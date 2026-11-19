@@ -1,0 +1,89 @@
+{
+  "at": "2026-11-10T12:20:49.039Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Exact five-suite mocked unit recipe only",
+  "files": [
+    {
+      "path": "unit/run.cjs",
+      "sha256": "3639ecea8d73d437aabf8a71a5f07ebc86351f6261b9c6e0bafd63a9015261c9"
+    },
+    {
+      "path": "unit/jest.config.cjs",
+      "sha256": "711c79123c48f8ad5f361017ebbb6166cb0fa73bdfaff51bcd5484ef24ca20cf"
+    },
+    {
+      "path": "unit/preload.cjs",
+      "sha256": "d490eba5fa3fc86cc69ad08621c69e29e4f01a20470e7708f1d4ebca45b8639e"
+    },
+    {
+      "path": "unit/guard.cjs",
+      "sha256": "98382f3fa2922a93f55f89327f8a3b5997b991742797d1836d56e39607de21ca"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "lib/auth.ts",
+      "sha256": "a377af943776826d68385a01ebdfe3478aff5737c8de98395e2bebbd16d102ad"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "c093f2c5a93498a75b013b525e9a22b452fca807266fb7203c08824a210bb19f"
+    },
+    {
+      "path": "lib/security/__tests__/auth-current-authority.test.ts",
+      "sha256": "9fc822b5297824bd7819454548e424f9cdd4e027ec0aae7d5d4fee37694e07d0"
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "sha256": "ecd46caee366aa3d422426e63eb8081187fb79e9fd4226fee3e3d948e18d498e"
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "sha256": "27133096cb51f66699988b4ecab3c013cb899c96aaf0001b84d6e09ff4ff7a08"
+    },
+    {
+      "path": "lib/security/__tests__/auth-request-bookkeeping.test.ts",
+      "sha256": "4f746cb0251104c080d8d41352500b67bdf3551aa5756b956ab388ee662d6b4d"
+    },
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "sha256": "ac5b6a129cc5fff4816147d201fa06a9a10b610a9f206686c7cdbfd9f2314873"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "docs/ecc/command-registry.json",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381"
+    },
+    {
+      "path": "node_modules/next/dist/build/jest/jest.js",
+      "sha256": "504b97be29860a11412afd5e1b74b3577725f22383faf549844429bb662f8d9c"
+    }
+  ],
+  "review": [
+    "New exclusive attempt01 output directory; five named suites only; in-band/no-cache; finite180s timeout and exitstatus propagation.",
+    "OS-variable allowlist plus synthetic test-only settings; no inherited database/provider/production URLs or real authentication secrets.",
+    "Preload before Jest blocks environment-file reads and network connect/socket/fetch; setup retains independent mock isolation.",
+    "next/jest invoked without application directory; no real application config or environment load intended. Current configured suites mock SDK/adapter/database/audit imports.",
+    "Existing current-session/deactivation/outcome coverage preserved except the deliberately corrected expired-lock before-hook expectation; new suite checks both hooks and actual bounded outcome helper.",
+    "Six repeated rejected-origin calls per state verify no lookup/write/audit; expired reset/actual wrong-password/threshold/success and rejected APIError outcomes have explicit assertions."
+  ],
+  "remaining": [
+    "This tests mocked middleware rejection/order and mocked persistence only. Actual installed middleware behavior,real HTTP/native database effects,typechecking/build and browser acceptance remain pending."
+  ]
+}

@@ -33,11 +33,10 @@ export async function readUserInvitationHistory(input: {
   if (!parsed.success) return { status: 400, error: "Select an invitation", data: null, code: "INVITATION_INPUT_INVALID" }
   if (!input.actorId || !input.organizationId || !hasRbacPermission(input.actorPermissions, "users.read") || !evaluateRoleGrantAuthority(input.actorPermissions).allowed) return { status: 403, error: "Invitation review authority is required", data: null, code: "FORBIDDEN" }
   return db.$transaction(async tx => {
-    const invite = await tx.invite.findFirst({ where: { id: parsed.data.inviteId, organizationId: input.organizationId }, include: { role: { select: { organizationId: true, permissions: true } } } })
+    const invite = await tx.invite.findFirst({ where: { id: parsed.data.inviteId, organizationId: input.organizationId }, include: { role: { select: { code: true, organizationId: true, permissions: true } } } })
     if (!invite) return { status: 404, error: "Invitation is unavailable", data: null, code: "INVITATION_UNAVAILABLE" }
-    if (!evaluateRoleGrantPolicy({ actorOrganizationId: input.organizationId, actorPermissions: input.actorPermissions, targetRole: invite.role }).allowed) return { status: 403, error: "Invitation review authority changed", data: null, code: "FORBIDDEN" }
     const reviewer = await readCurrentInvitationIssuer(tx, { organizationId: input.organizationId, actorId: input.actorId, role: invite.role })
-    if (!reviewer || !hasRbacPermission(reviewer.permissions, "users.read")) return { status: 403, error: "Invitation review authority changed", data: null, code: "FORBIDDEN" }
+    if (!reviewer || !hasRbacPermission(reviewer.permissions, "users.read") || !evaluateRoleGrantPolicy({ actorOrganizationId: input.organizationId, actorPermissions: input.actorPermissions, actorRoleCodes: reviewer.roleCodes, targetRole: invite.role }).allowed) return { status: 403, error: "Invitation review authority changed", data: null, code: "FORBIDDEN" }
     const scope = { organizationId: input.organizationId, sourceId: invite.id, eventType: { in: [USER_INVITATION_EVENT, cancellationEvent] } }
     const cursor = parsed.data.cursor ? await tx.businessEvent.findFirst({ where: { ...scope, id: parsed.data.cursor }, select: { id: true, recordedAt: true } }) : null
     if (parsed.data.cursor && !cursor) return { status: 404, error: "History page is unavailable. Refresh the history.", data: null, code: "INVITATION_UNAVAILABLE" }
@@ -58,7 +57,7 @@ export async function readUserInvitationHistory(input: {
       const cancelled = event.eventType === cancellationEvent ? cancellationPayload.safeParse(event.payload) : null
       const payload = issued?.success ? issued.data : cancelled?.success ? cancelled.data : null
       const evidenceValid = Boolean(payload && payload.organizationId === input.organizationId && payload.inviteId === invite.id && payload.actorId === event.actorId && event.eventSource === "API" && event.schemaVersion === 1 && event.status === "APPLIED" && hashBusinessPayload(event.payload) === event.payloadHash
-        && (!issued?.success || hasInvitationGrantEvidence(issued.data)))
+        && (!issued?.success || hasInvitationGrantEvidence(issued.data, invite.role.code)))
       const actor = evidenceValid ? actors.find(row => row.id === event.actorId) : null
       const queued = event.outboxMessages.length === 1 ? event.outboxMessages[0] : null
       const delivery = evidenceValid && issued?.success && queued && queued.idempotencyKey === event.idempotencyKey && queued.payloadHash === event.payloadHash && hashBusinessPayload(queued.payload) === event.payloadHash ? queued : null

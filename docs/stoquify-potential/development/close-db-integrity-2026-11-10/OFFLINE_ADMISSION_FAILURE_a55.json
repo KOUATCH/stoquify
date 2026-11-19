@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-10",
+  "status": "OFFLINE_ADMISSION_SCRIPT_CONTRACT_FAILURE",
+  "executedBy": "root agent",
+  "sourcePreimage": "finalize-integrity.before-monthly-raw-facts.cjs",
+  "sourceSha256": "a55ed3f635d21082d1afe0d2aba9fb9c01b17c1625185f2cf4281955d68fd581",
+  "qualifiedPostgresAttempt": "pg-attempt-99a87606d0",
+  "failedAssertion": "actualMonthly.checks.every(item => item.passed)",
+  "cause": "The raw monthly evidence stores phase-specific facts and has no per-check passed field. The finalizer incorrectly expected that field. The separate raw Jest result already records all twenty tests as passed.",
+  "finalQualificationWrittenByFailedAttempt": false,
+  "finalQualificationAbsentWhenCorrectionStarted": true,
+  "databaseQualificationFailed": false,
+  "databaseRetestNeededForThisCorrection": false,
+  "databaseOrApplicationOperationsDuringCorrection": false,
+  "correction": "Assert the actual phase-specific facts, existing names and counts, and each corresponding passed raw Jest assertion. Preserve all existing source, database, migration, client and cleanup evidence requirements."
+}

@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": [
+    "../../next-env.d.ts",
+    "../../components/landing/**/*.ts",
+    "../../components/landing/**/*.tsx",
+    "../../components/dashboard/todays-operating-truth.ts",
+    "../../components/dashboard/Sidebar.tsx",
+    "../../lib/public-site.ts",
+    "../../app/[locale]/(home)/contact/page.tsx"
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "package": "P04",
+  "candidate_id": "p04-20261029-07216cdcb1fb",
+  "production_gate": "R03",
+  "production_gate_state": "open_blocked",
+  "rows": [
+    {
+      "id": "P04-Q01",
+      "requirement": "Current source inventory and provenance",
+      "status": "pass_for_inventory_only",
+      "evidence": [
+        "source-manifest.json",
+        "actions-review/integrity.json",
+        "routes-review/register-validation.json"
+      ],
+      "limit": "Inventory is not per-operation qualification."
+    },
+    {
+      "id": "P04-Q02",
+      "requirement": "Shared current authority/tenant/session-mirror denials",
+      "status": "scoped_pass",
+      "evidence": [
+        "native-authority-result.json",
+        "mocked-tests-result.json"
+      ],
+      "limit": "23 native checks pass with explicit auth transport stub; audit writes excluded from unauthorized business-state equality."
+    },
+    {
+      "id": "P04-Q03",
+      "requirement": "Operating-scope delegation ceiling",
+      "status": "fail_confirmed",
+      "package": "P04-R01",
+      "evidence": [
+        "native-authority-jest.json"
+      ]
+    },
+    {
+      "id": "P04-Q04",
+      "requirement": "Private file delivery through every alternate path",
+      "status": "fail_confirmed_component_http",
+      "package": "P04-R02",
+      "evidence": [
+        "routes-review/synthetic-static-run-O6X3iX/result.json"
+      ]
+    },
+    {
+      "id": "P04-Q05",
+      "requirement": "Safe private-error responses",
+      "status": "fail_confirmed_mocked_characterization",
+      "package": "P04-R03",
+      "evidence": [
+        "mocked-tests-jest.json"
+      ]
+    },
+    {
+      "id": "P04-Q06",
+      "requirement": "Every admitted route/action/object/location/module boundary qualified",
+      "status": "blocked_incomplete",
+      "packages": [
+        "P04-V01",
+        "P04-V03",
+        "P04-V04",
+        "P04-V05"
+      ],
+      "evidence": [
+        "findings-register.json"
+      ]
+    },
+    {
+      "id": "P04-Q07",
+      "requirement": "Actual signed-session transport, browser restoration and provider endpoints",
+      "status": "not_run_blocking",
+      "package": "P04-V02"
+    },
+    {
+      "id": "P04-Q08",
+      "requirement": "Finance export visibility decision",
+      "status": "external_business_decision_open",
+      "package": "P04-D01"
+    },
+    {
+      "id": "P04-Q09",
+      "requirement": "Independent review, preserved source and isolated cleanup",
+      "status": "assessment_review_accepted_scoped_preservation_pass_whole_worktree_drift_retained",
+      "evidence": [
+        "guard-review/FINAL-INDEPENDENT-REVIEW.md",
+        "final-integrity.json",
+        "preservation-disposition.json",
+        "actions-review/INDEPENDENT-NATIVE-CROSSCHECK.md",
+        "test-source-relocation.json",
+        "forensic-fixture-discovery-check.json"
+      ]
+    }
+  ]
+}

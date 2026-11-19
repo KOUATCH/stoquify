@@ -27,7 +27,7 @@ import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-ord
 import type { PurchaseOrderPresentation } from "@/services/purchase-order/purchase-order-capabilities";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error";
 // Types
@@ -295,6 +295,7 @@ const getBaseMutationOptions = <TData extends { data?: any; message?: string }>(
 export function useCreatePurchaseOrder() {
   const queryClient = useQueryClient();
   const t = useTranslations("moduleComposition.stop");
+  const requestId = useRef<string | null>(null);
 
   return useMutation<
     PurchaseOrderResponse<PurchaseOrderWithRelations>,
@@ -306,7 +307,9 @@ export function useCreatePurchaseOrder() {
       if (!payload.organizationId) {
         throw new Error("Organization ID is required");
       }
-      const result = await createPurchaseOrder(payload);
+      requestId.current ??= crypto.randomUUID();
+      const result = await createPurchaseOrder({ ...payload, requestId: payload.requestId ?? requestId.current });
+      if (result.success) requestId.current = null;
       return getModuleOperationErrorReason(result) ? { ...result, error: t("deniedMessage") } : result;
     },
     ...getBaseMutationOptions(queryClient),

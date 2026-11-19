@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "package_id": "P04-R06",
+  "reviewed_at": "2026-11-10T11:18:25.596Z",
+  "reviewer": "/root/r06_source_resume",
+  "classification": "CONFIRMED_PACKAGE_CONTRACT_FAILURE_BROWSER_REACHABILITY_AND_POLICY_UNRESOLVED",
+  "passed": false,
+  "source_inspection_only": true,
+  "actual_evidence": {
+    "result_path": "browser/auth-r06-attempt02/result.json",
+    "result_sha256": "81a50e5a71168c93b4d2af6c9a21010cebeead3303f778cbafc70200f39e2878",
+    "case_id": "R06-C-origin",
+    "requests": [
+      {
+        "id": "foreign-origin-unlink",
+        "path": "/api/auth/unlink-account",
+        "method": "POST",
+        "status": 403,
+        "bytes": 52,
+        "sha256": "c0efe3e4504d685256099acd2e7b3fd523c955b897306a0fbc54f8fa98f6c80d",
+        "cacheControl": null,
+        "hasPrivateCanary": false,
+        "hasUser": false,
+        "hasSession": false,
+        "hasTokenField": false,
+        "currentGateDenial": false,
+        "redirect": null,
+        "authHeaders": []
+      },
+      {
+        "id": "foreign-origin-signin",
+        "path": "/api/auth/sign-in/email",
+        "method": "POST",
+        "status": 200,
+        "bytes": 375,
+        "sha256": "8ba79a60a5ef4e1532dfe7b2c33c1910596ae2615702ad1089f782f6f00897ee",
+        "cacheControl": null,
+        "hasPrivateCanary": true,
+        "hasUser": true,
+        "hasSession": false,
+        "hasTokenField": true,
+        "currentGateDenial": false,
+        "redirect": null,
+        "authHeaders": [
+          {
+            "name": "set-cookie",
+            "sha256": "624934a9d44cf54622774cdd3222d050e9be007e51a9033ea0f1d128b7a91511",
+            "bytes": 84,
+            "setsNonemptySessionToken": false,
+            "setsNonemptySessionData": false
+          },
+          {
+            "name": "set-cookie",
+            "sha256": "cefbf42c516cad1e33ebaaa019a752787ea667e22f5fc3c20562cb95d748357d",
+            "bytes": 170,
+            "setsNonemptySessionToken": true,
+            "setsNonemptySessionData": false
+          }
+        ]
+      }
+    ],
+    "before_snapshot": "database/snapshot-R06-C-origin-before-1794308902323-e9b6d04a-2b19-4c3b-bcc0-a931c54543ea.json",
+    "after_snapshot": "database/snapshot-R06-C-origin-after-1794308911095-49ab8b7b-54a6-4044-a5f7-95232571f8ca.json",
+    "before_sha256": "40b3cddc34f1d34f3f52c05cc2ffac4f5526503f18efa4fe34056fe7bf0cbf2b",
+    "after_sha256": "611391fe688d7a92883c8a21b03712b11663de35b891af12548dac8b9c343961",
+    "new_session_count": 1,
+    "new_session_actor": "p04r06-active",
+    "new_audit": "LOGIN_SUCCESS",
+    "changed_business_tables": [
+      "users"
+    ],
+    "changed_user_fields": [
+      "lastLogin",
+      "updatedAt"
+    ],
+    "account_rows_unchanged": true,
+    "raw_failure": "Unreviewed session insertion/update\n+ actual - expected\n\n+ undefined\n- 'bb734d94ddf3a2757e4bfda4b2807e4427b9f0ac05a876b58a21aa66d2b503c8'\n"
+  },
+  "package_contract": {
+    "path": "inventory/test-case-map.json",
+    "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61",
+    "id": "R06-C-origin",
+    "required": "403 safe denial; no unauthorized account/session creation or business writes.",
+    "observed_violation": true,
+    "disposition": "Retain failed status. SDK defaults or a narrower interpretation do not authorize weakening this accepted test."
+  },
+  "baseline": {
+    "before_auth_sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+    "current_auth_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5",
+    "trusted_origin_setup_identical": true,
+    "sign_in_hooks_identical_except_new_public_noop": true,
+    "current_origin_or_csrf_disable_option_present": false,
+    "unchanged_files": [
+      {
+        "path": "lib/security/trusted-origins.ts",
+        "current": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+        "before": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b"
+      },
+      {
+        "path": "app/api/auth/[...all]/route.ts",
+        "current": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+        "before": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b"
+      },
+      {
+        "path": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+        "current": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2",
+        "before": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2"
+      },
+      {
+        "path": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+        "current": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+        "before": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490"
+      },
+      {
+        "path": "node_modules/better-auth/dist/integrations/next-js.mjs",
+        "current": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489",
+        "before": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489"
+      }
+    ],
+    "conclusion": "Source indicates pre-existing cookie-free protocol behavior, not a regression introduced by the R06 current-session repair. No before-repair runtime reproduction performed, so historical runtime equivalence is not certified."
+  },
+  "protocol_facts": [
+    {
+      "source": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+      "fact": "Global origin validation skips safe methods; for mutating requests it normally checks Origin/Referer only when Cookie is present or forceValidate is true. The first-login form middleware checks cookie-bearing requests, blocks cross-site navigate Fetch Metadata and otherwise forces origin validation whenever any Sec-Fetch-Site/Mode/Dest is present; it returns without that validation when both cookies and fetch metadata are absent."
+    },
+    {
+      "source": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "fact": "Credential sign-in accepts application/json and application/x-www-form-urlencoded, uses formCsrfMiddleware and native credential/account checks. It is public to the new application current-session gate."
+    },
+    {
+      "source": "node_modules/playwright-core/lib/coreBundle.js",
+      "fact": "BrowserContextAPIRequestContext uses APIRequestContext HTTP transport. Its default headers are user-agent, accept and accept-encoding, plus configured/request headers; the recipe adds Origin but no Fetch Metadata. This request is not a page-origin browser navigation or fetch and does not exercise browser CORS."
+    },
+    {
+      "source": "middleware.ts",
+      "fact": "The /api/auth/ prefix returns through nextWithLocale before the generic API CORS and OPTIONS block. That branch adds common headers/locale cookie but does not declare foreign CORS access."
+    },
+    {
+      "source": "app/api/auth/[...all]/route.ts",
+      "fact": "Only GET and POST are exported, with update-user alone intercepted; all other auth POSTs use the native handler."
+    },
+    {
+      "source": "node_modules/next/dist/server/route-modules/app-route/helpers/auto-implement-methods.js",
+      "fact": "Next auto-implements absent OPTIONS as204 with Allow; it does not add Access-Control-Allow-Origin. next.config.mjs adds COOP/CORP and security headers but no foreign CORS allowance."
+    }
+  ],
+  "source_predictions_not_runtime_results": [
+    {
+      "transport": "Foreign-origin browser JSON fetch",
+      "prediction": "Source provides no foreign-origin preflight grant; browser send/read behavior needs actual measurement. CORS failure must not be mistaken for general server-side write prevention."
+    },
+    {
+      "transport": "Cross-site top-level URL-encoded credential form",
+      "prediction": "Sign-in accepts this media type; browser cross-site/navigate Fetch Metadata should be rejected by formCsrfMiddleware. Must prove denied server-side effects and no session cookie/authority."
+    },
+    {
+      "transport": "Same-site but cross-origin page request",
+      "prediction": "Fetch Metadata present should force strict trusted-origin matching even when Sec-Fetch-Site is same-site. Probe separate from cross-site."
+    },
+    {
+      "transport": "Cookie-free non-browser client with valid credentials and foreign Origin, no Fetch Metadata",
+      "prediction": "Current source accepts credentials as observed. Whether this is intentionally supported is not established by the SDK implementation."
+    }
+  ],
+  "repository_policy_evidence": [
+    {
+      "path": "docs/security/findings/STOCKFLOW-SECURITY-HARDENING-2026-06-02.md",
+      "lines": [
+        128,
+        137,
+        160
+      ],
+      "interpretation": "Dated document says CORS only allows same origin and lists further CSRF intent/origin hardening. CORS access policy alone does not define blanket rejection of native credential requests."
+    },
+    {
+      "path": "docs/security/auth-rbac/AUTH-AUTHZ-ANALYSIS-2026-05.md",
+      "lines": [
+        136,
+        138,
+        195
+      ],
+      "interpretation": "Historical analysis records partial CSRF coverage and a proposed helper; its older auth-stack description is not current runtime proof."
+    },
+    {
+      "path": "lib/security/__tests__/trusted-origins.test.ts",
+      "interpretation": "Tests configuration normalization, invalid values and absence of spoofed-host-derived trust; does not exercise cookie-free HTTP credential origin enforcement."
+    },
+    {
+      "path": "lib/security/__tests__/middleware-routing.test.ts",
+      "interpretation": "Current routing/private-transport tests do not qualify foreign-origin first-login browser behavior."
+    }
+  ],
+  "recommended_next_action": {
+    "verification": "Use a separately reviewed bounded real-browser protocol probe with isolated same-site cross-origin and cross-site local origins, actual browser-created Origin/Fetch Metadata, JSON preflight and URL-encoded form/navigation. Include same-origin positives and cookie-bearing negatives; capture ingress header classifications, request delivery, response/CORS metadata, cookie outcomes and exact DB deltas. Preserve all existing failed tests/evidence.",
+    "decision": "If the explicit R06 universal403/no-write rule is the intended product policy, implement a bounded server guard against a new regression test. If native credential clients are intended, security/product must explicitly reconcile that compatibility requirement with R06-C-origin after protocol evidence; no implicit approval from SDK behavior.",
+    "forbidden_shortcut": "Do not ignore origin-session insertion, rewrite attempt02 as pass, disable CSRF/origin checks, or weaken the test to the observed default."
+  },
+  "source_bindings": [
+    {
+      "path": "lib/auth.ts",
+      "sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b"
+    },
+    {
+      "path": "app/api/auth/[...all]/route.ts",
+      "sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b"
+    },
+    {
+      "path": "middleware.ts",
+      "sha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204"
+    },
+    {
+      "path": "next.config.mjs",
+      "sha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+      "sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/index.mjs",
+      "sha256": "9ccb59e0b6b519f681d0c9eab3f0a52c8847d6af843a48d014854a3801479c5f"
+    },
+    {
+      "path": "node_modules/better-auth/dist/context/create-context.mjs",
+      "sha256": "519af35dd5e9454a41c4a8729c9bbeed69f7bbf8c80eefebdd747050b99ec153"
+    },
+    {
+      "path": "node_modules/better-auth/dist/integrations/next-js.mjs",
+      "sha256": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489"
+    },
+    {
+      "path": "node_modules/better-call/dist/router.mjs",
+      "sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480"
+    },
+    {
+      "path": "node_modules/better-call/dist/utils.mjs",
+      "sha256": "9084905b8afc612dcc978ed61ea037cfe8839e41b1aa8e4bc4b45b6c59627487"
+    },
+    {
+      "path": "node_modules/next/dist/server/route-modules/app-route/helpers/auto-implement-methods.js",
+      "sha256": "34fe7956067e5515a9fc8db052386f7ba45802c23cd409f2fa7ae8dbc710d5e2"
+    },
+    {
+      "path": "node_modules/playwright-core/lib/coreBundle.js",
+      "sha256": "6be5c2ea035554e9b184b1dbc7aa5e7f1fb428dd1b5c202022858dcfae9bee27"
+    },
+    {
+      "path": "lib/security/__tests__/trusted-origins.test.ts",
+      "sha256": "97b6099aa61307b0b00591f512464e51a1888e8be317756a857ee1beb90fc6fc"
+    },
+    {
+      "path": "lib/security/__tests__/middleware-routing.test.ts",
+      "sha256": "55f0e680b08ca9defac179b626eb94305bdea376aba4477bf1c3a0f7b0d1a1f7"
+    },
+    {
+      "path": "docs/security/findings/STOCKFLOW-SECURITY-HARDENING-2026-06-02.md",
+      "sha256": "f6830cda7496ca5abecfaa20d109d0dfdf8bbacff9b809efaaa7f034eca26acd"
+    },
+    {
+      "path": "docs/security/auth-rbac/AUTH-AUTHZ-ANALYSIS-2026-05.md",
+      "sha256": "2bda379ef8dfb4b97d2bc44fe513df3d04ed5108ca8336a214640b17cf0a9a58"
+    }
+  ],
+  "limits": [
+    "No additional browser, HTTP request, database query, compiler or test executed for this classification.",
+    "No product/harness/configuration changes; no real-browser exploit or universal absence of exploit asserted.",
+    "No P04-R06, parent P04 or production advancement."
+  ]
+}

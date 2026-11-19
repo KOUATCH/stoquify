@@ -73,6 +73,8 @@ jest.mock("next/cache", () => ({
   revalidatePath: jest.fn(),
 }))
 
+jest.mock("@/lib/logger", () => ({ logger: { warn: jest.fn() } }))
+
 jest.mock("@/services/accounting/close-assurance.service", () => ({
   acceptMissingCloseEvidenceResponse: jest.fn(),
   getCloseAssuranceDashboard: jest.fn(),
@@ -89,6 +91,8 @@ jest.mock("@/services/accounting/close-assurance.service", () => ({
 
 jest.mock("@/services/accounting/close-assurance-pack.service", () => ({
   exportClosePack: jest.fn(),
+  getRetainedClosePackExport: jest.fn(),
+  listClosePackExports: jest.fn(),
 }))
 
 import { revalidatePath } from "next/cache"
@@ -128,6 +132,15 @@ const mockExportClosePack = exportClosePack as jest.Mock
 const mockRevalidatePath = revalidatePath as jest.Mock
 
 describe("close assurance actions", () => {
+  it.each(["draft", "certified"])("preserves the committed %s export when cache refresh fails", async mode => {
+    mockRevalidatePath.mockImplementationOnce(() => { throw new Error("Synthetic post-commit cache failure") })
+    const action = mode === "draft" ? exportDraftClosePackAction : exportCertifiedClosePackAction
+    const response = await action({ closeRunId: "close-run-1" })
+    expect(response.success).toBe(true)
+    expect(response.data).toEqual({ exportId: "export-1", periodId: "period-1", contentHash: "sha256:close-pack" })
+    expect(mockExportClosePack).toHaveBeenCalledTimes(1)
+  })
+
   beforeEach(() => {
     jest.clearAllMocks()
     setCloseAssuranceActionContextOverride(undefined)
@@ -174,29 +187,36 @@ describe("close assurance actions", () => {
   })
 
   it("derives close dashboard tenant scope from the RBAC context", async () => {
+    mockGetCloseAssuranceDashboard.mockResolvedValue({ organizationId: "service-untrusted-org", actorId: "service-untrusted-actor", run: { id: "retained-run" } })
     const result = await getCloseAssuranceDashboardAction({
       organizationId: "attacker-org",
+      actorId: "attacker-actor",
       periodId: "period-1",
     })
 
     expect(result.success).toBe(true)
+    expect(result.data).toMatchObject({ organizationId: "org-session", actorId: "user-session", run: { id: "retained-run" } })
     expect(mockGetCloseAssuranceDashboard).toHaveBeenCalledWith("org-session", "period-1")
   })
 
   it("passes actor and permission context when running a close assessment", async () => {
+    mockRunCloseAssurance.mockResolvedValue({ organizationId: "service-untrusted-org", actorId: "service-untrusted-actor", run: { id: "new-run" } })
     const result = await runCloseAssuranceAction({
       organizationId: "attacker-org",
+      actorId: "attacker-actor",
       periodId: "period-1",
       correlationId: "corr-1",
     })
 
     expect(result.success).toBe(true)
+    expect(result.data).toMatchObject({ organizationId: "org-session", actorId: "user-session", run: { id: "new-run" } })
     expect(mockRunCloseAssurance).toHaveBeenCalledWith(
       "org-session",
       { periodId: "period-1", correlationId: "corr-1" },
       {
         actorId: "user-session",
         actorPermissions: mockPermissions,
+        session: { id: "trusted-session-id", token: "trusted-session-token" },
       },
     )
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/accounting/close", "page")
@@ -219,6 +239,7 @@ describe("close assurance actions", () => {
       {
         actorId: "user-session",
         actorPermissions: mockPermissions,
+        session: { id: "trusted-session-id", token: "trusted-session-token" },
       },
     )
   })
@@ -446,6 +467,7 @@ describe("close assurance actions", () => {
       {
         actorId: "user-session",
         actorPermissions: mockPermissions,
+        session: { id: "trusted-session-id", token: "trusted-session-token" },
       },
     )
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/accounting/close/period-1", "page")
@@ -485,6 +507,7 @@ describe("close assurance actions", () => {
       {
         actorId: "user-session",
         actorPermissions: mockPermissions,
+        session: { id: "trusted-session-id", token: "trusted-session-token" },
         freshAuth: {
           actorId: "user-session",
           organizationId: "org-session",
@@ -551,6 +574,7 @@ describe("close assurance actions", () => {
       {
         actorId: "user-session",
         actorPermissions: mockPermissions,
+        session: { id: "trusted-session-id", token: "trusted-session-token" },
         lastAuthAt: new Date("2026-08-02T08:30:00.000Z"),
       },
     )

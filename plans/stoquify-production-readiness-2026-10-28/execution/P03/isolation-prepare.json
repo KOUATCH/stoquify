@@ -1,0 +1,55 @@
+{
+  "startedAt": "2026-10-28T17:00:32.199Z",
+  "artifactSha256": "987da3ead9c716cdbf5d2a22ac1723aa8a8ed15113f40a6b8abd3c1fb64d151f",
+  "passed": false,
+  "commands": [
+    {
+      "label": "initdb",
+      "file": "C:\\Program Files\\PostgreSQL\\17\\bin\\initdb.exe",
+      "args": [
+        "-D",
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p03-grant-20261028-r1\\postgres",
+        "-U",
+        "p03",
+        "-A",
+        "trust",
+        "--no-locale",
+        "--encoding=UTF8"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "pg-start",
+      "file": "C:\\Program Files\\PostgreSQL\\17\\bin\\pg_ctl.exe",
+      "args": [
+        "-D",
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p03-grant-20261028-r1\\postgres",
+        "-l",
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p03-grant-20261028-r1\\postgres.log",
+        "-o",
+        "-h 127.0.0.1 -p 50346",
+        "-w",
+        "start"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "pg-stop",
+      "file": "C:\\Program Files\\PostgreSQL\\17\\bin\\pg_ctl.exe",
+      "args": [
+        "-D",
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p03-grant-20261028-r1\\postgres",
+        "-m",
+        "fast",
+        "-w",
+        "stop"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "buildId": "eoW9-NZPj4rd9OHTZxMDM",
+  "runtimeFiles": 5284,
+  "error": "spawnSync C:\\Program Files\\PostgreSQL\\17\\bin\\pg_ctl.exe ETIMEDOUT",
+  "clusterStopped": true,
+  "finishedAt": "2026-10-28T17:16:55.987Z"
+}

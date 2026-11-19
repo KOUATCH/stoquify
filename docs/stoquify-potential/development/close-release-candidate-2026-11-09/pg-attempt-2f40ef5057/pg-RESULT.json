@@ -1,0 +1,40 @@
+{
+  "began": "2026-11-09T17:09:58.622Z",
+  "passed": true,
+  "target": {
+    "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5",
+    "clusterDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5",
+    "host": "localhost",
+    "port": 58033,
+    "user": "sales_release_fixture",
+    "freshDatabase": "stoquify_replay_close_authority_20261109_2f40ef5057",
+    "sourceManifestSha256": "8c9723660c455a3cea75b4ab774d91844418e9397d7ed35da47fceef389168b3",
+    "purpose": "hardened-close-release-candidate"
+  },
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-release-candidate-2026-11-09\\pg-attempt-2f40ef5057",
+  "privateDir": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\db-private-2f40ef5057",
+  "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\candidate",
+  "sourceManifestSha256": "8c9723660c455a3cea75b4ab774d91844418e9397d7ed35da47fceef389168b3",
+  "checks": [
+    {
+      "name": "Full candidate-bound121 replay and second deploy",
+      "migrations": 121,
+      "certification": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT"
+    },
+    {
+      "name": "Candidate-bound real helper and SQL race proof",
+      "passed": 40,
+      "skipped": 0
+    },
+    {
+      "name": "Actual candidate close service workflow, rollback and committed revocations",
+      "passed": 5,
+      "skipped": 0,
+      "fixture": "pg-FIXTURE_PUBLIC.json"
+    }
+  ],
+  "runnerSha256": "83c228f30f170da0a8809a47abf56a313b67753b161b567152f5cd60a143a039",
+  "limitation": "Real candidate service/helper tests; deliberately BLOCKED synthetic assessment and draft. No earned READY/T4/certificate, actual password/login/provider or browser claim.",
+  "ownedClusterStopped": true,
+  "ended": "2026-11-09T17:12:41.091Z"
+}

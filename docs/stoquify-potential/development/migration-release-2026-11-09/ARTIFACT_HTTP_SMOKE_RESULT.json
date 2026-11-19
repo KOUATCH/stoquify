@@ -1,0 +1,160 @@
+{
+  "passed": true,
+  "startedAt": "2026-11-09T15:20:15.493Z",
+  "origin": "https://127.0.0.1:3443",
+  "database": "stoquify_local_artifact_http_20261109_2c550993e0",
+  "artifact": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\11\\02\\01a19e00-6435-7443-92d6-f2cf160728a8\\sales-accounting-release-20261109-ffb02aacd5-artifact",
+  "certificateSha256": "8f6c1592e9a971b84644e55c2557cde003d8af433d2cbb1db7df796eedb291a2",
+  "seedSha256": "cb500d14a692e5491115c8aa7724e95854eaec087c423e0ce63398e0163536b4",
+  "routes": [
+    {
+      "route": "/en/dashboard/pos",
+      "status": 200,
+      "elapsedMs": 2706,
+      "protectedDashboardMainPresent": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 450453,
+      "bodySha256": "47c8204df6d3f104256479ec153e512e9349708e4b3cc609ffdc67ac5cee9ffc"
+    },
+    {
+      "route": "/en/dashboard/finance/receivables",
+      "status": 200,
+      "elapsedMs": 179,
+      "protectedDashboardMainPresent": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 452340,
+      "bodySha256": "c4df7fd5bc54e73c393f72867590f64c49a40988caf29285786b92cae7a6439a"
+    },
+    {
+      "route": "/en/dashboard/accounting/reports/trial-balance",
+      "status": 200,
+      "elapsedMs": 275,
+      "protectedDashboardMainPresent": true,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 491785,
+      "bodySha256": "008e5e766b69a14612e91a8a7f66609b2bcc19edea8759d65fd8d8d89169b4ca"
+    }
+  ],
+  "evidenceClass": "Real HTTPS client requests through private loopback TLS proxy to actual sealed standalone application and Better Auth endpoints; no browser",
+  "limitations": [
+    "Synthetic configuration and roles; no provider operations, financial sale workflow, statutory certification or deployment.",
+    "Private self-signed TLS is accepted only for https://127.0.0.1:3443 by this Node client; no global TLS validation override.",
+    "Read-only protected-route SSR and actual credential/session/revocation checks; no rendered accessibility or full browser claim."
+  ],
+  "artifactBefore": {
+    "sha256": "a7e81563d896cc834a60c6b0a239fd20cd3fafc46fc466c3f3f212259d3a0c30",
+    "buildId": "tRROCJHlhqUTyyQGm1mN6",
+    "files": 6709
+  },
+  "privateConfigScan": {
+    "passed": true,
+    "filesScanned": 6710,
+    "variableNames": [
+      "AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY",
+      "AQSTOQFLOW_HISTORY_CURSOR_SECRET",
+      "AQSTOQFLOW_RECEIPT_TOKEN_SECRET",
+      "AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY",
+      "AQSTOQFLOW_STATEMENT_TOKEN_SECRET",
+      "AUTH_SECRET",
+      "BETTER_AUTH_SECRET",
+      "DATABASE_URL",
+      "DIRECT_URL",
+      "NEXTAUTH_SECRET",
+      "PUBLIC_IDENTITY_ABUSE_HASH_SECRET",
+      "SHADOW_DATABASE_URL"
+    ],
+    "privateValuesRecorded": false
+  },
+  "migrationCount": 121,
+  "historySha256": "fb3390eacbf1b32cdb4bb5e7b4de1269afe1a7524b6c6822045d2edb35ad8af2",
+  "seedClient": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-accounting-release-20261109-ffb02aacd5\\candidate\\node_modules\\@prisma\\client\\default.js",
+  "fixture": {
+    "organizationId": "auth-sales-2c550993e0",
+    "initialCounts": {
+      "sales": 0,
+      "settlements": 0,
+      "sessions": 0,
+      "posSessions": 0,
+      "journals": 0
+    },
+    "initialStock": {
+      "quantity": "5",
+      "unitCost": "4",
+      "value": "20",
+      "sellingPrice": "10"
+    },
+    "role": "cashier",
+    "userId": "auth-sales-2c550993e0-cashier"
+  },
+  "applicationPid": 34352,
+  "anonymous": {
+    "status": 307,
+    "locationPath": "/en/login"
+  },
+  "authEndpointWarmup": {
+    "status": 200,
+    "elapsedMs": 6846,
+    "timeoutMs": 180000,
+    "noCookieSent": true,
+    "noSessionCreated": true
+  },
+  "wrongPassword": {
+    "status": 401,
+    "elapsedMs": 12103,
+    "sessionCreated": false
+  },
+  "signIn": {
+    "status": 200,
+    "elapsedMs": 135,
+    "secureSessionCookie": true,
+    "cookieNames": [
+      "STOCKFLOW_LOCALE",
+      "__Secure-better-auth.session_token",
+      "__Secure-better-auth.session_data"
+    ],
+    "sessionCreated": 1
+  },
+  "sessionRead": {
+    "status": 200,
+    "userId": "auth-sales-2c550993e0-cashier",
+    "organizationId": "auth-sales-2c550993e0"
+  },
+  "signOut": {
+    "status": 200,
+    "sessionRevoked": true,
+    "uncachedOldCookieSessionAbsent": true,
+    "oldCookieProtectedRouteStatus": 200,
+    "responseBytes": 405804,
+    "responseSha256": "cb8f38c7fcc964d76fda70f5d24ef6cd0783243a5e68d9df7159b6b061692cbc",
+    "protectedRecovery": {
+      "mode": "streamed-next-redirect",
+      "status": 200,
+      "loginPath": "/en/login",
+      "callbackPath": "/en/dashboard/pos",
+      "protectedDashboardMainAbsent": true
+    }
+  },
+  "warmWrongPassword": {
+    "status": 401,
+    "elapsedMs": 116,
+    "noCookieSent": true,
+    "sessionCreated": false,
+    "limitation": "One measured warm request on this synthetic local host; not a production performance SLA"
+  },
+  "finalTransactionCounts": {
+    "sales": 0,
+    "settlements": 0,
+    "sessions": 0,
+    "posSessions": 0,
+    "journals": 0
+  },
+  "applicationStopped": true,
+  "clusterStopped": true,
+  "artifactAfter": {
+    "sha256": "a7e81563d896cc834a60c6b0a239fd20cd3fafc46fc466c3f3f212259d3a0c30",
+    "buildId": "tRROCJHlhqUTyyQGm1mN6",
+    "files": 6709
+  },
+  "artifactUnchanged": true,
+  "finishedAt": "2026-11-09T15:22:10.591Z"
+}

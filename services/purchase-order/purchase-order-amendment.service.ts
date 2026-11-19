@@ -8,6 +8,7 @@ import { buildEnvelopePayload, proposalResult } from "./supplier-po-acknowledgem
 import { loadSupplierProposalEvents } from "./supplier-po-proposal-evidence"
 import { purchaseAmendmentCommandSchema, purchaseAmendmentQuerySchema, purchaseAmendmentReceiptSchema, type PurchaseAmendmentCommand, type PurchaseAmendmentPreview, type PurchaseAmendmentReceipt } from "./purchase-order-amendment-contracts"
 import { purchaseAmendmentEventKey as key, readPurchaseAmendmentEvent } from "./purchase-order-amendment-record"
+import { planPurchaseReceiptCommercialBasis, pricePurchaseOrderLine, purchaseOrderTotal } from "./purchase-commercial-basis"
 
 const money = (value: Prisma.Decimal) => value.toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP)
 function boundedMoney(value: Prisma.Decimal) {
@@ -50,16 +51,24 @@ async function reviewedInTx(tx: Prisma.TransactionClient, scope: PurchaseApprova
     const receipts = order.goodsReceipts.filter(r => r.status === "RECEIVED").flatMap(r => r.lines).filter(value => value.purchaseOrderLineId === line.id).reduce((sum,value) => sum.plus(value.receivedQuantity), new Prisma.Decimal(0))
     if (!prior && (quantity.lt(line.receivedQuantity) || quantity.lt(receipts) || quantity.lt(invoiced))) throw new BusinessRuleError("The amended quantity cannot be less than received or invoiced obligations.", "RETAINED_OBLIGATIONS")
     if (!prior && (!line.item.isActive || line.item.deletedAt)) throw new BusinessRuleError("An item on this order is no longer available.")
-    const base = boundedMoney(quantity.mul(line.unitCost)), taxable = boundedMoney(base.minus(line.discount))
-    // Preserve the existing purchase-order tax convention; no statutory rule is introduced here.
-    const taxAmount = change && !prior ? boundedMoney(base.mul(line.taxRate).div(100)) : line.taxAmount
-    const lineTotal = change && !prior ? boundedMoney(taxable.plus(taxAmount)) : line.lineTotal
+    const price = pricePurchaseOrderLine({ quantity, unitCost: line.unitCost, taxRate: line.taxRate, discount: line.discount })
+    const base = price.subtotal
+    const taxAmount = change && !prior ? price.taxAmount : line.taxAmount
+    const lineTotal = change && !prior ? price.lineTotal : line.lineTotal
     return { line, quantity, base, taxAmount, lineTotal }
   })
   if (!prior && proposal.lines.some(change => !lines.some(value => value.line.id === change.purchaseOrderLineId))) throw new ConflictError("A proposed line no longer exists on this order.")
   const sum = (field: "base" | "taxAmount" | "lineTotal") => boundedMoney(lines.reduce((total,line) => total.plus(line[field]), new Prisma.Decimal(0)))
   const subtotal = sum("base"), taxAmount = sum("taxAmount"), discount = boundedMoney(lines.reduce((total,value) => total.plus(value.line.discount), new Prisma.Decimal(0)))
-  const total = boundedMoney(subtotal.plus(taxAmount).minus(discount).plus(order.shippingCost))
+  const total = purchaseOrderTotal(subtotal, discount, taxAmount, order.shippingCost)
+  if (!prior && lines.some(({ line, quantity }) => !quantity.eq(line.orderedQuantity))) {
+    const active = order.goodsReceipts.filter(receipt => ["RECEIVED", "COMPLETED"].includes(receipt.status)).flatMap(receipt => receipt.lines)
+    if (active.length) planPurchaseReceiptCommercialBasis(
+      { ...order, lines: lines.map(({ line, quantity, taxAmount }) => ({ ...line, orderedQuantity: quantity, taxAmount })) },
+      active,
+      lines.filter(({ line, quantity }) => quantity.gt(line.receivedQuantity)).map(({ line, quantity }) => ({ lineId: line.id, receivedQuantity: quantity.minus(line.receivedQuantity) })),
+    )
+  }
   const expectedDeliveryDate = proposal.requestedDeliveryDate ?? order.expectedDeliveryDate
   if (!prior && !proposal.lines.length && expectedDeliveryDate?.getTime() === order.expectedDeliveryDate?.getTime()) throw new BusinessRuleError("This proposal does not change the order.")
   const evidence = { order: purchaseApprovalSnapshot(order), currency: order.organization.currency, contract: currentPayload, proposalId, stateHash: accepted.stateHash,

@@ -1,0 +1,10 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../../../../..'),hash=p=>crypto.createHash('sha256').update(fs.readFileSync(path.join(root,p))).digest('hex');
+const prior=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../P07/evidence/BASELINE.json'),'utf8'));
+const files=Object.keys(prior.files).filter(p=>p.startsWith('docs/retention/execution/P03/')||p.startsWith('docs/retention/execution/P04/')||p.startsWith('services/onboarding/__tests__/fixtures/'));
+const graph=JSON.parse(fs.readFileSync(path.join(root,'graphify-out/ordered-code-graph.json'),'utf8'));
+const nodes=graph.nodes.filter(n=>['item_item_service_createitem','inventory_inventory_stock_event_service_postopeningstock'].includes(n.id));
+const components=JSON.parse(fs.readFileSync(path.join(root,'graphify-out/graph_components.json'),'utf8'));
+nodes.push(...components.nodes.filter(n=>n.id==='forminputs_enhancedimageuploadbutton_enhancedimageuploadbutton'));
+fs.writeFileSync(path.join(__dirname,'SOURCE_REVIEW.json'),JSON.stringify({at:new Date().toISOString(),graphDate:'2026-08-09',graphRegenerated:false,nodes,predecessors:files.map(p=>({path:p,unchangedSinceP07:hash(p)===prior.files[p],sha256:hash(p)})),decision:'P03 synthetic master boundary and P04 local access foundation allow this continuation. Their live/expert/restore gates remain open. Source, not dated graph, owns current media behavior.',skillGuidance:['ECC security-review: input validation, fresh tenant scope and data protection','Project UI/UX Pro Max ux-guidelines.csv rows28,41,80: focus, keyboard and recovery'],mediaControlFiles:['services/media/picture.service.ts','services/media/picture-authorization.ts','services/item/item.service.ts','app/api/media/upload/route.ts','lib/media/policy.ts'].map(p=>({path:p,sha256:hash(p)}))},null,2));
+console.log('Saved source, graph and prerequisite revalidation');

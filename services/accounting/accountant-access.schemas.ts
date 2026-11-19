@@ -12,11 +12,11 @@ export const grantAccountantAccessInputSchema = z.object({
   effectiveFrom: z.coerce.date().optional(),
   expiresAt: z.coerce.date(),
   correlationId: idSchema.nullable().optional(),
+  idempotencyKey: idSchema.min(8).max(191).nullable().optional(),
 })
 
 export const inviteAccountantAccessInputSchema =
   grantAccountantAccessInputSchema.extend({
-    idempotencyKey: idSchema.min(8).max(191).nullable().optional(),
     locale: z.enum(["EN", "FR"]).optional(),
   })
 
@@ -29,6 +29,13 @@ export const revokeAccountantAccessInputSchema = z.object({
 export const accountantClientScopeInputSchema = z.object({
   clientOrganizationId: idSchema.nullable().optional(),
 })
+
+export const accountantPortfolioInputSchema = z.object({
+  cursor: z.string().min(1).max(2000).optional(),
+  search: z.string().trim().max(100).default(""),
+  pageSize: z.number().int().min(1).max(20).default(10),
+}).strict()
+export type AccountantPortfolioInput = z.input<typeof accountantPortfolioInputSchema>
 
 export type GrantAccountantAccessInput = z.infer<typeof grantAccountantAccessInputSchema>
 export type InviteAccountantAccessInput = z.infer<typeof inviteAccountantAccessInputSchema>

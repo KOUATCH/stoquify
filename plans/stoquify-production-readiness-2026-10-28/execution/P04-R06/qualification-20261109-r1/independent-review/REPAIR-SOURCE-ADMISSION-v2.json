@@ -1,0 +1,68 @@
+{
+  "at": "2026-11-09T20:22:54.265Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "productChangesByReviewer": false,
+  "scope": "Final corrected R06 source admitted for isolated qualification; supersedes first source admission only",
+  "files": [
+    {
+      "path": "lib/auth.ts",
+      "sha256": "181e15aad556024353b1e988cce6ccb5eb9679dfc50620427b81aa059a8c7064"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b"
+    },
+    {
+      "path": "lib/security/__tests__/auth-current-authority.test.ts",
+      "sha256": "3b299762f485a4ab0f0ce9e281fcc2e7ac18ea20e61eebbb0c72dbba7744070c"
+    },
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "sha256": "ac5b6a129cc5fff4816147d201fa06a9a10b610a9f206686c7cdbfd9f2314873"
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "sha256": "4b402f487038b9c7c1d4b86b56e8f271e1303405a2a10ceb14bed23f0ab0ae09"
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "sha256": "aae2f1a20add9453671f8c08c25eca1215dcb7e790a46b784d3d35cd01b1949a"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b"
+    }
+  ],
+  "inventories": [
+    {
+      "path": "inventory/source-after-repair-manifest-v3.json",
+      "sha256": "c6f523d4ba3ff62b06bca90deaf910b07118dc620e9a91a7856a3f2bf100733f",
+      "inputs": 48
+    },
+    {
+      "path": "inventory/source-after-manifest-v3.json",
+      "sha256": "c87fce426205197ed6ba9d119f1e9b850830820127da739dd4106a9923975d2a",
+      "inputs": 63
+    }
+  ],
+  "previousAdmissionSha256": "da6179d498cd88e75885b603daab5f6b564ad5821e8e268399cabbfcd5269501",
+  "reviewFindings": [
+    "Raw installed getSession factory propagates store errors instead of helper catch-to-null. BetterCall endpoint.mjs confirms asResponse false throws API errors and returnHeaders true wraps even native null.",
+    "Cloned context forces GET, asResponse false, returnHeaders true, returnStatus false, cache bypass and refresh suppression; existing cached context cannot supply authority.",
+    "Header propagation follows installed SDK semantics: append set-cookie and set singleton headers; existing unrelated headers are preserved.",
+    "Current user eligibility, public templates, default protected pathless operations, global cache disable and exact application APIError normalization remain within the previously reviewed bounded repair.",
+    "Three added store-error tests and one native null/header regression supplement prior tests; source-derived transient error concern is not claimed as an observed runtime exploit."
+  ],
+  "limitations": [
+    "Mocked units do not prove real SDK hooks, signed sessions, native effects, or browser consumers.",
+    "Exact retained legacy cache replay against repaired full artifact still required, with validity through each response.",
+    "Current schema drift is not admitted by this receipt; candidate schema/client/build isolation needs separate review.",
+    "Additional database lookups are expected; no performance/SLA claim.",
+    "No production, commit, deployment or full readiness approval."
+  ]
+}

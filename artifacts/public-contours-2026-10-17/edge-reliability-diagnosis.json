@@ -1,0 +1,84 @@
+{
+  "date": "2026-10-20",
+  "codex_update": {
+    "installedVersion": "26.1013.40934",
+    "build": "20770",
+    "channel": "prod",
+    "status": "up_to_date"
+  },
+  "runtime_comparison": {
+    "browser_and_chrome_service_sha256": "B352A10A7CCF2273CD5062516E82178A62E3F6CD197148B3F4EF97D2B776BF60",
+    "match": true
+  },
+  "process_observation": {
+    "logical_processors": 8,
+    "edge_main_priority": "Normal",
+    "many_edge_child_priorities": "Idle",
+    "all_listed_processes_responding": true,
+    "root_cause_proven": false
+  },
+  "baseline": [
+    {
+      "phase": "background",
+      "operation": "login screenshot",
+      "ok": false,
+      "ms": 33770,
+      "error": "Error: Timed out after 10000ms waiting for CDP command Emulation.setFocusEmulationEnabled."
+    },
+    {
+      "phase": "foreground",
+      "operation": "login screenshot",
+      "ok": true,
+      "ms": 36653
+    },
+    {
+      "phase": "foreground",
+      "operation": "navigate register",
+      "ok": true,
+      "ms": 8209
+    },
+    {
+      "phase": "foreground",
+      "operation": "register screenshot",
+      "ok": true,
+      "ms": 15405
+    },
+    {
+      "phase": "foreground",
+      "operation": "navigate workflows",
+      "ok": true,
+      "ms": 11530
+    },
+    {
+      "phase": "foreground",
+      "operation": "workflows screenshot",
+      "ok": true,
+      "ms": 12957
+    },
+    {
+      "phase": "foreground",
+      "operation": "navigate landing",
+      "ok": false,
+      "ms": 10488,
+      "error": "Error: Timed out waiting for tab 1861542243 to navigate to http://127.0.0.1:3101/en."
+    },
+    {
+      "phase": "foreground",
+      "operation": "landing screenshot",
+      "ok": true,
+      "ms": 2162
+    },
+    {
+      "phase": "foreground",
+      "operation": "navigate login repeat",
+      "ok": false,
+      "ms": 10681,
+      "error": "Error: Timed out waiting for tab 1861542243 to navigate to http://127.0.0.1:3101/en/login."
+    }
+  ],
+  "comparison": "User confirmed Edge foreground at the start. Four screenshots succeeded; two later navigation calls timed out. Continuous foreground state was not independently observable.",
+  "repair_applied": false,
+  "repair_blocker": "Browser URL security policy rejects edge://settings/system/managePerformance. No workaround attempted.",
+  "manual_repair_response": "User reports the setting is disabled or marked managed by your organization. No exception applied; no management control bypass attempted.",
+  "root_cause_proven": false
+}

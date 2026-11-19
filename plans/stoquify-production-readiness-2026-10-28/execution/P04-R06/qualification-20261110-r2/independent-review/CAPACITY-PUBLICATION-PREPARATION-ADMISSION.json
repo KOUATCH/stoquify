@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:36:06.707Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Local blocked-checkpoint document preparation only; shared publication requires separate exact-result admission",
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "artifactSha256": null,
+  "files": [
+    {
+      "path": "prepare-capacity-publication-v2.cjs",
+      "sha256": "783b9cf83e268537df112a7b932088727ee1d30ae8ff12161c47b02c9c72cdb9"
+    },
+    {
+      "path": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW.json",
+      "sha256": "3bf8025fcc153bbc1f54de36c7c44c8f34ac36ad33450af557f3c5e270083ff8"
+    },
+    {
+      "path": "independent-review/CAPACITY-CHECKPOINT-SOURCE-REVIEW.json",
+      "sha256": "93c673303173aa2488553e153797df1996b53fbdc444aaf9beb687469b2c466a"
+    },
+    {
+      "path": "independent-review/CURRENT-SOURCE-MANIFEST-at-capacity.json",
+      "sha256": "644d7b344824b5ae4eb6f7095fb0fab3c839fb45e78a35a651b26aca47df321e"
+    },
+    {
+      "path": "RETRY-HANDOFF-20261110-r3.md",
+      "sha256": "b47674a842e0c9fc30a8c4ad8e4567c5fdac2f13269a3b07ddd95b4b0ceb0007"
+    },
+    {
+      "path": "database/capacity-suspension.json",
+      "sha256": "7aed928e69514da4b8f905ecf7d0e67638871ccdc6e3c81330b11532e4827ff4"
+    },
+    {
+      "path": "resource-retry-ready-attempt02-r2.json",
+      "sha256": "b12d50a63f5619db685d665f4fa2a742a5ed2867a9a9d0c44bc339b45c765d55"
+    },
+    {
+      "path": "build-result.json",
+      "sha256": "df85508f56d3ca6666ed7e1edb0827fe85d2d0c686770346d5d81eca4d52beba"
+    }
+  ],
+  "observed": {
+    "syntaxExitCode": 0,
+    "sharedPublicationBaselinesUnchanged": true,
+    "fullQualificationPassed": false
+  },
+  "review": [
+    "Two blockers explicit: unchanged memory gate failed and twelve concurrent current-source differences; all68 selected R06 inputs remain unchanged.",
+    "Stopped owner is read from exact private/cluster-owner.json; no artifact/client/build environment/runtime/resume receipt allowed.",
+    "Five local outputs use exclusive create; no product, database, app, Git or network operation.",
+    "Next action begins read-only source reconciliation and independently admitted successor context/dependency/fixture bindings; old retry remains ineligible.",
+    "Historical memory-only checkpoint omitted from current E30 evidence; no prior receipt overwritten.",
+    "Source/mocked/native setup evidence remains separate from zero actual repaired-artifact session/browser cases."
+  ],
+  "expectedOutputs": [
+    "advancement-gates.json",
+    "RESULT.md",
+    "CURRENT.md",
+    "NEXT.md",
+    "publication-input.json"
+  ],
+  "qualificationPassed": false
+}

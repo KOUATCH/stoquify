@@ -33,6 +33,7 @@ export default async function EmployeeProfilePage({
   const { locale: rawLocale, employeeId } = await params
   const locale = pickLocale(rawLocale)
   const peopleHref = localizePath("/dashboard/people", locale)
+  const manageHref = localizePath(`/dashboard/people/manage?employeeId=${encodeURIComponent(employeeId)}`, locale)
 
   const surface = routeByKey("people-employee-profile")
 
@@ -109,7 +110,7 @@ export default async function EmployeeProfilePage({
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-semibold uppercase tracking-normal text-emerald-200">Employee profile</p>
-                  <h1 className="mt-1 break-words text-2xl font-semibold tracking-normal text-white sm:text-3xl">{employee.displayName}</h1>
+                  <Link href={manageHref} className="text-sm underline">{locale === "fr" ? "Corriger les données et préparer un changement" : "Repair details and prepare a change"}</Link><h1 className="mt-1 break-words text-2xl font-semibold tracking-normal text-white sm:text-3xl">{employee.displayName}</h1>
                   <p className="mt-1 text-sm text-slate-400">{employee.status}</p>
                   <p className="mt-1 text-xs text-slate-500">{profile.accessScope.authority.label}</p>
                 </div>

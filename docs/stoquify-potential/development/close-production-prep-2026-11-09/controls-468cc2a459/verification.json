@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "pureTests": 15,
+  "skipped": 0,
+  "expectedBlockedTemplate": true,
+  "productionContacted": false,
+  "sourceHashes": {
+    "scripts/hardened-close-production-readiness.cjs": "82d88b392cf64f230ff3d96e0e3e1077e7cd268868f62bb37184230911fa5196",
+    "scripts/__tests__/hardened-close-production-readiness.node-test.cjs": "2c17503bd9b2f94c991d0c0bf07cd1e0a0c57d0532cb75958aa44e0f07e4b360",
+    "config/release/hardened-close-production.template.json": "d2e45c8bf5483d41a5b89d154d9496351d1b8963c749ef539fdeae9fd816a8e6",
+    "scripts/release-secret-preflight.js": "d20efac2da7ef1767cffb0bf19a9825b9a41310edee1b64bd4248dcaa1638729",
+    "scripts/prisma-production-migration-gate.js": "1ee29e6674f53eec17c473bb225bd6e5d83bfaa1453e5490ca4259eec3e72008",
+    "scripts/release-artifact.cjs": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c",
+    "scripts/candidate-snapshot.cjs": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46",
+    "scripts/prisma-migration-catalog-gate.js": "e68b9643afe1d6f41420ee9cf2c65431a30739615ad4be6e9920b2a16065aeaa"
+  },
+  "runnerSha256": "afad0abd37657bbdfbe64f4519a72d44e7aec75b6f6db7532e3c019fb0616ce7",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\controls-468cc2a459",
+  "checks": [
+    {
+      "name": "pure-unit",
+      "args": [
+        "--test",
+        "scripts/__tests__/hardened-close-production-readiness.node-test.cjs"
+      ],
+      "started": "2026-11-09T19:30:24.502Z",
+      "finished": "2026-11-09T19:30:28.906Z",
+      "exitCode": 0
+    },
+    {
+      "name": "undecided-template",
+      "args": [
+        "scripts/hardened-close-production-readiness.cjs",
+        "--plan",
+        "config/release/hardened-close-production.template.json",
+        "--trusted-plan-sha256",
+        "d2e45c8bf5483d41a5b89d154d9496351d1b8963c749ef539fdeae9fd816a8e6"
+      ],
+      "started": "2026-11-09T19:30:28.906Z",
+      "finished": "2026-11-09T19:30:29.525Z",
+      "exitCode": 1
+    }
+  ],
+  "classification": "Pure/file-only synthetic tests and exact CLI fail-closed check; no provider/database/application execution"
+}

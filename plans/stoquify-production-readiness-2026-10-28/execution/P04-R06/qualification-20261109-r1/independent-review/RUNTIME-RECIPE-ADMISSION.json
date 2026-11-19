@@ -1,0 +1,605 @@
+{
+  "createdAt": "2026-11-09T19:45:51.336Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "scope": "Exact real-session qualification, bounded native fixtures, cleanup and preservation recipes; no runtime outcome yet",
+  "manifest": "runtime-recipe-manifest-v3.json",
+  "manifestSha256": "870283de32524b8f6fea7609b715f6a499a2e86b03bc1c42276efea756308fc4",
+  "files": [
+    {
+      "path": "runtime-bridge.cjs",
+      "sha256": "76c625e85ef4643dac762817bd362a7909015b1ae2d8d23fe3da7b49236edb9c",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "run-runtime.cjs",
+      "sha256": "91d4bee08130028740e8ba6343992923d11592aa45707346653cecfb01202839",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "admit-runtime-source.cjs",
+      "sha256": "ffff4d004331f3ea6087760f45db89b6f70ffd976375221ba7279f9169877def",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "direct-api-driver.cjs",
+      "sha256": "c660e14c4a88d5654a23beae100ecda419d3b40437b1e72595daabae25da6331",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/direct-api-child.cjs",
+      "sha256": "1d301585915ad81c418ccadd3b4dd3446e8fada4a184eee35138e003bd0f56a5",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/finalize.cjs",
+      "sha256": "853e7be2c20ddad2ba5175a95044f76feb874265bce8b52f452d940e48c323dd",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/stop.cjs",
+      "sha256": "c44d4ab5be4972d98e74330e739c653446a052bdc52b5ada2b5eda6cf7799889",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "final-integrity.cjs",
+      "sha256": "83d0d92b210962d9bce19d93d6d6407432e581daa0d3e88979dd5540fe077e24",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "276e495ce09869bf75d701607e3e6d209866d5d52062efdc8090add85a0b444f",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "browser/run-auth-r06.cjs",
+      "sha256": "be1fdbab14f438204e273c9dad774a6e06dd81ac1a357496cb14a5dda9086d38",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "inventory/source-after-manifest.json",
+      "sha256": "529b22446f9c9bd5facc3e9372fcdc7bce40d74ed3a6d1cdc57dc61f12af3649",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "inventory/test-case-map.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61",
+      "syntaxExitCode": 0
+    }
+  ],
+  "currentSelectedSourceInputsVerified": [
+    {
+      "path": "actions/security/account-session.actions.ts",
+      "sha256": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+      "bytes": 1261,
+      "snapshot": "source-after/actions/security/account-session.actions.ts.source.txt",
+      "before_sha256": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "actions/users/self-profile.actions.ts",
+      "sha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2",
+      "bytes": 1147,
+      "snapshot": "source-after/actions/users/self-profile.actions.ts.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/layout.tsx",
+      "sha256": "c54995a81b0aceefed11ba83549198f7d59650add8ff9c011c9f40da6e1dbf36",
+      "bytes": 2960,
+      "snapshot": "source-after/app/[locale]/(dashboard)/dashboard/layout.tsx.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/profile/page.tsx",
+      "sha256": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc",
+      "bytes": 1474,
+      "snapshot": "source-after/app/[locale]/(dashboard)/dashboard/profile/page.tsx.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/layout.tsx",
+      "sha256": "3961d8117888eddac195fc857c77729281ab3e6512b8738271dcc3b2ad00d5e3",
+      "bytes": 87,
+      "snapshot": "source-after/app/[locale]/(dashboard)/layout.tsx.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "app/api/auth/[...all]/route.ts",
+      "sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "bytes": 817,
+      "snapshot": "source-after/app/api/auth/[...all]/route.ts.source.txt",
+      "before_sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "app/api/me/permissions/route.ts",
+      "sha256": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+      "bytes": 849,
+      "snapshot": "source-after/app/api/me/permissions/route.ts.source.txt",
+      "before_sha256": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "app/api/me/profile/route.ts",
+      "sha256": "7b72f47e15810d348e52edbf9b15905477ee9d60e9bd90802ebe526889ef966e",
+      "bytes": 191,
+      "snapshot": "source-after/app/api/me/profile/route.ts.source.txt",
+      "before_sha256": "7b72f47e15810d348e52edbf9b15905477ee9d60e9bd90802ebe526889ef966e",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "components/dashboard/DashboardRouteState.tsx",
+      "sha256": "b2c69d73283f42828b20469596572d0b48666f676f8989c92ed0a7597497c9b3",
+      "bytes": 4812,
+      "snapshot": "source-after/components/dashboard/DashboardRouteState.tsx.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "8457239b4dfaf0e9c76576826f36d4a7e72a2ad7c97e479a45716d8af3466232",
+      "bytes": 13692,
+      "snapshot": "source-after/components/dashboard/Navbar.tsx.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "components/dashboard/Sidebar.tsx",
+      "sha256": "6303191e68eedc1b3c86bc0112cb36c47a6295b79eb398bea5b11e874c4969bf",
+      "bytes": 18525,
+      "snapshot": "source-after/components/dashboard/Sidebar.tsx.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "components/i18n/ApplicationMessages.tsx",
+      "sha256": "6c30db36ac3f2e9eef6ab2561316575fe47d98d5c14621304190ade600cf36cd",
+      "bytes": 431,
+      "snapshot": "source-after/components/i18n/ApplicationMessages.tsx.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "components/settings/SelfProfile.tsx",
+      "sha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+      "bytes": 18370,
+      "snapshot": "source-after/components/settings/SelfProfile.tsx.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "design-system/stoquify/MASTER.md",
+      "sha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+      "bytes": 7598,
+      "snapshot": "source-after/design-system/stoquify/MASTER.md.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "design-system/stoquify/pages/public-auth.md",
+      "sha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+      "bytes": 3109,
+      "snapshot": "source-after/design-system/stoquify/pages/public-auth.md.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "docs/ecc/WORKFLOW.md",
+      "sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c",
+      "bytes": 6784,
+      "snapshot": "source-after/docs/ecc/WORKFLOW.md.source.txt",
+      "before_sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "docs/ecc/command-registry.json",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+      "bytes": 11422,
+      "snapshot": "source-after/docs/ecc/command-registry.json.source.txt",
+      "before_sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "hooks/self-profile-draft.ts",
+      "sha256": "e131a85afc28617ff954dfd15e1800c262eb5a4f9dc7778ec346d5d9c2559ee9",
+      "bytes": 1596,
+      "snapshot": "source-after/hooks/self-profile-draft.ts.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "hooks/useSelfProfile.ts",
+      "sha256": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6",
+      "bytes": 1461,
+      "snapshot": "source-after/hooks/useSelfProfile.ts.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "sha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+      "bytes": 4218,
+      "snapshot": "source-after/lib/auth-client.ts.source.txt",
+      "before_sha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "lib/auth-server.ts",
+      "sha256": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+      "bytes": 1612,
+      "snapshot": "source-after/lib/auth-server.ts.source.txt",
+      "before_sha256": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "lib/auth.ts",
+      "sha256": "6e40844d3bd3a4d93d95c1916418eada52d37c38aea313e760a9bd2f6f9bbe72",
+      "bytes": 9842,
+      "snapshot": "source-after/lib/auth.ts.source.txt",
+      "before_sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+      "comparison": "changed_since_before_snapshot"
+    },
+    {
+      "path": "lib/security/audit-log.ts",
+      "sha256": "b3cb587d4687f4a5114c07d8c238bc8ec916a2dab8f76c0f6b2b0995db16711d",
+      "bytes": 2360,
+      "snapshot": "source-after/lib/security/audit-log.ts.source.txt",
+      "before_sha256": "b3cb587d4687f4a5114c07d8c238bc8ec916a2dab8f76c0f6b2b0995db16711d",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b",
+      "bytes": 5905,
+      "snapshot": "source-after/lib/security/auth-session.ts.source.txt",
+      "before_sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c",
+      "comparison": "changed_since_before_snapshot"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+      "bytes": 616,
+      "snapshot": "source-after/lib/security/credential-sign-in-outcome.ts.source.txt",
+      "before_sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "lib/security/dashboard-session-recovery.ts",
+      "sha256": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a",
+      "bytes": 885,
+      "snapshot": "source-after/lib/security/dashboard-session-recovery.ts.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "sha256": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb",
+      "bytes": 24861,
+      "snapshot": "source-after/lib/security/rbac-permissions.ts.source.txt",
+      "before_sha256": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "bytes": 10696,
+      "snapshot": "source-after/lib/security/rbac.ts.source.txt",
+      "before_sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "lib/security/server-authz.ts",
+      "sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+      "bytes": 3821,
+      "snapshot": "source-after/lib/security/server-authz.ts.source.txt",
+      "before_sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+      "bytes": 618,
+      "snapshot": "source-after/lib/security/trusted-origins.ts.source.txt",
+      "before_sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/index.mjs",
+      "sha256": "9ccb59e0b6b519f681d0c9eab3f0a52c8847d6af843a48d014854a3801479c5f",
+      "bytes": 9862,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/index.mjs.source.txt",
+      "before_sha256": "9ccb59e0b6b519f681d0c9eab3f0a52c8847d6af843a48d014854a3801479c5f",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+      "sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2",
+      "bytes": 7973,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/middlewares/origin-check.mjs.source.txt",
+      "before_sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "bytes": 20950,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/account.mjs.source.txt",
+      "before_sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/callback.mjs",
+      "sha256": "bc4980902c0bca2863b4bb4c1d51a5c28ae3882565a320679a2eb1f84c38919e",
+      "bytes": 7102,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/callback.mjs.source.txt",
+      "before_sha256": "bc4980902c0bca2863b4bb4c1d51a5c28ae3882565a320679a2eb1f84c38919e",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/email-verification.mjs",
+      "sha256": "9e33bab463d366c0e8fc947500fb98fe143228b14f69b9e247eec4215a224249",
+      "bytes": 11419,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/email-verification.mjs.source.txt",
+      "before_sha256": "9e33bab463d366c0e8fc947500fb98fe143228b14f69b9e247eec4215a224249",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/error.mjs",
+      "sha256": "4edcaa5f7a88fae70c364c04fd2f3e05d91ecdeaed9c50ef0c172ab14f457803",
+      "bytes": 12927,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/error.mjs.source.txt",
+      "before_sha256": "4edcaa5f7a88fae70c364c04fd2f3e05d91ecdeaed9c50ef0c172ab14f457803",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/ok.mjs",
+      "sha256": "1ee6e836bb9986404eeaaa9052f7eca6d88134aa359774b46460714a9fa64daa",
+      "bytes": 671,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/ok.mjs.source.txt",
+      "before_sha256": "1ee6e836bb9986404eeaaa9052f7eca6d88134aa359774b46460714a9fa64daa",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "bytes": 8387,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/password.mjs.source.txt",
+      "before_sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "bytes": 18745,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/session.mjs.source.txt",
+      "before_sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+      "bytes": 11008,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/sign-in.mjs.source.txt",
+      "before_sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-out.mjs",
+      "sha256": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3",
+      "bytes": 987,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/sign-out.mjs.source.txt",
+      "before_sha256": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-up.mjs",
+      "sha256": "452803772ba80e56b077ea8e1c65ccadd1ad0a2afa86d6f23e3f76b39b1b3d9e",
+      "bytes": 9912,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/sign-up.mjs.source.txt",
+      "before_sha256": "452803772ba80e56b077ea8e1c65ccadd1ad0a2afa86d6f23e3f76b39b1b3d9e",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/update-session.mjs",
+      "sha256": "70860209765aab66ba8c2d973e30c648dbcc0ecc0221a1778af57233093761e2",
+      "bytes": 1939,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/update-session.mjs.source.txt",
+      "before_sha256": "70860209765aab66ba8c2d973e30c648dbcc0ecc0221a1778af57233093761e2",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+      "sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "bytes": 19135,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/routes/update-user.mjs.source.txt",
+      "before_sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/to-auth-endpoints.mjs",
+      "sha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3",
+      "bytes": 12519,
+      "snapshot": "source-after/node_modules/better-auth/dist/api/to-auth-endpoints.mjs.source.txt",
+      "before_sha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/context/create-context.mjs",
+      "sha256": "519af35dd5e9454a41c4a8729c9bbeed69f7bbf8c80eefebdd747050b99ec153",
+      "bytes": 10479,
+      "snapshot": "source-after/node_modules/better-auth/dist/context/create-context.mjs.source.txt",
+      "before_sha256": "519af35dd5e9454a41c4a8729c9bbeed69f7bbf8c80eefebdd747050b99ec153",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/db/internal-adapter.mjs",
+      "sha256": "dcfd03b6150fa74cc15d4c18bdb222e877be47c270d37ebaa44f2b3c16431777",
+      "bytes": 25539,
+      "snapshot": "source-after/node_modules/better-auth/dist/db/internal-adapter.mjs.source.txt",
+      "before_sha256": "dcfd03b6150fa74cc15d4c18bdb222e877be47c270d37ebaa44f2b3c16431777",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/db/schema.mjs",
+      "sha256": "a0ddffa656c4a42e9f2929eab5942108f7d0c3a221753768fdaf46b302eacd83",
+      "bytes": 6112,
+      "snapshot": "source-after/node_modules/better-auth/dist/db/schema.mjs.source.txt",
+      "before_sha256": "a0ddffa656c4a42e9f2929eab5942108f7d0c3a221753768fdaf46b302eacd83",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/integrations/next-js.mjs",
+      "sha256": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489",
+      "bytes": 2997,
+      "snapshot": "source-after/node_modules/better-auth/dist/integrations/next-js.mjs.source.txt",
+      "before_sha256": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/oauth2/state.mjs",
+      "sha256": "f2e9046f4df819c7923407cd56eca9a4a0765298a4b561436d36c57305530509",
+      "bytes": 1971,
+      "snapshot": "source-after/node_modules/better-auth/dist/oauth2/state.mjs.source.txt",
+      "before_sha256": "f2e9046f4df819c7923407cd56eca9a4a0765298a4b561436d36c57305530509",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/package.json",
+      "sha256": "86e8f39e15e32e563f3a4b1307845155dbdbae63a6f1361060275a88bb29970a",
+      "bytes": 19180,
+      "snapshot": "source-after/node_modules/better-auth/package.json.source.txt",
+      "before_sha256": "86e8f39e15e32e563f3a4b1307845155dbdbae63a6f1361060275a88bb29970a",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/better-call/dist/router.mjs",
+      "sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+      "bytes": 4326,
+      "snapshot": "source-after/node_modules/better-call/dist/router.mjs.source.txt",
+      "before_sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "node_modules/rou3/dist/index.mjs",
+      "sha256": "0f77b955be24584dad93ca5c232e1150fa9ee54a96b5e6483c05bfa4b338f1b0",
+      "bytes": 8134,
+      "snapshot": "source-after/node_modules/rou3/dist/index.mjs.source.txt",
+      "before_sha256": "0f77b955be24584dad93ca5c232e1150fa9ee54a96b5e6483c05bfa4b338f1b0",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "bytes": 759960,
+      "snapshot": "source-after/package-lock.json.source.txt",
+      "before_sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "bytes": 34421,
+      "snapshot": "source-after/package.json.source.txt",
+      "before_sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+      "bytes": 357574,
+      "snapshot": "source-after/prisma/schema.prisma.source.txt",
+      "before_sha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+      "comparison": "changed_since_before_snapshot"
+    },
+    {
+      "path": "scripts/verify-agent-workflow-contract.js",
+      "sha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29",
+      "bytes": 5760,
+      "snapshot": "source-after/scripts/verify-agent-workflow-contract.js.source.txt",
+      "before_sha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+      "bytes": 7550,
+      "snapshot": "source-after/services/_shared/protect.ts.source.txt",
+      "before_sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "services/modules/module-navigation.service.ts",
+      "sha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf",
+      "bytes": 1455,
+      "snapshot": "source-after/services/modules/module-navigation.service.ts.source.txt",
+      "before_sha256": null,
+      "comparison": "supplementary_rendered_consumer_input"
+    },
+    {
+      "path": "services/security/account-session.service.ts",
+      "sha256": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+      "bytes": 6846,
+      "snapshot": "source-after/services/security/account-session.service.ts.source.txt",
+      "before_sha256": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "services/users/self-profile-http.service.ts",
+      "sha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3",
+      "bytes": 2907,
+      "snapshot": "source-after/services/users/self-profile-http.service.ts.source.txt",
+      "before_sha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "services/users/self-profile-input.ts",
+      "sha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf",
+      "bytes": 1439,
+      "snapshot": "source-after/services/users/self-profile-input.ts.source.txt",
+      "before_sha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf",
+      "comparison": "unchanged"
+    },
+    {
+      "path": "services/users/self-profile.service.ts",
+      "sha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17",
+      "bytes": 7502,
+      "snapshot": "source-after/services/users/self-profile.service.ts.source.txt",
+      "before_sha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17",
+      "comparison": "unchanged"
+    }
+  ],
+  "plannedLogicalGroups": 58,
+  "inheritedDefectMappings": 9,
+  "conditions": [
+    "Successful independent physical dependency reconciliation, current candidate admission, private client generation, full build and synthetic seed remain prerequisites.",
+    "Pre-runtime gate must prove full candidate/current source equality and all63 selected current source/dependency inputs; original failure must be retained if any gate fails.",
+    "Only fresh R06 PostgreSQL55516 and localhost3296/3297/3299 may run; old V02 cluster remains stopped and its archive read-only.",
+    "Both sealed runtime copies must verify before any real legacy cache issuance; baseline is restricted to credential/get-session/readiness HTTP and never used as a browser consumer.",
+    "Exact genuinely issued old cookies must be verified with task signing secret and remain valid through each claimed replay; insufficient time is incomplete, not pass.",
+    "Finalizers revoke all and only owned synthetic sessions, prove business/audit preservation, then stop the exact recorded cluster with no unexpected clients.",
+    "Failed cases and failed attempts remain evidence; no automatic product changes or relaxation of failed expectations."
+  ],
+  "reviewedCorrections": [
+    "Direct API negative results now require recognized401/current code or native200null;500, undefined and private/token-bearing results cannot qualify.",
+    "Authorized own reads require nonempty current native-bound account/session rows and current session subject; empty200 cannot qualify.",
+    "Cookie lifetime combines browser expiry, signed payload expiry and cached nested-session expiry before/after; HMAC signature verified in memory and actual loopback ingress cookie fingerprints bound by probe ID.",
+    "Raw cookie/signature comparisons use fixed diagnostics, and emitted browser evidence is recursively sanitized and scanned.",
+    "Read/denial native effects default to no audit changes; expiry deletion restricted to exact presented token; existing sessions/audits preserved.",
+    "Positive profile/login/unlink effects are constrained to exact owned native fields/rows and named counted audit effects.",
+    "Actual EN/FR profile consumer response capture, settled DOM and screenshots distinguish rendered evidence from API-only checks.",
+    "Runtime failure sets nonzero exit; cleanup and sealed artifact preservation remain independently checked."
+  ],
+  "limitations": [
+    "58 groups are scoped qualification, not all30 HTTP candidate success branches.",
+    "Pathless setPassword and other unsupported/disabled/provider branches remain source/unit-only; optional orgless/unverified proposals are not silently qualified.",
+    "Direct API executes exact candidate source through reviewed loader with real database; HTTP/browser lanes use sealed full artifact.",
+    "Core legacy replay excludes concurrent revocation linearizability and performance capacity claims.",
+    "Original private asset routes are intentionally blocked by qualification front proxy; no new R02/media-delivery claim.",
+    "No hosted provider, public recovery delivery, clean install, production deployment or parent P04 readiness approval."
+  ]
+}

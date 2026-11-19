@@ -61,6 +61,7 @@ jest.mock("@/lib/security/auth-session", () => {
 jest.mock("@/lib/logger", () => ({
   logger: {
     error: jest.fn(),
+    warn: jest.fn(),
   },
 }))
 
@@ -134,8 +135,25 @@ function rbacContext(userId = "actor-1", permissions: string[] = []) {
 describe("payroll contract actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: "2026-06-27T00:00:00.000Z" } })
+    mockRevalidatePath.mockReset()
+    mockRequireFreshAuth.mockResolvedValue({ claims: { userId:"hr-1", tenantId:"org-1", lastAuthAt: Date.now() } })
     mockObserveModuleAccess.mockResolvedValue(moduleDecision())
+  })
+
+  it("preserves committed create result when cache refresh fails", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("hr-1",["payroll.contracts.manage"]))
+    const committed={businessEventId:"event-committed",contract:{id:"contract-committed"}}
+    mockCreatePayrollContract.mockResolvedValue(committed)
+    mockRevalidatePath.mockImplementation(()=>{throw new Error("Synthetic cache failure")})
+    const result=await createPayrollContractAction({employeeId:"emp-1",contractNumber:"CTR-001",type:PayrollContractType.CDI,status:PayrollContractStatus.DRAFT,effectiveFrom:"2026-01-01",baseSalary:"150000.00"})
+    expect(result).toMatchObject({success:true,data:committed})
+  })
+  it("keeps a native creation failure and never refreshes a failed create", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("hr-1",["payroll.contracts.manage"]))
+    mockCreatePayrollContract.mockRejectedValueOnce(new Error("Synthetic native create rejection"))
+    const result=await createPayrollContractAction({employeeId:"emp-1",contractNumber:"CTR-001",type:PayrollContractType.CDI,status:PayrollContractStatus.DRAFT,effectiveFrom:"2026-01-01",baseSalary:"150000.00"})
+    expect(result.success).toBe(false)
+    expect(mockRevalidatePath).not.toHaveBeenCalled()
   })
 
   it("passes tenant, actor, and permission context into employee contract workflow reads", async () => {

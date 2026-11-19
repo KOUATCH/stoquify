@@ -20,6 +20,17 @@ type CurrentProofRun = {
   checklistItems: Array<{ status: string; severity: string }>
   evidenceItems: Array<{ available: boolean }>
   packExports: Array<{ metadata: Prisma.JsonValue }>
+  // Unsampled database aggregates use the same decision logic as detail rows.
+  counts?: CloseProofCounts
+}
+
+export type CloseProofCounts = {
+  currentExports: number
+  openFindings: number
+  highFindings: number
+  failedControls: number
+  highControls: number
+  unavailableEvidence: number
 }
 
 function stale(metadata: Prisma.JsonValue) {
@@ -32,11 +43,13 @@ function stale(metadata: Prisma.JsonValue) {
 // one database snapshot. Persisted readiness scores remain historical evidence.
 export function deriveCloseCurrentProof(run: CurrentProofRun, checkedAt: Date): CloseCurrentProof {
   const blockers: ProofTrailBlocker[] = []
-  const currentExports = run.packExports.filter(item => !stale(item.metadata)).length
+  const currentExports = run.counts?.currentExports ?? run.packExports.filter(item => !stale(item.metadata)).length
   const openFindings = run.findings.filter(item => ["OPEN", "ASSIGNED", "IN_REVIEW", "REOPENED"].includes(item.status))
   const failedControls = run.checklistItems.filter(item => ["FAILED", "UNAVAILABLE"].includes(item.status))
-  const unavailableEvidence = run.evidenceItems.filter(item => !item.available).length
+  const unavailableEvidence = run.counts?.unavailableEvidence ?? run.evidenceItems.filter(item => !item.available).length
   const high = (items: Array<{ severity: string }>) => items.some(item => ["HIGH", "CRITICAL"].includes(item.severity))
+  const findingCount = run.counts?.openFindings ?? openFindings.length
+  const controlCount = run.counts?.failedControls ?? failedControls.length
   if (run.status === CloseRunStatus.BLOCKED || run.status === CloseRunStatus.VOIDED || run.voidedAt) blockers.push({
     id: "close-runs-blocked", severity: "high", gate: "close_readiness", title: "Close runs are blocked",
     detail: "1 close run(s) are blocked in the selected period.", sourceTables: ["close_runs"],
@@ -52,14 +65,14 @@ export function deriveCloseCurrentProof(run: CurrentProofRun, checkedAt: Date): 
     detail: "1 certified close run(s) lack a current certified export.", sourceTables: ["close_runs", "close_pack_exports"],
     nextAction: "Review and retain a current certified close pack before relying on certification.",
   })
-  if (openFindings.length) blockers.push({
-    id: "close-findings-open", severity: high(openFindings) ? "high" : "medium", gate: "close_readiness", title: "Close findings remain open",
-    detail: `${openFindings.length} finding(s) remain unresolved in the selected close runs.`, sourceTables: ["close_assurance_findings"],
+  if (findingCount) blockers.push({
+    id: "close-findings-open", severity: (run.counts ? run.counts.highFindings > 0 : high(openFindings)) ? "high" : "medium", gate: "close_readiness", title: "Close findings remain open",
+    detail: `${findingCount} finding(s) remain unresolved in the selected close runs.`, sourceTables: ["close_assurance_findings"],
     nextAction: "Resolve or formally waive close findings through Close Assurance.",
   })
-  if (failedControls.length) blockers.push({
-    id: "close-checklist-incomplete", severity: high(failedControls) ? "high" : "medium", gate: "close_readiness", title: "Close controls failed or are unavailable",
-    detail: `${failedControls.length} checklist control(s) failed or are unavailable in the selected close runs.`, sourceTables: ["close_checklist_items"],
+  if (controlCount) blockers.push({
+    id: "close-checklist-incomplete", severity: (run.counts ? run.counts.highControls > 0 : high(failedControls)) ? "high" : "medium", gate: "close_readiness", title: "Close controls failed or are unavailable",
+    detail: `${controlCount} checklist control(s) failed or are unavailable in the selected close runs.`, sourceTables: ["close_checklist_items"],
     nextAction: "Review failed controls and restore their evidence before certification.",
   })
   if (unavailableEvidence) blockers.push({

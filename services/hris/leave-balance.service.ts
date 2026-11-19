@@ -13,6 +13,10 @@ import {
   NotFoundError,
 } from "@/services/_shared/action-errors"
 import { resolveHrisPeopleAccessScope } from "@/services/hris/org.service"
+import { assertHrisLeaveDebitInTx, lockHrisLeaveLedgerInTx } from "./leave-ledger-order"
+import { lockOperationalEmployeeInTx } from "./attendance-correction"
+import { assertEmployeeLeaveEligibility } from "./leave-eligibility.service"
+import { assertLeavePolicyOpen, getHrisLeaveBalances } from "./leave-entitlement.service"
 
 type Client = typeof db | Prisma.TransactionClient
 
@@ -35,6 +39,7 @@ export const postHrisLeaveBalanceEntryInputSchema = z.object({
   sourceId: z.string().trim().min(1).max(160),
   sourceEvidenceHash: z.string().trim().min(8).max(256),
   idempotencyKey: z.string().trim().min(8).max(160),
+  reason: z.string().trim().min(8).max(1000).optional(),
 })
 
 function hash(value: unknown) {
@@ -51,25 +56,28 @@ export async function postHrisLeaveBalanceEntry(
   if (!hasAnyRbacPermission(parsed.actorPermissions, ["hris.people.manage"])) {
     throw new ForbiddenError("Missing permission for leave balance posting.")
   }
+  const operation = (tx: Prisma.TransactionClient) => postInTransaction(parsed, tx)
+  return "$transaction" in client
+    ? client.$transaction(operation, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
+    : operation(client)
+}
+
+async function postInTransaction(
+  parsed: z.output<typeof postHrisLeaveBalanceEntryInputSchema>,
+  client: Prisma.TransactionClient,
+) {
+  await lockOperationalEmployeeInTx(client, parsed.organizationId, parsed.employeeId)
   await resolveHrisPeopleAccessScope({
     ...parsed,
     limit: 1,
     asOf: parsed.effectiveAt,
   }, client)
-  const policy = await client.hrisLeavePolicy.findFirst({
-    where: {
-      id: parsed.leavePolicyId,
-      organizationId: parsed.organizationId,
-      status: "ACTIVE",
-      effectiveFrom: { lte: parsed.effectiveAt },
-      OR: [
-        { effectiveTo: null },
-        { effectiveTo: { gte: parsed.effectiveAt } },
-      ],
-    },
-    select: { id: true },
-  })
-  if (!policy) throw new NotFoundError("Active leave policy was not found.")
+
+  // Serialize keys independently of the target: a mismatched-key race must
+  // return a semantic conflict even if it names another employee or policy.
+  const replayKey = JSON.stringify(["hris-leave-command-v1", parsed.organizationId, parsed.idempotencyKey])
+  await client.$queryRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtextextended(${replayKey}, 0))::text`)
+  await lockHrisLeaveLedgerInTx(client, parsed)
 
   const existing = await client.hrisLeaveBalanceEntry.findUnique({
     where: {
@@ -85,29 +93,38 @@ export async function postHrisLeaveBalanceEntry(
     deltaMinutes: parsed.deltaMinutes,
     effectiveAt: parsed.effectiveAt.toISOString(),
     sourceEvidenceHash: parsed.sourceEvidenceHash,
+    entryType: parsed.entryType,
+    sourceType: parsed.sourceType,
+    sourceId: parsed.sourceId,
+    ...(parsed.reason ? { reason: parsed.reason } : {}),
   })
   if (existing) {
-    if (existing.sourceHash !== sourceHash) {
+    // Earlier entries hashed fewer fields. Retain exact recovery while also
+    // checking their persisted semantics; never rewrite historical hashes.
+    const legacyHash = hash({
+      employeeId: parsed.employeeId,
+      leavePolicyId: parsed.leavePolicyId,
+      deltaMinutes: parsed.deltaMinutes,
+      effectiveAt: parsed.effectiveAt.toISOString(),
+      sourceEvidenceHash: parsed.sourceEvidenceHash,
+    })
+    const legacyReplay = !parsed.reason && existing.sourceHash === legacyHash
+      && existing.entryType === parsed.entryType
+      && existing.sourceType === parsed.sourceType
+      && existing.sourceId === parsed.sourceId
+    if (existing.sourceHash !== sourceHash && !legacyReplay) {
       throw new BusinessRuleError(
         "IDEMPOTENCY_CONFLICT: Leave balance key was reused for different evidence.",
       )
     }
     return { entry: existing, created: false }
   }
-  const current = await client.hrisLeaveBalanceEntry.aggregate({
-    where: {
-      organizationId: parsed.organizationId,
-      employeeId: parsed.employeeId,
-      leavePolicyId: parsed.leavePolicyId,
-      effectiveAt: { lte: parsed.effectiveAt },
-    },
-    _sum: { deltaMinutes: true },
-  })
-  if ((current._sum.deltaMinutes ?? 0) + parsed.deltaMinutes < 0) {
-    throw new BusinessRuleError(
-      "HRIS_LEAVE_BALANCE_NEGATIVE: A balance posting cannot create negative available leave.",
-    )
-  }
+  await assertEmployeeLeaveEligibility(client, parsed.organizationId, parsed.employeeId, parsed.leavePolicyId, parsed.effectiveAt)
+  await assertLeavePolicyOpen(client, parsed.organizationId, parsed.employeeId, parsed.leavePolicyId)
+  if (["HRIS_LEAVE_SETTLEMENT", "HRIS_LEAVE_SCHEDULE", "HRIS_LEAVE_CARRYOVER_SOURCE", "HRIS_LEAVE_REVERSAL", "HRIS_TIME_REQUEST"].includes(parsed.sourceType)) throw new BusinessRuleError("HRIS_LEAVE_RESERVED_SOURCE: Use the owning leave workflow.")
+  if (["ACCRUAL", "CARRY_OVER"].includes(parsed.entryType)) throw new BusinessRuleError("HRIS_LEAVE_SCHEDULE_REQUIRED: Use the approved entitlement schedule; manual corrections must be identified as adjustments.")
+  const scope = { organizationId: parsed.organizationId, employeeId: parsed.employeeId, leavePolicyId: parsed.leavePolicyId }
+  await assertHrisLeaveDebitInTx(client, scope, parsed.effectiveAt, parsed.deltaMinutes)
 
   const entry = await client.hrisLeaveBalanceEntry.create({
     data: {

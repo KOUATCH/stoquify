@@ -1,0 +1,20 @@
+{
+  "startedAt": "2026-10-24T19:38:14.440Z",
+  "origin": "http://127.0.0.1:55885",
+  "database": "stoquify_local_command_center_e2e_cc2e4dea7c",
+  "realAuthentication": true,
+  "actionMocks": false,
+  "checks": [
+    "Browser credential login created a real BetterAuth session",
+    "Real server actions persisted assignment and UTC deadline for both source families",
+    "Personal Digest reads the real persisted assignments",
+    "Owner view persists an evidence-bound review through its real protected action"
+  ],
+  "errors": [],
+  "blockedExternalRequests": 0,
+  "passed": false,
+  "failure": "locator.waitFor: Timeout 180000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: 'Receive goods', exact: true }) to be visible\u001b[22m\n\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\command-center\\phase-7-release-2026-10-24\\authenticated-browser.cjs:37:87)",
+  "failureUrl": "http://127.0.0.1:55885/en/dashboard/purchase-orders/cmvmsvymk000gmafwxhyruvwk?tab=receive",
+  "failureText": "Skip to main content\nENTERPRISE OS\nNotifications\n0\n\nPhase 7 disposable workspace\n\nDISPOSABLE ADMINISTRATOR\nSession\nMODULES\n10\nCOMMAND\n3\nDashboard\nOperating overview\nAnalytics\nBusiness pulse and reports\n3\nCommand Center\nOwner and manager daily command views\n3\nOPERATIONS\n3\nInventory\nItems, loss control, stock movements, transfers, and units\n6\nPurchases\nPurchase orders, suppliers, and AP workbench\n6\nOverview\nAP History\nAP Workbench\nPurchase Analytics\nPurchase Orders\nSuppliers\nSales\nCustomers, sales, and POS entry points\n3\nFINANCE & TRUST\n2\nAccounting\nLedger, close, reports, and controls\n2\nFinance\nCash, profitability, payments, and reconciliation\n9\nPEOPLE\n1\nHR & Payroll\nPayroll command center\n2\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n9\nMF\n\nmanager Fixture\n\nmanager@phase7.example.invalid\n\nPurchase Orders\n\nOperations / Purchases / Purchase Orders\n\nFR\nMF\nBack\nP7-RECEIVE\nApproved\nOverdue\nPrint\nSupplier acknowledgement\nReceiving is unavailable: This action requires the purchases.orders.receive permission.\nTOTAL AMOUNT\nFCFA 0.00\n\nOrder value\n\nLINE ITEMS\n1\n\nProducts ordered\n\nEXPECTED DELIVERY\nOct 23, 2026\n\nOverdue\n\nORDER DATE\nOct 24, 2026\n\nCreated\n\nPurchase Order Details\n\nP7-RECEIVE • FCFA 0.00 • 1 items\n\nOverview\nLine Items\nReceipt history\nInventory\nDecision history\nSupplier & Delivery Details\nSUPPLIER\nPhase 7 supplier\nDELIVERY LOCATION\nPhase 7 warehouse\nOrder Information\nExpected Delivery Date\n\n23/10/2026\n\nCreated By\n\nmanager Fixture\n\nFinancial Summary\nSubtotal\nFCFA 0.00\nTax\nFCFA 0.00\nShipping\nFCFA 0.00\nTotal\nFCFA 0.00\nQuick Actions\nPrint Order\nRefresh Data",
+  "finishedAt": "2026-10-24T19:46:36.535Z"
+}

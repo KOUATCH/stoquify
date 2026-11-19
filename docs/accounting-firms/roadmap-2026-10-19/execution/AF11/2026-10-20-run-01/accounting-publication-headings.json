@@ -1,0 +1,630 @@
+{
+  "docs/accounting-firms/README.md": [
+    "Accounting firms: reports and execution prompts",
+    "Start here",
+    "Publication index",
+    "Reading the evidence"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/00_SOURCE_REPORT.md": [
+    "Accounting firms in Stoquify: capability audit and product strategy",
+    "1. Executive assessment",
+    "2. What was inspected and what was verified",
+    "3. Accounting firms’ roles, segments, and commercial involvement",
+    "Best-fit segments",
+    "Roles and responsibilities",
+    "Client relationship lifecycle",
+    "4. Current functionality inventory",
+    "5. Important gaps and their implications",
+    "A. A portfolio card can be more reassuring than its evidence supports",
+    "B. The two portfolio surfaces have different completeness contracts",
+    "C. A mandate is not a complete firm's engagement structure",
+    "D. Delegated review is broader than a portal, but narrower than outsourced accounting execution",
+    "E. Importing names is not migrating a client's books",
+    "F. Useful evidence must become a usable deliverable",
+    "G. Country-pack labels need to lead to precise capability explanations",
+    "H. Real provider files are an onboarding and reliability risk",
+    "6. End-to-end workflows and recurring pain points",
+    "Work cadence",
+    "7. Ranked product opportunities",
+    "Validation requirements for opportunities 6–12",
+    "8. Top-five product briefs",
+    "1. Current portfolio status and honest coverage",
+    "2. Firm engagements, teams and handover",
+    "3. Unified source-linked evidence and exception desk",
+    "4. Financial onboarding and cutover",
+    "5. Account workpapers and client-ready deliverables",
+    "9. Frequent use through recurring value",
+    "10. Competitive position",
+    "11. Commercial model and distribution hypotheses",
+    "12. Roadmap and pilot",
+    "Proposed research and pilot design",
+    "Proposed success criteria",
+    "13. Evidence appendix and limitations",
+    "Architecture navigation",
+    "Exact focused test reproduction",
+    "Outstanding decisions",
+    "Code and project evidence",
+    "External sources"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/01_IMPLEMENTATION_ROADMAP.md": [
+    "Accounting firms in Stoquify: implementation roadmap and execution prompts",
+    "1. Product objective and first release",
+    "2. Delivery order and release cuts",
+    "3. Scope, ownership and planning estimates",
+    "4. Reuse map and explicit boundaries",
+    "5. First priority: portfolio reliability",
+    "AF01 contract to settle before UI work",
+    "AF02 user experience",
+    "6. Second priority: firm engagements",
+    "AF03 domain contract",
+    "AF04 authority and transaction boundaries",
+    "AF05 operating workflow",
+    "7. Phase delivery briefs",
+    "AF01 — Portfolio reliability — current proof and complete coverage",
+    "AF02 — Portfolio reliability — actionable bilingual UI",
+    "AF03 — Firm engagements — domain contract and additive schema",
+    "AF04 — Firm engagements — authorization and lifecycle services",
+    "AF05 — Firm engagements — setup, staff assignment and handover UI",
+    "AF06 — Delegated evidence work — complete the firm-to-client loop",
+    "AF07 — Reconciliation inputs — provider formats and account coverage",
+    "AF08 — Review workpapers and readable close deliverables",
+    "AF09 — Financial onboarding — staged opening position and tie-out preview",
+    "AF10 — Financial onboarding — controlled apply, recovery and activation",
+    "AF11 — Country-specific obligations and evidence register",
+    "AF12 — Client advisory packs and outcome measurement",
+    "AF13 — Firm workload and engagement economics",
+    "AF14 — Evidence-grounded drafting and review assistant",
+    "AF15 — Firm onboarding, coexistence and packaging",
+    "AF16 — Integration, release assurance and measured pilot",
+    "8. Measurement and pilot protocol",
+    "9. Verification, release and operational acceptance",
+    "10. Decisions to preserve and work deliberately deferred"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/02_EXECUTION_CONTRACT.md": [
+    "Execution contract for the accounting-firm roadmap",
+    "Authorization and ordering",
+    "Source and conflict policy",
+    "Status model",
+    "Phase result template",
+    "Shared implementation and verification rules",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/PORTFOLIO_READ_CONTRACT.md": [
+    "AF01 portfolio read contract",
+    "Entry points and ownership",
+    "Input",
+    "Paging and changing data",
+    "Per-client proof and observation time",
+    "Bounded evidence and canonical rules",
+    "Authorization timing and failure behavior",
+    "Existing consumer transition"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/RESULT.md": [
+    "AF01 result: portfolio read model",
+    "Outcome",
+    "Baseline refresh and reuse decisions",
+    "Owned implementation",
+    "Acceptance criteria",
+    "Verification commands and evidence lanes",
+    "Failures and recoveries retained",
+    "Query and snapshot evidence",
+    "Data, rollout and rollback",
+    "Review lenses and remaining limits"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/RESULT.md": [
+    "AF02 portfolio UI: implementation and verification",
+    "Acceptance results",
+    "What changed and what was reused",
+    "Verification by evidence class",
+    "Source inspection",
+    "Mocked/pure service and jsdom component checks",
+    "Real PostgreSQL-backed authenticated browser journey",
+    "Accessibility and visual scope",
+    "Operational behavior, rollout and limitations",
+    "Publication"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/UI_STATE_MATRIX.md": [
+    "AF02 portfolio UI state and navigation contract",
+    "Reused boundaries",
+    "State matrix",
+    "Presentation and accessibility contract",
+    "Verification boundaries"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/CAPABILITY_MATRIX.md": [
+    "AF03 capability contract"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/DATA_MIGRATION_PLAN.md": [
+    "AF03 additive migration and rollback plan",
+    "Scope",
+    "Rehearsal",
+    "Activation and rollback",
+    "Operations",
+    "Results"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/ENGAGEMENT_ADR.md": [
+    "AF03 engagement domain decision",
+    "Reuse and boundary",
+    "Entities and ownership",
+    "Entity diagram",
+    "State transitions",
+    "Conservative rollout fence",
+    "Consequences and deferred work"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/RESULT.md": [
+    "AF03 firm engagement model: implementation and verification",
+    "Acceptance results",
+    "Reuse, discovery and owned changes",
+    "Verification by evidence class",
+    "Domain and security decisions",
+    "Rollout, rollback and operations",
+    "Review lenses and remaining work"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF04/AUTHORITY_AND_LOCK_ORDER.md": [
+    "AF04 authority and lock order",
+    "Authority",
+    "Persistent enrollment and rollback",
+    "Lock order and publication",
+    "Command contract",
+    "Scope boundaries"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF04/RESULT.md": [
+    "AF04 firm engagement authorization and lifecycle services",
+    "Delivered behavior",
+    "Implementation and reuse map",
+    "Acceptance criteria",
+    "Verification record",
+    "Activation, rollback and operating limits",
+    "Review lenses and next step"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF05/ENGAGEMENT_JOURNEY.md": [
+    "AF05 engagement journey",
+    "Entry and existing functionality",
+    "Setup and consent",
+    "Handover and retained work",
+    "Renewal, delivery and recovery",
+    "Boundaries"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF05/PERMISSION_STATE_MATRIX.md": [
+    "AF05 permission and state matrix"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF05/PILOT_TRAINING_NOTES.md": [
+    "AF05 pilot training notes",
+    "Firm manager",
+    "Client owner",
+    "Preparers and reviewers",
+    "Recovery and operator checks"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF05/RESULT.md": [
+    "AF05 firm engagement workflows",
+    "Delivered behavior and reuse",
+    "Source evidence and owned changes",
+    "Acceptance evidence",
+    "Verification classes",
+    "Design, operations and limits",
+    "Activation, rollback and next phase"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF06/CASE_CONTRACT.md": [
+    "AF06 evidence case contract",
+    "Supported cases",
+    "Request, response and review",
+    "Truthful state and ownership",
+    "Bounded reading and continuation",
+    "Retry, stale and denied states",
+    "Synthetic proof boundary"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF06/DELEGATED_CAPABILITY_MATRIX.md": [
+    "AF06 delegated capability matrix",
+    "Authority intersection",
+    "Action contract",
+    "Evidence and limits"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF06/REQUEST_RESOLUTION_METRICS.md": [
+    "AF06 request-resolution metric definitions",
+    "Measurement population",
+    "Definitions",
+    "Pilot evaluation"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF06/RESULT.md": [
+    "AF06 delegated evidence desk: implementation and verification",
+    "Delivered behavior",
+    "Reuse and change inventory",
+    "Acceptance register",
+    "Verification by evidence class",
+    "Failed attempts and recovery",
+    "Design and operational review",
+    "Rollout, rollback and remaining limits"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF07/NORMALIZATION_AND_FINGERPRINTS.md": [
+    "AF07 normalization, identity and coverage contract",
+    "Retained identities",
+    "Stricter new input without historical reinterpretation",
+    "Changed payloads and duplicates",
+    "Atomicity and uncertainty",
+    "Current account coverage"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF07/OPERATIONS.md": [
+    "AF07 statement ingestion and account-coverage operations",
+    "Rejected format",
+    "Duplicate or changed source",
+    "Provider outage or absent statement",
+    "Uncertain response, timeout or connection loss",
+    "Stale signed evidence",
+    "Activation, monitoring and rollback",
+    "Repeatable local verification (R9 review)"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF07/RESULT.md": [
+    "AF07 provider formats and account coverage: implementation and verification",
+    "Outcome",
+    "Discovery, prerequisites and reuse",
+    "Implementation evidence",
+    "Acceptance criteria",
+    "Verification by evidence class",
+    "Controls and delivery review",
+    "Rollout, rollback and remaining gates"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF07/SUPPORTED_FORMATS.md": [
+    "AF07 supported pilot statement formats",
+    "Supported scope",
+    "Fields and value rules",
+    "CSV grammar and bounds",
+    "Fixture controls and measured capacity"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF08/EVIDENCE_REVIEW.md": [
+    "AF08 evidence and deliverable inspection",
+    "Canonical financial controls",
+    "PDF inspection",
+    "CSV and JSON inspection",
+    "Service, database and component evidence",
+    "Authenticated browser evidence",
+    "Interpretation"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF08/RESULT.md": [
+    "AF08: review workpapers and readable close deliverables",
+    "Delivered behavior",
+    "Reuse and implementation",
+    "Acceptance register",
+    "Verification by evidence class",
+    "Reproduction commands and side effects",
+    "Output and reconciliation evidence",
+    "Source and change ownership",
+    "Release boundaries and operational limits",
+    "Multidisciplinary review",
+    "Next step"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF08/WORKPAPER_CONTRACT.md": [
+    "AF08 workpaper contract",
+    "Sources and availability",
+    "Current source binding",
+    "Preparation and independent review",
+    "Authorization and session controls",
+    "Retention, export and redaction",
+    "Roll-forward",
+    "Bounds and operational behavior",
+    "UI and recovery",
+    "Rollout and rollback"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF09/CUTOVER_CONTRACT.md": [
+    "AF09: staged opening position contract",
+    "Pilot and source of truth",
+    "Input records",
+    "Calculation and tie-out",
+    "Provenance and states",
+    "Authorization, concurrency and privacy",
+    "Financial boundary and recovery"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF09/DOMAIN_WRITE_PLAN.md": [
+    "AF09: controlled domain write plan for AF10",
+    "Current domain writers and gaps",
+    "Single ownership of each accounting amount",
+    "Required controlled operation order",
+    "Recovery evidence required before apply",
+    "Release and expert gates"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF09/RESULT.md": [
+    "AF09: staged opening position and tie-out preview",
+    "Outcome and reuse",
+    "Acceptance evidence",
+    "Implementation ownership",
+    "Verification by evidence class",
+    "Initial failures and recovery",
+    "Rendered review",
+    "Rollout, fallback and limits",
+    "Cross-discipline assessment",
+    "Next justified work"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF10/CUTOVER_RECOVERY_RUNBOOK.md": [
+    "AF10 — Cutover, recovery and correction runbook",
+    "Before approval",
+    "Approval and apply",
+    "Recovery decisions",
+    "State retention and observability",
+    "Corrections after activation",
+    "Application rollback and next qualification"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF10/FAILURE_MATRIX.md": [
+    "AF10 — Failure and verification matrix",
+    "Real PostgreSQL behavior",
+    "Browser and rendered evidence",
+    "Other verification boundaries"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF10/RESULT.md": [
+    "AF10 — Controlled opening apply, recovery and activation",
+    "Outcome and acceptance",
+    "Reuse and implementation",
+    "Authority, atomicity and scope",
+    "Reconciliation evidence",
+    "Verification by evidence class",
+    "Source state, rollout and limitations",
+    "Cross-discipline review and next work"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF11/CAPABILITY_MATRIX.md": [
+    "AF11 — Capability and evidence matrix",
+    "Evidence meaning",
+    "Rule-change and recovery tests"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF11/COUNTRY_REVIEW_GAPS.md": [
+    "AF11 — Country-review gaps and statutory admission",
+    "Work completed independently",
+    "Safe continuation"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF11/OBLIGATION_SOURCE_REGISTER.md": [
+    "AF11 — Obligation source register and refresh procedure",
+    "Existing official provenance, not a current legal conclusion",
+    "Refresh and expiry procedure"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/execution/AF11/RESULT.md": [
+    "AF11 — Country-specific obligations and evidence register",
+    "Outcome and acceptance",
+    "Reuse and owned implementation",
+    "Authority, evidence and consistency",
+    "Bounded behavior and limitations",
+    "Verification by evidence class",
+    "Rollout, observation and retained rollback",
+    "Remaining decision and next work"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/PACKAGE_VALIDATION.md": [
+    "Package validation"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF01-portfolio-read-model.md": [
+    "AF01: Portfolio reliability — current proof and complete coverage",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF02-portfolio-ui.md": [
+    "AF02: Portfolio reliability — actionable bilingual UI",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF03-engagement-model.md": [
+    "AF03: Firm engagements — domain contract and additive schema",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF04-engagement-authority.md": [
+    "AF04: Firm engagements — authorization and lifecycle services",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF05-engagement-workflows.md": [
+    "AF05: Firm engagements — setup, staff assignment and handover UI",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF06-delegated-evidence-desk.md": [
+    "AF06: Delegated evidence work — complete the firm-to-client loop",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF07-provider-coverage.md": [
+    "AF07: Reconciliation inputs — provider formats and account coverage",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF08-workpapers-deliverables.md": [
+    "AF08: Review workpapers and readable close deliverables",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF09-opening-preview.md": [
+    "AF09: Financial onboarding — staged opening position and tie-out preview",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF10-opening-apply.md": [
+    "AF10: Financial onboarding — controlled apply, recovery and activation",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF11-obligation-register.md": [
+    "AF11: Country-specific obligations and evidence register",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF12-advisory-outcomes.md": [
+    "AF12: Client advisory packs and outcome measurement",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF13-workload-economics.md": [
+    "AF13: Firm workload and engagement economics",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF14-evidence-assistant.md": [
+    "AF14: Evidence-grounded drafting and review assistant",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF15-partner-packaging.md": [
+    "AF15: Firm onboarding, coexistence and packaging",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/prompts/AF16-pilot-release-assurance.md": [
+    "AF16: Integration, release assurance and measured pilot",
+    "Mission and boundaries",
+    "Evidence and reuse targets",
+    "Ordered implementation tasks",
+    "Acceptance criteria",
+    "Non-goals",
+    "Rollout and rollback",
+    "Required outputs",
+    "Operating contract",
+    "Verification and completion rules"
+  ],
+  "docs/accounting-firms/roadmap-2026-10-19/STATUS.md": [
+    "Accounting-firm roadmap status",
+    "Release decisions",
+    "Planning-only verification"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-19-af01-accountant-portfolio.md": [
+    "AF01 accountant portfolio: verified read-model slice"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-19-af02-accountant-portfolio-ui.md": [
+    "AF02 accountant portfolio UI: verified"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-19-af03-firm-engagement-model.md": [
+    "AF03 firm engagement model: verified foundation"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-20-af04-firm-engagement-authority.md": [
+    "AF04 firm engagement authorization: verified services",
+    "Evidence",
+    "Next: AF05"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-20-af05-firm-engagement-workflows.md": [
+    "AF05 firm engagement workflows: verified"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-20-af06-delegated-evidence-desk.md": [
+    "AF06 delegated evidence desk: verified"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-20-af07-provider-formats.md": [
+    "AF07 provider formats and account coverage: verified"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-20-af08-review-workpapers.md": [
+    "AF08 review workpapers and readable close deliverables: verified",
+    "Delivered and reused",
+    "Verification and boundaries",
+    "Canonical evidence and next action"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-20-af09-opening-position-preview.md": [
+    "AF09 opening position preview: verified"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-20-af10-controlled-opening-apply.md": [
+    "AF10 controlled opening apply — implementation result and next qualification"
+  ],
+  "docs/accounting-firms/supporting-reports/accounting-firm-workflow-evidence-2026-10-18.md": [
+    "Accounting firm workflow copy — 18 October 2026",
+    "Source inspection",
+    "Presentation",
+    "Verification scope"
+  ],
+  "docs/accounting-firms/supporting-reports/2026-10-20-af11-obligation-register.md": [
+    "AF11 obligation register: operational implementation, country review outstanding"
+  ]
+}

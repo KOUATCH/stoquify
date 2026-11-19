@@ -1,0 +1,158 @@
+{
+  "at": "2026-11-10T19:13:42.440Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "evidenceClass": "Pure metadata/helper tests only",
+  "files": [
+    {
+      "path": "independent-review/PRIVATE-METADATA-RECIPE-ADMISSION-v3.json",
+      "sha256": "cf8be27fdff7869175a0d85b50fb9ed6ac0881fed6746d4a623b73f2c163b9cd"
+    },
+    {
+      "path": "PRIVATE-METADATA-TEST-RESULT-v3.json",
+      "sha256": "883a4bd9caebdc506fe090e9efcf71286402f2601fac5c737f954381127f82e1"
+    },
+    {
+      "path": "PRIVATE-METADATA-TEST-OUTPUT-v3.tap",
+      "sha256": "74dccdeb22b6124df63a7e2983953ecf851afcd38a1df71ec26732d2a699e271"
+    },
+    {
+      "path": "PRIVATE-METADATA-TEST-RESULT-v2.json",
+      "sha256": "21a4c83a18983ac95b49542c885c68b8d3657fe96aa2399a7bb8c8bed90394df"
+    }
+  ],
+  "helperSha256": "209d95b017d03fb4f4274e5cb242f0ef6af33b561598359eae73cb61d889b70f",
+  "testSha256": "1b048e064e6aa315e5608edefcb135813954d5773edbe94ecb0aa8725300b0f3",
+  "actual": {
+    "tests": 28,
+    "passed": 28,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0
+  },
+  "observedCases": [
+    {
+      "id": 1,
+      "name": "typed fixture and client documents pass with no external references opened"
+    },
+    {
+      "id": 2,
+      "name": "required public code digest and generic generated basename remain eligible"
+    },
+    {
+      "id": 3,
+      "name": "required engine code remains eligible with distinct private receipt bytes excluded"
+    },
+    {
+      "id": 4,
+      "name": "renamed native readiness receipt bytes are denied"
+    },
+    {
+      "id": 5,
+      "name": "native readiness receipt path in trace is denied"
+    },
+    {
+      "id": 6,
+      "name": "code path cannot masquerade as native readiness metadata"
+    },
+    {
+      "id": 7,
+      "name": "renamed fixture content remains denied"
+    },
+    {
+      "id": 8,
+      "name": "renamed pack content remains denied"
+    },
+    {
+      "id": 9,
+      "name": "private fixture filename in actual trace remains denied"
+    },
+    {
+      "id": 10,
+      "name": "renamed client metadata document bytes remain denied"
+    },
+    {
+      "id": 11,
+      "name": "client metadata basename in output remains denied"
+    },
+    {
+      "id": 12,
+      "name": "absolute private client root in trace is denied"
+    },
+    {
+      "id": 13,
+      "name": "relative trace resolving to private client root is denied"
+    },
+    {
+      "id": 14,
+      "name": "normalized dot segments cannot hide a private client trace"
+    },
+    {
+      "id": 15,
+      "name": "different root with a common prefix remains eligible"
+    },
+    {
+      "id": 16,
+      "name": "private provenance path in sealed manifest is denied"
+    },
+    {
+      "id": 17,
+      "name": "unknown metadata kind is not silently allowed"
+    },
+    {
+      "id": 18,
+      "name": "fixture cannot opt into document-only policy"
+    },
+    {
+      "id": 19,
+      "name": "fixture payload cannot masquerade as client metadata"
+    },
+    {
+      "id": 20,
+      "name": "unexpected credential field in client metadata fails closed"
+    },
+    {
+      "id": 21,
+      "name": "environment values are rejected in context metadata"
+    },
+    {
+      "id": 22,
+      "name": "command schema argument cannot point outside private root"
+    },
+    {
+      "id": 23,
+      "name": "unknown generated payload is not classified as public code"
+    },
+    {
+      "id": 24,
+      "name": "hash drift rejects altered metadata"
+    },
+    {
+      "id": 25,
+      "name": "policy traversal is denied before reading outside candidate"
+    },
+    {
+      "id": 26,
+      "name": "duplicate metadata policy is denied"
+    },
+    {
+      "id": 27,
+      "name": "missing actual build traces cannot pass"
+    },
+    {
+      "id": 28,
+      "name": "the seven admitted real metadata shapes work with synthetic allowed code only"
+    }
+  ],
+  "facts": [
+    "Every raw TAP case name/id matches28source-declared tests; no failed/skipped/cancelled/todo cases.",
+    "All exact admitted inputs still match; original23of24failure and v2sources remain preserved.",
+    "Synthetic denied-content/path/provenance tests and all7actual metadata shapes passed."
+  ],
+  "limits": [
+    "No actual candidate/sealed artifact/trace qualification, application, database or generated-client execution.",
+    "Build/final recipes must bind this exacthelper and typedpolicy before actual packaging proof."
+  ],
+  "artifactExclusionVerified": false,
+  "qualificationPassed": false
+}

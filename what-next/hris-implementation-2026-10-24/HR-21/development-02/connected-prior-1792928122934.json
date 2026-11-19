@@ -1,0 +1,56 @@
+{
+  "status": "PASS_SCOPED_NATIVE_SERVICES",
+  "runId": "hr21dev-12c70876-edee-4be1-b488-8331e9d74170",
+  "stages": [
+    {
+      "stage": "native-import-document-contract-payment-compensation-starter-and-own-correction",
+      "at": "2026-10-25T12:00:00.000Z",
+      "employees": 2,
+      "distinctPaymentActors": 3,
+      "protectedOriginalRoundTrip": true
+    },
+    {
+      "stage": "native-office-leave-and-local-start-date-shift-certified-to-handoff",
+      "at": "2026-10-25T12:00:00.000Z",
+      "scheduledMinutes": 930,
+      "workedMinutes": 750,
+      "leaveMinutes": 120,
+      "shiftMinutesOnStartDate": 450
+    },
+    {
+      "stage": "native-rejection-correction-recertification-replacement-receipt",
+      "at": "2026-10-25T12:00:00.000Z",
+      "workedMinutes": 810,
+      "rawOriginalPreserved": true,
+      "originalPackagePreserved": true
+    },
+    {
+      "stage": "native-future-leaver-and-no-payroll-effects",
+      "at": "2026-10-25T12:00:00.000Z",
+      "manualAttestationOnly": true,
+      "noExternalRevocation": true
+    },
+    {
+      "stage": "effective-leaver-native-replay-and-manual-account-proof",
+      "at": "2026-11-01T12:00:00.000Z",
+      "actualAccountRevocation": false,
+      "syntheticAccountState": true
+    },
+    {
+      "stage": "synthetic-recovery-inputs-captured",
+      "at": "2026-10-25T12:00:00.000Z",
+      "tables": 29,
+      "documents": 2,
+      "packages": 2
+    }
+  ],
+  "limitations": [
+    "Synthetic roles; no actual authenticated browser",
+    "Synthetic storage/scanner protocol; no real provider qualification",
+    "Manual task attestation; no external revocation",
+    "Two-person connected lane;200-person scale lane is HR19"
+  ],
+  "jestExitCode": 0,
+  "completedAt": "2026-10-25T11:34:34.321Z",
+  "log": "connected-final.log"
+}

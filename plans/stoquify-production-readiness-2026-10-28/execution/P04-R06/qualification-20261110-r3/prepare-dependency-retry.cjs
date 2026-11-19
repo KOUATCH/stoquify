@@ -1,0 +1,4 @@
+// Preserve the capacity-blocked entry; create an identical-gate successor with exclusive receipts.
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const prior=JSON.parse(fs.readFileSync(path.join(__dirname,'dependency-staging.json')));assert.equal(prior.passed,false);assert(!prior.copy);assert(!fs.existsSync('D:/p04-r06-fullapp-20261110-r3'));let source=fs.readFileSync(path.join(__dirname,'stage-dependencies.cjs'),'utf8');
+for(const[a,b]of [['DEPENDENCY-STAGING-RECIPE-ADMISSION.json','DEPENDENCY-STAGING-RECIPE-ADMISSION-attempt02.json'],['resource-precopy.json','resource-precopy-attempt02.json'],['dependency-staging.json','dependency-staging-attempt02.json']]){assert(source.includes(a));source=source.replaceAll(a,b);}fs.writeFileSync(path.join(__dirname,'stage-dependencies-attempt02.cjs'),source,{flag:'wx'});console.log(JSON.stringify({preservedEntry:true,copyEverStarted:false,thresholdsChanged:false}));

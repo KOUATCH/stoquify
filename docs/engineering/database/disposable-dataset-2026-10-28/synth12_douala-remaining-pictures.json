@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "organizationId": "synth12_douala",
+  "storageMode": "LOCAL_TEST_TRANSPORT_ONLY",
+  "externalCommunicationPerformed": false,
+  "catalogItemLinked": false,
+  "attachmentMeaning": "claimItemPictures reservation only; no item or ordinary application media route is linked",
+  "attached": {
+    "id": "2d40177a-fc4e-4e07-8e54-f86eb62a0ccc",
+    "reference": "/api/media/2d40177a-fc4e-4e07-8e54-f86eb62a0ccc",
+    "providerKey": "local-test:2d40177a-fc4e-4e07-8e54-f86eb62a0ccc",
+    "providerLocator": "local-test-picture:2d40177a-fc4e-4e07-8e54-f86eb62a0ccc",
+    "plaintextFile": "synthetic-documents/synth12_douala-remaining-picture-attached.png",
+    "plaintextSha256": "9dca41fd561b4c30442d3e3ad3c7af264dbf10b07beeff05f9748cda88c11739",
+    "byteLength": 157,
+    "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_douala/2d40177a-fc4e-4e07-8e54-f86eb62a0ccc.bin",
+    "ciphertextSha256": "4ca462c5a29db8b507d60d9fb41192480bb9d1fcf918459a7d37187adcf3ee1f",
+    "status": "ready",
+    "attachedAt": "2026-10-28T20:00:00.000Z",
+    "tombstoneFile": null
+  },
+  "orphan": {
+    "id": "0253a4fc-60f3-40c3-be7e-ab53316d1f7a",
+    "reference": "/api/media/0253a4fc-60f3-40c3-be7e-ab53316d1f7a",
+    "providerKey": "local-test:0253a4fc-60f3-40c3-be7e-ab53316d1f7a",
+    "providerLocator": "local-test-picture:0253a4fc-60f3-40c3-be7e-ab53316d1f7a",
+    "plaintextFile": "synthetic-documents/synth12_douala-remaining-picture-orphan.png",
+    "plaintextSha256": "fbd08fd83ebf452167573e6eca4ed73967332da9f2a3dd23dbd87732b8513242",
+    "byteLength": 155,
+    "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_douala/0253a4fc-60f3-40c3-be7e-ab53316d1f7a.bin",
+    "ciphertextSha256": "cdffda180704dd929b193dee2508d86307ba039f4701049df09ebdbe92120b5c",
+    "status": "deleted",
+    "attachedAt": null,
+    "tombstoneFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_douala/0253a4fc-60f3-40c3-be7e-ab53316d1f7a.deleted.json"
+  },
+  "checks": {
+    "roundTrip": true,
+    "wrongTenantReadDenied": true,
+    "wrongTenantClaimDenied": true,
+    "tamperDenied": true,
+    "attachedDeleteDenied": true,
+    "orphanDeleted": true,
+    "deletedReadDenied": true,
+    "invalidMimeDenied": true,
+    "defaultTransportDenied": true
+  }
+}

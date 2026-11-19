@@ -1,0 +1,252 @@
+diff --git "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\components__hris__HrisLifecycleTasks.tsx.baseline" b/components/hris/HrisLifecycleTasks.tsx
+index 08759f73..e6fd2d26 100644
+--- "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\components__hris__HrisLifecycleTasks.tsx.baseline"
++++ b/components/hris/HrisLifecycleTasks.tsx
+@@ -15,9 +15,9 @@ export function HrisLifecycleTasks({initial,locale,execute}:{initial:LifecycleTa
+  async function refresh(){setData(await execute('READ'));setAccessDenied(false)}
+  async function run(fn:()=>Promise<void>,write=false){setBusy(true);setError('');setNotice('');try{await fn()}catch(e){const failure=e as {status?:number;code?:string};if(failure.code==="FRESH_AUTH_REQUIRED"){setError(t("Verify your password, then explicitly retry the unchanged request.","Vérifiez votre mot de passe, puis réessayez explicitement la demande inchangée."))}else if(failure.status===401||failure.status===403||["AUTH_REQUIRED","FORBIDDEN","TENANT_SCOPE_VIOLATION"].includes(failure.code??"")){setAccessDenied(true);setError(t("Access is no longer authorized. Private details are hidden. Restore access before refreshing or recovering the original result.","L’accès n’est plus autorisé. Les détails confidentiels sont masqués. Rétablissez l’accès avant d’actualiser ou de récupérer le résultat initial."))}else if([400,404,409,422].includes((e as {status?:number}).status??0)){setRetry(null);setAck(false);setError(t('The task or your access changed, or evidence is incomplete. Refresh and review the task; your draft is retained.','La tâche ou vos droits ont changé, ou les preuves sont incomplètes. Actualisez et vérifiez la tâche ; votre brouillon est conservé.'))}else setError(write?t('Outcome unconfirmed. Recover the recorded result before starting another action.','Résultat incertain. Récupérez le résultat enregistré avant une autre action.'):t('The current task list is unavailable. Retry Refresh tasks.','La liste actuelle est indisponible. Réessayez Actualiser les tâches.'))}finally{setBusy(false);setTimeout(()=>message.current?.focus(),0)}}
+  async function send(envelope:NonNullable<typeof retry>){setRetry(envelope);await execute(envelope.operation,envelope.input);setRetry(null);setSelected(null);setReason('');setEvidence('');setAck(false);setNotice(t('Task outcome recorded. External actions are not executed by this workspace.','Résultat de la tâche enregistré. Cet espace n’exécute aucune action externe.'));try{await refresh()}catch(e){const failure=e as {status?:number;code?:string};if(failure.status===401||failure.status===403||["AUTH_REQUIRED","FORBIDDEN","TENANT_SCOPE_VIOLATION"].includes(failure.code??""))setAccessDenied(true);setNotice(t('Task outcome recorded. Refresh tasks to reload the list.','Résultat enregistré. Actualisez les tâches pour recharger la liste.'))}}
+- if(accessDenied)return <main className="space-y-4 p-4"><h1>{t("Access needs to be restored","L’accès doit être rétabli")}</h1><p ref={message} tabIndex={-1} role={error?"alert":"status"}>{error||notice}</p><Button disabled={busy} onClick={()=>run(async()=>{await refresh()})}>{t("Refresh tasks","Actualiser les tâches")}</Button>{retry&&<Button disabled={busy} onClick={()=>run(()=>send(retry),true)}>{t("Recover recorded result","Récupérer le résultat enregistré")}</Button>}</main>
++ if(accessDenied)return <main className="dashboard-landing-theme dark min-h-screen"><div className="dashboard-landing-content space-y-4 p-4"><h1>{t("Access needs to be restored","L’accès doit être rétabli")}</h1><p ref={message} tabIndex={-1} role={error?"alert":"status"}>{error||notice}</p><Button disabled={busy} onClick={()=>run(async()=>{await refresh()})}>{t("Refresh tasks","Actualiser les tâches")}</Button>{retry&&<Button disabled={busy} onClick={()=>run(()=>send(retry),true)}>{t("Recover recorded result","Récupérer le résultat enregistré")}</Button>}</div></main>
+  const filtered=data.tasks.filter(r=>filter==='ALL'||filter==='OVERDUE'&&r.overdue||r.status===filter)
+- return <main className="mx-auto max-w-4xl min-w-0 space-y-4 p-4"><h1 className="text-2xl font-semibold">{t('Starter and leaver tasks','Tâches d’entrée et de sortie')}</h1><p>{t('Assigned work, retained evidence and independent verification. Employment, application access, external access and assets remain separate.','Travail attribué, preuves conservées et vérification indépendante. Emploi, accès applicatif, accès externes et équipements restent distincts.')}</p><p className="text-sm">{t('As of: ','Situation au : ')}{new Date(data.asOf).toLocaleString(locale)}</p>
++ return <main className="dashboard-landing-theme dark min-h-screen"><div className="dashboard-landing-content mx-auto max-w-4xl min-w-0 space-y-4 p-4"><h1 className="text-2xl font-semibold">{t('Starter and leaver tasks','Tâches d’entrée et de sortie')}</h1><p>{t('Assigned work, retained evidence and independent verification. Employment, application access, external access and assets remain separate.','Travail attribué, preuves conservées et vérification indépendante. Emploi, accès applicatif, accès externes et équipements restent distincts.')}</p><p className="text-sm">{t('As of: ','Situation au : ')}{new Date(data.asOf).toLocaleString(locale)}</p>
+  <p ref={message} tabIndex={-1} role={error?'alert':'status'}>{error||notice}</p><Button disabled={busy} variant="outline" onClick={()=>run(async()=>{await refresh();if(!retry){setSelected(null);setAck(false)}})}>{t('Refresh tasks','Actualiser les tâches')}</Button>{retry&&<Button disabled={busy} onClick={()=>run(()=>send(retry),true)}>{t('Recover recorded result','Récupérer le résultat enregistré')}</Button>}
+  {!data.configured&&<p role="status">{locale==='fr'?data.support.fr:data.support.en}</p>}<p>{t('Escalation contact: ','Contact pour faire remonter un problème : ')}{locale==='fr'?data.support.fr:data.support.en}</p>
+  <Label htmlFor="task-filter">{t('Task status','Statut des tâches')}</Label><select id="task-filter" className="w-full rounded-md border bg-background p-2" value={filter} onChange={e=>setFilter(e.target.value)}>{['ALL','OVERDUE','OPEN','FAILED','AWAITING_REVIEW','COMPLETED','CANCELLED'].map(s=><option key={s} value={s}>{s==='ALL'?t('All assigned tasks','Toutes les tâches attribuées'):s==='OVERDUE'?t('Overdue','En retard'):labels[s]}</option>)}</select><p>{filtered.length} / {data.tasks.length} {t('authorized tasks','tâches autorisées')}{data.truncated?' · '+t('Recent 800 shown; contact HR for older history.','800 tâches affichées ; contactez les RH pour l’historique antérieur.'):''}</p>
+@@ -27,5 +27,5 @@ export function HrisLifecycleTasks({initial,locale,execute}:{initial:LifecycleTa
+  {row?.id===r.id&&<section className="space-y-3 border-t pt-3" aria-label={t('Task decision','Décision de tâche')}><form className="space-y-3" onSubmit={e=>{e.preventDefault();if(!choices(r).includes(operation))return;void run(()=>send({operation:'DECIDE',input:{taskId:r.id,revision:r.revision,operation,reason,acknowledged:ack,idempotencyKey:crypto.randomUUID(),...(operation==='SUBMIT'?{evidenceReference:evidence}:{})}}),true)}}><fieldset disabled={busy||!!retry} className="space-y-3"><Label htmlFor="task-operation">{t('Action','Action')}</Label><select id="task-operation" value={operation} onChange={e=>{setOperation(e.target.value);setAck(false)}} className="w-full rounded-md border bg-background p-2">{choices(r).map(o=><option key={o} value={o}>{labels[o]}</option>)}</select>{operation==='SUBMIT'&&<><Label htmlFor="task-evidence">{t('Evidence reference','Référence de preuve')}</Label><Input id="task-evidence" required minLength={8} maxLength={500} value={evidence} onChange={e=>setEvidence(e.target.value)}/><p>{t('Use a retained ticket, signed checklist or provider receipt; avoid secrets and personal data in this reference.','Utilisez un ticket conservé, une liste signée ou un reçu du prestataire ; évitez les secrets et données personnelles dans cette référence.')}</p></>}<Label htmlFor="task-reason">{t('Reason and result','Motif et résultat')}</Label><textarea id="task-reason" required minLength={8} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)} className="w-full rounded-md border bg-background p-2"/><label className="flex items-start gap-2"><input type="checkbox" checked={ack} onChange={e=>setAck(e.target.checked)}/>{t('I checked the source, responsibilities and retained evidence. This is a manual attestation, not connector confirmation.','J’ai vérifié la source, les responsabilités et les preuves conservées. Il s’agit d’une attestation manuelle, pas d’une confirmation de connecteur.')}</label></fieldset><Button type="submit" disabled={busy||!!retry||!ack||reason.trim().length<8}>{t('Record task outcome','Enregistrer le résultat')}</Button></form>
+  {r.canReview&&['TERMINATE','OFFBOARD'].includes(r.lifecycleType)&&new Date(r.effectiveAt)>new Date()&&<details><summary>{t('Request a revised departure date','Demander une nouvelle date de départ')}</summary><p>{t('The old request and pending tasks are cancelled. A replacement employment request needs another HR approver; current employment and access remain unchanged. HR management authority is required.','L’ancienne demande et les tâches en attente sont annulées. La nouvelle demande exige un autre approbateur RH ; l’emploi et les accès actuels restent inchangés. L’autorité de gestion RH est requise.')}</p><Label htmlFor="task-effective">{t('New departure date','Nouvelle date de départ')}</Label><Input id="task-effective" type="date" value={effectiveAt} onChange={e=>setEffectiveAt(e.target.value)}/><Button disabled={busy||!!retry||!ack||reason.length<8||!effectiveAt} onClick={()=>run(()=>send({operation:'RESCHEDULE',input:{taskId:r.id,revision:r.revision,effectiveAt:new Date(effectiveAt+'T00:00:00Z').toISOString(),reason,acknowledged:ack,idempotencyKey:crypto.randomUUID()}}),true)}>{t('Request replacement for approval','Demander un remplacement à approuver')}</Button></details>}</section>}
+  </CardContent></Card>)}
+- </main>
++ </div></main>
+ }
+diff --git "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\components__hris__HrisPeopleAuthoring.tsx.baseline" b/components/hris/HrisPeopleAuthoring.tsx
+index 4e12e297..a6737105 100644
+--- "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\components__hris__HrisPeopleAuthoring.tsx.baseline"
++++ b/components/hris/HrisPeopleAuthoring.tsx
+@@ -411,7 +411,10 @@ export function HrisPeopleAuthoring({
+                 <p key={code}>
+                   {(
+                     {
+-                      EMPLOYEE_NOT_ACTIVE: t(
++                      EMPLOYEE_NOT_ACTIVE: employee.status === "TERMINATED" ? t(
++                        "Employment ended: review departure tasks and final-period inputs.",
++                        "Emploi terminé : vérifiez les tâches de sortie et les entrées de la dernière période.",
++                      ) : t(
+                         "Employment: review and apply onboarding below.",
+                         "Emploi : validez puis appliquez l’entrée ci-dessous.",
+                       ),
+@@ -419,7 +422,10 @@ export function HrisPeopleAuthoring({
+                         "Account: link an existing tenant member in the profile form.",
+                         "Compte : liez un membre existant dans le formulaire du profil.",
+                       ),
+-                      ACTIVE_CONTRACT_MISSING: t(
++                      ACTIVE_CONTRACT_MISSING: employee.status === "TERMINATED" ? t(
++                        "No active contract is expected after departure. Review retained approved contracts and final-period inputs.",
++                        "Aucun contrat actif n’est attendu après le départ. Vérifiez les contrats approuvés conservés et les données de la dernière période.",
++                      ) : t(
+                         "Contract: prepare a draft, review its signed evidence and request activation.",
+                         "Contrat : préparez un brouillon, validez la preuve signée puis demandez l’activation.",
+                       ),
+@@ -798,6 +804,10 @@ export function HrisPeopleAuthoring({
+               <h2 className="text-lg font-semibold">
+                 {t("Employment changes", "Changements d’emploi")}
+               </h2>
++              <p>{t(
++                "For a departure, select the first date no longer employed. The preceding date is the last employment day. Account access is handled separately.",
++                "Pour une sortie, choisissez le premier jour hors emploi. La veille est le dernier jour d’emploi. Les accès au compte sont traités séparément.",
++              )}</p>
+               {selected.lifecycle ? (
+                 <>
+                   <p>
+diff --git "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\components__hris__payroll-handoff-copy.ts.baseline" b/components/hris/payroll-handoff-copy.ts
+index ce86f57f..95f79c07 100644
+--- "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\components__hris__payroll-handoff-copy.ts.baseline"
++++ b/components/hris/payroll-handoff-copy.ts
+@@ -1,5 +1,6 @@
+ export function handoffReason(code:string,locale:'en'|'fr'){
+  const labels:Record<string,[string,string]>={
+- EMPLOYMENT_DATES_UNPROVEN:['Confirm employment dates','Confirmer les dates d’emploi'],PENDING_CONTRACT_OR_COMPENSATION:['Resolve pending contract or compensation','Résoudre le contrat ou la rémunération en attente'],PENDING_APPROVAL_OR_CANCELLATION:['Complete pending approvals or cancellations','Terminer les validations ou annulations en attente'],OPEN_ATTENDANCE_ANOMALY:['Resolve attendance anomalies and recertify','Résoudre les anomalies de présence et recertifier'],MULTIPLE_CONTRACT_SEGMENTS_REQUIRE_REVIEW:['Review multiple contracts in this period','Vérifier les contrats multiples de cette période'],ACTIVE_CONTRACT_MISSING:['Activate an approved contract','Activer un contrat approuvé'],BASE_COMPENSATION_INVALID:['Correct the contract salary reference','Corriger le salaire contractuel de référence'],EXACT_CERTIFIED_ATTENDANCE_REQUIRED:['Certify attendance for this exact period','Certifier la présence pour cette période exacte'],ATTENDANCE_CERTIFICATION_STALE_OR_INVALID:['Update and recertify attendance','Actualiser et recertifier la présence'],COMPENSATION_DEFINITION_UNAVAILABLE:['Review the compensation definition','Vérifier la définition de rémunération'],NO_ELIGIBLE_EMPLOYEES:['No eligible employees in this period','Aucun employé admissible dans cette période'],HRIS_PAYROLL_IDENTITY_SOURCE_PROOF_MISSING:['Complete employee identity evidence','Compléter les preuves d’identité'],HRIS_PAYROLL_CONTRACT_APPROVAL_PROOF_MISSING:['Complete independent contract approval','Terminer la validation indépendante du contrat'],HRIS_PAYROLL_CONTRACT_DOCUMENT_PROOF_MISSING:['Complete approved contract document evidence','Compléter les preuves documentaires du contrat'],HRIS_PAYROLL_COMPENSATION_APPROVAL_PROOF_MISSING:['Complete compensation approval','Terminer la validation de rémunération'],HRIS_PAYROLL_PAYMENT_DESTINATION_PROOF_MISSING:['Complete payment destination evidence','Compléter les preuves de destination de paiement'],HRIS_PAYROLL_ATTENDANCE_CERTIFICATION_PROOF_MISSING:['Complete attendance certification evidence','Compléter les preuves de certification de présence'],LEFT_BEFORE_PERIOD:['Left before this period','Départ avant cette période'],HIRED_AFTER_PERIOD:['Hired after this period','Embauche après cette période'],COUNTRY_OUTSIDE_PERIOD:['Outside the selected country','Hors du pays sélectionné'],DRAFT_EMPLOYEE:['Draft employee record','Dossier employé en brouillon']}
++ SUSPENDED_CONTRACT_REQUIRES_REVIEW:['Review suspended contract history','Vérifier l’historique du contrat suspendu'],ENDED_SOURCE_DATES_UNPROVEN:['Confirm the dates of ended source records','Confirmer les dates des sources terminées'],MULTIPLE_COMPENSATION_SEGMENTS_REQUIRE_REVIEW:['Review multiple periods of the same compensation component','Vérifier les périodes multiples de la même rubrique'],SUSPENDED_COMPENSATION_REQUIRES_REVIEW:['Review suspended compensation history','Vérifier l’historique de rémunération suspendue'],
++ EMPLOYMENT_DATES_UNPROVEN:['Confirm employment dates','Confirmer les dates d’emploi'],PENDING_CONTRACT_OR_COMPENSATION:['Resolve pending contract or compensation','Résoudre le contrat ou la rémunération en attente'],PENDING_APPROVAL_OR_CANCELLATION:['Complete pending approvals or cancellations','Terminer les validations ou annulations en attente'],OPEN_ATTENDANCE_ANOMALY:['Resolve attendance anomalies and recertify','Résoudre les anomalies de présence et recertifier'],MULTIPLE_CONTRACT_SEGMENTS_REQUIRE_REVIEW:['Review multiple contracts in this period','Vérifier les contrats multiples de cette période'],ACTIVE_CONTRACT_MISSING:['Provide an approved contract covering this period','Fournir un contrat approuvé couvrant cette période'],BASE_COMPENSATION_INVALID:['Correct the contract salary reference','Corriger le salaire contractuel de référence'],EXACT_CERTIFIED_ATTENDANCE_REQUIRED:['Certify attendance for this exact period','Certifier la présence pour cette période exacte'],ATTENDANCE_CERTIFICATION_STALE_OR_INVALID:['Update and recertify attendance','Actualiser et recertifier la présence'],COMPENSATION_DEFINITION_UNAVAILABLE:['Review the compensation definition','Vérifier la définition de rémunération'],NO_ELIGIBLE_EMPLOYEES:['No eligible employees in this period','Aucun employé admissible dans cette période'],HRIS_PAYROLL_IDENTITY_SOURCE_PROOF_MISSING:['Complete employee identity evidence','Compléter les preuves d’identité'],HRIS_PAYROLL_CONTRACT_APPROVAL_PROOF_MISSING:['Complete independent contract approval','Terminer la validation indépendante du contrat'],HRIS_PAYROLL_CONTRACT_DOCUMENT_PROOF_MISSING:['Complete approved contract document evidence','Compléter les preuves documentaires du contrat'],HRIS_PAYROLL_COMPENSATION_APPROVAL_PROOF_MISSING:['Complete compensation approval','Terminer la validation de rémunération'],HRIS_PAYROLL_PAYMENT_DESTINATION_PROOF_MISSING:['Complete payment destination evidence','Compléter les preuves de destination de paiement'],HRIS_PAYROLL_ATTENDANCE_CERTIFICATION_PROOF_MISSING:['Complete attendance certification evidence','Compléter les preuves de certification de présence'],LEFT_BEFORE_PERIOD:['Left before this period','Départ avant cette période'],HIRED_AFTER_PERIOD:['Hired after this period','Embauche après cette période'],COUNTRY_OUTSIDE_PERIOD:['Outside the selected country','Hors du pays sélectionné'],DRAFT_EMPLOYEE:['Draft employee record','Dossier employé en brouillon']}
+  return labels[code]?.[locale==='fr'?1:0]??(locale==='fr'?'Vérifier les preuves sources avec le responsable RH':'Review source evidence with the HR owner')
+ }
+diff --git "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\services__hris__lifecycle.service.ts.baseline" b/services/hris/lifecycle.service.ts
+index b16e2e08..6ffb12b1 100644
+--- "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\services__hris__lifecycle.service.ts.baseline"
++++ b/services/hris/lifecycle.service.ts
+@@ -350,6 +350,7 @@ export async function requestHrisEmployeeLifecycle(
+   client: DbClient = db,
+ ) {
+   const parsed = lifecycleRequestInputSchema.parse(input)
++  assertTerminationDate(parsed.type, parsed.effectiveAt)
+   assertPermission(parsed.actorPermissions, MANAGE_PERMISSIONS, "HRIS lifecycle request")
+   assertTarget(parsed.type, parsed.target)
+ 
+@@ -647,57 +648,54 @@ function dayBefore(value: Date) {
+   return new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate() - 1))
+ }
+ 
++function assertTerminationDate(type: string, effectiveAt: Date) {
++  if (type === "TERMINATE" && effectiveAt.getTime() !== Date.UTC(effectiveAt.getUTCFullYear(), effectiveAt.getUTCMonth(), effectiveAt.getUTCDate())) {
++    throw new BusinessRuleError("HRIS_TERMINATION_DATE_REQUIRED: Use a date at midnight UTC; partial-day termination is not supported.")
++  }
++}
++
+ async function closeLeaverAssignments(
+   tx: Prisma.TransactionClient,
+   input: { organizationId: string; employeeId: string; effectiveAt: Date },
+ ) {
+   const effectiveTo = dayBefore(input.effectiveAt)
+-  await tx.payrollContract.updateMany({
+-    where: {
+-      organizationId: input.organizationId,
+-      employeeId: input.employeeId,
+-      status: { in: [PayrollContractStatus.ACTIVE, PayrollContractStatus.SUSPENDED] },
+-      effectiveFrom: { lt: input.effectiveAt },
+-      OR: [{ effectiveTo: null }, { effectiveTo: { gte: input.effectiveAt } }],
+-      deletedAt: null,
+-    },
+-    data: { status: PayrollContractStatus.ENDED, effectiveTo },
+-  })
+-  await tx.payrollContract.updateMany({
+-    where: {
+-      organizationId: input.organizationId,
+-      employeeId: input.employeeId,
+-      OR: [
+-        { status: PayrollContractStatus.DRAFT },
+-        {
+-          status: { in: [PayrollContractStatus.ACTIVE, PayrollContractStatus.SUSPENDED] },
+-          effectiveFrom: { gte: input.effectiveAt },
+-        },
+-      ],
+-      deletedAt: null,
+-    },
+-    data: { status: PayrollContractStatus.CANCELLED },
+-  })
+-  await tx.payrollEmployeeRubriqueAssignment.updateMany({
+-    where: {
+-      organizationId: input.organizationId,
+-      employeeId: input.employeeId,
+-      status: { in: [PayrollRubriqueAssignmentStatus.DRAFT, PayrollRubriqueAssignmentStatus.ACTIVE, PayrollRubriqueAssignmentStatus.SUSPENDED] },
+-      effectiveFrom: { lt: input.effectiveAt },
+-      deletedAt: null,
+-    },
+-    data: { status: PayrollRubriqueAssignmentStatus.ENDED, effectiveTo },
+-  })
+-  await tx.payrollEmployeeRubriqueAssignment.updateMany({
++  const contracts = await tx.payrollContract.findMany({where: {
++    organizationId: input.organizationId, employeeId: input.employeeId,
++    status: {in: [PayrollContractStatus.DRAFT, PayrollContractStatus.ACTIVE, PayrollContractStatus.SUSPENDED]}, deletedAt: null,
++  }})
++  for (const contract of contracts) {
++    const cancelled = contract.status === PayrollContractStatus.DRAFT || contract.effectiveFrom >= input.effectiveAt
++    await tx.payrollContract.update({where: {id: contract.id, organizationId: input.organizationId}, data: {
++      status: cancelled ? PayrollContractStatus.CANCELLED : PayrollContractStatus.ENDED,
++      ...(!cancelled ? {effectiveTo: contract.effectiveTo && contract.effectiveTo < effectiveTo ? contract.effectiveTo : effectiveTo} : {}),
++      metadata: safeJson({...metadataRecord(contract.metadata), hrisLifecycleClosure: {
++        status: cancelled ? "CANCELLED" : "ENDED", previousStatus: contract.status, effectiveAt: input.effectiveAt.toISOString(),
++      }}),
++    }})
++  }
++  const assignments = await tx.payrollEmployeeRubriqueAssignment.findMany({
+     where: {
+       organizationId: input.organizationId,
+       employeeId: input.employeeId,
+       status: { in: [PayrollRubriqueAssignmentStatus.DRAFT, PayrollRubriqueAssignmentStatus.ACTIVE, PayrollRubriqueAssignmentStatus.SUSPENDED] },
+-      effectiveFrom: { gte: input.effectiveAt },
+       deletedAt: null,
+     },
+-    data: { status: PayrollRubriqueAssignmentStatus.ENDED },
+   })
++  for (const assignment of assignments) {
++    const cancelled = assignment.status === PayrollRubriqueAssignmentStatus.DRAFT || assignment.effectiveFrom >= input.effectiveAt
++    await tx.payrollEmployeeRubriqueAssignment.update({
++      where: { id: assignment.id, organizationId: input.organizationId },
++      data: {
++        status: PayrollRubriqueAssignmentStatus.ENDED,
++        // Earlier end dates remain historical facts. Never extend them at departure.
++        ...(!cancelled ? { effectiveTo: assignment.effectiveTo && assignment.effectiveTo < effectiveTo ? assignment.effectiveTo : effectiveTo } : {}),
++        metadata: safeJson({ ...metadataRecord(assignment.metadata), hrisLifecycleClosure: {
++          status: cancelled ? "CANCELLED" : "ENDED", previousStatus: assignment.status,
++          effectiveAt: input.effectiveAt.toISOString(),
++        } }),
++      },
++    })
++  }
+ }
+ 
+ export async function applyApprovedHrisEmployeeLifecycle(
+@@ -738,6 +736,7 @@ export async function applyApprovedHrisEmployeeLifecycle(
+     }
+ 
+     const effectiveAt = new Date(pending.effectiveAt)
++    assertTerminationDate(pending.type, effectiveAt)
+     const now = new Date()
+     if (effectiveAt > now) {
+       return { ...mutationResult(employee, pending, pending.approvalEventId ?? pending.requestId),
+diff --git "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\services__hris__payroll-handoff-read.service.ts.baseline" b/services/hris/payroll-handoff-read.service.ts
+index b5670ab8..868f1f9d 100644
+--- "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\services__hris__payroll-handoff-read.service.ts.baseline"
++++ b/services/hris/payroll-handoff-read.service.ts
+@@ -39,7 +39,7 @@ async function projectHandoffInputsInTx(tx:Prisma.TransactionClient,a:SelfServic
+  if(period.countryCode!==policy.countryCode)throw new BusinessRuleError("HRIS_HANDOFF_COUNTRY_OUTSIDE_REVIEWED_TEMPLATE")
+  const catalogIds=await tx.payrollEmployeeRubriqueAssignment.findMany({where:{organizationId:a.organizationId,employeeId:{in:population.map(e=>e.id)},deletedAt:null},select:{rubriqueId:true},orderBy:{rubriqueId:"asc"}})
+  await tx.$queryRaw`SELECT id FROM payroll_rubriques WHERE "organizationId"=${a.organizationId} AND id=ANY(${[...new Set(catalogIds.map(r=>r.rubriqueId))]}::text[]) ORDER BY id FOR SHARE`
+- const employees=await tx.payrollEmployee.findMany({where:{organizationId:a.organizationId,deletedAt:null,id:{in:population.map(e=>e.id)}},orderBy:{id:'asc'},include:{contracts:{where:{organizationId:a.organizationId,deletedAt:null,status:{in:['ACTIVE','DRAFT']},effectiveFrom:{lte:period.periodEnd},OR:[{effectiveTo:null},{effectiveTo:{gte:period.periodStart}}]},orderBy:{id:'asc'}},rubriqueAssignments:{where:{organizationId:a.organizationId,deletedAt:null,status:{in:['ACTIVE','DRAFT']},effectiveFrom:{lte:period.periodEnd},OR:[{effectiveTo:null},{effectiveTo:{gte:period.periodStart}}]},include:{rubrique:true},orderBy:{id:'asc'}},attendanceSnapshots:{where:{organizationId:a.organizationId,payrollPeriodId:period.id,status:'FROZEN'},orderBy:[{frozenAt:'desc'},{id:'desc'}]},paymentDestinationChangeRequests:{where:{organizationId:a.organizationId,status:'APPLIED',deletedAt:null},orderBy:[{appliedAt:'desc'},{id:'desc'}],take:1}}})
++ const employees=await tx.payrollEmployee.findMany({where:{organizationId:a.organizationId,deletedAt:null,id:{in:population.map(e=>e.id)}},orderBy:{id:'asc'},include:{contracts:{where:{organizationId:a.organizationId,deletedAt:null,status:{in:['ACTIVE','DRAFT','ENDED']},effectiveFrom:{lte:period.periodEnd},OR:[{effectiveTo:null},{effectiveTo:{gte:period.periodStart}}]},orderBy:{id:'asc'}},rubriqueAssignments:{where:{organizationId:a.organizationId,deletedAt:null,status:{in:['ACTIVE','DRAFT','ENDED']},effectiveFrom:{lte:period.periodEnd},OR:[{effectiveTo:null},{effectiveTo:{gte:period.periodStart}}]},include:{rubrique:true},orderBy:{id:'asc'}},attendanceSnapshots:{where:{organizationId:a.organizationId,payrollPeriodId:period.id,status:'FROZEN'},orderBy:[{frozenAt:'desc'},{id:'desc'}]},paymentDestinationChangeRequests:{where:{organizationId:a.organizationId,status:'APPLIED',deletedAt:null},orderBy:[{appliedAt:'desc'},{id:'desc'}],take:1}}})
+  const events=await tx.businessEvent.findMany({where:{organizationId:a.organizationId,sourceId:{in:population.map(e=>e.id)},eventType:'hris.employee.lifecycle.applied',status:'APPLIED'},select:{id:true,sourceId:true,payload:true},orderBy:{id:'asc'}})
+  const pendingSalary=await tx.payrollSalaryChangeRequest.findMany({where:{organizationId:a.organizationId,deletedAt:null,status:{in:['REQUESTED','APPROVED']},effectiveFrom:{lte:period.periodEnd}},select:{id:true,employeeId:true,updatedAt:true},orderBy:{id:'asc'}})
+  const pendingPayment=await tx.payrollPaymentDestinationChangeRequest.findMany({where:{organizationId:a.organizationId,deletedAt:null,status:{in:['REQUESTED','APPROVED']}},select:{id:true,employeeId:true,updatedAt:true},orderBy:{id:'asc'}})
+@@ -49,15 +49,23 @@ async function projectHandoffInputsInTx(tx:Prisma.TransactionClient,a:SelfServic
+  const add=(employeeId:string,code:string)=>blocked.push({employeeId,code})
+  for(const e of employees){
+   const history=events.filter(v=>v.sourceId===e.id),state=projectEmploymentAsOf({id:e.id,employeeNumber:e.employeeNumber,status:e.status,hireDate:e.hireDate.toISOString(),terminationDate:e.terminationDate?.toISOString()??null,locationId:e.locationId,department:e.department,jobTitle:e.jobTitle,costCenter:e.costCenter},history,period.periodEnd).state
+-  const reason=e.countryCode!==period.countryCode?'COUNTRY_OUTSIDE_PERIOD':state.status==='DRAFT'?'DRAFT_EMPLOYEE':new Date(state.hireDate)>period.periodEnd?'HIRED_AFTER_PERIOD':state.terminationDate&&new Date(state.terminationDate)<period.periodStart?'LEFT_BEFORE_PERIOD':null
++  const reason=e.countryCode!==period.countryCode?'COUNTRY_OUTSIDE_PERIOD':state.status==='DRAFT'?'DRAFT_EMPLOYEE':new Date(state.hireDate)>period.periodEnd?'HIRED_AFTER_PERIOD':state.terminationDate&&new Date(state.terminationDate)<=period.periodStart?'LEFT_BEFORE_PERIOD':null
+   sources.push({employeeId:e.id,updatedAt:e.updatedAt,metadata:e.metadata,state,history})
+   if(reason){excluded.push({employeeId:e.id,employeeNumber:e.employeeNumber,reason});continue}
+   if(['TERMINATED','ARCHIVED'].includes(state.status)&&!state.terminationDate)add(e.id,'EMPLOYMENT_DATES_UNPROVEN')
++  // Sources must intersect actual employment, not merely the payroll calendar.
++  const inEmployment=(source:{effectiveFrom:Date;effectiveTo:Date|null})=>(!state.terminationDate||source.effectiveFrom<new Date(state.terminationDate))&&(!source.effectiveTo||source.effectiveTo>=new Date(state.hireDate))
++  e.contracts=e.contracts.filter(inEmployment)
++  e.rubriqueAssignments=e.rubriqueAssignments.filter(r=>inEmployment(r)&&attendanceMetadata(attendanceMetadata(r.metadata).hrisLifecycleClosure).status!=='CANCELLED')
++  for(const source of [...e.contracts,...e.rubriqueAssignments])if(source.status==='ENDED'&&(!source.effectiveTo||source.effectiveTo<source.effectiveFrom))add(e.id,'ENDED_SOURCE_DATES_UNPROVEN')
++  if(e.contracts.some(c=>c.status==='ENDED'&&attendanceMetadata(attendanceMetadata(c.metadata).hrisLifecycleClosure).previousStatus==='SUSPENDED'))add(e.id,'SUSPENDED_CONTRACT_REQUIRES_REVIEW')
++  if(e.rubriqueAssignments.some(r=>r.status==='ENDED'&&attendanceMetadata(attendanceMetadata(r.metadata).hrisLifecycleClosure).previousStatus==='SUSPENDED'))add(e.id,'SUSPENDED_COMPENSATION_REQUIRES_REVIEW')
+   const pendingMovement=pendingHrisLifecycleFromMetadata(e.metadata)
+   const draftContracts=e.contracts.filter(c=>c.status==='DRAFT'),draftAssignments=e.rubriqueAssignments.filter(r=>r.status==='DRAFT')
+   if(draftContracts.length||draftAssignments.length)add(e.id,'PENDING_CONTRACT_OR_COMPENSATION')
+   sources.push({employeeId:e.id,draftContracts,draftAssignments})
+-  e.contracts=e.contracts.filter(c=>c.status==='ACTIVE');e.rubriqueAssignments=e.rubriqueAssignments.filter(r=>r.status==='ACTIVE')
++  e.contracts=e.contracts.filter(c=>c.status==='ACTIVE'||c.status==='ENDED');e.rubriqueAssignments=e.rubriqueAssignments.filter(r=>r.status==='ACTIVE'||r.status==='ENDED')
++  if(new Set(e.rubriqueAssignments.map(r=>r.rubriqueId)).size!==e.rubriqueAssignments.length)add(e.id,'MULTIPLE_COMPENSATION_SEGMENTS_REQUIRE_REVIEW')
+   if((pendingMovement&&new Date(pendingMovement.effectiveAt)<=period.periodEnd)||pendingSalary.some(p=>p.employeeId===e.id)||pendingPayment.some(p=>p.employeeId===e.id)||pendingTime.some(p=>p.employeeId===e.id))add(e.id,'PENDING_APPROVAL_OR_CANCELLATION')
+   if(anomalies.some(p=>p.employeeId===e.id||p.employeeId===null))add(e.id,'OPEN_ATTENDANCE_ANOMALY')
+   if(e.contracts.length!==1)add(e.id,e.contracts.length?'MULTIPLE_CONTRACT_SEGMENTS_REQUIRE_REVIEW':'ACTIVE_CONTRACT_MISSING')
+diff --git "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\services__payroll__payroll-control.service.ts.baseline" b/services/payroll/payroll-control.service.ts
+index a0bc4168..edf50387 100644
+--- "a/what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\services__payroll__payroll-control.service.ts.baseline"
++++ b/services/payroll/payroll-control.service.ts
+@@ -5225,13 +5225,17 @@ export async function freezeAttendanceSnapshot(
+       where: {
+         id: parsed.employeeId,
+         organizationId: parsed.organizationId,
+-        status: PayrollEmployeeStatus.ACTIVE,
++        hireDate: { lte: period.periodEnd },
++        OR: [
++          { status: PayrollEmployeeStatus.ACTIVE, OR: [{ terminationDate: null }, { terminationDate: { gt: period.periodStart } }] },
++          { status: PayrollEmployeeStatus.TERMINATED, terminationDate: { gt: period.periodStart } },
++        ],
+         deletedAt: null,
+       },
+     });
+-    if (!employee)
++    if (!employee || (employee.terminationDate && employee.terminationDate <= employee.hireDate))
+       throw new BusinessRuleError(
+-        "Attendance can only be frozen for an active payroll employee.",
++        "Attendance can only be frozen for an active employee or a dated leaver whose employment intersects this period.",
+       );
+ 
+     const existing = await tx.payrollAttendanceSnapshot.findFirst({

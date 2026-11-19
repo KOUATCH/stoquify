@@ -1,0 +1,181 @@
+{
+  "at": "2026-11-10T19:01:48.082Z",
+  "definitionPreparationOnly": true,
+  "applicationOrDatabaseExecuted": false,
+  "changes": [
+    {
+      "from": "database/fixture-control.cjs",
+      "to": "database-current/fixture-control.cjs",
+      "beforeSha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d",
+      "afterSha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d",
+      "substitutions": []
+    },
+    {
+      "from": "database/login-fixture-control.cjs",
+      "to": "database-current/login-fixture-control.cjs",
+      "beforeSha256": "1ca0e416469fdb9f581857ca895c66301a9de0e565aa4c30eb8bda40fa6d6388",
+      "afterSha256": "1ca0e416469fdb9f581857ca895c66301a9de0e565aa4c30eb8bda40fa6d6388",
+      "substitutions": []
+    },
+    {
+      "from": "database/read-authority-utc.cjs",
+      "to": "database-current/read-authority-utc.cjs",
+      "beforeSha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8",
+      "afterSha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8",
+      "substitutions": []
+    },
+    {
+      "from": "database/fixture-definition.cjs",
+      "to": "database-current/fixture-definition.cjs",
+      "beforeSha256": "1e37557aef27d8797850f8704288d61c3d33943928e86124e1145244171a4bfe",
+      "afterSha256": "83180a47cfcfade62e247350718f9a7afbee9ff6ada6a59d4cdf53f8fdcfce89",
+      "substitutions": [
+        {
+          "before": "['p04-r06-a','p04-r06-b']",
+          "after": "['p04-r06-r3-a','p04-r06-r3-b']",
+          "count": 1
+        },
+        {
+          "before": "'p04r06-synthetic'",
+          "after": "'p04r06-r3-synthetic'",
+          "count": 1
+        },
+        {
+          "before": "id='p04r06-'+alias",
+          "after": "id='p04r06-r3-'+alias",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "from": "database/direct-api-child.cjs",
+      "to": "database-current/direct-api-child.cjs",
+      "beforeSha256": "2a2ed026c73edf518c0878e0d7d5b489d14093c10e99da3b2fb923b6b0f00c38",
+      "afterSha256": "9f4d1dd77e2f4267eb430b4c291d8d5fc0e5451f468846326c82724598191144",
+      "substitutions": [
+        {
+          "before": "stoquify_local_p04r06_20261110_full_r2",
+          "after": "stoquify_local_p04r06_20261110_full_r3",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "from": "database/finalize.cjs",
+      "to": "database-current/finalize.cjs",
+      "beforeSha256": "c94d9ce16d04a28cf37349af715614e41599c1ee3a7f52e5040f6fe60a84184b",
+      "afterSha256": "c94d9ce16d04a28cf37349af715614e41599c1ee3a7f52e5040f6fe60a84184b",
+      "substitutions": []
+    },
+    {
+      "from": "database/stop.cjs",
+      "to": "database-current/stop.cjs",
+      "beforeSha256": "08bee06a7c259cffcd6e72d0be389c52aa818f36a996e24ea5893a47913a1432",
+      "afterSha256": "08bee06a7c259cffcd6e72d0be389c52aa818f36a996e24ea5893a47913a1432",
+      "substitutions": []
+    },
+    {
+      "from": "../qualification-20261110-r2/database/seed-fixture.cjs",
+      "to": "database-current/seed-fixture.cjs",
+      "beforeSha256": "c75e913102e5743b63b094e411a554342921844d1ac2503908a468c4d7bf9924",
+      "afterSha256": "b1cb5190a85c6150c5ec38ba479b923514e8c689d7e1b41828d6a95e6a9d0227",
+      "substitutions": [
+        {
+          "before": "DATABASE-RECIPE-ADMISSION.json",
+          "after": "DATABASE-CURRENT-RECIPE-ADMISSION.json",
+          "count": 1
+        },
+        {
+          "before": "path.join(__dirname,'..',item.path)",
+          "after": "path.resolve(__dirname,'..',item.path)",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "from": "direct-api-driver.cjs",
+      "to": "direct-api-driver-v2.cjs",
+      "beforeSha256": "e810c7464c549b23d44f9ca829b66d0b5a2feb5b43a1676053ac21c0223a753c",
+      "afterSha256": "99a37252a40c7541432079974449eee1b9b6f26de42f1a51a031e31317dfdd98",
+      "substitutions": [
+        {
+          "before": "stoquify_local_p04r06_20261110_full_r2",
+          "after": "stoquify_local_p04r06_20261110_full_r3",
+          "count": 2
+        },
+        {
+          "before": "database/direct-api-child.cjs",
+          "after": "database-current/direct-api-child.cjs",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "from": "runtime/run-protected-core.cjs",
+      "to": "runtime-current/run-protected-core.cjs",
+      "beforeSha256": "3bdc7a715fc4519c321c7391a205845c1ffed43a3f9d125014dd7c3fd9d38fa5",
+      "afterSha256": "3bdc7a715fc4519c321c7391a205845c1ffed43a3f9d125014dd7c3fd9d38fa5",
+      "substitutions": []
+    },
+    {
+      "from": "runtime/run-credential-probes.cjs",
+      "to": "runtime-current/run-credential-probes.cjs",
+      "beforeSha256": "a08d4cf1fedb2affc179a5cf26e4d15506a5d7f423dc0a8376b1104aa730084c",
+      "afterSha256": "a08d4cf1fedb2affc179a5cf26e4d15506a5d7f423dc0a8376b1104aa730084c",
+      "substitutions": []
+    },
+    {
+      "from": "runtime/run-origin-probes.cjs",
+      "to": "runtime-current/run-origin-probes.cjs",
+      "beforeSha256": "8b802095304ef10beb243620fbcfccfd2c656bfc49c5a5ae202a53cf67602265",
+      "afterSha256": "8b802095304ef10beb243620fbcfccfd2c656bfc49c5a5ae202a53cf67602265",
+      "substitutions": []
+    },
+    {
+      "from": "runtime/run-retained-expiry.cjs",
+      "to": "runtime-current/run-retained-expiry.cjs",
+      "beforeSha256": "9b1430784b51d3b65add983794b357e34bac0548cb2f716cb3492ea7cf5522f0",
+      "afterSha256": "b3655ccff30bf8f0bd5dd1d3dde74eeb127157586feb5be7054a34684bb6db20",
+      "substitutions": [
+        {
+          "before": "../database/",
+          "after": "../database-current/",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "from": "runtime/run-expanded.cjs",
+      "to": "runtime-current/run-expanded.cjs",
+      "beforeSha256": "4ae6d178bc90789004e36352e1fad487ec470fd17c585c4c487e692c5a8eb30b",
+      "afterSha256": "5bc1eae9d9b14be04a67785464454eb0f71f00e06e2e877756a81855cd1557d9",
+      "substitutions": [
+        {
+          "before": "../database/",
+          "after": "../database-current/",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "from": "runtime/runtime-bridge.cjs",
+      "to": "runtime-current/runtime-bridge.cjs",
+      "beforeSha256": "6ee4946913471af6811fb25960554da766fda9b4874e48d6e829368d946a4ce3",
+      "afterSha256": "e4f34f6e706996f6ee48e232a02ced9694f1cbcf7c3e44b1e303a059608680c5",
+      "substitutions": [
+        {
+          "before": "stoquify_local_p04r06_20261110_full_r2",
+          "after": "stoquify_local_p04r06_20261110_full_r3",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "from": "runtime/qualification-contract.json",
+      "to": "runtime-current/qualification-contract.json",
+      "beforeSha256": "22d4543fef2795f838aa54c203be96ad0448b466f0b80f6d7104f863bf8d08e1",
+      "afterSha256": "22d4543fef2795f838aa54c203be96ad0448b466f0b80f6d7104f863bf8d08e1",
+      "substitutions": []
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+    if (receiptKey) {
+      const receipt = await recordBusinessEventInTx(tx, {
+        organizationId, actorId, eventSource: "INTERNAL",
+        eventType: "ACCOUNTANT_ACCESS_GRANT_COMMAND_APPLIED", idempotencyKey: receiptKey,
+        sourceEntityType: "AccountantAccessGrant", sourceId: grant.id,
+        payload: { commandHash, grantId: grant.id },
+      })
+      await markBusinessEventAppliedInTx(tx, organizationId, receipt.event.id)
+    }

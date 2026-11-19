@@ -1,0 +1,45 @@
+[
+  {
+    "scenario": "B5 legacy reproduction / concurrent replay / changed payload",
+    "organizationId": "org-full-pos-f696737e-f1cf-4b3a-8d34-981115b06dc8",
+    "legacyIds": [
+      "cmvpghuld0019ma24ho7mf8rk",
+      "cmvpghupc001dma24wx0ifb1n"
+    ],
+    "receipt": {
+      "requestReference": "4f91063b-012e-4618-be2a-0ea758667eb4",
+      "orderId": "cmvpghvvc001pma24s1tv8lhh",
+      "orderNumber": "PO-000003",
+      "createdAt": "2026-10-26T16:13:45.262Z"
+    },
+    "orders": 3,
+    "createdEvents": 1,
+    "stockMovements": 0,
+    "journals": 0
+  },
+  {
+    "scenario": "B5 frozen clone + flag rollback",
+    "receipt": {
+      "requestReference": "4692c149-8906-48f0-a6c2-548bfea7c86b",
+      "orderId": "cmvpghxhr003hma24i8l058fs",
+      "orderNumber": "PO-000002",
+      "createdAt": "2026-10-26T16:13:47.361Z"
+    },
+    "orders": 2
+  },
+  {
+    "scenario": "B5 stored authority / session / foreign location",
+    "organizationId": "org-full-pos-f98976fd-0842-40b3-8a48-a670f8b6a133",
+    "orders": 0
+  },
+  {
+    "scenario": "B5 final transaction rollback and same-key recovery",
+    "receipt": {
+      "requestReference": "0bcfb370-88fa-4363-b47a-0e83c8ba2404",
+      "orderId": "cmvpgi103007tma24i38c6t49",
+      "orderNumber": "PO-000001",
+      "createdAt": "2026-10-26T16:13:51.908Z"
+    },
+    "orders": 1
+  }
+]

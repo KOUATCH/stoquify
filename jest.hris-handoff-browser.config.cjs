@@ -1,0 +1,3 @@
+// Bounded pure/mocked checks. No application configuration or database bootstrap.
+const base=require('./jest.hris-fresh-auth-ui.config.cjs');
+module.exports={...base,roots:['<rootDir>/components/hris/__tests__','<rootDir>/actions/hris/__tests__','<rootDir>/services/hris/__tests__'],testMatch:['**/HrisPayrollHandoff.test.tsx','**/payroll-handoff.actions.test.ts','**/payroll-handoff.contract.test.ts','**/payroll-handoff-download.test.ts'],testTimeout:30000,moduleNameMapper:{...base.moduleNameMapper,'^server-only$':'<rootDir>/what-next/hris-implementation-2026-10-24/HR-21/development-08/server-only.cjs'}};

@@ -1,0 +1,35 @@
+# P04-R02 independent source design review
+
+29 October 2026. Source-only review; no application edits or runtime checks performed by this reviewer. This is a design recommendation, not approval of an unreviewed patch or evidence of repair completion.
+
+## Current boundaries
+
+- `app/api/uploads/[...path]/route.ts` checks current session/org, dashboard module and `dashboard.read`, then reads `public/uploads/{organizationId}/{fileName}`. It restricts filename characters/types and returns private/no-store. The organization directory is derived from the authenticated organization but currently has no independent path-component/realpath validation. Filesystem links need explicit treatment if a new storage abstraction is introduced.
+- `middleware.ts` passes filename-like paths before normal routing; its matcher excludes `/_next/image`. A cookie-presence gate is only optimistic routing and must not replace the API's current authority checks.
+- `next.config.mjs` has only security.txt rewrites, no upload rewrite. A returned-array rewrite normally occurs after public-file matching; use an explicit before-files boundary or an equally tested earlier interception if legacy files remain locally public.
+- `scripts/release-artifact.cjs` copies every enumerated public file to `runtime/public`. A route fix alone therefore cannot establish absence from CDN/static hosting. Traced standalone output must also be checked for duplicate public copies.
+- Installed Next image optimization uses a cache key from href/width/quality/mime, not user identity. `fetchInternalImage` creates an internal request without forwarding cookies. Private media should render through direct, unoptimized authorized URLs; do not add credential forwarding to the optimizer. A sampled existing editor already sets `unoptimized`, but this does not establish every legacy consumer does so.
+- Historical graph node `api_uploads_path_route_ts`, community 15, identifies the legacy reader; current source above determines behavior.
+
+## Recommended bounded repair
+
+Preserve both existing URL contracts: `/api/uploads/{org}/{file}` and `/uploads/{org}/{file}`. Route the latter through the same current server authorization and private file reader, preserving query behavior deliberately. No database-reference rewrite is necessary merely to preserve those URLs. Both unauthenticated and wrong-tenant callers must be denied before file access.
+
+Place runtime legacy bytes outside every public/static directory. In an isolated candidate/artifact, the packer can map each original `public/uploads/...` byte sequence to a dedicated private runtime root, record matching hashes, and omit it from runtime/public. Preserve original workspace files unchanged. Refuse conflicting destinations, symlinks/junctions and duplicate or ambiguous normalized paths instead of silently choosing one. Exclusion must cover both explicit public copying and any already-traced standalone public files. Verify generated output before sealing and during verification.
+
+If a source-tree compatibility fallback is retained for development/current checkout, it must be narrowly defined and remain behind both guarded URLs. Its presence is not an acceptable static-hosting deployment configuration. The production artifact should resolve its explicit private root and fail closed if missing, rather than silently searching public storage. Avoid adding arbitrary filesystem-root configuration unless it is needed and its trust/containment rules are clear.
+
+Do not silently move or delete live assets, change database references, alter production storage configuration, or purge hosted caches. Record the eventual deployment prerequisites: private assets provisioned and reconciled; public/CDN copies and previously cached variants removed or rendered inaccessible through an approved operator procedure. This task can prepare and qualify that procedure locally; it cannot attest that existing hosted copies have ceased to exist.
+
+## Inventory and acceptance
+
+1. Refresh candidate identity before changes. Inventory original paths, sizes and content hashes from an isolated copy; identify known source/fixture references and label database reference completeness honestly. No live tenant database query is implied. Keep originals and a before/after mapping. An absence of references in code does not prove an orphaned production asset.
+2. Reproduce the direct static leak first with synthetic bytes, retaining the already-protected API negative as a control. After repair, test both URL contracts for anonymous, forged cookie, wrong tenant, revoked/expired session, removed permission and denied module states. Assert no private body or hash leaks; authorized same-tenant reads must return the exact bytes and intended MIME/private-cache headers. Guard mocks alone do not qualify real signed-session revocation.
+3. Exercise GET and HEAD, range/conditional requests, query strings and redirect behavior. Include percent-encoded characters/separators, double encoding, dot segments, repeated slashes, backslashes and malformed encodings. Determine actual router normalization using native HTTP; direct handler invocation cannot establish encoded routing safety. Test sibling-prefix/traversal and filesystem-link refusal at the reader boundary. GET byte equality is a positive control; denied HEAD must not reveal private body or an existence-sensitive success.
+4. Exercise `/_next/image` with both legacy and API private URLs, encoded URL parameters and a request after an authorized direct read. No optimized private bytes should emerge for anonymous or unauthorized requests. If authorized legacy rendering formerly depended on optimization, repair the affected rendering contract to direct unoptimized delivery and verify it; do not solve continuity by weakening authentication or enabling shared caching.
+5. Inspect sealed artifact paths and hashes: no upload bytes beneath public/static output, private mapped bytes exactly match inventory, no duplicate traced copies, authorized references still resolve. Test the installed runtime independently of the source checkout. A minimal Next fixture can prove routing/packing mechanics but is not a current full-application artifact qualification.
+6. Check original files/reference inputs unchanged, owned processes stopped and ports released. Keep failed attempts and disclosure characterizations distinct from passing security regressions. Recovery restores availability from preserved originals into private storage; it must not restore the public exposure.
+
+## Review disposition
+
+An explicit pre-files guarded legacy route plus private runtime asset packaging is a suitable small repair direction. Middleware-only denial, cache headers alone, or excluding files without an authorized-read continuity proof is insufficient. Final acceptance requires the concrete patch, source identity and independently inspected runtime/artifact evidence. Existing production/CDN state remains outside this local authorization.

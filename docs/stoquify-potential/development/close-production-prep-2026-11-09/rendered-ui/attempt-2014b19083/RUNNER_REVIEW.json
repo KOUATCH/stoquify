@@ -1,0 +1,69 @@
+{
+  "checkedAt": "2026-11-09T19:52:00.975Z",
+  "runnerSha256": "e4392760355903e882d0c85286639c1febe868f4d5c0c1977bdb09728a6fc94c",
+  "initial": [
+    {
+      "path": "app/globals.css",
+      "sha256": "07118192d482007650eeac42ccd1a37c0c9fbbd6f7cbaa199774a0f4728fdd9f"
+    },
+    {
+      "path": "app/public-contours.css",
+      "sha256": "bb07597416699370283bdbcad1fe3cd951090006e969040351623c5080217992"
+    },
+    {
+      "path": "components/accounting/CloseAssuranceCenter.tsx",
+      "sha256": "631a08069a157463388d62606e8f90ba0ef65240268ce8ee5ae736e724b71f51"
+    },
+    {
+      "path": "hooks/accounting/useCloseAssurance.ts",
+      "sha256": "bed42feed89332f298323a451ecae28d6718701c721f6ba1e4ca09b6ff3d59be"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "tailwind.config.ts",
+      "sha256": "5929ece1e683fcba92d08ac5646cd15b32aaabf3cdcf31f838a091c78bef0f8a"
+    }
+  ],
+  "classification": "Real browser rendering of current components/hooks with explicitly MOCKED AUTH/ACTIONS. No authenticated application, database, statutory or hosted-origin qualification.",
+  "toolchain": "Installed Next bundled Webpack + explicit TypeScript transpileModule loader; no Next/tsconfig/dotenv setup; real Tailwind3/app tokens",
+  "effects": [
+    "New owned fixture bundle/CSS/receipts/downloads/screenshots",
+    "Ephemeral127.0.0.1 static HTTP listener",
+    "Owned headless installed Edge browser"
+  ],
+  "boundaries": [
+    "No package installation",
+    "No application server or database",
+    "No live provider calls",
+    "No private credentials",
+    "External browser requests aborted"
+  ],
+  "environmentVariableNames": [
+    "APPDATA",
+    "ComSpec",
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "LOCALAPPDATA",
+    "NEXT_TELEMETRY_DISABLED",
+    "NODE_ENV",
+    "NUMBER_OF_PROCESSORS",
+    "PATHEXT",
+    "Path",
+    "ProgramFiles",
+    "ProgramFiles(x86)",
+    "SHADOW_DATABASE_URL",
+    "SystemDrive",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ]
+}

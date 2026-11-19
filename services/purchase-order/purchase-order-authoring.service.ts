@@ -1,5 +1,6 @@
 import "server-only"
 import { Prisma } from "@prisma/client"
+import { z } from "zod"
 import { db } from "@/prisma/db"
 import { expandPermissions, hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { isUsableAccount } from "@/services/roles/role-custodian-policy"
@@ -7,6 +8,7 @@ import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.
 import { BusinessRuleError, ConflictError, ForbiddenError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import { hashBusinessPayload, recordBusinessEventInTx, markBusinessEventAppliedInTx } from "@/services/events/business-event.service"
 import { createPurchaseOrderInTx } from "./purchase-order.service"
+import { CreatePurchaseOrderSchema, ClonePurchaseOrderSchema } from "./purchase-order.schemas"
 import { normalizePurchaseAuthoring, purchaseAuthoringCommand, purchaseAuthoringContent, purchaseAuthoringList, purchaseAuthoringLookup, purchaseAuthoringReceipt, savePurchaseAuthoringInput, type PurchaseAuthoringView, type PurchaseAuthoringReceipt } from "./purchase-order-authoring-contracts"
 
 export type PurchaseAuthoringActor = { orgId: string; userId: string; permissions: readonly string[]; sessionId: string; sessionToken: string }
@@ -14,7 +16,9 @@ type Tx = Prisma.TransactionClient
 type Row = { id: string; organizationId: string; actorId: string; title: string; status: PurchaseAuthoringView["status"]; revision: number; content: unknown;
   lastSaveHash: string; commandHash: string | null; preparedAt: Date | null; resultOrderId: string | null; createdAt: Date; updatedAt: Date }
 export const purchaseAuthoringWritesEnabled = () => process.env.PURCHASE_ORDER_AUTHORING_WRITES_ENABLED === "true"
+export const purchaseAuthoringRolloutEnabled = () => purchaseAuthoringWritesEnabled() || process.env.PURCHASE_ORDER_AUTHORING_UI_ENABLED === "true"
 const eventKey = (id: string) => `purchase-order-create:${id}`
+const legacyIntentKey = (id: string) => `purchase-order-authoring-intent:${id}`
 const scope = (ctx: PurchaseAuthoringActor) => Prisma.sql`"organizationId" = ${ctx.orgId} AND "actorId" = ${ctx.userId}`
 
 async function moduleAccess(tx: Tx, ctx: PurchaseAuthoringActor, intent: "read" | "write") {
@@ -175,4 +179,65 @@ export async function discardPurchaseAuthoring(ctx: PurchaseAuthoringActor, inpu
     await audit(tx, ctx, rows[0], "PO_AUTHORING_DISCARDED")
     return view(rows[0])
   })
+}
+
+// Routing only, never a receipt or authorization decision. A retained request
+// stays with this owner when new-work flags are switched off during rollback.
+export async function hasRetainedPurchaseAuthoringIntent(orgId: string, actorId: string, id: string) {
+  z.string().uuid().parse(id)
+  return !!await db.businessEvent.findFirst({ where: { organizationId: orgId, actorId, eventSource: "INTERNAL", idempotencyKey: legacyIntentKey(id), eventType: "purchase_order.authoring_intent" }, select: { id: true } })
+}
+
+type LegacyCreationIntent = { id: string } & (
+  | { kind: "create"; payload: z.input<typeof CreatePurchaseOrderSchema> }
+  | { kind: "clone"; payload: z.input<typeof ClonePurchaseOrderSchema> }
+)
+
+/** Compatibility adapter. The existing authoring owner still saves, prepares,
+ * creates and recovers the only business result. The immutable intent freezes
+ * clone defaults/source content before any potentially lost intermediate reply. */
+export async function createPurchaseOrderFromLegacyIntent(ctx: PurchaseAuthoringActor, input: LegacyCreationIntent) {
+  const id = z.string().uuid().parse(input.id)
+  const payload = input.kind === "create"
+    ? CreatePurchaseOrderSchema.parse({ ...input.payload, organizationId: ctx.orgId, createdById: ctx.userId })
+    : ClonePurchaseOrderSchema.parse({ ...input.payload, organizationId: ctx.orgId })
+  const inputHash = hashBusinessPayload({ version: 1, kind: input.kind, payload })
+  const content = await transaction(ctx, async tx => {
+    const existing = await tx.businessEvent.findUnique({ where: { organizationId_eventSource_idempotencyKey: { organizationId: ctx.orgId, eventSource: "INTERNAL", idempotencyKey: legacyIntentKey(id) } } })
+    if (existing) {
+      const stored = existing.payload as Record<string, unknown>
+      if (existing.actorId !== ctx.userId || existing.eventType !== "purchase_order.authoring_intent" || existing.status !== "APPLIED" || existing.payloadHash !== hashBusinessPayload(existing.payload) || stored.inputHash !== inputHash || stored.kind !== input.kind || stored.draftId !== id) throw new IdempotencyConflictError()
+      return purchaseAuthoringContent.parse(stored.content)
+    }
+    if (await rowById(tx, ctx, id, true)) throw new IdempotencyConflictError()
+    await writeAllowed(tx, ctx)
+    let order: z.infer<typeof CreatePurchaseOrderSchema>
+    if (input.kind === "create") order = CreatePurchaseOrderSchema.parse(payload)
+    else {
+      const clone = ClonePurchaseOrderSchema.parse(payload)
+      await tx.$queryRaw`SELECT id FROM purchase_orders WHERE id = ${clone.id} AND "organizationId" = ${ctx.orgId} FOR SHARE`
+      const source = await tx.purchaseOrder.findFirst({ where: { id: clone.id, organizationId: ctx.orgId, deletedAt: null }, include: { lines: { orderBy: { id: "asc" } } } })
+      if (!source) throw new NotFoundError()
+      const overrides = clone.overrides ?? {}
+      order = CreatePurchaseOrderSchema.parse({ organizationId: ctx.orgId, createdById: ctx.userId,
+        supplierId: overrides.supplierId ?? source.supplierId, locationId: overrides.locationId ?? source.locationId,
+        date: overrides.date ?? new Date().toISOString().slice(0, 10), expectedDeliveryDate: overrides.expectedDeliveryDate ?? source.expectedDeliveryDate?.toISOString().slice(0, 10),
+        paymentTerms: overrides.paymentTerms ?? source.paymentTerms ?? "Net 30 days", notes: overrides.notes ?? source.notes ?? `Cloned from ${source.orderNumber}`,
+        shippingCost: overrides.shippingCost ?? Number(source.shippingCost), orderLines: source.lines.map(line => ({ itemId: line.itemId, quantity: Number(line.orderedQuantity), unitPrice: Number(line.unitCost), taxRate: Number(line.taxRate), discount: Number(line.discount), notes: line.notes ?? "" })) })
+    }
+    // Legacy forms submit ISO timestamps; the durable contract uses calendar days.
+    const day = (value: string) => z.string().datetime({ offset: true }).safeParse(value).success ? value.slice(0, 10) : value
+    const frozen = purchaseAuthoringContent.parse({ supplierId: order.supplierId, locationId: order.locationId, date: day(order.date), expectedDeliveryDate: day(order.expectedDeliveryDate),
+      paymentTerms: order.paymentTerms ?? "Net 30 days", notes: order.notes ?? "", shippingCost: String(order.shippingCost),
+      orderLines: order.orderLines.map(line => ({ itemId: line.itemId, quantity: String(line.quantity), unitPrice: String(line.unitPrice), taxRate: String(line.taxRate), discount: String(line.discount), notes: line.notes ?? "" })) })
+    normalizePurchaseAuthoring(frozen, ctx.orgId, ctx.userId)
+    const recorded = await recordBusinessEventInTx(tx, { organizationId: ctx.orgId, actorId: ctx.userId, eventSource: "INTERNAL", eventType: "purchase_order.authoring_intent", schemaVersion: 1, idempotencyKey: legacyIntentKey(id), occurredAt: new Date(), payload: { draftId: id, kind: input.kind, inputHash, content: frozen }, outboxMessages: [] })
+    await markBusinessEventAppliedInTx(tx, ctx.orgId, recorded.event.id)
+    return frozen
+  })
+  const saved = await savePurchaseAuthoring(ctx, { id, expectedRevision: 0, title: input.kind === "clone" ? "Purchase order clone" : "Purchase order", content })
+  if (saved.receipt) return saved
+  const prepared = await preparePurchaseAuthoring(ctx, { id, expectedRevision: 1 })
+  if (prepared.receipt) return prepared
+  return createPurchaseOrderFromAuthoring(ctx, { id, expectedRevision: prepared.revision })
 }

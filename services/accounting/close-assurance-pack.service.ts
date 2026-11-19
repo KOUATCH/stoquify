@@ -14,6 +14,7 @@ import { hasRbacPermission } from "@/lib/security/rbac-permissions";
 import { db } from "@/prisma/db";
 import {
   BusinessRuleError,
+  ConflictError,
   NotFoundError,
 } from "@/services/_shared/action-errors";
 import { recordBusinessEventInTx } from "@/services/events/business-event.service";
@@ -21,9 +22,10 @@ import {
   reconcileInventoryClass3,
   type InventoryClass3ReconciliationResult,
 } from "@/services/inventory/inventory-valuation.service";
-import type { ExportClosePackInput } from "./close-assurance.schemas";
+import type { ExportClosePackInput, GetRetainedClosePackExportInput, ListClosePackExportsInput } from "./close-assurance.schemas";
 import { assertCloseAssessmentCurrent, deriveCloseAssessmentSelection, lockCloseAssessmentOrderInTx, readCloseAssessmentOrderInTx } from "./close-assessment-order.service";
 import { lockCloseSourceRevisionInTx, closeSourceRevisionMatches, type CloseSourceRevision } from "./close-source-revision.service";
+import { lockCloseWriteAuthorityInTx, lockClosePackRetrievalAuthorityInTx } from "./close-evidence-acceptance-authority.service";
 
 export type ClosePackExportMode = "DRAFT_NOT_CERTIFIED" | "CERTIFIED";
 
@@ -36,6 +38,7 @@ export type ExportClosePackControl = {
   actorPermissions?: readonly string[];
   lastAuthAt?: Date | number | string | null;
   now?: Date | number | string | null;
+  session?: { id: string; token: string } | null;
 };
 
 export type ClosePackExportResult = {
@@ -46,6 +49,8 @@ export type ClosePackExportResult = {
   mimeType: "application/json";
   content: string;
   contentHash: string;
+  /** SHA-256 of the exact UTF-8 download bytes; contentHash keeps its semantic meaning. */
+  documentDigest: string;
   watermarkId: string;
   mode: ClosePackExportMode;
   isCertified: boolean;
@@ -54,6 +59,21 @@ export type ClosePackExportResult = {
   correlationId: string;
   redactionNote: string;
   certificationLimitations: string[];
+  replayed?: boolean;
+  historicalNotice?: string;
+};
+
+export type ClosePackExportReceipt = {
+  exportId: string;
+  closeRunId: string;
+  periodId: string;
+  mode: ClosePackExportMode;
+  isCertified: boolean;
+  exportedAt: string;
+  contentHash: string;
+  documentDigest: string | null;
+  retained: boolean;
+  correlationId: string | null;
 };
 
 export type CloseCertificationInvalidationSourceCode =
@@ -2098,6 +2118,110 @@ export async function recordCloseCertificationInvalidationsForSource(
   );
 }
 
+const retainedExportSelect = {
+  id: true, organizationId: true, periodId: true, closeRunId: true,
+  fileType: true, watermarkId: true, contentHash: true, rowCount: true, isCertified: true,
+  exportedById: true, exportedAt: true, correlationId: true,
+  canonicalContent: true, canonicalContentSha256: true, exportRequestHash: true,
+} as const;
+
+type RetainedExport = {
+  id: string; organizationId: string; periodId: string; closeRunId: string;
+  fileType: string; watermarkId: string; contentHash: string; rowCount: number; isCertified: boolean;
+  exportedById: string | null; exportedAt: Date; correlationId: string | null;
+  canonicalContent: string | null; canonicalContentSha256: string | null; exportRequestHash: string | null;
+};
+
+function closePackRequestHash(organizationId: string, closeRunId: string, mode: ClosePackExportMode) {
+  return sha256(stableStringify({ version: 1, organizationId, closeRunId, mode }));
+}
+
+function retainedExportResult(row: RetainedExport): ClosePackExportResult {
+  if (!row.canonicalContent || !row.canonicalContentSha256 || !row.exportRequestHash) {
+    throw new BusinessRuleError("The original close pack document was not retained. It cannot be regenerated from this receipt.");
+  }
+  const invalid = () => new ConflictError("The retained close pack document failed its integrity check.");
+  if (sha256(row.canonicalContent) !== row.canonicalContentSha256) throw invalid();
+  let payload: Record<string, unknown>;
+  try { payload = metadataRecord(JSON.parse(row.canonicalContent)); } catch { throw invalid(); }
+  const exported = metadataRecord(payload.export);
+  const mode: ClosePackExportMode = row.isCertified ? "CERTIFIED" : "DRAFT_NOT_CERTIFIED";
+  if (!row.correlationId || payload.kind !== "AQSTOQFLOW_CLOSE_ASSURANCE_PACK" || payload.version !== 1 || row.fileType !== "json" ||
+      metadataRecord(payload.organization).id !== row.organizationId || metadataRecord(payload.period).id !== row.periodId ||
+      metadataRecord(payload.closeRun).id !== row.closeRunId || exported.exportId !== row.id || exported.mode !== mode ||
+      exported.contentHash !== row.contentHash || exported.watermarkId !== row.watermarkId ||
+      exported.generatedAt !== row.exportedAt.toISOString() || exported.generatedById !== row.exportedById ||
+      exported.correlationId !== row.correlationId || metadataRecord(payload.summaries).rowCount !== row.rowCount ||
+      row.exportRequestHash !== closePackRequestHash(row.organizationId, row.closeRunId, mode) ||
+      typeof exported.redaction !== "string" || !Array.isArray(exported.certificationLimitations) ||
+      !exported.certificationLimitations.every(value => typeof value === "string")) throw invalid();
+  // contentHash retains the original semantic-hash algorithm. JSON emission can
+  // omit undefined projection fields, so it must not be recomputed from parsed
+  // download bytes; the separate byte digest and immutable receipt bind them.
+  return {
+    exportId: row.id, closeRunId: row.closeRunId, periodId: row.periodId,
+    fileName: `${row.watermarkId}.json`, mimeType: "application/json", content: row.canonicalContent,
+    contentHash: row.contentHash, documentDigest: row.canonicalContentSha256, watermarkId: row.watermarkId,
+    mode, isCertified: row.isCertified, rowCount: row.rowCount, generatedAt: row.exportedAt.toISOString(),
+    correlationId: row.correlationId!, redactionNote: exported.redaction,
+    certificationLimitations: exported.certificationLimitations as string[], replayed: true,
+    historicalNotice: "Retained historical snapshot; current close certification must be checked separately.",
+  };
+}
+
+async function auditRetainedExportRead(tx: Prisma.TransactionClient, organizationId: string, row: RetainedExport, control: ExportClosePackControl, recovery: boolean) {
+  await tx.ledgerAuditEvent.create({ data: {
+    organizationId, actorId: control.actorId ?? null, action: "CLOSE_PACK_RETAINED_RETRIEVED",
+    resourceType: "ClosePackExport", resourceId: row.id, message: "Retained close pack document retrieved",
+    metadata: jsonObject({ closeRunId: row.closeRunId, periodId: row.periodId, contentHash: row.contentHash,
+      documentDigest: row.canonicalContentSha256, requestReplay: recovery, historicalSnapshot: true }),
+  } });
+}
+
+export async function listClosePackExports(organizationId: string, input: ListClosePackExportsInput, control: ExportClosePackControl = {}): Promise<ClosePackExportReceipt[]> {
+  assertExportPermission("DRAFT_NOT_CERTIFIED", control);
+  return db.$transaction(async tx => {
+    const authority = await lockClosePackRetrievalAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId: control.actorId ?? "", session: control.session,
+    }, { certified: false });
+    const rows = await tx.closePackExport.findMany({
+      where: { organizationId, closeRunId: input.closeRunId, closeRun: { organizationId, period: { organizationId } } },
+      orderBy: [{ exportedAt: "desc" }, { id: "desc" }], take: 50,
+      select: { id: true, closeRunId: true, periodId: true, isCertified: true, exportedAt: true, contentHash: true,
+        canonicalContentSha256: true, exportRequestHash: true, correlationId: true },
+    });
+    await authority.revalidate();
+    return rows.map<ClosePackExportReceipt>(row => ({ exportId: row.id, closeRunId: row.closeRunId, periodId: row.periodId,
+      mode: row.isCertified ? "CERTIFIED" : "DRAFT_NOT_CERTIFIED", isCertified: row.isCertified,
+      exportedAt: row.exportedAt.toISOString(), contentHash: row.contentHash, documentDigest: row.canonicalContentSha256,
+      retained: Boolean(row.canonicalContentSha256 && row.exportRequestHash), correlationId: row.correlationId }));
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
+}
+
+export async function getRetainedClosePackExport(organizationId: string, input: GetRetainedClosePackExportInput, control: ExportClosePackControl = {}): Promise<ClosePackExportResult> {
+  const startedAt = Date.now(), now = control.now ? new Date(control.now) : new Date();
+  assertExportPermission("DRAFT_NOT_CERTIFIED", control);
+  if (input.mode === "CERTIFIED") requireFreshControl(control, now);
+  return db.$transaction(async tx => {
+    const authority = await lockClosePackRetrievalAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId: control.actorId ?? "", session: control.session,
+    }, { certified: input.mode === "CERTIFIED" });
+    const row = await tx.closePackExport.findFirst({
+      where: { id: input.exportId, organizationId, closeRun: { organizationId, period: { organizationId } } }, select: retainedExportSelect,
+    });
+    if (!row) throw new NotFoundError("Close pack export not found");
+    if (row.organizationId !== organizationId) throw new NotFoundError("Close pack export not found");
+    if (row.isCertified !== (input.mode === "CERTIFIED")) throw new ConflictError("The requested export mode does not match the retained receipt.");
+    const scopedRun = await tx.closeRun.findFirst({ where: { id: row.closeRunId, organizationId, periodId: row.periodId, period: { organizationId } }, select: { id: true } });
+    if (!scopedRun) throw new NotFoundError("Close run not found");
+    const result = retainedExportResult(row);
+    await auditRetainedExportRead(tx, organizationId, row, control, false);
+    if (input.mode === "CERTIFIED") requireFreshControl(control, new Date(now.getTime() + Date.now() - startedAt));
+    await authority.revalidate();
+    return result;
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
+}
+
 export async function exportClosePack(
   organizationId: string,
   input: ExportClosePackInput,
@@ -2108,11 +2232,33 @@ export async function exportClosePack(
   const mode = exportMode(input);
   const correlationId = input.correlationId ?? randomUUID();
   const exportId = randomUUID();
+  const requestHash = closePackRequestHash(organizationId, input.closeRunId, mode);
 
   assertExportPermission(mode, control);
   if (mode === "CERTIFIED") requireFreshControl(control, now);
 
   const outcome = await db.$transaction<ClosePackExportResult | { blockedReason: string }>(async (tx) => {
+    const authority = await lockCloseWriteAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId: control.actorId ?? "", session: control.session,
+    }, mode === "CERTIFIED" ? "certified-export" : "draft-export");
+    const requestKey = JSON.stringify(["close-pack-export-request", organizationId, correlationId]);
+    await tx.$queryRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtextextended(${requestKey}, 0))::text`);
+    await authority.revalidate();
+    const retained = await tx.closePackExport.findMany({ where: { organizationId, correlationId }, select: retainedExportSelect, orderBy: { id: "asc" }, take: 2 });
+    if (retained.length > 1) throw new ConflictError("The export request identity is ambiguous. Review the retained receipts before retrying.");
+    if (retained.length === 1) {
+      const row = retained[0];
+      if (row.organizationId !== organizationId || row.closeRunId !== input.closeRunId || row.isCertified !== (mode === "CERTIFIED") || row.exportRequestHash !== requestHash) {
+        throw new ConflictError("The export request identity was already used for a different close pack.");
+      }
+      const scopedRun = await tx.closeRun.findFirst({ where: { id: row.closeRunId, organizationId, periodId: row.periodId, period: { organizationId } }, select: { id: true } });
+      if (!scopedRun) throw new NotFoundError("Close run not found");
+      const result = retainedExportResult(row);
+      await auditRetainedExportRead(tx, organizationId, row, control, true);
+      if (mode === "CERTIFIED") requireFreshControl(control, new Date(now.getTime() + Date.now() - startedAt));
+      await authority.revalidate();
+      return result;
+    }
     let sourceRevision: CloseSourceRevision | null = null;
     if (mode === "CERTIFIED") {
       const target = await tx.closeRun.findFirst({
@@ -2133,6 +2279,7 @@ export async function exportClosePack(
           staleReason: "The close source revision is missing or changed. Run a new assessment before certification.",
           correlationId,
         }, control, true);
+        await authority.revalidate();
         return { blockedReason: "The close source revision is missing or changed. Run a new assessment before certification." };
       }
       const order = await readCloseAssessmentOrderInTx(tx, organizationId, run.periodId);
@@ -2202,6 +2349,7 @@ export async function exportClosePack(
         );
         // Commit the detected invalidation before returning the domain denial.
         // Retrying an already-invalidated run must retain its original evidence.
+        await authority.revalidate();
         return { blockedReason: blockers[0] };
       }
       throw new BusinessRuleError(
@@ -2240,10 +2388,13 @@ export async function exportClosePack(
     );
     const fileName = `${watermarkId}.json`;
     const isCertified = mode === "CERTIFIED";
+    const documentDigest = sha256(content);
 
     if (isCertified) requireFreshControl(control, new Date(now.getTime() + Date.now() - startedAt));
+    await authority.revalidate();
     const closePackExport = await tx.closePackExport.create({
       data: {
+        id: exportId,
         organizationId,
         periodId: run.periodId,
         closeRunId: run.id,
@@ -2255,6 +2406,9 @@ export async function exportClosePack(
         exportedById: control.actorId ?? null,
         exportedAt: now,
         correlationId,
+        canonicalContent: content,
+        canonicalContentSha256: documentDigest,
+        exportRequestHash: requestHash,
         metadata: jsonObject({
           mode,
           trustLevel: closePackTrustLevelFromMetadata(run.metadata),
@@ -2355,6 +2509,8 @@ export async function exportClosePack(
       },
     });
 
+    if (isCertified) requireFreshControl(control, new Date(now.getTime() + Date.now() - startedAt));
+    await authority.revalidate();
     return {
       exportId: closePackExport.id,
       closeRunId: run.id,
@@ -2363,6 +2519,7 @@ export async function exportClosePack(
       mimeType: "application/json",
       content,
       contentHash,
+      documentDigest,
       watermarkId,
       mode,
       isCertified,
@@ -2371,8 +2528,9 @@ export async function exportClosePack(
       correlationId,
       redactionNote,
       certificationLimitations: certificationLimitations(mode),
+      replayed: false,
     };
-  }, mode === "CERTIFIED" ? { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted } : undefined);
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
   if ("blockedReason" in outcome) {
     throw new BusinessRuleError(`Certified close pack is blocked: ${outcome.blockedReason}`);
   }

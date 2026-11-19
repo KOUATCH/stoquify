@@ -1,0 +1,198 @@
+// Actual item action/service/RBAC exports against fresh PostgreSQL.
+// Better Auth and Next transport/cache invalidation are explicit stubs, not HTTP evidence.
+jest.mock("server-only", () => ({}))
+jest.mock("next/headers", () => ({ headers: jest.fn(async () => new Headers()) }))
+jest.mock("next/cache", () => ({ revalidatePath: jest.fn(), revalidateTag: jest.fn() }))
+jest.mock("@/lib/auth", () => ({ auth: { api: { getSession: jest.fn() } } }))
+jest.mock("@/prisma/db", () => {
+  const { PrismaClient } = require("@prisma/client")
+  const target = process.env.P04R03_DATABASE_URL
+  if (process.env.NODE_ENV !== "test" || !target || !process.env.P04R03_CLUSTER) throw Error("Explicit R03 target required")
+  const url = new URL(target)
+  if (url.hostname !== "127.0.0.1" || url.port !== process.env.P04R03_PORT || url.username !== "p04r03" || url.pathname !== "/stoquify_local_p04_r03_20261104_r3") throw Error("Wrong R03 target")
+  return { db: new PrismaClient({ datasources: { db: { url: target } }, transactionOptions: { maxWait: 15000, timeout: 30000 } }) }
+})
+
+import { createHash, randomUUID } from "node:crypto"
+import fs from "node:fs"
+import path from "node:path"
+import { db } from "@/prisma/db"
+import { auth } from "@/lib/auth"
+import * as actions from "@/actions/item/items"
+import { revalidatePath, revalidateTag } from "next/cache"
+
+const getSession = auth.api.getSession as unknown as jest.Mock
+const observations: unknown[] = []
+const privateSentinel = "P04R03_PRIVATE_DATABASE_DETAIL_SENTINEL"
+const permissions = ["inventory.items.read", "inventory.items.update", "inventory.items.delete", "inventory.stock.adjust"]
+const digest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex")
+let serial = 0
+beforeAll(async () => {
+  const directory = await db.$queryRawUnsafe<Array<{ data_directory: string }>>("SHOW data_directory")
+  expect(fs.realpathSync(directory[0].data_directory).toLowerCase()).toBe(fs.realpathSync(process.env.P04R03_CLUSTER!).toLowerCase())
+})
+afterAll(async () => {
+  await db.$disconnect()
+  fs.writeFileSync(path.join(process.env.P04R03_EVIDENCE!, "native-observations-retry02.json"), JSON.stringify({ evidenceClass: "real database/action/service/RBAC; Better Auth and Next transport stubbed", observations }, null, 2), { flag: "wx" })
+})
+beforeEach(() => { getSession.mockReset(); jest.mocked(revalidatePath).mockClear(); jest.mocked(revalidateTag).mockClear() })
+
+async function fixture(grants = permissions) {
+  const prefix = "r03-" + ++serial + "-" + randomUUID().slice(0, 8)
+  const org = prefix + "-org", foreign = prefix + "-foreign", actor = prefix + "-actor"
+  await db.organization.createMany({ data: [org, foreign].map(id => ({ id, name: id, slug: id })) })
+  const role = await db.role.create({ data: { organizationId: org, code: "inventory_operator", nameEn: "Inventory operator", permissions: grants } })
+  await db.user.create({ data: { id: actor, name: actor, email: actor + "@example.invalid", organizationId: org, emailVerified: true, isVerified: true, roles: { connect: { id: role.id } } } })
+  const session = await db.session.create({ data: { userId: actor, token: randomUUID(), expiresAt: new Date(Date.now() + 3600000) } })
+  // Stub transports the persisted fixture subject. Its expiration validation is deliberately NOT claimed.
+  getSession.mockResolvedValue({ session: { id: session.id, token: session.token }, user: { id: actor, organizationId: org } })
+  const item = await db.item.create({ data: { organizationId: org, nameEn: "Authorized item", slug: prefix + "-item", sku: prefix + "-sku", imageUrls: [], costPrice: 1, sellingPrice: 2 } })
+  const foreignItem = await db.item.create({ data: { organizationId: foreign, nameEn: privateSentinel, slug: prefix + "-foreign", sku: privateSentinel + prefix, imageUrls: [] } })
+  const location = await db.location.create({ data: { organizationId: org, name: "Authorized branch", code: "A" } })
+  const foreignLocation = await db.location.create({ data: { organizationId: foreign, name: privateSentinel, code: "F" } })
+  const category = await db.category.create({ data: { organizationId: org, titleEn: "Authorized category", slug: prefix } })
+  const foreignCategory = await db.category.create({ data: { organizationId: foreign, titleEn: privateSentinel, slug: prefix } })
+  return { prefix, org, foreign, actor, role, session, item, foreignItem, location, foreignLocation, category, foreignCategory }
+}
+type Fixture = Awaited<ReturnType<typeof fixture>>
+type Case = { name: string; permission: string; action: (input: unknown) => Promise<unknown>; input: (f: Fixture) => Record<string, unknown> }
+const base = (f: Fixture) => ({ id: f.item.id, organizationId: f.org })
+const cases: Case[] = [
+  { name: "getItemAction", permission: "inventory.items.read", action: actions.getItemAction, input: base },
+  { name: "listItemsAction", permission: "inventory.items.read", action: actions.listItemsAction, input: f => ({ organizationId: f.org }) },
+  { name: "updateItemBasicInfoAction", permission: "inventory.items.update", action: actions.updateItemBasicInfoAction, input: f => ({ ...base(f), nameEn: "Updated item" }) },
+  { name: "updateItemDetailsAction", permission: "inventory.items.update", action: actions.updateItemDetailsAction, input: f => ({ ...base(f), sku: f.prefix + "-changed" }) },
+  { name: "updateItemPricingAction", permission: "inventory.items.update", action: actions.updateItemPricingAction, input: f => ({ ...base(f), costPrice: 11, sellingPrice: 22 }) },
+  { name: "updateItemRelationsAction", permission: "inventory.items.update", action: actions.updateItemRelationsAction, input: f => ({ ...base(f), categoryId: f.category.id }) },
+  { name: "updateItemStockAction", permission: "inventory.items.update", action: actions.updateItemStockAction, input: f => ({ ...base(f), minStockLevel: 9, maxStockLevel: 19 }) },
+  { name: "updateItemTrackingAction", permission: "inventory.items.update", action: actions.updateItemTrackingAction, input: f => ({ ...base(f), isActive: false, isSerialTracked: true }) },
+  { name: "deleteItemAction", permission: "inventory.items.delete", action: actions.deleteItemAction, input: base },
+]
+async function state(f: Fixture) {
+  const tables = ["organizations", "users", "roles", "sessions", "items", "categories", "brands", "units", "tax_rates", "locations", "inventory_levels", "inventory_transactions", "serial_numbers", "stock_adjustments", "picture_assets", "ledger_posting_batches", "business_events", "business_event_outbox", "business_event_audits", "tenant_module_configurations", "tenant_module_grants", "tenant_module_configuration_commands"]
+  const result: Record<string, { count: number; sha256: string }> = {}
+  for (const table of tables) {
+    const where = table === "organizations" ? 'id = ANY($1::text[])' : table === "sessions" ? '"userId" IN (SELECT id FROM users WHERE "organizationId"=ANY($1::text[]))' : table === "inventory_levels" ? '"itemId" IN (SELECT id FROM items WHERE "organizationId"=ANY($1::text[]))' : '"organizationId"=ANY($1::text[])'
+    const rows = await db.$queryRawUnsafe<Array<{ value: unknown }>>(`SELECT to_jsonb(t) AS value FROM "${table}" t WHERE ${where}`, [f.org, f.foreign])
+    result[table] = { count: rows.length, sha256: digest(rows.map(row => JSON.stringify(row.value)).sort()) }
+  }
+  for (const [name, sql] of [
+    ["memberships", 'SELECT to_jsonb(t) AS value FROM "_UserRoles" t WHERE "B" IN (SELECT id FROM users WHERE "organizationId"=ANY($1::text[]))'],
+    ["stock_adjustment_lines", 'SELECT to_jsonb(t) AS value FROM stock_adjustment_lines t WHERE "adjustmentId" IN (SELECT id FROM stock_adjustments WHERE "organizationId"=ANY($1::text[]))'],
+  ]) {
+    const rows = await db.$queryRawUnsafe<Array<{ value: unknown }>>(sql, [f.org, f.foreign])
+    result[name] = { count: rows.length, sha256: digest(rows.map(row => JSON.stringify(row.value)).sort()) }
+  }
+  return result
+}
+async function noWrite(f: Fixture, name: string, work: () => Promise<unknown>, expected?: string) {
+  const before = await state(f), auditBefore = await db.auditLog.count({ where: { organizationId: { in: [f.org, f.foreign] } } })
+  const response: any = await work()
+  expect(response.success).toBe(false)
+  expect(response.data).toBeUndefined()
+  expect(typeof response.error).toBe("string")
+  if (expected) expect(response.error).toBe(expected)
+  const serialized = JSON.stringify(response)
+  expect(serialized).not.toContain(privateSentinel)
+  expect(serialized).not.toContain(f.session.token)
+  expect(serialized).not.toMatch(/Prisma|constraint|SELECT |UPDATE |stack|missing permission/)
+  const after = await state(f)
+  expect(after).toEqual(before)
+  expect(revalidatePath).not.toHaveBeenCalled()
+  expect(revalidateTag).not.toHaveBeenCalled()
+  observations.push({ name, response, before, after, securityAuditRowsAdded: (await db.auditLog.count({ where: { organizationId: { in: [f.org, f.foreign] } } })) - auditBefore })
+}
+
+it.each(cases)("$name denies freshly revoked database permission without business writes", async c => {
+  const f = await fixture()
+  await db.role.update({ where: { id: f.role.id }, data: { permissions: permissions.filter(p => p !== c.permission) } })
+  await noWrite(f, c.name + ":permission-revoked", () => c.action(c.input(f)))
+})
+it.each(cases)("$name denies unauthenticated transport without business writes", async c => {
+  const f = await fixture(); getSession.mockResolvedValue(null)
+  await noWrite(f, c.name + ":unauthenticated", () => c.action(c.input(f)))
+})
+it.each(cases)("$name permits authorized reads or persists the intended update", async c => {
+  const f = await fixture(), before = await state(f)
+  const response: any = await c.action(c.input(f))
+  expect(response.success).toBe(true)
+  expect(JSON.stringify(response)).not.toContain(privateSentinel)
+  const item = await db.item.findUniqueOrThrow({ where: { id: f.item.id } })
+  switch (c.name) {
+    case "getItemAction": expect(response.data.id).toBe(f.item.id); expect(await state(f)).toEqual(before); break
+    case "listItemsAction": expect(response.data.data.map((i: any) => i.id)).toEqual([f.item.id]); expect(await state(f)).toEqual(before); break
+    case "updateItemBasicInfoAction": expect(item.nameEn).toBe("Updated item"); break
+    case "updateItemDetailsAction": expect(item.sku).toBe(f.prefix + "-changed"); break
+    case "updateItemPricingAction": expect(item.costPrice.toNumber()).toBe(11); expect(item.sellingPrice.toNumber()).toBe(22); break
+    case "updateItemRelationsAction": expect(item.categoryId).toBe(f.category.id); break
+    case "updateItemStockAction": expect(item.minStockLevel.toNumber()).toBe(9); expect(item.maxStockLevel?.toNumber()).toBe(19); expect(await db.stockAdjustment.count({ where: { organizationId: f.org } })).toBe(0); break
+    case "updateItemTrackingAction": expect(item.isActive).toBe(false); expect(item.trackSerialNumbers).toBe(true); break
+    case "deleteItemAction": expect(item.isActive).toBe(false); expect(item.deletedAt).not.toBeNull(); expect(response.data.id).toBe(f.item.id); break
+  }
+  const foreign = await db.item.findUniqueOrThrow({ where: { id: f.foreignItem.id } })
+  expect(foreign).toEqual(f.foreignItem)
+  if (c.name.includes("update") || c.name === "deleteItemAction") expect(revalidateTag).toHaveBeenCalledWith("items")
+  observations.push({ name: c.name + ":authorized-positive", expectedMutationVerified: true, foreignItemUnchanged: true })
+})
+it.each(cases.filter(c => c.name !== "listItemsAction"))("$name rejects foreign item identifiers without business writes", async c => {
+  const f = await fixture()
+  await noWrite(f, c.name + ":foreign-item", () => c.action({ ...c.input(f), id: f.foreignItem.id, organizationId: f.foreign }), "Item not found")
+})
+it("listItemsAction derives tenant from the current actor despite a forged organization", async () => {
+  const f = await fixture(), before = await state(f)
+  const response = await actions.listItemsAction({ organizationId: f.foreign })
+  expect(response.success).toBe(true)
+  if (!response.success) throw Error("Unexpected list failure")
+  expect(response.data.data.map(i => i.id)).toEqual([f.item.id])
+  expect(JSON.stringify(response)).not.toContain(privateSentinel)
+  expect(await state(f)).toEqual(before)
+  observations.push({ name: "list:forged-organization", before, after: await state(f), actorTenantOnly: true })
+})
+it("stock secondary permission denial occurs before policy/adjustment writes", async () => {
+  const f = await fixture(["inventory.items.update"])
+  await noWrite(f, "stock:secondary-permission", () => actions.updateItemStockAction({ ...base(f), minStockLevel: 999, adjustInventory: { locationId: f.location.id, deltaQty: 3 } }))
+})
+it("authorized nonzero stock change submits an adjustment without posting stock or ledger", async () => {
+  const f = await fixture(), before = await state(f)
+  const response = await actions.updateItemStockAction({ ...base(f), minStockLevel: 7, adjustInventory: { locationId: f.location.id, deltaQty: 3, unitCost: 2 } })
+  expect(response.success).toBe(true)
+  expect(response.message).toBe("Stock change submitted for approval")
+  const item = await db.item.findUniqueOrThrow({ where: { id: f.item.id } })
+  expect(item.minStockLevel.toNumber()).toBe(7)
+  const adjustments = await db.stockAdjustment.findMany({ where: { organizationId: f.org }, include: { lines: true } })
+  expect(adjustments).toHaveLength(1)
+  expect(adjustments[0]).toMatchObject({ status: "SUBMITTED", locationId: f.location.id, createdById: f.actor })
+  expect(adjustments[0].lines).toHaveLength(1)
+  expect(adjustments[0].lines[0].adjustedQuantity.toNumber()).toBe(3)
+  expect(adjustments[0].lines[0].itemId).toBe(f.item.id)
+  const after = await state(f)
+  for (const table of ["inventory_levels", "inventory_transactions", "ledger_posting_batches"]) expect(after[table]).toEqual(before[table])
+  expect(await db.item.findUniqueOrThrow({ where: { id: f.foreignItem.id } })).toEqual(f.foreignItem)
+  expect(await db.stockAdjustment.count({ where: { organizationId: f.foreign } })).toBe(0)
+  observations.push({ name: "stock:authorized-nonzero", before, after, submittedAdjustment: true, quantityDelta: 3, postedStockOrLedger: false, foreignItemUnchanged: true })
+})
+it("stock service rejection rolls back the earlier policy update", async () => {
+  const f = await fixture()
+  await noWrite(f, "stock:foreign-location-rollback", () => actions.updateItemStockAction({ ...base(f), minStockLevel: 999, adjustInventory: { locationId: f.foreignLocation.id, deltaQty: 3 } }), "Inventory location not found or inactive for this organization.")
+})
+it("stock approved business rule remains safe and rolls back policy changes", async () => {
+  const f = await fixture()
+  await db.item.update({ where: { id: f.item.id }, data: { trackInventory: false } })
+  await noWrite(f, "stock:not-tracked-rollback", () => actions.updateItemStockAction({ ...base(f), minStockLevel: 999, adjustInventory: { locationId: f.location.id, deltaQty: 3 } }), "Item is not inventory-tracked.")
+})
+it("details preserves the approved duplicate-SKU conflict without a write", async () => {
+  const f = await fixture()
+  await db.item.create({ data: { organizationId: f.org, nameEn: "Other item", slug: f.prefix + "-other", sku: "taken", imageUrls: [] } })
+  await noWrite(f, "details:duplicate-sku", () => actions.updateItemDetailsAction({ ...base(f), sku: "taken" }), "Another item with this SKU already exists")
+})
+it("relations hides real Prisma foreign-reference exception details without writes", async () => {
+  const f = await fixture()
+  await noWrite(f, "relations:foreign-reference-prisma", () => actions.updateItemRelationsAction({ ...base(f), categoryId: f.foreignCategory.id }))
+})
+it("real database trigger fault is normalized and atomic mutation is rolled back", async () => {
+  const f = await fixture()
+  await db.$executeRawUnsafe(`CREATE FUNCTION p04r03_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.id = '${f.item.id}' THEN RAISE EXCEPTION '${privateSentinel}'; END IF; RETURN NEW; END; $$`)
+  await db.$executeRawUnsafe('CREATE TRIGGER p04r03_fault BEFORE UPDATE ON items FOR EACH ROW EXECUTE FUNCTION p04r03_fault()')
+  try { await noWrite(f, "basic:database-trigger-fault", () => actions.updateItemBasicInfoAction({ ...base(f), nameEn: "Must roll back" })) }
+  finally { await db.$executeRawUnsafe('DROP TRIGGER p04r03_fault ON items'); await db.$executeRawUnsafe('DROP FUNCTION p04r03_fault()') }
+})

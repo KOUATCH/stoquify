@@ -1,0 +1,94 @@
+{
+  "startedAt": "2026-11-10T11:14:23.411Z",
+  "passed": true,
+  "databaseRowMutations": 0,
+  "historical": {
+    "mainResultSha256": "81a50e5a71168c93b4d2af6c9a21010cebeead3303f778cbafc70200f39e2878",
+    "failedGroup": {
+      "id": "R06-C-login",
+      "startedAt": "2026-11-10T11:08:16.657Z",
+      "passed": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(new Date(after.user.lastLogin).getTime()>=requestedAt&&new Date(after.user.lastLogin).getTime()<=finishedAt)\n",
+      "failureClass": "observed_assertion_failure",
+      "finishedAt": "2026-11-10T11:08:20.663Z"
+    },
+    "signInsWithinGroup": [
+      {
+        "alias": "active",
+        "at": "2026-11-10T11:08:18.700Z",
+        "status": 200
+      }
+    ],
+    "before": {
+      "path": "snapshot-credential-positive-before-1794308898569-3d9d6e4a-36bf-4fc0-a8b4-4deff30e56a5.json",
+      "sha256": "e58553453d42d49d7f280c3426d1af9b6c9540c1bdef33108ad49216088a0bb4",
+      "at": "2026-11-10T11:08:18.568Z"
+    },
+    "after": {
+      "path": "snapshot-credential-positive-after-1794308900612-da73b8b2-986d-4053-803d-7f76c3c7a14c.json",
+      "sha256": "246d2341c0dfdbdcd04e6d93708f281e7fca4131aeb62c435deaa7335f2576eb",
+      "at": "2026-11-10T11:08:20.611Z"
+    },
+    "lastLoginFieldHashes": {
+      "before": "8e9b87e64254ef36dee16af445bf798f3248b52a9fb049830e46a1744832fd8d",
+      "after": "6d631987d1edf223b45cf808706925a619a911056fd222a3d47260b5c5d61696"
+    },
+    "limit": "Original exact requestedAt/finishedAt millisecond variables and raw lastLogin value were not persisted by the failed group. Its group bounds, sign-in start and hashed before/after snapshots remain preserved. Current database values below may reflect later valid logins and do not reconstruct the historical assertion."
+  },
+  "server": {
+    "timezone": "Europe/Paris",
+    "clock": "2026-11-10T11:14:24.737Z",
+    "local_timestamp": "2026-11-10 12:14:23.53404"
+  },
+  "columns": [
+    {
+      "column_name": "lastFailedLogin",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "datetime_precision": 3
+    },
+    {
+      "column_name": "lastLogin",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "datetime_precision": 3
+    },
+    {
+      "column_name": "lockedUntil",
+      "data_type": "timestamp without time zone",
+      "udt_name": "timestamp",
+      "datetime_precision": 3
+    }
+  ],
+  "current": {
+    "id": "p04r06-active",
+    "last_login_type": "timestamp without time zone",
+    "last_login_raw": "2026-11-10 11:08:39.644",
+    "last_login_default_pg": "2026-11-10T10:08:39.644Z",
+    "last_login_explicit_utc": "2026-11-10T11:08:39.644Z",
+    "last_login_utc_epoch_ms": "1794308919644.000000"
+  },
+  "controlLiteral": {
+    "default_pg": "1969-12-31T23:00:00.000Z",
+    "raw": "1970-01-01 00:00:00",
+    "explicit_utc": "1970-01-01T00:00:00.000Z"
+  },
+  "node": {
+    "version": "v22.17.0",
+    "timezone": "Etc/GMT-1",
+    "timezoneOffsetMinutes": -60,
+    "TZ": null
+  },
+  "parser": {
+    "timestampOid": 1114,
+    "implementationSha256": "320e64a6a5c1ffbc2da13e957a33e994e52c0079f3a56be386a6a4c1de0d7b28",
+    "pgVersion": "8.23.0"
+  },
+  "comparison": {
+    "defaultPgEpochMs": 1794305319644,
+    "explicitUtcEpochMs": 1794308919644,
+    "differenceMs": -3600000,
+    "sqlUtcEpochMs": 1794308919644
+  },
+  "finishedAt": "2026-11-10T11:14:24.967Z"
+}

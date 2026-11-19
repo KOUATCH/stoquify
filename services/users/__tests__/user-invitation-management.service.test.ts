@@ -5,8 +5,8 @@ import { cancelUserInvitation } from "../user-invitation-management.service"
 import { invitationRevision } from "../invitation-revision"
 const permissions = ["users.invite", "users.roles.assign", "items.read"]
 function setup() {
-  const invite = { id: "invite", organizationId: "org", email: "colleague@example.invalid", roleId: "reader", status: "PENDING", expiresAt: new Date(Date.now() + 60000), updatedAt: new Date(), role: { organizationId: "org", permissions: ["items.read"] } }
-  const issuer = { id: "issuer", isLocked: false, isVerified: true, emailVerified: true, organization: { name: "Company", isActive: true, deletedAt: null }, roles: [{ permissions }] }
+  const invite = { id: "invite", organizationId: "org", email: "colleague@example.invalid", roleId: "reader", status: "PENDING", expiresAt: new Date(Date.now() + 60000), updatedAt: new Date(), role: { code: "reader", organizationId: "org", permissions: ["items.read"] } }
+  const issuer = { id: "issuer", isLocked: false, isVerified: true, emailVerified: true, organization: { name: "Company", isActive: true, deletedAt: null }, roles: [{ code: "manager", permissions }] }
   const tx = { invite: { findFirst: jest.fn().mockResolvedValue(invite), update: jest.fn() }, user: { findFirst: jest.fn().mockResolvedValue(issuer) }, businessEvent: { findUnique: jest.fn().mockResolvedValue(null), create: jest.fn().mockResolvedValue({ id: "cancellation" }) }, businessEventOutbox: { updateMany: jest.fn() }, auditLog: { create: jest.fn() } }
   ;(db.$transaction as jest.Mock).mockImplementation(async fn => fn(tx))
   const input = { organizationId: "org", actorId: "issuer", actorPermissions: permissions, request: { inviteId: invite.id, revision: invitationRevision(invite), reason: "Invitation sent to wrong colleague", requestId: "d6f031db-5f40-49f3-81ca-c5fcd2c886c1" } }

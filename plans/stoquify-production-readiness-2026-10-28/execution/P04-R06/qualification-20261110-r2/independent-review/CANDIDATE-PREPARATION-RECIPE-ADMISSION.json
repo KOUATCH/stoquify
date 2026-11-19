@@ -1,0 +1,73 @@
+{
+  "at": "2026-11-10T12:31:11.928Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Fresh isolated source capture and candidate admission only; conditional on accepted dependency staging outcome",
+  "files": [
+    {
+      "path": "prepare-candidate.cjs",
+      "sha256": "9da95c40d99478bffacfebcce55a9b818e152a41d1251e33175fec6580bacfbd"
+    },
+    {
+      "path": "admit-candidate.cjs",
+      "sha256": "3ab2baadae2a61a53de6879f3343a76f70a55d3dd7ba6efe951b9c45c8a3a1fe"
+    },
+    {
+      "path": "inventory/source-after-manifest.json",
+      "sha256": "e535b2e9cb694d09b67d64706e9fbbe2f89ac829b2297c86120ca83d012ac614"
+    },
+    {
+      "path": "inventory/repair-owned-files.json",
+      "sha256": "947b5da57354ecb09673c594b60c2d66bcef5998ce6c72d96bf561aadeeda8e6"
+    },
+    {
+      "path": "independent-review/REPAIR-SOURCE-ADMISSION.json",
+      "sha256": "4993e10c3c40dd9e29e947db2533de7427d1e9cbe1290e61563aa4644936cca9"
+    },
+    {
+      "path": "independent-review/SOURCE-INVENTORY-RECONCILIATION.json",
+      "sha256": "93402063599976d4d08c19bd3eed281ad2852663688879a86fb8081767dc88dc"
+    },
+    {
+      "path": "independent-review/UNIT-OUTCOME-REVIEW.json",
+      "sha256": "70144c056ef2ff4a7dd04b88753ec84cdcb8ba49a97bef1fed21a56a1a990a96"
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-RECIPE-ADMISSION.json",
+      "sha256": "9b36ea5d9cb4dd8d39c98d5b8c4e43c996efd2c4a80439ff3427774b35c35358"
+    },
+    {
+      "path": "../../../../../scripts/candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    },
+    {
+      "path": "../../P04-R02/asset-inventory.json",
+      "sha256": "e64ad097bc3891a4f8cebb8ff1dc60ad04d6bf398f32f229c1a9ee7d5a3404cf"
+    },
+    {
+      "path": "../../P04-R02/private-alias-exclusion-20261102/asset-decision.json",
+      "sha256": "17fd4e881fdf511b01d43def19aa7d8a4bd6029bd5604bd09d0f73c05a1882dd"
+    },
+    {
+      "path": "../../../../../config/private-upload-aliases.json",
+      "sha256": "9cc5f6ee3f72c4a6d5eed6759b9e8ad8ab7fab90f11a7010374419fb7a4778fc"
+    }
+  ],
+  "review": [
+    "Requires exact68current inputs,six owned source admission,passed116mocked tests and independently accepted dependency-staging receipt hash.",
+    "Fixed exclusive Dtask path with ownership/realpath checks; new source cannot exist. Both dependency move endpoints resolve inside the verified Dtask directory; no recursive deletion.",
+    "Candidate snapshot helper restricts tracked/untracked source selectors,excludesenv/privatekey/generated/evidence trees and validates regular files/path/byte hashes. No application imports or dependency installation.",
+    "Local git clone with no checkout/shared objects and read-tree writes only new candidate metadata; exact working-tree source bytes are then written exclusively.",
+    "Known upload asset inventory is copied only into ignored source annex,sha-bound and unserved; all three user-classified private aliases match explicit private decision/policy. No new asset classification inferred.",
+    "Current root/candidate full source equality and all68 current/dependency inputs are rechecked by admission; no source override/addition or surrogate qualification.",
+    "Physical staged dependencies move into fresh source; generated Prisma client remains unqualified until reviewed canonical regeneration.",
+    "No database creation/migration,startup,build or production change in these two recipes."
+  ],
+  "requiredBeforeExecution": [
+    "Accepted actual dependency staging receipt.",
+    "No source/input drift and successful fresh local port/disk/ownership checks."
+  ],
+  "requiredAfterExecution": [
+    "Independent actual candidate outcome review before database/build work."
+  ]
+}

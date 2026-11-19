@@ -471,7 +471,7 @@ export async function ensureComplianceHrisRoleCoverage(input: {
         });
       }
 
-      const scheduleWhere = { organizationId_employeeId_effectiveFrom: { organizationId: organization.id, employeeId: employee.id, effectiveFrom } };
+      const scheduleWhere = { organizationId_employeeId_effectiveFrom_revision: { organizationId: organization.id, employeeId: employee.id, effectiveFrom, revision: 1 } };
       await input.prisma.hrisWorkSchedule.upsert({
         where: scheduleWhere,
         create: {

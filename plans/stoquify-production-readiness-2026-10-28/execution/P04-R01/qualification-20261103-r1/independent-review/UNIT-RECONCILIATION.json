@@ -1,0 +1,60 @@
+{
+  "reviewedAt": "2026-11-03T17:36:34.6418932Z",
+  "reviewer": "r01_independent_review",
+  "verdict": "accepted_scoped_unit_and_typecheck_evidence",
+  "passed": true,
+  "tests": 432,
+  "suites": 16,
+  "failed": 0,
+  "skipped": 0,
+  "sourceInputs": 108,
+  "changedInputs": [],
+  "currentSourceReviewMatches": 17,
+  "ownedFileMatches": 30,
+  "archivedSourceMatches": 106,
+  "typecheck": "17 product entry files with transitive imports; noEmit incrementalfalse; exit0",
+  "evidenceClass": "isolated mocked/pure/action unit checks; neither database nor HTTP/browser proof",
+  "limitations": [
+    "Native qualification pending",
+    "Only named input hashes are asserted stable; no whole-checkout/release certification",
+    "Earlier failed unit/config/fixture attempts remain preserved"
+  ],
+  "files": [
+    {
+      "path": "unit/attempt06/result.json",
+      "sha256": "f02a6e819e9355a8e5556e3cc49b8b46df0600d51aa638cac7a2274097019ac7"
+    },
+    {
+      "path": "unit/attempt06/jest.json",
+      "sha256": "baf1fbdb5c0aa68f98e8e41e3b5c52773895fcd0d8a922e4d087598149676a13"
+    },
+    {
+      "path": "unit/typecheck02/result.json",
+      "sha256": "85e37875279503150209781082e35dfa2567489b2d1580cb87e76e1812143d92"
+    },
+    {
+      "path": "unit/tsconfig.json",
+      "sha256": "d1520649290abee3a7424a900aa7f0f22f73c0fcd7b814ac5756b972617c2b21"
+    },
+    {
+      "path": "unit/run.cjs",
+      "sha256": "1a46761b2e3a94df1468cc23dafbd500a8368dd8b9c4821382dcb3cfaa21f0b7"
+    },
+    {
+      "path": "unit/guard.cjs",
+      "sha256": "b850302d73df93faec3141541430664a5a7f752c720f8f9aec375cc84076e4dc"
+    },
+    {
+      "path": "unit/jest.config.cjs",
+      "sha256": "df9d93ed6ed4c4e154949a4ff78627f68b934663384a597d87ff036a388fbbf5"
+    },
+    {
+      "path": "owned-source.json",
+      "sha256": "0f6cb3b06d350691d814884e3248e136348b8efbb256eaa1942704357cc7378a"
+    },
+    {
+      "path": "source-before.json",
+      "sha256": "068bb8e10d8e5397c60d50aefde03336fc6f53cfc6da302fb851e16b170af015"
+    }
+  ]
+}

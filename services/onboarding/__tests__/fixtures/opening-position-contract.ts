@@ -14,7 +14,7 @@ export type OpeningFixture = {
 export function scaled(value: string, places: number): bigint {
   if (!new RegExp(`^\\d+(?:\\.\\d{1,${places}})?$`).test(value)) throw new Error("PRECISION")
   const [whole, fraction = ""] = value.split(".")
-  return BigInt(whole) * 10n ** BigInt(places) + BigInt(fraction.padEnd(places, "0"))
+  return BigInt(whole) * BigInt("10") ** BigInt(places) + BigInt(fraction.padEnd(places, "0"))
 }
 export function stockIssues(fixture: OpeningFixture, row: StockRow) {
   const issues: string[] = []
@@ -27,10 +27,10 @@ export function stockIssues(fixture: OpeningFixture, row: StockRow) {
   if (row.reviewId !== fixture.review.id) issues.push("MISSING_REVIEW")
   try {
     const quantity = scaled(row.quantity, 3), cost = scaled(row.unitCost, 2), value = scaled(row.sourceValue, 2)
-    if (quantity <= 0n) issues.push("INVALID_QUANTITY")
+    if (quantity <= BigInt("0")) issues.push("INVALID_QUANTITY")
     // Positive half-up row valuation. This checks the proposal; it does not certify
     // production rounding. Independent literal controls are kept in another file.
-    if ((quantity * cost + 500n) / 1000n !== value) issues.push("VALUE_DISCREPANCY")
+    if ((quantity * cost + BigInt("500")) / BigInt("1000") !== value) issues.push("VALUE_DISCREPANCY")
   } catch { issues.push("PRECISION") }
   return issues
 }
@@ -56,7 +56,7 @@ export function auditOpeningFixture(fixture: OpeningFixture) {
   const stockKeys = new Set<string>(), documents = new Set<string>()
   const quantity: Record<string, bigint> = {}, byLocation: Record<string, bigint> = {}, byItem: Record<string, bigint> = {}
   const controls = new Map<string, { account: string; amount: bigint }>()
-  let stock = 0n, ar = 0n, ap = 0n, debit = 0n, credit = 0n
+  let stock = BigInt("0"), ar = BigInt("0"), ap = BigInt("0"), debit = BigInt("0"), credit = BigInt("0")
   const accountBalances: Record<string, bigint> = {}
   for (const row of fixture.stock) {
     const rowIssues = stockIssues(fixture, row); issues.push(...rowIssues)
@@ -65,9 +65,9 @@ export function auditOpeningFixture(fixture: OpeningFixture) {
     stockKeys.add(key)
     if (rowIssues.length) continue
     const q = scaled(row.quantity, 3), value = scaled(row.sourceValue, 2)
-    quantity[row.unit] = (quantity[row.unit] ?? 0n) + q
-    byLocation[row.locationId] = (byLocation[row.locationId] ?? 0n) + value
-    byItem[row.itemId] = (byItem[row.itemId] ?? 0n) + value
+    quantity[row.unit] = (quantity[row.unit] ?? BigInt("0")) + q
+    byLocation[row.locationId] = (byLocation[row.locationId] ?? BigInt("0")) + value
+    byItem[row.itemId] = (byItem[row.itemId] ?? BigInt("0")) + value
     stock += value; controls.set(row.sourceId, { account: "FIXTURE_INVENTORY", amount: value })
   }
   for (const row of fixture.openItems) {
@@ -79,7 +79,7 @@ export function auditOpeningFixture(fixture: OpeningFixture) {
     if (!Number.isFinite(Date.parse(row.sourceDate)) || !Number.isFinite(Date.parse(row.dueDate)) || row.sourceDate >= fixture.cutoverLocal.slice(0, 10) || row.dueDate < row.sourceDate) issues.push("DOCUMENT_DATE")
     try {
       const original = scaled(row.originalAmount, 2), paid = scaled(row.settledBeforeCutover, 2), amount = scaled(row.outstandingAmount, 2)
-      if (original - paid !== amount || amount <= 0n) issues.push("OPEN_ITEM_DISCREPANCY")
+      if (original - paid !== amount || amount <= BigInt("0")) issues.push("OPEN_ITEM_DISCREPANCY")
       if (row.kind === "AR") ar += amount; else if (row.kind === "AP") ap += amount; else issues.push("OPEN_ITEM_KIND")
       controls.set(row.sourceId, { account: row.kind === "AR" ? "FIXTURE_AR" : "FIXTURE_AP", amount })
     } catch { issues.push("PRECISION") }
@@ -92,8 +92,8 @@ export function auditOpeningFixture(fixture: OpeningFixture) {
     try {
       const amount = scaled(row.amount, 2)
       if (row.side === "DEBIT") debit += amount; else if (row.side === "CREDIT") credit += amount
-      accountBalances[row.account] = (accountBalances[row.account] ?? 0n) + (row.side === "DEBIT" ? amount : -amount)
-      let coveredAmount = 0n
+      accountBalances[row.account] = (accountBalances[row.account] ?? BigInt("0")) + (row.side === "DEBIT" ? amount : -amount)
+      let coveredAmount = BigInt("0")
       for (const id of row.covers) {
         if (covered.has(id)) issues.push("DUPLICATE_POSTING_COVERAGE")
         covered.add(id)
@@ -117,7 +117,7 @@ export function auditOpeningFixture(fixture: OpeningFixture) {
     sourceStockRows: fixture.stock.length + fixture.rejectedStockRows.length,
     openReceivables: fixture.openItems.filter(row => row.kind === "AR").length, openPayables: fixture.openItems.filter(row => row.kind === "AP").length,
     ledgerLines: fixture.ledger.length, quantityThousandthsByUnit: strings(quantity), stockValueMinorByLocation: strings(byLocation), stockValueMinorByItem: strings(byItem),
-    stockValueMinor: stock.toString(), receivableMinor: ar.toString(), payableMinor: ap.toString(), cashMinor: (accountBalances.FIXTURE_CASH ?? 0n).toString(),
-    equityMinor: (-(accountBalances.FIXTURE_EQUITY ?? 0n)).toString(), ledgerDebitMinor: debit.toString(), ledgerCreditMinor: credit.toString(),
+    stockValueMinor: stock.toString(), receivableMinor: ar.toString(), payableMinor: ap.toString(), cashMinor: (accountBalances.FIXTURE_CASH ?? BigInt("0")).toString(),
+    equityMinor: (-(accountBalances.FIXTURE_EQUITY ?? BigInt("0"))).toString(), ledgerDebitMinor: debit.toString(), ledgerCreditMinor: credit.toString(),
   } }
 }

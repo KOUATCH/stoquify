@@ -1,0 +1,74 @@
+{
+  "at": "2026-11-10T14:38:21.3344956Z",
+  "packageId": "P04-R06",
+  "status": "blocked_E30_published_memory_and_candidate_freshness",
+  "priorCheckpoint": "../qualification-20261109-r1/RESULT-attempt02.md",
+  "authorization": "AUTHORIZATION.md",
+  "sourceManifest": "inventory/source-after-manifest.json",
+  "sourceReview": "independent-review/REPAIR-SOURCE-ADMISSION.json",
+  "unitRecipeReview": "independent-review/UNIT-RECIPE-ADMISSION.json",
+  "unit": {
+    "receipt": "unit/attempt01/receipt.json",
+    "result": "unit/attempt01/jest.json",
+    "passed": 116,
+    "failed": 0,
+    "skipped": 0,
+    "suites": 5,
+    "outcomeReview": "independent-review/UNIT-OUTCOME-REVIEW.json"
+  },
+  "build": "not_started_capacity_gate_failed",
+  "nativeDatabase": "not_run_on_repaired_artifact",
+  "browser": "not_run_on_repaired_artifact",
+  "advancementAllowed": false,
+  "productionReady": false,
+  "ownedProductFiles": [
+    "lib/auth.ts",
+    "lib/security/credential-sign-in-outcome.ts"
+  ],
+  "constraints": [
+    "No commits or push",
+    "No deployment",
+    "No production flag/data changes",
+    "Preserve unrelated edits and all prior evidence"
+  ],
+  "dependencies": {
+    "receipt": "dependency-staging.json",
+    "review": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+    "passed": true,
+    "files": 152806,
+    "bytes": 2998378443
+  },
+  "qualificationContract": "runtime/qualification-contract.json",
+  "plannedRawChecks": 107,
+  "originalLogicalRequirements": 58,
+  "browserObserver": {
+    "version": 3,
+    "review": "independent-review/BROWSER-OBSERVER-RECIPE-ADMISSION-r3.json",
+    "pureChecks": 67,
+    "actualRuntime": "pending"
+  },
+  "candidate": {
+    "id": "p04-r06-r2-f6b4ff106590",
+    "sourceFiles": 9789,
+    "selectedInputs": 68,
+    "admission": "candidate-admission.json",
+    "review": "independent-review/CANDIDATE-OUTCOME-REVIEW.json"
+  },
+  "databaseSetup": {
+    "passed": true,
+    "review": "independent-review/DATABASE-OUTCOME-REVIEW.json",
+    "fixture": "database/fixture-seeded.json",
+    "migrations": 122,
+    "syntheticUsers": 16,
+    "syntheticAccounts": 32,
+    "initialSessions": 0
+  },
+  "latestResourceGate": "resource-retry-ready-attempt02-r2.json",
+  "suspensionReceipt": "database/capacity-suspension.json",
+  "actualCasesExecuted": 0,
+  "currentSourceReview": "independent-review/CAPACITY-CHECKPOINT-SOURCE-REVIEW.json",
+  "currentCapturedFiles": 9792,
+  "concurrentSourceDifferences": 12,
+  "publicationValidation": "publication-validation.json",
+  "evidenceRecord": "E30"
+}

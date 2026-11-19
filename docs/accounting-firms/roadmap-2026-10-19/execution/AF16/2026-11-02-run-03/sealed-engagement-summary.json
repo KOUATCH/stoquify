@@ -1,0 +1,51 @@
+{
+  "startedAt": "2026-11-02T15:49:21.459Z",
+  "artifactSha256": "bed03f4b4ce2d88345a6f04244e9667c6fdbca9cf8f47d037810aa6423d43835",
+  "base": "https://localhost:3186",
+  "database": "stoquify_local_af16_20261102_engagement_r3",
+  "passed": true,
+  "evidenceClass": "Synthetic AF03/AF05 authenticated browser on sealed full application; local TLS with test certificate; not hosted TLS, predecessor rollback or production approval",
+  "buildId": "R3-zVTu3LoKCHOp2WTaZA",
+  "preverifiedFiles": 5284,
+  "migrations": 120,
+  "clonedFrom": "stoquify_local_af16_20261025_template_r1",
+  "fixture": {
+    "source": ".codex-tmp\\af16-release-20261102\\scripts\\fixtures\\firm-engagement-workflows-browser.cjs",
+    "sourceSha256": "e7a09a2185ce0ce19e4639bf7992f44580be2dca01f4f7d7be5728f3d664cc36",
+    "seedSha256": "6fb09707bb3d8fa2301c3df58bd86444ed75286ddbb57d33c410d65e7b1e4c51",
+    "users": 5,
+    "organizations": 3
+  },
+  "certificate": {
+    "fingerprint256": "61:DB:48:68:C5:2A:30:44:30:65:FE:13:32:A2:5C:2E:6B:BE:8C:8B:5B:10:24:5A:49:FA:C5:FC:45:19:FA:84",
+    "subjectAltName": "DNS:localhost, IP Address:127.0.0.1",
+    "selfSigned": true,
+    "operatingSystemTrustChanged": false
+  },
+  "listener": {
+    "tls": "127.0.0.1:3186",
+    "upstream": "127.0.0.1:57332"
+  },
+  "adapters": [
+    {
+      "source": ".codex-tmp\\af16-release-20261102\\scripts\\verify-firm-engagement-browser.cjs",
+      "sourceSha256": "2615888316509f8e6ec2351537f1a4a3384f4dfed891297464962d0caceceb5d",
+      "generated": "scripts\\af16-sealed-engagement-20261102-r3-browser.generated.cjs",
+      "generatedSha256": "663fa4c4781478e93304696b5695b3cbe6142fb39476c7cfb7e32426269f6fca",
+      "businessAssertionsPreserved": true,
+      "exitCode": 0
+    },
+    {
+      "source": ".codex-tmp\\af16-release-20261102\\scripts\\verify-firm-engagement-browser-recovery.cjs",
+      "sourceSha256": "170352431f63f5384bfaa3e3da97d36050b26b962029e1928f6f61ff019748a7",
+      "generated": "scripts\\af16-sealed-engagement-20261102-r3-browser-recovery.generated.cjs",
+      "generatedSha256": "e041ba292b9f77d6b0773269e6fdfa8eb574d95e3d2a4be8a1e9437ec75db7a4",
+      "businessAssertionsPreserved": true,
+      "exitCode": 0
+    }
+  ],
+  "artifactUnchangedAfterBrowser": true,
+  "proxyStopped": true,
+  "serverStopped": true,
+  "finishedAt": "2026-11-02T15:52:07.131Z"
+}

@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "realHttp": true,
+  "realDatabase": true,
+  "productionAccess": false,
+  "checks": [
+    {
+      "accountState": "inactive",
+      "status": 403,
+      "sessionCreated": false
+    },
+    {
+      "accountState": "permanently locked",
+      "status": 403,
+      "sessionCreated": false
+    },
+    {
+      "accountState": "temporarily locked",
+      "status": 403,
+      "sessionCreated": false
+    },
+    {
+      "accountState": "expired throttle",
+      "status": 200,
+      "sessionCreated": true
+    }
+  ],
+  "throttleChecks": [
+    {
+      "status": 429,
+      "retryAfterSeconds": 10,
+      "sessionCreated": false
+    }
+  ],
+  "rateLimitUnchanged": true
+}

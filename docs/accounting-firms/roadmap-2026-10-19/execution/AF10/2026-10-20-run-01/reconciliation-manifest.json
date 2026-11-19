@@ -1,0 +1,132 @@
+{
+  "id": "cmvgwq5m8002fmaw099mr6f7d",
+  "revisionId": "cmvgwq5bl0029maw06f5521kk",
+  "status": "ACTIVE",
+  "manifestDigest": "sha256:fa149b3cb9115f9ff35794e7c4037ab88e14df7c2c5e09aa718310793f2e72c0",
+  "approvedById": "af10-1792514288119-apply-owner",
+  "approvedAt": "2026-10-20T16:38:09.391Z",
+  "expiresAt": "2026-10-20T17:08:09.391Z",
+  "appliedAt": "2026-10-20T16:38:09.767Z",
+  "periodId": "cmvgwq57f0025maw0xqb5aqln",
+  "periodVersion": 0,
+  "reconciliation": {
+    "debit": "150.00",
+    "lines": [
+      {
+        "debit": "25.00",
+        "credit": "0.00",
+        "sourceId": "ledger-stock",
+        "accountId": "cmvgwq562001jmaw0g2t73yvr",
+        "difference": "0.00"
+      },
+      {
+        "debit": "100.00",
+        "credit": "0.00",
+        "sourceId": "ledger-ar",
+        "accountId": "cmvgwq568001lmaw0xtww3jrl",
+        "difference": "0.00"
+      },
+      {
+        "debit": "0.00",
+        "credit": "50.00",
+        "sourceId": "ledger-ap",
+        "accountId": "cmvgwq56a001nmaw0l0vlacz7",
+        "difference": "0.00"
+      },
+      {
+        "debit": "25.00",
+        "credit": "0.00",
+        "sourceId": "ledger-cash",
+        "accountId": "cmvgwq56d001pmaw0pvnino58",
+        "difference": "0.00"
+      },
+      {
+        "debit": "0.00",
+        "credit": "100.00",
+        "sourceId": "ledger-equity",
+        "accountId": "cmvgwq56f001rmaw0yk46x3ty",
+        "difference": "0.00"
+      }
+    ],
+    "credit": "150.00",
+    "details": [
+      {
+        "domain": "AR",
+        "sourceId": "ar-1",
+        "difference": "0.00",
+        "documentId": "cmvgwq5rr0035maw0n75a7fmn",
+        "outstanding": "100.00"
+      },
+      {
+        "domain": "AP",
+        "sourceId": "ap-1",
+        "difference": "0.00",
+        "documentId": "cmvgwq5t5003nmaw05xrvr54e",
+        "outstanding": "50.00"
+      },
+      {
+        "value": "25.00",
+        "domain": "STOCK",
+        "itemId": "cmvgwq56v001zmaw0xalho41h",
+        "quantity": "2.500",
+        "sourceId": "stock-1",
+        "difference": "0.00",
+        "locationId": "cmvgwq5740021maw0rewxlpas"
+      }
+    ],
+    "version": "opening-reconciliation-v1",
+    "currency": "XAF",
+    "cutoverAt": "2026-09-30T23:00:00.000Z",
+    "operations": [
+      {
+        "domain": "AP",
+        "sourceId": "ap-1",
+        "receiptHash": "sha256:ac47a9547eda7ff9a20d8178bf23833cb86f72da3e3274b99a05d11e6c50588a"
+      },
+      {
+        "domain": "AR",
+        "sourceId": "ar-1",
+        "receiptHash": "sha256:e1d0072683cafa1a94ded1496ef9f46a03c9fef08bb714b68f5ade559281b978"
+      },
+      {
+        "domain": "LEDGER",
+        "sourceId": "cmvgwq5bl0029maw06f5521kk",
+        "receiptHash": "sha256:301a8503b8c22702c43abda0a185fb1495c0b0bd9c2f1a072e62a02627bb4de1"
+      },
+      {
+        "domain": "STOCK",
+        "sourceId": "stock-1",
+        "receiptHash": "sha256:9d42b67ffffd3ad6df8f207e45c321a86c64334989674f49ac18971745d03c1c"
+      }
+    ],
+    "reconciled": true,
+    "revisionId": "cmvgwq5bl0029maw06f5521kk",
+    "executionId": "cmvgwq5m8002fmaw099mr6f7d",
+    "journalEntryId": "cmvgwq5pu002nmaw0zzl1weyq",
+    "manifestDigest": "sha256:fa149b3cb9115f9ff35794e7c4037ab88e14df7c2c5e09aa718310793f2e72c0"
+  },
+  "reconciliationHash": "sha256:569fd36159bd4d4b2449c6adc29b6356c97114e6b24859ff823bd0c874c39623",
+  "cancellationReason": null,
+  "operations": [
+    {
+      "domain": "AP",
+      "sourceId": "ap-1",
+      "receiptHash": "sha256:ac47a9547eda7ff9a20d8178bf23833cb86f72da3e3274b99a05d11e6c50588a"
+    },
+    {
+      "domain": "AR",
+      "sourceId": "ar-1",
+      "receiptHash": "sha256:e1d0072683cafa1a94ded1496ef9f46a03c9fef08bb714b68f5ade559281b978"
+    },
+    {
+      "domain": "LEDGER",
+      "sourceId": "cmvgwq5bl0029maw06f5521kk",
+      "receiptHash": "sha256:301a8503b8c22702c43abda0a185fb1495c0b0bd9c2f1a072e62a02627bb4de1"
+    },
+    {
+      "domain": "STOCK",
+      "sourceId": "stock-1",
+      "receiptHash": "sha256:9d42b67ffffd3ad6df8f207e45c321a86c64334989674f49ac18971745d03c1c"
+    }
+  ]
+}

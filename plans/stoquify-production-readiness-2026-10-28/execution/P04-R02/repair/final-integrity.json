@@ -1,0 +1,133 @@
+{
+  "at": "2026-10-29T13:33:20.813Z",
+  "passed": true,
+  "candidateId": "p04-r02-20261029-e2cf325ec4db",
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "sourceFiles": 3976,
+  "testedFiles": [
+    {
+      "path": "middleware.ts",
+      "sha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204"
+    },
+    {
+      "path": "app/api/uploads/[...path]/route.ts",
+      "sha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245"
+    },
+    {
+      "path": "i18n/routing.ts",
+      "sha256": "48782c1ec405c53623812c80a1d4a7301d869b3c07ea36625374d2c056757421"
+    },
+    {
+      "path": "types/bilingual.ts",
+      "sha256": "31fa7407cd8826655c29800ea6b508752100fb250d987736f9eac35afbfdc3ed"
+    },
+    {
+      "path": "lib/security/dashboard-session-recovery.ts",
+      "sha256": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a"
+    },
+    {
+      "path": "lib/security/traffic-limiter.ts",
+      "sha256": "30755f70a016192784af76aa6c03597d2184e79f42e2d842fb8d4b412ff7914c"
+    },
+    {
+      "path": "lib/security/csp-pilot.ts",
+      "sha256": "ecda804a316a7a96cde98927361afd8f8903e4cdb499ffc0a0bb9508bee2b292"
+    },
+    {
+      "path": "lib/media/legacy-upload-routing.ts",
+      "sha256": "7a39993c296c00e0d9305343a3aa745ccb48648a6202b1a43580e169f7488a5a"
+    },
+    {
+      "path": "lib/media/legacy-upload-storage.ts",
+      "sha256": "4c8b2e0a8ea1261fe7eb76e4e902d7aa1550f1a969623cb843e0306f317a7a62"
+    },
+    {
+      "path": "next.config.mjs",
+      "sha256": "ddb79d450a8bfc1bcf29765b8ea1e7ad914ecb292e728b327e97def3a48798ac"
+    },
+    {
+      "path": "lib/media/__tests__/legacy-upload-storage.test.ts",
+      "sha256": "5e83dc447684fc97d3e491c69e0e3e7e524a7d10cdbd302513f436f6ce434d3d"
+    },
+    {
+      "path": "lib/media/__tests__/legacy-upload-routing.test.ts",
+      "sha256": "23f715e476c19168e920f2456d15eda39839a1b3fbfcaf3461a9f99ba28b21f1"
+    },
+    {
+      "path": "app/api/uploads/[...path]/__tests__/route.test.ts",
+      "sha256": "04930dfbe511e0f0b38ba4b8d16fe8fe45d3a359db41aee049f99fe8230dcff0"
+    },
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "62c0b3a26a9db2899228a43ba7ecee3d814dca87df268a5f32725121dd5a9f7d"
+    },
+    {
+      "path": "scripts/candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    },
+    {
+      "path": "tests/s10-s11/release-artifact.test.js",
+      "sha256": "2d6c7d31e35e4b7517942388398076824122b1a49c18322f3c79adb7473a0453"
+    },
+    {
+      "path": "tests/s10-s11/release-artifact-private-uploads.test.js",
+      "sha256": "f6e3830de436cd19d9abbd016ce81a91e13bc9db6a2629fd783f08c6cb2824db"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/repair/packing/jest.config.cjs",
+      "sha256": "dbabc15ccf3463f0c94ccd7622b57f40a95d8e72e2f224d0aa0b5d2f85425731"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/repair/packing/run-fixtures.cjs",
+      "sha256": "ea3dda7b02854268fcdf728c0983e6b7f332a1416d89ca52fdd404e801ed5b60"
+    }
+  ],
+  "assets": [
+    {
+      "source": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "sha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2",
+      "privateDestination": "runtime/.private/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "originalAndMirrorUnchanged": true
+    },
+    {
+      "source": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "sha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225",
+      "privateDestination": "runtime/.private/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "originalAndMirrorUnchanged": true
+    },
+    {
+      "source": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "sha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519",
+      "privateDestination": "runtime/.private/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "originalAndMirrorUnchanged": true
+    }
+  ],
+  "portsReleased": [
+    53607,
+    53585,
+    60838,
+    53546,
+    58895,
+    54768
+  ],
+  "unrelatedDriftPreserved": [
+    "prisma/disposable-remaining-commerce.ts",
+    "scripts/assess-disposable-remaining.cjs",
+    "scripts/report-disposable-dataset.cjs",
+    "scripts/verify-disposable-remaining.cjs",
+    "services/item/__tests__/picture.service.test.ts",
+    "services/media/picture.service.ts",
+    "services/payroll/__tests__/payroll-control.service.test.ts",
+    "services/payroll/__tests__/payroll-country-pack-fixture-runner.test.ts",
+    "services/payroll/payroll-country-pack-fixture-runner.ts"
+  ],
+  "wholeCandidateReleaseQualified": false,
+  "applicationDatabaseAccess": false,
+  "productionChanges": false,
+  "notes": [
+    "Final HTTP fixtures isolate credentials and restrict loopback to their allocated port.",
+    "First superseded development runner constructed localhost:3000 rewrite URLs; socket-reset failure preserved, task process stopped, fixed-port isolation then passed.",
+    "Original asset bytes were hashed for preservation only; never rendered or HTTP-served.",
+    "Concurrent source outside the exercised binding is not certified by these scoped tests."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "workflow": "PASS",
+  "initialProcessGuard": "PASS",
+  "frozenSourceIdentity": "PASS",
+  "databaseMigrationChecks": "PASS",
+  "lint": {
+    "errors": 0,
+    "warnings": 24
+  },
+  "compiler": "NOT_RUN",
+  "outcome": "BLOCKED_BY_COMPETING_BUILD_AFTER_LINT",
+  "elapsedMs": 516281,
+  "competingProcessAtObservation": {
+    "pid": 10304,
+    "parentPid": 30996
+  },
+  "buildTimeoutMs": 3600000,
+  "pipelineTimeoutMs": 5400000,
+  "note": "Process IDs are historical observations, not reusable shutdown targets. No competing process stopped; no allow-orphans/skip-clean/lint/type bypass."
+}

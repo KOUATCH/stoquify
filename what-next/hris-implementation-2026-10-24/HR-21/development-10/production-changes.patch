@@ -1,0 +1,195 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\services__hris__document-evidence.service.ts.baseline" b/services/hris/document-evidence.service.ts
+index 2bdd39c0..8477d241 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\services__hris__document-evidence.service.ts.baseline"	
++++ b/services/hris/document-evidence.service.ts
+@@ -212,17 +212,29 @@ export async function requestHrisContractDocumentEvidence(
+     if (contract.signedDocumentHash) {
+       throw new ConflictError("Contract already has approved signed document evidence.")
+     }
++    const requestFacts = {
++      capturedById: parsed.actorId,
++      artifactHash: parsed.artifactHash,
++      malwareScanEvidenceHash: parsed.malwareScanEvidenceHash,
++      malwareScanProvider: parsed.malwareScanProvider,
++      malwareScannedAt: parsed.malwareScannedAt.toISOString(),
++      signedAt: parsed.signedAt.toISOString(),
++      retentionPolicyCode: parsed.retentionPolicyCode,
++      retentionBasis: parsed.retentionBasis,
++      retainUntil: parsed.retainUntil.toISOString(),
++      legalHold: parsed.legalHold,
++      legalHoldReasonHash: parsed.legalHoldReason
++        ? `sha256:${hashBusinessPayload({ reason: parsed.legalHoldReason })}`
++        : null,
++    }
+     const openRequest = pendingEvidence(contract.metadata)
+     if (openRequest) {
+-      if (openRequest.capturedById === parsed.actorId && openRequest.artifactHash === parsed.artifactHash) {
++      if (Object.entries(requestFacts).every(([key, value]) => openRequest[key as keyof typeof requestFacts] === value)) {
+         return { contractId: contract.id, status: "PENDING_REVIEW" as const, requestId: openRequest.requestId }
+       }
+       throw new ConflictError("Contract already has document evidence pending review.")
+     }
+ 
+-    const reasonHash = parsed.legalHoldReason
+-      ? `sha256:${hashBusinessPayload({ reason: parsed.legalHoldReason })}`
+-      : null
+     const eventId = await recordEvidenceEvent(tx, {
+       organizationId: parsed.organizationId,
+       actorId: parsed.actorId,
+@@ -240,19 +252,9 @@ export async function requestHrisContractDocumentEvidence(
+       },
+     })
+     const pending = {
++      ...requestFacts,
+       requestId: eventId,
+-      capturedById: parsed.actorId,
+       capturedAt: new Date().toISOString(),
+-      artifactHash: parsed.artifactHash,
+-      malwareScanEvidenceHash: parsed.malwareScanEvidenceHash,
+-      malwareScanProvider: parsed.malwareScanProvider,
+-      malwareScannedAt: parsed.malwareScannedAt.toISOString(),
+-      signedAt: parsed.signedAt.toISOString(),
+-      retentionPolicyCode: parsed.retentionPolicyCode,
+-      retentionBasis: parsed.retentionBasis,
+-      retainUntil: parsed.retainUntil.toISOString(),
+-      legalHold: parsed.legalHold,
+-      legalHoldReasonHash: reasonHash,
+     }
+     await tx.payrollContract.update({
+       where: { id: contract.id, organizationId: parsed.organizationId },
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\services__hris__lifecycle.service.ts.baseline" b/services/hris/lifecycle.service.ts
+index 6ffb12b1..e16f73f2 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\services__hris__lifecycle.service.ts.baseline"	
++++ b/services/hris/lifecycle.service.ts
+@@ -26,6 +26,7 @@ import { assertPayrollEmployeeLocationInOrganization } from "@/services/payroll/
+ import { lockOperationalEmployeeInTx } from "./attendance-correction"
+ import { projectEmploymentAsOf } from "./employment-projection"
+ import { syncLifecycleTaskEventInTx } from "./lifecycle-task.service"
++import { evaluateHrisContractReadinessProof, evaluateHrisPaymentDestinationReadinessProof } from "./payroll-readiness-contract"
+ 
+ type DbClient = typeof db | Prisma.TransactionClient
+ type BusinessEventTx = Parameters<typeof recordBusinessEventInTx>[0]
+@@ -623,23 +624,31 @@ async function assertStarterReadiness(
+   employee: Awaited<ReturnType<typeof findEmployee>>,
+   effectiveAt: Date,
+ ) {
+-  const contract = await tx.payrollContract.findFirst({
++  const contracts = await tx.payrollContract.findMany({
+     where: {
+       organizationId: employee.organizationId,
+       employeeId: employee.id,
+       status: PayrollContractStatus.ACTIVE,
+-      signedDocumentHash: { not: null },
+-      activatedBusinessEventId: { not: null },
+       effectiveFrom: { lte: effectiveAt },
+       OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveAt } }],
+       deletedAt: null,
+     },
+-    select: { id: true },
++    select: { id: true, signedDocumentHash: true, activatedBusinessEventId: true, metadata: true },
++    take: 2,
+   })
+-  if (!contract) {
++  const proof = evaluateHrisContractReadinessProof(contracts.length === 1 ? contracts[0] : null)
++  if (!proof.approvalValid || !proof.documentValid) {
+     throw new BusinessRuleError("Onboarding and rehire require an approved active contract covering the effective date.")
+   }
+-  if (!employee.paymentDestinationHash) {
++  const destination = await tx.payrollPaymentDestinationChangeRequest.findFirst({
++    where: { organizationId: employee.organizationId, employeeId: employee.id, status: "APPLIED", deletedAt: null },
++    orderBy: [{ appliedAt: "desc" }, { id: "desc" }],
++  })
++  if (!evaluateHrisPaymentDestinationReadinessProof({
++    employeeMetadata: employee.metadata,
++    paymentDestinationHash: employee.paymentDestinationHash,
++    paymentDestinationRequest: destination ? { ...destination, appliedAt: destination.appliedAt?.toISOString() ?? null } : null,
++  })) {
+     throw new BusinessRuleError("Onboarding and rehire require a verified payroll payment destination.")
+   }
+ }
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\services__hris__payroll-readiness-contract.ts.baseline" b/services/hris/payroll-readiness-contract.ts
+index 78a3b356..646778e5 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\services__hris__payroll-readiness-contract.ts.baseline"	
++++ b/services/hris/payroll-readiness-contract.ts
+@@ -137,6 +137,7 @@ export function evaluateHrisContractReadinessProof(
+   );
+   const approvalValid = Boolean(
+     contract &&
++    stringValue(contract.activatedBusinessEventId) &&
+     approval.status === "APPROVED" &&
+     stringValue(approval.requestId) &&
+     stringValue(approval.requestEvidenceHash) &&
+@@ -157,6 +158,21 @@ export function evaluateHrisContractReadinessProof(
+   return { approval, documentEvidence, approvalValid, documentValid };
+ }
+ 
++export function evaluateHrisPaymentDestinationReadinessProof(
++  source: Pick<HrisPayrollReadinessEmployeeSource, "employeeMetadata" | "paymentDestinationHash" | "paymentDestinationRequest">,
++) {
++  const evidence = record(record(source.employeeMetadata).approvedPaymentDestinationEvidence);
++  const request = source.paymentDestinationRequest;
++  if (!request || request.status !== "APPLIED" || !stringValue(source.paymentDestinationHash) ||
++      request.paymentDestinationHash !== source.paymentDestinationHash ||
++      stringValue(evidence.paymentDestinationHash) !== source.paymentDestinationHash) return false;
++  const links = ["evidenceDocumentHash", "approvalEvidenceHash", "requestBusinessEventId", "approvalBusinessEventId", "appliedBusinessEventId"] as const;
++  const actors = [request.requestedById, request.approvedById, request.appliedById].map(stringValue);
++  return Boolean(stringValue(request.id) && stringValue(evidence.requestId) === request.id &&
++    links.every(key => stringValue(request[key]) && stringValue(evidence[key]) === request[key]) &&
++    actors.every(Boolean) && new Set(actors).size === 3 && stringValue(request.appliedAt));
++}
++
+ function employeeProof(source: HrisPayrollReadinessEmployeeSource) {
+   const blockers: HrisPayrollReadinessBlocker[] = [];
+   const addBlocker = (
+@@ -269,36 +285,7 @@ function employeeProof(source: HrisPayrollReadinessEmployeeSource) {
+     employeeMetadata.approvedPaymentDestinationEvidence,
+   );
+   const destinationRequest = source.paymentDestinationRequest;
+-  const requester = stringValue(destinationRequest?.requestedById);
+-  const approver = stringValue(destinationRequest?.approvedById);
+-  const applier = stringValue(destinationRequest?.appliedById);
+-  const destinationProofValid = Boolean(
+-    source.paymentDestinationHash &&
+-    destinationRequest &&
+-    destinationRequest.status === "APPLIED" &&
+-    destinationRequest.paymentDestinationHash ===
+-      source.paymentDestinationHash &&
+-    stringValue(destinationEvidence.requestId) === destinationRequest.id &&
+-    stringValue(destinationEvidence.paymentDestinationHash) ===
+-      source.paymentDestinationHash &&
+-    stringValue(destinationEvidence.evidenceDocumentHash) ===
+-      destinationRequest.evidenceDocumentHash &&
+-    stringValue(destinationEvidence.approvalEvidenceHash) ===
+-      destinationRequest.approvalEvidenceHash &&
+-    stringValue(destinationEvidence.requestBusinessEventId) ===
+-      destinationRequest.requestBusinessEventId &&
+-    stringValue(destinationEvidence.approvalBusinessEventId) ===
+-      destinationRequest.approvalBusinessEventId &&
+-    stringValue(destinationEvidence.appliedBusinessEventId) ===
+-      destinationRequest.appliedBusinessEventId &&
+-    requester &&
+-    approver &&
+-    applier &&
+-    requester !== approver &&
+-    requester !== applier &&
+-    approver !== applier &&
+-    stringValue(destinationRequest.appliedAt),
+-  );
++  const destinationProofValid = evaluateHrisPaymentDestinationReadinessProof(source);
+   if (!destinationProofValid) {
+     addBlocker(
+       "HRIS_PAYROLL_PAYMENT_DESTINATION_PROOF_MISSING",
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\actions__payroll__payroll-contract.actions.ts.baseline" b/actions/payroll/payroll-contract.actions.ts
+index a890594d..1f83b3c2 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\actions__payroll__payroll-contract.actions.ts.baseline"	
++++ b/actions/payroll/payroll-contract.actions.ts
+@@ -112,7 +112,8 @@ const createContract = protect<unknown, PayrollContractMutationResult>(
+       actorPermissions: ctx.permissions,
+     })
+     const result = await createPayrollContract(parsed)
+-    revalidatePayrollContractPaths()
++    // A refresh failure cannot undo the committed contract or invite a duplicate create.
++    try { revalidatePayrollContractPaths() } catch { /* The caller retains the committed receipt. */ }
+     return result
+   },
+ )

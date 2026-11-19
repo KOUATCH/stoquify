@@ -1,0 +1,27 @@
+{
+  "organizationId": "p08-manager-83ea71c021db",
+  "locationId": "p08-location-83ea71c021db",
+  "itemId": "p08-item-83ea71c021db",
+  "actors": {
+    "manager": {
+      "id": "p08-manager-83ea71c021db",
+      "email": "p08-manager-83ea71c021db@retention.invalid",
+      "permissions": [
+        "dashboard.read",
+        "inventory.read",
+        "inventory.items.read",
+        "inventory.levels.read",
+        "locations.read"
+      ]
+    },
+    "denied": {
+      "id": "p08-denied-83ea71c021db",
+      "email": "p08-denied-83ea71c021db@retention.invalid",
+      "permissions": [
+        "pos.read"
+      ]
+    }
+  },
+  "database": "stoquify_pos_audit_20261018_d5f8832f3f",
+  "scope": "Synthetic tenant-wide manager, no multi-location grant claim"
+}

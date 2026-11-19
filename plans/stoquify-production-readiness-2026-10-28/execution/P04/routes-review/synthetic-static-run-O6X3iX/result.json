@@ -1,0 +1,46 @@
+{
+  "evidenceClass": "component_http_current_middleware_installed_next_synthetic_manifests",
+  "fullApplicationBuild": false,
+  "databaseTouched": false,
+  "externalNetwork": false,
+  "credentialsSent": false,
+  "timestamp": "2026-10-29T11:02:13.256Z",
+  "nextVersion": "15.5.27",
+  "source": [
+    {
+      "path": "middleware.ts",
+      "sha256": "5ab2f985ba452717f361e0f4e29eaaedb646202a83dd58b83412b24e9c88f180"
+    },
+    {
+      "path": "i18n/routing.ts",
+      "sha256": "48782c1ec405c53623812c80a1d4a7301d869b3c07ea36625374d2c056757421"
+    },
+    {
+      "path": "types/bilingual.ts",
+      "sha256": "31fa7407cd8826655c29800ea6b508752100fb250d987736f9eac35afbfdc3ed"
+    },
+    {
+      "path": "lib/security/dashboard-session-recovery.ts",
+      "sha256": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a"
+    },
+    {
+      "path": "lib/security/traffic-limiter.ts",
+      "sha256": "30755f70a016192784af76aa6c03597d2184e79f42e2d842fb8d4b412ff7914c"
+    },
+    {
+      "path": "lib/security/csp-pilot.ts",
+      "sha256": "ecda804a316a7a96cde98927361afd8f8903e4cdb499ffc0a0bb9508bee2b292"
+    }
+  ],
+  "status": 200,
+  "sentinelReturned": true,
+  "trace": [
+    {
+      "path": "/uploads/synthetic-tenant/sentinel.jpg",
+      "middlewarePass": true,
+      "middlewareStatus": 200,
+      "kind": "publicFolder"
+    }
+  ],
+  "limitation": "Actual app route tree, build/config and ingress are not started. Synthetic public-directory fixture only. No real tenant file was read or served."
+}

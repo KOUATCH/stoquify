@@ -1,0 +1,40 @@
+import { decodeLegacyPath, isPrivateUploadOptimizerTarget, legacyUploadDestination } from "../legacy-upload-routing"
+
+describe("legacy upload routing", () => {
+  test.each([
+    "/uploads/org-1/item.png", "/Uploads/org-1/item.png",
+    "/%75ploads/org-1/item.png", "/uploads%2Forg-1%2Fitem.png",
+    "/%2575ploads/org-1/item.png", "/uploads/org-1/%69tem.png",
+    "/uploads\\org-1\\item.png",
+    "/x/..%2Fuploads/org-1/item.png", "/%2e%2Fuploads/org-1/item.png", "/%2Fuploads/org-1/item.png",
+  ])("routes %s through the guarded API", pathname => {
+    expect(legacyUploadDestination(pathname)).toBe("/api/uploads/org-1/item.png")
+  })
+
+  test.each(["/public-control.png", "/uploads-other/org/item.png", "/api/uploads/org/item.png"])('leaves %s outside the legacy rewrite', pathname => {
+    expect(legacyUploadDestination(pathname)).toBeNull()
+  })
+
+  test.each(["/%zz", "/%", "/%252525252525252575ploads/org/item.png"])('refuses malformed or excessive decoding: %s', pathname => {
+    expect(decodeLegacyPath(pathname)).toBeNull()
+  })
+
+  it("encodes query/fragment characters as path data in a rewrite", () => {
+    expect(legacyUploadDestination("/uploads/org/item%3Fq%3Dx%23f.png")).toBe("/api/uploads/org/item%3Fq%3Dx%23f.png")
+  })
+
+  const origin = "http://127.0.0.1:12345"
+  test.each([
+    "/uploads/org/item.png", "/api/uploads/org/item.png", "/Uploads/org/item.png",
+    "/%75ploads%2Forg%2Fitem.png", "/api%2Fuploads/org/item.png",
+    "/%2575ploads/org/item.png", "/uploads/org/item.png?width=2#fragment",
+    origin + "/uploads/org/item.png", "/%zz", null, "",
+    "/x/..%2Fuploads/org/item.png", "/%2e%2Fuploads/org/item.png", "/%2Fuploads/org/item.png",
+  ])("blocks private or invalid optimizer source %s", value => {
+    expect(isPrivateUploadOptimizerTarget(value, origin)).toBe(true)
+  })
+
+  test.each(["/public-control.png", "/images/logo.png", "https://images.unsplash.com/public.png"])('retains public optimizer source %s', value => {
+    expect(isPrivateUploadOptimizerTarget(value, origin)).toBe(false)
+  })
+})

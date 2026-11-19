@@ -1,0 +1,157 @@
+{
+  "generatedAt": "2026-11-02T17:23:15.582Z",
+  "evidenceClass": "REAL_POSTGRESQL_READ_ONLY_INSPECTION",
+  "identity": {
+    "database": "stoquify_replay_dataset_20261028_01",
+    "schema": "public",
+    "readOnly": "on"
+  },
+  "schemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+  "lastWholeDatasetVerification": "2026-10-29T13:41:30.630Z",
+  "payrollPeriods": [],
+  "payrollRuns": [],
+  "attendance": [
+    {
+      "organizationId": "synth12_bafoussam",
+      "entries": 4345,
+      "first": "2025-11-01 00:00:00",
+      "last": "2026-10-28 00:00:00"
+    },
+    {
+      "organizationId": "synth12_douala",
+      "entries": 4345,
+      "first": "2025-11-01 00:00:00",
+      "last": "2026-10-28 00:00:00"
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "entries": 4345,
+      "first": "2025-11-01 00:00:00",
+      "last": "2026-10-28 00:00:00"
+    }
+  ],
+  "octoberAttendance": [
+    {
+      "organizationId": "synth12_bafoussam",
+      "status": "VALIDATED",
+      "entries": 336,
+      "first": "2026-10-01 00:00:00",
+      "last": "2026-10-28 00:00:00"
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "status": "REJECTED",
+      "entries": 1,
+      "first": "2026-10-28 00:00:00",
+      "last": "2026-10-28 00:00:00"
+    },
+    {
+      "organizationId": "synth12_douala",
+      "status": "VALIDATED",
+      "entries": 336,
+      "first": "2026-10-01 00:00:00",
+      "last": "2026-10-28 00:00:00"
+    },
+    {
+      "organizationId": "synth12_douala",
+      "status": "REJECTED",
+      "entries": 1,
+      "first": "2026-10-28 00:00:00",
+      "last": "2026-10-28 00:00:00"
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "status": "VALIDATED",
+      "entries": 336,
+      "first": "2026-10-01 00:00:00",
+      "last": "2026-10-28 00:00:00"
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "status": "REJECTED",
+      "entries": 1,
+      "first": "2026-10-28 00:00:00",
+      "last": "2026-10-28 00:00:00"
+    }
+  ],
+  "historicalAp": [
+    {
+      "organizationId": "synth12_bafoussam",
+      "status": "MATCHED",
+      "invoices": 6
+    },
+    {
+      "organizationId": "synth12_douala",
+      "status": "MATCHED",
+      "invoices": 6
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "status": "MATCHED",
+      "invoices": 6
+    }
+  ],
+  "originalPendingTableCounts": [
+    {
+      "table": "hris_payroll_handoff_packages",
+      "count": 0
+    },
+    {
+      "table": "hris_payroll_handoff_receipts",
+      "count": 0
+    },
+    {
+      "table": "payroll_attendance_snapshots",
+      "count": 0
+    },
+    {
+      "table": "payroll_declaration_evidence",
+      "count": 0
+    },
+    {
+      "table": "payroll_declarations",
+      "count": 0
+    },
+    {
+      "table": "payroll_employee_balance_cases",
+      "count": 0
+    },
+    {
+      "table": "payroll_employee_balance_events",
+      "count": 0
+    },
+    {
+      "table": "payroll_payment_allocations",
+      "count": 0
+    },
+    {
+      "table": "payroll_payment_batches",
+      "count": 0
+    },
+    {
+      "table": "payroll_payslip_lines",
+      "count": 0
+    },
+    {
+      "table": "payroll_payslips",
+      "count": 0
+    },
+    {
+      "table": "payroll_periods",
+      "count": 0
+    },
+    {
+      "table": "payroll_run_lines",
+      "count": 0
+    },
+    {
+      "table": "payroll_run_transitions",
+      "count": 0
+    },
+    {
+      "table": "payroll_runs",
+      "count": 0
+    }
+  ],
+  "scope": "No seed writes, statutory approvals, application/provider calls, or business dates changed."
+}

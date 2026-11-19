@@ -13,9 +13,11 @@ import { db } from "@/prisma/db"
 import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
 import { getPendingManualMatchProposals } from "./payment-reconciliation-manual-read.service"
 import { getManualMatchCandidates, type ManualMatchCandidate, type ManualCandidateReadModel } from "./payment-reconciliation-manual-candidates.service"
+import { isUtcDayAlignedAccountingPeriod } from "./reconciliation-period-scope"
 
 export type PaymentReconciliationDashboardData = {
   alertScan?: ReconciliationAlertScan | null
+  openAccountingPeriods?: Array<{ id: string; name: string; startDate: string; endDate: string }>
   source: {
     mode: "DURABLE_EVIDENCE_KERNEL"
     certificationStatus: "NO_EVIDENCE" | "READY_FOR_RUN" | "NEEDS_REVIEW" | "READY_FOR_SIGNOFF" | "SIGNED"
@@ -305,6 +307,7 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
     overview,
     inboxItems,
     alertScan,
+    openAccountingPeriods,
   ] = await Promise.all([
     db.providerAccount.findMany({
       where: { organizationId },
@@ -379,10 +382,18 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
       },
     }),
     readLatestReconciliationAlertScan(organizationId),
+    db.accountingPeriod.findMany({
+      where: { organizationId, status: "OPEN" },
+      orderBy: [{ startDate: "desc" }, { id: "asc" }],
+      take: 50,
+      select: { id: true, name: true, startDate: true, endDate: true },
+    }),
   ])
 
   return {
     alertScan,
+    openAccountingPeriods: openAccountingPeriods.filter(period => isUtcDayAlignedAccountingPeriod(period.startDate, period.endDate))
+      .map(period => ({ id: period.id, name: period.name, startDate: period.startDate.toISOString(), endDate: period.endDate.toISOString() })),
     source: {
       mode: "DURABLE_EVIDENCE_KERNEL",
       certificationStatus: overview.certificationStatus,

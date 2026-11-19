@@ -1,0 +1,43 @@
+{
+  "startedAt": "2026-10-28T07:35:02.344Z",
+  "artifactSha256": "987da3ead9c716cdbf5d2a22ac1723aa8a8ed15113f40a6b8abd3c1fb64d151f",
+  "base": "https://localhost:3186",
+  "database": "stoquify_local_af16_20261028_engagement_r2",
+  "passed": false,
+  "evidenceClass": "Synthetic AF03/AF05 authenticated browser on sealed full application; local TLS with test certificate; not hosted TLS, predecessor rollback or production approval",
+  "buildId": "eoW9-NZPj4rd9OHTZxMDM",
+  "preverifiedFiles": 5284,
+  "migrations": 120,
+  "clonedFrom": "stoquify_local_af16_20261025_template_r1",
+  "fixture": {
+    "source": ".codex-tmp\\af16-release-20261026\\scripts\\fixtures\\firm-engagement-workflows-browser.cjs",
+    "sourceSha256": "e7a09a2185ce0ce19e4639bf7992f44580be2dca01f4f7d7be5728f3d664cc36",
+    "seedSha256": "6fb09707bb3d8fa2301c3df58bd86444ed75286ddbb57d33c410d65e7b1e4c51",
+    "users": 5,
+    "organizations": 3
+  },
+  "certificate": {
+    "fingerprint256": "11:8B:06:07:B9:52:DC:E2:3D:BA:9B:9C:4F:51:7A:8A:A5:89:DE:11:81:3E:27:E3:56:A9:0E:DB:E4:09:D8:C7",
+    "subjectAltName": "DNS:localhost, IP Address:127.0.0.1",
+    "selfSigned": true,
+    "operatingSystemTrustChanged": false
+  },
+  "listener": {
+    "tls": "127.0.0.1:3186",
+    "upstream": "127.0.0.1:57382"
+  },
+  "adapters": [
+    {
+      "source": ".codex-tmp\\af16-release-20261026\\scripts\\verify-firm-engagement-browser.cjs",
+      "sourceSha256": "2615888316509f8e6ec2351537f1a4a3384f4dfed891297464962d0caceceb5d",
+      "generated": "scripts\\af16-sealed-engagement-browser.generated.cjs",
+      "generatedSha256": "fb381cb6215fc3134f0f9bb94df98c453c6f7c73bda66cec3ac942c4448e222c",
+      "businessAssertionsPreserved": true,
+      "exitCode": 1
+    }
+  ],
+  "error": "Error: Browser failure; evidence retained\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\scripts\\run-af16-sealed-engagement-browser.cjs:149:50)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "proxyStopped": true,
+  "serverStopped": true,
+  "finishedAt": "2026-10-28T07:52:16.796Z"
+}

@@ -168,6 +168,22 @@ describe("AccountingSetupPage", () => {
     expect(mockGetAccountingSetupDataAction).not.toHaveBeenCalled()
   })
 
+  it("localizes the French period-closing control and retained closed status", async () => {
+    const frenchProps = { ...pageProps, params: Promise.resolve({ locale: "fr" }) }
+    const view = render(await AccountingSetupPage(frenchProps))
+    expect(screen.getByRole("button", { name: "Clôturer" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Périodes comptables" })).toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument()
+
+    mockGetAccountingSetupDataAction.mockResolvedValue({
+      success: true,
+      data: { ...setupData, periods: setupData.periods.map(period => ({ ...period, status: "CLOSED" })) },
+    })
+    view.rerender(await AccountingSetupPage(frenchProps))
+    expect(screen.getByText("Clôturée")).toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "Clôturer" })).not.toBeInTheDocument()
+  })
+
   it("keeps setup data action errors inside the setup access panel after permission succeeds", async () => {
     mockGetAccountingSetupDataAction.mockResolvedValue({
       success: false,

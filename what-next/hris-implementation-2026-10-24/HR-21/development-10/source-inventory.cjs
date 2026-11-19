@@ -1,0 +1,10 @@
+const fs=require('fs'),path=require('path');
+const base='what-next/hris-implementation-2026-10-24/HR-21/development-10';
+const prior=JSON.parse(fs.readFileSync('what-next/hris-implementation-2026-10-24/HR-21/development-09/sources.json'));
+const added=['actions/payroll/payroll-contract.actions.ts','actions/payroll/__tests__/payroll-contract.actions.test.ts','services/payroll/contract.service.ts','services/payroll/payment-evidence.service.ts','services/hris/document-evidence.service.ts','services/hris/employee-profile.service.ts','services/hris/contract.service.ts','actions/hris/contract-authoring.actions.ts','actions/hris/employee.actions.ts','actions/hris/payment-destination.actions.ts','services/hris/__tests__/document-evidence.service.test.ts','services/hris/__tests__/payroll-readiness-contract.test.ts','jest.hris-hiring.config.cjs'];
+const sources=[...new Set([...prior.filter(f=>!f.startsWith('what-next/')), ...added.filter(f=>fs.existsSync(f)),...fs.readdirSync(base).filter(f=>f.endsWith('.cjs')).map(f=>base+'/'+f)])];
+fs.writeFileSync(path.join(base,'sources.json'),JSON.stringify(sources,null,2));
+const graph=JSON.parse(fs.readFileSync('graphify-out/graph_actions.json'));
+const nodes=(graph.nodes||[]).filter(n=>/payroll-contract.actions|contract-authoring.actions|employee.actions/.test(JSON.stringify(n)));
+fs.writeFileSync(path.join(base,'graph-discovery.json'),JSON.stringify({note:'Historical 2026-09-08 graph discovery only; current source controls behavior.',nodes},null,2));
+console.log('Inventoried '+sources.length+' sources; historical graph matches '+nodes.length);

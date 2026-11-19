@@ -31,7 +31,7 @@ function fixture() {
   const tx = {
     $queryRaw: jest.fn().mockResolvedValue([]),
     purchaseOrder: { findFirst: jest.fn().mockResolvedValue(order) },
-    goodsReceiptLine: { groupBy: jest.fn().mockResolvedValue([]) },
+    goodsReceiptLine: { groupBy: jest.fn().mockResolvedValue([]), findMany: jest.fn().mockResolvedValue([]) },
     location: { findFirst: jest.fn().mockResolvedValue(location) },
     businessEvent: { findUnique: jest.fn().mockResolvedValue(null), findMany: jest.fn().mockResolvedValue([]) },
     inventoryTransaction: { findMany: jest.fn().mockResolvedValue([]) },

@@ -1,0 +1,383 @@
+{
+  "organizationId": "af09-1792511407230-journey-client",
+  "catalog": {
+    "accounts": [
+      {
+        "id": "cmvgv0gg6001jma0kwl84l61q",
+        "code": "311",
+        "nameEn": "STOCK",
+        "type": "ASSET",
+        "normalBalance": "DEBIT",
+        "currency": "XAF",
+        "name": "STOCK",
+        "active": true
+      },
+      {
+        "id": "cmvgv0ggt001lma0ka89axgjx",
+        "code": "411",
+        "nameEn": "AR",
+        "type": "ASSET",
+        "normalBalance": "DEBIT",
+        "currency": "XAF",
+        "name": "AR",
+        "active": true
+      },
+      {
+        "id": "cmvgv0ghd001nma0komi0pfdx",
+        "code": "401",
+        "nameEn": "AP",
+        "type": "LIABILITY",
+        "normalBalance": "CREDIT",
+        "currency": "XAF",
+        "name": "AP",
+        "active": true
+      },
+      {
+        "id": "cmvgv0gi2001pma0k7fcdjje0",
+        "code": "571",
+        "nameEn": "CASH",
+        "type": "ASSET",
+        "normalBalance": "DEBIT",
+        "currency": "XAF",
+        "name": "CASH",
+        "active": true
+      },
+      {
+        "id": "cmvgv0gii001rma0k6r2373no",
+        "code": "101",
+        "nameEn": "EQUITY",
+        "type": "EQUITY",
+        "normalBalance": "CREDIT",
+        "currency": "XAF",
+        "name": "EQUITY",
+        "active": true
+      }
+    ],
+    "customers": [
+      {
+        "id": "cmvgv0gj5001tma0kznjyhg4n",
+        "name": "Synthetic customer",
+        "active": true
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "cmvgv0gjo001vma0kig54jg5u",
+        "name": "Synthetic supplier",
+        "active": true
+      }
+    ],
+    "locations": [
+      {
+        "id": "cmvgv0glh0021ma0kwjnx5i13",
+        "name": "Synthetic warehouse",
+        "active": true
+      }
+    ],
+    "items": [
+      {
+        "id": "cmvgv0gkh001zma0km7r3rpka",
+        "name": "Synthetic flour",
+        "active": true,
+        "unit": "kg"
+      }
+    ]
+  },
+  "latestRevision": 1,
+  "current": {
+    "id": "cmvgv0hm30023ma0k2od8hvpk",
+    "revision": 1,
+    "sourceFilename": "source.json",
+    "controlsFilename": "controls.json",
+    "createdById": "af09-1792511407230-journey-preparer",
+    "createdAt": "2026-10-20T15:50:12.266Z",
+    "source": {
+      "version": "opening-position-v1",
+      "country": "CM",
+      "currency": "XAF",
+      "cutoverDate": "2026-10-01",
+      "timezone": "Africa/Douala",
+      "evidenceReference": "synthetic:source-position-20260930",
+      "stock": [
+        {
+          "sourceId": "stock-1",
+          "item": "FLOUR",
+          "location": "MAIN",
+          "unit": "kg",
+          "account": "STOCK",
+          "quantity": "2.500",
+          "unitCost": "10.00",
+          "value": "25.00"
+        }
+      ],
+      "openItems": [
+        {
+          "sourceId": "ar-1",
+          "kind": "AR",
+          "counterparty": "CUSTOMER-1",
+          "document": "INV-001",
+          "account": "AR",
+          "sourceDate": "2026-09-01",
+          "dueDate": "2026-10-15",
+          "currency": "XAF",
+          "original": "120.00",
+          "settled": "20.00",
+          "outstanding": "100.00"
+        },
+        {
+          "sourceId": "ap-1",
+          "kind": "AP",
+          "counterparty": "SUPPLIER-1",
+          "document": "BILL-001",
+          "account": "AP",
+          "sourceDate": "2026-09-02",
+          "dueDate": "2026-10-16",
+          "currency": "XAF",
+          "original": "80.00",
+          "settled": "30.00",
+          "outstanding": "50.00"
+        }
+      ],
+      "ledger": [
+        {
+          "sourceId": "ledger-stock",
+          "account": "STOCK",
+          "domain": "STOCK",
+          "side": "DEBIT",
+          "amount": "25.00",
+          "currency": "XAF",
+          "covers": [
+            "stock-1"
+          ]
+        },
+        {
+          "sourceId": "ledger-ar",
+          "account": "AR",
+          "domain": "AR",
+          "side": "DEBIT",
+          "amount": "100.00",
+          "currency": "XAF",
+          "covers": [
+            "ar-1"
+          ]
+        },
+        {
+          "sourceId": "ledger-ap",
+          "account": "AP",
+          "domain": "AP",
+          "side": "CREDIT",
+          "amount": "50.00",
+          "currency": "XAF",
+          "covers": [
+            "ap-1"
+          ]
+        },
+        {
+          "sourceId": "ledger-cash",
+          "account": "CASH",
+          "domain": "CASH",
+          "side": "DEBIT",
+          "amount": "25.00",
+          "currency": "XAF",
+          "covers": []
+        },
+        {
+          "sourceId": "ledger-equity",
+          "account": "EQUITY",
+          "domain": "EQUITY",
+          "side": "CREDIT",
+          "amount": "100.00",
+          "currency": "XAF",
+          "covers": []
+        }
+      ]
+    },
+    "controls": {
+      "version": "opening-controls-v1",
+      "evidenceReference": "synthetic:independent-checker-controls-20260930",
+      "country": "CM",
+      "currency": "XAF",
+      "cutoverDate": "2026-10-01",
+      "stock": "25.00",
+      "ar": "100.00",
+      "ap": "50.00",
+      "debit": "150.00",
+      "credit": "150.00",
+      "quantities": [
+        {
+          "unit": "kg",
+          "quantity": "2.500"
+        }
+      ]
+    },
+    "mappings": {
+      "accounts": [
+        {
+          "source": "STOCK",
+          "targetId": "cmvgv0gg6001jma0kwl84l61q"
+        },
+        {
+          "source": "AR",
+          "targetId": "cmvgv0ggt001lma0ka89axgjx"
+        },
+        {
+          "source": "AP",
+          "targetId": "cmvgv0ghd001nma0komi0pfdx"
+        },
+        {
+          "source": "CASH",
+          "targetId": "cmvgv0gi2001pma0k7fcdjje0"
+        },
+        {
+          "source": "EQUITY",
+          "targetId": "cmvgv0gii001rma0k6r2373no"
+        }
+      ],
+      "customers": [
+        {
+          "source": "CUSTOMER-1",
+          "targetId": "cmvgv0gj5001tma0kznjyhg4n"
+        }
+      ],
+      "suppliers": [
+        {
+          "source": "SUPPLIER-1",
+          "targetId": "cmvgv0gjo001vma0kig54jg5u"
+        }
+      ],
+      "items": [
+        {
+          "source": "FLOUR",
+          "targetId": "cmvgv0gkh001zma0km7r3rpka"
+        }
+      ],
+      "locations": [
+        {
+          "source": "MAIN",
+          "targetId": "cmvgv0glh0021ma0kwjnx5i13"
+        }
+      ]
+    },
+    "preview": {
+      "version": "opening-preview-v1",
+      "sourceHash": "sha256:27361b09474122f4cf9d6fbf7d7920865a971a95a7afcdd590c1554c03bfb8d6",
+      "controlsHash": "sha256:2401e33968d5af113eaf8c9b46a8d5cb74770e73017c8a6510f5d67f5e8ce89e",
+      "mappingHash": "sha256:44befcf69f379e2750ed2f445970bc2d1494fb2c256d0ea5bae90094e599e1e0",
+      "masterHash": "sha256:c8ee486608954342dd1be962b51d938025a6eb6ce5c3baa3c27c7d89b03eb31d",
+      "digest": "sha256:4c65b974c4204353a7b80410004f5e03e4035a584da25cc4738d54b9a9dda905",
+      "currency": "XAF",
+      "country": "CM",
+      "cutoverAt": "2026-09-30T23:00:00.000Z",
+      "canReview": true,
+      "canApply": false,
+      "issues": [],
+      "comparisons": [
+        {
+          "key": "stock",
+          "proposed": "25.00",
+          "control": "25.00",
+          "difference": "0.00"
+        },
+        {
+          "key": "ar",
+          "proposed": "100.00",
+          "control": "100.00",
+          "difference": "0.00"
+        },
+        {
+          "key": "ap",
+          "proposed": "50.00",
+          "control": "50.00",
+          "difference": "0.00"
+        },
+        {
+          "key": "debit",
+          "proposed": "150.00",
+          "control": "150.00",
+          "difference": "0.00"
+        },
+        {
+          "key": "credit",
+          "proposed": "150.00",
+          "control": "150.00",
+          "difference": "0.00"
+        },
+        {
+          "key": "quantity:kg",
+          "proposed": "2.500",
+          "control": "2.500",
+          "difference": "0.000"
+        }
+      ],
+      "details": [
+        {
+          "sourceId": "stock-1",
+          "kind": "STOCK",
+          "accountId": "cmvgv0gg6001jma0kwl84l61q",
+          "amount": "25.00"
+        },
+        {
+          "sourceId": "ar-1",
+          "kind": "AR",
+          "accountId": "cmvgv0ggt001lma0ka89axgjx",
+          "amount": "100.00"
+        },
+        {
+          "sourceId": "ap-1",
+          "kind": "AP",
+          "accountId": "cmvgv0ghd001nma0komi0pfdx",
+          "amount": "50.00"
+        },
+        {
+          "sourceId": "ledger-stock",
+          "kind": "LEDGER_STOCK",
+          "accountId": "cmvgv0gg6001jma0kwl84l61q",
+          "amount": "25.00"
+        },
+        {
+          "sourceId": "ledger-ar",
+          "kind": "LEDGER_AR",
+          "accountId": "cmvgv0ggt001lma0ka89axgjx",
+          "amount": "100.00"
+        },
+        {
+          "sourceId": "ledger-ap",
+          "kind": "LEDGER_AP",
+          "accountId": "cmvgv0ghd001nma0komi0pfdx",
+          "amount": "50.00"
+        },
+        {
+          "sourceId": "ledger-cash",
+          "kind": "LEDGER_CASH",
+          "accountId": "cmvgv0gi2001pma0k7fcdjje0",
+          "amount": "25.00"
+        },
+        {
+          "sourceId": "ledger-equity",
+          "kind": "LEDGER_EQUITY",
+          "accountId": "cmvgv0gii001rma0k6r2373no",
+          "amount": "100.00"
+        }
+      ],
+      "writerBlockers": [
+        "AR_OPENING_WRITER_UNSUPPORTED",
+        "AP_OPENING_WRITER_UNSUPPORTED",
+        "STOCK_OPENING_NO_DOUBLE_POSTING_UNPROVEN",
+        "CUTOVER_ORCHESTRATOR_AF10_REQUIRED"
+      ]
+    },
+    "reviewState": "REVIEWED",
+    "reviewedById": "af09-1792511407230-journey-reviewer",
+    "reviewedAt": "2026-10-20T15:50:13.230Z",
+    "conclusion": "Synthetic independent tie-out reviewed; no financial apply authorized."
+  },
+  "history": [
+    {
+      "id": "cmvgv0hm30023ma0k2od8hvpk",
+      "revision": 1,
+      "sourceHash": "sha256:27361b09474122f4cf9d6fbf7d7920865a971a95a7afcdd590c1554c03bfb8d6",
+      "mappingHash": "sha256:44befcf69f379e2750ed2f445970bc2d1494fb2c256d0ea5bae90094e599e1e0",
+      "status": "REVIEWED"
+    }
+  ]
+}

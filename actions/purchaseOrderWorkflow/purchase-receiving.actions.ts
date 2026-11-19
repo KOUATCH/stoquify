@@ -8,6 +8,10 @@ import { getPurchaseReceivingWorkbench, previewPurchaseReceiving, confirmPurchas
 import type { PurchaseReceivingCommand, PurchaseReceivingDraft } from "@/services/purchase-order/purchase-receiving-contracts"
 import { previewReceiptLedgerRecovery, confirmReceiptLedgerRecovery } from "@/services/purchase-order/receipt-ledger-recovery.service"
 import type { ReceiptLedgerRecoveryCommand, ReceiptLedgerRecoveryDraft } from "@/services/purchase-order/receipt-ledger-recovery-contracts"
+import { db } from "@/prisma/db"
+import { purchaseReceivingAuthority } from "@/services/purchase-order/purchase-receiving-authority"
+import { purchaseReturnWorkbenchSourceQuerySchema, type PurchaseReturnWorkbenchSource } from "@/services/purchasing/purchase-return-workbench.contracts"
+import { purchaseReturnSourceInTx } from "@/services/purchasing/purchase-return-workbench.service"
 
 async function scope(write: boolean) {
   const actor = await requirePermission(write ? "purchases.orders.receive" : "purchases.orders.read", { resource: "PurchaseOrder", auditAllowed: write })
@@ -22,6 +26,18 @@ function failure(error: unknown) {
 export async function loadPurchaseReceiving(orderId: string) {
   try { return { success: true as const, data: await getPurchaseReceivingWorkbench(orderId, await scope(false)) } }
   catch (error) { return failure(error) }
+}
+export async function loadPurchaseReturnSource(input: unknown) {
+  try {
+    const { purchaseOrderId, goodsReceiptId } = purchaseReturnWorkbenchSourceQuerySchema.parse(input)
+    const current = await scope(false)
+    const data = await db.$transaction(async tx => {
+      const authority = await purchaseReceivingAuthority(tx, current, "return")
+      const source = await purchaseReturnSourceInTx(tx, current.organizationId, purchaseOrderId, goodsReceiptId)
+      return { ...source, organizationId: current.organizationId, actorId: current.actorId, requiresFreshAuth: !authority.fresh } satisfies PurchaseReturnWorkbenchSource
+    })
+    return { success: true as const, data }
+  } catch (error) { return failure(error) }
 }
 export async function reviewPurchaseReceiving(draft: PurchaseReceivingDraft) {
   try { return { success: true as const, data: await previewPurchaseReceiving(draft, await scope(true)) } }

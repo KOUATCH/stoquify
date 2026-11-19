@@ -1,0 +1,29 @@
+{
+  "synthetic": true,
+  "handler": "local no-op with one injected failure; no external delivery",
+  "load": 105,
+  "foreignLoad": 1,
+  "before": {
+    "pending": 105,
+    "locked": 0,
+    "deferred": 0,
+    "failed": 0,
+    "deadLetter": 0,
+    "oldestActionableAt": "2026-10-25T14:06:37.839Z"
+  },
+  "after": {
+    "pending": 0,
+    "locked": 0,
+    "deferred": 0,
+    "failed": 0,
+    "deadLetter": 0,
+    "oldestActionableAt": null
+  },
+  "concurrentClaims": [
+    25,
+    25
+  ],
+  "elapsedMs": 12562.6876,
+  "latencyBudget": null,
+  "staleAcknowledgement": "LEASE_LOST"
+}

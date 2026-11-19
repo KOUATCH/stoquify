@@ -1,0 +1,198 @@
+{
+  "errors": 0,
+  "warnings": 24,
+  "findings": [
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx",
+      "line": 82,
+      "column": 9,
+      "severity": "warning",
+      "message": "The 'copy' conditional could make the dependencies of useMemo Hook (at line 123) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'copy' in its own useMemo() Hook",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/AccountantInvitationDelivery.tsx",
+      "line": 22,
+      "column": 31,
+      "severity": "warning",
+      "message": "The ref value 'sequence.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'sequence.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/AccountantPortfolioWorkspace.tsx",
+      "line": 75,
+      "column": 16,
+      "severity": "warning",
+      "message": "The ref value 'revision.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'revision.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/AdvisoryOutcomesDesk.tsx",
+      "line": 65,
+      "column": 26,
+      "severity": "warning",
+      "message": "The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/CloseEvidenceInvestigationPanel.tsx",
+      "line": 37,
+      "column": 134,
+      "severity": "warning",
+      "message": "The ref value 'generation.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'generation.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/DelegatedEvidenceDesk.tsx",
+      "line": 73,
+      "column": 54,
+      "severity": "warning",
+      "message": "The ref value 'generation.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'generation.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/DelegatedEvidenceDesk.tsx",
+      "line": 73,
+      "column": 64,
+      "severity": "warning",
+      "message": "React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/FirmEngagementWorkspace.tsx",
+      "line": 48,
+      "column": 31,
+      "severity": "warning",
+      "message": "The ref value 'sequence.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'sequence.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/FirmPracticeDesk.tsx",
+      "line": 57,
+      "column": 26,
+      "severity": "warning",
+      "message": "The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/FirmPracticeDesk.tsx",
+      "line": 58,
+      "column": 6,
+      "severity": "warning",
+      "message": "React Hook useEffect has a missing dependency: 'clear'. Either include it or remove the dependency array",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/JournalEntryActions.tsx",
+      "line": 73,
+      "column": 111,
+      "severity": "warning",
+      "message": "React Hook useCallback has a missing dependency: 'workflow'. Either include it or remove the dependency array",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/ObligationRegister.tsx",
+      "line": 42,
+      "column": 26,
+      "severity": "warning",
+      "message": "The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/accounting/ReviewWorkpaperBinder.tsx",
+      "line": 50,
+      "column": 26,
+      "severity": "warning",
+      "message": "The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/cash-command/CashCommandDashboard.tsx",
+      "line": 318,
+      "column": 53,
+      "severity": "warning",
+      "message": "The ref value 'request.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'request.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/frontend/custom-carousel.tsx",
+      "line": 62,
+      "column": 13,
+      "severity": "warning",
+      "message": "Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element",
+      "rule": "@next/next/no-img-element"
+    },
+    {
+      "file": "components/hris/HrisDocumentWorkspace.tsx",
+      "line": 18,
+      "column": 314,
+      "severity": "warning",
+      "message": "React Hook useEffect has a missing dependency: 't'. Either include it or remove the dependency array",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/onboarding/OpeningCutoverPanel.tsx",
+      "line": 62,
+      "column": 26,
+      "severity": "warning",
+      "message": "The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/onboarding/OpeningPositionWorkbench.tsx",
+      "line": 85,
+      "column": 26,
+      "severity": "warning",
+      "message": "The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/purchase-orders/PurchaseOrderAmendmentDialog.tsx",
+      "line": 35,
+      "column": 29,
+      "severity": "warning",
+      "message": "The ref value 'generation.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'generation.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/purchase-orders/PurchaseOrderDecisionHistory.tsx",
+      "line": 26,
+      "column": 187,
+      "severity": "warning",
+      "message": "The ref value 'generation.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'generation.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/purchasing/PaymentReconciliationHandoffWorkbench.tsx",
+      "line": 99,
+      "column": 26,
+      "severity": "warning",
+      "message": "The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "file": "components/ui/groups/inventory/ItemManagement.tsx",
+      "line": 223,
+      "column": 15,
+      "severity": "warning",
+      "message": "Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element",
+      "rule": "@next/next/no-img-element"
+    },
+    {
+      "file": "config/permissions.ts",
+      "line": 595,
+      "column": 1,
+      "severity": "warning",
+      "message": "Assign object to a variable before exporting as module default",
+      "rule": "import/no-anonymous-default-export"
+    },
+    {
+      "file": "hooks/posHooks/usePOSCheckoutLifecycle.ts",
+      "line": 109,
+      "column": 18,
+      "severity": "warning",
+      "message": "The ref value 'generation.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'generation.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    }
+  ]
+}

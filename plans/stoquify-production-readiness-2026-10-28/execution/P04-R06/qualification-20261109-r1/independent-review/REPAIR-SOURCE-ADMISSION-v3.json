@@ -1,0 +1,94 @@
+{
+  "at": "2026-11-10T08:49:29.210Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "productChangesByReviewer": false,
+  "scope": "Current selected authentication source admitted for refreshed isolated candidate only; no full-app outcome",
+  "supersedesForCurrentSource": "REPAIR-SOURCE-ADMISSION-v2.json",
+  "inputs": [
+    {
+      "path": "inventory/source-after-manifest-v4.json",
+      "sha256": "ec1a3785e9140629889e2dd4e8f4a5efa174088967ee1f3beb111838ce127e70"
+    },
+    {
+      "path": "inventory/source-after-repair-manifest-v4.json",
+      "sha256": "915e4316f73e4b84cac7629e75b1adece7289a9bf5c3db802c95ce2b6072d2bf"
+    },
+    {
+      "path": "inventory/authority-map-after-v4.json",
+      "sha256": "6fd3236bc238185313d93eb9a5c938e689d4119186f49de7179551263d0e3775"
+    },
+    {
+      "path": "inventory/resume-20261110-r1/SOURCE-COMPARISON.json",
+      "sha256": "bb44ddd9b425de8066036d326a473bc90e08c8fe85ed2084ac4677f5f730e875"
+    },
+    {
+      "path": "inventory/resume-20261110-r1/typescript-erasure.json",
+      "sha256": "0eb253721ff5ff2f00d2c3e92d1088579b485bc92ed6b1e5c971cfaff1dc4f55"
+    }
+  ],
+  "sourceIdentity": "d156380731346ebfee88a9c7fcc936468e189e9ae4f949129366bc1836cd78c5",
+  "selectedInputs": 63,
+  "subsetInputs": 48,
+  "currentAndSnapshotHashesVerified": true,
+  "files": [
+    {
+      "path": "lib/auth.ts",
+      "sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b"
+    },
+    {
+      "path": "lib/security/__tests__/auth-current-authority.test.ts",
+      "sha256": "3b299762f485a4ab0f0ce9e281fcc2e7ac18ea20e61eebbb0c72dbba7744070c"
+    },
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "sha256": "ac5b6a129cc5fff4816147d201fa06a9a10b610a9f206686c7cdbfd9f2314873"
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "sha256": "4b402f487038b9c7c1d4b86b56e8f271e1303405a2a10ceb14bed23f0ab0ae09"
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "sha256": "aae2f1a20add9453671f8c08c25eca1215dcb7e790a46b784d3d35cd01b1949a"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b"
+    }
+  ],
+  "change": {
+    "path": "lib/auth.ts",
+    "previousSha256": "181e15aad556024353b1e988cce6ccb5eb9679dfc50620427b81aa059a8c7064",
+    "currentSha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5",
+    "difference": "Only typed object spread: ...ctx to ...(ctx as NonNullable<Parameters<ReturnType<typeof getSession>>[0]>)",
+    "attribution": "Concurrent unattributed edit preserved",
+    "classification": "Type-only assertion; exact full-file string comparison confirms no other edit"
+  },
+  "reviewFindings": [
+    "The raw getSession lookup and forced fresh/GET/no-refresh behavior remain unchanged.",
+    "Public templates, default protected operations, lifecycle checks, generic error and precise normalization remain within prior bounded repair.",
+    "The 63 selected current files match immutable v4 snapshots; former48 subset and source identity recomputed and checked.",
+    "Installed TypeScript isolated erasure receipt reports equal JavaScript outputs; this supports type-only classification, not project typecheck or native behavior.",
+    "Current-source mocked attempt03 passed87 tests in four suites and was independently reviewed."
+  ],
+  "conditions": [
+    "Refresh and independently bind a successor full candidate before build/runtime; failed original candidate remains v3 and cannot be called current.",
+    "Recheck selected source hashes immediately before execution; changed inputs require new admission.",
+    "Preserve original failure, v3 snapshots, candidate and external schema changes.",
+    "Obtain real-session denial/authorized-positive, native database and browser outcomes with exact successor artifact and independent review."
+  ],
+  "limitations": [
+    "No full project typecheck/build success.",
+    "No actual session/native database/browser qualification.",
+    "No performance, concurrency-linearizability, production or full-readiness approval."
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "at": "2026-11-10T19:05:20.409Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "candidateCaptureAccepted": true,
+  "files": [
+    {
+      "path": "inventory/capture-input-v2.json",
+      "sha256": "e659c57159ae6fa162df9799a3f57e3661a3855d52cfe11660661e96a9730fc0"
+    },
+    {
+      "path": "inventory/source-after-manifest-runtime-v2.json",
+      "sha256": "e319b9c3ad8394030de8f1cd26db8f0139e8d6763dba9fc5ea41d9e2efbcbabc"
+    },
+    {
+      "path": "inventory/private-metadata-policy-v2.json",
+      "sha256": "f6b24a709fbc2df9033c648afb8687bfcf46068dc299b299c050237d6cb551a3"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/CURRENT-SOURCE-MANIFEST.json",
+      "sha256": "c346a34aaf073e4ee3ac1246863adbf751869400331755c69c698235e4623064"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/SOURCE-IMPACT.json",
+      "sha256": "045007bb97f0939cd8859c4b9235be4ecb434e7cd3d8fe817b3babad4ba8bf42"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/PRIVATE-METADATA-DISPOSITION.json",
+      "sha256": "fe5a21ce44f5f2910783d816824c56de3dd6ad809646e66dfef6b9ef76709abb"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/MIGRATION-SOURCE-REFRESH.json",
+      "sha256": "bf9fad5af1fe9a8440e3ec8939c81a2b3be622e1ada7589a36645cf20ad73228"
+    },
+    {
+      "path": "independent-review/SOURCE-RESUME-OUTCOME-REVIEW-r2.json",
+      "sha256": "79151ccad74deaa2769d5281bbc1c30372dfabaee1866196de56badf4dbd76d9"
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+      "sha256": "dbf7007e9e23e7c2b54b0ef726c2949b67a13eb7b72363279d4d4b7a93142617"
+    }
+  ],
+  "sourceManifestSha256": "c346a34aaf073e4ee3ac1246863adbf751869400331755c69c698235e4623064",
+  "sourceIdentitySha256": "0b8354d4f340ad5b82931e2e18e3e01a7ba18cfd089351a2536b41e23891332c",
+  "sourceFiles": 9988,
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "selectedInputs": 68,
+  "unchangedSelectedInputs": 67,
+  "migrationCount": 123,
+  "metadataReceipts": 7,
+  "facts": [
+    "Normalized68matches observed current inputs exactly; only schema row differs from preserved historical68.",
+    "Typed4fixture/3client policy equals independently accepted disposition.",
+    "All68 current inputs rehashed at admission.",
+    "Capture entry remains conditional on fullsource/HEAD and fresh6/12/12 resource equality."
+  ],
+  "limitations": [
+    "No DB/client reuse or build/runtime qualification.",
+    "Typed artifact helper and tests mandatory before packaging verification."
+  ],
+  "qualificationPassed": false
+}

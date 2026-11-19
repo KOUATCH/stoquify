@@ -1,0 +1,12 @@
+{
+  "database": "stoquify_local_command_center_e2e_f7253138fe_upgrade",
+  "productionAccess": false,
+  "checks": [
+    "115-to-118 populated upgrade preserves user, occurrence and immutable event bytes",
+    "Promotion advisory lock excludes contenders and releases after failure",
+    "Existing client writes coexist with retained coordination history; deletion still rejected",
+    "All 118 upgrade ledger names and hashes match the captured catalog"
+  ],
+  "scope": "115-to-118 upgrade with synthetic user and Command Center history; not all older populated domain transitions",
+  "passed": true
+}

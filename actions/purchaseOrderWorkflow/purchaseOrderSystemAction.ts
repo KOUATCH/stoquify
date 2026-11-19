@@ -4,11 +4,12 @@ import { readPurchaseOrderDecisionHistory } from "@/services/purchase-order/purc
 import { purchaseLifecyclePermission, purchaseLifecycleKindSchema, purchaseLifecycleRequestSchema, type PurchaseLifecycleRequest, type PurchaseLifecycleKind, type PurchaseLifecyclePreview, type PurchaseLifecycleReceipt } from "@/services/purchase-order/purchase-order-lifecycle-contracts";
 import { executePurchaseOrderLifecycle as executeLifecycleService, getPurchaseOrderLifecyclePreview } from "@/services/purchase-order/purchase-order.service";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation";
 
 import { requirePermission } from "@/lib/security/rbac";
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { requireSession } from "@/lib/security/auth-session";
+import { createPurchaseOrderFromLegacyIntent, hasRetainedPurchaseAuthoringIntent, purchaseAuthoringRolloutEnabled, type PurchaseAuthoringActor } from "@/services/purchase-order/purchase-order-authoring.service";
 import { purchaseApprovalRequestSchema, type PurchaseApprovalRequest, type PurchaseApprovalPreview, type PurchaseApprovalReceipt } from "@/services/purchase-order/purchase-order-approval-contracts";
 import { ForbiddenError } from "@/services/_shared/action-errors";
 import { BusinessRuleError, toSafeActionError } from "@/services/_shared/action-errors";
@@ -54,17 +55,12 @@ import type {
 export type GoodsReceiptPayload = ClientGoodsReceiptPayload
 
 function revalidatePurchaseOrderWorkflow(organizationId: string, id?: string) {
-  revalidateTag("purchaseOrders")
-  revalidateTag(`purchaseOrders-${organizationId}`)
-  if (id) revalidateTag(`purchaseOrder-${id}`)
-
-  revalidatePath("/[locale]/dashboard/purchase-orders", "page")
-  revalidatePath("/[locale]/dashboard/purchases", "page")
-  if (id) {
-    revalidatePath("/[locale]/dashboard/purchase-orders/[id]", "page")
-    revalidatePath("/[locale]/dashboard/purchase-orders/[id]/edit", "page")
-    revalidatePath("/[locale]/dashboard/purchases/[id]", "page")
-  }
+  revalidateAfterCommit({
+    tags: ["purchaseOrders", `purchaseOrders-${organizationId}`, ...(id ? [`purchaseOrder-${id}`] : [])],
+    paths: ["/[locale]/dashboard/purchase-orders", "/[locale]/dashboard/purchases", ...(id ? [
+      "/[locale]/dashboard/purchase-orders/[id]", "/[locale]/dashboard/purchase-orders/[id]/edit", "/[locale]/dashboard/purchases/[id]",
+    ] : [])],
+  })
 }
 
 async function scopedOrg(
@@ -109,6 +105,14 @@ function mapCreatePayload(payload: CreatePurchaseOrderPayload, orgId: string, us
     shippingCost: payload.shippingCost ?? 0,
     orderLines: payload.orderLines,
   })
+}
+
+async function durableCreationActor(actor: Awaited<ReturnType<typeof scopedOrg>>, requestId?: string): Promise<PurchaseAuthoringActor | null> {
+  if (!purchaseAuthoringRolloutEnabled() && !(requestId && await hasRetainedPurchaseAuthoringIntent(actor.orgId, actor.userId, requestId))) return null
+  if (!requestId) throw new BusinessRuleError("Retain the original purchase creation request before submitting.", "REVIEW_REQUIRED")
+  const { claims } = await requireSession()
+  if (claims.userId !== actor.userId || claims.tenantId !== actor.orgId) throw new ForbiddenError()
+  return { ...actor, sessionId: claims.sessionId, sessionToken: claims.sessionToken }
 }
 
 function mapUpdatePayload(payload: UpdatePurchaseOrderDTO, orgId: string, userId: string, session: { sessionId: string; sessionToken: string }) {
@@ -158,17 +162,23 @@ export async function createPurchaseOrder(
   payload: CreatePurchaseOrderPayload,
 ): Promise<PurchaseOrderResponse<PurchaseOrderWithRelations>> {
   try {
-    const { orgId, userId } = await scopedOrg(payload.organizationId, "purchases.orders.create", {
+    const actor = await scopedOrg(payload.organizationId, "purchases.orders.create", {
       auditAllowed: true,
     })
-    const created = await createPurchaseOrderService(mapCreatePayload(payload, orgId, userId))
+    const { orgId, userId } = actor
+    const durable = await durableCreationActor(actor, payload.requestId)
+    const retained = durable ? await createPurchaseOrderFromLegacyIntent(durable, { id: payload.requestId!, kind: "create", payload: mapCreatePayload(payload, orgId, userId) }) : null
+    const created = retained?.receipt
+      ? await getPurchaseOrderById(retained.receipt.orderId, orgId)
+      : durable ? (() => { throw new BusinessRuleError("Recover the original creation request.", "REVIEW_REQUIRED") })()
+      : await createPurchaseOrderService(mapCreatePayload(payload, orgId, userId))
     revalidatePurchaseOrderWorkflow(orgId, created.id)
     return response(created as PurchaseOrderWithRelations, `Purchase order ${created.orderNumber} created successfully`)
   } catch (error) {
     return {
       success: false,
       data: null as unknown as PurchaseOrderWithRelations,
-      error: error instanceof Error ? error.message : "Failed to create purchase order",
+      error: getModuleOperationErrorReason(error) ? "New work is stopped" : toSafeActionError(error).error,
       ...(getModuleOperationErrorReason(error) ? { code: "FORBIDDEN" as const, reason: getModuleOperationErrorReason(error) } : {}),
     }
   }
@@ -339,6 +349,8 @@ export async function bulkUpdatePurchaseOrderStatus(params: {
 export async function clonePurchaseOrder(params: {
   id: string
   organizationId: string
+  requestId?: string
+  recoverOnly?: boolean
   overrides?: Partial<{
     supplierId: string
     locationId: string
@@ -358,7 +370,17 @@ export async function clonePurchaseOrder(params: {
       auditAllowed: true,
     })
     const parsed = ClonePurchaseOrderSchema.parse({ ...params, organizationId: actor.orgId })
-    const cloned = await clonePurchaseOrderService(parsed, actor.userId)
+    // An uncertain legacy result must never fall through to another legacy
+    // create. Recovery can advance only a retained intent owned by this actor.
+    if (params.recoverOnly && (!params.requestId || !await hasRetainedPurchaseAuthoringIntent(actor.orgId, actor.userId, params.requestId))) {
+      throw new BusinessRuleError("The original creation outcome needs review.", "REVIEW_REQUIRED")
+    }
+    const durable = await durableCreationActor(actor, params.requestId)
+    const retained = durable ? await createPurchaseOrderFromLegacyIntent(durable, { id: params.requestId!, kind: "clone", payload: parsed }) : null
+    const cloned = retained?.receipt
+      ? await getPurchaseOrderById(retained.receipt.orderId, actor.orgId)
+      : durable ? (() => { throw new BusinessRuleError("Recover the original clone request.", "REVIEW_REQUIRED") })()
+      : await clonePurchaseOrderService(parsed, actor.userId)
     revalidatePurchaseOrderWorkflow(actor.orgId, cloned.id)
     return {
       ...response(cloned as PurchaseOrderWithRelations),

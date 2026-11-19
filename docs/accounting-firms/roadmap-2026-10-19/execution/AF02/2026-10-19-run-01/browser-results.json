@@ -1,0 +1,68 @@
+{
+  "synthetic": true,
+  "authentication": "Better Auth email/password; real protected actions and PostgreSQL",
+  "checks": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "keyboardSubmitAndHeadingRecovery": true,
+      "geometry": {
+        "client": 1112,
+        "scroll": 1112
+      },
+      "axeViolations": []
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "keyboardSubmitAndHeadingRecovery": true,
+      "geometry": {
+        "client": 358,
+        "scroll": 358
+      },
+      "axeViolations": []
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "keyboardSubmitAndHeadingRecovery": true,
+      "geometry": {
+        "client": 1112,
+        "scroll": 1112
+      },
+      "axeViolations": []
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "keyboardSubmitAndHeadingRecovery": true,
+      "geometry": {
+        "client": 358,
+        "scroll": 358
+      },
+      "axeViolations": []
+    },
+    {
+      "traversal": "105 unique authorized clients / 6 real service pages"
+    },
+    {
+      "evidenceNavigation": "real guarded portal route; client and period preserved"
+    },
+    {
+      "revokedGrant": "removed on refresh; direct portal revisit does not expose client name"
+    }
+  ],
+  "screenshots": [
+    "portfolio-en-1440.png",
+    "portfolio-en-390.png",
+    "portfolio-fr-1440.png",
+    "portfolio-fr-390.png",
+    "portal-client-period.png",
+    "changed-grant-empty.png",
+    "failure.png"
+  ],
+  "pageErrors": [],
+  "passed": false,
+  "failure": "locator.waitFor: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Access unavailable', exact: true }) to be visible\u001b[22m\n",
+  "sessionsRevokedAfterCapture": true
+}

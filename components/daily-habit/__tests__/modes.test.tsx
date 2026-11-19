@@ -40,6 +40,51 @@ function data(): DailyHabitDigestData {
   return { organizationId: "owned-org", organizationName: "Owned test", generatedAt: freshness.generatedAt!, periodStart: "2026-07-11T00:00:00Z", periodEnd: "2026-07-11T23:59:59Z", currency: "XAF", timezone: "UTC", digests: [digest("owner", "owner"), digest("manager", "manager")], actionQueue: { filteredOutCount: 0, summary: { total: 2, open: 2, assigned: 0, stale: 0, expired: 0, redacted: 0, bySeverity: { info: 0, low: 0, medium: 0, high: 2, critical: 0 }, byRole: { owner: 2 } } }, summary: { digestCount: 2, visibleActionCount: 2, filteredOutActionCount: 0, staleSignalCount: 1, redactedSignalCount: 0, blockedDigestCount: 0, hiddenDigestCount: 0 } }
 }
 
+it.each(["en", "fr"] as const)("P08 pairs source identity and limitations with its permitted next step (%s)", locale => {
+  const input = data()
+  const selected = input.digests[0]
+  selected.risks = [{
+    id: "risk-1", organizationId: input.organizationId, moduleSlug: "inventory", rank: 1,
+    title: locale === "fr" ? "Écart de stock" : "Stock discrepancy", detail: "Source detail", businessImpact: "Review evidence",
+    severity: "high", severityScore: 70, moneyImpact: null, urgency: null, state: "stale",
+    evidenceGrade: "operational", trustState: "operational", freshness, sourceModules: ["inventory"],
+    blockers: [blocker], redactions: [], actionLink: action,
+    drillThrough: { available: true, type: "route", label: action.label, href: action.href, requiredPermission: action.requiredPermission },
+  }]
+  const before = JSON.stringify(input)
+  const view = render(<DailyHabitDigestDashboard data={input} locale={locale} />)
+  fireEvent.click(screen.getByRole("button", { name: locale === "en" ? "Command" : "Pilotage", exact: true }))
+  const row = within(screen.getByRole("article", { name: selected.risks[0].title }))
+  expect(row.getByText(action.label)).toBeVisible()
+  expect(row.getByText(locale === "en" ? /Source is stale/ : /Source ancienne/)).toBeVisible()
+  expect(row.getByRole("link", { name: `${locale === "en" ? "Open" : "Ouvrir"}: ${selected.risks[0].title}` })).toHaveAttribute("href", `/${locale}/dashboard/inventory`)
+  expect(JSON.stringify(input)).toBe(before)
+  const failed = { ...input, digests: [{ ...selected, risks: [{ ...selected.risks[0], state: "safe_error" as const }] }] }
+  view.rerender(<DailyHabitDigestDashboard data={failed} locale={locale} />)
+  expect(within(screen.getByRole("article", { name: selected.risks[0].title })).getByText(locale === "en" ? "Source unavailable" : "Source indisponible")).toBeVisible()
+})
+
+it("P08 does not offer navigation for an explicitly unavailable source or manufacture a source from a shared route", () => {
+  const input = data(), selected = input.digests[0]
+  selected.risks = [{
+    id: "risk-1", organizationId: input.organizationId, moduleSlug: "inventory", rank: 1,
+    title: "Unavailable stock source", detail: "Unavailable", businessImpact: "Unknown", severity: "high", severityScore: 70,
+    moneyImpact: null, urgency: null, state: "safe_error", evidenceGrade: "operational", trustState: "operational",
+    freshness, sourceModules: ["inventory"], blockers: [], redactions: [], actionLink: action,
+    drillThrough: { available: false, type: "route", label: action.label, requiredPermission: action.requiredPermission, unavailableReason: "Refresh source access" },
+  }]
+  selected.actions.push({ ...action, id: "another-action", label: "Separate review" })
+  render(<DailyHabitDigestDashboard data={input} locale="en" />)
+  fireEvent.click(screen.getByRole("button", { name: "Command", exact: true }))
+  const row = within(screen.getByRole("article", { name: "Unavailable stock source" }))
+  expect(row.queryByRole("link")).not.toBeInTheDocument()
+  expect(row.getByRole("button", { name: "Source unavailable" })).toBeDisabled()
+  expect(row.getByText("Refresh source access")).toBeVisible()
+  const independent = within(screen.getByRole("article", { name: "Separate review" }))
+  expect(independent.getByRole("link", { name: "Open: Separate review" })).toHaveAttribute("href", "/en/dashboard/inventory")
+  expect(independent.queryByText("Source unavailable")).not.toBeInTheDocument()
+})
+
 it("clears agent state on workspace, source revision or tenant changes, but keeps it across display modes", () => {
   const source = data()
   const { rerender } = render(<DailyHabitDigestDashboard data={source} locale="en" />)
@@ -56,7 +101,7 @@ it("clears agent state on workspace, source revision or tenant changes, but keep
   expect(screen.getByRole("button", { name: "Build test brief" })).toBeVisible()
 })
 
-it.each(["en", "fr"] as const)("switches both UTC reporting-period labels independently of the local generation time (%s)", locale => {
+it.each(["en", "fr"] as const)("switches the single UTC reporting-period label independently of the local generation time (%s)", locale => {
   const source = data()
   source.timezone = "America/New_York"
   const weekly = digest("weekly", "weekly")
@@ -65,18 +110,18 @@ it.each(["en", "fr"] as const)("switches both UTC reporting-period labels indepe
   render(<DailyHabitDigestDashboard data={source} locale={locale} />)
   const dailyPeriod = locale === "en" ? "Jul 11 - Jul 11" : "11 juil. - 11 juil."
   const weeklyPeriod = locale === "en" ? "Jul 5 - Jul 11" : "5 juil. - 11 juil."
-  expect(screen.getAllByText(dailyPeriod)).toHaveLength(2)
+  expect(screen.getAllByText(dailyPeriod)).toHaveLength(1)
   fireEvent.click(screen.getByRole("button", { name: locale === "en" ? "Weekly" : "Hebdomadaire", exact: true }))
-  expect(screen.getAllByText(weeklyPeriod)).toHaveLength(2)
+  expect(screen.getAllByText(weeklyPeriod)).toHaveLength(1)
   expect(screen.queryByText(dailyPeriod)).not.toBeInTheDocument()
   fireEvent.click(screen.getByRole("button", { name: locale === "en" ? "Owner" : "Dirigeant", exact: true }))
-  expect(screen.getAllByText(dailyPeriod)).toHaveLength(2)
+  expect(screen.getAllByText(dailyPeriod)).toHaveLength(1)
 })
 
 it.each(["en", "fr"] as const)("switches real mode content in %s while retaining source warnings and disabled actions", locale => {
   const source = data(), before = JSON.stringify(source)
   render(<DailyHabitDigestDashboard data={source} locale={locale} />)
-  const titles = locale === "en" ? ["Summary and changes", "Actions and risks", "Source details"] : ["Synthèse et évolutions", "Actions et risques", "Détails des sources"]
+  const titles = locale === "en" ? ["Summary and observations", "Actions and risks", "Source details"] : ["Synthèse et observations", "Actions et risques", "Détails des sources"]
   const modes = locale === "en" ? ["Brief", "Command", "Investigate"] : ["Synthèse", "Pilotage", "Examiner"]
   expect(screen.getByRole("region", { name: titles[0] })).toBeVisible()
   const disclosure = screen.getByText(blocker.title, { selector: "summary" })
@@ -89,7 +134,7 @@ it.each(["en", "fr"] as const)("switches real mode content in %s while retaining
   fireEvent.click(screen.getByRole("button", { name: modes[1], exact: true }))
   const command = screen.getByRole("region", { name: titles[1] })
   expect(screen.queryByRole("region", { name: titles[0] })).not.toBeInTheDocument()
-  expect(within(command).getByRole("link", { name: locale === "en" ? "Open" : "Ouvrir", exact: true })).toHaveAttribute("href", action.href)
+  expect(within(command).getByRole("link", { name: `${locale === "en" ? "Open" : "Ouvrir"}: Review source`, exact: true })).toHaveAttribute("href", `/${locale}/dashboard/inventory`)
   expect(within(command).getByRole("button", { name: locale === "en" ? "Hidden" : "Masqué" })).toBeDisabled()
   expect(within(command).getByText("Current permission required")).toBeVisible()
   expect(screen.getByRole("region", { name: locale === "en" ? "Source limitations" : "Limites des sources" })).toHaveTextContent(blocker.title)
@@ -123,7 +168,7 @@ it("restores the authorized workspace and mode from history while retaining unre
 it("does not make an unavailable workspace visible through URL state", () => {
   window.history.replaceState({}, "", "/en/dashboard/daily-digest?digest=unauthorized&mode=unexpected")
   render(<DailyHabitDigestDashboard data={data()} locale="en" />)
-  expect(screen.getByRole("region", { name: "Summary and changes" })).toBeVisible()
+  expect(screen.getByRole("region", { name: "Summary and observations" })).toBeVisible()
   expect(screen.queryByRole("button", { name: "unauthorized" })).not.toBeInTheDocument()
 })
 
@@ -134,7 +179,7 @@ it.each(["en", "fr"] as const)("opens sources at the top while retaining the cur
   render(<DailyHabitDigestDashboard data={source} locale={locale} />)
   fireEvent.click(screen.getByRole("button", { name: locale === "fr" ? "Responsable" : "Manager", exact: true }))
   fireEvent.click(screen.getByRole("button", { name: locale === "fr" ? "Pilotage" : "Command", exact: true }))
-  const link = screen.getByRole("link", { name: locale === "fr" ? "Ouvrir" : "Open", exact: true })
+  const link = screen.getByRole("link", { name: `${locale === "fr" ? "Ouvrir" : "Open"}: Review source`, exact: true })
   fireEvent.click(link)
   expect(mockPush).toHaveBeenCalledTimes(1)
   expect(mockPush).toHaveBeenCalledWith(href + "#top", { scroll: true })
@@ -154,7 +199,7 @@ it.each([
   source.digests[0]!.actions = [{ ...action, href: "/en/dashboard/inventory" }]
   render(<DailyHabitDigestDashboard data={source} locale="en" />)
   fireEvent.click(screen.getByRole("button", { name: "Command", exact: true }))
-  const link = screen.getByRole("link", { name: "Open", exact: true })
+  const link = screen.getByRole("link", { name: "Open: Review source", exact: true })
   for (const [key, value] of Object.entries(attributes)) link.setAttribute(key, value)
   // Avoid jsdom's unsupported native navigation after the capture-phase check.
   link.addEventListener("click", click => click.preventDefault())

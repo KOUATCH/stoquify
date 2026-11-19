@@ -1,4 +1,7 @@
 import createNextIntlPlugin from 'next-intl/plugin';
+import { createRequire } from 'node:module';
+
+const privateUploadAliases = createRequire(import.meta.url)('./config/private-upload-aliases.json');
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 const configuredDistDir = process.env.NEXT_DIST_DIR?.trim();
@@ -163,7 +166,16 @@ const nextConfig = {
     return headers;
   },
   async rewrites() {
-    return [
+    return {
+      // Legacy image URLs must reach authorization before public-file resolution.
+      beforeFiles: [
+        { source: '/uploads/:path*', destination: '/api/uploads/:path*' },
+        ...privateUploadAliases.map(({ source, uploadSource }) => ({
+          source: source.slice('public'.length),
+          destination: '/api' + uploadSource.slice('public'.length),
+        })),
+      ],
+      afterFiles: [
       {
         source: '/security.txt',
         destination: '/api/security-txt'
@@ -172,7 +184,9 @@ const nextConfig = {
         source: '/.well-known/security.txt',
         destination: '/api/security-txt'
       }
-    ];
+      ],
+      fallback: [],
+    };
   }
 };
 

@@ -1,0 +1,12 @@
+const fs=require('node:fs');
+const p='components/hris/HrisPeopleAuthoring.tsx';let s=fs.readFileSync(p,'utf8');
+s=s.replace('...reason.length?{}:{},','');
+s=s.replace('["PERMANENT",t("Permanent","Permanent")]','["CDI",t("Permanent","CDI")]').replace('["FIXED_TERM",t("Fixed term","Durée déterminée")]','["CDD",t("Fixed term","CDD")]').replace('["TEMPORARY",t("Temporary","Temporaire")]','["DAILY",t("Daily","Journalier")]');
+s=s.replace('c.approvalStatus==="REQUESTED"&&form','c.approvalStatus==="REQUESTED"&&c.canReviewAmounts&&form');
+s=s.replace('<p>{c.documentEvidencePresent?', '<p>{c.baseSalary??t("Salary unavailable for this role", "Salaire indisponible pour ce rôle")} {c.currency??""}</p><p>{c.documentEvidencePresent?');
+s=s.replace('{selected.documentRequests.find((d:any)=>d.contractId===c.id)?.pending&&<>','{selected.documentRequests.find((d:any)=>d.contractId===c.id)?.pending&&<><dl className="grid gap-1 break-all text-sm">{Object.entries(selected.documentRequests.find((d:any)=>d.contractId===c.id).pending).filter(([key])=>["artifactHash","malwareScanEvidenceHash","malwareScanProvider","malwareScannedAt","signedAt","retentionPolicyCode","retentionBasis","retainUntil","legalHold"].includes(key)).map(([key,value])=><div key={key}><dt>{key}</dt><dd>{String(value)}</dd></div>)}</dl>');
+fs.writeFileSync(p,s);
+const directory='app/[locale]/(dashboard)/dashboard/people/page.tsx';s=fs.readFileSync(directory,'utf8');s=s.replace('<nav aria-label=', '<nav aria-label=');
+s=s.replace('            <Link className="rounded-md border border-white/20 px-3 py-2" href={localizePath("/dashboard/people/setup",locale)}','            <Link className="rounded-md border border-white/20 px-3 py-2" href={localizePath("/dashboard/people/manage",locale)}>{fr ? "Administrer le personnel" : "Manage employees"}</Link>\n            <Link className="rounded-md border border-white/20 px-3 py-2" href={localizePath("/dashboard/people/setup",locale)}');fs.writeFileSync(directory,s);
+const profile='app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx';s=fs.readFileSync(profile,'utf8');const at='  const peopleHref = localizePath("/dashboard/people", locale)';s=s.replace(at,at+'\n  const manageHref = localizePath(`/dashboard/people/manage?employeeId=${encodeURIComponent(employeeId)}`, locale)');
+s=s.replace('<h1 ', '<Link href={manageHref} className="text-sm underline">{locale === "fr" ? "Corriger les données et préparer un changement" : "Repair details and prepare a change"}</Link><h1 ');fs.writeFileSync(profile,s);

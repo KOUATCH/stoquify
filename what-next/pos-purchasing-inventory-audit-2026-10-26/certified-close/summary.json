@@ -1,0 +1,270 @@
+{
+  "at": "2026-10-26T18:34:34.370Z",
+  "status": "PASS_WITH_EXPLICIT_SCOPE",
+  "programComplete": false,
+  "scope": "Complete system-certified close-pack service/database lifecycle for synthetic zero-tax XAF cash settlement and nonnegative stock",
+  "source": {
+    "head": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+    "start": "2026-10-26T18:23:23.209Z",
+    "final": "2026-10-26T18:32:51.090Z",
+    "fingerprintedFiles": 1164,
+    "changedDuringRun": [
+      "services/inventory/__tests__/certified-close-lifecycle.postgres.test.ts",
+      "services/inventory/__tests__/certified-close.fixture.ts"
+    ],
+    "applicationDriftWithinManifest": [],
+    "applicationEditsThisContinuation": [],
+    "finalTypeOnlyChanges": "Two non-null assertions on close-run IDs after the runtime pass; no emitted runtime difference"
+  },
+  "checks": {
+    "workflow": {
+      "status": "PASS",
+      "receipt": "a536b0",
+      "exitCode": 0
+    },
+    "postgres": {
+      "status": "PASS",
+      "tests": 1,
+      "suites": 1,
+      "stages": [
+        {
+          "id": "BLOCKED_DRAFT",
+          "status": "PASS"
+        },
+        {
+          "id": "REAL_READY",
+          "status": "PASS"
+        },
+        {
+          "id": "CERTIFICATION_DENIALS",
+          "status": "PASS"
+        },
+        {
+          "id": "CERTIFY_ROLLBACK_AND_RACE",
+          "status": "PASS"
+        },
+        {
+          "id": "PERIOD_SEAL",
+          "status": "PASS"
+        },
+        {
+          "id": "REOPEN_CORRECT_INVALIDATE",
+          "status": "PASS"
+        },
+        {
+          "id": "RECERTIFY_AND_RESEAL",
+          "status": "PASS"
+        }
+      ],
+      "session": 57137,
+      "exitCode": 0
+    },
+    "readback": {
+      "status": "PASS",
+      "receipt": "08185c",
+      "exitCode": 0,
+      "environment": [
+        {
+          "database": "stoquify_pos_audit_20261026_d30f",
+          "version": "PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.44.35209, 64-bit"
+        }
+      ],
+      "migrations": [
+        {
+          "count": 120
+        }
+      ],
+      "residualFaultFunctions": 0
+    },
+    "mockedAndPure": {
+      "status": "PASS",
+      "tests": 139,
+      "suites": 5,
+      "session": 93761,
+      "exitCode": 0
+    },
+    "typescript": {
+      "status": "PASS",
+      "session": 64023,
+      "receipt": "c48099",
+      "exitCode": 0,
+      "diagnostics": [],
+      "command": "node node_modules/typescript/bin/tsc --project tsconfig.certified-close.json --noEmit --incremental false",
+      "initialResult": "Two nullable run-ID errors in new test; fixed with type-only assertions"
+    },
+    "scopedDiffCheck": {
+      "status": "PASS",
+      "receipt": "ef4cc1",
+      "exitCode": 0,
+      "limitation": "Git diff does not include untracked additions; owned code/report whitespace and full source content also inspected"
+    },
+    "ownedWhitespace": {
+      "status": "PASS",
+      "findings": []
+    },
+    "browser": {
+      "status": "NOT_RUN",
+      "reason": "No UI edits; authenticated close-screen evidence remains separate"
+    },
+    "provider": {
+      "status": "OUT_OF_SCOPE",
+      "reason": "MTN sandbox absent; user excluded provider work"
+    }
+  },
+  "reconciliation": {
+    "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+    "period": {
+      "id": "cmvpl739c0005maeomy35mmm6",
+      "status": "CLOSED",
+      "controlVersion": 3
+    },
+    "finalState": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "journalCount": 4,
+      "returns": 1,
+      "payments": 1,
+      "transactions": 1
+    },
+    "periodOperations": [
+      "CLOSE",
+      "REOPEN",
+      "CLOSE"
+    ],
+    "certifiedExports": [
+      {
+        "id": "cmvpl8cpp00iimaeowdh81b4w",
+        "hash": "sha256:c9f4f39bdab47c9e4560b3d2a64565c9d5abeade62c42371703977a8249370e2"
+      },
+      {
+        "id": "cmvpl8u5a00rxmaeo2p0u5pj4",
+        "hash": "sha256:d678ea38d8270276958878af765bc1d6f7c0128270038795a0fd5046ec778312"
+      }
+    ],
+    "debitNetByAccount": {
+      "INVENTORY": 100,
+      "GRNI": 0,
+      "ACCOUNTS_PAYABLE": 0,
+      "CASH_ON_HAND": -200,
+      "SUPPLIER_RETURN_CLAIM": 100
+    }
+  },
+  "confirmedApplicationDefects": [],
+  "limitations": [
+    "Synthetic ledger-derived approved schedules are not independent external-document evidence",
+    "Concurrent certification test observes one durable winner without a lock-wait barrier",
+    "Service controls plus mocked action checks are not authenticated browser authorization",
+    "No provider or statutory certification; no exhaustive concurrency claim"
+  ],
+  "open": [
+    "MTN sandbox account/product/configuration and safe callback/test endpoint",
+    "Retention, creator resumption and escalation policies",
+    "Default durable authoring rollout, legacy compatibility and mixed-version rollout; default legacy duplicate-create risk remains",
+    "Authenticated close UI journeys"
+  ],
+  "excluded": [
+    "Negative-stock certification",
+    "Production mutations",
+    "Live charges",
+    "Deployment",
+    "Commits and pushes"
+  ],
+  "files": [
+    {
+      "file": "jest.certified-close.config.cjs",
+      "sha256": "1a58e72e54bad080a43568c90107de93a82eeebeebe6c3d48a8040c48ace7c46"
+    },
+    {
+      "file": "services/inventory/__tests__/certified-close-lifecycle.postgres.test.ts",
+      "sha256": "cc75dde098e0334f2bf2766f71c4d176c766351cb3c4207bad40ad0484ba3b86"
+    },
+    {
+      "file": "services/inventory/__tests__/certified-close.fixture.ts",
+      "sha256": "429f46c979dc77422bb033658a0670176b31fb17a926ea4e0b45b3b5f5f23971"
+    },
+    {
+      "file": "tsconfig.certified-close.json",
+      "sha256": "51d48d41440344f8146126129a6e690ef288ba5c29a53624376198389a79c6b7"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/EVIDENCE_REGISTER.md",
+      "sha256": "45da5577ed9cf63012ba59ac337ac23d815aecb5296706d611707ef3aa050769"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/REPORT.md",
+      "sha256": "8aec9687fec3a4ddb372ef7b704f99b3fe55b6e7273756719027a8ccb5af1e7c"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/blocked-draft.json",
+      "sha256": "ed4b9a5df5a02af861f293149a61a0a93644b1414864d75738fa5807f9f8df2e"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/certified-corrected.json",
+      "sha256": "590756fd8e61f974ab486b4ca0f0f9c014fcae67a172d225fd264f875733a730"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/certified-first.json",
+      "sha256": "4ec719172c2cf3c14db7bb15f25daa8dac91c70b4da6968e95ea69ceb9ba15a2"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/database-readback.json",
+      "sha256": "38278dffd4d53ea1ae97f88243d6b33ef0fabfc146eedc2ecdcf0c86bde02f11"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/final-source.json",
+      "sha256": "29bb2351f1ba1dabf655c447f8a1920ef7feede670d3cfc2a58a9004210ffea2"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/final-working-tree.txt",
+      "sha256": "d81e8f1c0ee623a9fcb58ddb2fc51e2cbf555504a21b8b0259bfba591722544c"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/finalize.cjs",
+      "sha256": "8edf47b371bba07d105de94f4b2ff59c1104d123fa50902ae5984461cfe8c1a0"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/initial-prerequisites.json",
+      "sha256": "9c434311b01b5d83ee7a4351fcc97a124ba2ecdcb476835731989ead840fbb39"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/lifecycle-reconciliation.json",
+      "sha256": "401d4b3506e37f8ddfdad971439b3b440ecb546c15ad0c0f2ef182de3a9f14b7"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/lifecycle-results.json",
+      "sha256": "e4acd69a9ae7bc72cbb65562b1e50ac6c14aba00f72dd048432fed98ccd380a4"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/lifecycle.log",
+      "sha256": "30875233ba2bee6674a5343f37bd65408ae53f3dc8345a1bb64b41e051c3078d"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/readback.cjs",
+      "sha256": "86350216e397ac72c4fec7f33be5204972ff3fae57f09e3a3324b20088d973e5"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/run.cjs",
+      "sha256": "a66b3b24206f929ee736ed32303ca3469d5db101281ab86107fb5d549677c4dd"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/source-state.cjs",
+      "sha256": "f63a93c01b527911fbc09cd7f6586ed7d5293f23a70a3f6aa211f32f546e584d"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/start-source.json",
+      "sha256": "f5e01b89ed3ba21984bde2dd9abe30485e9cd689afba7361f898e606994aaf19"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/start-working-tree.txt",
+      "sha256": "8703306db34024f581d4d9abe33e261455da90116dbde8b8d47fb0f0c7276d61"
+    },
+    {
+      "file": "what-next/pos-purchasing-inventory-audit-2026-10-26/certified-close/unit-results.json",
+      "sha256": "f2738ebc056421d3d8dcad29bc92fc43b5e8acb6e6536094354ff8e9388419a3"
+    }
+  ]
+}

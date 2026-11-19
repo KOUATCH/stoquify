@@ -1,0 +1,326 @@
+[
+  {
+    "file": "services/snapshots/branch-operating-snapshot.service.ts",
+    "count": 6,
+    "blockers": [
+      {
+        "id": "branch-location-required",
+        "gate": "branch_operating_snapshot",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "branch-location-not-found",
+        "gate": "tenant_isolation",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "branch-location-inactive",
+        "gate": "branch_operating_snapshot",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "branch-payroll-profitability-missing",
+        "gate": "branch_payroll_profitability",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "branch-payroll-attendance-proof-missing",
+        "gate": "branch_payroll_inputs",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "branch-payroll-unallocated-lines-present",
+        "gate": "branch_payroll_allocation",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "services/snapshots/tenant-operating-snapshot.service.ts",
+    "count": 5,
+    "blockers": [
+      {
+        "id": "tenant-operating-location-scope-unsupported",
+        "gate": "tenant_operating_scope",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "tenant-active-location-missing",
+        "gate": "tenant_operating_snapshot",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "tenant-ledger-source-link-gap",
+        "gate": "ledger_evidence",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "tenant-ledger-trust-assurance-incidents",
+        "gate": "workflow_assurance",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "tenant-payroll-employee-balance-open",
+        "gate": "payroll_employee_balance",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "services/snapshots/payment-truth-snapshot.service.ts",
+    "count": 6,
+    "blockers": [
+      {
+        "id": "payment-location-scope-unsupported",
+        "gate": "payment_truth_scope",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "payment-suspense-currency-mismatch",
+        "gate": "payment_truth",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "payment-critical-exceptions-open",
+        "gate": "payment_truth",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "payment-suspense-open",
+        "gate": "payment_truth",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "payment-provider-account-missing",
+        "gate": "payment_truth",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "payment-reconciliation-run-missing",
+        "gate": "payment_truth",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "services/snapshots/inventory-cash-snapshot.service.ts",
+    "count": 2,
+    "blockers": [
+      {
+        "id": "inventory-negative-stock",
+        "gate": "inventory_cash",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "inventory-levels-missing",
+        "gate": "inventory_cash",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "services/snapshots/close-readiness-snapshot.service.ts",
+    "count": 11,
+    "blockers": [
+      {
+        "id": "close-location-scope-unsupported",
+        "gate": "close_readiness_scope",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "close-critical-findings-open",
+        "gate": "close_readiness",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "close-periods-unreviewed",
+        "gate": "close_readiness",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "close-periods-missing",
+        "gate": "close_readiness",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "close-assessment-order-ambiguous",
+        "gate": "close_readiness",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "close-runs-blocked",
+        "gate": "close_readiness",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "close-evidence-stale",
+        "gate": "close_readiness",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "close-certified-export-missing",
+        "gate": "close_readiness",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "close-findings-open",
+        "gate": "close_readiness",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "close-checklist-incomplete",
+        "gate": "close_readiness",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "close-evidence-unavailable",
+        "gate": "close_readiness",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "services/snapshots/inventory-loss-snapshot.service.ts",
+    "count": 4,
+    "blockers": [
+      {
+        "id": "inventory-loss-source-truncated",
+        "gate": "inventory_loss_source",
+        "fields": [
+          "title",
+          "detail",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "inventory-loss-evidence-missing",
+        "gate": "inventory_loss_evidence",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "inventory-loss-valuation-missing",
+        "gate": "inventory_loss_valuation",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      },
+      {
+        "id": "inventory-loss-approval-attribution-missing",
+        "gate": "inventory_loss_approval",
+        "fields": [
+          "title",
+          "nextAction"
+        ]
+      }
+    ]
+  }
+]

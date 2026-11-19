@@ -22,6 +22,12 @@ export type AccountantClientInviteProviderResult =
       errorCode: string
       retryable: boolean
     }
+  | {
+      status: "UNKNOWN"
+      provider: "RESEND"
+      errorCode: "ACCOUNTANT_INVITE_PROVIDER_OUTCOME_UNKNOWN"
+      retryable: false
+    }
 
 type ProviderEnvironment = Record<string, string | undefined>
 type ProviderFetch = typeof fetch
@@ -108,6 +114,7 @@ export async function sendAccountantClientInvite(
     const copy = inviteCopy(input)
     const response = await fetcher("https://api.resend.com/emails", {
       method: "POST",
+      signal: AbortSignal.timeout(30000),
       headers: {
         Authorization: "Bearer " + apiKey,
         "Content-Type": "application/json",
@@ -124,28 +131,23 @@ export async function sendAccountantClientInvite(
       id?: unknown
       message?: unknown
     } | null
-    if (response.ok && typeof body?.id === "string") {
+    if (response.ok && typeof body?.id === "string" && body.id.trim()) {
       return {
         status: "SENT",
         provider: "RESEND",
         providerReference: body.id,
       }
     }
-    return {
-      status: "FAILED",
-      provider: "RESEND",
-      errorCode:
-        response.status === 429 || response.status >= 500
-          ? "ACCOUNTANT_INVITE_PROVIDER_RETRYABLE"
-          : "ACCOUNTANT_INVITE_PROVIDER_REJECTED",
-      retryable: response.status === 429 || response.status >= 500,
+    if (response.status >= 400 && response.status < 500 && response.status !== 408 && response.status !== 409) {
+      return {
+        status: "FAILED",
+        provider: "RESEND",
+        errorCode: response.status === 429 ? "ACCOUNTANT_INVITE_PROVIDER_RETRYABLE" : "ACCOUNTANT_INVITE_PROVIDER_REJECTED",
+        retryable: response.status === 429,
+      }
     }
+    return { status: "UNKNOWN", provider: "RESEND", errorCode: "ACCOUNTANT_INVITE_PROVIDER_OUTCOME_UNKNOWN", retryable: false }
   } catch {
-    return {
-      status: "FAILED",
-      provider: "RESEND",
-      errorCode: "ACCOUNTANT_INVITE_PROVIDER_UNAVAILABLE",
-      retryable: true,
-    }
+    return { status: "UNKNOWN", provider: "RESEND", errorCode: "ACCOUNTANT_INVITE_PROVIDER_OUTCOME_UNKNOWN", retryable: false }
   }
 }

@@ -1,0 +1,66 @@
+{
+  "startedAt": "2026-11-02T15:12:20.619Z",
+  "passed": false,
+  "candidateId": "p04-r02-full-eb25ee4e218c",
+  "commands": [
+    {
+      "label": "client-generation",
+      "startedAt": "2026-11-02T15:12:39.832Z",
+      "args": [
+        "node_modules/prisma/build/index.js",
+        "generate"
+      ],
+      "pid": 2980,
+      "exitCode": 1,
+      "signal": null,
+      "timedOut": false,
+      "finishedAt": "2026-11-02T15:12:39.973Z"
+    }
+  ],
+  "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p04-r02-fullapp-20261102-r2\\source",
+  "artifact": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p04-r02-fullapp-20261102-r2\\artifact",
+  "database": {
+    "host": "127.0.0.1",
+    "port": 53528,
+    "name": "stoquify_local_p04r02_20261029_build_r1",
+    "migrations": 120,
+    "synthetic": true
+  },
+  "environmentVariableNames": [
+    "APPDATA",
+    "AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY",
+    "AQSTOQFLOW_HISTORY_CURSOR_SECRET",
+    "AQSTOQFLOW_RECEIPT_TOKEN_SECRET",
+    "AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY",
+    "AQSTOQFLOW_STATEMENT_TOKEN_SECRET",
+    "AUTH_SECRET",
+    "BETTER_AUTH_SECRET",
+    "BUILD_APP_TIMEOUT_MS",
+    "CHECKPOINT_DISABLE",
+    "ComSpec",
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "LOCALAPPDATA",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_URL",
+    "NEXT_PUBLIC_APP_URL",
+    "NEXT_PUBLIC_BASE_URL",
+    "NEXT_TELEMETRY_DISABLED",
+    "NODE_OPTIONS",
+    "PATHEXT",
+    "PRISMA_HIDE_UPDATE_MESSAGE",
+    "PUBLIC_IDENTITY_ABUSE_HASH_SECRET",
+    "Path",
+    "STOQUIFY_ACCOUNTANT_INVITE_LIVE_SENDS",
+    "STOQUIFY_STATEMENT_EMAIL_LIVE_SENDS",
+    "STOQUIFY_STATEMENT_WHATSAPP_LIVE_SENDS",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "error": "Error: client-generation failed\n    at finish (E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\full-app-20261102-r2\\run-build.cjs:13:490)\n    at ChildProcess.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\full-app-20261102-r2\\run-build.cjs:16:87)\n    at Object.onceWrapper (node:events:633:26)\n    at ChildProcess.emit (node:events:518:28)\n    at ChildProcess._handle.onexit (node:internal/child_process:293:12)",
+  "finishedAt": "2026-11-02T15:12:39.979Z",
+  "clusterLifecycle": "Exclusively owned by database worker; build runner does not stop it"
+}

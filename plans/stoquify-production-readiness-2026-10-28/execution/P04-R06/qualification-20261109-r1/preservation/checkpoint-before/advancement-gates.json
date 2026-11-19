@@ -1,0 +1,77 @@
+{
+  "package_id": "P04-R06",
+  "updated_at": "2026-11-09T20:23:23.467Z",
+  "status": "pending_real_session_qualification",
+  "advancement_allowed": false,
+  "gates": [
+    {
+      "id": "source-authority-refresh",
+      "status": "passed",
+      "evidence": [
+        "inventory/source-before-manifest.json",
+        "inventory/authority-map.json"
+      ]
+    },
+    {
+      "id": "bounded-independent-source-review",
+      "status": "passed",
+      "evidence": [
+        "independent-review/REPAIR-SOURCE-ADMISSION-v2.json"
+      ],
+      "prior_revision_evidence": [
+        "independent-review/REPAIR-SOURCE-ADMISSION.json"
+      ]
+    },
+    {
+      "id": "isolated-mocked-regressions",
+      "status": "passed",
+      "evidence": [
+        "unit/attempt02/jest.json",
+        "independent-review/UNIT-OUTCOME-REVIEW-v2.json"
+      ],
+      "passed": 87,
+      "skipped": 0,
+      "prior_revision_evidence": [
+        "unit/attempt01/jest.json",
+        "independent-review/UNIT-OUTCOME-REVIEW.json"
+      ]
+    },
+    {
+      "id": "fresh-full-app-build",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "genuine-signed-cache-denials",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "authorized-positive-operations",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "native-database-state",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "rendered-browser-continuity",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "independent-outcome-review",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "owned-runtime-cleanup",
+      "status": "pending",
+      "evidence": []
+    }
+  ],
+  "parent_p04": "blocked",
+  "production": "blocked"
+}

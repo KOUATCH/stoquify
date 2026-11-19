@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "sourceDatabase": "stoquify_replay_close_monthly_20261110_00f0345d42",
+  "restoreDatabase": "stoquify_restore_close_integrity_rc_20261110_00f0345d42",
+  "publicTables": 247,
+  "exactDataSequencesAndHistoryPreserved": true,
+  "retainedBytesPreserved": true,
+  "allOtherSchemaDefinitionsExact": true,
+  "checkParserEquivalence": [
+    {
+      "table": "accountant_client_invites",
+      "constraint": "accountant_client_invites_key_check",
+      "source": "CHECK ((((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191)) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))",
+      "restored": "CHECK (((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))",
+      "parserFixedPoint": "CHECK (((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))"
+    },
+    {
+      "table": "branch_daily_close_runs",
+      "constraint": "branch_daily_close_runs_readiness_check",
+      "source": "CHECK ((((\"readinessState\")::text = ANY ((ARRAY['READY_FOR_REVIEW'::character varying, 'ACTION_REQUIRED'::character varying, 'NO_ACTIVITY'::character varying, 'UNAVAILABLE'::character varying])::text[])) AND ((\"evidenceCoverageState\")::text = ANY ((ARRAY['PARTIAL'::character varying, 'COMPLETE'::character varying])::text[]))))",
+      "restored": "CHECK ((((\"readinessState\")::text = ANY (ARRAY[('READY_FOR_REVIEW'::character varying)::text, ('ACTION_REQUIRED'::character varying)::text, ('NO_ACTIVITY'::character varying)::text, ('UNAVAILABLE'::character varying)::text])) AND ((\"evidenceCoverageState\")::text = ANY (ARRAY[('PARTIAL'::character varying)::text, ('COMPLETE'::character varying)::text]))))",
+      "parserFixedPoint": "CHECK ((((\"readinessState\")::text = ANY (ARRAY[('READY_FOR_REVIEW'::character varying)::text, ('ACTION_REQUIRED'::character varying)::text, ('NO_ACTIVITY'::character varying)::text, ('UNAVAILABLE'::character varying)::text])) AND ((\"evidenceCoverageState\")::text = ANY (ARRAY[('PARTIAL'::character varying)::text, ('COMPLETE'::character varying)::text]))))"
+    },
+    {
+      "table": "customer_statement_deliveries",
+      "constraint": "customer_statement_deliveries_key_check",
+      "source": "CHECK ((((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191)) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))",
+      "restored": "CHECK (((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))",
+      "parserFixedPoint": "CHECK (((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))"
+    },
+    {
+      "table": "customer_statement_recipient_actions",
+      "constraint": "customer_statement_recipient_actions_key_check",
+      "source": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))",
+      "restored": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))",
+      "parserFixedPoint": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    {
+      "table": "customer_statement_recipient_actions",
+      "constraint": "customer_statement_recipient_actions_note_check",
+      "source": "CHECK ((((char_length(btrim(\"recipientNote\")) >= 3) AND (char_length(btrim(\"recipientNote\")) <= 500)) AND (\"noteHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"payloadHash\" ~ '^[0-9a-f]{64}$'::text)))",
+      "restored": "CHECK (((char_length(btrim(\"recipientNote\")) >= 3) AND (char_length(btrim(\"recipientNote\")) <= 500) AND (\"noteHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"payloadHash\" ~ '^[0-9a-f]{64}$'::text)))",
+      "parserFixedPoint": "CHECK (((char_length(btrim(\"recipientNote\")) >= 3) AND (char_length(btrim(\"recipientNote\")) <= 500) AND (\"noteHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"payloadHash\" ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "table": "customer_statement_snapshots",
+      "constraint": "customer_statement_identity_check",
+      "source": "CHECK ((((char_length(btrim(\"statementNumber\")) >= 8) AND (char_length(btrim(\"statementNumber\")) <= 80)) AND ((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"generatedById\")) > 0) AND (char_length(btrim(\"businessEventId\")) > 0) AND ((\"supersedesStatementId\" IS NULL) OR (\"supersedesStatementId\" <> id))))",
+      "restored": "CHECK (((char_length(btrim(\"statementNumber\")) >= 8) AND (char_length(btrim(\"statementNumber\")) <= 80) AND ((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"generatedById\")) > 0) AND (char_length(btrim(\"businessEventId\")) > 0) AND ((\"supersedesStatementId\" IS NULL) OR (\"supersedesStatementId\" <> id))))",
+      "parserFixedPoint": "CHECK (((char_length(btrim(\"statementNumber\")) >= 8) AND (char_length(btrim(\"statementNumber\")) <= 80) AND ((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"generatedById\")) > 0) AND (char_length(btrim(\"businessEventId\")) > 0) AND ((\"supersedesStatementId\" IS NULL) OR (\"supersedesStatementId\" <> id))))"
+    },
+    {
+      "table": "goods_receipt_inspection_resolutions",
+      "constraint": "goods_receipt_inspection_resolutions_command_evidence_check",
+      "source": "CHECK ((((char_length(btrim((\"idempotencyKey\")::text)) >= 8) AND (char_length(btrim((\"idempotencyKey\")::text)) <= 191)) AND ((\"idempotencyKey\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"payloadHash\")::text ~ '^[0-9a-f]{64}$'::text)))",
+      "restored": "CHECK (((char_length(btrim((\"idempotencyKey\")::text)) >= 8) AND (char_length(btrim((\"idempotencyKey\")::text)) <= 191) AND ((\"idempotencyKey\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"payloadHash\")::text ~ '^[0-9a-f]{64}$'::text)))",
+      "parserFixedPoint": "CHECK (((char_length(btrim((\"idempotencyKey\")::text)) >= 8) AND (char_length(btrim((\"idempotencyKey\")::text)) <= 191) AND ((\"idempotencyKey\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"payloadHash\")::text ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "table": "pos_commit_results",
+      "constraint": "pos_commit_results_request_identity_check",
+      "source": "CHECK ((((char_length(btrim((\"clientCommitId\")::text)) >= 8) AND (char_length(btrim((\"clientCommitId\")::text)) <= 191)) AND ((\"clientCommitId\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"requestHash\")::text ~ '^[0-9a-f]{64}$'::text) AND (\"requestSchemaVersion\" > 0)))",
+      "restored": "CHECK (((char_length(btrim((\"clientCommitId\")::text)) >= 8) AND (char_length(btrim((\"clientCommitId\")::text)) <= 191) AND ((\"clientCommitId\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"requestHash\")::text ~ '^[0-9a-f]{64}$'::text) AND (\"requestSchemaVersion\" > 0)))",
+      "parserFixedPoint": "CHECK (((char_length(btrim((\"clientCommitId\")::text)) >= 8) AND (char_length(btrim((\"clientCommitId\")::text)) <= 191) AND ((\"clientCommitId\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"requestHash\")::text ~ '^[0-9a-f]{64}$'::text) AND (\"requestSchemaVersion\" > 0)))"
+    },
+    {
+      "table": "referral_attributions",
+      "constraint": "referral_attributions_text_check",
+      "source": "CHECK ((((length(btrim(\"sourceId\")) >= 1) AND (length(btrim(\"sourceId\")) <= 191)) AND ((length(btrim(campaign)) >= 1) AND (length(btrim(campaign)) <= 120)) AND ((length(btrim(\"createdById\")) >= 1) AND (length(btrim(\"createdById\")) <= 191))))",
+      "restored": "CHECK (((length(btrim(\"sourceId\")) >= 1) AND (length(btrim(\"sourceId\")) <= 191) AND ((length(btrim(campaign)) >= 1) AND (length(btrim(campaign)) <= 120)) AND ((length(btrim(\"createdById\")) >= 1) AND (length(btrim(\"createdById\")) <= 191))))",
+      "parserFixedPoint": "CHECK (((length(btrim(\"sourceId\")) >= 1) AND (length(btrim(\"sourceId\")) <= 191) AND ((length(btrim(campaign)) >= 1) AND (length(btrim(campaign)) <= 120)) AND ((length(btrim(\"createdById\")) >= 1) AND (length(btrim(\"createdById\")) <= 191))))"
+    },
+    {
+      "table": "supplier_po_access_tokens",
+      "constraint": "supplier_po_access_tokens_key_check",
+      "source": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))",
+      "restored": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))",
+      "parserFixedPoint": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    {
+      "table": "supplier_po_envelopes",
+      "constraint": "supplier_po_envelopes_key_check",
+      "source": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0) AND (char_length(btrim(\"createdById\")) > 0)))",
+      "restored": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0) AND (char_length(btrim(\"createdById\")) > 0)))",
+      "parserFixedPoint": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0) AND (char_length(btrim(\"createdById\")) > 0)))"
+    },
+    {
+      "table": "supplier_po_proposals",
+      "constraint": "supplier_po_proposals_key_check",
+      "source": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))",
+      "restored": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))",
+      "parserFixedPoint": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    {
+      "table": "supplier_po_proposals",
+      "constraint": "supplier_po_proposals_note_check",
+      "source": "CHECK ((((\"supplierNote\" IS NULL) AND (\"noteHash\" IS NULL)) OR (((char_length(btrim(\"supplierNote\")) >= 3) AND (char_length(btrim(\"supplierNote\")) <= 500)) AND (\"noteHash\" IS NOT NULL))))",
+      "restored": "CHECK ((((\"supplierNote\" IS NULL) AND (\"noteHash\" IS NULL)) OR ((char_length(btrim(\"supplierNote\")) >= 3) AND (char_length(btrim(\"supplierNote\")) <= 500) AND (\"noteHash\" IS NOT NULL))))",
+      "parserFixedPoint": "CHECK ((((\"supplierNote\" IS NULL) AND (\"noteHash\" IS NULL)) OR ((char_length(btrim(\"supplierNote\")) >= 3) AND (char_length(btrim(\"supplierNote\")) <= 500) AND (\"noteHash\" IS NOT NULL))))"
+    }
+  ],
+  "sourceUnchanged": true,
+  "dump": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-00f0345d42\\synthetic-monthly.dump",
+    "sha256": "0a54b265c4c0ed0896cbc98deeb78d11456702843003b827fbc4cb131149b5ba",
+    "bytes": 1718869
+  },
+  "before": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-00f0345d42\\restore-before.private.json",
+    "sha256": "c932e0ace35014f81bb417b8977b67f30c033b0b708704724e8480f59d41c322",
+    "bytes": 2483510
+  },
+  "after": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-00f0345d42\\restore-after.private.json",
+    "sha256": "9d6cd138a4aeaf87f4a8af848236cdfdd94c6683e16a3f3d662c592f1df45cb1",
+    "bytes": 2483514
+  }
+}

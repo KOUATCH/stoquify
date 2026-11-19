@@ -1,0 +1,73 @@
+{
+  "generatedAt": "2026-10-29T11:08:15.705Z",
+  "confirmed": [
+    {
+      "id": "P04-R-01",
+      "title": "Legacy tenant upload files also served by an unauthenticated public static path",
+      "severity": "high_when_retained_tenant_private_files_are_included",
+      "sourceStatus": "confirmed",
+      "runtimeStatus": "reproduced_component_http",
+      "receipt": "synthetic-static-run-O6X3iX/result.json",
+      "observed": {
+        "status": 200,
+        "sentinelReturned": true,
+        "credentialsSent": false,
+        "trace": [
+          {
+            "path": "/uploads/synthetic-tenant/sentinel.jpg",
+            "middlewarePass": true,
+            "middlewareStatus": 200,
+            "kind": "publicFolder"
+          }
+        ]
+      },
+      "limitations": "Actual app route tree, build/config and ingress are not started. Synthetic public-directory fixture only. No real tenant file was read or served.",
+      "repairPackage": "P04-R01-LEGACY-MEDIA-BOUNDARY",
+      "ownerRoles": [
+        "application security",
+        "media/storage maintainer",
+        "QA/platform"
+      ],
+      "applicationFixesImplemented": false,
+      "sourceReferences": [
+        {
+          "path": "app/api/uploads/[...path]/route.ts",
+          "line": 43
+        },
+        {
+          "path": "app/api/uploads/[...path]/route.ts",
+          "line": 92
+        },
+        {
+          "path": "middleware.ts",
+          "line": 145
+        },
+        {
+          "path": "next.config.mjs",
+          "line": 165
+        },
+        {
+          "path": "node_modules/next/dist/server/lib/router-utils/filesystem.js",
+          "line": 166
+        },
+        {
+          "path": "node_modules/next/dist/server/lib/router-server.js",
+          "line": 384
+        }
+      ],
+      "acceptance": [
+        "Unauthenticated/wrong-tenant/missing-permission/disabled-module API and alternate-static requests reveal no sentinel bytes",
+        "Authorized reads and retained references work after bounded compatibility change",
+        "Release artifact public-root inventory and ingress verification"
+      ],
+      "recovery": "Preserve legacy assets and mapping manifest; restore private serving compatibility only, not public exposure."
+    }
+  ],
+  "qualificationPackages": [
+    "P04-V01-PAGE-CONTINUATIONS",
+    "P04-V02-PROVIDER-ENDPOINTS",
+    "P04-V03-CAPABILITY-NEGATIVES",
+    "P04-V04-HR-DOCUMENT-BOUNDARIES",
+    "P04-V05-HTTP-AND-ARTIFACT"
+  ]
+}

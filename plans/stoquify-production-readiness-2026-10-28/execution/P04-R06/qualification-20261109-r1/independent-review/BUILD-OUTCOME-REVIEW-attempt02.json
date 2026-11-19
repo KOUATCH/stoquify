@@ -1,0 +1,85 @@
+{
+  "at": "2026-11-10T10:55:18.319Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Actual complete isolated full build and sealed artifact acceptance; not native session/browser qualification",
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "buildId": "0Bfm5_McCY4nZ4HMhHTEN",
+  "checks": {
+    "actualBuildPassed": true,
+    "commandsPassed": true,
+    "candidateMatches": true,
+    "manifestDigestMatches": true,
+    "buildIdMatches": true,
+    "sourceManifest9788": true,
+    "all5305SealedHashes": true,
+    "threePrivateAliasesExact": true,
+    "privateAliasesNotPublic": true,
+    "canonicalClientMatches": true,
+    "empty246BuildTables": true,
+    "resourcesPassed": true,
+    "recipeUnchanged": true,
+    "failureEvidenceUnchanged": true
+  },
+  "configuredTypeAndLintChecksPassed": true,
+  "sourceFiles": 9788,
+  "sealedRuntimeFiles": 5305,
+  "sealedRuntimeBytes": 213982809,
+  "evidence": [
+    {
+      "path": "build-result-attempt02.json",
+      "sha256": "0124329359273775db300041794d1176abf9b308d1abc82b03b98f1c91f296f8"
+    },
+    {
+      "path": "client-generation-attempt02-result.json",
+      "sha256": "60b02e9e3372968f234fc813bb3f94407243cdc64dfcd4b05096f01a4a21160a"
+    },
+    {
+      "path": "artifact-build-attempt02-result.json",
+      "sha256": "a6bdf3959d6c0f8d600ce85f5b8a03aa55ac51ec86f7925a2a408da53ad82a9e"
+    },
+    {
+      "path": "artifact-build-attempt02.log",
+      "sha256": "ca38436a942215ec19848f57a4d99f7eda691a671795a3bc0942151cb88e3228"
+    },
+    {
+      "path": "private-client-attempt02.json",
+      "sha256": "576e206e381c399afe72ac9a6a9c329a7486abf31fef1f77a41f51ff1581681c"
+    },
+    {
+      "path": "resource-build-admission-attempt02.json",
+      "sha256": "8b9933d795e8f543c94f4e60cf11af93e8f75b57e739ab5ba6e6c11a8c3111b7"
+    },
+    {
+      "path": "resource-build-precompile-attempt02.json",
+      "sha256": "b641cf6bb30e0be0c37d406bcb21828c9ec530147490590db46f101546282143"
+    },
+    {
+      "path": "independent-review/ARTIFACT-BYTE-REVIEW-attempt02.json",
+      "sha256": "5e5ec0d45cb4b0f31cc148f9733cd54504d787c43b2aed62231f1d59f49418b8"
+    },
+    {
+      "path": "independent-review/DATABASE-RESUME-OUTCOME-attempt02.json",
+      "sha256": "2cc652e0d65dbb9e2ef375d8fe82e8c27b2d3d7561bdbd419919b8fce71bba9c"
+    }
+  ],
+  "reviewFindings": [
+    "Client generation and artifact build exited0 without recorded timeouts or errors. Next completed configured lint/type checking, static pages, trace/optimization, and valid output with no orphaned build chains.",
+    "Independently streamed and hashed every one of the5305 sealed files; all match the frozen artifact manifest.",
+    "Manifest source exactly matches the9788-file successor and the private alias policy has exactly the three approved aliases, absent from public runtime delivery paths.",
+    "The private generated Prisma schema is the exact admitted canonical output; the build target was the owned empty database with122 exact migrations.",
+    "All original failed build inputs and evidence remain byte-preserved.",
+    "Resource headroom passed both initial and immediate precompile gates; no heap, worker or type/lint bypass was introduced."
+  ],
+  "permittedNext": "Execute independently admitted read-only runtime source gate and retained-fixture binding, then submit actual receipts for independent runtime-start acceptance.",
+  "limitations": [
+    "No real-session denial, authorized native operation, database-effect or browser outcome has yet been established.",
+    "Existing project TypeScript exclusions remain; this is the normal configured build, not proof for every ignored workspace file.",
+    "Installed dependency reuse is not clean-install reproducibility.",
+    "Database launcher timeout remains separately reconciled; no claim that increased memory alone caused the build improvement.",
+    "No migration promotion, deployment, production flag change, commit or push."
+  ],
+  "runtimeQualification": false,
+  "productionReady": false
+}

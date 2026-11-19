@@ -1,0 +1,220 @@
+{
+  "generatedAt": "2026-10-29T12:20:16.825Z",
+  "passed": true,
+  "checks": [
+    {
+      "id": "review_tool_engineering_evidence_current",
+      "passed": true,
+      "detail": {
+        "tests": 43,
+        "suites": 3,
+        "evidenceClass": "PURE_NODE_UNIT_TESTS_WITH_SYNTHETIC_FILESYSTEM_FIXTURES"
+      }
+    },
+    {
+      "id": "unique_entry_ids",
+      "passed": true,
+      "detail": {
+        "entries": 601,
+        "unique": 601
+      }
+    },
+    {
+      "id": "entry_structure",
+      "passed": true,
+      "detail": [
+        "id",
+        "category",
+        "destination",
+        "field",
+        "currentValue",
+        "requiredType",
+        "requirement",
+        "owner",
+        "action",
+        "evidence",
+        "status",
+        "dependencies",
+        "scope",
+        "proposedValue",
+        "verification"
+      ]
+    },
+    {
+      "id": "dependency_references",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "id": "dependency_graph_acyclic",
+      "passed": true,
+      "detail": "No self-dependencies or cycles"
+    },
+    {
+      "id": "status_counts",
+      "passed": true,
+      "detail": {
+        "VERIFIED": 8,
+        "RECORDED": 90,
+        "PENDING_HUMAN": 319,
+        "OPTIONAL_OR_CONDITIONAL": 52,
+        "PENDING_INDEPENDENT_RECOMPUTATION": 18,
+        "PENDING_RESEARCH": 49,
+        "CONDITIONAL": 15,
+        "BLOCKED": 42,
+        "PENDING_ENGINEERING": 7,
+        "COMPLETED_ENGINEERING": 1
+      }
+    },
+    {
+      "id": "destinations_and_evidence_exist",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "id": "13_payroll_paths",
+      "passed": true,
+      "detail": "13 payroll paths, separate from 11 scenario families"
+    },
+    {
+      "id": "11_scenario_families",
+      "passed": true,
+      "detail": [
+        "CNPS_PENSION",
+        "CNPS_FAMILY_ALLOWANCE",
+        "CNPS_OCCUPATIONAL_RISK",
+        "IRPP_PERIOD",
+        "IRPP_YTD",
+        "IRPP_ADJUSTMENTS",
+        "IRPP_CORRECTIONS",
+        "ALLOWANCES_BENEFITS",
+        "DEDUCTIONS_RECOVERIES",
+        "LEAVE_OVERTIME",
+        "COMPOSITE_REGISTER_TIE_OUT"
+      ]
+    },
+    {
+      "id": "36_pay_date_rows",
+      "passed": true,
+      "detail": "12 distinct months for each of three organizations"
+    },
+    {
+      "id": "2025_and_october_boundaries",
+      "passed": true,
+      "detail": "Six organization/month rows require 2025 pack coverage; three October rows remain partial"
+    },
+    {
+      "id": "inspected_source_digests_current",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "id": "existing_reference_links",
+      "passed": true,
+      "detail": {
+        "missing": [],
+        "authenticReturnsPending": 5
+      }
+    },
+    {
+      "id": "approval_state_preserved",
+      "passed": true,
+      "detail": "Working copies retain pending review; automated work supplies no attestations"
+    },
+    {
+      "id": "canonical_manifest_pending",
+      "passed": true,
+      "detail": "Original manifest remains fail-closed"
+    },
+    {
+      "id": "working_source_paths",
+      "passed": true,
+      "detail": "Rebased source references resolve to retained originals"
+    },
+    {
+      "id": "review_templates_preserved_in_working_copies",
+      "passed": true,
+      "detail": "No reviewer identity, decisions or calculated independent outputs added to pending working copies"
+    },
+    {
+      "id": "six_sources_hash_and_size",
+      "passed": true,
+      "detail": [
+        {
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "passed": true
+        },
+        {
+          "legalRef": "CM_CNPS_EMPLOYER_RULES",
+          "passed": true
+        },
+        {
+          "legalRef": "CM_CNPS_STATISTICAL_YEARBOOK_2025",
+          "passed": true
+        },
+        {
+          "legalRef": "CM_CNPS_EMPLOYER_OBLIGATIONS_CURRENT",
+          "passed": true
+        },
+        {
+          "legalRef": "CM_CNPS_OFFICIAL_FAQ_DECREE_2016_072",
+          "passed": true
+        },
+        {
+          "legalRef": "CM_CNPS_CONTRIBUTION_SCALE_OFFICIAL_2025",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "new_official_source_bytes",
+      "passed": true,
+      "detail": [
+        {
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "byteLength": 9916419
+        },
+        {
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-finance-law-2025.pdf",
+          "sha256": "e3d1c4ce54bbd8ee1536b1b7ec3d95eb840a4c25931297c3871782f2e614c546",
+          "byteLength": 19399033
+        }
+      ]
+    },
+    {
+      "id": "missing_review_fails_closed",
+      "passed": true,
+      "detail": "Expected blocked outcomes; not production gate passes"
+    },
+    {
+      "id": "workpaper_json_parse",
+      "passed": true,
+      "detail": {
+        "parsed": 17
+      }
+    },
+    {
+      "id": "owned_document_local_links",
+      "passed": true,
+      "detail": {
+        "checked": 56,
+        "missing": []
+      }
+    }
+  ],
+  "workflowContract": {
+    "command": "npm run agent:workflow:check",
+    "observedResult": "PASS",
+    "unclassifiedScripts": 196
+  },
+  "evidenceClasses": {
+    "sourceInspection": "Performed; scoped hashes retained",
+    "documentStaticChecks": "Executed by this script",
+    "mockedUnitTests": "PASS: 43 pure Node tests in 3 suites with synthetic filesystem fixtures",
+    "realPostgreSQLTests": "NOT_RUN",
+    "browserChecks": "NOT_RUN",
+    "authenticHumanReview": "PENDING"
+  },
+  "notRunReason": "Review tooling was corrected and unit tested. Missing authentic review/admission and reviewed calculation contract prevent full dataset continuation. No real production gate, broad build or database command was run; production-gate tests use synthetic fixtures."
+}

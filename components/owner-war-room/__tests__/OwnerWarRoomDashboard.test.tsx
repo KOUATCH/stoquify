@@ -1,6 +1,6 @@
 import type { SVGProps } from "react"
 jest.mock("next-intl/routing", () => ({ defineRouting: (config: unknown) => config }))
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 
 jest.mock("lucide-react", () => {
   const createIcon = (name: string) => {
@@ -200,7 +200,7 @@ function buildData(): OwnerWarRoomData {
           organizationId: "org-1",
           moduleSlug: "payment_reconciliation",
           requiredPermission: "payments.reconciliation.read",
-          title: "Cash at risk is visible since yesterday",
+          title: "Current cash at risk",
           detail: "Open suspense value is still present.",
           businessImpact: "Daily cash remains ambiguous until suspense is explained.",
           direction: "new",
@@ -332,7 +332,7 @@ describe("OwnerWarRoomDashboard", () => {
 
     expect(screen.getByRole("heading", { name: "Owner morning brief" })).toBeInTheDocument()
     expect(screen.getByText(/125,000 XAF cash at risk/)).toBeInTheDocument()
-    expect(screen.getByText("Cash at risk is visible since yesterday")).toBeInTheDocument()
+    expect(screen.getByText("Current cash at risk")).toBeInTheDocument()
     expect(screen.getByText("Resolve payment suspense")).toBeInTheDocument()
     expect(screen.queryByText("Cash truth")).not.toBeInTheDocument()
     expect(screen.queryByRole("heading", { name: "Owner action queue" })).not.toBeInTheDocument()
@@ -361,12 +361,12 @@ describe("OwnerWarRoomDashboard", () => {
     render(<OwnerWarRoomDashboard data={buildData()} locale="en" title="Owner War Room" subtitle="Owner overview" />)
     fireEvent.click(screen.getByRole("button", { name: "Investigate", exact: true }))
     fireEvent.click(screen.getAllByRole("button", { name: /Reconciliation proof/ }).at(-1)!)
-    await waitFor(() => expect(screen.getAllByText("Evidence temporarily unavailable").length).toBeGreaterThan(0))
+    await waitFor(() => expect(screen.getAllByText("Proof trail could not be loaded safely.").length).toBeGreaterThan(0))
     expect(getProofTrailAction).toHaveBeenCalledWith({ subjectType: "reconciliation.run", subjectId: "rr-1" })
     expect(screen.getByText("Proof drawer")).toBeInTheDocument()
     fireEvent.click(screen.getByRole("button", { name: "Brief", exact: true }))
     expect(screen.getByText("Proof drawer")).toBeInTheDocument()
-    expect(screen.getByText("Evidence temporarily unavailable")).toBeVisible()
+    expect(screen.getByText("Proof trail could not be loaded safely.")).toBeVisible()
   })
 
   it("uses French view controls and retains permission-limited feedback", () => {
@@ -398,6 +398,20 @@ it.each(["en", "fr"])("presents role labels without changing action authority in
   expect(screen.getByText("purchase.order.read")).toBeVisible()
   expect(screen.getByRole("link", { name: /Review receipt/ })).toHaveAttribute("href", `/${locale}/dashboard/purchase-orders`)
   expect(JSON.stringify(data.actionQueue)).toBe(before)
+})
+
+it("discards an in-flight proof when refreshed authority removes the subject", async () => {
+  let finish!: (value: unknown) => void
+  jest.mocked(getProofTrailAction).mockImplementationOnce(() => new Promise(resolve => {finish = resolve}) as never)
+  const input = buildData()
+  const {rerender} = render(<OwnerWarRoomDashboard data={input} locale="en" title="Owner" subtitle="Overview" />)
+  fireEvent.click(screen.getAllByRole("button", {name: /Reconciliation proof/})[0])
+  await waitFor(() => expect(finish).toBeDefined())
+  const revised = {...input, proofSubjects: [], morningBrief: {...input.morningBrief, proofSubjects: []}}
+  rerender(<OwnerWarRoomDashboard data={revised} locale="en" title="Owner" subtitle="Overview" />)
+  await act(async () => finish({success: true, data: {organizationId: "old-private-scope"}}))
+  expect(screen.queryByText("Proof drawer")).not.toBeInTheDocument()
+  expect(screen.queryByText("old-private-scope")).not.toBeInTheDocument()
 })
 
 it("retains all four attention counts and uses localized, descriptive priority links", () => {

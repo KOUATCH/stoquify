@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache"
 
 import { protect } from "@/services/_shared/protect"
+import { ForbiddenError } from "@/services/_shared/action-errors"
+import { getHrisApprovalReview, decideReviewedHrisApproval } from "@/services/hris/approval-review.service"
 import {
   decideHrisApprovalInboxItem,
   getHrisApprovalInbox,
@@ -33,8 +35,9 @@ function decisionFields(input: unknown) {
     employeeId: record.employeeId,
     sourceId: record.sourceId,
     decisionReason: record.decisionReason,
-    approvalEvidenceHash: record.approvalEvidenceHash,
-    idempotencyKey: record.idempotencyKey,
+    reviewVersion: record.reviewVersion,
+    acknowledged: record.acknowledged,
+    evidenceReferences: record.evidenceReferences,
   }
 }
 
@@ -64,22 +67,25 @@ const readInbox = protect<unknown, Awaited<ReturnType<typeof getHrisApprovalInbo
 
 const decideInboxItem = protect<
   unknown,
-  Awaited<ReturnType<typeof decideHrisApprovalInboxItem>>
+  Awaited<ReturnType<typeof decideReviewedHrisApproval>>
 >(
   {
     permission: "hris.people.manage",
     auditResource: "HrisApprovalInbox",
     freshAuth: true,
     tenantGuard: "handler-derived",
+    module: {moduleSlug:"payroll",surface:"hris.approval.review.decide",accessIntent:"write",mode:"enforce"},
   },
   async (input, ctx) => {
-    const result = await decideHrisApprovalInboxItem({
+    if(ctx.freshAuth?.claims.userId!==ctx.userId||ctx.freshAuth?.claims.tenantId!==ctx.orgId)throw new ForbiddenError("Refresh your session before continuing.")
+    const result = await decideReviewedHrisApproval({
       ...decisionFields(input),
       organizationId: ctx.orgId,
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
-    } as HrisApprovalInboxDecisionInput)
-    revalidateApprovalPaths()
+    } as Parameters<typeof decideReviewedHrisApproval>[0])
+    // A cache failure after commit must not hide the durable decision receipt.
+    try { revalidateApprovalPaths() } catch { /* Receipt remains authoritative; refresh can be retried. */ }
     return result
   },
 )
@@ -91,3 +97,13 @@ export async function getHrisApprovalInboxAction(input: unknown = {}) {
 export async function decideHrisApprovalInboxItemAction(input: unknown) {
   return decideInboxItem(input)
 }
+
+const previewReview = protect<unknown, Awaited<ReturnType<typeof getHrisApprovalReview>>>(
+  {permission:"hris.people.manage",freshAuth:true,tenantGuard:"handler-derived",module:{moduleSlug:"payroll",surface:"hris.approval.review.read",accessIntent:"read",mode:"enforce"}},
+  async(input,ctx)=>{
+    if(ctx.freshAuth?.claims.userId!==ctx.userId||ctx.freshAuth?.claims.tenantId!==ctx.orgId)throw new ForbiddenError("Refresh your session before continuing.")
+    const fields=decisionFields(input)
+    return getHrisApprovalReview({...fields,organizationId:ctx.orgId,actorId:ctx.userId,actorPermissions:ctx.permissions} as Parameters<typeof getHrisApprovalReview>[0])
+  },
+)
+export async function getHrisApprovalReviewAction(input:unknown){return previewReview(input)}

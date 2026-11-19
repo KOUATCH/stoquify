@@ -1,0 +1,89 @@
+{
+  "at": "2026-11-10T16:07:02.400Z",
+  "packageId": "P04-R06",
+  "scope": "Reviewed local preparation and capacity-blocked checkpoint; no successor candidate qualification",
+  "candidateId": null,
+  "artifactSha256": null,
+  "advancement_allowed": false,
+  "production_ready": false,
+  "required_logical_groups": 58,
+  "planned_actual_cases": 107,
+  "actual_cases_executed": 0,
+  "gates": [
+    {
+      "id": "repair_source",
+      "status": "passed",
+      "evidence": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW.json",
+      "note": "Unchanged repaired source; no new product edit in r3."
+    },
+    {
+      "id": "mocked_regression",
+      "status": "passed",
+      "evidence": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW.json",
+      "note": "116 historical passes reused with source/dependency provenance; newTestRun:false."
+    },
+    {
+      "id": "dependencies",
+      "status": "passed",
+      "evidence": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json"
+    },
+    {
+      "id": "source_refresh",
+      "status": "passed",
+      "evidence": "independent-review/LATE-SOURCE-OUTCOME-REVIEW.json",
+      "note": "Recorded preparation snapshot; capture must recheck live-source equality."
+    },
+    {
+      "id": "capture_capacity",
+      "status": "blocked",
+      "evidence": "resource-capture-retry-ready-r1.json"
+    },
+    {
+      "id": "candidate",
+      "status": "not_run",
+      "evidence": "preparation.json"
+    },
+    {
+      "id": "database_resume",
+      "status": "not_run",
+      "evidence": "capacity-checkpoint.json"
+    },
+    {
+      "id": "full_build",
+      "status": "not_run",
+      "evidence": "capacity-checkpoint.json"
+    },
+    {
+      "id": "real_session_qualification",
+      "status": "not_run",
+      "evidence": "capacity-checkpoint.json"
+    },
+    {
+      "id": "browser_qualification",
+      "status": "not_run",
+      "evidence": "capacity-checkpoint.json"
+    },
+    {
+      "id": "private_runtime_packaging",
+      "status": "not_run",
+      "evidence": "capacity-checkpoint.json",
+      "note": "No built artifact exists to inspect."
+    },
+    {
+      "id": "owned_checkpoint",
+      "status": "passed",
+      "evidence": "capacity-checkpoint.json"
+    },
+    {
+      "id": "independent_checkpoint_review",
+      "status": "passed",
+      "evidence": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW.json",
+      "note": "Blocked checkpoint accepted; qualification did not pass."
+    }
+  ],
+  "outcome_receipts": {
+    "qualification": null,
+    "integrity": "capacity-checkpoint.json",
+    "review": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW.json"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "passed": false,
+  "checks": [
+    {
+      "name": "typecheck",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\typescript\\bin\\tsc",
+        "--project",
+        "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\static-6e66bef416\\tsconfig.json",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "--pretty",
+        "false"
+      ],
+      "started": "2026-11-10T14:57:27.731Z",
+      "finished": "2026-11-10T15:02:13.912Z",
+      "exitCode": 2,
+      "error": null
+    },
+    {
+      "name": "scoped-lint",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\eslint\\bin\\eslint.js",
+        "services/accounting/customer-settlement.schemas.ts",
+        "services/accounting/customer-settlement.service.ts",
+        "services/payments/customer-settlement-payment-authority.service.ts",
+        "services/payments/pos-electronic-tender-authority.service.ts",
+        "services/accounting/customer-settlement-workbench.service.ts",
+        "actions/finance/customer-settlement.actions.ts",
+        "components/finance/CustomerSettlementControls.tsx",
+        "--format",
+        "json",
+        "--output-file",
+        "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\static-6e66bef416\\eslint.json"
+      ],
+      "started": "2026-11-10T15:02:13.913Z",
+      "finished": "2026-11-10T15:02:31.629Z",
+      "exitCode": 0,
+      "error": null
+    }
+  ],
+  "unchangedInputs": true,
+  "sourceHashes": {
+    "services/accounting/customer-settlement.schemas.ts": "e4938b2a6a708b1c919aed309cc7436ef2e0bbd3d2f2e66ce0b404ea89957daa",
+    "services/accounting/customer-settlement.service.ts": "1ac164a091a4061fffd6ac467f475a8b2ecdec941c98543f04e26d0c711e8191",
+    "services/payments/customer-settlement-payment-authority.service.ts": "02d58827d5063d500dba358b6544a7df0617d0dd1860fc395bf608b524799d69",
+    "services/payments/pos-electronic-tender-authority.service.ts": "f0614f708e100170cc143da3d8d135814ed95ba201dcfa1e798f2296c0276d55",
+    "services/accounting/customer-settlement-workbench.service.ts": "0864bde250c783471fd5ea4345f4772b76b0e2808b80876e2b161b53eb91eefc",
+    "actions/finance/customer-settlement.actions.ts": "fbaebb725ed973fe80a5b1d3765f9dd2c6252e405455b633534569840eee6d5b",
+    "components/finance/CustomerSettlementControls.tsx": "c9b32fae6645a32bb72f8d2f3ce4929220d2e545bacb46fe3f943b680f0d585d",
+    "tsconfig.json": "d8520694b9940364a676d62d757600ffb29718574e72c5752f8f4875021f4ccb",
+    ".eslintrc.json": "82d9c40e94e4eba05c53f4c6c9aebf62a3463583e1ccc5e2ad24c77882ab987a",
+    "prisma/schema.prisma": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+    "package-lock.json": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+  },
+  "privateClient": "E:/ohada saas/Focused projects/stoquify/.codex-tmp/close-retention-client-20261109-b4075974cd/orm/client",
+  "privateClientSchemaSha256": "b3f66c1e4cba6b2b51d8896b1e543c8b70d4d0a42eb4d054669cbf849f939cd4",
+  "privateClientTypesSha256": "09419016b045dfd7f44f7edbff8d37d2cfdd58cc17026c5ee6a13e1b708666f1",
+  "lintErrors": 0,
+  "lintWarnings": 2,
+  "runnerSha256": "81538df647cc14a37301b17d8c448db3b86d1cdaddeccd3ad15fab9418a392d7",
+  "configSha256": "09f5adfb0a07cb045372b39e857acee8d94df94e809dd208acc4b7ebdfc67136",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\static-6e66bef416",
+  "classification": "Static TypeScript and ESLint only; no build, database or browser qualification"
+}

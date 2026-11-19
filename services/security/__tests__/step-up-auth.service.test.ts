@@ -155,6 +155,10 @@ describe("password session step-up", () => {
       data: {
         assuranceFailureCount: STEP_UP_MAX_FAILURES,
         assuranceLockedUntil: expectedLock,
+        assuranceVerifiedAt: null,
+        assuranceMethod: null,
+        assuranceOrganizationId: null,
+        assuranceLevel: 0,
       },
     }))
     expect(mockLogSecurityEvent).toHaveBeenNthCalledWith(1, expect.objectContaining({

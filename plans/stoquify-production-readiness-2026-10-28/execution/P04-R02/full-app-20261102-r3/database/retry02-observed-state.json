@@ -1,0 +1,183 @@
+{
+  "at": "2026-11-02T18:00:54.407Z",
+  "passed": true,
+  "evidenceClass": "read_only_final_fixture_observation",
+  "database": "stoquify_local_p04r02_20261029_full_r1",
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "businessSha256": "91f0ce1c4bcca7ee9d9a0755266724cfa527c00d3d3e6735b24c6a912d547667",
+  "businessTables": 245,
+  "businessBaselineUnchanged": false,
+  "changedBusinessTables": [
+    {
+      "table": "roles",
+      "before": {
+        "count": 8,
+        "sha256": "3fd843e0f94117099a31081f70f51caa1d032a6dfdd9fd06ebfb0dae6286655c"
+      },
+      "after": {
+        "count": 8,
+        "sha256": "efe6ae9477df643484be1afb8ce143927a33f33df911c7e20e72972d72168ab9"
+      }
+    },
+    {
+      "table": "tenant_module_grants",
+      "before": {
+        "count": 6,
+        "sha256": "f9062f422fbed13fac5125f523571d9f791a3773992eb5b3af8b77862dcb269c"
+      },
+      "after": {
+        "count": 6,
+        "sha256": "8df67fa005ae22705ab8095ad1c17ba1eb9c5dfbf96fce196d12efa07ddc9068"
+      }
+    },
+    {
+      "table": "users",
+      "before": {
+        "count": 8,
+        "sha256": "2146d1baef4a884b110f7be453fd5486c07458f8e336bdaefa8adcb15561c046"
+      },
+      "after": {
+        "count": 8,
+        "sha256": "71ea8157311c068cd871ce47ed465c36fe1ba24d0299ca9c9fc21d437514061a"
+      }
+    }
+  ],
+  "sessionCounts": [
+    {
+      "userId": "p04r02-user-expiry",
+      "count": 1
+    },
+    {
+      "userId": "p04r02-user-foreign",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-modulechange",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-moduledenied",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-permissionchange",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-permissiondenied",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-ui",
+      "count": 7
+    }
+  ],
+  "auditCounts": [
+    {
+      "entityType": "ModuleEntitlementDecision",
+      "action": "MODULE_ENTITLEMENT_ENFORCED",
+      "count": 10
+    },
+    {
+      "entityType": "SecurityEvent",
+      "action": "LOGIN_SUCCESS",
+      "count": 21
+    },
+    {
+      "entityType": "SecurityEvent",
+      "action": "PERMISSION_GRANTED",
+      "count": 13
+    }
+  ],
+  "authority": [
+    {
+      "alias": "ui",
+      "actorId": "p04r02-user-ui",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-ui",
+      "dashboardRead": true,
+      "seededPermissionsMatch": true
+    },
+    {
+      "alias": "foreign",
+      "actorId": "p04r02-user-foreign",
+      "organizationId": "p04-upload-b",
+      "roleId": "p04r02-role-foreign",
+      "dashboardRead": true,
+      "seededPermissionsMatch": true
+    },
+    {
+      "alias": "revocation",
+      "actorId": "p04r02-user-revocation",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-revocation",
+      "dashboardRead": true,
+      "seededPermissionsMatch": true
+    },
+    {
+      "alias": "expiry",
+      "actorId": "p04r02-user-expiry",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-expiry",
+      "dashboardRead": true,
+      "seededPermissionsMatch": true
+    },
+    {
+      "alias": "permissionChange",
+      "actorId": "p04r02-user-permissionchange",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-permissionchange",
+      "dashboardRead": false,
+      "seededPermissionsMatch": false
+    },
+    {
+      "alias": "moduleChange",
+      "actorId": "p04r02-user-modulechange",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-modulechange",
+      "dashboardRead": true,
+      "seededPermissionsMatch": true
+    },
+    {
+      "alias": "permissionDenied",
+      "actorId": "p04r02-user-permissiondenied",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-permissiondenied",
+      "dashboardRead": false,
+      "seededPermissionsMatch": true
+    },
+    {
+      "alias": "moduleDenied",
+      "actorId": "p04r02-user-moduledenied",
+      "organizationId": "p04-upload-disabled",
+      "roleId": "p04r02-role-moduledenied",
+      "dashboardRead": true,
+      "seededPermissionsMatch": true
+    }
+  ],
+  "dashboardGrants": [
+    {
+      "organizationId": "p04-upload-a",
+      "status": "active",
+      "revision": 3
+    },
+    {
+      "organizationId": "p04-upload-b",
+      "status": "active",
+      "revision": 1
+    }
+  ],
+  "fixtureReadyForFreshRepeat": false,
+  "baselineEvidence": "snapshot-resumed-baseline-20261102-r3-1793638891947-7969b5d4-9585-46a5-bca2-e56a2746d174.json",
+  "finalEvidence": "snapshot-retry02-observed-1793642454295-ec9557ae-c76c-4370-a910-924e9468f2fa.json",
+  "transitionEvidence": [
+    "transition-disable-module-1793642293504-f578c55d-e3fb-4aae-bc69-cad9d9e48bab.json",
+    "transition-expire-1793642272192-6a4f4fee-e89e-4584-b297-d8eb22143f15.json",
+    "transition-remove-permission-1793642282974-a334a031-e530-44e6-a485-90df5e847f3f.json",
+    "transition-restore-module-1793642297627-3c4cd408-4604-45b0-a63c-85831fa7eb70.json",
+    "transition-revoke-1793642263764-cd5a479e-18b5-4c54-848b-662c4f05b517.json"
+  ],
+  "requiresOutcomeReconciliation": true,
+  "limitations": "Observation only. Explicit role/module/expiry/revocation transitions and real sign-in may change fixture rows. Per-denial before/after snapshots establish no-write assertions; this receipt does not certify request behavior or authorize broad fixture reset.",
+  "mutations": "None. READ ONLY queries; retained test state is not automatically reverted."
+}

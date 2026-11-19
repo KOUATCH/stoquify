@@ -1,0 +1,10 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),net=require('node:net'),{spawnSync}=require('node:child_process');
+const root=path.resolve(__dirname,'../../../..'),m=JSON.parse(fs.readFileSync(path.join(__dirname,'source-manifest.json'),'utf8'));
+const changed=m.files.filter(f=>!fs.existsSync(path.join(root,f.path))||crypto.createHash('sha256').update(fs.readFileSync(path.join(root,f.path))).digest('hex')!==f.sha256).map(x=>x.path);
+const git=args=>{const r=spawnSync('git',args,{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024});assert.equal(r.status,0,r.stderr);return r.stdout};
+const head=git(['rev-parse','HEAD']).trim(),status=git(['status','--short','--untracked-files=normal']);fs.writeFileSync(path.join(__dirname,'git-status-after.txt'),status,{flag:'wx'});
+const before=fs.readFileSync(path.join(__dirname,'git-status-before.txt'),'utf8');const unrelated=s=>s.split(/\r?\n/).filter(Boolean).filter(l=>!l.includes('plans/stoquify-production-readiness-2026-10-28')).sort();
+const result={at:new Date().toISOString(),head,sourceFilesChecked:m.files.length,changedSourcePaths:changed,unchangedUnrelatedGitStatus:JSON.stringify(unrelated(before))===JSON.stringify(unrelated(status)),headUnchanged:head===m.head};
+const c=JSON.parse(fs.readFileSync(path.join(root,'.codex-tmp/p03-grant-20261028-r1/context.json'),'utf8'));result.clusterStopped=spawnSync(path.join(c.bin,'pg_ctl.exe'),['-D',c.cluster,'status'],{windowsHide:true,stdio:'ignore',timeout:5000}).status===3;
+const server=net.createServer();server.once('error',e=>{result.loopbackPortReleased=false;finish(e.message)});server.listen(c.pgPort,'127.0.0.1',()=>server.close(()=>{result.loopbackPortReleased=true;finish()}));
+function finish(error){result.error=error;result.passed=!changed.length&&result.unchangedUnrelatedGitStatus&&result.headUnchanged&&result.clusterStopped&&result.loopbackPortReleased;fs.writeFileSync(path.join(__dirname,'final-integrity.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(result));process.exitCode=result.passed?0:1;}

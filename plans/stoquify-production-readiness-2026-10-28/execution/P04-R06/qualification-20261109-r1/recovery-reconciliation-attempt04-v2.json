@@ -1,0 +1,1227 @@
+{
+  "at": "2026-11-10T11:50:49.259Z",
+  "packageId": "P04-R06",
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "reconciliationCompleted": true,
+  "passed": false,
+  "qualificationDisposition": "blocked",
+  "originalMainRun": {
+    "total": 58,
+    "passed": 53,
+    "failed": 5,
+    "qualificationPassed": false,
+    "unchanged": true
+  },
+  "recoveryChecks": {
+    "total": 7,
+    "passed": 5,
+    "failed": 2
+  },
+  "recoveryBrowserAttempt03": {
+    "total": 6,
+    "passed": 1,
+    "failed": 5
+  },
+  "latestBrowserAttempt04": {
+    "total": 6,
+    "passed": 2,
+    "failed": 4
+  },
+  "supplementaryRetainedExpiry": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "additionalToLogicalGroups": true,
+    "cases": [
+      {
+        "receipt": "expiry-supplement-result-attempt02.json",
+        "caseId": "R06-E-retained-list-sessions",
+        "passed": true,
+        "error": null
+      },
+      {
+        "receipt": "expiry-supplement-result-attempt02.json",
+        "caseId": "R06-E-retained-list-accounts",
+        "passed": true,
+        "error": null
+      },
+      {
+        "receipt": "expiry-supplement-result-attempt02.json",
+        "caseId": "R06-E-retained-unlink-account",
+        "passed": true,
+        "error": null
+      }
+    ]
+  },
+  "logicalRequirements": {
+    "total": 58,
+    "satisfied": 53,
+    "unresolved": 5
+  },
+  "requirements": [
+    {
+      "id": "R06-P-get-session",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-P-get-session",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-P-get-session",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-P-list-sessions",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-P-list-sessions",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-P-list-sessions",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-P-list-accounts",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-P-list-accounts",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-P-list-accounts",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-P-verify-password",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-P-verify-password",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-P-verify-password",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-P-unlink",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-P-unlink",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-P-unlink",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-P-profile",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-P-profile",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-P-profile",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-P-independent-session",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-P-independent-session",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-P-independent-session",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-revoked-get-session",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-revoked-get-session",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-revoked-get-session",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-revoked-list-sessions",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-revoked-list-sessions",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-revoked-list-sessions",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-revoked-list-accounts",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-revoked-list-accounts",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-revoked-list-accounts",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-revoked-unlink-account",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-revoked-unlink-account",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-revoked-unlink-account",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-revoked-verify-password",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-revoked-verify-password",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-revoked-verify-password",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-Q-revoked-get-session",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-Q-revoked-get-session",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-Q-revoked-get-session",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-Q-revoked-list-accounts",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-Q-revoked-list-accounts",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-Q-revoked-list-accounts",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-Q-revoked-unlink-account",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-Q-revoked-unlink-account",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-Q-revoked-unlink-account",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-Q-revoked-change-password",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-Q-revoked-change-password",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-Q-revoked-change-password",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-expired-get-session",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-expired-get-session",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-expired-get-session",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-expired-list-sessions",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-expired-list-sessions",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-expired-list-sessions",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-expired-list-accounts",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-expired-list-accounts",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-expired-list-accounts",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-expired-unlink-account",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-expired-unlink-account",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-expired-unlink-account",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-expired-verify-password",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-expired-verify-password",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-expired-verify-password",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-Q-expired-get-session",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-Q-expired-get-session",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-Q-expired-get-session",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-Q-expired-list-accounts",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-Q-expired-list-accounts",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-Q-expired-list-accounts",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-Q-expired-unlink-account",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-Q-expired-unlink-account",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-Q-expired-unlink-account",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-Q-expired-change-password",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-Q-expired-change-password",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-Q-expired-change-password",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-inactive-get-session",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-inactive-get-session",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-inactive-get-session",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-inactive-list-sessions",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-inactive-list-sessions",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-inactive-list-sessions",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-inactive-list-accounts",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-inactive-list-accounts",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-inactive-list-accounts",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-inactive-unlink-account",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-inactive-unlink-account",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-inactive-unlink-account",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-inactive-verify-password",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-inactive-verify-password",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-inactive-verify-password",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-locked_indefinite-get-session",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-locked_indefinite-get-session",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-locked_indefinite-get-session",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-locked_indefinite-list-sessions",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-locked_indefinite-list-sessions",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-locked_indefinite-list-sessions",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-locked_indefinite-list-accounts",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-locked_indefinite-list-accounts",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-locked_indefinite-list-accounts",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-locked_indefinite-unlink-account",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-locked_indefinite-unlink-account",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-locked_indefinite-unlink-account",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-locked_indefinite-verify-password",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-locked_indefinite-verify-password",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-locked_indefinite-verify-password",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-locked_future-get-session",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-locked_future-get-session",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-locked_future-get-session",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-locked_future-list-sessions",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-locked_future-list-sessions",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-locked_future-list-sessions",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-locked_future-list-accounts",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-locked_future-list-accounts",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-locked_future-list-accounts",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-locked_future-unlink-account",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-locked_future-unlink-account",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-locked_future-unlink-account",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-N-locked_future-verify-password",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-N-locked_future-verify-password",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-N-locked_future-verify-password",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-P-expired-lock",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-P-expired-lock",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-P-expired-lock",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-B-anonymous",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-B-anonymous",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-B-anonymous",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-B-foreign-unlink",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-B-foreign-unlink",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-B-foreign-unlink",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-B-provider-userid",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-B-provider-userid",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-B-provider-userid",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-B-mixed-active-cookie",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-B-mixed-active-cookie",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-B-mixed-active-cookie",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-B-mixed-revoked-cookie",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-B-mixed-revoked-cookie",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-B-mixed-revoked-cookie",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-C-login",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-C-login",
+        "passed": false,
+        "error": "The expression evaluated to a falsy value:\n\n  assert(new Date(after.user.lastLogin).getTime()>=requestedAt&&new Date(after.user.lastLogin).getTime()<=finishedAt)\n"
+      },
+      "latest": [
+        {
+          "receipt": "recovery-result-attempt03.json",
+          "caseId": "R06-C-login-positive-utc",
+          "passed": true,
+          "error": null
+        },
+        {
+          "receipt": "recovery-result-attempt03.json",
+          "caseId": "R06-C-login-wrong-password-utc",
+          "passed": true,
+          "error": null
+        },
+        {
+          "receipt": "recovery-result-attempt03.json",
+          "caseId": "R06-C-login-inactive",
+          "passed": true,
+          "error": null
+        },
+        {
+          "receipt": "recovery-result-attempt03.json",
+          "caseId": "R06-C-login-locked-future",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "successor_four_credential_cases_with_explicit_utc_and_exact_bounds",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-C-origin",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-C-origin",
+        "passed": false,
+        "error": "Unreviewed session insertion/update\n+ actual - expected\n\n+ undefined\n- 'bb734d94ddf3a2757e4bfda4b2807e4427b9f0ac05a876b58a21aa66d2b503c8'\n"
+      },
+      "latest": [
+        {
+          "receipt": "recovery-result-attempt03.json",
+          "caseId": "R06-C-origin-cookie-bearing",
+          "passed": true,
+          "error": null
+        },
+        {
+          "receipt": "recovery-result-attempt03.json",
+          "caseId": "R06-C-origin-browser-navigate",
+          "passed": false,
+          "error": "Cross-site browser request changed persisted data"
+        },
+        {
+          "receipt": "recovery-result-attempt03.json",
+          "caseId": "R06-C-origin-browser-cors",
+          "passed": false,
+          "error": "Cross-site browser request changed persisted data"
+        }
+      ],
+      "classification": "actual_browser_origin_probes_and_cookie_bearing_control_original_native_client_expectation_preserved",
+      "currentlySatisfied": false
+    },
+    {
+      "id": "R06-C-signout",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-C-signout",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-C-signout",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-C-public-recovery",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-C-public-recovery",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-C-public-recovery",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-C-methods",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-C-methods",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-C-methods",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-C-direct-api",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-C-direct-api",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "runtime-result-attempt02.json",
+          "caseId": "R06-C-direct-api",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "original_observation_retained",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-UI-en-authorized",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-UI-en-authorized",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "browser-only-result-attempt04.json",
+          "caseId": "R06-UI-en-authorized",
+          "passed": false,
+          "error": "Selected browser protocol requests lack exact original response/terminal evidence"
+        }
+      ],
+      "classification": "all_six_latest_browser_cases_used_without_cherry_picking",
+      "currentlySatisfied": false
+    },
+    {
+      "id": "R06-UI-en-invalidated-reload",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-UI-en-invalidated-reload",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "browser-only-result-attempt04.json",
+          "caseId": "R06-UI-en-invalidated-reload",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "all_six_latest_browser_cases_used_without_cherry_picking",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-UI-en-restored",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-UI-en-restored",
+        "passed": false,
+        "error": "Browser response capture incomplete"
+      },
+      "latest": [
+        {
+          "receipt": "browser-only-result-attempt04.json",
+          "caseId": "R06-UI-en-restored",
+          "passed": false,
+          "error": "Selected browser protocol requests lack exact original response/terminal evidence"
+        }
+      ],
+      "classification": "all_six_latest_browser_cases_used_without_cherry_picking",
+      "currentlySatisfied": false
+    },
+    {
+      "id": "R06-UI-fr-authorized",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-UI-fr-authorized",
+        "passed": false,
+        "error": "Browser response capture incomplete"
+      },
+      "latest": [
+        {
+          "receipt": "browser-only-result-attempt04.json",
+          "caseId": "R06-UI-fr-authorized",
+          "passed": false,
+          "error": "Selected browser protocol requests lack exact original response/terminal evidence"
+        }
+      ],
+      "classification": "all_six_latest_browser_cases_used_without_cherry_picking",
+      "currentlySatisfied": false
+    },
+    {
+      "id": "R06-UI-fr-invalidated-reload",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-UI-fr-invalidated-reload",
+        "passed": true,
+        "error": null
+      },
+      "latest": [
+        {
+          "receipt": "browser-only-result-attempt04.json",
+          "caseId": "R06-UI-fr-invalidated-reload",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "classification": "all_six_latest_browser_cases_used_without_cherry_picking",
+      "currentlySatisfied": true
+    },
+    {
+      "id": "R06-UI-fr-restored",
+      "original": {
+        "receipt": "runtime-result-attempt02.json",
+        "caseId": "R06-UI-fr-restored",
+        "passed": false,
+        "error": "Browser response capture incomplete"
+      },
+      "latest": [
+        {
+          "receipt": "browser-only-result-attempt04.json",
+          "caseId": "R06-UI-fr-restored",
+          "passed": false,
+          "error": "Selected browser protocol requests lack exact original response/terminal evidence"
+        }
+      ],
+      "classification": "all_six_latest_browser_cases_used_without_cherry_picking",
+      "currentlySatisfied": false
+    }
+  ],
+  "inputs": [
+    {
+      "path": "runtime-result-attempt02.json",
+      "sha256": "4459b141a394444372f88d3728b84f38d5adeb49eb840d382cc4725327fc92df"
+    },
+    {
+      "path": "recovery-result-attempt03.json",
+      "sha256": "d08ed69741d7b10165708cbc72ff4f354f43eb17fa3916a1af1e8f44cf7b508c"
+    },
+    {
+      "path": "browser-only-result-attempt04.json",
+      "sha256": "b7d842e28108eba900e3244239e6f1ed5302e62192edd322ba37ec40d98e537d"
+    },
+    {
+      "path": "expiry-supplement-result-attempt02.json",
+      "sha256": "79625e82bb0bb9c7146aa3a2888d359a4a2fb6ac10aa094c03e3e308bd10d6f7"
+    },
+    {
+      "path": "inventory/test-case-map.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    },
+    {
+      "path": "build-result-attempt02.json",
+      "sha256": "0124329359273775db300041794d1176abf9b308d1abc82b03b98f1c91f296f8"
+    }
+  ],
+  "limits": [
+    "This mapping does not change any raw result or certify production readiness.",
+    "Independent outcome review and owned cleanup are separate gates.",
+    "Original native-client Origin expectation is preserved; actual browser outcomes determine the unresolved origin requirement."
+  ]
+}

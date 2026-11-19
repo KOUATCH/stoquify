@@ -184,7 +184,7 @@ function normalizeCommand(
 
 function orderedAllocations(settlement: PersistedSettlement) {
   return [...settlement.allocations].sort((left, right) =>
-    left.salesOrderId.localeCompare(right.salesOrderId),
+    (left.salesOrderId ?? left.customerReceivableDocumentId ?? left.id).localeCompare(right.salesOrderId ?? right.customerReceivableDocumentId ?? right.id),
   );
 }
 

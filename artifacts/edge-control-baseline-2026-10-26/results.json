@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-26",
+  "recordedAtUtc": "2026-10-26T13:26:40Z",
+  "chatId": "01a17413-e483-7f83-b9d1-398c290db867",
+  "purpose": "Attempt an independent public-page Edge baseline without the local preview dependency",
+  "result": "Blocked before browser selection or page navigation",
+  "timingBasis": "Wall durations returned by CUA tool, not internal debugger timings",
+  "checks": [
+    {
+      "operation": "cua.getState()",
+      "ok": false,
+      "wallSeconds": 31.9966,
+      "error": "js execution timed out; kernel reset, rerun your request"
+    },
+    {
+      "operation": "cua.listBrowsers() after automatic kernel reset",
+      "ok": false,
+      "wallSeconds": 31.9165,
+      "requestedToolTimeoutMs": 30000,
+      "error": "js execution timed out; kernel reset, rerun your request"
+    }
+  ],
+  "browserSelected": false,
+  "taskTabCreated": false,
+  "navigationAttempts": 0,
+  "screenshotAttempts": 0,
+  "actualUrl": null,
+  "renderedPageIdentity": null,
+  "publicPageBaselinePassed": false,
+  "repairProven": false,
+  "settingsChanged": false,
+  "applicationSourceChanged": false,
+  "serverStartedOrStopped": false,
+  "externalReportSent": false,
+  "interpretation": "This discovery failure occurred without a requested Stoquify navigation. It does not prove a root cause, a successful public-page control test, or independence from overall host conditions.",
+  "stopReason": "Both supported discovery entry points timed out; no further retries or alternate browser-control mechanisms used.",
+  "relatedEvidence": [
+    "../edge-fresh-chat-2026-10-25/results.json",
+    "../edge-recovery-2026-10-26/results.json",
+    "../edge-staged-attachment-2026-10-26/results.json"
+  ]
+}

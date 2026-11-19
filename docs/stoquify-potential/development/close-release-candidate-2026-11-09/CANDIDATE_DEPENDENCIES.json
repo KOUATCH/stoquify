@@ -1,0 +1,96 @@
+{
+  "utc": "2026-11-09T17:36:25.263Z",
+  "passed": true,
+  "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\candidate",
+  "sourceManifestSha256": "8c9723660c455a3cea75b4ab774d91844418e9397d7ed35da47fceef389168b3",
+  "previous": {
+    "source": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-accounting-release-20261109-ffb02aacd5\\candidate\\node_modules",
+    "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-accounting-release-20261109-ffb02aacd5\\candidate",
+    "sourceManifestSha256": "a6e0b40433ec6faaadae9e2db14ddd972f0e30ecd0185646b8d7190ed91d2a06",
+    "inputs": [
+      {
+        "path": "package.json",
+        "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+      },
+      {
+        "path": "prisma/schema.prisma",
+        "sha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+      },
+      {
+        "path": "vendor/xlsx-0.20.3.tgz",
+        "sha256": "8dc73fc3b00203e72d176e85b50938627c7b086e607c682e8d3c22c02bb99fe8"
+      },
+      {
+        "path": "vendor/README.md",
+        "sha256": "6a2bf1e6d253a477692aaa6d6375cc6f085a77e09f30fb967993a130eae4220f"
+      },
+      {
+        "path": "scripts/ensure-prisma-client.js",
+        "sha256": "3ea590f5bda9f6b68f9be0cbe8442e18220b50c100c763c0a237c50d20297989"
+      },
+      {
+        "path": "scripts/candidate-snapshot.cjs",
+        "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+      }
+    ],
+    "node": "v22.17.0",
+    "migrations": {
+      "count": 121,
+      "manifestSha256": "474808cc62ec5048a1a6ebb286b8f9b8be84143f1f691d6797f8b3906a27aa90"
+    },
+    "generatedPrismaSchemaSha256": "2fdb8c5dc9c1db6f10ab35b1a8c8e7910ad8eca0d9d97661c003b31b5dbe0226",
+    "schemaTokensSha256": "d7016d7c373abedd46ee0b1558fb815b609d1994d007cda1a4b4a37690932086",
+    "receipts": [
+      {
+        "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\migration-release-2026-11-09\\CLEAN_INSTALL_SELECTED.json",
+        "sha256": "ce880a8f22f27f6b94fdc83fa83b1715f1cbf9a0f111b53c60d20c324c5219ba"
+      },
+      {
+        "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\migration-release-2026-11-09\\CLEAN_INSTALL_RESULT_ATTEMPT_2.json",
+        "sha256": "81b5b52f1f7e6d6537905eec3907b15cf3d078a165660ef566f15968050ef6ed"
+      },
+      {
+        "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\migration-release-2026-11-09\\CANDIDATE_NATIVE_READINESS.json",
+        "sha256": "1fcce2de7f25c97906bdbfc053d127871572ee8a1bebb4f3b788355030edf1d2"
+      }
+    ]
+  },
+  "destination": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\candidate\\node_modules",
+  "capacity": {
+    "checkedAt": "2026-11-09T17:30:20.646Z",
+    "passed": true,
+    "reviewSha256": "8f0a6f844ac3c20563a98c5c54772b94618acf93fcb33afe1c87f7d982fd97bf",
+    "baseCapacity": {
+      "reviewSha256": "8f0a6f844ac3c20563a98c5c54772b94618acf93fcb33afe1c87f7d982fd97bf",
+      "freeBytes": 5376868352,
+      "minimumFreeBytes": 4948033672
+    },
+    "minimumBuildFreeBytes": 4948033672,
+    "neededBytes": 133456851,
+    "requiredFreeBytes": 5081490523,
+    "freeBytes": 5376868352,
+    "missingFiles": 7264,
+    "replacementFiles": 0,
+    "skippedCorrectFiles": 64750,
+    "formula": "Unchanged reviewed minimumBuildFreeBytes +full missing/replacement file bytes; existing correct files are not allocated twice"
+  },
+  "files": 72014,
+  "totalBytes": 1175733068,
+  "fileManifest": {
+    "path": "DEPENDENCY_COPY_MANIFEST.json",
+    "sha256": "2538801c6f2e7ea0e83002eaeab30699b46301bd4a239a963e32c50a16f5d2b4"
+  },
+  "sourceAndDestinationChecksumsEqual": true,
+  "sourceUnchanged": true,
+  "independentRegularFileCopy": true,
+  "cleanInstallPerformed": false,
+  "externalRecovery": {
+    "path": "DEPENDENCY_COPY_RECOVERY.json",
+    "sha256": "9f832c75b538c0d49ea6d9078d233b332c2c1fe0804b3bfc9724f4dc406e2e21"
+  },
+  "limitation": "Independent checksum-verified reuse of the previous installed tree after stopping the slow original copier; not a new clean installation. Native/build/runtime qualification remains separate."
+}

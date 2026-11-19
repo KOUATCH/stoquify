@@ -423,6 +423,7 @@ export interface CreateStockTransferRequest {
 }
 
 export interface ReserveInventoryRequest {
+  idempotencyKey: string
   reservations: {
     inventoryLevelId: any
     itemId: string

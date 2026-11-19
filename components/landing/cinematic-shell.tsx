@@ -12,28 +12,35 @@ import { useLocale } from "next-intl"
 import { Link, usePathname } from "@/i18n/navigation"
 import { cinematicModules } from "./cinematic-modules"
 import StoquifyLogo from "@/components/global/kit-logo"
+import { PreviewLogoProvider } from "./preview-logo"
 import { Moon, Sun } from "lucide-react"
+import { usesCinematicShell } from "./public-page-routes"
+import type { PublicContact } from "@/lib/public-site"
+import "./landing-production.css"
 
-const CinematicContext = createContext({ motionOff: true, light: false })
+const CinematicContext = createContext({ motionOff: true, light: false, signedIn: false })
 export const useCinematicMotionOff = () =>
   useContext(CinematicContext).motionOff
 export const useCinematicLight = () => useContext(CinematicContext).light
+export const useCinematicSignedIn = () => useContext(CinematicContext).signedIn
 
-/** Only the locale homepage gets the cinematic chrome; other public routes keep their shell. */
+/** Landing discovery pages share chrome; other public routes keep their shell. */
 export function LandingRouteShell({
   children,
   header,
   footer,
   signedIn,
+  contact,
 }: {
   children: ReactNode
   header: ReactNode
   footer: ReactNode
   signedIn: boolean
+  contact?: PublicContact
 }) {
   const pathname = usePathname()
-  return pathname === "/" ? (
-    <CinematicShell signedIn={signedIn}>{children}</CinematicShell>
+  return usesCinematicShell(pathname) ? (
+    <CinematicShell signedIn={signedIn} contact={contact}>{children}</CinematicShell>
   ) : (
     <>
       {header}
@@ -46,11 +53,14 @@ export function LandingRouteShell({
 function CinematicShell({
   children,
   signedIn,
+  contact,
 }: {
   children: ReactNode
   signedIn: boolean
+  contact?: PublicContact
 }) {
   const locale = useLocale()
+  const pathname = usePathname()
   const t = (en: string, fr: string) => (locale === "fr" ? fr : en)
   // Start static on the server. Media is attached only after client preference checks.
   const [reduced, setReduced] = useState(true)
@@ -58,11 +68,17 @@ function CinematicShell({
   const [paused, setPaused] = useState(false)
   const [menu, setMenu] = useState<"products" | "mobile" | null>(null)
   const [light, setLight] = useState(false)
+  const [query, setQuery] = useState("")
   const [scrolled, setScrolled] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
   const productsRef = useRef<HTMLButtonElement>(null)
   const mobileRef = useRef<HTMLButtonElement>(null)
   const motionOff = reduced || paused
+
+  useEffect(() => {
+    setQuery(window.location.search)
+    try { setLight(sessionStorage.getItem("stoquify-public-theme") === "light") } catch { /* Storage can be unavailable. */ }
+  }, [pathname])
 
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)")
@@ -117,15 +133,16 @@ function CinematicShell({
     }
   }, [menu])
 
-  const products = cinematicModules.map((module) => module.label)
+  const products = cinematicModules
 
   return (
-    <CinematicContext.Provider value={{ motionOff, light }}>
+    <CinematicContext.Provider value={{ motionOff, light, signedIn }}>
+    <PreviewLogoProvider>
       <div
         className={`cinematic-home${ready ? " motion-ready" : ""}${motionOff ? " motion-off" : ""}`}
         data-theme={light ? "light" : "dark"}
       >
-        <a className="skip" href="#main">
+        <a className="skip" href="#main" tabIndex={0}>
           {t("Skip to content", "Aller au contenu")}
         </a>
         <header
@@ -148,7 +165,7 @@ function CinematicShell({
             <Link
               className="logo"
               href="/"
-              aria-label={t("Stoquify home", "Accueil Stoquify")}
+              aria-label={t("Stoquify — OHADA operating OS — Home", "Stoquify — Système opérationnel OHADA — Accueil")}
             >
               <StoquifyLogo
                 theme={light ? "light" : "dark"}
@@ -168,8 +185,8 @@ function CinematicShell({
                 {t("Products", "Produits")}
                 <span aria-hidden="true">⌄</span>
               </button>
-              <Link href="/#workflow">{t("Workflows", "Parcours")}</Link>
-              <Link href="/#pricing">
+              <Link href="/workflows">{t("Workflows", "Parcours")}</Link>
+              <Link href="/pricing">
                 {t("Offers & pricing", "Offres et tarifs")}
               </Link>
             </div>
@@ -187,7 +204,10 @@ function CinematicShell({
                     ? t("Switch to dark mode", "Passer au mode sombre")
                     : t("Switch to light mode", "Passer au mode clair")
                 }
-                onClick={() => setLight(!light)}
+                onClick={() => {
+                  setLight(!light)
+                  try { sessionStorage.setItem("stoquify-public-theme", light ? "dark" : "light") } catch { /* The theme still works without storage. */ }
+                }}
               >
                 {light ? (
                   <Moon size={19} aria-hidden="true" />
@@ -197,7 +217,7 @@ function CinematicShell({
               </button>
               <Link
                 id="language"
-                href="/"
+                href={`${pathname}${query}`}
                 locale={locale === "fr" ? "en" : "fr"}
                 aria-label={
                   locale === "fr" ? "Switch to English" : "Passer en français"
@@ -205,18 +225,18 @@ function CinematicShell({
               >
                 {locale === "fr" ? "EN" : "FR"}
               </Link>
-              <Link className="login" href={signedIn ? "/dashboard" : "/login"}>
+              <Link className="login" href={signedIn ? "/dashboard" : "/login"} prefetch={false}>
                 {signedIn
                   ? t("Dashboard", "Tableau de bord")
                   : t("Log in", "Connexion")}
               </Link>
               <Link
                 className="button primary"
-                href={signedIn ? "/dashboard" : "/register"}
+                href={signedIn ? "/dashboard" : "/contact"}
               >
                 {signedIn
                   ? t("Open workspace", "Ouvrir l’espace")
-                  : t("Create account", "Créer un compte")}
+                  : t("Plan your workspace", "Préparer votre projet")}
                 <span aria-hidden="true">↗︎</span>
               </Link>
               <button
@@ -251,14 +271,14 @@ function CinematicShell({
                   "Explorez les ventes, les stocks, le personnel, la paie et la révision financière.",
                 )}
               </p>
-              <Link className="text-link" href="/#modules">
+              <Link className="text-link" href="/products">
                 {t("Explore all capabilities", "Explorer les fonctionnalités")}{" "}
                 ↗︎
               </Link>
             </div>
-            {products.map(([en, fr], index) => (
-              <Link className="mega-link" key={en} href={`/#flow-tab-${index}`}>
-                <h3>{t(en, fr)}</h3>
+            {products.map((module) => (
+              <Link className="mega-link" key={module.id} href={`/products/${module.id}`}>
+                <h3>{t(module.label[0], module.label[1])}</h3>
                 <p>
                   {t(
                     "Explore the connected workspace",
@@ -274,23 +294,27 @@ function CinematicShell({
             data-landing-mobile-menu
             hidden={menu !== "mobile"}
           >
-            <Link href="/#product">{t("Products", "Produits")}</Link>
+            <Link href="/products">{t("Products", "Produits")}</Link>
             <Link href="/#modules">{t("Capabilities", "Fonctionnalités")}</Link>
-            <Link href="/#workflow">{t("Workflows", "Parcours")}</Link>
-            <Link href="/#pricing">
+            <Link href="/workflows">{t("Workflows", "Parcours")}</Link>
+            <Link href="/pricing">
               {t("Offers & pricing", "Offres et tarifs")}
             </Link>
-            <Link href="/workflows">
-              {t("Workflow atlas", "Catalogue des parcours")}
+            <Link href="/get-started">
+              {t("Prepare your workspace", "Préparer votre espace")}
             </Link>
-            <Link href={signedIn ? "/dashboard" : "/login"}>
+            <button type="button" className="mobile-motion-toggle" aria-pressed={motionOff} disabled={reduced}
+              onClick={() => { setPaused(!paused); setMenu(null); mobileRef.current?.focus() }}>
+              {reduced ? t("Reduced motion enabled", "Animations réduites activées") : motionOff ? t("Enable motion", "Activer les animations") : t("Pause motion", "Suspendre les animations")}
+            </button>
+            <Link href={signedIn ? "/dashboard" : "/login"} prefetch={false}>
               {signedIn
                 ? t("Dashboard", "Tableau de bord")
                 : t("Log in", "Connexion")}
             </Link>
             {!signedIn && (
-              <Link className="button primary" href="/register">
-                {t("Create your account", "Créer votre compte")} ↗︎
+              <Link className="button primary" href="/contact">
+                {t("Plan your workspace", "Préparer votre projet")} ↗︎
               </Link>
             )}
           </div>
@@ -301,7 +325,7 @@ function CinematicShell({
             <Link
               className="logo"
               href="/"
-              aria-label={t("Stoquify home", "Accueil Stoquify")}
+              aria-label={t("Stoquify — OHADA operating OS — Home", "Stoquify — Système opérationnel OHADA — Accueil")}
             >
               <StoquifyLogo
                 theme={light ? "light" : "dark"}
@@ -312,21 +336,23 @@ function CinematicShell({
             </Link>
             <div>
               <h3>{t("Product", "Produit")}</h3>
-              <Link href="/#product">{t("Overview", "Vue d’ensemble")}</Link>
+              <Link href="/products">{t("Overview", "Vue d’ensemble")}</Link>
               <Link href="/#modules">
                 {t("Capabilities", "Fonctionnalités")}
               </Link>
-              <Link href="/#workflow">{t("Workflow", "Parcours")}</Link>
+              <Link href="/workflows">{t("Workflow", "Parcours")}</Link>
             </div>
             <div>
               <h3>{t("Get started", "Démarrer")}</h3>
-              <Link href="/register">
-                {t("Create account", "Créer un compte")}
+              <Link href={signedIn ? "/dashboard" : "/register"} prefetch={false}>
+                {signedIn ? t("Open workspace", "Ouvrir l’espace") : t("Create account", "Créer un compte")}
               </Link>
-              <Link href="/login">{t("Log in", "Connexion")}</Link>
-              <Link href="/#pricing">
+              {!signedIn && <Link href="/login" prefetch={false}>{t("Log in", "Connexion")}</Link>}
+              <Link href="/pricing">
                 {t("Offers & pricing", "Offres et tarifs")}
               </Link>
+              <Link href="/get-started">{t("Setup guide", "Guide de démarrage")}</Link>
+              <Link href="/contact">{t("Enquiries & workspace planning", "Demandes et préparation du projet")}</Link>
             </div>
             <div>
               <h3>{t("Explore", "Explorer")}</h3>
@@ -339,7 +365,12 @@ function CinematicShell({
             </div>
           </div>
           <div className="footer-bottom">
-            <span>© {new Date().getFullYear()} Stoquify</span>
+            <span>© {new Date().getFullYear()} {contact?.company || "Stoquify"}</span>
+            <div className="footer-contact">
+              {contact?.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
+              {contact?.privacyUrl && <a href={contact.privacyUrl}>{t("Privacy", "Confidentialité")}</a>}
+              {contact?.termsUrl && <a href={contact.termsUrl}>{t("Terms", "Conditions d’utilisation")}</a>}
+            </div>
             <span>
               {t(
                 "Illustrative records. No live business data.",
@@ -361,6 +392,7 @@ function CinematicShell({
               : t("Pause motion", "Suspendre les animations")}
         </button>
       </div>
+    </PreviewLogoProvider>
     </CinematicContext.Provider>
   )
 }

@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T18:41:11.3275765Z",
+  "reviewer": "/root/audit_financial_core",
+  "passed": true,
+  "scope": "Read-only compatibility classification of four concurrent close changes; not close behavior or runtime acceptance",
+  "files": [
+    {
+      "path": "services/accounting/close-assurance.service.ts",
+      "sha256": "2d0da62313e44e5239f4edd08307c21fd32362a399fe71a4aeb6ff1e7b137d29"
+    },
+    {
+      "path": "services/accounting/__tests__/close-assurance.service.test.ts",
+      "sha256": "c27a763925fa23a1e1d3ca7b9822638e18141a354336b5d90d8cd3c47faee90f"
+    },
+    {
+      "path": "services/accounting/close-finding-assignee-authority.service.ts",
+      "sha256": "8bd2d4face949d4eaa1e2a7a4e3b93a0c2fc715a7f50aa6f0e6434aee3b010cb"
+    },
+    {
+      "path": "services/accounting/__tests__/close-finding-assignee-authority.service.test.ts",
+      "sha256": "13381a638b37d2d591d2067d144d37935a69dcd31f0415805db932a71731f1e3"
+    }
+  ],
+  "findings": [
+    "close-assurance adds one import of the new existing-schema assignee authority helper; assignment requires current assigner session, sorted organization prelocks, assignee eligibility and post-wait/final revalidation.",
+    "Existing close mutation loaders now check the organization/run/period relationship for findings, checklist, evidence and review links, rather than relying on target precedence.",
+    "The new helper uses existing Organization/User/Role/AccountantAccessGrant fields, existing tenant module tables and managed accountant linkage; no new dependency, schema field or migration is introduced.",
+    "The two changed/added test files mock collaborators and add scope/assignee cases; they were read, not executed.",
+    "No selected R06 authentication/session/profile input changed. The 16-actor identity fixture does not exercise these close mutations; the original 107/58 R06 contract stays intact.",
+    "These changes must be included in the successor source manifest and full application compilation; close eligibility/concurrency correctness requires its own domain qualification and is not certified by R06."
+  ],
+  "sourceAnchors": [
+    "services/accounting/close-assurance.service.ts:23",
+    "services/accounting/close-assurance.service.ts:3195",
+    "services/accounting/close-assurance.service.ts:3280",
+    "services/accounting/close-assurance.service.ts:3410",
+    "services/accounting/close-finding-assignee-authority.service.ts:29",
+    "services/accounting/close-finding-assignee-authority.service.ts:49"
+  ],
+  "selectedR06Inputs": 68,
+  "selectedR06Differences": [],
+  "migrationsCompared": 122,
+  "migrationDifferences": [],
+  "stableInputs": [
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+      "matchesR2": true
+    },
+    {
+      "path": "prisma/migrations/migration_lock.toml",
+      "sha256": "c1b9baaaaf4862b8f72b8fe252588c3a167d89f4cc3a21ee1fafc22b01225a41",
+      "matchesR2": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "matchesR2": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "matchesR2": true
+    }
+  ],
+  "fixtureSchemaCompatible": true,
+  "additionalR06RequirementRequired": false,
+  "requiresSuccessorManifestBinding": true,
+  "fullSourceInventoryReviewed": false,
+  "applicationExecuted": false,
+  "databaseExecuted": false,
+  "testsExecuted": false,
+  "executionAdmitted": false,
+  "qualificationPassed": false,
+  "limits": [
+    "Observed files/hashes only; the root checkout may change concurrently.",
+    "Root/independent candidate admission must bind this classification to the actual successor manifest.",
+    "No assignee-policy, row-lock race, close certification, migration execution or deployed behavior acceptance is asserted."
+  ]
+}

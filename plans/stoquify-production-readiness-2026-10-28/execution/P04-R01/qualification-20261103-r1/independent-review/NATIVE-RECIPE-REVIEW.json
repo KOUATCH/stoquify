@@ -1,0 +1,38 @@
+{
+  "reviewedAt": "2026-11-03T17:33:40.2157344Z",
+  "reviewer": "r01_independent_review",
+  "verdict": "accepted_for_fresh_isolated_native_execution",
+  "executionAccepted": true,
+  "outcomeAccepted": false,
+  "target": "fresh owned .codex-tmp/p04r01-qualification-20261103-r1 cluster; stoquify_local_p04_r01_20261103_r1; IPv4 loopback dynamically allocated port",
+  "scope": "Creates a new local cluster and DB; replays copied121 migrations; synthetic fixtures, actual services/actions; Better Auth transport/Next request context mocked; no HTTP/browser certification",
+  "conditions": [
+    "Run only the hash-bound recipe with fresh evidence and owned directory",
+    "Freeze candidate product/test source during execution; runner checks source and migrations before/after",
+    "Retain failures and database; stop only identity-checked owned cluster and verify port release",
+    "Do not claim native action composition proves signed cookies or HTTP routing",
+    "No retained P03/R02 DB mutation, provider send, production change, commit/push/deploy"
+  ],
+  "files": [
+    {
+      "path": "database/PLAN.md",
+      "sha256": "22136af9b8618ca4c4e1e6d77500e2a38735cf49bc0a1011387444a0689c150a"
+    },
+    {
+      "path": "database/run-native.cjs",
+      "sha256": "77279a92e5cdad295bef5881da9102f60525926fbdafe86d70e35cb1cc089986"
+    },
+    {
+      "path": "database/isolation-guard.cjs",
+      "sha256": "be37ae563e6def0d5b4ec67d45d5231e2ee7d0782df5aca1ad6a10ae6adc0e56"
+    },
+    {
+      "path": "database/jest.native.config.cjs",
+      "sha256": "4dd7804478a1701120faa842ca83fb7ca52fd764225bc9843d5d054924831f7a"
+    },
+    {
+      "path": "database/authority.postgres.test.ts",
+      "sha256": "682c449e780c5af664911b1ffcf5fd767eff9cf465bb0a346ba3bb80c0c18a1a"
+    }
+  ]
+}

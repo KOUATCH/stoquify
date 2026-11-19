@@ -1,0 +1,25 @@
+{
+  "database": "stoquify_replay_dataset_20261028_01",
+  "executedAt": "2026-10-28T18:10:34.836Z",
+  "checks": [
+    {
+      "name": "foreign-key-rejection",
+      "passed": true,
+      "code": "23503"
+    },
+    {
+      "name": "unique-key-rejection",
+      "passed": true,
+      "code": "23505"
+    },
+    {
+      "name": "concurrent-update-lock",
+      "passed": true,
+      "code": "55P03"
+    },
+    {
+      "name": "transaction-rollback-restores-data",
+      "passed": true
+    }
+  ]
+}

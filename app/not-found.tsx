@@ -2,13 +2,26 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import StoquifyLogo from "@/components/global/kit-logo";
 
 export default function NotFound() {
+  const pathname = usePathname();
+  const locale = /^\/fr(?:\/|$)/.test(pathname || "") ? "fr" : "en";
+  const t = (en: string, fr: string) => locale === "fr" ? fr : en;
+  useEffect(() => { document.documentElement.lang = locale; }, [locale]);
   return (
-    <div className="bg-blue-50 min-h-screen">
+    <main lang={locale} className="bg-blue-50 text-gray-900 min-h-screen">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative h-[calc(550px-85px)] flex justify-center items-center flex-col">
+        <div className="relative min-h-screen py-12 flex justify-center items-center flex-col">
+          <Link href={`/${locale}`} className="mb-8 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4" aria-label={t("Stoquify home", "Accueil Stoquify")}>
+            <StoquifyLogo compact tagline="" />
+          </Link>
           <svg
+            className="max-w-full h-auto"
+            aria-hidden="true"
+            focusable="false"
             width="314"
             height="171"
             viewBox="0 0 314 171"
@@ -74,28 +87,27 @@ export default function NotFound() {
             <circle cx="147.131" cy="31.0854" r="1.36752" fill="#4F46E5" />
           </svg>
           <div className="block text-center mt-5">
-            <h5 className="md:text-xl text-lg leading-8 text-gray-900 font-medium mb-1.5">
-              <span className="text-rose-600 font-semibold ">Oops!</span> It
-              seems like you've taken a wrong turn
-            </h5>
-            <p className="text-sm text-gray-500">
-              We're working to bring it back.
+            <h1 className="md:text-xl text-lg leading-8 text-gray-900 font-medium mb-1.5">
+              {t("This page could not be found", "Cette page est introuvable")}
+            </h1>
+            <p className="text-sm text-gray-600">
+              {t("Check the address, or return to explore Stoquify.", "Vérifiez l’adresse ou revenez découvrir Stoquify.")}
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center py-8">
-              <Button variant={"outline"} asChild>
-                <Link href="/">
-                  <Home className="mr-2 h-4 w-4" />
-                  Go to Home
+              <Button variant={"outline"} className="border-slate-300 bg-white text-slate-900 hover:bg-slate-100 hover:text-slate-900" asChild>
+                <Link href={`/${locale}`}>
+                  <Home className="mr-2 h-4 w-4" aria-hidden="true" />
+                  {t("Go to home", "Revenir à l’accueil")}
                 </Link>
               </Button>
-              <Button variant="ghost" onClick={() => window.history.back()}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Go Back
+              <Button variant="ghost" className="text-slate-900 hover:bg-slate-100 hover:text-slate-900" onClick={() => window.history.back()}>
+                <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+                {t("Go back", "Retour")}
               </Button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

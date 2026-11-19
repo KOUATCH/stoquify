@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client"
 import { hashBusinessPayload } from "@/services/events/business-event.service"
+import { readInvoiceCommercialMatch } from "./invoice-commercial-basis"
 
 type Source = Prisma.SupplierInvoiceGetPayload<{ include: { lines: true; threeWayMatches: true } }>
 
@@ -19,6 +20,7 @@ export function invoicePreparationSourceHash(invoice: Source) {
       itemId: line.itemId, description: line.description, quantity: line.quantity,
       unitCost: line.unitCost, taxRate: line.taxRate, taxAmount: line.taxAmount,
       lineTotal: line.lineTotal, notes: line.notes,
+      ...(readInvoiceCommercialMatch(line.metadata) ? { purchaseCommercial: readInvoiceCommercialMatch(line.metadata) } : {}),
     })),
     matches: [...invoice.threeWayMatches].sort((a, b) => a.id.localeCompare(b.id)).map(match => ({
       id: match.id, organizationId: match.organizationId, supplierInvoiceId: match.supplierInvoiceId,

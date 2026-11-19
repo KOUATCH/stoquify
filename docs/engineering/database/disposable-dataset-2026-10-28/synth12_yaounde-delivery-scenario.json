@@ -1,0 +1,55 @@
+{
+  "organizationId": "synth12_yaounde",
+  "scenario": "synth12_yaounde:delivery-fixture:v1",
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "status": "completed",
+  "occurredAt": "2026-10-28T20:00:00.000Z",
+  "actorId": "synth12_yaounde_user_owner",
+  "orderId": "cmvtazct300avma4060paeavs",
+  "orderNumber": "DO-FCB54422F49619",
+  "reservationId": "cmvtazd3z00bgma40ktaxutny",
+  "goodsIssueId": "cmvtazdw100c9ma40iif45tz2",
+  "billingOutcomeId": "cmvtazf3e00dfma4070h8iecv",
+  "invoiceNumber": "INV-A489CE54111549",
+  "receivableDocumentId": "cmvtazff900dxma40xid295r7",
+  "customerLedgerEntryId": "cmvtazfiq00e9ma404t0kzvpx",
+  "journalEntryIds": [
+    "cmvtazedv00cuma40bq8pjrhc",
+    "cmvtazf9g00dmma404qchy1lz"
+  ],
+  "inventoryTransactionIds": [
+    "cmvtazddi00brma40jlwnfgdm",
+    "cmvtazdgq00btma40i81w77sk",
+    "cmvtaze0000ckma403dc7ppy3",
+    "cmvtaze2900cmma403m8z0end"
+  ],
+  "fiscalDocumentId": "cmvtazflv00ebma40up117ns0",
+  "total": "10800.00",
+  "currency": "XAF",
+  "paymentStatus": "PENDING",
+  "document": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\engineering\\database\\disposable-dataset-2026-10-28\\synthetic-documents\\synth12_yaounde-delivery-fixture-v1.json",
+    "sha256": "68ab151fd899d8c759a6c63d6aa9a96227276ce14a21b506e45b6583cf135982"
+  },
+  "commandKeys": [
+    "synth12_yaounde:delivery-fixture:v1:create",
+    "synth12_yaounde:delivery-fixture:v1:confirm",
+    "synth12_yaounde:delivery-fixture:v1:issue",
+    "synth12_yaounde:delivery-fixture:v1:bill"
+  ],
+  "exactReplayVerified": true,
+  "checks": [
+    "full quantity conservation",
+    "consumed reservation",
+    "stock movement/source tie-out",
+    "balanced posted journals",
+    "unpaid receivable and customer ledger tie-out",
+    "applied command events",
+    "stable exact replay"
+  ],
+  "limitations": [
+    "Direct service fixture; no HTTP action or browser authorization claim",
+    "No real delivery or settlement occurred",
+    "Any fiscal artifact/submission is locally queued sandbox evidence; no certification worker or provider was run"
+  ]
+}

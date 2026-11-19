@@ -34,7 +34,11 @@ export function BIWhatChangedStrip({
   contentKind = "changes",
 }: BIWhatChangedStripProps) {
   const t = biCopy[biLocale(locale)]
-  const visible = changes.slice(0, maxItems)
+  // Observation-only callers have no comparable historical pair. Do not render
+  // a delta/directional claim just because a legacy producer supplied two numbers.
+  // Default consumers retain their existing rendering contract.
+  const visible = changes.slice(0, maxItems).map(change => contentKind === "observations"
+    ? { ...change, direction: "observed" as const, previousValue: null } : change)
   const onlyObservations = contentKind === "observations" || (changes.length > 0 && changes.every(change => change.direction === "observed"))
   const observedCopy = biLocale(locale) === "fr"
     ? { title: "Signaux actuels", detail: "Observations issues des sources actuelles, sans comparaison avec un instantané antérieur.", count: changes.length === 1 ? "observation" : "observations", label: "Observé", value: "Valeur actuelle", score: "Score de risque", unavailable: "Comparaison historique indisponible", emptyTitle: "Aucune observation visible", emptyDetail: "Aucune observation n’est disponible pour ce périmètre et vos autorisations. Consultez les limites des sources ; cela ne confirme pas l’absence de risque." }

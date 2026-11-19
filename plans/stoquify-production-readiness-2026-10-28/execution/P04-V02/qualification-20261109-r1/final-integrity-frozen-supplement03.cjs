@@ -1,0 +1,3 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');assert.equal(process.argv.length,2);
+const report=require('./frozen-scope-integrity.cjs').verifyFrozenScope();if(report.passed)try{report.supplementSource=require('./supplement03-source-integrity.cjs').verifySupplementSource();}catch(e){report.passed=false;report.error=String(e.message);}
+fs.writeFileSync(path.join(__dirname,'final-integrity-frozen-supplement03.json'),JSON.stringify(report,null,2),{flag:'wx'});if(!report.passed)process.exitCode=1;console.log(JSON.stringify({passed:report.passed,candidateId:report.candidateId,scope:report.scope,currentCheckoutQualified:false,error:report.error}));

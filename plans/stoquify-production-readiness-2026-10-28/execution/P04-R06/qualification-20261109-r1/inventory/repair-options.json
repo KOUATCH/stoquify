@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "package_id": "P04-R06",
+  "status": "recommendation_only_product_not_edited_by_inventory_owner",
+  "recommended": {
+    "id": "A",
+    "name": "Application-owned Better Auth before hook with server-owned current authority and cookie-cache disabled",
+    "scope": [
+      "lib/auth.ts current configuration/before hook",
+      "Small application-owned helper if needed to keep lifecycle policy testable without circular auth import",
+      "Targeted tests and separately captured current-source evidence"
+    ],
+    "requirements": [
+      "Disable use of signed cookie cache for authority, including already-issued valid cache.",
+      "For protected own-account and optional get-session operations obtain fresh persisted session without inheriting prepopulated stale context or caller cache query; prevent recursive outer-hook calls.",
+      "Check current account by immutable current session subject for isActive and indefinite/future lock. Do not substitute full application RBAC.",
+      "Public initiation/recovery/callback/status and sign-out cleanup exceptions explicit. Custom update-user service remains authoritative.",
+      "Avoid refreshing session lifetime during admission; allow only separately reviewed own expired-session cleanup."
+    ],
+    "tradeoffs": [
+      "Every protected auth request must reach persisted authority; extra local database query cost is accepted for immediate current-state correctness.",
+      "A global disable switch alone is insufficient for lifecycle state. Hook and config must be reviewed together.",
+      "No transaction-level revocation linearizability is claimed by a preflight query."
+    ]
+  },
+  "alternatives": [
+    {
+      "id": "B",
+      "name": "Catch-all HTTP preflight while retaining cache",
+      "assessment": "Can close HTTP symptoms but leaves direct auth.api entry points requiring a separate equivalent policy, duplicates path normalization, and risks trusting provider-internal stale context after preflight. Prefer A for bounded shared enforcement."
+    },
+    {
+      "id": "C",
+      "name": "Disable cookie cache only",
+      "assessment": "Insufficient: fresh current session still returns inactive/locked current user unless account lifecycle is checked."
+    },
+    {
+      "id": "D",
+      "name": "Replace core auth admission with requireRbacContext",
+      "assessment": "Reject: it silently adds active tenant, email verification, role/permission and module-adjacent constraints to own-account/public recovery semantics."
+    }
+  ],
+  "acceptance_reference": "test-case-map.json",
+  "rollback": {
+    "source": "Restore only reviewed R06-owned hunks/helper/tests if repair is reverted; preserve unrelated working-tree modifications.",
+    "data": "No schema change or production migration required. Retain isolated native receipts and fixture database; clean only owned sessions/runtime processes.",
+    "security": "Reverting reopens confirmed V02 current-authority defects; do not describe rollback as production acceptance."
+  },
+  "independent_review_required": true
+}

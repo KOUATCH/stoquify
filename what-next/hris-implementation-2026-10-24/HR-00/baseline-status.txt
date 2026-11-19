@@ -1,0 +1,352 @@
+ M actions/accounting/__tests__/accountant-work-desk.actions.test.ts
+ M actions/accounting/__tests__/data-trust.actions.test.ts
+ M actions/accounting/accountant-access.actions.ts
+ M actions/accounting/accountant-work-desk.actions.ts
+ M actions/accounting/data-trust.actions.ts
+ M actions/payments/__tests__/reconciliation.actions.test.ts
+ M app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx
+ M app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx
+ M app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts
+ M app/[locale]/(home)/workflows/page.tsx
+ M app/public-contours.css
+ M artifacts/public-contours-2026-10-17/verification.md
+ M components/Forms/WaitList.tsx
+ M components/accounting/AccountantAccessManager.tsx
+ M components/accounting/AccountantPortal.tsx
+ M components/accounting/AccountantPortfolio.tsx
+ M components/accounting/AccountantWorkDesk.tsx
+ M components/accounting/__tests__/AccountantWorkDesk.test.tsx
+ M components/accounting/__tests__/CloseEvidenceWorkflowPanel.test.tsx
+ M components/auth/AuthLayout.tsx
+ M components/daily-habit/DailyHabitDigestDashboard.tsx
+ M components/daily-habit/__tests__/modes.test.tsx
+ M components/landing/__tests__/CinematicLanding.test.tsx
+ M components/landing/__tests__/workflow-atlas.test.tsx
+ M components/landing/capability-overview.tsx
+ M components/landing/cinematic-business-story.tsx
+ M components/landing/cinematic-chapters.tsx
+ M components/landing/cinematic-hero.tsx
+ M components/landing/cinematic-landing.tsx
+ M components/landing/cinematic-offers.tsx
+ M components/landing/cinematic-product.tsx
+ M components/landing/cinematic-setup.tsx
+ M components/landing/cinematic-shell.tsx
+ M components/landing/cinematic.css
+ M components/landing/public-product-copy.ts
+ M components/landing/workflow-atlas.tsx
+ M components/onboarding/MasterDataOnboardingWorkbench.tsx
+ M components/onboarding/OpeningReadinessPanel.tsx
+ M components/onboarding/__tests__/OpeningReadinessPanel.test.tsx
+ M design-system/stoquify/MASTER.md
+ M docs/ecc/command-registry.json
+ M docs/ecc/maintenance.md
+ M docs/retention/execution/P02/RESULT.md
+ M docs/retention/execution/P06/RESULT.md
+ M docs/retention/execution/P07/ITEM_IMPORT_BLOCKER.md
+ M docs/retention/execution/P07/RESULT.md
+ M docs/retention/execution/P07/SETUP_JOURNEY.md
+ M docs/retention/execution/STATUS.md
+ M hooks/posHooks/__tests__/pos-read-scope.test.tsx
+ M hooks/posHooks/usePOSReadQuery.ts
+ M package.json
+ M prisma/db.ts
+ M prisma/schema.prisma
+ M scripts/__tests__/landing-navigation-localization.test.js
+ M scripts/__tests__/landing-refinement-content.test.js
+ M services/accounting/__tests__/accountant-access.service.test.ts
+ M services/accounting/__tests__/accountant-work-desk.service.test.ts
+ M services/accounting/__tests__/close-assurance.service.test.ts
+ M services/accounting/__tests__/close-evidence-acceptance-authority.service.test.ts
+ M services/accounting/__tests__/data-trust.service.test.ts
+ M services/accounting/accountant-access.schemas.ts
+ M services/accounting/accountant-access.service.ts
+ M services/accounting/accountant-work-desk.service.ts
+ M services/accounting/ar-open-item-export.service.ts
+ M services/accounting/close-assessment-order.service.ts
+ M services/accounting/close-assurance-current-proof.ts
+ M services/accounting/close-assurance.service.ts
+ M services/accounting/close-evidence-acceptance-authority.service.ts
+ M services/accounting/customer-settlement-reversal.service.ts
+ M services/accounting/customer-settlement.schemas.ts
+ M services/accounting/customer-settlement.service.ts
+ M services/accounting/data-trust.service.ts
+ M services/accounting/missing-close-evidence-accountant-review-queue.service.ts
+ M services/accounting/posting.service.ts
+ M services/inventory/inventory-stock-event.service.ts
+ M services/onboarding/__tests__/master-data-csv.test.ts
+ M services/onboarding/__tests__/master-data-import-guards.test.ts
+ M services/onboarding/__tests__/opening-readiness.postgres.test.ts
+ M services/onboarding/__tests__/opening-readiness.test.ts
+ M services/onboarding/master-data-csv.ts
+ M services/onboarding/master-data-import.service.ts
+ M services/onboarding/opening-readiness.ts
+ M services/payments/__tests__/statement-import.service.test.ts
+ M services/payments/adapters/mobile-money-hmac.adapter.ts
+ M services/payments/statement-import.service.ts
+ M services/reconciliation/__tests__/account-close-coverage.test.ts
+ M services/reconciliation/account-close-coverage.service.ts
+ M what-next/bakery-profitability-2026-10-03/node_modules/.modules.yaml
+ M what-next/bakery-profitability-2026-10-03/node_modules/.pnpm-workspace-state-v1.json
+ M what-next/bakery-profitability-2026-10-03/node_modules/@img/sharp-win32-x64/lib/libvips-42.dll
+ M what-next/bakery-profitability-2026-10-03/node_modules/@img/sharp-win32-x64/lib/libvips-cpp-8.18.7.dll
+ M what-next/bakery-profitability-2026-10-03/node_modules/@img/sharp-win32-x64/lib/sharp-win32-x64-0.35.5.node
+ M what-next/bakery-profitability-2026-10-03/node_modules/@napi-rs/canvas-win32-x64-msvc/skia.win32-x64-msvc.node
+ M what-next/bakery-profitability-2026-10-03/node_modules/@oai/artifact-tool/node_modules/.pnpm-workspace-state-v1.json
+ M what-next/bakery-profitability-2026-10-03/node_modules/@oai/artifact-tool/node_modules/skia-canvas/lib/skia.node
+ M what-next/bakery-profitability-2026-10-03/node_modules/pnpm/dist/node_modules/@reflink/reflink-win32-arm64-msvc/reflink.win32-arm64-msvc.node
+ M what-next/bakery-profitability-2026-10-03/node_modules/pnpm/dist/node_modules/@reflink/reflink-win32-x64-msvc/reflink.win32-x64-msvc.node
+ M what-next/bakery-profitability-2026-10-03/node_modules/pnpm/dist/vendor/fastlist-0.3.0-x64.exe
+ M what-next/bakery-profitability-2026-10-03/node_modules/pnpm/dist/vendor/fastlist-0.3.0-x86.exe
+?? actions/accounting/__tests__/delegated-evidence-desk.actions.test.ts
+?? actions/accounting/__tests__/firm-engagement.actions.test.ts
+?? actions/accounting/delegated-evidence-desk.actions.ts
+?? actions/accounting/firm-engagement.actions.ts
+?? actions/accounting/obligation-register.actions.ts
+?? actions/accounting/review-workpaper.actions.ts
+?? actions/onboarding/opening-cutover.actions.ts
+?? actions/onboarding/opening-position.actions.ts
+?? app/[locale]/(dashboard)/dashboard/accounting/opening-position/
+?? app/[locale]/(home)/get-started/
+?? app/[locale]/(home)/offers/
+?? app/[locale]/(home)/pricing/
+?? app/[locale]/(home)/products/
+?? artifacts/landing-sections-2026-10-23/
+?? artifacts/pricing-workflows-2026-10-24/
+?? artifacts/public-contours-2026-10-17/edge-reliability-diagnosis.json
+?? artifacts/public-contours-2026-10-17/edge-support-report.md
+?? artifacts/public-contours-2026-10-17/landing-desktop-en.jpg
+?? artifacts/public-contours-2026-10-17/landing-mobile-en.jpg
+?? artifacts/public-contours-2026-10-17/landing-mobile-menu-en.jpg
+?? artifacts/public-contours-2026-10-17/landing-resize-not-applied-en.jpg
+?? artifacts/public-contours-2026-10-17/login-desktop-en.jpg
+?? artifacts/public-contours-2026-10-17/login-keyboard-focus-en.jpg
+?? artifacts/public-contours-2026-10-17/login-light-en.jpg
+?? artifacts/public-contours-2026-10-17/login-light-fr.jpg
+?? artifacts/public-contours-2026-10-17/login-mobile-en.jpg
+?? artifacts/public-contours-2026-10-17/login-mobile-focus-en.jpg
+?? artifacts/public-contours-2026-10-17/register-dark-fr.jpg
+?? artifacts/public-contours-2026-10-17/register-desktop-en.jpg
+?? artifacts/public-contours-2026-10-17/register-light-fr.jpg
+?? artifacts/public-contours-2026-10-17/register-mobile-en.jpg
+?? artifacts/public-contours-2026-10-17/workflow-desktop-en.jpg
+?? artifacts/public-contours-2026-10-17/workflow-mobile-en.jpg
+?? artifacts/workflow-library-playback-2026-10-24/
+?? components/Forms/__tests__/
+?? components/accounting/AccountantInvitationDelivery.tsx
+?? components/accounting/AccountantPortfolioWorkspace.tsx
+?? components/accounting/DelegatedEvidenceDesk.tsx
+?? components/accounting/FirmEngagementWorkspace.tsx
+?? components/accounting/ObligationRegister.tsx
+?? components/accounting/ReviewWorkpaperBinder.tsx
+?? components/accounting/__tests__/AccountantInvitationDelivery.test.tsx
+?? components/accounting/__tests__/AccountantPortfolio.test.tsx
+?? components/accounting/__tests__/AccountantPortfolioPage.test.tsx
+?? components/accounting/__tests__/AccountantPortfolioWorkspace.test.tsx
+?? components/accounting/__tests__/DelegatedEvidenceDesk.test.tsx
+?? components/accounting/__tests__/DelegatedEvidenceRecovery.test.tsx
+?? components/accounting/__tests__/FirmEngagementWorkspace.test.tsx
+?? components/accounting/__tests__/ObligationRegister.test.tsx
+?? components/accounting/__tests__/ReviewWorkpaperBinder.test.tsx
+?? components/accounting/accountant-portfolio-copy.ts
+?? components/accounting/firm-engagement-copy.ts
+?? components/landing/__tests__/JourneyPreview.test.tsx
+?? components/landing/__tests__/ProductWorkflowDemo.test.tsx
+?? components/landing/__tests__/workflow-details.test.tsx
+?? components/landing/accounting-workflow-context.tsx
+?? components/landing/cinematic-people-payroll.tsx
+?? components/landing/journey-preview.tsx
+?? components/landing/landing-decision-guide.tsx
+?? components/landing/landing-module-catalog-data.ts
+?? components/landing/landing-module-catalog.tsx
+?? components/landing/landing-sections.css
+?? components/landing/landing-workflow-library.ts
+?? components/landing/photo-workspace.tsx
+?? components/landing/preview-logo.tsx
+?? components/landing/product-workflow-demo.tsx
+?? components/landing/product-workflow-motion.ts
+?? components/landing/product-workflow.css
+?? components/landing/public-page-routes.ts
+?? components/landing/public-pages.tsx
+?? components/landing/workflow-atlas.css
+?? components/landing/workflow-details.tsx
+?? components/landing/workflow-story.tsx
+?? components/onboarding/ItemImportImages.tsx
+?? components/onboarding/OpeningCutoverPanel.tsx
+?? components/onboarding/OpeningPositionWorkbench.tsx
+?? components/onboarding/__tests__/ItemImportImages.test.tsx
+?? components/onboarding/__tests__/ItemImportImages.upload.test.tsx
+?? components/onboarding/__tests__/OpeningCutoverPanel.test.tsx
+?? components/onboarding/__tests__/OpeningPositionWorkbench.test.tsx
+?? design-system/stoquify/pages/accountant-portfolio.md
+?? design-system/stoquify/pages/command-center-shared.md
+?? design-system/stoquify/pages/daily-digest.md
+?? design-system/stoquify/pages/delegated-evidence-desk.md
+?? design-system/stoquify/pages/firm-engagements.md
+?? design-system/stoquify/pages/manager-action-center.md
+?? design-system/stoquify/pages/obligation-register.md
+?? design-system/stoquify/pages/owner-war-room.md
+?? docs/accounting-firms/
+?? docs/command-center/
+?? docs/landing/
+?? docs/payroll-HRIS/hris-assessment-ohada-1-200-2026-10-24.md
+?? docs/payroll-HRIS/implementation-2026-10-24/
+?? docs/prompt-execution/S06-S12_SHARED_CANDIDATE_REVIEW_R3_2026-10-18.md
+?? docs/prompt-execution/S06-S12_SHARED_CANDIDATE_REVIEW_R4_2026-10-18.md
+?? docs/prompt-execution/S06-S12_SHARED_CANDIDATE_REVIEW_R5_2026-10-20.md
+?? docs/prompt-execution/S06-S12_SHARED_CANDIDATE_REVIEW_R6_2026-10-20.md
+?? docs/prompt-execution/S06-S12_SHARED_CANDIDATE_REVIEW_R7_2026-10-20.md
+?? docs/prompt-execution/S06-S12_SHARED_CANDIDATE_REVIEW_R8_2026-10-20.md
+?? docs/prompt-execution/S06-S12_SHARED_CANDIDATE_REVIEW_R9_2026-10-20.md
+?? docs/retention/execution/P02-P06-verification-2026-10-18/
+?? docs/retention/execution/P07-media-2026-10-18/
+?? docs/retention/execution/P08/
+?? docs/retention/execution/P09/
+?? docs/retention/execution/P10/
+?? docs/retention/execution/P11/
+?? docs/retention/execution/P12/
+?? jest.accountant-portfolio-postgres.config.cjs
+?? jest.accountant-portfolio.config.cjs
+?? jest.delegated-evidence-postgres.config.cjs
+?? jest.delegated-evidence.config.cjs
+?? jest.firm-engagement-authority-postgres.config.cjs
+?? jest.firm-engagement-postgres.config.cjs
+?? jest.firm-engagement-workflows-postgres.config.cjs
+?? jest.firm-engagement-workflows.config.cjs
+?? jest.firm-engagement.config.cjs
+?? jest.obligation-register-postgres.config.cjs
+?? jest.obligation-register.config.cjs
+?? jest.opening-cutover-postgres.config.cjs
+?? jest.opening-cutover.config.cjs
+?? jest.opening-position-postgres.config.cjs
+?? jest.opening-position.config.cjs
+?? jest.provider-formats-postgres.config.cjs
+?? jest.provider-formats.config.cjs
+?? jest.retention-archive.config.cjs
+?? jest.review-workpaper-postgres.config.cjs
+?? jest.review-workpaper.config.cjs
+?? prisma/migrations/20261019120000_firm_engagement_foundation/
+?? prisma/migrations/20261019140000_firm_engagement_authority/
+?? prisma/migrations/20261020100000_accountant_active_named_scope/
+?? prisma/migrations/20261020130000_opening_position_preview/
+?? prisma/migrations/20261020160000_controlled_opening_cutover/
+?? prisma/migrations/20261020180000_firm_obligation_register/
+?? public/landing/cinematic/accounting-firm-manifest.json
+?? public/landing/cinematic/accounting-firm-screen-v2-768.webp
+?? public/landing/cinematic/accounting-firm-screen-v2.webp
+?? public/landing/cinematic/bakery-screen-v2-768.webp
+?? public/landing/cinematic/bakery-screen-v2.webp
+?? public/landing/cinematic/materials-screen-v2-768.webp
+?? public/landing/cinematic/materials-screen-v2.webp
+?? public/landing/cinematic/pharmacy-screen-v2-768.webp
+?? public/landing/cinematic/pharmacy-screen-v2.webp
+?? public/landing/cinematic/photo-screens-v2-manifest.json
+?? public/landing/cinematic/retail-screen-v2-768.webp
+?? public/landing/cinematic/retail-screen-v2.webp
+?? public/landing/cinematic/sme-accounting-firm-768.webp
+?? public/landing/cinematic/sme-accounting-firm.webp
+?? public/landing/cinematic/stoquify-dashboard-en.webp
+?? public/landing/cinematic/stoquify-dashboard-fr.webp
+?? scripts/__tests__/prisma-dev-restart.test.ps1
+?? scripts/fixtures/
+?? scripts/jest.landing-showcase.config.cjs
+?? scripts/prepare-delegated-evidence-browser.cjs
+?? scripts/prepare-firm-engagement-browser.cjs
+?? scripts/prepare-obligation-register-browser.cjs
+?? scripts/prepare-opening-cutover-browser.cjs
+?? scripts/prepare-opening-position-browser.cjs
+?? scripts/prepare-review-workpaper-browser.cjs
+?? scripts/prisma-dev-restart.ps1
+?? scripts/render-review-workpaper-sample.cjs
+?? scripts/run-accountant-portfolio-postgres.cjs
+?? scripts/run-firm-engagement-authority-postgres.cjs
+?? scripts/run-firm-engagement-postgres.cjs
+?? scripts/start-delegated-evidence-browser.cjs
+?? scripts/start-firm-engagement-browser.cjs
+?? scripts/start-obligation-register-browser.cjs
+?? scripts/start-opening-cutover-browser.cjs
+?? scripts/start-opening-position-browser.cjs
+?? scripts/start-review-workpaper-browser.cjs
+?? scripts/verify-accountant-portfolio-browser.cjs
+?? scripts/verify-delegated-evidence-browser.cjs
+?? scripts/verify-firm-engagement-browser-recovery.cjs
+?? scripts/verify-firm-engagement-browser.cjs
+?? scripts/verify-obligation-register-browser.cjs
+?? scripts/verify-opening-cutover-browser.cjs
+?? scripts/verify-opening-position-browser.cjs
+?? scripts/verify-review-workpaper-artifacts.py
+?? scripts/verify-review-workpaper-browser.cjs
+?? services/accounting/__tests__/accountant-portfolio-proof.service.test.ts
+?? services/accounting/__tests__/accountant-portfolio.postgres.test.ts
+?? services/accounting/__tests__/accountant-portfolio.service.test.ts
+?? services/accounting/__tests__/delegated-evidence-desk.postgres.test.ts
+?? services/accounting/__tests__/delegated-evidence-desk.service.test.ts
+?? services/accounting/__tests__/firm-engagement-authority.postgres.test.ts
+?? services/accounting/__tests__/firm-engagement-workflows.postgres.test.ts
+?? services/accounting/__tests__/firm-engagement-workspace.service.test.ts
+?? services/accounting/__tests__/firm-engagement.postgres.test.ts
+?? services/accounting/__tests__/managed-accountant-access.service.test.ts
+?? services/accounting/__tests__/review-workpaper-export.test.ts
+?? services/accounting/__tests__/review-workpaper.postgres.test.ts
+?? services/accounting/accountant-portfolio-proof.service.ts
+?? services/accounting/accountant-portfolio.service.ts
+?? services/accounting/close-period-selection.service.ts
+?? services/accounting/delegated-evidence-desk.service.ts
+?? services/accounting/firm-engagement-workspace.service.ts
+?? services/accounting/firm-engagement.schemas.ts
+?? services/accounting/firm-engagement.service.ts
+?? services/accounting/managed-accountant-access.service.ts
+?? services/accounting/opening-ledger.service.ts
+?? services/accounting/opening-receivable.service.ts
+?? services/accounting/review-workpaper-export.ts
+?? services/accounting/review-workpaper.contract.ts
+?? services/accounting/review-workpaper.service.ts
+?? services/analytics/__tests__/retention-outcomes.postgres.test.ts
+?? services/compliance/__tests__/obligation-register-source.test.ts
+?? services/compliance/__tests__/obligation-register.postgres.test.ts
+?? services/compliance/obligation-register-source.ts
+?? services/compliance/obligation-register.contract.ts
+?? services/compliance/obligation-register.service.ts
+?? services/onboarding/__tests__/fixtures/af09-controls.json
+?? services/onboarding/__tests__/fixtures/af09-source.json
+?? services/onboarding/__tests__/item-import-media.postgres.test.ts
+?? services/onboarding/__tests__/item-import-media.test.ts
+?? services/onboarding/__tests__/opening-cutover.postgres.test.ts
+?? services/onboarding/__tests__/opening-position-preview.test.ts
+?? services/onboarding/__tests__/opening-position.postgres.test.ts
+?? services/onboarding/opening-cutover.contract.ts
+?? services/onboarding/opening-cutover.service.ts
+?? services/onboarding/opening-domain-source.ts
+?? services/onboarding/opening-position-preview.ts
+?? services/onboarding/opening-position.contract.ts
+?? services/onboarding/opening-position.service.ts
+?? services/organization/__fixtures__/
+?? services/organization/__tests__/authorized-archive-contract.test.ts
+?? services/organization/authorized-archive-contract.ts
+?? services/payments/__fixtures__/
+?? services/payments/__tests__/provider-formats.postgres.test.ts
+?? services/payments/__tests__/statement-pilot-format.test.ts
+?? services/payments/adapters/statement-pilot-format.ts
+?? services/purchasing/opening-payable.service.ts
+?? services/security/export-csv.ts
+?? tsconfig.accountant-portfolio.json
+?? tsconfig.delegated-evidence.json
+?? tsconfig.firm-engagement-workflows.json
+?? tsconfig.firm-engagement.json
+?? tsconfig.obligation-register.json
+?? tsconfig.opening-cutover.json
+?? tsconfig.opening-position.json
+?? tsconfig.provider-formats.json
+?? tsconfig.review-workpaper.json
+?? what-next/2026-10-19-af01-accountant-portfolio.md
+?? what-next/2026-10-19-af02-accountant-portfolio-ui.md
+?? what-next/2026-10-19-af03-firm-engagement-model.md
+?? what-next/2026-10-19-pos-checkout-repair.md
+?? what-next/2026-10-20-af04-firm-engagement-authority.md
+?? what-next/2026-10-20-af05-firm-engagement-workflows.md
+?? what-next/2026-10-20-af06-delegated-evidence-desk.md
+?? what-next/2026-10-20-af07-provider-formats.md
+?? what-next/2026-10-20-af08-review-workpapers.md
+?? what-next/2026-10-20-af09-opening-position-preview.md
+?? what-next/2026-10-20-af10-controlled-opening-apply.md
+?? what-next/2026-10-20-af11-obligation-register.md
+?? what-next/2026-10-20-pos-checkout-verification.md

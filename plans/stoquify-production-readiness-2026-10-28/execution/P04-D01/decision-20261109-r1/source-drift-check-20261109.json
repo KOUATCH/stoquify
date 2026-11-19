@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-09T17:20:08.224Z",
+  "trigger": "Concurrent accounting source edits during P04-V02 build",
+  "passed": true,
+  "files": [
+    {
+      "path": "actions/accounting/finance-statement-export.actions.ts",
+      "expected": "583a1830b85b9015dc243f633a98c59e04177ff3d1813ed041818539ef478399",
+      "actual": "583a1830b85b9015dc243f633a98c59e04177ff3d1813ed041818539ef478399"
+    },
+    {
+      "path": "services/accounting/finance-statement-export.service.ts",
+      "expected": "f3182b84654fb5e0127757234b6561b0dba6d80c58c10da10221573280ebac50",
+      "actual": "f3182b84654fb5e0127757234b6561b0dba6d80c58c10da10221573280ebac50"
+    },
+    {
+      "path": "services/accounting/finance-statement-export-operations.service.ts",
+      "expected": "d75a2edf0a14dbba3cd1dbbc4c6a29e968bf92d00efae7f265b4b2654551f2f0",
+      "actual": "d75a2edf0a14dbba3cd1dbbc4c6a29e968bf92d00efae7f265b4b2654551f2f0"
+    },
+    {
+      "path": "components/DataTableComponents/finance-accounting-contracts.ts",
+      "expected": "54d8afe4cd158bf522474d5a482971712ba3609af90bba11f419e178dad52c06",
+      "actual": "54d8afe4cd158bf522474d5a482971712ba3609af90bba11f419e178dad52c06"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "expected": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+      "actual": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+    },
+    {
+      "path": "services/controls/sensitive-action.service.ts",
+      "expected": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+      "actual": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "expected": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "actual": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "expected": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c",
+      "actual": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+    },
+    {
+      "path": "actions/accounting/__tests__/finance-statement-export.actions.test.ts",
+      "expected": "5cfd33c2945d4d1ccee978b599e40682a60e1bb0321a2046e0ff7648edb661ff",
+      "actual": "5cfd33c2945d4d1ccee978b599e40682a60e1bb0321a2046e0ff7648edb661ff"
+    },
+    {
+      "path": "services/accounting/__tests__/finance-statement-export.service.test.ts",
+      "expected": "578afeecc65ac9f3fe999099b90de45ec978e6f1aef86e05bcdcbe66cc472b80",
+      "actual": "578afeecc65ac9f3fe999099b90de45ec978e6f1aef86e05bcdcbe66cc472b80"
+    },
+    {
+      "path": "services/accounting/__tests__/finance-statement-export-operations.service.test.ts",
+      "expected": "04327e2d2820fa3bad2e723f72c4473a03452e810dff8a92d09da0297441f69c",
+      "actual": "04327e2d2820fa3bad2e723f72c4473a03452e810dff8a92d09da0297441f69c"
+    }
+  ]
+}

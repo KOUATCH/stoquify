@@ -1,0 +1,82 @@
+{
+  "at": "2026-11-10T09:07:56.196Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Accuracy and preservation of actual blocked-status publication only",
+  "qualificationPassed": false,
+  "productionReady": false,
+  "candidateId": "p04-r06-full-4661f767924e",
+  "checks": {
+    "validatorElevenPass": true,
+    "writtenHashesCurrent": true,
+    "frozenMutationInputs": true,
+    "allOtherGlobalFieldsUnchanged": true,
+    "all56OtherPackagesUnchanged": true,
+    "historicalEvidenceUnchanged": true,
+    "onlyNewEvidenceE28": true,
+    "allThreePackagesRemainBlocked": true,
+    "logAppendOnly": true,
+    "roadmapEarlierContentPreserved": true,
+    "currentNextEqualAdmittedDrafts": true,
+    "qualificationStillFalse": true
+  },
+  "sharedFiles": [
+    {
+      "path": "work-register.json",
+      "sha256": "e5121b01da8e492c766c369b9d6497b7f426300b1b31b07873a1b3a1f40b2453"
+    },
+    {
+      "path": "work-register.csv",
+      "sha256": "5edb1d2b0c3419b555d5194e4b44bcaafb9833b195fe64e41157105e20e451d3"
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "1b6f7bd44ab1f364089652c6c130b72b98662cad9e922de03ee786935943681d"
+    },
+    {
+      "path": "mutation-log.md",
+      "sha256": "811b9646137d9c8ffafb2f4f8b3c88d47f548e9f556a56a89553c33d4681c758"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "sha256": "03593628ad4ee600987914bab0e7f91f66a964d880f7a91774ccf967070ecd9b"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "sha256": "9f4d0484a54f3214dd31bd47a8564791788e41b681375ca269023cb8f19399ab"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "publication-written.json",
+      "sha256": "8deef8f55a4a13a73aa6999431ae36310332314a30409592b822336bc75d8552"
+    },
+    {
+      "path": "publication-validation.json",
+      "sha256": "feaaca7b933315808f1b59ab25b18b1335338eba556fa9116c6758ed88e88cde"
+    },
+    {
+      "path": "independent-review/PUBLICATION-WRITE-ADMISSION.json",
+      "sha256": "09be9010a864aab668b636b0b97e36800c636d05688b282edb4d7030c4665eda"
+    },
+    {
+      "path": "independent-review/FINAL-OUTCOME-REVIEW.json",
+      "sha256": "1d9b71c20aa39b74ad92a5dd02435a98b0b5520d9d007a749cca4346cf5e60cf"
+    }
+  ],
+  "counts": {
+    "packages": 59,
+    "domains": 57,
+    "decisions": 14,
+    "gates": 18,
+    "unrelatedPackagesUnchanged": 56,
+    "validatorChecksPassed": 11
+  },
+  "conclusion": "Published records accurately describe the implemented but unqualified R06 repair, actual mocked/preparation/cleanup results and failed memory gate. R06, P04 and V02 remain blocked; production is not approved. Historical evidence, unrelated packages, scope/dependencies and deferred commitments remain preserved.",
+  "nextEligibleAction": "Continue P04-R06 after a fresh passing host-capacity gate; follow the independently reviewed retained-database and full-build recovery sequence, then separately admit and execute native session/browser qualification.",
+  "limitations": [
+    "A publication pass certifies truthful records, not application security or release readiness.",
+    "All58 planned native qualification groups remain unrun on a repaired artifact; nine inherited failures remain unresolved by runtime evidence.",
+    "No commit, push, deployment or production operation was authorized by this review."
+  ]
+}

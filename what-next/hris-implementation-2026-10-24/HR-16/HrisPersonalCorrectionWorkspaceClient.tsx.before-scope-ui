@@ -1,0 +1,6 @@
+"use client"
+import {HrisPersonalCorrectionWorkspace,type OwnCorrections,type CorrectionQueue,type CorrectionTransport} from "./HrisPersonalCorrectionWorkspace"
+import {getOwnCorrectionWorkspaceAction,submitOwnCorrectionAction,amendOwnCorrectionAction,getCorrectionQueueAction,getCorrectionReviewAction,decideCorrectionAction} from "@/actions/hris/personal-correction.actions"
+const operations={OWN:getOwnCorrectionWorkspaceAction,SUBMIT:submitOwnCorrectionAction,AMEND:amendOwnCorrectionAction,QUEUE:getCorrectionQueueAction,REVIEW:getCorrectionReviewAction,DECIDE:decideCorrectionAction}
+const execute:CorrectionTransport=async(operation,input)=>{const r=await operations[operation](input);if(!r.success)throw Object.assign(Error(r.error),{status:r.status,code:r.code});return r.data}
+export function HrisPersonalCorrectionWorkspaceClient({initial,own,locale}:{initial:OwnCorrections|CorrectionQueue;own:boolean;locale:"en"|"fr"}){return <HrisPersonalCorrectionWorkspace initial={initial} own={own} locale={locale} execute={execute}/>}

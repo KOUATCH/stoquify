@@ -1,0 +1,415 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "actual-approved-opening-and-replay",
+      "passed": true
+    },
+    {
+      "name": "actual-collections-and-provider-links",
+      "passed": true
+    },
+    {
+      "name": "electronic-claim-denials-no-effects",
+      "passed": true
+    },
+    {
+      "name": "actual-concurrent-claim-exclusion",
+      "passed": true
+    },
+    {
+      "name": "assessment-before-provider-and-schedule-evidence",
+      "passed": true
+    },
+    {
+      "name": "actual-monthly-import-independent-signatures",
+      "passed": true
+    },
+    {
+      "name": "actual-bank-bs-approval-certification-and-seal",
+      "passed": true
+    },
+    {
+      "name": "actual-closed-period-denial-and-retained-recovery",
+      "passed": true
+    }
+  ],
+  "counts": {
+    "journals": 4,
+    "customerSettlements": 3,
+    "claimedProviderTransactions": 2,
+    "signedReconciliationRuns": 2,
+    "approvedBankBalanceEvidence": 1,
+    "certifiedExports": 1,
+    "periodCloseEvents": 1,
+    "periodReopenEvents": 0,
+    "providerAccounts": 2,
+    "activeOpeningExecutions": 1,
+    "openingReceivables": 1,
+    "sales": 0,
+    "payrollRuns": 0,
+    "statutoryCertifiedDocuments": 0
+  },
+  "auxiliary": {
+    "denials": {
+      "organizationId": "monthly-denials-07f74d7cf9a8",
+      "negativeKinds": [
+        "foreign",
+        "rail",
+        "amount",
+        "currency",
+        "mapping",
+        "reused-native",
+        "changed-primary-replay"
+      ],
+      "allNegativeFinancialSnapshotsUnchanged": true,
+      "financialState": {
+        "journals": 2,
+        "lines": 4,
+        "batches": 2,
+        "settlements": 1,
+        "legacyPayments": 0,
+        "completedSales": 0,
+        "claimed": 1,
+        "nativeTransactions": [
+          {
+            "id": "cmwau3vvw00lamajwvtetnwk9",
+            "sourceType": "CUSTOMER_SETTLEMENT",
+            "sourceId": "cmwau3wcu00m8majwhb0qoebr",
+            "ledgerPostingBatchId": "cmwau3wet00momajw7fxhggka",
+            "legacyPaymentId": null,
+            "providerAuthorityEventId": "cmwau3vvr00l8majwtl0chlmw",
+            "providerAccountId": "cmwau3vfl00jdmajwjmez91kc",
+            "providerTransactionId": "monthly-denials-07f74d7cf9a8-valid-unclaimed-f3198a1d",
+            "providerReference": "monthly-denials-07f74d7cf9a8-valid-unclaimed-f3198a1d",
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100",
+            "currencyCode": "XAF",
+            "metadata": null,
+            "updatedAt": "2026-11-10T15:17:57.115Z"
+          },
+          {
+            "id": "cmwau3vw700lemajws12mttz0",
+            "sourceType": "SYNTHETIC_EXTERNAL_CONFIRMATION_INPUT",
+            "sourceId": null,
+            "ledgerPostingBatchId": null,
+            "legacyPaymentId": null,
+            "providerAuthorityEventId": "cmwau3vw300lcmajw7r4f0qqu",
+            "providerAccountId": "cmwau3vfl00jdmajwjmez91kc",
+            "providerTransactionId": "monthly-denials-07f74d7cf9a8-wrong-currency-e19f9b3f",
+            "providerReference": "monthly-denials-07f74d7cf9a8-wrong-currency-e19f9b3f",
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100",
+            "currencyCode": "USD",
+            "metadata": null,
+            "updatedAt": "2026-11-10T15:17:56.407Z"
+          }
+        ],
+        "inventory": {
+          "levels": [],
+          "movements": [],
+          "events": []
+        },
+        "customerBalance": "200.00"
+      }
+    },
+    "race": {
+      "organizationId": "monthly-race-7845a92a9dbf",
+      "injectedClaimFailureRolledBack": true,
+      "claimFaultMarker": {
+        "reached": true,
+        "invocations": 1
+      },
+      "trackedStockOpening": {
+        "quantity": "2.000",
+        "averageCost": "10.00",
+        "value": "20.00",
+        "equity": "620.00"
+      },
+      "crossWorkflowContenders": 2,
+      "crossWorkflowFinancialWinners": 1,
+      "crossWorkflowWinner": "POS",
+      "afterCrossStock": {
+        "quantity": "1.000",
+        "averageCost": "10.00",
+        "value": "10.00"
+      },
+      "losingContenderCode": "CONFLICT",
+      "twoCollectionContenders": 2,
+      "twoCollectionFinancialWinners": 1,
+      "financialState": {
+        "journals": 4,
+        "lines": 11,
+        "batches": 4,
+        "settlements": 1,
+        "legacyPayments": 1,
+        "completedSales": 1,
+        "claimed": 2,
+        "nativeTransactions": [
+          {
+            "id": "cmwau3xj700wqmajwhaauxw8k",
+            "sourceType": "SYNTHETIC_EXTERNAL_CONFIRMATION_INPUT",
+            "sourceId": null,
+            "ledgerPostingBatchId": null,
+            "legacyPaymentId": null,
+            "providerAuthorityEventId": "cmwau3xj300womajwagi00sac",
+            "providerAccountId": "cmwau3wyc00u6majwfhgswu4o",
+            "providerTransactionId": "monthly-race-7845a92a9dbf-rollback-claim-d3162484",
+            "providerReference": "monthly-race-7845a92a9dbf-rollback-claim-d3162484",
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100",
+            "currencyCode": "XAF",
+            "metadata": null,
+            "updatedAt": "2026-11-10T15:17:58.532Z"
+          },
+          {
+            "id": "cmwau3y6900xnmajwcjqwdg45",
+            "sourceType": "SYNTHETIC_EXTERNAL_CONFIRMATION_INPUT",
+            "sourceId": null,
+            "ledgerPostingBatchId": null,
+            "legacyPaymentId": "cmwau3yo900yfmajw5sbx83ub",
+            "providerAuthorityEventId": "cmwau3y5z00xlmajw1jzuktr0",
+            "providerAccountId": "cmwau3wyc00u6majwfhgswu4o",
+            "providerTransactionId": "monthly-race-7845a92a9dbf-pos-versus-ar-c9ce7e10",
+            "providerReference": "monthly-race-7845a92a9dbf-pos-versus-ar-c9ce7e10",
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100",
+            "currencyCode": "XAF",
+            "metadata": null,
+            "updatedAt": "2026-11-10T15:18:00.025Z"
+          },
+          {
+            "id": "cmwau40ja00zomajwnhp49g5l",
+            "sourceType": "CUSTOMER_SETTLEMENT",
+            "sourceId": "cmwau40o000zumajwra4ji41v",
+            "ledgerPostingBatchId": "cmwau412a010amajw8rxhrkin",
+            "legacyPaymentId": null,
+            "providerAuthorityEventId": "cmwau40hl00zmmajwq3zk70u3",
+            "providerAccountId": "cmwau3wyc00u6majwfhgswu4o",
+            "providerTransactionId": "monthly-race-7845a92a9dbf-two-ar-contenders-975d5411",
+            "providerReference": "monthly-race-7845a92a9dbf-two-ar-contenders-975d5411",
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100",
+            "currencyCode": "XAF",
+            "metadata": null,
+            "updatedAt": "2026-11-10T15:18:03.298Z"
+          }
+        ],
+        "inventory": {
+          "levels": [
+            {
+              "id": "cmwau3xfx00w2majwyknogyfx",
+              "itemId": "cmwau3wy300u2majw7dbtmmr6",
+              "locationId": "cmwau3wxm00twmajwq3zn3q9b",
+              "quantityOnHand": "1",
+              "quantityReserved": "0",
+              "quantityAvailable": "1",
+              "quantityInTransit": "0",
+              "quantityOnOrder": "0",
+              "reorderPoint": "0",
+              "averageCost": "10",
+              "totalValue": "10",
+              "version": 1,
+              "lastCountDate": null,
+              "lastTransactionAt": "2026-11-10T15:17:59.941Z",
+              "createdAt": "2026-11-10T15:17:58.414Z",
+              "updatedAt": "2026-11-10T15:17:59.961Z"
+            }
+          ],
+          "movements": [
+            {
+              "id": "cmwau3xg300w4majwcdf855c4",
+              "type": "INITIAL_STOCK",
+              "quantity": "2",
+              "unitCost": "10",
+              "totalCost": "20",
+              "notes": "Approved opening source opening-stock",
+              "effectiveAt": "2026-09-30T23:00:00.000Z",
+              "recordedAt": "2026-11-10T15:17:58.402Z",
+              "timeProvenance": "EXPLICIT_SOURCE_TIME",
+              "createdAt": "2026-11-10T15:17:58.419Z",
+              "itemId": "cmwau3wy300u2majw7dbtmmr6",
+              "locationId": "cmwau3wxm00twmajwq3zn3q9b",
+              "organizationId": "monthly-race-7845a92a9dbf",
+              "createdById": "cmwau3wm900nvmajw6kq43nfc",
+              "referenceType": "MANUAL",
+              "referenceId": "cmwau3x7r00ummajw12xw929n:opening-stock",
+              "referenceNumber": "OPEN-1",
+              "batchNumber": null,
+              "serialNumbers": [],
+              "expiryDate": null,
+              "balanceAfter": "2",
+              "reversalOfTransactionId": null
+            },
+            {
+              "id": "cmwau3yn300y9majw0ndj62ka",
+              "type": "SALE",
+              "quantity": "-1",
+              "unitCost": "10",
+              "totalCost": "10",
+              "notes": "POS sale POS-monthly-race-7845a92a9dbf-20261110-MJBCR",
+              "effectiveAt": "2026-11-10T15:17:59.910Z",
+              "recordedAt": "2026-11-10T15:17:59.941Z",
+              "timeProvenance": "EXPLICIT_SOURCE_TIME",
+              "createdAt": "2026-11-10T15:17:59.967Z",
+              "itemId": "cmwau3wy300u2majw7dbtmmr6",
+              "locationId": "cmwau3wxm00twmajwq3zn3q9b",
+              "organizationId": "monthly-race-7845a92a9dbf",
+              "createdById": "cmwau3wn300o7majwwuhul94j",
+              "referenceType": "SALES_ORDER",
+              "referenceId": "cmwau3ye800xxmajw2jp19oo1",
+              "referenceNumber": "POS-monthly-race-7845a92a9dbf-20261110-MJBCR",
+              "batchNumber": null,
+              "serialNumbers": [],
+              "expiryDate": null,
+              "balanceAfter": "1",
+              "reversalOfTransactionId": null
+            }
+          ],
+          "events": [
+            {
+              "id": "cmwau3xff00vwmajwciafgtep",
+              "organizationId": "monthly-race-7845a92a9dbf",
+              "eventType": "stock.opening_balance.posted",
+              "eventSource": "INTERNAL",
+              "schemaVersion": 1,
+              "status": "APPLIED",
+              "idempotencyKey": "opening:cmwau3x7r00ummajw12xw929n:stock:opening-stock",
+              "payloadHash": "6a4ee889d543f422e2e95430de37a5f460504678df93593521e0c69267ec9b23",
+              "payload": {
+                "lines": [
+                  {
+                    "itemId": "cmwau3wy300u2majw7dbtmmr6",
+                    "quantity": "2.000",
+                    "unitCost": "10.00",
+                    "expiryDate": null,
+                    "locationId": "cmwau3wxm00twmajwq3zn3q9b",
+                    "batchNumber": null,
+                    "referenceId": "cmwau3x7r00ummajw12xw929n:opening-stock",
+                    "movementType": "INITIAL_STOCK",
+                    "referenceType": "MANUAL",
+                    "serialNumbers": [],
+                    "referenceNumber": "OPEN-1",
+                    "reversalOfTransactionId": null,
+                    "reservedQuantityToConsume": null
+                  }
+                ],
+                "metadata": {
+                  "manifestDigest": "sha256:cc17e98ade1e07cc220aaa49b059908692f4d83789e7afe1a9bd24af351b64f5",
+                  "openingSourceId": "opening-stock",
+                  "openingExecutionId": "cmwau3x7r00ummajw12xw929n"
+                },
+                "sourceId": "cmwau3x7r00ummajw12xw929n:opening-stock",
+                "eventType": "stock.opening_balance.posted",
+                "sourceType": "OPENING_BALANCE",
+                "documentHash": "sha256:65ea8b1e02880be67634261f0803535d26231af6e5df3e26052917cb08c1d7a5",
+                "postingBatchId": "cmwau3xbl00usmajwibiil1hw",
+                "valuationMethod": "WEIGHTED_AVERAGE"
+              },
+              "correlationId": "evt_8a16bdfa-49a1-4cf0-8510-b2b0ac1e9558",
+              "occurredAt": "2026-09-30T23:00:00.000Z",
+              "recordedAt": "2026-11-10T15:17:58.395Z",
+              "processedAt": "2026-11-10T15:17:58.429Z",
+              "failedAt": null,
+              "actorId": "cmwau3wm900nvmajw6kq43nfc",
+              "locationId": "cmwau3wxm00twmajwq3zn3q9b",
+              "registerId": null,
+              "deviceId": null,
+              "sourceType": "OPENING_BALANCE",
+              "sourceId": "cmwau3x7r00ummajw12xw929n:opening-stock",
+              "postingBatchId": "cmwau3xbl00usmajwibiil1hw",
+              "documentHash": "sha256:65ea8b1e02880be67634261f0803535d26231af6e5df3e26052917cb08c1d7a5",
+              "failureCode": null,
+              "failureMessage": null,
+              "metadata": {
+                "ledgerStatus": "NOT_REQUIRED",
+                "manifestDigest": "sha256:cc17e98ade1e07cc220aaa49b059908692f4d83789e7afe1a9bd24af351b64f5",
+                "openingSourceId": "opening-stock",
+                "valuationMethod": "WEIGHTED_AVERAGE",
+                "openingExecutionId": "cmwau3x7r00ummajw12xw929n"
+              },
+              "createdAt": "2026-11-10T15:17:58.395Z",
+              "updatedAt": "2026-11-10T15:17:58.431Z"
+            },
+            {
+              "id": "cmwau3ym000y3majw3xf7yn5m",
+              "organizationId": "monthly-race-7845a92a9dbf",
+              "eventType": "pos.sale.stock_issued",
+              "eventSource": "POS",
+              "schemaVersion": 1,
+              "status": "APPLIED",
+              "idempotencyKey": "pos-sale-stock:monthly-race-7845a92a9dbf:cmwau3ye800xxmajw2jp19oo1",
+              "payloadHash": "505255f07c39353a8ef0f5b6595fdd1aba95e16dd45912d0ea7557f36675633d",
+              "payload": {
+                "lines": [
+                  {
+                    "itemId": "cmwau3wy300u2majw7dbtmmr6",
+                    "quantity": "-1.000",
+                    "unitCost": "10.00",
+                    "expiryDate": null,
+                    "locationId": "cmwau3wxm00twmajwq3zn3q9b",
+                    "batchNumber": null,
+                    "referenceId": "cmwau3ye800xxmajw2jp19oo1",
+                    "movementType": "SALE",
+                    "referenceType": "SALES_ORDER",
+                    "serialNumbers": [],
+                    "referenceNumber": "POS-monthly-race-7845a92a9dbf-20261110-MJBCR",
+                    "reversalOfTransactionId": null,
+                    "reservedQuantityToConsume": null
+                  }
+                ],
+                "metadata": {
+                  "orderNumber": "POS-monthly-race-7845a92a9dbf-20261110-MJBCR"
+                },
+                "sourceId": "cmwau3ye800xxmajw2jp19oo1",
+                "eventType": "pos.sale.stock_issued",
+                "sourceType": "POS_SALE",
+                "documentHash": "sha256:75ea1ca809d041654377ff3e21611a60e74fe9a36bd460e2d81cc92e4d1d97ff",
+                "postingBatchId": null,
+                "valuationMethod": "WEIGHTED_AVERAGE"
+              },
+              "correlationId": "evt_b89421db-0447-48df-89a1-58a924e2d0bd",
+              "occurredAt": "2026-11-10T15:17:59.910Z",
+              "recordedAt": "2026-11-10T15:17:59.928Z",
+              "processedAt": "2026-11-10T15:17:59.977Z",
+              "failedAt": null,
+              "actorId": "cmwau3wn300o7majwwuhul94j",
+              "locationId": "cmwau3wxm00twmajwq3zn3q9b",
+              "registerId": null,
+              "deviceId": null,
+              "sourceType": "POS_SALE",
+              "sourceId": "cmwau3ye800xxmajw2jp19oo1",
+              "postingBatchId": null,
+              "documentHash": "sha256:75ea1ca809d041654377ff3e21611a60e74fe9a36bd460e2d81cc92e4d1d97ff",
+              "failureCode": null,
+              "failureMessage": null,
+              "metadata": {
+                "orderNumber": "POS-monthly-race-7845a92a9dbf-20261110-MJBCR",
+                "ledgerStatus": "NOT_REQUIRED",
+                "valuationMethod": "WEIGHTED_AVERAGE"
+              },
+              "createdAt": "2026-11-10T15:17:59.928Z",
+              "updatedAt": "2026-11-10T15:17:59.979Z"
+            }
+          ]
+        },
+        "customerBalance": "500.00"
+      },
+      "unclaimedUiObservationId": "cmwau41f8010zmajwcbs7fey4",
+      "remainingOpeningAR": "500.00"
+    }
+  },
+  "earnedInternalTerminalStates": true,
+  "seededInternalFinancialTerminalStates": false,
+  "syntheticProviderConfirmationFacts": true,
+  "privateEvidence": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-monthly-20261110-54a799a9fc\\monthly-close-service-evidence.private.json",
+    "sha256": "9fac447d6f7b0acf1bb2ac25300c7bd22492c7ea126c1db5685fdbca80d166c2",
+    "bytes": 38678
+  }
+}

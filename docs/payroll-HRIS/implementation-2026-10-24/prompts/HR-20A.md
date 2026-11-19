@@ -1,0 +1,76 @@
+Act as a Stoquify multidisciplinary principal engineering, product, controls, and operations review board. Cover enterprise/platform architecture; backend, API, and distributed systems; database, data integrity, and migration engineering; application security, IAM/RBAC, privacy, fraud, and abuse prevention; frontend and design-system engineering; workflow/service UX, accessibility, localization, and content design; product strategy and business-process analysis; finance, accounting, reconciliation, and internal controls; OHADA/SYSCOHADA statutory and country-pack compliance; quality engineering and release assurance; SRE, DevSecOps, observability, resilience, performance, and cost; integration, event-driven, offline/edge, and provider-boundary architecture; analytics and data governance; AI/agent safety, evaluation, and human-approval governance; and SaaS modularity, packaging, billing, growth, customer-success, and product-operations strategy.
+
+Operate as one coordinated team. Make evidence-backed recommendations, expose disagreements and tradeoffs, trace impacts across UX, services, data, controls, infrastructure, operations, and commercial packaging, and distinguish current repository truth from proposals. Use every applicable lens without widening a narrow request into an unrelated rewrite. Mark immaterial lenses `not applicable` with one short reason. Never claim legal, tax, accounting, security, accessibility, privacy, or release certification without the required expert-reviewed evidence.
+
+# HR-20A — Establish the first live-payroll country's approved rule contract
+
+**Phase:** Conditional live payroll. **Planning status:** PLANNED. **Accountable delivery role:** Country payroll specialist and payroll technical lead. **Relative effort:** L (not a time commitment). **Direct dependencies:** [HR-07](HR-07.md), [HR-19](HR-19.md)
+
+## Mission
+
+Define an explicitly reviewed, effective-dated rule and output contract before enabling live calculations for the selected jurisdiction.
+
+Execute only this slice under the [shared execution contract](../EXECUTION_CONTRACT.md), including its review lenses, controls, evidence classes and status rules. Read the [master plan](../README.md) first. Confirm dependency evidence before dependent integration or activation; safe preparation may proceed with missing runtime evidence explicitly open.
+
+## Current evidence and crosswalk
+
+Current production scope is Cameroon/monthly; the assessment found CNPS draft/source-checked and IRPP unreviewed. Existing admission must remain enforced.
+
+Crosswalk: Assessment F05; blueprint 07–11/15; country-pack provenance. These are assessment-era observations, not a substitute for current reproduction. Inspect the [assessment](../../hris-assessment-ohada-1-200-2026-10-24.md) and current implementations before changing code.
+
+## Evidence and candidate owned surfaces
+
+- [services/payroll](<../../../../services/payroll>)
+- [services/compliance](<../../../../services/compliance>)
+- [prisma/schema.prisma](<../../../../prisma/schema.prisma>)
+- [docs/ecc/cameroon-blueprint-execution-2026-10-07.md](<../../../../docs/ecc/cameroon-blueprint-execution-2026-10-07.md>)
+
+Trace relevant callers, schemas, tests and graph relationships. Declare the actual narrow owned-file set; a listed directory does not authorize editing every module. Preserve unrelated working-tree changes.
+
+## Ordered execution checklist
+
+1. Confirm one launch country, legal employer, pay frequency, workforce categories and effective period; preserve current supported envelope until a separately approved expansion.
+2. Inventory implemented rules and gaps against authoritative current sources for tax, contributions, employment segments, declarations and payment obligations.
+3. Record source URLs/documents, publication/effective dates, applicability, interpretation, examples, reviewer identity and approval status.
+4. Resolve conflicting sources and exclusions with qualified reviewers; do not use AI or internal test success as statutory approval.
+5. Create independently reviewed expected-value examples and a list of hard admission conditions; inspect existing draft pack provenance rather than replacing it.
+6. Run the reviewed verification lanes below, record each acceptance result, review rollback, and save the required artifacts. Do not claim completion from source inspection alone.
+
+## Acceptance criteria
+
+- **HR-20A-AC01:** Every in-scope obligation and exclusion maps to a current authoritative source and named qualified review outcome.
+- **HR-20A-AC02:** Expected values cover ordinary and boundary cases with independently explained derivations.
+- **HR-20A-AC03:** Unknown/expired/unreviewed obligations remain blocked; no country-pack status is promoted merely to make tests pass.
+- **HR-20A-AC04:** The country/employer/frequency/period envelope is explicit in UI and server admission.
+- **HR-20A-AC05:** No live output is generated by this research/contract slice.
+
+Every criterion needs PASS/FAIL/NOT_RUN with a concrete artifact or explanation. A missing mandatory test/review remains open. Use not applicable only with a defensible scope reason; do not use it to evade the criterion.
+
+## Verification commands and evidence
+
+Read the current script/config/setup and command registry before executing commands. Start with `npm run agent:workflow:check` after inspection. Follow the [contract's command recipes and separated test lanes](../EXECUTION_CONTRACT.md). Select focused tests from the current source ownership and save their exact commands/exit codes.
+
+- Source/provenance consistency checks and admission-negative fixtures.
+- Review sign-off must be genuine external/domain review evidence, separate from code tests.
+
+No application .env database fallback, unreviewed reset/seed command, live provider effect or fabricated qualified approval. Source, mocked tests, real-database tests, provider tests and browser checks must be reported separately.
+
+## Data, release and rollback
+
+- **Data/migration:** Versioned source/review records only through existing ownership; no unsupported pack publication or rate edits on production.
+- **Release boundary:** Contract acceptance only; does not authorize live payroll.
+- **Rollback/recovery:** Withdraw a superseded contract from new execution while retaining its review history.
+- **Decision or external dependency:** This lane is conditional on choosing live payroll and a country. Missing qualified review is a launch blocker for that lane, not for core HR.
+
+## Required artifacts and completion
+
+1. The bounded implementation, focused tests and any necessary reviewed migration/runbook; no unrelated refactor.
+2. `what-next/hris-implementation-2026-10-24/HR-20A/RESULT.md` with current baseline, owned files, acceptance matrix, distinct verification results, review lenses, unresolved items and next eligible slice.
+3. `what-next/hris-implementation-2026-10-24/HR-20A/evidence.json` with baseline/file hashes, commands, results, timestamps and actual artifact paths; exclude secrets and personal data.
+4. A dated follow-up status/evidence entry in `docs/ecc/cameroon-blueprint-execution-2026-10-07.md`, preserving existing program history. Do not mark older work packages incomplete or completed merely because this slice exists.
+
+Use VERIFIED only when every applicable criterion has current evidence. Otherwise report IMPLEMENTED_PENDING_VERIFICATION or the precise BLOCKED condition after completing safe work. Stop after this slice unless a larger sequence was explicitly requested.
+
+## Non-goals
+
+Do not create a parallel employee master, approval engine or generic platform rewrite; do not weaken tenant scope, maker-checker, immutable evidence, country admission or exact-replay recovery. Do not fix unrelated lint, redesign unrelated pages, enable unsupported countries, deploy, commit, file declarations, make payments or send external messages without applicable authorization. Apply the selected mission narrowly.

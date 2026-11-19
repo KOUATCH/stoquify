@@ -1,0 +1,326 @@
+{
+  "at": "2026-11-10T11:48:42.912Z",
+  "reviewer": "/root/r06_review",
+  "passed": false,
+  "observationAccepted": true,
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "scope": "Independent actual same-artifact browser04 review; faithful observation accepted, strict browser qualification remainsfailed",
+  "summary": {
+    "planned": 6,
+    "passed": 2,
+    "failed": 4,
+    "notRun": 0,
+    "observations": 6,
+    "responses": 18,
+    "primaryBodyReadErrorsRetained": 8,
+    "independentlyRecoveredBodies": 0,
+    "incompleteResponseEvidence": 8,
+    "protocolCompletionRecoveries": 0
+  },
+  "checks": {
+    "actualRunComplete": true,
+    "exactCandidateArtifact": true,
+    "rawBrowserEmbeddedMatches": true,
+    "allSixPlannedIds": true,
+    "allSixNativeEffectsUnchanged": true,
+    "allScreenshotsHashes": true,
+    "exactEightCancellations": true,
+    "bothDeniedReloadsPass": true,
+    "fourSuccessfulCurrentSessionResponses": true,
+    "originalOutcomesPreserved": true,
+    "ownedRuntimeCleanup": true
+  },
+  "nativeEffects": [
+    {
+      "id": "R06-UI-en-authorized",
+      "before": "snapshot-R06-UI-en-authorized-diagnostic04-before-1794311057779-eb36793f-c577-4b9d-9cbd-cb9170e4d69b.json",
+      "after": "snapshot-R06-UI-en-authorized-diagnostic04-after-1794311083991-f050d29c-bc2f-45f0-8838-992530034119.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-en-invalidated-reload",
+      "before": "snapshot-R06-UI-en-invalidated-reload-diagnostic04-before-1794311087846-36f7d39f-4aa7-4ad2-a51b-616f02ff8707.json",
+      "after": "snapshot-R06-UI-en-invalidated-reload-diagnostic04-after-1794311094179-6500cf16-9a64-4210-85a5-51c1e85ac617.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-en-restored",
+      "before": "snapshot-R06-UI-en-restored-diagnostic04-before-1794311097237-d862dfaf-9e7d-4435-8c9c-511507beb957.json",
+      "after": "snapshot-R06-UI-en-restored-diagnostic04-after-1794311120524-49593707-314d-4638-a412-f066d08ea3f9.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-fr-authorized",
+      "before": "snapshot-R06-UI-fr-authorized-diagnostic04-before-1794311123618-513495c1-c2d0-4a50-94ca-aee70494d5a5.json",
+      "after": "snapshot-R06-UI-fr-authorized-diagnostic04-after-1794311148122-cc1f1e55-ab02-4a09-8710-e407f029c516.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-fr-invalidated-reload",
+      "before": "snapshot-R06-UI-fr-invalidated-reload-diagnostic04-before-1794311150456-bae0e6cd-f2b8-4d3a-9733-f918937ad64c.json",
+      "after": "snapshot-R06-UI-fr-invalidated-reload-diagnostic04-after-1794311156282-bbb92f79-9c9f-4ffa-9dae-0bda5ab51832.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-fr-restored",
+      "before": "snapshot-R06-UI-fr-restored-diagnostic04-before-1794311159436-d2794268-8c7e-47e3-af7c-ff992eb0f3fe.json",
+      "after": "snapshot-R06-UI-fr-restored-diagnostic04-after-1794311184690-289ea68c-e76f-4d56-86ae-4b0e3b60e471.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    }
+  ],
+  "canceledResponses": [
+    {
+      "label": "en-authorized",
+      "path": "/fr/dashboard/profile",
+      "method": "GET",
+      "prefetch": true,
+      "captureId": "c06bcc24-55f7-4c46-b792-d17337f1d073",
+      "requestId": "34500.94",
+      "terminal": {
+        "kind": "loadingFailed",
+        "timestamp": 554918.804322,
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true,
+        "blockedReason": null,
+        "corsErrorStatus": null
+      },
+      "bridgeDecodedBytes": 414498,
+      "bridgeDecodedSha256": "204401781602119a43578c5078bbec8136b0a6b5c8a8cdcbe346c38da625fcde",
+      "cdpDecodedDataLength": 414498,
+      "bridgeComplete": true,
+      "downstreamFinished": true,
+      "downstreamClosedEarly": false
+    },
+    {
+      "label": "en-authorized",
+      "path": "/en/dashboard/profile",
+      "method": "POST",
+      "prefetch": false,
+      "captureId": "22f9be37-414d-48eb-8a4e-de00d4bc3997",
+      "requestId": "34500.95",
+      "terminal": {
+        "kind": "loadingFailed",
+        "timestamp": 554919.787805,
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true,
+        "blockedReason": null,
+        "corsErrorStatus": null
+      },
+      "bridgeDecodedBytes": 372398,
+      "bridgeDecodedSha256": "ef36b6cd5cd1954bcdfd614614f425bdcda625a28c5a04f86eb6b17c1a468cec",
+      "cdpDecodedDataLength": 372398,
+      "bridgeComplete": true,
+      "downstreamFinished": true,
+      "downstreamClosedEarly": false
+    },
+    {
+      "label": "en-restored",
+      "path": "/fr/dashboard/profile",
+      "method": "GET",
+      "prefetch": true,
+      "captureId": "b8c17690-d582-40af-9ece-90b99d9ec6d2",
+      "requestId": "15860.100",
+      "terminal": {
+        "kind": "loadingFailed",
+        "timestamp": 554956.71973,
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true,
+        "blockedReason": null,
+        "corsErrorStatus": null
+      },
+      "bridgeDecodedBytes": 414498,
+      "bridgeDecodedSha256": "009ef49d318170a5cbf2492a72e327ac6e5a2e496c133b39c11124fefba20457",
+      "cdpDecodedDataLength": 414498,
+      "bridgeComplete": true,
+      "downstreamFinished": true,
+      "downstreamClosedEarly": false
+    },
+    {
+      "label": "en-restored",
+      "path": "/en/dashboard/profile",
+      "method": "POST",
+      "prefetch": false,
+      "captureId": "eaff3455-ee28-4589-9b10-49fb67670277",
+      "requestId": "15860.101",
+      "terminal": {
+        "kind": "loadingFailed",
+        "timestamp": 554957.425508,
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true,
+        "blockedReason": null,
+        "corsErrorStatus": null
+      },
+      "bridgeDecodedBytes": 372398,
+      "bridgeDecodedSha256": "1d1d10268361ebb19cf374a06f650b3e8d19fe6ef0da42efa34015e8ea4ce77f",
+      "cdpDecodedDataLength": 372398,
+      "bridgeComplete": true,
+      "downstreamFinished": true,
+      "downstreamClosedEarly": false
+    },
+    {
+      "label": "fr-authorized",
+      "path": "/en/dashboard/profile",
+      "method": "GET",
+      "prefetch": true,
+      "captureId": "16b22f64-85e5-4a20-9dd2-321f3ee921e6",
+      "requestId": "14028.100",
+      "terminal": {
+        "kind": "loadingFailed",
+        "timestamp": 554983.857465,
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true,
+        "blockedReason": null,
+        "corsErrorStatus": null
+      },
+      "bridgeDecodedBytes": 361146,
+      "bridgeDecodedSha256": "ccda9c8f78a44dc31a6b5f2b6072e2b7eb2ae4730fe4ca9d66f97da1bfa7a067",
+      "cdpDecodedDataLength": 361146,
+      "bridgeComplete": true,
+      "downstreamFinished": true,
+      "downstreamClosedEarly": false
+    },
+    {
+      "label": "fr-authorized",
+      "path": "/fr/dashboard/profile",
+      "method": "POST",
+      "prefetch": false,
+      "captureId": "4cdb7f45-ab36-4a9e-b20e-af76ac8b1350",
+      "requestId": "14028.101",
+      "terminal": {
+        "kind": "loadingFailed",
+        "timestamp": 554984.259932,
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true,
+        "blockedReason": null,
+        "corsErrorStatus": null
+      },
+      "bridgeDecodedBytes": 425756,
+      "bridgeDecodedSha256": "928c2d776bcc834fca3892c064b12950bc8ea1b73d5ded1642f3275d6f085821",
+      "cdpDecodedDataLength": 425756,
+      "bridgeComplete": true,
+      "downstreamFinished": true,
+      "downstreamClosedEarly": false
+    },
+    {
+      "label": "fr-restored",
+      "path": "/en/dashboard/profile",
+      "method": "GET",
+      "prefetch": true,
+      "captureId": "7c98e5c1-054a-44e1-be10-ae736550e0fa",
+      "requestId": "15532.100",
+      "terminal": {
+        "kind": "loadingFailed",
+        "timestamp": 555019.709252,
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true,
+        "blockedReason": null,
+        "corsErrorStatus": null
+      },
+      "bridgeDecodedBytes": 361146,
+      "bridgeDecodedSha256": "0913b47bea277babe305b364f060253bc389615444981c62e2e60e71c481ac79",
+      "cdpDecodedDataLength": 361146,
+      "bridgeComplete": true,
+      "downstreamFinished": true,
+      "downstreamClosedEarly": false
+    },
+    {
+      "label": "fr-restored",
+      "path": "/fr/dashboard/profile",
+      "method": "POST",
+      "prefetch": false,
+      "captureId": "743f7ed4-c0f2-4d52-b93a-8b324dc1a44f",
+      "requestId": "15532.101",
+      "terminal": {
+        "kind": "loadingFailed",
+        "timestamp": 555020.332579,
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true,
+        "blockedReason": null,
+        "corsErrorStatus": null
+      },
+      "bridgeDecodedBytes": 425756,
+      "bridgeDecodedSha256": "5e36ac23fb1fc9f48165f6b38884bb3ba39ecc0ff6ff436330c6462d52866adb",
+      "cdpDecodedDataLength": 425756,
+      "bridgeComplete": true,
+      "downstreamFinished": true,
+      "downstreamClosedEarly": false
+    }
+  ],
+  "visualReview": {
+    "allSixScreenshotsIndependentlyViewed": true,
+    "positiveStates": "All four authorized/restored screenshots display correct fixture profile identity.",
+    "deniedStates": "Both revoked reload screenshots show sign-in without private profile identity.",
+    "localeLimit": "The FR-prefixed revoked route screenshot renders English sign-in copy. This authentication review does not certify localization correctness."
+  },
+  "interpretation": [
+    "Both revoked reloads pass actual browser/byte/native no-write gates. All four authorized/restored views also show correct identity and successful current-subject get-session responses.",
+    "Strict positive browser groups remainfailed because eight selected RSC requests terminate as CDP loadingFailed/net::ERR_ABORTED/canceled:true. Complete proxy bodies and matching byte counts do not prove completed browser transfer or application consumption.",
+    "This identifies actual cancellations, not merely missing Playwright bodies. It does not establish a product UI regression; intended request cancellation/consumption lifecycle requires separate source attribution before changing the evidence contract.",
+    "No canceled rows were suppressed and no old browser passes substituted for latest failures.03 observer null-body race was addressed; original03 remains preserved."
+  ],
+  "nextBrowserAction": "Map each canceled RSC request to its initiating router/server-action lifecycle and distinguish expected cancellation from incomplete required consumer work; retain exact terminal events, byte/identity proofs and native effects. Do not merely increase timeout or relabel canceled rows completed.",
+  "evidence": [
+    {
+      "path": "browser-only-result-attempt04.json",
+      "sha256": "b7d842e28108eba900e3244239e6f1ed5302e62192edd322ba37ec40d98e537d"
+    },
+    {
+      "path": "browser/browser-diagnostic-attempt04/result.json",
+      "sha256": "e2bd19a57a0f635141891441cdbc62428ce312a8684a7c77b1a359d0b5fd5318"
+    },
+    {
+      "path": "independent-review/BROWSER-ONLY-RECIPE-ADMISSION-attempt04.json",
+      "sha256": "a5c26bdfbb623ae05c09eb99485211a92255e26a76eef047e885d13435c71830"
+    },
+    {
+      "path": "independent-review/BROWSER-DIAGNOSTIC-OUTCOME-REVIEW-attempt04.json",
+      "sha256": "406cee76f531bd45f75f2b1acf1bdc4ea150519a18166067b93d3af2db349de5"
+    }
+  ],
+  "permittedNext": "Perform admitted owned-session cleanup/cluster stop and preservation checks, then publish truthful blocked outcome. No product implementation this turn.",
+  "packageAdvancement": false,
+  "productionReady": false
+}

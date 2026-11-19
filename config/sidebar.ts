@@ -221,6 +221,17 @@ export const sidebarLinks: ISidebarLink[] = [
     ],
   },
   {
+    title: "HR Tasks",
+    href: "/dashboard/people/tasks",
+    icon: UserCheck,
+    dropdown: false,
+    permission: "hris.tasks.read",
+    description: "Assigned starter and leaver tasks",
+    moduleSlug: "payroll",
+    section: "people",
+    priority: "primary",
+  },
+  {
     title: "Inventory",
     icon: Package2,
     dropdown: true,

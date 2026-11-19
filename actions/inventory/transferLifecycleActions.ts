@@ -10,7 +10,7 @@ import { loadTransferDetail, transferWorkflowAvailability, transitionStockTransf
 import { toLocationTransferDTO } from "@/services/inventory/inventory-read.service"
 import { readTransferActivity } from "@/services/inventory/inventory-transfer-activity.service"
 import type { TransferCommand, TransferDetail } from "@/types/transferLifecycle"
-import { revalidatePath, revalidateTag } from "next/cache"
+import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation"
 
 // Preserve safe business-rule explanations through the older inventory wrapper.
 function withTransferErrors<I, O>(action: (input: I) => Promise<ServerActionResult<O>>) {
@@ -54,9 +54,10 @@ export const getTransferDetail = inventoryAction(withTransferErrors(async (input
 export const executeTransferCommand = inventoryAction(withTransferErrors(async (input: TransferCommand) => {
   const ctx = await transferAccess(input.organizationId, input.transferId, true)
   const result = await transitionStockTransfer({ ...input, organizationId: ctx.orgId, actorId: ctx.userId })
-  for (const tag of ["transfers", `transfers-${ctx.orgId}`, `transfer-${input.transferId}`, "inventory", `inventory-${ctx.orgId}`]) revalidateTag(tag)
-  revalidatePath("/[locale]/dashboard/inventory/transfers", "layout")
-  revalidatePath("/[locale]/dashboard/inventory", "page")
+  revalidateAfterCommit({
+    tags: ["transfers", `transfers-${ctx.orgId}`, `transfer-${input.transferId}`, "inventory", `inventory-${ctx.orgId}`],
+    paths: [{ path: "/[locale]/dashboard/inventory/transfers", type: "layout" }, "/[locale]/dashboard/inventory"],
+  })
   return { success: true, data: { transfer: toLocationTransferDTO(result.transfer), replayed: result.replayed } }
 }), { actionName: "executeTransferCommand", component: "InventoryTransfers",
   businessContext: { domain: "inventory", operation: "update", resourceType: "stock_transfer", criticalOperation: true },

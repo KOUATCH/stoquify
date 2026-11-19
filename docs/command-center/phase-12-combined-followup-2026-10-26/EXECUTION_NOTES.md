@@ -1,0 +1,9 @@
+# Execution notes
+
+- A restricted preparation attempt restored an owned source copy but failed to create its dependency junction with EPERM. A subsequent permitted preparation completed. Incomplete owned copies were not reused as verified candidates or deleted. The current pointer identifies the completed capture.
+- Three supplemental test fixtures omitted by the source-capture policy were copied into the candidate. Their recorded hashes exactly match the previously reviewed Phase 11 fixtures.
+- Verification stages run sequentially. The public/recovery lane completed successfully despite a slow landing-page suite; the host had approximately 195 MiB available during a resource observation. During type checking another observation showed approximately 183 MiB available. These observations explain a possible source of delay; they are not an application performance benchmark or a proven diagnosis of every delay.
+- Read-only process observations were limited to diagnosing local progress. Other application/build/test processes were not stopped, suspended or reconfigured.
+- Tests use the previous clean-installed packages and a fresh source candidate. No npm install, package update, Prisma generation or database startup occurs in this continuation. Type checking disables both emission and incremental output. Lint has no fix flag.
+- The supplemental boundary lane has an explicit eleven-file list and mocked dependencies. The broader HR configuration is not executed, avoiding accidental discovery of real database tests. Other HR fixtures were inspected to distinguish tests that exercise the real protection wrapper from those that mock it.
+- No build, packaged runtime, authenticated browser, real database, human accessibility or production result is inferred from the passing unit tests. The final report and result receipts retain those distinctions.

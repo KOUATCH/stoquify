@@ -6,10 +6,10 @@ import { readInvitationRedemptionAuthority } from "../user-invitation-redemption
 
 const permissions = ["users.invite", "users.roles.assign", "items.read"]
 function setup() {
-  const invite = { id: "invite", organizationId: "org", roleId: "reader", email: "reader@example.invalid", token: "a".repeat(64), expiresAt: new Date("2027-01-01T00:00:00Z"), role: { organizationId: "org", permissions: ["items.read"] } }
+  const invite = { id: "invite", organizationId: "org", roleId: "reader", email: "reader@example.invalid", token: "a".repeat(64), expiresAt: new Date("2027-01-01T00:00:00Z"), role: { code: "reader", organizationId: "org", permissions: ["items.read"] } }
   const payload = { version: 1, organizationId: "org", inviteId: "invite", actorId: "issuer", roleId: "reader", requestFingerprint: "b".repeat(64), tokenHash: invitationDigest(invite.token), recipientHash: invitationDigest(invite.email), actorPermissions: permissions, rolePermissions: ["items.read"], locale: "en", companyName: "Synthetic", roleName: "Reader", baseUrl: "https://example.invalid", from: "invites@example.invalid", expiresAt: invite.expiresAt.toISOString() }
   const event = { id: "issue", organizationId: "org", eventType: USER_INVITATION_EVENT, eventSource: "API", schemaVersion: 1, status: "APPLIED", actorId: "issuer", sourceId: "invite", payload, payloadHash: hashBusinessPayload(payload) }
-  const actor = { id: "issuer", isLocked: false, lockedUntil: null, isVerified: true, emailVerified: true, organization: { name: "Synthetic", isActive: true, deletedAt: null }, roles: [{ permissions }] }
+  const actor = { id: "issuer", isLocked: false, lockedUntil: null, isVerified: true, emailVerified: true, organization: { name: "Synthetic", isActive: true, deletedAt: null }, roles: [{ code: "manager", permissions }] }
   const mock = { businessEvent: { findMany: jest.fn().mockResolvedValue([event]) }, user: { findFirst: jest.fn().mockResolvedValue(actor) }, $queryRaw: jest.fn() }
   const tx = mock as unknown as Prisma.TransactionClient
   return { invite, payload, event, actor, mock, tx }
@@ -19,7 +19,7 @@ it("requires stored-grant provenance for a historical role-management invitation
   payload.rolePermissions = ["roles.permissions.remove"]
   payload.actorPermissions = [...permissions, "ASSIGN_ROLES", "roles.permissions.remove"]
   invite.role.permissions = [...payload.rolePermissions]
-  actor.roles = [{ permissions: payload.actorPermissions }]
+  actor.roles = [{ code: "manager", permissions: payload.actorPermissions }]
   event.payloadHash = hashBusinessPayload(payload)
   expect(await readInvitationRedemptionAuthority(tx, invite)).toBeNull()
 })
@@ -28,14 +28,14 @@ it.each([false, true])("rechecks exact stored control authority at redemption (l
   Object.assign(payload, { actorPermissionBasis: "stored-grants", rolePermissions: ["roles.permissions.remove"], actorPermissions: [...permissions, "roles.permissions.remove"] })
   invite.role.permissions = [...payload.rolePermissions]
   event.payloadHash = hashBusinessPayload(payload)
-  if (locked) mock.$queryRaw.mockResolvedValueOnce([event]).mockResolvedValueOnce([{ isActive: true, deletedAt: null }]).mockResolvedValueOnce([invite.role]).mockResolvedValueOnce([{ isActive: true, isVerified: true }]).mockResolvedValueOnce([{ permissions }])
+  if (locked) mock.$queryRaw.mockResolvedValueOnce([event]).mockResolvedValueOnce([{ isActive: true, deletedAt: null }]).mockResolvedValueOnce([invite.role]).mockResolvedValueOnce([{ isActive: true, isVerified: true }]).mockResolvedValueOnce([{ code: "manager", permissions }])
   expect(await readInvitationRedemptionAuthority(tx, invite, locked ? tx : undefined)).toBeNull()
 })
 it("accepts a recorded stored grant that is still held by the issuer", async () => {
   const { invite, payload, event, actor, tx } = setup()
   Object.assign(payload, { actorPermissionBasis: "stored-grants", rolePermissions: ["roles.permissions.remove"], actorPermissions: [...permissions, "roles.permissions.remove"] })
   invite.role.permissions = [...payload.rolePermissions]
-  actor.roles = [{ permissions: payload.actorPermissions }]
+  actor.roles = [{ code: "manager", permissions: payload.actorPermissions }]
   event.payloadHash = hashBusinessPayload(payload)
   expect(await readInvitationRedemptionAuthority(tx, invite)).toMatchObject({ issueId: "issue" })
 })
@@ -70,7 +70,7 @@ it.each(["missing", "ambiguous", "wrongTenant", "wrongInvite", "wrongActor", "wr
 it.each(["missing", "revoked", "locked", "unverified", "disabledOrg"])("rejects a currently %s issuer", async kind => {
   const { invite, actor, tx, mock } = setup()
   if (kind === "missing") mock.user.findFirst.mockResolvedValue(null)
-  if (kind === "revoked") actor.roles = [{ permissions: ["items.read"] }]
+  if (kind === "revoked") actor.roles = [{ code: "manager", permissions: ["items.read"] }]
   if (kind === "locked") actor.isLocked = true
   if (kind === "unverified") { actor.isVerified = false; actor.emailVerified = false }
   if (kind === "disabledOrg") actor.organization.isActive = false
@@ -78,7 +78,7 @@ it.each(["missing", "revoked", "locked", "unverified", "disabledOrg"])("rejects 
 })
 it("holds the issuance, organization, role, issuer and actual memberships through commit", async () => {
   const { invite, event, tx, mock } = setup()
-  mock.$queryRaw.mockResolvedValueOnce([event]).mockResolvedValueOnce([{ isActive: true, deletedAt: null }]).mockResolvedValueOnce([invite.role]).mockResolvedValueOnce([{ isActive: true, isLocked: false, isVerified: true }]).mockResolvedValueOnce([{ permissions }])
+  mock.$queryRaw.mockResolvedValueOnce([event]).mockResolvedValueOnce([{ isActive: true, deletedAt: null }]).mockResolvedValueOnce([invite.role]).mockResolvedValueOnce([{ isActive: true, isLocked: false, isVerified: true }]).mockResolvedValueOnce([{ code: "manager", permissions }])
   expect(await readInvitationRedemptionAuthority(tx, invite, tx)).toMatchObject({ issueId: "issue" })
   expect(mock.user.findFirst).not.toHaveBeenCalled()
   expect(mock.businessEvent.findMany).not.toHaveBeenCalled()
@@ -92,4 +92,34 @@ it("uses the locked target role rather than the pre-hash role snapshot", async (
   mock.$queryRaw.mockResolvedValueOnce([event]).mockResolvedValueOnce([{ isActive: true, deletedAt: null }]).mockResolvedValueOnce([{ organizationId: "org", permissions: ["items.read", "users.read"] }])
   expect(await readInvitationRedemptionAuthority(tx, invite, tx)).toBeNull()
   expect(mock.$queryRaw).toHaveBeenCalledTimes(3)
+})
+
+it.each([false, true])("rejects legacy reserved authority and preserves evidence (locked=%s)", async locked => {
+  const { invite, event, tx, mock } = setup(); invite.role.code = "admin"
+  const before = JSON.stringify(event)
+  if (locked) mock.$queryRaw.mockResolvedValueOnce([event])
+  expect(await readInvitationRedemptionAuthority(tx, invite, locked ? tx : undefined)).toBeNull()
+  expect(JSON.stringify(event)).toBe(before)
+})
+it.each([false, true])("requires the current issuer code even with unchanged permissions (locked=%s)", async locked => {
+  const { invite, payload, event, actor, tx, mock } = setup()
+  invite.role.code = "admin"; payload.actorPermissions = [...permissions, "dashboard.read"]
+  Object.assign(payload, { roleCode: "admin", actorRoleCodes: ["admin"] })
+  actor.roles = [{ code: "manager", permissions: payload.actorPermissions }]
+  event.payloadHash = hashBusinessPayload(payload)
+  if (locked) mock.$queryRaw.mockResolvedValueOnce([event]).mockResolvedValueOnce([{ isActive: true, deletedAt: null }]).mockResolvedValueOnce([invite.role]).mockResolvedValueOnce([{ isActive: true, isVerified: true }]).mockResolvedValueOnce(actor.roles)
+  expect(await readInvitationRedemptionAuthority(tx, invite, locked ? tx : undefined)).toBeNull()
+})
+it.each([false, true])("accepts a recorded privileged grant still held at redemption (locked=%s)", async locked => {
+  const { invite, payload, event, actor, tx, mock } = setup()
+  invite.role.code = "admin"; payload.actorPermissions = [...permissions, "dashboard.read"]
+  Object.assign(payload, { roleCode: "admin", actorRoleCodes: ["administrator"] })
+  actor.roles = [{ code: "administrator", permissions: payload.actorPermissions }]; event.payloadHash = hashBusinessPayload(payload)
+  if (locked) mock.$queryRaw.mockResolvedValueOnce([event]).mockResolvedValueOnce([{ isActive: true, deletedAt: null }]).mockResolvedValueOnce([invite.role]).mockResolvedValueOnce([{ isActive: true, isVerified: true }]).mockResolvedValueOnce(actor.roles)
+  expect(await readInvitationRedemptionAuthority(tx, invite, locked ? tx : undefined)).toMatchObject({ issueId: "issue" })
+})
+it("rejects a code changed during password hashing with identical permissions", async () => {
+  const { invite, payload, event, tx, mock } = setup(); Object.assign(payload, { roleCode: "reader", actorRoleCodes: ["manager"] }); event.payloadHash = hashBusinessPayload(payload)
+  mock.$queryRaw.mockResolvedValueOnce([event]).mockResolvedValueOnce([{ isActive: true, deletedAt: null }]).mockResolvedValueOnce([{ ...invite.role, code: "admin" }])
+  expect(await readInvitationRedemptionAuthority(tx, invite, tx)).toBeNull()
 })

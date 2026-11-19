@@ -1,4 +1,5 @@
 import "server-only"
+import type { Prisma } from "@prisma/client"
 
 import {
   ExceptionSeverity,
@@ -32,7 +33,7 @@ const OPEN_EXCEPTION_STATUSES = [
   PaymentExceptionStatus.REOPENED,
 ]
 
-const OPEN_SUSPENSE_STATUSES = [
+export const OPEN_SUSPENSE_STATUSES = [
   SuspenseStatus.OPEN,
   SuspenseStatus.ASSIGNED,
   SuspenseStatus.IN_REVIEW,
@@ -54,6 +55,7 @@ const CONFIRMED_MATCH_STATUSES = [MatchStatus.AUTO_MATCHED, MatchStatus.APPROVED
 
 export async function getPaymentTruthSnapshot(
   input: SnapshotScopeInput,
+  client: Prisma.TransactionClient = db,
 ): Promise<SnapshotResult<PaymentTruthMetrics>> {
   const scope = normalizeSnapshotScope(input)
   if (scope.locationId) {
@@ -121,15 +123,15 @@ export async function getPaymentTruthSnapshot(
     latestTransaction,
     latestMatch,
   ] = await Promise.all([
-    db.providerAccount.count({ where: { organizationId: scope.organizationId, archivedAt: null } }),
-    db.providerAccount.count({
+    client.providerAccount.count({ where: { organizationId: scope.organizationId, archivedAt: null } }),
+    client.providerAccount.count({
       where: {
         organizationId: scope.organizationId,
         archivedAt: null,
         status: ProviderAccountStatus.ACTIVE,
       },
     }),
-    db.payment.aggregate({
+    client.payment.aggregate({
       where: {
         organizationId: scope.organizationId,
         deletedAt: null,
@@ -138,14 +140,14 @@ export async function getPaymentTruthSnapshot(
       },
       _sum: { amount: true },
     }),
-    db.matchRecord.count({
+    client.matchRecord.count({
       where: {
         organizationId: scope.organizationId,
         status: { in: CONFIRMED_MATCH_STATUSES },
         createdAt: periodWhere,
       },
     }),
-    db.matchRecord.aggregate({
+    client.matchRecord.aggregate({
       where: {
         organizationId: scope.organizationId,
         status: { in: CONFIRMED_MATCH_STATUSES },
@@ -153,14 +155,14 @@ export async function getPaymentTruthSnapshot(
       },
       _sum: { amountMatched: true },
     }),
-    db.reconciliationRun.count({
+    client.reconciliationRun.count({
       where: {
         organizationId: scope.organizationId,
         voidedAt: null,
         businessDate: periodWhere,
       },
     }),
-    db.reconciliationRun.count({
+    client.reconciliationRun.count({
       where: {
         organizationId: scope.organizationId,
         voidedAt: null,
@@ -168,7 +170,7 @@ export async function getPaymentTruthSnapshot(
         status: ReconciliationRunStatus.READY_FOR_SIGNOFF,
       },
     }),
-    db.reconciliationRun.count({
+    client.reconciliationRun.count({
       where: {
         organizationId: scope.organizationId,
         voidedAt: null,
@@ -176,20 +178,20 @@ export async function getPaymentTruthSnapshot(
         status: ReconciliationRunStatus.SIGNED,
       },
     }),
-    db.paymentException.count({
+    client.paymentException.count({
       where: {
         organizationId: scope.organizationId,
         status: { in: OPEN_EXCEPTION_STATUSES },
       },
     }),
-    db.paymentException.count({
+    client.paymentException.count({
       where: {
         organizationId: scope.organizationId,
         status: { in: OPEN_EXCEPTION_STATUSES },
         severity: ExceptionSeverity.CRITICAL,
       },
     }),
-    db.suspenseItem.groupBy({
+    client.suspenseItem.groupBy({
       by: ["currencyCode"],
       where: {
         organizationId: scope.organizationId,
@@ -199,40 +201,40 @@ export async function getPaymentTruthSnapshot(
       _count: { _all: true },
       orderBy: { currencyCode: "asc" },
     }),
-    db.organization.findFirst({ where: { id: scope.organizationId }, select: { currency: true } }),
-    db.paymentTransaction.count({
+    client.organization.findFirst({ where: { id: scope.organizationId }, select: { currency: true } }),
+    client.paymentTransaction.count({
       where: {
         organizationId: scope.organizationId,
         occurredAt: periodWhere,
         state: { in: PENDING_PAYMENT_STATES },
       },
     }),
-    db.providerAccount.findFirst({
+    client.providerAccount.findFirst({
       where: { organizationId: scope.organizationId },
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },
     }),
-    db.reconciliationRun.findFirst({
+    client.reconciliationRun.findFirst({
       where: { organizationId: scope.organizationId, voidedAt: null },
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },
     }),
-    db.paymentException.findFirst({
+    client.paymentException.findFirst({
       where: { organizationId: scope.organizationId },
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },
     }),
-    db.suspenseItem.findFirst({
+    client.suspenseItem.findFirst({
       where: { organizationId: scope.organizationId },
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },
     }),
-    db.paymentTransaction.findFirst({
+    client.paymentTransaction.findFirst({
       where: { organizationId: scope.organizationId },
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },
     }),
-    db.matchRecord.findFirst({
+    client.matchRecord.findFirst({
       where: { organizationId: scope.organizationId },
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },

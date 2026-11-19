@@ -213,6 +213,15 @@ export const hrisPermissions = [
   "hris.self_service.request",
   "hris.people.read",
   "hris.people.manage",
+  "hris.documents.read",
+  "hris.documents.manage",
+  "hris.documents.retention",
+  "hris.tasks.read",
+  "hris.handoff.read",
+  "hris.handoff.export",
+  "hris.handoff.receive",
+  "hris.tasks.work",
+  "hris.tasks.review",
 ] as const;
 
 // Payroll and presence permissions

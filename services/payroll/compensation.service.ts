@@ -1,3 +1,4 @@
+import { lockHrisReviewEmployeeInTx, lockHrisReviewAssignmentInTx, lockHrisReviewSalaryInTx } from "@/services/hris/review-lock.service"
 import "server-only"
 
 import {
@@ -900,6 +901,7 @@ export async function assignEmployeeRubrique(
   }
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewEmployeeInTx(tx, parsed.organizationId, parsed.employeeId)
     const employee = await tx.payrollEmployee.findFirst({
       where: { id: parsed.employeeId, organizationId: parsed.organizationId, deletedAt: null },
       select: { id: true, employeeNumber: true, status: true },
@@ -1028,6 +1030,7 @@ export async function approveEmployeeRubriqueAssignment(
   assertPermission(parsed.actorPermissions, MANAGE_PERMISSIONS, "employee rubrique assignment approval")
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewAssignmentInTx(tx, parsed.organizationId, parsed.employeeId, parsed.assignmentId)
     const existing = await tx.payrollEmployeeRubriqueAssignment.findFirst({
       where: {
         id: parsed.assignmentId,
@@ -1180,6 +1183,7 @@ export async function requestSalaryChange(
   const effectiveFrom = parseDate(parsed.effectiveFrom, "effectiveFrom")
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewEmployeeInTx(tx, parsed.organizationId, parsed.employeeId)
     const contract = await tx.payrollContract.findFirst({
       where: {
         id: parsed.sourceContractId,
@@ -1281,6 +1285,7 @@ async function findSalaryChangeForDecision(
   organizationId: string,
   salaryChangeRequestId: string,
 ) {
+  await lockHrisReviewSalaryInTx(tx, organizationId, salaryChangeRequestId)
   const request = await tx.payrollSalaryChangeRequest.findFirst({
     where: { id: salaryChangeRequestId, organizationId, deletedAt: null },
     include: { employee: true, sourceContract: true, supersedingContract: true },

@@ -33,8 +33,53 @@ import {
   updateItemStockFromForm,
   updateItemTrackingWithRelations,
 } from "@/services/item/item.service"
-import { ForbiddenError } from "@/services/_shared/action-errors"
+import { ApplicationError, BusinessRuleError, ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
 import { revalidatePath, revalidateTag } from "next/cache"
+import { ZodError } from "zod"
+
+// Only reviewed, fixed business messages may cross this legacy string boundary.
+// A typed/provider code or a thrown string alone does not make its text public.
+function itemActionError(error: unknown, action: string, fallback: string): string {
+  let userMessage = fallback
+  if (error instanceof ZodError) {
+    userMessage = "Invalid input. Please review the form and try again."
+  } else if (error instanceof ApplicationError && error.expose) {
+    if (
+      (error instanceof NotFoundError && [
+        "Item not found",
+        "Item not found or inactive for this organization.",
+        "Inventory location not found or inactive for this organization.",
+        "Adjustment location not found.",
+        "Active organization not found",
+      ].includes(error.message)) ||
+      (error instanceof ConflictError && [
+        "Another item with this SKU already exists",
+        "Operation policy is ambiguous",
+        "The stored operation policy requires reconciliation",
+        "Capability dependencies require reconciliation",
+      ].includes(error.message)) ||
+      (error instanceof BusinessRuleError && [
+        "Upload an image before saving this item.",
+        "This image is unavailable. Upload it again before saving.",
+        "Item is not inventory-tracked.",
+        "A default active location is required before requesting a stock adjustment.",
+        "One or more adjustment items were not found for this organization.",
+      ].includes(error.message)) ||
+      (error.code === "FORBIDDEN" && error.message ===
+        "This capability is not accepting new work. Existing records and permitted completion workflows remain available.")
+    ) {
+      userMessage = error.message
+    } else if (error.code === "AUTH_REQUIRED") {
+      userMessage = "Unauthenticated"
+    } else if (error.code === "FORBIDDEN") {
+      userMessage = "Forbidden"
+    }
+  } else if (error instanceof Error && "code" in error) {
+    if (error.code === "UNAUTHENTICATED" || error.code === "NO_ACTIVE_ORG") userMessage = "Unauthenticated"
+    if (error.code === "FORBIDDEN") userMessage = "Forbidden"
+  }
+  return safeLoggedActionErrorMessage("Item action failed", error, { action }, userMessage)
+}
 
 export type PaginatedItems = {
   data: ItemWithRelations[]
@@ -109,7 +154,7 @@ export async function getItemAction(input: unknown): Promise<ActionResult<ItemWi
     }
     return { success: true, data: item }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to fetch item"
+    const message = itemActionError(error, "getItemAction", "Failed to fetch item")
     return { success: false, error: message }
   }
 }
@@ -130,7 +175,7 @@ export async function listItemsAction(input: unknown): Promise<ActionResult<Pagi
 
     return { success: true, data }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to list items"
+    const message = itemActionError(error, "listItemsAction", "Failed to list items")
     return { success: false, error: message }
   }
 }
@@ -190,7 +235,7 @@ export async function updateItemBasicInfoAction(input: unknown): Promise<ActionR
     revalidateItems(updated.id, ctx.orgId)
     return { success: true, data: updated, message: "Item updated" }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update item"
+    const message = itemActionError(error, "updateItemBasicInfoAction", "Failed to update item")
     return { success: false, error: message }
   }
 }
@@ -209,7 +254,7 @@ export async function updateItemDetailsAction(input: unknown): Promise<ActionRes
     revalidateItems(updated.id, ctx.orgId)
     return { success: true, data: updated, message: "Item details updated" }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update item details"
+    const message = itemActionError(error, "updateItemDetailsAction", "Failed to update item details")
     return { success: false, error: message }
   }
 }
@@ -228,7 +273,7 @@ export async function updateItemPricingAction(input: unknown): Promise<ActionRes
     revalidateItems(updated.id, ctx.orgId)
     return { success: true, data: updated, message: "Item pricing updated" }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update pricing"
+    const message = itemActionError(error, "updateItemPricingAction", "Failed to update pricing")
     return { success: false, error: message }
   }
 }
@@ -247,7 +292,7 @@ export async function updateItemRelationsAction(input: unknown): Promise<ActionR
     revalidateItems(updated.id, ctx.orgId)
     return { success: true, data: updated, message: "Item relations updated" }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update relations"
+    const message = itemActionError(error, "updateItemRelationsAction", "Failed to update relations")
     return { success: false, error: message }
   }
 }
@@ -274,7 +319,7 @@ export async function updateItemStockAction(input: unknown): Promise<ActionResul
     revalidateItems(updated.id, ctx.orgId)
     return { success: true, data: updated, message: "Stock change submitted for approval" }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update stock"
+    const message = itemActionError(error, "updateItemStockAction", "Failed to update stock")
     return { success: false, error: message }
   }
 }
@@ -293,7 +338,7 @@ export async function updateItemTrackingAction(input: unknown): Promise<ActionRe
     revalidateItems(updated.id, ctx.orgId)
     return { success: true, data: updated, message: "Item tracking updated" }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update tracking"
+    const message = itemActionError(error, "updateItemTrackingAction", "Failed to update tracking")
     return { success: false, error: message }
   }
 }
@@ -316,7 +361,7 @@ export async function deleteItemAction(input: unknown): Promise<ActionResult<{ i
 
     return { success: true, data: { id }, message: "Item deleted" }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to delete item"
+    const message = itemActionError(error, "deleteItemAction", "Failed to delete item")
     return { success: false, error: message }
   }
 }

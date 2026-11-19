@@ -1,0 +1,40 @@
+{
+  "startedAt": "2026-11-03T17:32:47.848Z",
+  "endedAt": "2026-11-03T17:32:57.934Z",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R01\\qualification-20261103-r1\\unit\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--runTestsByPath",
+    "services/users/__tests__/user-identity.service.test.ts",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R01\\qualification-20261103-r1\\unit\\attempt04\\jest.json"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "inputs": [
+    {
+      "file": "services/users/__tests__/user-identity.service.test.ts",
+      "sha256": "cf939d5648c7b39d560512687b8f8d1bae9a1cce858a08ef508aeb0dee130fbf"
+    },
+    {
+      "file": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "file": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    }
+  ],
+  "result": {
+    "suites": 1,
+    "passed": 70,
+    "failed": 0,
+    "skipped": 0
+  },
+  "evidenceClass": "isolated mocked/pure tests; no database or HTTP qualification"
+}

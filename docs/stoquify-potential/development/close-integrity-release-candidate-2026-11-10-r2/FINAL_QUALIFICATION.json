@@ -1,0 +1,1725 @@
+{
+  "admittedAt": "2026-11-11T12:48:27.213Z",
+  "status": "PASS_LOCAL_RELEASE_CANDIDATE_WITH_PRODUCTION_GATES",
+  "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate",
+  "sourceManifestSha256": "cfcac6d0dfa217f3ad18ff27d16e46a55aa002bcbf77c91afc7e0b7082bfd544",
+  "sourceFiles": 10148,
+  "artifact": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\artifact",
+  "artifactSha256": "6d0147749362b359969b6113bf3e6a94918dc6df8d19ee1fcc5c208db4724d2f",
+  "buildId": "4CtAnxpXoochpr8CsDOPH",
+  "migrationCount": 123,
+  "catalogSha256": "968c1f6c7c45f26a8eb8068b551e67450142fccc119b84528e4f4424c64a2e66",
+  "scopeMigrationSha256": "334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7",
+  "verification": {
+    "currentCandidateMockedTests": 472,
+    "mockedSuites": 5,
+    "currentCandidateRealPostgresTests": 20,
+    "integrityCases": 12,
+    "earnedMonthlyCases": 8,
+    "skipped": 0,
+    "fullUnchangedArtifactPipelinePassed": true,
+    "freshMigrationDeployments": 2,
+    "isolatedRestorePassed": true,
+    "restoredPublicTables": 247,
+    "checkParserProofs": 13,
+    "retainedBytesPreserved": true,
+    "actualLocalhostPromotionRefusal": true,
+    "actualPromotionLockCalls": 0,
+    "actualMigrationLauncherCalls": 0,
+    "sealedHttpsChecks": 4,
+    "actualBrowserSteps": 6,
+    "controlledAuthorityTransitions": 4,
+    "exactRetainedDownloads": 2,
+    "passwordStepUpWithManualRetry": true,
+    "sourceAndArtifactUnchangedThroughFinalAdmission": true,
+    "sharedRootSdkUnchanged": true
+  },
+  "inheritedMigrationLane": {
+    "admissionSha256": "4b8fd1f6da7800416f0fbe7536fd9e50c26d626c447c2086b27499662b0a1df3",
+    "clean122to123UpgradePassed": true,
+    "corruptLegacyPreflightAll14Rejected": true,
+    "executedAgainInThisCandidateRun": false,
+    "notAddedToCurrentTestCounts": true
+  },
+  "cleanup": {
+    "applicationStopped": true,
+    "ownedPostgresStopped": true,
+    "runtimePortsReleased": true,
+    "browserClosed": true,
+    "contextClosed": true,
+    "ownedBrowserProfilesRemaining": 0,
+    "externalBrowserRequests": 0
+  },
+  "production": {
+    "approved": false,
+    "deployed": false,
+    "databasePromoted": false,
+    "liveMessagesSent": false,
+    "platform": "win32-x64",
+    "publicOrigin": "https://127.0.0.1:3443",
+    "expectedDisabledLiveDeliveryBlockers": [
+      "statement_live_delivery_channel_enabled",
+      "accountant_invite_live_delivery_enabled"
+    ]
+  },
+  "limitations": [
+    "Local Windows/x64 artifact with a loopback public origin; the intended production platform and HTTPS domain remain undecided.",
+    "The monthly workflow earns internal close states from synthetic provider observations; no upstream provider authenticity or statutory certification is claimed.",
+    "The clean populated upgrade and corrupt-data migration lane are inherited by exact source/evidence hashes, not rerun or counted as new cases.",
+    "Restore evidence uses synthetic local data; hosted recovery objectives and production-size migration locking remain unqualified.",
+    "A planned writer-quiescence window, live delivery/invitation configuration, hosted promotion and existing independent global/domain release gates remain required.",
+    "The actual browser journey qualifies retained-document recovery, password step-up/manual retry and module/session denials; it does not exercise every legacy close write action."
+  ],
+  "evidence": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\raw-source-snapshot.json.gz",
+      "sha256": "f95b9a170e904f42b731ad283861bb604d346de2949c71af3ca16a6e5589e071",
+      "bytes": 99805594
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\CANDIDATE_TARGET.json",
+      "sha256": "53dc6b88666b5c5354c335bf93c742372eee1e0612ff8cd63a4549f85c88a5a2",
+      "bytes": 410
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\CANDIDATE_SOURCE_MANIFEST.json",
+      "sha256": "7fa32727ecd0af866b6b305742ad427777d935efa8dfcd4b49a9cf2376f49b81",
+      "bytes": 1908006
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\RAW_SOURCE_MANIFEST.json",
+      "sha256": "b56c713e11615f3d08a5df38a3667a2f0c6c39a88d888bfc687e3846cd1da1e7",
+      "bytes": 2656290
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\capture-final-source.cjs",
+      "sha256": "21b9a9d2753c42b5f9a64f03535efbcb9ec2d8d9d6f2114bf2e001f249caabc0",
+      "bytes": 3277
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\FINAL_SOURCE_BINDING.json",
+      "sha256": "d2e7ebd1938acaa41a7be00d5b96f090bcd596cce6a19003fa22d3cb9f72c62e",
+      "bytes": 3860411
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\prisma\\migration-catalog-manifest.json",
+      "sha256": "2f75aa91184a92eb558d5c55b6f8f1c2e824c8b1fd7e6ce451b330814656cbdd",
+      "bytes": 63838
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\prisma\\schema.prisma",
+      "sha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+      "bytes": 362667
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\clean-offline-install.private.log",
+      "sha256": "3ed64da0a626d3a290f7366d03710e27f022806213d9fd15e8f4508ccdc8e902",
+      "bytes": 5287
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\clean-offline-install.execution.json",
+      "sha256": "4fed977c1b4601ba195dbc1480604483e5db1771e53ea2cbd23874d097fdffc4",
+      "bytes": 1371
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\CLEAN_INSTALL_SELECTED.json",
+      "sha256": "126373f445b7ef08248b743a8f71a99ef0eb4df5dd5b7f521ff2c83318a5fed0",
+      "bytes": 140
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\CLEAN_INSTALL_RESULT.json",
+      "sha256": "c4c87afc4570028518b96bb7e15038355b3117ae191359d30b0648fd28ce04a1",
+      "bytes": 2077
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\INSTALL_INPUT_REVIEW.json",
+      "sha256": "31f11a3301b609d8ed87a75b3e671882e9113b94fbc5f12628ee0bcbd54df788",
+      "bytes": 1517
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\MINIMAL_OFFLINE_CACHE_SEED.json",
+      "sha256": "04cc9d65de770a120d29624960284de235a53e5c61d26e6d134f589a49687f9c",
+      "bytes": 454570
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\MINIMAL_CACHE_CAPACITY.json",
+      "sha256": "f069801971adf8801ea82eeaf3971dddd48a4a6751e55b67b5be6850f1759dde",
+      "bytes": 336
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\client.d.ts",
+      "sha256": "d5eb5865d4cbaa9985cc3cfb920b230cdcf3363f1e70903a08dc4baab80b0ce1",
+      "bytes": 23
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\client.js",
+      "sha256": "7fb2958626ff9bd585ec82af0935a4f71e852a183a0345145b828e2a9c1fd44a",
+      "bytes": 166
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\default.d.ts",
+      "sha256": "d5eb5865d4cbaa9985cc3cfb920b230cdcf3363f1e70903a08dc4baab80b0ce1",
+      "bytes": 23
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\default.js",
+      "sha256": "773f2836a698a5fe850cf320d1f849ca04e620e9b47f05816683260cba2b8b1c",
+      "bytes": 182
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\edge.d.ts",
+      "sha256": "7378dd41401ba1acff435b9c317a5b919a3d38479ed3dbd4a25c8b4fd623a224",
+      "bytes": 25
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\edge.js",
+      "sha256": "0581a4185ee3c52862849fecd4fd967b4ea524c2815375d20181e8031d36e40d",
+      "bytes": 2304523
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\index-browser.js",
+      "sha256": "0ac0b111461cfe1417dac87f47fdc3f2880fe0165cbc04b9dfa59674a2a705c4",
+      "bytes": 203955
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\index.d.ts",
+      "sha256": "8e091393b9141a5e06d4a1f31370f93680376c29118f226af63366e771d8af59",
+      "bytes": 46090566
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\index.js",
+      "sha256": "25aa775ed5eed0973d5aa0b759f44104ee82bdd75923d5da548f9ffb3e9e67bc",
+      "bytes": 2305192
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\package.json",
+      "sha256": "0abcd61da743cf9e263063847177aabc8569d8799319aa8bcd73d09757ec2224",
+      "bytes": 5309
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine_bg.js",
+      "sha256": "2b50b4328595b0fb99a73cfed34cf11fa8e56511dcc4fb808af4516952448514",
+      "bytes": 16927
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine_bg.wasm",
+      "sha256": "b199ed8bf8f3610c20a3f7398b3cbb875f99b7d6565f4887fc0af2b47dceb30f",
+      "bytes": 2297601
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine-windows.dll.node",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine-windows.dll.node.tmp13952",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine-windows.dll.node.tmp14420",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine-windows.dll.node.tmp20180",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine-windows.dll.node.tmp25184",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine-windows.dll.node.tmp25200",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine-windows.dll.node.tmp25996",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine-windows.dll.node.tmp35560",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\query_engine-windows.dll.node.tmp36880",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\schema.prisma",
+      "sha256": "2fdb8c5dc9c1db6f10ab35b1a8c8e7910ad8eca0d9d97661c003b31b5dbe0226",
+      "bytes": 354998
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\wasm-edge-light-loader.mjs",
+      "sha256": "48311a316daab3b1c21dd227b7277d03436a7d10d78b19b3b625cd25ffa1674b",
+      "bytes": 184
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\wasm-worker-loader.mjs",
+      "sha256": "48b4f73d61fe341ea5b59f09059f730dfb600249985a64f0456508dd4c81b01b",
+      "bytes": 177
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\wasm.d.ts",
+      "sha256": "7378dd41401ba1acff435b9c317a5b919a3d38479ed3dbd4a25c8b4fd623a224",
+      "bytes": 25
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.prisma\\client\\wasm.js",
+      "sha256": "36f8f7928716e8fbd89a4a9af2ec515808337dfc029e71f3238ae26b9bc51859",
+      "bytes": 1043876
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.cache\\prisma\\master\\c2990dca591cba766e3b7ef5d9e8a84796e47ab7\\windows\\libquery-engine",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\@prisma\\engines\\query_engine-windows.dll.node",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.cache\\prisma\\master\\c2990dca591cba766e3b7ef5d9e8a84796e47ab7\\windows\\schema-engine",
+      "sha256": "f2b48e3ce8de8712c9dce6c71f952bec383fa472830b91bca8e64b4b51bf0dd7",
+      "bytes": 18974720
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\@prisma\\engines\\schema-engine-windows.exe",
+      "sha256": "f2b48e3ce8de8712c9dce6c71f952bec383fa472830b91bca8e64b4b51bf0dd7",
+      "bytes": 18974720
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\CANDIDATE_NATIVE_READINESS.json",
+      "sha256": "ae61f30d0c689b53b6d444880b777ff80855a04647d52be16fe37f78cef2793f",
+      "bytes": 8143
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\build-private\\candidate-prisma-validate.private.log",
+      "sha256": "cee181ad31bacb29345a02d90613d8e062aa6c91dc5c10ea7d78b410fba6272c",
+      "bytes": 204
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\candidate-prisma-validate.execution.json",
+      "sha256": "1fb30ce0f5c481c0e51dc5b4ecacf0ce2386925438189c3b82d52f3a1f7bc417",
+      "bytes": 805
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\build-private\\candidate-prisma-generate.private.log",
+      "sha256": "1b5c608f2e645309e3af7451786587be5bd068417daffe2d7e59f1b9d3d03fb0",
+      "bytes": 437
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\candidate-prisma-generate.execution.json",
+      "sha256": "23f00f7d21682570d74551a689bc405820ce6847837864d689b6d9037bcfa562",
+      "bytes": 806
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\client.d.ts",
+      "sha256": "d5eb5865d4cbaa9985cc3cfb920b230cdcf3363f1e70903a08dc4baab80b0ce1",
+      "bytes": 23
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\client.js",
+      "sha256": "7fb2958626ff9bd585ec82af0935a4f71e852a183a0345145b828e2a9c1fd44a",
+      "bytes": 166
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\default.d.ts",
+      "sha256": "d5eb5865d4cbaa9985cc3cfb920b230cdcf3363f1e70903a08dc4baab80b0ce1",
+      "bytes": 23
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\default.js",
+      "sha256": "773f2836a698a5fe850cf320d1f849ca04e620e9b47f05816683260cba2b8b1c",
+      "bytes": 182
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\edge.d.ts",
+      "sha256": "7378dd41401ba1acff435b9c317a5b919a3d38479ed3dbd4a25c8b4fd623a224",
+      "bytes": 25
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\edge.js",
+      "sha256": "4f923829756b8288eb415f352236f84c24659ec7f4732ee014cd94a7539fe86c",
+      "bytes": 2324162
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\index-browser.js",
+      "sha256": "efe24f5d1c66700ad078d2e56871954307ed51e0888ace5c776224e9fb5f531b",
+      "bytes": 204089
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\index.d.ts",
+      "sha256": "60166d14251102e67162c04dd8c64251bda08bdc87c6a3e59e7c81fc2b74ff81",
+      "bytes": 46491651
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\index.js",
+      "sha256": "8c88fc1a3b575130bc8d272135d5f9e6fc2812adcb1d145738a7f8a274c65211",
+      "bytes": 2324831
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\package.json",
+      "sha256": "239d43bf569bc28f783a01019e09cd6f853b7c6951e8e05ba3ac0579111ff1ce",
+      "bytes": 5309
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\query_engine_bg.js",
+      "sha256": "2b50b4328595b0fb99a73cfed34cf11fa8e56511dcc4fb808af4516952448514",
+      "bytes": 16927
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\query_engine_bg.wasm",
+      "sha256": "b199ed8bf8f3610c20a3f7398b3cbb875f99b7d6565f4887fc0af2b47dceb30f",
+      "bytes": 2297601
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\query_engine-windows.dll.node",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\schema.prisma",
+      "sha256": "f5c698cdcfb6514fcc52f3d8a6709b3eca095017c13b0dc669c5aa6cd9655486",
+      "bytes": 360507
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\wasm-edge-light-loader.mjs",
+      "sha256": "48311a316daab3b1c21dd227b7277d03436a7d10d78b19b3b625cd25ffa1674b",
+      "bytes": 184
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\wasm-worker-loader.mjs",
+      "sha256": "48b4f73d61fe341ea5b59f09059f730dfb600249985a64f0456508dd4c81b01b",
+      "bytes": 177
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\wasm.d.ts",
+      "sha256": "7378dd41401ba1acff435b9c317a5b919a3d38479ed3dbd4a25c8b4fd623a224",
+      "bytes": 25
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\.prisma\\client\\wasm.js",
+      "sha256": "432dabbaf7e6c6fb5dd4f8e234f9938c5faea0b8676b4d232e479999b3e46428",
+      "bytes": 1053463
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\unit-23f972acc4\\jest.config.cjs",
+      "sha256": "a5be95a988ad1bdd1eca02a52624a5aef9ab098a148c7e4fdb09a0289fa34513",
+      "bytes": 1329
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\unit-23f972acc4\\results.private.json",
+      "sha256": "1b24b0b69d33d0ba41c2cf1bf34e8ebd531609e58ec59f2bc23a2877d7af4ca6",
+      "bytes": 192089
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\unit-23f972acc4\\checks.private.log",
+      "sha256": "43e8eb89d51edce3c40bbc0680d963101576610055e7aae4ed7f6b447fb8fc20",
+      "bytes": 957
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\UNIT_QUALIFICATION.json",
+      "sha256": "cb6b0c83b250e81a5a44d1e5b488c2fa6ec769adbade0f86c1620102e57029d7",
+      "bytes": 9378
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\unit-23f972acc4\\RESULT.json",
+      "sha256": "cb6b0c83b250e81a5a44d1e5b488c2fa6ec769adbade0f86c1620102e57029d7",
+      "bytes": 9378
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\DATABASE_TARGET.json",
+      "sha256": "be7bbea510d52bdb2f4d7f055118f1964e4aa70a2ca5c12e72371a37b73926c5",
+      "bytes": 1227
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\DATABASE_QUALIFICATION.json",
+      "sha256": "747acb0630a6c23ac2e04b16a8886b4e27bbb36cea32bb6d932bf520ba8b088d",
+      "bytes": 1143
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-RESULT.json",
+      "sha256": "652c72d097cdf673dc9b19f600940064bbedefb05aa0c58895fc6faaddb69571",
+      "bytes": 2346
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-integrity-qualification.cjs",
+      "sha256": "da3d109cd7f73ce953137e46e9fb383b030802d33277e33905355a42480c918c",
+      "bytes": 39783
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-SOURCE_MANIFEST.json",
+      "sha256": "c95f1a7767086ec9e1f0be3205264b6253a39a73c0325d8806886009891e2c44",
+      "bytes": 72732
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\prisma\\migration-catalog-manifest.json",
+      "sha256": "2f75aa91184a92eb558d5c55b6f8f1c2e824c8b1fd7e6ce451b330814656cbdd",
+      "bytes": 63838
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\prisma\\schema.prisma",
+      "sha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+      "bytes": 362667
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\prisma\\migrations\\20261110190000_close_scope_integrity\\migration.sql",
+      "sha256": "334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7",
+      "bytes": 12710
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-PRIVATE_CLIENT.json",
+      "sha256": "1d6d226922ea6babab71bd7fc4130e1d836ad5a5885c0eb781ea84dea1ba1d84",
+      "bytes": 12733
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\BASELINE_122_CATALOG.json",
+      "sha256": "ebfa7d6d08c3757bf6beca180823b4b1cda57355f066be3751417fc0c09770e3",
+      "bytes": 63343
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\CATALOG_ADMISSION.json",
+      "sha256": "5e04c29354a68dfcce782eeca935815aff5af1c3d99de243c5a1bbe80f46f1b8",
+      "bytes": 2010
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\append-reviewed-catalog.cjs",
+      "sha256": "03dfe50f9ac19e772ed3ef1ab02da3411c04390782af690ce864382e0c56e578",
+      "bytes": 4300
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\pg-RETENTION_LATEST.json",
+      "sha256": "82687c8e0ced73875fbab0602fcefcb92b37c13e3dc058a357545ea9434d77ea",
+      "bytes": 1755
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\pg-retention-1b805fc00a\\pg-SOURCE_MANIFEST.json",
+      "sha256": "5e0bd1bda9f5d05bfea9fbd0327c72b37fd5fe1aa8c770baf5cc0cc73baace7d",
+      "bytes": 54159
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-client-e29eaa8acf\\pg-CLIENT_RESULT.json",
+      "sha256": "1d6d226922ea6babab71bd7fc4130e1d836ad5a5885c0eb781ea84dea1ba1d84",
+      "bytes": 12733
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\prepare-integrity-client.cjs",
+      "sha256": "a2330ade2269e0e3586fe966c8e940a499e032cd6bcbb889fc00aff9a061a410",
+      "bytes": 9335
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\@prisma\\engines\\query_engine-windows.dll.node",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\@prisma\\engines\\schema-engine-windows.exe",
+      "sha256": "f2b48e3ce8de8712c9dce6c71f952bec383fa472830b91bca8e64b4b51bf0dd7",
+      "bytes": 18974720
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\migration-release-2026-11-09\\CANDIDATE_NATIVE_READINESS.json",
+      "sha256": "1fcce2de7f25c97906bdbfc053d127871572ee8a1bebb4f3b788355030edf1d2",
+      "bytes": 1888
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-client-e29eaa8acf\\pg-CLIENT_CONTEXT.json",
+      "sha256": "3db34836e9b6c1121b532843e4cf3e2caa5ba0fc0cf9d0ffd7b48a048543d7f0",
+      "bytes": 9755
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-client-e29eaa8acf\\pg-validate.execution.json",
+      "sha256": "08e96cc8ccfff6f48fab3758df1040ee90391a7fe1d9fc5329c6c17e02815bc6",
+      "bytes": 140
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-client-e29eaa8acf\\pg-generate.execution.json",
+      "sha256": "74f9973b9c87700aa7fe271530e0e0b5b5c8c33590e4f34e0037af98e2469733",
+      "bytes": 140
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-client-20261110-e29eaa8acf\\orm\\client\\runtime\\library.js",
+      "sha256": "5a72b6f69474641f48a0f5ffee45802dc939c6333467371ebbd9102353eb7aae",
+      "bytes": 202629
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-execution-clients-20261110-b96b309c4c\\canary-probe.cjs",
+      "sha256": "3fc14ae7871e974cbb92f55d0bc10629bc461a70f609241d0bd82391004b9f6e",
+      "bytes": 1466
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\pg-PRIVATE_CLIENT.json",
+      "sha256": "ec7ff7ca1628bced6a6e8af1bf510118dfdbb6b1c17078c716a087ac05830304",
+      "bytes": 2634
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\pg-retention-1b805fc00a\\pg-ORM_PROVENANCE.json",
+      "sha256": "a6d3d68d9e2af59204c3b590f4780ecf1968659fdb277ee04c7d02538a8435c0",
+      "bytes": 4667
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-execution-clients-b96b309c4c\\current-module-positive.log",
+      "sha256": "5bf17abe993a023361838a29b53cde5c4b8982d78e53102fb2fb7ddebf668366",
+      "bytes": 128
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-execution-clients-b96b309c4c\\current-constructor-negative.log",
+      "sha256": "0ed332bdea51ce7987c8dcd3c6dfb4ed40b00ed729b773b26d6c8c5f2528010a",
+      "bytes": 133
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-execution-clients-b96b309c4c\\old-module-positive.log",
+      "sha256": "5bf17abe993a023361838a29b53cde5c4b8982d78e53102fb2fb7ddebf668366",
+      "bytes": 128
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-execution-clients-b96b309c4c\\old-constructor-negative.log",
+      "sha256": "0ed332bdea51ce7987c8dcd3c6dfb4ed40b00ed729b773b26d6c8c5f2528010a",
+      "bytes": 133
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-EXECUTION_CLIENTS.json",
+      "sha256": "f12b550df338bda9e32051a3b0635dd18f3a55909d3a2455be3f6fe4bc9bab55",
+      "bytes": 14148
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-execution-clients-b96b309c4c\\RESULT.json",
+      "sha256": "f12b550df338bda9e32051a3b0635dd18f3a55909d3a2455be3f6fe4bc9bab55",
+      "bytes": 14148
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\prepare-execution-clients.cjs",
+      "sha256": "b240d47bd792d36f74a1bf9204616a7899628b3d78969db5b9122a23cd80b6a5",
+      "bytes": 10719
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\unit-eb48f1b56b\\verification.json",
+      "sha256": "e6eb4df0560396dbb4c087a49749b54d9b25c996b0b7c10b31f66be2174216b1",
+      "bytes": 8421
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\unit-eb48f1b56b\\jest.config.cjs",
+      "sha256": "7c0dc55472da75641865612c570a77452b99d3af64e23f2773b77665d193f1f5",
+      "bytes": 923
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\unit-eb48f1b56b\\results.json",
+      "sha256": "ba5b5d07f936fd7078093cf0b1cc1f8676e8001c8bad2eb22ff6f3870e670182",
+      "bytes": 191743
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\unit-eb48f1b56b\\checks.log",
+      "sha256": "471667bd89c89693f805e145512b027a4df51a35a499a538cfe910c4b71ad816",
+      "bytes": 1012
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\unit-qualification.cjs",
+      "sha256": "4cfd31eb85dc9c7c5eac6ebb119616cf623fba431a3027e60992f6af71a02e78",
+      "bytes": 6694
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\static-0694cd6a62\\eslint.json",
+      "sha256": "09fdaeed8d9a8ecad24ef97a2396dd647f315140aea922b9db31039ec512e116",
+      "bytes": 1073
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\static-0694cd6a62\\verification.json",
+      "sha256": "8fbcfa2a935fa0080696d6fba0643ac2a6a84d80365d9d82db6ec9cd3f6d82ad",
+      "bytes": 3037
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\static-0694cd6a62\\tsconfig.json",
+      "sha256": "ed445b933265a05a3efb0a90eb6202b2eeceb8ab0cf899ab247094373638abb7",
+      "bytes": 388
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\source-qualification.cjs",
+      "sha256": "81538df647cc14a37301b17d8c448db3b86d1cdaddeccd3ad15fab9418a392d7",
+      "bytes": 3713
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-RUNTIME_BINDING.json",
+      "sha256": "d0d2f508958b5b50bcd9c930b7ea2906a5b6de8f89dca04c1184b0fff89fc3b9",
+      "bytes": 432
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-jest.config.cjs",
+      "sha256": "6a6d119d4c79da3b1d49fe41bff3806e1838e42ab38d9cf838ed2b6809e7ef63",
+      "bytes": 1555
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-db.cjs",
+      "sha256": "f737a912c580c6c1e64d8414dce00f2671af7f1c2d4477a6feba6b9a30cc0ac7",
+      "bytes": 679
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\fresh-integrity-and-monthly-tests.private.json",
+      "sha256": "f309bcc5a4918269161dc213fcde0430905dc402569ad6596f7a2a71ff21c476",
+      "bytes": 9329
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-tests.summary.json",
+      "sha256": "8ce258e2f3caea37ca259397f4379fa64e127d83103a43cf677a54cb62b3a603",
+      "bytes": 3234
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\scope-integrity-service-evidence.private.json",
+      "sha256": "17e675f45109ee4d7400ed9b5046555d8a832ac1440277f7a35dc8ba054997be",
+      "bytes": 3390
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\monthly-close-service-evidence.private.json",
+      "sha256": "8013645e1f1f3a59d12b239a36b5a6c759d9476241ceacb66ee5b592c8aad805",
+      "bytes": 38678
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-integrity.summary.json",
+      "sha256": "34d30f90f0723e7dcac7576c67415da0ed6b5d138848578cb27d0463978ca10b",
+      "bytes": 1470
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-monthly.summary.json",
+      "sha256": "275ecbd2c72eb326cef24b42e269dbc3e8b9bf88735d576fb435d04fe4e3438b",
+      "bytes": 1629
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-HISTORY_FRESH.json",
+      "sha256": "a41ef8fbd0679a0a3c7774201ee2cba459a7c5a58294cd0aadb513b168ae054e",
+      "bytes": 49705
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-SQL_INVENTORY_FRESH.json",
+      "sha256": "fb2f52c0e87f96199142e1636164c23f4fd4aa4fba673185a36ac5e40cf93684",
+      "bytes": 194
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-fresh123.json",
+      "sha256": "32838993da5fefba62e2c10048c73868cbb73c4ed2a85b170545bbd5d3de326d",
+      "bytes": 802
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-clean123.json",
+      "sha256": "97adacd544cb1e4dbf22028686cf11f34efd0e045506b0fc407c870449636384",
+      "bytes": 812
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-clean122.json",
+      "sha256": "37c8fb2cead3ecb7fcb0c3b3970d2755c0b66ac1c7b2541d820fdbc5dc45d071",
+      "bytes": 812
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-dirty122.json",
+      "sha256": "7890962eaa90efa4ab85ff3052af27ff0a0b09bfee1c99448572108f8ff0a6de",
+      "bytes": 812
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\private-documents\\FIXTURE.json",
+      "sha256": "0d09f417eb2cc8171f827b7f70c139d0ac0dc6b9247d8de2ccb91c8d70d696aa",
+      "bytes": 1035
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\private-documents\\pack-f1f1126f-5ef6-4fc9-aa4f-7096b78b59b5.json",
+      "sha256": "88303409198b368e746febe37090f720b6b94367807ad2d128d9d71f3f16d13e",
+      "bytes": 97633
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-PRIVATE_MONTHLY_FIXTURE.json",
+      "sha256": "e1116736ce98c71d5b62c3d3c3ef46057cd1c6c1f27f051fa1627d9ad33b6a1b",
+      "bytes": 555
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\clean-upgrade-before.private.json",
+      "sha256": "e10ca17bee8be87ae2f43320b1cd6f034353f90f0093b477cfdf6ed545f21a1c",
+      "bytes": 95487
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\clean-upgrade-after.private.json",
+      "sha256": "caeb64ec4ec4f26fd957e37d145e4a8b526aacaf71c112ffa221187c8d24f680",
+      "bytes": 95880
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-CLEAN_UPGRADE.json",
+      "sha256": "5ebaba69161c47479a5c44588fadc7c90a185cdf3c7d4ac2b58f3e004342bdfb",
+      "bytes": 957
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-OLD_WRITER_COMPATIBILITY.json",
+      "sha256": "17bc5e6caeb44e5db603d66e7cac38d752c9e930e2418ee16a9eba754e4ed066",
+      "bytes": 426
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\old122-writer-probe.private.json",
+      "sha256": "472d22b6e4ab2f8dca33678371bfcbf0a68e264e47d7e76e209916685a1a32dc",
+      "bytes": 1420
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-OLD_WRITER_BINDING.json",
+      "sha256": "da9769c5f4911bc94aa98118c077dec6fc5d3edb4fe6e847b3a2cc5f2030e8a3",
+      "bytes": 4611
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\dirty-upgrade-before.private.json",
+      "sha256": "a1642ad285d48e5f442d05ced5ebc7989a489b7a13e7af04efd3b6da353797e5",
+      "bytes": 2089699
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\dirty-upgrade-after.private.json",
+      "sha256": "603f79d25d2da4c312632296f2ec5392fc4cbddfc33eba0b82651c53b94cf705",
+      "bytes": 2088841
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-DIRTY_UPGRADE_REJECTION.json",
+      "sha256": "c36ea80be85c75f29f9b5e2328af93968cc2a4012f6f40170ce83ada05106285",
+      "bytes": 3375
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-start.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-start.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-start.execution.json",
+      "sha256": "b64653debde767cdbd6d361c7238f3946b4ee9f51ae744704939e64d0afb46de",
+      "bytes": 1260
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-fresh123.stdout.private.log",
+      "sha256": "f71b8fe0f07948e4fa57c1ee59e6e8e1fe705325bc2b4f644ee5f66303274616",
+      "bytes": 19962
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-fresh123.stderr.private.log",
+      "sha256": "c8458089baa43f71feda389a45ffb3965048414e5804ad62325a4a00e65f0c03",
+      "bytes": 216
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-fresh123.execution.json",
+      "sha256": "6a9541500d66e58a104f2c5f6e4a2e66f6d5063b4cacf2a048b469468dfc1ee0",
+      "bytes": 1686
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-fresh-service-cases.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-fresh-service-cases.stderr.private.log",
+      "sha256": "359c27e80584d6c7f3f1dd1e4b6ca75b1ef70e2f5191d20f887cfa94f0ee9bce",
+      "bytes": 4317
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-fresh-service-cases.execution.json",
+      "sha256": "396972804b4718ccb4b54ea879502a74028aaec9dff5ad2d7ebae9aca994c832",
+      "bytes": 1866
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-clean122.stdout.private.log",
+      "sha256": "811ef23afc38abe0698923fb343a598a8269217b1d4e151708c0b5b764d98bba",
+      "bytes": 19872
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-clean122.stderr.private.log",
+      "sha256": "c8458089baa43f71feda389a45ffb3965048414e5804ad62325a4a00e65f0c03",
+      "bytes": 216
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-clean122.execution.json",
+      "sha256": "d3878118d6be7213192e504273e36cc46abd673ac193bd361fd00a5763f137d2",
+      "bytes": 1687
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-clean-deploy123-1.stdout.private.log",
+      "sha256": "b887a019bd7ca9dbee2ac3198052323daa1967d131280637559a01c4be7f2a8d",
+      "bytes": 472
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-clean-deploy123-1.stderr.private.log",
+      "sha256": "f0be17b355c9f69434b43ac5396c606d168d90e4558889eb88482c48103fe845",
+      "bytes": 108
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-clean-deploy123-1.execution.json",
+      "sha256": "17f76a0a8ec49cd7bc690d506b478733438774fd9038a7966c1044cba237a273",
+      "bytes": 1167
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-clean-deploy123-2.stdout.private.log",
+      "sha256": "94df4cf5f42e39861bcb8dc36979a265bf74725798ea766edc1b4f7d8d422925",
+      "bytes": 261
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-clean-deploy123-2.stderr.private.log",
+      "sha256": "f0be17b355c9f69434b43ac5396c606d168d90e4558889eb88482c48103fe845",
+      "bytes": 108
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-clean-deploy123-2.execution.json",
+      "sha256": "8fd037f5cd624d0c4d95e1f34e07a62ee86fcdcd738e9ffd94019108ba2bb2bb",
+      "bytes": 1167
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-clean-certify123.stdout.private.log",
+      "sha256": "918c8c08caa868a0eebff926f42950e01c5ed8fe95873dce575143f46ad81cdc",
+      "bytes": 859
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-clean-certify123.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-clean-certify123.execution.json",
+      "sha256": "515553bc33c74023bb62c4af1c82e1daa9d1733081eaf4719f98ed3b8212d10f",
+      "bytes": 1746
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-dirty122.stdout.private.log",
+      "sha256": "d1c0341a0ec6e38291ffd1868181dbfa2b56398396d8bf6ccbb43929f23c8243",
+      "bytes": 19872
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-dirty122.stderr.private.log",
+      "sha256": "c8458089baa43f71feda389a45ffb3965048414e5804ad62325a4a00e65f0c03",
+      "bytes": 216
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-dirty122.execution.json",
+      "sha256": "d8cef92f1f3573271f426464b8a526d329ffd2e2478e7b186af326a9a5fe99a6",
+      "bytes": 1687
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-dirty-deploy123-rejected.stdout.private.log",
+      "sha256": "bce1f503c761157b0805828db3865eca9eda2bc07775bbc98f7536509910547f",
+      "bytes": 286
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-dirty-deploy123-rejected.stderr.private.log",
+      "sha256": "701b6d65de067531a9cb57634dc478c0b7723b0d901d6698b787a2cea294dae4",
+      "bytes": 512
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-dirty-deploy123-rejected.execution.json",
+      "sha256": "51cb59be5580d77dfed6fc13d2c4ca9654a609b39248caa9665eb2584d767b66",
+      "bytes": 1180
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-stop.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\pg-stop.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-stop.execution.json",
+      "sha256": "d108f735fa2aed9f1727d714581ce7553b03b3b2edb634421dd3894b95d5b399",
+      "bytes": 1129
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-TARGETS.json",
+      "sha256": "421208fe8f37d64e101915dafb5af4401246456fe6a0b5b04b5c576b423379f9",
+      "bytes": 1427
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-IDENTITY.json",
+      "sha256": "b01ad520b5e333a88eb05e5f48b3d8c46fa8fc5b450a8d4081bd76f290eab566",
+      "bytes": 243
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-clean122.md",
+      "sha256": "aae54aa35b76783d7be33dbd587094865278bdda3a574e0aadab019701c9d9f8",
+      "bytes": 1005
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-clean123.md",
+      "sha256": "b932b2732c2abcd36c7ae73fd889708ac4b7f14069b70fbede4091a50e04740f",
+      "bytes": 1005
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-dirty122.md",
+      "sha256": "c120485b3334087d6404facafe39972d38ecc75bc90232b0dc23ec26148c3abe",
+      "bytes": 1005
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0\\pg-fresh123.md",
+      "sha256": "2f9507f39373bab82bb7a77c0e14dc06ce67d09544b1f8d49e473090c4e43aae",
+      "bytes": 995
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-LATEST.json",
+      "sha256": "652c72d097cdf673dc9b19f600940064bbedefb05aa0c58895fc6faaddb69571",
+      "bytes": 2346
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\FINAL_QUALIFICATION.json",
+      "sha256": "4b8fd1f6da7800416f0fbe7536fd9e50c26d626c447c2086b27499662b0a1df3",
+      "bytes": 32151
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\INHERITED_UPGRADE_ADMISSION.json",
+      "sha256": "4c678b53710e58c7b63688fbc35f7f0ceafb6bcfffee7f936f263e164745a6f6",
+      "bytes": 865
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\fresh123.json",
+      "sha256": "4355e8602816ae5897c843b798024d511d3e86491d4d7e7a014c378321fbfbb7",
+      "bytes": 802
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\fresh-123-replay.stdout.private.log",
+      "sha256": "24427b21d399ea0dc79d0229e63bd1b5d762170f70d8e6934799d066bb3ed749",
+      "bytes": 19962
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\fresh-123-replay.stderr.private.log",
+      "sha256": "c8458089baa43f71feda389a45ffb3965048414e5804ad62325a4a00e65f0c03",
+      "bytes": 216
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\fresh-123-replay.execution.json",
+      "sha256": "022551658ab89d3620ffd67ad37f4d13182e8fdc67323b4d19697fd5fc4a7959",
+      "bytes": 1685
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\scope-integrity.postgres.test.ts",
+      "sha256": "b326625a06fc663e07b1e0bfbe5d58526376d118d43f7060ceb9860665fa2f53",
+      "bytes": 22854
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\cases\\scope-integrity.postgres.test.ts",
+      "sha256": "b326625a06fc663e07b1e0bfbe5d58526376d118d43f7060ceb9860665fa2f53",
+      "bytes": 22854
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\mixed-month.postgres.test.ts",
+      "sha256": "2b20bc73ab9e944b08d50c197b425dedbb6b44d9cf00e06773839b9cff1e6ba0",
+      "bytes": 55293
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\cases\\mixed-month.postgres.test.ts",
+      "sha256": "2b20bc73ab9e944b08d50c197b425dedbb6b44d9cf00e06773839b9cff1e6ba0",
+      "bytes": 55293
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\scope-fixtures.cjs",
+      "sha256": "ef9a98ae90a8c226a7c2e36b9be03669b35ffce063eb41622cae0369451d923c",
+      "bytes": 11276
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\cases\\scope-fixtures.cjs",
+      "sha256": "ef9a98ae90a8c226a7c2e36b9be03669b35ffce063eb41622cae0369451d923c",
+      "bytes": 11276
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\pg-db.cjs",
+      "sha256": "0776b2bf1580b55473323bad72787045c2c7f60d0956a878af4feda20af198d3",
+      "bytes": 653
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\jest.config.cjs",
+      "sha256": "5706efea0b8338aeee52d51e9067e4738014313a1f6b317db195fe7931c6a52d",
+      "bytes": 1462
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\TEST_BINDING.json",
+      "sha256": "32a389aa33000e4624dc9d4eb62668554744db95f5a7c427b92514509db6eae6",
+      "bytes": 2309
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\jest-results.private.json",
+      "sha256": "7a30eba9f4053b04c458b205401b0ca77f4bcdac9ea358b2c9d9412d96e4db21",
+      "bytes": 9189
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\monthly-evidence.private.json",
+      "sha256": "ed50ec719af0a97ce77e3c5a5769a6f7ba2f3d7678e40f30c92aaa633df3f6c7",
+      "bytes": 38678
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\integrity-evidence.private.json",
+      "sha256": "17e675f45109ee4d7400ed9b5046555d8a832ac1440277f7a35dc8ba054997be",
+      "bytes": 3390
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\TEST_RESULTS.json",
+      "sha256": "76e9f0692cca75566a00d3d0cb1663655a5a5e05325ed7571173a7cebe550536",
+      "bytes": 4239
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\private-documents\\FIXTURE.json",
+      "sha256": "13211f50194d17dcbaf587120958d17f30a80cf6cb211f53d3ace0a294f34883",
+      "bytes": 1038
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\private-documents\\pack-c10f760f-25dd-41c0-b180-e71e1b0ea678.json",
+      "sha256": "99f3d6425d2af55eec2d742b90d4787ebf58e484966148fa3414b77c7f5cc1a3",
+      "bytes": 97550
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\MONTHLY_FIXTURE.json",
+      "sha256": "7a1aa8f352b8b2b8795946a31c18cfaa6334f91dc1d991f4b67eed7bed4fb581",
+      "bytes": 670
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\synthetic-monthly.dump",
+      "sha256": "ff142a3d58774e502eeedf917ab5caca48e945c564ae4e99e6cb78d37ed4f614",
+      "bytes": 1723231
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\restore-before.private.json",
+      "sha256": "5e1d15518717e4b58f1f904b846886794b22869e8617a7032f5d5069832d8e98",
+      "bytes": 2483513
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\restore-after.private.json",
+      "sha256": "c1ae373d2ff95f22c09dd08929fb87dec2ccc7688e87fc7fdbff05337e40973c",
+      "bytes": 2483517
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\RESTORE_RESULT.json",
+      "sha256": "ded311478dfb54e543690262b13df6f68ddef8a9d3577d43cfaf41a5f5ba1907",
+      "bytes": 14147
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\pg-start.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\pg-start.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\pg-start.execution.json",
+      "sha256": "1905ab8908ce344155e95d0a64f499bf40973c1e6735baaacfc6849c274ed27c",
+      "bytes": 1241
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\twenty-database-cases.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\twenty-database-cases.stderr.private.log",
+      "sha256": "df263c3503d7b915315e807df95d00182e2e2f14a512c9289b6f29f22cab73ce",
+      "bytes": 4173
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\twenty-database-cases.execution.json",
+      "sha256": "c8e3bb9c06ca3b0d4573e7c38cc68d027903c7909b0b5ddfcf581e8de63bfab6",
+      "bytes": 1755
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\pg-dump.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\pg-dump.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\pg-dump.execution.json",
+      "sha256": "f7ff9fa7c9a6e253660c7c42fef7b328e285886355078e394b5dc06e9b6442f6",
+      "bytes": 1129
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\pg-restore.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\pg-restore.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\pg-restore.execution.json",
+      "sha256": "6c9432688c38eac7db48c24a2c29f05362728cedc5118658049d5ae77786bcad",
+      "bytes": 1203
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\pg-stop.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-rc-db-20261110-e5474a4749\\pg-stop.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\database-e5474a4749\\pg-stop.execution.json",
+      "sha256": "08735ca0f3810ba653683cc3f705128ba774f12c8ebb495c7ea5b98b3ab9609d",
+      "bytes": 1110
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\run-focused.cjs",
+      "sha256": "74d9cbceeba777fe5dd308f1902d59e54eb1fae8fe872d7de82eb9103546c456",
+      "bytes": 5642
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\before.receipt.json",
+      "sha256": "9eacb1c0693493b596dc9ba517496234ab9645cf688adc84bcd50afe3ed5464b",
+      "bytes": 3405
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\before.results.private.json",
+      "sha256": "5773e314a1768f7f8c11d11e032c117ef16d849b3b4c0d51c876bf3da0867a31",
+      "bytes": 50702
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\before.output.private.log",
+      "sha256": "da1305869ec7aeb35cc44c2994916a7cd3fcc104ac1e289d1bee9bdd70b1b5aa",
+      "bytes": 11075
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\before.jest.config.cjs",
+      "sha256": "3aa4a11d1e7ff5352ba13a4bf1ee0315e7c0f2ff4ffcd92b61f70d5ff1ed02c8",
+      "bytes": 776
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\after.receipt.json",
+      "sha256": "22a090ea1b5fcc6e3b49b0ccb0c7d9068cc1e4395974227595d01080e49568c7",
+      "bytes": 3361
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\after.results.private.json",
+      "sha256": "73ff22a801607bcf89d45c83b39fe9ab0ae5aa84b8bf162034187840c771752c",
+      "bytes": 16790
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\after.output.private.log",
+      "sha256": "3883261ece286396fdcd548da9b81a373ce02d080ee1acc559d3688f27475641",
+      "bytes": 449
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\after.jest.config.cjs",
+      "sha256": "3aa4a11d1e7ff5352ba13a4bf1ee0315e7c0f2ff4ffcd92b61f70d5ff1ed02c8",
+      "bytes": 776
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\middleware.before.ts",
+      "sha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204",
+      "bytes": 9025
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\local-gates-network.cjs",
+      "sha256": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e",
+      "bytes": 835
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\REDIRECT_REGRESSION_QUALIFICATION.json",
+      "sha256": "cfc65f93199d359896ff1798840acc6cdc41fcd270b1b256ae204c73780ee02f",
+      "bytes": 6999
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\ARTIFACT_BUILD_TARGET.json",
+      "sha256": "7022fe4c3ab11c6df847298b67b297599421395af58c72688a6850023662e6dc",
+      "bytes": 1780
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\build-artifact.before-owned-workspace-storage.cjs",
+      "sha256": "a545373e90da83a75b89e9214c57a46a2cda23959eb9c633182290642627c882",
+      "bytes": 40302
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\localhost-promotion-refusal.before-owned-workspace-storage.cjs",
+      "sha256": "d02a9df33b22155634860b0fa6d8b614c8502ca8cb5eb490b404391e769768de",
+      "bytes": 12625
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\BUILD_STORAGE_REVIEW.json",
+      "sha256": "38aa19c77b4c3996df208bdce7d50c48ea292a0877f13924121f566b72fc774a",
+      "bytes": 3244
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\install-private\\empty-user.npmrc",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\install-private\\empty-global.npmrc",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\build-artifact.cjs",
+      "sha256": "ab21544e0b5b2a76a3606fe97d404c257e4fb1d8b505f441adf58eadfdf651d5",
+      "bytes": 40379
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\build-private\\production-secrets-preflight.private.log",
+      "sha256": "94caa8621f03d005349135b644260ee672aea544855a4cde1df415c78772f861",
+      "bytes": 4087
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\production-secrets-preflight.execution.json",
+      "sha256": "5877a198a30efe8e981f42e435ba919ade31b2d4002aed8547c5c50ab7c7a295",
+      "bytes": 748
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\BUILD_NPM_CONFIGURATION.json",
+      "sha256": "db8e219c93f3f67b7bd7aac9bf7831625f4741a16b32a48ba76df999b39a0844",
+      "bytes": 2998
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\PRODUCTION_SECRET_PREFLIGHT_SELECTED.json",
+      "sha256": "8436cc45843525961ca00771c2dd3e5f7af27b4402ce260a09907827fc4d9dc1",
+      "bytes": 641
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\build-private\\production-secrets-preflight-config-isolated.private.log",
+      "sha256": "66d5b314535c6240135d43b8334cc424c2a220478c0c5e13f0e0aa8edd2e3f76",
+      "bytes": 4087
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\production-secrets-preflight-config-isolated.execution.json",
+      "sha256": "93d84bc74a00d505a23d6e2df1503b50e917dd930667809d1bd9c8ecf5fee1bd",
+      "bytes": 765
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\PRODUCTION_SECRET_PREFLIGHT_CONFIG_ISOLATED.json",
+      "sha256": "732418790dfb96a8ee715b66fc69bf1b4760d5021d35ffe217196d104b42b7e5",
+      "bytes": 5331
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\build-private\\full-artifact-build.private.log",
+      "sha256": "13b3058b6b0b08f7d4595960ccf689e998c9d58d346718bb638d75da5f344e9a",
+      "bytes": 49591
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\FULL_ARTIFACT_BUILD_RESULT.json",
+      "sha256": "f0ec8d3ecf02610a226e0a1734dbae8502696216938eccbc564d62e422c8db39",
+      "bytes": 1204
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\ARTIFACT_EMITTED_DIGEST.json",
+      "sha256": "d3c9782817a8ec4bb4ecdec4aa678b30aee68135ae8741da454e8de1214a89d7",
+      "bytes": 405
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\artifact\\artifact.json",
+      "sha256": "6d0147749362b359969b6113bf3e6a94918dc6df8d19ee1fcc5c208db4724d2f",
+      "bytes": 3128946
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\ARTIFACT_QUALIFICATION.json",
+      "sha256": "a72584816c9254aa8290690726f695a06a20118f4d2fab4be35cc02581d1259a",
+      "bytes": 1430
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\build-private\\full-artifact-verify.private.log",
+      "sha256": "553a996ea163cef472b7a3383f749c74fff911fc197090ee2396bda6dd3e2c3b",
+      "bytes": 307
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\full-artifact-verify.execution.json",
+      "sha256": "2aa20369a465411713370066e3a2b71908868ca06dfab4eea04f817f870c3962",
+      "bytes": 938
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\build-pg-start.execution.json",
+      "sha256": "41e24f07e5b2e4f1cc4402d02d32b9fe1d4e5749d63c88435fd31fb1e7451f94",
+      "bytes": 551
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\build-pg-stop.execution.json",
+      "sha256": "ca2791fa1c9f02f92aa96f38b5196804c20647e1cea6eb8b86d10eab19e441e5",
+      "bytes": 401
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\BUILD_DATABASE_GUARD.json",
+      "sha256": "02d0c1d489154ca6bb69190fbbb23563f5fa30b5a8b3923f3a60e83bab2a47f3",
+      "bytes": 404
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\PRIVATE_ASSET_INPUT_SUPPLEMENT.json",
+      "sha256": "1e75b0443dfe7627fb768712e90ea8799cada4a49c549e49107a80a2e7486e94",
+      "bytes": 2238
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\private-assets-supplement.json.gz",
+      "sha256": "b315b9709f7a423ff6781a8723b8438f373be7d6e1edb80d3b0750a9c461b74c",
+      "bytes": 458771
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\ARTIFACT_SYNTHETIC_CONFIG_EXCLUSION.json",
+      "sha256": "b8b518699b7b100f1e99bdfe89bfd9d342d76b77325dd2287c7afb114fd62255",
+      "bytes": 1195
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\localhost-promotion-refusal-a680917bb3\\actual-npm-cli.execution.json",
+      "sha256": "4ac1586cb9de5547c6a3c670f6b61f6b69a8b60698b0e3eb47c96934d66ce8ba",
+      "bytes": 678
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\localhost-promotion-refusal-a680917bb3\\coverage\\coverage-26480-1794399877007-0.json",
+      "sha256": "619290727b46d9ad30358600059f4c24d6cd42d46bd21868eb13e2e0747ef0e3",
+      "bytes": 251095
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\localhost-promotion-refusal-a680917bb3\\coverage\\coverage-32452-1794399880845-0.json",
+      "sha256": "6438c7cd73ca565d15cef0d1f3192fbc629d6f51206e59f283ad35f8fb29626a",
+      "bytes": 365598
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\localhost-promotion-refusal-a680917bb3\\RESULT.json",
+      "sha256": "3f6e2a0f11825e1974cc9d31dba4f1b41ff392701ed145cbfdca1d0a02077f50",
+      "bytes": 2311
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\localhost-promotion-refusal-a680917bb3\\actual-npm-cli.log",
+      "sha256": "b87f46694e9365e7aded041b903f666be9f366cd8f9f77d2c46f0ed455ceccfb",
+      "bytes": 319
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\localhost-promotion-refusal-a680917bb3\\native-v8-call-evidence.json",
+      "sha256": "e05aefa7c52a782635d71b31da176a876fe7678dccefe928657f9ce231b86517",
+      "bytes": 963
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\LOCALHOST_PROMOTION_REFUSAL.json",
+      "sha256": "cbc8672715595927f7420be89a5e461e6f077383d6a4de4d64f0f15536cb05ad",
+      "bytes": 2508
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\artifact\\runtime\\node_modules\\.prisma\\client\\schema.prisma",
+      "sha256": "f5c698cdcfb6514fcc52f3d8a6709b3eca095017c13b0dc669c5aa6cd9655486",
+      "bytes": 360507
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\artifact\\runtime\\node_modules\\.prisma\\client\\query_engine-windows.dll.node",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\localhost.crt",
+      "sha256": "f34607d2f08199d6923ac0609a9a86acebb17394aab876a0e6bebfb90cd05692",
+      "bytes": 1134
+    },
+    {
+      "path": "C:\\Program Files\\Git\\mingw64\\bin\\openssl.exe",
+      "sha256": "9c677536ea80e3111fba62784024360e9ea2f1f20391452a6195454ea1fa3faa",
+      "bytes": 1001116
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\APP_READY.json",
+      "sha256": "66beee7758aa86b1b06695736ef6c405b03be42ed0c6249ccf1ad5e05f3a69ce",
+      "bytes": 1124
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\handshake\\9bb128c71c354ce8d3f8bf9ae501c398.request.json",
+      "sha256": "dc79972d49aa6d7ce22eec8d275966db83f6ce435e4faa20ad71a8a65c44905a",
+      "bytes": 77
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\handshake\\9bb128c71c354ce8d3f8bf9ae501c398.response.json",
+      "sha256": "7ec6b63e76c454d1f1d9573f4fbdcf06e2502dca858206e0aa9fd46605e71b79",
+      "bytes": 139
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\handshake\\68035ff34b2e0a563a392490595dfe9d.request.json",
+      "sha256": "85e271928f17996b5a52d2024521f138078c4bcf4a97dd8ac3876660a16f7e36",
+      "bytes": 86
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\handshake\\68035ff34b2e0a563a392490595dfe9d.response.json",
+      "sha256": "57843185e6fe09753e34c209e9e84e7bfd71c951504432526189f72c99b940c4",
+      "bytes": 148
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\handshake\\1aecd7c850626c879b640a34d7b673d3.request.json",
+      "sha256": "1b658998d81e1eae70a382f2d0e481103451619953d4d77b924660d3c55f2727",
+      "bytes": 86
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\handshake\\1aecd7c850626c879b640a34d7b673d3.response.json",
+      "sha256": "94a16418076c6712397a87025065af534906fba04b7e79d130545d3cbdabef7e",
+      "bytes": 148
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\handshake\\28f0ff1e6f821a4d226af57fadac7ab5.request.json",
+      "sha256": "a320e5778d75d434f8e78bfed385fecbc20c6cfd382bb0d4c049480b8225227e",
+      "bytes": 88
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\handshake\\28f0ff1e6f821a4d226af57fadac7ab5.response.json",
+      "sha256": "ed818fe9c5c60dcecb6198ce73ff431afc491389dd2dd462e11170f3eb04b97c",
+      "bytes": 150
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\handshake\\FINISHED.json",
+      "sha256": "4a2296e30a8a6352dafdd8fe5ded53609d9b103239ebb375ffc1c7cb416b275f",
+      "bytes": 198
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\SOURCE_PREPARATION_RESULT.json",
+      "sha256": "e8d3894f32ce62721e7271eea14823c7774f350751dcc272e303bd4a3b12bd09",
+      "bytes": 1903
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\qualify-browser.cjs",
+      "sha256": "8e3c2474381ea1d7841cf8451bd3f710d0a873513e9abc805770211fccb1fff5",
+      "bytes": 28787
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+      "sha256": "d258e512aa24947cfbef0c0033d8c3cd56ecb40f7b2ad59802fa75c4e4f3324d",
+      "bytes": 5073736
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\playwright\\index.js",
+      "sha256": "4e98f65f0a9d9bcab8cffc0c5cfdd87fd3f5b0be74fc494ff166a466b204cd44",
+      "bytes": 648
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\playwright\\package.json",
+      "sha256": "6b840268612656f0639fb7d68782e8353bdf11518589d30ddf66f283c2670ed5",
+      "bytes": 1559
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\browser-895f24c2aa\\retained-original-1440.png",
+      "sha256": "ed8e5522d7ea340eaaeb24dab73f3fe4f694bafd8957bdb2a1170d272a9050cb",
+      "bytes": 1121030
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\browser-895f24c2aa\\retained-original-390.png",
+      "sha256": "9953a8be2eb46bea4deed3213ffcad1e6344fc09c3ca72acbd49cb8e6c42f3f9",
+      "bytes": 792719
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\browser-895f24c2aa\\renewed-password-assurance-1440.png",
+      "sha256": "1f6d22549c6f0cd82ac7ff61dbf8a03cadd52dcd6ef2e8e46886db12b9e9e016",
+      "bytes": 1121238
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\browser-895f24c2aa\\module-denial-1440.png",
+      "sha256": "87aed0ca2c58b1f83d8c0f656c046960dc34899843b47c15536027e683d76625",
+      "bytes": 120607
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\browser-895f24c2aa\\session-denial-1440.png",
+      "sha256": "e4e8d1fe1ae744425373f34bd32f7b563eee2b70fcbf376f58ff89c84628480f",
+      "bytes": 121891
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\browser-895f24c2aa\\5cbdf67e5d881192cb158281dbb5b260.download.json",
+      "sha256": "99f3d6425d2af55eec2d742b90d4787ebf58e484966148fa3414b77c7f5cc1a3",
+      "bytes": 97550
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\browser-895f24c2aa\\91ac8f7ae5fbb8a2dcb7929d9b13d710.download.json",
+      "sha256": "99f3d6425d2af55eec2d742b90d4787ebf58e484966148fa3414b77c7f5cc1a3",
+      "bytes": 97550
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\browser-895f24c2aa\\BINDING.json",
+      "sha256": "5bcf0394b3563ed4226b1fc887c322d5a2535e27f847bbe091e4d8f5284d7e1f",
+      "bytes": 5193
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\browser-895f24c2aa\\RESULT.json",
+      "sha256": "60875252ff7d2332381536ebd656d9aa307416dd9171428f38abbd7e38656f13",
+      "bytes": 20318
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\sealed-runtime-be3da1890d\\IDENTITY.json",
+      "sha256": "7036a8149da7ef58d4871a81feb14fc1851ca2d9e75701dce69296e312d31f9e",
+      "bytes": 284
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\sealed-runtime-be3da1890d\\RESULT.json",
+      "sha256": "23c1b722dcb6a217458aa4274c255fd6b9540584e13c1c11e954f4829469e181",
+      "bytes": 4623
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\sealed-runtime-be3da1890d\\pg-start.execution.json",
+      "sha256": "be1fd385a3cf36317c7416405e1cb2eed3f2cee55d63e705506177ee610ba6a6",
+      "bytes": 1328
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\sealed-runtime-be3da1890d\\pg-stop.execution.json",
+      "sha256": "a1fe001bd642c6e5593666081932e4a1d0de203f3b56e95491529753f5efa448",
+      "bytes": 1197
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\sealed-runtime-be3da1890d\\private-tls.execution.json",
+      "sha256": "88dfa61999571a903802523d59be9058598f2d4c7a24c99a16cb1be15a760ccd",
+      "bytes": 1605
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\RUNTIME_QUALIFICATION.json",
+      "sha256": "23c1b722dcb6a217458aa4274c255fd6b9540584e13c1c11e954f4829469e181",
+      "bytes": 4623
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\private-tls.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\private-tls.stderr.private.log",
+      "sha256": "4f2b6ca69321fadda5e1d831d301894b8f32697dbc8ea219a362368c3fbc9a88",
+      "bytes": 753
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\pg-start.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\pg-start.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\pg-stop.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\pg-stop.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\candidate-validation.cjs",
+      "sha256": "aefb57e436ee6b9d2a00cdfb4c1e97391deff8b57b5eb64111419e1f70faacb7",
+      "bytes": 7184
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\SOURCE_PATH_GUARD_QUALIFICATION.json",
+      "sha256": "5d4fbe52ffe02caddace54c7734136130bf1919fbb835a69a1c9a76f7fbc4838",
+      "bytes": 969
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\artifact-runtime.cjs",
+      "sha256": "3eb50aaebb019bd8d0ddac71c937a9875c50ccbb6c38cd3184cad55feb1f6af9",
+      "bytes": 27099
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\CACHED_ENGINE_INPUTS.json",
+      "sha256": "ef07bc0d343b7a5af5f08e787c005d3bcf80f7f29521444a42990ea81d02aa9b",
+      "bytes": 1281
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\candidate-clone.execution.json",
+      "sha256": "ca06cf0861e2221abbf2e6c1538926bbcc14b568c41772ded26a72823bd97c9f",
+      "bytes": 850
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\candidate-read-tree.execution.json",
+      "sha256": "1ea105ded1e2f86d5eca0df9adc2034378d12606fe2a9a7ed3a3fbcafc78bd62",
+      "bytes": 681
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\CANDIDATE_PRISMA_OFFLINE_ENGINE_OVERRIDES.json",
+      "sha256": "bf80c9924adcd2102a3d86a0fdc672b2fe1fc1b3c17f553567d349a46f8de438",
+      "bytes": 719
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\finalize-qualification.before-r2-npm-admission.cjs",
+      "sha256": "8cc265e3aea5a8f0fc05a3edcdd70862bf3fd4aaf351f87cfcc956e96c3e3c20",
+      "bytes": 58818
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\finalize-qualification.before-workspace-artifact.cjs",
+      "sha256": "f3892ee5250265a33106150ec383670e0684980f33dfb26b15a8df541f91ee0e",
+      "bytes": 59021
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\finalize-qualification.cjs",
+      "sha256": "02a93d05eb192df004aab6e64a6b4d5838bb7f42916fe7b31d065630e6b0dcdd",
+      "bytes": 66169
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\HELPER_COPY_REVIEW.json",
+      "sha256": "054682c81f38db4a6a62cd3364ff6f8656ef2b1550b022a7760eb1c0ece6435b",
+      "bytes": 3877
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\localhost-promotion-refusal.cjs",
+      "sha256": "5b0c0b59cf48f70c6b1a8f3fc8c4c47f4462ca8bc89de8ad405839ed49f81968",
+      "bytes": 12966
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\prepare-candidate.cjs",
+      "sha256": "f9ae0a2d6a4dd82cb005ced22bd5a8c959c8047720393909a097773a3a81bb1c",
+      "bytes": 14833
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\PRODUCTION_SECRET_PREFLIGHT.json",
+      "sha256": "69452aafba67e24a6fdbffa72054c1910afcb8a6bbb4cff2b9c0209a9322dff2",
+      "bytes": 5331
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\PRODUCTION_SECRET_PREFLIGHT.md",
+      "sha256": "868d6b2012a4a09f72fe9c0e092cf0586cbebd896a5698df9dfdc0151cfea6ea",
+      "bytes": 3876
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\PRODUCTION_SECRET_PREFLIGHT_CONFIG_ISOLATED.md",
+      "sha256": "d02d77492b193d75aa7ef564cf67eacb29d5162b13c038c7322a6fdec2f357df",
+      "bytes": 3876
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\qualify-database.cjs",
+      "sha256": "51192e7a597180ca55eae7d464addcbba79c2100cc9d78c7ad83f610b9f4adfd",
+      "bytes": 29235
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\qualify-source-paths.cjs",
+      "sha256": "9cc76dd3781e5fc3d53ec67971de5d87b029733e36fea7974e691ca4939df3ec",
+      "bytes": 3898
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\qualify-unit.cjs",
+      "sha256": "0d2497467b8f4728924ad36bc7c197e87ae7bbbc1d95a6f358c6970f7c24e7ff",
+      "bytes": 5862
+    }
+  ],
+  "credentialsAndBrowserFailureDiagnosticsExcluded": true,
+  "runnerSha256": "02a93d05eb192df004aab6e64a6b4d5838bb7f42916fe7b31d065630e6b0dcdd",
+  "redirectRegression": {
+    "mockedPassingTests": 35,
+    "mockedSuites": 2,
+    "expectedFailingBeforeFix": 9,
+    "beforePassesNotAddedToQualifiedCounts": true,
+    "sourceMatchesFrozenCandidate": true,
+    "qualification": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\REDIRECT_REGRESSION_QUALIFICATION.json",
+      "sha256": "cfc65f93199d359896ff1798840acc6cdc41fcd270b1b256ae204c73780ee02f",
+      "bytes": 6999
+    }
+  },
+  "storage": {
+    "artifact": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\artifact",
+    "temporaryDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\build-private\\temp",
+    "artifactOnOwnedWorkspaceVolume": true,
+    "combinedReserveBytes": 9663676416,
+    "review": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\BUILD_STORAGE_REVIEW.json",
+      "sha256": "38aa19c77b4c3996df208bdce7d50c48ea292a0877f13924121f566b72fc774a",
+      "bytes": 3244
+    }
+  }
+}

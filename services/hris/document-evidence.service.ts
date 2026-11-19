@@ -1,3 +1,4 @@
+import { lockHrisReviewContractInTx } from "./review-lock.service"
 import "server-only"
 
 import { PayrollContractStatus, Prisma } from "@prisma/client"
@@ -203,6 +204,7 @@ export async function requestHrisContractDocumentEvidence(
   await resolveHrisPeopleAccessScope(parsed, client)
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewContractInTx(tx, parsed.organizationId, parsed.contractId, parsed.employeeId)
     const contract = await findContract(tx, parsed)
     if (contract.status !== PayrollContractStatus.DRAFT) {
       throw new BusinessRuleError("Signed document evidence can only be replaced while a contract is draft.")
@@ -210,17 +212,29 @@ export async function requestHrisContractDocumentEvidence(
     if (contract.signedDocumentHash) {
       throw new ConflictError("Contract already has approved signed document evidence.")
     }
+    const requestFacts = {
+      capturedById: parsed.actorId,
+      artifactHash: parsed.artifactHash,
+      malwareScanEvidenceHash: parsed.malwareScanEvidenceHash,
+      malwareScanProvider: parsed.malwareScanProvider,
+      malwareScannedAt: parsed.malwareScannedAt.toISOString(),
+      signedAt: parsed.signedAt.toISOString(),
+      retentionPolicyCode: parsed.retentionPolicyCode,
+      retentionBasis: parsed.retentionBasis,
+      retainUntil: parsed.retainUntil.toISOString(),
+      legalHold: parsed.legalHold,
+      legalHoldReasonHash: parsed.legalHoldReason
+        ? `sha256:${hashBusinessPayload({ reason: parsed.legalHoldReason })}`
+        : null,
+    }
     const openRequest = pendingEvidence(contract.metadata)
     if (openRequest) {
-      if (openRequest.capturedById === parsed.actorId && openRequest.artifactHash === parsed.artifactHash) {
+      if (Object.entries(requestFacts).every(([key, value]) => openRequest[key as keyof typeof requestFacts] === value)) {
         return { contractId: contract.id, status: "PENDING_REVIEW" as const, requestId: openRequest.requestId }
       }
       throw new ConflictError("Contract already has document evidence pending review.")
     }
 
-    const reasonHash = parsed.legalHoldReason
-      ? `sha256:${hashBusinessPayload({ reason: parsed.legalHoldReason })}`
-      : null
     const eventId = await recordEvidenceEvent(tx, {
       organizationId: parsed.organizationId,
       actorId: parsed.actorId,
@@ -238,19 +252,9 @@ export async function requestHrisContractDocumentEvidence(
       },
     })
     const pending = {
+      ...requestFacts,
       requestId: eventId,
-      capturedById: parsed.actorId,
       capturedAt: new Date().toISOString(),
-      artifactHash: parsed.artifactHash,
-      malwareScanEvidenceHash: parsed.malwareScanEvidenceHash,
-      malwareScanProvider: parsed.malwareScanProvider,
-      malwareScannedAt: parsed.malwareScannedAt.toISOString(),
-      signedAt: parsed.signedAt.toISOString(),
-      retentionPolicyCode: parsed.retentionPolicyCode,
-      retentionBasis: parsed.retentionBasis,
-      retainUntil: parsed.retainUntil.toISOString(),
-      legalHold: parsed.legalHold,
-      legalHoldReasonHash: reasonHash,
     }
     await tx.payrollContract.update({
       where: { id: contract.id, organizationId: parsed.organizationId },
@@ -287,6 +291,7 @@ export async function approveHrisContractDocumentEvidence(
   await resolveHrisPeopleAccessScope(parsed, client)
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewContractInTx(tx, parsed.organizationId, parsed.contractId, parsed.employeeId)
     const contract = await findContract(tx, parsed)
     const pending = pendingEvidence(contract.metadata)
     if (!pending) throw new NotFoundError("Pending HRIS contract document evidence was not found.")

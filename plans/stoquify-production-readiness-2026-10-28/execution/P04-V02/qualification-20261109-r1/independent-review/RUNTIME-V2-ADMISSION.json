@@ -1,0 +1,42 @@
+{
+  "at": "2026-11-09T16:50:09.109Z",
+  "reviewer": "/root/v02_review",
+  "verdict": "admitted_successor_recipes_only",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "priorReceipt": "RUNTIME-RECIPE-ADMISSION.json",
+  "unchangedPriorInputsVerified": true,
+  "files": [
+    {
+      "path": "run-runtime.cjs",
+      "sha256": "897868db3191e8f9ec63ff8d52ad6272fcfc6f0f51e8da6a40d7010dba761d8e"
+    },
+    {
+      "path": "database/provider-authority-proof.cjs",
+      "sha256": "2e7828c59f17123fdfc8b3ef80b284a5fe023181147371b9e5559ef1ad652d49"
+    },
+    {
+      "path": "browser/run-auth-transport-v2.cjs",
+      "sha256": "a70e1d5df2fcb24593c250e80a2c0d26a9e77b9840253d7500dfc1f90dfcc255"
+    }
+  ],
+  "changes": [
+    "Select the versioned116-group auth successor; original91-group harness and admission remain immutable.",
+    "Add current-profile strict ownership/authority-field negatives and four core-provider foreign-Origin negatives.",
+    "Qualify active/revoked/expired HEAD as installed-router unsupported404 with no body/auth headers/state changes, separately from GET authorization.",
+    "Prepare eight private inventory forward-history entries before authority transition; record new response bytes and restored DOM separately.",
+    "Capture read-only current native provider actor, active/nondeleted organization, tenant-scoped nonreserved roles, permissions and active module grants immediately before protocol."
+  ],
+  "safety": "No product changes or new external calls. All prior exact-target, real-session, cache-lifetime, state-effect, private-original protection and cleanup controls remain applicable.",
+  "preconditions": [
+    "Build/artifact and fixture readiness receipts must pass for this candidate before runtime starts.",
+    "Current root and candidate source admission must pass; browser harness fingerprints must match at runtime.",
+    "Use only the exact loopback DB data directory/ports and isolated runtime/environment already reviewed.",
+    "These fingerprints remain frozen; preserve any failed runtime attempt and independently review a changed recipe before rerun."
+  ],
+  "evidenceLimits": [
+    "Admission is not a runtime pass. All116 auth groups,22 baseline groups and23 protocol groups must be reconciled with actual observations.",
+    "Unsupported HEAD is not proof that a GET guard ran.",
+    "Provider preconditions and reviewed source support the managed-only refusal classification; generic500 alone cannot establish the reached branch.",
+    "Absent completed native focus revalidation is incomplete evidence, not an invented push-revocation requirement."
+  ]
+}

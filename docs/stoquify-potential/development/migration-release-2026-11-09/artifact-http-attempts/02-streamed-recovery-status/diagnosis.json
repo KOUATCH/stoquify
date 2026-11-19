@@ -1,0 +1,19 @@
+{
+  "firstAuthDeadlineResolvedByMeasuredBoundedRetry": true,
+  "authWarmupMs": 8432,
+  "wrongPassword401Ms": 22824,
+  "wrongPasswordCreatedNoSession": true,
+  "signIn200SecureCookieMs": 171,
+  "persistedActorOrganizationMatched": true,
+  "protectedSSR200": [
+    "POS",
+    "AR",
+    "trial-balance"
+  ],
+  "realSignoutAndPersistedRevocationPassedBeforeFailedStatusAssertion": true,
+  "failure": "Harness assumed HTTP3xx for revoked-cookie redirect; Next supports HTTP200 streamed recovery metadata. Actual recovery body still requires fresh verification.",
+  "artifactUnchanged": true,
+  "applicationStopped": true,
+  "clusterStopped": true,
+  "sourceEvidence": "Next15 make-get-server-inserted-html emits __next-page-redirect refresh metadata"
+}

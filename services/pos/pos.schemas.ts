@@ -192,6 +192,10 @@ export const refundPOSSaleSchema = z.object({
   sessionId: z.string().min(1, "Session is required"),
   reason: z.string().trim().min(3, "Refund reason is required").max(500),
   notes: z.string().trim().max(500).optional(),
+  reviewedTotal: z.object({
+    amount: z.string().regex(/^\d{1,12}\.\d{2}$/),
+    currency: z.string().regex(/^[A-Z]{3}$/),
+  }).optional(),
 })
 
 export const voidPOSSaleSchema = z.object({

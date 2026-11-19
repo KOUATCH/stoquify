@@ -8,6 +8,7 @@ import { buildInvoiceLinePlans, prepareSupplierInvoice } from "./ap-control.serv
 import { invoicePreparationSourceHash } from "./invoice-source-evidence"
 import { readInvoicePreparationEvidence } from "./invoice-preparation-evidence"
 import { netUninvoicedReceiptReturns } from "./receipt-invoice-capacity"
+import { readAvailableInvoiceCommercialBasis } from "./invoice-commercial-basis"
 import type { InvoicePreparationOutcome } from "./invoice-preparation-contracts"
 import { invoicePreparationAuthority, invoicePreparationScopeSchema, type InvoicePreparationScope } from "./invoice-preparation-authority"
 import { invoicePreparationCommandSchema, invoicePreparationDecisionSchema, invoicePreparationDraftSchema, invoicePreparationQuerySchema, type InvoicePreparationCommand, type InvoicePreparationDraft, type InvoicePreparationPreview, type InvoicePreparationQuery, type InvoicePreparationSources } from "./invoice-preparation-contracts"
@@ -25,11 +26,19 @@ export async function loadInvoicePreparationSources(queryInput: InvoicePreparati
     const organization = await tx.organization.findUniqueOrThrow({ where: { id: scope.organizationId }, select: { currency: true } })
     const suppliers = await tx.supplier.findMany({ where: { organizationId: scope.organizationId, deletedAt: null, isActive: true, name: { contains: query.supplierSearch, mode: "insensitive" }, ...(query.supplierAfter ? { id: { gt: query.supplierAfter } } : {}) }, select: { id: true, name: true }, orderBy: { id: "asc" }, take: 26 })
     if (query.supplierId && !await tx.supplier.findFirst({ where: { id: query.supplierId, organizationId: scope.organizationId, deletedAt: null, isActive: true }, select: { id: true } })) throw new NotFoundError("Supplier is unavailable.")
-    const rows = query.supplierId ? await tx.goodsReceiptLine.findMany({ where: { ...eligibleReceipts(scope.organizationId, query.supplierId), ...(query.receiptAfter ? { id: { gt: query.receiptAfter } } : {}) }, include: { goodsReceipt: { select: { receiptNumber: true } }, purchaseOrderLine: { select: { purchaseOrder: { select: { orderNumber: true } } } }, item: { select: { nameEn: true, nameFr: true } } }, orderBy: { id: "asc" }, take: 51 }) : []
+    const rows = query.supplierId ? await tx.goodsReceiptLine.findMany({ where: { ...eligibleReceipts(scope.organizationId, query.supplierId), ...(query.receiptAfter ? { id: { gt: query.receiptAfter } } : {}) }, include: { goodsReceipt: { select: { receiptNumber: true } }, purchaseOrderLine: { select: { taxRate: true, purchaseOrder: { select: { orderNumber: true } } } }, item: { select: { nameEn: true, nameFr: true } } }, orderBy: { id: "asc" }, take: 51 }) : []
     const invoiced = rows.length ? await tx.supplierInvoiceLine.groupBy({ by: ["goodsReceiptLineId"], where: { organizationId: scope.organizationId, goodsReceiptLineId: { in: rows.map(row => row.id) }, supplierInvoice: { organizationId: scope.organizationId, deletedAt: null, status: { not: "CANCELLED" } } }, _sum: { quantity: true } }) : []
     const returned = query.supplierId ? await netUninvoicedReceiptReturns(tx, { organizationId: scope.organizationId, supplierId: query.supplierId, lines: rows }) : new Map<string, Prisma.Decimal>()
     const used = new Map(invoiced.map(row => [row.goodsReceiptLineId, row._sum.quantity ?? new Prisma.Decimal(0)]))
-    return { organizationId: scope.organizationId, actorId: scope.actorId, currency: organization.currency, checkedAt: new Date().toISOString(), suppliers: suppliers.slice(0, 25), supplierNext: suppliers.length > 25 ? suppliers[24].id : null, receipts: rows.slice(0, 50).map(row => ({ id: row.id, receiptNumber: row.goodsReceipt.receiptNumber, orderNumber: row.purchaseOrderLine.purchaseOrder.orderNumber, description: row.item.nameEn, descriptionFr: row.item.nameFr || row.item.nameEn, available: Prisma.Decimal.max(0, row.receivedQuantity.minus(used.get(row.id) ?? 0).minus(returned.get(row.id) ?? 0)).toString(), unitCost: row.unitCost.toFixed(2) })), receiptNext: rows.length > 50 ? rows[49].id : null }
+    const receipts = await Promise.all(rows.slice(0, 50).map(async row => {
+      const invoicedQuantity = used.get(row.id) ?? new Prisma.Decimal(0), returnedQuantity = returned.get(row.id) ?? new Prisma.Decimal(0)
+      const available = Prisma.Decimal.max(0, row.receivedQuantity.minus(invoicedQuantity).minus(returnedQuantity))
+      const commercialBasis = available.gt(0) ? await readAvailableInvoiceCommercialBasis(tx, row, scope.organizationId, invoicedQuantity, returnedQuantity) : undefined
+      return { id: row.id, receiptNumber: row.goodsReceipt.receiptNumber, orderNumber: row.purchaseOrderLine.purchaseOrder.orderNumber,
+        description: row.item.nameEn, descriptionFr: row.item.nameFr || row.item.nameEn, available: available.toString(), unitCost: row.unitCost.toFixed(2),
+        taxRate: commercialBasis?.taxRate ?? row.purchaseOrderLine.taxRate?.toString(), ...(commercialBasis ? { commercialBasis } : {}) }
+    }))
+    return { organizationId: scope.organizationId, actorId: scope.actorId, currency: organization.currency, checkedAt: new Date().toISOString(), suppliers: suppliers.slice(0, 25), supplierNext: suppliers.length > 25 ? suppliers[24].id : null, receipts, receiptNext: rows.length > 50 ? rows[49].id : null }
   }, { timeout: 15000 })
 }
 
@@ -48,9 +57,11 @@ async function plan(tx: Prisma.TransactionClient, draft: InvoicePreparationDraft
   await tx.$queryRaw`SELECT id FROM accounting_periods WHERE id = ${periodBeforeLock.id} AND "organizationId" = ${scope.organizationId} FOR SHARE`
   const period = await getOpenPeriodForDate(scope.organizationId, documentDate, tx)
   const subtotal = lines.reduce((sum, line) => sum.plus(line.lineSubtotal), new Prisma.Decimal(0)), tax = lines.reduce((sum, line) => sum.plus(line.taxAmount), new Prisma.Decimal(0))
-  const total = subtotal.plus(tax), variance = lines.reduce((sum, line) => sum.plus(line.priceVariance.abs()), new Prisma.Decimal(0))
+  const total = subtotal.plus(tax), variance = lines.reduce((sum, line) => sum.plus(line.matchVariance), new Prisma.Decimal(0))
   if (total.lte(0)) throw new BusinessRuleError("Supplier invoice total must be greater than zero.")
-  const rows = lines.map(line => ({ id: line.goodsReceiptLineId, available: line.availableQuantity.toString(), quantity: line.quantity.toString(), total: line.lineTotal.toFixed(2), variance: line.priceVariance.toFixed(2) }))
+  const rows = lines.map(line => ({ id: line.goodsReceiptLineId, available: line.availableQuantity.toString(), quantity: line.quantity.toString(), total: line.lineTotal.toFixed(2), variance: line.priceVariance.toFixed(2),
+    ...(line.commercial ? { discountVariance: line.discountVariance.toFixed(2), freightVariance: line.freightVariance.toFixed(2), taxVariance: line.taxVariance.toFixed(2), commercialBasis: line.commercial.expected } : {}),
+  }))
   const revision = hashBusinessPayload({ version: 1, draft, rows, supplierName: supplier.name, currency: organization.currency, periodId: period.id, subtotal: subtotal.toFixed(2), tax: tax.toFixed(2), total: total.toFixed(2) })
   return { organizationId: scope.organizationId, actorId: scope.actorId, draft, revision, checkedAt: new Date().toISOString(), supplierName: supplier.name, subtotal: subtotal.toFixed(2), tax: tax.toFixed(2), total: total.toFixed(2), variance: variance.toFixed(2), lines: rows }
 }

@@ -23,6 +23,7 @@ import {
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
 import { resolveHrisPeopleAccessScope } from "@/services/hris/org.service"
+import { lockOperationalEmployeeInTx } from "./attendance-correction"
 import {
   hrisTimeLeaveAttendanceCertificationSchema,
   hrisTimeLeaveEvidenceSchema,
@@ -272,7 +273,7 @@ function validateCertificationForPeriod(
   })
 }
 
-function snapshotReadModel(snapshot: {
+export function snapshotReadModel(snapshot: {
   id: string
   status: PayrollAttendanceSnapshotStatus
   periodStart: Date
@@ -400,6 +401,7 @@ export async function correctCertifiedHrisTimeLeaveAttendance(
   )
 
   const result = await inTransaction(client, async (tx) => {
+    await lockOperationalEmployeeInTx(tx, parsed.organizationId, parsed.employeeId)
     const period = await loadOpenPayrollPeriod(tx, parsed)
     const certification = validateCertificationForPeriod(
       buildCertification(parsed),
@@ -411,7 +413,7 @@ export async function correctCertifiedHrisTimeLeaveAttendance(
         organizationId: parsed.organizationId,
         payrollPeriodId: parsed.payrollPeriodId,
         employeeId: parsed.employeeId,
-        status: PayrollAttendanceSnapshotStatus.FROZEN,
+        status: { in: [PayrollAttendanceSnapshotStatus.FROZEN, PayrollAttendanceSnapshotStatus.SUPERSEDED] },
       },
     })
     if (!original) {
@@ -446,7 +448,6 @@ export async function correctCertifiedHrisTimeLeaveAttendance(
         employeeId: parsed.employeeId,
         payrollPeriodId: parsed.payrollPeriodId,
         correctedFromId: original.id,
-        status: PayrollAttendanceSnapshotStatus.FROZEN,
       },
     })
     if (existing) {
@@ -460,6 +461,10 @@ export async function correctCertifiedHrisTimeLeaveAttendance(
         created: false,
         businessEventId: null,
       }
+    }
+
+    if (original.status !== PayrollAttendanceSnapshotStatus.FROZEN) {
+      throw new ConflictError("HRIS_TIME_CORRECTION_REVISION_STALE: The original snapshot has already been superseded.")
     }
 
     const sealedRun = await tx.payrollRun.findFirst({

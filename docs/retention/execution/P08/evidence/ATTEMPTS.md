@@ -1,0 +1,15 @@
+# P08 execution attempts
+
+All successful and failed results remain in this packet. Overlapping runs are not summed.
+
+1. `unit-1792342297962`: exit 1. Seven suites / 181 checks passed; two dashboard suites did not load because the scoped harness omitted the `next-intl/routing` ESM boundary mock already used by the route tests. Added `ui.setup.cjs` to the owned configuration. No production workaround.
+2. `unit-1792342495539`: exit 0, 201 checks / nine suites. First full green result.
+3. `unit-1792342730047`: exit 1, 200 passed / one failed. The unchanged POS component test “requires a fresh review after losing register ownership” timed out looking for `recovery.reviewCurrent` while browser/application verification was also active. Manager regressions passed. This is retained as a failed run; concurrent load is a possible explanation, not proof of cause. A subsequent isolated run is required for final acceptance.
+4. `BROWSER_RECOVERY.json`: exit 0, five actual cashier checks. Original operation and economic snapshot retained through deliberately lost post-commit response; exact captured pending bytes restored for French, then keyboard acknowledgement clears the confirmed request. Mobile screenshot captures checking; trace/result carries the completed acknowledgement evidence. No external payment-provider claim.
+5. `manager-1792342924972.json`: exit 1 after English source/empty/error/recovery and French source-row checks. The French destination assertion expected `nameFr`, but the actual inventory source list rendered the same exact item's `nameEn`. Failure body, screenshot, trace and the first run's screenshots in `manager-attempt-1792342924972/` are retained. The rerun checks SKU plus the canonical item-ID link and records the displayed name. No source behavior or access guard was weakened.
+6. `manager-1792343331471.json`: exit 0, both languages complete, including source/item identity, empty, failed-read/keyboard recovery and denied-role checks. All source injections restored.
+7. `unit-1792343498866`: final exit 0, **201 passed / nine suites / zero failed or skipped**, 158.429 seconds reported by Jest. Executed after the owned app/browser work stopped; the earlier timeout case passed without changing the POS component or its test. No performance conclusion is inferred from that comparison.
+
+The inventory source contract currently maps `name` from `nameEn` (`services/item/item.service.ts`), including on the French list. The browser destination check must identify the exact fixture by SKU and item-ID link rather than assume `nameFr` is rendered. This existing source-view localization limitation is outside the owned digest presentation. The French digest wording and next step are separately verified; no platform-wide French completeness claim is made.
+
+Intentional source-read failure produces the Next development “1 Issue” badge in later screenshots. Restored reads and the runner's cleanup flag are checked separately. Source-missing diagnostics are retained; the badge is not silently removed to improve evidence.

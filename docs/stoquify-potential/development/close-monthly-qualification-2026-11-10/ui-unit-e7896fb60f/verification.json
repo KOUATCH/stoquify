@@ -1,0 +1,38 @@
+{
+  "started": "2026-11-10T14:54:57.543Z",
+  "finished": "2026-11-10T14:55:04.328Z",
+  "args": [
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\ui-unit-e7896fb60f\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--runTestsByPath",
+    "services/accounting/__tests__/customer-settlement-workbench.service.test.ts",
+    "actions/finance/__tests__/customer-settlement.actions.test.ts",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\ui-unit-e7896fb60f\\results.json"
+  ],
+  "exitCode": 0,
+  "error": null,
+  "passed": true,
+  "passedTests": 76,
+  "failedTests": 0,
+  "skipped": 0,
+  "unchangedInputs": true,
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\ui-unit-e7896fb60f",
+  "suiteHashes": {
+    "services/accounting/__tests__/customer-settlement-workbench.service.test.ts": "e84010ab07370e4a71a6252a7e2a4953d312deaa66ab8922c206c247c912831a",
+    "actions/finance/__tests__/customer-settlement.actions.test.ts": "0a716b4d8241ce3d2ef36dd44fc8cbd0bf5517d36eb8e307b4514ec65795876f",
+    "services/accounting/customer-settlement-workbench.service.ts": "0864bde250c783471fd5ea4345f4772b76b0e2808b80876e2b161b53eb91eefc",
+    "actions/finance/customer-settlement.actions.ts": "fbaebb725ed973fe80a5b1d3765f9dd2c6252e405455b633534569840eee6d5b",
+    "components/finance/CustomerSettlementControls.tsx": "c9b32fae6645a32bb72f8d2f3ce4929220d2e545bacb46fe3f943b680f0d585d",
+    "services/accounting/customer-settlement.schemas.ts": "e4938b2a6a708b1c919aed309cc7436ef2e0bbd3d2f2e66ce0b404ea89957daa",
+    "scripts/local-gates-network.cjs": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e",
+    "package-lock.json": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+  },
+  "runnerSha256": "4c08b33b86312a29f95d012675494faf8b23fafe8201276ca29875eadf85382d",
+  "configSha256": "385e1bcc57777f0939720e6569bd1a081f1796254a18279634816c6a4a2f3838",
+  "evidenceClass": "Mocked unit / protect adapter boundaries; no PostgreSQL/browser"
+}

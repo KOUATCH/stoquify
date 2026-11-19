@@ -1,0 +1,84 @@
+{
+  "reviewedAt": "2026-11-03T17:43:37.0646342Z",
+  "reviewer": "r01_independent_review",
+  "verdict": "accepted_final_caller_unit_static_evidence",
+  "passed": true,
+  "candidate": "p04-r01-20261103-e7ff3b08d605",
+  "candidateIdentityRecomputed": "e7ff3b08d605aebbd4d74f1381055b72b422ba9f9de723fdacaf48753df301d4",
+  "tests": 454,
+  "suites": 17,
+  "failed": 0,
+  "skipped": 0,
+  "sourceInputs": 110,
+  "changedInputs": [],
+  "ownedFileMatches": 32,
+  "archivedSourceMatches": 108,
+  "typecheck": {
+    "productEntries": 18,
+    "noEmit": true,
+    "incremental": false,
+    "exitCode": 0
+  },
+  "lint": {
+    "files": 32,
+    "errors": 0,
+    "warnings": 0
+  },
+  "reconciliationErrors": [],
+  "evidenceClass": "isolated mocked/pure/action unit plus scoped static checks; no database or HTTP/browser proof",
+  "limitations": [
+    "Final fresh native retry02 pending",
+    "Supersedes initial 17-product scoped evidence; missed delivery-issues caller is now explicitly included",
+    "No whole-checkout, production census or release acceptance"
+  ],
+  "receipts": [
+    {
+      "path": "unit/attempt08/result.json",
+      "sha256": "3472ac71a6f0e4ffad8efdeed5171fe7116d8372a6d30d482ce22616b028b5fa"
+    },
+    {
+      "path": "unit/attempt08/jest.json",
+      "sha256": "f15e276b0e265b5b51368c85b15aeef5ff214cf8c11f23f4801aa5135feff12c"
+    },
+    {
+      "path": "unit/typecheck03/result.json",
+      "sha256": "85e37875279503150209781082e35dfa2567489b2d1580cb87e76e1812143d92"
+    },
+    {
+      "path": "unit/tsconfig.json",
+      "sha256": "a6c34be7b1c184a609d7338364bb38f8fc9d135c906929504922531fed522da5"
+    },
+    {
+      "path": "unit/lint02/result.json",
+      "sha256": "a5782074bda6e9024b4b24c5f6ce7dbe1a0b1c7916d814bc649220e120d3fbd0"
+    },
+    {
+      "path": "unit/run.cjs",
+      "sha256": "c26eafc60999f4a1d3acd34799e24209c37e59135126f2e2a80779674d1adca7"
+    },
+    {
+      "path": "unit/guard.cjs",
+      "sha256": "b850302d73df93faec3141541430664a5a7f752c720f8f9aec375cc84076e4dc"
+    },
+    {
+      "path": "unit/jest.config.cjs",
+      "sha256": "df9d93ed6ed4c4e154949a4ff78627f68b934663384a597d87ff036a388fbbf5"
+    },
+    {
+      "path": "owned-source.json",
+      "sha256": "7709316fe710224a11fffa684620c7a2ba7bf2136985817d5e9d9b3e8923d18c"
+    },
+    {
+      "path": "candidate.json",
+      "sha256": "8182b33d086e99e9d55546f470b6854cc32b2cd3e71125f2bbef173eecd4689b"
+    },
+    {
+      "path": "source-before.json",
+      "sha256": "068bb8e10d8e5397c60d50aefde03336fc6f53cfc6da302fb851e16b170af015"
+    },
+    {
+      "path": "source-before-supplement.json",
+      "sha256": "91d54f56ed7a279c3ddce259b6ae9e713cb9879e3c3ad719d7701478243f671f"
+    }
+  ]
+}

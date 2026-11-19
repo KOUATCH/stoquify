@@ -1,0 +1,2 @@
+const fs=require('node:fs'),path=require('node:path'),sharp=require('sharp');
+(async()=>{const root=path.join(__dirname,'browser'),out=path.join(__dirname,'visual-crops');fs.mkdirSync(out,{recursive:true});for(const name of fs.readdirSync(root).filter(n=>n.endsWith('.png'))){const file=path.join(root,name),m=await sharp(file).metadata(),height=Math.min(m.height,m.width<600?1600:1000);await sharp(file).extract({left:0,top:0,width:m.width,height}).toFile(path.join(out,name));}})().catch(e=>{console.error(e);process.exitCode=1});

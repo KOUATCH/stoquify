@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 import { FreshAuthRequiredError, requireFreshAuth } from "@/lib/security/auth-session"
 import { RbacError, requirePermission } from "@/lib/security/rbac"
@@ -55,7 +56,7 @@ jest.mock("@/lib/security/auth-session", () => {
 })
 
 jest.mock("@/lib/logger", () => ({
-  logger: { error: jest.fn() },
+  logger: { error: jest.fn(), warn: jest.fn() },
 }))
 
 jest.mock("@/services/modules/module-entitlement.service", () => ({
@@ -93,8 +94,9 @@ function rbacContext(userId = "actor-1", permissions = ["hris.people.read"]) {
 describe("HRIS employee actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(observeModuleAccess as jest.Mock).mockResolvedValue({ allowed: true })
     mockRequireFreshAuth.mockResolvedValue({
-      claims: { lastAuthAt: "2026-07-14T00:00:00.000Z" },
+      claims: { userId: "hr-admin-1", tenantId: "org-1", lastAuthAt: "2026-07-14T00:00:00.000Z" },
     })
     mockGetDirectory.mockResolvedValue({
       organizationId: "org-1",
@@ -122,6 +124,7 @@ describe("HRIS employee actions", () => {
       employeeId: "other-employee",
       userId: "other-user",
       limit: 25,
+      page: 1, search: "", department: "",
     })
 
     expect(result.success).toBe(true)
@@ -134,6 +137,7 @@ describe("HRIS employee actions", () => {
       actorId: "reader-1",
       actorPermissions: ["hris.people.read"],
       limit: 25,
+      page: 1, search: "", department: "",
     })
     expect(mockGetDirectory.mock.calls[0][0]).not.toHaveProperty("employeeId")
     expect(mockGetDirectory.mock.calls[0][0]).not.toHaveProperty("userId")

@@ -1,0 +1,415 @@
+import { confirmPaymentRequestApproval } from "@/services/purchasing/payment-request.service"
+import { confirmPaymentRelease } from "@/services/purchasing/payment-release.service"
+jest.mock("@/services/purchasing/payment-release.service", () => ({ confirmPaymentRelease: jest.fn() }))
+jest.mock("@/services/purchasing/payment-request.service", () => ({ confirmPaymentRequestApproval: jest.fn() }))
+import { revalidatePath } from "next/cache"
+
+import { requireFreshAuth, FreshAuthRequiredError } from "@/lib/security/auth-session"
+import { requirePermission, RbacError } from "@/lib/security/rbac"
+import {
+  approveSupplierBankChangeWithControls,
+  approveSupplierInvoice,
+  approveSupplierPaymentWithControls,
+  getAPWorkbenchData,
+  prepareSupplierInvoice,
+  releaseSupplierPaymentWithControls,
+  requestSupplierInvoiceMatchException,
+  requestSupplierBankChange,
+  reviewSupplierInvoiceMatchException,
+} from "@/services/purchasing/ap-control.service"
+
+import {
+  approveSupplierBankChangeAction,
+  approveSupplierPaymentAction,
+  getAPWorkbenchAction,
+  postSupplierInvoiceAction,
+  prepareSupplierInvoiceAction,
+  releaseSupplierPaymentAction,
+  requestSupplierInvoiceMatchExceptionAction,
+  requestSupplierBankChangeAction,
+  reviewSupplierInvoiceMatchExceptionAction,
+} from "../ap-control.actions"
+
+jest.mock("next/cache", () => ({
+  revalidatePath: jest.fn(),
+}))
+
+jest.mock("@/lib/security/rbac", () => {
+  class MockRbacError extends Error {
+    constructor(
+      message: string,
+      public readonly code: "UNAUTHENTICATED" | "NO_ACTIVE_ORG" | "FORBIDDEN",
+      public readonly status: 401 | 403,
+    ) {
+      super(message)
+      this.name = "RbacError"
+    }
+  }
+
+  return {
+    RbacError: MockRbacError,
+    isRbacError: (error: unknown) => error instanceof MockRbacError,
+    requirePermission: jest.fn(),
+  }
+})
+
+jest.mock("@/lib/security/auth-session", () => {
+  class MockFreshAuthRequiredError extends Error {
+    constructor(message = "Fresh authentication required") {
+      super(message)
+      this.name = "FreshAuthRequiredError"
+    }
+  }
+
+  return {
+    FreshAuthRequiredError: MockFreshAuthRequiredError,
+    requireFreshAuth: jest.fn(),
+  }
+})
+
+jest.mock("@/lib/logger", () => ({
+  logger: {
+    error: jest.fn(),
+  },
+}))
+
+jest.mock("@/services/purchasing/ap-control.service", () => ({
+  approveSupplierBankChangeWithControls: jest.fn(),
+  approveSupplierInvoice: jest.fn(),
+  approveSupplierPaymentWithControls: jest.fn(),
+  getAPWorkbenchData: jest.fn(),
+  prepareSupplierInvoice: jest.fn(),
+  releaseSupplierPaymentWithControls: jest.fn(),
+  requestSupplierInvoiceMatchException: jest.fn(),
+  requestSupplierBankChange: jest.fn(),
+  reviewSupplierInvoiceMatchException: jest.fn(),
+}))
+
+const mockRequirePermission = requirePermission as jest.Mock
+const mockRequireFreshAuth = requireFreshAuth as jest.Mock
+const mockPrepareSupplierInvoice = prepareSupplierInvoice as jest.Mock
+const mockApproveSupplierInvoice = approveSupplierInvoice as jest.Mock
+const mockRequestSupplierInvoiceMatchException = requestSupplierInvoiceMatchException as jest.Mock
+const mockReviewSupplierInvoiceMatchException = reviewSupplierInvoiceMatchException as jest.Mock
+const mockRequestSupplierBankChange = requestSupplierBankChange as jest.Mock
+const mockApproveSupplierBankChangeWithControls = approveSupplierBankChangeWithControls as jest.Mock
+const mockApproveSupplierPaymentWithControls = approveSupplierPaymentWithControls as jest.Mock
+const mockReleaseSupplierPaymentWithControls = releaseSupplierPaymentWithControls as jest.Mock
+const mockGetAPWorkbenchData = getAPWorkbenchData as jest.Mock
+const mockRevalidatePath = revalidatePath as jest.Mock
+
+function rbacContext(userId = "actor-1", permissions: string[] = []) {
+  return {
+    userId,
+    orgId: "org-1",
+    permissions,
+    roles: [],
+    isSuperUser: false,
+    fetchedAt: Date.now(),
+    source: "better-auth",
+    organizationName: "Demo Org",
+    user: {
+      id: userId,
+      firstName: "Ada",
+      lastName: "Ngono",
+      phone: "",
+      roles: [],
+      permissions,
+      organizationId: "org-1",
+      organizationName: "Demo Org",
+    },
+  }
+}
+
+function invoiceInput() {
+  return {
+    organizationId: "client-org",
+    supplierId: "supplier-1",
+    invoiceNumber: "INV-001",
+    currency: "XAF",
+    approvedById: "client-approver",
+    lines: [
+      {
+        goodsReceiptLineId: "gr-line-1",
+        description: "Farine",
+        quantity: "2.000",
+        unitCost: "1000.00",
+      },
+    ],
+  }
+}
+
+describe("AP control actions", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockRequireFreshAuth.mockResolvedValue({
+      claims: { lastAuthAt: "2026-07-02T12:00:00.000Z" },
+    })
+  })
+
+  it("requires reviewed preparation and never forwards a legacy client command to the writer", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("maker-1", ["purchasing.ap.invoice.post"]))
+    mockPrepareSupplierInvoice.mockResolvedValue({
+      supplierInvoice: { id: "invoice-1", status: "MATCHED" },
+      ledgerStatus: "PENDING_APPROVAL",
+    })
+
+    const result = await prepareSupplierInvoiceAction(invoiceInput())
+
+    expect(result.success).toBe(false)
+    expect(result).toMatchObject({ code: "REVIEW_REQUIRED" })
+    expect(mockRequireFreshAuth).not.toHaveBeenCalled()
+    expect(mockPrepareSupplierInvoice).not.toHaveBeenCalled()
+  })
+
+  it("requires fresh auth but directs legacy posting to a reviewed approval command", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("checker-1", ["purchasing.ap.invoice.post"]))
+    mockApproveSupplierInvoice.mockResolvedValue({
+      supplierInvoice: { id: "invoice-1", status: "POSTED" },
+      ledgerStatus: "POSTED",
+    })
+
+    const result = await postSupplierInvoiceAction({
+      organizationId: "client-org",
+      supplierInvoiceId: "invoice-1",
+      approvedById: "client-approver",
+    })
+
+    expect(result).toEqual(expect.objectContaining({ success: false, code: "REVIEW_REQUIRED" }))
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+    expect(mockApproveSupplierInvoice).not.toHaveBeenCalled()
+    expect(mockRevalidatePath).not.toHaveBeenCalled()
+  })
+
+  it("fails closed before invoice posting when fresh authentication is unavailable", async () => {
+    mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError())
+
+    const result = await postSupplierInvoiceAction({
+      supplierInvoiceId: "invoice-1",
+    })
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        code: "FRESH_AUTH_REQUIRED",
+        status: 403,
+      }),
+    )
+    expect(mockRequirePermission).not.toHaveBeenCalled()
+    expect(mockApproveSupplierInvoice).not.toHaveBeenCalled()
+  })
+
+  it("requires reviewed submission for legacy match-exception requests without effects", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("maker-1", ["purchasing.ap.invoice.post"]))
+    mockRequestSupplierInvoiceMatchException.mockResolvedValue({
+      matchException: { id: "exception-1", status: "OPEN" },
+    })
+
+    const result = await requestSupplierInvoiceMatchExceptionAction({
+      organizationId: "client-org",
+      supplierInvoiceId: "invoice-disputed",
+      requestedById: "client-requester",
+      reason: "Supplier documented a temporary variance.",
+      evidenceReference: "artifact://supplier/variance-proof",
+      expiresAt: "2099-06-30T00:00:00.000Z",
+    })
+
+    expect(result).toMatchObject({ success: false, code: "REVIEW_REQUIRED" })
+    expect(mockRequireFreshAuth).not.toHaveBeenCalled()
+    expect(mockRequestSupplierInvoiceMatchException).not.toHaveBeenCalled()
+  })
+
+  it("denies match-exception review without the dedicated review permission", async () => {
+    mockRequirePermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
+
+    const result = await reviewSupplierInvoiceMatchExceptionAction({
+      matchExceptionId: "exception-1",
+      decision: "APPROVE",
+    })
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        code: "FORBIDDEN",
+        status: 403,
+      }),
+    )
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+    expect(mockRequirePermission).toHaveBeenCalledWith(
+      "purchasing.ap.match.review",
+      expect.objectContaining({ resource: "SupplierInvoiceMatchException" }),
+    )
+    expect(mockReviewSupplierInvoiceMatchException).not.toHaveBeenCalled()
+  })
+
+  it("retains fresh auth but requires reviewed submission for legacy exception decisions", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("checker-1", ["purchasing.ap.match.review"]))
+    mockReviewSupplierInvoiceMatchException.mockResolvedValue({
+      kind: "reviewed",
+      matchException: { id: "exception-1", status: "APPROVED" },
+    })
+
+    const result = await reviewSupplierInvoiceMatchExceptionAction({
+      organizationId: "client-org",
+      matchExceptionId: "exception-1",
+      reviewedById: "client-reviewer",
+      decision: "APPROVE",
+    })
+
+    expect(result).toMatchObject({ success: false, code: "REVIEW_REQUIRED" })
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+    expect(mockReviewSupplierInvoiceMatchException).not.toHaveBeenCalled()
+  })
+
+  it("returns a client-safe RBAC denial for the AP workbench", async () => {
+    mockRequirePermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
+
+    const result = await getAPWorkbenchAction({})
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        data: null,
+        error: "Forbidden",
+        status: 403,
+        code: "FORBIDDEN",
+        retryable: false,
+      }),
+    )
+    expect(result).toHaveProperty("correlationId")
+    expect(mockGetAPWorkbenchData).not.toHaveBeenCalled()
+  })
+
+  it("requires fresh auth before approving supplier bank changes", async () => {
+    mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError())
+
+    const result = await approveSupplierBankChangeAction({
+      changeRequestId: "change-1",
+    })
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        data: null,
+        error: "Fresh authentication required",
+        status: 403,
+        code: "FRESH_AUTH_REQUIRED",
+        retryable: false,
+      }),
+    )
+    expect(result).toHaveProperty("correlationId")
+    expect(mockRequirePermission).not.toHaveBeenCalled()
+    expect(mockApproveSupplierBankChangeWithControls).not.toHaveBeenCalled()
+  })
+
+  it("delegates supplier bank approval to the AP service with trusted actor controls", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("approver-1", ["purchasing.supplier.bank.approve"]))
+    mockApproveSupplierBankChangeWithControls.mockResolvedValue({
+      bankChangeRequest: { id: "change-1" },
+    })
+
+    const result = await approveSupplierBankChangeAction({
+      organizationId: "client-org",
+      changeRequestId: "change-1",
+      approvedById: "client-approver",
+      documentHash: "bank-change-proof-hash",
+    })
+
+    expect(result.success).toBe(true)
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+    expect(mockApproveSupplierBankChangeWithControls).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        changeRequestId: "change-1",
+        approvedById: "approver-1",
+        documentHash: "bank-change-proof-hash",
+      }),
+      expect.objectContaining({
+        organizationId: "org-1",
+        actorId: "approver-1",
+        actorPermissions: ["purchasing.supplier.bank.approve"],
+        lastAuthAt: expect.any(Number),
+      }),
+    )
+    expect(mockApproveSupplierBankChangeWithControls.mock.calls[0][0]).not.toMatchObject({
+      organizationId: "client-org",
+      approvedById: "client-approver",
+    })
+  })
+
+  it("rejects the former approval payload that supplied a requester", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("approver-1", ["purchasing.ap.payment.approve"]))
+    const result = await approveSupplierPaymentAction({supplierId:"supplier-1",requestedById:"other",allocations:[]})
+    expect(result.success).toBe(false)
+    expect(confirmPaymentRequestApproval).not.toHaveBeenCalled()
+    expect(mockApproveSupplierPaymentWithControls).not.toHaveBeenCalled()
+  })
+  it("binds approval to a retained request and the current verified session", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("approver-1", ["purchasing.ap.payment.approve"]))
+    mockRequireFreshAuth.mockResolvedValue({claims:{sessionId:"session-1",sessionToken:"session-token",lastAuthAt:new Date().toISOString()}})
+    ;(confirmPaymentRequestApproval as jest.Mock).mockResolvedValue({paymentRequestId:"p",status:"APPROVED",replayed:false})
+    const command={paymentRequestId:"p",expectedRevision:"a".repeat(64),idempotencyKey:"approval-1"}
+    expect((await approveSupplierPaymentAction(command)).success).toBe(true)
+    expect(confirmPaymentRequestApproval).toHaveBeenCalledWith(command,{organizationId:"org-1",actorId:"approver-1",sessionId:"session-1",sessionToken:"session-token"})
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+  })
+
+  it("rejects the former release payload rather than inventing execution evidence", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("treasury-1", ["purchasing.ap.payment.release"]))
+    mockReleaseSupplierPaymentWithControls.mockResolvedValue({
+      supplierPayment: { id: "payment-1" },
+      ledgerStatus: "BLOCKED_PENDING_RULES",
+    })
+
+    const result = await releaseSupplierPaymentAction({
+      organizationId: "client-org",
+      supplierPaymentId: "payment-approval-1",
+      supplierId: "client-supplier",
+      requestedById: "client-requester",
+      approvedById: "client-approver",
+      releasedById: "client-release",
+      paymentDate: "2026-07-02T12:30:00.000Z",
+      documentHash: "payment-document-hash",
+      evidenceHash: "payment-evidence-hash",
+      allocations: [{ supplierInvoiceId: "invoice-1", amount: "1500.00" }],
+      idempotencyKey: "supplier-payment-release-1",
+    })
+
+    expect(result.success).toBe(false)
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+    expect(mockReleaseSupplierPaymentWithControls).not.toHaveBeenCalled()
+    expect(confirmPaymentRelease).not.toHaveBeenCalled()
+  })
+  it("records execution using the authenticated session and reviewed strict command", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("treasury-1", ["purchasing.ap.payment.release"]))
+    mockRequireFreshAuth.mockResolvedValue({claims:{sessionId:"session-1",sessionToken:"token-1"}})
+    ;(confirmPaymentRelease as jest.Mock).mockResolvedValue({paymentRequestId:"p",status:"RELEASED",replayed:false})
+    const command={draft:{paymentRequestId:"p",executionReference:"BANK/TXN-1",executedAt:"2026-09-08T12:00:00Z",evidenceUri:"https://example.invalid/record",evidenceSha256:"a".repeat(64)},expectedRevision:"b".repeat(64),idempotencyKey:"record-1"}
+    expect((await releaseSupplierPaymentAction(command)).success).toBe(true)
+    expect(confirmPaymentRelease).toHaveBeenCalledWith(command,{organizationId:"org-1",actorId:"treasury-1",sessionId:"session-1",sessionToken:"token-1"})
+    expect(mockReleaseSupplierPaymentWithControls).not.toHaveBeenCalled()
+  })
+  it("injects the requester ID for supplier bank change requests", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("requester-1", ["purchasing.supplier.bank.request"]))
+    mockRequestSupplierBankChange.mockResolvedValue({
+      bankChangeRequest: { id: "change-1" },
+    })
+
+    const result = await requestSupplierBankChangeAction({
+      organizationId: "client-org",
+      supplierId: "supplier-1",
+      requestedById: "client-user",
+      mobileMoneyProvider: "MTN",
+      mobileMoneyPhone: "+237699000000",
+    })
+
+    expect(result.success).toBe(true)
+    expect(mockRequestSupplierBankChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        requestedById: "requester-1",
+        supplierId: "supplier-1",
+      }),
+    )
+  })
+})

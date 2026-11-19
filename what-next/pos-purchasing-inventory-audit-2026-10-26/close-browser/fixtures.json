@@ -1,0 +1,87 @@
+{
+  "database": "stoquify_pos_audit_20261026_d30f",
+  "fixtures": [
+    {
+      "locale": "en",
+      "organizationId": "org-full-pos-89d4d45b-b43b-499b-9e59-42efab8e7f73",
+      "periodId": "cmvpm0rcu0005ma54h163n2is",
+      "actors": [
+        {
+          "kind": "preparer",
+          "id": "cmvpm0t5q0011ma54nevkv5bf",
+          "roleId": "cmvpm1gal00aqma54wnjed236",
+          "permissions": [
+            "accounting.close.read",
+            "accounting.close.run",
+            "accounting.close.export",
+            "accounting.close.certify",
+            "accounting.close.accountant.review",
+            "accounting.close.review",
+            "accounting.settings.read",
+            "accounting.period.close",
+            "accounting.period.reopen",
+            "accounting.dashboard.read"
+          ]
+        },
+        {
+          "kind": "reviewer",
+          "id": "cmvpm1d3800a6ma5408rp0k7s",
+          "roleId": "cmvpm1gre00asma54doxhl3jc",
+          "permissions": [
+            "accounting.close.read",
+            "accounting.close.run",
+            "accounting.close.export",
+            "accounting.close.certify",
+            "accounting.close.accountant.review",
+            "accounting.close.review",
+            "accounting.settings.read",
+            "accounting.period.close",
+            "accounting.period.reopen",
+            "accounting.dashboard.read"
+          ]
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "organizationId": "org-full-pos-865ec0e7-fc29-4d46-95a1-2be0ec099745",
+      "periodId": "cmvpm1krm00boma54lmgmlgw0",
+      "actors": [
+        {
+          "kind": "preparer",
+          "id": "cmvpm1luh00ckma54c4f293t5",
+          "roleId": "cmvpm209i00m9ma54k6jqb3iy",
+          "permissions": [
+            "accounting.close.read",
+            "accounting.close.run",
+            "accounting.close.export",
+            "accounting.close.certify",
+            "accounting.close.accountant.review",
+            "accounting.close.review",
+            "accounting.settings.read",
+            "accounting.period.close",
+            "accounting.period.reopen",
+            "accounting.dashboard.read"
+          ]
+        },
+        {
+          "kind": "reviewer",
+          "id": "cmvpm1y3000lpma54mchg8dqi",
+          "roleId": "cmvpm20ef00mbma544m1jlro2",
+          "permissions": [
+            "accounting.close.read",
+            "accounting.close.run",
+            "accounting.close.export",
+            "accounting.close.certify",
+            "accounting.close.accountant.review",
+            "accounting.close.review",
+            "accounting.settings.read",
+            "accounting.period.close",
+            "accounting.period.reopen",
+            "accounting.dashboard.read"
+          ]
+        }
+      ]
+    }
+  ]
+}

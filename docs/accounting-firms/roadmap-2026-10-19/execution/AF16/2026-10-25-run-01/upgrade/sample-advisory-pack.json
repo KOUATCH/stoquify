@@ -1,0 +1,131 @@
+{
+  "document": {
+    "version": 1,
+    "agreedAt": "2026-10-25T13:41:33.042Z",
+    "periodId": "cmvnvlxol001lmaog8xdwshcr",
+    "narrative": {
+      "actions": [
+        {
+          "kind": "CASH",
+          "dueAt": "2026-11-15T23:59:59.999Z",
+          "title": "Confirm next month cash evidence coverage",
+          "ownerId": "af12-1792935650136-journey-owner"
+        }
+      ],
+      "conclusions": [
+        {
+          "kind": "CASH",
+          "text": "Cash matches the independently approved support."
+        },
+        {
+          "kind": "RECEIVABLES",
+          "text": "Receivable balances match reviewed supporting evidence."
+        }
+      ]
+    },
+    "periodEnd": "2026-09-30T23:59:59.999Z",
+    "agreedById": "af12-1792935650136-journey-owner",
+    "closeRunId": "cmvnvlxuu0027maogjaglfsln",
+    "confidence": "REVIEWED_SUPPORT_NOT_AUDIT_OPINION",
+    "observedAt": "2026-10-25T13:41:20.572Z",
+    "preparedAt": "2026-10-25T13:41:20.946Z",
+    "reviewHash": "sha256:4ee6bebbc06a6a9352167278e63273f52e6e3807c50a846de770ce73dedd1f0b",
+    "reviewedAt": "2026-10-25T13:41:29.839Z",
+    "sourceHash": "sha256:bb4f52f9ec94e7a6dfc8a55816a3de074e43efffeaf6baf07f0c316e6d8ae9ef",
+    "deliveredAt": "2026-10-25T13:41:34.775Z",
+    "limitations": "Historical observations copied from independently reviewed workpapers, by account and currency. No forecast, FX aggregation, audit opinion or close certification. Client agreement confirms the listed actions; delivery means publication in the authenticated client workspace, not email receipt. Recheck current source freshness before relying on a retained export.",
+    "periodStart": "2026-09-01T00:00:00.000Z",
+    "engagementId": "cmvnvlwcf0007maogfn3g022a",
+    "observations": [
+      {
+        "kind": "CASH",
+        "accounts": [
+          {
+            "kind": "CASH",
+            "reason": null,
+            "balances": {
+              "ledger": {
+                "additions": "100.20",
+                "reductions": "0.00",
+                "closingBalance": "100.20",
+                "openingBalance": "0.00"
+              },
+              "schedule": {
+                "additions": "100.20",
+                "reductions": "0.00",
+                "closingBalance": "100.20",
+                "openingBalance": "0.00"
+              },
+              "differences": {
+                "additions": "0.00",
+                "reductions": "0.00",
+                "closingBalance": "0.00",
+                "openingBalance": "0.00"
+              }
+            },
+            "currency": "XAF",
+            "approvedAt": "2026-10-25T13:41:16.797Z",
+            "evidenceId": "cmvnvly370029maogjn91rhzy",
+            "sourceHash": "sha256:51e45107d9af4245f46d4d3da3f6109d3805e6c514868aa3c78f4708cb23d92f",
+            "accountCode": "571",
+            "approvedById": "af12-1792935650136-journey-reviewer",
+            "availability": "RECONCILED",
+            "evidenceHash": "sha256:3e731fe835d2d0c436c2712c9ca9254c75d87b32b91f7aba9709ce6cd776caed",
+            "sourceRevision": "15",
+            "ledgerAccountId": "cmvnvlxpv001pmaoghx3x4jwu"
+          }
+        ],
+        "availability": "RECONCILED"
+      },
+      {
+        "kind": "RECEIVABLES",
+        "accounts": [
+          {
+            "kind": "RECEIVABLES",
+            "reason": null,
+            "balances": {
+              "ledger": {
+                "additions": "200.10",
+                "reductions": "0.00",
+                "closingBalance": "200.10",
+                "openingBalance": "0.00"
+              },
+              "schedule": {
+                "additions": "200.10",
+                "reductions": "0.00",
+                "closingBalance": "200.10",
+                "openingBalance": "0.00"
+              },
+              "differences": {
+                "additions": "0.00",
+                "reductions": "0.00",
+                "closingBalance": "0.00",
+                "openingBalance": "0.00"
+              }
+            },
+            "currency": "XAF",
+            "approvedAt": "2026-10-25T13:41:17.007Z",
+            "evidenceId": "cmvnvlyba002bmaogudsd3wrx",
+            "sourceHash": "sha256:75fa9039c46f7c8aaee3971c6e8a468d5b87b31ea324e7c5f392ee67b6aaf00b",
+            "accountCode": "411",
+            "approvedById": "af12-1792935650136-journey-reviewer",
+            "availability": "RECONCILED",
+            "evidenceHash": "sha256:f6f7b33313cb63bcb83a4f4f5c9a8d60b6350556844d8b65dc8d2ba86583c183",
+            "sourceRevision": "15",
+            "ledgerAccountId": "cmvnvlxqn001rmaog3qxvpjbh"
+          }
+        ],
+        "availability": "RECONCILED"
+      }
+    ],
+    "preparedById": "af12-1792935650136-journey-preparer",
+    "reviewedById": "af12-1792935650136-journey-reviewer",
+    "deliveredById": "af12-1792935650136-journey-reviewer",
+    "organizationId": "af12-1792935650136-journey-client",
+    "sourceRevision": "23"
+  },
+  "revisionId": "cmvnvmc4v0031maognik9snhu",
+  "version": 4,
+  "deliveryHash": "sha256:9e8b0e90e167d33914dbc305cdb95890c6d713ba99ad333602c572dbcff92511",
+  "freshness": "CURRENT"
+}

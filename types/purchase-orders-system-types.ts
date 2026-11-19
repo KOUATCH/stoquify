@@ -22,6 +22,8 @@ export interface OrderLineInput {
 }
 
 export interface CreatePurchaseOrderPayload {
+  /** Retain for the same user intent, including retries after an unknown outcome. */
+  requestId?: string
   organizationId: string
   supplierId: string
   locationId: string

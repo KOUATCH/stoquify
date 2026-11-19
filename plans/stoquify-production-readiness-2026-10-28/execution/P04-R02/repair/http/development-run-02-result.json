@@ -1,0 +1,971 @@
+{
+  "phase": "after",
+  "evidenceClass": "actual_installed_next_development_http_router_sealed_fixture",
+  "runtimeMode": "development",
+  "rewritesPolicy": {
+    "beforeFiles": [
+      {
+        "source": "/uploads/:path*",
+        "destination": "/api/uploads/:path*"
+      }
+    ],
+    "afterFiles": [
+      {
+        "source": "/security.txt",
+        "destination": "/api/security-txt"
+      },
+      {
+        "source": "/.well-known/security.txt",
+        "destination": "/api/security-txt"
+      }
+    ],
+    "fallback": []
+  },
+  "seededPrivateOptimizerCache": true,
+  "fullApplication": false,
+  "productionBuild": false,
+  "authBoundary": "explicit synthetic server-authz adapter; actual Better Auth/session/database behavior not tested",
+  "sourceManifest": {
+    "capturedAt": "2026-10-29T13:23:41.825Z",
+    "files": [
+      {
+        "path": "middleware.ts",
+        "sha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204",
+        "materialize": true
+      },
+      {
+        "path": "app/api/uploads/[...path]/route.ts",
+        "sha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+        "materialize": true
+      },
+      {
+        "path": "i18n/routing.ts",
+        "sha256": "48782c1ec405c53623812c80a1d4a7301d869b3c07ea36625374d2c056757421",
+        "materialize": true
+      },
+      {
+        "path": "types/bilingual.ts",
+        "sha256": "31fa7407cd8826655c29800ea6b508752100fb250d987736f9eac35afbfdc3ed",
+        "materialize": true
+      },
+      {
+        "path": "lib/security/dashboard-session-recovery.ts",
+        "sha256": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a",
+        "materialize": true
+      },
+      {
+        "path": "lib/security/traffic-limiter.ts",
+        "sha256": "30755f70a016192784af76aa6c03597d2184e79f42e2d842fb8d4b412ff7914c",
+        "materialize": true
+      },
+      {
+        "path": "lib/security/csp-pilot.ts",
+        "sha256": "ecda804a316a7a96cde98927361afd8f8903e4cdb499ffc0a0bb9508bee2b292",
+        "materialize": true
+      },
+      {
+        "path": "lib/media/legacy-upload-routing.ts",
+        "sha256": "7a39993c296c00e0d9305343a3aa745ccb48648a6202b1a43580e169f7488a5a",
+        "materialize": true
+      },
+      {
+        "path": "lib/media/legacy-upload-storage.ts",
+        "sha256": "4c8b2e0a8ea1261fe7eb76e4e902d7aa1550f1a969623cb843e0306f317a7a62",
+        "materialize": true
+      },
+      {
+        "path": "next.config.mjs",
+        "sha256": "ddb79d450a8bfc1bcf29765b8ea1e7ad914ecb292e728b327e97def3a48798ac",
+        "materialize": false
+      }
+    ]
+  },
+  "imagesPolicy": {
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "cdn-icons-png.flaticon.com",
+        "port": "",
+        "pathname": "/**"
+      },
+      {
+        "protocol": "https",
+        "hostname": "images.unsplash.com",
+        "port": "",
+        "pathname": "/**"
+      },
+      {
+        "protocol": "https",
+        "hostname": "14j7oh8kso.ufs.sh",
+        "port": "",
+        "pathname": "/**"
+      },
+      {
+        "protocol": "https",
+        "hostname": "utfs.io",
+        "port": "",
+        "pathname": "/**"
+      },
+      {
+        "protocol": "https",
+        "hostname": "via.placeholder.com",
+        "port": "",
+        "pathname": "/**"
+      }
+    ]
+  },
+  "nextVersion": "15.5.27",
+  "writesScope": "fresh ignored fixture compilation output/evidence and synthetic files only",
+  "fixture": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p04-r02-next-JqVE2X",
+  "databaseAccess": false,
+  "realUploadBytesRead": false,
+  "externalNetwork": "HTTP/fetch guarded; executor sandbox remains authoritative",
+  "syntheticHashes": {
+    "private": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+    "public": "cb492478eb6ed78392a193204330fb8f9e8387f6f3444ea12c1e1524dd7c1235"
+  },
+  "tests": [
+    {
+      "label": "api-absent",
+      "url": "/api/uploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-absent",
+      "url": "/uploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "api-cross-tenant",
+      "url": "/api/uploads/synthetic-tenant/sentinel.png",
+      "actor": "cross-tenant",
+      "method": "GET",
+      "status": 403,
+      "bytes": 21,
+      "privateSentinelEquals": false,
+      "bodyHash": "18e11a797e00b786f40daa25b22dd4cee77ad3efc4b71e0dea081993d7adca44",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-cross-tenant",
+      "url": "/uploads/synthetic-tenant/sentinel.png",
+      "actor": "cross-tenant",
+      "method": "GET",
+      "status": 403,
+      "bytes": 21,
+      "privateSentinelEquals": false,
+      "bodyHash": "18e11a797e00b786f40daa25b22dd4cee77ad3efc4b71e0dea081993d7adca44",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "api-revoked",
+      "url": "/api/uploads/synthetic-tenant/sentinel.png",
+      "actor": "revoked",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-revoked",
+      "url": "/uploads/synthetic-tenant/sentinel.png",
+      "actor": "revoked",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "api-expired",
+      "url": "/api/uploads/synthetic-tenant/sentinel.png",
+      "actor": "expired",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-expired",
+      "url": "/uploads/synthetic-tenant/sentinel.png",
+      "actor": "expired",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "api-missing-permission",
+      "url": "/api/uploads/synthetic-tenant/sentinel.png",
+      "actor": "missing-permission",
+      "method": "GET",
+      "status": 403,
+      "bytes": 21,
+      "privateSentinelEquals": false,
+      "bodyHash": "18e11a797e00b786f40daa25b22dd4cee77ad3efc4b71e0dea081993d7adca44",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-missing-permission",
+      "url": "/uploads/synthetic-tenant/sentinel.png",
+      "actor": "missing-permission",
+      "method": "GET",
+      "status": 403,
+      "bytes": 21,
+      "privateSentinelEquals": false,
+      "bodyHash": "18e11a797e00b786f40daa25b22dd4cee77ad3efc4b71e0dea081993d7adca44",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "api-module-disabled",
+      "url": "/api/uploads/synthetic-tenant/sentinel.png",
+      "actor": "module-disabled",
+      "method": "GET",
+      "status": 403,
+      "bytes": 21,
+      "privateSentinelEquals": false,
+      "bodyHash": "18e11a797e00b786f40daa25b22dd4cee77ad3efc4b71e0dea081993d7adca44",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-module-disabled",
+      "url": "/uploads/synthetic-tenant/sentinel.png",
+      "actor": "module-disabled",
+      "method": "GET",
+      "status": 403,
+      "bytes": 21,
+      "privateSentinelEquals": false,
+      "bodyHash": "18e11a797e00b786f40daa25b22dd4cee77ad3efc4b71e0dea081993d7adca44",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "api-valid",
+      "url": "/api/uploads/synthetic-tenant/sentinel.png",
+      "actor": "valid",
+      "method": "GET",
+      "status": 200,
+      "bytes": 70,
+      "privateSentinelEquals": true,
+      "bodyHash": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+      "contentType": "image/png",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": [
+        {
+          "operation": "open",
+          "path": "synthetic-private-sentinel"
+        }
+      ]
+    },
+    {
+      "label": "static-valid",
+      "url": "/uploads/synthetic-tenant/sentinel.png",
+      "actor": "valid",
+      "method": "GET",
+      "status": 200,
+      "bytes": 70,
+      "privateSentinelEquals": true,
+      "bodyHash": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+      "contentType": "image/png",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": [
+        {
+          "operation": "open",
+          "path": "synthetic-private-sentinel"
+        }
+      ]
+    },
+    {
+      "label": "static-encoded",
+      "url": "/%2e%2Fuploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-encoded",
+      "url": "/x/..%2Fuploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-encoded",
+      "url": "/%2Fuploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-encoded",
+      "url": "/uploads/synthetic-tenant/%73entinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-encoded",
+      "url": "/%75ploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-encoded",
+      "url": "/uploads%2Fsynthetic-tenant%2Fsentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-encoded",
+      "url": "/%75ploads%2Fsynthetic-tenant%2Fsentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-encoded",
+      "url": "/%2575ploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-encoded",
+      "url": "/uploads/synthetic-tenant/sentinel.png?x=1",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-encoded",
+      "url": "/Uploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "api-valid-encoded",
+      "url": "/api/uploads/synthetic-tenant/%73entinel.png",
+      "actor": "valid",
+      "method": "GET",
+      "status": 200,
+      "bytes": 70,
+      "privateSentinelEquals": true,
+      "bodyHash": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+      "contentType": "image/png",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": [
+        {
+          "operation": "open",
+          "path": "synthetic-private-sentinel"
+        }
+      ]
+    },
+    {
+      "label": "api-traversal",
+      "url": "/api/uploads/synthetic-tenant/%2e%2e%2fsentinel.png",
+      "actor": "valid",
+      "method": "GET",
+      "status": 400,
+      "bytes": 29,
+      "privateSentinelEquals": false,
+      "bodyHash": "e0a074a5cd714a73a0d029c1cf9d01b654a2487983b5f9253b527258f9366d0d",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "api-head-absent",
+      "url": "/api/uploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "HEAD",
+      "status": 401,
+      "bytes": 0,
+      "privateSentinelEquals": false,
+      "bodyHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-head-absent",
+      "url": "/uploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "HEAD",
+      "status": 401,
+      "bytes": 0,
+      "privateSentinelEquals": false,
+      "bodyHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "api-head-valid",
+      "url": "/api/uploads/synthetic-tenant/sentinel.png",
+      "actor": "valid",
+      "method": "HEAD",
+      "status": 200,
+      "bytes": 0,
+      "privateSentinelEquals": false,
+      "bodyHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contentType": "image/png",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": [
+        {
+          "operation": "open",
+          "path": "synthetic-private-sentinel"
+        }
+      ]
+    },
+    {
+      "label": "static-head-valid",
+      "url": "/uploads/synthetic-tenant/sentinel.png",
+      "actor": "valid",
+      "method": "HEAD",
+      "status": 200,
+      "bytes": 0,
+      "privateSentinelEquals": false,
+      "bodyHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contentType": "image/png",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": [
+        {
+          "operation": "open",
+          "path": "synthetic-private-sentinel"
+        }
+      ]
+    },
+    {
+      "label": "static-conditional",
+      "url": "/uploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "api-after-valid",
+      "url": "/api/uploads/synthetic-tenant/sentinel.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 401,
+      "bytes": 27,
+      "privateSentinelEquals": false,
+      "bodyHash": "3d9d96a1b3c5b8e03e2a498ce574e409ef2e5088f47106eb0d79f5ab6c38d3ba",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-static-preseeded",
+      "url": "/_next/image?url=%2Fuploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-static-warm",
+      "url": "/_next/image?url=%2Fuploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "cross-tenant",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-static-encoded",
+      "url": "/_next/image?url=%2F%2575ploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-api-valid",
+      "url": "/_next/image?url=%2Fapi%2Fuploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "valid",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-api-after-valid",
+      "url": "/_next/image?url=%2Fapi%2Fuploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-alias",
+      "url": "/_next/image?url=%2F%252e%252Fuploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-alias",
+      "url": "/_next/image?url=%2Fx%2F..%252Fuploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-alias",
+      "url": "/_next/image?url=%2F%252Fuploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-alias",
+      "url": "/_next/image?url=%2Fuploads%2Fsynthetic-tenant%2Fsentinel.png%3Fcold%3D1&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-alias",
+      "url": "/_next/image?url=%2FUploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-alias",
+      "url": "/_next/image?url=%2Fuploads%252Fsynthetic-tenant%252Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-alias",
+      "url": "/_next/image?url=%2F%252575ploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-alias",
+      "url": "/_next/image?url=%2Fapi%252Fuploads%252Fsynthetic-tenant%252Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-endpoint-encoded",
+      "url": "/_next/%69mage?url=%2Fuploads%2Fsynthetic-tenant%2Fsentinel.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 400,
+      "bytes": 41,
+      "privateSentinelEquals": false,
+      "bodyHash": "f957eded205e3038d67a677cfb7898dc7cd800b78f0ecc5b7d9f2a7fe73fee81",
+      "contentType": "text/plain;charset=UTF-8",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "static-valid-alias",
+      "url": "/uploads/synthetic-tenant/%73entinel.png",
+      "actor": "valid",
+      "method": "GET",
+      "status": 200,
+      "bytes": 70,
+      "privateSentinelEquals": true,
+      "bodyHash": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+      "contentType": "image/png",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": [
+        {
+          "operation": "open",
+          "path": "synthetic-private-sentinel"
+        }
+      ]
+    },
+    {
+      "label": "static-valid-alias",
+      "url": "/%75ploads/synthetic-tenant/sentinel.png",
+      "actor": "valid",
+      "method": "GET",
+      "status": 200,
+      "bytes": 70,
+      "privateSentinelEquals": true,
+      "bodyHash": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+      "contentType": "image/png",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": [
+        {
+          "operation": "open",
+          "path": "synthetic-private-sentinel"
+        }
+      ]
+    },
+    {
+      "label": "static-valid-alias",
+      "url": "/uploads%2Fsynthetic-tenant%2Fsentinel.png",
+      "actor": "valid",
+      "method": "GET",
+      "status": 200,
+      "bytes": 70,
+      "privateSentinelEquals": true,
+      "bodyHash": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+      "contentType": "image/png",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": [
+        {
+          "operation": "open",
+          "path": "synthetic-private-sentinel"
+        }
+      ]
+    },
+    {
+      "label": "static-valid-alias",
+      "url": "/Uploads/synthetic-tenant/sentinel.png",
+      "actor": "valid",
+      "method": "GET",
+      "status": 200,
+      "bytes": 70,
+      "privateSentinelEquals": true,
+      "bodyHash": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+      "contentType": "image/png",
+      "cacheControl": "private, no-store",
+      "etag": null,
+      "location": null,
+      "privateFileIo": [
+        {
+          "operation": "open",
+          "path": "synthetic-private-sentinel"
+        }
+      ]
+    },
+    {
+      "label": "public-control",
+      "url": "/public-control.png",
+      "actor": "absent",
+      "method": "GET",
+      "status": 200,
+      "bytes": 70,
+      "privateSentinelEquals": false,
+      "bodyHash": "cb492478eb6ed78392a193204330fb8f9e8387f6f3444ea12c1e1524dd7c1235",
+      "contentType": "image/png",
+      "cacheControl": "public, max-age=0",
+      "etag": "W/\"46-1a187d4f590\"",
+      "location": null,
+      "privateFileIo": []
+    },
+    {
+      "label": "optimizer-public-control",
+      "url": "/_next/image?url=%2Fpublic-control.png&w=64&q=75",
+      "actor": "absent",
+      "method": "GET",
+      "status": 200,
+      "bytes": 103,
+      "privateSentinelEquals": false,
+      "bodyHash": "59365354d84e9e3137d8c8b9a9caf6a9433f34b29ca52c74513837d09cf2ae53",
+      "contentType": "image/png",
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "WTZTVNhOnjE32Mi5qcr2qUM_NLKcpSx0UTg30JzyrlM",
+      "location": null,
+      "privateFileIo": []
+    }
+  ],
+  "harnessCompleted": true,
+  "acceptancePassed": true,
+  "acceptanceFailures": [],
+  "runnerFailure": null,
+  "deniedFileReads": [],
+  "completedAt": "2026-10-29T13:25:07.938Z",
+  "remainingGaps": [
+    "full current application artifact",
+    "actual session revocation/expiry semantics",
+    "production image/CDN cache invalidation",
+    "deployment ingress/static-file configuration"
+  ],
+  "cleanup": {
+    "listenerClosed": true,
+    "nextCloseCompleted": true,
+    "ownedProcessExits": true
+  }
+}

@@ -236,13 +236,14 @@ function summaryByDomain(items: HrisApprovalInboxItem[]) {
 export async function getHrisApprovalInbox(
   input: HrisApprovalInboxReadInput,
   client: ApprovalInboxClient = db,
+  queueRead?: { capacity: 1000; employeeId?: string },
 ) {
   const parsed = hrisApprovalInboxReadInputSchema.parse(input)
   assertPermission(parsed.actorPermissions, READ_PERMISSIONS, "HRIS approval inbox read")
-  const scope = await resolveHrisPeopleAccessScope(parsed, client)
-  const scopedEmployees = scope.employeeIds
+  const scope = await resolveHrisPeopleAccessScope({ ...parsed, ...(queueRead?.employeeId ? {employeeId: queueRead.employeeId} : {}) }, client)
+  const scopedEmployees = queueRead?.employeeId ? [queueRead.employeeId] : scope.employeeIds
   const relatedScope = employeeScopeFilter(scopedEmployees)
-  const rowLimit = parsed.limit
+  const rowLimit = queueRead?.capacity ?? parsed.limit
 
   const [employees, contracts, assignments, salaryChanges, paymentChanges] =
     await Promise.all([
@@ -272,7 +273,7 @@ export async function getHrisApprovalInbox(
           employee: { select: { displayName: true } },
         },
         orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
-        take: Math.min(rowLimit * 2, 200),
+        take: queueRead ? rowLimit : Math.min(rowLimit * 2, 200),
       }),
       client.payrollEmployeeRubriqueAssignment.findMany({
         where: {
@@ -534,7 +535,7 @@ export async function getHrisApprovalInbox(
   const items = allItems
     .filter((item) => !parsed.domain || item.domain === parsed.domain)
     .filter((item) => !parsed.stage || item.stage === parsed.stage)
-    .slice(0, parsed.limit)
+    .slice(0, queueRead?.capacity ?? parsed.limit)
 
   await client.auditLog.create({
     data: {
@@ -562,6 +563,7 @@ export async function getHrisApprovalInbox(
 
   return {
     organizationId: parsed.organizationId,
+    coverageLimited: [employees, contracts, assignments, salaryChanges, paymentChanges].some(rows => rows.length >= rowLimit) || allItems.length > (queueRead?.capacity ?? parsed.limit),
     asOf: new Date().toISOString(),
     items,
     summary: {
@@ -728,7 +730,11 @@ export async function decideHrisApprovalInboxItem(
     decision: parsed.decision,
     employeeId: parsed.employeeId,
     sourceId: parsed.sourceId,
-    status: "COMPLETED" as const,
+    status: parsed.decision === "APPLY"
+      ? (result && typeof result === "object" && "applied" in result && result.applied === false ? "SCHEDULED" : "APPLIED")
+      : parsed.decision === "REJECT" ? "REJECTED" : "APPROVED",
+    scheduledFor: result && typeof result === "object" && "scheduledFor" in result ? String(result.scheduledFor) : null,
+    replayed: !!(result && typeof result === "object" && "replayed" in result && result.replayed),
     businessEventId: eventIdFromResult(result),
   }
 }

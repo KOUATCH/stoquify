@@ -1,0 +1,77 @@
+{
+  "startedAt": "2026-10-29T11:06:14.116Z",
+  "passed": true,
+  "database": "stoquify_local_p04_authority_20261029_r1",
+  "host": "127.0.0.1",
+  "port": 53528,
+  "source": [
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+    },
+    {
+      "path": "services/roles/role-write.service.ts",
+      "sha256": "986e554af046c1c86064c129c8e48d00d07ee8f3f5e899dc922eb2d7b7a162fb"
+    },
+    {
+      "path": "services/users/member-access.service.ts",
+      "sha256": "093e879a7c25777e43017d30f1ce71554ac78b8d7c5d708d742e913ce1183933"
+    },
+    {
+      "path": "services/operating-access/operating-access-scope-contracts.ts",
+      "sha256": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04/guard-review/shared-guards.postgres.test.ts",
+      "sha256": "9edc38412afaee491a731dd632e7263c3653fa2ea8d81dfa61c28635b3310046"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04/jest.native.config.cjs",
+      "sha256": "2c432b22b917be48fa8b32d5bbfa89e5ea94e3bfee658757f0174a0840228faa"
+    }
+  ],
+  "environmentVariableNames": [
+    "APPDATA",
+    "ComSpec",
+    "LOCALAPPDATA",
+    "NEXT_TELEMETRY_DISABLED",
+    "NODE_ENV",
+    "P04_CLUSTER_DIR",
+    "P04_POSTGRES_URL",
+    "PATHEXT",
+    "Path",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "privateClientManifest": "../P03/private-client-manifest.json",
+  "environmentReadGuard": "environment-read-guard.cjs",
+  "migrationsVerified": 120,
+  "exitCode": 1,
+  "timedOut": false,
+  "tests": {
+    "passed": 23,
+    "failed": 1,
+    "skipped": 0
+  },
+  "confirmedNegativeFailure": "must not let location-scoped role delegators manufacture tenant-wide authority through an Admin name",
+  "securityQualificationPassed": false,
+  "passedMeaning": "Harness completed; expected security defect reproduced, not a green security gate",
+  "sourceUnchanged": true,
+  "clusterStopped": true,
+  "finishedAt": "2026-10-29T11:08:47.118Z"
+}

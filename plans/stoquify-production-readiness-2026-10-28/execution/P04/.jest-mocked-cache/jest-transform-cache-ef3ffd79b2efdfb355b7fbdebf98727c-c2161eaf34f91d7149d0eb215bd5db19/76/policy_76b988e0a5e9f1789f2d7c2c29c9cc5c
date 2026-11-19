@@ -1,0 +1,39 @@
+c7179b321e41f1f97b955dacf359520f
+// Permanent picture uploads use managed online storage; local files are legacy reads.
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+}
+_export(exports, {
+    get MEDIA_URL_PREFIX () {
+        return MEDIA_URL_PREFIX;
+    },
+    get PICTURE_MAX_BYTES () {
+        return PICTURE_MAX_BYTES;
+    },
+    get PICTURE_MIME_TYPES () {
+        return PICTURE_MIME_TYPES;
+    },
+    get mediaIdFromUrl () {
+        return mediaIdFromUrl;
+    }
+});
+const PICTURE_MAX_BYTES = 4 * 1024 * 1024;
+const PICTURE_MIME_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp"
+];
+const MEDIA_URL_PREFIX = "/api/media/";
+function mediaIdFromUrl(url) {
+    return /^\/api\/media\/([0-9a-f-]{36})$/.exec(url)?.[1] ?? null;
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6XFxvaGFkYSBzYWFzXFxGb2N1c2VkIHByb2plY3RzXFxzdG9xdWlmeVxcbGliXFxtZWRpYVxccG9saWN5LnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIFBlcm1hbmVudCBwaWN0dXJlIHVwbG9hZHMgdXNlIG1hbmFnZWQgb25saW5lIHN0b3JhZ2U7IGxvY2FsIGZpbGVzIGFyZSBsZWdhY3kgcmVhZHMuXG5leHBvcnQgY29uc3QgUElDVFVSRV9NQVhfQllURVMgPSA0ICogMTAyNCAqIDEwMjRcbmV4cG9ydCBjb25zdCBQSUNUVVJFX01JTUVfVFlQRVMgPSBbXCJpbWFnZS9qcGVnXCIsIFwiaW1hZ2UvcG5nXCIsIFwiaW1hZ2UvZ2lmXCIsIFwiaW1hZ2Uvd2VicFwiXSBhcyBjb25zdFxuZXhwb3J0IGNvbnN0IE1FRElBX1VSTF9QUkVGSVggPSBcIi9hcGkvbWVkaWEvXCJcblxuZXhwb3J0IGZ1bmN0aW9uIG1lZGlhSWRGcm9tVXJsKHVybDogc3RyaW5nKTogc3RyaW5nIHwgbnVsbCB7XG4gIHJldHVybiAvXlxcL2FwaVxcL21lZGlhXFwvKFswLTlhLWYtXXszNn0pJC8uZXhlYyh1cmwpPy5bMV0gPz8gbnVsbFxufVxuIl0sIm5hbWVzIjpbIk1FRElBX1VSTF9QUkVGSVgiLCJQSUNUVVJFX01BWF9CWVRFUyIsIlBJQ1RVUkVfTUlNRV9UWVBFUyIsIm1lZGlhSWRGcm9tVXJsIiwidXJsIiwiZXhlYyJdLCJtYXBwaW5ncyI6IkFBQUEsc0ZBQXNGOzs7Ozs7Ozs7Ozs7UUFHekVBO2VBQUFBOztRQUZBQztlQUFBQTs7UUFDQUM7ZUFBQUE7O1FBR0dDO2VBQUFBOzs7QUFKVCxNQUFNRixvQkFBb0IsSUFBSSxPQUFPO0FBQ3JDLE1BQU1DLHFCQUFxQjtJQUFDO0lBQWM7SUFBYTtJQUFhO0NBQWE7QUFDakYsTUFBTUYsbUJBQW1CO0FBRXpCLFNBQVNHLGVBQWVDLEdBQVc7SUFDeEMsT0FBTyxrQ0FBa0NDLElBQUksQ0FBQ0QsTUFBTSxDQUFDLEVBQUUsSUFBSTtBQUM3RCJ9

@@ -1,0 +1,38 @@
+{
+  "began": "2026-11-09T19:47:34.633Z",
+  "passed": true,
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-retention-20261109-1b805fc00a",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\pg-retention-1b805fc00a",
+  "freshDatabase": "stoquify_replay_retention_fresh_20261109_1b805fc00a",
+  "upgradeDatabase": "stoquify_replay_retention_upgrade_20261109_1b805fc00a",
+  "source": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-retention-20261109-1b805fc00a\\source",
+  "migrations": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-retention-20261109-1b805fc00a\\migration-source122",
+  "privateClient": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-retention-client-20261109-b4075974cd\\orm\\client",
+  "runnerSha256": "c361766ef0382ff1084d7f1ddc7d6cfea24e50d1e9317b70bd31bf35a017c0e5",
+  "checks": [
+    {
+      "name": "fresh122ReplayTwice",
+      "certification": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT"
+    },
+    {
+      "name": "populated121to122",
+      "legacyReceiptAndHistoryPreserved": true,
+      "deploymentReplayed": true
+    },
+    {
+      "name": "realRetentionServicesAndSql",
+      "tests": 23,
+      "skipped": 0,
+      "sqlInventoryUnchanged": true,
+      "noFinanceOrCertifiedExports": {
+        "journals": 0,
+        "sales": 0,
+        "settlements": 0,
+        "certifiedExports": 0
+      }
+    }
+  ],
+  "limitation": "Real isolated retention migration/service proof; synthetic DRAFT/BLOCKED receipts only, no earned certificate, live provider, browser, production or clean-install claim.",
+  "ownedClusterStopped": true,
+  "ended": "2026-11-09T19:50:14.471Z"
+}

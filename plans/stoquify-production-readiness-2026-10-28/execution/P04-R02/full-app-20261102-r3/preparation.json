@@ -1,0 +1,64 @@
+{
+  "startedAt": "2026-11-02T16:32:39.802Z",
+  "passed": true,
+  "root": "E:\\ohada saas\\Focused projects\\stoquify",
+  "storage": "D:\\p04-r02-fullapp-20261102-r3",
+  "source": "D:\\p04-r02-fullapp-20261102-r3\\source",
+  "commands": [
+    {
+      "label": "source-local-clone",
+      "file": "git",
+      "args": [
+        "clone",
+        "--no-checkout",
+        "--shared",
+        "--",
+        "E:\\ohada saas\\Focused projects\\stoquify",
+        "D:\\p04-r02-fullapp-20261102-r3\\source"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "source-local-index",
+      "file": "git",
+      "args": [
+        "read-tree",
+        "HEAD"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "physical-dependency-copy",
+      "file": "robocopy.exe",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\node_modules",
+        "D:\\p04-r02-fullapp-20261102-r3\\source\\node_modules",
+        "/E",
+        "/XJ",
+        "/R:0",
+        "/W:0",
+        "/MT:16",
+        "/NFL",
+        "/NDL",
+        "/NJH",
+        "/NP",
+        "/XD",
+        "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.cache"
+      ],
+      "exitCode": 1
+    }
+  ],
+  "files": 9136,
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "assetCount": 6,
+  "dependencies": "Physical installed dependency copy; regenerate private Prisma before application use. Not clean-install proof.",
+  "dependencyVersions": {
+    "next": "15.5.27",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "prisma": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "typescript": "5.8.3"
+  },
+  "finishedAt": "2026-11-02T16:59:02.367Z"
+}

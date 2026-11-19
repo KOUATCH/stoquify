@@ -1,0 +1,265 @@
+{
+  "schema_version": 1,
+  "package_id": "P04-D01",
+  "record_id": "P04-D01-20261109-r1",
+  "status": "approved_policy_implementation_pending",
+  "generated_at": "2026-11-09T16:08:35.302Z",
+  "decision_owner": {
+    "product_accounting": "Kouatchoua Mark",
+    "security": "Kouatchoua Mark",
+    "approval_reference": "User reply in this chat: selected C — Creator plus named, revocable delegates (recommended); approving owner Kouatchoua Mark.",
+    "approved_at": "2026-11-09T16:18:55.953Z"
+  },
+  "distinct_from_global_decision": "D01 (M1/M2 capability exposure) is a separate existing register decision; this packet changes neither.",
+  "source_manifest": "source-manifest.json",
+  "source_identity": "8c38fb408e382aae9fcd7507c38a857019992af4e082d987c1e141022526fa00",
+  "evidence_class": "current_source_inspection_only; existing tests inspected, not rerun",
+  "current_behavior": {
+    "enqueue_permission": "accounting.exports.create",
+    "enqueue_fresh_auth_seconds": 300,
+    "enqueue_module": "accounting/enforce/export",
+    "status_permission": "accounting.reports.read",
+    "status_module": "accounting/enforce/read",
+    "status_query": [
+      "jobId",
+      "server-derived organizationId",
+      "REPORT_EXPORT channel",
+      "finance.statement.export.requested event"
+    ],
+    "status_actor_ownership_check": false,
+    "status_delegation_check": false,
+    "returned_artifact_fields": [
+      "provider",
+      "key",
+      "contentType",
+      "byteLength",
+      "contentHash",
+      "expiresAt"
+    ],
+    "returned_job_fields": [
+      "schemaVersion",
+      "clientRequestId",
+      "jobId",
+      "status",
+      "acceptedAt",
+      "completedAt?"
+    ],
+    "download_route": "No production HTTP download consumer for this async artifact reference found in app/actions/hooks/components/services lexical caller search; reference metadata is not proof that bytes can be downloaded.",
+    "runtime_provider_status": "Runtime readiness requires renderer, approved artifact store, download-grant policy and retention; configuration state not inspected."
+  },
+  "choices": [
+    {
+      "id": "A",
+      "label": "Any authorized report reader",
+      "effect": "Permit any current same-tenant class-scoped accounting report reader to inspect each job and artifact. Download still requires separately specified current export authority and a guarded private delivery path.",
+      "tradeoff": "Broad team visibility; provider/key and financial job metadata available to readers who did not create the export."
+    },
+    {
+      "id": "B",
+      "label": "Creator only",
+      "effect": "Only the original creator with current read scope may inspect; current export authority required to download.",
+      "tradeoff": "Smallest initial access footprint; accounting handover and review need a new export or separately approved procedure."
+    },
+    {
+      "id": "C",
+      "label": "Creator plus explicit delegates",
+      "recommended": true,
+      "effect": "Creator or an explicitly named, revocable same-tenant delegate may inspect, subject to current read/class/module/location scope; current export authority plus fresh authentication required to issue a delivery grant.",
+      "tradeoff": "Supports controller/auditor handoff while restricting file exposure; needs a bounded delegation and delivery implementation after approval."
+    }
+  ],
+  "proposed_policy": {
+    "selected_option": "C",
+    "recommendation": "C",
+    "business_rationale": "Financial export contents and storage references can contain more history/detail than a report reader currently needs; controlled handoff supports continuity without automatic tenant-wide access.",
+    "same_tenant_required": true,
+    "current_class_read_required": true,
+    "current_module_and_object_scope_required": true,
+    "metadata_authority": "creator OR explicit active same-tenant actor/job grant; creator status alone never overrides current permissions",
+    "download_authority": "metadata authority AND accounting.exports.create AND current underlying class read scope AND fresh authentication (300 seconds for issuing the delivery grant)",
+    "delegation": "Named actor, job/contentHash, inspect/download capability, grantor, reason, start, expiry and revocation evidence. No onward delegation or scope widening by default. Grantor and recipient must hold corresponding current authority.",
+    "public_or_bearer_only_delivery": false,
+    "admin_role_name_bypass": false,
+    "redaction_and_current_scope_at_delivery": true,
+    "artifact_expiry_is_absolute": true,
+    "default_for_all_classes": "C approved for all 14 listed classes; implementation/delivery remains unqualified",
+    "classes": [
+      {
+        "id": "finance.payments-ledger",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "finance.receivables",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "finance.receivables-history",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "finance.payables",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "finance.payables-history",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "finance.cash-history",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "accounting.journal-entries-posted",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "accounting.journal-entries-drafts",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "accounting.trial-balance",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "accounting.profit-loss",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "accounting.balance-sheet",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "finance.cash-flow",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "accounting.close-evidence",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      },
+      {
+        "id": "accounting.close-findings",
+        "inspect": "creator_or_explicit_delegate_with_current_read_scope",
+        "download": "inspect_plus_current_export_scope_and_fresh_auth",
+        "decision": "approved_policy_implementation_pending"
+      }
+    ],
+    "existing_aggregate_queue_summary": "Keep existing same-tenant accounting.reports.read summary boundary; do not silently include per-job locator metadata.",
+    "excluded": [
+      "payroll/payslip employee exports",
+      "HR documents",
+      "customer statement public capabilities",
+      "inventory background exports",
+      "external accountant cross-tenant delegation",
+      "hosted storage/provider approval",
+      "statutory content/country-pack approval"
+    ],
+    "expired_artifact_history": "Eligible creator/delegate may read retained historical status with current read scope; omit provider/key and delivery grants. Expiry does not revoke independently authorized aggregate summary."
+  },
+  "acceptance_cases": [
+    {
+      "id": "D01-T01",
+      "acceptance": "Current authorized creator reads own same-tenant status and downloads the exact artifact once its class and export authority pass.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T02",
+      "acceptance": "Same-tenant reader without creator status or an explicit grant receives no job metadata, provider/key, file bytes or existence distinction.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T03",
+      "acceptance": "Same-tenant explicitly delegated reader with current underlying read scope sees granted status/metadata only; download denied without current export authority.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T04",
+      "acceptance": "Same-tenant delegated exporter with all current scopes and fresh authentication downloads only the granted job/hash until expiry.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T05",
+      "acceptance": "Other-tenant creator, reader, administrator or delegate cannot inspect or download; forged organization, job, key and manifest rejected.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T06",
+      "acceptance": "Creator permission removal, session revocation/expiry, module deactivation and location/period restriction removal take effect on next status/download; historic creation grants no continuing authority.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T07",
+      "acceptance": "Grant revoked/expired/wrong actor/wrong job/wrong content hash is denied; direct object key/old URL does not bypass current policy.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T08",
+      "acceptance": "An administrator needs explicit current class/export authority; role name alone does not bypass scope. Delegation cannot exceed grantor or recipient authority.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T09",
+      "acceptance": "Concurrent revocation or artifact replacement during storage latency is rechecked before bytes are released. Expired artifacts do not yield a fresh delivery grant.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T10",
+      "acceptance": "Denied reads leave business/job/artifact/grant state unchanged; permitted security audit entries are classified separately.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T11",
+      "acceptance": "Queue summary remains tenant-scoped under its separately approved existing reports.read boundary and contains no per-job artifact locator.",
+      "status": "not_executed_implementation_pending"
+    },
+    {
+      "id": "D01-T12",
+      "acceptance": "Existing callers and absent/unknown jobs retain a safe uniform denial; browser back/reload does not restore unauthorized metadata/download affordances.",
+      "status": "not_executed_implementation_pending"
+    }
+  ],
+  "dependent_work": {
+    "P04_V01": "P04-D01 policy is approved. Existing finance status/artifact metadata family waits for its bounded visibility repair and policy-specific qualification.",
+    "P04_V02": "Actual session/browser qualification may proceed independently without approving finance visibility.",
+    "implementation": "Policy approved only. Define a bounded repair; implementation and delivery qualification require a separate authorized package. No product change in this task.",
+    "production": "Approved policy is not implemented/qualified. Artifact visibility, delivery and all other parent P04/production gates remain blocked."
+  },
+  "rollback_recovery": "No product changes in this preparation. Preserve current behavior, source snapshots and unapproved alternatives; do not weaken access or change flags. A later repair must fail closed if grant/provider validation cannot complete.",
+  "user_approval": {
+    "received_at": "2026-11-09T16:18:55.953Z",
+    "option": "C",
+    "approver": "Kouatchoua Mark",
+    "roles": [
+      "product/accounting",
+      "security"
+    ],
+    "class_exceptions": "None stated",
+    "implementation_authorized": false
+  },
+  "bounded_repair_proposal": "REPAIR-PROPOSAL.md"
+}

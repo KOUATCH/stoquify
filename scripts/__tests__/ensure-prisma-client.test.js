@@ -84,6 +84,19 @@ describe("Prisma development startup", () => {
     expect(task.spawnSync).toHaveBeenCalledTimes(1)
   })
 
+  it.each([false, true])("handles formatted relation arguments without hiding a referential-action change (changed: %s)", (changed) => {
+    const task = fixture()
+    const relation = '  parentId String\n  parent Parent @relation(fields:[parentId],references:[id],onDelete:Restrict,onUpdate:NoAction)\n'
+    const withRelation = schema.replace('  name String @default("New York")\n', '  name String @default("New York")\n' + relation) + '\nmodel Parent {\n  id String @id\n  items Item[]\n}\n'
+    task.write("prisma/schema.prisma", withRelation)
+    task.write("node_modules/.prisma/client/schema.prisma", withRelation.replace(
+      'fields:[parentId],references:[id],onDelete:Restrict,onUpdate:NoAction',
+      `fields: [parentId], references: [id], onDelete: ${changed ? "Cascade" : "Restrict"}, onUpdate: NoAction`,
+    ))
+    expect(ensureClient(task.options)).toBe(0)
+    expect(task.spawnSync).toHaveBeenCalledTimes(changed ? 1 : 0)
+  })
+
   it.each([false, true])("handles fields moved above block attributes (field changed: %s)", (changed) => {
     const task = fixture()
     task.write("prisma/schema.prisma", schema.replace('  name String @default("New York")',

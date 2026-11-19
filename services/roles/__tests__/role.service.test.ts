@@ -178,7 +178,7 @@ describe("authoritative role commands", () => {
     expect(tx.role.update).not.toHaveBeenCalled()
   })
   it("allows a custodian change when another active qualified member remains", async () => {
-    roles.push(role("other-admin", [...getAllPermissions()])); users.push({ ...users[0], id: "other" }); members.push({ roleId: "other-admin", userId: "other" })
+    roles.push({ ...role("other-admin", [...getAllPermissions()]), code: "administrator" }); users.push({ ...users[0], id: "other" }); members.push({ roleId: "other-admin", userId: "other" })
     await expect(update({ permissions: roles[0].permissions.filter((permission: string) => permission !== "roles.update") }, "admin")).resolves.toBeDefined()
   })
 })
@@ -214,5 +214,51 @@ describe("editor read model", () => {
     database.user.findFirst.mockResolvedValue({ roles: [{ permissions: ["roles.update", "controls.audit.read"] }] })
     database.auditLog.findMany.mockRejectedValue(new Error("History unavailable"))
     await expect(getRoleEditorForOrganization({ ...ctx, permissions: ["roles.update"] }, "target")).rejects.toThrow("History unavailable")
+  })
+})
+
+describe("operating-scope grant ceiling", () => {
+  const limited = () => { roles[0].code = "location_manager"; roles[0].nameEn = "Location manager" }
+  const noWrites = () => { expect(tx.role.create).not.toHaveBeenCalled(); expect(tx.role.update).not.toHaveBeenCalled(); expect(tx.auditLog.create).not.toHaveBeenCalled() }
+  it.each(["Admin", "Administrator", "Super Admin", " SUPER   ADMIN "])("denies creation of latent reserved %s without trusting context", async name => {
+    limited()
+    await expect(create({ ...input, name, permissions: [] }, { ...ctx, isSuperUser: true })).rejects.toMatchObject({ code: "FORBIDDEN" }); noWrites()
+  })
+  it("allows an authorized tenant administrator to create a reserved role", async () => {
+    await expect(create({ ...input, name: "Administrator" })).resolves.toMatchObject({ code: "administrator" })
+    expect(receipt.changes.tenantOperatingAuthorityGranted).toBe(true)
+  })
+  it("denies additions on an existing empty reserved role", async () => {
+    limited(); roles[1].code = "admin"; roles[1].permissions = []
+    await expect(update({ permissions: ["dashboard.read"] })).rejects.toMatchObject({ code: "FORBIDDEN" }); noWrites()
+  })
+  it("allows metadata-only reserved edits and removal-only changes", async () => {
+    limited(); roles[1].code = "admin"
+    await expect(update({ description: "Retained historical role" })).resolves.toMatchObject({ code: "admin" })
+    receipt = null; roles[1].updatedAt = revision
+    await expect(update({ permissions: [] })).resolves.toMatchObject({ permissions: [] })
+  })
+  function composed() {
+    roles[1].permissions = []; roles.push(role("administrator", []))
+    users.push({ ...users[0], id: "member" }); members.push({ userId: "member", roleId: "target" }, { userId: "member", roleId: "administrator" })
+  }
+  it("denies ordinary-role edits activating tenant scope in an existing member", async () => {
+    limited(); composed()
+    await expect(update({ permissions: ["dashboard.read"] })).rejects.toMatchObject({ code: "FORBIDDEN" }); noWrites()
+  })
+  it("allows and records an authorized composed grant, then denies replay after authority loss", async () => {
+    composed(); await expect(update({ permissions: ["dashboard.read"] })).resolves.toBeDefined()
+    expect(receipt.changes.tenantOperatingAuthorityGranted).toBe(true)
+    limited(); await expect(update({ permissions: ["dashboard.read"] })).rejects.toMatchObject({ code: "FORBIDDEN" })
+    expect(tx.role.update).toHaveBeenCalledTimes(1); expect(tx.auditLog.create).toHaveBeenCalledTimes(1)
+  })
+  it("denies reserved create replay after actor code loss", async () => {
+    await create({ ...input, name: "Administrator" }); limited()
+    await expect(create({ ...input, name: "Administrator" })).rejects.toMatchObject({ code: "FORBIDDEN" })
+    expect(tx.role.create).toHaveBeenCalledTimes(1)
+  })
+  it("retains the last effective tenant grant custodian when dashboard authority is removed", async () => {
+    roles.push(role("permission-editor", [...getAllPermissions()])); users.push({ ...users[0], id: "other" }); members.push({ roleId: "permission-editor", userId: "other" })
+    await expect(update({ permissions: roles[0].permissions.filter((value: string) => value !== "dashboard.read") }, "admin")).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" }); noWrites()
   })
 })

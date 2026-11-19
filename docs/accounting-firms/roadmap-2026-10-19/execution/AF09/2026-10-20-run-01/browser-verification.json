@@ -1,0 +1,69 @@
+{
+  "synthetic": true,
+  "checks": [
+    "Real preparer uploads separate source/control files, maps existing client records and stages a new revision.",
+    "Reviewer completes password step-up and explicitly retries the saved command.",
+    "Independent review is persisted against the exact manifest; financial apply remains unavailable.",
+    "EN/FR desktop/mobile: no panel overflow; four scoped axe scans without violations.",
+    "A changed mapped master makes the former review stale and disables review.",
+    "Current module denial clears figures, mappings and review evidence from the panel.",
+    "Operational journals, stock, ledger entries and customer/supplier balances remain unchanged.",
+    "A separately changed control produces a visible +1.00 AR difference, supersedes review and blocks positive review.",
+    "A changed mapped master makes the former review stale and disables review.",
+    "Current module denial clears figures, mappings and review evidence from the panel.",
+    "Operational journals, stock, ledger entries and customer/supplier balances remain unchanged."
+  ],
+  "screenshots": [
+    "opening-en-1440.png",
+    "opening-en-390.png",
+    "opening-fr-1440.png",
+    "opening-fr-390.png",
+    "opening-stale-fr-390.png",
+    "opening-denied-fr-390.png",
+    "opening-mismatch-fr-390.png",
+    "opening-stale-fr-390.png",
+    "opening-denied-fr-390.png"
+  ],
+  "axe": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "violations": []
+    }
+  ],
+  "pageErrors": [],
+  "passed": true,
+  "financialBefore": {
+    "journals": 0,
+    "stock": 0,
+    "levels": 0,
+    "ar": 0,
+    "ap": 0,
+    "customer": "17",
+    "supplier": "29"
+  },
+  "financialAfter": {
+    "journals": 0,
+    "stock": 0,
+    "levels": 0,
+    "ar": 0,
+    "ap": 0,
+    "customer": "17",
+    "supplier": "29"
+  }
+}

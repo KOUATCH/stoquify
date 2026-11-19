@@ -1,0 +1,57 @@
+{
+  "productionAccess": false,
+  "applicationEnvironmentRead": false,
+  "clusterIdentityVerified": true,
+  "clusterStarted": true,
+  "clusterStopped": true,
+  "results": [
+    {
+      "name": "stock-postgres",
+      "exitCode": 0,
+      "elapsedMs": 17252,
+      "database": "stoquify_local_pos_repairs_20261026_a19f",
+      "migrations": 120,
+      "checksumsVerified": true,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "cross-workflow-postgres",
+      "exitCode": 1,
+      "elapsedMs": 45800,
+      "database": "stoquify_pos_audit_20261026_d30f",
+      "migrations": 120,
+      "checksumsVerified": true,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "fixtureRepairs": {
+    "applicationRuntimeChanges": 0,
+    "schemaChanges": 0,
+    "changes": [
+      {
+        "scope": "shared-workspace",
+        "file": "services/inventory/__tests__/stock-integrity.repairs.postgres.test.ts",
+        "before": "050f1190c4a0e7067ae611e3f1a035e2c0cc1b009a0b143510f6c5d84b693f68",
+        "after": "c08ec4ff7deb74132c4e97d1f215329db4a7d8082788d08beaefcaea715faf07"
+      },
+      {
+        "scope": "captured-candidate",
+        "file": "services/inventory/__tests__/stock-integrity.repairs.postgres.test.ts",
+        "before": "050f1190c4a0e7067ae611e3f1a035e2c0cc1b009a0b143510f6c5d84b693f68",
+        "after": "c08ec4ff7deb74132c4e97d1f215329db4a7d8082788d08beaefcaea715faf07"
+      },
+      {
+        "scope": "captured-candidate",
+        "file": "services/inventory/__tests__/cross-workflow.phase3.postgres.test.ts",
+        "before": "f8d6ec9bf86516d1103eef0d66ed5ff46303505292e68442a7602efb528f702f",
+        "after": "69313b978edf5d37d208a2e19191b5ccc5e6638ffa943a884b6202e661f7e20e"
+      }
+    ],
+    "reason": "Closed-state setup must satisfy retained receipt trigger; second checkout requires customer. Explicit purchase input defaults and observed blocker-chain waits reuse reviewed shared-workspace corrections. New accounting scenario remains outside capture."
+  },
+  "passed": false
+}

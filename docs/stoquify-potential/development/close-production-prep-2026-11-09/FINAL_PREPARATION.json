@@ -1,0 +1,147 @@
+{
+  "checkedAt": "2026-11-10T07:33:10.003Z",
+  "status": "LOCAL_CLOSE_SCOPE_QUALIFIED_PRODUCTION_BLOCKED",
+  "localQualificationPassed": true,
+  "productionApproved": false,
+  "deploymentApproved": false,
+  "schemaPromotionExecuted": false,
+  "liveDeliveryExecuted": false,
+  "source": {
+    "manifest": {
+      "path": ".codex-tmp/close-app-d94239a737/SOURCE_MANIFEST.json",
+      "sha256": "b616a75bc552cd01f4cdfbbc74829359cc8b2d73f2806262acc9147e72670501",
+      "bytes": 1325292
+    },
+    "manifestSha256": "07557c8056042d904168ce86d309b4fe9e786241329b4c411d0ea9fdfe2608d4",
+    "files": 4397,
+    "scope": "Current application source; no environment files. Explicit read-only reuse of previously qualified Windows dependencies and separately generated schema-bound Prisma client. Development runtime, not a production artifact.",
+    "actualApplication": "Next development runtime; reused locked dependencies, schema-only private Prisma override; no new production artifact",
+    "generatedCandidateDeclarationSha256": "145b02057cb963a8baac49c75cbdff1cf5bedda546858cb19052541aa5452c31",
+    "catalog": {
+      "path": "prisma/migration-catalog-manifest.json",
+      "sha256": "ebfa7d6d08c3757bf6beca180823b4b1cda57355f066be3751417fc0c09770e3",
+      "bytes": 63343
+    },
+    "catalogIdentity": "e894a828415592f4c2ab155993b1923ed12245374a21b0184ae8a375495190aa",
+    "migrations": 122
+  },
+  "counts": {
+    "distinctMockedServiceActionSuites": 14,
+    "mockedServiceActionTests": 796,
+    "distinctJsdomSuites": 4,
+    "jsdomComponentHookTests": 161,
+    "distinctMockedAuthSuites": 4,
+    "mockedAuthRegressionTests": 87,
+    "pureReleaseControlTests": 15,
+    "realDatabaseTests": 41,
+    "earnedCloseNamedPhases": 10,
+    "mockedAuthActionRenderedCases": 72,
+    "actualAuthenticatedBrowserChecks": 6,
+    "realAuthorityTransitions": 4,
+    "exactHistoricalDownloads": 2
+  },
+  "staticChecks": {
+    "passed": true,
+    "lintErrors": 0,
+    "lintWarnings": 1
+  },
+  "operationalCleanup": {
+    "browserStopped": true,
+    "applicationStopped": true,
+    "isolatedDatabaseStopped": true,
+    "portsReleased": true,
+    "financialFactsUnchangedDuringAuthenticatedJourney": true
+  },
+  "evidence": [
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/EVIDENCE_INVENTORY.json",
+      "sha256": "ff9102bd177eb08959f465a9f3e4f272d76ff71db96634a5789adb6f8a52a780",
+      "bytes": 49890
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/static-adc814740a/verification.json",
+      "sha256": "6f86da1c64c995f4c12e0d06d89f61b26ae4de7e834d459887b47657a860b8a1",
+      "bytes": 6436
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/authenticated-app/runtime-2d0757d253/RESULT.json",
+      "sha256": "dfd38ca9ad553d1927ca5a0103dce49cdd9483aeaac1399c04724cb79d579ab7",
+      "bytes": 2709
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/authenticated-app/attempt-4a55df136f/RESULT.json",
+      "sha256": "24a7038f727118e180913398dffc04a3b597a6bb5c1632d9d26566fdde8d2040",
+      "bytes": 12467
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/authenticated-app/attempt-4a55df136f/SOURCE_BINDING.json",
+      "sha256": "dc648d7af48008efa53cf23a84705fa14b914494faf322c6d55e14d873b4a066",
+      "bytes": 2798
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/AUTHENTICATED_RUNTIME_TARGET.json",
+      "sha256": "8d47f5ec22474db9cd745a456cd41ae853796d7af3f3ea70ebd6b37a49fc668b",
+      "bytes": 2183
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/auth-typing/WORKFLOW.json",
+      "sha256": "ff5568ce542afbfc6b906064e33c06a7d45466e10acdabd56f810b12c9698f41",
+      "bytes": 323
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/QUALIFICATION_ADMISSION.json",
+      "sha256": "2d100d72980336bb62141af2411586208544f17b42f74b9fd15fa20cf83524ae",
+      "bytes": 4911
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/auth-typing/proof-c8b1c6a182/RESULT.json",
+      "sha256": "9da47248be6b8319d980120ae03687ac24c7ea4f9093decb55e717150fa9ce2d",
+      "bytes": 1562
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/RESULT.md",
+      "sha256": "8b4f8d96d9f7a3cffe653de240af2f4e1b11095191cd059a9bc033ca9f5c72d1",
+      "bytes": 13872
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/FINAL_ADMISSION_ATTEMPT_01.json",
+      "sha256": "d39b69dbb248bcdc2a7067479ae9ef9dcc5a03a0a99868b3504fc8f6dacacb32",
+      "bytes": 414
+    },
+    {
+      "path": "docs/release/HARDENED_CLOSE_PRODUCTION_DEPLOYMENT.md",
+      "sha256": "94280573ce85a0222a0665158e4249d9df51b3f7e1cb31cc644a749b1006a0ac",
+      "bytes": 17609
+    },
+    {
+      "path": "config/release/hardened-close-production.template.json",
+      "sha256": "d2e45c8bf5483d41a5b89d154d9496351d1b8963c749ef539fdeae9fd816a8e6",
+      "bytes": 1046
+    },
+    {
+      "path": "scripts/hardened-close-production-readiness.cjs",
+      "sha256": "82d88b392cf64f230ff3d96e0e3e1077e7cd268868f62bb37184230911fa5196",
+      "bytes": 17622
+    }
+  ],
+  "remainingProductionGates": [
+    "Selected host, public HTTPS domain and provider-compatible current artifact",
+    "Wider platform release gates and independent Cameroon domain acceptance; provider-backed full-month close for any pilot bank/mobile-money rails",
+    "Production database/history/risk, protected secrets and measured hosted recovery",
+    "Verified sender, real owned-test statement/invitation delivery and qualified private scheduled worker",
+    "Approved original statement custody/provider onboarding and scoped CA-06 follow-up",
+    "Independent protected promotion/cohort/stop/rollback authorization"
+  ],
+  "limits": [
+    "Internal system-close evidence only; no statutory certification.",
+    "Mocked, PostgreSQL, rendered fixture and actual development-session evidence are separate classes.",
+    "No target-platform production build or provider deployment was qualified.",
+    "Failed and superseded receipts remain preserved; delayed PG cleanup was admitted by a separate bound supplement.",
+    "The pre-runtime inventory remains historical IN_PROGRESS evidence; this admission records the additional completed runtime/static checks."
+  ],
+  "runner": {
+    "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/finalize-preparation.cjs",
+    "sha256": "4444395b0204c117f2c7d774f65f7ca00973d8c01744b9298fbb425dfd11b697",
+    "bytes": 8599
+  }
+}

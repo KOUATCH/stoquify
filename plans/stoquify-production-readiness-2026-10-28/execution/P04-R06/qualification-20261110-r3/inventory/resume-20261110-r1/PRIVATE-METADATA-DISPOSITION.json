@@ -1,0 +1,50 @@
+{
+  "at": "2026-11-10T18:43:49.033Z",
+  "sourceIdentitySha256": "04dc0a79755c41b22bd68be018e1cdca2cb96c3abc763f1338dea947165f3650",
+  "sourceManifestSha256": "0a69e88e6040d07fe70eaa3bb68f53875dabfc46c439736028981a935456dbe2",
+  "metadataOnly": true,
+  "externalReferencedFilesRead": false,
+  "rawReferenceValuesPublished": false,
+  "allMetadataStillMatchesManifest": true,
+  "classificationBlockers": [],
+  "validation": "Read-only exact JSON-shape and current SHA256 inspection. Top-level keys are path, sha256, bytes, packs. Each pack is path/sha256/bytes, optionally the previously admitted exact first/final kind labels. Referenced paths are absolute, digests are 64 lowercase hex characters, sizes are nonnegative integers. No referenced file was opened.",
+  "files": [
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-PRIVATE_FIXTURE.json",
+      "sha256": "1fe896640c9d10be26bf93823d346c66b6ea4d707d9130fae9a3b31f8a20460c",
+      "metadataOnly": true,
+      "packCount": 1,
+      "packKindLabels": [],
+      "externalReferencedFilesRead": false
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-PRIVATE_FIXTURE.json",
+      "sha256": "b41b42cf84bc965a263e094baa1cc3e94753a198c97bb2ff00ac172baf56c385",
+      "metadataOnly": true,
+      "packCount": 1,
+      "packKindLabels": [],
+      "externalReferencedFilesRead": false
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-ownership-qualification-2026-11-10/pg-attempt-0e69f2030b/pg-PRIVATE_FIXTURE.json",
+      "sha256": "ef5f463343e2c00c6666a30f5ef2ce4d2433d9305f69299e598b4070ec96deea",
+      "metadataOnly": true,
+      "packCount": 1,
+      "packKindLabels": [],
+      "externalReferencedFilesRead": false
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/pg-attempt-ece011f832/pg-PRIVATE_FIXTURE.json",
+      "sha256": "3abd13acd1adba63dc6e0e831c1e8e628883347f6180dd225074899adadc2086",
+      "metadataOnly": true,
+      "packCount": 2,
+      "packKindLabels": ["first", "final"],
+      "externalReferencedFilesRead": false
+    }
+  ],
+  "artifactRequirement": "Preserve all four metadata receipts in isolated source. Bind every exact path/hash in a named successor metadata policy, then verify sealed runtime/public/static excludes these receipts and their referenced private fixture/pack data. No R06 runtime requires those unrelated fixtures.",
+  "limits": [
+    "Filename-based bounded classification of the four private-fixture metadata paths found by the admitted source helper; not a whole-codebase secret audit.",
+    "No artifact exists or artifact exclusion is certified by this source inspection."
+  ]
+}

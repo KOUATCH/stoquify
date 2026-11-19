@@ -100,6 +100,13 @@ export const exportClosePackInputSchema = z.object({
   correlationId: optionalCorrelationIdSchema,
 })
 
+export const getRetainedClosePackExportInputSchema = z.object({
+  exportId: idSchema,
+  mode: z.enum(["DRAFT_NOT_CERTIFIED", "CERTIFIED"]),
+})
+
+export const listClosePackExportsInputSchema = z.object({ closeRunId: idSchema })
+
 export type CloseAssurancePeriodInput = z.infer<typeof closeAssurancePeriodInputSchema>
 export type CloseAssuranceDashboardInput = z.infer<typeof closeAssuranceDashboardInputSchema>
 export type CloseEvidenceGraphInput = z.infer<typeof closeEvidenceGraphInputSchema>
@@ -118,6 +125,8 @@ export type RequestCloseWaiverInput = z.infer<typeof requestCloseWaiverInputSche
 export type ApproveCloseWaiverInput = z.infer<typeof approveCloseWaiverInputSchema>
 export type UpdateAccountantReviewInput = z.infer<typeof updateAccountantReviewInputSchema>
 export type ExportClosePackInput = z.infer<typeof exportClosePackInputSchema>
+export type GetRetainedClosePackExportInput = z.infer<typeof getRetainedClosePackExportInputSchema>
+export type ListClosePackExportsInput = z.infer<typeof listClosePackExportsInputSchema>
 
 export type CloseAssuranceErrorCode =
   | "CloseBlocked"

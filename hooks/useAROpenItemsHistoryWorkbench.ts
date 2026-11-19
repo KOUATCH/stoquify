@@ -111,6 +111,9 @@ export function useAROpenItemsHistoryWorkbench() {
 
   return {
     filters,
+    settlementScope: enabled && userId && organizationId
+      ? { userId, organizationId, permissions: permissions.permissions ?? [] }
+      : null,
     result: enabled && !historyQuery.isError ? historyQuery.data : undefined,
     rows: enabled && !historyQuery.isError ? historyQuery.data?.items.slice(0, filters.pageSize) ?? [] : [],
     selectedRowId: filters.selected ?? null,

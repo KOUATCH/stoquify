@@ -54,6 +54,9 @@ function databaseRows(value: unknown, parent?: string): unknown {
   if (Array.isArray(value)) return value.map(row => databaseRows(row))
   if (!value || typeof value !== "object" || value instanceof Date || value instanceof Prisma.Decimal) return value
   const row = Object.fromEntries(Object.entries(value).map(([key, child]) => [key, typeof child === "number" && ["orderedQuantity", "receivedQuantity", "unitCost", "lineTotal"].includes(key) ? new Prisma.Decimal(child) : databaseRows(child,key)]))
+  if (typeof row.purchaseOrderLineId === "string" && row.lineTotal === undefined && row.receivedQuantity instanceof Prisma.Decimal && row.unitCost instanceof Prisma.Decimal) {
+    row.lineTotal = row.receivedQuantity.times(row.unitCost).toDecimalPlaces(2)
+  }
   if (parent === "item") return { organizationId: "org-1", isActive: true, deletedAt: null, ...row }
   return row
 }
@@ -68,6 +71,7 @@ function receivingTx<T extends object>(input: T): T {
     auditLog: { create: jest.fn().mockResolvedValue({ id: "receiving-audit" }) },
     purchaseOrder: { findFirst: jest.fn().mockResolvedValue(purchaseOrder()) },
     goodsReceipt: { findFirst: jest.fn().mockResolvedValue(tx.goodsReceiptInspectionResolution ? { purchaseOrderId: "po-1" } : null) },
+    goodsReceiptLine: { findMany: jest.fn().mockResolvedValue([]) },
   }
   const proxy = new Proxy(input, { get(target, property) {
     const original = Reflect.get(target,property)

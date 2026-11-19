@@ -1,0 +1,22 @@
+{
+  "reviewedAt": "2026-11-09T13:44:23.308Z",
+  "passed": true,
+  "reviewer": "r04_review",
+  "preRepairSnapshotsVerified": 25,
+  "changedBaselineFiles": [
+    "actions/item/listItemsAction.ts"
+  ],
+  "currentSourceSha256": "a51725ecd654eb17c350ff40749a6088b379fd433e5da2595268983bd3b8859e",
+  "baselineSha256": "3f763ceea82658460f6e0ed339a8d1283c13080af25bf34b082877cab8e95f60",
+  "scope": "Two imports and one catch only; complete normalized pre-repair source restored by reversing those changes",
+  "unchanged": [
+    "normalizeArgs object/positional branches",
+    "schema/guard order and permission options",
+    "server-owned ctx.orgId override",
+    "service invocation/success envelope",
+    "consumer hook",
+    "shared canonical/logger/services/schema/guards"
+  ],
+  "responsePolicy": "Explicit fixed fallbacks by reviewed error discriminator; no arbitrary message propagation; existing safe logger/canonical FreshAuth/Next controls",
+  "noProductOrTestEditsByReviewer": true
+}

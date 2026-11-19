@@ -1,0 +1,76 @@
+{
+  "generatedAt": "2026-11-02T17:27:04.438Z",
+  "status": "ENGINEERING_PROGRESS_STATUTORY_EXECUTION_BLOCKED",
+  "database": "stoquify_replay_dataset_20261028_01",
+  "userConfirmedReviewerArtifactsUnavailable": true,
+  "statutoryApprovalRecorded": false,
+  "productionUseAllowed": false,
+  "periodGates": {
+    "plannedOrganizationMonths": 36,
+    "recordedOrganizationMonths": 36,
+    "periodGateAttempts": 33,
+    "periodsCreated": 0,
+    "existingPeriodsReused": 0,
+    "blockedPeriodGates": 33,
+    "unexpectedFailures": 0,
+    "octoberPending": 3,
+    "completedPayrollLifecycles": 0
+  },
+  "reviewPreflight": {
+    "passedConditions": 4,
+    "totalConditions": 12,
+    "status": "BLOCKED_PENDING_QUALIFIED_REVIEW"
+  },
+  "verification": {
+    "scopedUnit": {
+      "tests": 207,
+      "passed": 207,
+      "failed": 0,
+      "suites": 7
+    },
+    "postgresService": {
+      "tests": 23,
+      "passed": 23,
+      "failed": 0,
+      "suites": 2
+    },
+    "postgresDatabase": "stoquify_local_payroll_blockers_20261102_ba4a1aaf",
+    "postgresMigrations": 121,
+    "sql": {
+      "ready": true,
+      "checks": 3,
+      "passed": 3
+    },
+    "sourceTypecheck": {
+      "owned": 0,
+      "imported": 0
+    },
+    "sourcePreparation": {
+      "checks": 19,
+      "passed": true
+    },
+    "wholeDataset": {
+      "checks": 1124,
+      "passed": true,
+      "businessFingerprintUnchanged": true,
+      "lastOrderedReplay": "2026-10-29"
+    }
+  },
+  "remaining": {
+    "payrollTables": 15,
+    "historicalInvoices": 18,
+    "requirements": [
+      "Authentic reviewed effective-dated 2025/2026 rules and independent expected-result fixtures",
+      "Qualified reviewer/checker evidence and legal-owner publication/admission",
+      "Reviewed tax-year, history-membership, adjustment, correction/reversal and refund contract",
+      "Certified complete-period inputs, followed by full chronological payroll and downstream acceptance"
+    ]
+  },
+  "sourceHashes": {
+    "services/payroll/payroll-control.service.ts": "c63014192e78d8db77ebdb8af1099455a4b92f3aed9b032f4d2a6a6f2772a9d1",
+    "services/payroll/payroll-history-proof.ts": "dc448640187ae97c3b681793511b512e64366848de3a520fb7ce37118df8d959",
+    "prisma/disposable-payroll-continuation.ts": "27a117204f15d1911178dd1ade34a4129e037f17d85f2d9739d239f1270dfb4e",
+    "scripts/run-disposable-payroll-continuation.cjs": "fbcc5457a51e9612a68540472c49f856286872ef8e9ffa73e64ce662e0b42260",
+    "prisma/migrations/20261102190000_payroll_history_proof_version_binding/migration.sql": "6134a60bec2f4aead9d134ac16a28c50e8b724b0c2b3ea5dcde97c79485017ce"
+  }
+}

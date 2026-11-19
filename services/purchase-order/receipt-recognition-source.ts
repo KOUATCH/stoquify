@@ -4,6 +4,7 @@ import { z } from "zod"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { hashBusinessPayload, markBusinessEventAppliedInTx, recordBusinessEventInTx } from "@/services/events/business-event.service"
 import { hasVerifiedReceiptPosting, receiptPostingEvidenceSelect } from "./purchase-receipt-accounting-evidence"
+import { purchaseReceiptCommercialBasisSchema } from "./purchase-commercial-basis"
 
 export const receiptRecognitionSourceEventType = "purchase.goods_receipt.recognition_source"
 export const receiptRecognitionSourceEventKey = (receiptId: string) => `goods-receipt-recognition-source:${receiptId}`
@@ -11,15 +12,20 @@ const record = (value: unknown): Record<string, unknown> => value && typeof valu
 const id = z.string().min(1), hash = z.string().regex(/^[a-f0-9]{64}$/)
 const money = (value: Prisma.Decimal.Value) => new Prisma.Decimal(value).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP)
 export const receiptRecognitionManifestSchema = z.object({
-  version: z.literal(1), organizationId: id, receiptId: id, receiptNumber: id, purchaseOrderId: id, supplierId: id,
+  version: z.union([z.literal(1), z.literal(2)]), organizationId: id, receiptId: id, receiptNumber: id, purchaseOrderId: id, supplierId: id,
   locationId: id, currency: z.string().regex(/^[A-Z]{3}$/), receiptDate: z.string().datetime(), effectiveAt: z.string().datetime(),
   acceptance: z.object({ kind: z.enum(["inspection", "resolution"]), id, actorId: id, at: z.string().datetime(), sourceHash: hash }).strict(),
   lines: z.array(z.object({
     receiptLineId: id, purchaseOrderLineId: id, itemId: id, quantity: z.string().regex(/^\d+\.\d{3}$/),
     unitCost: z.string().regex(/^\d+\.\d{2}$/), value: z.string().regex(/^\d+\.\d{2}$/), stockTracked: z.boolean(),
+    commercialBasis: purchaseReceiptCommercialBasisSchema.optional(),
     batchNumber: z.string().nullable(), expiryDate: z.string().datetime().nullable(), serialNumbers: z.array(z.string()),
   }).strict()).min(1),
-}).strict()
+}).strict().superRefine((manifest, context) => {
+  if (manifest.lines.some(line => manifest.version === 1 ? line.commercialBasis !== undefined : line.commercialBasis?.net !== line.value)) {
+    context.addIssue({ code: z.ZodIssueCode.custom, message: "The receipt recognition version does not match its commercial evidence." })
+  }
+})
 export type ReceiptRecognitionManifest = z.infer<typeof receiptRecognitionManifestSchema>
 export type ReceiptRecognitionSource = { manifest: ReceiptRecognitionManifest; eventId: string; sourceHash: string; inventoryValue: Prisma.Decimal }
 export type ReceiptRecognitionEvidence = { stockVerified: boolean; accountingStatus: "POSTED" | "BLOCKED" | "NOT_REQUIRED" | "UNVERIFIED"; batchId: string | null; journalId: string | null; evidenceHash: string | null }
@@ -51,15 +57,18 @@ function manifestFromReceipt(receipt: Receipt, frozen?: ReceiptRecognitionManife
   const accepted = acceptance(receipt)
   if (accepted.at !== receipt.inventoryPostedAt.toISOString()) throw receiptRecognitionReviewRequired()
   const lines = receipt.lines.map(line => {
-    if (line.purchaseOrderLine.purchaseOrderId !== receipt.purchaseOrderId || line.purchaseOrderLine.itemId !== line.itemId || line.receivedQuantity.lte(0) || line.unitCost.lt(0) || !money(line.receivedQuantity.times(line.unitCost)).eq(line.lineTotal)) throw receiptRecognitionReviewRequired()
+    if (line.purchaseOrderLine.purchaseOrderId !== receipt.purchaseOrderId || line.purchaseOrderLine.itemId !== line.itemId || line.receivedQuantity.lte(0) || line.unitCost.lt(0)) throw receiptRecognitionReviewRequired()
+    const commercialBasis = line.commercialBasis == null ? undefined : purchaseReceiptCommercialBasisSchema.safeParse(line.commercialBasis)
+    if (commercialBasis ? !commercialBasis.success || !money(commercialBasis.data.net).eq(line.lineTotal) : !money(line.receivedQuantity.times(line.unitCost)).eq(line.lineTotal)) throw receiptRecognitionReviewRequired()
     const retained = frozen?.lines.find(candidate => candidate.receiptLineId === line.id)
     if (frozen && !retained) throw receiptRecognitionReviewRequired()
     return { receiptLineId: line.id, purchaseOrderLineId: line.purchaseOrderLineId, itemId: line.itemId,
       quantity: line.receivedQuantity.toFixed(3), unitCost: line.unitCost.toFixed(2), value: line.lineTotal.toFixed(2),
+      ...(commercialBasis?.success ? { commercialBasis: commercialBasis.data } : {}),
       stockTracked: retained ? retained.stockTracked : line.item.trackInventory,
       batchNumber: line.batchNumber, expiryDate: line.expiryDate?.toISOString() ?? null, serialNumbers: [...line.serialNumbers].sort() }
   }).sort((a, b) => a.receiptLineId.localeCompare(b.receiptLineId))
-  return receiptRecognitionManifestSchema.parse({ version: 1, organizationId: receipt.organizationId, receiptId: receipt.id, receiptNumber: receipt.receiptNumber,
+  return receiptRecognitionManifestSchema.parse({ version: lines.some(line => line.commercialBasis !== undefined) ? 2 : 1, organizationId: receipt.organizationId, receiptId: receipt.id, receiptNumber: receipt.receiptNumber,
     purchaseOrderId: receipt.purchaseOrderId, supplierId: receipt.purchaseOrder.supplierId, locationId: receipt.locationId,
     currency: frozen?.currency ?? receipt.organization.currency.trim().toUpperCase(), receiptDate: receipt.receiptDate.toISOString(), effectiveAt: receipt.inventoryPostedAt.toISOString(), acceptance: accepted, lines })
 }
@@ -103,7 +112,7 @@ export async function readReceiptRecognitionSource(tx: Prisma.TransactionClient,
   return result(manifest, event.id)
 }
 
-const stockLineSchema = z.object({ itemId: z.string(), locationId: z.string(), quantity: z.string(), unitCost: z.string(), movementType: z.literal("PURCHASE_RECEIPT"), referenceType: z.literal("GOODS_RECEIPT"), referenceId: z.string(), batchNumber: z.string().nullable(), serialNumbers: z.array(z.string()), expiryDate: z.string().nullable() })
+const stockLineSchema = z.object({ itemId: z.string(), locationId: z.string(), quantity: z.string(), unitCost: z.string(), acquisitionValue: z.string().regex(/^\d+\.\d{2}$/).optional(), movementType: z.literal("PURCHASE_RECEIPT"), referenceType: z.literal("GOODS_RECEIPT"), referenceId: z.string(), batchNumber: z.string().nullable(), serialNumbers: z.array(z.string()), expiryDate: z.string().nullable() })
 const signatures = (lines: z.infer<typeof stockLineSchema>[]) => lines.map(line => hashBusinessPayload({ ...line, quantity: new Prisma.Decimal(line.quantity).toString(), unitCost: money(line.unitCost).toString(), serialNumbers: [...line.serialNumbers].sort() })).sort()
 
 /** Shared read-only corroboration for receiving, recovery, invoices and returns.
@@ -116,10 +125,10 @@ export async function readReceiptRecognitionEvidence(tx: Prisma.TransactionClien
   const journals = await tx.journalEntry.findMany({ where: { organizationId, sourceType: "GOODS_RECEIPT", sourceId: receiptId }, select: { id: true, postingBatchId: true } })
   const links = await tx.accountingSourceLink.findMany({ where: { organizationId, sourceType: "GOODS_RECEIPT", sourceId: receiptId }, select: { journalEntryId: true, postingBatchId: true } })
   const base: ReceiptRecognitionEvidence = { stockVerified: false, accountingStatus: "UNVERIFIED", batchId: batches.length === 1 ? batches[0].id : null, journalId: null, evidenceHash: null }
-  const expected = signatures(manifest.lines.filter(line => line.stockTracked).map(line => ({ itemId: line.itemId, locationId: manifest.locationId, quantity: line.quantity, unitCost: line.unitCost, movementType: "PURCHASE_RECEIPT", referenceType: "GOODS_RECEIPT", referenceId: receiptId, batchNumber: line.batchNumber, expiryDate: line.expiryDate, serialNumbers: line.serialNumbers })))
+  const expected = signatures(manifest.lines.filter(line => line.stockTracked).map(line => ({ itemId: line.itemId, locationId: manifest.locationId, quantity: line.quantity, unitCost: line.unitCost, ...(line.commercialBasis ? { acquisitionValue: line.commercialBasis.net } : {}), movementType: "PURCHASE_RECEIPT", referenceType: "GOODS_RECEIPT", referenceId: receiptId, batchNumber: line.batchNumber, expiryDate: line.expiryDate, serialNumbers: line.serialNumbers })))
   try {
-    if (movements.some(m => m.effectiveAt.toISOString() !== manifest.effectiveAt || m.timeProvenance !== "EXPLICIT_SOURCE_TIME" || m.reversalOfTransactionId || !m.totalCost.eq(money(m.quantity.times(m.unitCost))))) return base
-    const actual = signatures(movements.map(m => stockLineSchema.parse({ ...m, quantity: m.quantity.toString(), unitCost: m.unitCost.toString(), movementType: m.type, referenceType: "GOODS_RECEIPT", expiryDate: m.expiryDate?.toISOString() ?? null })))
+    if (movements.some(m => m.effectiveAt.toISOString() !== manifest.effectiveAt || m.timeProvenance !== "EXPLICIT_SOURCE_TIME" || m.reversalOfTransactionId || manifest.version === 1 && !m.totalCost.eq(money(m.quantity.times(m.unitCost))))) return base
+    const actual = signatures(movements.map(m => stockLineSchema.parse({ ...m, quantity: m.quantity.toString(), unitCost: m.unitCost.toString(), ...(manifest.version === 2 ? { acquisitionValue: m.totalCost.toFixed(2) } : {}), movementType: m.type, referenceType: "GOODS_RECEIPT", expiryDate: m.expiryDate?.toISOString() ?? null })))
     const recorded = signatures(events.flatMap(event => {
       const payload = record(event.payload)
       if (event.eventSource !== "INTERNAL" || event.schemaVersion !== 1 || event.status !== "APPLIED" || !event.processedAt || event.actorId !== manifest.acceptance.actorId || event.occurredAt.toISOString() !== manifest.effectiveAt || event.postingBatchId !== base.batchId || payload.postingBatchId !== base.batchId || event.payloadHash !== hashBusinessPayload(event.payload) || event.documentHash !== sourceHash || payload.documentHash !== sourceHash || payload.sourceId !== receiptId || payload.sourceType !== "GOODS_RECEIPT" || payload.eventType !== "purchase.goods_receipt.stock_posted") throw receiptRecognitionReviewRequired()

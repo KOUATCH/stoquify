@@ -1,0 +1,632 @@
+{
+  "utc": "2026-11-09T10:18:11.011Z",
+  "operations": [
+    {
+      "kind": "login",
+      "user": "accountant",
+      "returnUrl": "/dashboard/accounting/close/cmw8bfnw6000ymalgmsnz84ha"
+    },
+    {
+      "kind": "wait",
+      "text": "Current close evidence",
+      "timeout": 60000
+    },
+    {
+      "kind": "inspect"
+    },
+    {
+      "kind": "screenshot"
+    }
+  ],
+  "results": [
+    {
+      "signedInRole": "accountant"
+    },
+    {
+      "operation": "login"
+    },
+    {
+      "operation": "wait"
+    },
+    {
+      "url": "http://127.0.0.1:3196/en/dashboard/accounting/close/cmw8bfnw6000ymalgmsnz84ha",
+      "title": "Stoquify - OHADA Operating System",
+      "text": "Skip to main content\nToggle navigation menu\n\nClose Center\n\nFinance & Trust / Accounting / Close Center\n\nFR\nSA\nCLOSE ASSURANCE\nClose & Assurance Center\n\nClose readiness from the ledger, reconciliation, suspense, and data-trust evidence already in the accounting backbone.\n\nControl center\nEvidence\nReview required\nRecorded status: BLOCKED\nT2\nClose readiness journey\n\nA read-only path from operating sources to reconciliation, posted ledger, findings, certification, and export readiness.\n\nRecorded readiness\n\n70%\n\n70% evidence coverage\n\nOPEN\nOperational sources\n\nSynthetic open period: 10 checklist gate(s), 19 evidence item(s).\n\nACCOUNTING_PERIODS\n\nWARNING\nReconciliation proof\n\nNo payment reconciliation evidence is available for close review.\n\nRECONCILIATION_RUNS\n\nPASSED\nPosted ledger\n\nPosted ledger entries balance and retain posting/source traceability.\n\nJOURNAL_ENTRIES\n\n6\nClose findings\n\n6 open finding(s), 1 critical blocker(s).\n\nCLOSE_ASSURANCE_FINDINGS\n\nBLOCKED\nCertification\n\nReview the current evidence conditions below.\n\nCLOSE_RUNS\n\nDRAFT\nDraft export\n\nDraft close pack export is available; certified export still enforces readiness gates.\n\nCLOSE_PACK_EXPORTS\n\nJourney blockers\n\nClose runs are blocked\n\n1 close run(s) are blocked in the selected period.\n\nUse Close Assurance to clear blockers before certification.\n\nClose findings remain open\n\n6 finding(s) remain unresolved in the selected close runs.\n\nResolve or formally waive close findings through Close Assurance.\n\nClose controls failed or are unavailable\n\n2 checklist control(s) failed or are unavailable in the selected close runs.\n\nReview failed controls and restore their evidence before certification.\n\nClose evidence is unavailable\n\n4 close evidence item(s) are unavailable for this organization.\n\nRegenerate or attach the missing close evidence.\n\nSystem evidence only. Statutory filings still require qualified expert validation.\n\n01\nClose readiness checklist\n02\nBlockers and findings\n03\nCertification controls\n04\nEvidence coverage\nCurrent close evidence\n\nReview required\n\nThe recorded status and score describe the saved assessment; current proof is checked separately.\n\nAs of: Nov 9, 2026, 10:18 AM UTC\n\nClose runs are blocked\n\n1 close run(s) are blocked in the selected period.\n\nUse Close Assurance to clear blockers before certification.\n\nClose findings remain open\n\n6 finding(s) remain unresolved in the selected close runs.\n\nResolve or formally waive close findings through Close Assurance.\n\nClose controls failed or are unavailable\n\n2 checklist control(s) failed or are unavailable in the selected close runs.\n\nReview failed controls and restore their evidence before certification.\n\nClose evidence is unavailable\n\n4 close evidence item(s) are unavailable for this organization.\n\nRegenerate or attach the missing close evidence.\n\nSTATUS\n\nReview required\n\nRecorded status: BLOCKED\n\nRECORDED READINESS\n\n70%\n\n6/10 gates passed\n\nEVIDENCE COVERAGE\n\n70%\n\n19 evidence items\n\nRECORDED CRITICAL BLOCKERS\n\n1\n\n5 high severity\n\nOPEN FINDINGS\n\n6\n\n6 total findings\n\nRECORDED TRUST LEVEL\n\nT2\n\nAs of: Nov 9, 2026, 10:02 AM UTC\n\nReview required\n\nSynthetic open period - Jan 1, 2026 to Dec 31, 2026\n\nRun assessment\nRefresh\n\nChecking your permissions…\n\nPartial data\n\nMIXED\n\nSome close evidence domains are unavailable. Certification remains gated until required evidence is posted, resolved, or waived through controls.\n\n0 unavailable checklist gates\nClose readiness checklist\n\nService-backed gates from period close, ledger, payment reconciliation, suspense, inventory, AP, payroll, tax, and data-trust sources.\n\nBalance-sheet account reconciliations\n\nLEDGER\n\nFAILED\nHIGH\n\n0 of 4 account/currency schedules have current independent approval.\n\n0 evidence items - services/accounting/balance-sheet-close.service.ts\n\nReconcile and independently approve each required account/currency schedule.\n\nLedger balance and traceability\n\nLEDGER\n\nPASSED\nINFO\n\nPosted ledger entries balance and retain posting/source traceability.\n\n1 evidence items - services/accounting/reconciliations.service.ts\n\nPeriod close preflight\n\nLEDGER\n\nPASSED\nINFO\n\nNo period close preflight blockers were detected.\n\n1 evidence items - services/accounting/periods.service.ts\n\nAccounting period state\n\nLEDGER\n\nPASSED\nINFO\n\nSynthetic open period is open and available for close readiness.\n\n1 evidence items - services/accounting/periods.service.ts\n\nPayment reconciliation sign-off\n\nPAYMENT_RECONCILIATION\n\nWARNING\nMEDIUM\n\nNo payment reconciliation evidence is available for close review.\n\n0 evidence items - services/reconciliation/payment-close-evidence.service.ts\n\nSuspense and payment exceptions\n\nSUSPENSE\n\nPASSED\nINFO\n\nNo open close-blocking suspense items were detected.\n\n0 evidence items - services/reconciliation/payment-suspense-workflow.service.ts\n\nInventory valuation readiness\n\nINVENTORY_VALUATION\n\nFAILED\nCRITICAL\n\nInventory subledger value -4.00 does not reconcile to class 3 ledger value 0.00 XAF.\n\n1 evidence items - services/inventory/inventory-valuation.service.ts\n\nInventory subledger value -4.00 does not reconcile to class 3 ledger value 0.00 XAF.\n\nAP, payroll, and compliance exposure\n\nTAX\n\nPASSED\nINFO\n\nPurchasing and AP: ready; Payroll and declarations: ready; Compliance documents: ready\n\n3 evidence items - services/accounting/data-trust.service.ts\n\nPayroll finance forecast proof\n\nPAYROLL\n\nPASSED\nINFO\n\nAggregate payroll forecast is authoritative through 2026-12-31T23:59:59.999Z; net pay 0, statutory liabilities 0.\n\n1 evidence items - services/snapshots/tenant-operating-snapshot.service.ts\n\nData trust and provenance\n\nDATA_TRUST\n\nWARNING\nMEDIUM\n\nData-trust level T2; 5 blockers detected.\n\n16 evidence items - services/accounting/data-trust.service.ts\n\nAccountant trust packs require the accounting setup to be marked ready before certification.\n\nBlockers and findings\n\nOpen issues must be resolved, assigned, or waived through segregation-of-duties controls before certification.\n\nTable ready\n\nBlockers and findings\nSTATUS\tDETAIL\tSOURCE\tOWNER\tACTION\n\nOPEN\nCRITICAL\n\t\n\nclass3 reconciliation drift\n\nInventory subledger value -4.00 does not reconcile to class 3 ledger value 0.00 XAF.\n\n\t\nINVENTORY_VALUATION\nservices/inventory/inventory-valuation.service.ts\nCLASS3_RECONCILIATION_DRIFT\n\t\nNot set\n\t\nAssign to me\nInspect finding\n\n\nOPEN\nHIGH\n\t\n\nBalance-sheet reconciliation is incomplete\n\nTEST_AR TEST_AR (XAF): Balance-sheet supporting evidence is missing.\n\n\t\nLEDGER\nservices/accounting/balance-sheet-close.service.ts\nBalanceSheetReconciliation\n\t\nNot set\n\t\nAssign to me\nInspect finding\n\n\nOPEN\nHIGH\n\t\n\nBalance-sheet reconciliation is incomplete\n\nTEST_CASH TEST_CASH (XAF): Balance-sheet supporting evidence is missing.\n\n\t\nLEDGER\nservices/accounting/balance-sheet-close.service.ts\nBalanceSheetReconciliation\n\t\nNot set\n\t\nAssign to me\nInspect finding\n\n\nOPEN\nHIGH\n\t\n\nBalance-sheet reconciliation is incomplete\n\nTEST_STOCK TEST_STOCK (XAF): Balance-sheet supporting evidence is missing.\n\n\t\nLEDGER\nservices/accounting/balance-sheet-close.service.ts\nBalanceSheetReconciliation\n\t\nNot set\n\t\nAssign to me\nInspect finding\n\n\nOPEN\nHIGH\n\t\n\nBalance-sheet reconciliation is incomplete\n\nTEST_BANK TEST_BANK (XAF): Balance-sheet supporting evidence is missing.\n\n\t\nLEDGER\nservices/accounting/balance-sheet-close.service.ts\nBalanceSheetReconciliation\n\t\nNot set\n\t\nAssign to me\nInspect finding\n\n\nOPEN\nHIGH\n\t\n\nAccounting setup is not locked\n\nOrganization-wide control: Accountant trust packs require the accounting setup to be marked ready before certification.\n\n\t\nDATA_TRUST\nservices/accounting/data-trust.service.ts\naccounting.setup.ready\n\t\nNot set\n\t\nAssign to me\nInspect finding\n\n6 of 6 loaded records\n\nRows per page\n\nPage 1 of 1\nGo to previous page\nGo to next page\n\nAccountant comments\n\nclass3 reconciliation drift\n\nPersisted run\nAdd comment\n\nRequest waiver\n\nclass3 reconciliation drift\n\nSoD\nRequest waiver\n\nNo comments yet.\n\nRecover missing evidence\nRefresh evidence\nEvidence updates\nRefresh updates\n\nPublished in-app updates you can currently access. Publication does not mean someone has read the update. Use the evidence workbench below to act on the current request.\n\nLoading evidence updates…\n\nOpen work for this period, including earlier assessments. A response is not approval; original evidence remains retained.\n\nDates are displayed in your browser's timezone.\n\nLoading current evidence work…\n\nHistorical missing evidence is retained after acceptance. This does not authenticate an external signature or authorize a payment.\n\nCertification controls\nASSIGN TO ME\non\n\naccounting.close.finding.assign\n\nWAIVER APPROVAL REQUIRES FRESH AUTHENTICATION.\non\n\naccounting.close.waiver.approve\n\nCERTIFIED EXPORT GATE\noff\n\ndisabled\n\nDRAFT EXPORT GATE\non\n\nDraft close pack export is available; certified export still enforces readiness gates.\n\nSOURCE TABLES\n\naccounting_periods, journal_entries, journal_entry_lines, ledger_posting_batches, accounting_source_links, bank_balance_evidence, balance_sheet_evidence, close_source_changes, provider_accounts, payment_rails, chart_of_accounts, settlement_accounts, match_records, payment_transactions, provider_events, statement_files, statement_lines, reconciliation_runs, suspense_items, payment_exceptions, inventory_levels, inventory_transactions, stock_adjustments, stock_count_sessions, payroll_periods, payroll_runs, payroll_run_transitions, payroll_payment_batches, payroll_declarations, payroll_declaration_evidence, business_events, ledger_audit_events, audit_logs\n\nAccountant review\n\nRecord an accountant decision against this close run without changing source evidence or posted ledger entries.\n\nLATEST REVIEW\n\nOPEN\n\nNo comments yet.\n\nRun close readiness before recording an accountant review.\n\nREVIEW STATUS\nDECISION NOTES\nSave review\nClose pack export\n\nGenerate deterministic JSON snapshots with a watermark, SHA-256 content hash, and close-run audit trail.\n\nSystem evidence pack only. Statutory filings still require qualified expert validation.\n\nCurrent close evidence requires review.\n\nAvailable\nCertified export blocked\nExport draft JSON\nExport certified JSON\nEvidence coverage\n\nSource-linked proof gathered by the close engine. Missing domains stay visible as unavailable evidence.\n\nTable ready\n\nEvidence coverage\nEVIDENCE ID\tEVIDENCE TYPE\tSOURCE\tPERIOD\tSTATUS\tEVIDENCE ITEMS\tHASH\n\ncmw93ergy004wmato840gjtss\n\t\nSOURCE_LINK\n\t\n\nPOS_SALE POS-SYNTHETIC_TILL-20261108-EUVIV\n\naccounting_source_links\n\n\t\nNov 9, 2026, 9:59 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93ergv004umatoxujuvyng\n\t\nSOURCE_LINK\n\t\n\nPOS_PAYMENT PAY-20261109-O49SG6P\n\naccounting_source_links\n\n\t\nNov 9, 2026, 9:59 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erhx005kmatoc7p6kp2i\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:00 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erhu005imatobw4ig7uq\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:00 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erhr005gmatoodfg0agl\n\t\nAUDIT_LOG\n\t\n\nLOGIN_SUCCESS - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:01 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erho005emato9tm1uzww\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erhl005cmatob0og1pup\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erhi005amatojnl9h3qe\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erhf0058matomwlv6zmt\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erhd0056matoeznxnvz2\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erha0054matoyllc69kw\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erh70052mato80i6n5qx\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erh40050matoiftigjib\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93erh1004ymatogijbqew2\n\t\nAUDIT_LOG\n\t\n\nPERMISSION_GRANTED - recorded\n\naudit_logs\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93ergl004omatov6ecwt5a\n\t\nAUDIT_LOG\n\t\n\n0 normal unpaid invoice(s); 0 AP control exception(s).\n\nsupplier_invoices\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nOPERATIONAL\n\t\n1\n\t\n4adb9dc829dd14943ce7469804eb256f76c7afb558bcf78f107cc9afc4078636\n\n\ncmw93ergi004mmatoz5gbfr7k\n\t\nAUDIT_LOG\n\t\n\nBalance sheet TEST_BANK TEST_BANK (XAF): BLOCKED\n\nbalance_sheet_evidence\n\nBalance-sheet supporting evidence is missing.\n\n\t\nNot set\n\t\nUnavailable\nOPERATIONAL\n\t\n1\n\t\nNot set\n\n\ncmw93ergf004kmatopdg8tah6\n\t\nAUDIT_LOG\n\t\n\nBalance sheet TEST_STOCK TEST_STOCK (XAF): BLOCKED\n\nbalance_sheet_evidence\n\nBalance-sheet supporting evidence is missing.\n\n\t\nNot set\n\t\nUnavailable\nOPERATIONAL\n\t\n1\n\t\nNot set\n\n\ncmw93ergb004imatocbp6x4cl\n\t\nAUDIT_LOG\n\t\n\nBalance sheet TEST_CASH TEST_CASH (XAF): BLOCKED\n\nbalance_sheet_evidence\n\nBalance-sheet supporting evidence is missing.\n\n\t\nNot set\n\t\nUnavailable\nOPERATIONAL\n\t\n1\n\t\nNot set\n\n\ncmw93erg5004gmato9l3f1n5c\n\t\nAUDIT_LOG\n\t\n\nBalance sheet TEST_AR TEST_AR (XAF): BLOCKED\n\nbalance_sheet_evidence\n\nBalance-sheet supporting evidence is missing.\n\n\t\nNot set\n\t\nUnavailable\nOPERATIONAL\n\t\n1\n\t\nNot set\n\n\ncmw93eri5005omato55vgr4tn\n\t\nREPORT_EXPORT\n\t\n\nAuthoritative payroll forecast proof: total upcoming 0\n\npayroll_runs\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nsha256:0a5e47db38e2d1bfbc245f52e169a3c13e001d8cf07f1e432147a512727c5a71\n\n\ncmw93eri1005mmatoyvb4swy9\n\t\nREPORT_EXPORT\n\t\n\nInventory valuation annex BLOCKED: inventory -4.00 / class 3 0.00 XAF\n\ninventory_transactions\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nsha256:b9ff5cab74840b99c337fa5c6f3ac82391108ca59f0ef0e93ae555797df9d792\n\n\ncmw93ergp004qmato5xsoakbf\n\t\nREPORT_EXPORT\n\t\n\nTrial balance XAF: debit 20.00 / credit 20.00\n\njournal_entry_lines\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nNot set\n\n\ncmw93ergt004smatomiovroqg\n\t\nDATA_TRUST_CERTIFICATE\n\t\n\nData trust T2 - PARTIAL\n\nledger_audit_events\n\n\t\nNov 9, 2026, 10:02 AM UTC\n\t\nAvailable\nPOSTED\n\t\n1\n\t\nsha256:f5e1f22b57abed81340aba8eb03031150889e750e3ab9405fa581228d91c8a25\n\n23 of 23 loaded records\n\nRows per page\n\nPage 1 of 1\nGo to previous page\nGo to next page\nProvenance\n\nWhich service produced each part of the close picture, and whether it is posted, operational, or unavailable.\n\nLedger and period close\n\nOPEN\n\nPOSTED\n\nNov 9, 2026, 10:02 AM UTC\n\naccounting_periods, journal_entries, journal_entry_lines, ledger_posting_batches\n\nPayment reconciliation\n\nOPEN\n\nOPERATIONAL\n\nNov 9, 2026, 10:02 AM UTC\n\nreconciliation_runs, suspense_items, payment_exceptions, provider_events, statement_files, statement_lines\n\nPeriod evidence through 2026-11-09T10:02:47.095Z; unassigned organization-wide controls: 0 suspense, 0 exceptions.\n\nData trust\n\nOPEN\n\nPOSTED\n\nNov 9, 2026, 10:02 AM UTC\n\njournal_entries, journal_entry_lines, ledger_posting_batches, accounting_source_links, business_events, ledger_audit_events, audit_logs, provider_accounts, statement_files, statement_lines, reconciliation_runs, reconciliation_no_activity_evidence, bank_balance_evidence, balance_sheet_evidence, close_source_changes, payment_exceptions, payment_transactions, supplier_invoices, supplier_ledger_entries, supplier_invoice_match_exceptions, supplier_payment_allocations, supplier_credit_notes, supplier_payments, payroll_runs, payroll_run_transitions, payroll_run_lines, payroll_payslips, payroll_declarations, payroll_declaration_evidence, payroll_payment_batches, payroll_payment_allocations, fiscal_documents\n\nInventory valuation\n\nOPEN\n\nPOSTED\n\nNov 9, 2026, 10:02 AM UTC\n\ninventory_levels, inventory_transactions, stock_adjustments, stock_count_sessions, journal_entry_lines, business_events\n\nInventory subledger value -4.00 does not reconcile to class 3 ledger value 0.00 XAF.\n\nPayroll finance forecast proof\n\nOPEN\n\nPOSTED\n\nNov 9, 2026, 10:02 AM UTC\n\npayroll_periods, payroll_runs, payroll_run_lines, payroll_payment_batches, payroll_declarations, payroll_declaration_evidence, payment_provider_accounts, accounting_source_links, ledger_posting_batches\n\nEvidence graph\n\nNodes and edges generated from the current close run evidence.\n\nNODES\n\n...\n\nLive preview\n\nEDGES\n\n...\n\nEvidence graph is not available for this assessment.",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Notifications0",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Search navigation modules",
+          "placeholder": "Search modules",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Command Center menu",
+          "placeholder": null,
+          "text": "Command CenterOwner and manager daily command views3",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sales menu",
+          "placeholder": null,
+          "text": "SalesCustomers, sales, and POS entry points2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Accounting menu",
+          "placeholder": null,
+          "text": "AccountingLedger, close, reports, and controls7",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Finance menu",
+          "placeholder": null,
+          "text": "FinanceCash, profitability, payments, and reconciliation2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sign out",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Toggle navigation menu",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": "combobox",
+          "type": "search",
+          "id": "",
+          "name": null,
+          "label": "Search pages or records",
+          "placeholder": "Search pages or records",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Disable notification sound",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "radix-_R_2auitqbnabn9lb_",
+          "name": null,
+          "label": "Open account menu",
+          "placeholder": null,
+          "text": "SASynthetic accountant",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": "combobox",
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Period",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "SELECT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Run assessment",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Refresh",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": "search",
+          "id": "",
+          "name": null,
+          "label": "Search: Blockers and findings",
+          "placeholder": "Search table data...",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Assign to me",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Inspect finding",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Assign to me",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Inspect finding",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Assign to me",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Inspect finding",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Assign to me",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Inspect finding",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Assign to me",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Inspect finding",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Assign to me",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Inspect finding",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": "combobox",
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Rows per page",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "SELECT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to first page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to previous page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to next page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to last page",
+          "disabled": true
+        },
+        {
+          "tag": "TEXTAREA",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Accountant comments",
+          "placeholder": "Add source-linked review notes for this finding.",
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Add comment",
+          "disabled": true
+        },
+        {
+          "tag": "TEXTAREA",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Request waiver",
+          "placeholder": "Document the compensating control or management-approved reason for this waiver request.",
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Request waiver",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Refresh evidence",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Refresh updates",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": "combobox",
+          "type": "button",
+          "id": "close-review-status",
+          "name": null,
+          "label": "Review status",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "SELECT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "TEXTAREA",
+          "role": null,
+          "type": null,
+          "id": "close-review-notes",
+          "name": null,
+          "label": null,
+          "placeholder": "Document reviewer decision, requested changes, or close-readiness rationale.",
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Save review",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Export draft JSON",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Export certified JSON",
+          "disabled": true
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": "search",
+          "id": "",
+          "name": null,
+          "label": "Search: Evidence coverage",
+          "placeholder": "Search table data...",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": "combobox",
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Rows per page",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "SELECT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to first page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to previous page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to next page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to last page",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "operation": "inspect"
+    },
+    {
+      "operation": "screenshot"
+    }
+  ]
+}

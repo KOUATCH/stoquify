@@ -1,0 +1,31 @@
+{
+  "workflow": {
+    "command": "npm run agent:workflow:check",
+    "exitCode": 0,
+    "unclassifiedScripts": 196
+  },
+  "mockedTests": {
+    "command": "node node_modules/jest/bin/jest.js --config docs/command-center/phase-5-follow-through-2026-10-24/jest.config.cjs --runInBand",
+    "exitCode": 0,
+    "suites": 6,
+    "tests": 101
+  },
+  "typescript": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit -p docs/command-center/phase-5-follow-through-2026-10-24/tsconfig.json",
+    "exitCode": 0
+  },
+  "eslint": {
+    "exitCode": 0,
+    "files": 2,
+    "errors": 0,
+    "warnings": 0
+  },
+  "diffCheck": {
+    "exitCode": 0,
+    "scope": "five owned changed paths"
+  },
+  "database": "not run",
+  "browser": "not rerun; no UI changes",
+  "build": "not run",
+  "notifications": "not sent; no worker executed"
+}

@@ -52,6 +52,9 @@ export const usePublicReceiptAccessTokens = () => query([])
 export const usePublicReceiptSalesSearch = () => query([])
 export const usePOSCheckoutLifecycle = () => ({ ready: true, busy: false, error: null, leaseId: "00000000-0000-4000-8000-000000000001", acceptedCartId: "cart", snapshot: null, acceptCart() {}, refresh: async () => {}, command: async () => true })
 export const retainLegacyPOSCheckoutAction = async () => ok(null)
+export const getPOSWhatsAppReceiptCapabilityAction = async () => ok({ available: false })
+export const getPOSWhatsAppReceiptStatusAction = async () => ok(null)
+export const queuePOSWhatsAppReceiptAction = async () => { throw new Error("Outside fixture cohort") }
 function useMutation(run: (input: any) => Promise<any>) {
   const [isPending, setPending] = useState(false)
   return { isPending, variables: undefined, mutateAsync: async (input: unknown) => { setPending(true); try { return await run(input) } finally { setPending(false) } } }
@@ -82,3 +85,4 @@ export const useNotifications = () => notifications
 export const OfflineSyncStatusStrip = () => null
 export const ReceiptTokenHistoryPanel = () => null
 export const ReceiptTokenControlStrip = () => null
+export const POSReturns = () => null

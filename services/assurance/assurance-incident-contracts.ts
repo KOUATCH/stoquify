@@ -104,6 +104,8 @@ export type WorkflowAssuranceIncidentProofSummary = {
 };
 
 export type WorkflowAssuranceIncidentDto = {
+  /** Current source-owned assignment token. Older cached payloads must refresh before assigning. */
+  assignmentRevision?: string;
   id: string;
   organizationId: string;
   checkKey: string;
@@ -152,7 +154,10 @@ export type ResolveWorkflowAssuranceIncidentInput =
 export type AssignWorkflowAssuranceIncidentInput =
   WorkflowAssuranceIncidentTransitionInput & {
     ownerId: string;
-    assignedRole?: string;
+    expectedRevision: string;
+    requestId: string;
+    /** Server-derived session only; never accepted from a form. */
+    session: { id: string; token: string };
     dueAt?: Date | null;
   };
 

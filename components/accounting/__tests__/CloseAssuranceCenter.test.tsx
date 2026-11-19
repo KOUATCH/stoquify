@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
 import { exportCertifiedClosePackAction } from "@/actions/accounting/close-assurance.actions"
@@ -11,6 +11,7 @@ import {
   useAssignCloseFinding,
   useCloseAssurance,
   useCloseEvidenceGraph,
+  useClosePackExports,
   useCloseWaiver,
   useCommentOnCloseFinding,
   useExportClosePack,
@@ -48,6 +49,7 @@ jest.mock("@/hooks/accounting/useCloseAssurance", () => ({
   useAssignCloseFinding: jest.fn(),
   useCloseAssurance: jest.fn(),
   useCloseEvidenceGraph: jest.fn(),
+  useClosePackExports: jest.fn(),
   useCloseWaiver: jest.fn(),
   useCommentOnCloseFinding: jest.fn(),
   useExportClosePack: jest.fn(),
@@ -57,6 +59,7 @@ jest.mock("@/hooks/accounting/useCloseAssurance", () => ({
 
 const mockUseCloseAssurance = useCloseAssurance as jest.Mock
 const mockUseCloseEvidenceGraph = useCloseEvidenceGraph as jest.Mock
+const mockUseClosePackExports = useClosePackExports as jest.Mock
 const mockUseRunCloseAssurance = useRunCloseAssurance as jest.Mock
 const mockUseAssignCloseFinding = useAssignCloseFinding as jest.Mock
 const mockUseCommentOnCloseFinding = useCommentOnCloseFinding as jest.Mock
@@ -76,6 +79,7 @@ function dashboardData(): CloseAssuranceDashboardData {
   return {
     currentProof: { checkedAt: "2026-06-24T10:01:00.000Z", grade: "blocked", blockers: [] },
     organizationId: "org-1",
+    actorId: "actor-1",
     periods: {
       currentOpenPeriod: period,
       recentPeriods: [period],
@@ -145,9 +149,10 @@ function dashboardData(): CloseAssuranceDashboardData {
   } as unknown as CloseAssuranceDashboardData
 }
 
-function setDashboardData(data: CloseAssuranceDashboardData) {
+function setDashboardData(data: CloseAssuranceDashboardData, dataUpdatedAt = 1) {
   mockUseCloseAssurance.mockReturnValue({
     data,
+    dataUpdatedAt,
     isLoading: false,
     isFetching: false,
     error: null,
@@ -158,18 +163,19 @@ function setDashboardData(data: CloseAssuranceDashboardData) {
 describe("CloseAssuranceCenter", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(usePermissions as jest.Mock).mockReturnValue({
+    ;(usePermissions as jest.Mock).mockReturnValue({ user: { id: "actor-1" }, organizationId: "org-1",
       permissionState: "ready",
       hasPermission: () => true,
       refreshPermissions: jest.fn(),
     })
     setDashboardData(dashboardData())
     mockUseCloseEvidenceGraph.mockReturnValue({ data: null, isFetching: false })
+    mockUseClosePackExports.mockReturnValue({ data: [], isFetching: false, error: null })
     mockUseRunCloseAssurance.mockReturnValue({ isPending: false, mutateAsync: jest.fn() })
     mockUseAssignCloseFinding.mockReturnValue({ isPending: false, mutateAsync: jest.fn() })
     mockUseCommentOnCloseFinding.mockReturnValue({ isPending: false, mutateAsync: jest.fn() })
     mockUseCloseWaiver.mockReturnValue({ request: { isPending: false, mutateAsync: jest.fn() } })
-    mockUseExportClosePack.mockReturnValue({
+    mockUseExportClosePack.mockReturnValue({ recover: { isPending: false, mutateAsync: jest.fn() },
       draft: { isPending: false, mutateAsync: jest.fn() },
       certified: { isPending: false, mutateAsync: jest.fn() },
     })
@@ -215,7 +221,7 @@ describe("CloseAssuranceCenter", () => {
     })
   })
 
-  it.each(["ready", "loading", "error"])("prevents all writes with unverified or read-only permissions (%s)", (permissionState) => {
+  it.each(["ready", "loading", "error"])("hides private workspace with missing read authority (%s)", (permissionState) => {
     const data = dashboardData()
     data.controls.certificationAvailable = true
     data.findings = [{
@@ -225,19 +231,16 @@ describe("CloseAssuranceCenter", () => {
       waiverRequestedById: null, waiverApprovedById: null, correlationId: null,
     }]
     setDashboardData(data)
-    ;(usePermissions as jest.Mock).mockReturnValue({
+    ;(usePermissions as jest.Mock).mockReturnValue({ user: { id: "actor-1" }, organizationId: "org-1",
       permissionState,
       // Cached grants must not authorize an operation while current permissions are unverified.
       hasPermission: () => permissionState !== "ready",
       refreshPermissions: jest.fn(),
     })
     render(<CloseAssuranceCenter initialData={data} locale="en" />)
-    fireEvent.change(screen.getByPlaceholderText("Add source-linked review notes for this finding."), { target: { value: "Review notes" } })
-    fireEvent.change(screen.getByPlaceholderText("Document the compensating control or management-approved reason for this waiver request."), { target: { value: "A documented compensating control" } })
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument()
     for (const name of ["Run assessment", "Assign to me", "Add comment", "Request waiver", "Export draft JSON", "Export certified JSON", "Save review"]) {
-      const button = screen.getByRole("button", { name, exact: true })
-      expect(button).toBeDisabled()
-      fireEvent.click(button)
+      expect(screen.queryByRole("button", { name })).not.toBeInTheDocument()
     }
     for (const hook of [mockUseRunCloseAssurance, mockUseAssignCloseFinding, mockUseCommentOnCloseFinding, mockUseUpdateAccountantReview]) {
       expect(hook.mock.results[0].value.mutateAsync).not.toHaveBeenCalled()
@@ -245,14 +248,13 @@ describe("CloseAssuranceCenter", () => {
     expect(mockUseCloseWaiver.mock.results[0].value.request.mutateAsync).not.toHaveBeenCalled()
     expect(mockUseExportClosePack.mock.results[0].value.draft.mutateAsync).not.toHaveBeenCalled()
     expect(mockUseExportClosePack.mock.results[0].value.certified.mutateAsync).not.toHaveBeenCalled()
-    const guidance = permissionState === "ready" ? "Some actions are unavailable with your current permissions. An administrator can review your access."
-      : permissionState === "loading" ? "Checking your permissions…" : "Your permissions could not be verified. Refresh the page to retry."
-    expect(screen.getByText(guidance)).toHaveAttribute("role", "status")
+    expect(mockUseCloseAssurance.mock.calls[0][0].enabled).toBe(false)
+    expect(screen.getByRole("status")).toBeInTheDocument()
   })
 
   it("keeps assessment authority separate from exports and review", () => {
-    ;(usePermissions as jest.Mock).mockReturnValue({
-      permissionState: "ready", hasPermission: (permission: string) => permission === "accounting.close.run", refreshPermissions: jest.fn(),
+    ;(usePermissions as jest.Mock).mockReturnValue({ user: { id: "actor-1" }, organizationId: "org-1",
+      permissionState: "ready", hasPermission: (permission: string) => ["accounting.close.read", "accounting.close.run"].includes(permission), refreshPermissions: jest.fn(),
     })
     render(<CloseAssuranceCenter initialData={dashboardData()} locale="en" />)
     expect(screen.getByRole("button", { name: "Run assessment" })).toBeEnabled()
@@ -362,6 +364,28 @@ describe("CloseAssuranceCenter", () => {
     expect(retry).toHaveBeenCalledTimes(1)
   })
 
+  it.each([
+    ["FORBIDDEN", false], ["AUTH_REQUIRED", false], ["FORBIDDEN", true], ["AUTH_REQUIRED", true],
+  ])("removes private assessment and drafts after %s while retrying=%s", async (code, retrying) => {
+    const data = dashboardData()
+    const view = render(<CloseAssuranceCenter initialData={data} locale="en" />)
+    fireEvent.change(screen.getByRole("textbox", { name: "Decision notes" }), { target: { value: "Private review notes" } })
+    const denied = Object.assign(new Error("Private denial detail"), { code })
+    mockUseCloseAssurance.mockReturnValue({ data, error: retrying ? null : denied, failureReason: denied, dataUpdatedAt: 1, isLoading: false, isFetching: retrying, refetch: jest.fn() })
+    view.rerender(<CloseAssuranceCenter initialData={data} locale="en" />)
+    expect(screen.queryByTestId("close-readiness-workspace")).not.toBeInTheDocument()
+    expect(screen.queryByText("Private denial detail")).not.toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Access to close evidence denied" })).toBeInTheDocument()
+    if (code === "AUTH_REQUIRED") expect(screen.getByRole("link", { name: "Sign in again" })).toHaveAttribute("href", "/en/login")
+    // Starting a retry clears query errors before a new protected read resolves.
+    mockUseCloseAssurance.mockReturnValue({ data, dataUpdatedAt: 1, error: null, failureReason: null, isLoading: false, isFetching: true, refetch: jest.fn() })
+    view.rerender(<CloseAssuranceCenter initialData={data} locale="en" />)
+    expect(screen.queryByTestId("close-readiness-workspace")).not.toBeInTheDocument()
+    setDashboardData(data, 2)
+    view.rerender(<CloseAssuranceCenter initialData={data} locale="en" />)
+    await waitFor(() => expect(screen.getByRole("textbox", { name: "Decision notes" })).toHaveValue(""))
+  })
+
   it("updates the journey and center together when the live proof response changes", () => {
     const initial = dashboardData()
     initial.run.status = "CERTIFIED"
@@ -380,16 +404,14 @@ describe("CloseAssuranceCenter", () => {
     expect(screen.getAllByRole("heading", { name: "Close readiness journey" })).toHaveLength(1)
   })
 
-  it("refreshes both evidence and permissions without discarding review notes", () => {
+  it("hides private review notes while permissions are unavailable and offers refresh", () => {
     const refreshPermissions = jest.fn()
-    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "error", hasPermission: () => false, refreshPermissions })
+    ;(usePermissions as jest.Mock).mockReturnValue({ user: { id: "actor-1" }, organizationId: "org-1", permissionState: "error", hasPermission: () => false, refreshPermissions })
     render(<CloseAssuranceCenter initialData={dashboardData()} locale="fr" />)
-    const notes = screen.getByRole("textbox", { name: "Notes de decision" })
-    fireEvent.change(notes, { target: { value: "Notes à conserver" } })
-    fireEvent.click(screen.getByRole("button", { name: "Actualiser", exact: true }))
+    expect(screen.queryByRole("textbox", { name: "Notes de decision" })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: "Actualiser" }))
     expect(refreshPermissions).toHaveBeenCalledTimes(1)
     expect(mockUseCloseAssurance.mock.results[0].value.refetch).toHaveBeenCalledTimes(1)
-    expect(notes).toHaveValue("Notes à conserver")
   })
 
   it.each([
@@ -420,7 +442,7 @@ describe("CloseAssuranceCenter", () => {
       }
       throw new Error(message)
     })
-    mockUseExportClosePack.mockReturnValue({ draft: { isPending: false, mutateAsync: jest.fn() }, certified: { isPending: false, mutateAsync: certified } })
+    mockUseExportClosePack.mockReturnValue({ recover: { isPending: false, mutateAsync: jest.fn() }, draft: { isPending: false, mutateAsync: jest.fn() }, certified: { isPending: false, mutateAsync: certified } })
     const download = jest.spyOn(HTMLAnchorElement.prototype, "click")
     try {
       render(<CloseAssuranceCenter initialData={data} locale={locale} />)
@@ -473,7 +495,7 @@ describe("CloseAssuranceCenter", () => {
         id: "evidence-1",
         checklistItemId: "check-1",
         findingId: null,
-        evidenceType: "PAYMENT_RECONCILIATION_CERTIFICATE",
+        evidenceType: "RECONCILIATION_CERTIFICATE",
         sourceTable: "payment_reconciliation_runs",
         sourceType: "PaymentReconciliationRun",
         sourceId: null,
@@ -581,14 +603,14 @@ describe("CloseAssuranceCenter", () => {
   it.each([
     ["en", "Export certified JSON", "Current password", "Verify identity", "Identity verified. Retry your selected action.", "Decision notes"],
     ["fr", "Exporter JSON certifie", "Mot de passe actuel", "Vérifier l’identité", "Identité vérifiée. Réessayez l’action choisie.", "Notes de decision"],
-  ] as const)("returns %s certified-export focus once after permissions become ready without repeating the action", async (locale, actionName, passwordLabel, verifyLabel, verified, notesLabel) => {
+  ] as const)("clears %s step-up state during permission loss without repeating certification", async (locale, actionName, passwordLabel, _verifyLabel, verified, notesLabel) => {
     const data = dashboardData()
     data.run.status = "READY"
     data.currentProof = { checkedAt: data.source.asOf, grade: "operational", blockers: [] }
     data.controls.certificationAvailable = true
     setDashboardData(data)
     const exportPack = jest.fn().mockRejectedValue(Object.assign(new Error("Fresh authentication required"), { code: "FRESH_AUTH_REQUIRED" }))
-    mockUseExportClosePack.mockReturnValue({ draft: { isPending: false, mutateAsync: jest.fn() }, certified: { isPending: false, mutateAsync: exportPack } })
+    mockUseExportClosePack.mockReturnValue({ recover: { isPending: false, mutateAsync: jest.fn() }, draft: { isPending: false, mutateAsync: jest.fn() }, certified: { isPending: false, mutateAsync: exportPack } })
     ;(stepUpWithPasswordAction as jest.Mock).mockResolvedValue({ success: true })
     const view = render(<CloseAssuranceCenter initialData={data} locale={locale} />)
     const trigger = screen.getByRole("button", { name: actionName })
@@ -596,19 +618,17 @@ describe("CloseAssuranceCenter", () => {
     fireEvent.click(trigger)
     const password = await screen.findByLabelText(passwordLabel)
     expect(password).toHaveFocus()
-    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "loading", hasPermission: () => false })
+    ;(usePermissions as jest.Mock).mockReturnValue({ user: { id: "actor-1" }, organizationId: "org-1", permissionState: "loading", hasPermission: () => false })
     view.rerender(<CloseAssuranceCenter initialData={data} locale={locale} />)
-    fireEvent.change(password, { target: { value: "synthetic-password" } })
-    fireEvent.click(screen.getByRole("button", { name: verifyLabel }))
-    expect(await screen.findByText(verified)).toHaveAttribute("role", "status")
     expect(screen.queryByLabelText(passwordLabel)).not.toBeInTheDocument()
-    expect(trigger).toBeDisabled()
-    expect(trigger).not.toHaveFocus()
+    expect(screen.queryByRole("button", { name: actionName })).not.toBeInTheDocument()
+    expect(stepUpWithPasswordAction).not.toHaveBeenCalled()
     expect(exportPack).toHaveBeenCalledTimes(1)
-    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "ready", hasPermission: () => true })
+    ;(usePermissions as jest.Mock).mockReturnValue({ user: { id: "actor-1" }, organizationId: "org-1", permissionState: "ready", hasPermission: () => true })
     view.rerender(<CloseAssuranceCenter initialData={data} locale={locale} />)
-    await waitFor(() => expect(trigger).toHaveFocus())
-    expect(trigger).toBeEnabled()
+    const restoredTrigger = screen.getByRole("button", { name: actionName })
+    expect(restoredTrigger).toBeEnabled()
+    expect(screen.queryByText(verified)).not.toBeInTheDocument()
     const notes = screen.getByRole("textbox", { name: notesLabel })
     notes.focus()
     fireEvent.change(notes, { target: { value: "Preserved review draft" } })
@@ -617,8 +637,8 @@ describe("CloseAssuranceCenter", () => {
     expect(notes).toHaveValue("Preserved review draft")
     expect(exportPack).toHaveBeenCalledTimes(1)
     exportPack.mockRejectedValue(new Error("Deliberate retry requires review"))
-    trigger.focus()
-    fireEvent.click(trigger)
+    restoredTrigger.focus()
+    fireEvent.click(restoredTrigger)
     await waitFor(() => expect(exportPack).toHaveBeenCalledTimes(2))
   })
 
@@ -703,5 +723,121 @@ describe("CloseAssuranceCenter", () => {
       expect(screen.queryByText(/secret token leaked/i)).not.toBeInTheDocument()
       expect(screen.queryByText(/raw provider payload/i)).not.toBeInTheDocument()
     })
+  })
+
+  it("clears actor-scoped drafts and ignores an export response from the previous actor", async () => {
+    let release!: (value: unknown) => void
+    const draft = jest.fn(() => new Promise(resolve => { release = resolve }))
+    mockUseExportClosePack.mockReturnValue({ draft: { isPending: false, mutateAsync: draft }, certified: { isPending: false, mutateAsync: jest.fn() }, recover: { isPending: false, mutateAsync: jest.fn() } })
+    const download = jest.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {})
+    try {
+      const data = dashboardData(), view = render(<CloseAssuranceCenter initialData={data} locale="en" />)
+      fireEvent.change(screen.getByRole("textbox", { name: "Decision notes" }), { target: { value: "Private actor-A draft" } })
+      fireEvent.click(screen.getByRole("button", { name: "Export draft JSON" }))
+      await waitFor(() => expect(draft).toHaveBeenCalledTimes(1))
+      ;(usePermissions as jest.Mock).mockReturnValue({ user: { id: "actor-2" }, organizationId: "org-1", permissionState: "ready", hasPermission: () => true, refreshPermissions: jest.fn() })
+      setDashboardData({ ...data, actorId: "actor-2" })
+      view.rerender(<CloseAssuranceCenter initialData={data} locale="en" />)
+      expect(screen.getByRole("textbox", { name: "Decision notes" })).toHaveValue("")
+      expect(mockUseCloseAssurance.mock.calls.at(-1)?.[0]).toMatchObject({ actorId: "actor-2", organizationId: "org-1", initialData: null })
+      await act(async () => { release({ exportId: "old-export", content: "private actor-A bytes", contentHash: "old-hash", documentDigest: "old-file-digest", fileName: "old.json", mimeType: "application/json", mode: "DRAFT_NOT_CERTIFIED", isCertified: false }); await Promise.resolve() })
+      await waitFor(() => expect(draft).toHaveBeenCalledTimes(1))
+      expect(download).not.toHaveBeenCalled(); expect(screen.queryByText("old-hash")).not.toBeInTheDocument()
+    } finally { download.mockRestore() }
+  })
+
+  it("preserves an explicit route period while permissions load without falling back to current data", () => {
+    const permissions = { user: { id: "actor-1" }, organizationId: "org-1", permissionState: "loading", hasPermission: () => true, refreshPermissions: jest.fn() }
+    ;(usePermissions as jest.Mock).mockReturnValue(permissions)
+    const view = render(<CloseAssuranceCenter initialPeriodId="requested-period" initialError="Requested period unavailable" locale="en" />)
+    expect(mockUseCloseAssurance.mock.calls.at(-1)?.[0]).toMatchObject({ periodId: "requested-period", enabled: false, initialData: null })
+    ;(usePermissions as jest.Mock).mockReturnValue({ ...permissions, permissionState: "ready" })
+    view.rerender(<CloseAssuranceCenter initialPeriodId="requested-period" locale="en" />)
+    expect(mockUseCloseAssurance.mock.calls.at(-1)?.[0]).toMatchObject({ periodId: "requested-period", enabled: true, initialData: null })
+    expect(screen.queryByTestId("close-readiness-workspace")).not.toBeInTheDocument()
+    expect(mockUseRunCloseAssurance.mock.results.at(-1)?.value.mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it("ignores an export from the previous resolved current period after a rollover", async () => {
+    let release!: (value: unknown) => void
+    const draft = jest.fn(() => new Promise(resolve => { release = resolve }))
+    mockUseExportClosePack.mockReturnValue({ draft: { isPending: false, mutateAsync: draft }, certified: { isPending: false, mutateAsync: jest.fn() }, recover: { isPending: false, mutateAsync: jest.fn() } })
+    const download = jest.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {})
+    try {
+      const view = render(<CloseAssuranceCenter locale="en" />)
+      fireEvent.change(screen.getByRole("textbox", { name: "Decision notes" }), { target: { value: "Private June draft" } })
+      fireEvent.click(screen.getByRole("button", { name: "Export draft JSON" }))
+      await waitFor(() => expect(draft).toHaveBeenCalledTimes(1))
+      const next = dashboardData()
+      next.period = { ...next.period!, id: "period-2026-07", name: "July 2026" }
+      next.periods.currentOpenPeriod = next.period
+      next.periods.recentPeriods = [next.period]
+      next.run.id = "close-run-july"
+      setDashboardData(next, 2)
+      view.rerender(<CloseAssuranceCenter locale="en" />)
+      expect(screen.getByRole("textbox", { name: "Decision notes" })).toHaveValue("")
+      expect(mockUseCloseAssurance.mock.calls.at(-1)?.[0].periodId).toBeUndefined()
+      expect(mockUseExportClosePack.mock.calls.at(-1)?.[1]).toMatchObject({ periodId: "period-2026-07" })
+      await act(async () => { release({ exportId: "june-export", content: "June bytes", contentHash: "june-hash", documentDigest: "june-digest", fileName: "june.json", mimeType: "application/json", mode: "DRAFT_NOT_CERTIFIED", isCertified: false }); await Promise.resolve() })
+      expect(download).not.toHaveBeenCalled()
+      expect(screen.queryByText("june-hash")).not.toBeInTheDocument()
+      expect(screen.queryByText("Last export")).not.toBeInTheDocument()
+    } finally { download.mockRestore() }
+  })
+
+  it.each(["en", "fr"] as const)("recovers a retained %s file as historical evidence without claiming current certification", async locale => {
+    const receipt = { exportId: "retained-export", closeRunId: "close-run-1", periodId: "period-2026-06", mode: "CERTIFIED", isCertified: true,
+      exportedAt: "2026-06-24T10:00:00Z", contentHash: "canonical-hash", documentDigest: "exact-byte-digest", retained: true, correlationId: "retained-correlation" }
+    mockUseClosePackExports.mockReturnValue({ data: [receipt, { ...receipt, exportId: "legacy-export", documentDigest: null, retained: false }], isFetching: false, error: null })
+    const recover = jest.fn().mockResolvedValue({ ...receipt, fileName: "original.json", mimeType: "application/json", content: '{"retained":true}', watermarkId: "retained-watermark", historicalNotice: "Historical recorded export", replayed: true })
+    mockUseExportClosePack.mockReturnValue({ draft: { isPending: false, mutateAsync: jest.fn() }, certified: { isPending: false, mutateAsync: jest.fn() }, recover: { isPending: false, mutateAsync: recover } })
+    const create = URL.createObjectURL, revoke = URL.revokeObjectURL
+    URL.createObjectURL = jest.fn(() => "blob:retained"); URL.revokeObjectURL = jest.fn()
+    const download = jest.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {})
+    try {
+      render(<CloseAssuranceCenter initialData={dashboardData()} locale={locale} />)
+      expect(screen.getByText(locale === "fr" ? "Les octets d’origine ne sont pas disponibles pour ce reçu." : "Original bytes unavailable for this receipt.")).toBeInTheDocument()
+      fireEvent.click(screen.getByRole("button", { name: locale === "fr" ? "Récupérer le JSON d’origine" : "Recover original JSON" }))
+      await waitFor(() => expect(recover).toHaveBeenCalledWith({ exportId: "retained-export", mode: "CERTIFIED" }))
+      await waitFor(() => expect(download).toHaveBeenCalledTimes(1))
+      expect(screen.getAllByText(locale === "fr" ? /Copie historique enregistrée/ : /Historical recorded copy/).length).toBeGreaterThan(0)
+      expect(screen.queryByText(locale === "fr" ? "Preuves de certification actuelles" : "Current certification evidence")).not.toBeInTheDocument()
+      expect(screen.getAllByText("exact-byte-digest").length).toBeGreaterThan(0)
+    } finally { URL.createObjectURL = create; URL.revokeObjectURL = revoke; download.mockRestore() }
+  })
+
+  it("offers inline fresh authentication for a retained certified file without recertifying", async () => {
+    mockUseClosePackExports.mockReturnValue({ data: [{ exportId: "retained-export", closeRunId: "close-run-1", periodId: "period-2026-06", mode: "CERTIFIED", isCertified: true,
+      exportedAt: "2026-06-24T10:00:00Z", contentHash: "canonical", documentDigest: "bytes", retained: true, correlationId: "retained" }], isFetching: false, error: null })
+    const recover = jest.fn().mockRejectedValue(Object.assign(new Error("Fresh authentication required"), { code: "FRESH_AUTH_REQUIRED" })), certify = jest.fn()
+    mockUseExportClosePack.mockReturnValue({ draft: { isPending: false, mutateAsync: jest.fn() }, certified: { isPending: false, mutateAsync: certify }, recover: { isPending: false, mutateAsync: recover } })
+    render(<CloseAssuranceCenter initialData={dashboardData()} locale="en" />)
+    fireEvent.click(screen.getByRole("button", { name: "Recover original JSON" }))
+    expect(await screen.findByLabelText("Current password")).toHaveFocus()
+    expect(recover).toHaveBeenCalledTimes(1); expect(certify).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ["en", "FORBIDDEN", "draft"], ["fr", "FORBIDDEN", "draft"],
+    ["en", "AUTH_REQUIRED", "recover"], ["fr", "AUTH_REQUIRED", "recover"],
+  ] as const)("hides private %s data immediately after a %s %s denial until a fresh read succeeds", async (locale, code, operation) => {
+    const data = dashboardData(), denied = jest.fn().mockRejectedValue(Object.assign(new Error("Private session diagnostic"), { code }))
+    mockUseClosePackExports.mockReturnValue({ data: [{ exportId: "retained-export", closeRunId: "close-run-1", periodId: data.period!.id, mode: "CERTIFIED", isCertified: true,
+      exportedAt: "2026-06-24T10:00:00Z", contentHash: "canonical", documentDigest: "bytes", retained: true, correlationId: "retained" }], isFetching: false, error: null })
+    mockUseExportClosePack.mockReturnValue({ draft: { isPending: false, mutateAsync: operation === "draft" ? denied : jest.fn() },
+      certified: { isPending: false, mutateAsync: jest.fn() }, recover: { isPending: false, mutateAsync: operation === "recover" ? denied : jest.fn() } })
+    const view = render(<CloseAssuranceCenter initialData={data} locale={locale} />)
+    fireEvent.change(screen.getByRole("textbox", { name: locale === "fr" ? "Notes de decision" : "Decision notes" }), { target: { value: "Private draft before revocation" } })
+    fireEvent.click(screen.getByRole("button", { name: operation === "draft" ? locale === "fr" ? "Exporter JSON brouillon" : "Export draft JSON" : locale === "fr" ? "Récupérer le JSON d’origine" : "Recover original JSON" }))
+    expect(await screen.findByRole("heading", { name: locale === "fr" ? "Accès aux preuves de clôture refusé" : "Access to close evidence denied" })).toBeInTheDocument()
+    expect(screen.queryByTestId("close-readiness-workspace")).not.toBeInTheDocument()
+    expect(screen.queryByText("Private session diagnostic")).not.toBeInTheDocument()
+    if (code === "AUTH_REQUIRED") expect(screen.getByRole("link", { name: locale === "fr" ? "Se reconnecter" : "Sign in again" })).toHaveAttribute("href", `/${locale}/login`)
+    view.rerender(<CloseAssuranceCenter initialData={data} locale={locale} />)
+    expect(screen.queryByTestId("close-readiness-workspace")).not.toBeInTheDocument()
+    setDashboardData(data, 2)
+    view.rerender(<CloseAssuranceCenter initialData={data} locale={locale} />)
+    expect(await screen.findByRole("textbox", { name: locale === "fr" ? "Notes de decision" : "Decision notes" })).toHaveValue("")
+    expect(denied).toHaveBeenCalledTimes(1)
   })
 })

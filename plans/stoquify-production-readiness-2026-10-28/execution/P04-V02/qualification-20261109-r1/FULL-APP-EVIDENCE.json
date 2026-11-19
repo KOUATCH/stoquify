@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-09T18:45:18.555Z",
+  "package": "P04-V02",
+  "executionStatus": "completed_with_confirmed_findings",
+  "qualificationStatus": "blocked",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "scope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "wholeInventoryImportClosureByteIdentical": false,
+  "criticalInputUnion": 107,
+  "rawSuites": [
+    {
+      "suite": "baseline",
+      "executed": 22,
+      "passed": 21,
+      "failed": 1,
+      "adjudication": "One expected audit-cardinality harness error; independent corrected scoped gate passed."
+    },
+    {
+      "suite": "auth-v4",
+      "planned": 116,
+      "passed": 93,
+      "failed": 23,
+      "notRun": 0,
+      "requests": 109,
+      "browserObservations": 67
+    },
+    {
+      "suite": "provider",
+      "executed": 23,
+      "passed": 23,
+      "failed": 0
+    },
+    {
+      "suite": "supplement03",
+      "planned": 35,
+      "passed": 19,
+      "failed": 16,
+      "notRun": 0,
+      "requests": 30,
+      "browserObservations": 32
+    },
+    {
+      "suite": "followup04",
+      "planned": 11,
+      "passed": 8,
+      "failed": 3,
+      "notRun": 0,
+      "requests": 11,
+      "browserObservations": 22
+    }
+  ],
+  "countsAreNotAdditiveCoverage": true,
+  "productChangesMade": false,
+  "productionChangesMade": false,
+  "commitsMade": false,
+  "localDatabaseMigrationReplay": 121,
+  "cleanup": {
+    "startedAt": "2026-11-09T18:40:54.000Z",
+    "passed": true,
+    "databases": [
+      {
+        "database": "stoquify_local_p04v02_20261109_full_r1",
+        "sessions": 0,
+        "businessSha256": "fd225288fcb63abb24dd7bde78ed05414b7e6379efb2161de51fdce40e8caa42",
+        "auditSha256": "3911b74cbccf2088fc68cbc1f27905c67e81f00e93d1fa3dabcdfa77ebaf97f3",
+        "sessionSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "evidence": "snapshot-final-all-cleanup-1794249655822-27c67249-7e99-4ea3-9e8b-e2f26e7de3cf.json"
+      },
+      {
+        "database": "stoquify_local_p04v02_20261109_full_r2",
+        "sessions": 0,
+        "businessSha256": "e449e98e9c8c14ab9d08e4d94ebcb31203dbd163cb2d4132557dc2c79711d87f",
+        "auditSha256": "3e10112ca3b3fc7978c942a65b9cc12771068dd8e85c52af12397f0e06bb4759",
+        "sessionSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "evidence": "snapshot-final-all-cleanup-r2-1794249657756-01b6d1f6-4e64-403d-a969-57af227217a2.json"
+      },
+      {
+        "database": "stoquify_local_p04v02_20261109_full_r3",
+        "sessions": 0,
+        "businessSha256": "25f95c57ac2915fe82acd196bea08619a7f0b72355245abd124c1e4e04adc379",
+        "auditSha256": "483043f1dcce2b9591d9db07d74a7c00f8886e2a563f73d5852e5d00d75c959d",
+        "sessionSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "evidence": "snapshot-final-all-cleanup-r3-1794249660400-2a293820-76b1-40ae-960f-2a3d656673b9.json"
+      }
+    ],
+    "finishedAt": "2026-11-09T18:41:00.423Z"
+  },
+  "cluster": {
+    "startedAt": "2026-11-09T18:41:11.159Z",
+    "passed": true,
+    "remainingClients": [],
+    "clusterStopped": true,
+    "portReleased": true,
+    "ownedPid": 34440,
+    "databasesRetained": [
+      "stoquify_local_p04v02_20261109_build_r1",
+      "stoquify_local_p04v02_20261109_full_r1",
+      "stoquify_local_p04v02_20261109_full_r2",
+      "stoquify_local_p04v02_20261109_full_r3"
+    ],
+    "finishedAt": "2026-11-09T18:41:11.777Z"
+  },
+  "evidence": [
+    {
+      "path": "candidate-context.json",
+      "sha256": "00250b7fef68993c172620a29e0480e1ca92676584e6b41132985a95d7a8d1a1"
+    },
+    {
+      "path": "build-result.json",
+      "sha256": "2fd9842617f70f6ab8e03ff25d53499b4785b01f19a8cc6471804fb2260659c3"
+    },
+    {
+      "path": "candidate-source-manifest.json",
+      "sha256": "aa41bfe7c956992efc74ffebd259992c3a788742a5e3e53fe37f3cd9da4dd589"
+    },
+    {
+      "path": "root-source-manifest.json",
+      "sha256": "41ac1e9f9d6bc548b8b9e142a1f2a651b355f7167452ca08efb13978345657db"
+    },
+    {
+      "path": "source-admission-failure-drift.json",
+      "sha256": "9eaf8f203006a097fbb358158ef7b13932e4ae09ef0b7249076dde9dedf26603"
+    },
+    {
+      "path": "browser/source-admission-frozen.json",
+      "sha256": "6af9ad048e8a0b8f3374ae63c93e1325eb8f4e7dba5d39b9cb4dbf0b9a646cf9"
+    },
+    {
+      "path": "browser/source-admission-frozen-attempt02.json",
+      "sha256": "aba767be3197e7c96e51d8699ee69178a89d779ce8f5dde874650ad20b878e80"
+    },
+    {
+      "path": "browser/source-admission-frozen-attempt03.json",
+      "sha256": "9d55e4aef7a3dc84c742366cd8d31777b0e11b5f43bf261fd1f929fdd02daa8c"
+    },
+    {
+      "path": "browser/source-admission-frozen-attempt04.json",
+      "sha256": "8cefbcbf5c7f569738dcb38f239d58ea9451a1d793121e7fb5bdb28f820e9623"
+    },
+    {
+      "path": "final-integrity-frozen-supplement03.json",
+      "sha256": "e9b04c6cd37823748facb6083f6b2d570569ed1fb79a7d5e6d2f8621fc0085dc"
+    },
+    {
+      "path": "runtime-result-attempt01.json",
+      "sha256": "5e50ba3bb8fc7ac4d6c20cfbec151822285288bbaa2f2c8ccb900a9a9b72ce37"
+    },
+    {
+      "path": "runtime-result-attempt02.json",
+      "sha256": "f19e7346fe9e9688b769b717256cf192585902f5039bc71893f3e44364ee101b"
+    },
+    {
+      "path": "runtime-result-attempt03.json",
+      "sha256": "ef742e094e3478bdf9a0418b8cb46438e5194a9e75b0b8d830887059914ba0a2"
+    },
+    {
+      "path": "runtime-result-attempt04.json",
+      "sha256": "f7ffb8b71e2ffa2a960632354bb9267f76f98302d40f2828d664bd3f3574975b"
+    },
+    {
+      "path": "browser/p04v02-full-20261109-r1-attempt01/result.json",
+      "sha256": "02d1d10e3132f403207b8d02923ca1d1b3fdd21417ec751466733e549f2e1bf5"
+    },
+    {
+      "path": "browser/auth-transport-v4/result.json",
+      "sha256": "1bdc9e4ba851c6a0042717b3ab33cec626bdaa1ea9aa30970f2f8416fe9d7ff5"
+    },
+    {
+      "path": "provider/attempt02/result.json",
+      "sha256": "3a8043953e519fb0e5ae3174d0bc936efc2bfb73218d85ebfb1743a3481f5ca0"
+    },
+    {
+      "path": "browser/auth-supplement-03/result.json",
+      "sha256": "1742e04e2973f5b7a78286b23ccaa2fbf62df54910d75b0bc9b3d88aa0936f0b"
+    },
+    {
+      "path": "browser/auth-followup04/result.json",
+      "sha256": "66beb9e26d9030bc8a2f951dcdea5783a7378bdc8bb40ef12a55db60ee8d7ffd"
+    },
+    {
+      "path": "database/final-session-cleanup.json",
+      "sha256": "27ad1d4c29ec1a18e669734f847b52e2c333684617b933e2bf45f3049f9f3a57"
+    },
+    {
+      "path": "database/final-session-cleanup-r2.json",
+      "sha256": "bb389b65547b6a0fa7f99eb5b647d49f67973a541d8a05d744002be2efee630d"
+    },
+    {
+      "path": "database/final-session-cleanup-r3.json",
+      "sha256": "b3ed1cd9dc664b01ec1e6830dbf6f2ecbf8f6a9a16a7ccc709f04d98086c370a"
+    },
+    {
+      "path": "database/all-session-cleanup-verified.json",
+      "sha256": "307453214d7ed52bab04d9658995ee5a3bb5dc096722e8992c439ff7fa66925d"
+    },
+    {
+      "path": "database/cleanup-r3.json",
+      "sha256": "d51648719425d197ee971735a0560d5e3d90c2f479e912581e1cb7123d592eb5"
+    },
+    {
+      "path": "independent-review/MODULE-DENIAL-CARDINALITY-REVIEW.json",
+      "sha256": "4ed157162c56238186a4afa17b5d5294350c27efa70ab60b3103b6023db231dc"
+    },
+    {
+      "path": "independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+      "sha256": "9a0708aabba646db8fbc11683ff15dc44b70582d5ed97b50619dfce13aa58fd3"
+    },
+    {
+      "path": "independent-review/PROVIDER-OUTCOME-REVIEW.json",
+      "sha256": "3b49b0c4c11aa0c06a2bcff82cd81ced579972d78416fe99f3b99f7527775001"
+    },
+    {
+      "path": "independent-review/SUPPLEMENT03-OUTCOME-REVIEW.json",
+      "sha256": "44931ad7f3d27d32c9a162d94ef8f49360f1729277d601db97ff11e114624e06"
+    },
+    {
+      "path": "independent-review/FOLLOWUP04-OUTCOME-REVIEW.json",
+      "sha256": "c574bd4805a1a9b3c82ac8ce40081334d10c31e59157396e016f40496787acd5"
+    }
+  ]
+}

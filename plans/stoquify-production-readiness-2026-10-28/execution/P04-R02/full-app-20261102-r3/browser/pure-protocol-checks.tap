@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: 93 exact probes cover three aliases and ten normalization forms
+ok 1 - 93 exact probes cover three aliases and ten normalization forms
+  ---
+  duration_ms: 6.1642
+  type: 'test'
+  ...
+# Subtest: candidate-only fourth synthetic alias is excluded from original denial probes
+ok 2 - candidate-only fourth synthetic alias is excluded from original denial probes
+  ---
+  duration_ms: 5.3819
+  type: 'test'
+  ...
+# Subtest: refuses changed fourth-alias owner or target
+ok 3 - refuses changed fourth-alias owner or target
+  ---
+  duration_ms: 2.3807
+  type: 'test'
+  ...
+# Subtest: all request paths survive URL serialization exactly
+ok 4 - all request paths survive URL serialization exactly
+  ---
+  duration_ms: 4.3063
+  type: 'test'
+  ...
+# Subtest: probe match requires exact marker, method and path
+ok 5 - probe match requires exact marker, method and path
+  ---
+  duration_ms: 1.3333
+  type: 'test'
+  ...
+# Subtest: accepts canonical public denial 401
+ok 6 - accepts canonical public denial 401
+  ---
+  duration_ms: 3.6476
+  type: 'test'
+  ...
+# Subtest: accepts canonical public denial 403
+ok 7 - accepts canonical public denial 403
+  ---
+  duration_ms: 1.1027
+  type: 'test'
+  ...
+# Subtest: accepts empty HEAD and exact optimizer response
+ok 8 - accepts empty HEAD and exact optimizer response
+  ---
+  duration_ms: 1.0057
+  type: 'test'
+  ...
+# Subtest: rejects successful or image upstream headers before collecting a body
+ok 9 - rejects successful or image upstream headers before collecting a body
+  ---
+  duration_ms: 2.7531
+  type: 'test'
+  ...
+# Subtest: rejects unexpected HTML and other error statuses
+ok 10 - rejects unexpected HTML and other error statuses
+  ---
+  duration_ms: 2.8501
+  type: 'test'
+  ...
+# Subtest: rejects arbitrary response bytes without logging them
+ok 11 - rejects arbitrary response bytes without logging them
+  ---
+  duration_ms: 4.1062
+  type: 'test'
+  ...
+# Subtest: rejects added private fields without logging key or value
+ok 12 - rejects added private fields without logging key or value
+  ---
+  duration_ms: 3.6503
+  type: 'test'
+  ...
+# Subtest: rejects private error text without logging it
+ok 13 - rejects private error text without logging it
+  ---
+  duration_ms: 1.233
+  type: 'test'
+  ...
+# Subtest: rejects private correlation content without logging it
+ok 14 - rejects private correlation content without logging it
+  ---
+  duration_ms: 1.3792
+  type: 'test'
+  ...
+# Subtest: rejects appended or noncanonical JSON bytes
+ok 15 - rejects appended or noncanonical JSON bytes
+  ---
+  duration_ms: 1.3073
+  type: 'test'
+  ...
+# Subtest: rejects oversized bodies
+ok 16 - rejects oversized bodies
+  ---
+  duration_ms: 0.7346
+  type: 'test'
+  ...
+# Subtest: rejects nonempty HEAD and optimizer suffixes
+ok 17 - rejects nonempty HEAD and optimizer suffixes
+  ---
+  duration_ms: 2.4131
+  type: 'test'
+  ...
+# Subtest: refuses changed original-owner or alias metadata
+ok 18 - refuses changed original-owner or alias metadata
+  ---
+  duration_ms: 1.2224
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 425.9615

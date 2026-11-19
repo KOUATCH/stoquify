@@ -1,0 +1,830 @@
+{
+  "at": "2026-10-18T19:33:01.887Z",
+  "method": "Source text and graph JSON only; no runtime imports",
+  "files": [
+    {
+      "path": "services/regulatory/country-packs/registry.ts",
+      "sha256": "dd7cac8d10d2ad7239a6061ae4ab91853c671b0d127cfb2fed8553cfa6e834bb"
+    },
+    {
+      "path": "services/regulatory/country-packs/cameroon.ts",
+      "sha256": "3bcc16ecc6b7f8695102fdbd047cadb63fe4049ba6ea409466465aa17c3e4749"
+    },
+    {
+      "path": "services/regulatory/country-packs/cameroon.constants.ts",
+      "sha256": "dae6e3ec4720d94637d234337e4343bcbfaea2d4094f01e3813ab3b533c1fbf3"
+    },
+    {
+      "path": "services/regulatory/country-packs/resolve.ts",
+      "sha256": "419d0ccce13d81e5e250a214c8d02c97f24e87ffe6765e8d70a7256351bffeac"
+    },
+    {
+      "path": "services/regulatory/regulatory-capability.service.ts",
+      "sha256": "02a2179e9785f6798af96131736cec6e2233b2091c33ea154d02e5e192d32b8a"
+    },
+    {
+      "path": "services/regulatory/runtime/regulatory-runtime-class.ts",
+      "sha256": "5ed9db65fdeebc8b64a1ebda177ba8c8316e0a73e1ac9dea7e1087c140181b4a"
+    },
+    {
+      "path": "services/regulatory/adapters/published-country-pack.adapter.ts",
+      "sha256": "e9f2a5e94f418a9e5126d556bc8dd14280c902459bdd0ff7bb99f825ab09f090"
+    },
+    {
+      "path": "services/payroll/payroll-production-admission.ts",
+      "sha256": "48b722fe75bc7db244d6ad8a2d394c08bb7a9449346c2959ed03e5552bf608da"
+    },
+    {
+      "path": "services/payroll/authority-adapter-worker.service.ts",
+      "sha256": "dcc8e2966207d754948afd868d885ac2a03d9ff769bec93e44b7d8963748bca2"
+    },
+    {
+      "path": "services/accounting/accounting-settings.service.ts",
+      "sha256": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04"
+    },
+    {
+      "path": "services/onboarding/opening-readiness.ts",
+      "sha256": "072fd43d66c1418bac6c8828d14b402d6d94fdb867a1dba9c6693183113b3022"
+    },
+    {
+      "path": "services/payments/adapters/mobile-money-hmac.adapter.ts",
+      "sha256": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e"
+    },
+    {
+      "path": "services/payments/provider-event.service.ts",
+      "sha256": "bbe5f784df707793be28e79eefebfd03721c3672243f264ff4fe07f24afe778f"
+    },
+    {
+      "path": "services/payments/statement-import.service.ts",
+      "sha256": "b46c63152e1d7dc7c94c0e02ee1b7fc3109b45f446686ee63d1dbd496e6a8ea2"
+    },
+    {
+      "path": "services/payments/provider-operations.service.ts",
+      "sha256": "c17e8e71302fb76f809650d654a4e2cf32d66cbb23298ccca542a889231ac6d6"
+    },
+    {
+      "path": "actions/payments/reconciliation.actions.ts",
+      "sha256": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf"
+    },
+    {
+      "path": "services/regulatory/__tests__/country-pack.service.test.ts",
+      "sha256": "1933f7d34e4475796f0955206b88ce4f71fc2eaa7cb3d39f5d1712bd293cf26e"
+    },
+    {
+      "path": "services/regulatory/__tests__/regulatory-capability.service.test.ts",
+      "sha256": "b092b77490b59e8659190ccbca2ca9a9bfe82a61b2460f918e3a16f6131196fd"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-production-admission.test.ts",
+      "sha256": "b3cf113da4fd70243e50b318b42d18fc16a17846719ad84d997150d2925a7f59"
+    },
+    {
+      "path": "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+      "sha256": "1816a6d0307930847724373416d78253965587030050d93e88f9284aff7e2af1"
+    },
+    {
+      "path": "services/payments/__tests__/mobile-money-hmac.adapter.test.ts",
+      "sha256": "4399dc0faf61a69afeb0a4364de9ff820fd139826c6a2c553f5bd4efa801c768"
+    },
+    {
+      "path": "services/payments/__tests__/statement-import.service.test.ts",
+      "sha256": "05941e2a53219d9a381677a0b3411996d383319f05b14570d66b030e04788aa7"
+    },
+    {
+      "path": "services/payments/__tests__/provider-event.service.test.ts",
+      "sha256": "febeff7e8505a6d20e3bc80cd507a2af582ae28fe91af47dbb35456738566cd5"
+    },
+    {
+      "path": "services/onboarding/__tests__/fixtures/opening-position-source.json",
+      "sha256": "ae9c0c9dfa0daa45ce7207d299457b050b945bba03d9b45e3f597f5c54a776c3"
+    },
+    {
+      "path": "services/onboarding/__tests__/fixtures/opening-position-controls.json",
+      "sha256": "6d4d13de88217f73e095f8cfbd0a787678258168f539de0b25470de64642cc1c"
+    },
+    {
+      "path": "services/onboarding/__tests__/fixtures/opening-position-contract.ts",
+      "sha256": "726f46e8d64dc8d8eb800debcfae805f8824ecd9359421239f675bfeaeee8d84"
+    },
+    {
+      "path": "services/onboarding/__tests__/opening-position-contract.test.ts",
+      "sha256": "1fafffbda1d63ac206142c5d70ee345437afac83892b5d938c3e34c2cb981931"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "a2ce0a3139d98928e20e347e9903e475ca38d9bed5a564a037d33f97b25b062b"
+    },
+    {
+      "path": "package.json",
+      "sha256": "21a30b394c82bb245487b96eec11710abeeafdeef2ce805ac4d54897f8c2755b"
+    },
+    {
+      "path": "scripts/verify-agent-workflow-contract.js",
+      "sha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29"
+    },
+    {
+      "path": "docs/ecc/command-registry.json",
+      "sha256": "e299bbc44c87c7ca1ebf876fb911469b615a333aa7b1f18cfbf34b43674fbf33"
+    },
+    {
+      "path": "graphify-out/graph.json",
+      "sha256": "0194632742d6adfc606bcb099830bddc06460aeb413da42b951898bb57832cab"
+    },
+    {
+      "path": "graphify-out/graph_actions.json",
+      "sha256": "01aa0155ee0b6889fda9be251d9bd73c82d6bd1d4e143114eee8b3bdb3a2c032"
+    },
+    {
+      "path": "graphify-out/manifest.json",
+      "sha256": "e058d368ba1ee1c90eeec5341f8791d5f1d3adf733f3b0c01487aa7e2dc677f4"
+    },
+    {
+      "path": "graphify-out/POST_SLICE_438_GRAPH_REFRESH_2026-08-09.md",
+      "sha256": "3ffd642637e6e4564e2bff621ddc60f70d0146707ebe78424f7ac3d7e87de6df"
+    }
+  ],
+  "graph": {
+    "freshness": "2026-08-09 refresh; stale for current behavior",
+    "nodes": [
+      {
+        "label": "getAccountingSettings()",
+        "file_type": "code",
+        "source_file": "services\\accounting\\accounting-settings.service.ts",
+        "source_location": "L204",
+        "id": "accounting_accounting_settings_service_getaccountingsettings",
+        "community": 8,
+        "norm_label": "getaccountingsettings()"
+      },
+      {
+        "label": "getCountryPacks()",
+        "file_type": "code",
+        "source_file": "services\\regulatory\\country-packs\\registry.ts",
+        "source_location": "L8",
+        "id": "country_packs_registry_getcountrypacks",
+        "community": 16,
+        "norm_label": "getcountrypacks()"
+      },
+      {
+        "label": "getCountryPack()",
+        "file_type": "code",
+        "source_file": "services\\regulatory\\country-packs\\registry.ts",
+        "source_location": "L12",
+        "id": "country_packs_registry_getcountrypack",
+        "community": 16,
+        "norm_label": "getcountrypack()"
+      },
+      {
+        "label": "resolveRegulatoryParameter()",
+        "file_type": "code",
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L102",
+        "id": "country_packs_resolve_resolveregulatoryparameter",
+        "community": 16,
+        "norm_label": "resolveregulatoryparameter()"
+      }
+    ],
+    "links": [
+      {
+        "relation": "contains",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\accounting\\accounting-settings.service.ts",
+        "source_location": "L204",
+        "weight": 1,
+        "_src": "services_accounting_accounting_settings_service_ts",
+        "_tgt": "accounting_accounting_settings_service_getaccountingsettings",
+        "source": "services_accounting_accounting_settings_service_ts",
+        "target": "accounting_accounting_settings_service_getaccountingsettings",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\accounting\\accounting-settings.service.ts",
+        "source_location": "L211",
+        "weight": 1,
+        "_src": "accounting_accounting_settings_service_ensureaccountingsettings",
+        "_tgt": "accounting_accounting_settings_service_getaccountingsettings",
+        "source": "accounting_accounting_settings_service_getaccountingsettings",
+        "target": "accounting_accounting_settings_service_ensureaccountingsettings",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "services\\accounting\\control-center.service.ts",
+        "source_location": "L306",
+        "weight": 1,
+        "_src": "accounting_control_center_service_getaccountingcontrolcenterdata",
+        "_tgt": "accounting_accounting_settings_service_getaccountingsettings",
+        "source": "accounting_accounting_settings_service_getaccountingsettings",
+        "target": "accounting_control_center_service_getaccountingcontrolcenterdata"
+      },
+      {
+        "relation": "calls",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "services\\compliance\\country-pack-hooks.ts",
+        "source_location": "L62",
+        "weight": 1,
+        "_src": "compliance_country_pack_hooks_resolvemetadataparameter",
+        "_tgt": "country_packs_resolve_resolveregulatoryparameter",
+        "source": "compliance_country_pack_hooks_resolvemetadataparameter",
+        "target": "country_packs_resolve_resolveregulatoryparameter"
+      },
+      {
+        "relation": "calls",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L172",
+        "weight": 1,
+        "_src": "country_packs_resolve_resolveregulatoryparameter",
+        "_tgt": "country_packs_hash_computeresolutionhash",
+        "source": "country_packs_hash_computeresolutionhash",
+        "target": "country_packs_resolve_resolveregulatoryparameter"
+      },
+      {
+        "relation": "contains",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\registry.ts",
+        "source_location": "L8",
+        "weight": 1,
+        "_src": "services_regulatory_country_packs_registry_ts",
+        "_tgt": "country_packs_registry_getcountrypacks",
+        "source": "services_regulatory_country_packs_registry_ts",
+        "target": "country_packs_registry_getcountrypacks",
+        "confidence_score": 1
+      },
+      {
+        "relation": "contains",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\registry.ts",
+        "source_location": "L12",
+        "weight": 1,
+        "_src": "services_regulatory_country_packs_registry_ts",
+        "_tgt": "country_packs_registry_getcountrypack",
+        "source": "services_regulatory_country_packs_registry_ts",
+        "target": "country_packs_registry_getcountrypack",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\registry.ts",
+        "source_location": "L13",
+        "weight": 1,
+        "_src": "country_packs_registry_getcountrypack",
+        "_tgt": "country_packs_registry_getcountrypacks",
+        "source": "country_packs_registry_getcountrypacks",
+        "target": "country_packs_registry_getcountrypack",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L65",
+        "weight": 1,
+        "_src": "country_packs_resolve_selectcountrypack",
+        "_tgt": "country_packs_registry_getcountrypacks",
+        "source": "country_packs_registry_getcountrypacks",
+        "target": "country_packs_resolve_selectcountrypack"
+      },
+      {
+        "relation": "contains",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L102",
+        "weight": 1,
+        "_src": "services_regulatory_country_packs_resolve_ts",
+        "_tgt": "country_packs_resolve_resolveregulatoryparameter",
+        "source": "services_regulatory_country_packs_resolve_ts",
+        "target": "country_packs_resolve_resolveregulatoryparameter",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L116",
+        "weight": 1,
+        "_src": "country_packs_resolve_resolveregulatoryparameter",
+        "_tgt": "country_packs_resolve_toisodate",
+        "source": "country_packs_resolve_toisodate",
+        "target": "country_packs_resolve_resolveregulatoryparameter",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L118",
+        "weight": 1,
+        "_src": "country_packs_resolve_resolveregulatoryparameter",
+        "_tgt": "country_packs_resolve_resolvecapabilitystatus",
+        "source": "country_packs_resolve_resolvecapabilitystatus",
+        "target": "country_packs_resolve_resolveregulatoryparameter",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L117",
+        "weight": 1,
+        "_src": "country_packs_resolve_resolveregulatoryparameter",
+        "_tgt": "country_packs_resolve_selectcountrypack",
+        "source": "country_packs_resolve_selectcountrypack",
+        "target": "country_packs_resolve_resolveregulatoryparameter",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L182",
+        "weight": 1,
+        "_src": "country_packs_resolve_resolvecameroonstandardvatratebps",
+        "_tgt": "country_packs_resolve_resolveregulatoryparameter",
+        "source": "country_packs_resolve_resolveregulatoryparameter",
+        "target": "country_packs_resolve_resolvecameroonstandardvatratebps",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L190",
+        "weight": 1,
+        "_src": "country_packs_resolve_resolvecameroonmobilemoneylegality",
+        "_tgt": "country_packs_resolve_resolveregulatoryparameter",
+        "source": "country_packs_resolve_resolveregulatoryparameter",
+        "target": "country_packs_resolve_resolvecameroonmobilemoneylegality",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L131",
+        "weight": 1,
+        "_src": "country_packs_resolve_resolveregulatoryparameter",
+        "_tgt": "country_packs_validation_getparameterenvelopearray",
+        "source": "country_packs_resolve_resolveregulatoryparameter",
+        "target": "country_packs_validation_getparameterenvelopearray"
+      },
+      {
+        "relation": "calls",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "services\\regulatory\\country-packs\\resolve.ts",
+        "source_location": "L139",
+        "weight": 1,
+        "_src": "country_packs_resolve_resolveregulatoryparameter",
+        "_tgt": "country_packs_validation_selecteffectiveenvelope",
+        "source": "country_packs_resolve_resolveregulatoryparameter",
+        "target": "country_packs_validation_selecteffectiveenvelope"
+      }
+    ]
+  },
+  "claims": [
+    {
+      "path": "services/regulatory/country-packs/registry.ts",
+      "start": 4,
+      "end": 14,
+      "lines": [
+        "export const COUNTRY_PACK_REGISTRY: Record<string, CountryPack[]> = {",
+        "  CM: [cameroonCountryPack],",
+        "}",
+        "",
+        "export function getCountryPacks(countryCode: string) {",
+        "  return COUNTRY_PACK_REGISTRY[countryCode.toUpperCase()] ?? []",
+        "}",
+        "",
+        "export function getCountryPack(countryCode: string, packVersion: string) {",
+        "  return getCountryPacks(countryCode).find((pack) => pack.header.packVersion === packVersion) ?? null",
+        "}"
+      ]
+    },
+    {
+      "path": "services/regulatory/country-packs/cameroon.ts",
+      "start": 10,
+      "end": 73,
+      "lines": [
+        "const VERIFIED_ON = \"2026-06-11\";",
+        "const VERIFIED_BY =",
+        "  \"Codex regulatory source pass; legal-owner approval required before statutory publication\";",
+        "const CNPS_SOURCE_CHECKED_ON = \"2026-06-26\";",
+        "const CNPS_SOURCE_CHECKED_BY =",
+        "  \"Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use\";",
+        "const CNPS_CAPABILITY_STATUS = \"SUPPORTED_DRAFT\" as const;",
+        "const CNPS_VERIFICATION_STATUS = \"SOURCE_CHECKED\" as const;",
+        "const IRPP_EXPERT_REVIEW_REQUIRED_VALUE = {",
+        "  productionCalculationSupported: false,",
+        "  calculationMode: \"OFFICIAL_IRPP_FORMULA_REVIEW_REQUIRED\",",
+        "  employeeWithholdingRequired: true,",
+        "  declarationCode: \"IRPP\",",
+        "  requiredReviewedCoverage: [",
+        "    \"taxableSalaryBase\",",
+        "    \"familyQuotientOrDependentTreatment\",",
+        "    \"bracketsAndRates\",",
+        "    \"deductibleEmployeeContributions\",",
+        "    \"withholdingRounding\",",
+        "    \"monthlyAndAnnualRegularization\",",
+        "  ],",
+        "} as const;",
+        "",
+        "const cameroonCountryPackUnsealed: CountryPack = {",
+        "  header: {",
+        "    countryCode: CAMEROON_COUNTRY_CODE,",
+        "    countryName: {",
+        "      en: \"Cameroon\",",
+        "      fr: \"Cameroun\",",
+        "    },",
+        "    currencyCode: \"XAF\",",
+        "    packVersion: \"CM-2026.1\",",
+        "    schemaVersion: \"country-pack.v1\",",
+        "    status: \"PUBLISHED\",",
+        "    effectiveFrom: \"2026-01-01\",",
+        "    effectiveTo: null,",
+        "    verifiedOn: VERIFIED_ON,",
+        "    verifiedBy: VERIFIED_BY,",
+        "    hash: \"sha256:0000000000000000000000000000000000000000000000000000000000000000\",",
+        "    capabilityMatrix: {",
+        "      \"taxes.vat\": \"SUPPORTED\",",
+        "      \"taxes.filing\": \"SUPPORTED\",",
+        "      \"payroll.cnps\": CNPS_CAPABILITY_STATUS,",
+        "      \"payroll.irpp\": \"REQUIRES_EXPERT_REVIEW\",",
+        "      \"identifiers.niu\": \"SUPPORTED\",",
+        "      \"identifiers.rccm\": \"PARTIALLY_SUPPORTED\",",
+        "      filings: \"SUPPORTED\",",
+        "      labels: \"SUPPORTED\",",
+        "      holidays: \"PARTIALLY_SUPPORTED\",",
+        "      \"payments.mobileMoney\": \"PARTIALLY_SUPPORTED\",",
+        "      \"compliance.eInvoicing\": \"REQUIRES_EXPERT_REVIEW\",",
+        "    },",
+        "    legalRefs: [",
+        "      {",
+        "        id: \"CM_DGI_CGI_2025\",",
+        "        title: \"Code General des Impots mis a jour au 1er janvier 2025\",",
+        "        jurisdiction: \"CM\",",
+        "        issuedBy: \"Direction Generale des Impots du Cameroun\",",
+        "        sourceUrl:",
+        "          \"https://www.impots.cm/fr/code-general-des-impots-mis-jour-au-1er-janvier-2025\",",
+        "        documentDate: \"2025-01-01\",",
+        "        retrievedOn: VERIFIED_ON,",
+        "      },",
+        "      {"
+      ]
+    },
+    {
+      "path": "services/regulatory/country-packs/cameroon.ts",
+      "start": 466,
+      "end": 501,
+      "lines": [
+        "            effectiveFrom: \"2026-01-01\",",
+        "            effectiveTo: null,",
+        "            verifiedOn: VERIFIED_ON,",
+        "            verifiedBy: VERIFIED_BY,",
+        "            verificationStatus: \"SOURCE_CHECKED\",",
+        "            notes:",
+        "              \"This pack controls platform acceptance. Individual provider license, merchant contract, and settlement evidence must be attached per tenant before automated reconciliation sign-off.\",",
+        "          },",
+        "        ],",
+        "      },",
+        "    },",
+        "    compliance: {",
+        "      eInvoicing: {",
+        "        capability: [",
+        "          {",
+        "            value: {",
+        "              status: \"REQUIRES_EXPERT_REVIEW\",",
+        "              productionAutomationAllowed: false,",
+        "              automationBlockReason:",
+        "                \"Cameroon e-invoicing/fiscal certification details require official DGI technical specifications and qualified legal/accounting review before any production adapter or certification workflow is enabled.\",",
+        "              supportedDocumentTypes: [",
+        "                \"POS_RECEIPT\",",
+        "                \"SALES_INVOICE\",",
+        "                \"CREDIT_NOTE\",",
+        "              ],",
+        "              requiresPostedLedgerSource: true,",
+        "              requiresOfficialTechnicalSpec: true,",
+        "              requiredExpertReviewBeforeAdapter: true,",
+        "            },",
+        "            legalRef: \"CM_DGI_EINVOICING_REVIEW_REQUIRED\",",
+        "            effectiveFrom: \"2026-01-01\",",
+        "            effectiveTo: null,",
+        "            verifiedOn: VERIFIED_ON,",
+        "            verifiedBy: VERIFIED_BY,",
+        "            verificationStatus: \"REQUIRES_EXPERT_REVIEW\",",
+        "            notes:"
+      ]
+    },
+    {
+      "path": "services/regulatory/regulatory-capability.service.ts",
+      "start": 17,
+      "end": 24,
+      "lines": [
+        "const AUTHORITATIVE_CAPABILITIES = new Set([",
+        "  \"SUPPORTED\",",
+        "  \"SUPPORTED_CERTIFIED\",",
+        "])",
+        "const AUTHORITATIVE_VERIFICATION = new Set([",
+        "  \"EXPERT_REVIEWED\",",
+        "  \"REGULATOR_CONFIRMED\",",
+        "])"
+      ]
+    },
+    {
+      "path": "services/regulatory/regulatory-capability.service.ts",
+      "start": 55,
+      "end": 82,
+      "lines": [
+        "    if (mode === \"PRODUCTION\") {",
+        "      if (!isAuthoritative(result)) {",
+        "        return {",
+        "          kind: \"PENDING_COUNTRY_PACK\",",
+        "          mode,",
+        "          countryCode: context.countryCode.toUpperCase(),",
+        "          parameterPath,",
+        "          reason:",
+        "            \"The selected country-pack value is not approved for authoritative production use.\",",
+        "          retryable: true,",
+        "        }",
+        "      }",
+        "",
+        "      return {",
+        "        kind: \"AUTHORITATIVE\",",
+        "        mode,",
+        "        value: result.value,",
+        "        provenance: provenanceOf(result),",
+        "      }",
+        "    }",
+        "",
+        "    return {",
+        "      kind: \"NON_AUTHORITATIVE\",",
+        "      mode,",
+        "      value: result.value,",
+        "      provenance: provenanceOf(result),",
+        "      watermark: \"NOT FOR STATUTORY USE\",",
+        "    }"
+      ]
+    },
+    {
+      "path": "services/payroll/payroll-production-admission.ts",
+      "start": 65,
+      "end": 151,
+      "lines": [
+        "}",
+        "",
+        "/** Server-owned gate. Reading archived evidence remains possible through read APIs.",
+        " * No caller-supplied bypass, environment switch or missing-as-exempt fallback. */",
+        "export function assertPayrollProductionAdmission(run: AdmissionRun): void {",
+        "  if (run.countryCode !== \"CM\" || run.payrollPeriod.frequency !== \"MONTHLY\") {",
+        "    deny(\"This release requires Cameroon and a monthly payroll period.\");",
+        "  }",
+        "  if (!supported.has(run.countryPackCapabilityStatus)) {",
+        "    deny(\"The calculated country pack is not production supported.\");",
+        "  }",
+        "  const metadata = record(run.metadata);",
+        "  const packSnapshot = record(metadata.countryPackStatus);",
+        "  if (",
+        "    !run.countryPackResolutionHash ||",
+        "    packSnapshot.countryCode !== run.countryCode ||",
+        "    packSnapshot.countryPackVersion !== run.countryPackVersion ||",
+        "    packSnapshot.countryPackSchemaVersion !== run.countryPackSchemaVersion ||",
+        "    packSnapshot.countryPackResolutionHash !== run.countryPackResolutionHash ||",
+        "    packSnapshot.countryPackCapabilityStatus !== run.countryPackCapabilityStatus",
+        "  )",
+        "    deny(\"Calculated country-pack evidence is missing or inconsistent.\");",
+        "",
+        "  const certifiedInputProof =",
+        "    assertPayrollCertifiedInputProofMetadata(metadata);",
+        "  const readiness = record(metadata.payrollInputReadiness);",
+        "  if (",
+        "    readiness.status !== \"READY\" ||",
+        "    readiness.verdictHash !== metadata.payrollInputReadinessHash",
+        "  ) {",
+        "    deny(\"Certified input readiness is missing or inconsistent.\");",
+        "  }",
+        "",
+        "  for (const [key, parameterPath, purpose] of requiredResolutions) {",
+        "    const stored = record(packSnapshot[key]);",
+        "    if (",
+        "      !supported.has(String(stored.capabilityStatus)) ||",
+        "      !reviewed.has(String(stored.verificationStatus))",
+        "    ) {",
+        "      deny(`Reviewed production evidence is required for ${parameterPath}.`);",
+        "    }",
+        "    const current = resolveRegulatoryParameter<Record<string, unknown>>(",
+        "      parameterPath,",
+        "      {",
+        "        countryCode: run.countryCode,",
+        "        pinnedPackVersion: run.countryPackVersion,",
+        "        date: run.payrollPeriod.payDate,",
+        "        purpose,",
+        "        entityProfile: { countryCode: run.countryCode },",
+        "      },",
+        "    );",
+        "    if (",
+        "      !supported.has(current.capabilityStatus) ||",
+        "      !reviewed.has(current.verificationStatus) ||",
+        "      current.resolutionHash !== stored.resolutionHash ||",
+        "      current.packVersion !== run.countryPackVersion ||",
+        "      current.schemaVersion !== run.countryPackSchemaVersion",
+        "    )",
+        "      deny(",
+        "        `Rule evidence is no longer current for ${parameterPath}; recalculate and review.`,",
+        "      );",
+        "    if (",
+        "      key === \"incomeTaxRules\" &&",
+        "      current.value.productionCalculationSupported !== true",
+        "    ) {",
+        "      deny(\"The reviewed income-tax calculation is unavailable.\");",
+        "    }",
+        "    if (",
+        "      key === \"productionAdmission\" &&",
+        "      (current.value.status !== \"APPROVED\" ||",
+        "        current.value.calculatorContract !==",
+        "          PAYROLL_PRODUCTION_CALCULATOR_CONTRACT ||",
+        "        current.value.scope !== \"CM_PRIVATE_SME_MONTHLY_SINGLE_EMPLOYER\" ||",
+        "        !/^sha256:[a-f0-9]{64}$/.test(",
+        "          String(current.value.obligationCatalogueHash),",
+        "        ) ||",
+        "        !/^sha256:[a-f0-9]{64}$/.test(",
+        "          String(current.value.releaseEvidenceHash),",
+        "        ))",
+        "    )",
+        "      deny(",
+        "        \"An approved release scope, obligation catalogue and calculator acceptance are required.\",",
+        "      );",
+        "  }",
+        "",
+        "  const pack = getCountryPack(run.countryCode, run.countryPackVersion);",
+        "  if (!pack || pack.header.status !== \"PUBLISHED\")"
+      ]
+    },
+    {
+      "path": "services/payroll/authority-adapter-worker.service.ts",
+      "start": 386,
+      "end": 447,
+      "lines": [
+        "export async function processPayrollAuthorityAdapterWorkerBatch(",
+        "  input: PayrollAuthorityAdapterWorkerInput,",
+        "  deps: WorkerDependencies = {},",
+        ") {",
+        "  const parsed = payrollAuthorityAdapterWorkerInputSchema.parse(input);",
+        "  const now = parseDate(parsed.now, new Date());",
+        "  const actorId = parsed.actorId ?? parsed.workerId;",
+        "  const lastAuthAt = parseDate(parsed.lastAuthAt, now);",
+        "  const adapter = deps.adapter ?? payrollSandboxAuthorityAdapter;",
+        "  const leaseExecutions =",
+        "    deps.leaseExecutions ?? leasePayrollAuthorityAdapterExecutions;",
+        "  const processExecution =",
+        "    deps.processExecution ?? processPayrollAuthorityAdapterExecution;",
+        "  const recordDeclarationEvidence =",
+        "    deps.recordDeclarationEvidence ?? recordPayrollDeclarationEvidence;",
+        "",
+        "  const leaseInput: LeasePayrollAuthorityAdapterExecutionsInput = {",
+        "    organizationId: parsed.organizationId,",
+        "    leasedBy: parsed.workerId,",
+        "    limit: parsed.limit,",
+        "    leaseSeconds: parsed.leaseSeconds,",
+        "    now,",
+        "  };",
+        "  const leased = await leaseExecutions(leaseInput, db);",
+        "  const results = [];",
+        "",
+        "  for (const execution of leased.executions) {",
+        "    if (execution.status === \"DEAD_LETTER\") {",
+        "      results.push({",
+        "        declarationId: execution.declarationId,",
+        "        declarationEvidenceId: execution.declarationEvidenceId,",
+        "        executionStatus: execution.status,",
+        "        lifecycleTransition: null,",
+        "        lifecycleEvidenceId: null,",
+        "        errorCode: execution.errorCode,",
+        "      });",
+        "      continue;",
+        "    }",
+        "",
+        "    let outcome: PayrollAuthorityAdapterOutcome;",
+        "    let submissionAttempted = false;",
+        "    try {",
+        "      const declaration = await db.payrollDeclaration.findFirst({",
+        "        where: { id: execution.declarationId, organizationId: parsed.organizationId },",
+        "        select: { payrollRunId: true },",
+        "      });",
+        "      if (!declaration) throw new NotFoundError(\"Payroll declaration not found\");",
+        "      await assertPayrollProductionAdmissionInTx(db, parsed.organizationId, declaration.payrollRunId);",
+        "      submissionAttempted = true;",
+        "      outcome = await adapter.submit({",
+        "        organizationId: parsed.organizationId,",
+        "        workerId: parsed.workerId,",
+        "        execution,",
+        "        now,",
+        "      });",
+        "    } catch {",
+        "      outcome = {",
+        "        status: \"failed\",",
+        "        errorCode: submissionAttempted ? \"ADAPTER_UNSAFE_ERROR\" : \"PAYROLL_PRODUCTION_ADMISSION_BLOCKED\",",
+        "        errorMessage: submissionAttempted",
+        "          ? \"Payroll authority adapter threw an unsafe error. Raw error details were suppressed.\"",
+        "          : \"Payroll production admission could not be established. Review run and rule evidence before retrying.\","
+      ]
+    },
+    {
+      "path": "services/payments/adapters/mobile-money-hmac.adapter.ts",
+      "start": 115,
+      "end": 145,
+      "lines": [
+        "export class MobileMoneyHmacAdapter implements PaymentProviderAdapter {",
+        "  readonly railType = \"MOBILE_MONEY\" as const",
+        "",
+        "  constructor(",
+        "    readonly providerCode: string,",
+        "    readonly maxPayloadBytes = 256 * 1024,",
+        "    readonly timestampToleranceSeconds = 300,",
+        "  ) {}",
+        "",
+        "  canonicalPayload(rawBody: string) {",
+        "    try {",
+        "      return stableStringify(JSON.parse(rawBody))",
+        "    } catch {",
+        "      return rawBody",
+        "    }",
+        "  }",
+        "",
+        "  verifySignature(input: SignatureVerificationInput) {",
+        "    const signature = normalizeSignature(header(input.headers, \"x-provider-signature\"))",
+        "    const timestamp = header(input.headers, \"x-provider-timestamp\")",
+        "    if (!signature || !timestamp) return false",
+        "",
+        "    const timestampMs = Number(timestamp)",
+        "    if (!Number.isFinite(timestampMs)) return false",
+        "",
+        "    const nowMs = (input.now ?? new Date()).getTime()",
+        "    if (Math.abs(nowMs - timestampMs) > this.timestampToleranceSeconds * 1000) return false",
+        "",
+        "    const canonical = `${timestamp}.${this.canonicalPayload(input.rawBody)}`",
+        "    const expected = createHmac(\"sha256\", input.secret).update(canonical).digest(\"hex\")",
+        "    return safeEqualHex(signature, expected)"
+      ]
+    },
+    {
+      "path": "services/accounting/accounting-settings.service.ts",
+      "start": 272,
+      "end": 302,
+      "lines": [
+        "export async function updateAccountingSettings(",
+        "  organizationId: string,",
+        "  input: AccountingSettingsUpdateInput,",
+        "  actorId?: string | null,",
+        ") {",
+        "  await ensureAccountingSettings(organizationId, actorId)",
+        "",
+        "  return db.$transaction(async (tx) => {",
+        "    if (input.baseCurrency !== undefined) {",
+        "      const current = await tx.organizationAccountingSettings.findUnique({ where: { organizationId } })",
+        "      if (!current) throw new NotFoundError(\"Accounting settings not found\")",
+        "      // Match the organization-profile policy: changing the denomination of",
+        "      // historical amounts is a controlled migration, never a settings edit.",
+        "      if (normalizeCurrency(input.baseCurrency) !== normalizeCurrency(current.baseCurrency)) {",
+        "        throw new BusinessRuleError(\"Changing the accounting base currency requires a separate controlled migration of accounting and operating records\")",
+        "      }",
+        "    }",
+        "    const settings = await tx.organizationAccountingSettings.update({",
+        "      where: { organizationId },",
+        "      data: {",
+        "        ...(input.countryPack !== undefined ? { countryPack: input.countryPack } : {}),",
+        "        ...(input.baseCurrency !== undefined ? { baseCurrency: normalizeCurrency(input.baseCurrency) } : {}),",
+        "        ...(input.fiscalYearStartMonth !== undefined ? { fiscalYearStartMonth: input.fiscalYearStartMonth } : {}),",
+        "        ...(input.fiscalYearStartDay !== undefined ? { fiscalYearStartDay: input.fiscalYearStartDay } : {}),",
+        "        ...(input.inventoryValuationPolicy !== undefined",
+        "          ? { inventoryValuationPolicy: input.inventoryValuationPolicy }",
+        "          : {}),",
+        "        ...(input.roundingMode !== undefined ? { roundingMode: input.roundingMode } : {}),",
+        "        ...(input.roundingScale !== undefined ? { roundingScale: input.roundingScale } : {}),",
+        "        ...(input.taxRegime !== undefined ? { taxRegime: input.taxRegime } : {}),",
+        "      },"
+      ]
+    },
+    {
+      "path": "services/onboarding/opening-readiness.ts",
+      "start": 52,
+      "end": 58,
+      "lines": [
+        "    requirements: [",
+        "      { key: \"STOCK\", state: \"NOT_VERIFIED\", href: \"/dashboard/inventory/movements\" },",
+        "      { key: \"AR\", state: \"UNSUPPORTED\", href: \"/dashboard/finance/receivables\" },",
+        "      { key: \"AP\", state: \"UNSUPPORTED\", href: \"/dashboard/purchases/payables\" },",
+        "      { key: \"LEDGER\", state: \"NOT_VERIFIED\", href: \"/dashboard/accounting/journals\" },",
+        "      { key: \"TIE_OUT\", state: \"NOT_VERIFIED\", href: null },",
+        "    ],"
+      ]
+    }
+  ]
+}

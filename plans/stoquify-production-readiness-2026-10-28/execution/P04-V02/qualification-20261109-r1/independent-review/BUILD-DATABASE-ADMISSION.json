@@ -1,0 +1,39 @@
+{
+  "reviewedAt": "2026-11-09",
+  "reviewer": "independent v02_review agent",
+  "verdict": "accepted_for_fresh_local_database_build_and_seed",
+  "productReadinessAccepted": false,
+  "reviewedRecipes": [
+    {"path": "admit-preparation.cjs", "sha256": "214284311ced9568d3b8836a17e9b52266f48977d875d77e1c5b121d6fc0012d"},
+    {"path": "database/database-common.cjs", "sha256": "581f303e2a81ebbcc896e2e1cf90d232d4ae9336cc20c002c384fc16e0de2d03"},
+    {"path": "database/prepare.cjs", "sha256": "f4ef2b6e1256fdfcc734ad2a105dc08671312541b0f8d338f27f82250909744b"},
+    {"path": "database/fixture-definition.cjs", "sha256": "ea4ccf1373d7ac7f22e9c698ffe936453282c1c0c265da109a7cac3dd0b7d476"},
+    {"path": "database/seed-fixture.cjs", "sha256": "cea93851d50b598c9ec1aca26234e5c410bd8631c6bf43d5de458e9acb206d81"},
+    {"path": "run-build.cjs", "sha256": "a6bbb0a304af5bdd2e98e5aa52a2f45ebebe4de9b14e6c6d43d475ce25a7d6a0"},
+    {"path": "environment-guard.cjs", "sha256": "78a1d6736277f3c9c5457650b96ae0bc288d754326aa593beb5a3b053edcfeb0"}
+  ],
+  "reviewedDelegates": [
+    {"path": "scripts/release-artifact.cjs", "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"},
+    {"path": "scripts/build-app-safe.js", "sha256": "c45e5d883a8f93a996227977ad85df4725f7d9e4ef54d37067927e2286f8f68d"},
+    {"path": "scripts/release-secret-preflight.js", "sha256": "d20efac2da7ef1767cffb0bf19a9825b9a41310edee1b64bd4248dcaa1638729"},
+    {"path": "next.config.mjs", "sha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf"},
+    {"path": "prisma.config.ts", "sha256": "9ca041eb60d478f2284a37417ff230927c92cff0d675342d8262dea57e516737"},
+    {"path": "package.json", "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"}
+  ],
+  "conditions": [
+    "Successful preparation/candidate admission must precede database creation and build.",
+    "Only D:/p04-v02-fullapp-20261109-r1/postgres on 127.0.0.1:55509 is admitted; connection helper verifies data_directory, server host/port and database.",
+    "Database names are stoquify_local_p04v02_20261109_build_r1 and stoquify_local_p04v02_20261109_full_r1; both must be newly created, with exact 121 current migration checksums.",
+    "Migration scaffold is outside source, imports only candidate dependencies through its explicit junction, and cannot load application environment files.",
+    "Build uses an explicit environment allowlist, random local secrets, synthetic UploadThing token, disabled delivery sends and allowed loopback ports 55509/3196/3197/3198.",
+    "Installed Prisma generation must match pinned canonical schema transform before full artifact build; private build database must have no users.",
+    "Source identity and private upload mappings must remain exact through build and artifact verification.",
+    "Fixture seeding uses only the confirmed new full database, synthetic users/roles/organizations/items, no wildcard authority and zero preseeded sessions.",
+    "Successful cluster remains task-owned until runtime completion and must be explicitly stopped by cleanup; no production migration/deployment occurs."
+  ],
+  "remainingReview": [
+    "Runtime/browser/auth/protocol invocation and cleanup before execution.",
+    "Snapshot exclusion digests and intended audit/session delta classification before qualification claims.",
+    "Actual successful artifact, candidate drift, private-client and migration evidence after execution."
+  ]
+}

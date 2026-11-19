@@ -1,0 +1,68 @@
+{
+  "id": "P04-R04",
+  "title": "Normalize the sibling item-list action failure response",
+  "phase": 1,
+  "kind": "implementation",
+  "depends_on": [
+    "P01",
+    "P02"
+  ],
+  "milestone": "M1",
+  "owner_role": "Inventory action owner + security reviewer",
+  "domains": [
+    "item",
+    "security"
+  ],
+  "audit_gaps": [
+    "G04"
+  ],
+  "status": "not_started",
+  "current_state": "Current-source finding P04-R03-SCOPE-01: actions/item/listItemsAction.ts is a distinct raw exception catch consumed by useListItems. Outside the completed nine-path R03 scope; unimplemented and unqualified.",
+  "tasks": [
+    "Refresh current sibling list action, session/permission/tenant/Prisma chain and useListItems client envelope; capture source hashes and distinguish source reachability from rendered use.",
+    "Normalize arbitrary thrown details with the existing safe error contract; preserve server-owned tenant scope, approved business results and successful pagination/DTO shape.",
+    "Run isolated negative and authorized positive evidence, prove denied reads reveal no private data or unauthorized writes, and obtain independent review before advancement."
+  ],
+  "acceptance_criteria": [
+    "No raw guard/service/Prisma/provider exception detail reaches the sibling list response.",
+    "Server-owned authority and legitimate list/filter/pagination behavior remain functional; current source and tests bind the same candidate.",
+    "Independent review passes; browser transport and all remaining P04 obligations remain explicit."
+  ],
+  "evidence_refs": [
+    "E24"
+  ],
+  "rollback_recovery": "Revert only owned response-normalization hunks if needed; affected surfaces stay outside production admission until safe responses are restored.",
+  "effort": "M",
+  "confidence": "high",
+  "model_tier": "strongest_available",
+  "execution_boundary": "Separate bounded follow-up discovered during R03 refresh. Planning/source inspection only; implementation requires user authorization. No commit/push, production data/flags or deployment.",
+  "verification_recipes": [
+    "C01",
+    "C02",
+    "C05",
+    "C06",
+    "C07"
+  ],
+  "required_decisions": [],
+  "source_locations": [
+    "actions/item/listItemsAction.ts",
+    "hooks/itemsHooks/useItemHooks.ts",
+    "plans/stoquify-production-readiness-2026-10-28/execution/P04-R03/qualification-20261104-r1/supplemental-findings.json"
+  ],
+  "branch_pr_workflow": "Future codex/ branch or explicitly owned local diff from approved candidate; inspect/stage only owned hunks if commit requested. PR/CI admin waits for authenticated authorization; never auto-merge/deploy.",
+  "evidence_record": {
+    "candidate_id": null,
+    "source_hashes": "execution/P04-R03/qualification-20261104-r1/inventory/source-manifest.json",
+    "commands": null,
+    "source_review": "execution/P04-R03/qualification-20261104-r1/supplemental-findings.json",
+    "mocked_tests": "NOT RUN for the sibling action",
+    "native_database": "NOT RUN for the sibling action",
+    "authenticated_browser": "NOT RUN",
+    "provider_hosted": "NOT RUN",
+    "operator": "NOT RUN",
+    "cleanup": "No sibling action runtime started",
+    "reviewer": "execution/P04-R03/qualification-20261104-r1/independent-review/ASSESSMENT.json"
+  },
+  "parent_id": "P04",
+  "implementation_authorized": false
+}

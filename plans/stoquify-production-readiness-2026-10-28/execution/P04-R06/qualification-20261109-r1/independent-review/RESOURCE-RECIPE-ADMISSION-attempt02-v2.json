@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-10T08:50:38.049Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Successor read-only resource collection launch compatibility only; not build admission",
+  "files": [
+    {
+      "path": "resource-snapshot-attempt02.ps1",
+      "sha256": "f7c83e373431777de4abad4daafb440b7d2db66e726038a37eb8001e6bc9c326"
+    },
+    {
+      "path": "check-resources-attempt02-v2.cjs",
+      "sha256": "1e4255e45b06aebea9bc5094c7a08c890032199b0c33aeb3b0d5758710bb19ae"
+    }
+  ],
+  "syntaxExit": 0,
+  "sideEffects": {
+    "host": "Read-only CIM/process/pagefile/drive/listening-port inspection, no OS setting change or termination",
+    "output": "New resource-[a-z0-9-]+.json receipt within packet with exclusive create",
+    "secrets": "No environment values or command lines emitted"
+  },
+  "thresholds": {
+    "freePhysicalGiB": 6,
+    "freeCommitGiB": 12,
+    "freeBuildDriveGiB": 12
+  },
+  "reviewFindings": [
+    "Thresholds are conservative retry admission heuristics, not empirically validated capacity guarantees.",
+    "The existing configuration retains compiler work and installed Next runs separate type/lint workers; no source/config/dependency weakening is proposed.",
+    "A resource pass alone cannot authorize retry: independent process ownership/port/source/candidate/DB/build recipe checks remain required.",
+    "Failure should remain a failed capacity receipt; do not relax thresholds silently or terminate unrelated processes.",
+    "Host checks must rerun immediately before costly build, because availability changes."
+  ],
+  "limitations": [
+    "This receipt does not assert present capacity or classify exact cause of the prior native OOM.",
+    "No new build/runtime/source-copy mutation admitted."
+  ],
+  "supersedes": "RESOURCE-RECIPE-ADMISSION-attempt02.json",
+  "change": "Exact only difference adds child-process PowerShell -ExecutionPolicy Bypass so this reviewed read-only local script can execute; no global execution policy or security setting is changed",
+  "priorAttempt": "Initial helper blocked by PowerShell script execution policy; not an automatic approval rejection and not a capacity measurement"
+}

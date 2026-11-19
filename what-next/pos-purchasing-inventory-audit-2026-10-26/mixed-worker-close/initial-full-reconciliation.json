@@ -1,0 +1,881 @@
+{
+  "table": "audit_mv_receiver_151b3eb18a2e",
+  "evidence": [
+    {
+      "scenario": "outbox crash baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-e3d1f532-74ff-4baf-9d32-8c10ddd3e26e",
+      "exitCode": 73,
+      "original": {
+        "id": "cmvrt0qrz0013masc2ajt02gf",
+        "organizationId": "org-full-pos-e3d1f532-74ff-4baf-9d32-8c10ddd3e26e",
+        "businessEventId": "cmvrt0qry000zmasczflbxmv2",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.a0817454-70bc-47c3-b4f0-a61db21b4cd6",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:e67feef8-10b7-456f-959a-e2af7a3217b3:NOTIFICATION:audit.mixed.recovery.a0817454-70bc-47c3-b4f0-a61db21b4cd6",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "status": "LOCKED",
+        "attempts": 1,
+        "maxAttempts": 5,
+        "availableAt": "2026-10-28T07:39:52.846Z",
+        "lockedAt": "2026-10-28T07:39:59.065Z",
+        "lockedBy": "crashed-baseline",
+        "correlationId": "37de4363-748e-4ce4-a76d-8e0bff67a2ce"
+      },
+      "resumed": [
+        {
+          "messageId": "cmvrt0qrz0013masc2ajt02gf",
+          "status": "SENT",
+          "processedAt": "2026-10-28T07:45:59.065Z"
+        }
+      ],
+      "effects": [
+        {
+          "key": "SYSTEM:e67feef8-10b7-456f-959a-e2af7a3217b3:NOTIFICATION:audit.mixed.recovery.a0817454-70bc-47c3-b4f0-a61db21b4cd6",
+          "delivery_id": "cmvrt0qrz0013masc2ajt02gf",
+          "requests": 2
+        }
+      ],
+      "auditId": "cmvrt11b80001mahwwzb1aqsc",
+      "state": {
+        "id": "cmvrt0qrz0013masc2ajt02gf",
+        "organizationId": "org-full-pos-e3d1f532-74ff-4baf-9d32-8c10ddd3e26e",
+        "businessEventId": "cmvrt0qry000zmasczflbxmv2",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.a0817454-70bc-47c3-b4f0-a61db21b4cd6",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:e67feef8-10b7-456f-959a-e2af7a3217b3:NOTIFICATION:audit.mixed.recovery.a0817454-70bc-47c3-b4f0-a61db21b4cd6",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "correlationId": "37de4363-748e-4ce4-a76d-8e0bff67a2ce",
+        "status": "SENT",
+        "attempts": 2,
+        "maxAttempts": 5,
+        "availableAt": "2026-10-28T07:39:52.846Z",
+        "lockedAt": null,
+        "lockedBy": null,
+        "processedAt": "2026-10-28T07:45:59.065Z",
+        "failedAt": null,
+        "lastErrorCode": null,
+        "lastErrorMessage": null,
+        "metadata": null,
+        "createdAt": "2026-10-28T07:39:52.846Z",
+        "updatedAt": "2026-10-28T07:40:06.488Z"
+      }
+    },
+    {
+      "scenario": "outbox crash current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-30851b00-4153-4954-8940-d800183219f9",
+      "exitCode": 73,
+      "original": {
+        "id": "cmvrt2bmz0027masckai3jxcr",
+        "organizationId": "org-full-pos-30851b00-4153-4954-8940-d800183219f9",
+        "businessEventId": "cmvrt2bmy0023masc16x7g4jn",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.cb3a76bd-23dd-477d-b626-293b2f27eac4",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:2a040d68-d835-4342-a592-ff5ac35e51a0:NOTIFICATION:audit.mixed.recovery.cb3a76bd-23dd-477d-b626-293b2f27eac4",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "status": "LOCKED",
+        "attempts": 1,
+        "maxAttempts": 5,
+        "availableAt": "2026-10-28T07:41:06.538Z",
+        "lockedAt": "2026-10-28T07:41:26.497Z",
+        "lockedBy": "crashed-current",
+        "correlationId": "e5529f80-61b1-4cb5-b7b0-f15f961376b6"
+      },
+      "resumed": [
+        {
+          "messageId": "cmvrt2bmz0027masckai3jxcr",
+          "status": "SENT",
+          "processedAt": "2026-10-28T07:47:26.497Z"
+        }
+      ],
+      "effects": [
+        {
+          "key": "SYSTEM:2a040d68-d835-4342-a592-ff5ac35e51a0:NOTIFICATION:audit.mixed.recovery.cb3a76bd-23dd-477d-b626-293b2f27eac4",
+          "delivery_id": "cmvrt2bmz0027masckai3jxcr",
+          "requests": 2
+        }
+      ],
+      "auditId": "cmvrt381n0001ma1kmxz7q1ak",
+      "state": {
+        "id": "cmvrt2bmz0027masckai3jxcr",
+        "organizationId": "org-full-pos-30851b00-4153-4954-8940-d800183219f9",
+        "businessEventId": "cmvrt2bmy0023masc16x7g4jn",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.cb3a76bd-23dd-477d-b626-293b2f27eac4",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:2a040d68-d835-4342-a592-ff5ac35e51a0:NOTIFICATION:audit.mixed.recovery.cb3a76bd-23dd-477d-b626-293b2f27eac4",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "correlationId": "e5529f80-61b1-4cb5-b7b0-f15f961376b6",
+        "status": "SENT",
+        "attempts": 2,
+        "maxAttempts": 5,
+        "availableAt": "2026-10-28T07:41:06.538Z",
+        "lockedAt": null,
+        "lockedBy": null,
+        "processedAt": "2026-10-28T07:47:26.497Z",
+        "failedAt": null,
+        "lastErrorCode": null,
+        "lastErrorMessage": null,
+        "metadata": null,
+        "createdAt": "2026-10-28T07:41:06.538Z",
+        "updatedAt": "2026-10-28T07:41:48.379Z"
+      }
+    },
+    {
+      "scenario": "outbox bounded retry baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-e2ce04c2-0f3b-40ff-b5d1-cca88192ff3a",
+      "state": {
+        "id": "cmvrt4ibw003bmascvcz02icx",
+        "organizationId": "org-full-pos-e2ce04c2-0f3b-40ff-b5d1-cca88192ff3a",
+        "businessEventId": "cmvrt4ibv0037mascm4z6jj77",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.a2b33693-8d52-4c43-a4bc-3b7b22aa780f",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:6f56dd3f-a589-4194-8923-68bdce4775b3:NOTIFICATION:audit.mixed.recovery.a2b33693-8d52-4c43-a4bc-3b7b22aa780f",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "correlationId": "0e595d8a-623d-4aee-a5c4-53008d222a21",
+        "status": "DEAD_LETTER",
+        "attempts": 2,
+        "maxAttempts": 2,
+        "availableAt": "2026-10-28T07:43:04.539Z",
+        "lockedAt": null,
+        "lockedBy": null,
+        "processedAt": null,
+        "failedAt": "2026-10-28T07:43:04.539Z",
+        "lastErrorCode": "INTERNAL_ERROR",
+        "lastErrorMessage": "Business-event outbox delivery failed.",
+        "metadata": null,
+        "createdAt": "2026-10-28T07:42:48.523Z",
+        "updatedAt": "2026-10-28T07:43:22.296Z"
+      },
+      "effects": []
+    },
+    {
+      "scenario": "outbox bounded retry current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-e3c93c34-30a7-464a-be00-4b4901625bd4",
+      "state": {
+        "id": "cmvrt5idy004fmascr88myhfk",
+        "organizationId": "org-full-pos-e3c93c34-30a7-464a-be00-4b4901625bd4",
+        "businessEventId": "cmvrt5idx004bmascrhszj0w3",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.5f837766-c910-4e0c-b93d-afca4ce6ce69",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:6fe4e29e-7fae-45c8-a2fe-39b3c124ad2f:NOTIFICATION:audit.mixed.recovery.5f837766-c910-4e0c-b93d-afca4ce6ce69",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "correlationId": "2cae3b9d-9b2b-499a-a38f-440fd33ce4db",
+        "status": "DEAD_LETTER",
+        "attempts": 2,
+        "maxAttempts": 2,
+        "availableAt": "2026-10-28T07:43:51.378Z",
+        "lockedAt": null,
+        "lockedBy": null,
+        "processedAt": null,
+        "failedAt": "2026-10-28T07:43:51.378Z",
+        "lastErrorCode": "INTERNAL_ERROR",
+        "lastErrorMessage": "Business-event outbox delivery failed.",
+        "metadata": null,
+        "createdAt": "2026-10-28T07:43:35.253Z",
+        "updatedAt": "2026-10-28T07:43:59.971Z"
+      },
+      "effects": []
+    },
+    {
+      "scenario": "webhook unknown outcome baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-93a168a5-c0cb-4432-b660-e496249d8012",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "effects": [
+        {
+          "key": "d9093c917372aeb21a0a534fdcb5f132b932fa29dd2ca5be23cfeadc99465940",
+          "delivery_id": "cmvrt662w005imasccb08uc4e",
+          "requests": 2
+        }
+      ],
+      "state": {
+        "id": "cmvrt662w005imasccb08uc4e",
+        "organizationId": "org-full-pos-93a168a5-c0cb-4432-b660-e496249d8012",
+        "incidentId": "cmvrt661j005gmasctr5fy1ru",
+        "channel": "WEBHOOK",
+        "status": "DELIVERED",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": "2001-01-01T00:00:31.000Z",
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": "synthetic-mixed-receiver",
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:44:05.960Z",
+        "updatedAt": "2026-10-28T07:44:15.592Z"
+      },
+      "requests": 2
+    },
+    {
+      "scenario": "webhook unknown outcome current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-c1b39950-c094-4139-8963-5aefdf933139",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "effects": [
+        {
+          "key": "abc7be8e4d6411b93a57136e07438deeeb274684bbbc4dc551cbcd020c5e9499",
+          "delivery_id": "cmvrt6dw8006lmascnmx64oqi",
+          "requests": 2
+        }
+      ],
+      "state": {
+        "id": "cmvrt6dw8006lmascnmx64oqi",
+        "organizationId": "org-full-pos-c1b39950-c094-4139-8963-5aefdf933139",
+        "incidentId": "cmvrt6dvz006jmasc2993848g",
+        "channel": "WEBHOOK",
+        "status": "DELIVERED",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": "2001-01-01T00:00:31.000Z",
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": "synthetic-mixed-receiver",
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:44:16.088Z",
+        "updatedAt": "2026-10-28T07:44:29.709Z"
+      },
+      "requests": 2
+    },
+    {
+      "scenario": "late webhook success baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-d1abb42f-4aa8-4d0a-b51a-6b8fdfca20af",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "effects": [
+        {
+          "key": "1b2ab9036e3b64c81354e91711154a10c6d339a721badf7fefe9ca42969e50de",
+          "delivery_id": "cmvrt6p9e007omasccdb8a8vi",
+          "requests": 2
+        }
+      ],
+      "state": {
+        "id": "cmvrt6p9e007omasccdb8a8vi",
+        "organizationId": "org-full-pos-d1abb42f-4aa8-4d0a-b51a-6b8fdfca20af",
+        "incidentId": "cmvrt6p6r007mmascvekkklzx",
+        "channel": "WEBHOOK",
+        "status": "DELIVERED",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": "2001-01-01T00:06:00.000Z",
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": "synthetic-mixed-receiver",
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:44:30.817Z",
+        "updatedAt": "2026-10-28T07:44:43.844Z"
+      },
+      "older": {
+        "ready": true,
+        "delivered": 0,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      },
+      "newer": {
+        "ready": true,
+        "delivered": 1,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      }
+    },
+    {
+      "scenario": "late webhook failure baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-5f6b4ccf-ac88-429c-aedc-9a3b3a068c9b",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "effects": [
+        {
+          "key": "69f0028e30f9d901263a2264fcdcc795b2eb3b4a482a060a7aef5b35e8d61753",
+          "delivery_id": "cmvrt70e9008rmascayu58gyk",
+          "requests": 2
+        }
+      ],
+      "state": {
+        "id": "cmvrt70e9008rmascayu58gyk",
+        "organizationId": "org-full-pos-5f6b4ccf-ac88-429c-aedc-9a3b3a068c9b",
+        "incidentId": "cmvrt70dn008pmascgstf3cyy",
+        "channel": "WEBHOOK",
+        "status": "DELIVERED",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": "2001-01-01T00:06:00.000Z",
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": "synthetic-mixed-receiver",
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:44:45.249Z",
+        "updatedAt": "2026-10-28T07:45:04.552Z"
+      },
+      "older": {
+        "ready": true,
+        "delivered": 0,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      },
+      "newer": {
+        "ready": true,
+        "delivered": 1,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      }
+    },
+    {
+      "scenario": "late webhook success current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-0e7c849a-45a9-4033-9d34-ed2255530637",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "effects": [
+        {
+          "key": "4b401e8ca723f71d9478474821cfe601503f0b1ceaaa58e8732afd7c75214302",
+          "delivery_id": "cmvrt7glb009umasc9c28lbif",
+          "requests": 2
+        }
+      ],
+      "state": {
+        "id": "cmvrt7glb009umasc9c28lbif",
+        "organizationId": "org-full-pos-0e7c849a-45a9-4033-9d34-ed2255530637",
+        "incidentId": "cmvrt7gkg009smasczgb3akdo",
+        "channel": "WEBHOOK",
+        "status": "DELIVERED",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": "2001-01-01T00:06:00.000Z",
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": "synthetic-mixed-receiver",
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:45:06.239Z",
+        "updatedAt": "2026-10-28T07:45:18.534Z"
+      },
+      "older": {
+        "ready": true,
+        "delivered": 0,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      },
+      "newer": {
+        "ready": true,
+        "delivered": 1,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      }
+    },
+    {
+      "scenario": "late webhook failure current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-639e2eb6-7688-43cc-a58b-1ead68806cce",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "effects": [
+        {
+          "key": "73c9cd48c68439ecd3d0bb58defcacc0d6bf5f505f78c6248f3ab494920f3508",
+          "delivery_id": "cmvrt7r3i00axmascfu9wkuon",
+          "requests": 2
+        }
+      ],
+      "state": {
+        "id": "cmvrt7r3i00axmascfu9wkuon",
+        "organizationId": "org-full-pos-639e2eb6-7688-43cc-a58b-1ead68806cce",
+        "incidentId": "cmvrt7r2900avmascdr63a0tg",
+        "channel": "WEBHOOK",
+        "status": "DELIVERED",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": "2001-01-01T00:06:00.000Z",
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": "synthetic-mixed-receiver",
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:45:19.853Z",
+        "updatedAt": "2026-10-28T07:45:33.751Z"
+      },
+      "older": {
+        "ready": true,
+        "delivered": 0,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      },
+      "newer": {
+        "ready": true,
+        "delivered": 1,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      }
+    },
+    {
+      "scenario": "exhausted webhook baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-61bd02c1-4eff-41e6-a473-847bbe840855",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "requests": 0,
+      "state": {
+        "id": "cmvrt829n00c0mascgveb71q6",
+        "organizationId": "org-full-pos-61bd02c1-4eff-41e6-a473-847bbe840855",
+        "incidentId": "cmvrt829700bymascftyei6e5",
+        "channel": "WEBHOOK",
+        "status": "DEAD_LETTER",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": null,
+        "failedAt": "2001-01-01T00:00:00.000Z",
+        "failureCode": "RETRY_EXHAUSTED",
+        "failureReason": "Retry limit reached before lease acquisition.",
+        "attemptCount": 5,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": null,
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:45:34.330Z",
+        "updatedAt": "2026-10-28T07:45:40.667Z"
+      }
+    },
+    {
+      "scenario": "exhausted webhook current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-955a105c-5f5a-48bf-89ec-08a651ced92b",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "requests": 0,
+      "state": {
+        "id": "cmvrt87xc00d3mascm9jqgjzq",
+        "organizationId": "org-full-pos-955a105c-5f5a-48bf-89ec-08a651ced92b",
+        "incidentId": "cmvrt87wd00d1mascikdzmd92",
+        "channel": "WEBHOOK",
+        "status": "DEAD_LETTER",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": null,
+        "failedAt": "2001-01-01T00:00:00.000Z",
+        "failureCode": "RETRY_EXHAUSTED",
+        "failureReason": "Retry limit reached before lease acquisition.",
+        "attemptCount": 5,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": null,
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:45:41.664Z",
+        "updatedAt": "2026-10-28T07:45:47.428Z"
+      }
+    },
+    {
+      "scenario": "close blocked handoff baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-7b685ccd-918b-42f7-9346-804e45e510bc",
+      "periodId": "cmvrt8ctp00d9mascedmtd7z3",
+      "runId": "cmvrt99ug0001ma7s93cc160u",
+      "pack": {
+        "id": "cmvrt9nah0001malg6z0nd149",
+        "hash": "sha256:b6b211049990179cf68edcbbe0a41ceded21ecc3813a26bd1983eed414933cc2",
+        "runId": "cmvrt99ug0001ma7s93cc160u",
+        "mode": "DRAFT_NOT_CERTIFIED"
+      }
+    },
+    {
+      "scenario": "close certification race and rollback baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-7b685ccd-918b-42f7-9346-804e45e510bc",
+      "periodId": "cmvrt8ctp00d9mascedmtd7z3",
+      "attempts": [
+        {
+          "source": "baseline",
+          "ok": false,
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "Certified close pack is blocked: Close run status is CERTIFIED, not READY."
+          }
+        },
+        {
+          "source": "current",
+          "ok": true
+        }
+      ],
+      "pack": {
+        "id": "cmvrtc6920001maooye0v7vso",
+        "hash": "sha256:b7151ae1e18c3ba579ace03dcac72d04a1eacc69c83e06c61da9666dd8dc5e89",
+        "runId": "cmvrta4270001mam8xg7z4pcd",
+        "mode": "CERTIFIED"
+      },
+      "financialState": {
+        "stock": [
+          {
+            "quantity": "2.000",
+            "value": "200.00"
+          }
+        ],
+        "journals": 3,
+        "payments": 1,
+        "paymentTransactions": 1,
+        "returns": 0
+      }
+    },
+    {
+      "scenario": "close reopen correct recertify baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-7b685ccd-918b-42f7-9346-804e45e510bc",
+      "periodId": "cmvrt8ctp00d9mascedmtd7z3",
+      "seals": [
+        {
+          "id": "cmvrtckuv0003maog8qo1fkd4",
+          "organizationId": "org-full-pos-7b685ccd-918b-42f7-9346-804e45e510bc",
+          "periodId": "cmvrt8ctp00d9mascedmtd7z3",
+          "version": 1,
+          "operation": "CLOSE",
+          "fromStatus": "OPEN",
+          "toStatus": "CLOSED",
+          "actorId": "cmvrt8sph00namasc02x5pwb5",
+          "reason": "Current independently certified close approval accepted",
+          "idempotencyKey": "close:cmvrt8ctp00d9mascedmtd7z3:0",
+          "sourceRevision": "142",
+          "approval": {
+            "closeRunId": "cmvrta4270001mam8xg7z4pcd",
+            "contentHash": "sha256:b7151ae1e18c3ba579ace03dcac72d04a1eacc69c83e06c61da9666dd8dc5e89",
+            "approvedById": "cmvrt8sph00namasc02x5pwb5",
+            "preparedById": "cmvrt8d9200e5mascwjoq6aq5",
+            "sourceRevision": "142",
+            "certifiedExportId": "cmvrtc6920001maooye0v7vso"
+          },
+          "createdAt": "2026-10-28T07:49:04.769Z"
+        },
+        {
+          "id": "cmvrtcv1z0001mamseppwm6h8",
+          "organizationId": "org-full-pos-7b685ccd-918b-42f7-9346-804e45e510bc",
+          "periodId": "cmvrt8ctp00d9mascedmtd7z3",
+          "version": 2,
+          "operation": "REOPEN",
+          "fromStatus": "CLOSED",
+          "toStatus": "OPEN",
+          "actorId": "cmvrt8sph00namasc02x5pwb5",
+          "reason": "Controlled mixed-version reopening for supplier return",
+          "idempotencyKey": "3b81e107-d630-4ddc-8ad1-ab5a1f916eef",
+          "sourceRevision": "142",
+          "approval": {
+            "closedAt": "2026-10-28T07:49:04.769Z",
+            "lockedAt": "2026-10-28T07:49:04.769Z",
+            "closedById": "cmvrt8sph00namasc02x5pwb5",
+            "priorControlEventId": "cmvrtckuv0003maog8qo1fkd4"
+          },
+          "createdAt": "2026-10-28T07:49:18.228Z"
+        },
+        {
+          "id": "cmvrtec4w0003mah471rquxac",
+          "organizationId": "org-full-pos-7b685ccd-918b-42f7-9346-804e45e510bc",
+          "periodId": "cmvrt8ctp00d9mascedmtd7z3",
+          "version": 3,
+          "operation": "CLOSE",
+          "fromStatus": "OPEN",
+          "toStatus": "CLOSED",
+          "actorId": "cmvrt8sph00namasc02x5pwb5",
+          "reason": "Current independently certified close approval accepted",
+          "idempotencyKey": "close:cmvrt8ctp00d9mascedmtd7z3:2",
+          "sourceRevision": "182",
+          "approval": {
+            "closeRunId": "cmvrtdvp20001mamgvirjs6u6",
+            "contentHash": "sha256:90fb60b92f40e0b4fb36a73dc113529526c473d5b2dc7df82ed87a2c433668c3",
+            "approvedById": "cmvrt8sph00namasc02x5pwb5",
+            "preparedById": "cmvrt8d9200e5mascwjoq6aq5",
+            "sourceRevision": "182",
+            "certifiedExportId": "cmvrte5fn0001madszahjkpqt"
+          },
+          "createdAt": "2026-10-28T07:50:26.789Z"
+        }
+      ],
+      "oldPack": {
+        "id": "cmvrtc6920001maooye0v7vso",
+        "hash": "sha256:b7151ae1e18c3ba579ace03dcac72d04a1eacc69c83e06c61da9666dd8dc5e89"
+      },
+      "newPack": {
+        "id": "cmvrte5fn0001madszahjkpqt",
+        "hash": "sha256:90fb60b92f40e0b4fb36a73dc113529526c473d5b2dc7df82ed87a2c433668c3",
+        "runId": "cmvrtdvp20001mamgvirjs6u6",
+        "mode": "CERTIFIED"
+      },
+      "final": {
+        "stock": [
+          {
+            "quantity": "1.000",
+            "value": "100.00"
+          }
+        ],
+        "journals": 4,
+        "payments": 1,
+        "paymentTransactions": 1,
+        "returns": 1
+      }
+    },
+    {
+      "scenario": "close blocked handoff current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-4f1c5808-dd23-4a7f-9b18-0145376e85ba",
+      "periodId": "cmvrted9h00qvmascgjsd8j6g",
+      "runId": "cmvrtexwe0001map4ci48mgzf",
+      "pack": {
+        "id": "cmvrtf77c0001mafofagbpaol",
+        "hash": "sha256:20817ddf387b803f5a64cd1dccfc21ec31aeda90f36fd18e25ae0c0bbf6680b8",
+        "runId": "cmvrtexwe0001map4ci48mgzf",
+        "mode": "DRAFT_NOT_CERTIFIED"
+      }
+    },
+    {
+      "scenario": "close certification race and rollback current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-4f1c5808-dd23-4a7f-9b18-0145376e85ba",
+      "periodId": "cmvrted9h00qvmascgjsd8j6g",
+      "attempts": [
+        {
+          "source": "current",
+          "ok": true
+        },
+        {
+          "source": "baseline",
+          "ok": false,
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "Certified close pack is blocked: Close run status is CERTIFIED, not READY."
+          }
+        }
+      ],
+      "pack": {
+        "id": "cmvrtgwnw0001may86bu7lp2v",
+        "hash": "sha256:a233bdc5c23f9c1d14723c77197c543fe4bbfc197f600c38c27211ab0e00c081",
+        "runId": "cmvrtfndh0001ma945f08l3zb",
+        "mode": "CERTIFIED"
+      },
+      "financialState": {
+        "stock": [
+          {
+            "quantity": "2.000",
+            "value": "200.00"
+          }
+        ],
+        "journals": 3,
+        "payments": 1,
+        "paymentTransactions": 1,
+        "returns": 0
+      }
+    },
+    {
+      "scenario": "close reopen correct recertify current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-4f1c5808-dd23-4a7f-9b18-0145376e85ba",
+      "periodId": "cmvrted9h00qvmascgjsd8j6g",
+      "seals": [
+        {
+          "id": "cmvrth9f00003mam4mr59uwv7",
+          "organizationId": "org-full-pos-4f1c5808-dd23-4a7f-9b18-0145376e85ba",
+          "periodId": "cmvrted9h00qvmascgjsd8j6g",
+          "version": 1,
+          "operation": "CLOSE",
+          "fromStatus": "OPEN",
+          "toStatus": "CLOSED",
+          "actorId": "cmvrten25010wmascpivdmcil",
+          "reason": "Current independently certified close approval accepted",
+          "idempotencyKey": "close:cmvrted9h00qvmascgjsd8j6g:0",
+          "sourceRevision": "142",
+          "approval": {
+            "closeRunId": "cmvrtfndh0001ma945f08l3zb",
+            "contentHash": "sha256:a233bdc5c23f9c1d14723c77197c543fe4bbfc197f600c38c27211ab0e00c081",
+            "approvedById": "cmvrten25010wmascpivdmcil",
+            "preparedById": "cmvrtee5800rrmascc3o6c5hh",
+            "sourceRevision": "142",
+            "certifiedExportId": "cmvrtgwnw0001may86bu7lp2v"
+          },
+          "createdAt": "2026-10-28T07:52:43.350Z"
+        },
+        {
+          "id": "cmvrthiqs0001ma2wgheis66d",
+          "organizationId": "org-full-pos-4f1c5808-dd23-4a7f-9b18-0145376e85ba",
+          "periodId": "cmvrted9h00qvmascgjsd8j6g",
+          "version": 2,
+          "operation": "REOPEN",
+          "fromStatus": "CLOSED",
+          "toStatus": "OPEN",
+          "actorId": "cmvrten25010wmascpivdmcil",
+          "reason": "Controlled mixed-version reopening for supplier return",
+          "idempotencyKey": "fc37045b-965b-4943-a5fe-8feca6cb7957",
+          "sourceRevision": "142",
+          "approval": {
+            "closedAt": "2026-10-28T07:52:43.350Z",
+            "lockedAt": "2026-10-28T07:52:43.350Z",
+            "closedById": "cmvrten25010wmascpivdmcil",
+            "priorControlEventId": "cmvrth9f00003mam4mr59uwv7"
+          },
+          "createdAt": "2026-10-28T07:52:55.580Z"
+        },
+        {
+          "id": "cmvrtisxr0003ma387v8o33ry",
+          "organizationId": "org-full-pos-4f1c5808-dd23-4a7f-9b18-0145376e85ba",
+          "periodId": "cmvrted9h00qvmascgjsd8j6g",
+          "version": 3,
+          "operation": "CLOSE",
+          "fromStatus": "OPEN",
+          "toStatus": "CLOSED",
+          "actorId": "cmvrten25010wmascpivdmcil",
+          "reason": "Current independently certified close approval accepted",
+          "idempotencyKey": "close:cmvrted9h00qvmascgjsd8j6g:2",
+          "sourceRevision": "182",
+          "approval": {
+            "closeRunId": "cmvrtihl90001maws6g7qksda",
+            "contentHash": "sha256:f7116bd2cc356e0338f9133bd0f19699a168b9167bcbbdad3fc8fabb12d2fe41",
+            "approvedById": "cmvrten25010wmascpivdmcil",
+            "preparedById": "cmvrtee5800rrmascc3o6c5hh",
+            "sourceRevision": "182",
+            "certifiedExportId": "cmvrtiod70001mauoypk8er3u"
+          },
+          "createdAt": "2026-10-28T07:53:55.353Z"
+        }
+      ],
+      "oldPack": {
+        "id": "cmvrtgwnw0001may86bu7lp2v",
+        "hash": "sha256:a233bdc5c23f9c1d14723c77197c543fe4bbfc197f600c38c27211ab0e00c081"
+      },
+      "newPack": {
+        "id": "cmvrtiod70001mauoypk8er3u",
+        "hash": "sha256:f7116bd2cc356e0338f9133bd0f19699a168b9167bcbbdad3fc8fabb12d2fe41",
+        "runId": "cmvrtihl90001maws6g7qksda",
+        "mode": "CERTIFIED"
+      },
+      "final": {
+        "stock": [
+          {
+            "quantity": "1.000",
+            "value": "100.00"
+          }
+        ],
+        "journals": 4,
+        "payments": 1,
+        "paymentTransactions": 1,
+        "returns": 1
+      }
+    }
+  ]
+}

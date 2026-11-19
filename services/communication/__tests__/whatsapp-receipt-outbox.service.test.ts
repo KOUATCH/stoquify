@@ -132,6 +132,30 @@ describe("WhatsApp receipt outbox", () => {
     expect(JSON.stringify(createCall.data.payload)).not.toContain("+237699000000")
     expect(JSON.stringify(createCall.data.metadata)).not.toContain("+237699000000")
     expect(JSON.stringify(tx.auditLog.create.mock.calls)).not.toContain("+237699000000")
+    expect(JSON.stringify(createCall.data.payload)).not.toContain("receipt-token")
+    expect(JSON.stringify(tx.auditLog.create.mock.calls)).not.toContain("receipt-token")
+    expect(createCall.data.outboxMessages.create[0].payload.digitalReceiptUrl).toBe(receiptFixture().digitalReceiptUrl)
   })
 
+  it("reuses the durable delivery when a repeat request has a refreshed link", async () => {
+    const tx = createTx()
+    tx.businessEvent.findUnique.mockResolvedValue(null)
+    const input = {
+      receipt: receiptFixture(), destination: "+237699000000", locale: "EN" as const,
+      organizationId: "org-1", userId: "cashier-1",
+    }
+    const first = await queueWhatsAppReceiptDeliveryInTx(tx, input)
+    tx.businessEvent.findUnique.mockResolvedValue(await tx.businessEvent.create.mock.results[0].value)
+
+    const duplicate = await queueWhatsAppReceiptDeliveryInTx(tx, {
+      ...input,
+      destination: "00237 699 000 000",
+      receipt: { ...input.receipt, digitalReceiptUrl: "https://app.example.test/digital-receipt/sale-1?token=new-token" },
+    })
+
+    expect(duplicate.providerReference).toBe(first.providerReference)
+    expect(duplicate.digitalReceiptUrl).toBe(first.digitalReceiptUrl)
+    expect(tx.businessEvent.create).toHaveBeenCalledTimes(1)
+    expect(tx.auditLog.create).toHaveBeenCalledTimes(1)
+  })
 })

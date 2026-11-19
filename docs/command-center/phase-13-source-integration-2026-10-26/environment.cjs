@@ -1,0 +1,4 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');const root=path.resolve(__dirname,'../../..');
+function state(){const s=JSON.parse(fs.readFileSync(path.join(root,'.codex-tmp/command-center-phase13-current.json')));assert.equal(path.dirname(s.work),path.join(root,'.codex-tmp'));assert.match(path.basename(s.work),/^phase13-[a-f0-9]{10}$/);assert.equal(s.candidate,path.join(s.work,'candidate'));assert.equal(fs.realpathSync(path.join(s.candidate,'node_modules')),s.dependencies);return s}
+function environment(){const s=state(),env=require('../phase-11-artifact-2026-10-26/environment.cjs').environment();env.STOQUIFY_VERIFIED_DEPENDENCIES=s.dependencies;env.NODE_OPTIONS+=' --require "'+path.join(__dirname,'../phase-12-combined-followup-2026-10-26/dependency-boundary.cjs').replaceAll('\\','/')+'"';return env}
+module.exports={root,state,environment};

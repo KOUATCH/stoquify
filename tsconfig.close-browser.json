@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.workflow-repairs.json",
+  "compilerOptions": {
+    "types": [
+      "node",
+      "jest",
+      "@testing-library/jest-dom"
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "components/accounting/CloseAssuranceCenter.tsx",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+    "actions/accounting/close-assurance.actions.ts",
+    "actions/accounting/__tests__/close-assurance.actions.test.ts",
+    "services/inventory/__tests__/close-browser-seed.postgres.test.ts",
+    "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+    "app/[locale]/(dashboard)/dashboard/accounting/setup/__tests__/page.test.tsx"
+  ]
+}

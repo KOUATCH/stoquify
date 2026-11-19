@@ -35,6 +35,7 @@ jest.mock("../payment-reconciliation-summary.service", () => ({
 jest.mock("@/prisma/db", () => ({
   db: {
     providerAccount: { findMany: jest.fn() },
+    accountingPeriod: { findMany: jest.fn() },
     statementFile: { findMany: jest.fn() },
     matchRecord: { findMany: jest.fn() },
     reconciliationRun: { findMany: jest.fn(), count: jest.fn() },
@@ -52,6 +53,7 @@ jest.mock("../payment-reconciliation-notifications", () => ({
 
 const mockedDb = db as unknown as {
   providerAccount: { findMany: jest.Mock }
+  accountingPeriod: { findMany: jest.Mock }
   statementFile: { findMany: jest.Mock }
   matchRecord: { findMany: jest.Mock }
   reconciliationRun: { findMany: jest.Mock; count: jest.Mock }
@@ -74,6 +76,7 @@ describe("payment reconciliation dashboard read model", () => {
     jest.useFakeTimers().setSystemTime(new Date("2026-06-14T12:00:00.000Z"))
     mockedDb.statementFile.findMany.mockResolvedValue([])
     mockedDb.matchRecord.findMany.mockResolvedValue([])
+    mockedDb.accountingPeriod.findMany.mockResolvedValue([])
 
     mockedDb.providerAccount.findMany.mockResolvedValue([
       {
@@ -182,8 +185,25 @@ describe("payment reconciliation dashboard read model", () => {
     jest.useRealTimers()
   })
 
+  it("offers only bounded current-tenant open UTC-day-aligned period metadata", async () => {
+    mockedDb.accountingPeriod.findMany.mockResolvedValue([
+      { id: "period-month", name: "June", startDate: new Date("2026-06-01T00:00:00.000Z"), endDate: new Date("2026-06-30T23:59:59.999Z") },
+      { id: "period-midday", name: "Unsupported start", startDate: new Date("2026-06-01T12:00:00Z"), endDate: new Date("2026-06-30T23:59:59.999Z") },
+      { id: "period-short", name: "Unsupported end", startDate: new Date("2026-06-01T00:00:00Z"), endDate: new Date("2026-06-30T23:59:59Z") },
+    ])
+    const result = await getPaymentReconciliationDashboardData("org-1")
+    expect(mockedDb.accountingPeriod.findMany).toHaveBeenCalledWith({ where: { organizationId: "org-1", status: "OPEN" }, orderBy: [{ startDate: "desc" }, { id: "asc" }], take: 50, select: { id: true, name: true, startDate: true, endDate: true } })
+    expect(result.openAccountingPeriods).toEqual([{ id: "period-month", name: "June", startDate: "2026-06-01T00:00:00.000Z", endDate: "2026-06-30T23:59:59.999Z" }])
+  })
+
+  it("propagates period catalog failures instead of presenting a complete empty list", async () => {
+    mockedDb.accountingPeriod.findMany.mockRejectedValueOnce(new Error("Period catalog unavailable"))
+    await expect(getPaymentReconciliationDashboardData("org-1")).rejects.toThrow("Period catalog unavailable")
+  })
+
   it("returns route-ready evidence, run, exception, and suspense facts without certifying unresolved blockers", async () => {
     const result = await getPaymentReconciliationDashboardData("org-1")
+    expect(result.openAccountingPeriods).toEqual([])
 
     expect(result.source).toMatchObject({
       mode: "DURABLE_EVIDENCE_KERNEL",

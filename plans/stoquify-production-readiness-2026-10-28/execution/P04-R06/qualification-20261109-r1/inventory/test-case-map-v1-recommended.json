@@ -1,0 +1,1403 @@
+{
+  "schema_version": 1,
+  "package_id": "P04-R06",
+  "status": "recommended_requirements_pending_runtime_recipe_mapping",
+  "created_at": "2026-11-09T19:16:52.008Z",
+  "source_identity": "ddeb0b5ad000a37525c3bf3392b5821d2b80a397a26d8826eb5895f6e65f2a36",
+  "counts": {
+    "logical_requirements": 58,
+    "real_http_database": 51,
+    "rendered_browser": 6,
+    "server_api": 1
+  },
+  "cases": [
+    {
+      "id": "R06-P-get-session",
+      "lane": "real_http_database",
+      "title": "Active own-account read remains functional",
+      "actors": [
+        "active",
+        "same_actor_sibling",
+        "foreign"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session"
+        }
+      ],
+      "acceptance": [
+        "200 with only current actor-owned fields; independent same-actor session remains valid; no foreign actor canaries.",
+        "Native read effects unchanged except explicitly reviewed session-refresh bookkeeping."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-P-list-sessions",
+      "lane": "real_http_database",
+      "title": "Active own-account read remains functional",
+      "actors": [
+        "active",
+        "same_actor_sibling",
+        "foreign"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-sessions"
+        }
+      ],
+      "acceptance": [
+        "200 with only current actor-owned fields; independent same-actor session remains valid; no foreign actor canaries.",
+        "Native read effects unchanged except explicitly reviewed session-refresh bookkeeping."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-P-list-accounts",
+      "lane": "real_http_database",
+      "title": "Active own-account read remains functional",
+      "actors": [
+        "active",
+        "same_actor_sibling",
+        "foreign"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-accounts"
+        }
+      ],
+      "acceptance": [
+        "200 with only current actor-owned fields; independent same-actor session remains valid; no foreign actor canaries.",
+        "Native read effects unchanged except explicitly reviewed session-refresh bookkeeping."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-P-verify-password",
+      "lane": "real_http_database",
+      "title": "Current password verification remains functional",
+      "actors": [
+        "active"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/verify-password",
+          "body_fixture": "valid current password"
+        }
+      ],
+      "acceptance": [
+        "200 status true; no native business/account changes."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-P-unlink",
+      "lane": "real_http_database",
+      "title": "Authorized own secondary account unlink remains functional",
+      "actors": [
+        "active",
+        "foreign"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "body_fixture": "owned synthetic noncredential provider/account"
+        }
+      ],
+      "acceptance": [
+        "Exactly the selected own secondary account removed; credential and foreign account preserved; no unrelated rows changed."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-P-profile",
+      "lane": "real_http_database",
+      "title": "Reviewed self-profile route stays functional",
+      "actors": [
+        "active",
+        "foreign"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/update-user",
+          "body_fixture": "allowed own profile field"
+        }
+      ],
+      "acceptance": [
+        "Exactly reviewed own-profile delta and expected audit; no foreign or authority field changes."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-P-expired-lock",
+      "lane": "real_http_database",
+      "title": "Expired lock does not block an active account",
+      "actors": [
+        "expired_lock"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session"
+        }
+      ],
+      "acceptance": [
+        "Current active account with past lockedUntil can read own identity; do not require lock flag reset as a read side effect."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-P-independent-session",
+      "lane": "real_http_database",
+      "title": "Independent surviving same-actor session works after target revocation",
+      "actors": [
+        "revoked_target",
+        "same_actor_sibling"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session"
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/list-accounts"
+        }
+      ],
+      "acceptance": [
+        "Target is revoked, sibling remains unexpired/persisted and returns its current owner; target does not learn sibling token fields."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-N-revoked-get-session",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies get-session",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "revoked",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-revoked-list-sessions",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-sessions",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-sessions",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "revoked",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-revoked-list-accounts",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-accounts",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-accounts",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "revoked",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-revoked-unlink-account",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies unlink-account",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "body_fixture": "owned synthetic secondary account"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "revoked",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-revoked-verify-password",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies verify-password",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/verify-password",
+          "body_fixture": "valid current password"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "revoked",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-expired-get-session",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies get-session",
+      "actors": [
+        "expired"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "expired",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-expired-list-sessions",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-sessions",
+      "actors": [
+        "expired"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-sessions",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "expired",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-expired-list-accounts",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-accounts",
+      "actors": [
+        "expired"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-accounts",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "expired",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-expired-unlink-account",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies unlink-account",
+      "actors": [
+        "expired"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "body_fixture": "owned synthetic secondary account"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "expired",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-expired-verify-password",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies verify-password",
+      "actors": [
+        "expired"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/verify-password",
+          "body_fixture": "valid current password"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "expired",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-inactive-get-session",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies get-session",
+      "actors": [
+        "inactive"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session",
+          "body_fixture": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/me/permissions"
+        },
+        {
+          "method": "GET",
+          "path": "/api/me/profile"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable.",
+        "Existing application profile/permission routes deny unavailable current accounts with recognized public denial and no private fields; do not reinterpret as core tenant requirement."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "inactive",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-inactive-list-sessions",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-sessions",
+      "actors": [
+        "inactive"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-sessions",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "inactive",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-inactive-list-accounts",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-accounts",
+      "actors": [
+        "inactive"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-accounts",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "inactive",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-inactive-unlink-account",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies unlink-account",
+      "actors": [
+        "inactive"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "body_fixture": "owned synthetic secondary account"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "inactive",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-inactive-verify-password",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies verify-password",
+      "actors": [
+        "inactive"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/verify-password",
+          "body_fixture": "valid current password"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "inactive",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-locked_indefinite-get-session",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies get-session",
+      "actors": [
+        "locked_indefinite"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session",
+          "body_fixture": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/me/permissions"
+        },
+        {
+          "method": "GET",
+          "path": "/api/me/profile"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable.",
+        "Existing application profile/permission routes deny unavailable current accounts with recognized public denial and no private fields; do not reinterpret as core tenant requirement."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "locked_indefinite",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-locked_indefinite-list-sessions",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-sessions",
+      "actors": [
+        "locked_indefinite"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-sessions",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "locked_indefinite",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-locked_indefinite-list-accounts",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-accounts",
+      "actors": [
+        "locked_indefinite"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-accounts",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "locked_indefinite",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-locked_indefinite-unlink-account",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies unlink-account",
+      "actors": [
+        "locked_indefinite"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "body_fixture": "owned synthetic secondary account"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "locked_indefinite",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-locked_indefinite-verify-password",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies verify-password",
+      "actors": [
+        "locked_indefinite"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/verify-password",
+          "body_fixture": "valid current password"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "locked_indefinite",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-locked_future-get-session",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies get-session",
+      "actors": [
+        "locked_future"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session",
+          "body_fixture": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/me/permissions"
+        },
+        {
+          "method": "GET",
+          "path": "/api/me/profile"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable.",
+        "Existing application profile/permission routes deny unavailable current accounts with recognized public denial and no private fields; do not reinterpret as core tenant requirement."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "locked_future",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-locked_future-list-sessions",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-sessions",
+      "actors": [
+        "locked_future"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-sessions",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "locked_future",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-locked_future-list-accounts",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-accounts",
+      "actors": [
+        "locked_future"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-accounts",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "locked_future",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-locked_future-unlink-account",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies unlink-account",
+      "actors": [
+        "locked_future"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "body_fixture": "owned synthetic secondary account"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "locked_future",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-N-locked_future-verify-password",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies verify-password",
+      "actors": [
+        "locked_future"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/verify-password",
+          "body_fixture": "valid current password"
+        }
+      ],
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "status": "planned_not_executed",
+      "required_native_transition": "locked_future",
+      "cache_proof": "If signed session_data exists, prove exact replay and unexpired lifetime at request. For cache-disabled repair, separate genuinely issued legacy-cache bridge is mandatory."
+    },
+    {
+      "id": "R06-Q-revoked-get-session",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session?disableCookieCache=false",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-Q-revoked-list-accounts",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-accounts?disableCookieCache=false",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-Q-revoked-unlink-account",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account?disableCookieCache=false",
+          "body_fixture": "owned synthetic secondary account"
+        }
+      ],
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-Q-revoked-change-password",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/change-password?disableCookieCache=false",
+          "body_fixture": "valid current and valid different fixture password"
+        }
+      ],
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-Q-expired-get-session",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "actors": [
+        "expired"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session?disableCookieCache=false",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-Q-expired-list-accounts",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "actors": [
+        "expired"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-accounts?disableCookieCache=false",
+          "body_fixture": null
+        }
+      ],
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-Q-expired-unlink-account",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "actors": [
+        "expired"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account?disableCookieCache=false",
+          "body_fixture": "owned synthetic secondary account"
+        }
+      ],
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-Q-expired-change-password",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "actors": [
+        "expired"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/change-password?disableCookieCache=false",
+          "body_fixture": "valid current and valid different fixture password"
+        }
+      ],
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-B-anonymous",
+      "lane": "real_http_database",
+      "title": "Anonymous protected-operation denial",
+      "actors": [
+        "anonymous"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/list-sessions"
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/list-accounts"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "body_fixture": "existing synthetic account"
+        }
+      ],
+      "acceptance": [
+        "Denied without private data or native writes."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-B-foreign-unlink",
+      "lane": "real_http_database",
+      "title": "Forged foreign account identifier does not change ownership",
+      "actors": [
+        "active",
+        "foreign"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "body_fixture": "foreign provider/accountId"
+        }
+      ],
+      "acceptance": [
+        "Safe non-success; all foreign accounts and active credential remain unchanged."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-B-provider-userid",
+      "lane": "real_http_database",
+      "title": "Provider account request cannot select foreign identity",
+      "actors": [
+        "active",
+        "foreign"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/get-access-token",
+          "body_fixture": "unconfigured provider and foreign userId/accountId"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh-token",
+          "body_fixture": "unconfigured provider and foreign userId/accountId"
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/account-info",
+          "query_fixture": "foreign userId/accountId"
+        }
+      ],
+      "acceptance": [
+        "Safe configuration/not-found/denial without foreign/private tokens or writes; no live provider exchange."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-B-mixed-active-cookie",
+      "lane": "real_http_database",
+      "title": "Active token cannot acquire foreign signed-cache subject",
+      "actors": [
+        "active",
+        "foreign"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session",
+          "cookies_fixture": "genuinely issued active token plus genuinely issued foreign legacy session_data"
+        }
+      ],
+      "acceptance": [
+        "Response belongs only to current active token subject; no foreign fields."
+      ],
+      "status": "planned_not_executed",
+      "requires_legacy_cache_bridge": true
+    },
+    {
+      "id": "R06-B-mixed-revoked-cookie",
+      "lane": "real_http_database",
+      "title": "Foreign signed cache cannot revive revoked token",
+      "actors": [
+        "revoked",
+        "foreign"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/get-session",
+          "cookies_fixture": "genuinely issued revoked token plus genuinely issued foreign legacy session_data"
+        }
+      ],
+      "acceptance": [
+        "No private identity; no native unauthorized changes."
+      ],
+      "status": "planned_not_executed",
+      "requires_legacy_cache_bridge": true
+    },
+    {
+      "id": "R06-C-login",
+      "lane": "real_http_database",
+      "title": "Credential sign-in retains valid and invalid account controls",
+      "actors": [
+        "active",
+        "inactive",
+        "locked_future"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/sign-in/email",
+          "body_fixture": "real credentials; one active success and isolated denied actors/wrong password"
+        }
+      ],
+      "acceptance": [
+        "Active positive; inactive/current lock/wrong-password safe denial; only classified login counters/audits/session creation."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-C-origin",
+      "lane": "real_http_database",
+      "title": "Foreign origin cannot invoke credential or own-account mutation",
+      "actors": [
+        "active"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/sign-in/email",
+          "origin_fixture": "untrusted"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "origin_fixture": "untrusted",
+          "body_fixture": "owned secondary account"
+        }
+      ],
+      "acceptance": [
+        "403 safe denial; no unauthorized account/session creation or business writes."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-C-signout",
+      "lane": "real_http_database",
+      "title": "Cleanup remains reachable after account state change",
+      "actors": [
+        "active",
+        "inactive",
+        "locked_indefinite"
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/sign-out"
+        }
+      ],
+      "acceptance": [
+        "Current presented session cookie cleanup and own revocation allowed even when account unavailable; no newly minted identity."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-C-public-recovery",
+      "lane": "real_http_database",
+      "title": "Public recovery/status routes retain their own safeguards",
+      "actors": [
+        "anonymous"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/ok"
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/error"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/request-password-reset",
+          "body_fixture": "synthetic address; outbound denied"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/send-verification-email",
+          "body_fixture": "synthetic address; outbound denied"
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/callback/google",
+          "query_fixture": "invalid state"
+        }
+      ],
+      "acceptance": [
+        "Public status safe; unsupported/unconfigured recovery and invalid callback fail safely without private data, native unauthorized changes or external delivery."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-C-methods",
+      "lane": "real_http_database",
+      "title": "Implicit methods preserve source-grounded behavior",
+      "actors": [
+        "active",
+        "revoked"
+      ],
+      "requests": [
+        {
+          "method": "HEAD",
+          "path": "/api/auth/list-accounts"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/get-session"
+        },
+        {
+          "method": "OPTIONS",
+          "path": "/api/auth/list-accounts"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/set-password"
+        }
+      ],
+      "acceptance": [
+        "Unsupported protected HEAD404 empty/no authority header; get-session POST405 with current config; OPTIONS204; pathless set-password404. No private data/native writes."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-C-direct-api",
+      "lane": "isolated_real_database_server_api",
+      "title": "Outer auth.api own-account calls share current-account gate",
+      "actors": [
+        "active",
+        "inactive",
+        "revoked"
+      ],
+      "requests": [
+        {
+          "transport": "auth.api",
+          "operation": "getSession/listAccounts",
+          "headers_fixture": "actual signed session cookies"
+        }
+      ],
+      "acceptance": [
+        "Active positive; invalidated authority no private fields; no HTTP-only guard bypass. No mocked database claim."
+      ],
+      "status": "planned_not_executed"
+    },
+    {
+      "id": "R06-UI-en-authorized",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer authorized",
+      "actors": [
+        "active"
+      ],
+      "requests": [
+        {
+          "navigation": "/en/dashboard/profile",
+          "action": "credential sign-in and real rendered navigation"
+        }
+      ],
+      "acceptance": [
+        "Actual authorized profile/session consumer renders own identity; relevant core session request succeeds.",
+        "Fresh restored session remains functional without bypassing native authority."
+      ],
+      "status": "planned_not_executed",
+      "locale": "en",
+      "exclusions": [
+        "No inventory Refresh repair claim (R07/R08).",
+        "No hidden-tab/BFCache or hosted provider qualification."
+      ]
+    },
+    {
+      "id": "R06-UI-en-invalidated-reload",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer invalidated-reload",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "navigation": "/en/dashboard/profile",
+          "action": "real external session revocation followed by actual reload"
+        }
+      ],
+      "acceptance": [
+        "Concrete reload reaches login/denied recovery without new or settled private profile data.",
+        "Do not infer instantaneous stale-tab/focus/BFCache removal."
+      ],
+      "status": "planned_not_executed",
+      "locale": "en",
+      "exclusions": [
+        "No inventory Refresh repair claim (R07/R08).",
+        "No hidden-tab/BFCache or hosted provider qualification."
+      ]
+    },
+    {
+      "id": "R06-UI-en-restored",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer restored",
+      "actors": [
+        "active"
+      ],
+      "requests": [
+        {
+          "navigation": "/en/dashboard/profile",
+          "action": "credential sign-in and real rendered navigation"
+        }
+      ],
+      "acceptance": [
+        "Actual authorized profile/session consumer renders own identity; relevant core session request succeeds.",
+        "Fresh restored session remains functional without bypassing native authority."
+      ],
+      "status": "planned_not_executed",
+      "locale": "en",
+      "exclusions": [
+        "No inventory Refresh repair claim (R07/R08).",
+        "No hidden-tab/BFCache or hosted provider qualification."
+      ]
+    },
+    {
+      "id": "R06-UI-fr-authorized",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer authorized",
+      "actors": [
+        "active"
+      ],
+      "requests": [
+        {
+          "navigation": "/fr/dashboard/profile",
+          "action": "credential sign-in and real rendered navigation"
+        }
+      ],
+      "acceptance": [
+        "Actual authorized profile/session consumer renders own identity; relevant core session request succeeds.",
+        "Fresh restored session remains functional without bypassing native authority."
+      ],
+      "status": "planned_not_executed",
+      "locale": "fr",
+      "exclusions": [
+        "No inventory Refresh repair claim (R07/R08).",
+        "No hidden-tab/BFCache or hosted provider qualification."
+      ]
+    },
+    {
+      "id": "R06-UI-fr-invalidated-reload",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer invalidated-reload",
+      "actors": [
+        "revoked"
+      ],
+      "requests": [
+        {
+          "navigation": "/fr/dashboard/profile",
+          "action": "real external session revocation followed by actual reload"
+        }
+      ],
+      "acceptance": [
+        "Concrete reload reaches login/denied recovery without new or settled private profile data.",
+        "Do not infer instantaneous stale-tab/focus/BFCache removal."
+      ],
+      "status": "planned_not_executed",
+      "locale": "fr",
+      "exclusions": [
+        "No inventory Refresh repair claim (R07/R08).",
+        "No hidden-tab/BFCache or hosted provider qualification."
+      ]
+    },
+    {
+      "id": "R06-UI-fr-restored",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer restored",
+      "actors": [
+        "active"
+      ],
+      "requests": [
+        {
+          "navigation": "/fr/dashboard/profile",
+          "action": "credential sign-in and real rendered navigation"
+        }
+      ],
+      "acceptance": [
+        "Actual authorized profile/session consumer renders own identity; relevant core session request succeeds.",
+        "Fresh restored session remains functional without bypassing native authority."
+      ],
+      "status": "planned_not_executed",
+      "locale": "fr",
+      "exclusions": [
+        "No inventory Refresh repair claim (R07/R08).",
+        "No hidden-tab/BFCache or hosted provider qualification."
+      ]
+    }
+  ],
+  "evidence_requirements": [
+    "Versioned exact candidate/source/build/artifact receipts; identify current checkout versus frozen candidate explicitly.",
+    "Real signed sessions acquired through actual credential sign-in; preserve private credentials separately, no preseeded or fabricated signed auth cookie.",
+    "Replay genuinely issued pre-repair signed session_data against repaired authority before its original expiry when testing legacy cache. Record cookie name/value hash/expiry/remaining lifetime without value.",
+    "Capture request response status/length/hash/private-canary flags and safe authentication-header effects; do not store passwords/tokens/cookie strings.",
+    "Compare native before/after business/account/session/audit state per request after exact invalidation transition. Denials must cause no unauthorized changes.",
+    "Authorized effects must be exact: chosen own secondary unlink, reviewed own-profile delta, classified login bookkeeping and own cleanup only.",
+    "Keep raw harness mismatches separate; use source contract rather than inventing expected status. Incrementally persist sanitized evidence and bounded cleanup.",
+    "Run independent recipe/result review; no case counted from source alone."
+  ],
+  "legacy_cache_bridge": {
+    "required_if_cookie_cache_disabled": true,
+    "allowed": "Acquire genuine signed session+cache using independently reviewed pre-repair source/runtime against the new isolated target with identical local signing secret, then test repaired target without changing cookie contents and while cache remains unexpired.",
+    "forbidden_inference": "Absence of newly issued cache cookies does not prove that existing signed legacy cache is ignored.",
+    "fresh_database_only": true
+  },
+  "excluded": [
+    "Hosted OAuth/token exchange and provider delivery positives.",
+    "Unrelated media upload/provider/whole inventory Refresh matrices.",
+    "Production, migrations outside new disposable target, deployment or committed changes.",
+    "Claim of instantaneous revocation or transaction-level linearizability without dedicated race evidence."
+  ],
+  "supplementary_recommended_controls": [
+    {
+      "id": "R06-P-orgless-core",
+      "actors": [
+        "active_orgless"
+      ],
+      "requests": [
+        "GET /api/auth/get-session",
+        "GET /api/auth/list-accounts"
+      ],
+      "acceptance": "Active/unlocked real session core identity works without tenant or roles; application /api/me stays under its existing stronger admission. Requires reviewed fixture support."
+    },
+    {
+      "id": "R06-P-unverified-core",
+      "actors": [
+        "active_unverified_after_signin"
+      ],
+      "requests": [
+        "GET /api/auth/get-session"
+      ],
+      "acceptance": "Core own-session policy is active/unlocked identity; changing verification flags after legitimate issuance does not silently import full application RBAC. Preserve existing application verification denial."
+    }
+  ]
+}

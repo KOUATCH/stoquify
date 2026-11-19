@@ -16,7 +16,7 @@ const noEffects = () => { expect(tx.user.update).not.toHaveBeenCalled(); expect(
 beforeEach(() => {
   jest.clearAllMocks(); recorded = null; deactivation = null
   users = [account("actor"), account("member")]
-  roles = [{ id: "admin", permissions: getAllPermissions(), updatedAt: date }, { id: "reader", permissions: ["users.read"], updatedAt: date }, { id: "stock", permissions: ["inventory.items.read"], updatedAt: date }]
+  roles = [{ id: "admin", code: "admin", permissions: getAllPermissions(), updatedAt: date }, { id: "reader", code: "reader", permissions: ["users.read"], updatedAt: date }, { id: "stock", code: "stock", permissions: ["inventory.items.read"], updatedAt: date }]
   memberships = [{ userId: "actor", roleId: "admin" }, { userId: "member", roleId: "reader" }]
   session = { expiresAt: new Date(Date.now() + 600000), assuranceVerifiedAt: new Date(), assuranceMethod: "password", assuranceOrganizationId: "org", assuranceLevel: 1 }
   command = { requestId: "09ba28c2-5a3a-48ae-b8c5-46e7abff3991", expectedRevision: revision(), roleIds: ["reader", "stock"], reason: "Changed responsibilities", operation: "roles" }
@@ -25,7 +25,7 @@ beforeEach(() => {
     organization: { findFirst: jest.fn(async () => ({ id: "org" })) },
     role: { findMany: jest.fn(async () => roles) },
     user: {
-      findFirst: jest.fn(async ({ where }: any) => { const user = users.find(row => row.id === where.id); return user ? { ...user, roles: where.id === "actor" ? [{ permissions: roles[0].permissions }] : memberships.filter(row => row.userId === user.id).map(row => ({ id: row.roleId })) } : null }),
+      findFirst: jest.fn(async ({ where }: any) => { const user = users.find(row => row.id === where.id); return user ? { ...user, roles: where.id === "actor" ? [{ code: roles[0].code, permissions: roles[0].permissions }] : memberships.filter(row => row.userId === user.id).map(row => ({ id: row.roleId })) } : null }),
       update: jest.fn(async ({ where, data }: any) => { const index = users.findIndex(user => user.id === where.id); const { roles: links, ...fields } = data; users[index] = { ...users[index], ...fields }; memberships = [...memberships.filter(row => row.userId !== where.id), ...links.set.map((role: any) => ({ userId: where.id, roleId: role.id }))]; return users[index] }),
     },
     session: { deleteMany: jest.fn(async () => ({ count: 2 })) },
@@ -53,4 +53,39 @@ it("reactivates through matching evidence without changing identity or verificat
 it.each(["missing", "outdated", "unverified", "temporary-lock", "active", "authority", "ceiling"])("rejects unsupported reactivation %s", async kind => { inactive(); if (kind === "missing") deactivation = null; if (kind === "outdated") deactivation.changes.receipt.updatedAt = "2000-01-01T00:00:00.000Z"; if (kind === "unverified") { users[1].emailVerified = false; users[1].isVerified = false }; if (kind === "temporary-lock") users[1].lockedUntil = new Date(); if (kind === "active") users[1].isActive = true; if (kind === "authority") roles[0].permissions = roles[0].permissions.filter((value: string) => value !== "users.activate"); if (kind === "ceiling") roles[0].permissions = roles[0].permissions.filter((value: string) => value !== "users.read").concat("READ_USERS"); if (kind === "ceiling") roles[1].permissions = ["roles.permissions.remove"]; if (kind === "ceiling") roles[0].permissions = roles[0].permissions.filter((value: string) => value !== "roles.permissions.remove"); command.expectedRevision = revision(); await expect(run()).rejects.toMatchObject({ code: ["authority", "ceiling"].includes(kind) ? "FORBIDDEN" : "BUSINESS_RULE_VIOLATION" }); noEffects() })
 it("does not mask a failed history read as an empty history", async () => { tx.auditLog.findFirst.mockResolvedValue({ id: "history", createdAt: date }); tx.auditLog.findMany.mockRejectedValue(new Error("database unavailable")); await expect(getMemberAccess(actor)).rejects.toThrow("database unavailable") })
 it("redacts history for a directory-only reader", async () => { roles[0].permissions = ["users.read"]; const model = await getMemberAccess(actor); expect(model.canReadHistory).toBe(false); expect(tx.auditLog.findMany).not.toHaveBeenCalled(); expect(model.catalogue.every(role => !role.canAssign)).toBe(true) })
-it("honors explicit legacy assignment but never infers activation or removal from it", () => { expect(hasMemberControl(["ASSIGN_ROLES"], "assign")).toBe(true); expect(hasMemberControl(["ASSIGN_ROLES"], "remove")).toBe(false); expect(hasMemberControl(["*"], "activate")).toBe(false); expect(canGrantMemberRole(["users.roles.assign", "*"], { permissions: ["users.activate"] })).toBe(false) })
+it("honors explicit legacy assignment but never infers activation or removal from it", () => { expect(hasMemberControl(["ASSIGN_ROLES"], "assign")).toBe(true); expect(hasMemberControl(["ASSIGN_ROLES"], "remove")).toBe(false); expect(hasMemberControl(["*"], "activate")).toBe(false); expect(canGrantMemberRole(["users.roles.assign", "*"], { code: "activator", permissions: ["users.activate"] })).toBe(false) })
+
+it.each(["admin", "administrator", "super_admin", " ADMIN "])("denies a limited actor's empty reserved %s assignment without effects", async code => {
+  roles[0].code = "location_manager"; roles[2].code = code; roles[2].permissions = []
+  command.expectedRevision = revision()
+  await expect(run()).rejects.toMatchObject({ code: "FORBIDDEN" }); noEffects()
+})
+it("denies ordinary dashboard addition that activates an existing empty reserved role", async () => {
+  roles[0].code = "location_manager"; roles[1].code = "admin"; roles[1].permissions = []; roles[2].permissions = ["dashboard.read"]
+  command.expectedRevision = revision()
+  expect((await getMemberAccess(actor)).catalogue.find(role => role.id === "stock")?.canAssign).toBe(false)
+  await expect(run()).rejects.toMatchObject({ code: "FORBIDDEN" }); noEffects()
+})
+it("allows the same composed grant for a current tenant administrator", async () => {
+  roles[1].code = "admin"; roles[1].permissions = []; roles[2].permissions = ["dashboard.read"]
+  command.expectedRevision = revision(); await expect(run()).resolves.toMatchObject({ id: "member" })
+})
+it("rechecks a composed grant replay after actor tenant authority is removed", async () => {
+  roles[1].code = "admin"; roles[1].permissions = []; roles[2].permissions = ["dashboard.read"]
+  command.expectedRevision = revision(); await run(); roles[0].code = "location_manager"
+  await expect(run()).rejects.toMatchObject({ code: "FORBIDDEN" }); expect(tx.user.update).toHaveBeenCalledTimes(1)
+})
+it("does not reactivate existing reserved authority for a limited actor", async () => {
+  roles[0].code = "location_manager"; roles[1].code = "admin"; roles[1].permissions = ["dashboard.read"]
+  inactive(); command.roleIds = ["reader"]
+  await expect(run()).rejects.toMatchObject({ code: "FORBIDDEN" }); noEffects()
+})
+it("binds stored role code changes into the reviewed member revision", async () => {
+  roles[2].code = "changed_ordinary_code"
+  await expect(run()).rejects.toMatchObject({ code: "CONFLICT" }); noEffects()
+})
+it("preserves the last tenant-wide grant custodian despite another permission-only custodian", async () => {
+  roles[0].code = "location_manager"; roles[1].code = "admin"; roles[1].permissions = getAllPermissions()
+  command = { ...command, roleIds: [], expectedRevision: revision() }
+  await expect(run()).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" }); noEffects()
+})

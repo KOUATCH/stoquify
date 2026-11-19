@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-11-10T14:47:46.461Z",
+  "passed": false,
+  "failure": {
+    "stage": "en-390-uncertain-retry",
+    "errorType": "TimeoutError",
+    "message": "Rendered fixture failed; redacted private diagnostic retained.",
+    "activeVariant": {
+      "locale": "en",
+      "width": 390,
+      "completedCases": [
+        "manual-default-explicit-keyboard-native-selection-file-hash-and-submit",
+        "amount-date-method-edits-clear-native-link",
+        "uncertain-outcome-refreshed-preview-retains-exact-native-command"
+      ]
+    }
+  },
+  "results": [],
+  "errors": [],
+  "network": [
+    {
+      "path": "/en/fixture",
+      "allowed": true
+    },
+    {
+      "path": "/style.css",
+      "allowed": true
+    },
+    {
+      "path": "/bundle.js",
+      "allowed": true
+    },
+    {
+      "path": "/axe.js",
+      "allowed": true
+    }
+  ],
+  "browserClosed": true,
+  "serverClosed": true,
+  "remainingOwnedProfiles": 0,
+  "origin": "http://127.0.0.1:64282",
+  "evidenceClass": "Real browser components/styles with mocked parent authority and actions. No authenticated app, DB, provider or E2E qualification.",
+  "limits": [
+    "No visual regression baseline; new screenshots only.",
+    "Axe is partial automation; no screen-reader or complete accessibility claim.",
+    "No raw action payload, password, request body, HAR or real financial document was retained."
+  ]
+}

@@ -23,6 +23,10 @@ import {
 } from "@/services/events/business-event.service"
 import { resolveHrisPeopleAccessScope } from "@/services/hris/org.service"
 import { assertPayrollEmployeeLocationInOrganization } from "@/services/payroll/org-manager-scope.service"
+import { lockOperationalEmployeeInTx } from "./attendance-correction"
+import { projectEmploymentAsOf } from "./employment-projection"
+import { syncLifecycleTaskEventInTx } from "./lifecycle-task.service"
+import { evaluateHrisContractReadinessProof, evaluateHrisPaymentDestinationReadinessProof } from "./payroll-readiness-contract"
 
 type DbClient = typeof db | Prisma.TransactionClient
 type BusinessEventTx = Parameters<typeof recordBusinessEventInTx>[0]
@@ -103,6 +107,7 @@ const lifecyclePendingSchema = z.object({
   approvalEvidenceHash: z.string().min(12).optional(),
   decisionReasonHash: z.string().min(12).optional(),
   approvalEventId: z.string().min(1).optional(),
+  sourceStateHash: z.string().min(12).optional(),
 })
 
 const READ_PERMISSIONS = ["hris.people.read", "hris.people.manage"] as const
@@ -168,9 +173,12 @@ function withLifecycleProjection(
   return safeJson({
     ...root,
     hrisLifecycle: {
+      ...lifecycleProjection(metadata),
       version: 1,
       pending,
       latest,
+      lastApplied: latest.status === "APPLIED" ? latest : lifecycleProjection(metadata).lastApplied
+        ?? (metadataRecord(lifecycleProjection(metadata).latest).status === "APPLIED" ? lifecycleProjection(metadata).latest : null),
       updatedAt: new Date().toISOString(),
       gate: "stoquify-hris-05-lifecycle-workflows",
     },
@@ -224,6 +232,9 @@ function assertTarget(type: HrisLifecycleType, target: z.output<typeof lifecycle
 }
 
 async function findEmployee(tx: Prisma.TransactionClient, organizationId: string, employeeId: string) {
+  await lockOperationalEmployeeInTx(tx, organizationId, employeeId)
+  // Row locking also orders writers which update the existing employee master.
+  await tx.$queryRaw(Prisma.sql`SELECT id FROM payroll_employees WHERE id = ${employeeId} AND "organizationId" = ${organizationId} FOR UPDATE`)
   const employee = await tx.payrollEmployee.findFirst({
     where: { id: employeeId, organizationId, deletedAt: null },
   })
@@ -231,7 +242,7 @@ async function findEmployee(tx: Prisma.TransactionClient, organizationId: string
   return employee
 }
 
-function employeeSnapshot(employee: {
+export function employeeSnapshot(employee: {
   id: string
   employeeNumber: string
   status: PayrollEmployeeStatus
@@ -340,6 +351,7 @@ export async function requestHrisEmployeeLifecycle(
   client: DbClient = db,
 ) {
   const parsed = lifecycleRequestInputSchema.parse(input)
+  assertTerminationDate(parsed.type, parsed.effectiveAt)
   assertPermission(parsed.actorPermissions, MANAGE_PERMISSIONS, "HRIS lifecycle request")
   assertTarget(parsed.type, parsed.target)
 
@@ -367,6 +379,12 @@ export async function requestHrisEmployeeLifecycle(
       evidenceHash: parsed.evidenceHash,
     }
     const requestHash = prefixedHash(payload)
+    const existingPending = pendingHrisLifecycleFromMetadata(employee.metadata)
+    if (!existingPending) {
+      await assertNoCertifiedPayrollEvidence(tx, {
+        organizationId: parsed.organizationId, employeeId: employee.id, effectiveAt: parsed.effectiveAt,
+      })
+    }
     const eventResult = await recordLifecycleEvent(tx, {
       organizationId: parsed.organizationId,
       actorId: parsed.actorId,
@@ -377,7 +395,6 @@ export async function requestHrisEmployeeLifecycle(
       documentHash: parsed.evidenceHash,
     })
 
-    const existingPending = pendingHrisLifecycleFromMetadata(employee.metadata)
     if (existingPending) {
       if (existingPending.requestId === eventResult.event.id) {
         return mutationResult(employee, existingPending, eventResult.event.id)
@@ -397,6 +414,7 @@ export async function requestHrisEmployeeLifecycle(
       target,
       requestedById: parsed.actorId,
       requestedAt: new Date().toISOString(),
+      sourceStateHash: prefixedHash(employeeSnapshot(employee)),
     }
     const updated = await tx.payrollEmployee.update({
       where: { id: employee.id, organizationId: parsed.organizationId },
@@ -448,6 +466,9 @@ export async function approveHrisEmployeeLifecycle(
     if (employee.status !== pending.fromStatus) {
       throw new ConflictError("Employee status changed after the lifecycle request was created.")
     }
+    await assertNoCertifiedPayrollEvidence(tx, {
+      organizationId: parsed.organizationId, employeeId: employee.id, effectiveAt: new Date(pending.effectiveAt),
+    })
 
     const decisionReasonHash = prefixedHash({ decisionReason: parsed.decisionReason.trim() })
     const eventResult = await recordLifecycleEvent(tx, {
@@ -496,6 +517,7 @@ export async function approveHrisEmployeeLifecycle(
       after: { ...employeeSnapshot(updated), workflow },
       businessEventId: eventResult.event.id,
     })
+    await syncLifecycleTaskEventInTx(tx, parsed.organizationId, employee.id, eventResult.event.id)
     return mutationResult(updated, workflow, eventResult.event.id)
   })
 }
@@ -516,8 +538,8 @@ export async function rejectHrisEmployeeLifecycle(
     if (pending.requestedById === parsed.actorId) {
       throw new ForbiddenError("Lifecycle requester cannot reject their own request.")
     }
-    if (pending.status !== "REQUESTED") {
-      throw new BusinessRuleError("Only requested lifecycle changes can be rejected.")
+    if (pending.status !== "REQUESTED" && pending.status !== "APPROVED") {
+      throw new BusinessRuleError("Only requested or approved, unapplied lifecycle changes can be rejected.")
     }
 
     const decisionReasonHash = prefixedHash({ decisionReason: parsed.decisionReason.trim() })
@@ -558,6 +580,7 @@ export async function rejectHrisEmployeeLifecycle(
       after: { ...employeeSnapshot(updated), workflow: latest },
       businessEventId: eventResult.event.id,
     })
+    await syncLifecycleTaskEventInTx(tx, parsed.organizationId, employee.id, eventResult.event.id)
     return {
       employee: employeeSnapshot(updated),
       workflow: latest,
@@ -591,7 +614,7 @@ async function assertNoCertifiedPayrollEvidence(
   ])
   if (runLine || frozenAttendance) {
     throw new BusinessRuleError(
-      "Lifecycle effective date overlaps certified payroll input; use attendance and payroll correction workflows first.",
+      "Lifecycle effective date overlaps certified payroll input. Normal lifecycle application is unavailable for this date; an independent reviewer can reject an unapplied proposal. Retrospective changes require a separately supported correction process.",
     )
   }
 }
@@ -601,23 +624,31 @@ async function assertStarterReadiness(
   employee: Awaited<ReturnType<typeof findEmployee>>,
   effectiveAt: Date,
 ) {
-  const contract = await tx.payrollContract.findFirst({
+  const contracts = await tx.payrollContract.findMany({
     where: {
       organizationId: employee.organizationId,
       employeeId: employee.id,
       status: PayrollContractStatus.ACTIVE,
-      signedDocumentHash: { not: null },
-      activatedBusinessEventId: { not: null },
       effectiveFrom: { lte: effectiveAt },
       OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveAt } }],
       deletedAt: null,
     },
-    select: { id: true },
+    select: { id: true, signedDocumentHash: true, activatedBusinessEventId: true, metadata: true },
+    take: 2,
   })
-  if (!contract) {
+  const proof = evaluateHrisContractReadinessProof(contracts.length === 1 ? contracts[0] : null)
+  if (!proof.approvalValid || !proof.documentValid) {
     throw new BusinessRuleError("Onboarding and rehire require an approved active contract covering the effective date.")
   }
-  if (!employee.paymentDestinationHash) {
+  const destination = await tx.payrollPaymentDestinationChangeRequest.findFirst({
+    where: { organizationId: employee.organizationId, employeeId: employee.id, status: "APPLIED", deletedAt: null },
+    orderBy: [{ appliedAt: "desc" }, { id: "desc" }],
+  })
+  if (!evaluateHrisPaymentDestinationReadinessProof({
+    employeeMetadata: employee.metadata,
+    paymentDestinationHash: employee.paymentDestinationHash,
+    paymentDestinationRequest: destination ? { ...destination, appliedAt: destination.appliedAt?.toISOString() ?? null } : null,
+  })) {
     throw new BusinessRuleError("Onboarding and rehire require a verified payroll payment destination.")
   }
 }
@@ -626,57 +657,54 @@ function dayBefore(value: Date) {
   return new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate() - 1))
 }
 
+function assertTerminationDate(type: string, effectiveAt: Date) {
+  if (type === "TERMINATE" && effectiveAt.getTime() !== Date.UTC(effectiveAt.getUTCFullYear(), effectiveAt.getUTCMonth(), effectiveAt.getUTCDate())) {
+    throw new BusinessRuleError("HRIS_TERMINATION_DATE_REQUIRED: Use a date at midnight UTC; partial-day termination is not supported.")
+  }
+}
+
 async function closeLeaverAssignments(
   tx: Prisma.TransactionClient,
   input: { organizationId: string; employeeId: string; effectiveAt: Date },
 ) {
   const effectiveTo = dayBefore(input.effectiveAt)
-  await tx.payrollContract.updateMany({
-    where: {
-      organizationId: input.organizationId,
-      employeeId: input.employeeId,
-      status: { in: [PayrollContractStatus.ACTIVE, PayrollContractStatus.SUSPENDED] },
-      effectiveFrom: { lt: input.effectiveAt },
-      OR: [{ effectiveTo: null }, { effectiveTo: { gte: input.effectiveAt } }],
-      deletedAt: null,
-    },
-    data: { status: PayrollContractStatus.ENDED, effectiveTo },
-  })
-  await tx.payrollContract.updateMany({
-    where: {
-      organizationId: input.organizationId,
-      employeeId: input.employeeId,
-      OR: [
-        { status: PayrollContractStatus.DRAFT },
-        {
-          status: { in: [PayrollContractStatus.ACTIVE, PayrollContractStatus.SUSPENDED] },
-          effectiveFrom: { gte: input.effectiveAt },
-        },
-      ],
-      deletedAt: null,
-    },
-    data: { status: PayrollContractStatus.CANCELLED },
-  })
-  await tx.payrollEmployeeRubriqueAssignment.updateMany({
+  const contracts = await tx.payrollContract.findMany({where: {
+    organizationId: input.organizationId, employeeId: input.employeeId,
+    status: {in: [PayrollContractStatus.DRAFT, PayrollContractStatus.ACTIVE, PayrollContractStatus.SUSPENDED]}, deletedAt: null,
+  }})
+  for (const contract of contracts) {
+    const cancelled = contract.status === PayrollContractStatus.DRAFT || contract.effectiveFrom >= input.effectiveAt
+    await tx.payrollContract.update({where: {id: contract.id, organizationId: input.organizationId}, data: {
+      status: cancelled ? PayrollContractStatus.CANCELLED : PayrollContractStatus.ENDED,
+      ...(!cancelled ? {effectiveTo: contract.effectiveTo && contract.effectiveTo < effectiveTo ? contract.effectiveTo : effectiveTo} : {}),
+      metadata: safeJson({...metadataRecord(contract.metadata), hrisLifecycleClosure: {
+        status: cancelled ? "CANCELLED" : "ENDED", previousStatus: contract.status, effectiveAt: input.effectiveAt.toISOString(),
+      }}),
+    }})
+  }
+  const assignments = await tx.payrollEmployeeRubriqueAssignment.findMany({
     where: {
       organizationId: input.organizationId,
       employeeId: input.employeeId,
       status: { in: [PayrollRubriqueAssignmentStatus.DRAFT, PayrollRubriqueAssignmentStatus.ACTIVE, PayrollRubriqueAssignmentStatus.SUSPENDED] },
-      effectiveFrom: { lt: input.effectiveAt },
       deletedAt: null,
     },
-    data: { status: PayrollRubriqueAssignmentStatus.ENDED, effectiveTo },
   })
-  await tx.payrollEmployeeRubriqueAssignment.updateMany({
-    where: {
-      organizationId: input.organizationId,
-      employeeId: input.employeeId,
-      status: { in: [PayrollRubriqueAssignmentStatus.DRAFT, PayrollRubriqueAssignmentStatus.ACTIVE, PayrollRubriqueAssignmentStatus.SUSPENDED] },
-      effectiveFrom: { gte: input.effectiveAt },
-      deletedAt: null,
-    },
-    data: { status: PayrollRubriqueAssignmentStatus.ENDED },
-  })
+  for (const assignment of assignments) {
+    const cancelled = assignment.status === PayrollRubriqueAssignmentStatus.DRAFT || assignment.effectiveFrom >= input.effectiveAt
+    await tx.payrollEmployeeRubriqueAssignment.update({
+      where: { id: assignment.id, organizationId: input.organizationId },
+      data: {
+        status: PayrollRubriqueAssignmentStatus.ENDED,
+        // Earlier end dates remain historical facts. Never extend them at departure.
+        ...(!cancelled ? { effectiveTo: assignment.effectiveTo && assignment.effectiveTo < effectiveTo ? assignment.effectiveTo : effectiveTo } : {}),
+        metadata: safeJson({ ...metadataRecord(assignment.metadata), hrisLifecycleClosure: {
+          status: cancelled ? "CANCELLED" : "ENDED", previousStatus: assignment.status,
+          effectiveAt: input.effectiveAt.toISOString(),
+        } }),
+      },
+    })
+  }
 }
 
 export async function applyApprovedHrisEmployeeLifecycle(
@@ -690,6 +718,16 @@ export async function applyApprovedHrisEmployeeLifecycle(
     const employee = await findEmployee(tx, parsed.organizationId, parsed.employeeId)
     const pending = pendingHrisLifecycleFromMetadata(employee.metadata)
     if (!pending || pending.requestId !== parsed.requestId) {
+      const retained = await tx.businessEvent.findFirst({ where: {
+        organizationId: parsed.organizationId, sourceId: employee.id,
+        eventType: "hris.employee.lifecycle.applied", status: "APPLIED",
+        payload: { path: ["requestId"], equals: parsed.requestId },
+      } })
+      const payload = metadataRecord(retained?.payload)
+      if (retained && payload.after && payload.workflow) {
+        return { employee: payload.after as ReturnType<typeof employeeSnapshot>, workflow: metadataRecord(payload.workflow),
+          businessEventId: retained.id, applied: true, replayed: true }
+      }
       throw new NotFoundError("Approved lifecycle request not found")
     }
     if (pending.status !== "APPROVED" || !pending.approvalEvidenceHash || !pending.approvedById) {
@@ -702,7 +740,24 @@ export async function applyApprovedHrisEmployeeLifecycle(
       throw new ConflictError("Employee status changed after the lifecycle request was approved.")
     }
 
+    if (!pending.sourceStateHash || pending.sourceStateHash !== prefixedHash(employeeSnapshot(employee))) {
+      throw new ConflictError("HRIS_LIFECYCLE_SOURCE_CHANGED: Review the current employment state and submit a fresh request.")
+    }
+
     const effectiveAt = new Date(pending.effectiveAt)
+    assertTerminationDate(pending.type, effectiveAt)
+    const now = new Date()
+    if (effectiveAt > now) {
+      return { ...mutationResult(employee, pending, pending.approvalEventId ?? pending.requestId),
+        applied: false, replayed: false, scheduledFor: pending.effectiveAt }
+    }
+    const prior = metadataRecord(lifecycleProjection(employee.metadata).lastApplied)
+    if (prior.status === "APPLIED" && typeof prior.effectiveAt === "string" && effectiveAt <= new Date(prior.effectiveAt)) {
+      throw new ConflictError("HRIS_LIFECYCLE_BACKDATED_CONFLICT: Reconcile the retained movement history before applying an earlier change.")
+    }
+    if (pending.target.locationId !== undefined) {
+      await assertPayrollEmployeeLocationInOrganization(tx, parsed.organizationId, pending.target.locationId)
+    }
     await assertNoCertifiedPayrollEvidence(tx, {
       organizationId: parsed.organizationId,
       employeeId: employee.id,
@@ -725,7 +780,7 @@ export async function applyApprovedHrisEmployeeLifecycle(
       status: "APPLIED",
       effectiveAt: pending.effectiveAt,
       approvalEvidenceHash: pending.approvalEvidenceHash,
-      appliedAt: new Date().toISOString(),
+      appliedAt: now.toISOString(),
     }
     const updateData: Prisma.PayrollEmployeeUpdateInput = {
       status: pending.targetStatus,
@@ -760,6 +815,10 @@ export async function applyApprovedHrisEmployeeLifecycle(
         effectiveAt: pending.effectiveAt,
         target: pending.target,
         approvalEvidenceHash: pending.approvalEvidenceHash,
+        before: employeeSnapshot(employee),
+        after: employeeSnapshot(updated),
+        workflow: latest,
+        followUpOwners: { access: "HR-17_ACCESS_REVOCATION", contracts: "EXISTING_CONTRACT_SERVICE", compensation: "EXISTING_COMPENSATION_SERVICE" },
       },
       documentHash: pending.approvalEvidenceHash,
     })
@@ -777,6 +836,7 @@ export async function applyApprovedHrisEmployeeLifecycle(
       after: { ...employeeSnapshot(finalized), workflow: finalLatest },
       businessEventId: eventResult.event.id,
     })
+    await syncLifecycleTaskEventInTx(tx, parsed.organizationId, employee.id, eventResult.event.id)
     return {
       employee: employeeSnapshot(finalized),
       workflow: finalLatest,
@@ -786,6 +846,8 @@ export async function applyApprovedHrisEmployeeLifecycle(
         eventAuthority: "BUSINESS_EVENT",
         projection: "PayrollEmployee.metadata.hrisLifecycle",
       } as const,
+      applied: true,
+      replayed: false,
     }
   })
 }
@@ -865,4 +927,17 @@ export async function getHrisEmployeeLifecycleTimeline(
       projection: "PayrollEmployee.metadata.hrisLifecycle",
     } as const,
   }
+}
+
+/** Explicit due execution remains the existing fresh-auth apply action; no timer. */
+export async function getHrisEmploymentAsOf(input: HrisLifecycleTimelineInput & {asOf: Date}, client: DbClient = db) {
+  const parsed=lifecycleTimelineInputSchema.parse(input)
+  assertPermission(parsed.actorPermissions,READ_PERMISSIONS,"HRIS employment history")
+  await resolveHrisPeopleAccessScope({...parsed,actorId:parsed.actorId??"",asOf:new Date(),employeeId:parsed.employeeId},client)
+  return inTransaction(client,async tx=>{
+    const employee=await findEmployee(tx,parsed.organizationId,parsed.employeeId)
+    const events=await tx.businessEvent.findMany({where:{organizationId:parsed.organizationId,sourceId:employee.id,eventType:"hris.employee.lifecycle.applied",status:"APPLIED"},select:{id:true,payload:true}})
+    const projection=projectEmploymentAsOf(employeeSnapshot(employee),events,input.asOf)
+    return {...projection,pending:pendingHrisLifecycleFromMetadata(employee.metadata)}
+  })
 }

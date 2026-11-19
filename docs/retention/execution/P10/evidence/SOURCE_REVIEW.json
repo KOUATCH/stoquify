@@ -1,0 +1,69 @@
+{
+  "utc": "2026-10-18T19:26:12.592Z",
+  "scope": "Current inspected source; no production configuration/customer data",
+  "sourceHashes": [
+    {
+      "path": "components/landing/public-pages.tsx",
+      "sha256": "342e9dc8df9623529a810a3fe72a928c1193d500ff4f93a9888c8169fcf5d53f"
+    },
+    {
+      "path": "services/communication/customer-statement-delivery.provider.ts",
+      "sha256": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32"
+    },
+    {
+      "path": "services/users/user-identity.service.ts",
+      "sha256": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7"
+    },
+    {
+      "path": "services/signals/signal-notification.service.ts",
+      "sha256": "a9e48231e9eeafb019ad7e421a01c859dbfa6acae5552cbb0773316e49855574"
+    },
+    {
+      "path": "services/purchasing/ap-history-export.service.ts",
+      "sha256": "9cdcd7f822f804219cd26d6e44392589ded8a4ca48436d621d229589e7a31241"
+    },
+    {
+      "path": "actions/purchasing/ap-history.actions.ts",
+      "sha256": "0e271374f96051f6ac9329361f6b75acd035ba385109bf30aa9ef1e4360a6fa7"
+    },
+    {
+      "path": "actions/accounting/data-trust.actions.ts",
+      "sha256": "e6e31dcc477b3ff533ec4dda4331d3ea680cf7f399f6e42410b21627429fd2a0"
+    },
+    {
+      "path": "services/accounting/accountant-access.service.ts",
+      "sha256": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "sha256": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "a73256a2e81dcba710d45cff43e811c1b256043edf2c32391c9525543968fb97"
+    }
+  ],
+  "searchRoots": [
+    "app",
+    "actions",
+    "services",
+    "lib",
+    "prisma/schema.prisma",
+    "package.json"
+  ],
+  "searchTerms": [
+    "subscription",
+    "billing portal",
+    "billing provider",
+    "stripe",
+    "paddle",
+    "support ticket",
+    "zendesk",
+    "intercom",
+    "freshdesk",
+    "support",
+    "pricing",
+    "Resend"
+  ],
+  "finding": "No platform subscription/helpdesk process established in scoped discovery; external/manual systems unknown. Merchant payments and business/identity notification code are separate."
+}

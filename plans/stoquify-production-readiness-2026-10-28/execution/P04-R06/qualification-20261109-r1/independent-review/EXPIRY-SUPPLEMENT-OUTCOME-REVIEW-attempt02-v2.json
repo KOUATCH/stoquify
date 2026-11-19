@@ -1,0 +1,104 @@
+{
+  "at": "2026-11-10T11:23:17.942Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "scope": "Three additional retained-expiry native HTTP/database probes only",
+  "cases": [
+    {
+      "id": "R06-E-retained-list-sessions",
+      "passed": true,
+      "checks": {
+        "observedPass": true,
+        "retainedOneTarget": true,
+        "expiredInSQL": true,
+        "requestFollowsPrecondition": true,
+        "signatureVerified": true,
+        "allExpiryBoundsHold": true,
+        "wireMatchesAllCookies": true,
+        "deniedWithoutPrivateData": true,
+        "businessAndAuditEqual": true,
+        "onlyExactExpiredTargetDeleted": true
+      },
+      "before": "snapshot-R06-E-retained-list-sessions-before-1794309474615-6274b6ba-cde4-4700-bf8b-b99c8f6b1e29.json",
+      "after": "snapshot-R06-E-retained-list-sessions-after-1794309487845-ae58aad0-8e00-43c0-abfa-cf96572f8f46.json",
+      "privateResponseBytes": 74,
+      "remainingCacheSecondsAtResponse": 275.948
+    },
+    {
+      "id": "R06-E-retained-list-accounts",
+      "passed": true,
+      "checks": {
+        "observedPass": true,
+        "retainedOneTarget": true,
+        "expiredInSQL": true,
+        "requestFollowsPrecondition": true,
+        "signatureVerified": true,
+        "allExpiryBoundsHold": true,
+        "wireMatchesAllCookies": true,
+        "deniedWithoutPrivateData": true,
+        "businessAndAuditEqual": true,
+        "onlyExactExpiredTargetDeleted": true
+      },
+      "before": "snapshot-R06-E-retained-list-accounts-before-1794309513349-00ed248c-6ecc-4f17-b786-b8c8929af04c.json",
+      "after": "snapshot-R06-E-retained-list-accounts-after-1794309531963-daf09fd4-9c11-4f29-b8ce-1625c4220768.json",
+      "privateResponseBytes": 74,
+      "remainingCacheSecondsAtResponse": 260.386
+    },
+    {
+      "id": "R06-E-retained-unlink-account",
+      "passed": true,
+      "checks": {
+        "observedPass": true,
+        "retainedOneTarget": true,
+        "expiredInSQL": true,
+        "requestFollowsPrecondition": true,
+        "signatureVerified": true,
+        "allExpiryBoundsHold": true,
+        "wireMatchesAllCookies": true,
+        "deniedWithoutPrivateData": true,
+        "businessAndAuditEqual": true,
+        "onlyExactExpiredTargetDeleted": true
+      },
+      "before": "snapshot-R06-E-retained-unlink-account-before-1794309562205-b416837b-c013-45cc-8378-65b6b418f084.json",
+      "after": "snapshot-R06-E-retained-unlink-account-after-1794309589226-cf2a9c2d-fadc-4fcb-989a-45f40380ec95.json",
+      "privateResponseBytes": 74,
+      "remainingCacheSecondsAtResponse": 248.473
+    }
+  ],
+  "distinctGenuinelyIssuedSessions": 3,
+  "originalRuntimeOutcomePreserved": true,
+  "main58GroupPassed": false,
+  "main58GroupSummary": {
+    "planned": 58,
+    "passed": 53,
+    "failed": 5,
+    "notRun": 0,
+    "requests": 87,
+    "browserObservations": 6
+  },
+  "cleanup": {
+    "portsReleased": true,
+    "errors": [],
+    "artifactsAndRuntimeCopiesUnchanged": true
+  },
+  "evidence": [
+    {
+      "path": "expiry-supplement-result-attempt02.json",
+      "sha256": "79625e82bb0bb9c7146aa3a2888d359a4a2fb6ac10aa094c03e3e308bd10d6f7"
+    },
+    {
+      "path": "independent-review/EXPIRY-SUPPLEMENT-RECIPE-ADMISSION-attempt02.json",
+      "sha256": "87fabc7f423ff6d348e46ecb1b042ee165fd11742ad730c360d4a25a33201dff"
+    }
+  ],
+  "limitations": [
+    "This supplies direct retained-expired-row evidence for the three original critical endpoints beyond the earlier post-cleanup replay sequence.",
+    "Original53/58 outcome and five failed groups remain immutable; this supplement does not pass the credential/origin/browser recovery gates."
+  ],
+  "overallRuntimeQualification": false,
+  "productionReady": false,
+  "supersedes": "independent-review/EXPIRY-SUPPLEMENT-OUTCOME-REVIEW-attempt02.json",
+  "correction": "Predecessor accidentally reported millisecond values in remainingCacheSecondsAtResponse. This successor divides those values by1000; observed pass/fail and raw evidence are unchanged."
+}

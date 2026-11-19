@@ -1,0 +1,22 @@
+{
+  "realAuthentication": true,
+  "productionAccess": false,
+  "checks": [
+    "All six coordination tables preserved across application restart with flag disabled",
+    "manager-action-center: real login and original dashboard remain available with follow-up flag disabled",
+    "daily-digest: real login and original dashboard remain available with follow-up flag disabled",
+    "owner-war-room: real login and original dashboard remain available with follow-up flag disabled",
+    "Occurrences, event history and review receipts unchanged byte-for-byte across disabled UI visits"
+  ],
+  "authenticationResponse": {
+    "status": 200,
+    "keys": [
+      "redirect",
+      "token",
+      "user"
+    ],
+    "errorCode": null
+  },
+  "retainedRows": 16,
+  "passed": true
+}

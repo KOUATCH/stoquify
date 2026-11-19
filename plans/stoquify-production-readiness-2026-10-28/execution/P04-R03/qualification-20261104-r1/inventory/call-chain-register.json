@@ -1,0 +1,418 @@
+{
+  "schemaVersion": 1,
+  "package": "P04-R03",
+  "finding": "P04-F03",
+  "capturedAt": "2026-11-04T09:23:53.370Z",
+  "sourceManifest": "source-manifest.json",
+  "historicalEvidence": {
+    "readsRuntimeCharacterized": 2,
+    "mutationCatchesSourceOnly": 7,
+    "sentinel": "synthetic only",
+    "path": "../../../P04/actions-review/item-read-error-disclosure.test.ts.source.txt",
+    "unchanged": true
+  },
+  "handlers": [
+    {
+      "handler": "getItemAction",
+      "line": 97,
+      "source": "actions/item/items.ts",
+      "schema": "getItemSchema",
+      "permission": "inventory.items.read",
+      "service": "getItemWithRelations",
+      "originalUnknownFallback": "Failed to fetch item",
+      "hook": "useGetItem",
+      "serviceChecks": "tenant-filtered item.findFirst; missing returns Item not found",
+      "businessWrites": "none",
+      "catch": "error instanceof Error ? error.message : fallback",
+      "parseBeforeGuard": true,
+      "auditAllowed": false,
+      "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+      "moduleScope": "No module enforcement added or certified by this response repair",
+      "revalidation": "none"
+    },
+    {
+      "handler": "listItemsAction",
+      "line": 118,
+      "source": "actions/item/items.ts",
+      "schema": "listItemsSchema",
+      "permission": "inventory.items.read",
+      "service": "listItemsWithRelations",
+      "originalUnknownFallback": "Failed to list items",
+      "hook": null,
+      "serviceChecks": "server ctx.orgId overwrites caller organizationId; tenant-filtered count/findMany",
+      "businessWrites": "none",
+      "catch": "error instanceof Error ? error.message : fallback",
+      "parseBeforeGuard": true,
+      "auditAllowed": false,
+      "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+      "moduleScope": "No module enforcement added or certified by this response repair",
+      "revalidation": "none"
+    },
+    {
+      "handler": "updateItemBasicInfoAction",
+      "line": 180,
+      "source": "actions/item/items.ts",
+      "schema": "updateBasicInfoSchema",
+      "permission": "inventory.items.update",
+      "service": "updateItemBasicInfoWithRelations",
+      "originalUnknownFallback": "Failed to update item",
+      "hook": "useUpdateItemBasicInfo",
+      "serviceChecks": "transaction: existing image row tenant lookup, claimItemPictures tenant-bound claim, assertItemInTenant then update",
+      "businessWrites": "item plus optional picture attachment; transaction",
+      "catch": "error instanceof Error ? error.message : fallback",
+      "parseBeforeGuard": true,
+      "auditAllowed": true,
+      "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+      "moduleScope": "No module enforcement added or certified by this response repair",
+      "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+    },
+    {
+      "handler": "updateItemDetailsAction",
+      "line": 199,
+      "source": "actions/item/items.ts",
+      "schema": "updateDetailsSchema",
+      "permission": "inventory.items.update",
+      "service": "updateItemDetailsWithRelations",
+      "originalUnknownFallback": "Failed to update item details",
+      "hook": "useUpdateItemDetails",
+      "serviceChecks": "assertItemInTenant; same-tenant SKU duplicate check then update",
+      "businessWrites": "item; existing separate prechecks/update",
+      "catch": "error instanceof Error ? error.message : fallback",
+      "parseBeforeGuard": true,
+      "auditAllowed": true,
+      "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+      "moduleScope": "No module enforcement added or certified by this response repair",
+      "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+    },
+    {
+      "handler": "updateItemPricingAction",
+      "line": 218,
+      "source": "actions/item/items.ts",
+      "schema": "updatePricingSchema",
+      "permission": "inventory.items.update",
+      "service": "updateItemPricingWithRelations",
+      "originalUnknownFallback": "Failed to update pricing",
+      "hook": "useUpdateItemPricing",
+      "serviceChecks": "assertItemInTenant then update",
+      "businessWrites": "item; existing separate precheck/update",
+      "catch": "error instanceof Error ? error.message : fallback",
+      "parseBeforeGuard": true,
+      "auditAllowed": true,
+      "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+      "moduleScope": "No module enforcement added or certified by this response repair",
+      "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+    },
+    {
+      "handler": "updateItemRelationsAction",
+      "line": 237,
+      "source": "actions/item/items.ts",
+      "schema": "updateRelationsSchema",
+      "permission": "inventory.items.update",
+      "service": "updateItemRelationsWithRelations",
+      "originalUnknownFallback": "Failed to update relations",
+      "hook": "useUpdateItemRelations",
+      "serviceChecks": "assertItemInTenant; same-tenant category/brand/unit/taxRate checks via assertItemRelations then update",
+      "businessWrites": "item; existing separate prechecks/update",
+      "catch": "error instanceof Error ? error.message : fallback",
+      "parseBeforeGuard": true,
+      "auditAllowed": true,
+      "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+      "moduleScope": "No module enforcement added or certified by this response repair",
+      "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+    },
+    {
+      "handler": "updateItemStockAction",
+      "line": 256,
+      "source": "actions/item/items.ts",
+      "schema": "updateStockSchema",
+      "permission": "inventory.items.update",
+      "service": "updateItemStockFromForm",
+      "originalUnknownFallback": "Failed to update stock",
+      "hook": "useUpdateItemStock",
+      "serviceChecks": "nonzero adjustment also requires inventory.stock.adjust; transaction existingItem tenant lookup; stock policy update; requestManualItemStockAdjustment verifies item active/tracked/location; createStockAdjustment module admission and tenant references",
+      "businessWrites": "item stock policy, draft adjustment/lines; no posted stock movement; transaction rollback on denial",
+      "catch": "error instanceof Error ? error.message : fallback",
+      "parseBeforeGuard": true,
+      "auditAllowed": true,
+      "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+      "moduleScope": "New nonzero adjustment reaches module admission within transaction",
+      "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+    },
+    {
+      "handler": "updateItemTrackingAction",
+      "line": 283,
+      "source": "actions/item/items.ts",
+      "schema": "updateTrackingSchema",
+      "permission": "inventory.items.update",
+      "service": "updateItemTrackingWithRelations",
+      "originalUnknownFallback": "Failed to update tracking",
+      "hook": "useUpdateItemTracking",
+      "serviceChecks": "assertItemInTenant then update",
+      "businessWrites": "item; existing separate precheck/update",
+      "catch": "error instanceof Error ? error.message : fallback",
+      "parseBeforeGuard": true,
+      "auditAllowed": true,
+      "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+      "moduleScope": "No module enforcement added or certified by this response repair",
+      "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+    },
+    {
+      "handler": "deleteItemAction",
+      "line": 302,
+      "source": "actions/item/items.ts",
+      "schema": "deleteItemSchema",
+      "permission": "inventory.items.delete",
+      "service": "archiveItem",
+      "originalUnknownFallback": "Failed to delete item",
+      "hook": "useDeleteItem",
+      "serviceChecks": "tenant lookup with evidence relation counts then archive flags/date",
+      "businessWrites": "item archival; no hard deletion",
+      "catch": "error instanceof Error ? error.message : fallback",
+      "parseBeforeGuard": true,
+      "auditAllowed": true,
+      "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+      "moduleScope": "No module enforcement added or certified by this response repair",
+      "revalidation": "items, item-ID and org-ID item tags plus inventory list path"
+    }
+  ],
+  "authorityChain": [
+    "parse fixed schema",
+    "requirePermission -> requireRbacContext -> BetterAuth getSession(disableCookieCache:true)",
+    "load current active verified unlocked user, active organization and same-tenant roles; reject stale session organization",
+    "known permission and effective permission check; allowed/denied security audit as existing behavior",
+    "service checks listed by handler"
+  ],
+  "responseContract": {
+    "shape": "{success:false,error:string} unchanged; success payload/messages unchanged",
+    "default": "operation-specific literal via safeLoggedActionErrorMessage explicit userMessage",
+    "approvedBusinessMessages": "Only source-reviewed constant messages with trusted class checks; never arbitrary Error.message, string or structural code alone",
+    "approvedLiterals": [
+      {
+        "errorClass": "NotFoundError",
+        "message": "Item not found",
+        "source": "services/item/item.service.ts",
+        "handlers": [
+          "updateItemBasicInfoAction",
+          "updateItemDetailsAction",
+          "updateItemPricingAction",
+          "updateItemRelationsAction",
+          "updateItemStockAction",
+          "updateItemTrackingAction",
+          "deleteItemAction"
+        ],
+        "reason": "get also has explicit null return"
+      },
+      {
+        "errorClass": "ConflictError",
+        "message": "Another item with this SKU already exists",
+        "source": "services/item/item.service.ts",
+        "handlers": [
+          "updateItemDetailsAction"
+        ],
+        "reason": "same-tenant duplicate"
+      },
+      {
+        "errorClass": "BusinessRuleError",
+        "message": "Upload an image before saving this item.",
+        "source": "services/media/picture.service.ts",
+        "handlers": [
+          "updateItemBasicInfoAction"
+        ],
+        "reason": "invalid new image reference"
+      },
+      {
+        "errorClass": "BusinessRuleError",
+        "message": "This image is unavailable. Upload it again before saving.",
+        "source": "services/media/picture.service.ts",
+        "handlers": [
+          "updateItemBasicInfoAction"
+        ],
+        "reason": "tenant-ready claim failed"
+      },
+      {
+        "errorClass": "NotFoundError",
+        "message": "Item not found or inactive for this organization.",
+        "source": "services/inventory/inventory-adjustment.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "manual adjustment item"
+      },
+      {
+        "errorClass": "BusinessRuleError",
+        "message": "Item is not inventory-tracked.",
+        "source": "services/inventory/inventory-adjustment.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "manual adjustment item"
+      },
+      {
+        "errorClass": "BusinessRuleError",
+        "message": "A default active location is required before requesting a stock adjustment.",
+        "source": "services/inventory/inventory-adjustment.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "manual adjustment location fallback"
+      },
+      {
+        "errorClass": "NotFoundError",
+        "message": "Inventory location not found or inactive for this organization.",
+        "source": "services/inventory/inventory-adjustment.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "manual adjustment location"
+      },
+      {
+        "errorClass": "NotFoundError",
+        "message": "Adjustment location not found.",
+        "source": "services/inventory/inventory-adjustment.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "createStockAdjustment"
+      },
+      {
+        "errorClass": "BusinessRuleError",
+        "message": "One or more adjustment items were not found for this organization.",
+        "source": "services/inventory/inventory-adjustment.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "createStockAdjustment"
+      },
+      {
+        "errorClass": "ModuleNewWorkStoppedError extends ApplicationError",
+        "message": "This capability is not accepting new work. Existing records and permitted completion workflows remain available.",
+        "source": "services/modules/module-admission.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "FORBIDDEN status403; fixed literal, not stopped module metadata"
+      },
+      {
+        "errorClass": "NotFoundError",
+        "message": "Active organization not found",
+        "source": "services/modules/module-admission.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "module admission"
+      },
+      {
+        "errorClass": "ConflictError",
+        "message": "Operation policy is ambiguous",
+        "source": "services/modules/module-admission.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "multiple policy rows"
+      },
+      {
+        "errorClass": "ConflictError",
+        "message": "The stored operation policy requires reconciliation",
+        "source": "services/modules/module-admission.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "invalid stored stopped module policy"
+      },
+      {
+        "errorClass": "ConflictError",
+        "message": "Capability dependencies require reconciliation",
+        "source": "services/modules/module-admission.service.ts",
+        "handlers": [
+          "updateItemStockAction"
+        ],
+        "reason": "catalog/dependency invalid"
+      }
+    ],
+    "validation": "fixed safe validation text, no raw Zod message/issues payload",
+    "notFound": "get null branch Item not found remains; typed fixed item/location missing messages may remain",
+    "logging": "existing safe helper logs only normalized code/status/correlation/category/severity/retryability, not raw error or metadata",
+    "excluded": "No permission expansion, schema/service/transaction change, module rollout, provider call or global error-helper change"
+  },
+  "consumers": {
+    "hookFile": "hooks/itemsHooks/useItemHooks.ts",
+    "hookBehavior": "callAction throws res.error into React Query Error; same failure result shape remains compatible",
+    "eightExportedHooks": true,
+    "currentRenderedUsage": "Search app/components/hooks/actions/services/lib/tests found no component consumer for those eight hooks. ItemManagement uses only useCreateItem from this file; its other item hooks use hooks/useAllItemQueries.ts and separate actions. Exported server actions remain obligations despite absent direct rendered caller.",
+    "vulnerableListExport": "No current product consumer of items.ts listItemsAction located; separate sibling listItemsAction.ts is consumed instead",
+    "adjacentFinding": {
+      "id": "P04-R03-SCOPE-01",
+      "source": "actions/item/listItemsAction.ts",
+      "catchLines": "76-80",
+      "handler": "listItemsAction",
+      "consumer": "hooks/itemsHooks/useItemHooks.ts#useListItems",
+      "finding": "Same raw exception response in active sibling action; outside original nine-path inventory; record explicitly or expand bounded repair before claiming all item list consumers safe",
+      "evidenceClass": "source only at refresh"
+    }
+  },
+  "graph": {
+    "files": [
+      {
+        "path": "graphify-out/graph_actions.json",
+        "sha256": "01aa0155ee0b6889fda9be251d9bd73c82d6bd1d4e143114eee8b3bdb3a2c032",
+        "bytes": 997968
+      },
+      {
+        "path": "graphify-out/graph_hooks.json",
+        "sha256": "735b50697dd1552a5a768b5e6f3bd8c31b4574e52a5b769cdd55b5a86d06fe5a",
+        "bytes": 245978
+      },
+      {
+        "path": "graphify-out/manifest.json",
+        "sha256": "e058d368ba1ee1c90eeec5341f8791d5f1d3adf733f3b0c01487aa7e2dc677f4",
+        "bytes": 43338
+      }
+    ],
+    "generated": "2026-08-09 (filesystem timestamp and existing graph refresh record); stale discovery aid only",
+    "nodes": [
+      {
+        "id": "item_items_getitemaction",
+        "community": 1
+      },
+      {
+        "id": "item_items_listitemsaction",
+        "community": 1
+      },
+      {
+        "id": "item_items_updateitembasicinfoaction",
+        "community": 1
+      },
+      {
+        "id": "item_items_updateitemdetailsaction",
+        "community": 1
+      },
+      {
+        "id": "item_items_updateitempricingaction",
+        "community": 1
+      },
+      {
+        "id": "item_items_updateitemrelationsaction",
+        "community": 1
+      },
+      {
+        "id": "item_items_updateitemstockaction",
+        "community": 1
+      },
+      {
+        "id": "item_items_updateitemtrackingaction",
+        "community": 1
+      },
+      {
+        "id": "item_items_deleteitemaction",
+        "community": 1
+      }
+    ],
+    "freshnessRule": "Current source and captured bytes override dated graph relationships/counts."
+  },
+  "limitations": [
+    "Inventory/source inspection is not native database or browser proof.",
+    "Signed-cookie transport/session expiry/revocation runtime not proven by guard names.",
+    "No full role/location/module qualification: preserve current authority checks; broader P04 remains blocked.",
+    "No production secrets/data inspected; no provider/production actions."
+  ]
+}

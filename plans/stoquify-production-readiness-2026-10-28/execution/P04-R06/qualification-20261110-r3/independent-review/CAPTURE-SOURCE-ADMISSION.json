@@ -1,0 +1,54 @@
+{
+  "at": "2026-11-10T15:57:15.992Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "candidateCaptureAccepted": true,
+  "files": [
+    {
+      "path": "inventory/capture-input.json",
+      "sha256": "27b0a6716caa514b16c172d5341b4f998a388556063006241b5374f39651036d"
+    },
+    {
+      "path": "inventory/source-after-manifest-runtime.json",
+      "sha256": "6a5e5b0c5237159fbdf321a0f8d2c3df33229ba50907238fa03550cc5a673cc3"
+    },
+    {
+      "path": "inventory/private-metadata-policy.json",
+      "sha256": "a044327ea56b8488574704fdd8f25b7f46506f4dc45a9fdf4d900fff09ca33d6"
+    },
+    {
+      "path": "inventory/CURRENT-SOURCE-MANIFEST-r2.json",
+      "sha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699"
+    },
+    {
+      "path": "inventory/SOURCE-DELTA-CLASSIFICATION-r3.json",
+      "sha256": "cd2e5d4e59654db0c4c8cbe6b6777e4422490c3261e244603f3ee7a081e81ce8"
+    },
+    {
+      "path": "inventory/PRIVATE-METADATA-DISPOSITION-r3.json",
+      "sha256": "ed075393100cad5edfc1a78ef161bfa9f42d136dc22a00e80838870abbed4a9c"
+    },
+    {
+      "path": "independent-review/LATE-SOURCE-OUTCOME-REVIEW.json",
+      "sha256": "619d5949939fa087c634357b8d5a297dd905990f435f3a0bde8a775c7074e7e9"
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+      "sha256": "dbf7007e9e23e7c2b54b0ef726c2949b67a13eb7b72363279d4d4b7a93142617"
+    }
+  ],
+  "sourceManifestSha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699",
+  "sourceIdentitySha256": "4ea56948b133706d3dc0531852f7dd37da41f40bb6968604e822dae3bb10ac74",
+  "sourceFiles": 9942,
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "selectedInputs": 68,
+  "metadataReceipts": 3,
+  "scope": "Exact admitted full source snapshot and normalization; capture entry must recapture full current source and reject any drift",
+  "facts": [
+    "Normalization equals accepted selected68 and metadata disposition exactly",
+    "All68 current inputs and16 changed non-doc sources rehashed at review",
+    "Config/type-selection and metadata classification acceptance preserved",
+    "Initial normalization wrapper argv failure occurred before writes; actual direct invocation generated the exact three inputs"
+  ],
+  "qualificationPassed": false
+}

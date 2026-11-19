@@ -36,7 +36,7 @@ jest.mock("@/lib/security/auth-session", () => {
   }
 })
 
-jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn() } }))
+jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn(), warn: jest.fn() } }))
 jest.mock("@/services/modules/module-entitlement.service", () => ({
   observeModuleAccess: jest.fn(),
 }))
@@ -70,7 +70,7 @@ describe("HRIS time, leave, and attendance actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockRequireFreshAuth.mockResolvedValue({
-      claims: { lastAuthAt: "2026-07-15T00:00:00.000Z" },
+      claims: { userId: "manager-1", tenantId: "org-1", lastAuthAt: "2026-07-15T00:00:00.000Z" },
     })
     mockRead.mockResolvedValue({ organizationId: "org-1", snapshots: [] })
     mockCertify.mockResolvedValue({
@@ -154,6 +154,7 @@ describe("HRIS time, leave, and attendance actions", () => {
   })
 
   it("requires the HRIS manage gate and fresh authentication for corrections", async () => {
+    mockRequireFreshAuth.mockResolvedValue({ claims: { userId: "hr-admin-1", tenantId: "org-1", lastAuthAt: "2026-07-15T00:00:00.000Z" } })
     mockRequirePermission.mockResolvedValue(
       rbacContext("hr-admin-1", ["hris.people.manage"]),
     )

@@ -1,0 +1,87 @@
+{
+  "at": "2026-11-10T15:49:13.307Z",
+  "sourceManifest": {
+    "path": "CURRENT-SOURCE-MANIFEST-r2.json",
+    "sha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699",
+    "identitySha256": "4ea56948b133706d3dc0531852f7dd37da41f40bb6968604e822dae3bb10ac74"
+  },
+  "selection": "Every .json basename matching private[-_. ]*fixture or fixture[-_. ]*private, case-insensitive, in the full current source manifest. Content-based discovery of arbitrarily named secret files is outside this bounded check.",
+  "files": [
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-PRIVATE_FIXTURE.json",
+      "sha256": "1fe896640c9d10be26bf93823d346c66b6ea4d707d9130fae9a3b31f8a20460c",
+      "manifestSha256": "1fe896640c9d10be26bf93823d346c66b6ea4d707d9130fae9a3b31f8a20460c",
+      "stillMatchesManifest": true,
+      "metadataOnly": true,
+      "externalReferencedFilesRead": false,
+      "underDocs": true,
+      "underPublic": false,
+      "parseable": true,
+      "classification": "Metadata only: external fixture/pack path, SHA256 and byte length; no embedded records or credentials",
+      "safeShape": {
+        "permittedTopLevelKeys": [
+          "bytes",
+          "packs",
+          "path",
+          "sha256"
+        ],
+        "packCount": 1,
+        "referenceShapeValid": true,
+        "rawReferenceValuesPublished": false
+      }
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-PRIVATE_FIXTURE.json",
+      "sha256": "b41b42cf84bc965a263e094baa1cc3e94753a198c97bb2ff00ac172baf56c385",
+      "manifestSha256": "b41b42cf84bc965a263e094baa1cc3e94753a198c97bb2ff00ac172baf56c385",
+      "stillMatchesManifest": true,
+      "metadataOnly": true,
+      "externalReferencedFilesRead": false,
+      "underDocs": true,
+      "underPublic": false,
+      "parseable": true,
+      "classification": "Metadata only: external fixture/pack path, SHA256 and byte length; no embedded records or credentials",
+      "safeShape": {
+        "permittedTopLevelKeys": [
+          "bytes",
+          "packs",
+          "path",
+          "sha256"
+        ],
+        "packCount": 1,
+        "referenceShapeValid": true,
+        "rawReferenceValuesPublished": false
+      }
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/pg-attempt-ece011f832/pg-PRIVATE_FIXTURE.json",
+      "sha256": "3abd13acd1adba63dc6e0e831c1e8e628883347f6180dd225074899adadc2086",
+      "manifestSha256": "3abd13acd1adba63dc6e0e831c1e8e628883347f6180dd225074899adadc2086",
+      "stillMatchesManifest": true,
+      "metadataOnly": false,
+      "externalReferencedFilesRead": false,
+      "underDocs": true,
+      "underPublic": false,
+      "parseable": true,
+      "classification": "Unclassified shape; independent review required before candidate capture",
+      "safeShape": {
+        "permittedTopLevelKeys": [
+          "bytes",
+          "packs",
+          "path",
+          "sha256"
+        ],
+        "packCount": 2,
+        "referenceShapeValid": false,
+        "rawReferenceValuesPublished": false
+      }
+    }
+  ],
+  "metadataOnly": false,
+  "allMetadataStillMatchesManifest": true,
+  "externalReferencedFilesRead": false,
+  "artifactRequirement": "Preserve all source metadata receipts; runtime owner produces an exact path/hash policy and verifies sealed runtime/public/static excludes the receipts and external referenced fixtures/packs. No referenced private file is opened by this inspection.",
+  "classificationBlockers": [
+    "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/pg-attempt-ece011f832/pg-PRIVATE_FIXTURE.json"
+  ]
+}

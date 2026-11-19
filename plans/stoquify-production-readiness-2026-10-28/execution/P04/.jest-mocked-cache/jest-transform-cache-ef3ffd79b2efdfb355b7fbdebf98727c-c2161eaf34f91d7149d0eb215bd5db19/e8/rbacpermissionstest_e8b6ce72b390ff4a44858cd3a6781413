@@ -1,0 +1,459 @@
+6df46fc89231358974f8f39612c4d139
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+const _permissions = require("@/lib/permissions");
+const _rbacpermissions = require("@/lib/security/rbac-permissions");
+describe("rbac permission compatibility", ()=>{
+    it("permits only directly declared compatibility between canonical operations, never shared-alias escalation", ()=>{
+        const table = _rbacpermissions.PERMISSION_ALIASES;
+        const canonical = Object.keys(table);
+        for (const [granted, aliases] of Object.entries(table)){
+            const direct = canonical.filter((required)=>required === granted || aliases.includes(required) || table[required].includes(granted));
+            expect(canonical.filter((required)=>(0, _rbacpermissions.hasRbacPermission)([
+                    granted
+                ], required))).toEqual(direct);
+            for (const legacy of aliases){
+                expect((0, _rbacpermissions.hasRbacPermission)([
+                    legacy
+                ], granted)).toBe(true);
+                expect((0, _rbacpermissions.hasRbacPermission)([
+                    granted
+                ], legacy)).toBe(true);
+            }
+        }
+    });
+    it.each([
+        [
+            "payments.reconciliation.read",
+            "accounting.close.read"
+        ],
+        [
+            "accounting.close.read",
+            "fraud.cases.manage"
+        ],
+        [
+            "roles.permissions.assign",
+            "roles.permissions.remove"
+        ],
+        [
+            "payroll.runs.calculate",
+            "payroll.payments.request"
+        ],
+        [
+            "accounting.close.run",
+            "payroll.payments.release"
+        ]
+    ])("does not manufacture %s sibling authority for %s through a shared legacy alias", (granted, required)=>{
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            granted
+        ], required)).toBe(false);
+        const effective = (0, _rbacpermissions.expandPermissions)([
+            granted
+        ]);
+        expect(effective).toEqual([
+            granted
+        ]);
+        expect((0, _rbacpermissions.expandPermissions)(effective)).toEqual(effective);
+        expect((0, _rbacpermissions.hasRbacPermission)(effective, required)).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            ...effective,
+            required
+        ], required)).toBe(true);
+    });
+    it("preserves directly stored legacy grants without inventing other legacy grants on repeated expansion", ()=>{
+        const effective = (0, _rbacpermissions.expandPermissions)([
+            "VIEW_FINANCIAL_AUDIT_TRAIL"
+        ]);
+        expect((0, _rbacpermissions.hasRbacPermission)(effective, "accounting.close.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)(effective, "payments.reconciliation.read")).toBe(true);
+        expect(effective).not.toContain("MANAGE_FINANCIAL_CONTROLS");
+        expect((0, _rbacpermissions.expandPermissions)(effective)).toEqual(effective);
+    });
+    it("recognizes explicit transfer-read grants without granting transfer operations", ()=>{
+        expect((0, _rbacpermissions.isKnownPermission)("TRANSFERS_READ")).toBe(true);
+        expect((0, _rbacpermissions.isKnownPermission)("inventory.transfers.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "TRANSFERS_READ"
+        ], "inventory.transfers.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "inventory.transfers.read"
+        ], "TRANSFERS_READ")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([], "TRANSFERS_READ")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "inventory.items.read"
+        ], "TRANSFERS_READ")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*"
+        ], "TRANSFERS_READ")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "TRANSFERS_READ"
+        ], "inventory.stock.transfer")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "TRANSFERS_READ"
+        ], "inventory.transfer.approve")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "TRANSFERS_CREATE"
+        ], "TRANSFERS_READ")).toBe(false);
+    });
+    it("allows old uppercase role permissions to satisfy canonical dot-style checks", ()=>{
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "READ_ROLES"
+        ], "roles.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "CREATE_USERS"
+        ], "users.create")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "READ_SUPPLIERS"
+        ], "purchases.suppliers.read")).toBe(true);
+    });
+    it("allows canonical dot-style permissions to satisfy older uppercase checks", ()=>{
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "roles.update"
+        ], "UPDATE_ROLES")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "customers.read"
+        ], "READ_CUSTOMERS")).toBe(true);
+    });
+    it("keeps customer order read permission compatible with legacy sales order grants", ()=>{
+        expect((0, _rbacpermissions.isKnownPermission)("customers.orders.read")).toBe(true);
+        expect((0, _rbacpermissions.permissionCandidates)("customers.orders.read")).toEqual(expect.arrayContaining([
+            "customers.orders.read",
+            "READ_SALES_ORDERS"
+        ]));
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "READ_SALES_ORDERS"
+        ], "customers.orders.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "customers.read"
+        ], "customers.orders.read")).toBe(false);
+    });
+    it("does not let wildcard grants bypass high-risk or critical permissions", ()=>{
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*"
+        ], "dashboard.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*"
+        ], "roles.permissions.assign")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*"
+        ], "branch.daily-close.sign")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*"
+        ], "accounting.period.close")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*"
+        ], "pos.receipts.revoke")).toBe(false);
+        expect((0, _rbacpermissions.hasAnyRbacPermission)([
+            "*"
+        ], [
+            "users.delete",
+            "roles.delete"
+        ])).toBe(false);
+        expect((0, _rbacpermissions.hasAllRbacPermissions)([
+            "*"
+        ], [
+            "users.delete",
+            "roles.delete"
+        ])).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*",
+            "roles.permissions.assign"
+        ], "roles.permissions.assign")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*",
+            "branch.daily-close.sign"
+        ], "branch.daily-close.sign")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*",
+            "pos.receipts.revoke"
+        ], "pos.receipts.revoke")).toBe(true);
+    });
+    it("registers branch daily-close sign-off as canonical critical authority", ()=>{
+        expect((0, _rbacpermissions.isKnownPermission)("branch.daily-close.sign")).toBe(true);
+        expect((0, _rbacpermissions.permissionRisk)("branch.daily-close.sign")).toBe("crit");
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "branch.daily-close.sign"
+        ], "branch.daily-close.sign")).toBe(true);
+    });
+    it("fails closed for unknown permission keys", ()=>{
+        expect((0, _rbacpermissions.isKnownPermission)("purchases.orders.receive")).toBe(true);
+        expect((0, _rbacpermissions.isKnownPermission)("pos.receipts.revoke")).toBe(true);
+        expect((0, _rbacpermissions.isKnownPermission)("unknown.module.action")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "unknown.module.action"
+        ], "unknown.module.action")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*"
+        ], "unknown.module.action")).toBe(false);
+    });
+    it("expands stored permissions into effective permission candidates", ()=>{
+        expect((0, _rbacpermissions.expandPermissions)([
+            "ASSIGN_ROLES"
+        ])).toEqual(expect.arrayContaining([
+            "ASSIGN_ROLES",
+            "roles.permissions.assign"
+        ]));
+        expect((0, _rbacpermissions.permissionCandidates)("roles.read")).toEqual(expect.arrayContaining([
+            "roles.read",
+            "READ_ROLES"
+        ]));
+    });
+    it("keeps accounting permissions compatible with legacy finance grants", ()=>{
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "POST_JOURNAL_ENTRIES"
+        ], "accounting.journal.post")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "accounting.reports.read"
+        ], "VIEW_FINANCIAL_REPORTS")).toBe(true);
+    });
+    it("registers missing-proof requests as explicit high-risk accounting authority", ()=>{
+        expect((0, _rbacpermissions.isKnownPermission)("accounting.close.evidence.request")).toBe(true);
+        expect((0, _rbacpermissions.permissionRisk)("accounting.close.evidence.request")).toBe("high");
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "MANAGE_FINANCIAL_CONTROLS"
+        ], "accounting.close.evidence.request")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*"
+        ], "accounting.close.evidence.request")).toBe(false);
+    });
+    it("does not let reconciliation run permission imply certified evidence powers", ()=>{
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "payments.reconciliation.run"
+        ], "payments.reconciliation.import")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "payments.reconciliation.run"
+        ], "payments.reconciliation.sign")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "payments.reconciliation.run"
+        ], "payments.reconciliation.suspense.post")).toBe(false);
+    });
+    it("allows reconciliation read without granting elevated reconciliation operations", ()=>{
+        const elevatedPermissions = [
+            "payments.reconciliation.import",
+            "payments.reconciliation.run",
+            "payments.reconciliation.match",
+            "payments.reconciliation.override",
+            "payments.reconciliation.exception.assign",
+            "payments.reconciliation.exception.resolve",
+            "payments.reconciliation.suspense.propose",
+            "payments.reconciliation.suspense.post",
+            "payments.reconciliation.sign",
+            "payments.reconciliation.certificate.export"
+        ];
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "payments.reconciliation.read"
+        ], "payments.reconciliation.read")).toBe(true);
+        for (const permission of elevatedPermissions){
+            expect((0, _rbacpermissions.hasRbacPermission)([
+                "payments.reconciliation.read"
+            ], permission)).toBe(false);
+        }
+    });
+    it("keeps AP controls compatible with legacy purchasing and supplier payment grants", ()=>{
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "SUPPLIER_PAYABLES_READ"
+        ], "purchasing.ap.invoice.view")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "SUPPLIER_PAYMENTS_MANAGE"
+        ], "purchasing.ap.payment.release")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "MANAGE_FINANCIAL_CONTROLS"
+        ], "purchasing.supplier.bank.approve")).toBe(true);
+    });
+    it("recognizes enterprise sensitive workflow permissions through existing grants", ()=>{
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "ASSIGN_ROLES"
+        ], "admin.role.assign")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "CREATE_USERS"
+        ], "admin.user.invite")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "MANAGE_CASH_TRANSACTIONS"
+        ], "pos.cash.adjust")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PROCESS_REFUNDS"
+        ], "pos.sale.refund")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PROCESS_REFUNDS"
+        ], "pos.sale.void")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "APPROVE_STOCK_ADJUSTMENTS"
+        ], "inventory.adjust.approve")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "APPROVE_STOCK_TRANSFERS"
+        ], "inventory.transfer.approve")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "APPROVE_PURCHASE_ORDERS"
+        ], "purchasing.purchaseOrder.approve")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "SUPPLIER_PAYMENTS_MANAGE"
+        ], "purchasing.payment.record")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PAYROLL_APPROVE"
+        ], "payroll.run.approve")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "FINANCIAL_REPORTS_EXPORT"
+        ], "reports.financial.export")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "VIEW_AUDIT_LOGS"
+        ], "reports.audit.view")).toBe(true);
+    });
+    it("requires the canonical purchase order receiving permission without aliases", ()=>{
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "purchases.orders.receive"
+        ], "purchases.orders.receive")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "RECEIVE_GOODS"
+        ], "purchases.orders.receive")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "po:receive"
+        ], "purchases.orders.receive")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "purchases.orders.receive"
+        ], "po:receive")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "READ_PURCHASE_ORDERS"
+        ], "purchases.orders.receive")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "UPDATE_PURCHASE_ORDERS"
+        ], "purchases.orders.receive")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "APPROVE_PURCHASE_ORDERS"
+        ], "purchases.orders.receive")).toBe(false);
+    });
+    it("keeps payroll controls compatible with legacy payroll and finance grants", ()=>{
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PAYROLL_READ"
+        ], "payroll.command.read")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PAYROLL_REPORTS_READ"
+        ], "payroll.command.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PAYROLL_READ"
+        ], "payroll.payslips.self.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "EMPLOYEE_SALARY_READ"
+        ], "payroll.payslips.self.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PAYROLL_APPROVE"
+        ], "payroll.runs.approve")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PAYROLL_PROCESS"
+        ], "payroll.runs.calculate")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PAYROLL_PROCESS"
+        ], "payroll.payments.request")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PAYROLL_APPROVE"
+        ], "payroll.payments.approve")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "MANAGE_FINANCIAL_CONTROLS"
+        ], "payroll.payments.release")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "MANAGE_FINANCIAL_CONTROLS"
+        ], "payroll.payments.reconcile")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "PAYROLL_APPROVE"
+        ], "payroll.declarations.manage")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "EMPLOYEE_SALARY_READ"
+        ], "payroll.payslips.read")).toBe(true);
+    });
+    it("keeps HRIS people permissions independent from payroll permissions", ()=>{
+        expect((0, _rbacpermissions.isKnownPermission)("hris.self_service.read")).toBe(true);
+        expect((0, _rbacpermissions.isKnownPermission)("hris.self_service.request")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "hris.self_service.read"
+        ], "hris.self_service.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "hris.self_service.read"
+        ], "hris.people.read")).toBe(false);
+        expect((0, _rbacpermissions.isKnownPermission)("hris.people.read")).toBe(true);
+        expect((0, _rbacpermissions.isKnownPermission)("hris.people.manage")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "hris.people.read"
+        ], "hris.people.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "hris.people.read"
+        ], "hris.people.manage")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "payroll.employees.read",
+            "payroll.command.read"
+        ], "hris.people.read")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "hris.people.read"
+        ], "payroll.employees.read")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*"
+        ], "hris.people.read")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*",
+            "hris.people.read"
+        ], "hris.people.read")).toBe(true);
+    });
+    it("keeps legacy role templates aligned with the own-record permission catalog", ()=>{
+        for (const role of [
+            "ADMIN",
+            "MANAGER",
+            "SUPERVISOR",
+            "EMPLOYEE",
+            "CASHIER",
+            "VIEWER"
+        ]){
+            expect(_permissions.ROLE_TEMPLATES[role].permissions).toEqual(expect.arrayContaining([
+                "hris.self_service.read",
+                "hris.self_service.request"
+            ]));
+        }
+        expect(_permissions.PERMISSION_GROUPS.HRIS_PEOPLE_CORE.permissions).toEqual(expect.arrayContaining([
+            "hris.self_service.read",
+            "hris.self_service.request"
+        ]));
+    });
+    it("classifies role mutation permissions as critical", ()=>{
+        expect((0, _rbacpermissions.permissionRisk)("roles.permissions.assign")).toBe("crit");
+    });
+    it("classifies critical accounting and export permissions explicitly", ()=>{
+        expect((0, _rbacpermissions.permissionRisk)("accounting.journal.post")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("POST_JOURNAL_ENTRIES")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("accounting.period.close")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("accounting.exports.create")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("FINANCIAL_REPORTS_EXPORT")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("purchasing.ap.payment.release")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("purchasing.supplier.bank.approve")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("payroll.runs.approve")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("admin.role.assign")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("inventory.adjust.approve")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("reports.financial.export")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("reports.audit.view")).toBe("high");
+        expect((0, _rbacpermissions.permissionRisk)("payroll.payments.release")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("payroll.payments.request")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("payroll.payments.approve")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("payroll.payments.reconcile")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("payroll.declarations.manage")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("hris.self_service.read")).toBe("low");
+        expect((0, _rbacpermissions.permissionRisk)("hris.self_service.request")).toBe("high");
+        expect((0, _rbacpermissions.permissionRisk)("hris.people.read")).toBe("high");
+        expect((0, _rbacpermissions.permissionRisk)("hris.people.manage")).toBe("crit");
+        expect((0, _rbacpermissions.permissionRisk)("pos.receipts.revoke")).toBe("high");
+    });
+    it("requires explicit organization management authority for cross-org resolver permission", ()=>{
+        expect((0, _rbacpermissions.permissionRisk)("system.organization.update")).toBe("high");
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "COMPANY_READ"
+        ], "system.organization.read")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "*"
+        ], "system.organization.update")).toBe(false);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "MANAGE_ORGANIZATION"
+        ], "system.organization.update")).toBe(true);
+        expect((0, _rbacpermissions.hasRbacPermission)([
+            "system.organization.update"
+        ], "system.organization.update")).toBe(true);
+    });
+});
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6XFxvaGFkYSBzYWFzXFxGb2N1c2VkIHByb2plY3RzXFxzdG9xdWlmeVxcbGliXFxzZWN1cml0eVxcX190ZXN0c19fXFxyYmFjLXBlcm1pc3Npb25zLnRlc3QudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgUEVSTUlTU0lPTl9HUk9VUFMsIFJPTEVfVEVNUExBVEVTIH0gZnJvbSBcIkAvbGliL3Blcm1pc3Npb25zXCJcbmltcG9ydCB7XG4gIFBFUk1JU1NJT05fQUxJQVNFUyxcbiAgZXhwYW5kUGVybWlzc2lvbnMsXG4gIGhhc0FsbFJiYWNQZXJtaXNzaW9ucyxcbiAgaGFzQW55UmJhY1Blcm1pc3Npb24sXG4gIGhhc1JiYWNQZXJtaXNzaW9uLFxuICBpc0tub3duUGVybWlzc2lvbixcbiAgcGVybWlzc2lvbkNhbmRpZGF0ZXMsXG4gIHBlcm1pc3Npb25SaXNrLFxufSBmcm9tIFwiQC9saWIvc2VjdXJpdHkvcmJhYy1wZXJtaXNzaW9uc1wiXG5cbmRlc2NyaWJlKFwicmJhYyBwZXJtaXNzaW9uIGNvbXBhdGliaWxpdHlcIiwgKCkgPT4ge1xuICBpdChcInBlcm1pdHMgb25seSBkaXJlY3RseSBkZWNsYXJlZCBjb21wYXRpYmlsaXR5IGJldHdlZW4gY2Fub25pY2FsIG9wZXJhdGlvbnMsIG5ldmVyIHNoYXJlZC1hbGlhcyBlc2NhbGF0aW9uXCIsICgpID0+IHtcbiAgICBjb25zdCB0YWJsZTogUmVjb3JkPHN0cmluZywgcmVhZG9ubHkgc3RyaW5nW10+ID0gUEVSTUlTU0lPTl9BTElBU0VTXG4gICAgY29uc3QgY2Fub25pY2FsID0gT2JqZWN0LmtleXModGFibGUpXG4gICAgZm9yIChjb25zdCBbZ3JhbnRlZCwgYWxpYXNlc10gb2YgT2JqZWN0LmVudHJpZXModGFibGUpKSB7XG4gICAgICBjb25zdCBkaXJlY3QgPSBjYW5vbmljYWwuZmlsdGVyKHJlcXVpcmVkID0+IHJlcXVpcmVkID09PSBncmFudGVkIHx8IGFsaWFzZXMuaW5jbHVkZXMocmVxdWlyZWQpIHx8IHRhYmxlW3JlcXVpcmVkXSEuaW5jbHVkZXMoZ3JhbnRlZCkpXG4gICAgICBleHBlY3QoY2Fub25pY2FsLmZpbHRlcihyZXF1aXJlZCA9PiBoYXNSYmFjUGVybWlzc2lvbihbZ3JhbnRlZF0sIHJlcXVpcmVkKSkpLnRvRXF1YWwoZGlyZWN0KVxuICAgICAgZm9yIChjb25zdCBsZWdhY3kgb2YgYWxpYXNlcykge1xuICAgICAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW2xlZ2FjeV0sIGdyYW50ZWQpKS50b0JlKHRydWUpXG4gICAgICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbZ3JhbnRlZF0sIGxlZ2FjeSkpLnRvQmUodHJ1ZSlcbiAgICAgIH1cbiAgICB9XG4gIH0pXG4gIGl0LmVhY2goW1xuICAgIFtcInBheW1lbnRzLnJlY29uY2lsaWF0aW9uLnJlYWRcIiwgXCJhY2NvdW50aW5nLmNsb3NlLnJlYWRcIl0sXG4gICAgW1wiYWNjb3VudGluZy5jbG9zZS5yZWFkXCIsIFwiZnJhdWQuY2FzZXMubWFuYWdlXCJdLFxuICAgIFtcInJvbGVzLnBlcm1pc3Npb25zLmFzc2lnblwiLCBcInJvbGVzLnBlcm1pc3Npb25zLnJlbW92ZVwiXSxcbiAgICBbXCJwYXlyb2xsLnJ1bnMuY2FsY3VsYXRlXCIsIFwicGF5cm9sbC5wYXltZW50cy5yZXF1ZXN0XCJdLFxuICAgIFtcImFjY291bnRpbmcuY2xvc2UucnVuXCIsIFwicGF5cm9sbC5wYXltZW50cy5yZWxlYXNlXCJdLFxuICBdKShcImRvZXMgbm90IG1hbnVmYWN0dXJlICVzIHNpYmxpbmcgYXV0aG9yaXR5IGZvciAlcyB0aHJvdWdoIGEgc2hhcmVkIGxlZ2FjeSBhbGlhc1wiLCAoZ3JhbnRlZCwgcmVxdWlyZWQpID0+IHtcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW2dyYW50ZWRdLCByZXF1aXJlZCkpLnRvQmUoZmFsc2UpXG4gICAgY29uc3QgZWZmZWN0aXZlID0gZXhwYW5kUGVybWlzc2lvbnMoW2dyYW50ZWRdKVxuICAgIGV4cGVjdChlZmZlY3RpdmUpLnRvRXF1YWwoW2dyYW50ZWRdKVxuICAgIGV4cGVjdChleHBhbmRQZXJtaXNzaW9ucyhlZmZlY3RpdmUpKS50b0VxdWFsKGVmZmVjdGl2ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oZWZmZWN0aXZlLCByZXF1aXJlZCkpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFsuLi5lZmZlY3RpdmUsIHJlcXVpcmVkXSwgcmVxdWlyZWQpKS50b0JlKHRydWUpXG4gIH0pXG5cbiAgaXQoXCJwcmVzZXJ2ZXMgZGlyZWN0bHkgc3RvcmVkIGxlZ2FjeSBncmFudHMgd2l0aG91dCBpbnZlbnRpbmcgb3RoZXIgbGVnYWN5IGdyYW50cyBvbiByZXBlYXRlZCBleHBhbnNpb25cIiwgKCkgPT4ge1xuICAgIGNvbnN0IGVmZmVjdGl2ZSA9IGV4cGFuZFBlcm1pc3Npb25zKFtcIlZJRVdfRklOQU5DSUFMX0FVRElUX1RSQUlMXCJdKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihlZmZlY3RpdmUsIFwiYWNjb3VudGluZy5jbG9zZS5yZWFkXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKGVmZmVjdGl2ZSwgXCJwYXltZW50cy5yZWNvbmNpbGlhdGlvbi5yZWFkXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGVmZmVjdGl2ZSkubm90LnRvQ29udGFpbihcIk1BTkFHRV9GSU5BTkNJQUxfQ09OVFJPTFNcIilcbiAgICBleHBlY3QoZXhwYW5kUGVybWlzc2lvbnMoZWZmZWN0aXZlKSkudG9FcXVhbChlZmZlY3RpdmUpXG4gIH0pXG4gIGl0KFwicmVjb2duaXplcyBleHBsaWNpdCB0cmFuc2Zlci1yZWFkIGdyYW50cyB3aXRob3V0IGdyYW50aW5nIHRyYW5zZmVyIG9wZXJhdGlvbnNcIiwgKCkgPT4ge1xuICAgIGV4cGVjdChpc0tub3duUGVybWlzc2lvbihcIlRSQU5TRkVSU19SRUFEXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGlzS25vd25QZXJtaXNzaW9uKFwiaW52ZW50b3J5LnRyYW5zZmVycy5yZWFkXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIlRSQU5TRkVSU19SRUFEXCJdLCBcImludmVudG9yeS50cmFuc2ZlcnMucmVhZFwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJpbnZlbnRvcnkudHJhbnNmZXJzLnJlYWRcIl0sIFwiVFJBTlNGRVJTX1JFQURcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW10sIFwiVFJBTlNGRVJTX1JFQURcIikpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcImludmVudG9yeS5pdGVtcy5yZWFkXCJdLCBcIlRSQU5TRkVSU19SRUFEXCIpKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCIqXCJdLCBcIlRSQU5TRkVSU19SRUFEXCIpKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJUUkFOU0ZFUlNfUkVBRFwiXSwgXCJpbnZlbnRvcnkuc3RvY2sudHJhbnNmZXJcIikpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIlRSQU5TRkVSU19SRUFEXCJdLCBcImludmVudG9yeS50cmFuc2Zlci5hcHByb3ZlXCIpKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJUUkFOU0ZFUlNfQ1JFQVRFXCJdLCBcIlRSQU5TRkVSU19SRUFEXCIpKS50b0JlKGZhbHNlKVxuICB9KVxuXG4gIGl0KFwiYWxsb3dzIG9sZCB1cHBlcmNhc2Ugcm9sZSBwZXJtaXNzaW9ucyB0byBzYXRpc2Z5IGNhbm9uaWNhbCBkb3Qtc3R5bGUgY2hlY2tzXCIsICgpID0+IHtcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUkVBRF9ST0xFU1wiXSwgXCJyb2xlcy5yZWFkXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIkNSRUFURV9VU0VSU1wiXSwgXCJ1c2Vycy5jcmVhdGVcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUkVBRF9TVVBQTElFUlNcIl0sIFwicHVyY2hhc2VzLnN1cHBsaWVycy5yZWFkXCIpKS50b0JlKHRydWUpXG4gIH0pXG5cbiAgaXQoXCJhbGxvd3MgY2Fub25pY2FsIGRvdC1zdHlsZSBwZXJtaXNzaW9ucyB0byBzYXRpc2Z5IG9sZGVyIHVwcGVyY2FzZSBjaGVja3NcIiwgKCkgPT4ge1xuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJyb2xlcy51cGRhdGVcIl0sIFwiVVBEQVRFX1JPTEVTXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcImN1c3RvbWVycy5yZWFkXCJdLCBcIlJFQURfQ1VTVE9NRVJTXCIpKS50b0JlKHRydWUpXG4gIH0pXG5cbiAgaXQoXCJrZWVwcyBjdXN0b21lciBvcmRlciByZWFkIHBlcm1pc3Npb24gY29tcGF0aWJsZSB3aXRoIGxlZ2FjeSBzYWxlcyBvcmRlciBncmFudHNcIiwgKCkgPT4ge1xuICAgIGV4cGVjdChpc0tub3duUGVybWlzc2lvbihcImN1c3RvbWVycy5vcmRlcnMucmVhZFwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uQ2FuZGlkYXRlcyhcImN1c3RvbWVycy5vcmRlcnMucmVhZFwiKSkudG9FcXVhbChcbiAgICAgIGV4cGVjdC5hcnJheUNvbnRhaW5pbmcoW1wiY3VzdG9tZXJzLm9yZGVycy5yZWFkXCIsIFwiUkVBRF9TQUxFU19PUkRFUlNcIl0pLFxuICAgIClcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUkVBRF9TQUxFU19PUkRFUlNcIl0sIFwiY3VzdG9tZXJzLm9yZGVycy5yZWFkXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcImN1c3RvbWVycy5yZWFkXCJdLCBcImN1c3RvbWVycy5vcmRlcnMucmVhZFwiKSkudG9CZShmYWxzZSlcbiAgfSlcbiAgaXQoXCJkb2VzIG5vdCBsZXQgd2lsZGNhcmQgZ3JhbnRzIGJ5cGFzcyBoaWdoLXJpc2sgb3IgY3JpdGljYWwgcGVybWlzc2lvbnNcIiwgKCkgPT4ge1xuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCIqXCJdLCBcImRhc2hib2FyZC5yZWFkXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIipcIl0sIFwicm9sZXMucGVybWlzc2lvbnMuYXNzaWduXCIpKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCIqXCJdLCBcImJyYW5jaC5kYWlseS1jbG9zZS5zaWduXCIpKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCIqXCJdLCBcImFjY291bnRpbmcucGVyaW9kLmNsb3NlXCIpKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCIqXCJdLCBcInBvcy5yZWNlaXB0cy5yZXZva2VcIikpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGhhc0FueVJiYWNQZXJtaXNzaW9uKFtcIipcIl0sIFtcInVzZXJzLmRlbGV0ZVwiLCBcInJvbGVzLmRlbGV0ZVwiXSkpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGhhc0FsbFJiYWNQZXJtaXNzaW9ucyhbXCIqXCJdLCBbXCJ1c2Vycy5kZWxldGVcIiwgXCJyb2xlcy5kZWxldGVcIl0pKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCIqXCIsIFwicm9sZXMucGVybWlzc2lvbnMuYXNzaWduXCJdLCBcInJvbGVzLnBlcm1pc3Npb25zLmFzc2lnblwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCIqXCIsIFwiYnJhbmNoLmRhaWx5LWNsb3NlLnNpZ25cIl0sIFwiYnJhbmNoLmRhaWx5LWNsb3NlLnNpZ25cIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiKlwiLCBcInBvcy5yZWNlaXB0cy5yZXZva2VcIl0sIFwicG9zLnJlY2VpcHRzLnJldm9rZVwiKSkudG9CZSh0cnVlKVxuICB9KVxuXG4gIGl0KFwicmVnaXN0ZXJzIGJyYW5jaCBkYWlseS1jbG9zZSBzaWduLW9mZiBhcyBjYW5vbmljYWwgY3JpdGljYWwgYXV0aG9yaXR5XCIsICgpID0+IHtcbiAgICBleHBlY3QoaXNLbm93blBlcm1pc3Npb24oXCJicmFuY2guZGFpbHktY2xvc2Uuc2lnblwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcImJyYW5jaC5kYWlseS1jbG9zZS5zaWduXCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJicmFuY2guZGFpbHktY2xvc2Uuc2lnblwiXSwgXCJicmFuY2guZGFpbHktY2xvc2Uuc2lnblwiKSkudG9CZSh0cnVlKVxuICB9KVxuXG4gIGl0KFwiZmFpbHMgY2xvc2VkIGZvciB1bmtub3duIHBlcm1pc3Npb24ga2V5c1wiLCAoKSA9PiB7XG4gICAgZXhwZWN0KGlzS25vd25QZXJtaXNzaW9uKFwicHVyY2hhc2VzLm9yZGVycy5yZWNlaXZlXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGlzS25vd25QZXJtaXNzaW9uKFwicG9zLnJlY2VpcHRzLnJldm9rZVwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChpc0tub3duUGVybWlzc2lvbihcInVua25vd24ubW9kdWxlLmFjdGlvblwiKSkudG9CZShmYWxzZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1widW5rbm93bi5tb2R1bGUuYWN0aW9uXCJdLCBcInVua25vd24ubW9kdWxlLmFjdGlvblwiKSkudG9CZShmYWxzZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiKlwiXSwgXCJ1bmtub3duLm1vZHVsZS5hY3Rpb25cIikpLnRvQmUoZmFsc2UpXG4gIH0pXG5cbiAgaXQoXCJleHBhbmRzIHN0b3JlZCBwZXJtaXNzaW9ucyBpbnRvIGVmZmVjdGl2ZSBwZXJtaXNzaW9uIGNhbmRpZGF0ZXNcIiwgKCkgPT4ge1xuICAgIGV4cGVjdChleHBhbmRQZXJtaXNzaW9ucyhbXCJBU1NJR05fUk9MRVNcIl0pKS50b0VxdWFsKFxuICAgICAgZXhwZWN0LmFycmF5Q29udGFpbmluZyhbXCJBU1NJR05fUk9MRVNcIiwgXCJyb2xlcy5wZXJtaXNzaW9ucy5hc3NpZ25cIl0pLFxuICAgIClcbiAgICBleHBlY3QocGVybWlzc2lvbkNhbmRpZGF0ZXMoXCJyb2xlcy5yZWFkXCIpKS50b0VxdWFsKFxuICAgICAgZXhwZWN0LmFycmF5Q29udGFpbmluZyhbXCJyb2xlcy5yZWFkXCIsIFwiUkVBRF9ST0xFU1wiXSksXG4gICAgKVxuICB9KVxuXG4gIGl0KFwia2VlcHMgYWNjb3VudGluZyBwZXJtaXNzaW9ucyBjb21wYXRpYmxlIHdpdGggbGVnYWN5IGZpbmFuY2UgZ3JhbnRzXCIsICgpID0+IHtcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUE9TVF9KT1VSTkFMX0VOVFJJRVNcIl0sIFwiYWNjb3VudGluZy5qb3VybmFsLnBvc3RcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiYWNjb3VudGluZy5yZXBvcnRzLnJlYWRcIl0sIFwiVklFV19GSU5BTkNJQUxfUkVQT1JUU1wiKSkudG9CZSh0cnVlKVxuICB9KVxuXG4gIGl0KFwicmVnaXN0ZXJzIG1pc3NpbmctcHJvb2YgcmVxdWVzdHMgYXMgZXhwbGljaXQgaGlnaC1yaXNrIGFjY291bnRpbmcgYXV0aG9yaXR5XCIsICgpID0+IHtcbiAgICBleHBlY3QoaXNLbm93blBlcm1pc3Npb24oXCJhY2NvdW50aW5nLmNsb3NlLmV2aWRlbmNlLnJlcXVlc3RcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QocGVybWlzc2lvblJpc2soXCJhY2NvdW50aW5nLmNsb3NlLmV2aWRlbmNlLnJlcXVlc3RcIikpLnRvQmUoXCJoaWdoXCIpXG4gICAgZXhwZWN0KFxuICAgICAgaGFzUmJhY1Blcm1pc3Npb24oXG4gICAgICAgIFtcIk1BTkFHRV9GSU5BTkNJQUxfQ09OVFJPTFNcIl0sXG4gICAgICAgIFwiYWNjb3VudGluZy5jbG9zZS5ldmlkZW5jZS5yZXF1ZXN0XCIsXG4gICAgICApLFxuICAgICkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChcbiAgICAgIGhhc1JiYWNQZXJtaXNzaW9uKFtcIipcIl0sIFwiYWNjb3VudGluZy5jbG9zZS5ldmlkZW5jZS5yZXF1ZXN0XCIpLFxuICAgICkudG9CZShmYWxzZSlcbiAgfSlcblxuICBpdChcImRvZXMgbm90IGxldCByZWNvbmNpbGlhdGlvbiBydW4gcGVybWlzc2lvbiBpbXBseSBjZXJ0aWZpZWQgZXZpZGVuY2UgcG93ZXJzXCIsICgpID0+IHtcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wicGF5bWVudHMucmVjb25jaWxpYXRpb24ucnVuXCJdLCBcInBheW1lbnRzLnJlY29uY2lsaWF0aW9uLmltcG9ydFwiKSkudG9CZShmYWxzZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wicGF5bWVudHMucmVjb25jaWxpYXRpb24ucnVuXCJdLCBcInBheW1lbnRzLnJlY29uY2lsaWF0aW9uLnNpZ25cIikpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcInBheW1lbnRzLnJlY29uY2lsaWF0aW9uLnJ1blwiXSwgXCJwYXltZW50cy5yZWNvbmNpbGlhdGlvbi5zdXNwZW5zZS5wb3N0XCIpKS50b0JlKGZhbHNlKVxuICB9KVxuXG4gIGl0KFwiYWxsb3dzIHJlY29uY2lsaWF0aW9uIHJlYWQgd2l0aG91dCBncmFudGluZyBlbGV2YXRlZCByZWNvbmNpbGlhdGlvbiBvcGVyYXRpb25zXCIsICgpID0+IHtcbiAgICBjb25zdCBlbGV2YXRlZFBlcm1pc3Npb25zID0gW1xuICAgICAgXCJwYXltZW50cy5yZWNvbmNpbGlhdGlvbi5pbXBvcnRcIixcbiAgICAgIFwicGF5bWVudHMucmVjb25jaWxpYXRpb24ucnVuXCIsXG4gICAgICBcInBheW1lbnRzLnJlY29uY2lsaWF0aW9uLm1hdGNoXCIsXG4gICAgICBcInBheW1lbnRzLnJlY29uY2lsaWF0aW9uLm92ZXJyaWRlXCIsXG4gICAgICBcInBheW1lbnRzLnJlY29uY2lsaWF0aW9uLmV4Y2VwdGlvbi5hc3NpZ25cIixcbiAgICAgIFwicGF5bWVudHMucmVjb25jaWxpYXRpb24uZXhjZXB0aW9uLnJlc29sdmVcIixcbiAgICAgIFwicGF5bWVudHMucmVjb25jaWxpYXRpb24uc3VzcGVuc2UucHJvcG9zZVwiLFxuICAgICAgXCJwYXltZW50cy5yZWNvbmNpbGlhdGlvbi5zdXNwZW5zZS5wb3N0XCIsXG4gICAgICBcInBheW1lbnRzLnJlY29uY2lsaWF0aW9uLnNpZ25cIixcbiAgICAgIFwicGF5bWVudHMucmVjb25jaWxpYXRpb24uY2VydGlmaWNhdGUuZXhwb3J0XCIsXG4gICAgXVxuXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcInBheW1lbnRzLnJlY29uY2lsaWF0aW9uLnJlYWRcIl0sIFwicGF5bWVudHMucmVjb25jaWxpYXRpb24ucmVhZFwiKSkudG9CZSh0cnVlKVxuICAgIGZvciAoY29uc3QgcGVybWlzc2lvbiBvZiBlbGV2YXRlZFBlcm1pc3Npb25zKSB7XG4gICAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wicGF5bWVudHMucmVjb25jaWxpYXRpb24ucmVhZFwiXSwgcGVybWlzc2lvbikpLnRvQmUoZmFsc2UpXG4gICAgfVxuICB9KVxuICBpdChcImtlZXBzIEFQIGNvbnRyb2xzIGNvbXBhdGlibGUgd2l0aCBsZWdhY3kgcHVyY2hhc2luZyBhbmQgc3VwcGxpZXIgcGF5bWVudCBncmFudHNcIiwgKCkgPT4ge1xuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJTVVBQTElFUl9QQVlBQkxFU19SRUFEXCJdLCBcInB1cmNoYXNpbmcuYXAuaW52b2ljZS52aWV3XCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIlNVUFBMSUVSX1BBWU1FTlRTX01BTkFHRVwiXSwgXCJwdXJjaGFzaW5nLmFwLnBheW1lbnQucmVsZWFzZVwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJNQU5BR0VfRklOQU5DSUFMX0NPTlRST0xTXCJdLCBcInB1cmNoYXNpbmcuc3VwcGxpZXIuYmFuay5hcHByb3ZlXCIpKS50b0JlKHRydWUpXG4gIH0pXG5cbiAgaXQoXCJyZWNvZ25pemVzIGVudGVycHJpc2Ugc2Vuc2l0aXZlIHdvcmtmbG93IHBlcm1pc3Npb25zIHRocm91Z2ggZXhpc3RpbmcgZ3JhbnRzXCIsICgpID0+IHtcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiQVNTSUdOX1JPTEVTXCJdLCBcImFkbWluLnJvbGUuYXNzaWduXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIkNSRUFURV9VU0VSU1wiXSwgXCJhZG1pbi51c2VyLmludml0ZVwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJNQU5BR0VfQ0FTSF9UUkFOU0FDVElPTlNcIl0sIFwicG9zLmNhc2guYWRqdXN0XCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIlBST0NFU1NfUkVGVU5EU1wiXSwgXCJwb3Muc2FsZS5yZWZ1bmRcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUFJPQ0VTU19SRUZVTkRTXCJdLCBcInBvcy5zYWxlLnZvaWRcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiQVBQUk9WRV9TVE9DS19BREpVU1RNRU5UU1wiXSwgXCJpbnZlbnRvcnkuYWRqdXN0LmFwcHJvdmVcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiQVBQUk9WRV9TVE9DS19UUkFOU0ZFUlNcIl0sIFwiaW52ZW50b3J5LnRyYW5zZmVyLmFwcHJvdmVcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiQVBQUk9WRV9QVVJDSEFTRV9PUkRFUlNcIl0sIFwicHVyY2hhc2luZy5wdXJjaGFzZU9yZGVyLmFwcHJvdmVcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiU1VQUExJRVJfUEFZTUVOVFNfTUFOQUdFXCJdLCBcInB1cmNoYXNpbmcucGF5bWVudC5yZWNvcmRcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUEFZUk9MTF9BUFBST1ZFXCJdLCBcInBheXJvbGwucnVuLmFwcHJvdmVcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiRklOQU5DSUFMX1JFUE9SVFNfRVhQT1JUXCJdLCBcInJlcG9ydHMuZmluYW5jaWFsLmV4cG9ydFwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJWSUVXX0FVRElUX0xPR1NcIl0sIFwicmVwb3J0cy5hdWRpdC52aWV3XCIpKS50b0JlKHRydWUpXG4gIH0pXG5cbiAgaXQoXCJyZXF1aXJlcyB0aGUgY2Fub25pY2FsIHB1cmNoYXNlIG9yZGVyIHJlY2VpdmluZyBwZXJtaXNzaW9uIHdpdGhvdXQgYWxpYXNlc1wiLCAoKSA9PiB7XG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcInB1cmNoYXNlcy5vcmRlcnMucmVjZWl2ZVwiXSwgXCJwdXJjaGFzZXMub3JkZXJzLnJlY2VpdmVcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUkVDRUlWRV9HT09EU1wiXSwgXCJwdXJjaGFzZXMub3JkZXJzLnJlY2VpdmVcIikpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcInBvOnJlY2VpdmVcIl0sIFwicHVyY2hhc2VzLm9yZGVycy5yZWNlaXZlXCIpKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJwdXJjaGFzZXMub3JkZXJzLnJlY2VpdmVcIl0sIFwicG86cmVjZWl2ZVwiKSkudG9CZShmYWxzZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUkVBRF9QVVJDSEFTRV9PUkRFUlNcIl0sIFwicHVyY2hhc2VzLm9yZGVycy5yZWNlaXZlXCIpKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJVUERBVEVfUFVSQ0hBU0VfT1JERVJTXCJdLCBcInB1cmNoYXNlcy5vcmRlcnMucmVjZWl2ZVwiKSkudG9CZShmYWxzZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiQVBQUk9WRV9QVVJDSEFTRV9PUkRFUlNcIl0sIFwicHVyY2hhc2VzLm9yZGVycy5yZWNlaXZlXCIpKS50b0JlKGZhbHNlKVxuICB9KVxuXG4gIGl0KFwia2VlcHMgcGF5cm9sbCBjb250cm9scyBjb21wYXRpYmxlIHdpdGggbGVnYWN5IHBheXJvbGwgYW5kIGZpbmFuY2UgZ3JhbnRzXCIsICgpID0+IHtcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUEFZUk9MTF9SRUFEXCJdLCBcInBheXJvbGwuY29tbWFuZC5yZWFkXCIpKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJQQVlST0xMX1JFUE9SVFNfUkVBRFwiXSwgXCJwYXlyb2xsLmNvbW1hbmQucmVhZFwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJQQVlST0xMX1JFQURcIl0sIFwicGF5cm9sbC5wYXlzbGlwcy5zZWxmLnJlYWRcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiRU1QTE9ZRUVfU0FMQVJZX1JFQURcIl0sIFwicGF5cm9sbC5wYXlzbGlwcy5zZWxmLnJlYWRcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUEFZUk9MTF9BUFBST1ZFXCJdLCBcInBheXJvbGwucnVucy5hcHByb3ZlXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIlBBWVJPTExfUFJPQ0VTU1wiXSwgXCJwYXlyb2xsLnJ1bnMuY2FsY3VsYXRlXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIlBBWVJPTExfUFJPQ0VTU1wiXSwgXCJwYXlyb2xsLnBheW1lbnRzLnJlcXVlc3RcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiUEFZUk9MTF9BUFBST1ZFXCJdLCBcInBheXJvbGwucGF5bWVudHMuYXBwcm92ZVwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJNQU5BR0VfRklOQU5DSUFMX0NPTlRST0xTXCJdLCBcInBheXJvbGwucGF5bWVudHMucmVsZWFzZVwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJNQU5BR0VfRklOQU5DSUFMX0NPTlRST0xTXCJdLCBcInBheXJvbGwucGF5bWVudHMucmVjb25jaWxlXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIlBBWVJPTExfQVBQUk9WRVwiXSwgXCJwYXlyb2xsLmRlY2xhcmF0aW9ucy5tYW5hZ2VcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiRU1QTE9ZRUVfU0FMQVJZX1JFQURcIl0sIFwicGF5cm9sbC5wYXlzbGlwcy5yZWFkXCIpKS50b0JlKHRydWUpXG4gIH0pXG5cbiAgaXQoXCJrZWVwcyBIUklTIHBlb3BsZSBwZXJtaXNzaW9ucyBpbmRlcGVuZGVudCBmcm9tIHBheXJvbGwgcGVybWlzc2lvbnNcIiwgKCkgPT4ge1xuICAgIGV4cGVjdChpc0tub3duUGVybWlzc2lvbihcImhyaXMuc2VsZl9zZXJ2aWNlLnJlYWRcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaXNLbm93blBlcm1pc3Npb24oXCJocmlzLnNlbGZfc2VydmljZS5yZXF1ZXN0XCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcImhyaXMuc2VsZl9zZXJ2aWNlLnJlYWRcIl0sIFwiaHJpcy5zZWxmX3NlcnZpY2UucmVhZFwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJocmlzLnNlbGZfc2VydmljZS5yZWFkXCJdLCBcImhyaXMucGVvcGxlLnJlYWRcIikpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGlzS25vd25QZXJtaXNzaW9uKFwiaHJpcy5wZW9wbGUucmVhZFwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChpc0tub3duUGVybWlzc2lvbihcImhyaXMucGVvcGxlLm1hbmFnZVwiKSkudG9CZSh0cnVlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJocmlzLnBlb3BsZS5yZWFkXCJdLCBcImhyaXMucGVvcGxlLnJlYWRcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiaHJpcy5wZW9wbGUucmVhZFwiXSwgXCJocmlzLnBlb3BsZS5tYW5hZ2VcIikpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcInBheXJvbGwuZW1wbG95ZWVzLnJlYWRcIiwgXCJwYXlyb2xsLmNvbW1hbmQucmVhZFwiXSwgXCJocmlzLnBlb3BsZS5yZWFkXCIpKS50b0JlKGZhbHNlKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJocmlzLnBlb3BsZS5yZWFkXCJdLCBcInBheXJvbGwuZW1wbG95ZWVzLnJlYWRcIikpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIipcIl0sIFwiaHJpcy5wZW9wbGUucmVhZFwiKSkudG9CZShmYWxzZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wiKlwiLCBcImhyaXMucGVvcGxlLnJlYWRcIl0sIFwiaHJpcy5wZW9wbGUucmVhZFwiKSkudG9CZSh0cnVlKVxuICB9KVxuXG4gIGl0KFwia2VlcHMgbGVnYWN5IHJvbGUgdGVtcGxhdGVzIGFsaWduZWQgd2l0aCB0aGUgb3duLXJlY29yZCBwZXJtaXNzaW9uIGNhdGFsb2dcIiwgKCkgPT4ge1xuICAgIGZvciAoY29uc3Qgcm9sZSBvZiBbXCJBRE1JTlwiLCBcIk1BTkFHRVJcIiwgXCJTVVBFUlZJU09SXCIsIFwiRU1QTE9ZRUVcIiwgXCJDQVNISUVSXCIsIFwiVklFV0VSXCJdIGFzIGNvbnN0KSB7XG4gICAgICBleHBlY3QoUk9MRV9URU1QTEFURVNbcm9sZV0ucGVybWlzc2lvbnMpLnRvRXF1YWwoZXhwZWN0LmFycmF5Q29udGFpbmluZyhbXG4gICAgICAgIFwiaHJpcy5zZWxmX3NlcnZpY2UucmVhZFwiLFxuICAgICAgICBcImhyaXMuc2VsZl9zZXJ2aWNlLnJlcXVlc3RcIixcbiAgICAgIF0pKVxuICAgIH1cbiAgICBleHBlY3QoUEVSTUlTU0lPTl9HUk9VUFMuSFJJU19QRU9QTEVfQ09SRS5wZXJtaXNzaW9ucykudG9FcXVhbChleHBlY3QuYXJyYXlDb250YWluaW5nKFtcbiAgICAgIFwiaHJpcy5zZWxmX3NlcnZpY2UucmVhZFwiLFxuICAgICAgXCJocmlzLnNlbGZfc2VydmljZS5yZXF1ZXN0XCIsXG4gICAgXSkpXG4gIH0pXG5cbiAgaXQoXCJjbGFzc2lmaWVzIHJvbGUgbXV0YXRpb24gcGVybWlzc2lvbnMgYXMgY3JpdGljYWxcIiwgKCkgPT4ge1xuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcInJvbGVzLnBlcm1pc3Npb25zLmFzc2lnblwiKSkudG9CZShcImNyaXRcIilcbiAgfSlcblxuICBpdChcImNsYXNzaWZpZXMgY3JpdGljYWwgYWNjb3VudGluZyBhbmQgZXhwb3J0IHBlcm1pc3Npb25zIGV4cGxpY2l0bHlcIiwgKCkgPT4ge1xuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcImFjY291bnRpbmcuam91cm5hbC5wb3N0XCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcIlBPU1RfSk9VUk5BTF9FTlRSSUVTXCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcImFjY291bnRpbmcucGVyaW9kLmNsb3NlXCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcImFjY291bnRpbmcuZXhwb3J0cy5jcmVhdGVcIikpLnRvQmUoXCJjcml0XCIpXG4gICAgZXhwZWN0KHBlcm1pc3Npb25SaXNrKFwiRklOQU5DSUFMX1JFUE9SVFNfRVhQT1JUXCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcInB1cmNoYXNpbmcuYXAucGF5bWVudC5yZWxlYXNlXCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcInB1cmNoYXNpbmcuc3VwcGxpZXIuYmFuay5hcHByb3ZlXCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcInBheXJvbGwucnVucy5hcHByb3ZlXCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcImFkbWluLnJvbGUuYXNzaWduXCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcImludmVudG9yeS5hZGp1c3QuYXBwcm92ZVwiKSkudG9CZShcImNyaXRcIilcbiAgICBleHBlY3QocGVybWlzc2lvblJpc2soXCJyZXBvcnRzLmZpbmFuY2lhbC5leHBvcnRcIikpLnRvQmUoXCJjcml0XCIpXG4gICAgZXhwZWN0KHBlcm1pc3Npb25SaXNrKFwicmVwb3J0cy5hdWRpdC52aWV3XCIpKS50b0JlKFwiaGlnaFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcInBheXJvbGwucGF5bWVudHMucmVsZWFzZVwiKSkudG9CZShcImNyaXRcIilcbiAgICBleHBlY3QocGVybWlzc2lvblJpc2soXCJwYXlyb2xsLnBheW1lbnRzLnJlcXVlc3RcIikpLnRvQmUoXCJjcml0XCIpXG4gICAgZXhwZWN0KHBlcm1pc3Npb25SaXNrKFwicGF5cm9sbC5wYXltZW50cy5hcHByb3ZlXCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcInBheXJvbGwucGF5bWVudHMucmVjb25jaWxlXCIpKS50b0JlKFwiY3JpdFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcInBheXJvbGwuZGVjbGFyYXRpb25zLm1hbmFnZVwiKSkudG9CZShcImNyaXRcIilcbiAgICBleHBlY3QocGVybWlzc2lvblJpc2soXCJocmlzLnNlbGZfc2VydmljZS5yZWFkXCIpKS50b0JlKFwibG93XCIpXG4gICAgZXhwZWN0KHBlcm1pc3Npb25SaXNrKFwiaHJpcy5zZWxmX3NlcnZpY2UucmVxdWVzdFwiKSkudG9CZShcImhpZ2hcIilcbiAgICBleHBlY3QocGVybWlzc2lvblJpc2soXCJocmlzLnBlb3BsZS5yZWFkXCIpKS50b0JlKFwiaGlnaFwiKVxuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcImhyaXMucGVvcGxlLm1hbmFnZVwiKSkudG9CZShcImNyaXRcIilcbiAgICBleHBlY3QocGVybWlzc2lvblJpc2soXCJwb3MucmVjZWlwdHMucmV2b2tlXCIpKS50b0JlKFwiaGlnaFwiKVxuICB9KVxuICBpdChcInJlcXVpcmVzIGV4cGxpY2l0IG9yZ2FuaXphdGlvbiBtYW5hZ2VtZW50IGF1dGhvcml0eSBmb3IgY3Jvc3Mtb3JnIHJlc29sdmVyIHBlcm1pc3Npb25cIiwgKCkgPT4ge1xuICAgIGV4cGVjdChwZXJtaXNzaW9uUmlzayhcInN5c3RlbS5vcmdhbml6YXRpb24udXBkYXRlXCIpKS50b0JlKFwiaGlnaFwiKVxuICAgIGV4cGVjdChoYXNSYmFjUGVybWlzc2lvbihbXCJDT01QQU5ZX1JFQURcIl0sIFwic3lzdGVtLm9yZ2FuaXphdGlvbi5yZWFkXCIpKS50b0JlKHRydWUpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIipcIl0sIFwic3lzdGVtLm9yZ2FuaXphdGlvbi51cGRhdGVcIikpLnRvQmUoZmFsc2UpXG4gICAgZXhwZWN0KGhhc1JiYWNQZXJtaXNzaW9uKFtcIk1BTkFHRV9PUkdBTklaQVRJT05cIl0sIFwic3lzdGVtLm9yZ2FuaXphdGlvbi51cGRhdGVcIikpLnRvQmUodHJ1ZSlcbiAgICBleHBlY3QoaGFzUmJhY1Blcm1pc3Npb24oW1wic3lzdGVtLm9yZ2FuaXphdGlvbi51cGRhdGVcIl0sIFwic3lzdGVtLm9yZ2FuaXphdGlvbi51cGRhdGVcIikpLnRvQmUodHJ1ZSlcbiAgfSlcbn0pXG4iXSwibmFtZXMiOlsiZGVzY3JpYmUiLCJpdCIsInRhYmxlIiwiUEVSTUlTU0lPTl9BTElBU0VTIiwiY2Fub25pY2FsIiwiT2JqZWN0Iiwia2V5cyIsImdyYW50ZWQiLCJhbGlhc2VzIiwiZW50cmllcyIsImRpcmVjdCIsImZpbHRlciIsInJlcXVpcmVkIiwiaW5jbHVkZXMiLCJleHBlY3QiLCJoYXNSYmFjUGVybWlzc2lvbiIsInRvRXF1YWwiLCJsZWdhY3kiLCJ0b0JlIiwiZWFjaCIsImVmZmVjdGl2ZSIsImV4cGFuZFBlcm1pc3Npb25zIiwibm90IiwidG9Db250YWluIiwiaXNLbm93blBlcm1pc3Npb24iLCJwZXJtaXNzaW9uQ2FuZGlkYXRlcyIsImFycmF5Q29udGFpbmluZyIsImhhc0FueVJiYWNQZXJtaXNzaW9uIiwiaGFzQWxsUmJhY1Blcm1pc3Npb25zIiwicGVybWlzc2lvblJpc2siLCJlbGV2YXRlZFBlcm1pc3Npb25zIiwicGVybWlzc2lvbiIsInJvbGUiLCJST0xFX1RFTVBMQVRFUyIsInBlcm1pc3Npb25zIiwiUEVSTUlTU0lPTl9HUk9VUFMiLCJIUklTX1BFT1BMRV9DT1JFIl0sIm1hcHBpbmdzIjoiOzs7OzZCQUFrRDtpQ0FVM0M7QUFFUEEsU0FBUyxpQ0FBaUM7SUFDeENDLEdBQUcsNEdBQTRHO1FBQzdHLE1BQU1DLFFBQTJDQyxtQ0FBa0I7UUFDbkUsTUFBTUMsWUFBWUMsT0FBT0MsSUFBSSxDQUFDSjtRQUM5QixLQUFLLE1BQU0sQ0FBQ0ssU0FBU0MsUUFBUSxJQUFJSCxPQUFPSSxPQUFPLENBQUNQLE9BQVE7WUFDdEQsTUFBTVEsU0FBU04sVUFBVU8sTUFBTSxDQUFDQyxDQUFBQSxXQUFZQSxhQUFhTCxXQUFXQyxRQUFRSyxRQUFRLENBQUNELGFBQWFWLEtBQUssQ0FBQ1UsU0FBUyxDQUFFQyxRQUFRLENBQUNOO1lBQzVITyxPQUFPVixVQUFVTyxNQUFNLENBQUNDLENBQUFBLFdBQVlHLElBQUFBLGtDQUFpQixFQUFDO29CQUFDUjtpQkFBUSxFQUFFSyxZQUFZSSxPQUFPLENBQUNOO1lBQ3JGLEtBQUssTUFBTU8sVUFBVVQsUUFBUztnQkFDNUJNLE9BQU9DLElBQUFBLGtDQUFpQixFQUFDO29CQUFDRTtpQkFBTyxFQUFFVixVQUFVVyxJQUFJLENBQUM7Z0JBQ2xESixPQUFPQyxJQUFBQSxrQ0FBaUIsRUFBQztvQkFBQ1I7aUJBQVEsRUFBRVUsU0FBU0MsSUFBSSxDQUFDO1lBQ3BEO1FBQ0Y7SUFDRjtJQUNBakIsR0FBR2tCLElBQUksQ0FBQztRQUNOO1lBQUM7WUFBZ0M7U0FBd0I7UUFDekQ7WUFBQztZQUF5QjtTQUFxQjtRQUMvQztZQUFDO1lBQTRCO1NBQTJCO1FBQ3hEO1lBQUM7WUFBMEI7U0FBMkI7UUFDdEQ7WUFBQztZQUF3QjtTQUEyQjtLQUNy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

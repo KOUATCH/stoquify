@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T15:27:32.817Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Six pure synthetic filesystem verifier tests only",
+  "files": [
+    {
+      "path": "verify-private-metadata-exclusion.cjs",
+      "sha256": "4ebc6034ef45760738f686de16410665ec3fa7f1be52567a311ec13238630da8"
+    },
+    {
+      "path": "verify-private-metadata-exclusion.test.cjs",
+      "sha256": "006a138c7ea9e357292abc480b77b3657dba30d136feacfda8e731dd696d1244"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r3\\verify-private-metadata-exclusion.test.cjs"
+  ],
+  "review": [
+    "Only built-in modules and the inspected helper; no application/database/provider import or environment file read.",
+    "Creates one uniquely named owned temporary directory per synthetic case; verifies realpath, parent and prefix before recursive cleanup. No external referenced file is opened.",
+    "Canonical slash-only relative docs paths and resolved/realpath containment reject Windows traversal before any metadata read.",
+    "Tests cover positive exclusion proof, renamed whole-file metadata/fixture digest detection, trace reference rejection, source-hash mismatch and backslash traversal.",
+    "Result labels accurately limit claims to exact whole-file hashes and path/trace absence; no arbitrary embedded-content claim.",
+    "Current source syntax checks passed. Actual test outcome and eventual actual artifact verification remain separate."
+  ],
+  "expectedTests": 6,
+  "qualificationPassed": false
+}

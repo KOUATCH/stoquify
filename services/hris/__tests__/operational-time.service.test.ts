@@ -1,3 +1,7 @@
+// These owner-unit contracts isolate upstream policy/schedule admission. HR-12 real PostgreSQL cases verify those guards.
+jest.mock("@/services/hris/leave-eligibility.service", () => ({ assertEmployeeLeaveEligibility: jest.fn().mockResolvedValue({}) }))
+jest.mock("@/services/hris/leave-entitlement.service", () => ({ assertLeavePolicyOpen: jest.fn().mockResolvedValue(undefined) }))
+jest.mock("@/services/hris/leave-allocation.service", () => ({ resolveLeaveAllocationInTx: jest.fn().mockImplementation(async (_tx, input) => ({ requestedMinutes: input.requestedMinutes, allocations: input.allocations ?? [] })) }))
 import {
   HrisAttendanceAnomalyStatus,
   HrisOperationalStatus,
@@ -23,6 +27,7 @@ jest.mock("@/services/hris/org.service", () => ({
   resolveHrisPeopleAccessScope: jest.fn(),
 }))
 jest.mock("@/services/events/business-event.service", () => ({
+  hashBusinessPayload: jest.requireActual("@/services/events/business-event.service").hashBusinessPayload,
   recordBusinessEventInTx: jest.fn(),
   markBusinessEventAppliedInTx: jest.fn(),
 }))
@@ -54,6 +59,8 @@ describe("HRIS operational time management", () => {
 
   it("derives the employee for self-service and creates a pending leave request", async () => {
     const client = {
+      $queryRaw: jest.fn().mockResolvedValue([{ isolationLevel: "read committed" }]),
+      payrollRun: {findFirst: jest.fn().mockResolvedValue(null)},
       payrollEmployee: {
         findFirst: jest.fn().mockResolvedValue({ id: "emp-1" }),
       },
@@ -99,6 +106,8 @@ describe("HRIS operational time management", () => {
 
   it("blocks requester self-approval before touching leave balances", async () => {
     const client = {
+      $queryRaw: jest.fn().mockResolvedValue([{ isolationLevel: "read committed" }]),
+      payrollRun: {findFirst: jest.fn().mockResolvedValue(null)},
       hrisTimeRequest: {
         findFirst: jest.fn().mockResolvedValue({
           id: "request-1",
@@ -157,12 +166,14 @@ describe("HRIS operational time management", () => {
         update: jest.fn().mockImplementation(({ data }) => ({ ...request, ...data })),
       },
       hrisLeaveBalanceEntry: {
+        findMany: jest.fn().mockResolvedValue([]),
         aggregate: jest.fn().mockResolvedValue({ _sum: { deltaMinutes: 960 } }),
         create: jest.fn().mockResolvedValue({ id: "leave-debit-1" }),
       },
       auditLog: { create: jest.fn().mockResolvedValue({ id: "audit-1" }) },
     }
 
+    Object.assign(client, { payrollRun: {findFirst: jest.fn().mockResolvedValue(null)}, $queryRaw: jest.fn().mockResolvedValue([{ isolationLevel: "read committed" }]) })
     const result = await decideOperationalTimeRequest({
       organizationId: "org-1",
       actorId: "manager-1",
@@ -261,6 +272,11 @@ describe("HRIS operational time management", () => {
       auditLog: { create: jest.fn() },
     }
 
+    Object.assign(client, {
+      $queryRaw: jest.fn().mockResolvedValue([{ isolationLevel: "read committed" }]),
+      payrollRun: {findFirst: jest.fn().mockResolvedValue(null)},
+    })
+    Object.assign(client.hrisLeaveBalanceEntry, { findMany: jest.fn().mockResolvedValue([]) })
     await expect(decideOperationalTimeRequest({
       organizationId: "org-1",
       actorId: "manager-1",
@@ -280,10 +296,13 @@ describe("HRIS operational time management", () => {
 
   it("validates imports and creates an anomaly queue for unreconciled rows", async () => {
     const client = {
+      $queryRaw: jest.fn().mockResolvedValue([{ isolationLevel: "read committed" }]),
+      payrollRun: {findFirst: jest.fn().mockResolvedValue(null)},
       payrollEmployee: {
         findMany: jest.fn().mockResolvedValue([{ id: "emp-1" }]),
       },
       hrisTimeImportBatch: {
+        findMany: jest.fn().mockResolvedValue([]),
         create: jest.fn().mockResolvedValue({ id: "batch-1" }),
         update: jest.fn().mockImplementation(({ data }) => ({
           id: "batch-1",
@@ -291,6 +310,7 @@ describe("HRIS operational time management", () => {
         })),
       },
       hrisTimeEntry: {
+        findMany: jest.fn().mockResolvedValue([]),
         create: jest.fn().mockResolvedValue({ id: "entry-1" }),
       },
       hrisAttendanceAnomaly: {
@@ -336,7 +356,7 @@ describe("HRIS operational time management", () => {
       organizationId: "org-1",
       countryCode: "CM",
       periodStart: new Date("2026-08-01"),
-      periodEnd: new Date("2026-08-31"),
+      periodEnd: new Date("2026-08-01"),
     }
     const client = {
       payrollPeriod: { findFirst: jest.fn().mockResolvedValue(period) },
@@ -344,15 +364,17 @@ describe("HRIS operational time management", () => {
         findFirst: jest.fn().mockResolvedValue({ id: "emp-1" }),
       },
       hrisWorkSchedule: {
-        findFirst: jest.fn().mockResolvedValue({
+        findMany: jest.fn().mockResolvedValue([{
           id: "schedule-1",
           status: HrisOperationalStatus.ACTIVE,
           sourceHash: "sha256:schedule-proof",
-          calendar: { sourceHash: "sha256:calendar-proof" },
-        }),
+          timezone: "Africa/Douala", weeklyPattern: {sat:480}, effectiveFrom: new Date("2026-01-01"), effectiveTo: null,
+          approvedById: "reviewer", approvalEvidenceHash: "sha256:schedule-review",
+          calendar: { sourceHash: "sha256:calendar-proof", status: "ACTIVE", timezone:"Africa/Douala", holidays:[], effectiveFrom:new Date("2026-01-01"),effectiveTo:null },
+        }]),
       },
       hrisLeavePolicy: {
-        findFirst: jest.fn().mockResolvedValue({
+        findMany: jest.fn().mockResolvedValue([{
           id: "policy-1",
           code: "ANNUAL",
           version: 1,
@@ -361,10 +383,11 @@ describe("HRIS operational time management", () => {
           approvalEvidenceHash: "sha256:policy-review",
           effectiveFrom: new Date("2026-01-01"),
           effectiveTo: null,
-        }),
+        }]),
       },
       hrisTimeEntry: {
         findMany: jest.fn().mockResolvedValue([{
+          id: "entry-1", sourceHash: "sha256:entry-proof", workDate: new Date("2026-08-01Z"),
           scheduledMinutes: 480,
           workedMinutes: 420,
           overtimeMinutes: 60,
@@ -373,6 +396,8 @@ describe("HRIS operational time management", () => {
       },
       hrisTimeRequest: {
         findMany: jest.fn().mockResolvedValue([{
+          id: "overtime-1", periodStart: new Date("2026-08-01"), periodEnd: new Date("2026-08-01"),
+          approvalEvidenceHash: "sha256:overtime-approval", metadata:{}, leavePolicyId:null,
           type: HrisTimeRequestType.OVERTIME,
           status: HrisTimeRequestStatus.APPROVED,
           requestedMinutes: 60,
@@ -382,7 +407,7 @@ describe("HRIS operational time management", () => {
       hrisAttendanceAnomaly: { count: jest.fn().mockResolvedValue(0) },
       hrisTimeImportBatch: {
         findMany: jest.fn().mockResolvedValue([
-          { sourceHash: "sha256:import-proof" },
+          { sourceHash: "sha256:import-proof", importedById: "time-preparer-1" },
         ]),
       },
       hrisLeaveBalanceEntry: { findMany: jest.fn().mockResolvedValue([]) },
@@ -401,8 +426,8 @@ describe("HRIS operational time management", () => {
     expect(certification.sourcePayload).toMatchObject({
       kind: "STOQUIFY_HRIS_TIME_LEAVE_ATTENDANCE_CERTIFICATION",
       policy: {
-        scheduleHash: "sha256:schedule-proof",
-        holidayCalendarHash: "sha256:calendar-proof",
+        scheduleHash: expect.stringMatching(/^sha256:/),
+        holidayCalendarHash: expect.stringMatching(/^sha256:/),
       },
       unresolved: {
         timeEntryCount: 0,

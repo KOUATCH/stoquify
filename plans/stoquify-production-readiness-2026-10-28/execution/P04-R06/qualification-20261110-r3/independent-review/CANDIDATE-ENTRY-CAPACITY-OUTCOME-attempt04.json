@@ -1,0 +1,45 @@
+{
+  "at": "2026-11-10T19:08:30.713Z",
+  "reviewer": "/root/r06_review",
+  "passed": false,
+  "observationAccepted": true,
+  "candidateId": null,
+  "artifactSha256": null,
+  "files": [
+    {
+      "path": "preparation-attempt04.json",
+      "sha256": "aa9016065419c9b8a5e60850b3ef56aee2d2da6a4286e0fdd6ed6bbe01b14e27"
+    },
+    {
+      "path": "resource-capture-entry-attempt04.json",
+      "sha256": "fa2d24f07e0ff0552b0aa5a7350fc66f459327881ddfa42fd29e4db43142ca37"
+    },
+    {
+      "path": "independent-review/CANDIDATE-PREPARATION-RECIPE-ADMISSION-attempt04.json",
+      "sha256": "96231e2a8b8f3e790153f895eb4678d87f558f00be9d59b64902dc5b81574679"
+    },
+    {
+      "path": "independent-review/CAPTURE-SOURCE-ADMISSION-resume-r2.json",
+      "sha256": "e97d177d0f9fbafd5faf4cfae1a2c1e2b3b909dd2e1b84771dbe3d9ae5910c2f"
+    }
+  ],
+  "actual": {
+    "physicalGiB": 7.8671112060546875,
+    "commitGiB": 11.301101684570312,
+    "requiredCommitGiB": 12,
+    "driveGiB": 12.531044006347656,
+    "commands": 0,
+    "newCandidate": false,
+    "newDatabaseStartup": false,
+    "build": false,
+    "runtime": false
+  },
+  "facts": [
+    "Entry rechecked exact selected68 and frozen recipe bindings before failing fresh commit gate.",
+    "Full source capture was not reached; no complete-current-source success is inferred from this failed entry.",
+    "Only preserved dependencies/ownership are present in D3; source/private/artifact and capture output receipts absent.",
+    "Old E31failure remains bound and all unused attempts preserved."
+  ],
+  "next": "Prepare named same-gate retry only after real capacity change, preserve failure and recheck full current source before writes.",
+  "qualificationPassed": false
+}

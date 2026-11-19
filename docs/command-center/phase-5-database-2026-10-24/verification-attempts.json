@@ -1,0 +1,20 @@
+{
+  "initialAssignmentRun": {
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0,
+    "clusterStopped": true
+  },
+  "expandedRunBeforeFixtureCorrection": {
+    "passed": 29,
+    "failed": 2,
+    "skipped": 0,
+    "failures": [
+      "rejects wrong or unavailable POS location authority: foreign-location",
+      "rejects wrong or unavailable POS location authority: foreign-terminal"
+    ],
+    "cause": "Two cross-tenant fixtures referenced a nonexistent organization and were rejected by PostgreSQL foreign keys before reaching assignment. Corrected to create a synthetic second tenant. No application guard relaxed.",
+    "clusterStopped": true
+  },
+  "runnerInitialization": "Initial sandbox/pipe attempt did not bootstrap a database. Two subsequent identity checks refused the loopback address with a /32 suffix and stopped their private clusters. SQL host(inet_server_addr()) now normalizes it."
+}

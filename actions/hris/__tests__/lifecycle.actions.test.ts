@@ -38,7 +38,7 @@ jest.mock("@/lib/security/auth-session", () => {
   }
 })
 
-jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn() } }))
+jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn(), warn: jest.fn() } }))
 jest.mock("@/services/modules/module-entitlement.service", () => ({ observeModuleAccess: jest.fn() }))
 jest.mock("@/services/hris/lifecycle.service", () => ({
   applyApprovedHrisEmployeeLifecycle: jest.fn(),
@@ -71,7 +71,7 @@ function rbacContext(userId: string, permissions: string[]) {
 describe("HRIS lifecycle actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: "2026-07-14T00:00:00.000Z" } })
+    mockRequireFreshAuth.mockResolvedValue({ claims: { userId: "checker-1", tenantId: "org-1", lastAuthAt: "2026-07-14T00:00:00.000Z" } })
     mockTimeline.mockResolvedValue({ organizationId: "org-1", employee: { id: "emp-1" }, events: [] })
     mockRequest.mockResolvedValue({ employee: { id: "emp-1" }, workflow: { status: "REQUESTED" } })
     mockApprove.mockResolvedValue({ employee: { id: "emp-1" }, workflow: { status: "APPROVED" } })

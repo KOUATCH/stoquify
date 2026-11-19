@@ -1,0 +1,81 @@
+{
+  "createdAt": "2026-11-09T19:26:04.375Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "productChangesByReviewer": false,
+  "actualTestsExecutedByReviewer": false,
+  "scope": "Reviewed successor recipe uses exclusive attempt02; definitions reviewed after execution receipt was already present, no retroactive pre-execution timing claim",
+  "files": [
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/unit/run-v2.cjs",
+      "sha256": "cda4c1e201ea55104e03f43a7d8a7d4eafe5d39427563092ea097aed5ef8a3f4",
+      "syntaxExit": 0
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/unit/jest.config.cjs",
+      "sha256": "711c79123c48f8ad5f361017ebbb6166cb0fa73bdfaff51bcd5484ef24ca20cf",
+      "syntaxExit": 0
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/unit/guard.cjs",
+      "sha256": "98382f3fa2922a93f55f89327f8a3b5997b991742797d1836d56e39607de21ca",
+      "syntaxExit": 0
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/unit/preload.cjs",
+      "sha256": "d490eba5fa3fc86cc69ad08621c69e29e4f01a20470e7708f1d4ebca45b8639e",
+      "syntaxExit": 0
+    }
+  ],
+  "selectedInputs": [
+    {
+      "path": "lib/auth.ts",
+      "sha256": "181e15aad556024353b1e988cce6ccb5eb9679dfc50620427b81aa059a8c7064"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b"
+    },
+    {
+      "path": "lib/security/__tests__/auth-current-authority.test.ts",
+      "sha256": "3b299762f485a4ab0f0ce9e281fcc2e7ac18ea20e61eebbb0c72dbba7744070c"
+    },
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "sha256": "ac5b6a129cc5fff4816147d201fa06a9a10b610a9f206686c7cdbfd9f2314873"
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "sha256": "4b402f487038b9c7c1d4b86b56e8f271e1303405a2a10ceb14bed23f0ab0ae09"
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "sha256": "aae2f1a20add9453671f8c08c25eca1215dcb7e790a46b784d3d35cd01b1949a"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b"
+    }
+  ],
+  "sideEffects": {
+    "allowed": [
+      "unit/attempt02 logs and JSON",
+      "unit/cache if Jest writes its configured cache directory"
+    ],
+    "database": "Mocked imports only; no database URL passed",
+    "network": "Node fetch/net/tls and Socket.connect blocked before Jest config and inside test runtime",
+    "environment": "Allowlisted OS environment plus synthetic AUTH_SECRET/test flags; .env file reads rejected",
+    "applicationConfiguration": "nextJest() called without dir; installed definition gates Next config and dotenv loading on options.dir",
+    "lockfile": "NEXT_IGNORE_INCORRECT_LOCKFILE=1 bypasses installed SWC lockfile patch"
+  },
+  "limitations": [
+    "Source-defined side-effect review, not a general security sandbox certification.",
+    "No integration/browser/native database evidence from these mocked suites."
+  ],
+  "at": "2026-11-09T20:22:54.265Z",
+  "change": "Only exclusive output directory and command label differ from prior run recipe. Isolation guards/config unchanged."
+}

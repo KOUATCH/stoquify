@@ -1,0 +1,74 @@
+{
+  "slice": "HR-07",
+  "status": "VERIFIED",
+  "timestamp": "2026-10-24T15:11:03.663Z",
+  "baselineCommit": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "scope": "Engineering verification only; inherited dirty tree preserved; no legal or production certification",
+  "hashes": [
+    {
+      "path": "services/payroll/payroll-production-admission.ts",
+      "sha256": "48b722fe75bc7db244d6ad8a2d394c08bb7a9449346c2959ed03e5552bf608da"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "d01a31f84c24fbb0ae6fc39157d457cb6f9c6e79a7065f74c05d3e444a423366"
+    },
+    {
+      "path": "services/payroll/declaration-lifecycle.service.ts",
+      "sha256": "3fddde2b040c572b4ec76ca306816c5f9f618666db12f880e4ed7eb054ba26c8"
+    },
+    {
+      "path": "services/payroll/authority-adapter-execution.service.ts",
+      "sha256": "0da109ee754f485e81100eed3036e107c38e1344d16d626236066e8e20ade2e3"
+    },
+    {
+      "path": "services/payroll/authority-adapter-worker.service.ts",
+      "sha256": "dcc8e2966207d754948afd868d885ac2a03d9ff769bec93e44b7d8963748bca2"
+    },
+    {
+      "path": "services/payroll/__tests__/authority-adapter-execution.service.test.ts",
+      "sha256": "b49574aad941f25c3deef0588c8a988441baecf5fb1862d4866a4359c90702be"
+    },
+    {
+      "path": "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+      "sha256": "2def1d3356507f340aa8ff4ede9d7875fc078c09d0b461117b40dee12b21e6fb"
+    },
+    {
+      "path": "services/payroll/__tests__/declaration-lifecycle.service.test.ts",
+      "sha256": "e4eb59e599e6bde391463e25ed87931c300ebca8e0f29788f305038f2ff4316f"
+    }
+  ],
+  "results": [
+    {
+      "lane": "mocked/pure/source assertions",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-07/unit.json",
+      "success": true,
+      "passed": 73,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "lane": "real PostgreSQL",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-07/postgres.json",
+      "success": true,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 51,
+      "exitCode": 0
+    },
+    {
+      "lane": "focused TypeScript",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-08/typecheck.txt",
+      "success": true,
+      "exitCode": 0
+    }
+  ],
+  "commands": [
+    "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath services/payroll/__tests__/payroll-production-admission.test.ts services/payroll/__tests__/authority-adapter-execution.service.test.ts services/payroll/__tests__/authority-adapter-worker.service.test.ts services/payroll/__tests__/declaration-lifecycle.service.test.ts --json --outputFile=what-next/hris-implementation-2026-10-24/HR-07/unit.json",
+    "node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand --no-cache --testNamePattern=HR-07 --json --outputFile=what-next/hris-implementation-2026-10-24/HR-07/postgres.json"
+  ],
+  "databaseTarget": "Task-owned loopback 127.0.0.1:55464 / stoquify_local_hris_20261024 / public; synthetic namespace and bounded cleanup; cluster stopped after verification",
+  "browser": null,
+  "open": []
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "at": "2026-11-09T18:01:17.334Z",
+  "status": "independently_admitted_pending_actual_r2_execution",
+  "supersedes_for_reexecution_only": {
+    "path": "browser/run-auth-transport-v3.cjs",
+    "sha256": "0e89ac37db95b2cb82be132c553664db550e895d04737c79d18136a219fc5574",
+    "attempt_preserved": true,
+    "original_evidence_failure": "Auth report publication blocked by blanket cookie-value secret scan; provider not reached."
+  },
+  "successor": {
+    "path": "browser/run-auth-transport-v4.cjs",
+    "sha256": "fa86a3570c11174f1ec732cca747c6a47e98d7f6eda8e842de5b81a576ba5e4f",
+    "planned_groups": 116,
+    "case_ids_unchanged": true,
+    "output": "browser/auth-transport-v4/result.json",
+    "progress": "browser/auth-transport-v4/progress.json"
+  },
+  "fixture_controls": {
+    "path": "database/auth-controls-r2.cjs",
+    "sha256": "f1b7c86d0339fe666f7d513fe5bbb5b2a1a9bea66a49c10be5fb9ef185fd2ed2",
+    "only_change": "Import exact fresh-r2 database-common-r2.cjs; preserve prior controls and all r1 rows."
+  },
+  "sanitizer": {
+    "exemption": "Only cookie STOCKFLOW_LOCALE with one of the two current supported locale values. Every other cookie value, every fixture password and every returned session token remains registered for scanning.",
+    "structural_fields": [
+      "password",
+      "token",
+      "sessionToken",
+      "accessToken",
+      "refreshToken",
+      "idToken",
+      "authorization",
+      "cookie",
+      "set-cookie"
+    ],
+    "recursive_redaction": true,
+    "final_raw_value_scan": true,
+    "parent_receives_same_sanitized_record": true,
+    "diagnostics": "Only category,index,length,hash and sanitized JSON path; never raw values.",
+    "pure_test": "inventory/auth-successor-v4-sanitizer-check.json"
+  },
+  "cleanup_bounds_ms": {
+    "browser_context": 15000,
+    "browser": 20000,
+    "proxy": 5000,
+    "owned_auth_fixture_session_cleanup": 125000
+  },
+  "checks": {
+    "syntax_pass": true,
+    "pure_sanitizer_pass": true,
+    "application_run": false,
+    "database_run": false
+  },
+  "ownership": {
+    "auth_successor": "/root/v02_scope_d01",
+    "fresh_database_and_runtime": "/root/v02_fullapp",
+    "independent_admission": "/root/v02_review"
+  },
+  "product_modified": false,
+  "independent_admission": "../independent-review/ATTEMPT02-RUNTIME-ADMISSION.json"
+}

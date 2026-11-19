@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-18T16:22:55.594Z",
+  "fixture": "p07-org-e24b36edfb7c",
+  "steps": [
+    {
+      "name": "Authenticated empty guidance; five outstanding opening requirements"
+    },
+    {
+      "name": "Actual unconfigured upload fails visibly, offers retry and creates no fake ready image",
+      "uploadStatus": 503
+    }
+  ],
+  "origin": "http://127.0.0.1:3188",
+  "browser": "149.0.7827.55",
+  "before": {
+    "customers": 0,
+    "suppliers": 0,
+    "items": 0,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0
+  },
+  "status": "FAIL",
+  "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText('Use an available image uploaded to this organization, then validate a corrected file.', { exact: true })\nExpected: visible\nTimeout: 90000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 90000ms\n  - waiting for getByText('Use an available image uploaded to this organization, then validate a corrected file.', { exact: true })\n\n    at captureRawStack (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright-core\\lib\\coreBundle.js:3172:17)\n    at callMatcherAsStep (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright\\lib\\matchers\\expect.js:12877:57)\n    at Object.toBeVisible (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright\\lib\\matchers\\expect.js:12867:23)\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07-media-2026-10-18\\evidence\\browser.cjs:42:163)"
+}

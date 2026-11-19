@@ -1,0 +1,28 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "plugins": []
+  },
+  "include": [
+    "../../../next-env.d.ts",
+    "../DailyHabitDigestDashboard.tsx",
+    "../DigestSourceLimitations.tsx",
+    "../../agents/AgentCommandPanel.tsx",
+    "../../bi/BIWhatChangedStrip.tsx",
+    "../../owner-war-room/OwnerWarRoomDashboard.tsx",
+    "../../../services/owner-war-room/owner-war-room.service.ts",
+    "../../../services/daily-habit/daily-habit-digest.service.ts",
+    "../../../docs/command-center/phase-2-2026-10-24/owner-browser-fixture.tsx",
+    "phase2-fixtures.ts",
+    "../../manager-action-center/ManagerActionCenterDashboard.tsx",
+    "../../manager-action-center/ManagerLocationActionCenterDashboard.tsx",
+    "../../../services/manager-action-center/manager-action-center.service.ts",
+    "../../../services/manager-action-center/manager-location-action-center.service.ts",
+    "../../../app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx",
+    "../../../app/[locale]/(dashboard)/dashboard/manager-action-center/error.tsx",
+    "../../../app/[locale]/(dashboard)/dashboard/owner-war-room/error.tsx",
+    "../../../docs/command-center/phase-4-2026-10-24/fixtures.ts"
+  ],
+  "exclude": []
+}

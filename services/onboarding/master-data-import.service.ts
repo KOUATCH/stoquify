@@ -1,5 +1,6 @@
 import "server-only"
 import { buildOpeningReadiness, type OpeningReadiness } from "./opening-readiness"
+import { MEDIA_URL_PREFIX, mediaIdFromUrl } from "@/lib/media/policy"
 
 import type { Prisma } from "@prisma/client"
 
@@ -13,10 +14,10 @@ import type { SupplierCreateInput } from "@/services/supplier/supplier.schemas"
 import { createSupplier } from "@/services/supplier/supplier.service"
 import {
   MASTER_DATA_IMPORT_MAX_BYTES,
-  MASTER_DATA_IMPORT_SCHEMA_VERSION,
   MASTER_DATA_IMPORT_TARGETS,
   MASTER_DATA_TARGET_CONFIG,
   analyzeMasterDataCsv,
+  masterDataSchemaVersion,
   buildTenantCsvTemplate,
   defaultFieldMap,
   hashCsvContent,
@@ -429,16 +430,19 @@ async function getOrCreateDefaultMapping(input: {
     where: { organizationId: input.organizationId, target: input.target },
     orderBy: { version: "desc" },
   })
-  if (existing) return existing
+  const previousMap = existing ? asRecord(existing.fieldMap) as MasterDataFieldMap : null
+  const needsMediaMapping = input.target === "ITEM" && previousMap && !Object.values(previousMap).includes("imageUrls")
+  if (existing && !needsMediaMapping) return existing
+  if (needsMediaMapping && previousMap?.imageUrls) throw new BusinessRuleError("Update the item mapping to include the imageUrls field")
 
   try {
     return await controlDb.onboardingImportMapping.create({
       data: {
         organizationId: input.organizationId,
         target: input.target,
-        version: 1,
-        schemaVersion: MASTER_DATA_IMPORT_SCHEMA_VERSION,
-        fieldMap: defaultFieldMap(input.target),
+        version: (existing?.version ?? 0) + 1,
+        schemaVersion: masterDataSchemaVersion(input.target),
+        fieldMap: previousMap ? { ...previousMap, imageUrls: "imageUrls" } : defaultFieldMap(input.target),
         requiredFields: [...MASTER_DATA_TARGET_CONFIG[input.target].requiredFields],
         createdById: input.actorId,
       },
@@ -448,7 +452,7 @@ async function getOrCreateDefaultMapping(input: {
       where: { organizationId: input.organizationId, target: input.target },
       orderBy: { version: "desc" },
     })
-    if (!raced) throw new BusinessRuleError("The default onboarding mapping could not be created")
+    if (!raced || (input.target === "ITEM" && !Object.values(asRecord(raced.fieldMap)).includes("imageUrls"))) throw new BusinessRuleError("The default onboarding mapping could not be created")
     return raced
   }
 }
@@ -469,7 +473,7 @@ export async function createMasterDataImportMapping(input: {
       organizationId: input.organizationId,
       target: input.target,
       version: (latest._max.version ?? 0) + 1,
-      schemaVersion: MASTER_DATA_IMPORT_SCHEMA_VERSION,
+      schemaVersion: masterDataSchemaVersion(input.target),
       fieldMap: input.fieldMap,
       requiredFields: [...MASTER_DATA_TARGET_CONFIG[input.target].requiredFields],
       createdById: input.actorId,
@@ -697,6 +701,16 @@ export async function stageMasterDataImport(input: {
 
   const fieldMap = asRecord(mapping.fieldMap) as MasterDataFieldMap
   const preliminary = analyzeMasterDataCsv({ target: input.target, content: input.content, fieldMap })
+  // Availability at validation is advisory; createItem claims again inside its
+  // transaction, serializing against media cleanup after approval.
+  const mediaIds = input.target === "ITEM" ? preliminary.rows.flatMap((row) => {
+    const id = mediaIdFromUrl(String(row.normalizedData.imageUrls ?? ""))
+    return id ? [id] : []
+  }) : []
+  const availableItemMedia = input.target === "ITEM" ? new Set((await db.pictureAsset.findMany({
+    where: { organizationId: input.organizationId, id: { in: mediaIds }, entityType: "item", status: "ready" },
+    select: { id: true },
+  })).map((asset) => `${MEDIA_URL_PREFIX}${asset.id}`)) : undefined
   const existingKeys = await existingBusinessKeys(
     input.organizationId,
     input.target,
@@ -707,6 +721,7 @@ export async function stageMasterDataImport(input: {
     content: input.content,
     fieldMap,
     existingBusinessKeys: existingKeys,
+    availableItemMedia,
   })
   const risk = classifyMasterDataImportRisk({ target: input.target, rows: analysis.rows })
   const status = analysis.issues.some((issue) => issue.severity === "ERROR") ? "BLOCKED" : "VALIDATED"
@@ -817,7 +832,7 @@ async function countDomainRecords(organizationId: string, target: MasterDataImpo
   return db.item.count({ where: { organizationId, deletedAt: null } })
 }
 
-type ExistingDomainRecord = { id: string; businessKey: string; requiredName: string }
+type ExistingDomainRecord = { id: string; businessKey: string; requiredName: string; imageUrls?: string[] }
 
 async function findExistingDomainRecord(
   organizationId: string,
@@ -840,9 +855,9 @@ async function findExistingDomainRecord(
   }
   const row = await db.item.findFirst({
     where: { organizationId, deletedAt: null, sku: { equals: businessKey, mode: "insensitive" } },
-    select: { id: true, sku: true, nameEn: true },
+    select: { id: true, sku: true, nameEn: true, imageUrls: true },
   })
-  return row ? { id: row.id, businessKey: row.sku, requiredName: row.nameEn } : null
+  return row ? { id: row.id, businessKey: row.sku, requiredName: row.nameEn, imageUrls: row.imageUrls } : null
 }
 
 function attemptedRecordMatches(
@@ -854,7 +869,8 @@ function attemptedRecordMatches(
   const nameField = target === "ITEM" ? "nameEn" : "name"
   return (
     normalizeBusinessKey(record.businessKey) === normalizeBusinessKey(String(data[keyField] ?? "")) &&
-    record.requiredName.trim() === String(data[nameField] ?? "").trim()
+    record.requiredName.trim() === String(data[nameField] ?? "").trim() &&
+    (target !== "ITEM" || (record.imageUrls?.length === 1 && record.imageUrls[0] === data.imageUrls))
   )
 }
 
@@ -881,6 +897,7 @@ async function createThroughDomainOwner(input: {
     sku: itemData.sku,
     costPrice: itemData.costPrice,
     sellingPrice: itemData.sellingPrice,
+    imageUrls: itemData.imageUrls,
   }
   return createItem(input.organizationId, input.actorId, safeItemData)
 }
@@ -916,11 +933,12 @@ async function destinationRequiredTotals(input: {
   }
   const rows = await db.item.findMany({
     where: { organizationId: input.organizationId, id: { in: input.recordIds }, deletedAt: null },
-    select: { sku: true, nameEn: true },
+    select: { sku: true, nameEn: true, imageUrls: true },
   })
   for (const row of rows) {
     if (row.sku.trim()) totals.sku += 1
     if (row.nameEn.trim()) totals.nameEn += 1
+    if (row.imageUrls.length > 0 && row.imageUrls.every((url) => mediaIdFromUrl(url))) totals.imageUrls += 1
   }
   return totals
 }

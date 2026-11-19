@@ -1,0 +1,2 @@
+// Mocked missing-page UI; no application config, environment or persistence.
+module.exports=require('next/jest')()({rootDir:'../..',roots:['<rootDir>/components/landing/__tests__'],testEnvironment:'jsdom',setupFilesAfterEnv:['@testing-library/jest-dom'],moduleNameMapper:{'^@/(.*)$':'<rootDir>/$1','^lucide-react$':'<rootDir>/node_modules/lucide-react/dist/cjs/lucide-react.js'},testMatch:['**/PublicNotFound.test.tsx'],collectCoverage:false});

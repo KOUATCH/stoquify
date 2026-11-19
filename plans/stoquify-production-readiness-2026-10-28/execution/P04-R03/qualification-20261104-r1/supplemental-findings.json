@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-04T09:30:51.306Z",
+  "id": "P04-R03-SCOPE-01",
+  "proposedPackage": "P04-R04",
+  "status": "confirmed_source_unimplemented",
+  "title": "Sibling item list action exposes arbitrary exception messages",
+  "source": "actions/item/listItemsAction.ts",
+  "handler": "listItemsAction",
+  "catchLines": "76-80",
+  "consumer": "hooks/itemsHooks/useItemHooks.ts#useListItems",
+  "sourceHashes": [
+    {
+      "path": "actions/item/listItemsAction.ts",
+      "sha256": "3f763ceea82658460f6e0ed339a8d1283c13080af25bf34b082877cab8e95f60"
+    },
+    {
+      "path": "hooks/itemsHooks/useItemHooks.ts",
+      "sha256": "26078150c12c0dcd08fe53a5aeb88b8216154fbc4e3887959cc1fce4f9e42d03"
+    }
+  ],
+  "evidenceClass": "Current-source inspection only; no sibling action runtime reproduction in R03",
+  "scope": "Distinct handler from the nine repaired items.ts catches. Export consumed by a hook; current rendered use of that hook not established.",
+  "requiredRepair": "Refresh sibling action/session/Prisma/client-envelope chain; normalize arbitrary failures using existing safe response contract while preserving server-owned scope and success response; isolated negatives/positives/no-write evidence and independent review.",
+  "implementationAuthorized": false,
+  "parentBlocking": true,
+  "productionBlocking": true,
+  "historicalFindingUnchanged": "execution/P04/findings-register.json#P04-F03"
+}

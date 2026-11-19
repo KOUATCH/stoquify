@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "at": "2026-11-09T18:32:08.113Z",
+  "status": "executed_independently_reviewed",
+  "harness": {
+    "path": "browser/run-auth-followup04.cjs",
+    "sha256": "763024da1a2476845155aaa43dd23ee9635d075e5ea5dacda583fc7e67aae15a",
+    "groups": 11,
+    "output": "browser/auth-followup04/result.json"
+  },
+  "fixture": {
+    "database": "stoquify_local_p04v02_20261109_full_r3",
+    "retained": true,
+    "new_actor_insertions": false,
+    "required_readiness": "database/followup04-readiness.json",
+    "fresh_real_sessions": true,
+    "checks": [
+      "Exact10 retained actors/roles/fullpermissions/org/grants validated by fullapp read-only gate",
+      "Zero owned auth sessions before replay",
+      "Fresh credential sign-in for every context",
+      "Only3 reviewed native invalidation transitions; permission restoration and owned session cleanup retained"
+    ]
+  },
+  "recovery_bug": "Original supplement returned noWrites promise from a try/finally without awaiting; finally closed context before async click. Original8 failures preserved; successor uses return await and replays only those positives.",
+  "denial_markers": {
+    "raw_body_written": false,
+    "fields": [
+      "failedEnvelope",
+      "successEnvelope",
+      "recognizedDenialCodes",
+      "privateItemBytes",
+      "body hash/length",
+      "cacheControl"
+    ],
+    "recognized_codes": [
+      "AUTH_REQUIRED",
+      "UNAUTHENTICATED",
+      "UNAUTHORIZED",
+      "FORBIDDEN",
+      "PERMISSION_DENIED",
+      "MODULE_ACCESS_DENIED",
+      "SESSION_EXPIRED"
+    ],
+    "scope": "3 EN revoked/expired/permission cases corroborate explicit server denial and independently test settled client recovery; no new module-disclosure replay is required."
+  },
+  "cases": [
+    {
+      "id": "authBrowserRevoked-en-authorized-recovery",
+      "status": "planned",
+      "purpose": "bounded_replay_of_original_recovery_positive",
+      "family_ids": [
+        "V02-T01",
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserExpiry-en-authorized-recovery",
+      "status": "planned",
+      "purpose": "bounded_replay_of_original_recovery_positive",
+      "family_ids": [
+        "V02-T01",
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserPermission-en-authorized-recovery",
+      "status": "planned",
+      "purpose": "bounded_replay_of_original_recovery_positive",
+      "family_ids": [
+        "V02-T01",
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserModule-en-authorized-recovery",
+      "status": "planned",
+      "purpose": "bounded_replay_of_original_recovery_positive",
+      "family_ids": [
+        "V02-T01",
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserRevoked-fr-authorized-recovery",
+      "status": "planned",
+      "purpose": "bounded_replay_of_original_recovery_positive",
+      "family_ids": [
+        "V02-T01",
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserExpiry-fr-authorized-recovery",
+      "status": "planned",
+      "purpose": "bounded_replay_of_original_recovery_positive",
+      "family_ids": [
+        "V02-T01",
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserPermission-fr-authorized-recovery",
+      "status": "planned",
+      "purpose": "bounded_replay_of_original_recovery_positive",
+      "family_ids": [
+        "V02-T01",
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserModule-fr-authorized-recovery",
+      "status": "planned",
+      "purpose": "bounded_replay_of_original_recovery_positive",
+      "family_ids": [
+        "V02-T01",
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserRevoked-en-denial-envelope-refresh",
+      "status": "planned",
+      "purpose": "denial_envelope_and_client_recovery_corroboration",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserExpiry-en-denial-envelope-refresh",
+      "status": "planned",
+      "purpose": "denial_envelope_and_client_recovery_corroboration",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserPermission-en-denial-envelope-refresh",
+      "status": "planned",
+      "purpose": "denial_envelope_and_client_recovery_corroboration",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    }
+  ],
+  "counts": {
+    "original_requirements": 161,
+    "additional_supplement_requirements": 35,
+    "requirements_total": 196,
+    "additional_bounded_replay_diagnostic_groups": 11,
+    "total_group_executions_if_complete": 207,
+    "note": "Eleven replay/diagnostic groups are additional evidence; they do not inflate the original196 requirement groups."
+  },
+  "source_binding": "supplement03-scope-and-case-map.json",
+  "canonical_error_binding": {
+    "path": "lib/error-handling/canonical.ts",
+    "current_sha256": "f29ffd68323259c447f051d34cbdf2ca5716a6f9ebf1f74c1e0d5a21d2da297a",
+    "frozen_sha256": "f29ffd68323259c447f051d34cbdf2ca5716a6f9ebf1f74c1e0d5a21d2da297a"
+  },
+  "product_changes": false,
+  "syntax_passed": true,
+  "outcome": {
+    "result": "browser/auth-followup04/result.json",
+    "review": "independent-review/FOLLOWUP04-OUTCOME-REVIEW.json",
+    "raw_passed": 8,
+    "raw_failed": 3,
+    "named_denial_code_unqualified": true,
+    "failed_envelope_corroborated": true
+  }
+}

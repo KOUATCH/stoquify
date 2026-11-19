@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T12:53:07.843Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Exact runtime bridge source admission only; full wrapper and actual artifact outcomes required separately",
+  "files": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\runtime\\runtime-bridge-v2.cjs",
+      "sha256": "ec542a56bdaf1b4b3e4c78ceedb46828cfd4dffec922d18d2f9e32ba8bf6aa01"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\browser\\flight-profile-evidence.cjs",
+      "sha256": "9c8aece7411279a75969059e69a7536e1f5fc6c2bdc2ff4921e366708851e0cd"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\browser\\private-canaries.cjs",
+      "sha256": "ccf6d3f65436fe95db508fce6d89db93c7d53bdf5fe7e449265178e7312a51ae"
+    }
+  ],
+  "predecessor": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\independent-review\\RUNTIME-BRIDGE-SOURCE-ADMISSION.json",
+    "sha256": "d18b7f5085e407f97b8fa963d785bedb417af2a58b3a809a5458fb156c3486e7"
+  },
+  "reviewedChanges": [
+    "Fixed fresh r2 storage/DB/TLS/output bindings.",
+    "Fault phase changes only app DATABASE_URL and DIRECT_URL to verified unused loopback55518; evidence connection remains55517. No listener or database changes on fault port.",
+    "Exact compiled profile Next-Action and source-bound root Flight result hashes; actor/email/organization canaries.",
+    "Passive request/response lifecycle records; transport forwarding remains unchanged. forwardedHeaderIntent is explicitly supplied forwarding metadata and not actual downstream/on-wire framing."
+  ],
+  "retainedControls": [
+    "Legacy runtime restricted to credential issuance, optional cache materialization and readiness; original assets blocked.",
+    "Real signed cache payload/embedded session/cookie expiry and HMAC verification with new task key; actual wire proof retained.",
+    "TLS localhost only; owned child PID stop/wait and free-port checks; no external targets.",
+    "Original compressed and decoded response bytes hash-bound with32MiB cap and2048captures; incomplete/aborted decoding never accepted.",
+    "No raw response bodies or cookie/secret values in bridge report."
+  ],
+  "conditionsBeforeExecution": [
+    "Whole runtime wrapper must bind fresh accepted artifact/source, legacy archive integrity and exact bridge/helper hashes.",
+    "New private synthetic environment only; no inherited provider credentials or old signing secrets.",
+    "Fresh compiled profile action binding required before any relevant profile capture.",
+    "Fault negative must explicitly retain actual denied response, native no-write evidence and normal-runtime recovery, labeled early before-hook DB unavailability.",
+    "Browser CDP original received-byte identity and consumer proof required independently; bridge completion alone cannot establish browser consumption."
+  ],
+  "qualificationPassed": false,
+  "successorDelta": "Only safe ACAO/ACAC response header metadata added for CORS diagnosis; no transport, authentication or capture acceptance changes."
+}

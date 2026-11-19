@@ -85,6 +85,7 @@ describe("HRIS organization and people access scope", () => {
       actorPermissions: ["hris.people.read"],
       employeeId: undefined,
       limit: 50,
+      completeScope: true,
     }, scopedClient)
     expect(result).toMatchObject({
       authority: {

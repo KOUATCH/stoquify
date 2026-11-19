@@ -1,0 +1,299 @@
+{
+  "package": "P04-V02",
+  "definedBeforeRuntime": true,
+  "sourceInventoryIdentity": "2a3cd525dc8cfdad21550b4f77ca2af5d68ca7b8585b8888db6fd086a7256823",
+  "status": "pending_execution",
+  "cases": [
+    {
+      "id": "V02-T01",
+      "acceptance": "Actual credential login creates signed cookie and independent session; wrong password, locked/inactive user and forbidden origin do not gain authority.",
+      "family": "auth/session",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T02",
+      "acceptance": "Get-session default versus disableCookieCache after server-side revoke, DB expiry, account deactivation and fresh untouched independent login; inspect no private user/session fields.",
+      "family": "core-auth-cache",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T03",
+      "acceptance": "list-sessions and list-accounts deny revoked/expired cached subject; no sibling session token or account metadata; independent active user still works.",
+      "family": "core-auth-cache",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T04",
+      "acceptance": "unlink-account on revoked/expired cached session with two owned accounts causes no deletion; active account positive control separately.",
+      "family": "core-auth-mutation",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T05",
+      "acceptance": "update-user custom HTTP rejects revoked/expired session, forged ownership, unsupported authority fields and cross-origin; authorized reviewed profile read/write still works.",
+      "family": "custom-profile",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T06",
+      "acceptance": "update-session forged assurance/user/org/expiry fields rejected with no changed session privilege; no writable additional fields currently configured.",
+      "family": "implicit-session-write",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T07",
+      "acceptance": "revoke-session foreign token does not revoke other subject; revoke-others preserves caller, new independent login remains functional; no test credential logged.",
+      "family": "session-management",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T08",
+      "acceptance": "Core provider endpoints reject anonymous/forged user/account IDs and wrong origin; configured-provider branch and callback state/signature negative evidence labeled separately from hosted positive.",
+      "family": "provider-auth",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T09",
+      "acceptance": "GET/HEAD/OPTIONS/method-denial matrix on auth and UploadThing; HEAD carries no body/private leak and must not bypass guard; OPTIONS public204 metadata only.",
+      "family": "implicit-methods",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T10",
+      "acceptance": "Guarded /api/me/permissions,/api/me/profile and both current private-media delivery URLs reject revoked/expired/other-tenant cases; no unauthorized writes; permissions from DB fresh.",
+      "family": "private-HTTP",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T11",
+      "acceptance": "Role permission removal/restoration and enforced inventory module disable/restoration take effect on next API/action/page request; legitimate independent actor works throughout.",
+      "family": "permission-module",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T12",
+      "acceptance": "Rendered private page then revoke externally: same tab stale action, focus/visibility return, back/forward and reload do not restore private records or controls from stale authorization. Record each journey separately, both locales.",
+      "family": "browser-recovery",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T13",
+      "acceptance": "Expiry browser journey and account switch/other-tenant browser contexts cannot reuse private data; authorized positive screenshot/bytes before and after recovery.",
+      "family": "browser-recovery",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T14",
+      "acceptance": "UploadThing public GET/HEAD only router metadata; POST unauthorized/no permission/no module rejected before storage; authorized legacy ingress intentionally denied managed-upload-only.",
+      "family": "uploadthing-ingress",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T15",
+      "acceptance": "UploadThing missing/invalid signature, tampered signed body/origin, unknown slug/method/action combos fail without callback side effects; approved synthetic signed callback can reach owned loopback callback sink only and no business writes.",
+      "family": "uploadthing-callback",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    },
+    {
+      "id": "V02-T16",
+      "acceptance": "Security/session/audit before-after snapshots classify each intended effect; denied requests cannot modify item/profile/account/role/grant/outbox state or expose any private canary.",
+      "family": "database-evidence",
+      "status": "planned",
+      "evidence_required": [
+        "source/artifact identity",
+        "actual request/browser result as applicable",
+        "sanitized body/canary scan",
+        "state comparison and classified effects"
+      ],
+      "sourceInspection": "complete",
+      "actualHTTP": "not_run",
+      "renderedBrowser": "not_run",
+      "databaseEvidence": "not_run",
+      "evidence": [],
+      "limitations": []
+    }
+  ],
+  "hostedProvider": "not_run_external_gate",
+  "parentP04Accepted": false,
+  "productionAccepted": false
+}

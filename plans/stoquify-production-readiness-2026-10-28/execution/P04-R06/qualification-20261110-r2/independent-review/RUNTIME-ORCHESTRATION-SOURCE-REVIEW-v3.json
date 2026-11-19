@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:15:45.224Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Main runtime source review only; actual build and preflight plus final exact recipe admission still required",
+  "files": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\run-runtime-v3.cjs",
+      "sha256": "5ba7ae27f4c5a90c35d30d29f8d1f707825a5f3e4934121b3f904b49865eb440"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\runtime\\run-expanded.cjs",
+      "sha256": "bd064bf41b35e88f098789c3bb2dc76a2bb014d3098ebf9d02a2544feef819a3"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\runtime\\runtime-bridge-v2.cjs",
+      "sha256": "ec542a56bdaf1b4b3e4c78ceedb46828cfd4dffec922d18d2f9e32ba8bf6aa01"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\runtime\\qualification-contract.json",
+      "sha256": "22d4543fef2795f838aa54c203be96ad0448b466f0b80f6d7104f863bf8d08e1"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\direct-api-driver.cjs",
+      "sha256": "8430cd241dcfa81199877b361e78fc4eadd592e3cc2b08d7e497162d223fca43"
+    }
+  ],
+  "reviewed": [
+    "Fixed fresh owned directory and exact current/legacy artifact verification before physical runtime copies; no archive mutation.",
+    "Fresh synthetic signing environment shared with legacy issuer only, no old secrets loaded.",
+    "Independent actual build/preflight outcomes and all68 current/candidate hashes required before application launch.",
+    "Fresh compiled profile action binding from exact sealed artifact; no old browser consumer.",
+    "Protected50 plus57 auxiliaries exactly reconciled, no duplicate or missing observations accepted.",
+    "Controlled fixture state restored, owned runtimes/proxies stopped, sealed artifact/runtime bytes verified on all normal failure paths."
+  ],
+  "pending": [
+    "Actual successful build/artifact outcome",
+    "Actual source and fresh fixture preflight outcomes",
+    "Exact final RUNTIME-RECIPE-ADMISSION binding all helper/admission and actual input hashes",
+    "Actual107-case qualification and independent native/browser outcome review"
+  ],
+  "qualificationPassed": false,
+  "successorDelta": "Only active current r2 build-result-attempt02 reference. Immutable legacy V02 build-result.json restored and verified unchanged.",
+  "preservedRejectedDraft": {
+    "path": "run-runtime-v2.cjs",
+    "sha256": "7f0e37fe77c0e9941e945e7b52acf8f0f10e9ebe97aeabc1fe6ff034a1989b19",
+    "executed": false,
+    "reason": "Global replacement changed historical V02 build receipt; corrected in named v3 before admission."
+  },
+  "predecessorAdmissionSha256": "c9dfd072929104f17c4fc27996dd99642feb5384c531ae5f252bd5bc10053404"
+}

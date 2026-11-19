@@ -4,6 +4,8 @@ import { revalidatePOSAfterCommit } from "./cache-revalidation"
 import { preparePOSCheckout } from "@/services/pos/checkout.service"
 import { checkoutLeaseSchema } from "@/services/pos/pos.schemas"
 import { protect } from "@/services/_shared/protect"
+import { requireSession } from "@/lib/security/auth-session"
+import { ForbiddenError } from "@/services/_shared/action-errors"
 import { commitPOSSale, refundPOSSale, voidPOSSale } from "@/services/pos/pos.service"
 import {
   commitSaleSchema,
@@ -44,12 +46,14 @@ export const commitPOSSaleAction = protect(
   },
   async (input: unknown, ctx) => {
     const parsed = commitSaleSchema.merge(checkoutLeaseSchema).parse(input)
+    const { claims } = await requireSession()
+    if (claims.userId !== ctx.userId || claims.tenantId !== ctx.orgId) throw new ForbiddenError("Current POS session is required.")
     await preparePOSCheckout({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
     const sale = await commitPOSSale({
       ...parsed,
       organizationId: ctx.orgId,
       userId: ctx.userId,
-    })
+    }, { sessionId: claims.sessionId, sessionToken: claims.sessionToken })
 
     revalidatePOSSaleTags(parsed)
     return sale
@@ -68,7 +72,8 @@ export const refundPOSSaleAction = protect(
   },
   async (input: unknown, ctx) => {
     const parsed = refundPOSSaleSchema.parse(input)
-    const refund = await refundPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
+    if (!ctx.freshAuth) throw new ForbiddenError("Fresh authentication is required.")
+    const refund = await refundPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId }, { sessionId: ctx.freshAuth.claims.sessionId, sessionToken: ctx.freshAuth.claims.sessionToken })
 
     revalidatePOSSaleTags(parsed)
     return refund
@@ -87,7 +92,8 @@ export const voidPOSSaleAction = protect(
   },
   async (input: unknown, ctx) => {
     const parsed = voidPOSSaleSchema.parse(input)
-    const voided = await voidPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
+    if (!ctx.freshAuth) throw new ForbiddenError("Fresh authentication is required.")
+    const voided = await voidPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId }, { sessionId: ctx.freshAuth.claims.sessionId, sessionToken: ctx.freshAuth.claims.sessionToken })
 
     revalidatePOSSaleTags(parsed)
     return voided

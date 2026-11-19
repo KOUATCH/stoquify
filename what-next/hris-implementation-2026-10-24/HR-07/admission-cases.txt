@@ -1,0 +1,60 @@
+
+describe("HR-07 real admission denial and recovery", () => {
+  let runId: string
+  let lineId: string
+  let periodId: string
+  const key = `${namespace}-emission`
+  const now = new Date()
+  const input = () => ({organizationId:orgs[0], payrollRunId:runId, actorId:actors[0], actorPermissions:["payroll.payslips.emit"], expectedVersion:3, idempotencyKey:key, now, lastAuthAt:now})
+  let oldSwitch: string | undefined
+  beforeAll(async () => {
+    oldSwitch=process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED
+    process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED="true"
+    await fixture()
+    const contract=await db.payrollContract.create({data:{organizationId:orgs[0],employeeId,contractNumber:randomUUID(),type:"CDI",status:"ACTIVE",effectiveFrom:date,baseSalary:100}})
+    const period=await db.payrollPeriod.create({data:{organizationId:orgs[0],name:randomUUID(),countryCode:"GA",periodStart:date,periodEnd:date,payDate:date,frequency:"MONTHLY"}})
+    periodId=period.id
+    const event=await db.businessEvent.create({data:{organizationId:orgs[0],eventType:"payroll.run.approved",idempotencyKey:randomUUID(),payloadHash:"sha256:synthetic",payload:{synthetic:true},occurredAt:now}})
+    const run=await db.payrollRun.create({data:{organizationId:orgs[0],payrollPeriodId:period.id,runNumber:randomUUID(),status:"APPROVED",version:3,
+      countryCode:"GA",countryPackVersion:"SYNTHETIC-NOT-APPROVED",countryPackSchemaVersion:"1",countryPackResolutionHash:"sha256:synthetic",countryPackCapabilityStatus:"REQUIRES_EXPERT_REVIEW",ruleSetHash:"sha256:synthetic",calculationHash:"sha256:synthetic",attendanceSnapshotHash:"sha256:synthetic",
+      preparedById:actors[1],approvedById:actors[2],approvedAt:now,approvedBusinessEventId:event.id,
+      lines:{create:{organizationId:orgs[0],employeeId,contractId:contract.id,calculationSnapshot:{synthetic:true},ruleProvenance:{synthetic:true}}}},include:{lines:true}})
+    runId=run.id;lineId=run.lines[0].id
+  })
+  afterAll(()=>{if(oldSwitch===undefined)delete process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED;else process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED=oldSwitch})
+  it("actual emission denies before effects and rolls back its authorization audit", async () => {
+    const before=await db.auditLog.count({where:{organizationId:orgs[0]}})
+    const eventCount=await db.businessEvent.count({where:{organizationId:orgs[0]}})
+    await expect(emitPayrollPayslips(input())).rejects.toThrow("PAYROLL_PRODUCTION_ADMISSION_BLOCKED")
+    expect(await db.auditLog.count({where:{organizationId:orgs[0]}})).toBe(before)
+    expect(await db.businessEvent.count({where:{organizationId:orgs[0]}})).toBe(eventCount)
+    expect(await db.payrollPayslip.count({where:{payrollRunId:runId}})).toBe(0)
+    expect(await db.payrollRunTransition.count({where:{payrollRunId:runId}})).toBe(0)
+    expect(await db.payrollPaymentBatch.count({where:{payrollRunId:runId}})).toBe(0)
+    expect(await db.payrollRun.findUnique({where:{id:runId},select:{status:true,version:true}})).toEqual({status:"APPROVED",version:3})
+  })
+  it("recovers an exact retained emission despite unavailable rules; changed replay conflicts", async () => {
+    // A synthetic retained outcome tests recovery; it is not a newly approved national calculation.
+    const event=await db.businessEvent.create({data:{organizationId:orgs[0],eventType:"payroll.payslips.emitted",idempotencyKey:randomUUID(),payloadHash:"sha256:synthetic-retained",payload:{synthetic:true},occurredAt:now}})
+    await db.payrollRun.update({where:{id:runId},data:{status:"EMITTED",version:4,emittedBusinessEventId:event.id}})
+    const run=await db.payrollRun.findUniqueOrThrow({where:{id:runId}})
+    await db.payrollPayslip.create({data:{organizationId:orgs[0],payrollRunId:runId,runLineId:lineId,employeeId,payslipNumber:randomUUID(),status:"EMITTED",countryCode:run.countryCode,countryPackVersion:run.countryPackVersion,countryPackSchemaVersion:run.countryPackSchemaVersion,countryPackResolutionHash:run.countryPackResolutionHash,ruleSetHash:run.ruleSetHash,documentHash:"sha256:synthetic-retained",emittedBusinessEventId:event.id}})
+    const payloadHash=`sha256:${hashBusinessPayload({operation:"emitPayrollPayslips",payrollRunId:runId,expectedVersion:3,actorId:actors[0],documentHash:null})}`
+    await db.payrollRunTransition.create({data:{organizationId:orgs[0],payrollRunId:runId,sequence:1,fromStatus:"APPROVED",toStatus:"EMITTED",fromVersion:3,toVersion:4,actorId:actors[0],transitionedAt:now,businessEventId:event.id,idempotencyKey:key,payloadHash}})
+    for(let retry=0;retry<2;retry++) expect((await emitPayrollPayslips(input())).idempotent).toBe(true)
+    await expect(emitPayrollPayslips({...input(),documentHash:"sha256:changed"})).rejects.toThrow("different payload")
+    expect(await db.payrollPayslip.count({where:{payrollRunId:runId}})).toBe(1)
+    expect(await db.payrollRunTransition.count({where:{payrollRunId:runId}})).toBe(1)
+  })
+  it("real worker admission denies before even a fake adapter is called", async () => {
+    const declaration=await db.payrollDeclaration.create({data:{organizationId:orgs[0],payrollRunId:runId,authority:"SYNTHETIC",declarationType:"SYNTHETIC",periodStart:date,periodEnd:date,countryCode:"GA",countryPackVersion:"SYNTHETIC",countryPackSchemaVersion:"1",countryPackResolutionHash:"sha256:synthetic"}})
+    const execution={declarationId:declaration.id,declarationEvidenceId:"synthetic-evidence",correlationId:"synthetic",status:"LEASED"}
+    const adapter={submit:jest.fn()}
+    const processExecution=jest.fn().mockImplementation(async ({outcome})=>({execution:{...execution,status:"FAILED",errorCode:outcome.errorCode}}))
+    const recordDeclarationEvidence=jest.fn()
+    await processPayrollAuthorityAdapterWorkerBatch({organizationId:orgs[0],workerId:actors[0]}, {adapter,leaseExecutions:jest.fn().mockResolvedValue({executions:[execution]}),processExecution,recordDeclarationEvidence})
+    expect(adapter.submit).not.toHaveBeenCalled()
+    expect(recordDeclarationEvidence).not.toHaveBeenCalled()
+    expect(processExecution).toHaveBeenCalledWith(expect.objectContaining({outcome:expect.objectContaining({errorCode:"PAYROLL_PRODUCTION_ADMISSION_BLOCKED"})}),db)
+  })
+})

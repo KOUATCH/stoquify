@@ -1,0 +1,274 @@
+{
+  "pos": {
+    "passed": 15,
+    "failed": 0,
+    "skipped": 1,
+    "startTime": 1793027636419,
+    "tests": [
+      {
+        "name": "full POS commit real PostgreSQL kernels P05 rejects a substituted retained commit ID without financial effects and permits the original retry",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels P05 rejects foreign scope for recorded evidence and commit retry without changing effects",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels commits stock, cash, receivable, ledger, events and durable result exactly once under duplicate completion",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels preserves the original caller identity when a retry wins receipt completion",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels keeps a committed sale recoverable after receipt failure and rejects changed retry intent",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels rejects stale cart without partial financial effects",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels rejects insufficient stock without partial financial effects",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels invalidates previously certified close evidence in the sale transaction",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels recovers a signed offline event after sale commit but before server acknowledgement without another sale",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels retains an offline payload conflict without replacing accepted evidence or creating a sale",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels P06 concurrent original-event replay converges on one financial effect and one acknowledgement",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels P06 revocation after ingestion retains blocked evidence without committing a sale",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels P06 expired policy quarantines original signed evidence without a financial effect",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels P06 integrates durable browser queue, real ingestion and replay after lost HTTP responses",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels retries a serialization failure at sale evidence with one complete financial effect",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels rolls back every real kernel when durable commit-result finalization fails, preserving the retained request",
+        "status": "passed"
+      }
+    ]
+  },
+  "chain": {
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "startTime": 1793029063193,
+    "tests": [
+      {
+        "name": "P3-CHAIN receiving → checkout → refund reconciles retained stock, cash, journals and history",
+        "status": "passed"
+      },
+      {
+        "name": "P3-CHAIN receiving → checkout → void reconciles retained stock, cash, journals and history",
+        "status": "passed"
+      },
+      {
+        "name": "P3-AUTH denies revoked receiving role/session and foreign destination before effects",
+        "status": "passed"
+      },
+      {
+        "name": "P3-HELD inspection prevents availability, stale review and self-acceptance; independent acceptance posts once",
+        "status": "passed"
+      },
+      {
+        "name": "P3-ACCOUNTING configured receiving accrual → sale → refund ties stock value to the general ledger",
+        "status": "passed"
+      },
+      {
+        "name": "P3-CONTENTION two checkout backends compete for the same received stock with one complete financial outcome",
+        "status": "passed"
+      },
+      {
+        "name": "P3-RECEIPT-DUP concurrent duplicate receiving records one receipt and stock effect",
+        "status": "passed"
+      },
+      {
+        "name": "P3-RECEIPT-ROLLBACK final receipt-decision failure rolls back receipt, stock and accounting blockers; original retry succeeds",
+        "status": "passed"
+      }
+    ]
+  },
+  "browser": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 15,
+    "startTime": 1793028238684,
+    "tests": [
+      {
+        "name": "full POS commit real PostgreSQL kernels P05 rejects a substituted retained commit ID without financial effects and permits the original retry",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels P05 rejects foreign scope for recorded evidence and commit retry without changing effects",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels commits stock, cash, receivable, ledger, events and durable result exactly once under duplicate completion",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels preserves the original caller identity when a retry wins receipt completion",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels keeps a committed sale recoverable after receipt failure and rejects changed retry intent",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels rejects stale cart without partial financial effects",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels rejects insufficient stock without partial financial effects",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels invalidates previously certified close evidence in the sale transaction",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels recovers a signed offline event after sale commit but before server acknowledgement without another sale",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels retains an offline payload conflict without replacing accepted evidence or creating a sale",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels P06 concurrent original-event replay converges on one financial effect and one acknowledgement",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels P06 revocation after ingestion retains blocked evidence without committing a sale",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels P06 expired policy quarantines original signed evidence without a financial effect",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels P06 integrates durable browser queue, real ingestion and replay after lost HTTP responses",
+        "status": "passed"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels retries a serialization failure at sale evidence with one complete financial effect",
+        "status": "pending"
+      },
+      {
+        "name": "full POS commit real PostgreSQL kernels rolls back every real kernel when durable commit-result finalization fails, preserving the retained request",
+        "status": "pending"
+      }
+    ]
+  },
+  "component": {
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0,
+    "startTime": 1793028652144,
+    "tests": [
+      {
+        "name": "uses canonical counts, columns and cursor navigation without unused selection or a fictional last page",
+        "status": "passed"
+      },
+      {
+        "name": "debounces server search and prevents exporting the old query while typing",
+        "status": "passed"
+      },
+      {
+        "name": "persists density through the canonical preferences and hides unauthorized export",
+        "status": "passed"
+      },
+      {
+        "name": "retains decimal precision and offers only valid inventory transaction filters",
+        "status": "passed"
+      },
+      {
+        "name": "discovers unsent evidence by authenticated organization/station and sends the retained queue",
+        "status": "passed"
+      },
+      {
+        "name": "shows recovery rather than zero when storage cannot be read",
+        "status": "passed"
+      },
+      {
+        "name": "retains evidence and disables sending for offline",
+        "status": "passed"
+      },
+      {
+        "name": "retains evidence and disables sending for other session",
+        "status": "passed"
+      },
+      {
+        "name": "retains evidence and disables sending for denied",
+        "status": "passed"
+      },
+      {
+        "name": "retains evidence and disables sending for conflict",
+        "status": "passed"
+      },
+      {
+        "name": "does not read local records without current transaction access",
+        "status": "passed"
+      },
+      {
+        "name": "distinguishes a loading session from a known different session",
+        "status": "passed"
+      },
+      {
+        "name": "never labels acknowledged evidence as a confirmed payment",
+        "status": "passed"
+      },
+      {
+        "name": "renders French recovery and safe errors without exposing transport text",
+        "status": "passed"
+      },
+      {
+        "name": "drops the previous organization's counts immediately on scope change",
+        "status": "passed"
+      },
+      {
+        "name": "uses each receipt's frozen currency and leaves unknown currency unasserted in en",
+        "status": "passed"
+      },
+      {
+        "name": "uses each receipt's frozen currency and leaves unknown currency unasserted in fr",
+        "status": "passed"
+      }
+    ]
+  },
+  "rendered": {
+    "passed": 12,
+    "total": 12,
+    "violations": 0
+  },
+  "source": {
+    "head": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+    "phase2OwnedDrift": [],
+    "files": 852,
+    "migrations": 120,
+    "checksumsMatch": true
+  }
+}

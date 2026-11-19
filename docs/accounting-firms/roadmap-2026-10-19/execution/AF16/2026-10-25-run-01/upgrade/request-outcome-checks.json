@@ -1,0 +1,113 @@
+{
+  "result": {
+    "version": 1,
+    "fromInclusive": "2026-10-24T13:44:01.859Z",
+    "toExclusive": "2026-10-25T13:44:07.352Z",
+    "observedAt": "2026-10-25T13:44:07.671Z",
+    "cohortCount": 1,
+    "coverage": "COMPLETE_FOR_EXPLICIT_AUTHORIZED_COHORT",
+    "cohorts": [
+      {
+        "engagementId": "cmvnvpdl200rjmaognb0f8fgn",
+        "clientOrganizationId": "af12-1792935650136-request-metrics-client",
+        "periodId": "cmvnvpep300sxmaoghx2lx3wi",
+        "requestScope": "AUTHORIZED_CLIENT_PERIOD_ALL_REQUESTERS",
+        "requestTouches": {
+          "value": 1,
+          "eligible": 1,
+          "definition": "Durable requests created in window; reminders and page visits are not counted."
+        },
+        "excludedRequests": 0,
+        "clientWaiting": {
+          "eligible": 1,
+          "measured": 1,
+          "missing": 0,
+          "elapsedMs": 402
+        },
+        "responseToResolution": {
+          "eligible": 1,
+          "measured": 1,
+          "missing": 0,
+          "elapsedMs": 3646
+        },
+        "reviewerRework": {
+          "changesRequested": 0,
+          "reviewedDecisions": 1,
+          "rate": 0
+        },
+        "closeDuration": {
+          "eligible": 1,
+          "measured": 0,
+          "missing": 1,
+          "elapsedMs": null
+        },
+        "activation": {
+          "eligible": 1,
+          "measured": 1,
+          "missing": 0,
+          "elapsedMs": 1404
+        }
+      }
+    ],
+    "activeWorkTimeMs": null,
+    "improvement": null,
+    "baseline": "NOT_ESTABLISHED",
+    "limitations": "Elapsed durations are means of valid timestamp pairs, not active work time. Client waiting and reviewer elapsed time must not be subtracted from overlapping close intervals. Missing pairs are disclosed. Activation means first recorded engagement activation. No financial sums or retention endpoint are used."
+  },
+  "earlier": {
+    "version": 1,
+    "fromInclusive": "2026-10-24T13:44:01.859Z",
+    "toExclusive": "2026-10-25T13:44:03.374Z",
+    "observedAt": "2026-10-25T13:44:08.054Z",
+    "cohortCount": 1,
+    "coverage": "COMPLETE_FOR_EXPLICIT_AUTHORIZED_COHORT",
+    "cohorts": [
+      {
+        "engagementId": "cmvnvpdl200rjmaognb0f8fgn",
+        "clientOrganizationId": "af12-1792935650136-request-metrics-client",
+        "periodId": "cmvnvpep300sxmaoghx2lx3wi",
+        "requestScope": "AUTHORIZED_CLIENT_PERIOD_ALL_REQUESTERS",
+        "requestTouches": {
+          "value": 1,
+          "eligible": 1,
+          "definition": "Durable requests created in window; reminders and page visits are not counted."
+        },
+        "excludedRequests": 0,
+        "clientWaiting": {
+          "eligible": 1,
+          "measured": 0,
+          "missing": 1,
+          "elapsedMs": null
+        },
+        "responseToResolution": {
+          "eligible": 1,
+          "measured": 0,
+          "missing": 1,
+          "elapsedMs": null
+        },
+        "reviewerRework": {
+          "changesRequested": 0,
+          "reviewedDecisions": 1,
+          "rate": 0
+        },
+        "closeDuration": {
+          "eligible": 1,
+          "measured": 0,
+          "missing": 1,
+          "elapsedMs": null
+        },
+        "activation": {
+          "eligible": 1,
+          "measured": 1,
+          "missing": 0,
+          "elapsedMs": 1404
+        }
+      }
+    ],
+    "activeWorkTimeMs": null,
+    "improvement": null,
+    "baseline": "NOT_ESTABLISHED",
+    "limitations": "Elapsed durations are means of valid timestamp pairs, not active work time. Client waiting and reviewer elapsed time must not be subtracted from overlapping close intervals. Missing pairs are disclosed. Activation means first recorded engagement activation. No financial sums or retention endpoint are used."
+  },
+  "actualWorkflow": true
+}

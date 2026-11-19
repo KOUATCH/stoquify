@@ -1,3 +1,7 @@
+// These owner-unit contracts isolate upstream policy/schedule admission. HR-12 real PostgreSQL cases verify those guards.
+jest.mock("@/services/hris/leave-eligibility.service", () => ({ assertEmployeeLeaveEligibility: jest.fn().mockResolvedValue({}) }))
+jest.mock("@/services/hris/leave-entitlement.service", () => ({ assertLeavePolicyOpen: jest.fn().mockResolvedValue(undefined) }))
+jest.mock("@/services/hris/leave-allocation.service", () => ({ resolveLeaveAllocationInTx: jest.fn().mockImplementation(async (_tx, input) => ({ requestedMinutes: input.requestedMinutes, allocations: input.allocations ?? [] })) }))
 import { HrisTimeRequestStatus, HrisTimeRequestType } from "@prisma/client"
 
 import { resolveHrisPeopleAccessScope } from "@/services/hris/org.service"
@@ -38,12 +42,15 @@ function fixture() {
     sourceHash: "sha256:synthetic-source",
   }
   return {
+    $queryRaw: jest.fn().mockResolvedValue([{ isolationLevel: "read committed" }]),
+      payrollRun: {findFirst: jest.fn().mockResolvedValue(null)},
     hrisTimeRequest: {
       findFirst: jest.fn().mockResolvedValue(request),
       updateMany: jest.fn().mockResolvedValue({ count: 1 }),
       update: jest.fn().mockImplementation(({ data }) => ({ ...request, ...data })),
     },
     hrisLeaveBalanceEntry: {
+      findMany: jest.fn().mockResolvedValue([]),
       aggregate: jest.fn().mockResolvedValue({ _sum: { deltaMinutes: 960 } }),
       create: jest.fn().mockResolvedValue({ id: "debit-1" }),
     },

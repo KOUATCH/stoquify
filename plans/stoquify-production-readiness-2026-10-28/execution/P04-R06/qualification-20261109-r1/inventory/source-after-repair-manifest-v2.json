@@ -1,0 +1,355 @@
+{
+  "captured_at": "2026-11-09T20:16:02.524Z",
+  "before_identity": "ddeb0b5ad000a37525c3bf3392b5821d2b80a397a26d8826eb5895f6e65f2a36",
+  "supersedes": "source-after-repair-manifest.json",
+  "reason": "Propagate raw session lookup errors; do not confuse failure with native anonymous null",
+  "files": [
+    {
+      "path": "actions/security/account-session.actions.ts",
+      "before_sha256": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+      "sha256": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+      "bytes": 1261,
+      "change": "unchanged"
+    },
+    {
+      "path": "app/api/auth/[...all]/route.ts",
+      "before_sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "bytes": 817,
+      "change": "unchanged"
+    },
+    {
+      "path": "app/api/me/permissions/route.ts",
+      "before_sha256": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+      "sha256": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+      "bytes": 849,
+      "change": "unchanged"
+    },
+    {
+      "path": "app/api/me/profile/route.ts",
+      "before_sha256": "7b72f47e15810d348e52edbf9b15905477ee9d60e9bd90802ebe526889ef966e",
+      "sha256": "7b72f47e15810d348e52edbf9b15905477ee9d60e9bd90802ebe526889ef966e",
+      "bytes": 191,
+      "change": "unchanged"
+    },
+    {
+      "path": "docs/ecc/WORKFLOW.md",
+      "before_sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c",
+      "sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c",
+      "bytes": 6784,
+      "change": "unchanged"
+    },
+    {
+      "path": "docs/ecc/command-registry.json",
+      "before_sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+      "bytes": 11422,
+      "change": "unchanged"
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "before_sha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+      "sha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+      "bytes": 4218,
+      "change": "unchanged"
+    },
+    {
+      "path": "lib/auth-server.ts",
+      "before_sha256": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+      "sha256": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+      "bytes": 1612,
+      "change": "unchanged"
+    },
+    {
+      "path": "lib/auth.ts",
+      "before_sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+      "sha256": "05994789cdf3671ff52e5399e4f83029a92af7e741aefef8ca85d30b8bc96d24",
+      "bytes": 10261,
+      "change": "owned_repair"
+    },
+    {
+      "path": "lib/security/audit-log.ts",
+      "before_sha256": "b3cb587d4687f4a5114c07d8c238bc8ec916a2dab8f76c0f6b2b0995db16711d",
+      "sha256": "b3cb587d4687f4a5114c07d8c238bc8ec916a2dab8f76c0f6b2b0995db16711d",
+      "bytes": 2360,
+      "change": "unchanged"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "before_sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c",
+      "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b",
+      "bytes": 5905,
+      "change": "owned_repair"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "before_sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+      "sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+      "bytes": 616,
+      "change": "unchanged"
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "before_sha256": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb",
+      "sha256": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb",
+      "bytes": 24861,
+      "change": "unchanged"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "before_sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "bytes": 10696,
+      "change": "unchanged"
+    },
+    {
+      "path": "lib/security/server-authz.ts",
+      "before_sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+      "sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+      "bytes": 3821,
+      "change": "unchanged"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "before_sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+      "bytes": 618,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/index.mjs",
+      "before_sha256": "9ccb59e0b6b519f681d0c9eab3f0a52c8847d6af843a48d014854a3801479c5f",
+      "sha256": "9ccb59e0b6b519f681d0c9eab3f0a52c8847d6af843a48d014854a3801479c5f",
+      "bytes": 9862,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+      "before_sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2",
+      "sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2",
+      "bytes": 7973,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "before_sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "bytes": 20950,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/callback.mjs",
+      "before_sha256": "bc4980902c0bca2863b4bb4c1d51a5c28ae3882565a320679a2eb1f84c38919e",
+      "sha256": "bc4980902c0bca2863b4bb4c1d51a5c28ae3882565a320679a2eb1f84c38919e",
+      "bytes": 7102,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/email-verification.mjs",
+      "before_sha256": "9e33bab463d366c0e8fc947500fb98fe143228b14f69b9e247eec4215a224249",
+      "sha256": "9e33bab463d366c0e8fc947500fb98fe143228b14f69b9e247eec4215a224249",
+      "bytes": 11419,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/error.mjs",
+      "before_sha256": "4edcaa5f7a88fae70c364c04fd2f3e05d91ecdeaed9c50ef0c172ab14f457803",
+      "sha256": "4edcaa5f7a88fae70c364c04fd2f3e05d91ecdeaed9c50ef0c172ab14f457803",
+      "bytes": 12927,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/ok.mjs",
+      "before_sha256": "1ee6e836bb9986404eeaaa9052f7eca6d88134aa359774b46460714a9fa64daa",
+      "sha256": "1ee6e836bb9986404eeaaa9052f7eca6d88134aa359774b46460714a9fa64daa",
+      "bytes": 671,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "before_sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "bytes": 8387,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "before_sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "bytes": 18745,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "before_sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+      "sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+      "bytes": 11008,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-out.mjs",
+      "before_sha256": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3",
+      "sha256": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3",
+      "bytes": 987,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-up.mjs",
+      "before_sha256": "452803772ba80e56b077ea8e1c65ccadd1ad0a2afa86d6f23e3f76b39b1b3d9e",
+      "sha256": "452803772ba80e56b077ea8e1c65ccadd1ad0a2afa86d6f23e3f76b39b1b3d9e",
+      "bytes": 9912,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/update-session.mjs",
+      "before_sha256": "70860209765aab66ba8c2d973e30c648dbcc0ecc0221a1778af57233093761e2",
+      "sha256": "70860209765aab66ba8c2d973e30c648dbcc0ecc0221a1778af57233093761e2",
+      "bytes": 1939,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+      "before_sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "bytes": 19135,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/to-auth-endpoints.mjs",
+      "before_sha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3",
+      "sha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3",
+      "bytes": 12519,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/context/create-context.mjs",
+      "before_sha256": "519af35dd5e9454a41c4a8729c9bbeed69f7bbf8c80eefebdd747050b99ec153",
+      "sha256": "519af35dd5e9454a41c4a8729c9bbeed69f7bbf8c80eefebdd747050b99ec153",
+      "bytes": 10479,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/db/internal-adapter.mjs",
+      "before_sha256": "dcfd03b6150fa74cc15d4c18bdb222e877be47c270d37ebaa44f2b3c16431777",
+      "sha256": "dcfd03b6150fa74cc15d4c18bdb222e877be47c270d37ebaa44f2b3c16431777",
+      "bytes": 25539,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/db/schema.mjs",
+      "before_sha256": "a0ddffa656c4a42e9f2929eab5942108f7d0c3a221753768fdaf46b302eacd83",
+      "sha256": "a0ddffa656c4a42e9f2929eab5942108f7d0c3a221753768fdaf46b302eacd83",
+      "bytes": 6112,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/integrations/next-js.mjs",
+      "before_sha256": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489",
+      "sha256": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489",
+      "bytes": 2997,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/dist/oauth2/state.mjs",
+      "before_sha256": "f2e9046f4df819c7923407cd56eca9a4a0765298a4b561436d36c57305530509",
+      "sha256": "f2e9046f4df819c7923407cd56eca9a4a0765298a4b561436d36c57305530509",
+      "bytes": 1971,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-auth/package.json",
+      "before_sha256": "86e8f39e15e32e563f3a4b1307845155dbdbae63a6f1361060275a88bb29970a",
+      "sha256": "86e8f39e15e32e563f3a4b1307845155dbdbae63a6f1361060275a88bb29970a",
+      "bytes": 19180,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/better-call/dist/router.mjs",
+      "before_sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+      "sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+      "bytes": 4326,
+      "change": "unchanged"
+    },
+    {
+      "path": "node_modules/rou3/dist/index.mjs",
+      "before_sha256": "0f77b955be24584dad93ca5c232e1150fa9ee54a96b5e6483c05bfa4b338f1b0",
+      "sha256": "0f77b955be24584dad93ca5c232e1150fa9ee54a96b5e6483c05bfa4b338f1b0",
+      "bytes": 8134,
+      "change": "unchanged"
+    },
+    {
+      "path": "package-lock.json",
+      "before_sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "bytes": 759960,
+      "change": "unchanged"
+    },
+    {
+      "path": "package.json",
+      "before_sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "bytes": 34421,
+      "change": "unchanged"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "before_sha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+      "sha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+      "bytes": 357574,
+      "change": "external_drift"
+    },
+    {
+      "path": "scripts/verify-agent-workflow-contract.js",
+      "before_sha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29",
+      "sha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29",
+      "bytes": 5760,
+      "change": "unchanged"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "before_sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+      "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+      "bytes": 7550,
+      "change": "unchanged"
+    },
+    {
+      "path": "services/security/account-session.service.ts",
+      "before_sha256": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+      "sha256": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+      "bytes": 6846,
+      "change": "unchanged"
+    },
+    {
+      "path": "services/users/self-profile-http.service.ts",
+      "before_sha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3",
+      "sha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3",
+      "bytes": 2907,
+      "change": "unchanged"
+    },
+    {
+      "path": "services/users/self-profile-input.ts",
+      "before_sha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf",
+      "sha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf",
+      "bytes": 1439,
+      "change": "unchanged"
+    },
+    {
+      "path": "services/users/self-profile.service.ts",
+      "before_sha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17",
+      "sha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17",
+      "bytes": 7502,
+      "change": "unchanged"
+    }
+  ],
+  "additional_owned": [
+    {
+      "path": "lib/security/__tests__/auth-current-authority.test.ts",
+      "sha256": "0ca9ab8254af2c180dd7397b7d968d96ed4a77c21af87fe4ac51b1aefc1250e5"
+    },
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "sha256": "ac5b6a129cc5fff4816147d201fa06a9a10b610a9f206686c7cdbfd9f2314873"
+    }
+  ],
+  "pending_full_app_qualification": true
+}

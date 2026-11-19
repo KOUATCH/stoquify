@@ -1,0 +1,47 @@
+{
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "externalCallsPerformed": false,
+  "productionReadinessClaimed": false,
+  "value": {
+    "kind": "inventory.cash",
+    "organizationId": "synth12_douala",
+    "locationId": null,
+    "periodStart": "2026-10-01T00:00:00.000Z",
+    "periodEnd": "2026-10-28T23:59:59.999Z",
+    "status": "fresh",
+    "uiState": "fresh",
+    "evidenceGrade": "operational",
+    "freshness": {
+      "generatedAt": "2026-10-28T20:00:00.000Z",
+      "sourceMaxUpdatedAt": "2026-10-29T11:43:18.136Z",
+      "maxAgeMinutes": 1440,
+      "stale": false,
+      "staleReason": null
+    },
+    "sourceHash": "sha256:67409c2747ebcc734d3c9dd320d77e645b9a67d552aeacc4e4f7c2f15bf5ae33",
+    "generatedAt": "2026-10-28T20:00:00.000Z",
+    "sourceModules": [
+      "inventory",
+      "purchasing",
+      "pos",
+      "accounting"
+    ],
+    "metrics": {
+      "trackedItemCount": 13,
+      "inventoryLevelCount": 37,
+      "quantityOnHand": 8381,
+      "quantityAvailable": 8381,
+      "quantityReserved": 0,
+      "quantityInTransit": 0,
+      "quantityOnOrder": 0,
+      "inventoryValue": 23846940,
+      "zeroStockLevelCount": 0,
+      "negativeStockLevelCount": 0,
+      "periodTransactionCount": 511,
+      "periodAdjustmentCount": 1,
+      "periodTransferCount": 1
+    },
+    "blockers": [],
+    "redactions": []
+  }
+}

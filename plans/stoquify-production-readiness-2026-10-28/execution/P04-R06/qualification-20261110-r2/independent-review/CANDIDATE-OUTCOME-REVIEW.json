@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T13:01:05.434Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "sourceFiles": 9789,
+  "criticalInputs": 68,
+  "sourceManifestSha256": "f6b4ff1065906271c68e8839519396e93e9712e0f2ebad2598ce3a1ea48137c5",
+  "files": [
+    {
+      "path": "preparation.json",
+      "sha256": "0e4022e3095c4daab2570b46aa02235d9bad9595d1444a7193c0edeca7858b8b"
+    },
+    {
+      "path": "candidate-context.json",
+      "sha256": "d953368da04a8a13742ca3647f559d5b43183f34dc5d608a68f623e4a46da754"
+    },
+    {
+      "path": "candidate-source-manifest.json",
+      "sha256": "c3a3db592e71a26bbbc10033a2c8c3cb088fbd313b55f65bdb9d1c978d830737"
+    },
+    {
+      "path": "root-source-manifest.json",
+      "sha256": "1341b8809a3c8e57cb698a143308181b88891fa796a4c97a47f8ef8478cd8384"
+    },
+    {
+      "path": "candidate-admission.json",
+      "sha256": "1566793399eea9c369dfe94ba9312b41ea47ef4b69c38fe8fa41323c59dd3dc9"
+    },
+    {
+      "path": "inventory/source-after-manifest.json",
+      "sha256": "e535b2e9cb694d09b67d64706e9fbbe2f89ac829b2297c86120ca83d012ac614"
+    },
+    {
+      "path": "independent-review/REPAIR-SOURCE-ADMISSION.json",
+      "sha256": "4993e10c3c40dd9e29e947db2533de7427d1e9cbe1290e61563aa4644936cca9"
+    },
+    {
+      "path": "independent-review/UNIT-OUTCOME-REVIEW.json",
+      "sha256": "70144c056ef2ff4a7dd04b88753ec84cdcb8ba49a97bef1fed21a56a1a990a96"
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+      "sha256": "413fbeb7c6ab028ab82e9e8b566f84ef44dc13dfb21ff4936f4d3f01237c9f2c"
+    }
+  ],
+  "method": "Reconciled admitted actual preparation and full root/candidate capture receipts, all9789 unique path/hash entries and identity algorithm; independently rehashed all68 current/candidate critical inputs and all3 unserved private asset annex files, verified exact recipe references, unchanged current HEAD and physical moved dependencies. No second whole-root traversal repeated.",
+  "sourceOverrides": [],
+  "sourceAdditions": [],
+  "privateAssets": {
+    "annexCount": 3,
+    "served": false,
+    "policyRows": 3,
+    "policyUnchanged": true
+  },
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "allowedNext": "Execute admitted fresh isolated database preparation and fixture seed. Actual native preparation/fixture outcomes must be reviewed before build; build also requires fresh resource admission and private canonical Prisma generation.",
+  "limitations": [
+    "Source identity and mocked tests do not certify native/runtime/browser outcomes.",
+    "Private annex files are packaging inputs only; guarded artifact exclusions still must be verified.",
+    "Installed dependency reuse is not a clean-install proof.",
+    "No commit, production change, deployment or parent P04/production advancement."
+  ],
+  "qualificationPassed": false
+}

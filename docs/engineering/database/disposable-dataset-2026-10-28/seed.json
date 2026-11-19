@@ -1,0 +1,16 @@
+{
+  "label": "seed",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "prisma/disposable-business-dataset.ts"
+  ],
+  "startedAt": "2026-10-28T18:37:42.204Z",
+  "finishedAt": "2026-10-28T18:38:32.723Z",
+  "exitCode": 1,
+  "errorCode": null
+}

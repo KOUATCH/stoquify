@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-10T11:15:08.022Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Diagnostic result review only; does not close R06-C-login",
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "checks": {
+    "actualProbePassed": true,
+    "readOnly": true,
+    "currentSqlUtcEqualsExplicitDate": true,
+    "defaultReaderShiftProven": true,
+    "literalControlShiftProven": true,
+    "exactHistoricalResult": true,
+    "exactHistoricalSnapshots": true
+  },
+  "finding": "The default pg timestamp1114 decoder interprets Prisma timestamp-without-zone values in the local host timezone, yielding a one-hour earlier epoch than explicit SQL UTC. This establishes a test-evidence interpretation problem on the observed target. The exact historical raw value/request interval was not saved, so the failed original assertion is preserved and not retroactively passed.",
+  "requiredNext": "For any credential successor, persist exact request start/end, raw timestamp text and explicit SQL UTC epochs, then execute all four credential scenarios including those skipped after the first assertion failure.",
+  "evidence": [
+    {
+      "path": "database/time-interpretation-attempt02.json",
+      "sha256": "7bbebf2d031c533cd9015b2b00d9283d4f1f137de97d1dcbfe40fc191a8dc5a8"
+    },
+    {
+      "path": "independent-review/TIME-PROBE-RECIPE-ADMISSION-attempt02.json",
+      "sha256": "ba0b95261c233a6566447ff770a7a7a7e5acfb852612c10f777e6cc23b6a86d4"
+    }
+  ],
+  "credentialQualificationPassed": false,
+  "productionReady": false
+}

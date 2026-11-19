@@ -1,0 +1,24 @@
+{
+  "reviewedAt": "2026-11-03T17:35:37.8766341Z",
+  "reviewer": "r01_independent_review",
+  "verdict": "accepted_fresh_native_retry01",
+  "executionAccepted": true,
+  "outcomeAccepted": false,
+  "supersedesRecipeOnly": "NATIVE-RECIPE-REVIEW.json",
+  "changes": [
+    "New result filename preserves failed initial receipt",
+    "Replace whitespace-sensitive declaration comparison with pinned Prisma6.19.3 canonical WASM equality against root generated schema and exact private generated schema SHA",
+    "Include canonical proof helper in source before/after binding"
+  ],
+  "retainedControls": "All original fresh-target, no-environment, synthetic fixtures, source stability and owned cleanup controls unchanged",
+  "files": [
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R01/qualification-20261103-r1/database/run-native-retry01.cjs",
+      "sha256": "4a59d17b1921716c111ca0e6729459954a69acda276f1100c2f85240724daf9a"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/full-app-20261102-r3/verify-generated-schema.cjs",
+      "sha256": "f0c73d0ed95fa45c328006c04607b8b129b7347400a3d96292914aa4170d1d93"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "at": "2026-11-10T18:56:42.667Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "files": [
+    {
+      "path": "inventory/resume-20261110-r2/refresh-resume-source.cjs",
+      "sha256": "5cfe410080c552a2d6638c3d88902d1e7d0ed9cd552b572f3709878ff0a5115e"
+    },
+    {
+      "path": "inventory/resume-20261110-r1/CURRENT-SOURCE-MANIFEST.json",
+      "sha256": "0a69e88e6040d07fe70eaa3bb68f53875dabfc46c439736028981a935456dbe2"
+    },
+    {
+      "path": "inventory/resume-20261110-r1/SELECTED-INPUTS-REFRESH.json",
+      "sha256": "5a49fb11d3dcb573d0529ca9a7ad050d607b1668a29daafde9ea057df89be29b"
+    },
+    {
+      "path": "inventory/resume-20261110-r1/SCHEMA-DRIFT-DISPOSITION.json",
+      "sha256": "529fbac1d0f0eab1dccb4c6f0ed490cec9f74fb715a99895ccd950f8da39e40d"
+    },
+    {
+      "path": "inventory/RETAINED-FIXTURE-SOURCE-COMPATIBILITY-r2.json",
+      "sha256": "a66946d3c60e21e28a077f3baa3e662687a5a0ab6e134d1b41b4c07296fa5daa"
+    },
+    {
+      "path": "inventory/private-metadata-policy.json",
+      "sha256": "a044327ea56b8488574704fdd8f25b7f46506f4dc45a9fdf4d900fff09ca33d6"
+    },
+    {
+      "path": "resource-capture-retry-ready-r2.json",
+      "sha256": "a9644ac4702e5ceb032266c5e2df4fd8ab846feed874ad0a742c4f6382cc824b"
+    },
+    {
+      "path": "independent-review/CONCURRENT-SCHEMA-MIGRATION-SOURCE-REVIEW.json",
+      "sha256": "cd04890301d5507e406bd47dd9faced08b163dd0e82e9d66c1b5b650db37198b"
+    },
+    {
+      "path": "../../../../../scripts/candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    },
+    {
+      "path": "../../../../../docs/ecc/command-registry.json",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381"
+    },
+    {
+      "path": "../../../../../prisma/schema.prisma",
+      "sha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0"
+    },
+    {
+      "path": "../../../../../prisma/migrations/20261110190000_close_scope_integrity/migration.sql",
+      "sha256": "334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7"
+    }
+  ],
+  "scope": "Read-only full source/selected68/123migration observation; five exclusive local evidence receipts, no D/app/DB/build writes.",
+  "facts": [
+    "Exact67unchanged plus reviewed schema change required; all migrations rehashed and matched to full observation.",
+    "Existing source selector loaded only for inert included predicate; git queries read only.",
+    "Historical9973 receipts and E31 retained; retained122database explicitly not current."
+  ],
+  "requirements": [
+    "Actual head equality, source delta, metadata and migration results need outcome review before capture.",
+    "Capture entry must still enforce fresh current-source/resource equality."
+  ],
+  "candidateCaptureAccepted": false,
+  "qualificationPassed": false
+}

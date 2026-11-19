@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-18",
+  "baselineHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "baselineHasUnrelatedChanges": true,
+  "routes": ["/en/dashboard/pos", "/fr/dashboard/pos"],
+  "role": "seeded SUPER ADMIN",
+  "fixture": "Bepanda Store / Seed POS Terminal 012 / existing shift / empty cart",
+  "businessRecordsChangedByBrowserChecks": false,
+  "realSalesOrPaymentsSubmitted": false,
+  "deployed": false,
+  "browser": [
+    {"cssWidth": 1440, "cssHeight": 900, "locale": "en", "firstProductTop": 365.76, "horizontalOverflow": false, "chargeTop": 798.16, "chargeBottom": 846.16},
+    {"cssWidth": 1280, "cssHeight": 720, "locale": "en", "firstProductTop": 365.76, "horizontalOverflow": false, "chargeTop": 618.16, "chargeBottom": 666.16},
+    {"cssWidth": 768, "cssHeight": 1024, "locale": "en", "firstProductTop": 409.33, "horizontalOverflow": false, "chargeTop": 966.67, "chargeBottom": 1014.67},
+    {"cssWidth": 1024, "cssHeight": 768, "locale": "en", "firstProductTop": 364.67, "horizontalOverflow": false, "chargeTop": 710.67, "chargeBottom": 758.67},
+    {"cssWidth": 1024, "cssHeight": 768, "locale": "fr", "firstProductTop": 364.67, "horizontalOverflow": false, "chargeTop": 710.67, "chargeBottom": 758.67}
+  ],
+  "mockedOrPureTests": {"passed": 294, "failed": 0, "suites": 19, "footerSubsetRepeated": 6},
+  "postgres": {
+    "distinctPassedCases": 16,
+    "adapterLaunchFailuresPerRun": 1,
+    "skippedPerRun": 0,
+    "runs": 2,
+    "fullSuiteExitCode": 1,
+    "allPassCertification": false,
+    "ownedDatabaseCleanupVerified": true,
+    "applicationDatabaseChanged": false,
+    "launchBlockers": ["Bundled Chromium missing", "Installed Edge exits before Playwright connects"]
+  },
+  "lintPassed": true,
+  "workflowContractPassed": true,
+  "scopedDiffCheckPassed": true,
+  "physicalHardwareVerified": false,
+  "receiptDeliveryConfigured": false,
+  "returnInterfaceAvailable": false,
+  "liveOfflineSellingEnabled": false,
+  "sourceSha256": {
+    "components/pos/ProfessionalPOSSystem.tsx": "F4BA0630A0FE287A609CE9F74A39958D9DDB263FB4981E91DF07FE80AF3C83FF",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "E7C5250976DEB004E0F264FB7156031E22D8A71BCE716D8281A9C913F22051F4",
+    "components/pos/offline/LocalOfflineRecovery.tsx": "1EA1B8C84C98B75E02B88232DF9C8E3A223BAB17EA0BC052C055B2D81A5A1C4F",
+    "components/pos/POSCheckoutShell.tsx": "087A8CB10D34D96B4AAB05D9884F3AD333A8B13309152EB8C3CAE85D328FE2F1",
+    "components/pos/pos-workspace.css": "B820FCEA0E4D427179CBA7A967CC08E811C59DB3F99CE33CD732D8CF5B6E263D"
+  }
+}

@@ -70,6 +70,7 @@ export default async function PurchasePayablesPage({
               {hasRbacPermission(_context.permissions, "purchasing.ap.payment.release") && <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/payments/record`}>{locale === "fr" ? "Enregistrer un paiement fournisseur" : "Record a supplier payment"}</Link></Button>}
               {hasRbacPermission(_context.permissions, "purchasing.ap.payment.request") && <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/payments/request`}>{locale === "fr" ? "Demander un paiement fournisseur" : "Request a supplier payment"}</Link></Button>}
               {hasRbacPermission(_context.permissions, "purchasing.ap.payment.approve") && <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/payments/approve`}>{locale === "fr" ? "Examiner les paiements fournisseurs" : "Review supplier payments"}</Link></Button>}
+              {hasRbacPermission(_context.permissions, "purchasing.ap.credit.post") && <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/credit`}>{locale === "fr" ? "Enregistrer un avoir fournisseur" : "Record supplier credit"}</Link></Button>}
             </div>
             <APControlWorkbench
               data={result.data}

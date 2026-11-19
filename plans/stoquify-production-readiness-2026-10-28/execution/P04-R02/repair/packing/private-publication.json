@@ -1,0 +1,46 @@
+{
+  "at": "2026-10-29T13:29:21.895Z",
+  "harnessCompleted": true,
+  "packingAcceptancePassed": true,
+  "productionReleaseQualified": false,
+  "evidenceClass": "actual repaired packer and verifier; existing isolated asset mirror; synthetic standalone; build invocation stubbed",
+  "buildExecuted": false,
+  "stubBuildInvocations": 1,
+  "runtimeServed": false,
+  "originalAssetsRead": false,
+  "originalAssetsWritten": false,
+  "mirrorAssetsUnchanged": true,
+  "publicLegacyCopies": 0,
+  "renamedKnownPrivateCopies": 0,
+  "privateAssets": [
+    {
+      "source": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "destination": "runtime/.private/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "sha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2"
+    },
+    {
+      "source": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "destination": "runtime/.private/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "sha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225"
+    },
+    {
+      "source": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "destination": "runtime/.private/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "sha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519"
+    }
+  ],
+  "artifact": {
+    "destination": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p04-r02-20261029-r1\\private-publication-repair-01",
+    "sha256": "786829183a71d79a6e0adf4f3c04a9d0f39708aaf71907d47498025f9fdc08e2",
+    "buildId": "P04-R02-SYNTHETIC-PACKING",
+    "files": 8
+  },
+  "sourcePackerSha256": "62c0b3a26a9db2899228a43ba7ecee3d814dca87df268a5f32725121dd5a9f7d",
+  "assetInventorySha256": "e64ad097bc3891a4f8cebb8ff1dc60ad04d6bf398f32f229c1a9ee7d5a3404cf",
+  "harnessSha256": "f9f7c4025133e10bb822532be2dbbe5bf31ea1e3d3a36f8a73083fa9a4c0ee76",
+  "limitations": [
+    "Not a real standalone compilation",
+    "No real auth/session/browser/CDN behavior exercised",
+    "Original source asset preservation must be reconciled by the parent receipt; this runner reads only isolated copies"
+  ]
+}

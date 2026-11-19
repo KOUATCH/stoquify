@@ -1,0 +1,17 @@
+{
+  "label": "remaining-firm-close",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "prisma/disposable-remaining.ts",
+    "firm-close"
+  ],
+  "startedAt": "2026-10-29T12:26:44.589Z",
+  "finishedAt": "2026-10-29T12:28:22.984Z",
+  "exitCode": 0,
+  "errorCode": null
+}

@@ -1,0 +1,45 @@
+{
+  "passed": false,
+  "files": [
+    {
+      "file": "AF08/sample-workpapers.pdf",
+      "pages": 5,
+      "bytes": 9428,
+      "sha256": "cafeae8c38c0baac23878d10591bd3e8a2181616cdb33f940608455b9f15fa5f",
+      "reviewedBalancesVisible": [
+        "100.20",
+        "200.10"
+      ]
+    },
+    {
+      "file": "AF12/sample-advisory-pack.pdf",
+      "pages": 2,
+      "bytes": 6672,
+      "sha256": "3fc1ae97854e855f74b8a5bc14341b8be11dafcaf44e181a116e85698f97179c",
+      "reviewedBalancesVisible": [
+        "100.20",
+        "200.10"
+      ]
+    },
+    {
+      "file": "AF12/browser-advisory.pdf",
+      "pages": 1,
+      "bytes": 5605,
+      "sha256": "5c2259ba74d7c14333edb7cdb71b6b80abc35ee09e8cc1a0401c1f060091c4a7",
+      "reviewedBalancesVisible": [
+        "100.20",
+        "200.10"
+      ]
+    }
+  ],
+  "errors": [
+    "Expected reviewed balance absent: AF12/browser-advisory.pdf 200.10"
+  ],
+  "checks": [
+    "extractable PDF text",
+    "reviewed cash/receivable balances",
+    "private markers excluded",
+    "AF08 JSON/CSV/PDF artifact hashes"
+  ],
+  "visualReview": "Separate visual-review.json"
+}

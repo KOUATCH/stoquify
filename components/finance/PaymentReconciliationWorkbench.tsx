@@ -84,6 +84,7 @@ import { SUBJECT_PERMISSION_MAP, type ProofTrailResult } from "@/services/eviden
 import type { PaymentReconciliationWorkbenchPeriod } from "@/services/payments/payment-reconciliation-workbench.schemas"
 
 const allLocationsValue = "all"
+type ReconciliationRunSelection = { kind: "DAILY" | "ACCOUNTING_PERIOD"; periodId: string }
 const periods: PaymentReconciliationWorkbenchPeriod[] = [
   "today",
   "yesterday",
@@ -456,6 +457,10 @@ export default function PaymentReconciliationWorkbench({ initialSignRunId }: { i
   const [activeProofSubjectId, setActiveProofSubjectId] = useState<string | null>(null)
   const [proofLoadingSubjectId, setProofLoadingSubjectId] = useState<string | null>(null)
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null)
+  const actorScopeKey = JSON.stringify([authority.organizationId, authority.user?.id])
+  const [storedRunSelection, setStoredRunSelection] = useState<ReconciliationRunSelection & { scopeKey: string }>({ kind: "DAILY", periodId: "", scopeKey: actorScopeKey })
+  const runSelection: ReconciliationRunSelection = storedRunSelection.scopeKey === actorScopeKey ? storedRunSelection : { kind: "DAILY", periodId: "" }
+  const changeRunSelection = (selection: ReconciliationRunSelection) => setStoredRunSelection({ ...selection, scopeKey: actorScopeKey })
 
   const queryInput = useMemo(
     () => ({
@@ -477,6 +482,14 @@ export default function PaymentReconciliationWorkbench({ initialSignRunId }: { i
   }
   const durableDashboardQuery = usePaymentReconciliationDashboard()
   const durableDashboard = durableDashboardQuery.data
+  const runAuthorityReady = authority.permissionState === "ready" && authority.hasPermission("payments.reconciliation.run") &&
+    authority.organizationId === durableDashboard?.scope.organizationId && authority.user?.id === durableDashboard?.scope.actorId
+  const selectedRunPeriod = (durableDashboard?.openAccountingPeriods ?? []).find(item => item.id === runSelection.periodId)
+  const runSelectionReady = runAuthorityReady && (runSelection.kind === "DAILY" || Boolean(selectedRunPeriod))
+  const runContextKey = JSON.stringify([actorScopeKey, authority.permissionState, runAuthorityReady, runSelection.kind, runSelection.periodId, selectedRunPeriod?.startDate, selectedRunPeriod?.endDate])
+  const activeRunContext = useRef({ key: runContextKey, mounted: true })
+  if (activeRunContext.current.key !== runContextKey) activeRunContext.current = { key: runContextKey, mounted: true }
+  useEffect(() => { activeRunContext.current.mounted = true; return () => { activeRunContext.current.mounted = false } }, [])
   const selectedRunDetailId = selectedRunId ?? durableDashboard?.recentRuns[0]?.id ?? null
   const runDetailQuery = useReconciliationRunDetail(selectedRunDetailId)
   const runReconciliation = useRunPaymentReconciliation()
@@ -558,18 +571,22 @@ export default function PaymentReconciliationWorkbench({ initialSignRunId }: { i
   }
 
   async function runDurableReconciliation(providerAccountId: string) {
+    if (!runSelectionReady || !durableDashboard?.providerAccounts.some(account => account.id === providerAccountId && account.status === "ACTIVE")) return
+    const requestContext = activeRunContext.current
     notifications.info(t("certification.notifications.runStartedTitle"), t("certification.notifications.runStartedMessage"), {
       category: "reconciliation",
     })
     try {
       await runReconciliation.mutateAsync({
         providerAccountId,
-        businessDate: new Date(),
+        ...(runSelection.kind === "ACCOUNTING_PERIOD" && selectedRunPeriod ? { accountingPeriodId: selectedRunPeriod.id } : { businessDate: new Date() }),
       })
+      if (activeRunContext.current !== requestContext || !requestContext.mounted) return
       notifications.success(t("certification.notifications.runCompleteTitle"), t("certification.notifications.runCompleteMessage"), {
         category: "reconciliation",
       })
     } catch (error) {
+      if (activeRunContext.current !== requestContext || !requestContext.mounted) return
       notifications.error(
         t("notifications.failedTitle"),
         error instanceof Error ? error.message : t("notifications.failedMessage"),
@@ -757,6 +774,9 @@ export default function PaymentReconciliationWorkbench({ initialSignRunId }: { i
           isLoading={durableDashboardQuery.isLoading}
           error={durableDashboardQuery.error ? t("notifications.failedMessage") : null}
           isRunning={runReconciliation.isPending}
+          runSelection={runSelection}
+          runSelectionReady={runSelectionReady}
+          onRunSelectionChange={changeRunSelection}
           isExporting={exportCertificate.isPending}
           onRun={runDurableReconciliation}
           onExport={exportDurableCertificate}
@@ -894,6 +914,9 @@ function DurableEvidencePanel({
   isRunDetailLoading,
   runDetailError,
   isRunning,
+  runSelection,
+  runSelectionReady,
+  onRunSelectionChange,
   isExporting,
   onRun,
   onExport,
@@ -922,6 +945,9 @@ function DurableEvidencePanel({
   isRunDetailLoading: boolean
   runDetailError: string | null
   isRunning: boolean
+  runSelection: ReconciliationRunSelection
+  runSelectionReady: boolean
+  onRunSelectionChange: (selection: ReconciliationRunSelection) => void
   isExporting: boolean
   onRun: (providerAccountId: string) => void
   onExport: (command: ReconciliationCertificateExportCommand) => ReturnType<ReturnType<typeof useExportReconciliationCertificate>["mutateAsync"]>
@@ -1046,6 +1072,25 @@ function DurableEvidencePanel({
               <div className={cn("text-xs font-semibold uppercase tracking-normal", faintTextClass)}>
                 {t("certification.providerAccounts")}
               </div>
+              {exportScopeReady && <div className="space-y-2">
+                <label htmlFor="reconciliation-run-scope" className={cn("text-xs font-medium", mutedTextClass)}>{t("certification.runScope.label")}</label>
+                <Select value={runSelection.kind} onValueChange={value => onRunSelectionChange({ kind: value as ReconciliationRunSelection["kind"], periodId: "" })}>
+                  <SelectTrigger id="reconciliation-run-scope" aria-label={t("certification.runScope.label")} className="dashboard-control"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="DAILY">{t("certification.runScope.daily")}</SelectItem>
+                    <SelectItem value="ACCOUNTING_PERIOD">{t("certification.runScope.accountingPeriod")}</SelectItem>
+                  </SelectContent>
+                </Select>
+                {runSelection.kind === "ACCOUNTING_PERIOD" && <>
+                  <label htmlFor="reconciliation-run-period" className={cn("text-xs font-medium", mutedTextClass)}>{t("certification.runScope.periodLabel")}</label>
+                  <Select value={runSelection.periodId} onValueChange={periodId => onRunSelectionChange({ kind: "ACCOUNTING_PERIOD", periodId })}>
+                    <SelectTrigger id="reconciliation-run-period" aria-label={t("certification.runScope.periodLabel")} aria-describedby="reconciliation-period-warning" className="dashboard-control"><SelectValue placeholder={t("certification.runScope.choosePeriod")} /></SelectTrigger>
+                    <SelectContent>{(dashboard.openAccountingPeriods ?? []).map(item => <SelectItem key={item.id} value={item.id}>{item.name} / {item.startDate.slice(0, 10)} – {item.endDate.slice(0, 10)} UTC</SelectItem>)}</SelectContent>
+                  </Select>
+                  {(dashboard.openAccountingPeriods ?? []).length === 0 && <p className={cn("text-xs", mutedTextClass)}>{t("certification.runScope.noPeriods")}</p>}
+                  <p id="reconciliation-period-warning" className={cn("text-xs", mutedTextClass)}>{t("certification.runScope.collisionWarning")}</p>
+                </>}
+              </div>}
             {dashboard.providerAccounts.length === 0 ? (
               <EmptyState icon={Database} label={t("certification.emptyProviderAccounts")} />
             ) : (
@@ -1069,7 +1114,7 @@ function DurableEvidencePanel({
                     type="button"
                     variant="outline"
                     size="sm"
-                    disabled={isRunning || account.status !== "ACTIVE"}
+                    disabled={isRunning || !runSelectionReady || account.status !== "ACTIVE"}
                     onClick={() => onRun(account.id)}
                     className="dashboard-button-secondary shrink-0 rounded-lg"
                   >

@@ -37,7 +37,7 @@ function hasCompletedValues(value) {
   if (value === null || value === undefined) return false;
   if (typeof value === "string") return value.trim().length > 0;
   if (Array.isArray(value)) return value.length > 0 && value.every(hasCompletedValues);
-  if (typeof value === "object") return Object.values(value).every(hasCompletedValues);
+  if (typeof value === "object") return Object.keys(value).length > 0 && Object.values(value).every(hasCompletedValues);
   return true;
 }
 
@@ -78,7 +78,9 @@ function verifyEvidenceIndex(packageDir) {
 function fixtureTieOutHashes(workbookFile) {
   const workbook = readJson(workbookFile);
   const results = (workbook.fixtureFamilies || []).map((fixture) => {
-    const complete = hasCompletedValues(fixture.independentReview);
+    const complete = isText(fixture.fixtureFamily) && fixture.independentReview !== null
+      && typeof fixture.independentReview === "object" && !Array.isArray(fixture.independentReview)
+      && hasCompletedValues(fixture.independentReview);
     const hash = complete
       ? `sha256:${crypto.createHash("sha256").update(canonicalJson(fixture.independentReview)).digest("hex")}`
       : null;
@@ -89,7 +91,7 @@ function fixtureTieOutHashes(workbookFile) {
     };
   });
   return {
-    status: results.length === 4 && results.every((result) => result.complete)
+    status: results.length === 4 && new Set(results.map((result) => result.fixtureFamily)).size === 4 && results.every((result) => result.complete)
       ? "TIE_OUT_HASHES_READY"
       : "BLOCKED_INCOMPLETE_INDEPENDENT_REVIEW",
     results,
@@ -116,7 +118,7 @@ function assessSignatureVerification({ evidenceDir, decisionFile }) {
     if (!fs.existsSync(signedFile) || sha256File(signedFile) !== signed.sha256) blockers.push("signed_artifact_hash_mismatch");
   }
   if (verification.status !== "VERIFIED") blockers.push("checker_verification_not_verified");
-  if (!isText(verification.verifiedBy) || verification.verifiedBy.trim().toLowerCase() === String(reviewer.fullName || "").trim().toLowerCase()) {
+  if (!isText(reviewer.fullName) || !isText(verification.verifiedBy) || verification.verifiedBy.trim().toLowerCase() === String(reviewer.fullName || "").trim().toLowerCase()) {
     blockers.push("maker_checker_separation_invalid");
   }
   if (!isText(verification.verifierRole) || !validDate(verification.verifiedAt) || !isText(verification.verificationMethod)) {

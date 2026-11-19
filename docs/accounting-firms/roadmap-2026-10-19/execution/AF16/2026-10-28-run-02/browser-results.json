@@ -1,0 +1,15 @@
+{
+  "synthetic": true,
+  "checks": [],
+  "screenshots": [
+    "failure.png",
+    "client-failure.png"
+  ],
+  "pageErrors": [],
+  "passed": false,
+  "secureCookieRoles": [
+    "manager",
+    "owner"
+  ],
+  "failure": "locator.click: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Invite an accountant', exact: true }).locator('..').locator('..').getByRole('button', { name: 'Invite or grant access', exact: true })\u001b[22m\n"
+}

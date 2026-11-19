@@ -1,0 +1,200 @@
+{
+  "status": "PASS",
+  "at": "2026-10-18T16:35:10.579Z",
+  "database": "stoquify_retention_p07_20261018_1574a9f2e0",
+  "organizationId": "p07-org-79c7241cd7bb",
+  "mediaBoundary": "Synthetic pre-existing ready assets; no provider upload/read proof",
+  "customers": [
+    {
+      "id": "cmve1jr6p001smajgfa8ac7u8",
+      "code": "customer-a",
+      "currentBalance": "0"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "cmve1ldoy002emajg879oc7nf",
+      "code": "supplier-a",
+      "currentBalance": "0"
+    }
+  ],
+  "items": [
+    {
+      "id": "cmve1mq7f002xmajgf1z44nme",
+      "sku": "item-each",
+      "imageUrls": [
+        "/api/media/33d821bf-74ff-4f3c-88b1-d37472a172d5"
+      ]
+    },
+    {
+      "id": "cmve1mqe0002zmajgumshv0je",
+      "sku": "item-weight",
+      "imageUrls": [
+        "/api/media/e9441192-773a-4f14-8ca3-3f07cd167a0d"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "id": "33d821bf-74ff-4f3c-88b1-d37472a172d5",
+      "organizationId": "p07-org-79c7241cd7bb",
+      "status": "ready",
+      "attachedAt": "2026-10-18T16:32:08.980Z"
+    },
+    {
+      "id": "e9441192-773a-4f14-8ca3-3f07cd167a0d",
+      "organizationId": "p07-org-79c7241cd7bb",
+      "status": "ready",
+      "attachedAt": "2026-10-18T16:32:09.220Z"
+    }
+  ],
+  "stockLevels": 0,
+  "stockMovements": 0,
+  "journals": 0,
+  "postings": 0,
+  "batches": [
+    {
+      "id": "cmve1j0pg000pmajg0cvvagxg",
+      "target": "ITEM",
+      "status": "BLOCKED",
+      "schemaVersion": "2",
+      "mappingVersion": 1,
+      "sourceRecordCount": 1,
+      "committedRecordCount": 0,
+      "contentHash": "sha256:f1099aa97d4650c45e4389134a6cd6d7459cbbdc4ff8edb3a504eb768adaeed0",
+      "uploadedById": "p07-maker-79c7241cd7bb",
+      "approvedById": null,
+      "replayCount": 0,
+      "riskLevel": "STANDARD"
+    },
+    {
+      "id": "cmve1jh2i001imajg4apnrod6",
+      "target": "CUSTOMER",
+      "status": "COMMITTED",
+      "schemaVersion": "1",
+      "mappingVersion": 1,
+      "sourceRecordCount": 1,
+      "committedRecordCount": 1,
+      "contentHash": "sha256:01e05e8986361f2370f3fbae77c6438829cdb7796365f2dfc95c59931e43b1a9",
+      "uploadedById": "p07-maker-79c7241cd7bb",
+      "approvedById": "p07-maker-79c7241cd7bb",
+      "replayCount": 0,
+      "riskLevel": "STANDARD"
+    },
+    {
+      "id": "cmve1j6h40011majgk2pkeky1",
+      "target": "CUSTOMER",
+      "status": "BLOCKED",
+      "schemaVersion": "1",
+      "mappingVersion": 1,
+      "sourceRecordCount": 1,
+      "committedRecordCount": 0,
+      "contentHash": "sha256:ffe8726b5d78c472f2a193ad171c9f508569fea2dd13830e5dc8c5a6e0da92ff",
+      "uploadedById": "p07-maker-79c7241cd7bb",
+      "approvedById": null,
+      "replayCount": 0,
+      "riskLevel": "STANDARD"
+    },
+    {
+      "id": "cmve1kls10020majg2g3v84mp",
+      "target": "SUPPLIER",
+      "status": "COMMITTED",
+      "schemaVersion": "1",
+      "mappingVersion": 1,
+      "sourceRecordCount": 1,
+      "committedRecordCount": 1,
+      "contentHash": "sha256:87f4f888e30b1ed1ae5c0f9747a619906c863b2c824e693c282a432f4fc465f2",
+      "uploadedById": "p07-maker-79c7241cd7bb",
+      "approvedById": "p07-checker-79c7241cd7bb",
+      "replayCount": 0,
+      "riskLevel": "HIGH"
+    },
+    {
+      "id": "cmve1lwlx002kmajg2dqjre6h",
+      "target": "ITEM",
+      "status": "COMMITTED",
+      "schemaVersion": "2",
+      "mappingVersion": 1,
+      "sourceRecordCount": 2,
+      "committedRecordCount": 2,
+      "contentHash": "sha256:658cb05d84c99945c24a13d1d22cf28af0822eadbb07c8c9edf740ff925f37e6",
+      "uploadedById": "p07-maker-79c7241cd7bb",
+      "approvedById": "p07-checker-79c7241cd7bb",
+      "replayCount": 1,
+      "riskLevel": "HIGH"
+    }
+  ],
+  "rows": [
+    {
+      "businessKey": "customer-a",
+      "committedRecordId": "cmve1jr6p001smajgfa8ac7u8",
+      "sourceRowHash": "sha256:37e86f7f0c8ce9cb8db4b2ab11fcca97a34367ea7810bbbc31e8e00f6e0151bb",
+      "batchId": "cmve1jh2i001imajg4apnrod6",
+      "normalizedData": {
+        "code": "customer-a",
+        "name": "Synthetic customer",
+        "phone": null,
+        "taxId": null,
+        "isActive": true,
+        "creditLimit": 0,
+        "paymentTerms": 30,
+        "preferredLocale": "EN"
+      }
+    },
+    {
+      "businessKey": "supplier-a",
+      "committedRecordId": "cmve1ldoy002emajg879oc7nf",
+      "sourceRowHash": "sha256:ab3106226bdc63ec8451e6a2e76352daf5f7213bedaa634537ff33396de64671",
+      "batchId": "cmve1kls10020majg2g3v84mp",
+      "normalizedData": {
+        "city": null,
+        "code": "supplier-a",
+        "name": "Synthetic supplier",
+        "phone": null,
+        "state": null,
+        "taxId": null,
+        "address": null,
+        "country": null,
+        "zipCode": null,
+        "isActive": true,
+        "creditLimit": 0,
+        "paymentTerms": 30,
+        "contactPerson": null,
+        "preferredLocale": "EN"
+      }
+    },
+    {
+      "businessKey": "item-each",
+      "committedRecordId": "cmve1mq7f002xmajgf1z44nme",
+      "sourceRowHash": "sha256:59e04d7b6f828ae98cf7ae95080ccdcbac1cf9eb94d455eab85f1b43dd7095f0",
+      "batchId": "cmve1lwlx002kmajg2dqjre6h",
+      "normalizedData": {
+        "sku": "item-each",
+        "nameEn": "Synthetic EA",
+        "nameFr": "Article EA",
+        "costPrice": 0,
+        "imageUrls": "/api/media/33d821bf-74ff-4f3c-88b1-d37472a172d5",
+        "sellingPrice": 0,
+        "descriptionEn": null,
+        "descriptionFr": null
+      }
+    },
+    {
+      "businessKey": "item-weight",
+      "committedRecordId": "cmve1mqe0002zmajgumshv0je",
+      "sourceRowHash": "sha256:b9cc9c353d989b7793ed6a4cbbf46af4efe3fb44cd90b7041ddfbfbcc9e6432d",
+      "batchId": "cmve1lwlx002kmajg2dqjre6h",
+      "normalizedData": {
+        "sku": "item-weight",
+        "nameEn": "Synthetic KG",
+        "nameFr": "Article KG",
+        "costPrice": 0,
+        "imageUrls": "/api/media/e9441192-773a-4f14-8ca3-3f07cd167a0d",
+        "sellingPrice": 0,
+        "descriptionEn": null,
+        "descriptionFr": null
+      }
+    }
+  ],
+  "checkpointTriggerRemoved": true
+}

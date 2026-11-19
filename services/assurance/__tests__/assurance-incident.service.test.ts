@@ -641,28 +641,8 @@ describe("workflow assurance incident service", () => {
     expect(mockDb.workflowAssuranceIncident.update).not.toHaveBeenCalled()
   })
 
-  it("validates assignment owner is active and belongs to the incident tenant", async () => {
-    const open = incidentRecord({ id: "incident-1", status: "OPEN" })
-    mockDb.workflowAssuranceIncident.findFirst.mockResolvedValue(open)
-    mockDb.user.findFirst.mockResolvedValue(null)
-
-    await expect(
-      assignWorkflowAssuranceIncident({
-        organizationId: "org-1",
-        incidentId: "incident-1",
-        actorId: "user-1",
-        ownerId: "foreign-or-inactive-user",
-      }),
-    ).rejects.toThrow(/active user in the same organization/i)
-
-    expect(mockDb.user.findFirst).toHaveBeenCalledWith({
-      where: {
-        id: "foreign-or-inactive-user",
-        organizationId: "org-1",
-        isActive: true,
-      },
-      select: { id: true },
-    })
+  it("refuses legacy assignments without a trusted session, revision and request identity", async () => {
+    await expect(assignWorkflowAssuranceIncident({organizationId: "org-1", incidentId: "incident-1", actorId: "user-1", ownerId: "owner-1"} as never)).rejects.toThrow(/session, source revision and assignment request/i)
     expect(mockDb.workflowAssuranceIncident.update).not.toHaveBeenCalled()
   })
   it("enforces maker-checker on waiver approval", async () => {
@@ -804,3 +784,12 @@ function waiverRecord(overrides: Record<string, unknown> = {}) {
     ...overrides,
   }
 }
+
+// Mocked transaction-boundary evidence; not a concurrent PostgreSQL test.
+it("returns a recoverable assignment conflict for serialization failure without blind retries", async () => {
+  mockDb.$transaction.mockClear()
+  mockDb.$transaction.mockRejectedValueOnce({code: "P2034"})
+  await expect(assignWorkflowAssuranceIncident({organizationId: "org-1", incidentId: "incident-1", actorId: "user-1", ownerId: "owner-1", expectedRevision: "a".repeat(64), requestId: "11111111-1111-4111-8111-111111111111", session: {id: "session", token: "synthetic"}})).rejects.toThrow(/refresh/i)
+  expect(mockDb.$transaction).toHaveBeenCalledTimes(1)
+  expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {isolationLevel: "Serializable"})
+})

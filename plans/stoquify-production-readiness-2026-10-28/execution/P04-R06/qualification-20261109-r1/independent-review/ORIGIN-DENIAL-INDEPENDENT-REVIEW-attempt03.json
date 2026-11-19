@@ -1,0 +1,112 @@
+{
+  "at": "2026-11-10T11:39:40.429Z",
+  "reviewer": "/root/r06_review",
+  "passed": false,
+  "observationAccepted": true,
+  "productDefectConfirmed": true,
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "classification": "Rejected cross-site sign-in mutates supplied account failure bookkeeping; no observed authentication bypass",
+  "checks": {
+    "currentBindingsMatch": true,
+    "capturedBeforeHashMatch": true,
+    "sourceComparisonReportsIdenticalHook": true,
+    "currentHelperMatchesBaseline": true,
+    "nativeSnapshotHashesMatch": true,
+    "independentActualEffectsAgree": true
+  },
+  "sourceAttribution": {
+    "presentInCapturedBeforeRepairSource": true,
+    "afterHookSha256": "925fa82ff36df3177272633c4fc66f31c6dc158ce255a6a9ac6d088a183cd9cd",
+    "helperSha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+    "beforeRuntimeReplayed": false,
+    "limit": "Pre-existing attribution is supported by exact source equality; no historical runtime replay was performed."
+  },
+  "actualCases": [
+    {
+      "id": "R06-C-origin-browser-navigate",
+      "captureId": "70bbd449-6824-433d-95bf-d842ddd60fac",
+      "status": 403,
+      "origin": "http://127.0.0.1:3298",
+      "fetchSite": "cross-site",
+      "fetchMode": "navigate",
+      "fetchDest": "document",
+      "cookieCount": 0,
+      "complete": true,
+      "privateAuthorityBytesAbsent": true,
+      "nativeSessionRowsUnchanged": true,
+      "failedLoginAttemptsBefore": 0,
+      "failedLoginAttemptsAfter": 1,
+      "changedOwnFields": [
+        "failedLoginAttempts",
+        "lastFailedLogin",
+        "updatedAt"
+      ],
+      "otherUserRowsUnchanged": true,
+      "addedAudits": [
+        {
+          "action": "LOGIN_FAILED",
+          "userId": "p04r06-active",
+          "organizationId": "p04-r06-a"
+        }
+      ],
+      "before": "snapshot-R06-C-origin-browser-navigate-before-1794310318320-8a21118c-888e-4850-8e6b-6972abb949c7.json",
+      "after": "snapshot-R06-C-origin-browser-navigate-after-1794310321077-9d87d316-dcce-457c-82be-d96dad813133.json",
+      "bodySha256": "831218014e59dee0bf7786bc53c8cd813f0e053ced0cc8684d7b47cda546b91a"
+    },
+    {
+      "id": "R06-C-origin-browser-cors",
+      "captureId": "e597760c-59ef-45cd-b83e-39eabc7cf583",
+      "status": 403,
+      "origin": "http://127.0.0.1:3298",
+      "fetchSite": "cross-site",
+      "fetchMode": "cors",
+      "fetchDest": "empty",
+      "cookieCount": 0,
+      "complete": true,
+      "privateAuthorityBytesAbsent": true,
+      "nativeSessionRowsUnchanged": true,
+      "failedLoginAttemptsBefore": 1,
+      "failedLoginAttemptsAfter": 2,
+      "changedOwnFields": [
+        "failedLoginAttempts",
+        "lastFailedLogin",
+        "updatedAt"
+      ],
+      "otherUserRowsUnchanged": true,
+      "addedAudits": [
+        {
+          "action": "LOGIN_FAILED",
+          "userId": "p04r06-active",
+          "organizationId": "p04-r06-a"
+        }
+      ],
+      "before": "snapshot-R06-C-origin-browser-cors-before-1794310329333-1abb8925-f142-4e5f-a11f-bfb98fe23cec.json",
+      "after": "snapshot-R06-C-origin-browser-cors-after-1794310332233-275e0be7-4065-433c-ae48-1d09475edec7.json",
+      "bodySha256": "c0efe3e4504d685256099acd2e7b3fd523c955b897306a0fbc54f8fa98f6c80d"
+    }
+  ],
+  "causalConclusion": "Installed form CSRF/origin middleware rejects before credential verification; native error flows to application after-hook. The current helper labels every APIError non-success, and the hook treats every non-success as a wrong-password attempt without checking failure eligibility.",
+  "sourceDerivedImplications": [
+    "A supplied account can acquire failed-attempt bookkeeping on a rejected origin request before admitted credential verification. Actual probes supplied valid synthetic credentials.",
+    "Repeated rejection can reach the existing failure threshold by source analysis; actual threshold crossing and expired-lock reset behavior were not exercised."
+  ],
+  "nextRepair": "Refresh/harden the narrow credential outcome eligibility and hook ordering, preserving genuine wrong-password and successful-login bookkeeping, unavailable-account semantics and current-session guards; rebuild and independently requalify changed source.",
+  "originalNativeClientExpectation": "Preserved modeling/acceptance question; no new business approval gate is inferred solely from the APIRequestContext premise.",
+  "evidence": [
+    {
+      "path": "independent-review/ORIGIN-DENIAL-BOOKKEEPING-SOURCE-attempt03.json",
+      "sha256": "5e271a8810a5d453d635cff61b5b17988309b841c8496506965493e338b344ae"
+    },
+    {
+      "path": "independent-review/RECOVERY-OUTCOME-REVIEW-attempt03.json",
+      "sha256": "8ccbe5fef2bf100101616da953b7de43c06adc6f2e28d5e183721ee0d4b17e38"
+    },
+    {
+      "path": "REPAIR-HANDOFF-attempt02.md",
+      "sha256": "203253d38733dead76986b40a97e84afef8e1bf22be0c665041e232332c54cf2"
+    }
+  ],
+  "packageAdvancement": false,
+  "productionReady": false
+}

@@ -137,6 +137,7 @@ export function evaluateHrisContractReadinessProof(
   );
   const approvalValid = Boolean(
     contract &&
+    stringValue(contract.activatedBusinessEventId) &&
     approval.status === "APPROVED" &&
     stringValue(approval.requestId) &&
     stringValue(approval.requestEvidenceHash) &&
@@ -155,6 +156,21 @@ export function evaluateHrisContractReadinessProof(
     stringValue(documentEvidence.approvalBusinessEventId),
   );
   return { approval, documentEvidence, approvalValid, documentValid };
+}
+
+export function evaluateHrisPaymentDestinationReadinessProof(
+  source: Pick<HrisPayrollReadinessEmployeeSource, "employeeMetadata" | "paymentDestinationHash" | "paymentDestinationRequest">,
+) {
+  const evidence = record(record(source.employeeMetadata).approvedPaymentDestinationEvidence);
+  const request = source.paymentDestinationRequest;
+  if (!request || request.status !== "APPLIED" || !stringValue(source.paymentDestinationHash) ||
+      request.paymentDestinationHash !== source.paymentDestinationHash ||
+      stringValue(evidence.paymentDestinationHash) !== source.paymentDestinationHash) return false;
+  const links = ["evidenceDocumentHash", "approvalEvidenceHash", "requestBusinessEventId", "approvalBusinessEventId", "appliedBusinessEventId"] as const;
+  const actors = [request.requestedById, request.approvedById, request.appliedById].map(stringValue);
+  return Boolean(stringValue(request.id) && stringValue(evidence.requestId) === request.id &&
+    links.every(key => stringValue(request[key]) && stringValue(evidence[key]) === request[key]) &&
+    actors.every(Boolean) && new Set(actors).size === 3 && stringValue(request.appliedAt));
 }
 
 function employeeProof(source: HrisPayrollReadinessEmployeeSource) {
@@ -269,36 +285,7 @@ function employeeProof(source: HrisPayrollReadinessEmployeeSource) {
     employeeMetadata.approvedPaymentDestinationEvidence,
   );
   const destinationRequest = source.paymentDestinationRequest;
-  const requester = stringValue(destinationRequest?.requestedById);
-  const approver = stringValue(destinationRequest?.approvedById);
-  const applier = stringValue(destinationRequest?.appliedById);
-  const destinationProofValid = Boolean(
-    source.paymentDestinationHash &&
-    destinationRequest &&
-    destinationRequest.status === "APPLIED" &&
-    destinationRequest.paymentDestinationHash ===
-      source.paymentDestinationHash &&
-    stringValue(destinationEvidence.requestId) === destinationRequest.id &&
-    stringValue(destinationEvidence.paymentDestinationHash) ===
-      source.paymentDestinationHash &&
-    stringValue(destinationEvidence.evidenceDocumentHash) ===
-      destinationRequest.evidenceDocumentHash &&
-    stringValue(destinationEvidence.approvalEvidenceHash) ===
-      destinationRequest.approvalEvidenceHash &&
-    stringValue(destinationEvidence.requestBusinessEventId) ===
-      destinationRequest.requestBusinessEventId &&
-    stringValue(destinationEvidence.approvalBusinessEventId) ===
-      destinationRequest.approvalBusinessEventId &&
-    stringValue(destinationEvidence.appliedBusinessEventId) ===
-      destinationRequest.appliedBusinessEventId &&
-    requester &&
-    approver &&
-    applier &&
-    requester !== approver &&
-    requester !== applier &&
-    approver !== applier &&
-    stringValue(destinationRequest.appliedAt),
-  );
+  const destinationProofValid = evaluateHrisPaymentDestinationReadinessProof(source);
   if (!destinationProofValid) {
     addBlocker(
       "HRIS_PAYROLL_PAYMENT_DESTINATION_PROOF_MISSING",

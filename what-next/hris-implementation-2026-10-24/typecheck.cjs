@@ -1,0 +1,12 @@
+const fs = require('node:fs');
+const ts = require('typescript');
+const [output, ...roots] = process.argv.slice(2);
+if (!output || !roots.length) throw new Error('Output path and explicit source roots required');
+const config = ts.readConfigFile('tsconfig.json', ts.sys.readFile);
+const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, process.cwd());
+const program = ts.createProgram(roots, {...parsed.options, noEmit: true, incremental: false});
+const diagnostics = ts.getPreEmitDiagnostics(program);
+const text = ts.formatDiagnosticsWithColorAndContext(diagnostics, {getCanonicalFileName: f => f, getCurrentDirectory: () => process.cwd(), getNewLine: () => '\n'});
+fs.writeFileSync(output, text + `\nDiagnostics: ${diagnostics.length}\n`);
+console.log(`Diagnostics: ${diagnostics.length}; ${output}`);
+process.exitCode = diagnostics.length ? 1 : 0;

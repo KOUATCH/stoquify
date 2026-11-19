@@ -1,0 +1,79 @@
+{
+  "at": "2026-11-09T16:12:57.310Z",
+  "passed": true,
+  "evidenceClass": "read-only source and proposal consistency",
+  "checks": [
+    {
+      "path": "actions/accounting/finance-statement-export.actions.ts",
+      "sha256": "583a1830b85b9015dc243f633a98c59e04177ff3d1813ed041818539ef478399",
+      "currentAndSnapshotMatch": true
+    },
+    {
+      "path": "services/accounting/finance-statement-export.service.ts",
+      "sha256": "f3182b84654fb5e0127757234b6561b0dba6d80c58c10da10221573280ebac50",
+      "currentAndSnapshotMatch": true
+    },
+    {
+      "path": "services/accounting/finance-statement-export-operations.service.ts",
+      "sha256": "d75a2edf0a14dbba3cd1dbbc4c6a29e968bf92d00efae7f265b4b2654551f2f0",
+      "currentAndSnapshotMatch": true
+    },
+    {
+      "path": "components/DataTableComponents/finance-accounting-contracts.ts",
+      "sha256": "54d8afe4cd158bf522474d5a482971712ba3609af90bba11f419e178dad52c06",
+      "currentAndSnapshotMatch": true
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+      "currentAndSnapshotMatch": true
+    },
+    {
+      "path": "services/controls/sensitive-action.service.ts",
+      "sha256": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+      "currentAndSnapshotMatch": true
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "currentAndSnapshotMatch": true
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c",
+      "currentAndSnapshotMatch": true
+    },
+    {
+      "path": "actions/accounting/__tests__/finance-statement-export.actions.test.ts",
+      "sha256": "5cfd33c2945d4d1ccee978b599e40682a60e1bb0321a2046e0ff7648edb661ff",
+      "currentAndSnapshotMatch": true
+    },
+    {
+      "path": "services/accounting/__tests__/finance-statement-export.service.test.ts",
+      "sha256": "578afeecc65ac9f3fe999099b90de45ec978e6f1aef86e05bcdcbe66cc472b80",
+      "currentAndSnapshotMatch": true
+    },
+    {
+      "path": "services/accounting/__tests__/finance-statement-export-operations.service.test.ts",
+      "sha256": "04327e2d2820fa3bad2e723f72c4473a03452e810dff8a92d09da0297441f69c",
+      "currentAndSnapshotMatch": true
+    }
+  ],
+  "approvalStillPending": true,
+  "classes": 14,
+  "acceptanceCases": 12,
+  "packetFiles": [
+    {
+      "path": "DECISION.md",
+      "sha256": "3bdf093e45700a6a46c6ad1ae2ed35a104b13e2fbea903b137fd1327a9328a97"
+    },
+    {
+      "path": "decision-record.json",
+      "sha256": "93bc5efead1fe4f515b4f62ee17e7528e47703b4932d743572e744438d5f6a22"
+    },
+    {
+      "path": "source-manifest.json",
+      "sha256": "e69590a9dfd91af2e8c47db2aec17cdef7c4c990be82a0729cc0b1bf97e94ae6"
+    }
+  ]
+}

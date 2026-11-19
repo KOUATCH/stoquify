@@ -14,7 +14,7 @@ describe("opening readiness guidance", () => {
     expect(result.masters[0]).toMatchObject({ stage, latestBatchId: "source-batch", sourceFilename: "items.csv", contentHash: "sha256:retained" })
     expect(result.state).toBe("REVIEW_REQUIRED")
     expect(result.requirements.map(step => [step.key, step.state])).toEqual([
-      ["STOCK", "NOT_VERIFIED"], ["AR", "UNSUPPORTED"], ["AP", "UNSUPPORTED"], ["LEDGER", "NOT_VERIFIED"], ["TIE_OUT", "NOT_VERIFIED"],
+      ["STOCK", "NOT_VERIFIED"], ["AR", "NOT_VERIFIED"], ["AP", "NOT_VERIFIED"], ["LEDGER", "NOT_VERIFIED"], ["TIE_OUT", "NOT_VERIFIED"],
     ])
   })
   it("keeps P03 stock, AR/AP and balanced ledger independent of master import", () => {

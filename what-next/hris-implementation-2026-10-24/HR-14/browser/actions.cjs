@@ -1,0 +1,2 @@
+async function call(operation,input){const response=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({operation,input})});return response.json()}
+module.exports={getHrisApprovalReviewAction:input=>call('PREVIEW',input),decideHrisApprovalInboxItemAction:input=>call('DECIDE',input),getTimeApprovalReviewAction:input=>call('TIME_PREVIEW',input),decideReviewedTimeApprovalAction:input=>call('TIME_DECIDE',input)};

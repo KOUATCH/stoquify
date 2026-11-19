@@ -1,0 +1,50 @@
+{
+  "reviewedAt": "2026-11-04T09:26:36.086Z",
+  "reviewer": "r03_inventory",
+  "scope": "Supplementary source/test-coverage review only; final independent acceptance belongs to independent reviewer",
+  "sourceHashes": [
+    {
+      "path": "actions/item/items.ts",
+      "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac"
+    },
+    {
+      "path": "actions/item/__tests__/item-error-responses.action.test.ts",
+      "sha256": "b7e9c630a6134254a209523b5104674a78d31d38d1b626241974d431ee64fd70"
+    }
+  ],
+  "implementation": {
+    "nineCatches": true,
+    "explicitFallback": true,
+    "approvedLiteralsCovered": 15,
+    "globalErrorHelpersUnchanged": true,
+    "permissionServiceTransactionChangesObserved": false
+  },
+  "testsInspected": {
+    "file": "actions/item/__tests__/item-error-responses.action.test.ts",
+    "classes": [
+      "plain service Error",
+      "thrown string",
+      "provider-shaped code",
+      "Prisma P2002/P2025",
+      "unapproved typed BusinessRule/NotFound/Conflict",
+      "non-exposing ApplicationError",
+      "message-shaped object",
+      "guard denial",
+      "invalid actual schema",
+      "Zod private metadata",
+      "fresh-auth recovery",
+      "Next redirect/notfound control flow",
+      "authorized success",
+      "server tenant overwrite",
+      "approved business literals",
+      "secondary stock permission"
+    ],
+    "executedByThisReviewer": false
+  },
+  "finding": {
+    "severity": "verification follow-up",
+    "message": "Cache revalidation is inside mutation try blocks after service completion. Include synthetic revalidation exception redaction, and distinguish denied prewrite requests from all failure responses; existing postcommit cache failure may follow a committed authorized mutation.",
+    "sentToParent": true
+  },
+  "adjacentScopeFinding": "P04-R03-SCOPE-01 remains outside nine paths and explicitly preserved in call-chain-register.json"
+}

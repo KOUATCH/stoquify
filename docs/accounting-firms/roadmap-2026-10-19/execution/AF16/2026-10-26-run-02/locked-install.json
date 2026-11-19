@@ -1,0 +1,86 @@
+{
+  "observedAt": "2026-10-26T15:39:33.168Z",
+  "destination": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\10\\19\\01a1542f-53bc-7513-b68f-4bce330ca993\\af16-locked-install-20261026",
+  "command": "npm ci --ignore-scripts --no-audit --no-fund with owned empty npm configuration and cache",
+  "node": "v22.17.0",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "elapsedMs": 972364,
+  "copiedInputs": [
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "vendor/xlsx-0.20.3.tgz",
+      "sha256": "8dc73fc3b00203e72d176e85b50938627c7b086e607c682e8d3c22c02bb99fe8"
+    }
+  ],
+  "vendoredIntegrity": "PASS",
+  "inputsUnchanged": true,
+  "versions": {
+    "next": "15.5.27",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "prisma": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "typescript": "5.8.3"
+  },
+  "passed": true,
+  "limitations": [
+    "Dependency lifecycle hooks deliberately disabled",
+    "No client generation, native-module runtime, application build, audit or database access in this probe",
+    "Existing frozen candidate node_modules not replaced"
+  ],
+  "skippedLifecyclePackages": [
+    {
+      "name": "node_modules/@parcel/watcher",
+      "version": "2.5.6"
+    },
+    {
+      "name": "node_modules/@prisma/client",
+      "version": "6.19.3"
+    },
+    {
+      "name": "node_modules/@prisma/engines",
+      "version": "6.19.3"
+    },
+    {
+      "name": "node_modules/@swc/core",
+      "version": "1.15.40"
+    },
+    {
+      "name": "node_modules/argon2",
+      "version": "0.44.0"
+    },
+    {
+      "name": "node_modules/core-js",
+      "version": "3.49.0"
+    },
+    {
+      "name": "node_modules/fsevents",
+      "version": "2.3.3"
+    },
+    {
+      "name": "node_modules/msgpackr-extract",
+      "version": "3.0.3"
+    },
+    {
+      "name": "node_modules/playwright/node_modules/fsevents",
+      "version": "2.3.2"
+    },
+    {
+      "name": "node_modules/prisma",
+      "version": "6.19.3"
+    },
+    {
+      "name": "node_modules/unrs-resolver",
+      "version": "1.11.1"
+    }
+  ]
+}

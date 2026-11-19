@@ -1,0 +1,7 @@
+# P03 verification boundary correction
+
+Independent source review found that the shared generated Prisma client calls warnEnvConflicts at import and its runtime can load schemaEnvPath ../../../.env even with NODE_ENV=test. Earlier mocked grant suites had fully mocked database operations, but their environment-file lookup path was not isolated or instrumented. Their pass/fail outcomes remain mocked behavioral evidence; they do not prove an environment-file isolation boundary. No database connection or provider execution is established by this finding. Compiler-only checks never execute this import.
+
+Correction: copy the complete generated client, including schema.prisma and native engine, into the owned private native-client directory without importing or changing it. Verify its bytes and that configured environment paths resolve inside the private root and are absent. Both native and replacement mocked Jest configurations map @prisma/client exactly to this private index. An early guard denies .env/.env.* opens/reads and fails the suite if any attempt occurs, including swallowed dotenv errors. Shared Prisma runtime code is used without importing the shared generated index.
+
+Prior receipts are retained. Replacement isolated mocked and native results will be recorded separately. The separately built browser runtime has no application .env files and remains on the explicitly owned local database. No production secrets or data are intentionally loaded.

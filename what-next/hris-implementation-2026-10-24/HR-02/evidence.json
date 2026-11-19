@@ -1,0 +1,117 @@
+{
+  "slice": "HR-02",
+  "status": "VERIFIED",
+  "timestamp": "2026-10-24T14:17:27.065Z",
+  "baselineCommit": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "hashes": [
+    {
+      "path": "services/hris/attendance-correction.ts",
+      "sha256": "740335a7ebba3d189ca4144020be78c34eaee1f3822d5f4853d47ef9e4561f00"
+    },
+    {
+      "path": "services/hris/operational-attendance.service.ts",
+      "sha256": "db0ec656b09cd9c91be8a60671870af38d4f887d4bea3f6001e08a4b8ce6fd10"
+    },
+    {
+      "path": "services/hris/operational-time.service.ts",
+      "sha256": "c295a02c112e941d6babf9c916130e80b7d3fbedc7b05ea8370eb2ba62c360b2"
+    },
+    {
+      "path": "services/hris/time-leave.contract.ts",
+      "sha256": "4f2e71705cc51dee6592017acc7b98311b05f8371bb853b995456fafece72bac"
+    },
+    {
+      "path": "services/hris/time-leave.service.ts",
+      "sha256": "677aeaa61b8c672c385dc4c3e5082a12ca4ee89d7b7e78d31d406dd935615b54"
+    },
+    {
+      "path": "services/hris/self-service.service.ts",
+      "sha256": "f56758405d69c571dc3cf3ef5fef3f7cc1c238a305bffb5b5e49db554f9427e2"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "d01a31f84c24fbb0ae6fc39157d457cb6f9c6e79a7065f74c05d3e444a423366"
+    },
+    {
+      "path": "actions/hris/operational-time.actions.ts",
+      "sha256": "430cb9cc823209020be53144eb043cf5baf8dae7531e7b4be7071e5f072db8af"
+    },
+    {
+      "path": "components/hris/HrisOperationalTimeRequestPanel.tsx",
+      "sha256": "0301a807183898feb565c8ae3e40489e8dc932d1eeba1376a25dfd66797dc313"
+    },
+    {
+      "path": "components/hris/HrisEmployeeSelfService.tsx",
+      "sha256": "6cdbed35ad609094922eaecf1c33eedcc5407b9bcc225deee05fb1434e04f635"
+    },
+    {
+      "path": "services/hris/__tests__/hris-correctness.postgres.test.ts",
+      "sha256": "39abd8cf4c88ff03f0455b0eb57b33ca09182d8c05a5281ee5848ef1374f32fc"
+    }
+  ],
+  "runs": [
+    {
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-02/unit.json",
+      "passed": 67,
+      "failed": 0,
+      "exitCode": 0,
+      "sha256": "cd5e4a12bb5b04d31445cd5ee2ea6eab2f4aa2dd030acbd9d2bbe56f278c2766"
+    },
+    {
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-02/component-final.json",
+      "passed": 3,
+      "failed": 0,
+      "exitCode": 0,
+      "sha256": "b08adc599be5f69565273ef819c7e1e095c38248529ac45ef2941205df36eeef"
+    },
+    {
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-02/postgres-regression.json",
+      "passed": 30,
+      "failed": 0,
+      "exitCode": 0,
+      "sha256": "9c932416545824c5864260123bc640582897c941262f85a9ade9f604fb3ce98d"
+    }
+  ],
+  "browser": {
+    "artifact": "what-next/hris-implementation-2026-10-24/HR-02/browser/results.json",
+    "cases": 6,
+    "scope": "Actual component with synthetic action; not authenticated route"
+  },
+  "commands": [
+    "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath services/hris/__tests__/operational-time.service.test.ts services/hris/__tests__/operational-time-decision-concurrency.test.ts services/hris/__tests__/time-leave.service.test.ts services/payroll/__tests__/payroll-control.service.test.ts components/hris/__tests__/HrisOperationalTimeRequestPanel.test.tsx --json --outputFile=what-next/hris-implementation-2026-10-24/HR-02/unit.json",
+    "node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand --no-cache --json --outputFile=what-next/hris-implementation-2026-10-24/HR-02/postgres-regression.json",
+    "node what-next/hris-implementation-2026-10-24/HR-02/browser/check.cjs"
+  ],
+  "acceptance": [
+    {
+      "id": "HR-02-AC01",
+      "result": "PASS",
+      "detail": "See RESULT.md and linked lane artifacts"
+    },
+    {
+      "id": "HR-02-AC02",
+      "result": "PASS",
+      "detail": "See RESULT.md and linked lane artifacts"
+    },
+    {
+      "id": "HR-02-AC03",
+      "result": "PASS",
+      "detail": "See RESULT.md and linked lane artifacts"
+    },
+    {
+      "id": "HR-02-AC04",
+      "result": "PASS",
+      "detail": "See RESULT.md and linked lane artifacts"
+    },
+    {
+      "id": "HR-02-AC05",
+      "result": "PASS",
+      "detail": "See RESULT.md and linked lane artifacts"
+    },
+    {
+      "id": "HR-02-AC06",
+      "result": "PASS",
+      "detail": "See RESULT.md and linked lane artifacts"
+    }
+  ]
+}

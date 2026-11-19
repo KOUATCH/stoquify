@@ -1,0 +1,71 @@
+{
+  "captured_at": "2026-11-10T08:53:27.406Z",
+  "full_receipt": "FULL-SOURCE-COMPARISON.json",
+  "full_receipt_sha256": "4a4a940dbfede3d5c9e6c98abe0a2fc1df2e0d6e28149c096cdbc52e648d18cf",
+  "summary": {
+    "baseline_files": 9723,
+    "current_selected_files": 9788,
+    "unchanged": 9719,
+    "changed": 4,
+    "missing": 0,
+    "added": 65,
+    "selection_dropped": 0
+  },
+  "changes": [
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/RESULT.md",
+      "classification": "unrelated_concurrent_documentation",
+      "previous_snapshot": "unrelated-close-prep-result-previous.source.txt",
+      "current_snapshot": "unrelated-close-prep-result-current.source.txt",
+      "previous_sha256": "fb9c3c070865df5436e5ddd8d18fd7f3c3fe816c13d1359704c04640223e053a",
+      "current_sha256": "8b4f8d96d9f7a3cffe653de240af2f4e1b11095191cd059a9bc033ca9f5c72d1"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/PLAN.md",
+      "classification": "unrelated_concurrent_documentation",
+      "previous_snapshot": "unrelated-earned-close-plan-previous.source.txt",
+      "current_snapshot": "unrelated-earned-close-plan-current.source.txt",
+      "previous_sha256": "b14f701505a5b786346ea5e9a4b2a833ca1db99570e4d11bff2ae6e557f894cd",
+      "current_sha256": "2e4be23f990c3c1db74be81355d39d4896e5e6cca38de3f9cf37e8bc269504a7"
+    },
+    {
+      "path": "lib/auth.ts",
+      "classification": "unattributed_concurrent_type_assertion",
+      "previous_snapshot": "auth-v3-preserved.source.txt",
+      "current_snapshot": "auth-v4-current.source.txt",
+      "previous_sha256": "181e15aad556024353b1e988cce6ccb5eb9679dfc50620427b81aa059a8c7064",
+      "current_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "path": "tsconfig.json",
+      "classification": "unrelated_concurrent_build_configuration",
+      "previous_snapshot": "tsconfig-previous.source.txt",
+      "current_snapshot": "tsconfig-current.source.txt",
+      "previous_sha256": "d942c27b9e4e277b542b9232da76073d625bdc3d59f089498057ac759a1daa57",
+      "current_sha256": "d8520694b9940364a676d62d757600ffb29718574e72c5752f8f4875021f4ccb"
+    }
+  ],
+  "added_files": {
+    "count": 65,
+    "all_under_unrelated_close_prep_docs": true,
+    "new_application_sources": [],
+    "classification": "Unrelated documentation/evidence files; contents not used to qualify P04-R06."
+  },
+  "tsconfig": {
+    "before": "plans/**/preservation/before/source/**",
+    "current": "plans/**/preservation/**",
+    "meaning": "Broadens excluded preservation evidence inputs in project type checking. No runtime equivalence or project typecheck success inferred.",
+    "candidate_update": "Requires separate owner/reviewer decision; source lane preserves both versions without mutation."
+  },
+  "candidate_eligibility": {
+    "auth_only_successor": "May bind to previously admitted Nov9 9,723-file source plus reviewed one-line auth assertion; must expressly exclude current tsconfig/documentation drift from its whole-root equivalence claim.",
+    "whole_current_root": "Not byte-identical: 4 baseline changes and65 added source-selected docs. Requires explicit source refresh/admission if claimed.",
+    "p04_r06_complete": false
+  },
+  "restrictions_preserved": [
+    "No product/config/candidate edits",
+    "No production/data migration/deployment",
+    "No commits/push",
+    "No prior evidence overwrite"
+  ]
+}

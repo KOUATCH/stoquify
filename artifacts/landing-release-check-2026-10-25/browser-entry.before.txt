@@ -1,0 +1,15 @@
+import {createRoot} from 'react-dom/client';
+import {DailyHabitDigestDashboard} from '@/components/daily-habit/DailyHabitDigestDashboard';
+import {OwnerWarRoomDashboard} from '@/components/owner-war-room/OwnerWarRoomDashboard';
+import {ManagerActionCenterDashboard} from '@/components/manager-action-center/ManagerActionCenterDashboard';
+import {ManagerLocationActionCenterDashboard} from '@/components/manager-action-center/ManagerLocationActionCenterDashboard';
+import {daily,owner,manager,locations,proof} from '@/docs/command-center/phase-4-2026-10-24/fixtures';
+const locale=location.pathname.startsWith('/fr')?'fr':'en';
+const kind=location.pathname.split('/').at(-1);
+window.fixtureCommandCalls=0;window.fixtureProofCalls=0;window.fixtureRefreshMode='hold';window.fixtureProofMode='success';window.fixtureProof=proof;
+let data=kind==='daily-digest'?daily(locale):kind==='owner-war-room'?owner(locale):kind==='locations'?locations(locale):manager(locale);
+const root=createRoot(document.getElementById('root'));
+function render(){root.render(kind==='daily-digest'?<DailyHabitDigestDashboard data={data} locale={locale}/>:kind==='owner-war-room'?<OwnerWarRoomDashboard data={data} locale={locale} title={locale==='fr'?'Dirigeant':'Owner'} subtitle="Fixture"/>:kind==='locations'?<ManagerLocationActionCenterDashboard data={data} locale={locale} title={locale==='fr'?'Responsable de site':'Location manager'} subtitle="Fixture"/>:<ManagerActionCenterDashboard data={data} locale={locale} title={locale==='fr'?'Centre d’actions du responsable':'Manager Action Center'} subtitle="Fixture"/>)}
+window.fixtureCommit=()=>{data=structuredClone(data);render()};
+window.fixtureRevoke=()=>{data=structuredClone(data);if(kind==='owner-war-room'){data.proofSubjects=[];data.morningBrief.proofSubjects=[];data.actionQueue.actionItems=[];data.morningBrief.priorityActions=[]}else if(kind==='daily-digest'){data.digests=[]}else if(kind==='locations'){data.bundles=[];data.scope.locationIds=[]}else {data.actionItems=[];data.runSheetGroups=[];data.commandBrief.primaryAction=null;data.summary.total=0}render()};
+render();

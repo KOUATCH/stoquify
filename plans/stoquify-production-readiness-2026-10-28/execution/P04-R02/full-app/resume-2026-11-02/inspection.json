@@ -1,0 +1,136 @@
+{
+  "at": "2026-11-02T14:51:30.103Z",
+  "sourceHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "files": 9067,
+  "sourceManifestSha256": "fc43a3ecab799bf4abf86f4626e183286bfd357eb1602894508cbd3cce232590",
+  "drift": {
+    "added": [
+      "docs/payroll-blockers/evidence/postgres-run.json",
+      "docs/payroll-blockers/evidence/service-transactions.json",
+      "scripts/jest.payroll-blockers-postgres.config.cjs",
+      "scripts/payroll-blockers-postgres-target.cjs",
+      "scripts/run-payroll-blockers-postgres.cjs",
+      "tests/postgres/payroll-blockers/transactions.test.ts"
+    ],
+    "changed": [
+      "services/payroll/payroll-control.service.ts"
+    ],
+    "removed": []
+  },
+  "repairedInputs": [
+    {
+      "path": "next.config.mjs",
+      "expectedSha256": "ddb79d450a8bfc1bcf29765b8ea1e7ad914ecb292e728b327e97def3a48798ac",
+      "sha256": "ddb79d450a8bfc1bcf29765b8ea1e7ad914ecb292e728b327e97def3a48798ac",
+      "unchanged": true
+    },
+    {
+      "path": "middleware.ts",
+      "expectedSha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204",
+      "sha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204",
+      "unchanged": true
+    },
+    {
+      "path": "app/api/uploads/[...path]/route.ts",
+      "expectedSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+      "sha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/release-artifact.cjs",
+      "expectedSha256": "62c0b3a26a9db2899228a43ba7ecee3d814dca87df268a5f32725121dd5a9f7d",
+      "sha256": "62c0b3a26a9db2899228a43ba7ecee3d814dca87df268a5f32725121dd5a9f7d",
+      "unchanged": true
+    },
+    {
+      "path": "app/api/uploads/[...path]/__tests__/route.test.ts",
+      "expectedSha256": "04930dfbe511e0f0b38ba4b8d16fe8fe45d3a359db41aee049f99fe8230dcff0",
+      "sha256": "04930dfbe511e0f0b38ba4b8d16fe8fe45d3a359db41aee049f99fe8230dcff0",
+      "unchanged": true
+    },
+    {
+      "path": "docs/ecc/command-registry.json",
+      "expectedSha256": "94556b4b5d965409c3c54fbe8b15470b508a8ca2ce78e1cb60afcc96da26ab03",
+      "sha256": "94556b4b5d965409c3c54fbe8b15470b508a8ca2ce78e1cb60afcc96da26ab03",
+      "unchanged": true
+    },
+    {
+      "path": "lib/media/legacy-upload-routing.ts",
+      "expectedSha256": "7a39993c296c00e0d9305343a3aa745ccb48648a6202b1a43580e169f7488a5a",
+      "sha256": "7a39993c296c00e0d9305343a3aa745ccb48648a6202b1a43580e169f7488a5a",
+      "unchanged": true
+    },
+    {
+      "path": "lib/media/legacy-upload-storage.ts",
+      "expectedSha256": "4c8b2e0a8ea1261fe7eb76e4e902d7aa1550f1a969623cb843e0306f317a7a62",
+      "sha256": "4c8b2e0a8ea1261fe7eb76e4e902d7aa1550f1a969623cb843e0306f317a7a62",
+      "unchanged": true
+    },
+    {
+      "path": "lib/media/__tests__/legacy-upload-storage.test.ts",
+      "expectedSha256": "5e83dc447684fc97d3e491c69e0e3e7e524a7d10cdbd302513f436f6ce434d3d",
+      "sha256": "5e83dc447684fc97d3e491c69e0e3e7e524a7d10cdbd302513f436f6ce434d3d",
+      "unchanged": true
+    },
+    {
+      "path": "lib/media/__tests__/legacy-upload-routing.test.ts",
+      "expectedSha256": "23f715e476c19168e920f2456d15eda39839a1b3fbfcaf3461a9f99ba28b21f1",
+      "sha256": "23f715e476c19168e920f2456d15eda39839a1b3fbfcaf3461a9f99ba28b21f1",
+      "unchanged": true
+    },
+    {
+      "path": "tests/s10-s11/release-artifact-private-uploads.test.js",
+      "expectedSha256": "f6e3830de436cd19d9abbd016ce81a91e13bc9db6a2629fd783f08c6cb2824db",
+      "sha256": "f6e3830de436cd19d9abbd016ce81a91e13bc9db6a2629fd783f08c6cb2824db",
+      "unchanged": true
+    }
+  ],
+  "assets": [
+    {
+      "path": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "sha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2",
+      "bytes": 16399,
+      "originalPreserved": true,
+      "mirrorPreserved": true
+    },
+    {
+      "path": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "sha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225",
+      "bytes": 261826,
+      "originalPreserved": true,
+      "mirrorPreserved": true
+    },
+    {
+      "path": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "sha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519",
+      "bytes": 182909,
+      "originalPreserved": true,
+      "mirrorPreserved": true
+    }
+  ],
+  "originalInventoryMatches": true,
+  "volumes": [
+    {
+      "drive": "C:/",
+      "available": true,
+      "freeBytes": 8147824640
+    },
+    {
+      "drive": "D:/",
+      "available": false,
+      "errorCode": "EPERM"
+    },
+    {
+      "drive": "E:/",
+      "available": true,
+      "freeBytes": 1135972352
+    }
+  ],
+  "reviewedMinimumFreeBytes": 12884901888,
+  "priorIsolatedStorageAvailable": false,
+  "buildExecuted": false,
+  "realSessionBrowserExecuted": false,
+  "status": "blocked",
+  "blocker": "Reviewed isolated build storage unavailable or below required free space",
+  "limit": "Source metadata and asset hashes only; no new immutable build candidate, artifact, session or browser qualification."
+}

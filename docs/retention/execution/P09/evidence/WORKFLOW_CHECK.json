@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-18",
+  "command": "npm run agent:workflow:check",
+  "script": "node scripts/verify-agent-workflow-contract.js",
+  "preHook": null,
+  "postHook": null,
+  "review": "Read current runner (fs/path/crypto only), matching registry entry, workflow, test-lanes and package lifecycle. No application command executed by this check.",
+  "session": 10491,
+  "exitCode": 0,
+  "output": "Workflow contract passed; 196 package scripts remain outside the reviewed manifest. No commands executed."
+}

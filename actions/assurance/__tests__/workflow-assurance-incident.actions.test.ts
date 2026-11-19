@@ -1,3 +1,4 @@
+jest.mock("@/lib/security/auth-session", () => ({requireSession: jest.fn(async () => ({ctx: {orgId: "org-session", userId: "user-session"}, claims: {sessionId: "session-1", sessionToken: "synthetic-token"}}))}))
 jest.mock("@/services/_shared/protect", () => ({
   protect: jest.fn((options, handler) => {
     const store = globalThis as typeof globalThis & {
@@ -29,6 +30,7 @@ jest.mock("@/services/assurance/assurance-incident.service", () => ({
   suppressWorkflowAssuranceIncident: jest.fn(),
 }))
 
+import { requireSession } from "@/lib/security/auth-session"
 import {
   acknowledgeWorkflowAssuranceIncident,
   approveWorkflowAssuranceWaiver,
@@ -74,7 +76,8 @@ describe("workflow assurance incident actions", () => {
       organizationId: "attacker-org",
       incidentId: "incident-1",
       ownerId: "owner-1",
-      assignedRole: "accountant",
+      expectedRevision: "a".repeat(64),
+      requestId: "11111111-1111-4111-8111-111111111111",
       dueAt: "2026-07-01T00:00:00.000Z",
     } as never)
 
@@ -85,11 +88,14 @@ describe("workflow assurance incident actions", () => {
         actorId: "user-session",
         incidentId: "incident-1",
         ownerId: "owner-1",
-        assignedRole: "accountant",
+        expectedRevision: "a".repeat(64),
+        requestId: "11111111-1111-4111-8111-111111111111",
         dueAt: new Date("2026-07-01T00:00:00.000Z"),
       }),
     )
     expect(mockAssign.mock.calls[0][0]).not.toHaveProperty("organizationId", "attacker-org")
+    expect(mockAssign.mock.calls[0][0].session).toEqual({id: "session-1", token: "synthetic-token"})
+    expect(mockAssign.mock.calls[0][0]).not.toHaveProperty("assignedRole")
   })
 
   it("registers write and fresh-auth controls for risky incident actions", async () => {
@@ -137,4 +143,18 @@ describe("workflow assurance incident actions", () => {
       ]),
     )
   })
+})
+
+
+it("refuses a missing assignment revision/request before reaching the writer", async () => {
+  jest.mocked(assignWorkflowAssuranceIncident).mockClear()
+  await expect(assignWorkflowAssuranceIncidentAction({incidentId:"incident-1",ownerId:"owner-1"} as never)).rejects.toThrow()
+  expect(assignWorkflowAssuranceIncident).not.toHaveBeenCalled()
+})
+
+it("rejects a changed authenticated context instead of mixing two sessions", async () => {
+  jest.mocked(assignWorkflowAssuranceIncident).mockClear()
+  jest.mocked(requireSession).mockResolvedValueOnce({ctx:{orgId:"other",userId:"user-session"},claims:{sessionId:"other-session",sessionToken:"synthetic"}} as never)
+  await expect(assignWorkflowAssuranceIncidentAction({incidentId:"incident-1",ownerId:"owner-1",expectedRevision:"a".repeat(64),requestId:"11111111-1111-4111-8111-111111111111"})).rejects.toThrow(/context changed/)
+  expect(assignWorkflowAssuranceIncident).not.toHaveBeenCalled()
 })

@@ -1,0 +1,532 @@
+{
+  "at": "2026-11-09T18:20:53.250Z",
+  "reviewer": "/root/v02_review",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "verdict": "blocked_confirmed_core_authority_defect_and_explicit_remaining_browser_qualification",
+  "raw": {
+    "planned": 116,
+    "executed": 116,
+    "passed": 93,
+    "failed": 23,
+    "notRun": 0,
+    "requests": 109,
+    "browserObservations": 67
+  },
+  "dispositions": {
+    "confirmedProductCases": [
+      {
+        "id": "authRevoked-get-session",
+        "request": {
+          "id": "authRevoked-get-session",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 744,
+          "sha256": "65ce6dcfc263bab5863250a37f4a8affe992a8d2fafbf9d069564143984fc85b",
+          "redirect": null,
+          "authResponseHeaders": [],
+          "contentType": "application/json",
+          "cacheControl": null,
+          "retryAfter": null,
+          "hasPrivateUser": true,
+          "hasSession": true,
+          "privateActorCanaries": true,
+          "hasTokenField": true
+        },
+        "before": "snapshot-auth-authRevoked-get-session-before-1794247619542-2f914f71-c14b-4bf5-816b-889adf9cd779.json",
+        "after": "snapshot-auth-authRevoked-get-session-after-1794247621709-e43ff22d-9754-4a9e-838c-a42db3639ffd.json",
+        "changedTables": [],
+        "sessionAndAuditUnchanged": true,
+        "classification": "private_core_auth_response_under_invalid_current_authority",
+        "cacheProof": {
+          "id": "authRevoked-get-session",
+          "startedAt": "2026-11-09T18:06:59.570Z",
+          "remainingSeconds": 286.8289999961853,
+          "passed": true,
+          "remainingAfterResponseSeconds": 286.7809998989105
+        }
+      },
+      {
+        "id": "authRevoked-list-sessions",
+        "request": {
+          "id": "authRevoked-list-sessions",
+          "path": "/api/auth/list-sessions",
+          "method": "GET",
+          "status": 200,
+          "bytes": 400,
+          "sha256": "0b5d3a061799ab19f1d60f91f544627e96d7cccb8597e5cabf6c3d745cefb8a1",
+          "redirect": null,
+          "authResponseHeaders": [],
+          "contentType": "application/json",
+          "cacheControl": null,
+          "retryAfter": null,
+          "hasPrivateUser": false,
+          "hasSession": false,
+          "privateActorCanaries": true,
+          "hasTokenField": true
+        },
+        "before": "snapshot-auth-authRevoked-list-sessions-before-1794247627825-4e526f27-cc2b-41f9-a279-247628431c02.json",
+        "after": "snapshot-auth-authRevoked-list-sessions-after-1794247629918-6773786f-f67c-4198-9105-867a38924d3c.json",
+        "changedTables": [],
+        "sessionAndAuditUnchanged": true,
+        "classification": "private_core_auth_response_under_invalid_current_authority",
+        "cacheProof": {
+          "id": "authRevoked-list-sessions",
+          "startedAt": "2026-11-09T18:07:07.855Z",
+          "remainingSeconds": 278.5439999103546,
+          "passed": true,
+          "remainingAfterResponseSeconds": 278.5160000324249
+        }
+      },
+      {
+        "id": "authRevoked-list-accounts",
+        "request": {
+          "id": "authRevoked-list-accounts",
+          "path": "/api/auth/list-accounts",
+          "method": "GET",
+          "status": 200,
+          "bytes": 482,
+          "sha256": "edcd3170a07573d9c814374a614c3892cbe66f77049e6d864145be66c6cf16d5",
+          "redirect": null,
+          "authResponseHeaders": [],
+          "contentType": "application/json",
+          "cacheControl": null,
+          "retryAfter": null,
+          "hasPrivateUser": false,
+          "hasSession": false,
+          "privateActorCanaries": true,
+          "hasTokenField": false
+        },
+        "before": "snapshot-auth-authRevoked-list-accounts-before-1794247632003-02ea0310-c884-468f-ba0f-3571fa887f14.json",
+        "after": "snapshot-auth-authRevoked-list-accounts-after-1794247633983-20fbb9a9-d49c-45a7-bb22-87d9ebd0a7f7.json",
+        "changedTables": [],
+        "sessionAndAuditUnchanged": true,
+        "classification": "private_core_auth_response_under_invalid_current_authority",
+        "cacheProof": {
+          "id": "authRevoked-list-accounts",
+          "startedAt": "2026-11-09T18:07:12.022Z",
+          "remainingSeconds": 274.3769998550415,
+          "passed": true,
+          "remainingAfterResponseSeconds": 274.3359999656677
+        }
+      },
+      {
+        "id": "authRevoked-unlink",
+        "request": {
+          "id": "authRevoked-unlink",
+          "path": "/api/auth/unlink-account",
+          "method": "POST",
+          "status": 200,
+          "bytes": 15,
+          "sha256": "edc48cd3b0bc4fa7ba23aad40b8508a17d370ca38be174bae2a2f64634e65a2b",
+          "redirect": null,
+          "authResponseHeaders": [],
+          "contentType": "application/json",
+          "cacheControl": null,
+          "retryAfter": null,
+          "hasPrivateUser": false,
+          "hasSession": false,
+          "privateActorCanaries": false,
+          "hasTokenField": false
+        },
+        "before": "snapshot-auth-authRevoked-unlink-before-1794247658818-c11ae34c-5c44-4229-9f79-c075811ee016.json",
+        "after": "snapshot-auth-authRevoked-unlink-after-1794247660742-d0800b08-9fd2-4e1c-93c1-2cfe4c56510b.json",
+        "changedTables": [
+          "accounts"
+        ],
+        "sessionAndAuditUnchanged": true,
+        "accountsBefore": 27,
+        "accountsAfter": 26,
+        "classification": "unauthorized_authentication_account_deletion",
+        "cacheProof": {
+          "id": "authRevoked-unlink",
+          "startedAt": "2026-11-09T18:07:38.845Z",
+          "remainingSeconds": 247.55399990081787,
+          "passed": true,
+          "remainingAfterResponseSeconds": 247.5130000114441
+        }
+      },
+      {
+        "id": "authExpired-get-session",
+        "request": {
+          "id": "authExpired-get-session",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 744,
+          "sha256": "3202c2f7a8b88534790987d72f5576c7456c98fb317694b3a00f9e76c76ac965",
+          "redirect": null,
+          "authResponseHeaders": [],
+          "contentType": "application/json",
+          "cacheControl": null,
+          "retryAfter": null,
+          "hasPrivateUser": true,
+          "hasSession": true,
+          "privateActorCanaries": true,
+          "hasTokenField": true
+        },
+        "before": "snapshot-auth-authExpired-get-session-before-1794247681799-1007d274-bec1-41a9-8e2c-9946a6370762.json",
+        "after": "snapshot-auth-authExpired-get-session-after-1794247683708-087c8e2d-2ad0-478b-b5e6-0c7c06b363d0.json",
+        "changedTables": [],
+        "sessionAndAuditUnchanged": true,
+        "classification": "private_core_auth_response_under_invalid_current_authority",
+        "cacheProof": {
+          "id": "authExpired-get-session",
+          "startedAt": "2026-11-09T18:08:01.873Z",
+          "remainingSeconds": 287.6980001926422,
+          "passed": true,
+          "remainingAfterResponseSeconds": 287.6640000343323
+        }
+      },
+      {
+        "id": "authExpired-list-sessions",
+        "request": {
+          "id": "authExpired-list-sessions",
+          "path": "/api/auth/list-sessions",
+          "method": "GET",
+          "status": 200,
+          "bytes": 400,
+          "sha256": "0e4d920a99a419cef99a8971ff46414ea96c1166be75b960eb29eb0b380882f5",
+          "redirect": null,
+          "authResponseHeaders": [],
+          "contentType": "application/json",
+          "cacheControl": null,
+          "retryAfter": null,
+          "hasPrivateUser": false,
+          "hasSession": false,
+          "privateActorCanaries": true,
+          "hasTokenField": true
+        },
+        "before": "snapshot-auth-authExpired-list-sessions-before-1794247690630-9fa39123-c293-4318-8e7a-ef5db1fdf7aa.json",
+        "after": "snapshot-auth-authExpired-list-sessions-after-1794247692591-98ab5ebd-be5d-4b36-aa07-04484dc833ae.json",
+        "changedTables": [],
+        "sessionAndAuditUnchanged": true,
+        "classification": "private_core_auth_response_under_invalid_current_authority",
+        "cacheProof": {
+          "id": "authExpired-list-sessions",
+          "startedAt": "2026-11-09T18:08:10.656Z",
+          "remainingSeconds": 278.9150002002716,
+          "passed": true,
+          "remainingAfterResponseSeconds": 278.88100004196167
+        }
+      },
+      {
+        "id": "authExpired-list-accounts",
+        "request": {
+          "id": "authExpired-list-accounts",
+          "path": "/api/auth/list-accounts",
+          "method": "GET",
+          "status": 200,
+          "bytes": 482,
+          "sha256": "de22668a8d92d02d055c83b21a272b5db4f7136faabfe1df13e4972bd678b050",
+          "redirect": null,
+          "authResponseHeaders": [],
+          "contentType": "application/json",
+          "cacheControl": null,
+          "retryAfter": null,
+          "hasPrivateUser": false,
+          "hasSession": false,
+          "privateActorCanaries": true,
+          "hasTokenField": false
+        },
+        "before": "snapshot-auth-authExpired-list-accounts-before-1794247694791-601564c7-3d86-4640-a0fc-676b53cf77f1.json",
+        "after": "snapshot-auth-authExpired-list-accounts-after-1794247696964-893ac68b-253b-454b-bd11-ef1c797184fc.json",
+        "changedTables": [],
+        "sessionAndAuditUnchanged": true,
+        "classification": "private_core_auth_response_under_invalid_current_authority",
+        "cacheProof": {
+          "id": "authExpired-list-accounts",
+          "startedAt": "2026-11-09T18:08:14.797Z",
+          "remainingSeconds": 274.7740001678467,
+          "passed": true,
+          "remainingAfterResponseSeconds": 274.73800015449524
+        }
+      },
+      {
+        "id": "authExpired-unlink",
+        "request": {
+          "id": "authExpired-unlink",
+          "path": "/api/auth/unlink-account",
+          "method": "POST",
+          "status": 200,
+          "bytes": 15,
+          "sha256": "edc48cd3b0bc4fa7ba23aad40b8508a17d370ca38be174bae2a2f64634e65a2b",
+          "redirect": null,
+          "authResponseHeaders": [],
+          "contentType": "application/json",
+          "cacheControl": null,
+          "retryAfter": null,
+          "hasPrivateUser": false,
+          "hasSession": false,
+          "privateActorCanaries": false,
+          "hasTokenField": false
+        },
+        "before": "snapshot-auth-authExpired-unlink-before-1794247723622-8b63bfd0-dc98-4cef-a996-c8d4d4f3e4b4.json",
+        "after": "snapshot-auth-authExpired-unlink-after-1794247725975-1a13aa09-d851-4a44-8551-52d7d1e7c5be.json",
+        "changedTables": [
+          "accounts"
+        ],
+        "sessionAndAuditUnchanged": true,
+        "accountsBefore": 27,
+        "accountsAfter": 26,
+        "classification": "unauthorized_authentication_account_deletion",
+        "cacheProof": {
+          "id": "authExpired-unlink",
+          "startedAt": "2026-11-09T18:08:43.650Z",
+          "remainingSeconds": 245.9210000038147,
+          "passed": true,
+          "remainingAfterResponseSeconds": 245.8140001296997
+        }
+      },
+      {
+        "id": "inactive-cached-core-session",
+        "request": {
+          "id": "inactive-cached-core-session",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 754,
+          "sha256": "7e71c52c3dffc9c2ddb46a113f73546b990a2d70d3e15400a10d206453516afe",
+          "redirect": null,
+          "authResponseHeaders": [],
+          "contentType": "application/json",
+          "cacheControl": null,
+          "retryAfter": null,
+          "hasPrivateUser": true,
+          "hasSession": true,
+          "privateActorCanaries": true,
+          "hasTokenField": true
+        },
+        "before": "snapshot-auth-inactive-cached-core-session-before-1794247797177-e42135c0-35f7-41d6-ac70-be4fb6ae9c5f.json",
+        "after": "snapshot-auth-inactive-cached-core-session-after-1794247799130-1753a982-098b-4d43-a5b8-e05c1d457088.json",
+        "changedTables": [],
+        "sessionAndAuditUnchanged": true,
+        "classification": "private_core_auth_response_under_invalid_current_authority"
+      }
+    ],
+    "harnessExpectationErrors": [
+      {
+        "id": "auth-method-boundary",
+        "error": "Expected values to be strictly equal:\n\n400 !== 404\n",
+        "before": "snapshot-auth-auth-method-boundary-before-1794247746359-8c66435f-5ab2-45eb-8d34-e34254de2581.json",
+        "after": "snapshot-auth-auth-method-boundary-after-1794247748852-fc90bcb0-cd6d-42bc-aed3-59ab6e3f3258.json",
+        "requests": [
+          {
+            "id": "method-POST",
+            "path": "/api/auth/verify-password",
+            "method": "POST",
+            "status": 400,
+            "bytes": 106,
+            "sha256": "67de16be7eed66d0b49dfa305921879cc9f79c91bf08785c74de668e73198adb",
+            "redirect": null,
+            "authResponseHeaders": [],
+            "contentType": "application/json",
+            "cacheControl": null,
+            "retryAfter": null,
+            "hasPrivateUser": false,
+            "hasSession": false,
+            "privateActorCanaries": false,
+            "hasTokenField": false
+          }
+        ],
+        "classification": "harness_status_expectation_error",
+        "remainingQualification": "Valid password/origin/session behavior remains supplement03 scope."
+      },
+      {
+        "id": "provider-authenticated-forgery",
+        "error": "Unconfigured/forged provider request must reject",
+        "before": "snapshot-auth-provider-authenticated-forgery-before-1794247850363-484eb758-5f6f-4276-b0d5-a9724add5f4e.json",
+        "after": "snapshot-auth-provider-authenticated-forgery-after-1794247852755-14bb7cb3-fa2a-4349-8032-67de4fa49280.json",
+        "requests": [
+          {
+            "id": "authenticated-/api/auth/get-access-token",
+            "path": "/api/auth/get-access-token",
+            "method": "POST",
+            "status": 400,
+            "bytes": 79,
+            "sha256": "91e1977c3dd0a2e491e3c23e7a1710c6176b6ab8d2b6b3665cad3e44ff3fb6ad",
+            "redirect": null,
+            "authResponseHeaders": [],
+            "contentType": "application/json",
+            "cacheControl": null,
+            "retryAfter": null,
+            "hasPrivateUser": false,
+            "hasSession": false,
+            "privateActorCanaries": false,
+            "hasTokenField": false
+          },
+          {
+            "id": "authenticated-/api/auth/refresh-token",
+            "path": "/api/auth/refresh-token",
+            "method": "POST",
+            "status": 400,
+            "bytes": 79,
+            "sha256": "91e1977c3dd0a2e491e3c23e7a1710c6176b6ab8d2b6b3665cad3e44ff3fb6ad",
+            "redirect": null,
+            "authResponseHeaders": [],
+            "contentType": "application/json",
+            "cacheControl": null,
+            "retryAfter": null,
+            "hasPrivateUser": false,
+            "hasSession": false,
+            "privateActorCanaries": false,
+            "hasTokenField": false
+          },
+          {
+            "id": "authenticated-/api/auth/link-social",
+            "path": "/api/auth/link-social",
+            "method": "POST",
+            "status": 404,
+            "bytes": 60,
+            "sha256": "10f11e147e21f298fddcda4dcefd570f4a6191e6502a76a68055925204233c99",
+            "redirect": null,
+            "authResponseHeaders": [],
+            "contentType": "application/json",
+            "cacheControl": null,
+            "retryAfter": null,
+            "hasPrivateUser": false,
+            "hasSession": false,
+            "privateActorCanaries": false,
+            "hasTokenField": false
+          }
+        ],
+        "classification": "harness_status_expectation_error",
+        "remainingQualification": "Unconfigured social sign-in tail not reached; supplement03 scope. Hosted-provider ownership remains unqualified."
+      }
+    ],
+    "historicalForwardInspectionErrors": [
+      {
+        "id": "authBrowserRevoked-en-browser-forward",
+        "error": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+        "classification": "optional_historical_response_body_inspection_error",
+        "settledRecoveryObserved": true,
+        "path": "/en/login",
+        "privateItemVisible": false,
+        "loginVisible": true,
+        "screenshot": "authBrowserRevoked-en-forward.png",
+        "before": "snapshot-auth-authBrowserRevoked-en-browser-forward-before-1794247906798-23710b24-b63f-4fd4-93f2-bb37a6368039.json",
+        "after": "snapshot-auth-authBrowserRevoked-en-browser-forward-after-1794247910400-fede2b4e-d2c1-418d-9a92-a1da600651ff.json",
+        "newPrivateBytesClaimed": false,
+        "actualBfCacheHitObserved": false
+      },
+      {
+        "id": "authBrowserExpiry-en-browser-forward",
+        "error": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+        "classification": "optional_historical_response_body_inspection_error",
+        "settledRecoveryObserved": true,
+        "path": "/en/login",
+        "privateItemVisible": false,
+        "loginVisible": true,
+        "screenshot": "authBrowserExpiry-en-forward.png",
+        "before": "snapshot-auth-authBrowserExpiry-en-browser-forward-before-1794247961032-334b6f91-3de9-4a39-8114-5dd9a78d2ccc.json",
+        "after": "snapshot-auth-authBrowserExpiry-en-browser-forward-after-1794247965325-37ced208-98e2-4ee4-ac82-967c182cca4f.json",
+        "newPrivateBytesClaimed": false,
+        "actualBfCacheHitObserved": false
+      },
+      {
+        "id": "authBrowserRevoked-fr-browser-forward",
+        "error": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+        "classification": "optional_historical_response_body_inspection_error",
+        "settledRecoveryObserved": true,
+        "path": "/fr/login",
+        "privateItemVisible": false,
+        "loginVisible": true,
+        "screenshot": "authBrowserRevoked-fr-forward.png",
+        "before": "snapshot-auth-authBrowserRevoked-fr-browser-forward-before-1794248101304-d0aacf1f-9c86-42d1-b9a2-f1b86439494a.json",
+        "after": "snapshot-auth-authBrowserRevoked-fr-browser-forward-after-1794248105856-f4b2b960-078f-412f-ae0b-fa721ef6c280.json",
+        "newPrivateBytesClaimed": false,
+        "actualBfCacheHitObserved": false
+      },
+      {
+        "id": "authBrowserExpiry-fr-browser-forward",
+        "error": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+        "classification": "optional_historical_response_body_inspection_error",
+        "settledRecoveryObserved": true,
+        "path": "/fr/login",
+        "privateItemVisible": false,
+        "loginVisible": true,
+        "screenshot": "authBrowserExpiry-fr-forward.png",
+        "before": "snapshot-auth-authBrowserExpiry-fr-browser-forward-before-1794248151084-a05cf213-1678-4145-bad6-ef2935d492e2.json",
+        "after": "snapshot-auth-authBrowserExpiry-fr-browser-forward-after-1794248155350-6599696c-1e07-43f9-820a-6b63a5f0ce3c.json",
+        "newPrivateBytesClaimed": false,
+        "actualBfCacheHitObserved": false
+      }
+    ],
+    "focusPrerequisiteGaps": [
+      {
+        "id": "authBrowserRevoked-en-stale-tab-focus",
+        "classification": "native_hidden_tab_prerequisite_not_observed",
+        "privateItemVisible": true,
+        "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+        "productDefectConfirmed": false
+      },
+      {
+        "id": "authBrowserExpiry-en-stale-tab-focus",
+        "classification": "native_hidden_tab_prerequisite_not_observed",
+        "privateItemVisible": true,
+        "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+        "productDefectConfirmed": false
+      },
+      {
+        "id": "authBrowserPermission-en-stale-tab-focus",
+        "classification": "native_hidden_tab_prerequisite_not_observed",
+        "privateItemVisible": true,
+        "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+        "productDefectConfirmed": false
+      },
+      {
+        "id": "authBrowserModule-en-stale-tab-focus",
+        "classification": "native_hidden_tab_prerequisite_not_observed",
+        "privateItemVisible": true,
+        "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+        "productDefectConfirmed": false
+      },
+      {
+        "id": "authBrowserRevoked-fr-stale-tab-focus",
+        "classification": "native_hidden_tab_prerequisite_not_observed",
+        "privateItemVisible": true,
+        "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+        "productDefectConfirmed": false
+      },
+      {
+        "id": "authBrowserExpiry-fr-stale-tab-focus",
+        "classification": "native_hidden_tab_prerequisite_not_observed",
+        "privateItemVisible": true,
+        "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+        "productDefectConfirmed": false
+      },
+      {
+        "id": "authBrowserPermission-fr-stale-tab-focus",
+        "classification": "native_hidden_tab_prerequisite_not_observed",
+        "privateItemVisible": true,
+        "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+        "productDefectConfirmed": false
+      },
+      {
+        "id": "authBrowserModule-fr-stale-tab-focus",
+        "classification": "native_hidden_tab_prerequisite_not_observed",
+        "privateItemVisible": true,
+        "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+        "productDefectConfirmed": false
+      }
+    ]
+  },
+  "proposedRepair": "P04-R06",
+  "interpretation": [
+    "Six revoked/expired core read cases, two account deletions and one inactive-account core response confirm one bounded current-authority repair contract.",
+    "The fresh database session getter and reviewed application profile/query-negative controls deny correctly; no query-override bypass is established.",
+    "Returned session-token fields are sensitive response evidence, not proof of a usable forged session or takeover.",
+    "Four completed forward journeys recovered to login with no visible synthetic item; optional historical response-body retrieval failed afterward. Original failures remain retained.",
+    "No native private BFCache hit or hidden-tab transition occurred. Those coverage gaps are not product defects.",
+    "Visible Refresh consumer and newly admitted verify-password valid-body route are separately qualified by supplement03; this review does not pre-judge them."
+  ],
+  "authCleanup": {
+    "removedSessions": 19,
+    "remaining": 0,
+    "browserAndProxyClosed": true
+  },
+  "finalRuntimeProviderAndDatabaseCleanup": "separate_pending_receipts"
+}

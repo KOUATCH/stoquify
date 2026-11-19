@@ -1,0 +1,78 @@
+{
+  "began": "2026-11-10T17:26:37.818Z",
+  "passed": true,
+  "database": "stoquify_replay_close_monthly_20261110_0e69f2030b",
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-ownership-20261110-0e69f2030b",
+  "source": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-ownership-20261110-0e69f2030b\\source",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-ownership-qualification-2026-11-10\\pg-attempt-0e69f2030b",
+  "privateClient": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-retention-client-20261109-b4075974cd\\orm\\client",
+  "catalogSha256": "e894a828415592f4c2ab155993b1923ed12245374a21b0184ae8a375495190aa",
+  "runnerSha256": "843028863233a20c3537715fdeb2b60d2d22ea3400643e6d8e0ea9e333b20312",
+  "checks": [
+    {
+      "name": "fresh122ReplayTwice",
+      "certification": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT"
+    },
+    {
+      "name": "closeOwnershipAndScopeServiceCases",
+      "passedTests": 13,
+      "skipped": 0,
+      "namedPhaseChecks": [
+        "eligible-client-local-owners",
+        "eligible-legacy-delegated-contributors",
+        "eligible-managed-delegated-contributors",
+        "ineligible-local-owners-no-effects",
+        "invalid-delegated-grants-no-effects",
+        "managed-restrictions-no-effects",
+        "aligned-comment-targets",
+        "mixed-comment-targets-no-effects",
+        "corrupt-finding-graph-no-effects",
+        "owned-review-period",
+        "persisted-recipient-role-revocation-wins",
+        "recipient-expiry-at-publication-time",
+        "assignment-audit-failure-rollback"
+      ],
+      "syntheticInitialAuthorityConfiguration": true,
+      "directSqlCompositeIntegrityQualified": false
+    },
+    {
+      "name": "earnedMonthlyCloseServiceRegression",
+      "passedTests": 8,
+      "skipped": 0,
+      "namedPhaseChecks": [
+        "actual-approved-opening-and-replay",
+        "actual-collections-and-provider-links",
+        "electronic-claim-denials-no-effects",
+        "actual-concurrent-claim-exclusion",
+        "assessment-before-provider-and-schedule-evidence",
+        "actual-monthly-import-independent-signatures",
+        "actual-bank-bs-approval-certification-and-seal",
+        "actual-closed-period-denial-and-retained-recovery"
+      ],
+      "earnedInternalTerminalStates": true,
+      "seededInternalFinancialTerminalStates": false,
+      "syntheticProviderConfirmationFacts": true,
+      "sqlInventoryUnchanged": true,
+      "scope": "Opening-receivable collection/monthly internal system certification only; no October new sale, live provider or statutory approval",
+      "observedCounts": {
+        "journals": 4,
+        "customerSettlements": 3,
+        "claimedProviderTransactions": 2,
+        "signedReconciliationRuns": 2,
+        "approvedBankBalanceEvidence": 1,
+        "certifiedExports": 1,
+        "periodCloseEvents": 1,
+        "periodReopenEvents": 0,
+        "providerAccounts": 2,
+        "activeOpeningExecutions": 1,
+        "openingReceivables": 1,
+        "sales": 0,
+        "payrollRuns": 0,
+        "statutoryCertifiedDocuments": 0
+      }
+    }
+  ],
+  "limitation": "Real isolated service-level owner/linked-resource scope qualification and October monthly-close regression with synthetic authority/provider inputs. No direct-SQL composite-integrity, every-interleaving, October new sale, live provider, statutory, delivery, browser or production claim.",
+  "ownedClusterStopped": true,
+  "ended": "2026-11-10T17:28:17.413Z"
+}

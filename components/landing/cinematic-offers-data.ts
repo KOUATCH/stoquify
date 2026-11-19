@@ -298,8 +298,8 @@ export const offerFaqs = [
       "Puis-je découvrir le produit avant de choisir ?",
     ],
     answer: [
-      "Yes. The interactive previews on this page use fictional records and require no account. You can also create an account through the existing registration flow. This page does not promise a free trial, a trial duration or immediate module activation.",
-      "Oui. Les aperçus interactifs de cette page utilisent des données fictives et ne nécessitent aucun compte. Vous pouvez également créer un compte via l’inscription. Cette page ne promet ni essai gratuit, ni durée d’essai, ni activation immédiate des modules.",
+      "Explore the interactive examples without an account. They use fictional records. Confirm access, enabled modules and setup when planning your rollout; account registration and module activation are separate steps.",
+      "Oui. Explorez les exemples interactifs sans compte, avec des données fictives. Les accès, la mise en place et les conditions d’activation sont précisés lors de la préparation de votre déploiement. L’inscription reste disponible séparément.",
     ],
   },
   {
@@ -358,8 +358,8 @@ export const offerFaqs = [
       "Choisir un parcours déclenche-t-il une commande ?",
     ],
     answer: [
-      "No. Your selection only helps you compare this page. Creating an account opens registration; it does not submit this selection, accept a quote or purchase a subscription.",
-      "Non. Votre sélection sert uniquement à comparer sur cette page. Créer un compte ouvre l’inscription ; cela ne transmet pas la sélection, n’accepte pas de devis et n’achète aucun abonnement.",
+      "No. Your selection helps you compare and is carried into your enquiry brief when you choose to plan the rollout. You review and send the enquiry yourself. It does not accept a quote or purchase a subscription.",
+      "Non. Votre sélection vous aide à comparer et accompagne votre projet lorsque vous préparez le déploiement. Vous vérifiez puis envoyez vous-même votre demande. Elle n’accepte pas de devis et n’achète aucun abonnement.",
     ],
   },
 ] as const

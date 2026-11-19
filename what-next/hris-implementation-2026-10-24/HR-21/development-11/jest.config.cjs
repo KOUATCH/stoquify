@@ -1,0 +1,2 @@
+const path=require('node:path');
+module.exports={...require('../../../../jest.hris-fresh-auth-ui.config.cjs'),rootDir:path.resolve(__dirname,'../../../..'),testMatch:['**/HrisDenialRaces.test.tsx','**/HrisHiringSelectionDenial.test.tsx','**/HrisDenialRecovery.test.tsx','**/HrisPeopleAuthoring.test.tsx','**/HrisControlledReview.test.tsx','**/HrisDocumentWorkspace.test.tsx','**/HrisDocumentTransport.test.tsx'],testTimeout:15000,cache:false};

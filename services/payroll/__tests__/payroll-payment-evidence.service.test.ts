@@ -50,6 +50,7 @@ const originalPaymentDestinationHashSecret =
 
 function buildTx() {
   return {
+    $queryRaw: jest.fn().mockResolvedValue([{isolationLevel:"read committed"}]),
     payrollEmployee: {
       findMany: jest.fn(),
       findFirst: jest.fn(),
@@ -119,7 +120,7 @@ function destinationChangeRow(overrides: Record<string, unknown> = {}) {
     id: "dest-change-1",
     organizationId: "org-1",
     employeeId: "employee-1",
-    employee: { id: "employee-1", displayName: "Ada Payroll", metadata: null, paymentDestinationHash: null },
+    employee: { id: "employee-1", displayName: "Ada Payroll", status: PayrollEmployeeStatus.ACTIVE, metadata: null, paymentDestinationHash: null },
     status: PayrollPaymentDestinationChangeStatus.REQUESTED,
     paymentMethod: PaymentMethod.BANK_TRANSFER,
     bankAccountMasked: "***1234",

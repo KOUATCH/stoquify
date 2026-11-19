@@ -1,0 +1,85 @@
+{
+  "slice": "HR-04",
+  "status": "VERIFIED",
+  "timestamp": "2026-10-24T14:40:27.838Z",
+  "baselineCommit": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "hashes": [
+    {
+      "path": "services/hris/lifecycle.service.ts",
+      "sha256": "95b8b0477ae514dff8ea033e59e12f732430fe6e4fed7e796516a064409165ed"
+    },
+    {
+      "path": "services/hris/employment-projection.ts",
+      "sha256": "3071602f4e50aabcd3f7d33565228198a5cd820323db7eba7942dcbce4481ee4"
+    },
+    {
+      "path": "services/hris/employee.service.ts",
+      "sha256": "08f8419df7ce4b30c99eb6eefbe4d112e828259fd338bda3d342d994b204ecfe"
+    },
+    {
+      "path": "services/payroll/employee.service.ts",
+      "sha256": "85a53588070550e83bb9d108412a1543bb38b30e7571aec8f67229dedf0159e0"
+    },
+    {
+      "path": "services/hris/__tests__/lifecycle.service.test.ts",
+      "sha256": "fea410448c2443be58eb55be4999b0e8e6cb317b097e9334b77fafbeaf463186"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-employee.service.test.ts",
+      "sha256": "ab7b68f405a5683458ecfc620d7d72095e29e0f141dcef253f0df1d646969ffd"
+    },
+    {
+      "path": "services/hris/__tests__/hris-correctness.postgres.test.ts",
+      "sha256": "272db6a692c7d20c220828c70cf070c6812e92ca4ae80ea3f7c187e38cc1729c"
+    }
+  ],
+  "runs": [
+    {
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-04/unit.json",
+      "passed": 35,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-04/postgres.json",
+      "passed": 7,
+      "skipped": 31,
+      "exitCode": 0
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "HR-04-AC01",
+      "result": "PASS",
+      "scope": "See RESULT.md"
+    },
+    {
+      "id": "HR-04-AC02",
+      "result": "PASS",
+      "scope": "See RESULT.md"
+    },
+    {
+      "id": "HR-04-AC03",
+      "result": "PASS",
+      "scope": "See RESULT.md"
+    },
+    {
+      "id": "HR-04-AC04",
+      "result": "PASS",
+      "scope": "See RESULT.md"
+    },
+    {
+      "id": "HR-04-AC05",
+      "result": "PASS",
+      "scope": "See RESULT.md"
+    }
+  ],
+  "commands": [
+    "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath services/hris/__tests__/lifecycle.service.test.ts services/hris/__tests__/employee.service.test.ts services/payroll/__tests__/payroll-employee.service.test.ts --json --outputFile=what-next/hris-implementation-2026-10-24/HR-04/unit.json",
+    "node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand --no-cache --testNamePattern=HR-04 --json --outputFile=what-next/hris-implementation-2026-10-24/HR-04/postgres.json"
+  ],
+  "limitations": [
+    "No automatic due worker or session revocation",
+    "Employment-state projection does not certify historical contract/compensation rules"
+  ]
+}

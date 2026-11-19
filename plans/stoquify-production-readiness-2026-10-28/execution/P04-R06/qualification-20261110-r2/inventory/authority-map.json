@@ -1,0 +1,42 @@
+{
+  "at": "2026-11-10T12:19:34.227Z",
+  "scope": [
+    "Credential sign-in admission and security bookkeeping",
+    "Existing current-session protection regressions",
+    "Selected EN/FR profile browser consumers"
+  ],
+  "before": [
+    "HTTP router origin/callback middleware",
+    "User before hook: session guard/public exemption; user lookup; lock audit; expired-lock write",
+    "Native endpoint body validation/form CSRF",
+    "Credential verification/session creation",
+    "User after hook: all non-success results counted as credential failures"
+  ],
+  "after": [
+    "HTTP router origin/callback middleware remains",
+    "User before hook: current-session guard unchanged; credential path calls public native formCsrfMiddleware before account lookup/audit; no expired-lock write",
+    "Native endpoint body validation/form CSRF remain",
+    "Credential verification/session creation remain",
+    "User after hook: only session-token/user success or native401 INVALID_EMAIL_OR_PASSWORD qualify; expired-lock reset occurs only with admitted credential outcome"
+  ],
+  "boundaries": {
+    "nativeClients": "Retain installed SDK no-request/headerless semantics; no inferred new business gate",
+    "deniedTransport": "No failure counter/login timestamp/unlock/session write from origin/validation/infrastructure errors",
+    "legitimateCredentials": "Successful login resets; wrong password increments; fifth genuine failure locks; expired throttle counts fresh wrong attempt as1"
+  },
+  "graph": {
+    "id": "api_auth_all_route_ts",
+    "community": 188,
+    "usedFor": "Discovery only; current installed/source behavior inspected"
+  },
+  "sourceManifest": "source-after-manifest.json",
+  "nativeEvidenceRequired": [
+    "real browser cross-site navigation and CORS",
+    "wrong/unknown-password origin probes",
+    "near-threshold repeated rejection",
+    "expired and future lock rejection",
+    "credential and current-session positive/negative regressions",
+    "exact native before/after rows"
+  ],
+  "qualification": "pending"
+}

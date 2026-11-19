@@ -121,6 +121,10 @@ function supportedIrppPack() {
     calculationScenario: {
       input: {
         taxableBaseAmount: "150000.00",
+        // Synthetic scenarios explicitly assert zero; production omissions are errors.
+        ytdTaxableBaseAmount: "0.00",
+        ytdTaxWithheldAmount: "0.00",
+        adjustmentValues: { socialDeduction: "0.00", familyRelief: "0.00", currentPeriodCorrection: "0.00" },
         currency: "XAF",
       },
       expectedOutput: {
@@ -182,6 +186,7 @@ function supportedIrppPack() {
           taxableBaseAmount: "50000.00",
           ytdTaxableBaseAmount: "100000.00",
           ytdTaxWithheldAmount: "1000.00",
+          adjustmentValues: { socialDeduction: "0.00", familyRelief: "0.00", currentPeriodCorrection: "0.00" },
           yearToDatePolicyHash: "sha256:irpp-ytd-policy-fixture",
           yearToDateAccumulatorHash: "sha256:irpp-ytd-accumulator-fixture",
           registerProofHash: "sha256:irpp-ytd-register-proof",
@@ -213,9 +218,12 @@ function supportedIrppPack() {
         ...baseFixture.calculationScenario,
         input: {
           taxableBaseAmount: "200000.00",
+          ytdTaxableBaseAmount: "0.00",
+          ytdTaxWithheldAmount: "0.00",
           adjustmentValues: {
             socialDeduction: "40000.00",
             familyRelief: "2000.00",
+            currentPeriodCorrection: "0.00",
           },
           currency: "XAF",
         },
@@ -245,6 +253,8 @@ function supportedIrppPack() {
           ytdTaxableBaseAmount: "100000.00",
           ytdTaxWithheldAmount: "1000.00",
           adjustmentValues: {
+            socialDeduction: "0.00",
+            familyRelief: "0.00",
             currentPeriodCorrection: "250.00",
           },
           yearToDatePolicyHash: "sha256:irpp-correction-ytd-policy-fixture",
@@ -1445,6 +1455,21 @@ describe("payroll country-pack calculation fixture runner", () => {
       ]),
     );
   });
+
+  it.each(["ytdTaxableBaseAmount", "ytdTaxWithheldAmount", "adjustmentValues"])(
+    "does not certify a synthetic YTD scenario with missing %s",
+    (key) => {
+      const supported = supportedIrppPack();
+      const fixture = supported.goldenFixtures.find((row) => row.id === "cm-irpp-period-calculation-reviewed-2026")!;
+      delete fixture.calculationScenario!.input[key];
+      supported.header.hash = computeCountryPackHash(supported);
+      const result = validatePayrollCountryPackCalculationFixtures(supported);
+      expect(result.valid).toBe(false);
+      expect(result.issues).toEqual(expect.arrayContaining([expect.objectContaining({
+        fixtureId: fixture.id, code: "SCENARIO_EXECUTION_FAILED", message: expect.stringContaining("is required"),
+      })]));
+    },
+  );
 
   it("fails validation when reviewed expected outputs drift from evaluator output", () => {
     const supported = supportedIrppPack();

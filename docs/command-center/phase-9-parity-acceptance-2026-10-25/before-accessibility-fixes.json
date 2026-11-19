@@ -1,0 +1,309 @@
+{
+  "startedAt": "2026-10-25T11:40:41.236Z",
+  "realAuthentication": true,
+  "actionMocks": false,
+  "productionAccess": false,
+  "checks": [
+    "Real credential login and database session",
+    "en manager-action-center: one main landmark and working keyboard skip link",
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Brief",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Command",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Investigate",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    "en Manager: keyboard queue disclosure",
+    "en owner-war-room: one main landmark and working keyboard skip link",
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Brief",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Command",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Investigate",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    }
+  ],
+  "audits": [
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Brief",
+      "violations": [
+        {
+          "id": "landmark-complementary-is-top-level",
+          "impact": "moderate",
+          "nodes": [
+            {
+              "target": [
+                ".lg\\:w-\\[340px\\]"
+              ],
+              "summary": "Fix any of the following:\n  The null landmark is contained in another landmark."
+            }
+          ]
+        }
+      ],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Command",
+      "violations": [
+        {
+          "id": "landmark-complementary-is-top-level",
+          "impact": "moderate",
+          "nodes": [
+            {
+              "target": [
+                ".lg\\:w-\\[340px\\]"
+              ],
+              "summary": "Fix any of the following:\n  The null landmark is contained in another landmark."
+            }
+          ]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "nodes": [
+            {
+              "target": [
+                "section[aria-labelledby=\"sidebar-section-command\"]"
+              ],
+              "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+            }
+          ]
+        }
+      ],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Investigate",
+      "violations": [
+        {
+          "id": "heading-order",
+          "impact": "moderate",
+          "nodes": [
+            {
+              "target": [
+                ".transition.hover\\:border-\\[var\\(--dash-brand\\)\\]:nth-child(1) > .items-start.justify-between.gap-3 > .basis-48.max-w-full.flex-1 > h3"
+              ],
+              "summary": "Fix any of the following:\n  Heading order invalid"
+            }
+          ]
+        },
+        {
+          "id": "landmark-complementary-is-top-level",
+          "impact": "moderate",
+          "nodes": [
+            {
+              "target": [
+                ".lg\\:w-\\[340px\\]"
+              ],
+              "summary": "Fix any of the following:\n  The null landmark is contained in another landmark."
+            }
+          ]
+        }
+      ],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Brief",
+      "violations": [
+        {
+          "id": "landmark-complementary-is-top-level",
+          "impact": "moderate",
+          "nodes": [
+            {
+              "target": [
+                ".lg\\:w-\\[340px\\]"
+              ],
+              "summary": "Fix any of the following:\n  The null landmark is contained in another landmark."
+            }
+          ]
+        }
+      ],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Command",
+      "violations": [
+        {
+          "id": "landmark-complementary-is-top-level",
+          "impact": "moderate",
+          "nodes": [
+            {
+              "target": [
+                ".lg\\:w-\\[340px\\]"
+              ],
+              "summary": "Fix any of the following:\n  The null landmark is contained in another landmark."
+            }
+          ]
+        }
+      ],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Investigate",
+      "violations": [
+        {
+          "id": "landmark-complementary-is-top-level",
+          "impact": "moderate",
+          "nodes": [
+            {
+              "target": [
+                ".lg\\:w-\\[340px\\]"
+              ],
+              "summary": "Fix any of the following:\n  The null landmark is contained in another landmark."
+            }
+          ]
+        }
+      ],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    }
+  ],
+  "errors": [],
+  "blockedExternalRequests": 0,
+  "passed": false,
+  "failure": "locator.focus: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#dashboard-main-content').getByRole('button', { name: 'Reconciliation proof', exact: true }).first()\u001b[22m\n\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\command-center\\phase-9-parity-acceptance-2026-10-25\\acceptance-browser.cjs:27:177)",
+  "failureUrl": "http://127.0.0.1:61472/en/dashboard/owner-war-room?mode=brief",
+  "failureText": "Skip to main content\nOHADA OPERATING OS\nNotifications\n0\n\nPhase 9 disposable workspace\n\nDISPOSABLE ADMINISTRATOR\nSession\nMODULES\n10\nCOMMAND\n3\nDashboard\nOperating overview\nAnalytics\nBusiness pulse and reports\n3\nCommand Center\nOwner and manager daily command views\n3\nDaily Digest\nManager Action Center\nOwner War Room\nOPERATIONS\n3\nInventory\nItems, loss control, stock movements, transfers, and units\n6\nPurchases\nPurchase orders, suppliers, and AP workbench\n6\nSales\nCustomers, sales, and POS entry points\n3\nFINANCE & TRUST\n2\nAccounting\nLedger, close, reports, and controls\n2\nFinance\nCash, profitability, payments, and reconciliation\n9\nPEOPLE\n1\nHR & Payroll\nPayroll command center\n2\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n9\nMF\n\nmanager Fixture\n\nmanager@phase9.example.invalid\n\nOwner War Room\n\nCommand / Command Center / Owner War Room\n\nFR\nMF\nRefresh view\n\nPeriods and deadlines use UTC.\n\nA read-only, evidence-backed command center for cash truth, reconciliation pressure, stock exposure, supplier commitments, payroll exposure, close readiness, action pressure, and module state.\n\nBlocked\npartial\nevidence:\nPosted\nTrust: Posted\nOwner morning brief\n\nNo cash, close, or freshness blocker is visible in the current owner brief.\n\nEvidence and sources\nBrief\nCommand\nInvestigate\n\nPeriod (UTC): Oct 25 - Oct 25\n\nGenerated: Oct 25, 11:47 AM\n\nReview: blocked\n\nPhase 9 disposable workspace\n\nPeriod: Oct 25 - Oct 25\n\nRead-only\nLedger proof\nCritical actions\n0\nHigh-priority actions\n0\nStale indicators\n0\nBlocked indicators\n5\nTop proof-linked actions\n\nNo permitted action is available in this scope.\n\n0 actions\n\nNo visible action is due\n\nThere is no permission-filtered command action for this user and tenant right now.\n\nOwner risks\n\nCash at risk, blocked close items, stale evidence, and stock-to-cash exposure ranked for today.\n\n1 signal\n#1\nMedium\nReady\nsoon\nStock-to-cash exposure\n\nZero or negative stock levels can turn working capital into missed sales.\n\nResolve stock pressure before it becomes a cash leakage story.\n\nFCFA 0\nOpen stock items\nevidence:\nRaw\nOperational\nfresh\nCurrent observations\n\nCurrent cash, close and evidence observations. Comparable historical snapshots are not available.\n\n0 observations\n\nNo visible observations\n\nNo observations are available for this scope and your permissions. Review source limitations; this does not confirm the absence of risk.\n\nAcknowledge brief\n\nMark this brief as read for this visit. This does not resolve any action.\n\nAcknowledge brief\nWork & follow-up\n\nSaved across Digest, Manager and Owner for the same source and scope. Coordination never certifies a business outcome.\n\nRefresh follow-ups\n\nChecking current access and source evidence…",
+  "finishedAt": "2026-10-25T11:47:28.163Z"
+}

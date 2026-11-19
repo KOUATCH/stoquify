@@ -77,6 +77,7 @@ function queuedExecution(
     adapterIdempotencyKey: "cnps-submit-run-1",
     adapterAttempt: 1,
     authorityCertificationHarnessHash: "sha256:authority-harness",
+    adapterChaosReleaseGateHash: "sha256:synthetic-adapter-chaos-gate",
     authorityCertificationProofEnvelope,
     correlationId: "sha256:authority-execution-correlation",
     attempts: 1,
@@ -113,14 +114,27 @@ describe("processPayrollAuthorityAdapterWorkerBatch", () => {
     (assertPayrollProductionAdmissionInTx as jest.Mock).mockReset().mockResolvedValue(undefined);
   });
 
+  it.each(["revoked", "stale", "missing-auth", "missing-permission", "missing-actor"])("rejects %s worker authority before lease or adapter submission", async mode => {
+    const input = {organizationId:"org-1",workerId:"worker-1",actorId:mode === "missing-actor" ? undefined : "operator-1",
+      actorPermissions:mode === "missing-permission" ? undefined : mode === "revoked" ? [] : ["payroll.declarations.manage"],
+      now:"2026-10-24T10:00:00Z",lastAuthAt:mode === "missing-auth" ? undefined : mode === "stale" ? "2026-10-24T09:00:00Z" : "2026-10-24T10:00:00Z"}
+    const adapter={submit:jest.fn()}, leaseExecutions=jest.fn().mockResolvedValue({executions:[queuedExecution()]}), processExecution=jest.fn(), recordDeclarationEvidence=jest.fn()
+    await expect(processPayrollAuthorityAdapterWorkerBatch(input as never,{adapter,leaseExecutions,processExecution,recordDeclarationEvidence})).rejects.toThrow()
+    expect(leaseExecutions).not.toHaveBeenCalled()
+    expect(adapter.submit).not.toHaveBeenCalled()
+    expect(processExecution).not.toHaveBeenCalled()
+    expect(recordDeclarationEvidence).not.toHaveBeenCalled()
+  })
+
   it("never calls the external adapter when admission has been revoked after queueing", async () => {
     const adapter = { submit: jest.fn() };
     const execution = queuedExecution();
     const leaseExecutions = jest.fn().mockResolvedValue({ executions: [execution] });
     const processExecution = jest.fn().mockResolvedValue({ execution: { ...execution, status: "FAILED" } });
     const recordDeclarationEvidence = jest.fn();
-    (assertPayrollProductionAdmissionInTx as jest.Mock).mockRejectedValue(new Error("PAYROLL_PRODUCTION_ADMISSION_BLOCKED"));
-    await processPayrollAuthorityAdapterWorkerBatch({ organizationId: "org-1", workerId: "worker-1" }, { adapter, leaseExecutions, processExecution, recordDeclarationEvidence });
+    Object.assign(db, { payrollRun: { findFirst: jest.fn().mockResolvedValue({ countryCode: "GA", payrollPeriod: { frequency: "MONTHLY" } }) } });
+    (assertPayrollProductionAdmissionInTx as jest.Mock).mockImplementation(jest.requireActual("../payroll-production-admission").assertPayrollProductionAdmissionInTx);
+    await processPayrollAuthorityAdapterWorkerBatch({ organizationId: "org-1", workerId: "worker-1", actorId: "operator-1", actorPermissions: ["payroll.declarations.manage"], lastAuthAt: new Date() }, { adapter, leaseExecutions, processExecution, recordDeclarationEvidence });
     expect(db.payrollDeclaration.findFirst).toHaveBeenCalledWith({ where: { id: execution.declarationId, organizationId: "org-1" }, select: { payrollRunId: true } });
     expect(assertPayrollProductionAdmissionInTx).toHaveBeenCalledWith(db, "org-1", "run-1");
     expect(adapter.submit).not.toHaveBeenCalled();
@@ -262,6 +276,7 @@ describe("processPayrollAuthorityAdapterWorkerBatch", () => {
         actorId: "operator-1",
         now: "2026-06-30T10:11:00.000Z",
         lastAuthAt: "2026-06-30T10:10:00.000Z",
+        actorPermissions: ["payroll.declarations.manage"],
       },
       { adapter, leaseExecutions, processExecution, recordDeclarationEvidence },
     );
@@ -313,6 +328,9 @@ describe("processPayrollAuthorityAdapterWorkerBatch", () => {
         organizationId: "org-1",
         workerId: "worker-1",
         now: "2026-06-30T10:15:00.000Z",
+        actorId: "operator-1",
+        actorPermissions: ["payroll.declarations.manage"],
+        lastAuthAt: "2026-06-30T10:15:00.000Z",
       },
       { adapter, leaseExecutions, processExecution, recordDeclarationEvidence },
     );
@@ -351,6 +369,9 @@ describe("processPayrollAuthorityAdapterWorkerBatch", () => {
         organizationId: "org-1",
         workerId: "worker-1",
         now: "2026-06-30T10:16:00.000Z",
+        actorId: "operator-1",
+        actorPermissions: ["payroll.declarations.manage"],
+        lastAuthAt: "2026-06-30T10:16:00.000Z",
       },
       { adapter, leaseExecutions, processExecution, recordDeclarationEvidence },
     );
@@ -412,6 +433,7 @@ describe("processPayrollAuthorityAdapterWorkerBatch", () => {
         actorId: "operator-1",
         now: "2026-06-30T10:17:00.000Z",
         lastAuthAt: "2026-06-30T10:16:00.000Z",
+        actorPermissions: ["payroll.declarations.manage"],
       },
       { adapter, leaseExecutions, processExecution, recordDeclarationEvidence },
     );
@@ -499,6 +521,7 @@ describe("processPayrollAuthorityAdapterWorkerBatch", () => {
         amendmentApprovedById: "compliance-approver-1",
         now: "2026-06-30T10:18:00.000Z",
         lastAuthAt: "2026-06-30T10:17:00.000Z",
+        actorPermissions: ["payroll.declarations.manage"],
       },
       { adapter, leaseExecutions, processExecution, recordDeclarationEvidence },
     );
@@ -560,6 +583,7 @@ describe("processPayrollAuthorityAdapterWorkerBatch", () => {
         actorId: "operator-1",
         now: "2026-06-30T10:19:00.000Z",
         lastAuthAt: "2026-06-30T10:18:00.000Z",
+        actorPermissions: ["payroll.declarations.manage"],
       },
       { adapter, leaseExecutions, processExecution, recordDeclarationEvidence },
     );

@@ -1,0 +1,35 @@
+{
+  "utc": "2026-10-18T17:02:04.972Z",
+  "fixture": "p08-manager-83ea71c021db",
+  "scope": "Synthetic tenant-wide manager, no multi-location grant claim",
+  "steps": [
+    {
+      "locale": "en",
+      "state": "pending and source-linked discrepancy",
+      "geometry": {
+        "width": 1440,
+        "scrollWidth": 1440
+      }
+    },
+    {
+      "locale": "en",
+      "state": "Keyboard source navigation reaches actual scoped inventory item"
+    },
+    {
+      "locale": "en",
+      "state": "Empty distinct from failed source; keyboard retry restores actual read"
+    },
+    {
+      "locale": "fr",
+      "state": "pending and source-linked discrepancy",
+      "geometry": {
+        "width": 390,
+        "scrollWidth": 390
+      }
+    }
+  ],
+  "browser": "149.0.7827.55",
+  "status": "FAIL",
+  "failure": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Source de rupture P08', { exact: true }).first()\nExpected: visible\nTimeout: 180000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 180000ms\n  - waiting for getByText('Source de rupture P08', { exact: true }).first()\n",
+  "injectionRestored": true
+}

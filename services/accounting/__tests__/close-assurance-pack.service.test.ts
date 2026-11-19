@@ -1,4 +1,9 @@
 import { CLOSE_CERTIFICATION_INVALIDATION_SOURCES } from "../close-assurance-pack.service"
+jest.mock("../close-evidence-acceptance-authority.service", () => ({ lockCloseWriteAuthorityInTx: jest.fn(), lockClosePackRetrievalAuthorityInTx: jest.fn() }))
+import { lockCloseWriteAuthorityInTx, lockClosePackRetrievalAuthorityInTx } from "../close-evidence-acceptance-authority.service"
+import { createHash } from "node:crypto"
+import { ApplicationError } from "@/services/_shared/action-errors"
+const mockRevalidateCloseWriteAuthority = jest.fn()
 jest.mock("../close-source-revision.service", () => ({ ...jest.requireActual("../close-source-revision.service"), lockCloseSourceRevisionInTx: jest.fn().mockResolvedValue({ version: 1, revision: "0" }) }))
 import { lockCloseSourceRevisionInTx } from "../close-source-revision.service"
 import { createCloseControlScope } from "../close-control-scope"
@@ -25,6 +30,7 @@ jest.mock("@/prisma/db", () => {
     closePackExport: {
       create: jest.fn(),
       findFirst: jest.fn(),
+      findMany: jest.fn(),
       update: jest.fn(),
     },
     ledgerAuditEvent: {
@@ -58,6 +64,8 @@ import { db } from "@/prisma/db"
 import { reconcileInventoryClass3 } from "@/services/inventory/inventory-valuation.service"
 import {
   exportClosePack,
+  getRetainedClosePackExport,
+  listClosePackExports,
   recordCloseCertificationInvalidation,
   recordCloseCertificationInvalidationsForSource,
 } from "../close-assurance-pack.service"
@@ -74,6 +82,7 @@ const mockDb = db as unknown as {
   closePackExport: {
     create: jest.Mock
     findFirst: jest.Mock
+    findMany: jest.Mock
     update: jest.Mock
   }
   ledgerAuditEvent: {
@@ -97,6 +106,9 @@ const mockDb = db as unknown as {
 }
 
 const mockReconcileInventoryClass3 = reconcileInventoryClass3 as jest.Mock
+
+const businessLockCalls = () => mockDb.$queryRaw.mock.calls.filter(([query]) =>
+  !String(query.values?.[0] ?? "").includes('"close-pack-export-request"'))
 
 function inventoryAnnex(sourceHash = "sha256:inventory-valuation") {
   return {
@@ -429,14 +441,18 @@ function observeInvalidationTransactions(initialRun = closeRun()) {
   const committedEvents: unknown[] = []
   const committedAudits: unknown[] = []
   const committedExports: unknown[] = []
+  const committedReceipts: unknown[] = []
+  const committedAuditLogs: unknown[] = []
   const transactions = { committed: 0, rolledBack: 0 }
   const createEvent = mockDb.businessEvent.create.getMockImplementation()!
   const createAudit = mockDb.ledgerAuditEvent.create.getMockImplementation()!
   const updateExport = mockDb.closePackExport.update.getMockImplementation()!
+  const createReceipt = mockDb.closePackExport.create.getMockImplementation()!
+  const createAuditLog = mockDb.auditLog.create.getMockImplementation()!
   const updateRun = mockDb.closeRun.update.getMockImplementation()!
   mockDb.$transaction.mockImplementation(async callback => {
     let pendingRun = committedRun
-    const events: unknown[] = [], audits: unknown[] = [], exports: unknown[] = []
+    const events: unknown[] = [], audits: unknown[] = [], exports: unknown[] = [], receipts: unknown[] = [], auditLogs: unknown[] = []
     mockDb.closeRun.findFirst.mockImplementation(async () => pendingRun)
     mockDb.closeRun.update.mockImplementation(async args => {
       await updateRun(args)
@@ -458,12 +474,24 @@ function observeInvalidationTransactions(initialRun = closeRun()) {
       exports.push(args)
       return result
     })
+    mockDb.closePackExport.create.mockImplementation(async args => {
+      const result = await createReceipt(args)
+      receipts.push(args.data)
+      return result
+    })
+    mockDb.auditLog.create.mockImplementation(async args => {
+      const result = await createAuditLog(args)
+      auditLogs.push(args.data)
+      return result
+    })
     try {
       const result = await callback(mockDb)
       committedRun = pendingRun
       committedEvents.push(...events)
       committedAudits.push(...audits)
       committedExports.push(...exports)
+      committedReceipts.push(...receipts)
+      committedAuditLogs.push(...auditLogs)
       transactions.committed++
       return result
     } catch (error) {
@@ -471,12 +499,15 @@ function observeInvalidationTransactions(initialRun = closeRun()) {
       throw error
     }
   })
-  return { run: () => committedRun, committedEvents, committedAudits, committedExports, transactions }
+  return { run: () => committedRun, committedEvents, committedAudits, committedExports, committedReceipts, committedAuditLogs, transactions }
 }
 
 describe("close assurance pack service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockRevalidateCloseWriteAuthority.mockReset().mockResolvedValue(undefined)
+    jest.mocked(lockCloseWriteAuthorityInTx).mockReset().mockResolvedValue({ revalidate: mockRevalidateCloseWriteAuthority })
+    jest.mocked(lockClosePackRetrievalAuthorityInTx).mockReset().mockResolvedValue({ revalidate: mockRevalidateCloseWriteAuthority })
     jest.mocked(lockCloseSourceRevisionInTx).mockReset().mockResolvedValue({ version: 1, revision: "0" })
     mockDb.$transaction.mockImplementation((callback) => callback(mockDb))
     mockDb.$queryRaw.mockResolvedValue([{ id: "close-run-1" }])
@@ -499,6 +530,7 @@ describe("close assurance pack service", () => {
       id: "close-pack-export-1",
       metadata: { mode: "CERTIFIED" },
     } : null))
+    mockDb.closePackExport.findMany.mockReset().mockResolvedValue([])
     mockDb.closePackExport.update.mockResolvedValue({
       id: "close-pack-export-1",
     })
@@ -529,6 +561,231 @@ describe("close assurance pack service", () => {
     mockDb.auditLog.findMany.mockResolvedValue([pilotCertificationAudit()])
     mockDb.auditLog.create.mockResolvedValue({ id: "audit-log-1" })
     mockReconcileInventoryClass3.mockResolvedValue(cleanInventoryValuation())
+  })
+
+  const retainedControl = () => ({ actorId: "certifier-1", actorPermissions: ["accounting.close.export", "accounting.close.certify"],
+    session: { id: "trusted-session", token: "trusted-token" }, now: "2026-06-15T13:01:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })
+  const byteDigest = (content: string) => `sha256:${createHash("sha256").update(content, "utf8").digest("hex")}`
+  async function retainedFixture(mode: "DRAFT_NOT_CERTIFIED" | "CERTIFIED" = "DRAFT_NOT_CERTIFIED") {
+    const result = await exportClosePack("org-1", { closeRunId: "close-run-1", mode, correlationId: "durable-request" }, retainedControl())
+    return { result, row: mockDb.closePackExport.create.mock.calls.at(-1)![0].data }
+  }
+
+  it.each(["DRAFT_NOT_CERTIFIED", "CERTIFIED"] as const)("retains exact %s bytes and a separate byte digest in its receipt transaction", async mode => {
+    const { result, row } = await retainedFixture(mode)
+    expect(row.canonicalContent).toBe(result.content)
+    expect(row.canonicalContentSha256).toBe(byteDigest(result.content))
+    expect(result.documentDigest).toBe(row.canonicalContentSha256)
+    expect(row.exportRequestHash).toMatch(/^sha256:[a-f0-9]{64}$/)
+    expect(row.contentHash).toBe(result.contentHash)
+    expect(JSON.parse(result.content).export.exportId).toBe(row.id)
+    expect(result.exportId).toBe(row.id)
+    expect(row.metadata).not.toHaveProperty("canonicalContent")
+    expect(row.metadata).not.toHaveProperty("canonicalContentSha256")
+    if (mode === "CERTIFIED") expect(mockDb.closeRun.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({
+      status: "CERTIFIED", metadata: expect.objectContaining({ certifiedExportId: row.id }),
+    }) }))
+  })
+
+  it.each(["DRAFT_NOT_CERTIFIED", "CERTIFIED"] as const)("recovers original %s bytes on an exact retry after the run becomes stale", async mode => {
+    const { result: first, row } = await retainedFixture(mode)
+    mockDb.closePackExport.findMany.mockResolvedValue([row])
+    mockDb.closeRun.findFirst.mockResolvedValue(closeRun({ status: "BLOCKED", metadata: { staleState: { status: "EVIDENCE_STALE" } } }))
+    mockDb.closePackExport.create.mockClear(); mockDb.closeRun.update.mockClear(); mockReconcileInventoryClass3.mockClear()
+    const recovered = await exportClosePack("org-1", { closeRunId: "close-run-1", mode, correlationId: "durable-request" }, retainedControl())
+    expect(recovered).toMatchObject({ content: first.content, contentHash: first.contentHash, documentDigest: first.documentDigest, exportId: first.exportId, replayed: true })
+    expect(recovered.historicalNotice).toMatch(/historical snapshot/)
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.update).not.toHaveBeenCalled()
+    expect(mockReconcileInventoryClass3).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).toHaveBeenLastCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: "CLOSE_PACK_RETAINED_RETRIEVED" }) }))
+    const requestLock = mockDb.$queryRaw.mock.calls.find(([query]) => String(query.values?.[0]).includes('"close-pack-export-request"'))
+    expect(requestLock![0].values).toEqual([JSON.stringify(["close-pack-export-request", "org-1", "durable-request"])])
+  })
+
+  it.each(["run", "mode", "request hash", "duplicate receipts"])("rejects export request reuse with conflicting %s", async change => {
+    const { row } = await retainedFixture()
+    mockDb.closePackExport.findMany.mockResolvedValue(change === "duplicate receipts" ? [row, { ...row, id: "another-receipt" }] : [{ ...row,
+      ...(change === "run" ? { closeRunId: "different-run" } : {}), ...(change === "mode" ? { isCertified: true } : {}),
+      ...(change === "request hash" ? { exportRequestHash: "sha256:unrelated" } : {}),
+    }])
+    mockDb.closePackExport.create.mockClear()
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED", correlationId: "durable-request" }, retainedControl())).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("retrieves retained certified bytes using current export authority without running certification again", async () => {
+    const { result: original, row } = await retainedFixture("CERTIFIED")
+    mockDb.closePackExport.findFirst.mockResolvedValue(row)
+    mockDb.closeRun.findFirst.mockResolvedValue(closeRun({ status: "BLOCKED" }))
+    mockDb.closePackExport.create.mockClear(); mockDb.closeRun.update.mockClear(); mockReconcileInventoryClass3.mockClear()
+    const control = { ...retainedControl(), actorPermissions: ["accounting.close.export"] }
+    const retrieved = await getRetainedClosePackExport("org-1", { exportId: row.id, mode: "CERTIFIED" }, control)
+    expect(retrieved.content).toBe(original.content)
+    expect(retrieved.documentDigest).toBe(original.documentDigest)
+    expect(retrieved.historicalNotice).toBeTruthy()
+    expect(lockClosePackRetrievalAuthorityInTx).toHaveBeenCalledWith(mockDb, expect.objectContaining({ actorId: control.actorId, session: control.session }), { certified: true })
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled(); expect(mockDb.closeRun.update).not.toHaveBeenCalled()
+    expect(mockReconcileInventoryClass3).not.toHaveBeenCalled()
+  })
+
+  it.each(["bytes", "payload identity", "embedded semantic hash", "legacy receipt"])("fails closed for retained %s without regeneration", async change => {
+    const { row } = await retainedFixture()
+    const damaged = { ...row }
+    if (change === "legacy receipt") { damaged.canonicalContent = null; damaged.canonicalContentSha256 = null; damaged.exportRequestHash = null }
+    else if (change === "bytes") damaged.canonicalContent += " "
+    else {
+      const payload = JSON.parse(damaged.canonicalContent)
+      if (change === "payload identity") payload.export.exportId = "foreign-receipt"
+      else payload.export.contentHash = "sha256:unrelated"
+      damaged.canonicalContent = JSON.stringify(payload)
+      damaged.canonicalContentSha256 = byteDigest(damaged.canonicalContent)
+    }
+    mockDb.closePackExport.findFirst.mockResolvedValue(damaged)
+    mockDb.ledgerAuditEvent.create.mockClear(); mockDb.closePackExport.create.mockClear(); mockReconcileInventoryClass3.mockClear()
+    await expect(getRetainedClosePackExport("org-1", { exportId: row.id, mode: "DRAFT_NOT_CERTIFIED" }, retainedControl())).rejects.toThrow(change === "legacy receipt" ? /not retained/ : /integrity check/)
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled(); expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockReconcileInventoryClass3).not.toHaveBeenCalled()
+  })
+
+  it.each(["organization", "period binding", "mode"])("rejects a retained receipt with the wrong %s", async change => {
+    const { row } = await retainedFixture()
+    mockDb.closePackExport.findFirst.mockResolvedValue({ ...row, ...(change === "organization" ? { organizationId: "foreign-org" } : {}) })
+    if (change === "period binding") mockDb.closeRun.findFirst.mockResolvedValue(null)
+    await expect(getRetainedClosePackExport("org-1", { exportId: row.id, mode: change === "mode" ? "CERTIFIED" : "DRAFT_NOT_CERTIFIED" }, retainedControl())).rejects.toMatchObject({ code: change === "mode" ? "CONFLICT" : "NOT_FOUND" })
+  })
+
+  it("lists bounded receipt metadata without returning retained document bytes", async () => {
+    const { row } = await retainedFixture()
+    mockDb.closePackExport.findMany.mockResolvedValue([row, { ...row, id: "legacy", canonicalContentSha256: null, exportRequestHash: null }])
+    const listed = await listClosePackExports("org-1", { closeRunId: row.closeRunId }, retainedControl())
+    expect(listed.map(receipt => receipt.retained)).toEqual([true, false])
+    expect(listed[0].documentDigest).toBe(row.canonicalContentSha256)
+    expect(JSON.stringify(listed)).not.toContain("AQSTOQFLOW_CLOSE_ASSURANCE_PACK")
+    expect(mockDb.closePackExport.findMany).toHaveBeenLastCalledWith(expect.objectContaining({ take: 50,
+      where: { organizationId: "org-1", closeRunId: row.closeRunId, closeRun: { organizationId: "org-1", period: { organizationId: "org-1" } } },
+      select: expect.not.objectContaining({ canonicalContent: true }),
+    }))
+  })
+
+  it.each(["retrieve", "list"])("rejects revoked authority before %s receipt reads", async operation => {
+    jest.mocked(lockClosePackRetrievalAuthorityInTx).mockRejectedValue(new ApplicationError("AUTH_REQUIRED", "Session revoked", 401))
+    const result = operation === "retrieve" ? getRetainedClosePackExport("org-1", { exportId: "receipt", mode: "DRAFT_NOT_CERTIFIED" }, retainedControl())
+      : listClosePackExports("org-1", { closeRunId: "close-run-1" }, retainedControl())
+    await expect(result).rejects.toMatchObject({ code: "AUTH_REQUIRED" })
+    expect(mockDb.closePackExport.findFirst).not.toHaveBeenCalled(); expect(mockDb.closePackExport.findMany).not.toHaveBeenCalled()
+  })
+
+  // These are service glue regressions with a mocked authority gate and a
+  // callback transaction double; they do not exercise real session rows or SQL rollback.
+  it.each(["CERTIFIED", "DRAFT_NOT_CERTIFIED"] as const)("rejects revoked authority before any %s export writes", async mode => {
+    const revoked = new ApplicationError("AUTH_REQUIRED", "The export session was revoked", 401)
+    const session = { id: "server-session-1", token: "server-session-token" }
+    jest.mocked(lockCloseWriteAuthorityInTx).mockRejectedValue(revoked)
+
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode }, {
+      actorId: "certifier-1", actorPermissions: ["accounting.close.certify", "accounting.close.export"], session,
+      lastAuthAt: "2026-06-15T13:00:00Z", now: "2026-06-15T13:00:00Z",
+    })).rejects.toBe(revoked)
+
+    expect(lockCloseWriteAuthorityInTx).toHaveBeenCalledWith(mockDb, {
+      homeOrganizationId: "org-1", organizationId: "org-1", actorId: "certifier-1", session,
+    }, mode === "CERTIFIED" ? "certified-export" : "draft-export")
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.closePackExport.update).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.update).not.toHaveBeenCalled()
+    expect(mockDb.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockDb.auditLog.create).not.toHaveBeenCalled()
+  })
+
+  it("revalidates authority after a certified run-lock wait before writing the export receipt", async () => {
+    const expired = new ApplicationError("FRESH_AUTH_REQUIRED", "Export authority expired while waiting for the run lock", 403)
+    let live = true
+    let unlock!: () => void, lockEntered!: () => void
+    const pendingLock = new Promise<{ id: string }[]>(resolve => { unlock = () => resolve([{ id: "close-run-1" }]) })
+    const entered = new Promise<void>(resolve => { lockEntered = resolve })
+    mockDb.$queryRaw.mockImplementation(async query => {
+      if (query.text.includes('FROM "close_runs"')) {
+        lockEntered()
+        return pendingLock
+      }
+      return []
+    })
+    mockRevalidateCloseWriteAuthority.mockImplementation(async () => { if (!live) throw expired })
+
+    const exporting = exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
+      actorId: "certifier-1", actorPermissions: ["accounting.close.certify"],
+      lastAuthAt: "2026-06-15T13:00:00Z", now: "2026-06-15T13:00:00Z",
+    })
+    const rejected = expect(exporting).rejects.toBe(expired)
+    await entered
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    live = false
+    unlock()
+    await rejected
+
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.update).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+  })
+
+  it.each(["source revision", "inventory annex"] as const)("rolls back %s invalidation when authority expires before the blocked return", async source => {
+    const original = closeRun()
+    const retained = closeRun({
+      status: "CERTIFIED",
+      metadata: {
+        ...original.metadata, certifiedExportId: "retained-export", certifiedContentHash: "retained-content-hash",
+        ...(source === "source revision" ? { sourceRevision: { version: 1, revision: "99" } } : {}),
+      },
+    })
+    if (source === "inventory annex") mockReconcileInventoryClass3.mockResolvedValue(cleanInventoryValuation("sha256:changed"))
+    mockDb.closePackExport.findFirst.mockResolvedValue({ id: "retained-export", contentHash: "retained-content-hash", isCertified: true, metadata: { certificationHistory: "retained" } })
+    const state = observeInvalidationTransactions(retained)
+    const expired = new ApplicationError("AUTH_REQUIRED", "The session expired during invalidation", 401)
+    mockRevalidateCloseWriteAuthority.mockImplementation(async () => { if (mockDb.closeRun.update.mock.calls.length) throw expired })
+
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
+      actorId: "certifier-1", actorPermissions: ["accounting.close.certify"],
+      lastAuthAt: "2026-06-15T13:00:00Z", now: "2026-06-15T13:01:00Z",
+    })).rejects.toBe(expired)
+
+    expect(mockDb.closeRun.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "BLOCKED" }) }))
+    expect(mockDb.closePackExport.update).toHaveBeenCalledWith(expect.objectContaining({ where: { id: "retained-export" } }))
+    expect(state.transactions).toEqual({ committed: 0, rolledBack: 1 })
+    expect(state.run()).toEqual(retained)
+    expect(state.committedEvents).toEqual([])
+    expect(state.committedAudits).toEqual([])
+    expect(state.committedExports).toEqual([])
+    expect(state.committedReceipts).toEqual([])
+    expect(state.committedAuditLogs).toEqual([])
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it.each(["CERTIFIED", "DRAFT_NOT_CERTIFIED"] as const)("rolls back the %s export receipt when authority expires after its write", async mode => {
+    const expired = new ApplicationError("AUTH_REQUIRED", "The session expired after the export receipt write", 401)
+    let live = true
+    mockRevalidateCloseWriteAuthority.mockImplementation(async () => { if (!live) throw expired })
+    mockDb.closePackExport.create.mockImplementation(async ({ data }) => {
+      live = false
+      return { id: "close-pack-export-1", ...data }
+    })
+    const retained = closeRun()
+    const state = observeInvalidationTransactions(retained)
+
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode }, {
+      actorId: "certifier-1", actorPermissions: ["accounting.close.certify", "accounting.close.export"],
+      lastAuthAt: "2026-06-15T13:00:00Z", now: "2026-06-15T13:00:00Z",
+    })).rejects.toBe(expired)
+
+    expect(mockDb.closePackExport.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ isCertified: mode === "CERTIFIED" }) }))
+    expect(state.transactions).toEqual({ committed: 0, rolledBack: 1 })
+    expect(state.run()).toEqual(retained)
+    expect(state.committedReceipts).toEqual([])
+    expect(state.committedAudits).toEqual([])
+    expect(state.committedAuditLogs).toEqual([])
+    expect(state.committedEvents).toEqual([])
+    expect(state.committedExports).toEqual([])
   })
 
   it.each([undefined, { version: 1, revision: "99" }])("refuses certification and retains invalidation for a missing or stale source revision: %j", async sourceRevision => {
@@ -622,7 +879,7 @@ describe("close assurance pack service", () => {
     )
 
     expect(result.mode).toBe("DRAFT_NOT_CERTIFIED")
-    expect(mockDb.$queryRaw).not.toHaveBeenCalled()
+    expect(businessLockCalls()).toHaveLength(0)
     expect(result.contentHash).toMatch(/^sha256:/)
     expect(result.watermarkId).toContain("draft-not-certified")
     expect(result.content).toContain("Draft close pack is not certified")
@@ -1101,14 +1358,17 @@ describe("close assurance pack service", () => {
     const result = await exportClosePack("org-1", { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED" }, { actorId: "reader", actorPermissions: ["accounting.close.export"] })
     expect(result.isCertified).toBe(false)
     expect(mockDb.closeRun.findMany).not.toHaveBeenCalled()
-    expect(mockDb.$queryRaw).not.toHaveBeenCalled()
+    expect(businessLockCalls()).toHaveLength(0)
   })
 
   it("waits for period publication and rereads the newly current assessment before certification", async () => {
     let release!: () => void, entered!: () => void
     const waiting = new Promise<void>(resolve => { entered = resolve })
     const lock = new Promise(resolve => { release = () => resolve([]) })
-    mockDb.$queryRaw.mockImplementationOnce(() => { entered(); return lock })
+    mockDb.$queryRaw.mockImplementation(async query => {
+      if (query.values?.[0] === JSON.stringify(["close-assessment-order", "org-1", "period-1"])) { entered(); return lock }
+      return [{ id: "close-run-1" }]
+    })
     const work = exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })
     await waiting
     expect(mockDb.closeRun.findFirst).toHaveBeenCalledTimes(1)
@@ -1118,8 +1378,8 @@ describe("close assurance pack service", () => {
     mockDb.closeRun.findMany.mockResolvedValue([closeRun({ id: "newly-published", status: "RUNNING", createdAt: new Date("2026-06-15T12:01:00Z") }), closeRun()])
     release()
     await expect(work).rejects.toMatchObject({ code: "CONFLICT" })
-    expect(mockDb.$queryRaw.mock.calls[0][0].values).toEqual([JSON.stringify(["close-assessment-order", "org-1", "period-1"])])
-    expect(mockDb.$queryRaw.mock.calls[1][0].text).toContain('FROM "close_runs"')
+    expect(businessLockCalls()[0][0].values).toEqual([JSON.stringify(["close-assessment-order", "org-1", "period-1"])])
+    expect(businessLockCalls()[1][0].text).toContain('FROM "close_runs"')
     expect(mockDb.closeRun.findFirst).toHaveBeenCalledTimes(2)
     expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
   })
@@ -1128,7 +1388,7 @@ describe("close assurance pack service", () => {
     mockDb.closeRun.findFirst.mockResolvedValue(null)
     await expect(exportClosePack("org-1", { closeRunId: "foreign-run", mode: "CERTIFIED" }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })).rejects.toMatchObject({ code: "NOT_FOUND" })
     expect(mockDb.closeRun.findFirst).toHaveBeenCalledWith({ where: { id: "foreign-run", organizationId: "org-1", period: { organizationId: "org-1" } }, select: { periodId: true } })
-    expect(mockDb.$queryRaw).not.toHaveBeenCalled()
+    expect(businessLockCalls()).toHaveLength(0)
     expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
   })
   it.each(["CERTIFIED", "DRAFT_NOT_CERTIFIED"] as const)("rejects a tenant-owned run with a foreign accounting period during %s export", async mode => {
@@ -1140,7 +1400,7 @@ describe("close assurance pack service", () => {
     )
     await expect(exportClosePack("org-1", { closeRunId: corrupt.id, mode }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify", "accounting.close.export"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })).rejects.toMatchObject({ code: "NOT_FOUND" })
     expect(mockDb.closeRun.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: { id: corrupt.id, organizationId: "org-1", period: { organizationId: "org-1" } } }))
-    expect(mockDb.$queryRaw).not.toHaveBeenCalled()
+    expect(businessLockCalls()).toHaveLength(0)
     expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
     expect(mockDb.closeRun.update).not.toHaveBeenCalled()
     expect(mockReconcileInventoryClass3).not.toHaveBeenCalled()
@@ -1156,7 +1416,10 @@ describe("close assurance pack service", () => {
     let unlock!: () => void, lockEntered!: () => void
     const pendingLock = new Promise<{ id: string }[]>(resolve => { unlock = () => resolve([{ id: "close-run-1" }]) })
     const entered = new Promise<void>(resolve => { lockEntered = resolve })
-    mockDb.$queryRaw.mockResolvedValueOnce([]).mockImplementationOnce(() => { lockEntered(); return pendingLock })
+    mockDb.$queryRaw.mockImplementation(async query => {
+      if (query.text.includes('FROM "close_runs"')) { lockEntered(); return pendingLock }
+      return []
+    })
     const exporting = exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
       actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z",
     })
@@ -1167,9 +1430,9 @@ describe("close assurance pack service", () => {
     unlock()
     await expect(exporting).rejects.toThrow("A recorded change invalidated close certification evidence.")
     expect(readsBeforeUnlock).toBe(1) // Tenant-scoped period discovery only.
-    expect(mockDb.$queryRaw.mock.calls[0][0].text).toContain("pg_advisory_xact_lock")
-    expect(mockDb.$queryRaw.mock.calls[1][0].text).toMatch(/FROM "close_runs"[\s\S]*FOR NO KEY UPDATE/)
-    expect(mockDb.$queryRaw.mock.calls[1][0].values).toEqual(["org-1", "close-run-1"])
+    expect(businessLockCalls()[0][0].text).toContain("pg_advisory_xact_lock")
+    expect(businessLockCalls()[1][0].text).toMatch(/FROM "close_runs"[\s\S]*FOR NO KEY UPDATE/)
+    expect(businessLockCalls()[1][0].values).toEqual(["org-1", "close-run-1"])
     expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
     expect(mockDb.closeRun.update).not.toHaveBeenCalled()
   })
@@ -1211,7 +1474,7 @@ describe("close assurance pack service", () => {
       ? exportClosePack("org-1", { closeRunId: "foreign-close", mode: "CERTIFIED" }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })
       : recordCloseCertificationInvalidation("org-1", { closeRunId: "foreign-close", sourceModel: "Ledger", sourceEventName: "ledger.journal.posted", staleReason: "Owned source changed" })
     await expect(result).rejects.toThrow("Close run not found")
-    expect(mockDb.$queryRaw.mock.calls[operation === "certify" ? 1 : 0][0].values).toEqual(["org-1", "foreign-close"])
+    expect(businessLockCalls()[operation === "certify" ? 1 : 0][0].values).toEqual(["org-1", "foreign-close"])
     expect(mockDb.closeRun.findFirst).toHaveBeenCalledTimes(operation === "certify" ? 1 : 0)
     expect(mockDb.closePackExport.findFirst).not.toHaveBeenCalled()
     expect(mockDb.closePackExport.create).not.toHaveBeenCalled()

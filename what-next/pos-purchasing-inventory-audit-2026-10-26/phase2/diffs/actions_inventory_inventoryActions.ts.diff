@@ -1,0 +1,45 @@
+diff --git a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/actions/inventory/inventoryActions.ts b/actions/inventory/inventoryActions.ts
+index 898eba85..55aaf937 100644
+--- a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/actions/inventory/inventoryActions.ts
++++ b/actions/inventory/inventoryActions.ts
+@@ -16,7 +16,7 @@ import {
+   toStockAdjustmentRecord,
+   toStockTransferRecord,
+ } from "@/services/inventory/inventory-read.service"
+-import { postInventoryReservation } from "@/services/inventory/inventory-stock-event.service"
++import { postInventoryReservationBatch } from "@/services/inventory/inventory-stock-event.service"
+ import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+ import { createStockTransfer as createStockTransferService } from "@/services/inventory/inventory-transfer.service"
+ import {
+@@ -345,20 +345,17 @@ export const reserveInventory = inventoryAction(
+       audit: true,
+     })
+     if (!moduleDecision.allowed) throw new ForbiddenError("Inventory module is not available for this organization")
+-    const reservations = await Promise.all(
+-      data.reservations.map((reservation) =>
+-        postInventoryReservation({
+-          itemId: reservation.itemId,
+-          locationId: reservation.locationId,
+-          organizationId: ctx.organizationId,
+-          quantity: reservation.quantity,
+-          actorId: ctx.userId,
+-          reason: "Inventory reserved",
+-        }),
+-      ),
+-    )
+-
+-    return { success: true, data: reservations }
++    const result = await postInventoryReservationBatch({
++      organizationId: ctx.organizationId,
++      actorId: ctx.userId,
++      idempotencyKey: data.idempotencyKey,
++      reason: "Inventory reserved",
++      lines: data.reservations,
++    })
++    return { success: true, data: data.reservations.map(line => ({
++      itemId: line.itemId, locationId: line.locationId, quantity: line.quantity,
++      eventId: result.eventId, idempotencyKey: result.idempotencyKey, replayed: result.replayed,
++    })) }
+   },
+   {
+     actionName: "reserveInventory",

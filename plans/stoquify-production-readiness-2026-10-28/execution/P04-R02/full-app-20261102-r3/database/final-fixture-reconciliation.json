@@ -1,0 +1,328 @@
+{
+  "at": "2026-11-02T18:13:39.224Z",
+  "passed": true,
+  "mutations": "None. Final observation/reconciliation only.",
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+  "transitions": [
+    {
+      "at": "2026-11-02T17:57:43.764Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "revocation",
+      "actorId": "p04r02-user-revocation",
+      "organizationId": "p04-upload-a",
+      "kind": "revoke",
+      "affected": 2,
+      "recovery": "New real sign-in may create a fresh session; revoked tokens are not reinserted.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-revoke-1793642263764-cd5a479e-18b5-4c54-848b-662c4f05b517.json"
+    },
+    {
+      "at": "2026-11-02T17:57:52.192Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "expiry",
+      "actorId": "p04r02-user-expiry",
+      "organizationId": "p04-upload-a",
+      "kind": "expire",
+      "affected": 2,
+      "recovery": "Restore retained expiry rows or acquire a new real session if Better Auth deletes the expired row.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-expire-1793642272192-6a4f4fee-e89e-4584-b297-d8eb22143f15.json"
+    },
+    {
+      "at": "2026-11-02T17:58:02.974Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "permissionChange",
+      "actorId": "p04r02-user-permissionchange",
+      "organizationId": "p04-upload-a",
+      "kind": "remove-permission",
+      "affected": 1,
+      "recovery": "restore-permission returns the actor-exclusive fixture role to its seeded permission set.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-remove-permission-1793642282974-a334a031-e530-44e6-a485-90df5e847f3f.json"
+    },
+    {
+      "at": "2026-11-02T17:58:13.504Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "moduleChange",
+      "actorId": "p04r02-user-modulechange",
+      "organizationId": "p04-upload-a",
+      "kind": "disable-module",
+      "affected": 1,
+      "recovery": "restore-module reactivates the same synthetic dashboard grant. Serialize all tenant-A tests while disabled.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-disable-module-1793642293504-f578c55d-e3fb-4aae-bc69-cad9d9e48bab.json"
+    },
+    {
+      "at": "2026-11-02T17:58:17.627Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "moduleChange",
+      "actorId": "p04r02-user-modulechange",
+      "organizationId": "p04-upload-a",
+      "kind": "restore-module",
+      "affected": 1,
+      "recovery": "restore-module reactivates the same synthetic dashboard grant. Serialize all tenant-A tests while disabled.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-restore-module-1793642297627-3c4cd408-4604-45b0-a63c-85831fa7eb70.json"
+    },
+    {
+      "at": "2026-11-02T18:04:24.325Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "permissionChange",
+      "actorId": "p04r02-user-permissionchange",
+      "organizationId": "p04-upload-a",
+      "kind": "restore-permission",
+      "affected": 1,
+      "recovery": "restore-permission returns the actor-exclusive fixture role to its seeded permission set.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-restore-permission-1793642664325-0fbc81e5-b7bb-4a41-bb33-9b7a2a5c9431.json"
+    },
+    {
+      "at": "2026-11-02T18:08:53.890Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "revocation",
+      "actorId": "p04r02-user-revocation",
+      "organizationId": "p04-upload-a",
+      "kind": "revoke",
+      "affected": 2,
+      "recovery": "New real sign-in may create a fresh session; revoked tokens are not reinserted.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-revoke-1793642933891-95fe177a-d641-499b-a03c-0768c37c7f33.json"
+    },
+    {
+      "at": "2026-11-02T18:09:02.806Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "expiry",
+      "actorId": "p04r02-user-expiry",
+      "organizationId": "p04-upload-a",
+      "kind": "expire",
+      "affected": 3,
+      "recovery": "Restore retained expiry rows or acquire a new real session if Better Auth deletes the expired row.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-expire-1793642942806-9acd8b48-542f-4b1e-b4f0-4657d6bb0a9f.json"
+    },
+    {
+      "at": "2026-11-02T18:09:13.595Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "permissionChange",
+      "actorId": "p04r02-user-permissionchange",
+      "organizationId": "p04-upload-a",
+      "kind": "remove-permission",
+      "affected": 1,
+      "recovery": "restore-permission returns the actor-exclusive fixture role to its seeded permission set.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-remove-permission-1793642953595-95aeff46-46f0-4dfc-8e14-12aef6bbeeb3.json"
+    },
+    {
+      "at": "2026-11-02T18:09:24.158Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "moduleChange",
+      "actorId": "p04r02-user-modulechange",
+      "organizationId": "p04-upload-a",
+      "kind": "disable-module",
+      "affected": 1,
+      "recovery": "restore-module reactivates the same synthetic dashboard grant. Serialize all tenant-A tests while disabled.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-disable-module-1793642964158-1dbbd5af-d142-46c7-98d2-5eeefb7829c3.json"
+    },
+    {
+      "at": "2026-11-02T18:09:28.295Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "moduleChange",
+      "actorId": "p04r02-user-modulechange",
+      "organizationId": "p04-upload-a",
+      "kind": "restore-module",
+      "affected": 1,
+      "recovery": "restore-module reactivates the same synthetic dashboard grant. Serialize all tenant-A tests while disabled.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-restore-module-1793642968295-07771d46-d076-4cf6-9d2d-b31b8867437b.json"
+    }
+  ],
+  "fieldProof": {
+    "normalizedSeedDigests": {
+      "users": {
+        "count": 8,
+        "sha256": "2146d1baef4a884b110f7be453fd5486c07458f8e336bdaefa8adcb15561c046"
+      },
+      "roles": {
+        "count": 8,
+        "sha256": "3fd843e0f94117099a31081f70f51caa1d032a6dfdd9fd06ebfb0dae6286655c"
+      },
+      "tenant_module_grants": {
+        "count": 6,
+        "sha256": "f9062f422fbed13fac5125f523571d9f791a3773992eb5b3af8b77862dcb269c"
+      }
+    },
+    "userMetadata": [
+      {
+        "id": "p04r02-user-expiry",
+        "lastLogin": "2026-11-02T18:09:02.594Z",
+        "updatedAt": "2026-11-02T18:09:02.595Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-foreign",
+        "lastLogin": "2026-11-02T18:08:19.547Z",
+        "updatedAt": "2026-11-02T18:08:19.550Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-modulechange",
+        "lastLogin": "2026-11-02T18:09:23.970Z",
+        "updatedAt": "2026-11-02T18:09:23.971Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-moduledenied",
+        "lastLogin": "2026-11-02T18:08:40.886Z",
+        "updatedAt": "2026-11-02T18:08:40.888Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-permissionchange",
+        "lastLogin": "2026-11-02T18:09:13.277Z",
+        "updatedAt": "2026-11-02T18:09:13.279Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-permissiondenied",
+        "lastLogin": "2026-11-02T18:08:30.200Z",
+        "updatedAt": "2026-11-02T18:08:30.201Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-revocation",
+        "lastLogin": "2026-11-02T18:08:51.540Z",
+        "updatedAt": "2026-11-02T18:08:51.542Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-ui",
+        "lastLogin": "2026-11-02T18:09:34.624Z",
+        "updatedAt": "2026-11-02T18:09:34.625Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      }
+    ],
+    "permissionRole": {
+      "id": "p04r02-role-permissionchange",
+      "code": "p04r02_permissionchange",
+      "permissions": [
+        "inventory.items.read"
+      ],
+      "updatedAt": "2026-11-02T18:09:13.574Z"
+    },
+    "dashboardGrant": {
+      "id": "p04r02-grant-p04-upload-a-dashboard",
+      "status": "active",
+      "revision": 5,
+      "updatedAt": "2026-11-02T18:09:28.275Z"
+    },
+    "retained": {
+      "sessions": {
+        "count": 33,
+        "sha256": "6b59c522d2266b683c36dcdd1e2dff199c2f6d8e68542eef1292f8739cbeab2a"
+      },
+      "audit_logs": {
+        "count": 82,
+        "sha256": "bf6fa2dabe33b9ef339d49137e7737b7b0026a9c4d1cd73e7a5fd642ae363f02"
+      }
+    },
+    "expiredSessions": [
+      {
+        "userId": "p04r02-user-expiry",
+        "count": 2
+      }
+    ],
+    "timestampProof": "Prisma login fields interpreted as UTC; SQL-control now() fields interpreted in verified Europe/Paris session timezone. No tolerance added."
+  },
+  "businessSha256": "ce17d09dd0754488d22c392b3aa0a75d5f52849b6c936b14dac3ac328f9feeee",
+  "unchangedBusinessTables": 242,
+  "changedBusinessTables": [
+    "roles",
+    "tenant_module_grants",
+    "users"
+  ],
+  "sessionCounts": [
+    {
+      "userId": "p04r02-user-expiry",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-foreign",
+      "count": 4
+    },
+    {
+      "userId": "p04r02-user-modulechange",
+      "count": 4
+    },
+    {
+      "userId": "p04r02-user-moduledenied",
+      "count": 4
+    },
+    {
+      "userId": "p04r02-user-permissionchange",
+      "count": 4
+    },
+    {
+      "userId": "p04r02-user-permissiondenied",
+      "count": 4
+    },
+    {
+      "userId": "p04r02-user-ui",
+      "count": 11
+    }
+  ],
+  "auditCounts": [
+    {
+      "entityType": "ModuleEntitlementDecision",
+      "action": "MODULE_ENTITLEMENT_ENFORCED",
+      "count": 20
+    },
+    {
+      "entityType": "SecurityEvent",
+      "action": "LOGIN_SUCCESS",
+      "count": 39
+    },
+    {
+      "entityType": "SecurityEvent",
+      "action": "PERMISSION_GRANTED",
+      "count": 23
+    }
+  ],
+  "finalSnapshot": "snapshot-final-reconciliation-1793643220567-d7f6985c-1bed-4016-99d1-90c361175aee.json",
+  "browserContinuitySnapshot": "snapshot-authorized-and-optimizer-denials-after-1793642978105-8118efac-571e-4d71-9f1b-7f50f1ed7cba.json",
+  "intentionalDeltas": {
+    "users": "Only lastLogin/updatedAt for eight actors, each within that actor latest recorded successful sign-in.",
+    "roles": "Only permissionChange permissions/updatedAt; final dashboard.read remains removed after the last negative test.",
+    "tenantModuleGrants": "Only tenant A dashboard revision/updatedAt; two disable/restore pairs advance revision1 to5 while final status is active.",
+    "sessions": "39 successful real sign-ins accumulated. Two revocations removed4 sessions and expired-token reads removed2 sessions.33 session rows remain, including2 expired expiry-actor rows.",
+    "audit": "Recorded security and module-decision audit rows are retained."
+  },
+  "fixtureReadyForFreshRepeat": false,
+  "limit": "This is reconciled intentional fixture change, not whole-database invariance. Fresh reuse requires reviewed bounded fixture recovery; no reset is authorized.",
+  "finishedAt": "2026-11-02T18:13:40.699Z"
+}

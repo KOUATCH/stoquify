@@ -1,4 +1,5 @@
 import "server-only"
+import type { Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
 import type { EvidenceGrade } from "@/services/evidence/evidence-contracts"
@@ -7,6 +8,7 @@ import { blocker, buildSnapshotResult, maxDate, normalizeSnapshotScope, toNumber
 
 export async function getInventoryCashSnapshot(
   input: SnapshotScopeInput,
+  client: Prisma.TransactionClient = db,
 ): Promise<SnapshotResult<InventoryCashMetrics>> {
   const scope = normalizeSnapshotScope(input)
   const locationFilter = scope.locationId ? { locationId: scope.locationId } : {}
@@ -36,9 +38,9 @@ export async function getInventoryCashSnapshot(
     latestAdjustment,
     latestTransfer,
   ] = await Promise.all([
-    db.item.count({ where: itemScope }),
-    db.inventoryLevel.count({ where: inventoryLevelScope }),
-    db.inventoryLevel.aggregate({
+    client.item.count({ where: itemScope }),
+    client.inventoryLevel.count({ where: inventoryLevelScope }),
+    client.inventoryLevel.aggregate({
       where: inventoryLevelScope,
       _sum: {
         quantityOnHand: true,
@@ -49,26 +51,26 @@ export async function getInventoryCashSnapshot(
         totalValue: true,
       },
     }),
-    db.inventoryLevel.count({
+    client.inventoryLevel.count({
       where: {
         ...inventoryLevelScope,
         quantityAvailable: { lte: 0 },
       },
     }),
-    db.inventoryLevel.count({
+    client.inventoryLevel.count({
       where: {
         ...inventoryLevelScope,
         quantityAvailable: { lt: 0 },
       },
     }),
-    db.inventoryTransaction.count({
+    client.inventoryTransaction.count({
       where: {
         organizationId: scope.organizationId,
         createdAt: periodWhere,
         ...locationFilter,
       },
     }),
-    db.stockAdjustment.count({
+    client.stockAdjustment.count({
       where: {
         organizationId: scope.organizationId,
         deletedAt: null,
@@ -76,7 +78,7 @@ export async function getInventoryCashSnapshot(
         ...locationFilter,
       },
     }),
-    db.stockTransfer.count({
+    client.stockTransfer.count({
       where: {
         organizationId: scope.organizationId,
         deletedAt: null,
@@ -88,27 +90,27 @@ export async function getInventoryCashSnapshot(
           : {}),
       },
     }),
-    db.item.findFirst({
+    client.item.findFirst({
       where: { organizationId: scope.organizationId },
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },
     }),
-    db.inventoryLevel.findFirst({
+    client.inventoryLevel.findFirst({
       where: inventoryLevelScope,
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },
     }),
-    db.inventoryTransaction.findFirst({
+    client.inventoryTransaction.findFirst({
       where: { organizationId: scope.organizationId },
       orderBy: { createdAt: "desc" },
       select: { createdAt: true },
     }),
-    db.stockAdjustment.findFirst({
+    client.stockAdjustment.findFirst({
       where: { organizationId: scope.organizationId },
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },
     }),
-    db.stockTransfer.findFirst({
+    client.stockTransfer.findFirst({
       where: { organizationId: scope.organizationId },
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },

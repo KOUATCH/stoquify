@@ -1,0 +1,93 @@
+{
+  "at": "2026-11-10T16:10:13.176Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Independent actual E31 blocked publication integrity; not qualification",
+  "candidateId": null,
+  "artifactSha256": null,
+  "qualificationPassed": false,
+  "productionReady": false,
+  "blockedCheckpointAccepted": true,
+  "files": [
+    {
+      "path": "publication-written.json",
+      "sha256": "d6e5315b7918c8b72108a078ef87612f8d7196518ab8bac9b5cec03ffe84ab4a"
+    },
+    {
+      "path": "publication-validation.json",
+      "sha256": "ca12fe456e2197715616002317ea925c6ff9480f6722e98e4d21f17519eaba70"
+    },
+    {
+      "path": "publication-input.json",
+      "sha256": "bc1ce995b2a7fa20f90e485d8524087289f48101d5f94fc13820f010ab8404b2"
+    },
+    {
+      "path": "advancement-gates.json",
+      "sha256": "1119efc88672c8d8afb3a7f25e48e579ea1436a773ce19962324573e54c39e00"
+    },
+    {
+      "path": "independent-review/PUBLICATION-RECIPE-ADMISSION.json",
+      "sha256": "23ea5819f5e51ded38a5c45408511379b93b459de0cc6b94751972b358506390"
+    },
+    {
+      "path": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW.json",
+      "sha256": "62fb15d44d202a24fa728c41b68df1e3315a9f4856df480c33d9e149f67a7793"
+    }
+  ],
+  "publishedFiles": [
+    {
+      "path": "work-register.json",
+      "sha256": "b4241d2b0cc69f38decaa4b7cdfc517457a63f4bbee2a324b2a9a6770aac9b5f"
+    },
+    {
+      "path": "work-register.csv",
+      "sha256": "19616be86edcf34bd950b7df4a875ee989af6a450a61e0b01d6c3c24ac99a78a"
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "4d0565760b8d60d94736b86d9262c6cd8500bd8134c6725833f07c794a7f14be"
+    },
+    {
+      "path": "mutation-log.md",
+      "sha256": "ce5eb5b1a5e50f16c469bf673f4008632dbc7b58126363abb43a59291a2d039a"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "sha256": "03efa8f66e2d1180474a64138fb5ef6fd762a96533ab96347892d06f1328dc9c"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "sha256": "8a10d563fdca386f9548ccc0a754834b405ebde06a3cf417decc5d23342a9d88"
+    }
+  ],
+  "checks": {
+    "exact39AdmittedInputsUnchanged": true,
+    "exactExpectedRegisterReconstructed": true,
+    "all59Packages57Domains14Decisions18GatesPreserved": true,
+    "onlyR06AndParentV02SummariesChanged": true,
+    "historicalE01ThroughE30Preserved": true,
+    "existingTasksAndImplementationAuthorizationsPreserved": true,
+    "dependenciesAcyclic": true,
+    "csv59Rows20ColumnsMatches": true,
+    "mutationLogExactAppend": true,
+    "roadmapOnlyExactNextTailChanged": true,
+    "sharedCurrentNextEqualReviewedDocs": true,
+    "currentOwned6SourceHashesMatch": true,
+    "noCaptureOrRuntimeResumed": true,
+    "validatorChecksPassed": 9
+  },
+  "truthfulness": {
+    "historicalMocked116ReusedNotRerun": true,
+    "rawR3CasesExecuted": 0,
+    "newCandidateOrArtifact": false,
+    "noNewDatabaseQuery": true,
+    "sourceSnapshotTimeBound": true,
+    "capacityStillLastObservedFailed": true,
+    "nextActionRequiresRealCapacityChangeThenFreshResourceAndExactSourceGates": true
+  },
+  "limitations": [
+    "This pass certifies accurate local blocked-status publication only.",
+    "P04-R06/P04/P04-V02 and production remain blocked; native/browser/build evidence still required.",
+    "No commit,push,deploy or production changes."
+  ]
+}

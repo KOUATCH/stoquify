@@ -1,0 +1,80 @@
+{
+  "passed": false,
+  "startedAt": "2026-11-09T15:04:27.206Z",
+  "origin": "https://127.0.0.1:3443",
+  "database": "stoquify_local_artifact_http_20261109_6919d6b039",
+  "artifact": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\11\\02\\01a19e00-6435-7443-92d6-f2cf160728a8\\sales-accounting-release-20261109-ffb02aacd5-artifact",
+  "certificateSha256": "463ff43973db4f422d2adf0751148931cf821483c6c2d467695df6202f946830",
+  "seedSha256": "cb500d14a692e5491115c8aa7724e95854eaec087c423e0ce63398e0163536b4",
+  "routes": [],
+  "evidenceClass": "Real HTTPS client requests through private loopback TLS proxy to actual sealed standalone application and Better Auth endpoints; no browser",
+  "limitations": [
+    "Synthetic configuration and roles; no provider operations, financial sale workflow, statutory certification or deployment.",
+    "Private self-signed TLS is accepted only for https://127.0.0.1:3443 by this Node client; no global TLS validation override.",
+    "Read-only protected-route SSR and actual credential/session/revocation checks; no rendered accessibility or full browser claim."
+  ],
+  "artifactBefore": {
+    "sha256": "a7e81563d896cc834a60c6b0a239fd20cd3fafc46fc466c3f3f212259d3a0c30",
+    "buildId": "tRROCJHlhqUTyyQGm1mN6",
+    "files": 6709
+  },
+  "privateConfigScan": {
+    "passed": true,
+    "filesScanned": 6710,
+    "variableNames": [
+      "AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY",
+      "AQSTOQFLOW_HISTORY_CURSOR_SECRET",
+      "AQSTOQFLOW_RECEIPT_TOKEN_SECRET",
+      "AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY",
+      "AQSTOQFLOW_STATEMENT_TOKEN_SECRET",
+      "AUTH_SECRET",
+      "BETTER_AUTH_SECRET",
+      "DATABASE_URL",
+      "DIRECT_URL",
+      "NEXTAUTH_SECRET",
+      "PUBLIC_IDENTITY_ABUSE_HASH_SECRET",
+      "SHADOW_DATABASE_URL"
+    ],
+    "privateValuesRecorded": false
+  },
+  "migrationCount": 121,
+  "historySha256": "fb3390eacbf1b32cdb4bb5e7b4de1269afe1a7524b6c6822045d2edb35ad8af2",
+  "seedClient": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-accounting-release-20261109-ffb02aacd5\\candidate\\node_modules\\@prisma\\client\\default.js",
+  "fixture": {
+    "organizationId": "auth-sales-6919d6b039",
+    "initialCounts": {
+      "sales": 0,
+      "settlements": 0,
+      "sessions": 0,
+      "posSessions": 0,
+      "journals": 0
+    },
+    "initialStock": {
+      "quantity": "5",
+      "unitCost": "4",
+      "value": "20",
+      "sellingPrice": "10"
+    },
+    "role": "cashier",
+    "userId": "auth-sales-6919d6b039-cashier"
+  },
+  "applicationPid": 23224,
+  "anonymous": {
+    "status": 307,
+    "locationPath": "/en/login"
+  },
+  "failure": {
+    "name": "Error",
+    "code": null,
+    "message": "Owned HTTP request timed out"
+  },
+  "applicationStopped": true,
+  "clusterStopped": true,
+  "artifactAfter": {
+    "sha256": "a7e81563d896cc834a60c6b0a239fd20cd3fafc46fc466c3f3f212259d3a0c30",
+    "buildId": "tRROCJHlhqUTyyQGm1mN6",
+    "files": 6709
+  },
+  "artifactUnchanged": true,
+  "finishedAt": "2026-11-09T15:07:12.099Z"
+}

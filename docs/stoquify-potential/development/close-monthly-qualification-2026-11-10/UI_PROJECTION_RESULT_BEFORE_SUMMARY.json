@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-11-10T14:36:14.219Z",
+  "status": "PASS_MOCKED_PROJECTION_ACTION_AND_COMPONENT_SCOPE",
+  "productionApproved": false,
+  "files": [
+    {
+      "path": "services/accounting/customer-settlement-workbench.service.ts",
+      "sha256": "0864bde250c783471fd5ea4345f4772b76b0e2808b80876e2b161b53eb91eefc"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement-workbench.service.test.ts",
+      "sha256": "e84010ab07370e4a71a6252a7e2a4953d312deaa66ab8922c206c247c912831a"
+    },
+    {
+      "path": "actions/finance/customer-settlement.actions.ts",
+      "sha256": "fbaebb725ed973fe80a5b1d3765f9dd2c6252e405455b633534569840eee6d5b"
+    },
+    {
+      "path": "actions/finance/__tests__/customer-settlement.actions.test.ts",
+      "sha256": "0a716b4d8241ce3d2ef36dd44fc8cbd0bf5517d36eb8e307b4514ec65795876f"
+    },
+    {
+      "path": "components/finance/CustomerSettlementControls.tsx",
+      "sha256": "aef41c8e626222eebed779c1b1a95fd6d70b2b62571f9eb4283827a8191879a9"
+    },
+    {
+      "path": "components/finance/__tests__/CustomerSettlementControls.test.tsx",
+      "sha256": "2c6258d66a455e8f1ea2cff5cf57b1653f204f7ab29b9ecd64504a8683eb743f"
+    }
+  ],
+  "receipts": [
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0d0d1362cd/verification.json",
+      "sha256": "e4256bcd1517e812c224127b6757dc82d125a0274c0038f315c21a5954dc1c98",
+      "tests": 76,
+      "classification": "Mocked unit / protect adapter boundaries; no PostgreSQL/browser"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0db5ef7563/verification.json",
+      "sha256": "6806fde0ace6ddbb327376bd67805f3bfd1cf1bc4ab874ec46a711ae4d7331bf",
+      "tests": 22,
+      "classification": "jsdom components/mocked actions; no browser or DB"
+    }
+  ],
+  "counts": {
+    "mockedServiceActionTests": 76,
+    "jsdomComponentTests": 22,
+    "skipped": 0
+  },
+  "manualCollectionsPreserved": true,
+  "previewIsReservation": false,
+  "serverWriteAuthorityRevalidatedBySeparateBackendOwner": true,
+  "selectedNativeReceiptExplicit": true,
+  "sourceAndCurrentCapabilityFences": true,
+  "exactPendingNativeReceiptRetry": true,
+  "locales": [
+    "en",
+    "fr"
+  ],
+  "renderedBrowserExecuted": false,
+  "databaseExecuted": false,
+  "applicationExecuted": false,
+  "failedAttempt": {
+    "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-fa212601c7/verification.json",
+    "reason": "jsdom omitted standard TextEncoder; explicit node:util encoder shim added only to unit harness. Product code and failed receipt preserved."
+  },
+  "limits": [
+    "Persistence, authentication and actions are mocked in this scope.",
+    "No rendered accessibility, responsive geometry or authenticated application claim; root owns those checks.",
+    "No provider data or ledger writes, environment loading, application build, generation or deployment occurred."
+  ]
+}

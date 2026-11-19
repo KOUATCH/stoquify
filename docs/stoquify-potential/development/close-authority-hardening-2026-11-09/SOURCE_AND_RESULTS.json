@@ -1,0 +1,119 @@
+{
+  "checkedAt": "2026-11-09T16:42:02.521Z",
+  "status": "PASS_SCOPED_CLOSE_WRITE_AUTHORITY",
+  "gitHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "baseline": "Existing dirty working tree; affected pre-change files bound to prior candidate manifest, not a clean HEAD-only change",
+  "previousCandidateManifestSha256": "30c4cf3c26a58f9a218aaa31b68c919e1ece5afa288500f30b0588d7ce63f778",
+  "previousCandidateSourceSha256": "a6e0b40433ec6faaadae9e2db14ddd972f0e30ecd0185646b8d7190ed91d2a06",
+  "files": [
+    {
+      "path": "actions/accounting/__tests__/close-assurance-write-access.test.ts",
+      "sha256": "dba71715022e4b0f2269aacab1287de2555b51c974e9377df407e87b8c95955d",
+      "previousCandidateSha256": null,
+      "changedFromCandidate": true
+    },
+    {
+      "path": "actions/accounting/__tests__/close-assurance.actions.test.ts",
+      "sha256": "3ec810fd02694ce8077388bb15abb88cda0796fcd41e1ba1b9d52f250044b71b",
+      "previousCandidateSha256": "9e43cb136e992f7660ca68abb2b549dbdd7c535664cc15deaa84039af3964ee3",
+      "changedFromCandidate": true
+    },
+    {
+      "path": "services/accounting/__tests__/close-evidence-acceptance-authority.service.test.ts",
+      "sha256": "acb9370b63f1d360f7d8002b26c8c45287a068445e49a1a33edd2b4bfdc104bd",
+      "previousCandidateSha256": "d577b458fe0e1c79f2485e0b43b80cd3b4b9cfc154922a787c936a3e0a61a571",
+      "changedFromCandidate": true
+    },
+    {
+      "path": "services/accounting/__tests__/close-assurance.service.test.ts",
+      "sha256": "affe15eae6f93e3d29c0458b2bd5fdb8ca824371882f2fd9919dd0555bbc14d0",
+      "previousCandidateSha256": "712fcb2fc77b1e15ab8eceeacaf745fed8a49dfce98b7f7034d623d22eff6b71",
+      "changedFromCandidate": true
+    },
+    {
+      "path": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+      "sha256": "fdae8f2fd4165e55bae89bb174b2ec435fabfffed0aa3bd97454e048921fda6d",
+      "previousCandidateSha256": "57b873aea7813fa72b3851e7e19a71981473b1bf067e724cee0a9ea9bafa2108",
+      "changedFromCandidate": true
+    },
+    {
+      "path": "actions/accounting/close-assurance.actions.ts",
+      "sha256": "ecb49df8715c5b7f724c48662cebe2d2d73327ff53bd4b853dbed5b64bcdfc3e",
+      "previousCandidateSha256": "17017bbd01c36384be4070b019ea0376b364e59db283d04f76bc9085f2182e41",
+      "changedFromCandidate": true
+    },
+    {
+      "path": "services/accounting/close-evidence-acceptance-authority.service.ts",
+      "sha256": "1216b85c28fa48792d410f95270b2da43f3280a3efedb3106ef499f0d74b1cdc",
+      "previousCandidateSha256": "7f582ec4a54f5b9158e206fbc912a7f1bad48b2093e40772411f5729328645d4",
+      "changedFromCandidate": true
+    },
+    {
+      "path": "services/accounting/close-assurance.service.ts",
+      "sha256": "78094990e9db11c6454716f00985a32362ff873e86fa0be44a9e9eb84757bc46",
+      "previousCandidateSha256": "b87cc890e0961ae16d0b6b5fbb21f16de8ada9c6539b6d0f8c8e667d7fc9d64d",
+      "changedFromCandidate": true
+    },
+    {
+      "path": "services/accounting/close-assurance-pack.service.ts",
+      "sha256": "c21f83ff6884a7e68adcc340edb593b572902a92ee38128c71c3436b103055ca",
+      "previousCandidateSha256": "c48c938a28e99dda1f0a0f2293d2496cf7109525bd2479678270f8908210d0ae",
+      "changedFromCandidate": true
+    }
+  ],
+  "unchanged": [
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    }
+  ],
+  "unit": {
+    "evidence": "unit-2026-11-09T16-39-49-996Z",
+    "suites": 5,
+    "passed": 516,
+    "failed": 0,
+    "skipped": 0,
+    "classes": "Real protect/context adapter tests with auth/entitlement/writers mocked; persisted authority SQL mocked; business writer transaction doubles"
+  },
+  "types": {
+    "roots": 4,
+    "sourceFiles": 1435,
+    "diagnostics": 0,
+    "noEmit": true,
+    "incremental": false
+  },
+  "postgres": {
+    "evidence": "pg-attempt-b028dd77cb",
+    "database": "stoquify_replay_close_authority_20261109_b028dd77cb",
+    "passed": 40,
+    "skipped": 0,
+    "fullReplayMigrations": 121,
+    "schemaCertification": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT",
+    "ownedClusterStopped": true,
+    "sourceClosureFiles": 25,
+    "sourceClosureSha256": "1d5f7337251943bd2360771bc16b3e6c716b32668e096acae4b902bc0d1b6fd6",
+    "noFinancialOrCertificationRecords": {
+      "closeRuns": 0,
+      "exports": 0,
+      "journals": 0,
+      "sales": 0,
+      "settlements": 0
+    },
+    "classes": "Real helper, current module policy/RBAC and persisted authority rows, exact-PID SQL lock waits, real expiry, probe commit/rollback only"
+  },
+  "notRun": [
+    "Current-source application build",
+    "Browser/login journey for this patch",
+    "Whole-repository typecheck/test suite",
+    "Production migration/deployment"
+  ],
+  "oldArtifact": "Prior qualified candidate/artifact remains unchanged. This patch requires a new source-bound build/qualification before release."
+}

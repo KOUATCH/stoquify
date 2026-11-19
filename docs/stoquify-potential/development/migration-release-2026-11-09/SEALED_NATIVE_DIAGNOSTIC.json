@@ -1,0 +1,123 @@
+{
+  "utc": "2026-11-09T15:11:01.914Z",
+  "artifactSha256": "a7e81563d896cc834a60c6b0a239fd20cd3fafc46fc466c3f3f212259d3a0c30",
+  "buildId": "tRROCJHlhqUTyyQGm1mN6",
+  "evidenceClass": "Bounded actual native probes from sealed runtime dependencies; no server, DB, login or proxy",
+  "artifactFilesModified": false,
+  "noDatabaseConnection": true,
+  "noAppServer": true,
+  "stages": {
+    "argonRequireMs": 26,
+    "argonHashMs": 144,
+    "argonCorrectVerifyMs": 99,
+    "argonWrongVerifyMs": 85,
+    "prismaRequireMs": 244,
+    "prismaEngineLoadAndVersionMs": 12
+  },
+  "passed": true,
+  "nativeLayout": [
+    {
+      "path": "runtime/node_modules/.prisma/client/default.js",
+      "bytes": 182,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/.prisma/client/index.js",
+      "bytes": 2305292,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/.prisma/client/package.json",
+      "bytes": 5309,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/.prisma/client/query_engine-windows.dll.node",
+      "bytes": 21182976,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/.prisma/client/schema.prisma",
+      "bytes": 354998,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/@phc/format/index.js",
+      "bytes": 6151,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/@phc/format/package.json",
+      "bytes": 1201,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/@prisma/client/default.js",
+      "bytes": 61,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/@prisma/client/package.json",
+      "bytes": 10040,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/@prisma/client/runtime/library.js",
+      "bytes": 202499,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/argon2/argon2.cjs",
+      "bytes": 4959,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/argon2/package.json",
+      "bytes": 1858,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/argon2/prebuilds/win32-x64/argon2.glibc.node",
+      "bytes": 210944,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/node-gyp-build/index.js",
+      "bytes": 390,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/node-gyp-build/node-gyp-build.js",
+      "bytes": 6078,
+      "manifestHashMatched": true
+    },
+    {
+      "path": "runtime/node_modules/node-gyp-build/package.json",
+      "bytes": 1004,
+      "manifestHashMatched": true
+    }
+  ],
+  "resolvedModules": {
+    "argon2": "node_modules/argon2/argon2.cjs",
+    "prisma": "node_modules/@prisma/client/default.js",
+    "nodeGypBuild": "node_modules/node-gyp-build/index.js",
+    "phcFormat": "node_modules/@phc/format/index.js"
+  },
+  "argon2": {
+    "version": "0.44.0",
+    "correctPasswordVerified": true,
+    "wrongPasswordRejected": true,
+    "hashOrPasswordPrinted": false
+  },
+  "prisma": {
+    "clientVersion": "6.19.3",
+    "engineRevision": "c2990dca591cba766e3b7ef5d9e8a84796e47ab7",
+    "instanceCreated": false,
+    "connected": false
+  },
+  "loadedNativePaths": [
+    "node_modules/argon2/prebuilds/win32-x64/argon2.glibc.node",
+    "node_modules/.prisma/client/query_engine-windows.dll.node"
+  ],
+  "totalMs": 1045
+}

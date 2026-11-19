@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-26",
+  "attempt": 3,
+  "workflow": "PASS",
+  "competingBuildGuard": "PASS",
+  "frozenSourceAndDatabaseChecks": "PASS",
+  "configuredLint": { "errors": 0, "warnings": 24 },
+  "compilation": "PASS: Compiled successfully in 15.9min",
+  "nextTypeGate": "PASSED_STAGE: log advanced to Collecting page data",
+  "nextLint": "Warnings retained in the log; not a separate warning-count total",
+  "pageDataCollection": "STARTED_NOT_COMPLETED",
+  "safeBuild": "TIMEOUT after the configured 1800000 ms",
+  "outerRunner": "ETIMEDOUT at 2400265 ms; null exit code and SIGTERM",
+  "postBuildOrphanedProcesses": 0,
+  "buildId": "ABSENT",
+  "artifactSealing": "NOT_RUN",
+  "artifactVerification": "NOT_RUN",
+  "evidence": ["artifact-build-attempt-3.log", "artifact-build-attempt-3.json", "compiler-activity-attempt-3.json"],
+  "retryDecision": "Same frozen source with normal cleanup and all gates retained; bounded compiler budget 60 minutes, outer pipeline budget 90 minutes. No allow-orphans or lint/type bypass."
+}

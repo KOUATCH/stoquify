@@ -1,0 +1,141 @@
+{
+  "completedAt": "2026-10-26T17:07:12.604Z",
+  "head": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "sourceFiles": 3354,
+  "sourceDriftDuringRun": [],
+  "applicationChanges": [],
+  "harnessChanges": [
+    "Unique saved-work fixture titles",
+    "Per-scenario baseline counts on populated database",
+    "Require a new cache fault during this run"
+  ],
+  "checks": {
+    "authoring": {
+      "status": "PASS",
+      "passed": 5,
+      "failed": 0
+    },
+    "worker": {
+      "status": "PASS",
+      "passed": 2,
+      "failed": 0
+    },
+    "ap": {
+      "status": "PASS",
+      "passed": 2,
+      "failed": 0
+    },
+    "clone-action-hook": {
+      "status": "PASS",
+      "passed": 48,
+      "failed": 0
+    }
+  },
+  "authenticatedBrowser": [
+    {
+      "locale": "en",
+      "viewport": "1440x1000",
+      "requestId": "83c6e0e3-7fa9-4fb7-8db3-9a1e5491ed5d",
+      "orderId": "cmvpi9gd0000hma9ccz2ad1ex",
+      "realSignIn": 200,
+      "cacheFault": true,
+      "lostReply": true,
+      "reloadReceipt": true,
+      "receiptFocus": true,
+      "revocation": "stored session",
+      "createdEventCount": 1,
+      "status": "PASS"
+    },
+    {
+      "locale": "fr",
+      "viewport": "390x844",
+      "requestId": "74f68234-9f18-4000-bedb-98ef14d37096",
+      "orderId": "cmvpia6eb001hma9cxzwpqduc",
+      "realSignIn": 200,
+      "cacheFault": true,
+      "lostReply": false,
+      "reloadReceipt": true,
+      "receiptFocus": true,
+      "revocation": "stored role permission",
+      "createdEventCount": 1,
+      "status": "PASS"
+    }
+  ],
+  "cloneBrowser": {
+    "status": "PASS",
+    "sourceOrderId": "cmvpi9gd0000hma9ccz2ad1ex",
+    "requestId": "4ed48fa8-1395-4317-8a42-831496148d86",
+    "resultOrderId": "cmvpibo8c002bma9c9xfzzdbb",
+    "ordersBefore": 6,
+    "ordersAfter": 7,
+    "lostReply": true,
+    "recoveredAfterLocaleNavigation": true,
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "viewports": [
+      "1440x1000",
+      "390x844"
+    ]
+  },
+  "upgrade": {
+    "database": "stoquify_local_closure_upgrade_330a4320",
+    "from": 92,
+    "to": 120,
+    "checksumsMatched": 120
+  },
+  "restore": {
+    "database": "stoquify_local_closure_restore_79e65009",
+    "tables": 246,
+    "sourceStable": true
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "toolSession": 70724,
+    "diagnostics": 0
+  },
+  "workflow": {
+    "exitCode": 0,
+    "toolSession": 38427
+  },
+  "procedures": [
+    {
+      "file": "authenticated-browser.cjs",
+      "sha256": "fa038ae1f9640c97ff83b789b35600fbf8b91db3059e0f95f663fd32d2f34b5b"
+    },
+    {
+      "file": "clone-browser.cjs",
+      "sha256": "594d7be842c05487f50b4b41036cd44a74333b00d420c6174be074c421454e66"
+    },
+    {
+      "file": "finalize.cjs",
+      "sha256": "54c37a49acce69edfe2875cf122b23f5eb5b2f14efd62963d00751c2f4dc6471"
+    },
+    {
+      "file": "prepare-browser-app.cjs",
+      "sha256": "34b8c07b2d90694e39e278e90f56f72685e49eaaa774ee0bb9e59b3676f93b57"
+    },
+    {
+      "file": "run.cjs",
+      "sha256": "f893cec93f01b0f9c64b0aff716345a7543066079ad918d49c527794485f6d68"
+    },
+    {
+      "file": "start-app.cjs",
+      "sha256": "60174a477296ce9d99717b712f1364838654341e322d5000235b39d4d64e3e11"
+    },
+    {
+      "file": "upgrade-restore.cjs",
+      "sha256": "ceb4595c05d29204ea5d7b2fdd50ea77a54d0b961f0259b83c6d14de23c72ee3"
+    }
+  ],
+  "programComplete": false,
+  "remaining": [
+    "MTN MoMo sandbox configuration and provider verification",
+    "Open retention/operating policy",
+    "Previously documented broader verification exclusions"
+  ],
+  "negativeStockCertification": "EXCLUDED per user instruction",
+  "productionMutation": false,
+  "rolloutDefaultsChanged": false
+}

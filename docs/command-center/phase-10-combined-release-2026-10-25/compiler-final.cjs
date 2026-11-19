@@ -1,0 +1,10 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{spawn}=require('node:child_process');
+const {state,environment,redact}=require('./environment.cjs');const s=state();
+if(!fs.existsSync(path.join(__dirname,'combined-source-sync.json')))throw Error('Latest concurrent source refresh must be recorded before building');
+const typecheck=JSON.parse(fs.readFileSync(path.join(__dirname,'typecheck-result.json'))),client=JSON.parse(fs.readFileSync(path.join(__dirname,'private-client-result.json')));
+if(typecheck.exitCode!==0||!client.generatedSchemaMatches||!client.sharedClientUnchanged)throw Error('Verified private client and full project type-check required');
+const files=JSON.parse(fs.readFileSync(path.join(__dirname,'source-baseline.json'))).files.filter(f=>!f.path.startsWith('docs/')&&!f.path.endsWith('.md'));
+const fingerprints=()=>Object.fromEntries(files.map(({path:file})=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(s.candidate,file))).digest('hex')]));const before=fingerprints();
+const log=fs.openSync(path.join(__dirname,'compiler-final.log'),'w');
+const child=spawn(process.execPath,[path.join(s.candidate,'scripts/build-app-safe.js'),'--skip-clean','--timeout-ms','3600000'],{cwd:s.candidate,env:environment(s,'production'),windowsHide:true,stdio:['ignore',log,log]});fs.closeSync(log);
+child.on('error',e=>{console.error(redact(e.message));process.exitCode=1});child.on('exit',code=>{const after=fingerprints(),stable=JSON.stringify(before)===JSON.stringify(after);fs.writeFileSync(path.join(__dirname,'compiler-source-hashes.json'),JSON.stringify(after,null,2));fs.writeFileSync(path.join(__dirname,'compiler-final-result.json'),JSON.stringify({exitCode:code,capturedSourceUnchanged:stable,sourceFiles:files.length,productionAccess:false,releaseGateOverridden:false,normalTypeAndLintChecks:true,timeoutMs:3600000,privateGeneratedClient:true,scope:'Full combined-source build, normal checks enabled and source-bound; not a trusted release artifact or production approval'},null,2));console.log('Final captured build exit: '+code+'; source stable: '+stable);process.exitCode=stable?(code??1):1});

@@ -1,0 +1,338 @@
+[
+  {
+    "id": "P01-A1",
+    "text": "The baseline identifies the exact checkout and relevant local modifications without leaking secrets.",
+    "prompt": "P01",
+    "status": "PASS",
+    "owner": "Engineering/release",
+    "reason": "Baseline and relevant local edits recorded; P12 refreshes source observation, not candidate approval."
+  },
+  {
+    "id": "P01-A2",
+    "text": "The pilot scope distinguishes proposed, confirmed, unsupported and unresolved entries; external approvals are not fabricated.",
+    "prompt": "P01",
+    "status": "PASS",
+    "owner": "Product/programme",
+    "reason": "Proposed/confirmed/unsupported/unresolved states explicit; D01-D14 open."
+  },
+  {
+    "id": "P01-A3",
+    "text": "All 24 prompts and roadmap R01–R12 are accounted for in a dependency-aware register; no deployment or customer-readiness claim is made.",
+    "prompt": "P01",
+    "status": "PASS",
+    "owner": "Programme",
+    "reason": "24-prompt/R01-R12 register exists; no deployment claim."
+  },
+  {
+    "id": "P02-A1",
+    "text": "A repeated finalized operation counts once; a reversal is explicit; a failed or uncertain operation is not reported as completed.",
+    "prompt": "P02",
+    "status": "PASS",
+    "owner": "Data/QA",
+    "reason": "18 October: 65/65 mocked and 18/18 real PostgreSQL cases verify persisted counts, reversal/uncertainty, uniqueness, concurrency, snapshot and error propagation. U01 closed for the recorded reader/target; combined candidate remains U17."
+  },
+  {
+    "id": "P02-A2",
+    "text": "Cross-tenant reads are denied; no sensitive customer/payroll/provider payload enters analytics.",
+    "prompt": "P02",
+    "status": "PASS",
+    "owner": "Security/data/QA",
+    "reason": "Real persisted tenant/site, permission/module denials and scalar privacy checks passed. Session-subject/headers seam is disclosed; no complete cookie/session lifecycle claim. U01 closed."
+  },
+  {
+    "id": "P02-A3",
+    "text": "Demo/jobs are excluded from human adoption; missing or immature observations never become inferred churn.",
+    "prompt": "P02",
+    "status": "PASS",
+    "owner": "Data/product",
+    "reason": "Pure cohort contract excludes known demo/test/jobs and returns UNKNOWN without human provenance/calendar/coverage. Actual human classification remains U02."
+  },
+  {
+    "id": "P02-A4",
+    "text": "One working measurement slice and documented remaining instrumentation exist, or a concrete architecture blocker is recorded without building a speculative warehouse.",
+    "prompt": "P02",
+    "status": "PASS",
+    "owner": "Data/engineering",
+    "reason": "Working bounded reader has real database evidence and documented remaining instrumentation. Human provenance/calendar/completeness remain UNKNOWN under U02/D12."
+  },
+  {
+    "id": "P03-A1",
+    "text": "Fixture source counts, quantities, values and control totals reconcile with no unexplained difference.",
+    "prompt": "P03",
+    "status": "PASS",
+    "owner": "QA/accountant",
+    "reason": "Independent synthetic fixture controls reconcile; not a live opening."
+  },
+  {
+    "id": "P03-A2",
+    "text": "Tests expose a duplicated opening posting and a ledger imbalance rather than making the generated expected values mirror implementation.",
+    "prompt": "P03",
+    "status": "PASS",
+    "owner": "QA/domain",
+    "reason": "48 fixture/import plus three selected inventory-boundary cases expose duplicate/imbalanced expectations."
+  },
+  {
+    "id": "P03-A3",
+    "text": "The ownership map names existing services, missing paths and explicit reviewer requirements; it does not invent approved accounting mappings.",
+    "prompt": "P03",
+    "status": "PASS",
+    "owner": "Domain/accountant",
+    "reason": "Source-to-ledger ownership map and reviewer requirements explicit; mappings unapproved."
+  },
+  {
+    "id": "P04-A1",
+    "text": "The trust matrix maps every pilot path to server authority and a specific denial case.",
+    "prompt": "P04",
+    "status": "PARTIAL",
+    "owner": "Security/domain/QA",
+    "reason": "Trust matrix exists; U08–U15 remain. New accountant access/export composition and AF04 work have no completed retention-path qualification; inspect current integrated authority under U17 before consuming."
+  },
+  {
+    "id": "P04-A2",
+    "text": "Any changed authority boundary has focused regression evidence and no client-supplied tenant trust.",
+    "prompt": "P04",
+    "status": "PASS",
+    "owner": "Security/engineering",
+    "reason": "Original bounded work has focused mocked regression evidence; P12 changes no authority. This is not current full-path certification."
+  },
+  {
+    "id": "P04-A3",
+    "text": "The recovery protocol identifies database, files and operational dependencies; the roadmap’s proposed 15-minute RPO/4-hour RTO are not reported as achieved.",
+    "prompt": "P04",
+    "status": "PASS",
+    "owner": "SRE/platform",
+    "reason": "Recovery protocol covers DB/files/keys/queues; 15-minute RPO/4-hour RTO remain unmeasured."
+  },
+  {
+    "id": "P04-A4",
+    "text": "Missing deployment evidence is explicit and cannot unlock live onboarding.",
+    "prompt": "P04",
+    "status": "PASS",
+    "owner": "Programme/SRE",
+    "reason": "Missing deployed evidence explicit and cannot admit onboarding."
+  },
+  {
+    "id": "P05-A1",
+    "text": "Identical replay produces one set of financial/stock effects and returns the original confirmed outcome.",
+    "prompt": "P05",
+    "status": "PASS",
+    "owner": "POS/QA",
+    "reason": "Historical 9 lifecycle + 16 financial-commit cases remain bounded evidence; POS transaction source unchanged. Additive accountant schema drift is disclosed, not a current combined-candidate pass (U17)."
+  },
+  {
+    "id": "P05-A2",
+    "text": "Changed payload and unauthorized tenant/location attempts are rejected consistently.",
+    "prompt": "P05",
+    "status": "PASS",
+    "owner": "POS/security/QA",
+    "reason": "Closure DB denial/idempotency evidence plus authenticated boundary; limited to recorded tenant/location fixture."
+  },
+  {
+    "id": "P05-A3",
+    "text": "Uncertain state remains recoverable without duplicate sale or forced cart reset.",
+    "prompt": "P05",
+    "status": "PASS",
+    "owner": "POS/UX/QA",
+    "reason": "Actual lost-response/retry and later P08 cashier evidence retain original identity without extra effects."
+  },
+  {
+    "id": "P05-A4",
+    "text": "Mocks and actual transaction/concurrency evidence are reported separately; the zero-tax fixture does not certify tax behavior.",
+    "prompt": "P05",
+    "status": "PASS",
+    "owner": "QA/accountant",
+    "reason": "M/D/B and zero-tax limits explicitly separate. Broader envelope F02 remains untested."
+  },
+  {
+    "id": "P06-A1",
+    "text": "Replay into sale commit cannot double-post; changed payload/invalid authority is denied.",
+    "prompt": "P06",
+    "status": "PASS",
+    "owner": "POS/security/QA",
+    "reason": "Bounded historical economic replay proof (16 DB cases) plus 18 October current-source authenticated ingestion/retry/authority refresh. No new financial replay in that refresh; production replay disabled. U17 combined candidate qualification remains."
+  },
+  {
+    "id": "P06-A2",
+    "text": "Restart/reconnect preserves pending operations on the tested device and makes unknown status visible.",
+    "prompt": "P06",
+    "status": "PASS",
+    "owner": "POS/QA",
+    "reason": "18 October seven-step authenticated loss/reconnect/reload/retry journey and earlier 25-case isolated storage refresh establish retained identity/unknown state on the tested browser. F06 wider durability and U18 visual uncertainty remain."
+  },
+  {
+    "id": "P06-A3",
+    "text": "Expired/revoked policy has a defined operator path; no silent drop or false paid state.",
+    "prompt": "P06",
+    "status": "PASS",
+    "owner": "POS/security/UX",
+    "reason": "18 October actual expired/revoked conflicts remain retained with disabled send and manager guidance; acknowledgement is not paid. F04 closed; F05 renewal/correction/production enablement remains excluded."
+  },
+  {
+    "id": "P06-A4",
+    "text": "Supported envelope and untested combinations are documented.",
+    "prompt": "P06",
+    "status": "PASS",
+    "owner": "Product/QA",
+    "reason": "Loaded Chromium, fixture-generated signatures, current-browser-only visibility and excluded production capture/offline boot clearly documented."
+  },
+  {
+    "id": "P07-A1",
+    "text": "A user can import synthetic masters and see the exact remaining opening-position steps.",
+    "prompt": "P07",
+    "status": "PASS",
+    "owner": "Onboarding/QA",
+    "reason": "Media closure complete synthetic customer/supplier/two-item journey and remaining opening steps; current owned hashes match."
+  },
+  {
+    "id": "P07-A2",
+    "text": "Masters success does not mark opening stock, AR/AP or accounting complete.",
+    "prompt": "P07",
+    "status": "PASS",
+    "owner": "Onboarding/accountant",
+    "reason": "Masters success retains stock/AR/AP/accounting blockers; no opening writes."
+  },
+  {
+    "id": "P07-A3",
+    "text": "Wrong-tenant and unauthorized/reviewer-self-approval attempts are denied according to current controls.",
+    "prompt": "P07",
+    "status": "PASS",
+    "owner": "Onboarding/security/QA",
+    "reason": "107 mocked + 12 real-DB and independent-checker/tenant/media browser checks; no media ownership bypass."
+  },
+  {
+    "id": "P07-A4",
+    "text": "FR/EN and loading/empty/error/recovery states are usable in the tested view.",
+    "prompt": "P07",
+    "status": "PASS",
+    "owner": "UX/QA",
+    "reason": "Bounded EN/FR states and journey recorded in media closure. U05 actual provider upload/durable-read success remains separate."
+  },
+  {
+    "id": "P08-A1",
+    "text": "Cashier can find and execute the supported recovery action without losing the operation identity.",
+    "prompt": "P08",
+    "status": "PASS",
+    "owner": "POS/UX/QA",
+    "reason": "Recorded cashier original-identity recovery, keyboard acknowledgement and DB effects; two owned hashes match and 119/120 selected dependencies match (schema differs). No current full-schema runtime claim."
+  },
+  {
+    "id": "P08-A2",
+    "text": "Manager can trace a discrepancy to its source and next permitted action; source unavailability is explicit.",
+    "prompt": "P08",
+    "status": "PASS",
+    "owner": "Dashboard/UX/QA",
+    "reason": "Source navigation/next permitted action and unavailable-source state verified. Not completed discrepancy resolution (U04)."
+  },
+  {
+    "id": "P08-A3",
+    "text": "No unauthorized action is exposed by optimistic UI; all mutations remain server-authorized.",
+    "prompt": "P08",
+    "status": "PASS",
+    "owner": "Security/UX/QA",
+    "reason": "201-case focused regression evidence and current admission preserved; not every-role live audit."
+  },
+  {
+    "id": "P08-A4",
+    "text": "Record actual FR/EN renderings, keyboard/focus and representative viewport behavior; list untested accessibility claims.",
+    "prompt": "P08",
+    "status": "PASS",
+    "owner": "UX/QA",
+    "reason": "Recorded EN/FR keyboard/focus and declared viewport evidence; broad accessibility/customer claims excluded."
+  },
+  {
+    "id": "P09-A1",
+    "text": "Every pilot data category is included, explicitly excluded with reason, or a named blocker.",
+    "prompt": "P09",
+    "status": "PASS",
+    "owner": "Data/export/security",
+    "reason": "20-category contract names scope/omissions/blockers."
+  },
+  {
+    "id": "P09-A2",
+    "text": "The independent fixture check detects omitted referenced evidence and mismatched totals/hashes.",
+    "prompt": "P09",
+    "status": "PASS",
+    "owner": "QA/export",
+    "reason": "47 pure cases include independent missing-reference and hash/total detection."
+  },
+  {
+    "id": "P09-A3",
+    "text": "Secrets and access tokens are excluded; customer-owned sensitive fields require explicit authorized archive scope.",
+    "prompt": "P09",
+    "status": "PASS",
+    "owner": "Data/privacy/security",
+    "reason": "Secret/token exclusions and sensitive archive approval explicit; real extraction not implemented."
+  },
+  {
+    "id": "P09-A4",
+    "text": "Current AP row/size limits and redacted reports are recorded as implementation constraints, not retention benefits.",
+    "prompt": "P09",
+    "status": "PASS",
+    "owner": "Export/domain",
+    "reason": "Existing AP caps/redactions retained as constraints, not customer lock-in benefits."
+  },
+  {
+    "id": "P10-A1",
+    "text": "Each lifecycle transition has an owner, trigger, business effect, data-access effect and recovery path.",
+    "prompt": "P10",
+    "status": "PASS",
+    "owner": "Commercial/product/support",
+    "reason": "11 proposed transitions/17 scenarios with role, trigger, effect/access and recovery; people not assigned."
+  },
+  {
+    "id": "P10-A2",
+    "text": "Cancellation does not require feedback and does not intentionally trap data.",
+    "prompt": "P10",
+    "status": "PASS",
+    "owner": "Commercial/data",
+    "reason": "Proposed cancellation requires no feedback; no trapping recommendation. No deployed cancellation flow asserted."
+  },
+  {
+    "id": "P10-A3",
+    "text": "Read-only/export policy and unsupported stop behavior have explicit resolutions or blockers.",
+    "prompt": "P10",
+    "status": "PASS",
+    "owner": "Module/security/data",
+    "reason": "Retained-read/export and unsupported-stop blockers explicit; P10 D3/D4/D5 not resolved by tests."
+  },
+  {
+    "id": "P10-A4",
+    "text": "Policies and prices awaiting owner/legal review are clearly proposed; no inferred approval appears in UI or code.",
+    "prompt": "P10",
+    "status": "PASS",
+    "owner": "Commercial/legal",
+    "reason": "Terms/prices/support proposals clearly unapproved; 30 mocked cases do not approve policy."
+  },
+  {
+    "id": "P11-A1",
+    "text": "Implemented, tested, expert-reviewed and live-supported statuses remain separate for every capability.",
+    "prompt": "P11",
+    "status": "PASS",
+    "owner": "Country/domain/QA",
+    "reason": "13-capability matrix separates source/tests/review/live support."
+  },
+  {
+    "id": "P11-A2",
+    "text": "Accounting regime and national obligations are unresolved until appropriate review exists.",
+    "prompt": "P11",
+    "status": "PASS",
+    "owner": "Qualified accountant/country",
+    "reason": "E01-E10 and C01-C12 retain regime/rule/reviewer gaps."
+  },
+  {
+    "id": "P11-A3",
+    "text": "Generic HMAC ingestion is not labeled a native live connector; sandbox is not labeled production.",
+    "prompt": "P11",
+    "status": "PASS",
+    "owner": "Integration/security",
+    "reason": "Generic HMAC and sandbox separated from native/live connector."
+  },
+  {
+    "id": "P11-A4",
+    "text": "The packet names missing inputs and owners without contacting providers, authorities or customers.",
+    "prompt": "P11",
+    "status": "PASS",
+    "owner": "Programme/country/integration",
+    "reason": "Missing inputs/role owners explicit; no customer/provider/authority contact."
+  }
+]

@@ -1,0 +1,3280 @@
+{
+  "schema_version": 1,
+  "package_id": "P04-V02",
+  "generated_at": "2026-11-09T16:38:22.767Z",
+  "status": "planned_mapping_only_runtime_pending",
+  "not_a_qualification_result": true,
+  "source_identity": "2a3cd525dc8cfdad21550b4f77ca2af5d68ca7b8585b8888db6fd086a7256823",
+  "frozen_harness_inputs": [
+    {
+      "suite": "auth",
+      "path": "browser/run-auth-transport.cjs",
+      "sha256": "e28aa8ecbc0d5a835f49c29bccde6e1f6d53e33efa19822636ef0a3d1dd36088"
+    },
+    {
+      "suite": "auth-fixtures",
+      "path": "database/auth-controls.cjs",
+      "sha256": "117989dac6e45a9f0ee2a3a0f17078829a791d27185395a76b9200599a0c8d3d"
+    },
+    {
+      "suite": "baseline",
+      "path": "browser/run-browser.cjs",
+      "sha256": "e3d185bb877bf8a509037450dd95bd2d54c775d9eb87dc7ba6574c275fa0c3f1"
+    },
+    {
+      "suite": "provider",
+      "path": "provider/run-protocol.cjs",
+      "sha256": "d3aaf8ccb1cf2457f1302a26f8219ad5f9e40fa5d60b9949a6d0d0c8958de9c6"
+    }
+  ],
+  "counts": {
+    "auth": 91,
+    "baseline": 22,
+    "provider": 23,
+    "total": 136,
+    "unique_case_keys": 136,
+    "families": 16
+  },
+  "evidence_rules": [
+    "Counts are planned grouped checks, not executed tests, individual HTTP assertions, branches or percentage coverage.",
+    "Direct mappings name intended assertions; result receipts and independent review must establish actual execution and validity.",
+    "Supporting mappings cannot close a family by themselves. Missing/fatal/prerequisite cases stay not_run/incomplete.",
+    "Artifact/source hashes, actual signed session provenance, cookie cache lifetime, native state/effects, observed browser completion and sanitized canary/response evidence must match.",
+    "Any residual vector must remain explicit; a confirmed blocking defect does not silently close unexecuted vectors."
+  ],
+  "families": [
+    {
+      "id": "V02-T01",
+      "family": "auth/session",
+      "acceptance": "Actual credential login creates signed cookie and independent session; wrong password, locked/inactive user and forbidden origin do not gain authority.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:active-core-reads",
+        "auth:wrong-password-boundary",
+        "auth:locked-credential-boundary",
+        "auth:inactive-credential-boundary",
+        "auth:credential-forbidden-origin",
+        "auth:authRevoked-real-session",
+        "auth:authExpired-real-session",
+        "auth:independent-session-remains-functional",
+        "baseline:real-ui-login-and-image-consumers-en",
+        "baseline:real-ui-login-and-image-consumers-fr"
+      ],
+      "supporting_cases": [],
+      "residual_limits": []
+    },
+    {
+      "id": "V02-T02",
+      "family": "core-auth-cache",
+      "acceptance": "Get-session default versus disableCookieCache after server-side revoke, DB expiry, account deactivation and fresh untouched independent login; inspect no private user/session fields.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:inactive-cached-core-session",
+        "auth:inactive-current-app-session",
+        "auth:authRevoked-get-session",
+        "auth:authRevoked-get-session-fresh",
+        "auth:authRevoked-list-sessions",
+        "auth:authRevoked-list-accounts",
+        "auth:authRevoked-change-password-cache-override",
+        "auth:authExpired-get-session",
+        "auth:authExpired-get-session-fresh",
+        "auth:authExpired-list-sessions",
+        "auth:authExpired-list-accounts",
+        "auth:authExpired-change-password-cache-override"
+      ],
+      "supporting_cases": [
+        "baseline:revocation-original-signed-cookie-replay",
+        "baseline:expiry-original-signed-cookie-replay",
+        "baseline:permissionChange-original-signed-cookie-replay",
+        "baseline:moduleChange-original-signed-cookie-replay"
+      ],
+      "residual_limits": []
+    },
+    {
+      "id": "V02-T03",
+      "family": "core-auth-cache",
+      "acceptance": "list-sessions and list-accounts deny revoked/expired cached subject; no sibling session token or account metadata; independent active user still works.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:authRevoked-list-sessions",
+        "auth:authRevoked-list-accounts",
+        "auth:authExpired-list-sessions",
+        "auth:authExpired-list-accounts"
+      ],
+      "supporting_cases": [],
+      "residual_limits": []
+    },
+    {
+      "id": "V02-T04",
+      "family": "core-auth-mutation",
+      "acceptance": "unlink-account on revoked/expired cached session with two owned accounts causes no deletion; active account positive control separately.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:active-unlink-positive",
+        "auth:authRevoked-unlink",
+        "auth:authRevoked-unlink-cache-override",
+        "auth:authExpired-unlink",
+        "auth:authExpired-unlink-cache-override"
+      ],
+      "supporting_cases": [
+        "auth:authRevoked-change-password-cache-override",
+        "auth:authExpired-change-password-cache-override"
+      ],
+      "residual_limits": []
+    },
+    {
+      "id": "V02-T05",
+      "family": "custom-profile",
+      "acceptance": "update-user custom HTTP rejects revoked/expired session, forged ownership, unsupported authority fields and cross-origin; authorized reviewed profile read/write still works.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:active-reviewed-profile-write",
+        "auth:authRevoked-profile-write",
+        "auth:authRevoked-profile-cache-override",
+        "auth:authExpired-profile-write",
+        "auth:authExpired-profile-cache-override",
+        "auth:untrusted-profile-origin"
+      ],
+      "supporting_cases": [],
+      "residual_limits": [
+        "Frozen profile mutation cases do not separately submit a forged actor/tenant ownership field or every unsupported authority field. Source strictness is not runtime proof of those vectors."
+      ]
+    },
+    {
+      "id": "V02-T06",
+      "family": "implicit-session-write",
+      "acceptance": "update-session forged assurance/user/org/expiry fields rejected with no changed session privilege; no writable additional fields currently configured.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:forged-session-authority-fields"
+      ],
+      "supporting_cases": [],
+      "residual_limits": []
+    },
+    {
+      "id": "V02-T07",
+      "family": "session-management",
+      "acceptance": "revoke-session foreign token does not revoke other subject; revoke-others preserves caller, new independent login remains functional; no test credential logged.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:revoke-foreign-token",
+        "auth:revoke-other-sessions",
+        "auth:independent-session-remains-functional"
+      ],
+      "supporting_cases": [],
+      "residual_limits": []
+    },
+    {
+      "id": "V02-T08",
+      "family": "provider-auth",
+      "acceptance": "Core provider endpoints reject anonymous/forged user/account IDs and wrong origin; configured-provider branch and callback state/signature negative evidence labeled separately from hosted positive.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:provider-anonymous-forgery",
+        "auth:provider-authenticated-forgery",
+        "auth:invalid-oauth-and-verification"
+      ],
+      "supporting_cases": [],
+      "residual_limits": [
+        "No live/configured Google provider positive token-exchange or configured-provider object-ownership path; current isolated runtime has no live provider credentials. Hosted proof remains external."
+      ]
+    },
+    {
+      "id": "V02-T09",
+      "family": "implicit-methods",
+      "acceptance": "GET/HEAD/OPTIONS/method-denial matrix on auth and UploadThing; HEAD carries no body/private leak and must not bypass guard; OPTIONS public204 metadata only.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:auth-method-boundary",
+        "baseline:anonymous-both-delivery-urls",
+        "baseline:authorized-get-head-and-private-optimizer-denial",
+        "provider:public-config-get",
+        "provider:public-config-head",
+        "provider:implicit-options",
+        "provider:unsupported-put",
+        "provider:unsupported-delete"
+      ],
+      "supporting_cases": [],
+      "residual_limits": [
+        "Method case checks auth HEAD body emptiness; a full revoked-cookie HEAD/header privacy matrix is not part of the frozen auth suite."
+      ]
+    },
+    {
+      "id": "V02-T10",
+      "family": "private-HTTP",
+      "acceptance": "Guarded /api/me/permissions,/api/me/profile and both current private-media delivery URLs reject revoked/expired/other-tenant cases; no unauthorized writes; permissions from DB fresh.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:active-core-reads",
+        "auth:inactive-current-app-session",
+        "auth:authRevoked-permissions",
+        "auth:authRevoked-profile",
+        "auth:authExpired-permissions",
+        "auth:authExpired-profile",
+        "auth:authBrowserRevoked-en-next-read",
+        "auth:authBrowserExpiry-en-next-read",
+        "auth:authBrowserPermission-en-next-read",
+        "auth:authBrowserModule-en-next-read",
+        "auth:authBrowserRevoked-fr-next-read",
+        "auth:authBrowserExpiry-fr-next-read",
+        "auth:authBrowserPermission-fr-next-read",
+        "auth:authBrowserModule-fr-next-read",
+        "baseline:real-ui-login-and-image-consumers-en",
+        "baseline:real-ui-login-and-image-consumers-fr",
+        "baseline:original-private-alias-denials-anonymous",
+        "baseline:original-private-alias-denials-ui",
+        "baseline:original-private-alias-denials-foreign",
+        "baseline:original-private-alias-denials-revocation",
+        "baseline:original-private-alias-denials-expiry",
+        "baseline:original-private-alias-denials-permissionChange",
+        "baseline:original-private-alias-denials-moduleChange",
+        "baseline:original-private-alias-denials-permissionDenied",
+        "baseline:original-private-alias-denials-moduleDenied",
+        "baseline:anonymous-both-delivery-urls",
+        "baseline:foreign-both-delivery-urls",
+        "baseline:permissionDenied-both-delivery-urls",
+        "baseline:moduleDenied-both-delivery-urls",
+        "baseline:revocation-original-signed-cookie-replay",
+        "baseline:expiry-original-signed-cookie-replay",
+        "baseline:permissionChange-original-signed-cookie-replay",
+        "baseline:moduleChange-original-signed-cookie-replay",
+        "baseline:authorized-get-head-and-private-optimizer-denial",
+        "baseline:original-private-alias-probe-coverage",
+        "baseline:browser-cache-and-runtime-errors"
+      ],
+      "supporting_cases": [],
+      "residual_limits": []
+    },
+    {
+      "id": "V02-T11",
+      "family": "permission-module",
+      "acceptance": "Role permission removal/restoration and enforced inventory module disable/restoration take effect on next API/action/page request; legitimate independent actor works throughout.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:authBrowserPermission-en-authorized",
+        "auth:authBrowserPermission-en-stale-tab-focus",
+        "auth:authBrowserPermission-en-next-read",
+        "auth:authBrowserPermission-en-browser-back",
+        "auth:authBrowserPermission-en-browser-reload",
+        "auth:authBrowserPermission-en-authorized-recovery",
+        "auth:authBrowserModule-en-authorized",
+        "auth:authBrowserModule-en-stale-tab-focus",
+        "auth:authBrowserModule-en-next-read",
+        "auth:authBrowserModule-en-browser-back",
+        "auth:authBrowserModule-en-browser-reload",
+        "auth:authBrowserModule-en-authorized-recovery",
+        "auth:authBrowserPermission-fr-authorized",
+        "auth:authBrowserPermission-fr-stale-tab-focus",
+        "auth:authBrowserPermission-fr-next-read",
+        "auth:authBrowserPermission-fr-browser-back",
+        "auth:authBrowserPermission-fr-browser-reload",
+        "auth:authBrowserPermission-fr-authorized-recovery",
+        "auth:authBrowserModule-fr-authorized",
+        "auth:authBrowserModule-fr-stale-tab-focus",
+        "auth:authBrowserModule-fr-next-read",
+        "auth:authBrowserModule-fr-browser-back",
+        "auth:authBrowserModule-fr-browser-reload",
+        "auth:authBrowserModule-fr-authorized-recovery",
+        "baseline:permissionChange-original-signed-cookie-replay",
+        "baseline:moduleChange-original-signed-cookie-replay"
+      ],
+      "supporting_cases": [
+        "provider:module-disabled-upload-denied"
+      ],
+      "residual_limits": []
+    },
+    {
+      "id": "V02-T12",
+      "family": "browser-recovery",
+      "acceptance": "Rendered private page then revoke externally: same tab stale action, focus/visibility return, back/forward and reload do not restore private records or controls from stale authorization. Record each journey separately, both locales.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:authBrowserRevoked-en-authorized",
+        "auth:authBrowserRevoked-en-stale-tab-focus",
+        "auth:authBrowserRevoked-en-next-read",
+        "auth:authBrowserRevoked-en-browser-back",
+        "auth:authBrowserRevoked-en-browser-reload",
+        "auth:authBrowserRevoked-en-authorized-recovery",
+        "auth:authBrowserExpiry-en-authorized",
+        "auth:authBrowserExpiry-en-stale-tab-focus",
+        "auth:authBrowserExpiry-en-next-read",
+        "auth:authBrowserExpiry-en-browser-back",
+        "auth:authBrowserExpiry-en-browser-reload",
+        "auth:authBrowserExpiry-en-authorized-recovery",
+        "auth:authBrowserPermission-en-authorized",
+        "auth:authBrowserPermission-en-stale-tab-focus",
+        "auth:authBrowserPermission-en-next-read",
+        "auth:authBrowserPermission-en-browser-back",
+        "auth:authBrowserPermission-en-browser-reload",
+        "auth:authBrowserPermission-en-authorized-recovery",
+        "auth:authBrowserModule-en-authorized",
+        "auth:authBrowserModule-en-stale-tab-focus",
+        "auth:authBrowserModule-en-next-read",
+        "auth:authBrowserModule-en-browser-back",
+        "auth:authBrowserModule-en-browser-reload",
+        "auth:authBrowserModule-en-authorized-recovery",
+        "auth:authBrowserRevoked-fr-authorized",
+        "auth:authBrowserRevoked-fr-stale-tab-focus",
+        "auth:authBrowserRevoked-fr-next-read",
+        "auth:authBrowserRevoked-fr-browser-back",
+        "auth:authBrowserRevoked-fr-browser-reload",
+        "auth:authBrowserRevoked-fr-authorized-recovery",
+        "auth:authBrowserExpiry-fr-authorized",
+        "auth:authBrowserExpiry-fr-stale-tab-focus",
+        "auth:authBrowserExpiry-fr-next-read",
+        "auth:authBrowserExpiry-fr-browser-back",
+        "auth:authBrowserExpiry-fr-browser-reload",
+        "auth:authBrowserExpiry-fr-authorized-recovery",
+        "auth:authBrowserPermission-fr-authorized",
+        "auth:authBrowserPermission-fr-stale-tab-focus",
+        "auth:authBrowserPermission-fr-next-read",
+        "auth:authBrowserPermission-fr-browser-back",
+        "auth:authBrowserPermission-fr-browser-reload",
+        "auth:authBrowserPermission-fr-authorized-recovery",
+        "auth:authBrowserModule-fr-authorized",
+        "auth:authBrowserModule-fr-stale-tab-focus",
+        "auth:authBrowserModule-fr-next-read",
+        "auth:authBrowserModule-fr-browser-back",
+        "auth:authBrowserModule-fr-browser-reload",
+        "auth:authBrowserModule-fr-authorized-recovery",
+        "baseline:revocation-original-signed-cookie-replay"
+      ],
+      "supporting_cases": [
+        "baseline:real-ui-login-and-image-consumers-en",
+        "baseline:real-ui-login-and-image-consumers-fr",
+        "baseline:browser-cache-and-runtime-errors"
+      ],
+      "residual_limits": [
+        "Browser back/reload/native focus covered on selected inventory route; forward-specific history traversal is not independently exercised. Other private UI consumers remain distinct."
+      ]
+    },
+    {
+      "id": "V02-T13",
+      "family": "browser-recovery",
+      "acceptance": "Expiry browser journey and account switch/other-tenant browser contexts cannot reuse private data; authorized positive screenshot/bytes before and after recovery.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:browser-tenant-switch",
+        "auth:authBrowserExpiry-en-authorized",
+        "auth:authBrowserExpiry-en-stale-tab-focus",
+        "auth:authBrowserExpiry-en-next-read",
+        "auth:authBrowserExpiry-en-browser-back",
+        "auth:authBrowserExpiry-en-browser-reload",
+        "auth:authBrowserExpiry-en-authorized-recovery",
+        "auth:authBrowserExpiry-fr-authorized",
+        "auth:authBrowserExpiry-fr-stale-tab-focus",
+        "auth:authBrowserExpiry-fr-next-read",
+        "auth:authBrowserExpiry-fr-browser-back",
+        "auth:authBrowserExpiry-fr-browser-reload",
+        "auth:authBrowserExpiry-fr-authorized-recovery"
+      ],
+      "supporting_cases": [
+        "baseline:real-ui-login-and-image-consumers-en",
+        "baseline:real-ui-login-and-image-consumers-fr",
+        "baseline:expiry-original-signed-cookie-replay",
+        "baseline:browser-cache-and-runtime-errors"
+      ],
+      "residual_limits": [
+        "Tenant switching is English-only in frozen suite; selected expiry/permission/module/revocation recovery journeys run EN/FR."
+      ]
+    },
+    {
+      "id": "V02-T14",
+      "family": "uploadthing-ingress",
+      "acceptance": "UploadThing public GET/HEAD only router metadata; POST unauthorized/no permission/no module rejected before storage; authorized legacy ingress intentionally denied managed-upload-only.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "provider:public-config-get",
+        "provider:public-config-head",
+        "provider:anonymous-upload-denied",
+        "provider:authorized-legacy-upload-managed-control-only",
+        "provider:read-only-actor-upload-denied",
+        "provider:module-disabled-upload-denied",
+        "provider:foreign-origin-upload-denied"
+      ],
+      "supporting_cases": [],
+      "residual_limits": []
+    },
+    {
+      "id": "V02-T15",
+      "family": "uploadthing-callback",
+      "acceptance": "UploadThing missing/invalid signature, tampered signed body/origin, unknown slug/method/action combos fail without callback side effects; approved synthetic signed callback can reach owned loopback callback sink only and no business writes.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "provider:unknown-slug",
+        "provider:invalid-action",
+        "provider:missing-discriminator-no-op",
+        "provider:callback-missing-signature",
+        "provider:callback-invalid-signature",
+        "provider:callback-tampered-signed-origin",
+        "provider:callback-origin-header-without-signature",
+        "provider:callback-valid-signature-invalid-body",
+        "provider:error-hook-missing-signature",
+        "provider:error-hook-invalid-signature",
+        "provider:signed-error-hook-positive",
+        "provider:signed-callback-positive",
+        "provider:signed-callback-replay-no-business-effect"
+      ],
+      "supporting_cases": [],
+      "residual_limits": []
+    },
+    {
+      "id": "V02-T16",
+      "family": "database-evidence",
+      "acceptance": "Security/session/audit before-after snapshots classify each intended effect; denied requests cannot modify item/profile/account/role/grant/outbox state or expose any private canary.",
+      "status": "planned_not_executed",
+      "direct_cases": [
+        "auth:active-core-reads",
+        "auth:active-reviewed-profile-write",
+        "auth:active-unlink-positive",
+        "auth:wrong-password-boundary",
+        "auth:locked-credential-boundary",
+        "auth:inactive-credential-boundary",
+        "auth:inactive-cached-core-session",
+        "auth:inactive-current-app-session",
+        "auth:credential-forbidden-origin",
+        "auth:revoke-foreign-token",
+        "auth:revoke-other-sessions",
+        "auth:provider-anonymous-forgery",
+        "auth:provider-authenticated-forgery",
+        "auth:invalid-oauth-and-verification",
+        "auth:browser-tenant-switch",
+        "auth:authRevoked-get-session",
+        "auth:authRevoked-get-session-fresh",
+        "auth:authRevoked-list-sessions",
+        "auth:authRevoked-list-accounts",
+        "auth:authRevoked-permissions",
+        "auth:authRevoked-profile",
+        "auth:authRevoked-profile-write",
+        "auth:authRevoked-profile-cache-override",
+        "auth:authRevoked-unlink",
+        "auth:authRevoked-unlink-cache-override",
+        "auth:authRevoked-change-password-cache-override",
+        "auth:authExpired-get-session",
+        "auth:authExpired-get-session-fresh",
+        "auth:authExpired-list-sessions",
+        "auth:authExpired-list-accounts",
+        "auth:authExpired-permissions",
+        "auth:authExpired-profile",
+        "auth:authExpired-profile-write",
+        "auth:authExpired-profile-cache-override",
+        "auth:authExpired-unlink",
+        "auth:authExpired-unlink-cache-override",
+        "auth:authExpired-change-password-cache-override",
+        "auth:forged-session-authority-fields",
+        "auth:untrusted-profile-origin",
+        "auth:auth-method-boundary",
+        "auth:authBrowserRevoked-en-stale-tab-focus",
+        "auth:authBrowserRevoked-en-next-read",
+        "auth:authBrowserRevoked-en-browser-back",
+        "auth:authBrowserRevoked-en-browser-reload",
+        "auth:authBrowserExpiry-en-stale-tab-focus",
+        "auth:authBrowserExpiry-en-next-read",
+        "auth:authBrowserExpiry-en-browser-back",
+        "auth:authBrowserExpiry-en-browser-reload",
+        "auth:authBrowserPermission-en-stale-tab-focus",
+        "auth:authBrowserPermission-en-next-read",
+        "auth:authBrowserPermission-en-browser-back",
+        "auth:authBrowserPermission-en-browser-reload",
+        "auth:authBrowserModule-en-stale-tab-focus",
+        "auth:authBrowserModule-en-next-read",
+        "auth:authBrowserModule-en-browser-back",
+        "auth:authBrowserModule-en-browser-reload",
+        "auth:authBrowserRevoked-fr-stale-tab-focus",
+        "auth:authBrowserRevoked-fr-next-read",
+        "auth:authBrowserRevoked-fr-browser-back",
+        "auth:authBrowserRevoked-fr-browser-reload",
+        "auth:authBrowserExpiry-fr-stale-tab-focus",
+        "auth:authBrowserExpiry-fr-next-read",
+        "auth:authBrowserExpiry-fr-browser-back",
+        "auth:authBrowserExpiry-fr-browser-reload",
+        "auth:authBrowserPermission-fr-stale-tab-focus",
+        "auth:authBrowserPermission-fr-next-read",
+        "auth:authBrowserPermission-fr-browser-back",
+        "auth:authBrowserPermission-fr-browser-reload",
+        "auth:authBrowserModule-fr-stale-tab-focus",
+        "auth:authBrowserModule-fr-next-read",
+        "auth:authBrowserModule-fr-browser-back",
+        "auth:authBrowserModule-fr-browser-reload",
+        "provider:public-config-get",
+        "provider:public-config-head",
+        "provider:implicit-options",
+        "provider:unsupported-put",
+        "provider:unsupported-delete",
+        "provider:unknown-slug",
+        "provider:invalid-action",
+        "provider:missing-discriminator-no-op",
+        "provider:callback-missing-signature",
+        "provider:callback-invalid-signature",
+        "provider:callback-tampered-signed-origin",
+        "provider:callback-origin-header-without-signature",
+        "provider:callback-valid-signature-invalid-body",
+        "provider:error-hook-missing-signature",
+        "provider:error-hook-invalid-signature",
+        "provider:anonymous-upload-denied",
+        "provider:authorized-legacy-upload-managed-control-only",
+        "provider:read-only-actor-upload-denied",
+        "provider:module-disabled-upload-denied",
+        "provider:foreign-origin-upload-denied",
+        "provider:signed-error-hook-positive",
+        "provider:signed-callback-positive",
+        "provider:signed-callback-replay-no-business-effect"
+      ],
+      "supporting_cases": [
+        "auth:authRevoked-real-session",
+        "auth:authExpired-real-session",
+        "auth:independent-session-remains-functional",
+        "auth:authBrowserRevoked-en-authorized",
+        "auth:authBrowserRevoked-en-authorized-recovery",
+        "auth:authBrowserExpiry-en-authorized",
+        "auth:authBrowserExpiry-en-authorized-recovery",
+        "auth:authBrowserPermission-en-authorized",
+        "auth:authBrowserPermission-en-authorized-recovery",
+        "auth:authBrowserModule-en-authorized",
+        "auth:authBrowserModule-en-authorized-recovery",
+        "auth:authBrowserRevoked-fr-authorized",
+        "auth:authBrowserRevoked-fr-authorized-recovery",
+        "auth:authBrowserExpiry-fr-authorized",
+        "auth:authBrowserExpiry-fr-authorized-recovery",
+        "auth:authBrowserPermission-fr-authorized",
+        "auth:authBrowserPermission-fr-authorized-recovery",
+        "auth:authBrowserModule-fr-authorized",
+        "auth:authBrowserModule-fr-authorized-recovery",
+        "baseline:real-ui-login-and-image-consumers-en",
+        "baseline:real-ui-login-and-image-consumers-fr",
+        "baseline:original-private-alias-denials-anonymous",
+        "baseline:original-private-alias-denials-ui",
+        "baseline:original-private-alias-denials-foreign",
+        "baseline:original-private-alias-denials-revocation",
+        "baseline:original-private-alias-denials-expiry",
+        "baseline:original-private-alias-denials-permissionChange",
+        "baseline:original-private-alias-denials-moduleChange",
+        "baseline:original-private-alias-denials-permissionDenied",
+        "baseline:original-private-alias-denials-moduleDenied",
+        "baseline:anonymous-both-delivery-urls",
+        "baseline:foreign-both-delivery-urls",
+        "baseline:permissionDenied-both-delivery-urls",
+        "baseline:moduleDenied-both-delivery-urls",
+        "baseline:revocation-original-signed-cookie-replay",
+        "baseline:expiry-original-signed-cookie-replay",
+        "baseline:permissionChange-original-signed-cookie-replay",
+        "baseline:moduleChange-original-signed-cookie-replay",
+        "baseline:authorized-get-head-and-private-optimizer-denial",
+        "baseline:original-private-alias-probe-coverage",
+        "baseline:browser-cache-and-runtime-errors"
+      ],
+      "residual_limits": [
+        "Baseline receipts assert business state equality and retain audit/session evidence; reviewers must classify those rows, rather than infer that arbitrary excluded-table changes are allowed."
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_key": "auth:active-core-reads",
+      "suite": "auth",
+      "id": "active-core-reads",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T01",
+        "V02-T10",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "active-core-reads"
+      }
+    },
+    {
+      "case_key": "auth:active-reviewed-profile-write",
+      "suite": "auth",
+      "id": "active-reviewed-profile-write",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T05",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "active-reviewed-profile-write"
+      }
+    },
+    {
+      "case_key": "auth:active-unlink-positive",
+      "suite": "auth",
+      "id": "active-unlink-positive",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T04",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "active-unlink-positive"
+      }
+    },
+    {
+      "case_key": "auth:wrong-password-boundary",
+      "suite": "auth",
+      "id": "wrong-password-boundary",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T01",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "wrong-password-boundary"
+      }
+    },
+    {
+      "case_key": "auth:locked-credential-boundary",
+      "suite": "auth",
+      "id": "locked-credential-boundary",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T01",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "locked-credential-boundary"
+      }
+    },
+    {
+      "case_key": "auth:inactive-credential-boundary",
+      "suite": "auth",
+      "id": "inactive-credential-boundary",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T01",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "inactive-credential-boundary"
+      }
+    },
+    {
+      "case_key": "auth:inactive-cached-core-session",
+      "suite": "auth",
+      "id": "inactive-cached-core-session",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "inactive-cached-core-session"
+      }
+    },
+    {
+      "case_key": "auth:inactive-current-app-session",
+      "suite": "auth",
+      "id": "inactive-current-app-session",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T10",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "inactive-current-app-session"
+      }
+    },
+    {
+      "case_key": "auth:credential-forbidden-origin",
+      "suite": "auth",
+      "id": "credential-forbidden-origin",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T01",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "credential-forbidden-origin"
+      }
+    },
+    {
+      "case_key": "auth:revoke-foreign-token",
+      "suite": "auth",
+      "id": "revoke-foreign-token",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T07",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "revoke-foreign-token"
+      }
+    },
+    {
+      "case_key": "auth:revoke-other-sessions",
+      "suite": "auth",
+      "id": "revoke-other-sessions",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T07",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "revoke-other-sessions"
+      }
+    },
+    {
+      "case_key": "auth:provider-anonymous-forgery",
+      "suite": "auth",
+      "id": "provider-anonymous-forgery",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T08",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "provider-anonymous-forgery"
+      }
+    },
+    {
+      "case_key": "auth:provider-authenticated-forgery",
+      "suite": "auth",
+      "id": "provider-authenticated-forgery",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T08",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Unconfigured provider rejection is not positive proof of configured-provider account ownership or token refresh."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "provider-authenticated-forgery"
+      }
+    },
+    {
+      "case_key": "auth:invalid-oauth-and-verification",
+      "suite": "auth",
+      "id": "invalid-oauth-and-verification",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T08",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "invalid-oauth-and-verification"
+      }
+    },
+    {
+      "case_key": "auth:browser-tenant-switch",
+      "suite": "auth",
+      "id": "browser-tenant-switch",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T13",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "English selected inventory browser journey; separate current-tenant B positive and old-tenant A absence."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "browser-tenant-switch"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-real-session",
+      "suite": "auth",
+      "id": "authRevoked-real-session",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T01"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-real-session"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-get-session",
+      "suite": "auth",
+      "id": "authRevoked-get-session",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-get-session"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-get-session-fresh",
+      "suite": "auth",
+      "id": "authRevoked-get-session-fresh",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-get-session-fresh"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-list-sessions",
+      "suite": "auth",
+      "id": "authRevoked-list-sessions",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T03",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-list-sessions"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-list-accounts",
+      "suite": "auth",
+      "id": "authRevoked-list-accounts",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T03",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-list-accounts"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-permissions",
+      "suite": "auth",
+      "id": "authRevoked-permissions",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-permissions"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-profile",
+      "suite": "auth",
+      "id": "authRevoked-profile",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-profile"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-profile-write",
+      "suite": "auth",
+      "id": "authRevoked-profile-write",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T05",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-profile-write"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-profile-cache-override",
+      "suite": "auth",
+      "id": "authRevoked-profile-cache-override",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T05",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-profile-cache-override"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-unlink",
+      "suite": "auth",
+      "id": "authRevoked-unlink",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T04",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-unlink"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-unlink-cache-override",
+      "suite": "auth",
+      "id": "authRevoked-unlink-cache-override",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T04",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-unlink-cache-override"
+      }
+    },
+    {
+      "case_key": "auth:authRevoked-change-password-cache-override",
+      "suite": "auth",
+      "id": "authRevoked-change-password-cache-override",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [
+        "V02-T04"
+      ],
+      "notes": [
+        "Actual HTTP sensitive operation; server-only verify-password is exercised separately as404. Password reset to same synthetic password detects unauthorized account hash mutation without adding a new credential.",
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authRevoked-change-password-cache-override"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-real-session",
+      "suite": "auth",
+      "id": "authExpired-real-session",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T01"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-real-session"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-get-session",
+      "suite": "auth",
+      "id": "authExpired-get-session",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-get-session"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-get-session-fresh",
+      "suite": "auth",
+      "id": "authExpired-get-session-fresh",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-get-session-fresh"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-list-sessions",
+      "suite": "auth",
+      "id": "authExpired-list-sessions",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T03",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-list-sessions"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-list-accounts",
+      "suite": "auth",
+      "id": "authExpired-list-accounts",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T03",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-list-accounts"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-permissions",
+      "suite": "auth",
+      "id": "authExpired-permissions",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-permissions"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-profile",
+      "suite": "auth",
+      "id": "authExpired-profile",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-profile"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-profile-write",
+      "suite": "auth",
+      "id": "authExpired-profile-write",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T05",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-profile-write"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-profile-cache-override",
+      "suite": "auth",
+      "id": "authExpired-profile-cache-override",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T05",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-profile-cache-override"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-unlink",
+      "suite": "auth",
+      "id": "authExpired-unlink",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T04",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-unlink"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-unlink-cache-override",
+      "suite": "auth",
+      "id": "authExpired-unlink-cache-override",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T04",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-unlink-cache-override"
+      }
+    },
+    {
+      "case_key": "auth:authExpired-change-password-cache-override",
+      "suite": "auth",
+      "id": "authExpired-change-password-cache-override",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T02",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [
+        "V02-T04"
+      ],
+      "notes": [
+        "Actual HTTP sensitive operation; server-only verify-password is exercised separately as404. Password reset to same synthetic password detects unauthorized account hash mutation without adding a new credential.",
+        "Exact real signed cookie replay must remain unexpired at context construction and request/response boundaries; new same-actor independent session remains for meaningful list-sessions privacy checks."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authExpired-change-password-cache-override"
+      }
+    },
+    {
+      "case_key": "auth:forged-session-authority-fields",
+      "suite": "auth",
+      "id": "forged-session-authority-fields",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T06",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "forged-session-authority-fields"
+      }
+    },
+    {
+      "case_key": "auth:untrusted-profile-origin",
+      "suite": "auth",
+      "id": "untrusted-profile-origin",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T05",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "untrusted-profile-origin"
+      }
+    },
+    {
+      "case_key": "auth:auth-method-boundary",
+      "suite": "auth",
+      "id": "auth-method-boundary",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T09",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "auth-method-boundary"
+      }
+    },
+    {
+      "case_key": "auth:independent-session-remains-functional",
+      "suite": "auth",
+      "id": "independent-session-remains-functional",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T01",
+        "V02-T07"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "independent-session-remains-functional"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-en-authorized",
+      "suite": "auth",
+      "id": "authBrowserRevoked-en-authorized",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-en-authorized"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-en-stale-tab-focus",
+      "suite": "auth",
+      "id": "authBrowserRevoked-en-stale-tab-focus",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Requires observed native hidden/visible return and completed revalidation; absent trigger/completion is incomplete qualification. Existing DOM alone is not new server disclosure or an instantaneous revocation obligation."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-en-stale-tab-focus"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-en-next-read",
+      "suite": "auth",
+      "id": "authBrowserRevoked-en-next-read",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-en-next-read"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-en-browser-back",
+      "suite": "auth",
+      "id": "authBrowserRevoked-en-browser-back",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-en-browser-back"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-en-browser-reload",
+      "suite": "auth",
+      "id": "authBrowserRevoked-en-browser-reload",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-en-browser-reload"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-en-authorized-recovery",
+      "suite": "auth",
+      "id": "authBrowserRevoked-en-authorized-recovery",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-en-authorized-recovery"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-en-authorized",
+      "suite": "auth",
+      "id": "authBrowserExpiry-en-authorized",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T13"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-en-authorized"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-en-stale-tab-focus",
+      "suite": "auth",
+      "id": "authBrowserExpiry-en-stale-tab-focus",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Requires observed native hidden/visible return and completed revalidation; absent trigger/completion is incomplete qualification. Existing DOM alone is not new server disclosure or an instantaneous revocation obligation."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-en-stale-tab-focus"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-en-next-read",
+      "suite": "auth",
+      "id": "authBrowserExpiry-en-next-read",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-en-next-read"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-en-browser-back",
+      "suite": "auth",
+      "id": "authBrowserExpiry-en-browser-back",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-en-browser-back"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-en-browser-reload",
+      "suite": "auth",
+      "id": "authBrowserExpiry-en-browser-reload",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-en-browser-reload"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-en-authorized-recovery",
+      "suite": "auth",
+      "id": "authBrowserExpiry-en-authorized-recovery",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T13"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-en-authorized-recovery"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-en-authorized",
+      "suite": "auth",
+      "id": "authBrowserPermission-en-authorized",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-en-authorized"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-en-stale-tab-focus",
+      "suite": "auth",
+      "id": "authBrowserPermission-en-stale-tab-focus",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Requires observed native hidden/visible return and completed revalidation; absent trigger/completion is incomplete qualification. Existing DOM alone is not new server disclosure or an instantaneous revocation obligation."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-en-stale-tab-focus"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-en-next-read",
+      "suite": "auth",
+      "id": "authBrowserPermission-en-next-read",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-en-next-read"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-en-browser-back",
+      "suite": "auth",
+      "id": "authBrowserPermission-en-browser-back",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-en-browser-back"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-en-browser-reload",
+      "suite": "auth",
+      "id": "authBrowserPermission-en-browser-reload",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-en-browser-reload"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-en-authorized-recovery",
+      "suite": "auth",
+      "id": "authBrowserPermission-en-authorized-recovery",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-en-authorized-recovery"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-en-authorized",
+      "suite": "auth",
+      "id": "authBrowserModule-en-authorized",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-en-authorized"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-en-stale-tab-focus",
+      "suite": "auth",
+      "id": "authBrowserModule-en-stale-tab-focus",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Requires observed native hidden/visible return and completed revalidation; absent trigger/completion is incomplete qualification. Existing DOM alone is not new server disclosure or an instantaneous revocation obligation."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-en-stale-tab-focus"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-en-next-read",
+      "suite": "auth",
+      "id": "authBrowserModule-en-next-read",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-en-next-read"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-en-browser-back",
+      "suite": "auth",
+      "id": "authBrowserModule-en-browser-back",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-en-browser-back"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-en-browser-reload",
+      "suite": "auth",
+      "id": "authBrowserModule-en-browser-reload",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-en-browser-reload"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-en-authorized-recovery",
+      "suite": "auth",
+      "id": "authBrowserModule-en-authorized-recovery",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-en-authorized-recovery"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-fr-authorized",
+      "suite": "auth",
+      "id": "authBrowserRevoked-fr-authorized",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-fr-authorized"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-fr-stale-tab-focus",
+      "suite": "auth",
+      "id": "authBrowserRevoked-fr-stale-tab-focus",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Requires observed native hidden/visible return and completed revalidation; absent trigger/completion is incomplete qualification. Existing DOM alone is not new server disclosure or an instantaneous revocation obligation."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-fr-stale-tab-focus"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-fr-next-read",
+      "suite": "auth",
+      "id": "authBrowserRevoked-fr-next-read",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-fr-next-read"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-fr-browser-back",
+      "suite": "auth",
+      "id": "authBrowserRevoked-fr-browser-back",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-fr-browser-back"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-fr-browser-reload",
+      "suite": "auth",
+      "id": "authBrowserRevoked-fr-browser-reload",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-fr-browser-reload"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserRevoked-fr-authorized-recovery",
+      "suite": "auth",
+      "id": "authBrowserRevoked-fr-authorized-recovery",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserRevoked-fr-authorized-recovery"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-fr-authorized",
+      "suite": "auth",
+      "id": "authBrowserExpiry-fr-authorized",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T13"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-fr-authorized"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-fr-stale-tab-focus",
+      "suite": "auth",
+      "id": "authBrowserExpiry-fr-stale-tab-focus",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Requires observed native hidden/visible return and completed revalidation; absent trigger/completion is incomplete qualification. Existing DOM alone is not new server disclosure or an instantaneous revocation obligation."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-fr-stale-tab-focus"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-fr-next-read",
+      "suite": "auth",
+      "id": "authBrowserExpiry-fr-next-read",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-fr-next-read"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-fr-browser-back",
+      "suite": "auth",
+      "id": "authBrowserExpiry-fr-browser-back",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-fr-browser-back"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-fr-browser-reload",
+      "suite": "auth",
+      "id": "authBrowserExpiry-fr-browser-reload",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-fr-browser-reload"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserExpiry-fr-authorized-recovery",
+      "suite": "auth",
+      "id": "authBrowserExpiry-fr-authorized-recovery",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T12",
+        "V02-T13"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserExpiry-fr-authorized-recovery"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-fr-authorized",
+      "suite": "auth",
+      "id": "authBrowserPermission-fr-authorized",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-fr-authorized"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-fr-stale-tab-focus",
+      "suite": "auth",
+      "id": "authBrowserPermission-fr-stale-tab-focus",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Requires observed native hidden/visible return and completed revalidation; absent trigger/completion is incomplete qualification. Existing DOM alone is not new server disclosure or an instantaneous revocation obligation."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-fr-stale-tab-focus"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-fr-next-read",
+      "suite": "auth",
+      "id": "authBrowserPermission-fr-next-read",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-fr-next-read"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-fr-browser-back",
+      "suite": "auth",
+      "id": "authBrowserPermission-fr-browser-back",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-fr-browser-back"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-fr-browser-reload",
+      "suite": "auth",
+      "id": "authBrowserPermission-fr-browser-reload",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-fr-browser-reload"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserPermission-fr-authorized-recovery",
+      "suite": "auth",
+      "id": "authBrowserPermission-fr-authorized-recovery",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserPermission-fr-authorized-recovery"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-fr-authorized",
+      "suite": "auth",
+      "id": "authBrowserModule-fr-authorized",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-fr-authorized"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-fr-stale-tab-focus",
+      "suite": "auth",
+      "id": "authBrowserModule-fr-stale-tab-focus",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Requires observed native hidden/visible return and completed revalidation; absent trigger/completion is incomplete qualification. Existing DOM alone is not new server disclosure or an instantaneous revocation obligation."
+      ],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-fr-stale-tab-focus"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-fr-next-read",
+      "suite": "auth",
+      "id": "authBrowserModule-fr-next-read",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-fr-next-read"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-fr-browser-back",
+      "suite": "auth",
+      "id": "authBrowserModule-fr-browser-back",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-fr-browser-back"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-fr-browser-reload",
+      "suite": "auth",
+      "id": "authBrowserModule-fr-browser-reload",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12",
+        "V02-T16"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-fr-browser-reload"
+      }
+    },
+    {
+      "case_key": "auth:authBrowserModule-fr-authorized-recovery",
+      "suite": "auth",
+      "id": "authBrowserModule-fr-authorized-recovery",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T11",
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "browser/auth-transport/result.json",
+        "array": "checks",
+        "key": "id",
+        "value": "authBrowserModule-fr-authorized-recovery"
+      }
+    },
+    {
+      "case_key": "baseline:real-ui-login-and-image-consumers-en",
+      "suite": "baseline",
+      "id": "real-ui-login-and-image-consumers-en",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T01"
+      ],
+      "supporting_family_ids": [
+        "V02-T16",
+        "V02-T12",
+        "V02-T13"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "real-ui-login-and-image-consumers-en"
+      }
+    },
+    {
+      "case_key": "baseline:real-ui-login-and-image-consumers-fr",
+      "suite": "baseline",
+      "id": "real-ui-login-and-image-consumers-fr",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T01"
+      ],
+      "supporting_family_ids": [
+        "V02-T16",
+        "V02-T12",
+        "V02-T13"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "real-ui-login-and-image-consumers-fr"
+      }
+    },
+    {
+      "case_key": "baseline:original-private-alias-denials-anonymous",
+      "suite": "baseline",
+      "id": "original-private-alias-denials-anonymous",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Original private aliases receive denial-only probes; synthetic fourth alias covers compatibility positive. No original-owner positive/production-policy claim."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "original-private-alias-denials-anonymous"
+      }
+    },
+    {
+      "case_key": "baseline:original-private-alias-denials-ui",
+      "suite": "baseline",
+      "id": "original-private-alias-denials-ui",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Original private aliases receive denial-only probes; synthetic fourth alias covers compatibility positive. No original-owner positive/production-policy claim."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "original-private-alias-denials-ui"
+      }
+    },
+    {
+      "case_key": "baseline:original-private-alias-denials-foreign",
+      "suite": "baseline",
+      "id": "original-private-alias-denials-foreign",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Original private aliases receive denial-only probes; synthetic fourth alias covers compatibility positive. No original-owner positive/production-policy claim."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "original-private-alias-denials-foreign"
+      }
+    },
+    {
+      "case_key": "baseline:original-private-alias-denials-revocation",
+      "suite": "baseline",
+      "id": "original-private-alias-denials-revocation",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Original private aliases receive denial-only probes; synthetic fourth alias covers compatibility positive. No original-owner positive/production-policy claim."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "original-private-alias-denials-revocation"
+      }
+    },
+    {
+      "case_key": "baseline:original-private-alias-denials-expiry",
+      "suite": "baseline",
+      "id": "original-private-alias-denials-expiry",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Original private aliases receive denial-only probes; synthetic fourth alias covers compatibility positive. No original-owner positive/production-policy claim."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "original-private-alias-denials-expiry"
+      }
+    },
+    {
+      "case_key": "baseline:original-private-alias-denials-permissionChange",
+      "suite": "baseline",
+      "id": "original-private-alias-denials-permissionChange",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Original private aliases receive denial-only probes; synthetic fourth alias covers compatibility positive. No original-owner positive/production-policy claim."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "original-private-alias-denials-permissionChange"
+      }
+    },
+    {
+      "case_key": "baseline:original-private-alias-denials-moduleChange",
+      "suite": "baseline",
+      "id": "original-private-alias-denials-moduleChange",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Original private aliases receive denial-only probes; synthetic fourth alias covers compatibility positive. No original-owner positive/production-policy claim."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "original-private-alias-denials-moduleChange"
+      }
+    },
+    {
+      "case_key": "baseline:original-private-alias-denials-permissionDenied",
+      "suite": "baseline",
+      "id": "original-private-alias-denials-permissionDenied",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Original private aliases receive denial-only probes; synthetic fourth alias covers compatibility positive. No original-owner positive/production-policy claim."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "original-private-alias-denials-permissionDenied"
+      }
+    },
+    {
+      "case_key": "baseline:original-private-alias-denials-moduleDenied",
+      "suite": "baseline",
+      "id": "original-private-alias-denials-moduleDenied",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Original private aliases receive denial-only probes; synthetic fourth alias covers compatibility positive. No original-owner positive/production-policy claim."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "original-private-alias-denials-moduleDenied"
+      }
+    },
+    {
+      "case_key": "baseline:anonymous-both-delivery-urls",
+      "suite": "baseline",
+      "id": "anonymous-both-delivery-urls",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T09"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "anonymous-both-delivery-urls"
+      }
+    },
+    {
+      "case_key": "baseline:foreign-both-delivery-urls",
+      "suite": "baseline",
+      "id": "foreign-both-delivery-urls",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "foreign-both-delivery-urls"
+      }
+    },
+    {
+      "case_key": "baseline:permissionDenied-both-delivery-urls",
+      "suite": "baseline",
+      "id": "permissionDenied-both-delivery-urls",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "permissionDenied-both-delivery-urls"
+      }
+    },
+    {
+      "case_key": "baseline:moduleDenied-both-delivery-urls",
+      "suite": "baseline",
+      "id": "moduleDenied-both-delivery-urls",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "moduleDenied-both-delivery-urls"
+      }
+    },
+    {
+      "case_key": "baseline:revocation-original-signed-cookie-replay",
+      "suite": "baseline",
+      "id": "revocation-original-signed-cookie-replay",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T12"
+      ],
+      "supporting_family_ids": [
+        "V02-T16",
+        "V02-T02"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Only revocation branch renders/history-restores page; expiry/permission/module baseline branches are HTTP asset replays. Auth extension supplies actual rendered journeys."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "revocation-original-signed-cookie-replay"
+      }
+    },
+    {
+      "case_key": "baseline:expiry-original-signed-cookie-replay",
+      "suite": "baseline",
+      "id": "expiry-original-signed-cookie-replay",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16",
+        "V02-T02",
+        "V02-T13"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Only revocation branch renders/history-restores page; expiry/permission/module baseline branches are HTTP asset replays. Auth extension supplies actual rendered journeys."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "expiry-original-signed-cookie-replay"
+      }
+    },
+    {
+      "case_key": "baseline:permissionChange-original-signed-cookie-replay",
+      "suite": "baseline",
+      "id": "permissionChange-original-signed-cookie-replay",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T11"
+      ],
+      "supporting_family_ids": [
+        "V02-T16",
+        "V02-T02"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Only revocation branch renders/history-restores page; expiry/permission/module baseline branches are HTTP asset replays. Auth extension supplies actual rendered journeys."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "permissionChange-original-signed-cookie-replay"
+      }
+    },
+    {
+      "case_key": "baseline:moduleChange-original-signed-cookie-replay",
+      "suite": "baseline",
+      "id": "moduleChange-original-signed-cookie-replay",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T11"
+      ],
+      "supporting_family_ids": [
+        "V02-T16",
+        "V02-T02"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Only revocation branch renders/history-restores page; expiry/permission/module baseline branches are HTTP asset replays. Auth extension supplies actual rendered journeys."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "moduleChange-original-signed-cookie-replay"
+      }
+    },
+    {
+      "case_key": "baseline:authorized-get-head-and-private-optimizer-denial",
+      "suite": "baseline",
+      "id": "authorized-get-head-and-private-optimizer-denial",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10",
+        "V02-T09"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "authorized-get-head-and-private-optimizer-denial"
+      }
+    },
+    {
+      "case_key": "baseline:original-private-alias-probe-coverage",
+      "suite": "baseline",
+      "id": "original-private-alias-probe-coverage",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically.",
+        "Original private aliases receive denial-only probes; synthetic fourth alias covers compatibility positive. No original-owner positive/production-policy claim."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "original-private-alias-probe-coverage"
+      }
+    },
+    {
+      "case_key": "baseline:browser-cache-and-runtime-errors",
+      "suite": "baseline",
+      "id": "browser-cache-and-runtime-errors",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T10"
+      ],
+      "supporting_family_ids": [
+        "V02-T16",
+        "V02-T12",
+        "V02-T13"
+      ],
+      "notes": [
+        "Baseline R02 continuity is freshly rerun on the V02 candidate; no historical pass promoted automatically."
+      ],
+      "evidence_selector": {
+        "file": "browser/p04v02-full-20261109-r1/result.json",
+        "array": "checks",
+        "key": "label",
+        "value": "browser-cache-and-runtime-errors"
+      }
+    },
+    {
+      "case_key": "provider:public-config-get",
+      "suite": "provider",
+      "id": "public-config-get",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T09",
+        "V02-T14"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "public-config-get"
+      }
+    },
+    {
+      "case_key": "provider:public-config-head",
+      "suite": "provider",
+      "id": "public-config-head",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T09",
+        "V02-T14"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "public-config-head"
+      }
+    },
+    {
+      "case_key": "provider:implicit-options",
+      "suite": "provider",
+      "id": "implicit-options",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T09"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "implicit-options"
+      }
+    },
+    {
+      "case_key": "provider:unsupported-put",
+      "suite": "provider",
+      "id": "unsupported-put",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T09"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "unsupported-put"
+      }
+    },
+    {
+      "case_key": "provider:unsupported-delete",
+      "suite": "provider",
+      "id": "unsupported-delete",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T09"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "unsupported-delete"
+      }
+    },
+    {
+      "case_key": "provider:unknown-slug",
+      "suite": "provider",
+      "id": "unknown-slug",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "unknown-slug"
+      }
+    },
+    {
+      "case_key": "provider:invalid-action",
+      "suite": "provider",
+      "id": "invalid-action",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "invalid-action"
+      }
+    },
+    {
+      "case_key": "provider:missing-discriminator-no-op",
+      "suite": "provider",
+      "id": "missing-discriminator-no-op",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "missing-discriminator-no-op"
+      }
+    },
+    {
+      "case_key": "provider:callback-missing-signature",
+      "suite": "provider",
+      "id": "callback-missing-signature",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "callback-missing-signature"
+      }
+    },
+    {
+      "case_key": "provider:callback-invalid-signature",
+      "suite": "provider",
+      "id": "callback-invalid-signature",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "callback-invalid-signature"
+      }
+    },
+    {
+      "case_key": "provider:callback-tampered-signed-origin",
+      "suite": "provider",
+      "id": "callback-tampered-signed-origin",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "callback-tampered-signed-origin"
+      }
+    },
+    {
+      "case_key": "provider:callback-origin-header-without-signature",
+      "suite": "provider",
+      "id": "callback-origin-header-without-signature",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "callback-origin-header-without-signature"
+      }
+    },
+    {
+      "case_key": "provider:callback-valid-signature-invalid-body",
+      "suite": "provider",
+      "id": "callback-valid-signature-invalid-body",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "callback-valid-signature-invalid-body"
+      }
+    },
+    {
+      "case_key": "provider:error-hook-missing-signature",
+      "suite": "provider",
+      "id": "error-hook-missing-signature",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "error-hook-missing-signature"
+      }
+    },
+    {
+      "case_key": "provider:error-hook-invalid-signature",
+      "suite": "provider",
+      "id": "error-hook-invalid-signature",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "error-hook-invalid-signature"
+      }
+    },
+    {
+      "case_key": "provider:anonymous-upload-denied",
+      "suite": "provider",
+      "id": "anonymous-upload-denied",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T14"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "anonymous-upload-denied"
+      }
+    },
+    {
+      "case_key": "provider:authorized-legacy-upload-managed-control-only",
+      "suite": "provider",
+      "id": "authorized-legacy-upload-managed-control-only",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T14"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "authorized-legacy-upload-managed-control-only"
+      }
+    },
+    {
+      "case_key": "provider:read-only-actor-upload-denied",
+      "suite": "provider",
+      "id": "read-only-actor-upload-denied",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T14"
+      ],
+      "supporting_family_ids": [],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "read-only-actor-upload-denied"
+      }
+    },
+    {
+      "case_key": "provider:module-disabled-upload-denied",
+      "suite": "provider",
+      "id": "module-disabled-upload-denied",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T14"
+      ],
+      "supporting_family_ids": [
+        "V02-T11"
+      ],
+      "notes": [],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "module-disabled-upload-denied"
+      }
+    },
+    {
+      "case_key": "provider:foreign-origin-upload-denied",
+      "suite": "provider",
+      "id": "foreign-origin-upload-denied",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T14"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Legacy ingress deliberately rejects even an authorized caller; this does not establish an independent origin policy for a successful upload path."
+      ],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "foreign-origin-upload-denied"
+      }
+    },
+    {
+      "case_key": "provider:signed-error-hook-positive",
+      "suite": "provider",
+      "id": "signed-error-hook-positive",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Synthetic secret and owned local callback receiver only; replay/completion callback is intentionally no-op for business data."
+      ],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "signed-error-hook-positive"
+      }
+    },
+    {
+      "case_key": "provider:signed-callback-positive",
+      "suite": "provider",
+      "id": "signed-callback-positive",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Synthetic secret and owned local callback receiver only; replay/completion callback is intentionally no-op for business data."
+      ],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "signed-callback-positive"
+      }
+    },
+    {
+      "case_key": "provider:signed-callback-replay-no-business-effect",
+      "suite": "provider",
+      "id": "signed-callback-replay-no-business-effect",
+      "status": "planned_not_executed",
+      "direct_family_ids": [
+        "V02-T16",
+        "V02-T15"
+      ],
+      "supporting_family_ids": [],
+      "notes": [
+        "Synthetic secret and owned local callback receiver only; replay/completion callback is intentionally no-op for business data."
+      ],
+      "evidence_selector": {
+        "file": "provider/<owned-run-output>/result.json",
+        "array": "observations",
+        "key": "id",
+        "value": "signed-callback-replay-no-business-effect"
+      }
+    }
+  ],
+  "endpoint_disposition": {
+    "declared_path_count": 30,
+    "http_candidate_path_count": 29,
+    "server_only_declared_path": "/api/auth/verify-password",
+    "pathless_server_api": "setPassword",
+    "source_only_until_receipts": "Enumerating an endpoint does not certify all of its credential/token/state branches."
+  },
+  "finding_classification": "findings-classification-draft.json",
+  "repair_numbering": "P04-R05 is reserved for the approved finance visibility policy. New confirmed V02 defects may propose R06+ only after reviewed evidence; no IDs or completion are inferred here."
+}

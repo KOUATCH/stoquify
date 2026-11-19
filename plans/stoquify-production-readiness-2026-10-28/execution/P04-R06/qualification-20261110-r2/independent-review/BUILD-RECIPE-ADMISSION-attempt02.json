@@ -1,0 +1,185 @@
+{
+  "at": "2026-11-10T14:15:12.007Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Same isolated full build recipe; exclusive successor receipts after original capacity gate rejected before any command",
+  "files": [
+    {
+      "path": "run-build-attempt02.cjs",
+      "sha256": "d54c15b1af2591b966875143dc752d15ef55758bf5d45e0edae5da6ac3f0dbd9"
+    },
+    {
+      "path": "environment-guard.cjs",
+      "sha256": "2916634ef9741d082a86dfee8cdd1b06cc2ebdd285e956b79705671504b40a2d"
+    },
+    {
+      "path": "verify-generated-schema.cjs",
+      "sha256": "f0c73d0ed95fa45c328006c04607b8b129b7347400a3d96292914aa4170d1d93"
+    },
+    {
+      "path": "check-resources.cjs",
+      "sha256": "76ed28fd79069d9aed58c6d4ed9d2690008236cdaf0ad73516476f1429d150d4"
+    },
+    {
+      "path": "resource-snapshot.ps1",
+      "sha256": "46fcf22a3615aca5a4c48da70cadf246da81479a30f6f4b43ed301672ff61534"
+    },
+    {
+      "path": "inventory/source-after-manifest.json",
+      "sha256": "e535b2e9cb694d09b67d64706e9fbbe2f89ac829b2297c86120ca83d012ac614"
+    },
+    {
+      "path": "independent-review/REPAIR-SOURCE-ADMISSION.json",
+      "sha256": "4993e10c3c40dd9e29e947db2533de7427d1e9cbe1290e61563aa4644936cca9"
+    },
+    {
+      "path": "independent-review/UNIT-OUTCOME-REVIEW.json",
+      "sha256": "70144c056ef2ff4a7dd04b88753ec84cdcb8ba49a97bef1fed21a56a1a990a96"
+    },
+    {
+      "path": "independent-review/SOURCE-INVENTORY-RECONCILIATION.json",
+      "sha256": "93402063599976d4d08c19bd3eed281ad2852663688879a86fb8081767dc88dc"
+    },
+    {
+      "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+      "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+    },
+    {
+      "path": "../../../../../scripts/candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    },
+    {
+      "path": "../../../../../scripts/release-artifact.cjs",
+      "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"
+    },
+    {
+      "path": "../../../../../scripts/build-app-safe.js",
+      "sha256": "c45e5d883a8f93a996227977ad85df4725f7d9e4ef54d37067927e2286f8f68d"
+    },
+    {
+      "path": "../../../../../next.config.mjs",
+      "sha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf"
+    },
+    {
+      "path": "../../../../../prisma.config.ts",
+      "sha256": "9ca041eb60d478f2284a37417ff230927c92cff0d675342d8262dea57e516737"
+    },
+    {
+      "path": "../../../../../package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "../../../../../package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "../../../../../node_modules/typescript/lib/typescript.js",
+      "sha256": "dd17428736a07e1db1a138d8a14295ddb2699ba780ee15038acdd2c6da5373a0"
+    },
+    {
+      "path": "../../../../../scripts/release-secret-preflight.js",
+      "sha256": "d20efac2da7ef1767cffb0bf19a9825b9a41310edee1b64bd4248dcaa1638729"
+    },
+    {
+      "path": "../../../../../docs/ecc/command-registry.json",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381"
+    },
+    {
+      "path": "../../../../../tsconfig.json",
+      "sha256": "d8520694b9940364a676d62d757600ffb29718574e72c5752f8f4875021f4ccb"
+    },
+    {
+      "path": "run-build.cjs",
+      "sha256": "1a7ee622e67b363c6d0722085ee5c6af925e1f65ad0d3f41505986a1811c9226"
+    },
+    {
+      "path": "build-result.json",
+      "sha256": "df85508f56d3ca6666ed7e1edb0827fe85d2d0c686770346d5d81eca4d52beba"
+    },
+    {
+      "path": "resource-build-admission.json",
+      "sha256": "f2644ba18d4a1568cdbe9f7191f501746f62dd995b40b5603dae543f506637cf"
+    },
+    {
+      "path": "independent-review/BUILD-ENTRY-CAPACITY-OUTCOME.json",
+      "sha256": "bf7586f6982353eb0adffd9cb5628e37fbbd4ee681ccf230fc4301fc00ea6446"
+    },
+    {
+      "path": "independent-review/DATABASE-OUTCOME-REVIEW.json",
+      "sha256": "c46599dc6125dd0977a9cf0d7af6ceb8219080e0b13b7b3a645326b3c29c93c1"
+    }
+  ],
+  "delegatedInputs": [
+    {
+      "path": "scripts/candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46",
+      "previousExactReview": "../qualification-20261109-r1/independent-review/RETRY-RECIPE-ADMISSION-attempt02.json"
+    },
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c",
+      "previousExactReview": "../qualification-20261109-r1/independent-review/RETRY-RECIPE-ADMISSION-attempt02.json"
+    },
+    {
+      "path": "scripts/build-app-safe.js",
+      "sha256": "c45e5d883a8f93a996227977ad85df4725f7d9e4ef54d37067927e2286f8f68d",
+      "previousExactReview": "../qualification-20261109-r1/independent-review/RETRY-RECIPE-ADMISSION-attempt02.json"
+    },
+    {
+      "path": "next.config.mjs",
+      "sha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf",
+      "previousExactReview": "../qualification-20261109-r1/independent-review/RETRY-RECIPE-ADMISSION-attempt02.json"
+    },
+    {
+      "path": "prisma.config.ts",
+      "sha256": "9ca041eb60d478f2284a37417ff230927c92cff0d675342d8262dea57e516737",
+      "previousExactReview": "../qualification-20261109-r1/independent-review/RETRY-RECIPE-ADMISSION-attempt02.json"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "previousExactReview": "../qualification-20261109-r1/independent-review/RETRY-RECIPE-ADMISSION-attempt02.json"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "previousExactReview": "../qualification-20261109-r1/independent-review/RETRY-RECIPE-ADMISSION-attempt02.json"
+    },
+    {
+      "path": "node_modules/typescript/lib/typescript.js",
+      "sha256": "dd17428736a07e1db1a138d8a14295ddb2699ba780ee15038acdd2c6da5373a0",
+      "previousExactReview": "../qualification-20261109-r1/independent-review/RETRY-RECIPE-ADMISSION-attempt02.json"
+    }
+  ],
+  "review": [
+    "Current build entrypoints/config/lock/TypeScript and eight inherited helpers match exact previously independently reviewed bytes; artifact/schema promotion remain separate.",
+    "New runner requires exactrecipe,passedsource/candidate/independentcandidateproof,noenvfiles,fullroot/candidate equality and68critical hashes; private asset decisions preserved.",
+    "Fresh resource checks before client generation and before compile use unchanged6/12/12GiB thresholds; no heap/worker/type/lint gate removed.",
+    "Build connects only owned loopback55517 empty buildDB,checksactualdatadir,all122migration checksums and every nonmigration tableempty.",
+    "Childenvironment allowlists OSvariables,sets only synthetic local URLs/randomsecrets and disables live communication flags; secrets saved only newprivateDfile. NODE_OPTIONS preload blocksenvreads/nonallowed Node network targets.",
+    "Pinned installed Prisma CLI/WASM canonical merge verifies generated client exactly against current schema; no count-only schema acceptance.",
+    "Normal release:artifact invokes secretpreflight,repositorylint,Nextbuild/typevalidation and content-bound packaging; fixednewartifact path must be absent. No migration/deploy command called bybuild.",
+    "Packaging verifies full sourceidentity,allruntimebytes,legacyprivate mappings,and excludes allthree explicitlyprivatepublicaliases.",
+    "Childtimeouts stop only ownedchild process trees; any unconfirmed exit/failure remains failure withdiagnosticreceipts."
+  ],
+  "requiredBeforeExecution": [
+    "Accepted actualdependency staging andcandidateoutcome.",
+    "Accepted actualnewDB preparation/emptymigrationclone identity; no productiondata.",
+    "Fresh resource andallsourcehash gatespass at execution."
+  ],
+  "requiredAfterExecution": [
+    "Independent actualbuild/artifact/canonical-client review before any applicationruntime qualification."
+  ],
+  "limitations": [
+    "Reusedinstalleddependencies are not a clean-install reproducibility result.",
+    "Node socket guard/localenv constrain declared applicationtargets; this is not a blanket operating-system network-isolation certification.",
+    "No build success,real-session/nativeeffect/browser or productionreadiness claim from recipe admission."
+  ],
+  "predecessorAdmissionSha256": "c9ba07b64695d15aa06e4c6127cc2d66648486569be31753763ec0d556036559",
+  "retryChanges": [
+    "Only admission/resource/result filenames; intended private client/env/log names are unused and unchanged.",
+    "Same fresh6GiB physical/12GiB commit/12GiB disk admission floors; same heap, lint/type/Next/canonical artifact gates."
+  ],
+  "capacityDoesNotCurrentlyPass": true,
+  "allowedNext": "Retry can execute only if its own fresh resource gate passes; no generation/compilation under failed capacity. Do not rerun database prepare or seed."
+}

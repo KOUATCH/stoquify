@@ -1,0 +1,33 @@
+{
+  "startedAt": "2026-10-29T09:13:41.107Z",
+  "passed": true,
+  "command": {
+    "file": "robocopy.exe",
+    "args": [
+      "D:\\Codex-Stoquify-P03-20261028-01a1816a\\recovery\\node_modules",
+      "D:\\Codex-Stoquify-P03-20261028-01a1816a\\recovery-u02\\node_modules",
+      "/E",
+      "/XJ",
+      "/R:0",
+      "/W:0",
+      "/MT:8",
+      "/NFL",
+      "/NDL",
+      "/NJH",
+      "/NP"
+    ],
+    "exitCode": 1
+  },
+  "target": "D:\\Codex-Stoquify-P03-20261028-01a1816a\\recovery-u02",
+  "files": 7916,
+  "versions": {
+    "next": "15.5.27",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "prisma": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "typescript": "5.8.3"
+  },
+  "priorAttempt": "u02-preparation-attempt-01.json",
+  "finishedAt": "2026-10-29T09:19:15.109Z"
+}

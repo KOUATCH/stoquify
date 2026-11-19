@@ -1,0 +1,15 @@
+# P04-V02 UploadThing protocol qualification
+
+This recipe exercises the actual built application at https://localhost:3196. A task-owned receiver listens only on 127.0.0.1:3198 while the suite runs. It uses an explicitly synthetic signing key; no hosted provider credentials or requests are admitted. The full-app orchestrator invokes `runProviderProtocol` only after independent recipe review.
+
+The suite covers 23 cases: public metadata and implicit methods; missing/invalid signature; body/origin tampering; error hook; invalid route/discriminator; intentionally disabled legacy upload under anonymous, authorized and foreign-origin requests; a signed callback and replay. Every response is checked for synthetic private markers and provider-key disclosure. Every case has before/after business snapshots; authentication and audit bookkeeping are classified separately. Callback counts and payloads prove rejection and positive processing. Receipts store hashes and synthetic receiver metadata, never signed-session cookies.
+
+The runner is import-only and never imports application modules or directly writes the database. Its injected setModuleActive helper suspends/restores only the owned synthetic inventory grant for one precondition; snapshots bracket the HTTP request after that precondition, with exact original fixture restoration in finally. Its only mutations are fresh evidence files and transient loopback listeners. The application receives requests against a disposable local database. The injected snapshot helper must return a businessSha256 plus independently classified security/session state.
+
+The installed SDK wraps non-UploadThing application authorization/business exceptions as HTTP 500 with the fixed message “Failed to run middleware”. Those three legacy-upload cases require that exact response; a generic unexpected 500 is not sufficient. The application currently always refuses that legacy entry after authorization; managed storage uploads remain a separate scope.
+
+Signed callback origin is signature-covered input, not a separately enforced allowlist. Unsigned origin headers and body changes cannot grant callback authority. A valid synthetic key is used only with the local receiver; hosted routing, CDN/storage and operators are not qualified. The callback currently returns an empty object and has no business side effect.
+
+Cleanup closes the owned receiver in finally. Other database/application/browser cleanup belongs to the independently reviewed full-app orchestrator. Failed attempts remain immutable; retries use fresh evidence directories.
+
+Audit/session classification: all cases require unchanged businessSha256 (including accounts) and sessionSha256. All except module-disabled require unchanged auditSha256. The single module-disabled case requires exactly one appended ModuleEntitlementDecision/MODULE_ENTITLEMENT_ENFORCED audit for the authorized actor/tenant, inventory, POST /api/uploadthing, allowed:false, mode:enforce; every existing audit row must remain unchanged. The current writer and a separate read-only actor both exercise legacy upload refusal. Any unexpected delta fails the gate.

@@ -10,6 +10,7 @@ import {
 } from "@/services/payroll/employee.service"
 import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
 import { ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { getHrisEmploymentAsOf } from "./lifecycle.service"
 import {
   ownHrisRecordAccessScope,
   resolveHrisPeopleAccessScope,
@@ -115,6 +116,7 @@ export async function getHrisEmployeeDirectory(
     actorId: input.actorId ?? "",
     actorPermissions: input.actorPermissions,
     limit: input.limit,
+    asOf: input.asOf,
   }, client)
   const result = await getPayrollEmployeeSourceData({
     ...input,
@@ -139,6 +141,7 @@ export async function getHrisEmployeeProfile(
     actorPermissions: input.actorPermissions,
     employeeId: input.employeeId,
     limit: 1,
+    asOf: input.asOf,
   }, client)
   const result = await getPayrollEmployeeSourceData(
     {
@@ -149,7 +152,17 @@ export async function getHrisEmployeeProfile(
     client,
   )
 
-  return toHrisEmployeeProfileResult(result, "HRIS employee profile not found", accessScope)
+  const profile=toHrisEmployeeProfileResult(result, "HRIS employee profile not found", accessScope)
+  if (input.asOf) {
+    const projection=await getHrisEmploymentAsOf({organizationId:input.organizationId,employeeId:input.employeeId,
+      actorId:input.actorId,actorPermissions:input.actorPermissions,asOf:new Date(input.asOf)},client)
+    profile.employee.status=projection.state.status
+    profile.employee.blockers=profile.employee.blockers.filter(code=>code!=="EMPLOYEE_NOT_ACTIVE")
+    if(projection.state.status!=="ACTIVE")profile.employee.blockers.push("EMPLOYEE_NOT_ACTIVE")
+    const {hireDate,terminationDate,locationId,department,jobTitle,costCenter}=projection.state
+    profile.employee.employment={...profile.employee.employment,hireDate,terminationDate,locationId,department,jobTitle,costCenter}
+  }
+  return profile
 }
 
 export async function getOwnHrisEmployeeProfile(

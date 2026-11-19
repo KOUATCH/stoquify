@@ -16,6 +16,7 @@ import {
   grantAccountantAccessInputSchema,
   inviteAccountantAccessInputSchema,
   revokeAccountantAccessInputSchema,
+  accountantPortfolioInputSchema,
 } from "@/services/accounting/accountant-access.schemas"
 import { protect } from "@/services/_shared/protect"
 
@@ -40,7 +41,9 @@ const listPortfolio = protect<unknown, AccountantPortfolio>(
     auditResource: "AccountantPortfolio",
     auditAllowed: false,
   },
-  async (_input, ctx) => getAccountantPortfolio(ctx.userId),
+  async (input, ctx) => getAccountantPortfolio({
+    homeOrganizationId: ctx.orgId, actorId: ctx.userId, actorPermissions: ctx.permissions,
+  }, accountantPortfolioInputSchema.parse(input)),
 )
 
 export async function getAccountantPortfolioAction(input: unknown = {}) {

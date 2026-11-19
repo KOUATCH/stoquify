@@ -30,6 +30,13 @@ const session = {
 }
 
 describe("password step-up server action", () => {
+  it("classifies a locked account as an authentication denial", async () => {
+    mockRequireSession.mockRejectedValue({ code: "ACCOUNT_LOCKED" })
+    const result = await stepUpWithPasswordAction({ password: "valid password" })
+    expect(result).toMatchObject({ success: false, code: "AUTH_REQUIRED", data: null })
+    expect(mockStepUpSessionWithPassword).not.toHaveBeenCalled()
+    expect(mockLoggerError).not.toHaveBeenCalled()
+  })
   beforeEach(() => {
     jest.useFakeTimers()
     jest.setSystemTime(NOW)

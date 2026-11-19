@@ -25,6 +25,10 @@ export const hrisTimeLeaveEvidenceSchema = z.object({
   leaveBalanceSnapshotHash: hrisTimeLeaveProofHashSchema,
   approvedLeaveRequestHashes: z.array(hrisTimeLeaveProofHashSchema).max(500).default([]),
   approvedOvertimeRequestHashes: z.array(hrisTimeLeaveProofHashSchema).max(500).default([]),
+  approvedCorrectionHashes: z.array(hrisTimeLeaveProofHashSchema).max(500).optional(),
+  allocationHash: hrisTimeLeaveProofHashSchema.optional(),
+  allocationVersion: z.literal(1).optional(),
+  policySourceHashes: z.array(hrisTimeLeaveProofHashSchema).max(500).optional(),
 }).strict()
 
 export const hrisTimeLeaveUnresolvedSchema = z.object({

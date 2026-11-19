@@ -1,0 +1,158 @@
+{
+  "observedAt": "2026-10-29T12:27:59.794Z",
+  "evidenceClass": "source-and-filesystem-metadata-only",
+  "boundaries": [
+    "No application imports",
+    "No environment files read or loaded",
+    "No database or network access",
+    "No image contents read/rendered",
+    "No application changes"
+  ],
+  "scope": {
+    "sourceRoots": [
+      "actions",
+      "app",
+      "components",
+      "lib",
+      "services",
+      "prisma",
+      "scripts",
+      "types",
+      "config",
+      "hooks",
+      "src",
+      "_legacy-dashboard",
+      "tests",
+      "__tests__",
+      "validations"
+    ],
+    "rootFiles": [
+      "next.config.mjs",
+      "middleware.ts",
+      "package.json",
+      ".gitignore"
+    ],
+    "excludedDirectories": [
+      "node_modules",
+      ".git",
+      "graphify-out",
+      ".next",
+      "coverage",
+      "generated",
+      "migrations"
+    ],
+    "limitations": "Lexical discovery and AST JSX inventory are bounded to listed source roots/extensions. No database-reference prevalence or deployed/CDN/cache state is asserted."
+  },
+  "dependencies": [
+    {
+      "path": "node_modules/next/package.json",
+      "sha256": "547305a02acf9b1700e8210e511deefe616d415f3fc06c9f7551187430b7ee54",
+      "version": "15.5.27",
+      "reviewLevel": "read-installed-source-not-executed"
+    },
+    {
+      "path": "node_modules/next/dist/server/image-optimizer.js",
+      "sha256": "bf2e6f1961dd49c8928a9671319f1f623478a868cc460b979ba414f19e82f48b",
+      "reviewLevel": "read-installed-source-not-executed"
+    },
+    {
+      "path": "node_modules/next/dist/server/lib/mock-request.js",
+      "sha256": "aed787c56c2d3df27d96a49ec73b6c1263ef45de75ec9905747610e78b555909",
+      "reviewLevel": "read-installed-source-not-executed"
+    }
+  ],
+  "graphs": [
+    {
+      "path": "graphify-out/graph_actions.json",
+      "sha256": "01aa0155ee0b6889fda9be251d9bd73c82d6bd1d4e143114eee8b3bdb3a2c032",
+      "modifiedUtc": "2026-08-09T11:14:24.889Z",
+      "status": "dated-discovery-only",
+      "nodes": [
+        {
+          "label": "savePhotoLocally()",
+          "file_type": "code",
+          "source_file": "storage\\photo-upload-actions.ts",
+          "source_location": "L55",
+          "id": "storage_photo_upload_actions_savephotolocally",
+          "community": 7,
+          "norm_label": "savephotolocally()"
+        },
+        {
+          "label": "deletePhotoLocally()",
+          "file_type": "code",
+          "source_file": "storage\\photo-upload-actions.ts",
+          "source_location": "L93",
+          "id": "storage_photo_upload_actions_deletephotolocally",
+          "community": 7,
+          "norm_label": "deletephotolocally()"
+        },
+        {
+          "label": "uploadPhoto()",
+          "file_type": "code",
+          "source_file": "storage\\photo-upload-actions.ts",
+          "source_location": "L123",
+          "id": "storage_photo_upload_actions_uploadphoto",
+          "community": 7,
+          "norm_label": "uploadphoto()"
+        },
+        {
+          "label": "ensureLocalStorageDirectories()",
+          "file_type": "code",
+          "source_file": "storage\\storage-config-actions.ts",
+          "source_location": "L89",
+          "id": "storage_storage_config_actions_ensurelocalstoragedirectories",
+          "community": 7,
+          "norm_label": "ensurelocalstoragedirectories()"
+        }
+      ]
+    },
+    {
+      "path": "graphify-out/graph_app.json",
+      "sha256": "e02493517df4c3f25f2c84252031d266064966c781988c0fd6726060863aeb1b",
+      "modifiedUtc": "2026-08-09T11:14:24.214Z",
+      "status": "dated-discovery-only",
+      "nodes": [
+        {
+          "label": "route.ts",
+          "file_type": "code",
+          "source_file": "api\\uploads\\[...path]\\route.ts",
+          "source_location": "L1",
+          "id": "api_uploads_path_route_ts",
+          "community": 15,
+          "norm_label": "route.ts"
+        },
+        {
+          "label": "GET()",
+          "file_type": "code",
+          "source_file": "api\\uploads\\[...path]\\route.ts",
+          "source_location": "L38",
+          "id": "path_route_get",
+          "community": 15,
+          "norm_label": "get()"
+        }
+      ]
+    }
+  ],
+  "optimizerEvidence": [
+    {
+      "path": "node_modules/next/dist/server/image-optimizer.js",
+      "line": 714,
+      "claim": "Cache key uses href,width,quality,mimeType, not actor identity"
+    },
+    {
+      "path": "node_modules/next/dist/server/image-optimizer.js",
+      "line": 953,
+      "claim": "Internal fetch builds request without original headers/cookies"
+    },
+    {
+      "path": "node_modules/next/dist/server/lib/mock-request.js",
+      "line": 424,
+      "claim": "Mock internal request headers default to empty object"
+    },
+    {
+      "path": "node_modules/next/dist/server/image-optimizer.js",
+      "line": 1137,
+      "claim": "Optimizer response sets public cache-control"
+    }
+  ]
+}

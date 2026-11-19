@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-25",
+  "method": "Manual inspection of retained browser screenshots and PDF contact sheets",
+  "browserScreenshots": [
+    "AF06/desk-en-1440.png",
+    "AF06/desk-fr-390.png",
+    "AF12/advisory-en-1440.png",
+    "AF12/advisory-fr-390.png",
+    "AF13/shared-browser/practice-en-1440.png",
+    "AF13/shared-browser/practice-fr-390.png"
+  ],
+  "browserObservation": "Selected desktop and mobile panels have readable labels, wrapping controls and aligned content without visible horizontal clipping. Screenshots cover the scrolled panels, not every page state.",
+  "exportPages": [
+    "AF08/sample-workpapers.pdf page 1",
+    "AF12/sample-advisory-pack.pdf page 1",
+    "AF12/browser-advisory.pdf page 1"
+  ],
+  "exportObservation": "The inspected first pages have readable tables, balance labels, provenance and limitations without visible clipping. Text and balance reconciliation for all pages are recorded separately in export-artifact-verification.json.",
+  "publishedReports": {
+    "documents": ["GO_NO_GO", "PILOT_PROTOCOL", "RELEASE_SCOPE", "RESULT", "ROLLBACK_RUNBOOK"],
+    "pagesInspectedInContactSheets": 13,
+    "observation": "Headings, tables, wrapping, margins and page numbers remain visible. Tables continue with repeated headers. Some final continuation pages are sparse; no content is visibly clipped or overlapped."
+  },
+  "automatedEvidence": "Three browser receipts contain twelve scoped axe scans with no reported violations; publication-verification.json covers 88 Markdown/PDF pairs and 299 pages.",
+  "limitation": "Contact-sheet layout review and scoped axe scans are not full screen-reader, whole-application accessibility or production usability certification.",
+  "passedWithinInspectedScope": true
+}

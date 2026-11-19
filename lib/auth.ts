@@ -1,8 +1,9 @@
 import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log";
-import { credentialSignInSucceeded } from "@/lib/security/credential-sign-in-outcome";
+import { credentialSignInFailed, credentialSignInSucceeded } from "@/lib/security/credential-sign-in-outcome";
 import { buildTrustedOrigins } from "@/lib/security/trusted-origins";
 import { db } from "@/prisma/db";
 import { betterAuth } from "better-auth";
+import { APIError, formCsrfMiddleware, getSession } from "better-auth/api";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 
 const baseURL = process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"
@@ -43,6 +44,49 @@ function getRequestAuditContext(ctx: any) {
   }
 }
 
+// These registered endpoint templates use their own sign-in/recovery proof.
+// Everything else, including API-only endpoints without a path, needs a
+// current session. Sign-out remains available to clear unusable cookies.
+const publicAuthPaths = new Set([
+  "/sign-in/email", "/sign-in/social", "/sign-up/email", "/callback/:id",
+  "/send-verification-email", "/verify-email", "/request-password-reset",
+  "/reset-password/:token", "/reset-password", "/ok", "/error", "/sign-out",
+])
+
+async function requireCurrentAuthAccount(ctx: any) {
+  if (publicAuthPaths.has(ctx.path)) return
+
+  // Never let caller query values or a previously cached context supply proof.
+  // Use the raw endpoint: getSessionFromCtx turns store errors into null,
+  // which must not be mistaken for a successful anonymous session lookup.
+  const resolved = await getSession()({
+    ...(ctx as NonNullable<Parameters<ReturnType<typeof getSession>>[0]>),
+    method: "GET",
+    asResponse: false,
+    returnHeaders: true,
+    returnStatus: false,
+    query: { ...ctx.query, disableCookieCache: true, disableRefresh: true },
+    context: { ...ctx.context, session: null },
+  })
+  resolved.headers?.forEach((value, key) => {
+    ctx.context.responseHeaders ??= new Headers()
+    if (key.toLowerCase() === "set-cookie") ctx.context.responseHeaders.append(key, value)
+    else ctx.context.responseHeaders.set(key, value)
+  })
+  const session = resolved.response
+  // Keep the native nullable response for an anonymous/expired get-session.
+  if (!session && ctx.path === "/get-session") return
+  const user = session?.user?.id ? await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { isActive: true, isLocked: true, lockedUntil: true },
+  }) : null
+  if (!user || !user.isActive || (user.isLocked && (!user.lockedUntil || user.lockedUntil > new Date()))) {
+    throw new APIError("UNAUTHORIZED", {
+      code: "CURRENT_SESSION_UNAVAILABLE",
+      message: "Authentication required",
+    })
+  }
+}
 
 export const auth = betterAuth({
   baseURL,
@@ -54,8 +98,7 @@ export const auth = betterAuth({
   // ── Session ──────────────────────────────────────────────────────────────
   session: {
     cookieCache: {
-      enabled: true,
-      maxAge: 5 * 60, // 5-minute cookie cache — avoids per-request DB hit
+      enabled: false, // Current database authority also applies to older signed caches.
     },
   },
 
@@ -135,17 +178,24 @@ export const auth = betterAuth({
   // ── Request hooks — account locking ──────────────────────────────────
   hooks: {
     before: async (ctx: any) => {
+      await requireCurrentAuthAccount(ctx)
       if (ctx.path !== "/sign-in/email") return
+      // Native endpoint middleware runs after user hooks. Admit the request
+      // before account checks can write a lock audit or change bookkeeping.
+      await formCsrfMiddleware(ctx)
       const email = (ctx.body as any)?.email as string | undefined
       if (!email) return
 
       const user = await db.user.findFirst({
         where: { email: { equals: email, mode: "insensitive" } },
-        select: { id: true, organizationId: true, isLocked: true, lockedUntil: true },
+        select: { id: true, organizationId: true, isActive: true, isLocked: true, lockedUntil: true },
       })
       if (!user) return
 
       const now = new Date()
+      if (!user.isActive || (user.isLocked && !user.lockedUntil)) {
+        throw new APIError("FORBIDDEN", { message: "Account unavailable" })
+      }
       if (user.isLocked && user.lockedUntil && user.lockedUntil > now) {
         const retryAfterSec = Math.ceil((user.lockedUntil.getTime() - now.getTime()) / 1000)
         const audit = getRequestAuditContext(ctx)
@@ -158,20 +208,7 @@ export const auth = betterAuth({
           resource: email,
           details: { retryAfterSec },
         })
-        return new Response(
-          JSON.stringify({
-            error: "Account locked",
-            message: "Too many failed attempts. Try again later.",
-            retryAfter: retryAfterSec,
-          }),
-          { status: 403, headers: { "content-type": "application/json" } }
-        )
-      }
-      if (user.isLocked && (!user.lockedUntil || user.lockedUntil <= now)) {
-        await db.user.update({
-          where: { id: user.id },
-          data: { isLocked: false, lockedUntil: null, failedLoginAttempts: 0 },
-        })
+        throw new APIError("FORBIDDEN", { message: "Too many failed attempts. Try again later." })
       }
     },
     after: async (ctx: any) => {
@@ -182,17 +219,23 @@ export const auth = betterAuth({
       if (!email) return {}
 
       const isSuccess = credentialSignInSucceeded(ctx)
+      // Origin, validation and infrastructure failures are not bad passwords.
+      if (!isSuccess && !credentialSignInFailed(ctx)) return {}
 
       const user = await db.user.findFirst({
         where: { email: { equals: email, mode: "insensitive" } },
-        select: { id: true, organizationId: true, failedLoginAttempts: true },
+        select: { id: true, organizationId: true, isActive: true, isLocked: true, lockedUntil: true, failedLoginAttempts: true },
       })
       if (!user) return {}
+      const now = new Date()
+      if (!user.isActive || (user.isLocked && (!user.lockedUntil || user.lockedUntil > now))) return {}
+      const writableAccount = { id: user.id, isActive: true,
+        OR: [{ isLocked: false }, { isLocked: true, lockedUntil: { lte: now } }] }
 
       const audit = getRequestAuditContext(ctx)
       if (isSuccess) {
-        await db.user.update({
-          where: { id: user.id },
+        await db.user.updateMany({
+          where: writableAccount,
           data: { failedLoginAttempts: 0, isLocked: false, lockedUntil: null, lastLogin: new Date() },
         })
         await logSecurityEvent({
@@ -205,13 +248,15 @@ export const auth = betterAuth({
           details: { provider: "credential" },
         })
       } else {
-        const failures = (user.failedLoginAttempts ?? 0) + 1
+        const expiredLock = user.isLocked && user.lockedUntil && user.lockedUntil <= now
+        const failures = (expiredLock ? 0 : user.failedLoginAttempts ?? 0) + 1
         const shouldLock = failures >= 5
-        await db.user.update({
-          where: { id: user.id },
+        await db.user.updateMany({
+          where: writableAccount,
           data: {
             failedLoginAttempts: failures,
             lastFailedLogin: new Date(),
+            ...(expiredLock ? { isLocked: false, lockedUntil: null } : {}),
             ...(shouldLock ? { isLocked: true, lockedUntil: new Date(Date.now() + 30 * 60 * 1000) } : {}),
           },
         })

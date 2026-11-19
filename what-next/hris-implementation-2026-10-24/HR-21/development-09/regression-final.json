@@ -1,0 +1,115 @@
+{
+  "status": "PASS",
+  "baseline": false,
+  "checks": [
+    {
+      "name": "partial-day termination rejected before event creation",
+      "status": "PASS"
+    },
+    {
+      "name": "native requester cannot apply their approved termination",
+      "status": "PASS"
+    },
+    {
+      "name": "native termination closes approved contract at exclusive cutoff",
+      "status": "PASS"
+    },
+    {
+      "name": "termination never extends earlier compensation end",
+      "status": "PASS"
+    },
+    {
+      "name": "draft and never-effective assignments explicitly cancelled",
+      "status": "PASS"
+    },
+    {
+      "name": "native attendance can certify the worked period after termination",
+      "status": "PASS"
+    },
+    {
+      "name": "final period retains bounded approved ended sources and no cancelled inputs",
+      "status": "PASS"
+    },
+    {
+      "name": "a second contract segment is blocked rather than silently selected",
+      "status": "PASS"
+    },
+    {
+      "name": "termination exactly at period start excludes employee",
+      "status": "PASS"
+    },
+    {
+      "name": "exact native application replay creates one applied event",
+      "status": "PASS"
+    },
+    {
+      "name": "missing approval on ended compensation still blocks",
+      "status": "PASS"
+    },
+    {
+      "name": "multiple same-component periods remain blocked",
+      "status": "PASS"
+    },
+    {
+      "name": "unbounded ended source is not accepted",
+      "status": "PASS"
+    },
+    {
+      "name": "native certification denies cutoff equals period start without writes",
+      "status": "PASS"
+    },
+    {
+      "name": "native certification denies cutoff before period without writes",
+      "status": "PASS"
+    },
+    {
+      "name": "native certification denies terminated missing cutoff without writes",
+      "status": "PASS"
+    },
+    {
+      "name": "native certification denies hire after period without writes",
+      "status": "PASS"
+    },
+    {
+      "name": "native certification denies invalid zero employment interval without writes",
+      "status": "PASS"
+    },
+    {
+      "name": "native certification denies suspended employee without writes",
+      "status": "PASS"
+    },
+    {
+      "name": "native certification denies draft employee without writes",
+      "status": "PASS"
+    },
+    {
+      "name": "native suspended contract closure cannot become approved export input",
+      "status": "PASS"
+    }
+  ],
+  "cleanup": true,
+  "sourceHashes": {
+    "services/hris/payroll-handoff.service.ts": "2138d3f7ae43ad139fb1be68d3585113dc8bbf8abc9810138977c8dd6f448b8e",
+    "services/hris/payroll-handoff-read.service.ts": "3c50d3ae2231f78248f1b76985506771b9739ade12201c99a32a34a184701385",
+    "services/hris/payroll-handoff.contract.ts": "463c2e73acc84aff1624c7990b297af1b2dace0bd30a0c229547c2c28360df82",
+    "services/hris/payroll-readiness-contract.ts": "e7248febcc73de3d1b978b555ab857ee6603020cdb77e97288e5c4eef98a3797",
+    "services/hris/time-leave.service.ts": "677aeaa61b8c672c385dc4c3e5082a12ca4ee89d7b7e78d31d406dd935615b54",
+    "services/hris/time-leave.contract.ts": "a7a696f94c211f1e0ec82b69d555b890dce5d25949e8ada310cdb8346907df8f",
+    "services/hris/self-service-boundary.service.ts": "71f948ef85467341fc78c63b881e17a1d574812ef501ff08aa00a16a426b3c6f",
+    "services/_shared/protect.ts": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+    "services/security/step-up-auth.service.ts": "76b5d6b0c9015f2d12fcb4d6a74c479bf083eec5d2f22c54e9638d8ea0bf49a2",
+    "services/hris/__tests__/payroll-handoff.contract.test.ts": "d115bb9fd232763bfd935a84828fe0b7e41315abd1d78c4991192385ef5fc674",
+    "services/hris/lifecycle.service.ts": "cc426c4ed00a39b04d184549e41594db819fdd6da21d0a67747d5e45214f88f7",
+    "services/hris/lifecycle-task.service.ts": "53a3bbdd3499ee462ebced7affc2530bcec835847650e7f31a4a8227c1d052f8",
+    "services/hris/lifecycle-task.contract.ts": "c30248eb40e105da3c4e46d86f94538c7e481d76b498a7325a1d070b7f9ae74d",
+    "services/hris/approval-review.service.ts": "48a67e43bab3d4878944c88f14567bb3010e93616b16a757b9bb0ba4339ac446",
+    "services/hris/people-authoring-read.service.ts": "b4f38141d5840f50e352e143b21a6d7a77ed4fe411ab7f82147c73676c5f615a",
+    "services/payroll/payroll-control.service.ts": "41caa2171fefcc1d79c22b0637508635ace348bfd5d0de35129995abeb09717c",
+    "services/hris/__tests__/lifecycle.service.test.ts": "919cd7a0af145c5b6224b6e6ec7b6a61fb55deefc092d2d057d06659527c0335",
+    "services/payroll/__tests__/payroll-control.service.test.ts": "4fbb7c277a4828e0fc48f676f0ba1a23cd3cdfff3aec8a8bec4373e580fcdeed",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\regression.cjs": "188c528df0d1767da09cd889332535ce254dc20399e9a19fdaf3ac3feeffb1f9",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\native.cjs": "e045d7ef59f3a50e9b26c3fed73e1ab649d0fdbe11aabd7ff0dc9abfeae80823",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\fixture.cjs": "69d80953a95a7a3dcbb5f22852b65282e047981c7d8c8461b4eb4f51d3cd41fc"
+  },
+  "completedAt": "2026-10-26T18:45:46.827Z"
+}

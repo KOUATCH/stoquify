@@ -1,0 +1,139 @@
+{
+  "recordedAt": "2026-11-11T11:42:22.4686653Z",
+  "passed": true,
+  "classification": "Mocked Next middleware and pure trusted-origin helper regression; no real application, browser, build or database qualification",
+  "fix": {
+    "path": "middleware.ts",
+    "beforeSha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204",
+    "afterSha256": "e2ccfcf9f9b329bb64a84e96bf41aff8346340b6f436933ac81864825356fe5f",
+    "configuredOriginPrecedence": [
+      "NEXTAUTH_URL",
+      "NEXT_PUBLIC_BASE_URL",
+      "NEXT_PUBLIC_APP_URL"
+    ],
+    "requestHeaderHostsTrusted": false,
+    "invalidOriginFallback": "Existing request URL behavior",
+    "callbacksLocaleCookiesAndSecurityHeadersPreserved": true
+  },
+  "tests": {
+    "path": "lib/security/__tests__/middleware-routing.test.ts",
+    "sha256": "48ac643e0701ff019230eac52aaeab7ebfb26627a9df45d0f712262487dcd160",
+    "suites": [
+      "lib/security/__tests__/middleware-routing.test.ts",
+      "lib/security/__tests__/trusted-origins.test.ts"
+    ]
+  },
+  "before": {
+    "expectedFailure": true,
+    "originalIssueReproduced": true,
+    "testProcessExitCode": 1,
+    "passedTests": 26,
+    "failedTests": 9,
+    "skipped": 0,
+    "todo": 0,
+    "allFailuresInNewRedirectCases": true,
+    "receipt": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\before.receipt.json",
+      "sha256": "9eacb1c0693493b596dc9ba517496234ab9645cf688adc84bcd50afe3ed5464b",
+      "bytes": 3405
+    },
+    "results": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\before.results.private.json",
+      "sha256": "5773e314a1768f7f8c11d11e032c117ef16d849b3b4c0d51c876bf3da0867a31",
+      "bytes": 50702
+    },
+    "log": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\before.output.private.log",
+      "sha256": "da1305869ec7aeb35cc44c2994916a7cd3fcc104ac1e289d1bee9bdd70b1b5aa",
+      "bytes": 11075
+    },
+    "config": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\before.jest.config.cjs",
+      "sha256": "3aa4a11d1e7ff5352ba13a4bf1ee0315e7c0f2ff4ffcd92b61f70d5ff1ed02c8",
+      "bytes": 776
+    },
+    "middlewarePreimage": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\middleware.before.ts",
+      "sha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204",
+      "bytes": 9025
+    }
+  },
+  "after": {
+    "testProcessExitCode": 0,
+    "passedTests": 35,
+    "failedTests": 0,
+    "skipped": 0,
+    "todo": 0,
+    "suites": 2,
+    "allActualAssertionsPassed": true,
+    "receipt": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\after.receipt.json",
+      "sha256": "22a090ea1b5fcc6e3b49b0ccb0c7d9068cc1e4395974227595d01080e49568c7",
+      "bytes": 3361
+    },
+    "results": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\after.results.private.json",
+      "sha256": "73ff22a801607bcf89d45c83b39fe9ab0ae5aa84b8bf162034187840c771752c",
+      "bytes": 16790
+    },
+    "log": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\after.output.private.log",
+      "sha256": "3883261ece286396fdcd548da9b81a373ce02d080ee1acc559d3688f27475641",
+      "bytes": 449
+    },
+    "config": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\after.jest.config.cjs",
+      "sha256": "3aa4a11d1e7ff5352ba13a4bf1ee0315e7c0f2ff4ffcd92b61f70d5ff1ed02c8",
+      "bytes": 776
+    }
+  },
+  "runner": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\rc-redirect-fix-20261110-e7059f9d2a\\run-focused.cjs",
+    "sha256": "74d9cbceeba777fe5dd308f1902d59e54eb1fae8fe872d7de82eb9103546c456",
+    "bytes": 5642
+  },
+  "unchangedSourceWithinEachRun": true,
+  "changedSourceBetweenRuns": [
+    "middleware.ts"
+  ],
+  "sourceHashesAfter": {
+    "middleware.ts": "e2ccfcf9f9b329bb64a84e96bf41aff8346340b6f436933ac81864825356fe5f",
+    "lib/security/__tests__/middleware-routing.test.ts": "48ac643e0701ff019230eac52aaeab7ebfb26627a9df45d0f712262487dcd160",
+    "lib/security/__tests__/trusted-origins.test.ts": "97b6099aa61307b0b00591f512464e51a1888e8be317756a857ee1beb90fc6fc",
+    "lib/security/trusted-origins.ts": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+    "i18n/routing.ts": "48782c1ec405c53623812c80a1d4a7301d869b3c07ea36625374d2c056757421",
+    "types/bilingual.ts": "31fa7407cd8826655c29800ea6b508752100fb250d987736f9eac35afbfdc3ed",
+    "lib/security/traffic-limiter.ts": "30755f70a016192784af76aa6c03597d2184e79f42e2d842fb8d4b412ff7914c",
+    "lib/security/csp-pilot.ts": "ecda804a316a7a96cde98927361afd8f8903e4cdb499ffc0a0bb9508bee2b292",
+    "lib/security/dashboard-session-recovery.ts": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a",
+    "lib/media/legacy-upload-routing.ts": "6db25cc3f3486854115529b46d2eb6e60031708bbe5dac298c6c0a8ca31660f0",
+    "config/private-upload-aliases.json": "9cc5f6ee3f72c4a6d5eed6759b9e8ad8ab7fab90f11a7010374419fb7a4778fc",
+    "scripts/local-gates-network.cjs": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e"
+  },
+  "candidateBinding": {
+    "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate",
+    "sourceManifestSha256": "cfcac6d0dfa217f3ad18ff27d16e46a55aa002bcbf77c91afc7e0b7082bfd544",
+    "sourceManifest": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\CANDIDATE_SOURCE_MANIFEST.json",
+      "sha256": "7fa32727ecd0af866b6b305742ad427777d935efa8dfcd4b49a9cf2376f49b81",
+      "bytes": 1908006
+    },
+    "testedFixedFilesMatchCandidate": true
+  },
+  "environmentBoundary": {
+    "osOnlyInheritance": true,
+    "applicationEnvironmentFilesLoaded": false,
+    "defaultJestConfigOrSetupLoaded": false,
+    "explicitJestConfig": true,
+    "databaseUrls": "Explicit disabled 127.0.0.1:1 targets",
+    "networkGuard": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\local-gates-network.cjs",
+      "sha256": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e",
+      "bytes": 835
+    },
+    "npmOrApplicationBootstrapInvoked": false,
+    "databaseMigrationBuildBrowserOrProviderOperation": false,
+    "rootClientGeneration": false
+  },
+  "counting": "The before run is preserved expected-failure evidence. Count the 35 passing after assertions once; do not count 26 prior passes as additional qualified checks."
+}

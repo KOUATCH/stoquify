@@ -1,0 +1,81 @@
+{
+  "status": "R2_HARNESS_READY_FOR_ROOT_REVIEW",
+  "sourceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10",
+  "firstCandidateQualificationAdmitted": false,
+  "firstCandidateBuildRecordedAsHistorical": true,
+  "sourceRuntimeFailure": {
+    "path": "docs/stoquify-potential/development/close-integrity-release-candidate-2026-11-10/RUNTIME_QUALIFICATION.json",
+    "sha256": "8fe64ed0e93a9c7bb68e27498c1b7ca2d76d85521884399aa8bded43ff0585d6",
+    "passed": false
+  },
+  "copiedOnlyHelpers": true,
+  "resultReceiptsCopied": false,
+  "dependenciesOrSdkCopied": false,
+  "modifiedHelpers": [
+    "build-artifact.cjs",
+    "qualify-browser.cjs"
+  ],
+  "files": [
+    {
+      "name": "candidate-validation.cjs",
+      "sourceSha256": "aefb57e436ee6b9d2a00cdfb4c1e97391deff8b57b5eb64111419e1f70faacb7",
+      "currentSha256": "aefb57e436ee6b9d2a00cdfb4c1e97391deff8b57b5eb64111419e1f70faacb7"
+    },
+    {
+      "name": "prepare-candidate.cjs",
+      "sourceSha256": "f9ae0a2d6a4dd82cb005ced22bd5a8c959c8047720393909a097773a3a81bb1c",
+      "currentSha256": "f9ae0a2d6a4dd82cb005ced22bd5a8c959c8047720393909a097773a3a81bb1c"
+    },
+    {
+      "name": "build-artifact.cjs",
+      "sourceSha256": "1c6187e7af7987b873d679d5b4743d87589893da260e71caf8dd91eb14a6d6d1",
+      "currentSha256": "a545373e90da83a75b89e9214c57a46a2cda23959eb9c633182290642627c882"
+    },
+    {
+      "name": "qualify-database.cjs",
+      "sourceSha256": "51192e7a597180ca55eae7d464addcbba79c2100cc9d78c7ad83f610b9f4adfd",
+      "currentSha256": "51192e7a597180ca55eae7d464addcbba79c2100cc9d78c7ad83f610b9f4adfd"
+    },
+    {
+      "name": "artifact-runtime.cjs",
+      "sourceSha256": "3eb50aaebb019bd8d0ddac71c937a9875c50ccbb6c38cd3184cad55feb1f6af9",
+      "currentSha256": "3eb50aaebb019bd8d0ddac71c937a9875c50ccbb6c38cd3184cad55feb1f6af9"
+    },
+    {
+      "name": "qualify-unit.cjs",
+      "sourceSha256": "0d2497467b8f4728924ad36bc7c197e87ae7bbbc1d95a6f358c6970f7c24e7ff",
+      "currentSha256": "0d2497467b8f4728924ad36bc7c197e87ae7bbbc1d95a6f358c6970f7c24e7ff"
+    },
+    {
+      "name": "qualify-source-paths.cjs",
+      "sourceSha256": "9cc76dd3781e5fc3d53ec67971de5d87b029733e36fea7974e691ca4939df3ec",
+      "currentSha256": "9cc76dd3781e5fc3d53ec67971de5d87b029733e36fea7974e691ca4939df3ec"
+    },
+    {
+      "name": "localhost-promotion-refusal.cjs",
+      "sourceSha256": "d02a9df33b22155634860b0fa6d8b614c8502ca8cb5eb490b404391e769768de",
+      "currentSha256": "d02a9df33b22155634860b0fa6d8b614c8502ca8cb5eb490b404391e769768de"
+    },
+    {
+      "name": "qualify-browser.cjs",
+      "sourceSha256": "e8ad0cabdaaaae54f9b54ba37c325f95cd7cb20fe2ab8db4a051a9602dc35ffa",
+      "currentSha256": "8e3c2474381ea1d7841cf8451bd3f710d0a873513e9abc805770211fccb1fff5"
+    },
+    {
+      "name": "capture-final-source.cjs",
+      "sourceSha256": "21b9a9d2753c42b5f9a64f03535efbcb9ec2d8d9d6f2114bf2e001f249caabc0",
+      "currentSha256": "21b9a9d2753c42b5f9a64f03535efbcb9ec2d8d9d6f2114bf2e001f249caabc0"
+    }
+  ],
+  "sourceAndMigrationPolicy": "Root must capture the fixed current middleware after its focused checks; schema and 123-migration catalog remain strictly bound.",
+  "npmPolicy": "Owned empty configuration and owned cache apply from the initial preparation onward; all native execution receipts must bind the unchanged current R2 build helper.",
+  "browserPolicy": "Source identity comes from the validated raw archive and source-preparation receipt and must match APP_READY, artifact and build evidence.",
+  "syntaxOnly": {
+    "files": 10,
+    "passed": true,
+    "helperExecuted": false,
+    "applicationOrDatabaseStarted": false
+  },
+  "helperExecutionPerformed": false,
+  "productionOperationPerformed": false
+}

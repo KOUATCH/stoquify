@@ -1,0 +1,352 @@
+{
+  "lane": "platform-and-assurance",
+  "assignedTableCount": 36,
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "targetDatabase": "stoquify_replay_dataset_20261028_01",
+  "sourceInspection": true,
+  "mockedUnitTestsRun": false,
+  "realDatabaseTestsRunByThisAgent": false,
+  "renderedBrowserChecksRun": false,
+  "requirements": {
+    "NODE_ENV": "test",
+    "clock": "2026-10-28T20:00:00.000Z",
+    "actors": "Fresh persisted owner/checker/accountant/manager sessions supplied by parent; owner session/permissions reloaded using current service authority",
+    "processScopedFlag": "COMMAND_CENTER_PERSISTENCE_ENABLED=true only within command-center scenario, restored afterward",
+    "network": "No external model, API, provider, webhook, email or notification dispatch",
+    "moduleAccess": "All existing selected/active modules preserved; no stopped modules"
+  },
+  "tables": [
+    {
+      "table": "tenant_module_configuration_commands",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/modules/module-composition.service.ts; services/modules/module-entitlement.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current module preparation may remain REQUESTED/WAITING_INPUT for payroll/compliance setup; existing access is preserved. No purchase or module activation entitlement is invented."
+    },
+    {
+      "table": "tenant_module_configurations",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/modules/module-composition.service.ts; services/modules/module-entitlement.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current module preparation may remain REQUESTED/WAITING_INPUT for payroll/compliance setup; existing access is preserved. No purchase or module activation entitlement is invented."
+    },
+    {
+      "table": "tenant_module_grants",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/modules/module-composition.service.ts; services/modules/module-entitlement.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current module preparation may remain REQUESTED/WAITING_INPUT for payroll/compliance setup; existing access is preserved. No purchase or module activation entitlement is invented."
+    },
+    {
+      "table": "tenant_module_lifecycle_events",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/modules/module-composition.service.ts; services/modules/module-entitlement.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current module preparation may remain REQUESTED/WAITING_INPUT for payroll/compliance setup; existing access is preserved. No purchase or module activation entitlement is invented."
+    },
+    {
+      "table": "tenant_module_lifecycle_operations",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/modules/module-composition.service.ts; services/modules/module-entitlement.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current module preparation may remain REQUESTED/WAITING_INPUT for payroll/compliance setup; existing access is preserved. No purchase or module activation entitlement is invented."
+    },
+    {
+      "table": "tenant_module_lifecycle_steps",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/modules/module-composition.service.ts; services/modules/module-entitlement.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current module preparation may remain REQUESTED/WAITING_INPUT for payroll/compliance setup; existing access is preserved. No purchase or module activation entitlement is invented."
+    },
+    {
+      "table": "compliance_adapter_configs",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Configure Cameroon sandbox through the actual country adapter service without credentials or official specification.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/compliance/country-adapter-pilot.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Actual authority connectivity requires valid scoped credentials, the official specification with retained source evidence, and genuine expert review. This scenario leaves those gates unresolved."
+    },
+    {
+      "table": "business_event_anomalies",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Submit one isolated synthetic control event and a different payload with the same idempotency key; assert rejection and retained anomaly.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/events/business-event.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": null
+    },
+    {
+      "table": "agent_definitions",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Insert exact code-manifest reference definitions using the shipped provisioning structure, then activate only SHADOW definitions through release control. Includes an explicitly labelled local inventory-kernel reference registry using the shipped inventory tool contract.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "scripts/agent-runtime-phase-2a-provision.js; services/agents/agent-definition.service.ts; services/agents/agent-release-control.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Reference setup is synthetic. No model provider or production runtime activation is provisioned."
+    },
+    {
+      "table": "agent_skill_definitions",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Insert exact code-manifest reference definitions using the shipped provisioning structure, then activate only SHADOW definitions through release control. Includes an explicitly labelled local inventory-kernel reference registry using the shipped inventory tool contract.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "scripts/agent-runtime-phase-2a-provision.js; services/agents/agent-definition.service.ts; services/agents/agent-release-control.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Reference setup is synthetic. No model provider or production runtime activation is provisioned."
+    },
+    {
+      "table": "agent_tool_definitions",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Insert exact code-manifest reference definitions using the shipped provisioning structure, then activate only SHADOW definitions through release control. Includes an explicitly labelled local inventory-kernel reference registry using the shipped inventory tool contract.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "scripts/agent-runtime-phase-2a-provision.js; services/agents/agent-definition.service.ts; services/agents/agent-release-control.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Reference setup is synthetic. No model provider or production runtime activation is provisioned."
+    },
+    {
+      "table": "agent_activation_packages",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Prepare/review a synthetic package, assign six owners with independent backup and acceptance, record distinct synthetic product/security application approvals and provision inactive shadow configuration.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-release-control.service.ts; services/agents/agent-release-contracts.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Synthetic personas exercise application workflows; these rows do not represent real human production approval."
+    },
+    {
+      "table": "agent_activation_approvals",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Prepare/review a synthetic package, assign six owners with independent backup and acceptance, record distinct synthetic product/security application approvals and provision inactive shadow configuration.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-release-control.service.ts; services/agents/agent-release-contracts.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Synthetic personas exercise application workflows; these rows do not represent real human production approval."
+    },
+    {
+      "table": "agent_activation_owners",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Prepare/review a synthetic package, assign six owners with independent backup and acceptance, record distinct synthetic product/security application approvals and provision inactive shadow configuration.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-release-control.service.ts; services/agents/agent-release-contracts.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Synthetic personas exercise application workflows; these rows do not represent real human production approval."
+    },
+    {
+      "table": "agent_pilot_certifications",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Execute actual release readiness evaluation, retain the observed missing-certification/transport findings, and record a FAILED local pilot result.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-release-control.service.ts:evaluateAgentActivationReadiness,recordCommandAgentPilotCertification",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "A positive real deployment certification requires a genuine passing pilot report matching commit/manifest, valid approvals, ownership, reconciler cadence proof and healthy alert transport."
+    },
+    {
+      "table": "agent_runs",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Read the actual blocked Daily Digest without altering its grade; separately run an explicitly synthetic inventory agent using shipped readInventoryCashSnapshot metadata and actual available inventory evidence. Exercise an unregistered-tool policy rejection.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-runner.service.ts; services/agents/tools/command-tool-adapters.ts; services/agents/agent-policy.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Kernel tests do not claim external-model execution or production admission."
+    },
+    {
+      "table": "agent_steps",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Read the actual blocked Daily Digest without altering its grade; separately run an explicitly synthetic inventory agent using shipped readInventoryCashSnapshot metadata and actual available inventory evidence. Exercise an unregistered-tool policy rejection.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-runner.service.ts; services/agents/tools/command-tool-adapters.ts; services/agents/agent-policy.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Kernel tests do not claim external-model execution or production admission."
+    },
+    {
+      "table": "agent_evidence_links",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Read the actual blocked Daily Digest without altering its grade; separately run an explicitly synthetic inventory agent using shipped readInventoryCashSnapshot metadata and actual available inventory evidence. Exercise an unregistered-tool policy rejection.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-runner.service.ts; services/agents/tools/command-tool-adapters.ts; services/agents/agent-policy.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Kernel tests do not claim external-model execution or production admission."
+    },
+    {
+      "table": "agent_policy_incidents",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Read the actual blocked Daily Digest without altering its grade; separately run an explicitly synthetic inventory agent using shipped readInventoryCashSnapshot metadata and actual available inventory evidence. Exercise an unregistered-tool policy rejection.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-runner.service.ts; services/agents/tools/command-tool-adapters.ts; services/agents/agent-policy.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Kernel tests do not claim external-model execution or production admission."
+    },
+    {
+      "table": "agent_cost_ledger",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Retain observed zero-token/zero-external-cost usage of the completed deterministic local run.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "prisma/schema.prisma:AgentCostLedger; services/agents/agent-runner.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "No external provider is called. This is a labelled local runtime usage reference; it does not test provider billing ingestion."
+    },
+    {
+      "table": "agent_feedback",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Record the synthetic run owner's helpful feedback via the scoped application service.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-feedback.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Synthetic test-persona feedback only."
+    },
+    {
+      "table": "ai_action_proposals",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Create a proposal bound to the completed actual inventory snapshot run, then reject it through the scoped application service.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/ai/copilot-proposal.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Proposal has executionAuthority NONE; no downstream business action is executed."
+    },
+    {
+      "table": "agent_reconciler_invocations",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Acquire a real local scheduler-envelope lease, execute actual release control reconciliation, complete with observed warnings and assert exact replay.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-reconciler-invocation.service.ts; services/agents/agent-control-plane-reconciliation.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Local envelope/lease lifecycle only; external scheduler authentication and cadence admission are not claimed."
+    },
+    {
+      "table": "workflow_assurance_check_definitions",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Create a separate APPROVED synthetic release with genuinely missing owner assignments; run actual control-plane reconciliation to observe RELEASE_OWNERS_INCOMPLETE, retain the finding/incident and acknowledge it. Primary release remains PROVISIONED_INACTIVE. Run the actual balanced-ledger registry check.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-control-plane-reconciliation.service.ts; services/assurance/assurance-registry.service.ts; services/assurance/assurance-incident.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current source failures remain visible; no evidence is edited to manufacture a passing result."
+    },
+    {
+      "table": "workflow_assurance_check_runs",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Create a separate APPROVED synthetic release with genuinely missing owner assignments; run actual control-plane reconciliation to observe RELEASE_OWNERS_INCOMPLETE, retain the finding/incident and acknowledge it. Primary release remains PROVISIONED_INACTIVE. Run the actual balanced-ledger registry check.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-control-plane-reconciliation.service.ts; services/assurance/assurance-registry.service.ts; services/assurance/assurance-incident.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current source failures remain visible; no evidence is edited to manufacture a passing result."
+    },
+    {
+      "table": "workflow_assurance_check_findings",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Create a separate APPROVED synthetic release with genuinely missing owner assignments; run actual control-plane reconciliation to observe RELEASE_OWNERS_INCOMPLETE, retain the finding/incident and acknowledge it. Primary release remains PROVISIONED_INACTIVE. Run the actual balanced-ledger registry check.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-control-plane-reconciliation.service.ts; services/assurance/assurance-registry.service.ts; services/assurance/assurance-incident.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current source failures remain visible; no evidence is edited to manufacture a passing result."
+    },
+    {
+      "table": "workflow_assurance_incidents",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Create a separate APPROVED synthetic release with genuinely missing owner assignments; run actual control-plane reconciliation to observe RELEASE_OWNERS_INCOMPLETE, retain the finding/incident and acknowledge it. Primary release remains PROVISIONED_INACTIVE. Run the actual balanced-ledger registry check.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-control-plane-reconciliation.service.ts; services/assurance/assurance-registry.service.ts; services/assurance/assurance-incident.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current source failures remain visible; no evidence is edited to manufacture a passing result."
+    },
+    {
+      "table": "workflow_assurance_incident_events",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Create a separate APPROVED synthetic release with genuinely missing owner assignments; run actual control-plane reconciliation to observe RELEASE_OWNERS_INCOMPLETE, retain the finding/incident and acknowledge it. Primary release remains PROVISIONED_INACTIVE. Run the actual balanced-ledger registry check.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/agents/agent-control-plane-reconciliation.service.ts; services/assurance/assurance-registry.service.ts; services/assurance/assurance-incident.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Current source failures remain visible; no evidence is edited to manufacture a passing result."
+    },
+    {
+      "table": "workflow_assurance_alert_deliveries",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Let actual release reconciliation queue its deduplicated incident webhook notice; assert PENDING and never call dispatch.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/assurance/assurance-alert-delivery.service.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "Successful delivery requires configured transport and explicitly authorized sending. No message was sent."
+    },
+    {
+      "table": "workflow_assurance_waivers",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Request a time-limited test-only waiver with a retained document hash while keeping the actual incident active and activation disabled.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/assurance/assurance-incident.service.ts:requestWorkflowAssuranceWaiver",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "No waiver approval or substantive control bypass is fabricated."
+    },
+    {
+      "table": "command_center_events",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/command-center/persistence.service.ts; services/command-center/authority.ts; services/command-center/sources.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "No external notification transport. Review requires all visible source observations available; helper fails explicitly if current source evidence is unavailable."
+    },
+    {
+      "table": "command_center_notices",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/command-center/persistence.service.ts; services/command-center/authority.ts; services/command-center/sources.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "No external notification transport. Review requires all visible source observations available; helper fails explicitly if current source evidence is unavailable."
+    },
+    {
+      "table": "command_center_occurrences",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/command-center/persistence.service.ts; services/command-center/authority.ts; services/command-center/sources.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "No external notification transport. Review requires all visible source observations available; helper fails explicitly if current source evidence is unavailable."
+    },
+    {
+      "table": "command_center_preferences",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/command-center/persistence.service.ts; services/command-center/authority.ts; services/command-center/sources.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "No external notification transport. Review requires all visible source observations available; helper fails explicitly if current source evidence is unavailable."
+    },
+    {
+      "table": "command_center_review_receipts",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/command-center/persistence.service.ts; services/command-center/authority.ts; services/command-center/sources.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "No external notification transport. Review requires all visible source observations available; helper fails explicitly if current source evidence is unavailable."
+    },
+    {
+      "table": "command_center_review_states",
+      "status": "IMPLEMENTED_EXECUTED_VERIFICATION_PENDING",
+      "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+      "implementation": "prisma/disposable-remaining-platform.ts",
+      "source": "services/command-center/persistence.service.ts; services/command-center/authority.ts; services/command-center/sources.ts",
+      "verification": "Parent guarded database execution passed for all three organizations; full independent SQL verification and replay pending.",
+      "remainingPrerequisite": "No external notification transport. Review requires all visible source observations available; helper fails explicitly if current source evidence is unavailable."
+    }
+  ],
+  "parentDatabaseExecution": {
+    "status": "PASSED",
+    "resultFile": "remaining-platform-results.json",
+    "generatedAt": "2026-10-29T11:47:51.540Z",
+    "organizations": 3,
+    "issues": 0,
+    "independentVerification": "Pending root full read-only verifier and replay"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "startedAt": "2026-11-02T15:43:49.628Z",
+  "artifactSha256": "bed03f4b4ce2d88345a6f04244e9667c6fdbca9cf8f47d037810aa6423d43835",
+  "base": "https://localhost:3186",
+  "database": "stoquify_local_af16_20261102_engagement_r2",
+  "passed": false,
+  "evidenceClass": "Synthetic AF03/AF05 authenticated browser on sealed full application; local TLS with test certificate; not hosted TLS, predecessor rollback or production approval",
+  "buildId": "R3-zVTu3LoKCHOp2WTaZA",
+  "preverifiedFiles": 5284,
+  "migrations": 120,
+  "clonedFrom": "stoquify_local_af16_20261025_template_r1",
+  "fixture": {
+    "source": ".codex-tmp\\af16-release-20261102\\scripts\\fixtures\\firm-engagement-workflows-browser.cjs",
+    "sourceSha256": "e7a09a2185ce0ce19e4639bf7992f44580be2dca01f4f7d7be5728f3d664cc36",
+    "seedSha256": "6fb09707bb3d8fa2301c3df58bd86444ed75286ddbb57d33c410d65e7b1e4c51",
+    "users": 5,
+    "organizations": 3
+  },
+  "certificate": {
+    "fingerprint256": "5A:4A:52:29:E7:BD:48:9E:30:3C:93:D7:6D:49:FF:13:21:6C:71:2A:93:55:F6:58:CF:E5:06:17:54:DD:3B:D7",
+    "subjectAltName": "DNS:localhost, IP Address:127.0.0.1",
+    "selfSigned": true,
+    "operatingSystemTrustChanged": false
+  },
+  "listener": {
+    "tls": "127.0.0.1:3186",
+    "upstream": "127.0.0.1:59030"
+  },
+  "adapters": [
+    {
+      "source": ".codex-tmp\\af16-release-20261102\\scripts\\verify-firm-engagement-browser.cjs",
+      "sourceSha256": "2615888316509f8e6ec2351537f1a4a3384f4dfed891297464962d0caceceb5d",
+      "generated": "scripts\\af16-sealed-engagement-20261102-browser.generated.cjs",
+      "generatedSha256": "788b7856c0709b4f3e5384063f8ce1937a7c5140ce1011b93fb399075d7dee4e",
+      "businessAssertionsPreserved": true,
+      "exitCode": 1
+    }
+  ],
+  "error": "Error: Browser failure; evidence retained\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\scripts\\run-af16-engagement-repair-browser-20261102.cjs:151:50)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "proxyStopped": true,
+  "serverStopped": true,
+  "finishedAt": "2026-11-02T15:47:53.999Z"
+}

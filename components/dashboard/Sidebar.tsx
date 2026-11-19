@@ -142,7 +142,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
               aria-label={copy.home}
               className="group flex min-w-0 items-center gap-3"
             >
-              <StoquifyLogo theme="dark" width={180} height={52} tagline="Enterprise OS" />
+              <StoquifyLogo theme="dark" width={180} height={52} tagline={locale === "fr" ? "Système opérationnel OHADA" : "OHADA operating OS"} />
             </Link>
             <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.055]">
               <NotificationMenu notifications={notifications} />

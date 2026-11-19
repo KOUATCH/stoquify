@@ -1,0 +1,186 @@
+{
+  "buildId": "5rEuulwFG0K_PbQZ6DkW1",
+  "sourceHashesMatch": true,
+  "comprehensiveBuildId": "wZiHuxJzfJTqNqnQd7Gby",
+  "browsers": [
+    {
+      "engine": "chrome",
+      "finalBuildPageCases": 88,
+      "finalHomeAxeScans": 8,
+      "rateLimitWaits": [],
+      "finalHomeIncompleteCounts": {
+        "aria-valid-attr-value": 8,
+        "color-contrast": 8
+      },
+      "comprehensiveIncompleteCounts": {
+        "aria-prohibited-attr": 8,
+        "aria-valid-attr-value": 16,
+        "color-contrast": 106
+      },
+      "version": "155.0.8059.86",
+      "pageCases": 88,
+      "axeScans": 172,
+      "moduleSelections": 72,
+      "registrationStates": 8,
+      "keyboardAndDownloadCases": 4,
+      "prehydrationCases": 4,
+      "genericRecoveryCases": 4
+    },
+    {
+      "engine": "firefox",
+      "finalBuildPageCases": 88,
+      "finalHomeAxeScans": 8,
+      "rateLimitWaits": [],
+      "finalHomeIncompleteCounts": {
+        "aria-valid-attr-value": 8,
+        "color-contrast": 8
+      },
+      "comprehensiveIncompleteCounts": {
+        "aria-prohibited-attr": 8,
+        "aria-valid-attr-value": 16,
+        "color-contrast": 106
+      },
+      "version": "151.0",
+      "pageCases": 88,
+      "axeScans": 172,
+      "moduleSelections": 72,
+      "registrationStates": 8,
+      "keyboardAndDownloadCases": 4,
+      "prehydrationCases": 4,
+      "genericRecoveryCases": 4
+    },
+    {
+      "engine": "webkit",
+      "finalBuildPageCases": 88,
+      "finalHomeAxeScans": 8,
+      "rateLimitWaits": [],
+      "finalHomeIncompleteCounts": {
+        "aria-valid-attr-value": 8,
+        "color-contrast": 8
+      },
+      "comprehensiveIncompleteCounts": {
+        "aria-prohibited-attr": 8,
+        "aria-valid-attr-value": 16,
+        "color-contrast": 106
+      },
+      "version": "26.5",
+      "pageCases": 88,
+      "axeScans": 172,
+      "moduleSelections": 72,
+      "registrationStates": 8,
+      "keyboardAndDownloadCases": 4,
+      "prehydrationCases": 4,
+      "genericRecoveryCases": 4
+    }
+  ],
+  "limitations": [
+    "Local browser emulation, not physical iOS/Android or the Safari application",
+    "Native screen-reader spoken output unavailable through the current tools",
+    "No live account, email, database, upload or deployed-host certification",
+    "Automated contrast checks retain manual-review items; this is not a WCAG certification"
+  ],
+  "workflowStates": 678,
+  "touchStates": 20,
+  "performance": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "sample": 1,
+      "htmlBytes": 804592,
+      "lcpMs": 14904,
+      "cls": 0.00012225133215939556,
+      "ttfbMs": 12800
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "sample": 2,
+      "htmlBytes": 804592,
+      "lcpMs": 1660,
+      "cls": 0.00012225133215939556,
+      "ttfbMs": 197.39999997615814
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "sample": 1,
+      "htmlBytes": 804592,
+      "lcpMs": 7168,
+      "cls": 0.000023706873967097358,
+      "ttfbMs": 177.79999995231628
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "sample": 2,
+      "htmlBytes": 804592,
+      "lcpMs": 7012,
+      "cls": 0.000023706873967097358,
+      "ttfbMs": 187.10000002384186
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "sample": 1,
+      "htmlBytes": 820579,
+      "lcpMs": 1828,
+      "cls": 0.00014711153092207733,
+      "ttfbMs": 380.39999997615814
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "sample": 2,
+      "htmlBytes": 820579,
+      "lcpMs": 1716,
+      "cls": 0.00014711153092207733,
+      "ttfbMs": 225.79999995231628
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "sample": 1,
+      "htmlBytes": 820579,
+      "lcpMs": 6900,
+      "cls": 0.000028633033165564904,
+      "ttfbMs": 154.59999990463257
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "sample": 2,
+      "htmlBytes": 820579,
+      "lcpMs": 9092,
+      "cls": 0.0001989509818835136,
+      "ttfbMs": 260.1999999284744
+    }
+  ],
+  "dialogCases": 16,
+  "semanticCorrections": [
+    {
+      "file": "components/landing/capability-overview.tsx",
+      "beforeSha256": "C9E1340F964C7E3D78048E3D8D1AE8E810CC04B583A248AA62222C29DD08ADA2",
+      "afterSha256": "779424EF2B08945DBE5D65496299C51013A572A57F5B14B3631CBD0712893E9D",
+      "change": "Add role=\"group\" to the existing labelled container"
+    },
+    {
+      "file": "components/landing/cinematic-business-story.tsx",
+      "beforeSha256": "8D3EDCCCFFE37A70167E31270AA70FB40A328CC4B1ADE9FCE05694FD2BF6A398",
+      "afterSha256": "C2976824A5C7948C226F30B9B22456BFF241256BCFF407EDEF81762142849D4F",
+      "change": "Add role=\"group\" to the existing labelled container"
+    },
+    {
+      "file": "components/landing/cinematic-shell.tsx",
+      "beforeSha256": "7F17FD99377529608FEFB255957C8412DACCA841F8C07082FD37B01C0017AF77",
+      "afterSha256": "ED622DB56CA644D7A37AC6E9614BA7A721654D6697C8BC9F5A2C573A89410286",
+      "change": "Add explicit tabIndex=0 to the skip link; measured WebKit default Tab now reaches it"
+    }
+  ],
+  "performanceBuildId": "wZiHuxJzfJTqNqnQd7Gby",
+  "openFindings": [
+    {
+      "priority": "P1",
+      "description": "Synthetic mobile LCP improved to 6.9–9.1 seconds but further performance work remains"
+    }
+  ]
+}

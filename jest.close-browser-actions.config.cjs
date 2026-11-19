@@ -1,0 +1,2 @@
+// Mocked action regression only; no Next configuration/environment loading.
+module.exports={rootDir:'.',roots:['<rootDir>/actions/accounting/__tests__'],testEnvironment:'node',moduleNameMapper:{'^@/(.*)$':'<rootDir>/$1','^server-only$':'<rootDir>/tests/close-scope/server-only.cjs'},transform:{'^.+\\.(js|jsx|ts|tsx)$':'next/dist/build/swc/jest-transformer'},testMatch:['<rootDir>/actions/accounting/__tests__/close-assurance.actions.test.ts'],testTimeout:15000};

@@ -1,0 +1,27 @@
+{
+  "reviewedAt": "2026-11-09",
+  "reviewer": "independent v02_review agent",
+  "verdict": "accepted_for_local_protocol_execution_with_bound_runtime_and_controls",
+  "supersedesRecipeAdmission": "PROVIDER-RECIPE-REVIEW.json",
+  "recipe": {"path": "provider/run-protocol.cjs", "sha256": "64f415beb724a0101a35b94ce686ef8e0b362923bb3d463e2a5fcd1da8d48f37"},
+  "cases": 23,
+  "changesReviewed": [
+    "Exact origin now https://localhost:3196, matching current candidate and runtime authentication origin.",
+    "Adds read-only actor initiation denial and explicit suspended-inventory-module denial.",
+    "Injected setModuleActive control suspends/restores only the owned synthetic inventory grant; transition occurs outside the request before/after snapshot pair and restoration is retried in finally.",
+    "Module denial allows exactly one new ModuleEntitlementDecision/MODULE_ENTITLEMENT_ENFORCED audit matching actor, organization, inventory, POST /api/uploadthing, allowed=false and enforce mode; existing audit rows must remain unchanged.",
+    "All other protocol cases require exact session and audit digests unchanged, alongside business state and response privacy.",
+    "Parent must use result.ok===true; result.passed is a numeric count."
+  ],
+  "executionPreconditions": [
+    "Parent current candidate/artifact provenance and fresh actual signed sessions remain required.",
+    "Snapshot must supply auditRows including safe selected changes fields and exact row hashes, plus sessionSha256 and auditSha256.",
+    "Injected synthetic module control must be independently reviewed and restore the exact prior grant state.",
+    "Run sequentially without concurrent application requests or fixture mutations."
+  ],
+  "claimLimits": [
+    "Generic middleware refusal does not by itself prove Origin enforcement; unchanged state and observed module audit support only their specific claimed boundaries.",
+    "Signed callback origin is signature-covered input, not a proven allowlist.",
+    "No real provider, CDN, hosted storage, lifecycle, operator or production acceptance."
+  ]
+}

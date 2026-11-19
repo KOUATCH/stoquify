@@ -1,3 +1,5 @@
+// Domain-unit fixtures isolate SQL locking; HR-14 PostgreSQL tests exercise real locks and concurrent decisions.
+jest.mock("@/services/hris/review-lock.service",()=>({lockHrisReviewEmployeeInTx:jest.fn(),lockHrisReviewContractInTx:jest.fn(),lockHrisReviewSalaryInTx:jest.fn(),lockHrisReviewPaymentInTx:jest.fn(),lockHrisReviewAssignmentInTx:jest.fn()}))
 import { PayrollContractStatus } from "@prisma/client"
 
 import { ForbiddenError } from "@/services/_shared/action-errors"
@@ -101,6 +103,29 @@ function pendingMetadata() {
 }
 
 describe("HRIS contract document evidence", () => {
+  const retryInput = () => {
+    const {requestId, capturedById, capturedAt, legalHoldReasonHash, ...facts} = pendingMetadata().hrisDocumentEvidence.pending
+    return {organizationId:"org-1",actorId:capturedById,actorPermissions:["hris.people.manage"],employeeId:"emp-1",contractId:"contract-1",...facts}
+  }
+  it("returns an exact normalized pending retry without another write", async () => {
+    const tx = txWith(contract({metadata:pendingMetadata()}))
+    expect(await requestHrisContractDocumentEvidence({...retryInput(),malwareScanProvider:" Defender "},rootClient(tx) as never)).toMatchObject({requestId:"event-request"})
+    expect(tx.payrollContract.update).not.toHaveBeenCalled()
+    expect(mockRecordEvent).not.toHaveBeenCalled()
+  })
+  it.each([
+    {artifactHash:"sha256:changed-artifact"}, {malwareScanEvidenceHash:"sha256:changed-scan"},
+    {malwareScanProvider:"Changed scanner"}, {malwareScannedAt:"2026-07-16T00:00:00.000Z"},
+    {signedAt:"2026-07-13T00:00:00.000Z"}, {retentionPolicyCode:"CHANGED_POLICY"},
+    {retentionBasis:"Changed basis"}, {retainUntil:"2037-07-14T00:00:00.000Z"},
+    {legalHold:true,legalHoldReason:"Changed hold"}, {legalHoldReason:"New retained reason"},
+  ])("rejects altered pending document evidence %j without writes", async change => {
+    const tx = txWith(contract({metadata:pendingMetadata()}))
+    await expect(requestHrisContractDocumentEvidence({...retryInput(),...change},rootClient(tx) as never)).rejects.toThrow("pending review")
+    expect(tx.payrollContract.update).not.toHaveBeenCalled()
+    expect(tx.auditLog.create).not.toHaveBeenCalled()
+    expect(mockRecordEvent).not.toHaveBeenCalled()
+  })
   beforeEach(() => {
     jest.clearAllMocks()
     mockResolveScope.mockResolvedValue(accessScope)

@@ -1,0 +1,512 @@
+{
+  "generatedAt": "2026-10-29T12:27:23.785Z",
+  "lane": "firm-close",
+  "scenarios": [
+    {
+      "organizationId": "synth12_douala",
+      "lane": "firm-close",
+      "result": {
+        "organizationId": "synth12_douala",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "findings": [
+          {
+            "scenario": "inventory-access-request",
+            "status": "COMPLETE",
+            "detail": {
+              "id": "2f48f0ca4eb59a1120322a64e88da34299b2bb0c5fad73b5af5baeb36f5614f4",
+              "decision": "PENDING",
+              "application": "NOT_REQUIRED"
+            }
+          },
+          {
+            "scenario": "pending-accountant-invitation",
+            "status": "COMPLETE",
+            "detail": {
+              "outcome": "INVITED",
+              "inviteId": "c8f36467-a42e-433e-acf6-2519a14215a0",
+              "delivery": "LOCAL_OUTBOX_ONLY; workers disabled; no email sent"
+            }
+          },
+          {
+            "scenario": "consented-firm-engagement",
+            "status": "COMPLETE",
+            "detail": "cmvtgt9pe0031ma80s80ipgv5"
+          },
+          {
+            "scenario": "firm-practice-plan-effort-budget",
+            "status": "COMPLETE",
+            "detail": [
+              {
+                "id": "cmvtgtcjk004dma800xfett4v",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgtd90004hma80wtquuxf2",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgtdyb004lma80vwl5ohkk",
+                "version": 1,
+                "replayed": true
+              }
+            ]
+          },
+          {
+            "scenario": "operational-obligation-register",
+            "status": "COMPLETE",
+            "detail": {
+              "instanceId": "eb882c58-e669-4f0e-8e3d-02de0579d9d0",
+              "version": 1,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "branch-daily-review",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvth7xbu001zmafce1j6lf16",
+              "status": "BLOCKED",
+              "blockerCount": 3,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "auxiliary-controlled-opening",
+            "status": "COMPLETE",
+            "detail": {
+              "organizationId": "synth12_opening_aux",
+              "personas": 3,
+              "locations": 1,
+              "chartAccounts": 7,
+              "executionId": "cmvth84410047mafcjujcu3mh",
+              "status": "ACTIVE",
+              "replayed": true,
+              "reconciliation": {
+                "debit": "2500000.00",
+                "lines": [
+                  {
+                    "debit": "2500000.00",
+                    "credit": "0.00",
+                    "sourceId": "opening-cash",
+                    "accountId": "cmvth81za002rmafcxwbklmpj",
+                    "difference": "0.00"
+                  },
+                  {
+                    "debit": "0.00",
+                    "credit": "2500000.00",
+                    "sourceId": "opening-capital",
+                    "accountId": "cmvth8222002vmafcywhqydrl",
+                    "difference": "0.00"
+                  }
+                ],
+                "credit": "2500000.00",
+                "details": [],
+                "version": "opening-reconciliation-v1",
+                "currency": "XAF",
+                "cutoverAt": "2026-09-30T23:00:00.000Z",
+                "operations": [
+                  {
+                    "domain": "LEDGER",
+                    "sourceId": "cmvth832o0041mafcykn181p5",
+                    "receiptHash": "sha256:7eca69ee31440b8c07b9b4e35856fc90b00b7cd7f9ec9e4fa8ab1a7a71f64a3f"
+                  }
+                ],
+                "reconciled": true,
+                "revisionId": "cmvth832o0041mafcykn181p5",
+                "executionId": "cmvth84410047mafcjujcu3mh",
+                "journalEntryId": "cmvth84ji004fmafcou2ats9t",
+                "manifestDigest": "sha256:7645614856a10e0e852e3bc85840a1714fd02aed40a14c6afcdee7856510b1cf"
+              }
+            }
+          },
+          {
+            "scenario": "auxiliary-firm-engagement",
+            "status": "COMPLETE",
+            "detail": "cmvth8ge500bnmafc5ig22v6u"
+          },
+          {
+            "scenario": "capital-support-independent-review",
+            "status": "COMPLETE",
+            "detail": {
+              "evidenceId": "cmvthsu2n002rmajcr0da3pml",
+              "status": "APPROVED"
+            }
+          },
+          {
+            "scenario": "september-close-assessment",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvthsu7j002tmajciir2vmuz",
+              "status": "BLOCKED",
+              "highBlockers": 25,
+              "criticalBlockers": 0,
+              "draftExportId": "cmvthsyww008vmajcp1xa13qe"
+            }
+          },
+          {
+            "scenario": "local-evidence-inbox-publication",
+            "status": "COMPLETE",
+            "detail": {
+              "before": 2,
+              "after": 2,
+              "publication": [],
+              "replay": [],
+              "delivery": "AUTHENTICATED_SYNTHETIC_LOCAL_INBOX_ONLY",
+              "externalCommunicationPerformed": false
+            }
+          },
+          {
+            "scenario": "provider-event-and-suspense",
+            "status": "COMPLETE",
+            "detail": {
+              "providerEventRecordId": "cmvth8691005pmafcu2xcbpu2",
+              "replayStatus": "DUPLICATE",
+              "reconciliationRunId": "cmvth86ww0061mafcyh8i6ll1",
+              "suspense": [
+                {
+                  "id": "cmvth871j0065mafc52418jqk",
+                  "status": "OPEN",
+                  "amount": "250.00",
+                  "currencyCode": "XAF"
+                },
+                {
+                  "id": "cmvth874d006bmafcy7ho3ok3",
+                  "status": "OPEN",
+                  "amount": "1000.00",
+                  "currencyCode": "XAF"
+                }
+              ],
+              "externalProviderContacted": false
+            }
+          },
+          {
+            "scenario": "bank-balance-unmatched-statement-negative-case",
+            "status": "COMPLETE",
+            "detail": {
+              "evidenceId": "cmvth87gr006fmafc9h81ilje",
+              "status": "PROPOSED",
+              "exactDifferenceXAF": "1000.00",
+              "financialPostingInvented": false
+            }
+          },
+          {
+            "scenario": "auxiliary-branch-review-and-signature",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvth8ngl00d1mafcchgprf2a",
+              "status": "IN_REVIEW",
+              "signOffId": "cmvth8o2r00ddmafc606kkt2i",
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "auxiliary-zero-activity-support",
+            "status": "COMPLETE",
+            "detail": [
+              {
+                "id": "cmvthszm20095majcd7dq2a42",
+                "status": "APPROVED",
+                "account": "571100"
+              },
+              {
+                "id": "cmvthszrp0097majco4jb1mcz",
+                "status": "APPROVED",
+                "account": "101100"
+              },
+              {
+                "id": "cmvthszzc0099majceakq8ci2",
+                "status": "APPROVED",
+                "account": "411100"
+              },
+              {
+                "id": "cmvtht06w009bmajcbzqws736",
+                "status": "APPROVED",
+                "account": "401100"
+              },
+              {
+                "id": "cmvtht0so009dmajc5vj3r0pn",
+                "status": "APPROVED",
+                "account": "311100"
+              },
+              {
+                "id": "cmvtht1pk009fmajcx0tsi73f",
+                "status": "APPROVED",
+                "account": "521100"
+              },
+              {
+                "id": "cmvtht20q009hmajc4o0i0za0",
+                "status": "APPROVED",
+                "account": "471900"
+              }
+            ]
+          },
+          {
+            "scenario": "auxiliary-close-assessment",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvtht28l009jmajcfrdvdlcq",
+              "status": "BLOCKED",
+              "highBlockers": 4,
+              "criticalBlockers": 3,
+              "draftExportId": "cmvtht4kb00dtmajcn9patakj"
+            }
+          },
+          {
+            "scenario": "auxiliary-advisory-lifecycle",
+            "status": "COMPLETE",
+            "detail": {
+              "engagementId": "cmvth8ge500bnmafc5ig22v6u",
+              "advisoryRevisionId": "cmvtht98200ehmajckhd5u6g1",
+              "publication": "AUTHENTICATED_LOCAL_WORKSPACE_ONLY",
+              "version": 4
+            }
+          },
+          {
+            "scenario": "period-control-event",
+            "status": "BLOCKED",
+            "detail": {
+              "code": "BUSINESS_RULE_VIOLATION",
+              "message": "Accounting period cannot be closed: 2 open payment reconciliation exceptions must be resolved; 2 open payment reconciliation suspense items must be resolved; 1 payment reconciliation run must be signed or voided",
+              "prerequisites": "Resolve real close blockers, independently certify the current completed-period close pack, then invoke closeAccountingPeriod. Core October periods stay OPEN."
+            }
+          },
+          {
+            "scenario": "clean-auxiliary-independent-period-closure",
+            "status": "COMPLETE",
+            "detail": {
+              "organizationId": "synth12_close_aux",
+              "periodId": "synth12_close_aux_period_2026_08",
+              "status": "CLOSED",
+              "eventId": "cmvtir4yf007mma54wklul3po",
+              "certifiedExportId": "cmvtir4r8007gma5448t71y5w",
+              "accounts": 19,
+              "balanceSheetSchedules": 14,
+              "users": 2,
+              "locations": 0,
+              "periods": 2,
+              "replayed": false,
+              "certification": "APPLICATION_SYSTEM_EVIDENCE_ONLY; statutory authority remains unconfigured"
+            }
+          }
+        ],
+        "issues": [],
+        "externalCommunicationPerformed": false
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "lane": "firm-close",
+      "result": {
+        "organizationId": "synth12_yaounde",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "findings": [
+          {
+            "scenario": "inventory-access-request",
+            "status": "COMPLETE",
+            "detail": {
+              "id": "cb67beda1ff143830c19d7949d125d3573b1b77ae6497453e4f289aa31c5d6a3",
+              "decision": "PENDING",
+              "application": "NOT_REQUIRED"
+            }
+          },
+          {
+            "scenario": "pending-accountant-invitation",
+            "status": "COMPLETE",
+            "detail": {
+              "outcome": "INVITED",
+              "inviteId": "6704a9ce-e7c2-423a-9bea-47c6974b9a94",
+              "delivery": "LOCAL_OUTBOX_ONLY; workers disabled; no email sent"
+            }
+          },
+          {
+            "scenario": "consented-firm-engagement",
+            "status": "COMPLETE",
+            "detail": "cmvtgtqz600e1ma80i068tsn5"
+          },
+          {
+            "scenario": "firm-practice-plan-effort-budget",
+            "status": "COMPLETE",
+            "detail": [
+              {
+                "id": "cmvtgtrq500fdma802mzlmtx4",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgtrw900fhma806m9najuc",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgts4p00flma80xcnqlum4",
+                "version": 1,
+                "replayed": true
+              }
+            ]
+          },
+          {
+            "scenario": "operational-obligation-register",
+            "status": "COMPLETE",
+            "detail": {
+              "instanceId": "8bb831d6-673f-4b41-96ac-eceab54f248a",
+              "version": 1,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "branch-daily-review",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvth95a300fjmafcoi3ei60v",
+              "status": "BLOCKED",
+              "blockerCount": 3,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "capital-support-independent-review",
+            "status": "COMPLETE",
+            "detail": {
+              "evidenceId": "cmvthteza00ghmajcilb9d4b7",
+              "status": "APPROVED"
+            }
+          },
+          {
+            "scenario": "september-close-assessment",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvthtf2v00gjmajctd088gtw",
+              "status": "BLOCKED",
+              "highBlockers": 25,
+              "criticalBlockers": 0,
+              "draftExportId": "cmvthtje400mlmajcopi8fdkl"
+            }
+          },
+          {
+            "scenario": "local-evidence-inbox-publication",
+            "status": "COMPLETE",
+            "detail": {
+              "before": 2,
+              "after": 2,
+              "publication": [],
+              "replay": [],
+              "delivery": "AUTHENTICATED_SYNTHETIC_LOCAL_INBOX_ONLY",
+              "externalCommunicationPerformed": false
+            }
+          }
+        ],
+        "issues": [],
+        "externalCommunicationPerformed": false
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "lane": "firm-close",
+      "result": {
+        "organizationId": "synth12_bafoussam",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "findings": [
+          {
+            "scenario": "inventory-access-request",
+            "status": "COMPLETE",
+            "detail": {
+              "id": "491ed4174c25496d94067140800ce3a3e373c5f9dab6e89d8bd9acfc0b27ca0e",
+              "decision": "PENDING",
+              "application": "NOT_REQUIRED"
+            }
+          },
+          {
+            "scenario": "pending-accountant-invitation",
+            "status": "COMPLETE",
+            "detail": {
+              "outcome": "INVITED",
+              "inviteId": "134d4f2b-d4fb-42b8-a47a-e09ce8010b70",
+              "delivery": "LOCAL_OUTBOX_ONLY; workers disabled; no email sent"
+            }
+          },
+          {
+            "scenario": "consented-firm-engagement",
+            "status": "COMPLETE",
+            "detail": "cmvtgtz1200ozma8013fbtj3i"
+          },
+          {
+            "scenario": "firm-practice-plan-effort-budget",
+            "status": "COMPLETE",
+            "detail": [
+              {
+                "id": "cmvtgu09n00qbma80g56doo15",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgu0gs00qfma80mec3qoyh",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgu0qm00qjma80n5jgnzgj",
+                "version": 1,
+                "replayed": true
+              }
+            ]
+          },
+          {
+            "scenario": "operational-obligation-register",
+            "status": "COMPLETE",
+            "detail": {
+              "instanceId": "be3d5709-0633-4663-94aa-f58c9a8e6c30",
+              "version": 1,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "branch-daily-review",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvth9iar00hpmafc01rcnr4m",
+              "status": "BLOCKED",
+              "blockerCount": 3,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "capital-support-independent-review",
+            "status": "COMPLETE",
+            "detail": {
+              "evidenceId": "cmvthtv5w00olmajcxhivgh03",
+              "status": "APPROVED"
+            }
+          },
+          {
+            "scenario": "september-close-assessment",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvthtvp600onmajc7kcpgv84",
+              "status": "BLOCKED",
+              "highBlockers": 25,
+              "criticalBlockers": 0,
+              "draftExportId": "cmvthu05b00upmajcc6hao7z0"
+            }
+          },
+          {
+            "scenario": "local-evidence-inbox-publication",
+            "status": "COMPLETE",
+            "detail": {
+              "before": 2,
+              "after": 2,
+              "publication": [],
+              "replay": [],
+              "delivery": "AUTHENTICATED_SYNTHETIC_LOCAL_INBOX_ONLY",
+              "externalCommunicationPerformed": false
+            }
+          }
+        ],
+        "issues": [],
+        "externalCommunicationPerformed": false
+      }
+    }
+  ],
+  "issues": []
+}

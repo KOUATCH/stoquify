@@ -235,7 +235,8 @@ describe("payroll authority adapter execution service", () => {
   it("does not enqueue new authority work when production admission is blocked", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation((callback) => callback(tx));
-    (assertPayrollProductionAdmissionInTx as jest.Mock).mockRejectedValue(new BusinessRuleError("PAYROLL_PRODUCTION_ADMISSION_BLOCKED"));
+    Object.assign(tx, { payrollRun: { findFirst: jest.fn().mockResolvedValue({ countryCode: "GA", payrollPeriod: { frequency: "MONTHLY" } }) } });
+    (assertPayrollProductionAdmissionInTx as jest.Mock).mockImplementation(jest.requireActual("../payroll-production-admission").assertPayrollProductionAdmissionInTx);
     await expect(enqueuePayrollAuthorityAdapterExecution({ organizationId: "org-1", declarationEvidenceId: "evidence-1", actorId: "controller-1", idempotencyKey: "blocked-queue", now: "2026-06-30T10:05:00Z" })).rejects.toThrow("PAYROLL_PRODUCTION_ADMISSION_BLOCKED");
     expect(tx.payrollDeclaration.update).not.toHaveBeenCalled();
     expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();

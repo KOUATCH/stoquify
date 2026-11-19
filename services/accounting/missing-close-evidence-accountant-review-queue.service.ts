@@ -201,7 +201,7 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
   }
 
   const generatedAt = new Date()
-  return db.$transaction(
+  const result = await db.$transaction(
     async (tx) => {
       const actor = await tx.user.findFirst({
         where: {
@@ -544,4 +544,8 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
     },
     { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
   )
+  if (clientOrganizationId && clientOrganizationId !== homeOrganizationId) {
+    await resolveAccountantClientAccess({ homeOrganizationId, clientOrganizationId, accountantUserId: actorId, capability: "REVIEW" })
+  }
+  return result
 }

@@ -1,0 +1,35 @@
+{
+  "createdAt": "2026-11-09T19:27:38.706Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "scope": "Preservation and isolated qualification compatibility only; not business acceptance of unrelated accounting feature",
+  "beforeSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+  "files": [
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39"
+    },
+    {
+      "path": "prisma/migrations/20261109190000_close_pack_canonical_retention/migration.sql",
+      "sha256": "61e5ff2bfd3209906d92ca36b923d5125242db76c8cae5d4bc1269897f76e6d8"
+    }
+  ],
+  "schemaDelta": [
+    "ClosePackExport.canonicalContent nullable text",
+    "ClosePackExport.canonicalContentSha256 nullable string",
+    "ClosePackExport.exportRequestHash nullable string"
+  ],
+  "migrationEffects": [
+    "Add three nullable columns to close_pack_exports",
+    "Add check constraint permitting all-null legacy rows or consistent nonempty content and sha256/request hashes",
+    "Add function and before update/delete trigger protecting retained canonical content and identity; metadata and updatedAt remain writable"
+  ],
+  "authModelsChanged": false,
+  "requirements": [
+    "Preserve before/current schema and original failed staging receipt.",
+    "Bind current full migration chain in candidate and fresh owned PostgreSQL cluster; no production migration.",
+    "Regenerate private copied Prisma client from current schema; archived baseline and source node_modules remain unchanged.",
+    "Fresh database begins empty; all-table native snapshots cover close_pack_exports too.",
+    "Do not admit dependency staging until actual destination equality and archived input preservation results are available."
+  ]
+}

@@ -8,6 +8,7 @@ export type ManagerActionCenterQueryInput = Omit<
   SnapshotScopeInput,
   "organizationId" | "locationId"
 > & {
+  locale?: "en" | "fr"
   accessContext: OperatingAccessContext
 }
 

@@ -1,0 +1,1407 @@
+{
+  "generatedAt": "2026-10-29T13:37:53.642Z",
+  "scenarios": [
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "catalog-and-partner-master-data",
+      "result": {
+        "categories": 3,
+        "brands": 3,
+        "supplierCatalogLinks": 24,
+        "customerLocationLinks": 24
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "organization-branch-units",
+      "result": {
+        "unitIds": [
+          "cmvtan8670039maqoaaikhpvf",
+          "cmvtan880003dmaqo1kgwn37r",
+          "cmvtan89c003hmaqoi2pah663",
+          "cmvtan8b1003lmaqori0tpbzx",
+          "cmvtan8do003pmaqopani6qtg"
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "hris-structure-and-access-scopes",
+      "result": {
+        "classification": "SYNTHETIC_REFERENCE_CONFIGURATION",
+        "organizationId": "synth12_douala",
+        "records": {
+          "positions": 6,
+          "primaryAssignments": 12,
+          "directRelationships": 11,
+          "peopleReadDelegations": 1
+        },
+        "created": {
+          "positions": 0,
+          "primaryAssignments": 0,
+          "directRelationships": 0,
+          "peopleReadDelegations": 0
+        },
+        "provenance": {
+          "file": "synthetic-documents/synth12_douala-hr-structure-provenance.json",
+          "sha256": "95fc43774213118f52c43cdd6a2f6e85029def13092106d9aecc75ee54195dd1",
+          "bytes": 23456
+        },
+        "reason": {
+          "file": "synthetic-documents/synth12_douala-hr-structure-reason.json",
+          "sha256": "80aaae4d78838eeeeeab98ec60c2dc5d997666eefcca679fba27ecc14d54e781",
+          "bytes": 564
+        },
+        "authoringWorkflowExecuted": false,
+        "approvalWorkflowExecuted": false,
+        "browserVerified": false,
+        "serviceReadChecks": {
+          "managerAuthority": "REPORTING_RELATIONSHIP",
+          "managerEmployeeIds": [
+            "cmvselhgd006zma3ouog1m4gc",
+            "cmvselhsv007lma3ogxixj9p1",
+            "cmvseli550087ma3o5zg2kh5e",
+            "cmvselihw008tma3otkh91379",
+            "cmvselio7009fma3o7v8uckag",
+            "cmvseljnr00anma3oi75s6dng",
+            "cmvseljwh00b9ma3ozpklxkut",
+            "cmvseljzx00bvma3o9jv5onb2",
+            "cmvselk8k00chma3o2ox5jayi",
+            "cmvselkn800d3ma3os255lcob"
+          ],
+          "ownEmployeeId": "cmvselj4d00a1ma3o2ixyv7ob",
+          "rootOwnerDenied": true,
+          "endBoundaryDenied": true,
+          "actualPayrollAdministratorAuthority": "TENANT_HRIS_ADMIN",
+          "delegatedReadProjection": {
+            "permissionAttenuationOnly": true,
+            "personaPermissionsChanged": false,
+            "employeeIds": [
+              "cmvseljnr00anma3oi75s6dng",
+              "cmvseljwh00b9ma3ozpklxkut",
+              "cmvseljzx00bvma3o9jv5onb2",
+              "cmvselk8k00chma3o2ox5jayi",
+              "cmvselkn800d3ma3os255lcob"
+            ],
+            "authority": "DELEGATED_MANAGER_AUTHORITY",
+            "beforeStartDenied": true,
+            "approvalAuthorityDenied": true
+          }
+        }
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "cash-payment-independent-evidence-review",
+      "result": {
+        "paymentId": "2f34350c-19a4-4e91-94aa-108051261bce",
+        "status": "CASH_REVIEWED",
+        "evidenceCurrent": true,
+        "independentReviewer": "synth12_douala_user_manager"
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "leave-entitlements-and-time-requests",
+      "result": {
+        "employeesCredited": 12,
+        "requests": [
+          {
+            "id": "cmvsihss00051mawkpuwq8plh",
+            "type": "LEAVE",
+            "status": "APPROVED"
+          },
+          {
+            "id": "cmvsiht4a005hmawkkjo32tgj",
+            "type": "OVERTIME",
+            "status": "REJECTED"
+          },
+          {
+            "id": "cmvsiht8z005nmawkblit3271",
+            "type": "LEAVE",
+            "status": "REQUESTED"
+          }
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "pending-future-salary-review",
+      "result": {
+        "id": "cmvsihtcr005rmawkcato9mkf",
+        "status": "REQUESTED",
+        "reused": true
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "bank-payment-statement-reconciliation",
+      "result": {
+        "scenario": "synthetic-manual-bank-reconciliation",
+        "organizationId": "synth12_douala",
+        "paymentId": "98a323b1-d49a-4996-a49a-9c46cc926097",
+        "transactionId": "cmvtbbsc00053mab459kfakye",
+        "statementFileId": "cmvtbbsnn005qmab4o75pb0az",
+        "statementLineId": "cmvtbbsnw005rmab42ylquuk4",
+        "runId": "cmvtbbuo8006lmab4plnbpawb",
+        "status": "RECONCILED",
+        "fundingJournalId": "cmvtbbqnc003hmab486lwpphw",
+        "fundingDocumentSha256": "a4da01abc4fd113e06d3f3abb698a646b7ba6f0439269f76b73f82f090ddab78",
+        "closingCash": "19888870.00",
+        "closingBank": "4417760.00",
+        "runStatus": "SIGNED",
+        "evidenceCurrent": true,
+        "counts": {
+          "payments": 1,
+          "files": 1,
+          "runs": 1,
+          "matches": 1
+        },
+        "releaseReplay": false,
+        "statementReplay": "DUPLICATE_FILE",
+        "runReplay": true,
+        "referenceSetup": {
+          "mode": "SYNTHETIC_FIXTURE",
+          "setupApprovalWorkflowTested": false,
+          "configurationSha256": "d6649de635e05b6256ed642e3048c1a68f9dba7c741e0b0a71b7856a955fd57e"
+        },
+        "statementSha256": "8c7dd493626dcc6c391cac27776495f74d0c97e42a20fc2f02aa9b5dec3e956d",
+        "certificateHash": "35fff949caeeac08427278d8fb467c45bc09df0e2109576f5ae18f9e50154ae2",
+        "certificateSourceHash": "d36199f24af51e67ede0ce8a87370358ae6bfa9f5d8e111addc567f296fa1a5d",
+        "certificateDocumentSha256": "35fff949caeeac08427278d8fb467c45bc09df0e2109576f5ae18f9e50154ae2",
+        "signReplay": true,
+        "signedRunCount": 1,
+        "externalTransferPerformed": false,
+        "providerCertificationClaimed": false,
+        "applicationSignOffVerified": true,
+        "runSigningPerformed": false
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "delivery-order-fulfillment-and-billing",
+      "result": {
+        "organizationId": "synth12_douala",
+        "scenario": "synth12_douala:delivery-fixture:v1",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "status": "completed",
+        "occurredAt": "2026-10-28T20:00:00.000Z",
+        "actorId": "synth12_douala_user_owner",
+        "orderId": "cmvtaz49e0039ma40xrxj7glt",
+        "orderNumber": "DO-B66E37B80B4436",
+        "reservationId": "cmvtaz4v8003uma40dgy654c5",
+        "goodsIssueId": "cmvtaz5bh004nma40m21j6a2y",
+        "billingOutcomeId": "cmvtaz62j005tma40yh1a7gcx",
+        "invoiceNumber": "INV-721384D9555637",
+        "receivableDocumentId": "cmvtaz6ix006bma40n9kskjx4",
+        "customerLedgerEntryId": "cmvtaz6mh006nma40wp2ofbzt",
+        "journalEntryIds": [
+          "cmvtaz5p10058ma4035hgi8m1",
+          "cmvtaz6a60060ma40vej1vtsr"
+        ],
+        "inventoryTransactionIds": [
+          "cmvtaz4yy0045ma40wt2ksjgk",
+          "cmvtaz5170047ma40386ebsi4",
+          "cmvtaz5eq004yma40793ijjk9",
+          "cmvtaz5fr0050ma407ohbsh4j"
+        ],
+        "fiscalDocumentId": "cmvtaz6pm006pma40tni3g2do",
+        "total": "10800.00",
+        "currency": "XAF",
+        "paymentStatus": "PENDING",
+        "document": {
+          "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\engineering\\database\\disposable-dataset-2026-10-28\\synthetic-documents\\synth12_douala-delivery-fixture-v1.json",
+          "sha256": "39bbfae0ebf8677d00c2fd5fa76cab3bdeff1d2ea5efb14951bc5cfb969c00e3"
+        },
+        "commandKeys": [
+          "synth12_douala:delivery-fixture:v1:create",
+          "synth12_douala:delivery-fixture:v1:confirm",
+          "synth12_douala:delivery-fixture:v1:issue",
+          "synth12_douala:delivery-fixture:v1:bill"
+        ],
+        "exactReplayVerified": true,
+        "checks": [
+          "full quantity conservation",
+          "consumed reservation",
+          "stock movement/source tie-out",
+          "balanced posted journals",
+          "unpaid receivable and customer ledger tie-out",
+          "applied command events",
+          "stable exact replay"
+        ],
+        "limitations": [
+          "Direct service fixture; no HTTP action or browser authorization claim",
+          "No real delivery or settlement occurred",
+          "Any fiscal artifact/submission is locally queued sandbox evidence; no certification worker or provider was run"
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "customer-credit-and-collections",
+      "result": [
+        {
+          "salesOrderId": "cmvsim6r0003jmay8ti607cfd",
+          "amount": 8750,
+          "result": {
+            "settlement": {
+              "id": "cmvsim8hy0059may8i9upolu0",
+              "organizationId": "synth12_douala",
+              "customerId": "synth12_douala_customer_0",
+              "settlementNumber": "CSET-20261028-6B1B71E1A2",
+              "status": "POSTED",
+              "method": "CASH",
+              "amount": "8750",
+              "currency": "XAF",
+              "settlementDate": "2026-10-28T00:00:00.000Z",
+              "idempotencyKey": "synth12_douala:customer-collection:0",
+              "idempotencyPayloadHash": "7d793df911f501af62e5e3184ac645ce3ffc92a1f432ba4575defca96818884f",
+              "correlationId": "synth12_douala:customer-collection:0",
+              "externalReference": null,
+              "documentHash": "d0d1903e2471931cb20502283448389af9ca5165bc8c943f5168fc28628db26c",
+              "evidenceHash": "d0d1903e2471931cb20502283448389af9ca5165bc8c943f5168fc28628db26c",
+              "receivedById": "synth12_douala_user_owner",
+              "ledgerPostingBatchId": "cmvsim8qh005pmay8uto0euvr",
+              "journalEntryId": "cmvsim8rc005rmay8echt91nc",
+              "postedBusinessEventId": "cmvsim8tl0060may8grq7mbmn",
+              "reversedAt": null,
+              "reversalDate": null,
+              "reversedById": null,
+              "reversalReason": null,
+              "reversalIdempotencyKey": null,
+              "reversalIdempotencyPayloadHash": null,
+              "reversalCorrelationId": null,
+              "reversalDocumentHash": null,
+              "reversalEvidenceHash": null,
+              "reversalLedgerPostingBatchId": null,
+              "reversalJournalEntryId": null,
+              "reversalAccountingSourceLinkId": null,
+              "reversalBusinessEventId": null,
+              "notes": "Synthetic customer collection evidence",
+              "metadata": {
+                "gate": "phase-5-slice-435-customer-settlement",
+                "postingRuleId": "synth12_douala_rule_AR-CUSTOMER-SETTLEMENT",
+                "sourceVersion": 1,
+                "allocationCount": 1,
+                "postingRuleCode": "AR-CUSTOMER-SETTLEMENT",
+                "accountingSourceLinkId": "cmvsim8s8005wmay8ixk2279p",
+                "idempotencyPayloadHash": "7d793df911f501af62e5e3184ac645ce3ffc92a1f432ba4575defca96818884f"
+              },
+              "createdAt": "2026-10-28T19:36:25.990Z",
+              "updatedAt": "2026-10-28T19:36:26.447Z",
+              "allocations": [
+                {
+                  "id": "cmvsim8jb005dmay8v73084kv",
+                  "organizationId": "synth12_douala",
+                  "customerSettlementId": "cmvsim8hy0059may8i9upolu0",
+                  "salesOrderId": "cmvsim6r0003jmay8ti607cfd",
+                  "customerReceivableDocumentId": "cmvsim7hk0043may8bn92uoch",
+                  "customerLedgerEntryId": "cmvsim8iz005bmay8i2epwd32",
+                  "reversalCustomerLedgerEntryId": null,
+                  "amount": "8750",
+                  "createdAt": "2026-10-28T19:36:26.040Z"
+                }
+              ]
+            },
+            "settlementId": "cmvsim8hy0059may8i9upolu0",
+            "allocationIds": [
+              "cmvsim8jb005dmay8v73084kv"
+            ],
+            "customerLedgerEntryIds": [
+              "cmvsim8iz005bmay8i2epwd32"
+            ],
+            "postingBatchId": "cmvsim8qh005pmay8uto0euvr",
+            "journalEntryId": "cmvsim8rc005rmay8echt91nc",
+            "sourceLinkId": "cmvsim8s8005wmay8ixk2279p",
+            "businessEventId": "cmvsim8tl0060may8grq7mbmn",
+            "replayed": true
+          }
+        },
+        {
+          "salesOrderId": "cmvsim93t006emay8v6tpgu3x",
+          "amount": 3000,
+          "result": {
+            "settlement": {
+              "id": "cmvsimafa0084may8tj7p3erl",
+              "organizationId": "synth12_douala",
+              "customerId": "synth12_douala_customer_1",
+              "settlementNumber": "CSET-20261028-85D37329EC",
+              "status": "POSTED",
+              "method": "CASH",
+              "amount": "3000",
+              "currency": "XAF",
+              "settlementDate": "2026-10-28T00:00:00.000Z",
+              "idempotencyKey": "synth12_douala:customer-collection:1",
+              "idempotencyPayloadHash": "04b301423ee16e13c8e955bbac46036a72fda022ddd712e279d0a400c488edf7",
+              "correlationId": "synth12_douala:customer-collection:1",
+              "externalReference": null,
+              "documentHash": "a4157d63cc5b645986a73c841d8588a1899abf227c95aac21bf97614d8af757c",
+              "evidenceHash": "a4157d63cc5b645986a73c841d8588a1899abf227c95aac21bf97614d8af757c",
+              "receivedById": "synth12_douala_user_owner",
+              "ledgerPostingBatchId": "cmvsimakx008kmay85k08opd5",
+              "journalEntryId": "cmvsimalh008mmay82nkm86rz",
+              "postedBusinessEventId": "cmvsimanl008vmay8dhyutgdo",
+              "reversedAt": null,
+              "reversalDate": null,
+              "reversedById": null,
+              "reversalReason": null,
+              "reversalIdempotencyKey": null,
+              "reversalIdempotencyPayloadHash": null,
+              "reversalCorrelationId": null,
+              "reversalDocumentHash": null,
+              "reversalEvidenceHash": null,
+              "reversalLedgerPostingBatchId": null,
+              "reversalJournalEntryId": null,
+              "reversalAccountingSourceLinkId": null,
+              "reversalBusinessEventId": null,
+              "notes": "Synthetic customer collection evidence",
+              "metadata": {
+                "gate": "phase-5-slice-435-customer-settlement",
+                "postingRuleId": "synth12_douala_rule_AR-CUSTOMER-SETTLEMENT",
+                "sourceVersion": 1,
+                "allocationCount": 1,
+                "postingRuleCode": "AR-CUSTOMER-SETTLEMENT",
+                "accountingSourceLinkId": "cmvsimam7008rmay86hm8lo7f",
+                "idempotencyPayloadHash": "04b301423ee16e13c8e955bbac46036a72fda022ddd712e279d0a400c488edf7"
+              },
+              "createdAt": "2026-10-28T19:36:28.486Z",
+              "updatedAt": "2026-10-28T19:36:28.815Z",
+              "allocations": [
+                {
+                  "id": "cmvsimagc0088may8mb42jyxk",
+                  "organizationId": "synth12_douala",
+                  "customerSettlementId": "cmvsimafa0084may8tj7p3erl",
+                  "salesOrderId": "cmvsim93t006emay8v6tpgu3x",
+                  "customerReceivableDocumentId": "cmvsim9l0006ymay89ro1datd",
+                  "customerLedgerEntryId": "cmvsimag50086may87ruth5sf",
+                  "reversalCustomerLedgerEntryId": null,
+                  "amount": "3000",
+                  "createdAt": "2026-10-28T19:36:28.525Z"
+                }
+              ]
+            },
+            "settlementId": "cmvsimafa0084may8tj7p3erl",
+            "allocationIds": [
+              "cmvsimagc0088may8mb42jyxk"
+            ],
+            "customerLedgerEntryIds": [
+              "cmvsimag50086may87ruth5sf"
+            ],
+            "postingBatchId": "cmvsimakx008kmay85k08opd5",
+            "journalEntryId": "cmvsimalh008mmay82nkm86rz",
+            "sourceLinkId": "cmvsimam7008rmay86hm8lo7f",
+            "businessEventId": "cmvsimanl008vmay8dhyutgdo",
+            "replayed": true
+          }
+        }
+      ]
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "warehouse-transfer-complete",
+      "result": {
+        "id": "cmvsimax1009hmay8h755phru",
+        "status": "COMPLETED"
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "physical-count-and-approved-variance",
+      "result": {
+        "id": "cmvtanbs10043maqo3f8lk7j8",
+        "status": "POSTED"
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "scenario": "supplier-return-and-credit",
+      "result": {
+        "returnId": "39226089-32f9-49ef-b3c9-6312e48e0a40",
+        "credit": {
+          "supplierCreditNote": {
+            "id": "4ae0452e-7809-4a5b-9fd8-e676360d53ff",
+            "organizationId": "synth12_douala",
+            "supplierId": "synth12_douala_supplier_2",
+            "purchaseOrderId": "cmvsic33y06z2ma1ozjpo4i0f",
+            "goodsReceiptId": "cmvsic4lf06zzma1os5zr8wsb",
+            "purchaseReturnId": "39226089-32f9-49ef-b3c9-6312e48e0a40",
+            "supplierInvoiceId": "cmvsic7ic076gma1opl3vre2q",
+            "direction": "CORRECTION",
+            "reversalOfSupplierCreditNoteId": null,
+            "creditNoteNumber": "SYN-CN-synth12_douala",
+            "normalizedCreditNoteNumber": "SYN-CN-SYNTH12_DOUALA",
+            "creditDate": "2026-10-28T18:31:00.000Z",
+            "currency": "XAF",
+            "subtotal": "14000",
+            "taxAmount": "0",
+            "total": "14000",
+            "idempotencyKey": "synth12_douala:supplier-credit",
+            "payloadHash": "sha256:b1d530f8260f71c4505474c45fa885fc45c496580e96824732b26a03389a8663",
+            "documentHash": "cf96b7c673ad724ac7532564e703e73231c374fd8e1dd8fd554559fa47cfe3ef",
+            "evidenceHash": "cf96b7c673ad724ac7532564e703e73231c374fd8e1dd8fd554559fa47cfe3ef",
+            "ledgerPostingBatchId": "cmvtancxz004amaqot2s6mghr",
+            "journalEntryId": "cmvtand10004cmaqojx623u7e",
+            "postedBusinessEventId": "cmvtandb1004nmaqougs7klkc",
+            "postedById": "synth12_douala_user_checker",
+            "reason": "Supplier credit for synthetic returned merchandise",
+            "createdAt": "2026-10-29T08:41:08.260Z",
+            "lines": [
+              {
+                "id": "cmvtandet004tmaqojzucbgwy",
+                "organizationId": "synth12_douala",
+                "supplierCreditNoteId": "4ae0452e-7809-4a5b-9fd8-e676360d53ff",
+                "sourcePurchaseReturnLineId": "cmvsimdcx00bpmay8j6zysv85",
+                "sourceSupplierInvoiceLineId": "cmvsic7id076ima1of0p5no05",
+                "sourceGoodsReceiptLineId": "cmvsic4mp0703ma1oheh4ot1v",
+                "itemId": "synth12_douala_item_0",
+                "quantity": "1",
+                "unitCost": "14000",
+                "taxRate": "0",
+                "taxAmount": "0",
+                "lineTotal": "14000",
+                "evidenceHash": "sha256:78411699f8be3c5d3e2633d67f5a0851c736503558ef58713adc133d0291c955",
+                "createdAt": "2026-10-29T08:41:08.260Z"
+              }
+            ]
+          },
+          "replayed": true
+        }
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "catalog-and-partner-master-data",
+      "result": {
+        "categories": 3,
+        "brands": 3,
+        "supplierCatalogLinks": 24,
+        "customerLocationLinks": 24
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "organization-branch-units",
+      "result": {
+        "unitIds": [
+          "cmvtanh260087maqojakbgnpn",
+          "cmvtanh2t008bmaqo8l01d346",
+          "cmvtanh51008fmaqoeed7sdqd",
+          "cmvtanh5q008jmaqo52x50uas",
+          "cmvtanh6h008nmaqo1shllevc"
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "hris-structure-and-access-scopes",
+      "result": {
+        "classification": "SYNTHETIC_REFERENCE_CONFIGURATION",
+        "organizationId": "synth12_yaounde",
+        "records": {
+          "positions": 6,
+          "primaryAssignments": 12,
+          "directRelationships": 11,
+          "peopleReadDelegations": 1
+        },
+        "created": {
+          "positions": 0,
+          "primaryAssignments": 0,
+          "directRelationships": 0,
+          "peopleReadDelegations": 0
+        },
+        "provenance": {
+          "file": "synthetic-documents/synth12_yaounde-hr-structure-provenance.json",
+          "sha256": "43f529599ecbe58355f2054508d551d552a1b1d735bd3e377288e25c42335266",
+          "bytes": 23617
+        },
+        "reason": {
+          "file": "synthetic-documents/synth12_yaounde-hr-structure-reason.json",
+          "sha256": "a094264a9fd01fdd75c97688d45edfb1dd09507f4d823cac23710d32feec0abd",
+          "bytes": 565
+        },
+        "authoringWorkflowExecuted": false,
+        "approvalWorkflowExecuted": false,
+        "browserVerified": false,
+        "serviceReadChecks": {
+          "managerAuthority": "REPORTING_RELATIONSHIP",
+          "managerEmployeeIds": [
+            "cmvselrk600knma3os02urkmr",
+            "cmvselru700l9ma3ozwsq24gp",
+            "cmvselrxd00lvma3owhep6d3v",
+            "cmvsels0w00mhma3o3ffkvpdp",
+            "cmvsels7300n3ma3oa8w1myk9",
+            "cmvselstk00obma3o9aci6eil",
+            "cmvselt5400oxma3oza11rpg4",
+            "cmvseltd000pjma3os8en0zyl",
+            "cmvseltnn00q5ma3osc0bs6nd",
+            "cmvselty400qrma3ogjwv4yju"
+          ],
+          "ownEmployeeId": "cmvselsik00npma3obfaiuwq6",
+          "rootOwnerDenied": true,
+          "endBoundaryDenied": true,
+          "actualPayrollAdministratorAuthority": "TENANT_HRIS_ADMIN",
+          "delegatedReadProjection": {
+            "permissionAttenuationOnly": true,
+            "personaPermissionsChanged": false,
+            "employeeIds": [
+              "cmvselstk00obma3o9aci6eil",
+              "cmvselt5400oxma3oza11rpg4",
+              "cmvseltd000pjma3os8en0zyl",
+              "cmvseltnn00q5ma3osc0bs6nd",
+              "cmvselty400qrma3ogjwv4yju"
+            ],
+            "authority": "DELEGATED_MANAGER_AUTHORITY",
+            "beforeStartDenied": true,
+            "approvalAuthorityDenied": true
+          }
+        }
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "cash-payment-independent-evidence-review",
+      "result": {
+        "paymentId": "9929e3ef-d5be-4b63-b280-ff4cbbf0d8dd",
+        "status": "CASH_REVIEWED",
+        "evidenceCurrent": true,
+        "independentReviewer": "synth12_yaounde_user_manager"
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "leave-entitlements-and-time-requests",
+      "result": {
+        "employeesCredited": 12,
+        "requests": [
+          {
+            "id": "cmvsii1tk00b1mawkxm2h2opw",
+            "type": "LEAVE",
+            "status": "APPROVED"
+          },
+          {
+            "id": "cmvsii25200bhmawkjhgjc1sw",
+            "type": "OVERTIME",
+            "status": "REJECTED"
+          },
+          {
+            "id": "cmvsii2c800bnmawk0a90o8i0",
+            "type": "LEAVE",
+            "status": "REQUESTED"
+          }
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "pending-future-salary-review",
+      "result": {
+        "id": "cmvsii2gn00brmawks84pqcm9",
+        "status": "REQUESTED",
+        "reused": true
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "bank-payment-statement-reconciliation",
+      "result": {
+        "scenario": "synthetic-manual-bank-reconciliation",
+        "organizationId": "synth12_yaounde",
+        "paymentId": "ea8c3ac1-0002-4f50-90f8-c4b5eb61236d",
+        "transactionId": "cmvtbc2ko00c4mab4rpm75l0u",
+        "statementFileId": "cmvtbc34100crmab4gudj8uet",
+        "statementLineId": "cmvtbc34e00csmab4b5ug09ke",
+        "runId": "cmvtbc69s00dmmab4vfu1c7je",
+        "status": "RECONCILED",
+        "fundingJournalId": "cmvtbc0x800aimab4amkg2xjf",
+        "fundingDocumentSha256": "3c8168e3d008641f0c9d56bbb2729d6132d27a56f451a8df7e320c19b077c3a0",
+        "closingCash": "19888870.00",
+        "closingBank": "4417760.00",
+        "runStatus": "SIGNED",
+        "evidenceCurrent": true,
+        "counts": {
+          "payments": 1,
+          "files": 1,
+          "runs": 1,
+          "matches": 1
+        },
+        "releaseReplay": false,
+        "statementReplay": "DUPLICATE_FILE",
+        "runReplay": true,
+        "referenceSetup": {
+          "mode": "SYNTHETIC_FIXTURE",
+          "setupApprovalWorkflowTested": false,
+          "configurationSha256": "21e68f116e9124706f2249ecd4f59a5b9a8ac8955c58d4b8c29d61b32afafef9"
+        },
+        "statementSha256": "4916ba01970390e98c88a24505e7c73f17727a0e35955a57f206edea96bd0591",
+        "certificateHash": "11f882e11bedeb54906709d20e66b93778f4de232925e7fe389a18a9630fc0d0",
+        "certificateSourceHash": "51332685909581d3195a4095ed0b159120b2dde6bd532357ff7336e9a3010eaa",
+        "certificateDocumentSha256": "11f882e11bedeb54906709d20e66b93778f4de232925e7fe389a18a9630fc0d0",
+        "signReplay": true,
+        "signedRunCount": 1,
+        "externalTransferPerformed": false,
+        "providerCertificationClaimed": false,
+        "applicationSignOffVerified": true,
+        "runSigningPerformed": false
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "delivery-order-fulfillment-and-billing",
+      "result": {
+        "organizationId": "synth12_yaounde",
+        "scenario": "synth12_yaounde:delivery-fixture:v1",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "status": "completed",
+        "occurredAt": "2026-10-28T20:00:00.000Z",
+        "actorId": "synth12_yaounde_user_owner",
+        "orderId": "cmvtazct300avma4060paeavs",
+        "orderNumber": "DO-FCB54422F49619",
+        "reservationId": "cmvtazd3z00bgma40ktaxutny",
+        "goodsIssueId": "cmvtazdw100c9ma40iif45tz2",
+        "billingOutcomeId": "cmvtazf3e00dfma4070h8iecv",
+        "invoiceNumber": "INV-A489CE54111549",
+        "receivableDocumentId": "cmvtazff900dxma40xid295r7",
+        "customerLedgerEntryId": "cmvtazfiq00e9ma404t0kzvpx",
+        "journalEntryIds": [
+          "cmvtazedv00cuma40bq8pjrhc",
+          "cmvtazf9g00dmma404qchy1lz"
+        ],
+        "inventoryTransactionIds": [
+          "cmvtazddi00brma40jlwnfgdm",
+          "cmvtazdgq00btma40i81w77sk",
+          "cmvtaze0000ckma403dc7ppy3",
+          "cmvtaze2900cmma403m8z0end"
+        ],
+        "fiscalDocumentId": "cmvtazflv00ebma40up117ns0",
+        "total": "10800.00",
+        "currency": "XAF",
+        "paymentStatus": "PENDING",
+        "document": {
+          "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\engineering\\database\\disposable-dataset-2026-10-28\\synthetic-documents\\synth12_yaounde-delivery-fixture-v1.json",
+          "sha256": "68ab151fd899d8c759a6c63d6aa9a96227276ce14a21b506e45b6583cf135982"
+        },
+        "commandKeys": [
+          "synth12_yaounde:delivery-fixture:v1:create",
+          "synth12_yaounde:delivery-fixture:v1:confirm",
+          "synth12_yaounde:delivery-fixture:v1:issue",
+          "synth12_yaounde:delivery-fixture:v1:bill"
+        ],
+        "exactReplayVerified": true,
+        "checks": [
+          "full quantity conservation",
+          "consumed reservation",
+          "stock movement/source tie-out",
+          "balanced posted journals",
+          "unpaid receivable and customer ledger tie-out",
+          "applied command events",
+          "stable exact replay"
+        ],
+        "limitations": [
+          "Direct service fixture; no HTTP action or browser authorization claim",
+          "No real delivery or settlement occurred",
+          "Any fiscal artifact/submission is locally queued sandbox evidence; no certification worker or provider was run"
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "customer-credit-and-collections",
+      "result": [
+        {
+          "salesOrderId": "cmvsimhfb00ffmay8foxdywe5",
+          "amount": 8750,
+          "result": {
+            "settlement": {
+              "id": "cmvsimih900h5may8h13qw7lc",
+              "organizationId": "synth12_yaounde",
+              "customerId": "synth12_yaounde_customer_0",
+              "settlementNumber": "CSET-20261028-699CB14E87",
+              "status": "POSTED",
+              "method": "CASH",
+              "amount": "8750",
+              "currency": "XAF",
+              "settlementDate": "2026-10-28T00:00:00.000Z",
+              "idempotencyKey": "synth12_yaounde:customer-collection:0",
+              "idempotencyPayloadHash": "55111dde621de8887ec115a0453e6e468a18474c0c6be987bda8c6773c7e05bb",
+              "correlationId": "synth12_yaounde:customer-collection:0",
+              "externalReference": null,
+              "documentHash": "5f53a11a181f33f66b70c3193fc0c0ffbdb118a14c95b1bde67aea2c8ba07162",
+              "evidenceHash": "5f53a11a181f33f66b70c3193fc0c0ffbdb118a14c95b1bde67aea2c8ba07162",
+              "receivedById": "synth12_yaounde_user_owner",
+              "ledgerPostingBatchId": "cmvsimin800hlmay8ezj6xson",
+              "journalEntryId": "cmvsimint00hnmay8imudp8pi",
+              "postedBusinessEventId": "cmvsimivd00hwmay8rbelcy3n",
+              "reversedAt": null,
+              "reversalDate": null,
+              "reversedById": null,
+              "reversalReason": null,
+              "reversalIdempotencyKey": null,
+              "reversalIdempotencyPayloadHash": null,
+              "reversalCorrelationId": null,
+              "reversalDocumentHash": null,
+              "reversalEvidenceHash": null,
+              "reversalLedgerPostingBatchId": null,
+              "reversalJournalEntryId": null,
+              "reversalAccountingSourceLinkId": null,
+              "reversalBusinessEventId": null,
+              "notes": "Synthetic customer collection evidence",
+              "metadata": {
+                "gate": "phase-5-slice-435-customer-settlement",
+                "postingRuleId": "synth12_yaounde_rule_AR-CUSTOMER-SETTLEMENT",
+                "sourceVersion": 1,
+                "allocationCount": 1,
+                "postingRuleCode": "AR-CUSTOMER-SETTLEMENT",
+                "accountingSourceLinkId": "cmvsimisi00hsmay8xs9ifrw3",
+                "idempotencyPayloadHash": "55111dde621de8887ec115a0453e6e468a18474c0c6be987bda8c6773c7e05bb"
+              },
+              "createdAt": "2026-10-28T19:36:38.925Z",
+              "updatedAt": "2026-10-28T19:36:39.462Z",
+              "allocations": [
+                {
+                  "id": "cmvsimihx00h9may8rwu47muf",
+                  "organizationId": "synth12_yaounde",
+                  "customerSettlementId": "cmvsimih900h5may8h13qw7lc",
+                  "salesOrderId": "cmvsimhfb00ffmay8foxdywe5",
+                  "customerReceivableDocumentId": "cmvsimhxl00fzmay8tdsmogua",
+                  "customerLedgerEntryId": "cmvsimiht00h7may82zvbb84q",
+                  "reversalCustomerLedgerEntryId": null,
+                  "amount": "8750",
+                  "createdAt": "2026-10-28T19:36:38.949Z"
+                }
+              ]
+            },
+            "settlementId": "cmvsimih900h5may8h13qw7lc",
+            "allocationIds": [
+              "cmvsimihx00h9may8rwu47muf"
+            ],
+            "customerLedgerEntryIds": [
+              "cmvsimiht00h7may82zvbb84q"
+            ],
+            "postingBatchId": "cmvsimin800hlmay8ezj6xson",
+            "journalEntryId": "cmvsimint00hnmay8imudp8pi",
+            "sourceLinkId": "cmvsimisi00hsmay8xs9ifrw3",
+            "businessEventId": "cmvsimivd00hwmay8rbelcy3n",
+            "replayed": true
+          }
+        },
+        {
+          "salesOrderId": "cmvsimj1f00iamay893sbgzwr",
+          "amount": 3000,
+          "result": {
+            "settlement": {
+              "id": "cmvsimjrl00k0may87lr7l9m4",
+              "organizationId": "synth12_yaounde",
+              "customerId": "synth12_yaounde_customer_1",
+              "settlementNumber": "CSET-20261028-C801AC2077",
+              "status": "POSTED",
+              "method": "CASH",
+              "amount": "3000",
+              "currency": "XAF",
+              "settlementDate": "2026-10-28T00:00:00.000Z",
+              "idempotencyKey": "synth12_yaounde:customer-collection:1",
+              "idempotencyPayloadHash": "1b20f9a6f298439d199f92ff7c85fbe87788636d82ddc88488fdae6d0df4ad3e",
+              "correlationId": "synth12_yaounde:customer-collection:1",
+              "externalReference": null,
+              "documentHash": "96adad29f86eb21c07e983e176a48d355b7270e0211e8dcf156868fd1b217428",
+              "evidenceHash": "96adad29f86eb21c07e983e176a48d355b7270e0211e8dcf156868fd1b217428",
+              "receivedById": "synth12_yaounde_user_owner",
+              "ledgerPostingBatchId": "cmvsimjva00kgmay8nd152e0h",
+              "journalEntryId": "cmvsimjvq00kimay893ibv2uc",
+              "postedBusinessEventId": "cmvsimjx400krmay8a19zh4hm",
+              "reversedAt": null,
+              "reversalDate": null,
+              "reversedById": null,
+              "reversalReason": null,
+              "reversalIdempotencyKey": null,
+              "reversalIdempotencyPayloadHash": null,
+              "reversalCorrelationId": null,
+              "reversalDocumentHash": null,
+              "reversalEvidenceHash": null,
+              "reversalLedgerPostingBatchId": null,
+              "reversalJournalEntryId": null,
+              "reversalAccountingSourceLinkId": null,
+              "reversalBusinessEventId": null,
+              "notes": "Synthetic customer collection evidence",
+              "metadata": {
+                "gate": "phase-5-slice-435-customer-settlement",
+                "postingRuleId": "synth12_yaounde_rule_AR-CUSTOMER-SETTLEMENT",
+                "sourceVersion": 1,
+                "allocationCount": 1,
+                "postingRuleCode": "AR-CUSTOMER-SETTLEMENT",
+                "accountingSourceLinkId": "cmvsimjw700knmay822uk9qfo",
+                "idempotencyPayloadHash": "1b20f9a6f298439d199f92ff7c85fbe87788636d82ddc88488fdae6d0df4ad3e"
+              },
+              "createdAt": "2026-10-28T19:36:40.594Z",
+              "updatedAt": "2026-10-28T19:36:40.822Z",
+              "allocations": [
+                {
+                  "id": "cmvsimjs100k4may86jpw2mmj",
+                  "organizationId": "synth12_yaounde",
+                  "customerSettlementId": "cmvsimjrl00k0may87lr7l9m4",
+                  "salesOrderId": "cmvsimj1f00iamay893sbgzwr",
+                  "customerReceivableDocumentId": "cmvsimjce00iumay8qwild6ja",
+                  "customerLedgerEntryId": "cmvsimjrx00k2may8ycpyyrwf",
+                  "reversalCustomerLedgerEntryId": null,
+                  "amount": "3000",
+                  "createdAt": "2026-10-28T19:36:40.609Z"
+                }
+              ]
+            },
+            "settlementId": "cmvsimjrl00k0may87lr7l9m4",
+            "allocationIds": [
+              "cmvsimjs100k4may86jpw2mmj"
+            ],
+            "customerLedgerEntryIds": [
+              "cmvsimjrx00k2may8ycpyyrwf"
+            ],
+            "postingBatchId": "cmvsimjva00kgmay8nd152e0h",
+            "journalEntryId": "cmvsimjvq00kimay893ibv2uc",
+            "sourceLinkId": "cmvsimjw700knmay822uk9qfo",
+            "businessEventId": "cmvsimjx400krmay8a19zh4hm",
+            "replayed": true
+          }
+        }
+      ]
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "warehouse-transfer-complete",
+      "result": {
+        "id": "cmvsimk4i00ldmay82apj9bvo",
+        "status": "COMPLETED"
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "physical-count-and-approved-variance",
+      "result": {
+        "id": "cmvtanjb50091maqoboltzoht",
+        "status": "POSTED"
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "scenario": "supplier-return-and-credit",
+      "result": {
+        "returnId": "d2fb79a7-d8f6-4eef-9272-f2c3bcd82b99",
+        "credit": {
+          "supplierCreditNote": {
+            "id": "5eda6378-42b5-4738-8139-61b1e805ceec",
+            "organizationId": "synth12_yaounde",
+            "supplierId": "synth12_yaounde_supplier_2",
+            "purchaseOrderId": "cmvsid0uq08fkma1o8303fa36",
+            "goodsReceiptId": "cmvsid2kz08ghma1oomtz2p3d",
+            "purchaseReturnId": "d2fb79a7-d8f6-4eef-9272-f2c3bcd82b99",
+            "supplierInvoiceId": "cmvsid5s308myma1od8b9lkpf",
+            "direction": "CORRECTION",
+            "reversalOfSupplierCreditNoteId": null,
+            "creditNoteNumber": "SYN-CN-synth12_yaounde",
+            "normalizedCreditNoteNumber": "SYN-CN-SYNTH12_YAOUNDE",
+            "creditDate": "2026-10-28T18:31:00.000Z",
+            "currency": "XAF",
+            "subtotal": "14000",
+            "taxAmount": "0",
+            "total": "14000",
+            "idempotencyKey": "synth12_yaounde:supplier-credit",
+            "payloadHash": "sha256:b5eadb7ead2dd9b0cc26d06c361f688b7e601a10af7b57121341296d5e17614f",
+            "documentHash": "325cd041e06ef36766010351adcb3ec1e58a42ba8b2b60027f1b8e1ddb62dbc8",
+            "evidenceHash": "325cd041e06ef36766010351adcb3ec1e58a42ba8b2b60027f1b8e1ddb62dbc8",
+            "ledgerPostingBatchId": "cmvtank3r0098maqo62vgt9i1",
+            "journalEntryId": "cmvtank5j009amaqokie26sd5",
+            "postedBusinessEventId": "cmvtankh1009lmaqoo9hbtvde",
+            "postedById": "synth12_yaounde_user_checker",
+            "reason": "Supplier credit for synthetic returned merchandise",
+            "createdAt": "2026-10-29T08:41:17.459Z",
+            "lines": [
+              {
+                "id": "cmvtankib009rmaqonh68ledj",
+                "organizationId": "synth12_yaounde",
+                "supplierCreditNoteId": "5eda6378-42b5-4738-8139-61b1e805ceec",
+                "sourcePurchaseReturnLineId": "cmvsimlbk00nlmay8jk0dzvph",
+                "sourceSupplierInvoiceLineId": "cmvsid5s408n0ma1oz00is485",
+                "sourceGoodsReceiptLineId": "cmvsid2lf08glma1olx1etoyl",
+                "itemId": "synth12_yaounde_item_0",
+                "quantity": "1",
+                "unitCost": "14000",
+                "taxRate": "0",
+                "taxAmount": "0",
+                "lineTotal": "14000",
+                "evidenceHash": "sha256:c87ed9e11ca972a5132923f668fef2b7d01d1359ca4d8cf9415f3af194179083",
+                "createdAt": "2026-10-29T08:41:17.459Z"
+              }
+            ]
+          },
+          "replayed": true
+        }
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "catalog-and-partner-master-data",
+      "result": {
+        "categories": 3,
+        "brands": 3,
+        "supplierCatalogLinks": 24,
+        "customerLocationLinks": 24
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "organization-branch-units",
+      "result": {
+        "unitIds": [
+          "cmvtanpsr00d5maqornjjnphm",
+          "cmvtanpts00d9maqo4sfmkxzz",
+          "cmvtanpvi00ddmaqoovhm6pui",
+          "cmvtanpx200dhmaqowh3sm82b",
+          "cmvtanq0i00dlmaqolxjdjt00"
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "hris-structure-and-access-scopes",
+      "result": {
+        "classification": "SYNTHETIC_REFERENCE_CONFIGURATION",
+        "organizationId": "synth12_bafoussam",
+        "records": {
+          "positions": 6,
+          "primaryAssignments": 12,
+          "directRelationships": 11,
+          "peopleReadDelegations": 1
+        },
+        "created": {
+          "positions": 0,
+          "primaryAssignments": 0,
+          "directRelationships": 0,
+          "peopleReadDelegations": 0
+        },
+        "provenance": {
+          "file": "synthetic-documents/synth12_bafoussam-hr-structure-provenance.json",
+          "sha256": "9e853695096f7ae5ca85a99aa84f4c0b392698d594e97d573120ac65eece1dd3",
+          "bytes": 23939
+        },
+        "reason": {
+          "file": "synthetic-documents/synth12_bafoussam-hr-structure-reason.json",
+          "sha256": "47ba0b9e11a3109424f605e0cd921180d03c7836c001ebcf9710c0e7994fa02d",
+          "bytes": 567
+        },
+        "authoringWorkflowExecuted": false,
+        "approvalWorkflowExecuted": false,
+        "browserVerified": false,
+        "serviceReadChecks": {
+          "managerAuthority": "REPORTING_RELATIONSHIP",
+          "managerEmployeeIds": [
+            "cmvsem0h100ybma3og03hg2j2",
+            "cmvsem0xh00yxma3o1unuhm6d",
+            "cmvsem18t00zjma3ox47yin8q",
+            "cmvsem1j40105ma3ocfkf6r8q",
+            "cmvsem1yw010rma3o0vt3o62y",
+            "cmvsem30c011zma3o9ytyw2co",
+            "cmvsem3q8012lma3oll2mw2lx",
+            "cmvsem45u0137ma3oe6bxna7e",
+            "cmvsem4j0013tma3oe76hm470",
+            "cmvsem4xx014fma3ovzkzdqup"
+          ],
+          "ownEmployeeId": "cmvsem2ev011dma3of9d5k3gy",
+          "rootOwnerDenied": true,
+          "endBoundaryDenied": true,
+          "actualPayrollAdministratorAuthority": "TENANT_HRIS_ADMIN",
+          "delegatedReadProjection": {
+            "permissionAttenuationOnly": true,
+            "personaPermissionsChanged": false,
+            "employeeIds": [
+              "cmvsem30c011zma3o9ytyw2co",
+              "cmvsem3q8012lma3oll2mw2lx",
+              "cmvsem45u0137ma3oe6bxna7e",
+              "cmvsem4j0013tma3oe76hm470",
+              "cmvsem4xx014fma3ovzkzdqup"
+            ],
+            "authority": "DELEGATED_MANAGER_AUTHORITY",
+            "beforeStartDenied": true,
+            "approvalAuthorityDenied": true
+          }
+        }
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "cash-payment-independent-evidence-review",
+      "result": {
+        "paymentId": "ecd92dce-3161-4c5c-96b3-2d8258c50d9d",
+        "status": "PROPOSED",
+        "evidenceCurrent": true,
+        "independentReviewer": "synth12_bafoussam_user_manager"
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "leave-entitlements-and-time-requests",
+      "result": {
+        "employeesCredited": 12,
+        "requests": [
+          {
+            "id": "cmvsii97400gtmawknvo5zir3",
+            "type": "LEAVE",
+            "status": "APPROVED"
+          },
+          {
+            "id": "cmvsii9x400h9mawksgu67q2l",
+            "type": "OVERTIME",
+            "status": "REJECTED"
+          },
+          {
+            "id": "cmvsiia8200hfmawku020zpix",
+            "type": "LEAVE",
+            "status": "REQUESTED"
+          }
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "pending-future-salary-review",
+      "result": {
+        "id": "cmvsiiafh00hjmawkt9tr9gqk",
+        "status": "REQUESTED",
+        "reused": true
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "bank-payment-statement-reconciliation",
+      "result": {
+        "scenario": "synthetic-manual-bank-reconciliation",
+        "organizationId": "synth12_bafoussam",
+        "paymentId": "b4119a00-0bab-4160-99b5-ccb5f74546f2",
+        "transactionId": "cmvtbcdf900j5mab484164vo1",
+        "statementFileId": "cmvtbcdzx00jsmab4vdip5jx6",
+        "statementLineId": "cmvtbce0400jtmab415zoulv0",
+        "runId": "cmvtbcfy300knmab4knupa37v",
+        "status": "RECONCILED",
+        "fundingJournalId": "cmvtbcbdq00hjmab4l1urdxrg",
+        "fundingDocumentSha256": "ebf35592d159deee7063778c7a43c4a0d04abc1c39551373ee88ef8c9595b4e0",
+        "closingCash": "19888870.00",
+        "closingBank": "4417760.00",
+        "runStatus": "SIGNED",
+        "evidenceCurrent": true,
+        "counts": {
+          "payments": 1,
+          "files": 1,
+          "runs": 1,
+          "matches": 1
+        },
+        "releaseReplay": false,
+        "statementReplay": "DUPLICATE_FILE",
+        "runReplay": true,
+        "referenceSetup": {
+          "mode": "SYNTHETIC_FIXTURE",
+          "setupApprovalWorkflowTested": false,
+          "configurationSha256": "e6f4470b9de1b7f51f1be457ba198a810850f80d2d1ad46421273b88d8c1912b"
+        },
+        "statementSha256": "671cb4b6ef656ac9cfc714a4717002526108b45563d7508539884363e72cd36a",
+        "certificateHash": "007364563d184786a561b0f20a682c61497e9599348b8bca33d8acf33374446e",
+        "certificateSourceHash": "7addc09c313920e45446c219c75634eae290dd7019b05de3d4915ca48f80eb8d",
+        "certificateDocumentSha256": "007364563d184786a561b0f20a682c61497e9599348b8bca33d8acf33374446e",
+        "signReplay": true,
+        "signedRunCount": 1,
+        "externalTransferPerformed": false,
+        "providerCertificationClaimed": false,
+        "applicationSignOffVerified": true,
+        "runSigningPerformed": false
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "delivery-order-fulfillment-and-billing",
+      "result": {
+        "organizationId": "synth12_bafoussam",
+        "scenario": "synth12_bafoussam:delivery-fixture:v1",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "status": "completed",
+        "occurredAt": "2026-10-28T20:00:00.000Z",
+        "actorId": "synth12_bafoussam_user_owner",
+        "orderId": "cmvtaznpm00ihma40rrc1jewm",
+        "orderNumber": "DO-F7D9618527F305",
+        "reservationId": "cmvtaznx600j2ma401ml4iuvs",
+        "goodsIssueId": "cmvtazo6d00jvma408pcxt7b1",
+        "billingOutcomeId": "cmvtazoth00l1ma40wjptrs6e",
+        "invoiceNumber": "INV-DA45C47AFF3305",
+        "receivableDocumentId": "cmvtazp1c00ljma40l93gfy17",
+        "customerLedgerEntryId": "cmvtazp4100lvma409k9mn0az",
+        "journalEntryIds": [
+          "cmvtazoj300kgma40jxjnbw0b",
+          "cmvtazox800l8ma40pm9tsskz"
+        ],
+        "inventoryTransactionIds": [
+          "cmvtaznzi00jdma40hfoikjfv",
+          "cmvtazo0i00jfma408b155dkg",
+          "cmvtazob300k6ma40av4qvm7k",
+          "cmvtazoe400k8ma40vx3o9s1m"
+        ],
+        "fiscalDocumentId": "cmvtazp6b00lxma40irymuj1r",
+        "total": "10800.00",
+        "currency": "XAF",
+        "paymentStatus": "PENDING",
+        "document": {
+          "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\engineering\\database\\disposable-dataset-2026-10-28\\synthetic-documents\\synth12_bafoussam-delivery-fixture-v1.json",
+          "sha256": "97651d04453d077db0d6321d292bb60c170421dcc40624e8f9aaeb7a33a9785d"
+        },
+        "commandKeys": [
+          "synth12_bafoussam:delivery-fixture:v1:create",
+          "synth12_bafoussam:delivery-fixture:v1:confirm",
+          "synth12_bafoussam:delivery-fixture:v1:issue",
+          "synth12_bafoussam:delivery-fixture:v1:bill"
+        ],
+        "exactReplayVerified": true,
+        "checks": [
+          "full quantity conservation",
+          "consumed reservation",
+          "stock movement/source tie-out",
+          "balanced posted journals",
+          "unpaid receivable and customer ledger tie-out",
+          "applied command events",
+          "stable exact replay"
+        ],
+        "limitations": [
+          "Direct service fixture; no HTTP action or browser authorization claim",
+          "No real delivery or settlement occurred",
+          "Any fiscal artifact/submission is locally queued sandbox evidence; no certification worker or provider was run"
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "customer-credit-and-collections",
+      "result": [
+        {
+          "salesOrderId": "cmvsimogx00rdmay846m387ll",
+          "amount": 8750,
+          "result": {
+            "settlement": {
+              "id": "cmvsimp2100t3may8yr5rw8nj",
+              "organizationId": "synth12_bafoussam",
+              "customerId": "synth12_bafoussam_customer_0",
+              "settlementNumber": "CSET-20261028-2AE1337350",
+              "status": "POSTED",
+              "method": "CASH",
+              "amount": "8750",
+              "currency": "XAF",
+              "settlementDate": "2026-10-28T00:00:00.000Z",
+              "idempotencyKey": "synth12_bafoussam:customer-collection:0",
+              "idempotencyPayloadHash": "a6a63e979159bcf3bf1a0f49ec71e733477d24008b03ce031bcd30ea3a090de9",
+              "correlationId": "synth12_bafoussam:customer-collection:0",
+              "externalReference": null,
+              "documentHash": "6522f98372c5f1ed95a9134bc572f301a63d76a0925fcd392254f60c899fed77",
+              "evidenceHash": "6522f98372c5f1ed95a9134bc572f301a63d76a0925fcd392254f60c899fed77",
+              "receivedById": "synth12_bafoussam_user_owner",
+              "ledgerPostingBatchId": "cmvsimp6l00tjmay8mfeoxmh4",
+              "journalEntryId": "cmvsimp7900tlmay8vvwh6x5v",
+              "postedBusinessEventId": "cmvsimp9000tumay8rt7f1rkc",
+              "reversedAt": null,
+              "reversalDate": null,
+              "reversedById": null,
+              "reversalReason": null,
+              "reversalIdempotencyKey": null,
+              "reversalIdempotencyPayloadHash": null,
+              "reversalCorrelationId": null,
+              "reversalDocumentHash": null,
+              "reversalEvidenceHash": null,
+              "reversalLedgerPostingBatchId": null,
+              "reversalJournalEntryId": null,
+              "reversalAccountingSourceLinkId": null,
+              "reversalBusinessEventId": null,
+              "notes": "Synthetic customer collection evidence",
+              "metadata": {
+                "gate": "phase-5-slice-435-customer-settlement",
+                "postingRuleId": "synth12_bafoussam_rule_AR-CUSTOMER-SETTLEMENT",
+                "sourceVersion": 1,
+                "allocationCount": 1,
+                "postingRuleCode": "AR-CUSTOMER-SETTLEMENT",
+                "accountingSourceLinkId": "cmvsimp7x00tqmay8e5vcx2ji",
+                "idempotencyPayloadHash": "a6a63e979159bcf3bf1a0f49ec71e733477d24008b03ce031bcd30ea3a090de9"
+              },
+              "createdAt": "2026-10-28T19:36:47.449Z",
+              "updatedAt": "2026-10-28T19:36:47.726Z",
+              "allocations": [
+                {
+                  "id": "cmvsimp2q00t7may8jeahuxza",
+                  "organizationId": "synth12_bafoussam",
+                  "customerSettlementId": "cmvsimp2100t3may8yr5rw8nj",
+                  "salesOrderId": "cmvsimogx00rdmay846m387ll",
+                  "customerReceivableDocumentId": "cmvsimor600rxmay8wq3pgklt",
+                  "customerLedgerEntryId": "cmvsimp2l00t5may846dtyogo",
+                  "reversalCustomerLedgerEntryId": null,
+                  "amount": "8750",
+                  "createdAt": "2026-10-28T19:36:47.474Z"
+                }
+              ]
+            },
+            "settlementId": "cmvsimp2100t3may8yr5rw8nj",
+            "allocationIds": [
+              "cmvsimp2q00t7may8jeahuxza"
+            ],
+            "customerLedgerEntryIds": [
+              "cmvsimp2l00t5may846dtyogo"
+            ],
+            "postingBatchId": "cmvsimp6l00tjmay8mfeoxmh4",
+            "journalEntryId": "cmvsimp7900tlmay8vvwh6x5v",
+            "sourceLinkId": "cmvsimp7x00tqmay8e5vcx2ji",
+            "businessEventId": "cmvsimp9000tumay8rt7f1rkc",
+            "replayed": true
+          }
+        },
+        {
+          "salesOrderId": "cmvsimpk400u8may85x5rei79",
+          "amount": 3000,
+          "result": {
+            "settlement": {
+              "id": "cmvsimq8x00vymay8hmxu7sws",
+              "organizationId": "synth12_bafoussam",
+              "customerId": "synth12_bafoussam_customer_1",
+              "settlementNumber": "CSET-20261028-8135875195",
+              "status": "POSTED",
+              "method": "CASH",
+              "amount": "3000",
+              "currency": "XAF",
+              "settlementDate": "2026-10-28T00:00:00.000Z",
+              "idempotencyKey": "synth12_bafoussam:customer-collection:1",
+              "idempotencyPayloadHash": "467f99b0f6c26752be4aeb61beb01da33a6abfda0c1cc8a60ddae326c2cf726c",
+              "correlationId": "synth12_bafoussam:customer-collection:1",
+              "externalReference": null,
+              "documentHash": "71dc0b31a6c0f60323e308df16c2179a44fcf0adc713e99e1bc6660ebc3f0c80",
+              "evidenceHash": "71dc0b31a6c0f60323e308df16c2179a44fcf0adc713e99e1bc6660ebc3f0c80",
+              "receivedById": "synth12_bafoussam_user_owner",
+              "ledgerPostingBatchId": "cmvsimqbw00wemay86miuvbzc",
+              "journalEntryId": "cmvsimqca00wgmay8lv83m653",
+              "postedBusinessEventId": "cmvsimqdl00wpmay8qt0ajt49",
+              "reversedAt": null,
+              "reversalDate": null,
+              "reversedById": null,
+              "reversalReason": null,
+              "reversalIdempotencyKey": null,
+              "reversalIdempotencyPayloadHash": null,
+              "reversalCorrelationId": null,
+              "reversalDocumentHash": null,
+              "reversalEvidenceHash": null,
+              "reversalLedgerPostingBatchId": null,
+              "reversalJournalEntryId": null,
+              "reversalAccountingSourceLinkId": null,
+              "reversalBusinessEventId": null,
+              "notes": "Synthetic customer collection evidence",
+              "metadata": {
+                "gate": "phase-5-slice-435-customer-settlement",
+                "postingRuleId": "synth12_bafoussam_rule_AR-CUSTOMER-SETTLEMENT",
+                "sourceVersion": 1,
+                "allocationCount": 1,
+                "postingRuleCode": "AR-CUSTOMER-SETTLEMENT",
+                "accountingSourceLinkId": "cmvsimqcq00wlmay8fj8u3zve",
+                "idempotencyPayloadHash": "467f99b0f6c26752be4aeb61beb01da33a6abfda0c1cc8a60ddae326c2cf726c"
+              },
+              "createdAt": "2026-10-28T19:36:48.994Z",
+              "updatedAt": "2026-10-28T19:36:49.182Z",
+              "allocations": [
+                {
+                  "id": "cmvsimq9d00w2may8fwmhu0ns",
+                  "organizationId": "synth12_bafoussam",
+                  "customerSettlementId": "cmvsimq8x00vymay8hmxu7sws",
+                  "salesOrderId": "cmvsimpk400u8may85x5rei79",
+                  "customerReceivableDocumentId": "cmvsimpvv00usmay8frepri2w",
+                  "customerLedgerEntryId": "cmvsimq9a00w0may8mx19ii9b",
+                  "reversalCustomerLedgerEntryId": null,
+                  "amount": "3000",
+                  "createdAt": "2026-10-28T19:36:49.010Z"
+                }
+              ]
+            },
+            "settlementId": "cmvsimq8x00vymay8hmxu7sws",
+            "allocationIds": [
+              "cmvsimq9d00w2may8fwmhu0ns"
+            ],
+            "customerLedgerEntryIds": [
+              "cmvsimq9a00w0may8mx19ii9b"
+            ],
+            "postingBatchId": "cmvsimqbw00wemay86miuvbzc",
+            "journalEntryId": "cmvsimqca00wgmay8lv83m653",
+            "sourceLinkId": "cmvsimqcq00wlmay8fj8u3zve",
+            "businessEventId": "cmvsimqdl00wpmay8qt0ajt49",
+            "replayed": true
+          }
+        }
+      ]
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "warehouse-transfer-complete",
+      "result": {
+        "id": "cmvsimqj700xbmay8tqhph1tg",
+        "status": "COMPLETED"
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "physical-count-and-approved-variance",
+      "result": {
+        "id": "cmvtanwlj00dzmaqoid7ubcpx",
+        "status": "POSTED"
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "scenario": "supplier-return-and-credit",
+      "result": {
+        "returnId": "a79d52eb-b19d-4448-98ea-baf1ba1cd70c",
+        "credit": {
+          "supplierCreditNote": {
+            "id": "2372b843-6b2b-40cb-8c27-93a57f7039fc",
+            "organizationId": "synth12_bafoussam",
+            "supplierId": "synth12_bafoussam_supplier_2",
+            "purchaseOrderId": "cmvsidt2409w2ma1ofkwg8p8q",
+            "goodsReceiptId": "cmvsidv1109wzma1okm3xqa8t",
+            "purchaseReturnId": "a79d52eb-b19d-4448-98ea-baf1ba1cd70c",
+            "supplierInvoiceId": "cmvsidzjt0a3gma1ovp4kj47n",
+            "direction": "CORRECTION",
+            "reversalOfSupplierCreditNoteId": null,
+            "creditNoteNumber": "SYN-CN-synth12_bafoussam",
+            "normalizedCreditNoteNumber": "SYN-CN-SYNTH12_BAFOUSSAM",
+            "creditDate": "2026-10-28T18:31:00.000Z",
+            "currency": "XAF",
+            "subtotal": "14000",
+            "taxAmount": "0",
+            "total": "14000",
+            "idempotencyKey": "synth12_bafoussam:supplier-credit",
+            "payloadHash": "sha256:8af1450dda30b65cc41bd7d1057b02e36531416b20ebb7abb122e9db042b6d6a",
+            "documentHash": "348cd209185f8d6d96bc90818f6c6ec02c0eafb0959e29ee0a4d225f045e1e86",
+            "evidenceHash": "348cd209185f8d6d96bc90818f6c6ec02c0eafb0959e29ee0a4d225f045e1e86",
+            "ledgerPostingBatchId": "cmvtanyiz00e6maqo4cg1lapp",
+            "journalEntryId": "cmvtanyrc00e8maqo7a2csyjt",
+            "postedBusinessEventId": "cmvtanz3a00ejmaqo7gvfy620",
+            "postedById": "synth12_bafoussam_user_checker",
+            "reason": "Supplier credit for synthetic returned merchandise",
+            "createdAt": "2026-10-29T08:41:36.423Z",
+            "lines": [
+              {
+                "id": "cmvtanz5300epmaqoqno4au0t",
+                "organizationId": "synth12_bafoussam",
+                "supplierCreditNoteId": "2372b843-6b2b-40cb-8c27-93a57f7039fc",
+                "sourcePurchaseReturnLineId": "cmvsimsik00zjmay8e7kr4j8w",
+                "sourceSupplierInvoiceLineId": "cmvsidzju0a3ima1okirtidmr",
+                "sourceGoodsReceiptLineId": "cmvsidv1y09x3ma1ort1q3ck4",
+                "itemId": "synth12_bafoussam_item_0",
+                "quantity": "1",
+                "unitCost": "14000",
+                "taxRate": "0",
+                "taxAmount": "0",
+                "lineTotal": "14000",
+                "evidenceHash": "sha256:cdc1abef72aee1eec19587aff70d1761e33036207aa6c79e3a5f9b7cdb7f4225",
+                "createdAt": "2026-10-29T08:41:36.423Z"
+              }
+            ]
+          },
+          "replayed": true
+        }
+      }
+    }
+  ],
+  "issues": []
+}

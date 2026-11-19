@@ -7,7 +7,7 @@ import { invitationRevision } from "../invitation-revision"
 
 const input = { actor: { id: "issuer", organizationId: "org" }, actorPermissions: ["users.invite", "users.roles.assign", "items.read"], email: " Colleague@Example.invalid ", roleId: "reader", locale: "fr" as const, requestId: "ccb01ec7-2f22-47e6-b56e-4c564269bfa6" }
 function setup() {
-  const issuer = { id: "issuer", isLocked: false, lockedUntil: null, isVerified: true, emailVerified: true, organization: { name: "Scoped company", isActive: true, deletedAt: null }, roles: [{ permissions: input.actorPermissions }] }
+  const issuer = { id: "issuer", isLocked: false, lockedUntil: null, isVerified: true, emailVerified: true, organization: { name: "Scoped company", isActive: true, deletedAt: null }, roles: [{ code: "manager", permissions: input.actorPermissions }] }
   const tx = {
     role: { findFirst: jest.fn().mockResolvedValue({ id: "reader", organizationId: "org", permissions: ["items.read"], nameEn: "Reader", nameFr: "Lecteur", code: "reader" }) },
     user: { findFirst: jest.fn().mockImplementation(async args => args.where.id ? issuer : null) },
@@ -57,7 +57,7 @@ it.each(["disabled", "locked", "unverified", "inactiveOrg", "authorityLost"])("r
   if (kind === "locked") issuer.isLocked = true
   if (kind === "unverified") { issuer.isVerified = false; issuer.emailVerified = false }
   if (kind === "inactiveOrg") issuer.organization.isActive = false
-  if (kind === "authorityLost") issuer.roles = [{ permissions: ["items.read"] }]
+  if (kind === "authorityLost") issuer.roles = [{ code: "manager", permissions: ["items.read"] }]
   expect(await issueUserInvitation(input)).toMatchObject({ status: 403, code: "INVITATION_AUTHORITY_CHANGED" })
   expect(tx.invite.create).not.toHaveBeenCalled(); expect(tx.businessEvent.create).not.toHaveBeenCalled()
 })
@@ -100,4 +100,24 @@ it("cannot replace a higher-privilege invitation with a lower role to evade the 
   tx.role.findFirst.mockResolvedValueOnce({ id: "reader", organizationId: "org", permissions: ["items.read"] }).mockResolvedValueOnce({ organizationId: "org", permissions: ["accounting.period.close"] })
   expect(await issueUserInvitation({ ...input, replace: { inviteId: current.id, revision: invitationRevision(current), reason: "Change role" } })).toMatchObject({ status: 403 })
   expect(tx.invite.update).not.toHaveBeenCalled()
+})
+
+it.each(["admin", "administrator", "super_admin"])("denies a reserved %s role before any invitation or queue write", async code => {
+  const { tx } = setup()
+  tx.role.findFirst.mockResolvedValue({ id: "reserved", organizationId: "org", code, nameEn: "Reserved", permissions: [] })
+  expect(await issueUserInvitation(input)).toMatchObject({ status: 403, data: null })
+  expect(tx.invite.create).not.toHaveBeenCalled(); expect(tx.businessEvent.create).not.toHaveBeenCalled(); expect(tx.auditLog.create).not.toHaveBeenCalled()
+})
+it("records code authority and rechecks a privileged issuer on replay", async () => {
+  const { tx, issuer } = setup()
+  issuer.roles = [{ code: "admin", permissions: [...input.actorPermissions, "dashboard.read"] }]
+  tx.role.findFirst.mockResolvedValue({ id: "reader", organizationId: "org", code: "administrator", nameEn: "Administrator", permissions: [] })
+  const command = { ...input, actorPermissions: issuer.roles[0].permissions }
+  expect(await issueUserInvitation(command)).toMatchObject({ status: 200 })
+  const event = tx.businessEvent.create.mock.calls[0][0].data
+  expect(event.payload).toMatchObject({ roleCode: "administrator", actorRoleCodes: ["admin"] })
+  tx.businessEvent.findUnique.mockResolvedValue({ ...event, id: "event", outboxMessages: [{ status: "PENDING" }] })
+  issuer.roles[0].code = "manager"
+  expect(await issueUserInvitation(command)).toMatchObject({ status: 403, data: null })
+  expect(tx.invite.create).toHaveBeenCalledTimes(1); expect(tx.businessEvent.create).toHaveBeenCalledTimes(1)
 })

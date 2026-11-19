@@ -1,0 +1,54 @@
+54c1cc7287f808ba3fef2160387ea523
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+}
+_export(exports, {
+    get canChangeOperatingRoleSet () {
+        return canChangeOperatingRoleSet;
+    },
+    get canGrantOperatingRole () {
+        return canGrantOperatingRole;
+    },
+    get hasTenantWideOperatingGrantAuthority () {
+        return hasTenantWideOperatingGrantAuthority;
+    }
+});
+const _rbacpermissions = require("@/lib/security/rbac-permissions");
+const _operatingaccessscopecontracts = require("./operating-access-scope-contracts");
+function hasTenantWideOperatingGrantAuthority(actor) {
+    return (0, _rbacpermissions.hasRbacPermission)(actor.permissions, _operatingaccessscopecontracts.OPERATING_ACCESS_REQUIRED_PERMISSION) && Boolean((0, _operatingaccessscopecontracts.resolveTenantWideOperatingAuthority)({
+        isSuperUser: actor.permissions.includes("*"),
+        roleCodes: actor.roleCodes
+    }));
+}
+function canGrantOperatingRole(actor, role) {
+    if (typeof role.code !== "string" || !role.code.trim()) return false;
+    return !(0, _operatingaccessscopecontracts.resolveTenantWideOperatingAuthority)({
+        isSuperUser: false,
+        roleCodes: [
+            role.code
+        ]
+    }) || hasTenantWideOperatingGrantAuthority(actor);
+}
+function canChangeOperatingRoleSet(actor, before, after) {
+    if ([
+        ...before,
+        ...after
+    ].some((role)=>typeof role.code !== "string" || !role.code.trim())) return false;
+    const tenantWide = (roles)=>hasTenantWideOperatingGrantAuthority({
+            permissions: roles.flatMap((role)=>[
+                    ...role.permissions
+                ]),
+            roleCodes: roles.map((role)=>role.code)
+        });
+    return hasTenantWideOperatingGrantAuthority(actor) || !tenantWide(after) || tenantWide(before);
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6XFxvaGFkYSBzYWFzXFxGb2N1c2VkIHByb2plY3RzXFxzdG9xdWlmeVxcc2VydmljZXNcXG9wZXJhdGluZy1hY2Nlc3NcXG9wZXJhdGluZy1hY2Nlc3MtZ3JhbnQtcG9saWN5LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IGhhc1JiYWNQZXJtaXNzaW9uIH0gZnJvbSBcIkAvbGliL3NlY3VyaXR5L3JiYWMtcGVybWlzc2lvbnNcIlxuaW1wb3J0IHsgT1BFUkFUSU5HX0FDQ0VTU19SRVFVSVJFRF9QRVJNSVNTSU9OLCByZXNvbHZlVGVuYW50V2lkZU9wZXJhdGluZ0F1dGhvcml0eSB9IGZyb20gXCIuL29wZXJhdGluZy1hY2Nlc3Mtc2NvcGUtY29udHJhY3RzXCJcblxuZXhwb3J0IHR5cGUgT3BlcmF0aW5nR3JhbnRBdXRob3JpdHkgPSB7IHBlcm1pc3Npb25zOiByZWFkb25seSBzdHJpbmdbXTsgcm9sZUNvZGVzOiByZWFkb25seSBzdHJpbmdbXSB9XG5leHBvcnQgdHlwZSBPcGVyYXRpbmdHcmFudFJvbGUgPSB7IGNvZGU6IHN0cmluZzsgcGVybWlzc2lvbnM6IHJlYWRvbmx5IHN0cmluZ1tdIH1cblxuLyoqIEN1cnJlbnQgc3RvcmVkIGFjdG9yIHJvbGVzIG9ubHk7IG5ldmVyIGEgY2xpZW50LXN1cHBsaWVkIHN1cGVyLXVzZXIgY2xhaW0uICovXG5leHBvcnQgZnVuY3Rpb24gaGFzVGVuYW50V2lkZU9wZXJhdGluZ0dyYW50QXV0aG9yaXR5KGFjdG9yOiBPcGVyYXRpbmdHcmFudEF1dGhvcml0eSkge1xuICByZXR1cm4gaGFzUmJhY1Blcm1pc3Npb24oYWN0b3IucGVybWlzc2lvbnMsIE9QRVJBVElOR19BQ0NFU1NfUkVRVUlSRURfUEVSTUlTU0lPTilcbiAgICAmJiBCb29sZWFuKHJlc29sdmVUZW5hbnRXaWRlT3BlcmF0aW5nQXV0aG9yaXR5KHsgaXNTdXBlclVzZXI6IGFjdG9yLnBlcm1pc3Npb25zLmluY2x1ZGVzKFwiKlwiKSwgcm9sZUNvZGVzOiBhY3Rvci5yb2xlQ29kZXMgfSkpXG59XG5cbi8qKiBSZXNlcnZlZCBjb2RlcyBjYXJyeSBsYXRlbnQgYXV0aG9yaXR5IGV2ZW4gd2hlbiB0aGVpciBwZXJtaXNzaW9uIGxpc3QgaXMgZW1wdHkuICovXG5leHBvcnQgZnVuY3Rpb24gY2FuR3JhbnRPcGVyYXRpbmdSb2xlKGFjdG9yOiBPcGVyYXRpbmdHcmFudEF1dGhvcml0eSwgcm9sZTogUGljazxPcGVyYXRpbmdHcmFudFJvbGUsIFwiY29kZVwiPikge1xuICBpZiAodHlwZW9mIHJvbGUuY29kZSAhPT0gXCJzdHJpbmdcIiB8fCAhcm9sZS5jb2RlLnRyaW0oKSkgcmV0dXJuIGZhbHNlXG4gIHJldHVybiAhcmVzb2x2ZVRlbmFudFdpZGVPcGVyYXRpbmdBdXRob3JpdHkoeyBpc1N1cGVyVXNlcjogZmFsc2UsIHJvbGVDb2RlczogW3JvbGUuY29kZV0gfSlcbiAgICB8fCBoYXNUZW5hbnRXaWRlT3BlcmF0aW5nR3JhbnRBdXRob3JpdHkoYWN0b3IpXG59XG5cbmV4cG9ydCBmdW5jdGlvbiBjYW5DaGFuZ2VPcGVyYXRpbmdSb2xlU2V0KGFjdG9yOiBPcGVyYXRpbmdHcmFudEF1dGhvcml0eSwgYmVmb3JlOiByZWFkb25seSBPcGVyYXRpbmdHcmFudFJvbGVbXSwgYWZ0ZXI6IHJlYWRvbmx5IE9wZXJhdGluZ0dyYW50Um9sZVtdKSB7XG4gIGlmIChbLi4uYmVmb3JlLCAuLi5hZnRlcl0uc29tZShyb2xlID0+IHR5cGVvZiByb2xlLmNvZGUgIT09IFwic3RyaW5nXCIgfHwgIXJvbGUuY29kZS50cmltKCkpKSByZXR1cm4gZmFsc2VcbiAgY29uc3QgdGVuYW50V2lkZSA9IChyb2xlczogcmVhZG9ubHkgT3BlcmF0aW5nR3JhbnRSb2xlW10pID0+IGhhc1RlbmFudFdpZGVPcGVyYXRpbmdHcmFudEF1dGhvcml0eSh7XG4gICAgcGVybWlzc2lvbnM6IHJvbGVzLmZsYXRNYXAocm9sZSA9PiBbLi4ucm9sZS5wZXJtaXNzaW9uc10pLCByb2xlQ29kZXM6IHJvbGVzLm1hcChyb2xlID0+IHJvbGUuY29kZSksXG4gIH0pXG4gIHJldHVybiBoYXNUZW5hbnRXaWRlT3BlcmF0aW5nR3JhbnRBdXRob3JpdHkoYWN0b3IpIHx8ICF0ZW5hbnRXaWRlKGFmdGVyKSB8fCB0ZW5hbnRXaWRlKGJlZm9yZSlcbn1cbiJdLCJuYW1lcyI6WyJjYW5DaGFuZ2VPcGVyYXRpbmdSb2xlU2V0IiwiY2FuR3JhbnRPcGVyYXRpbmdSb2xlIiwiaGFzVGVuYW50V2lkZU9wZXJhdGluZ0dyYW50QXV0aG9yaXR5IiwiYWN0b3IiLCJoYXNSYmFjUGVybWlzc2lvbiIsInBlcm1pc3Npb25zIiwiT1BFUkFUSU5HX0FDQ0VTU19SRVFVSVJFRF9QRVJNSVNTSU9OIiwiQm9vbGVhbiIsInJlc29sdmVUZW5hbnRXaWRlT3BlcmF0aW5nQXV0aG9yaXR5IiwiaXNTdXBlclVzZXIiLCJpbmNsdWRlcyIsInJvbGVDb2RlcyIsInJvbGUiLCJjb2RlIiwidHJpbSIsImJlZm9yZSIsImFmdGVyIiwic29tZSIsInRlbmFudFdpZGUiLCJyb2xlcyIsImZsYXRNYXAiLCJtYXAiXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O1FBbUJnQkE7ZUFBQUE7O1FBTkFDO2VBQUFBOztRQU5BQztlQUFBQTs7O2lDQVBrQjsrQ0FDd0Q7QUFNbkYsU0FBU0EscUNBQXFDQyxLQUE4QjtJQUNqRixPQUFPQyxJQUFBQSxrQ0FBaUIsRUFBQ0QsTUFBTUUsV0FBVyxFQUFFQyxtRUFBb0MsS0FDM0VDLFFBQVFDLElBQUFBLGtFQUFtQyxFQUFDO1FBQUVDLGFBQWFOLE1BQU1FLFdBQVcsQ0FBQ0ssUUFBUSxDQUFDO1FBQU1DLFdBQVdSLE1BQU1RLFNBQVM7SUFBQztBQUM5SDtBQUdPLFNBQVNWLHNCQUFzQkUsS0FBOEIsRUFBRVMsSUFBc0M7SUFDMUcsSUFBSSxPQUFPQSxLQUFLQyxJQUFJLEtBQUssWUFBWSxDQUFDRCxLQUFLQyxJQUFJLENBQUNDLElBQUksSUFBSSxPQUFPO0lBQy9ELE9BQU8sQ0FBQ04sSUFBQUEsa0VBQW1DLEVBQUM7UUFBRUMsYUFBYTtRQUFPRSxXQUFXO1lBQUNDLEtBQUtDLElBQUk7U0FBQztJQUFDLE1BQ3BGWCxxQ0FBcUNDO0FBQzVDO0FBRU8sU0FBU0gsMEJBQTBCRyxLQUE4QixFQUFFWSxNQUFxQyxFQUFFQyxLQUFvQztJQUNuSixJQUFJO1dBQUlEO1dBQVdDO0tBQU0sQ0FBQ0MsSUFBSSxDQUFDTCxDQUFBQSxPQUFRLE9BQU9BLEtBQUtDLElBQUksS0FBSyxZQUFZLENBQUNELEtBQUtDLElBQUksQ0FBQ0MsSUFBSSxLQUFLLE9BQU87SUFDbkcsTUFBTUksYUFBYSxDQUFDQyxRQUF5Q2pCLHFDQUFxQztZQUNoR0csYUFBYWMsTUFBTUMsT0FBTyxDQUFDUixDQUFBQSxPQUFRO3VCQUFJQSxLQUFLUCxXQUFXO2lCQUFDO1lBQUdNLFdBQVdRLE1BQU1FLEdBQUcsQ0FBQ1QsQ0FBQUEsT0FBUUEsS0FBS0MsSUFBSTtRQUNuRztJQUNBLE9BQU9YLHFDQUFxQ0MsVUFBVSxDQUFDZSxXQUFXRixVQUFVRSxXQUFXSDtBQUN6RiJ9

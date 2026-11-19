@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:16:42.666Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Exact isolated runtime execution recipe, conditional on independently accepted actual build and fresh native/source preflight outcomes",
+  "files": [
+    {
+      "path": "run-runtime-v3.cjs",
+      "sha256": "5ba7ae27f4c5a90c35d30d29f8d1f707825a5f3e4934121b3f904b49865eb440"
+    },
+    {
+      "path": "admit-runtime-source-v2.cjs",
+      "sha256": "06dfc1a4b16f05e86a46d0de9eb22ab824c01a5149a56e7b58227589a8cf92a2"
+    },
+    {
+      "path": "database/fixture-preflight-v2.cjs",
+      "sha256": "4c2f2190154c217fb4b3f0968dd15ce661732141bd3262013171f45830ba379c"
+    },
+    {
+      "path": "direct-api-driver.cjs",
+      "sha256": "8430cd241dcfa81199877b361e78fc4eadd592e3cc2b08d7e497162d223fca43"
+    },
+    {
+      "path": "environment-guard.cjs",
+      "sha256": "2916634ef9741d082a86dfee8cdd1b06cc2ebdd285e956b79705671504b40a2d"
+    },
+    {
+      "path": "runtime/run-protected-core.cjs",
+      "sha256": "3bdc7a715fc4519c321c7391a205845c1ffed43a3f9d125014dd7c3fd9d38fa5"
+    },
+    {
+      "path": "runtime/run-expanded.cjs",
+      "sha256": "bd064bf41b35e88f098789c3bb2dc76a2bb014d3098ebf9d02a2544feef819a3"
+    },
+    {
+      "path": "runtime/run-credential-probes.cjs",
+      "sha256": "a08d4cf1fedb2affc179a5cf26e4d15506a5d7f423dc0a8376b1104aa730084c"
+    },
+    {
+      "path": "runtime/run-origin-probes.cjs",
+      "sha256": "8b802095304ef10beb243620fbcfccfd2c656bfc49c5a5ae202a53cf67602265"
+    },
+    {
+      "path": "runtime/run-retained-expiry.cjs",
+      "sha256": "9b1430784b51d3b65add983794b357e34bac0548cb2f716cb3492ea7cf5522f0"
+    },
+    {
+      "path": "runtime/runtime-bridge-v2.cjs",
+      "sha256": "ec542a56bdaf1b4b3e4c78ceedb46828cfd4dffec922d18d2f9e32ba8bf6aa01"
+    },
+    {
+      "path": "runtime/qualification-contract.json",
+      "sha256": "22d4543fef2795f838aa54c203be96ad0448b466f0b80f6d7104f863bf8d08e1"
+    },
+    {
+      "path": "browser/run-consumer-qualification-v3.cjs",
+      "sha256": "f4d6460b79cfff193de4b3f6cb48f21bb112dda367c0225a3fc5d13be4319c0a"
+    },
+    {
+      "path": "browser/browser-protocol-v3.cjs",
+      "sha256": "ab98d36dac6326b3c45c5ab65b31c034ba3567e97d91118ea319f3679d19d256"
+    },
+    {
+      "path": "browser/consumer-evidence-v2.cjs",
+      "sha256": "dcc42c28244da7282b1989049c78f69c96c2ed45e0529d310c7a3f40d9958cb4"
+    },
+    {
+      "path": "browser/flight-profile-evidence.cjs",
+      "sha256": "9c8aece7411279a75969059e69a7536e1f5fc6c2bdc2ff4921e366708851e0cd"
+    },
+    {
+      "path": "browser/private-canaries.cjs",
+      "sha256": "ccf6d3f65436fe95db508fce6d89db93c7d53bdf5fe7e449265178e7312a51ae"
+    },
+    {
+      "path": "browser/CONSUMER-MAP.json",
+      "sha256": "8bb5362ec50106b8d0f236ab08210c21377848fafd8a5a1acef1dfc6548dbf19"
+    },
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "22d6005ff8ac2355837e339c621819ce2411ba6322bc1febe2d0edfe52661be8"
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d"
+    },
+    {
+      "path": "database/login-fixture-control.cjs",
+      "sha256": "1ca0e416469fdb9f581857ca895c66301a9de0e565aa4c30eb8bda40fa6d6388"
+    },
+    {
+      "path": "database/read-authority-utc.cjs",
+      "sha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8"
+    },
+    {
+      "path": "database/direct-api-child.cjs",
+      "sha256": "d3194e9b397bbabf393a490f335b31197432317e70ecca9e496a3e7d2f79cd3b"
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "sha256": "1e37557aef27d8797850f8704288d61c3d33943928e86124e1145244171a4bfe"
+    },
+    {
+      "path": "inventory/test-case-map-original.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    },
+    {
+      "path": "inventory/source-after-manifest.json",
+      "sha256": "e535b2e9cb694d09b67d64706e9fbbe2f89ac829b2297c86120ca83d012ac614"
+    },
+    {
+      "path": "candidate-context.json",
+      "sha256": "d953368da04a8a13742ca3647f559d5b43183f34dc5d608a68f623e4a46da754"
+    },
+    {
+      "path": "candidate-admission.json",
+      "sha256": "1566793399eea9c369dfe94ba9312b41ea47ef4b69c38fe8fa41323c59dd3dc9"
+    },
+    {
+      "path": "candidate-source-manifest.json",
+      "sha256": "c3a3db592e71a26bbbc10033a2c8c3cb088fbd313b55f65bdb9d1c978d830737"
+    },
+    {
+      "path": "root-source-manifest.json",
+      "sha256": "1341b8809a3c8e57cb698a143308181b88891fa796a4c97a47f8ef8478cd8384"
+    },
+    {
+      "path": "independent-review/BROWSER-OBSERVER-RECIPE-ADMISSION-r3.json",
+      "sha256": "6aa4bc8b21cc30adb5771667ddbaeed984e5318f4f2e3f01234bcdb06790e648"
+    },
+    {
+      "path": "independent-review/PROTECTED-CORE-SOURCE-ADMISSION.json",
+      "sha256": "5d96a1d110eb694ccdc1c4a3fa228878c8e3de0fca5fd996548aef48d37b0fa7"
+    },
+    {
+      "path": "independent-review/RUNTIME-BRIDGE-SOURCE-ADMISSION-v2.json",
+      "sha256": "cf75f34abfebd9fd723bc3a9f57bc0c3c7cab3b1b381d64af15995a5914bc366"
+    },
+    {
+      "path": "independent-review/CREDENTIAL-EXPIRY-SOURCE-ADMISSION.json",
+      "sha256": "a87a57ed6a4384ec5a5298d52ba3052f1eae5099f42a859a9a8aa8fd0b18463e"
+    },
+    {
+      "path": "independent-review/ORIGIN-PROBES-SOURCE-ADMISSION.json",
+      "sha256": "83dfad7318ad171c0a232231dc66dbc0226f3fc6116fe7824247d352cd0f7959"
+    },
+    {
+      "path": "independent-review/EXPANDED-RUNTIME-SOURCE-ADMISSION.json",
+      "sha256": "375dd3cf180848034b28dc9bec6814863f761cea1175cd08a0751719c0b6fea0"
+    },
+    {
+      "path": "independent-review/RUNTIME-PREFLIGHT-RECIPE-ADMISSION-v2.json",
+      "sha256": "d0ac0a100f9fe1a1dd922ce49a67cc51b9750e2b02227c7b1efd0867a17af0db"
+    },
+    {
+      "path": "independent-review/RUNTIME-ORCHESTRATION-SOURCE-REVIEW-v3.json",
+      "sha256": "ddb41a30473d6f379187a6f91b166bc9642a6d527b83cbf1c6316b2774367128"
+    },
+    {
+      "path": "independent-review/CANDIDATE-OUTCOME-REVIEW.json",
+      "sha256": "c4642a03949f8b741ccd3371acd635e173317594d90632848ffce42755ef2e22"
+    },
+    {
+      "path": "independent-review/DATABASE-OUTCOME-REVIEW.json",
+      "sha256": "c46599dc6125dd0977a9cf0d7af6ceb8219080e0b13b7b3a645326b3c29c93c1"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261109-r1\\independent-review\\CONCURRENT-SCHEMA-REVIEW.json",
+      "sha256": "01cd511c5635f2aadfb421245298e72b6c6ed3a1dd244ad711741980859d425f"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-V02\\qualification-20261109-r1\\build-result.json",
+      "sha256": "2fd9842617f70f6ab8e03ff25d53499b4785b01f19a8cc6471804fb2260659c3"
+    }
+  ],
+  "entry": "run-runtime-v3.cjs",
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "coverage": {
+    "logical": 58,
+    "protectedCore": 50,
+    "credential": 10,
+    "origin": 24,
+    "infrastructure": 2,
+    "retainedExpiry": 3,
+    "browser": 18,
+    "raw": 107
+  },
+  "gating": [
+    "Main entry fails before app/copy mutation unless BUILD-OUTCOME-REVIEW.json and RUNTIME-PREFLIGHT-OUTCOME.json passed with exact candidate/artifact identity.",
+    "Those future outcome receipts must hash-bind their actual raw build/artifact/private-environment and source/native preflight/snapshot evidence; main admitted() rechecks files.",
+    "Whole current/candidate source and68 selected inputs rechecked; actual sealed artifacts verified before copies and after runtime.",
+    "Only fixed task-owned new runtime copies, loopback target55517/fault55518/app3296-3299 and16synthetic actors permitted.",
+    "Main wrapper must preserve all failed observations; exact107 IDs and all57 auxiliary proofs required before qualified result."
+  ],
+  "reviewed": [
+    "Native/credential/expiry/browser helper source admissions verified unchanged, including exact30-minute lock bounds, UTC timestamps, repeated origin no-write brackets and global token/cookie redaction.",
+    "Browser cancellation cannot be waived: exact actual browser bytes, compiled action/root Flight/unique DOM consumer and fresh refresh/real locale navigation required by explicit successor contract.",
+    "CORS TypeError accepted only at await-fetch with exact complete original403 and no ACAO, not from body/status instrumentation error.",
+    "Legacy archive used only for genuine signed-cookie issuance with new synthetic key; no old browser consumer or original private asset serving.",
+    "Context/fixture/process cleanup and exact sealed-copy integrity are mandatory even when individual cases fail."
+  ],
+  "limitations": [
+    "Source/recipe admission does not certify any application, native denial or browser result.",
+    "Current resource gate is blocked; no build artifact exists yet.",
+    "No production changes, commits, pushes, deployments or broader P04 readiness."
+  ],
+  "qualificationPassed": false
+}

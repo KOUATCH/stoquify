@@ -15,6 +15,9 @@ export const supplierInvoiceLineInputSchema = z.object({
   quantity: moneyValueSchema,
   unitCost: moneyValueSchema,
   taxRate: moneyValueSchema.optional(),
+  discount: moneyValueSchema.optional(),
+  freight: moneyValueSchema.optional(),
+  taxAmount: moneyValueSchema.optional(),
   notes: z.string().trim().max(500).optional(),
 })
 

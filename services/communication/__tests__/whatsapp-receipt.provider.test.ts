@@ -7,6 +7,12 @@ import {
 } from "../whatsapp-receipt.provider"
 import type { ReceiptDeliveryProviderInput } from "@/services/pos/receipt.service"
 
+const fixtureEnvironment = {
+  STOQUIFY_WHATSAPP_RECEIPT_LIVE_SENDS: "1",
+  WHATSAPP_PHONE_NUMBER_ID: "test-number-id",
+  WHATSAPP_ACCESS_TOKEN: "synthetic-provider-token",
+}
+
 function providerInput(destination = "+237699000000"): ReceiptDeliveryProviderInput {
   return {
     destination,
@@ -163,5 +169,40 @@ describe("WhatsApp receipt provider", () => {
     })
     expect(JSON.stringify(result)).not.toContain("super-secret-token")
     expect(JSON.stringify(result)).not.toContain("+237699000000")
+  })
+
+  it("allows retry after a confirmed provider throttling rejection", async () => {
+    const fetcher = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 429,
+      json: async () => ({ error: { code: 130429, message: "sensitive detail" } }),
+    })
+    const result = await sendWhatsAppReceipt(providerInput(), { environment: fixtureEnvironment, fetcher })
+    expect(result).toMatchObject({ status: "FAILED", retryable: true })
+    expect(result.acceptance).toBeUndefined()
+    expect(result.message).not.toContain("sensitive detail")
+  })
+
+  it.each([
+    [503, { error: { code: 2 } }],
+    [200, { messages: [] }],
+    [429, null],
+  ])("does not retry an ambiguous HTTP %i response", async (status, body) => {
+    const fetcher = jest.fn().mockResolvedValue({
+      ok: status === 200,
+      status,
+      json: async () => body,
+    })
+    await expect(sendWhatsAppReceipt(providerInput(), { environment: fixtureEnvironment, fetcher })).resolves.toMatchObject({
+      status: "FAILED", retryable: false, acceptance: "UNKNOWN",
+    })
+  })
+
+  it("does not retry an interrupted request whose acceptance is unknown", async () => {
+    const fetcher = jest.fn().mockRejectedValue(new Error("timeout after dispatch"))
+    await expect(sendWhatsAppReceipt(providerInput(), { environment: fixtureEnvironment, fetcher })).resolves.toMatchObject({
+      status: "FAILED", retryable: false, acceptance: "UNKNOWN",
+    })
+    expect(fetcher).toHaveBeenCalledTimes(1)
   })
 })

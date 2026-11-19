@@ -8,6 +8,7 @@ jest.mock("@/services/reconciliation/account-close-coverage.service", () => ({ r
 import { readAccountCloseCoverage } from "@/services/reconciliation/account-close-coverage.service";
 jest.mock("@/prisma/db", () => {
   const dbMock = {
+    user: { findUnique: jest.fn(async ({ where }) => ({ organizationId: "org-1" })) },
     $transaction: jest.fn(),
     organizationAccountingSettings: { findUnique: jest.fn() },
     accountingPeriod: { findFirst: jest.fn() },

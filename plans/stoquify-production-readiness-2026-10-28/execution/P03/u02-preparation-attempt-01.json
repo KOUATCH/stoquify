@@ -1,0 +1,49 @@
+{
+  "startedAt": "2026-10-29T08:53:57.068Z",
+  "passed": false,
+  "sourceArtifact": "70d438cd2476ecb555973e1649499da9a6b948ce17e5e54d0b5956a9201e0fcd",
+  "commands": [
+    {
+      "label": "u02-local-clone",
+      "file": "git",
+      "args": [
+        "clone",
+        "--no-checkout",
+        "--shared",
+        "--",
+        "D:\\Codex-Stoquify-P03-20261028-01a1816a\\recovery",
+        "D:\\Codex-Stoquify-P03-20261028-01a1816a\\recovery-u02"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "u02-local-index",
+      "file": "git",
+      "args": [
+        "read-tree",
+        "HEAD"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "u02-dependency-copy",
+      "file": "robocopy.exe",
+      "args": [
+        "D:\\Codex-Stoquify-P03-20261028-01a1816a\\recovery\\node_modules",
+        "D:\\Codex-Stoquify-P03-20261028-01a1816a\\recovery-u02\\node_modules",
+        "/E",
+        "/XJ",
+        "/R:0",
+        "/W:0",
+        "/MT:8",
+        "/NFL",
+        "/NDL",
+        "/NJH",
+        "/NP"
+      ],
+      "exitCode": null
+    }
+  ],
+  "error": "spawnSync robocopy.exe ETIMEDOUT",
+  "finishedAt": "2026-10-29T09:10:19.077Z"
+}

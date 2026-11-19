@@ -1,0 +1,76 @@
+{
+  "startedAt": "2026-10-29T11:07:18.055Z",
+  "finishedAt": "2026-10-29T11:08:38.478Z",
+  "exitCode": 0,
+  "source": [
+    {
+      "path": "app/api/uploads/[...path]/__tests__/route.test.ts",
+      "sha256": "6ea5d6a548545ba3df873319ccfa12c555a01a5390d65dcfc6ed16e16e3d187f"
+    },
+    {
+      "path": "app/api/v1/organisations/__tests__/route.test.ts",
+      "sha256": "e4f8faa8a7bf1ea61b12346a90baaa326dbbb6055c892bc095c6856f27dc2507"
+    },
+    {
+      "path": "app/api/v1/organisations/[id]/items/__tests__/route.test.ts",
+      "sha256": "24f1e5c354a02ab4af01b265ae204effe3b317efcbc8bcbe969cd34e9a091775"
+    },
+    {
+      "path": "app/api/v1/organisations/[id]/briefItems/__tests__/route.test.ts",
+      "sha256": "da0f89f20e0bad122caf509b0acaf10770dec2f4df05790ebd49800c1e8d5547"
+    },
+    {
+      "path": "services/item/__tests__/media-route.test.ts",
+      "sha256": "6753625222e275cede02ae7f081600ac69a55853dd8da01ab139ec27e42a41f8"
+    },
+    {
+      "path": "services/item/__tests__/media-upload-route.test.ts",
+      "sha256": "13b961918a5bbb66a66cc132d21bc33a946fe99e52c8ee8f42f41ac8e84d83ae"
+    },
+    {
+      "path": "services/hris/__tests__/employee-document.authorization.test.ts",
+      "sha256": "58a4f127d393299d9872c6e372c799fb55375a724c487974267f546cc7a0f6d5"
+    },
+    {
+      "path": "lib/security/__tests__/rbac.test.ts",
+      "sha256": "425064af9fe0e7cb814d8a5f3c982907900eec89d4316a1abe9e0058b42a85e8"
+    },
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "sha256": "c6da5af178a02bb21aea9170457c60eafac2d6d078276fc28d0c909572d172b2"
+    },
+    {
+      "path": "lib/security/__tests__/rbac-permissions.test.ts",
+      "sha256": "b4f8e135c81be91ffd0dce08259553df9cbcdb7b66e07554a8094d071110bf01"
+    },
+    {
+      "path": "services/_shared/__tests__/protect.test.ts",
+      "sha256": "a182a172e2a61b22abd0cd687f6028abefaac055ca17ab54ac0bcc0231289201"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04/actions-review/item-read-error-disclosure.test.ts",
+      "sha256": "e251521757851c1377ba3c1caf92db7352f8edfc8e3792930c4870781e43f131"
+    }
+  ],
+  "environmentVariableNames": [
+    "APPDATA",
+    "ComSpec",
+    "LOCALAPPDATA",
+    "Path",
+    "PATHEXT",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir",
+    "NODE_ENV",
+    "NEXT_TELEMETRY_DISABLED"
+  ],
+  "evidenceClass": "mocked unit/component; four characterization cases pass when disclosure is reproduced",
+  "tests": {
+    "passed": 113,
+    "failed": 0,
+    "pending": 0,
+    "suites": 12
+  }
+}

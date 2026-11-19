@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-09T18:48:27.615Z",
+  "passed": false,
+  "checks": [
+    "exact publication backups",
+    "unchanged repository HEAD",
+    "preserved global structures and deferred commitments",
+    "bounded package mutations",
+    "preserved and explicit new dependency edges; no cycles",
+    "preserved audit gaps and explicit G04 follow-ups",
+    "historical evidence unchanged and new paths exist",
+    "CSV mirrors every package field"
+  ],
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "edges": {
+    "ordinary": 208,
+    "conditional": 7,
+    "added": 27,
+    "acyclic": true
+  },
+  "csv": {
+    "rows": 59,
+    "columns": 20
+  },
+  "failure": {
+    "name": "AssertionError",
+    "message": "The expression evaluated to a falsy value:\n\n  assert(current.startsWith(previous))\n"
+  }
+}

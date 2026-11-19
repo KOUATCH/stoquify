@@ -1,0 +1,66 @@
+{
+  "startedAt": "2026-11-02T16:26:45.946Z",
+  "finishedAt": "2026-11-02T16:27:20.166Z",
+  "evidenceClass": "isolated-filesystem-and-mocked-promotion",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\private-alias-exclusion-20261102\\packing\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\private-alias-exclusion-20261102\\packing\\jest-native-result.json"
+  ],
+  "cwd": "E:\\ohada saas\\Focused projects\\stoquify",
+  "inheritedEnvironmentKeys": [
+    "CI",
+    "ComSpec",
+    "NUMBER_OF_PROCESSORS",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "Path",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "inputs": [
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"
+    },
+    {
+      "path": "scripts/candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    },
+    {
+      "path": "tests/s10-s11/release-artifact.test.js",
+      "sha256": "2d6c7d31e35e4b7517942388398076824122b1a49c18322f3c79adb7473a0453"
+    },
+    {
+      "path": "tests/s10-s11/release-artifact-private-uploads.test.js",
+      "sha256": "bfcc0856cec266fe71f727b1da4a5eb7c7231babb33889c4c72208d8f7f1be73"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/private-alias-exclusion-20261102/packing/jest.config.cjs",
+      "sha256": "dbabc15ccf3463f0c94ccd7622b57f40a95d8e72e2f224d0aa0b5d2f85425731"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/private-alias-exclusion-20261102/packing/run-fixtures-native.cjs",
+      "sha256": "7d759174f55aefe422a997cb23859d2966855d4221086d12955a09bf19576fe6"
+    }
+  ],
+  "exclusions": [
+    "No real build",
+    "No application config or dotenv load",
+    "No real database/provider",
+    "No source image contents read by tests",
+    "No migration or deployment"
+  ]
+}

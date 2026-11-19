@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-10T12:21:25.900Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "68-input repaired-source inventory and authority-map reconciliation only",
+  "files": [
+    {
+      "path": "inventory/source-after-manifest.json",
+      "sha256": "e535b2e9cb694d09b67d64706e9fbbe2f89ac829b2297c86120ca83d012ac614"
+    },
+    {
+      "path": "inventory/authority-map.json",
+      "sha256": "48613a3ffd06c5f072c8192f398ea14cb74f62f894771f0a4194faf7901b4953"
+    },
+    {
+      "path": "inventory/repair-owned-files.json",
+      "sha256": "947b5da57354ecb09673c594b60c2d66bcef5998ce6c72d96bf561aadeeda8e6"
+    },
+    {
+      "path": "independent-review/REPAIR-SOURCE-ADMISSION.json",
+      "sha256": "4993e10c3c40dd9e29e947db2533de7427d1e9cbe1290e61563aa4644936cca9"
+    }
+  ],
+  "inputCount": 68,
+  "uniquePaths": 68,
+  "allCurrentBytesAndSizesMatch": true,
+  "allSixOwnedInputsBound": true,
+  "all66ContextInputsBound": true,
+  "authorityMapConsistentWithInstalledCallOrder": true,
+  "limits": [
+    "Before/after authority map describes inspected behavior; actual middleware,build/database/browser evidence remains pending.",
+    "No blanket no-write assertion for all account-lock audit behavior; rejected-origin guard runs before it, and genuine admitted locked-account events remain intentional.",
+    "Candidate capture must preserve these exact inputs and fail on concurrent drift."
+  ]
+}

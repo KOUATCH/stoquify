@@ -1,0 +1,16 @@
+{
+  "label": "scenarios",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "prisma/disposable-scenarios.ts"
+  ],
+  "startedAt": "2026-10-29T13:37:37.529Z",
+  "finishedAt": "2026-10-29T13:38:15.163Z",
+  "exitCode": 0,
+  "errorCode": null
+}

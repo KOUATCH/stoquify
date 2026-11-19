@@ -1,0 +1,19 @@
+{
+  "status": "FAILED",
+  "completedAt": "2026-10-25T11:42:03.230Z",
+  "steps": [
+    "anonymous-session-denied",
+    "wrong-password-denied",
+    "native-password-and-cookie-login",
+    "real-session-authorizes-native-hr-read",
+    "own-scope-and-cross-tenant-denial",
+    "existing-cookie-observes-role-revocation",
+    "existing-cookie-observes-account-disabled-and-locked"
+  ],
+  "cleanupComplete": true,
+  "limits": [
+    "Native auth.handler and cookie APIs, not an actual Next server/browser",
+    "Injected request-header adapter and guarded Prisma connection only",
+    "No deployment, external provider or human operator acceptance"
+  ]
+}

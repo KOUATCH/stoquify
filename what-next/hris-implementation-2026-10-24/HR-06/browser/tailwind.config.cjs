@@ -1,0 +1,1 @@
+module.exports = {content:['./components/hris/HrisEmployeeDirectoryTable.tsx','./components/dashboard/DashboardRouteState.tsx','./app/[locale]/(dashboard)/dashboard/people/error.tsx'],theme:{extend:{}},plugins:[]};

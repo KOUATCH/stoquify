@@ -1,0 +1,89 @@
+{
+  "at": "2026-11-10T12:32:46.907Z",
+  "reviewer": "/root",
+  "independentOfRecipeAuthor": "/root/r06_runtime_resume",
+  "passed": true,
+  "scope": "Read-only supplemental review of new isolated DB recipe; not actual database or product qualification",
+  "files": [
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "22d6005ff8ac2355837e339c621819ce2411ba6322bc1febe2d0edfe52661be8"
+    },
+    {
+      "path": "database/prepare.cjs",
+      "sha256": "8adb93c8b5d25c69e66d72571a6fef7e3f7f28ce809b0239c72589df4325b975"
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "sha256": "1e37557aef27d8797850f8704288d61c3d33943928e86124e1145244171a4bfe"
+    },
+    {
+      "path": "database/seed-fixture.cjs",
+      "sha256": "c75e913102e5743b63b094e411a554342921844d1ac2503908a468c4d7bf9924"
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d"
+    },
+    {
+      "path": "database/read-authority-utc.cjs",
+      "sha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8"
+    },
+    {
+      "path": "database/direct-api-child.cjs",
+      "sha256": "d3194e9b397bbabf393a490f335b31197432317e70ecca9e496a3e7d2f79cd3b"
+    },
+    {
+      "path": "database/finalize.cjs",
+      "sha256": "853e7be2c20ddad2ba5175a95044f76feb874265bce8b52f452d940e48c323dd"
+    },
+    {
+      "path": "database/stop.cjs",
+      "sha256": "0e88776d266504f5aa19578c5c2d4ffa11564e2a34b41a15b21bb0b915ed54de"
+    },
+    {
+      "path": "environment-guard.cjs",
+      "sha256": "2916634ef9741d082a86dfee8cdd1b06cc2ebdd285e956b79705671504b40a2d"
+    }
+  ],
+  "target": {
+    "storage": "D:/p04-r06-fullapp-20261110-r2",
+    "host": "127.0.0.1",
+    "port": 55517,
+    "build": "stoquify_local_p04r06_20261110_build_r2",
+    "full": "stoquify_local_p04r06_20261110_full_r2"
+  },
+  "checks": {
+    "newOwnedPathAndPort": true,
+    "actualDataDirectoryDatabaseAddressPortChecked": true,
+    "noDotenvOrProductionURLFallback": true,
+    "freshEmptyMigrationCloneBeforeSeed": true,
+    "parameterizedSyntheticActorsAndControls": true,
+    "actorCount": 16,
+    "organizationCount": 2,
+    "noPreseededSessions": true,
+    "fullTableHashesWithSessionsAndAuditsSeparate": true,
+    "knownActorOnlySessionCleanup": true,
+    "cleanupPreservesBusinessAndAuditDigests": true,
+    "ownerPidDataDirectoryAndNoUnexpectedClientsBeforeStop": true,
+    "internalScaffoldJunctionOnlyToNewCandidateDependencies": true
+  },
+  "findingResolved": {
+    "issue": "pg Date serialization shifts timestamp-without-time-zone fixture values under local UTC+1",
+    "fix": "Explicit UTC timestamp writes; exact raw lockedUntil/updatedAt saved and transactionally compared on restoration",
+    "correctedFixtureSha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d",
+    "priorEvidenceUnchanged": true
+  },
+  "migrationInspection": {
+    "count": 122,
+    "sourceManifestSha256": "18f667a29e31892e8b231a2b41e22760140154e3cbd9c350a0c075e9a3bd3d59",
+    "scan": "Searched migration SQL for external program/file/network/extension/foreign-wrapper and cross-database operations; only benign truncated column substring matched broad truncate pattern.",
+    "executed": false
+  },
+  "limits": [
+    "Primary exact recipe admission and candidate/resource outcome still required before execution.",
+    "A launcher timeout, if observed, must remain separately reported and reconciled; exit status or a port alone does not prove a clean launcher.",
+    "Connection-failure rehearsal cannot be claimed as a particular adapter-null/after-hook branch.",
+    "Private fixture prepared-state on seed failure is fail-closed; do not silently reuse/reset a partially prepared target."
+  ]
+}

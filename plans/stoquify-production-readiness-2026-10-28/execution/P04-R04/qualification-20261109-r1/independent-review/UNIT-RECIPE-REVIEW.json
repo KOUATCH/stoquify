@@ -1,0 +1,43 @@
+{
+  "reviewedAt": "2026-11-09T13:45:21.771Z",
+  "reviewer": "r04_review",
+  "approvedForExecution": true,
+  "scope": "Two expected-red pre-repair plain-error tests, followed by current sibling/R03/shared-helper suites",
+  "files": [
+    {
+      "path": "unit/run.cjs",
+      "sha256": "a9d5b0ddfb5de4993dc35475b620867f2654e51bed8bb046b1fd3ee010d3e808"
+    },
+    {
+      "path": "unit/jest.config.cjs",
+      "sha256": "0c462c0edca9afac344ef1dd3b70da6070a81405a20f5b7b4e89f53b89eddeb3"
+    },
+    {
+      "path": "unit/guard.cjs",
+      "sha256": "b850302d73df93faec3141541430664a5a7f752c720f8f9aec375cc84076e4dc"
+    },
+    {
+      "path": "unit/baseline-list.ts",
+      "sha256": "3f763ceea82658460f6e0ed339a8d1283c13080af25bf34b082877cab8e95f60"
+    },
+    {
+      "path": "actions/item/__tests__/list-items-error-responses.action.test.ts",
+      "sha256": "b1d43e3ba41e0e08a7116407242c048938a1a4f96c608baac94f572db1c64455"
+    }
+  ],
+  "baselineMatchesPreRepair": true,
+  "privateClientFilesRecomputed": 26,
+  "reviewedControls": [
+    "nextJest without dir; no application config/env loading",
+    "Fresh exclusive attempt outputs and environment allowlist",
+    "Environment-file and net/tls/socket/fetch guards; default DB mock",
+    "Actual normalizer/schema; authority/service/logger mock boundaries explicit",
+    "Both argument styles, actual hook queryFn with useQuery mocked; not browser rendering",
+    "Source/harness hashes and source-drift failure"
+  ],
+  "limits": [
+    "Mocked/pure unit evidence, not native persistence or HTTP",
+    "Baseline name filter exclusions are not acceptance-suite skips"
+  ],
+  "noProductOrTestEditsByReviewer": true
+}

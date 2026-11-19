@@ -1,0 +1,108 @@
+{
+  "at": "2026-11-10T20:11:37.159Z",
+  "packageId": "P04-R06",
+  "scope": "Fresh capacity retry failed before candidate capture; no new qualification execution",
+  "candidateId": null,
+  "artifactSha256": null,
+  "advancement_allowed": false,
+  "production_ready": false,
+  "required_logical_groups": 58,
+  "planned_actual_cases": 107,
+  "actual_cases_executed": 0,
+  "gates": [
+    {
+      "id": "repair_source",
+      "status": "passed",
+      "evidence": "reused-evidence/independent-review/REPAIR-SOURCE-ADMISSION.json",
+      "note": "Unchanged repair, rehash required by publication."
+    },
+    {
+      "id": "auth_mocked_regression",
+      "status": "historical",
+      "evidence": "reused-evidence/MANIFEST.json",
+      "note": "116 earlier passes; no new current-schema auth run."
+    },
+    {
+      "id": "dependencies",
+      "status": "passed",
+      "evidence": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+      "note": "Retained E31 verification; no new full traversal."
+    },
+    {
+      "id": "source_observation",
+      "status": "passed",
+      "evidence": "independent-review/SOURCE-RESUME-OUTCOME-REVIEW-r2.json",
+      "note": "9988/67unchanged+reviewedschema/123migrations; time-bound."
+    },
+    {
+      "id": "packaging_pure_tests",
+      "status": "passed",
+      "evidence": "PRIVATE-METADATA-TEST-RESULT-v3.json",
+      "note": "28/28; actual artifact exclusion still pending."
+    },
+    {
+      "id": "lifecycle_mocked_tests",
+      "status": "passed",
+      "evidence": "database-current/unit/attempt01/result.json",
+      "note": "11/11; no native lifecycle execution."
+    },
+    {
+      "id": "capture_capacity",
+      "status": "blocked",
+      "evidence": "resource-current-schema-retry-ready-r1.json"
+    },
+    {
+      "id": "current_full_source_equality",
+      "status": "not_run",
+      "evidence": "preparation-attempt04.json",
+      "note": "Capacity failed before new full comparison."
+    },
+    {
+      "id": "candidate",
+      "status": "not_run",
+      "evidence": "capacity-checkpoint-current-schema.json"
+    },
+    {
+      "id": "new_database_and_baseline_preservation",
+      "status": "not_run",
+      "evidence": "EXECUTION-HANDOFF-current-schema-r1.md"
+    },
+    {
+      "id": "full_build",
+      "status": "not_run",
+      "evidence": "capacity-checkpoint-current-schema.json"
+    },
+    {
+      "id": "real_session_qualification",
+      "status": "not_run",
+      "evidence": "capacity-checkpoint-current-schema.json"
+    },
+    {
+      "id": "browser_qualification",
+      "status": "not_run",
+      "evidence": "capacity-checkpoint-current-schema.json"
+    },
+    {
+      "id": "private_runtime_packaging",
+      "status": "not_run",
+      "evidence": "capacity-checkpoint-current-schema.json"
+    },
+    {
+      "id": "stopped_state_checkpoint",
+      "status": "passed",
+      "evidence": "independent-review/CAPACITY-RETRY-OUTCOME-REVIEW-r1.json",
+      "note": "No native database requery."
+    },
+    {
+      "id": "independent_blocked_checkpoint",
+      "status": "passed",
+      "evidence": "independent-review/CAPACITY-RETRY-OUTCOME-REVIEW-r1.json",
+      "note": "New blocked retry accepted; not qualification acceptance."
+    }
+  ],
+  "outcome_receipts": {
+    "qualification": null,
+    "integrity": "independent-review/CAPACITY-RETRY-OUTCOME-REVIEW-r1.json",
+    "review": "independent-review/CAPACITY-RETRY-OUTCOME-REVIEW-r1.json"
+  }
+}

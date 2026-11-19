@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-02T16:33:31.077Z",
+  "evidenceClass": "pure_protocol_assertions_not_application_browser_or_database",
+  "commands": [
+    {
+      "command": "node --check E:/ohada saas/Focused projects/stoquify/plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/full-app-20261102-r3/browser/run-browser.cjs",
+      "exitCode": 0
+    },
+    {
+      "command": "node --check E:/ohada saas/Focused projects/stoquify/plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/full-app-20261102-r3/browser/private-alias-probe.cjs",
+      "exitCode": 0
+    },
+    {
+      "command": "node --test E:/ohada saas/Focused projects/stoquify/plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/full-app-20261102-r3/browser/private-alias-probe.test.cjs",
+      "exitCode": 0,
+      "tests": 18,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "hashes": [
+    {
+      "path": "run-browser.cjs",
+      "sha256": "1b805e678e50a8e4d232d08cceeef0fd9c914bbebc3055ba0a01a53851d6b798"
+    },
+    {
+      "path": "private-alias-probe.cjs",
+      "sha256": "350ce96d6bf8b009e48ba5d64b46a2dff3a500d8f3f5f20bbe6b604bd20745aa"
+    },
+    {
+      "path": "private-alias-probe.test.cjs",
+      "sha256": "582d7d0e8173b7e8a3700f595e1e0350c0e6eb64fc29f5cb4154757af8f17f08"
+    }
+  ],
+  "actualAppStarted": false,
+  "browserStarted": false,
+  "databaseAccess": false,
+  "harnessSyntaxRecheckedAt": "2026-11-02T16:37:13.781Z",
+  "harnessOnlyChangeSincePureTests": "Added exact planned/completed per-actor alias-count reconciliation; helper and pure-test input hashes unchanged"
+}

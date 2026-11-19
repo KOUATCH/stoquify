@@ -1,0 +1,148 @@
+{
+  "status": "PASS",
+  "baseline": false,
+  "checks": [
+    {
+      "name": "document retry exact",
+      "status": "PASS"
+    },
+    {
+      "name": "document retry malwareScanEvidenceHash",
+      "status": "PASS"
+    },
+    {
+      "name": "document retry malwareScanProvider",
+      "status": "PASS"
+    },
+    {
+      "name": "document retry malwareScannedAt",
+      "status": "PASS"
+    },
+    {
+      "name": "document retry signedAt",
+      "status": "PASS"
+    },
+    {
+      "name": "document retry retentionPolicyCode",
+      "status": "PASS"
+    },
+    {
+      "name": "document retry retentionBasis",
+      "status": "PASS"
+    },
+    {
+      "name": "document retry retainUntil",
+      "status": "PASS"
+    },
+    {
+      "name": "document retry legalHold,legalHoldReason",
+      "status": "PASS"
+    },
+    {
+      "name": "document retry legalHoldReason",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD valid",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD contract approval absent",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD document proof absent",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD document hash mismatch",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD ambiguous contracts",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD payment metadata absent",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD payment request absent",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD payment hash mismatch",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD same payment actors",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD null payment links",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD null activation link",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE valid",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE contract approval absent",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE document proof absent",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE document hash mismatch",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE ambiguous contracts",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE payment metadata absent",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE payment request absent",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE payment hash mismatch",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE same payment actors",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE null payment links",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE null activation link",
+      "status": "PASS"
+    },
+    {
+      "name": "native draft contract duplicate retry conflicts without a second record",
+      "status": "PASS"
+    }
+  ],
+  "cleanup": true,
+  "sourceHashes": {
+    "services/hris/document-evidence.service.ts": "a846876ba1b97b41419854513a373116e847582f1e87132d0188c1d69ad8fd48",
+    "services/hris/lifecycle.service.ts": "df8fbb2f6b9765d162daedb6cdcb4f8a3ecd6b7e104f3132e4dffed6d4f5e0c2",
+    "services/hris/payroll-readiness-contract.ts": "9ce52a295d1468b43e88722a3bbc58933597353e87da9ca148a4d7599f453fd4",
+    "services/payroll/contract.service.ts": "f6ff163be50fba75409a58fdf3a0d2d5ef27e9828c9c09c4a71857b0fbdb56bc",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\regression.cjs": "c18086357b811b43b5ad1043850fefed7f2b3671b1f100553af58db3a70e0f1b",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\native.cjs": "d7d6f4099a8c97d0e6fe9f4d90c23e6d763f3c42856d9a9e6ff10806478907e5"
+  },
+  "completedAt": "2026-10-28T07:21:36.486Z"
+}

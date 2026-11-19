@@ -1,0 +1,48 @@
+{
+  "startedAt": "2026-10-25T16:16:37.685Z",
+  "origin": "http://127.0.0.1:51784",
+  "database": "stoquify_replay_command_center_phase10_5b6c850591",
+  "realAuthentication": true,
+  "actionMocks": false,
+  "checks": [],
+  "errors": [],
+  "blockedExternalRequests": 0,
+  "actionDates": [
+    {
+      "at": 1792945028534,
+      "dates": []
+    },
+    {
+      "at": 1792945028796,
+      "dates": []
+    },
+    {
+      "at": 1792945029067,
+      "dates": []
+    },
+    {
+      "at": 1792945029371,
+      "dates": []
+    }
+  ],
+  "immediate": "2026-11-01",
+  "original": {
+    "connected": false,
+    "value": "2026-11-01"
+  },
+  "beforeSubmit": "",
+  "passed": false,
+  "failure": "AssertionError [ERR_ASSERTION]: Date changed before submit\n\n'' !== '2026-11-01'\n\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\command-center\\phase-10-combined-release-2026-10-25\\date-diagnostic.cjs:21:1564)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:453:9)\n    at process.callbackTrampoline (node:internal/async_hooks:130:17)",
+  "events": [
+    {
+      "type": "input",
+      "at": 1792945028497,
+      "value": "2026-11-01"
+    },
+    {
+      "type": "change",
+      "at": 1792945028498,
+      "value": "2026-11-01"
+    }
+  ]
+}

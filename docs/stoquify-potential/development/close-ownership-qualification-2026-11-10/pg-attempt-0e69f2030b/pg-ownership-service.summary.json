@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "eligible-client-local-owners",
+      "passed": true
+    },
+    {
+      "name": "eligible-legacy-delegated-contributors",
+      "passed": true
+    },
+    {
+      "name": "eligible-managed-delegated-contributors",
+      "passed": true
+    },
+    {
+      "name": "ineligible-local-owners-no-effects",
+      "passed": true
+    },
+    {
+      "name": "invalid-delegated-grants-no-effects",
+      "passed": true
+    },
+    {
+      "name": "managed-restrictions-no-effects",
+      "passed": true
+    },
+    {
+      "name": "aligned-comment-targets",
+      "passed": true
+    },
+    {
+      "name": "mixed-comment-targets-no-effects",
+      "passed": true
+    },
+    {
+      "name": "corrupt-finding-graph-no-effects",
+      "passed": true
+    },
+    {
+      "name": "owned-review-period",
+      "passed": true
+    },
+    {
+      "name": "persisted-recipient-role-revocation-wins",
+      "passed": true
+    },
+    {
+      "name": "recipient-expiry-at-publication-time",
+      "passed": true
+    },
+    {
+      "name": "assignment-audit-failure-rollback",
+      "passed": true
+    }
+  ],
+  "syntheticInitialAuthorityConfiguration": true,
+  "financialTerminalStatesSeeded": false,
+  "noProviderOrBrowserCalls": true,
+  "limitation": "Service-level owner/scope, observed role-revocation ordering and observed grant expiry across an actual public-command row-lock wait. No every-interleaving or direct-SQL structural-integrity claim.",
+  "privateEvidence": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-ownership-20261110-0e69f2030b\\ownership-close-service-evidence.private.json",
+    "sha256": "954a7f2c45c6c563e9afe3481fa8ac483844ad25f17e849ed0b540193c8543cd",
+    "bytes": 4385
+  }
+}

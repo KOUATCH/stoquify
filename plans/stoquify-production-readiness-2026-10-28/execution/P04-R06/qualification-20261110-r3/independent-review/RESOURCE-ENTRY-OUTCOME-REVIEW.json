@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:52:27.042Z",
+  "reviewer": "/root/r06_review",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r3",
+  "passed": true,
+  "scope": "Initial host memory/storage observation only; no candidate/runtime admission",
+  "files": [
+    {
+      "path": "resource-entry.cjs",
+      "sha256": "2e5a49502544ff1c6d453902a84b675913db74c5ee6d19ad51bc25a2774b1c9e"
+    },
+    {
+      "path": "resource-entry.json",
+      "sha256": "0957fe4b9f17fabaeada2279a990b7f0a2206a4c9b5c6844a8d8ecf6861fa8b1"
+    },
+    {
+      "path": "workflow-check.json",
+      "sha256": "69473269ddeffddc9eb6a5984caa9bb1dca33d217b5a93d94866f52ed1da84c3"
+    }
+  ],
+  "collectorAdmission": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\independent-review\\RESOURCE-RECIPE-ADMISSION.json",
+    "sha256": "1d351c6d9ce5b2433364e20ee72ab915f1c3bb9196960fe7b5c763fd0203a9b9"
+  },
+  "observed": {
+    "freePhysicalGiB": 8.925167083740234,
+    "freeCommitGiB": 13.739269256591797,
+    "freeDriveDGiB": 15.688743591308594,
+    "requiredPhysicalGiB": 6,
+    "requiredCommitGiB": 12,
+    "requiredDriveDGiB": 12,
+    "workflowCheckExitCode": 0,
+    "workflowUnclassifiedCount": 196
+  },
+  "limits": [
+    "Receipt uses prior r2 process/port filter; r3 target ownership and all future scoped ports need separate proof.",
+    "Fresh source reconciliation/successor capture/compatibility admission remains required before database resume/build.",
+    "Separate dependency copy requires actual postcopy capacity; this entry observation does not guarantee later memory or disk availability.",
+    "Initial restricted CIM-access failure produced no receipt; root reran same reviewed read-only collector with required access, not changed thresholds.",
+    "Workflow execution is root-reported actual outcome with independently verified current definition hashes, not a duplicate reviewer execution."
+  ],
+  "qualificationPassed": false
+}

@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "database": "stoquify_replay_close_integrity_corrupt_20261110_99a87606d0",
+  "expectedRejection": true,
+  "preflightReasonVerified": true,
+  "all14Reported": true,
+  "diagnosticSource": "direct-postgresql-exact-migration",
+  "directMigrationRawSha256": "334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7",
+  "directSqlstate": "23514",
+  "directMessage": "Close scope integrity preflight failed.",
+  "directReportedCounts": {
+    "close_exports_run_scope_fkey": 1,
+    "close_runs_period_scope_fkey": 1,
+    "close_evidence_run_scope_fkey": 1,
+    "close_findings_run_scope_fkey": 1,
+    "close_checklists_run_scope_fkey": 1,
+    "accountant_reviews_run_scope_fkey": 1,
+    "close_evidence_finding_scope_fkey": 1,
+    "accountant_comments_run_scope_fkey": 1,
+    "close_evidence_checklist_scope_fkey": 1,
+    "close_findings_checklist_scope_fkey": 1,
+    "accounting_periods_fiscal_scope_fkey": 1,
+    "accountant_comments_review_scope_fkey": 1,
+    "accountant_comments_finding_scope_fkey": 1,
+    "accountant_comments_evidence_scope_fkey": 1
+  },
+  "directRollbackVerified": true,
+  "directBeforeHistoryUnchanged": true,
+  "prismaFailureCauseUnavailable": true,
+  "invalidEdgeCategories": [
+    {
+      "name": "accounting_periods_fiscal_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "close_runs_period_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "close_checklists_run_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "close_findings_run_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "close_evidence_run_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "close_exports_run_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "accountant_reviews_run_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "accountant_comments_run_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "close_findings_checklist_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "close_evidence_checklist_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "close_evidence_finding_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "accountant_comments_finding_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "accountant_comments_evidence_scope_fkey",
+      "violations": 1
+    },
+    {
+      "name": "accountant_comments_review_scope_fkey",
+      "violations": 1
+    }
+  ],
+  "exactFixtureSnapshotUnchanged": true,
+  "existing122HistoryUnchanged": true,
+  "noPartialDDL": true,
+  "ddlSha256Before": "a6eab05fd802b0b6096eaf328773cb5d410cfeb7679cc94bba2ca48af3a07e61",
+  "ddlSha256After": "a6eab05fd802b0b6096eaf328773cb5d410cfeb7679cc94bba2ca48af3a07e61",
+  "expectedUnfinishedMigration": "20261110190000_close_scope_integrity",
+  "intentionallyBlockedHistoryPreserved": true,
+  "before": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\dirty-upgrade-before.private.json",
+    "sha256": "a1642ad285d48e5f442d05ced5ebc7989a489b7a13e7af04efd3b6da353797e5",
+    "bytes": 2089699
+  },
+  "after": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\dirty-upgrade-after.private.json",
+    "sha256": "603f79d25d2da4c312632296f2ec5392fc4cbddfc33eba0b82651c53b94cf705",
+    "bytes": 2088841
+  }
+}

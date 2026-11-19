@@ -1,0 +1,34 @@
+{
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-authority-hardening-2026-11-09\\pg-attempt-b028dd77cb",
+  "began": "2026-11-09T16:38:04.719Z",
+  "passed": true,
+  "database": "stoquify_replay_close_authority_20261109_b028dd77cb",
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-write-authority-20261109-b028dd77cb",
+  "source": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-write-authority-20261109-b028dd77cb\\source",
+  "sourceClass": "Frozen current authority helper and dependencies, existing private schema-bound Prisma6.19.3 client, real isolated PostgreSQL17",
+  "migrationCatalogSha256": "3f4c0d0880c659bd22e5f6551aae459924e57ed3baddcac89f4b2f5bc9cf1737",
+  "runnerSha256": "400d85f0981395e517b301deb655fba68354af6b8f72c5feaa3859a96a8a2fba",
+  "checks": [
+    {
+      "stage": "fullFreshReplay",
+      "migrations": 121,
+      "certification": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT"
+    },
+    {
+      "stage": "realAuthorityHelper",
+      "passedTests": 40,
+      "skipped": 0,
+      "retainedProbeChecks": 40,
+      "noFinancialOrCertificationRecords": {
+        "closeRuns": 0,
+        "exports": 0,
+        "journals": 0,
+        "sales": 0,
+        "settlements": 0
+      }
+    }
+  ],
+  "limitation": "Helper authority/SQL locking only; audit probe markers, no application session journey, finance, close certificate, production/provider or clean install claim.",
+  "ownedClusterStopped": true,
+  "ended": "2026-11-09T16:40:37.145Z"
+}

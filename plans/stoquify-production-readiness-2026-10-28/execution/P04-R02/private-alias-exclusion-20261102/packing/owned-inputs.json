@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-02T16:27:20.336Z",
+  "owner": "/root/private_alias_packing",
+  "files": [
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"
+    },
+    {
+      "path": "tests/s10-s11/release-artifact-private-uploads.test.js",
+      "sha256": "bfcc0856cec266fe71f727b1da4a5eb7c7231babb33889c4c72208d8f7f1be73"
+    }
+  ],
+  "scope": "Explicit private alias policy validation, public copy exclusion, private mapping verification and filesystem regressions only",
+  "mutations": [
+    "Owned two source/test files",
+    "New evidence runner/config/receipts",
+    "Owned OS temp fixture files"
+  ],
+  "notRun": [
+    "Real Next build",
+    "Database operations",
+    "HTTP/browser qualification",
+    "Production changes"
+  ]
+}

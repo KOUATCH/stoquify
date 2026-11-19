@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:13:40.229Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": false,
+  "observationAccepted": true,
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "classification": "Build admission blocked before generation or compilation",
+  "files": [
+    {
+      "path": "build-result.json",
+      "sha256": "df85508f56d3ca6666ed7e1edb0827fe85d2d0c686770346d5d81eca4d52beba"
+    },
+    {
+      "path": "resource-build-admission.json",
+      "sha256": "f2644ba18d4a1568cdbe9f7191f501746f62dd995b40b5603dae543f506637cf"
+    },
+    {
+      "path": "run-build.cjs",
+      "sha256": "1a7ee622e67b363c6d0722085ee5c6af925e1f65ad0d3f41505986a1811c9226"
+    },
+    {
+      "path": "independent-review/BUILD-RECIPE-ADMISSION.json",
+      "sha256": "c9ba07b64695d15aa06e4c6127cc2d66648486569be31753763ec0d556036559"
+    }
+  ],
+  "actual": {
+    "commandsExecuted": 0,
+    "freePhysicalGiB": 6.353248596191406,
+    "freeCommitGiB": 11.791282653808594,
+    "minimumCommitGiB": 12,
+    "privateBuildEnvironmentCreated": false,
+    "privateClientReceiptCreated": false,
+    "artifactCreated": false
+  },
+  "requiredRecovery": "Preserve failed entry receipt; release only proven-owned idle review memory if useful, then freshly recheck unchanged capacity floors via an exact admitted successor with exclusive output names. Do not lower thresholds, change heap/gates or rerun DB preparation/seed.",
+  "qualificationPassed": false
+}

@@ -1,0 +1,1235 @@
+{
+  "database": "stoquify_replay_close_monthly_20261110_c662f9dcbd",
+  "rows": [
+    {
+      "id": "e59da716-a261-40fa-ad09-b9e22221b8b4",
+      "checksum": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2",
+      "finished_at": "2026-11-10T19:01:21.068Z",
+      "migration_name": "20260528124341_refine_item_barcode",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:20.336Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "4ee96b3c-af64-4104-a27f-1a87bb15fb03",
+      "checksum": "e61d8f02ef48e9034cda93f6a5b7259be0a099d4861dadd25faab530dbe84eb2",
+      "finished_at": "2026-11-10T19:01:21.083Z",
+      "migration_name": "20260611120000_payment_provider_reference_uniqueness",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.069Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "ee0f1b00-34f6-413a-ba19-047b8e80b06a",
+      "checksum": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+      "finished_at": "2026-11-10T19:01:21.312Z",
+      "migration_name": "20260611130000_accounting_auth_baseline_bridge",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.085Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "86b504d6-51d8-4424-ae18-aadedb4340ad",
+      "checksum": "aa11c0dd1e5f24a7cb9c49d900572f4f07244d4a19d3b4b6b6089effe1fe1643",
+      "finished_at": "2026-11-10T19:01:21.319Z",
+      "migration_name": "20260618154500_repair_accounting_source_links",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.312Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "46b4fdcb-f4a3-4b59-997c-ec3520681981",
+      "checksum": "77c4c1bbd5618e5d01d7416e2f304014890a843785280ccca8aeb0c8c1f4ada8",
+      "finished_at": "2026-11-10T19:01:21.528Z",
+      "migration_name": "20260618160000_payroll_foundation_bridge",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.321Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "a2a5b194-9d6a-4def-a58f-ae58ecd06198",
+      "checksum": "b6c29029961c7080ff75cf1dbd7f918f2b4c4335befe487dcc89ce2d325ccacc",
+      "finished_at": "2026-11-10T19:01:21.812Z",
+      "migration_name": "20260618161000_ap_stock_count_foundation_bridge",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.529Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d15bda0c-820f-41c2-adcc-4bb980a8300e",
+      "checksum": "f64f6e4ade970f347c4db26e8dd14252e081862500a5070b45e72e8a4387dd40",
+      "finished_at": "2026-11-10T19:01:21.820Z",
+      "migration_name": "20260619120000_backfill_purchase_receive_permission",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.812Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "58e00953-ed6e-4a32-9b65-d42d3df4229a",
+      "checksum": "da34bc1196e951830980419a3e5f6f98600054a2a1f136e633a7301406c9cb35",
+      "finished_at": "2026-11-10T19:01:21.829Z",
+      "migration_name": "20260621102500_workflow_assurance_enum_bridge",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.821Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "53118a63-ba36-4f4c-8bde-9ee7a9f335aa",
+      "checksum": "ba6bc0fca858e4a9b599c30ccd32f288235857a736d6c6afc186e8e54f79f473",
+      "finished_at": "2026-11-10T19:01:21.872Z",
+      "migration_name": "20260621103000_workflow_assurance_registry_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.830Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "2c0c9d68-f124-4a29-b2e3-653c3a582bde",
+      "checksum": "8fa08137b6d785ddc812391ce212aa411c4e777bf453bfbf4c450b31cedac0e4",
+      "finished_at": "2026-11-10T19:01:21.881Z",
+      "migration_name": "20260621112500_workflow_assurance_incident_enum_bridge",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.873Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "3f6522f6-139b-41bd-aed9-fff560ead9b4",
+      "checksum": "cfa1cb1cb7242c9717e8aeedc95c7424591aa78b799ea381d2bd40c199bf1664",
+      "finished_at": "2026-11-10T19:01:21.965Z",
+      "migration_name": "20260621113000_workflow_assurance_incident_spine",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.882Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "bcd495cb-bbcd-4e39-a260-a2fb5c9cf32d",
+      "checksum": "d3bb80305c4d130c7533bdee5a75dd88da3da103ca885f7d14dc73b7167ee8d4",
+      "finished_at": "2026-11-10T19:01:21.975Z",
+      "migration_name": "20260625110000_payroll_kernel_immutability",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.967Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "3eeda983-04d5-45b6-af84-9cb9d9da52c0",
+      "checksum": "69e379301a592e4fc126f72688b550d2c842bb74de785de01a732b60cc9a65e2",
+      "finished_at": "2026-11-10T19:01:22.047Z",
+      "migration_name": "20260626093000_payroll_compensation_approval",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:21.976Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "93d6f64e-0d6a-459c-b8a0-d2fd74e25fdc",
+      "checksum": "3a75598e7fe3bdddce1ba6c4248cb08b1cd89966dbff0381d915903fa7aa0c61",
+      "finished_at": "2026-11-10T19:01:22.074Z",
+      "migration_name": "20260626103000_payroll_payment_evidence_readiness",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.048Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e8c2aeba-2013-4cf2-b93d-c742d5535512",
+      "checksum": "da6c26b20c8572648ea6d82da2e8c4b6b71ee0b82c6ed1181d1b27a351a092a6",
+      "finished_at": "2026-11-10T19:01:22.078Z",
+      "migration_name": "20260626123000_payroll_cnps_country_pack_expansion",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.075Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d2cf77c7-3227-4144-aaaa-7771b799ac67",
+      "checksum": "326c7a82dab1b64179bb72b422eb380affcbe1a648612eeb042384b2e7dc3a7f",
+      "finished_at": "2026-11-10T19:01:22.111Z",
+      "migration_name": "20260626133000_payroll_declaration_lifecycle_evidence",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.079Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "c09294f9-3bee-497f-9563-d86c2a0cdf74",
+      "checksum": "b3fbfc15e09fd15c0692397004f22746f1dee8d865fa5d0ed411c133ec3bc900",
+      "finished_at": "2026-11-10T19:01:22.116Z",
+      "migration_name": "20260626143000_payroll_payment_reconciliation_lifecycle",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.112Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "6dd3c032-efd5-49d2-89cf-7a06c3f25b45",
+      "checksum": "afc488a800240f9869faedca30229fda44ff834225839051dfbf12e8b11c8d8a",
+      "finished_at": "2026-11-10T19:01:22.203Z",
+      "migration_name": "20260628123000_payroll_employee_balance_lifecycle",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.117Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "945ca46f-4e59-4f4e-bf03-488892cb0d56",
+      "checksum": "51c342aaa93f3bc909376ecfa6359840e6fca9ad29e15cd4b18c964dc99006e5",
+      "finished_at": "2026-11-10T19:01:22.602Z",
+      "migration_name": "20260630090000_payment_reconciliation_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.206Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "b60cb021-9b27-4aa9-b72c-4e939a43847d",
+      "checksum": "176825a859d1bbc7b59a2bfa03028412f2a2de8c34a581b3b8ad5e0a122781ba",
+      "finished_at": "2026-11-10T19:01:22.610Z",
+      "migration_name": "20260630100000_payment_reconciliation_inbox_worker_leases",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.603Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "45692843-704a-4bbc-81f7-bd67bd74a43e",
+      "checksum": "2097ae01e00361195610fcbf2cf06748bef7e190054d030a5983acb68b1f66f8",
+      "finished_at": "2026-11-10T19:01:22.631Z",
+      "migration_name": "20260703110000_public_receipt_access_tokens",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.611Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "83d60d2c-0725-4f1c-9078-c8d70b6ad190",
+      "checksum": "53e55fb881f552ab9f54b8d69ca92cf3554f690b149d890d60d7ce9e5d5bb258",
+      "finished_at": "2026-11-10T19:01:22.644Z",
+      "migration_name": "20260711133000_public_identity_abuse_limits",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.632Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "ec1b7acd-ed20-4322-b80c-742f4849f4c2",
+      "checksum": "bdff0414f9046d566dcb03bb3b59fbefa28f3570af51bd6b527cdcb1c881ab72",
+      "finished_at": "2026-11-10T19:01:22.660Z",
+      "migration_name": "20260714194500_inventory_history_accounting_time_controls",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.645Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "44e6fd22-269d-48ac-8e3c-9049ea339c66",
+      "checksum": "b30c2a40ecdc2b82e631dea157ac2a2b6fa3078a7837f311a4b7052a259f1fa2",
+      "finished_at": "2026-11-10T19:01:22.665Z",
+      "migration_name": "20260714203000_session_assurance",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.661Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e13fa629-87d6-4224-a2cd-8b78df5e09e3",
+      "checksum": "c3e8c220f522f6b26b86f9e794f4e9fe6f44ca80f9b1d808f9d9fa5e199eb69f",
+      "finished_at": "2026-11-10T19:01:22.691Z",
+      "migration_name": "20260715090000_inventory_correction_reversal_lineage",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.667Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "310caa58-154e-4fb6-8f0f-b7eca557d0e0",
+      "checksum": "2d2fb6276b5bc5a8a1cbcab774c39c1ee2fb67b6c7f2f82afc3f06c7cb6804ec",
+      "finished_at": "2026-11-10T19:01:22.729Z",
+      "migration_name": "20260718100000_branch_daily_close_review_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.692Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "986daf77-1ec1-4fd8-b5d0-3d314f1c04c9",
+      "checksum": "ba8c880bdde4c432cf8171f4da91716ce8738a0e2639cf6dcf6758f613fd1984",
+      "finished_at": "2026-11-10T19:01:22.788Z",
+      "migration_name": "20260718130000_branch_daily_close_sign_off_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.730Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d152e177-7650-4ef5-ba32-cdd2b2998dc3",
+      "checksum": "cef33045a530b51f10bd86cc42c08c1951ce2ad1eeaa096562c6b9d83ee36f0f",
+      "finished_at": "2026-11-10T19:01:22.935Z",
+      "migration_name": "20260719190000_hris_org_manager_scope_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.790Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "fd45dd19-01b7-467b-96b8-123217d59b60",
+      "checksum": "cb88d079e9ee8ea2b360cbacfa711df8aef6892e672b8b7e72abd76e3065c2ec",
+      "finished_at": "2026-11-10T19:01:22.949Z",
+      "migration_name": "20260719203000_workflow_assurance_stable_case_identity",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.936Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "71ae3c0c-f6e1-45c0-b95b-ddf9fb29d795",
+      "checksum": "d2ac0be6867203ce77f3293c778b69b7dd162213613f71be013c3e845d557100",
+      "finished_at": "2026-11-10T19:01:23.063Z",
+      "migration_name": "20260720090000_close_assurance_schema_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:22.951Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "ee7fd677-9b1f-4bec-af83-2aa0fbdcce56",
+      "checksum": "3cef5f9080d5bf58359a3e7ec569b86dfddfa16e0a7355de52d1dd6cf52f7805",
+      "finished_at": "2026-11-10T19:01:23.081Z",
+      "migration_name": "20260720130000_cash_shortage_policy_governance",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.064Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "c61e3295-1e4b-4fca-8f2f-9f776afefc94",
+      "checksum": "e46a97770a96a83c0c97db74aebb6644fa2eaffd9a588dd4f4b3b3cbe0739a1b",
+      "finished_at": "2026-11-10T19:01:23.101Z",
+      "migration_name": "20260720210000_workflow_assurance_multi_finding_persistence",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.083Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "3d9154f9-f782-4931-9908-d62b105b1fa3",
+      "checksum": "94a21b2478abed9013ad91b86a3c0ca8d1be299c4c647e9d72db7060d7891422",
+      "finished_at": "2026-11-10T19:01:23.192Z",
+      "migration_name": "20260722143000_agent_runtime_phase_1_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.103Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "5c2aab73-32d7-45e4-a926-47d4b42f444c",
+      "checksum": "60120afc396082326a0028d6b4f5be8c0056d92b2df53d9bc43c5d924e2cec5d",
+      "finished_at": "2026-11-10T19:01:23.228Z",
+      "migration_name": "20260722150000_agent_runtime_tenant_consistency",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.193Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "9c10466e-f6cb-4732-9be9-e7852079181c",
+      "checksum": "0b4b522a97016d0f3c314f2e6756be76cc6b9ea3937d17104a7bc38df256c146",
+      "finished_at": "2026-11-10T19:01:23.234Z",
+      "migration_name": "20260722153000_agent_runtime_incident_cascade_consistency",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.229Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d4f2c227-d24c-4c3f-aff8-e254f9a2c7aa",
+      "checksum": "b17cfa95100676b20853918337b295859e3790fba99e07ba988936ca511c9831",
+      "finished_at": "2026-11-10T19:01:23.239Z",
+      "migration_name": "20260722160000_agent_runtime_phase_2a_provenance",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.235Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "f44e5926-7368-4c59-aeaf-b017af5bb08b",
+      "checksum": "e6da3e097a6ec88d4015202be95fa06183a3f1051dd9d63d4a1b3ea0bd794d7c",
+      "finished_at": "2026-11-10T19:01:23.243Z",
+      "migration_name": "20260722161000_agent_runtime_phase_2a_operational_controls",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.240Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "6ef9bb1a-5628-45b7-92eb-3cebf630da21",
+      "checksum": "cd9373debc557762912be2b0185eb3c1e5a63be563ca7414ce928acc66d6fd0d",
+      "finished_at": "2026-11-10T19:01:23.251Z",
+      "migration_name": "20260722162000_agent_runtime_tenant_scoped_correlation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.243Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "07ea2495-9111-4271-b2d3-1a4526e775d6",
+      "checksum": "36cfeaca10404bdecb900e04b6c6059b3f0b1525742601c376d78f4edf158410",
+      "finished_at": "2026-11-10T19:01:23.310Z",
+      "migration_name": "20260723100000_agent_runtime_release_control",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.252Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "c627875c-fbb3-43f0-a6a2-39464608c37b",
+      "checksum": "1b49cff8f3465d4d82d8684f0f990843c9800a9371c178d0ac5066f317adfc60",
+      "finished_at": "2026-11-10T19:01:23.316Z",
+      "migration_name": "20260724100000_agent_runtime_release_hardening",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.311Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e326b4ac-2ddc-468f-b30d-92dffb28d3eb",
+      "checksum": "e6e436d7b9b70a3dc4d1acdabff9309c68b3e55d0e74a74c3575a5f8e2f1f7e2",
+      "finished_at": "2026-11-10T19:01:23.321Z",
+      "migration_name": "20260724113000_agent_runtime_retirement_alert_dead_letter",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.317Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "61cd854d-ff14-4444-9d44-c2c0a37844a8",
+      "checksum": "d152473fcdf0b5379ad2d18a18681d6597b7a21f654a395a4022ee9fb8c67b8a",
+      "finished_at": "2026-11-10T19:01:23.334Z",
+      "migration_name": "20260724193000_agent_reconciler_invocation_ledger",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.322Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "6e32c3ec-a73f-4a57-a5d6-23727eb7efe0",
+      "checksum": "62c534a5d0abda2d256ff28cfa82017593375fea4fa776f9d5e907653fe3299e",
+      "finished_at": "2026-11-10T19:01:23.375Z",
+      "migration_name": "20260726140000_business_event_foundation_bridge",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.335Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "89dfc82a-616c-4e9f-9a92-c5a84a13fa90",
+      "checksum": "cb4891823eb8473d01ff1323890383bef0a49d87a8a82a638ccf175a5a2e6fbb",
+      "finished_at": "2026-11-10T19:01:23.378Z",
+      "migration_name": "20260726143000_regulatory_isolation_outbox",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.375Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "200054c3-7ce5-4030-83f5-46f8f6684562",
+      "checksum": "f8e1ed80e1e0ef53cb6c7cfed2902baa3a65065e99a044ea72a62ed432d11ae5",
+      "finished_at": "2026-11-10T19:01:23.386Z",
+      "migration_name": "20260726190000_retire_production_bom_capability",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.379Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "0a080b15-b951-443b-bd72-812b1795c00d",
+      "checksum": "b48051b1fb971666933f6f915966cdf184b936add25402075243b3731800ab9d",
+      "finished_at": "2026-11-10T19:01:23.528Z",
+      "migration_name": "20260726213000_hris_operational_time_management",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.387Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "79fa6b88-fcd4-477f-90ed-e0d22d913af8",
+      "checksum": "92eb7d70aec20347911f3b6ae3b6197bedf1a85e0cac0117974627fd682ffd41",
+      "finished_at": "2026-11-10T19:01:23.553Z",
+      "migration_name": "20260727090000_accountant_access_portfolio",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.529Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "b89cefb7-fe42-4ae2-ac7e-5b35ef166ca7",
+      "checksum": "4a8896360a554d94707dbf86495b2e4e0bbb80e1cae4e8ec9343463c2e30d725",
+      "finished_at": "2026-11-10T19:01:23.689Z",
+      "migration_name": "20260727110000_offline_pos_sync_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.554Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "23390ed9-0e14-44c5-bbf7-fb53f14cba9b",
+      "checksum": "035a01b974be882877669107d4e7c68b939097c6e49cb6273c9daf5b458d584d",
+      "finished_at": "2026-11-10T19:01:23.693Z",
+      "migration_name": "20260727110100_offline_pos_sync_foundation_reconciliation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.690Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "f40cd352-5a3c-4a58-b273-4ee78000e7ee",
+      "checksum": "da49e87bd903ba3130b4ad2782338f72ddd002ecf988c8789a66bd09400fad61",
+      "finished_at": "2026-11-10T19:01:23.861Z",
+      "migration_name": "20260727143000_country_adapter_pilot_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.695Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "fdb12cc8-f0bc-4d36-becf-374739bca8a1",
+      "checksum": "755aef868ddba0f420b6b728a23b50f2097a8054b1fbd090716207f76461e439",
+      "finished_at": "2026-11-10T19:01:23.889Z",
+      "migration_name": "20260727170000_ai_copilot_proposal_guardrails",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.862Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "7cd78915-83f4-4da0-bd9d-0edad73282b6",
+      "checksum": "dbf12970ca133f5241f8814a56102374baefa6dd155a1682b2b76543ae3be270",
+      "finished_at": "2026-11-10T19:01:23.907Z",
+      "migration_name": "20260728100000_pos_cash_shortage_checkpoint_persistence",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.890Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "7eb7d866-8f2b-45b2-9c91-1a9cfc3c23b5",
+      "checksum": "939c1a58986dbe63fa005df7fac668689038287238e877ecdded43b4dc87d1fa",
+      "finished_at": "2026-11-10T19:01:23.925Z",
+      "migration_name": "20260730150000_organization_onboarding_entitlement_bridge",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.908Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "463daa78-e7d3-4d7c-bc9c-e4a3b2165097",
+      "checksum": "60b09a3d7b59e3886483990819cb489b2cee55b2b0b5b9894d833008d91dbbf5",
+      "finished_at": "2026-11-10T19:01:23.929Z",
+      "migration_name": "20260730160000_pos_sales_dependency_entitlement",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.926Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "77586fed-e5de-48fd-8b6c-03d3f72e1094",
+      "checksum": "fb2349ba0a80398ca18d53fc756d84f55948d114b1ba4791f81cad3727939073",
+      "finished_at": "2026-11-10T19:01:23.940Z",
+      "migration_name": "20260801153000_certified_fiscal_evidence_immutability",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.930Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "ca1d2a13-c5f0-4956-b7fa-206343d02fe7",
+      "checksum": "33e11ec31c4c9e3ddca8ab7004fcefc4950e37caf559037abf32bb7c606ea81c",
+      "finished_at": "2026-11-10T19:01:24.021Z",
+      "migration_name": "20260808120000_customer_settlement_allocation_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:23.940Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "30d662b9-b3aa-450a-acd3-abeb7a422ff8",
+      "checksum": "3eed50d1c697abbe30492208f46361fa312b6f67c2195e40faa65bbcaaeebea5",
+      "finished_at": "2026-11-10T19:01:24.038Z",
+      "migration_name": "20260808133000_customer_settlement_compensating_reversal_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.022Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "7ce3748b-f603-4653-9ec4-c4975137ac92",
+      "checksum": "f5e4f34f6b0a7fc9389ec07131330def4aa645fc4d30dc19b9c944fda130e84c",
+      "finished_at": "2026-11-10T19:01:24.114Z",
+      "migration_name": "20260809100000_customer_receivable_document_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.040Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "dc061a9a-b2cf-4751-9b17-d87e745ac8bd",
+      "checksum": "ef4f1a295873dc53a40e3376a1a83aec723fa5ab92e517d54bc4f67dd5ff467f",
+      "finished_at": "2026-11-10T19:01:24.156Z",
+      "migration_name": "20260809113000_customer_statement_snapshot_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.116Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "af14cec6-1586-4721-843c-4ad14ce23bfb",
+      "checksum": "ba745969c795572cd9f7692f519e56781bce463356a8720e91d0d3b57d826b97",
+      "finished_at": "2026-11-10T19:01:24.253Z",
+      "migration_name": "20260809130000_customer_statement_external_access",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.157Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "db3cea18-0dc9-47ca-a99e-e5cb4a1e0b0b",
+      "checksum": "7fb1b45b6f599c661e7831ed282185331b263f82ad430c2f465f1d547bd3fb06",
+      "finished_at": "2026-11-10T19:01:24.351Z",
+      "migration_name": "20260809143000_customer_statement_delivery_referral",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.255Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "52668385-7050-4e99-94cd-47445c0b7be7",
+      "checksum": "f1067b08aefdec02a1038767ca525bcd3ffc178008a31a18fbbf2d6667f303f6",
+      "finished_at": "2026-11-10T19:01:24.526Z",
+      "migration_name": "20260809160000_accountant_client_invite_onboarding",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.352Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "f208a04a-8873-492c-b325-05a5bbe67017",
+      "checksum": "0790760cb0ed07251063090db06bfd315f525039d9398cc0efbd03da8b11d41e",
+      "finished_at": "2026-11-10T19:01:24.530Z",
+      "migration_name": "20260809170000_referral_accounting_source_types",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.527Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "4a0f1ddd-440c-4d18-9a11-49eb0d833622",
+      "checksum": "e89b4380a5ee50ddf6f587c40d9da9d987e0b79bdf41cc4f3a42b4339f464043",
+      "finished_at": "2026-11-10T19:01:24.536Z",
+      "migration_name": "20260809180000_accounting_enum_completion",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.531Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e0fcc425-21a4-4f50-b7d9-8c0fd7312ac9",
+      "checksum": "6ba2d60a539d4daa6396a5398648dc15310bb146513ad5b8db7a4c40012d6e99",
+      "finished_at": "2026-11-10T19:01:24.695Z",
+      "migration_name": "20260815120000_supplier_po_acknowledgement_pilot",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.537Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "8d202a73-9ae0-43a1-a462-d3841fcfa8ed",
+      "checksum": "89128f621cbde5711f6a8dde4679fc077bc34d0b3849ea0739926e07a1d475b4",
+      "finished_at": "2026-11-10T19:01:24.758Z",
+      "migration_name": "20260815130000_governed_master_data_onboarding",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.696Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "b12deeeb-ef49-4f20-a2f4-532d5442bd6f",
+      "checksum": "a4a5fc37cc0d405ad567a3ea87d846ed8f9dfc528aa2139d38f7a8d739022c0a",
+      "finished_at": "2026-11-10T19:01:24.779Z",
+      "migration_name": "20260815143000_pos_customer_location_scope",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.759Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "cc24e1e4-32f5-4e60-9cab-4d0821b1cb37",
+      "checksum": "317a58d31e5247b999c95cc27832891a8f10784f9ac79a2906ce13ce386d085e",
+      "finished_at": "2026-11-10T19:01:24.786Z",
+      "migration_name": "20260815190000_payment_reconciliation_evidence_immutability",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.781Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "aec456c0-d942-4e75-839f-2ef5ded726af",
+      "checksum": "c67d33b36703ba1815bf8d9d2d19c5ddc6c9757985741d3e5941de12d3a8af27",
+      "finished_at": "2026-11-10T19:01:24.791Z",
+      "migration_name": "20260816100000_master_data_onboarding_risk_tier",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.787Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "97f1be26-9dc9-4f8f-ae7d-692ff694363f",
+      "checksum": "991a1508f73aa75c2331316d019dbf4abc505097dd2d60d7d108a85e24d7f056",
+      "finished_at": "2026-11-10T19:01:24.821Z",
+      "migration_name": "20260817120000_pos_commit_result_registry",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.792Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "71104971-c41b-4e94-b1aa-dbd988dc8d9a",
+      "checksum": "df4aa75d35f09d856b8f4eb75fd2c283ec333b519e99a3ed4579ffc513d9ba8f",
+      "finished_at": "2026-11-10T19:01:24.847Z",
+      "migration_name": "20260818100000_purchase_receiving_integrity",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.823Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "2eb11625-ae09-42a2-b635-692d9c19ce57",
+      "checksum": "74d1b1f491b1fc8e8a8319a21d29e957f21a362f227eacc4403ddd87df38bd78",
+      "finished_at": "2026-11-10T19:01:24.958Z",
+      "migration_name": "20260818120000_governed_delivery_order_to_cash",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.849Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "28a9fc56-283a-4e7c-bdca-2f0ce1f427fa",
+      "checksum": "3451178f2323b8c8d96fb0f38e01fc2cc3c82e3a89c917c68b980253ef503d3f",
+      "finished_at": "2026-11-10T19:01:24.988Z",
+      "migration_name": "20260818120000_pos_electronic_tender_authority",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.959Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "b4093842-f908-41aa-b0c9-0f6f44f8497f",
+      "checksum": "eed41a06bff7999be0bc41dc88ca46c13bed08ed5ed8791c8e6406179a0d32ca",
+      "finished_at": "2026-11-10T19:01:25.006Z",
+      "migration_name": "20260818130000_sales_order_reporting_schema_repair",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:24.989Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "9a16ca75-f57e-444e-9026-fe3ede58e151",
+      "checksum": "a407a1fe586934c9066dad7e2e0f1cf4ad4a692e50dce9964e92076d7fb48451",
+      "finished_at": "2026-11-10T19:01:25.062Z",
+      "migration_name": "20260819100000_purchase_receiving_inspection_control",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.007Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d08c8c16-74be-4e25-b55a-29a8fc750fc1",
+      "checksum": "100ca778dad886f4c80e2889c67142ce37e41d194994c84a440073d3d044892c",
+      "finished_at": "2026-11-10T19:01:25.244Z",
+      "migration_name": "20260819120000_purchase_return_credit_evidence_boundary",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.063Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "81772a72-fe6a-4c88-a12c-7e7bbce81128",
+      "checksum": "126bc799c1885856f23a8d768c1f7fe8808841ec8382f9e2c20e52b870e9ed76",
+      "finished_at": "2026-11-10T19:01:25.285Z",
+      "migration_name": "20260820100000_supplier_invoice_match_exception_boundary",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.245Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "0c37b970-d057-4553-aba1-5656ec887806",
+      "checksum": "98a4907bb72cbb99c2919df3ef975c3c5924e70b19c9b34a536c9b3a77915a52",
+      "finished_at": "2026-11-10T19:01:25.364Z",
+      "migration_name": "20260821210000_payroll_trust_spine_transition_ledger",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.286Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "127d36e4-286b-4633-bd25-e84b9216c3d4",
+      "checksum": "a9031a12fda4b925e90f52b6f510c2f65dbe4904cf6abd7c35c3a2ed4585fb3b",
+      "finished_at": "2026-11-10T19:01:25.418Z",
+      "migration_name": "20260823100000_business_event_gateway_completion",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.365Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "f9fe6b9a-0354-4086-976a-6eaa6cd7f696",
+      "checksum": "ee40069dd6ca75c79161d721d297f1140b9508ed22f90be836cbe3640225459e",
+      "finished_at": "2026-11-10T19:01:25.421Z",
+      "migration_name": "20260828190000_align_onboarding_risk_reasons_default",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.419Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "a98300d1-bc13-4f77-8009-1c69772254f0",
+      "checksum": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb",
+      "finished_at": "2026-11-10T19:01:25.455Z",
+      "migration_name": "20260905170000_add_tenant_module_composition",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.422Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "507540b0-32a3-443c-b08c-375dd74d2b06",
+      "checksum": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66",
+      "finished_at": "2026-11-10T19:01:25.468Z",
+      "migration_name": "20260905173000_protect_module_configuration_authority",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.456Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "df7c39a9-9a49-4bd9-a943-f3e676459fe4",
+      "checksum": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73",
+      "finished_at": "2026-11-10T19:01:25.470Z",
+      "migration_name": "20260905200000_add_module_lifecycle_command_state",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.468Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d29c9baf-f634-4197-abab-b4cce3291999",
+      "checksum": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c",
+      "finished_at": "2026-11-10T19:01:25.508Z",
+      "migration_name": "20260905200100_add_module_lifecycle",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.471Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "bfc91f5f-4ae5-439c-a512-853bb28914aa",
+      "checksum": "cd5d20a342504c2f1d27c8644c3d41a8f80019d56a0a459678166df6ff8f119f",
+      "finished_at": "2026-11-10T19:01:25.517Z",
+      "migration_name": "20260909093000_add_suspense_posting_cycles",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.509Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "13466756-1373-4f59-b93e-2555087afd7d",
+      "checksum": "ed1cc1ee182cbd119abfd2cbb5953ca96cad6fc9ca08f380153e917692fab5ae",
+      "finished_at": "2026-11-10T19:01:25.528Z",
+      "migration_name": "20260919110000_managed_picture_assets",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.519Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "35224b46-a5eb-4ce5-8fc2-27c9d5c68a86",
+      "checksum": "f09015253f4479d62404f1ddd840687173854508aca058fc2d0a7589396f020c",
+      "finished_at": "2026-11-10T19:01:25.542Z",
+      "migration_name": "20260920060000_pos_checkout_lifecycle",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.530Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "b3ea761f-3a6e-44d6-94c7-280b8f091b79",
+      "checksum": "b967518e17b8d8dfe82a27be32ed387171eccf361ade577d63ea4fedaf665cde",
+      "finished_at": "2026-11-10T19:01:25.547Z",
+      "migration_name": "20260930211500_journal_posted_line_tenant_guards",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.543Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "7d381309-c7a1-4a49-987d-d61d8afe0558",
+      "checksum": "50742465c97d3519981a2918d50a2988a4f06058159a7662a9341048815f8e97",
+      "finished_at": "2026-11-10T19:01:25.552Z",
+      "migration_name": "20260930213000_journal_posted_status_transitions",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.548Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "f3ee4759-4687-40a8-91da-e72a8f2fce5f",
+      "checksum": "4e56dc79850e0937c8671500da573373f8d0aff8a4f45cf1527255684d464eec",
+      "finished_at": "2026-11-10T19:01:25.558Z",
+      "migration_name": "20260930231500_supplier_credit_zero_value_evidence",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.553Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "239ab6c7-0be9-454d-986f-2fb386e788de",
+      "checksum": "d7ff57b0070851dd095ae6d4da6797bae46420a2108cb686b2d5d3912f3b4d3b",
+      "finished_at": "2026-11-10T19:01:25.574Z",
+      "migration_name": "20261004000000_close_evidence_notifications",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.559Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d6b794ee-f84a-4ad2-94e5-c9af46a83e75",
+      "checksum": "5b8b73f6370bb6e2d0175ad1b7511a04c030566cfec8fde8d7be6c74db23d776",
+      "finished_at": "2026-11-10T19:01:25.596Z",
+      "migration_name": "20261004120000_access_requests",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.575Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "5f908989-ae17-4843-bf58-cafa17cc396c",
+      "checksum": "bf5bf939856394cbb6e45cb9bd1b6ab84619193f86f05d6a1efbcf52b969deb7",
+      "finished_at": "2026-11-10T19:01:25.609Z",
+      "migration_name": "20261004130000_purchase_order_authoring",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.597Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "2e89bc1a-5d03-42b8-a28b-336428cb96b9",
+      "checksum": "e009473b277dab79c1fec8b2fc62d25197a28ffc3219978ceae102e64f81bf5b",
+      "finished_at": "2026-11-10T19:01:25.626Z",
+      "migration_name": "20261016150000_reconciliation_no_activity_evidence",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.610Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "c0c8ccaa-c601-43fe-bcf8-63f7c500e874",
+      "checksum": "c284f59107a6062ab41d8d4696cc1e49d996ecdf30c50eb0d963300ad7ac7668",
+      "finished_at": "2026-11-10T19:01:25.664Z",
+      "migration_name": "20261016180000_close_source_publication_guard",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.627Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "63c67ce8-0499-4b8b-807e-93f390c97c46",
+      "checksum": "726bc8eefd7efca0cae2a020583c027cf1e42c5008a6b08403bdd32627925730",
+      "finished_at": "2026-11-10T19:01:25.670Z",
+      "migration_name": "20261016200000_close_payable_sources",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.667Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "1d6c5bc1-8071-4f7b-9b0c-5bdb0611a1f4",
+      "checksum": "ce4699dad31c271f9bac9ea83574efd235f1c4372d164801098973536bff1969",
+      "finished_at": "2026-11-10T19:01:25.688Z",
+      "migration_name": "20261016220000_bank_balance_evidence",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.671Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "82bf116a-7fd8-4c4a-ae59-0890056b8ce5",
+      "checksum": "8f2de043df62bdd0e25492ed8f6b4b071cf25ae9c1460931292e732f7b45b0c5",
+      "finished_at": "2026-11-10T19:01:25.705Z",
+      "migration_name": "20261016230000_balance_sheet_evidence",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.689Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "39458028-8697-496b-be1c-7501a8b70011",
+      "checksum": "07b87dba77eed8f7deef288276f16590de0d3860e6ff2456ee3ffcacdd7f39fe",
+      "finished_at": "2026-11-10T19:01:25.724Z",
+      "migration_name": "20261017090000_period_close_control",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.706Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "17d40942-6bf0-4db5-b878-e15e4ee6617b",
+      "checksum": "aa164a6bdabebe210530a802dad62a685df48f8ad1773d4c2e3eee68aa23b5db",
+      "finished_at": "2026-11-10T19:01:25.786Z",
+      "migration_name": "20261019120000_firm_engagement_foundation",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.725Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "3879c81e-1595-41c9-b9e9-dc80502a8f8b",
+      "checksum": "84c008d40b14282b5ea78fe4cd6b9da086240d6b3e7df3fe1121e51642f9ced5",
+      "finished_at": "2026-11-10T19:01:25.789Z",
+      "migration_name": "20261019140000_firm_engagement_authority",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.787Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "056cecf6-a64c-436e-b78c-7e2291246178",
+      "checksum": "a11b45efeb4b859cb22965b5367f8198d6c346b46c63224171094b538c67bde1",
+      "finished_at": "2026-11-10T19:01:25.794Z",
+      "migration_name": "20261020100000_accountant_active_named_scope",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.790Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "2e8def83-5e14-4e98-a283-3ecfb97c046e",
+      "checksum": "ce8f1230a47de4fc4b205c46dec3dcd69067fd0d4b52418811d1441a3a3dc918",
+      "finished_at": "2026-11-10T19:01:25.808Z",
+      "migration_name": "20261020130000_opening_position_preview",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.795Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "a7462a92-be29-4b81-a54a-f21a8ffcf02f",
+      "checksum": "7867dd521a64f5ceea7d5413d6946b325d2c375c2295bc9e6da08c5252463faa",
+      "finished_at": "2026-11-10T19:01:25.860Z",
+      "migration_name": "20261020160000_controlled_opening_cutover",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.809Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "bbb5a722-0b9f-44f9-8b56-125ba05928c9",
+      "checksum": "af967f0d5859f7051a6b42f9007c4f2fb5356da11c51fc53bc07e93adb7ff72d",
+      "finished_at": "2026-11-10T19:01:25.875Z",
+      "migration_name": "20261020180000_firm_obligation_register",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.861Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "1797f925-3d69-4216-a0fd-8d4b60b33e92",
+      "checksum": "dc3624299c02bb358cada3293d86ec73f6431c087c8c421d43f6beb9383d8714",
+      "finished_at": "2026-11-10T19:01:25.896Z",
+      "migration_name": "20261024143000_hris_schedule_revisions",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.876Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "a5a178fd-c0a3-43de-8a48-3b8f6c342be6",
+      "checksum": "54617a571a7a32e340cf5436b988a39dcc9260c2da8e4af65aec8506682854c9",
+      "finished_at": "2026-11-10T19:01:25.916Z",
+      "migration_name": "20261024150000_hris_employee_documents",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.897Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d14a4496-b582-45ba-b10a-30dbc62ea1a3",
+      "checksum": "42e4c17c0e04eaffcfeff9c7a649c11e3ce6c7ac7e6c130e56e0c47a8c0c3517",
+      "finished_at": "2026-11-10T19:01:25.920Z",
+      "migration_name": "20261024150100_hris_document_evidence_guard",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.917Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "311807dc-2657-4108-9b82-83b3b2432702",
+      "checksum": "0ab06ce36165e1ccf63cc9e0130e6628b4be9b512853f1c3c296eb6b62714dc9",
+      "finished_at": "2026-11-10T19:01:25.924Z",
+      "migration_name": "20261024150200_hris_document_duplicate_evidence",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.921Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "b9eed03f-1ea4-4013-98f3-fe651af476e9",
+      "checksum": "fc3202a8a00bf7212a0a9c068eae1417cbec9c3826bbb1f3550cfebb52fc9865",
+      "finished_at": "2026-11-10T19:01:25.926Z",
+      "migration_name": "20261024150300_hris_document_storage_identity",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.924Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "5cf8a0ce-3eb4-4ccb-b9cc-abaa1b5f2e51",
+      "checksum": "7670458f81dac1c5946f4818ee4fd262997d4edbf4e7c6cbf3bf51b465803aec",
+      "finished_at": "2026-11-10T19:01:25.930Z",
+      "migration_name": "20261024150400_hris_document_legacy_evidence",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.927Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "c0be6232-6592-4540-b53c-ad39708a9597",
+      "checksum": "8c6885dcdc012d8855ff796f376a635a755a618e9ef4479dca0944904e1cfa69",
+      "finished_at": "2026-11-10T19:01:25.943Z",
+      "migration_name": "20261024160000_hris_personal_correction_cases",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.931Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "f8ff2cf8-e6b3-4fcb-bf76-b38d887fc479",
+      "checksum": "f4cbe0129005fe9c0634ddfd6f78d349c34f66ed5a680196706f965a7aa69654",
+      "finished_at": "2026-11-10T19:01:25.960Z",
+      "migration_name": "20261024170000_hris_lifecycle_tasks",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.944Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "acef78fc-dbf2-4d1c-904b-528f6095ed00",
+      "checksum": "2b5ca60fa12d2aed9add8ec9895bfbabceb6f8d49423269fe26d12c5ac616a9b",
+      "finished_at": "2026-11-10T19:01:25.976Z",
+      "migration_name": "20261024170000_hris_setup_reviewer_grants",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.961Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "213d1b17-84f2-4e5e-a077-bd1365df901e",
+      "checksum": "f391b11a08b581d89922527eef6a0937a27128b3091c30c93a97a175cff8b941",
+      "finished_at": "2026-11-10T19:01:26.065Z",
+      "migration_name": "20261024180000_command_center_coordination",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:25.977Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "0a37e143-3231-45f5-9673-79540b22c58e",
+      "checksum": "89dcd1ba406e637efdd96234fc685f7f0b6cf666f5350ad42324bb60c9eef574",
+      "finished_at": "2026-11-10T19:01:26.081Z",
+      "migration_name": "20261025090000_firm_advisory_outcomes",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:26.066Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "a9846939-2f10-4eab-8421-74968aca0818",
+      "checksum": "a1a0d1996d86aa6b1b4415450a5f86caaef6851fb3360348b89da4e8add73d09",
+      "finished_at": "2026-11-10T19:01:26.103Z",
+      "migration_name": "20261025180000_firm_practice_records",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:26.082Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "2f43d266-6386-4998-9c5b-ca6b0b59c030",
+      "checksum": "f7406f2292f10909d0b0dd8614b6655e2069615a0c3fa26c0a3c6d75cd1100e2",
+      "finished_at": "2026-11-10T19:01:26.108Z",
+      "migration_name": "20261025180100_firm_practice_integrity",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:26.104Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e57c06cb-ab91-42e3-808c-46693129ed47",
+      "checksum": "8c8505a509ebfb59cc8bd30f326e8d3ba9663070255cf0919b0cdda2968c0776",
+      "finished_at": "2026-11-10T19:01:26.141Z",
+      "migration_name": "20261025190000_hris_payroll_handoff",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:26.109Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "6f83cde6-3061-49a3-bf49-b4d93c740be6",
+      "checksum": "37f0de12f2b315e05ef4a6489a81b5898b8cb7a50896361c97e29af60d679471",
+      "finished_at": "2026-11-10T19:01:26.145Z",
+      "migration_name": "20261025190100_hris_handoff_actor_guard",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:26.142Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "8d81ebc7-9f05-4cf1-9072-2bf000bb7d01",
+      "checksum": "6134a60bec2f4aead9d134ac16a28c50e8b724b0c2b3ea5dcde97c79485017ce",
+      "finished_at": "2026-11-10T19:01:26.150Z",
+      "migration_name": "20261102190000_payroll_history_proof_version_binding",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:26.146Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "0a7c04da-a95f-418e-a539-f72ee745d0a1",
+      "checksum": "61e5ff2bfd3209906d92ca36b923d5125242db76c8cae5d4bc1269897f76e6d8",
+      "finished_at": "2026-11-10T19:01:26.156Z",
+      "migration_name": "20261109190000_close_pack_canonical_retention",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:26.151Z",
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d9365c74-a277-4d13-a22c-150f38689c58",
+      "checksum": "334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7",
+      "finished_at": "2026-11-10T19:01:26.250Z",
+      "migration_name": "20261110190000_close_scope_integrity",
+      "logs": null,
+      "rolled_back_at": null,
+      "started_at": "2026-11-10T19:01:26.158Z",
+      "applied_steps_count": 1
+    }
+  ]
+}

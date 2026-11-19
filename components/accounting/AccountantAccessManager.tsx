@@ -4,7 +4,7 @@ import { AccountingDataTable } from "@/components/accounting/AccountingDataTable
 import { accountantAccessCopy, accountantAccessLabel } from "./accountantAccessCopy"
 import type { Locale } from "@/types/bilingual"
 
-import { useState, useTransition } from "react"
+import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 
 import {
@@ -12,6 +12,8 @@ import {
   revokeAccountantAccessAction,
 } from "@/actions/accounting/accountant-access.actions"
 import type { AccountantAccessGrantDto } from "@/services/accounting/accountant-access.service"
+import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+import { firmEngagementCopy } from "./firm-engagement-copy"
 
 function toAbsoluteIsoDateTime(
   value: FormDataEntryValue | null,
@@ -43,57 +45,90 @@ export function AccountantAccessManager({
   const t = accountantAccessCopy[locale]
   const router = useRouter()
   const [message, setMessage] = useState<string | null>(null)
-  const [isPending, startTransition] = useTransition()
+  const [isPending, setPending] = useState(false)
+  const inFlight = useRef(false)
+  const [saved, setSaved] = useState(false)
+  const [operation, setOperation] = useState<{ kind: "grant" | "revoke"; input: Record<string, unknown> } | null>(null)
+  const operationRef = useRef<typeof operation>(null)
+  const [fresh, setFresh] = useState(false)
+  const ft = firmEngagementCopy[locale]
 
-  function grant(formData: FormData) {
+  function retainOperation(next: typeof operation) {
+    operationRef.current = next
+    setOperation(next)
+  }
+
+  async function run(next: NonNullable<typeof operation>) {
+    if (inFlight.current || (operationRef.current && operationRef.current !== next)) return
+    inFlight.current = true
+    setPending(true)
+    retainOperation(next)
+    setSaved(false)
     setMessage(null)
-    startTransition(async () => {
-      const result = await inviteAccountantAccessAction({
+    let confirmed = false
+    try {
+      const result = next.kind === "grant" ? await inviteAccountantAccessAction(next.input) : await revokeAccountantAccessAction(next.input)
+      if (result.success) {
+        retainOperation(null); setFresh(false)
+        setMessage(next.kind === "grant" ? ("outcome" in result.data && result.data.outcome === "INVITED" ? t.queued : t.granted) : ("status" in result.data && result.data.status === "EXPIRED" ? t.expired : t.revoked))
+        setSaved(true)
+        confirmed = true
+      } else if (result.code === "FRESH_AUTH_REQUIRED") { setFresh(true); setMessage(ft.fresh) }
+      else if (result.retryable || result.code === "INTERNAL_ERROR") setMessage(ft.uncertain)
+      else { retainOperation(null); setMessage(ft.rejected) }
+    } catch { setMessage(ft.uncertain) }
+    finally { inFlight.current = false; setPending(false) }
+    if (confirmed) {
+      try { router.refresh() }
+      catch { /* The command is confirmed; the explicit reload remains available. */ }
+    }
+  }
+
+  async function confirmIdentity(password: string) {
+    if (inFlight.current || !operationRef.current || !fresh) return
+    inFlight.current = true
+    setPending(true)
+    try {
+      const result = await stepUpWithPasswordAction({ password })
+      if (result.success) { setFresh(false); setMessage(null) }
+      else setMessage(ft.identityFailed)
+    } catch { setMessage(ft.identityFailed) }
+    finally { inFlight.current = false; setPending(false) }
+  }
+  function grant(formData: FormData) {
+    if (inFlight.current || operationRef.current) return
+    run({ kind: "grant", input: {
         accountantEmail: formData.get("accountantEmail"),
         accountantFirmName: formData.get("accountantFirmName"),
         accountantFirmRegistrationNumber:
           formData.get("accountantFirmRegistrationNumber") || null,
         role: formData.get("role"),
         consentEvidenceHash: formData.get("consentEvidenceHash"),
-        effectiveFrom: toAbsoluteIsoDateTime(formData.get("effectiveFrom")),
+        effectiveFrom: toAbsoluteIsoDateTime(formData.get("effectiveFrom")) ?? new Date().toISOString(),
         expiresAt: toAbsoluteIsoDateTime(formData.get("expiresAt")),
-      })
-      setMessage(
-        result.success
-          ? result.data.outcome === "GRANTED"
-            ? t.granted
-            : t.queued
-          : result.error,
-      )
-      if (result.success) router.refresh()
-    })
+        idempotencyKey: crypto.randomUUID(), locale: locale === "fr" ? "FR" : "EN",
+      } })
   }
 
   function revoke(grantId: string) {
-    const reason = window.prompt(t.revokeReason)
+    if (inFlight.current || operationRef.current) return
+    const reason = window.prompt(`${t.revokeReason}\n${ft.consequence}`)
     if (!reason) return
-    setMessage(null)
-    startTransition(async () => {
-      const result = await revokeAccountantAccessAction({ grantId, reason })
-      setMessage(
-        result.success
-          ? result.data.status === "EXPIRED"
-            ? t.expired
-            : t.revoked
-          : result.error,
-      )
-      if (result.success) router.refresh()
-    })
+    run({ kind: "revoke", input: { grantId, reason } })
   }
 
   return (
     <div className="space-y-6">
-      <form action={grant} className="dashboard-glass-panel grid min-w-0 gap-4 rounded-lg p-5 md:grid-cols-2">
+      <form onSubmit={(event) => {
+        event.preventDefault()
+        grant(new FormData(event.currentTarget))
+      }} className="dashboard-glass-panel grid min-w-0 gap-4 rounded-lg p-5 md:grid-cols-2">
         <div className="md:col-span-2">
           <h2 className="font-semibold">{t.invite}</h2>
           <p className="mt-1 text-sm text-[var(--dash-text-soft)]">
             {t.invitationHelp}
           </p>
+          <p className="mt-2 text-sm">{locale === "fr" ? "Pour renouveler un mandat actif, révoquez-le puis accordez un nouveau mandat avec un nouveau consentement et une nouvelle échéance. Le cabinet doit rattacher le nouveau mandat." : "To renew an active mandate, revoke it and grant a new mandate with fresh consent and expiry. The firm must explicitly enroll the new mandate."}</p>
         </div>
         <label className="text-sm">
           {t.email}
@@ -133,11 +168,25 @@ export function AccountantAccessManager({
             required
           />
         </label>
-        <button className="dashboard-button-create min-h-10 w-fit rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50" disabled={isPending}>
+        <button className="dashboard-button-create min-h-11 w-fit rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50" disabled={isPending || !!operation}>
           {isPending ? t.saving : t.submit}
         </button>
         {message ? <p role="status" className="self-center text-sm md:col-span-2">{message}</p> : null}
       </form>
+      {saved && !operation && !isPending && <div className="dashboard-glass-panel space-y-3 rounded-lg p-5">
+        <p>{locale === "fr" ? "La modification a été enregistrée. Si elle ne figure pas dans la liste, actualisez-la avant une autre modification." : "The change was saved. If it is not shown in the list, refresh it before making another change."}</p>
+        <button type="button" className="dashboard-button-secondary min-h-11 rounded-lg px-3" onClick={() => { if (!inFlight.current && !operationRef.current) window.location.reload() }}>
+          {locale === "fr" ? "Actualiser la liste" : "Refresh current list"}
+        </button>
+      </div>}
+      {operation && <div className="dashboard-glass-panel space-y-3 rounded-lg p-5">
+        {fresh && <form onSubmit={e => {
+          e.preventDefault(); const form = e.currentTarget, password = String(new FormData(form).get("password")); form.reset()
+          void confirmIdentity(password)
+        }}><label>{ft.password}<input className="dashboard-control ml-2 min-h-11 rounded-lg px-3" name="password" type="password" autoComplete="current-password" required /></label>
+          <button className="dashboard-button-secondary min-h-11 rounded-lg px-3" disabled={isPending}>{ft.verify}</button></form>}
+        <button className="dashboard-button-secondary min-h-11 rounded-lg px-3" disabled={isPending || fresh} onClick={() => run(operation)}>{ft.retry}</button>
+      </div>}
 
       <div className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg">
         <AccountingDataTable
@@ -156,6 +205,7 @@ export function AccountantAccessManager({
               id: grant.id,
               searchText: [
                 grant.accountantFirmName,
+                grant.accountantEmail ?? grant.accountantUserId,
                 accountantAccessLabel(t.roles, grant.role),
                 accountantAccessLabel(t.statuses, grant.status),
                 formatConsentInstant(grant.expiresAt, locale),
@@ -163,7 +213,8 @@ export function AccountantAccessManager({
                 .filter((value) => value !== null && value !== undefined)
                 .join(" "),
               cells: [
-                <div key="cell-0">{grant.accountantFirmName}</div>,
+                <div key="cell-0"><p>{grant.accountantFirmName}</p><p className="break-all text-sm">{grant.accountantName || grant.accountantEmail || grant.accountantUserId}</p>
+                  {grant.accountantName && <p className="break-all text-sm">{grant.accountantEmail}</p>}</div>,
                 <div key="cell-1">{accountantAccessLabel(t.roles, grant.role)}</div>,
                 <div key="cell-2">{accountantAccessLabel(t.statuses, grant.status)}</div>,
                 <div key="cell-3">
@@ -175,7 +226,7 @@ export function AccountantAccessManager({
                   {["ACTIVE", "SCHEDULED"].includes(grant.status) ? (
                     <button
                       className="min-h-10 rounded-md px-2 text-[var(--dash-danger)] underline focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]"
-                      disabled={isPending}
+                      disabled={isPending || !!operation}
                       onClick={() => revoke(grant.id)}
                       type="button"
                     >

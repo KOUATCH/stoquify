@@ -1,0 +1,108 @@
+{
+  "reviewedAt": "2026-11-03T17:43:58.7505062Z",
+  "reviewer": "r01_independent_review",
+  "verdict": "completed_caller_source_review_no_remaining_blocker",
+  "sourceAccepted": true,
+  "outcomeAccepted": false,
+  "supersedesScope": "SOURCE-REVIEW.json originally omitted delivery-issues; initial assessment invalidation retained",
+  "resolvedFinding": {
+    "path": "services/communication/delivery-issues.service.ts",
+    "cause": "Missed current/target role-code projections and current-code historical evidence argument",
+    "resolution": "Fresh stored reviewer codes and target role codes now drive grant filtering before candidate/cursor reads; evidence validation receives current target code; authorized ordinary historical and privileged new code-bound reads restored",
+    "tests": "Unit attempt08 adds 22 delivery issue tests to final scope; fresh native retry02 adds two production service positive/negative read cases"
+  },
+  "callerSearch": {
+    "roots": [
+      "actions",
+      "services",
+      "lib",
+      "app",
+      "components"
+    ],
+    "extensions": [
+      "ts",
+      "tsx"
+    ],
+    "excluded": [
+      "__tests__",
+      "*.test.*",
+      "dated what-next/plan source snapshots",
+      "graph JSON/reports"
+    ],
+    "files": [
+      {
+        "path": "services/access-requests/access-request.service.ts",
+        "sha256": "62d1450906441480457297948dc16125bbc31dcf71b07669c81015ebd2b04a3e"
+      },
+      {
+        "path": "services/communication/delivery-issues.service.ts",
+        "sha256": "0b9820b67cf73247d18ed8942ab07eb43dc1e4b60b140a2496bd470b4f768db1"
+      },
+      {
+        "path": "services/communication/user-invitation-delivery-worker.service.ts",
+        "sha256": "f59eb5ee842e9a63afdcc553f918427a89fc49527d6571eb2d1714e61ff9ca2c"
+      },
+      {
+        "path": "services/operating-access/operating-access-grant-policy.ts",
+        "sha256": "32800a7d0d7b7a69928b1eda16de2da1602d9570420bae33d3410543b669df6e"
+      },
+      {
+        "path": "services/roles/role-write.service.ts",
+        "sha256": "12735d1f2860265f4a098b57c14a18373059b93aa6fef19309bf1dad67a99208"
+      },
+      {
+        "path": "services/security/role-grant-policy.service.ts",
+        "sha256": "6d42a728c6fa72b037a2a9e798a81ca2ea2cd0bae6c5a0d5cfa81095739cfaa6"
+      },
+      {
+        "path": "services/users/member-access-policy.ts",
+        "sha256": "4f243dccab69936a22d12cd3a2a996ed1561f21098bcd8ec4d1ab36fb7acafe2"
+      },
+      {
+        "path": "services/users/member-access-read.service.ts",
+        "sha256": "2e9c81dc78a1e0fc77cffab474127861fbdb39af4a85fed9fd7942be0e769a8e"
+      },
+      {
+        "path": "services/users/member-access.service.ts",
+        "sha256": "7bd7063d54219f81a686d86c5c7adc096b6d5436c5943092bdf3044144ab621c"
+      },
+      {
+        "path": "services/users/user-invitation-authority.service.ts",
+        "sha256": "727ae4905f6309f8830d7e74cd2fcc426e00d3aeb3dd5ad4780376aed4cfb246"
+      },
+      {
+        "path": "services/users/user-invitation-delivery-contract.ts",
+        "sha256": "08bdf37292f34ccdf3f0db5b123205e3a273d5bd33894cab99896a8c651f7a4c"
+      },
+      {
+        "path": "services/users/user-invitation-history.service.ts",
+        "sha256": "e1ad93a0db15e825384afb8989dc08d44426cd2255a38611ab0a5b3910608930"
+      },
+      {
+        "path": "services/users/user-invitation-issuance.service.ts",
+        "sha256": "b2bbec58e59c2c9eff8c5d83c423c015be8bb748f55d20ac2191d9ac9f1b42ef"
+      },
+      {
+        "path": "services/users/user-invitation-management.service.ts",
+        "sha256": "bfa07e94e621a73e3c8137e990e33c375b19cc48c3a30cd036f6a573521d240c"
+      },
+      {
+        "path": "services/users/user-invitation-options.service.ts",
+        "sha256": "0b5c386ada487563f2507a0aaa1694d84e2c8cb131d22478a8689ff552106482"
+      },
+      {
+        "path": "services/users/user-invitation-redemption-authority.service.ts",
+        "sha256": "c245173a19baf119e7564f5a258ced87328b29c23f83c2d68f6ab8b6d014b2b3"
+      },
+      {
+        "path": "services/users/user-lifecycle.service.ts",
+        "sha256": "738769a59e641a09e5cb8f6d3fbf86eee498f8483a606e8461179f59f30a6024"
+      }
+    ]
+  },
+  "limitations": [
+    "Caller search and source review are scoped source evidence; no actual route/HTTP or browser certification",
+    "Final outcome depends on native retry02 result and cleanup",
+    "Historical initial assessment is invalidated and must not serve as current completion evidence"
+  ]
+}

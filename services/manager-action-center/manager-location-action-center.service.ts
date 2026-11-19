@@ -1,4 +1,8 @@
 import "server-only"
+import { commandSourceText, commandSourceFreshness } from "@/lib/dashboard/command-center-source-copy"
+import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
+import { stableIdentityOrder } from "@/lib/dashboard/command-center-context"
+import { presentDailyAction, presentDailySignal } from "@/services/daily-habit/daily-habit-signal-presentation"
 
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { ForbiddenError } from "@/services/_shared/action-errors"
@@ -100,8 +104,12 @@ export async function getManagerLocationActionCenterDataFromResolvedAccess(
 
       return {
         location,
-        snapshot,
-        actionQueue,
+        snapshot: {...snapshot, freshness: commandSourceFreshness(snapshot.freshness, input.locale ?? "en"), blockers: snapshot.blockers.map(b => presentSnapshotBlocker(b, input.locale ?? "en")), redactions: snapshot.redactions.map(r => ({...r, reason: commandSourceText(r.reason, input.locale ?? "en")}))},
+        actionQueue: {...actionQueue,
+          signals: actionQueue.signals.map(signal => presentDailySignal(signal, input.locale ?? "en")),
+          actionItems: actionQueue.actionItems.map(item => ({...presentDailyAction(item, input.locale ?? "en"), dueAt: actionQueue.signals.find(signal => signal.id === item.signalId)?.expiresAt ?? ""}))
+            .sort((a, b) => b.severityScore - a.severityScore || stableIdentityOrder(a, b)),
+        },
       }
     }),
   )

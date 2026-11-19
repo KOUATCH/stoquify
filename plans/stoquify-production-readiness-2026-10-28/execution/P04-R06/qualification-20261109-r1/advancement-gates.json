@@ -1,0 +1,101 @@
+{
+  "package_id": "P04-R06",
+  "updated_at": "2026-11-10T09:04:54.454Z",
+  "status": "blocked_full_app_build_memory",
+  "advancement_allowed": false,
+  "gates": [
+    {
+      "id": "source-authority-refresh",
+      "status": "passed",
+      "evidence": [
+        "inventory/source-before-manifest.json",
+        "inventory/authority-map.json",
+        "inventory/source-after-manifest-v4.json",
+        "inventory/authority-map-after-v4.json",
+        "inventory/resume-20261110-r1/FULL-SOURCE-COMPARISON.json"
+      ]
+    },
+    {
+      "id": "bounded-independent-source-review",
+      "status": "passed",
+      "evidence": [
+        "independent-review/REPAIR-SOURCE-ADMISSION-v3.json"
+      ],
+      "prior_revision_evidence": [
+        "independent-review/REPAIR-SOURCE-ADMISSION.json",
+        "independent-review/REPAIR-SOURCE-ADMISSION-v2.json"
+      ]
+    },
+    {
+      "id": "isolated-mocked-regressions",
+      "status": "passed",
+      "evidence": [
+        "unit/attempt03/jest.json",
+        "independent-review/UNIT-OUTCOME-REVIEW-v3.json"
+      ],
+      "passed": 87,
+      "skipped": 0,
+      "prior_revision_evidence": [
+        "unit/attempt01/jest.json",
+        "independent-review/UNIT-OUTCOME-REVIEW.json",
+        "unit/attempt02/jest.json",
+        "independent-review/UNIT-OUTCOME-REVIEW-v2.json"
+      ]
+    },
+    {
+      "id": "fresh-full-app-build",
+      "status": "failed",
+      "evidence": [
+        "build-result.json",
+        "artifact-build-result.json",
+        "artifact-build.log",
+        "independent-review/RESUME-FAILED-BUILD-REVIEW.json"
+      ],
+      "reason": "Native V8 memory exhaustion after compilation; no sealed artifact; retry gated by current host memory"
+    },
+    {
+      "id": "genuine-signed-cache-denials",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "authorized-positive-operations",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "native-database-state",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "rendered-browser-continuity",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "independent-outcome-review",
+      "status": "blocked",
+      "evidence": [
+        "independent-review/FINAL-OUTCOME-REVIEW.json"
+      ],
+      "reason": "Blocked checkpoint review is not successful real-session qualification."
+    },
+    {
+      "id": "owned-runtime-cleanup",
+      "status": "passed",
+      "evidence": [
+        "database/suspend-attempt02.json"
+      ]
+    }
+  ],
+  "parent_p04": "blocked",
+  "production": "blocked",
+  "successor": {
+    "candidate_id": "p04-r06-full-4661f767924e",
+    "prepared": true,
+    "built": false,
+    "evidence": "candidate-refresh-attempt02.json"
+  },
+  "retry_resource": "resource-resume-20261110-r2.json"
+}

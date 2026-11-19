@@ -1,0 +1,57 @@
+{
+  "status": "FAILED",
+  "steps": [
+    "explicit-reviewed-prerequisites-two-employees-one-draft-native-certification",
+    "native-browser-retains-incomplete-employee-and-blocks-issue"
+  ],
+  "failures": [
+    {
+      "name": "TimeoutError",
+      "message": "locator.waitFor: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText(/Mandatory input checks passed/) to be visible\u001b[22m\n"
+    }
+  ],
+  "pageErrors": [],
+  "sourceHashes": {
+    "components/hris/HrisPayrollHandoff.tsx": "b765ae21ff86b1f14ef825c0ac9ec9aa74050f080d0ebe46bc2991036819fdc0",
+    "components/hris/HrisPayrollHandoffClient.tsx": "165840d0ff7052f427de478a19fbcda7f7948a58a3b99803a95eef0e6b2f3295",
+    "components/hris/useHrisFreshAuth.tsx": "7ef5ea8b6a795520c2cd8b90d99aef20721147037d3e20d8ffd20262db9be44e",
+    "components/hris/payroll-handoff-copy.ts": "33b649651d486bee509ca3bfb0842fecbf90497542c28144668298bccedc5923",
+    "actions/hris/payroll-handoff.actions.ts": "bf360e4a2585fc97403309a97241e48d312e4c0a03a156e3ce16ce1644edee03",
+    "services/hris/payroll-handoff.service.ts": "2138d3f7ae43ad139fb1be68d3585113dc8bbf8abc9810138977c8dd6f448b8e",
+    "services/hris/payroll-handoff-read.service.ts": "22f8c8c4f24d885a0e225455c2376d53e9997a0c617b14edd8cb7f7da8a379d6",
+    "services/hris/payroll-handoff.contract.ts": "463c2e73acc84aff1624c7990b297af1b2dace0bd30a0c229547c2c28360df82",
+    "services/hris/payroll-readiness-contract.ts": "e7248febcc73de3d1b978b555ab857ee6603020cdb77e97288e5c4eef98a3797",
+    "services/hris/time-leave.service.ts": "677aeaa61b8c672c385dc4c3e5082a12ca4ee89d7b7e78d31d406dd935615b54",
+    "services/hris/time-leave.contract.ts": "a7a696f94c211f1e0ec82b69d555b890dce5d25949e8ada310cdb8346907df8f",
+    "services/hris/self-service-boundary.service.ts": "71f948ef85467341fc78c63b881e17a1d574812ef501ff08aa00a16a426b3c6f",
+    "services/_shared/protect.ts": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+    "services/security/step-up-auth.service.ts": "76b5d6b0c9015f2d12fcb4d6a74c479bf083eec5d2f22c54e9638d8ea0bf49a2",
+    "app/[locale]/(dashboard)/dashboard/people/handoff/page.tsx": "3096aed24900b53fe0ff6b17ca18768d228141592d8f9d309b4ef8407b8a0ecf",
+    "components/hris/__tests__/HrisPayrollHandoff.test.tsx": "8ebf0de3d0760433508816cb92e6b2586ddf91ba874b726a9fae6036f2f64af5",
+    "actions/hris/__tests__/payroll-handoff.actions.test.ts": "5b7ae17830d6cc05ea32cf53fa4035344fb72b64fbb056e2f061db0db3a58d8d",
+    "services/hris/__tests__/payroll-handoff.contract.test.ts": "d115bb9fd232763bfd935a84828fe0b7e41315abd1d78c4991192385ef5fc674",
+    "jest.hris-handoff-browser.config.cjs": "1f1aafbf675d103d1847ffe6ab2da74ba58d103b37ff9e4ca9c78e7c8c47ab8a",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-08/browser.cjs": "7b92296fd9e755339b190a7d11c8790aac249650b824c09dfdb5e645dd928eec",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-08/journey.cjs": "d3cb7c811a15a2aa83e2fc2d1712064d713c585b050013c45dab2be64ef87ca7",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-08/helpers.cjs": "c9f15809e39a686ba0aec0192be9ddd672026a2bb6306960f35ab7961e02748e",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-08/fixture.cjs": "a4f4681b504a9f4fd2f69b7973e74571b9b154d4e5268bbb942e295c4ca52af0",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-08/cleanup.cjs": "9766043b7ff0f74f74e8568ebf6daefd335d0f89f838e5e384f9dba6cb067c49",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-08/native.cjs": "792e4d1563a38adc6ac9cfcc31cebe4127d2c898e53f38d807207e81d447128c",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-08/serve.cjs": "d4f785e82645a40247ea29093973c0b3798a9a617cd567b353ce80b2c9663e8d",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-08/preload.cjs": "fe92094492c3a3166c88497a093b24c971818dd1ca571892a22c341b23feee65",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-08/prepare.cjs": "b719d1d5cf37f24b37fb21149255f2fccb7006e46cf2b000f60d64fd3158ea35",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-08/preflight.cjs": "a020d71ec0b4d76b889c43f28938fa71ec75fa5e00e83e84175ed7fc1e082977"
+  },
+  "runtimeHashes": {
+    "next.config.mjs": "1769a31215594f5c4b66ad6fc7407ab2771812ff90157385f5c9a5b47b3f9a4e",
+    "middleware.ts": "5ab2f985ba452717f361e0f4e29eaaedb646202a83dd58b83412b24e9c88f180",
+    "package.json": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+    "tsconfig.json": "03eab73728381989544472e39816be2e1771b4d637471412aace1b21fa57c193",
+    "next-env.d.ts": "b174774e0c60dc97e3f1ab18c46f243592be8a93b1d744d77e7d4400fee4ba7a",
+    "postcss.config.mjs": "da1e5e8147fb42cbc582a60607fea0df35171ae60bd5617846c841568bbe2272",
+    "tailwind.config.ts": "5929ece1e683fcba92d08ac5646cd15b32aaabf3cdcf31f838a091c78bef0f8a"
+  },
+  "databaseClientCreated": true,
+  "cleanupComplete": true,
+  "completedAt": "2026-10-26T17:29:47.125Z"
+}

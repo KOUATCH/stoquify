@@ -25,7 +25,8 @@ const batchStages: Record<MasterDataImportSummary["status"], OpeningMasterStage>
 }
 
 // A read projection of permission-filtered master evidence. No financial completion
-// is inferred: there is no source-bound cutover approval/tie-out contract yet.
+// is inferred from master imports. Financial approval and retained activation
+// are read through the separately authorized AF10 cutover workspace.
 export function buildOpeningReadiness(
   milestones: MasterDataOnboardingDashboard["milestones"],
   recentBatches: MasterDataImportSummary[],
@@ -51,10 +52,10 @@ export function buildOpeningReadiness(
     }),
     requirements: [
       { key: "STOCK", state: "NOT_VERIFIED", href: "/dashboard/inventory/movements" },
-      { key: "AR", state: "UNSUPPORTED", href: "/dashboard/finance/receivables" },
-      { key: "AP", state: "UNSUPPORTED", href: "/dashboard/purchases/payables" },
+      { key: "AR", state: "NOT_VERIFIED", href: "/dashboard/accounting/opening-position" },
+      { key: "AP", state: "NOT_VERIFIED", href: "/dashboard/accounting/opening-position" },
       { key: "LEDGER", state: "NOT_VERIFIED", href: "/dashboard/accounting/journals" },
-      { key: "TIE_OUT", state: "NOT_VERIFIED", href: null },
+      { key: "TIE_OUT", state: "NOT_VERIFIED", href: "/dashboard/accounting/opening-position" },
     ],
   }
 }

@@ -1,0 +1,54 @@
+{
+  "verifiedAt": "2026-10-24T19:31:29.923087+00:00",
+  "baseHead": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "featureDefault": "disabled",
+  "productionAccess": false,
+  "applicationDatabaseAccess": false,
+  "database": {
+    "passed": 64,
+    "skipped": 0,
+    "suites": 3,
+    "exitCode": 0,
+    "targetIdentityVerified": true,
+    "clusterStopped": true,
+    "migrationSha256": "f391b11a08b581d89922527eef6a0937a27128b3091c30c93a97a175cff8b941",
+    "kind": "Real PostgreSQL services and source records; captured-schema bootstrap plus additive migration, not full migration history"
+  },
+  "mocked": {
+    "passed": 590,
+    "skipped": 0,
+    "suites": 36,
+    "exitCode": 0
+  },
+  "browser": {
+    "journeys": 8,
+    "scans": 32,
+    "violations": 0,
+    "pageErrors": 0,
+    "exitCode": 0,
+    "kind": "Synthetic DTO/action transport, actual React/Tailwind, temporary headless Edge profile"
+  },
+  "static": {
+    "typescriptExitCode": 0,
+    "prismaValidationExitCode": 0,
+    "lintExitCode": 0,
+    "lintFiles": 22,
+    "lintErrors": 0,
+    "lintWarnings": 0,
+    "newFileTrailingWhitespace": 0
+  },
+  "preservation": {
+    "capturedFiles": 20,
+    "existingSchemaLinesPreserved": 10511,
+    "newImplementationFiles": 11,
+    "staged": false,
+    "committed": false
+  },
+  "notRun": [
+    "Production or application DB migration",
+    "Full historical migration chain / release artifact schema promotion",
+    "Authenticated browser-to-business-source-command-to-DB E2E",
+    "Human screen-reader/productivity acceptance",
+    "Representative-volume performance/load gate"
+  ]
+}

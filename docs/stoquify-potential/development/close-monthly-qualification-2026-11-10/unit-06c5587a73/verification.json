@@ -1,0 +1,36 @@
+{
+  "started": "2026-11-10T14:34:04.875Z",
+  "finished": "2026-11-10T14:34:34.546Z",
+  "args": [
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\unit-06c5587a73\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--runTestsByPath",
+    "services/accounting/__tests__/customer-settlement.service.test.ts",
+    "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts",
+    "services/payments/__tests__/customer-settlement-payment-authority.service.test.ts",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\unit-06c5587a73\\results.json"
+  ],
+  "exitCode": 1,
+  "error": null,
+  "passed": false,
+  "passedTests": 82,
+  "failedTests": 4,
+  "skipped": 0,
+  "unchangedInputs": true,
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\unit-06c5587a73",
+  "suiteHashes": {
+    "services/accounting/__tests__/customer-settlement.service.test.ts": "65c97c64fd5ffcd5028933fa79f2189e894fe6502a1761917529979b3fc5fb6c",
+    "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts": "d130fb7b8fe5ebce9af62823b51a32d0da49fd70076b8662fb3889604a45532b",
+    "services/payments/__tests__/customer-settlement-payment-authority.service.test.ts": "27c30684d8ae0f455fa8d8d44a6844abfe843cd4d548b2c590a7107c5a57a522",
+    "scripts/local-gates-network.cjs": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e",
+    "package-lock.json": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+  },
+  "runnerSha256": "437b4906ac2f134b2e3f13def72f88148e94e2fc6a390cb0e404869274894dd6",
+  "configSha256": "18cf08619f93bb20a1c3b475fa98306323b1d7eee06aa15c0472c08552f991fd",
+  "evidenceClass": "Mocked unit / protect adapter boundaries; no PostgreSQL/browser"
+}

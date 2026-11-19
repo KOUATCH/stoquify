@@ -1,0 +1,13 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'../../../..'),read=n=>JSON.parse(fs.readFileSync(path.join(__dirname,n),'utf8'));
+const native=read('native-authority-result.json'),mock=read('mocked-tests-jest.json'),reloc=read('test-source-relocation.json');
+assert.equal(native.securityQualificationPassed,false);assert.deepEqual(native.tests,{passed:23,failed:1,skipped:0});assert(native.clusterStopped);
+const characterizations=mock.testResults.flatMap(s=>s.assertionResults).filter(t=>t.ancestorTitles.some(a=>a.includes('characterization')));assert.equal(characterizations.length,4);assert(characterizations.every(t=>t.status==='passed'));assert.equal(mock.numPassedTests,113);assert.equal(mock.numFailedTests,0);assert.equal(mock.numPendingTests,0);
+for(const r of reloc.files){assert(!fs.existsSync(path.join(root,r.executedPath)));assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,r.archivedPath))).digest('hex'),r.sha256)}
+for(const f of native.source){const r=reloc.files.find(r=>r.executedPath===f.path);assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,r?r.archivedPath:f.path))).digest('hex'),f.sha256)}
+const scope=read('scope-and-guard-register.json');assert.equal(scope.status,'assessment_complete_blocked');assert.equal(scope.outcomes.production_admitted,0);
+const finding=read('findings-register.json');assert.equal(finding.findings.length,3);for(const f of finding.findings)for(const ref of f.evidence)assert(fs.existsSync(path.join(__dirname,ref)),ref);
+const preservation=read('preservation-disposition.json');assert.equal(preservation.wholeWorkingTreeStable,false);assert(preservation.scopePreservationPassed);assert(read('forensic-fixture-discovery-check.json').passed);
+const packages=read('repair-and-qualification-packages.json');const reg=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../work-register.json'),'utf8'));for(const p of packages.packages)assert.deepEqual(reg.packages.find(x=>x.id===p.id),p);
+assert(fs.existsSync(path.join(__dirname,'guard-review/FINAL-INDEPENDENT-REVIEW.md')));assert(fs.existsSync(path.join(__dirname,'actions-review/INDEPENDENT-NATIVE-CROSSCHECK.md')));
+const result={at:new Date().toISOString(),passed:true,securityQualificationPassed:false,ordinaryMockedChecks:109,disclosureCharacterizations:4,nativeChecksPassed:23,nativeSecurityFailures:1,archiveBytesUnchanged:true,wholeWorkingTreeStable:false,scopePreservationPassed:true,productionAdmitted:0};fs.writeFileSync(path.join(__dirname,'evidence-validation.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

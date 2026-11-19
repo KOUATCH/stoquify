@@ -1,0 +1,52 @@
+{
+  "at": "2026-11-10T19:36:21.696Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "observationAccepted": true,
+  "qualificationPassed": false,
+  "candidateId": null,
+  "artifactSha256": null,
+  "files": [
+    {
+      "path": "capacity-checkpoint-current-schema.json",
+      "sha256": "086652f612dca5fadc119fe5ccbe8b909710b68fc03fba2540f0dcee07a0c2b2"
+    },
+    {
+      "path": "execution-handoff-current-schema-r1.json",
+      "sha256": "ab79142f574653a3c5ea420c980f9d073026f1228beebbe59b2197936b87a744"
+    },
+    {
+      "path": "independent-review/CAPACITY-CHECKPOINT-CURRENT-SCHEMA-RECIPE-ADMISSION.json",
+      "sha256": "f58a491d8dba41ba910828d55855ceedcf002cf5ae8109b0bcfcafa9aabb9bd8"
+    }
+  ],
+  "reconciled": {
+    "exactAdmissionInputs": 54,
+    "exactHandoffInputs": 43,
+    "allScopedPortsFree": 14,
+    "recordedRetainedPidAbsent": true,
+    "newStorageEntries": [
+      "dependencies",
+      "ownership.json"
+    ],
+    "sourceSnapshotFiles": 9988,
+    "sourceFullIdentity": "0b8354d4f340ad5b82931e2e18e3e01a7ba18cfd089351a2536b41e23891332c",
+    "currentMigrationsExecuted": 0,
+    "realQualificationCasesRun": 0,
+    "latestCommitGiB": 11.301101684570312,
+    "requiredCommitGiB": 12
+  },
+  "limitations": [
+    "Passed is checkpoint integrity acceptance only; the full-app qualification remains blocked.",
+    "The resource receipt and full-source snapshot are historical observations. No fresh resource measurement or full root/dependency traversal was repeated.",
+    "Retained fixture hashes and stopped ownership were checked; historical native fixture counts and contents were not queried again.",
+    "Actual candidate capture, current client, new 123-migration targets, build, native sessions and browser tests are still absent."
+  ],
+  "nextAction": {
+    "condition": "After an actual capacity-changing event; unchanged gates must pass and source/HEAD equality must still hold",
+    "resourceCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/check-resources.cjs resource-current-schema-retry-ready-r1.json",
+    "candidateCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/prepare-candidate-attempt05.cjs",
+    "admissionCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/admit-candidate-attempt05.cjs",
+    "handoff": "EXECUTION-HANDOFF-current-schema-r1.md"
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "synthetic": true,
+  "checks": [
+    "Real preparer uploads separate source/control files, maps existing client records and stages a new revision.",
+    "Reviewer completes password step-up and explicitly retries the saved command.",
+    "Independent review is persisted against the exact manifest; preview review remains separate from financial authorization.",
+    "Client operator completes real password step-up and explicitly retries the separate financial approval.",
+    "Financial approval persists without effects; keyboard confirmation enables apply. Approval/apply form axe scans have no violations.",
+    "Real protected apply fails after stock; all financial effects roll back and UI retains the exact retry command.",
+    "Lost response after real commit is recovered from ACTIVE receipt; exact retry does not duplicate financial effects.",
+    "EN/FR desktop/mobile retained results: four axe scans without violations and no panel overflow.",
+    "Named firm reviewer can inspect committed recovery evidence but has no client financial actions.",
+    "Current module denial clears retained financial details."
+  ],
+  "screenshots": [
+    "cutover-approval-form-en-1440.png",
+    "cutover-approved-en-1440.png",
+    "cutover-rollback-retry-en-1440.png",
+    "cutover-active-en-1440.png",
+    "cutover-active-en-390.png",
+    "cutover-active-fr-1440.png",
+    "cutover-active-fr-390.png",
+    "cutover-denied-en-1440.png"
+  ],
+  "axe": [
+    {
+      "state": "approval-form",
+      "locale": "en",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "state": "apply-form",
+      "locale": "en",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "violations": []
+    }
+  ],
+  "pageErrors": [],
+  "passed": true,
+  "secureCookieRoles": [
+    "preparer",
+    "reviewer",
+    "owner"
+  ],
+  "financialBefore": {
+    "journals": 0,
+    "stock": 0,
+    "levels": 0,
+    "ar": 0,
+    "ap": 0,
+    "customer": "0",
+    "supplier": "0"
+  },
+  "financialAfter": {
+    "journals": 1,
+    "stock": 1,
+    "levels": 1,
+    "ar": 1,
+    "ap": 1,
+    "customer": "100",
+    "supplier": "50"
+  },
+  "reconciliation": {
+    "debit": "150.00",
+    "lines": [
+      {
+        "debit": "25.00",
+        "credit": "0.00",
+        "sourceId": "ledger-stock",
+        "accountId": "cmvnw5ou302ibmatk7kbqurnd",
+        "difference": "0.00"
+      },
+      {
+        "debit": "100.00",
+        "credit": "0.00",
+        "sourceId": "ledger-ar",
+        "accountId": "cmvnw5ov702idmatkup2iflb0",
+        "difference": "0.00"
+      },
+      {
+        "debit": "0.00",
+        "credit": "50.00",
+        "sourceId": "ledger-ap",
+        "accountId": "cmvnw5ovi02ifmatkqt0vebvh",
+        "difference": "0.00"
+      },
+      {
+        "debit": "25.00",
+        "credit": "0.00",
+        "sourceId": "ledger-cash",
+        "accountId": "cmvnw5ovo02ihmatknuamb8zu",
+        "difference": "0.00"
+      },
+      {
+        "debit": "0.00",
+        "credit": "100.00",
+        "sourceId": "ledger-equity",
+        "accountId": "cmvnw5ow202ijmatkkba8pkyx",
+        "difference": "0.00"
+      }
+    ],
+    "credit": "150.00",
+    "details": [
+      {
+        "domain": "AR",
+        "sourceId": "ar-1",
+        "difference": "0.00",
+        "documentId": "cmvpj7y98004fmayk2bgcnyiq",
+        "outstanding": "100.00"
+      },
+      {
+        "domain": "AP",
+        "sourceId": "ap-1",
+        "difference": "0.00",
+        "documentId": "cmvpj7yc4004xmaykwh0tzw6e",
+        "outstanding": "50.00"
+      },
+      {
+        "value": "25.00",
+        "domain": "STOCK",
+        "itemId": "cmvnw5ox202irmatknvsg0g1g",
+        "quantity": "2.500",
+        "sourceId": "stock-1",
+        "difference": "0.00",
+        "locationId": "cmvnw5oxc02itmatkdwnawm9c"
+      }
+    ],
+    "version": "opening-reconciliation-v1",
+    "currency": "XAF",
+    "cutoverAt": "2026-09-30T23:00:00.000Z",
+    "operations": [
+      {
+        "domain": "AP",
+        "sourceId": "ap-1",
+        "receiptHash": "sha256:765c87b602ddb819a61c31ffcca4550df8df6f45cfbd26e7e9dcf4e5f9817b49"
+      },
+      {
+        "domain": "AR",
+        "sourceId": "ar-1",
+        "receiptHash": "sha256:9517b870c0875d45d0a7c2a7e77333ba1ef88ec6a2e814b00965f3f3b5c6ef54"
+      },
+      {
+        "domain": "LEDGER",
+        "sourceId": "cmvpj6qto000dmaykz3q8pq37",
+        "receiptHash": "sha256:b0d95f77f0aa9f6cffaa33d3ffd6de894647c6f485d115b7bd4cc3b344cc90bf"
+      },
+      {
+        "domain": "STOCK",
+        "sourceId": "stock-1",
+        "receiptHash": "sha256:fa3bdd591e3a71a71d50b5a6a1aa3f852f1caf57a9a36420415908b93e3a7c19"
+      }
+    ],
+    "reconciled": true,
+    "revisionId": "cmvpj6qto000dmaykz3q8pq37",
+    "executionId": "cmvpj7ua6001dmaykpaffdaj3",
+    "journalEntryId": "cmvpj7y2r003xmayku3e53dbq",
+    "manifestDigest": "sha256:f691b7660e8f485b79ab01978f04d7e5069ebf388aaf9cb4ad412452edafaaae"
+  },
+  "artifactSha256": "987da3ead9c716cdbf5d2a22ac1723aa8a8ed15113f40a6b8abd3c1fb64d151f"
+}

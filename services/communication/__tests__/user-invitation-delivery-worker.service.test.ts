@@ -8,7 +8,7 @@ const database = db as unknown as { $transaction: jest.Mock; businessEventOutbox
 const common = { organizationId: "org", workerId: "test-worker" }
 function setup() {
   const token = "a".repeat(64), email = "colleague@example.invalid", expiresAt = new Date(Date.now() + 86400000)
-  const role = { organizationId: "org", permissions: ["items.read"] }
+  const role = { code: "reader", organizationId: "org", permissions: ["items.read"] }
   const payload = { version: 1 as const, organizationId: "org", inviteId: "invite", actorId: "issuer", roleId: "reader", requestFingerprint: "b".repeat(64), tokenHash: invitationDigest(token), recipientHash: invitationDigest(email), actorPermissions: ["users.invite", "users.roles.assign", "items.read"], rolePermissions: ["items.read"], locale: "fr" as const, companyName: "Company", roleName: "Lecteur", from: "invites@example.invalid", baseUrl: "http://127.0.0.1:3107", expiresAt: expiresAt.toISOString() }
   const row = { id: "outbox", organizationId: "org", businessEventId: "event", payload, payloadHash: hashBusinessPayload(payload), idempotencyKey: "stable-request", attempts: 0, maxAttempts: 5, metadata: null as unknown, updatedAt: new Date(), status: "PENDING", eventName: USER_INVITATION_DELIVERY }
   const invitation = { id: "invite", organizationId: "org", token, email, expiresAt, roleId: "reader", status: "PENDING", role, organization: { isActive: true, deletedAt: null } }
@@ -16,7 +16,7 @@ function setup() {
   database.businessEventOutbox.findMany.mockResolvedValue([row]); database.businessEventOutbox.updateMany.mockResolvedValue({ count: 1 })
   database.businessEvent.findFirst.mockResolvedValue({ payloadHash: row.payloadHash, payload, idempotencyKey: row.idempotencyKey, actorId: payload.actorId, eventType: USER_INVITATION_EVENT })
   database.invite.findFirst.mockResolvedValue(invitation)
-  database.user.findFirst.mockResolvedValue({ id: "issuer", isLocked: false, isVerified: true, emailVerified: true, organization: { name: "Company", isActive: true, deletedAt: null }, roles: [{ permissions: payload.actorPermissions }] })
+  database.user.findFirst.mockResolvedValue({ id: "issuer", isLocked: false, isVerified: true, emailVerified: true, organization: { name: "Company", isActive: true, deletedAt: null }, roles: [{ code: "manager", permissions: payload.actorPermissions }] })
   const adapter = jest.fn().mockResolvedValue({ state: "accepted", providerId: "isolated-receipt" })
   return { row, invitation, adapter }
 }
@@ -27,7 +27,7 @@ it.each([false, true])("does not dispatch ambiguous or currently unauthorized ro
   invitation.role.permissions = [...row.payload.rolePermissions]
   row.payloadHash = hashBusinessPayload(row.payload)
   database.businessEvent.findFirst.mockResolvedValue({ payloadHash: row.payloadHash, payload: row.payload, idempotencyKey: row.idempotencyKey, actorId: row.payload.actorId })
-  database.user.findFirst.mockResolvedValue({ id: "issuer", isVerified: true, organization: { name: "Company", isActive: true }, roles: [{ permissions: ["users.invite", "users.roles.assign"] }] })
+  database.user.findFirst.mockResolvedValue({ id: "issuer", isVerified: true, organization: { name: "Company", isActive: true }, roles: [{ code: "manager", permissions: ["users.invite", "users.roles.assign"] }] })
   expect(await runUserInvitationDeliveryWorker(common, adapter)).toMatchObject({ results: [{ status: stored ? "CANCELLED" : "DEAD_LETTER" }] })
   expect(adapter).not.toHaveBeenCalled()
 })
@@ -86,4 +86,24 @@ it("does not report acceptance after losing the settlement lease", async () => {
   const { adapter } = setup(); database.businessEventOutbox.updateMany.mockResolvedValueOnce({ count: 1 }).mockResolvedValueOnce({ count: 1 }).mockResolvedValueOnce({ count: 0 })
   expect(await runUserInvitationDeliveryWorker(common, adapter)).toMatchObject({ results: [{ status: "LEASE_LOST" }] })
   expect(database.auditLog.create).not.toHaveBeenCalled()
+})
+
+it.each(["legacy-reserved", "code-drift", "issuer-code-revoked"])("does not dispatch %s authority", async kind => {
+  const { row, invitation, adapter } = setup()
+  invitation.role.code = "admin"
+  if (kind !== "legacy-reserved") Object.assign(row.payload, { roleCode: kind === "code-drift" ? "reader" : "admin", actorRoleCodes: ["administrator"], actorPermissions: [...row.payload.actorPermissions, "dashboard.read"] })
+  row.payloadHash = hashBusinessPayload(row.payload)
+  database.businessEvent.findFirst.mockResolvedValue({ payloadHash: row.payloadHash, payload: row.payload, idempotencyKey: row.idempotencyKey, actorId: row.payload.actorId })
+  database.user.findFirst.mockResolvedValue({ id: "issuer", isVerified: true, organization: { name: "Company", isActive: true }, roles: [{ code: "manager", permissions: [...row.payload.actorPermissions, "dashboard.read"] }] })
+  expect(await runUserInvitationDeliveryWorker(common, adapter)).toMatchObject({ results: [{ status: kind === "issuer-code-revoked" ? "CANCELLED" : "DEAD_LETTER" }] })
+  expect(adapter).not.toHaveBeenCalled()
+})
+it("delivers a recorded reserved grant only while privileged authority remains", async () => {
+  const { row, invitation, adapter } = setup(); invitation.role.code = "admin"
+  Object.assign(row.payload, { roleCode: "admin", actorRoleCodes: ["administrator"], actorPermissions: [...row.payload.actorPermissions, "dashboard.read"] })
+  row.payloadHash = hashBusinessPayload(row.payload)
+  database.businessEvent.findFirst.mockResolvedValue({ payloadHash: row.payloadHash, payload: row.payload, idempotencyKey: row.idempotencyKey, actorId: row.payload.actorId })
+  database.user.findFirst.mockResolvedValue({ id: "issuer", isVerified: true, organization: { name: "Company", isActive: true }, roles: [{ code: "administrator", permissions: row.payload.actorPermissions }] })
+  expect(await runUserInvitationDeliveryWorker(common, adapter)).toMatchObject({ results: [{ status: "SENT" }] })
+  expect(adapter).toHaveBeenCalledTimes(1)
 })

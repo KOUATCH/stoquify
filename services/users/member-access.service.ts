@@ -6,6 +6,7 @@ import { ApplicationError, BusinessRuleError, ConflictError, ForbiddenError, Ide
 import { isRoleCustodian, isUsableAccount } from "@/services/roles/role-custodian-policy"
 import { memberAccessCommand, type MemberAccessCommand, type MemberAccessReceipt } from "./member-access-input"
 import { accessDigest, canGrantMemberRole, hasMemberControl, hasRecordedDeactivation, memberAccessRevision, type AccessMember, type AccessMembership } from "./member-access-policy"
+import { canChangeOperatingRoleSet, hasTenantWideOperatingGrantAuthority } from "@/services/operating-access/operating-access-grant-policy"
 
 type ChangeMemberAccessInput = { organizationId: string; actorId: string; targetUserId: string; command: MemberAccessCommand; session: { id: string; token: string } }
 
@@ -39,6 +40,7 @@ export async function changeMemberAccessInTx(tx: Prisma.TransactionClient, input
     const roleIdsFor = (id: string) => memberships.filter(row => row.userId === id).map(row => row.roleId).sort()
     const permissionsFor = (ids: string[]) => roles.filter(role => ids.includes(role.id)).flatMap(role => role.permissions)
     const actorPermissions = permissionsFor(roleIdsFor(input.actorId))
+    const actorRoleCodes = roles.filter(role => roleIdsFor(input.actorId).includes(role.id)).map(role => role.code)
     if (!actor || !isUsableAccount(actor, now) || !hasRbacPermission(actorPermissions, "users.read")) throw new ForbiddenError()
     if (!member) throw new NotFoundError("Member not found.")
     const sessions = await tx.$queryRaw<Session[]>`SELECT * FROM sessions WHERE id = ${input.session.id} AND token = ${input.session.token} AND "userId" = ${input.actorId} FOR SHARE`
@@ -49,13 +51,18 @@ export async function changeMemberAccessInTx(tx: Prisma.TransactionClient, input
     const selected = command.roleIds.map(id => roles.find(role => role.id === id))
     if (selected.some(role => !role)) throw new NotFoundError("A selected role is unavailable in this organization.")
     const previous = await tx.auditLog.findFirst({ where: { id: auditId, organizationId: input.organizationId, userId: input.actorId, entityType: "User", entityId: member.id, action: "MEMBER_ACCESS_CHANGED" } })
-    const saved = previous?.changes as { fingerprint?: string; receipt?: MemberAccessReceipt; added?: string[]; removed?: string[] } | null
+    const saved = previous?.changes as { fingerprint?: string; receipt?: MemberAccessReceipt; added?: string[]; removed?: string[]; beforeRoleIds?: string[] } | null
     if (previous && saved?.fingerprint !== fingerprint) throw new IdempotencyConflictError()
     const added = saved?.added ?? command.roleIds.filter(id => !beforeIds.includes(id))
     const removed = saved?.removed ?? beforeIds.filter(id => !command.roleIds.includes(id))
     if (removed.length && !hasMemberControl(actorPermissions, "remove")) throw new ForbiddenError("Role-removal authority is required.")
-    if (added.some(id => !canGrantMemberRole(actorPermissions, roles.find(role => role.id === id)!))) throw new ForbiddenError("You cannot assign one or more selected roles.")
-    if (command.operation === "reactivate" && (!hasMemberControl(actorPermissions, "activate") || selected.some(role => !canGrantMemberRole(actorPermissions, role!)))) throw new ForbiddenError("Reactivation and assignment authority for every selected role are required.")
+    if (added.some(id => !canGrantMemberRole(actorPermissions, roles.find(role => role.id === id)!, actorRoleCodes))) throw new ForbiddenError("You cannot assign one or more selected roles.")
+    if (command.operation === "reactivate" && (!hasMemberControl(actorPermissions, "activate") || selected.some(role => !canGrantMemberRole(actorPermissions, role!, actorRoleCodes)))) throw new ForbiddenError("Reactivation and assignment authority for every selected role are required.")
+    // A normal role can activate an empty reserved role already held by this
+    // member. Replay uses its recorded before-state, not the elevated current one.
+    const originalBeforeIds = saved?.beforeRoleIds ?? beforeIds
+    if (!canChangeOperatingRoleSet({ permissions: actorPermissions, roleCodes: actorRoleCodes },
+      command.operation === "reactivate" ? [] : roles.filter(role => originalBeforeIds.includes(role.id)), selected as Role[])) throw new ForbiddenError("You cannot broaden this member's operating access.")
     if (saved?.receipt) {
       if (memberAccessRevision(member, beforeIds, roles) !== saved.receipt.revision) throw new ConflictError("This request was recorded, but the member or roles changed. Reload the current state.")
       return { ...saved.receipt, replayed: true }
@@ -68,6 +75,8 @@ export async function changeMemberAccessInTx(tx: Prisma.TransactionClient, input
       if (!hasRecordedDeactivation(member, record)) throw new BusinessRuleError("A verified account and matching recorded deactivation are required. Do not clear an unexplained security lock.")
     }
     if (isRoleCustodian(member, permissionsFor(beforeIds), now) && !isRoleCustodian(member, permissionsFor(command.roleIds), now) && !users.some(user => user.id !== member.id && isRoleCustodian(user, permissionsFor(roleIdsFor(user.id)), now))) throw new BusinessRuleError("Keep another active administrator able to manage roles and invite members.")
+    const tenantCustodian = (user: AccessMember, ids: string[]) => isRoleCustodian(user, permissionsFor(ids), now) && hasTenantWideOperatingGrantAuthority({ permissions: permissionsFor(ids), roleCodes: roles.filter(role => ids.includes(role.id)).map(role => role.code) })
+    if (tenantCustodian(member, beforeIds) && !tenantCustodian(member, command.roleIds) && !users.some(user => user.id !== member.id && tenantCustodian(user, roleIdsFor(user.id)))) throw new BusinessRuleError("Keep an active administrator able to restore tenant-wide operating access.")
     const revoked = await tx.session.deleteMany({ where: { userId: member.id } })
     const updatedAt = new Date(Math.max(now.getTime(), member.updatedAt.getTime() + 1))
     const after = { ...member, updatedAt, ...(command.operation === "reactivate" ? { isActive: true, isLocked: false, lockedUntil: null } : {}) }

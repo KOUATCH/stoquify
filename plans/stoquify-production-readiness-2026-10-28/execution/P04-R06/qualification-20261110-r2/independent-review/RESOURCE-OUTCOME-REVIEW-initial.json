@@ -1,0 +1,23 @@
+{
+  "at": "2026-11-10T12:16:37.468Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Observed initial capacity thresholds only; later environment/build recipe and fresh resource admission remain required",
+  "evidence": {
+    "path": "resource-initial.json",
+    "sha256": "e10433ad59ac24c4f18d847228d8312a9d963ef11255726b62e368a828714778"
+  },
+  "capturedAt": "2026-11-10T12:15:25.3125789Z",
+  "physicalFreeGiB": 8.711261749267578,
+  "commitFreeGiB": 14.98934555053711,
+  "driveDFreeGiB": 19.348560333251953,
+  "observedListeningPorts": [],
+  "portInspectionError": null,
+  "observedTaskMatchingNodePid": 32124,
+  "ownershipQualification": "PID32124 is present in the collection itself; runtime owner must reconcile its collector identity/completion or absence before staging/build. No assumption that it is an application process or safe to terminate.",
+  "limits": [
+    "Point-in-time capacity only, not a durable guarantee.",
+    "No new environment/database/build/runtime action admitted by this receipt.",
+    "No process termination or system setting change."
+  ]
+}

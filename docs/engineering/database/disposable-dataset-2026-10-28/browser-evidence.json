@@ -1,0 +1,21 @@
+{
+  "database": "stoquify_replay_dataset_20261028_01",
+  "method": "Codex browser automation against isolated Next development server",
+  "origin": "http://localhost:3187",
+  "organization": "synth12_douala",
+  "role": "owner",
+  "checks": [
+    {"route":"/en/login","result":"PASS","observed":"Existing synthetic credentials accepted by actual sign-in form; navigation to authenticated dashboard."},
+    {"route":"/en/dashboard","result":"PASS_WITH_LIMITATIONS","observed":"Wouri Distribution — Synthetic; XAF 238000 sales and collected payments; two active POS sessions; actual stock movement and sales links; payroll headcount 12.","screenshot":"dashboard-owner.png"},
+    {"route":"/fr/dashboard","result":"PASS_WITH_LIMITATIONS","observed":"French navigation and matching tenant/data; visible corrupted French text and mixed-language cards.","screenshot":"dashboard-owner-fr.png"},
+    {"route":"/fr/dashboard/people","result":"PASS_WITH_READINESS_GAPS","observed":"12 active employees; profile links and scoped directory. Initial account-link gap subsequently targeted by versioned seed update; frozen attendance remains missing.","screenshot":"people-fr.png"},
+    {"route":"/fr/dashboard/people/cmvselgyi006dma3oerdhur3k","result":"PASS_WITH_READINESS_GAPS","observed":"After profile-service correction and browser reload: user mapping LINKED, correct active employee and November 2025 hire date. Exactly one remaining blocker: Frozen attendance input is missing.","screenshot":"employee-linked-fr.png"}
+  ],
+  "limitations": [
+    "This is a limited browser smoke test, not all-role or all-module end-to-end certification.",
+    "No responsive, keyboard-only or full accessibility audit was performed.",
+    "Dashboard AP and close cards explicitly expose partial/pending proof; dashboard counts alone do not verify AP readiness.",
+    "First development route compilations took up to several minutes on this host. No performance certification.",
+    "The launcher initially had an empty public URL; corrected in the owned launcher without changing application files."
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "at": "2026-11-10T12:35:11.429Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Exact disposable local database preparation/fixture/control/cleanup recipes; actual outcomes and later application runtime require separate admission",
+  "files": [
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "22d6005ff8ac2355837e339c621819ce2411ba6322bc1febe2d0edfe52661be8"
+    },
+    {
+      "path": "database/prepare.cjs",
+      "sha256": "8adb93c8b5d25c69e66d72571a6fef7e3f7f28ce809b0239c72589df4325b975"
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "sha256": "1e37557aef27d8797850f8704288d61c3d33943928e86124e1145244171a4bfe"
+    },
+    {
+      "path": "database/seed-fixture.cjs",
+      "sha256": "c75e913102e5743b63b094e411a554342921844d1ac2503908a468c4d7bf9924"
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d"
+    },
+    {
+      "path": "database/read-authority-utc.cjs",
+      "sha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8"
+    },
+    {
+      "path": "database/direct-api-child.cjs",
+      "sha256": "d3194e9b397bbabf393a490f335b31197432317e70ecca9e496a3e7d2f79cd3b"
+    },
+    {
+      "path": "database/finalize.cjs",
+      "sha256": "853e7be2c20ddad2ba5175a95044f76feb874265bce8b52f452d940e48c323dd"
+    },
+    {
+      "path": "database/stop.cjs",
+      "sha256": "0e88776d266504f5aa19578c5c2d4ffa11564e2a34b41a15b21bb0b915ed54de"
+    },
+    {
+      "path": "environment-guard.cjs",
+      "sha256": "2916634ef9741d082a86dfee8cdd1b06cc2ebdd285e956b79705671504b40a2d"
+    },
+    {
+      "path": "inventory/source-after-manifest.json",
+      "sha256": "e535b2e9cb694d09b67d64706e9fbbe2f89ac829b2297c86120ca83d012ac614"
+    },
+    {
+      "path": "independent-review/SOURCE-INVENTORY-RECONCILIATION.json",
+      "sha256": "93402063599976d4d08c19bd3eed281ad2852663688879a86fb8081767dc88dc"
+    },
+    {
+      "path": "independent-review/DATABASE-SUPPLEMENTAL-SOURCE-REVIEW.json",
+      "sha256": "72256d199c2d95ceea54e9ec6a0ca7d352edc9c8036fe2bafc277356148f175f"
+    }
+  ],
+  "target": {
+    "storage": "D:/p04-r06-fullapp-20261110-r2",
+    "host": "127.0.0.1",
+    "port": 55517,
+    "build": "stoquify_local_p04r06_20261110_build_r2",
+    "full": "stoquify_local_p04r06_20261110_full_r2"
+  },
+  "independentChecks": [
+    "Inspected all nine current DBscripts and root supplemental review; exact hashes agree.",
+    "Connect restricts three named local databases,loopback55517,owned Dcluster and verifies actual server address/port/database/data_directory before SQL.",
+    "Preparation requires accepted candidate and exactrecipe,exclusive missing cluster/scaffold,freeport; only newcluster init/migrations/fresh empty build clone and full clone.",
+    "Migration scaffold imports only new physical candidate dependencies through an explicitly internal junction; no dotenv or source productionconfiguration fallback. All122current migration inputs separately inspected by root and source-bound.",
+    "Seed is one transaction with16synthetic users,2orgs,minimalroles,32synthetic accounts,no sessions; random passwords stay private onD. Failed prepared fixture cannot be silently reused.",
+    "State writes parameterized by exact fixture identities; UTC strings/timestamp casts avoid previous pg Date ambiguity,raw prior lock/update values transactionally restored and compared.",
+    "Snapshot uses repeatable-read readonly transaction,hashes every public table except separately reported sessions/audits,and retains full per-user/account/session/audit digests without raw secret publication.",
+    "Finalizer first verifies all sessions belong to exact synthetic actor/email/org,then deletes only those locked sessionIDs and proves business/audit digests unchanged.",
+    "Stop validates recorded data directory/PID/port/no other clients; preserves owner and launcher result,retains data. Any timeout must be reported distinctly and independently reconciled with actualPID/port/launcher absence."
+  ],
+  "allowedNow": "After independently accepted candidate: prepare fresh localcluster/migrations/empty clones and seed synthetic fixture. No production target or existingcluster mutation.",
+  "deferredUntilRuntimeAdmission": [
+    "fixture state changes and session controls during real-session qualification",
+    "direct-api-child candidate application imports and actual auth API calls",
+    "finalizer/stop after authorized runtime completion or separately reviewed recovery"
+  ],
+  "limits": [
+    "Recipe admission is not database/migration/fixture outcome evidence.",
+    "No native after-hook infrastructure branch inferred from early connection-unavailability probe.",
+    "No product/productionchanges,remote service,commit,push or deployment."
+  ]
+}

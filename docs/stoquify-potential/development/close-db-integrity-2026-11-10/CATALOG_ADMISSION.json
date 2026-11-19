@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "checkedAt": "2026-11-10T18:48:02.727Z",
+  "previousCount": 122,
+  "currentCount": 123,
+  "previousCatalogSha256": "e894a828415592f4c2ab155993b1923ed12245374a21b0184ae8a375495190aa",
+  "currentCatalogSha256": "968c1f6c7c45f26a8eb8068b551e67450142fccc119b84528e4f4424c64a2e66",
+  "historicalSqlAndCatalogPrefixUnchanged": true,
+  "newMigration": "20261110190000_close_scope_integrity",
+  "newMigrationRawSha256": "334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7",
+  "sourceSchemaSha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+  "privateClientReceipt": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-PRIVATE_CLIENT.json",
+    "sha256": "1d6d226922ea6babab71bd7fc4130e1d836ad5a5885c0eb781ea84dea1ba1d84"
+  },
+  "baseline": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\BASELINE_122_CATALOG.json",
+    "sha256": "ebfa7d6d08c3757bf6beca180823b4b1cda57355f066be3751417fc0c09770e3"
+  },
+  "catalogFileSha256": "2f75aa91184a92eb558d5c55b6f8f1c2e824c8b1fd7e6ce451b330814656cbdd",
+  "lexicalRiskFindings": [],
+  "reviewedOperationalRisks": [
+    "Nine-table ACCESS EXCLUSIVE cohort requires a planned writer-quiescence window.",
+    "Five-second lock timeout and transactional rollback bound failed lock acquisition; index/validation work still needs target-scale timing.",
+    "Legacy scope mismatches abort before indexes/constraints; no records are rewritten or removed.",
+    "Additional constraints and identity guards require old-writer/deletion/cascade/retention compatibility proof.",
+    "An automatic lexical scan does not classify constraint tightening or certify production readiness."
+  ],
+  "rootClientGenerated": false,
+  "databaseContacted": false,
+  "productionApproved": false,
+  "runnerSha256": "03dfe50f9ac19e772ed3ef1ab02da3411c04390782af690ce864382e0c56e578"
+}

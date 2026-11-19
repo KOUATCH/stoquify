@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-02T15:53:35.097Z",
+  "passed": true,
+  "database": "stoquify_local_p04r02_20261029_full_r1",
+  "evidenceClass": "real_isolated_database_read_only_synthetic_reference_inventory",
+  "limit": "Three declared synthetic item references only; not a live original-tenant database census or delivery qualification.",
+  "applicationOrSchemaOrDataWrites": false,
+  "priorAttempt": "reference-inventory-attempt01.json",
+  "candidateId": "p04-r02-full-eb25ee4e218c",
+  "transactionReadOnly": "on",
+  "totalFixtureItems": 3,
+  "referenceColumns": [
+    "imageUrls",
+    "thumbnail"
+  ],
+  "mappings": [
+    {
+      "id": "p04r02-item-a",
+      "organizationId": "p04-upload-a",
+      "imageUrl": "/uploads/p04-upload-a/sentinel.png",
+      "apiUrl": "/api/uploads/p04-upload-a/sentinel.png",
+      "candidateAssetPath": "public/uploads/p04-upload-a/sentinel.png",
+      "assetSha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+      "assetBytes": 70,
+      "expectedPrivateRuntimePath": ".private/uploads/p04-upload-a/sentinel.png"
+    },
+    {
+      "id": "p04r02-item-b",
+      "organizationId": "p04-upload-b",
+      "imageUrl": "/uploads/p04-upload-b/sentinel.png",
+      "apiUrl": "/api/uploads/p04-upload-b/sentinel.png",
+      "candidateAssetPath": "public/uploads/p04-upload-b/sentinel.png",
+      "assetSha256": "13a70c1156151a2323af88801aeb7068712733dfb42ddccd2975486e2e2d09f8",
+      "assetBytes": 70,
+      "expectedPrivateRuntimePath": ".private/uploads/p04-upload-b/sentinel.png"
+    },
+    {
+      "id": "p04r02-item-disabled",
+      "organizationId": "p04-upload-disabled",
+      "imageUrl": "/uploads/p04-upload-disabled/sentinel.png",
+      "apiUrl": "/api/uploads/p04-upload-disabled/sentinel.png",
+      "candidateAssetPath": "public/uploads/p04-upload-disabled/sentinel.png",
+      "assetSha256": "d053a56cd4331f75c220f68ae11ac6d53dd2ee99591362a115e12b7d05cdb525",
+      "assetBytes": 70,
+      "expectedPrivateRuntimePath": ".private/uploads/p04-upload-disabled/sentinel.png"
+    }
+  ],
+  "finishedAt": "2026-11-02T15:53:35.313Z"
+}

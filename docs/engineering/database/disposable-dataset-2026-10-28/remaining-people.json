@@ -1,0 +1,17 @@
+{
+  "label": "remaining-people",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "prisma/disposable-remaining.ts",
+    "people"
+  ],
+  "startedAt": "2026-10-29T11:41:08.977Z",
+  "finishedAt": "2026-10-29T11:41:58.456Z",
+  "exitCode": 0,
+  "errorCode": null
+}

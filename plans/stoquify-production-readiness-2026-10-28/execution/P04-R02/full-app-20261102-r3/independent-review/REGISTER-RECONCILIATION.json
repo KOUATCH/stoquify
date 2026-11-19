@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "qualification_review_r2",
+  "at": "2026-11-02T18:22:38.923Z",
+  "passed": true,
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+  "localR02Accepted": true,
+  "parentP04Accepted": false,
+  "productionAccepted": false,
+  "changedPackages": [
+    "P04",
+    "P04-R02"
+  ],
+  "statusChanges": [
+    "P04-R02"
+  ],
+  "unchangedOtherPackages": 52,
+  "parentChangedFields": [
+    "current_state",
+    "evidence_refs"
+  ],
+  "counts": {
+    "packages": 54,
+    "ordinaryDependencyEdges": 176,
+    "conditionalDependencyEdges": 7,
+    "totalDependencyEdges": 183,
+    "domains": 57,
+    "auditGaps": 12,
+    "decisions": 14,
+    "productionGates": 18
+  },
+  "allDependenciesUnchanged": true,
+  "allOtherTopLevelFieldsUnchanged": true,
+  "allPriorEvidenceUnchanged": true,
+  "addedEvidence": [
+    "E22"
+  ],
+  "allDeferredPackagesUnchanged": true,
+  "csvRows": 54,
+  "csvOnlyChangedIds": [
+    "P04",
+    "P04-R02"
+  ],
+  "e22PathsPresent": 10,
+  "backupHashesMatch": true,
+  "roadmap": "Only final exact-next-action/evidence paragraphs changed; earlier roadmap and deferred scope preserved.",
+  "mutationLog": "Append-only E22 entry.",
+  "nextEligiblePackage": "P04-R01",
+  "nextPackageImplementationAuthorized": false,
+  "assessmentSha256": "13998bbc0f3ce2c9c6f217af913d3cfc7253d4e42a19e14c393f070e7b09ff87",
+  "publisherReceiptSha256": "d9cf286ae920d6100cdd7a106154fad0bba9115614cbef86c76fcc4051cbc48d",
+  "publicationBindings": [
+    {
+      "path": "work-register.json",
+      "beforeSha256": "0ed77fb528c0139c3a82193668870c6d666095b742dc923051db4c6edcb4dfd9",
+      "afterSha256": "1a03d104f4db15b7e1ddfd0d03505f75a8fb747518b09ad6d6f62c1579a3b60f"
+    },
+    {
+      "path": "work-register.csv",
+      "beforeSha256": "c0418dec13cdb4705cf66dc48b91bbafe0e2535e624c3f221691b74a26511a44",
+      "afterSha256": "a8d53050faac1cdfba579d262b0f7e90ceaf294fa247bdc1b5bc60bd104cd246"
+    },
+    {
+      "path": "ROADMAP.md",
+      "beforeSha256": "cea3a26a742d108fe974edda634227b6011b391817568e91e4b08719beb96c9a",
+      "afterSha256": "3c53a22a4789a900877982b847eada7f0fe47a994fcc18e10fc0c4fc0a8d20be"
+    },
+    {
+      "path": "mutation-log.md",
+      "beforeSha256": "e4bc319a3b3744c13fe17f698bb0ebe8654c41c70e6cc4884c2efe1058683c3e",
+      "afterSha256": "1c1be8bcb13202af9d4924c25ba9f4b2ff914b1a00eb56066f325c298f7de01c"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "beforeSha256": "d2227249bd813b8d49101b0d733c056974f19f4244d838d681ffba8112801c6a",
+      "afterSha256": "3343213fced00c6a545f7725e8de7423ff89482b5048a6393a3e5771a7b3f4f8"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "beforeSha256": "fd39742c068f84608c3821cf3324612ef74dace5222da487df8712903a23c4ee",
+      "afterSha256": "189e59805df5fb1f4aa1e985c00c698a3ed0e32f2f90d151ac97d52a78b50d47"
+    }
+  ],
+  "limitations": "This is a semantic publication reconciliation. It does not rerun the app/database/browser, certify latest whole-checkout changes, or advance parent/production gates."
+}

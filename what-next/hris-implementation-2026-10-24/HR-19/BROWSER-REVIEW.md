@@ -1,0 +1,7 @@
+# Rendered review
+
+The primary agent visually inspected `browser/en-360.png` and `browser/fr-360.png` from the synthetic native-service fixture. Both use the existing dashboard theme/components, wrap long headings and French text, keep primary controls reachable, and show explicit period/history/input limitations. The period selector truncates long option text at phone width; selected period/country and dates are repeated in the detailed package section. This is not a full assistive-technology or WCAG certification.
+
+The browser runner checks EN/FR at360/768/1440, no document-level horizontal overflow, exactly200 included/1 excluded rows in the synthetic fixture, blocked issuance, immutable issuance/downloads, retained recipient draft, rejection/certified correction/linked replacement, reconciled recipient outcome, failed-refresh privacy/retry, keyboard reachability, and unaddressed/revoked roles. Only `browser/results.json` after a successful complete run is final evidence. `progress.json` is diagnostic progress, not a passing result.
+
+Synthetic HTTP/cookie transport calls native database services and renders the actual client component. Protected production action configuration is tested separately with mocks; actual Next/BetterAuth/module-entitlement integration remains an HR21 gate. Fixture source resolution and certification use synthetic test helpers/native services, not a claim that a human operator completed the entire source workflow through production UI.

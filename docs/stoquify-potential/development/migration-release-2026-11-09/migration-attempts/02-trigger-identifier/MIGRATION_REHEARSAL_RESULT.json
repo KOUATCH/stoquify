@@ -1,0 +1,23 @@
+{
+  "began": "2026-11-09T13:49:12.268Z",
+  "passed": false,
+  "target": {
+    "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5",
+    "clusterDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5",
+    "migrationSource": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5\\migration-source",
+    "host": "localhost",
+    "port": 58033,
+    "user": "sales_release_fixture",
+    "freshDatabase": "stoquify_replay_20261109_44a94875d5",
+    "posDatabase": "stoquify_pos_audit_20261109_44a94875d5",
+    "createdAt": "2026-11-09T13:45:26.860Z",
+    "method": "New private PG17 cluster, full frozen migration catalog; no existing database reset, copy or drop"
+  },
+  "catalogSha256": "3f4c0d0880c659bd22e5f6551aae459924e57ed3baddcac89f4b2f5bc9cf1737",
+  "runnerSha256": "cee795f615967794d512b543c68e97da62b524b394a31119a531de7cb34772f4",
+  "initializedThisAttempt": false,
+  "checks": [],
+  "failure": "Expected trigger absent: customer_settlement_allocations_prevent_receivable_relink_trigger",
+  "ownedClusterStopped": true,
+  "ended": "2026-11-09T13:50:07.935Z"
+}

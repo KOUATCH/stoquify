@@ -1,0 +1,518 @@
+{
+  "schema_version": 1,
+  "at": "2026-11-09T18:16:21.958Z",
+  "status": "pending_independent_admission",
+  "candidate_id": "p04-v02-full-6577e9e63dc7",
+  "artifact_sha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "scope": "frozen_artifact_only",
+  "current_checkout_qualified": false,
+  "entire_import_closure_equal": false,
+  "harness": {
+    "path": "browser/run-auth-supplement.cjs",
+    "sha256": "c45c8f117637480734c2acf673eb7d722ec354fafc805ae4bc0f09bee7ddbbca",
+    "groups": 35,
+    "output": "browser/auth-supplement-03/result.json"
+  },
+  "controls": {
+    "path": "database/auth-controls-r3.cjs",
+    "sha256": "66bb7ddcbdfa454da9eaa195ae0db59cc1907a9f95360f7ef8a2831fe076431f",
+    "database": "stoquify_local_p04v02_20261109_full_r3",
+    "fixture_kind": "fresh isolated actors, no r1/r2 reuse"
+  },
+  "read_chain": [
+    "Visible Refresh / Actualiser button in ItemManagement invokes handleRefresh.",
+    "handleRefresh awaits useOrgItemsNew.refetch, then emits existing provider-notification completion event.",
+    "useOrgItemsNew queryFn calls getOrgItems(serverAction) with organizationId.",
+    "getOrgItems obtains current requirePermission inventory.items.read context and calls listActiveItemPayloads(ctx.orgId).",
+    "listActiveItemPayloads reads db.item.findMany and maps payloads; no item/stock mutation function is called by this probe."
+  ],
+  "actual_ui_action": "Real Playwright role/button click; passive action-response and notification observations; no synthetic network response or app event dispatch.",
+  "completion_contract": "Wait for actual Next server-action response plus handler completion notification or visible login recovery, then settled DOM; absent completion is incomplete, not guessed denial.",
+  "source_bindings": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
+      "current_sha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+      "frozen_sha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+      "equal": true
+    },
+    {
+      "path": "components/ui/groups/inventory/ItemManagement.tsx",
+      "current_sha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+      "frozen_sha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+      "equal": true
+    },
+    {
+      "path": "components/inventory/inventory-items-copy.ts",
+      "current_sha256": "45b7e7c486615d623dec8131172b73fcd53bdfe2a74671d4d90ac28a849386f4",
+      "frozen_sha256": "45b7e7c486615d623dec8131172b73fcd53bdfe2a74671d4d90ac28a849386f4",
+      "equal": true
+    },
+    {
+      "path": "hooks/useAllItemQueries.ts",
+      "current_sha256": "509d8f920fa6c236fa474bf9c3dbbf141fe9159dfe35780f145416e0b4c242f6",
+      "frozen_sha256": "509d8f920fa6c236fa474bf9c3dbbf141fe9159dfe35780f145416e0b4c242f6",
+      "equal": true
+    },
+    {
+      "path": "actions/itemsShow/getOrgItems.ts",
+      "current_sha256": "b36d7c11758a52452dc6bdbbcf040f184f14d7e79467ec2b39926ad0c4397193",
+      "frozen_sha256": "b36d7c11758a52452dc6bdbbcf040f184f14d7e79467ec2b39926ad0c4397193",
+      "equal": true
+    },
+    {
+      "path": "services/item/item.service.ts",
+      "current_sha256": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62",
+      "frozen_sha256": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62",
+      "equal": true
+    },
+    {
+      "path": "lib/item/includes.ts",
+      "current_sha256": "a509c68ef78f808e2f7a00bf202285614fa47c1ea937488cb13139e809ba355e",
+      "frozen_sha256": "a509c68ef78f808e2f7a00bf202285614fa47c1ea937488cb13139e809ba355e",
+      "equal": true
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "current_sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "frozen_sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "equal": true
+    },
+    {
+      "path": "lib/error-handling/index.ts",
+      "current_sha256": "d954c8b5de3fc53fddfd05f68161174a096ffa33e48b856f1675aa970af2668d",
+      "frozen_sha256": "d954c8b5de3fc53fddfd05f68161174a096ffa33e48b856f1675aa970af2668d",
+      "equal": true
+    },
+    {
+      "path": "lib/error-handling/server-action-wrapper.ts",
+      "current_sha256": "0d3c4b992cbdbf944459c2af6c7f415f0379a154e70b86b127002583a6a4fe7d",
+      "frozen_sha256": "0d3c4b992cbdbf944459c2af6c7f415f0379a154e70b86b127002583a6a4fe7d",
+      "equal": true
+    },
+    {
+      "path": "lib/notifications/notify.ts",
+      "current_sha256": "a36427372ac068fa07ede5d3817c79765e0615691548adcf149b62857cad8888",
+      "frozen_sha256": "a36427372ac068fa07ede5d3817c79765e0615691548adcf149b62857cad8888",
+      "equal": true
+    },
+    {
+      "path": "lib/auth.ts",
+      "current_sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+      "frozen_sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+      "equal": true
+    },
+    {
+      "path": "app/api/auth/[...all]/route.ts",
+      "current_sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "frozen_sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "equal": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "current_sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "frozen_sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "equal": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "current_sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "frozen_sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "equal": true
+    },
+    {
+      "path": "node_modules/better-call/dist/router.mjs",
+      "current_sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+      "frozen_sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+      "equal": true
+    }
+  ],
+  "unchanged_original98_inputs_reference": "independent-review/CONCURRENT-DRIFT-SCAN.json",
+  "concurrent_drift_limit": "Four reviewed accounting-file changes remain outside read/verify probes. Entire current checkout/import closure equality is not claimed.",
+  "cases": [
+    {
+      "id": "verify-password-authorized",
+      "status": "planned",
+      "family_ids": [
+        "V02-T01",
+        "V02-T02",
+        "V02-T09",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "verify-password-wrong-password",
+      "status": "planned",
+      "family_ids": [
+        "V02-T01",
+        "V02-T02",
+        "V02-T09",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "verify-password-anonymous",
+      "status": "planned",
+      "family_ids": [
+        "V02-T01",
+        "V02-T02",
+        "V02-T09",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "verify-password-foreign-origin",
+      "status": "planned",
+      "family_ids": [
+        "V02-T08",
+        "V02-T09",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "unconfigured-social-signin",
+      "status": "planned",
+      "family_ids": [
+        "V02-T08",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authRevoked-real-session",
+      "status": "planned",
+      "family_ids": [
+        "V02-T01",
+        "V02-T02",
+        "V02-T09",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authRevoked-verify-password",
+      "status": "planned",
+      "family_ids": [
+        "V02-T01",
+        "V02-T02",
+        "V02-T09",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authRevoked-verify-password-cache-override",
+      "status": "planned",
+      "family_ids": [
+        "V02-T01",
+        "V02-T02",
+        "V02-T09",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authExpired-real-session",
+      "status": "planned",
+      "family_ids": [
+        "V02-T01",
+        "V02-T02",
+        "V02-T09",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authExpired-verify-password",
+      "status": "planned",
+      "family_ids": [
+        "V02-T01",
+        "V02-T02",
+        "V02-T09",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authExpired-verify-password-cache-override",
+      "status": "planned",
+      "family_ids": [
+        "V02-T01",
+        "V02-T02",
+        "V02-T09",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserRevoked-en-authorized-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserRevoked-en-stale-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserRevoked-en-authorized-recovery",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserExpiry-en-authorized-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserExpiry-en-stale-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserExpiry-en-authorized-recovery",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserPermission-en-authorized-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserPermission-en-stale-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserPermission-en-authorized-recovery",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserModule-en-authorized-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserModule-en-stale-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserModule-en-authorized-recovery",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserRevoked-fr-authorized-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserRevoked-fr-stale-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserRevoked-fr-authorized-recovery",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserExpiry-fr-authorized-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserExpiry-fr-stale-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserExpiry-fr-authorized-recovery",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserPermission-fr-authorized-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserPermission-fr-stale-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserPermission-fr-authorized-recovery",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserModule-fr-authorized-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserModule-fr-stale-refresh",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    },
+    {
+      "id": "authBrowserModule-fr-authorized-recovery",
+      "status": "planned",
+      "family_ids": [
+        "V02-T10",
+        "V02-T11",
+        "V02-T12",
+        "V02-T13",
+        "V02-T16"
+      ]
+    }
+  ],
+  "original_counts_preserved": {
+    "original_auth": 116,
+    "baseline": 22,
+    "provider": 23,
+    "total": 161,
+    "supplemental": 35,
+    "total_if_all_executed": 196
+  },
+  "product_changes": false,
+  "checks": {
+    "syntax_passed": true,
+    "application_execution": false,
+    "database_execution": false
+  }
+}

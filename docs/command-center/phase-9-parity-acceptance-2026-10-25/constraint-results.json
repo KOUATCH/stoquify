@@ -1,0 +1,146 @@
+{
+  "passed": true,
+  "identityVerified": true,
+  "foreignKeys": [
+    {
+      "table": "firm_advisory_revisions",
+      "name": "firm_advisory_revisions_actorId_fkey",
+      "updateAction": "r",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"actorId\") REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "firm_advisory_revisions",
+      "name": "firm_advisory_revisions_clientOrganizationId_periodId_fkey",
+      "updateAction": "r",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"clientOrganizationId\", \"periodId\") REFERENCES accounting_periods(\"organizationId\", id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "firm_advisory_revisions",
+      "name": "firm_advisory_revisions_engagementId_firmOrganizationId_cl_fkey",
+      "updateAction": "r",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"engagementId\", \"firmOrganizationId\", \"clientOrganizationId\") REFERENCES firm_engagements(id, \"firmOrganizationId\", \"clientOrganizationId\") ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "firm_obligation_revisions",
+      "name": "firm_obligation_revisions_organizationId_fkey",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"organizationId\") REFERENCES organizations(id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "firm_obligation_revisions",
+      "name": "firm_obligation_revisions_periodId_fkey",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"periodId\") REFERENCES accounting_periods(id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "hris_lifecycle_tasks",
+      "name": "hris_task_employee_fk",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"organizationId\", \"employeeId\") REFERENCES payroll_employees(\"organizationId\", id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "hris_payroll_handoff_packages",
+      "name": "hris_payroll_handoff_packages_organizationId_fkey",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"organizationId\") REFERENCES organizations(id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "hris_payroll_handoff_packages",
+      "name": "hris_payroll_handoff_packages_payrollPeriodId_fkey",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"payrollPeriodId\") REFERENCES payroll_periods(id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "hris_payroll_handoff_packages",
+      "name": "hris_payroll_handoff_packages_replacesPackageId_fkey",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"replacesPackageId\") REFERENCES hris_payroll_handoff_packages(id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "hris_payroll_handoff_receipts",
+      "name": "hris_payroll_handoff_receipts_organizationId_fkey",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"organizationId\") REFERENCES organizations(id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "hris_payroll_handoff_receipts",
+      "name": "hris_payroll_handoff_receipts_packageId_fkey",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"packageId\") REFERENCES hris_payroll_handoff_packages(id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "hris_setup_reviewer_grants",
+      "name": "hris_setup_employee_tenant_fk",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"organizationId\", \"employeeId\") REFERENCES payroll_employees(\"organizationId\", id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "hris_setup_reviewer_grants",
+      "name": "hris_setup_grantor_tenant_fk",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"organizationId\", \"createdById\") REFERENCES users(\"organizationId\", id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "hris_setup_reviewer_grants",
+      "name": "hris_setup_reviewer_grants_organizationId_fkey",
+      "updateAction": "a",
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (\"organizationId\") REFERENCES organizations(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "hris_setup_reviewer_grants",
+      "name": "hris_setup_reviewer_tenant_fk",
+      "updateAction": "a",
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (\"organizationId\", \"reviewerUserId\") REFERENCES users(\"organizationId\", id) ON DELETE RESTRICT"
+    }
+  ],
+  "queries": [
+    {
+      "model": "firmObligationRevision",
+      "allScalarFieldsReadable": true,
+      "rows": 0
+    },
+    {
+      "model": "firmAdvisoryRevision",
+      "allScalarFieldsReadable": true,
+      "rows": 0
+    },
+    {
+      "model": "hrisLifecycleTask",
+      "allScalarFieldsReadable": true,
+      "rows": 0
+    },
+    {
+      "model": "hrisSetupReviewerGrant",
+      "allScalarFieldsReadable": true,
+      "rows": 0
+    },
+    {
+      "model": "hrisPayrollHandoffPackage",
+      "allScalarFieldsReadable": true,
+      "rows": 0
+    },
+    {
+      "model": "hrisPayrollHandoffReceipt",
+      "allScalarFieldsReadable": true,
+      "rows": 0
+    }
+  ],
+  "exactRawMigrationChecksums": 118,
+  "sourceDatabaseMutation": false,
+  "productionAccess": false
+}

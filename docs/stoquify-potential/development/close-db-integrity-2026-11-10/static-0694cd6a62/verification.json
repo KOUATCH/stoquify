@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "typecheck",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\typescript\\bin\\tsc",
+        "--project",
+        "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\static-0694cd6a62\\tsconfig.json",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "--pretty",
+        "false"
+      ],
+      "started": "2026-11-10T18:48:16.387Z",
+      "finished": "2026-11-10T18:53:03.142Z",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "name": "scoped-lint",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\eslint\\bin\\eslint.js",
+        "services/accounting/close-assurance.service.ts",
+        "services/accounting/close-assurance-pack.service.ts",
+        "services/accounting/periods.service.ts",
+        "services/accounting/period-control.service.ts",
+        "--format",
+        "json",
+        "--output-file",
+        "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\static-0694cd6a62\\eslint.json"
+      ],
+      "started": "2026-11-10T18:53:03.142Z",
+      "finished": "2026-11-10T18:53:12.650Z",
+      "exitCode": 0,
+      "error": null
+    }
+  ],
+  "unchangedInputs": true,
+  "sourceHashes": {
+    "services/accounting/close-assurance.service.ts": "2d0da62313e44e5239f4edd08307c21fd32362a399fe71a4aeb6ff1e7b137d29",
+    "services/accounting/close-assurance-pack.service.ts": "b7066916a3aded4555f4db656306f941095070d1b6c8540c96bf3325f57e0b8c",
+    "services/accounting/periods.service.ts": "6b54f0ef75e92a59289267f714042abdbd384b4883c4b4680300129361797ad5",
+    "services/accounting/period-control.service.ts": "f6b7f7fbed78a5f9c3ff3e7cda7237fc3a94f2a65a5f77294dcd01a8cd7234d6",
+    "tsconfig.json": "d3579c5303333929f58ef96286529142b8e64137c59fb8a32b7c43598ac518c9",
+    ".eslintrc.json": "82d9c40e94e4eba05c53f4c6c9aebf62a3463583e1ccc5e2ad24c77882ab987a",
+    "prisma/schema.prisma": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+    "package-lock.json": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+  },
+  "privateClient": "E:/ohada saas/Focused projects/stoquify/.codex-tmp/close-integrity-client-20261110-e29eaa8acf/orm/client",
+  "privateClientSchemaSha256": "977440d9335ef4d461f89d5f6bceb0afd690d424c294fcc91e548fe78ca16b0e",
+  "privateClientTypesSha256": "ac7172c881d6c4e9d3ce44092291550a984db00fbb6068277c1f0f1322459d31",
+  "lintErrors": 0,
+  "lintWarnings": 0,
+  "runnerSha256": "81538df647cc14a37301b17d8c448db3b86d1cdaddeccd3ad15fab9418a392d7",
+  "configSha256": "ed445b933265a05a3efb0a90eb6202b2eeceb8ab0cf899ab247094373638abb7",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\static-0694cd6a62",
+  "classification": "Static TypeScript and ESLint only; no build, database or browser qualification"
+}

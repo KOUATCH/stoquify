@@ -1,0 +1,9 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{spawn}=require('node:child_process');
+const root=path.resolve(__dirname,'../../../..'),paths=require('./mocked-test-paths.json');
+const source=paths.map(p=>({path:p,sha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,p))).digest('hex')}));
+const env=Object.fromEntries(Object.entries(process.env).filter(([k])=>['PATH','PATHEXT','SYSTEMROOT','WINDIR','TEMP','TMP','USERPROFILE','APPDATA','LOCALAPPDATA','COMSPEC'].includes(k.toUpperCase())));Object.assign(env,{NODE_ENV:'test',NEXT_TELEMETRY_DISABLED:'1'});
+const fd=fs.openSync(path.join(__dirname,'mocked-tests.log'),'wx'),start=new Date().toISOString();
+const child=spawn(process.execPath,['node_modules/jest/bin/jest.js','--config',path.join(__dirname,'jest.mocked.config.cjs'),'--runInBand','--no-cache','--runTestsByPath',...paths,'--json','--outputFile',path.join(__dirname,'mocked-tests-jest.json')],{cwd:root,env,windowsHide:true,stdio:['ignore',fd,fd]});
+const timer=setTimeout(()=>child.kill(),600000);
+child.once('exit',code=>{clearTimeout(timer);fs.closeSync(fd);const result={startedAt:start,finishedAt:new Date().toISOString(),exitCode:code,source,environmentVariableNames:Object.keys(env),evidenceClass:'mocked unit/component; four characterization cases pass when disclosure is reproduced'};if(fs.existsSync(path.join(__dirname,'mocked-tests-jest.json'))){const j=JSON.parse(fs.readFileSync(path.join(__dirname,'mocked-tests-jest.json'),'utf8'));result.tests={passed:j.numPassedTests,failed:j.numFailedTests,pending:j.numPendingTests,suites:j.numTotalTestSuites};}fs.writeFileSync(path.join(__dirname,'mocked-tests-result.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(result));process.exitCode=code===0?0:1;});
+child.once('error',e=>{clearTimeout(timer);fs.closeSync(fd);console.error(e.message);process.exitCode=1});

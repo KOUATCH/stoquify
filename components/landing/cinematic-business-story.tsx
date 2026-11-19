@@ -6,88 +6,14 @@ import {
   ClipboardCheck,
   ArrowRight,
   Users,
-  ClipboardList,
+  Store,
+  Wallet,
+  Building2,
 } from "lucide-react"
 import { Link } from "@/i18n/navigation"
-
-function SmeComputerPhoto({
-  scene,
-  alt,
-}: {
-  scene: "pharmacy" | "materials"
-  alt: string
-}) {
-  const fr = useLocale() === "fr"
-  return (
-    <div className={`sme-photo-scene sme-photo-${scene}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={`/landing/cinematic/sme-${scene}-aio.webp`}
-        width={1200}
-        height={800}
-        loading="lazy"
-        decoding="async"
-        alt={alt}
-      />
-      <div
-        className="sme-computer-screen"
-        aria-hidden="true"
-        data-visual-classification="sample"
-      >
-        <div className="sme-screen-brand">
-          <span>q</span>
-          <strong>stoquify</strong>
-          <small>{fr ? "ESPACE ILLUSTRATIF" : "ILLUSTRATIVE WORKSPACE"}</small>
-        </div>
-        <div className="sme-screen-workspace">
-          <aside>
-            {[
-              fr ? "Ventes" : "Sales",
-              fr ? "Stocks" : "Inventory",
-              "Finance",
-              fr ? "Comptabilité" : "Accounting",
-            ].map((label) => (
-              <span key={label}>{label}</span>
-            ))}
-          </aside>
-          <div>
-            <b>
-              {scene === "pharmacy"
-                ? fr
-                  ? "Ventes et stocks"
-                  : "Sales and inventory"
-                : fr
-                  ? "Paiements et rapprochement"
-                  : "Payments and reconciliation"}
-            </b>
-            <div className="sme-screen-kpis">
-              <span>
-                {fr ? "Ventes" : "Sales"}
-                <b>24</b>
-              </span>
-              <span>
-                {fr ? "Stocks" : "Stock"}
-                <b>18</b>
-              </span>
-              <span>
-                {fr ? "À vérifier" : "To review"}
-                <b>3</b>
-              </span>
-            </div>
-            <div className="sme-screen-row">
-              <span>SALE-104</span>
-              <span>{fr ? "Enregistré" : "Recorded"}</span>
-            </div>
-            <div className="sme-screen-row">
-              <span>REF-104</span>
-              <span>{fr ? "À vérifier" : "To review"}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+import { BusinessComputerPhoto, PhotoScreenButton } from "./photo-workspace"
+import { CinematicPeoplePayroll } from "./cinematic-people-payroll"
+import "./landing-sections.css"
 
 export function CinematicBusinessStory() {
   const fr = useLocale() === "fr"
@@ -113,8 +39,8 @@ export function CinematicBusinessStory() {
         </h2>
         <p>
           {t(
-            "From the morning rush to the monthly review, connect the work of your shops, warehouses, finance and people teams.",
-            "Du premier client à la revue mensuelle, reliez le travail de vos boutiques, entrepôts, équipes financières et RH.",
+            "From the morning rush to the monthly review, connect your shops, warehouses, finance and people teams with your accounting firm.",
+            "Du premier client à la revue mensuelle, reliez vos boutiques, entrepôts, équipes financières et RH à votre cabinet comptable.",
           )}
         </p>
         <small>
@@ -123,11 +49,19 @@ export function CinematicBusinessStory() {
             "Scènes de PME originales et illustratives. Les entreprises représentées ne sont pas des témoignages clients.",
           )}
         </small>
+        <nav className="business-journey" aria-label={t("Follow the business record", "Suivre le fil des opérations")}>
+          {[
+            { href: "#business-operations", icon: Store, title: t("Trade & stock", "Ventes et stocks"), body: t("Record the activity", "Enregistrer l’activité") },
+            { href: "#business-payments", icon: Wallet, title: t("Money & evidence", "Paiements et preuves"), body: t("Explain the balance", "Expliquer le solde") },
+            { href: "#accounting-firm", icon: Building2, title: t("Your accounting firm", "Votre cabinet"), body: t("Review the source", "Examiner les sources") },
+            { href: "#people-payroll", icon: Users, title: t("HRIS & payroll", "SIRH et paie"), body: t("Connect the people record", "Relier les dossiers salariés") },
+          ].map((item, index) => <a key={item.href} href={item.href}><item.icon size={21} aria-hidden="true" /><span><strong>{item.title}</strong><small>{item.body}</small></span><span className="business-journey-number">0{index + 1}</span></a>)}
+        </nav>
       </div>
 
-      <article className="section sme-editorial reveal">
+      <article className="section sme-editorial reveal" id="business-operations">
         <figure className="sme-photo">
-          <SmeComputerPhoto
+          <BusinessComputerPhoto
             scene="pharmacy"
             alt={t(
               "Illustrative pharmacy team serving a customer, with Stoquify sales and stock records on an all-in-one computer",
@@ -140,6 +74,7 @@ export function CinematicBusinessStory() {
               "LA CAISSE. LA RÉSERVE. LE MÊME FIL CONDUCTEUR.",
             )}
           </figcaption>
+          <PhotoScreenButton scene="pharmacy" />
         </figure>
         <div className="sme-editorial-copy">
           <p className="eyebrow">
@@ -182,9 +117,9 @@ export function CinematicBusinessStory() {
         </div>
       </article>
 
-      <article className="section sme-editorial sme-editorial-reverse reveal">
+      <article className="section sme-editorial sme-editorial-reverse reveal" id="business-payments">
         <figure className="sme-photo">
-          <SmeComputerPhoto
+          <BusinessComputerPhoto
             scene="materials"
             alt={t(
               "Illustrative building-materials merchant reviewing a delivery with a customer, beside an all-in-one computer displaying Stoquify reconciliation",
@@ -197,6 +132,7 @@ export function CinematicBusinessStory() {
               "DES OPÉRATIONS AUX JUSTIFICATIFS DE PAIEMENT.",
             )}
           </figcaption>
+          <PhotoScreenButton scene="materials" />
         </figure>
         <div className="sme-editorial-copy">
           <p className="eyebrow">
@@ -235,6 +171,53 @@ export function CinematicBusinessStory() {
         </div>
       </article>
 
+      <article className="section sme-editorial sme-firm-editorial reveal" id="accounting-firm" aria-labelledby="accounting-firm-title">
+        <figure className="sme-photo">
+          <BusinessComputerPhoto scene="accountingFirm" alt={t(
+            "Illustrative accounting firm reviewing client records on a large, front-facing Stoquify laptop screen",
+            "Cabinet comptable illustratif examinant les données clients sur un grand écran Stoquify tourné vers le visiteur",
+          )} />
+          <figcaption>{t("YOUR BUSINESS. YOUR ACCOUNTING FIRM. A SHARED REVIEW.", "VOTRE ENTREPRISE. VOTRE CABINET. UNE REVUE PARTAGÉE.")}</figcaption>
+          <PhotoScreenButton scene="accountingFirm" />
+        </figure>
+        <div className="sme-editorial-copy">
+          <p className="eyebrow">{t("WORK WITH YOUR ACCOUNTING FIRM", "COLLABOREZ AVEC VOTRE CABINET COMPTABLE")}</p>
+          <h2 id="accounting-firm-title">
+            {t("Your accounting firm starts with the records already here.", "Votre cabinet part des données déjà présentes.")}
+          </h2>
+          <p>
+            {t(
+              "Sales, customer invoices, stock movements and payroll runs build a record of your activity in Stoquify. With configured postings and source links, your authorized accounting firm can review the ledger and the evidence behind its figures.",
+              "Ventes, factures clients, mouvements de stock et calculs de paie constituent une trace de votre activité dans Stoquify. Grâce aux comptabilisations configurées et aux liens sources, votre cabinet autorisé peut examiner le grand livre et les justificatifs derrière ses chiffres.",
+            )}
+          </p>
+          <details className="business-detail">
+            <summary>{t("How the shared review helps both teams", "Une revue utile à l’entreprise et au cabinet")}</summary>
+            <p>{t(
+              "For your business, less rebuilding of information already recorded. For your firm, client periods, accounting evidence and review priorities in context. External statements and missing supporting documents are handled where the review requires them.",
+              "Pour votre entreprise, moins d’informations déjà enregistrées à reconstituer. Pour votre cabinet, les périodes clients, justificatifs comptables et priorités de revue dans leur contexte. Les relevés externes et pièces manquantes sont traités lorsque la revue le nécessite.",
+            )}</p>
+          </details>
+          <Link className="sme-link" href="/workflows#workflow-accountingCloseAssurance">
+            {t("Explore the accounting review workflow", "Explorer le parcours de revue comptable")}{" "}
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+          <p className="firm-access-note">
+            {t(
+              "Start together: an authorized user in the client’s workspace can invite an accountant. Invitations for new accountants include a registration link; existing users can receive scoped access. Each client controls its own access grant.",
+              "Pour collaborer, un utilisateur autorisé de l’espace client peut inviter un comptable. L’invitation des nouveaux comptables comprend un lien d’inscription ; les utilisateurs existants peuvent recevoir un accès délimité. Chaque client contrôle l’accès à ses données.",
+            )}
+          </p>
+        </div>
+        <div className="firm-workflow" role="group" aria-label={t("Accounting firm workflow", "Parcours du cabinet comptable")}>
+          {[
+            [t("01 / Client mandate", "01 / Mandat client"), t("Invite, accept and define access", "Inviter, accepter et délimiter l’accès"), t("Each client grants its own scope, with expiry and revocation controls.", "Chaque client définit son périmètre, avec expiration et révocation.")],
+            [t("02 / Client portfolio", "02 / Portefeuille clients"), t("Select the client and period", "Choisir le client et la période"), t("See authorized clients and open the relevant review context.", "Retrouvez les clients autorisés et le contexte de revue pertinent.")],
+            [t("03 / Review work desk", "03 / Dossier de revue"), t("Inspect, follow up and retain conclusions", "Examiner, suivre et conserver les conclusions"), t("Trace journals to evidence, handle exceptions and review eligible exports.", "Reliez écritures et pièces, traitez les anomalies et vérifiez les exports autorisés.")],
+          ].map(([label, title, body]) => <article key={label}><small>{label}</small><h3>{title}</h3><p>{body}</p></article>)}
+        </div>
+      </article>
+
       <div className="section sme-accounting reveal" id="accounting-close">
         <div className="sme-accounting-heading">
           <p className="eyebrow">
@@ -251,11 +234,19 @@ export function CinematicBusinessStory() {
           </h2>
           <p>
             {t(
-              "Give your accountant the records, context and outstanding checks behind the period’s figures.",
-              "Donnez à votre comptable les pièces, le contexte et les contrôles en attente derrière les chiffres de la période.",
+              "Your firm reviews the period using posted journals, source links and checks already available in Stoquify.",
+              "Votre cabinet examine la période à partir des écritures comptabilisées, liens sources et contrôles déjà disponibles dans Stoquify.",
             )}
           </p>
         </div>
+        <ol className="accounting-close-path" aria-label={t("From operations to the close decision", "Des opérations à la décision de clôture")}>
+          {[
+            [t("Source records", "Pièces d’origine"), t("Operations teams", "Équipes terrain")],
+            [t("Journals & balances", "Écritures et soldes"), t("Configured accounting", "Comptabilité configurée")],
+            [t("Evidence & exceptions", "Pièces et anomalies"), t("Finance and your firm", "Finance et cabinet")],
+            [t("Close review", "Revue de clôture"), t("Authorized reviewers", "Responsables autorisés")],
+          ].map(([title, owner], index) => <li key={title}><span>0{index + 1}</span><strong>{title}</strong><small>{owner}</small></li>)}
+        </ol>
         <div className="sme-accounting-grid">
           <article>
             <BookOpen size={28} aria-hidden="true" />
@@ -271,7 +262,7 @@ export function CinematicBusinessStory() {
                 "Utilisez les références SYSCOHADA, les règles de comptabilisation configurées, les journaux et le grand livre. Remontez d’une écriture à l’opération et aux justificatifs qui l’expliquent.",
               )}
             </p>
-            <ul>
+            <details className="business-detail"><summary>{t("Explore the accounting records", "Découvrir les données comptables")}</summary><ul>
               {[
                 t(
                   "Chart of accounts & SYSCOHADA references",
@@ -288,7 +279,7 @@ export function CinematicBusinessStory() {
               ].map((label) => (
                 <li key={label}>{label}</li>
               ))}
-            </ul>
+            </ul></details>
           </article>
           <article>
             <ClipboardCheck size={28} aria-hidden="true" />
@@ -304,7 +295,7 @@ export function CinematicBusinessStory() {
                 "Examinez les écarts de rapprochement, les justificatifs manquants et les points de clôture. Gardez les responsabilités et la revue du comptable visibles avant de déclarer la période prête.",
               )}
             </p>
-            <ul>
+            <details className="business-detail"><summary>{t("Explore the close checks", "Découvrir les contrôles de clôture")}</summary><ul>
               {[
                 t(
                   "Reconciliation & unresolved differences",
@@ -321,7 +312,7 @@ export function CinematicBusinessStory() {
               ].map((label) => (
                 <li key={label}>{label}</li>
               ))}
-            </ul>
+            </ul></details>
           </article>
         </div>
         <div className="sme-accounting-footer">
@@ -344,80 +335,7 @@ export function CinematicBusinessStory() {
         </div>
       </div>
 
-      <div className="section sme-people reveal" id="people-payroll">
-        <div>
-          <p className="eyebrow">
-            {t(
-              "YOUR PEOPLE, CONNECTED TO THE BUSINESS",
-              "VOS ÉQUIPES, RELIÉES À L’ACTIVITÉ",
-            )}
-          </p>
-          <h2>
-            {t(
-              "Connect your HRIS to payroll preparation.",
-              "Reliez le SIRH à la préparation de la paie.",
-            )}
-          </h2>
-          <p>
-            {t(
-              "The team behind the counter has its own records, time and pay. Connect people administration to payroll preparation while keeping each approval and payment check visible.",
-              "L’équipe derrière le comptoir a ses dossiers, ses temps et sa rémunération. Reliez la gestion du personnel à la préparation de la paie en gardant chaque approbation et contrôle de paiement visible.",
-            )}
-          </p>
-          <Link className="sme-link" href="/workflows#workflow-peopleToPay">
-            {t("Explore HRIS and payroll", "Explorer le SIRH et la paie")}{" "}
-            <ArrowRight size={16} aria-hidden="true" />
-          </Link>
-        </div>
-        <div className="sme-people-flow">
-          <article>
-            <Users size={24} aria-hidden="true" />
-            <div>
-              <h3>
-                {t(
-                  "HRIS: build the people record",
-                  "SIRH : constituez le dossier salarié",
-                )}
-              </h3>
-              <p>
-                {t(
-                  "Employees, contracts, compensation and time inputs.",
-                  "Salariés, contrats, rémunérations et temps de travail.",
-                )}
-              </p>
-            </div>
-          </article>
-          <div className="sme-people-connector">
-            {t(
-              "Reviewed inputs → payroll preparation",
-              "Données vérifiées → préparation de la paie",
-            )}
-          </div>
-          <article>
-            <ClipboardList size={24} aria-hidden="true" />
-            <div>
-              <h3>
-                {t(
-                  "Payroll: prepare, review, retain proof",
-                  "Paie : préparez, vérifiez, conservez les preuves",
-                )}
-              </h3>
-              <p>
-                {t(
-                  "Payroll runs, payslips and payment evidence, with the required checks.",
-                  "Calculs, bulletins et justificatifs de paiement, avec les contrôles requis.",
-                )}
-              </p>
-            </div>
-          </article>
-          <small>
-            {t(
-              "Payroll depends on supported country rules, configuration and approved inputs.",
-              "La paie dépend des règles du pays prises en charge, du paramétrage et des données approuvées.",
-            )}
-          </small>
-        </div>
-      </div>
+      <CinematicPeoplePayroll />
     </section>
   )
 }

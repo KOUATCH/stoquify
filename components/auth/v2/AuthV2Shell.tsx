@@ -23,7 +23,7 @@ type AuthV2ShellProps = {
 
 const shellCopy = {
   en: {
-    brandSubtitle: "OHADA SMB Operating System",
+    brandSubtitle: "OHADA operating OS",
     loginTitle: "Trusted access, not noisy marketing.",
     loginBody:
       "Sign in to the workspace that protects cash, stock, payroll, accounting, approvals, and close evidence.",
@@ -59,7 +59,7 @@ const shellCopy = {
     verify: "Verify email",
   },
   fr: {
-    brandSubtitle: "Systeme d'exploitation PME OHADA",
+    brandSubtitle: "Système opérationnel OHADA",
     loginTitle: "Un acces fiable, sans surcharge marketing.",
     loginBody:
       "Connectez-vous a l'espace qui protege caisse, stock, paie, comptabilite, validations et preuves de cloture.",
@@ -77,22 +77,22 @@ const shellCopy = {
     recoveryBody: "Utilisez votre lien de récupération pour choisir un nouveau mot de passe, puis connectez-vous avec vos droits d’accès actuels.",
     backHome: "OHADA OS",
     trust: [
-      "Espace tenant securise",
-      "Permissions par role",
+      "Espace d’organisation sécurisé",
+      "Permissions par rôle",
       "Audit des actions sensibles",
-      "Rapports rattaches aux sources",
-      "Replay hors ligne controle",
-      "Preuves pretes pour la cloture",
+      "Rapports rattachés aux sources",
+      "Synchronisation hors ligne contrôlée",
+      "Preuves prêtes pour la clôture",
     ],
     status: [
-      ["Espace", "Protege"],
-      ["Acces", "RBAC"],
+      ["Espace", "Protégé"],
+      ["Accès", "RBAC"],
       ["Rapports", "Sources"],
     ],
     language: "EN",
     login: "Connexion",
-    register: "Creer l'espace",
-    verify: "Verifier l'email",
+    register: "Créer l’espace",
+    verify: "Vérifier l’email",
   },
 } as const
 
@@ -112,7 +112,7 @@ export function AuthV2Shell({ children, locale, variant, alternatePath }: AuthV2
         <aside className="relative hidden overflow-hidden bg-[#132028] px-8 py-7 text-white lg:flex lg:flex-col">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(125,232,220,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(240,197,77,0.07)_1px,transparent_1px)] bg-[size:44px_44px]" />
           <div className="relative z-10 flex items-center justify-between">
-            <Link href="/ohada-os" className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3">
               <StoquifyLogo theme="dark" width={236} height={52} tagline={t.brandSubtitle} />
             </Link>
             <Link
@@ -162,7 +162,7 @@ export function AuthV2Shell({ children, locale, variant, alternatePath }: AuthV2
 
         <section className="flex min-h-screen min-w-0 flex-col">
           <header className="flex items-center justify-between gap-3 px-5 py-5 sm:px-8 lg:hidden">
-            <Link href="/ohada-os" className="flex min-w-0 flex-1 items-center gap-3">
+            <Link href="/" className="flex min-w-0 flex-1 items-center gap-3">
               <StoquifyLogo theme="light" width={236} height={52} tagline={t.brandSubtitle} />
             </Link>
             <Link

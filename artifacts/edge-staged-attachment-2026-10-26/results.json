@@ -1,0 +1,137 @@
+{
+  "date": "2026-10-26",
+  "pluginVersion": "26.1021.31345",
+  "managedSettingsChanged": false,
+  "applicationSourceChanged": false,
+  "repairProven": false,
+  "workflowCheck": "npm run agent:workflow:check passed",
+  "checks": [
+    {
+      "operation": "blank screenshot preflight",
+      "ok": true,
+      "ms": 1250
+    },
+    {
+      "operation": "cycle 1 landing navigation after screenshot preflight",
+      "ok": false,
+      "ms": 8665,
+      "error": "Error: Browser Use cannot open http://localhost:3000/en in tab 1861544040. Browser reported: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "operation": "static motif navigation",
+      "ok": false,
+      "ms": 2972,
+      "error": "Error: Debugger unattached"
+    },
+    {
+      "operation": "ready preview landing navigation",
+      "ok": true,
+      "ms": 11694
+    },
+    {
+      "operation": "cycle 1 landing screenshot",
+      "ok": true,
+      "ms": 9452
+    },
+    {
+      "operation": "cycle 1 workflow navigation",
+      "ok": false,
+      "ms": 199,
+      "error": "Error: Tab 1861544055 is not part of browser session 01a1491c-9a5e-78a3-b2a2-647195f18a8a"
+    },
+    {
+      "operation": "cycle 1 workflow after warm-up",
+      "ok": false,
+      "error": "Task tab 1861544055 was no longer present; operation could not run. Cause of tab removal unknown."
+    },
+    {
+      "operation": "cycle 2 landing navigation",
+      "ok": false,
+      "ms": 1778,
+      "error": "Error: Tab 1861544055 is not part of browser session 01a1491c-9a5e-78a3-b2a2-647195f18a8a"
+    },
+    {
+      "operation": "cycle 2 landing navigation",
+      "ok": false,
+      "ms": 160,
+      "error": "Error: Debugger unattached"
+    }
+  ],
+  "preview": {
+    "origin": "http://127.0.0.1:3101",
+    "launcherPid": 8844,
+    "distDir": ".next-dev-session-ez7AZb",
+    "prisma": "Existing generated client reused; no migration run",
+    "landingColdRequest": {
+      "clientTimeoutMs": 60104,
+      "serverLogStatus": 200,
+      "serverLogMs": 57469
+    },
+    "warmRoutes": [
+      {
+        "route": "/en/workflows",
+        "status": 200,
+        "ms": 15426
+      },
+      {
+        "route": "/en/login",
+        "status": 200,
+        "ms": 27553
+      },
+      {
+        "route": "/en/register",
+        "status": 200,
+        "ms": 19127
+      }
+    ],
+    "leftRunning": true
+  },
+  "localhost3000": {
+    "initialBrowserError": "net::ERR_CONNECTION_REFUSED",
+    "listenersObserved": [
+      {
+        "address": "::",
+        "pid": 27216,
+        "identifiedAsStoquify": false
+      },
+      {
+        "address": "127.0.0.1",
+        "pid": 33972,
+        "identifiedAsStoquify": true
+      }
+    ],
+    "ipv4ProbeTimeoutMs": 45139,
+    "note": "Existing listeners left untouched; conflict not proven as cause of historical debugger errors."
+  },
+  "nativeControl": {
+    "accessibilityInitiallyReadable": true,
+    "tabClickError": "coordinate input geometry is unavailable",
+    "screenshot": "Displayed Codex rather than Edge; not retained as website evidence",
+    "raiseResult": "Accessibility state unavailable"
+  },
+  "verification": {
+    "completeReliableCycles": 0,
+    "freshWebsiteScreenshots": [
+      "landing-cycle-1.jpg"
+    ],
+    "missingFreshScreenshots": [
+      "workflow",
+      "login",
+      "register"
+    ]
+  },
+  "limitations": [
+    "Cause of disappearing task tab unknown",
+    "A helper retained an old tab reference on one attempt; recorded separately from the subsequent explicit-tab Debugger unattached failure",
+    "No permanent browser fix established"
+  ],
+  "references": [
+    "https://github.com/openai/codex/issues/54606",
+    "https://learn.chatgpt.com/docs/chrome-extension"
+  ],
+  "cleanup": {
+    "taskTabClosed": false,
+    "error": "Error: Debugger unattached",
+    "note": "No tab marked for retention; normal tool cleanup remains responsible."
+  }
+}

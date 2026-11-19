@@ -47,6 +47,6 @@ export default function ForgotPasswordForm() {
       <p role="status" aria-live="polite" className="sr-only">{pending ? t("requesting") : ""}</p>
     </form>}
     <p className="mt-5 text-sm leading-6 text-[#526671]">{t("requestHelp")}</p>
-    <Link href={localizePath("/login-v2", locale)} className="mt-6 inline-block rounded font-bold text-[#006960] underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178e83]">{t("signIn")}</Link>
+    <Link href={localizePath("/login", locale)} className="mt-6 inline-block rounded font-bold text-[#006960] underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178e83]">{t("signIn")}</Link>
   </section>
 }

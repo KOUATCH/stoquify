@@ -1,0 +1,295 @@
+[
+  {
+    "id": "R01",
+    "title": "Candidate/source integrity",
+    "applicability": "mandatory",
+    "packages": [
+      "P01",
+      "P02"
+    ],
+    "acceptance": "Manifest binds source, selected untracked inputs, lock/vendor, migrations, configs, flags and evidence; no unexplained drift.",
+    "evidence_classes": "source+manifest",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R02",
+    "title": "Compilation and required checks",
+    "applicability": "mandatory",
+    "packages": [
+      "P02",
+      "P31"
+    ],
+    "acceptance": "Current configured and required scoped checks pass with zero silently skipped required cases; no broad strictness weakening.",
+    "evidence_classes": "compiler+unit+CI",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R03",
+    "title": "Authority, tenant and data security",
+    "applicability": "mandatory",
+    "packages": [
+      "P04",
+      "P05",
+      "P03"
+    ],
+    "acceptance": "Every admitted journey has server-owned current authority; denial, tenant crossing, revoked/expired assurance and export/privacy cases pass; confirmed blockers resolved.",
+    "evidence_classes": "source+native DB+authenticated browser+security review",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R04",
+    "title": "Transaction/value integrity",
+    "applicability": "mandatory",
+    "packages": [
+      "P07",
+      "P08",
+      "P09",
+      "P10",
+      "P11"
+    ],
+    "acceptance": "No duplicate logical business effects or unexplained quantity/value/money imbalance; expected rejects preserve state; applicable taxable scope qualified separately.",
+    "evidence_classes": "native DB+reconciliation+browser",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R05",
+    "title": "Mixed-version and recovery",
+    "applicability": "mandatory",
+    "packages": [
+      "P07",
+      "P12",
+      "P13"
+    ],
+    "acceptance": "Supported app/worker/artifact pair and flags pass replay/lease/stale-tab/rollback; unsafe combinations excluded; explicit reservation/older-key recovery.",
+    "evidence_classes": "native DB+HTTP+mixed-artifact browser",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R06",
+    "title": "Country/fiscal admission",
+    "applicability": "mandatory_for_real_financial_scope",
+    "packages": [
+      "P17"
+    ],
+    "acceptance": "Applicable financial/tax claims have effective qualified source and tested admission; unreviewed or unsupported cases fail closed. Zero-tax fixture is not sufficient.",
+    "evidence_classes": "qualified review+runtime fixtures",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R07",
+    "title": "HR/handoff acceptance",
+    "applicability": "conditional_HR_exposed_M2_required",
+    "packages": [
+      "P14",
+      "P15"
+    ],
+    "acceptance": "Selected employee/lifecycle/time/compensation/self-service journeys and correction/handoff immutability pass with proper privacy.",
+    "evidence_classes": "native DB+authenticated browser",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R08",
+    "title": "Protected originals/provider operation",
+    "applicability": "conditional_originals_exposed_M2_required",
+    "packages": [
+      "P16"
+    ],
+    "acceptance": "Actual approved storage/scanner contracts, grant expiry, quarantine and key/object restore demonstrated; simulation labelled separately.",
+    "evidence_classes": "nonproduction provider+native DB+browser+recovery",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R09",
+    "title": "Statutory payroll and outputs",
+    "applicability": "conditional_payroll_exposed_M2_required",
+    "packages": [
+      "P17",
+      "P18a",
+      "P18b",
+      "P19",
+      "P20"
+    ],
+    "acceptance": "Approved monthly employer cases tie input, component, register, payslip, payment/declaration and accounting proof; no missing applicable component.",
+    "evidence_classes": "qualified review+native DB+browser+provider where applicable",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R10",
+    "title": "Payment/delivery integrations",
+    "applicability": "selected_providers_only",
+    "packages": [
+      "P21",
+      "P22"
+    ],
+    "acceptance": "Actual enabled contract samples/receipts, auth, duplicate/unknown outcome and settlement/delivery truth proven; simulation not live proof.",
+    "evidence_classes": "provider+native DB+HTTP+ops",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R11",
+    "title": "Archive/commercial rights",
+    "applicability": "mandatory_for_proposed_paid_M1",
+    "packages": [
+      "P05",
+      "P23",
+      "P24"
+    ],
+    "acceptance": "Promised categories complete with tenant-safe manifest and retrieval; hold/retention/stop/read/export policy approved and tested.",
+    "evidence_classes": "policy+native DB+download+support",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R12",
+    "title": "Reporting/AF/command center",
+    "applicability": "mandatory_for_exposed_surfaces",
+    "packages": [
+      "P25",
+      "P26",
+      "P27",
+      "P28"
+    ],
+    "acceptance": "Reports reconcile, source/stale/partial truth preserved, real authenticated workflows pass and all 57 domains have disposition.",
+    "evidence_classes": "native DB+authenticated browser+coverage",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R13",
+    "title": "User experience/public content",
+    "applicability": "mandatory_for_exposed_surfaces",
+    "packages": [
+      "P29",
+      "P30"
+    ],
+    "acceptance": "Approved performance/device/accessibility budgets; real human keyboard/screen-reader/zoom acceptance; EN/FR/private recovery and public policy/content approved.",
+    "evidence_classes": "rendered+manual+performance+content approval",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R14",
+    "title": "Native build/artifact",
+    "applicability": "mandatory",
+    "packages": [
+      "P31"
+    ],
+    "acceptance": "Clean intended install with native lifecycle, locked inputs and complete immutable runtime identity; exact tested artifact promoted.",
+    "evidence_classes": "isolated install/build+trusted artifact",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R15",
+    "title": "Migration/restore",
+    "applicability": "mandatory",
+    "packages": [
+      "P32"
+    ],
+    "acceptance": "Current clean and populated upgrade, failure/replay/backfill and backup/key restore meet approved objectives; histories/digests reconcile.",
+    "evidence_classes": "disposable real DB+restore+timed recovery",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R16",
+    "title": "Hosted release/operations",
+    "applicability": "mandatory",
+    "packages": [
+      "P33",
+      "P34"
+    ],
+    "acceptance": "Reviewed schema/artifact promotion, protected target, cohort health, compatible rollback, monitoring/alerts/support and sustained workload accepted.",
+    "evidence_classes": "nonproduction deployment rehearsal+operations",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R17",
+    "title": "Operator and release decision",
+    "applicability": "mandatory",
+    "packages": [
+      "P35"
+    ],
+    "acceptance": "Named operators complete agreed workflows and recovery; independent domain/release owners accept current gate matrix and explicit exclusions.",
+    "evidence_classes": "operator pilot+signed decision",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  },
+  {
+    "id": "R18",
+    "title": "Expanded HR/payroll/wider rollout",
+    "applicability": "M2",
+    "packages": [
+      "P36"
+    ],
+    "acceptance": "All inherited required HRIS/payroll children and affected M1 gates requalified on expanded artifact; repeated-team value and support capacity accepted.",
+    "evidence_classes": "employer pilot+expanded release decision",
+    "status": "open",
+    "current_evidence": "Historical scoped proof may contribute after applicability check; planning creates no production PASS.",
+    "accepted_by": null,
+    "candidate_id": null,
+    "expansion_policy": "Baseline M1/M2 excludes X01-X04. Earlier expansion admission requires D14 approval and acyclic graph mutation replacing later-milestone prerequisites; not a conditional back-edge."
+  }
+]

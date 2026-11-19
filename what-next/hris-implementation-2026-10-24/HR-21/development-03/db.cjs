@@ -1,0 +1,1 @@
+const {PrismaClient}=require('@prisma/client');const url=process.env.HRIS_CORRECTNESS_DATABASE_URL;if(url!=='postgresql://hris_test@127.0.0.1:55464/stoquify_local_hris_20261024?schema=public')throw Error('Owned synthetic database required');exports.db=new PrismaClient({datasources:{db:{url}}});

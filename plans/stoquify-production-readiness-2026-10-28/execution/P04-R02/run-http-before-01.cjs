@@ -1,0 +1,9 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),{spawn,spawnSync}=require('node:child_process');
+const root=path.resolve(__dirname,'../../../..'),runner=path.join(root,'.codex-tmp/p04-r02-20261029-r1/http-run-01/runner.cjs'),archive=path.join(__dirname,'http-review/next-http-runner.cjs.source.txt');
+assert(fs.readFileSync(runner).equals(fs.readFileSync(archive)));
+const env=Object.fromEntries(Object.entries(process.env).filter(([k])=>['PATH','PATHEXT','SYSTEMROOT','WINDIR','TEMP','TMP','USERPROFILE','APPDATA','LOCALAPPDATA','COMSPEC'].includes(k.toUpperCase())));Object.assign(env,{NODE_ENV:'development',NEXT_TELEMETRY_DISABLED:'1'});
+const log=path.join(__dirname,'http-before-01.log'),fd=fs.openSync(log,'wx'),report={startedAt:new Date().toISOString(),environmentVariableNames:Object.keys(env).sort(),runnerSha256:crypto.createHash('sha256').update(fs.readFileSync(runner)).digest('hex'),phase:'before',productionData:false};
+const child=spawn(process.execPath,[runner,root,path.join(__dirname,'http-review/snapshots/before'),'before'],{cwd:root,env,windowsHide:true,stdio:['ignore',fd,fd]});let done=false,timedOut=false;
+const timer=setTimeout(()=>{timedOut=true;report.termination=spawnSync('taskkill',['/PID',String(child.pid),'/T','/F'],{windowsHide:true,stdio:'ignore',timeout:10000}).status},600000);
+function finish(code,error){if(done)return;done=true;clearTimeout(timer);fs.closeSync(fd);Object.assign(report,{finishedAt:new Date().toISOString(),exitCode:code,timedOut,error:error?.message});fs.writeFileSync(path.join(__dirname,'http-before-01-launch.json'),JSON.stringify(report,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(report));process.exitCode=code===0&&!timedOut?0:1;}
+child.once('exit',code=>finish(code));child.once('error',error=>finish(null,error));

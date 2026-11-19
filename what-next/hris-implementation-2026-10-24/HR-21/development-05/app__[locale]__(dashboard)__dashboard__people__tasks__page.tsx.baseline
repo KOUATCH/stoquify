@@ -1,0 +1,5 @@
+import {getLifecycleTaskWorkspaceAction} from '@/actions/hris/lifecycle-task.actions'
+import {HrisLifecycleTasksClient} from '@/components/hris/HrisLifecycleTasksClient'
+import {DashboardRouteState} from '@/components/dashboard/DashboardRouteState'
+import {pickLocale,localizePath} from '@/i18n/routing'
+export default async function LifecycleTasksPage({params}:{params:Promise<{locale:string}>}){const locale=pickLocale((await params).locale),result=await getLifecycleTaskWorkspaceAction();if(!result.success)return <DashboardRouteState kind={result.code==='FRESH_AUTH_REQUIRED'?'stale_session':result.status===403?'permission_denied':'error'} locale={locale} message={result.error} primaryHref={localizePath('/dashboard',locale)}/>;return <HrisLifecycleTasksClient initial={result.data} locale={locale}/>}

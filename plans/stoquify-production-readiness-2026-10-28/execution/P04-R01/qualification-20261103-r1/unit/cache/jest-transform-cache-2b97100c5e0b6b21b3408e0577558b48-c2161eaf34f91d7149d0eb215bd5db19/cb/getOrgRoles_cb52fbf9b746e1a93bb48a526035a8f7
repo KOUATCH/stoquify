@@ -1,0 +1,50 @@
+d0e3b45f37e63a1880a1614059e2fae5
+"use server";
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _rbac = require("@/lib/security/rbac");
+const _moduleentitlementservice = require("@/services/modules/module-entitlement.service");
+const _roleservice = require("@/services/roles/role.service");
+const _safeactionresponses = require("../_shared/safe-action-responses");
+const getOrgRoles = async (orgId)=>{
+    try {
+        const ctx = await (0, _rbac.requirePermission)("roles.read", {
+            resource: "Role"
+        });
+        await (0, _moduleentitlementservice.observeModuleAccess)({
+            moduleSlug: "settings",
+            organizationId: ctx.orgId,
+            userId: ctx.userId,
+            actorPermissions: ctx.permissions,
+            surfaceType: "action",
+            surface: "actions/roles/getOrgRoles.ts",
+            accessIntent: "read",
+            mode: "observe"
+        });
+        const orgRoles = await (0, _roleservice.listOrganizationRoles)({
+            ctx,
+            organizationId: orgId
+        });
+        return {
+            success: true,
+            data: orgRoles,
+            error: null
+        };
+    } catch (error) {
+        return (0, _safeactionresponses.safeSuccessActionErrorResult)(error, {
+            action: "roles.read",
+            component: "Role"
+        }, "Failed to fetch org roles");
+    }
+};
+const _default = getOrgRoles;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6XFxvaGFkYSBzYWFzXFxGb2N1c2VkIHByb2plY3RzXFxzdG9xdWlmeVxcYWN0aW9uc1xccm9sZXNcXGdldE9yZ1JvbGVzLnRzIl0sInNvdXJjZXNDb250ZW50IjpbIlwidXNlIHNlcnZlclwiO1xuXG5pbXBvcnQgeyByZXF1aXJlUGVybWlzc2lvbiB9IGZyb20gXCJAL2xpYi9zZWN1cml0eS9yYmFjXCI7XG5pbXBvcnQgeyBvYnNlcnZlTW9kdWxlQWNjZXNzIH0gZnJvbSBcIkAvc2VydmljZXMvbW9kdWxlcy9tb2R1bGUtZW50aXRsZW1lbnQuc2VydmljZVwiO1xuaW1wb3J0IHsgbGlzdE9yZ2FuaXphdGlvblJvbGVzIH0gZnJvbSBcIkAvc2VydmljZXMvcm9sZXMvcm9sZS5zZXJ2aWNlXCI7XG5pbXBvcnQgeyBzYWZlU3VjY2Vzc0FjdGlvbkVycm9yUmVzdWx0IH0gZnJvbSBcIi4uL19zaGFyZWQvc2FmZS1hY3Rpb24tcmVzcG9uc2VzXCI7XG5cbmNvbnN0IGdldE9yZ1JvbGVzID0gYXN5bmMgKG9yZ0lkPzogc3RyaW5nIHwgbnVsbCkgPT4ge1xuICB0cnkge1xuICAgIGNvbnN0IGN0eCA9IGF3YWl0IHJlcXVpcmVQZXJtaXNzaW9uKFwicm9sZXMucmVhZFwiLCB7IHJlc291cmNlOiBcIlJvbGVcIiB9KTtcblxuICAgIGF3YWl0IG9ic2VydmVNb2R1bGVBY2Nlc3Moe1xuICAgICAgbW9kdWxlU2x1ZzogXCJzZXR0aW5nc1wiLFxuICAgICAgb3JnYW5pemF0aW9uSWQ6IGN0eC5vcmdJZCxcbiAgICAgIHVzZXJJZDogY3R4LnVzZXJJZCxcbiAgICAgIGFjdG9yUGVybWlzc2lvbnM6IGN0eC5wZXJtaXNzaW9ucyxcbiAgICAgIHN1cmZhY2VUeXBlOiBcImFjdGlvblwiLFxuICAgICAgc3VyZmFjZTogXCJhY3Rpb25zL3JvbGVzL2dldE9yZ1JvbGVzLnRzXCIsXG4gICAgICBhY2Nlc3NJbnRlbnQ6IFwicmVhZFwiLFxuICAgICAgbW9kZTogXCJvYnNlcnZlXCIsXG4gICAgfSk7XG5cbiAgICBjb25zdCBvcmdSb2xlcyA9IGF3YWl0IGxpc3RPcmdhbml6YXRpb25Sb2xlcyh7IGN0eCwgb3JnYW5pemF0aW9uSWQ6IG9yZ0lkIH0pO1xuICAgIHJldHVybiB7IHN1Y2Nlc3M6IHRydWUgYXMgY29uc3QsIGRhdGE6IG9yZ1JvbGVzLCBlcnJvcjogbnVsbCB9O1xuICB9IGNhdGNoIChlcnJvcikge1xuICAgIHJldHVybiBzYWZlU3VjY2Vzc0FjdGlvbkVycm9yUmVzdWx0KGVycm9yLCB7XG4gICAgICBhY3Rpb246IFwicm9sZXMucmVhZFwiLFxuICAgICAgY29tcG9uZW50OiBcIlJvbGVcIixcbiAgICB9LCBcIkZhaWxlZCB0byBmZXRjaCBvcmcgcm9sZXNcIik7XG4gIH1cbn07XG5cbmV4cG9ydCBkZWZhdWx0IGdldE9yZ1JvbGVzO1xuIl0sIm5hbWVzIjpbImdldE9yZ1JvbGVzIiwib3JnSWQiLCJjdHgiLCJyZXF1aXJlUGVybWlzc2lvbiIsInJlc291cmNlIiwib2JzZXJ2ZU1vZHVsZUFjY2VzcyIsIm1vZHVsZVNsdWciLCJvcmdhbml6YXRpb25JZCIsInVzZXJJZCIsImFjdG9yUGVybWlzc2lvbnMiLCJwZXJtaXNzaW9ucyIsInN1cmZhY2VUeXBlIiwic3VyZmFjZSIsImFjY2Vzc0ludGVudCIsIm1vZGUiLCJvcmdSb2xlcyIsImxpc3RPcmdhbml6YXRpb25Sb2xlcyIsInN1Y2Nlc3MiLCJkYXRhIiwiZXJyb3IiLCJzYWZlU3VjY2Vzc0FjdGlvbkVycm9yUmVzdWx0IiwiYWN0aW9uIiwiY29tcG9uZW50Il0sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7K0JBZ0NBOzs7ZUFBQTs7O3NCQTlCa0M7MENBQ0U7NkJBQ0U7cUNBQ087QUFFN0MsTUFBTUEsY0FBYyxPQUFPQztJQUN6QixJQUFJO1FBQ0YsTUFBTUMsTUFBTSxNQUFNQyxJQUFBQSx1QkFBaUIsRUFBQyxjQUFjO1lBQUVDLFVBQVU7UUFBTztRQUVyRSxNQUFNQyxJQUFBQSw2Q0FBbUIsRUFBQztZQUN4QkMsWUFBWTtZQUNaQyxnQkFBZ0JMLElBQUlELEtBQUs7WUFDekJPLFFBQVFOLElBQUlNLE1BQU07WUFDbEJDLGtCQUFrQlAsSUFBSVEsV0FBVztZQUNqQ0MsYUFBYTtZQUNiQyxTQUFTO1lBQ1RDLGNBQWM7WUFDZEMsTUFBTTtRQUNSO1FBRUEsTUFBTUMsV0FBVyxNQUFNQyxJQUFBQSxrQ0FBcUIsRUFBQztZQUFFZDtZQUFLSyxnQkFBZ0JOO1FBQU07UUFDMUUsT0FBTztZQUFFZ0IsU0FBUztZQUFlQyxNQUFNSDtZQUFVSSxPQUFPO1FBQUs7SUFDL0QsRUFBRSxPQUFPQSxPQUFPO1FBQ2QsT0FBT0MsSUFBQUEsaURBQTRCLEVBQUNELE9BQU87WUFDekNFLFFBQVE7WUFDUkMsV0FBVztRQUNiLEdBQUc7SUFDTDtBQUNGO01BRUEsV0FBZXRCIn0=

@@ -1,0 +1,16 @@
+{
+  "name": "independent-reversal-completed-fr",
+  "operations": [
+    { "kind": "password", "label": "Mot de passe actuel", "user": "reverser" },
+    { "kind": "click", "role": "button", "text": "Vérifier l’identité" },
+    { "kind": "wait", "text": "Identité vérifiée. Réessayez l’action de paiement pour continuer.", "timeout": 30000 },
+    { "kind": "audit", "role": "region", "text": "Paiements clients" },
+    { "kind": "screenshot" },
+    { "kind": "click", "role": "button", "text": "Réessayer la même annulation" },
+    { "kind": "wait", "text": "Paiement client annulé. La créance affectée est rétablie.", "timeout": 60000 },
+    { "kind": "wait", "text": "Montant dû actuel: 4\u00a0FCFA", "timeout": 60000 },
+    { "kind": "assertCount", "role": "button", "text": "Examiner l’annulation", "count": 0 },
+    { "kind": "inspect" },
+    { "kind": "screenshot" }
+  ]
+}

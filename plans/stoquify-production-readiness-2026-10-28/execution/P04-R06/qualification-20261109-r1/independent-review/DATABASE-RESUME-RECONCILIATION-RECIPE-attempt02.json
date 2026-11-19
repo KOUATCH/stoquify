@@ -1,0 +1,56 @@
+{
+  "at": "2026-11-10T10:24:26.309Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Exact read-only reconciliation of actual retained database readiness and ownership after ambiguous launcher completion",
+  "files": [
+    {
+      "path": "database/reconcile-resume-attempt02.cjs",
+      "sha256": "c03aabee0dacb64acb9460e7f35779be68bd2ce3c3f2bec170c810a08d1d1352",
+      "syntaxExit": 0
+    },
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "7a370fe26b060921635dd2d32c73fc777bdd9584f2f38582e422af78b26bb598",
+      "syntaxExit": 0
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "276e495ce09869bf75d701607e3e6d209866d5d52062efdc8090add85a0b444f",
+      "syntaxExit": 0
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "sha256": "254a9e6f3ec0eef369f13f4385553c0db6aa8e48428a951c6b7014d3688c47f7",
+      "syntaxExit": 0
+    },
+    {
+      "path": "database/resume-attempt02.json",
+      "sha256": "8adfa753da7027eac8a9ddb05be86cd060321fd4443e377f4f28556667be8a23"
+    },
+    {
+      "path": "database/suspend-attempt02.json",
+      "sha256": "f45b7ba50a737518a3e16496d86dec14cb1f996a35273dbe0ea02ffbc3289d31"
+    }
+  ],
+  "observedTrigger": "resume-attempt02.json records pg_ctl exitCode 0 together with spawnSync ETIMEDOUT; original receipt must remain unchanged",
+  "sideEffects": [
+    "Read-only CIM process inspection",
+    "Read-only SQL and repeatable-read snapshot on exact isolated databases",
+    "New sanitized reconciliation and snapshot receipts under the package"
+  ],
+  "reviewFindings": [
+    "Validates exact owned PID, process executable and UTC creation time against cluster PID file and live postmaster start identity.",
+    "Rejects residual owned pg_ctl launchers and any other database client.",
+    "Verifies exact host, port, real data directory, both migration ledgers and empty build database.",
+    "Compares complete full-database business, session and audit digests with both suspended and resumed snapshots.",
+    "Does not start, stop, migrate, seed or mutate database rows.",
+    "Records original launcher anomaly without inferring its cause; present state proof is separate from clean launcher completion."
+  ],
+  "conditions": [
+    "Only an actual passing reconciliation plus independent outcome review permits build continuation.",
+    "No rerun of mutation or deletion of the original timeout evidence.",
+    "Preserve any unexpected process, connection or digest difference for review."
+  ],
+  "qualificationPassed": false
+}

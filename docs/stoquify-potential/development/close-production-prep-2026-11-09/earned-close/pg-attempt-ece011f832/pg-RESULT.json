@@ -1,0 +1,50 @@
+{
+  "began": "2026-11-09T20:42:53.584Z",
+  "passed": false,
+  "database": "stoquify_replay_close_earned_20261109_ece011f832",
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-earned-20261109-ece011f832",
+  "source": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-earned-20261109-ece011f832\\source",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\earned-close\\pg-attempt-ece011f832",
+  "privateClient": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-retention-client-20261109-b4075974cd\\orm\\client",
+  "catalogSha256": "e894a828415592f4c2ab155993b1923ed12245374a21b0184ae8a375495190aa",
+  "runnerSha256": "27fb22021acaf9d5ccf5dcabb7f9fb826fde3bcf2f934320c93071dd54a0fd04",
+  "checks": [
+    {
+      "name": "fresh122ReplayTwice",
+      "certification": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT"
+    },
+    {
+      "name": "earnedSystemCloseServiceCases",
+      "passedTests": 6,
+      "skipped": 0,
+      "namedPhaseChecks": [
+        "actual-setup-pos-cash-shift",
+        "assessment-before-schedules",
+        "assessment-after-schedules",
+        "actual-independent-schedules-and-ready",
+        "actual-independent-certification-retention",
+        "actual-seal-and-reopen",
+        "assessment-after-correction-before-new-schedules",
+        "actual-correction-and-historical-recovery",
+        "assessment-corrected-current",
+        "actual-recertification-and-reseal"
+      ],
+      "earnedTerminalStates": true,
+      "seededTerminalStates": false,
+      "sqlInventoryUnchanged": true,
+      "scope": "Actual internal system certification only; no statutory approval",
+      "observedCounts": {
+        "certifiedExports": 2,
+        "periodCloseEvents": 2,
+        "periodReopenEvents": 1,
+        "journals": 3,
+        "providerAccounts": 0,
+        "payrollRuns": 0,
+        "statutoryCertifiedDocuments": 0
+      }
+    }
+  ],
+  "limitation": "Real isolated earned internal system-close lifecycle on synthetic cash-sale facts; statutory approval, real providers, hosted delivery and browser qualification remain excluded.",
+  "cleanupFailure": "pg-stop failed; retained evidence available",
+  "ended": "2026-11-09T20:48:54.185Z"
+}

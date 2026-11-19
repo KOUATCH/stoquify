@@ -16,6 +16,8 @@ import {
   exportAccountantTrustPackInputSchema,
 } from "@/services/accounting/data-trust.schemas"
 import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
+import { closeEvidenceAcceptanceControl } from "@/services/accounting/close-evidence-acceptance-context"
+import { ForbiddenError } from "@/services/_shared/action-errors"
 
 export type { AccountantPortalData, AccountantTrustPackExport }
 
@@ -37,13 +39,17 @@ const getPortal = protect<unknown, AccountantPortalData>(
       accountantUserId: ctx.userId,
       capability: "READ",
     })
-    return getAccountantPortalData({
+    const result = await getAccountantPortalData({
       organizationId: access.organizationId,
       periodId: parsed?.periodId,
       startDate: parsed?.startDate,
       endDate: parsed?.endDate,
       limit: parsed?.limit,
     })
+    const current = await resolveAccountantClientAccess({ homeOrganizationId: ctx.orgId,
+      clientOrganizationId: parsed?.clientOrganizationId, accountantUserId: ctx.userId, capability: "READ" })
+    if (current.grant?.id !== access.grant?.id) throw new ForbiddenError("Client mandate changed.")
+    return result
   },
 )
 
@@ -71,6 +77,9 @@ const exportTrustPack = protect<unknown, AccountantTrustPackExport>(
       exportedById: ctx.userId,
       actorPermissions: ctx.permissions,
       lastAuthAt,
+      ...(access.mode === "DELEGATED_ACCOUNTANT"
+        ? { authority: { homeOrganizationId: ctx.orgId, session: closeEvidenceAcceptanceControl(ctx).session } }
+        : {}),
       periodId: parsed?.periodId,
       startDate: parsed?.startDate,
       endDate: parsed?.endDate,

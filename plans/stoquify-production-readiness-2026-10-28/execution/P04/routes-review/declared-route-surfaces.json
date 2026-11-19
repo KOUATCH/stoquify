@@ -1,0 +1,1414 @@
+{
+  "evidenceClass": "syntax_extraction_not_guard_proof",
+  "surfaces": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 29,
+      "key": "accounting-opening-position",
+      "source": "{\n    key: \"accounting-opening-position\",\n    route: \"/dashboard/accounting/opening-position\",\n    resource: \"FinancialOpeningRevision\",\n    title: \"Opening position preview\",\n    permissions: [\"accounting.close.read\"],\n    module: { moduleSlug: \"accounting\", surface: \"accounting-opening-position\", accessIntent: \"read\", mode: \"enforce\" },\n  }",
+      "route": "\"/dashboard/accounting/opening-position\"",
+      "permissions": "[\"accounting.close.read\"]",
+      "module": "{ moduleSlug: \"accounting\", surface: \"accounting-opening-position\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"FinancialOpeningRevision\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 37,
+      "key": "accounting-dashboard",
+      "source": "{\n    key: \"accounting-dashboard\",\n    route: \"/dashboard/accounting\",\n    resource: \"AccountingDashboard\",\n    title: \"Accounting dashboard\",\n    permissions: [\"accounting.reports.read\"],\n  }",
+      "route": "\"/dashboard/accounting\"",
+      "permissions": "[\"accounting.reports.read\"]",
+      "resource": "\"AccountingDashboard\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 44,
+      "key": "accounting-accountant-access",
+      "source": "{\n    key: \"accounting-accountant-access\",\n    route: \"/dashboard/accounting/accountant-access\",\n    resource: \"AccountingAccountantAccess\",\n    title: \"Accountant access\",\n    permissions: [\"accounting.close.accountant.invite\"],\n  }",
+      "route": "\"/dashboard/accounting/accountant-access\"",
+      "permissions": "[\"accounting.close.accountant.invite\"]",
+      "resource": "\"AccountingAccountantAccess\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 51,
+      "key": "accounting-accountant-portal",
+      "source": "{\n    key: \"accounting-accountant-portal\",\n    route: \"/dashboard/accounting/accountant-portal\",\n    resource: \"AccountingAccountantPortal\",\n    title: \"Accountant portal\",\n    permissions: [\"accounting.audit.read\"],\n  }",
+      "route": "\"/dashboard/accounting/accountant-portal\"",
+      "permissions": "[\"accounting.audit.read\"]",
+      "resource": "\"AccountingAccountantPortal\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 58,
+      "key": "accounting-accountant-portfolio",
+      "source": "{\n    key: \"accounting-accountant-portfolio\",\n    route: \"/dashboard/accounting/accountant-portfolio\",\n    resource: \"AccountingAccountantPortal\",\n    title: \"Accountant portfolio\",\n    permissions: [\"accounting.audit.read\"],\n    module: { moduleSlug: \"accounting\", surface: \"accounting-accountant-portfolio\", accessIntent: \"read\", mode: \"enforce\" },\n  }",
+      "route": "\"/dashboard/accounting/accountant-portfolio\"",
+      "permissions": "[\"accounting.audit.read\"]",
+      "module": "{ moduleSlug: \"accounting\", surface: \"accounting-accountant-portfolio\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"AccountingAccountantPortal\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 66,
+      "key": "accounting-accounts",
+      "source": "{\n    key: \"accounting-accounts\",\n    route: \"/dashboard/accounting/accounts\",\n    resource: \"AccountingChartOfAccounts\",\n    title: \"Chart of accounts\",\n    permissions: [\"accounting.accounts.read\"],\n  }",
+      "route": "\"/dashboard/accounting/accounts\"",
+      "permissions": "[\"accounting.accounts.read\"]",
+      "resource": "\"AccountingChartOfAccounts\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 73,
+      "key": "accounting-close",
+      "source": "{\n    key: \"accounting-close\",\n    route: \"/dashboard/accounting/close\",\n    resource: \"AccountingCloseCenter\",\n    title: \"Close center\",\n    permissions: [\"accounting.close.read\"],\n    module: { moduleSlug: \"close_assurance\", surface: \"accounting-close\", accessIntent: \"read\", mode: \"enforce\" },\n  }",
+      "route": "\"/dashboard/accounting/close\"",
+      "permissions": "[\"accounting.close.read\"]",
+      "module": "{ moduleSlug: \"close_assurance\", surface: \"accounting-close\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"AccountingCloseCenter\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 81,
+      "key": "accounting-close-period",
+      "source": "{\n    key: \"accounting-close-period\",\n    route: \"/dashboard/accounting/close/[periodId]\",\n    resource: \"AccountingCloseCenter\",\n    title: \"Close assurance details\",\n    permissions: [\"accounting.close.read\"],\n    module: { moduleSlug: \"close_assurance\", surface: \"accounting-close-period\", accessIntent: \"read\", mode: \"enforce\" },\n  }",
+      "route": "\"/dashboard/accounting/close/[periodId]\"",
+      "permissions": "[\"accounting.close.read\"]",
+      "module": "{ moduleSlug: \"close_assurance\", surface: \"accounting-close-period\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"AccountingCloseCenter\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 89,
+      "key": "accounting-control-center",
+      "source": "{\n    key: \"accounting-control-center\",\n    route: \"/dashboard/accounting/control-center\",\n    resource: \"AccountingControlCenter\",\n    title: \"Accounting control center\",\n    permissions: [\"accounting.setup.manage\"],\n  }",
+      "route": "\"/dashboard/accounting/control-center\"",
+      "permissions": "[\"accounting.setup.manage\"]",
+      "resource": "\"AccountingControlCenter\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 96,
+      "key": "accounting-journals",
+      "source": "{\n    key: \"accounting-journals\",\n    route: \"/dashboard/accounting/journals\",\n    resource: \"AccountingJournals\",\n    title: \"Journal management\",\n    permissions: [\"accounting.journal.read\"],\n  }",
+      "route": "\"/dashboard/accounting/journals\"",
+      "permissions": "[\"accounting.journal.read\"]",
+      "resource": "\"AccountingJournals\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 103,
+      "key": "accounting-journals-new",
+      "source": "{\n    key: \"accounting-journals-new\",\n    route: \"/dashboard/accounting/journals/new\",\n    resource: \"AccountingJournals\",\n    title: \"Create journal entry\",\n    permissions: [\"accounting.journal.create\", \"accounting.journal.read\"],\n    permissionMode: \"all\",\n  }",
+      "route": "\"/dashboard/accounting/journals/new\"",
+      "permissions": "[\"accounting.journal.create\", \"accounting.journal.read\"]",
+      "permissionMode": "\"all\"",
+      "resource": "\"AccountingJournals\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 111,
+      "key": "accounting-reports-financial-statements",
+      "source": "{\n    key: \"accounting-reports-financial-statements\",\n    route: \"/dashboard/accounting/reports/financial-statements\",\n    resource: \"AccountingFinancialStatements\",\n    title: \"Financial statements\",\n    permissions: [\"accounting.reports.read\"],\n  }",
+      "route": "\"/dashboard/accounting/reports/financial-statements\"",
+      "permissions": "[\"accounting.reports.read\"]",
+      "resource": "\"AccountingFinancialStatements\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 118,
+      "key": "accounting-reports-trial-balance",
+      "source": "{\n    key: \"accounting-reports-trial-balance\",\n    route: \"/dashboard/accounting/reports/trial-balance\",\n    resource: \"AccountingTrialBalance\",\n    title: \"Trial balance\",\n    permissions: [\"accounting.reports.read\"],\n  }",
+      "route": "\"/dashboard/accounting/reports/trial-balance\"",
+      "permissions": "[\"accounting.reports.read\"]",
+      "resource": "\"AccountingTrialBalance\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "line": 125,
+      "key": "accounting-setup",
+      "source": "{\n    key: \"accounting-setup\",\n    route: \"/dashboard/accounting/setup\",\n    resource: \"AccountingSetup\",\n    title: \"Accounting setup\",\n    permissions: [\"accounting.setup.manage\"],\n  }",
+      "route": "\"/dashboard/accounting/setup\"",
+      "permissions": "[\"accounting.setup.manage\"]",
+      "resource": "\"AccountingSetup\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts",
+      "line": 30,
+      "key": "analytics-dashboard",
+      "source": "{\n    key: \"analytics-dashboard\",\n    route: \"/dashboard/analytics\",\n    title: \"Analytics dashboard\",\n    resource: \"BusinessPulseAnalytics\",\n    permissions: [\"reports.read\", \"dashboard.read\"],\n    permissionMode: \"any\",\n    module: { moduleSlug: \"analytics\" },\n  }",
+      "route": "\"/dashboard/analytics\"",
+      "permissions": "[\"reports.read\", \"dashboard.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{ moduleSlug: \"analytics\" }",
+      "resource": "\"BusinessPulseAnalytics\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts",
+      "line": 39,
+      "key": "analytics-reports",
+      "source": "{\n    key: \"analytics-reports\",\n    route: \"/dashboard/analytics/reports\",\n    title: \"Analytics reports\",\n    resource: \"AnalyticsReports\",\n    permissions: [\"reports.read\"],\n  }",
+      "route": "\"/dashboard/analytics/reports\"",
+      "permissions": "[\"reports.read\"]",
+      "resource": "\"AnalyticsReports\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts",
+      "line": 46,
+      "key": "analytics-referrals",
+      "source": "{\n    key: \"analytics-referrals\",\n    route: \"/dashboard/analytics/referrals\",\n    title: \"Referral funnel\",\n    resource: \"ReferralFunnel\",\n    permissions: [\"analytics.read\"],\n  }",
+      "route": "\"/dashboard/analytics/referrals\"",
+      "permissions": "[\"analytics.read\"]",
+      "resource": "\"ReferralFunnel\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/assurance/assurance-route-data-access.ts",
+      "line": 27,
+      "key": "assurance-control-tower",
+      "source": "{\n    key: \"assurance-control-tower\",\n    route: \"/dashboard/assurance/control-tower\",\n    title: \"Assurance control tower\",\n    resource: \"WorkflowAssuranceControlTower\",\n    permissions: [\"controls.audit.read\"],\n  }",
+      "route": "\"/dashboard/assurance/control-tower\"",
+      "permissions": "[\"controls.audit.read\"]",
+      "resource": "\"WorkflowAssuranceControlTower\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/assurance/assurance-route-data-access.ts",
+      "line": 34,
+      "key": "assurance-control-tower-incident",
+      "source": "{\n    key: \"assurance-control-tower-incident\",\n    route: \"/dashboard/assurance/control-tower/incidents/[incidentId]\",\n    title: \"Assurance control tower incident\",\n    resource: \"WorkflowAssuranceControlTower\",\n    permissions: [\"controls.audit.read\"],\n  }",
+      "route": "\"/dashboard/assurance/control-tower/incidents/[incidentId]\"",
+      "permissions": "[\"controls.audit.read\"]",
+      "resource": "\"WorkflowAssuranceControlTower\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/cashDrawer/cash-drawer-route-data-access.ts",
+      "line": 11,
+      "key": "cash-drawer-legacy-redirect",
+      "source": "{\n    key: \"cash-drawer-legacy-redirect\",\n    route: \"/dashboard/cashDrawer\",\n    title: \"Cash drawer\",\n    resource: \"LegacyCashDrawerRedirect\",\n    permissions: [\"finance.cash-drawer.read\", \"finance.read\"],\n    permissionMode: \"any\",\n  }",
+      "route": "\"/dashboard/cashDrawer\"",
+      "permissions": "[\"finance.cash-drawer.read\", \"finance.read\"]",
+      "permissionMode": "\"any\"",
+      "resource": "\"LegacyCashDrawerRedirect\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/change-password/change-password-route-data-access.ts",
+      "line": 20,
+      "key": "change-password",
+      "source": "{\n    key: \"change-password\",\n    route: \"/dashboard/change-password\",\n    title: \"Change password\",\n    resource: \"ChangePasswordPage\",\n    permissions: [\"profile.password.update\"],\n    permissionMode: \"single\",\n    noActiveOrgTitle: \"Change password needs an active organization\",\n    permissionDeniedTitle: \"Change password is not available for this role\",\n    permissionDeniedMessage: \"Ask your administrator for permission to update your own password.\",\n  }",
+      "route": "\"/dashboard/change-password\"",
+      "permissions": "[\"profile.password.update\"]",
+      "permissionMode": "\"single\"",
+      "resource": "\"ChangePasswordPage\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/compliance/compliance-route-data-access.ts",
+      "line": 20,
+      "key": "compliance-dashboard",
+      "source": "{\n    key: \"compliance-dashboard\",\n    route: \"/dashboard/compliance\",\n    title: \"Compliance dashboard\",\n    resource: \"ComplianceCenterPage\",\n    permissions: [\"compliance.documents.read\"],\n    permissionMode: \"single\",\n    noActiveOrgTitle: \"Compliance dashboard needs an active organization\",\n    permissionDeniedTitle: \"Compliance dashboard is not available for this role\",\n    permissionDeniedMessage: \"This surface requires access to compliance documents.\",\n  }",
+      "route": "\"/dashboard/compliance\"",
+      "permissions": "[\"compliance.documents.read\"]",
+      "permissionMode": "\"single\"",
+      "resource": "\"ComplianceCenterPage\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts",
+      "line": 29,
+      "key": "customers-dashboard",
+      "source": "{\n    key: \"customers-dashboard\",\n    route: \"/dashboard/customers\",\n    resource: \"CustomerManagement\",\n    title: \"Customer management dashboard\",\n    permissions: [\"customers.read\"],\n    module: {\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/customers\",\n      accessIntent: \"read\",\n    },\n  }",
+      "route": "\"/dashboard/customers\"",
+      "permissions": "[\"customers.read\"]",
+      "module": "{\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/customers\",\n      accessIntent: \"read\",\n    }",
+      "resource": "\"CustomerManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts",
+      "line": 41,
+      "key": "customers-new",
+      "source": "{\n    key: \"customers-new\",\n    route: \"/dashboard/customers/new\",\n    resource: \"CustomerManagement\",\n    title: \"Create customer\",\n    permissions: [\"customers.read\", \"customers.create\"],\n    module: {\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/customers/new\",\n      accessIntent: \"write\",\n    },\n  }",
+      "route": "\"/dashboard/customers/new\"",
+      "permissions": "[\"customers.read\", \"customers.create\"]",
+      "module": "{\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/customers/new\",\n      accessIntent: \"write\",\n    }",
+      "resource": "\"CustomerManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts",
+      "line": 53,
+      "key": "customers-detail",
+      "source": "{\n    key: \"customers-detail\",\n    route: \"/dashboard/customers/[id]\",\n    resource: \"CustomerManagement\",\n    title: \"Customer analytics\",\n    permissions: [\"customers.read\", \"customers.analytics.read\"],\n    module: {\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/customers/[id]\",\n      accessIntent: \"read\",\n    },\n  }",
+      "route": "\"/dashboard/customers/[id]\"",
+      "permissions": "[\"customers.read\", \"customers.analytics.read\"]",
+      "module": "{\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/customers/[id]\",\n      accessIntent: \"read\",\n    }",
+      "resource": "\"CustomerManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts",
+      "line": 65,
+      "key": "customers-edit",
+      "source": "{\n    key: \"customers-edit\",\n    route: \"/dashboard/customers/[id]/edit\",\n    resource: \"CustomerManagement\",\n    title: \"Edit customer\",\n    permissions: [\"customers.read\", \"customers.update\"],\n    module: {\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/customers/[id]/edit\",\n      accessIntent: \"write\",\n    },\n  }",
+      "route": "\"/dashboard/customers/[id]/edit\"",
+      "permissions": "[\"customers.read\", \"customers.update\"]",
+      "module": "{\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/customers/[id]/edit\",\n      accessIntent: \"write\",\n    }",
+      "resource": "\"CustomerManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts",
+      "line": 77,
+      "key": "customers-orders",
+      "source": "{\n    key: \"customers-orders\",\n    route: \"/dashboard/customers/[id]/orders\",\n    resource: \"CustomerManagement\",\n    title: \"Customer orders\",\n    permissions: [\"customers.read\", \"customers.orders.read\"],\n    module: {\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/customers/[id]/orders\",\n      accessIntent: \"read\",\n    },\n  }",
+      "route": "\"/dashboard/customers/[id]/orders\"",
+      "permissions": "[\"customers.read\", \"customers.orders.read\"]",
+      "module": "{\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/customers/[id]/orders\",\n      accessIntent: \"read\",\n    }",
+      "resource": "\"CustomerManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts",
+      "line": 89,
+      "key": "customers-statement",
+      "source": "{\n    key: \"customers-statement\",\n    route: \"/dashboard/customers/[id]/statement\",\n    resource: \"CustomerManagement\",\n    title: \"Customer statement\",\n    permissions: [\"customers.read\", \"accounting.exports.create\"],\n    module: {\n      moduleSlug: \"accounting\",\n      surface: \"/dashboard/customers/[id]/statement\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    },\n  }",
+      "route": "\"/dashboard/customers/[id]/statement\"",
+      "permissions": "[\"customers.read\", \"accounting.exports.create\"]",
+      "module": "{\n      moduleSlug: \"accounting\",\n      surface: \"/dashboard/customers/[id]/statement\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    }",
+      "resource": "\"CustomerManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts",
+      "line": 17,
+      "key": "daily-digest",
+      "source": "{\n    key: \"daily-digest\",\n    route: \"/dashboard/daily-digest\",\n    title: \"Daily Digest\",\n    resource: \"KontavaDailyHabitDigest\",\n    permissions: [\"dashboard.read\", \"finance.read\", \"accounting.close.read\", \"inventory.read\", \"analytics.read\"],\n    permissionMode: \"any\",\n    noActiveOrgPrimaryHref: \"/dashboard\",\n    permissionDeniedPrimaryHref: \"/dashboard\",\n  }",
+      "route": "\"/dashboard/daily-digest\"",
+      "permissions": "[\"dashboard.read\", \"finance.read\", \"accounting.close.read\", \"inventory.read\", \"analytics.read\"]",
+      "permissionMode": "\"any\"",
+      "resource": "\"KontavaDailyHabitDigest\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 25,
+      "key": "finance-dashboard",
+      "source": "{\n    key: \"finance-dashboard\",\n    route: \"/dashboard/finance\",\n    title: \"Finance dashboard\",\n    resource: \"FinanceDashboard\",\n    permissions: [\"finance.dashboard.read\", \"finance.read\"],\n  }",
+      "route": "\"/dashboard/finance\"",
+      "permissions": "[\"finance.dashboard.read\", \"finance.read\"]",
+      "resource": "\"FinanceDashboard\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 32,
+      "key": "finance-analytics",
+      "source": "{\n    key: \"finance-analytics\",\n    route: \"/dashboard/finance/analytics\",\n    title: \"Finance analytics\",\n    resource: \"FinanceAnalytics\",\n    permissions: [\"finance.analytics.read\", \"finance.read\"],\n  }",
+      "route": "\"/dashboard/finance/analytics\"",
+      "permissions": "[\"finance.analytics.read\", \"finance.read\"]",
+      "resource": "\"FinanceAnalytics\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 39,
+      "key": "finance-receivables",
+      "source": "{\n    key: \"finance-receivables\",\n    route: \"/dashboard/finance/receivables\",\n    title: \"Finance receivables\",\n    resource: \"FinanceReceivablesSurface\",\n    permissions: [\"finance.receivables.read\", \"finance.read\"],\n  }",
+      "route": "\"/dashboard/finance/receivables\"",
+      "permissions": "[\"finance.receivables.read\", \"finance.read\"]",
+      "resource": "\"FinanceReceivablesSurface\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 46,
+      "key": "finance-receivables-history",
+      "source": "{\n    key: \"finance-receivables-history\",\n    route: \"/dashboard/finance/receivables/history\",\n    title: \"Customer AR history\",\n    resource: \"AROpenItemsHistorySurface\",\n    permissions: [\"finance.receivables.read\", \"finance.read\"],\n  }",
+      "route": "\"/dashboard/finance/receivables/history\"",
+      "permissions": "[\"finance.receivables.read\", \"finance.read\"]",
+      "resource": "\"AROpenItemsHistorySurface\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 53,
+      "key": "finance-payables",
+      "source": "{\n    key: \"finance-payables\",\n    route: \"/dashboard/finance/payables\",\n    title: \"Finance payables\",\n    resource: \"FinancePayablesSurface\",\n    permissions: [\"finance.payables.read\", \"finance.read\", \"purchasing.ap.invoice.view\"],\n  }",
+      "route": "\"/dashboard/finance/payables\"",
+      "permissions": "[\"finance.payables.read\", \"finance.read\", \"purchasing.ap.invoice.view\"]",
+      "resource": "\"FinancePayablesSurface\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 60,
+      "key": "finance-payments",
+      "source": "{\n    key: \"finance-payments\",\n    route: \"/dashboard/finance/payments\",\n    title: \"Finance payments\",\n    resource: \"FinancePaymentsSurface\",\n    permissions: [\"finance.payments.read\", \"finance.read\", \"payments.provider-account.read\"],\n  }",
+      "route": "\"/dashboard/finance/payments\"",
+      "permissions": "[\"finance.payments.read\", \"finance.read\", \"payments.provider-account.read\"]",
+      "resource": "\"FinancePaymentsSurface\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 67,
+      "key": "finance-cash-flow",
+      "source": "{\n    key: \"finance-cash-flow\",\n    route: \"/dashboard/finance/cash-flow\",\n    title: \"Finance cash flow dashboard\",\n    resource: \"FinanceCashFlowDashboard\",\n    permissions: [\"finance.cash-flow.read\", \"finance.read\", \"finance.analytics.read\"],\n  }",
+      "route": "\"/dashboard/finance/cash-flow\"",
+      "permissions": "[\"finance.cash-flow.read\", \"finance.read\", \"finance.analytics.read\"]",
+      "resource": "\"FinanceCashFlowDashboard\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 74,
+      "key": "finance-cash-drawer",
+      "source": "{\n    key: \"finance-cash-drawer\",\n    route: \"/dashboard/finance/cash-drawer\",\n    title: \"Finance cash drawer\",\n    resource: \"FinanceCashDrawer\",\n    permissions: [\"finance.cash-drawer.read\", \"finance.read\"],\n  }",
+      "route": "\"/dashboard/finance/cash-drawer\"",
+      "permissions": "[\"finance.cash-drawer.read\", \"finance.read\"]",
+      "resource": "\"FinanceCashDrawer\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 81,
+      "key": "finance-cash-payment-history",
+      "source": "{\n    key: \"finance-cash-payment-history\",\n    route: \"/dashboard/finance/cash-payment-history\",\n    title: \"Cash and payment history\",\n    resource: \"CashPaymentHistorySurface\",\n    permissions: [\n      \"finance.cash-drawer.read\",\n      \"finance.read\",\n      \"payments.reconciliation.read\",\n      \"finance.payments.read\",\n      \"pos.read\",\n      \"OPERATE_POS\",\n    ],\n    modules: [\n      {\n        moduleSlug: \"cash_drawer\",\n        surface: \"actions/pos/cash-payment-history.actions.ts:getCashPaymentHistoryAction\",\n        accessIntent: \"read\",\n        moduleLockedTitle: \"Cash drawer is not enabled for this tenant\",\n        moduleLockedMessage:\n          \"Enable the cash drawer module so cash and payment history can load drawer-backed payment movements.\",\n      },\n      {\n        moduleSlug: \"payment_reconciliation\",\n        surface: \"actions/pos/cash-payment-history.actions.ts:getCashPaymentHistoryAction\",\n        accessIntent: \"read\",\n        moduleLockedTitle: \"Payment reconciliation is not enabled for this tenant\",\n        moduleLockedMessage:\n          \"Enable payment reconciliation so payment settlement and reconciliation lineage can be displayed for this history surface.\",\n      },\n    ],\n  }",
+      "route": "\"/dashboard/finance/cash-payment-history\"",
+      "permissions": "[\n      \"finance.cash-drawer.read\",\n      \"finance.read\",\n      \"payments.reconciliation.read\",\n      \"finance.payments.read\",\n      \"pos.read\",\n      \"OPERATE_POS\",\n    ]",
+      "modules": "[\n      {\n        moduleSlug: \"cash_drawer\",\n        surface: \"actions/pos/cash-payment-history.actions.ts:getCashPaymentHistoryAction\",\n        accessIntent: \"read\",\n        moduleLockedTitle: \"Cash drawer is not enabled for this tenant\",\n        moduleLockedMessage:\n          \"Enable the cash drawer module so cash and payment history can load drawer-backed payment movements.\",\n      },\n      {\n        moduleSlug: \"payment_reconciliation\",\n        surface: \"actions/pos/cash-payment-history.actions.ts:getCashPaymentHistoryAction\",\n        accessIntent: \"read\",\n        moduleLockedTitle: \"Payment reconciliation is not enabled for this tenant\",\n        moduleLockedMessage:\n          \"Enable payment reconciliation so payment settlement and reconciliation lineage can be displayed for this history surface.\",\n      },\n    ]",
+      "resource": "\"CashPaymentHistorySurface\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 113,
+      "key": "finance-reconciliation",
+      "source": "{\n    key: \"finance-reconciliation\",\n    route: \"/dashboard/finance/reconciliation\",\n    title: \"Payment reconciliation\",\n    resource: \"PaymentReconciliationWorkbench\",\n    permissions: [\"payments.reconciliation.read\"],\n    module: {\n      moduleSlug: \"payment_reconciliation\",\n      surface: \"/dashboard/finance/reconciliation\",\n      accessIntent: \"read\",\n      moduleLockedTitle: \"Payment reconciliation is not enabled for this tenant\",\n      moduleLockedMessage:\n        \"Enable the payment reconciliation module so cash, bank, card, or mobile-money reconciliation results can be validated by this surface.\",\n    },\n  }",
+      "route": "\"/dashboard/finance/reconciliation\"",
+      "permissions": "[\"payments.reconciliation.read\"]",
+      "module": "{\n      moduleSlug: \"payment_reconciliation\",\n      surface: \"/dashboard/finance/reconciliation\",\n      accessIntent: \"read\",\n      moduleLockedTitle: \"Payment reconciliation is not enabled for this tenant\",\n      moduleLockedMessage:\n        \"Enable the payment reconciliation module so cash, bank, card, or mobile-money reconciliation results can be validated by this surface.\",\n    }",
+      "resource": "\"PaymentReconciliationWorkbench\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 128,
+      "key": "finance-costs",
+      "source": "{\n    key: \"finance-costs\",\n    route: \"/dashboard/finance/costs\",\n    title: \"Finance cost analysis\",\n    resource: \"FinanceCostsDashboard\",\n    permissions: [\"finance.costs.read\", \"finance.read\", \"finance.analytics.read\"],\n  }",
+      "route": "\"/dashboard/finance/costs\"",
+      "permissions": "[\"finance.costs.read\", \"finance.read\", \"finance.analytics.read\"]",
+      "resource": "\"FinanceCostsDashboard\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 135,
+      "key": "finance-sales",
+      "source": "{\n    key: \"finance-sales\",\n    route: \"/dashboard/finance/sales\",\n    title: \"Finance sales dashboard\",\n    resource: \"FinanceSales\",\n    permissions: [\"sales.analytics.read\", \"finance.read\"],\n  }",
+      "route": "\"/dashboard/finance/sales\"",
+      "permissions": "[\"sales.analytics.read\", \"finance.read\"]",
+      "resource": "\"FinanceSales\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 142,
+      "key": "finance-retail",
+      "source": "{\n    key: \"finance-retail\",\n    route: \"/dashboard/finance/retail\",\n    title: \"Retail finance dashboard\",\n    resource: \"FinanceRetailDashboard\",\n    permissions: [\"finance.dashboard.read\", \"finance.read\"],\n  }",
+      "route": "\"/dashboard/finance/retail\"",
+      "permissions": "[\"finance.dashboard.read\", \"finance.read\"]",
+      "resource": "\"FinanceRetailDashboard\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 149,
+      "key": "finance-profitability",
+      "source": "{\n    key: \"finance-profitability\",\n    route: \"/dashboard/finance/profitability\",\n    title: \"Finance profitability dashboard\",\n    resource: \"FinanceProfitabilityDashboard\",\n    permissions: [\"finance.profitability.read\", \"finance.read\", \"finance.analytics.read\"],\n  }",
+      "route": "\"/dashboard/finance/profitability\"",
+      "permissions": "[\"finance.profitability.read\", \"finance.read\", \"finance.analytics.read\"]",
+      "resource": "\"FinanceProfitabilityDashboard\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 156,
+      "key": "finance-profit-loss",
+      "source": "{\n    key: \"finance-profit-loss\",\n    route: \"/dashboard/finance/profit-loss\",\n    title: \"Finance profit and loss dashboard\",\n    resource: \"FinanceProfitLossDashboard\",\n    permissions: [\"finance.profitability.read\", \"finance.read\", \"finance.analytics.read\"],\n  }",
+      "route": "\"/dashboard/finance/profit-loss\"",
+      "permissions": "[\"finance.profitability.read\", \"finance.read\", \"finance.analytics.read\"]",
+      "resource": "\"FinanceProfitLossDashboard\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 163,
+      "key": "finance-cash-command",
+      "source": "{\n    key: \"finance-cash-command\",\n    route: \"/dashboard/finance/cash-command\",\n    title: \"Cash Command Intelligence\",\n    resource: \"KontavaCashCommand\",\n    permissions: [\"finance.read\", \"dashboard.read\"],\n  }",
+      "route": "\"/dashboard/finance/cash-command\"",
+      "permissions": "[\"finance.read\", \"dashboard.read\"]",
+      "resource": "\"KontavaCashCommand\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 170,
+      "key": "finance-stock-to-cash",
+      "source": "{\n    key: \"finance-stock-to-cash\",\n    route: \"/dashboard/finance/stock-to-cash\",\n    title: \"Stock-to-Cash Flow\",\n    resource: \"KontavaStockToCashFlow\",\n    permissions: [\"finance.read\", \"dashboard.read\", \"inventory.read\"],\n  }",
+      "route": "\"/dashboard/finance/stock-to-cash\"",
+      "permissions": "[\"finance.read\", \"dashboard.read\", \"inventory.read\"]",
+      "resource": "\"KontavaStockToCashFlow\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "line": 177,
+      "key": "finance-tax-rates-create",
+      "source": "{\n    key: \"finance-tax-rates-create\",\n    route: \"/dashboard/finance/tax-rates/create\",\n    title: \"Create Tax Rate\",\n    resource: \"FinanceTaxRatesCreate\",\n    permissions: [\"taxes.create\"],\n  }",
+      "route": "\"/dashboard/finance/tax-rates/create\"",
+      "permissions": "[\"taxes.create\"]",
+      "resource": "\"FinanceTaxRatesCreate\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 29,
+      "key": "inventory-dashboard",
+      "source": "{\n    key: \"inventory-dashboard\",\n    route: \"/dashboard/inventory\",\n    resource: \"InventoryManagement\",\n    title: \"Inventory dashboard\",\n    permissions: [\"inventory.read\"],\n  }",
+      "route": "\"/dashboard/inventory\"",
+      "permissions": "[\"inventory.read\"]",
+      "resource": "\"InventoryManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 36,
+      "key": "inventory-brands",
+      "source": "{\n    key: \"inventory-brands\",\n    route: \"/dashboard/inventory/brands\",\n    resource: \"InventoryBrands\",\n    title: \"Inventory brands\",\n    permissions: [\"inventory.brands.read\"],\n  }",
+      "route": "\"/dashboard/inventory/brands\"",
+      "permissions": "[\"inventory.brands.read\"]",
+      "resource": "\"InventoryBrands\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 43,
+      "key": "inventory-brands-create",
+      "source": "{\n    key: \"inventory-brands-create\",\n    route: \"/dashboard/inventory/brands/create\",\n    resource: \"InventoryBrands\",\n    title: \"Create inventory brand\",\n    permissions: [\"inventory.brands.create\"],\n  }",
+      "route": "\"/dashboard/inventory/brands/create\"",
+      "permissions": "[\"inventory.brands.create\"]",
+      "resource": "\"InventoryBrands\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 50,
+      "key": "inventory-brands-edit",
+      "source": "{\n    key: \"inventory-brands-edit\",\n    route: \"/dashboard/inventory/brands/[id]/edit\",\n    resource: \"InventoryBrands\",\n    title: \"Edit inventory brand\",\n    permissions: [\"inventory.brands.update\"],\n  }",
+      "route": "\"/dashboard/inventory/brands/[id]/edit\"",
+      "permissions": "[\"inventory.brands.update\"]",
+      "resource": "\"InventoryBrands\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 57,
+      "key": "inventory-categories",
+      "source": "{\n    key: \"inventory-categories\",\n    route: \"/dashboard/inventory/categories\",\n    resource: \"InventoryCategories\",\n    title: \"Inventory categories\",\n    permissions: [\"inventory.categories.read\"],\n  }",
+      "route": "\"/dashboard/inventory/categories\"",
+      "permissions": "[\"inventory.categories.read\"]",
+      "resource": "\"InventoryCategories\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 64,
+      "key": "inventory-categories-create",
+      "source": "{\n    key: \"inventory-categories-create\",\n    route: \"/dashboard/inventory/categories/create\",\n    resource: \"InventoryCategories\",\n    title: \"Create inventory category\",\n    permissions: [\"inventory.categories.create\"],\n  }",
+      "route": "\"/dashboard/inventory/categories/create\"",
+      "permissions": "[\"inventory.categories.create\"]",
+      "resource": "\"InventoryCategories\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 71,
+      "key": "inventory-categories-detail",
+      "source": "{\n    key: \"inventory-categories-detail\",\n    route: \"/dashboard/inventory/categories/[id]\",\n    resource: \"InventoryCategories\",\n    title: \"Inventory category detail\",\n    permissions: [\"inventory.categories.read\"],\n  }",
+      "route": "\"/dashboard/inventory/categories/[id]\"",
+      "permissions": "[\"inventory.categories.read\"]",
+      "resource": "\"InventoryCategories\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 78,
+      "key": "inventory-categories-edit",
+      "source": "{\n    key: \"inventory-categories-edit\",\n    route: \"/dashboard/inventory/categories/[id]/edit\",\n    resource: \"InventoryCategories\",\n    title: \"Edit inventory category\",\n    permissions: [\"inventory.categories.update\"],\n  }",
+      "route": "\"/dashboard/inventory/categories/[id]/edit\"",
+      "permissions": "[\"inventory.categories.update\"]",
+      "resource": "\"InventoryCategories\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 85,
+      "key": "inventory-items",
+      "source": "{\n    key: \"inventory-items\",\n    route: \"/dashboard/inventory/items\",\n    resource: \"InventoryItems\",\n    title: \"Inventory items\",\n    permissions: [\"inventory.items.read\"],\n    module: { moduleSlug: \"inventory\", surface: \"/dashboard/inventory/items\", accessIntent: \"read\", mode: \"enforce\" },\n  }",
+      "route": "\"/dashboard/inventory/items\"",
+      "permissions": "[\"inventory.items.read\"]",
+      "module": "{ moduleSlug: \"inventory\", surface: \"/dashboard/inventory/items\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"InventoryItems\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 93,
+      "key": "inventory-items-detail",
+      "source": "{\n    key: \"inventory-items-detail\",\n    route: \"/dashboard/inventory/items/[id]\",\n    resource: \"InventoryItemOverview\",\n    title: \"Item overview\",\n    permissions: [\"inventory.items.read\"],\n    module: { moduleSlug: \"inventory\", surface: \"/dashboard/inventory/items/[id]\", accessIntent: \"read\", mode: \"enforce\" },\n  }",
+      "route": "\"/dashboard/inventory/items/[id]\"",
+      "permissions": "[\"inventory.items.read\"]",
+      "module": "{ moduleSlug: \"inventory\", surface: \"/dashboard/inventory/items/[id]\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"InventoryItemOverview\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 101,
+      "key": "inventory-items-create",
+      "source": "{\n    key: \"inventory-items-create\",\n    route: \"/dashboard/inventory/items/create\",\n    resource: \"InventoryItems\",\n    title: \"Create inventory item\",\n    permissions: [\"inventory.items.create\"],\n  }",
+      "route": "\"/dashboard/inventory/items/create\"",
+      "permissions": "[\"inventory.items.create\"]",
+      "resource": "\"InventoryItems\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 108,
+      "key": "inventory-items-new",
+      "source": "{\n    key: \"inventory-items-new\",\n    route: \"/dashboard/inventory/items/new\",\n    resource: \"InventoryItems\",\n    title: \"Create inventory item\",\n    permissions: [\"inventory.items.create\"],\n  }",
+      "route": "\"/dashboard/inventory/items/new\"",
+      "permissions": "[\"inventory.items.create\"]",
+      "resource": "\"InventoryItems\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 115,
+      "key": "inventory-items-edit",
+      "source": "{\n    key: \"inventory-items-edit\",\n    route: \"/dashboard/inventory/items/[id]/edit\",\n    resource: \"InventoryItems\",\n    title: \"Edit inventory item\",\n    permissions: [\"inventory.items.update\"],\n  }",
+      "route": "\"/dashboard/inventory/items/[id]/edit\"",
+      "permissions": "[\"inventory.items.update\"]",
+      "resource": "\"InventoryItems\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 122,
+      "key": "inventory-items-others",
+      "source": "{\n    key: \"inventory-items-others\",\n    route: \"/dashboard/inventory/items/[id]/others\",\n    resource: \"InventoryItems\",\n    title: \"Item suppliers and related details\",\n    permissions: [\"inventory.items.read\"],\n  }",
+      "route": "\"/dashboard/inventory/items/[id]/others\"",
+      "permissions": "[\"inventory.items.read\"]",
+      "resource": "\"InventoryItems\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 129,
+      "key": "inventory-items-suppliers",
+      "source": "{\n    key: \"inventory-items-suppliers\",\n    route: \"/dashboard/inventory/items/[id]/suppliers\",\n    resource: \"InventoryItems\",\n    title: \"Item suppliers\",\n    permissions: [\"inventory.items.read\"],\n  }",
+      "route": "\"/dashboard/inventory/items/[id]/suppliers\"",
+      "permissions": "[\"inventory.items.read\"]",
+      "resource": "\"InventoryItems\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 136,
+      "key": "inventory-loss-control",
+      "source": "{\n    key: \"inventory-loss-control\",\n    route: \"/dashboard/inventory/loss-control\",\n    resource: \"InventoryLossControl\",\n    title: \"Inventory loss control\",\n    permissions: [\"inventory.levels.read\"],\n  }",
+      "route": "\"/dashboard/inventory/loss-control\"",
+      "permissions": "[\"inventory.levels.read\"]",
+      "resource": "\"InventoryLossControl\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 143,
+      "key": "inventory-movements",
+      "source": "{\n    key: \"inventory-movements\",\n    route: \"/dashboard/inventory/movements\",\n    resource: \"InventoryMovements\",\n    title: \"Inventory movements\",\n    permissions: [\"inventory.levels.read\"],\n  }",
+      "route": "\"/dashboard/inventory/movements\"",
+      "permissions": "[\"inventory.levels.read\"]",
+      "resource": "\"InventoryMovements\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 150,
+      "key": "inventory-transfers",
+      "source": "{\n    key: \"inventory-transfers\",\n    route: \"/dashboard/inventory/transfers\",\n    resource: \"InventoryTransfers\",\n    title: \"Inventory transfers\",\n    permissions: [\"TRANSFERS_READ\"],\n  }",
+      "route": "\"/dashboard/inventory/transfers\"",
+      "permissions": "[\"TRANSFERS_READ\"]",
+      "resource": "\"InventoryTransfers\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 157,
+      "key": "inventory-transfers-detail",
+      "source": "{\n    key: \"inventory-transfers-detail\",\n    route: \"/dashboard/inventory/transfers/[id]\",\n    resource: \"StockTransfer\",\n    title: \"Transfer progress\",\n    permissions: [\"inventory.levels.read\"],\n    module: { moduleSlug: \"inventory\", surface: \"/dashboard/inventory/transfers/[id]\", accessIntent: \"read\", mode: \"enforce\" },\n  }",
+      "route": "\"/dashboard/inventory/transfers/[id]\"",
+      "permissions": "[\"inventory.levels.read\"]",
+      "module": "{ moduleSlug: \"inventory\", surface: \"/dashboard/inventory/transfers/[id]\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"StockTransfer\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 165,
+      "key": "inventory-transfers-create",
+      "source": "{\n    key: \"inventory-transfers-create\",\n    route: \"/dashboard/inventory/transfers/create\",\n    resource: \"StockTransfer\",\n    title: \"Create inventory transfer\",\n    permissions: [\"TRANSFERS_READ\", \"inventory.stock.transfer\"],\n    permissionMode: \"all\",\n    module: {\n      moduleSlug: \"inventory\",\n      surface: \"/dashboard/inventory/transfers/create\",\n      accessIntent: \"write\",\n      mode: \"enforce\",\n    },\n  }",
+      "route": "\"/dashboard/inventory/transfers/create\"",
+      "permissions": "[\"TRANSFERS_READ\", \"inventory.stock.transfer\"]",
+      "permissionMode": "\"all\"",
+      "module": "{\n      moduleSlug: \"inventory\",\n      surface: \"/dashboard/inventory/transfers/create\",\n      accessIntent: \"write\",\n      mode: \"enforce\",\n    }",
+      "resource": "\"StockTransfer\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 179,
+      "key": "inventory-units",
+      "source": "{\n    key: \"inventory-units\",\n    route: \"/dashboard/inventory/units\",\n    resource: \"InventoryUnits\",\n    title: \"Inventory units\",\n    permissions: [\"inventory.units.read\"],\n  }",
+      "route": "\"/dashboard/inventory/units\"",
+      "permissions": "[\"inventory.units.read\"]",
+      "resource": "\"InventoryUnits\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 186,
+      "key": "inventory-units-create",
+      "source": "{\n    key: \"inventory-units-create\",\n    route: \"/dashboard/inventory/units/create\",\n    resource: \"InventoryUnits\",\n    title: \"Create inventory unit\",\n    permissions: [\"inventory.units.create\"],\n  }",
+      "route": "\"/dashboard/inventory/units/create\"",
+      "permissions": "[\"inventory.units.create\"]",
+      "resource": "\"InventoryUnits\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "line": 193,
+      "key": "inventory-units-edit",
+      "source": "{\n    key: \"inventory-units-edit\",\n    route: \"/dashboard/inventory/units/[id]/edit\",\n    resource: \"InventoryUnits\",\n    title: \"Edit inventory unit\",\n    permissions: [\"inventory.units.update\"],\n  }",
+      "route": "\"/dashboard/inventory/units/[id]/edit\"",
+      "permissions": "[\"inventory.units.update\"]",
+      "resource": "\"InventoryUnits\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/items/items-route-data-access.ts",
+      "line": 20,
+      "key": "items-dashboard",
+      "source": "{\n    key: \"items-dashboard\",\n    route: \"/dashboard/items\",\n    title: \"Items dashboard\",\n    resource: \"ItemsPage\",\n    permissions: [\"inventory.items.read\"],\n    permissionMode: \"single\",\n    noActiveOrgTitle: \"Items dashboard needs an active organization\",\n    permissionDeniedTitle: \"Items dashboard is not available for this role\",\n    permissionDeniedMessage: \"Item listing requires inventory item read permission.\",\n  }",
+      "route": "\"/dashboard/items\"",
+      "permissions": "[\"inventory.items.read\"]",
+      "permissionMode": "\"single\"",
+      "resource": "\"ItemsPage\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/items/items-route-data-access.ts",
+      "line": 31,
+      "key": "items-new",
+      "source": "{\n    key: \"items-new\",\n    route: \"/dashboard/items/new\",\n    title: \"Create item alias\",\n    resource: \"ItemsNewPage\",\n    permissions: [\"inventory.items.create\"],\n    permissionMode: \"single\",\n    noActiveOrgTitle: \"Item creation needs an active organization\",\n    permissionDeniedTitle: \"Item creation is not available for this role\",\n    permissionDeniedMessage: \"Item creation requires inventory item create permission.\",\n  }",
+      "route": "\"/dashboard/items/new\"",
+      "permissions": "[\"inventory.items.create\"]",
+      "permissionMode": "\"single\"",
+      "resource": "\"ItemsNewPage\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-data-access.ts",
+      "line": 20,
+      "key": "manager-action-center",
+      "source": "{\n    key: \"manager-action-center\",\n    route: \"/dashboard/manager-action-center\",\n    title: \"Manager Action Center\",\n    resource: \"KontavaManagerActionCenter\",\n    permissions: [\"dashboard.read\"],\n    noActiveOrgTitle: \"Manager Action Center needs an active organization\",\n    noActiveOrgMessage: \"Refresh your session from the dashboard so the action center can load tenant-scoped operating work.\",\n    permissionDeniedTitle: \"Manager Action Center is not available for this role\",\n    permissionDeniedMessage: \"This action center requires dashboard access. The denial was recorded by the RBAC guard.\",\n    noActiveOrgPrimaryHref: \"/dashboard\",\n    permissionDeniedPrimaryHref: \"/dashboard\",\n    locale: \"en\",\n  }",
+      "route": "\"/dashboard/manager-action-center\"",
+      "permissions": "[\"dashboard.read\"]",
+      "resource": "\"KontavaManagerActionCenter\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-data-access.ts",
+      "line": 34,
+      "key": "manager-action-center-daily-close",
+      "source": "{\n    key: \"manager-action-center-daily-close\",\n    route: \"/dashboard/manager-action-center/daily-close\",\n    title: \"Branch daily close workspace\",\n    resource: \"BranchDailyCloseWorkspace\",\n    permissions: [\"dashboard.read\"],\n    noActiveOrgTitle: \"Branch daily close needs an active organization\",\n    permissionDeniedTitle: \"Manager Action Center is not available for this role\",\n    permissionDeniedMessage: \"This branch close workspace is unavailable for your role.\",\n    noActiveOrgPrimaryHref: \"/dashboard\",\n    permissionDeniedPrimaryHref: \"/dashboard\",\n    locale: \"en\",\n  }",
+      "route": "\"/dashboard/manager-action-center/daily-close\"",
+      "permissions": "[\"dashboard.read\"]",
+      "resource": "\"BranchDailyCloseWorkspace\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/notifications-demo/notifications-demo-route-data-access.ts",
+      "line": 27,
+      "key": "notifications-demo",
+      "source": "{\n    key: \"notifications-demo\",\n    route: \"/dashboard/notifications-demo\",\n    title: \"Notification demo\",\n    resource: \"NotificationSystemDemo\",\n    permissions: [\"communication.notifications.read\"],\n    permissionMode: \"single\",\n    noActiveOrgTitle: \"Notification demo needs an active organization\",\n    noActiveOrgMessage: \"Refresh your session from the dashboard so notification diagnostics can load tenant-scoped settings.\",\n    permissionDeniedTitle: \"Notification demo is not available for this role\",\n    permissionDeniedMessage:\n      \"Viewing notification diagnostics requires notification settings read access. The denial was recorded by the RBAC guard.\",\n    noActiveOrgPrimaryHref: \"/dashboard\",\n    permissionDeniedPrimaryHref: \"/dashboard/settings/notifications\",\n    module: {\n      moduleSlug: \"settings\",\n      surface: \"/dashboard/notifications-demo\",\n      accessIntent: \"read\",\n      mode: \"observe\",\n      moduleLockedTitle: \"Notification module is not enabled for this tenant\",\n      moduleLockedMessage:\n        \"Enable the settings module so notification diagnostics can load tenant-scoped feature configuration and evidence.\",\n    },\n  }",
+      "route": "\"/dashboard/notifications-demo\"",
+      "permissions": "[\"communication.notifications.read\"]",
+      "permissionMode": "\"single\"",
+      "module": "{\n      moduleSlug: \"settings\",\n      surface: \"/dashboard/notifications-demo\",\n      accessIntent: \"read\",\n      mode: \"observe\",\n      moduleLockedTitle: \"Notification module is not enabled for this tenant\",\n      moduleLockedMessage:\n        \"Enable the settings module so notification diagnostics can load tenant-scoped feature configuration and evidence.\",\n    }",
+      "resource": "\"NotificationSystemDemo\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-data-access.ts",
+      "line": 17,
+      "key": "owner-war-room",
+      "source": "{\n    key: \"owner-war-room\",\n    route: \"/dashboard/owner-war-room\",\n    title: \"Owner War Room\",\n    resource: \"KontavaOwnerWarRoom\",\n    permissions: [\"dashboard.read\"],\n    permissionMode: \"single\",\n    noActiveOrgTitle: \"Owner War Room needs an active organization\",\n    noActiveOrgMessage:\n      \"Refresh your session from the dashboard so the command center can load tenant-scoped evidence.\",\n    permissionDeniedTitle: \"Owner War Room is not available for this role\",\n    permissionDeniedMessage:\n      \"This read-only tenant command center requires administrator-wide operating authority. The denial was recorded by the RBAC guard.\",\n    noActiveOrgPrimaryHref: \"/dashboard\",\n    permissionDeniedPrimaryHref: \"/dashboard\",\n  }",
+      "route": "\"/dashboard/owner-war-room\"",
+      "permissions": "[\"dashboard.read\"]",
+      "permissionMode": "\"single\"",
+      "resource": "\"KontavaOwnerWarRoom\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 28,
+      "key": "payroll-dashboard",
+      "source": "{\n    key: \"payroll-dashboard\",\n    route: \"/dashboard/payroll\",\n    title: \"Payroll command center\",\n    resource: \"PayrollCommandReadModel\",\n    permissions: [\"payroll.command.read\"],\n    permissionMode: \"any\",\n    noActiveOrgTitle: \"Payroll needs an active organization\",\n    permissionDeniedTitle: \"HR and Payroll is not available for this role\",\n    noActiveOrgMessage:\n      \"Refresh your session from the dashboard so payroll can load tenant-scoped HR and payroll evidence.\",\n    permissionDeniedMessage:\n      \"HR and Payroll requires payroll command read access. The denial was recorded by the RBAC guard.\",\n    primaryHref: \"/dashboard\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll\",\n      accessIntent: \"read\",\n      mode: \"observe\",\n      moduleLockedTitle: \"Payroll is not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening payroll command center and readiness tooling.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll\"",
+      "permissions": "[\"payroll.command.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll\",\n      accessIntent: \"read\",\n      mode: \"observe\",\n      moduleLockedTitle: \"Payroll is not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening payroll command center and readiness tooling.\",\n    }",
+      "resource": "\"PayrollCommandReadModel\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 51,
+      "key": "payroll-attendance",
+      "source": "{\n    key: \"payroll-attendance\",\n    route: \"/dashboard/payroll/attendance\",\n    title: \"Payroll attendance readiness\",\n    resource: \"PayrollPaymentEvidenceReadiness\",\n    permissions: [\"payroll.payment_destination.read\"],\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/attendance\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll attendance readiness is not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the Payroll module before opening payment and attendance readiness. The module entitlement denial was audited.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll/attendance\"",
+      "permissions": "[\"payroll.payment_destination.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/attendance\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll attendance readiness is not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the Payroll module before opening payment and attendance readiness. The module entitlement denial was audited.\",\n    }",
+      "resource": "\"PayrollPaymentEvidenceReadiness\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 68,
+      "key": "payroll-compensation",
+      "source": "{\n    key: \"payroll-compensation\",\n    route: \"/dashboard/payroll/compensation\",\n    title: \"Payroll compensation\",\n    resource: \"PayrollCompensation\",\n    permissions: [\"payroll.compensation.read\"],\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/compensation\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll compensation is not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the Payroll module before opening compensation readiness. The module entitlement denial was audited.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll/compensation\"",
+      "permissions": "[\"payroll.compensation.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/compensation\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll compensation is not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the Payroll module before opening compensation readiness. The module entitlement denial was audited.\",\n    }",
+      "resource": "\"PayrollCompensation\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 85,
+      "key": "payroll-contracts",
+      "source": "{\n    key: \"payroll-contracts\",\n    route: \"/dashboard/payroll/contracts\",\n    title: \"Payroll contracts\",\n    resource: \"PayrollContract\",\n    permissions: [\"payroll.contracts.read\"],\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/contracts\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll contracts are not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening contract lifecycle readiness. The module entitlement denial was audited.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll/contracts\"",
+      "permissions": "[\"payroll.contracts.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/contracts\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll contracts are not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening contract lifecycle readiness. The module entitlement denial was audited.\",\n    }",
+      "resource": "\"PayrollContract\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 101,
+      "key": "payroll-declarations",
+      "source": "{\n    key: \"payroll-declarations\",\n    route: \"/dashboard/payroll/declarations\",\n    title: \"Payroll declarations\",\n    resource: \"PayrollDeclarationWorkbench\",\n    permissions: [\"payroll.command.read\"],\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/declarations\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll declarations are not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the Payroll module before opening declaration lifecycle and authority evidence. The module entitlement denial was audited.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll/declarations\"",
+      "permissions": "[\"payroll.command.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/declarations\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll declarations are not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the Payroll module before opening declaration lifecycle and authority evidence. The module entitlement denial was audited.\",\n    }",
+      "resource": "\"PayrollDeclarationWorkbench\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 118,
+      "key": "payroll-employees",
+      "source": "{\n    key: \"payroll-employees\",\n    route: \"/dashboard/payroll/employees\",\n    title: \"Payroll employees\",\n    resource: \"PayrollEmployee\",\n    permissions: [\"payroll.employees.read\"],\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/employees\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll employees are not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening employee source-data readiness. The module entitlement denial was audited.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll/employees\"",
+      "permissions": "[\"payroll.employees.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/employees\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll employees are not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening employee source-data readiness. The module entitlement denial was audited.\",\n    }",
+      "resource": "\"PayrollEmployee\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 134,
+      "key": "payroll-payslips",
+      "source": "{\n    key: \"payroll-payslips\",\n    route: \"/dashboard/payroll/payslips\",\n    title: \"Payroll payslips\",\n    resource: \"PayrollPayslip\",\n    permissions: [\"payroll.payslips.self.read\"],\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/payslips\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payslips are not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening employee payslip evidence. The module entitlement denial was audited.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll/payslips\"",
+      "permissions": "[\"payroll.payslips.self.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/payslips\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payslips are not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening employee payslip evidence. The module entitlement denial was audited.\",\n    }",
+      "resource": "\"PayrollPayslip\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 150,
+      "key": "payroll-payments",
+      "source": "{\n    key: \"payroll-payments\",\n    route: \"/dashboard/payroll/payments\",\n    title: \"Payroll payments\",\n    resource: \"PayrollPaymentReconciliationWorkbench\",\n    permissions: [\"payments.reconciliation.read\"],\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/payments\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll payments are not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the Payroll module before opening payment reconciliation, settlement proof, and employee balance recovery. The module entitlement denial was audited.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll/payments\"",
+      "permissions": "[\"payments.reconciliation.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/payments\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll payments are not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the Payroll module before opening payment reconciliation, settlement proof, and employee balance recovery. The module entitlement denial was audited.\",\n    }",
+      "resource": "\"PayrollPaymentReconciliationWorkbench\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 167,
+      "key": "payroll-register",
+      "source": "{\n    key: \"payroll-register\",\n    route: \"/dashboard/payroll/register\",\n    title: \"Payroll register\",\n    resource: \"PayrollRegister\",\n    permissions: [\"payroll.reports.read\"],\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/register\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll register is not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening register evidence. The module entitlement denial was audited.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll/register\"",
+      "permissions": "[\"payroll.reports.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/register\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll register is not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening register evidence. The module entitlement denial was audited.\",\n    }",
+      "resource": "\"PayrollRegister\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 183,
+      "key": "payroll-runs",
+      "source": "{\n    key: \"payroll-runs\",\n    route: \"/dashboard/payroll/runs\",\n    title: \"Payroll runs\",\n    resource: \"PayrollRunWorkbench\",\n    permissions: [\"payroll.command.read\"],\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/runs\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll runs are not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the Payroll module before opening run lifecycle, register proof, and accounting readiness. The module entitlement denial was audited.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll/runs\"",
+      "permissions": "[\"payroll.command.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/runs\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll runs are not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the Payroll module before opening run lifecycle, register proof, and accounting readiness. The module entitlement denial was audited.\",\n    }",
+      "resource": "\"PayrollRunWorkbench\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+      "line": 200,
+      "key": "payroll-setup",
+      "source": "{\n    key: \"payroll-setup\",\n    route: \"/dashboard/payroll/setup\",\n    title: \"Payroll setup\",\n    resource: \"PayrollSetupReadiness\",\n    permissions: [\"payroll.runs.calculate\"],\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/setup\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll setup is not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening setup readiness and dry-run planning.\",\n    },\n  }",
+      "route": "\"/dashboard/payroll/setup\"",
+      "permissions": "[\"payroll.runs.calculate\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"payroll\",\n      surface: \"/dashboard/payroll/setup\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n      moduleLockedTitle: \"Payroll setup is not enabled for this organization\",\n      moduleLockedMessage: \"Enable the Payroll module before opening setup readiness and dry-run planning.\",\n    }",
+      "resource": "\"PayrollSetupReadiness\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/people-route-data-access.ts",
+      "line": 17,
+      "key": "people-workspace",
+      "source": "{\n    key: \"people-workspace\",\n    route: \"/dashboard/people\",\n    title: \"People workspace\",\n    resource: \"HrisPeopleWorkspace\",\n    permissions: [\"hris.people.read\"],\n    permissionMode: \"any\",\n    noActiveOrgTitle: \"People workspace needs an active organization\",\n    noActiveOrgMessage:\n      \"Refresh your session from the dashboard so HRIS people controls can load within the active tenant.\",\n    permissionDeniedTitle: \"People workspace is not available for this role\",\n    permissionDeniedMessage:\n      \"People workspace access requires HRIS people read permission. Payroll permissions do not unlock HRIS people truth.\",\n    noActiveOrgPrimaryHref: \"/dashboard\",\n    permissionDeniedPrimaryHref: \"/dashboard\",\n  }",
+      "route": "\"/dashboard/people\"",
+      "permissions": "[\"hris.people.read\"]",
+      "permissionMode": "\"any\"",
+      "resource": "\"HrisPeopleWorkspace\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/people-route-data-access.ts",
+      "line": 33,
+      "key": "people-employee-profile",
+      "source": "{\n    key: \"people-employee-profile\",\n    route: \"/dashboard/people/[employeeId]\",\n    title: \"Employee profile\",\n    resource: \"HrisEmployeeProfile\",\n    permissions: [\"hris.people.read\"],\n    permissionMode: \"any\",\n    noActiveOrgTitle: \"Employee profile is not available\",\n    noActiveOrgMessage: \"This profile requires HRIS people read permission within the active organization.\",\n    permissionDeniedTitle: \"Employee profile is not available\",\n    permissionDeniedMessage: \"This profile requires HRIS people read permission within the active organization.\",\n    noActiveOrgPrimaryHref: \"/dashboard\",\n    permissionDeniedPrimaryHref: \"/dashboard\",\n  }",
+      "route": "\"/dashboard/people/[employeeId]\"",
+      "permissions": "[\"hris.people.read\"]",
+      "permissionMode": "\"any\"",
+      "resource": "\"HrisEmployeeProfile\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/people-route-data-access.ts",
+      "line": 47,
+      "key": "people-team",
+      "source": "{\n    key: \"people-team\",\n    route: \"/dashboard/people/team\",\n    title: \"Managed workforce\",\n    resource: \"HrisManagerSelfService\",\n    permissions: [\"hris.people.read\"],\n    permissionMode: \"any\",\n    noActiveOrgTitle: \"Managed workforce is not available\",\n    noActiveOrgMessage: \"This workspace requires scoped HRIS people access in the active organization.\",\n    permissionDeniedTitle: \"Managed workforce is not available\",\n    permissionDeniedMessage: \"This workspace requires scoped HRIS people access in the active organization.\",\n    noActiveOrgPrimaryHref: \"/dashboard\",\n    permissionDeniedPrimaryHref: \"/dashboard\",\n  }",
+      "route": "\"/dashboard/people/team\"",
+      "permissions": "[\"hris.people.read\"]",
+      "permissionMode": "\"any\"",
+      "resource": "\"HrisManagerSelfService\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/people-route-data-access.ts",
+      "line": 61,
+      "key": "people-me",
+      "source": "{\n    key: \"people-me\",\n    route: \"/dashboard/people/me\",\n    title: \"Employee self-service\",\n    resource: \"HrisEmployeeSelfService\",\n    permissions: [\"hris.self_service.read\"],\n    permissionMode: \"any\",\n    noActiveOrgTitle: \"Employee self-service is not available\",\n    noActiveOrgMessage: \"This workspace requires own-record HRIS self-service access in the active organization.\",\n    permissionDeniedTitle: \"Employee self-service is not available\",\n    permissionDeniedMessage: \"This workspace requires own-record HRIS self-service access in the active organization.\",\n    noActiveOrgPrimaryHref: \"/dashboard\",\n    permissionDeniedPrimaryHref: \"/dashboard\",\n  }",
+      "route": "\"/dashboard/people/me\"",
+      "permissions": "[\"hris.self_service.read\"]",
+      "permissionMode": "\"any\"",
+      "resource": "\"HrisEmployeeSelfService\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/people-route-data-access.ts",
+      "line": 75,
+      "key": "people-history",
+      "source": "{\n    key: \"people-history\",\n    route: \"/dashboard/people/history\",\n    title: \"People history\",\n    resource: \"HrisMovementHistory\",\n    permissions: [\"hris.people.read\"],\n    permissionMode: \"any\",\n    noActiveOrgTitle: \"People history needs an active organization\",\n    noActiveOrgMessage: \"Refresh your dashboard session before loading HRIS movement evidence.\",\n    permissionDeniedTitle: \"People history is not available for this role\",\n    permissionDeniedMessage: \"Movement history visibility requires HRIS people read access.\",\n    noActiveOrgPrimaryHref: \"/dashboard/people\",\n    permissionDeniedPrimaryHref: \"/dashboard/people\",\n  }",
+      "route": "\"/dashboard/people/history\"",
+      "permissions": "[\"hris.people.read\"]",
+      "permissionMode": "\"any\"",
+      "resource": "\"HrisMovementHistory\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/people-route-data-access.ts",
+      "line": 89,
+      "key": "people-approvals",
+      "source": "{\n    key: \"people-approvals\",\n    route: \"/dashboard/people/approvals\",\n    title: \"Approval inbox\",\n    resource: \"HrisApprovalInbox\",\n    permissions: [\"hris.people.read\"],\n    permissionMode: \"any\",\n    noActiveOrgTitle: \"Approvals need an active organization\",\n    noActiveOrgMessage: \"Refresh your dashboard session before loading HRIS approvals.\",\n    permissionDeniedTitle: \"Approval inbox is not available for this role\",\n    permissionDeniedMessage: \"Approval visibility requires HRIS people read access.\",\n    noActiveOrgPrimaryHref: \"/dashboard/people\",\n    permissionDeniedPrimaryHref: \"/dashboard/people\",\n  }",
+      "route": "\"/dashboard/people/approvals\"",
+      "permissions": "[\"hris.people.read\"]",
+      "permissionMode": "\"any\"",
+      "resource": "\"HrisApprovalInbox\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/pos/pos-route-data-access.ts",
+      "line": 21,
+      "key": "pos-dashboard",
+      "source": "{\n    key: \"pos-dashboard\",\n    route: \"/dashboard/pos\",\n    title: \"POS\",\n    resource: \"POSPage\",\n    permissions: [\"OPERATE_POS\"],\n    permissionMode: \"single\",\n    noActiveOrgTitle: { en: \"Choose an organization to open the point of sale\", fr: \"Choisissez une organisation pour ouvrir le point de vente\" },\n    permissionDeniedTitle: { en: \"Point of sale access is required\", fr: \"Un accès au point de vente est nécessaire\" },\n    permissionDeniedMessage: { en: \"Your current role cannot operate the point of sale. Ask your administrator for access or switch to an authorized account.\", fr: \"Votre rôle actuel ne permet pas d’utiliser le point de vente. Demandez un accès à votre administrateur ou utilisez un compte autorisé.\" },\n  }",
+      "route": "\"/dashboard/pos\"",
+      "permissions": "[\"OPERATE_POS\"]",
+      "permissionMode": "\"single\"",
+      "resource": "\"POSPage\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts",
+      "line": 29,
+      "key": "purchase-orders-dashboard",
+      "source": "{\n    key: \"purchase-orders-dashboard\",\n    route: \"/dashboard/purchase-orders\",\n    resource: \"PurchaseOrder\",\n    title: \"Purchase order dashboard\",\n    permissions: [\"purchases.orders.read\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    },\n  }",
+      "route": "\"/dashboard/purchase-orders\"",
+      "permissions": "[\"purchases.orders.read\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    }",
+      "resource": "\"PurchaseOrder\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts",
+      "line": 42,
+      "key": "purchase-orders-analytics",
+      "source": "{\n    key: \"purchase-orders-analytics\",\n    route: \"/dashboard/purchase-orders/analytics\",\n    resource: \"PurchaseOrder\",\n    title: \"Purchase order analytics\",\n    permissions: [\"purchases.orders.read\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders/analytics\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    },\n  }",
+      "route": "\"/dashboard/purchase-orders/analytics\"",
+      "permissions": "[\"purchases.orders.read\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders/analytics\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    }",
+      "resource": "\"PurchaseOrder\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts",
+      "line": 55,
+      "key": "purchase-orders-detail",
+      "source": "{\n    key: \"purchase-orders-detail\",\n    route: \"/dashboard/purchase-orders/[id]\",\n    resource: \"PurchaseOrder\",\n    title: \"Purchase order detail\",\n    permissions: [\"purchases.orders.read\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders/[id]\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    },\n  }",
+      "route": "\"/dashboard/purchase-orders/[id]\"",
+      "permissions": "[\"purchases.orders.read\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders/[id]\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    }",
+      "resource": "\"PurchaseOrder\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts",
+      "line": 68,
+      "key": "purchase-orders-supplier-acknowledgement",
+      "source": "{\n    key: \"purchase-orders-supplier-acknowledgement\",\n    route: \"/dashboard/purchase-orders/[id]/supplier-acknowledgement\",\n    resource: \"PurchaseOrder\",\n    title: \"Supplier purchase-order acknowledgement\",\n    permissions: [\"purchases.orders.read\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders/[id]/supplier-acknowledgement\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    },\n  }",
+      "route": "\"/dashboard/purchase-orders/[id]/supplier-acknowledgement\"",
+      "permissions": "[\"purchases.orders.read\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders/[id]/supplier-acknowledgement\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    }",
+      "resource": "\"PurchaseOrder\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts",
+      "line": 81,
+      "key": "purchase-orders-new",
+      "source": "{\n    key: \"purchase-orders-new\",\n    route: \"/dashboard/purchase-orders/new\",\n    resource: \"PurchaseOrder\",\n    title: \"Create purchase order\",\n    permissions: [\"purchases.orders.create\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders/new\",\n      accessIntent: \"write\",\n    },\n  }",
+      "route": "\"/dashboard/purchase-orders/new\"",
+      "permissions": "[\"purchases.orders.create\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders/new\",\n      accessIntent: \"write\",\n    }",
+      "resource": "\"PurchaseOrder\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts",
+      "line": 93,
+      "key": "purchase-orders-edit",
+      "source": "{\n    key: \"purchase-orders-edit\",\n    route: \"/dashboard/purchase-orders/[id]/edit\",\n    resource: \"PurchaseOrder\",\n    title: \"Edit purchase order\",\n    permissions: [\"purchases.orders.update\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders/[id]/edit\",\n      accessIntent: \"write\",\n    },\n  }",
+      "route": "\"/dashboard/purchase-orders/[id]/edit\"",
+      "permissions": "[\"purchases.orders.update\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchase-orders/[id]/edit\",\n      accessIntent: \"write\",\n    }",
+      "resource": "\"PurchaseOrder\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 36,
+      "key": "purchases-payment-reconciliation",
+      "source": "{ key: \"purchases-payment-reconciliation\", route: \"/dashboard/purchases/payables/payments/reconcile\", resource: \"SupplierPayment\", title: \"Supplier payment evidence\", permissions: [\"payments.reconciliation.read\", \"accounting.journal.read\"], permissionMode: \"all\", permissionDeniedTitle: { en: \"Payment evidence is unavailable for this role\", fr: \"Les preuves de paiement sont indisponibles pour ce rôle\" }, permissionDeniedMessage: { en: \"Ask your administrator to review reconciliation and journal read access.\", fr: \"Demandez à l’administrateur de vérifier les droits de lecture du rapprochement et des écritures.\" }, primaryHref: \"/dashboard/purchases/payables\", modules: [{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/payments/reconcile\", accessIntent: \"read\", mode: \"enforce\" }, { moduleSlug: \"payment_reconciliation\", surface: \"/dashboard/purchases/payables/payments/reconcile\", accessIntent: \"read\", mode: \"enforce\" }] }",
+      "route": "\"/dashboard/purchases/payables/payments/reconcile\"",
+      "permissions": "[\"payments.reconciliation.read\", \"accounting.journal.read\"]",
+      "permissionMode": "\"all\"",
+      "modules": "[{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/payments/reconcile\", accessIntent: \"read\", mode: \"enforce\" }, { moduleSlug: \"payment_reconciliation\", surface: \"/dashboard/purchases/payables/payments/reconcile\", accessIntent: \"read\", mode: \"enforce\" }]",
+      "resource": "\"SupplierPayment\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 37,
+      "key": "purchases-payment-recovery",
+      "source": "{ key: \"purchases-payment-recovery\", route: \"/dashboard/purchases/payables/payments/recovery\", resource: \"SupplierPayment\", title: \"Recover supplier payment posting\", permissions: [\"purchasing.ap.payment.release\"], permissionDeniedTitle: { en: \"Payment posting recovery is unavailable for this role\", fr: \"La reprise comptable des paiements est indisponible pour ce rôle\" }, permissionDeniedMessage: { en: \"Ask the administrator to review supplier payment recovery access.\", fr: \"Demandez à l’administrateur de vérifier les droits de reprise des paiements fournisseurs.\" }, primaryHref: \"/dashboard/purchases/payables\", module: { moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/payments/recovery\", accessIntent: \"read\", mode: \"enforce\" } }",
+      "route": "\"/dashboard/purchases/payables/payments/recovery\"",
+      "permissions": "[\"purchasing.ap.payment.release\"]",
+      "module": "{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/payments/recovery\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"SupplierPayment\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 38,
+      "key": "purchases-payment-record",
+      "source": "{ key: \"purchases-payment-record\", route: \"/dashboard/purchases/payables/payments/record\", resource: \"SupplierPayment\", title: \"Record a supplier payment\", permissions: [\"purchasing.ap.payment.release\"], permissionDeniedTitle: { en: \"Payment recording is unavailable for this role\", fr: \"L’enregistrement des paiements est indisponible pour ce rôle\" }, permissionDeniedMessage: { en: \"Ask the administrator to review supplier payment execution-recording access.\", fr: \"Demandez à l’administrateur de vérifier les droits d’enregistrement des paiements fournisseurs.\" }, primaryHref: \"/dashboard/purchases/payables\", module: { moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/payments/record\", accessIntent: \"read\", mode: \"enforce\" } }",
+      "route": "\"/dashboard/purchases/payables/payments/record\"",
+      "permissions": "[\"purchasing.ap.payment.release\"]",
+      "module": "{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/payments/record\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"SupplierPayment\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 39,
+      "key": "purchases-payment-request",
+      "source": "{ key: \"purchases-payment-request\", route: \"/dashboard/purchases/payables/payments/request\", resource: \"SupplierPayment\", title: \"Request a supplier payment\", permissions: [\"purchasing.ap.payment.request\"], permissionDeniedTitle: { en: \"Payment requests are unavailable for this role\", fr: \"Les demandes de paiement sont indisponibles pour ce rôle\" }, permissionDeniedMessage: { en: \"Ask the administrator to review supplier payment request access.\", fr: \"Demandez à l’administrateur de vérifier les droits de demande de paiement fournisseur.\" }, primaryHref: \"/dashboard/purchases/payables\", module: { moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/payments/request\", accessIntent: \"read\", mode: \"enforce\" } }",
+      "route": "\"/dashboard/purchases/payables/payments/request\"",
+      "permissions": "[\"purchasing.ap.payment.request\"]",
+      "module": "{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/payments/request\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"SupplierPayment\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 40,
+      "key": "purchases-payment-approve",
+      "source": "{ key: \"purchases-payment-approve\", route: \"/dashboard/purchases/payables/payments/approve\", resource: \"SupplierPayment\", title: \"Review supplier payments\", permissions: [\"purchasing.ap.payment.approve\"], permissionDeniedTitle: { en: \"Payment approval is unavailable for this role\", fr: \"L’approbation des paiements est indisponible pour ce rôle\" }, permissionDeniedMessage: { en: \"Ask the administrator to review supplier payment approval access.\", fr: \"Demandez à l’administrateur de vérifier les droits d’approbation des paiements fournisseurs.\" }, primaryHref: \"/dashboard/purchases/payables\", module: { moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/payments/approve\", accessIntent: \"read\", mode: \"enforce\" } }",
+      "route": "\"/dashboard/purchases/payables/payments/approve\"",
+      "permissions": "[\"purchasing.ap.payment.approve\"]",
+      "module": "{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/payments/approve\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"SupplierPayment\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 41,
+      "key": "purchases-invoice-correct",
+      "source": "{ key: \"purchases-invoice-correct\", route: \"/dashboard/purchases/payables/correct\", resource: \"SupplierInvoice\", title: \"Correct a supplier invoice\", permissions: [\"purchasing.ap.invoice.post\"], permissionDeniedTitle: { en: \"Invoice correction is unavailable for this role\", fr: \"La correction de facture est indisponible pour ce rôle\" }, permissionDeniedMessage: { en: \"Ask your administrator to review invoice preparation access.\", fr: \"Demandez à l’administrateur de vérifier les droits de préparation.\" }, primaryHref: \"/dashboard/purchases/payables\", module: { moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/correct\", accessIntent: \"read\", mode: \"enforce\" } }",
+      "route": "\"/dashboard/purchases/payables/correct\"",
+      "permissions": "[\"purchasing.ap.invoice.post\"]",
+      "module": "{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/correct\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"SupplierInvoice\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 42,
+      "key": "purchases-exception-request",
+      "source": "{ key: \"purchases-exception-request\", route: \"/dashboard/purchases/payables/exceptions/request\", resource: \"SupplierInvoiceMatchException\", title: \"Request an invoice exception\", permissions: [\"purchasing.ap.invoice.post\"], permissionDeniedTitle: { en: \"Invoice exceptions are not available for this role\", fr: \"Les dérogations de facture ne sont pas disponibles pour ce rôle\" }, permissionDeniedMessage: { en: \"Ask the organization administrator for the appropriate exception permission.\", fr: \"Demandez à l’administrateur le droit approprié pour les dérogations.\" }, primaryHref: \"/dashboard/purchases/payables\", module: { moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/exceptions/request\", accessIntent: \"read\", mode: \"enforce\" } }",
+      "route": "\"/dashboard/purchases/payables/exceptions/request\"",
+      "permissions": "[\"purchasing.ap.invoice.post\"]",
+      "module": "{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/exceptions/request\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"SupplierInvoiceMatchException\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 43,
+      "key": "purchases-exception-review",
+      "source": "{ key: \"purchases-exception-review\", route: \"/dashboard/purchases/payables/exceptions/review\", resource: \"SupplierInvoiceMatchException\", title: \"Review invoice exceptions\", permissions: [\"purchasing.ap.match.review\"], permissionDeniedTitle: { en: \"Invoice exceptions are not available for this role\", fr: \"Les dérogations de facture ne sont pas disponibles pour ce rôle\" }, permissionDeniedMessage: { en: \"Ask the organization administrator for the appropriate exception permission.\", fr: \"Demandez à l’administrateur le droit approprié pour les dérogations.\" }, primaryHref: \"/dashboard/purchases/payables\", module: { moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/exceptions/review\", accessIntent: \"read\", mode: \"enforce\" } }",
+      "route": "\"/dashboard/purchases/payables/exceptions/review\"",
+      "permissions": "[\"purchasing.ap.match.review\"]",
+      "module": "{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/exceptions/review\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"SupplierInvoiceMatchException\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 44,
+      "key": "purchases-invoice-approve",
+      "source": "{\n    key: \"purchases-invoice-approve\",\n    route: \"/dashboard/purchases/payables/approve\",\n    resource: \"SupplierInvoice\",\n    title: \"Review supplier invoices\",\n    permissions: [\"purchasing.ap.invoice.post\"],\n    permissionDeniedTitle: { en: \"Invoice approval is not available for this role\", fr: \"L’approbation des factures n’est pas disponible pour ce rôle\" },\n    permissionDeniedMessage: { en: \"Ask the organization administrator for invoice approval access.\", fr: \"Demandez à l’administrateur l’accès à l’approbation des factures.\" },\n    primaryHref: \"/dashboard/purchases/payables\",\n    module: { moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/approve\", accessIntent: \"read\", mode: \"enforce\" },\n  }",
+      "route": "\"/dashboard/purchases/payables/approve\"",
+      "permissions": "[\"purchasing.ap.invoice.post\"]",
+      "module": "{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/approve\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"SupplierInvoice\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 55,
+      "key": "purchases-invoice-recovery",
+      "source": "{\n    key: \"purchases-invoice-recovery\",\n    route: \"/dashboard/purchases/payables/recovery\",\n    resource: \"SupplierInvoice\",\n    title: \"Recover invoice posting\",\n    permissions: [\"purchasing.ap.invoice.post\"],\n    permissionDeniedTitle: { en: \"Invoice recovery is not available for this role\", fr: \"La reprise comptable des factures n’est pas disponible pour ce rôle\" },\n    permissionDeniedMessage: { en: \"Ask the organization administrator for invoice posting access.\", fr: \"Demandez à l’administrateur l’accès à la comptabilisation des factures.\" },\n    primaryHref: \"/dashboard/purchases/payables\",\n    module: { moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/recovery\", accessIntent: \"read\", mode: \"enforce\" },\n  }",
+      "route": "\"/dashboard/purchases/payables/recovery\"",
+      "permissions": "[\"purchasing.ap.invoice.post\"]",
+      "module": "{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/recovery\", accessIntent: \"read\", mode: \"enforce\" }",
+      "resource": "\"SupplierInvoice\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 66,
+      "key": "purchases-invoice-prepare",
+      "source": "{\n    key: \"purchases-invoice-prepare\",\n    route: \"/dashboard/purchases/payables/prepare\",\n    resource: \"SupplierInvoice\",\n    title: \"Prepare a supplier invoice\",\n    permissions: [\"purchasing.ap.invoice.post\"],\n    permissionDeniedTitle: { en: \"Invoice preparation is not available for this role\", fr: \"La préparation de facture n’est pas disponible pour ce rôle\" },\n    permissionDeniedMessage: { en: \"Ask the organization administrator for invoice preparation access.\", fr: \"Demandez à l’administrateur l’accès à la préparation des factures.\" },\n    primaryHref: \"/dashboard/purchases/payables\",\n    module: { moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/prepare\", accessIntent: \"write\", mode: \"enforce\" },\n  }",
+      "route": "\"/dashboard/purchases/payables/prepare\"",
+      "permissions": "[\"purchasing.ap.invoice.post\"]",
+      "module": "{ moduleSlug: \"purchasing\", surface: \"/dashboard/purchases/payables/prepare\", accessIntent: \"write\", mode: \"enforce\" }",
+      "resource": "\"SupplierInvoice\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 77,
+      "key": "purchases-dashboard",
+      "source": "{\n    key: \"purchases-dashboard\",\n    route: \"/dashboard/purchases\",\n    resource: \"PurchaseOrder\",\n    title: \"Purchase order dashboard\",\n    permissions: [\"purchases.orders.read\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases\",\n      accessIntent: \"read\",\n    },\n  }",
+      "route": "\"/dashboard/purchases\"",
+      "permissions": "[\"purchases.orders.read\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases\",\n      accessIntent: \"read\",\n    }",
+      "resource": "\"PurchaseOrder\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 89,
+      "key": "purchases-detail",
+      "source": "{\n    key: \"purchases-detail\",\n    route: \"/dashboard/purchases/[id]\",\n    resource: \"PurchaseOrder\",\n    title: \"Purchase order detail\",\n    permissions: [\"purchases.orders.read\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/[id]\",\n      accessIntent: \"read\",\n    },\n  }",
+      "route": "\"/dashboard/purchases/[id]\"",
+      "permissions": "[\"purchases.orders.read\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/[id]\",\n      accessIntent: \"read\",\n    }",
+      "resource": "\"PurchaseOrder\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 101,
+      "key": "purchases-payables",
+      "source": "{\n    key: \"purchases-payables\",\n    route: \"/dashboard/purchases/payables\",\n    resource: \"APWorkbench\",\n    title: \"AP workbench\",\n    permissions: [\"purchasing.ap.invoice.view\"],\n    noActiveOrgTitle: \"AP workbench needs an active organization\",\n    permissionDeniedTitle: {\n      en: \"AP workbench is not available for this role\",\n      fr: \"L'atelier AP n'est pas disponible pour ce rôle\",\n    },\n    noActiveOrgMessage:\n      \"Refresh your session from the dashboard so purchasing can load tenant-scoped AP controls.\",\n    permissionDeniedMessage:\n      \"Viewing the AP workbench requires purchasing AP read access. The denial was recorded by the RBAC guard.\",\n    primaryHref: \"/dashboard/purchases\",\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/payables\",\n      accessIntent: \"read\",\n    },\n  }",
+      "route": "\"/dashboard/purchases/payables\"",
+      "permissions": "[\"purchasing.ap.invoice.view\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/payables\",\n      accessIntent: \"read\",\n    }",
+      "resource": "\"APWorkbench\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 123,
+      "key": "purchases-payables-history",
+      "source": "{\n    key: \"purchases-payables-history\",\n    route: \"/dashboard/purchases/payables/history\",\n    resource: \"SupplierAPHistory\",\n    title: \"AP history\",\n    permissions: [\"purchasing.ap.invoice.view\", \"finance.payables.read\", \"purchases.suppliers.read\"],\n    permissionMode: \"any\",\n    permissionDeniedTitle: {\n      en: \"AP history is not available for this role\",\n      fr: \"L'historique AP n'est pas disponible pour ce rôle\",\n    },\n    primaryHref: \"/dashboard/purchases/payables\",\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/payables/history\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    },\n  }",
+      "route": "\"/dashboard/purchases/payables/history\"",
+      "permissions": "[\"purchasing.ap.invoice.view\", \"finance.payables.read\", \"purchases.suppliers.read\"]",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/payables/history\",\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    }",
+      "resource": "\"SupplierAPHistory\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 142,
+      "key": "purchases-suppliers",
+      "source": "{\n    key: \"purchases-suppliers\",\n    route: \"/dashboard/purchases/suppliers\",\n    resource: \"SupplierManagement\",\n    title: \"Supplier management\",\n    permissions: [\"purchases.suppliers.read\"],\n    permissionDeniedTitle: {\n      en: \"Supplier management is not available for this role\",\n      fr: \"La gestion des fournisseurs n'est pas disponible pour ce role\",\n    },\n    primaryHref: \"/dashboard/purchases\",\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/suppliers\",\n      accessIntent: \"read\",\n    },\n  }",
+      "route": "\"/dashboard/purchases/suppliers\"",
+      "permissions": "[\"purchases.suppliers.read\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/suppliers\",\n      accessIntent: \"read\",\n    }",
+      "resource": "\"SupplierManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 159,
+      "key": "purchases-suppliers-create",
+      "source": "{\n    key: \"purchases-suppliers-create\",\n    route: \"/dashboard/purchases/suppliers/create\",\n    resource: \"SupplierManagement\",\n    title: \"Create supplier\",\n    permissions: [\"purchases.suppliers.create\"],\n    permissionDeniedTitle: {\n      en: \"Supplier creation is not available for this role\",\n      fr: \"La creation de fournisseurs n'est pas disponible pour ce role\",\n    },\n    primaryHref: \"/dashboard/purchases/suppliers\",\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/suppliers/create\",\n      accessIntent: \"write\",\n    },\n  }",
+      "route": "\"/dashboard/purchases/suppliers/create\"",
+      "permissions": "[\"purchases.suppliers.create\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/suppliers/create\",\n      accessIntent: \"write\",\n    }",
+      "resource": "\"SupplierManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 176,
+      "key": "purchases-suppliers-detail",
+      "source": "{\n    key: \"purchases-suppliers-detail\",\n    route: \"/dashboard/purchases/suppliers/[id]\",\n    resource: \"SupplierManagement\",\n    title: \"Supplier analytics\",\n    permissions: [\"purchases.suppliers.read\"],\n    permissionDeniedTitle: {\n      en: \"Supplier analytics are not available for this role\",\n      fr: \"Les analyses fournisseur ne sont pas disponibles pour ce role\",\n    },\n    primaryHref: \"/dashboard/purchases/suppliers\",\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/suppliers/[id]\",\n      accessIntent: \"read\",\n    },\n  }",
+      "route": "\"/dashboard/purchases/suppliers/[id]\"",
+      "permissions": "[\"purchases.suppliers.read\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/suppliers/[id]\",\n      accessIntent: \"read\",\n    }",
+      "resource": "\"SupplierManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "line": 193,
+      "key": "purchases-suppliers-edit",
+      "source": "{\n    key: \"purchases-suppliers-edit\",\n    route: \"/dashboard/purchases/suppliers/[id]/edit\",\n    resource: \"SupplierManagement\",\n    title: \"Edit supplier\",\n    permissions: [\"purchases.suppliers.update\"],\n    permissionDeniedTitle: {\n      en: \"Supplier editing is not available for this role\",\n      fr: \"La modification des fournisseurs n'est pas disponible pour ce role\",\n    },\n    primaryHref: \"/dashboard/purchases/suppliers\",\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/suppliers/[id]/edit\",\n      accessIntent: \"write\",\n    },\n  }",
+      "route": "\"/dashboard/purchases/suppliers/[id]/edit\"",
+      "permissions": "[\"purchases.suppliers.update\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/purchases/suppliers/[id]/edit\",\n      accessIntent: \"write\",\n    }",
+      "resource": "\"SupplierManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/sales/sales-route-data-access.ts",
+      "line": 29,
+      "key": "sales-dashboard",
+      "source": "{\n    key: \"sales-dashboard\",\n    route: \"/dashboard/sales\",\n    title: \"Sales dashboard\",\n    resource: \"SalesDashboard\",\n    permissions: [\"sales.read\"],\n    permissionMode: \"single\",\n    module: {\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/sales\",\n      accessIntent: \"read\",\n      mode: \"observe\",\n      moduleLockedTitle: \"Sales module is not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the sales module so this dashboard can display order, customer, and transaction evidence.\",\n    },\n    noActiveOrgTitle: \"Sales dashboard needs an active organization\",\n    noActiveOrgMessage:\n      \"Refresh your session from the dashboard so sales can load tenant-scoped order and customer data.\",\n    permissionDeniedTitle: \"Sales dashboard is not available for this role\",\n    permissionDeniedMessage:\n      \"Viewing sales requires sales read access. The denial was recorded by the RBAC guard.\",\n    noActiveOrgPrimaryHref: \"/dashboard\",\n    permissionDeniedPrimaryHref: \"/dashboard\",\n  }",
+      "route": "\"/dashboard/sales\"",
+      "permissions": "[\"sales.read\"]",
+      "permissionMode": "\"single\"",
+      "module": "{\n      moduleSlug: \"sales\",\n      surface: \"/dashboard/sales\",\n      accessIntent: \"read\",\n      mode: \"observe\",\n      moduleLockedTitle: \"Sales module is not enabled for this organization\",\n      moduleLockedMessage:\n        \"Enable the sales module so this dashboard can display order, customer, and transaction evidence.\",\n    }",
+      "resource": "\"SalesDashboard\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 35,
+      "key": "settings-appearance",
+      "source": "{\n    key: \"settings-appearance\",\n    route: \"/dashboard/settings/appearance\",\n    resource: \"SettingsAppearance\",\n    title: \"Appearance settings\",\n    permissions: [\"DASHBOARD_READ\"],\n  }",
+      "route": "\"/dashboard/settings/appearance\"",
+      "permissions": "[\"DASHBOARD_READ\"]",
+      "resource": "\"SettingsAppearance\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 42,
+      "key": "settings-company",
+      "source": "{\n    key: \"settings-company\",\n    route: \"/dashboard/settings/company\",\n    resource: \"SettingsCompany\",\n    title: \"Company settings\",\n    permissions: [\"COMPANY_READ\"],\n  }",
+      "route": "\"/dashboard/settings/company\"",
+      "permissions": "[\"COMPANY_READ\"]",
+      "resource": "\"SettingsCompany\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 49,
+      "key": "settings-data-onboarding",
+      "source": "{\n    key: \"settings-data-onboarding\",\n    route: MASTER_DATA_ONBOARDING_ROUTE,\n    resource: \"MasterDataOnboarding\",\n    title: \"Data onboarding\",\n    titleFr: \"Intégration des données\",\n    permissions: MASTER_DATA_ONBOARDING_READ_PERMISSIONS,\n    permissionMode: \"any\",\n    module: {\n      moduleSlug: MASTER_DATA_ONBOARDING_MODULE_SLUG,\n      surface: `${MASTER_DATA_ONBOARDING_ROUTE}#page`,\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    },\n  }",
+      "route": "MASTER_DATA_ONBOARDING_ROUTE",
+      "permissions": "MASTER_DATA_ONBOARDING_READ_PERMISSIONS",
+      "permissionMode": "\"any\"",
+      "module": "{\n      moduleSlug: MASTER_DATA_ONBOARDING_MODULE_SLUG,\n      surface: `${MASTER_DATA_ONBOARDING_ROUTE}#page`,\n      accessIntent: \"read\",\n      mode: \"enforce\",\n    }",
+      "resource": "\"MasterDataOnboarding\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 64,
+      "key": "settings-locations",
+      "source": "{\n    key: \"settings-locations\",\n    route: \"/dashboard/settings/locations\",\n    resource: \"SettingsLocations\",\n    title: \"Location settings\",\n    permissions: [\"locations.read\"],\n  }",
+      "route": "\"/dashboard/settings/locations\"",
+      "permissions": "[\"locations.read\"]",
+      "resource": "\"SettingsLocations\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 71,
+      "key": "settings-locations-create",
+      "source": "{\n    key: \"settings-locations-create\",\n    route: \"/dashboard/settings/locations/create\",\n    resource: \"SettingsLocations\",\n    title: \"Create location\",\n    permissions: [\"locations.create\"],\n  }",
+      "route": "\"/dashboard/settings/locations/create\"",
+      "permissions": "[\"locations.create\"]",
+      "resource": "\"SettingsLocations\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 78,
+      "key": "settings-locations-new",
+      "source": "{\n    key: \"settings-locations-new\",\n    route: \"/dashboard/settings/locations/new\",\n    resource: \"SettingsLocations\",\n    title: \"Create location\",\n    permissions: [\"locations.create\"],\n  }",
+      "route": "\"/dashboard/settings/locations/new\"",
+      "permissions": "[\"locations.create\"]",
+      "resource": "\"SettingsLocations\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 85,
+      "key": "settings-locations-edit",
+      "source": "{\n    key: \"settings-locations-edit\",\n    route: \"/dashboard/settings/locations/[id]/edit\",\n    resource: \"SettingsLocations\",\n    title: \"Edit location\",\n    permissions: [\"locations.update\"],\n  }",
+      "route": "\"/dashboard/settings/locations/[id]/edit\"",
+      "permissions": "[\"locations.update\"]",
+      "resource": "\"SettingsLocations\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 92,
+      "key": "settings-modules",
+      "source": "{\n    key: \"settings-modules\",\n    route: \"/dashboard/settings/modules\",\n    resource: \"ModuleControlCenter\",\n    title: \"Module control center\",\n    permissions: [\"MANAGE_SYSTEM_SETTINGS\"],\n  }",
+      "route": "\"/dashboard/settings/modules\"",
+      "permissions": "[\"MANAGE_SYSTEM_SETTINGS\"]",
+      "resource": "\"ModuleControlCenter\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 99,
+      "key": "settings-notifications",
+      "source": "{\n    key: \"settings-notifications\",\n    route: \"/dashboard/settings/notifications\",\n    resource: \"SettingsNotifications\",\n    title: \"Notification settings\",\n    permissions: [\"communication.notifications.read\"],\n  }",
+      "route": "\"/dashboard/settings/notifications\"",
+      "permissions": "[\"communication.notifications.read\"]",
+      "resource": "\"SettingsNotifications\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 106,
+      "key": "settings-delivery-issues",
+      "source": "{\n    key: \"settings-delivery-issues\",\n    route: \"/dashboard/settings/delivery-issues\",\n    resource: \"DeliveryIssues\",\n    title: \"Delivery issues\",\n    titleFr: \"Problèmes de livraison\",\n    // The shell is shared; adapters check complete source permissions and modules.\n    permissions: [\"accounting.exports.create\", \"users.read\"],\n    permissionMode: \"any\",\n  }",
+      "route": "\"/dashboard/settings/delivery-issues\"",
+      "permissions": "[\"accounting.exports.create\", \"users.read\"]",
+      "permissionMode": "\"any\"",
+      "resource": "\"DeliveryIssues\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 116,
+      "key": "settings-audit",
+      "source": "{\n    key: \"settings-audit\",\n    route: \"/dashboard/settings/audit\",\n    resource: \"AuditExplorer\",\n    title: \"Audit explorer\",\n    titleFr: \"Explorateur d’audit\",\n    permissions: [\"controls.audit.read\"],\n  }",
+      "route": "\"/dashboard/settings/audit\"",
+      "permissions": "[\"controls.audit.read\"]",
+      "resource": "\"AuditExplorer\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 124,
+      "key": "settings-organization",
+      "source": "{\n    key: \"settings-organization\",\n    route: \"/dashboard/settings/organization\",\n    resource: \"SettingsOrganization\",\n    title: \"Organization settings\",\n    permissions: [\"COMPANY_READ\"],\n  }",
+      "route": "\"/dashboard/settings/organization\"",
+      "permissions": "[\"COMPANY_READ\"]",
+      "resource": "\"SettingsOrganization\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 131,
+      "key": "settings-roles",
+      "source": "{\n    key: \"settings-roles\",\n    route: \"/dashboard/settings/roles\",\n    resource: \"SettingsRoles\",\n    title: \"Role administration\",\n    permissions: [\"READ_ROLES\"],\n  }",
+      "route": "\"/dashboard/settings/roles\"",
+      "permissions": "[\"READ_ROLES\"]",
+      "resource": "\"SettingsRoles\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 138,
+      "key": "settings-roles-new",
+      "source": "{\n    key: \"settings-roles-new\",\n    route: \"/dashboard/settings/roles/new\",\n    resource: \"SettingsRoles\",\n    title: \"Create role\",\n    permissions: [\"roles.create\"],\n  }",
+      "route": "\"/dashboard/settings/roles/new\"",
+      "permissions": "[\"roles.create\"]",
+      "resource": "\"SettingsRoles\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 145,
+      "key": "settings-roles-update",
+      "source": "{\n    key: \"settings-roles-update\",\n    route: \"/dashboard/settings/roles/update/[id]\",\n    resource: \"SettingsRoles\",\n    title: \"Update role\",\n    permissions: [\"roles.update\"],\n  }",
+      "route": "\"/dashboard/settings/roles/update/[id]\"",
+      "permissions": "[\"roles.update\"]",
+      "resource": "\"SettingsRoles\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 152,
+      "key": "settings-security",
+      "source": "{\n    key: \"settings-security\",\n    route: \"/dashboard/settings/security\",\n    resource: \"SettingsSecurity\",\n    title: \"Security settings\",\n    titleFr: \"Sécurité du compte\",\n    permissions: [\"profile.read\"],\n  }",
+      "route": "\"/dashboard/settings/security\"",
+      "permissions": "[\"profile.read\"]",
+      "resource": "\"SettingsSecurity\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 160,
+      "key": "settings-tax-rates",
+      "source": "{\n    key: \"settings-tax-rates\",\n    route: \"/dashboard/settings/tax-rates\",\n    resource: \"SettingsTaxRates\",\n    title: \"Tax rates\",\n    permissions: [\"taxes.read\"],\n  }",
+      "route": "\"/dashboard/settings/tax-rates\"",
+      "permissions": "[\"taxes.read\"]",
+      "resource": "\"SettingsTaxRates\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 167,
+      "key": "settings-tax-rates-create",
+      "source": "{\n    key: \"settings-tax-rates-create\",\n    route: \"/dashboard/settings/tax-rates/create\",\n    resource: \"SettingsTaxRates\",\n    title: \"Create tax rate\",\n    permissions: [\"taxes.create\"],\n  }",
+      "route": "\"/dashboard/settings/tax-rates/create\"",
+      "permissions": "[\"taxes.create\"]",
+      "resource": "\"SettingsTaxRates\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 174,
+      "key": "settings-tax-rates-edit",
+      "source": "{\n    key: \"settings-tax-rates-edit\",\n    route: \"/dashboard/settings/tax-rates/[id]/edit\",\n    resource: \"SettingsTaxRates\",\n    title: \"Edit tax rate\",\n    permissions: [\"taxes.update\"],\n  }",
+      "route": "\"/dashboard/settings/tax-rates/[id]/edit\"",
+      "permissions": "[\"taxes.update\"]",
+      "resource": "\"SettingsTaxRates\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 181,
+      "key": "settings-terminals",
+      "source": "{\n    key: \"settings-terminals\",\n    route: \"/dashboard/settings/terminals\",\n    resource: \"SettingsTerminals\",\n    title: \"Terminal settings\",\n    permissions: [\"POS_STATION_READ\"],\n  }",
+      "route": "\"/dashboard/settings/terminals\"",
+      "permissions": "[\"POS_STATION_READ\"]",
+      "resource": "\"SettingsTerminals\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 188,
+      "key": "settings-users",
+      "source": "{\n    key: \"settings-users\",\n    route: \"/dashboard/settings/users\",\n    resource: \"SettingsUsers\",\n    title: \"User directory\",\n    permissions: [\"READ_USERS\"],\n  }",
+      "route": "\"/dashboard/settings/users\"",
+      "permissions": "[\"READ_USERS\"]",
+      "resource": "\"SettingsUsers\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "line": 195,
+      "key": "settings-users-update",
+      "source": "{\n    key: \"settings-users-update\",\n    route: \"/dashboard/settings/users/update/[id]\",\n    resource: \"User\",\n    title: \"Member access\",\n    titleFr: \"Accès du membre\",\n    permissions: [\"users.read\"],\n    module: { moduleSlug: \"settings\", surface: \"app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx\", accessIntent: \"read\", mode: \"observe\" },\n  }",
+      "route": "\"/dashboard/settings/users/update/[id]\"",
+      "permissions": "[\"users.read\"]",
+      "module": "{ moduleSlug: \"settings\", surface: \"app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx\", accessIntent: \"read\", mode: \"observe\" }",
+      "resource": "\"User\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/suppliersSystem/suppliers-system-route-data-access.ts",
+      "line": 29,
+      "key": "suppliers-system-dashboard",
+      "source": "{\n    key: \"suppliers-system-dashboard\",\n    route: \"/dashboard/suppliersSystem\",\n    resource: \"SupplierManagement\",\n    title: \"Supplier system dashboard\",\n    permissions: [\"purchases.suppliers.read\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/suppliersSystem\",\n      accessIntent: \"read\",\n    },\n  }",
+      "route": "\"/dashboard/suppliersSystem\"",
+      "permissions": "[\"purchases.suppliers.read\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/suppliersSystem\",\n      accessIntent: \"read\",\n    }",
+      "resource": "\"SupplierManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/suppliersSystem/suppliers-system-route-data-access.ts",
+      "line": 41,
+      "key": "suppliers-system-new",
+      "source": "{\n    key: \"suppliers-system-new\",\n    route: \"/dashboard/suppliersSystem/new\",\n    resource: \"SupplierManagement\",\n    title: \"Create supplier\",\n    permissions: [\"purchases.suppliers.create\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/suppliersSystem/new\",\n      accessIntent: \"write\",\n    },\n  }",
+      "route": "\"/dashboard/suppliersSystem/new\"",
+      "permissions": "[\"purchases.suppliers.create\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/suppliersSystem/new\",\n      accessIntent: \"write\",\n    }",
+      "resource": "\"SupplierManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/suppliersSystem/suppliers-system-route-data-access.ts",
+      "line": 53,
+      "key": "suppliers-system-detail",
+      "source": "{\n    key: \"suppliers-system-detail\",\n    route: \"/dashboard/suppliersSystem/[id]\",\n    resource: \"SupplierManagement\",\n    title: \"Supplier analytics\",\n    permissions: [\"purchases.suppliers.read\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/suppliersSystem/[id]\",\n      accessIntent: \"read\",\n    },\n  }",
+      "route": "\"/dashboard/suppliersSystem/[id]\"",
+      "permissions": "[\"purchases.suppliers.read\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/suppliersSystem/[id]\",\n      accessIntent: \"read\",\n    }",
+      "resource": "\"SupplierManagement\""
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/suppliersSystem/suppliers-system-route-data-access.ts",
+      "line": 65,
+      "key": "suppliers-system-edit",
+      "source": "{\n    key: \"suppliers-system-edit\",\n    route: \"/dashboard/suppliersSystem/[id]/edit\",\n    resource: \"SupplierManagement\",\n    title: \"Edit supplier\",\n    permissions: [\"purchases.suppliers.update\"],\n    module: {\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/suppliersSystem/[id]/edit\",\n      accessIntent: \"write\",\n    },\n  }",
+      "route": "\"/dashboard/suppliersSystem/[id]/edit\"",
+      "permissions": "[\"purchases.suppliers.update\"]",
+      "module": "{\n      moduleSlug: \"purchasing\",\n      surface: \"/dashboard/suppliersSystem/[id]/edit\",\n      accessIntent: \"write\",\n    }",
+      "resource": "\"SupplierManagement\""
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-10-25T11:34:51.490Z",
+  "status": "ready",
+  "hashContract": {
+    "version": "stoquify-migration-sql-sha256-v1",
+    "approvalIdentity": "canonicalLfSha256",
+    "transportIdentity": "rawSha256",
+    "encoding": "UTF-8",
+    "canonicalization": "Decode as UTF-8, normalize CRLF and lone CR line endings to LF, preserve every other byte represented by the decoded text, then SHA-256 hash the UTF-8 result."
+  },
+  "migrationCount": 118,
+  "manifestPresent": true,
+  "manifestSha256": "e279bc2dc7652b857c0b25a9b763455158d108922fc277037973fc84bb150fd7",
+  "catalogSha256": "3e22de8f7ee6b0d5ec6c32c7bc4f18361fdd4b72ca44fc1a0932777835f8ef94",
+  "unmanifested": [],
+  "missingFromCatalog": [],
+  "changed": [],
+  "duplicateTimestamps": [
+    {
+      "timestamp": "20260818120000",
+      "migrations": [
+        "20260818120000_governed_delivery_order_to_cash",
+        "20260818120000_pos_electronic_tender_authority"
+      ],
+      "grandfathered": true,
+      "reason": "Both full migration names were already applied before the timestamp-uniqueness ratchet. Preserve their immutable names and reject every new collision."
+    },
+    {
+      "timestamp": "20261024170000",
+      "migrations": [
+        "20261024170000_hris_lifecycle_tasks",
+        "20261024170000_hris_setup_reviewer_grants"
+      ],
+      "grandfathered": true,
+      "reason": "Exact existing pair reconciled on 2026-10-25 under the requested catalog-blocker repair. Both full names and unchanged SQL hashes were already applied in disposable rehearsals before this reconciliation (docs/command-center/phase-7-release-2026-10-24/migration-catalog.json and history-gate.json). Preserve those identities; production application status was not inspected. See docs/command-center/phase-8-blocker-fixes-2026-10-25/CATALOG_REVIEW.md. This exception admits no additional migration at this timestamp."
+    }
+  ],
+  "errors": [],
+  "secretValuePrinted": false
+}

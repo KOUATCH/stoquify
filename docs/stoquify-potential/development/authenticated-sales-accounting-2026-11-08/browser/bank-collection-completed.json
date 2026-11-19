@@ -1,0 +1,376 @@
+{
+  "utc": "2026-11-09T10:16:37.420Z",
+  "operations": [
+    {
+      "kind": "password",
+      "label": "Current password",
+      "user": "collector"
+    },
+    {
+      "kind": "click",
+      "role": "button",
+      "text": "Verify identity"
+    },
+    {
+      "kind": "wait",
+      "text": "Identity verified. Retry the payment action to continue.",
+      "timeout": 30000
+    },
+    {
+      "kind": "click",
+      "role": "button",
+      "text": "Retry the same payment"
+    },
+    {
+      "kind": "wait",
+      "text": "Current amount due: FCFA 0",
+      "timeout": 60000
+    },
+    {
+      "kind": "assertCount",
+      "role": "button",
+      "text": "Review reversal",
+      "count": 0
+    },
+    {
+      "kind": "inspect"
+    },
+    {
+      "kind": "screenshot"
+    }
+  ],
+  "results": [
+    {
+      "operation": "password",
+      "label": "Current password"
+    },
+    {
+      "operation": "click",
+      "role": "button",
+      "text": "Verify identity"
+    },
+    {
+      "operation": "wait"
+    },
+    {
+      "operation": "click",
+      "role": "button",
+      "text": "Retry the same payment"
+    },
+    {
+      "operation": "wait"
+    },
+    {
+      "assertion": "Review reversal",
+      "count": 0,
+      "passed": true
+    },
+    {
+      "operation": "assertCount",
+      "role": "button",
+      "text": "Review reversal"
+    },
+    {
+      "url": "http://127.0.0.1:3196/en/dashboard/finance/receivables/history?selected=cmw939xau000vmatojel0y1bs",
+      "title": "Customer receivable history | Stoquify",
+      "text": "Skip to main content\nOHADA OPERATING OS\nNotifications\n0\n\nSynthetic Cameroon sales accounting pilot\n\nSYNTHETIC COLLECTOR\nSession\nMODULES\n5\nCOMMAND\n2\nDashboard\nOperating overview\nCommand Center\nOwner and manager daily command views\n3\nOPERATIONS\n1\nSales\nCustomers, sales, and POS entry points\n2\nFINANCE & TRUST\n2\nAccounting\nLedger, close, reports, and controls\n2\nFinance\nCash, profitability, payments, and reconciliation\n2\nCustomer AR History\nReceivables\nSC\n\nSynthetic collector\n\ncollector-ac360f134c@sales-accounting.invalid\n\nCustomer AR History\n\nFinance & Trust / Finance / Customer AR History\n\nFR\nSC\n\nTable ready\n\nCustomer AR history\nTenant-scoped AR history\nCustomer receivable history\n\nReview customer open items, allocations, aging, and settlement state from one tenant-scoped receivables history.\n\nNot certified\n/ Posting status is shown per item. Close certification is not included.\nAs of\nNov 9, 2026, 11:08 AM\nRecorded through\nNov 9, 2026, 11:08 AM\n\nITEMS\n\n1\n\nOPEN AR (XAF)\n\nFCFA 4\n\nOVERDUE (XAF)\n\nFCFA 0\n\nSETTLED\n\n0\nOperational history\n\nTenant-scoped AR history\n\n0 actions\nTenant-scoped AR history\n\nPosting status is shown per item. Close certification is not included.\n\nCustomer receivable open items\n\n1 AR item\n\nTenant-scoped AR history\nRetry\nFrom - As of\nReset\nREFERENCE\tCUSTOMER\tDUE DATE\tSTATUS\tCURRENCY\tOPENED\tOPEN\tEVIDENCE GRADE\tDETAILS\nAR-POS-SYNTHETIC_TILL-20261108-EUVIV\tSynthetic credit customer\tDec 9, 2026, 10:59 AM\tPartially settled\tXAF\tFCFA 10\tFCFA 4\tPosted receivable\t\nDetails\n\nRows\n\n50\nPage 1\nGo to first page\nGo to previous page\nNo more rows\nClose\nPOS-SYNTHETIC_TILL-20261108-EUVIV\n\nSynthetic credit customer / Customer receivable document\n\nCustomer\nSynthetic credit customer\nDue date\nDec 9, 2026, 10:59 AM\nRecorded through\nNov 9, 2026, 11:08 AM\nOpen item\nCustomer\nSynthetic credit customer\nReference\ncmw939xau000vmatojel0y1bs\nCurrency\nXAF\nOpened\nFCFA 10\nAllocated\nFCFA 6\nOpen\nFCFA 4\nStatus\nPartially settled\nAging\nInvoice date\nNov 9, 2026, 10:59 AM\nDue date\nDec 9, 2026, 10:59 AM\nDays past due\n-\nAging bucket\nCurrent\nEvidence grade\nPosted receivable\nAllocations\nAllocations\nNo allocations yet\nCustomer payments\n\nCustomer payment recorded. The invoice and accounting entries have been updated.\n\nRefresh payments\n\nCurrent amount due: FCFA 0\n\nThis invoice is read-only for your current permissions or state.\n\nReversal requires another authorized person and reverses the entire payment, including allocations to other invoices. The original payment remains in history.\n\nCSET-20261109-B793B9EB61 · Posted\n\nFCFA 4 · 11/9/2026\n\nAllocated to this invoice: FCFA 4\n\nSYNTHETIC-BANK-20261109-UI-001",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Notifications\n0",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Search navigation modules",
+          "placeholder": "Search modules",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Command Center menu",
+          "placeholder": null,
+          "text": "Command Center\nOwner and manager daily command views\n3",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sales menu",
+          "placeholder": null,
+          "text": "Sales\nCustomers, sales, and POS entry points\n2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Accounting menu",
+          "placeholder": null,
+          "text": "Accounting\nLedger, close, reports, and controls\n2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Finance menu",
+          "placeholder": null,
+          "text": "Finance\nCash, profitability, payments, and reconciliation\n2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sign out",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Toggle navigation menu",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": "combobox",
+          "type": "search",
+          "id": "",
+          "name": null,
+          "label": "Search pages or records",
+          "placeholder": "Search pages or records",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Disable notification sound",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "radix-_R_2auitqbnabn9lb_",
+          "name": null,
+          "label": "Open account menu",
+          "placeholder": null,
+          "text": "SC",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Retry",
+          "placeholder": null,
+          "text": "Retry",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": "text",
+          "id": "",
+          "name": null,
+          "label": "Search",
+          "placeholder": "Search receivables",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "From - As of",
+          "placeholder": null,
+          "text": "From - As of",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Reset",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Details: POS-SYNTHETIC_TILL-20261108-EUVIV",
+          "placeholder": null,
+          "text": "Details",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Open details: POS-SYNTHETIC_TILL-20261108-EUVIV",
+          "placeholder": null,
+          "text": "Open details",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": "combobox",
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Rows",
+          "placeholder": null,
+          "text": "50",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to first page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to previous page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "No more rows",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Open issues overlay",
+          "placeholder": null,
+          "text": "-10 Issue",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Collapse issues badge",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "DIV",
+          "role": "dialog",
+          "type": null,
+          "id": "radix-_R_iaatpesnebneitqbnabn9lb_",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Close\nPOS-SYNTHETIC_TILL-20261108-EUVIV\n\nSynthetic credit customer / Customer receivable document\n\nCustomer\nSynthetic credit customer\nDue date\nDec 9, 2026, 10:59 AM\nRecorded throug",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Close",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Refresh payments",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "operation": "inspect"
+    },
+    {
+      "operation": "screenshot"
+    }
+  ]
+}

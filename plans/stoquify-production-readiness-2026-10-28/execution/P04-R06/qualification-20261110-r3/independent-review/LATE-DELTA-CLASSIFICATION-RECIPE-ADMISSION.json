@@ -1,0 +1,57 @@
+{
+  "at": "2026-11-10T15:53:55.160Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Recipe-only bounded classification and two exclusive E evidence writes",
+  "files": [
+    {
+      "path": "inventory/classify-late-delta-r3.cjs",
+      "sha256": "71e6434ab9c444d06e4dc370f5979184f1c585b7f1da2c8d89e6e9675afa1c52"
+    },
+    {
+      "path": "inventory/CURRENT-SOURCE-MANIFEST-r2.json",
+      "sha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699"
+    },
+    {
+      "path": "inventory/SOURCE-IMPACT-r2.json",
+      "sha256": "19fb4fa4fc472a64c2eb55daf54f3024cb8759ce2a846e8ddbc215df010f36b1"
+    },
+    {
+      "path": "inventory/PRIVATE-METADATA-DISPOSITION-r2.json",
+      "sha256": "a45cde4732995e182e286c2af5420a678ff84745a1703faf2ac6e1a2cb1981e9"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\tsconfig.json",
+      "sha256": "d3579c5303333929f58ef96286529142b8e64137c59fb8a32b7c43598ac518c9"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\typescript\\lib\\typescript.js",
+      "sha256": "dd17428736a07e1db1a138d8a14295ddb2699ba780ee15038acdd2c6da5373a0"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\next\\dist\\build\\jest\\jest.js",
+      "sha256": "504b97be29860a11412afd5e1b74b3577725f22383faf549844429bb662f8d9c"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\unit\\jest.config.cjs",
+      "sha256": "711c79123c48f8ad5f361017ebbb6166cb0fa73bdfaff51bcd5484ef24ca20cf"
+    },
+    {
+      "path": "D:/p04-r06-fullapp-20261110-r2/source/tsconfig.json",
+      "sha256": "d8520694b9940364a676d62d757600ffb29718574e72c5752f8f4875021f4ccb"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\earned-close\\pg-earned-close-qualification.cjs",
+      "sha256": "27fb22021acaf9d5ccf5dcabb7f9fb826fde3bcf2f934320c93071dd54a0fd04"
+    }
+  ],
+  "reviewed": [
+    "Exact first/final labels verified against producer112-117; no external reference content is opened",
+    "Installed TypeScript filename matcher receives synthetic bounded indexes, no compiler program or typecheck",
+    "Before/after config must differ only added plans/**/source-before/** exclusion and candidate filename selection must remain exact",
+    "Unit Next/Jest no options.dir confirmed against current config and installed implementation; no new mocked run claimed",
+    "Rehash of changed source paths is explicit; any new drift needs actual outcome review"
+  ],
+  "candidateCaptureAccepted": false,
+  "qualificationPassed": false
+}

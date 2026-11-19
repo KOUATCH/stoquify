@@ -5,6 +5,8 @@ import { useRef } from "react"
 import { usePermissions } from "@/hooks/usePermissions"
 import type { POSReadResult } from "@/services/pos/pos-read-result"
 
+export const POS_READ_TIMEOUT_MS = 30_000
+
 export function usePOSReadQuery<T>(options: {
   queryKey: readonly unknown[]
   queryFn: () => Promise<POSReadResult<T>>
@@ -29,7 +31,13 @@ export function usePOSReadQuery<T>(options: {
     meta: { suppressErrorNotification: true },
     queryFn: async () => {
       if (!allowed) throw Object.assign(new Error("POS_READ_DENIED"), { code: "FORBIDDEN" })
-      const result = await options.queryFn()
+      let timeout: ReturnType<typeof setTimeout> | undefined
+      const result = await Promise.race([
+        Promise.resolve().then(options.queryFn),
+        new Promise<never>((_, reject) => {
+          timeout = setTimeout(() => reject(Object.assign(new Error("POS_READ_TIMEOUT"), { code: "POS_READ_TIMEOUT" })), POS_READ_TIMEOUT_MS)
+        }),
+      ]).finally(() => clearTimeout(timeout))
       if (!result.success) throw Object.assign(new Error(result.error), { code: "POS_READ_FAILED" })
       if (result.scope.organizationId !== organizationId || result.scope.actorId !== actorId)
         throw Object.assign(new Error("POS_READ_SCOPE_CHANGED"), { code: "TENANT_SCOPE_VIOLATION" })

@@ -1,0 +1,39 @@
+{
+  "executable": "C:/Program Files/Git/mingw64/bin/openssl.exe",
+  "args": [
+    "req",
+    "-x509",
+    "-newkey",
+    "rsa:2048",
+    "-sha256",
+    "-nodes",
+    "-days",
+    "1",
+    "-config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-d581d56c11\\sealed-runtime-6d714e1e8a\\openssl.cnf",
+    "-keyout",
+    "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-d581d56c11\\sealed-runtime-6d714e1e8a\\localhost.key",
+    "-out",
+    "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-d581d56c11\\sealed-runtime-6d714e1e8a\\localhost.crt"
+  ],
+  "cwd": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-d581d56c11\\sealed-runtime-6d714e1e8a",
+  "began": "2026-11-10T21:10:37.465Z",
+  "ended": "2026-11-10T21:10:37.622Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "privateOutputs": [
+    {
+      "stream": "stdout",
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-d581d56c11\\sealed-runtime-6d714e1e8a\\private-tls.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "stream": "stderr",
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-d581d56c11\\sealed-runtime-6d714e1e8a\\private-tls.stderr.private.log",
+      "sha256": "c4f5d577c4402a98991a5ea24149f76254c082d1accfb6c8219f147da3adc185",
+      "bytes": 1152
+    }
+  ]
+}

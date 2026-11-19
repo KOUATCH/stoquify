@@ -1,0 +1,42 @@
+- main:
+  - link "Offres et tarifs":
+    - /url: /fr/pricing
+  - paragraph: VOTRE PROCHAINE ÉTAPE
+  - heading "Un espace adapté à votre activité." [level=1]
+  - paragraph: Précisez votre point de départ. Conservez vos besoins et confirmez modules, prise en charge du pays et coût global avant de vous engager.
+  - text: Votre priorité
+  - combobox "Votre priorité":
+    - option "Ventes, stocks et achats"
+    - option "Finance et comptabilité" [selected]
+    - option "SIRH et paie"
+    - option "Collaboration avec un cabinet"
+    - option "Aidez-moi à choisir"
+  - text: Organisation
+  - textbox "Organisation": Fictional accessibility review
+  - text: Pays à étudier
+  - textbox "Pays à étudier"
+  - text: Effectif
+  - combobox "Effectif":
+    - option "À préciser" [selected]
+    - option "1–10"
+    - option "11–50"
+    - option "51–200"
+    - option "200+"
+  - text: Nombre de sites
+  - textbox "Nombre de sites"
+  - paragraph: La prise en charge du pays, de la paie et des prestataires doit être confirmée pour votre déploiement.
+  - text: Que souhaitez-vous organiser en premier ?
+  - textbox "Que souhaitez-vous organiser en premier ?"
+  - paragraph: Champs facultatifs. N’ajoutez pas de dossiers salariés, de paie, de coordonnées bancaires ou d’autres données confidentielles. Cette page garde votre projet uniquement en mémoire ; rien n’est envoyé automatiquement.
+  - button "Enregistrer mon projet"
+  - status: Votre projet est prêt à être téléchargé. Il n’a pas été envoyé à Stoquify.
+  - complementary:
+    - heading "Les points à préciser ensemble" [level=2]
+    - list:
+      - listitem: Vos modules de départ et les responsabilités
+      - listitem: Règles du pays, prestataires et équipements
+      - listitem: Données existantes, mise en place et formation
+      - listitem: Logiciel, services et éventuels coûts distincts
+    - paragraph: Les demandes en ligne ne sont pas encore disponibles. Enregistrez votre projet pour votre prochain échange avec l’équipe Stoquify ; aucune demande ne sera envoyée depuis cette page.
+    - link "Voir le guide de préparation":
+      - /url: /fr/get-started

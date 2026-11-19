@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-10T08:45:16.307Z",
+  "command": "node unit/run-v3.cjs",
+  "args": [
+    "--require",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261109-r1\\unit\\preload.cjs",
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261109-r1\\unit\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261109-r1\\unit\\attempt03\\jest.json",
+    "--runTestsByPath",
+    "lib/security/__tests__/auth-current-authority.test.ts",
+    "lib/security/__tests__/auth-session.test.ts",
+    "lib/security/__tests__/auth-deactivation.test.ts",
+    "lib/security/__tests__/credential-sign-in-outcome.test.ts"
+  ],
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "environment": "allowlisted OS variables plus synthetic test-only settings; no DB/provider URLs; no Next config/env load",
+  "files": [
+    "auth-current-authority",
+    "auth-session",
+    "auth-deactivation",
+    "credential-sign-in-outcome"
+  ]
+}

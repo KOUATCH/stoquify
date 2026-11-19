@@ -1,7 +1,8 @@
 "use server"
 
 import { requirePermission } from "@/lib/security/rbac"
-import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
   getGoodsReceipts,
   getSummary,
@@ -50,14 +51,20 @@ function toNumber(value: unknown): number {
 }
 
 async function scopedOrg(organizationId: string) {
-  const { orgId } = await requirePermission("purchases.orders.read", {
+  const ctx = await requirePermission("purchases.orders.read", {
     resource: "PurchaseOrder",
     auditAllowed: false,
   })
-  if (organizationId !== orgId) {
+  if (organizationId !== ctx.orgId) {
     throw new BusinessRuleError("You do not have access to this organization")
   }
-  return orgId
+  const access = await observeModuleAccess({
+    organizationId: ctx.orgId, userId: ctx.userId, actorPermissions: ctx.permissions,
+    moduleSlug: "purchasing", surfaceType: "action", surface: "GoodsReceiptAndSummary.read",
+    accessIntent: "read", mode: "enforce", audit: true,
+  })
+  if (!access.allowed) throw new ForbiddenError("Purchasing module read access is unavailable")
+  return ctx.orgId
 }
 
 export async function getGoodsReceiptsForPurchaseOrder(

@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "package": "P04",
+  "candidate_id": "p04-20261029-07216cdcb1fb",
+  "qualification_status": "blocked",
+  "application_fixes_implemented": false,
+  "findings": [
+    {
+      "id": "P04-F01",
+      "source_ids": [
+        "P04-GR01",
+        "P04-A-F01"
+      ],
+      "title": "Reserved role codes escape the operating-scope grant ceiling",
+      "severity": "high",
+      "status": "confirmed",
+      "evidence_class": "current source plus real PostgreSQL composition; authentication transport stubbed",
+      "evidence": [
+        "native-authority-result.json",
+        "native-authority-jest.json",
+        "guard-review/REVIEW.md",
+        "actions-review/findings.json"
+      ],
+      "observed": "A location-scoped delegator created Admin with dashboard.read and assigned it to a distinct member. Recipient scope changed LOCATIONS to TENANT without wildcard permissions.",
+      "limit": "Same-tenant location scope escalation; no cross-tenant or real HTTP/cookie exploit claimed.",
+      "repair_package": "P04-R01"
+    },
+    {
+      "id": "P04-F02",
+      "source_ids": [
+        "P04-R-01"
+      ],
+      "title": "Private legacy uploads have an unguarded static delivery path",
+      "severity": "high_when_private_assets_are_published",
+      "status": "confirmed",
+      "evidence_class": "current source plus synthetic component HTTP",
+      "evidence": [
+        "routes-review/synthetic-static-run-O6X3iX/result.json",
+        "routes-review/ROUTES_REVIEW.md"
+      ],
+      "observed": "Unauthenticated /uploads/synthetic-tenant/sentinel.jpg returned HTTP200 and synthetic private bytes through current middleware and installed Next static components.",
+      "limit": "Synthetic minimal manifests; full current build, ingress and actual production asset exposure not tested.",
+      "repair_package": "P04-R02"
+    },
+    {
+      "id": "P04-F03",
+      "source_ids": [
+        "P04-A-F02"
+      ],
+      "title": "Item action failures expose arbitrary exception messages",
+      "severity": "medium",
+      "status": "confirmed",
+      "evidence_class": "current source plus mocked error-injection characterization",
+      "evidence": [
+        "mocked-tests-jest.json",
+        "actions-review/item-read-error-disclosure.test.ts.source.txt",
+        "actions-review/findings.json"
+      ],
+      "observed": "getItemAction and listItemsAction returned injected guard/service exception sentinel verbatim in four cases.",
+      "limit": "No live confidential database payload demonstrated. Seven additional mutation catches are source-matched obligations, not runtime-proven disclosures.",
+      "repair_package": "P04-R03"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "P04-G01",
+      "title": "Remaining action/page data continuations and object/location/module enforcement",
+      "package": "P04-V01",
+      "status": "blocking",
+      "coverage": "676 actions export rows,185 page continuations, remaining app-local paths; reviewed entries also need operation-specific runtime proof",
+      "rule": "Subdivide by domain/route family and one authority contract before execution. No blanket approval from guard-name presence."
+    },
+    {
+      "id": "P04-G02",
+      "title": "Actual signed-session transport, provider endpoints and browser restoration",
+      "package": "P04-V02",
+      "status": "blocking",
+      "coverage": "Actual Better Auth config/cookies, expiry/revocation/role changes, plugin endpoints, UploadThing callbacks, implicit HEAD/OPTIONS, cache/back-navigation",
+      "rule": "Current sealed source and isolated signed-session HTTP/browser evidence. Native mocked transport is not sufficient."
+    },
+    {
+      "id": "P04-G03",
+      "title": "Public capability and referral negative lifecycle",
+      "package": "P04-V03",
+      "status": "blocking",
+      "coverage": "Statement, supplier PO, receipt, invitation tokens and referral continuation; malformed/forged/expired/revoked/wrong-resource tenant claims",
+      "rule": "Separate approved public DTO/audit effects from forbidden data or business mutation."
+    },
+    {
+      "id": "P04-G04",
+      "title": "HR document object/manager scope and storage-latency revocation",
+      "package": "P04-V04",
+      "status": "blocking",
+      "coverage": "Self/manager/HR, employee/document/revision grants, module changes and revocation during storage latency",
+      "rule": "Real disposable database with deterministic fake storage first; hosted provider proof remains under P16."
+    },
+    {
+      "id": "P04-G05",
+      "title": "Remaining dependency, secret-handling, logging, export and artifact-content review",
+      "package": "P04-V05",
+      "status": "blocking",
+      "coverage": "Current dependencies and relevant configuration, log sinks, upload/export/object storage and release public-content inventory",
+      "rule": "No claim of dependency/secrets clearance from passing unit tests; avoid secrets in evidence."
+    },
+    {
+      "id": "P04-G06",
+      "title": "Same-tenant report export artifact visibility policy",
+      "package": "P04-D01",
+      "status": "business_policy_unresolved",
+      "coverage": "getFinanceStatementExportJobStatusAction requires reports.read and can resolve another same-tenant REPORT_EXPORT job by ID",
+      "rule": "Product/accounting/security owner decides intended visibility; no defect claimed before policy and negative evidence."
+    }
+  ],
+  "gate_effect": "R03 remains OPEN/BLOCKED; no production gate promoted. Parent P04 cannot close with required children unverified.",
+  "test_source_relocation": "test-source-relocation.json"
+}

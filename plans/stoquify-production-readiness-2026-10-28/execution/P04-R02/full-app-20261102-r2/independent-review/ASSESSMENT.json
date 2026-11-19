@@ -1,0 +1,169 @@
+{
+  "reviewedAt": "2026-11-02T16:16:13.862Z",
+  "reviewer": "qualification_review_r2",
+  "package": "P04-R02",
+  "gate": "R02-G08",
+  "candidateId": "p04-r02-full-eb25ee4e218c",
+  "status": "blocked",
+  "advanceParent": false,
+  "evidenceClass": "independent_source_recipe_and_execution_receipt_review",
+  "executionByReviewer": false,
+  "results": {
+    "preparation": "passed",
+    "disposableDatabaseReadiness": "passed_scoped",
+    "syntheticStoredReferences": "3_passed_read_only",
+    "privatePrismaCanonicalProof": "passed",
+    "nextBuild": "passed_exit_0",
+    "artifactAdmission": "failed_before_artifact_creation",
+    "realSessionQualification": "not_run",
+    "renderedBrowser": "not_run",
+    "hostedIngress": "not_run"
+  },
+  "blocker": {
+    "id": "R02-ASSET-01",
+    "status": "unresolved_owner_classification",
+    "rawHashMatches": 15,
+    "recognizedUploadCopiesExcluded": 12,
+    "blockingPublicAliases": [
+      {
+        "input": "public/images/cabin-1.jpg",
+        "source": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+        "sha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225"
+      },
+      {
+        "input": "public/images/cabin-2.jpg",
+        "source": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+        "sha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519"
+      },
+      {
+        "input": "public/images/profile.jpg",
+        "source": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+        "sha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2"
+      }
+    ],
+    "confirmed": "Byte-identical public packaging inputs and private-upload candidates",
+    "notEstablished": [
+      "Confidential classification of those public files",
+      "Approved public classification",
+      "Live original-tenant reference census",
+      "New HTTP disclosure reproduction"
+    ],
+    "disposition": "Preserve bytes and hash guard; await explicit classification/reference disposition before dependent artifact/session/browser work"
+  },
+  "sourceHistory": {
+    "reviewer": "/root/prisma_schema_format",
+    "introducedCommit": "2b4441ce8e2b1f05fdd915eb211e46dee708ce02",
+    "introducedDate": "2026-06-09",
+    "commitSubject": "after accounting backbone implemented",
+    "headBlobsUnchanged": true,
+    "workingTreeAssetsUnchanged": true,
+    "literalReferencesFound": 0,
+    "referenceSearchScope": [
+      "app",
+      "actions",
+      "components",
+      "config",
+      "hooks",
+      "i18n",
+      "lib",
+      "messages",
+      "prisma",
+      "services",
+      "src",
+      "types",
+      "validations",
+      "scripts",
+      "docs",
+      "tests"
+    ],
+    "limits": [
+      "Public-path history does not establish approved public classification.",
+      "Computed references and original-tenant database URLs remain unqualified.",
+      "No live original-tenant database census was performed."
+    ]
+  },
+  "limitations": [
+    "Installed dependency reuse is not clean-install proof",
+    "Database checks are not fresh migration replay",
+    "Synthetic reference inventory does not cover original tenants",
+    "Local conditional secret preflight does not grant production provider admission",
+    "No runtime was launched or original asset served/rendered"
+  ],
+  "cleanup": {
+    "status": "verified",
+    "databaseStopped": true,
+    "postmasterPid": 9496,
+    "portAvailable": true,
+    "clientCounts": [
+      0,
+      0
+    ],
+    "databaseReceipt": "../database/resume-20261102-r2-retry01-guarded-stop-1793635954332.json",
+    "applicationRuntimeStarted": false,
+    "browserStarted": false
+  },
+  "registerConsistency": {
+    "status": "verified_by_independent_comparison",
+    "packages": 54,
+    "dependencyEdges": 183,
+    "domains": 57,
+    "globalDecisions": 14,
+    "productionGates": 18,
+    "otherPackagesUnchanged": 53,
+    "topLevelRegistersUnchanged": true,
+    "dependenciesUnchanged": true,
+    "historicalEvidenceUnchanged": true,
+    "newEvidence": [
+      "E20"
+    ],
+    "deferredCommitmentsUnchanged": true,
+    "p04Status": "blocked",
+    "r02Status": "blocked",
+    "localDecision": "R02-ASSET-01 unresolved",
+    "documentsReviewed": [
+      "../RESULT.md",
+      "../advancement-gates.json",
+      "../../../CURRENT.md",
+      "../../../NEXT.md",
+      "../../../../ROADMAP.md",
+      "../../../../work-register.json"
+    ]
+  },
+  "evidence": [
+    "../candidate-admission.json",
+    "../database/resume-20261102-r2-retry01-readiness.json",
+    "../database/reference-inventory.json",
+    "../retry03-private-client.json",
+    "../retry03-artifact-build.log",
+    "../build-retry03-result.json",
+    "../packing-failure-classification.json",
+    "../final-integrity.json",
+    "../database/final-fixture-integrity.json",
+    "../database/resume-20261102-r2-retry01-guarded-stop-1793635954332.json",
+    "../register-validation.json"
+  ],
+  "preservation": {
+    "integrityPassed": true,
+    "executionReceiptsReconciled": false,
+    "frozenSourceFiles": 9068,
+    "assetAnnexEntries": 6,
+    "repairInputsUnchanged": 11,
+    "browserInputsUnchanged": 17,
+    "originalMirrorPairsPreserved": 3,
+    "headUnchanged": true,
+    "unrelatedRootAdded": 37,
+    "unrelatedRootChanged": 5,
+    "unrelatedRootRemoved": 0,
+    "selectedInputDrift": [],
+    "wholeWorktreeEqualityClaimed": false,
+    "evidence": "../final-integrity.json",
+    "finalDatabase": {
+      "businessTables": 245,
+      "businessSha256": "8a663dffdd67fafba5be9a74a81c0ae5f462273b38790e3f8343081634fe7195",
+      "sessions": 0,
+      "auditRows": 0,
+      "unchanged": true,
+      "evidence": "../database/final-fixture-integrity.json"
+    }
+  }
+}

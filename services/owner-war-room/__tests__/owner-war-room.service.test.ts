@@ -89,6 +89,14 @@ import {
 const generatedAt = "2026-06-20T10:00:00.000Z"
 
 describe("owner war room service", () => {
+// Current snapshots supply no comparable prior-period source evidence.
+it.each(["en", "fr"] as const)("labels current Owner evidence as observations (%s)", locale => {
+  const result = composeOwnerWarRoomData(localizedInput(locale));
+  expect(result.morningBrief.changes.length).toBeGreaterThan(0);
+  expect(result.morningBrief.changes.every(change => change.direction === "observed" && change.previousValue === null)).toBe(true);
+  expect(result.morningBrief.changes.find(change => change.id === "owner-morning-brief-cash-at-risk")?.title).toBe(locale === "fr" ? "Trésorerie actuellement à risque" : "Current cash at risk");
+});
+
   function localizedInput(locale: "en" | "fr") {
     return {
       locale, organizationId: "org-1", organizationName: "Owner custom name", generatedAt, actorPermissions: ["*"],
@@ -126,15 +134,48 @@ describe("owner war room service", () => {
     })
   })
 
-  it.each([0, 2])("does not substitute an unrelated queue action when only freshness or no blocker remains (%s)", (stale) => {
+  it.each([0, 2])("does not substitute an unrelated queue action when freshness or incomplete coverage remains (%s)", (stale) => {
     const input = localizedInput("en")
     input.snapshots.paymentTruth.metrics.openSuspenseAmount = 0
     input.snapshots.closeReadiness.metrics = closeMetrics({ unavailableEvidenceCount: 0 })
     input.snapshots.tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount = 0
+    for (const snapshot of Object.values(input.snapshots)) { snapshot.status = "fresh"; snapshot.uiState = "ready"; snapshot.blockers = [] }
     input.actionQueue.summary.stale = stale
     const brief = composeOwnerWarRoomData(input).morningBrief.commandBrief
     expect(brief.primaryAction).toBeNull()
-    expect(brief.conclusion).toContain(stale ? "Refresh stale evidence" : "No cash, close, or freshness blocker")
+    expect(brief.conclusion).toContain(stale ? "Refresh stale evidence" : "blocked or incomplete")
+  })
+
+  it("reports clear coverage only when all contributing sources are fresh and no blockers remain", () => {
+    const input = localizedInput("en")
+    input.snapshots.paymentTruth.metrics.openSuspenseAmount = 0
+    input.snapshots.closeReadiness.metrics = closeMetrics({ unavailableEvidenceCount: 0 })
+    input.snapshots.tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount = 0
+    for (const snapshot of Object.values(input.snapshots)) { snapshot.status = "fresh"; snapshot.uiState = "ready"; snapshot.blockers = [] }
+    input.actionQueue = actionQueue({ total: 0 })
+    expect(composeOwnerWarRoomData(input).morningBrief.commandBrief.conclusion).toContain("No cash, close, or freshness blocker")
+  })
+
+  it.each(["en", "fr"] as const)("does not certify incomplete zero-exposure coverage (%s)", locale => {
+    const input = localizedInput(locale)
+    input.snapshots.paymentTruth.metrics.openSuspenseAmount = 0
+    input.snapshots.closeReadiness.metrics = closeMetrics({ unavailableEvidenceCount: 0 })
+    input.snapshots.tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount = 0
+    input.actionQueue.summary.stale = 0
+    const result = composeOwnerWarRoomData(input)
+    expect(result.morningBrief.commandBrief.primaryAction).toBeNull()
+    expect(result.morningBrief.commandBrief.conclusion).toContain(locale === "fr" ? "bloqués ou incomplets" : "blocked or incomplete")
+    expect(JSON.stringify(result.strips)).toContain(locale === "fr" ? "preuves indisponibles" : "unavailable evidence")
+  })
+
+  it("uses the weakest financial evidence without promoting clean module configuration to posted", () => {
+    const input = localizedInput("en")
+    input.snapshots.tenantOperating.evidenceGrade = "certified"
+    input.snapshots.paymentTruth.evidenceGrade = "posted"
+    input.snapshots.inventoryCash.evidenceGrade = "raw"
+    const result = composeOwnerWarRoomData(input)
+    expect(result.morningBrief.commandBrief.evidenceGrade).toBe("raw")
+    expect(result.cards.find(card => card.id === "module_observe")?.evidenceGrade).toBe("operational")
   })
 
   it("localizes owned narratives while preserving figures, provenance, source evidence and custom actions", () => {
@@ -148,7 +189,7 @@ describe("owner war room service", () => {
     expect(fr.morningBrief.commandBrief.conclusion).toContain("Commencez par le risque de trésorerie")
     expect(fr.morningBrief.zones.map(zone => zone.title)).toEqual(["Situation de trésorerie", "Prévisions financières de paie", "Situation du stock et de la trésorerie", "Préparation de la clôture", "Situation des paiements et rapprochements"])
     expect(fr.morningBrief.zones[2].summary).toContain("450\u202f000 XAF")
-    expect(fr.morningBrief.priorityActions[0].dueLabel).toContain("Échéance :")
+    expect(fr.morningBrief.priorityActions[0].dueLabel).toContain("Expiration des preuves (UTC)")
     expect(fr.morningBrief.priorityActions[0].actionLink.label).toBe("Ouvrir")
     expect(fr.proofSubjects[0].unavailableReason).toBe("Aucune écriture comptabilisée n’est visible pour cette période.")
     expect(fr.morningBrief.headlineMetrics).toEqual(en.morningBrief.headlineMetrics)
@@ -448,6 +489,22 @@ describe("owner war room service", () => {
     expect(data.morningBrief.priorityActions).toHaveLength(0)
     expect(data.morningBrief.proofSubjects.every((subject) => !subject.available)).toBe(true)
   })
+  it("pins the Owner source clock when loading crosses UTC midnight", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-10-23T23:59:59Z"))
+    try {
+      mockOwnerWarRoomSources()
+      jest.mocked(getPaymentTruthSnapshot).mockImplementationOnce(async () => {
+        jest.setSystemTime(new Date("2026-10-24T00:00:01Z"))
+        return paymentSnapshot()
+      })
+      const data = await getOwnerWarRoomData({organizationId: "org-1", actorId: "admin-1", actorPermissions: ["dashboard.read"], actorRoleCodes: ["Administrator"]})
+      expect(data.generatedAt).toBe("2026-10-23T23:59:59.000Z")
+      for (const source of [getPaymentTruthSnapshot, getInventoryCashSnapshot, getCloseReadinessSnapshot, getTenantOperatingSnapshotFromRelated]) {
+        expect((jest.mocked(source).mock.calls[0][0].now as Date).toISOString()).toBe(data.generatedAt)
+      }
+    } finally { jest.useRealTimers() }
+  })
+
   it("loads one tenant Inventory Loss action for an entitled administrator", async () => {
     mockOwnerWarRoomSources()
     const actorPermissions = ["dashboard.read", "inventory.levels.read"]

@@ -1,0 +1,26 @@
+// Fresh loopback cluster only. Leaves successful target running for its owned build/runtime.
+const {fs,path,assert,root,storage,candidate,own,target,hash,receipt,connect,checkMigrations,requireEmpty}=require('./database-common.cjs');
+const {spawnSync}=require('node:child_process');const net=require('node:net');
+const report={startedAt:new Date().toISOString(),passed:false,commands:[]};
+const env=Object.fromEntries(Object.entries(process.env).filter(([k])=>['PATH','PATHEXT','SYSTEMROOT','WINDIR','TEMP','TMP','USERPROFILE','APPDATA','LOCALAPPDATA','COMSPEC'].includes(k.toUpperCase())));
+Object.assign(env,{NEXT_TELEMETRY_DISABLED:'1',CHECKPOINT_DISABLE:'1',PRISMA_HIDE_UPDATE_MESSAGE:'1',NODE_OPTIONS:'--require="'+path.join(__dirname,'../environment-guard.cjs').replaceAll('\\','/')+'"'});
+const scaffold=path.join(storage,'migration-scaffold');let started=false,ownedPid;
+function run(label,file,args,cwd=storage,overrides={}){const fd=fs.openSync(path.join(own,label+'.log'),'wx');let r;try{r=spawnSync(file,args,{cwd,env:{...env,...overrides},windowsHide:true,timeout:300000,stdio:['ignore',fd,fd]});}finally{fs.closeSync(fd);}report.commands.push({label,file,args,exitCode:r.status,error:r.error?.message});assert(!r.error&&r.status===0,label+' failed');}
+async function main(){
+ assert.equal(process.argv.length,2);assert.notEqual(process.env.NODE_ENV,'production');assert.equal(JSON.parse(fs.readFileSync(path.join(storage,'ownership.json'))).root,root);assert.equal(JSON.parse(fs.readFileSync(path.join(__dirname,'../candidate-admission.json'))).passed,true);assert(!fs.existsSync(target.cluster));assert(!fs.existsSync(scaffold));
+ await new Promise((ok,no)=>{const s=net.createServer();s.once('error',no);s.listen(target.port,target.host,()=>s.close(ok));});
+ fs.mkdirSync(own,{recursive:true});fs.mkdirSync(scaffold);fs.copyFileSync(path.join(candidate,'prisma/schema.prisma'),path.join(scaffold,'schema.prisma'));fs.cpSync(path.join(candidate,'prisma/migrations'),path.join(scaffold,'migrations'),{recursive:true,force:false,errorOnExist:true});fs.writeFileSync(path.join(scaffold,'prisma.config.ts'),'import { defineConfig } from "prisma/config"; export default defineConfig({schema:"schema.prisma"});\n',{flag:'wx'});
+ // Prisma config is outside source and imports only the physically copied candidate dependency.
+ fs.symlinkSync(path.join(candidate,'node_modules'),path.join(scaffold,'node_modules'),'junction');
+ run('initdb',path.join(target.bin,'initdb.exe'),['-D',target.cluster,'-U',target.user,'-A','trust','--no-locale','--encoding=UTF8']);fs.writeFileSync(path.join(target.cluster,'pg_hba.conf'),'host all all 127.0.0.1/32 trust\nhost all all ::1/128 reject\n');
+ started=true;run('pg-start',path.join(target.bin,'pg_ctl.exe'),['-D',target.cluster,'-l',path.join(own,'postgres.log'),'-o','-h 127.0.0.1 -p '+target.port,'-w','start']);ownedPid=Number(fs.readFileSync(path.join(target.cluster,'postmaster.pid'),'utf8').split(/\r?\n/)[0]);assert(ownedPid>0);
+ fs.writeFileSync(path.join(own,'cluster-owner.json'),JSON.stringify({root,storage,cluster:target.cluster,port:target.port,ownedPid,state:'running',startedAt:report.startedAt},null,2),{flag:'wx'});
+ const admin=await connect('postgres');try{assert.equal((await admin.query('SELECT 1 FROM pg_database WHERE datname=ANY($1::text[])',[[target.build,target.full]])).rowCount,0);await admin.query('CREATE DATABASE "'+target.build+'"');}finally{await admin.end();}
+ const url='postgresql://'+target.user+'@'+target.host+':'+target.port+'/'+target.build;
+ run('migrate-current',process.execPath,[path.join(candidate,'node_modules/prisma/build/index.js'),'migrate','deploy','--config',path.join(scaffold,'prisma.config.ts')],scaffold,{DATABASE_URL:url,DIRECT_URL:url,SHADOW_DATABASE_URL:url});
+ const build=await connect(target.build);try{report.migrations=await checkMigrations(build);report.buildEmpty=await requireEmpty(build);}finally{await build.end();}
+ const clone=await connect('postgres');try{await clone.query('CREATE DATABASE "'+target.full+'" TEMPLATE "'+target.build+'"');}finally{await clone.end();}
+ const full=await connect(target.full);try{assert.deepEqual(await checkMigrations(full),report.migrations);report.fullEmpty=await requireEmpty(full);}finally{await full.end();}
+ report.target={...target,ownedPid};report.passed=true;receipt('database-clones',{passed:true,migrations:report.migrations,target:report.target});
+}
+main().catch(e=>{report.error=e.stack;process.exitCode=1;}).finally(()=>{if(started&&!report.passed){const pidFile=path.join(target.cluster,'postmaster.pid');if(fs.existsSync(pidFile)){const actual=Number(fs.readFileSync(pidFile,'utf8').split(/\r?\n/)[0]);if(!ownedPid||actual===ownedPid){const r=spawnSync(path.join(target.bin,'pg_ctl.exe'),['-D',target.cluster,'-m','fast','-w','stop'],{env,windowsHide:true,timeout:30000,stdio:'ignore'});report.failureCleanup={exitCode:r.status};}}}report.finishedAt=new Date().toISOString();receipt('preparation',report);console.log(JSON.stringify({passed:report.passed,error:report.error,target:report.target}));});

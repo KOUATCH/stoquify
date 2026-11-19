@@ -1,0 +1,47 @@
+
+describe("HR-05 real manager authorization", () => {
+  const start = new Date("2026-01-01Z")
+  let manager: string
+  let delegate: string
+  let unit: string
+  let delegation: string
+  const reports = Array.from({length: 200}, (_, i) => `${namespace}-report-${String(i + 1).padStart(3, "0")}`)
+  const input = (extra: Record<string, unknown> = {}) => ({organizationId: orgs[0], actorId: actors[1], actorPermissions: ["hris.people.read"], limit: 1, ...extra})
+  beforeAll(async () => {
+    manager = (await db.payrollEmployee.create({data: {organizationId: orgs[0], userId: actors[1], employeeNumber: randomUUID(), displayName: "Synthetic manager", status: "ACTIVE", hireDate: start}})).id
+    delegate = (await db.payrollEmployee.create({data: {organizationId: orgs[0], userId: actors[2], employeeNumber: randomUUID(), displayName: "Synthetic delegate", status: "ACTIVE", hireDate: start}})).id
+    unit = (await db.hrisOrgUnit.create({data: {organizationId: orgs[0], code: randomUUID(), name: "Synthetic team", type: "TEAM", effectiveFrom: start}})).id
+    const position = await db.hrisPosition.create({data: {organizationId: orgs[0], orgUnitId: unit, code: randomUUID(), title: "Synthetic role", effectiveFrom: start}})
+    await db.payrollEmployee.createMany({data: reports.map((id, i) => ({id, organizationId: orgs[0], employeeNumber: id, displayName: `Synthetic report ${i + 1}`, department: "Synthetic team", status: "ACTIVE", hireDate: start}))})
+    const assignments = [manager, ...reports].map(id => ({id: `${id}-assignment`, organizationId: orgs[0], employeeId: id, positionId: position.id, orgUnitId: unit, effectiveFrom: start}))
+    await db.hrisEmploymentAssignment.createMany({data: assignments})
+    await db.hrisReportingRelationship.createMany({data: reports.map(id => ({organizationId: orgs[0], managerEmployeeId: manager, managerAssignmentId: `${manager}-assignment`, reportEmployeeId: id, reportAssignmentId: `${id}-assignment`, effectiveFrom: start, approvalEvidenceHash: "sha256:synthetic", approvedById: actors[0], reasonHash: "sha256:synthetic"}))})
+    delegation = (await db.hrisManagerDelegation.create({data: {organizationId: orgs[0], delegatorEmployeeId: manager, delegateEmployeeId: delegate, scopeOrgUnitId: unit, authority: "PEOPLE_READ", effectiveFrom: start, effectiveTo: new Date("2099-01-01Z"), approvalEvidenceHash: "sha256:synthetic", approvedById: actors[0], reasonHash: "sha256:synthetic"}})).id
+  })
+  it("authorizes exact reports 2/51/200 and all scope IDs despite page size one", async () => {
+    for (const n of [2, 51, 200]) expect((await resolveHrisPeopleAccessScope(input({employeeId: reports[n - 1]}))).employeeIds).toEqual([reports[n - 1]])
+    expect((await resolveHrisPeopleAccessScope(input())).employeeIds).toHaveLength(200)
+  })
+  it("denies foreign and unrelated targets before profile access", async () => {
+    const foreign = await db.payrollEmployee.create({data: {organizationId: orgs[1], employeeNumber: randomUUID(), displayName: "Foreign synthetic", hireDate: start}})
+    await expect(resolveHrisPeopleAccessScope(input({employeeId: foreign.id}))).rejects.toThrow("tenant scope")
+    await expect(resolveHrisPeopleAccessScope(input({employeeId: delegate}))).rejects.toThrow("No active durable")
+    await expect(resolveHrisPeopleAccessScope(input({actorPermissions: ["hris.self_service.read"]}))).rejects.toThrow("Missing permission")
+  })
+  it("read delegation never grants approval, and expiry/revocation denies historical reads", async () => {
+    const delegated = input({actorId: actors[2], employeeId: reports[199], asOf: new Date("2026-04-01Z")})
+    expect((await resolveHrisPeopleAccessScope(delegated)).employeeIds).toEqual([reports[199]])
+    await expect(resolveHrisPeopleAccessScope({...delegated, delegationAuthority: "APPROVAL_DECISION"})).rejects.toThrow("No active durable")
+    await db.hrisManagerDelegation.update({where: {id: delegation}, data: {effectiveTo: new Date("2026-05-01Z")}})
+    await expect(resolveHrisPeopleAccessScope(delegated)).rejects.toThrow("No active durable")
+    await db.hrisManagerDelegation.update({where: {id: delegation}, data: {effectiveTo: new Date("2099-01-01Z"), revokedAt: new Date()}})
+    await expect(resolveHrisPeopleAccessScope(delegated)).rejects.toThrow("No active durable")
+  })
+  it("denies former and inactive managers even when the requested date predates removal", async () => {
+    await db.hrisReportingRelationship.updateMany({where: {organizationId: orgs[0], managerEmployeeId: manager, reportEmployeeId: reports[199]}, data: {effectiveTo: new Date("2026-05-01Z")}})
+    await expect(resolveHrisPeopleAccessScope(input({employeeId: reports[199], asOf: new Date("2026-04-01Z")}))).rejects.toThrow("No active durable")
+    await db.payrollEmployee.update({where: {id: manager}, data: {status: "TERMINATED"}})
+    await expect(resolveHrisPeopleAccessScope(input({employeeId: reports[1]}))).rejects.toThrow("active employee identity")
+    await db.payrollEmployee.update({where: {id: manager}, data: {status: "ACTIVE"}})
+  })
+})

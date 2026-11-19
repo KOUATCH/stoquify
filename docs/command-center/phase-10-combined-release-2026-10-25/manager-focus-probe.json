@@ -1,0 +1,23 @@
+{
+  "startedAt": "2026-10-25T15:26:16.335Z",
+  "realAuthentication": true,
+  "actionMocks": false,
+  "productionAccess": false,
+  "checks": [
+    "Real credential login and database session",
+    "en manager-action-center: one main landmark and working keyboard skip link"
+  ],
+  "audits": [],
+  "errors": [],
+  "failures": [
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "error": "{\"active\":false,\"targetConnected\":false,\"targetDisabled\":false,\"targetText\":\"Brief\",\"activeTag\":\"BUTTON\",\"activeId\":\"\",\"activeText\":\"Brief\",\"panelDataReady\":false}"
+    }
+  ],
+  "blockedExternalRequests": 0,
+  "violationCount": 0,
+  "passed": false,
+  "finishedAt": "2026-10-25T15:26:21.379Z"
+}

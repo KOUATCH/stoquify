@@ -1,0 +1,27 @@
+{
+  "at": "2026-11-10T08:52:59.462Z",
+  "reviewer": "/root/r06_review",
+  "passed": false,
+  "scope": "Independent recomputation of actual resource admission result; capacity only",
+  "receipt": {
+    "path": "resource-resume-20261110-r1.json",
+    "sha256": "b0b4c6345ce4fbd54c0a3d2264b39ec4ef8d6046d69b64887d6d2736ebc7e234"
+  },
+  "measurementAt": "2026-11-10T08:51:10.3948750Z",
+  "availableGiB": {
+    "physical": 3.4660873413085938,
+    "commit": 1.8377876281738281,
+    "D": 22.130611419677734
+  },
+  "failures": [
+    "physical_memory_headroom",
+    "commit_headroom"
+  ],
+  "buildEligible": false,
+  "assessment": "Disk gate passes. Physical memory and commit headroom fail the unchanged-build conservative retry gate; no build should start using this receipt.",
+  "limitations": [
+    "Measurements are time-specific and must refresh before a future retry",
+    "Process list and port snapshot are not ownership admission or database-liveness proof",
+    "No unrelated process may be stopped based on memory attribution alone"
+  ]
+}

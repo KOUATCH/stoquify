@@ -1,0 +1,11 @@
+# HR21 development07 — shifts and attendance
+
+Scope: actual isolated Next/browser shift preparation, independent publication, observed attendance import, certification and approved correction. Own this evidence folder, narrowly reproduced roster integration defects/regressions, one Jest configuration and the execution-register append. Preserve unrelated changes and prior evidence.
+
+Three synthetic users: employee, preparer/importer, independent reviewer/certifier. An ACTIVE linked employee, native reviewed calendar/policy and valid recurring Monday480-minute baseline with zero planned work on both boundary dates are prerequisites, not hiring or statutory-law qualification. Use two adjacent one-day periods crossing September/October 2026, not complete monthly payroll periods.
+
+Browser plan: September30 22:00+01 to October1 06:00+01, Africa/Douala, with02:00–02:30 unpaid break. Exactly450minutes belong to September30. Wrong offset must fail before creating a draft. Reviewer publishes through controlled facts/acknowledgment; current roster updates only after receipt dismissal. Employee sees published450/0 across the boundary.
+
+Import actual CSV observations450scheduled/420worked/30absent and next-day0/0/0. Exact replay preserves original entries. Independent certification must deny the importer and revoked authority. First period retains420; next-day observation stays0 and certification is blocked because no work is scheduled. Employee requests a450/0 correction through self-service; follow the roster's actual review link to independent approval. Pending correction blocks certification. Old certification becomes stale; reused evidence is rejected. New independent evidence creates a450 successor linked to the original; raw observation, original payload/hash/totals and next-day zero observation remain unchanged. The original certificate may legitimately become SUPERSEDED. Repeated certification must not add snapshots.
+
+Independent reviewer is read-only. Separate pure/mocked tests, source review, real database and rendered browser claims. Save before/after failures, source/runtime hashes, EN/FR screenshots, synthetic cleanup and service shutdown. No schema changes, generic seeds, root environment loading, external workers/providers, live payroll or deployment.

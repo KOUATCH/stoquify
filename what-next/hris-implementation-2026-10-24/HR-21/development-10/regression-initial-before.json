@@ -1,0 +1,179 @@
+{
+  "status": "FAILED",
+  "baseline": true,
+  "checks": [
+    {
+      "name": "document retry exact",
+      "status": "PASS"
+    },
+    {
+      "name": "document retry malwareScanEvidenceHash",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "document retry malwareScanProvider",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "document retry malwareScannedAt",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "document retry signedAt",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "document retry retentionPolicyCode",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "document retry retentionBasis",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "document retry retainUntil",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "document retry legalHold,legalHoldReason",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "document retry legalHoldReason",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "ONBOARD valid",
+      "status": "PASS"
+    },
+    {
+      "name": "ONBOARD contract approval absent",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "ONBOARD document proof absent",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "ONBOARD document hash mismatch",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "ONBOARD ambiguous contracts",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "ONBOARD payment metadata absent",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "ONBOARD payment request absent",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "ONBOARD payment hash mismatch",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "ONBOARD same payment actors",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "ONBOARD null payment links",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "ONBOARD null activation link",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE valid",
+      "status": "PASS"
+    },
+    {
+      "name": "REHIRE contract approval absent",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "REHIRE document proof absent",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "REHIRE document hash mismatch",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "REHIRE ambiguous contracts",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "REHIRE payment metadata absent",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "REHIRE payment request absent",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "REHIRE payment hash mismatch",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "REHIRE same payment actors",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "REHIRE null payment links",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "REHIRE null activation link",
+      "status": "PASS"
+    },
+    {
+      "name": "native draft contract exact create replay",
+      "status": "FAIL",
+      "message": "A payroll contract with this number already exists in the tenant."
+    }
+  ],
+  "cleanup": true,
+  "sourceHashes": {
+    "services/hris/document-evidence.service.ts": "a846876ba1b97b41419854513a373116e847582f1e87132d0188c1d69ad8fd48",
+    "services/hris/lifecycle.service.ts": "df8fbb2f6b9765d162daedb6cdcb4f8a3ecd6b7e104f3132e4dffed6d4f5e0c2",
+    "services/hris/payroll-readiness-contract.ts": "9ce52a295d1468b43e88722a3bbc58933597353e87da9ca148a4d7599f453fd4",
+    "services/payroll/contract.service.ts": "f6ff163be50fba75409a58fdf3a0d2d5ef27e9828c9c09c4a71857b0fbdb56bc",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\regression.cjs": "d56a3c9919239d09acc670bef188051ce68797c4cac525c86f9fac1f3766bb4c",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\native.cjs": "d7d6f4099a8c97d0e6fe9f4d90c23e6d763f3c42856d9a9e6ff10806478907e5",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\services__hris__document-evidence.service.ts.baseline": "c2f83247f04954afb1a37c695ef2677bfd001f0a2b4ff2d559769a2e6d80d806",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\services__hris__lifecycle.service.ts.baseline": "cc426c4ed00a39b04d184549e41594db819fdd6da21d0a67747d5e45214f88f7",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-10\\services__hris__payroll-readiness-contract.ts.baseline": "e7248febcc73de3d1b978b555ab857ee6603020cdb77e97288e5c4eef98a3797"
+  },
+  "completedAt": "2026-10-28T07:20:09.208Z"
+}

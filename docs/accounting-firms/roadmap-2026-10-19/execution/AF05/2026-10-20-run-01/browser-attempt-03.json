@@ -1,0 +1,65 @@
+{
+  "synthetic": true,
+  "checks": [
+    {
+      "clientGrant": "Client owner granted named preparer/reviewer through real existing protected form"
+    },
+    {
+      "setup": "Draft, assignment, explicit enrollment and activation; assignment alone did not create a link"
+    },
+    {
+      "handover": "Old assignment ended, incoming consent not transferred; explicit second enrollment; work rows unchanged"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "geometry": {
+        "client": 1112,
+        "scroll": 1112
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "geometry": {
+        "client": 358,
+        "scroll": 358
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "geometry": {
+        "client": 1112,
+        "scroll": 1112
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "geometry": {
+        "client": 358,
+        "scroll": 358
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    }
+  ],
+  "screenshots": [
+    "engagement-en-1440.png",
+    "engagement-en-390.png",
+    "engagement-fr-1440.png",
+    "engagement-fr-390.png",
+    "failure.png",
+    "client-failure.png"
+  ],
+  "pageErrors": [],
+  "passed": false,
+  "failure": "locator.waitFor: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Accountant access revoked.', { exact: true }) to be visible\u001b[22m\n"
+}

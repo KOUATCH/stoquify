@@ -1,0 +1,72 @@
+{
+  "generatedAt": "2026-10-29T13:30:58.312Z",
+  "evidenceClass": "MOCKED_UNIT_TESTS_NO_DATABASE_OR_NETWORK",
+  "command": "node node_modules/jest/bin/jest.js --config .seed-artifacts/jest.pictures.config.cjs --runInBand --no-cache --json --outputFile docs/engineering/database/disposable-dataset-2026-10-28/picture-unit-results.json",
+  "suitesPassed": 1,
+  "testsPassed": 15,
+  "testsFailed": 0,
+  "success": true,
+  "syntaxDiagnostics": [],
+  "tests": [
+    {
+      "name": "uploads only ciphertext and persists an owned durable reference",
+      "status": "passed"
+    },
+    {
+      "name": "rejects forged content and oversize files before provider writes",
+      "status": "passed"
+    },
+    {
+      "name": "does not mark a provider failure as a completed upload",
+      "status": "passed"
+    },
+    {
+      "name": "rejects another tenant's, deleted, or missing asset before attachment",
+      "status": "passed"
+    },
+    {
+      "name": "accepts unchanged legacy references but rejects new arbitrary URLs",
+      "status": "passed"
+    },
+    {
+      "name": "does not fetch or disclose an asset from another tenant",
+      "status": "passed"
+    },
+    {
+      "name": "decrypts authenticated bytes and verifies integrity",
+      "status": "passed"
+    },
+    {
+      "name": "rejects modified provider ciphertext",
+      "status": "passed"
+    },
+    {
+      "name": "never deletes an attached or foreign asset",
+      "status": "passed"
+    },
+    {
+      "name": "serializes deletion against attachment and keeps a retryable tombstone",
+      "status": "passed"
+    },
+    {
+      "name": "runs real encryption and decryption through explicit local storage without provider calls",
+      "status": "passed"
+    },
+    {
+      "name": "does not accept an incorrect local ciphertext storage acknowledgement",
+      "status": "passed"
+    },
+    {
+      "name": "rejects local locators through default read and delete transports before network calls",
+      "status": "passed"
+    },
+    {
+      "name": "rejects test transport injection outside the test environment",
+      "status": "passed"
+    },
+    {
+      "name": "retains a retryable local delete until the storage removal succeeds",
+      "status": "passed"
+    }
+  ]
+}

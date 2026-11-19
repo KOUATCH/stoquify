@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "began": "2026-11-10T15:26:42.993Z",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\authenticated-app\\runtime-a912af197f",
+  "sourceManifestSha256": "1ccc2522b476470ac0a1fe2a7da9ed82ec36ef49ad806cb6a704c89861dbecff",
+  "parentPgReceiptSha256": "6c26fe6b7970bd3feead668845c6099b08105469b40d97039528d96e36cce36f",
+  "runnerSha256": "22960473627dd8bea1f4b83ddb10f0a7a1e7d852cff8aa2b96e66efaefade8e0",
+  "operations": [
+    {
+      "id": "d31a75edfb5245a3363e9c734d56331a",
+      "operation": "stale-assurance",
+      "applied": true,
+      "checkedAt": "2026-11-10T15:32:36.652Z"
+    },
+    {
+      "id": "9e2fc04b7c72211c721fd87d9b1036ac",
+      "operation": "verify-no-collection-before-manual-retry",
+      "applied": true,
+      "checkedAt": "2026-11-10T15:32:42.059Z"
+    },
+    {
+      "id": "8808847ae5f4985253f65d2bb40ec999",
+      "operation": "verify-one-collection",
+      "applied": true,
+      "checkedAt": "2026-11-10T15:32:46.666Z"
+    },
+    {
+      "id": "ee9079ad2ea3cc0d942f6e10abbae3a1",
+      "operation": "revoke-collect-permission",
+      "applied": true,
+      "checkedAt": "2026-11-10T15:32:48.594Z"
+    },
+    {
+      "id": "6f2191e6074db80e0c58a73d63f79ac0",
+      "operation": "restore-collect-permission",
+      "applied": true,
+      "checkedAt": "2026-11-10T15:32:52.435Z"
+    },
+    {
+      "id": "955b4f1aa2f7d31edd7731bca32f40ba",
+      "operation": "revoke-current-session",
+      "applied": true,
+      "checkedAt": "2026-11-10T15:32:53.884Z"
+    }
+  ],
+  "classification": "Actual password/session/Next development application and synthetic collection; reused dependencies/private Prisma override. No production artifact, provider authenticity or delivery qualification.",
+  "applicationPid": 8676,
+  "noFinancialEffectFromIdentityVerification": true,
+  "collectionVerified": {
+    "exactlyOneSettlementAndJournal": true,
+    "nativeReceiptLinkedToSamePosting": true,
+    "originalDocumentAllocation": true,
+    "customerAndReceivableReducedExactly100": true,
+    "sourceAndBusinessEventBound": true,
+    "supportFingerprintOnly": true
+  },
+  "primaryOctoberAndRetainedPackUnchanged": true,
+  "privateOctoberPackFilesUnchanged": true,
+  "noFinancialWritesAfterVerifiedCollection": true,
+  "generatedDeclarationSha256": "5cd21bac147d62d3a34798daeed02e5c19713b22102686cb15ca14ddfbfc49eb",
+  "collectPermissionRestored": true,
+  "proxyStopped": true,
+  "applicationStopped": true,
+  "ownedClusterStopped": true,
+  "portsReleased": true,
+  "finishedAt": "2026-11-10T15:33:12.171Z"
+}

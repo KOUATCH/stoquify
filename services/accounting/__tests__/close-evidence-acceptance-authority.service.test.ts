@@ -1,6 +1,6 @@
 /** @jest-environment node */
 import { Prisma } from "@prisma/client"
-import { lockCloseEvidenceAcceptanceAuthorityInTx, lockCloseEvidenceWorkAuthorityInTx, lockCloseEvidenceRecipientInTx, type CloseEvidenceAcceptanceAuthorityInput } from "../close-evidence-acceptance-authority.service"
+import { lockCloseEvidenceAcceptanceAuthorityInTx, lockCloseEvidenceWorkAuthorityInTx, lockCloseEvidenceRecipientInTx, lockCloseWriteAuthorityInTx, lockClosePackRetrievalAuthorityInTx, lockWorkpaperAuthorityInTx, type CloseEvidenceAcceptanceAuthorityInput, type CloseWriteOperation } from "../close-evidence-acceptance-authority.service"
 
 jest.mock("server-only", () => ({}))
 jest.mock("@/prisma/db", () => ({ db: {} }))
@@ -36,6 +36,7 @@ function fixture(delegated = false) {
   })))
   const state = { organizations, actor, roles, memberships, session, grant, grants, managed: true, actorExists: true, sessionExists: true, grantExists: true }
   const tx: any = {
+    firmEngagementGrantLink: { findUnique: jest.fn().mockResolvedValue(null) },
     $queryRaw: jest.fn(async (sql: Prisma.Sql) => {
       const query = sql.text
       if (query.includes('FROM "organizations"')) return state.organizations
@@ -56,6 +57,34 @@ function fixture(delegated = false) {
 
 beforeEach(() => { jest.useFakeTimers(); jest.setSystemTime(NOW) })
 afterEach(() => jest.useRealTimers())
+
+it("permits current read-only workpaper consent without granting preparation, review or export", async () => {
+  const { input, state, tx } = fixture(true)
+  state.roles[0].permissions = ["accounting.close.read", "accounting.close.finding.comment", "accounting.close.accountant.review"]
+  state.grant.role = "READ_ONLY"
+  state.session.assuranceVerifiedAt = null
+  await expect(lockWorkpaperAuthorityInTx(tx, input, "workpaper-read")).resolves.toBeDefined()
+  await expect(lockWorkpaperAuthorityInTx(tx, input, "workpaper-prepare")).rejects.toMatchObject({ code: "FORBIDDEN" })
+  await expect(lockWorkpaperAuthorityInTx(tx, input, "workpaper-review")).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED" })
+})
+
+it("requires current read scope, review permission and fresh password for workpaper review", async () => {
+  const { input, state, tx } = fixture(true)
+  await expect(lockWorkpaperAuthorityInTx(tx, input, "workpaper-review")).rejects.toMatchObject({ code: "FORBIDDEN" })
+  state.roles[0].permissions.push("accounting.close.read")
+  await expect(lockWorkpaperAuthorityInTx(tx, input, "workpaper-review")).resolves.toBeDefined()
+  state.session.assuranceVerifiedAt = later(-301000)
+  await expect(lockWorkpaperAuthorityInTx(tx, input, "workpaper-review")).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED" })
+})
+
+it("allows inspection but denies workpaper writes when the home accounting module becomes read-only", async () => {
+  const { input, state, tx } = fixture(true)
+  state.roles[0].permissions = ["accounting.close.read", "accounting.close.finding.comment", "accounting.close.accountant.review"]
+  state.grants.find(row => row.organizationId === input.homeOrganizationId && row.moduleSlug === "accounting")!.readOnly = true
+  await expect(lockWorkpaperAuthorityInTx(tx, input, "workpaper-read")).resolves.toBeDefined()
+  await expect(lockWorkpaperAuthorityInTx(tx, input, "workpaper-prepare")).rejects.toMatchObject({ code: "FORBIDDEN" })
+  await expect(lockWorkpaperAuthorityInTx(tx, input, "workpaper-review")).rejects.toMatchObject({ code: "FORBIDDEN" })
+})
 
 it("requires current assignment permission in addition to requesting evidence for recipient replacement", async () => {
   const { input, state, tx } = fixture()
@@ -308,4 +337,158 @@ it("never treats delegated access as recipient response ownership", async () => 
   state.roles[0].permissions = ["accounting.close.read", "accounting.close.finding.comment"]
   await expect(lockCloseEvidenceWorkAuthorityInTx(tx, { ...input, operation: "respond" })).rejects.toMatchObject({ code: "FORBIDDEN" })
   expect(tx.$queryRaw).not.toHaveBeenCalled()
+})
+
+const closeOperations = [
+  ["assessment", "accounting.close.run"],
+  ["assign", "accounting.close.finding.assign"],
+  ["comment", "accounting.close.finding.comment"],
+  ["waiver-request", "accounting.close.waiver.request"],
+  ["waiver-approve", "accounting.close.waiver.approve"],
+  ["review", "accounting.close.accountant.review"],
+  ["draft-export", "accounting.close.export"],
+  ["certified-export", "accounting.close.certify"],
+] as const
+
+function closeFixture(operation: CloseWriteOperation) {
+  const value = fixture()
+  value.state.roles[0].permissions = [closeOperations.find(([key]) => key === operation)![1]]
+  return value
+}
+
+describe.each(closeOperations)("legacy %s authority", (operation, permission) => {
+  it("requires its exact persisted permission, membership and session before business work", async () => {
+    const { tx, input } = closeFixture(operation)
+    const authority = await lockCloseWriteAuthorityInTx(tx, input, operation)
+    await expect(authority.revalidate(later(1_000))).resolves.toBeUndefined()
+    expect(Object.keys(authority)).toEqual(["revalidate"])
+    expect(JSON.stringify(authority)).not.toContain(input.session!.token)
+    const queries: Prisma.Sql[] = tx.$queryRaw.mock.calls.map(([sql]: [Prisma.Sql]) => sql)
+    expect(queries.map(sql => sql.text.match(/FROM "([^"]+)"/)?.[1])).toEqual([
+      "organizations", "tenant_module_configurations", "tenant_module_grants", "users", "roles", "_UserRoles", "sessions",
+    ])
+    expect(queries.every(sql => sql.text.includes("FOR SHARE"))).toBe(true)
+    expect(queries.find(sql => sql.text.includes('FROM "sessions"'))?.values).toEqual(["session", "private-session-token", "reviewer"])
+  })
+
+  it.each(["missing-permission", "revoked-membership", "foreign-role", "inactive-actor", "disabled-module"])("denies %s even when a caller supplies an old permission snapshot", async kind => {
+    const { tx, input, state } = closeFixture(operation)
+    if (kind === "missing-permission") state.roles[0].permissions = []
+    if (kind === "revoked-membership") state.memberships.length = 0
+    if (kind === "foreign-role") state.roles[0].organizationId = "foreign"
+    if (kind === "inactive-actor") state.actor.isActive = false
+    if (kind === "disabled-module") state.grants.find(row => row.moduleSlug === "close_assurance")!.status = "suspended"
+    const staleCaller = { ...input, actorPermissions: [permission, "*"] }
+    await expect(lockCloseWriteAuthorityInTx(tx, staleCaller, operation)).rejects.toMatchObject({ code: "FORBIDDEN" })
+  })
+
+  it("does not reinterpret delegated review consent as legacy close write authority", async () => {
+    const { tx, input, state } = fixture(true)
+    state.roles[0].permissions = [permission]
+    await expect(lockCloseWriteAuthorityInTx(tx, input, operation)).rejects.toMatchObject({ code: "FORBIDDEN" })
+    expect(tx.$queryRaw).not.toHaveBeenCalled()
+  })
+})
+
+describe.each(["comment", "certified-export"] as const)("legacy %s session binding", operation => {
+  it.each(["no-proof", "no-token", "wrong-id", "wrong-token", "revoked", "expired", "foreign-actor"])("rejects %s exact session", async kind => {
+    const { tx, input, state } = closeFixture(operation)
+    if (kind === "no-proof") input.session = undefined
+    if (kind === "no-token") input.session!.token = ""
+    if (kind === "wrong-id") input.session!.id = "foreign-session"
+    if (kind === "wrong-token") input.session!.token = "forged"
+    if (kind === "revoked") state.sessionExists = false
+    if (kind === "expired") state.session.expiresAt = NOW
+    if (kind === "foreign-actor") state.session.userId = "foreign-actor"
+    await expect(lockCloseWriteAuthorityInTx(tx, input, operation)).rejects.toMatchObject({
+      code: operation === "certified-export" ? "FRESH_AUTH_REQUIRED" : "AUTH_REQUIRED",
+    })
+    if (kind === "no-proof" || kind === "no-token") expect(tx.$queryRaw).not.toHaveBeenCalled()
+  })
+})
+
+describe.each(["waiver-approve", "certified-export"] as const)("legacy %s password assurance", operation => {
+  it.each(["missing", "stale", "future", "wrong-organization", "wrong-method", "insufficient-level", "locked"])("rejects %s persisted assurance", async kind => {
+    const { tx, input, state } = closeFixture(operation)
+    if (kind === "missing") state.session.assuranceVerifiedAt = null
+    if (kind === "stale") state.session.assuranceVerifiedAt = later(-300_001)
+    if (kind === "future") state.session.assuranceVerifiedAt = later(1)
+    if (kind === "wrong-organization") state.session.assuranceOrganizationId = "foreign"
+    if (kind === "wrong-method") state.session.assuranceMethod = "unverified-claim"
+    if (kind === "insufficient-level") state.session.assuranceLevel = 0
+    if (kind === "locked") state.session.assuranceLockedUntil = later(1)
+    await expect(lockCloseWriteAuthorityInTx(tx, input, operation)).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED" })
+  })
+
+  it("accepts the exact five-minute boundary and refuses freshness expiry after later lock waits", async () => {
+    const { tx, input } = closeFixture(operation)
+    const authority = await lockCloseWriteAuthorityInTx(tx, input, operation)
+    await expect(authority.revalidate(later(270_000))).resolves.toBeUndefined()
+    await expect(authority.revalidate(later(270_001))).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED" })
+    await expect(authority.revalidate(new Date("invalid"))).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED" })
+  })
+})
+
+it.each(closeOperations.filter(([operation]) => operation !== "waiver-approve" && operation !== "certified-export"))("keeps %s live-session-only without adding password step-up", async operation => {
+  const { tx, input, state } = closeFixture(operation)
+  state.session.assuranceVerifiedAt = null
+  state.session.assuranceLevel = 0
+  const authority = await lockCloseWriteAuthorityInTx(tx, input, operation)
+  await expect(authority.revalidate(later(600_000))).resolves.toBeUndefined()
+})
+
+it.each(["session", "close-module", "accounting-module"])("rechecks legacy %s expiry after business waits", async kind => {
+  const { tx, input, state } = closeFixture("comment"), at = later(1_000)
+  if (kind === "session") state.session.expiresAt = at
+  else state.grants.find(row => row.moduleSlug === (kind === "close-module" ? "close_assurance" : "accounting"))!.endsAt = at
+  const authority = await lockCloseWriteAuthorityInTx(tx, input, "comment")
+  await expect(authority.revalidate(at)).rejects.toMatchObject({ code: kind === "session" ? "AUTH_REQUIRED" : "FORBIDDEN" })
+})
+
+it("refuses an unknown legacy operation before acquiring any authority locks", async () => {
+  const { tx, input } = fixture()
+  await expect(lockCloseWriteAuthorityInTx(tx, input, "request" as CloseWriteOperation)).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(tx.$queryRaw).not.toHaveBeenCalled()
+})
+
+it("permits a fresh exporter to retrieve a certificate without granting certification authority", async () => {
+  const { tx, input } = closeFixture("draft-export")
+  await expect(lockClosePackRetrievalAuthorityInTx(tx, input, { certified: true })).resolves.toBeDefined()
+  await expect(lockCloseWriteAuthorityInTx(tx, input, "certified-export")).rejects.toMatchObject({ code: "FORBIDDEN" })
+})
+
+it("requires export permission rather than certification permission to retrieve retained packs", async () => {
+  const { tx, input } = closeFixture("certified-export")
+  await expect(lockClosePackRetrievalAuthorityInTx(tx, input, { certified: true })).rejects.toMatchObject({ code: "FORBIDDEN" })
+})
+
+it("requires current password proof for certified retrieval while preserving draft-read policy", async () => {
+  const { tx, input, state } = closeFixture("draft-export")
+  state.session.assuranceVerifiedAt = later(-301_000)
+  await expect(lockClosePackRetrievalAuthorityInTx(tx, input, { certified: true })).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED" })
+  await expect(lockClosePackRetrievalAuthorityInTx(tx, input, { certified: false })).resolves.toBeDefined()
+})
+
+it.each([true, false])("denies a revoked exact session for retained retrieval (certified=%s)", async certified => {
+  const { tx, input, state } = closeFixture("draft-export")
+  state.sessionExists = false
+  await expect(lockClosePackRetrievalAuthorityInTx(tx, input, { certified })).rejects.toMatchObject({ code: certified ? "FRESH_AUTH_REQUIRED" : "AUTH_REQUIRED" })
+})
+
+it("revalidates certified-retrieval freshness after later lock waits", async () => {
+  const { tx, input } = closeFixture("draft-export")
+  const authority = await lockClosePackRetrievalAuthorityInTx(tx, input, { certified: true })
+  await expect(authority.revalidate(later(270_001))).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED" })
+})
+
+it("does not introduce delegated authority through retained-pack retrieval", async () => {
+  const { tx, input } = fixture(true)
+  await expect(lockClosePackRetrievalAuthorityInTx(tx, input, { certified: true })).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(tx.$queryRaw).not.toHaveBeenCalled()
+})
+
+it.each([true, false])("enforces current module export policy for retained reads (certified=%s)", async certified => {
+  const { tx, input, state } = closeFixture("draft-export")
+  state.grants.find(row => row.moduleSlug === "close_assurance")!.status = "suspended"
+  await expect(lockClosePackRetrievalAuthorityInTx(tx, input, { certified })).rejects.toMatchObject({ code: "FORBIDDEN" })
 })

@@ -1,0 +1,342 @@
+diff --git a/prisma/schema.prisma b/prisma/schema.prisma
+index 61548f9e..9e91f9e5 100644
+--- a/prisma/schema.prisma
++++ b/prisma/schema.prisma
+@@ -236,6 +236,16 @@ model User {
+   @@index([email])
+   @@index([phone])
+   @@unique([organizationId, id])
++  firmEngagementsOwned FirmEngagement[] @relation("FirmEngagementOwner")
++  firmEngagementsCreated FirmEngagement[] @relation("FirmEngagementCreator")
++  firmEngagementAssignments FirmEngagementAssignment[] @relation("FirmEngagementStaff")
++  firmEngagementAssignmentsCreated FirmEngagementAssignment[] @relation("FirmEngagementAssigner")
++  firmEngagementAssignmentsEnded FirmEngagementAssignment[] @relation("FirmEngagementAssignmentEnder")
++  firmEngagementTransitions FirmEngagementTransition[]
++  firmEngagementLinks FirmEngagementGrantLink[]
++  firmEngagementMandates FirmEngagementGrantLink[] @relation("FirmLinkedAccountant")
++
++  @@unique([id, organizationId])
+   @@map("users")
+ }
+ 
+@@ -464,6 +474,8 @@ model Organization {
+   accountantReviews                       AccountantReview[]
+   accountantComments                      AccountantComment[]
+   accountantAccessGrants                  AccountantAccessGrant[]
++  firmEngagements                         FirmEngagement[] @relation("EngagementFirm")
++  clientFirmEngagements                   FirmEngagement[] @relation("EngagementClient")
+   fiscalDocuments                         FiscalDocument[]
+   fiscalDocumentLines                     FiscalDocumentLine[]
+   fiscalSequences                         FiscalSequence[]
+@@ -500,6 +512,9 @@ model Organization {
+   onboardingImportBatches                 OnboardingImportBatch[]
+   onboardingImportRows                    OnboardingImportRow[]
+   onboardingImportIssues                  OnboardingImportIssue[]
++  financialOpeningRevisions               FinancialOpeningRevision[]
++  financialOpeningExecutions              FinancialOpeningExecution[]
++  firmObligationRevisions FirmObligationRevision[]
+   onboardingReadinessMilestones           OnboardingReadinessMilestone[]
+ 
+   @@unique([slug])
+@@ -1300,6 +1315,97 @@ enum OnboardingReadinessState {
+   WAIVED
+ }
+ 
++// AF09 evidence only: no operational balance or posting relation.
++model FinancialOpeningRevision {
++  id                 String       @id @default(cuid())
++  organizationId     String
++  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
++  cutoverDate        String
++  revision           Int
++  sourceFilename     String
++  controlsFilename   String
++  sourceContent      String
++  controlsContent    String
++  sourceHash         String
++  controlsHash       String
++  mappingHash        String
++  datasetHash        String
++  mappings           Json
++  manifest           Json
++  manifestDigest     String
++  commandHash        String
++  idempotencyKey     String
++  createdById        String
++  createdAt          DateTime     @default(now())
++  status             String       @default("STAGED")
++  reviewedById       String?
++  reviewedAt         DateTime?
++  reviewDigest       String?
++  reviewKey          String?
++  reviewCommandHash  String?
++  conclusion         String?
++
++  executions FinancialOpeningExecution[]
++  openingReceivables CustomerReceivableDocument[]
++  openingPayables SupplierInvoice[]
++
++  @@unique([organizationId, id])
++  @@unique([organizationId, cutoverDate, revision])
++  @@unique([organizationId, idempotencyKey])
++  @@index([organizationId, cutoverDate, sourceHash])
++  @@map("financial_opening_revisions")
++}
++
++// AF10 approvals and final receipts are retained separately from immutable previews.
++model FinancialOpeningExecution {
++  id String @id @default(cuid())
++  organizationId String
++  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
++  revisionId String
++  revision FinancialOpeningRevision @relation(fields: [organizationId, revisionId], references: [organizationId, id], onDelete: Restrict)
++  cutoverDate String
++  activeScopeKey String? @unique
++  manifestDigest String
++  periodId String
++  periodVersion Int
++  approvedById String
++  approvedAt DateTime @default(now())
++  expiresAt DateTime
++  approvalKey String
++  approvalHash String
++  conclusion String
++  status String @default("APPROVED")
++  appliedById String?
++  appliedAt DateTime?
++  applyKey String?
++  applyHash String?
++  reconciliation Json?
++  reconciliationHash String?
++  cancelledById String?
++  cancelledAt DateTime?
++  cancellationReason String?
++  operations FinancialOpeningOperation[]
++  @@unique([organizationId, id])
++  @@unique([organizationId, approvalKey])
++  @@index([organizationId, cutoverDate, approvedAt])
++  @@map("financial_opening_executions")
++}
++
++model FinancialOpeningOperation {
++  id String @id @default(cuid())
++  organizationId String
++  executionId String
++  execution FinancialOpeningExecution @relation(fields: [organizationId, executionId], references: [organizationId, id], onDelete: Restrict)
++  domain String
++  sourceId String
++  sourceHash String
++  receipt Json
++  receiptHash String
++  createdAt DateTime @default(now())
++  @@unique([executionId, domain, sourceId])
++  @@map("financial_opening_operations")
++}
++
+ model OnboardingImportMapping {
+   id             String                 @id @default(cuid())
+   organizationId String
+@@ -2105,6 +2211,10 @@ model SupplierInvoice {
+   supplierId String
+   supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+ 
++  openingRevisionId String?
++  openingSourceId String?
++  openingRevision FinancialOpeningRevision? @relation(fields: [organizationId, openingRevisionId], references: [organizationId, id], onDelete: Restrict)
++
+   purchaseOrderId String?
+   purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+ 
+@@ -2144,6 +2254,7 @@ model SupplierInvoice {
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+ 
++  @@unique([organizationId, openingRevisionId, openingSourceId])
+   @@unique([organizationId, supplierId, invoiceNumber])
+   @@unique([organizationId, id])
+   @@unique([organizationId, idempotencyKey])
+@@ -6403,8 +6514,11 @@ model CustomerReceivableDocument {
+   customerId String
+   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+ 
+-  sourceSalesOrderId String
+-  sourceSalesOrder   SalesOrder @relation(fields: [sourceSalesOrderId], references: [id], onDelete: Restrict)
++  sourceSalesOrderId String?
++  sourceSalesOrder   SalesOrder? @relation(fields: [sourceSalesOrderId], references: [id], onDelete: Restrict)
++  openingRevisionId String?
++  openingSourceId String?
++  openingRevision FinancialOpeningRevision? @relation(fields: [organizationId, openingRevisionId], references: [organizationId, id], onDelete: Restrict)
+ 
+   documentNumber String
+   version        Int    @default(1)
+@@ -6451,6 +6565,7 @@ model CustomerReceivableDocument {
+   @@unique([organizationId, id])
+   @@unique([organizationId, documentNumber, version])
+   @@unique([organizationId, sourceSalesOrderId, version])
++  @@unique([organizationId, openingRevisionId, openingSourceId])
+   @@index([organizationId, customerId, invoiceDate])
+   @@index([organizationId, customerId, dueDate])
+   @@index([organizationId, supersedesDocumentId])
+@@ -7077,8 +7192,8 @@ model CustomerSettlementAllocation {
+   customerSettlementId String
+   customerSettlement   CustomerSettlement @relation(fields: [customerSettlementId], references: [id], onDelete: Cascade)
+ 
+-  salesOrderId String
+-  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
++  salesOrderId String?
++  salesOrder   SalesOrder? @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+ 
+   customerReceivableDocumentId String?
+   customerReceivableDocument   CustomerReceivableDocument? @relation(fields: [organizationId, customerReceivableDocumentId], references: [organizationId, id], onDelete: Restrict)
+@@ -7734,6 +7849,9 @@ model AccountantAccessGrant {
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+ 
++  firmEngagementLink FirmEngagementGrantLink?
++
++  @@unique([id, organizationId, accountantUserId], map: "accountant_grant_identity_key")
+   @@index([organizationId, status, expiresAt])
+   @@index([accountantUserId, status, expiresAt])
+   @@index([organizationId, accountantUserId, createdAt])
+@@ -7741,6 +7859,108 @@ model AccountantAccessGrant {
+   @@map("accountant_access_grants")
+ }
+ 
++// AF03 foundation with AF04 managed authorization. SQL owns partial uniqueness,
++// lifecycle/retention guards and sticky managed mandate keys; services own authority.
++enum FirmEngagementStatus {
++  DRAFT
++  ACTIVE
++  SUSPENDED
++  ENDED
++}
++
++model FirmEngagement {
++  id String @id @default(cuid())
++  firmOrganizationId String
++  clientOrganizationId String
++  firm Organization @relation("EngagementFirm", fields: [firmOrganizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
++  client Organization @relation("EngagementClient", fields: [clientOrganizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
++  ownerUserId String
++  createdById String
++  owner User @relation("FirmEngagementOwner", fields: [ownerUserId, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
++  creator User @relation("FirmEngagementCreator", fields: [createdById, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
++  scope AccountantAccessRole
++  effectiveFrom DateTime
++  expiresAt DateTime
++  status FirmEngagementStatus @default(DRAFT)
++  version Int @default(0)
++  lastTransitionId String?
++  createdAt DateTime @default(now())
++  updatedAt DateTime @updatedAt
++  assignments FirmEngagementAssignment[]
++  transitions FirmEngagementTransition[]
++  grantLinks FirmEngagementGrantLink[]
++
++  @@unique([id, firmOrganizationId, clientOrganizationId], map: "firm_engagement_identity_key")
++  @@index([firmOrganizationId, status, expiresAt])
++  @@index([clientOrganizationId, status])
++  @@map("firm_engagements")
++}
++
++model FirmEngagementAssignment {
++  id String @id @default(cuid())
++  engagementId String
++  firmOrganizationId String
++  clientOrganizationId String
++  engagement FirmEngagement @relation(fields: [engagementId, firmOrganizationId, clientOrganizationId], references: [id, firmOrganizationId, clientOrganizationId], onDelete: Restrict, onUpdate: Restrict)
++  accountantUserId String
++  createdById String
++  accountant User @relation("FirmEngagementStaff", fields: [accountantUserId, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
++  creator User @relation("FirmEngagementAssigner", fields: [createdById, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
++  version Int
++  scope AccountantAccessRole
++  effectiveFrom DateTime
++  expiresAt DateTime
++  endedAt DateTime?
++  endedById String?
++  endReason String?
++  endedBy User? @relation("FirmEngagementAssignmentEnder", fields: [endedById, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
++  createdAt DateTime @default(now())
++
++  @@unique([engagementId, accountantUserId, version], map: "firm_assignment_version_key")
++  @@index([firmOrganizationId, accountantUserId, endedAt])
++  @@map("firm_engagement_assignments")
++}
++
++model FirmEngagementGrantLink {
++  id String @id @default(cuid())
++  engagementId String
++  firmOrganizationId String
++  clientOrganizationId String
++  engagement FirmEngagement @relation(fields: [engagementId, firmOrganizationId, clientOrganizationId], references: [id, firmOrganizationId, clientOrganizationId], onDelete: Restrict, onUpdate: Restrict)
++  grantId String @unique
++  accountantUserId String
++  grant AccountantAccessGrant @relation(fields: [grantId, clientOrganizationId, accountantUserId], references: [id, organizationId, accountantUserId], onDelete: Restrict, onUpdate: Restrict)
++  accountant User @relation("FirmLinkedAccountant", fields: [accountantUserId, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
++  enrolledById String
++  enrolledBy User @relation(fields: [enrolledById, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
++  enrolledAt DateTime @default(now())
++
++  @@unique([grantId, clientOrganizationId, accountantUserId], map: "firm_link_grant_identity_key")
++  @@index([firmOrganizationId, engagementId, accountantUserId])
++  @@map("firm_engagement_grant_links")
++}
++
++model FirmEngagementTransition {
++  id String @id @default(cuid())
++  engagementId String
++  firmOrganizationId String
++  clientOrganizationId String
++  engagement FirmEngagement @relation(fields: [engagementId, firmOrganizationId, clientOrganizationId], references: [id, firmOrganizationId, clientOrganizationId], onDelete: Restrict, onUpdate: Restrict)
++  version Int
++  fromStatus FirmEngagementStatus
++  toStatus FirmEngagementStatus
++  actorId String
++  actor User @relation(fields: [actorId, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
++  reason String
++  idempotencyKey String
++  createdAt DateTime @default(now())
++
++  @@unique([engagementId, version], map: "firm_transition_version_key")
++  @@unique([engagementId, idempotencyKey], map: "firm_transition_idempotency_key")
++  @@index([firmOrganizationId, engagementId, createdAt])
++  @@map("firm_engagement_transitions")
++}
++
+ model ChartOfAccount {
+   id String @id @default(cuid())
+ 
+@@ -10160,3 +10380,32 @@ model PeriodControlEvent {
+   @@unique([organizationId, periodId, version])
+   @@map("period_control_events")
+ }
++
++// AF11 retains operational obligation revisions; domain filing statuses stay domain-owned.
++model FirmObligationRevision {
++  id String @id @default(cuid())
++  organizationId String
++  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
++  instanceId String
++  version Int
++  code String
++  periodId String
++  countryCode String
++  ownerId String
++  applicability String
++  dueAt DateTime?
++  sourceHash String
++  sourceSnapshot Json
++  evidenceId String?
++  evidenceHash String?
++  decision String
++  actorId String
++  reason String
++  idempotencyKey String
++  commandHash String
++  createdAt DateTime @default(now())
++  @@unique([organizationId, instanceId, version])
++  @@unique([organizationId, idempotencyKey])
++  @@index([organizationId, periodId, createdAt])
++  @@map("firm_obligation_revisions")
++}

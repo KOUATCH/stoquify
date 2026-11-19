@@ -1,0 +1,33 @@
+
+it("HR-06 browser scoped search and recovery with real database", async () => {
+  const {createServer} = require("node:http")
+  const fs = require("node:fs")
+  const path = require("node:path")
+  const {execFile} = require("node:child_process")
+  const directory = path.resolve("what-next/hris-implementation-2026-10-24/HR-06/browser")
+  const server = createServer(async (req: any, res: any) => {
+    const url = new URL(req.url,"http://127.0.0.1")
+    if (url.pathname === "/api") {
+      res.setHeader("Content-Type","application/json")
+      const role = /fixtureRole=([^;]+)/.exec(req.headers.cookie ?? "")?.[1]
+      const authority = role === "admin" ? {organizationId:orgs[1],actorId:`${namespace}-b-admin`,actorPermissions:["hris.people.read","hris.people.manage"]}
+        : {organizationId:orgs[0],actorId:actors[1],actorPermissions:role==="manager"?["hris.people.read"]:role==="own"?["hris.self_service.read"]:[]}
+      try {
+        if (url.searchParams.has("failure")) throw new Error("Synthetic unavailable response")
+        const {peopleDirectoryQuerySchema} = require("../people-directory-query")
+        const result = await getHrisEmployeeDirectory({...authority, ...peopleDirectoryQuerySchema.parse(Object.fromEntries(url.searchParams)),limit:25})
+        res.end(JSON.stringify(result))
+      } catch(error) {res.statusCode=(error as any).code==="FORBIDDEN"?403:500;res.end(JSON.stringify({unavailable:true}))}
+      return
+    }
+    const name=url.pathname==="/bundle.js"?"bundle.js":url.pathname==="/style.css"?"style.css":"index.html"
+    res.setHeader("Content-Type",name.endsWith("js")?"text/javascript":name.endsWith("css")?"text/css":"text/html")
+    res.end(fs.readFileSync(path.join(directory,name)))
+  })
+  await new Promise<void>(resolve=>server.listen(0,"127.0.0.1",resolve))
+  try {
+    const origin=`http://127.0.0.1:${server.address().port}`
+    await new Promise<void>((resolve,reject)=>execFile(process.execPath,[path.join(directory,"check.cjs"),origin],{timeout:150000},(error:Error|null,stdout:string,stderr:string)=>error?reject(new Error(stderr||String(error))):resolve()))
+    expect(JSON.parse(fs.readFileSync(path.join(directory,"results.json"),"utf8")).results).toHaveLength(6)
+  } finally {await new Promise<void>(resolve=>server.close(resolve))}
+},180000)

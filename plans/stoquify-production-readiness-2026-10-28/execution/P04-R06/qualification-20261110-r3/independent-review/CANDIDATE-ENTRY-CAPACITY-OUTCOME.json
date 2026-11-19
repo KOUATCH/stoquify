@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-10T15:58:48.213Z",
+  "reviewer": "/root/r06_review",
+  "passed": false,
+  "observationAccepted": true,
+  "scope": "Actual pre-capture capacity denial, no candidate/source mutation",
+  "files": [
+    {
+      "path": "preparation.json",
+      "sha256": "f2e03f764cfebb01bfce8758904a40ffbc4fb43c26243b850a7832da33c63b90"
+    },
+    {
+      "path": "resource-capture-entry.json",
+      "sha256": "5f2dedd96e18c891e908a21d589f07372a8143fb294432eb5996bee72fe0daf3"
+    },
+    {
+      "path": "independent-review/CANDIDATE-PREPARATION-RECIPE-ADMISSION.json",
+      "sha256": "aeeaef8fa6b846d1a8899c35ba11a7b7655798dbda619a65a67bdfefcbcee978"
+    }
+  ],
+  "freePhysicalBytes": 10111123456,
+  "freeCommitBytes": 12248236032,
+  "requiredCommitBytes": 12884901888,
+  "commands": 0,
+  "newSourceAbsent": true,
+  "sourceArchiveAbsent": true,
+  "candidateReceiptsAbsent": true,
+  "qualifiedCandidateExists": false,
+  "ownAnalysisKernelRelease": "Reviewer reset only its own persistent analysis kernel before capture and again after observing failure; no unrelated process stopped",
+  "next": "Preserve original failure; review exclusive successor retry with identical resource/source/storage gates"
+}

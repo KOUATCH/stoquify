@@ -104,17 +104,17 @@ async function statements(tx: Prisma.TransactionClient, ctx: Actor, query: Deliv
   }), query)
 }
 
-type InvitationCandidate = { id: string; recordedAt: Date; inviteId: string; email: string }
+type InvitationCandidate = { id: string; recordedAt: Date; inviteId: string; roleId: string; email: string }
 async function invitations(tx: Prisma.TransactionClient, ctx: Actor, query: DeliveryIssuesQuery): Promise<DeliveryIssuePage> {
   // The source history rechecks stored grants and the target role. Perform the
   // same checks before selecting events, resolving cursors or exposing counts.
-  const reviewer = await readCurrentInvitationIssuer(tx, { organizationId: ctx.orgId, actorId: ctx.userId, role: { organizationId: ctx.orgId, permissions: [] } })
+  const reviewer = await readCurrentInvitationIssuer(tx, { organizationId: ctx.orgId, actorId: ctx.userId, role: { code: "invitation_review_probe", organizationId: ctx.orgId, permissions: [] } })
   if (!reviewer || !hasAllRbacPermissions(reviewer.permissions, permissions.invitations)) return empty("invitations", "restricted")
-  const roles = await tx.role.findMany({ where: { organizationId: ctx.orgId }, select: { id: true, organizationId: true, permissions: true }, take: 1001, orderBy: { id: "asc" } })
+  const roles = await tx.role.findMany({ where: { organizationId: ctx.orgId }, select: { id: true, code: true, organizationId: true, permissions: true }, take: 1001, orderBy: { id: "asc" } })
   // Do not return a silently incomplete authorization universe.
   if (roles.length > 1000) throw new Error("Role inventory exceeds bounded review")
   const allowed = roles.filter(role => [ctx.permissions, reviewer.permissions].every(actorPermissions => evaluateRoleGrantPolicy({
-    actorOrganizationId: ctx.orgId, actorPermissions, targetRole: role,
+    actorOrganizationId: ctx.orgId, actorPermissions, actorRoleCodes: reviewer.roleCodes, targetRole: role,
   }).allowed)).map(role => role.id)
   if (!allowed.length || query.channel === "WHATSAPP") return empty("invitations", "ready")
   const scope = Prisma.sql`e."organizationId" = ${ctx.orgId} AND i."organizationId" = ${ctx.orgId}
@@ -127,7 +127,7 @@ async function invitations(tx: Prisma.TransactionClient, ctx: Actor, query: Deli
   const anchor = anchors[0]
   if (query.invitationCursor && !anchor) throw new Error("Unavailable cursor")
   const candidates = await tx.$queryRaw<InvitationCandidate[]>(Prisma.sql`
-    SELECT e.id, e."recordedAt", i.id AS "inviteId", i.email FROM business_events e JOIN invites i ON i.id = e."sourceId"
+    SELECT e.id, e."recordedAt", i.id AS "inviteId", i."roleId", i.email FROM business_events e JOIN invites i ON i.id = e."sourceId"
     WHERE ${scope} ${anchor ? Prisma.sql`AND (e."recordedAt", e.id) < (SELECT prior."recordedAt", prior.id FROM business_events prior WHERE prior."organizationId" = ${ctx.orgId} AND prior.id = ${anchor.id})` : Prisma.empty}
     ORDER BY e."recordedAt" DESC, e.id DESC LIMIT ${SCAN_SIZE + 1}`)
   const events = candidates.length ? await tx.businessEvent.findMany({ where: { organizationId: ctx.orgId, id: { in: candidates.map(row => row.id) } },
@@ -138,9 +138,9 @@ async function invitations(tx: Prisma.TransactionClient, ctx: Actor, query: Deli
   return deliveryWindow("invitations", candidates.map(row => {
     const event = events.find(event => event.id === row.id)
     const payload = invitationDeliveryPayload.safeParse(event?.payload)
-    const valid = event && payload.success && payload.data.organizationId === ctx.orgId && payload.data.inviteId === row.inviteId
+    const valid = event && payload.success && payload.data.organizationId === ctx.orgId && payload.data.inviteId === row.inviteId && payload.data.roleId === row.roleId
       && payload.data.actorId === event.actorId && event.eventSource === "API" && event.schemaVersion === 1 && event.status === "APPLIED"
-      && hashBusinessPayload(event.payload) === event.payloadHash && hasInvitationGrantEvidence(payload.data)
+      && hashBusinessPayload(event.payload) === event.payloadHash && hasInvitationGrantEvidence(payload.data, roles.find(role => role.id === row.roleId)?.code)
     const queued = event?.outboxMessages.length === 1 ? event.outboxMessages[0] : null
     const delivery = valid && queued && queued.idempotencyKey === event.idempotencyKey && queued.payloadHash === event.payloadHash && hashBusinessPayload(queued.payload) === event.payloadHash ? queued : null
     const state = delivery ? deliveryStatus(delivery.status, delivery.lastErrorCode) : "unknown"

@@ -1,0 +1,17 @@
+{
+  "label": "remaining-commerce",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "prisma/disposable-remaining.ts",
+    "commerce"
+  ],
+  "startedAt": "2026-10-29T13:33:18.936Z",
+  "finishedAt": "2026-10-29T13:34:02.764Z",
+  "exitCode": 0,
+  "errorCode": null
+}

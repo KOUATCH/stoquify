@@ -1,0 +1,954 @@
+Skip to main content
+Toggle navigation menu
+IC
+CLOSE ASSURANCE
+Close & Assurance Center
+
+Close readiness from the ledger, reconciliation, suspense, and data-trust evidence already in the accounting backbone.
+
+Control center
+Evidence
+Current certification evidence
+Recorded status: CERTIFIED
+T4
+Close readiness journey
+
+A read-only path from operating sources to reconciliation, posted ledger, findings, certification, and export readiness.
+
+Recorded readiness
+
+100%
+
+90% evidence coverage
+
+OPEN
+Operational sources
+
+Synthetic open period: 10 checklist gate(s), 34 evidence item(s).
+
+ACCOUNTING_PERIODS
+
+PASSED
+Reconciliation proof
+
+1 supplier cash receipt review(s) retained as internal evidence; provider settlement and recipient identity are not certified by these reviews.
+
+RECONCILIATION_RUNS
+
+PASSED
+Posted ledger
+
+Posted ledger entries balance and retain posting/source traceability.
+
+JOURNAL_ENTRIES
+
+0
+Close findings
+
+0 open finding(s), 0 critical blocker(s).
+
+CLOSE_ASSURANCE_FINDINGS
+
+VERIFIED
+Certification
+
+A current certified export is retained for this close run.
+
+CLOSE_RUNS
+
+DRAFT
+Draft export
+
+Draft close pack export is available; certified export still enforces readiness gates.
+
+CLOSE_PACK_EXPORTS
+
+Journey blockers
+
+No high-risk journey blockers are visible.
+
+System evidence only. Statutory filings still require qualified expert validation.
+
+01
+Close readiness checklist
+02
+Blockers and findings
+03
+Certification controls
+04
+Evidence coverage
+Current close evidence
+
+Current certification evidence
+
+The recorded status and score describe the saved assessment; current proof is checked separately.
+
+As of: Oct 26, 2026, 7:28 PM UTC
+
+STATUS
+
+Current certification evidence
+
+Recorded status: CERTIFIED
+
+RECORDED READINESS
+
+100%
+
+10/10 gates passed
+
+EVIDENCE COVERAGE
+
+90%
+
+34 evidence items
+
+RECORDED CRITICAL BLOCKERS
+
+0
+
+0 high severity
+
+OPEN FINDINGS
+
+0
+
+0 total findings
+
+RECORDED TRUST LEVEL
+
+T4
+
+As of: Oct 26, 2026, 7:27 PM UTC
+
+Current certification evidence
+
+Synthetic open period - Jan 1, 2026 to Oct 26, 2026
+
+Synthetic open period - OPEN
+Run assessment
+Refresh
+
+Some actions are unavailable with your current permissions. An administrator can review your access.
+
+Partial data
+
+MIXED
+
+Some close evidence domains are unavailable. Certification remains gated until required evidence is posted, resolved, or waived through controls.
+
+0 unavailable checklist gates
+Close readiness checklist
+
+Service-backed gates from period close, ledger, payment reconciliation, suspense, inventory, AP, payroll, tax, and data-trust sources.
+
+Balance-sheet account reconciliations
+
+LEDGER
+
+PASSED
+INFO
+
+13 of 13 account/currency schedules have current independent approval.
+
+13 evidence items - services/accounting/balance-sheet-close.service.ts
+
+Ledger balance and traceability
+
+LEDGER
+
+PASSED
+INFO
+
+Posted ledger entries balance and retain posting/source traceability.
+
+1 evidence items - services/accounting/reconciliations.service.ts
+
+Period close preflight
+
+LEDGER
+
+PASSED
+INFO
+
+No period close preflight blockers were detected.
+
+1 evidence items - services/accounting/periods.service.ts
+
+Accounting period state
+
+LEDGER
+
+PASSED
+INFO
+
+Synthetic open period is open and available for close readiness.
+
+1 evidence items - services/accounting/periods.service.ts
+
+Payment reconciliation sign-off
+
+PAYMENT_RECONCILIATION
+
+PASSED
+INFO
+
+1 supplier cash receipt review(s) retained as internal evidence; provider settlement and recipient identity are not certified by these reviews.
+
+1 evidence items - services/reconciliation/payment-close-evidence.service.ts
+
+Suspense and payment exceptions
+
+SUSPENSE
+
+PASSED
+INFO
+
+No open close-blocking suspense items were detected.
+
+0 evidence items - services/reconciliation/payment-suspense-workflow.service.ts
+
+Inventory valuation readiness
+
+INVENTORY_VALUATION
+
+PASSED
+INFO
+
+Inventory subledger value 200.00 reconciles to class 3 ledger value 200.00 XAF.
+
+1 evidence items - services/inventory/inventory-valuation.service.ts
+
+AP, payroll, and compliance exposure
+
+TAX
+
+PASSED
+INFO
+
+Purchasing and AP: ready; Payroll and declarations: ready; Compliance documents: ready
+
+3 evidence items - services/accounting/data-trust.service.ts
+
+Payroll finance forecast proof
+
+PAYROLL
+
+PASSED
+INFO
+
+Aggregate payroll forecast is authoritative through 2026-10-26T23:59:59.999Z; net pay 0, statutory liabilities 0.
+
+1 evidence items - services/snapshots/tenant-operating-snapshot.service.ts
+
+Data trust and provenance
+
+DATA_TRUST
+
+PASSED
+INFO
+
+Data-trust level T4; 0 blockers detected.
+
+17 evidence items - services/accounting/data-trust.service.ts
+
+Blockers and findings
+
+Open issues must be resolved, assigned, or waived through segregation-of-duties controls before certification.
+
+No records yet
+
+Blockers and findings
+STATUS	DETAIL	SOURCE	OWNER	ACTION
+No close blockers detected for this assessment.
+
+0 of 0 loaded records
+
+Rows per page
+
+25
+Page 1 of 1
+Go to previous page
+Go to next page
+
+Accountant comments
+
+No finding records are listed. Review current evidence conditions above.
+
+Persisted run
+Add comment
+
+Request waiver
+
+No finding records are listed. Review current evidence conditions above.
+
+SoD
+Request waiver
+
+No comments yet.
+
+Recover missing evidence
+Refresh evidence
+Evidence updates
+Refresh updates
+
+Published in-app updates you can currently access. Publication does not mean someone has read the update. Use the evidence workbench below to act on the current request.
+
+No published updates on this page for your current access.
+Notification delivery controls
+
+Open work for this period, including earlier assessments. A response is not approval; original evidence remains retained.
+
+Dates are displayed in your browser's timezone.
+
+No evidence work is listed for your role in this period.
+
+Investigate retained evidence
+
+Enter the request reference from the evidence history or the colleague reporting the issue. Accountant review permission is required.
+
+Request reference
+Inspect records
+
+Historical missing evidence is retained after acceptance. This does not authenticate an external signature or authorize a payment.
+
+Certification controls
+ASSIGN TO ME
+on
+
+accounting.close.finding.assign
+
+WAIVER APPROVAL REQUIRES FRESH AUTHENTICATION.
+on
+
+accounting.close.waiver.approve
+
+CERTIFIED EXPORT GATE
+off
+
+disabled
+
+DRAFT EXPORT GATE
+on
+
+Draft close pack export is available; certified export still enforces readiness gates.
+
+SOURCE TABLES
+
+accounting_periods, journal_entries, journal_entry_lines, ledger_posting_batches, accounting_source_links, bank_balance_evidence, balance_sheet_evidence, close_source_changes, provider_accounts, payment_rails, chart_of_accounts, settlement_accounts, match_records, payment_transactions, provider_events, statement_files, statement_lines, reconciliation_runs, suspense_items, payment_exceptions, inventory_levels, inventory_transactions, stock_adjustments, stock_count_sessions, payroll_periods, payroll_runs, payroll_run_transitions, payroll_payment_batches, payroll_declarations, payroll_declaration_evidence, business_events, ledger_audit_events, audit_logs
+
+Accountant review
+
+Record an accountant decision against this close run without changing source evidence or posted ledger entries.
+
+LATEST REVIEW
+
+OPEN
+
+No comments yet.
+
+Run close readiness before recording an accountant review.
+
+REVIEW STATUS
+Ready to close
+DECISION NOTES
+Save review
+Close pack export
+
+Generate deterministic JSON snapshots with a watermark, SHA-256 content hash, and close-run audit trail.
+
+System evidence pack only. Statutory filings still require qualified expert validation.
+
+Certification is already recorded for this assessment.
+
+Available
+Certification recorded
+Export draft JSON
+Export certified JSON
+Evidence coverage
+
+Source-linked proof gathered by the close engine. Missing domains stay visible as unavailable evidence.
+
+Table ready
+
+Evidence coverage
+EVIDENCE ID	EVIDENCE TYPE	SOURCE	PERIOD	STATUS	EVIDENCE ITEMS	HASH
+
+cmvpnfjky00vnmackpo3irpfm
+	
+SOURCE_LINK
+	
+
+GOODS_RECEIPT GR-000001
+
+accounting_source_links
+
+	
+Oct 26, 2026, 6:48 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjks00vlmackefr6xtzn
+	
+SOURCE_LINK
+	
+
+SUPPLIER_INVOICE SYNTH-d7a100a1-7d31-4a33-b992-abdd13f7f15a
+
+accounting_source_links
+
+	
+Oct 26, 2026, 6:48 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjkn00vjmackg4sa7lp6
+	
+SOURCE_LINK
+	
+
+SUPPLIER_PAYMENT SPAY-20261026-0001
+
+accounting_source_links
+
+	
+Oct 26, 2026, 6:48 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjmb00wbmackrv08g00i
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:24 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjm700w9mackvyahd0o6
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:25 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjm300w7mack1nlc1pfi
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:25 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjlz00w5mack8vz7gu3t
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:25 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjlv00w3mackxvrqouin
+	
+AUDIT_LOG
+	
+
+LOGIN_SUCCESS - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:27 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjls00w1mackuh6b50px
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:27 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjlo00vzmackibplwlaq
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:27 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjlj00vxmackmtpzhnsd
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:27 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjle00vvmack0y1x5doi
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:27 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjla00vtmacko2p93i9l
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:27 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjl700vrmack4lg3lzcl
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:27 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjl200vpmacke60q1dvv
+	
+AUDIT_LOG
+	
+
+PERMISSION_GRANTED - recorded
+
+audit_logs
+
+	
+Oct 26, 2026, 7:27 PM UTC
+	
+Available
+POSTED
+	
+1
+	
+Not set
+
+
+cmvpnfjka00vdmackfqznlhiz
+	
+AUDIT_LOG
+	
+
+Independently reviewed supplier cash receipt (internal attestation)
+
+business_events
+
+	
+Oct 26, 2026, 6:48 PM UTC
+	
+Available
+OPERATIONAL
+	
+1
+	
+16a5bbb68310e79f24aea9830d45f1bf80fd9138938bfd062044f4be7f70ed10
+
+
+cmvpnfjk500vbmackhn6r964i
+	
+AUDIT_LOG
+	
+
+0 normal unpaid invoice(s); 0 AP control exception(s).
+
+supplier_invoices
+
+	
+Oct 26, 2026, 7:27 PM UTC
+	
+Available
+OPERATIONAL
+	
+1
+	
+b53f49201a793ad6497a95d5d3be41f10675d6c5027c9617fc1b94364f2a8b01
+
+
+cmvpnfjjz00v9mackoaln4wup
+	
+AUDIT_LOG
+	
+
+Balance sheet 49014 Synthetic INPUT_VAT (XAF): RECONCILED
+
+balance_sheet_evidence
+
+	
+Oct 26, 2026, 6:49 PM UTC
+	
+Available
+OPERATIONAL
+	
+1
+	
+sha256:5e9126ef90a889af18b7f70661f1c929002268fe1d9e5ca9def244a9311fcfff
+
+
+cmvpnfjjv00v7mackbg5ekzu0
+	
+AUDIT_LOG
+	
+
+Balance sheet 49013 Synthetic OUTPUT_VAT (XAF): RECONCILED
+
+balance_sheet_evidence
+
+	
+Oct 26, 2026, 6:49 PM UTC
+	
+Available
+OPERATIONAL
+	
+1
+	
+sha256:b1153cd58709d6ed3ee6b18204fff7a2701ba6fee3545b3a297ee7a3fd912416
+
+
+cmvpnfjjp00v5mackcndznqc7
+	
+AUDIT_LOG
+	
+
+Balance sheet 49010 Synthetic STORE_CREDIT_LIABILITY (XAF): RECONCILED
+
+balance_sheet_evidence
+
+	
+Oct 26, 2026, 6:49 PM UTC
+	
+Available
+OPERATIONAL
+	
+1
+	
+sha256:36a483ad5bdbd91c86802f73c6ad9c9b92ab4a3dcce667d89477480816ba0b79
+
+
+cmvpnfjji00v3mackod7bqugn
+	
+AUDIT_LOG
+	
+
+Balance sheet 49009 Synthetic SUPPLIER_RETURN_CLAIM (XAF): RECONCILED
+
+balance_sheet_evidence
+
+	
+Oct 26, 2026, 6:49 PM UTC
+	
+Available
+OPERATIONAL
+	
+1
+	
+sha256:81035a4eb5795381337f73ed55ceda9b31d5fc1e7a5b1876b0da669320330839
+
+
+cmvpnfjjc00v1mackna7qwgqv
+	
+AUDIT_LOG
+	
+
+Balance sheet 59005 Synthetic CHEQUE_CLEARING (XAF): RECONCILED
+
+balance_sheet_evidence
+
+	
+Oct 26, 2026, 6:48 PM UTC
+	
+Available
+OPERATIONAL
+	
+1
+	
+sha256:cc4728b411149bfafc8cd9468664504b92d0732feb0fbe88914c5c907d4a05d7
+
+
+cmvpnfjj800uzmack402xgemd
+	
+AUDIT_LOG
+	
+
+Balance sheet 59004 Synthetic MOBILE_MONEY_CLEARING (XAF): RECONCILED
+
+balance_sheet_evidence
+
+	
+Oct 26, 2026, 6:48 PM UTC
+	
+Available
+OPERATIONAL
+	
+1
+	
+sha256:bd5f67b0df938a520bdf57d0c7ef34cc45c94c39c1d94359eab819479b8d09ee
+
+
+cmvpnfjj400uxmacktz64m05a
+	
+AUDIT_LOG
+	
+
+Balance sheet 59003 Synthetic CARD_CLEARING (XAF): RECONCILED
+
+balance_sheet_evidence
+
+	
+Oct 26, 2026, 6:48 PM UTC
+	
+Available
+OPERATIONAL
+	
+1
+	
+sha256:a2a95e66c337283619a2dce9cf4f964c94c205350b71bfdbba2c21f6f1ac06e8
+
+
+cmvpnfjj000uvmackfbi62c81
+	
+AUDIT_LOG
+	
+
+Balance sheet 59002 Synthetic BANK (XAF): RECONCILED
+
+balance_sheet_evidence
+
+	
+Oct 26, 2026, 6:48 PM UTC
+	
+Available
+OPERATIONAL
+	
+1
+	
+sha256:fb4ed0aa7828d634dc8ad1912dc2d2b45c3b262a31e1f68a6ae90f66725f5697
+
+34 of 34 loaded records
+
+Rows per page
+
+25
+Page 1 of 2
+Go to previous page
+Go to next page
+Provenance
+
+Which service produced each part of the close picture, and whether it is posted, operational, or unavailable.
+
+Ledger and period close
+
+OPEN
+
+POSTED
+
+Oct 26, 2026, 7:27 PM UTC
+
+accounting_periods, journal_entries, journal_entry_lines, ledger_posting_batches
+
+Payment reconciliation
+
+OPEN
+
+OPERATIONAL
+
+Oct 26, 2026, 7:27 PM UTC
+
+reconciliation_runs, suspense_items, payment_exceptions, provider_events, statement_files, statement_lines
+
+Period evidence through 2026-10-26T19:27:51.037Z; unassigned organization-wide controls: 0 suspense, 0 exceptions.
+
+Data trust
+
+OPEN
+
+POSTED
+
+Oct 26, 2026, 7:27 PM UTC
+
+journal_entries, journal_entry_lines, ledger_posting_batches, accounting_source_links, business_events, ledger_audit_events, audit_logs, provider_accounts, statement_files, statement_lines, reconciliation_runs, reconciliation_no_activity_evidence, bank_balance_evidence, balance_sheet_evidence, close_source_changes, payment_exceptions, payment_transactions, supplier_invoices, supplier_ledger_entries, supplier_invoice_match_exceptions, supplier_payment_allocations, supplier_credit_notes, supplier_payments, payroll_runs, payroll_run_transitions, payroll_run_lines, payroll_payslips, payroll_declarations, payroll_declaration_evidence, payroll_payment_batches, payroll_payment_allocations, fiscal_documents
+
+Inventory valuation
+
+OPEN
+
+POSTED
+
+Oct 26, 2026, 7:27 PM UTC
+
+inventory_levels, inventory_transactions, stock_adjustments, stock_count_sessions, journal_entry_lines, business_events
+
+Payroll finance forecast proof
+
+OPEN
+
+POSTED
+
+Oct 26, 2026, 7:27 PM UTC
+
+payroll_periods, payroll_runs, payroll_run_lines, payroll_payment_batches, payroll_declarations, payroll_declaration_evidence, payment_provider_accounts, accounting_source_links, ledger_posting_batches
+
+Evidence graph
+
+Nodes and edges generated from the current close run evidence.
+
+NODES
+
+54
+
+cmvpnfhuu00tzmacksngcnozv
+
+EDGES
+
+53
+
+Oct 26, 2026, 7:28 PM UTC

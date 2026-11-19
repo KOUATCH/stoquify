@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "package": "P04-R02",
+  "date": "2026-11-02",
+  "status": "blocked",
+  "advance_parent": false,
+  "implementation_status": "implemented_scoped_verified",
+  "prior_scoped_gates": "../repair/advancement-gates.json",
+  "gates": [
+    {
+      "id": "R02-G08",
+      "status": "blocked",
+      "name": "Local full application artifact, persisted auth and private browser qualification",
+      "required_for_local_r02_completion": true,
+      "executed_full_app": false,
+      "blocking_precondition": "Previous D: isolation target unavailable; visible drives below reviewed 12 GiB free-space minimum",
+      "evidence": [
+        "preparation.json",
+        "preparation-resume.json",
+        "resume-2026-11-02/inspection.json",
+        "database/resume-20261102-r1-preconditions.json",
+        "browser/denial-assertions-review.md",
+        "independent-review/final-2026-11-02.md"
+      ],
+      "remaining": [
+        "fresh bound candidate",
+        "actual full build and private artifact verification",
+        "fresh disposable DB/session qualification",
+        "authorized and denied reads on both URLs",
+        "actual EN/FR browser consumers and cache recovery",
+        "business no-write snapshots",
+        "cleanup and final independent review"
+      ]
+    },
+    {
+      "id": "R02-G09",
+      "status": "not_run",
+      "name": "Hosted ingress/CDN/operator cutover",
+      "required_for_local_r02_completion": false,
+      "limit": "Separate release requirement. No deployment or production change authorized."
+    }
+  ]
+}

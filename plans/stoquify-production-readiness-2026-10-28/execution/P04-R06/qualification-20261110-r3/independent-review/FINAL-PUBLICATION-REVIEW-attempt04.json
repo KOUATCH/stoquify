@@ -1,0 +1,91 @@
+{
+  "at": "2026-11-17T11:33:03.899Z",
+  "reviewer": "/root/r06_capacity_review",
+  "passed": true,
+  "publicationAccepted": true,
+  "qualificationPassed": false,
+  "blockedCheckpointAccepted": true,
+  "candidateId": null,
+  "artifactSha256": null,
+  "evidenceId": "E34",
+  "exactFrozenInputsRehashed": 19,
+  "sharedFiles": [
+    {
+      "path": "work-register.json",
+      "sha256": "fc5199b4784b32f50033b49be6b58dcf5c3a606fe2afb44655db47b9d9956cd1"
+    },
+    {
+      "path": "work-register.csv",
+      "sha256": "c9f0fdb69b02a8df6a6eae7c273c12c2a7d3e85dd8578354f4ab40f583223343"
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "a2ec45c15f92cfaf573b9ebef9d959012c9e21f2037439ae5d5ac815ce81aeed"
+    },
+    {
+      "path": "mutation-log.md",
+      "sha256": "fd2824b923b1e46e65bed7f4bc71e51e78c48aae65c86b3294afbbaa6eddf26b"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "sha256": "5057c326dc9595203c9f5dd219fa8a55b76ca836bc12bc5f67ead1549da2cdbe"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "sha256": "1932e0216b5425317bdb6977eb05a1903a22f98cb64ee19e48dce852a1328767"
+    }
+  ],
+  "independentChecks": [
+    "Exact 19 frozen publication input hashes matched the independent admission after publication; six E33 backup hashes remain bound by that admission.",
+    "Actual register independently reconstructed using only permitted R06/P04/V02 state and evidence changes; all other packages, tasks, dependencies, global fields, authorizations and deferred commitments remain unchanged.",
+    "Historical E01-E33 preserved exactly and the exact E34 record added.",
+    "JSON/20-column CSV mirror, append-only mutation log, bounded roadmap tail and exact CURRENT/NEXT outputs independently compared against the frozen publication baseline and inputs.",
+    "Six owned repair hashes still match. The two selected-input drifts remain explicit; the saved full snapshot and prior test results are labeled historical, current full source equality remains unestablished, and unchanged attempt05 reuse is prohibited.",
+    "Actual publication receipt hashes match all six shared outputs; the validator reports 9/9 checks passed. Candidate/artifact remain null and qualification remains false.",
+    "No new build, database, mocked unit test, browser or production qualification is claimed."
+  ],
+  "counts": {
+    "packages": 59,
+    "domains": 57,
+    "decisions": 14,
+    "globalGates": 18,
+    "publicationChecks": 9,
+    "historicalEvidencePreserved": 33
+  },
+  "actualComparisonToolChunk": "1146b3",
+  "files": [
+    {
+      "path": "independent-review/PUBLICATION-RECIPE-ADMISSION-attempt04.json",
+      "sha256": "da42d7895dae684c6e321a59ef3c1059c20cea0082ad1b5dc4d058d1695e4bfb"
+    },
+    {
+      "path": "publication-written-attempt04.json",
+      "sha256": "1c3829b6a7f6da0cace6bb417bcbcd82d6fe80c8728787ea97db607cb3a362d2"
+    },
+    {
+      "path": "publication-validation-attempt04.json",
+      "sha256": "877a640b728bc2dffe5e09cce45f1095aa5ec93da19ca505638b5c4f1bb46f18"
+    },
+    {
+      "path": "publication-input-attempt04.json",
+      "sha256": "42b1a560843a171f90b9ff36520ca3a79cb0864da03fa1bfb8fded30d7a2db70"
+    },
+    {
+      "path": "RESULT-attempt04.md",
+      "sha256": "81ddf7f9d601d63424fcb2f385e188e6de5378f7d78e3e29ca61297763e92c4c"
+    },
+    {
+      "path": "advancement-gates-attempt04.json",
+      "sha256": "ba506297c84ab07add713d0c8132cd3e339fc3dbc0855d0a84e5d3883756389e"
+    },
+    {
+      "path": "independent-review/CAPACITY-RETRY-OUTCOME-REVIEW-r2.json",
+      "sha256": "122410ea51fcbf7f920289b44f3a18883304298db5a8cb41a613b76d74b190f4"
+    }
+  ],
+  "limits": [
+    "Passed certifies accurate blocked publication only. P04-R06, parent P04/P04-V02 and production readiness remain blocked.",
+    "The latest receipt reports 4.041489 GiB physical and 9.081867 GiB commit below unchanged 6/12 GiB floors; D storage passes. No capacity repoll or native query was performed by this review.",
+    "No full source/dependency scan or new application execution was performed. Source inspection, historical mocked tests, real database evidence and rendered/browser qualification remain separate."
+  ]
+}

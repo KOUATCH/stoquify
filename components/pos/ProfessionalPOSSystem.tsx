@@ -1,11 +1,15 @@
 "use client"
 
+import "./pos-workspace.css"
+
 import { useEffect, useMemo, useRef, useState } from "react"
 import { readPendingSale, removePendingSale, savePendingSale, type PendingSale } from "@/lib/pos/pending-sale"
 import { usePOSCheckoutLifecycle } from "@/hooks/posHooks/usePOSCheckoutLifecycle"
+import { usePOSWhatsAppReceipt } from "@/hooks/posHooks/usePOSWhatsAppReceipt"
 import { retainLegacyPOSCheckoutAction } from "@/actions/pos/checkout.actions"
 import type { getPOSSaleCommitStatus } from "@/services/pos/pos.service"
 import { useLocale, useTranslations } from "next-intl"
+import Link from "next/link"
 import { usePermissions } from "@/hooks/usePermissions"
 import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
@@ -18,8 +22,6 @@ import {
   Clock,
   ClipboardList,
   CreditCard,
-  Eye,
-  Heart,
   ImageIcon,
   LayoutGrid,
   List,
@@ -27,13 +29,10 @@ import {
   PackageCheck,
   PauseCircle,
   Plus,
-  Printer,
   Receipt,
   Search,
-  ShieldCheck,
   Smartphone,
   Star,
-  Tag,
   Trash2,
   UserRound,
   UsersRound,
@@ -46,7 +45,10 @@ import type { ButtonProps } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Progress } from "@/components/ui/progress"
+import { POSCatalogCard } from "@/components/pos/POSCatalogCard"
+import { POSCheckoutShell } from "@/components/pos/POSCheckoutShell"
+import { POSReturns } from "@/components/pos/POSReturns"
+import { POSReceiptPrintLink, POSReceiptReprintForm } from "@/components/pos/POSReceiptPrintLink"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
@@ -58,11 +60,7 @@ import { ReceiptTokenHistoryPanel, type ReceiptTokenSaleSearchItem } from "@/com
 import { ReceiptTokenControlStrip, type ReceiptTokenControlItem } from "@/components/pos/ReceiptTokenControlStrip"
 import { currencyFractionDigits } from "@/lib/i18n/organization-money"
 import { cn } from "@/lib/utils"
-import {
-  receiptChannelRequiresDestination,
-  receiptDestinationKind,
-  type ReceiptChannel,
-} from "@/services/pos/receipt-channels"
+import type { ReceiptChannel } from "@/services/pos/receipt-channels"
 import {
   useActivePOSCart,
   useActivePOSShift,
@@ -190,21 +188,9 @@ function firstLocationId(locations: Array<{ id: string; isDefault?: boolean }>) 
   return locations.find((location) => location.isDefault)?.id || locations[0]?.id || ""
 }
 
-function stockBadgeVariant(status: string) {
-  if (status === "out") return "destructive" as const
-  if (status === "low") return "secondary" as const
-  return "outline" as const
-}
-
 function localizedName(entity: { nameEn?: string; nameFr?: string | null; titleEn?: string; titleFr?: string | null }, locale: string) {
   if (locale === "fr") return entity.nameFr || entity.titleFr || entity.nameEn || entity.titleEn || ""
   return entity.nameEn || entity.titleEn || entity.nameFr || entity.titleFr || ""
-}
-
-function stockProgress(item: CatalogItem, displayedOnHand: number) {
-  if (!item.trackInventory || item.stock.status === "not_tracked") return 100
-  const reorderPoint = Math.max(1, Number(item.stock.reorderPoint || 8))
-  return Math.min(100, Math.round((Math.max(0, displayedOnHand) / Math.max(reorderPoint * 2, displayedOnHand, 1)) * 100))
 }
 
 function customerInitials(name: string) {
@@ -315,8 +301,9 @@ function toErrorMessage(error: unknown, fallback: string) {
   return fallback
 }
 
-const tenderMethods: TenderMethod[] = ["CASH"]
-const receiptChannels: ReceiptChannel[] = ["NONE"]
+// Local customer credit uses the existing receivable controls. Provider tenders
+// remain unavailable until their authoritative payment evidence is integrated.
+const tenderMethods: TenderMethod[] = ["CASH", "ON_ACCOUNT"]
 const posSurfaceClass =
   "dashboard-glass-panel overflow-hidden rounded-lg text-[var(--dash-text)]"
 const posPanelClass =
@@ -351,17 +338,6 @@ const posInfoPillClass = "rounded-lg bg-[var(--dash-brand-soft)] px-2 py-1 text-
 const posSuccessPillClass = "rounded-lg bg-[var(--dash-spruce-soft)] px-2 py-1 text-[#d9fffb]"
 const posWarningPillClass = "rounded-lg bg-[var(--dash-warning-soft)] px-2 py-1 text-[#ffe4a8]"
 const posEmptyClass = "rounded-lg border border-dashed border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.36)] p-8 text-center text-[var(--dash-text-soft)] shadow-sm"
-const posProductCardClass =
-  "group relative overflow-hidden rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(29,45,53,0.72)] p-3 text-[var(--dash-text)] shadow-[0_18px_48px_rgba(5,12,16,0.20)] transition hover:-translate-y-0.5 hover:border-[var(--dash-border)] hover:bg-[rgba(37,57,67,0.86)]"
-const posProductSelectedClass =
-  "border-[var(--dash-spruce)]/70 bg-[rgba(45,212,191,0.12)] ring-1 ring-[var(--dash-spruce)]/25"
-const posMetricSpruceClass = "rounded-lg border border-[var(--dash-spruce)]/25 bg-[var(--dash-spruce-soft)] px-2 py-1.5"
-const posMetricBrandClass = "rounded-lg border border-[var(--dash-brand)]/25 bg-[var(--dash-brand-soft)] px-2 py-1.5"
-const posMetricGoldClass = "rounded-lg border border-[var(--dash-gold)]/25 bg-[var(--dash-gold-soft)] px-2 py-1.5"
-const posMetricRowClass = "flex min-w-0 items-center justify-between gap-2"
-const posMetricLabelClass = "min-w-0 truncate text-[10px] font-medium leading-none"
-const posMetricValueClass = "shrink-0 text-base font-bold leading-none tabular-nums"
-
 function POSButton({ className, variant: _variant, ...buttonProps }: ButtonProps) {
   void _variant
 
@@ -380,8 +356,28 @@ function POSWorkspace() {
   const { user, organizationId, hasPermission } = usePermissions()
   const locale = useLocale()
   const notifications = useNotifications()
+  const workspaceRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    const root = workspaceRef.current
+    if (!root) return
+    const header = root.querySelector<HTMLElement>("[data-pos-header]")
+    const navbar = document.querySelector<HTMLElement>("header:not([data-pos-header])")
+    const measure = () => {
+      const navHeight = navbar?.getBoundingClientRect().height ?? 64
+      root.style.setProperty("--pos-navbar-height", `${navHeight}px`)
+      root.style.setProperty("--pos-search-top", `${navHeight + (header?.getBoundingClientRect().height ?? 65)}px`)
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    if (navbar) observer.observe(navbar)
+    if (header) observer.observe(header)
+    window.addEventListener("resize", measure)
+    return () => { observer.disconnect(); window.removeEventListener("resize", measure) }
+  })
   const customerSearchRef = useRef<HTMLInputElement>(null)
+  const customerDialogTriggerRef = useRef<HTMLElement | null>(null)
+  const productDialogTriggerRef = useRef<HTMLButtonElement | null>(null)
   const tenderAmountRef = useRef<HTMLInputElement>(null)
   const currentShiftDefaultAppliedRef = useRef(false)
   const previousCustomerLocationIdRef = useRef("")
@@ -393,13 +389,21 @@ function POSWorkspace() {
   const submissionInFlight = useRef(false)
   const recoveryPanelRef = useRef<HTMLElement>(null)
   const checkoutFooterRef = useRef<HTMLDivElement>(null)
+  const recoveryFocusAfterCloseRef = useRef(false)
+  const blockerFocusAfterCloseRef = useRef<(() => void) | null>(null)
   const pendingCommitId = pendingCommit?.request.clientCommitId
   const [reviewingChangedCart, setReviewingChangedCart] = useState(false)
   const settledCommitIds = useRef(new Set<string>())
   useEffect(() => {
     if (!pendingLoaded || !pendingCommitId) return
-    recoveryPanelRef.current?.focus({ preventScroll: true })
-    recoveryPanelRef.current?.scrollIntoView?.({ block: "start", behavior: "instant" })
+    recoveryFocusAfterCloseRef.current = Boolean(document.querySelector('[data-testid="pos-tablet-checkout"]'))
+    setIsCheckoutOpen(false)
+    if (recoveryFocusAfterCloseRef.current) return
+    const focusTimer = window.setTimeout(() => {
+      recoveryPanelRef.current?.focus({ preventScroll: true })
+      recoveryPanelRef.current?.scrollIntoView?.({ block: "start", behavior: "instant" })
+    }, 0)
+    return () => window.clearTimeout(focusTimer)
   }, [pendingLoaded, pendingCommitId])
   const [selectedLocationId, setSelectedLocationId] = useState("")
   const [selectedTerminalId, setSelectedTerminalId] = useState("")
@@ -415,10 +419,7 @@ function POSWorkspace() {
   const [varianceExplanation, setVarianceExplanation] = useState("")
   const [closeShiftError, setCloseShiftError] = useState<string | null>(null)
   const [tenderLines, setTenderLines] = useState<TenderLineState[]>(() => [createTenderLine()])
-  const [receiptChannel, setReceiptChannel] = useState<ReceiptChannel>("NONE")
-  const [receiptDestination, setReceiptDestination] = useState("")
-  const [whatsAppCustomerOptInConfirmed, setWhatsAppCustomerOptInConfirmed] = useState(false)
-  const [lastSale, setLastSale] = useState<CommitSaleResult | null>(null)
+  const [lastSale, setLastSale] = useState<(CommitSaleResult & { locationId: string }) | null>(null)
   const [receiptHistorySearchDraft, setReceiptHistorySearchDraft] = useState("")
   const [receiptHistorySearchQuery, setReceiptHistorySearchQuery] = useState<string | null>(null)
   const [receiptHistorySaleId, setReceiptHistorySaleId] = useState("")
@@ -426,6 +427,7 @@ function POSWorkspace() {
   const [recentItemIds, setRecentItemIds] = useState<string[]>([])
   const [isCustomerDialogOpen, setIsCustomerDialogOpen] = useState(false)
   const [isEndShiftDialogOpen, setIsEndShiftDialogOpen] = useState(false)
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [touchMode, setTouchMode] = useState(false)
   const [isOnline, setIsOnline] = useState(true)
   const [gridMode, setGridMode] = useState<"grid" | "list">("grid")
@@ -692,11 +694,15 @@ function POSWorkspace() {
       }
       if (event.key === "F4") {
         event.preventDefault()
-        if (selectedLocationId) setIsCustomerDialogOpen(true)
+        if (selectedLocationId) {
+          customerDialogTriggerRef.current = event.target instanceof HTMLElement ? event.target : null
+          setIsCustomerDialogOpen(true)
+        }
       }
       if (event.key === "F8") {
         event.preventDefault()
-        tenderAmountRef.current?.focus()
+        setIsCheckoutOpen(true)
+        window.setTimeout(() => tenderAmountRef.current?.focus(), 0)
       }
     }
 
@@ -715,6 +721,21 @@ function POSWorkspace() {
   const cartTotal = cart?.total ?? 0
   const cartLineCount = cart?.lines.reduce((total, line) => total + line.quantity, 0) ?? 0
   const hasCartLines = (cart?.lines.length ?? 0) > 0
+  const whatsApp = usePOSWhatsAppReceipt({
+    allow: Boolean(isOnline && user?.id && organizationId && hasPermission("pos.use")),
+    draftKey: JSON.stringify([selectedLocationId, selectedTerminalId, activeShift?.id, cart?.id, selectedCustomerId]),
+    locale,
+  })
+  const queueWhatsAppAfterConfirmation = whatsApp.queueAfterConfirmation
+  useEffect(() => {
+    if (!pendingCommit || commitRecovery?.kind !== "RECORDED" || commitRecovery.currentStatus !== "COMPLETED") return
+    if (commitRecovery.clientCommitId !== pendingCommit.request.clientCommitId || commitRecovery.saleId !== pendingCommit.request.salesOrderId) return
+    queueWhatsAppAfterConfirmation(commitRecovery.clientCommitId, {
+      salesOrderId: commitRecovery.saleId,
+      locationId: pendingCommit.request.locationId,
+      orderNumber: commitRecovery.orderNumber,
+    })
+  }, [commitRecovery, pendingCommit, queueWhatsAppAfterConfirmation])
   const tenderPreview = useMemo(() => previewTenders(tenderLines, cartTotal), [cartTotal, tenderLines])
   const primaryTenderMethod = tenderLines[0]?.method ?? "CASH"
   const activeTenderCount = tenderPreview.tenders.length
@@ -727,16 +748,6 @@ function POSWorkspace() {
   const isElectronicTenderEvidenceMissing = tenderLines.some(
     (line) => isElectronicTenderMethod(line.method) && !line.paymentTransactionId.trim(),
   )
-  const isWhatsAppReceiptChannel = receiptChannel === "WHATSAPP"
-  const receiptDestinationRequired = receiptChannelRequiresDestination(receiptChannel)
-  const receiptDestinationPlaceholder = receiptDestinationRequired
-    ? t(`receipt.destinationPlaceholders.${isWhatsAppReceiptChannel ? "whatsapp" : receiptDestinationKind(receiptChannel)}`)
-    : ""
-  const receiptBlocker = receiptDestinationRequired && receiptDestination.trim().length === 0
-    ? t("receipt.destinationRequired")
-    : isWhatsAppReceiptChannel && !whatsAppCustomerOptInConfirmed
-      ? t("receipt.whatsAppConsentRequired")
-      : null
   let tenderBlocker: string | null = null
   if (isAccountTenderMissingCustomer) {
     tenderBlocker = t("tender.customerRequired")
@@ -750,12 +761,81 @@ function POSWorkspace() {
   const hasUnconfirmedQuantity = (cart?.lines ?? []).some(line =>
     quantityErrors[line.id] || (quantityDrafts[line.id] !== undefined && (quantityDrafts[line.id].trim() === "" || Number(quantityDrafts[line.id]) !== line.quantity)),
   )
-  const saleBlocker = hasUnconfirmedQuantity ? t("notifications.quantityPendingMessage") : tenderBlocker || receiptBlocker
+  const whatsAppBlocker = hasCartLines && whatsApp.incomplete ? t("receipt.whatsApp.incomplete") : null
+  const saleBlocker = hasUnconfirmedQuantity ? t("notifications.quantityPendingMessage") : tenderBlocker || whatsAppBlocker
   const needsSaleRecovery = pendingStorageError || Boolean(pendingAffectsRegister && !(reviewingChangedCart && cart?.id === pendingCommit?.request.salesOrderId))
   const isRecoveryCartReviewed = reviewingChangedCart && pendingAffectsRegister && cart?.id === pendingCommit?.request.salesOrderId && !needsSaleRecovery && !commitRecoveryError && checkout.ready && !checkout.busy && !recoverCommit.isPending && ["NOT_FOUND", "CART_CHANGED", "CART_REVIEW_REQUIRED"].includes(commitRecovery?.kind ?? "")
   const canCommitSale = canSell && checkout.ready && !checkout.busy && !needsResume && pendingLoaded && !pendingStorageError && (!pendingAffectsRegister || (reviewingChangedCart && cart?.id === pendingCommit?.request.salesOrderId)) && hasCartLines && !commitSale.isPending && !updateLine.isPending && !addLine.isPending && !removeLine.isPending && !hasUnconfirmedQuantity && tenderPreview.totalTendered > 0 && !saleBlocker
   const lifecycleError = checkout.error ? t(`lifecycle.errors.${["POS_CHECKOUT_OWNED_ELSEWHERE", "POS_CHECKOUT_OWNERSHIP_REQUIRED", "POS_CHECKOUT_RECOVERY_REQUIRED", "POS_CHECKOUT_OFFLINE_PENDING", "POS_CHECKOUT_SHIFT_UNAVAILABLE", "POS_CHECKOUT_STOCK_CHANGED", "POS_CHECKOUT_PARK_FIRST", "POS_CHECKOUT_BROWSER_UNSUPPORTED"].includes(checkout.error) ? checkout.error : "POS_CHECKOUT_CONNECTION_LOST"}`) : null
   const chargeBlocker = !canSell ? t("notifications.openShiftRequiredMessage") : lifecycleError || (!checkout.ready ? t("lifecycle.connecting") : needsResume ? t("lifecycle.resumeRequired") : saleBlocker || (!hasCartLines ? t("lifecycle.empty") : !canCommitSale && !needsSaleRecovery ? t("lifecycle.saving") : null))
+  const blockerTarget = !canSell ? "setup"
+    : lifecycleError || !checkout.ready || needsResume ? "status"
+    : hasUnconfirmedQuantity ? "cart"
+    : isAccountTenderMissingCustomer ? "customer"
+    : tenderBlocker ? "tender"
+    : whatsAppBlocker ? "receipt"
+    : !hasCartLines ? "search"
+    : null
+  const blockerActionLabel = blockerTarget === "setup" ? (locale === "fr" ? "Configurer la caisse" : "Open register setup")
+    : blockerTarget === "status" ? (locale === "fr" ? "Voir l’état" : "View status")
+    : blockerTarget === "customer" ? (locale === "fr" ? "Choisir un client" : "Choose customer")
+    : blockerTarget === "tender" ? (locale === "fr" ? "Vérifier le règlement" : "Review tender")
+    : blockerTarget === "receipt" ? t("receipt.whatsApp.review")
+    : blockerTarget === "cart" ? (locale === "fr" ? "Vérifier les quantités" : "Review quantities")
+    : (locale === "fr" ? "Chercher un article" : "Find an item")
+  const blockerNextStep = blockerTarget === "status" && checkout.error === "POS_CHECKOUT_OWNED_ELSEWHERE"
+    ? (locale === "fr" ? "Revenez au navigateur qui détient la caisse ou demandez à un responsable de rétablir l’accès." : "Return to the browser that owns this register, or ask a manager to restore access.")
+    : blockerTarget === "status" && checkout.error === "POS_CHECKOUT_OFFLINE_PENDING"
+    ? (locale === "fr" ? "Rétablissez la connexion et examinez les preuves hors ligne d’origine. Ne recommencez pas le paiement." : "Reconnect and review the original offline evidence. Do not take the payment again.")
+    : blockerTarget === "status" && checkout.error === "POS_CHECKOUT_BROWSER_UNSUPPORTED"
+    ? (locale === "fr" ? "Utilisez un navigateur compatible ; conservez les données du navigateur d’origine pour la reprise." : "Use a supported browser; keep the original browser data for recovery.")
+    : blockerTarget === "status" && needsResume
+    ? (locale === "fr" ? "Reprenez le panier existant ou mettez-le en attente avant de commencer une autre vente." : "Resume the existing cart, or park it before starting another sale.")
+    : blockerTarget === "setup"
+    ? (locale === "fr" ? "Choisissez le site et le terminal, puis ouvrez votre session de caisse." : "Choose a location and terminal, then open your cashier shift.")
+    : blockerTarget === "tender"
+    ? (locale === "fr" ? "Corrigez le montant ou ajoutez un règlement pour couvrir le total." : "Correct the amount or add a tender to cover the total.")
+    : null
+
+  function focusRegisterStatus() {
+    const panel = document.getElementById("pos-register-status") as HTMLDetailsElement | null
+    if (panel) { panel.open = true; panel.focus(); panel.scrollIntoView?.({ block: "center" }) }
+  }
+
+  function handleBlockerAction(trigger: HTMLElement) {
+    const focus = () => {
+      if (blockerTarget === "status") { focusRegisterStatus(); return }
+      if (blockerTarget === "setup") {
+        const panel = document.getElementById("pos-register-setup") as HTMLDetailsElement | null
+        if (panel) { panel.open = true; (panel.querySelector<HTMLElement>("select, input") ?? panel.querySelector<HTMLElement>("summary"))?.focus(); panel.scrollIntoView?.({ block: "start" }) }
+        return
+      }
+      if (blockerTarget === "customer") { customerDialogTriggerRef.current = trigger; setIsCustomerDialogOpen(true); return }
+      if (blockerTarget === "tender") { tenderAmountRef.current?.focus(); return }
+      if (blockerTarget === "receipt") {
+        const panel = document.querySelector<HTMLDetailsElement>('[data-testid="pos-more-payment-options"]')
+        if (panel) {
+          panel.open = true
+          const number = panel.querySelector<HTMLInputElement>('[data-pos-whatsapp-destination]')
+          const consent = panel.querySelector<HTMLButtonElement>('[data-pos-whatsapp-consent]')
+          const focusField = whatsApp.validDestination ? consent : number
+          focusField?.focus()
+        }
+        return
+      }
+      if (blockerTarget === "cart") {
+        const index = (cart?.lines ?? []).findIndex(line => quantityErrors[line.id] || (quantityDrafts[line.id] !== undefined && (quantityDrafts[line.id].trim() === "" || Number(quantityDrafts[line.id]) !== line.quantity)))
+        document.querySelectorAll<HTMLElement>('[data-testid="pos-cart-line"] input[type="number"]')[Math.max(0, index)]?.focus()
+        return
+      }
+      searchRef.current?.focus()
+    }
+    if (["status", "setup", "search"].includes(blockerTarget || "") && document.querySelector('[data-testid="pos-tablet-checkout"]')) {
+      blockerFocusAfterCloseRef.current = focus
+      setIsCheckoutOpen(false)
+    } else focus()
+  }
+
   const currentCustomerLabel = selectedCustomer?.name || cart?.customer?.name || t("cart.walkIn")
   const onAccountAmountPreview = tenderPreview.tenders
     .filter((line) => line.method === "ON_ACCOUNT")
@@ -776,9 +856,9 @@ function POSWorkspace() {
   const needsVarianceExplanation = closeVariance !== null && closeVariance !== 0
   const canSubmitCloseShift = hasValidCloseBalance && (!needsVarianceExplanation || varianceExplanation.trim().length > 0)
   const hardwareStatuses = [
-    { label: t("hardware.scanner"), value: canSell ? t("hardware.ready") : t("hardware.waiting"), ready: canSell },
-    { label: t("hardware.drawer"), value: activeShift?.cashDrawer?.isOpen ? t("hardware.open") : t("hardware.closed"), ready: !!activeShift?.cashDrawer?.isOpen },
-    { label: t("hardware.printer"), value: t("hardware.notConfigured"), ready: false },
+    { label: locale === "fr" ? "Saisie code-barres" : "Barcode entry", value: canSell ? t("hardware.ready") : t("hardware.waiting"), ready: canSell },
+    { label: locale === "fr" ? "Registre de caisse" : "Drawer record", value: activeShift?.cashDrawer?.isOpen ? t("hardware.open") : t("hardware.closed"), ready: !!activeShift?.cashDrawer?.isOpen },
+    { label: t("hardware.printer"), value: t("hardware.browserPrint"), ready: false },
     { label: t("hardware.network"), value: t(isOnline ? "hardware.online" : "hardware.offline"), ready: isOnline },
   ]
 
@@ -1063,16 +1143,6 @@ function POSWorkspace() {
     }
   }
 
-  function selectReceiptChannel(channel: ReceiptChannel) {
-    if (receiptDestinationKind(channel) !== receiptDestinationKind(receiptChannel)) {
-      setReceiptDestination("")
-    }
-    if (channel !== "WHATSAPP") {
-      setWhatsAppCustomerOptInConfirmed(false)
-    }
-    setReceiptChannel(channel)
-  }
-
   async function handleRecoverCommit() {
     if (!pendingCommit || recoverCommit.isPending || commitSale.isPending) return
     setCommitRecoveryError(null)
@@ -1095,6 +1165,7 @@ function POSWorkspace() {
       const refreshed = unwrap(result.data, null)
       if (result.isError || !refreshed) { setCommitRecoveryError("failed"); return }
       if (refreshed.id !== pendingCommit.request.salesOrderId) { setCommitRecoveryError("cartMismatch"); return }
+      whatsApp.clearIntent(pendingCommit.request.clientCommitId)
       setReviewingChangedCart(true)
     } catch { setCommitRecoveryError("failed") }
   }
@@ -1104,6 +1175,7 @@ function POSWorkspace() {
     try {
       removePendingSale(sessionStorage, organizationId, user.id)
       if (pendingCommit) settledCommitIds.current.add(pendingCommit.request.clientCommitId)
+      whatsApp.clearIntent(pendingCommit?.request.clientCommitId)
       setPendingCommit(null); setCommitRecovery(null); setPendingStorageError(false); setSaleAccessError(false)
       setReviewingChangedCart(false)
       void checkout.refresh()
@@ -1114,8 +1186,7 @@ function POSWorkspace() {
   async function handleCartLifecycle(command: "RESUME" | "PARK", salesOrderId: string) {
     const result = await checkout.command(command, salesOrderId)
     if (!result) return
-    setTenderLines([createTenderLine()]); setSelectedCustomerId(""); setReceiptChannel("NONE")
-    setReceiptDestination(""); setWhatsAppCustomerOptInConfirmed(false)
+    setTenderLines([createTenderLine()]); setSelectedCustomerId("")
     setQuantityDrafts({}); setQuantityErrors({})
   }
 
@@ -1160,6 +1231,7 @@ function POSWorkspace() {
       let retained: PendingSale
       try { retained = savePendingSale(sessionStorage, { version: 1, organizationId, actorId: user.id, request }) }
       catch { setPendingStorageError(true); notifications.removeNotification(pendingId); return }
+      if (!retryPending) whatsApp.rememberIntent(request.clientCommitId, { salesOrderId: request.salesOrderId, locationId: request.locationId })
       setPendingCommit(retained); setCommitRecovery(null); setSaleAccessError(false)
       setReviewingChangedCart(false)
       const response = await commitSale.mutateAsync({ ...retained.request, checkoutLeaseId: checkout.leaseId })
@@ -1182,12 +1254,14 @@ function POSWorkspace() {
         return
       }
 
-      setLastSale(response.data)
+      setLastSale({ ...response.data, locationId: retained.request.locationId })
+      if (response.data.status === "COMPLETED" && response.data.clientCommitId === request.clientCommitId && response.data.saleId === request.salesOrderId) {
+        queueWhatsAppAfterConfirmation(request.clientCommitId, {
+          salesOrderId: response.data.saleId, locationId: request.locationId, orderNumber: response.data.orderNumber,
+        })
+      }
       clearPendingCommit()
       setTenderLines([createTenderLine()])
-      setReceiptChannel("NONE")
-      setReceiptDestination("")
-      setWhatsAppCustomerOptInConfirmed(false)
       setSelectedCustomerId("")
       searchRef.current?.focus()
       notifications.success(
@@ -1355,13 +1429,29 @@ function POSWorkspace() {
     setTenderLines((current) => (current.length <= 1 ? current : current.filter((line) => line.id !== id)))
   }
 
-  function setExactCash() {
-    setTenderLines([createTenderLine("CASH", String(cartTotal))])
-    window.setTimeout(() => tenderAmountRef.current?.focus(), 0)
-  }
-
-  function handleBackendGatedFeature(feature: string) {
-    notifications.warning(t("featureGates.title"), t("featureGates.message", { feature }), { category: "pos", duration: 7000 })
+  function renderWhatsAppStatus(salesOrderId: string, locationId: string) {
+    const { feedback, checking, statusUnavailable, retryQueueRequest, checkStatus } = whatsApp
+    if (feedback?.salesOrderId !== salesOrderId || feedback.locationId !== locationId) return null
+    const canCheck = !["REQUESTING", "UNAVAILABLE", "ACCEPTED", "UNCERTAIN", "FAILED"].includes(feedback.status)
+    return (
+      <div className="mt-3 space-y-2 border-t border-[var(--dash-border-subtle)] pt-2 text-xs" data-testid="pos-whatsapp-status">
+        <p className="font-medium">{t("receipt.whatsApp.order", { number: feedback.orderNumber })}</p>
+        <p role="status">{t(`receipt.whatsApp.status.${feedback.status}`)}</p>
+        {statusUnavailable ? <p role="alert">{t("receipt.whatsApp.statusUnavailable")}</p> : null}
+        <div className="flex flex-wrap gap-2">
+          {canCheck ? (
+            <POSButton type="button" disabled={!isOnline || checking} className={cn(posButtonClass, "min-h-10 px-3 text-xs")} onClick={() => void checkStatus()}>
+              {t(checking ? "receipt.whatsApp.checking" : "receipt.whatsApp.checkStatus")}
+            </POSButton>
+          ) : null}
+          {feedback.status === "REQUEST_UNCONFIRMED" ? (
+            <POSButton type="button" disabled={!isOnline || checking} className={cn(posButtonClass, "min-h-10 px-3 text-xs")} onClick={retryQueueRequest}>
+              {t("receipt.whatsApp.retryRequest")}
+            </POSButton>
+          ) : null}
+        </div>
+      </div>
+    )
   }
 
   const requiredReads = [locationsQuery, currentUserShiftQuery,
@@ -1371,7 +1461,7 @@ function POSWorkspace() {
   const failedReads = requiredReads.filter(query => query.isError)
   const localOfflineRecovery = <LocalOfflineRecovery organizationId={organizationId} userId={user?.id}
     locationId={selectedLocationId} terminalId={selectedTerminalId} sessionId={activeShift?.id}
-    canRead={hasPermission("pos.transactions.read")} canSend={hasPermission("pos.use")} locale={locale === "fr" ? "fr" : "en"} />
+    canRead={hasPermission("pos.transactions.read")} canSend={hasPermission("pos.use")} locale={locale === "fr" ? "fr" : "en"} compact hideEmpty />
   if (failedReads.length) return <>{localOfflineRecovery}<DashboardErrorState
     locale={locale === "fr" ? "fr" : "en"}
     title={t("readState.failedTitle")}
@@ -1386,18 +1476,18 @@ function POSWorkspace() {
   /></>
 
   return (
-    <div className={cn("dashboard-landing-theme dark min-h-screen overflow-x-hidden text-[var(--dash-text)]", touchMode && "text-base")}>
-      <header className="dashboard-landing-content sticky top-16 z-20 border-b border-[var(--dash-border-subtle)] bg-[rgba(20,33,41,0.92)] px-4 py-3 text-white shadow-[0_18px_42px_rgba(5,12,16,0.22)] backdrop-blur-xl lg:top-[68px]">
+    <div ref={workspaceRef} data-pos-workspace className={cn("dashboard-landing-theme dark min-h-screen overflow-x-clip text-[var(--dash-text)]", touchMode && "text-base")}>
+      <header data-pos-header className="dashboard-landing-content !sticky top-16 z-20 border-b border-[var(--dash-border-subtle)] bg-[var(--dash-canvas)] px-4 py-2 text-[var(--dash-text)] lg:top-[68px]">
         <div className="mx-auto flex w-full max-w-[112rem] flex-wrap items-center gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[rgba(47,125,246,0.18)] text-[#8fb7ff] shadow-[0_16px_36px_rgba(47,125,246,0.18)] ring-1 ring-white/10">
+              <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[rgba(47,125,246,0.18)] text-[#8fb7ff] shadow-[0_16px_36px_rgba(47,125,246,0.18)] ring-1 ring-white/10">
                 <Monitor className="h-5 w-5" />
                 <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[var(--dash-spruce)] shadow-[0_0_0_4px_rgba(45,212,191,0.14)]" />
               </span>
               <div className="min-w-0">
-                <h1 className="truncate text-xl font-bold tracking-tight text-[var(--dash-text)]">{t("shell.title")}</h1>
-                <p className="truncate text-sm text-[var(--dash-text-soft)]">{t("shell.subtitle")}</p>
+                <h1 className="truncate text-lg font-bold tracking-tight text-[var(--dash-text)]">{t("shell.title")}</h1>
+                <p className="sr-only">{t("shell.subtitle")}</p>
               </div>
               {activeShift ? (
                 <Badge variant="outline" className={posChipClass}>
@@ -1410,9 +1500,25 @@ function POSWorkspace() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline" className="hidden gap-1.5 rounded-lg border-[var(--dash-info)]/35 bg-[var(--dash-info-soft)] px-3 py-2 text-[#cfe8ff] md:flex">
+            <POSButton asChild className={cn(posButtonClass, "min-h-11 px-3")}>
+              <Link
+                prefetch={false}
+                href={{
+                  pathname: `/${locale}/dashboard/pos/activity`,
+                  query: {
+                    ...(selectedLocationId ? { locationId: selectedLocationId } : {}),
+                    ...(selectedTerminalId && selectedTerminal?.id === selectedTerminalId ? { terminalId: selectedTerminalId } : {}),
+                    ...(activeShift && activeShift.id === currentUserShift?.id && activeShift.locationId === selectedLocationId && activeShift.terminalId === selectedTerminal?.id ? { sessionId: activeShift.id } : {}),
+                  },
+                }}
+              >
+                <Clock aria-hidden="true" className="h-4 w-4" />
+                {t("shell.todayActivity")}
+              </Link>
+            </POSButton>
+            <Badge variant="outline" className="hidden gap-1.5 rounded-lg border-[var(--dash-info)]/35 bg-[var(--dash-info-soft)] px-3 py-2 text-[#cfe8ff] lg:flex">
               <Barcode className="h-4 w-4" />
-              {t("shell.scannerReady")}
+              {locale === "fr" ? "Saisie code-barres" : "Barcode entry"}
             </Badge>
             <POSButton
               type="button"
@@ -1421,6 +1527,8 @@ function POSWorkspace() {
               className={cn(gridMode === "grid" ? posButtonActiveClass : posButtonClass)}
               onClick={() => setGridMode("grid")}
               title={t("view.grid")}
+              aria-label={t("view.grid")}
+              aria-pressed={gridMode === "grid"}
             >
               <LayoutGrid className="h-4 w-4" />
             </POSButton>
@@ -1431,6 +1539,8 @@ function POSWorkspace() {
               className={cn(gridMode === "list" ? posButtonActiveClass : posButtonClass)}
               onClick={() => setGridMode("list")}
               title={t("view.list")}
+              aria-label={t("view.list")}
+              aria-pressed={gridMode === "list"}
             >
               <List className="h-4 w-4" />
             </POSButton>
@@ -1438,6 +1548,7 @@ function POSWorkspace() {
               type="button"
               variant="outline"
               onClick={() => setTouchMode((value) => !value)}
+              aria-pressed={touchMode}
               className={cn(touchMode ? posButtonActiveClass : posButtonClass, touchMode && "h-14 px-5")}
             >
               <Smartphone className="h-4 w-4" />
@@ -1446,25 +1557,8 @@ function POSWorkspace() {
           </div>
         </div>
       </header>
-      {activeShift && (!checkout.ready || checkout.error || needsResume || checkout.snapshot?.settled || (!pendingCommit && commitRecovery?.kind === "NOT_COMMITTED") || checkout.snapshot?.parked.length || checkout.snapshot?.historicalRequests?.length || checkout.snapshot?.recoveredSales?.length) ? <section aria-label={t("lifecycle.title")} className="mx-4 mb-3 mt-20 space-y-2 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-3 text-sm">
-        <h2 className="font-semibold">{t("lifecycle.title")}</h2>
-        {lifecycleError ? <p role="alert">{lifecycleError}</p> : !checkout.ready ? <p role="status">{t("lifecycle.connecting")}</p> : null}
-        {checkout.snapshot?.settled || (!pendingCommit && commitRecovery?.kind === "NOT_COMMITTED") ? <p role="status">{t("lifecycle.settled")}</p> : null}
-        {checkout.snapshot?.recoveredSales?.map(sale => <p key={sale.salesOrderId} role="status">{t("lifecycle.recorded", { number: sale.orderNumber, amount: money.format(sale.total) })}</p>)}
-        {needsResume ? <p>{t("lifecycle.resumeRequired")}</p> : null}
-        <div className="flex flex-wrap gap-2">
-          {needsResume && cart ? <>
-            <POSButton className={posButtonClass} disabled={!checkout.ready || checkout.busy} onClick={() => handleCartLifecycle("RESUME", cart.id)}>{t("lifecycle.resume")}</POSButton>
-            <POSButton className={posButtonClass} disabled={!checkout.ready || checkout.busy} onClick={() => handleCartLifecycle("PARK", cart.id)}>{t("lifecycle.startNew")}</POSButton>
-          </> : null}
-          {checkout.error ? <POSButton className={posButtonClass} onClick={() => checkout.refresh()}>{t("lifecycle.retry")}</POSButton> : null}
-          {checkout.snapshot?.parked.map(parked => <POSButton key={parked.id} className={posButtonClass} disabled={!checkout.ready || checkout.busy || hasCartLines || pendingAffectsRegister} onClick={() => handleCartLifecycle("RESUME", parked.id)}>{t("lifecycle.resumeParked", { number: parked.orderNumber })}</POSButton>)}
-          {checkout.snapshot?.historicalRequests?.map(request => <POSButton key={request.clientCommitId} className={posButtonClass} disabled={commitSale.isPending || pendingAffectsRegister} onClick={() => organizationId && user?.id && setPendingCommit({ version: 1, organizationId, actorId: user.id, request })}>{t("lifecycle.checkEarlier")}</POSButton>)}
-        </div>
-        {checkout.snapshot?.parked.length ? <p className="text-xs">{t("lifecycle.parkedPolicy")}</p> : null}
-      </section> : null}
       {pendingCommit || pendingStorageError ? (
-        <section ref={recoveryPanelRef} tabIndex={-1} data-testid="pos-commit-recovery" aria-label={t(isRecoveryCartReviewed ? "recovery.reviewTitle" : "recovery.title")} className={cn("mx-4 mb-3 mt-20 scroll-mt-72 space-y-3 rounded-lg border p-4 text-[var(--dash-text)] outline-offset-4 focus-visible:outline focus-visible:outline-[var(--dash-brand)] md:scroll-mt-48", isRecoveryCartReviewed ? "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)]" : "border-[var(--dash-warning)] bg-[var(--dash-warning-soft)]")}>
+        <section ref={recoveryPanelRef} tabIndex={-1} data-testid="pos-commit-recovery" aria-label={t(isRecoveryCartReviewed ? "recovery.reviewTitle" : "recovery.title")} className={cn("mx-4 my-3 scroll-mt-72 space-y-3 rounded-lg border p-4 text-[var(--dash-text)] outline-offset-4 focus-visible:outline focus-visible:outline-[var(--dash-brand)] md:scroll-mt-48", isRecoveryCartReviewed ? "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)]" : "border-[var(--dash-warning)] bg-[var(--dash-warning-soft)]")}>
           <h2 className="font-semibold">{t(isRecoveryCartReviewed ? "recovery.reviewTitle" : "recovery.title")}</h2>
           {!isRecoveryCartReviewed ? <p className="text-sm">{t("recovery.explanation")}</p> : null}
           {pendingStorageError ? <p role="alert">{t("recovery.storageError")}</p> : null}
@@ -1483,9 +1577,17 @@ function POSWorkspace() {
             ) : null}
           </div>
           <div className="flex flex-wrap gap-2">
+            {pendingCommit && commitRecovery?.kind === "RECORDED" && commitRecovery.currentStatus === "COMPLETED" && commitRecovery.receiptStatus === "READY" && hasPermission("pos.receipts.print") ? (
+              <POSReceiptPrintLink locale={locale} salesOrderId={commitRecovery.saleId} locationId={pendingCommit.request.locationId} />
+            ) : null}
             {isRecoveryCartReviewed ? <POSButton className={posButtonPrimaryClass} onClick={() => {
-              checkoutFooterRef.current?.focus({ preventScroll: true })
-              checkoutFooterRef.current?.scrollIntoView?.({ block: "center", behavior: "instant" })
+              setIsCheckoutOpen(true)
+              const focusCheckout = () => {
+                checkoutFooterRef.current?.focus({ preventScroll: true })
+                checkoutFooterRef.current?.scrollIntoView?.({ block: "nearest", behavior: "instant" })
+              }
+              if (checkoutFooterRef.current) focusCheckout()
+              else window.setTimeout(focusCheckout, 0)
             }}>{t("recovery.continueCheckout")}</POSButton> : null}
             <POSButton className={posButtonClass} disabled={!pendingCommit || recoverCommit.isPending || commitSale.isPending} onClick={handleRecoverCommit}>{t("recovery.check")}</POSButton>
             {!reviewingChangedCart && commitRecovery?.kind === "NOT_FOUND" ? <POSButton className={posButtonClass} disabled={commitSale.isPending || recoverCommit.isPending || pendingStorageError} onClick={() => handleCommitSale(true)}>{t("recovery.retryOriginal")}</POSButton> : null}
@@ -1494,13 +1596,36 @@ function POSWorkspace() {
             {!reviewingChangedCart && commitRecovery?.kind === "CART_REVIEW_REQUIRED" ? <POSButton className={posButtonClass} disabled={commitSale.isPending || recoverCommit.isPending || cartQuery.isFetching || pendingStorageError} onClick={reviewChangedCart}>{t("recovery.reviewCurrent")}</POSButton> : null}
             {commitRecovery?.kind === "RECORDED" || commitRecovery?.kind === "NOT_COMMITTED" ? <POSButton className={posButtonClass} disabled={recoverCommit.isPending || commitSale.isPending} onClick={() => { if (clearPendingCommit()) checkoutFooterRef.current?.focus() }}>{t("recovery.acknowledge")}</POSButton> : null}
           </div>
+          {pendingCommit && commitRecovery?.kind === "RECORDED" ? renderWhatsAppStatus(commitRecovery.saleId, pendingCommit.request.locationId) : null}
         </section>
       ) : null}
 
-      <main className="dashboard-landing-content mx-auto flex min-h-[calc(100vh-132px)] w-full max-w-[112rem] flex-col gap-4 px-3 py-4 pb-12 sm:px-4 lg:px-5">
+      <main className="dashboard-landing-content mx-auto flex min-h-[calc(100vh-132px)] w-full max-w-[112rem] flex-col gap-3 px-3 py-3 pb-28 sm:px-4 lg:px-5 xl:pb-6">
+        <div className="grid min-h-0 flex-1 gap-3 xl:grid-cols-[minmax(0,1fr)_380px] xl:items-start">
+          <div className="min-w-0 space-y-2">
+      {activeShift && (!checkout.ready || checkout.error || needsResume || checkout.snapshot?.settled || (!pendingCommit && commitRecovery?.kind === "NOT_COMMITTED") || checkout.snapshot?.parked.length || checkout.snapshot?.historicalRequests?.length || checkout.snapshot?.recoveredSales?.length) ? <details open={Boolean(lifecycleError || !checkout.ready || needsResume)} id="pos-register-status" tabIndex={-1} aria-label={t("lifecycle.title")} className="mb-2 space-y-1 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-2 text-xs outline-offset-2">
+        <summary className="min-h-10 cursor-pointer rounded-md py-2 font-semibold focus-visible:outline focus-visible:outline-[var(--dash-brand)]">{t("lifecycle.title")}{lifecycleError || needsResume ? <span className="ml-2 font-normal text-[var(--dash-warning)]">{locale === "fr" ? "Action requise" : "Action required"}</span> : null}</summary>
+        <div className="space-y-2 pb-2">
+        {lifecycleError ? <p role="alert">{lifecycleError}</p> : !checkout.ready ? <p role="status">{t("lifecycle.connecting")}</p> : null}
+        {checkout.snapshot?.settled || (!pendingCommit && commitRecovery?.kind === "NOT_COMMITTED") ? <p role="status">{t("lifecycle.settled")}</p> : null}
+        {checkout.snapshot?.recoveredSales?.map(sale => <p key={sale.salesOrderId} role="status">{t("lifecycle.recorded", { number: sale.orderNumber, amount: money.format(sale.total) })}</p>)}
+        {needsResume ? <p>{t("lifecycle.resumeRequired")}</p> : null}
+        <div className="flex flex-wrap gap-2">
+          {needsResume && cart ? <>
+            <POSButton className={posButtonClass} disabled={!checkout.ready || checkout.busy} onClick={() => handleCartLifecycle("RESUME", cart.id)}>{t("lifecycle.resume")}</POSButton>
+            <POSButton className={posButtonClass} disabled={!checkout.ready || checkout.busy} onClick={() => handleCartLifecycle("PARK", cart.id)}>{t("lifecycle.startNew")}</POSButton>
+          </> : null}
+          {checkout.error ? <POSButton className={posButtonClass} onClick={() => checkout.refresh()}>{t("lifecycle.retry")}</POSButton> : null}
+          {checkout.snapshot?.parked.map(parked => <POSButton key={parked.id} className={posButtonClass} disabled={!checkout.ready || checkout.busy || hasCartLines || pendingAffectsRegister} onClick={() => handleCartLifecycle("RESUME", parked.id)}>{t("lifecycle.resumeParked", { number: parked.orderNumber })}</POSButton>)}
+          {checkout.snapshot?.historicalRequests?.map(request => <POSButton key={request.clientCommitId} className={posButtonClass} disabled={commitSale.isPending || pendingAffectsRegister} onClick={() => organizationId && user?.id && setPendingCommit({ version: 1, organizationId, actorId: user.id, request })}>{t("lifecycle.checkEarlier")}</POSButton>)}
+        </div>
+        {checkout.snapshot?.parked.length ? <p className="text-xs">{t("lifecycle.parkedPolicy")}</p> : null}
+        </div>
+      </details> : null}
         {localOfflineRecovery}
         <OfflineSyncStatusStrip
-          className="mt-20 scroll-mt-48"
+          compact
+          className="scroll-mt-48 !gap-2 !px-3 !py-0"
           access={{ organizationId, userId: user?.id, canRead: hasPermission("pos.transactions.read"), canReview: hasPermission("controls.manage") }}
           locationId={selectedLocationId || undefined}
           terminalId={selectedTerminalId || undefined}
@@ -1508,12 +1633,19 @@ function POSWorkspace() {
           locale={locale === "fr" ? "fr" : "en"}
         />
 
-        <div className="grid min-h-0 flex-1 gap-3 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-start">
-          <div className="min-w-0 space-y-3">
-            <section className={cn("p-4", posSurfaceClass)}>
-              <div className="grid gap-3 lg:grid-cols-2">
-            <div className={cn("p-3", posPanelClass)}>
-              <div className="mb-3 flex flex-wrap items-center gap-2">
+
+            <details id="pos-register-setup" data-testid="pos-register-setup" open={!activeShift} className={cn("px-3", posSurfaceClass)}>
+              <summary className="flex min-h-11 cursor-pointer flex-wrap items-center gap-x-2 gap-y-1 rounded-md py-2 text-sm outline-offset-2 focus-visible:outline focus-visible:outline-[var(--dash-brand)]">
+                <Monitor aria-hidden="true" className={cn("h-4 w-4 shrink-0", posIconBrandClass)} />
+                <span className="font-semibold">{t("setup.title")}</span>
+                <span className="min-w-0 flex-1 truncate text-xs text-[var(--dash-text-soft)]" title={`${selectedLocation?.name || t("setup.noLocation")} / ${selectedTerminal?.name || t("setup.noTerminal")}`}>{selectedLocation?.name || t("setup.noLocation")} / {selectedTerminal?.name || t("setup.noTerminal")}</span>
+                <span className={cn("text-xs", activeShift ? "text-[var(--dash-spruce)]" : "text-[var(--dash-warning)]")}>{activeShift ? t("shift.active") : t("shift.notOpen")}</span>
+              </summary>
+              <div className="space-y-3 pb-3">
+
+<div className="grid gap-3 lg:grid-cols-2">
+            <div className={cn("min-w-0")}>
+              <div className="mb-2 flex flex-wrap items-center gap-2">
                 <Monitor className={cn("h-4 w-4", posIconBrandClass)} />
                 <h2 className="text-sm font-semibold">{t("setup.title")}</h2>
                 {activeShift ? (
@@ -1522,11 +1654,11 @@ function POSWorkspace() {
                   </Badge>
                 ) : null}
               </div>
-              <div className="grid gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <label className={posLabelClass}>
                   {t("setup.location")}
                   <select
-                    className={posSelectClass}
+                    className={cn(posSelectClass, "min-w-0")}
                     value={selectedLocationId}
                     disabled={locationsQuery.isLoading}
                     onChange={(event) => changeLocation(event.target.value)}
@@ -1543,7 +1675,7 @@ function POSWorkspace() {
                 <label className={posLabelClass}>
                   {t("setup.terminal")}
                   <select
-                    className={posSelectClass}
+                    className={cn(posSelectClass, "min-w-0")}
                     value={selectedTerminalId}
                     disabled={!selectedLocationId || terminalsQuery.isLoading}
                     onChange={(event) => setSelectedTerminalId(event.target.value)}
@@ -1560,8 +1692,8 @@ function POSWorkspace() {
               </div>
             </div>
 
-            <div className={cn("p-3", posPanelClass)}>
-              <div className="mb-3 flex items-start justify-between gap-3">
+            <div className={cn("min-w-0")}>
+              <div className="mb-2 flex items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
                     <Wallet className={cn("h-4 w-4", posIconSpruceClass)} />
@@ -1577,7 +1709,11 @@ function POSWorkspace() {
               </div>
 
               {activeShift ? (
-                <div className="space-y-3">
+                <details data-testid="pos-shift-details" className="group">
+                  <summary className="min-h-9 cursor-pointer rounded-md py-2 text-sm font-medium text-[var(--dash-text-soft)] outline-offset-2 focus-visible:outline focus-visible:outline-[var(--dash-brand)]">
+                    {locale === "fr" ? "Détails et clôture de session" : "Shift details and closing"}
+                  </summary>
+                <div className="space-y-3 pt-2">
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className={cn("p-2", posInsetClass)}>
                       <div className={cn("flex items-center gap-1.5 text-xs", posMutedTextClass)}>
@@ -1649,6 +1785,7 @@ function POSWorkspace() {
                   </div>
                   {cashFractionDigits === 0 ? <p id="pos-closing-balance-hint" className={cn("text-xs", posMutedTextClass)}>{t("shift.wholeCurrencyAmounts", { currency })}</p> : null}
                 </div>
+                </details>
               ) : selectedTerminalOccupied ? (
                 <div role="status" className={cn("rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900", "dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100")}>
                   {t("shift.occupiedDescription", {
@@ -1692,10 +1829,23 @@ function POSWorkspace() {
             </div>
 
           </div>
-            </section>
+        <details data-testid="pos-device-status" className={cn("px-3", posSurfaceClass)}>
+          <summary className="flex min-h-10 cursor-pointer flex-wrap items-center gap-x-2 gap-y-1 rounded-md py-2 text-xs font-medium outline-offset-2 focus-visible:outline focus-visible:outline-[var(--dash-brand)]">
+            <Wifi aria-hidden="true" className="h-3.5 w-3.5" />
+            <span>{locale === "fr" ? "État et reprise du navigateur" : "Device status and browser recovery"}</span>
+            <span className="ml-auto text-[var(--dash-text-soft)]">{t(isOnline ? "hardware.online" : "hardware.offline")} · {t("hardware.browserPrint")}</span>
+          </summary>
+          <div className="space-y-3 pb-3">
+            <div className="grid gap-2 sm:grid-cols-2">{hardwareStatuses.map(status => <div key={status.label} className="flex items-center justify-between gap-2 rounded-md border border-[var(--dash-border-subtle)] px-2 py-2 text-xs"><span>{status.label}</span><span>{status.value}</span></div>)}</div>
+            <p className="text-xs text-[var(--dash-text-soft)]">{t("hardware.deviceHelp")}</p>
+            <p className="text-xs text-[var(--dash-text-soft)]">{localOfflineCopy[locale === "fr" ? "fr" : "en"].unsupported}</p>
+          </div>
+        </details>
+</div>
+            </details>
 
             <section className="min-w-0">
-            <div className={cn("mb-3 p-4", posSurfaceClass)}>
+            <div data-pos-search className="pos-persistent-search rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-3">
               <div className="flex flex-wrap items-center gap-2">
                 <div className="relative min-w-0 flex-1">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
@@ -1712,68 +1862,28 @@ function POSWorkspace() {
                 <Badge variant="outline" className={cn("px-3 py-2", posChipClass)}>
                   {t("catalog.showing", { count: visibleCatalogItems.length })}
                 </Badge>
+                {hasCartLines ? <POSButton type="button" variant="outline" className={cn(posButtonClass, "h-11 px-3")} disabled={!cart || !checkout.ready || checkout.busy || pendingAffectsRegister} onClick={() => cart && handleCartLifecycle("PARK", cart.id)} title={t("smart.parkSale")} aria-label={t("smart.parkSale")}><PauseCircle className="h-4 w-4" /><span className="hidden sm:inline">{t("smart.parkSale")}</span></POSButton> : null}
+                {canSell && activeShift && organizationId && user?.id && hasPermission("pos.transactions.refund") ? (
+                  <POSReturns
+                    key={`${selectedLocationId}:${selectedTerminalId}:${activeShift.id}`}
+                    locale={locale}
+                    organizationId={organizationId}
+                    actorId={user.id}
+                    locationId={selectedLocationId}
+                    terminalId={selectedTerminalId}
+                    sessionId={activeShift.id}
+                    disabled={!isOnline || !pendingLoaded || needsSaleRecovery || commitSale.isPending}
+                    className="px-3"
+                  />
+                ) : null}
+                <POSButton type="button" variant="outline" className={cn(posButtonClass, "h-11 px-3")} disabled={!activeShift} onClick={() => setIsEndShiftDialogOpen(true)} title={t("smart.endShift")} aria-label={t("smart.endShift")}><ClipboardList className="h-4 w-4" /><span className="hidden sm:inline">{t("smart.endShift")}</span></POSButton>
                 {search ? <POSButton type="button" variant="outline" className={posButtonClass} onClick={() => { setSearch(""); searchRef.current?.focus() }}>{t("search.clear")}</POSButton> : null}
               </div>
-              <p id="pos-search-help" className={cn("mt-2 text-xs", posMutedTextClass)}>{t("search.help")}</p>
+              <p id="pos-search-help" className={cn("sr-only", posMutedTextClass)}>{t("search.help")}</p>
 
-              <div className="mt-3 grid gap-2 md:grid-cols-3 xl:grid-cols-6">
-                <POSButton
-                  type="button"
-                  variant="outline"
-                  className={posButtonClass}
-                  disabled={!selectedLocationId}
-                  onClick={() => setIsCustomerDialogOpen(true)}
-                >
-                  <UsersRound className="h-4 w-4" />
-                  {selectedCustomer ? t("smart.changeCustomer") : t("smart.addCustomer")}
-                </POSButton>
-                <POSButton type="button" variant="outline" className={posButtonClass} disabled={!hasCartLines} onClick={setExactCash}>
-                  <Banknote className="h-4 w-4" />
-                  {t("smart.exactCash")}
-                </POSButton>
-                <POSButton
-                  type="button"
-                  variant="outline"
-                  className={posButtonClass}
-                  disabled={!lastSale}
-                  onClick={() => lastSale?.delivery && notifications.info(t("notifications.receiptTitle"), lastSale.delivery.message, { category: "receipt" })}
-                >
-                  <Printer className="h-4 w-4" />
-                  {t("smart.receiptStatus")}
-                </POSButton>
-                <POSButton type="button" variant="outline" className={posButtonClass} disabled={!cart || !checkout.ready || checkout.busy || pendingAffectsRegister} onClick={() => cart && handleCartLifecycle("PARK", cart.id)}>
-                  <PauseCircle className="h-4 w-4" />
-                  {t("smart.parkSale")}
-                </POSButton>
-                <POSButton type="button" variant="outline" className={posButtonClass} onClick={() => handleBackendGatedFeature(t("smart.managerOverride"))}>
-                  <ShieldCheck className="h-4 w-4" />
-                  {t("smart.managerOverride")}
-                </POSButton>
-                <POSButton type="button" variant="outline" className={posButtonClass} disabled={!activeShift} onClick={() => setIsEndShiftDialogOpen(true)}>
-                  <ClipboardList className="h-4 w-4" />
-                  {t("smart.endShift")}
-                </POSButton>
-              </div>
-
-              <div className="mt-3 grid gap-2 md:grid-cols-4">
-                {hardwareStatuses.map((status) => (
-                  <div
-                    key={status.label}
-                    className={cn(
-                      "flex items-center gap-2 rounded-md border px-2 py-1.5 text-xs",
-                      status.ready
-                        ? "border-[var(--dash-spruce)]/25 bg-[var(--dash-spruce-soft)] text-[#d9fffb]"
-                        : "border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] text-[#ffe4a8]",
-                    )}
-                  >
-                    <Wifi className="h-3.5 w-3.5" />
-                    <span className="font-medium">{status.label}</span>
-                    <span className="ml-auto">{status.value}</span>
-                  </div>
-                ))}
-              </div>
-
-              <ScrollArea className="mt-3 w-full whitespace-nowrap">
+            </div>
+            <div className="mb-2 min-w-0 px-1">
+              <ScrollArea className="mt-2 w-full whitespace-nowrap">
                 <div className="flex gap-2 pb-2">
                   <POSButton
                     type="button"
@@ -1836,7 +1946,7 @@ function POSWorkspace() {
                 <p className={cn("mx-auto mt-2 max-w-md text-sm", posMutedTextClass)}>{t("empty.openShiftDescription")}</p>
               </div>
             ) : catalogQuery.isLoading ? (
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {Array.from({ length: 12 }).map((_, index) => (
                   <div key={index} className="h-56 animate-pulse rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.54)]" />
                 ))}
@@ -1846,252 +1956,76 @@ function POSWorkspace() {
                 {t("empty.noItems")}
               </div>
             ) : (
-              <div className={cn(gridMode === "grid" ? "grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" : "space-y-2")}>
-                {visibleCatalogItems.map((item) => {
-                  const itemLabel = localizedName(item, locale)
-                  const isFavorite = favoriteItemIds.includes(item.id)
-                  const outOfStock = item.stock.status === "out"
-                  const inCartQuantity = cartQuantitiesByItemId.get(item.id) ?? 0
-                  const displayedOnHand = Number(item.stock.quantityOnHand || 0)
-                  const categoryLabel = item.category ? localizedName(item.category, locale) : t("catalog.noCategory")
-                  const brandLabel = item.brand ? localizedName(item.brand, locale) : t("catalog.noBrand")
-
-                  return (
-                    <div
-                      key={item.id}
-                      className={cn(
-                        posProductCardClass,
-                        touchMode && "p-4",
-                        outOfStock && "opacity-65",
-                        inCartQuantity > 0 && posProductSelectedClass,
-                        gridMode === "list" && "grid items-center gap-3 lg:grid-cols-[minmax(0,1fr)_280px]",
-                      )}
-                    >
-                      <button
-                        type="button"
-                        aria-label={`${t("catalog.add")} ${itemLabel}`}
-                        title={outOfStock ? t("stock.out") : t("catalog.add")}
-                        className="absolute inset-0 z-0 rounded-lg bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--dash-brand)] disabled:cursor-not-allowed"
-                        onClick={() => handleAddItem(item.id)}
-                        disabled={!canEditCart || outOfStock || addLine.isPending}
-                      />
-                      <div className={cn("pointer-events-none relative z-[1]", gridMode === "grid" ? "space-y-3" : "flex min-w-0 gap-3")}>
-                        <div
-                          className={cn(
-                            "flex shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.58)] text-[var(--dash-text-faint)] shadow-[inset_0_1px_0_rgba(255,255,255,0.045)]",
-                            gridMode === "grid" ? "h-36 w-full" : "h-24 w-24",
-                          )}
-                        >
-                          {item.thumbnail ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={item.thumbnail} alt={itemLabel} className="h-full w-full object-cover" />
-                          ) : (
-                            <ImageIcon className="h-8 w-8" />
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="min-w-0">
-                            <div className={cn("text-sm font-semibold leading-snug text-[var(--dash-text)]", gridMode === "list" ? "line-clamp-2" : "break-words")}>
-                              {itemLabel}
-                            </div>
-                            <div className="mt-1 text-base font-bold tabular-nums text-[var(--dash-text)]">
-                              {money.format(item.sellingPrice)}
-                            </div>
-                            <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                              <Badge variant={stockBadgeVariant(item.stock.status)}>
-                                {t(`stock.${item.stock.status}`, { count: item.stock.quantityAvailable })}
-                              </Badge>
-                              {inCartQuantity > 0 ? (
-                                <Badge variant="outline" className={posChipClass}>
-                                  {t("stock.inCartCount", { count: inCartQuantity })}
-                                </Badge>
-                              ) : null}
-                            </div>
-                          </div>
-
-                          <div className="mt-3 overflow-x-auto rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.48)]">
-                            <div className="flex min-w-max items-center gap-2 px-2 py-1.5 text-[10px] leading-none">
-                              <span className={cn("shrink-0 font-semibold uppercase tracking-normal", posMutedTextClass)}>
-                                {t("catalog.sku")}
-                              </span>
-                              <span className="font-mono font-semibold text-[#7de8dc]">{item.sku}</span>
-                              <span className="h-3 w-px shrink-0 bg-[var(--dash-border-subtle)]" />
-                              <span className={cn("shrink-0 font-semibold uppercase tracking-normal", posMutedTextClass)}>
-                                {t("catalog.barcode")}
-                              </span>
-                              <span className="font-mono font-semibold text-[#8fb7ff]">
-                                {item.barcode || t("catalog.noBarcode")}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className={cn("mt-2 flex flex-wrap gap-1.5 text-xs", posMutedTextClass)}>
-                            <span className="inline-flex max-w-full items-center gap-1 rounded-lg bg-[rgba(37,57,67,0.74)] px-2 py-1">
-                              <Tag className="h-3 w-3 shrink-0" />
-                              <span className={cn(gridMode === "list" ? "truncate" : "whitespace-normal break-words")}>
-                                {categoryLabel}
-                              </span>
-                            </span>
-                            <span className="inline-flex max-w-full items-center gap-1 rounded-lg bg-[var(--dash-brand-soft)] px-2 py-1">
-                              <PackageCheck className="h-3 w-3 shrink-0" />
-                              <span className={cn(gridMode === "list" ? "truncate" : "whitespace-normal break-words")}>
-                                {brandLabel}
-                              </span>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className={cn("pointer-events-none relative z-10 mt-3 space-y-3", gridMode === "list" && "mt-0")}>
-                        <div className="grid gap-1.5">
-                          <div className={cn(posMetricSpruceClass, posMetricRowClass)}>
-                            <div className={cn(posMetricLabelClass, posMutedTextClass)}>{t("stock.onHand")}</div>
-                            <div className={cn(posMetricValueClass, "text-[#7de8dc]")}>{displayedOnHand}</div>
-                          </div>
-                          <div className={cn(posMetricBrandClass, posMetricRowClass)}>
-                            <div className={cn(posMetricLabelClass, posMutedTextClass)}>{t("stock.availableLabel")}</div>
-                            <div className={cn(posMetricValueClass, "text-[#8fb7ff]")}>{item.stock.quantityAvailable}</div>
-                          </div>
-                          <div className={cn(posMetricGoldClass, posMetricRowClass)}>
-                            <div className={cn(posMetricLabelClass, posMutedTextClass)}>{t("stock.inCart")}</div>
-                            <div className={cn(posMetricValueClass, "text-[#f1d28a]")}>{inCartQuantity}</div>
-                          </div>
-                        </div>
-                        <Progress value={stockProgress(item, displayedOnHand)} className="h-1.5 bg-[rgba(84,112,122,0.36)]" />
-                        <div className="flex min-w-0 items-center gap-2">
-                          <POSButton
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            className={cn("pointer-events-auto shrink-0", posButtonClass)}
-                            onClick={() => setSelectedProductId(item.id)}
-                            title={t("catalog.details")}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </POSButton>
-                          <POSButton
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            className={cn("pointer-events-auto shrink-0", isFavorite ? posButtonActiveClass : posButtonClass)}
-                            onClick={() => toggleFavorite(item.id)}
-                            title={isFavorite ? t("catalog.removeFavorite") : t("catalog.addFavorite")}
-                          >
-                            <Heart className={cn("h-4 w-4", isFavorite && "fill-current")} />
-                          </POSButton>
-                          <POSButton
-                            type="button"
-                            onClick={() => handleAddItem(item.id)}
-                            disabled={!canEditCart || outOfStock || addLine.isPending}
-                            title={outOfStock ? t("stock.out") : t("catalog.add")}
-                            className={cn(
-                              "pointer-events-auto min-w-0 flex-1 overflow-hidden px-3",
-                              posButtonPrimaryClass,
-                              outOfStock && "px-2 text-xs",
-                              touchMode && (outOfStock ? "h-12 px-2" : "h-12 px-5"),
-                            )}
-                          >
-                            <Plus className="h-4 w-4" />
-                            <span className="min-w-0 truncate">
-                              {outOfStock ? t("stock.out") : t("catalog.add")}
-                            </span>
-                          </POSButton>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
+              <div className={cn(gridMode === "grid" ? "grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" : "space-y-2")}>
+                {visibleCatalogItems.map((item) => (
+                  <POSCatalogCard
+                    key={item.id}
+                    item={item}
+                    locale={locale}
+                    formattedPrice={money.format(item.sellingPrice)}
+                    inCartQuantity={cartQuantitiesByItemId.get(item.id) ?? 0}
+                    isFavorite={favoriteItemIds.includes(item.id)}
+                    disabled={!canEditCart || addLine.isPending}
+                    view={gridMode}
+                    touchMode={touchMode}
+                    onAdd={() => handleAddItem(item.id)}
+                    onDetails={(trigger) => {
+                      productDialogTriggerRef.current = trigger
+                      setSelectedProductId(item.id)
+                    }}
+                    onToggleFavorite={() => toggleFavorite(item.id)}
+                  />
+                ))}
               </div>
             )}
             </section>
           </div>
 
-          <aside className="min-w-0">
-            <div className={cn("flex flex-col", posSurfaceClass)}>
-              <div className={cn("shrink-0 p-1.5", posPanelClass)}>
-                <div className="mb-1 flex flex-wrap items-center gap-2">
-                  <UsersRound className={cn("h-4 w-4", posIconBrandClass)} />
-                  <h2 className="text-sm font-semibold">{t("customers.title")}</h2>
-                  {selectedCustomer ? (
-                    <Badge variant="outline" className={cn("ml-auto", posChipClass)}>
-                      {t("customers.locked")}
-                    </Badge>
-                  ) : null}
-                </div>
-                <div className={cn("p-1.5", posInsetClass)}>
-                  <div className="flex items-start gap-2">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[rgba(47,125,246,0.18)] text-sm font-semibold text-[#d9fffb] shadow-[0_14px_28px_rgba(47,125,246,0.15)]">
-                      {selectedCustomer ? customerInitials(selectedCustomer.name) : "WI"}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-semibold">{currentCustomerLabel}</div>
-                      <div className={cn("mt-0.5 truncate text-xs", posMutedTextClass)}>
-                        {selectedCustomer
-                          ? selectedCustomer.phone || selectedCustomer.email || selectedCustomer.code || t("customers.noContact")
-                          : t("customers.walkInMeta")}
-                      </div>
-                      <div className={cn("mt-1 flex flex-wrap gap-2 text-xs", posMutedTextClass)}>
-                        <span className={posSuccessPillClass}>
-                          {selectedCustomer ? t("customers.selected") : t("customers.walkIn")}
-                        </span>
-                        {selectedCustomer ? (
-                          <span className={posInfoPillClass}>
-                            {t("customers.orders", { count: selectedCustomer.totalOrders })}
-                          </span>
-                        ) : null}
-                        {selectedCustomer ? (
-                          <span
-                            className={cn(
-                              "rounded-lg px-2 py-1",
-                              isCustomerCreditRisk
-                                ? posWarningPillClass
-                                : posInfoPillClass,
-                            )}
-                          >
-                            {customerCreditLimit ? t("customers.creditLimit", { amount: money.format(customerCreditLimit) }) : t("customers.noCreditLimit")}
-                          </span>
-                        ) : null}
-                      </div>
-                      {selectedCustomer && isCustomerCreditRisk ? (
-                        <div className="mt-2 flex items-center gap-1.5 rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-2 py-1 text-xs text-[#ffe4a8]">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          {t("customers.creditWarning")}
-                        </div>
-                      ) : null}
-                    </div>
+          <POSCheckoutShell
+            locale={locale}
+            lineCount={cart?.lines.length ?? 0}
+            formattedTotal={money.format(cart?.total ?? 0)}
+            open={isCheckoutOpen}
+            onOpenChange={setIsCheckoutOpen}
+            onReturnToSearch={() => searchRef.current?.focus()}
+            onCloseAutoFocus={(event) => {
+              if (blockerFocusAfterCloseRef.current) {
+                const focus = blockerFocusAfterCloseRef.current
+                blockerFocusAfterCloseRef.current = null
+                event.preventDefault()
+                focus()
+                return
+              }
+              if (!recoveryFocusAfterCloseRef.current) return
+              recoveryFocusAfterCloseRef.current = false
+              event.preventDefault()
+              recoveryPanelRef.current?.focus({ preventScroll: true })
+              recoveryPanelRef.current?.scrollIntoView?.({ block: "start", behavior: "instant" })
+            }}
+          >
+            <div className={cn("flex h-full min-h-0 flex-col", posSurfaceClass)}>
+              <div data-testid="pos-checkout-scroll-region" tabIndex={0} aria-label={locale === "fr" ? "Contenu du panier et modes de paiement" : "Cart items and tender"} className="min-h-0 flex-1 overflow-y-auto overscroll-contain scroll-py-3 outline-offset-[-2px] focus-visible:outline focus-visible:outline-[var(--dash-brand)]">
+              <section className="border-b border-[var(--dash-border-subtle)] p-3" aria-label={t("customers.title")}>
+                <div className="flex min-w-0 items-center gap-2">
+                  <UserRound aria-hidden="true" className={cn("h-4 w-4 shrink-0", posIconBrandClass)} />
+                  <div className="min-w-0 flex-1">
+                    <h2 className={cn("text-xs", posMutedTextClass)}>{t("customers.title")}</h2>
+                    <p className="break-words text-sm font-semibold">{currentCustomerLabel}</p>
                   </div>
-                  <div className="mt-1 grid grid-cols-2 gap-2">
-                    <POSButton
-                      type="button"
-                      variant="outline"
-                      disabled={!selectedLocationId}
-                      onClick={() => setIsCustomerDialogOpen(true)}
-                      className={posButtonClass}
-                    >
-                      <UsersRound className="h-4 w-4" />
-                      {selectedCustomer ? t("customers.change") : t("customers.choose")}
-                    </POSButton>
-                    <POSButton
-                      type="button"
-                      variant="outline"
-                      disabled={!selectedCustomerId}
-                      onClick={selectWalkInCustomer}
-                      className={posButtonClass}
-                    >
-                      <UserRound className="h-4 w-4" />
-                      {t("customers.walkIn")}
-                    </POSButton>
-                  </div>
+                  <POSButton type="button" className={cn(posButtonClass, "min-h-10 px-3 text-xs")} disabled={!selectedLocationId} onClick={(event) => { customerDialogTriggerRef.current = event.currentTarget; setIsCustomerDialogOpen(true) }}>
+                    {selectedCustomer ? t("customers.change") : t("customers.choose")}
+                  </POSButton>
+                  {selectedCustomer ? <POSButton type="button" className={cn(posButtonClass, "min-h-10 px-2 text-xs")} onClick={selectWalkInCustomer}>{t("customers.walkIn")}</POSButton> : null}
                 </div>
-              </div>
+                {selectedCustomer ? <p className={cn("mt-2 break-words text-xs", posMutedTextClass)}>
+                  {selectedCustomer.phone || selectedCustomer.email || selectedCustomer.code || t("customers.noContact")} · {t("customers.orders", { count: selectedCustomer.totalOrders })} · {customerCreditLimit ? t("customers.creditLimit", { amount: money.format(customerCreditLimit) }) : t("customers.noCreditLimit")}
+                </p> : null}
+                {selectedCustomer && isCustomerCreditRisk ? <p className="mt-2 flex items-start gap-2 rounded-md bg-[var(--dash-warning-soft)] p-2 text-xs text-[var(--dash-warning)]"><AlertTriangle aria-hidden="true" className="h-4 w-4 shrink-0" />{t("customers.creditWarning")}</p> : null}
+              </section>
               <div className={cn("shrink-0 border-b bg-[rgba(12,20,24,0.42)] p-2", posDividerClass)}>
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="text-lg font-semibold text-[var(--dash-text)]">{t("cart.title")}</h2>
-                    <div className={cn("mt-1 flex items-center gap-2 text-sm", posMutedTextClass)}>
-                      <UserRound className="h-4 w-4" />
-                      <span>{currentCustomerLabel}</span>
-                    </div>
+                    <h2 className="text-lg font-semibold text-[var(--dash-text)]">{t("cart.title")}</h2><p className="text-xs text-[var(--dash-text-muted)]">{locale === "fr" ? "Totaux des lignes : taxes applicables comprises" : "Line totals include applicable tax"}</p>
                   </div>
                   <div className="text-right">
                     {cart ? (
@@ -2100,7 +2034,7 @@ function POSWorkspace() {
                       </Badge>
                     ) : null}
                     <div className={cn("mt-2 text-xs", posMutedTextClass)}>
-                      {t("cart.lines", { count: cartLineCount })}
+                      {t("cart.lines", { count: cart?.lines.length ?? 0 })}
                     </div>
                   </div>
                 </div>
@@ -2149,7 +2083,7 @@ function POSWorkspace() {
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className={cn("h-7 w-7", touchMode && "h-10 w-10", posButtonDangerClass)}
+                                className={cn("h-11 w-11 xl:h-9 xl:w-9", touchMode && "!h-11 !w-11", posButtonDangerClass)}
                                 aria-label={t("cart.removeLine", {
                                   item: locale === "fr" ? line.nameFr || line.nameEn : line.nameEn,
                                 })}
@@ -2194,7 +2128,7 @@ function POSWorkspace() {
                                   }
                                 }}
                                 className={cn(
-                                  touchMode ? "h-10 w-24 text-base" : "h-7 w-20",
+                                  touchMode ? "h-11 w-24 text-base" : "h-10 w-20 xl:h-9",
                                   "text-center font-semibold tabular-nums",
                                   posFieldClass,
                                 )}
@@ -2222,24 +2156,14 @@ function POSWorkspace() {
                   posDividerClass,
                 )}
               >
-                <div data-testid="pos-totals-summary" className="grid grid-cols-2 gap-2 px-3 py-1 text-xs tabular-nums xl:gap-1.5">
-                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
-                      <div className={posMutedTextClass}>{t("totals.subtotal")}</div>
-                      <div className="mt-0.5 truncate font-semibold">{money.format(cart?.subtotal ?? 0)}</div>
-                    </div>
-                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
-                      <div className={posMutedTextClass}>{t("totals.discount")}</div>
-                      <div className="mt-0.5 truncate font-semibold">{money.format(cart?.discount ?? 0)}</div>
-                    </div>
-                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
-                      <div className={posMutedTextClass}>{t("totals.tax")}</div>
-                      <div className="mt-0.5 truncate font-semibold">{money.format(cart?.taxAmount ?? 0)}</div>
-                    </div>
-                  <div className={cn("rounded-md border bg-[rgba(37,57,67,0.58)] px-2 py-1", posDividerClass)}>
-                    <div className={posMutedTextClass}>{t("totals.total")}</div>
-                    <div className="mt-0.5 truncate text-base font-bold text-[#8fb7ff]">{money.format(cart?.total ?? 0)}</div>
-                  </div>
-                </div>
+                <details data-testid="pos-totals-summary" className="px-3 py-1 text-xs tabular-nums">
+                  <summary className="cursor-pointer rounded-md py-2 font-medium text-[var(--dash-text-soft)] focus-visible:outline focus-visible:outline-[var(--dash-brand)]">{locale === "fr" ? "Détail du montant" : "Price breakdown"}</summary>
+                  <dl className="space-y-1 pb-2">
+                    <div className="flex justify-between gap-2"><dt>{t("totals.subtotal")}</dt><dd>{money.format(cart?.subtotal ?? 0)}</dd></div>
+                    {(cart?.discount ?? 0) > 0 ? <div className="flex justify-between gap-2"><dt>{t("totals.discount")}</dt><dd>{money.format(cart?.discount ?? 0)}</dd></div> : null}
+                    <div className="flex justify-between gap-2"><dt>{t("totals.tax")}</dt><dd>{money.format(cart?.taxAmount ?? 0)}</dd></div>
+                  </dl>
+                </details>
 
                 <div
                   data-testid="pos-tender-scroll-region"
@@ -2272,12 +2196,12 @@ function POSWorkspace() {
                         t("timeline.financePosted"),
                         t("timeline.drawerUpdated"),
                         lastSale.onAccountAmount > 0 ? t("timeline.customerLedgerUpdated") : t("timeline.walkInRecorded"),
-                        lastSale.delivery
-                          ? t("timeline.receiptStatus", {
+                        ...(lastSale.delivery && lastSale.delivery.channel !== "NONE"
+                          ? [t("timeline.receiptStatus", {
                               channel: t(`receipt.channels.${lastSale.delivery.channel}`),
                               status: lastSale.delivery.status,
-                            })
-                          : t("timeline.noReceipt"),
+                            })]
+                          : []),
                       ].map((entry) => (
                         <div key={entry} className="flex items-center gap-2 text-xs">
                           <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
@@ -2315,6 +2239,11 @@ function POSWorkspace() {
                         {lastSale.receipt.digitalReceiptUrl}
                       </div>
                     ) : null}
+                    {lastSale.receipt && lastSale.receiptStatus !== "RETRY_REQUIRED" && hasPermission("pos.receipts.print") ? (
+                      <div className="mt-3">
+                        <POSReceiptPrintLink locale={locale} salesOrderId={lastSale.saleId} locationId={lastSale.locationId} />
+                      </div>
+                    ) : null}
                     {canManageReceiptTokens && receiptTokensQuery.isError ? (
                       <div role="alert" className="mt-2 text-sm text-[var(--dash-warning)]">
                         {t("readState.failedMessage")}
@@ -2331,29 +2260,121 @@ function POSWorkspace() {
                     ) : null}
                   </div>
                   ) : null}
+                  {whatsApp.feedback && !pendingCommit && selectedLocationId === whatsApp.feedback.locationId
+                    ? renderWhatsAppStatus(whatsApp.feedback.salesOrderId, whatsApp.feedback.locationId)
+                    : null}
 
-                  <div data-testid="pos-tender-controls" className={cn("space-y-1 p-1.5", posPanelClass)}>
-                  <div className="flex items-center justify-between gap-2">
-                    <div>
-                      <div className="text-sm font-semibold">{t("tender.panelTitle")}</div>
-                      <div className={cn("text-xs", posMutedTextClass)}>
-                        {t("tender.splitSummary", { count: tenderLines.length })}
-                      </div>
+                  <details data-testid="pos-more-payment-options">
+                    <summary className="cursor-pointer py-2 text-sm font-medium text-[var(--dash-text)]">{locale === "fr" ? "Options de règlement et reçu" : "Payment and receipt options"}</summary>
+                  {primaryTenderMethod === "CASH" && quickCashAmounts.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      {quickCashAmounts.filter((_, index) => index > 0).map((amount, index) => (
+                        <POSButton
+                          key={amount}
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className={cn(
+                            "w-full justify-center px-3 text-sm tabular-nums",
+                            index > 1 && "col-span-2",
+                            tenderPreview.totalTendered === amount ? posButtonActiveClass : posButtonClass,
+                          )}
+                          onClick={() => updateTenderLine(tenderLines[0].id, { amount: String(amount), method: "CASH" })}
+                        >
+                          <span className="min-w-0 truncate">
+                            {money.format(amount)}
+                          </span>
+                        </POSButton>
+                      ))}
                     </div>
-                    <POSButton type="button" variant="outline" size="sm" className={posButtonClass} onClick={addTenderLine}>
-                      <Plus className="h-4 w-4" />
-                      {t("tender.addTender")}
-                    </POSButton>
+                  ) : null}
+
+                  <div>
+                    <div className={cn("mb-1 text-xs font-medium", posMutedTextClass)}>{t("receipt.options")}</div>
+                    <p data-testid="pos-receipt-availability" className={cn("mb-2 text-xs", posMutedTextClass)}>
+                      {t(whatsApp.enabled ? "receipt.whatsApp.available" : hasPermission("pos.receipts.print") ? "receipt.browserDelivery" : "receipt.deliveryRestricted")}
+                    </p>
+                    {whatsApp.enabled && hasCartLines ? (
+                      <fieldset disabled={commitSale.isPending || !canEditCart} className="space-y-2">
+                        <label className="flex min-h-10 items-center gap-2 text-sm">
+                          <Checkbox checked={whatsApp.draft.selected} onCheckedChange={checked => whatsApp.updateDraft(checked === true ? { selected: true } : { selected: false, destination: "", consent: false })} />
+                          <span>{t("receipt.whatsApp.select")}</span>
+                        </label>
+                        {whatsApp.draft.selected ? (
+                          <>
+                            <label className={posLabelClass}>
+                              {t("receipt.whatsApp.number")}
+                              <Input
+                                data-pos-whatsapp-destination
+                                type="tel"
+                                autoComplete="off"
+                                value={whatsApp.draft.destination}
+                                aria-invalid={Boolean(whatsApp.draft.destination && !whatsApp.validDestination)}
+                                maxLength={40}
+                                onChange={event => whatsApp.updateDraft({ destination: event.target.value, consent: false })}
+                                className={cn("mt-1", posFieldClass)}
+                              />
+                            </label>
+                            <label className="flex min-h-10 items-center gap-2 text-sm">
+                              <Checkbox data-pos-whatsapp-consent checked={whatsApp.draft.consent} onCheckedChange={checked => whatsApp.updateDraft({ consent: checked === true })} />
+                              <span>{t("receipt.whatsAppConsent")}</span>
+                            </label>
+                          </>
+                        ) : null}
+                      </fieldset>
+                    ) : null}
                   </div>
 
-                  <div className="space-y-2">
+                  </details>
+
+                  <details className="mt-3 border-t border-[var(--dash-border-subtle)] pt-2">
+                    <summary className="cursor-pointer rounded-md py-2 text-xs font-medium text-[var(--dash-text-soft)] focus-visible:outline focus-visible:outline-[var(--dash-brand)]">{locale === "fr" ? "Historique et accès aux reçus" : "Receipt history and access"}</summary>
+                  {selectedLocationId && hasPermission("pos.receipts.reprint") ? (
+                    <div className="mb-3 border-b border-[var(--dash-border-subtle)] pb-3">
+                      <POSReceiptReprintForm locale={locale} locationId={selectedLocationId} />
+                    </div>
+                  ) : null}
+                  <ReceiptTokenHistoryPanel
+                    searchDraft={receiptHistorySearchDraft}
+                    hasSearched={receiptHistorySearchQuery !== null}
+                    selectedSaleId={receiptHistorySaleId}
+                    saleResults={receiptHistorySales}
+                    tokens={receiptHistoryTokens}
+                    canManage={canManageReceiptTokens}
+                    capabilityLoading={receiptTokenCapabilityQuery.isLoading}
+                    capabilityUnavailable={receiptTokenCapabilityQuery.isError && receiptTokenCapabilityQuery.readState !== "denied"}
+                    capabilityErrorMessage={receiptTokenCapabilityError || receiptTokenCapabilityUnavailableError}
+                    salesLoading={receiptHistorySalesQuery.isFetching}
+                    isLoading={receiptHistoryTokensQuery.isFetching}
+                    salesErrorMessage={receiptHistorySalesError}
+                    errorMessage={receiptHistoryError}
+                    revokePendingTokenId={revokePendingTokenId}
+                    controlLabels={receiptTokenLabels}
+                    labels={receiptTokenHistoryLabels}
+                    formatTotal={(amount) => money.format(amount)}
+                    onSearchDraftChange={setReceiptHistorySearchDraft}
+                    onLookup={handleReceiptHistoryLookup}
+                    onSelectSale={setReceiptHistorySaleId}
+                    onRevoke={handleRevokeHistoricalReceiptToken}
+                  />
+                  </details>
+                </div>
+
+              </div>
+              </div>
+                <div ref={checkoutFooterRef} tabIndex={-1} data-testid="pos-charge-footer" className={cn("shrink-0 border-t bg-[var(--dash-surface-raised)] px-3 py-2 outline-offset-4 focus-visible:outline focus-visible:outline-[var(--dash-brand)]", posDividerClass)}>
+                  <div data-testid="pos-total-due" className="mb-2 flex items-start justify-between gap-3">
+                    <div><p className="text-sm font-semibold">{t("totals.total")}</p><p className="text-xs text-[var(--dash-text-muted)]">{locale === "fr" ? "Taxes comprises" : "Includes tax"}</p></div>
+                    <p className="text-right text-2xl font-bold tabular-nums text-[var(--dash-text)]">{money.format(cart?.total ?? 0)}</p>
+                  </div>
+<div data-testid="pos-tender-controls" className="space-y-2">                  <div data-testid="pos-tender-rows" className="max-h-36 space-y-2 overflow-y-auto overscroll-contain">
                     {tenderLines.map((line, index) => (
-                      <div key={line.id} className={cn("p-2", posInsetClass)}>
-                        <div className="grid gap-2 lg:grid-cols-[1fr_1fr_auto]">
+                      <div key={line.id} className="px-0.5">
+                        <div className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)_auto] items-end gap-2">
                           <label className={posLabelClass}>
                             {t("tender.method")}
                             <select
-                              className={posSelectClass}
+                              className={cn(posSelectClass, "h-11")}
                               value={line.method}
                               onChange={(event) => {
                                 const method = event.target.value as TenderMethod
@@ -2384,7 +2405,7 @@ function POSWorkspace() {
                               step={cashFractionDigits === 0 ? "1" : "0.01"}
                               onChange={(event) => updateTenderLine(line.id, { amount: event.target.value })}
                               placeholder={index === 0 && tenderLines.length === 1 ? money.format(cartTotal) : (cashFractionDigits === 0 ? "0" : "0.00")}
-                              className={cn("mt-1", posFieldClass)}
+                              className={cn("mt-1 h-11", posFieldClass)}
                             />
                           </label>
 
@@ -2392,7 +2413,7 @@ function POSWorkspace() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className={cn("mt-5", posButtonDangerClass)}
+                            className={cn("mb-0 h-10 w-10", posButtonDangerClass)}
                             disabled={tenderLines.length <= 1}
                             onClick={() => removeTenderLine(line.id)}
                             title={t("tender.removeTender")}
@@ -2409,7 +2430,7 @@ function POSWorkspace() {
                               onChange={(event) => updateTenderLine(line.id, { paymentTransactionId: event.target.value })}
                               placeholder={t("tender.providerEvidencePlaceholder")}
                               autoComplete="off"
-                              className={cn("mt-1", posFieldClass)}
+                              className={cn("mt-1 h-11", posFieldClass)}
                             />
                             <span className={cn("mt-1 block text-xs", posMutedTextClass)}>
                               {t("tender.providerEvidenceHelp")}
@@ -2420,126 +2441,21 @@ function POSWorkspace() {
                     ))}
                   </div>
 
-                  {primaryTenderMethod === "CASH" && quickCashAmounts.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-2">
-                      {quickCashAmounts.map((amount, index) => (
-                        <POSButton
-                          key={amount}
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className={cn(
-                            "w-full justify-center px-3 text-sm tabular-nums",
-                            index > 1 && "col-span-2",
-                            tenderPreview.totalTendered === amount ? posButtonActiveClass : posButtonClass,
-                          )}
-                          onClick={() => updateTenderLine(tenderLines[0].id, { amount: String(amount), method: "CASH" })}
-                        >
-                          <span className="min-w-0 truncate">
-                            {index === 0 ? t("tender.exact") : money.format(amount)}
-                          </span>
-                        </POSButton>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  <div>
-                    <div className={cn("mb-1 text-xs font-medium", posMutedTextClass)}>{t("receipt.options")}</div>
-                    <div className="grid grid-cols-5 gap-1">
-                      {receiptChannels.map((channel) => (
-                        <POSButton
-                          key={channel}
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className={cn("min-w-0 px-2", receiptChannel === channel ? posButtonActiveClass : posButtonClass)}
-                          onClick={() => selectReceiptChannel(channel)}
-                          title={t(`receipt.channels.${channel}`)}
-                        >
-                          <span className="truncate">{t(`receipt.channels.${channel}`)}</span>
-                        </POSButton>
-                      ))}
-                    </div>
-                    {receiptDestinationRequired ? (
-                      <label className={cn("mt-2", posLabelClass)}>
-                        {t("receipt.destination")}
-                        <Input
-                          value={receiptDestination}
-                          onChange={(event) => setReceiptDestination(event.target.value)}
-                          placeholder={receiptDestinationPlaceholder}
-                          aria-invalid={Boolean(receiptBlocker)}
-                          className={cn("mt-1", posFieldClass)}
-                        />
-                      </label>
-                    ) : null}
-                    {isWhatsAppReceiptChannel ? (
-                      <label className="mt-2 flex items-start gap-2 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.36)] px-3 py-2 text-xs leading-5 text-[var(--dash-text-soft)]">
-                        <Checkbox
-                          checked={whatsAppCustomerOptInConfirmed}
-                          onCheckedChange={(checked) => setWhatsAppCustomerOptInConfirmed(checked === true)}
-                          aria-label={t("receipt.whatsAppConsent")}
-                          className="mt-0.5"
-                        />
-                        <span>{t("receipt.whatsAppConsent")}</span>
-                      </label>
-                    ) : null}
-                    {receiptBlocker ? (
-                      <div role="alert" className="mt-2 rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-3 py-2 text-xs font-medium text-[#ffe4a8]">
-                        {receiptBlocker}
-                      </div>
-                    ) : null}
+                  <div className="flex gap-2">
+                    {primaryTenderMethod === "CASH" && hasCartLines ? <POSButton type="button" className={cn(posButtonClass, "h-9 flex-1")} onClick={() => updateTenderLine(tenderLines[0].id, { amount: String(quickCashAmounts[0] ?? cartTotal), method: "CASH" })}>{t("tender.exact")}</POSButton> : null}
+                    <POSButton type="button" className={cn(posButtonClass, "h-9 flex-1")} onClick={addTenderLine}><Plus className="h-4 w-4" />{t("tender.addTender")}</POSButton>
                   </div>
-
-                  {saleBlocker ? (
-                    <div className="rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] px-3 py-2 text-xs font-medium text-[#ffe4a8]">
-                      {saleBlocker}
-                    </div>
-                  ) : null}
+                </div>
                   {saleAccessError ? (
                     <p role="alert" data-testid="pos-sale-access-error" className="rounded-lg border border-[var(--dash-danger)] px-3 py-2 text-sm text-[var(--dash-danger)]">
                       {t("notifications.saleAccessUnavailable")}
                     </p>
                   ) : null}
-                  </div>
-
-                  <ReceiptTokenHistoryPanel
-                    searchDraft={receiptHistorySearchDraft}
-                    hasSearched={receiptHistorySearchQuery !== null}
-                    selectedSaleId={receiptHistorySaleId}
-                    saleResults={receiptHistorySales}
-                    tokens={receiptHistoryTokens}
-                    canManage={canManageReceiptTokens}
-                    capabilityLoading={receiptTokenCapabilityQuery.isLoading}
-                    capabilityUnavailable={receiptTokenCapabilityQuery.isError && receiptTokenCapabilityQuery.readState !== "denied"}
-                    capabilityErrorMessage={receiptTokenCapabilityError || receiptTokenCapabilityUnavailableError}
-                    salesLoading={receiptHistorySalesQuery.isFetching}
-                    isLoading={receiptHistoryTokensQuery.isFetching}
-                    salesErrorMessage={receiptHistorySalesError}
-                    errorMessage={receiptHistoryError}
-                    revokePendingTokenId={revokePendingTokenId}
-                    controlLabels={receiptTokenLabels}
-                    labels={receiptTokenHistoryLabels}
-                    formatTotal={(amount) => money.format(amount)}
-                    onSearchDraftChange={setReceiptHistorySearchDraft}
-                    onLookup={handleReceiptHistoryLookup}
-                    onSelectSale={setReceiptHistorySaleId}
-                    onRevoke={handleRevokeHistoricalReceiptToken}
-                  />
-                </div>
-
-                <div ref={checkoutFooterRef} tabIndex={-1} data-testid="pos-charge-footer" className={cn("shrink-0 border-t px-3 py-1 outline-offset-4 focus-visible:outline focus-visible:outline-[var(--dash-brand)]", posDividerClass)}>
-                  {chargeBlocker && !needsSaleRecovery ? <p id="pos-lifecycle-blocker" role="status" className="mb-2 text-sm">{chargeBlocker}</p> : null}
-                  {needsResume && cart && !needsSaleRecovery ? (
-                    <POSButton
-                      type="button"
-                      className={cn(posButtonClass, "mb-2 h-11 w-full", touchMode && "h-14")}
-                      disabled={!checkout.ready || checkout.busy}
-                      aria-describedby="pos-lifecycle-blocker"
-                      onClick={() => handleCartLifecycle("RESUME", cart.id)}
-                    >
-                      {t("lifecycle.resume")}
-                    </POSButton>
-                  ) : null}
+                  {chargeBlocker && !needsSaleRecovery ? <div id="pos-lifecycle-blocker" role="status" className={cn("mt-2 rounded-md px-2 py-1.5 text-xs", hasCartLines || !canSell || lifecycleError ? "bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]" : "text-[var(--dash-text-soft)]")}>
+                    <p>{chargeBlocker}</p>
+                    {blockerNextStep ? <p className="mt-1 text-[var(--dash-text-soft)]">{blockerNextStep}</p> : null}
+                    {blockerTarget ? <button type="button" className="min-h-9 font-semibold underline underline-offset-2 focus-visible:outline focus-visible:outline-[var(--dash-brand)]" onClick={(event) => handleBlockerAction(event.currentTarget)}>{blockerActionLabel}</button> : null}
+                  </div> : null}
                   {needsSaleRecovery ? (
                     <div className="mb-2 rounded-md border border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] p-2 text-sm">
                       <p id="pos-charge-blocker" role="status">{t("recovery.chargePaused")}</p>
@@ -2547,30 +2463,40 @@ function POSWorkspace() {
                         type="button"
                         className={cn(posButtonClass, "mt-2 w-full")}
                         onClick={() => {
-                          recoveryPanelRef.current?.focus({ preventScroll: true })
-                          recoveryPanelRef.current?.scrollIntoView?.({ block: "start", behavior: "instant" })
+                          recoveryFocusAfterCloseRef.current = Boolean(document.querySelector('[data-testid="pos-tablet-checkout"]'))
+                          setIsCheckoutOpen(false)
+                          if (!recoveryFocusAfterCloseRef.current) {
+                            recoveryPanelRef.current?.focus({ preventScroll: true })
+                            recoveryPanelRef.current?.scrollIntoView?.({ block: "start", behavior: "instant" })
+                          }
                         }}
                       >
                         {t("recovery.open")}
                       </POSButton>
                     </div>
                   ) : null}
-                  <div data-testid="pos-charge-summary" className="grid grid-cols-2 items-center gap-2 text-center text-xs tabular-nums">
+                  <div data-testid="pos-charge-summary" className="mt-2 space-y-2 text-xs tabular-nums">
+                    {hasCartLines && (onAccountAmountPreview > 0 || balancePreview > 0 || changePreview > 0) ? <div className="grid grid-cols-3 items-start gap-2 text-center">
                     <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
-                      <div className={posMutedTextClass}>{t("tender.paid")}</div>
-                      <div className="mt-0.5 font-semibold">{money.format(paidPreview)}</div>
+                      <div className={posMutedTextClass}>{locale === "fr" ? "Paiement prévu" : "Payment preview"}</div>
+                      <div className="mt-0.5 font-semibold">{money.format(Math.max(0, paidPreview - onAccountAmountPreview))}</div>
                     </div>
-                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
-                      <div className={posMutedTextClass}>{t("tender.due")}</div>
+                    {balancePreview > 0 || onAccountAmountPreview > 0 ? <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
+                      <div className={posMutedTextClass}>{onAccountAmountPreview > 0 ? (locale === "fr" ? "Reste à couvrir" : "Uncovered") : t("tender.due")}</div>
                       <div className="mt-0.5 font-semibold">{money.format(balancePreview)}</div>
-                    </div>
-                    <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
+                    </div> : null}
+                    {onAccountAmountPreview > 0 && <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
+                      <div className={posMutedTextClass}>{t("tender.methods.ON_ACCOUNT")}</div>
+                      <div className="mt-0.5 font-semibold">{money.format(onAccountAmountPreview)}</div>
+                    </div>}
+                    {changePreview > 0 ? <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
                       <div className={posMutedTextClass}>{t("tender.change")}</div>
                       <div className="mt-0.5 font-semibold">{money.format(changePreview)}</div>
-                    </div>
+                    </div> : null}
+                    </div> : null}
                     <POSButton
                       type="button"
-                      className={cn(posButtonPrimaryClass, "h-11 w-full justify-center rounded-md border text-base", posDividerClass, touchMode && "h-14")}
+                      className={cn(posButtonPrimaryClass, "h-12 w-full justify-center rounded-lg border text-base", posDividerClass, touchMode && "h-14")}
                       disabled={!canCommitSale}
                       aria-describedby={needsSaleRecovery ? "pos-charge-blocker" : chargeBlocker ? "pos-lifecycle-blocker" : undefined}
                       onClick={() => handleCommitSale()}
@@ -2580,14 +2506,18 @@ function POSWorkspace() {
                     </POSButton>
                   </div>
                 </div>
-              </div>
             </div>
-          </aside>
+          </POSCheckoutShell>
         </div>
       </main>
 
       <Dialog open={!!selectedProduct} onOpenChange={(open) => !open && setSelectedProductId("")}>
-        <DialogContent className={cn("max-w-2xl", posDialogClass)}>
+        <DialogContent onCloseAutoFocus={(event) => {
+          event.preventDefault()
+          const trigger = productDialogTriggerRef.current
+          if (trigger?.isConnected) trigger.focus()
+          else searchRef.current?.focus()
+        }} className={cn("max-w-2xl", posDialogClass)}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <PackageCheck className={cn("h-5 w-5", posIconBrandClass)} />
@@ -2613,11 +2543,11 @@ function POSWorkspace() {
                 <div className="grid grid-cols-2 gap-2">
                   <div className={cn("p-2", posInsetClass)}>
                     <div className={cn("text-xs", posMutedTextClass)}>{t("catalog.sku")}</div>
-                    <div className="font-mono font-semibold">{selectedProduct.sku}</div>
+                    <div className="break-all font-mono font-semibold">{selectedProduct.sku}</div>
                   </div>
                   <div className={cn("p-2", posInsetClass)}>
                     <div className={cn("text-xs", posMutedTextClass)}>{t("catalog.barcode")}</div>
-                    <div className="font-mono font-semibold">{selectedProduct.barcode || t("catalog.noBarcode")}</div>
+                    <div className="break-all font-mono font-semibold">{selectedProduct.barcode || t("catalog.noBarcode")}</div>
                   </div>
                   <div className={cn("p-2", posInsetClass)}>
                     <div className={cn("text-xs", posMutedTextClass)}>{t("stock.onHand")}</div>
@@ -2628,6 +2558,9 @@ function POSWorkspace() {
                     <div className="font-semibold">{selectedProduct.stock.quantityAvailable}</div>
                   </div>
                 </div>
+                <p className={cn("break-words text-xs", posMutedTextClass)}>
+                  {selectedProduct.category ? localizedName(selectedProduct.category, locale) : t("catalog.noCategory")} · {selectedProduct.brand ? localizedName(selectedProduct.brand, locale) : t("catalog.noBrand")}
+                </p>
                 <div className="rounded-lg border border-[var(--dash-warning)]/25 bg-[var(--dash-warning-soft)] p-2 text-xs text-[#ffe4a8]">
                   {t("catalog.detailBackendNote")}
                 </div>
@@ -2772,7 +2705,12 @@ function POSWorkspace() {
       </Dialog>
 
       <Dialog open={isCustomerDialogOpen} onOpenChange={setIsCustomerDialogOpen}>
-        <DialogContent className={cn("max-h-[86vh] max-w-3xl overflow-hidden p-0", posDialogClass)}>
+        <DialogContent onCloseAutoFocus={(event) => {
+          event.preventDefault()
+          const trigger = customerDialogTriggerRef.current
+          if (trigger?.isConnected && trigger !== document.body) trigger.focus()
+          else searchRef.current?.focus()
+        }} className={cn("max-h-[86vh] max-w-3xl overflow-hidden p-0", posDialogClass)}>
           <DialogHeader className={posDialogHeaderClass}>
             <DialogTitle className="flex items-center gap-2">
               <UsersRound className={cn("h-5 w-5", posIconBrandClass)} />
@@ -2872,7 +2810,7 @@ function POSWorkspace() {
         </DialogContent>
       </Dialog>
 
-      <div className="fixed bottom-0 left-0 right-0 z-30 hidden border-t border-[var(--dash-border-subtle)] bg-[rgba(20,33,41,0.94)] px-4 py-2 text-xs text-[var(--dash-text-soft)] backdrop-blur-xl lg:block">
+      <div data-pos-shortcuts className="fixed bottom-0 left-0 right-0 z-30 hidden border-t border-[var(--dash-border-subtle)] bg-[rgba(20,33,41,0.94)] px-4 py-2 text-xs text-[var(--dash-text-soft)] backdrop-blur-xl xl:block">
         {t("hotkeys")}
       </div>
     </div>

@@ -1,0 +1,15 @@
+import { getSession } from "better-auth/api"
+declare const ctx: any
+async function proof() {
+  const resolved = await getSession()({
+    ...ctx,
+    method: "GET",
+    asResponse: false,
+    returnHeaders: true,
+    returnStatus: false,
+    query: { ...ctx.query, disableCookieCache: true, disableRefresh: true },
+    context: { ...ctx.context, session: null },
+  })
+const session = resolved.response
+return session?.user?.id
+}

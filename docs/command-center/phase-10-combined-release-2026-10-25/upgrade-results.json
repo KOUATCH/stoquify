@@ -1,0 +1,13 @@
+{
+  "database": "stoquify_replay_command_center_phase10_5b6c850591_upgrade",
+  "productionAccess": false,
+  "checks": [
+    "118-to-120 populated upgrade preserves user, occurrence and immutable event bytes",
+    "Promotion advisory lock excludes contenders and releases after failure",
+    "Existing client writes coexist with retained coordination history; deletion still rejected",
+    "Latest generated client reads the newly migrated FirmPracticeRevision table",
+    "All 120 upgrade ledger names and hashes match the captured catalog"
+  ],
+  "scope": "118-to-120 upgrade with synthetic user and Command Center history; not all older populated domain transitions",
+  "passed": true
+}

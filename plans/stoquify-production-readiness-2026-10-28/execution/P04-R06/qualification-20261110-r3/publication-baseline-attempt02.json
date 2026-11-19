@@ -1,0 +1,45 @@
+{
+  "at": "2026-11-10T18:40:01.000Z",
+  "packageId": "P04-R06",
+  "sourceEvidence": "E31",
+  "nextEvidence": "E32",
+  "currentRequest": "Resume on D after user freed memory; source checks, isolated full build, real-session/browser qualification, independent review; no commits/deployment/production changes.",
+  "baseline": [
+    {
+      "path": "work-register.json",
+      "sha256": "b4241d2b0cc69f38decaa4b7cdfc517457a63f4bbee2a324b2a9a6770aac9b5f"
+    },
+    {
+      "path": "work-register.csv",
+      "sha256": "19616be86edcf34bd950b7df4a875ee989af6a450a61e0b01d6c3c24ac99a78a"
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "4d0565760b8d60d94736b86d9262c6cd8500bd8134c6725833f07c794a7f14be"
+    },
+    {
+      "path": "mutation-log.md",
+      "sha256": "ce5eb5b1a5e50f16c469bf673f4008632dbc7b58126363abb43a59291a2d039a"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "sha256": "03efa8f66e2d1180474a64138fb5ef6fd762a96533ab96347892d06f1328dc9c"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "sha256": "8a10d563fdca386f9548ccc0a754834b405ebde06a3cf417decc5d23342a9d88"
+    }
+  ],
+  "workflowCheck": {
+    "command": "npm run agent:workflow:check",
+    "exitCode": 0,
+    "toolChunk": "c4a709",
+    "unclassifiedScripts": 196,
+    "packageSha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+  },
+  "capacityReceipt": "resource-capture-retry-ready-r2.json",
+  "capacityReceiptSha256": "a9644ac4702e5ceb032266c5e2df4fd8ab846feed874ad0a742c4f6382cc824b",
+  "newTestRun": false,
+  "candidateQualified": false,
+  "sharedFilesChanged": 0
+}

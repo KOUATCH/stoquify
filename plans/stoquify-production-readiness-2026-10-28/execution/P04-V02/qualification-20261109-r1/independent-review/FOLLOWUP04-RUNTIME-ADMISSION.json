@@ -1,0 +1,65 @@
+{
+  "at": "2026-11-09T18:34:32.842Z",
+  "reviewer": "/root/v02_review",
+  "verdict": "admit_minimal_11_group_followup_and_exact_owned_cleanup_verifier",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "files": [
+    {
+      "path": "browser/run-auth-followup04.cjs",
+      "sha256": "763024da1a2476845155aaa43dd23ee9635d075e5ea5dacda583fc7e67aae15a",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "run-runtime-followup04.cjs",
+      "sha256": "c39e325e5e0e3eab61e9ba1450be685a2681849050a10ebc4c14e02446bcb21a",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/readiness-followup04.cjs",
+      "sha256": "2fdd47a79680d31d9de5a5f5974eeac36cfd3a98adaeeb1b2dee982c84321c3f",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "browser/admit-source-frozen-attempt04.cjs",
+      "sha256": "c1fcef057e9b850b6179ddf59fa0b739c51ac2a1d19b65a145956a9b746ee175",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/verify-all-session-cleanup.cjs",
+      "sha256": "e0b97adbe065a06ecb4ddb12bbaa62e9545f68048056ae71934542b9563b4c69",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/auth-controls-r3.cjs",
+      "sha256": "66bb7ddcbdfa454da9eaa195ae0db59cc1907a9f95360f7ef8a2831fe076431f",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "supplement03-source-integrity.cjs",
+      "sha256": "d1f6764f10d964dc52a9ea3c74923c207ab96e3aa4424cab500e836d8ad24997",
+      "syntaxExitCode": 0
+    }
+  ],
+  "plannedChecks": 11,
+  "sourceInputs": 107,
+  "scope": [
+    "Eight authorized real Refresh recovery checks replayed after fixing missing await before context close.",
+    "Three EN completed Refresh denial-envelope corroborations for revoked, expired and permission-removed actors.",
+    "No new fixtures or database reset: read-only restored r3 precondition verifies all ten actors, exact roles/permissions, active organizations/grants, credential accounts and zero sessions. Fresh real sign-ins then use retained synthetic actors.",
+    "Same sealed runtime is rehashed before start; original 35-group evidence remains untouched.",
+    "Only owned r3 authority/session transitions, permission restoration, and synthetic-session cleanup; same loopback browser egress restriction and sanitizer.",
+    "Final all-database verifier reads r1/r2/r3 and compares all digests to finalizers before owned cluster stop."
+  ],
+  "assertionInterpretation": [
+    "An HTTP 200 RSC response can contain a denied action envelope. Capture only recognized code/boolean/hash evidence, never raw bodies.",
+    "Denied envelope plus completed success notification and retained old private DOM is a client recovery defect, distinct from new private response bytes.",
+    "No qualification pass is claimed by this recipe admission."
+  ],
+  "requiredBeforeLaunch": [
+    "Successor source gate passes for frozen candidate/artifact and 107 unchanged critical inputs.",
+    "Read-only retained r3 readiness passes before any follow-up sign-in."
+  ]
+}

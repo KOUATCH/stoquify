@@ -1,0 +1,24 @@
+# Provider claim lock-order source inspection
+
+Read-only inspection on 2026-11-10; no frozen product changes or new database execution. The passing monthly native race proves its observed one-winner/rollback invariants. It does not prove deadlock elimination for all inventory or interleaving cases.
+
+**Follow-up:** root approved a bounded correction after this inspection. POS now locks electronic native receipts in sorted unique ID order after the session/cart claims and before proof resolution or stock publication, using the same exact-organization helper as linked AR. AR now recognizes raw P2010 SQLSTATE 40001/40P01 for whole-transaction retries. The correction passed 155 mocked unit tests and scoped seven-file lint; tracked-stock PostgreSQL qualification remains root-owned and pending. See `LOCK_ORDER_IMPLEMENTATION.json`. The trace and line references below describe the preserved pre-correction sources under `.codex-tmp/provider-lock-order-20261110-f016fbf2b1`.
+
+`commitPOSSale` (`services/pos/pos.service.ts:2172`) reads the existing draft. It does not create a new SalesOrder or a PosSale. Before its native claim it performs:
+
+1. Optional checkout workspace lease renewal (`:2201`, `services/pos/checkout-state.ts:20`). Authenticated authority also takes SHARE locks on organization/user/role/membership/session rows; it does not update those financial source tables (`services/pos/tender-write-access.ts:27`).
+2. Provider authority reads (`:2350`), then POSCommitResult creation (`:2360`), POSSession claim (`:2375`) and the existing SalesOrder DRAFT→COMPLETED transition (`:2400`).
+3. `postPOSStockIssue` (`:2441`) and subsequent POSSession totals, optional drawer update/drawer transaction, then legacy `payment.create` (`:2543`).
+4. `claimPOSElectronicTenderAuthority` (`:2579`), which conditionally updates the native `payment_transactions` row.
+
+The generic source guard migration `20261016180000_close_source_publication_guard/migration.sql:81` lists neither checkout workspace, POSCommitResult, POSSession, SalesOrder, payments nor cash-drawer tables. Those preclaim writes do not themselves invoke this guard.
+
+Tracked-stock POS **does** invoke it before the native claim. `postInventoryStockEvent` first records non-close `pos.sale.stock_issued` through `recordBusinessEventInTx` (`services/inventory/inventory-stock-event.service.ts:741`; actual `businessEvent.create` at `services/events/business-event.service.ts:205`), then updates inventory levels and creates inventory transactions. The migration installs BEFORE triggers on `business_events` and `inventory_transactions` (`:94`) and tenant-inherited inventory levels (`:97`). Its `advance_close_source_revision` (`:17`) executes an INSERT/ON CONFLICT UPDATE against the one organization revision row, then can update current close runs/exports. The non-close POS event is not covered by the close-event exemption (`:57`).
+
+If no tracked stock lines are runnable, `postInventoryStockEvent` returns without recording an event or stock writes (`services/inventory/inventory-stock-event.service.ts:691`). In that path the listed preclaim work introduces no generic source revision write. The native payment UPDATE itself is a guarded source write.
+
+New linked AR explicitly locks the exact same-organization native payment first (`services/payments/customer-settlement-payment-authority.service.ts:24`), then later performs financial/source writes. For tracked-stock POS a cycle remains possible: POS holds the organization revision and waits for the native row; AR holds the native row and waits for the organization revision. Therefore the narrower ordering change must not be described as eliminating all POS/AR deadlocks.
+
+Existing recovery differs by path. POS `prismaErrorCode` (`services/pos/pos.service.ts:659`) maps raw-query P2010 with SQLSTATE `40001`/`40P01` to P2034, and `commitPOSSale` (`:2858`) retries the complete Serializable transaction at most twice, checks the retained commit registry, and surfaces an exhausted retry as DATABASE_CONFLICT 409. Customer settlement `runSerializable` (`services/accounting/customer-settlement.service.ts:1093`) retries literal P2034 at most three times and returns Conflict on exhaustion. Its `isPrismaCode` (`:197`) does not normalize raw P2010 metadata; such an error from the explicit row lock can consequently become a generic INTERNAL_ERROR after the transaction rolls back. The current native race passing does not establish which transaction/error form would be selected in the unforced tracked-stock cycle.
+
+The original claim remained transactional and exclusive even when PostgreSQL aborted a transaction. The approved follow-up above addresses the identified ordering and error normalization gap; its native qualification must bind the new frozen source and must not reuse the prior non-stock packet as current proof.

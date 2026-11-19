@@ -9,6 +9,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { DASHBOARD_REQUEST_PATH_HEADER } from "@/lib/security/dashboard-session-recovery";
 import { TrafficLimiter, trafficIdentity } from "@/lib/security/traffic-limiter";
 import { cspPilot, CSP_NONCE_HEADER, reportOnlyBaseline } from "@/lib/security/csp-pilot";
+import { decodeLegacyPath, isPrivateUploadOptimizerTarget, legacyUploadDestination } from "@/lib/media/legacy-upload-routing";
+import { normalizeTrustedOrigin } from "@/lib/security/trusted-origins";
 
 const scriptSrc =
   process.env.NODE_ENV === "production"
@@ -47,11 +49,12 @@ function applySecurityHeaders(response: NextResponse, pathname = ""): NextRespon
   })
   // Signed statement, supplier and receipt URLs carry bearer evidence. Preserve the private route
   // policy through middleware responses, including rate-limit denials.
-  if (/^\/(?:customer-statement|digital-receipt|api\/receipts|api\/customer-statements|api\/supplier-po-envelopes)(?:\/|$)/.test(pathname) || /^\/(?:en|fr)\/supplier-purchase-order(?:\/|$)/.test(pathname)) {
+  const posPrintReceipt = /^\/(?:en|fr)\/pos-receipt(?:\/|$)/.test(pathname)
+  if (posPrintReceipt || /^\/(?:customer-statement|digital-receipt|api\/receipts|api\/customer-statements|api\/supplier-po-envelopes)(?:\/|$)/.test(pathname) || /^\/(?:en|fr)\/supplier-purchase-order(?:\/|$)/.test(pathname)) {
     response.headers.set("Referrer-Policy", "no-referrer")
     response.headers.set("Cache-Control", "private, no-store, max-age=0")
   }
-  if (/^\/(?:digital-receipt|api\/receipts)(?:\/|$)/.test(pathname)) {
+  if (posPrintReceipt || /^\/(?:digital-receipt|api\/receipts)(?:\/|$)/.test(pathname)) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive")
   }
   return response
@@ -87,10 +90,14 @@ function nextWithLocale(req: NextRequest, locale: string): NextResponse {
   const response = NextResponse.next({
     request: { headers },
   })
-  response.cookies.set(LOCALE_COOKIE, locale, {
-    maxAge: 60 * 60 * 24 * 365,
-    path: "/",
-  })
+  // Rewriting an unchanged cookie also revalidates Server Action responses,
+  // replacing protected snapshots and discarding forms during ordinary reads.
+  if (req.cookies.get(LOCALE_COOKIE)?.value !== locale) {
+    response.cookies.set(LOCALE_COOKIE, locale, {
+      maxAge: 60 * 60 * 24 * 365,
+      path: "/",
+    })
+  }
   applySecurityHeaders(response, req.nextUrl.pathname)
   if (pilot) {
     if (pilot.header === "Content-Security-Policy-Report-Only") {
@@ -107,7 +114,12 @@ function redirectWithLocaleCookie(
   href: string,
   locale: string
 ): NextResponse {
-  const response = NextResponse.redirect(new URL(href, req.url))
+  // Next can expose an internal server address behind a reverse proxy. Use
+  // configured origins for public redirects, never a caller's forwarded host.
+  const origin = normalizeTrustedOrigin(process.env.NEXTAUTH_URL)
+    ?? normalizeTrustedOrigin(process.env.NEXT_PUBLIC_BASE_URL)
+    ?? normalizeTrustedOrigin(process.env.NEXT_PUBLIC_APP_URL)
+  const response = NextResponse.redirect(new URL(href, origin ?? req.url))
   response.cookies.set(LOCALE_COOKIE, locale, {
     maxAge: 60 * 60 * 24 * 365,
     path: "/",
@@ -122,6 +134,24 @@ function isAuthenticated(req: NextRequest): boolean {
 
 export default function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl
+  // Run before static skips and the optimizer's URL-keyed cache. Never optimize
+  // private legacy assets: the internal fetch does not carry the user's session.
+  const decodedPath = decodeLegacyPath(pathname)
+  if (decodedPath?.toLowerCase() === "/_next/image" &&
+      isPrivateUploadOptimizerTarget(req.nextUrl.searchParams.get("url"), req.nextUrl.origin)) {
+    return new NextResponse("Private image optimization is unavailable", {
+      status: 400,
+      headers: { "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" },
+    })
+  }
+  const legacyDestination = legacyUploadDestination(pathname)
+  if (legacyDestination) {
+    const destination = req.nextUrl.clone()
+    destination.pathname = legacyDestination
+    const response = NextResponse.rewrite(destination)
+    response.headers.set("Cache-Control", "private, no-store")
+    return applySecurityHeaders(response, pathname)
+  }
   const pathLocale = getLocaleFromPathname(pathname)
   const locale = pathLocale ?? pickLocale(req.cookies.get(LOCALE_COOKIE)?.value)
   const path = stripLocale(pathname)
@@ -214,6 +244,6 @@ export default function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|public/).*)",
+    "/((?!_next/static|favicon.ico|public/).*)",
   ],
 }

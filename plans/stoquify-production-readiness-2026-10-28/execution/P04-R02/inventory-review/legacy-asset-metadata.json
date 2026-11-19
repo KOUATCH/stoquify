@@ -1,0 +1,78 @@
+{
+  "observedAt": "2026-10-29T12:27:59.794Z",
+  "evidenceClass": "source-and-filesystem-metadata-only",
+  "boundaries": [
+    "No application imports",
+    "No environment files read or loaded",
+    "No database or network access",
+    "No image contents read/rendered",
+    "No application changes"
+  ],
+  "scope": {
+    "sourceRoots": [
+      "actions",
+      "app",
+      "components",
+      "lib",
+      "services",
+      "prisma",
+      "scripts",
+      "types",
+      "config",
+      "hooks",
+      "src",
+      "_legacy-dashboard",
+      "tests",
+      "__tests__",
+      "validations"
+    ],
+    "rootFiles": [
+      "next.config.mjs",
+      "middleware.ts",
+      "package.json",
+      ".gitignore"
+    ],
+    "excludedDirectories": [
+      "node_modules",
+      ".git",
+      "graphify-out",
+      ".next",
+      "coverage",
+      "generated",
+      "migrations"
+    ],
+    "limitations": "Lexical discovery and AST JSX inventory are bounded to listed source roots/extensions. No database-reference prevalence or deployed/CDN/cache state is asserted."
+  },
+  "root": "public/uploads",
+  "exists": true,
+  "entries": [
+    {
+      "path": "public/uploads/cmp_org_005",
+      "kind": "directory",
+      "bytes": null,
+      "modifiedUtc": "2026-08-05T17:20:37.174Z",
+      "contentsRead": false
+    },
+    {
+      "path": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "kind": "file",
+      "bytes": 16399,
+      "modifiedUtc": "2026-08-05T17:06:11.276Z",
+      "contentsRead": false
+    },
+    {
+      "path": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "kind": "file",
+      "bytes": 261826,
+      "modifiedUtc": "2026-08-05T15:17:44.779Z",
+      "contentsRead": false
+    },
+    {
+      "path": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "kind": "file",
+      "bytes": 182909,
+      "modifiedUtc": "2026-08-05T16:30:45.094Z",
+      "contentsRead": false
+    }
+  ]
+}

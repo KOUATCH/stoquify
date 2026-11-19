@@ -1,0 +1,499 @@
+{
+  "schemaVersion": 1,
+  "packageId": "P04-R06",
+  "at": "2026-11-10T11:47:52.501Z",
+  "reviewer": "/root/r06_source_resume",
+  "observerAuthorshipDisclosed": true,
+  "independentAcceptanceOwner": "/root/r06_review",
+  "observationAccepted": true,
+  "passed": false,
+  "verdict": "ACTUAL_OUTCOMES_ACCEPTED_STRICT_BROWSER_GATE_FAILED_CONFIRMED_CANCELLATIONS",
+  "result": {
+    "path": "browser/browser-diagnostic-attempt04/result.json",
+    "sha256": "e2bd19a57a0f635141891441cdbc62428ce312a8684a7c77b1a359d0b5fd5318"
+  },
+  "summary": {
+    "planned": 6,
+    "passed": 2,
+    "failed": 4,
+    "notRun": 0,
+    "observations": 6,
+    "responses": 18,
+    "primaryBodyReadErrorsRetained": 8,
+    "independentlyRecoveredBodies": 0,
+    "incompleteResponseEvidence": 8,
+    "protocolCompletionRecoveries": 0
+  },
+  "visualInspection": {
+    "inspectedScreenshots": [
+      {
+        "label": "en-authorized",
+        "path": "/en/dashboard/profile",
+        "privateEmailVisible": true,
+        "loginVisible": false,
+        "profileUnavailable": false,
+        "textSha256": "6a431d364e183ec7eca9b2c609750d61dd39531ec0f349ba40cbd1ba1fe34df7",
+        "screenshot": "en-authorized.png",
+        "at": "2026-11-10T11:44:22.469Z",
+        "screenshotSha256": "b07227ed9538e985544f2e7135ced3af5eb0eb54ac3ade9f799cb949d157e811",
+        "actualSha256": "b07227ed9538e985544f2e7135ced3af5eb0eb54ac3ade9f799cb949d157e811",
+        "visuallyConfirmed": true
+      },
+      {
+        "label": "en-invalidated-reload",
+        "path": "/en/login",
+        "privateEmailVisible": false,
+        "loginVisible": true,
+        "profileUnavailable": false,
+        "textSha256": "a2bee6cbc617ddd2251444c3034000bbab4f31234dbe6b1ecd2ecc52c8b87e7f",
+        "screenshot": "en-invalidated-reload.png",
+        "at": "2026-11-10T11:44:50.883Z",
+        "screenshotSha256": "d15770a07d7cf250d0d858ab6a7a5a9ff771d1ee0628482e116a0b62240d905f",
+        "actualSha256": "d15770a07d7cf250d0d858ab6a7a5a9ff771d1ee0628482e116a0b62240d905f",
+        "visuallyConfirmed": true
+      },
+      {
+        "label": "en-restored",
+        "path": "/en/dashboard/profile",
+        "privateEmailVisible": true,
+        "loginVisible": false,
+        "profileUnavailable": false,
+        "textSha256": "c61bc8ea95ccabec3d1dbef6baf5fc2459021974225bccc41bcee9e15b71cec9",
+        "screenshot": "en-restored.png",
+        "at": "2026-11-10T11:45:00.093Z",
+        "screenshotSha256": "d908f9060e9297e09b5e6f64bfe7fc950595da871ec5ead03d9c745b8552212e",
+        "actualSha256": "d908f9060e9297e09b5e6f64bfe7fc950595da871ec5ead03d9c745b8552212e",
+        "visuallyConfirmed": true
+      },
+      {
+        "label": "fr-authorized",
+        "path": "/fr/dashboard/profile",
+        "privateEmailVisible": true,
+        "loginVisible": false,
+        "profileUnavailable": false,
+        "textSha256": "131ab85d1ab2382b5558e94964a582a933894a756f5960ba978713bd9029477e",
+        "screenshot": "fr-authorized.png",
+        "at": "2026-11-10T11:45:26.931Z",
+        "screenshotSha256": "d0967e2944e12a1814074b6b5afb885681ca58b3f7f8a2d9ee39ff40cba01f88",
+        "actualSha256": "d0967e2944e12a1814074b6b5afb885681ca58b3f7f8a2d9ee39ff40cba01f88",
+        "visuallyConfirmed": true
+      },
+      {
+        "label": "fr-invalidated-reload",
+        "path": "/fr/login",
+        "privateEmailVisible": false,
+        "loginVisible": true,
+        "profileUnavailable": false,
+        "textSha256": "0123dc79845fed69019e976d8b6fe46b1135e7a88786160d8a01a866850aac6f",
+        "screenshot": "fr-invalidated-reload.png",
+        "at": "2026-11-10T11:45:53.127Z",
+        "screenshotSha256": "0eb7b75b95d19e98d530146c09b40005170cb2f3f3ec3be52a24514012d8ad97",
+        "actualSha256": "0eb7b75b95d19e98d530146c09b40005170cb2f3f3ec3be52a24514012d8ad97",
+        "visuallyConfirmed": true
+      },
+      {
+        "label": "fr-restored",
+        "path": "/fr/dashboard/profile",
+        "privateEmailVisible": true,
+        "loginVisible": false,
+        "profileUnavailable": false,
+        "textSha256": "7978d885379fb1c8b6c99ed852b8a5eba95a0e6e090c28a92a91c5cb0e86d7b9",
+        "screenshot": "fr-restored.png",
+        "at": "2026-11-10T11:46:03.130Z",
+        "screenshotSha256": "e76d496bb63213c65b98b2f991dba03d8839fcb4a97d5fd782e52be9d0f9b0e1",
+        "actualSha256": "e76d496bb63213c65b98b2f991dba03d8839fcb4a97d5fd782e52be9d0f9b0e1",
+        "visuallyConfirmed": true
+      }
+    ],
+    "description": "All six screenshots inspected. Four authorized/restored EN/FR views show the correct synthetic actor and current account profile. Both revoked reloads show localized login without visible actor email, private profile or tenant shell. The FR null-body observer race from03 no longer occurs."
+  },
+  "nativeRecomparison": [
+    {
+      "id": "R06-UI-en-authorized",
+      "before": "snapshot-R06-UI-en-authorized-diagnostic04-before-1794311057779-eb36793f-c577-4b9d-9cbd-cb9170e4d69b.json",
+      "beforeSha256": "aeefb6eec93584ac4b6500c43e5cda5cd2674885ab97d57b4f2d11a71b4f14d3",
+      "after": "snapshot-R06-UI-en-authorized-diagnostic04-after-1794311083991-f050d29c-bc2f-45f0-8838-992530034119.json",
+      "afterSha256": "2ae1bc831007b113568c13ed0449c51ffd47aaae8256d6420656e9a732b7e408",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    },
+    {
+      "id": "R06-UI-en-invalidated-reload",
+      "before": "snapshot-R06-UI-en-invalidated-reload-diagnostic04-before-1794311087846-36f7d39f-4aa7-4ad2-a51b-616f02ff8707.json",
+      "beforeSha256": "dd3f1ebee8ea1dfe3bae6ad0968568e30ad967b058e1b35580a17002669cc9c8",
+      "after": "snapshot-R06-UI-en-invalidated-reload-diagnostic04-after-1794311094179-6500cf16-9a64-4210-85a5-51c1e85ac617.json",
+      "afterSha256": "af3446673e4064c62489a1df4389be3ff3560d2a787a2d00dc8e6458eb418eba",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    },
+    {
+      "id": "R06-UI-en-restored",
+      "before": "snapshot-R06-UI-en-restored-diagnostic04-before-1794311097237-d862dfaf-9e7d-4435-8c9c-511507beb957.json",
+      "beforeSha256": "1bf04ef8133b726b9cf7022fcc2ce0e43ac84633a5f7c6ab5cc6e30737bc2487",
+      "after": "snapshot-R06-UI-en-restored-diagnostic04-after-1794311120524-49593707-314d-4638-a412-f066d08ea3f9.json",
+      "afterSha256": "396728d0ceebbe37a2621a4621a98be877a9b0c53e5be79e81d1beed2a966fcd",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    },
+    {
+      "id": "R06-UI-fr-authorized",
+      "before": "snapshot-R06-UI-fr-authorized-diagnostic04-before-1794311123618-513495c1-c2d0-4a50-94ca-aee70494d5a5.json",
+      "beforeSha256": "95d289a08ac47b44f9662b0647ec540dc357ed1e4fcb5bc8c416e6581f83ab9e",
+      "after": "snapshot-R06-UI-fr-authorized-diagnostic04-after-1794311148122-cc1f1e55-ab02-4a09-8710-e407f029c516.json",
+      "afterSha256": "2fd04bc2ca4af2ab5e0541cf7c53adf31da5318a6f3ede94394ecb70a0bd079d",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    },
+    {
+      "id": "R06-UI-fr-invalidated-reload",
+      "before": "snapshot-R06-UI-fr-invalidated-reload-diagnostic04-before-1794311150456-bae0e6cd-f2b8-4d3a-9733-f918937ad64c.json",
+      "beforeSha256": "f584ed7bab2043682fc3cefaea39b9fe46b2ffa08dd1a6eb1d04dddf7dddd7e8",
+      "after": "snapshot-R06-UI-fr-invalidated-reload-diagnostic04-after-1794311156282-bbb92f79-9c9f-4ffa-9dae-0bda5ab51832.json",
+      "afterSha256": "5ca1def03cfad728b334de4f90d9b5349c06b0f4be7e1a759061486cd3290b89",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    },
+    {
+      "id": "R06-UI-fr-restored",
+      "before": "snapshot-R06-UI-fr-restored-diagnostic04-before-1794311159436-d2794268-8c7e-47e3-af7c-ff992eb0f3fe.json",
+      "beforeSha256": "691c21aa66fb086cc3cd31bcfb2c630899a36802abe4accc0935ac31087e46b8",
+      "after": "snapshot-R06-UI-fr-restored-diagnostic04-after-1794311184690-289ea68c-e76f-4d56-86ae-4b0e3b60e471.json",
+      "afterSha256": "bb714ee0dec9d3f16c5af0e743ed29f35c5d869c4e537614fd1ab0f5db924074",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    }
+  ],
+  "protocolEvidence": {
+    "responses": 18,
+    "successfulCurrentSubjectSessionResponses": 4,
+    "cancellations": [
+      {
+        "sequence": 2,
+        "label": "en-authorized",
+        "method": "GET",
+        "path": "/fr/dashboard/profile",
+        "status": 200,
+        "prefetch": true,
+        "resourceType": "fetch",
+        "navigation": false,
+        "captureId": "c06bcc24-55f7-4c46-b792-d17337f1d073",
+        "requestId": "34500.94",
+        "terminal": {
+          "kind": "loadingFailed",
+          "timestamp": 554918.804322,
+          "errorText": "net::ERR_ABORTED",
+          "canceled": true,
+          "blockedReason": null,
+          "corsErrorStatus": null
+        },
+        "decodedLengthObservedByBrowser": 414498,
+        "independentDecodedLength": 414498,
+        "lengthsEqual": true,
+        "browserEncodedDataLength": 111175,
+        "independentWireLength": 111066,
+        "bridgeComplete": true,
+        "downstreamFinished": true,
+        "issues": [
+          "browser_protocol_completion_unconfirmed",
+          "browser_protocol_network_failure",
+          "browser_protocol_encoded_length_unavailable",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 4,
+        "label": "en-authorized",
+        "method": "POST",
+        "path": "/en/dashboard/profile",
+        "status": 200,
+        "prefetch": false,
+        "resourceType": "fetch",
+        "navigation": false,
+        "captureId": "22f9be37-414d-48eb-8a4e-de00d4bc3997",
+        "requestId": "34500.95",
+        "terminal": {
+          "kind": "loadingFailed",
+          "timestamp": 554919.787805,
+          "errorText": "net::ERR_ABORTED",
+          "canceled": true,
+          "blockedReason": null,
+          "corsErrorStatus": null
+        },
+        "decodedLengthObservedByBrowser": 372398,
+        "independentDecodedLength": 372398,
+        "lengthsEqual": true,
+        "browserEncodedDataLength": 103754,
+        "independentWireLength": 103578,
+        "bridgeComplete": true,
+        "downstreamFinished": true,
+        "issues": [
+          "browser_protocol_completion_unconfirmed",
+          "browser_protocol_network_failure",
+          "browser_protocol_encoded_length_unavailable",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 7,
+        "label": "en-restored",
+        "method": "GET",
+        "path": "/fr/dashboard/profile",
+        "status": 200,
+        "prefetch": true,
+        "resourceType": "fetch",
+        "navigation": false,
+        "captureId": "b8c17690-d582-40af-9ece-90b99d9ec6d2",
+        "requestId": "15860.100",
+        "terminal": {
+          "kind": "loadingFailed",
+          "timestamp": 554956.71973,
+          "errorText": "net::ERR_ABORTED",
+          "canceled": true,
+          "blockedReason": null,
+          "corsErrorStatus": null
+        },
+        "decodedLengthObservedByBrowser": 414498,
+        "independentDecodedLength": 414498,
+        "lengthsEqual": true,
+        "browserEncodedDataLength": 111176,
+        "independentWireLength": 111067,
+        "bridgeComplete": true,
+        "downstreamFinished": true,
+        "issues": [
+          "browser_protocol_completion_unconfirmed",
+          "browser_protocol_network_failure",
+          "browser_protocol_encoded_length_unavailable",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 9,
+        "label": "en-restored",
+        "method": "POST",
+        "path": "/en/dashboard/profile",
+        "status": 200,
+        "prefetch": false,
+        "resourceType": "fetch",
+        "navigation": false,
+        "captureId": "eaff3455-ee28-4589-9b10-49fb67670277",
+        "requestId": "15860.101",
+        "terminal": {
+          "kind": "loadingFailed",
+          "timestamp": 554957.425508,
+          "errorText": "net::ERR_ABORTED",
+          "canceled": true,
+          "blockedReason": null,
+          "corsErrorStatus": null
+        },
+        "decodedLengthObservedByBrowser": 372398,
+        "independentDecodedLength": 372398,
+        "lengthsEqual": true,
+        "browserEncodedDataLength": 103751,
+        "independentWireLength": 103575,
+        "bridgeComplete": true,
+        "downstreamFinished": true,
+        "issues": [
+          "browser_protocol_completion_unconfirmed",
+          "browser_protocol_network_failure",
+          "browser_protocol_encoded_length_unavailable",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 11,
+        "label": "fr-authorized",
+        "method": "GET",
+        "path": "/en/dashboard/profile",
+        "status": 200,
+        "prefetch": true,
+        "resourceType": "fetch",
+        "navigation": false,
+        "captureId": "16b22f64-85e5-4a20-9dd2-321f3ee921e6",
+        "requestId": "14028.100",
+        "terminal": {
+          "kind": "loadingFailed",
+          "timestamp": 554983.857465,
+          "errorText": "net::ERR_ABORTED",
+          "canceled": true,
+          "blockedReason": null,
+          "corsErrorStatus": null
+        },
+        "decodedLengthObservedByBrowser": 361146,
+        "independentDecodedLength": 361146,
+        "lengthsEqual": true,
+        "browserEncodedDataLength": 99182,
+        "independentWireLength": 99070,
+        "bridgeComplete": true,
+        "downstreamFinished": true,
+        "issues": [
+          "browser_protocol_completion_unconfirmed",
+          "browser_protocol_network_failure",
+          "browser_protocol_encoded_length_unavailable",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 13,
+        "label": "fr-authorized",
+        "method": "POST",
+        "path": "/fr/dashboard/profile",
+        "status": 200,
+        "prefetch": false,
+        "resourceType": "fetch",
+        "navigation": false,
+        "captureId": "4cdb7f45-ab36-4a9e-b20e-af76ac8b1350",
+        "requestId": "14028.101",
+        "terminal": {
+          "kind": "loadingFailed",
+          "timestamp": 554984.259932,
+          "errorText": "net::ERR_ABORTED",
+          "canceled": true,
+          "blockedReason": null,
+          "corsErrorStatus": null
+        },
+        "decodedLengthObservedByBrowser": 425756,
+        "independentDecodedLength": 425756,
+        "lengthsEqual": true,
+        "browserEncodedDataLength": 115753,
+        "independentWireLength": 115569,
+        "bridgeComplete": true,
+        "downstreamFinished": true,
+        "issues": [
+          "browser_protocol_completion_unconfirmed",
+          "browser_protocol_network_failure",
+          "browser_protocol_encoded_length_unavailable",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 16,
+        "label": "fr-restored",
+        "method": "GET",
+        "path": "/en/dashboard/profile",
+        "status": 200,
+        "prefetch": true,
+        "resourceType": "fetch",
+        "navigation": false,
+        "captureId": "7c98e5c1-054a-44e1-be10-ae736550e0fa",
+        "requestId": "15532.100",
+        "terminal": {
+          "kind": "loadingFailed",
+          "timestamp": 555019.709252,
+          "errorText": "net::ERR_ABORTED",
+          "canceled": true,
+          "blockedReason": null,
+          "corsErrorStatus": null
+        },
+        "decodedLengthObservedByBrowser": 361146,
+        "independentDecodedLength": 361146,
+        "lengthsEqual": true,
+        "browserEncodedDataLength": 98882,
+        "independentWireLength": 99070,
+        "bridgeComplete": true,
+        "downstreamFinished": true,
+        "issues": [
+          "browser_protocol_completion_unconfirmed",
+          "browser_protocol_network_failure",
+          "browser_protocol_encoded_length_unavailable",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 18,
+        "label": "fr-restored",
+        "method": "POST",
+        "path": "/fr/dashboard/profile",
+        "status": 200,
+        "prefetch": false,
+        "resourceType": "fetch",
+        "navigation": false,
+        "captureId": "743f7ed4-c0f2-4d52-b93a-8b324dc1a44f",
+        "requestId": "15532.101",
+        "terminal": {
+          "kind": "loadingFailed",
+          "timestamp": 555020.332579,
+          "errorText": "net::ERR_ABORTED",
+          "canceled": true,
+          "blockedReason": null,
+          "corsErrorStatus": null
+        },
+        "decodedLengthObservedByBrowser": 425756,
+        "independentDecodedLength": 425756,
+        "lengthsEqual": true,
+        "browserEncodedDataLength": 115758,
+        "independentWireLength": 115574,
+        "bridgeComplete": true,
+        "downstreamFinished": true,
+        "issues": [
+          "browser_protocol_completion_unconfirmed",
+          "browser_protocol_network_failure",
+          "browser_protocol_encoded_length_unavailable",
+          "browser_response_completion_unconfirmed"
+        ]
+      }
+    ],
+    "deniedResponses": [
+      {
+        "sequence": 5,
+        "label": "en-invalidated-reload",
+        "status": 200,
+        "qualified": true,
+        "containsActorCanary": false,
+        "terminal": {
+          "kind": "loadingFinished",
+          "timestamp": 554946.346429,
+          "encodedDataLength": 110618
+        }
+      },
+      {
+        "sequence": 14,
+        "label": "fr-invalidated-reload",
+        "status": 200,
+        "qualified": true,
+        "containsActorCanary": false,
+        "terminal": {
+          "kind": "loadingFinished",
+          "timestamp": 555008.672977,
+          "encodedDataLength": 122654
+        }
+      }
+    ],
+    "interpretation": "Eight original RSC responses are exactly attributed to real CDP loadingFailed/net::ERR_ABORTED/canceled:true. Complete original bridge bytes and exact decoded byte-count totals do not convert canceled transfers into loadingFinished or prove all payload bytes were consumed by the application. Both denied profile documents finished, contain no actor canary and cause no writes. Strict positive/restored cases remain failed."
+  },
+  "limits": [
+    "No waiver or reinterpretation of prior raw failures.",
+    "No new product changes, browser execution or database queries by this observer author.",
+    "Primary independent reviewer must accept actual outcomes.",
+    "No accessibility, visual-design, mobile, BFCache or R07 certification."
+  ]
+}

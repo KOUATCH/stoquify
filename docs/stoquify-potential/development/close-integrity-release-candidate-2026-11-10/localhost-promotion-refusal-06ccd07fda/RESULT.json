@@ -1,0 +1,55 @@
+{
+  "began": "2026-11-10T21:08:51.672Z",
+  "passed": true,
+  "classification": "Actual named CLI refusal of explicitly owned localhost target; no production promotion",
+  "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-d581d56c11\\candidate",
+  "database": "stoquify_replay_close_monthly_20261110_00f0345d42",
+  "sourceManifestSha256": "5927a9e593e1a5a467c1156dcd06feb2e64948e1c19e971c2a5688b760203093",
+  "emittedDigestReceiptSha256": "495c502859709f85d5b974306b6ba46b9a0ed0057f4a1fd94e156848aedf3930",
+  "artifactSha256": "529513478dc7d5245a3ab1cf9ef35e30613004c1d1c9c0d8de80eda4699554ee",
+  "buildId": "9Rbh3LK-fOIO8T0G5B8S4",
+  "artifactQualificationSha256": "80c16983453016bab8a43847f00b960e810903a04a004d9366af20da62f56173",
+  "privateConfigurationSha256": "0eae38dc6a9b0e4267d2b0f148d296694125385d5427190e21a5f967c15f3faa",
+  "sourceBinding": [
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "scripts/promote-release-schema.cjs",
+      "sha256": "4528b01b3f231838cd8d98c8f5a50995c390df5d166ec3c2114c931375d9ed28"
+    },
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"
+    },
+    {
+      "path": "scripts/prisma-production-migration-gate.js",
+      "sha256": "1ee29e6674f53eec17c473bb225bd6e5d83bfaa1453e5490ca4259eec3e72008"
+    },
+    {
+      "path": "scripts/local-gates-network.cjs",
+      "sha256": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e"
+    }
+  ],
+  "runnerSha256": "d02a9df33b22155634860b0fa6d8b614c8502ca8cb5eb490b404391e769768de",
+  "checks": [
+    {
+      "name": "Actual named npm command rejects localhost after trusted artifact verification",
+      "passed": true,
+      "exitCode": 1,
+      "refusal": "database_target_is_local"
+    },
+    {
+      "name": "Native coverage proves exported lock and migration child launcher were never called",
+      "passed": true,
+      "lockCalls": 0,
+      "migrationLauncherCalls": 0,
+      "actualArtifactVerificationCalls": 1
+    }
+  ],
+  "ownedClusterStoppedBeforeAndAfter": true,
+  "databasePromoted": false,
+  "applicationDeployed": false,
+  "ended": "2026-11-10T21:09:11.687Z"
+}

@@ -1,0 +1,142 @@
+{
+  "at": "2026-11-10T08:58:43.360Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Exact successor source-refresh and conditional isolated build-retry recipe admission; no observed result",
+  "files": [
+    {
+      "path": "refresh-candidate-attempt02-v2.cjs",
+      "sha256": "002e9b382e0943e193d966653672b13677000b340201da57c4808af6dc0c5e63",
+      "syntaxExit": 0
+    },
+    {
+      "path": "run-build-attempt02-v2.cjs",
+      "sha256": "b5d4b126cc426b1dfd8037cfdf76f87ca881c515f41596fd2510739a6ddeb9eb",
+      "syntaxExit": 0
+    },
+    {
+      "path": "check-resources-attempt02-v2.cjs",
+      "sha256": "1e4255e45b06aebea9bc5094c7a08c890032199b0c33aeb3b0d5758710bb19ae",
+      "syntaxExit": 0
+    },
+    {
+      "path": "resource-snapshot-attempt02.ps1",
+      "sha256": "f7c83e373431777de4abad4daafb440b7d2db66e726038a37eb8001e6bc9c326"
+    },
+    {
+      "path": "environment-guard.cjs",
+      "sha256": "1e7ca667274a069547ec989391e9789716d6621d72c952806b24ead147f1d28e",
+      "syntaxExit": 0
+    },
+    {
+      "path": "verify-generated-schema.cjs",
+      "sha256": "f0c73d0ed95fa45c328006c04607b8b129b7347400a3d96292914aa4170d1d93",
+      "syntaxExit": 0
+    },
+    {
+      "path": "candidate-context.json",
+      "sha256": "38887252910e9d2686e1c49512868a618a28f058149e8651a831600908e41caa"
+    },
+    {
+      "path": "candidate-source-manifest.json",
+      "sha256": "f38c8543ceff127e8f146dbf0e86646cd35fbb7da30de4de29c1d3434078f280"
+    },
+    {
+      "path": "preparation.json",
+      "sha256": "155e4d88b069cdf5fcf2df4d8946100f15b4eb6334d6c1159dfeb878a45cba89"
+    },
+    {
+      "path": "dependency-reconciliation.json",
+      "sha256": "6626e0e29f73ef084f8318a0d968dabf84cff527e9c7a3cc1818f6adbd5564a6"
+    },
+    {
+      "path": "inventory/source-after-manifest-v4.json",
+      "sha256": "ec1a3785e9140629889e2dd4e8f4a5efa174088967ee1f3beb111838ce127e70"
+    },
+    {
+      "path": "inventory/resume-20261110-r1/CURRENT-FULL-SOURCE-MANIFEST.json",
+      "sha256": "762c971bba9a54bd51b7f120787986adc7c271e7d6fc8c49febe93c28a8de163"
+    },
+    {
+      "path": "independent-review/REPAIR-SOURCE-ADMISSION-v3.json",
+      "sha256": "36edc8ac27f762c062a9c76f46a55c444522f62a03b0ad54165252f6b535d571"
+    },
+    {
+      "path": "independent-review/FULL-SOURCE-DELTA-ADMISSION-attempt02.json",
+      "sha256": "580035d21bfc1034b0657d480f8d1052b1f75dcdd0eed2605745ec6d54fe3595"
+    },
+    {
+      "path": "independent-review/UNIT-OUTCOME-REVIEW-v3.json",
+      "sha256": "776aaf7bcd9a71ea0698776a78f51f427609f441ccb872eb480e7b4fe3ecff75"
+    }
+  ],
+  "delegatedInputs": [
+    {
+      "path": "scripts/candidate-snapshot.cjs",
+      "rootSha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46",
+      "candidateSha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    },
+    {
+      "path": "scripts/release-artifact.cjs",
+      "rootSha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c",
+      "candidateSha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"
+    },
+    {
+      "path": "scripts/build-app-safe.js",
+      "rootSha256": "c45e5d883a8f93a996227977ad85df4725f7d9e4ef54d37067927e2286f8f68d",
+      "candidateSha256": "c45e5d883a8f93a996227977ad85df4725f7d9e4ef54d37067927e2286f8f68d"
+    },
+    {
+      "path": "next.config.mjs",
+      "rootSha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf",
+      "candidateSha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf"
+    },
+    {
+      "path": "prisma.config.ts",
+      "rootSha256": "9ca041eb60d478f2284a37417ff230927c92cff0d675342d8262dea57e516737",
+      "candidateSha256": "9ca041eb60d478f2284a37417ff230927c92cff0d675342d8262dea57e516737"
+    },
+    {
+      "path": "package.json",
+      "rootSha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "candidateSha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "package-lock.json",
+      "rootSha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "candidateSha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "node_modules/typescript/lib/typescript.js",
+      "rootSha256": "dd17428736a07e1db1a138d8a14295ddb2699ba780ee15038acdd2c6da5373a0",
+      "candidateSha256": "dd17428736a07e1db1a138d8a14295ddb2699ba780ee15038acdd2c6da5373a0"
+    }
+  ],
+  "permittedNow": "Lightweight exact current-source refresh with preserved old versions/output and no DB/application execution",
+  "buildCurrentlyEligible": false,
+  "resourceReason": "Actual latest resource receipt failed physical and commit headroom. Build remains blocked until fresh independent resource gates pass.",
+  "reviewFindings": [
+    "Refresh requires the exact 9,788-file current manifest and 69-file delta; four old source versions are retained and 65 current documents added. All 63 critical inputs and private aliases are rechecked.",
+    "Every move and write target resolves within the exact owned D: storage; links are rejected. Old .next output is renamed on the same volume and never deleted.",
+    "TypeScript config input lists are compared before and after preservation; parser proof makes no typecheck or emit claim.",
+    "Build verifies exact current root and candidate source, 63 selected inputs and independent candidate-refresh outcome before work.",
+    "Default heap, Next configuration, type/lint behavior and the ordinary release:artifact path remain unchanged.",
+    "Fresh capacity is checked at admission and immediately before compilation; failed checks stop the build.",
+    "Exact local database name, real data directory, migration checksums and empty business tables are required before generation/build.",
+    "Only the private copied client is regenerated; attempt02 environment, logs, receipts and artifact paths are exclusive.",
+    "Existing task-only secrets are reused privately without output; external-network and environment-file guards remain.",
+    "Prior failure, source and admissions are preserved; the new artifact must verify exact source and private-alias exclusion."
+  ],
+  "conditions": [
+    "Review the actual candidate-refresh outcome and set CANDIDATE-REFRESH-OUTCOME-attempt02.json before build.",
+    "Do not run a costly build against a failed or stale capacity receipt; do not terminate unrelated processes or change global settings.",
+    "Retained database resume needs its separate exact recipe admission and successful identity/fixture checks.",
+    "Any input change requires new admission; original interrupted or failed recipes must not be rerun.",
+    "Runtime, browser and direct API attempt02 need successor path and recipe admission after artifact success."
+  ],
+  "limitations": [
+    "No new build, full typecheck, runtime or production approval.",
+    "Thresholds are conservative heuristics, not a capacity guarantee.",
+    "Installed dependency reuse is not clean-install proof."
+  ]
+}

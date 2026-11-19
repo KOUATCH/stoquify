@@ -1,0 +1,2918 @@
+{
+  "at": "2026-11-10T11:13:53.508Z",
+  "package": "P04-R06",
+  "passed": false,
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "scope": "Observed local qualification evidence; independent acceptance and production remain separate",
+  "counts": {
+    "planned": 58,
+    "observed": 58,
+    "passed": 53,
+    "failed": 5,
+    "not_run": 0,
+    "by_lane": {
+      "real_http_database": {
+        "planned": 51,
+        "passed": 49,
+        "failed": 2,
+        "not_run": 0
+      },
+      "isolated_real_database_server_api": {
+        "planned": 1,
+        "passed": 1,
+        "failed": 0,
+        "not_run": 0
+      },
+      "rendered_browser": {
+        "planned": 6,
+        "passed": 3,
+        "failed": 3,
+        "not_run": 0
+      }
+    }
+  },
+  "inherited": [
+    {
+      "prior_case": "authRevoked-get-session",
+      "classification": "private_core_auth_response_under_invalid_current_authority",
+      "r06_case": "R06-N-revoked-get-session",
+      "prior_evidence": "P04-V02/qualification-20261109-r1/independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+      "runtime_status": "passed",
+      "prior_runtime_status": "pending",
+      "outcome_pointer": "runtime-result-attempt02.json#/auth/checks/7"
+    },
+    {
+      "prior_case": "authRevoked-list-sessions",
+      "classification": "private_core_auth_response_under_invalid_current_authority",
+      "r06_case": "R06-N-revoked-list-sessions",
+      "prior_evidence": "P04-V02/qualification-20261109-r1/independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+      "runtime_status": "passed",
+      "prior_runtime_status": "pending",
+      "outcome_pointer": "runtime-result-attempt02.json#/auth/checks/8"
+    },
+    {
+      "prior_case": "authRevoked-list-accounts",
+      "classification": "private_core_auth_response_under_invalid_current_authority",
+      "r06_case": "R06-N-revoked-list-accounts",
+      "prior_evidence": "P04-V02/qualification-20261109-r1/independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+      "runtime_status": "passed",
+      "prior_runtime_status": "pending",
+      "outcome_pointer": "runtime-result-attempt02.json#/auth/checks/9"
+    },
+    {
+      "prior_case": "authRevoked-unlink",
+      "classification": "unauthorized_authentication_account_deletion",
+      "r06_case": "R06-N-revoked-unlink-account",
+      "prior_evidence": "P04-V02/qualification-20261109-r1/independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+      "runtime_status": "passed",
+      "prior_runtime_status": "pending",
+      "outcome_pointer": "runtime-result-attempt02.json#/auth/checks/10"
+    },
+    {
+      "prior_case": "authExpired-get-session",
+      "classification": "private_core_auth_response_under_invalid_current_authority",
+      "r06_case": "R06-N-expired-get-session",
+      "prior_evidence": "P04-V02/qualification-20261109-r1/independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+      "runtime_status": "passed",
+      "prior_runtime_status": "pending",
+      "outcome_pointer": "runtime-result-attempt02.json#/auth/checks/16"
+    },
+    {
+      "prior_case": "authExpired-list-sessions",
+      "classification": "private_core_auth_response_under_invalid_current_authority",
+      "r06_case": "R06-N-expired-list-sessions",
+      "prior_evidence": "P04-V02/qualification-20261109-r1/independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+      "runtime_status": "passed",
+      "prior_runtime_status": "pending",
+      "outcome_pointer": "runtime-result-attempt02.json#/auth/checks/17"
+    },
+    {
+      "prior_case": "authExpired-list-accounts",
+      "classification": "private_core_auth_response_under_invalid_current_authority",
+      "r06_case": "R06-N-expired-list-accounts",
+      "prior_evidence": "P04-V02/qualification-20261109-r1/independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+      "runtime_status": "passed",
+      "prior_runtime_status": "pending",
+      "outcome_pointer": "runtime-result-attempt02.json#/auth/checks/18"
+    },
+    {
+      "prior_case": "authExpired-unlink",
+      "classification": "unauthorized_authentication_account_deletion",
+      "r06_case": "R06-N-expired-unlink-account",
+      "prior_evidence": "P04-V02/qualification-20261109-r1/independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+      "runtime_status": "passed",
+      "prior_runtime_status": "pending",
+      "outcome_pointer": "runtime-result-attempt02.json#/auth/checks/19"
+    },
+    {
+      "prior_case": "inactive-cached-core-session",
+      "classification": "private_core_auth_response_under_invalid_current_authority",
+      "r06_case": "R06-N-inactive-get-session",
+      "prior_evidence": "P04-V02/qualification-20261109-r1/independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+      "runtime_status": "passed",
+      "prior_runtime_status": "pending",
+      "outcome_pointer": "runtime-result-attempt02.json#/auth/checks/25"
+    }
+  ],
+  "checks": [
+    {
+      "id": "R06-P-get-session",
+      "lane": "real_http_database",
+      "title": "Active own-account read remains functional",
+      "status": "passed",
+      "acceptance": [
+        "200 with only current actor-owned fields; independent same-actor session remains valid; no foreign actor canaries.",
+        "Native read effects unchanged except explicitly reviewed session-refresh bookkeeping."
+      ],
+      "observed": {
+        "id": "R06-P-get-session",
+        "startedAt": "2026-11-10T11:02:51.894Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-P-get-session-before-1794308573621-5b5e78b6-b125-41fc-b1d6-9de01aaeb7a2.json",
+          "after": "snapshot-R06-P-get-session-after-1794308575553-29d0e8a3-37c3-4d8b-8224-72d1b0226117.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-P-get-session",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 714,
+          "sha256": "ce82027efb470396f07c7006983293075e782dd274c86364820bbed68ebc64f7",
+          "cacheControl": null,
+          "hasPrivateCanary": true,
+          "hasUser": true,
+          "hasSession": true,
+          "hasTokenField": true,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:02:55.565Z"
+      }
+    },
+    {
+      "id": "R06-P-list-sessions",
+      "lane": "real_http_database",
+      "title": "Active own-account read remains functional",
+      "status": "passed",
+      "acceptance": [
+        "200 with only current actor-owned fields; independent same-actor session remains valid; no foreign actor canaries.",
+        "Native read effects unchanged except explicitly reviewed session-refresh bookkeeping."
+      ],
+      "observed": {
+        "id": "R06-P-list-sessions",
+        "startedAt": "2026-11-10T11:02:55.570Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-P-list-sessions-before-1794308577384-0bbf4014-ad4d-4838-8cb1-bf159a1fa2a1.json",
+          "after": "snapshot-R06-P-list-sessions-after-1794308579405-4c31b4c4-6685-4fd1-b394-9f8dc2690eb7.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-P-list-sessions",
+          "path": "/api/auth/list-sessions",
+          "method": "GET",
+          "status": 200,
+          "bytes": 390,
+          "sha256": "eb21988e9d2391c69558dfb82677b6439627b648908ebf41279dd0dcccd6a113",
+          "cacheControl": null,
+          "hasPrivateCanary": true,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": true,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": [],
+          "authorizedRowProof": {
+            "kind": "sessions",
+            "count": 1,
+            "idsSha256": [
+              "4d476260d3765dd66ba6c213e3ecd08b8ef5196c828410b0ae5892ff7c4b5510"
+            ]
+          }
+        },
+        "finishedAt": "2026-11-10T11:02:59.433Z"
+      }
+    },
+    {
+      "id": "R06-P-list-accounts",
+      "lane": "real_http_database",
+      "title": "Active own-account read remains functional",
+      "status": "passed",
+      "acceptance": [
+        "200 with only current actor-owned fields; independent same-actor session remains valid; no foreign actor canaries.",
+        "Native read effects unchanged except explicitly reviewed session-refresh bookkeeping."
+      ],
+      "observed": {
+        "id": "R06-P-list-accounts",
+        "startedAt": "2026-11-10T11:02:59.440Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-P-list-accounts-before-1794308581516-ccd602b0-cafa-40a5-bed8-464616588601.json",
+          "after": "snapshot-R06-P-list-accounts-after-1794308583708-1d11da1c-f862-4197-b3d0-d2c42e7cc6f1.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-P-list-accounts",
+          "path": "/api/auth/list-accounts",
+          "method": "GET",
+          "status": 200,
+          "bytes": 422,
+          "sha256": "6e17867ad3c0948067c3e227f718a4eaec8c0a4a444d4c1bfe36f1fecc62aaab",
+          "cacheControl": null,
+          "hasPrivateCanary": true,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": [],
+          "authorizedRowProof": {
+            "kind": "accounts",
+            "count": 2,
+            "idsSha256": [
+              "08ff7c5d6559b78846ad1a638362b36bf1f7e48ffbbd52430c798e7c6426d231",
+              "bf425577eb6a169bb0e496c537fe09a46f08e039cd6fa60e9d35eaa27ab9f33a"
+            ]
+          }
+        },
+        "finishedAt": "2026-11-10T11:03:03.716Z"
+      }
+    },
+    {
+      "id": "R06-P-verify-password",
+      "lane": "real_http_database",
+      "title": "Current password verification remains functional",
+      "status": "passed",
+      "acceptance": [
+        "200 status true; no native business/account changes."
+      ],
+      "observed": {
+        "id": "R06-P-verify-password",
+        "startedAt": "2026-11-10T11:03:03.719Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-P-verify-password-before-1794308585482-5bcbb97e-6199-4680-a8c8-e7f5cf637ae5.json",
+          "after": "snapshot-R06-P-verify-password-after-1794308587144-d98fc1e1-d638-45d2-89de-e51ff9703536.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-P-verify-password",
+          "path": "/api/auth/verify-password",
+          "method": "POST",
+          "status": 200,
+          "bytes": 15,
+          "sha256": "edc48cd3b0bc4fa7ba23aad40b8508a17d370ca38be174bae2a2f64634e65a2b",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:03:07.176Z"
+      }
+    },
+    {
+      "id": "R06-P-unlink",
+      "lane": "real_http_database",
+      "title": "Authorized own secondary account unlink remains functional",
+      "status": "passed",
+      "acceptance": [
+        "Exactly the selected own secondary account removed; credential and foreign account preserved; no unrelated rows changed."
+      ],
+      "observed": {
+        "id": "R06-P-unlink",
+        "startedAt": "2026-11-10T11:03:07.180Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-P-unlink-before-1794308588981-ed5ea5d6-3140-4970-abb2-a949c26a3b53.json",
+          "after": "snapshot-R06-P-unlink-after-1794308591032-5dd6b1ad-3c99-471a-88d7-75e2c7adca5e.json",
+          "businessEqual": false,
+          "changedBusinessTables": [
+            "accounts"
+          ],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "selectedOwnSecondaryRemoved": true
+        },
+        "finishedAt": "2026-11-10T11:03:11.059Z"
+      }
+    },
+    {
+      "id": "R06-P-profile",
+      "lane": "real_http_database",
+      "title": "Reviewed self-profile route stays functional",
+      "status": "passed",
+      "acceptance": [
+        "Exactly reviewed own-profile delta and expected audit; no foreign or authority field changes."
+      ],
+      "observed": {
+        "id": "R06-P-profile",
+        "startedAt": "2026-11-10T11:03:11.217Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-P-profile-before-1794308593173-4785a72a-f1d4-43a0-963b-c7bc0927f9b1.json",
+          "after": "snapshot-R06-P-profile-after-1794308594811-60cad94f-9dba-4b76-9933-f2cdafb6f126.json",
+          "businessEqual": false,
+          "changedBusinessTables": [
+            "users"
+          ],
+          "sessionsChanged": false,
+          "auditsChanged": true,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": [
+              {
+                "entityType": "SelfProfile",
+                "action": "SELF_PROFILE_UPDATED",
+                "userId": "p04r06-active",
+                "organizationId": "p04-r06-a"
+              }
+            ]
+          },
+          "changedOwnUserFields": [
+            "jobTitle",
+            "updatedAt"
+          ]
+        },
+        "detail": {
+          "reviewedOwnProfileChanged": true
+        },
+        "finishedAt": "2026-11-10T11:03:14.836Z"
+      }
+    },
+    {
+      "id": "R06-P-expired-lock",
+      "lane": "real_http_database",
+      "title": "Expired lock does not block an active account",
+      "status": "passed",
+      "acceptance": [
+        "Current active account with past lockedUntil can read own identity; do not require lock flag reset as a read side effect."
+      ],
+      "observed": {
+        "id": "R06-P-expired-lock",
+        "startedAt": "2026-11-10T11:07:17.956Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-P-expired-lock-before-1794308839819-34ec647b-c878-4353-963e-c7dc68746425.json",
+          "after": "snapshot-R06-P-expired-lock-after-1794308842008-03ed2be5-7a65-4744-a6f8-16a0610e8417.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-P-expired-lock",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 621,
+          "sha256": "9d47223549e05074b320e393e7625916ca94ccc7e6acf196bc964db880512657",
+          "cacheControl": null,
+          "hasPrivateCanary": true,
+          "hasUser": true,
+          "hasSession": true,
+          "hasTokenField": true,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:07:22.036Z"
+      }
+    },
+    {
+      "id": "R06-P-independent-session",
+      "lane": "real_http_database",
+      "title": "Independent surviving same-actor session works after target revocation",
+      "status": "passed",
+      "acceptance": [
+        "Target is revoked, sibling remains unexpired/persisted and returns its current owner; target does not learn sibling token fields."
+      ],
+      "observed": {
+        "id": "R06-P-independent-session",
+        "startedAt": "2026-11-10T11:03:49.827Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-P-independent-session-before-1794308631760-5f2f8389-74c1-432c-ad67-98f3d682b6b7.json",
+          "after": "snapshot-R06-P-independent-session-after-1794308634388-b0f27c1b-c837-4321-9f5a-7ad245ae3608.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "independent-accounts",
+          "path": "/api/auth/list-accounts",
+          "method": "GET",
+          "status": 200,
+          "bytes": 428,
+          "sha256": "20b9606ffeb9856b261cd2f8df384aff3247278f3958263170f04edaa73a9db0",
+          "cacheControl": null,
+          "hasPrivateCanary": true,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": [],
+          "authorizedRowProof": {
+            "kind": "accounts",
+            "count": 2,
+            "idsSha256": [
+              "c880698ad12cac5077ee9ca6ba87dabd7d4ab23132f4103a3943474784b5bf4f",
+              "d52ae45a805371d1d48dfd22cf1f1a6236dd76a2fc87c7145b7629cf91dcecbb"
+            ]
+          }
+        },
+        "finishedAt": "2026-11-10T11:03:54.400Z"
+      }
+    },
+    {
+      "id": "R06-N-revoked-get-session",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies get-session",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-revoked-get-session",
+        "startedAt": "2026-11-10T11:03:54.436Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-revoked-get-session-before-1794308636344-32653d0e-9efb-4676-8538-0acc6dfb467d.json",
+          "after": "snapshot-R06-N-revoked-get-session-after-1794308638341-a90bf079-0236-4717-bc4b-dfd73c9d3aa6.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-revoked-get-session",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 4,
+          "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": [
+            {
+              "name": "set-cookie",
+              "sha256": "d8da1636dd19be6a7c1f79b8b37db5fb016f412129c98eaf1da6ce2982d619e3",
+              "bytes": 86,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            },
+            {
+              "name": "set-cookie",
+              "sha256": "e24e2db04a5c1be690a88e23e3d3c90bfb64da415f45bc7377159a9a435cbc7d",
+              "bytes": 85,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            },
+            {
+              "name": "set-cookie",
+              "sha256": "2a3aa6b5326255cac27d9c405d147190204508b7cc3322daa3ac39c2bb572393",
+              "bytes": 86,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            }
+          ]
+        },
+        "finishedAt": "2026-11-10T11:03:58.368Z"
+      }
+    },
+    {
+      "id": "R06-N-revoked-list-sessions",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-sessions",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-revoked-list-sessions",
+        "startedAt": "2026-11-10T11:03:58.379Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-revoked-list-sessions-before-1794308640306-24204e27-c2b5-4bcb-9ab6-624bb17eab0e.json",
+          "after": "snapshot-R06-N-revoked-list-sessions-after-1794308642502-76dc30ff-933d-4f9e-a8b5-1142a17a0fae.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-revoked-list-sessions",
+          "path": "/api/auth/list-sessions",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:02.515Z"
+      }
+    },
+    {
+      "id": "R06-N-revoked-list-accounts",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-accounts",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-revoked-list-accounts",
+        "startedAt": "2026-11-10T11:04:02.525Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-revoked-list-accounts-before-1794308644759-e25ad6fa-dc00-480e-92c4-0c8a63884f00.json",
+          "after": "snapshot-R06-N-revoked-list-accounts-after-1794308646747-0458e15d-c0f8-4467-b95c-8828245caebb.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-revoked-list-accounts",
+          "path": "/api/auth/list-accounts",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:06.777Z"
+      }
+    },
+    {
+      "id": "R06-N-revoked-unlink-account",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies unlink-account",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-revoked-unlink-account",
+        "startedAt": "2026-11-10T11:04:06.783Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-revoked-unlink-account-before-1794308648697-aaeeec03-1c66-438b-b6f4-4a349d6a1f1c.json",
+          "after": "snapshot-R06-N-revoked-unlink-account-after-1794308650771-9b3fd868-5fec-4000-b842-690e5af4aa50.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-revoked-unlink-account",
+          "path": "/api/auth/unlink-account",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:10.786Z"
+      }
+    },
+    {
+      "id": "R06-N-revoked-verify-password",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies verify-password",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-revoked-verify-password",
+        "startedAt": "2026-11-10T11:04:10.793Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-revoked-verify-password-before-1794308653058-877f6969-9a63-4c46-930e-8f4601a2d304.json",
+          "after": "snapshot-R06-N-revoked-verify-password-after-1794308655099-22e03f21-5c98-4aae-bc8f-6f9db5ddb9f4.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-revoked-verify-password",
+          "path": "/api/auth/verify-password",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:15.128Z"
+      }
+    },
+    {
+      "id": "R06-N-expired-get-session",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies get-session",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-expired-get-session",
+        "startedAt": "2026-11-10T11:04:32.329Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-expired-get-session-before-1794308674081-ada95bdb-f278-4d3c-82c9-e892966e3e5c.json",
+          "after": "snapshot-R06-N-expired-get-session-after-1794308675772-6d684532-8fa9-4f8a-9dac-eb4ceb63e662.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": true,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 1,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-expired-get-session",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 4,
+          "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": [
+            {
+              "name": "set-cookie",
+              "sha256": "d8da1636dd19be6a7c1f79b8b37db5fb016f412129c98eaf1da6ce2982d619e3",
+              "bytes": 86,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            },
+            {
+              "name": "set-cookie",
+              "sha256": "e24e2db04a5c1be690a88e23e3d3c90bfb64da415f45bc7377159a9a435cbc7d",
+              "bytes": 85,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            },
+            {
+              "name": "set-cookie",
+              "sha256": "2a3aa6b5326255cac27d9c405d147190204508b7cc3322daa3ac39c2bb572393",
+              "bytes": 86,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            }
+          ]
+        },
+        "finishedAt": "2026-11-10T11:04:35.794Z"
+      }
+    },
+    {
+      "id": "R06-N-expired-list-sessions",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-sessions",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-expired-list-sessions",
+        "startedAt": "2026-11-10T11:04:35.800Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-expired-list-sessions-before-1794308677673-1365cd95-5e49-4dcc-9241-c53023df439a.json",
+          "after": "snapshot-R06-N-expired-list-sessions-after-1794308679442-dfc76d7e-5f1e-474c-be34-7d4fc9819a9b.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-expired-list-sessions",
+          "path": "/api/auth/list-sessions",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:39.478Z"
+      }
+    },
+    {
+      "id": "R06-N-expired-list-accounts",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-accounts",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-expired-list-accounts",
+        "startedAt": "2026-11-10T11:04:39.484Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-expired-list-accounts-before-1794308681138-e612337c-2d8e-47cf-aa19-b8ebcf9ee52f.json",
+          "after": "snapshot-R06-N-expired-list-accounts-after-1794308683176-359db698-5ecf-4f9c-bfa8-d78f1b9dc4e3.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-expired-list-accounts",
+          "path": "/api/auth/list-accounts",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:43.189Z"
+      }
+    },
+    {
+      "id": "R06-N-expired-unlink-account",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies unlink-account",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-expired-unlink-account",
+        "startedAt": "2026-11-10T11:04:43.198Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-expired-unlink-account-before-1794308685152-34730673-56a0-42c6-863c-702a6ebc65e7.json",
+          "after": "snapshot-R06-N-expired-unlink-account-after-1794308686769-b82b8856-5b48-4c1a-8b97-c5efae9665ca.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-expired-unlink-account",
+          "path": "/api/auth/unlink-account",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:46.802Z"
+      }
+    },
+    {
+      "id": "R06-N-expired-verify-password",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies verify-password",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-expired-verify-password",
+        "startedAt": "2026-11-10T11:04:46.812Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-expired-verify-password-before-1794308688397-63f3b4ad-3c45-442b-addf-044581a54f28.json",
+          "after": "snapshot-R06-N-expired-verify-password-after-1794308690233-5423d087-c606-4cd4-a03d-ab5548d2365d.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-expired-verify-password",
+          "path": "/api/auth/verify-password",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:50.255Z"
+      }
+    },
+    {
+      "id": "R06-N-inactive-get-session",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies get-session",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable.",
+        "Existing application profile/permission routes deny unavailable current accounts with recognized public denial and no private fields; do not reinterpret as core tenant requirement."
+      ],
+      "observed": {
+        "id": "R06-N-inactive-get-session",
+        "startedAt": "2026-11-10T11:05:23.044Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-inactive-get-session-before-1794308725110-72d8ecbe-22a7-4129-89d6-c4b49cb231a4.json",
+          "after": "snapshot-R06-N-inactive-get-session-after-1794308741218-457a973a-0015-41cc-8827-2a6e71500462.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-inactive-get-session",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:05:41.249Z"
+      }
+    },
+    {
+      "id": "R06-N-inactive-list-sessions",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-sessions",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-inactive-list-sessions",
+        "startedAt": "2026-11-10T11:05:41.262Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-inactive-list-sessions-before-1794308743285-3aaeabda-1033-4087-a066-9b5cdd9ee18e.json",
+          "after": "snapshot-R06-N-inactive-list-sessions-after-1794308745345-15e6277c-eae5-4321-9842-6d2a09d2621a.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-inactive-list-sessions",
+          "path": "/api/auth/list-sessions",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:05:45.369Z"
+      }
+    },
+    {
+      "id": "R06-N-inactive-list-accounts",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-accounts",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-inactive-list-accounts",
+        "startedAt": "2026-11-10T11:05:45.385Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-inactive-list-accounts-before-1794308747235-c1050278-b932-49d0-a0bb-50ec1c780bec.json",
+          "after": "snapshot-R06-N-inactive-list-accounts-after-1794308748992-2894a1e7-8ffc-4446-9c81-c194304b8aae.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-inactive-list-accounts",
+          "path": "/api/auth/list-accounts",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:05:49.005Z"
+      }
+    },
+    {
+      "id": "R06-N-inactive-unlink-account",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies unlink-account",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-inactive-unlink-account",
+        "startedAt": "2026-11-10T11:05:49.017Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-inactive-unlink-account-before-1794308750774-274947c6-5938-42a3-90c2-351fe1cfd8e6.json",
+          "after": "snapshot-R06-N-inactive-unlink-account-after-1794308752791-a8872380-f7a4-4e2b-b045-b44b5f6135d1.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-inactive-unlink-account",
+          "path": "/api/auth/unlink-account",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:05:52.823Z"
+      }
+    },
+    {
+      "id": "R06-N-inactive-verify-password",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies verify-password",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-inactive-verify-password",
+        "startedAt": "2026-11-10T11:05:52.839Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-inactive-verify-password-before-1794308755065-53421df3-5ea0-4e08-9a38-5b0d674497ef.json",
+          "after": "snapshot-R06-N-inactive-verify-password-after-1794308757316-4cd1f2b5-5a5e-45ec-83d1-c8226ff0ad33.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-inactive-verify-password",
+          "path": "/api/auth/verify-password",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:05:57.341Z"
+      }
+    },
+    {
+      "id": "R06-N-locked_indefinite-get-session",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies get-session",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable.",
+        "Existing application profile/permission routes deny unavailable current accounts with recognized public denial and no private fields; do not reinterpret as core tenant requirement."
+      ],
+      "observed": {
+        "id": "R06-N-locked_indefinite-get-session",
+        "startedAt": "2026-11-10T11:05:58.874Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-locked_indefinite-get-session-before-1794308760852-46983fea-b4d2-4bde-a77a-e782466bf45d.json",
+          "after": "snapshot-R06-N-locked_indefinite-get-session-after-1794308762877-584cdd93-56b4-43af-9266-7672b17e52a5.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-locked_indefinite-get-session",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:06:02.907Z"
+      }
+    },
+    {
+      "id": "R06-N-locked_indefinite-list-sessions",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-sessions",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-locked_indefinite-list-sessions",
+        "startedAt": "2026-11-10T11:06:02.926Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-locked_indefinite-list-sessions-before-1794308765076-9118fc14-cf08-4fcc-8a93-f8459ef1665a.json",
+          "after": "snapshot-R06-N-locked_indefinite-list-sessions-after-1794308766902-05992aec-f267-40e7-b297-02dd6907f160.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-locked_indefinite-list-sessions",
+          "path": "/api/auth/list-sessions",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:06:06.936Z"
+      }
+    },
+    {
+      "id": "R06-N-locked_indefinite-list-accounts",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-accounts",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-locked_indefinite-list-accounts",
+        "startedAt": "2026-11-10T11:06:06.952Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-locked_indefinite-list-accounts-before-1794308768747-4d831f93-0a3d-4b50-9d1f-cf391fccb7b1.json",
+          "after": "snapshot-R06-N-locked_indefinite-list-accounts-after-1794308770562-e86aedeb-54cb-49b9-a424-e171cd07ad77.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-locked_indefinite-list-accounts",
+          "path": "/api/auth/list-accounts",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:06:10.592Z"
+      }
+    },
+    {
+      "id": "R06-N-locked_indefinite-unlink-account",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies unlink-account",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-locked_indefinite-unlink-account",
+        "startedAt": "2026-11-10T11:06:10.607Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-locked_indefinite-unlink-account-before-1794308772406-e35f1968-17e4-45b6-a679-c937ce6dc5d3.json",
+          "after": "snapshot-R06-N-locked_indefinite-unlink-account-after-1794308774393-9e91d3f7-4b29-4cdc-b97a-6432dca201ea.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-locked_indefinite-unlink-account",
+          "path": "/api/auth/unlink-account",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:06:14.418Z"
+      }
+    },
+    {
+      "id": "R06-N-locked_indefinite-verify-password",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies verify-password",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-locked_indefinite-verify-password",
+        "startedAt": "2026-11-10T11:06:14.431Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-locked_indefinite-verify-password-before-1794308776369-c9ef5da4-6b54-4de1-a015-4dedf957ae70.json",
+          "after": "snapshot-R06-N-locked_indefinite-verify-password-after-1794308778021-b2185a7a-6bd7-4dc1-8b48-3159744fbda8.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-locked_indefinite-verify-password",
+          "path": "/api/auth/verify-password",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:06:18.050Z"
+      }
+    },
+    {
+      "id": "R06-N-locked_future-get-session",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies get-session",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable.",
+        "Existing application profile/permission routes deny unavailable current accounts with recognized public denial and no private fields; do not reinterpret as core tenant requirement."
+      ],
+      "observed": {
+        "id": "R06-N-locked_future-get-session",
+        "startedAt": "2026-11-10T11:06:40.632Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-locked_future-get-session-before-1794308802929-8b7f0dc3-a39c-4d46-8189-f6c4313f2147.json",
+          "after": "snapshot-R06-N-locked_future-get-session-after-1794308820339-3b176778-b51c-4d0e-a05f-4efb13e3ebf4.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-locked_future-get-session",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:07:00.362Z"
+      }
+    },
+    {
+      "id": "R06-N-locked_future-list-sessions",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-sessions",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-locked_future-list-sessions",
+        "startedAt": "2026-11-10T11:07:00.380Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-locked_future-list-sessions-before-1794308821842-04befd7e-97fa-4c77-a16a-a9482a5c8f45.json",
+          "after": "snapshot-R06-N-locked_future-list-sessions-after-1794308823997-ff0c2fd7-7ec8-47e8-b4be-64f66440ddbe.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-locked_future-list-sessions",
+          "path": "/api/auth/list-sessions",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:07:04.026Z"
+      }
+    },
+    {
+      "id": "R06-N-locked_future-list-accounts",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies list-accounts",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-locked_future-list-accounts",
+        "startedAt": "2026-11-10T11:07:04.054Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-locked_future-list-accounts-before-1794308826028-78cceb64-d309-4de0-96c3-9dcacf67bae2.json",
+          "after": "snapshot-R06-N-locked_future-list-accounts-after-1794308828050-2339197d-0d3e-418a-8eac-6b0b2f9eb0c6.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-locked_future-list-accounts",
+          "path": "/api/auth/list-accounts",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:07:08.080Z"
+      }
+    },
+    {
+      "id": "R06-N-locked_future-unlink-account",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies unlink-account",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-locked_future-unlink-account",
+        "startedAt": "2026-11-10T11:07:08.092Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-locked_future-unlink-account-before-1794308829917-075e0ce7-5bea-4703-a9be-e7fbd4aa8527.json",
+          "after": "snapshot-R06-N-locked_future-unlink-account-after-1794308832020-ce6f420c-be04-4975-add0-4403fad3ad68.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-locked_future-unlink-account",
+          "path": "/api/auth/unlink-account",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:07:12.034Z"
+      }
+    },
+    {
+      "id": "R06-N-locked_future-verify-password",
+      "lane": "real_http_database",
+      "title": "Invalidated current authority denies verify-password",
+      "status": "passed",
+      "acceptance": [
+        "No private user/account/session/token canaries or newly granting authentication headers.",
+        "get-session may safely return null200; protected operations deny401/403.",
+        "No business/account mutation; preserve all existing audit/session rows except exact current expired-session cleanup when applicable."
+      ],
+      "observed": {
+        "id": "R06-N-locked_future-verify-password",
+        "startedAt": "2026-11-10T11:07:12.056Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-N-locked_future-verify-password-before-1794308834067-dde61f8c-f699-458d-902d-a6a523141967.json",
+          "after": "snapshot-R06-N-locked_future-verify-password-after-1794308836401-df15c64c-6eac-4648-ac9a-64774ecb4b50.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-N-locked_future-verify-password",
+          "path": "/api/auth/verify-password",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:07:16.412Z"
+      }
+    },
+    {
+      "id": "R06-Q-revoked-get-session",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "status": "passed",
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "observed": {
+        "id": "R06-Q-revoked-get-session",
+        "startedAt": "2026-11-10T11:04:15.135Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-Q-revoked-get-session-before-1794308656708-9bc701a5-8816-4ad0-8368-4eaa9642885f.json",
+          "after": "snapshot-R06-Q-revoked-get-session-after-1794308658363-89842a57-fa91-48aa-a49b-067b324d6205.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-Q-revoked-get-session",
+          "path": "/api/auth/get-session?disableCookieCache=false",
+          "method": "GET",
+          "status": 200,
+          "bytes": 4,
+          "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": [
+            {
+              "name": "set-cookie",
+              "sha256": "d8da1636dd19be6a7c1f79b8b37db5fb016f412129c98eaf1da6ce2982d619e3",
+              "bytes": 86,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            },
+            {
+              "name": "set-cookie",
+              "sha256": "e24e2db04a5c1be690a88e23e3d3c90bfb64da415f45bc7377159a9a435cbc7d",
+              "bytes": 85,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            },
+            {
+              "name": "set-cookie",
+              "sha256": "2a3aa6b5326255cac27d9c405d147190204508b7cc3322daa3ac39c2bb572393",
+              "bytes": 86,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            }
+          ]
+        },
+        "finishedAt": "2026-11-10T11:04:18.385Z"
+      }
+    },
+    {
+      "id": "R06-Q-revoked-list-accounts",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "status": "passed",
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "observed": {
+        "id": "R06-Q-revoked-list-accounts",
+        "startedAt": "2026-11-10T11:04:18.390Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-Q-revoked-list-accounts-before-1794308660444-8b78fb60-030a-42f6-a4c7-9b035a326474.json",
+          "after": "snapshot-R06-Q-revoked-list-accounts-after-1794308662635-6575deb7-eb58-4d4b-868a-b41b27a33c55.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-Q-revoked-list-accounts",
+          "path": "/api/auth/list-accounts?disableCookieCache=false",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:22.649Z"
+      }
+    },
+    {
+      "id": "R06-Q-revoked-unlink-account",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "status": "passed",
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "observed": {
+        "id": "R06-Q-revoked-unlink-account",
+        "startedAt": "2026-11-10T11:04:22.663Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-Q-revoked-unlink-account-before-1794308664886-630e2910-cc6d-41b2-99a2-00186e7cadbf.json",
+          "after": "snapshot-R06-Q-revoked-unlink-account-after-1794308666906-e544581c-89bb-48ff-84d4-b8d05c2c4728.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-Q-revoked-unlink-account",
+          "path": "/api/auth/unlink-account?disableCookieCache=false",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:26.917Z"
+      }
+    },
+    {
+      "id": "R06-Q-revoked-change-password",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "status": "passed",
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "observed": {
+        "id": "R06-Q-revoked-change-password",
+        "startedAt": "2026-11-10T11:04:26.923Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-Q-revoked-change-password-before-1794308668895-cb4eec5e-0744-430e-b673-b423dda47325.json",
+          "after": "snapshot-R06-Q-revoked-change-password-after-1794308670682-0cd412af-6a09-44ec-8491-7994b1315705.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-Q-revoked-change-password",
+          "path": "/api/auth/change-password?disableCookieCache=false",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:30.725Z"
+      }
+    },
+    {
+      "id": "R06-Q-expired-get-session",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "status": "passed",
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "observed": {
+        "id": "R06-Q-expired-get-session",
+        "startedAt": "2026-11-10T11:04:50.265Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-Q-expired-get-session-before-1794308691948-4cf4334c-a683-4a28-8feb-60f1fb07c35e.json",
+          "after": "snapshot-R06-Q-expired-get-session-after-1794308693787-b866f5e0-61e2-4664-add7-48fd12493284.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-Q-expired-get-session",
+          "path": "/api/auth/get-session?disableCookieCache=false",
+          "method": "GET",
+          "status": 200,
+          "bytes": 4,
+          "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": [
+            {
+              "name": "set-cookie",
+              "sha256": "d8da1636dd19be6a7c1f79b8b37db5fb016f412129c98eaf1da6ce2982d619e3",
+              "bytes": 86,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            },
+            {
+              "name": "set-cookie",
+              "sha256": "e24e2db04a5c1be690a88e23e3d3c90bfb64da415f45bc7377159a9a435cbc7d",
+              "bytes": 85,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            },
+            {
+              "name": "set-cookie",
+              "sha256": "2a3aa6b5326255cac27d9c405d147190204508b7cc3322daa3ac39c2bb572393",
+              "bytes": 86,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            }
+          ]
+        },
+        "finishedAt": "2026-11-10T11:04:53.804Z"
+      }
+    },
+    {
+      "id": "R06-Q-expired-list-accounts",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "status": "passed",
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "observed": {
+        "id": "R06-Q-expired-list-accounts",
+        "startedAt": "2026-11-10T11:04:53.815Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-Q-expired-list-accounts-before-1794308695455-2b068d56-bd3c-4e8a-9e2e-8ac996e080e1.json",
+          "after": "snapshot-R06-Q-expired-list-accounts-after-1794308696965-6d881e4a-3ae6-402d-888f-e7ba79bc4298.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-Q-expired-list-accounts",
+          "path": "/api/auth/list-accounts?disableCookieCache=false",
+          "method": "GET",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:04:56.994Z"
+      }
+    },
+    {
+      "id": "R06-Q-expired-unlink-account",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "status": "passed",
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "observed": {
+        "id": "R06-Q-expired-unlink-account",
+        "startedAt": "2026-11-10T11:04:57.000Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-Q-expired-unlink-account-before-1794308698849-de1ad92a-5fa1-4811-b0cb-36057730913f.json",
+          "after": "snapshot-R06-Q-expired-unlink-account-after-1794308700887-afb0d9f9-bc42-4000-8d13-0d1aa504e618.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-Q-expired-unlink-account",
+          "path": "/api/auth/unlink-account?disableCookieCache=false",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:05:00.905Z"
+      }
+    },
+    {
+      "id": "R06-Q-expired-change-password",
+      "lane": "real_http_database",
+      "title": "Caller cache query cannot restore authority",
+      "status": "passed",
+      "acceptance": [
+        "No private fields or unauthorized account/password changes; nullable get-session semantics preserved.",
+        "This is regression coverage; prior V02 query-override bypass was not confirmed."
+      ],
+      "observed": {
+        "id": "R06-Q-expired-change-password",
+        "startedAt": "2026-11-10T11:05:00.928Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-Q-expired-change-password-before-1794308702756-65f3923f-e2c2-4549-9271-babbf8ead714.json",
+          "after": "snapshot-R06-Q-expired-change-password-after-1794308704377-a44aca95-99af-4cb8-9af5-49ec9c540128.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-Q-expired-change-password",
+          "path": "/api/auth/change-password?disableCookieCache=false",
+          "method": "POST",
+          "status": 401,
+          "bytes": 74,
+          "sha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": true,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:05:04.390Z"
+      }
+    },
+    {
+      "id": "R06-B-anonymous",
+      "lane": "real_http_database",
+      "title": "Anonymous protected-operation denial",
+      "status": "passed",
+      "acceptance": [
+        "Denied without private data or native writes."
+      ],
+      "observed": {
+        "id": "R06-B-anonymous",
+        "startedAt": "2026-11-10T11:07:22.181Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-B-anonymous-before-1794308844069-64a0198e-b87b-43e9-9601-5d050ba1c5ed.json",
+          "after": "snapshot-R06-B-anonymous-after-1794308846104-563e2521-d6c9-4e5b-93da-ee8820cc897e.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "allDenied": true
+        },
+        "finishedAt": "2026-11-10T11:07:26.129Z"
+      }
+    },
+    {
+      "id": "R06-B-foreign-unlink",
+      "lane": "real_http_database",
+      "title": "Forged foreign account identifier does not change ownership",
+      "status": "passed",
+      "acceptance": [
+        "Safe non-success; all foreign accounts and active credential remain unchanged."
+      ],
+      "observed": {
+        "id": "R06-B-foreign-unlink",
+        "startedAt": "2026-11-10T11:07:26.171Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-B-foreign-unlink-before-1794308848161-1cdead7f-954d-4565-ac78-649ab0875166.json",
+          "after": "snapshot-R06-B-foreign-unlink-after-1794308849947-b819b1ee-5f23-4e8b-a09c-843725f70f4d.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-B-foreign-unlink",
+          "path": "/api/auth/unlink-account",
+          "method": "POST",
+          "status": 400,
+          "bytes": 58,
+          "sha256": "798494eefa780c49b8a2378f0cc8314115f8bfe3d79e8c7eed2b7370c080143b",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:07:29.967Z"
+      }
+    },
+    {
+      "id": "R06-B-provider-userid",
+      "lane": "real_http_database",
+      "title": "Provider account request cannot select foreign identity",
+      "status": "passed",
+      "acceptance": [
+        "Safe configuration/not-found/denial without foreign/private tokens or writes; no live provider exchange."
+      ],
+      "observed": {
+        "id": "R06-B-provider-userid",
+        "startedAt": "2026-11-10T11:07:29.989Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-B-provider-userid-before-1794308851605-2d814e15-ba25-4475-bb8c-7ffc1c74a1f9.json",
+          "after": "snapshot-R06-B-provider-userid-after-1794308853593-d2fe07b6-c1cf-43ad-ba4e-7b60f5bf846d.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "safeRejections": true
+        },
+        "finishedAt": "2026-11-10T11:07:33.603Z"
+      }
+    },
+    {
+      "id": "R06-B-mixed-active-cookie",
+      "lane": "real_http_database",
+      "title": "Active token cannot acquire foreign signed-cache subject",
+      "status": "passed",
+      "acceptance": [
+        "Response belongs only to current active token subject; no foreign fields."
+      ],
+      "observed": {
+        "id": "R06-B-mixed-active-cookie",
+        "startedAt": "2026-11-10T11:07:54.472Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-B-mixed-active-cookie-before-1794308876424-0aca80c5-de9c-4010-998f-fcd765dd4be1.json",
+          "after": "snapshot-R06-B-mixed-active-cookie-after-1794308892394-010fd3cf-1de2-40e6-8f22-651220d47e33.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-B-mixed-active-cookie",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 591,
+          "sha256": "097cb3e444c39100361c0cf055dc96cfb19a4d6337072c2fb6417f36b8529e40",
+          "cacheControl": null,
+          "hasPrivateCanary": true,
+          "hasUser": true,
+          "hasSession": true,
+          "hasTokenField": true,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": []
+        },
+        "finishedAt": "2026-11-10T11:08:12.499Z"
+      }
+    },
+    {
+      "id": "R06-B-mixed-revoked-cookie",
+      "lane": "real_http_database",
+      "title": "Foreign signed cache cannot revive revoked token",
+      "status": "passed",
+      "acceptance": [
+        "No private identity; no native unauthorized changes."
+      ],
+      "observed": {
+        "id": "R06-B-mixed-revoked-cookie",
+        "startedAt": "2026-11-10T11:08:12.629Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-B-mixed-revoked-cookie-before-1794308894457-402c9d2e-e177-4da5-86ef-5929cfbabf0a.json",
+          "after": "snapshot-R06-B-mixed-revoked-cookie-after-1794308896597-8495abae-5713-4bd0-beb9-a1269cee4980.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "id": "R06-B-mixed-revoked-cookie",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 4,
+          "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "cacheControl": null,
+          "hasPrivateCanary": false,
+          "hasUser": false,
+          "hasSession": false,
+          "hasTokenField": false,
+          "currentGateDenial": false,
+          "redirect": null,
+          "authHeaders": [
+            {
+              "name": "set-cookie",
+              "sha256": "d8da1636dd19be6a7c1f79b8b37db5fb016f412129c98eaf1da6ce2982d619e3",
+              "bytes": 86,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            },
+            {
+              "name": "set-cookie",
+              "sha256": "e24e2db04a5c1be690a88e23e3d3c90bfb64da415f45bc7377159a9a435cbc7d",
+              "bytes": 85,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            },
+            {
+              "name": "set-cookie",
+              "sha256": "2a3aa6b5326255cac27d9c405d147190204508b7cc3322daa3ac39c2bb572393",
+              "bytes": 86,
+              "setsNonemptySessionToken": false,
+              "setsNonemptySessionData": false
+            }
+          ]
+        },
+        "finishedAt": "2026-11-10T11:08:16.628Z"
+      }
+    },
+    {
+      "id": "R06-C-login",
+      "lane": "real_http_database",
+      "title": "Credential sign-in retains valid and invalid account controls",
+      "status": "failed",
+      "acceptance": [
+        "Active positive; inactive/current lock/wrong-password safe denial; only classified login counters/audits/session creation."
+      ],
+      "observed": {
+        "id": "R06-C-login",
+        "startedAt": "2026-11-10T11:08:16.657Z",
+        "passed": false,
+        "error": "The expression evaluated to a falsy value:\n\n  assert(new Date(after.user.lastLogin).getTime()>=requestedAt&&new Date(after.user.lastLogin).getTime()<=finishedAt)\n",
+        "failureClass": "observed_assertion_failure",
+        "finishedAt": "2026-11-10T11:08:20.663Z"
+      }
+    },
+    {
+      "id": "R06-C-origin",
+      "lane": "real_http_database",
+      "title": "Foreign origin cannot invoke credential or own-account mutation",
+      "status": "failed",
+      "acceptance": [
+        "403 safe denial; no unauthorized account/session creation or business writes."
+      ],
+      "observed": {
+        "id": "R06-C-origin",
+        "startedAt": "2026-11-10T11:08:20.683Z",
+        "passed": false,
+        "effects": {
+          "before": "snapshot-R06-C-origin-before-1794308902323-e9b6d04a-2b19-4c3b-bcc0-a931c54543ea.json",
+          "after": "snapshot-R06-C-origin-after-1794308911095-49ab8b7b-54a6-4044-a5f7-95232571f8ca.json",
+          "businessEqual": false,
+          "changedBusinessTables": [
+            "users"
+          ],
+          "sessionsChanged": true,
+          "auditsChanged": true
+        },
+        "error": "Unreviewed session insertion/update\n+ actual - expected\n\n+ undefined\n- 'bb734d94ddf3a2757e4bfda4b2807e4427b9f0ac05a876b58a21aa66d2b503c8'\n",
+        "failureClass": "observed_assertion_failure",
+        "finishedAt": "2026-11-10T11:08:31.125Z"
+      }
+    },
+    {
+      "id": "R06-C-signout",
+      "lane": "real_http_database",
+      "title": "Cleanup remains reachable after account state change",
+      "status": "passed",
+      "acceptance": [
+        "Current presented session cookie cleanup and own revocation allowed even when account unavailable; no newly minted identity."
+      ],
+      "observed": {
+        "id": "R06-C-signout",
+        "startedAt": "2026-11-10T11:08:31.147Z",
+        "passed": true,
+        "effectsByActor": [
+          {
+            "before": "snapshot-signout-active-before-1794308921179-050ef618-b6cb-4c7e-82f0-c531cbfd2ad4.json",
+            "after": "snapshot-signout-active-after-1794308923154-12f7c8d2-d735-4035-8e3e-d0be3ee0980f.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": true,
+            "auditsChanged": false,
+            "bookkeeping": {
+              "sessionAdditions": 0,
+              "allowedSessionDeletions": 1,
+              "preservedExistingAudits": true,
+              "allowedNewAudits": []
+            }
+          },
+          {
+            "before": "snapshot-signout-inactive-before-1794308932050-eaf20b34-7236-4d8e-9547-2084af7671a3.json",
+            "after": "snapshot-signout-inactive-after-1794308933984-bfd3d169-451d-435f-85b3-bfbdc49fd29d.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": true,
+            "auditsChanged": false,
+            "bookkeeping": {
+              "sessionAdditions": 0,
+              "allowedSessionDeletions": 1,
+              "preservedExistingAudits": true,
+              "allowedNewAudits": []
+            }
+          },
+          {
+            "before": "snapshot-signout-locked_indefinite-before-1794308942241-9d6bb947-07d6-4149-9109-34f84a3f2c42.json",
+            "after": "snapshot-signout-locked_indefinite-after-1794308944090-f2110788-71c3-49ef-8794-12667e108934.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": true,
+            "auditsChanged": false,
+            "bookkeeping": {
+              "sessionAdditions": 0,
+              "allowedSessionDeletions": 1,
+              "preservedExistingAudits": true,
+              "allowedNewAudits": []
+            }
+          }
+        ],
+        "detail": {
+          "cleanupWorksForUnavailableAccounts": true
+        },
+        "finishedAt": "2026-11-10T11:09:04.224Z"
+      }
+    },
+    {
+      "id": "R06-C-public-recovery",
+      "lane": "real_http_database",
+      "title": "Public recovery/status routes retain their own safeguards",
+      "status": "passed",
+      "acceptance": [
+        "Public status safe; unsupported/unconfigured recovery and invalid callback fail safely without private data, native unauthorized changes or external delivery."
+      ],
+      "observed": {
+        "id": "R06-C-public-recovery",
+        "startedAt": "2026-11-10T11:09:04.253Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-C-public-recovery-before-1794308946354-10536ac1-e029-4a8e-ad83-1228ab4fcd72.json",
+          "after": "snapshot-R06-C-public-recovery-after-1794308948519-1cd9fdc0-512e-404a-883d-e9d49164fcfb.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "safePublicResponses": true
+        },
+        "finishedAt": "2026-11-10T11:09:08.538Z"
+      }
+    },
+    {
+      "id": "R06-C-methods",
+      "lane": "real_http_database",
+      "title": "Implicit methods preserve source-grounded behavior",
+      "status": "passed",
+      "acceptance": [
+        "Unsupported protected HEAD404 empty/no authority header; get-session POST405 with current config; OPTIONS204; pathless set-password404. No private data/native writes."
+      ],
+      "observed": {
+        "id": "R06-C-methods",
+        "startedAt": "2026-11-10T11:09:08.567Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-C-methods-before-1794308950501-f2a89372-a907-4215-a6e1-d46b5ae0efef.json",
+          "after": "snapshot-R06-C-methods-after-1794308953627-80c7680d-ce9d-48be-9ad1-115bca000a5f.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "methodsPreserved": true,
+          "legacyLifetimeClaim": false
+        },
+        "finishedAt": "2026-11-10T11:09:13.635Z"
+      }
+    },
+    {
+      "id": "R06-C-direct-api",
+      "lane": "isolated_real_database_server_api",
+      "title": "Outer auth.api own-account calls share current-account gate",
+      "status": "passed",
+      "acceptance": [
+        "Active200 real current owned session; inactive401 CURRENT_SESSION_UNAVAILABLE; revoked200null or recognized401 CURRENT_SESSION_UNAVAILABLE; reject500/undefined/malformed results.",
+        "Denied responses no user/session/token/private canaries; native business/accounts/sessions/audits unchanged. Exported getSession only; pathless setPassword remains source/unit coverage."
+      ],
+      "observed": {
+        "id": "R06-C-direct-api",
+        "startedAt": "2026-11-10T11:09:13.698Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-C-direct-api-before-1794308956147-a5e186f8-9aee-4f46-8135-219c01ef02f8.json",
+          "after": "snapshot-R06-C-direct-api-after-1794308964455-a06dd07d-961b-47c0-b351-9644bf5f57d6.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "results": [
+            {
+              "id": "active",
+              "status": 200,
+              "responseIsNull": false,
+              "responseIsObject": true,
+              "userIdMatchesExpected": true,
+              "hasUser": true,
+              "hasSession": true,
+              "hasPrivateCanary": true,
+              "hasTokenField": true,
+              "errorCode": null,
+              "responseSha256": "9da4f9c851a95237750931ad29f9d0cbb8fd66b1da04e9741fb140d896e1d91e",
+              "evidenceClass": "actual_candidate_auth_api_with_native_database"
+            },
+            {
+              "id": "inactive",
+              "status": 401,
+              "responseIsNull": true,
+              "responseIsObject": false,
+              "userIdMatchesExpected": false,
+              "hasUser": false,
+              "hasSession": false,
+              "hasPrivateCanary": false,
+              "hasTokenField": false,
+              "errorCode": "CURRENT_SESSION_UNAVAILABLE",
+              "responseSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+              "evidenceClass": "actual_candidate_auth_api_with_native_database"
+            },
+            {
+              "id": "revoked",
+              "status": 200,
+              "responseIsNull": true,
+              "responseIsObject": false,
+              "userIdMatchesExpected": false,
+              "hasUser": false,
+              "hasSession": false,
+              "hasPrivateCanary": false,
+              "hasTokenField": false,
+              "errorCode": null,
+              "responseSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+              "evidenceClass": "actual_candidate_auth_api_with_native_database"
+            }
+          ]
+        },
+        "finishedAt": "2026-11-10T11:09:24.618Z"
+      }
+    },
+    {
+      "id": "R06-UI-en-authorized",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer authorized",
+      "status": "passed",
+      "acceptance": [
+        "Actual authorized profile/session consumer renders own identity; relevant core session request succeeds.",
+        "Fresh restored session remains functional without bypassing native authority."
+      ],
+      "observed": {
+        "id": "R06-UI-en-authorized",
+        "startedAt": "2026-11-10T11:09:25.448Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-UI-en-authorized-before-1794308967478-982b9bf3-53ac-4462-a3d0-bb38339363fd.json",
+          "after": "snapshot-R06-UI-en-authorized-after-1794308972084-7606087b-8dfb-4c0a-8af9-d4440260517a.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "view": {
+            "label": "en-authorized",
+            "path": "/en/dashboard/profile",
+            "privateEmailVisible": true,
+            "loginVisible": false,
+            "profileUnavailable": false,
+            "textSha256": "ba2dfe834cc7e19e682a4db47331e6b154c72fb3bf3d5083530f38d122390420",
+            "screenshot": "en-authorized.png",
+            "at": "2026-11-10T11:09:30.391Z"
+          },
+          "responses": [
+            {
+              "label": "en-authorized",
+              "path": "/en/dashboard/profile",
+              "method": "GET",
+              "status": 200,
+              "bytes": 443697,
+              "sha256": "74b488e3e5e3ef4459b7e9b90a491a2e60371e93e6d44f6e4b7e0b91c0433adb",
+              "containsActorCanary": true,
+              "currentSessionSubject": false,
+              "at": "2026-11-10T11:09:28.723Z"
+            },
+            {
+              "label": "en-authorized",
+              "path": "/api/auth/get-session",
+              "method": "GET",
+              "status": 200,
+              "bytes": 734,
+              "sha256": "b108fe6c5eaffeb084d9c97c516e3f4436414ffe533f1dbcb6872997dc03decc",
+              "containsActorCanary": true,
+              "currentSessionSubject": true,
+              "at": "2026-11-10T11:09:29.416Z"
+            },
+            {
+              "label": "en-authorized",
+              "path": "/fr/dashboard/profile",
+              "method": "GET",
+              "status": 200,
+              "bytes": 439414,
+              "sha256": "9655c831c777e8b99dc1677005a131e79a301870c5fc13ff8f70dec69063c3e8",
+              "containsActorCanary": false,
+              "currentSessionSubject": false,
+              "at": "2026-11-10T11:09:29.500Z"
+            },
+            {
+              "label": "en-authorized",
+              "path": "/en/dashboard/profile",
+              "method": "POST",
+              "status": 200,
+              "bytes": 373116,
+              "sha256": "f3be9d89ef167c50a662c2d61a948e177f9530972199657833b2d2de6bf28776",
+              "containsActorCanary": true,
+              "currentSessionSubject": false,
+              "at": "2026-11-10T11:09:29.915Z"
+            }
+          ]
+        },
+        "finishedAt": "2026-11-10T11:09:32.114Z"
+      }
+    },
+    {
+      "id": "R06-UI-en-invalidated-reload",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer invalidated-reload",
+      "status": "passed",
+      "acceptance": [
+        "Concrete reload reaches login/denied recovery without new or settled private profile data.",
+        "Do not infer instantaneous stale-tab/focus/BFCache removal."
+      ],
+      "observed": {
+        "id": "R06-UI-en-invalidated-reload",
+        "startedAt": "2026-11-10T11:09:32.270Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-UI-en-invalidated-reload-before-1794308973922-a49984a3-029f-4d8f-afd9-b27ed2c8a06b.json",
+          "after": "snapshot-R06-UI-en-invalidated-reload-after-1794308978029-db200f43-a71f-44f6-b71e-f6c2cf27fe4b.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "view": {
+            "label": "en-invalidated-reload",
+            "path": "/en/login",
+            "privateEmailVisible": false,
+            "loginVisible": true,
+            "profileUnavailable": false,
+            "textSha256": "a2bee6cbc617ddd2251444c3034000bbab4f31234dbe6b1ecd2ecc52c8b87e7f",
+            "screenshot": "en-invalidated-reload.png",
+            "at": "2026-11-10T11:09:35.903Z"
+          },
+          "responses": [
+            {
+              "label": "en-invalidated-reload",
+              "path": "/en/dashboard/profile",
+              "method": "GET",
+              "status": 200,
+              "bytes": 406119,
+              "sha256": "f259abdd9396eb87579beb59a23610c977210a8ab5392c35d542a5e90ce9e971",
+              "containsActorCanary": false,
+              "currentSessionSubject": false,
+              "at": "2026-11-10T11:09:34.279Z"
+            }
+          ]
+        },
+        "finishedAt": "2026-11-10T11:09:38.038Z"
+      }
+    },
+    {
+      "id": "R06-UI-en-restored",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer restored",
+      "status": "failed",
+      "acceptance": [
+        "Actual authorized profile/session consumer renders own identity; relevant core session request succeeds.",
+        "Fresh restored session remains functional without bypassing native authority."
+      ],
+      "observed": {
+        "id": "R06-UI-en-restored",
+        "startedAt": "2026-11-10T11:09:38.594Z",
+        "passed": false,
+        "effects": {
+          "before": "snapshot-R06-UI-en-restored-before-1794308980213-1bf75744-0e53-48c0-915c-6db4021ae9cc.json",
+          "after": "snapshot-R06-UI-en-restored-after-1794308984643-0e7a3e0c-367a-4601-94b0-4e91ede8fd2a.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "error": "Browser response capture incomplete",
+        "failureClass": "observed_assertion_failure",
+        "finishedAt": "2026-11-10T11:09:44.654Z"
+      }
+    },
+    {
+      "id": "R06-UI-fr-authorized",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer authorized",
+      "status": "failed",
+      "acceptance": [
+        "Actual authorized profile/session consumer renders own identity; relevant core session request succeeds.",
+        "Fresh restored session remains functional without bypassing native authority."
+      ],
+      "observed": {
+        "id": "R06-UI-fr-authorized",
+        "startedAt": "2026-11-10T11:09:48.950Z",
+        "passed": false,
+        "effects": {
+          "before": "snapshot-R06-UI-fr-authorized-before-1794308990488-39a4a968-539a-40ff-b4d5-c95087a9ec2a.json",
+          "after": "snapshot-R06-UI-fr-authorized-after-1794308994037-75ce82e0-27ec-4811-a661-45c6f28a2306.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "error": "Browser response capture incomplete",
+        "failureClass": "observed_assertion_failure",
+        "finishedAt": "2026-11-10T11:09:54.054Z"
+      }
+    },
+    {
+      "id": "R06-UI-fr-invalidated-reload",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer invalidated-reload",
+      "status": "passed",
+      "acceptance": [
+        "Concrete reload reaches login/denied recovery without new or settled private profile data.",
+        "Do not infer instantaneous stale-tab/focus/BFCache removal."
+      ],
+      "observed": {
+        "id": "R06-UI-fr-invalidated-reload",
+        "startedAt": "2026-11-10T11:09:54.193Z",
+        "passed": true,
+        "effects": {
+          "before": "snapshot-R06-UI-fr-invalidated-reload-before-1794308995870-cc1855da-e736-4797-ae63-036eb72c61c5.json",
+          "after": "snapshot-R06-UI-fr-invalidated-reload-after-1794308999909-b706b56a-a20e-4512-98b3-ac9fe84359d3.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "detail": {
+          "view": {
+            "label": "fr-invalidated-reload",
+            "path": "/fr/login",
+            "privateEmailVisible": false,
+            "loginVisible": true,
+            "profileUnavailable": false,
+            "textSha256": "0123dc79845fed69019e976d8b6fe46b1135e7a88786160d8a01a866850aac6f",
+            "screenshot": "fr-invalidated-reload.png",
+            "at": "2026-11-10T11:09:57.941Z"
+          },
+          "responses": [
+            {
+              "label": "fr-invalidated-reload",
+              "path": "/fr/dashboard/profile",
+              "method": "GET",
+              "status": 200,
+              "bytes": 459167,
+              "sha256": "aa214520e7f88dd81a74bcccd1046fd4296581238a1b9ebf9223268e93c89f37",
+              "containsActorCanary": false,
+              "currentSessionSubject": false,
+              "at": "2026-11-10T11:09:56.345Z"
+            }
+          ]
+        },
+        "finishedAt": "2026-11-10T11:09:59.919Z"
+      }
+    },
+    {
+      "id": "R06-UI-fr-restored",
+      "lane": "rendered_browser",
+      "title": "Selected profile/session consumer restored",
+      "status": "failed",
+      "acceptance": [
+        "Actual authorized profile/session consumer renders own identity; relevant core session request succeeds.",
+        "Fresh restored session remains functional without bypassing native authority."
+      ],
+      "observed": {
+        "id": "R06-UI-fr-restored",
+        "startedAt": "2026-11-10T11:10:00.389Z",
+        "passed": false,
+        "effects": {
+          "before": "snapshot-R06-UI-fr-restored-before-1794309001670-c13e510d-ba8b-4e5d-a112-a6212b41846a.json",
+          "after": "snapshot-R06-UI-fr-restored-after-1794309005283-24ee3efb-2d91-434b-a7b0-c5c3b0a41ccb.json",
+          "businessEqual": true,
+          "changedBusinessTables": [],
+          "sessionsChanged": false,
+          "auditsChanged": false,
+          "bookkeeping": {
+            "sessionAdditions": 0,
+            "allowedSessionDeletions": 0,
+            "preservedExistingAudits": true,
+            "allowedNewAudits": []
+          }
+        },
+        "error": "Browser response capture incomplete",
+        "failureClass": "observed_assertion_failure",
+        "finishedAt": "2026-11-10T11:10:05.290Z"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "path": "inventory/test-case-map.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    },
+    {
+      "path": "candidate-context-attempt02.json",
+      "sha256": "5e698a5acf73e69c5584d5e310001770a9798faa77d96877a11fde2fa0c8b6c2"
+    },
+    {
+      "path": "build-result-attempt02.json",
+      "sha256": "0124329359273775db300041794d1176abf9b308d1abc82b03b98f1c91f296f8"
+    },
+    {
+      "path": "runtime-result-attempt02.json",
+      "sha256": "4459b141a394444372f88d3728b84f38d5adeb49eb840d382cc4725327fc92df"
+    }
+  ],
+  "runtimeTopLevelPassed": false,
+  "runtimeError": null,
+  "cleanupErrors": [],
+  "limits": [
+    "Hosted OAuth/token exchange and provider delivery positives.",
+    "Unrelated media upload/provider/whole inventory Refresh matrices.",
+    "Production, migrations outside new disposable target, deployment or committed changes.",
+    "Claim of instantaneous revocation or transaction-level linearizability without dedicated race evidence."
+  ]
+}

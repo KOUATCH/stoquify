@@ -1,0 +1,281 @@
+{
+  "at": "2026-11-10T15:40:31.469Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Source successor comparison only; not execution admission",
+  "files": [
+    {
+      "path": "run-runtime.cjs",
+      "sha256": "47a4be6d859a22510aacbc6b98b7b618b5328662520657b1f18a574b528f9f55"
+    },
+    {
+      "path": "admit-runtime-source.cjs",
+      "sha256": "335e88287afe955ec22850701bdeea8043394b6bffd340398d3fc5ca48f3d8e7"
+    },
+    {
+      "path": "database/fixture-preflight.cjs",
+      "sha256": "3f799da00b7b96b836e2c4a5d78cbc01c589bf943ceae877accc5551afdc0d86"
+    },
+    {
+      "path": "direct-api-driver.cjs",
+      "sha256": "e810c7464c549b23d44f9ca829b66d0b5a2feb5b43a1676053ac21c0223a753c"
+    },
+    {
+      "path": "environment-guard.cjs",
+      "sha256": "2916634ef9741d082a86dfee8cdd1b06cc2ebdd285e956b79705671504b40a2d"
+    },
+    {
+      "path": "runtime/run-protected-core.cjs",
+      "sha256": "3bdc7a715fc4519c321c7391a205845c1ffed43a3f9d125014dd7c3fd9d38fa5"
+    },
+    {
+      "path": "runtime/run-expanded.cjs",
+      "sha256": "4ae6d178bc90789004e36352e1fad487ec470fd17c585c4c487e692c5a8eb30b"
+    },
+    {
+      "path": "runtime/run-credential-probes.cjs",
+      "sha256": "a08d4cf1fedb2affc179a5cf26e4d15506a5d7f423dc0a8376b1104aa730084c"
+    },
+    {
+      "path": "runtime/run-origin-probes.cjs",
+      "sha256": "8b802095304ef10beb243620fbcfccfd2c656bfc49c5a5ae202a53cf67602265"
+    },
+    {
+      "path": "runtime/run-retained-expiry.cjs",
+      "sha256": "9b1430784b51d3b65add983794b357e34bac0548cb2f716cb3492ea7cf5522f0"
+    },
+    {
+      "path": "runtime/runtime-bridge.cjs",
+      "sha256": "6ee4946913471af6811fb25960554da766fda9b4874e48d6e829368d946a4ce3"
+    },
+    {
+      "path": "browser/run-consumer-qualification-v4.cjs",
+      "sha256": "d32b2e2afad066c1b0b734cfbac257af477c7321a04368c02c5e74c6895e3d8e"
+    },
+    {
+      "path": "browser/browser-protocol-v3.cjs",
+      "sha256": "ab98d36dac6326b3c45c5ab65b31c034ba3567e97d91118ea319f3679d19d256"
+    },
+    {
+      "path": "browser/consumer-evidence-v2.cjs",
+      "sha256": "dcc42c28244da7282b1989049c78f69c96c2ed45e0529d310c7a3f40d9958cb4"
+    },
+    {
+      "path": "browser/flight-profile-evidence.cjs",
+      "sha256": "9c8aece7411279a75969059e69a7536e1f5fc6c2bdc2ff4921e366708851e0cd"
+    },
+    {
+      "path": "browser/private-canaries.cjs",
+      "sha256": "ccf6d3f65436fe95db508fce6d89db93c7d53bdf5fe7e449265178e7312a51ae"
+    },
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "3815ceeb4af41b8c8fdf280cda276fa0e7dfc6a264ae1e370d19380962a26fcd"
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d"
+    },
+    {
+      "path": "database/login-fixture-control.cjs",
+      "sha256": "1ca0e416469fdb9f581857ca895c66301a9de0e565aa4c30eb8bda40fa6d6388"
+    },
+    {
+      "path": "database/read-authority-utc.cjs",
+      "sha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8"
+    },
+    {
+      "path": "database/direct-api-child.cjs",
+      "sha256": "2a2ed026c73edf518c0878e0d7d5b489d14093c10e99da3b2fb923b6b0f00c38"
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "sha256": "1e37557aef27d8797850f8704288d61c3d33943928e86124e1145244171a4bfe"
+    }
+  ],
+  "predecessor": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\independent-review\\RUNTIME-RECIPE-ADMISSION.json",
+    "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+  },
+  "comparison": [
+    {
+      "path": "run-runtime.cjs",
+      "previousPath": "run-runtime-v3.cjs",
+      "previousSha256": "5ba7ae27f4c5a90c35d30d29f8d1f707825a5f3e4934121b3f904b49865eb440",
+      "sha256": "47a4be6d859a22510aacbc6b98b7b618b5328662520657b1f18a574b528f9f55",
+      "unchanged": false
+    },
+    {
+      "path": "admit-runtime-source.cjs",
+      "previousPath": "admit-runtime-source-v2.cjs",
+      "previousSha256": "06dfc1a4b16f05e86a46d0de9eb22ab824c01a5149a56e7b58227589a8cf92a2",
+      "sha256": "335e88287afe955ec22850701bdeea8043394b6bffd340398d3fc5ca48f3d8e7",
+      "unchanged": false
+    },
+    {
+      "path": "database/fixture-preflight.cjs",
+      "previousPath": "database/fixture-preflight-v2.cjs",
+      "previousSha256": "4c2f2190154c217fb4b3f0968dd15ce661732141bd3262013171f45830ba379c",
+      "sha256": "3f799da00b7b96b836e2c4a5d78cbc01c589bf943ceae877accc5551afdc0d86",
+      "unchanged": false
+    },
+    {
+      "path": "direct-api-driver.cjs",
+      "previousPath": "direct-api-driver.cjs",
+      "previousSha256": "8430cd241dcfa81199877b361e78fc4eadd592e3cc2b08d7e497162d223fca43",
+      "sha256": "e810c7464c549b23d44f9ca829b66d0b5a2feb5b43a1676053ac21c0223a753c",
+      "unchanged": false
+    },
+    {
+      "path": "environment-guard.cjs",
+      "previousPath": "environment-guard.cjs",
+      "previousSha256": "2916634ef9741d082a86dfee8cdd1b06cc2ebdd285e956b79705671504b40a2d",
+      "sha256": "2916634ef9741d082a86dfee8cdd1b06cc2ebdd285e956b79705671504b40a2d",
+      "unchanged": true
+    },
+    {
+      "path": "runtime/run-protected-core.cjs",
+      "previousPath": "runtime/run-protected-core.cjs",
+      "previousSha256": "3bdc7a715fc4519c321c7391a205845c1ffed43a3f9d125014dd7c3fd9d38fa5",
+      "sha256": "3bdc7a715fc4519c321c7391a205845c1ffed43a3f9d125014dd7c3fd9d38fa5",
+      "unchanged": true
+    },
+    {
+      "path": "runtime/run-expanded.cjs",
+      "previousPath": "runtime/run-expanded.cjs",
+      "previousSha256": "bd064bf41b35e88f098789c3bb2dc76a2bb014d3098ebf9d02a2544feef819a3",
+      "sha256": "4ae6d178bc90789004e36352e1fad487ec470fd17c585c4c487e692c5a8eb30b",
+      "unchanged": false
+    },
+    {
+      "path": "runtime/run-credential-probes.cjs",
+      "previousPath": "runtime/run-credential-probes.cjs",
+      "previousSha256": "a08d4cf1fedb2affc179a5cf26e4d15506a5d7f423dc0a8376b1104aa730084c",
+      "sha256": "a08d4cf1fedb2affc179a5cf26e4d15506a5d7f423dc0a8376b1104aa730084c",
+      "unchanged": true
+    },
+    {
+      "path": "runtime/run-origin-probes.cjs",
+      "previousPath": "runtime/run-origin-probes.cjs",
+      "previousSha256": "8b802095304ef10beb243620fbcfccfd2c656bfc49c5a5ae202a53cf67602265",
+      "sha256": "8b802095304ef10beb243620fbcfccfd2c656bfc49c5a5ae202a53cf67602265",
+      "unchanged": true
+    },
+    {
+      "path": "runtime/run-retained-expiry.cjs",
+      "previousPath": "runtime/run-retained-expiry.cjs",
+      "previousSha256": "9b1430784b51d3b65add983794b357e34bac0548cb2f716cb3492ea7cf5522f0",
+      "sha256": "9b1430784b51d3b65add983794b357e34bac0548cb2f716cb3492ea7cf5522f0",
+      "unchanged": true
+    },
+    {
+      "path": "runtime/runtime-bridge.cjs",
+      "previousPath": "runtime/runtime-bridge-v2.cjs",
+      "previousSha256": "ec542a56bdaf1b4b3e4c78ceedb46828cfd4dffec922d18d2f9e32ba8bf6aa01",
+      "sha256": "6ee4946913471af6811fb25960554da766fda9b4874e48d6e829368d946a4ce3",
+      "unchanged": false
+    },
+    {
+      "path": "browser/run-consumer-qualification-v4.cjs",
+      "previousPath": "browser/run-consumer-qualification-v3.cjs",
+      "previousSha256": "f4d6460b79cfff193de4b3f6cb48f21bb112dda367c0225a3fc5d13be4319c0a",
+      "sha256": "d32b2e2afad066c1b0b734cfbac257af477c7321a04368c02c5e74c6895e3d8e",
+      "unchanged": false
+    },
+    {
+      "path": "browser/browser-protocol-v3.cjs",
+      "previousPath": "browser/browser-protocol-v3.cjs",
+      "previousSha256": "ab98d36dac6326b3c45c5ab65b31c034ba3567e97d91118ea319f3679d19d256",
+      "sha256": "ab98d36dac6326b3c45c5ab65b31c034ba3567e97d91118ea319f3679d19d256",
+      "unchanged": true
+    },
+    {
+      "path": "browser/consumer-evidence-v2.cjs",
+      "previousPath": "browser/consumer-evidence-v2.cjs",
+      "previousSha256": "dcc42c28244da7282b1989049c78f69c96c2ed45e0529d310c7a3f40d9958cb4",
+      "sha256": "dcc42c28244da7282b1989049c78f69c96c2ed45e0529d310c7a3f40d9958cb4",
+      "unchanged": true
+    },
+    {
+      "path": "browser/flight-profile-evidence.cjs",
+      "previousPath": "browser/flight-profile-evidence.cjs",
+      "previousSha256": "9c8aece7411279a75969059e69a7536e1f5fc6c2bdc2ff4921e366708851e0cd",
+      "sha256": "9c8aece7411279a75969059e69a7536e1f5fc6c2bdc2ff4921e366708851e0cd",
+      "unchanged": true
+    },
+    {
+      "path": "browser/private-canaries.cjs",
+      "previousPath": "browser/private-canaries.cjs",
+      "previousSha256": "ccf6d3f65436fe95db508fce6d89db93c7d53bdf5fe7e449265178e7312a51ae",
+      "sha256": "ccf6d3f65436fe95db508fce6d89db93c7d53bdf5fe7e449265178e7312a51ae",
+      "unchanged": true
+    },
+    {
+      "path": "database/database-common.cjs",
+      "previousPath": "database/database-common.cjs",
+      "previousSha256": "22d6005ff8ac2355837e339c621819ce2411ba6322bc1febe2d0edfe52661be8",
+      "sha256": "3815ceeb4af41b8c8fdf280cda276fa0e7dfc6a264ae1e370d19380962a26fcd",
+      "unchanged": false
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "previousPath": "database/fixture-control.cjs",
+      "previousSha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d",
+      "sha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d",
+      "unchanged": true
+    },
+    {
+      "path": "database/login-fixture-control.cjs",
+      "previousPath": "database/login-fixture-control.cjs",
+      "previousSha256": "1ca0e416469fdb9f581857ca895c66301a9de0e565aa4c30eb8bda40fa6d6388",
+      "sha256": "1ca0e416469fdb9f581857ca895c66301a9de0e565aa4c30eb8bda40fa6d6388",
+      "unchanged": true
+    },
+    {
+      "path": "database/read-authority-utc.cjs",
+      "previousPath": "database/read-authority-utc.cjs",
+      "previousSha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8",
+      "sha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8",
+      "unchanged": true
+    },
+    {
+      "path": "database/direct-api-child.cjs",
+      "previousPath": "database/direct-api-child.cjs",
+      "previousSha256": "d3194e9b397bbabf393a490f335b31197432317e70ecca9e496a3e7d2f79cd3b",
+      "sha256": "2a2ed026c73edf518c0878e0d7d5b489d14093c10e99da3b2fb923b6b0f00c38",
+      "unchanged": false
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "previousPath": "database/fixture-definition.cjs",
+      "previousSha256": "1e37557aef27d8797850f8704288d61c3d33943928e86124e1145244171a4bfe",
+      "sha256": "1e37557aef27d8797850f8704288d61c3d33943928e86124e1145244171a4bfe",
+      "unchanged": true
+    }
+  ],
+  "reviewedChanges": [
+    "Main/runtime-source: current and candidate HEAD/full source/68 inputs, new r3 source/private with retained r2 cluster active-owner binding",
+    "Native fixture preflight binds resumed actual PID and still requires16actors32accounts zero sessions/audits and empty build tables",
+    "Direct driver only unique r3 evidence names; child imports new r3 app/Prisma but verifies retained r2 cluster",
+    "Bridge only new storage and TLS/log names; old DB names, TLS origin, proxy forwarding and response evidence semantics retained",
+    "Expanded helper only imports label-successor browser v4; all assertions and no-write/byte/consumer gates unchanged",
+    "Browser v4 independently admitted exact label/sourceFiles successor"
+  ],
+  "coverage": {
+    "logical": 58,
+    "raw": 107,
+    "protectedCore": 50,
+    "credentials": 10,
+    "origin": 24,
+    "infrastructure": 2,
+    "expiry": 3,
+    "browser": 18,
+    "auxiliary": 57
+  },
+  "futureExecutionPrerequisites": [
+    "Exact source/candidate outcome and resumed native fixture acceptance",
+    "Actual passing build/artifact outcome and source/native preflight",
+    "Final recipe admission binding these sources and actual identities"
+  ],
+  "qualificationPassed": false
+}

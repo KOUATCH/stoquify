@@ -1,0 +1,81 @@
+{
+  "synthetic": true,
+  "checks": [
+    {
+      "clientGrant": "Client owner granted named preparer/reviewer through real existing protected form"
+    },
+    {
+      "setup": "Draft, assignment, explicit enrollment and activation; assignment alone did not create a link"
+    },
+    {
+      "suspension": "Real suspension clears managed read state; explicit reactivation advances version and restores it without rewriting client grants"
+    },
+    {
+      "handover": "Old assignment ended, incoming consent not transferred; explicit second enrollment; work rows unchanged"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "geometry": {
+        "client": 1112,
+        "scroll": 1112
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "geometry": {
+        "client": 358,
+        "scroll": 358
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "geometry": {
+        "client": 1112,
+        "scroll": 1112
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "geometry": {
+        "client": 358,
+        "scroll": 358
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "revocation": "Real client owner form revokes enrolled incoming mandate"
+    },
+    {
+      "invitation": "Actual queued invitation, synthetic worker-failure state; retry visible, acceptance still pending, no grant and no provider called"
+    }
+  ],
+  "screenshots": [
+    "engagement-suspended.png",
+    "engagement-en-1440.png",
+    "engagement-en-390.png",
+    "engagement-fr-1440.png",
+    "engagement-fr-390.png",
+    "client-revocation.png",
+    "delivery-failure-pending-acceptance.png",
+    "failure.png",
+    "client-failure.png"
+  ],
+  "pageErrors": [],
+  "passed": false,
+  "secureCookieRoles": [
+    "manager",
+    "owner"
+  ],
+  "failure": "locator.waitFor: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Accountant access is not available for this role', exact: true }) to be visible\u001b[22m\n"
+}

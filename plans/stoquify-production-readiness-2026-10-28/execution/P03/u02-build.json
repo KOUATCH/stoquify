@@ -1,0 +1,83 @@
+{
+  "startedAt": "2026-10-29T09:19:48.590Z",
+  "passed": true,
+  "commands": [
+    {
+      "label": "u02-client-generation",
+      "args": [
+        "node_modules/prisma/build/index.js",
+        "generate"
+      ],
+      "startedAt": "2026-10-29T09:20:17.747Z",
+      "finishedAt": "2026-10-29T09:22:09.485Z",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "termination": null
+    },
+    {
+      "label": "u02-artifact-build",
+      "args": [
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "release:artifact",
+        "--",
+        "D:\\Codex-Stoquify-P03-20261028-01a1816a\\recovery-u02-artifact"
+      ],
+      "startedAt": "2026-10-29T09:22:09.490Z",
+      "finishedAt": "2026-10-29T09:41:24.130Z",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "termination": null
+    }
+  ],
+  "candidate": "D:\\Codex-Stoquify-P03-20261028-01a1816a\\recovery-u02",
+  "artifact": "D:\\Codex-Stoquify-P03-20261028-01a1816a\\recovery-u02-artifact",
+  "database": {
+    "name": "stoquify_local_p03_20261029_u02_build_r1",
+    "host": "127.0.0.1",
+    "port": 53528,
+    "migrations": 120,
+    "synthetic": true
+  },
+  "environmentVariableNames": [
+    "APPDATA",
+    "AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY",
+    "AQSTOQFLOW_HISTORY_CURSOR_SECRET",
+    "AQSTOQFLOW_RECEIPT_TOKEN_SECRET",
+    "AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY",
+    "AQSTOQFLOW_STATEMENT_TOKEN_SECRET",
+    "AUTH_SECRET",
+    "BETTER_AUTH_SECRET",
+    "BUILD_APP_TIMEOUT_MS",
+    "CHECKPOINT_DISABLE",
+    "ComSpec",
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "LOCALAPPDATA",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_URL",
+    "NEXT_PUBLIC_APP_URL",
+    "NEXT_PUBLIC_BASE_URL",
+    "NEXT_TELEMETRY_DISABLED",
+    "PATHEXT",
+    "PRISMA_HIDE_UPDATE_MESSAGE",
+    "PUBLIC_IDENTITY_ABUSE_HASH_SECRET",
+    "Path",
+    "STOQUIFY_ACCOUNTANT_INVITE_LIVE_SENDS",
+    "STOQUIFY_STATEMENT_EMAIL_LIVE_SENDS",
+    "STOQUIFY_STATEMENT_WHATSAPP_LIVE_SENDS",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "scope": "Previously sealed four-delta candidate plus reviewed command/refresh repair, physical private dependencies, fresh synthetic secrets and build database. Not a current combined release or clean install.",
+  "artifactSha256": "147c7136b202d0baed804c7c80729c226ad7e7a59dd4c13fbc7c565fe6d1da5a",
+  "buildId": "Txewjg9meQy10h0DDROu3",
+  "runtimeFiles": 5284,
+  "clusterStopped": true,
+  "finishedAt": "2026-10-29T09:41:35.799Z"
+}

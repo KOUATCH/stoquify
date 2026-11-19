@@ -16,7 +16,7 @@ npm run dev:turbopack    # Same, faster with Turbopack
 # Build & verify
 npm run agent:workflow:check # Read-only workflow/command-reference validation
 npm run agent:workflow:test  # Isolated workflow-contract fixture tests
-npm run build            # Secrets preflight + database migration + linted build
+npm run build            # Secrets preflight + linted build; schema promotion is separate
 npm run build:linted     # Lint + build wrapper (may clean stale build output)
 npm run typecheck        # tsc --noEmit; incremental metadata may be written
 npm run lint             # ESLint
@@ -158,7 +158,7 @@ Organized by domain. Pattern: each file exports one or a few async server action
 
 - `argon2` is **server-only**. It's listed in `serverExternalPackages` and excluded from client bundles via webpack. Never import it in client components.
 - Build uses `output: 'standalone'` — self-contained for Docker deployment.
-- `npm run build` runs secrets preflight, migration deployment and the linted build. Select checks through the shared command contract; do not use it as a default audit command.
+- `npm run build` runs secrets preflight and the linted build. `release:schema:promote` is the separate mutating migration stage. Select checks through the shared command contract; do not use it as a default audit command.
 
 ---
 

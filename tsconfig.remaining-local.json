@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.workflow-repairs.json",
+  "include": [
+    "next-env.d.ts",
+    "services/inventory/__tests__/remaining-*.ts",
+    "services/pos/tender-write-access.ts",
+    "actions/pos/tender.actions.ts",
+    "actions/pos/__tests__/tender.actions.test.ts",
+    "components/pos/ProfessionalPOSSystem.tsx"
+  ]
+}

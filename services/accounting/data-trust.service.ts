@@ -28,6 +28,7 @@ import { createCloseControlScope, closeEconomicDates, closeRecordedDates, type C
 import { closePayrollRunWhere, closeDeclarationWhere } from "./close-data-trust-scope";
 import { closeStatementFileWhere, closeStatementLineWhere, closeRunWhere, closeExceptionWhere } from "@/services/reconciliation/payment-close-scope";
 import { recordBusinessEventInTx } from "@/services/events/business-event.service";
+import { lockAccountantExportAuthorityInTx } from "./close-evidence-acceptance-authority.service";
 import { summarizePayrollTransitionEvidence } from "@/services/payroll/payroll-transition-evidence";
 import { BusinessRuleError } from "@/services/_shared/action-errors";
 import { readSupplierPaymentReconciliationProofsInTx, type SupplierPaymentReconciliationProof } from "@/services/purchasing/payment-reconciliation-proof-summary";
@@ -231,6 +232,7 @@ export type ExportAccountantTrustPackServiceInput =
     now?: Date | number | string | null;
     fileType?: "json";
     includeLedgerRows?: boolean;
+    authority?: { homeOrganizationId: string; session: { id: string; token: string } };
   };
 
 export type AccountantTrustPackExport = {
@@ -3285,6 +3287,17 @@ export async function exportAccountantTrustPack(
   }
 
   return db.$transaction(async (tx) => {
+    // Action supplies trusted session proof; delegated direct service calls may
+    // not omit it to bypass managed authority. Legacy same-tenant callers retain
+    // their existing sensitive-action contract.
+    const exporter = await tx.user.findUnique({ where: { id: input.exportedById }, select: { organizationId: true } });
+    if (!exporter || (exporter.organizationId !== input.organizationId && !input.authority)) {
+      throw new BusinessRuleError("Delegated export requires authenticated authority.");
+    }
+    const authority = input.authority ? await lockAccountantExportAuthorityInTx(tx, {
+      homeOrganizationId: input.authority.homeOrganizationId, organizationId: input.organizationId,
+      actorId: input.exportedById, session: input.authority.session,
+    }) : null;
     const portal = await getAccountantPortalData(input, tx, now);
     const rowCount =
       portal.summary.journalLines +
@@ -3367,6 +3380,7 @@ export async function exportAccountantTrustPack(
     );
     const fileName = `${watermarkId}.json`;
 
+    await authority?.revalidate();
     await tx.ledgerAuditEvent.create({
       data: {
         organizationId: input.organizationId,
@@ -3417,6 +3431,7 @@ export async function exportAccountantTrustPack(
       ],
     });
 
+    await authority?.revalidate();
     return {
       exportId,
       fileName,

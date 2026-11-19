@@ -1,0 +1,64 @@
+{
+  "packageId": "P04-R06",
+  "qualification": "20261110-r3",
+  "observationStartedAt": "2026-11-10T18:56:55.117Z",
+  "observationFinishedAt": "2026-11-10T18:57:23.808Z",
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "sourceFiles": 9988,
+  "sourceIdentitySha256": "0b8354d4f340ad5b82931e2e18e3e01a7ba18cfd089351a2536b41e23891332c",
+  "sourceManifestSha256": "c346a34aaf073e4ee3ac1246863adbf751869400331755c69c698235e4623064",
+  "sourceComparisonSha256": "362c0d6da8b4d750cf22562c3c9f2616ad3410d06d097389059a554d5de16563",
+  "selectedInputReceiptSha256": "e82f7d8f7ae6259ded53422b718fd3b568eeaf0fcf08642b1cfa8236e59b6065",
+  "migrationReceiptSha256": "bf9fad5af1fe9a8440e3ec8939c81a2b3be622e1ada7589a36645cf20ad73228",
+  "sizeReceiptSha256": "1038f42443f9c1f94564ab2af7e21f8d91b0ead5a24085f1ee172677fa7cb29c",
+  "deltaSince9973": {"added":15,"modified":2,"removed":0,"newDocumentationFiles":14,"nonDocumentationPaths":3},
+  "selectedInputs": {
+    "count": 68,
+    "unchanged": 67,
+    "changed": [{"path":"prisma/schema.prisma","beforeSha256":"b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39","sha256":"937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0"}],
+    "all68Unchanged": false,
+    "reviewedSchemaSuccessorMatches": true,
+    "selectedSourceRowsAgreeWithFullObservation": true
+  },
+  "migrationSource": {
+    "count":123,
+    "identitySha256":"4bc9837046bf41549a682d5f2fe9d53b539e2b554d28e6bc393d7865fb4b614c",
+    "old122Unchanged":true,
+    "migrationLockUnchanged":true,
+    "added":{"path":"prisma/migrations/20261110190000_close_scope_integrity/migration.sql","sha256":"334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7"},
+    "allMigrationRowsAgreeWithFullObservation":true,
+    "sourceDisposition":"../resume-20261110-r1/SCHEMA-DRIFT-DISPOSITION.json",
+    "sourceDispositionSha256":"529fbac1d0f0eab1dccb4c6f0ed490cec9f74fb715a99895ccd950f8da39e40d"
+  },
+  "catalog": {
+    "path":"prisma/migration-catalog-manifest.json",
+    "beforeSha256":"ebfa7d6d08c3757bf6beca180823b4b1cda57355f066be3751417fc0c09770e3",
+    "sha256":"2f75aa91184a92eb558d5c55b6f8f1c2e824c8b1fd7e6ce451b330814656cbdd",
+    "beforeCount":122,
+    "currentCount":123,
+    "all122PriorEntriesUnchanged":true,
+    "otherChangedFields":["catalogSha256","migrationCount"],
+    "newEntryMatchesSql":true,
+    "disposition":"Catalog extends the prior122 ledger by the same new migration. It is release/tool metadata consumed by existing migration/Close gate scripts; no new authentication code or application startup is introduced. No catalog command or migration was executed by this source task."
+  },
+  "impact": [
+    "The schema/SQL change is structural Close/accounting scope integrity. Current authentication/profile inputs, package/lock and configuration remain unchanged relative to the preceding observation. No auth scalar shape delta was found, but the current schema/client/ledger requires fresh qualification.",
+    "The four accounting service/test changes classified in the preceding9973 source observation remain preserved. Their finance/assignment/concurrency behavior remains outside R06 qualification; no claim is imported from their separate test receipts.",
+    "All14 new docs belong to another lane's Close database integrity evidence. Their catalog/validation/unit reports are retained as source documents without adopting their success claims. The nested static/tsconfig.json is an evidence configuration and does not replace the application's root tsconfig.json.",
+    "Four prior fixture metadata documents remain exact. Three added private-client metadata documents describe code/tool provenance rather than fixture payloads. The seven-row typed metadata disposition requires an independently reviewed successor artifact exclusion check."
+  ],
+  "privateMetadataDisposition":"PRIVATE-METADATA-DISPOSITION.json",
+  "requirementsBeforeAdvancement": [
+    "Independently admit the exact9988 full-source identity, all68 current hashes,123-migration source identity and bounded impact/privacy dispositions. Preserve all earlier9942/9973/E31 receipts.",
+    "Prepare named successor capture inputs and typed seven-row private metadata policy. Do not reuse old all68-match or old identical-schema/client/retained database compatibility claims.",
+    "Runtime owner prepares newly named disposable databases and privately generated current client under independent recipe admission. Preserve the original stopped r2 databases and their historical fixture/suspension evidence.",
+    "Candidate capture must recheck exact full source, selected inputs, HEAD, dependency integrity and current resource capacity. Concurrent writers have not been confirmed paused; drift stops capture for reconciliation.",
+    "Full build/type/lint, fresh database-ledger/fixture evidence and actual native/browser gates remain required. No source inspection or other lane's output certifies those outcomes."
+  ],
+  "atomicSnapshot":false,
+  "applicationExecution":false,
+  "databaseAccess":false,
+  "candidateWrites":false,
+  "buildExecution":false,
+  "qualificationPassed":false
+}

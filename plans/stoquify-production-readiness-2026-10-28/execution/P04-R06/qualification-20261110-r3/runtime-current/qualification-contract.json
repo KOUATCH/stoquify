@@ -1,0 +1,802 @@
+{
+  "schemaVersion": 1,
+  "packageId": "P04-R06",
+  "scope": "Fresh r2 candidate. Original logical requirements are mapped explicitly; no retrospective replacement of r1 outcomes.",
+  "originalRequirements": [
+    "R06-P-get-session",
+    "R06-P-list-sessions",
+    "R06-P-list-accounts",
+    "R06-P-verify-password",
+    "R06-P-unlink",
+    "R06-P-profile",
+    "R06-P-expired-lock",
+    "R06-P-independent-session",
+    "R06-N-revoked-get-session",
+    "R06-N-revoked-list-sessions",
+    "R06-N-revoked-list-accounts",
+    "R06-N-revoked-unlink-account",
+    "R06-N-revoked-verify-password",
+    "R06-N-expired-get-session",
+    "R06-N-expired-list-sessions",
+    "R06-N-expired-list-accounts",
+    "R06-N-expired-unlink-account",
+    "R06-N-expired-verify-password",
+    "R06-N-inactive-get-session",
+    "R06-N-inactive-list-sessions",
+    "R06-N-inactive-list-accounts",
+    "R06-N-inactive-unlink-account",
+    "R06-N-inactive-verify-password",
+    "R06-N-locked_indefinite-get-session",
+    "R06-N-locked_indefinite-list-sessions",
+    "R06-N-locked_indefinite-list-accounts",
+    "R06-N-locked_indefinite-unlink-account",
+    "R06-N-locked_indefinite-verify-password",
+    "R06-N-locked_future-get-session",
+    "R06-N-locked_future-list-sessions",
+    "R06-N-locked_future-list-accounts",
+    "R06-N-locked_future-unlink-account",
+    "R06-N-locked_future-verify-password",
+    "R06-Q-revoked-get-session",
+    "R06-Q-revoked-list-accounts",
+    "R06-Q-revoked-unlink-account",
+    "R06-Q-revoked-change-password",
+    "R06-Q-expired-get-session",
+    "R06-Q-expired-list-accounts",
+    "R06-Q-expired-unlink-account",
+    "R06-Q-expired-change-password",
+    "R06-B-anonymous",
+    "R06-B-foreign-unlink",
+    "R06-B-provider-userid",
+    "R06-B-mixed-active-cookie",
+    "R06-B-mixed-revoked-cookie",
+    "R06-C-login",
+    "R06-C-origin",
+    "R06-C-signout",
+    "R06-C-public-recovery",
+    "R06-C-methods",
+    "R06-C-direct-api",
+    "R06-UI-en-authorized",
+    "R06-UI-en-invalidated-reload",
+    "R06-UI-en-restored",
+    "R06-UI-fr-authorized",
+    "R06-UI-fr-invalidated-reload",
+    "R06-UI-fr-restored"
+  ],
+  "protectedCore": {
+    "runner": "runtime/run-protected-core.cjs",
+    "requirements": [
+      "R06-P-get-session",
+      "R06-P-list-sessions",
+      "R06-P-list-accounts",
+      "R06-P-verify-password",
+      "R06-P-unlink",
+      "R06-P-profile",
+      "R06-P-expired-lock",
+      "R06-P-independent-session",
+      "R06-N-revoked-get-session",
+      "R06-N-revoked-list-sessions",
+      "R06-N-revoked-list-accounts",
+      "R06-N-revoked-unlink-account",
+      "R06-N-revoked-verify-password",
+      "R06-N-expired-get-session",
+      "R06-N-expired-list-sessions",
+      "R06-N-expired-list-accounts",
+      "R06-N-expired-unlink-account",
+      "R06-N-expired-verify-password",
+      "R06-N-inactive-get-session",
+      "R06-N-inactive-list-sessions",
+      "R06-N-inactive-list-accounts",
+      "R06-N-inactive-unlink-account",
+      "R06-N-inactive-verify-password",
+      "R06-N-locked_indefinite-get-session",
+      "R06-N-locked_indefinite-list-sessions",
+      "R06-N-locked_indefinite-list-accounts",
+      "R06-N-locked_indefinite-unlink-account",
+      "R06-N-locked_indefinite-verify-password",
+      "R06-N-locked_future-get-session",
+      "R06-N-locked_future-list-sessions",
+      "R06-N-locked_future-list-accounts",
+      "R06-N-locked_future-unlink-account",
+      "R06-N-locked_future-verify-password",
+      "R06-Q-revoked-get-session",
+      "R06-Q-revoked-list-accounts",
+      "R06-Q-revoked-unlink-account",
+      "R06-Q-revoked-change-password",
+      "R06-Q-expired-get-session",
+      "R06-Q-expired-list-accounts",
+      "R06-Q-expired-unlink-account",
+      "R06-Q-expired-change-password",
+      "R06-B-anonymous",
+      "R06-B-foreign-unlink",
+      "R06-B-provider-userid",
+      "R06-B-mixed-active-cookie",
+      "R06-B-mixed-revoked-cookie",
+      "R06-C-signout",
+      "R06-C-public-recovery",
+      "R06-C-methods",
+      "R06-C-direct-api"
+    ],
+    "changes": [
+      "Organization-aware denial canaries",
+      "UTC fixture writes and exact raw restoration",
+      "Credential/origin/browser requirements handled by dedicated admitted successors"
+    ]
+  },
+  "credentialRequirement": "R06-C-login",
+  "credentialCases": [
+    [
+      "active-success",
+      200,
+      "One owned session and LOGIN_SUCCESS; count0; UTC lastLogin in request interval"
+    ],
+    [
+      "wrong-password",
+      401,
+      "No session; count+1; LOGIN_FAILED; UTC lastFailedLogin in request interval"
+    ],
+    [
+      "fifth-wrong-password",
+      401,
+      "Count4to5; new future lock; ACCOUNT_LOCKED; no session"
+    ],
+    [
+      "future-lock-denial",
+      403,
+      "No user/session change; exactly one intended ACCOUNT_LOCKED audit"
+    ],
+    [
+      "inactive-denial",
+      403,
+      "No persisted changes"
+    ],
+    [
+      "expired-lock-success",
+      200,
+      "Only genuine success clears expired lock/count and creates owned session/success audit"
+    ],
+    [
+      "expired-lock-wrong-password",
+      401,
+      "Only genuine invalid password clears expired lock and begins count1/failure audit"
+    ],
+    [
+      "unverified-expired-lock",
+      403,
+      "EMAIL_NOT_VERIFIED; exact zero writes with expired lock retained"
+    ],
+    [
+      "malformed-expired-lock",
+      400,
+      "Validation denial; exact zero writes with expired lock retained"
+    ],
+    [
+      "unknown-email",
+      401,
+      "Exact zero writes; no known private bytes"
+    ]
+  ],
+  "originRequirement": "R06-C-origin",
+  "originContract": {
+    "nativeClient": "Cookie-free, Fetch-Metadata-free HTTP client with correct own credentials is an authorized positive, even with Origin header; explicit replacement of unsupported r1 denial premise",
+    "cookieBearing": "Foreign Origin plus acquired own cookie on unlink must403 with no private bytes/no persisted changes",
+    "browser": "Actual cross-site form navigate and simple CORS POST, each known and wrong passwords; Origin/Sec-Fetch headers and exact response attribution required",
+    "fixtures": [
+      {
+        "alias": "origin",
+        "state": "near_threshold",
+        "repetitionsPerModeAndCredential": 2
+      },
+      {
+        "alias": "origin_expired",
+        "state": "expired_lock",
+        "repetitionsPerModeAndCredential": 2
+      },
+      {
+        "alias": "locked_future",
+        "state": "future_lock",
+        "repetitionsPerModeAndCredential": 1
+      }
+    ],
+    "denialEffects": "All counters/locks/login/session/audit/business data unchanged; no ACCOUNT_LOCKED audit for rejected origins",
+    "recovery": "Normal own login works after threshold/expired-origin sequences",
+    "corsObservation": "Response.status property; persist exact failure stage (await-fetch/read-body/after-response); never infer unreadability from an undifferentiated TypeError"
+  },
+  "retainedExpirySupplement": [
+    "list-sessions",
+    "list-accounts",
+    "unlink-account"
+  ],
+  "connectionFailure": {
+    "port": 55518,
+    "realFixtureDatabasePort": 55517,
+    "scope": "Before-hook database-unavailability/no-private-data/no-write and normal-configuration recovery. Not a post-password session-creation error branch.",
+    "changes": "Only owned app DATABASE_URL/DIRECT_URL target during sequential fault phase; no listener/migration/data mutation on fault port"
+  },
+  "browser": {
+    "requirements": [
+      "R06-UI-en-authorized",
+      "R06-UI-en-invalidated-reload",
+      "R06-UI-en-restored",
+      "R06-UI-fr-authorized",
+      "R06-UI-fr-invalidated-reload",
+      "R06-UI-fr-restored"
+    ],
+    "runner": "browser/run-consumer-qualification-v3.cjs",
+    "admission": "independent-review/BROWSER-OBSERVER-RECIPE-ADMISSION-r3.json",
+    "brackets": 18,
+    "proof": "Exact compiled profile action and original bytes/browser stream bind root Flight actor, organization and snapshot to the consumer; displayed email/fields/formatted checkedAt and fresh explicit refresh/locale transitions prove use. OrganizationId and snapshotHash are Flight provenance, not claimed DOM fields. Cancellations remain reported."
+  },
+  "fixtureActors": 16,
+  "initialSessions": 0,
+  "advancement": "All required logical groups and supplements must pass actual source-bound gates and independent review; only fully classified effects allowed",
+  "rawResults": {
+    "receipt": "runtime-result.json",
+    "candidateIdField": "candidateId",
+    "artifactSha256Field": "artifactSha256",
+    "coreArrayPath": [
+      "protectedCore",
+      "checks"
+    ],
+    "expandedArrayPath": [
+      "expanded",
+      "checks"
+    ],
+    "expiryArrayPath": [
+      "expanded",
+      "expiry",
+      "checks"
+    ],
+    "browserArrayPath": [
+      "expanded",
+      "browserDiagnostic",
+      "checks"
+    ],
+    "expectedRawCases": 107
+  },
+  "credentialCaseIds": [
+    "R06-C-login-active-success",
+    "R06-C-login-wrong-password",
+    "R06-C-login-fifth-wrong-password",
+    "R06-C-login-future-lock-denial",
+    "R06-C-login-inactive-denial",
+    "R06-C-login-expired-lock-success",
+    "R06-C-login-expired-lock-wrong-password",
+    "R06-C-login-unverified-expired-lock",
+    "R06-C-login-malformed-expired-lock",
+    "R06-C-login-unknown-email"
+  ],
+  "originCaseIds": [
+    "R06-C-origin-native-own-positive",
+    "R06-C-origin-cookie-bearing",
+    "R06-C-origin-browser-near-threshold-navigate-known-1",
+    "R06-C-origin-browser-near-threshold-navigate-known-2",
+    "R06-C-origin-browser-near-threshold-navigate-wrong-1",
+    "R06-C-origin-browser-near-threshold-navigate-wrong-2",
+    "R06-C-origin-browser-near-threshold-cors-known-1",
+    "R06-C-origin-browser-near-threshold-cors-known-2",
+    "R06-C-origin-browser-near-threshold-cors-wrong-1",
+    "R06-C-origin-browser-near-threshold-cors-wrong-2",
+    "R06-C-origin-recovery-near-threshold",
+    "R06-C-origin-browser-expired-lock-navigate-known-1",
+    "R06-C-origin-browser-expired-lock-navigate-known-2",
+    "R06-C-origin-browser-expired-lock-navigate-wrong-1",
+    "R06-C-origin-browser-expired-lock-navigate-wrong-2",
+    "R06-C-origin-browser-expired-lock-cors-known-1",
+    "R06-C-origin-browser-expired-lock-cors-known-2",
+    "R06-C-origin-browser-expired-lock-cors-wrong-1",
+    "R06-C-origin-browser-expired-lock-cors-wrong-2",
+    "R06-C-origin-recovery-expired-lock",
+    "R06-C-origin-browser-future-lock-navigate-known-1",
+    "R06-C-origin-browser-future-lock-navigate-wrong-1",
+    "R06-C-origin-browser-future-lock-cors-known-1",
+    "R06-C-origin-browser-future-lock-cors-wrong-1"
+  ],
+  "infrastructureCaseIds": [
+    "R06-I-database-unavailable",
+    "R06-I-normal-configuration-recovery"
+  ],
+  "retainedExpiryCaseIds": [
+    "R06-E-retained-list-sessions",
+    "R06-E-retained-list-accounts",
+    "R06-E-retained-unlink-account"
+  ],
+  "browserCaseIds": [
+    "R06-UI-en-authorized",
+    "R06-UI-en-authorized-refresh",
+    "R06-UI-en-authorized-locale-away",
+    "R06-UI-en-authorized-locale-return",
+    "R06-UI-en-restored",
+    "R06-UI-en-restored-refresh",
+    "R06-UI-en-restored-locale-away",
+    "R06-UI-en-restored-locale-return",
+    "R06-UI-en-invalidated-reload",
+    "R06-UI-fr-authorized",
+    "R06-UI-fr-authorized-refresh",
+    "R06-UI-fr-authorized-locale-away",
+    "R06-UI-fr-authorized-locale-return",
+    "R06-UI-fr-restored",
+    "R06-UI-fr-restored-refresh",
+    "R06-UI-fr-restored-locale-away",
+    "R06-UI-fr-restored-locale-return",
+    "R06-UI-fr-invalidated-reload"
+  ],
+  "mandatoryProofs": [
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-login-active-success"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-login-wrong-password"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-login-fifth-wrong-password"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-login-future-lock-denial"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-login-inactive-denial"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-login-expired-lock-success"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-login-expired-lock-wrong-password"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-login-unverified-expired-lock"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-login-malformed-expired-lock"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-login-unknown-email"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-native-own-positive"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-cookie-bearing"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-near-threshold-navigate-known-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-near-threshold-navigate-known-2"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-near-threshold-navigate-wrong-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-near-threshold-navigate-wrong-2"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-near-threshold-cors-known-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-near-threshold-cors-known-2"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-near-threshold-cors-wrong-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-near-threshold-cors-wrong-2"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-recovery-near-threshold"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-expired-lock-navigate-known-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-expired-lock-navigate-known-2"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-expired-lock-navigate-wrong-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-expired-lock-navigate-wrong-2"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-expired-lock-cors-known-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-expired-lock-cors-known-2"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-expired-lock-cors-wrong-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-expired-lock-cors-wrong-2"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-recovery-expired-lock"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-future-lock-navigate-known-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-future-lock-navigate-wrong-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-future-lock-cors-known-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-C-origin-browser-future-lock-cors-wrong-1"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-I-database-unavailable"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "checks"
+      ],
+      "caseId": "R06-I-normal-configuration-recovery"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "expiry",
+        "checks"
+      ],
+      "caseId": "R06-E-retained-list-sessions"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "expiry",
+        "checks"
+      ],
+      "caseId": "R06-E-retained-list-accounts"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "expiry",
+        "checks"
+      ],
+      "caseId": "R06-E-retained-unlink-account"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-en-authorized"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-en-authorized-refresh"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-en-authorized-locale-away"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-en-authorized-locale-return"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-en-restored"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-en-restored-refresh"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-en-restored-locale-away"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-en-restored-locale-return"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-en-invalidated-reload"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-fr-authorized"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-fr-authorized-refresh"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-fr-authorized-locale-away"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-fr-authorized-locale-return"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-fr-restored"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-fr-restored-refresh"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-fr-restored-locale-away"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-fr-restored-locale-return"
+    },
+    {
+      "receipt": "runtime-result.json",
+      "arrayPath": [
+        "expanded",
+        "browserDiagnostic",
+        "checks"
+      ],
+      "caseId": "R06-UI-fr-invalidated-reload"
+    }
+  ]
+}

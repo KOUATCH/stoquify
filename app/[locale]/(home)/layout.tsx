@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth-server";
+import { getPublicSession } from "@/lib/public-session";
 import { LandingFooter } from "@/components/landing/landing-footer";
 import { LandingHeader } from "@/components/landing/landing-header";
 import { LandingRouteShell } from "@/components/landing/cinematic-shell";
@@ -6,6 +6,9 @@ import type { ReactNode } from "react";
 import { landingFontVars } from "./landing-fonts";
 import "./landing.css"
 import "@/components/landing/cinematic.css"
+import { getPublicContact } from "@/lib/public-site"
+import { NextIntlClientProvider } from "next-intl"
+import { getMessages } from "next-intl/server"
 
 /**
  * Marketing-page shell.
@@ -26,12 +29,15 @@ export default async function HomeLayout({
 }: {
   children: ReactNode
 }) {
-  const session = await getSession()
+  const session = await getPublicSession()
+  const messages = await getMessages()
   return (
+    <NextIntlClientProvider messages={{ landing: messages.landing }}>
     <div className={`landing-root ${landingFontVars} bg-[var(--color-canvas)] text-[var(--color-text-secondary)]`}>
-      <LandingRouteShell signedIn={Boolean(session)} header={<LandingHeader session={session} />} footer={<LandingFooter />}>
+      <LandingRouteShell signedIn={Boolean(session)} contact={getPublicContact()} header={<LandingHeader session={session} />} footer={<LandingFooter />}>
         {children}
       </LandingRouteShell>
     </div>
+    </NextIntlClientProvider>
   )
 }

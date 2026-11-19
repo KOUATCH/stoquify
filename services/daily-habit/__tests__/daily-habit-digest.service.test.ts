@@ -758,6 +758,13 @@ describe("Daily Habit Digest role cockpit", () => {
     const risks = result.digests.find(digest => digest.id === "manager-run-sheet")!.risks
     expect(risks.length).toBeGreaterThan(0)
     expect(risks[0]).toMatchObject({ state: "stale", urgency: null, sourceModules: ["inventory"], freshness: { state: "stale", stale: true, generatedAt: stock.freshness.generatedAt, sourceMaxUpdatedAt: stock.freshness.sourceMaxUpdatedAt } })
+    const changes = result.digests.find(digest => digest.id === "manager-run-sheet")!.changes
+    for (const risk of risks) {
+      expect(risk.provenance?.sourceId).toBeTruthy()
+      const source = changes.find(change => change.provenance?.sourceId === risk.provenance?.sourceId)
+      expect(source).toBeDefined()
+      expect(risk.provenance).toEqual(source!.provenance)
+    }
   })
 
   it.each(["tenantOperating", "paymentTruth", "inventoryCash", "closeReadiness"] as const)("rejects foreign %s evidence before composing a digest", (key) => {

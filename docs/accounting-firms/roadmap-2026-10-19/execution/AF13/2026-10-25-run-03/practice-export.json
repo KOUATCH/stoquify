@@ -1,0 +1,149 @@
+{
+  "report": {
+    "observedAt": "2026-10-25T12:20:35.800Z",
+    "actorId": "af12-1792930801400-af13-export-reviewer",
+    "mode": "manager",
+    "coverage": "EXPLICIT_ENGAGEMENT_PERIODS",
+    "cohortCount": 1,
+    "economicsIncluded": true,
+    "cohorts": [
+      {
+        "clientOrganizationId": "af12-1792930801400-af13-export-client",
+        "periodId": "cmvnsq56200klmao07lyc4ik2",
+        "engagementId": "cmvnsq4gl00j7mao05gcy3jye",
+        "periodName": "AF12 September",
+        "periodStart": "2026-09-01T00:00:00.000Z",
+        "periodEnd": "2026-09-30T23:59:59.999Z",
+        "staff": [
+          {
+            "id": "af12-1792930801400-af13-export-preparer",
+            "name": "preparer"
+          },
+          {
+            "id": "af12-1792930801400-af13-export-reviewer",
+            "name": "reviewer"
+          }
+        ],
+        "records": [
+          {
+            "id": "cmvnsq6f700llmao0dukf22rv",
+            "recordKey": "effort:export",
+            "version": 1,
+            "payload": {
+              "kind": "EFFORT",
+              "minutes": 30,
+              "workDate": "2026-09-15",
+              "advisoryRevisionId": null,
+              "reviewDecisionId": null
+            },
+            "subjectUserId": "af12-1792930801400-af13-export-preparer",
+            "recordedById": "af12-1792930801400-af13-export-preparer",
+            "actorId": "af12-1792930801400-af13-export-preparer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:35.203Z"
+          },
+          {
+            "id": "cmvnsq65y00lhmao0jvtkgh6q",
+            "recordKey": "fee:XAF",
+            "version": 1,
+            "payload": {
+              "kind": "FEE",
+              "currency": "XAF",
+              "amount": "500.00"
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-export-reviewer",
+            "actorId": "af12-1792930801400-af13-export-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:34.870Z"
+          }
+        ],
+        "history": [
+          {
+            "id": "cmvnsq6f700llmao0dukf22rv",
+            "recordKey": "effort:export",
+            "version": 1,
+            "payload": {
+              "kind": "EFFORT",
+              "minutes": 30,
+              "workDate": "2026-09-15",
+              "advisoryRevisionId": null,
+              "reviewDecisionId": null
+            },
+            "subjectUserId": "af12-1792930801400-af13-export-preparer",
+            "recordedById": "af12-1792930801400-af13-export-preparer",
+            "actorId": "af12-1792930801400-af13-export-preparer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:35.203Z"
+          },
+          {
+            "id": "cmvnsq65y00lhmao0jvtkgh6q",
+            "recordKey": "fee:XAF",
+            "version": 1,
+            "payload": {
+              "kind": "FEE",
+              "currency": "XAF",
+              "amount": "500.00"
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-export-reviewer",
+            "actorId": "af12-1792930801400-af13-export-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:34.870Z"
+          }
+        ],
+        "summary": {
+          "allocation": [
+            {
+              "assigneeId": "af12-1792930801400-af13-export-preparer",
+              "plannedMinutes": null,
+              "recordedMinutes": 30,
+              "declarationCount": 1,
+              "effortVarianceMinutes": null,
+              "recordingCoverage": "PARTIAL_DECLARATIONS",
+              "reviewedDeclarations": 0
+            },
+            {
+              "assigneeId": "af12-1792930801400-af13-export-reviewer",
+              "plannedMinutes": null,
+              "recordedMinutes": null,
+              "declarationCount": 0,
+              "effortVarianceMinutes": null,
+              "recordingCoverage": "UNKNOWN",
+              "reviewedDeclarations": 0
+            }
+          ],
+          "plannedSubtotalMinutes": null,
+          "missingPlans": 2,
+          "economics": [
+            {
+              "currency": "XAF",
+              "feeBudget": "500.00",
+              "feePerPlannedHour": null,
+              "actualFeeVariance": null,
+              "profitability": null
+            }
+          ],
+          "corrections": 0,
+          "limitations": "Manual declarations are partial; missing effort is unknown. Plans are estimates. Fee per planned hour uses the supplied plan subtotal, not capacity, revenue, realization or profit. No payroll, monitoring or FX conversion."
+        },
+        "canManage": true,
+        "canReadEconomics": true,
+        "advisoryReferences": [],
+        "reviewReferences": [],
+        "referencesPartial": false
+      }
+    ]
+  },
+  "contentHash": "sha256:c655c4e23a6c7bc5ffc99776a14c872513d9bc97511d6a7f98eb561d8d85f7cd",
+  "watermarkId": "wm_18382985f5950edc19278083",
+  "notice": "Firm-confidential manual declarations and planning estimates; not a client close deliverable or certified financial report."
+}

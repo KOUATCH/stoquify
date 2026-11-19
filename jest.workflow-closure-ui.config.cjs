@@ -1,0 +1,2 @@
+// Bounded mocked hook tests; no Next application/env bootstrap.
+module.exports={rootDir:'.',roots:['<rootDir>/hooks/__tests__','<rootDir>/actions/purchaseOrderWorkflow/__tests__'],testEnvironment:'jsdom',setupFilesAfterEnv:['<rootDir>/jest.setup.ts'],moduleNameMapper:{'^@/(.*)$':'<rootDir>/$1','^server-only$':'<rootDir>/scripts/server-only-node-shim.js'},transform:{'^.+\\.(js|jsx|ts|tsx)$':['next/dist/build/swc/jest-transformer',{jsc:{transform:{react:{runtime:'automatic'}}}}]},testMatch:['**/usePurchaseOrderClone.test.tsx','**/purchaseOrderSystemAction.test.ts']}

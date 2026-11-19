@@ -1,0 +1,21 @@
+53fc353902d6d54afe32172899c2d49b
+/** The only module-operation reason allowed across the public error boundary.
+ * This is a presentation discriminator, never an authorization decision. */ "use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "getModuleOperationErrorReason", {
+    enumerable: true,
+    get: function() {
+        return getModuleOperationErrorReason;
+    }
+});
+function getModuleOperationErrorReason(error) {
+    if (!error || typeof error !== "object" || !("code" in error) || error.code !== "FORBIDDEN") return undefined;
+    const reason = "reason" in error ? error.reason : undefined;
+    const metadata = "metadata" in error ? error.metadata : undefined;
+    const metadataReason = metadata && typeof metadata === "object" && "reason" in metadata ? metadata.reason : undefined;
+    return reason === "MODULE_NEW_WORK_STOPPED" || metadataReason === "MODULE_NEW_WORK_STOPPED" ? "MODULE_NEW_WORK_STOPPED" : undefined;
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6XFxvaGFkYSBzYWFzXFxGb2N1c2VkIHByb2plY3RzXFxzdG9xdWlmeVxcbGliXFxtb2R1bGVzXFxtb2R1bGUtb3BlcmF0aW9uLWVycm9yLnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8qKiBUaGUgb25seSBtb2R1bGUtb3BlcmF0aW9uIHJlYXNvbiBhbGxvd2VkIGFjcm9zcyB0aGUgcHVibGljIGVycm9yIGJvdW5kYXJ5LlxuICogVGhpcyBpcyBhIHByZXNlbnRhdGlvbiBkaXNjcmltaW5hdG9yLCBuZXZlciBhbiBhdXRob3JpemF0aW9uIGRlY2lzaW9uLiAqL1xuZXhwb3J0IHR5cGUgTW9kdWxlT3BlcmF0aW9uRXJyb3JSZWFzb24gPSBcIk1PRFVMRV9ORVdfV09SS19TVE9QUEVEXCJcblxuZXhwb3J0IGZ1bmN0aW9uIGdldE1vZHVsZU9wZXJhdGlvbkVycm9yUmVhc29uKGVycm9yOiB1bmtub3duKTogTW9kdWxlT3BlcmF0aW9uRXJyb3JSZWFzb24gfCB1bmRlZmluZWQge1xuICBpZiAoIWVycm9yIHx8IHR5cGVvZiBlcnJvciAhPT0gXCJvYmplY3RcIiB8fCAhKFwiY29kZVwiIGluIGVycm9yKSB8fCBlcnJvci5jb2RlICE9PSBcIkZPUkJJRERFTlwiKSByZXR1cm4gdW5kZWZpbmVkXG4gIGNvbnN0IHJlYXNvbiA9IFwicmVhc29uXCIgaW4gZXJyb3IgPyBlcnJvci5yZWFzb24gOiB1bmRlZmluZWRcbiAgY29uc3QgbWV0YWRhdGEgPSBcIm1ldGFkYXRhXCIgaW4gZXJyb3IgPyBlcnJvci5tZXRhZGF0YSA6IHVuZGVmaW5lZFxuICBjb25zdCBtZXRhZGF0YVJlYXNvbiA9IG1ldGFkYXRhICYmIHR5cGVvZiBtZXRhZGF0YSA9PT0gXCJvYmplY3RcIiAmJiBcInJlYXNvblwiIGluIG1ldGFkYXRhID8gbWV0YWRhdGEucmVhc29uIDogdW5kZWZpbmVkXG4gIHJldHVybiByZWFzb24gPT09IFwiTU9EVUxFX05FV19XT1JLX1NUT1BQRURcIiB8fCBtZXRhZGF0YVJlYXNvbiA9PT0gXCJNT0RVTEVfTkVXX1dPUktfU1RPUFBFRFwiID8gXCJNT0RVTEVfTkVXX1dPUktfU1RPUFBFRFwiIDogdW5kZWZpbmVkXG59XG4iXSwibmFtZXMiOlsiZ2V0TW9kdWxlT3BlcmF0aW9uRXJyb3JSZWFzb24iLCJlcnJvciIsImNvZGUiLCJ1bmRlZmluZWQiLCJyZWFzb24iLCJtZXRhZGF0YSIsIm1ldGFkYXRhUmVhc29uIl0sIm1hcHBpbmdzIjoiQUFBQTswRUFDMEU7Ozs7K0JBRzFEQTs7O2VBQUFBOzs7QUFBVCxTQUFTQSw4QkFBOEJDLEtBQWM7SUFDMUQsSUFBSSxDQUFDQSxTQUFTLE9BQU9BLFVBQVUsWUFBWSxDQUFFLENBQUEsVUFBVUEsS0FBSSxLQUFNQSxNQUFNQyxJQUFJLEtBQUssYUFBYSxPQUFPQztJQUNwRyxNQUFNQyxTQUFTLFlBQVlILFFBQVFBLE1BQU1HLE1BQU0sR0FBR0Q7SUFDbEQsTUFBTUUsV0FBVyxjQUFjSixRQUFRQSxNQUFNSSxRQUFRLEdBQUdGO0lBQ3hELE1BQU1HLGlCQUFpQkQsWUFBWSxPQUFPQSxhQUFhLFlBQVksWUFBWUEsV0FBV0EsU0FBU0QsTUFBTSxHQUFHRDtJQUM1RyxPQUFPQyxXQUFXLDZCQUE2QkUsbUJBQW1CLDRCQUE0Qiw0QkFBNEJIO0FBQzVIIn0=

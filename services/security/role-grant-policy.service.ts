@@ -4,6 +4,8 @@ import {
 } from "@/lib/security/rbac-permissions"
 import { canGrantRolePermission } from "@/services/roles/role-permission-policy"
 
+import { canGrantOperatingRole } from "@/services/operating-access/operating-access-grant-policy"
+
 export const INVITATION_ROLE_GRANT_PERMISSIONS = [
   "users.invite",
   "users.roles.assign",
@@ -16,6 +18,7 @@ export type RoleGrantPolicyReasonCode =
   | "CROSS_TENANT_ROLE"
   | "TARGET_ROLE_WILDCARD"
   | "ACTOR_GRANT_CEILING_EXCEEDED"
+  | "OPERATING_SCOPE_CEILING_EXCEEDED"
 
 export type RoleGrantPermissionEvidence = {
   permission: string
@@ -33,7 +36,9 @@ export type RoleGrantPolicyDecision = {
 export type RoleGrantPolicyInput = {
   actorOrganizationId: string
   actorPermissions: readonly string[]
+  actorRoleCodes?: readonly string[]
   targetRole: {
+    code: string
     organizationId: string
     permissions: readonly string[]
   }
@@ -86,6 +91,10 @@ export function evaluateRoleGrantPolicy(input: RoleGrantPolicyInput): RoleGrantP
       deniedPermissions: [],
       safeMessage: "Invalid role for this organization",
     }
+  }
+
+  if (!canGrantOperatingRole({ permissions: input.actorPermissions, roleCodes: input.actorRoleCodes ?? [] }, input.targetRole)) {
+    return { allowed: false, reasonCode: "OPERATING_SCOPE_CEILING_EXCEEDED", risk: ROLE_GRANT_RISK, deniedPermissions: [], safeMessage: "You cannot grant the selected role" }
   }
 
   if (input.targetRole.permissions.includes("*")) {

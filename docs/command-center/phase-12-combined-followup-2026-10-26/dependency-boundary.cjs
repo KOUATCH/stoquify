@@ -1,0 +1,2 @@
+const Module=require('node:module'),path=require('node:path'),fs=require('node:fs');const allowed=fs.realpathSync(process.env.STOQUIFY_VERIFIED_DEPENDENCIES)+path.sep,resolve=Module._resolveFilename;
+Module._resolveFilename=function(...args){const file=resolve.apply(this,args);if(typeof file==='string'&&file.includes(path.sep+'node_modules'+path.sep)&&!fs.realpathSync(file).startsWith(allowed))throw Error('Dependency escaped owned clean install: '+args[0]);return file};

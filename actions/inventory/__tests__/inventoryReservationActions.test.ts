@@ -1,7 +1,7 @@
 import { revalidateTag } from "next/cache"
 import { getAuthenticatedUser } from "@/lib/auth-server"
 import { requirePermission } from "@/lib/security/rbac"
-import { postInventoryReservation } from "@/services/inventory/inventory-stock-event.service"
+import { postInventoryReservation, postInventoryReservationBatch } from "@/services/inventory/inventory-stock-event.service"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { reserveInventory as reserveBatch } from "../inventoryActions"
 import { reserveInventory, reserveInventoryMovement } from "../inventoryMovementActions"
@@ -10,7 +10,7 @@ jest.mock("@/lib/error-handling", () => ({ inventoryAction: (handler: unknown) =
 jest.mock("@/lib/auth-server", () => ({ getAuthenticatedUser: jest.fn() }))
 jest.mock("@/lib/security/rbac", () => ({ requirePermission: jest.fn() }))
 jest.mock("@/services/modules/module-entitlement.service", () => ({ observeModuleAccess: jest.fn() }))
-jest.mock("@/services/inventory/inventory-stock-event.service", () => ({ postInventoryReservation: jest.fn() }))
+jest.mock("@/services/inventory/inventory-stock-event.service", () => ({ postInventoryReservation: jest.fn(), postInventoryReservationBatch: jest.fn() }))
 jest.mock("@/services/inventory/inventory-adjustment.service", () => ({}))
 jest.mock("@/services/inventory/inventory-read.service", () => ({}))
 jest.mock("@/services/inventory/inventory-transfer.service", () => ({}))
@@ -20,18 +20,20 @@ jest.mock("next/cache", () => ({ revalidateTag: jest.fn(), revalidatePath: jest.
 const permission = requirePermission as jest.Mock
 const observe = observeModuleAccess as jest.Mock
 const reserve = postInventoryReservation as jest.Mock
+const batch = postInventoryReservationBatch as jest.Mock
 const expiresAt = new Date("2026-09-06T12:00:00Z")
-const input = { organizationId: "org-session", itemId: "item-1", locationId: "loc-1", quantity: 3, reason: "Owned reservation", expiresAt }
+const input = { idempotencyKey: "reservation-owned-1", organizationId: "org-session", itemId: "item-1", locationId: "loc-1", quantity: 3, reason: "Owned reservation", expiresAt }
 const adapters = [
   { name: "movement", call: (organizationId = input.organizationId) => reserveInventoryMovement({ ...input, organizationId }), surface: "actions/inventory/inventoryMovementActions.ts:reserveInventoryMovement" },
-  { name: "legacy batch", call: (organizationId = input.organizationId) => reserveBatch({ data: { organizationId, reservations: [{ inventoryLevelId: "level-1", itemId: input.itemId, locationId: input.locationId, quantity: input.quantity }] } }), surface: "actions/inventory/inventoryActions.ts:reserveInventory" },
+  { name: "legacy batch", call: (organizationId = input.organizationId) => reserveBatch({ data: { organizationId, idempotencyKey: input.idempotencyKey, reservations: [{ inventoryLevelId: "level-1", itemId: input.itemId, locationId: input.locationId, quantity: input.quantity }] } }), surface: "actions/inventory/inventoryActions.ts:reserveInventory" },
 ]
 
 beforeEach(() => {
   jest.clearAllMocks()
   permission.mockReset().mockResolvedValue({ orgId: "org-session", userId: "actor-session", permissions: ["inventory.levels.adjust"] })
   observe.mockReset().mockResolvedValue({ allowed: true })
-  reserve.mockReset().mockResolvedValue({ reservationId: "saved-1" })
+  reserve.mockReset().mockResolvedValue({ eventId: "saved-1" })
+  batch.mockReset().mockImplementation(reserve)
   ;(getAuthenticatedUser as jest.Mock).mockReset().mockResolvedValue({ id: "legacy-auth-actor" })
 })
 
@@ -71,7 +73,8 @@ describe.each(adapters)("$name reservation authority", ({ call, surface }) => {
     expect(permission).toHaveBeenCalledWith("inventory.levels.adjust", expect.objectContaining({ resource: "InventoryReservation", auditAllowed: true }))
     expect(observe).toHaveBeenCalledWith({ organizationId: "org-session", userId: "actor-session", actorPermissions: ["inventory.levels.adjust"], moduleSlug: "inventory", surfaceType: "action", surface, accessIntent: "write", mode: "enforce", audit: true })
     expect(reserve).toHaveBeenCalledTimes(1)
-    expect(reserve).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-session", actorId: "actor-session", itemId: "item-1", locationId: "loc-1", quantity: 3 }))
+    expect(reserve).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-session", actorId: "actor-session", idempotencyKey: input.idempotencyKey }))
+    if (batch.mock.calls.length) expect(batch.mock.calls[0][0].lines).toEqual([expect.objectContaining({itemId: "item-1", locationId: "loc-1", quantity: 3})])
   })
 
   it("preserves a kernel failure without successful cache refresh", async () => {
@@ -82,7 +85,7 @@ describe.each(adapters)("$name reservation authority", ({ call, surface }) => {
 })
 
 it("keeps reason/expiry and the positional compatibility entry behind the same guard", async () => {
-  await reserveInventory(input.itemId, input.locationId, input.quantity, input.reason, input.organizationId, expiresAt)
+  await reserveInventory(input.itemId, input.locationId, input.quantity, input.reason, input.organizationId, expiresAt, input.idempotencyKey)
   expect(reserve).toHaveBeenCalledWith({ ...input, actorId: "actor-session" })
   permission.mockRejectedValueOnce(new Error("permission revoked"))
   await expect(reserveInventory(input.itemId, input.locationId, input.quantity, input.reason, input.organizationId)).rejects.toThrow("permission revoked")
@@ -91,6 +94,13 @@ it("keeps reason/expiry and the positional compatibility entry behind the same g
 
 it("denies the entire legacy batch before its first stock effect", async () => {
   observe.mockResolvedValueOnce({ allowed: false })
-  await expect(reserveBatch({ data: { organizationId: input.organizationId, reservations: [1, 2].map(index => ({ inventoryLevelId: `level-${index}`, itemId: `item-${index}`, locationId: input.locationId, quantity: 1 })) } })).rejects.toThrow("Inventory module is not available")
+  await expect(reserveBatch({ data: { organizationId: input.organizationId, idempotencyKey: input.idempotencyKey, reservations: [1, 2].map(index => ({ inventoryLevelId: `level-${index}`, itemId: `item-${index}`, locationId: input.locationId, quantity: 1 })) } })).rejects.toThrow("Inventory module is not available")
   expect(reserve).not.toHaveBeenCalled()
+})
+
+it("submits multiple lines once under one retained batch identity", async () => {
+  const reservations = [1, 2].map(i => ({ inventoryLevelId: `level-${i}`, itemId: `item-${i}`, locationId: input.locationId, quantity: 1 }))
+  await reserveBatch({ data: { organizationId: input.organizationId, idempotencyKey: input.idempotencyKey, reservations } })
+  expect(batch).toHaveBeenCalledTimes(1)
+  expect(batch).toHaveBeenCalledWith(expect.objectContaining({ lines: reservations, idempotencyKey: input.idempotencyKey }))
 })

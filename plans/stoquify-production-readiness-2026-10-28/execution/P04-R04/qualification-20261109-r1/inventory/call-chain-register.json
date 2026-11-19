@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "package": "P04-R04",
+  "finding": "P04-R03-SCOPE-01",
+  "capturedAt": "2026-11-09T13:44:13.922Z",
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "sourceManifest": "source-manifest.json",
+  "inventoryBasis": "Pre-repair source snapshots; final implementation is independently bound by the parent owned-source/candidate manifest",
+  "handler": {
+    "source": "actions/item/listItemsAction.ts",
+    "name": "listItemsAction",
+    "exportLine": 52,
+    "normalizeArgsLine": 22,
+    "catchLines": [
+      71,
+      75
+    ],
+    "disclosureLine": 73,
+    "sourceSha256": "3f763ceea82658460f6e0ed339a8d1283c13080af25bf34b082877cab8e95f60",
+    "priorLocatorCorrection": {
+      "historicalPath": "../../../P04-R03/qualification-20261104-r1/supplemental-findings.json",
+      "recordedCatchLines": "76-80",
+      "correctCatchLines": "71-75",
+      "reason": "Historical locator inaccurate despite identical file hash; original history preserved"
+    },
+    "arguments": {
+      "object": "First non-null object is passed to listItemsSchema; unknown fields stripped by Zod",
+      "positional": "organizationId first string, q only if string, page/pageSize only if numbers; trailing args unused",
+      "empty": "No arguments become {}, then schema validation fails",
+      "invalid": "Other first values pass to schema validation",
+      "identity": "Caller organizationId is required by schema for compatibility but replaced with ctx.orgId before service"
+    },
+    "publicEnvelope": {
+      "success": "{success:true,data:{data,total,page,pageSize,totalPages}}",
+      "failure": "{success:false,error:string}",
+      "empty": "success with data:[], total:0 and totalPages:1"
+    },
+    "permission": {
+      "name": "inventory.items.read",
+      "resource": "Item",
+      "auditAllowed": false,
+      "parseBeforeGuard": true
+    }
+  },
+  "service": {
+    "path": "services/item/item.service.ts",
+    "function": "listItemsWithRelations",
+    "line": 831,
+    "whereHelper": "itemWhereFromListInput",
+    "whereHelperLine": 431,
+    "operations": [
+      "item.count({where})",
+      "item.findMany({where,include:itemStandardInclude,orderBy,skip,take})"
+    ],
+    "organizationBound": "where.organizationId is ctx.orgId from action",
+    "deletedScope": "where.deletedAt:null",
+    "filters": [
+      "q on nameEn/nameFr/sku/barcode case insensitive",
+      "categoryId",
+      "brandId",
+      "unitId",
+      "taxRateId",
+      "isActive"
+    ],
+    "sorting": "schema enum; createdAt default, desc default",
+    "pagination": "page>=1; pageSize1..200; default1/20; totalPages>=1",
+    "businessMutations": [],
+    "explicitBusinessErrorMessages": [],
+    "notFoundBehavior": "No throw for empty page; successful empty collection"
+  },
+  "authority": {
+    "owner": "lib/security/rbac.ts#requirePermission",
+    "chain": [
+      "normalizeArgs",
+      "listItemsSchema.parse",
+      "requirePermission(inventory.items.read)",
+      "requireRbacContext",
+      "getBetterAuthSession disableCookieCache:true",
+      "loadRbacContextFromSession reloads active user/current organization/current same-tenant roles",
+      "hasRbacPermission on expanded stored permissions",
+      "listItemsWithRelations with server organization"
+    ],
+    "denials": [
+      "missing session subject or inactive user",
+      "inactive/deleted/missing organization",
+      "locked user",
+      "unverified user",
+      "stale session organization",
+      "missing permission"
+    ],
+    "auditEffects": "Permission denial can append a security audit row; it is not a business mutation",
+    "sessionLimit": "No requireSession mirror lookup is called by this action. Expiry/revocation/signature behavior belongs to actual Better Auth transport; native stubs cannot certify it.",
+    "locationAndModuleLimit": "No new explicit location/module guard is present in this chain. Broader admitted-surface qualification remains P04-V01; response repair must not expand authority."
+  },
+  "consumer": {
+    "file": "hooks/itemsHooks/useItemHooks.ts",
+    "importLine": 6,
+    "hook": "useListItems",
+    "hookLine": 57,
+    "callLine": 63,
+    "forwarding": "callAction line30 checks success and throws new Error(res.error || Unknown error) at line34; successful data passed unchanged",
+    "queryKey": "itemKeys.list(params)",
+    "enabled": "Boolean(params.organizationId)",
+    "styles": "Hook uses object style; positional style remains exported compatibility contract",
+    "renderedUsage": "Current targeted source search found hook definition/import call but no rendered component call. No browser/compiled-reachability claim."
+  },
+  "responsePolicy": {
+    "approvedBusinessMessages": [],
+    "reason": "Reachable read service contains no explicit BusinessRuleError, ConflictError or NotFoundError branch; empty results are successful DTOs.",
+    "recommended": "Existing safeLoggedActionErrorMessage with explicit Failed to list items fallback; no new shared helper or R03 business-message allowlist needed.",
+    "preserve": [
+      "ActionResult failure/success envelopes",
+      "Both argument styles and current coercion/default rules",
+      "Server-owned organization and existing permission/guard order",
+      "Empty success, filters, sort, pagination",
+      "Existing canonical FreshAuthRequiredError recovery and Next control-flow rethrow"
+    ],
+    "mustNotExpose": [
+      "arbitrary Error.message",
+      "thrown strings",
+      "unknown provider/application-like codes with custom messages",
+      "Prisma message/stack/meta",
+      "raw Zod issues",
+      "private values in log context"
+    ],
+    "helperChain": [
+      "actions/_shared/safe-action-responses.ts#safeLoggedActionErrorMessage",
+      "services/_shared/action-errors.ts#toSafeActionError",
+      "lib/error-handling/canonical.ts#normalizeToCanonicalError"
+    ],
+    "helperCaution": "Without an explicit fixed userMessage, current canonical logic can expose thrown strings or structurally coded Error messages. Fixed fallback also overrides generic auth/validation messages, except FreshAuth special handling."
+  },
+  "graph": {
+    "datedRefresh": "2026-08-09",
+    "provenance": "graphify-out/POST_SLICE_438_GRAPH_REFRESH_2026-08-09.md",
+    "nodes": [
+      {
+        "graph": "graphify-out/graph_actions.json",
+        "label": "listItemsAction()",
+        "file_type": "code",
+        "source_file": "item\\items.ts",
+        "source_location": "L118",
+        "id": "item_items_listitemsaction",
+        "community": 1,
+        "norm_label": "listitemsaction()"
+      },
+      {
+        "graph": "graphify-out/graph_actions.json",
+        "label": "listItemsAction.ts",
+        "file_type": "code",
+        "source_file": "item\\listItemsAction.ts",
+        "source_location": "L1",
+        "id": "item_listitemsaction_ts",
+        "community": 112,
+        "norm_label": "listitemsaction.ts"
+      },
+      {
+        "graph": "graphify-out/graph_actions.json",
+        "label": "normalizeArgs()",
+        "file_type": "code",
+        "source_file": "item\\listItemsAction.ts",
+        "source_location": "L22",
+        "id": "item_listitemsaction_normalizeargs",
+        "community": 112,
+        "norm_label": "normalizeargs()"
+      },
+      {
+        "graph": "graphify-out/graph_actions.json",
+        "label": "listItemsAction()",
+        "file_type": "code",
+        "source_file": "item\\listItemsAction.ts",
+        "source_location": "L52",
+        "id": "item_listitemsaction_listitemsaction",
+        "community": 112,
+        "norm_label": "listitemsaction()"
+      },
+      {
+        "graph": "graphify-out/graph_hooks.json",
+        "label": "useListItems()",
+        "file_type": "code",
+        "source_file": "itemsHooks\\useItemHooks.ts",
+        "source_location": "L57",
+        "id": "itemshooks_useitemhooks_uselistitems",
+        "community": 6,
+        "norm_label": "uselistitems()"
+      }
+    ],
+    "hashes": [
+      {
+        "path": "graphify-out/graph_actions.json",
+        "sha256": "01aa0155ee0b6889fda9be251d9bd73c82d6bd1d4e143114eee8b3bdb3a2c032",
+        "bytes": 997968
+      },
+      {
+        "path": "graphify-out/graph_hooks.json",
+        "sha256": "735b50697dd1552a5a768b5e6f3bd8c31b4574e52a5b769cdd55b5a86d06fe5a",
+        "bytes": 245978
+      },
+      {
+        "path": "graphify-out/POST_SLICE_438_GRAPH_REFRESH_2026-08-09.md",
+        "sha256": "3ffd642637e6e4564e2bff621ddc60f70d0146707ebe78424f7ac3d7e87de6df",
+        "bytes": 3294
+      }
+    ],
+    "limit": "Dated graph is navigation evidence only. Current source establishes behavioral scope; no graph regeneration/install occurred."
+  },
+  "verificationStatus": {
+    "sourceInspection": "completed",
+    "unit": "not executed by inventory agent",
+    "native": "not executed by inventory agent",
+    "httpBrowser": "not executed",
+    "production": "not accepted"
+  },
+  "ownership": "Inventory evidence only. No product, tests, work register or root baseline changed by inventory agent."
+}

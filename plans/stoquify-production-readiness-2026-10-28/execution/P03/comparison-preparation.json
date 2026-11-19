@@ -1,0 +1,67 @@
+{
+  "startedAt": "2026-10-28T17:42:31.286Z",
+  "passed": true,
+  "sourceArtifact": "987da3ead9c716cdbf5d2a22ac1723aa8a8ed15113f40a6b8abd3c1fb64d151f",
+  "commands": [
+    {
+      "label": "comparison-local-clone",
+      "file": "git",
+      "args": [
+        "clone",
+        "--no-checkout",
+        "--shared",
+        "--",
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\af16-release-20261026",
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p03-comparison-20261028-r1"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "comparison-local-index",
+      "file": "git",
+      "args": [
+        "read-tree",
+        "HEAD"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "comparison-dependency-copy",
+      "file": "robocopy.exe",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\af16-release-20261026\\node_modules",
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p03-comparison-20261028-r1\\node_modules",
+        "/E",
+        "/XJ",
+        "/R:0",
+        "/W:0",
+        "/MT:8",
+        "/NFL",
+        "/NDL",
+        "/NJH",
+        "/NP"
+      ],
+      "exitCode": 1
+    }
+  ],
+  "versions": {
+    "next": "15.5.27",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "prisma": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "typescript": "5.8.3"
+  },
+  "target": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p03-comparison-20261028-r1",
+  "files": 7916,
+  "changed": [
+    {
+      "path": "components/accounting/AccountantAccessManager.tsx",
+      "before": "e47c231a54828df40173c01b2735300e0770e1bbbe2ac2e8b050de35b5203c2a",
+      "after": "471393cefab82b8a8bd92d1603a5f61257b3f424413c30f1497c1be5b6f7f059"
+    }
+  ],
+  "dependencies": "Physical copy of failed candidate installed dependencies, no installation; not clean-install reproducibility",
+  "environmentFilesCopied": false,
+  "finishedAt": "2026-10-28T17:46:05.956Z"
+}

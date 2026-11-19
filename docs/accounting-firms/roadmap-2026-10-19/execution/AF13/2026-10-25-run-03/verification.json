@@ -1,0 +1,48 @@
+{
+  "upgrade": {
+    "receipt": "upgrade-verification.json",
+    "exitCode": 0
+  },
+  "release": "AF16 not qualified",
+  "isolatedClientGeneration": {
+    "receipt": "client-generation.log",
+    "exitCode": 0
+  },
+  "date": "2026-10-25",
+  "workflowCheck": {
+    "unclassifiedScripts": 196,
+    "exitCode": 0
+  },
+  "scope": "AF13 synthetic development",
+  "livePilot": "DEFERRED",
+  "browser": {
+    "exitCode": 0,
+    "continuation": "Completed workflow retained in browser-attempt-03.json; presentation-only continuation uses same source and records.",
+    "receipt": "browser-verification.json"
+  },
+  "componentLabels": {
+    "exitCode": 0,
+    "overlapsRegression": true,
+    "receipt": "component-labels-final.json",
+    "passed": 6
+  },
+  "schemaValidation": {
+    "receipt": "schema-validation.log",
+    "exitCode": 0
+  },
+  "focusedTypes": {
+    "exitCode": 0,
+    "afterFinalDropdownLabels": true,
+    "command": "node node_modules/typescript/bin/tsc --project tsconfig.firm-practice.json --pretty false"
+  },
+  "regression": {
+    "exitCode": 0,
+    "receipt": "regression-final.json",
+    "passed": 111
+  },
+  "postgres": {
+    "exitCode": 0,
+    "receipt": "postgres-final.json",
+    "passed": 10
+  }
+}

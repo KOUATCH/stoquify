@@ -1,0 +1,437 @@
+{
+  "method": "lexical discovery only; no complete callgraph claim",
+  "directSessionOrPermission": [
+    {
+      "path": "components/accounting/CloseAssuranceCenter.tsx",
+      "sha256": "b29700666d09912e244277a3f06e1b6a3f373219b4450e1ce8fb5f88e7ba0212",
+      "lines": [
+        {
+          "line": 535,
+          "text": "const permissions = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "components/analytics/CompleteIntegratedDailySalesDashboard.tsx",
+      "sha256": "20e39be9a79b224f57cacdcf10fd8c4f325b503f09a9575434d99b68404af8da",
+      "lines": [
+        {
+          "line": 26,
+          "text": "const { hasPermission, organizationId: permissionOrgId } = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "components/auth/AuthProvider.tsx",
+      "sha256": "5b4824cf351829b9a3cfd556bbcd375421dc6f9011c61230b73b614edee8e70b",
+      "lines": [
+        {
+          "line": 10,
+          "text": "// through authClient.useSession() which reads the server session directly."
+        }
+      ]
+    },
+    {
+      "path": "components/finance/PaymentReconciliationWorkbench.tsx",
+      "sha256": "e6575cfd16b4e57666876b109e9e9ccef5412e5be93811bad2c5a4eb46918948",
+      "lines": [
+        {
+          "line": 448,
+          "text": "const authority = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "components/pos/ProfessionalPOSSystem.tsx",
+      "sha256": "112cdd7331fd99bbac3b0a233fed953dec0a6560cca2dd7a8811898ef682e3ff",
+      "lines": [
+        {
+          "line": 374,
+          "text": "const { user, organizationId } = usePermissions()"
+        },
+        {
+          "line": 382,
+          "text": "const { user, organizationId, hasPermission } = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "components/pos/TerminalManagementDashboard.tsx",
+      "sha256": "45e62398275ca54e75623006140803ae3aa64fa5aac8eac112cb210f868b53ec",
+      "lines": [
+        {
+          "line": 360,
+          "text": "const { user, organizationId } = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx",
+      "sha256": "064e888fc319de0d1c142b623323c9eecf0cd34980458ebbf2484e084bca3a6a",
+      "lines": [
+        {
+          "line": 192,
+          "text": "const { data: session } = useSession()"
+        }
+      ]
+    },
+    {
+      "path": "components/settings/AccountSessions.tsx",
+      "sha256": "382858360910cc38be4a24d363346a186c5cf99f798db88d4b38a33ea334a207",
+      "lines": [
+        {
+          "line": 16,
+          "text": "const { data: session, isPending } = useSession()"
+        }
+      ]
+    },
+    {
+      "path": "components/settings/OrganizationDirectoryExport.tsx",
+      "sha256": "6d06133fb1f9334ebcd7311ca8a9515af75b1aa2f087ae018596f36b3535266e",
+      "lines": [
+        {
+          "line": 22,
+          "text": "const { data: session, isPending } = useSession()"
+        }
+      ]
+    },
+    {
+      "path": "components/settings/SelfProfile.tsx",
+      "sha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+      "lines": [
+        {
+          "line": 19,
+          "text": "const session = useSession(), t = selfProfileCopy[props.locale]"
+        }
+      ]
+    },
+    {
+      "path": "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx",
+      "sha256": "2755141f2e51c3e35522b7d48772900eba4bdade0a800b16536b14d8e1f6389b",
+      "lines": [
+        {
+          "line": 803,
+          "text": "const { data: approvalSession } = useSession()"
+        }
+      ]
+    },
+    {
+      "path": "hooks/finance/useOpenItemsDashboard.ts",
+      "sha256": "8f0bedf66d87c6cac36dc2050883a069dc07c3b06f5dfd1573b65a5d893dcba0",
+      "lines": [
+        {
+          "line": 13,
+          "text": "const permissions = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "hooks/payments/usePaymentReconciliationDashboard.ts",
+      "sha256": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+      "lines": [
+        {
+          "line": 44,
+          "text": "const { user, organizationId, permissionState } = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "hooks/payments/usePaymentReconciliationWorkbench.ts",
+      "sha256": "8abef8e62167c28f6156a2908373865c8274f07e2cf9ca6ba936faa511650840",
+      "lines": [
+        {
+          "line": 23,
+          "text": "const { organizationId, user, permissionState, hasPermission } = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "hooks/posHooks/usePOSReadQuery.ts",
+      "sha256": "888ba49887756a4c2a4d2bb4837bdda46b63a08e1972e41fc3553ca2b31e84d2",
+      "lines": [
+        {
+          "line": 18,
+          "text": "const { organizationId, user, permissionState, hasPermission, refreshPermissions } = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "hooks/useAROpenItemsHistoryWorkbench.ts",
+      "sha256": "b5c19ef3b59e968522aee4f73e86a6fe2140ea87006e065b5437ce632b6d6fcc",
+      "lines": [
+        {
+          "line": 45,
+          "text": "const auth = useClientAuth(), permissions = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "hooks/useCashPaymentHistoryWorkbench.ts",
+      "sha256": "f03a12cbccf5cf28277c8b088645fc1033352b883e7aa7aae6db8763a61db0b7",
+      "lines": [
+        {
+          "line": 97,
+          "text": "const { user, organizationId, permissionState, permissions, hasAnyPermission } = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "hooks/useClientAuth.ts",
+      "sha256": "c76b06c6630426a3c5aa5d898d8b02bd13634aa09bdced72ed1f20baf3c7df7b",
+      "lines": [
+        {
+          "line": 8,
+          "text": "const { data: session, isPending } = useSession()"
+        }
+      ]
+    },
+    {
+      "path": "hooks/useInventoryMovementHistoryWorkbench.ts",
+      "sha256": "7e92ea93b6dcf6c63c15a4474d1ca1ec719e0902cdf77c3eae4382c858c164a9",
+      "lines": [
+        {
+          "line": 79,
+          "text": "const { user, organizationId, permissionState, hasPermission } = usePermissions()"
+        }
+      ]
+    },
+    {
+      "path": "hooks/usePermissions.ts",
+      "sha256": "970331fd552b6fdacef3c7a2bd35be62728870f576f1c50d3b80289f2497402e",
+      "lines": [
+        {
+          "line": 8,
+          "text": "export function usePermissions() {"
+        }
+      ]
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "sha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+      "lines": [
+        {
+          "line": 17,
+          "text": "export function useSession() {"
+        },
+        {
+          "line": 18,
+          "text": "return authClient.useSession()"
+        },
+        {
+          "line": 22,
+          "text": "const { data: session, isPending } = authClient.useSession()"
+        },
+        {
+          "line": 38,
+          "text": "export function usePermissions() {"
+        },
+        {
+          "line": 39,
+          "text": "const { data: session, isPending: sessionPending } = authClient.useSession()"
+        }
+      ]
+    }
+  ],
+  "recoveryEvents": [
+    {
+      "path": "components/accounting/AccountantInvitationDelivery.tsx",
+      "sha256": "8370c6a7ecd9f62d8035f12441fdfde2ba28a3e6b496311e8d52e7beb5c41951",
+      "lines": [
+        {
+          "line": 21,
+          "text": "document.addEventListener(\"visibilitychange\", change)"
+        },
+        {
+          "line": 22,
+          "text": "return () => { ++sequence.current; document.removeEventListener(\"visibilitychange\", change) }"
+        }
+      ]
+    },
+    {
+      "path": "components/accounting/AccountantPortfolioWorkspace.tsx",
+      "sha256": "5f06803e3ec0ebf9640970c5321d27caf88619a38b920f17214b76a66617937e",
+      "lines": [
+        {
+          "line": 71,
+          "text": "document.addEventListener(\"visibilitychange\", visible)"
+        },
+        {
+          "line": 72,
+          "text": "window.addEventListener(\"pagehide\", hide)"
+        },
+        {
+          "line": 73,
+          "text": "window.addEventListener(\"pageshow\", restore)"
+        },
+        {
+          "line": 76,
+          "text": "document.removeEventListener(\"visibilitychange\", visible)"
+        },
+        {
+          "line": 77,
+          "text": "window.removeEventListener(\"pagehide\", hide)"
+        },
+        {
+          "line": 78,
+          "text": "window.removeEventListener(\"pageshow\", restore)"
+        }
+      ]
+    },
+    {
+      "path": "components/accounting/AdvisoryOutcomesDesk.tsx",
+      "sha256": "ddc333d14c803052c10863ab1b8105d0f49fa738fbbaff3e6f0e01c2b4db15b6",
+      "lines": [
+        {
+          "line": 63,
+          "text": "const pagehide = () => { epoch.current++; clear(); setWorkspace(null); setBusy(false) }"
+        },
+        {
+          "line": 64,
+          "text": "document.addEventListener(\"visibilitychange\", hide); window.addEventListener(\"pagehide\", pagehide)"
+        },
+        {
+          "line": 65,
+          "text": "return () => { epoch.current++; document.removeEventListener(\"visibilitychange\", hide); window.removeEventListener(\"pagehide\", pagehide) }"
+        }
+      ]
+    },
+    {
+      "path": "components/accounting/DelegatedEvidenceDesk.tsx",
+      "sha256": "343b6689f644427998a4d2ec9f7d9349afaf76a17b7ce790327cf0c20c737478",
+      "lines": [
+        {
+          "line": 84,
+          "text": "document.addEventListener(\"visibilitychange\",changed)"
+        },
+        {
+          "line": 85,
+          "text": "window.addEventListener(\"pageshow\",restored)"
+        },
+        {
+          "line": 86,
+          "text": "return()=>{document.removeEventListener(\"visibilitychange\",changed);window.removeEventListener(\"pageshow\",restored)}"
+        }
+      ]
+    },
+    {
+      "path": "components/accounting/FirmEngagementWorkspace.tsx",
+      "sha256": "9af4839ec7d33f099737bcea9460f12c55aac968e3a33367337e24301c5489bd",
+      "lines": [
+        {
+          "line": 46,
+          "text": "document.addEventListener(\"visibilitychange\", changed)"
+        },
+        {
+          "line": 47,
+          "text": "window.addEventListener(\"pageshow\", changed)"
+        },
+        {
+          "line": 48,
+          "text": "return () => { ++sequence.current; clearInterval(timer); document.removeEventListener(\"visibilitychange\", changed); window.removeEventListener(\"pageshow\", changed) }"
+        }
+      ]
+    },
+    {
+      "path": "components/accounting/FirmPracticeDesk.tsx",
+      "sha256": "fc13ed281401c8ff14491daeead16504f06a93ddacc62c644548d81ca4dce4fa",
+      "lines": [
+        {
+          "line": 56,
+          "text": "document.addEventListener(\"visibilitychange\", hide); window.addEventListener(\"pagehide\", leave)"
+        },
+        {
+          "line": 57,
+          "text": "return () => { epoch.current++; document.removeEventListener(\"visibilitychange\", hide); window.removeEventListener(\"pagehide\", leave) }"
+        }
+      ]
+    },
+    {
+      "path": "components/accounting/ObligationRegister.tsx",
+      "sha256": "813b3999c2ba3c38eab910de5814d4ea7a32c43b17032d3c78fff2e59da3cb11",
+      "lines": [
+        {
+          "line": 40,
+          "text": "const pagehide = () => clear()"
+        },
+        {
+          "line": 41,
+          "text": "document.addEventListener(\"visibilitychange\", hide); window.addEventListener(\"pagehide\", pagehide)"
+        },
+        {
+          "line": 42,
+          "text": "return () => { epoch.current++; document.removeEventListener(\"visibilitychange\", hide); window.removeEventListener(\"pagehide\", pagehide) }"
+        }
+      ]
+    },
+    {
+      "path": "components/accounting/ReviewWorkpaperBinder.tsx",
+      "sha256": "1502fead144caf8cc9bab36754d2e67b445e3d603ce1f2a1c085148e6396640b",
+      "lines": [
+        {
+          "line": 49,
+          "text": "document.addEventListener(\"visibilitychange\", hide)"
+        },
+        {
+          "line": 50,
+          "text": "return () => { epoch.current++; document.removeEventListener(\"visibilitychange\", hide) }"
+        }
+      ]
+    },
+    {
+      "path": "components/landing/journey-preview.tsx",
+      "sha256": "1098002cc9242449abd98cb2be90b24fe69452c2bcde92a891b4a292d74c41f5",
+      "lines": [
+        {
+          "line": 30,
+          "text": "document.addEventListener(\"visibilitychange\", update)"
+        },
+        {
+          "line": 35,
+          "text": "document.removeEventListener(\"visibilitychange\", update)"
+        }
+      ]
+    },
+    {
+      "path": "components/landing/product-workflow-demo.tsx",
+      "sha256": "25e8660f6f558f8abf1d23f96ccbd6a76125bf7cf7d469f23b5d780bcae5aa65",
+      "lines": [
+        {
+          "line": 803,
+          "text": "document.addEventListener(\"visibilitychange\", update);"
+        },
+        {
+          "line": 845,
+          "text": "document.removeEventListener(\"visibilitychange\", update);"
+        }
+      ]
+    },
+    {
+      "path": "components/onboarding/OpeningCutoverPanel.tsx",
+      "sha256": "833386288f6f884bd85c4e2458c1e7765a5beb5a89279e378101a90437f3ff35",
+      "lines": [
+        {
+          "line": 61,
+          "text": "document.addEventListener(\"visibilitychange\", hidden)"
+        },
+        {
+          "line": 62,
+          "text": "return () => { epoch.current++; document.removeEventListener(\"visibilitychange\", hidden) }"
+        }
+      ]
+    },
+    {
+      "path": "components/onboarding/OpeningPositionWorkbench.tsx",
+      "sha256": "f82dfc8c40e5c33b050518c7c6d85d48082e10f039cee7826879c65c98ffbdf8",
+      "lines": [
+        {
+          "line": 84,
+          "text": "document.addEventListener(\"visibilitychange\", clear)"
+        },
+        {
+          "line": 85,
+          "text": "return () => { epoch.current++; document.removeEventListener(\"visibilitychange\", clear) }"
+        }
+      ]
+    }
+  ]
+}

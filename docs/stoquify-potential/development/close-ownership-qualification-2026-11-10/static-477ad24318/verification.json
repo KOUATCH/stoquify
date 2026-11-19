@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "typecheck",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\typescript\\bin\\tsc",
+        "--project",
+        "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-ownership-qualification-2026-11-10\\static-477ad24318\\tsconfig.json",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "--pretty",
+        "false"
+      ],
+      "started": "2026-11-10T17:21:11.316Z",
+      "finished": "2026-11-10T17:24:41.406Z",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "name": "scoped-lint",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\eslint\\bin\\eslint.js",
+        "services/accounting/close-assurance.service.ts",
+        "services/accounting/close-finding-assignee-authority.service.ts",
+        "--format",
+        "json",
+        "--output-file",
+        "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-ownership-qualification-2026-11-10\\static-477ad24318\\eslint.json"
+      ],
+      "started": "2026-11-10T17:24:41.407Z",
+      "finished": "2026-11-10T17:24:50.292Z",
+      "exitCode": 0,
+      "error": null
+    }
+  ],
+  "unchangedInputs": true,
+  "sourceHashes": {
+    "services/accounting/close-assurance.service.ts": "2d0da62313e44e5239f4edd08307c21fd32362a399fe71a4aeb6ff1e7b137d29",
+    "services/accounting/close-finding-assignee-authority.service.ts": "8bd2d4face949d4eaa1e2a7a4e3b93a0c2fc715a7f50aa6f0e6434aee3b010cb",
+    "tsconfig.json": "d3579c5303333929f58ef96286529142b8e64137c59fb8a32b7c43598ac518c9",
+    ".eslintrc.json": "82d9c40e94e4eba05c53f4c6c9aebf62a3463583e1ccc5e2ad24c77882ab987a",
+    "prisma/schema.prisma": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+    "package-lock.json": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+  },
+  "privateClient": "E:/ohada saas/Focused projects/stoquify/.codex-tmp/close-retention-client-20261109-b4075974cd/orm/client",
+  "privateClientSchemaSha256": "b3f66c1e4cba6b2b51d8896b1e543c8b70d4d0a42eb4d054669cbf849f939cd4",
+  "privateClientTypesSha256": "09419016b045dfd7f44f7edbff8d37d2cfdd58cc17026c5ee6a13e1b708666f1",
+  "lintErrors": 0,
+  "lintWarnings": 0,
+  "runnerSha256": "81538df647cc14a37301b17d8c448db3b86d1cdaddeccd3ad15fab9418a392d7",
+  "configSha256": "09f5adfb0a07cb045372b39e857acee8d94df94e809dd208acc4b7ebdfc67136",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-ownership-qualification-2026-11-10\\static-477ad24318",
+  "classification": "Static TypeScript and ESLint only; no build, database or browser qualification"
+}

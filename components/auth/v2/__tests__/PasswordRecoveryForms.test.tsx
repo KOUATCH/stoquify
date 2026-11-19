@@ -54,6 +54,7 @@ it.each(["en", "fr"] as const)("acknowledges %s requests without claiming delive
   mockLocale = locale; const copy = (locale === "en" ? en : fr).passwordRecovery
   ;(sendResetLink as jest.Mock).mockResolvedValue({ status: 200, data: null })
   render(<ForgotPasswordForm />)
+  expect(screen.getByRole("link", { name: copy.signIn })).toHaveAttribute("href", "/" + locale + "/login")
   fireEvent.change(screen.getByLabelText(copy.email), { target: { value: "synthetic@example.invalid" } })
   fireEvent.click(screen.getByRole("button", { name: copy.requestSubmit }))
   expect(await screen.findByText(copy.requestedBody)).toBeVisible()

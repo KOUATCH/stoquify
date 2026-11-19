@@ -1,0 +1,84 @@
+{
+  "at": "2026-11-10T12:22:30.190Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Actual isolated mocked/pure unit attempt01 only",
+  "counts": {
+    "total": 116,
+    "passed": 116,
+    "failed": 0,
+    "skipped": 0,
+    "suites": 5
+  },
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "suites": [
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "passed": 15
+    },
+    {
+      "path": "lib/security/__tests__/auth-request-bookkeeping.test.ts",
+      "passed": 17
+    },
+    {
+      "path": "lib/security/__tests__/auth-current-authority.test.ts",
+      "passed": 64
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "passed": 5
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "passed": 15
+    }
+  ],
+  "allExactRecipeAndUnitSourceBindingsMatch": true,
+  "all68CurrentInventoryBindingsMatch": true,
+  "evidence": [
+    {
+      "path": "unit/attempt01/jest.json",
+      "sha256": "6a1390a0248fc6686d7dd9096bb4c834583b6ce4a22fd7dbb04597e9ade8e63b"
+    },
+    {
+      "path": "unit/attempt01/receipt.json",
+      "sha256": "1ce6f6ba26f642a1420c54dcaa9ccb7d6882e31c19eaababf7920df6d784dedf"
+    },
+    {
+      "path": "unit/attempt01/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "unit/attempt01/stderr.log",
+      "sha256": "92a67653917007b0859e743797aaefed286285d4b000fb92f9a771389703f492"
+    },
+    {
+      "path": "independent-review/UNIT-RECIPE-ADMISSION.json",
+      "sha256": "dbbe78d4cb8a9d45c3dae54375a81d5fd6683b059815d74abadc2dd5680b4306"
+    },
+    {
+      "path": "independent-review/REPAIR-SOURCE-ADMISSION.json",
+      "sha256": "4993e10c3c40dd9e29e947db2533de7427d1e9cbe1290e61563aa4644936cca9"
+    },
+    {
+      "path": "independent-review/SOURCE-INVENTORY-RECONCILIATION.json",
+      "sha256": "93402063599976d4d08c19bd3eed281ad2852663688879a86fb8081767dc88dc"
+    },
+    {
+      "path": "inventory/source-after-manifest.json",
+      "sha256": "e535b2e9cb694d09b67d64706e9fbbe2f89ac829b2297c86120ca83d012ac614"
+    }
+  ],
+  "review": [
+    "All five planned suites completed and every116 assertion passed; no missing/disabled/skipped suite or assertion.",
+    "Existing87 assertions are retained with the intentional expired-lock admission expectation corrected;29new failure-classification/bookkeeping assertions cover added bounded behavior.",
+    "Network/environment-read guards and all exact admitted source/recipe hashes remain unchanged."
+  ],
+  "limitations": [
+    "SDK/middleware/adapter/database/audit imports are mocked; this does not prove native CSRF behavior or real database isolation.",
+    "Full build/type/lint, real HTTP/session/native effects and browser consumer qualification remain pending.",
+    "R06,parentP04,V02 and production readiness remain blocked until actual independent outcome gates pass."
+  ]
+}

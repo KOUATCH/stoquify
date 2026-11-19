@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@prisma/client": [
+        "./.codex-tmp/af11-prisma/client"
+      ]
+    }
+  },
+  "include": [
+    "services/compliance/obligation-register*.ts",
+    "actions/accounting/obligation-register.actions.ts",
+    "components/accounting/ObligationRegister.tsx",
+    "components/accounting/AccountantWorkDesk.tsx",
+    "components/accounting/AccountantPortal.tsx",
+    "next-env.d.ts"
+  ]
+}

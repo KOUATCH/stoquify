@@ -1,0 +1,185 @@
+{
+  "at": "2026-11-09T18:22:47.461Z",
+  "reviewer": "/root/v02_review",
+  "verdict": "admit_supplement03_password_route_and_visible_read_refresh",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "files": [
+    {
+      "path": "run-runtime-supplement03.cjs",
+      "sha256": "ee78e19503ad07a2d05e34e50adf76e16809a403400d4881708d7172e33b92a6",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "supplement03-source-integrity.cjs",
+      "sha256": "d1f6764f10d964dc52a9ea3c74923c207ab96e3aa4424cab500e836d8ad24997",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "browser/admit-source-frozen-attempt03.cjs",
+      "sha256": "2c4e67957b8190f8ead73bf4ec06ed41dbfb668086569aec3b09b6aa53a6a859",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "final-integrity-frozen-supplement03.cjs",
+      "sha256": "2425ec93217ea1fed17677a64dbdf9b30696e62b79e11103e8cfb7420b291eec",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "browser/run-auth-supplement.cjs",
+      "sha256": "c45c8f117637480734c2acf673eb7d722ec354fafc805ae4bc0f09bee7ddbbca",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/auth-controls-r3.cjs",
+      "sha256": "66bb7ddcbdfa454da9eaa195ae0db59cc1907a9f95360f7ef8a2831fe076431f",
+      "syntaxExitCode": 0
+    }
+  ],
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "sourceBinding": {
+    "passed": true,
+    "receipt": "independent-review/SUPPLEMENT03-SOURCE-REVIEW.json",
+    "receiptSha256": "6739ff3eb68631955dc0cc254416172d4795694520f82f1373a2f695ed9452d5",
+    "checked": [
+      {
+        "path": "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
+        "sha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+        "alreadyBound": true,
+        "currentSha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+        "candidateSha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3"
+      },
+      {
+        "path": "components/ui/groups/inventory/ItemManagement.tsx",
+        "sha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+        "alreadyBound": false,
+        "currentSha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+        "candidateSha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176"
+      },
+      {
+        "path": "components/inventory/inventory-items-copy.ts",
+        "sha256": "45b7e7c486615d623dec8131172b73fcd53bdfe2a74671d4d90ac28a849386f4",
+        "alreadyBound": false,
+        "currentSha256": "45b7e7c486615d623dec8131172b73fcd53bdfe2a74671d4d90ac28a849386f4",
+        "candidateSha256": "45b7e7c486615d623dec8131172b73fcd53bdfe2a74671d4d90ac28a849386f4"
+      },
+      {
+        "path": "hooks/useAllItemQueries.ts",
+        "sha256": "509d8f920fa6c236fa474bf9c3dbbf141fe9159dfe35780f145416e0b4c242f6",
+        "alreadyBound": false,
+        "currentSha256": "509d8f920fa6c236fa474bf9c3dbbf141fe9159dfe35780f145416e0b4c242f6",
+        "candidateSha256": "509d8f920fa6c236fa474bf9c3dbbf141fe9159dfe35780f145416e0b4c242f6"
+      },
+      {
+        "path": "actions/itemsShow/getOrgItems.ts",
+        "sha256": "b36d7c11758a52452dc6bdbbcf040f184f14d7e79467ec2b39926ad0c4397193",
+        "alreadyBound": false,
+        "currentSha256": "b36d7c11758a52452dc6bdbbcf040f184f14d7e79467ec2b39926ad0c4397193",
+        "candidateSha256": "b36d7c11758a52452dc6bdbbcf040f184f14d7e79467ec2b39926ad0c4397193"
+      },
+      {
+        "path": "services/item/item.service.ts",
+        "sha256": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62",
+        "alreadyBound": false,
+        "currentSha256": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62",
+        "candidateSha256": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62"
+      },
+      {
+        "path": "lib/item/includes.ts",
+        "sha256": "a509c68ef78f808e2f7a00bf202285614fa47c1ea937488cb13139e809ba355e",
+        "alreadyBound": false,
+        "currentSha256": "a509c68ef78f808e2f7a00bf202285614fa47c1ea937488cb13139e809ba355e",
+        "candidateSha256": "a509c68ef78f808e2f7a00bf202285614fa47c1ea937488cb13139e809ba355e"
+      },
+      {
+        "path": "lib/security/rbac.ts",
+        "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+        "alreadyBound": true,
+        "currentSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+        "candidateSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+      },
+      {
+        "path": "lib/error-handling/index.ts",
+        "sha256": "d954c8b5de3fc53fddfd05f68161174a096ffa33e48b856f1675aa970af2668d",
+        "alreadyBound": false,
+        "currentSha256": "d954c8b5de3fc53fddfd05f68161174a096ffa33e48b856f1675aa970af2668d",
+        "candidateSha256": "d954c8b5de3fc53fddfd05f68161174a096ffa33e48b856f1675aa970af2668d"
+      },
+      {
+        "path": "lib/error-handling/server-action-wrapper.ts",
+        "sha256": "0d3c4b992cbdbf944459c2af6c7f415f0379a154e70b86b127002583a6a4fe7d",
+        "alreadyBound": false,
+        "currentSha256": "0d3c4b992cbdbf944459c2af6c7f415f0379a154e70b86b127002583a6a4fe7d",
+        "candidateSha256": "0d3c4b992cbdbf944459c2af6c7f415f0379a154e70b86b127002583a6a4fe7d"
+      },
+      {
+        "path": "lib/notifications/notify.ts",
+        "sha256": "a36427372ac068fa07ede5d3817c79765e0615691548adcf149b62857cad8888",
+        "alreadyBound": false,
+        "currentSha256": "a36427372ac068fa07ede5d3817c79765e0615691548adcf149b62857cad8888",
+        "candidateSha256": "a36427372ac068fa07ede5d3817c79765e0615691548adcf149b62857cad8888"
+      },
+      {
+        "path": "lib/auth.ts",
+        "sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+        "alreadyBound": true,
+        "currentSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+        "candidateSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9"
+      },
+      {
+        "path": "app/api/auth/[...all]/route.ts",
+        "sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+        "alreadyBound": true,
+        "currentSha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+        "candidateSha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b"
+      },
+      {
+        "path": "node_modules/better-auth/dist/api/routes/password.mjs",
+        "sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+        "alreadyBound": true,
+        "currentSha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+        "candidateSha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123"
+      },
+      {
+        "path": "node_modules/better-auth/dist/api/routes/session.mjs",
+        "sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+        "alreadyBound": true,
+        "currentSha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+        "candidateSha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237"
+      },
+      {
+        "path": "node_modules/better-call/dist/router.mjs",
+        "sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+        "alreadyBound": true,
+        "currentSha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+        "candidateSha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480"
+      }
+    ],
+    "totalDistinctCriticalInputs": 107,
+    "currentCheckoutQualified": false
+  },
+  "groups": 35,
+  "database": "stoquify_local_p04v02_20261109_full_r3",
+  "reusedRuntime": {
+    "path": "D:\\p04-v02-fullapp-20261109-r1\\runtime-attempt02",
+    "priorReceipt": "runtime-result-attempt02.json",
+    "sealedFilesMustReverify": 5311,
+    "allowedMutableSubtree": ".next/cache/images/"
+  },
+  "review": [
+    "Nine original supplemental password groups plus foreign-Origin negative, one previously unexecuted unconfigured social-signin branch, and24 actual Refresh warm/denial/recovery groups.",
+    "Valid body password checks use real acquired signed cookies with original cache lifetime proofs and native no-write snapshots; no credential material is published.",
+    "Visible Refresh/Actualiser click runs the actual scoped read action. Passive response/body-hash and existing completion notification/login observations precede settled DOM checks. No response interception or synthetic completion event.",
+    "Authorized Refresh controls must return and display the synthetic item; denied Refresh must return no new private item bytes and finish without displaying the old item.",
+    "Body capture/handler completion missing is incomplete, not privacy evidence. Native focus and BFCache limitations are not silently closed by Refresh tests.",
+    "R3 uses fresh synthetic actors/DB; r1/r2 retained. Runtime-attempt02 is reused only after exact sealed-byte revalidation and prior completed cleanup.",
+    "All16 supplemental current/frozen inputs are independently pinned; union107 retains the four-file concurrent accounting drift limitation.",
+    "Sanitizer/secret scanning and bounded owned cleanup match reviewed v4 behavior."
+  ],
+  "conditions": [
+    "Run source-admission-frozen-attempt03 immediately before execution; repeat source/artifact proof at final cleanup.",
+    "Record35 supplement groups separately from original161; do not alter active/completed earlier programs or results.",
+    "Finalize synthetic sessions in r1/r2/r3, retain all databases, then stop owned cluster.",
+    "No product repairs, production changes, commits or deployment."
+  ]
+}

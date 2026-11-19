@@ -1,0 +1,140 @@
+{
+  "finding": "P04-F01",
+  "package": "P04-R01",
+  "date": "2026-11-03",
+  "evidenceClass": "source_inspection_only",
+  "sourceHashes": "source-before.json",
+  "graph": {
+    "path": "graphify-out/graph_actions.json",
+    "dated": "2026-08-09",
+    "nodes": [
+      "roles_createrole_createrole",
+      "roles_updaterole_updaterole",
+      "users_sendinvite_sendinvite"
+    ],
+    "community": 0,
+    "currentCoverageGuarantee": false
+  },
+  "reservedCodes": [
+    "admin",
+    "administrator",
+    "super_admin"
+  ],
+  "scopeRequirement": "dashboard.read plus reserved persisted role code or stored wildcard; otherwise managed locations",
+  "chains": [
+    {
+      "entry": "actions/roles/createRole.ts",
+      "function": "createRole",
+      "service": "services/roles/role-write.service.ts#saveRole",
+      "guards": [
+        "requireFreshAuth(300)",
+        "roles.create",
+        "roleWriteContext identity match",
+        "organization/users/roles/membership/session locks",
+        "current permission ceiling",
+        "idempotency"
+      ],
+      "gap": "derived code and latent reserved authority"
+    },
+    {
+      "entry": "actions/roles/updateRole.ts",
+      "function": "updateRole",
+      "service": "services/roles/role-write.service.ts#saveRole",
+      "guards": [
+        "requireFreshAuth(300)",
+        "roles.update",
+        "locked current actor",
+        "expectedUpdatedAt",
+        "assign/remove delta",
+        "last custodian"
+      ],
+      "gap": "reserved permission additions and recipient composed tenant scope; replay"
+    },
+    {
+      "entry": "actions/users/memberAccess.ts",
+      "function": "changeMemberAccessAction",
+      "service": "services/users/member-access.service.ts#changeMemberAccessInTx",
+      "guards": [
+        "requireFreshAuth(300)",
+        "users.read",
+        "session identity match",
+        "locked actor/roles/membership/session",
+        "assign/remove/activate",
+        "memberAccessRevision",
+        "last custodian"
+      ],
+      "gap": "latent reserved code, combined role authority, replay and reactivation"
+    },
+    {
+      "entry": "actions/users/sendInvite.ts",
+      "function": "sendInvite",
+      "service": "services/users/user-invitation-issuance.service.ts#issueUserInvitation",
+      "guards": [
+        "requireFreshAuth(300)",
+        "users.invite",
+        "users.roles.assign",
+        "Serializable",
+        "evaluateRoleGrantPolicy",
+        "readCurrentInvitationIssuer"
+      ],
+      "gap": "actor roles project permissions only; old replacement role omits code"
+    },
+    {
+      "entry": "actions/users/createInvitedUser.ts",
+      "function": "createInvitedUser",
+      "service": "services/users/user-identity.service.ts#acceptInvitationWorkflow",
+      "guards": [
+        "public abuse controls",
+        "capability status/expiry",
+        "issue evidence",
+        "readInvitationRedemptionAuthority before and after hashing",
+        "locked authority and atomic invitation claim"
+      ],
+      "gap": "locked target role and issuer roles omit code"
+    },
+    {
+      "entry": "actions/access-requests/access-request.actions.ts",
+      "function": "previewAccessRequestAction/decideAccessRequestAction/applyAccessRequestAction",
+      "service": "services/access-requests/access-request.service.ts",
+      "guards": [
+        "requireRbacContext",
+        "organization-first transaction",
+        "fresh stored reviewer permissions",
+        "distinct requester",
+        "module enforce",
+        "feature flags",
+        "apply fresh assurance and changeMemberAccessInTx"
+      ],
+      "gap": "reviewer code and recipient composition omitted"
+    }
+  ],
+  "dependentProjections": [
+    "services/users/member-access-read.service.ts",
+    "services/users/user-invitation-authority.service.ts",
+    "services/users/user-invitation-options.service.ts",
+    "services/users/user-invitation-management.service.ts",
+    "services/users/user-invitation-history.service.ts",
+    "services/users/user-invitation-redemption-authority.service.ts",
+    "services/communication/user-invitation-delivery-worker.service.ts",
+    "services/communication/delivery-issues.service.ts"
+  ],
+  "bootstrapExclusions": [
+    "services/users/user-identity.service.ts#createOrganizationOwner",
+    "services/users/user-identity.service.ts#registerUserWorkflow"
+  ],
+  "historicalRegression": "plans/stoquify-production-readiness-2026-10-28/execution/P04/guard-review/shared-guards.postgres.test.ts.source.txt",
+  "historicalRegressionSha256": "9edc38412afaee491a731dd632e7263c3653fa2ea8d81dfa61c28635b3310046",
+  "testsExecuted": false,
+  "productionAccessed": false,
+  "final_caller_completion": {
+    "source_before_supplement": "source-before-supplement.json",
+    "path": "services/communication/delivery-issues.service.ts",
+    "guards": [
+      "readCurrentInvitationIssuer with fresh stored actor codes",
+      "current target code projection and pre-pagination grant-policy filter",
+      "current invite role ID and role-code-bound evidence"
+    ],
+    "candidate": "candidate.json",
+    "note": "Initial inventory is pre-repair discovery; final caller sweep completion is independently reviewed."
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "legalOrProviderCertification": false,
+  "data": {
+    "employeeId": "cmvsem45u0137ma3oe6bxna7e",
+    "templates": [
+      {
+        "code": "HR_PREPARATION",
+        "ownerId": "synth12_bafoussam_user_payroll_administrator",
+        "reviewerId": "synth12_bafoussam_user_owner",
+        "dueOffsetDays": 0,
+        "dependsOn": [],
+        "evidenceInstructionsEn": "Review the retained synthetic task evidence; no external provisioning is claimed.",
+        "evidenceInstructionsFr": "Vérifier la preuve synthétique conservée; aucun accès externe réel."
+      },
+      {
+        "code": "APPLICATION_ACCESS",
+        "ownerId": "synth12_bafoussam_user_payroll_administrator",
+        "reviewerId": "synth12_bafoussam_user_owner",
+        "dueOffsetDays": 1,
+        "dependsOn": [
+          "HR_PREPARATION"
+        ],
+        "evidenceInstructionsEn": "Review the retained synthetic task evidence; no external provisioning is claimed.",
+        "evidenceInstructionsFr": "Vérifier la preuve synthétique conservée; aucun accès externe réel."
+      },
+      {
+        "code": "EXTERNAL_ACCESS",
+        "ownerId": "synth12_bafoussam_user_payroll_administrator",
+        "reviewerId": "synth12_bafoussam_user_owner",
+        "dueOffsetDays": 2,
+        "dependsOn": [
+          "APPLICATION_ACCESS"
+        ],
+        "evidenceInstructionsEn": "Review the retained synthetic task evidence; no external provisioning is claimed.",
+        "evidenceInstructionsFr": "Vérifier la preuve synthétique conservée; aucun accès externe réel."
+      },
+      {
+        "code": "ASSETS",
+        "ownerId": "synth12_bafoussam_user_payroll_administrator",
+        "reviewerId": "synth12_bafoussam_user_owner",
+        "dueOffsetDays": 3,
+        "dependsOn": [
+          "EXTERNAL_ACCESS"
+        ],
+        "evidenceInstructionsEn": "Review the retained synthetic task evidence; no external provisioning is claimed.",
+        "evidenceInstructionsFr": "Vérifier la preuve synthétique conservée; aucun accès externe réel."
+      }
+    ],
+    "externalProvisioningPerformed": false
+  }
+}

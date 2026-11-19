@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:17:19.370Z",
+  "reviewer": "/root/r06_review",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "passed": false,
+  "observationAccepted": true,
+  "receipt": "resource-retry-ready-attempt02.json",
+  "receiptSha256": "f35904f208a5f2f5ef5b8cb3ea1b51b6d5c16a680a3e83a35e4c0f90d2298bde",
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "freePhysicalGiB": 5.447513580322266,
+  "freeCommitGiB": 10.493453979492188,
+  "thresholds": {
+    "freePhysicalBytes": 6442450944,
+    "freeCommitBytes": 12884901888,
+    "freeBuildDriveBytes": 12884901888
+  },
+  "failures": [
+    "physical_memory_headroom",
+    "commit_headroom"
+  ],
+  "buildRetryExecuted": false,
+  "artifactPresent": false,
+  "sourceRecipeAdmissionSeparate": true,
+  "next": "Freshly satisfy unchanged capacity gates, then execute reviewed attempt02 exactly once; otherwise retain blocked status and safely preserve owned prepared DB.",
+  "qualificationPassed": false
+}

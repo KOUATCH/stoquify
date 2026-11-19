@@ -22,6 +22,7 @@ jest.mock("../reconciliation-close-order.service", () => ({
 }))
 jest.mock("@/services/accounting/close-assurance-pack.service", () => ({ recordCloseCertificationInvalidationsForSourceInTx: jest.fn() }))
 import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
+import { accountingPeriodReconciliationScope } from "../reconciliation-period-scope"
 
 jest.mock("@/services/modules/module-admission.service", () => ({ assertModuleNewWorkInTx: jest.fn() }))
 
@@ -128,6 +129,59 @@ describe("durable payment reconciliation run service", () => {
     expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled()
     expect(mockedDb.paymentTransaction.findMany).not.toHaveBeenCalled()
     expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
+  })
+
+  const fullPeriod = () => ({ id: "current-period", status: "OPEN", startDate: new Date("2026-06-01T00:00:00Z"), endDate: new Date("2026-06-30T23:59:59.999Z") })
+  function periodSources(periods: object[] = [fullPeriod()]) {
+    mockedDb.$queryRaw.mockImplementation(async query => query.sql.includes('FROM "accounting_periods"') ? periods : [{ id: "provider-account-1" }])
+    mockedDb.paymentTransaction.findMany.mockResolvedValue([]); mockedDb.providerEvent.findMany.mockResolvedValue([]); mockedDb.statementLine.findMany.mockResolvedValue([])
+  }
+
+  it("derives a full accounting-period run from locked stored boundaries and retains its exact scope", async () => {
+    periodSources()
+    await runPaymentReconciliation({ organizationId: "org-1", providerAccountId: "provider-account-1", accountingPeriodId: "current-period", runById: "maker" })
+    const period = fullPeriod(), exclusiveEnd = new Date("2026-07-01T00:00:00Z")
+    const scope = accountingPeriodReconciliationScope("org-1", "provider-account-1", period.id, period.startDate, exclusiveEnd)
+    expect(mockedDb.reconciliationRun.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({
+      accountingPeriodId: period.id, businessDate: period.startDate, periodStart: period.startDate, periodEnd: exclusiveEnd,
+      metadata: expect.objectContaining({ scope: expect.objectContaining(scope), runDedupeKey: JSON.stringify(["accounting-period", "org-1", "provider-account-1", period.id, period.startDate.toISOString(), exclusiveEnd.toISOString()]) }),
+    }) }))
+    expect(mockedDb.paymentTransaction.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ occurredAt: { gte: period.startDate, lt: exclusiveEnd } }) }))
+    const periodRead = mockedDb.$queryRaw.mock.calls.find(([query]) => query.sql.includes('FROM "accounting_periods"'))![0]
+    expect(periodRead.values).toEqual(["current-period", "org-1"]); expect(periodRead.sql).toContain("FOR SHARE")
+  })
+
+  it.each(["foreign", "CLOSED", "LOCKED", "mid-day start", "incomplete last day"])("rejects %s accounting-period scope before reconciliation writes", async kind => {
+    const period = fullPeriod()
+    periodSources(kind === "foreign" ? [] : [{ ...period, ...(kind === "CLOSED" || kind === "LOCKED" ? { status: kind } : {}),
+      ...(kind === "mid-day start" ? { startDate: new Date("2026-06-01T12:00:00Z") } : {}), ...(kind === "incomplete last day" ? { endDate: new Date("2026-06-30T12:00:00Z") } : {}) }])
+    await expect(runPaymentReconciliation({ organizationId: "org-1", providerAccountId: "provider-account-1", accountingPeriodId: period.id })).rejects.toMatchObject({ code: kind === "foreign" ? "NOT_FOUND" : "CONFLICT" })
+    expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled(); expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
+    expect(mockedDb.paymentTransaction.findMany).not.toHaveBeenCalled(); expect(recordCloseCertificationInvalidationsForSourceInTx).not.toHaveBeenCalled()
+  })
+
+  it("retains the existing daily run and reports limited daily/period coexistence", async () => {
+    periodSources(); mockedDb.reconciliationRun.findFirst.mockResolvedValue({ id: "retained-daily", status: "SIGNED" })
+    await expect(runPaymentReconciliation({ organizationId: "org-1", providerAccountId: "provider-account-1", accountingPeriodId: "current-period" })).rejects.toThrow(/cannot coexist/)
+    expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled(); expect(mockedDb.reconciliationRun.update).not.toHaveBeenCalled()
+    expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects a mismatched supplied daily date without widening the chosen day", async () => {
+    periodSources()
+    await expect(runPaymentReconciliation({ organizationId: "org-1", providerAccountId: "provider-account-1", accountingPeriodId: "current-period", businessDate: new Date("2026-06-14") })).rejects.toThrow(/first UTC day/)
+    expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled(); expect(mockedDb.paymentTransaction.findMany).not.toHaveBeenCalled()
+  })
+
+  it("rejects daily provider-operation proof for a full accounting period before a transaction", async () => {
+    await expect(runPaymentReconciliation({ organizationId: "org-1", providerAccountId: "provider-account-1", accountingPeriodId: "current-period", providerOperationId: "daily-operation" })).rejects.toThrow(/daily reconciliation only/)
+    expect(mockedDb.$transaction).not.toHaveBeenCalled(); expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled()
+  })
+
+  it("does not reinterpret a period query failure as a missing period or successful empty run", async () => {
+    periodSources(); mockedDb.$queryRaw.mockRejectedValueOnce(new Error("period database unavailable"))
+    await expect(runPaymentReconciliation({ organizationId: "org-1", providerAccountId: "provider-account-1", accountingPeriodId: "current-period" })).rejects.toThrow("period database unavailable")
+    expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled()
   })
 
   it("runs required reconciliation with real admission when only new manual journals are stopped", async () => {

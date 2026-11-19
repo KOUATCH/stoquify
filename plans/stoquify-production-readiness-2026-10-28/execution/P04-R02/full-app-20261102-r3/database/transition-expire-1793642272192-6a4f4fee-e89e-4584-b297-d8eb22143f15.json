@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-02T17:57:52.192Z",
+  "database": "stoquify_local_p04r02_20261029_full_r1",
+  "actorAlias": "expiry",
+  "actorId": "p04r02-user-expiry",
+  "organizationId": "p04-upload-a",
+  "kind": "expire",
+  "affected": 2,
+  "recovery": "Restore retained expiry rows or acquire a new real session if Better Auth deletes the expired row.",
+  "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards."
+}

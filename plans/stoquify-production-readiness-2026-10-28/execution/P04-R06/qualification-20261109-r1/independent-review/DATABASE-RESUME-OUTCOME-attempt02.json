@@ -1,0 +1,56 @@
+{
+  "at": "2026-11-10T10:26:05.809Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Actual present owned database state and retained fixture equality after explicit launcher-anomaly reconciliation; permits guarded isolated build continuation",
+  "candidateId": "p04-r06-full-4661f767924e",
+  "checks": {
+    "reconciliationPassed": true,
+    "recipeHashesUnchanged": true,
+    "bothMigrationLedgers122": true,
+    "all246BuildTablesEmpty": true,
+    "allRetainedDigestsEqual": true,
+    "zeroSessionsAndAudits": true,
+    "noResidualLauncherOrOtherClients": true,
+    "currentPidFileMatches": true,
+    "currentOwnerRunning": true,
+    "originalLaunchAnomalyRetained": true
+  },
+  "ownedPid": 6428,
+  "launcherCompletedCleanly": false,
+  "launcherAnomaly": {
+    "exitCode": 0,
+    "error": "spawnSync C:\\Program Files\\PostgreSQL\\17\\bin\\pg_ctl.exe ETIMEDOUT"
+  },
+  "interpretation": "The original pg_ctl wait timeout remains unresolved as a launcher diagnostic. A separate read-only check proves the exact intended process and live target are ready, no launcher remains, and retained database state matches. No timeout cause or clean launcher completion is inferred.",
+  "evidence": [
+    {
+      "path": "database/resume-attempt02.json",
+      "sha256": "8adfa753da7027eac8a9ddb05be86cd060321fd4443e377f4f28556667be8a23"
+    },
+    {
+      "path": "resource-database-resume-attempt02.json",
+      "sha256": "f4016ffa113b55b09af5a8dd0ff3aacbd390ee4bd19f79221be8d4c3452c5fcf"
+    },
+    {
+      "path": "database/resume-reconciliation-attempt02.json",
+      "sha256": "1aeb4897e389bdc443b26c97c9ed22c62bae55de15c056e5276a04be7c7a45a5"
+    },
+    {
+      "path": "database/snapshot-resume-attempt02-reconciled-1794306295004-aaea883e-117f-435c-9e07-0ff9a4dc6bb7.json",
+      "sha256": "794395e46552674c7435014c2f3c743b93a6c325f61af7e4ce306077c9ca1852"
+    },
+    {
+      "path": "independent-review/DATABASE-RESUME-RECONCILIATION-RECIPE-attempt02.json",
+      "sha256": "33b157eccf1afb269a5f403d1f771c76f11c2594885b3335e79d8dd4891e15bd"
+    }
+  ],
+  "buildContinuationAccepted": true,
+  "conditions": [
+    "Use exact admitted build runner with fresh capacity and full current/candidate/source checks.",
+    "Preserve original resume and timeout evidence; do not rerun the start mutation.",
+    "Record no authentication or restore certification from this retained-state check."
+  ],
+  "runtimeQualification": false,
+  "productionReady": false
+}

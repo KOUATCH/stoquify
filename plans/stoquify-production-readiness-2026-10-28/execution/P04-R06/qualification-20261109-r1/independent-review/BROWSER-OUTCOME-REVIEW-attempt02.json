@@ -1,0 +1,669 @@
+{
+  "schema_version": 1,
+  "package_id": "P04-R06",
+  "reviewed_at": "2026-11-10T11:13:37.680Z",
+  "reviewer": "Independent browser-observation agent /root/r06_source_resume",
+  "status": "NEEDS_WORK_BROWSER_EVIDENCE",
+  "passed": false,
+  "scope": "Actual attempt02 EN/FR profile authorized navigation, externally revoked-session document reload, and fresh authorized-session recovery. Six observed views only.",
+  "candidate_id": "p04-r06-full-4661f767924e",
+  "artifact_sha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "browser": {
+    "engine": "Chromium",
+    "version": "149.0.7827.55",
+    "context_locale": "en-US",
+    "routes_locales": [
+      "en",
+      "fr"
+    ],
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "origin": "https://localhost:3296",
+    "actual_session_acquisition": "Real credential API sign-in using isolated synthetic actors; no independently launched browser or app in this review."
+  },
+  "controls": [
+    {
+      "path": "docs/ecc/WORKFLOW.md",
+      "sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c"
+    },
+    {
+      "path": "docs/ecc/test-lanes.md",
+      "sha256": "d486db7afde813cb6a09be10b25ff01c01a54a7b43496875501c8272e8d14575"
+    },
+    {
+      "path": "design-system/stoquify/MASTER.md",
+      "sha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6"
+    },
+    {
+      "path": "design-system/stoquify/pages/public-auth.md",
+      "sha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897"
+    },
+    {
+      "path": "docs/UI/UX/AQSTOQFLOW_UI_CONSTITUTION_2026-06-26.md",
+      "sha256": "576dacf38ac2b7f580a9849d47036b6dbad0530fe66bb66268d0ed4354a2ac6c"
+    }
+  ],
+  "page_contract": "No separate profile page contract found in design-system/stoquify; read current master/public-auth recovery and constitution robust-state rules, exact profile source and the six reviewed R06-UI test-case entries.",
+  "source_bindings": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/profile/page.tsx",
+      "current_sha256": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc",
+      "candidate_sha256": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/layout.tsx",
+      "current_sha256": "c54995a81b0aceefed11ba83549198f7d59650add8ff9c011c9f40da6e1dbf36",
+      "candidate_sha256": "c54995a81b0aceefed11ba83549198f7d59650add8ff9c011c9f40da6e1dbf36"
+    },
+    {
+      "path": "components/settings/SelfProfile.tsx",
+      "current_sha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+      "candidate_sha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c"
+    },
+    {
+      "path": "hooks/useSelfProfile.ts",
+      "current_sha256": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6",
+      "candidate_sha256": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6"
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "current_sha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+      "candidate_sha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757"
+    },
+    {
+      "path": "actions/users/self-profile.actions.ts",
+      "current_sha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2",
+      "candidate_sha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "current_sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b",
+      "candidate_sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b"
+    },
+    {
+      "path": "lib/auth.ts",
+      "current_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5",
+      "candidate_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    }
+  ],
+  "source_binding_match": true,
+  "evidence_bindings": [
+    {
+      "path": "browser/auth-r06-attempt02/result.json",
+      "sha256": "81a50e5a71168c93b4d2af6c9a21010cebeead3303f778cbafc70200f39e2878"
+    },
+    {
+      "path": "browser/run-auth-r06-attempt02.cjs",
+      "sha256": "085d928a769795cb436325db2e81127d7e4661d23e2811a0ac19a29e355d4cd5"
+    },
+    {
+      "path": "inventory/test-case-map.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    },
+    {
+      "path": "candidate-context-attempt02.json",
+      "sha256": "5e698a5acf73e69c5584d5e310001770a9798faa77d96877a11fde2fa0c8b6c2"
+    },
+    {
+      "path": "build-result-attempt02.json",
+      "sha256": "0124329359273775db300041794d1176abf9b308d1abc82b03b98f1c91f296f8"
+    },
+    {
+      "path": "runtime-result-attempt02.json",
+      "sha256": "4459b141a394444372f88d3728b84f38d5adeb49eb840d382cc4725327fc92df"
+    },
+    {
+      "path": "database/fixture-seeded.json",
+      "sha256": "aec293b30e16727e2f827ce251f9b5c1ffe84ac2344295fbe82cefe964707645"
+    }
+  ],
+  "observations": [
+    {
+      "label": "en-authorized",
+      "path": "/en/dashboard/profile",
+      "privateEmailVisible": true,
+      "loginVisible": false,
+      "profileUnavailable": false,
+      "textSha256": "ba2dfe834cc7e19e682a4db47331e6b154c72fb3bf3d5083530f38d122390420",
+      "screenshot": "en-authorized.png",
+      "at": "2026-11-10T11:09:30.391Z",
+      "manual_screenshot_reviewed": true,
+      "screenshot_path": "browser/auth-r06-attempt02/en-authorized.png",
+      "screenshot_sha256": "deac40cbd4e19dfe6f02aa96a1e957b4a1a733a22be286ceb6c3ec2908f6b923",
+      "png_width": 1440,
+      "png_height": 1064,
+      "manual_observation": "Localized profile page shows the intended synthetic actor email and name; own account panel and profile controls rendered.",
+      "raw_harness_check_passed": true,
+      "raw_harness_error": null,
+      "raw_harness_failure_class": null,
+      "review_status": "PASS_SCOPED",
+      "responses": [
+        {
+          "label": "en-authorized",
+          "path": "/en/dashboard/profile",
+          "method": "GET",
+          "status": 200,
+          "bytes": 443697,
+          "sha256": "74b488e3e5e3ef4459b7e9b90a491a2e60371e93e6d44f6e4b7e0b91c0433adb",
+          "containsActorCanary": true,
+          "currentSessionSubject": false,
+          "at": "2026-11-10T11:09:28.723Z"
+        },
+        {
+          "label": "en-authorized",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 734,
+          "sha256": "b108fe6c5eaffeb084d9c97c516e3f4436414ffe533f1dbcb6872997dc03decc",
+          "containsActorCanary": true,
+          "currentSessionSubject": true,
+          "at": "2026-11-10T11:09:29.416Z"
+        },
+        {
+          "label": "en-authorized",
+          "path": "/fr/dashboard/profile",
+          "method": "GET",
+          "status": 200,
+          "bytes": 439414,
+          "sha256": "9655c831c777e8b99dc1677005a131e79a301870c5fc13ff8f70dec69063c3e8",
+          "containsActorCanary": false,
+          "currentSessionSubject": false,
+          "at": "2026-11-10T11:09:29.500Z"
+        },
+        {
+          "label": "en-authorized",
+          "path": "/en/dashboard/profile",
+          "method": "POST",
+          "status": 200,
+          "bytes": 373116,
+          "sha256": "f3be9d89ef167c50a662c2d61a948e177f9530972199657833b2d2de6bf28776",
+          "containsActorCanary": true,
+          "currentSessionSubject": false,
+          "at": "2026-11-10T11:09:29.915Z"
+        }
+      ],
+      "total_response_records": 4,
+      "capture_error_count": 0,
+      "successful_current_subject_get_session": true,
+      "denial_captured_responses_actor_free": null
+    },
+    {
+      "label": "en-invalidated-reload",
+      "path": "/en/login",
+      "privateEmailVisible": false,
+      "loginVisible": true,
+      "profileUnavailable": false,
+      "textSha256": "a2bee6cbc617ddd2251444c3034000bbab4f31234dbe6b1ecd2ecc52c8b87e7f",
+      "screenshot": "en-invalidated-reload.png",
+      "at": "2026-11-10T11:09:35.903Z",
+      "manual_screenshot_reviewed": true,
+      "screenshot_path": "browser/auth-r06-attempt02/en-invalidated-reload.png",
+      "screenshot_sha256": "d15770a07d7cf250d0d858ab6a7a5a9ff771d1ee0628482e116a0b62240d905f",
+      "png_width": 1440,
+      "png_height": 1000,
+      "manual_observation": "Localized public login form; no visible profile, fixture email, private name, organization banner or tenant dashboard shell.",
+      "raw_harness_check_passed": true,
+      "raw_harness_error": null,
+      "raw_harness_failure_class": null,
+      "review_status": "PASS_SCOPED",
+      "responses": [
+        {
+          "label": "en-invalidated-reload",
+          "path": "/en/dashboard/profile",
+          "method": "GET",
+          "status": 200,
+          "bytes": 406119,
+          "sha256": "f259abdd9396eb87579beb59a23610c977210a8ab5392c35d542a5e90ce9e971",
+          "containsActorCanary": false,
+          "currentSessionSubject": false,
+          "at": "2026-11-10T11:09:34.279Z"
+        }
+      ],
+      "total_response_records": 1,
+      "capture_error_count": 0,
+      "successful_current_subject_get_session": false,
+      "denial_captured_responses_actor_free": true
+    },
+    {
+      "label": "en-restored",
+      "path": "/en/dashboard/profile",
+      "privateEmailVisible": true,
+      "loginVisible": false,
+      "profileUnavailable": false,
+      "textSha256": "998d85dc1853efb54e6ed4ee1af8dd7fd0536acefc4e2a6d2247d852ab457e71",
+      "screenshot": "en-restored.png",
+      "at": "2026-11-10T11:09:42.552Z",
+      "manual_screenshot_reviewed": true,
+      "screenshot_path": "browser/auth-r06-attempt02/en-restored.png",
+      "screenshot_sha256": "ece455a861f37853f139143c165ea59825ed27b5efb21fed2761a5a0988f0369",
+      "png_width": 1440,
+      "png_height": 1064,
+      "manual_observation": "Localized profile page shows the intended synthetic actor email and name; own account panel and profile controls rendered.",
+      "raw_harness_check_passed": false,
+      "raw_harness_error": "Browser response capture incomplete",
+      "raw_harness_failure_class": "observed_assertion_failure",
+      "review_status": "INCOMPLETE_RESPONSE_CAPTURE",
+      "responses": [
+        {
+          "label": "en-restored",
+          "path": "/en/dashboard/profile",
+          "method": "GET",
+          "status": 200,
+          "bytes": 443697,
+          "sha256": "fdc77d2ec4be51993104712954b3942821de10e16210b2b0a77035b1496f0a76",
+          "containsActorCanary": true,
+          "currentSessionSubject": false,
+          "at": "2026-11-10T11:09:40.723Z"
+        },
+        {
+          "label": "en-restored",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 734,
+          "sha256": "b27427e8271193a7dc4df37a7cfdb92332130bda6ddac1b6628980ee299e19c1",
+          "containsActorCanary": true,
+          "currentSessionSubject": true,
+          "at": "2026-11-10T11:09:41.670Z"
+        },
+        {
+          "label": "en-restored",
+          "path": "/fr/dashboard/profile",
+          "captureError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier"
+        },
+        {
+          "label": "en-restored",
+          "path": "/en/dashboard/profile",
+          "captureError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier"
+        }
+      ],
+      "total_response_records": 4,
+      "capture_error_count": 2,
+      "successful_current_subject_get_session": true,
+      "denial_captured_responses_actor_free": null
+    },
+    {
+      "label": "fr-authorized",
+      "path": "/fr/dashboard/profile",
+      "privateEmailVisible": true,
+      "loginVisible": false,
+      "profileUnavailable": false,
+      "textSha256": "ffc57773715bd474a5769fb3777c0e9e35ead1ad89aae30271eaa50356d52dcc",
+      "screenshot": "fr-authorized.png",
+      "at": "2026-11-10T11:09:52.399Z",
+      "manual_screenshot_reviewed": true,
+      "screenshot_path": "browser/auth-r06-attempt02/fr-authorized.png",
+      "screenshot_sha256": "aa86bcf3bc406a9d64dc162ea38900cd1b64db5914d1c8cfc0eb3d1625dd637d",
+      "png_width": 1440,
+      "png_height": 1064,
+      "manual_observation": "Localized profile page shows the intended synthetic actor email and name; own account panel and profile controls rendered.",
+      "raw_harness_check_passed": false,
+      "raw_harness_error": "Browser response capture incomplete",
+      "raw_harness_failure_class": "observed_assertion_failure",
+      "review_status": "INCOMPLETE_RESPONSE_CAPTURE",
+      "responses": [
+        {
+          "label": "fr-authorized",
+          "path": "/fr/dashboard/profile",
+          "method": "GET",
+          "status": 200,
+          "bytes": 497217,
+          "sha256": "e496e3e3a87a8fe14ee07d005298143e72c0acdfe4c4e0924822b5f7968a6e67",
+          "containsActorCanary": true,
+          "currentSessionSubject": false,
+          "at": "2026-11-10T11:09:50.872Z"
+        },
+        {
+          "label": "fr-authorized",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 734,
+          "sha256": "87e31dbf60df37e4fc721e1bb27f9ffb1def57d9229457b0153e668b447ab25b",
+          "containsActorCanary": true,
+          "currentSessionSubject": true,
+          "at": "2026-11-10T11:09:51.592Z"
+        },
+        {
+          "label": "fr-authorized",
+          "path": "/en/dashboard/profile",
+          "method": "GET",
+          "status": 200,
+          "bytes": 361864,
+          "sha256": "a0313c2a0a3d7a1c9509475769deeb7b4ca1cfb68520ac6bb19070af12394383",
+          "containsActorCanary": false,
+          "currentSessionSubject": false,
+          "at": "2026-11-10T11:09:51.647Z"
+        },
+        {
+          "label": "fr-authorized",
+          "path": "/fr/dashboard/profile",
+          "captureError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier"
+        }
+      ],
+      "total_response_records": 4,
+      "capture_error_count": 1,
+      "successful_current_subject_get_session": true,
+      "denial_captured_responses_actor_free": null
+    },
+    {
+      "label": "fr-invalidated-reload",
+      "path": "/fr/login",
+      "privateEmailVisible": false,
+      "loginVisible": true,
+      "profileUnavailable": false,
+      "textSha256": "0123dc79845fed69019e976d8b6fe46b1135e7a88786160d8a01a866850aac6f",
+      "screenshot": "fr-invalidated-reload.png",
+      "at": "2026-11-10T11:09:57.941Z",
+      "manual_screenshot_reviewed": true,
+      "screenshot_path": "browser/auth-r06-attempt02/fr-invalidated-reload.png",
+      "screenshot_sha256": "0eb7b75b95d19e98d530146c09b40005170cb2f3f3ec3be52a24514012d8ad97",
+      "png_width": 1440,
+      "png_height": 1000,
+      "manual_observation": "Localized public login form; no visible profile, fixture email, private name, organization banner or tenant dashboard shell.",
+      "raw_harness_check_passed": true,
+      "raw_harness_error": null,
+      "raw_harness_failure_class": null,
+      "review_status": "PASS_SCOPED",
+      "responses": [
+        {
+          "label": "fr-invalidated-reload",
+          "path": "/fr/dashboard/profile",
+          "method": "GET",
+          "status": 200,
+          "bytes": 459167,
+          "sha256": "aa214520e7f88dd81a74bcccd1046fd4296581238a1b9ebf9223268e93c89f37",
+          "containsActorCanary": false,
+          "currentSessionSubject": false,
+          "at": "2026-11-10T11:09:56.345Z"
+        }
+      ],
+      "total_response_records": 1,
+      "capture_error_count": 0,
+      "successful_current_subject_get_session": false,
+      "denial_captured_responses_actor_free": true
+    },
+    {
+      "label": "fr-restored",
+      "path": "/fr/dashboard/profile",
+      "privateEmailVisible": true,
+      "loginVisible": false,
+      "profileUnavailable": false,
+      "textSha256": "0c62895f75fde4db9f11035f2f6664d069c4d2f2a3bf7a0560b2fdcb0f217ff7",
+      "screenshot": "fr-restored.png",
+      "at": "2026-11-10T11:10:03.752Z",
+      "manual_screenshot_reviewed": true,
+      "screenshot_path": "browser/auth-r06-attempt02/fr-restored.png",
+      "screenshot_sha256": "c79fa2eca47835604e9d2ff2f29d1d418788c0059df6985319933dccaed41032",
+      "png_width": 1440,
+      "png_height": 1064,
+      "manual_observation": "Localized profile page shows the intended synthetic actor email and name; own account panel and profile controls rendered.",
+      "raw_harness_check_passed": false,
+      "raw_harness_error": "Browser response capture incomplete",
+      "raw_harness_failure_class": "observed_assertion_failure",
+      "review_status": "INCOMPLETE_RESPONSE_CAPTURE",
+      "responses": [
+        {
+          "label": "fr-restored",
+          "path": "/fr/dashboard/profile",
+          "method": "GET",
+          "status": 200,
+          "bytes": 497217,
+          "sha256": "276fc80a532eae41a7cf40506eabc153ff08dda1e051cbdabe44bff3bbb40908",
+          "containsActorCanary": true,
+          "currentSessionSubject": false,
+          "at": "2026-11-10T11:10:02.080Z"
+        },
+        {
+          "label": "fr-restored",
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "status": 200,
+          "bytes": 734,
+          "sha256": "7aa7b1ab2134b6788317785ea67937a97ba548734b7f942bc81e00142a50ee28",
+          "containsActorCanary": true,
+          "currentSessionSubject": true,
+          "at": "2026-11-10T11:10:02.988Z"
+        },
+        {
+          "label": "fr-restored",
+          "path": "/en/dashboard/profile",
+          "method": "GET",
+          "status": 200,
+          "bytes": 361864,
+          "sha256": "a6e3207babd1f095f8c7bf54c702b13bc4b165d68d1c53b3e6025a6995e2ecf3",
+          "containsActorCanary": false,
+          "currentSessionSubject": false,
+          "at": "2026-11-10T11:10:03.039Z"
+        },
+        {
+          "label": "fr-restored",
+          "path": "/fr/dashboard/profile",
+          "captureError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier"
+        }
+      ],
+      "total_response_records": 4,
+      "capture_error_count": 1,
+      "successful_current_subject_get_session": true,
+      "denial_captured_responses_actor_free": null
+    }
+  ],
+  "sign_ins": [
+    {
+      "alias": "browser_en",
+      "at": "2026-11-10T11:09:24.649Z",
+      "status": 200
+    },
+    {
+      "alias": "browser_en",
+      "at": "2026-11-10T11:09:38.125Z",
+      "status": 200
+    },
+    {
+      "alias": "browser_fr",
+      "at": "2026-11-10T11:09:48.381Z",
+      "status": 200
+    },
+    {
+      "alias": "browser_fr",
+      "at": "2026-11-10T11:09:59.972Z",
+      "status": 200
+    }
+  ],
+  "revocation_proof": [
+    {
+      "alias": "browser_en",
+      "transition_path": "database/session-revoke-1794308972252-450fb879-ee1e-48f2-b76e-a46a572b305d.json",
+      "transition_sha256": "f471bde17eb2cd6359638626f534085abf9e09ee33df5dcba84e0b05c544991b",
+      "affected": 1,
+      "authorized_snapshot_contains_selected_session": true,
+      "denial_snapshot_selected_session_absent": true,
+      "restored_snapshot_has_different_actor_session": true
+    },
+    {
+      "alias": "browser_fr",
+      "transition_path": "database/session-revoke-1794308994164-5bc5e17e-c7c7-4530-bcd4-a3772f98ee76.json",
+      "transition_sha256": "dcb9d2e03a5e50f79237c1bca96e43894db323434d3bb89dc50c91ebe870a0fe",
+      "affected": 1,
+      "authorized_snapshot_contains_selected_session": true,
+      "denial_snapshot_selected_session_absent": true,
+      "restored_snapshot_has_different_actor_session": true
+    }
+  ],
+  "database_pairs": [
+    {
+      "id": "R06-UI-en-authorized",
+      "before_path": "database/snapshot-R06-UI-en-authorized-before-1794308967478-982b9bf3-53ac-4462-a3d0-bb38339363fd.json",
+      "after_path": "database/snapshot-R06-UI-en-authorized-after-1794308972084-7606087b-8dfb-4c0a-8af9-d4440260517a.json",
+      "before_sha256": "ebf20c51480325003210a5f06a34d2f1f514ed715f7dec0772380a33c1ccd830",
+      "after_sha256": "7a0962f4d358cec44e7d4ab514d4efd241a8fdb45439508659886b42a9a10cfb",
+      "business_digest_equal": true,
+      "tables_count": 245,
+      "table_rows_equal": true,
+      "session_rows_equal": true,
+      "audit_rows_equal": true,
+      "user_rows_equal": true,
+      "account_rows_equal": true,
+      "business_sha256": "eb4318eba14e1cc18790486f356f640e48dd02fa900c80e85bf1f90ed10dda9a",
+      "session_sha256": "04bc5e8585ec44f1068cbbcfdb6cad2b717f4491d43f9b4f12c56cbb5b0e6ffd",
+      "audit_sha256": "e49a97f546ea582790cfa7c3739e287905040499864d19358cc499aefd84bb45"
+    },
+    {
+      "id": "R06-UI-en-invalidated-reload",
+      "before_path": "database/snapshot-R06-UI-en-invalidated-reload-before-1794308973922-a49984a3-029f-4d8f-afd9-b27ed2c8a06b.json",
+      "after_path": "database/snapshot-R06-UI-en-invalidated-reload-after-1794308978029-db200f43-a71f-44f6-b71e-f6c2cf27fe4b.json",
+      "before_sha256": "1c6199378e2c8a0feefd47af04b8222872aa7a2f5974bb1ea8e1a5422067abbd",
+      "after_sha256": "64e22a374579dbc8405389080d94d819678a8c8c71334825803adcbf91bf5503",
+      "business_digest_equal": true,
+      "tables_count": 245,
+      "table_rows_equal": true,
+      "session_rows_equal": true,
+      "audit_rows_equal": true,
+      "user_rows_equal": true,
+      "account_rows_equal": true,
+      "business_sha256": "eb4318eba14e1cc18790486f356f640e48dd02fa900c80e85bf1f90ed10dda9a",
+      "session_sha256": "1fc1cf3c5ad7c7fa8a824a095009db331af8f3702c06e0b3ea117b97769236c0",
+      "audit_sha256": "e49a97f546ea582790cfa7c3739e287905040499864d19358cc499aefd84bb45"
+    },
+    {
+      "id": "R06-UI-en-restored",
+      "before_path": "database/snapshot-R06-UI-en-restored-before-1794308980213-1bf75744-0e53-48c0-915c-6db4021ae9cc.json",
+      "after_path": "database/snapshot-R06-UI-en-restored-after-1794308984643-0e7a3e0c-367a-4601-94b0-4e91ede8fd2a.json",
+      "before_sha256": "0460b95ab3b35dd25e91d5647de35e4585c32feca389e16549b2c48a6eef93b5",
+      "after_sha256": "cbca2ddda4d7abaff284dc5d4adf4ed4063576150a1a63b7ee88b1c1e5ac51e3",
+      "business_digest_equal": true,
+      "tables_count": 245,
+      "table_rows_equal": true,
+      "session_rows_equal": true,
+      "audit_rows_equal": true,
+      "user_rows_equal": true,
+      "account_rows_equal": true,
+      "business_sha256": "d4192c48666552c3a95f80ae653491f2f25f265dcd6f75eb677a0080d44574a4",
+      "session_sha256": "dcfdd558539381e7e5a552dc176426108938a8de52e311313abc66d310d9a12d",
+      "audit_sha256": "24d08a6b615eed9dd813f0c9f61ec51533ba8dd017dc1034003e7887d8b7fa6a"
+    },
+    {
+      "id": "R06-UI-fr-authorized",
+      "before_path": "database/snapshot-R06-UI-fr-authorized-before-1794308990488-39a4a968-539a-40ff-b4d5-c95087a9ec2a.json",
+      "after_path": "database/snapshot-R06-UI-fr-authorized-after-1794308994037-75ce82e0-27ec-4811-a661-45c6f28a2306.json",
+      "before_sha256": "b773a7270bb099d9b981b2fd9643ffbfeb815cda2faf0469ec0f024b6be06b94",
+      "after_sha256": "675bcdf98d91a8d8b2fa67359862a83ee0afc5938dcc9a03fb89d8994ec886e3",
+      "business_digest_equal": true,
+      "tables_count": 245,
+      "table_rows_equal": true,
+      "session_rows_equal": true,
+      "audit_rows_equal": true,
+      "user_rows_equal": true,
+      "account_rows_equal": true,
+      "business_sha256": "f998c32a9660e0802675db7a5403fcf4f437f1365dffffe7eb877845e235f40c",
+      "session_sha256": "63f2db571ddbb942501f1890973d25581e6dc1e2b721f6eed847f1dbf7a90817",
+      "audit_sha256": "fbd0e5e016fd55a4ee4be7c2068a436b80892b783924f0d9efddf0338dcda7c8"
+    },
+    {
+      "id": "R06-UI-fr-invalidated-reload",
+      "before_path": "database/snapshot-R06-UI-fr-invalidated-reload-before-1794308995870-cc1855da-e736-4797-ae63-036eb72c61c5.json",
+      "after_path": "database/snapshot-R06-UI-fr-invalidated-reload-after-1794308999909-b706b56a-a20e-4512-98b3-ac9fe84359d3.json",
+      "before_sha256": "124fbf509c9cc7b9cb24f2d1b310a36258912bcfce14358e1c06531e7296be57",
+      "after_sha256": "474f8e2e0f129e62f098e5fb2098b868229f2167edec80b3b7c12c2f506a89ef",
+      "business_digest_equal": true,
+      "tables_count": 245,
+      "table_rows_equal": true,
+      "session_rows_equal": true,
+      "audit_rows_equal": true,
+      "user_rows_equal": true,
+      "account_rows_equal": true,
+      "business_sha256": "f998c32a9660e0802675db7a5403fcf4f437f1365dffffe7eb877845e235f40c",
+      "session_sha256": "dcfdd558539381e7e5a552dc176426108938a8de52e311313abc66d310d9a12d",
+      "audit_sha256": "fbd0e5e016fd55a4ee4be7c2068a436b80892b783924f0d9efddf0338dcda7c8"
+    },
+    {
+      "id": "R06-UI-fr-restored",
+      "before_path": "database/snapshot-R06-UI-fr-restored-before-1794309001670-c13e510d-ba8b-4e5d-a112-a6212b41846a.json",
+      "after_path": "database/snapshot-R06-UI-fr-restored-after-1794309005283-24ee3efb-2d91-434b-a7b0-c5c3b0a41ccb.json",
+      "before_sha256": "74ce1988cd607dbd37af12f56b00359eb1956613d70d2181c4a05f77df2f4058",
+      "after_sha256": "a311772483e848eb3327616caa84af7e1b59ce42dd681c914a442677297b3d5a",
+      "business_digest_equal": true,
+      "tables_count": 245,
+      "table_rows_equal": true,
+      "session_rows_equal": true,
+      "audit_rows_equal": true,
+      "user_rows_equal": true,
+      "account_rows_equal": true,
+      "business_sha256": "632107c3c5034121162bfa4ae0bb986d0f68386baabf88baad56caa9c430ee1b",
+      "session_sha256": "3f6db64ea84a077e358f1b744482f41ad813e995b2df218f7f0a2dcb38bfbe7e",
+      "audit_sha256": "0b72ffff3d61d220731fb6c2420b2cb0a86667ffdd7c640624f7f61f1e948851"
+    }
+  ],
+  "summary": {
+    "planned_browser_groups": 6,
+    "actual_browser_observations": 6,
+    "manually_reviewed_screenshots": 6,
+    "visual_states_match": 6,
+    "groups_passing_complete_scoped_harness": 3,
+    "groups_with_incomplete_response_capture": 3,
+    "missing_response_bodies": 4,
+    "authorized_current_subject_session_responses": 4,
+    "revoked_reloads_with_actor_free_captured_responses": 2,
+    "database_pairs_unchanged": 6
+  },
+  "findings": [
+    {
+      "id": "BROWSER-OBS-01",
+      "kind": "verification_gap",
+      "blocking": true,
+      "confirmed_product_defect": false,
+      "affected_groups": [
+        "R06-UI-en-restored",
+        "R06-UI-fr-authorized",
+        "R06-UI-fr-restored"
+      ],
+      "evidence": "Four Network.getResponseBody failures: two EN-restored, one FR-authorized and one FR-restored. The admitted harness required every selected response body; three original checks failed Browser response capture incomplete.",
+      "implication": "Visible authorized success and successful current-subject session responses are corroborated, but missing bodies prevent complete network qualification for these three groups. Their contents and cause cannot be inferred.",
+      "next_action": "Preserve attempt02. Diagnose response lifecycle and retain request method/status/resource type/timing on capture failure in a separately reviewed bounded evidence-capture repair. Rerun affected browser gates against the same sealed artifact with reviewed isolated real-session/DB preconditions; retain denial gates and do not downgrade or skip missing responses."
+    }
+  ],
+  "non_browser_failures_observed_not_adjudicated": [
+    {
+      "id": "R06-C-login",
+      "error": "The expression evaluated to a falsy value:\n\n  assert(new Date(after.user.lastLogin).getTime()>=requestedAt&&new Date(after.user.lastLogin).getTime()<=finishedAt)\n"
+    },
+    {
+      "id": "R06-C-origin",
+      "error": "Unreviewed session insertion/update\n+ actual - expected\n\n+ undefined\n- 'bb734d94ddf3a2757e4bfda4b2807e4427b9f0ac05a876b58a21aa66d2b503c8'\n"
+    }
+  ],
+  "runtime_receipt_scope": {
+    "overall_passed": false,
+    "ports_released": true,
+    "artifacts_unchanged": true,
+    "repaired_integrity_reported": true,
+    "legacy_integrity_reported": true,
+    "qualification_status_unchanged": true
+  },
+  "limitations": [
+    "No accessibility, visual design, keyboard, mobile, zoom or screen-reader certification.",
+    "No R07 inventory Refresh or whole-application stale-state claim; hidden tabs, focus changes and BFCache were not qualified.",
+    "Recovered views used fresh browser contexts after real credential sign-in; no same-tab reauthentication workflow claim.",
+    "Network body privacy predicates are produced by the exact hash-bound actual harness; raw private response bodies are not published. Screenshots and native snapshot files were independently inspected.",
+    "No generic absence-of-all-private-data claim outside the captured profile/session routes and synthetic actor canaries.",
+    "This review does not resolve the login timestamp or origin-session-write failures owned by the broader runtime review."
+  ],
+  "review_actions": {
+    "ran_browser": false,
+    "ran_app": false,
+    "ran_compiler": false,
+    "queried_database": false,
+    "product_changes": false,
+    "harness_changes": false,
+    "shared_document_changes": false,
+    "prior_evidence_changed": false
+  },
+  "advancement": {
+    "p04_r06_verified": false,
+    "parent_p04_verified": false,
+    "production_ready": false
+  }
+}

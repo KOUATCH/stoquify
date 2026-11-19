@@ -1,0 +1,3648 @@
+{
+  "at": "2026-10-20T08:34:52.578Z",
+  "head": "6ee84a90c760d2864f6aef672d8b393ac2b65971",
+  "status": " M actions/accounting/accountant-access.actions.ts\n M actions/accounting/data-trust.actions.ts\n M app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx\n M app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts\n M app/[locale]/(home)/workflows/page.tsx\n M components/Forms/WaitList.tsx\n M components/accounting/AccountantPortfolio.tsx\n M components/daily-habit/DailyHabitDigestDashboard.tsx\n M components/daily-habit/__tests__/modes.test.tsx\n M components/landing/__tests__/CinematicLanding.test.tsx\n M components/landing/__tests__/workflow-atlas.test.tsx\n M components/landing/cinematic-business-story.tsx\n M components/landing/cinematic-chapters.tsx\n M components/landing/cinematic-hero.tsx\n M components/landing/cinematic-offers.tsx\n M components/landing/cinematic-product.tsx\n M components/landing/cinematic-setup.tsx\n M components/landing/cinematic-shell.tsx\n M components/landing/cinematic.css\n M components/landing/public-product-copy.ts\n M components/landing/workflow-atlas.tsx\n M components/onboarding/MasterDataOnboardingWorkbench.tsx\n M design-system/stoquify/MASTER.md\n M docs/retention/execution/P02/RESULT.md\n M docs/retention/execution/P06/RESULT.md\n M docs/retention/execution/P07/ITEM_IMPORT_BLOCKER.md\n M docs/retention/execution/P07/RESULT.md\n M docs/retention/execution/P07/SETUP_JOURNEY.md\n M docs/retention/execution/STATUS.md\n M prisma/schema.prisma\n M scripts/__tests__/landing-navigation-localization.test.js\n M scripts/__tests__/landing-refinement-content.test.js\n M services/accounting/__tests__/accountant-access.service.test.ts\n M services/accounting/__tests__/close-evidence-acceptance-authority.service.test.ts\n M services/accounting/__tests__/data-trust.service.test.ts\n M services/accounting/accountant-access.schemas.ts\n M services/accounting/accountant-access.service.ts\n M services/accounting/accountant-work-desk.service.ts\n M services/accounting/close-assessment-order.service.ts\n M services/accounting/close-assurance-current-proof.ts\n M services/accounting/close-assurance.service.ts\n M services/accounting/close-evidence-acceptance-authority.service.ts\n M services/accounting/data-trust.service.ts\n M services/accounting/missing-close-evidence-accountant-review-queue.service.ts\n M services/onboarding/__tests__/master-data-csv.test.ts\n M services/onboarding/__tests__/master-data-import-guards.test.ts\n M services/onboarding/__tests__/opening-readiness.postgres.test.ts\n M services/onboarding/master-data-csv.ts\n M services/onboarding/master-data-import.service.ts\n M what-next/bakery-profitability-2026-10-03/node_modules/.modules.yaml\n M what-next/bakery-profitability-2026-10-03/node_modules/.pnpm-workspace-state-v1.json\n M what-next/bakery-profitability-2026-10-03/node_modules/@img/sharp-win32-x64/lib/libvips-42.dll\n M what-next/bakery-profitability-2026-10-03/node_modules/@img/sharp-win32-x64/lib/libvips-cpp-8.18.7.dll\n M what-next/bakery-profitability-2026-10-03/node_modules/@img/sharp-win32-x64/lib/sharp-win32-x64-0.35.5.node\n M what-next/bakery-profitability-2026-10-03/node_modules/@napi-rs/canvas-win32-x64-msvc/skia.win32-x64-msvc.node\n M what-next/bakery-profitability-2026-10-03/node_modules/@oai/artifact-tool/node_modules/.pnpm-workspace-state-v1.json\n M what-next/bakery-profitability-2026-10-03/node_modules/@oai/artifact-tool/node_modules/skia-canvas/lib/skia.node\n M what-next/bakery-profitability-2026-10-03/node_modules/pnpm/dist/node_modules/@reflink/reflink-win32-arm64-msvc/reflink.win32-arm64-msvc.node\n M what-next/bakery-profitability-2026-10-03/node_modules/pnpm/dist/node_modules/@reflink/reflink-win32-x64-msvc/reflink.win32-x64-msvc.node\n M what-next/bakery-profitability-2026-10-03/node_modules/pnpm/dist/vendor/fastlist-0.3.0-x64.exe\n M what-next/bakery-profitability-2026-10-03/node_modules/pnpm/dist/vendor/fastlist-0.3.0-x86.exe\n",
+  "untracked": [
+    "actions/accounting/firm-engagement.actions.ts",
+    "app/[locale]/(home)/get-started/page.tsx",
+    "app/[locale]/(home)/offers/[offer]/page.tsx",
+    "app/[locale]/(home)/offers/not-found.tsx",
+    "app/[locale]/(home)/pricing/page.tsx",
+    "app/[locale]/(home)/products/[module]/page.tsx",
+    "app/[locale]/(home)/products/not-found.tsx",
+    "app/[locale]/(home)/products/page.tsx",
+    "components/Forms/__tests__/WaitList.ssr.test.tsx",
+    "components/accounting/AccountantPortfolioWorkspace.tsx",
+    "components/accounting/__tests__/AccountantPortfolio.test.tsx",
+    "components/accounting/__tests__/AccountantPortfolioPage.test.tsx",
+    "components/accounting/__tests__/AccountantPortfolioWorkspace.test.tsx",
+    "components/accounting/accountant-portfolio-copy.ts",
+    "components/landing/__tests__/ProductWorkflowDemo.test.tsx",
+    "components/landing/__tests__/workflow-details.test.tsx",
+    "components/landing/accounting-workflow-context.tsx",
+    "components/landing/photo-workspace.tsx",
+    "components/landing/product-workflow-demo.tsx",
+    "components/landing/product-workflow-motion.ts",
+    "components/landing/product-workflow.css",
+    "components/landing/public-page-routes.ts",
+    "components/landing/public-pages.tsx",
+    "components/landing/workflow-atlas.css",
+    "components/landing/workflow-details.tsx",
+    "components/landing/workflow-story.tsx",
+    "components/onboarding/ItemImportImages.tsx",
+    "components/onboarding/__tests__/ItemImportImages.test.tsx",
+    "components/onboarding/__tests__/ItemImportImages.upload.test.tsx",
+    "design-system/stoquify/pages/accountant-portfolio.md",
+    "docs/accounting-firms/README.md",
+    "docs/accounting-firms/README.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/00_SOURCE_REPORT.md",
+    "docs/accounting-firms/roadmap-2026-10-19/00_SOURCE_REPORT.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/01_IMPLEMENTATION_ROADMAP.md",
+    "docs/accounting-firms/roadmap-2026-10-19/01_IMPLEMENTATION_ROADMAP.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/02_EXECUTION_CONTRACT.md",
+    "docs/accounting-firms/roadmap-2026-10-19/02_EXECUTION_CONTRACT.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/PACKAGE_VALIDATION.md",
+    "docs/accounting-firms/roadmap-2026-10-19/PACKAGE_VALIDATION.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/STATUS.md",
+    "docs/accounting-firms/roadmap-2026-10-19/STATUS.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/2026-10-19-run-01/postgres-query-evidence.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/2026-10-19-run-01/stoquify_local_af01_20261019_r1-target.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/2026-10-19-run-01/stoquify_local_af01_20261019_r1-tests.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/2026-10-19-run-01/stoquify_local_af01_20261019_r2-query-evidence.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/2026-10-19-run-01/stoquify_local_af01_20261019_r2-target.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/2026-10-19-run-01/stoquify_local_af01_20261019_r2-tests.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/2026-10-19-run-01/unit-component-rerun.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/2026-10-19-run-01/unit-component.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/PORTFOLIO_READ_CONTRACT.md",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/PORTFOLIO_READ_CONTRACT.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/RESULT.md",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF01/RESULT.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/browser-fixture.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/browser-results.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/changed-grant-empty.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/failure.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/portal-client-period.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/portfolio-en-1440.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/portfolio-en-390.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/portfolio-fr-1440.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/portfolio-fr-390.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/synthetic-browser-failed-trace.zip",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/unit-component-final.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/unit-component.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-01/work-desk.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-02/portfolio-en-1440.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-02/portfolio-en-390.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-02/portfolio-fr-1440.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-02/portfolio-fr-390.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-02/unit-component.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/browser-results.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/changed-grant-empty.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/cleanup.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/module-locked-en.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/module-locked-fr.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/permission-denied.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/portal-client-period.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/portfolio-en-1440.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/portfolio-en-390.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/portfolio-fr-1440.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/portfolio-fr-390.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/publication-verification.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/source-manifest.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/stale-card-en-1440.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/stale-card-fr-390.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/stale-session.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/synthetic-browser-trace.zip",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/transport-failure-retry.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/2026-10-19-run-03/unit-component.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/RESULT.md",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/RESULT.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/UI_STATE_MATRIX.md",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF02/UI_STATE_MATRIX.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-01/clean-tests.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-01/database-attempt.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-01/database-results.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-01/portfolio-regressions.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-01/schema-diff.sql",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-01/upgrade-tests.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-02/clean-tests.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-02/database-attempt.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-02/database-results.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-02/schema-comparison.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-02/upgrade-tests.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-03/artifact-review.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-03/clean-tests.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-03/cleanup.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-03/database-attempt.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-03/database-results.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-03/publication-contact-sheet.png",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-03/publication-preservation.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-03/publication-verification.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-03/source-manifest.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/2026-10-19-run-03/upgrade-tests.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/CAPABILITY_MATRIX.md",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/CAPABILITY_MATRIX.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/DATA_MIGRATION_PLAN.md",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/DATA_MIGRATION_PLAN.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/ENGAGEMENT_ADR.md",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/ENGAGEMENT_ADR.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/RESULT.md",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF03/RESULT.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF04/2026-10-19-run-01/database-attempt.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF04/2026-10-19-run-01/unit-tests.json",
+    "docs/accounting-firms/roadmap-2026-10-19/execution/AF04/AUTHORITY_AND_LOCK_ORDER.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF01-portfolio-read-model.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF01-portfolio-read-model.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF02-portfolio-ui.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF02-portfolio-ui.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF03-engagement-model.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF03-engagement-model.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF04-engagement-authority.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF04-engagement-authority.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF05-engagement-workflows.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF05-engagement-workflows.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF06-delegated-evidence-desk.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF06-delegated-evidence-desk.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF07-provider-coverage.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF07-provider-coverage.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF08-workpapers-deliverables.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF08-workpapers-deliverables.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF09-opening-preview.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF09-opening-preview.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF10-opening-apply.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF10-opening-apply.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF11-obligation-register.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF11-obligation-register.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF12-advisory-outcomes.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF12-advisory-outcomes.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF13-workload-economics.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF13-workload-economics.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF14-evidence-assistant.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF14-evidence-assistant.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF15-partner-packaging.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF15-partner-packaging.pdf",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF16-pilot-release-assurance.md",
+    "docs/accounting-firms/roadmap-2026-10-19/prompts/AF16-pilot-release-assurance.pdf",
+    "docs/accounting-firms/supporting-reports/2026-10-19-af01-accountant-portfolio.md",
+    "docs/accounting-firms/supporting-reports/2026-10-19-af01-accountant-portfolio.pdf",
+    "docs/accounting-firms/supporting-reports/2026-10-19-af02-accountant-portfolio-ui.md",
+    "docs/accounting-firms/supporting-reports/2026-10-19-af02-accountant-portfolio-ui.pdf",
+    "docs/accounting-firms/supporting-reports/2026-10-19-af03-firm-engagement-model.md",
+    "docs/accounting-firms/supporting-reports/2026-10-19-af03-firm-engagement-model.pdf",
+    "docs/accounting-firms/supporting-reports/accounting-firm-workflow-evidence-2026-10-18.md",
+    "docs/accounting-firms/supporting-reports/accounting-firm-workflow-evidence-2026-10-18.pdf",
+    "docs/landing/accounting-firm-workflow-evidence-2026-10-18.md",
+    "docs/landing/computer-screen-imagery-2026-10-18.md",
+    "docs/prompt-execution/S06-S12_SHARED_CANDIDATE_REVIEW_R3_2026-10-18.md",
+    "docs/prompt-execution/S06-S12_SHARED_CANDIDATE_REVIEW_R4_2026-10-18.md",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/APPLICATION_TARGET.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/BASELINE.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/BROWSER_FIXTURE.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/CLEANUP.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/DATABASE_TARGET.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/EVIDENCE_SUMMARY.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/FINAL_GIT_STATUS.txt",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/INITIAL_STATUS.md",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_CLOSE_BLOCKED.png",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_FR_MOBILE.png",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_FR_OFFLINE_READ_FAILURE.png",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_FR_READ_FAILURE.png",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_FR_READ_FAILURE_REPEAT.png",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_UNCERTAIN.png",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/MANIFEST.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/P02_DATABASE_VERIFICATION.md",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/P06_OPERATOR_REFRESH.md",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/RESULT.md",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/RUN_PLAN.md",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/SCHEMA_PROVENANCE.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/SERVER_CLOSE_BLOCKED.png",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/SOURCE_AND_COMMAND_REVIEW.md",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/VALIDATION.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/WORKFLOW.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/application.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/browser-1792354378317.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/browser-fixture.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/browser-fixture.results.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/browser-operator.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/browser-read-states.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/browser-server-close.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/check-cleanup.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/checks.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/client-shape.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/collect-evidence.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/createdb.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/database.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/finalize-evidence.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/initdb.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/jest.database.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/jest.retention-db.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/operator-1792354373829.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/p02-unit-1792353981196.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/p02-unit-1792353981196.results.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/pg-start.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/pg-stop.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/prepare-evidence.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/read-states-1792354695139.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/read-states-1792354719659.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/read-states-1792354845798.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/read-states-1792354860401.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db-1792354248182.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db-1792354248182.results.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db-1792354347784.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db-1792354347784.results.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db.cjs",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/schema-apply.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/schema-diff.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/server-close-1792354696827.execution.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/server-close-1792354740792.json",
+    "docs/retention/execution/P02-P06-verification-2026-10-18/workflow.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/COMPATIBILITY_AND_RECOVERY.md",
+    "docs/retention/execution/P07-media-2026-10-18/RESULT.md",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/1792340913818-EMPTY_EN.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/APPLICATION_TARGET.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/ARTIFACT_MANIFEST.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/ATTEMPTS.md",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/BASELINE.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/BROWSER_FIXTURE.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/BROWSER_FIXTURE.prior-1792340562852.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/BROWSER_FIXTURE.prior-1792340894711.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/CLEANUP.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/DATABASE_TARGET.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/DOC_UPDATES.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/EMPTY_EN.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/ERROR_en.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/ERROR_fr.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/FAIL-1792340828614.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/FINAL_TRACKED_STATUS.txt",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/GUIDANCE_en.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/GUIDANCE_fr.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/IMPORTED_FR_MOBILE.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/LINEAGE_AND_NO_OPENING_WRITES.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/LOADING_en.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/LOADING_fr.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/MEDIA_ERROR_en.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/MEDIA_ERROR_fr.png",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/MasterDataOnboardingWorkbench.tsx.before",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/MasterDataOnboardingWorkbench.tsx.patch",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/P03-CUSTOMER.csv",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/P03-ITEM-validation-evidence-1792341096487.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/P03-ITEM.csv",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/P03-SUPPLIER-validation-evidence-1792341037573.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/P03-SUPPLIER.csv",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/P07-ITEM_IMPORT_BLOCKER.md.before",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/P07-RESULT.md.before",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/P07-SETUP_JOURNEY.md.before",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/SCHEMA_PROVENANCE.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/SOURCE_REVIEW.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/STATUS.md.before",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/STATUS.md.patch",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/VALIDATION.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/WORKFLOW_CHECK.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/application.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/browser-1792340575594.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/browser-1792340911022.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/browser-states-1792341446824.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/browser-states.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/browser.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/cleanup-check.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/createdb.execution.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/database-1792340465549.execution.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/database-1792340465549.results.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/database-1792341206330.execution.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/database-1792341206330.results.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/database.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/finalize.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/fixture.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/initdb.execution.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/jest.database.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/jest.unit.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/lineage-check.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/master-data-csv.test.ts.before",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/master-data-csv.test.ts.patch",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/master-data-csv.ts.before",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/master-data-csv.ts.patch",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/master-data-import-guards.test.ts.before",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/master-data-import-guards.test.ts.patch",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/master-data-import.service.ts.before",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/master-data-import.service.ts.patch",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/pg-start.execution.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/pg-stop.execution.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/prepare.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/progress.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/publish.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/run-db.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/run-unit.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/schema-apply.execution.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/schema-diff.execution.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/source-review.cjs",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/unit-1792340438137.execution.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/unit-1792340438137.results.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/unit-1792340632787.execution.json",
+    "docs/retention/execution/P07-media-2026-10-18/evidence/unit-1792340632787.results.json",
+    "docs/retention/execution/P08/RESULT.md",
+    "docs/retention/execution/P08/RUN_PLAN.md",
+    "docs/retention/execution/P08/TASK_SCRIPTS.md",
+    "docs/retention/execution/P08/UI_STATE_EVIDENCE.md",
+    "docs/retention/execution/P08/evidence/APPLICATION_TARGET.json",
+    "docs/retention/execution/P08/evidence/ARTIFACT_LINKS.json",
+    "docs/retention/execution/P08/evidence/ATTEMPTS.md",
+    "docs/retention/execution/P08/evidence/BASELINE.json",
+    "docs/retention/execution/P08/evidence/BROWSER_EXECUTIONS.json",
+    "docs/retention/execution/P08/evidence/BROWSER_FIXTURE.json",
+    "docs/retention/execution/P08/evidence/BROWSER_RECOVERY.json",
+    "docs/retention/execution/P08/evidence/BROWSER_RECOVERY_BODY.txt",
+    "docs/retention/execution/P08/evidence/BROWSER_RECOVERY_FINAL.png",
+    "docs/retention/execution/P08/evidence/CLEANUP.json",
+    "docs/retention/execution/P08/evidence/DATABASE_TARGET.json",
+    "docs/retention/execution/P08/evidence/DailyHabitDigestDashboard.tsx.before",
+    "docs/retention/execution/P08/evidence/DailyHabitDigestDashboard.tsx.patch",
+    "docs/retention/execution/P08/evidence/MANAGER_DENIED_en.png",
+    "docs/retention/execution/P08/evidence/MANAGER_DENIED_fr.png",
+    "docs/retention/execution/P08/evidence/MANAGER_DESTINATION_en.png",
+    "docs/retention/execution/P08/evidence/MANAGER_DESTINATION_fr.png",
+    "docs/retention/execution/P08/evidence/MANAGER_EMPTY_en.png",
+    "docs/retention/execution/P08/evidence/MANAGER_EMPTY_fr.png",
+    "docs/retention/execution/P08/evidence/MANAGER_ERROR_en.png",
+    "docs/retention/execution/P08/evidence/MANAGER_ERROR_fr.png",
+    "docs/retention/execution/P08/evidence/MANAGER_FAILURE_1792342924972.png",
+    "docs/retention/execution/P08/evidence/MANAGER_FIXTURE.json",
+    "docs/retention/execution/P08/evidence/MANAGER_LOADING_en.png",
+    "docs/retention/execution/P08/evidence/MANAGER_LOADING_fr.png",
+    "docs/retention/execution/P08/evidence/MANAGER_RECOVERED_en.png",
+    "docs/retention/execution/P08/evidence/MANAGER_RECOVERED_fr.png",
+    "docs/retention/execution/P08/evidence/MANAGER_SOURCE_en.png",
+    "docs/retention/execution/P08/evidence/MANAGER_SOURCE_fr.png",
+    "docs/retention/execution/P08/evidence/MANIFEST.json",
+    "docs/retention/execution/P08/evidence/P08_EN_RECOVERED.png",
+    "docs/retention/execution/P08/evidence/P08_EN_RETRY.png",
+    "docs/retention/execution/P08/evidence/P08_EN_UNCERTAIN.png",
+    "docs/retention/execution/P08/evidence/P08_FR_MOBILE.png",
+    "docs/retention/execution/P08/evidence/P08_FR_RECOVERED.png",
+    "docs/retention/execution/P08/evidence/SCHEMA_PROVENANCE.json",
+    "docs/retention/execution/P08/evidence/SOURCE_MAP.md",
+    "docs/retention/execution/P08/evidence/SOURCE_REVIEW.json",
+    "docs/retention/execution/P08/evidence/STATUS.md.before",
+    "docs/retention/execution/P08/evidence/VALIDATION.json",
+    "docs/retention/execution/P08/evidence/WORKFLOW_CHECK.json",
+    "docs/retention/execution/P08/evidence/application.cjs",
+    "docs/retention/execution/P08/evidence/browser-cashier.cjs",
+    "docs/retention/execution/P08/evidence/browser-manager.cjs",
+    "docs/retention/execution/P08/evidence/cashier-trace.zip",
+    "docs/retention/execution/P08/evidence/check-artifacts.cjs",
+    "docs/retention/execution/P08/evidence/cleanup-check.cjs",
+    "docs/retention/execution/P08/evidence/createdb.execution.json",
+    "docs/retention/execution/P08/evidence/database.cjs",
+    "docs/retention/execution/P08/evidence/finalize.cjs",
+    "docs/retention/execution/P08/evidence/fix-unit-config.cjs",
+    "docs/retention/execution/P08/evidence/fixture-1792342513961.execution.json",
+    "docs/retention/execution/P08/evidence/fixture-1792342513961.results.json",
+    "docs/retention/execution/P08/evidence/fixture.test.ts",
+    "docs/retention/execution/P08/evidence/initdb.execution.json",
+    "docs/retention/execution/P08/evidence/jest.fixture.cjs",
+    "docs/retention/execution/P08/evidence/jest.unit.cjs",
+    "docs/retention/execution/P08/evidence/manager-1792342924972.json",
+    "docs/retention/execution/P08/evidence/manager-1792343331471.json",
+    "docs/retention/execution/P08/evidence/manager-attempt-1792342924972/MANAGER_DESTINATION_en.png",
+    "docs/retention/execution/P08/evidence/manager-attempt-1792342924972/MANAGER_EMPTY_en.png",
+    "docs/retention/execution/P08/evidence/manager-attempt-1792342924972/MANAGER_ERROR_en.png",
+    "docs/retention/execution/P08/evidence/manager-attempt-1792342924972/MANAGER_FAILURE_1792342924972.png",
+    "docs/retention/execution/P08/evidence/manager-attempt-1792342924972/MANAGER_LOADING_en.png",
+    "docs/retention/execution/P08/evidence/manager-attempt-1792342924972/MANAGER_LOADING_fr.png",
+    "docs/retention/execution/P08/evidence/manager-attempt-1792342924972/MANAGER_RECOVERED_en.png",
+    "docs/retention/execution/P08/evidence/manager-attempt-1792342924972/MANAGER_SOURCE_en.png",
+    "docs/retention/execution/P08/evidence/manager-attempt-1792342924972/MANAGER_SOURCE_fr.png",
+    "docs/retention/execution/P08/evidence/manager-failure-1792342924972.txt",
+    "docs/retention/execution/P08/evidence/manager-fixture.cjs",
+    "docs/retention/execution/P08/evidence/manager-trace-1792342924972.zip",
+    "docs/retention/execution/P08/evidence/manager-trace-1792343331471.zip",
+    "docs/retention/execution/P08/evidence/modes.test.tsx.before",
+    "docs/retention/execution/P08/evidence/modes.test.tsx.patch",
+    "docs/retention/execution/P08/evidence/pg-start.execution.json",
+    "docs/retention/execution/P08/evidence/pg-stop.execution.json",
+    "docs/retention/execution/P08/evidence/prepare-browser.cjs",
+    "docs/retention/execution/P08/evidence/prepare-harness.cjs",
+    "docs/retention/execution/P08/evidence/prepare.cjs",
+    "docs/retention/execution/P08/evidence/publish.cjs",
+    "docs/retention/execution/P08/evidence/run-fixture.cjs",
+    "docs/retention/execution/P08/evidence/run-unit.cjs",
+    "docs/retention/execution/P08/evidence/schema-apply.execution.json",
+    "docs/retention/execution/P08/evidence/schema-diff.execution.json",
+    "docs/retention/execution/P08/evidence/source-review.cjs",
+    "docs/retention/execution/P08/evidence/ui.setup.cjs",
+    "docs/retention/execution/P08/evidence/unit-1792342297962.execution.json",
+    "docs/retention/execution/P08/evidence/unit-1792342297962.results.json",
+    "docs/retention/execution/P08/evidence/unit-1792342495539.execution.json",
+    "docs/retention/execution/P08/evidence/unit-1792342495539.results.json",
+    "docs/retention/execution/P08/evidence/unit-1792342730047.execution.json",
+    "docs/retention/execution/P08/evidence/unit-1792342730047.results.json",
+    "docs/retention/execution/P08/evidence/unit-1792343498866.execution.json",
+    "docs/retention/execution/P08/evidence/unit-1792343498866.results.json",
+    "docs/retention/execution/P09/ARCHIVE_CONTRACT.md",
+    "docs/retention/execution/P09/ARCHIVE_FIXTURE_MANIFEST.md",
+    "docs/retention/execution/P09/PORTABILITY_COVERAGE.md",
+    "docs/retention/execution/P09/RESULT.md",
+    "docs/retention/execution/P09/evidence/ARTIFACT_LINKS.failed-attempt-2.json",
+    "docs/retention/execution/P09/evidence/ARTIFACT_LINKS.json",
+    "docs/retention/execution/P09/evidence/ATTEMPTS.md",
+    "docs/retention/execution/P09/evidence/BASELINE.json",
+    "docs/retention/execution/P09/evidence/GRAPH_NODES.json",
+    "docs/retention/execution/P09/evidence/MANIFEST.json",
+    "docs/retention/execution/P09/evidence/P01_REVALIDATION.json",
+    "docs/retention/execution/P09/evidence/PREREQUISITE_DRIFT.json",
+    "docs/retention/execution/P09/evidence/STATUS.md.before",
+    "docs/retention/execution/P09/evidence/VALIDATION.json",
+    "docs/retention/execution/P09/evidence/WORKFLOW_CHECK.json",
+    "docs/retention/execution/P09/evidence/capture.cjs",
+    "docs/retention/execution/P09/evidence/create-fixture.cjs",
+    "docs/retention/execution/P09/evidence/finalize.cjs",
+    "docs/retention/execution/P09/evidence/run-tests.cjs",
+    "docs/retention/execution/P09/evidence/unit-1792344529667.execution.json",
+    "docs/retention/execution/P09/evidence/unit-1792344529667.results.json",
+    "docs/retention/execution/P09/evidence/unit-1792344674897.execution.json",
+    "docs/retention/execution/P09/evidence/unit-1792344674897.results.json",
+    "docs/retention/execution/P09/evidence/unit-1792344817230.execution.json",
+    "docs/retention/execution/P09/evidence/unit-1792344817230.results.json",
+    "docs/retention/execution/P09/evidence/unit-1792344882953.execution.json",
+    "docs/retention/execution/P09/evidence/unit-1792344882953.results.json",
+    "docs/retention/execution/P10/LIFECYCLE_POLICY_PROPOSAL.md",
+    "docs/retention/execution/P10/PACKAGING_DECISIONS.md",
+    "docs/retention/execution/P10/RESULT.md",
+    "docs/retention/execution/P10/SUPPORT_RUNBOOK_DRAFT.md",
+    "docs/retention/execution/P10/evidence/ARTIFACT_LINKS.json",
+    "docs/retention/execution/P10/evidence/BASELINE.json",
+    "docs/retention/execution/P10/evidence/GRAPH_NODES.json",
+    "docs/retention/execution/P10/evidence/MANIFEST.json",
+    "docs/retention/execution/P10/evidence/PREREQUISITES.json",
+    "docs/retention/execution/P10/evidence/REVIEW_AND_COMMANDS.md",
+    "docs/retention/execution/P10/evidence/SOURCE_REVIEW.json",
+    "docs/retention/execution/P10/evidence/STATUS.md.before",
+    "docs/retention/execution/P10/evidence/VALIDATION.json",
+    "docs/retention/execution/P10/evidence/capture.cjs",
+    "docs/retention/execution/P10/evidence/finalize.cjs",
+    "docs/retention/execution/P10/evidence/jest.config.cjs",
+    "docs/retention/execution/P10/evidence/run-checks.cjs",
+    "docs/retention/execution/P10/evidence/tests-1792351292853.execution.json",
+    "docs/retention/execution/P10/evidence/tests-1792351292853.results.json",
+    "docs/retention/execution/P10/evidence/workflow-1792351280537.execution.json",
+    "docs/retention/execution/P11/COUNTRY_SUPPORT_MATRIX.md",
+    "docs/retention/execution/P11/EXPERT_REVIEW_PACKET.md",
+    "docs/retention/execution/P11/PROVIDER_PREREQUISITES.md",
+    "docs/retention/execution/P11/RESULT.md",
+    "docs/retention/execution/P11/evidence/BASELINE.json",
+    "docs/retention/execution/P11/evidence/INITIAL_STATUS.md",
+    "docs/retention/execution/P11/evidence/MANIFEST.json",
+    "docs/retention/execution/P11/evidence/PREREQUISITES.json",
+    "docs/retention/execution/P11/evidence/PRIMARY_SOURCES.md",
+    "docs/retention/execution/P11/evidence/REVIEW_AND_COMMANDS.md",
+    "docs/retention/execution/P11/evidence/SOURCE_REVIEW.json",
+    "docs/retention/execution/P11/evidence/VALIDATION.json",
+    "docs/retention/execution/P11/evidence/VALIDATION_ATTEMPT_1.json",
+    "docs/retention/execution/P11/evidence/WORKFLOW.json",
+    "docs/retention/execution/P11/evidence/capture.cjs",
+    "docs/retention/execution/P11/evidence/finalize.cjs",
+    "docs/retention/execution/P11/evidence/source-review.cjs",
+    "docs/retention/execution/P11/evidence/workflow.cjs",
+    "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+    "docs/retention/execution/P12/DAYS_31_60_EXECUTION_ORDER.md",
+    "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+    "docs/retention/execution/P12/RESULT.md",
+    "docs/retention/execution/P12/evidence/ACCEPTANCE.json",
+    "docs/retention/execution/P12/evidence/BASELINE.json",
+    "docs/retention/execution/P12/evidence/EVIDENCE_REVIEW.json",
+    "docs/retention/execution/P12/evidence/INITIAL_STATUS.md",
+    "docs/retention/execution/P12/evidence/MANIFEST.json",
+    "docs/retention/execution/P12/evidence/PREREQUISITE_FINGERPRINTS.json",
+    "docs/retention/execution/P12/evidence/PROMPT_CONTRACTS.json",
+    "docs/retention/execution/P12/evidence/REVIEW_AND_COMMANDS.md",
+    "docs/retention/execution/P12/evidence/SOURCE_REVIEW.json",
+    "docs/retention/execution/P12/evidence/STORAGE_EXECUTION.json",
+    "docs/retention/execution/P12/evidence/STORAGE_RESULTS.json",
+    "docs/retention/execution/P12/evidence/STORAGE_SANDBOX_EXECUTION.json",
+    "docs/retention/execution/P12/evidence/STORAGE_SANDBOX_RESULTS.json",
+    "docs/retention/execution/P12/evidence/VALIDATION.json",
+    "docs/retention/execution/P12/evidence/VALIDATION_ATTEMPT_1.json",
+    "docs/retention/execution/P12/evidence/WORKFLOW.json",
+    "docs/retention/execution/P12/evidence/acceptance.cjs",
+    "docs/retention/execution/P12/evidence/capture.cjs",
+    "docs/retention/execution/P12/evidence/finalize.cjs",
+    "docs/retention/execution/P12/evidence/jest.storage.cjs",
+    "docs/retention/execution/P12/evidence/review.cjs",
+    "docs/retention/execution/P12/evidence/storage.cjs",
+    "docs/retention/execution/P12/evidence/workflow.cjs",
+    "docs/retention/execution/P12/review-2026-10-18/prepare.cjs",
+    "docs/retention/execution/P12/review-2026-10-20/PREREQUISITE_FINGERPRINTS.json",
+    "docs/retention/execution/P12/review-2026-10-20/PRIOR_ACCEPTANCE_LEDGER.md",
+    "docs/retention/execution/P12/review-2026-10-20/PRIOR_DAYS_31_60_EXECUTION_ORDER.md",
+    "docs/retention/execution/P12/review-2026-10-20/PRIOR_DAY_30_CHECKPOINT.md",
+    "docs/retention/execution/P12/review-2026-10-20/PRIOR_RESULT.md",
+    "docs/retention/execution/P12/review-2026-10-20/prepare.cjs",
+    "jest.accountant-portfolio-postgres.config.cjs",
+    "jest.accountant-portfolio.config.cjs",
+    "jest.firm-engagement-authority-postgres.config.cjs",
+    "jest.firm-engagement-postgres.config.cjs",
+    "jest.firm-engagement.config.cjs",
+    "jest.retention-archive.config.cjs",
+    "prisma/migrations/20261019120000_firm_engagement_foundation/migration.sql",
+    "prisma/migrations/20261019140000_firm_engagement_authority/migration.sql",
+    "public/landing/cinematic/accounting-firm-manifest.json",
+    "public/landing/cinematic/accounting-firm-screen-v2-768.webp",
+    "public/landing/cinematic/accounting-firm-screen-v2.webp",
+    "public/landing/cinematic/bakery-screen-v2-768.webp",
+    "public/landing/cinematic/bakery-screen-v2.webp",
+    "public/landing/cinematic/materials-screen-v2-768.webp",
+    "public/landing/cinematic/materials-screen-v2.webp",
+    "public/landing/cinematic/pharmacy-screen-v2-768.webp",
+    "public/landing/cinematic/pharmacy-screen-v2.webp",
+    "public/landing/cinematic/photo-screens-v2-manifest.json",
+    "public/landing/cinematic/retail-screen-v2-768.webp",
+    "public/landing/cinematic/retail-screen-v2.webp",
+    "public/landing/cinematic/sme-accounting-firm-768.webp",
+    "public/landing/cinematic/sme-accounting-firm.webp",
+    "public/landing/cinematic/stoquify-dashboard-en.webp",
+    "public/landing/cinematic/stoquify-dashboard-fr.webp",
+    "scripts/fixtures/accountant-portfolio-browser.cjs",
+    "scripts/fixtures/landing-dashboard-capture.md",
+    "scripts/fixtures/landing-dashboard-capture.tsx",
+    "scripts/jest.landing-showcase.config.cjs",
+    "scripts/run-accountant-portfolio-postgres.cjs",
+    "scripts/run-firm-engagement-authority-postgres.cjs",
+    "scripts/run-firm-engagement-postgres.cjs",
+    "scripts/verify-accountant-portfolio-browser.cjs",
+    "services/accounting/__tests__/accountant-portfolio-proof.service.test.ts",
+    "services/accounting/__tests__/accountant-portfolio.postgres.test.ts",
+    "services/accounting/__tests__/accountant-portfolio.service.test.ts",
+    "services/accounting/__tests__/firm-engagement-authority.postgres.test.ts",
+    "services/accounting/__tests__/firm-engagement.postgres.test.ts",
+    "services/accounting/accountant-portfolio-proof.service.ts",
+    "services/accounting/accountant-portfolio.service.ts",
+    "services/accounting/close-period-selection.service.ts",
+    "services/accounting/firm-engagement.schemas.ts",
+    "services/accounting/firm-engagement.service.ts",
+    "services/accounting/managed-accountant-access.service.ts",
+    "services/analytics/__tests__/retention-outcomes.postgres.test.ts",
+    "services/onboarding/__tests__/item-import-media.postgres.test.ts",
+    "services/onboarding/__tests__/item-import-media.test.ts",
+    "services/organization/__fixtures__/authorized-archive.v1.json",
+    "services/organization/__tests__/authorized-archive-contract.test.ts",
+    "services/organization/authorized-archive-contract.ts",
+    "tsconfig.accountant-portfolio.json",
+    "tsconfig.firm-engagement.json",
+    "what-next/2026-10-19-af01-accountant-portfolio.md",
+    "what-next/2026-10-19-af02-accountant-portfolio-ui.md",
+    "what-next/2026-10-19-af03-firm-engagement-model.md",
+    "what-next/2026-10-19-pos-checkout-repair.md"
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "c437d3df5ee41574ae5382c2ce2b0dd0cc4138f4f11da6a10853489143e474c4"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "9f1f9719670580b16f31e8aa74253a33503b3caa7e6c7752842d033ed58832fd"
+    },
+    {
+      "path": "actions/accounting/accountant-access.actions.ts",
+      "sha256": "c249cfc4fbe94063cb3216e2b9a4b77628fd36928576545dc58cbed99d964445"
+    },
+    {
+      "path": "actions/accounting/close-assurance.actions.ts",
+      "sha256": "2a36c94d9b7d54e98d294a34e1567d4a18f71b9cb8f5aacfabd0c3845391039a"
+    },
+    {
+      "path": "actions/accounting/data-trust.actions.ts",
+      "sha256": "a7025ffc9ffec264deac7eb4f31900e2fa4a3d3c51b1119bd82c872f4700b8f7"
+    },
+    {
+      "path": "actions/analytics/daily-sales.actions.ts",
+      "sha256": "5f4ea9d45c8b01908c6f0b0de57e3b2cc9d58de6cdad0327ef934c32fc1f874e"
+    },
+    {
+      "path": "actions/inventory/inventoryLossControlActions.ts",
+      "sha256": "537c584eb64b07faa49fc6df4172df25c2ef11e30fff29bb4f2d82e6d9eb8af1"
+    },
+    {
+      "path": "actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts",
+      "sha256": "be7fcaddac60a6fb85c4dbf1f02a76fdf41f67c8ce236d454d6212ca25aeb890"
+    },
+    {
+      "path": "actions/onboarding/master-data-onboarding.actions.ts",
+      "sha256": "972dd5bacf05af7d5563f6c2e52f003d48306906e224fbdd542adfe852abb41b"
+    },
+    {
+      "path": "actions/payments/reconciliation.actions.ts",
+      "sha256": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf"
+    },
+    {
+      "path": "actions/pos/__tests__/cart-write-access.actions.test.ts",
+      "sha256": "9ca6376dcc14d177df5a81bc163ef054146d3c84721d6cd5162a0d38fd7c6431"
+    },
+    {
+      "path": "actions/pos/__tests__/cash-payment-history.actions.test.ts",
+      "sha256": "1e8c57930046584db565d0f033ced774374733200b5c7302dbd12ef941fde206"
+    },
+    {
+      "path": "actions/pos/__tests__/catalog.actions.test.ts",
+      "sha256": "be682aabe75c84fb26e922f5c5b88fd7c817e7ff1359059a06420e7fc98840ff"
+    },
+    {
+      "path": "actions/pos/__tests__/commit-recovery.actions.test.ts",
+      "sha256": "bb714d633bb0bce6131a2bb1a9ecadab7942033e43d0b98355513cf033afccbc"
+    },
+    {
+      "path": "actions/pos/__tests__/drawer-dashboard.actions.test.ts",
+      "sha256": "46a4612fa85c2d306b8166f1c7a8b84aa04bfc76c52001bd7557eac72f611f76"
+    },
+    {
+      "path": "actions/pos/__tests__/offline-review.actions.test.ts",
+      "sha256": "4e9b6304ddb76e5a2a14eeae54e6a75424792e83af83dfed62d1d5fabb725549"
+    },
+    {
+      "path": "actions/pos/__tests__/receipt-token.actions.test.ts",
+      "sha256": "03b09a3209a865e2f21a18d62f615f6f9c926834030a0fb1cce3bdde043db6c6"
+    },
+    {
+      "path": "actions/pos/__tests__/session.actions.test.ts",
+      "sha256": "2ae9b2904fb38b751e50ddbe8c3be5ff8a94c713042021bf139141ea59132d7c"
+    },
+    {
+      "path": "actions/pos/__tests__/shift-open-policy.actions.test.ts",
+      "sha256": "b232702a3c8dea9ff6a378617faea79ee30037863912e0000511f0736168146f"
+    },
+    {
+      "path": "actions/pos/__tests__/sync.actions.test.ts",
+      "sha256": "f6d473c791cacd127c8d11f43c40e35e44577eba1e2ee8a1a4cd0f94234e6df3"
+    },
+    {
+      "path": "actions/pos/__tests__/tender-electronic-authority.actions.test.ts",
+      "sha256": "9be1365570bed99db51d3e12198858755898c99369e844c1b6f168992576a6ae"
+    },
+    {
+      "path": "actions/pos/__tests__/tender.actions.test.ts",
+      "sha256": "ad6077ad2e51cd8c6d00355023708d2bd3aa9758822b9948134a5259ef6bc137"
+    },
+    {
+      "path": "actions/pos/__tests__/terminal-management.actions.test.ts",
+      "sha256": "a8ded632f9eb1261fc544bc5d37675b1826c8465c639e5bf03810d9a0d434c3d"
+    },
+    {
+      "path": "actions/pos/cache-revalidation.ts",
+      "sha256": "b689a0900302afa27bb4ffef59ef7e64ad6b3de73ff3acb1547799e7b99229c4"
+    },
+    {
+      "path": "actions/pos/cart.actions.ts",
+      "sha256": "9eea8030271896230e0e02d28fa5993c24b6ba240809616df47f1a50ddc73c26"
+    },
+    {
+      "path": "actions/pos/cash-payment-history.actions.ts",
+      "sha256": "7d80c0b765a2d1a11d46e159f7ce5acef7193871a1c69dc7062164f72152b74e"
+    },
+    {
+      "path": "actions/pos/catalog.actions.ts",
+      "sha256": "38d343f7070c5b448bb81abe467384fde980fac4f7fbf6da104662cb0d1de245"
+    },
+    {
+      "path": "actions/pos/checkout.actions.ts",
+      "sha256": "aa8eb935fe1e3d6846e246eb4da0f42e3a824393d585ba94db2cac4a1e799f27"
+    },
+    {
+      "path": "actions/pos/commit-recovery.actions.ts",
+      "sha256": "8b1b6f844a55e0244993a60f83167b4183eb8b7afef80a2c313d501f246353b5"
+    },
+    {
+      "path": "actions/pos/drawer-dashboard.actions.ts",
+      "sha256": "d92847a55e816a276764a38b12c0713c4878edf17d98fb7b1246e4208bc031e8"
+    },
+    {
+      "path": "actions/pos/offline-review.actions.ts",
+      "sha256": "8a3956987a17856ae6215784e24f1be77d0de184781427d1fa8026837ece2283"
+    },
+    {
+      "path": "actions/pos/receipt-token.actions.ts",
+      "sha256": "927fbae2768c868dbdd195a2c0502aeae54cf630928ca0b711507293d0eb942e"
+    },
+    {
+      "path": "actions/pos/session.actions.ts",
+      "sha256": "db6ab09ed4bff4287159357557747f47ffa45857c963a71b51cc2e202b3f8556"
+    },
+    {
+      "path": "actions/pos/sync.actions.ts",
+      "sha256": "495d576666ce7b230b38ce4642cb2b1497c777dfa9cced9d401ceb64482007ae"
+    },
+    {
+      "path": "actions/pos/tender.actions.ts",
+      "sha256": "af8ab17e288dbd678fc8ab053f25913a49f34ccae3cd730a1bf499b1aba3f0fd"
+    },
+    {
+      "path": "actions/pos/terminal-management.actions.ts",
+      "sha256": "2410740489c106969f2db5ebea42845dc1e294bd75d18af3c22f8468b592bccd"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts",
+      "sha256": "bd48c6d636ce68c52568103d91bcfe55cd37b7dd0a9fd45d52a2c461f73ea4cd"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx",
+      "sha256": "5d50490f528bb278c181646f69acf20beb219b6b44518a482eb15c5f5b35b4f2"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "sha256": "66007063c7ded421b03220844f5dd6b8e6892550bee7749d5266683f40baef09"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx",
+      "sha256": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx",
+      "sha256": "cf7a792922a181e56e2dc68205a47c024bedf173c8827d9413e42c829a7e6dd4"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx",
+      "sha256": "26d28b815cf2ccde2ebffa40e17cb47c9d5c717897134262224c8de5941d5311"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx",
+      "sha256": "baee5e26d94a57ec2ee35a5298e565e41b1b230548d5f40261841237eac17e71"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx",
+      "sha256": "7f69a100ccb0c0968cb33b7643b9740c4f6a47a2317876fa13fabe714a91f1d6"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/data-onboarding/page.tsx",
+      "sha256": "69d66a0c1c27b05ad361562de2c00addfdbbd353dca718f9bef48d376f1df9c6"
+    },
+    {
+      "path": "app/[locale]/(home)/workflows/page.tsx",
+      "sha256": "f9bc4483128fc2f9a765031bfc2b29909c5b344424c5600f71594bccebad1a21"
+    },
+    {
+      "path": "app/api/receipts/[receiptId]/route.ts",
+      "sha256": "6d07fdb634870a9ab29553f60918b5351d0f145d6467184aab72a916326312c2"
+    },
+    {
+      "path": "app/api/uploads/[...path]/route.ts",
+      "sha256": "56ebc4da4188180e0645519d8d3d8f90558ca54bf8bfd3daf671a5c82501c359"
+    },
+    {
+      "path": "components/Forms/WaitList.tsx",
+      "sha256": "6b29221a7003537e4dfed64ae2bc2a875a6a78d570d56800049d4330d5448769"
+    },
+    {
+      "path": "components/accounting/AccountantPortfolio.tsx",
+      "sha256": "871bdbbdce4b82017a9db75c2f2ca70123aaddb05d4886ed92e59f62962991c0"
+    },
+    {
+      "path": "components/daily-habit/DailyHabitDigestDashboard.tsx",
+      "sha256": "b71e8325386263ac3b303453b9e64d70704448148453ea74dea6ef94921ab0b0"
+    },
+    {
+      "path": "components/daily-habit/__tests__/modes.test.tsx",
+      "sha256": "e6bdd1a168b14736f01ce9089c323cc2d541c558cfa3508eac7eefe0ff90084d"
+    },
+    {
+      "path": "components/dashboard/DashboardLanguageLink.tsx",
+      "sha256": "9a03f4a2233eb829c192f01b936295bb193b62e6639ac848f7c42afe90bc8e1d"
+    },
+    {
+      "path": "components/dashboard/DashboardMobileNavigation.tsx",
+      "sha256": "0c7a4512bbbc72def3733ed9bba53271cf3f29136ffc8c6a59117fefd791cfb8"
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "8457239b4dfaf0e9c76576826f36d4a7e72a2ad7c97e479a45716d8af3466232"
+    },
+    {
+      "path": "components/dashboard/Sidebar.tsx",
+      "sha256": "6384f83ae5804b9d05ece71cf14d8001806a043577064c8e9d08cdc6eb5ce39a"
+    },
+    {
+      "path": "components/landing/__tests__/CinematicLanding.test.tsx",
+      "sha256": "bb350d4dab915a536167073f3af2675e6dc6269fcc1e2a5c26680006356049dc"
+    },
+    {
+      "path": "components/landing/__tests__/workflow-atlas.test.tsx",
+      "sha256": "743073c25f9808245ffb361b2984705325bddd6f18dd9122ebc812def487d4f9"
+    },
+    {
+      "path": "components/landing/cinematic-business-story.tsx",
+      "sha256": "7d552804c1155bc2badff7ea8c6c3e0e6b83f966f3a1d9124f68ab3888e22044"
+    },
+    {
+      "path": "components/landing/cinematic-chapters.tsx",
+      "sha256": "47d23472b63b617525dca6dbe7c236bfcf52e59cb98862fb422fdcef5dec01a1"
+    },
+    {
+      "path": "components/landing/cinematic-hero.tsx",
+      "sha256": "cf43066fc2976e7d17b18e75b639925fd11a59cbb99a0fcf55e35d1acdca9609"
+    },
+    {
+      "path": "components/landing/cinematic-offers.tsx",
+      "sha256": "dc6529e5426cb8c5aa5f3e6cc8dc5bcc8f2aba3ff5b94ba5fbc88991f12a654d"
+    },
+    {
+      "path": "components/landing/cinematic-product.tsx",
+      "sha256": "095b1727ab7b474fc57d1a4070d45eb25b29bb2cb8d9b58fbbccec72b5fdf5bc"
+    },
+    {
+      "path": "components/landing/cinematic-setup.tsx",
+      "sha256": "5a87639cedc15da04f4a6695226ec08a9e0255646cc4147997022f5d18ccbec7"
+    },
+    {
+      "path": "components/landing/cinematic-shell.tsx",
+      "sha256": "22c5dfd60b319cd04db172fa1d9393527b14ac40b6f8764a46f05a5f01251912"
+    },
+    {
+      "path": "components/landing/cinematic.css",
+      "sha256": "bd07ebbaaef68cdb521a6a4167518b4075a9848215fcba6bd883439fa654c735"
+    },
+    {
+      "path": "components/landing/public-product-copy.ts",
+      "sha256": "453ff0dbf6d20f25c94a634c74ba7053c69348610f52799dc8ad481a2794a8b8"
+    },
+    {
+      "path": "components/landing/workflow-atlas.tsx",
+      "sha256": "4c2925c16f6fe949c8cb5c87ebc142b3348ddf0f5c6825021c629d92911c50be"
+    },
+    {
+      "path": "components/onboarding/ItemImportImages.tsx",
+      "sha256": "780fa0ce3919dddd31117739643efcd4cddfbd145067c79cff1a0f67325cbf7b"
+    },
+    {
+      "path": "components/onboarding/MasterDataOnboardingWorkbench.tsx",
+      "sha256": "65ec63577f3cfaadb37df4cde0f09c80ff1ab3a8d6b9e7a9067018a086ab2671"
+    },
+    {
+      "path": "components/onboarding/__tests__/ItemImportImages.test.tsx",
+      "sha256": "fd4ea3a0cdc77f21ab356a39b3c277e9c5f28f70943975b9341debf8bed13595"
+    },
+    {
+      "path": "components/onboarding/__tests__/ItemImportImages.upload.test.tsx",
+      "sha256": "80375966bbd5a141a276cdc407cb201eb31fa15e80bdbe0df3a13fd1f5d50b98"
+    },
+    {
+      "path": "components/pos/CashDrawerManagementDashboard.tsx",
+      "sha256": "e81550d6fc74a7687ee815b82d9609f531e3a839eddcbd48765230a398015871"
+    },
+    {
+      "path": "components/pos/DrawerCommandCenter.tsx",
+      "sha256": "628913366d4b6e19a8090198707edc29ef463da76d10a3b157dcd6e4237ef30c"
+    },
+    {
+      "path": "components/pos/ProfessionalPOSSystem.tsx",
+      "sha256": "23522cd9b4a4b4738ef7ed78610396f1e778e72ccd530e0b035f844207e9034a"
+    },
+    {
+      "path": "components/pos/ReceiptTokenControlStrip.tsx",
+      "sha256": "1959aa55fa5d743301887f09adb222234727d50e469e54de78ce75fa9e15cb3b"
+    },
+    {
+      "path": "components/pos/ReceiptTokenHistoryPanel.tsx",
+      "sha256": "f4251f68e35716ea68faafa87e305bf711a064573ee7ffe2992dbf2737818f72"
+    },
+    {
+      "path": "components/pos/TerminalManagementDashboard.tsx",
+      "sha256": "45e62398275ca54e75623006140803ae3aa64fa5aac8eac112cb210f868b53ec"
+    },
+    {
+      "path": "components/pos/__tests__/DrawerCommandCenter.test.tsx",
+      "sha256": "80863be8fb3229a824bb0165cb80188168ae0491e03aaa11137ce749dba70ffc"
+    },
+    {
+      "path": "components/pos/__tests__/LocalOfflineRecovery.test.tsx",
+      "sha256": "6a9201c164a3727fa4ef769b5875455d7d2abd55aefe91b48438da29f7004f06"
+    },
+    {
+      "path": "components/pos/__tests__/OfflineConflictHistory.test.tsx",
+      "sha256": "df397a93b80a206b3428fa0017a56efcd62bb249e7798eeafc6e6382119387b7"
+    },
+    {
+      "path": "components/pos/__tests__/OfflineConflictReview.test.tsx",
+      "sha256": "ccdfda728e06122ffe3d8df37002b94cacf0ae7c8e6456d987514d6daa1dcd44"
+    },
+    {
+      "path": "components/pos/__tests__/ProfessionalPOSSystem.receipt-token-visibility.test.tsx",
+      "sha256": "ec8ccc45d77c0a41ab9d5f5a2998c70f0f3194fc804a33eff73ef6e0a6df8c72"
+    },
+    {
+      "path": "components/pos/__tests__/ProfessionalPOSSystem.shift-close.test.tsx",
+      "sha256": "2e2d1e01eebcb523119e86e87cf5631893dd8288e93d7426e5d7d243ab983c90"
+    },
+    {
+      "path": "components/pos/__tests__/ReceiptTokenControlStrip.test.tsx",
+      "sha256": "7acd678460886674f0d621c67822e30d3fe303f3b32f2db50c7e3a748e4c96ef"
+    },
+    {
+      "path": "components/pos/__tests__/ReceiptTokenHistoryPanel.test.tsx",
+      "sha256": "298eea84f75a576a299f155da603733305d5b5a0b6b13fb95f269515c9568fed"
+    },
+    {
+      "path": "components/pos/__tests__/review-note-draft.test.ts",
+      "sha256": "858f567b782e004ae841bda679d3026366a5686edc1591be728ec841f6d26d1c"
+    },
+    {
+      "path": "components/pos/__tests__/terminal-draft.test.ts",
+      "sha256": "c77981dfb60d16e939efbaefbcb9c7089e715d896a37827dacfc948931d90170"
+    },
+    {
+      "path": "components/pos/offline/LocalOfflineRecovery.tsx",
+      "sha256": "d48e4a044bed31e252442724297575eea0e4d2cb66e59d2df2a7e1273013ce7d"
+    },
+    {
+      "path": "components/pos/offline/OfflineConflictHistory.tsx",
+      "sha256": "643eb94585a3401b5483ee7f86310419d46f643b33fc025afbfddec29cc85f67"
+    },
+    {
+      "path": "components/pos/offline/OfflineConflictReview.tsx",
+      "sha256": "d15eed18bb35709daf911078522951de1eeba0b64cc12ac66858f9254d26ec5b"
+    },
+    {
+      "path": "components/pos/offline/OfflineSyncStatusStrip.tsx",
+      "sha256": "52c9b6d0953b72df716f3ec88b6b52bd383ae661cb6c0b0403dfb5f48deb5429"
+    },
+    {
+      "path": "components/pos/offline/review-note-draft.ts",
+      "sha256": "fabc406778cb57c030a5c0d9813c2822df55563e7b7efe4fe603e797b6736d60"
+    },
+    {
+      "path": "components/pos/terminal-draft.ts",
+      "sha256": "3b7d65348f5dcd7e16ac5c594367229799168050e4ee837b1cac3fa79ca10938"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "8bfa8735dffb234c779ec7bc6326d6ec6aa515765a404a37060ed50dfcef40a9"
+    },
+    {
+      "path": "design-system/stoquify/MASTER.md",
+      "sha256": "39a71f87eba06f5fde80c2f4a935424d0c98f43e3bd02179dfb0c4b7f825b5cc"
+    },
+    {
+      "path": "design-system/stoquify/pages/pos.md",
+      "sha256": "3b282b70e831aa0fd3690b3c097f79cc0bfc27edc402ec99c4cc198e16d94cfc"
+    },
+    {
+      "path": "docs/ecc/WORKFLOW.md",
+      "sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c"
+    },
+    {
+      "path": "docs/ecc/command-registry.json",
+      "sha256": "e299bbc44c87c7ca1ebf876fb911469b615a333aa7b1f18cfbf34b43674fbf33"
+    },
+    {
+      "path": "docs/ecc/skill-routing.md",
+      "sha256": "a3ba210c95eabfbdeabc09a39d971cbadc20087a2c850bcf7c08c554560a66b1"
+    },
+    {
+      "path": "docs/ecc/test-lanes.md",
+      "sha256": "5e87b8d6d504299f11e8f264f5d2e5308ad11ee9517572b26e8736732a5fcd6a"
+    },
+    {
+      "path": "docs/retention/STOQUIFY_CUSTOMER_RETENTION_AND_SWITCHING_COSTS_2026-10-12.pdf",
+      "sha256": "668d5db2e22e8814481643c1881b261e18a3349c4240e5f13bf4c19291845cd4"
+    },
+    {
+      "path": "docs/retention/STOQUIFY_OHADA_SME_VALUE_ROADMAP_2026-10-12.md",
+      "sha256": "39f708d13311d48a740877e9a2f750fa1c5715fb42e0860b6a4589a90323dfad"
+    },
+    {
+      "path": "docs/retention/STOQUIFY_OHADA_SME_VALUE_ROADMAP_2026-10-12.pdf",
+      "sha256": "b8e28e76bd66f40af779dabbf02218506a1af30db6d7c0b9fb825b9f1453bf7a"
+    },
+    {
+      "path": "docs/retention/execution/P01/BASELINE.md",
+      "sha256": "0be6b5f2126b9f4f4b20e5f2bb827870ccbb7dfcdcecf00405598efb1fccc962"
+    },
+    {
+      "path": "docs/retention/execution/P01/DECISIONS.md",
+      "sha256": "d9c0ab1b7f6c2e86da6fa65f55e83eac215fc520cc8200655228bd256716e626"
+    },
+    {
+      "path": "docs/retention/execution/P01/PILOT_SCOPE.md",
+      "sha256": "06dc676ce496a412328206c01e450cadb9d4d772f3876a254733da93fab1b386"
+    },
+    {
+      "path": "docs/retention/execution/P01/RESULT.md",
+      "sha256": "a00b736de798f71a0de1e4bf9748d55e67a4e531c8e7dcb7317476729b8b1b1e"
+    },
+    {
+      "path": "docs/retention/execution/P01/evidence/BASELINE_SNAPSHOT.json",
+      "sha256": "35698bf6e7ac35432053e6606bd766f0733b27c69d9e388f0442e94a286e37ee"
+    },
+    {
+      "path": "docs/retention/execution/P01/evidence/COMMAND_AND_INSPECTION_LOG.md",
+      "sha256": "e7b59174935f056c433256650bd182ae7dd9f2280befe6b35696f86f078bf4eb"
+    },
+    {
+      "path": "docs/retention/execution/P01/evidence/DIFF_STAT.txt",
+      "sha256": "fd17717f6b81d9a175742df37026df7f07a99f0dafcd2cd7c6eb1b54e467aabe"
+    },
+    {
+      "path": "docs/retention/execution/P01/evidence/PROMPT_REGISTER.json",
+      "sha256": "0abfbcccca8b3c41795d8f6e7c3dfecebe9d8b82e854adab738fb669dbf517a7"
+    },
+    {
+      "path": "docs/retention/execution/P01/evidence/SOURCE_MANIFEST.json",
+      "sha256": "78a6684bbf5124490e8e3888520c0aadd6b6b995cf5ee771f1a7043d70ca70a4"
+    },
+    {
+      "path": "docs/retention/execution/P01/evidence/STAGED_DIFF_STAT.txt",
+      "sha256": "c0fe0a4e6f3606df93921bcadbe28da0b93ad6a4a297a9a8e528a8454b297b6f"
+    },
+    {
+      "path": "docs/retention/execution/P01/evidence/SUPPLEMENTARY_SOURCE_MANIFEST.json",
+      "sha256": "5d4d6899bbd25be0a5a201c3aef287a363b82207c3719335d437ecc2ac10c6c5"
+    },
+    {
+      "path": "docs/retention/execution/P01/evidence/VALIDATION.json",
+      "sha256": "8d9c70cedaf61002e02e07ad904d02b8b07d34ea06f10bbcaa0b38fa0dc9c1e5"
+    },
+    {
+      "path": "docs/retention/execution/P01/evidence/WORKFLOW_CHECK.json",
+      "sha256": "1f2133d214ac642e2135a879ba02b36fb120f4e19d80cdbf22f664b7819492d0"
+    },
+    {
+      "path": "docs/retention/execution/P01/evidence/WORKTREE_INVENTORY.json",
+      "sha256": "bffd9b0f4fd067452e0469e3ac0d82c88b75771ce9248d44e8988809ca4913ec"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/APPLICATION.log",
+      "sha256": "8b14b1b2f5873a3225e8aaad93b0e7bb741bd24657a51ca9c34dfb417189d78e"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/APPLICATION_TARGET.json",
+      "sha256": "1345e8c7c2bda18257d1d64e064f73a1bb194a06177b200d94551d887b0309dc"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/BASELINE.json",
+      "sha256": "f78c0de4a35f1b7603edbc543ff19688d8cdb67e6259a18822dab6e34e5c79c1"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/BROWSER_FIXTURE.json",
+      "sha256": "e7f24d44d9ee17539a2c878aaf2941d3aa7d5c860f8764900fd315d22134635a"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/CLEANUP.json",
+      "sha256": "0ddaab28d5f2fd1aa3fa9eae4d6982156ce875c351855b931755e20aad6463f9"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/DATABASE_TARGET.json",
+      "sha256": "39452127b002e8d94b5dc580484af7d91f43ec55bdbee8930cf7c51666366900"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/EVIDENCE_SUMMARY.json",
+      "sha256": "62400bd5cb77dbc7b1f9efef07b146a96a773715ef4f5a4f7eda16429566b5e8"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/FINAL_GIT_STATUS.txt",
+      "sha256": "4a21e0b8c705eb743cca141acfb017c2439e91fd8e8dbfb034625495f779742a"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/INITIAL_STATUS.md",
+      "sha256": "18af829b7ec916f90ae7c4dda5fdfacdfd0baddf79829e294aa733133ac995a9"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_CLOSE_BLOCKED.png",
+      "sha256": "5caa8cc7bdf0b0725038fea373f00dd4f13c5a85c815e151e857be631c4f34ff"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_FR_MOBILE.png",
+      "sha256": "81532ad045682509a76660032a1464294fbc6e2b6e4dc91ff60e4ba6f32d76ec"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_FR_OFFLINE_READ_FAILURE.png",
+      "sha256": "25d614ba5039868004e73184484a5a19dec8a7a48dcb0eeff2785c2b6b020f79"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_FR_READ_FAILURE.png",
+      "sha256": "020f930c8d64e1f2f2e8f7c8d66877ee512d8696ad8fe9e483a774ba0beee4ed"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_FR_READ_FAILURE_REPEAT.png",
+      "sha256": "020f930c8d64e1f2f2e8f7c8d66877ee512d8696ad8fe9e483a774ba0beee4ed"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/LOCAL_UNCERTAIN.png",
+      "sha256": "af58361c8aaa69b49c3f70c81098894b549a7d1de8e986e0a98394823415716c"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/P02_DATABASE_VERIFICATION.md",
+      "sha256": "5c68d56e4ef0bce75e64e1b968474766faac86b8fdf32157bd6f07f9be21f338"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/P06_OPERATOR_REFRESH.md",
+      "sha256": "82fd59dc87c2f4509c1bfc62f795224caa5af71863adf83145142f881d63e8ef"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/POSTGRES_FAILURE_PROBE.log",
+      "sha256": "0b990a87fa1a944f25121892a992812671bc1b71f7ae93b9e4a80749f4d0af97"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/RESULT.md",
+      "sha256": "2a722045477cbe7e69d28e933d2ae72bdb380e55f25d43ba7ed3981011e48210"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/RUN_PLAN.md",
+      "sha256": "942bae57899c387b318fa3a9cb7aa65138473e78e1eeef3722302183ede9d12d"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/SCHEMA_PROVENANCE.json",
+      "sha256": "55a682444fa68e1f3690f1d977b11f19ba2ead5329117ee36e01a1fc9478a015"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/SERVER_CLOSE_BLOCKED.png",
+      "sha256": "7a0fc0811f02dcd0caf52435535a6c75c658d1b7e4bb2d1f2aeafdaf9d22caef"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/SOURCE_AND_COMMAND_REVIEW.md",
+      "sha256": "12602dd8456fe00e60105f512dbbcddc6df7d4041fbabdb7c4fc99897ac76f79"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/VALIDATION.json",
+      "sha256": "6e532e6d25bdf38fe536a87466dd3a135f5e403b7fa9508aacd5c63d1659e8e3"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/WORKFLOW.json",
+      "sha256": "7977fc33391d87e64c10576d2191848f42a128fa271ebf4bf9faded8fbdafffb"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/WORKFLOW.log",
+      "sha256": "82cb01fc96b80565316dc9ba5f54b58c00a080abf366a9146211a6cf7d2df313"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/application.cjs",
+      "sha256": "889a7c731233392b2384deec4a5bf77bf78f26b26a89a21dacd2c4dd750f07c6"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/browser-1792354378317.json",
+      "sha256": "99a8ddcc1f1e00ca92f7b19c52cef8cdaa9ecdd2e0377fda626282f23c6e20ee"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/browser-fixture.execution.json",
+      "sha256": "7331233a103ab2d38835ad2e89e518571639ca6d4de7b04b99552b1e2a29a15c"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/browser-fixture.log",
+      "sha256": "a32ccc6982d6f3d7ef5e4d112c4f4f1977ee11fd1965089201baa1e9557df493"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/browser-fixture.results.json",
+      "sha256": "0e65ab63879cd58fe18479918ad836dc5e40f611e023f4ff0fcf129a5a7ca777"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/browser-operator.cjs",
+      "sha256": "b9ce4e7f5a44d54ba80b9cc441af0ce0592a2e068372e0165d1ce984a026dcaa"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/browser-read-states.cjs",
+      "sha256": "42822cbcd181d23b04893e5ce9f7e8c78d99f829c49577a4c8fb54c1a7b952af"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/browser-server-close.cjs",
+      "sha256": "04a8c85cac55e2a200aafcf5edb8e115024fac0ff1ec5ff44226daaddec14e42"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/check-cleanup.cjs",
+      "sha256": "c0ad71e9628478c66ee68ee93b9ee7a5c95e7a6dd2730f26e1c2b08d6e9d499d"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/checks.cjs",
+      "sha256": "94f50f0e4ab54f7782a8bd0eaa02f093fd32dfd6f897b78c8941bde3e9e2453c"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/client-shape.execution.json",
+      "sha256": "a75f6f459cde293c3d4555c6bc841bcef6571bb34474e4573a4933a1b8cee1bb"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/client-shape.log",
+      "sha256": "e69c9f21be2b53770b13ea52bf6c4f304a9fc86b41f1e932729ec2de45574341"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/collect-evidence.cjs",
+      "sha256": "0103b4184fa3749c84d92cbfd187b2b5107fbfe7e0580f1c8f49c20d343880d9"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/createdb.execution.json",
+      "sha256": "10aa5d86306bee57b69a4661648cf2391e732eeadeffba94e8c5ccea02d3f23c"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/createdb.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/database.cjs",
+      "sha256": "58dda8dfa56c8151ac36e05dbce298b4fa95d6b42b1bfb6ef1196d77d04d4a34"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/finalize-evidence.cjs",
+      "sha256": "e39f306313eca29b19e00033b826f2044b8388edc5b713d8204afef0ba5e82f6"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/initdb.execution.json",
+      "sha256": "88af8e781c9c2456408e73214cbf8ece15e65aaa18dffe0d9559b2a93921562e"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/initdb.log",
+      "sha256": "d34c26419a11719c82d047723c5cdd5a2c58d9ce8e2064aae4892ba7bafaa38b"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/jest.database.cjs",
+      "sha256": "452af05c4d0feffb079b492da98b59fafa1e5beb86ee87d9f15c2dc51745736d"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/jest.retention-db.cjs",
+      "sha256": "e73c015572e6d412d17509dd073693d591551b94fa307c38399b250b4be8e2c6"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/operator-1792354373829.execution.json",
+      "sha256": "e0a975f203533cfb11c5b86807bc71ab161d3b043b854f92895e99ad67fc403c"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/operator-1792354373829.log",
+      "sha256": "4a5cab3adf14553ffb5b85c86d9f45999518c4ea9b902e497ae1d086c0325d2a"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/p02-unit-1792353981196.execution.json",
+      "sha256": "a66540dcfdc1a9a97b535a9bb3d9d440168aea54aa92dcb560d64e6c949dd8d4"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/p02-unit-1792353981196.log",
+      "sha256": "fb0a13e6264c0d776c075a0243e13c5594434db5b22cd4bd67b5b5b509f750d5"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/p02-unit-1792353981196.results.json",
+      "sha256": "4ef446a2a3efa5b42f65a9d47d94aa285191327a06000b0144773eeb6dce0277"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/pg-start.execution.json",
+      "sha256": "efc7c01debdee7f0bc8a6d6c0186e2939a5f79628c7ea7ab32bb5af9bd53f15f"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/pg-start.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/pg-stop.execution.json",
+      "sha256": "3393589c578224ea5ee5d2edf66c677d6d42644d7f5511c75c571d6ae91f2be0"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/pg-stop.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/prepare-evidence.cjs",
+      "sha256": "25b457c51e55dfa40b1f6a894a2492f89e2603567f8a9d9f2a9dc8b1e2746596"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/read-states-1792354695139.execution.json",
+      "sha256": "5d07989e5ac1f5becfef79863aef417617319a8a95d7fa13d2a94c0b6e742fbe"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/read-states-1792354695139.log",
+      "sha256": "9a04911d550ce81c5bc74e7eec234f4e7bb15ba87746c06061d4372308040c96"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/read-states-1792354719659.json",
+      "sha256": "b42514c74aff1e56c72db8a6cc6b03724641b9354b78a19a3725914b16b3b8e5"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/read-states-1792354845798.execution.json",
+      "sha256": "e75e845741f61a7dcc49cffcec3de925a56a27328941e58c78e358a1f390c9b8"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/read-states-1792354845798.log",
+      "sha256": "5dab08648c153fb6e003fddd55ae69de0aa2b9d24694484ed380c24787d936e0"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/read-states-1792354860401.json",
+      "sha256": "6be83769489946b059af1598b13d08acddcb718c2417c68efca55bf2acaf3235"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db-1792354248182.execution.json",
+      "sha256": "5294ea7f85a56ca66824f3ad799c55cd0ded907883fc8e98a25147653a293542"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db-1792354248182.log",
+      "sha256": "3ff3cb36fc884b043025ee8a4e04ffdb802ef711ce546e43da506de38c6639cf"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db-1792354248182.results.json",
+      "sha256": "22d6b3bcd6e6d9073f994099f905e1ef65f882e7626c07349e2a49938f2d5ad5"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db-1792354347784.execution.json",
+      "sha256": "d87f7a4216804b928a3bf1f7ae7febb3a93c1c3bd9f01af4fa7046e804ea7ad9"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db-1792354347784.log",
+      "sha256": "648d8dc5515b34210e1ca80b6eb9f370d6c5e69e0b752a4f29eb68443c353d84"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db-1792354347784.results.json",
+      "sha256": "a5693e588a00ccd813e3be14440bb6ee78b4a317933dc36af2c25fefb2df8fa8"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/retention-db.cjs",
+      "sha256": "4a86b7ba2d78cd27d25e6fa1ea24ace21344dcdef7df8dc9b22a158f6cd40a8d"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/schema-apply.execution.json",
+      "sha256": "0b073b2ba59f8749f0e9c1cea6a7d4ff0cfb7ed053a01a0ac85b4d7ee5376173"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/schema-apply.log",
+      "sha256": "85b2767ac745781d16c9de1e8cc8a581e87a519d432d136c519052f713d4a6a5"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/schema-diff.execution.json",
+      "sha256": "9107840cb976795b14052d3c7f23f3f25c8180415dd7306557ce591eefa78beb"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/schema-diff.log",
+      "sha256": "c35e5c8ba7d321d5c806d1f03b624a7fe706339ecc4b437740f630e82f11cffd"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/server-close-1792354696827.execution.json",
+      "sha256": "afbea0e67249a4b67abf404b89661568602ff32ea6253dab58af152de8d80912"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/server-close-1792354696827.log",
+      "sha256": "8f0c161dec153157b2daad34c03bb2a9985620231d12ec4baa5e0c4f7167dd27"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/server-close-1792354740792.json",
+      "sha256": "fb3a18924eb44339c81d7483029ed121e27a389f1e10d4d1a7581520d26f2f9c"
+    },
+    {
+      "path": "docs/retention/execution/P02-P06-verification-2026-10-18/workflow.cjs",
+      "sha256": "d90c57eab2b1baef6d824808ff8214706e0bfbe8f6365311fe1569c411761295"
+    },
+    {
+      "path": "docs/retention/execution/P02/METRIC_CONTRACT.md",
+      "sha256": "fb764126423dac238d0dd8817a6f9ec2556f3983a90a179f2555f8b207b2ab02"
+    },
+    {
+      "path": "docs/retention/execution/P02/RESULT.md",
+      "sha256": "82bdfe22cc089e4fb15c3301f38d7b67016fe2e8efff75ac65e04e2c5ffbe21f"
+    },
+    {
+      "path": "docs/retention/execution/P02/SOURCE_TRACE.md",
+      "sha256": "539314da2226acd3499b17918eb5d83ae828345329a933bb9c30c5e5f3731dcc"
+    },
+    {
+      "path": "docs/retention/execution/P02/SYNTHETIC_COHORT_EXPECTATIONS.md",
+      "sha256": "ef1cf43a9195425ad48559e66df0d8ff83d80cf9bed5c78ac5cafe9f56e4b882"
+    },
+    {
+      "path": "docs/retention/execution/P02/evidence/BASELINE_REVALIDATION.json",
+      "sha256": "8e7e0903a0e6ad5ecc6c7c35542c55b0ed5e3897da735e2b23dc509cbc07df93"
+    },
+    {
+      "path": "docs/retention/execution/P02/evidence/INITIAL_DIFF_STAT.txt",
+      "sha256": "fd17717f6b81d9a175742df37026df7f07a99f0dafcd2cd7c6eb1b54e467aabe"
+    },
+    {
+      "path": "docs/retention/execution/P02/evidence/INITIAL_STATUS_REGISTER.md",
+      "sha256": "33215340f1b35e4e1979256dbd3413e00eae18581ad43d370f63fd8bffe1f5f2"
+    },
+    {
+      "path": "docs/retention/execution/P02/evidence/INITIAL_WORKTREE.json",
+      "sha256": "c11c9ab94c7fc62b01db8fdb0e5eeb0285d9dcb417183c4c84f556e1ee1aec17"
+    },
+    {
+      "path": "docs/retention/execution/P02/evidence/JEST_RESULTS.json",
+      "sha256": "e2a9f2f13f7a6e78b5cb43e5677f143c8eb843dc8981964ac7316ca15d9c6eef"
+    },
+    {
+      "path": "docs/retention/execution/P02/evidence/JEST_RESULTS_FINAL.json",
+      "sha256": "200fda808c0264062c45f13e43bb52cd01fd5ef89b78eec5a428114c7ec7a665"
+    },
+    {
+      "path": "docs/retention/execution/P02/evidence/JEST_RESULTS_FINAL_02.json",
+      "sha256": "2a3aa7d8bbda95694b0a178c182f2703fbb737604bfc5f2139781fcb618d94be"
+    },
+    {
+      "path": "docs/retention/execution/P02/evidence/SOURCE_MANIFEST.json",
+      "sha256": "2ed5c3356d6d9f08a0cdfd34face1237be33f065889caaa3c2a6cf896c2ed383"
+    },
+    {
+      "path": "docs/retention/execution/P02/evidence/VALIDATION.json",
+      "sha256": "33a44c1da3fa4639b1e0b228515c5c2938c650ef6adc4aeea3233ffcd99e2717"
+    },
+    {
+      "path": "docs/retention/execution/P02/evidence/VERIFICATION.json",
+      "sha256": "00fc1f6800c4ec169624936915820398884d3d23539e2c6ac7745b23516e40bb"
+    },
+    {
+      "path": "docs/retention/execution/P03/FIXTURE_MANIFEST.md",
+      "sha256": "446830c2a240cdd6c1a9004d55c8251460b54618736564d6e7dcf4f10f02b954"
+    },
+    {
+      "path": "docs/retention/execution/P03/OPENING_POSITION_CONTRACT.md",
+      "sha256": "0cbe106b5a6f2b8419ff7a4c32c63d2933b202a242aa3e655e2ad8e3664e31d7"
+    },
+    {
+      "path": "docs/retention/execution/P03/RESULT.md",
+      "sha256": "2bf947a8b464ceb06d46e2410668375c530d47e6320b4520c721cda398b69d28"
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/BASELINE_REVALIDATION.json",
+      "sha256": "b7c9d83cbfd0e338d601817fb41f0a72179a968642d2799dd9549af3ddc847a9"
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/FIXTURE_AND_IMPORT_RESULTS.json",
+      "sha256": "91d4c17e4536ae7871479d44c875ce66df210fdb6c0c8c1bd1663abddfdcfd38"
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/FIXTURE_AND_IMPORT_RESULTS_FINAL.json",
+      "sha256": "651bbd5a7c4202954603ae09c499b0206407e4da4850bb1727df0b57dea43756"
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/INITIAL_STATUS.md",
+      "sha256": "ce09733a8e2001296176bfcc4906e2fe7e80a7576cbce8e6970044ecc5df7feb"
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/INITIAL_WORKTREE.json",
+      "sha256": "4e235a3136b93d94a321112fc7fea0421a7489cae157505b0d9e080c843539ad"
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/INVENTORY_BOUNDARY_RESULTS.json",
+      "sha256": "3b35bb03b799b2a5d3360be59fcbcdbfa733f4cf51e4d59b8d388bce22c5be5a"
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/PRESERVED_ARTIFACT_HASHES.json",
+      "sha256": "e207fe8f55864c08e183069827f2f4254b5665aebeabd595470cd18b69ea09cb"
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/SOURCE_MANIFEST.json",
+      "sha256": "b7beff4855ec22c5c56f1bcb4a22de313eb21182ab35473615bc954746e8f537"
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/VALIDATION.json",
+      "sha256": "1168cbeee27ece1470aa2b9dffd5b67fdb82c6d80793be49bee8c7c783bde0fe"
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/VERIFICATION.json",
+      "sha256": "7dcc16470849c6741d320dc0ee22a8773a8d742ad05a4dafc7ae37f21ef92bc4"
+    },
+    {
+      "path": "docs/retention/execution/P04/ACCESS_MATRIX.md",
+      "sha256": "0459ce5b9ef7d4c6bc00a5dcb2ac452d82e03ae76f0d4d2794f7c7082f4f96c0"
+    },
+    {
+      "path": "docs/retention/execution/P04/RECOVERY_PROTOCOL.md",
+      "sha256": "77499a6318c7ebbd8b11faa37f90ade6ccb8047e79f52cc8292c2146de1164fc"
+    },
+    {
+      "path": "docs/retention/execution/P04/RESULT.md",
+      "sha256": "118e32434f14e52aec92bf9dbc54fd2d74c916da84115b447a2dea241921ed15"
+    },
+    {
+      "path": "docs/retention/execution/P04/TRUST_BLOCKERS.md",
+      "sha256": "fcd3bd7ba1348cb4019003f091d850d0e5f38fbb5134a103225ca3b9930adb16"
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/ACCESS_RESULTS.json",
+      "sha256": "3c83ad2bd3e9a97292b5cb9702ab7c5b6c30003741a03acc0f41f2c3209466b1"
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/INITIAL_BASELINE.json",
+      "sha256": "3557b2aa0d36942603970b857219464d5fda15205376e36d0ecd118fa4706588"
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/INVENTORY_TEST_BEFORE.txt",
+      "sha256": "0701e983ac055d54e5b3689918024b839892995d8210dc39ddc38d6fe2c61568"
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/OWNED_BASELINE.json",
+      "sha256": "ae104d790d8f0657867d9c76ec4bde43d8437687846a5a6f772fc01af53ae0cc"
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/RBAC_RESULTS.json",
+      "sha256": "7f817fce8c29172bd1c4afb1344e4aedfff4f32477c4f6c5e43af2fba74c5a9b"
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/SOURCE_MANIFEST.json",
+      "sha256": "1065729d0439e7116cda2856724debc682ccc9daa22c72131dc0568c3333d1b5"
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/VALIDATION.json",
+      "sha256": "dead539e9f3353b8fc9328b15be82e804a247b979b3c717953517505a62ee16e"
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/VERIFICATION.json",
+      "sha256": "82c978d791e2ef6f4ee164ea25439ef12f9e9da008d02bf8ccd42cd70e819029"
+    },
+    {
+      "path": "docs/retention/execution/P05-P06-closure-2026-10-17/CONTINUATION_REVIEW.md",
+      "sha256": "6f1b6eeaabf3a3583a31d5ddadb6bdbda97f3d22347200e69a74106b0fd3733b"
+    },
+    {
+      "path": "docs/retention/execution/P05-P06-closure-2026-10-17/ENVIRONMENT_AND_LIMITS.md",
+      "sha256": "af2075c52ac75a7c11fb324f826cae3606ee84ad2068b4bc5689f650f7ea3c96"
+    },
+    {
+      "path": "docs/retention/execution/P05-P06-closure-2026-10-17/RESULT.md",
+      "sha256": "5d8b2f82728a7b360cf94995082a862ceebd7b22a920f52a433a8732834b2162"
+    },
+    {
+      "path": "docs/retention/execution/P05-P06-closure-2026-10-17/RUN_PLAN.md",
+      "sha256": "61ecaaa2073a3c05a20bea2611c5d5057c102ce5a943fb6bf7252b640d24fc58"
+    },
+    {
+      "path": "docs/retention/execution/P05/BROWSER_REHEARSAL.md",
+      "sha256": "dd2e061cbf1bb5903bbbb2b394d627920aaa2ded1b9f3fd09b387789a8f9b657"
+    },
+    {
+      "path": "docs/retention/execution/P05/CHECKOUT_FAILURE_MATRIX.md",
+      "sha256": "fefdc07e2b008b15a6d3d22c39aee8d6ab8c48551718582cd426b8fde0f1da2e"
+    },
+    {
+      "path": "docs/retention/execution/P05/RECOVERY_STATE_CONTRACT.md",
+      "sha256": "d3902fdf437545428889c827089dc48ec94baf50d1447ab44cb879f3f39b6c87"
+    },
+    {
+      "path": "docs/retention/execution/P05/RESULT.md",
+      "sha256": "1f62685daad29ba45e5a3bc39a68ac77bec145d74bf180c47bf9e4b3b0f54dac"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/CHECKOUT_LIFECYCLE_FINAL.json",
+      "sha256": "a1ff57537a1182ee44ce394d08547a7ff7fe92cba63e50dc615b2d2ae28834a4"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/CHECKOUT_LIFECYCLE_RESULTS.json",
+      "sha256": "77601e417c9ff773dc2ebfed94bcb358e6dbf17f299c73856de365730d4335d0"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/CHECKOUT_RECOVERY_AFTER.json",
+      "sha256": "ed5432350b0542910ca213b099f1e440659b8dbf988de8cc3cfec1797fb93591"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/INITIAL_BASELINE.json",
+      "sha256": "738c4fb10854a96c8cbde2e49f99d6c2231d4b5215d332adb642ae353bb911b8"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/OWNED_CODE.patch",
+      "sha256": "ce85ad8828f806fd20079caba94b1231ab508adf907fc9515d64d694f6f18eb2"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/PENDING_REQUEST_RESULTS.json",
+      "sha256": "015eb4f5448528410106e3bf06b09b65ee318f533c863bcf8a0611412ec6ef0c"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/RETAINED_IDENTITY_BEFORE.json",
+      "sha256": "12daf5994cf0be07e6ae40b92173b545c980b05e29ac7af742c27e00f1bd5c8b"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/SOURCE_MANIFEST.json",
+      "sha256": "76ece2bb41ca248a46f9a837c7e6524b65d3e14f3b48b2fb5952bc594ec3d422"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/STATUS_BEFORE.txt",
+      "sha256": "3cb3fefd13885376f47a2e39eb95e8673b95893ed85f31e798c2bfea0bdaee43"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/SYNTAX_RESULTS.json",
+      "sha256": "f2e73705d2125865c663b30b4555cbddeab952067cccb2f122e95e7874b67bf3"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/VALIDATION.json",
+      "sha256": "276f73658054774c6c643255968cba4d6cf195c89d84bc222369a5e27ca5bfe5"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/VALIDATION_INITIAL_SELF_LINK.json",
+      "sha256": "e5c09a275df008d66637ef64c1312a4ecf6512da85f6415e441c8e49f4e0da96"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/VERIFICATION.json",
+      "sha256": "b697389741bb89f89ab9144fe665691aeb9c82f23159fe3ab3a4a59fb0b430e2"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/commit-recovery.service.test.ts.before.txt",
+      "sha256": "f71745f64efbfb369bdd15f27fbf348b453fdb815dce98ac56b2364bad2b9af5"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/pos-full-commit.postgres.test.ts.before.txt",
+      "sha256": "2965bea2bfd2a34708da81f35e19a8c00b29dbb8b62db259ec2520dcc1cef9aa"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/pos.service.test.ts.before.txt",
+      "sha256": "3c57ce6b16598379a6b5d091ebd80e412f9273949ed3928664c27ff29289ebd8"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/pos.service.ts.before.txt",
+      "sha256": "f20894ce31eb92c9f99610102f768386a6a780e6ebc99239ee27b9632f972470"
+    },
+    {
+      "path": "docs/retention/execution/P05/evidence/validate_artifacts.py",
+      "sha256": "0fd92419677ce6049f70afd2f6c8871add67c42a68fd8f3297efd0e9a43c36ec"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/APPLICATION_TARGET.json",
+      "sha256": "0ad247bc19d73fcbfa627fc7852e1c1d7721dde01cb2c6951258e1fe44d58652"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ARTIFACT_MANIFEST.json",
+      "sha256": "2d1e892ee112bbb89df520dbab31bc91c7c3323e9136835294d861480ccb765a"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/BASELINE.json",
+      "sha256": "f7c79e494384a8b3cd02b76dbed313ad39ea6f059fe30e266ff114ab1ad97e77"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/BROWSER_ATTEMPTS.md",
+      "sha256": "e9963bbd068ee2c3d061a5c8a3c7a7181b0c1eff7d771e0abcb09d590c381517"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/BROWSER_FIXTURE.json",
+      "sha256": "6304f79e393e0795e22c77bd8bf0308d5bc1bfc0203582a72a10c1b3d764245f"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/BROWSER_FIXTURE.prior-1792236984998.json",
+      "sha256": "0d6889186ad68baee0e331df23e4231ab4ceebf8c3952533db69481b71a0c8cb"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/BROWSER_FIXTURE.prior-1792237147088.json",
+      "sha256": "464b4b2c052c0c0755b3bbe4cd7b0194cfd6dd72cad43f4b43e7b6bbb94d1e2d"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/CLEANUP.json",
+      "sha256": "d5c34b468b60f062224786340d4ba583824e6ceb11648e2001593d76f621d42d"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/CLEANUP.prior-1792237491905.json",
+      "sha256": "49771a0c4de4f6d37def78a4bd25cd6c1dbc8924dac85f861c81edaf6db40fb6"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/DATABASE_TARGET.json",
+      "sha256": "f7785ece7a047e67d3b68a49081532029cf3c94c4a4729106980843ee4632c5c"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/FAIL-1792236802616.png",
+      "sha256": "609d80e6bf78d9589f7230c9a71633a97702ecfd2b487c8a0a2d2dd1acca3e57"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/FAIL-1792236803155.txt",
+      "sha256": "4fd7afe6a0ad019d144ac540ccf1a4bdcc7708f0d240ddf5bc88d6408bbe324f"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/FAIL-1792236939390.png",
+      "sha256": "2ebd322b63a4f4bb48cfa973dacd1af1a7d265e8259f6d00de75af30b8eda22a"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/FAIL-1792236939542.txt",
+      "sha256": "bc43444744e05733d9ac93c7ed9cdb149851391af4a1346af1880db177f950cb"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/FAIL-1792237110883.png",
+      "sha256": "7bff1f5297873c6989a5009e74adf2fd86a2f6db711d4ee301e9d360de6ac3ee"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/FAIL-1792237111239.txt",
+      "sha256": "89b292aa57e37204ba503344ce4d44c31763900ee7b5b62a2974192a83299a88"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/FINAL_WORKTREE_STATUS.txt",
+      "sha256": "be917a1d57a2eca354dc56207e45b4084863bf57afbed5b13e4223f7b1d7ea11"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/LOCAL_CLOSE_BLOCKED.png",
+      "sha256": "6fee63043aaf708902b5464dae109afa63455805ff6b17ba1f73cd7cee92fa96"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/LOCAL_FR_MOBILE.png",
+      "sha256": "731a7e2327e860b3410f968c8abfadc766e402c26991da42335e1247962e0a5c"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/LOCAL_FR_READ_FAILURE.png",
+      "sha256": "020f930c8d64e1f2f2e8f7c8d66877ee512d8696ad8fe9e483a774ba0beee4ed"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/LOCAL_UNCERTAIN.png",
+      "sha256": "244a15c0e86c0e942ecf25039bb98cdf1d44870bf8d0fbf3fa815905a651367f"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/OWNERSHIP_CHECK.json",
+      "sha256": "114253d282e97c312c0087da5e90b43588b55363b0dc8231abcd5e37511e0b89"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ProfessionalPOSSystem.shift-close.test.tsx.before.txt",
+      "sha256": "72ab95f952c0ddb4a509acdc82bfca81420728b7cf2ec8be63acfbadca9ca698"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ProfessionalPOSSystem.shift-close.test.tsx.patch",
+      "sha256": "acdd0bd58623ab9866f776431ab88db5a700c3546f1332927a0af942c8e3deee"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ProfessionalPOSSystem.tsx.before.txt",
+      "sha256": "9e0280d3b4bb11d291e4ad5f477daf1016b147ee4c6c113c8591c3966b5ef50b"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ProfessionalPOSSystem.tsx.patch",
+      "sha256": "70f72ce496f459083144c5f1270a645397e09c36bc3731d5e3b07553ee8ff98b"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/RESULT.md",
+      "sha256": "3e5ce2abdceaac594d58756643b99b089b61077f4bd755dee2fb3ff07fbe69d6"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/RUN_PLAN.md",
+      "sha256": "54e413e8e1cd86353f1ae7ad4b490bfc522a209181a1e5ab9cfffe53a8fae935"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/SCHEMA_PROVENANCE.json",
+      "sha256": "55a682444fa68e1f3690f1d977b11f19ba2ead5329117ee36e01a1fc9478a015"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/SERVER_CLOSE_BLOCKED.png",
+      "sha256": "16b066262780bc6ec8f482591f98e82a8bb360bfd8d909a212d3fa9314ed4512"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/VALIDATION.json",
+      "sha256": "6cb9d724d746143f07ba6ad1e929a7425d165a2fd43c57555a7210486f6ae1fd"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/WORKTREE_STATUS.txt",
+      "sha256": "749527e9ac2739c2ce6d0b10c5c27a2067f5fb1000a5d4e38cd99ef9230fd254"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/application.cjs",
+      "sha256": "1663f47d6d47dd8bfdcfd697300317114cf868532465af50e501496f6af25fb0"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/baseline.cjs",
+      "sha256": "3142a3f64a565515c16f7a9c6508109bb54121f660d99cf202ebf857656460cd"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-1792236295122.json",
+      "sha256": "17a74c644414e96ca1f86b83f7c9782d523676a47560d76213eff9e5935704aa"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-1792236900003.json",
+      "sha256": "308cc73f95dc6058bccfab9c09da6e7cb062f88906dc3710d11ad516a650398f"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-1792237035402.json",
+      "sha256": "17a146adb96c955a4ea05ddc6ac3bb7051b519913fe449115d1ef35306b8dcb7"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-1792237177752.json",
+      "sha256": "afa4ff556ae1d6537e6c4ede94314a9c48e9a90efa57303e1bb600632ec3b5ad"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-fixture.execution.json",
+      "sha256": "4cf5ffaaaf444b95e3fb7409cb0cacce0a17f487b8926579a21a12e3ebd55529"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-fixture.prior-1792236985006.execution.json",
+      "sha256": "f86f6051ab61584171e0c8486e804291a29973928f3acd4ab8a48a1db23ce3c5"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-fixture.prior-1792236985007.results.json",
+      "sha256": "e0c5e534c2cf3018fe1b9846d36540b19a80a64b4f7c1d8780f0d2beeffb6c9c"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-fixture.prior-1792237147090.execution.json",
+      "sha256": "c8d82932472617cbb983da5e46051d5c30f81b34fd16ffb573d25b2566c2bc0d"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-fixture.prior-1792237147091.results.json",
+      "sha256": "893d602d60d403b89354bd5b39b16eec549c3318b624c2a7daf3ae63310dfd6b"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-fixture.results.json",
+      "sha256": "b2e7c0048c73545d30fe3e37d1bdd4b6e881babbee2c94e28940ae90b7213417"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-operator.cjs",
+      "sha256": "b6de6ea0327cc89f6204825452d1c8be8e9c08adb1338d55871f92ee312015b7"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-read-states.cjs",
+      "sha256": "f31519b01796fa262c1a3107367da1c5c2387544472cfb1ed92156f05df980b3"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/browser-server-close.cjs",
+      "sha256": "83215d99f619c274945c1e9b88a89de3defab4834f6199674031427339542367"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/check-cleanup.cjs",
+      "sha256": "2eda7810636e6a80b686ae29cb3bf6f7f11ba67e91a1fd51d36f8b58c1e02951"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/createdb.execution.json",
+      "sha256": "e062d2e428a7ec689b2ead062a4cb981d469d3f6f01f812577603f469368dfb7"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/database.cjs",
+      "sha256": "f63a1f8723c424aa4d4e6b07305752d895a4aeca3442238f42d836cdbb524c5d"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/full-commit.execution.json",
+      "sha256": "e7cc28fcc678dbe6609926049d8fa4ebceaae2c56e2e7aaefb328451ba72d82e"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/full-commit.results.json",
+      "sha256": "4d0eddfd6d712d2c9105f0a2a8c526dbfc419099ca023e2b33894ba9d0d19f23"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/initdb.execution.json",
+      "sha256": "c44742c532151ee62517d2dedca31497ae01102b6827deffea304950112b0bec"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/jest.database.cjs",
+      "sha256": "452af05c4d0feffb079b492da98b59fafa1e5beb86ee87d9f15c2dc51745736d"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/jest.storage.cjs",
+      "sha256": "64e52b0372a3cfbdb818b63dbe2c92757fbdb6eac85acc21561cfdfe52968879"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/jest.ui.cjs",
+      "sha256": "a52de09d97d54ce06146bb701ebe5758a4b626852197b191b2cecb4ae39dc924"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/offline-browser-1792237384796.json",
+      "sha256": "812e99980f05dd015a4da0002e94d12386a050ef73cdef8269a6360b9d1cdb19"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/offline-local-queue.test.ts.before.txt",
+      "sha256": "3a1a85f3984ca1976f4dd7ae7a856e25633da6ca604bbb91cf904a2b30bf6368"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/offline-local-queue.test.ts.patch",
+      "sha256": "89cc234c0937eeaee09f537bc97f674140e8bdb18a88d01d0de855b3ba21006c"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/offline-local-queue.ts.before.txt",
+      "sha256": "5200721e2214693cc7adcc05aef41e189235b01d6ad7085059c638183ce2bfe4"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/offline-local-queue.ts.patch",
+      "sha256": "06be975abde72acf28e59b30081dc8d7cf3c031891e331cc6502a8e2638fc6aa"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ownership-check.cjs",
+      "sha256": "e73fe98af7a03827caceb520526f1aa9b3cba7e989cd6f213d0b96d56eb4d434"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/package-evidence.cjs",
+      "sha256": "334d36ac39503a45aa7d5ff3a095e553496f7a5a963abe99d5d9fdb17648bbd0"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/panel-final.results.json",
+      "sha256": "2c02c22c98ff2770bec65c4e979abb0e4b2fcdb7d3ce386f2ff7ef1b910319cb"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/pg-start.execution.json",
+      "sha256": "57320efe409b7180e014ac3946e803bae3830851713493376bfc88a8cc1931be"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/pg-stop.execution.json",
+      "sha256": "a7860c6e80e0ca2ec936763e73f1abc383d37483e0d393d7a57153f491be215f"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/prepare-harness.cjs",
+      "sha256": "301b0d1ad2b9361e9945835ad9d8ec49213190cabc7896752191fcbacb3e2793"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/read-states-1792237326100.json",
+      "sha256": "de901815814cfa7dc77d641a28449ded0d64d072d0447ee312442dea20c17aa1"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/run-check.cjs",
+      "sha256": "2e39bd9e0f3637ca5fe5cb0b81825a4fa947716e01543cc12a1b48a4f00e60fe"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/schema-apply.execution.json",
+      "sha256": "d94813208a870d1671f1b1476b470f2640070f3c3df6055ecb0563ebaae583f4"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/schema-diff.execution.json",
+      "sha256": "d67517b80794953feea98869f9e578bb514f37c8cbdd4bf04db4aa0d1994bd77"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/scope-isolation-1792237368147.json",
+      "sha256": "f88a88965e2ab295df4332d2c17cc55b679688469908cb50e03c4d241d02047e"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/server-close-1792237271521.json",
+      "sha256": "9b18a05580cd86eb296da5dfdee6731f7bf4db7687607d8148feb81a58fb9c0b"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/storage-1792236525804.execution.json",
+      "sha256": "9e402aee77f9a058910f11170d26f16411fc302736ef305ae96c898bdcc80ecc"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/storage-1792236525804.results.json",
+      "sha256": "70d3b693e80071038788223ce3602f67e484f020786e87946e1acad4ded18cd8"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ui-1792236113008.execution.json",
+      "sha256": "cdeddf7c44557e03fdb6289e94987837ca686f4066fdcb65615cf0da68a9a8b1"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ui-1792236113008.results.json",
+      "sha256": "c1fce47811d27ee3a5718b79cc40dc415aadcfae6f19bd44a8af58749c4169b6"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ui-1792236995592.execution.json",
+      "sha256": "d2b21d945e68c1ae2425156d5f7e98347cd7b060dc264b7ac39781a719d43b39"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ui-1792236995592.results.json",
+      "sha256": "e4f984540ec70b974e705232d6661ebf172da98e1447a36c3c9a79c40385d37a"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ui.results.json",
+      "sha256": "8e2a46a4bf3e173c7bb29e9647d95be3722617a054b6bd80f9fafb8d8df14036"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/ui.setup.cjs",
+      "sha256": "41e222feabdd86574a774e39d7594729ae5c4bae9ec7418385bcfc70902781a1"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/useOfflineSync.ts.before.txt",
+      "sha256": "e7a2f808fecd109a96ac83ebf92cd079f3e75c3cb4363f110f59a31a145e7ae7"
+    },
+    {
+      "path": "docs/retention/execution/P06-operator-2026-10-17/useOfflineSync.ts.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/retention/execution/P06/OFFLINE_ENVELOPE.md",
+      "sha256": "107c0290ac5e345a1965fe5b25a9ea21b575c2b034484552d23e72dd83f7c413"
+    },
+    {
+      "path": "docs/retention/execution/P06/OFFLINE_FAILURE_MATRIX.md",
+      "sha256": "bbbb7e604116c8359d6591770220679f5e918200ad483cd2fbbcba3a2cf106a2"
+    },
+    {
+      "path": "docs/retention/execution/P06/RESULT.md",
+      "sha256": "47909fa2651f6bc1270b439e67ca36ad93447f52b6ea7eac9c118aa933be06a8"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/BROWSER_RUN_LOG.txt",
+      "sha256": "29a738fbe5dd3ff46094c2c24cc43fe2a045a839580526376f81a155285bb1f9"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/BROWSER_SANDBOX_DENIED_LOG.txt",
+      "sha256": "26f32b2b22860f4885aec5cb4d81a9f6ca9219d1a4823bc50dc3e366dcbf5d58"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/INITIAL_BASELINE.json",
+      "sha256": "884ce6ed9dc9e930f9204de014466e9aaee98100f10650f8bc58d77873413abd"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/OFFLINE_BROWSER_CACHED.json",
+      "sha256": "77cbdae1cfcaff70cc16e2de72247c9a34955bac889300d19091400620995585"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/OFFLINE_BROWSER_EXPLICIT_CACHE.json",
+      "sha256": "63b45ea3490f2eb65c9042e4fe41dce43f72cb6373c70efd416da10fc3354c08"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/OFFLINE_BROWSER_FINAL.json",
+      "sha256": "5f80a3d6ca8af1980a99905b9641f29e8a54507d8ea483570005031b0e012f80"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/OFFLINE_BROWSER_SANDBOX_DENIED.json",
+      "sha256": "c9c6e7e38cb7404739f2863805dddc2af05ada97ca41488d18d06c51fe0695ac"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/OFFLINE_HOOK_FINAL.json",
+      "sha256": "a68bb7c4f3d74a72b1de9a7e494895dcedf90e3c529d833ad5620e91ccba1ffd"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/OFFLINE_SERVICE_CMD_RESULTS.json",
+      "sha256": "18e0eed426a9e39cec9e38736f077f486d0899d4845b86d40e3626eb5aa58161"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/OFFLINE_SERVICE_FINAL.json",
+      "sha256": "51a7c5afa20b13c53e6726c8489206579d8aace63f396e20d1d200efbc436ff8"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/OWNED_CODE.patch",
+      "sha256": "82be3d6b15b4d96722b17f76baacaffdbb81fd166c7ba009e38d178940256bac"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/RESUMPTION_CHECK.json",
+      "sha256": "a175f3f4b3863207a820b47ad3cfa4da839ee94f10b489e47eb25f45943b1755"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/SOURCE_MANIFEST.json",
+      "sha256": "5ecdd92c20d4b54ce1d777aa9ba47a973fe2a73a048f32367b99cd441025bc0a"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/STATUS_BEFORE.txt",
+      "sha256": "0f29e97f9e42ada3e18d6d4171c0e0e8efbdea97dac7d64682188af290ba13a1"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/VALIDATION.json",
+      "sha256": "472e982466747970ff5e2a5d81e8278dea8d9c68717a818132bf4e5d08d18aad"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/VERIFICATION.json",
+      "sha256": "1089b5e525930a50285bbf95c998552a4e1506e75f4d4760ab9e90a9d43e7cf3"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/WORKTREE_STATUS.z",
+      "sha256": "cc2423d25ce4692c0857b4ec1991755cf9f40c0b498aca244da1a7a366543ea7"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/finalize_evidence.py",
+      "sha256": "ee269dbc9561035f58ebe9652a1ea6cdd7f1679bf82df399baaac0efa4eea448"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/offline-local-queue.test.ts.before.txt",
+      "sha256": "b90bc8ce37ff5bc45ae05a335219887fc446a513c60e6b2c8d5932253da6cc65"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/offline-sync.service.test.ts.before.txt",
+      "sha256": "6be2c1d190b766600183ae06d0ed8b46a9fa16d9ff68c9c3ddb7ca7b895bf3f6"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/record_verification.py",
+      "sha256": "6717df358118adcd5e1b56c1ec4c8b01b7835c39620686f5cd5f1f3bc0962578"
+    },
+    {
+      "path": "docs/retention/execution/P06/evidence/run_browser_fixture.py",
+      "sha256": "49f869e30d1abeba2e1a2e210aca2bb2b3c14a806e2d7fe34308ce23a181f3b2"
+    },
+    {
+      "path": "docs/retention/execution/P07-media-2026-10-18/COMPATIBILITY_AND_RECOVERY.md",
+      "sha256": "ba8756e430ef0c4331f3e262c68e91e3e80f3b87001c405fcfd49d7a0b73a622"
+    },
+    {
+      "path": "docs/retention/execution/P07-media-2026-10-18/RESULT.md",
+      "sha256": "196afa0ed82b8d1d0f6ba006b8b23713565ce25bbf990af46a28fdda6d782e73"
+    },
+    {
+      "path": "docs/retention/execution/P07/ITEM_IMPORT_BLOCKER.md",
+      "sha256": "43295d9dcd6f47a69217ca88d1161c9f366842c024212bbb062acc6888fe2a59"
+    },
+    {
+      "path": "docs/retention/execution/P07/OPENING_READINESS_STATES.md",
+      "sha256": "634c4b61e1fcb9771b87f61f9f58732c03a3f321e63766bedbf7f913e59a3c4e"
+    },
+    {
+      "path": "docs/retention/execution/P07/RESULT.md",
+      "sha256": "05cebfc9556a2108bc13c854fc3281fd017a6d669188866b1f316b7db7fd823e"
+    },
+    {
+      "path": "docs/retention/execution/P07/SETUP_JOURNEY.md",
+      "sha256": "ff6585ded0bd8d8715ab5cbee28842e4492c46fa1666f161cc0e7925c4c207e3"
+    },
+    {
+      "path": "docs/retention/execution/P08/RESULT.md",
+      "sha256": "1e71a8f17a4ed91169543e4fa72de56a114df5e50296607439b7da7bfade92c7"
+    },
+    {
+      "path": "docs/retention/execution/P08/RUN_PLAN.md",
+      "sha256": "3bc92fbbd923823a5aedae8dd0c7e5275c0d9655311acf244a124fea890af8f4"
+    },
+    {
+      "path": "docs/retention/execution/P08/TASK_SCRIPTS.md",
+      "sha256": "2cadc7d3e79d82c6b424a4ee1c47a370914ad006efb6861a9dc23a7bea5410df"
+    },
+    {
+      "path": "docs/retention/execution/P08/UI_STATE_EVIDENCE.md",
+      "sha256": "5fd866c93b67b6b988c204ffd8cbb4cfba62d4f8fd10df14c4d06ea1696aa439"
+    },
+    {
+      "path": "docs/retention/execution/P09/ARCHIVE_CONTRACT.md",
+      "sha256": "c481cb0ba205d3fb21c17fd5a1c7bdf0cbbd1a175e7887bf23eaa3f37456cd90"
+    },
+    {
+      "path": "docs/retention/execution/P09/ARCHIVE_FIXTURE_MANIFEST.md",
+      "sha256": "c597c38fc89dc2284e2bdb089bdeca68a4d147575059a50d1c2ab42dd8e6dbef"
+    },
+    {
+      "path": "docs/retention/execution/P09/PORTABILITY_COVERAGE.md",
+      "sha256": "df639b060a5dfd02ee18fd3d303a1f300ca2410bb1fbf2a3b8bcf2b553f0d98a"
+    },
+    {
+      "path": "docs/retention/execution/P09/RESULT.md",
+      "sha256": "deb2ef6c03e68bae001a3cfb3787e46bd5bda1cb11c05c3f42a6fc8dde60983a"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/ARTIFACT_LINKS.failed-attempt-2.json",
+      "sha256": "29bfa08125e3f110a6e8fb3ee41a2d61a9cad36dd17e59f0235d76873fc9d69d"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/ARTIFACT_LINKS.json",
+      "sha256": "b164157da24c45166a287a6ef5563d860f89be0a0a581ec4b4b84b9e3df7ab0d"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/ATTEMPTS.md",
+      "sha256": "9d8cfd514bb94ef618492a0256d697f05b2c4892bb64893ebfe61ddc1ebfdc77"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/BASELINE.json",
+      "sha256": "296f8ac620f426408e527d08c4895489de88e88816113ed1897c8fe390444e9b"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/GRAPH_NODES.json",
+      "sha256": "4e2173a59ab7ee77418075e29e2bbd58b333d581b94e13881346af1ad71af628"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/P01_REVALIDATION.json",
+      "sha256": "7b15d52b531c7bfae6f3537c6ebe08f64c083bd03cfb04b3de6e7d29ceae9609"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/PREREQUISITE_DRIFT.json",
+      "sha256": "fb2eb7d4a8b1d0dcd0c3c0a28ac4531fbe7e774d3f70a68f3df52a8d751aec29"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/STATUS.md.before",
+      "sha256": "8105426328f9b8583aa3905501a427262c5dc75591b641512119d936e068dc1d"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/VALIDATION.json",
+      "sha256": "c4078fca5020c1c3b5dadf8f4102dab6a96885e1c09f06acd66bf01117a847e5"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/WORKFLOW_CHECK.json",
+      "sha256": "c45e183bda11654bb4e7ba429513ef2f9b704414d94f8f0821ee7911ba7ea326"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/capture.cjs",
+      "sha256": "f842b035536dbab0806441121ed91c091b201e420579d220a3b6407b0bf7cf86"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/create-fixture.cjs",
+      "sha256": "e7e7f8636173eb97152646b7a799a55c1627669f87e504f3364a6f3c46383464"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/finalize.cjs",
+      "sha256": "dcee95fb20e7a0965228ecc68f1e8a676c74689a6fa33042ec75080dd90b758d"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/run-tests.cjs",
+      "sha256": "dd7fb60e0584baabd4a26a8fad057e45385baf86d32095354489f0acb3e97d64"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344529667.execution.json",
+      "sha256": "d51d66e0d9ea4da00b6aa37456e0513486608f41a631a76e0311d5715c09db24"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344529667.log",
+      "sha256": "b055679c865449b036e901cca66ddd348721a979eae3007a237a7e666ffa247e"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344529667.results.json",
+      "sha256": "b2533b6ac4e1396fc7d4676dc735d0328ec3dcc91bb34e3f0e98b6ba7e8ffc70"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344674897.execution.json",
+      "sha256": "b2bea628055ee06317cbc3419400b6be43c25217cddd88e7e884c2ab454cd819"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344674897.log",
+      "sha256": "26ca6a11591b3dbed027727e26fcd7cb8b82713499e4976a63fc2b3adf8f9586"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344674897.results.json",
+      "sha256": "bcbcdf1e128cddbb4f8ff88e6472221d6d76de91e13a9fc518472323092e2493"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344817230.execution.json",
+      "sha256": "6b2aacf961d3b1226edbb271c322dded750a6fe9696f497c5b324e8e0efbb15b"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344817230.log",
+      "sha256": "0b6e0be4617f855a6f93eebd6e7f34377668b941080f7abf0507cf6ee504dfed"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344817230.results.json",
+      "sha256": "a650ca96f005965a703678d8467b1fd1e10cfd654a5d0e62ca5d28932eb53a75"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344882953.execution.json",
+      "sha256": "be53ad7abae38ccd29c900dfbdd0bda6320e5094666dc907ec2f3f6de8b52c8c"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344882953.log",
+      "sha256": "d28af2c198ea03610fdac43a290f29c31d9643b81c35abc1c777cce6e31b269d"
+    },
+    {
+      "path": "docs/retention/execution/P09/evidence/unit-1792344882953.results.json",
+      "sha256": "d4a7e880e4ac38d301961e1a168986feeffe02a0b2280d1699dbd0fd56f61fe6"
+    },
+    {
+      "path": "docs/retention/execution/P10/LIFECYCLE_POLICY_PROPOSAL.md",
+      "sha256": "00cf0dbf8ae676d3f64d05351f8a4c71233b29cc69efe97de3bd62d1fda22f3c"
+    },
+    {
+      "path": "docs/retention/execution/P10/PACKAGING_DECISIONS.md",
+      "sha256": "f78a879b107c7a8f01b5352dcf81e60f465442fd664aa3c7be41235d2b273138"
+    },
+    {
+      "path": "docs/retention/execution/P10/RESULT.md",
+      "sha256": "041efb2f876b558a07104345a834debf55a7d304dcbcbde57984e7151bd5859a"
+    },
+    {
+      "path": "docs/retention/execution/P10/SUPPORT_RUNBOOK_DRAFT.md",
+      "sha256": "05080852a8c65314b64348da73ed8a7ad5517d96d44fac6dd1ca6bd4741a27ce"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/ARTIFACT_LINKS.json",
+      "sha256": "582edf67e2f5f2aa88784ef52b0add6bf34d233938c41e8987e775adbf54ad12"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/BASELINE.json",
+      "sha256": "460959f9360636403cdccb2ccb73db2b00b0539c123bef03ce1e4f33c7ed3435"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/GRAPH_NODES.json",
+      "sha256": "33802c8f2f1ef658b8dc02cdeab9e87c4da96739835465efddb3650e9f341ab0"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/PREREQUISITES.json",
+      "sha256": "fe1eb217facae6b08263447f5c11dede14ee1a1fa1577234edde511b432d35c2"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/REVIEW_AND_COMMANDS.md",
+      "sha256": "a94c2d94c1a4b835041c35bed396a7d2cdbb7418abd8c5032eb9b0b4936775ff"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/SOURCE_REVIEW.json",
+      "sha256": "bb0e4d10b2cb5c74c481c20ed9ccdf9c67d7ec301de98ef3b727ad5c184e90bc"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/STATUS.md.before",
+      "sha256": "a589d1fca2ef9c15ba326c9b739a63749fb28f876790362a9a0f13284d3d3964"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/VALIDATION.json",
+      "sha256": "e0c6e931722b9db3e91aaf89bd404e3f12d0b81844ae44dfbde01ea018685802"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/capture.cjs",
+      "sha256": "4d808bc1b60fb64b1fa8b4c3c3c0bde5282c543580439892175695141a6a4a66"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/finalize.cjs",
+      "sha256": "c29ade838a25d6f559901f7c4632e8b6987a1a6f3680a16207fb6abef49e0002"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/jest.config.cjs",
+      "sha256": "8e6a4f50f3dc4664ff1ee477aec727ed5df6bec26cfea2af08cd84334e5f62d7"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/run-checks.cjs",
+      "sha256": "8d99094fc8b10618ae1c3686ac12d9b37291eb50bbe2accc39d8f68866419791"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/tests-1792351292853.execution.json",
+      "sha256": "b6d5ddce889d175e8513d155fbe344c4f4b12f4512716ea1a76cfee57222d753"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/tests-1792351292853.log",
+      "sha256": "fc5dc8afec3eafdea1ba9635deb90cfb523454eca235e220d362bcb116f8c55f"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/tests-1792351292853.results.json",
+      "sha256": "c2ec7a1d0455475ad7b67a7c55d3591094f454d1780e8d792894ee095ea8969c"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/workflow-1792351280537.execution.json",
+      "sha256": "8d7fb450d50188acc141cb6de0bd9374427b7926b33d2cef441ac9a4b8067201"
+    },
+    {
+      "path": "docs/retention/execution/P10/evidence/workflow-1792351280537.log",
+      "sha256": "82cb01fc96b80565316dc9ba5f54b58c00a080abf366a9146211a6cf7d2df313"
+    },
+    {
+      "path": "docs/retention/execution/P11/COUNTRY_SUPPORT_MATRIX.md",
+      "sha256": "9f49541956e4e695489ce453d5796f68f0246d58e44a3eb021c51ac1fd9a49c6"
+    },
+    {
+      "path": "docs/retention/execution/P11/EXPERT_REVIEW_PACKET.md",
+      "sha256": "aff4f28f7dcd64295bb478ab2db81bf29597e4bb787238d289415d2e142abbaf"
+    },
+    {
+      "path": "docs/retention/execution/P11/PROVIDER_PREREQUISITES.md",
+      "sha256": "e280fdae3168099ee07fd34bcbc33377c3460186a04a69bb59a2d5b82b42ea07"
+    },
+    {
+      "path": "docs/retention/execution/P11/RESULT.md",
+      "sha256": "2d1c6cd6b8eac2d185519c8c0f63cee847ff16193bb79d1645d4047abbe43e31"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/BASELINE.json",
+      "sha256": "18c8ed1ec357c0bd4cf5081557e37667d1cdf607dc63aa26b80341f45766982e"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/INITIAL_STATUS.md",
+      "sha256": "fee9746142694d2be416963bf12dda18eb17740af45af847e7413723e72b9333"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/PREREQUISITES.json",
+      "sha256": "d075e218c52f990d39481ad486cbdbcbf9def9236ddf36d49ccbcf8ee56d681d"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/PRIMARY_SOURCES.md",
+      "sha256": "11712f28620edd532873f70b8483d1be3b1302eabae646604b887232a9a519fb"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/REVIEW_AND_COMMANDS.md",
+      "sha256": "fcaf85edce7c9527490ede82eecf114c9d1fb6c344c9b9267d55dd9c4cdf6a48"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/SOURCE_REVIEW.json",
+      "sha256": "8593c28faaa288f7df6bbc878cb7371130a9e629691839025f4fe93d51bc788c"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/VALIDATION.json",
+      "sha256": "663db248fd1e3de53a261858c8015f27de1311b0e5c9aa99eb536d9ff609cea2"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/VALIDATION_ATTEMPT_1.json",
+      "sha256": "5a03f06ab8c9d82dbc44c181f2e0d19f319115549369b89ef158b45a0b49702f"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/WORKFLOW.json",
+      "sha256": "703151a640200a8e907088f9296ce0e260c255addd9c1b471912401b01283b5f"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/WORKFLOW.log",
+      "sha256": "82cb01fc96b80565316dc9ba5f54b58c00a080abf366a9146211a6cf7d2df313"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/capture.cjs",
+      "sha256": "d3847097dbef8c4df4cc3a825bc5a30e00ceda845bd9bb6e9a30eac81c5208c8"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/finalize.cjs",
+      "sha256": "c0d7619ff1a469e6c1a8eda326db32403a075c6e1aa6f8fbb905e3018949c792"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/source-review.cjs",
+      "sha256": "4dc5ce057c1b3ba4d95eee2888b7a38b9f3a1d4755f15560803fa2ac12040907"
+    },
+    {
+      "path": "docs/retention/execution/P11/evidence/workflow.cjs",
+      "sha256": "47c52a1f7e9beb98efc929fc4fb2d826666a44d0cf4cb745ef3da9a20347faf2"
+    },
+    {
+      "path": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "sha256": "914400499178046f65f375892daf49bd14a3b7e47c7be6776b36b674b0ddc999"
+    },
+    {
+      "path": "docs/retention/execution/P12/DAYS_31_60_EXECUTION_ORDER.md",
+      "sha256": "0685dbcd0755623b0138535c696db1c900004f3a0c6ab7edb508d83bd284cb4a"
+    },
+    {
+      "path": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "sha256": "c2596b157e1ed1bab70666e6c6d78ccc4a6330352bdbf31e8970eb50bf004b28"
+    },
+    {
+      "path": "docs/retention/execution/P12/RESULT.md",
+      "sha256": "55de2b7a93dedf821ac8af19ada4d0512ebe52897689724d7b0c206d8ebe86d4"
+    },
+    {
+      "path": "docs/retention/execution/STATUS.md",
+      "sha256": "1d58d06f7c4e0ed6a9b6d1238ace469f51a63bbae8b315b858e908f1eb16e824"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/00_START_HERE.md",
+      "sha256": "edf30d27a70cd783365d774e6d321cd391a2b91d0604bafb5efd3223f09f6fc3"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/01_BASELINE_AND_PILOT_SCOPE.md",
+      "sha256": "83aea6d1a333a0172fa6f6ff05b1082fae08b634ea244df1bab455da28721f28"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/02_OUTCOME_METRICS_FIRST_SLICE.md",
+      "sha256": "4061757dfb51bb2b9761637cf2fae94f26e5abd55735d4a1c19fbff959becaf6"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/03_OPENING_POSITION_FIXTURES.md",
+      "sha256": "d3b422707ec6b2054be713f2b72947afd505c5e4c3ae48d1163a9a8331819fe3"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/04_ACCESS_AND_RECOVERY_FOUNDATION.md",
+      "sha256": "319a47bf10fec1fcf334838098666ac4fd72c1ae214afab8f2cc26be0ec58c62"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/05_CHECKOUT_UNCERTAINTY_RECOVERY.md",
+      "sha256": "5bdd47a09f41f4e8eba135489fb3969c27b955c232253cd2c56023b9601411f6"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/06_OFFLINE_REPLAY_FIRST_SLICE.md",
+      "sha256": "2873390792e5f79b5ef7498305ea220086296327ce3ae8a7c817c28ddd671f6b"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/07_GUIDED_SETUP_FIRST_SLICE.md",
+      "sha256": "f0bcbac8501aec15367378301215b1f681fe90ef41f0563e043f766e8a448d51"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/08_CASHIER_MANAGER_USABILITY.md",
+      "sha256": "98f1041cbdc8d1971cb72da79d430428800087d1965f4f1179198c57db8c83b3"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/09_PORTABILITY_CONTRACT.md",
+      "sha256": "4ca5ac32b06f76fcdebcab23a983a7d32ef9f6a6eea1b70f30284bed37685989"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/10_COMMERCIAL_LIFECYCLE_AND_SUPPORT.md",
+      "sha256": "f30726e05aee67c922e7dc54f63e014a3b92cb6c3da5a156b406a4e584316ade"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/11_COUNTRY_PROVIDER_PREREQUISITES.md",
+      "sha256": "4fb2cada2504acc5a6cdae26f0cca42efc0c1f236b7968d70586b66eef09de19"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/12_DAY_30_CHECKPOINT.md",
+      "sha256": "c28d2df2f0bc376417e5ce99800038fea01f34e164f61a77c03cd999f5cc7bba"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/13_COMPLETE_RECONCILED_CUTOVER.md",
+      "sha256": "6f18a347fbc5ceb87e405629a80ff56e928e0e9772b9572c06f5cb44692a88ec"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/14_COMPLETE_DAILY_OPERATING_LOOP.md",
+      "sha256": "b69afa53d627bdb73470c5251db7267dd920c868e7b6cbe5a47ac6cfc22b4b1a"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/15_ACCOUNTANT_CLOSE_JOURNEY.md",
+      "sha256": "0b9e935eb7a42a482b976c0aa08e4441fd2f9cf37c49e8fb1f010fbd593b664b"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/16_AUTHORIZED_ARCHIVE_IMPLEMENTATION.md",
+      "sha256": "649a76da2ef41651f6b1851bc835bde5e2438fcd68af644b7b3339deb3e03500"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/17_RECOVERY_AND_SERVICE_READINESS.md",
+      "sha256": "632d69acd72a4fd92a0775c42560fa50f536308151a941dbf043dae0c0c61beb"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/18_PILOT_ENTRY_GATE.md",
+      "sha256": "8cad308a216990774128396343eb7a750ce2ee2d8a0dbfa0542977c6faa53977"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/19_PILOT_OBSERVATION_AND_PAID_GATE.md",
+      "sha256": "3e3730d9838a4d9df21f474fd6ae99eafaf089e5f67e9d675dee438e8de139e1"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/20_ONE_PROVIDER_INTEGRATION.md",
+      "sha256": "f87a5df6b0ad26fc3094a64ea2d523d4188827a6c52b2fb1aa75ec7ba361768e"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/21_REVIEWED_COUNTRY_CAPABILITY.md",
+      "sha256": "f81096fcfa4f3ce197c02fdf335f42ad4ad0272720e6faa3a0d411940e841c4c"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/22_REPEATED_TEAM_VALUE.md",
+      "sha256": "d6f9f2300f42a4021401036403ecac025b635560674a6c100bce45cf8eac7bdf"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/23_WIDER_ROLLOUT_GATE.md",
+      "sha256": "abbd20aa2426df372f19a253b73d52b762c0c16267bc2975f2a796d6abe89c4c"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/24_CONDITIONAL_EXPANSION.md",
+      "sha256": "57fc853c3a9c62052a961d87e86887d55ad0782a8b8dcc3557f995dad727128b"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/COMMON_EXECUTION_CONTRACT.md",
+      "sha256": "c5967e5f35b068792336d1604f3829b8ea854bdd9233897167c70efb330f24df"
+    },
+    {
+      "path": "docs/retention/implementation-prompts/VERIFICATION_GUIDE.md",
+      "sha256": "e4fe946d23c1199a58e21b8a85dedce9d7081f74b758e95699bf1acdae07fa3d"
+    },
+    {
+      "path": "graphify-out/POST_SLICE_438_GRAPH_REFRESH_2026-08-09.md",
+      "sha256": "3ffd642637e6e4564e2bff621ddc60f70d0146707ebe78424f7ac3d7e87de6df"
+    },
+    {
+      "path": "graphify-out/graph.json",
+      "sha256": "0194632742d6adfc606bcb099830bddc06460aeb413da42b951898bb57832cab"
+    },
+    {
+      "path": "graphify-out/graph_actions.json",
+      "sha256": "01aa0155ee0b6889fda9be251d9bd73c82d6bd1d4e143114eee8b3bdb3a2c032"
+    },
+    {
+      "path": "graphify-out/manifest.json",
+      "sha256": "e058d368ba1ee1c90eeec5341f8791d5f1d3adf733f3b0c01487aa7e2dc677f4"
+    },
+    {
+      "path": "graphify-out/ordered-code-graph.json",
+      "sha256": "82ea4cd4fdcf9b011616a7dddf1bf5d236dd9fa14e92e551a03a19ac33f540a3"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/checkout-lifecycle-races.test.tsx",
+      "sha256": "8323765ce224cc5365ae82dd738106cbff54fda13f10c73a7ba4c224019681dc"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/drawer-read-scope.test.tsx",
+      "sha256": "056c9d8c9599f6f581d320e69325c649764b6de1f986318e6e081ef3b8123efd"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/offline-dashboard-scope.test.ts",
+      "sha256": "dc96e66b70c6706a0cb12153c14bfbf7c08ab2fb413fa30cefc29a24e2e05f1d"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/offline-flush-recovery.test.ts",
+      "sha256": "8c78ad4024413ef18093e7affac1bf1441af1a3af7656d924740f736cff1430a"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/pos-read-scope.test.tsx",
+      "sha256": "4dd9b001abc1f8cbd5cc79a6d3650c5565cee1edd370be3d67dcc72c5d346861"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/terminal-errors.test.ts",
+      "sha256": "c231a686224fabecea95596372e448d2d0c6b7c0e6b3948ccb85dcfa82248b6f"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/terminal-read-scope.test.tsx",
+      "sha256": "b7d1f36c945b733f33b0c495334860afb44e7b98541b162409ca84ac164fe3e0"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/usePosOperations-receipts.test.tsx",
+      "sha256": "fbcf82358b0f858105c22b4a1a801b4fa7ba19f8a80991df997de48ee3f6e2a3"
+    },
+    {
+      "path": "hooks/posHooks/useDrawerDashboard.ts",
+      "sha256": "67d7c33b20b084eeca250615070512045a325779ebedc507f16d22af191369f8"
+    },
+    {
+      "path": "hooks/posHooks/useOfflineSync.ts",
+      "sha256": "e7a2f808fecd109a96ac83ebf92cd079f3e75c3cb4363f110f59a31a145e7ae7"
+    },
+    {
+      "path": "hooks/posHooks/usePOSCheckoutLifecycle.ts",
+      "sha256": "ce98b5498227223a943362427305de79060ff0a2fce0f8703c611b340e4ece6d"
+    },
+    {
+      "path": "hooks/posHooks/usePOSReadQuery.ts",
+      "sha256": "a03693bc01e13d87b4aab987f6d04e97ed5aa420189287e4d5e37aaab10d3b75"
+    },
+    {
+      "path": "hooks/posHooks/usePosOperations.ts",
+      "sha256": "17a42f3d7056e6bbfae569e907ef96dceb54e1a36694d759901b3db7341fea67"
+    },
+    {
+      "path": "hooks/posHooks/useTerminalManagement.ts",
+      "sha256": "539a4b7a9a34fc7f32d12bbc9bc357e1d299dd1d73afd2e16b7f6763ba4b7a76"
+    },
+    {
+      "path": "innovation/DAILY_DIGEST_ROUTE_STATE_RERUN_NOTE_2026-06-26.md",
+      "sha256": "c7a929b568fe28644c075c2473fd51f0bec388fb5045f26315843147b66176f6"
+    },
+    {
+      "path": "innovation/FINANCE_COMMAND_SURFACES_SMOKE_RERUN_NOTE_2026-06-26.md",
+      "sha256": "d24dcbada76b6ac777a0abd341720a7f4a019cb11a5066088e5deea5e70e0ddf"
+    },
+    {
+      "path": "jest.ecc-pilots.config.cjs",
+      "sha256": "c649e25dd823e3e1b76f2747935cf71efaa3c721d4a93aed6a794597bd7394bb"
+    },
+    {
+      "path": "jest.opening-position-fixtures.config.cjs",
+      "sha256": "2039a6909ccdc0666b648e7c3e49b9048448842f37190df9fac137954c9fb4a2"
+    },
+    {
+      "path": "jest.payroll-trust-spine.config.cjs",
+      "sha256": "da43ee692dcd1295ccac8255daa9a408090a9335628f4ab7a74d9d0dea8acb1b"
+    },
+    {
+      "path": "jest.retention-access.config.cjs",
+      "sha256": "5569b9c85910b976dab19758a6fdbbf4fbf384066c5f94d8b3f19f0aac135922"
+    },
+    {
+      "path": "jest.retention-archive.config.cjs",
+      "sha256": "5cd82f3d77b60d07a039e39349554ba68a5deb50e6580b962208e33b4b1ea4c5"
+    },
+    {
+      "path": "jest.retention-checkout.config.cjs",
+      "sha256": "48e6e005a13b2f0230fde8443d3f0ff0e072ca90f2cf887859789eced5becdd9"
+    },
+    {
+      "path": "jest.retention-offline.config.cjs",
+      "sha256": "5518ccd95627ea4a552f80741e78aa493c8fc28d38458db6acde8fdd8969e8f0"
+    },
+    {
+      "path": "jest.retention-outcomes.config.cjs",
+      "sha256": "fdf2d36076dfc1c19bb36803d534664718375916c986625a25c8ae0d0f07326c"
+    },
+    {
+      "path": "jest.setup.ts",
+      "sha256": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494"
+    },
+    {
+      "path": "lib/auth.ts",
+      "sha256": "e8966d6db533eccdae19ba44298b3c58d36884b4a0a08b4fd4d17fbba085451b"
+    },
+    {
+      "path": "lib/error-handling/monitoring.ts",
+      "sha256": "030d5781c7ba847042579699ff906d041d186d34f69d7fabd800ca1a8833c396"
+    },
+    {
+      "path": "lib/pos/__tests__/offline-local-queue.test.ts",
+      "sha256": "8e5ee8f5d4c71f5455b5eedd6bcb3cd03492329ea0ee1e43c204c63d602fc897"
+    },
+    {
+      "path": "lib/pos/__tests__/pending-sale.test.ts",
+      "sha256": "81ef37325eacd1b37086291da81ce598b612093f90eabe69958529bfb03429b7"
+    },
+    {
+      "path": "lib/pos/offline-local-queue.ts",
+      "sha256": "3c162bc149b144c31000fc382bd9bbd657a236ccdd63f4001fc34b3d90b965db"
+    },
+    {
+      "path": "lib/pos/pending-sale.ts",
+      "sha256": "ebc667ca7fef0297c633734076d8d44666d7420d0a64f22709500ea5e4cc2dfd"
+    },
+    {
+      "path": "lib/security/__tests__/audit-log-fallback.test.ts",
+      "sha256": "c3b3809b09f52981d3bee04caf901d1d947c1ddef0024ca7b6c28d8dce59a406"
+    },
+    {
+      "path": "lib/security/__tests__/auth-credentials.test.ts",
+      "sha256": "bf59f22134566105844450fd5dfb8cbef7226fe32cae8c5a29385dda8cdbd623"
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "sha256": "4b402f487038b9c7c1d4b86b56e8f271e1303405a2a10ceb14bed23f0ab0ae09"
+    },
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "sha256": "2f0a15a52d33434bede0db6bbfa0d218effbead85b38feeb07f3511d6275efc2"
+    },
+    {
+      "path": "lib/security/__tests__/branch-daily-close-review-permission.test.ts",
+      "sha256": "2892e3e6eaf0dc9b2fcf6889d1503f753ed08593a00d42fd2eebaaa450986418"
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "sha256": "aae2f1a20add9453671f8c08c25eca1215dcb7e790a46b784d3d35cd01b1949a"
+    },
+    {
+      "path": "lib/security/__tests__/customer-settlement-security.test.ts",
+      "sha256": "d3a92931ce60544902a1fb38051600684c65be8bbd76144527e41ca8a43b55bd"
+    },
+    {
+      "path": "lib/security/__tests__/dashboard-session-recovery.test.ts",
+      "sha256": "931602064919fca373eee59a661b411e353b180985c0c2ef037c775d46586e79"
+    },
+    {
+      "path": "lib/security/__tests__/finance-rbac-permissions.test.ts",
+      "sha256": "93878e8851415ef7f6b62eae9ddb05798a8e53e2a9c1435951bb17133fed743b"
+    },
+    {
+      "path": "lib/security/__tests__/middleware-routing.test.ts",
+      "sha256": "55f0e680b08ca9defac179b626eb94305bdea376aba4477bf1c3a0f7b0d1a1f7"
+    },
+    {
+      "path": "lib/security/__tests__/public-request-context.test.ts",
+      "sha256": "9471955d612783be8e4649dfdf1aa0d5737a923008760312e7f69674b7936817"
+    },
+    {
+      "path": "lib/security/__tests__/rbac-permissions.test.ts",
+      "sha256": "b4f8e135c81be91ffd0dce08259553df9cbcdb7b66e07554a8094d071110bf01"
+    },
+    {
+      "path": "lib/security/__tests__/rbac.test.ts",
+      "sha256": "2f2d43d7556e2846d5df238c952179c313cf694705625b2c9a0088da1d5c2931"
+    },
+    {
+      "path": "lib/security/__tests__/server-authz.test.ts",
+      "sha256": "cf49573b50f7550578c9bd02e685f30e80cae78bb7bbab912bf6df6c138a3a58"
+    },
+    {
+      "path": "lib/security/__tests__/trusted-origins.test.ts",
+      "sha256": "97b6099aa61307b0b00591f512464e51a1888e8be317756a857ee1beb90fc6fc"
+    },
+    {
+      "path": "lib/security/audit-log.ts",
+      "sha256": "b3cb587d4687f4a5114c07d8c238bc8ec916a2dab8f76c0f6b2b0995db16711d"
+    },
+    {
+      "path": "lib/security/auth-credentials.ts",
+      "sha256": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493"
+    },
+    {
+      "path": "lib/security/csp-pilot.ts",
+      "sha256": "ecda804a316a7a96cde98927361afd8f8903e4cdb499ffc0a0bb9508bee2b292"
+    },
+    {
+      "path": "lib/security/dashboard-session-recovery.ts",
+      "sha256": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a"
+    },
+    {
+      "path": "lib/security/hibp.ts",
+      "sha256": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46"
+    },
+    {
+      "path": "lib/security/password-utils.ts",
+      "sha256": "bf6f4b60c23f6251f42e0d434d9bdf07086b25cd8df1445164f2c91aca293295"
+    },
+    {
+      "path": "lib/security/public-request-context.ts",
+      "sha256": "abccb5b7e55e2bb8cc3dd4748aa0fa1a1ea236d289ccb075ff668386e0ddf0b3"
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "sha256": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "sha256": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376"
+    },
+    {
+      "path": "lib/security/self-sign-out-copy.ts",
+      "sha256": "faa60df473b042556226493747334a2d909dcb0fef52ae07aa54a27605cf1be8"
+    },
+    {
+      "path": "lib/security/self-sign-out-plugin.ts",
+      "sha256": "503233fa378ea7d1e8897e0905617ce4dc6cfb011867ba7d73d4d0a0c7fd9ca3"
+    },
+    {
+      "path": "lib/security/server-authz.ts",
+      "sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5"
+    },
+    {
+      "path": "lib/security/traffic-limiter.ts",
+      "sha256": "30755f70a016192784af76aa6c03597d2184e79f42e2d842fb8d4b412ff7914c"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b"
+    },
+    {
+      "path": "middleware.ts",
+      "sha256": "636a809512e2544e02ed9cb0772d762b006536d7f858ba23059c6eb3f1c17b15"
+    },
+    {
+      "path": "next.config.mjs",
+      "sha256": "1769a31215594f5c4b66ad6fc7407ab2771812ff90157385f5c9a5b47b3f9a4e"
+    },
+    {
+      "path": "node_modules/.prisma/client/index.d.ts",
+      "sha256": "c5dd4f4f511f5e031d1ce0055f38d1e636bfec036f72adcaf82d9899319dc2df"
+    },
+    {
+      "path": "node_modules/.prisma/client/schema.prisma",
+      "sha256": "2d2886740ad5a4aaf5e31cb599f876f3e0eb862a04b00b9f48ee2c286cc0e936"
+    },
+    {
+      "path": "node_modules/jest/package.json",
+      "sha256": "90b2d495b4fdef80faefeeb26e275478bb3c1eeac15d587bbffb192ca3a4fa52"
+    },
+    {
+      "path": "node_modules/next/package.json",
+      "sha256": "547305a02acf9b1700e8210e511deefe616d415f3fc06c9f7551187430b7ee54"
+    },
+    {
+      "path": "node_modules/typescript/package.json",
+      "sha256": "ebb0ce176c85ac13ce82f5be7e6f15114732ba0f064ccc893fd9051426d35d3a"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "package.json",
+      "sha256": "21a30b394c82bb245487b96eec11710abeeafdeef2ce805ac4d54897f8c2755b"
+    },
+    {
+      "path": "prisma/db.ts",
+      "sha256": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "cfb3104d2af2fd80f4e7aeb2ea3df1e35a40070962341f2b859b4640d1336cd2"
+    },
+    {
+      "path": "scripts/__tests__/landing-navigation-localization.test.js",
+      "sha256": "37e9312e57322d4ae00ebe9b1e250221433077643b0e844809fa3e546a7874d8"
+    },
+    {
+      "path": "scripts/__tests__/landing-refinement-content.test.js",
+      "sha256": "5234cc9d0a28600a4cc0718d644f777df5f47e8697f7b075d1c407fcf6cf6862"
+    },
+    {
+      "path": "scripts/dev-app-safe.js",
+      "sha256": "b0a1fe5fc5ff3923c7430ae2813e1df816b13725176754d78b208b723535f52f"
+    },
+    {
+      "path": "scripts/inventory-history-export-worker.ts",
+      "sha256": "2c70e00ede6aea86a1152c7c691afe2f09c74b51e4c8b529dc30157bd4187af2"
+    },
+    {
+      "path": "scripts/prisma-local-fresh-bootstrap.js",
+      "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+    },
+    {
+      "path": "scripts/prisma-local-restore-rehearsal.js",
+      "sha256": "946145c8d0c541391fa00a2346ce9183663c911f2bf1ce7075da780fcfd8725c"
+    },
+    {
+      "path": "scripts/prisma-migration-history-health-check.js",
+      "sha256": "3649474ae9fe17200f61caff5c286638300928b418a88d7e58da5ed476d2caf1"
+    },
+    {
+      "path": "scripts/verify-agent-workflow-contract.js",
+      "sha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "a73256a2e81dcba710d45cff43e811c1b256043edf2c32391c9525543968fb97"
+    },
+    {
+      "path": "services/accounting/__tests__/accountant-access-retention-boundary.test.ts",
+      "sha256": "a75717be195d45f45d216ee645c20304bcf5da74d36cb94a220d098580986ef2"
+    },
+    {
+      "path": "services/accounting/__tests__/accountant-access.service.test.ts",
+      "sha256": "43565d555b334499168ebdb9c7597663191fae13bdce7a79b9e13867ba8c42fb"
+    },
+    {
+      "path": "services/accounting/__tests__/close-evidence-acceptance-authority.service.test.ts",
+      "sha256": "62ace12eaf6796856b08dce7d3ae7756f8ae874b2451c77210d7fe0a433e683a"
+    },
+    {
+      "path": "services/accounting/__tests__/data-trust.service.test.ts",
+      "sha256": "798e22d773c6cb6096f41a6689b106bed36727cbaa013297288a289bf8d44ceb"
+    },
+    {
+      "path": "services/accounting/accountant-access.schemas.ts",
+      "sha256": "86f52029c496d5304e16ce383e5326ae7ee369799935c18a2b8106b4a8ae25f7"
+    },
+    {
+      "path": "services/accounting/accountant-access.service.ts",
+      "sha256": "e1876cad16017a4858b8b02918e046bbb3faf2ea073c4f85d3a6157886219804"
+    },
+    {
+      "path": "services/accounting/accountant-work-desk.service.ts",
+      "sha256": "38a75a86e8a8d82d1768e9a074bf50b155a7ee305abe76982960ca5a2fb5c1fd"
+    },
+    {
+      "path": "services/accounting/accounting-settings.service.ts",
+      "sha256": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04"
+    },
+    {
+      "path": "services/accounting/close-assessment-order.service.ts",
+      "sha256": "2a9b7b4344de628eba9771cc579a8cd87ac3c9bf4311e95cdc00c9f2e0789103"
+    },
+    {
+      "path": "services/accounting/close-assurance-current-proof.ts",
+      "sha256": "ec7537cc3672cebabcdc87ba0d52565b84b8fecf304dd0f1442991f99ef6450e"
+    },
+    {
+      "path": "services/accounting/close-assurance-pack.service.ts",
+      "sha256": "c48c938a28e99dda1f0a0f2293d2496cf7109525bd2479678270f8908210d0ae"
+    },
+    {
+      "path": "services/accounting/close-assurance.service.ts",
+      "sha256": "b87cc890e0961ae16d0b6b5fbb21f16de8ada9c6539b6d0f8c8e667d7fc9d64d"
+    },
+    {
+      "path": "services/accounting/close-evidence-acceptance-authority.service.ts",
+      "sha256": "ad6a148a2200e0dd35fbd7e39b69e89b20a2ada1163b75b1e0634b7ac4da8f7f"
+    },
+    {
+      "path": "services/accounting/customer-ledger.service.ts",
+      "sha256": "6dacfd10afa40ff3fa603d49fb50476b9b83d68771b6d6090ad862343674ece6"
+    },
+    {
+      "path": "services/accounting/customer-receivable-backfill.service.ts",
+      "sha256": "495cbcff9247cd367f88572fcd488cbf6b516db5c0bf3d0d173121f1305868d8"
+    },
+    {
+      "path": "services/accounting/customer-receivable-document.service.ts",
+      "sha256": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101"
+    },
+    {
+      "path": "services/accounting/data-trust.service.ts",
+      "sha256": "6458d1501ba1e752e30a705bb1f6234c6a8b2ff5e7cbf0aa7113f6a123b86010"
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e"
+    },
+    {
+      "path": "services/accounting/missing-close-evidence-accountant-review-queue.service.ts",
+      "sha256": "102d4dbc595b2abd0357df8e0fa086b0adb932a9bfc85b7d5f6dbe8aff80e1e2"
+    },
+    {
+      "path": "services/accounting/posting.service.ts",
+      "sha256": "dffa355fddfbda64c724bbdae17ba97b36f0770f7a0e38d46ef68eb363a94961"
+    },
+    {
+      "path": "services/analytics/__tests__/analytical-context-contracts.test.ts",
+      "sha256": "853c0ca4381e1e8b940a1871811857141eed5d6247b8907c2cdc203067d9afe6"
+    },
+    {
+      "path": "services/analytics/__tests__/business-pulse-links.test.ts",
+      "sha256": "24c5acdaed05c3bd5c2e915ee9a09da990e737f754037d38b6763cda7029735c"
+    },
+    {
+      "path": "services/analytics/__tests__/business-pulse-snapshot.test.ts",
+      "sha256": "61ae02ab9da5d8fc5a00ef11477e8f04c9f1219d188070b4be1a5a2ee7d8c586"
+    },
+    {
+      "path": "services/analytics/__tests__/business-pulse.service.test.ts",
+      "sha256": "6014a5b742f390f532bca0b720f25a32a005cae94f4d5bfd842d17c872202df1"
+    },
+    {
+      "path": "services/analytics/__tests__/cash-report-evidence.test.ts",
+      "sha256": "6d8ceff167bb4bbd9ed573d070154ff7558b309dc3217ec30bda836cb4eb7ea9"
+    },
+    {
+      "path": "services/analytics/__tests__/completed-sales-evidence.test.ts",
+      "sha256": "1e6bd8f1a833421574c9540e4efa0abfb501149a66a94451c915157bfcc7c846"
+    },
+    {
+      "path": "services/analytics/__tests__/daily-sales-read.test.ts",
+      "sha256": "38604bbf9390fbe7b43905675d7cd80f1a68ade7d8daeb5bcda8781e333159fe"
+    },
+    {
+      "path": "services/analytics/__tests__/financial-analytics.service.test.ts",
+      "sha256": "86a9f8dd239469a7feb36cd0511a13db83023fd71a8b37ebd5697bcad8f54ba5"
+    },
+    {
+      "path": "services/analytics/__tests__/financial-reports.service.test.ts",
+      "sha256": "d8d81391846d48a1c93d23f2dc80f674d01b0550cef3b73db5ffda59a47f50ab"
+    },
+    {
+      "path": "services/analytics/__tests__/legacy-sales-analytics.test.ts",
+      "sha256": "9dba79fe84d054b1f67de8f67accbb0c368733a6a27bd4f59141da629bb3182a"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-cohorts.test.ts",
+      "sha256": "5640dd098dcc7cc2fed9391a5af94b09058466967fa2e1771504fe7975e8386e"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-fixtures.ts",
+      "sha256": "a775d9ed2bf691e1b3f4cff9208fd2f49ab30915ce7eea89c236d0756ddbd2b5"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-outcomes.postgres.test.ts",
+      "sha256": "4381bf5a740d7a77feecfaf50650a8c1e40f92b93f4425e388f3074727c235ca"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-outcomes.service.test.ts",
+      "sha256": "1b2809064438e34a5c585819972fd442047faae9aa173ab60545589bb71a0ab1"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-outcomes.test.ts",
+      "sha256": "90edb15bfc81a2facbdd86b50fd6aacb6109bdcbd197b37c08c368bd10c8158c"
+    },
+    {
+      "path": "services/analytics/__tests__/sales-insights.test.ts",
+      "sha256": "a048ac442b74fce93b3697a56ff9596558681bd0494f3d2ecbec9f25ff1918a5"
+    },
+    {
+      "path": "services/analytics/__tests__/sales-performance.test.ts",
+      "sha256": "a728f20864370a33caa77793d421975347f196112a1e22f299b388036f428196"
+    },
+    {
+      "path": "services/analytics/__tests__/sales-phase-six.test.ts",
+      "sha256": "0d7b9e8940d8855097dde4a8b694adae2f2352db037a5a23670b7a87174cc4b1"
+    },
+    {
+      "path": "services/analytics/analytical-context-contracts.ts",
+      "sha256": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab"
+    },
+    {
+      "path": "services/analytics/business-pulse-contracts.ts",
+      "sha256": "36276c62ab9777270dcdeab50b4485f25fe6e5322fe29738e4b4613dd60c118b"
+    },
+    {
+      "path": "services/analytics/business-pulse-links.ts",
+      "sha256": "fd936beac5e9edea0029040ce372715f3246257f6203de94d36ac564d7a8df80"
+    },
+    {
+      "path": "services/analytics/business-pulse-snapshot.ts",
+      "sha256": "3087935d81289f3cff8fc2ce51615a423ffc1e3bc49dfb8a95e53346420be14e"
+    },
+    {
+      "path": "services/analytics/cash-report-evidence.ts",
+      "sha256": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342"
+    },
+    {
+      "path": "services/analytics/completed-sales-evidence.ts",
+      "sha256": "4770744b2bba61824f061490baf290bb1a05d966f98f25dbf942928cc8914b7d"
+    },
+    {
+      "path": "services/analytics/daily-sales-period.ts",
+      "sha256": "2087ca2c3068ac96c02539f5d822a1575d1555b5b5c191fb7fa6106d43241e3a"
+    },
+    {
+      "path": "services/analytics/daily-sales-read.service.ts",
+      "sha256": "c87a8cd9e783a6faf043fda56447004a10560d3ce8b8896003fd7adecefb7a56"
+    },
+    {
+      "path": "services/analytics/financial-analytics.service.ts",
+      "sha256": "add466f9e4e2fef95bff1b6b6674ece0b699143c7393d8f7a378973132512822"
+    },
+    {
+      "path": "services/analytics/financial-order-activity.service.ts",
+      "sha256": "5748a3879309d7ac31631dda7d49903860cb9ae61274ff9650f67a38c4fee9c2"
+    },
+    {
+      "path": "services/analytics/financial-reports.service.ts",
+      "sha256": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7"
+    },
+    {
+      "path": "services/analytics/retention-cohorts.ts",
+      "sha256": "ee7e00f02132f7e2edb4b6866701c4de78a48b0cd702b1b22f948bd69d0fe4f6"
+    },
+    {
+      "path": "services/analytics/retention-outcomes.service.ts",
+      "sha256": "21935e0365d1616ddeb756274ecc142f00be6a4aea8ad42fd414fb534f30470e"
+    },
+    {
+      "path": "services/analytics/retention-outcomes.ts",
+      "sha256": "1be4474706826281f519cde87e6e79d50d96fe1f0f918b93ed0c137d62c20479"
+    },
+    {
+      "path": "services/analytics/sales-analytics.service.ts",
+      "sha256": "b34a58a3dd271186346b105409ba213a4c4750e0718ac9c8f1195e144731aba0"
+    },
+    {
+      "path": "services/analytics/sales-cash-attention.service.ts",
+      "sha256": "74187865f9d4becd64f51e7064e401a92692c39878d73e766f0b8b2291ea934b"
+    },
+    {
+      "path": "services/analytics/sales-collections.service.ts",
+      "sha256": "163495f2f45ca11bc4de21afcaadbc7ccf6f60f673f8f6adcecae53e24354021"
+    },
+    {
+      "path": "services/analytics/sales-insights-scope.ts",
+      "sha256": "984b7ac70c592cbff3a27c636de2a71bb1a6fdb6dd12acb1f6de5561923e0963"
+    },
+    {
+      "path": "services/analytics/sales-performance-export.service.ts",
+      "sha256": "73d1a02001ed6214ed472eeda5791ece791194b319109ac34783393218e8b336"
+    },
+    {
+      "path": "services/analytics/sales-performance-period.ts",
+      "sha256": "3d1cc3b2eaf43f4a93656783aa6d4313fce0c14b2c8af06fefba8ff64dda617b"
+    },
+    {
+      "path": "services/analytics/sales-performance.service.ts",
+      "sha256": "dae6e52756c7a19fa59a01a2d4a4bf2b67c809022dda15ad8f2fa40f492b7842"
+    },
+    {
+      "path": "services/analytics/sales-products.service.ts",
+      "sha256": "659d393d1ca7721bcfb5b9481476ee6cbd7dd048c10d5fb7d261a44ced48fb31"
+    },
+    {
+      "path": "services/assurance/assurance-incident.service.ts",
+      "sha256": "1017f7f1ddeaa218818c6aaad8fcf050e4b073de44eca6a49aaafc4b2392c0b0"
+    },
+    {
+      "path": "services/daily-habit/daily-habit-digest.service.ts",
+      "sha256": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5"
+    },
+    {
+      "path": "services/events/business-event.schemas.ts",
+      "sha256": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee"
+    },
+    {
+      "path": "services/events/business-event.service.ts",
+      "sha256": "d34b85567d46c872ae555720c5286c3dbcf641cf166d992738bd3fa104e87cb6"
+    },
+    {
+      "path": "services/graphify-out/graph.json",
+      "sha256": "d1c7d474ca54c6ae5d993bbf86369b551848ef87fdb989f3473ad00490c86774"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-history-background-export.service.test.ts",
+      "sha256": "0d04ee8ff06160b47cce7ba0fcd84e4cb1bad5859f0abfc2c93121a860190bc1"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+      "sha256": "52b5eaa255ba2a647678b9120012618b26a8d178c3e322dc37130a5e0e73ebf9"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment.service.ts",
+      "sha256": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7"
+    },
+    {
+      "path": "services/inventory/inventory-history-background-export.service.ts",
+      "sha256": "6ea0ee89d286d7f6952c0e09852280260ffc54f27e210c2083c478fadab96a6a"
+    },
+    {
+      "path": "services/inventory/inventory-history-export-artifact-store.ts",
+      "sha256": "6ad35bb24f1ebf81f1e03919399fb83f0ea2930da69461d76e775925dee5b35b"
+    },
+    {
+      "path": "services/inventory/inventory-reconciliation.service.ts",
+      "sha256": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef"
+    },
+    {
+      "path": "services/inventory/inventory-stock-event.service.ts",
+      "sha256": "98b1acd43cd596edd4be633d1edff6847dc7a4337ddaf03e93409d8da4b1f668"
+    },
+    {
+      "path": "services/item/item.service.ts",
+      "sha256": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62"
+    },
+    {
+      "path": "services/media/picture.service.ts",
+      "sha256": "f703217d3f3b0f7671788b496388914466b63618b8247adc461bac1c1439c938"
+    },
+    {
+      "path": "services/modules/__tests__/module-access-batch.service.test.ts",
+      "sha256": "996c1aed93e61e6c45910e847ef8b139f58ee11a0a54f090d31c35e761604fb4"
+    },
+    {
+      "path": "services/modules/__tests__/module-access-regressions.test.ts",
+      "sha256": "fc6885eec3004794fd89859735f708f43c2c79667121c80b4c87f1b0aca7422b"
+    },
+    {
+      "path": "services/modules/__tests__/module-admission.service.test.ts",
+      "sha256": "182bbc671ba489bff1b732db5570ca2abaf3800a29c8912a31c698f099696f72"
+    },
+    {
+      "path": "services/modules/__tests__/module-composition.service.test.ts",
+      "sha256": "015aee6c71be00dc13caa8b2193c9ed4d753a802ddfc5b679ab87db43ee31850"
+    },
+    {
+      "path": "services/modules/__tests__/module-entitlement.service.test.ts",
+      "sha256": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc"
+    },
+    {
+      "path": "services/modules/__tests__/module-inventory-continuation.service.test.ts",
+      "sha256": "8d674e95b459d9422bccb9e0183825f56569a5e1b7dcd7cbbef2ff3a9fb467bd"
+    },
+    {
+      "path": "services/modules/__tests__/module-lifecycle-readiness.service.test.ts",
+      "sha256": "77caaf6191a54a4b861387871c62d1a2c0d1705650b2aac720f96c8506967999"
+    },
+    {
+      "path": "services/modules/__tests__/module-navigation.test.ts",
+      "sha256": "0b354d84a14420c1fe67b7ed9eec394260eb89329445c96fffe871a53d50991a"
+    },
+    {
+      "path": "services/modules/__tests__/module-reconciliation-obligations.postgres.test.ts",
+      "sha256": "bb803f14e56cf30686bc8e7f3b3ed00a2413120a5bc1ca775c8b68abb129060d"
+    },
+    {
+      "path": "services/modules/__tests__/module-reconciliation-obligations.service.test.ts",
+      "sha256": "1d9862e6dca138a3b326014acc2e234227a11535ec7611db86ee010685817a9a"
+    },
+    {
+      "path": "services/modules/__tests__/module-retention-access.test.ts",
+      "sha256": "3fd268af2422a6a5951b1b71d3a685b637de9222fc4bcb542bc4b96720de1e16"
+    },
+    {
+      "path": "services/modules/__tests__/module-stop-policy.service.test.ts",
+      "sha256": "e39cb5e35792ba35dea756c227bfd1d9b0da4c708bc411ab23eccea6dd527901"
+    },
+    {
+      "path": "services/modules/__tests__/module-transport.integration.test.ts",
+      "sha256": "b429064df5453dac57bc67178afe7a5cb3a4c05fa77eb05b9040c3b1a6fe661d"
+    },
+    {
+      "path": "services/modules/module-access-batch.service.ts",
+      "sha256": "c37cdabc0aa9acab22e7af67749aae60b65300ca6a53077c1520af4a1efbcc6c"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+    },
+    {
+      "path": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "291bd003d161570251a54772fe38ca2e6cca9801fa1126461771caf56aaadd18"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "123c912ff168d2e6f9e47ae7010b192fdb6397b30d1e747bdd35448f8eecffdf"
+    },
+    {
+      "path": "services/modules/module-control-contracts.ts",
+      "sha256": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+    },
+    {
+      "path": "services/modules/module-inventory-continuation.service.ts",
+      "sha256": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820"
+    },
+    {
+      "path": "services/modules/module-lifecycle-readiness.service.ts",
+      "sha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01"
+    },
+    {
+      "path": "services/modules/module-lifecycle.service.ts",
+      "sha256": "3a5aeec79fa21f6ba15e122f74f139c6040d05deaabf684855450d5ebb2cd19b"
+    },
+    {
+      "path": "services/modules/module-navigation.service.ts",
+      "sha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf"
+    },
+    {
+      "path": "services/modules/module-operational-dependencies.ts",
+      "sha256": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677"
+    },
+    {
+      "path": "services/modules/module-reconciliation-obligations.service.ts",
+      "sha256": "59590b0ee05101c1723c933e9a742b264419ce067f2ce40db3f3285238c37fb5"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038"
+    },
+    {
+      "path": "services/onboarding/__tests__/fixtures/opening-position-contract.ts",
+      "sha256": "726f46e8d64dc8d8eb800debcfae805f8824ecd9359421239f675bfeaeee8d84"
+    },
+    {
+      "path": "services/onboarding/__tests__/fixtures/opening-position-controls.json",
+      "sha256": "6d4d13de88217f73e095f8cfbd0a787678258168f539de0b25470de64642cc1c"
+    },
+    {
+      "path": "services/onboarding/__tests__/fixtures/opening-position-source.json",
+      "sha256": "ae9c0c9dfa0daa45ce7207d299457b050b945bba03d9b45e3f597f5c54a776c3"
+    },
+    {
+      "path": "services/onboarding/__tests__/item-import-media.postgres.test.ts",
+      "sha256": "2172d9d0dc8356a915a9e001122e7c6d6a11558200f23a1aee20eeeaaf0c452a"
+    },
+    {
+      "path": "services/onboarding/__tests__/item-import-media.test.ts",
+      "sha256": "12c91c8771a6df75499139b902deb11d6ae3f2bda850f298e5648d6325911e5e"
+    },
+    {
+      "path": "services/onboarding/__tests__/master-data-control-boundary.test.ts",
+      "sha256": "65fb9c427857d2b5877bf4b891122076b0321b177d174cc5b1852bf654add1f4"
+    },
+    {
+      "path": "services/onboarding/__tests__/master-data-csv.test.ts",
+      "sha256": "584a54622a4c0807fa836fb1857660261650d562bb94ec9b63b797df02e98d1a"
+    },
+    {
+      "path": "services/onboarding/__tests__/master-data-import-guards.test.ts",
+      "sha256": "5e1094ea8d658f4afa856609cb271306155920853c553d14bc4e07600af23b90"
+    },
+    {
+      "path": "services/onboarding/__tests__/opening-position-contract.test.ts",
+      "sha256": "1fafffbda1d63ac206142c5d70ee345437afac83892b5d938c3e34c2cb981931"
+    },
+    {
+      "path": "services/onboarding/__tests__/opening-readiness.postgres.test.ts",
+      "sha256": "520e91e1afc0c827fba1e750b3aade9b131720975d42902c87685cd6fea19b8a"
+    },
+    {
+      "path": "services/onboarding/master-data-csv.ts",
+      "sha256": "9138da9baa999c5b20123ee241e5cd9988916580cdd02ab606dee0214a59105b"
+    },
+    {
+      "path": "services/onboarding/master-data-import.service.ts",
+      "sha256": "905ce04f033e6b61b82ddc3269a7fd311bd0eb60060f308843abd7d0a882e449"
+    },
+    {
+      "path": "services/onboarding/opening-readiness.ts",
+      "sha256": "072fd43d66c1418bac6c8828d14b402d6d94fdb867a1dba9c6693183113b3022"
+    },
+    {
+      "path": "services/operating-access/__tests__/operating-access-retention-boundary.test.ts",
+      "sha256": "96c95945ff1055fe264dd823abfc6b3332632b794f8a4be0c0662d742a524db1"
+    },
+    {
+      "path": "services/operating-access/operating-access-scope.service.ts",
+      "sha256": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26"
+    },
+    {
+      "path": "services/organization/__fixtures__/authorized-archive.v1.json",
+      "sha256": "f38fedc231e6789e896c90505ccff390c8761155578f0a41afdcdc088b624a2b"
+    },
+    {
+      "path": "services/organization/__tests__/authorized-archive-contract.test.ts",
+      "sha256": "31188bf90791b33db06da09713f70c0acfabcee35505f319a8cb8e26c13e356a"
+    },
+    {
+      "path": "services/organization/authorized-archive-contract.ts",
+      "sha256": "c356c8f9bb82312731b41c4dc11d9d4a07f81ea27d359652972838974d35e08d"
+    },
+    {
+      "path": "services/payments/__tests__/mobile-money-hmac.adapter.test.ts",
+      "sha256": "4399dc0faf61a69afeb0a4364de9ff820fd139826c6a2c553f5bd4efa801c768"
+    },
+    {
+      "path": "services/payments/__tests__/provider-event.service.test.ts",
+      "sha256": "febeff7e8505a6d20e3bc80cd507a2af582ae28fe91af47dbb35456738566cd5"
+    },
+    {
+      "path": "services/payments/__tests__/statement-import.service.test.ts",
+      "sha256": "05941e2a53219d9a381677a0b3411996d383319f05b14570d66b030e04788aa7"
+    },
+    {
+      "path": "services/payments/adapters/mobile-money-hmac.adapter.ts",
+      "sha256": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e"
+    },
+    {
+      "path": "services/payments/provider-event.service.ts",
+      "sha256": "bbe5f784df707793be28e79eefebfd03721c3672243f264ff4fe07f24afe778f"
+    },
+    {
+      "path": "services/payments/provider-operations.service.ts",
+      "sha256": "c17e8e71302fb76f809650d654a4e2cf32d66cbb23298ccca542a889231ac6d6"
+    },
+    {
+      "path": "services/payments/statement-import.service.ts",
+      "sha256": "b46c63152e1d7dc7c94c0e02ee1b7fc3109b45f446686ee63d1dbd496e6a8ea2"
+    },
+    {
+      "path": "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+      "sha256": "1816a6d0307930847724373416d78253965587030050d93e88f9284aff7e2af1"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-production-admission.test.ts",
+      "sha256": "b3cf113da4fd70243e50b318b42d18fc16a17846719ad84d997150d2925a7f59"
+    },
+    {
+      "path": "services/payroll/authority-adapter-worker.service.ts",
+      "sha256": "dcc8e2966207d754948afd868d885ac2a03d9ff769bec93e44b7d8963748bca2"
+    },
+    {
+      "path": "services/payroll/payroll-production-admission.ts",
+      "sha256": "48b722fe75bc7db244d6ad8a2d394c08bb7a9449346c2959ed03e5552bf608da"
+    },
+    {
+      "path": "services/pos/__tests__/cart-revision.test.ts",
+      "sha256": "7719c0853ebd9d91ff66d184f19cf25578e958705ee948c94fbd7b8c686d6507"
+    },
+    {
+      "path": "services/pos/__tests__/cart-write-access.test.ts",
+      "sha256": "15be4400cfac811c644094a2af2d97a78ecd942cff24da1782cd4bf8cfe69906"
+    },
+    {
+      "path": "services/pos/__tests__/cash-payment-history.service.test.ts",
+      "sha256": "41f62d4fa024e5281eaf3d64b98ee9b514430be11e10a4552c4a9582956115d3"
+    },
+    {
+      "path": "services/pos/__tests__/checkout-lifecycle.postgres.test.ts",
+      "sha256": "53d21e652a054c6756641d8f417ed4e2fab1b59a0619867f1eb023837afc477d"
+    },
+    {
+      "path": "services/pos/__tests__/checkout-lifecycle.service.test.ts",
+      "sha256": "f944d7ded1d168186eb802ceb094ff76ef48489667ff0e69ba875fb570b16fa0"
+    },
+    {
+      "path": "services/pos/__tests__/commit-recovery.service.test.ts",
+      "sha256": "d2768995ff044857da40603fd6e4116700120face37c299ec3a50a6a3b62b3b3"
+    },
+    {
+      "path": "services/pos/__tests__/offline-sync.service.test.ts",
+      "sha256": "58a7ee84b6b6549d5e304f5db179447e9ffd9e8613ccf0bf6234fb56269c0b04"
+    },
+    {
+      "path": "services/pos/__tests__/pos-cart-transaction.test.ts",
+      "sha256": "bef3653d27277a3effbda1f18efcc67c9da75b701e31f1d9e7ce7688e4ca9b4b"
+    },
+    {
+      "path": "services/pos/__tests__/pos-commit-result.postgres.test.ts",
+      "sha256": "d681cd7191934446de0dc8f429b58bf73a930763e1ccdca7c784326af0e6fcb3"
+    },
+    {
+      "path": "services/pos/__tests__/pos-corrections.postgres.test.ts",
+      "sha256": "37080458898b77fbe30f26387ed2cc06dea7c2ecef1a0f0bdfad97c8a0290655"
+    },
+    {
+      "path": "services/pos/__tests__/pos-customer.service.test.ts",
+      "sha256": "425c241d2f9ac085cddc863d466eaf2cf6e9551b5d3b202dba453e8139d4b7f8"
+    },
+    {
+      "path": "services/pos/__tests__/pos-full-commit.postgres.test.ts",
+      "sha256": "67dc7e63c60098c965a1156b7b8339a4d33fc886169a00bdd40e3d42f875c4dc"
+    },
+    {
+      "path": "services/pos/__tests__/pos-shift-close.postgres.test.ts",
+      "sha256": "35a565916316d6af1645b95337dcc4ef4e1b0999a9a08302b0e996e674edcf6c"
+    },
+    {
+      "path": "services/pos/__tests__/pos-shift-close.service.test.ts",
+      "sha256": "a2f21eaf755aa6b2bfc1799bdb28a95b78cd984532b7202493d9b25f35cc38ee"
+    },
+    {
+      "path": "services/pos/__tests__/pos.service.test.ts",
+      "sha256": "cc239a47b124ffdccc37ae07ddf498576c69b62a22b6a97045625a8b9bb8c8a4"
+    },
+    {
+      "path": "services/pos/__tests__/public-receipt-token-registry.service.test.ts",
+      "sha256": "77a08cbf16e4589c4593f045667f7dfdd1f6b20ef71b3e2f8d32c0a08bbce344"
+    },
+    {
+      "path": "services/pos/__tests__/public-receipt-token.test.ts",
+      "sha256": "449a4307d475a076aa5080ae45ca02f1d93bd1f69644f5d0e1a4223a73c5e908"
+    },
+    {
+      "path": "services/pos/__tests__/receipt-channel-contract.test.ts",
+      "sha256": "f527b3f7090cd2eef5b764d67d85e6ba83cad913ab3e790823d413d47ee87f14"
+    },
+    {
+      "path": "services/pos/__tests__/receipt-public.test.ts",
+      "sha256": "29d00e14cfaa0d81d200b9c2138b6e882f504cad4490447a82c9b044848e379b"
+    },
+    {
+      "path": "services/pos/__tests__/receipt-token-action-schema.test.ts",
+      "sha256": "ef87695da607b862b8e493c9c4dbcc67b106b5a65de21d7dbba2f0523f2e6216"
+    },
+    {
+      "path": "services/pos/__tests__/retention-offline-operator.browser-fixture.test.ts",
+      "sha256": "dd4ed45c246753ccf92cf656916e1924c27de1582e29f19a8899ea340f4144f3"
+    },
+    {
+      "path": "services/pos/__tests__/retention-recovery.browser-fixture.test.ts",
+      "sha256": "8f752ba8c125995611cd859fcb7201f2ebfc7de62d667d43e9e7e291f7eb914c"
+    },
+    {
+      "path": "services/pos/__tests__/shift-opening-access.test.ts",
+      "sha256": "c4b5bca8c5988df7000595498f035d6d329fe8d8d40bc8f54f2dd257e7780993"
+    },
+    {
+      "path": "services/pos/__tests__/tender-write-access.test.ts",
+      "sha256": "0a6b4a4a4349b25fe273e51e5f32fdd8d5d3dfe3f34fecd6883f1f6ac671dc79"
+    },
+    {
+      "path": "services/pos/__tests__/terminal-archive.service.test.ts",
+      "sha256": "9cd0a0b528239a23b92dbb8d911f3eb494833d8e1b38086e7f57ac1bf9035dc6"
+    },
+    {
+      "path": "services/pos/__tests__/terminal-result-transaction.service.test.ts",
+      "sha256": "e426f50d86de49db8880f776b15c35aed49e4f85336482de488da7ef772bfa31"
+    },
+    {
+      "path": "services/pos/cart-revision.ts",
+      "sha256": "4c5f908834e7a6ea7bcbfd5492dd8c60cf58980f047673c8613943de47c16169"
+    },
+    {
+      "path": "services/pos/cart-write-access.ts",
+      "sha256": "2f6b1811df12075a8dbb298987af100b3d8335db2d66ed7fa7cef65edd7899e8"
+    },
+    {
+      "path": "services/pos/cash-payment-history.schemas.ts",
+      "sha256": "ec94e63edc785abab67e9958647f5ac9ff16a2b2ef6e52a24ea0ede075b6ab78"
+    },
+    {
+      "path": "services/pos/cash-payment-history.service.ts",
+      "sha256": "78c0e579a2317a5ac850d21e633ad17f006b0f7f86278e97b841301c61b5eeb1"
+    },
+    {
+      "path": "services/pos/checkout-state.ts",
+      "sha256": "58591a2d57cf720ed1f99184b5cde637893556b47a239e60ec4cf86d4b1fd7bf"
+    },
+    {
+      "path": "services/pos/checkout.service.ts",
+      "sha256": "ff5616e1efc1ee9951c172e0d66d31eb8673f344c26068509ad6adf1871754c7"
+    },
+    {
+      "path": "services/pos/commit-result.ts",
+      "sha256": "4cd518ec5ebb5b7df9618da4eb58e779566804a021d4f6ce1461f56240aebb00"
+    },
+    {
+      "path": "services/pos/drawer-dashboard.schemas.ts",
+      "sha256": "2668e731481650e0b282a210a0353659419edcc952947cf5067903839d3be5d2"
+    },
+    {
+      "path": "services/pos/drawer-dashboard.service.ts",
+      "sha256": "2b5fd44cc75d0c42376649520f6b281fa321442e4e73d63903511789d90d7132"
+    },
+    {
+      "path": "services/pos/money.ts",
+      "sha256": "8869b6e1fe84e1e832cdcbb43656bbcf7ad79da80494592c051468d4601dffc1"
+    },
+    {
+      "path": "services/pos/offline-resolution.service.ts",
+      "sha256": "a6f3fb44f143a60cda7e1dbdd586bf9b0b2bbdda7a1137dacaaecb1e06c2ac86"
+    },
+    {
+      "path": "services/pos/offline-review.service.ts",
+      "sha256": "a810aec09020e68609e2650b26b53be145f50fafcc911f89326ade1e75e29ec1"
+    },
+    {
+      "path": "services/pos/offline-sync.schemas.ts",
+      "sha256": "dd23069bea183a7a20fe6efb0e6a7248b2014dcfe24addae24dcc2d4f068c1fc"
+    },
+    {
+      "path": "services/pos/offline-sync.service.ts",
+      "sha256": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6"
+    },
+    {
+      "path": "services/pos/pos-customer.service.ts",
+      "sha256": "72b25537644a8c669517794eb1bba589b10efd47de59ac49c2e1eb2016b4bd15"
+    },
+    {
+      "path": "services/pos/pos-read-result.ts",
+      "sha256": "3180c6ed2f07c58c2a39138ec163d026e4d46da7b77571427bf121585c631bfc"
+    },
+    {
+      "path": "services/pos/pos.schemas.ts",
+      "sha256": "8c2a9e86faa88042beab7572fac5169c3983f81f3d078122f5b3507b78028650"
+    },
+    {
+      "path": "services/pos/pos.service.ts",
+      "sha256": "d6c63a80e00326ac805e69bdc84678aeb1f3308b5b8a79f172fcab10b2a139df"
+    },
+    {
+      "path": "services/pos/public-receipt-token-registry.service.ts",
+      "sha256": "01e9d3297cdbe39476d4a3bf151f26d3e2b58ac3c8532122ad91ad4147919780"
+    },
+    {
+      "path": "services/pos/public-receipt-token.ts",
+      "sha256": "db18214de6cd8050d12b7d3243914fc437aac6bed63adbd304d2ef13de2ec820"
+    },
+    {
+      "path": "services/pos/receipt-channels.ts",
+      "sha256": "8061e2d507bf4f6e43ada228af5cca7ceecfd74c88a37f17a14288686df94d38"
+    },
+    {
+      "path": "services/pos/receipt.service.ts",
+      "sha256": "3acb6c4a2cf3d83a8b58781395ec0ed983e5ede8303d8443c19e5a06bab59faf"
+    },
+    {
+      "path": "services/pos/shift-opening-access.ts",
+      "sha256": "4c89c7f9015632b0bfb96477a44ffeab5b7149ba77705b875c3f17bf3a8751b4"
+    },
+    {
+      "path": "services/pos/tender-write-access.ts",
+      "sha256": "a06a5d1810d0785881856e41af66c6c30c2d07f7700d2e81b88c34624a82f4f4"
+    },
+    {
+      "path": "services/pos/terminal-configuration-revision.ts",
+      "sha256": "d2c38ba8ec1e80e0ce58c8639bcf383244a5b089c11b8c1dc74488a1a94b532e"
+    },
+    {
+      "path": "services/pos/terminal-management.schemas.ts",
+      "sha256": "3a437658b561080afe47692276ddd495f2e0006722e80290138c3c530e7da1ce"
+    },
+    {
+      "path": "services/pos/terminal-management.service.ts",
+      "sha256": "e139a6a2785888ef9a5b075c717fcc7e6ec18f88054d7c7f492f05036029f7a6"
+    },
+    {
+      "path": "services/purchase-order/purchase-receiving-authority.ts",
+      "sha256": "82df2062cd76b964bb579fdc3e31f27a9b5432cff732ecd1103c653e9bfd4686"
+    },
+    {
+      "path": "services/purchase-order/purchase-receiving-workbench.service.ts",
+      "sha256": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35"
+    },
+    {
+      "path": "services/purchasing/ap-control.service.ts",
+      "sha256": "6704f26093f6d57452393c797773ed6c271dccc3cc5ed46261dcca587160ba5c"
+    },
+    {
+      "path": "services/purchasing/invoice-approval.service.ts",
+      "sha256": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73"
+    },
+    {
+      "path": "services/purchasing/invoice-preparation.service.ts",
+      "sha256": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1"
+    },
+    {
+      "path": "services/regulatory/__tests__/country-pack.service.test.ts",
+      "sha256": "1933f7d34e4475796f0955206b88ce4f71fc2eaa7cb3d39f5d1712bd293cf26e"
+    },
+    {
+      "path": "services/regulatory/__tests__/regulatory-capability.service.test.ts",
+      "sha256": "b092b77490b59e8659190ccbca2ca9a9bfe82a61b2460f918e3a16f6131196fd"
+    },
+    {
+      "path": "services/regulatory/adapters/published-country-pack.adapter.ts",
+      "sha256": "e9f2a5e94f418a9e5126d556bc8dd14280c902459bdd0ff7bb99f825ab09f090"
+    },
+    {
+      "path": "services/regulatory/country-packs/cameroon.constants.ts",
+      "sha256": "dae6e3ec4720d94637d234337e4343bcbfaea2d4094f01e3813ab3b533c1fbf3"
+    },
+    {
+      "path": "services/regulatory/country-packs/cameroon.ts",
+      "sha256": "3bcc16ecc6b7f8695102fdbd047cadb63fe4049ba6ea409466465aa17c3e4749"
+    },
+    {
+      "path": "services/regulatory/country-packs/registry.ts",
+      "sha256": "dd7cac8d10d2ad7239a6061ae4ab91853c671b0d127cfb2fed8553cfa6e834bb"
+    },
+    {
+      "path": "services/regulatory/country-packs/resolve.ts",
+      "sha256": "419d0ccce13d81e5e250a214c8d02c97f24e87ffe6765e8d70a7256351bffeac"
+    },
+    {
+      "path": "services/regulatory/regulatory-capability.service.ts",
+      "sha256": "02a2179e9785f6798af96131736cec6e2233b2091c33ea154d02e5e192d32b8a"
+    },
+    {
+      "path": "services/regulatory/runtime/regulatory-runtime-class.ts",
+      "sha256": "5ed9db65fdeebc8b64a1ebda177ba8c8316e0a73e1ac9dea7e1087c140181b4a"
+    },
+    {
+      "path": "what-next/platform-remediation/2026-09-30-run-01/CAMEROON_FIRST_CONTINUATION_2026-10-07.md",
+      "sha256": "7eceb561fbf0750462576fbfb01ab3814bc9aca6be1daf9e263bda884390a00a"
+    },
+    {
+      "path": "what-next/platform-remediation/2026-09-30-run-01/CAMEROON_SOURCE_REFRESH_2026-10-07.md",
+      "sha256": "263ec1c748acbfbe6d3828f2b4f0731480c628dbb60aedcdf9b5dd6267f9cf35"
+    },
+    {
+      "path": "what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_01_DESIGN_SYSTEM_FREEZE_REPORT_2026-10-12.md",
+      "sha256": "ac11c81b02dfd0cb1d8eb786284fe72ee3587c8157a3c69fbc7bcf79ce5ab7b1"
+    },
+    {
+      "path": "what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_02_SHELL_NAVIGATION_REPORT_2026-10-12.md",
+      "sha256": "cbb1ff5df543bc8ddb8f4212d1d9230f55c83a40514d255c5739a446e1c0f1d0"
+    }
+  ]
+}

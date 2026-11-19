@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "package": "P04-R02",
+  "date": "2026-11-02",
+  "candidate_id": "p04-r02-full-eb25ee4e218c",
+  "status": "blocked",
+  "advance_parent": false,
+  "implementation_status": "implemented_scoped_verified",
+  "prior_scoped_gates": "../repair/advancement-gates.json",
+  "gates": [
+    {
+      "id": "R02-G08",
+      "status": "blocked",
+      "name": "Local full application artifact, persisted auth and private browser qualification",
+      "required_for_local_r02_completion": true,
+      "executed_full_build": true,
+      "compiler_status": "passed",
+      "artifact_status": "failed_before_seal",
+      "real_session_status": "not_run",
+      "browser_status": "not_run",
+      "storage_blocker": "resolved with fresh isolated E: candidate and physical dependencies",
+      "blocking_precondition": "R02-ASSET-01: three public/images files match tenant upload hashes; explicit classification and reference disposition required",
+      "evidence": [
+        "candidate-admission.json",
+        "retry03-private-client.json",
+        "retry03-artifact-build.log",
+        "build-retry03-result.json",
+        "packing-failure-inventory.json",
+        "packing-failure-classification.json",
+        "database/fixture-readiness.json",
+        "database/reference-inventory.json",
+        "database/final-fixture-integrity.json",
+        "database/resume-20261102-r2-retry01-guarded-stop-1793635954332.json",
+        "final-integrity.json",
+        "register-validation.json",
+        "independent-review/ASSESSMENT.md"
+      ],
+      "remaining": [
+        "Resolve explicit asset classification and reference/recovery disposition without weakening the hash guard",
+        "Implement and independently review any approved bounded repair, with a newly bound candidate for changed source",
+        "Seal and independently verify the actual full artifact",
+        "Execute real sign-in sessions, authorized exact bytes and safe denials on API and legacy URLs plus optimizer",
+        "Execute EN/FR consumers and default-cache/revocation recovery with unchanged business snapshots",
+        "Reconcile integrity and owned-process cleanup, then independent final review"
+      ]
+    },
+    {
+      "id": "R02-G09",
+      "status": "not_run",
+      "name": "Hosted ingress/CDN/operator cutover",
+      "required_for_local_r02_completion": false,
+      "limit": "Separate release requirement. No deployment or production change authorized."
+    }
+  ],
+  "local_decisions": [
+    {
+      "id": "R02-ASSET-01",
+      "status": "unresolved",
+      "owner_role": "Asset/product owner with media/storage and application security review",
+      "assets": [
+        "public/images/cabin-1.jpg",
+        "public/images/cabin-2.jpg",
+        "public/images/profile.jpg"
+      ],
+      "required_evidence": [
+        "Explicit intended-public or private classification for each asset",
+        "Provenance and permitted use for any public assertion",
+        "Disposition of computed and stored references within an approved isolated target",
+        "Preserved originals, recovery mapping and reviewed artifact policy"
+      ],
+      "reason": "Longstanding public filenames and absent literal code references do not establish public-use approval or absence of database references."
+    }
+  ],
+  "preservation": {
+    "status": "passed",
+    "execution_receipts_reconciled": false,
+    "frozen_source_files_unchanged": 9068,
+    "asset_annex_unchanged": 6,
+    "repair_inputs_unchanged": 11,
+    "browser_inputs_unchanged": 17,
+    "original_recovery_pairs_unchanged": 3,
+    "unrelated_added": 37,
+    "unrelated_changed": 5,
+    "whole_worktree_unchanged": false,
+    "database_stopped": true,
+    "port_53528_released": true
+  }
+}

@@ -1,5 +1,8 @@
 import "server-only"
 
+import { assignAssuranceIncidentInTx } from "./assurance-assignment.service"
+import { assuranceAssignmentRevision } from "./assurance-assignment-revision"
+
 import { Prisma } from "@prisma/client"
 import type {
   WorkflowAssuranceAlertChannel as PrismaAlertChannel,
@@ -224,19 +227,16 @@ export async function acknowledgeWorkflowAssuranceIncident(input: WorkflowAssura
 }
 
 export async function assignWorkflowAssuranceIncident(input: AssignWorkflowAssuranceIncidentInput) {
-  return transitionWorkflowAssuranceIncident(input, {
-    eventType: "assigned",
-    status: "assigned",
-    message: "Workflow assurance incident assigned",
-    data: {
-      ownerId: input.ownerId,
-      assignedRole: input.assignedRole ?? null,
-      dueAt: input.dueAt ?? null,
-    },
-    validate: async (client) => {
-      await assertAssignableIncidentOwner(client, input.organizationId, input.ownerId)
-    },
-  })
+  try {
+    return await db.$transaction(async tx => toIncidentDto(await assignAssuranceIncidentInTx(tx, input)), {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+    })
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === "P2034") {
+      throw new ConflictError("The assignment changed concurrently. Refresh the source before retrying.")
+    }
+    throw error
+  }
 }
 
 export async function resolveWorkflowAssuranceIncident(input: ResolveWorkflowAssuranceIncidentInput) {
@@ -696,26 +696,6 @@ function assertCurrentIncidentSourceHash(
   }
 }
 
-async function assertAssignableIncidentOwner(
-  client: IncidentDbClient,
-  organizationId: string,
-  ownerId: string,
-) {
-  const owner = await client.user.findFirst({
-    where: {
-      id: ownerId,
-      organizationId,
-      isActive: true,
-    },
-    select: { id: true },
-  })
-  if (!owner) {
-    throw new BusinessRuleError(
-      "Workflow assurance incident owner must be an active user in the same organization.",
-    )
-  }
-}
-
 async function findIncidentForTenant(client: IncidentDbClient, organizationId: string, incidentId: string) {
   const incident = await client.workflowAssuranceIncident.findFirst({
     where: {
@@ -876,6 +856,7 @@ function toIncidentDto(
 
   return {
     id: incident.id,
+    assignmentRevision: assuranceAssignmentRevision(incident),
     organizationId: incident.organizationId,
     checkKey: incident.checkKey,
     workflow,

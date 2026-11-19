@@ -23,6 +23,8 @@ jest.mock("@/services/_shared/protect", () => ({
           lastAuthAt,
           claims: {
             userId: "user-session",
+            sessionId: "synthetic-session",
+            sessionToken: "synthetic-token",
             tenantId: "org-session",
             assuranceOrganizationId: "org-session",
             assuranceLevel: 1,
@@ -123,6 +125,21 @@ describe("accountant data-trust actions", () => {
     )
     expect(mockExportAccountantTrustPack.mock.calls[0][0]).not.toHaveProperty("freshAuth")
     expect(mockExportAccountantTrustPack.mock.calls[0][0]).not.toHaveProperty("claims")
+  })
+
+  it("passes trusted persisted session proof for delegated exports", async () => {
+    mockResolveAccountantClientAccess.mockResolvedValue({ organizationId: "client", mode: "DELEGATED_ACCOUNTANT", grant: { id: "grant" } })
+    await exportAccountantTrustPackAction({ clientOrganizationId: "client", authority: { homeOrganizationId: "forged", session: { id: "forged", token: "forged" } } })
+    expect(mockExportAccountantTrustPack).toHaveBeenCalledWith(expect.objectContaining({
+      organizationId: "client", exportedById: "user-session",
+      authority: { homeOrganizationId: "org-session", session: { id: "synthetic-session", token: "synthetic-token" } },
+    }))
+  })
+
+  it("does not return portal data after its mandate changes during the read", async () => {
+    mockResolveAccountantClientAccess.mockResolvedValueOnce({ organizationId: "client", mode: "DELEGATED_ACCOUNTANT", grant: { id: "old" } })
+      .mockResolvedValueOnce({ organizationId: "client", mode: "DELEGATED_ACCOUNTANT", grant: { id: "new" } })
+    await expect(getAccountantPortalAction({ clientOrganizationId: "client" })).rejects.toThrow("Client mandate changed")
   })
 
   it.each([

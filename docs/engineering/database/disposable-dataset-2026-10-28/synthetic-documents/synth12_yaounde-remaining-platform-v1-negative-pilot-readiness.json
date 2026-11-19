@@ -1,0 +1,19 @@
+{
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "externalCallsPerformed": false,
+  "productionReadinessClaimed": false,
+  "value": {
+    "executedAt": "2026-10-28T20:00:00.000Z",
+    "source": "evaluateAgentActivationReadiness",
+    "readiness": {
+      "ready": false,
+      "blockers": [
+        "RELEASE_CERTIFICATION_INVALID",
+        "RELEASE_RECONCILIATION_STALE",
+        "RELEASE_ALERT_TRANSPORT_UNHEALTHY"
+      ]
+    },
+    "testResult": "Release admission is not ready; positive production certification is deliberately absent",
+    "commitSha": "80e4abb283216b9f8e04b94e5020393f7dcabf62"
+  }
+}

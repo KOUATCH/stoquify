@@ -1,0 +1,8 @@
+const fs=require('node:fs'),file='services/hris/lifecycle-task.service.ts';let s=fs.readFileSync(file,'utf8');function replace(a,b){if(!s.includes(a))throw Error('Missing replacement '+a);s=s.replace(a,()=>b)}
+replace("const policy=lifecycleTaskPolicy(a.organizationId),rows=", "const policy=lifecycleTaskPolicy(a.organizationId),replacement=replacementCodes(a),rows=");
+replace('(t."ownerId"=${a.actorId} OR t."reviewerId"=${a.actorId}) ORDER BY', '(t."ownerId"=${a.actorId} OR t."reviewerId"=${a.actorId} OR (t."lifecycleType" IN (\'ONBOARD\',\'REHIRE\') AND t.code=ANY(${replacement.starter}::text[])) OR (t."lifecycleType" IN (\'TERMINATE\',\'OFFBOARD\') AND t.code=ANY(${replacement.leaver}::text[]))) ORDER BY');
+replace("canReview:r.reviewerId===a.actorId&&hasAnyRbacPermission(a.actorPermissions,['hris.tasks.review']),overdue:","canReview:r.reviewerId===a.actorId&&hasAnyRbacPermission(a.actorPermissions,['hris.tasks.review']),canReassign:replacementReviewer(a,r)||r.reviewerId===a.actorId&&hasAnyRbacPermission(a.actorPermissions,['hris.tasks.review']),overdue:");
+replace("requirePermission(a,'hris.tasks.read');const ids=", "requirePermission(a,'hris.tasks.read');const replacement=replacementCodes(a),ids=");
+replace('AND ("ownerId"=${a.actorId} OR "reviewerId"=${a.actorId})`;', 'AND ("ownerId"=${a.actorId} OR "reviewerId"=${a.actorId} OR ("lifecycleType" IN (\'ONBOARD\',\'REHIRE\') AND code=ANY(${replacement.starter}::text[])) OR ("lifecycleType" IN (\'TERMINATE\',\'OFFBOARD\') AND code=ANY(${replacement.leaver}::text[])))`;');
+replace("if((reviewing?row.reviewerId:row.ownerId)!==a.actorId)","if((reviewing?row.reviewerId:row.ownerId)!==a.actorId&&!(input.operation==='REASSIGN'&&replacementReviewer(a,row)))");
+fs.writeFileSync(file,s);

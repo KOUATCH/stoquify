@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation"
 import { CheckCircle2, Clock3, FileCheck2, RotateCcw, ShieldAlert, UserRoundCheck } from "lucide-react"
-import type { FormEvent, ReactNode } from "react"
-import { useMemo, useState } from "react"
+import type { CSSProperties, FormEvent, ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 import {
   acknowledgeWorkflowAssuranceIncidentAction,
@@ -85,6 +85,13 @@ const copy = {
     quickAckSuccess: "Incident acknowledged",
     quickAckMessage: "The incident is marked for follow-up.",
     noRequestedWaiver: "No requested waiver is awaiting approval.",
+    assignmentHelp: "Assignment routes follow-up only. The server checks the assignee’s current account and source access. A blank due date preserves the current deadline.",
+    assignmentFailed: "Assignment could not be confirmed. Retry the same request, or refresh to review the current source before changing it.",
+    assignmentConflict: "The source or assignment changed. Refresh and review the current state before assigning again.",
+    assignmentDenied: "Assignment access is unavailable. Refresh to recheck your access and the assignee’s eligibility.",
+    assignmentRevisionMissing: "Refresh this source view before assigning an owner.",
+    refreshSource: "Refresh source",
+    assignmentSuccess: "Assignment recorded; business work remains subject to source controls.",
   },
   fr: {
     panelTitle: "Actions incident",
@@ -114,8 +121,20 @@ const copy = {
     quickAckSuccess: "Incident accuse",
     quickAckMessage: "L'incident est marque pour suivi.",
     noRequestedWaiver: "Aucune derogation demandee n'attend une approbation.",
+    assignmentHelp: "L’affectation organise le suivi uniquement. Le serveur vérifie le compte et l’accès actuel aux sources du responsable. Une échéance vide conserve la date actuelle.",
+    assignmentFailed: "L’affectation n’a pas pu être confirmée. Réessayez la même demande ou actualisez la source avant de la modifier.",
+    assignmentConflict: "La source ou l’affectation a changé. Actualisez et examinez l’état actuel avant une nouvelle affectation.",
+    assignmentDenied: "L’accès à l’affectation est indisponible. Actualisez pour vérifier vos droits et l’éligibilité du responsable.",
+    assignmentRevisionMissing: "Actualisez cette source avant d’affecter un responsable.",
+    refreshSource: "Actualiser la source",
+    assignmentSuccess: "Affectation enregistrée ; le travail métier reste soumis aux contrôles de la source.",
   },
 } as const
+
+// The dialog portal sits outside the dashboard shell; retain its product-token aliases.
+const assignmentPortalTokens = Object.fromEntries([
+  "canvas", "border-subtle", "text", "text-soft", "text-faint", "brand", "brand-soft",
+].map(token => ["--dash-" + token, "var(--product-" + token + ")"])) as CSSProperties
 
 const finalStatuses = new Set<AssuranceControlTowerIncident["status"]>(["resolved", "waived", "suppressed", "closed"])
 const POS_CASH_SHORTAGE_CHECK_KEY = "pos.closed_shift_cash_shortage.review"
@@ -167,7 +186,11 @@ export function AssuranceIncidentAcknowledgeButton({
   )
 }
 
-export function AssuranceIncidentActions({ incident, waivers, locale }: AssuranceIncidentActionsProps) {
+export function AssuranceIncidentActions(props: AssuranceIncidentActionsProps) {
+  return <AssuranceIncidentActionsForm key={`${props.incident.id}:${props.incident.assignmentRevision ?? props.incident.sourceHash}:${props.incident.canManage}`} {...props} />
+}
+
+function AssuranceIncidentActionsForm({ incident, waivers, locale }: AssuranceIncidentActionsProps) {
   const router = useRouter()
   const notifications = useNotifications()
   const t = copy[locale]
@@ -176,7 +199,14 @@ export function AssuranceIncidentActions({ incident, waivers, locale }: Assuranc
   const [isPending, setIsPending] = useState(false)
   const [note, setNote] = useState("")
   const [ownerId, setOwnerId] = useState(incident.ownerId ?? "")
-  const [assignedRole, setAssignedRole] = useState(incident.assignedRole ?? incident.ownerRole)
+  const assignmentRequest = useRef<{ fingerprint: string; id: string } | null>(null)
+  const submitting = useRef(false)
+  const dialogTrigger = useRef<HTMLElement | null>(null)
+  const mounted = useRef(true)
+  const [assignmentError, setAssignmentError] = useState<string | null>(null)
+  const [assignmentNeedsRefresh, setAssignmentNeedsRefresh] = useState(false)
+  const [assignmentUncertain, setAssignmentUncertain] = useState(false)
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false } }, [])
   const [dueAt, setDueAt] = useState("")
   const [reason, setReason] = useState("")
   const [suppressedUntil, setSuppressedUntil] = useState("")
@@ -207,21 +237,27 @@ export function AssuranceIncidentActions({ incident, waivers, locale }: Assuranc
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!dialogAction) return
-
+    if (!dialogAction || submitting.current) return
+    submitting.current = true
+    setAssignmentError(null)
     setIsPending(true)
     try {
       const trimmedNote = note.trim()
       const trimmedReason = reason.trim()
 
       if (dialogAction === "assign") {
-        const result = await assignWorkflowAssuranceIncidentAction({
-          incidentId: incident.id,
-          ownerId: ownerId.trim(),
-          assignedRole: assignedRole.trim() || incident.ownerRole,
-          dueAt: toIsoDateTime(dueAt),
-        })
-        if (!result.success) throw new Error(resultError(result))
+        if (!incident.assignmentRevision || assignmentNeedsRefresh) throw new Error(t.assignmentRevisionMissing)
+        const payload = { incidentId: incident.id, ownerId: ownerId.trim(), expectedRevision: incident.assignmentRevision, dueAt: toIsoDateTime(dueAt) }
+        const fingerprint = JSON.stringify(payload)
+        if (!assignmentRequest.current || assignmentRequest.current.fingerprint !== fingerprint) {
+          assignmentRequest.current = { fingerprint, id: crypto.randomUUID() }
+        }
+        const result = await assignWorkflowAssuranceIncidentAction({...payload, requestId: assignmentRequest.current.id})
+        if (!mounted.current) return
+        if (!result.success) {
+          if (result.status === 409 || result.status === 403 || result.status === 401) setAssignmentNeedsRefresh(true)
+          throw new Error(result.status === 409 ? t.assignmentConflict : result.status === 403 || result.status === 401 ? t.assignmentDenied : t.assignmentFailed)
+        }
       }
 
       if (dialogAction === "resolve") {
@@ -276,12 +312,23 @@ export function AssuranceIncidentActions({ incident, waivers, locale }: Assuranc
         if (!result.success) throw new Error(resultError(result))
       }
 
+      if (!mounted.current) return
       setDialogAction(null)
-      notifySuccess()
+      if (dialogAction === "assign") {
+        setAssignmentNeedsRefresh(true)
+        notifications.success(t.successTitle, t.assignmentSuccess, { category: "system" })
+        router.refresh()
+      } else notifySuccess()
     } catch (error) {
-      notifyFailure(error)
+      if (!mounted.current) return
+      if (dialogAction === "assign") {
+        setAssignmentUncertain(true)
+        setAssignmentError(error instanceof Error && ([t.assignmentConflict, t.assignmentDenied, t.assignmentRevisionMissing] as readonly string[]).includes(error.message) ? error.message : t.assignmentFailed)
+      }
+      else notifyFailure(error)
     } finally {
-      setIsPending(false)
+      submitting.current = false
+      if (mounted.current) setIsPending(false)
     }
   }
 
@@ -320,7 +367,7 @@ export function AssuranceIncidentActions({ incident, waivers, locale }: Assuranc
           </Button>
         ) : null}
 
-        <ActionButton label={t.assign} icon={<UserRoundCheck className="h-4 w-4" />} disabled={!canManageActive || isPending} onClick={() => setDialogAction("assign")} />
+        <ActionButton label={t.assign} icon={<UserRoundCheck className="h-4 w-4" />} disabled={!canManageActive || !incident.assignmentRevision || assignmentNeedsRefresh || isPending} onClick={() => setDialogAction("assign")} />
         <ActionButton label={t.resolve} icon={<FileCheck2 className="h-4 w-4" />} disabled={!canManageActive || isPending} onClick={() => setDialogAction("resolve")} tone="success" />
         <ActionButton label={t.suppress} icon={<Clock3 className="h-4 w-4" />} disabled={!canManageActive || isPending} onClick={() => setDialogAction("suppress")} tone="gold" />
         <ActionButton label={t.requestWaiver} icon={<ShieldAlert className="h-4 w-4" />} disabled={!canManageActive || isPending} onClick={() => setDialogAction("requestWaiver")} tone="danger" />
@@ -340,25 +387,37 @@ export function AssuranceIncidentActions({ incident, waivers, locale }: Assuranc
         </div>
       ) : null}
 
+      {incident.canManage && (!incident.assignmentRevision || assignmentNeedsRefresh) ? <p role="status" className="mt-3 text-sm text-[var(--dash-text-soft)]">{t.assignmentRevisionMissing}</p> : null}
+
       <Dialog open={dialogAction !== null} onOpenChange={(open) => !open && setDialogAction(null)}>
-        <DialogContent className="dashboard-glass-panel max-h-[92vh] overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
+        <DialogContent
+          style={assignmentPortalTokens}
+          lang={locale}
+          closeLabel={locale === "fr" ? "Fermer" : "Close"}
+          onOpenAutoFocus={() => { dialogTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null }}
+          onCloseAutoFocus={(event) => {
+            if (dialogTrigger.current?.isConnected && !dialogTrigger.current.matches(":disabled")) {
+              event.preventDefault()
+              dialogTrigger.current.focus()
+            }
+          }}
+          className="max-h-[92vh] overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] bg-[var(--product-canvas)] text-[var(--dash-text)] motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none"
+        >
           <form onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle className="text-[var(--dash-text)]">{dialogTitle(dialogAction, t)}</DialogTitle>
-              <DialogDescription className="text-[var(--dash-text-soft)]">{t.manageRequired}</DialogDescription>
+              <DialogDescription className="text-[var(--dash-text-soft)]">{dialogAction === "assign" ? t.assignmentHelp : t.manageRequired}</DialogDescription>
             </DialogHeader>
 
             <div className="mt-4 grid gap-4">
               {dialogAction === "assign" ? (
                 <>
                   <Field label={t.ownerId}>
-                    <Input className={fieldClassName} value={ownerId} onChange={(event) => setOwnerId(event.target.value)} required />
+                    <Input className={fieldClassName} aria-label={t.ownerId} disabled={isPending || assignmentNeedsRefresh || assignmentUncertain} value={ownerId} onChange={(event) => setOwnerId(event.target.value)} required />
                   </Field>
-                  <Field label={t.assignedRole}>
-                    <Input className={fieldClassName} value={assignedRole} onChange={(event) => setAssignedRole(event.target.value)} />
-                  </Field>
+                  {assignmentError ? <div role="alert" className="space-y-2 text-sm text-[var(--dash-text)]"><p>{assignmentError}</p><Button type="button" variant="outline" className="bg-[var(--product-surface)] text-[var(--dash-text)] hover:bg-[var(--product-surface-raised)] hover:text-[var(--dash-text)]" onClick={() => window.location.reload()}>{t.refreshSource}</Button></div> : null}
                   <Field label={t.dueAt}>
-                    <Input className={fieldClassName} type="datetime-local" value={dueAt} onChange={(event) => setDueAt(event.target.value)} />
+                    <Input className={fieldClassName} type="datetime-local" aria-label={t.dueAt} disabled={isPending || assignmentNeedsRefresh || assignmentUncertain} value={dueAt} onChange={(event) => setDueAt(event.target.value)} />
                   </Field>
                 </>
               ) : null}
@@ -416,10 +475,10 @@ export function AssuranceIncidentActions({ incident, waivers, locale }: Assuranc
             </div>
 
             <DialogFooter className="mt-5 gap-2">
-              <Button type="button" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]" onClick={() => setDialogAction(null)}>
+              <Button type="button" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] bg-[var(--product-surface)] text-[var(--dash-text)] hover:bg-[var(--product-surface-raised)] hover:text-[var(--dash-text)]" onClick={() => setDialogAction(null)}>
                 {t.cancel}
               </Button>
-              <Button type="submit" className="rounded-lg bg-[var(--dash-brand)] text-white hover:bg-[var(--dash-brand-strong)]" disabled={isPending}>
+              <Button type="submit" className="rounded-lg bg-[var(--product-brand-action)] text-white hover:bg-[var(--product-brand-action-hover)]" disabled={isPending || (dialogAction === "assign" && assignmentNeedsRefresh)}>
                 {t.submit}
               </Button>
             </DialogFooter>

@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "paths": { "@/*": ["./*"] }
+  },
+  "include": [
+    "services/payments/adapters/mobile-money-hmac.adapter.ts",
+    "services/payments/statement-import.service.ts",
+    "services/reconciliation/account-close-coverage.service.ts",
+    "next-env.d.ts"
+  ]
+}

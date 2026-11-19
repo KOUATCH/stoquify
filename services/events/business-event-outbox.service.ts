@@ -5,6 +5,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { WHATSAPP_RECEIPT_EVENT_NAME } from "@/services/communication/whatsapp-receipt-outbox.service"
 import {
   ApplicationError,
   isApplicationError,
@@ -89,6 +90,8 @@ export type ClaimBusinessEventOutboxInput = {
 
 const defaultOutboxClient = db as unknown as BusinessEventOutboxClient
 const GENERIC_FAILURE_MESSAGE = "Business-event outbox delivery failed."
+// Receipt sends require the WhatsApp worker's decision and dispatch fence.
+const genericEventName = { not: WHATSAPP_RECEIPT_EVENT_NAME }
 
 function requiredScope(value: string, label: string) {
   const normalized = value.trim()
@@ -146,7 +149,7 @@ export async function claimBusinessEventOutboxMessages(
     where: {
       organizationId,
       channel: input.channels?.length ? { in: input.channels } : undefined,
-      eventName: input.eventNames?.length ? { in: input.eventNames } : undefined,
+      eventName: { ...genericEventName, ...(input.eventNames?.length ? { in: input.eventNames } : {}) },
       OR: [
         {
           status: {
@@ -192,6 +195,7 @@ export async function claimBusinessEventOutboxMessages(
           id: candidate.id,
           organizationId,
           channel: candidate.channel,
+          eventName: genericEventName,
           status: candidate.status,
           attempts: candidate.attempts,
         },
@@ -212,6 +216,7 @@ export async function claimBusinessEventOutboxMessages(
         id: candidate.id,
         organizationId,
         channel: candidate.channel,
+        eventName: genericEventName,
         attempts: candidate.attempts,
         OR: [
           {
@@ -274,6 +279,7 @@ export async function markBusinessEventOutboxDelivered(
         status: BusinessOutboxStatus.LOCKED,
         lockedBy: workerId,
         ...lease,
+        eventName: genericEventName,
       },
       include: { businessEvent: true },
     })
@@ -286,6 +292,7 @@ export async function markBusinessEventOutboxDelivered(
         status: BusinessOutboxStatus.LOCKED,
         lockedBy: workerId,
         ...lease,
+        eventName: genericEventName,
       },
       data: {
         status: BusinessOutboxStatus.SENT,
@@ -349,6 +356,7 @@ export async function markBusinessEventOutboxFailed(
         status: BusinessOutboxStatus.LOCKED,
         lockedBy: workerId,
         ...lease,
+        eventName: genericEventName,
       },
       include: { businessEvent: true },
     })
@@ -367,6 +375,7 @@ export async function markBusinessEventOutboxFailed(
         status: BusinessOutboxStatus.LOCKED,
         lockedBy: workerId,
         ...lease,
+        eventName: genericEventName,
       },
       data: {
         status,

@@ -1,0 +1,74 @@
+{
+  "at": "2026-11-02T18:02:13.686Z",
+  "passed": true,
+  "evidenceClass": "pure_rendered_readiness_and_signin_cadence_with_syntax_only",
+  "hashes": [
+    {
+      "path": "run-browser.cjs",
+      "sha256": "ba67530b5a76b68f8e1f306c559cb253493b77782b4a6c38d84d428eb5bb0e31"
+    },
+    {
+      "path": "review-candidate-source.cjs",
+      "sha256": "24a276ab35df99e6e48b559d634f35d1cb58138d279a39d79b598c4ff3f8f974"
+    },
+    {
+      "path": "signin-cadence.cjs",
+      "sha256": "8f01962f3affd37a55347706b8f9642bc4e24669c9be988956f3450b84ede18b"
+    },
+    {
+      "path": "signin-cadence.test.cjs",
+      "sha256": "ff14712a8ffda36418ac2a655e0658f57b6170917711bdc0d455999cf4e60bba"
+    },
+    {
+      "path": "rendered-readiness.cjs",
+      "sha256": "2da3c472d17307a97a129ea6e5a4d95c10439f49f56162472e132e92c75f77fd"
+    },
+    {
+      "path": "rendered-readiness.test.cjs",
+      "sha256": "7f84533727e183581ed1db791e09b41a393c0105c15bedb8744fa63d2e0c65c9"
+    }
+  ],
+  "cadenceTests": {
+    "tests": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+  },
+  "readinessTests": {
+    "tests": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+  },
+  "combinedTests": {
+    "tests": 18,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0
+  },
+  "syntaxChecks": [
+    {
+      "path": "run-browser.cjs",
+      "exitCode": 0
+    },
+    {
+      "path": "review-candidate-source.cjs",
+      "exitCode": 0
+    }
+  ],
+  "changes": [
+    "Detail readiness requires one total and visible intended heading on three distinct consecutive rendered frames within ten seconds; strict locator retained",
+    "Count, visibility and hidden ancestor metadata retained on readiness failure",
+    "History recovery must reach actual login with one visible email input before same-context default-cache denial probes",
+    "Separate exact-cookie replay unchanged; reload must return login with no private consumers",
+    "New retry02 source review preserves initial and retry01 receipts"
+  ],
+  "preservation": "pre-retry02/recipe-hashes.json and failed-evidence-hashes.json",
+  "executed": {
+    "application": false,
+    "browser": false,
+    "database": false
+  },
+  "limit": "Pure helper assertions do not prove a real DOM convergence or auth redirect. Source review and browser retry remain parent-owned pending execution."
+}

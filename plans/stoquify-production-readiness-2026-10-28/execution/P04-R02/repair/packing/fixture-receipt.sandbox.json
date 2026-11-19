@@ -1,0 +1,66 @@
+{
+  "startedAt": "2026-10-29T13:24:19.973Z",
+  "finishedAt": "2026-10-29T13:25:13.761Z",
+  "evidenceClass": "isolated-filesystem-and-mocked-promotion",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\repair\\packing\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\repair\\packing\\jest-result.json"
+  ],
+  "cwd": "E:\\ohada saas\\Focused projects\\stoquify",
+  "inheritedEnvironmentKeys": [
+    "CI",
+    "ComSpec",
+    "NUMBER_OF_PROCESSORS",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "Path",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "inputs": [
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "62c0b3a26a9db2899228a43ba7ecee3d814dca87df268a5f32725121dd5a9f7d"
+    },
+    {
+      "path": "scripts/candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    },
+    {
+      "path": "tests/s10-s11/release-artifact.test.js",
+      "sha256": "2d6c7d31e35e4b7517942388398076824122b1a49c18322f3c79adb7473a0453"
+    },
+    {
+      "path": "tests/s10-s11/release-artifact-private-uploads.test.js",
+      "sha256": "f6e3830de436cd19d9abbd016ce81a91e13bc9db6a2629fd783f08c6cb2824db"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/repair/packing/jest.config.cjs",
+      "sha256": "dbabc15ccf3463f0c94ccd7622b57f40a95d8e72e2f224d0aa0b5d2f85425731"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/repair/packing/run-fixtures.cjs",
+      "sha256": "ea3dda7b02854268fcdf728c0983e6b7f332a1416d89ca52fdd404e801ed5b60"
+    }
+  ],
+  "exclusions": [
+    "No real build",
+    "No application config or dotenv load",
+    "No real database/provider",
+    "No source image contents read by tests",
+    "No migration or deployment"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-24",
+  "database": "stoquify_local_hris_20261024",
+  "host": "127.0.0.1",
+  "port": 55464,
+  "schema": "public",
+  "remainingSyntheticOrganizations": 0,
+  "cleanupCheck": "SELECT 'remaining_test_organizations=' || count(*) FROM organizations WHERE slug LIKE 'hris-verification-%';",
+  "cleanupCheckExitCode": 0,
+  "postgresStop": {
+    "dataDirectory": "C:/Users/J COMPUTER/.codex/visualizations/2026/10/24/01a16e07-5033-74f0-a987-8d57c6717085/hris-postgres-20261024",
+    "command": "pg_ctl -D <exact dataDirectory> -m fast -w stop",
+    "exitCode": 0,
+    "result": "server stopped",
+    "filesRetained": true
+  },
+  "staticComponentHarness": {
+    "address": "127.0.0.1:18542",
+    "ownedExecSession": 47553,
+    "result": "terminated with Ctrl-C after verification"
+  },
+  "databaseBrowserHarness": "ephemeral loopback HTTP server and headless browser closed in test finally blocks",
+  "noProductionEffects": true
+}

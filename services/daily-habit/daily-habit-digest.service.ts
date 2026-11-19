@@ -1,4 +1,5 @@
 import "server-only"
+import { stableIdentityOrder, priorityExplanation } from "@/lib/dashboard/command-center-context"
 import { restrictCloseSnapshotDetails, restrictInventorySnapshotDetails, restrictPaymentSnapshotDetails, restrictPayrollSnapshotDetails } from "./daily-habit-source-visibility"
 import { presentDailyDigest } from "./daily-habit-digest-presentation"
 import { presentDailyAction, presentDailySignal } from "./daily-habit-signal-presentation"
@@ -534,12 +535,12 @@ function buildDigest(input: {
   const sourceDrill = digestSourceDrill(input.config, input.input)
   const roleActions = input.actions
     .filter((action) => input.config.actionRoles.includes(action.assignedRole))
-    .sort((a, b) => b.severityScore - a.severityScore)
+    .sort((a, b) => b.severityScore - a.severityScore || stableIdentityOrder(a, b))
     .slice(0, 5)
     .map((action) => presentDailyAction(action, input.input.locale ?? "en"))
   const roleSignals = input.signals
     .filter((signal) => input.config.actionRoles.includes(signal.assignedRole))
-    .sort((a, b) => b.severityScore - a.severityScore)
+    .sort((a, b) => b.severityScore - a.severityScore || stableIdentityOrder(a, b))
     .slice(0, 5)
     .map((signal) => presentDailySignal(signal, input.input.locale ?? "en"))
   const freshness = normalizeSnapshotFreshness(input.input.tenantOperating.freshness, input.input.tenantOperating.status)
@@ -601,6 +602,7 @@ function buildDigest(input: {
       disabledReason: sourceDrill.available ? null : sourceDrill.unavailableReason,
     },
     actionCount: roleActions.length,
+    leadingAction: roleActions[0],
   })
   const zone = commandZoneForDigest({
     config: input.config,
@@ -644,15 +646,14 @@ function commandBriefForDigest(input: {
   redactions: BIRedaction[]
   primaryAction: BIActionLink | null
   actionCount: number
+  leadingAction?: ActionItem
 }): BICommandBrief {
   return {
     id: `${input.config.id}-brief`,
     organizationId: input.input.organizationId,
     title: input.config.title,
     summary: input.config.summary,
-    conclusion: input.actionCount
-      ? `${input.actionCount} visible action(s) need review for this digest.`
-      : "No visible action is due for this digest right now.",
+    conclusion: priorityExplanation(input.leadingAction, "score", input.input.locale),
     mode: "brief",
     generatedAt: input.input.tenantOperating.generatedAt,
     periodStart: input.input.tenantOperating.periodStart,
@@ -894,6 +895,15 @@ function riskFromAction(
     freshness,
     sourceModules: [signal.sourceModule],
     blockers: item.blockers.map(toBIBlocker),
+    provenance: {
+      organizationId: signal.organizationId,
+      locationId: null,
+      sourceKind: signal.sourceSnapshotKind ?? signal.signalType,
+      sourceId: signal.id,
+      sourceHash: signal.sourceHash ?? null,
+      sourceModules: [signal.sourceModule],
+      generatedAt: signal.generatedAt,
+    },
     redactions: item.redactions.map(toBIRedaction),
     drillThrough: {
       available: true,

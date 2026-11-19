@@ -1,0 +1,145 @@
+[
+  {
+    "scenario": "AP invoice review",
+    "organizationId": "org-full-pos-8de59140-92b0-4d99-b4c7-28314707da47",
+    "invoiceId": "cmvpgwutx004fmaf8tl5qq11d",
+    "blockers": [],
+    "warnings": []
+  },
+  {
+    "scenario": "AP receipt → invoice → independent approval → recorded cash settlement",
+    "organizationId": "org-full-pos-8de59140-92b0-4d99-b4c7-28314707da47",
+    "invoiceId": "cmvpgwutx004fmaf8tl5qq11d",
+    "release": {
+      "organizationId": "org-full-pos-8de59140-92b0-4d99-b4c7-28314707da47",
+      "actorId": "cmvpgx34v006gmaf8ygvjx5cl",
+      "paymentRequestId": "c1d1f9b9-4ffb-45e4-8f1d-1eef007e3914",
+      "paymentNumber": "SPAY-20261026-0001",
+      "status": "RELEASED",
+      "total": "200.00",
+      "currency": "XAF",
+      "recordedAt": "2026-10-26T16:25:37.295Z",
+      "executedAt": "2026-10-26T16:25:34.722Z",
+      "executionReference": "SYNTH-e6a62ed0-868d-4f6b-844b-551a7aca2ce9",
+      "requestReference": "af6169e2-dc58-4302-9446-6641b1453442",
+      "reviewedRevision": "5e909563cbf6ece1a4304aeb39b36694236b7fc6a0a9aa10a4fc5b7c3ce0b84d",
+      "executionEventId": "cmvpgx6fs007emaf8n6agbr2h",
+      "releaseEventId": "cmvpgx6bl0073maf8172b55mr",
+      "postingBatchId": "cmvpgx5xn006omaf8wb4t8xp3",
+      "ledgerStatus": "POSTED",
+      "paymentTransactionId": "cmvpgx67x006zmaf8rpf4yl1a",
+      "reconciliationState": "PENDING",
+      "observedAt": "2026-10-26T16:25:38.925Z",
+      "replayed": false
+    },
+    "final": {
+      "stock": [
+        {
+          "quantity": "2.000",
+          "value": "200.00"
+        }
+      ],
+      "balances": {
+        "TEST_STOCK": "200.00",
+        "TEST_GRNI": "0.00",
+        "TEST_AP": "0.00",
+        "TEST_CASH": "-200.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpgwrx0003ymaf8kk82c1wd",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpgwy4f004xmaf8d0p8ay7y",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpgx60v006qmaf8inj4yqgl",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 1,
+      "transactions": 1
+    },
+    "scope": "Synthetic execution evidence; no external money moved. Provider reconciliation remains separate."
+  },
+  {
+    "scenario": "Purchase return / changed payload / reversal",
+    "organizationId": "org-full-pos-f5761436-bf04-4802-b8f9-9ad6ece3a7c9",
+    "returnId": "697cd69c-040c-4eb0-9ce0-c9f47893c9b1",
+    "reversalId": "b5550c91-b5dc-4f17-aa85-efb1a7439a0c",
+    "before": {
+      "stock": [
+        {
+          "quantity": "2.000",
+          "value": "200.00"
+        }
+      ],
+      "balances": {
+        "TEST_STOCK": "200.00",
+        "TEST_GRNI": "-200.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpgxgtf00bjmaf8y25i4abd",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 0,
+      "transactions": 0
+    },
+    "after": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "balances": {
+        "TEST_STOCK": "100.00",
+        "TEST_GRNI": "-100.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpgxgtf00bjmaf8y25i4abd",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpgxinm00c4maf8iulknvxr",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 0,
+      "transactions": 0
+    },
+    "restored": {
+      "stock": [
+        {
+          "quantity": "2.000",
+          "value": "200.00"
+        }
+      ],
+      "balances": {
+        "TEST_STOCK": "200.00",
+        "TEST_GRNI": "-200.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpgxgtf00bjmaf8y25i4abd",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpgxlxl00d3maf8dze1z25d",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpgxinm00c4maf8iulknvxr",
+          "status": "REVERSED"
+        }
+      ],
+      "supplierPayments": 0,
+      "transactions": 0
+    }
+  }
+]

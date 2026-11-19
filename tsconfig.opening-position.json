@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "paths": { "@/*": ["./*"], "@prisma/client": ["./.codex-tmp/af09-prisma/client"] }
+  },
+  "include": [
+    "services/onboarding/opening-position*.ts",
+    "actions/onboarding/opening-position.actions.ts",
+    "components/onboarding/OpeningPositionWorkbench.tsx",
+    "components/accounting/AccountantPortfolio.tsx",
+    "app/[locale]/(dashboard)/dashboard/accounting/opening-position/page.tsx",
+    "next-env.d.ts"
+  ]
+}

@@ -1,0 +1,21 @@
+[
+  {
+    "locale": "en",
+    "scenario": "TRANSIENT_READ_RECOVERY",
+    "status": "PASS",
+    "historyRetained": true,
+    "certificationDisabledWhileUnverified": true
+  },
+  {
+    "locale": "en",
+    "scenario": "DENIED_SCREEN_ACCESSIBILITY",
+    "status": "PASS",
+    "overflow": false,
+    "violations": []
+  },
+  {
+    "scenario": "HARNESS_FAILURE",
+    "status": "FAIL",
+    "error": "locator.click: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('section').filter({ has: getByRole('combobox', { name: 'Period', exact: true }) }).getByRole('button', { name: 'Refresh', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"button\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground px-4 py-2 dashboard-button-secondary h-10 rounded-lg\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    4 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n"
+  }
+]

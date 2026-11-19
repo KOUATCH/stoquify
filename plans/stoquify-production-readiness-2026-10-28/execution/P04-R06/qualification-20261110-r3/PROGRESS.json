@@ -1,0 +1,38 @@
+{
+  "recordedAt": "2026-11-10 16:10:34 UTC",
+  "packageId": "P04-R06",
+  "packet": "qualification-20261110-r3",
+  "phase": "E31_capacity_checkpoint_published_and_independently_reviewed",
+  "settledBaseline": "E30",
+  "nextEvidence": "E31",
+  "initialCapacity": {
+    "receipt": "resource-entry.json",
+    "passed": true
+  },
+  "latestAdmittedRetryCapacity": "resource-retry-ready-r1.json",
+  "dependencyCopy": {
+    "sessionId": 59080,
+    "processId": 28608,
+    "parentProcessId": 33196,
+    "lastReportedContentPercent": 100,
+    "measurement": "Completed 152806 files. New copy exactly matches manifest; preserved baseline unchanged. Actual D free bytes13455106048. See dependency-staging-attempt03.json; session59080 exited0."
+  },
+  "source": {
+    "firstManifestFiles": 9870,
+    "criticalInputsStillMatch": 68,
+    "freshCaptureAdmitted": false,
+    "note": "E31 checkpoint published and independently reviewed; publication9of9checks passed.9942-file preparation snapshot/68selected inputs preserved. No source capture/artifact/database resume/runtime/browser qualification. Latest recorded capacity7.09GiBphysical/11.13GiBcommit/12.53GiBDfree; required6/12/12. Next: actual capacity change, fresh resource receipt, current source/HEAD equality and admitted retry. Shared register blocked; historical evidence and unrelated changes preserved."
+  },
+  "database": {
+    "state": "retained_r2_stopped",
+    "users": 16,
+    "accounts": 32,
+    "issuedSessions": 0
+  },
+  "buildExecuted": false,
+  "realQualificationCasesExecuted": 0,
+  "plannedActualCases": 107,
+  "originalLogicalRequirements": 58,
+  "advancementAllowed": false,
+  "productionReady": false
+}

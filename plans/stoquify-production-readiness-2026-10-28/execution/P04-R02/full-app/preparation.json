@@ -1,0 +1,54 @@
+{
+  "startedAt": "2026-10-29T14:25:33.197Z",
+  "passed": false,
+  "root": "E:\\ohada saas\\Focused projects\\stoquify",
+  "storage": "D:\\Codex-Stoquify-P04-R02-20261029-01a1816a",
+  "source": "D:\\Codex-Stoquify-P04-R02-20261029-01a1816a\\source",
+  "commands": [
+    {
+      "label": "source-local-clone",
+      "file": "git",
+      "args": [
+        "clone",
+        "--no-checkout",
+        "--shared",
+        "--",
+        "E:\\ohada saas\\Focused projects\\stoquify",
+        "D:\\Codex-Stoquify-P04-R02-20261029-01a1816a\\source"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "source-local-index",
+      "file": "git",
+      "args": [
+        "read-tree",
+        "HEAD"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "physical-dependency-copy",
+      "file": "robocopy.exe",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\node_modules",
+        "D:\\Codex-Stoquify-P04-R02-20261029-01a1816a\\source\\node_modules",
+        "/E",
+        "/XJ",
+        "/R:0",
+        "/W:0",
+        "/MT:8",
+        "/NFL",
+        "/NDL",
+        "/NJH",
+        "/NP",
+        "/XD",
+        "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.cache"
+      ],
+      "exitCode": null,
+      "error": "spawnSync robocopy.exe ETIMEDOUT"
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: physical-dependency-copy failed\n    at run (E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\full-app\\prepare-candidate.cjs:6:318)\n    at E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\full-app\\prepare-candidate.cjs:22:1\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "finishedAt": "2026-10-29T14:49:19.115Z"
+}

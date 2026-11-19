@@ -1,4 +1,4 @@
-import { fireEvent, render as renderWithTestingLibrary, screen, waitFor, within } from "@testing-library/react"
+import { act, fireEvent, render as renderWithTestingLibrary, screen, waitFor, within } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 const render = (ui: React.ReactNode) => {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
@@ -36,7 +36,7 @@ jest.mock("lucide-react", () => {
 jest.mock("next-intl", () => ({
   useLocale: jest.fn(() => "en-US"),
   useTranslations: () => (key: string, values?: Record<string, string | number>) => {
-    if (/^(certification\.(providerStatuses|runStatuses)\.|statementImport\.statuses\.|rails\.|filters\.)/.test(key)) {
+    if (/^(certification\.(providerStatuses|runStatuses|runScope)\.|statementImport\.(statuses\.|formatHint$)|rails\.|filters\.)/.test(key)) {
       const locale = require("next-intl").useLocale()
       const copy = require(locale === "fr" ? "@/messages/fr.json" : "@/messages/en.json").paymentReconciliationWorkbench
       const value = key.split(".").reduce((item: any, part: string) => item?.[part], copy)
@@ -188,13 +188,8 @@ jest.mock("@/actions/evidence/proof-trail.actions", () => ({
   getProofTrailAction: jest.fn(),
 }))
 
-jest.mock("@/components/notifications/NotificationProvider", () => ({
-  useNotifications: () => ({
-    info: jest.fn(),
-    success: jest.fn(),
-    error: jest.fn(),
-  }),
-}))
+const mockNotifications = { info: jest.fn(), success: jest.fn(), error: jest.fn() }
+jest.mock("@/components/notifications/NotificationProvider", () => ({ useNotifications: () => mockNotifications }))
 
 jest.mock("@/hooks/payments/usePaymentReconciliationWorkbench", () => ({
   usePaymentReconciliationWorkbench: jest.fn(),
@@ -557,7 +552,8 @@ function setupWorkbench(
   mockUseReconciliationRunDetail.mockReturnValue({ data: detail, isLoading: false, isFetching: false, error: null })
   mockUseImportProviderStatement.mockReturnValue(importStatement)
   mockUseManualMatchWorkflow.mockReturnValue(manualMatch)
-  mockUseRunPaymentReconciliation.mockReturnValue(mutationMock())
+  const runReconciliation = mutationMock()
+  mockUseRunPaymentReconciliation.mockReturnValue(runReconciliation)
   mockUseSignReconciliationRun.mockReturnValue(mutationMock())
   mockUseExportReconciliationCertificate.mockReturnValue(mutationMock())
   mockUseResolveSuspenseItem.mockReturnValue({
@@ -566,7 +562,7 @@ function setupWorkbench(
     approve: mutationMock(),
   })
 
-  return { ...render(<PaymentReconciliationWorkbench />), importStatement, manualMatch }
+  return { ...render(<PaymentReconciliationWorkbench />), importStatement, manualMatch, runReconciliation }
 }
 
 function rowForPayment(paymentNumber: string) {
@@ -574,6 +570,65 @@ function rowForPayment(paymentNumber: string) {
   if (!row) throw new Error(`Row not found for ${paymentNumber}`)
   return row
 }
+
+describe("accounting-period reconciliation command", () => {
+  const period = { id: "period-june", name: "June 2026", startDate: "2026-06-01T00:00:00.000Z", endDate: "2026-06-30T23:59:59.999Z" }
+  const account = { id: "account-1", displayName: "Provider name", providerCode: "CODE-1", status: "ACTIVE", currencyCode: "XAF", railName: "Mobile money", railType: "MOBILE_MONEY" }
+  const currentDashboard = () => ({ ...dashboard, providerAccounts: [account], openAccountingPeriods: [period] })
+  function authority(organizationId = "org-1", actorId = "checker-1") {
+    jest.mocked(usePermissions).mockReturnValue({ organizationId, permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => true, user: { id: actorId } } as ReturnType<typeof usePermissions>)
+  }
+  function choose(name: string, option: string) {
+    fireEvent.keyDown(screen.getByRole("combobox", { name }), { key: "Enter" })
+    fireEvent.click(screen.getByRole("option", { name: option }))
+  }
+  beforeEach(() => { authority(); jest.mocked(useLocale).mockReturnValue("en"); jest.clearAllMocks() })
+  afterEach(() => { authority(); jest.mocked(useLocale).mockReturnValue("en") })
+
+  it("preserves today's daily run as the default", async () => {
+    const page = setupWorkbench(workbenchData(), currentDashboard())
+    fireEvent.click(screen.getByRole("button", { name: "certification.actions.run" }))
+    await waitFor(() => expect(page.runReconciliation.mutateAsync).toHaveBeenCalledWith({ providerAccountId: account.id, businessDate: expect.any(Date) }))
+    expect(screen.queryByRole("combobox", { name: "Open accounting period" })).not.toBeInTheDocument()
+  })
+  it.each(["en", "fr"])("requires a stored open period and shows the coexistence warning in %s", async locale => {
+    jest.mocked(useLocale).mockReturnValue(locale)
+    const page = setupWorkbench(workbenchData(), currentDashboard())
+    choose(locale === "fr" ? "Couverture du rapprochement" : "Run coverage", locale === "fr" ? "Période comptable complète" : "Full accounting period")
+    expect(screen.getByRole("button", { name: "certification.actions.run" })).toBeDisabled()
+    expect(screen.getByText(locale === "fr" ? /sa couverture ne sera pas étendue/ : /its coverage will not be expanded/)).toBeInTheDocument()
+    expect(screen.getByText(locale === "fr" ? /transactions observées et ne prouvent pas une couverture complète/ : /observed transaction dates only and do not establish full-period coverage/)).toBeInTheDocument()
+    choose(locale === "fr" ? "Période comptable ouverte" : "Open accounting period", "June 2026 / 2026-06-01 – 2026-06-30 UTC")
+    fireEvent.click(screen.getByRole("button", { name: "certification.actions.run" }))
+    await waitFor(() => expect(page.runReconciliation.mutateAsync).toHaveBeenCalledWith({ providerAccountId: account.id, accountingPeriodId: period.id }))
+  })
+  it("does not offer arbitrary period input when the authorized list is empty", () => {
+    setupWorkbench(workbenchData(), { ...currentDashboard(), openAccountingPeriods: [] })
+    choose("Run coverage", "Full accounting period")
+    expect(screen.getByText(/No supported open period/)).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "certification.actions.run" })).toBeDisabled()
+    expect(screen.queryByRole("textbox", { name: "Open accounting period" })).not.toBeInTheDocument()
+  })
+  it("disables a selected period that disappears from the current authorized catalog", () => {
+    const page = setupWorkbench(workbenchData(), currentDashboard())
+    choose("Run coverage", "Full accounting period"); choose("Open accounting period", "June 2026 / 2026-06-01 – 2026-06-30 UTC")
+    mockUsePaymentReconciliationDashboard.mockReturnValue({ data: { ...currentDashboard(), openAccountingPeriods: [] }, isLoading: false, refetch: jest.fn() })
+    page.rerender(<PaymentReconciliationWorkbench />)
+    expect(screen.getByRole("button", { name: "certification.actions.run" })).toBeDisabled()
+    expect(page.runReconciliation.mutateAsync).not.toHaveBeenCalled()
+  })
+  it.each(["period", "actor", "organization", "unmount"])("suppresses late run completion notifications after %s changes", async change => {
+    let resolve!: () => void
+    const page = setupWorkbench(workbenchData(), currentDashboard())
+    page.runReconciliation.mutateAsync.mockReturnValue(new Promise<void>(done => { resolve = done }))
+    fireEvent.click(screen.getByRole("button", { name: "certification.actions.run" }))
+    if (change === "period") choose("Run coverage", "Full accounting period")
+    else if (change === "unmount") page.unmount()
+    else { authority(change === "organization" ? "org-2" : "org-1", change === "actor" ? "checker-2" : "checker-1"); page.rerender(<PaymentReconciliationWorkbench />) }
+    await act(async () => { resolve() })
+    expect(mockNotifications.success).not.toHaveBeenCalled(); expect(mockNotifications.error).not.toHaveBeenCalled()
+  })
+})
 
 describe("reconciliation read recovery", () => {
   it.each(["en", "fr"])("names filters and translates recorded status codes without changing allowed actions in %s", locale => {

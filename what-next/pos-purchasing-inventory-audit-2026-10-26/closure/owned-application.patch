@@ -1,0 +1,408 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\services\\purchase-order\\purchase-order-authoring.service.ts" "b/E:\\ohada saas\\Focused projects\\stoquify\\services\\purchase-order\\purchase-order-authoring.service.ts"
+index d9a7d591..6f9e6803 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\services\\purchase-order\\purchase-order-authoring.service.ts"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\services\\purchase-order\\purchase-order-authoring.service.ts"	
+@@ -1,5 +1,6 @@
+ import "server-only"
+ import { Prisma } from "@prisma/client"
++import { z } from "zod"
+ import { db } from "@/prisma/db"
+ import { expandPermissions, hasRbacPermission } from "@/lib/security/rbac-permissions"
+ import { isUsableAccount } from "@/services/roles/role-custodian-policy"
+@@ -7,6 +8,7 @@ import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.
+ import { BusinessRuleError, ConflictError, ForbiddenError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
+ import { hashBusinessPayload, recordBusinessEventInTx, markBusinessEventAppliedInTx } from "@/services/events/business-event.service"
+ import { createPurchaseOrderInTx } from "./purchase-order.service"
++import { CreatePurchaseOrderSchema, ClonePurchaseOrderSchema } from "./purchase-order.schemas"
+ import { normalizePurchaseAuthoring, purchaseAuthoringCommand, purchaseAuthoringContent, purchaseAuthoringList, purchaseAuthoringLookup, purchaseAuthoringReceipt, savePurchaseAuthoringInput, type PurchaseAuthoringView, type PurchaseAuthoringReceipt } from "./purchase-order-authoring-contracts"
+ 
+ export type PurchaseAuthoringActor = { orgId: string; userId: string; permissions: readonly string[]; sessionId: string; sessionToken: string }
+@@ -14,7 +16,9 @@ type Tx = Prisma.TransactionClient
+ type Row = { id: string; organizationId: string; actorId: string; title: string; status: PurchaseAuthoringView["status"]; revision: number; content: unknown;
+   lastSaveHash: string; commandHash: string | null; preparedAt: Date | null; resultOrderId: string | null; createdAt: Date; updatedAt: Date }
+ export const purchaseAuthoringWritesEnabled = () => process.env.PURCHASE_ORDER_AUTHORING_WRITES_ENABLED === "true"
++export const purchaseAuthoringRolloutEnabled = () => purchaseAuthoringWritesEnabled() || process.env.PURCHASE_ORDER_AUTHORING_UI_ENABLED === "true"
+ const eventKey = (id: string) => `purchase-order-create:${id}`
++const legacyIntentKey = (id: string) => `purchase-order-authoring-intent:${id}`
+ const scope = (ctx: PurchaseAuthoringActor) => Prisma.sql`"organizationId" = ${ctx.orgId} AND "actorId" = ${ctx.userId}`
+ 
+ async function moduleAccess(tx: Tx, ctx: PurchaseAuthoringActor, intent: "read" | "write") {
+@@ -176,3 +180,64 @@ export async function discardPurchaseAuthoring(ctx: PurchaseAuthoringActor, inpu
+     return view(rows[0])
+   })
+ }
++
++// Routing only, never a receipt or authorization decision. A retained request
++// stays with this owner when new-work flags are switched off during rollback.
++export async function hasRetainedPurchaseAuthoringIntent(orgId: string, actorId: string, id: string) {
++  z.string().uuid().parse(id)
++  return !!await db.businessEvent.findFirst({ where: { organizationId: orgId, actorId, eventSource: "INTERNAL", idempotencyKey: legacyIntentKey(id), eventType: "purchase_order.authoring_intent" }, select: { id: true } })
++}
++
++type LegacyCreationIntent = { id: string } & (
++  | { kind: "create"; payload: z.input<typeof CreatePurchaseOrderSchema> }
++  | { kind: "clone"; payload: z.input<typeof ClonePurchaseOrderSchema> }
++)
++
++/** Compatibility adapter. The existing authoring owner still saves, prepares,
++ * creates and recovers the only business result. The immutable intent freezes
++ * clone defaults/source content before any potentially lost intermediate reply. */
++export async function createPurchaseOrderFromLegacyIntent(ctx: PurchaseAuthoringActor, input: LegacyCreationIntent) {
++  const id = z.string().uuid().parse(input.id)
++  const payload = input.kind === "create"
++    ? CreatePurchaseOrderSchema.parse({ ...input.payload, organizationId: ctx.orgId, createdById: ctx.userId })
++    : ClonePurchaseOrderSchema.parse({ ...input.payload, organizationId: ctx.orgId })
++  const inputHash = hashBusinessPayload({ version: 1, kind: input.kind, payload })
++  const content = await transaction(ctx, async tx => {
++    const existing = await tx.businessEvent.findUnique({ where: { organizationId_eventSource_idempotencyKey: { organizationId: ctx.orgId, eventSource: "INTERNAL", idempotencyKey: legacyIntentKey(id) } } })
++    if (existing) {
++      const stored = existing.payload as Record<string, unknown>
++      if (existing.actorId !== ctx.userId || existing.eventType !== "purchase_order.authoring_intent" || existing.status !== "APPLIED" || existing.payloadHash !== hashBusinessPayload(existing.payload) || stored.inputHash !== inputHash || stored.kind !== input.kind || stored.draftId !== id) throw new IdempotencyConflictError()
++      return purchaseAuthoringContent.parse(stored.content)
++    }
++    if (await rowById(tx, ctx, id, true)) throw new IdempotencyConflictError()
++    await writeAllowed(tx, ctx)
++    let order: z.infer<typeof CreatePurchaseOrderSchema>
++    if (input.kind === "create") order = CreatePurchaseOrderSchema.parse(payload)
++    else {
++      const clone = ClonePurchaseOrderSchema.parse(payload)
++      await tx.$queryRaw`SELECT id FROM purchase_orders WHERE id = ${clone.id} AND "organizationId" = ${ctx.orgId} FOR SHARE`
++      const source = await tx.purchaseOrder.findFirst({ where: { id: clone.id, organizationId: ctx.orgId, deletedAt: null }, include: { lines: { orderBy: { id: "asc" } } } })
++      if (!source) throw new NotFoundError()
++      const overrides = clone.overrides ?? {}
++      order = CreatePurchaseOrderSchema.parse({ organizationId: ctx.orgId, createdById: ctx.userId,
++        supplierId: overrides.supplierId ?? source.supplierId, locationId: overrides.locationId ?? source.locationId,
++        date: overrides.date ?? new Date().toISOString().slice(0, 10), expectedDeliveryDate: overrides.expectedDeliveryDate ?? source.expectedDeliveryDate?.toISOString().slice(0, 10),
++        paymentTerms: overrides.paymentTerms ?? source.paymentTerms ?? "Net 30 days", notes: overrides.notes ?? source.notes ?? `Cloned from ${source.orderNumber}`,
++        shippingCost: overrides.shippingCost ?? Number(source.shippingCost), orderLines: source.lines.map(line => ({ itemId: line.itemId, quantity: Number(line.orderedQuantity), unitPrice: Number(line.unitCost), taxRate: Number(line.taxRate), discount: Number(line.discount), notes: line.notes ?? "" })) })
++    }
++    // Legacy forms submit ISO timestamps; the durable contract uses calendar days.
++    const day = (value: string) => z.string().datetime({ offset: true }).safeParse(value).success ? value.slice(0, 10) : value
++    const frozen = purchaseAuthoringContent.parse({ supplierId: order.supplierId, locationId: order.locationId, date: day(order.date), expectedDeliveryDate: day(order.expectedDeliveryDate),
++      paymentTerms: order.paymentTerms ?? "Net 30 days", notes: order.notes ?? "", shippingCost: String(order.shippingCost),
++      orderLines: order.orderLines.map(line => ({ itemId: line.itemId, quantity: String(line.quantity), unitPrice: String(line.unitPrice), taxRate: String(line.taxRate), discount: String(line.discount), notes: line.notes ?? "" })) })
++    normalizePurchaseAuthoring(frozen, ctx.orgId, ctx.userId)
++    const recorded = await recordBusinessEventInTx(tx, { organizationId: ctx.orgId, actorId: ctx.userId, eventSource: "INTERNAL", eventType: "purchase_order.authoring_intent", schemaVersion: 1, idempotencyKey: legacyIntentKey(id), occurredAt: new Date(), payload: { draftId: id, kind: input.kind, inputHash, content: frozen }, outboxMessages: [] })
++    await markBusinessEventAppliedInTx(tx, ctx.orgId, recorded.event.id)
++    return frozen
++  })
++  const saved = await savePurchaseAuthoring(ctx, { id, expectedRevision: 0, title: input.kind === "clone" ? "Purchase order clone" : "Purchase order", content })
++  if (saved.receipt) return saved
++  const prepared = await preparePurchaseAuthoring(ctx, { id, expectedRevision: 1 })
++  if (prepared.receipt) return prepared
++  return createPurchaseOrderFromAuthoring(ctx, { id, expectedRevision: prepared.revision })
++}
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\actions\\purchaseOrderWorkflow\\purchaseOrderSystemAction.ts" "b/E:\\ohada saas\\Focused projects\\stoquify\\actions\\purchaseOrderWorkflow\\purchaseOrderSystemAction.ts"
+index 0a8c8052..4e496d8b 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\actions\\purchaseOrderWorkflow\\purchaseOrderSystemAction.ts"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\actions\\purchaseOrderWorkflow\\purchaseOrderSystemAction.ts"	
+@@ -9,6 +9,7 @@ import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation";
+ import { requirePermission } from "@/lib/security/rbac";
+ import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
+ import { requireSession } from "@/lib/security/auth-session";
++import { createPurchaseOrderFromLegacyIntent, hasRetainedPurchaseAuthoringIntent, purchaseAuthoringRolloutEnabled, type PurchaseAuthoringActor } from "@/services/purchase-order/purchase-order-authoring.service";
+ import { purchaseApprovalRequestSchema, type PurchaseApprovalRequest, type PurchaseApprovalPreview, type PurchaseApprovalReceipt } from "@/services/purchase-order/purchase-order-approval-contracts";
+ import { ForbiddenError } from "@/services/_shared/action-errors";
+ import { BusinessRuleError, toSafeActionError } from "@/services/_shared/action-errors";
+@@ -106,6 +107,14 @@ function mapCreatePayload(payload: CreatePurchaseOrderPayload, orgId: string, us
+   })
+ }
+ 
++async function durableCreationActor(actor: Awaited<ReturnType<typeof scopedOrg>>, requestId?: string): Promise<PurchaseAuthoringActor | null> {
++  if (!purchaseAuthoringRolloutEnabled() && !(requestId && await hasRetainedPurchaseAuthoringIntent(actor.orgId, actor.userId, requestId))) return null
++  if (!requestId) throw new BusinessRuleError("Retain the original purchase creation request before submitting.", "REVIEW_REQUIRED")
++  const { claims } = await requireSession()
++  if (claims.userId !== actor.userId || claims.tenantId !== actor.orgId) throw new ForbiddenError()
++  return { ...actor, sessionId: claims.sessionId, sessionToken: claims.sessionToken }
++}
++
+ function mapUpdatePayload(payload: UpdatePurchaseOrderDTO, orgId: string, userId: string, session: { sessionId: string; sessionToken: string }) {
+   return UpdatePurchaseOrderSchema.parse({
+     ...payload,
+@@ -153,17 +162,23 @@ export async function createPurchaseOrder(
+   payload: CreatePurchaseOrderPayload,
+ ): Promise<PurchaseOrderResponse<PurchaseOrderWithRelations>> {
+   try {
+-    const { orgId, userId } = await scopedOrg(payload.organizationId, "purchases.orders.create", {
++    const actor = await scopedOrg(payload.organizationId, "purchases.orders.create", {
+       auditAllowed: true,
+     })
+-    const created = await createPurchaseOrderService(mapCreatePayload(payload, orgId, userId))
++    const { orgId, userId } = actor
++    const durable = await durableCreationActor(actor, payload.requestId)
++    const retained = durable ? await createPurchaseOrderFromLegacyIntent(durable, { id: payload.requestId!, kind: "create", payload: mapCreatePayload(payload, orgId, userId) }) : null
++    const created = retained?.receipt
++      ? await getPurchaseOrderById(retained.receipt.orderId, orgId)
++      : durable ? (() => { throw new BusinessRuleError("Recover the original creation request.", "REVIEW_REQUIRED") })()
++      : await createPurchaseOrderService(mapCreatePayload(payload, orgId, userId))
+     revalidatePurchaseOrderWorkflow(orgId, created.id)
+     return response(created as PurchaseOrderWithRelations, `Purchase order ${created.orderNumber} created successfully`)
+   } catch (error) {
+     return {
+       success: false,
+       data: null as unknown as PurchaseOrderWithRelations,
+-      error: error instanceof Error ? error.message : "Failed to create purchase order",
++      error: getModuleOperationErrorReason(error) ? "New work is stopped" : toSafeActionError(error).error,
+       ...(getModuleOperationErrorReason(error) ? { code: "FORBIDDEN" as const, reason: getModuleOperationErrorReason(error) } : {}),
+     }
+   }
+@@ -334,6 +349,8 @@ export async function bulkUpdatePurchaseOrderStatus(params: {
+ export async function clonePurchaseOrder(params: {
+   id: string
+   organizationId: string
++  requestId?: string
++  recoverOnly?: boolean
+   overrides?: Partial<{
+     supplierId: string
+     locationId: string
+@@ -353,7 +370,17 @@ export async function clonePurchaseOrder(params: {
+       auditAllowed: true,
+     })
+     const parsed = ClonePurchaseOrderSchema.parse({ ...params, organizationId: actor.orgId })
+-    const cloned = await clonePurchaseOrderService(parsed, actor.userId)
++    // An uncertain legacy result must never fall through to another legacy
++    // create. Recovery can advance only a retained intent owned by this actor.
++    if (params.recoverOnly && (!params.requestId || !await hasRetainedPurchaseAuthoringIntent(actor.orgId, actor.userId, params.requestId))) {
++      throw new BusinessRuleError("The original creation outcome needs review.", "REVIEW_REQUIRED")
++    }
++    const durable = await durableCreationActor(actor, params.requestId)
++    const retained = durable ? await createPurchaseOrderFromLegacyIntent(durable, { id: params.requestId!, kind: "clone", payload: parsed }) : null
++    const cloned = retained?.receipt
++      ? await getPurchaseOrderById(retained.receipt.orderId, actor.orgId)
++      : durable ? (() => { throw new BusinessRuleError("Recover the original clone request.", "REVIEW_REQUIRED") })()
++      : await clonePurchaseOrderService(parsed, actor.userId)
+     revalidatePurchaseOrderWorkflow(actor.orgId, cloned.id)
+     return {
+       ...response(cloned as PurchaseOrderWithRelations),
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\types\\purchase-orders-system-types.ts" "b/E:\\ohada saas\\Focused projects\\stoquify\\types\\purchase-orders-system-types.ts"
+index 611cf53d..5cfd61be 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\types\\purchase-orders-system-types.ts"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\types\\purchase-orders-system-types.ts"	
+@@ -22,6 +22,8 @@ export interface OrderLineInput {
+ }
+ 
+ export interface CreatePurchaseOrderPayload {
++  /** Retain for the same user intent, including retries after an unknown outcome. */
++  requestId?: string
+   organizationId: string
+   supplierId: string
+   locationId: string
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\hooks\\usePurchaseOrderClone.ts" "b/E:\\ohada saas\\Focused projects\\stoquify\\hooks\\usePurchaseOrderClone.ts"
+index a0b75793..7c4c1a26 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\hooks\\usePurchaseOrderClone.ts"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\hooks\\usePurchaseOrderClone.ts"	
+@@ -10,48 +10,57 @@ import type { Locale } from "@/types/bilingual"
+ import { notify } from "@/lib/notifications/notify"
+ import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
+ 
+-export function usePurchaseOrderClone(input: { id: string; organizationId: string; allowed: boolean; locale: Locale }) {
++export function usePurchaseOrderClone(input: { id: string; organizationId: string; actorId: string; allowed: boolean; locale: Locale }) {
+   const router = useRouter()
+   const client = useQueryClient()
+   const t = useTranslations("purchaseOrderClone")
+   const requestInFlight = useRef(false)
++  const requestId = useRef<string | null>(null)
++  const storageKey = `purchase-clone:${input.organizationId}:${input.actorId}:${input.id}`
++  const requestScope = useRef(storageKey)
++  if (requestScope.current !== storageKey) { requestScope.current = storageKey; requestId.current = null }
+   const [pending, setPending] = useState(false)
+   const [failure, setFailure] = useState<"denied" | "unavailable" | "stopped" | "unknown" | null>(null)
+   const mutation = useMutation({ mutationFn: (params: Parameters<typeof clonePurchaseOrder>[0]) => clonePurchaseOrder(params), retry: false })
+ 
+   async function clone() {
+     if (requestInFlight.current) return
+-    if (!input.allowed) { setFailure("denied"); return }
++    if (!input.allowed || !input.actorId) { setFailure("denied"); return }
+     requestInFlight.current = true
+     setPending(true)
+     setFailure(null)
+     let confirmed = false
+     let uncertain = false
+     try {
+-      const result = await mutation.mutateAsync({ id: input.id, organizationId: input.organizationId })
+-      if (!result.success || !result.data?.id || result.data.status !== "DRAFT") {
+-        const reason = getModuleOperationErrorReason(result) ? "stopped" : result.failure ?? "unknown"
++      // Store only an opaque identity, never purchasing content or credentials.
++      // A previous unknown result must be resolved before any command is sent.
++      const retained = sessionStorage.getItem(storageKey)
++      requestId.current ??= retained ?? crypto.randomUUID()
++      sessionStorage.setItem(storageKey, requestId.current)
++      const result = await mutation.mutateAsync({ id: input.id, organizationId: input.organizationId, requestId: requestId.current, ...(retained ? { recoverOnly: true } : {}) })
++      if (!result.success || !result.data?.id || !retained && result.data.status !== "DRAFT") {
++        const reason = retained ? "unknown" : getModuleOperationErrorReason(result) ? "stopped" : result.failure ?? "unknown"
+         uncertain = reason === "unknown"
++        if (!uncertain) sessionStorage.removeItem(storageKey)
+         setFailure(reason)
+         return
+       }
+       confirmed = true
++      sessionStorage.removeItem(storageKey)
+       void client.invalidateQueries({ queryKey: ["purchase-orders", "list"] })
+       void client.invalidateQueries({ queryKey: ["purchase-orders", "summary", input.organizationId] })
+       notify.success(t("created"))
+-      const destination = `/dashboard/purchase-orders/${result.data.id}${result.canEdit ? "/edit" : ""}`
++      const destination = `/dashboard/purchase-orders/${result.data.id}${result.canEdit && result.data.status === "DRAFT" ? "/edit" : ""}`
+       router.push(localizePath(destination, input.locale))
+       router.refresh()
+     } catch {
+       uncertain = true
+       setFailure("unknown")
+     } finally {
+-      // There is no durable clone-command idempotency key. Do not resend an
+-      // uncertain request: the user must inspect saved orders first.
+       if (!confirmed || uncertain) setPending(false)
+-      if (!confirmed && !uncertain) requestInFlight.current = false
++      if (!confirmed) requestInFlight.current = false
+     }
+   }
+ 
+-  return { clone, pending, failure, retryBlocked: failure === "unknown" }
++  return { clone, pending, failure, retryBlocked: false }
+ }
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\hooks\\useRecentPurchaseOrderQueries.ts" "b/E:\\ohada saas\\Focused projects\\stoquify\\hooks\\useRecentPurchaseOrderQueries.ts"
+index 106f928f..4f014ebd 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\hooks\\useRecentPurchaseOrderQueries.ts"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\hooks\\useRecentPurchaseOrderQueries.ts"	
+@@ -27,7 +27,7 @@ import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-ord
+ import type { PurchaseOrderPresentation } from "@/services/purchase-order/purchase-order-capabilities";
+ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+ import { useSearchParams } from "next/navigation";
+-import { useCallback, useMemo } from "react";
++import { useCallback, useMemo, useRef } from "react";
+ import { useTranslations } from "next-intl";
+ import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error";
+ // Types
+@@ -295,6 +295,7 @@ const getBaseMutationOptions = <TData extends { data?: any; message?: string }>(
+ export function useCreatePurchaseOrder() {
+   const queryClient = useQueryClient();
+   const t = useTranslations("moduleComposition.stop");
++  const requestId = useRef<string | null>(null);
+ 
+   return useMutation<
+     PurchaseOrderResponse<PurchaseOrderWithRelations>,
+@@ -306,7 +307,9 @@ export function useCreatePurchaseOrder() {
+       if (!payload.organizationId) {
+         throw new Error("Organization ID is required");
+       }
+-      const result = await createPurchaseOrder(payload);
++      requestId.current ??= crypto.randomUUID();
++      const result = await createPurchaseOrder({ ...payload, requestId: payload.requestId ?? requestId.current });
++      if (result.success) requestId.current = null;
+       return getModuleOperationErrorReason(result) ? { ...result, error: t("deniedMessage") } : result;
+     },
+     ...getBaseMutationOptions(queryClient),
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\components\\purchase-orders\\ModernCreatePurchaseOrderForm.tsx" "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\purchase-orders\\ModernCreatePurchaseOrderForm.tsx"
+index ae35b84c..b8c533a5 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\components\\purchase-orders\\ModernCreatePurchaseOrderForm.tsx"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\purchase-orders\\ModernCreatePurchaseOrderForm.tsx"	
+@@ -46,7 +46,7 @@ import {
+ import { useRouter } from "next/navigation"
+ import { useTranslations } from "next-intl"
+ import { getModuleOperationErrorReason, type ModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
+-import { useCallback, useState } from "react"
++import { useCallback, useRef, useState } from "react"
+ import { useForm } from "react-hook-form"
+ import { z } from "zod"
+ 
+@@ -328,6 +328,7 @@ export function ModernCreatePurchaseOrderForm({
+   }
+ 
+   // Actual form submission after confirmation
++  const creationRequest = useRef<string | null>(null)
+   const handleConfirmedSubmit = async () => {
+     const data = form.getValues()
+ 
+@@ -343,6 +344,8 @@ export function ModernCreatePurchaseOrderForm({
+     try {
+       if (action) {
+         const formData = new FormData()
++        creationRequest.current ??= crypto.randomUUID()
++        formData.set("requestId", creationRequest.current)
+         Object.entries(data).forEach(([key, value]) => {
+           if (value instanceof Date) {
+             formData.append(key, value.toISOString())
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\app\\[locale]\\(dashboard)\\dashboard\\purchase-orders\\new\\page.tsx" "b/E:\\ohada saas\\Focused projects\\stoquify\\app\\[locale]\\(dashboard)\\dashboard\\purchase-orders\\new\\page.tsx"
+index 9f0638ed..9a23d07c 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\app\\[locale]\\(dashboard)\\dashboard\\purchase-orders\\new\\page.tsx"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\app\\[locale]\\(dashboard)\\dashboard\\purchase-orders\\new\\page.tsx"	
+@@ -21,6 +21,7 @@ async function handleCreatePurchaseOrder(formData: FormData) {
+ 
+   const result = await createPurchaseOrder({
+     organizationId: user.organizationId,
++    requestId: String(formData.get("requestId") || "") || undefined,
+     supplierId: String(formData.get("supplierId") ?? ""),
+     locationId: String(formData.get("locationId") ?? ""),
+     date: String(formData.get("date") ?? ""),
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\messages\\en.json" "b/E:\\ohada saas\\Focused projects\\stoquify\\messages\\en.json"
+index 48432391..1ff3c9fc 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\messages\\en.json"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\messages\\en.json"	
+@@ -6194,6 +6194,7 @@
+     "positiveQuantity": "Enter a positive quantity with up to three decimal places."
+   },
+   "purchaseOrderClone": {
++    "recover": "Check original request",
+     "button": "Clone as a draft",
+     "pending": "Creating the draft…",
+     "created": "New purchase-order draft created.",
+@@ -6203,7 +6204,7 @@
+     "unavailable": "The source order, supplier, delivery location or items are no longer available for a new order. Review the current records before trying again.",
+     "stopped": "Purchasing is not accepting new orders. Existing orders and their permitted completion workflows remain available.",
+     "unknownTitle": "The clone result could not be confirmed",
+-    "unknown": "A draft may have been created. Check the most recent purchase orders before attempting another clone. This page will not send the request again.",
++    "unknown": "A draft may have been created. Check the original request or review saved authoring work and recent orders. Checking status does not create another order.",
+     "openOrders": "Open purchase orders in a new tab",
+     "draftOnly": "The copy is a draft. Submission and independent approval are still required."
+   },
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\messages\\fr.json" "b/E:\\ohada saas\\Focused projects\\stoquify\\messages\\fr.json"
+index 4ce89256..a0322d8d 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\messages\\fr.json"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\messages\\fr.json"	
+@@ -6194,6 +6194,7 @@
+     "positiveQuantity": "Saisissez une quantité positive avec au plus trois décimales."
+   },
+   "purchaseOrderClone": {
++    "recover": "Vérifier la demande initiale",
+     "button": "Cloner en brouillon",
+     "pending": "Création du brouillon…",
+     "created": "Un nouveau brouillon de commande a été créé.",
+@@ -6203,7 +6204,7 @@
+     "unavailable": "La commande d’origine, le fournisseur, le lieu de livraison ou les articles ne sont plus disponibles pour une nouvelle commande. Vérifiez les documents actuels avant de réessayer.",
+     "stopped": "Les achats n’acceptent plus de nouvelles commandes. Les commandes existantes et leurs opérations de finalisation autorisées restent accessibles.",
+     "unknownTitle": "Le résultat du clonage n’a pas pu être confirmé",
+-    "unknown": "Un brouillon a peut-être été créé. Vérifiez les commandes les plus récentes avant de recommencer. Cette page ne renverra pas la demande.",
++    "unknown": "Un brouillon a peut-être été créé. Vérifiez la demande initiale, le travail enregistré ou les commandes récentes. La vérification ne crée pas une autre commande.",
+     "openOrders": "Ouvrir les bons de commande dans un nouvel onglet",
+     "draftOnly": "La copie est un brouillon. La soumission et l’approbation indépendante restent obligatoires."
+   },
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\components\\purchase-orders\\ModernPurchaseOrderDetailPage.tsx" "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\purchase-orders\\ModernPurchaseOrderDetailPage.tsx"
+index 5afc6963..4577cf68 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\closure\\baseline\\components\\purchase-orders\\ModernPurchaseOrderDetailPage.tsx"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\purchase-orders\\ModernPurchaseOrderDetailPage.tsx"	
+@@ -202,7 +202,7 @@ export default function ModernPurchaseOrderDetailPage({
+   const approvalText = useTranslations("purchaseOrderApproval")
+   const cloneText = useTranslations("purchaseOrderClone")
+   const receivingText = useTranslations("purchaseReceiving")
+-  const cloneController = usePurchaseOrderClone({ id, organizationId: organizationId ?? "", locale, allowed: Boolean(purchaseOrder?.capabilities.clone.allowed && organizationId) })
++  const cloneController = usePurchaseOrderClone({ id, organizationId: organizationId ?? "", actorId: currentUserId, locale, allowed: Boolean(purchaseOrder?.capabilities.clone.allowed && organizationId && currentUserId) })
+ 
+   const receiveDeepLinkHandledRef = useRef(false)
+   const receiveDeepLink = purchaseOrder
+@@ -323,7 +323,7 @@ export default function ModernPurchaseOrderDetailPage({
+                   className="dashboard-button-secondary rounded-lg"
+                 >
+                   <Copy className="w-4 h-4 mr-2" />
+-                  {cloneController.pending ? cloneText("pending") : cloneText("button")}
++                  {cloneController.pending ? cloneText("pending") : cloneController.failure === "unknown" ? cloneText("recover") : cloneText("button")}
+                 </Button>
+               ) : null}
+ 
+@@ -711,7 +711,7 @@ export default function ModernPurchaseOrderDetailPage({
+                             disabled={cloneController.pending || cloneController.retryBlocked}
+                           >
+                             <Copy className="w-4 h-4 mr-2" />
+-                            {cloneController.pending ? cloneText("pending") : cloneText("button")}
++                            {cloneController.pending ? cloneText("pending") : cloneController.failure === "unknown" ? cloneText("recover") : cloneText("button")}
+                           </Button>
+                           ) : null}
+                           <Button

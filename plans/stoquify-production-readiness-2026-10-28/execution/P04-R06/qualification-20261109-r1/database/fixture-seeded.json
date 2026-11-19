@@ -1,0 +1,196 @@
+{
+  "at": "2026-11-09T20:30:22.684Z",
+  "passed": true,
+  "candidateId": "p04-r06-full-ecf7a96c3112",
+  "database": "stoquify_local_p04r06_20261109_full_r1",
+  "actors": {
+    "active": {
+      "id": "p04r06-active",
+      "email": "p04r06-active@example.invalid",
+      "organizationId": "p04-r06-a",
+      "roleId": "p04r06-active-role",
+      "roleCode": "p04r06-active_role",
+      "permissions": [
+        "dashboard.read",
+        "profile.read",
+        "profile.update",
+        "inventory.items.read"
+      ],
+      "secondary": {
+        "id": "p04r06-active-secondary",
+        "providerId": "p04r06-synthetic",
+        "accountId": "p04r06-active-secondary"
+      }
+    },
+    "foreign": {
+      "id": "p04r06-foreign",
+      "email": "p04r06-foreign@example.invalid",
+      "organizationId": "p04-r06-b",
+      "roleId": "p04r06-foreign-role",
+      "roleCode": "p04r06-foreign_role",
+      "permissions": [
+        "dashboard.read",
+        "profile.read",
+        "profile.update",
+        "inventory.items.read"
+      ],
+      "secondary": {
+        "id": "p04r06-foreign-secondary",
+        "providerId": "p04r06-synthetic",
+        "accountId": "p04r06-foreign-secondary"
+      }
+    },
+    "revoked": {
+      "id": "p04r06-revoked",
+      "email": "p04r06-revoked@example.invalid",
+      "organizationId": "p04-r06-a",
+      "roleId": "p04r06-revoked-role",
+      "roleCode": "p04r06-revoked_role",
+      "permissions": [
+        "dashboard.read",
+        "profile.read",
+        "profile.update",
+        "inventory.items.read"
+      ],
+      "secondary": {
+        "id": "p04r06-revoked-secondary",
+        "providerId": "p04r06-synthetic",
+        "accountId": "p04r06-revoked-secondary"
+      }
+    },
+    "expired": {
+      "id": "p04r06-expired",
+      "email": "p04r06-expired@example.invalid",
+      "organizationId": "p04-r06-a",
+      "roleId": "p04r06-expired-role",
+      "roleCode": "p04r06-expired_role",
+      "permissions": [
+        "dashboard.read",
+        "profile.read",
+        "profile.update",
+        "inventory.items.read"
+      ],
+      "secondary": {
+        "id": "p04r06-expired-secondary",
+        "providerId": "p04r06-synthetic",
+        "accountId": "p04r06-expired-secondary"
+      }
+    },
+    "inactive": {
+      "id": "p04r06-inactive",
+      "email": "p04r06-inactive@example.invalid",
+      "organizationId": "p04-r06-a",
+      "roleId": "p04r06-inactive-role",
+      "roleCode": "p04r06-inactive_role",
+      "permissions": [
+        "dashboard.read",
+        "profile.read",
+        "profile.update",
+        "inventory.items.read"
+      ],
+      "secondary": {
+        "id": "p04r06-inactive-secondary",
+        "providerId": "p04r06-synthetic",
+        "accountId": "p04r06-inactive-secondary"
+      }
+    },
+    "locked_indefinite": {
+      "id": "p04r06-locked_indefinite",
+      "email": "p04r06-locked_indefinite@example.invalid",
+      "organizationId": "p04-r06-a",
+      "roleId": "p04r06-locked_indefinite-role",
+      "roleCode": "p04r06-locked_indefinite_role",
+      "permissions": [
+        "dashboard.read",
+        "profile.read",
+        "profile.update",
+        "inventory.items.read"
+      ],
+      "secondary": {
+        "id": "p04r06-locked_indefinite-secondary",
+        "providerId": "p04r06-synthetic",
+        "accountId": "p04r06-locked_indefinite-secondary"
+      }
+    },
+    "locked_future": {
+      "id": "p04r06-locked_future",
+      "email": "p04r06-locked_future@example.invalid",
+      "organizationId": "p04-r06-a",
+      "roleId": "p04r06-locked_future-role",
+      "roleCode": "p04r06-locked_future_role",
+      "permissions": [
+        "dashboard.read",
+        "profile.read",
+        "profile.update",
+        "inventory.items.read"
+      ],
+      "secondary": {
+        "id": "p04r06-locked_future-secondary",
+        "providerId": "p04r06-synthetic",
+        "accountId": "p04r06-locked_future-secondary"
+      }
+    },
+    "expired_lock": {
+      "id": "p04r06-expired_lock",
+      "email": "p04r06-expired_lock@example.invalid",
+      "organizationId": "p04-r06-a",
+      "roleId": "p04r06-expired_lock-role",
+      "roleCode": "p04r06-expired_lock_role",
+      "permissions": [
+        "dashboard.read",
+        "profile.read",
+        "profile.update",
+        "inventory.items.read"
+      ],
+      "secondary": {
+        "id": "p04r06-expired_lock-secondary",
+        "providerId": "p04r06-synthetic",
+        "accountId": "p04r06-expired_lock-secondary"
+      }
+    },
+    "browser_en": {
+      "id": "p04r06-browser_en",
+      "email": "p04r06-browser_en@example.invalid",
+      "organizationId": "p04-r06-a",
+      "roleId": "p04r06-browser_en-role",
+      "roleCode": "p04r06-browser_en_role",
+      "permissions": [
+        "dashboard.read",
+        "profile.read",
+        "profile.update",
+        "inventory.items.read"
+      ],
+      "secondary": {
+        "id": "p04r06-browser_en-secondary",
+        "providerId": "p04r06-synthetic",
+        "accountId": "p04r06-browser_en-secondary"
+      }
+    },
+    "browser_fr": {
+      "id": "p04r06-browser_fr",
+      "email": "p04r06-browser_fr@example.invalid",
+      "organizationId": "p04-r06-a",
+      "roleId": "p04r06-browser_fr-role",
+      "roleCode": "p04r06-browser_fr_role",
+      "permissions": [
+        "dashboard.read",
+        "profile.read",
+        "profile.update",
+        "inventory.items.read"
+      ],
+      "secondary": {
+        "id": "p04r06-browser_fr-secondary",
+        "providerId": "p04r06-synthetic",
+        "accountId": "p04r06-browser_fr-secondary"
+      }
+    }
+  },
+  "organizations": [
+    "p04-r06-a",
+    "p04-r06-b"
+  ],
+  "sessionsInitially": 0,
+  "passwordAlgorithm": "Argon2id memory19456 time2 parallelism1",
+  "passwordSourceSha256": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+  "privateFixturePath": "D:\\p04-r06-fullapp-20261109-r1\\private\\browser-fixture.private.json"
+}

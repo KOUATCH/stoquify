@@ -1,0 +1,703 @@
+[
+  {
+    "scenario": "durable handoff baseline -> current",
+    "status": "PASS",
+    "receipt": {
+      "requestReference": "7c29274a-3290-4878-9483-7cdd16c1ce25",
+      "orderId": "cmvppzvv50003maxs0xk0eh9r",
+      "orderNumber": "PO-000001",
+      "createdAt": "2026-10-26T20:39:41.633Z"
+    },
+    "state": {
+      "organizationId": "org-full-pos-7422e947-1a6f-4b34-8fa4-ab743a9a12be",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 1,
+      "receipts": 0,
+      "movements": 0,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    }
+  },
+  {
+    "scenario": "durable handoff current -> baseline",
+    "status": "PASS",
+    "receipt": {
+      "requestReference": "52ac5fc4-769d-4ddd-a07e-430bbb3f4686",
+      "orderId": "cmvpq0b6x0003ma5gq0uvycze",
+      "orderNumber": "PO-000001",
+      "createdAt": "2026-10-26T20:40:01.476Z"
+    },
+    "state": {
+      "organizationId": "org-full-pos-3557173e-6e8b-4a9e-8ff0-6d41f4565951",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 1,
+      "receipts": 0,
+      "movements": 0,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    }
+  },
+  {
+    "scenario": "current flag transitions and old reader",
+    "status": "PASS",
+    "transitions": [
+      {
+        "flags": {
+          "ui": false,
+          "writes": false
+        },
+        "createId": "cmvpq0jzr0009mawcznn6gf8f",
+        "cloneId": "cmvpq0n210009matg41l4p0oj"
+      },
+      {
+        "flags": {
+          "ui": true,
+          "writes": false
+        },
+        "createId": "cmvpq0jzr0009mawcznn6gf8f",
+        "cloneId": "cmvpq0n210009matg41l4p0oj"
+      },
+      {
+        "flags": {
+          "ui": false,
+          "writes": true
+        },
+        "createId": "cmvpq0jzr0009mawcznn6gf8f",
+        "cloneId": "cmvpq0n210009matg41l4p0oj"
+      },
+      {
+        "flags": {
+          "ui": true,
+          "writes": true
+        },
+        "createId": "cmvpq0jzr0009mawcznn6gf8f",
+        "cloneId": "cmvpq0n210009matg41l4p0oj"
+      }
+    ],
+    "changedPayload": {
+      "success": false,
+      "error": "The idempotency key was already used with a different payload."
+    },
+    "oldReceipt": {
+      "requestReference": "b0dbf100-de65-4250-a61a-0a987d0a6318",
+      "orderId": "cmvpq0n210009matg41l4p0oj",
+      "orderNumber": "PO-000002",
+      "createdAt": "2026-10-26T20:40:16.848Z"
+    },
+    "state": {
+      "organizationId": "org-full-pos-f1ec32ca-eaf4-42d7-8bba-8de175db5dd2",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 2,
+      "receipts": 0,
+      "movements": 0,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    }
+  },
+  {
+    "scenario": "write-stop and discard handoff",
+    "status": "PASS",
+    "stopped": {
+      "name": "BusinessRuleError",
+      "code": "BUSINESS_RULE_VIOLATION",
+      "message": "Purchase authoring is unavailable."
+    },
+    "stale": {
+      "name": "ConflictError",
+      "code": "CONFLICT",
+      "message": "Reload the saved work."
+    },
+    "state": {
+      "organizationId": "org-full-pos-910faf0e-6c41-4c12-9045-080a247bb39b",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 0,
+      "receipts": 0,
+      "movements": 0,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    }
+  },
+  {
+    "scenario": "new admissions and older client contract",
+    "status": "PASS",
+    "admissions": [
+      {
+        "flags": {
+          "ui": false,
+          "writes": false
+        },
+        "result": {
+          "success": true,
+          "id": "cmvpq2giy0003ma0wicv952us",
+          "orderNumber": "PO-000001",
+          "error": null
+        }
+      },
+      {
+        "flags": {
+          "ui": true,
+          "writes": false
+        },
+        "result": {
+          "success": false,
+          "error": "Purchase authoring is unavailable."
+        }
+      },
+      {
+        "flags": {
+          "ui": false,
+          "writes": true
+        },
+        "result": {
+          "success": true,
+          "id": "cmvpq2l9f0009ma10ytaaug9t",
+          "orderNumber": "PO-000002",
+          "error": null
+        }
+      },
+      {
+        "flags": {
+          "ui": true,
+          "writes": true
+        },
+        "result": {
+          "success": true,
+          "id": "cmvpq2nz70009maec9ah02dm3",
+          "orderNumber": "PO-000003",
+          "error": null
+        }
+      }
+    ],
+    "keyless": {
+      "success": false,
+      "error": "Retain the original purchase creation request before submitting."
+    },
+    "noIntentRecovery": {
+      "success": false
+    },
+    "state": {
+      "organizationId": "org-full-pos-c9b188af-7a4a-4307-98f9-5777914eaeee",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 3,
+      "receipts": 0,
+      "movements": 0,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    },
+    "limitation": "The 00 cohort retains legacy behavior; this is not duplicate-safety certification for that cohort."
+  },
+  {
+    "scenario": "pre-adapter legacy rollback",
+    "status": "UNSUPPORTED",
+    "trigger": "Same retained request sent to baseline legacy action after current durable commit",
+    "first": {
+      "success": true,
+      "id": "cmvpq2vnc0009mafw4ybnj991",
+      "orderNumber": "PO-000001",
+      "error": null
+    },
+    "old": {
+      "success": true,
+      "id": "cmvpq2xxb0003ma28v2vawypd",
+      "orderNumber": "PO-000002",
+      "error": null
+    },
+    "recovery": {
+      "success": true,
+      "id": "cmvpq2vnc0009mafw4ybnj991",
+      "orderNumber": "PO-000001",
+      "error": null
+    },
+    "clone": {
+      "success": true,
+      "id": "cmvpq34il0009may8f8xnliqk",
+      "orderNumber": "PO-000003",
+      "error": null
+    },
+    "oldClone": {
+      "success": true,
+      "id": "cmvpq37il0003mafchpsp0xpz",
+      "orderNumber": "PO-000004",
+      "error": null
+    },
+    "cloneRecovery": {
+      "success": true,
+      "id": "cmvpq34il0009may8f8xnliqk",
+      "orderNumber": "PO-000003",
+      "error": null
+    },
+    "state": {
+      "organizationId": "org-full-pos-ecac0a46-a770-47d6-82ab-de3484c17b78",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 4,
+      "receipts": 0,
+      "movements": 0,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    }
+  },
+  {
+    "scenario": "mixed current flags at first admission",
+    "status": "UNSUPPORTED",
+    "trigger": "Off-node legacy admission precedes on-node durable intent",
+    "off": {
+      "success": true,
+      "id": "cmvpq3i970003mancnqpflt7n",
+      "orderNumber": "PO-000001",
+      "error": null
+    },
+    "on": {
+      "success": true,
+      "id": "cmvpq3m2d0009maa88xiqo9fn",
+      "orderNumber": "PO-000002",
+      "error": null
+    },
+    "state": {
+      "organizationId": "org-full-pos-9fc65c51-8526-4f76-b141-c10a086000d5",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 2,
+      "receipts": 0,
+      "movements": 0,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    }
+  },
+  {
+    "scenario": "POS receipt handoff baseline -> current",
+    "status": "PASS",
+    "committed": {
+      "status": "COMPLETED",
+      "replayed": false,
+      "saleId": "sale-full-pos-fe068bcc-b828-4ebd-be7c-4322d50b10c7",
+      "clientCommitId": "pos:b6792452-9004-4734-8c34-156af1364374",
+      "total": 450,
+      "receiptStatus": "READY"
+    },
+    "replay": {
+      "status": "COMPLETED",
+      "replayed": true,
+      "saleId": "sale-full-pos-fe068bcc-b828-4ebd-be7c-4322d50b10c7",
+      "clientCommitId": "pos:b6792452-9004-4734-8c34-156af1364374",
+      "total": 450,
+      "receiptStatus": "READY"
+    },
+    "changedPayload": {
+      "name": "ApplicationError",
+      "code": "DUPLICATE_KEY_CONFLICT",
+      "message": "This POS commit identifier was already used for a different sale request"
+    },
+    "state": {
+      "organizationId": "org-full-pos-fe068bcc-b828-4ebd-be7c-4322d50b10c7",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 0,
+      "receipts": 0,
+      "movements": 1,
+      "commits": 1,
+      "payments": 1,
+      "journals": [
+        {
+          "id": "cmvpq3q2r000lma7s3ryq171b",
+          "lines": [
+            {
+              "account": "TEST_AR",
+              "debit": "450",
+              "credit": "0"
+            },
+            {
+              "account": "TEST_REVENUE",
+              "debit": "0",
+              "credit": "450"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "300.03",
+              "credit": "0"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "0",
+              "credit": "300.03"
+            }
+          ]
+        },
+        {
+          "id": "cmvpq3q8j0010ma7sufij6gsk",
+          "lines": [
+            {
+              "account": "TEST_CASH",
+              "debit": "450",
+              "credit": "0"
+            },
+            {
+              "account": "TEST_AR",
+              "debit": "0",
+              "credit": "450"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "scenario": "POS receipt handoff current -> baseline",
+    "status": "PASS",
+    "committed": {
+      "status": "COMPLETED",
+      "replayed": false,
+      "saleId": "sale-full-pos-276844df-eea7-4eb0-9435-cac19c85efcf",
+      "clientCommitId": "pos:b7ea0ff6-6a9f-4e73-8551-58e72af27ddd",
+      "total": 450,
+      "receiptStatus": "READY"
+    },
+    "replay": {
+      "status": "COMPLETED",
+      "replayed": true,
+      "saleId": "sale-full-pos-276844df-eea7-4eb0-9435-cac19c85efcf",
+      "clientCommitId": "pos:b7ea0ff6-6a9f-4e73-8551-58e72af27ddd",
+      "total": 450,
+      "receiptStatus": "READY"
+    },
+    "changedPayload": {
+      "name": "ApplicationError",
+      "code": "DUPLICATE_KEY_CONFLICT",
+      "message": "This POS commit identifier was already used for a different sale request"
+    },
+    "state": {
+      "organizationId": "org-full-pos-276844df-eea7-4eb0-9435-cac19c85efcf",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 0,
+      "receipts": 0,
+      "movements": 1,
+      "commits": 1,
+      "payments": 1,
+      "journals": [
+        {
+          "id": "cmvpq400w000lmatsey5g38d6",
+          "lines": [
+            {
+              "account": "TEST_AR",
+              "debit": "450",
+              "credit": "0"
+            },
+            {
+              "account": "TEST_REVENUE",
+              "debit": "0",
+              "credit": "450"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "300.03",
+              "credit": "0"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "0",
+              "credit": "300.03"
+            }
+          ]
+        },
+        {
+          "id": "cmvpq40440010matsvgq3abs1",
+          "lines": [
+            {
+              "account": "TEST_CASH",
+              "debit": "450",
+              "credit": "0"
+            },
+            {
+              "account": "TEST_AR",
+              "debit": "0",
+              "credit": "450"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "scenario": "receiving handoff baseline -> current",
+    "status": "PASS",
+    "first": {
+      "kind": "receive",
+      "orderId": "cmvpq46jg00btmaosknebqqul",
+      "goodsReceiptId": "cmvpq4a030003ma4g1e7c7s81",
+      "receiptNumber": "GR-000001",
+      "requestReference": "receive:ce4c2b56-13b5-4141-801f-0ea95eca8b8d",
+      "reviewedRevision": "780dc965648a04cce61338e3917d36da8e5cd580141b3ec0c40fcbe947ba4a16",
+      "actorId": "cmvpq468j00b5maoslwykxi85",
+      "recordedAt": "2026-10-26T20:43:07.267Z",
+      "disposition": "RECEIVED",
+      "quantity": "3",
+      "value": "300",
+      "currency": "XAF",
+      "stockStatus": "recorded",
+      "accountingStatus": "review_required",
+      "replayed": false
+    },
+    "replay": {
+      "kind": "receive",
+      "orderId": "cmvpq46jg00btmaosknebqqul",
+      "goodsReceiptId": "cmvpq4a030003ma4g1e7c7s81",
+      "receiptNumber": "GR-000001",
+      "requestReference": "receive:ce4c2b56-13b5-4141-801f-0ea95eca8b8d",
+      "reviewedRevision": "780dc965648a04cce61338e3917d36da8e5cd580141b3ec0c40fcbe947ba4a16",
+      "actorId": "cmvpq468j00b5maoslwykxi85",
+      "recordedAt": "2026-10-26T20:43:07.267Z",
+      "disposition": "RECEIVED",
+      "quantity": "3",
+      "value": "300",
+      "currency": "XAF",
+      "stockStatus": "recorded",
+      "accountingStatus": "review_required",
+      "replayed": true
+    },
+    "changedPayload": {
+      "name": "IdempotencyConflictError",
+      "code": "IDEMPOTENCY_CONFLICT",
+      "message": "This receiving reference belongs to another request."
+    },
+    "state": {
+      "organizationId": "org-full-pos-dab6a538-9c2c-4f8e-af15-0d8a47ea1e17",
+      "stock": {
+        "quantity": "3.000",
+        "value": "300.00",
+        "reserved": "0.000"
+      },
+      "orders": 1,
+      "receipts": 1,
+      "movements": 1,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    },
+    "limitation": "Receipt stock/replay evidence; this fixture has no receipt posting rule, so no receipt-to-GL certification is inferred."
+  },
+  {
+    "scenario": "mixed-process stock competition",
+    "status": "PASS",
+    "blockerPid": 29360,
+    "observedWaits": [
+      {
+        "pid": 45432,
+        "blockers": [
+          29360
+        ]
+      },
+      {
+        "pid": 17204,
+        "blockers": [
+          45432
+        ]
+      }
+    ],
+    "results": [
+      {
+        "ok": true,
+        "source": "baseline",
+        "operation": "issue",
+        "clientVersion": "6.19.3",
+        "startedAt": "2026-10-26T20:43:17.592Z",
+        "endedAt": "2026-10-26T20:43:18.670Z",
+        "value": {
+          "eventId": "cmvpq4j780001ma2gawxxyckp",
+          "idempotencyKey": "pos-sale-stock:org-full-pos-62cb8260-419d-4eaa-8fad-5952be668171:509e7231-0f5c-4f34-822b-e0aea0c76ee6",
+          "documentHash": "sha256:bb331f4cccd60423bb00f4794d33d5a841fcf52c902c3e49a6a9085f4583e89b",
+          "movementTransactionIds": [
+            "cmvpq4jc30007ma2gcqmnxf3u"
+          ],
+          "totalCost": "300.03",
+          "replayed": false
+        }
+      },
+      {
+        "ok": false,
+        "source": "current",
+        "operation": "issue",
+        "startedAt": "2026-10-26T20:43:17.470Z",
+        "endedAt": "2026-10-26T20:43:18.796Z",
+        "error": {
+          "name": "InsufficientStockError",
+          "code": "BUSINESS_RULE_VIOLATION",
+          "message": "Insufficient inventory for item 62cb8260-419d-4eaa-8fad-5952be668171. Available: 0.000, Required: 3.000"
+        }
+      }
+    ],
+    "state": {
+      "organizationId": "org-full-pos-62cb8260-419d-4eaa-8fad-5952be668171",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 0,
+      "receipts": 0,
+      "movements": 1,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    }
+  },
+  {
+    "scenario": "reservation payload-version boundary",
+    "status": "PASS",
+    "behavior": "Fail-closed, not transparent replay compatibility; original reservations remain retained for review",
+    "first": {
+      "eventId": "cmvpq4tfu0001ma6ghh5n3z8p",
+      "idempotencyKey": "mixed-reserve:8197b7fd-5caf-43e0-8c52-75c5892fcdb4",
+      "documentHash": "sha256:1ddb577acebb1e4df034b3567deddccd0f6a68d74a28f3387e61fdae52476d60",
+      "movementTransactionIds": [
+        "cmvpq4tjj0007ma6g5hvg89ir"
+      ],
+      "totalCost": "0",
+      "replayed": false
+    },
+    "currentRetry": {
+      "name": "IdempotencyConflictError",
+      "code": "IDEMPOTENCY_CONFLICT",
+      "message": "Business event idempotency key was reused with a different payload."
+    },
+    "second": {
+      "eventId": "cmvpq4z9d0001ma0sy0p24aut",
+      "idempotencyKey": "mixed-reserve:896b3366-5c6b-4c57-b136-ee776dd49375",
+      "documentHash": "sha256:a47efd36c88a3be9da042bfc264a4fc297a69e7f96c71837d28fddb1705c48cf",
+      "movementTransactionIds": [
+        "cmvpq4zcw0007ma0syqst0yhg"
+      ],
+      "totalCost": "0",
+      "replayed": false
+    },
+    "oldRetry": {
+      "name": "IdempotencyConflictError",
+      "code": "IDEMPOTENCY_CONFLICT",
+      "message": "Business event idempotency key was reused with a different payload."
+    },
+    "state": {
+      "organizationId": "org-full-pos-31811b50-5413-4612-898e-e610cad49471",
+      "stock": {
+        "quantity": "3.000",
+        "value": "300.03",
+        "reserved": "2.000"
+      },
+      "orders": 0,
+      "receipts": 0,
+      "movements": 2,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    }
+  },
+  {
+    "scenario": "legacy restoration writer after repaired issue",
+    "status": "UNSUPPORTED",
+    "issued": {
+      "eventId": "cmvpq8us40001max0i385z07n",
+      "idempotencyKey": "pos-sale-stock:org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4:e5c6fdb1-846a-4edc-ad8a-156a31fe4068",
+      "documentHash": "sha256:2ba1a3a4d29455eb149d2330daedc62bc20f71fb45fe79d79b784775aaa9d610",
+      "movementTransactionIds": [
+        "cmvpq8uvv0007max0zn4rph6d"
+      ],
+      "totalCost": "300.02",
+      "replayed": false
+    },
+    "replay": {
+      "eventId": "cmvpq8us40001max0i385z07n",
+      "idempotencyKey": "pos-sale-stock:org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4:e5c6fdb1-846a-4edc-ad8a-156a31fe4068",
+      "documentHash": "sha256:2ba1a3a4d29455eb149d2330daedc62bc20f71fb45fe79d79b784775aaa9d610",
+      "movementTransactionIds": [],
+      "totalCost": "0",
+      "replayed": true
+    },
+    "issuedState": {
+      "organizationId": "org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 0,
+      "receipts": 0,
+      "movements": 1,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    },
+    "retainedIssueCost": "300.02",
+    "restored": {
+      "eventId": "cmvpq912w0001matgzijx4znt",
+      "idempotencyKey": "pos-refund-stock:org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4:e5c6fdb1-846a-4edc-ad8a-156a31fe4068",
+      "documentHash": "sha256:3377dc6ff67d82841cded0debcff9cd635db197b328e7ddb8896df60da199e90",
+      "movementTransactionIds": [
+        "cmvpq916k0007matgg5esmk42"
+      ],
+      "totalCost": "300.03",
+      "replayed": false
+    },
+    "retry": {
+      "eventId": "cmvpq912w0001matgzijx4znt",
+      "idempotencyKey": "pos-refund-stock:org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4:e5c6fdb1-846a-4edc-ad8a-156a31fe4068",
+      "documentHash": "sha256:3377dc6ff67d82841cded0debcff9cd635db197b328e7ddb8896df60da199e90",
+      "movementTransactionIds": [],
+      "totalCost": "0",
+      "replayed": true
+    },
+    "state": {
+      "organizationId": "org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4",
+      "stock": {
+        "quantity": "3.000",
+        "value": "300.03",
+        "reserved": "0.000"
+      },
+      "orders": 0,
+      "receipts": 0,
+      "movements": 2,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    },
+    "valueDrift": "0.01",
+    "reason": "Baseline return arithmetic predates B1; do not route new restoration writes back to that writer."
+  }
+]

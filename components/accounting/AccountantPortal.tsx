@@ -1,6 +1,10 @@
 "use client"
 
 import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
+import { ObligationRegister } from "./ObligationRegister"
+import { ReviewWorkpaperBinder } from "./ReviewWorkpaperBinder"
+import { AdvisoryOutcomesDesk } from "./AdvisoryOutcomesDesk"
+import { FirmPracticeDesk } from "./FirmPracticeDesk"
 
 import { useMemo } from "react"
 import type { ColumnDef } from "@tanstack/react-table"
@@ -305,11 +309,16 @@ export function AccountantPortal({
   return (
     <div className="min-w-0 space-y-6" data-finance-result="accountant-portal" data-finance-result-state={query.isError ? "error" : query.isFetching ? "refreshing" : "ready"}>
       <WorkspaceSectionNavigation label={locale === "fr" ? "Sections de la page" : "Page sections"} items={[
+        { id: "portal-workpapers", label: locale === "fr" ? "Dossier de travail" : "Review workpapers" },
         { id: "portal-blockers", label: t.blockersTitle },
         { id: "portal-figures", label: t.figures },
         { id: "portal-source-links", label: t.sourceLinks },
         { id: "portal-audit", label: t.auditEvents },
       ]} />
+      <ObligationRegister clientOrganizationId={clientOrganizationId} locale={locale} />
+      {data.scope.periodId && <ReviewWorkpaperBinder clientOrganizationId={clientOrganizationId} periodId={data.scope.periodId} locale={locale} />}
+      {data.scope.periodId && <AdvisoryOutcomesDesk clientOrganizationId={clientOrganizationId} periodId={data.scope.periodId} locale={locale} />}
+      {data.scope.periodId && <FirmPracticeDesk clientOrganizationId={clientOrganizationId} periodId={data.scope.periodId} locale={locale} />}
       <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
         <MetricTile
           label={t.trustLevel}

@@ -30,11 +30,11 @@ export async function issueUserInvitation(input: InviteWorkflowInput) {
     try {
       return await db.$transaction(async tx => {
         const role = await tx.role.findFirst({ where: { id: roleId, organizationId }, select: { id: true, nameEn: true, nameFr: true, code: true, organizationId: true, permissions: true } })
-        if (!role) return denied("Invalid role for this organization")
-        const policy = evaluateRoleGrantPolicy({ actorOrganizationId: organizationId, actorPermissions: input.actorPermissions, targetRole: role })
-        if (!policy.allowed) return denied(policy.safeMessage ?? "You cannot grant the selected role")
+        if (!role || role.organizationId !== organizationId) return denied("Invalid role for this organization")
         const issuer = await readCurrentInvitationIssuer(tx, { organizationId, actorId: input.actor.id, role })
         if (!issuer) return denied("Invitation authority changed. Refresh your session.")
+        const policy = evaluateRoleGrantPolicy({ actorOrganizationId: organizationId, actorPermissions: input.actorPermissions, actorRoleCodes: issuer.roleCodes, targetRole: role })
+        if (!policy.allowed) return denied(policy.safeMessage ?? "You cannot grant the selected role")
         const previous = await tx.businessEvent.findUnique({ where: { organizationId_eventSource_idempotencyKey: { organizationId, eventSource: "API", idempotencyKey: key } }, include: { outboxMessages: { select: { id: true, status: true } } } })
         if (previous) {
           const evidence = invitationDeliveryPayload.safeParse(previous.payload)
@@ -52,8 +52,8 @@ export async function issueUserInvitation(input: InviteWorkflowInput) {
         // Accepted records are historical evidence, including if an account was removed.
         if (existing?.status === "ACCEPTED") return { error: "This invitation was already accepted", status: 409, data: null, code: "INVITATION_ACCOUNT_EXISTS" }
         if (replacement && existing) {
-          const previousRole = await tx.role.findFirst({ where: { id: existing.roleId, organizationId }, select: { organizationId: true, permissions: true } })
-          if (!previousRole || !evaluateRoleGrantPolicy({ actorOrganizationId: organizationId, actorPermissions: input.actorPermissions, targetRole: previousRole }).allowed || !await readCurrentInvitationIssuer(tx, { organizationId, actorId: input.actor.id, role: previousRole })) return denied("You cannot replace the current invitation role")
+          const previousRole = await tx.role.findFirst({ where: { id: existing.roleId, organizationId }, select: { code: true, organizationId: true, permissions: true } })
+          if (!previousRole || !evaluateRoleGrantPolicy({ actorOrganizationId: organizationId, actorPermissions: input.actorPermissions, actorRoleCodes: issuer.roleCodes, targetRole: previousRole }).allowed || !await readCurrentInvitationIssuer(tx, { organizationId, actorId: input.actor.id, role: previousRole })) return denied("You cannot replace the current invitation role")
         }
         const token = randomBytes(32).toString("hex"), expiresAt = new Date(Date.now() + 7 * 86400000)
         const invite = existing
@@ -62,7 +62,7 @@ export async function issueUserInvitation(input: InviteWorkflowInput) {
         if (existing) await tx.businessEventOutbox.updateMany({ where: { organizationId, eventName: USER_INVITATION_DELIVERY, businessEvent: { organizationId, sourceId: existing.id }, status: { in: ["PENDING", "FAILED", "DEFERRED"] } }, data: { status: "CANCELLED", lastErrorCode: "INVITATION_REPLACED", lastErrorMessage: null } })
         const payload = invitationDeliveryPayload.parse({
           version: 1, organizationId, inviteId: invite.id, actorId: issuer.actorId, roleId, requestFingerprint,
-          tokenHash: invitationDigest(token), recipientHash: invitationDigest(email), actorPermissions: issuer.permissions, actorPermissionBasis: "stored-grants",
+          tokenHash: invitationDigest(token), recipientHash: invitationDigest(email), actorPermissions: issuer.permissions, actorPermissionBasis: "stored-grants", roleCode: role.code, actorRoleCodes: issuer.roleCodes,
           rolePermissions: [...new Set(role.permissions)].sort(), locale, companyName: issuer.companyName,
           roleName: (locale === "fr" ? role.nameFr || role.nameEn : role.nameEn || role.nameFr) || role.code,
           ...configuration, expiresAt: expiresAt.toISOString(),

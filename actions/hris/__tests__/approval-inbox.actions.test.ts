@@ -1,9 +1,10 @@
+import {decideReviewedHrisApproval,getHrisApprovalReview} from "@/services/hris/approval-review.service"
+import {observeModuleAccess} from "@/services/modules/module-entitlement.service"
 import { revalidatePath } from "next/cache"
 
 import { FreshAuthRequiredError, requireFreshAuth } from "@/lib/security/auth-session"
 import { requirePermission } from "@/lib/security/rbac"
 import {
-  decideHrisApprovalInboxItem,
   getHrisApprovalInbox,
 } from "@/services/hris/approval-inbox.service"
 
@@ -34,7 +35,7 @@ jest.mock("@/lib/security/auth-session", () => {
   }
 })
 
-jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn() } }))
+jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn(),warn:jest.fn() } }))
 jest.mock("@/services/modules/module-entitlement.service", () => ({
   observeModuleAccess: jest.fn(),
 }))
@@ -46,7 +47,8 @@ jest.mock("@/services/hris/approval-inbox.service", () => ({
 const mockRequirePermission = requirePermission as jest.Mock
 const mockRequireFreshAuth = requireFreshAuth as jest.Mock
 const mockGetInbox = getHrisApprovalInbox as jest.Mock
-const mockDecide = decideHrisApprovalInboxItem as jest.Mock
+jest.mock("@/services/hris/approval-review.service",()=>({decideReviewedHrisApproval:jest.fn(),getHrisApprovalReview:jest.fn()}))
+const mockDecide = decideReviewedHrisApproval as jest.Mock
 const mockRevalidatePath = revalidatePath as jest.Mock
 
 function rbacContext(userId: string, permissions: string[]) {
@@ -66,8 +68,9 @@ describe("HRIS approval inbox actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockRequireFreshAuth.mockResolvedValue({
-      claims: { lastAuthAt: "2026-07-15T00:00:00.000Z" },
+      claims: {userId:"checker-1",tenantId:"org-1", lastAuthAt: "2026-07-15T00:00:00.000Z" },
     })
+    ;(observeModuleAccess as jest.Mock).mockResolvedValue({allowed:true});
     mockGetInbox.mockResolvedValue({ organizationId: "org-1", items: [] })
     mockDecide.mockResolvedValue({
       domain: "SALARY_CHANGE",
@@ -77,6 +80,12 @@ describe("HRIS approval inbox actions", () => {
     })
   })
 
+  it("retains receipt after postcommit cache failure",async()=>{
+    mockRequirePermission.mockResolvedValue(rbacContext("checker-1",["hris.people.manage"]));mockRevalidatePath.mockImplementationOnce(()=>{throw Error("Synthetic cache failure")});const result=await decideHrisApprovalInboxItemAction({domain:"SALARY_CHANGE",decision:"APPROVE",employeeId:"emp-1",sourceId:"salary-1",reviewVersion:"a".repeat(64),acknowledged:true,decisionReason:"Evidence reviewed",evidenceReferences:["REQUEST"]});expect(result.success).toBe(true)
+  })
+  it("denies mismatched fresh identity",async()=>{
+    mockRequirePermission.mockResolvedValue(rbacContext("other-user",["hris.people.manage"]));expect((await decideHrisApprovalInboxItemAction({})).success).toBe(false);expect(mockDecide).not.toHaveBeenCalled()
+  })
   it("derives tenant authority and allowlists inbox filters", async () => {
     mockRequirePermission.mockResolvedValue(
       rbacContext("manager-1", ["hris.people.read"]),
@@ -117,7 +126,7 @@ describe("HRIS approval inbox actions", () => {
       employeeId: "emp-1",
       sourceId: "salary-1",
       decisionReason: "Evidence verified",
-      approvalEvidenceHash: "sha256:approval",
+      reviewVersion:"a".repeat(64),acknowledged:true,evidenceReferences:["REQUEST"],
     })
 
     expect(result).toEqual(expect.objectContaining({
@@ -143,8 +152,7 @@ describe("HRIS approval inbox actions", () => {
       employeeId: "emp-1",
       sourceId: "salary-1",
       decisionReason: "Evidence verified",
-      approvalEvidenceHash: "sha256:approval",
-      idempotencyKey: "inbox-approve-salary-1",
+      reviewVersion:"a".repeat(64),acknowledged:true,evidenceReferences:["REQUEST"],
       requestedById: "forged-maker",
     })
 
@@ -162,8 +170,7 @@ describe("HRIS approval inbox actions", () => {
       employeeId: "emp-1",
       sourceId: "salary-1",
       decisionReason: "Evidence verified",
-      approvalEvidenceHash: "sha256:approval",
-      idempotencyKey: "inbox-approve-salary-1",
+      reviewVersion:"a".repeat(64),acknowledged:true,evidenceReferences:["REQUEST"],
     })
     expect(mockDecide.mock.calls[0][0]).not.toHaveProperty("requestedById")
     expect(mockRevalidatePath).toHaveBeenCalledWith(

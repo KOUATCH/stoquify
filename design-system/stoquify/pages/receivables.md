@@ -22,7 +22,7 @@ The user explicitly approved connecting the current pages while implementing pha
 - Unavailable is never zero. Distinguish no source documents from a complete source population with no open invoices. These are source-coverage statements, not accounting completeness certification.
 - Follow existing route/action RBAC. Receipt activity requires independent payment-read permission and must not prevent reading otherwise-authorized invoice balances.
 
-No reminder sending, financial mutation, payment execution or new permission grant is introduced.
+These dashboard phases introduce no reminder sending, payment execution or new permission grant. The bounded customer-payment addition below applies separately to current AR History invoice details.
 
 ## Phases 2–3 addition (2026-10-12)
 
@@ -33,3 +33,13 @@ The independent receipt panel applies an explicit receipt period and location on
 ## Phases 4–5 addition (2026-10-12)
 
 Invoice filters/revisions and applied receipt periods have URL scope. Exact invoice links open customer-filtered AR History with safe same-locale return navigation; history and controlled exports disclose their broader temporal/retained-record scope. Statement disputes/promises reuse the existing permissioned customer workflow and never reduce balances. Per-currency overdue/largest-party/top-five shares use the complete current location/currency population; table filters do not change denominators. Missing evidence and zero denominators remain unavailable. See [phase 4–5 evidence and explicit deferrals](../../../docs/finance/receivables-payables-dashboard-phases-4-5.md).
+
+## Current customer-payment controls (2026-11-08)
+
+The authorized sales-to-accounting completion adds a bounded payment section to invoice details in `/[locale]/dashboard/finance/receivables/history`. An explicit as-of filter keeps history read-only. The section reads the current server-owned invoice and its later settlements separately from historical allocations. A failed or changed-workspace read removes its amounts and controls.
+
+Authorized collectors may record one payment allocation to the displayed invoice using the existing settlement service. An independent authorized actor may reverse a posted settlement; the receipt remains visible. Both operations retain finance module enforcement, tenant/actor checks, period and accounting rules, fresh password verification and service idempotency. No permission is granted by this UI. Password confirmation requires the user to retry the original action and never executes a financial command itself.
+
+Inputs include the payment rail, decimal amount, date and unique external/evidence reference. A supporting file is hashed locally (maximum 10 MB); only its fingerprint is saved. The UI explicitly instructs the operator to retain the original outside Stoquify and does not imply upload or document retention. Reversal additionally requires a reason and explicit confirmation. Pending/uncertain requests retain the exact command for retry; fields are locked until a successful response, and unique payment references also prevent a new request from collecting the same receipt twice. Successful responses refresh current payment and invoice evidence.
+
+Use existing dashboard controls and EN/FR copy, meaningful labels, announced errors/success, password/error focus, wrapping actions and at least 44px touch controls. Scope changes clear passwords, files and cached results. These source requirements need separate mocked component and authenticated browser evidence; they do not certify statutory compliance or retained-source quality.

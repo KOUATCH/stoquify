@@ -1,0 +1,94 @@
+{
+  "candidate_id": "p04-r01-20261103-e7ff3b08d605",
+  "status": "verified_local_native_actions",
+  "parent_p04": "blocked",
+  "production_ready": false,
+  "gates": [
+    {
+      "id": "R01-G01",
+      "name": "current source and authority contract",
+      "status": "pass",
+      "evidence": [
+        "source-before.json",
+        "call-chain-inventory.json",
+        "AUTHORITY-CONTRACT.md",
+        "owned-source.json",
+        "source-before-supplement.json"
+      ]
+    },
+    {
+      "id": "R01-G02",
+      "name": "isolated unit, types and lint",
+      "status": "pass",
+      "evidence": [
+        "unit/attempt08/result.json",
+        "unit/typecheck03/result.json",
+        "unit/lint02/result.json"
+      ]
+    },
+    {
+      "id": "R01-G03",
+      "name": "fresh current schema and native actions",
+      "status": "pass",
+      "evidence": [
+        "database/native-result-retry02.json",
+        "database/native-jest-retry02.json"
+      ]
+    },
+    {
+      "id": "R01-G04",
+      "name": "denied business-state preservation and recovery",
+      "status": "pass",
+      "evidence": [
+        "database/native-observations-retry02.json"
+      ]
+    },
+    {
+      "id": "R01-G05",
+      "name": "legitimate delegation and administration",
+      "status": "pass",
+      "evidence": [
+        "database/native-jest-retry02.json"
+      ]
+    },
+    {
+      "id": "R01-G06",
+      "name": "source identity and owned cleanup",
+      "status": "pass",
+      "evidence": [
+        "database/native-result-retry02.json"
+      ]
+    },
+    {
+      "id": "R01-G07",
+      "name": "independent local outcome review",
+      "status": "pass",
+      "evidence": [
+        "independent-review/ASSESSMENT.json"
+      ]
+    },
+    {
+      "id": "R01-G08",
+      "name": "actual HTTP/browser/production role census/release acceptance",
+      "status": "deferred",
+      "required_for_local_completion": false,
+      "owner_packages": [
+        "P04-V02",
+        "P04",
+        "release gates"
+      ],
+      "evidence": []
+    }
+  ],
+  "advance_local_r01": true,
+  "advance_parent": false,
+  "remaining_release_requirements": [
+    "P04-V01 admitted-surface/compiled-reachability qualification remains open",
+    "P04-V02 actual signed-cookie HTTP and browser restoration qualification remains open",
+    "Dedicated last-tenant-custodian PostgreSQL case not run; custody-specific cases are unit-tested",
+    "Production reserved-role and pending-invitation census/classification required before separately authorized remediation/release cutover",
+    "Legacy reserved invitations remain preserved and require reviewed replacement; no automatic reissue",
+    "Fresh full-app/release candidate, clean-install/build/deployment and hosted/provider/operator acceptance remain separate",
+    "All other P04 repairs/verification/decisions and deferred work remain unchanged"
+  ]
+}

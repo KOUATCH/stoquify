@@ -1,0 +1,50 @@
+{
+  "reviewedAt": "2026-11-04T09:26:41.5363506Z",
+  "reviewer": "r03_review",
+  "approvedForExecution": true,
+  "scope": "One fresh local native R03 qualification; no acceptance result yet",
+  "files": [
+    {
+      "path": "database/run-native.cjs",
+      "sha256": "90c04b918c0216f1cf90e9db2987745e85c405d573d98a77dc4e2cf352ac4e78"
+    },
+    {
+      "path": "database/jest.native.config.cjs",
+      "sha256": "c26a3d96a7b4c25dc38db270f648aec6e6f74e70f423a247c0f2f9c64735d086"
+    },
+    {
+      "path": "database/isolation-guard.cjs",
+      "sha256": "0cf745ccdb7863c990c0795f1a4c824bc65479de74f8fe0948022c25e8d97906"
+    },
+    {
+      "path": "database/item-errors.postgres.test.ts",
+      "sha256": "425bd0fdde3a94ec8ca0cf7ce44f77072cc07da74dbbfd59fa889a97c20fa259"
+    },
+    {
+      "path": "database/RECIPE.md",
+      "sha256": "b4d5671c54a598666a0aa2a796962725fff08b4fa780c84e2319de15fd6adae9"
+    }
+  ],
+  "target": ".codex-tmp/p04r03-qualification-20261104-r1; stoquify_local_p04_r03_20261104_r1; ephemeral 127.0.0.1 port",
+  "expectedTests": 43,
+  "businessRelationGroups": 24,
+  "reviewedControls": [
+    "Fresh directory and receipt exclusive creation",
+    "OS environment allowlist; no app dotenv/config",
+    "Private Prisma client and canonical schema hashes checked before writes",
+    "121 copied migration checksums matched to current source",
+    "Actual item/RBAC/services; explicit loopback target and data_directory assertion",
+    "Runtime environment-file/outbound fetch/socket guards",
+    "Actual stock SUBMITTED positive; real downstream/trigger rollback negatives",
+    "Business-state hashes and separate audit deltas",
+    "Source/migration before-after immutability",
+    "Only owned process/cluster stopped; port release; fixtures retained"
+  ],
+  "limits": [
+    "Better Auth and Next transport/cache are stubbed",
+    "No actual signed-cookie HTTP/browser, expiry/revocation, hosted or production proof",
+    "Not whole-database zero-write claim"
+  ],
+  "executionPrecondition": "Root source stable signal received; do not mutate captured inputs during run",
+  "noProductOrTestEditsByReviewer": true
+}

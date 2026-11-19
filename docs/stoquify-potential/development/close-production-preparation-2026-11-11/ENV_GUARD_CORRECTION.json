@@ -1,0 +1,52 @@
+{
+  "recordedAt": "2026-11-11T14:45:56.996Z",
+  "status": "BLOCKED_ATTEMPT_AND_CONTENT_LOAD_DISTINCTION_CORRECTED",
+  "failedAttempt": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\invite-pg-2e46d5a3da\\RESULT.json",
+    "sha256": "58698d88360c7881b17a3f7d1e0f0756eb724dbe77a2884faf8c631ea550d81d",
+    "bytes": 12380
+  },
+  "firstResolutionCorrection": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\INVITE_PG_RESOLUTION_CORRECTION.json",
+    "sha256": "4c6255824ccb03fd94b048524f44f57a287950a4e44f82b1321e9528df06964b",
+    "bytes": 2688
+  },
+  "diagnostic": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\env-path-probe-8127485b1e\\RESULT.json",
+    "sha256": "41d4256b19281d6fd4bd0bd8622054fcabdd9571fcd5393be1796c15fa9c4dc9",
+    "bytes": 5583
+  },
+  "originalRunner": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-invite-pg-20261111-2e46d5a3da\\qualify-invitation-postgres.before-env-diagnostics.cjs",
+    "sha256": "9618d212ba62ed1230e536f7d8e45ebb22b0c3d439c4d22a8f98245e0f4c116d",
+    "bytes": 26678
+  },
+  "correctedRunner": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\qualify-invitation-postgres.cjs",
+    "sha256": "1a39c17d106e68d3a325d5ebf8c3495177164103c1e650d7be004ae7b95b1913",
+    "bytes": 28926
+  },
+  "cause": "The former guard blocked reads before opening a file, but its noEnvironmentContentsLoaded flag and admission predicate incorrectly treated any denied attempt as a successful content load. Runtime forensic Prisma validate observed only an absent exact owned candidate .env readFileSync request.",
+  "correction": "All environment content reads still unconditionally throw. Before and after child execution, both exact owned candidate env paths must be absent by lstat. Fresh Prisma-stage blocked attempts qualify only for those exact paths with recorded ENOENT and independently rechecked absence. Jest and actual CLI require zero attempts. Existing, outside, unknown or unconfirmed paths still fail.",
+  "canaryProof": {
+    "classification": "Isolated VM execution of the actual generated guard with owned synthetic existing/missing paths; only createRequire anchor stubbed to avoid SDK import, no database or client imported",
+    "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\invite-env-guard-canary-20261111-8ab73a64ce",
+    "record": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\invite-env-guard-canary-20261111-8ab73a64ce\\guard-proof.1.json",
+      "sha256": "c22814089f45f430eb0917021f1e327f5f9c2369b52e4853fd172f195816b9c5",
+      "bytes": 1259
+    },
+    "cases": 4,
+    "allContentReadsBlocked": true,
+    "environmentContentsRead": 0,
+    "onlyExactAbsentOwnedEligible": 1,
+    "existingOrOutsideRejected": 3
+  },
+  "preservation": {
+    "failedReceiptsChanged": false,
+    "sourceServiceOrProviderOrTestChanged": false,
+    "failedDatabaseResetOrDropped": false,
+    "newPrepareAndAbsentDatabaseRequired": true,
+    "oldAttemptsRemainFailed": true
+  }
+}

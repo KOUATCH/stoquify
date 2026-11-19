@@ -1,0 +1,132 @@
+{
+  "package": "P04-V02",
+  "at": "2026-11-09T18:44:25.804Z",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "advanceLocalV02": false,
+  "advanceParentP04": false,
+  "productionReady": false,
+  "nextEligiblePackage": "P04-R06",
+  "blockingRepairs": [
+    "P04-R06",
+    "P04-R08",
+    "P04-R07"
+  ],
+  "gates": [
+    {
+      "id": "V02-G01",
+      "requirement": "Isolated full-app build and exact frozen/source admission",
+      "status": "passed_frozen_scope_only",
+      "evidence": [
+        "build-result.json",
+        "final-integrity-frozen-supplement03.json",
+        "independent-review/FROZEN-SCOPE-ADMISSION.json"
+      ]
+    },
+    {
+      "id": "V02-G02",
+      "requirement": "Current core authentication read/mutation authority",
+      "status": "failed",
+      "repair": "P04-R06",
+      "evidence": [
+        "browser/auth-transport-v4/result.json",
+        "independent-review/AUTH-V4-OUTCOME-REVIEW.json"
+      ]
+    },
+    {
+      "id": "V02-G03",
+      "requirement": "Authoritative module access for admitted item-list read",
+      "status": "failed",
+      "repair": "P04-R08",
+      "evidence": [
+        "browser/auth-supplement-03/result.json",
+        "independent-review/SUPPLEMENT03-OUTCOME-REVIEW.json"
+      ]
+    },
+    {
+      "id": "V02-G04",
+      "requirement": "Private inventory recovery after failed authoritative read",
+      "status": "failed",
+      "repair": "P04-R07",
+      "evidence": [
+        "browser/auth-supplement-03/result.json",
+        "browser/auth-followup04/result.json",
+        "independent-review/FOLLOWUP04-OUTCOME-REVIEW.json"
+      ]
+    },
+    {
+      "id": "V02-G05",
+      "requirement": "Selected private-media delivery/authorized consumers",
+      "status": "passed_bounded_with_independent_adjudication",
+      "evidence": [
+        "browser/p04v02-full-20261109-r1-attempt01/result.json",
+        "independent-review/MODULE-DENIAL-CARDINALITY-REVIEW.json"
+      ]
+    },
+    {
+      "id": "V02-G06",
+      "requirement": "Actual local provider protocol",
+      "status": "passed_local_only",
+      "evidence": [
+        "provider/attempt02/result.json",
+        "independent-review/PROVIDER-OUTCOME-REVIEW.json"
+      ]
+    },
+    {
+      "id": "V02-G07",
+      "requirement": "Actual native visibility/BFCache-hit behavior",
+      "status": "unexercised",
+      "evidence": [
+        "inventory/COVERAGE-OUTCOME.md",
+        "browser/auth-transport-v4/result.json"
+      ]
+    },
+    {
+      "id": "V02-G08",
+      "requirement": "No unauthorized writes for denied requests",
+      "status": "failed_two_authentication_account_deletions",
+      "repair": "P04-R06",
+      "evidence": [
+        "independent-review/AUTH-V4-OUTCOME-REVIEW.json",
+        "inventory/findings-classification-final.json"
+      ]
+    },
+    {
+      "id": "V02-G09",
+      "requirement": "Owned sessions/process/port cleanup and exact preservation",
+      "status": "passed",
+      "evidence": [
+        "database/all-session-cleanup-verified.json",
+        "database/cleanup-r3.json",
+        "final-integrity-frozen-supplement03.json"
+      ]
+    },
+    {
+      "id": "V02-G10",
+      "requirement": "Independent outcomes and preservation review",
+      "status": "passed_outcome_and_preservation_review_package_remains_blocked",
+      "evidence": [
+        "independent-review/FINAL-INDEPENDENT-REVIEW.md",
+        "independent-review/FINAL-PRESERVATION-REVIEW.json",
+        "independent-review/COVERAGE-RECONCILIATION-REVIEW.json"
+      ]
+    },
+    {
+      "id": "V02-G11",
+      "requirement": "Whole-current-checkout/hosted/provider/operator release admission",
+      "status": "not_qualified",
+      "evidence": [
+        "RESULT.md"
+      ]
+    }
+  ],
+  "policyDecision": {
+    "package": "P04-D01",
+    "status": "approved_policy_only",
+    "implementationRepair": "P04-R05",
+    "implementationAuthorized": false
+  },
+  "nextEvidence": "Fresh R06 source/guard map, bounded repair and isolated actual signed-session/private-response/native-account-state positive/negative evidence plus independent review; then R08/R07 and affected V02 requalification."
+}

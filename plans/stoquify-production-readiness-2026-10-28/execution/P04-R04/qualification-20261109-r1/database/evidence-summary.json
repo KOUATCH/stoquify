@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-11-09T13:50:14.482Z",
+  "passed": true,
+  "evidenceClass": "real PostgreSQL/services/actions; authentication transport stubbed; no HTTP/browser",
+  "tests": {
+    "total": 34,
+    "passed": 34,
+    "failed": 0,
+    "pending": 0
+  },
+  "sourceInputs": 5209,
+  "sourceUnchanged": true,
+  "migrationsVerified": 121,
+  "migrationsUnchanged": true,
+  "observations": 36,
+  "unchangedStatePairs": 36,
+  "deniedOrFailedResponses": 9,
+  "authorizedReadResponses": 27,
+  "businessRelationGroups": 24,
+  "intendedSecurityAuditRows": 4,
+  "actualQueryFault": "Prisma P2022 induced by fixed temporary column rename in owned database and restored in finally",
+  "transport": "Better Auth/Next stubs; real persisted actor and RBAC permission reload, not signed-cookie/session expiry/revocation/HTTP/browser proof",
+  "target": {
+    "host": "127.0.0.1",
+    "port": 55501,
+    "database": "stoquify_local_p04_r04_20261109_r1",
+    "cluster": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p04r04-qualification-20261109-r1\\postgres",
+    "ownedPid": 22660
+  },
+  "remainingClients": [],
+  "cleanup": {
+    "clusterStopped": true,
+    "portReleased": true,
+    "databasesRetained": [
+      "stoquify_local_p04_r04_20261109_r1"
+    ]
+  },
+  "attempts": 1,
+  "files": [
+    {
+      "path": "native-result.json",
+      "sha256": "9e5efe7ab0f512a17a63c99a40dd4a6f5b80ad233474c1dcd9d5d40bf52469f9"
+    },
+    {
+      "path": "native-jest.json",
+      "sha256": "002ce1d03100c0e3c63cceeb2688bb5debb991b453a32f7da4643b211fa22722"
+    },
+    {
+      "path": "native-observations.json",
+      "sha256": "fac79084e5abfabcf510ed77ae4ebe357db373095129037ab64768bb52ce2fc5"
+    },
+    {
+      "path": "list-items.postgres.test.ts.source.txt",
+      "sha256": "d0c6dbfdc67b22a2f472292390227c6c940483fbb873046f768bafd27cf8bc44"
+    },
+    {
+      "path": "test-source-relocation.json",
+      "sha256": "f7f4411405badd8519c544211b5fa865df51fff4d538dc0d5d9e24389bf2b7ed"
+    }
+  ]
+}

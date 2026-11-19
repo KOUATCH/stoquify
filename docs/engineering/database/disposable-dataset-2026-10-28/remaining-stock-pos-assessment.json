@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "database": "stoquify_replay_dataset_20261028_01",
+  "referenceClock": "2026-10-28T20:00:00.000Z",
+  "implementation": "prisma/disposable-remaining-stock-pos.ts",
+  "validation": {
+    "sourceInspection": true,
+    "syntaxTranspile": "PASS: 0 diagnostics",
+    "semanticTypecheck": "Root combined check pending",
+    "databaseExecution": "Root guarded execution pending; no database executed by this child",
+    "renderedOrBrowserChecks": "Not performed"
+  },
+  "invariants": [
+    "Existing historical sales and supplier portal orders are untouched.",
+    "One new serialized reference item per organization, explicitly synthetic and without a fake image asset; no opening stock.",
+    "A held 2-unit receipt posts no stock/serials before independent acceptance; accepted receipt creates 2 AVAILABLE serials, stock 2 units and value/GRNI 2000 XAF.",
+    "200 XAF supplier price variance remains DISPUTED with independently REJECTED exception; no supplier liability posting.",
+    "One dedicated POS cash sale per organization is fully refunded through the normal service, with signed stock/value cancellation, one posted refund batch and zero net cash.",
+    "Completed service transitions are checked and skipped on replay; stable request identities prevent duplicate inventory, accounting or refunds."
+  ],
+  "tables": [
+    {
+      "table": "goods_receipt_inspection_resolutions",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "held-serialized-receipt-independent-acceptance-and-invoice-exception",
+      "source": {
+        "path": "services/purchase-order/purchase-receiving-workbench.service.ts",
+        "functions": "previewPurchaseReceiving; confirmPurchaseReceiving"
+      },
+      "description": "Manager records INCOMPLETE inspection; owner independently ACCEPTS using fresh authenticated authority and retained synthetic checklist hashes. Receipt recognition and inventory are posted through normal services."
+    },
+    {
+      "table": "serial_numbers",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "held-serialized-receipt-independent-acceptance-and-invoice-exception",
+      "source": {
+        "path": "services/purchase-order/purchase-order.service.ts",
+        "functions": "resolveGoodsReceiptInspection; applyInventoryReceipt"
+      },
+      "description": "Two uniquely named serials per organization created only when the held serialized receipt is accepted; matched to item/location and positive inventory."
+    },
+    {
+      "table": "supplier_invoice_match_exceptions",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "held-serialized-receipt-independent-acceptance-and-invoice-exception",
+      "source": {
+        "path": "services/purchasing/invoice-match-exception.service.ts",
+        "functions": "previewInvoiceMatchException; confirmInvoiceMatchException"
+      },
+      "description": "Invoice unit cost 1100 against receipt cost1000 for two units creates 200 XAF mismatch; invoice maker requests and distinct checker rejects exception, retaining disputed invoice without posting."
+    },
+    {
+      "table": "payment_refunds",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "cash-pos-sale-refund-stock-cash-ledger-round-trip",
+      "source": {
+        "path": "services/pos/pos.service.ts",
+        "functions": "openPOSShift; commitPOSSale; refundPOSSale; closePOSShift"
+      },
+      "description": "Dedicated owner shift completes a 1-unit cash sale then full cash refund, using actual authenticated POS service, stock return and accounting reversal. Completed checkout points to returned/refunded sale; no external payment provider transfer."
+    }
+  ]
+}

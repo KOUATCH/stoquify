@@ -1,0 +1,86 @@
+{
+  "at": "2026-11-09T18:44:04.506Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "headUnchanged": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "criticalInputsRehashed": 107,
+  "reviewedProductionDriftRehashed": 4,
+  "artifactFilesRehashed": 5311,
+  "runtimeChecks": [
+    {
+      "path": "D:\\p04-v02-fullapp-20261109-r1\\runtime-attempt01",
+      "sealedFilesRehashed": 5311,
+      "allowedImageCacheAdditions": 2
+    },
+    {
+      "path": "D:\\p04-v02-fullapp-20261109-r1\\runtime-attempt02",
+      "sealedFilesRehashed": 5311,
+      "allowedImageCacheAdditions": 1
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": "attempt01",
+      "portsReleased": true,
+      "sealedBytesUnchanged": true
+    },
+    {
+      "attempt": "attempt02",
+      "portsReleased": true,
+      "sealedBytesUnchanged": true
+    },
+    {
+      "attempt": "attempt03",
+      "portsReleased": true,
+      "sealedBytesUnchanged": true
+    },
+    {
+      "attempt": "attempt04",
+      "portsReleased": true,
+      "sealedBytesUnchanged": true
+    }
+  ],
+  "sessionCleanup": [
+    {
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "removed": 15,
+      "remaining": 0,
+      "businessAccountsAndAuditsUnchanged": true
+    },
+    {
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "removed": 2,
+      "remaining": 0,
+      "businessAccountsAndAuditsUnchanged": true
+    },
+    {
+      "database": "stoquify_local_p04v02_20261109_full_r3",
+      "removed": 0,
+      "remaining": 0,
+      "businessAccountsAndAuditsUnchanged": true
+    }
+  ],
+  "ownedDatabaseStopped": true,
+  "ownedRuntimeAndProxyStopped": true,
+  "allDatabasesRetained": [
+    "stoquify_local_p04v02_20261109_build_r1",
+    "stoquify_local_p04v02_20261109_full_r1",
+    "stoquify_local_p04v02_20261109_full_r2",
+    "stoquify_local_p04v02_20261109_full_r3"
+  ],
+  "originalPrivateAliasProbes": {
+    "attempt": "attempt01",
+    "count": 270,
+    "originalBytesForwarded": 0,
+    "rerun": false
+  },
+  "limitations": [
+    "Concurrent accounting changes remain preserved and outside the qualified frozen probe functions.",
+    "Port release is observed in reviewed owner cleanup receipts, not independently rebound by this script.",
+    "Preservation integrity does not convert product failures or explicit qualification gaps into a pass."
+  ]
+}

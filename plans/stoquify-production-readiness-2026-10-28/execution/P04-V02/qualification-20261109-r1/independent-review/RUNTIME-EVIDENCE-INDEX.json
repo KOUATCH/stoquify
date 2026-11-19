@@ -1,0 +1,411 @@
+{
+  "at": "2026-11-09T17:59:05.435Z",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "qualificationPassed": false,
+  "evidenceIntegrityChecked": true,
+  "runtimeError": "AssertionError [ERR_ASSERTION]: Secret escaped sanitized evidence\n    at Object.runAuthTransport (E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-V02\\qualification-20261109-r1\\browser\\run-auth-transport-v3.cjs:122:83)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-V02\\qualification-20261109-r1\\run-runtime.cjs:50:617",
+  "lanes": {
+    "auth": {
+      "planned": 116,
+      "resultUnavailable": true,
+      "invoked": true,
+      "completedCheckCountUnknown": true,
+      "reason": "Harness result publication failed; preserved snapshots/screenshots do not supply a complete check tally."
+    },
+    "baseline": {
+      "planned": 22,
+      "executed": 22,
+      "passed": 21,
+      "failures": [
+        {
+          "label": "moduleDenied-both-delivery-urls",
+          "error": "Six direct delivery denial audits expected\n\n4 !== 6\n"
+        }
+      ],
+      "requests": 352,
+      "harnessError": null,
+      "cleanupErrors": [],
+      "aliasCoverage": {
+        "expectedCount": 270,
+        "completedCount": 270,
+        "byActor": {
+          "anonymous": 93,
+          "ui": 93,
+          "foreign": 12,
+          "revocation": 12,
+          "expiry": 12,
+          "permissionChange": 12,
+          "moduleChange": 12,
+          "permissionDenied": 12,
+          "moduleDenied": 12
+        },
+        "proxyValidatedEveryResponse": true,
+        "originalPositiveReads": 0
+      }
+    },
+    "provider": {
+      "notRun": true
+    }
+  },
+  "databasePairs": [
+    {
+      "label": "baseline:checks.2.evidence",
+      "before": "snapshot-original-alias-anonymous-before-1794245852356-e4bd5fb2-fb5b-4a6a-bbf3-6e9def147cbc.json",
+      "after": "snapshot-original-alias-anonymous-after-1794245857405-86be4653-fecf-4ee8-a852-b3c535905a9d.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.3.evidence",
+      "before": "snapshot-original-alias-ui-before-1794245859761-1644052a-c761-49b1-bc87-2d9888008d57.json",
+      "after": "snapshot-original-alias-ui-after-1794245865593-e776b07e-f513-467d-bdd7-84d3e2c1fe3d.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.4.evidence",
+      "before": "snapshot-original-alias-foreign-before-1794245870325-1961b900-a343-443d-9f5e-dc100f91ece7.json",
+      "after": "snapshot-original-alias-foreign-after-1794245872925-a00ccc4f-7718-405c-9983-45e0c3723fdd.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.5.evidence",
+      "before": "snapshot-original-alias-revocation-before-1794245880853-47947245-5f2f-4915-80f1-a64e75600462.json",
+      "after": "snapshot-original-alias-revocation-after-1794245883331-ff096a0a-1eee-4018-92ed-b517cf7503b8.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.6.evidence",
+      "before": "snapshot-original-alias-expiry-before-1794245891453-4e58a77e-a12f-40c5-b1e6-112ca090b4bb.json",
+      "after": "snapshot-original-alias-expiry-after-1794245893695-43126649-1ce3-481b-b2dc-d3937efac0b4.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.7.evidence",
+      "before": "snapshot-original-alias-permissionChange-before-1794245902608-e2ca72c9-2787-49a8-a77f-b11437ae472f.json",
+      "after": "snapshot-original-alias-permissionChange-after-1794245905326-e3a27877-d8d2-4a63-811c-a6513537e586.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.8.evidence",
+      "before": "snapshot-original-alias-moduleChange-before-1794245912837-0b92ff22-c6be-4a27-8aff-25d66395d1e6.json",
+      "after": "snapshot-original-alias-moduleChange-after-1794245915090-f22eaf4f-083f-4660-b7b1-bcfaada39d7c.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.9.evidence",
+      "before": "snapshot-original-alias-permissionDenied-before-1794245923947-eb445ef6-48b3-4424-83af-f85b27d2934a.json",
+      "after": "snapshot-original-alias-permissionDenied-after-1794245926622-d7761088-6634-4efc-adc9-dde2e5cb93e2.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.10.evidence",
+      "before": "snapshot-original-alias-moduleDenied-before-1794245934513-47f7dce9-fb2a-4964-b72d-f5a86ae75f3a.json",
+      "after": "snapshot-original-alias-moduleDenied-after-1794245937026-b7bb2ffa-e08a-4632-aefc-d9fbb5b63287.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.11.evidence",
+      "before": "snapshot-anonymous-before-1794245939305-f1019f81-315f-4805-ac51-2e1a8597c5b6.json",
+      "after": "snapshot-anonymous-after-1794245942221-32fad4a9-422d-449b-9052-79ce50d9fde1.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.11.evidence.encodedAliasNoWrites",
+      "before": "snapshot-anonymous-encoded-aliases-before-1794245944391-ea424a29-31c0-4031-9d48-42ebf723ebde.json",
+      "after": "snapshot-anonymous-encoded-aliases-after-1794245947059-1f732e03-92ee-46b8-8c83-9f209e6cfc9b.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.12.evidence",
+      "before": "snapshot-foreign-before-1794245949338-780f4db1-34cd-4fe3-9725-f41d2eb0a316.json",
+      "after": "snapshot-foreign-after-1794245951950-ccc3b41a-5d1e-4adc-80d7-d6634f7daa37.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.13.evidence",
+      "before": "snapshot-permissionDenied-before-1794245960081-cc2f6f60-edfd-4801-b27a-88c26869e9d8.json",
+      "after": "snapshot-permissionDenied-after-1794245962941-8e607e85-93ed-4f64-8cd5-685cdae9cf78.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.15.evidence.denial",
+      "before": "snapshot-revocation-after-before-1794245984658-c5eb2984-5a79-47d7-a3a9-c4e0be46d3d7.json",
+      "after": "snapshot-revocation-after-after-1794245987255-3549f763-7c1b-454b-872a-8ad2569d7752.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.15.evidence.backRestore",
+      "before": "snapshot-revoked-browser-restoration-before-1794245989014-7f49d9f3-a434-4f48-a602-b660bc7c4713.json",
+      "after": "snapshot-revoked-browser-restoration-after-1794245992602-bf434a11-14ea-4850-9636-f767c9f8835c.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.16.evidence.denial",
+      "before": "snapshot-expiry-after-before-1794245995111-76d22b28-dc11-4bc4-ae14-32a295b6e19d.json",
+      "after": "snapshot-expiry-after-after-1794245997411-f2002aec-2159-4071-82f8-90bb942c7247.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [
+        {
+          "idHash": "1b6502abd81e98fdc0b956624c39530455acc7ed601a7b3edf5d405d3b136b35",
+          "userId": "p04r02-user-expiry",
+          "expiresAt": "1970-01-01T01:00:00"
+        }
+      ],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.17.evidence.denial",
+      "before": "snapshot-permissionChange-after-before-1794246005871-fda120c6-fcd4-4ebf-baa9-ca2f38a0912e.json",
+      "after": "snapshot-permissionChange-after-after-1794246009094-c20dd378-4d62-4e9a-9a7e-d3d89369938f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.18.evidence.denial",
+      "before": "snapshot-moduleChange-after-before-1794246016642-e47e367d-8859-42f2-9d5d-17fc6f8f3001.json",
+      "after": "snapshot-moduleChange-after-after-1794246019563-4d3e9861-57d7-4959-a6bc-69af28484361.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "96b51c4ec52866d6931b43b2aba6255fd760f26f46a3cf5627d47361e8de8625",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:16.715",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "a4ec3ac2250a1a3b753451787a84e38da60e0cdf29644497229e9024d9494cf7"
+        },
+        {
+          "idHash": "a0ef375ebd60c2c69312de6101f8de3a11530554864e8176e289e019e3180ae5",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:16.76",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "05e7d453f27865080587596a4cc6b83b829b269252625fbb978938786c44099d"
+        },
+        {
+          "idHash": "546daecb22073d15fb80e9e117e0e0f63c2ae8d2a9221a3352503416c643db0c",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:17.109",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "b6b844fcbaa441942115f0d7dd05ec577a96e9438ffb8215f9261c12b286f81e"
+        },
+        {
+          "idHash": "f4e43bb0f01dbb0fcd5bfecfc66f83a4a75ae44b4f911abef76519addefc910f",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:17.15",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "54695bccb65672d4e4f21d4e86e85103f4fd92cc264873821cba2e41568f18dd"
+        },
+        {
+          "idHash": "9da8e77abadcb54532c0d53d456b2376e5301640834221326f5b97853c43d8cb",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:17.517",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "c5c92998b1f28af5fccd45d7e97cb6e18eaadb9cfd997aee7958d1a10f3989dc"
+        },
+        {
+          "idHash": "39e28b7468308cfcc13ab43dca4ca8e40cdee40c4c4aa0201edbc406731e181e",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:17.561",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "bc85970aa17b274df68f4d67b195f86474908554a255fec5c894373033d38e81"
+        }
+      ]
+    },
+    {
+      "label": "baseline:checks.19.evidence",
+      "before": "snapshot-authorized-and-optimizer-denials-before-1794246026925-caf141b3-bbb9-4d27-8775-59fe9fb37d78.json",
+      "after": "snapshot-authorized-and-optimizer-denials-after-1794246029492-d011c22c-a8bf-462b-bd8b-d099649178ba.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    }
+  ],
+  "limitations": [
+    "This index independently reconciles case counts, snapshots and fingerprints. Findings require semantic review of the actual requests, state transitions and browser observations.",
+    "Concurrent accounting changes are preserved. No whole-current-checkout or entire inventory import-closure identity is claimed."
+  ],
+  "snapshotFiles": 38,
+  "runtimeCleanup": {
+    "portsReleased": true,
+    "proxyClosed": true,
+    "runtimeTermination": {
+      "pid": 31352,
+      "exitCode": 0
+    },
+    "cleanup": []
+  },
+  "classificationCorrection": {
+    "at": "2026-11-09T17:59:32.336Z",
+    "prior": "RUNTIME-EVIDENCE-INDEX-before-unavailable-classification.json",
+    "change": "Distinguish actually invoked auth with unavailable result from genuinely unrun provider."
+  }
+}

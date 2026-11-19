@@ -1,0 +1,5 @@
+const fs=require('node:fs'),path=require('node:path'),{spawnSync,spawn}=require('node:child_process');
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function main(){const started=Date.now();console.log('Waiting for the existing public-page build to finish; no process will be stopped');for(;;){const probe=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-Command',"$p=Get-CimInstance Win32_Process -Filter 'ProcessId=36400'; if($p){Write-Output 'running'}"],{encoding:'utf8',windowsHide:true,timeout:15000});if(probe.status!==0)throw Error('Cannot safely inspect existing build');if(!probe.stdout.includes('running'))break;if(Date.now()-started>1800000)throw Error('Existing build is still active; preserve it and report the gate');await wait(15000)}
+console.log('Existing build exited; starting the guarded disposable build');const child=spawn(process.execPath,[path.join(__dirname,'compiler-final.cjs')],{stdio:'inherit',windowsHide:true});child.on('exit',code=>{process.exitCode=code??1});child.on('error',e=>{console.error(e.message);process.exitCode=1});}
+main().catch(e=>{console.error(e.message);process.exitCode=1});

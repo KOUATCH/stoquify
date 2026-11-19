@@ -1,0 +1,110 @@
+import "server-only"
+import { Prisma } from "@prisma/client"
+import { z } from "zod"
+import { db } from "@/prisma/db"
+import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
+import { BusinessRuleError, ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { hashBusinessPayload } from "@/services/events/business-event.service"
+import { resolveHrisPeopleAccessScope } from "./org.service"
+import { attendanceMetadata } from "./attendance-correction"
+import { employeeSnapshot, pendingHrisLifecycleFromMetadata } from "./lifecycle.service"
+import { pendingHrisContractDocumentEvidenceFromMetadata } from "./document-evidence.service"
+import { pendingHrisCompensationAssignmentFromMetadata } from "./compensation.service"
+import { hrisContractActivationPending } from "@/services/payroll/contract.service"
+import { approvalDecisionEligibility, decideHrisApprovalInboxItem, hrisApprovalDomainSchema, hrisApprovalDecisionSchema } from "./approval-inbox.service"
+import { lockHrisReviewEmployeeInTx, lockHrisReviewContractInTx, lockHrisReviewAssignmentInTx, lockHrisReviewSalaryInTx, lockHrisReviewPaymentInTx } from "./review-lock.service"
+
+type Client=typeof db|Prisma.TransactionClient
+const target=z.object({organizationId:z.string().min(1),actorId:z.string().min(1),actorPermissions:z.array(z.string()).default([]),domain:hrisApprovalDomainSchema,decision:hrisApprovalDecisionSchema,employeeId:z.string().min(1),sourceId:z.string().min(1)})
+const submit=target.extend({reviewVersion:z.string().length(64),acknowledged:z.literal(true),decisionReason:z.string().trim().min(8).max(500),evidenceReferences:z.array(z.enum(["REQUEST","APPROVAL","DOCUMENT_SCAN"])).max(3)})
+type Target=z.infer<typeof target>
+type Field={key:string;label:{en:string;fr:string};before:string;after:string}
+const text=(value:unknown)=>value===null||value===undefined?"—":value instanceof Date?value.toISOString():typeof value==="object"?JSON.stringify(value):String(value)
+const field=(key:string,en:string,fr:string,before:unknown,after:unknown):Field=>({key,label:{en,fr},before:text(before),after:text(after)})
+const json=(value:unknown)=>JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue
+const transaction=<T>(client:Client,run:(tx:Prisma.TransactionClient)=>Promise<T>):Promise<T>=>"$transaction" in client?client.$transaction(run,{isolationLevel:Prisma.TransactionIsolationLevel.ReadCommitted}):run(client)
+function permit(input:Target){if(!hasAnyRbacPermission(input.actorPermissions,["hris.people.manage"]))throw new ForbiddenError("Independent HR approval permission is required.")}
+function salary(input:Target){if(!input.actorPermissions.some(p=>p==="EMPLOYEE_SALARY_READ"||p==="payroll.payslips.read"))throw new ForbiddenError("Review requires existing salary visibility. Ask an authorized compensation reviewer; values are not disclosed by HR management permission alone.")}
+const masked=(record:{paymentMethod:string|null;bankAccountMasked:string|null;mobileMoneyProvider:string|null;mobileMoneyPhoneMasked:string|null})=>record.paymentMethod==="MOBILE_MONEY"?[record.mobileMoneyProvider,record.mobileMoneyPhoneMasked].filter(Boolean).join(" "):record.bankAccountMasked??record.paymentMethod
+
+async function project(tx:Prisma.TransactionClient,input:Target){
+  permit(input)
+  const access=await resolveHrisPeopleAccessScope({...input,limit:1,asOf:new Date(),delegationAuthority:"APPROVAL_DECISION"},tx)
+  await lockHrisReviewEmployeeInTx(tx,input.organizationId,input.employeeId)
+  const employee=await tx.payrollEmployee.findFirst({where:{organizationId:input.organizationId,id:input.employeeId,deletedAt:null}});if(!employee)throw new NotFoundError("Employee is unavailable.")
+  const fields:Field[]=[],evidence:Array<{id:"REQUEST"|"APPROVAL"|"DOCUMENT_SCAN";label:{en:string;fr:string}}>=[]
+  let requestId=input.sourceId,requestedById="",approvedById:string|null=null,requestedAt:Date|string="",effectiveAt:Date|string|null=null,stage:"REVIEW"|"APPLY"="REVIEW",source:unknown=null
+  const requestProof=(present:unknown)=>{if(present)evidence.push({id:"REQUEST",label:{en:"Retained request evidence",fr:"Preuve conservée de la demande"}})}
+  const approvalProof=(present:unknown)=>{if(present)evidence.push({id:"APPROVAL",label:{en:"Retained independent approval",fr:"Validation indépendante conservée"}})}
+  const where={organizationId:input.organizationId,employeeId:input.employeeId,id:input.sourceId,deletedAt:null}
+  if(input.domain==="LIFECYCLE"){
+    const pending=pendingHrisLifecycleFromMetadata(employee.metadata);if(!pending||pending.requestId!==input.sourceId)throw new ConflictError("HRIS_REVIEW_STALE: This employment request changed. Refresh and review again.")
+    requestId=pending.requestId;requestedById=pending.requestedById;approvedById=pending.approvedById??null;requestedAt=pending.requestedAt;effectiveAt=pending.effectiveAt;stage=pending.status==="APPROVED"?"APPLY":"REVIEW"
+    fields.push(field("status","Employment status","Statut d’emploi",employee.status,pending.targetStatus),field("operation","Movement","Mouvement",null,pending.type))
+    for(const key of ["department","jobTitle","costCenter","locationId"] as const)if(pending.target[key]!==undefined)fields.push(field(key,{department:"Department",jobTitle:"Job title",costCenter:"Cost center",locationId:"Location reference"}[key],{department:"Département",jobTitle:"Fonction",costCenter:"Centre de coût",locationId:"Référence d’établissement"}[key],employee[key],pending.target[key]))
+    requestProof(pending.evidenceHash);approvalProof(pending.approvalEvidenceHash);source={employee:employeeSnapshot(employee),pending,due:new Date(pending.effectiveAt)<=new Date()}
+  }else if(input.domain==="CONTRACT_ACTIVATION"||input.domain==="CONTRACT_DOCUMENT"){
+    await lockHrisReviewContractInTx(tx,input.organizationId,input.sourceId,input.employeeId)
+    const contract=await tx.payrollContract.findFirst({where});if(!contract)throw new NotFoundError("Contract is unavailable.")
+    if(input.domain==="CONTRACT_ACTIVATION"){
+      salary(input);const pending=hrisContractActivationPending(contract.metadata);if(!pending)throw new ConflictError("HRIS_REVIEW_STALE: Activation request changed.")
+      requestId=pending.requestId;requestedById=pending.requestedById;requestedAt=pending.requestedAt;requestProof(pending.requestEvidenceHash)
+      fields.push(field("status","Contract status","Statut du contrat",contract.status,"ACTIVE"),field("type","Contract type","Type de contrat",null,contract.type),field("baseSalary","Base salary","Salaire de base",null,contract.baseSalary.toString()+" "+contract.currency),field("hours","Monthly hours","Heures mensuelles",null,contract.workingHoursPerMonth?.toString()),field("end","Contract end","Fin du contrat",null,contract.effectiveTo))
+    }else{
+      const pending=pendingHrisContractDocumentEvidenceFromMetadata(contract.metadata);if(!pending)throw new ConflictError("HRIS_REVIEW_STALE: Document request changed.")
+      requestId=pending.requestId;requestedById=pending.capturedById;requestedAt=pending.capturedAt;requestProof(pending.artifactHash)
+      if(pending.malwareScanEvidenceHash)evidence.push({id:"DOCUMENT_SCAN",label:{en:"Retained malware scan evidence",fr:"Preuve conservée du contrôle antivirus"}})
+      fields.push(field("document","Document reference","Référence du document",null,contract.contractNumber),field("scanProvider","Scan provider","Fournisseur du contrôle",null,pending.malwareScanProvider),field("scanTime","Scan date","Date du contrôle",null,pending.malwareScannedAt),field("signedAt","Signature date","Date de signature",null,pending.signedAt),field("retention","Retention policy and basis","Politique et fondement de conservation",null,pending.retentionPolicyCode+" · "+pending.retentionBasis),field("retainUntil","Retain until","Conserver jusqu’au",null,pending.retainUntil),field("legalHold","Legal hold","Gel de conservation",null,pending.legalHold))
+    }
+    effectiveAt=contract.effectiveFrom;source={contract,employee:employeeSnapshot(employee)}
+  }else if(input.domain==="COMPENSATION_ASSIGNMENT"){
+    salary(input);await lockHrisReviewAssignmentInTx(tx,input.organizationId,input.employeeId,input.sourceId)
+    const row=await tx.payrollEmployeeRubriqueAssignment.findFirst({where,include:{rubrique:true}});if(!row)throw new NotFoundError("Compensation assignment is unavailable.")
+    const pending=pendingHrisCompensationAssignmentFromMetadata(row.metadata);if(!pending)throw new ConflictError("HRIS_REVIEW_STALE: Compensation request changed.")
+    const contracts=await tx.payrollContract.findMany({where:{organizationId:input.organizationId,employeeId:input.employeeId,status:"ACTIVE",deletedAt:null},orderBy:{id:"asc"}})
+    requestId=pending.requestBusinessEventId??row.id;requestedById=pending.requestedById;requestedAt=pending.requestedAt;effectiveAt=row.effectiveFrom;requestProof(row.evidenceDocumentHash)
+    fields.push(field("component","Compensation component","Rubrique de rémunération",null,row.rubrique.label+" · "+row.rubrique.code),field("amount","Amount","Montant",null,row.amount?.toString()),field("rate","Rate (basis points)","Taux (points de base)",null,row.rateBps),field("quantity","Quantity","Quantité",null,row.quantity?.toString()),field("currency","Currency","Devise",null,row.currency),field("end","Effective until","Applicable jusqu’au",null,row.effectiveTo),field("status","Assignment status","Statut d’affectation",row.status,"ACTIVE"))
+    source={row,contracts,employee:employeeSnapshot(employee)}
+  }else if(input.domain==="SALARY_CHANGE"){
+    salary(input);await lockHrisReviewSalaryInTx(tx,input.organizationId,input.sourceId)
+    const row=await tx.payrollSalaryChangeRequest.findFirst({where,include:{sourceContract:true}});if(!row)throw new NotFoundError("Salary request is unavailable.")
+    if(!["REQUESTED","APPROVED"].includes(row.status))throw new ConflictError("HRIS_REVIEW_STALE: Salary request was already decided.")
+    requestedById=row.requestedById;approvedById=row.approvedById;requestedAt=row.requestedAt;effectiveAt=row.effectiveFrom;stage=row.status==="APPROVED"?"APPLY":"REVIEW";requestProof(row.evidenceDocumentHash);approvalProof(row.approvalEvidenceHash)
+    fields.push(field("baseSalary","Base salary","Salaire de base",row.currentBaseSalary.toString()+" "+row.currency,row.proposedBaseSalary.toString()+" "+row.currency),field("sourceContract","Source contract","Contrat source",row.sourceContract.contractNumber,null),field("requestReason","Request reason","Motif de la demande",null,row.requestReason));source={row,employee:employeeSnapshot(employee)}
+  }else{
+    await lockHrisReviewPaymentInTx(tx,input.organizationId,input.sourceId)
+    const row=await tx.payrollPaymentDestinationChangeRequest.findFirst({where});if(!row)throw new NotFoundError("Payment destination request is unavailable.")
+    if(!["REQUESTED","APPROVED"].includes(row.status))throw new ConflictError("HRIS_REVIEW_STALE: Payment request was already decided.")
+    requestedById=row.requestedById;approvedById=row.approvedById;requestedAt=row.requestedAt;stage=row.status==="APPROVED"?"APPLY":"REVIEW";requestProof(row.evidenceDocumentHash);approvalProof(row.approvalEvidenceHash)
+    fields.push(field("method","Payment method","Mode de paiement",employee.paymentMethod,row.paymentMethod),field("destination","Masked destination","Destination masquée",masked(employee),masked(row)),field("reason","Request reason","Motif de la demande",null,row.requestReason));source={row,currentDestination:{method:employee.paymentMethod,identity:employee.paymentDestinationHash},employee:employeeSnapshot(employee)}
+  }
+  const allowed=stage==="APPLY"?["APPLY"]:["CONTRACT_ACTIVATION","CONTRACT_DOCUMENT","COMPENSATION_ASSIGNMENT"].includes(input.domain)?["APPROVE"]:["APPROVE","REJECT"]
+  if(!allowed.includes(input.decision))throw new ConflictError("HRIS_REVIEW_STALE: The requested action is no longer available.")
+  const eligibility=approvalDecisionEligibility({...input,stage,requestedById,approvedById});if(!eligibility.eligible)throw new ForbiddenError("Independent decision required: "+eligibility.reasonCode)
+  const requester=await tx.user.findFirst({where:{id:requestedById,organizationId:input.organizationId},select:{name:true}})
+  const scope={organizationId:input.organizationId,employeeId:input.employeeId,authority:access.authority.kind}
+  const version=hashBusinessPayload(json({version:1,domain:input.domain,decision:input.decision,employeeId:input.employeeId,sourceId:input.sourceId,requestId,source,scope,actorId:input.actorId}))
+  return {version,domain:input.domain,decision:input.decision,stage,sourceId:input.sourceId,requestId,employee:{id:employee.id,displayName:employee.displayName},requester:{id:requestedById,name:requester?.name??requestedById},requestedAt:text(requestedAt),effectiveAt:effectiveAt?text(effectiveAt):null,fields,evidence,scope,reviewHref:`/dashboard/people/${input.employeeId}`}
+}
+
+export async function getHrisApprovalReview(input:z.input<typeof target>,client:Client=db){const parsed=target.parse(input);return transaction(client,tx=>project(tx,parsed))}
+export async function decideReviewedHrisApproval(input:z.input<typeof submit>,client:Client=db){
+  const parsed=submit.parse(input);permit(parsed)
+  const identity="hris-reviewed:"+hashBusinessPayload({organizationId:parsed.organizationId,employeeId:parsed.employeeId,domain:parsed.domain,sourceId:parsed.sourceId,actorId:parsed.actorId,decision:parsed.decision,reviewVersion:parsed.reviewVersion})
+  const envelopeHash=hashBusinessPayload({...parsed,actorPermissions:undefined,evidenceReferences:[...new Set(parsed.evidenceReferences)].sort()})
+  return transaction(client,async tx=>{
+    await resolveHrisPeopleAccessScope({...parsed,limit:1,asOf:new Date(),delegationAuthority:"APPROVAL_DECISION"},tx);await lockHrisReviewEmployeeInTx(tx,parsed.organizationId,parsed.employeeId)
+    const retained=await tx.auditLog.findFirst({where:{organizationId:parsed.organizationId,userId:parsed.actorId,entityType:"HrisReviewedDecision",entityId:identity,action:"HRIS_REVIEW_DECISION_RECORDED"}})
+    if(retained){const prior=attendanceMetadata(retained.changes);if(prior.envelopeHash!==envelopeHash)throw new ConflictError("HRIS_REVIEW_REPLAY_CONFLICT: Decision reason or evidence changed after completion.");return {...attendanceMetadata(prior.receipt),replayed:true}}
+    const review=await project(tx,parsed)
+    if(review.version!==parsed.reviewVersion)throw new ConflictError("HRIS_REVIEW_STALE: Reviewed facts changed. Refresh, read the new facts and acknowledge them again.")
+    if(parsed.evidenceReferences.some(ref=>!review.evidence.some(e=>e.id===ref))||(parsed.decision!=="REJECT"&&!parsed.evidenceReferences.length))throw new BusinessRuleError("HRIS_REVIEW_EVIDENCE_REQUIRED: Select the retained source evidence you reviewed.")
+    const proof="sha256:"+hashBusinessPayload({version:"HRIS_ACKNOWLEDGED_REVIEW_V1",reviewVersion:review.version,requestId:review.requestId,actorId:parsed.actorId,scope:review.scope,acknowledged:true,reason:parsed.decisionReason,evidenceReferences:[...new Set(parsed.evidenceReferences)].sort()})
+    const result=await decideHrisApprovalInboxItem({organizationId:parsed.organizationId,actorId:parsed.actorId,actorPermissions:parsed.actorPermissions,domain:parsed.domain,decision:parsed.decision,employeeId:parsed.employeeId,sourceId:parsed.sourceId,decisionReason:parsed.decisionReason,approvalEvidenceHash:proof,idempotencyKey:identity},tx)
+    const user=await tx.user.findFirst({where:{id:parsed.actorId,organizationId:parsed.organizationId},select:{name:true}})
+    const receipt={id:identity,version:1,domain:parsed.domain,decision:parsed.decision,requestId:review.requestId,sourceId:parsed.sourceId,employee:review.employee,actor:{id:parsed.actorId,name:user?.name??parsed.actorId},scope:review.scope,decidedAt:new Date().toISOString(),reviewedVersion:review.version,status:result.status,scheduledFor:result.scheduledFor??null,businessEventId:result.businessEventId,replayed:false}
+    await tx.auditLog.create({data:{organizationId:parsed.organizationId,userId:parsed.actorId,entityType:"HrisReviewedDecision",entityId:identity,action:"HRIS_REVIEW_DECISION_RECORDED",changes:json({envelopeHash,proof,receipt})}})
+    return receipt
+  })
+}
+export type HrisApprovalReview=Awaited<ReturnType<typeof getHrisApprovalReview>>

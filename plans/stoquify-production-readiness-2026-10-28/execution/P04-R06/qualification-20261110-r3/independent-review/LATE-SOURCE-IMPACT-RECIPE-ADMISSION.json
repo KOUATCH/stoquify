@@ -1,0 +1,25 @@
+{
+  "at": "2026-11-10T15:37:13.570Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Recipe-only read inspection and two exclusive evidence writes",
+  "files": [
+    {
+      "path": "inventory/inspect-late-impact-r2.cjs",
+      "sha256": "3b063e6ac615ba0d466c889cbf7d7fd354a8c40941692cf8bc8aaed02399419b"
+    }
+  ],
+  "observedControls": [
+    "Verifies every exact admission input before inspection",
+    "Reads admitted late manifest and bounded changed non-doc/68 critical inputs",
+    "Classifies all private-fixture-named JSON with strict metadata shape; never follows external referenced paths",
+    "Unknown shapes or source drift are retained as blockers",
+    "No candidate/application/database/build action"
+  ],
+  "candidateCaptureAccepted": false,
+  "qualificationPassed": false,
+  "requirements": [
+    "Execute only after accepted complete physical dependency copy and late source refresh",
+    "Review actual impact/metadata disposition before candidate capture; source families and shape alone do not prove behavior"
+  ]
+}

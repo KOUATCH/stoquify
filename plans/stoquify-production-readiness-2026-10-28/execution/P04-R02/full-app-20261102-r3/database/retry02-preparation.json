@@ -1,0 +1,468 @@
+{
+  "at": "2026-11-02T18:04:21.895Z",
+  "passed": true,
+  "mutationCommitted": true,
+  "mutationCommitStatus": "committed",
+  "allowedMutation": "Existing restore-permission control for permissionChange only; retain all sessions, audit rows, expiry and revocation evidence.",
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+  "postmasterPid": 32788,
+  "clientsBefore": [],
+  "databases": [
+    {
+      "database": "stoquify_local_p03_20261028_template_r1",
+      "migrations": {
+        "count": 120,
+        "migrationsSha256": "919e652f586d6f6b8b0fa71ed0d68b4d9da3be30ae0c24371524609e28cfc041",
+        "schemaSourceSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+        "templateSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+      },
+      "schema": {
+        "sha256": "358cbea3f824f57f876f6ea12b48ced6861f96a301f0bf5edeb095036ffda811",
+        "counts": {
+          "columns": 4296,
+          "constraints": 1130,
+          "indexes": 1216,
+          "enums": 1110,
+          "policies": 0
+        }
+      },
+      "empty": {
+        "organizations": 0,
+        "users": 0,
+        "accounts": 0,
+        "sessions": 0,
+        "roles": 0,
+        "items": 0,
+        "tenant_module_configurations": 0,
+        "tenant_module_grants": 0
+      }
+    },
+    {
+      "database": "stoquify_local_p04r02_20261029_build_r1",
+      "migrations": {
+        "count": 120,
+        "migrationsSha256": "919e652f586d6f6b8b0fa71ed0d68b4d9da3be30ae0c24371524609e28cfc041",
+        "schemaSourceSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+        "templateSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+      },
+      "schema": {
+        "sha256": "358cbea3f824f57f876f6ea12b48ced6861f96a301f0bf5edeb095036ffda811",
+        "counts": {
+          "columns": 4296,
+          "constraints": 1130,
+          "indexes": 1216,
+          "enums": 1110,
+          "policies": 0
+        }
+      },
+      "empty": {
+        "organizations": 0,
+        "users": 0,
+        "accounts": 0,
+        "sessions": 0,
+        "roles": 0,
+        "items": 0,
+        "tenant_module_configurations": 0,
+        "tenant_module_grants": 0
+      }
+    },
+    {
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "migrations": {
+        "count": 120,
+        "migrationsSha256": "919e652f586d6f6b8b0fa71ed0d68b4d9da3be30ae0c24371524609e28cfc041",
+        "schemaSourceSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+        "templateSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+      },
+      "schema": {
+        "sha256": "358cbea3f824f57f876f6ea12b48ced6861f96a301f0bf5edeb095036ffda811",
+        "counts": {
+          "columns": 4296,
+          "constraints": 1130,
+          "indexes": 1216,
+          "enums": 1110,
+          "policies": 0
+        }
+      }
+    }
+  ],
+  "priorTransitionEvidence": [
+    {
+      "at": "2026-11-02T17:58:13.504Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "moduleChange",
+      "actorId": "p04r02-user-modulechange",
+      "organizationId": "p04-upload-a",
+      "kind": "disable-module",
+      "affected": 1,
+      "recovery": "restore-module reactivates the same synthetic dashboard grant. Serialize all tenant-A tests while disabled.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-disable-module-1793642293504-f578c55d-e3fb-4aae-bc69-cad9d9e48bab.json"
+    },
+    {
+      "at": "2026-11-02T17:57:52.192Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "expiry",
+      "actorId": "p04r02-user-expiry",
+      "organizationId": "p04-upload-a",
+      "kind": "expire",
+      "affected": 2,
+      "recovery": "Restore retained expiry rows or acquire a new real session if Better Auth deletes the expired row.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-expire-1793642272192-6a4f4fee-e89e-4584-b297-d8eb22143f15.json"
+    },
+    {
+      "at": "2026-11-02T17:58:02.974Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "permissionChange",
+      "actorId": "p04r02-user-permissionchange",
+      "organizationId": "p04-upload-a",
+      "kind": "remove-permission",
+      "affected": 1,
+      "recovery": "restore-permission returns the actor-exclusive fixture role to its seeded permission set.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-remove-permission-1793642282974-a334a031-e530-44e6-a485-90df5e847f3f.json"
+    },
+    {
+      "at": "2026-11-02T17:58:17.627Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "moduleChange",
+      "actorId": "p04r02-user-modulechange",
+      "organizationId": "p04-upload-a",
+      "kind": "restore-module",
+      "affected": 1,
+      "recovery": "restore-module reactivates the same synthetic dashboard grant. Serialize all tenant-A tests while disabled.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-restore-module-1793642297627-3c4cd408-4604-45b0-a63c-85831fa7eb70.json"
+    },
+    {
+      "at": "2026-11-02T17:57:43.764Z",
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "actorAlias": "revocation",
+      "actorId": "p04r02-user-revocation",
+      "organizationId": "p04-upload-a",
+      "kind": "revoke",
+      "affected": 2,
+      "recovery": "New real sign-in may create a fresh session; revoked tokens are not reinserted.",
+      "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+      "evidence": "transition-revoke-1793642263764-cd5a479e-18b5-4c54-848b-662c4f05b517.json"
+    }
+  ],
+  "beforeEvidence": "snapshot-retry02-before-permission-restore-1793642664108-7b37a07c-40d0-450f-833f-5a82ec3943ad.json",
+  "changedBusinessTables": [
+    "roles",
+    "tenant_module_grants",
+    "users"
+  ],
+  "beforeProof": {
+    "normalizedSeedDigests": {
+      "users": {
+        "count": 8,
+        "sha256": "2146d1baef4a884b110f7be453fd5486c07458f8e336bdaefa8adcb15561c046"
+      },
+      "roles": {
+        "count": 8,
+        "sha256": "3fd843e0f94117099a31081f70f51caa1d032a6dfdd9fd06ebfb0dae6286655c"
+      },
+      "tenant_module_grants": {
+        "count": 6,
+        "sha256": "f9062f422fbed13fac5125f523571d9f791a3773992eb5b3af8b77862dcb269c"
+      }
+    },
+    "userMetadata": [
+      {
+        "id": "p04r02-user-expiry",
+        "lastLogin": "2026-11-02T17:57:51.948Z",
+        "updatedAt": "2026-11-02T17:57:51.950Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-foreign",
+        "lastLogin": "2026-11-02T17:57:09.181Z",
+        "updatedAt": "2026-11-02T17:57:09.183Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-modulechange",
+        "lastLogin": "2026-11-02T17:58:13.298Z",
+        "updatedAt": "2026-11-02T17:58:13.299Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-moduledenied",
+        "lastLogin": "2026-11-02T17:57:30.600Z",
+        "updatedAt": "2026-11-02T17:57:30.601Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-permissionchange",
+        "lastLogin": "2026-11-02T17:58:02.624Z",
+        "updatedAt": "2026-11-02T17:58:02.626Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-permissiondenied",
+        "lastLogin": "2026-11-02T17:57:19.967Z",
+        "updatedAt": "2026-11-02T17:57:19.969Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-revocation",
+        "lastLogin": "2026-11-02T17:57:41.253Z",
+        "updatedAt": "2026-11-02T17:57:41.254Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-ui",
+        "lastLogin": "2026-11-02T17:58:23.968Z",
+        "updatedAt": "2026-11-02T17:58:23.969Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      }
+    ],
+    "permissionRole": {
+      "id": "p04r02-role-permissionchange",
+      "code": "p04r02_permissionchange",
+      "permissions": [
+        "inventory.items.read"
+      ],
+      "updatedAt": "2026-11-02T17:58:02.944Z"
+    },
+    "dashboardGrant": {
+      "id": "p04r02-grant-p04-upload-a-dashboard",
+      "status": "active",
+      "revision": 3,
+      "updatedAt": "2026-11-02T17:58:17.606Z"
+    },
+    "retained": {
+      "sessions": {
+        "count": 18,
+        "sha256": "3c48c262dae7281a4a478cb76009b4c9831b01d8739dba6e86b7c0ebbae53f90"
+      },
+      "audit_logs": {
+        "count": 44,
+        "sha256": "aeef8f868faf6ae85bc13b9df11981d6d0b7a6e845d35a5c9e66b64107339777"
+      }
+    },
+    "expiredSessions": [
+      {
+        "userId": "p04r02-user-expiry",
+        "count": 1
+      }
+    ],
+    "timestampProof": "Prisma login fields interpreted as UTC; SQL-control now() fields interpreted in verified Europe/Paris session timezone. No tolerance added."
+  },
+  "clientsBeforeMutation": [],
+  "restore": {
+    "at": "2026-11-02T18:04:24.325Z",
+    "database": "stoquify_local_p04r02_20261029_full_r1",
+    "actorAlias": "permissionChange",
+    "actorId": "p04r02-user-permissionchange",
+    "organizationId": "p04-upload-a",
+    "kind": "restore-permission",
+    "affected": 1,
+    "recovery": "restore-permission returns the actor-exclusive fixture role to its seeded permission set.",
+    "authoritySource": "Persisted synthetic database state; subsequent requests use actual Better Auth and server guards.",
+    "evidence": "transition-restore-permission-1793642664325-0fbc81e5-b7bb-4a41-bb33-9b7a2a5c9431.json"
+  },
+  "restoreBounds": {
+    "startedAt": 1793642664266,
+    "finishedAt": 1793642664330
+  },
+  "afterEvidence": "snapshot-retry02-after-permission-restore-1793642665457-6f909d2a-edb8-4b58-a3fd-a31f7a77a0cf.json",
+  "afterProof": {
+    "normalizedSeedDigests": {
+      "users": {
+        "count": 8,
+        "sha256": "2146d1baef4a884b110f7be453fd5486c07458f8e336bdaefa8adcb15561c046"
+      },
+      "roles": {
+        "count": 8,
+        "sha256": "3fd843e0f94117099a31081f70f51caa1d032a6dfdd9fd06ebfb0dae6286655c"
+      },
+      "tenant_module_grants": {
+        "count": 6,
+        "sha256": "f9062f422fbed13fac5125f523571d9f791a3773992eb5b3af8b77862dcb269c"
+      }
+    },
+    "userMetadata": [
+      {
+        "id": "p04r02-user-expiry",
+        "lastLogin": "2026-11-02T17:57:51.948Z",
+        "updatedAt": "2026-11-02T17:57:51.950Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-foreign",
+        "lastLogin": "2026-11-02T17:57:09.181Z",
+        "updatedAt": "2026-11-02T17:57:09.183Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-modulechange",
+        "lastLogin": "2026-11-02T17:58:13.298Z",
+        "updatedAt": "2026-11-02T17:58:13.299Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-moduledenied",
+        "lastLogin": "2026-11-02T17:57:30.600Z",
+        "updatedAt": "2026-11-02T17:57:30.601Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-permissionchange",
+        "lastLogin": "2026-11-02T17:58:02.624Z",
+        "updatedAt": "2026-11-02T17:58:02.626Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-permissiondenied",
+        "lastLogin": "2026-11-02T17:57:19.967Z",
+        "updatedAt": "2026-11-02T17:57:19.969Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-revocation",
+        "lastLogin": "2026-11-02T17:57:41.253Z",
+        "updatedAt": "2026-11-02T17:57:41.254Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      },
+      {
+        "id": "p04r02-user-ui",
+        "lastLogin": "2026-11-02T17:58:23.968Z",
+        "updatedAt": "2026-11-02T17:58:23.969Z",
+        "failedLoginAttempts": 0,
+        "lastFailedLogin": null,
+        "isLocked": false,
+        "lockedUntil": null
+      }
+    ],
+    "permissionRole": {
+      "id": "p04r02-role-permissionchange",
+      "code": "p04r02_permissionchange",
+      "permissions": [
+        "dashboard.read",
+        "inventory.items.read"
+      ],
+      "updatedAt": "2026-11-02T18:04:24.315Z"
+    },
+    "dashboardGrant": {
+      "id": "p04r02-grant-p04-upload-a-dashboard",
+      "status": "active",
+      "revision": 3,
+      "updatedAt": "2026-11-02T17:58:17.606Z"
+    },
+    "retained": {
+      "sessions": {
+        "count": 18,
+        "sha256": "3c48c262dae7281a4a478cb76009b4c9831b01d8739dba6e86b7c0ebbae53f90"
+      },
+      "audit_logs": {
+        "count": 44,
+        "sha256": "aeef8f868faf6ae85bc13b9df11981d6d0b7a6e845d35a5c9e66b64107339777"
+      }
+    },
+    "expiredSessions": [
+      {
+        "userId": "p04r02-user-expiry",
+        "count": 1
+      }
+    ],
+    "timestampProof": "Prisma login fields interpreted as UTC; SQL-control now() fields interpreted in verified Europe/Paris session timezone. No tolerance added."
+  },
+  "clientsAfter": [],
+  "sessionCounts": [
+    {
+      "userId": "p04r02-user-expiry",
+      "count": 1
+    },
+    {
+      "userId": "p04r02-user-foreign",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-modulechange",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-moduledenied",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-permissionchange",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-permissiondenied",
+      "count": 2
+    },
+    {
+      "userId": "p04r02-user-ui",
+      "count": 7
+    }
+  ],
+  "auditCounts": [
+    {
+      "entityType": "ModuleEntitlementDecision",
+      "action": "MODULE_ENTITLEMENT_ENFORCED",
+      "count": 10
+    },
+    {
+      "entityType": "SecurityEvent",
+      "action": "LOGIN_SUCCESS",
+      "count": 21
+    },
+    {
+      "entityType": "SecurityEvent",
+      "action": "PERMISSION_GRANTED",
+      "count": 13
+    }
+  ],
+  "finishedAt": "2026-11-02T18:04:25.712Z"
+}

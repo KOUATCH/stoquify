@@ -1,0 +1,34 @@
+{
+  "started": "2026-11-09T20:09:00.181Z",
+  "finished": "2026-11-09T20:09:49.945Z",
+  "args": [
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\unit-cacd81a6ed\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--runTestsByPath",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx",
+    "hooks/payments/__tests__/reconciliation-run-scope.test.tsx",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\unit-cacd81a6ed\\results.json"
+  ],
+  "exitCode": 1,
+  "error": null,
+  "passed": false,
+  "passedTests": 9,
+  "failedTests": 0,
+  "skipped": 0,
+  "unchangedInputs": true,
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\unit-cacd81a6ed",
+  "suiteHashes": {
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "ea28d049cf512c9a5c0009a0c41a9635433e6150812a80f995b808d29ca7c351",
+    "hooks/payments/__tests__/reconciliation-run-scope.test.tsx": "8ea8157e925a0997b9947bba0d2d1ae9e31e969ef176b9ba7c326b83bad293eb",
+    "scripts/local-gates-network.cjs": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e",
+    "package-lock.json": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+  },
+  "runnerSha256": "fc812b6e8faa6f29d80373d09bc1e5eb0e532198916788d65d715ded7f6edbaf",
+  "configSha256": "59bcbe20fc3f2ae6172e4486c0311ccda2696f67a8e301b5971f0de7a62527c4",
+  "evidenceClass": "jsdom components/mocked actions; no browser or DB"
+}

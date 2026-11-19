@@ -11,10 +11,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { loadInvoicePreparation, reviewInvoicePreparation, submitInvoicePreparation } from "@/actions/purchasing/invoice-preparation.actions"
 import { invoicePreparationDraftSchema, invoicePreparationCommandSchema, type InvoicePreparationCommand, type InvoicePreparationOutcome, type InvoicePreparationPreview, type InvoicePreparationSources, type InvoicePreparationQuery } from "@/services/purchasing/invoice-preparation-contracts"
+import { invoiceChargeFields, suggestedInvoiceCharge } from "./invoice-commercial-inputs"
 
 const text = z.string().max(1200)
-const formSchema = z.object({ supplierId: text, invoiceNumber: text, invoiceDate: text, dueDate: text, currency: text, documentReference: text, documentSha256: text, notes: text, lines: z.array(z.object({ goodsReceiptLineId: text, description: text, quantity: text, unitCost: text, taxRate: text }).strict()).max(100) }).strict()
+const formSchema = z.object({ supplierId: text, invoiceNumber: text, invoiceDate: text, dueDate: text, currency: text, documentReference: text, documentSha256: text, notes: text, lines: z.array(z.object({ goodsReceiptLineId: text, description: text, quantity: text, unitCost: text, taxRate: text, discount: text.optional(), freight: text.optional(), taxAmount: text.optional() }).strict()).max(100) }).strict()
 type Form = z.infer<typeof formSchema>
+const varianceFields = ["discountVariance", "freightVariance", "taxVariance"] as const
+
 const empty = (): Form => ({ supplierId: "", invoiceNumber: "", invoiceDate: "", dueDate: "", currency: "", documentReference: "", documentSha256: "", notes: "", lines: [] })
 const denied = (code?: string) => ["FORBIDDEN", "AUTH_REQUIRED", "NOT_FOUND", "TENANT_SCOPE_VIOLATION"].includes(code ?? "")
 export const invoicePreparationStorageKey = (org: string, actor: string) => `stoquify:invoice-preparation:${JSON.stringify([org, actor])}`
@@ -75,7 +78,16 @@ export function InvoicePreparationWorkbench({ organizationId, actorId }: { organ
   }
   async function review() {
     if (inFlight.current || busy || pending) return
-    const value = invoicePreparationDraftSchema.safeParse({ ...form, dueDate: form.dueDate || undefined, notes: form.notes || undefined })
+    const lines = form.lines.map(line => {
+      const row = data?.receipts.find(receipt => receipt.id === line.goodsReceiptLineId)
+      return {
+        ...line,
+        discount: (line.discount ?? suggestedInvoiceCharge(row, line.quantity, "discount")) || undefined,
+        freight: (line.freight ?? suggestedInvoiceCharge(row, line.quantity, "freight")) || undefined,
+        taxAmount: line.taxAmount || undefined,
+      }
+    })
+    const value = invoicePreparationDraftSchema.safeParse({ ...form, dueDate: form.dueDate || undefined, notes: form.notes || undefined, lines })
     if (!value.success) { setError(t("invalid")); return }
     const current = generation.current; inFlight.current = true; setBusy(true); setError("")
     try {
@@ -130,15 +142,52 @@ export function InvoicePreparationWorkbench({ organizationId, actorId }: { organ
       <section className={card}><h2 className="text-lg font-semibold">{t("receipts")}</h2><p className="my-2 text-sm text-[var(--dash-text-soft)]">{t("receiptHelp")}</p>
         {loading ? <p role="status">{t("loading")}</p> : <><Button variant="outline" disabled={locked} onClick={() => void load({ supplierId: form.supplierId || undefined })}>{t("refresh")}</Button>{data && <p className="mt-2 text-xs">{t("sourceTime")}: {formatTime(data.checkedAt)}</p>}</>}
         {!loading && data && !data.receipts.length && <p className="mt-3">{t("empty")}</p>}
-        <fieldset disabled={locked || loading} className="mt-3 space-y-2">{data?.receipts.map(row => <label key={row.id} className="flex items-start gap-3 rounded-lg border border-[var(--dash-border)] p-3"><input className="mt-1 h-4 w-4 shrink-0 accent-[var(--dash-brand)]" type="checkbox" checked={form.lines.some(line => line.goodsReceiptLineId === row.id)} disabled={Number(row.available) <= 0} onChange={e => change("lines", e.target.checked ? [...form.lines, { goodsReceiptLineId: row.id, description: locale === "fr" ? row.descriptionFr : row.description, quantity: "", unitCost: row.unitCost, taxRate: "0" }] : form.lines.filter(line => line.goodsReceiptLineId !== row.id))} /><span className="min-w-0 break-words">{row.receiptNumber} · {row.orderNumber}<br />{locale === "fr" ? row.descriptionFr : row.description}<br /><span className="text-sm text-[var(--dash-text-soft)]">{t("available")}: {row.available}</span></span></label>)}{data?.receiptNext && <Button variant="ghost" onClick={() => void load({ supplierId: form.supplierId, receiptAfter: data.receiptNext! })}>{t("moreReceipts")}</Button>}</fieldset>
-        <fieldset disabled={locked} className="mt-4 space-y-4">{form.lines.map((line,index) => <div key={line.goodsReceiptLineId} className="rounded-lg border border-[var(--dash-border)] p-3"><h3 className="mb-2 font-medium">{t("line")} {index + 1}</h3><div className="grid gap-3 sm:grid-cols-2">{(['description','quantity','unitCost','taxRate'] as const).map(field => <div key={field}><Label htmlFor={`invoice-line-${index}-${field}`}>{t(field === 'unitCost' ? 'cost' : field)}</Label><Input id={`invoice-line-${index}-${field}`} value={line[field]} inputMode={field === 'description' ? 'text' : 'decimal'} maxLength={field === 'description' ? 240 : 20} onChange={e => change('lines', form.lines.map((old,i) => i === index ? { ...old, [field]: field === 'description' ? e.target.value : e.target.value.replace(',', '.') } : old))} /></div>)}</div><Button variant="ghost" className="mt-2" onClick={() => change('lines',form.lines.filter((_,i) => i !== index))}>{t("remove")}</Button></div>)}<div><Label htmlFor="invoice-notes">{t("notes")}</Label><Textarea id="invoice-notes" value={form.notes} maxLength={1000} onChange={e => change('notes',e.target.value)} /></div></fieldset>
+        <fieldset disabled={locked || loading} className="mt-3 space-y-2">{data?.receipts.map(row => <label key={row.id} className="flex items-start gap-3 rounded-lg border border-[var(--dash-border)] p-3"><input className="mt-1 h-4 w-4 shrink-0 accent-[var(--dash-brand)]" type="checkbox" checked={form.lines.some(line => line.goodsReceiptLineId === row.id)} disabled={Number(row.available) <= 0} onChange={e => change("lines", e.target.checked ? [...form.lines, { goodsReceiptLineId: row.id, description: locale === "fr" ? row.descriptionFr : row.description, quantity: "", unitCost: row.unitCost, taxRate: row.commercialBasis?.taxRate ?? row.taxRate ?? "" }] : form.lines.filter(line => line.goodsReceiptLineId !== row.id))} /><span className="min-w-0 break-words">{row.receiptNumber} · {row.orderNumber}<br />{locale === "fr" ? row.descriptionFr : row.description}<br /><span className="text-sm text-[var(--dash-text-soft)]">{t("available")}: {row.available}</span></span></label>)}{data?.receiptNext && <Button variant="ghost" onClick={() => void load({ supplierId: form.supplierId, receiptAfter: data.receiptNext! })}>{t("moreReceipts")}</Button>}</fieldset>
+        <fieldset disabled={locked} className="mt-4 space-y-4">
+          {form.lines.map((line, index) => {
+            const row = data?.receipts.find(receipt => receipt.id === line.goodsReceiptLineId)
+            return <div key={line.goodsReceiptLineId} className="rounded-lg border border-[var(--dash-border)] p-3">
+              <h3 className="mb-2 font-medium">{t("line")} {index + 1}</h3>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {(["description", "quantity", "unitCost", "taxRate", "taxAmount", ...invoiceChargeFields] as const).map(field => {
+                  const isCharge = field === "discount" || field === "freight"
+                  const suggestion = isCharge ? suggestedInvoiceCharge(row, line.quantity, field) : undefined
+                  return <div key={field}>
+                    <Label htmlFor={`invoice-line-${index}-${field}`}>{t(field === "unitCost" ? "cost" : field)}{(isCharge || field === "taxAmount") && form.currency ? ` (${form.currency})` : ""}</Label>
+                    <Input id={`invoice-line-${index}-${field}`} value={line[field] ?? suggestion ?? ""} inputMode={field === "description" ? "text" : "decimal"} maxLength={field === "description" ? 240 : 20} onChange={e => change("lines", form.lines.map((old, i) => i === index ? { ...old, [field]: field === "description" ? e.target.value : e.target.value.replace(",", ".") } : old))} />
+                  </div>
+                })}
+              </div>
+              <Button variant="ghost" className="mt-2" onClick={() => change("lines", form.lines.filter((_, i) => i !== index))}>{t("remove")}</Button>
+            </div>
+          })}
+          <div><Label htmlFor="invoice-notes">{t("notes")}</Label><Textarea id="invoice-notes" value={form.notes} maxLength={1000} onChange={e => change("notes", e.target.value)} /></div>
+        </fieldset>
       </section><div className="pb-6"><Button ref={reviewButton} onClick={() => void review()} disabled={locked || loading || !data || !form.lines.length}>{t("review")}</Button></div>
     </>}
     <Dialog open={open} onOpenChange={value => { if (!busy) { setOpen(value); if (!value && !pending) setPreview(null) } }}><DialogContent closeLabel={locale === "fr" ? "Fermer" : "Close"} closeDisabled={busy} onCloseAutoFocus={event => { const target = decision ? newButton.current : reviewButton.current; if (target && !target.disabled) { event.preventDefault(); target.focus() } }} className="dashboard-landing-theme dark max-h-[90dvh] min-w-0 max-w-2xl overflow-y-auto text-[var(--dash-text)] [overflow-wrap:anywhere] [&>*]:min-w-0"><DialogHeader><DialogTitle>{t(decision ? "prepared" : "reviewTitle")}</DialogTitle><DialogDescription>{t(decision ? "observationHelp" : pending ? "recoveryHelp" : "reviewHelp")}</DialogDescription></DialogHeader>
       {error && <p role="alert" className="break-words">{error}</p>}
-      {preview && <div className="space-y-3"><p>{preview.supplierName} · {preview.draft.invoiceNumber}</p><dl className="grid grid-cols-2 gap-2">{(['subtotal','tax','total'] as const).map(field => <div key={field}><dt>{t(field)}</dt><dd className="font-semibold">{preview[field]} {preview.draft.currency}</dd></div>)}</dl>{Number(preview.variance) > 0 && <p><AlertTriangle className="mr-2 inline h-4 w-4" aria-hidden="true" />{t("variance")}: {preview.variance} {preview.draft.currency}</p>}<p className="break-all text-sm">{t("reference")}: {preview.draft.documentReference}</p><p className="break-all text-xs">{t("hash")}: {preview.draft.documentSha256}</p></div>}
+      {preview && <div className="space-y-3">
+        <p>{preview.supplierName} · {preview.draft.invoiceNumber}</p>
+        <dl className="grid grid-cols-2 gap-2">{(["subtotal", "tax", "total"] as const).map(field => <div key={field}><dt>{t(field)}</dt><dd className="font-semibold">{preview[field]} {preview.draft.currency}</dd></div>)}</dl>
+        {Number(preview.variance) > 0 && <p><AlertTriangle className="mr-2 inline h-4 w-4" aria-hidden="true" />{t("variance")}: {preview.variance} {preview.draft.currency}</p>}
+        {preview.lines.some(line => varianceFields.some(field => Math.abs(Number(line[field])) > 0)) && <ul className="space-y-1 text-sm">
+          {preview.lines.flatMap((line, index) => varianceFields.filter(field => Math.abs(Number(line[field])) > 0).map(field => <li key={line.id + field}>{t("line")} {index + 1} · {t(field)}: {line[field]} {preview.draft.currency}</li>))}
+        </ul>}
+        <p className="break-all text-sm">{t("reference")}: {preview.draft.documentReference}</p>
+        <p className="break-all text-xs">{t("hash")}: {preview.draft.documentSha256}</p>
+      </div>}
       {pending && <p className="break-all text-sm">{t("request")}: {pending.idempotencyKey}</p>}
-      {preview && <ul className="space-y-2 text-sm">{preview.lines.map((line,index) => <li key={`${line.id}-${index}`} className="rounded-lg border border-[var(--dash-border)] p-3"><p className="font-medium">{preview.draft.lines[index].description}</p><p>{t("quantity")}: {line.quantity} · {t("available")}: {line.available}</p><p>{t("cost")}: {preview.draft.lines[index].unitCost} · {t("taxRate")}: {preview.draft.lines[index].taxRate}</p><p>{t("total")}: {line.total} {preview.draft.currency}</p></li>)}</ul>}
+      {preview && <ul className="space-y-2 text-sm">{preview.lines.map((line, index) => {
+        const draft = preview.draft.lines[index]
+        return <li key={`${line.id}-${index}`} className="rounded-lg border border-[var(--dash-border)] p-3">
+          <p className="font-medium">{draft.description}</p>
+          <p>{t("quantity")}: {line.quantity} · {t("available")}: {line.available}</p>
+          <p>{t("cost")}: {draft.unitCost} · {t("taxRate")}: {draft.taxRate}</p>
+          {(["taxAmount", ...invoiceChargeFields] as const).map(field => draft[field] !== undefined && <p key={field}>{t(field)}: {draft[field]} {preview.draft.currency}</p>)}
+          <p>{t("total")}: {line.total} {preview.draft.currency}</p>
+        </li>
+      })}</ul>}
       {decision && <div className="space-y-3"><p><Clock className="mr-2 inline h-4 w-4" aria-hidden="true" />{t("recordedState")}: {t(decision.preparationStatus === 'MATCHED' ? 'recordedMatched' : 'recordedDisputed')}</p><p>{decision.invoiceNumber}: {decision.total} {decision.currency}</p><p>{t("noPosting")}</p><p className="break-all text-sm">{t("request")}: {decision.requestReference}</p><p>{t("recorded")}: {formatTime(decision.recordedAt)}</p>{observation}</div>}
       {!decision && <div className="flex flex-wrap gap-2"><Button onClick={() => void submit()} disabled={busy}>{t(pending ? "retry" : "confirm")}</Button>{!pending && <Button variant="outline" disabled={busy} onClick={() => { setOpen(false); setPreview(null) }}>{t("edit")}</Button>}</div>}
     </DialogContent></Dialog>

@@ -1,10 +1,12 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 
 import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
-import { requireFreshAuth } from "@/lib/security/auth-session"
+import { FreshAuthRequiredError, requireFreshAuth } from "@/lib/security/auth-session"
 import { RbacError, requirePermission } from "@/lib/security/rbac"
+import { purchaseReceivingAuthority, purchaseReceivingScopeSchema } from "@/services/purchase-order/purchase-receiving-authority"
+import { purchaseReturnWorkbenchCommandSchema } from "@/services/purchasing/purchase-return-workbench.contracts"
 import {
   postPurchaseReturn,
   postSupplierCreditNote,
@@ -60,14 +62,40 @@ const postReturn = protect<unknown, Awaited<ReturnType<typeof postPurchaseReturn
       organizationId: ctx.orgId,
       postedById: ctx.userId,
     })
-    const result = await postPurchaseReturn(parsed)
-    revalidatePurchaseEvidencePaths()
+    const session = ctx.freshAuth?.claims
+    if (session?.userId !== ctx.userId || session.tenantId !== ctx.orgId) throw new FreshAuthRequiredError()
+    const scope = purchaseReceivingScopeSchema.parse({ organizationId: ctx.orgId, actorId: ctx.userId, sessionId: session.sessionId, sessionToken: session.sessionToken })
+    const result = await postPurchaseReturn(parsed, undefined, {
+      async assertCurrentAuthority(tx) {
+        const current = await purchaseReceivingAuthority(tx, scope, "return")
+        if (!current.fresh) throw new FreshAuthRequiredError()
+      },
+    })
+    try {
+      revalidatePurchaseEvidencePaths()
+      revalidateTag(`purchaseOrder-${parsed.purchaseOrderId}`)
+      revalidateTag(`inventory-${ctx.orgId}`)
+      revalidatePath("/[locale]/dashboard/purchase-orders/[id]", "page")
+    } catch { /* The retained operation is authoritative after commit. */ }
     return result
   },
 )
 
 export async function postPurchaseReturnAction(input: unknown) {
   return postReturn(input)
+}
+
+export async function postPurchaseReturnFromReceiptAction(input: unknown) {
+  const command = purchaseReturnWorkbenchCommandSchema.safeParse(input)
+  if (!command.success) return { success: false as const, code: "VALIDATION_ERROR", error: "A reviewed source receipt and valid return quantities are required." }
+  const result = await postReturn(command.data)
+  if (!result.success) return { success: false as const, code: result.code, error: result.error }
+  const { purchaseReturn, replayed } = result.data
+  return { success: true as const, data: {
+    organizationId: purchaseReturn.organizationId, actorId: purchaseReturn.postedById,
+    purchaseOrderId: purchaseReturn.purchaseOrderId, goodsReceiptId: purchaseReturn.goodsReceiptId,
+    returnNumber: purchaseReturn.returnNumber, requestReference: purchaseReturn.idempotencyKey, replayed,
+  } }
 }
 
 const reverseReturn = protect<unknown, Awaited<ReturnType<typeof reversePurchaseReturn>>>(
@@ -94,7 +122,7 @@ export async function reversePurchaseReturnAction(input: unknown) {
   return reverseReturn(input)
 }
 
-const postCredit = protect<unknown, Awaited<ReturnType<typeof postSupplierCreditNote>>>(
+const postCredit = protect(
   {
     permission: "purchasing.ap.credit.post",
     auditResource: "SupplierCreditNote",
@@ -109,7 +137,12 @@ const postCredit = protect<unknown, Awaited<ReturnType<typeof postSupplierCredit
     })
     const result = await postSupplierCreditNote(parsed)
     revalidatePurchaseEvidencePaths()
-    return result
+    const { supplierCreditNote: note } = result
+    return {
+      supplierCreditNote: { id: note.id, creditNoteNumber: note.creditNoteNumber, currency: note.currency, total: note.total.toFixed(2) },
+      replayed: result.replayed,
+      ledgerStatus: result.ledgerStatus ?? (note.journalEntryId ? "POSTED" : note.ledgerPostingBatchId ? "BLOCKED_PENDING_RULES" : "NOT_REQUIRED"),
+    }
   },
 )
 

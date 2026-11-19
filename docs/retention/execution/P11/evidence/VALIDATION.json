@@ -1,0 +1,285 @@
+{
+  "at": "2026-10-18T19:38:56.672Z",
+  "method": "Static document/source assertions; not application tests",
+  "ok": true,
+  "checks": [
+    {
+      "id": "no unexplained selected-file drift",
+      "pass": true,
+      "detail": [
+        {
+          "path": "components/landing/cinematic.css",
+          "baseline": "6d6c474bcd81955f15439cd5fa24353633b5c0304d8d44747a7d1168b8682d41",
+          "current": "4890bba7be78fd9217e5a166009f03f821c71badafa193ec1a62f2ec3fc372be",
+          "classification": "documented concurrent unrelated change; preserved"
+        }
+      ]
+    },
+    {
+      "id": "reviewed source remains current",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "only P11 status row changed",
+      "pass": true
+    },
+    {
+      "id": "P03 owned fixture identity",
+      "pass": true,
+      "detail": [
+        "jest.opening-position-fixtures.config.cjs",
+        "services/onboarding/__tests__/fixtures/opening-position-contract.ts",
+        "services/onboarding/__tests__/fixtures/opening-position-controls.json",
+        "services/onboarding/__tests__/fixtures/opening-position-source.json",
+        "services/onboarding/__tests__/opening-position-contract.test.ts"
+      ]
+    },
+    {
+      "id": "P01 retained narrative identity",
+      "pass": true
+    },
+    {
+      "id": "historical P03 record inspected, not executed",
+      "pass": true
+    },
+    {
+      "id": "workflow actual exit",
+      "pass": true
+    },
+    {
+      "id": "14 source markers supporting reviewed claims",
+      "pass": true,
+      "detail": [
+        {
+          "path": "services/regulatory/country-packs/registry.ts",
+          "marker": "CM: [cameroonCountryPack]",
+          "present": true
+        },
+        {
+          "path": "services/regulatory/country-packs/cameroon.ts",
+          "marker": "const CNPS_CAPABILITY_STATUS = \"SUPPORTED_DRAFT\"",
+          "present": true
+        },
+        {
+          "path": "services/regulatory/country-packs/cameroon.ts",
+          "marker": "productionCalculationSupported: false",
+          "present": true
+        },
+        {
+          "path": "services/regulatory/country-packs/cameroon.ts",
+          "marker": "productionAutomationAllowed: false",
+          "present": true
+        },
+        {
+          "path": "services/regulatory/country-packs/cameroon.ts",
+          "marker": "CM_DGI_CGI_2025",
+          "present": true
+        },
+        {
+          "path": "services/regulatory/regulatory-capability.service.ts",
+          "marker": "kind: \"PENDING_COUNTRY_PACK\"",
+          "present": true
+        },
+        {
+          "path": "services/payroll/payroll-production-admission.ts",
+          "marker": "CM_PRIVATE_SME_MONTHLY_SINGLE_EMPLOYER",
+          "present": true
+        },
+        {
+          "path": "services/payroll/authority-adapter-worker.service.ts",
+          "marker": "deps.adapter ?? payrollSandboxAuthorityAdapter",
+          "present": true
+        },
+        {
+          "path": "services/payroll/authority-adapter-worker.service.ts",
+          "marker": "await assertPayrollProductionAdmissionInTx",
+          "present": true
+        },
+        {
+          "path": "services/payments/adapters/mobile-money-hmac.adapter.ts",
+          "marker": "x-provider-signature",
+          "present": true
+        },
+        {
+          "path": "services/payments/provider-operations.service.ts",
+          "marker": "signingPerformed: false",
+          "present": true
+        },
+        {
+          "path": "services/onboarding/opening-readiness.ts",
+          "marker": "state: \"REVIEW_REQUIRED\"",
+          "present": true
+        },
+        {
+          "path": "services/onboarding/master-data-import.service.ts",
+          "marker": "\"opening accounting balances\"",
+          "present": true
+        },
+        {
+          "path": "services/inventory/inventory-stock-event.service.ts",
+          "marker": "OPENING_STOCK_LEDGER_REVIEW",
+          "present": true
+        }
+      ]
+    },
+    {
+      "id": "12 planned cases",
+      "pass": true
+    },
+    {
+      "id": "9 provider prerequisite groups",
+      "pass": true
+    },
+    {
+      "id": "local artifact links",
+      "pass": true,
+      "detail": [
+        {
+          "document": "RESULT.md",
+          "target": "evidence/BASELINE.json",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "evidence/SOURCE_REVIEW.json",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "evidence/VALIDATION.json",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "evidence/MANIFEST.json",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "COUNTRY_SUPPORT_MATRIX.md",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "EXPERT_REVIEW_PACKET.md",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "PROVIDER_PREREQUISITES.md",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "evidence/PRIMARY_SOURCES.md",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "evidence/PREREQUISITES.json",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "evidence/REVIEW_AND_COMMANDS.md",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "evidence/VALIDATION_ATTEMPT_1.json",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "evidence/WORKFLOW.json",
+          "exists": true
+        },
+        {
+          "document": "RESULT.md",
+          "target": "evidence/WORKFLOW.log",
+          "exists": true
+        },
+        {
+          "document": "COUNTRY_SUPPORT_MATRIX.md",
+          "target": "RESULT.md",
+          "exists": true
+        },
+        {
+          "document": "COUNTRY_SUPPORT_MATRIX.md",
+          "target": "evidence/SOURCE_REVIEW.json",
+          "exists": true
+        },
+        {
+          "document": "COUNTRY_SUPPORT_MATRIX.md",
+          "target": "evidence/PRIMARY_SOURCES.md",
+          "exists": true
+        },
+        {
+          "document": "EXPERT_REVIEW_PACKET.md",
+          "target": "COUNTRY_SUPPORT_MATRIX.md",
+          "exists": true
+        },
+        {
+          "document": "EXPERT_REVIEW_PACKET.md",
+          "target": "evidence/PRIMARY_SOURCES.md",
+          "exists": true
+        },
+        {
+          "document": "EXPERT_REVIEW_PACKET.md",
+          "target": "../P03/OPENING_POSITION_CONTRACT.md",
+          "exists": true
+        },
+        {
+          "document": "EXPERT_REVIEW_PACKET.md",
+          "target": "../P03/FIXTURE_MANIFEST.md",
+          "exists": true
+        },
+        {
+          "document": "EXPERT_REVIEW_PACKET.md",
+          "target": "../../../../services/onboarding/__tests__/fixtures/opening-position-source.json",
+          "exists": true
+        },
+        {
+          "document": "EXPERT_REVIEW_PACKET.md",
+          "target": "../../../../services/onboarding/__tests__/fixtures/opening-position-controls.json",
+          "exists": true
+        },
+        {
+          "document": "EXPERT_REVIEW_PACKET.md",
+          "target": "evidence/PREREQUISITES.json",
+          "exists": true
+        },
+        {
+          "document": "EXPERT_REVIEW_PACKET.md",
+          "target": "PROVIDER_PREREQUISITES.md",
+          "exists": true
+        },
+        {
+          "document": "PROVIDER_PREREQUISITES.md",
+          "target": "COUNTRY_SUPPORT_MATRIX.md",
+          "exists": true
+        },
+        {
+          "document": "PROVIDER_PREREQUISITES.md",
+          "target": "evidence/PRIMARY_SOURCES.md",
+          "exists": true
+        },
+        {
+          "document": "PROVIDER_PREREQUISITES.md",
+          "target": "evidence/SOURCE_REVIEW.json",
+          "exists": true
+        },
+        {
+          "document": "evidence/REVIEW_AND_COMMANDS.md",
+          "target": "VALIDATION_ATTEMPT_1.json",
+          "exists": true
+        }
+      ]
+    }
+  ],
+  "concurrentOrUnrelatedDrift": [
+    "components/landing/cinematic.css"
+  ],
+  "sourceDrift": []
+}

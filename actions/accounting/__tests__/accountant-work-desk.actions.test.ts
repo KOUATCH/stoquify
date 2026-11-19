@@ -6,6 +6,7 @@ jest.mock("@/lib/security/auth-session", () => ({
     constructor() { super("Fresh authentication required"); this.name = "FreshAuthRequiredError" }
   },
   SESSION_ASSURANCE_LEVEL: { NONE: 0, PASSWORD: 1 },
+  requireSession: jest.fn(async () => ({ claims: { userId: "actor", tenantId: "firm", sessionId: "trusted-session", sessionToken: "synthetic-trusted-session-token" } })),
 }))
 jest.mock("@/services/_shared/protect", () => ({
   protect: jest.fn((_options, handler) => async (input: unknown) => {

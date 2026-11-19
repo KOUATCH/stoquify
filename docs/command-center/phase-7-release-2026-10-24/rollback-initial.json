@@ -1,0 +1,9 @@
+{
+  "realAuthentication": true,
+  "productionAccess": false,
+  "checks": [
+    "All six coordination tables preserved across application restart with flag disabled"
+  ],
+  "passed": false,
+  "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(page.url().includes('/dashboard/'))\n\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\command-center\\phase-7-release-2026-10-24\\rollback-browser.cjs:15:254)"
+}

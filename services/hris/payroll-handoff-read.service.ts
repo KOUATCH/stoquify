@@ -1,0 +1,107 @@
+import 'server-only'
+import {Prisma} from '@prisma/client'
+import {BusinessRuleError,ConflictError,ForbiddenError,NotFoundError} from '@/services/_shared/action-errors'
+import {hasAnyRbacPermission} from '@/lib/security/rbac-permissions'
+import {currentHrisActor,type SelfServiceActor} from './self-service-boundary.service'
+import {lockHrisReviewEmployeeInTx} from './review-lock.service'
+import {attendanceMetadata,assertOperationalCorrectionsCertified} from './attendance-correction'
+import {assertOperationalAttendanceCurrentInTx} from './operational-time.service'
+import {validateHrisTimeLeaveAttendanceCertification} from './time-leave.contract'
+import {buildHrisPayrollReadinessExport,type HrisPayrollReadinessEmployeeSource} from './payroll-readiness-contract'
+import {projectEmploymentAsOf} from './employment-projection'
+import {pendingHrisLifecycleFromMetadata} from './lifecycle.service'
+import {handoffPolicy,handoffHash,handoffTotals,type HandoffManifest,type HandoffRow,type HandoffPolicy} from './payroll-handoff.contract'
+export function handoffPermission(a:SelfServiceActor,p:string){if(!hasAnyRbacPermission(a.actorPermissions,[p]))throw new ForbiddenError('Current payroll handoff permission is required.')}
+export function handoffSalary(a:SelfServiceActor){if(!a.actorPermissions.some(p=>p==='EMPLOYEE_SALARY_READ'||p==='payroll.payslips.read'))throw new ForbiddenError('Existing salary visibility is required for payroll input export.')}
+export async function handoffActor(tx:Prisma.TransactionClient,a:SelfServiceActor,write=false){const current=await currentHrisActor(tx,a);handoffPermission(current,'hris.handoff.read');handoffSalary(current);if(write)handoffPermission(current,'hris.handoff.export');return current}
+export async function assertHandoffRecipient(tx:Prisma.TransactionClient,policy:HandoffPolicy){const a=await currentHrisActor(tx,{organizationId:policy.organizationId,actorId:policy.recipientUserId,actorPermissions:['hris.handoff.read','hris.handoff.receive','EMPLOYEE_SALARY_READ','payroll.payslips.read']});handoffPermission(a,'hris.handoff.read');handoffPermission(a,'hris.handoff.receive');handoffSalary(a)}
+
+/** Read Committed is required by native operational locks. Organization profile
+ * lock prevents population edits; sorted employee locks serialize source writers. */
+async function projectHandoffInputsInTx(tx:Prisma.TransactionClient,a:SelfServiceActor,payrollPeriodId:string,retainedRecipientPackageId?:string){
+ handoffPermission(a,'hris.handoff.read');handoffSalary(a)
+ if(retainedRecipientPackageId){
+  handoffPermission(a,'hris.handoff.receive')
+  const packages=await tx.$queryRaw<Array<{id:string}>>`SELECT id FROM hris_payroll_handoff_packages WHERE id=${retainedRecipientPackageId} AND "organizationId"=${a.organizationId} AND "payrollPeriodId"=${payrollPeriodId} AND "recipientUserId"=${a.actorId}`
+  if(!packages.length)throw new ForbiddenError('Retained recipient scope is required.')
+ }else handoffPermission(a,'hris.people.manage')
+ const policy=handoffPolicy(a.organizationId);if(!policy)throw new BusinessRuleError('HRIS_HANDOFF_POLICY_UNAVAILABLE')
+ await assertHandoffRecipient(tx,policy)
+ await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${"hris-profile:"+a.organizationId},0))::text`
+ const existingPeriod=await tx.payrollPeriod.findFirst({where:{id:payrollPeriodId,organizationId:a.organizationId}});if(!existingPeriod)throw new NotFoundError()
+ let period=existingPeriod
+ const employer=await tx.organization.findUniqueOrThrow({where:{id:a.organizationId},select:{id:true,name:true}})
+ if(period.countryCode!==policy.countryCode)throw new BusinessRuleError('HRIS_HANDOFF_COUNTRY_OUTSIDE_REVIEWED_TEMPLATE')
+ const population=await tx.payrollEmployee.findMany({where:{organizationId:a.organizationId,deletedAt:null},select:{id:true},orderBy:{id:'asc'},take:1001});if(population.length>1000)throw new BusinessRuleError('HRIS_HANDOFF_POPULATION_REQUIRES_BOUNDED_RECONCILIATION')
+ for(const e of population)await lockHrisReviewEmployeeInTx(tx,a.organizationId,e.id)
+ await tx.$queryRaw`SELECT id FROM payroll_periods WHERE id=${payrollPeriodId} AND "organizationId"=${a.organizationId} FOR SHARE`
+ period=await tx.payrollPeriod.findUniqueOrThrow({where:{id:payrollPeriodId}})
+ if(period.countryCode!==policy.countryCode)throw new BusinessRuleError("HRIS_HANDOFF_COUNTRY_OUTSIDE_REVIEWED_TEMPLATE")
+ const catalogIds=await tx.payrollEmployeeRubriqueAssignment.findMany({where:{organizationId:a.organizationId,employeeId:{in:population.map(e=>e.id)},deletedAt:null},select:{rubriqueId:true},orderBy:{rubriqueId:"asc"}})
+ await tx.$queryRaw`SELECT id FROM payroll_rubriques WHERE "organizationId"=${a.organizationId} AND id=ANY(${[...new Set(catalogIds.map(r=>r.rubriqueId))]}::text[]) ORDER BY id FOR SHARE`
+ const employees=await tx.payrollEmployee.findMany({where:{organizationId:a.organizationId,deletedAt:null,id:{in:population.map(e=>e.id)}},orderBy:{id:'asc'},include:{contracts:{where:{organizationId:a.organizationId,deletedAt:null,status:{in:['ACTIVE','DRAFT','ENDED']},effectiveFrom:{lte:period.periodEnd},OR:[{effectiveTo:null},{effectiveTo:{gte:period.periodStart}}]},orderBy:{id:'asc'}},rubriqueAssignments:{where:{organizationId:a.organizationId,deletedAt:null,status:{in:['ACTIVE','DRAFT','ENDED']},effectiveFrom:{lte:period.periodEnd},OR:[{effectiveTo:null},{effectiveTo:{gte:period.periodStart}}]},include:{rubrique:true},orderBy:{id:'asc'}},attendanceSnapshots:{where:{organizationId:a.organizationId,payrollPeriodId:period.id,status:'FROZEN'},orderBy:[{frozenAt:'desc'},{id:'desc'}]},paymentDestinationChangeRequests:{where:{organizationId:a.organizationId,status:'APPLIED',deletedAt:null},orderBy:[{appliedAt:'desc'},{id:'desc'}],take:1}}})
+ const events=await tx.businessEvent.findMany({where:{organizationId:a.organizationId,sourceId:{in:population.map(e=>e.id)},eventType:'hris.employee.lifecycle.applied',status:'APPLIED'},select:{id:true,sourceId:true,payload:true},orderBy:{id:'asc'}})
+ const pendingSalary=await tx.payrollSalaryChangeRequest.findMany({where:{organizationId:a.organizationId,deletedAt:null,status:{in:['REQUESTED','APPROVED']},effectiveFrom:{lte:period.periodEnd}},select:{id:true,employeeId:true,updatedAt:true},orderBy:{id:'asc'}})
+ const pendingPayment=await tx.payrollPaymentDestinationChangeRequest.findMany({where:{organizationId:a.organizationId,deletedAt:null,status:{in:['REQUESTED','APPROVED']}},select:{id:true,employeeId:true,updatedAt:true},orderBy:{id:'asc'}})
+ const pendingTime=await tx.hrisTimeRequest.findMany({where:{organizationId:a.organizationId,periodStart:{lte:period.periodEnd},periodEnd:{gte:period.periodStart},OR:[{status:'REQUESTED'},{status:'APPROVED',metadata:{path:['cancellation','status'],equals:'REQUESTED'}}]},select:{id:true,employeeId:true,updatedAt:true},orderBy:{id:'asc'}})
+ const anomalies=await tx.hrisAttendanceAnomaly.findMany({where:{organizationId:a.organizationId,status:'OPEN'},select:{id:true,employeeId:true,updatedAt:true},orderBy:{id:'asc'}})
+ const blocked:Array<{employeeId:string;code:string}>=[],rows:HandoffRow[]=[],excluded:HandoffManifest['excluded']=[],sources:unknown[]=[],proofSources:HrisPayrollReadinessEmployeeSource[]=[]
+ const add=(employeeId:string,code:string)=>blocked.push({employeeId,code})
+ for(const e of employees){
+  const history=events.filter(v=>v.sourceId===e.id),state=projectEmploymentAsOf({id:e.id,employeeNumber:e.employeeNumber,status:e.status,hireDate:e.hireDate.toISOString(),terminationDate:e.terminationDate?.toISOString()??null,locationId:e.locationId,department:e.department,jobTitle:e.jobTitle,costCenter:e.costCenter},history,period.periodEnd).state
+  const reason=e.countryCode!==period.countryCode?'COUNTRY_OUTSIDE_PERIOD':state.status==='DRAFT'?'DRAFT_EMPLOYEE':new Date(state.hireDate)>period.periodEnd?'HIRED_AFTER_PERIOD':state.terminationDate&&new Date(state.terminationDate)<=period.periodStart?'LEFT_BEFORE_PERIOD':null
+  sources.push({employeeId:e.id,updatedAt:e.updatedAt,metadata:e.metadata,state,history})
+  if(reason){excluded.push({employeeId:e.id,employeeNumber:e.employeeNumber,reason});continue}
+  if(['TERMINATED','ARCHIVED'].includes(state.status)&&!state.terminationDate)add(e.id,'EMPLOYMENT_DATES_UNPROVEN')
+  // Sources must intersect actual employment, not merely the payroll calendar.
+  const inEmployment=(source:{effectiveFrom:Date;effectiveTo:Date|null})=>(!state.terminationDate||source.effectiveFrom<new Date(state.terminationDate))&&(!source.effectiveTo||source.effectiveTo>=new Date(state.hireDate))
+  e.contracts=e.contracts.filter(inEmployment)
+  e.rubriqueAssignments=e.rubriqueAssignments.filter(r=>inEmployment(r)&&attendanceMetadata(attendanceMetadata(r.metadata).hrisLifecycleClosure).status!=='CANCELLED')
+  for(const source of [...e.contracts,...e.rubriqueAssignments])if(source.status==='ENDED'&&(!source.effectiveTo||source.effectiveTo<source.effectiveFrom))add(e.id,'ENDED_SOURCE_DATES_UNPROVEN')
+  if(e.contracts.some(c=>c.status==='ENDED'&&attendanceMetadata(attendanceMetadata(c.metadata).hrisLifecycleClosure).previousStatus==='SUSPENDED'))add(e.id,'SUSPENDED_CONTRACT_REQUIRES_REVIEW')
+  if(e.rubriqueAssignments.some(r=>r.status==='ENDED'&&attendanceMetadata(attendanceMetadata(r.metadata).hrisLifecycleClosure).previousStatus==='SUSPENDED'))add(e.id,'SUSPENDED_COMPENSATION_REQUIRES_REVIEW')
+  const pendingMovement=pendingHrisLifecycleFromMetadata(e.metadata)
+  const draftContracts=e.contracts.filter(c=>c.status==='DRAFT'),draftAssignments=e.rubriqueAssignments.filter(r=>r.status==='DRAFT')
+  if(draftContracts.length||draftAssignments.length)add(e.id,'PENDING_CONTRACT_OR_COMPENSATION')
+  sources.push({employeeId:e.id,draftContracts,draftAssignments})
+  e.contracts=e.contracts.filter(c=>c.status==='ACTIVE'||c.status==='ENDED');e.rubriqueAssignments=e.rubriqueAssignments.filter(r=>r.status==='ACTIVE'||r.status==='ENDED')
+  if(new Set(e.rubriqueAssignments.map(r=>r.rubriqueId)).size!==e.rubriqueAssignments.length)add(e.id,'MULTIPLE_COMPENSATION_SEGMENTS_REQUIRE_REVIEW')
+  if((pendingMovement&&new Date(pendingMovement.effectiveAt)<=period.periodEnd)||pendingSalary.some(p=>p.employeeId===e.id)||pendingPayment.some(p=>p.employeeId===e.id)||pendingTime.some(p=>p.employeeId===e.id))add(e.id,'PENDING_APPROVAL_OR_CANCELLATION')
+  if(anomalies.some(p=>p.employeeId===e.id||p.employeeId===null))add(e.id,'OPEN_ATTENDANCE_ANOMALY')
+  if(e.contracts.length!==1)add(e.id,e.contracts.length?'MULTIPLE_CONTRACT_SEGMENTS_REQUIRE_REVIEW':'ACTIVE_CONTRACT_MISSING')
+  const c=e.contracts[0]??null,s=e.attendanceSnapshots[0]??null,d=e.paymentDestinationChangeRequests[0]??null
+  if(c&&(!c.baseSalary.isFinite()||c.baseSalary.lte(0)||!c.currency))add(e.id,'BASE_COMPENSATION_INVALID')
+  if(e.attendanceSnapshots.length!==1)add(e.id,'EXACT_CERTIFIED_ATTENDANCE_REQUIRED')
+  let certificationHash:string|null=null,revision:number|null=null
+  if(s)try{
+   if(s.periodStart.getTime()!==period.periodStart.getTime()||s.periodEnd.getTime()!==period.periodEnd.getTime()||!s.frozenById||!s.frozenAt)throw new BusinessRuleError('PERIOD_SNAPSHOT_MISMATCH')
+   const proof=validateHrisTimeLeaveAttendanceCertification({sourcePayload:attendanceMetadata(s.metadata).sourcePayload,approvedById:s.frozenById,countryCode:period.countryCode,periodStart:period.periodStart,periodEnd:period.periodEnd,totals:{scheduledMinutes:s.scheduledMinutes,workedMinutes:s.workedMinutes,overtimeMinutes:s.overtimeMinutes,absenceMinutes:s.absenceMinutes,leaveMinutes:s.leaveMinutes}})
+   await assertOperationalCorrectionsCertified(tx,{organizationId:a.organizationId,employeeId:e.id},period,s.metadata)
+   await assertOperationalAttendanceCurrentInTx(tx,{organizationId:a.organizationId,employeeId:e.id,payrollPeriodId:period.id},s.metadata)
+   certificationHash=handoffHash(proof);revision=proof.sourceRevision
+  }catch(error){if(!(error instanceof BusinessRuleError)&&!(error instanceof ConflictError))throw error;add(e.id,'ATTENDANCE_CERTIFICATION_STALE_OR_INVALID')}
+  const assignments=e.rubriqueAssignments.map(r=>({id:r.id,rubriqueId:r.rubriqueId,amount:r.amount?.toFixed(2)??null,rateBps:r.rateBps,quantity:r.quantity?.toString()??null,currency:r.currency,effectiveFrom:r.effectiveFrom.toISOString(),effectiveTo:r.effectiveTo?.toISOString()??null,evidenceDocumentHash:r.evidenceDocumentHash,approvalBusinessEventId:r.approvalBusinessEventId,metadata:r.metadata}))
+  if(e.rubriqueAssignments.some(r=>r.rubrique.status!=='ACTIVE'||r.rubrique.deletedAt))add(e.id,'COMPENSATION_DEFINITION_UNAVAILABLE')
+  proofSources.push({employeeId:e.id,employeeDisplayName:e.displayName,employeeMetadata:e.metadata,contract:c?{id:c.id,baseSalary:c.baseSalary.toFixed(2),currency:c.currency,effectiveFrom:c.effectiveFrom.toISOString(),effectiveTo:c.effectiveTo?.toISOString()??null,signedDocumentHash:c.signedDocumentHash,activatedBusinessEventId:c.activatedBusinessEventId,metadata:c.metadata}:null,compensationAssignments:assignments,paymentDestinationHash:e.paymentDestinationHash,paymentDestinationRequest:d?{id:d.id,status:d.status,paymentDestinationHash:d.paymentDestinationHash,evidenceDocumentHash:d.evidenceDocumentHash,approvalEvidenceHash:d.approvalEvidenceHash,requestBusinessEventId:d.requestBusinessEventId,approvalBusinessEventId:d.approvalBusinessEventId,appliedBusinessEventId:d.appliedBusinessEventId,requestedById:d.requestedById,approvedById:d.approvedById,appliedById:d.appliedById,appliedAt:d.appliedAt?.toISOString()??null}:null,attendance:{snapshotId:s?.id??null,sourceHash:s?.sourceHash??null,certificationHash}})
+  rows.push({employeeId:e.id,employeeNumber:e.employeeNumber,displayName:e.displayName,legalName:e.legalName,hireDate:state.hireDate,terminationDate:state.terminationDate,employmentStatus:state.status,contractId:c?.id??null,contractVersion:c?.updatedAt.toISOString()??null,contractEffectiveFrom:c?.effectiveFrom.toISOString()??null,contractEffectiveTo:c?.effectiveTo?.toISOString()??null,contractBaseSalary:c?.baseSalary.toFixed(2)??null,currency:c?.currency??null,compensation:e.rubriqueAssignments.map(r=>({id:r.id,code:r.rubrique.code,amount:r.amount?.toFixed(2)??null,rateBps:r.rateBps,quantity:r.quantity?.toString()??null,currency:r.currency,sourceVersion:r.updatedAt.toISOString(),effectiveFrom:r.effectiveFrom.toISOString(),effectiveTo:r.effectiveTo?.toISOString()??null})),attendanceSnapshotId:s?.id??null,attendanceSourceHash:s?.sourceHash??null,attendanceRevision:revision,scheduledMinutes:s?.scheduledMinutes??0,workedMinutes:s?.workedMinutes??0,overtimeMinutes:s?.overtimeMinutes??0,absenceMinutes:s?.absenceMinutes??0,leaveMinutes:s?.leaveMinutes??0,sourceProofHash:null})
+  sources.push({employeeId:e.id,contracts:e.contracts,assignments:e.rubriqueAssignments,snapshots:e.attendanceSnapshots,destination:d})
+ }
+ if(rows.length>200)throw new BusinessRuleError('HRIS_HANDOFF_MAX_200_ELIGIBLE_EMPLOYEES')
+ if(!rows.length)add('','NO_ELIGIBLE_EMPLOYEES')
+ const proof=buildHrisPayrollReadinessExport({organizationId:a.organizationId,payrollPeriodId:period.id,periodStart:period.periodStart.toISOString(),periodEnd:period.periodEnd.toISOString(),countryCode:period.countryCode,employees:proofSources})
+ for(const b of proof.blockers)add(b.employeeId,b.code)
+ for(const r of rows)r.sourceProofHash=proof.employeeProofs.find(p=>p.employeeId===r.employeeId)?.proofHash??null
+ const manifest:HandoffManifest={kind:'STOQUIFY_HR_CORE_INPUTS',schemaVersion:1,mode:'HR_CORE_WITH_HANDOFF',employer,period:{id:period.id,name:period.name,start:period.periodStart.toISOString(),end:period.periodEnd.toISOString(),countryCode:period.countryCode},recipient:{userId:policy.recipientUserId,label:policy.recipientLabel,templateVersion:policy.templateVersion,policyVersion:policy.version,approvalReference:policy.approvalReference},units:{time:'MINUTES',money:'DECIMAL_CURRENCY_UNITS',rates:'BASIS_POINTS',baseSalary:'CONTRACT_REFERENCE_NOT_CALCULATED_PAY'},rows,excluded,totals:handoffTotals(rows,excluded.length),sourceFingerprint:handoffHash({sources,pendingSalary,pendingPayment,pendingTime,anomalies,policy,period}),limitations:['INPUTS_ONLY_NOT_CALCULATED_PAID_OR_FILED','CONTRACT_BASE_SALARY_IS_REFERENCE_NOT_PERIOD_EARNINGS','RECIPIENT_MUST_RECONCILE_IDS_UNITS_AND_EXCLUSIONS','NO_COUNTRY_PAYROLL_ADMISSION_GRANTED']}
+ return {asOf:new Date().toISOString(),manifest,blockers:[...new Map(blocked.map(b=>[b.employeeId+':'+b.code,b])).values()],previewHash:handoffHash(manifest),policy}
+}
+
+/** Full current source projection remains restricted to HR management. */
+export async function readHandoffInputsInTx(tx:Prisma.TransactionClient,a:SelfServiceActor,payrollPeriodId:string){return projectHandoffInputsInTx(tx,a,payrollPeriodId)}
+/** A retained recipient receives a status only, never newly collected sources. */
+export async function retainedHandoffFreshnessInTx(tx:Prisma.TransactionClient,actor:SelfServiceActor,packageId:string){
+ const a=await handoffActor(tx,actor);handoffPermission(a,'hris.handoff.receive')
+ const rows=await tx.$queryRaw<Array<{payrollPeriodId:string;previewHash:string}>>`SELECT "payrollPeriodId","previewHash" FROM hris_payroll_handoff_packages WHERE id=${packageId} AND "organizationId"=${a.organizationId} AND "recipientUserId"=${a.actorId}`
+ if(!rows[0])throw new NotFoundError()
+ const current=await projectHandoffInputsInTx(tx,a,rows[0].payrollPeriodId,packageId)
+ return current.blockers.length||current.previewHash!==rows[0].previewHash?'STALE' as const:'CURRENT' as const
+}

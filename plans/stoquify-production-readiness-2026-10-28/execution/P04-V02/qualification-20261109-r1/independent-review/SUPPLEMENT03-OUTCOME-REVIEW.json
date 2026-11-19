@@ -1,0 +1,870 @@
+{
+  "at": "2026-11-09T18:36:18.366Z",
+  "reviewer": "/root/v02_review",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "raw": {
+    "planned": 35,
+    "passed": 19,
+    "failed": 16,
+    "notRun": 0,
+    "requests": 30,
+    "browserObservations": 32
+  },
+  "verdict": "blocked_separate_server_module_boundary_and_client_refresh_recovery_findings",
+  "passedScope": [
+    "verify-password-authorized",
+    "verify-password-wrong-password",
+    "verify-password-anonymous",
+    "verify-password-foreign-origin",
+    "authRevoked-real-session",
+    "authRevoked-verify-password",
+    "authRevoked-verify-password-cache-override",
+    "authExpired-real-session",
+    "authExpired-verify-password",
+    "authExpired-verify-password-cache-override",
+    "unconfigured-social-signin",
+    "authBrowserRevoked-en-authorized-refresh",
+    "authBrowserExpiry-en-authorized-refresh",
+    "authBrowserPermission-en-authorized-refresh",
+    "authBrowserModule-en-authorized-refresh",
+    "authBrowserRevoked-fr-authorized-refresh",
+    "authBrowserExpiry-fr-authorized-refresh",
+    "authBrowserPermission-fr-authorized-refresh",
+    "authBrowserModule-fr-authorized-refresh"
+  ],
+  "nativeSnapshotFilesIndependentlyReconciled": 66,
+  "nativeEffects": [
+    {
+      "id": "verify-password-authorized",
+      "before": "snapshot-auth-verify-password-authorized-before-1794248754244-db960573-9580-4ab3-a905-87325b146a8d.json",
+      "after": "snapshot-auth-verify-password-authorized-after-1794248755822-c6bcd1a3-e44e-4a00-8149-6ce454f205cb.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "verify-password-wrong-password",
+      "before": "snapshot-auth-verify-password-wrong-password-before-1794248757316-dae3b8e7-8c4c-4520-b5ed-0aa89fe00db8.json",
+      "after": "snapshot-auth-verify-password-wrong-password-after-1794248758709-98b26741-dc14-475a-85c6-d01c3821dd97.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "verify-password-anonymous",
+      "before": "snapshot-auth-verify-password-anonymous-before-1794248760068-f99bf0f8-78da-4929-a288-2609da4a6b8c.json",
+      "after": "snapshot-auth-verify-password-anonymous-after-1794248761437-560d9468-ced5-40f0-8bd6-7c165c5a41d7.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "verify-password-foreign-origin",
+      "before": "snapshot-auth-verify-password-foreign-origin-before-1794248762692-60d39bbf-d6fe-4caf-957f-55045dca00e3.json",
+      "after": "snapshot-auth-verify-password-foreign-origin-after-1794248764130-8d26ff9f-57f6-42f1-9f32-106c95debf1f.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authRevoked-verify-password",
+      "before": "snapshot-auth-authRevoked-verify-password-before-1794248765745-8991d148-fdaa-4aec-8119-0e11037c6162.json",
+      "after": "snapshot-auth-authRevoked-verify-password-after-1794248767271-948adbec-c1f7-4530-a6d0-dc62e11cee5a.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authRevoked-verify-password-cache-override",
+      "before": "snapshot-auth-authRevoked-verify-password-cache-override-before-1794248768648-4d0fbf61-8bae-4f4b-81c4-1d6a9adec824.json",
+      "after": "snapshot-auth-authRevoked-verify-password-cache-override-after-1794248770090-726dc394-7d8b-4e6c-824d-1e68329d483e.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authExpired-verify-password",
+      "before": "snapshot-auth-authExpired-verify-password-before-1794248776357-b8ec3d80-ad28-41ae-a120-a0f840ef8340.json",
+      "after": "snapshot-auth-authExpired-verify-password-after-1794248777719-7bc0667b-180c-4dfe-ae84-f453a6c28bed.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 1
+    },
+    {
+      "id": "authExpired-verify-password-cache-override",
+      "before": "snapshot-auth-authExpired-verify-password-cache-override-before-1794248779050-e215fe12-a306-4838-b342-eb168ae73615.json",
+      "after": "snapshot-auth-authExpired-verify-password-cache-override-after-1794248780453-df5cc9e6-dd6d-431c-bdc1-0e7b7dba1cfe.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "unconfigured-social-signin",
+      "before": "snapshot-auth-unconfigured-social-signin-before-1794248781760-f6994225-de89-4279-b1fe-1c74303dfea7.json",
+      "after": "snapshot-auth-unconfigured-social-signin-after-1794248786511-0def4f34-3c21-41cc-9b57-5fac3cb4228f.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserRevoked-en-authorized-refresh",
+      "before": "snapshot-auth-authBrowserRevoked-en-authorized-refresh-before-1794248800496-ce0567ab-57c5-459a-a687-03617fb95a48.json",
+      "after": "snapshot-auth-authBrowserRevoked-en-authorized-refresh-after-1794248803303-03ec2e4c-d79c-4cf9-ae0a-e7a3155aca82.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserRevoked-en-stale-refresh",
+      "before": "snapshot-auth-authBrowserRevoked-en-stale-refresh-before-1794248805425-f6f07578-a2df-45b0-9463-5386ce05209d.json",
+      "after": "snapshot-auth-authBrowserRevoked-en-stale-refresh-after-1794248807884-f4ddc158-5d6e-4dd9-b962-2ae394f50598.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserRevoked-en-authorized-recovery",
+      "before": "snapshot-auth-authBrowserRevoked-en-authorized-recovery-before-1794248814100-fa1fe479-4ef9-455f-badd-eccd88369cea.json",
+      "after": "snapshot-auth-authBrowserRevoked-en-authorized-recovery-after-1794248815638-c0603249-b55b-4eb2-9738-0c4cc88fd71e.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserExpiry-en-authorized-refresh",
+      "before": "snapshot-auth-authBrowserExpiry-en-authorized-refresh-before-1794248822881-01720878-0cd1-48da-bd94-6dc220186aab.json",
+      "after": "snapshot-auth-authBrowserExpiry-en-authorized-refresh-after-1794248825381-6945279c-2ecb-40d2-9499-66bea1c51532.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserExpiry-en-stale-refresh",
+      "before": "snapshot-auth-authBrowserExpiry-en-stale-refresh-before-1794248827041-84c14b18-212b-4a03-989b-c2e9f4a36ace.json",
+      "after": "snapshot-auth-authBrowserExpiry-en-stale-refresh-after-1794248829282-82ec7e99-e53f-4cf7-add7-8b862c82c633.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 1
+    },
+    {
+      "id": "authBrowserExpiry-en-authorized-recovery",
+      "before": "snapshot-auth-authBrowserExpiry-en-authorized-recovery-before-1794248834128-e85d71f8-b25b-4468-949d-cb5baf95f1b1.json",
+      "after": "snapshot-auth-authBrowserExpiry-en-authorized-recovery-after-1794248835807-fa370d11-e641-4c9c-ad66-7c7a49aa8c6b.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserPermission-en-authorized-refresh",
+      "before": "snapshot-auth-authBrowserPermission-en-authorized-refresh-before-1794248844418-dc9b4c0c-6b17-4945-91ab-653edf76c2d7.json",
+      "after": "snapshot-auth-authBrowserPermission-en-authorized-refresh-after-1794248846787-297bd791-a046-4ab6-8825-f94d71ddbb12.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserPermission-en-stale-refresh",
+      "before": "snapshot-auth-authBrowserPermission-en-stale-refresh-before-1794248848390-a58e7f08-c183-47f1-9c13-fcd3835d2187.json",
+      "after": "snapshot-auth-authBrowserPermission-en-stale-refresh-after-1794248850473-4eb5f0dd-10e9-4c11-a8c1-0309164450bd.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 1,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserPermission-en-authorized-recovery",
+      "before": "snapshot-auth-authBrowserPermission-en-authorized-recovery-before-1794248855099-cd085baf-b2f6-40a4-b33b-e1285975a61b.json",
+      "after": "snapshot-auth-authBrowserPermission-en-authorized-recovery-after-1794248856778-65fb433a-8520-480f-b56e-3ceba32981a2.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserModule-en-authorized-refresh",
+      "before": "snapshot-auth-authBrowserModule-en-authorized-refresh-before-1794248866781-ad2fe04c-be0d-48bb-ad07-8c7f5683c9a5.json",
+      "after": "snapshot-auth-authBrowserModule-en-authorized-refresh-after-1794248869683-ffc4bb97-1b61-4fa4-ba12-18366a7c6b58.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserModule-en-stale-refresh",
+      "before": "snapshot-auth-authBrowserModule-en-stale-refresh-before-1794248871531-501d02af-11dd-43dd-b8bd-60272b44143c.json",
+      "after": "snapshot-auth-authBrowserModule-en-stale-refresh-after-1794248873913-fc12a0c1-58a9-4ac5-9a0d-7aff8391b2da.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserModule-en-authorized-recovery",
+      "before": "snapshot-auth-authBrowserModule-en-authorized-recovery-before-1794248877696-47453cdd-cd38-406c-a91b-9ab0f3357869.json",
+      "after": "snapshot-auth-authBrowserModule-en-authorized-recovery-after-1794248879180-9c33450e-3919-4969-a06c-bf962b8ba341.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserRevoked-fr-authorized-refresh",
+      "before": "snapshot-auth-authBrowserRevoked-fr-authorized-refresh-before-1794248888551-47eeb22b-0f33-4c84-82f6-f228c8464ffe.json",
+      "after": "snapshot-auth-authBrowserRevoked-fr-authorized-refresh-after-1794248891226-ab5f0867-a46b-4659-9cc7-689d32f2f0c2.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserRevoked-fr-stale-refresh",
+      "before": "snapshot-auth-authBrowserRevoked-fr-stale-refresh-before-1794248893007-f3b8c404-8459-44fc-ac93-107d4581e36f.json",
+      "after": "snapshot-auth-authBrowserRevoked-fr-stale-refresh-after-1794248895286-8d01cc3c-29f1-4a85-9cad-f2e46156e136.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserRevoked-fr-authorized-recovery",
+      "before": "snapshot-auth-authBrowserRevoked-fr-authorized-recovery-before-1794248899873-26d441ba-7807-4979-8636-f85f1cde4654.json",
+      "after": "snapshot-auth-authBrowserRevoked-fr-authorized-recovery-after-1794248901202-8218471f-2992-419f-a795-9ad16f093cdc.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserExpiry-fr-authorized-refresh",
+      "before": "snapshot-auth-authBrowserExpiry-fr-authorized-refresh-before-1794248910790-52901290-bb25-4ed0-a95f-fee4b9d3e6b7.json",
+      "after": "snapshot-auth-authBrowserExpiry-fr-authorized-refresh-after-1794248913299-5b5fa0f4-fae1-441b-b689-bd42f823d5fa.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserExpiry-fr-stale-refresh",
+      "before": "snapshot-auth-authBrowserExpiry-fr-stale-refresh-before-1794248914902-2a74ff32-5f78-4315-bf05-2ac84b1c967e.json",
+      "after": "snapshot-auth-authBrowserExpiry-fr-stale-refresh-after-1794248917242-b9910e81-7b83-4699-bd1d-6b807cd1b6e6.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 1
+    },
+    {
+      "id": "authBrowserExpiry-fr-authorized-recovery",
+      "before": "snapshot-auth-authBrowserExpiry-fr-authorized-recovery-before-1794248921698-ec351e65-e95a-4a5c-a2f6-bd3e82fedf07.json",
+      "after": "snapshot-auth-authBrowserExpiry-fr-authorized-recovery-after-1794248923609-7acfeddc-9212-4d80-8565-6562d504063d.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserPermission-fr-authorized-refresh",
+      "before": "snapshot-auth-authBrowserPermission-fr-authorized-refresh-before-1794248932635-d84332d5-f61d-40fb-bc83-4ec6711ca4be.json",
+      "after": "snapshot-auth-authBrowserPermission-fr-authorized-refresh-after-1794248934639-b99b292c-f10f-483d-ac5f-410f9f2f8042.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserPermission-fr-stale-refresh",
+      "before": "snapshot-auth-authBrowserPermission-fr-stale-refresh-before-1794248936188-ffe76442-05a7-4d1d-86db-452b300cf8b2.json",
+      "after": "snapshot-auth-authBrowserPermission-fr-stale-refresh-after-1794248938598-8d635bab-4916-4dc6-9cc6-048a8ece481f.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 1,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserPermission-fr-authorized-recovery",
+      "before": "snapshot-auth-authBrowserPermission-fr-authorized-recovery-before-1794248942726-861eabb9-8dfb-4ecb-9c71-94e5fc1494ff.json",
+      "after": "snapshot-auth-authBrowserPermission-fr-authorized-recovery-after-1794248944513-e0880120-c00e-4222-9200-9e7ad0de5da8.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserModule-fr-authorized-refresh",
+      "before": "snapshot-auth-authBrowserModule-fr-authorized-refresh-before-1794248953625-6734405e-c7f4-48de-87cd-9b0e08337d48.json",
+      "after": "snapshot-auth-authBrowserModule-fr-authorized-refresh-after-1794248955737-8467e296-ef67-4c83-8099-942c21dc0ca7.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserModule-fr-stale-refresh",
+      "before": "snapshot-auth-authBrowserModule-fr-stale-refresh-before-1794248957280-59cb29e4-dbe9-4152-b5cd-919732c6f6b8.json",
+      "after": "snapshot-auth-authBrowserModule-fr-stale-refresh-after-1794248959396-a453aa26-70bf-41ea-88ad-7e3014bc7946.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    },
+    {
+      "id": "authBrowserModule-fr-authorized-recovery",
+      "before": "snapshot-auth-authBrowserModule-fr-authorized-recovery-before-1794248964250-c1b1841f-4ba5-4c36-9194-3eda814bc482.json",
+      "after": "snapshot-auth-authBrowserModule-fr-authorized-recovery-after-1794248965662-6a540f9f-c357-423b-8afa-2c4168450521.json",
+      "businessAccountsUnchanged": true,
+      "oldAuditsPreserved": true,
+      "newAuditCount": 0,
+      "expiredSessionCleanup": 0
+    }
+  ],
+  "clientCases": [
+    {
+      "id": "authBrowserRevoked-en-stale-refresh",
+      "classification": "completed_refresh_retains_old_private_dom_and_reports_success",
+      "newPrivateResponseBytes": false,
+      "explicitDeniedEnvelope": "followup04_corrobation_pending",
+      "actualRefresh": {
+        "clickedAt": 1794248805434,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794248805529
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserRevoked-en-stale-refresh",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794248805530,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 695,
+            "sha256": "83bd2405b97cca472f829e4e1a87f52deec1550780a8e64812c6482c21d26098",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      },
+      "screenshot": "authBrowserRevoked-en-stale-refresh.png",
+      "effects": {
+        "before": "snapshot-auth-authBrowserRevoked-en-stale-refresh-before-1794248805425-f6f07578-a2df-45b0-9463-5386ce05209d.json",
+        "after": "snapshot-auth-authBrowserRevoked-en-stale-refresh-after-1794248807884-f4ddc158-5d6e-4dd9-b962-2ae394f50598.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 1,
+        "sessionCountAfter": 1,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      }
+    },
+    {
+      "id": "authBrowserExpiry-en-stale-refresh",
+      "classification": "completed_refresh_retains_old_private_dom_and_reports_success",
+      "newPrivateResponseBytes": false,
+      "explicitDeniedEnvelope": "followup04_corrobation_pending",
+      "actualRefresh": {
+        "clickedAt": 1794248827068,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794248827153
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserExpiry-en-stale-refresh",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794248827153,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 696,
+            "sha256": "98e1a393f6c0c4f093abe5dfacceed79c5b6880e2713b6042a2da569d7b9d0b0",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      },
+      "screenshot": "authBrowserExpiry-en-stale-refresh.png",
+      "effects": {
+        "before": "snapshot-auth-authBrowserExpiry-en-stale-refresh-before-1794248827041-84c14b18-212b-4a03-989b-c2e9f4a36ace.json",
+        "after": "snapshot-auth-authBrowserExpiry-en-stale-refresh-after-1794248829282-82ec7e99-e53f-4cf7-add7-8b862c82c633.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": true,
+        "auditsChanged": false,
+        "sessionCountBefore": 3,
+        "sessionCountAfter": 2,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 1,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      }
+    },
+    {
+      "id": "authBrowserPermission-en-stale-refresh",
+      "classification": "completed_refresh_retains_old_private_dom_and_reports_success",
+      "newPrivateResponseBytes": false,
+      "explicitDeniedEnvelope": "followup04_corrobation_pending",
+      "actualRefresh": {
+        "clickedAt": 1794248848397,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794248848483
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserPermission-en-stale-refresh",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794248848483,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 725,
+            "sha256": "8dd6fe491fef50458af38a74d5169a16f0354b0f4257e40201f69a7e0d35d501",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      },
+      "screenshot": "authBrowserPermission-en-stale-refresh.png",
+      "effects": {
+        "before": "snapshot-auth-authBrowserPermission-en-stale-refresh-before-1794248848390-a58e7f08-c183-47f1-9c13-fcd3835d2187.json",
+        "after": "snapshot-auth-authBrowserPermission-en-stale-refresh-after-1794248850473-4eb5f0dd-10e9-4c11-a8c1-0309164450bd.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": true,
+        "sessionCountBefore": 4,
+        "sessionCountAfter": 4,
+        "newAuditKinds": [
+          {
+            "action": "PERMISSION_DENIED",
+            "entityType": "SecurityEvent",
+            "userId": "p04v02-auth-authbrowserpermission",
+            "organizationId": "p04-upload-a"
+          }
+        ],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 1
+        }
+      }
+    },
+    {
+      "id": "authBrowserRevoked-fr-stale-refresh",
+      "classification": "completed_refresh_retains_old_private_dom_and_reports_success",
+      "newPrivateResponseBytes": false,
+      "explicitDeniedEnvelope": "followup04_corrobation_pending",
+      "actualRefresh": {
+        "clickedAt": 1794248893014,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794248893081
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserRevoked-fr-stale-refresh",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794248893081,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 695,
+            "sha256": "4cf228cb346c91af65eccf43b1779006236c30e0d184a12fda00ceab18171ca7",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      },
+      "screenshot": "authBrowserRevoked-fr-stale-refresh.png",
+      "effects": {
+        "before": "snapshot-auth-authBrowserRevoked-fr-stale-refresh-before-1794248893007-f3b8c404-8459-44fc-ac93-107d4581e36f.json",
+        "after": "snapshot-auth-authBrowserRevoked-fr-stale-refresh-after-1794248895286-8d01cc3c-29f1-4a85-9cad-f2e46156e136.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 6,
+        "sessionCountAfter": 6,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      }
+    },
+    {
+      "id": "authBrowserExpiry-fr-stale-refresh",
+      "classification": "completed_refresh_retains_old_private_dom_and_reports_success",
+      "newPrivateResponseBytes": false,
+      "explicitDeniedEnvelope": "followup04_corrobation_pending",
+      "actualRefresh": {
+        "clickedAt": 1794248914927,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794248915018
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserExpiry-fr-stale-refresh",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794248915018,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 696,
+            "sha256": "79251ad096583cc8e9673c57a2eeeef36a711f29a1716626586a15d2e8c67b09",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      },
+      "screenshot": "authBrowserExpiry-fr-stale-refresh.png",
+      "effects": {
+        "before": "snapshot-auth-authBrowserExpiry-fr-stale-refresh-before-1794248914902-2a74ff32-5f78-4315-bf05-2ac84b1c967e.json",
+        "after": "snapshot-auth-authBrowserExpiry-fr-stale-refresh-after-1794248917242-b9910e81-7b83-4699-bd1d-6b807cd1b6e6.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": true,
+        "auditsChanged": false,
+        "sessionCountBefore": 8,
+        "sessionCountAfter": 7,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 1,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      }
+    },
+    {
+      "id": "authBrowserPermission-fr-stale-refresh",
+      "classification": "completed_refresh_retains_old_private_dom_and_reports_success",
+      "newPrivateResponseBytes": false,
+      "explicitDeniedEnvelope": "followup04_corrobation_pending",
+      "actualRefresh": {
+        "clickedAt": 1794248936195,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794248936264
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserPermission-fr-stale-refresh",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794248936264,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 725,
+            "sha256": "4f18338ff4081fe8c6cdcd2174a209385b35a7725dcd0f8b030cbccc75fbe102",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      },
+      "screenshot": "authBrowserPermission-fr-stale-refresh.png",
+      "effects": {
+        "before": "snapshot-auth-authBrowserPermission-fr-stale-refresh-before-1794248936188-ffe76442-05a7-4d1d-86db-452b300cf8b2.json",
+        "after": "snapshot-auth-authBrowserPermission-fr-stale-refresh-after-1794248938598-8d635bab-4916-4dc6-9cc6-048a8ece481f.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": true,
+        "sessionCountBefore": 9,
+        "sessionCountAfter": 9,
+        "newAuditKinds": [
+          {
+            "action": "PERMISSION_DENIED",
+            "entityType": "SecurityEvent",
+            "userId": "p04v02-auth-authbrowserpermission",
+            "organizationId": "p04-upload-a"
+          }
+        ],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 1
+        }
+      }
+    }
+  ],
+  "moduleCases": [
+    {
+      "id": "authBrowserModule-en-stale-refresh",
+      "classification": "new_private_item_response_while_current_inventory_grant_suspended",
+      "transitionBefore": {
+        "file": "auth-transition-1794248869840-2e3eb793-f945-4f9f-b6b0-59569b8ac100.json",
+        "at": "2026-11-09T18:27:49.840Z",
+        "kind": "disableModule",
+        "alias": "authBrowserModule",
+        "affected": 1,
+        "database": "stoquify_local_p04v02_20261109_full_r3"
+      },
+      "transitionAfter": {
+        "file": "auth-transition-1794248874107-280c43f6-46e3-4605-93a3-501eb4d799c6.json",
+        "at": "2026-11-09T18:27:54.107Z",
+        "kind": "restoreModule",
+        "alias": "authBrowserModule",
+        "affected": 1,
+        "database": "stoquify_local_p04v02_20261109_full_r3"
+      },
+      "actualRefresh": {
+        "clickedAt": 1794248871574,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794248871643
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserModule-en-stale-refresh",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794248871643,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "b2b679bfccae3edc2daccb99f666ce4a6aa3d7f11b2cb00f7f99b1c4b17d8ea7",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      },
+      "screenshot": "authBrowserModule-en-stale-refresh.png",
+      "effects": {
+        "before": "snapshot-auth-authBrowserModule-en-stale-refresh-before-1794248871531-501d02af-11dd-43dd-b8bd-60272b44143c.json",
+        "after": "snapshot-auth-authBrowserModule-en-stale-refresh-after-1794248873913-fc12a0c1-58a9-4ac5-9a0d-7aff8391b2da.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 6,
+        "sessionCountAfter": 6,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      }
+    },
+    {
+      "id": "authBrowserModule-fr-stale-refresh",
+      "classification": "new_private_item_response_while_current_inventory_grant_suspended",
+      "transitionBefore": {
+        "file": "auth-transition-1794248955870-30004b58-8fd9-42ac-bd84-7ccd37f338c7.json",
+        "at": "2026-11-09T18:29:15.870Z",
+        "kind": "disableModule",
+        "alias": "authBrowserModule",
+        "affected": 1,
+        "database": "stoquify_local_p04v02_20261109_full_r3"
+      },
+      "transitionAfter": {
+        "file": "auth-transition-1794248959571-befd216d-93be-41b2-9b82-b11138d67e0b.json",
+        "at": "2026-11-09T18:29:19.571Z",
+        "kind": "restoreModule",
+        "alias": "authBrowserModule",
+        "affected": 1,
+        "database": "stoquify_local_p04v02_20261109_full_r3"
+      },
+      "actualRefresh": {
+        "clickedAt": 1794248957306,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794248957364
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserModule-fr-stale-refresh",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794248957364,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "7d553668b3177c4e284b387e8047dbfed7a726a818ebe30b9335de0c3d4a7a0e",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      },
+      "screenshot": "authBrowserModule-fr-stale-refresh.png",
+      "effects": {
+        "before": "snapshot-auth-authBrowserModule-fr-stale-refresh-before-1794248957280-59cb29e4-dbe9-4152-b5cd-919732c6f6b8.json",
+        "after": "snapshot-auth-authBrowserModule-fr-stale-refresh-after-1794248959396-a453aa26-70bf-41ea-88ad-7e3014bc7946.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 11,
+        "sessionCountAfter": 11,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      }
+    }
+  ],
+  "recoveryHarnessErrors": [
+    {
+      "id": "authBrowserRevoked-en-authorized-recovery",
+      "error": "page.evaluate: Target page, context or browser has been closed",
+      "classification": "harness_context_closed_before_unawaited_recovery_promise",
+      "replay": "followup04"
+    },
+    {
+      "id": "authBrowserExpiry-en-authorized-recovery",
+      "error": "page.evaluate: Target page, context or browser has been closed",
+      "classification": "harness_context_closed_before_unawaited_recovery_promise",
+      "replay": "followup04"
+    },
+    {
+      "id": "authBrowserPermission-en-authorized-recovery",
+      "error": "page.evaluate: Target page, context or browser has been closed",
+      "classification": "harness_context_closed_before_unawaited_recovery_promise",
+      "replay": "followup04"
+    },
+    {
+      "id": "authBrowserModule-en-authorized-recovery",
+      "error": "page.evaluate: Target page, context or browser has been closed",
+      "classification": "harness_context_closed_before_unawaited_recovery_promise",
+      "replay": "followup04"
+    },
+    {
+      "id": "authBrowserRevoked-fr-authorized-recovery",
+      "error": "page.evaluate: Target page, context or browser has been closed",
+      "classification": "harness_context_closed_before_unawaited_recovery_promise",
+      "replay": "followup04"
+    },
+    {
+      "id": "authBrowserExpiry-fr-authorized-recovery",
+      "error": "page.evaluate: Target page, context or browser has been closed",
+      "classification": "harness_context_closed_before_unawaited_recovery_promise",
+      "replay": "followup04"
+    },
+    {
+      "id": "authBrowserPermission-fr-authorized-recovery",
+      "error": "page.evaluate: Target page, context or browser has been closed",
+      "classification": "harness_context_closed_before_unawaited_recovery_promise",
+      "replay": "followup04"
+    },
+    {
+      "id": "authBrowserModule-fr-authorized-recovery",
+      "error": "page.evaluate: Target page, context or browser has been closed",
+      "classification": "harness_context_closed_before_unawaited_recovery_promise",
+      "replay": "followup04"
+    }
+  ],
+  "sourceContract": {
+    "readChain": [
+      "components/ui/groups/inventory/ItemManagement.tsx:handleRefresh",
+      "hooks/useAllItemQueries.ts:useOrgItemsNew",
+      "actions/itemsShow/getOrgItems.ts",
+      "lib/security/rbac.ts:requirePermission",
+      "services/item/item.service.ts:listActiveItemPayloads"
+    ],
+    "serverFinding": "getOrgItems requires current inventory.items.read and current tenant context but does not enforce inventory module entitlement before listActiveItemPayloads. inventoryAction only configures error handling. The inventory page independently enforces module access, and cannot protect the direct action.",
+    "clientFinding": "handleRefresh ignores the refetch result and emits success; displayed items derive initial props. This matches completed Refresh retention under current revoked/expired/removed-permission authority.",
+    "sourceEvidence": "independent-review/SUPPLEMENT03-SOURCE-REVIEW.json",
+    "separateProposedRepairs": {
+      "server": "P04-R08",
+      "client": "P04-R07"
+    },
+    "implementationAuthorized": false
+  },
+  "limits": [
+    "The server finding is bounded to the observed getOrgItems read path, not a whole-inventory audit.",
+    "Six old-DOM cases do not show newly returned private item bytes. Three EN denied-envelope corroborations are separately pending in followup04.",
+    "Eight recovery errors are harness faults; existing raw failures are preserved and minimal positive replays are required.",
+    "No product fixes, deployment, production change or BFCache/focus completion claim."
+  ],
+  "cleanup": {
+    "syntheticSessionsRemoved": 12,
+    "remaining": 0,
+    "browserAndProxyClosed": true
+  }
+}

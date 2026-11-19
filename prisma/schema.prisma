@@ -129,6 +129,13 @@ model Verification {
 }
 
 model User {
+  firmAdvisoryRevisions FirmAdvisoryRevision[]
+  practiceActorRevisions FirmPracticeRevision[] @relation("PracticeActor")
+  practiceSubjectRevisions FirmPracticeRevision[] @relation("PracticeSubject")
+  practiceRecorderRevisions FirmPracticeRevision[] @relation("PracticeRecorder")
+  practiceReviewerRevisions FirmPracticeRevision[] @relation("PracticeReviewer")
+  hrisSetupReviewGrants HrisSetupReviewerGrant[] @relation("HrisSetupReviewer")
+  hrisSetupIssuedGrants HrisSetupReviewerGrant[] @relation("HrisSetupGrantor")
   id            String  @id @default(cuid())
   name          String?
   email         String  @unique
@@ -236,6 +243,16 @@ model User {
   @@index([email])
   @@index([phone])
   @@unique([organizationId, id])
+  firmEngagementsOwned FirmEngagement[] @relation("FirmEngagementOwner")
+  firmEngagementsCreated FirmEngagement[] @relation("FirmEngagementCreator")
+  firmEngagementAssignments FirmEngagementAssignment[] @relation("FirmEngagementStaff")
+  firmEngagementAssignmentsCreated FirmEngagementAssignment[] @relation("FirmEngagementAssigner")
+  firmEngagementAssignmentsEnded FirmEngagementAssignment[] @relation("FirmEngagementAssignmentEnder")
+  firmEngagementTransitions FirmEngagementTransition[]
+  firmEngagementLinks FirmEngagementGrantLink[]
+  firmEngagementMandates FirmEngagementGrantLink[] @relation("FirmLinkedAccountant")
+
+  @@unique([id, organizationId])
   @@map("users")
 }
 
@@ -299,6 +316,15 @@ model Role {
 // ============================================================
 
 model Organization {
+  hrisHandoffPackages HrisPayrollHandoffPackage[]
+  hrisHandoffReceipts HrisPayrollHandoffReceipt[]
+  commandCenterNotices CommandCenterNotice[]
+  commandCenterPreferences CommandCenterPreference[]
+  commandCenterOccurrences CommandCenterOccurrence[]
+  commandCenterEvents CommandCenterEvent[]
+  commandCenterReviewStates CommandCenterReviewState[]
+  commandCenterReviewReceipts CommandCenterReviewReceipt[]
+  hrisSetupReviewGrants HrisSetupReviewerGrant[]
   id                     String    @id @default(cuid())
   name                   String
   slug                   String // per-org unique handled at app + index; tenants don't share slug space anyway
@@ -464,6 +490,8 @@ model Organization {
   accountantReviews                       AccountantReview[]
   accountantComments                      AccountantComment[]
   accountantAccessGrants                  AccountantAccessGrant[]
+  firmEngagements                         FirmEngagement[] @relation("EngagementFirm")
+  clientFirmEngagements                   FirmEngagement[] @relation("EngagementClient")
   fiscalDocuments                         FiscalDocument[]
   fiscalDocumentLines                     FiscalDocumentLine[]
   fiscalSequences                         FiscalSequence[]
@@ -500,6 +528,9 @@ model Organization {
   onboardingImportBatches                 OnboardingImportBatch[]
   onboardingImportRows                    OnboardingImportRow[]
   onboardingImportIssues                  OnboardingImportIssue[]
+  financialOpeningRevisions               FinancialOpeningRevision[]
+  financialOpeningExecutions              FinancialOpeningExecution[]
+  firmObligationRevisions FirmObligationRevision[]
   onboardingReadinessMilestones           OnboardingReadinessMilestone[]
 
   @@unique([slug])
@@ -1300,6 +1331,97 @@ enum OnboardingReadinessState {
   WAIVED
 }
 
+// AF09 evidence only: no operational balance or posting relation.
+model FinancialOpeningRevision {
+  id                 String       @id @default(cuid())
+  organizationId     String
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  cutoverDate        String
+  revision           Int
+  sourceFilename     String
+  controlsFilename   String
+  sourceContent      String
+  controlsContent    String
+  sourceHash         String
+  controlsHash       String
+  mappingHash        String
+  datasetHash        String
+  mappings           Json
+  manifest           Json
+  manifestDigest     String
+  commandHash        String
+  idempotencyKey     String
+  createdById        String
+  createdAt          DateTime     @default(now())
+  status             String       @default("STAGED")
+  reviewedById       String?
+  reviewedAt         DateTime?
+  reviewDigest       String?
+  reviewKey          String?
+  reviewCommandHash  String?
+  conclusion         String?
+
+  executions FinancialOpeningExecution[]
+  openingReceivables CustomerReceivableDocument[]
+  openingPayables SupplierInvoice[]
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, cutoverDate, revision])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, cutoverDate, sourceHash])
+  @@map("financial_opening_revisions")
+}
+
+// AF10 approvals and final receipts are retained separately from immutable previews.
+model FinancialOpeningExecution {
+  id String @id @default(cuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  revisionId String
+  revision FinancialOpeningRevision @relation(fields: [organizationId, revisionId], references: [organizationId, id], onDelete: Restrict)
+  cutoverDate String
+  activeScopeKey String? @unique
+  manifestDigest String
+  periodId String
+  periodVersion Int
+  approvedById String
+  approvedAt DateTime @default(now())
+  expiresAt DateTime
+  approvalKey String
+  approvalHash String
+  conclusion String
+  status String @default("APPROVED")
+  appliedById String?
+  appliedAt DateTime?
+  applyKey String?
+  applyHash String?
+  reconciliation Json?
+  reconciliationHash String?
+  cancelledById String?
+  cancelledAt DateTime?
+  cancellationReason String?
+  operations FinancialOpeningOperation[]
+  @@unique([organizationId, id])
+  @@unique([organizationId, approvalKey])
+  @@index([organizationId, cutoverDate, approvedAt])
+  @@map("financial_opening_executions")
+}
+
+model FinancialOpeningOperation {
+  id String @id @default(cuid())
+  organizationId String
+  executionId String
+  execution FinancialOpeningExecution @relation(fields: [organizationId, executionId], references: [organizationId, id], onDelete: Restrict)
+  domain String
+  sourceId String
+  sourceHash String
+  receipt Json
+  receiptHash String
+  createdAt DateTime @default(now())
+  @@unique([executionId, domain, sourceId])
+  @@map("financial_opening_operations")
+}
+
 model OnboardingImportMapping {
   id             String                 @id @default(cuid())
   organizationId String
@@ -1885,6 +2007,7 @@ model GoodsReceiptLine {
   receivedQuantity Decimal   @db.Decimal(12, 3)
   unitCost         Decimal   @db.Decimal(12, 2)
   lineTotal        Decimal   @db.Decimal(14, 2)
+  commercialBasis  Json?
   notes            String?
   batchNumber      String?
   expiryDate       DateTime?
@@ -2105,6 +2228,10 @@ model SupplierInvoice {
   supplierId String
   supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict)
 
+  openingRevisionId String?
+  openingSourceId String?
+  openingRevision FinancialOpeningRevision? @relation(fields: [organizationId, openingRevisionId], references: [organizationId, id], onDelete: Restrict)
+
   purchaseOrderId String?
   purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
 
@@ -2144,6 +2271,7 @@ model SupplierInvoice {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([organizationId, openingRevisionId, openingSourceId])
   @@unique([organizationId, supplierId, invoiceNumber])
   @@unique([organizationId, id])
   @@unique([organizationId, idempotencyKey])
@@ -2734,6 +2862,7 @@ enum PayrollEmployeeBalanceEventType {
 }
 
 model PayrollEmployee {
+  hrisSetupReviewGrants HrisSetupReviewerGrant[]
   id String @id @default(cuid())
 
   organizationId String
@@ -2787,6 +2916,9 @@ model PayrollEmployee {
   hrisTimeRequests                 HrisTimeRequest[]
   hrisTimeEntries                  HrisTimeEntry[]
   hrisAttendanceAnomalies          HrisAttendanceAnomaly[]
+  hrisEmployeeDocuments           HrisEmployeeDocument[]
+  hrisPersonalCorrections         HrisPersonalCorrectionCase[]
+  hrisLifecycleTasks              HrisLifecycleTask[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -3254,6 +3386,7 @@ model PayrollPeriod {
 
   metadata Json?
 
+  hrisHandoffPackages HrisPayrollHandoffPackage[]
   attendanceSnapshots PayrollAttendanceSnapshot[]
   runs                PayrollRun[]
 
@@ -3397,6 +3530,11 @@ model HrisWorkSchedule {
   employee              PayrollEmployee       @relation(fields: [employeeId], references: [id], onDelete: Restrict)
   calendarId            String
   calendar              HrisWorkCalendar      @relation(fields: [calendarId], references: [id], onDelete: Restrict)
+  revision              Int                   @default(1)
+  supersedesScheduleId  String?
+  supersedesSchedule    HrisWorkSchedule?      @relation("HrisScheduleRevision", fields: [supersedesScheduleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  successorSchedules    HrisWorkSchedule[]     @relation("HrisScheduleRevision")
+  shiftPlan             Json?
   name                  String
   timezone              String
   weeklyPattern         Json
@@ -3412,7 +3550,8 @@ model HrisWorkSchedule {
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
 
-  @@unique([organizationId, employeeId, effectiveFrom])
+  // The migration also enforces one ACTIVE version per employee/start date.
+  @@unique([organizationId, employeeId, effectiveFrom, revision], name: "organizationId_employeeId_effectiveFrom_revision", map: "hris_work_schedules_org_employee_date_revision_key")
   @@index([organizationId, employeeId, status, effectiveFrom])
   @@map("hris_work_schedules")
 }
@@ -6403,8 +6542,11 @@ model CustomerReceivableDocument {
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
 
-  sourceSalesOrderId String
-  sourceSalesOrder   SalesOrder @relation(fields: [sourceSalesOrderId], references: [id], onDelete: Restrict)
+  sourceSalesOrderId String?
+  sourceSalesOrder   SalesOrder? @relation(fields: [sourceSalesOrderId], references: [id], onDelete: Restrict)
+  openingRevisionId String?
+  openingSourceId String?
+  openingRevision FinancialOpeningRevision? @relation(fields: [organizationId, openingRevisionId], references: [organizationId, id], onDelete: Restrict)
 
   documentNumber String
   version        Int    @default(1)
@@ -6451,6 +6593,7 @@ model CustomerReceivableDocument {
   @@unique([organizationId, id])
   @@unique([organizationId, documentNumber, version])
   @@unique([organizationId, sourceSalesOrderId, version])
+  @@unique([organizationId, openingRevisionId, openingSourceId])
   @@index([organizationId, customerId, invoiceDate])
   @@index([organizationId, customerId, dueDate])
   @@index([organizationId, supersedesDocumentId])
@@ -7077,8 +7220,8 @@ model CustomerSettlementAllocation {
   customerSettlementId String
   customerSettlement   CustomerSettlement @relation(fields: [customerSettlementId], references: [id], onDelete: Cascade)
 
-  salesOrderId String
-  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+  salesOrderId String?
+  salesOrder   SalesOrder? @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
 
   customerReceivableDocumentId String?
   customerReceivableDocument   CustomerReceivableDocument? @relation(fields: [organizationId, customerReceivableDocumentId], references: [organizationId, id], onDelete: Restrict)
@@ -7213,11 +7356,13 @@ model FiscalYear {
   notes      String?
 
   periods AccountingPeriod[]
+  scopedPeriods AccountingPeriod[] @relation("AccountingPeriodFiscalScope")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, name])
+  @@unique([organizationId, id], map: "fiscal_years_scope_key")
   @@index([organizationId, status, startDate])
   @@map("fiscal_years")
 }
@@ -7229,6 +7374,9 @@ enum FiscalYearStatus {
 }
 
 model AccountingPeriod {
+  firmAdvisoryRevisions FirmAdvisoryRevision[]
+  firmPracticeRevisions FirmPracticeRevision[]
+  firmObligationRevisions FirmObligationRevision[]
   id String @id @default(cuid())
 
   organizationId String
@@ -7236,6 +7384,7 @@ model AccountingPeriod {
 
   fiscalYearId String
   fiscalYear   FiscalYear @relation(fields: [fiscalYearId], references: [id], onDelete: Cascade)
+  scopeFiscalYear FiscalYear @relation("AccountingPeriodFiscalScope", fields: [organizationId, fiscalYearId], references: [organizationId, id], onDelete: NoAction, onUpdate: Restrict, map: "accounting_periods_fiscal_scope_fkey")
 
   periodNumber Int
   name         String
@@ -7255,6 +7404,7 @@ model AccountingPeriod {
   ledgerPostingBatches LedgerPostingBatch[]
   reconciliationRuns   ReconciliationRun[]
   closeRuns            CloseRun[]
+  scopedCloseRuns CloseRun[] @relation("CloseRunPeriodScope")
   closeChecklistItems  CloseChecklistItem[]
   closeFindings        CloseAssuranceFinding[]
   closeEvidenceItems   CloseEvidenceItem[]
@@ -7406,6 +7556,7 @@ model CloseRun {
 
   periodId String
   period   AccountingPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  scopePeriod AccountingPeriod @relation("CloseRunPeriodScope", fields: [organizationId, periodId], references: [organizationId, id], onDelete: NoAction, onUpdate: Restrict, map: "close_runs_period_scope_fkey")
 
   status               CloseRunStatus @default(DRAFT)
   readinessScore       Int            @default(0)
@@ -7431,9 +7582,17 @@ model CloseRun {
   reviews        AccountantReview[]
   comments       AccountantComment[]
 
+  scopedChecklistItems CloseChecklistItem[] @relation("CloseChecklistRunScope")
+  scopedFindings CloseAssuranceFinding[] @relation("CloseFindingRunScope")
+  scopedEvidenceItems CloseEvidenceItem[] @relation("CloseEvidenceRunScope")
+  scopedPackExports ClosePackExport[] @relation("CloseExportRunScope")
+  scopedReviews AccountantReview[] @relation("AccountantReviewRunScope")
+  scopedComments AccountantComment[] @relation("AccountantCommentRunScope")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([organizationId, periodId, id], map: "close_runs_scope_key")
   @@index([organizationId, periodId, status, createdAt])
   @@index([organizationId, status, asOf])
   @@index([periodId])
@@ -7474,6 +7633,7 @@ model CloseChecklistItem {
 
   closeRunId String
   closeRun   CloseRun @relation(fields: [closeRunId], references: [id], onDelete: Cascade)
+  scopeRun CloseRun @relation("CloseChecklistRunScope", fields: [organizationId, periodId, closeRunId], references: [organizationId, periodId, id], onDelete: NoAction, onUpdate: Restrict, map: "close_checklists_run_scope_fkey")
 
   key            String
   domain         CloseFindingDomain
@@ -7491,10 +7651,13 @@ model CloseChecklistItem {
 
   findings      CloseAssuranceFinding[]
   evidenceItems CloseEvidenceItem[]
+  scopedFindings CloseAssuranceFinding[] @relation("CloseFindingChecklistScope")
+  scopedEvidenceItems CloseEvidenceItem[] @relation("CloseEvidenceChecklistScope")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([organizationId, periodId, closeRunId, id], map: "close_checklists_scope_key")
   @@unique([closeRunId, key])
   @@index([organizationId, periodId, status])
   @@index([organizationId, domain, status])
@@ -7513,9 +7676,11 @@ model CloseAssuranceFinding {
 
   closeRunId String
   closeRun   CloseRun @relation(fields: [closeRunId], references: [id], onDelete: Cascade)
+  scopeRun CloseRun @relation("CloseFindingRunScope", fields: [organizationId, periodId, closeRunId], references: [organizationId, periodId, id], onDelete: NoAction, onUpdate: Restrict, map: "close_findings_run_scope_fkey")
 
   checklistItemId String?
   checklistItem   CloseChecklistItem? @relation(fields: [checklistItemId], references: [id])
+  scopeChecklist CloseChecklistItem? @relation("CloseFindingChecklistScope", fields: [organizationId, periodId, closeRunId, checklistItemId], references: [organizationId, periodId, closeRunId, id], onDelete: NoAction, onUpdate: Restrict, map: "close_findings_checklist_scope_fkey")
 
   domain   CloseFindingDomain
   severity CloseFindingSeverity
@@ -7544,10 +7709,13 @@ model CloseAssuranceFinding {
 
   evidenceItems CloseEvidenceItem[]
   comments      AccountantComment[]
+  scopedEvidenceItems CloseEvidenceItem[] @relation("CloseEvidenceFindingScope")
+  scopedComments AccountantComment[] @relation("AccountantCommentFindingScope")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([organizationId, periodId, closeRunId, id], map: "close_findings_scope_key")
   @@index([organizationId, periodId, status, severity])
   @@index([organizationId, ownerId, status, dueAt])
   @@index([organizationId, domain, severity])
@@ -7568,12 +7736,15 @@ model CloseEvidenceItem {
 
   closeRunId String
   closeRun   CloseRun @relation(fields: [closeRunId], references: [id], onDelete: Cascade)
+  scopeRun CloseRun @relation("CloseEvidenceRunScope", fields: [organizationId, periodId, closeRunId], references: [organizationId, periodId, id], onDelete: NoAction, onUpdate: Restrict, map: "close_evidence_run_scope_fkey")
 
   checklistItemId String?
   checklistItem   CloseChecklistItem? @relation(fields: [checklistItemId], references: [id])
+  scopeChecklist CloseChecklistItem? @relation("CloseEvidenceChecklistScope", fields: [organizationId, periodId, closeRunId, checklistItemId], references: [organizationId, periodId, closeRunId, id], onDelete: NoAction, onUpdate: Restrict, map: "close_evidence_checklist_scope_fkey")
 
   findingId String?
   finding   CloseAssuranceFinding? @relation(fields: [findingId], references: [id])
+  scopeFinding CloseAssuranceFinding? @relation("CloseEvidenceFindingScope", fields: [organizationId, periodId, closeRunId, findingId], references: [organizationId, periodId, closeRunId, id], onDelete: NoAction, onUpdate: Restrict, map: "close_evidence_finding_scope_fkey")
 
   evidenceType      CloseEvidenceType
   sourceTable       String?
@@ -7589,10 +7760,12 @@ model CloseEvidenceItem {
   correlationId     String?
 
   comments AccountantComment[]
+  scopedComments AccountantComment[] @relation("AccountantCommentEvidenceScope")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([organizationId, periodId, closeRunId, id], map: "close_evidence_scope_key")
   @@index([organizationId, periodId, evidenceType])
   @@index([organizationId, sourceType, sourceId])
   @@index([closeRunId])
@@ -7613,6 +7786,7 @@ model ClosePackExport {
 
   closeRunId String
   closeRun   CloseRun @relation(fields: [closeRunId], references: [id], onDelete: Cascade)
+  scopeRun CloseRun @relation("CloseExportRunScope", fields: [organizationId, periodId, closeRunId], references: [organizationId, periodId, id], onDelete: NoAction, onUpdate: Restrict, map: "close_exports_run_scope_fkey")
 
   fileType      String   @default("json")
   watermarkId   String
@@ -7623,6 +7797,10 @@ model ClosePackExport {
   exportedAt    DateTime @default(now())
   correlationId String?
   metadata      Json?
+  // Exact original UTF-8 document and request identity; legacy receipts remain null.
+  canonicalContent       String? @db.Text
+  canonicalContentSha256 String?
+  exportRequestHash      String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -7645,6 +7823,7 @@ model AccountantReview {
 
   closeRunId String
   closeRun   CloseRun @relation(fields: [closeRunId], references: [id], onDelete: Cascade)
+  scopeRun CloseRun @relation("AccountantReviewRunScope", fields: [organizationId, periodId, closeRunId], references: [organizationId, periodId, id], onDelete: NoAction, onUpdate: Restrict, map: "accountant_reviews_run_scope_fkey")
 
   status        AccountantReviewStatus @default(OPEN)
   reviewerId    String?
@@ -7655,10 +7834,12 @@ model AccountantReview {
   metadata      Json?
 
   comments AccountantComment[]
+  scopedComments AccountantComment[] @relation("AccountantCommentReviewScope")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([organizationId, periodId, closeRunId, id], map: "accountant_reviews_scope_key")
   @@index([organizationId, periodId, status])
   @@index([organizationId, reviewerId, status])
   @@index([closeRunId])
@@ -7677,15 +7858,19 @@ model AccountantComment {
 
   closeRunId String
   closeRun   CloseRun @relation(fields: [closeRunId], references: [id], onDelete: Cascade)
+  scopeRun CloseRun @relation("AccountantCommentRunScope", fields: [organizationId, periodId, closeRunId], references: [organizationId, periodId, id], onDelete: NoAction, onUpdate: Restrict, map: "accountant_comments_run_scope_fkey")
 
   findingId String?
   finding   CloseAssuranceFinding? @relation(fields: [findingId], references: [id])
+  scopeFinding CloseAssuranceFinding? @relation("AccountantCommentFindingScope", fields: [organizationId, periodId, closeRunId, findingId], references: [organizationId, periodId, closeRunId, id], onDelete: NoAction, onUpdate: Restrict, map: "accountant_comments_finding_scope_fkey")
 
   evidenceItemId String?
   evidenceItem   CloseEvidenceItem? @relation(fields: [evidenceItemId], references: [id])
+  scopeEvidence CloseEvidenceItem? @relation("AccountantCommentEvidenceScope", fields: [organizationId, periodId, closeRunId, evidenceItemId], references: [organizationId, periodId, closeRunId, id], onDelete: NoAction, onUpdate: Restrict, map: "accountant_comments_evidence_scope_fkey")
 
   reviewId String?
   review   AccountantReview? @relation(fields: [reviewId], references: [id])
+  scopeReview AccountantReview? @relation("AccountantCommentReviewScope", fields: [organizationId, periodId, closeRunId, reviewId], references: [organizationId, periodId, closeRunId, id], onDelete: NoAction, onUpdate: Restrict, map: "accountant_comments_review_scope_fkey")
 
   authorId      String?
   body          String
@@ -7734,11 +7919,180 @@ model AccountantAccessGrant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  firmEngagementLink FirmEngagementGrantLink?
+
+  @@unique([id, organizationId, accountantUserId], map: "accountant_grant_identity_key")
   @@index([organizationId, status, expiresAt])
   @@index([accountantUserId, status, expiresAt])
   @@index([organizationId, accountantUserId, createdAt])
   @@index([correlationId])
   @@map("accountant_access_grants")
+}
+
+// AF03 foundation with AF04 managed authorization. SQL owns partial uniqueness,
+// lifecycle/retention guards and sticky managed mandate keys; services own authority.
+enum FirmEngagementStatus {
+  DRAFT
+  ACTIVE
+  SUSPENDED
+  ENDED
+}
+
+model FirmEngagement {
+  advisoryRevisions FirmAdvisoryRevision[]
+  practiceRevisions FirmPracticeRevision[]
+  id String @id @default(cuid())
+  firmOrganizationId String
+  clientOrganizationId String
+  firm Organization @relation("EngagementFirm", fields: [firmOrganizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  client Organization @relation("EngagementClient", fields: [clientOrganizationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  ownerUserId String
+  createdById String
+  owner User @relation("FirmEngagementOwner", fields: [ownerUserId, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
+  creator User @relation("FirmEngagementCreator", fields: [createdById, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
+  scope AccountantAccessRole
+  effectiveFrom DateTime
+  expiresAt DateTime
+  status FirmEngagementStatus @default(DRAFT)
+  version Int @default(0)
+  lastTransitionId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assignments FirmEngagementAssignment[]
+  transitions FirmEngagementTransition[]
+  grantLinks FirmEngagementGrantLink[]
+
+  @@unique([id, firmOrganizationId, clientOrganizationId], map: "firm_engagement_identity_key")
+  @@index([firmOrganizationId, status, expiresAt])
+  @@index([clientOrganizationId, status])
+  @@map("firm_engagements")
+}
+
+model FirmEngagementAssignment {
+  id String @id @default(cuid())
+  engagementId String
+  firmOrganizationId String
+  clientOrganizationId String
+  engagement FirmEngagement @relation(fields: [engagementId, firmOrganizationId, clientOrganizationId], references: [id, firmOrganizationId, clientOrganizationId], onDelete: Restrict, onUpdate: Restrict)
+  accountantUserId String
+  createdById String
+  accountant User @relation("FirmEngagementStaff", fields: [accountantUserId, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
+  creator User @relation("FirmEngagementAssigner", fields: [createdById, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
+  version Int
+  scope AccountantAccessRole
+  effectiveFrom DateTime
+  expiresAt DateTime
+  endedAt DateTime?
+  endedById String?
+  endReason String?
+  endedBy User? @relation("FirmEngagementAssignmentEnder", fields: [endedById, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
+  createdAt DateTime @default(now())
+
+  @@unique([engagementId, accountantUserId, version], map: "firm_assignment_version_key")
+  @@index([firmOrganizationId, accountantUserId, endedAt])
+  @@map("firm_engagement_assignments")
+}
+
+model FirmEngagementGrantLink {
+  id String @id @default(cuid())
+  engagementId String
+  firmOrganizationId String
+  clientOrganizationId String
+  engagement FirmEngagement @relation(fields: [engagementId, firmOrganizationId, clientOrganizationId], references: [id, firmOrganizationId, clientOrganizationId], onDelete: Restrict, onUpdate: Restrict)
+  grantId String @unique
+  accountantUserId String
+  grant AccountantAccessGrant @relation(fields: [grantId, clientOrganizationId, accountantUserId], references: [id, organizationId, accountantUserId], onDelete: Restrict, onUpdate: Restrict)
+  accountant User @relation("FirmLinkedAccountant", fields: [accountantUserId, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
+  enrolledById String
+  enrolledBy User @relation(fields: [enrolledById, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
+  enrolledAt DateTime @default(now())
+
+  @@unique([grantId, clientOrganizationId, accountantUserId], map: "firm_link_grant_identity_key")
+  @@index([firmOrganizationId, engagementId, accountantUserId])
+  @@map("firm_engagement_grant_links")
+}
+
+model FirmEngagementTransition {
+  id String @id @default(cuid())
+  engagementId String
+  firmOrganizationId String
+  clientOrganizationId String
+  engagement FirmEngagement @relation(fields: [engagementId, firmOrganizationId, clientOrganizationId], references: [id, firmOrganizationId, clientOrganizationId], onDelete: Restrict, onUpdate: Restrict)
+  version Int
+  fromStatus FirmEngagementStatus
+  toStatus FirmEngagementStatus
+  actorId String
+  actor User @relation(fields: [actorId, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict)
+  reason String
+  idempotencyKey String
+  createdAt DateTime @default(now())
+
+  @@unique([engagementId, version], map: "firm_transition_version_key")
+  @@unique([engagementId, idempotencyKey], map: "firm_transition_idempotency_key")
+  @@index([firmOrganizationId, engagementId, createdAt])
+  @@map("firm_engagement_transitions")
+}
+
+// AF12: append-only engagement narrative/action revisions. Financial observations
+// are retained AF08 evidence snapshots, never an alternative balance writer.
+// Composite tenant FKs and immutability are enforced in the AF12 migration.
+model FirmAdvisoryRevision {
+  actor User @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "firm_advisory_revisions_actorId_fkey")
+  engagement FirmEngagement @relation(fields: [engagementId, firmOrganizationId, clientOrganizationId], references: [id, firmOrganizationId, clientOrganizationId], onDelete: Restrict, onUpdate: Restrict, map: "firm_advisory_revisions_engagementId_firmOrganizationId_cl_fkey")
+  period AccountingPeriod @relation(fields: [clientOrganizationId, periodId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "firm_advisory_revisions_clientOrganizationId_periodId_fkey")
+  id String @id @default(cuid())
+  engagementId String
+  firmOrganizationId String
+  clientOrganizationId String
+  periodId String
+  version Int
+  state String
+  sourceHash String
+  reviewHash String
+  document Json
+  contentHash String
+  privateNote String
+  actorId String
+  reason String
+  idempotencyKey String
+  commandHash String
+  createdAt DateTime @default(now())
+  @@unique([engagementId, periodId, version])
+  @@unique([engagementId, periodId, idempotencyKey])
+  @@index([firmOrganizationId, clientOrganizationId, periodId])
+  @@map("firm_advisory_revisions")
+}
+
+model FirmPracticeRevision {
+  id String @id @default(cuid())
+  engagementId String
+  firmOrganizationId String
+  clientOrganizationId String
+  periodId String
+  recordKey String
+  version Int
+  kind String
+  operation String
+  subjectUserId String?
+  recordedById String
+  actorId String
+  reviewedById String?
+  payload Json
+  contentHash String
+  reason String
+  idempotencyKey String
+  commandHash String
+  createdAt DateTime @default(now())
+  engagement FirmEngagement @relation(fields: [engagementId, firmOrganizationId, clientOrganizationId], references: [id, firmOrganizationId, clientOrganizationId], onDelete: Restrict, onUpdate: Restrict, map: "practice_engagement_fk")
+  period AccountingPeriod @relation(fields: [clientOrganizationId, periodId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "practice_period_fk")
+  actor User @relation("PracticeActor", fields: [actorId, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict, map: "practice_actor_fk")
+  subject User? @relation("PracticeSubject", fields: [subjectUserId, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict, map: "practice_subject_fk")
+  recorder User @relation("PracticeRecorder", fields: [recordedById, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict, map: "practice_recorder_fk")
+  reviewer User? @relation("PracticeReviewer", fields: [reviewedById, firmOrganizationId], references: [id, organizationId], onDelete: Restrict, onUpdate: Restrict, map: "practice_reviewer_fk")
+  @@unique([engagementId, periodId, recordKey, version], map: "practice_record_version_key")
+  @@unique([engagementId, periodId, idempotencyKey], map: "practice_idempotency_key")
+  @@index([firmOrganizationId, clientOrganizationId, periodId], map: "practice_scope_idx")
+  @@map("firm_practice_revisions")
 }
 
 model ChartOfAccount {
@@ -10159,4 +10513,309 @@ model PeriodControlEvent {
   @@unique([organizationId, idempotencyKey])
   @@unique([organizationId, periodId, version])
   @@map("period_control_events")
+}
+
+// AF11 retains operational obligation revisions; domain filing statuses stay domain-owned.
+model FirmObligationRevision {
+  period AccountingPeriod @relation(fields: [periodId], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "firm_obligation_revisions_periodId_fkey")
+  id String @id @default(cuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  instanceId String
+  version Int
+  code String
+  periodId String
+  countryCode String
+  ownerId String
+  applicability String
+  dueAt DateTime?
+  sourceHash String
+  sourceSnapshot Json
+  evidenceId String?
+  evidenceHash String?
+  decision String
+  actorId String
+  reason String
+  idempotencyKey String
+  commandHash String
+  createdAt DateTime @default(now())
+  @@unique([organizationId, instanceId, version])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, periodId, createdAt])
+  @@map("firm_obligation_revisions")
+}
+
+// SQL migration also enforces domain/scope, finite interval and independent grantor.
+model HrisSetupReviewerGrant {
+  id String @id
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  reviewerUserId String
+  reviewer User @relation("HrisSetupReviewer", fields: [organizationId, reviewerUserId], references: [organizationId, id], onDelete: Restrict, onUpdate: NoAction, map: "hris_setup_reviewer_tenant_fk")
+  employeeId String?
+  employee PayrollEmployee? @relation(fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Restrict, onUpdate: NoAction, map: "hris_setup_employee_tenant_fk")
+  domain String
+  authority String
+  effectiveFrom DateTime
+  effectiveTo DateTime
+  createdById String
+  grantor User @relation("HrisSetupGrantor", fields: [organizationId, createdById], references: [organizationId, id], onDelete: Restrict, onUpdate: NoAction, map: "hris_setup_grantor_tenant_fk")
+  reasonHash String
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+  @@index([organizationId, reviewerUserId, domain, effectiveTo], map: "hris_setup_reviewer_scope_idx")
+  @@map("hris_setup_reviewer_grants")
+}
+
+// Protected originals: separate from item assets; retention prevents employee deletion.
+model HrisEmployeeDocument {
+ id String @id
+ storageProvider String @default("UNBOUND")
+ organizationId String
+ employeeId String
+ employee PayrollEmployee @relation(fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Restrict)
+ uploadedById String
+ idempotencyKey String
+ requestHash String
+ title String
+ mimeType String
+ byteLength Int
+ sha256 String
+ encryptionKey String
+ encryptionIv String
+ encryptionTag String
+ policy Json
+ employeeVisible Boolean
+ status String @default("UPLOADING")
+ scanProof Json?
+ reviewProof Json?
+ revision Int @default(1)
+ replacesDocumentId String?
+ replacesDocument HrisEmployeeDocument? @relation("HrisDocumentLineage", fields: [organizationId, employeeId, replacesDocumentId], references: [organizationId, employeeId, id], onDelete: Restrict)
+ replacements HrisEmployeeDocument[] @relation("HrisDocumentLineage")
+ expiresAt DateTime?
+ retainUntil DateTime
+ legalHold Boolean @default(false)
+ holdReasonHash String?
+ evidenceBoundAt DateTime?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @default(now())
+ @@unique([organizationId, employeeId, id], map: "hris_documents_identity_key")
+ @@unique([organizationId, uploadedById, idempotencyKey], map: "hris_documents_replay_key")
+ @@index([organizationId, employeeId, status, expiresAt], map: "hris_documents_scope_status_idx")
+ @@map("hris_employee_documents")
+}
+
+model HrisLifecycleTask {
+ id String @id
+ organizationId String
+ employeeId String
+ employee PayrollEmployee @relation(fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Restrict, map: "hris_task_employee_fk", onUpdate: NoAction)
+ requestId String
+ approvalEventId String
+ lifecycleType String
+ code String
+ ownerId String
+ reviewerId String
+ effectiveAt DateTime @db.Timestamptz
+ dueAt DateTime @db.Timestamptz
+ status String @default("OPEN")
+ sourceState String @default("ACTIVE")
+ revision Int @default(1)
+ policy Json
+ template Json
+ history Json @default("[]")
+ submittedById String?
+ evidenceReference String?
+ documentId String?
+ outcomeKind String?
+ createdAt DateTime @default(now()) @db.Timestamptz
+ updatedAt DateTime @default(now()) @db.Timestamptz
+ @@unique([organizationId, requestId, code], map: "hris_task_identity")
+ @@index([organizationId, ownerId, status, dueAt], map: "hris_task_owner_due")
+ @@index([organizationId, reviewerId, status, dueAt], map: "hris_task_reviewer_due")
+ @@map("hris_lifecycle_tasks")
+}
+
+model HrisPersonalCorrectionCase {
+ id String @id
+ organizationId String
+ employeeId String
+ employee PayrollEmployee @relation(fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Restrict)
+ requestedById String
+ assignedOwnerId String
+ idempotencyKey String
+ requestHash String
+ status String @default("REQUESTED")
+ revision Int @default(1)
+ proposal Json
+ baseline Json
+ policy Json
+ reason String
+ documentId String?
+ history Json
+ appliedBusinessEventId String?
+ appliedEmployeeVersion String?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @default(now())
+ @@unique([organizationId, requestedById, idempotencyKey], map: "hris_personal_case_replay")
+ @@index([organizationId, assignedOwnerId, status, createdAt], map: "hris_personal_case_owner")
+ @@index([organizationId, employeeId, createdAt], map: "hris_personal_case_employee")
+ @@map("hris_personal_correction_cases")
+}
+
+
+// Shared Command Center coordination; business outcomes remain source-owned.
+model CommandCenterOccurrence {
+  id String @id
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  logicalKey String
+  sourceKey String
+  sourceRefs Json
+  scopeKey String
+  windowKey String
+  episode Int
+  sourceRevision String
+  revision Int @default(1)
+  condition String
+  coordination String @default("OPEN")
+  ownerId String?
+  dueAt DateTime?
+  createdAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
+  updatedAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
+  events CommandCenterEvent[]
+  notices CommandCenterNotice[]
+  @@unique([organizationId, id])
+  @@unique([organizationId, logicalKey, episode], map: "cc_occurrence_episode_key")
+  @@index([organizationId, scopeKey, windowKey], map: "cc_occurrence_scope_idx")
+  @@map("command_center_occurrences")
+}
+
+model CommandCenterEvent {
+  id String @id
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  occurrenceId String
+  occurrence CommandCenterOccurrence @relation(fields: [organizationId, occurrenceId], references: [organizationId, id], onDelete: Restrict, map: "cc_event_occurrence_fk")
+  actorId String
+  requestId String?
+  intentHash String?
+  type String
+  resultRevision Int
+  changes Json
+  createdAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
+  @@unique([organizationId, actorId, requestId], map: "cc_event_request_key")
+  @@index([organizationId, occurrenceId, createdAt], map: "cc_event_history_idx")
+  @@map("command_center_events")
+}
+
+model CommandCenterReviewState {
+  id String @id
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  actorId String
+  scopeKey String
+  periodKey String
+  evidenceKey String
+  revision Int @default(1)
+  updatedAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
+  receipts CommandCenterReviewReceipt[]
+  @@unique([organizationId, id, actorId])
+  @@unique([organizationId, actorId, scopeKey, periodKey], map: "cc_review_scope_key")
+  @@map("command_center_review_states")
+}
+
+model CommandCenterReviewReceipt {
+  id String @id
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  actorId String
+  stateId String
+  state CommandCenterReviewState @relation(fields: [organizationId, stateId, actorId], references: [organizationId, id, actorId], onDelete: Restrict, map: "cc_receipt_state_fk")
+  revision Int
+  evidenceKey String
+  center String
+  requestId String
+  intentHash String
+  createdAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
+  @@unique([organizationId, actorId, requestId], map: "cc_receipt_request_key")
+  @@index([organizationId, stateId, revision], map: "cc_receipt_revision_idx")
+  @@map("command_center_review_receipts")
+}
+
+model CommandCenterNotice {
+ id String @id
+ organizationId String
+ organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+ occurrenceId String
+ occurrence CommandCenterOccurrence @relation(fields: [organizationId, occurrenceId], references: [organizationId, id], onDelete: Restrict, map: "cc_notice_occurrence_fk")
+ recipientId String
+ transitionRevision Int
+ sourceKey String
+ state String @default("PENDING")
+ createdAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
+ publishedAt DateTime?
+ readAt DateTime?
+ @@unique([organizationId, occurrenceId, recipientId, transitionRevision], map: "cc_notice_transition_key")
+ @@index([organizationId, recipientId, state], map: "cc_notice_recipient_idx")
+ @@map("command_center_notices")
+}
+model CommandCenterPreference {
+ id String @id
+ organizationId String
+ organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+ actorId String
+ enabled Boolean @default(true)
+ quietStart Int?
+ quietEnd Int?
+ @@unique([organizationId, actorId], map: "cc_preference_actor_key")
+ @@map("command_center_preferences")
+}
+
+model HrisPayrollHandoffPackage {
+ id String @id
+ organizationId String
+ organization Organization @relation(fields:[organizationId],references:[id],onDelete:Restrict, onUpdate: NoAction)
+ payrollPeriodId String
+ payrollPeriod PayrollPeriod @relation(fields:[payrollPeriodId],references:[id],onDelete:Restrict, onUpdate: NoAction)
+ version Int
+ recipientUserId String
+ issuedById String
+ idempotencyKey String
+ requestHash String
+ previewHash String
+ manifestJson Json
+ manifestBytes String
+ csvBytes String
+ manifestHash String
+ csvHash String
+ packageHash String
+ replacesPackageId String? @unique
+ replacesPackage HrisPayrollHandoffPackage? @relation("HandoffReplacement",fields:[replacesPackageId],references:[id],onDelete:Restrict,onUpdate:NoAction)
+ replacement HrisPayrollHandoffPackage? @relation("HandoffReplacement")
+ receipt HrisPayrollHandoffReceipt?
+ issuedAt DateTime @db.Timestamp(3)
+ @@unique([organizationId,payrollPeriodId,version],map:"hris_handoff_version")
+ @@unique([organizationId,issuedById,idempotencyKey],map:"hris_handoff_replay")
+ @@index([organizationId,recipientUserId,issuedAt],map:"hris_handoff_recipient")
+ @@map("hris_payroll_handoff_packages")
+}
+model HrisPayrollHandoffReceipt {
+ id String @id
+ organizationId String
+ organization Organization @relation(fields:[organizationId],references:[id],onDelete:Restrict, onUpdate: NoAction)
+ packageId String @unique
+ package HrisPayrollHandoffPackage @relation(fields:[packageId],references:[id],onDelete:Restrict, onUpdate: NoAction)
+ actorId String
+ idempotencyKey String
+ requestHash String
+ packageHash String
+ status String
+ acceptedRowIds Json
+ rejectedRows Json
+ reference String
+ recordedAt DateTime @db.Timestamp(3)
+ @@unique([organizationId,actorId,idempotencyKey],map:"hris_handoff_receipt_replay")
+ @@map("hris_payroll_handoff_receipts")
 }

@@ -1,0 +1,27 @@
+{
+  "startedAt": "2026-10-25T11:59:57.180Z",
+  "realAuthentication": true,
+  "actionMocks": false,
+  "productionAccess": false,
+  "checks": [
+    "Real credential login and database session"
+  ],
+  "audits": [],
+  "errors": [],
+  "failures": [
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "error": "locator.waitFor: Timeout 180000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Work & follow-up' }).first().getByRole('heading', { level: 3 }).first() to be visible\u001b[22m\n"
+    },
+    {
+      "locale": "fr",
+      "surface": "manager-action-center",
+      "error": "locator.waitFor: Timeout 180000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Travail et suivi' }).first().getByRole('heading', { level: 3 }).first() to be visible\u001b[22m\n"
+    }
+  ],
+  "blockedExternalRequests": 0,
+  "violationCount": 0,
+  "passed": false,
+  "finishedAt": "2026-10-25T12:07:23.889Z"
+}

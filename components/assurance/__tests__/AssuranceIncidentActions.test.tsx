@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: jest.fn() }),
@@ -46,7 +46,7 @@ jest.mock("@/actions/assurance/pos-cash-shortage-resolution.actions", () => ({
 }))
 
 import { resolvePosCashShortageIncidentAction } from "@/actions/assurance/pos-cash-shortage-resolution.actions"
-import { resolveWorkflowAssuranceIncidentAction } from "@/actions/assurance/workflow-assurance-incident.actions"
+import { assignWorkflowAssuranceIncidentAction, resolveWorkflowAssuranceIncidentAction } from "@/actions/assurance/workflow-assurance-incident.actions"
 
 import { AssuranceIncidentActions } from "../AssuranceIncidentActions"
 
@@ -103,6 +103,7 @@ describe("AssuranceIncidentActions", () => {
 function incident(overrides: Record<string, unknown> = {}) {
   return {
     id: "incident-1",
+    assignmentRevision: "a".repeat(64),
     checkKey: "pos.closed_shift_cash_shortage.review",
     workflow: "pos",
     moduleSlug: "pos",
@@ -131,3 +132,59 @@ function incident(overrides: Record<string, unknown> = {}) {
     ...overrides,
   } as never
 }
+
+
+describe("Phase 5 assignment recovery", () => {
+  const assign = jest.mocked(assignWorkflowAssuranceIncidentAction)
+  beforeEach(() => {
+    jest.clearAllMocks()
+    Object.defineProperty(crypto, "randomUUID", {configurable: true, value: jest.fn(() => "11111111-1111-4111-8111-111111111111")})
+  })
+  it.each(["en", "fr"] as const)("retains the same request after an uncertain failure and does not claim completion (%s)", async locale => {
+    assign.mockRejectedValueOnce(new Error("private transport details")).mockResolvedValueOnce({success: true, data: {id: "incident-1"}, error: null, status: 200} as never)
+    render(<AssuranceIncidentActions incident={incident()} waivers={[]} locale={locale} />)
+    fireEvent.click(screen.getByRole("button", {name: locale === "en" ? "Assign" : "Assigner", exact: true}))
+    fireEvent.change(screen.getByLabelText(locale === "en" ? "Owner user ID" : "ID utilisateur responsable"), {target: {value: "owner-1"}})
+    const submit = screen.getByRole("button", {name: locale === "en" ? "Apply action" : "Appliquer"})
+    fireEvent.click(submit)
+    expect(await screen.findByRole("alert")).not.toHaveTextContent("private transport details")
+    expect(screen.getByRole("button", {name: locale === "en" ? "Refresh source" : "Actualiser la source"})).toBeVisible()
+    expect(screen.getByLabelText(locale === "en" ? "Owner user ID" : "ID utilisateur responsable")).toBeDisabled()
+    fireEvent.click(submit)
+    await waitFor(() => expect(assign).toHaveBeenCalledTimes(2))
+    expect(assign.mock.calls[0][0]).toEqual(assign.mock.calls[1][0])
+    expect(assign.mock.calls[0][0]).toMatchObject({expectedRevision: "a".repeat(64), requestId: expect.any(String), ownerId: "owner-1"})
+    expect(assign.mock.calls[0][0]).not.toHaveProperty("assignedRole")
+    await waitFor(() => expect(mockNotifications.success).toHaveBeenCalledWith(expect.any(String), expect.stringMatching(locale === "en" ? /business work remains/ : /travail métier reste/), expect.anything()))
+  })
+  it.each([401,403,409])("requires source refresh after refusal %i and retains source context", async status => {
+    assign.mockResolvedValueOnce({success:false,status,error:"private details"} as never)
+    render(<AssuranceIncidentActions incident={incident()} waivers={[]} locale="en" />)
+    fireEvent.click(screen.getByRole("button", {name: "Assign", exact:true}))
+    fireEvent.change(screen.getByLabelText("Owner user ID"), {target: {value: "owner-1"}})
+    fireEvent.click(screen.getByRole("button", {name:"Apply action"}))
+    await screen.findByRole("alert")
+    expect(screen.getByRole("button", {name:"Apply action"})).toBeDisabled()
+    expect(screen.getByLabelText("Owner user ID")).toHaveValue("owner-1")
+    expect(mockNotifications.success).not.toHaveBeenCalled()
+  })
+  it("disables stale payloads without an assignment revision", () => {
+    render(<AssuranceIncidentActions incident={incident({assignmentRevision: undefined})} waivers={[]} locale="en" />)
+    expect(screen.getByRole("button", {name:"Assign",exact:true})).toBeDisabled()
+    expect(screen.getByRole("status")).toHaveTextContent("Refresh this source view")
+  })
+  it("clears pending form state on revoked/replaced authority and ignores its late response", async () => {
+    let finish!: (value: any) => void
+    assign.mockImplementationOnce(() => new Promise(resolve => {finish=resolve}))
+    const view=render(<AssuranceIncidentActions incident={incident()} waivers={[]} locale="en" />)
+    fireEvent.click(screen.getByRole("button", {name:"Assign",exact:true}))
+    fireEvent.change(screen.getByLabelText("Owner user ID"),{target:{value:"owner-1"}})
+    fireEvent.click(screen.getByRole("button",{name:"Apply action"}))
+    fireEvent.click(screen.getByRole("button",{name:"Apply action"}))
+    expect(assign).toHaveBeenCalledTimes(1)
+    view.rerender(<AssuranceIncidentActions incident={incident({canManage:false,assignmentRevision:"b".repeat(64)})} waivers={[]} locale="en" />)
+    expect(screen.queryByLabelText("Owner user ID")).not.toBeInTheDocument()
+    await act(async()=>finish({success:true,data:{id:"incident-1"},error:null,status:200}))
+    expect(mockNotifications.success).not.toHaveBeenCalled()
+  })
+})

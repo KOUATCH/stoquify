@@ -1,0 +1,199 @@
+// Actual item action/service/RBAC exports against fresh PostgreSQL.
+// Better Auth and Next transport/cache invalidation are explicit stubs, not HTTP evidence.
+jest.mock("server-only", () => ({}))
+jest.mock("next/headers", () => ({ headers: jest.fn(async () => new Headers()) }))
+jest.mock("next/cache", () => ({ revalidatePath: jest.fn(), revalidateTag: jest.fn() }))
+jest.mock("@/lib/auth", () => ({ auth: { api: { getSession: jest.fn() } } }))
+jest.mock("@/prisma/db", () => {
+  const { PrismaClient } = require("@prisma/client")
+  const target = process.env.P04R04_DATABASE_URL
+  if (process.env.NODE_ENV !== "test" || !target || !process.env.P04R04_CLUSTER) throw Error("Explicit R04 target required")
+  const url = new URL(target)
+  if (url.hostname !== "127.0.0.1" || url.port !== process.env.P04R04_PORT || url.username !== "p04r04" || url.pathname !== "/stoquify_local_p04_r04_20261109_r1") throw Error("Wrong R04 target")
+  return { db: new PrismaClient({ datasources: { db: { url: target } }, transactionOptions: { maxWait: 15000, timeout: 30000 } }) }
+})
+
+import { createHash, randomUUID } from "node:crypto"
+import fs from "node:fs"
+import path from "node:path"
+import { db } from "@/prisma/db"
+import { auth } from "@/lib/auth"
+import { listItemsAction } from "@/actions/item/listItemsAction"
+import { revalidatePath, revalidateTag } from "next/cache"
+
+const getSession = auth.api.getSession as unknown as jest.Mock
+const observations: unknown[] = []
+const privateSentinel = "P04R04_PRIVATE_DATABASE_DETAIL_SENTINEL"
+const permissions = ["inventory.items.read"]
+const digest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex")
+let serial = 0
+beforeAll(async () => {
+  const directory = await db.$queryRawUnsafe<Array<{ data_directory: string }>>("SHOW data_directory")
+  expect(fs.realpathSync(directory[0].data_directory).toLowerCase()).toBe(fs.realpathSync(process.env.P04R04_CLUSTER!).toLowerCase())
+})
+afterAll(async () => {
+  await db.$disconnect()
+  fs.writeFileSync(path.join(process.env.P04R04_EVIDENCE!, "native-observations.json"), JSON.stringify({ evidenceClass: "real database/action/service/RBAC; Better Auth and Next transport stubbed", observations }, null, 2), { flag: "wx" })
+})
+beforeEach(() => { getSession.mockReset(); jest.mocked(revalidatePath).mockClear(); jest.mocked(revalidateTag).mockClear() })
+
+async function fixture() {
+  const prefix = "r04-" + ++serial + "-" + randomUUID().slice(0, 8)
+  const org = prefix + "-org", foreign = prefix + "-foreign", actor = prefix + "-actor"
+  await db.organization.createMany({ data: [org, foreign].map(id => ({ id, name: id, slug: id })) })
+  const role = await db.role.create({ data: { organizationId: org, code: "inventory_reader", nameEn: "Inventory reader", permissions } })
+  await db.user.create({ data: { id: actor, name: actor, email: actor + "@example.invalid", organizationId: org, emailVerified: true, isVerified: true, roles: { connect: { id: role.id } } } })
+  const session = await db.session.create({ data: { userId: actor, token: randomUUID(), expiresAt: new Date(Date.now() + 3600000) } })
+  // Actual persisted subject; expiration/signature handling of transport is not qualified.
+  getSession.mockResolvedValue({ session: { id: session.id, token: session.token }, user: { id: actor, organizationId: org } })
+  async function relations(organizationId: string, label: string) {
+    return {
+      categoryId: (await db.category.create({ data: { organizationId, titleEn: label, slug: prefix } })).id,
+      brandId: (await db.brand.create({ data: { organizationId, nameEn: label, slug: prefix } })).id,
+      unitId: (await db.unit.create({ data: { organizationId, nameEn: label, symbol: "ea" } })).id,
+      taxRateId: (await db.taxRate.create({ data: { organizationId, nameEn: label, rate: 0 } })).id,
+    }
+  }
+  const ownRelations = await relations(org, "Authorized reference"), foreignRelations = await relations(foreign, privateSentinel)
+  const common = { organizationId: org, imageUrls: [] as string[] }
+  const alpha = await db.item.create({ data: { ...common, ...ownRelations, nameEn: "Alpha fruit", nameFr: "Pomme", slug: prefix + "-a", sku: prefix + "-alpha", barcode: "111", costPrice: 10, sellingPrice: 30, createdAt: new Date("2026-11-01T00:00:01Z") } })
+  const beta = await db.item.create({ data: { ...common, nameEn: "Beta fruit", nameFr: "Banane", slug: prefix + "-b", sku: prefix + "-beta", barcode: "222", costPrice: 20, sellingPrice: 10, createdAt: new Date("2026-11-01T00:00:02Z") } })
+  const inactive = await db.item.create({ data: { ...common, nameEn: "Carrot", slug: prefix + "-c", sku: prefix + "-inactive", isActive: false, costPrice: 30, sellingPrice: 20, createdAt: new Date("2026-11-01T00:00:03Z") } })
+  const deleted = await db.item.create({ data: { ...common, nameEn: "Deleted", slug: prefix + "-deleted", sku: prefix + "-deleted", deletedAt: new Date(), createdAt: new Date("2026-11-01T00:00:04Z") } })
+  const foreignItem = await db.item.create({ data: { ...foreignRelations, organizationId: foreign, nameEn: privateSentinel, slug: prefix + "-foreign", sku: privateSentinel + prefix, imageUrls: [] } })
+  return { prefix, org, foreign, actor, role, session, alpha, beta, inactive, deleted, foreignItem, ownRelations, foreignRelations }
+}
+type Fixture = Awaited<ReturnType<typeof fixture>>
+const forms = ["object", "positional"] as const
+function invoke(form: typeof forms[number], organizationId: string, q?: string, page?: number, pageSize?: number) {
+  return form === "object" ? listItemsAction({ organizationId, q, page, pageSize }) : listItemsAction(organizationId, q, page, pageSize)
+}
+async function state(f: Fixture) {
+  const tables = ["organizations", "users", "roles", "sessions", "items", "categories", "brands", "units", "tax_rates", "locations", "inventory_levels", "inventory_transactions", "serial_numbers", "stock_adjustments", "picture_assets", "ledger_posting_batches", "business_events", "business_event_outbox", "business_event_audits", "tenant_module_configurations", "tenant_module_grants", "tenant_module_configuration_commands"]
+  const result: Record<string, { count: number; sha256: string }> = {}
+  for (const table of tables) {
+    const where = table === "organizations" ? 'id = ANY($1::text[])' : table === "sessions" ? '"userId" IN (SELECT id FROM users WHERE "organizationId"=ANY($1::text[]))' : table === "inventory_levels" ? '"itemId" IN (SELECT id FROM items WHERE "organizationId"=ANY($1::text[]))' : '"organizationId"=ANY($1::text[])'
+    const rows = await db.$queryRawUnsafe<Array<{ value: unknown }>>(`SELECT to_jsonb(t) AS value FROM "${table}" t WHERE ${where}`, [f.org, f.foreign])
+    result[table] = { count: rows.length, sha256: digest(rows.map(row => JSON.stringify(row.value)).sort()) }
+  }
+  for (const [name, sql] of [
+    ["memberships", 'SELECT to_jsonb(t) AS value FROM "_UserRoles" t WHERE "B" IN (SELECT id FROM users WHERE "organizationId"=ANY($1::text[]))'],
+    ["stock_adjustment_lines", 'SELECT to_jsonb(t) AS value FROM stock_adjustment_lines t WHERE "adjustmentId" IN (SELECT id FROM stock_adjustments WHERE "organizationId"=ANY($1::text[]))'],
+  ]) {
+    const rows = await db.$queryRawUnsafe<Array<{ value: unknown }>>(sql, [f.org, f.foreign])
+    result[name] = { count: rows.length, sha256: digest(rows.map(row => JSON.stringify(row.value)).sort()) }
+  }
+  return result
+}
+async function observed(f: Fixture, name: string, work: () => ReturnType<typeof listItemsAction>, success: boolean, verify?: (data: any) => void) {
+  const before = await state(f), auditBefore = await db.auditLog.count({ where: { organizationId: { in: [f.org, f.foreign] } } })
+  const response = await work()
+  expect(response.success).toBe(success)
+  const serialized = JSON.stringify(response)
+  expect(serialized).not.toContain(privateSentinel)
+  expect(serialized).not.toContain(f.session.token)
+  expect(serialized).not.toMatch(/Prisma|constraint|SELECT |UPDATE |stack|missing permission/)
+  if (response.success) {
+    expect(response.data.data.every(item => item.organizationId === f.org)).toBe(true)
+    expect(response.data.data.map(item => item.id)).not.toContain(f.deleted.id)
+    verify?.(response.data)
+  } else {
+    expect((response as any).data).toBeUndefined()
+    expect(typeof response.error).toBe("string")
+    expect(response.error.length).toBeGreaterThan(0)
+  }
+  const after = await state(f)
+  expect(after).toEqual(before)
+  expect(revalidatePath).not.toHaveBeenCalled()
+  expect(revalidateTag).not.toHaveBeenCalled()
+  const securityAuditRowsAdded = (await db.auditLog.count({ where: { organizationId: { in: [f.org, f.foreign] } } })) - auditBefore
+  expect(securityAuditRowsAdded).toBe(success ? 0 : name.includes("revoked") ? 1 : 0)
+  observations.push({ name, success: response.success, ...(response.success ? { rowIds: response.data.data.map(item => item.id), total: response.data.total, page: response.data.page, pageSize: response.data.pageSize, totalPages: response.data.totalPages } : { response }), before, after, securityAuditRowsAdded })
+  return response
+}
+const ids = (data: any) => data.data.map((item: any) => item.id)
+it.each(forms)("%s input denies revoked current database permission", async form => {
+  const f = await fixture()
+  await db.role.update({ where: { id: f.role.id }, data: { permissions: [] } })
+  await observed(f, form + ":permission-revoked", () => invoke(form, f.org), false)
+})
+it.each(forms)("%s input denies unauthenticated transport", async form => {
+  const f = await fixture(); getSession.mockResolvedValue(null)
+  await observed(f, form + ":unauthenticated", () => invoke(form, f.org), false)
+})
+it.each(forms)("%s input returns authorized rows and related DTOs", async form => {
+  const f = await fixture()
+  await observed(f, form + ":authorized", () => invoke(form, f.org), true, data => {
+    expect(ids(data)).toEqual([f.inactive.id, f.beta.id, f.alpha.id])
+    expect(data).toMatchObject({ total: 3, page: 1, pageSize: 20, totalPages: 1 })
+    const alpha = data.data.find((item: any) => item.id === f.alpha.id)
+    expect(alpha.category).toMatchObject({ id: f.ownRelations.categoryId, titleEn: "Authorized reference" })
+    expect(alpha.brand).toMatchObject({ id: f.ownRelations.brandId, nameEn: "Authorized reference" })
+    expect(alpha.unit).toMatchObject({ id: f.ownRelations.unitId, symbol: "ea" })
+    expect(alpha.taxRate).toMatchObject({ id: f.ownRelations.taxRateId, nameEn: "Authorized reference" })
+  })
+})
+it.each(forms)("%s input ignores forged organization in favor of current actor scope", async form => {
+  const f = await fixture()
+  await observed(f, form + ":forged-organization", () => invoke(form, f.foreign), true, data => expect(ids(data)).toEqual([f.inactive.id, f.beta.id, f.alpha.id]))
+})
+it.each(forms)("%s input preserves search pagination", async form => {
+  const f = await fixture()
+  await observed(f, form + ":search-page", () => invoke(form, f.org, "fruit", 2, 1), true, data => {
+    expect(ids(data)).toEqual([f.alpha.id]); expect(data).toMatchObject({ total: 2, page: 2, pageSize: 1, totalPages: 2 })
+  })
+})
+it.each(forms)("%s input preserves empty pagination semantics", async form => {
+  const f = await fixture()
+  await observed(f, form + ":empty", () => invoke(form, f.org, "nonexistent-local-query", 1, 5), true, data => {
+    expect(ids(data)).toEqual([]); expect(data).toMatchObject({ total: 0, page: 1, pageSize: 5, totalPages: 1 })
+  })
+})
+const relations = ["categoryId", "brandId", "unitId", "taxRateId"] as const
+it.each(relations)("preserves authorized %s filter", async field => {
+  const f = await fixture()
+  await observed(f, "filter:" + field, () => listItemsAction({ organizationId: f.org, [field]: f.ownRelations[field] }), true, data => { expect(ids(data)).toEqual([f.alpha.id]); expect(data.total).toBe(1) })
+})
+it.each(relations)("foreign %s filter reveals no foreign rows", async field => {
+  const f = await fixture()
+  await observed(f, "foreign-filter:" + field, () => listItemsAction({ organizationId: f.foreign, [field]: f.foreignRelations[field] }), true, data => { expect(ids(data)).toEqual([]); expect(data.total).toBe(0) })
+})
+it.each(["nameEn", "nameFr", "sku", "barcode"] as const)("search matches authorized %s", async field => {
+  const f = await fixture()
+  const query = field === "nameEn" ? "Alpha" : field === "nameFr" ? "Banane" : field === "sku" ? f.beta.sku : "222"
+  const expected = field === "nameEn" ? f.alpha.id : f.beta.id
+  await observed(f, "search:" + field, () => listItemsAction({ organizationId: f.org, q: query }), true, data => expect(ids(data)).toEqual([expected]))
+})
+it.each([true, false])("preserves isActive=%s filter", async isActive => {
+  const f = await fixture()
+  await observed(f, "active:" + isActive, () => listItemsAction({ organizationId: f.org, isActive }), true, data => expect(ids(data)).toEqual(isActive ? [f.beta.id, f.alpha.id] : [f.inactive.id]))
+})
+it.each(["nameEn", "costPrice", "sellingPrice"] as const)("preserves %s sorting", async sortBy => {
+  const f = await fixture()
+  await observed(f, "sort:" + sortBy, () => listItemsAction({ organizationId: f.org, sortBy, sortOrder: "asc" }), true, data => expect(ids(data)).toEqual(sortBy === "sellingPrice" ? [f.beta.id, f.inactive.id, f.alpha.id] : [f.alpha.id, f.beta.id, f.inactive.id]))
+})
+it.each(forms)("%s input rejects invalid pagination without writes", async form => {
+  const f = await fixture()
+  await observed(f, form + ":invalid-page", () => invoke(form, f.org, undefined, -1, 2000), false)
+  expect(getSession).not.toHaveBeenCalled()
+})
+it("normalizes actual Prisma query failure and restores the fixture schema", async () => {
+  const f = await fixture()
+  await observed(f, "database:query-fault", async () => {
+    await db.$executeRawUnsafe('ALTER TABLE items RENAME COLUMN "nameEn" TO "P04R04_PRIVATE_DATABASE_DETAIL_SENTINEL"')
+    try {
+      await expect(db.item.findMany({ where: { organizationId: f.org } })).rejects.toMatchObject({ code: "P2022" })
+      return await listItemsAction({ organizationId: f.org })
+    } finally {
+      await db.$executeRawUnsafe('ALTER TABLE items RENAME COLUMN "P04R04_PRIVATE_DATABASE_DETAIL_SENTINEL" TO "nameEn"')
+    }
+  }, false)
+  expect(await db.item.count({ where: { organizationId: f.org } })).toBe(4)
+})
+it.each(forms)("%s input works again after a legitimate permission restoration", async form => {
+  const f = await fixture()
+  await db.role.update({ where: { id: f.role.id }, data: { permissions: [] } })
+  await observed(f, form + ":recovery-revoked", () => invoke(form, f.org), false)
+  await db.role.update({ where: { id: f.role.id }, data: { permissions } })
+  await observed(f, form + ":recovery-authorized", () => invoke(form, f.org), true, data => expect(ids(data)).toEqual([f.inactive.id, f.beta.id, f.alpha.id]))
+})

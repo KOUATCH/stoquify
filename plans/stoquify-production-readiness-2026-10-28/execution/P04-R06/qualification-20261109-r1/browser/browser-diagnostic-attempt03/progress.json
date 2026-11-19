@@ -1,0 +1,2240 @@
+{
+  "startedAt": "2026-11-10T11:32:12.309Z",
+  "packageId": "P04-R06",
+  "attempt": "browser-diagnostic-attempt03",
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "baseURL": "https://localhost:3296",
+  "harnessSha256": "666abbcdc483e6b001d706361eb676275efde2682dc6dd1e200b31f204588bd4",
+  "testMapSha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61",
+  "previousEvidence": "browser/auth-r06-attempt02/result.json",
+  "plannedChecks": [
+    "R06-UI-en-authorized",
+    "R06-UI-en-invalidated-reload",
+    "R06-UI-en-restored",
+    "R06-UI-fr-authorized",
+    "R06-UI-fr-invalidated-reload",
+    "R06-UI-fr-restored"
+  ],
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "contextLocale": "en-US",
+  "checks": [
+    {
+      "id": "R06-UI-en-authorized",
+      "alias": "browser_en",
+      "startedAt": "2026-11-10T11:32:17.900Z",
+      "passed": false,
+      "effects": {
+        "before": "snapshot-R06-UI-en-authorized-diagnostic03-before-1794310339742-caa16db9-75cf-4153-90a5-3e59ccb0f408.json",
+        "after": "snapshot-R06-UI-en-authorized-diagnostic03-after-1794310364701-21cd25df-5a62-48a6-9759-ad2f24041bc7.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsEqual": true,
+        "auditsEqual": true,
+        "usersEqual": true,
+        "accountsEqual": true
+      },
+      "error": "Original browser response bytes incomplete or not independently attributable",
+      "failureClass": "observed_assertion_or_evidence_failure",
+      "finishedAt": "2026-11-10T11:32:44.729Z"
+    },
+    {
+      "id": "R06-UI-en-invalidated-reload",
+      "alias": "browser_en",
+      "startedAt": "2026-11-10T11:32:46.057Z",
+      "passed": true,
+      "detail": {
+        "view": {
+          "label": "en-invalidated-reload",
+          "path": "/en/login",
+          "privateEmailVisible": false,
+          "loginVisible": true,
+          "profileUnavailable": false,
+          "textSha256": "a2bee6cbc617ddd2251444c3034000bbab4f31234dbe6b1ecd2ecc52c8b87e7f",
+          "screenshot": "en-invalidated-reload.png",
+          "at": "2026-11-10T11:32:50.117Z",
+          "screenshotSha256": "d15770a07d7cf250d0d858ab6a7a5a9ff771d1ee0628482e116a0b62240d905f"
+        },
+        "responseSequences": [
+          5
+        ],
+        "retainedPrimaryCaptureErrors": 0
+      },
+      "effects": {
+        "before": "snapshot-R06-UI-en-invalidated-reload-diagnostic03-before-1794310367805-f0a87775-285e-479d-9ad8-bcfbb5461517.json",
+        "after": "snapshot-R06-UI-en-invalidated-reload-diagnostic03-after-1794310373018-e605ed8e-0e37-4385-ab1e-a5766374b2ca.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsEqual": true,
+        "auditsEqual": true,
+        "usersEqual": true,
+        "accountsEqual": true
+      },
+      "finishedAt": "2026-11-10T11:32:53.055Z"
+    },
+    {
+      "id": "R06-UI-en-restored",
+      "alias": "browser_en",
+      "startedAt": "2026-11-10T11:32:53.827Z",
+      "passed": false,
+      "effects": {
+        "before": "snapshot-R06-UI-en-restored-diagnostic03-before-1794310375766-6edf339a-66e9-4463-a721-aab971daa5b0.json",
+        "after": "snapshot-R06-UI-en-restored-diagnostic03-after-1794310399060-04ca8752-9c1d-4248-a544-914bba3e446a.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsEqual": true,
+        "auditsEqual": true,
+        "usersEqual": true,
+        "accountsEqual": true
+      },
+      "error": "Original browser response bytes incomplete or not independently attributable",
+      "failureClass": "observed_assertion_or_evidence_failure",
+      "finishedAt": "2026-11-10T11:33:19.079Z"
+    },
+    {
+      "id": "R06-UI-fr-authorized",
+      "alias": "browser_fr",
+      "startedAt": "2026-11-10T11:33:19.800Z",
+      "passed": false,
+      "effects": {
+        "before": "snapshot-R06-UI-fr-authorized-diagnostic03-before-1794310402546-d24320a8-6911-4724-b051-491f6422c0c5.json",
+        "after": "snapshot-R06-UI-fr-authorized-diagnostic03-after-1794310427679-e0bd670c-f29f-4818-a17b-9afe6f8ba72d.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsEqual": true,
+        "auditsEqual": true,
+        "usersEqual": true,
+        "accountsEqual": true
+      },
+      "error": "Original browser response bytes incomplete or not independently attributable",
+      "failureClass": "observed_assertion_or_evidence_failure",
+      "finishedAt": "2026-11-10T11:33:47.691Z"
+    },
+    {
+      "id": "R06-UI-fr-invalidated-reload",
+      "alias": "browser_fr",
+      "startedAt": "2026-11-10T11:33:49.079Z",
+      "passed": false,
+      "effects": {
+        "before": "snapshot-R06-UI-fr-invalidated-reload-diagnostic03-before-1794310431794-00ae2021-b9c9-4fe5-b55b-5369fdc1b625.json",
+        "after": "snapshot-R06-UI-fr-invalidated-reload-diagnostic03-after-1794310435882-32e029eb-92b7-411b-9a0b-4b6ae6f9941d.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsEqual": true,
+        "auditsEqual": true,
+        "usersEqual": true,
+        "accountsEqual": true
+      },
+      "error": "page.waitForFunction: TypeError: Cannot read properties of null (reading 'innerText')\n    at eval (eval at predicate (eval at evaluate (:303:30)), <anonymous>:1:192)\n    at predicate (eval at evaluate (:303:30), <anonymous>:7:27)\n    at next (eval at evaluate (:303:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:303:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:305:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+      "failureClass": "observed_assertion_or_evidence_failure",
+      "finishedAt": "2026-11-10T11:33:55.903Z"
+    },
+    {
+      "id": "R06-UI-fr-restored",
+      "alias": "browser_fr",
+      "startedAt": "2026-11-10T11:33:56.654Z",
+      "passed": false,
+      "effects": {
+        "before": "snapshot-R06-UI-fr-restored-diagnostic03-before-1794310438734-29d284b2-3ed3-4631-87d8-c3966400dffe.json",
+        "after": "snapshot-R06-UI-fr-restored-diagnostic03-after-1794310462644-eb85c69f-cc24-4f79-b80e-5578935d3ffe.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsEqual": true,
+        "auditsEqual": true,
+        "usersEqual": true,
+        "accountsEqual": true
+      },
+      "error": "Original browser response bytes incomplete or not independently attributable",
+      "failureClass": "observed_assertion_or_evidence_failure",
+      "finishedAt": "2026-11-10T11:34:22.653Z"
+    }
+  ],
+  "observations": [
+    {
+      "label": "en-authorized",
+      "path": "/en/dashboard/profile",
+      "privateEmailVisible": true,
+      "loginVisible": false,
+      "profileUnavailable": false,
+      "textSha256": "0ceaba12021a3a75e8da0dc63a902645c8d4c94c1e4983efa6dbc19006a1dfaa",
+      "screenshot": "en-authorized.png",
+      "at": "2026-11-10T11:32:23.859Z",
+      "screenshotSha256": "c014b17d45cd31face738bb42099c92031b26b710be4c161de587843dff66dec"
+    },
+    {
+      "label": "en-invalidated-reload",
+      "path": "/en/login",
+      "privateEmailVisible": false,
+      "loginVisible": true,
+      "profileUnavailable": false,
+      "textSha256": "a2bee6cbc617ddd2251444c3034000bbab4f31234dbe6b1ecd2ecc52c8b87e7f",
+      "screenshot": "en-invalidated-reload.png",
+      "at": "2026-11-10T11:32:50.117Z",
+      "screenshotSha256": "d15770a07d7cf250d0d858ab6a7a5a9ff771d1ee0628482e116a0b62240d905f"
+    },
+    {
+      "label": "en-restored",
+      "path": "/en/dashboard/profile",
+      "privateEmailVisible": true,
+      "loginVisible": false,
+      "profileUnavailable": false,
+      "textSha256": "d0b7be9c9763e21822639b481c45e45d748ffdfa435c35a1257c37d8920016f5",
+      "screenshot": "en-restored.png",
+      "at": "2026-11-10T11:32:58.132Z",
+      "screenshotSha256": "f2ccb4565fc4aabf04dbe1225534e9b1929fc190b0f97d8eb2fe47e667c6355c"
+    },
+    {
+      "label": "fr-authorized",
+      "path": "/fr/dashboard/profile",
+      "privateEmailVisible": true,
+      "loginVisible": false,
+      "profileUnavailable": false,
+      "textSha256": "94de4c8c00eec263e87fcf1a8eeb129cebeb8b93f6989d80b79daa81482d15df",
+      "screenshot": "fr-authorized.png",
+      "at": "2026-11-10T11:33:26.879Z",
+      "screenshotSha256": "17e6562672801050e088c3f6f3ca1e95e0397533354069f4020450cb42a98912"
+    },
+    {
+      "label": "fr-restored",
+      "path": "/fr/dashboard/profile",
+      "privateEmailVisible": true,
+      "loginVisible": false,
+      "profileUnavailable": false,
+      "textSha256": "8269966cac5a1f645c82501917ca00ecaf7484eac48afb9ec1a3ceda203d77e2",
+      "screenshot": "fr-restored.png",
+      "at": "2026-11-10T11:34:01.597Z",
+      "screenshotSha256": "141da7b88e56703df19982cd0d5a5f79a76f10f862dd5a39078c63994fa80dc6"
+    }
+  ],
+  "responses": [
+    {
+      "sequence": 1,
+      "label": "en-authorized",
+      "at": "2026-11-10T11:32:20.233Z",
+      "path": "/en/dashboard/profile",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "document",
+      "navigation": true,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {},
+      "responseHeaders": {
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "gzip",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "95298710-5263-4e85-a71e-358282e22173"
+      },
+      "captureId": "95298710-5263-4e85-a71e-358282e22173",
+      "prefetch": false,
+      "browserResponseFinished": true,
+      "browserBody": {
+        "bytes": 443697,
+        "sha256": "94c26f676eee46a2e349ea6c5465733b7ac963c372b44a1cd0b167882317b402",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "independentCapture": {
+        "captureId": "95298710-5263-4e85-a71e-358282e22173",
+        "at": "2026-11-10T11:32:20.214Z",
+        "method": "GET",
+        "path": "/en/dashboard/profile",
+        "urlSha256": "6d099dbb54f897462f0452ec7037734889a3682bcbe73309358375fc50e526e0",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "none",
+          "secFetchMode": "navigate",
+          "secFetchDest": "document",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/html; charset=utf-8",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": []
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:32:20.902Z",
+        "wireBytes": 120261,
+        "wireSha256": "6a88bf00b23e12b3492dde5353438c28f4156205e59ce12d8e73985d2f25074c",
+        "decodedBytes": 443697,
+        "decodedSha256": "94c26f676eee46a2e349ea6c5465733b7ac963c372b44a1cd0b167882317b402",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": true,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:32:20.948Z",
+        "downstreamClosedAt": "2026-11-10T11:32:20.948Z"
+      },
+      "evidence": {
+        "qualified": true,
+        "issues": [],
+        "source": "playwright_body_and_independent_original_response",
+        "primaryBodyReadFailed": false,
+        "browserBodyRetrieved": true,
+        "browserResponseFinished": true,
+        "bytes": 443697,
+        "sha256": "94c26f676eee46a2e349ea6c5465733b7ac963c372b44a1cd0b167882317b402",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:32:21.214Z"
+    },
+    {
+      "sequence": 2,
+      "label": "en-authorized",
+      "at": "2026-11-10T11:32:22.507Z",
+      "path": "/fr/dashboard/profile",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {
+        "next-router-prefetch": "1",
+        "rsc": "1"
+      },
+      "responseHeaders": {
+        "content-type": "text/x-component",
+        "content-encoding": "gzip",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "cced5729-dc8a-4779-9f9a-f798224b1570"
+      },
+      "captureId": "cced5729-dc8a-4779-9f9a-f798224b1570",
+      "prefetch": true,
+      "transportError": "Original browser response completion exceeded its bound",
+      "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "independentCapture": {
+        "captureId": "cced5729-dc8a-4779-9f9a-f798224b1570",
+        "at": "2026-11-10T11:32:22.451Z",
+        "method": "GET",
+        "path": "/fr/dashboard/profile",
+        "urlSha256": "c1bf5c49eb352d5212fe0b42645c6ab7bcf27b9605cd299fe5c17c2b6f45055d",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/x-component",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "52431938990f72fb9ab1eea6a2c73317ebabee68505e34b9b1d3b85d72e3dffa",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:32:22.572Z",
+        "wireBytes": 111065,
+        "wireSha256": "804706ff1f50e63d7de540c0a91caa8c55729eee79eacddc8f128304c20af87a",
+        "decodedBytes": 414498,
+        "decodedSha256": "060b846883c2a830e7c60c736381cd056c4054c25b169f172c44609c5bc78567",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:32:22.604Z",
+        "downstreamClosedAt": "2026-11-10T11:32:22.604Z"
+      },
+      "evidence": {
+        "qualified": false,
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ],
+        "source": "independent_original_response_with_retained_playwright_error",
+        "primaryBodyReadFailed": true,
+        "browserBodyRetrieved": false,
+        "browserResponseFinished": false,
+        "bytes": 414498,
+        "sha256": "060b846883c2a830e7c60c736381cd056c4054c25b169f172c44609c5bc78567",
+        "containsActorCanary": false,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:32:42.522Z"
+    },
+    {
+      "sequence": 3,
+      "label": "en-authorized",
+      "at": "2026-11-10T11:32:22.549Z",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {},
+      "responseHeaders": {
+        "content-type": "application/json",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        "x-p04-r06-response-id": "28517cf3-4953-4feb-986b-8c07ccabdf03"
+      },
+      "captureId": "28517cf3-4953-4feb-986b-8c07ccabdf03",
+      "prefetch": false,
+      "browserResponseFinished": true,
+      "browserBody": {
+        "bytes": 734,
+        "sha256": "f6cc637defc13a77f8cd4ed511cf0dcda1139b9daee463aea63231dc030cc0e7",
+        "containsActorCanary": true,
+        "currentSessionSubject": true
+      },
+      "independentCapture": {
+        "captureId": "28517cf3-4953-4feb-986b-8c07ccabdf03",
+        "at": "2026-11-10T11:32:22.537Z",
+        "method": "GET",
+        "path": "/api/auth/get-session",
+        "urlSha256": "58d421e99f5165c82447054d7afc0bdcb1c2394052794018a8323004d11cebf8",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "application/json",
+          "contentEncoding": null,
+          "location": null,
+          "authorityCookies": []
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:32:22.538Z",
+        "wireBytes": 734,
+        "wireSha256": "f6cc637defc13a77f8cd4ed511cf0dcda1139b9daee463aea63231dc030cc0e7",
+        "decodedBytes": 734,
+        "decodedSha256": "f6cc637defc13a77f8cd4ed511cf0dcda1139b9daee463aea63231dc030cc0e7",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": true,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": true,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": true,
+        "downstreamFinishedAt": "2026-11-10T11:32:22.541Z",
+        "downstreamClosedAt": "2026-11-10T11:32:22.541Z"
+      },
+      "evidence": {
+        "qualified": true,
+        "issues": [],
+        "source": "playwright_body_and_independent_original_response",
+        "primaryBodyReadFailed": false,
+        "browserBodyRetrieved": true,
+        "browserResponseFinished": true,
+        "bytes": 734,
+        "sha256": "f6cc637defc13a77f8cd4ed511cf0dcda1139b9daee463aea63231dc030cc0e7",
+        "containsActorCanary": true,
+        "currentSessionSubject": true
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:32:22.606Z"
+    },
+    {
+      "sequence": 4,
+      "label": "en-authorized",
+      "at": "2026-11-10T11:32:22.898Z",
+      "path": "/en/dashboard/profile",
+      "method": "POST",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {
+        "accept": "text/x-component",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "responseHeaders": {
+        "content-type": "text/x-component",
+        "content-encoding": "gzip",
+        "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "8f48058d-7c5e-4996-a63f-e2c29080b762"
+      },
+      "captureId": "8f48058d-7c5e-4996-a63f-e2c29080b762",
+      "prefetch": false,
+      "transportError": "Original browser response completion exceeded its bound",
+      "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "independentCapture": {
+        "captureId": "8f48058d-7c5e-4996-a63f-e2c29080b762",
+        "at": "2026-11-10T11:32:22.848Z",
+        "method": "POST",
+        "path": "/en/dashboard/profile",
+        "urlSha256": "6d099dbb54f897462f0452ec7037734889a3682bcbe73309358375fc50e526e0",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": "https://localhost:3296",
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": "text/plain;charset=UTF-8",
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/x-component",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "1b75b772e7bf8dedd939fdf9d3cb3f492a27bef39c15e24a820aa1531f91640e",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:32:23.295Z",
+        "wireBytes": 103576,
+        "wireSha256": "d8d6cc3f80d34f2c5bd7319a18867d173c12906e0f2ae16cc9160de1ed3469d2",
+        "decodedBytes": 372398,
+        "decodedSha256": "b901c85ebaa163a6bbd0eb8b8d448df0bc4b9e30a46096ddcdc68b4bceb38e67",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": true,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:32:23.315Z",
+        "downstreamClosedAt": "2026-11-10T11:32:23.315Z"
+      },
+      "evidence": {
+        "qualified": false,
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ],
+        "source": "independent_original_response_with_retained_playwright_error",
+        "primaryBodyReadFailed": true,
+        "browserBodyRetrieved": false,
+        "browserResponseFinished": false,
+        "bytes": 372398,
+        "sha256": "b901c85ebaa163a6bbd0eb8b8d448df0bc4b9e30a46096ddcdc68b4bceb38e67",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:32:42.905Z"
+    },
+    {
+      "sequence": 5,
+      "label": "en-invalidated-reload",
+      "at": "2026-11-10T11:32:47.943Z",
+      "path": "/en/dashboard/profile",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "document",
+      "navigation": true,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {},
+      "responseHeaders": {
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "gzip",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "e775921b-b590-4b9a-b160-b18b0a0e8a64"
+      },
+      "captureId": "e775921b-b590-4b9a-b160-b18b0a0e8a64",
+      "prefetch": false,
+      "browserResponseFinished": true,
+      "browserBody": {
+        "bytes": 406119,
+        "sha256": "f259abdd9396eb87579beb59a23610c977210a8ab5392c35d542a5e90ce9e971",
+        "containsActorCanary": false,
+        "currentSessionSubject": false
+      },
+      "independentCapture": {
+        "captureId": "e775921b-b590-4b9a-b160-b18b0a0e8a64",
+        "at": "2026-11-10T11:32:47.935Z",
+        "method": "GET",
+        "path": "/en/dashboard/profile",
+        "urlSha256": "6d099dbb54f897462f0452ec7037734889a3682bcbe73309358375fc50e526e0",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "same-origin",
+          "secFetchMode": "navigate",
+          "secFetchDest": "document",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/html; charset=utf-8",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": []
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:32:48.111Z",
+        "wireBytes": 109231,
+        "wireSha256": "c237e683adfc6763e844e039f40497c4ba2ff2defeb25bf1f42337863ffe1f2f",
+        "decodedBytes": 406119,
+        "decodedSha256": "f259abdd9396eb87579beb59a23610c977210a8ab5392c35d542a5e90ce9e971",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:32:48.137Z",
+        "downstreamClosedAt": "2026-11-10T11:32:48.137Z"
+      },
+      "evidence": {
+        "qualified": true,
+        "issues": [],
+        "source": "playwright_body_and_independent_original_response",
+        "primaryBodyReadFailed": false,
+        "browserBodyRetrieved": true,
+        "browserResponseFinished": true,
+        "bytes": 406119,
+        "sha256": "f259abdd9396eb87579beb59a23610c977210a8ab5392c35d542a5e90ce9e971",
+        "containsActorCanary": false,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:32:48.280Z"
+    },
+    {
+      "sequence": 6,
+      "label": "en-restored",
+      "at": "2026-11-10T11:32:55.946Z",
+      "path": "/en/dashboard/profile",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "document",
+      "navigation": true,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {},
+      "responseHeaders": {
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "gzip",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "05bf0227-fea1-41bb-a06b-5dccf1372fac"
+      },
+      "captureId": "05bf0227-fea1-41bb-a06b-5dccf1372fac",
+      "prefetch": false,
+      "browserResponseFinished": true,
+      "browserBody": {
+        "bytes": 443697,
+        "sha256": "7fc8e382289cfd6e921c1c14d9c92cbfc58d816ae5ea05296666aa0646760eb2",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "independentCapture": {
+        "captureId": "05bf0227-fea1-41bb-a06b-5dccf1372fac",
+        "at": "2026-11-10T11:32:55.910Z",
+        "method": "GET",
+        "path": "/en/dashboard/profile",
+        "urlSha256": "6d099dbb54f897462f0452ec7037734889a3682bcbe73309358375fc50e526e0",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "none",
+          "secFetchMode": "navigate",
+          "secFetchDest": "document",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/html; charset=utf-8",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": []
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:32:56.158Z",
+        "wireBytes": 120265,
+        "wireSha256": "9ca4e28c61c9f69a125a9816e2512b4dfa558ce048dffa47487d466a68f03346",
+        "decodedBytes": 443697,
+        "decodedSha256": "7fc8e382289cfd6e921c1c14d9c92cbfc58d816ae5ea05296666aa0646760eb2",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": true,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:32:56.192Z",
+        "downstreamClosedAt": "2026-11-10T11:32:56.192Z"
+      },
+      "evidence": {
+        "qualified": true,
+        "issues": [],
+        "source": "playwright_body_and_independent_original_response",
+        "primaryBodyReadFailed": false,
+        "browserBodyRetrieved": true,
+        "browserResponseFinished": true,
+        "bytes": 443697,
+        "sha256": "7fc8e382289cfd6e921c1c14d9c92cbfc58d816ae5ea05296666aa0646760eb2",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:32:56.296Z"
+    },
+    {
+      "sequence": 7,
+      "label": "en-restored",
+      "at": "2026-11-10T11:32:57.137Z",
+      "path": "/fr/dashboard/profile",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {
+        "next-router-prefetch": "1",
+        "rsc": "1"
+      },
+      "responseHeaders": {
+        "content-type": "text/x-component",
+        "content-encoding": "gzip",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "84611ed6-d6bc-4d7b-b3ed-cae4bd914687"
+      },
+      "captureId": "84611ed6-d6bc-4d7b-b3ed-cae4bd914687",
+      "prefetch": true,
+      "transportError": "Original browser response completion exceeded its bound",
+      "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "independentCapture": {
+        "captureId": "84611ed6-d6bc-4d7b-b3ed-cae4bd914687",
+        "at": "2026-11-10T11:32:57.101Z",
+        "method": "GET",
+        "path": "/fr/dashboard/profile",
+        "urlSha256": "c1bf5c49eb352d5212fe0b42645c6ab7bcf27b9605cd299fe5c17c2b6f45055d",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/x-component",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "18db6f442056e4450231a0aa284de938d28918decc52231b681aa6e1417b915c",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:32:57.238Z",
+        "wireBytes": 111064,
+        "wireSha256": "e70578196bc9a59afd53769496974c0c67123521352c65b651b0cd8733476a0d",
+        "decodedBytes": 414498,
+        "decodedSha256": "64d8ffc1d9d732e7d7a87e761735da152968db714570b74040ca4bbd9728ae50",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:32:57.264Z",
+        "downstreamClosedAt": "2026-11-10T11:32:57.264Z"
+      },
+      "evidence": {
+        "qualified": false,
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ],
+        "source": "independent_original_response_with_retained_playwright_error",
+        "primaryBodyReadFailed": true,
+        "browserBodyRetrieved": false,
+        "browserResponseFinished": false,
+        "bytes": 414498,
+        "sha256": "64d8ffc1d9d732e7d7a87e761735da152968db714570b74040ca4bbd9728ae50",
+        "containsActorCanary": false,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:33:17.152Z"
+    },
+    {
+      "sequence": 8,
+      "label": "en-restored",
+      "at": "2026-11-10T11:32:57.161Z",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {},
+      "responseHeaders": {
+        "content-type": "application/json",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        "x-p04-r06-response-id": "9e5f8258-72e3-4e2d-9eba-cef952563f17"
+      },
+      "captureId": "9e5f8258-72e3-4e2d-9eba-cef952563f17",
+      "prefetch": false,
+      "browserResponseFinished": true,
+      "browserBody": {
+        "bytes": 734,
+        "sha256": "9a1664ccb67813cdd23088bd0cbab939f867868616bea9692d5e8ea644ca529c",
+        "containsActorCanary": true,
+        "currentSessionSubject": true
+      },
+      "independentCapture": {
+        "captureId": "9e5f8258-72e3-4e2d-9eba-cef952563f17",
+        "at": "2026-11-10T11:32:57.152Z",
+        "method": "GET",
+        "path": "/api/auth/get-session",
+        "urlSha256": "58d421e99f5165c82447054d7afc0bdcb1c2394052794018a8323004d11cebf8",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "application/json",
+          "contentEncoding": null,
+          "location": null,
+          "authorityCookies": []
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:32:57.153Z",
+        "wireBytes": 734,
+        "wireSha256": "9a1664ccb67813cdd23088bd0cbab939f867868616bea9692d5e8ea644ca529c",
+        "decodedBytes": 734,
+        "decodedSha256": "9a1664ccb67813cdd23088bd0cbab939f867868616bea9692d5e8ea644ca529c",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": true,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": true,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": true,
+        "downstreamFinishedAt": "2026-11-10T11:32:57.154Z",
+        "downstreamClosedAt": "2026-11-10T11:32:57.154Z"
+      },
+      "evidence": {
+        "qualified": true,
+        "issues": [],
+        "source": "playwright_body_and_independent_original_response",
+        "primaryBodyReadFailed": false,
+        "browserBodyRetrieved": true,
+        "browserResponseFinished": true,
+        "bytes": 734,
+        "sha256": "9a1664ccb67813cdd23088bd0cbab939f867868616bea9692d5e8ea644ca529c",
+        "containsActorCanary": true,
+        "currentSessionSubject": true
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:32:57.192Z"
+    },
+    {
+      "sequence": 9,
+      "label": "en-restored",
+      "at": "2026-11-10T11:32:57.359Z",
+      "path": "/en/dashboard/profile",
+      "method": "POST",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {
+        "accept": "text/x-component",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "responseHeaders": {
+        "content-type": "text/x-component",
+        "content-encoding": "gzip",
+        "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "86d83841-3949-4d23-844d-2f16132d4fdb"
+      },
+      "captureId": "86d83841-3949-4d23-844d-2f16132d4fdb",
+      "prefetch": false,
+      "transportError": "Original browser response completion exceeded its bound",
+      "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "independentCapture": {
+        "captureId": "86d83841-3949-4d23-844d-2f16132d4fdb",
+        "at": "2026-11-10T11:32:57.332Z",
+        "method": "POST",
+        "path": "/en/dashboard/profile",
+        "urlSha256": "6d099dbb54f897462f0452ec7037734889a3682bcbe73309358375fc50e526e0",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": "https://localhost:3296",
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": "text/plain;charset=UTF-8",
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/x-component",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "292e3c46986da94cbabf603ca4f732a47aa51200abe4ede7d20b80b66a2e2191",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:32:57.583Z",
+        "wireBytes": 103576,
+        "wireSha256": "b879664f3084ba46fcbd87b1f63829b1c9dc94c3cc1545456f6456d3f7ec4f13",
+        "decodedBytes": 372398,
+        "decodedSha256": "57ff6437f4cce2bfb2ef0a148d7d5acb29768995bb6f37335e3faeb4c58562e4",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": true,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:32:57.603Z",
+        "downstreamClosedAt": "2026-11-10T11:32:57.603Z"
+      },
+      "evidence": {
+        "qualified": false,
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ],
+        "source": "independent_original_response_with_retained_playwright_error",
+        "primaryBodyReadFailed": true,
+        "browserBodyRetrieved": false,
+        "browserResponseFinished": false,
+        "bytes": 372398,
+        "sha256": "57ff6437f4cce2bfb2ef0a148d7d5acb29768995bb6f37335e3faeb4c58562e4",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:33:17.372Z"
+    },
+    {
+      "sequence": 10,
+      "label": "fr-authorized",
+      "at": "2026-11-10T11:33:22.814Z",
+      "path": "/fr/dashboard/profile",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "document",
+      "navigation": true,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {},
+      "responseHeaders": {
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "gzip",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "44ed5108-0ee2-47cc-bbee-e9dc03afc8e0"
+      },
+      "captureId": "44ed5108-0ee2-47cc-bbee-e9dc03afc8e0",
+      "prefetch": false,
+      "browserResponseFinished": true,
+      "browserBody": {
+        "bytes": 497217,
+        "sha256": "101567178830633f4f05e1a47cdfac400e31609b9ff11928121a75172e8bd919",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "independentCapture": {
+        "captureId": "44ed5108-0ee2-47cc-bbee-e9dc03afc8e0",
+        "at": "2026-11-10T11:33:22.790Z",
+        "method": "GET",
+        "path": "/fr/dashboard/profile",
+        "urlSha256": "8375835be632a564b74c6e751653f7f725b15776efad6cc916730555bbe86b40",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "none",
+          "secFetchMode": "navigate",
+          "secFetchDest": "document",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/html; charset=utf-8",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "c3719b821a49132dbc2d126cc258203dbc490eb85ad4859c4b64e6acda051e5b",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:33:23.488Z",
+        "wireBytes": 132491,
+        "wireSha256": "949b5131ec35b3601956c5e3b88c6ba5a9269cd0db746e0051da23bdeaf0200b",
+        "decodedBytes": 497217,
+        "decodedSha256": "101567178830633f4f05e1a47cdfac400e31609b9ff11928121a75172e8bd919",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": true
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:33:23.525Z",
+        "downstreamClosedAt": "2026-11-10T11:33:23.526Z"
+      },
+      "evidence": {
+        "qualified": true,
+        "issues": [],
+        "source": "playwright_body_and_independent_original_response",
+        "primaryBodyReadFailed": false,
+        "browserBodyRetrieved": true,
+        "browserResponseFinished": true,
+        "bytes": 497217,
+        "sha256": "101567178830633f4f05e1a47cdfac400e31609b9ff11928121a75172e8bd919",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:33:23.877Z"
+    },
+    {
+      "sequence": 11,
+      "label": "fr-authorized",
+      "at": "2026-11-10T11:33:24.676Z",
+      "path": "/en/dashboard/profile",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {
+        "next-router-prefetch": "1",
+        "rsc": "1"
+      },
+      "responseHeaders": {
+        "content-type": "text/x-component",
+        "content-encoding": "gzip",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "2a767401-e234-4fde-880a-af6ee4720ff7"
+      },
+      "captureId": "2a767401-e234-4fde-880a-af6ee4720ff7",
+      "prefetch": true,
+      "transportError": "Original browser response completion exceeded its bound",
+      "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "independentCapture": {
+        "captureId": "2a767401-e234-4fde-880a-af6ee4720ff7",
+        "at": "2026-11-10T11:33:24.555Z",
+        "method": "GET",
+        "path": "/en/dashboard/profile",
+        "urlSha256": "fae4e0453891047d3b358c03e4f89fbcc659f4ada96c230108c189031eac3800",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/x-component",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "221a39dbcd47e9c53464f4a6cdafcc5de7a24c35448b5310b1966668c53c3b2c",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:33:24.913Z",
+        "wireBytes": 99070,
+        "wireSha256": "34cee8de2439f28e8da0fd394d35a9e3227032a10e592e7175886d3d57d077e6",
+        "decodedBytes": 361146,
+        "decodedSha256": "37fcdc199dde99c63e6b47ea7acb05a82ddc06f6887e15739ee7733ec1d16efc",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:33:24.948Z",
+        "downstreamClosedAt": "2026-11-10T11:33:24.948Z"
+      },
+      "evidence": {
+        "qualified": false,
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ],
+        "source": "independent_original_response_with_retained_playwright_error",
+        "primaryBodyReadFailed": true,
+        "browserBodyRetrieved": false,
+        "browserResponseFinished": false,
+        "bytes": 361146,
+        "sha256": "37fcdc199dde99c63e6b47ea7acb05a82ddc06f6887e15739ee7733ec1d16efc",
+        "containsActorCanary": false,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:33:44.685Z"
+    },
+    {
+      "sequence": 12,
+      "label": "fr-authorized",
+      "at": "2026-11-10T11:33:24.742Z",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {},
+      "responseHeaders": {
+        "content-type": "application/json",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        "x-p04-r06-response-id": "949ec598-1879-4cef-89c0-0214c04ae7bc"
+      },
+      "captureId": "949ec598-1879-4cef-89c0-0214c04ae7bc",
+      "prefetch": false,
+      "browserResponseFinished": true,
+      "browserBody": {
+        "bytes": 734,
+        "sha256": "b7f0df1e9888e02b67e78a055ebdc0280a2570b0f47bcea5cfa1ef784fd64fae",
+        "containsActorCanary": true,
+        "currentSessionSubject": true
+      },
+      "independentCapture": {
+        "captureId": "949ec598-1879-4cef-89c0-0214c04ae7bc",
+        "at": "2026-11-10T11:33:24.730Z",
+        "method": "GET",
+        "path": "/api/auth/get-session",
+        "urlSha256": "58d421e99f5165c82447054d7afc0bdcb1c2394052794018a8323004d11cebf8",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "application/json",
+          "contentEncoding": null,
+          "location": null,
+          "authorityCookies": []
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:33:24.731Z",
+        "wireBytes": 734,
+        "wireSha256": "b7f0df1e9888e02b67e78a055ebdc0280a2570b0f47bcea5cfa1ef784fd64fae",
+        "decodedBytes": 734,
+        "decodedSha256": "b7f0df1e9888e02b67e78a055ebdc0280a2570b0f47bcea5cfa1ef784fd64fae",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": true
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": true
+        },
+        "hasAuthorityFields": true,
+        "downstreamFinishedAt": "2026-11-10T11:33:24.732Z",
+        "downstreamClosedAt": "2026-11-10T11:33:24.732Z"
+      },
+      "evidence": {
+        "qualified": true,
+        "issues": [],
+        "source": "playwright_body_and_independent_original_response",
+        "primaryBodyReadFailed": false,
+        "browserBodyRetrieved": true,
+        "browserResponseFinished": true,
+        "bytes": 734,
+        "sha256": "b7f0df1e9888e02b67e78a055ebdc0280a2570b0f47bcea5cfa1ef784fd64fae",
+        "containsActorCanary": true,
+        "currentSessionSubject": true
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:33:24.782Z"
+    },
+    {
+      "sequence": 13,
+      "label": "fr-authorized",
+      "at": "2026-11-10T11:33:25.250Z",
+      "path": "/fr/dashboard/profile",
+      "method": "POST",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {
+        "accept": "text/x-component",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "responseHeaders": {
+        "content-type": "text/x-component",
+        "content-encoding": "gzip",
+        "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "bf0b85e6-defa-4c75-bc67-470afb0c1c96"
+      },
+      "captureId": "bf0b85e6-defa-4c75-bc67-470afb0c1c96",
+      "prefetch": false,
+      "transportError": "Original browser response completion exceeded its bound",
+      "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "independentCapture": {
+        "captureId": "bf0b85e6-defa-4c75-bc67-470afb0c1c96",
+        "at": "2026-11-10T11:33:25.115Z",
+        "method": "POST",
+        "path": "/fr/dashboard/profile",
+        "urlSha256": "8375835be632a564b74c6e751653f7f725b15776efad6cc916730555bbe86b40",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": "https://localhost:3296",
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": "text/plain;charset=UTF-8",
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/x-component",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "1ade91da6ccfedcccaf7a1052bb7e7346e96f39b766fdc146dd19860a7995b68",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            },
+            {
+              "sha256": "3ea0c5cd9f0beed137329656c718f5d80d2481f4b5c7521f5c5f7d0a2166504d",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:33:26.256Z",
+        "wireBytes": 115578,
+        "wireSha256": "609dfeb5655cf2b16b83597db0c6fac673037fd1a51db6b058a89bdecddf5f7c",
+        "decodedBytes": 425756,
+        "decodedSha256": "1cc44975dad36a4c99b92447f9f724a779a9cbc88330039adceb5fc52b53c85d",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": true
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:33:26.335Z",
+        "downstreamClosedAt": "2026-11-10T11:33:26.335Z"
+      },
+      "evidence": {
+        "qualified": false,
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ],
+        "source": "independent_original_response_with_retained_playwright_error",
+        "primaryBodyReadFailed": true,
+        "browserBodyRetrieved": false,
+        "browserResponseFinished": false,
+        "bytes": 425756,
+        "sha256": "1cc44975dad36a4c99b92447f9f724a779a9cbc88330039adceb5fc52b53c85d",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:33:45.264Z"
+    },
+    {
+      "sequence": 14,
+      "label": "fr-invalidated-reload",
+      "at": "2026-11-10T11:33:52.116Z",
+      "path": "/fr/dashboard/profile",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "document",
+      "navigation": true,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {},
+      "responseHeaders": {
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "gzip",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "fc0c12b1-e0c2-4fb4-9634-4752da181540"
+      },
+      "captureId": "fc0c12b1-e0c2-4fb4-9634-4752da181540",
+      "prefetch": false,
+      "browserResponseFinished": true,
+      "browserBody": {
+        "bytes": 459167,
+        "sha256": "aa214520e7f88dd81a74bcccd1046fd4296581238a1b9ebf9223268e93c89f37",
+        "containsActorCanary": false,
+        "currentSessionSubject": false
+      },
+      "independentCapture": {
+        "captureId": "fc0c12b1-e0c2-4fb4-9634-4752da181540",
+        "at": "2026-11-10T11:33:52.106Z",
+        "method": "GET",
+        "path": "/fr/dashboard/profile",
+        "urlSha256": "8375835be632a564b74c6e751653f7f725b15776efad6cc916730555bbe86b40",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "same-origin",
+          "secFetchMode": "navigate",
+          "secFetchDest": "document",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/html; charset=utf-8",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": []
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:33:52.331Z",
+        "wireBytes": 121253,
+        "wireSha256": "94498b6d4ed9fb21b159e76352196a91a72eb85eb34006f695d28770e7e8c203",
+        "decodedBytes": 459167,
+        "decodedSha256": "aa214520e7f88dd81a74bcccd1046fd4296581238a1b9ebf9223268e93c89f37",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:33:52.365Z",
+        "downstreamClosedAt": "2026-11-10T11:33:52.365Z"
+      },
+      "evidence": {
+        "qualified": true,
+        "issues": [],
+        "source": "playwright_body_and_independent_original_response",
+        "primaryBodyReadFailed": false,
+        "browserBodyRetrieved": true,
+        "browserResponseFinished": true,
+        "bytes": 459167,
+        "sha256": "aa214520e7f88dd81a74bcccd1046fd4296581238a1b9ebf9223268e93c89f37",
+        "containsActorCanary": false,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:33:52.584Z"
+    },
+    {
+      "sequence": 15,
+      "label": "fr-restored",
+      "at": "2026-11-10T11:33:58.929Z",
+      "path": "/fr/dashboard/profile",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "document",
+      "navigation": true,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {},
+      "responseHeaders": {
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "gzip",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "7f5efcaf-e570-444e-897e-b7e943b0e37a"
+      },
+      "captureId": "7f5efcaf-e570-444e-897e-b7e943b0e37a",
+      "prefetch": false,
+      "browserResponseFinished": true,
+      "browserBody": {
+        "bytes": 497217,
+        "sha256": "51ac88058ca886d1a00d33c42e141f0c5ff8a647a80644dee49de144eb102ffa",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "independentCapture": {
+        "captureId": "7f5efcaf-e570-444e-897e-b7e943b0e37a",
+        "at": "2026-11-10T11:33:58.882Z",
+        "method": "GET",
+        "path": "/fr/dashboard/profile",
+        "urlSha256": "8375835be632a564b74c6e751653f7f725b15776efad6cc916730555bbe86b40",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "none",
+          "secFetchMode": "navigate",
+          "secFetchDest": "document",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/html; charset=utf-8",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "3109644511a2fd345db055f7c22edda1b66a527aeeea06d7f881ddd8aed2fc1e",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:33:59.168Z",
+        "wireBytes": 132486,
+        "wireSha256": "b810ab764ef5e034ed602a03b5c9619adb2b655321026d999561123a2772e401",
+        "decodedBytes": 497217,
+        "decodedSha256": "51ac88058ca886d1a00d33c42e141f0c5ff8a647a80644dee49de144eb102ffa",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": true
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:33:59.193Z",
+        "downstreamClosedAt": "2026-11-10T11:33:59.193Z"
+      },
+      "evidence": {
+        "qualified": true,
+        "issues": [],
+        "source": "playwright_body_and_independent_original_response",
+        "primaryBodyReadFailed": false,
+        "browserBodyRetrieved": true,
+        "browserResponseFinished": true,
+        "bytes": 497217,
+        "sha256": "51ac88058ca886d1a00d33c42e141f0c5ff8a647a80644dee49de144eb102ffa",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:33:59.328Z"
+    },
+    {
+      "sequence": 16,
+      "label": "fr-restored",
+      "at": "2026-11-10T11:34:00.333Z",
+      "path": "/en/dashboard/profile",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {
+        "next-router-prefetch": "1",
+        "rsc": "1"
+      },
+      "responseHeaders": {
+        "content-type": "text/x-component",
+        "content-encoding": "gzip",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "e5cf29e8-c953-43ae-9f4c-3f290fff3e68"
+      },
+      "captureId": "e5cf29e8-c953-43ae-9f4c-3f290fff3e68",
+      "prefetch": true,
+      "transportError": "Original browser response completion exceeded its bound",
+      "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "independentCapture": {
+        "captureId": "e5cf29e8-c953-43ae-9f4c-3f290fff3e68",
+        "at": "2026-11-10T11:34:00.296Z",
+        "method": "GET",
+        "path": "/en/dashboard/profile",
+        "urlSha256": "fae4e0453891047d3b358c03e4f89fbcc659f4ada96c230108c189031eac3800",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/x-component",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "6b350c5bab1130de46327c7ad94e76fc86c034a09ab023ef26b85e7ea66218b2",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:34:00.391Z",
+        "wireBytes": 99071,
+        "wireSha256": "aaabc4a5f7e5ea9efe89baa763da393af4dc478637e73295e3e8d4c70378b935",
+        "decodedBytes": 361146,
+        "decodedSha256": "bea160704a03e0f8a44ad5b2015d97a7d6af19c2e955003686630ee16caaa7c3",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:34:00.418Z",
+        "downstreamClosedAt": "2026-11-10T11:34:00.418Z"
+      },
+      "evidence": {
+        "qualified": false,
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ],
+        "source": "independent_original_response_with_retained_playwright_error",
+        "primaryBodyReadFailed": true,
+        "browserBodyRetrieved": false,
+        "browserResponseFinished": false,
+        "bytes": 361146,
+        "sha256": "bea160704a03e0f8a44ad5b2015d97a7d6af19c2e955003686630ee16caaa7c3",
+        "containsActorCanary": false,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:34:20.348Z"
+    },
+    {
+      "sequence": 17,
+      "label": "fr-restored",
+      "at": "2026-11-10T11:34:00.381Z",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {},
+      "responseHeaders": {
+        "content-type": "application/json",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        "x-p04-r06-response-id": "c0ab4d34-e67f-433b-a6e9-6f6c4f6e3d78"
+      },
+      "captureId": "c0ab4d34-e67f-433b-a6e9-6f6c4f6e3d78",
+      "prefetch": false,
+      "browserResponseFinished": true,
+      "browserBody": {
+        "bytes": 734,
+        "sha256": "32c37327b24d15526dfa7fc763ad02361e9d277e234faf083caef5f2cc30b6bf",
+        "containsActorCanary": true,
+        "currentSessionSubject": true
+      },
+      "independentCapture": {
+        "captureId": "c0ab4d34-e67f-433b-a6e9-6f6c4f6e3d78",
+        "at": "2026-11-10T11:34:00.362Z",
+        "method": "GET",
+        "path": "/api/auth/get-session",
+        "urlSha256": "58d421e99f5165c82447054d7afc0bdcb1c2394052794018a8323004d11cebf8",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": null,
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": null,
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "application/json",
+          "contentEncoding": null,
+          "location": null,
+          "authorityCookies": []
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:34:00.366Z",
+        "wireBytes": 734,
+        "wireSha256": "32c37327b24d15526dfa7fc763ad02361e9d277e234faf083caef5f2cc30b6bf",
+        "decodedBytes": 734,
+        "decodedSha256": "32c37327b24d15526dfa7fc763ad02361e9d277e234faf083caef5f2cc30b6bf",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": true
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": true
+        },
+        "hasAuthorityFields": true,
+        "downstreamFinishedAt": "2026-11-10T11:34:00.367Z",
+        "downstreamClosedAt": "2026-11-10T11:34:00.367Z"
+      },
+      "evidence": {
+        "qualified": true,
+        "issues": [],
+        "source": "playwright_body_and_independent_original_response",
+        "primaryBodyReadFailed": false,
+        "browserBodyRetrieved": true,
+        "browserResponseFinished": true,
+        "bytes": 734,
+        "sha256": "32c37327b24d15526dfa7fc763ad02361e9d277e234faf083caef5f2cc30b6bf",
+        "containsActorCanary": true,
+        "currentSessionSubject": true
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:34:00.421Z"
+    },
+    {
+      "sequence": 18,
+      "label": "fr-restored",
+      "at": "2026-11-10T11:34:00.671Z",
+      "path": "/fr/dashboard/profile",
+      "method": "POST",
+      "status": 200,
+      "resourceType": "fetch",
+      "navigation": false,
+      "redirectedFrom": null,
+      "redirectedToAtResponse": null,
+      "requestHeaders": {
+        "accept": "text/x-component",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "responseHeaders": {
+        "content-type": "text/x-component",
+        "content-encoding": "gzip",
+        "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+        "x-p04-r06-response-id": "85c34314-577e-4706-a33c-180c5b55a45b"
+      },
+      "captureId": "85c34314-577e-4706-a33c-180c5b55a45b",
+      "prefetch": false,
+      "transportError": "Original browser response completion exceeded its bound",
+      "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "independentCapture": {
+        "captureId": "85c34314-577e-4706-a33c-180c5b55a45b",
+        "at": "2026-11-10T11:34:00.616Z",
+        "method": "POST",
+        "path": "/fr/dashboard/profile",
+        "urlSha256": "8375835be632a564b74c6e751653f7f725b15776efad6cc916730555bbe86b40",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": "https://localhost:3296",
+          "secFetchSite": "same-origin",
+          "secFetchMode": "cors",
+          "secFetchDest": "empty",
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": "text/plain;charset=UTF-8",
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "text/x-component",
+          "contentEncoding": "gzip",
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "428e559574487fd76ef9c892169f012c655df9404f8b1b455ef1b31901ec5d03",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:34:01.018Z",
+        "wireBytes": 115574,
+        "wireSha256": "99d6c549391f4150dd0d0b41c3cee292ac3841a5b62ae6c59f4f4efa41862a72",
+        "decodedBytes": 425756,
+        "decodedSha256": "b0f7fa46e1e1181e1790f5fccc9dbc0e3ed80d88cec18953645c0d192321a7f0",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": true
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:34:01.052Z",
+        "downstreamClosedAt": "2026-11-10T11:34:01.052Z"
+      },
+      "evidence": {
+        "qualified": false,
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ],
+        "source": "independent_original_response_with_retained_playwright_error",
+        "primaryBodyReadFailed": true,
+        "browserBodyRetrieved": false,
+        "browserResponseFinished": false,
+        "bytes": 425756,
+        "sha256": "b0f7fa46e1e1181e1790f5fccc9dbc0e3ed80d88cec18953645c0d192321a7f0",
+        "containsActorCanary": true,
+        "currentSessionSubject": false
+      },
+      "redirectedToAfterCompletion": null,
+      "finishedAt": "2026-11-10T11:34:20.682Z"
+    }
+  ],
+  "signIns": [
+    {
+      "alias": "browser_en",
+      "phase": "authorized",
+      "at": "2026-11-10T11:32:17.762Z",
+      "receipt": null,
+      "acquiredSession": true
+    },
+    {
+      "alias": "browser_en",
+      "phase": "restored",
+      "at": "2026-11-10T11:32:53.641Z",
+      "receipt": null,
+      "acquiredSession": true
+    },
+    {
+      "alias": "browser_fr",
+      "phase": "authorized",
+      "at": "2026-11-10T11:33:19.597Z",
+      "receipt": null,
+      "acquiredSession": true
+    },
+    {
+      "alias": "browser_fr",
+      "phase": "restored",
+      "at": "2026-11-10T11:33:56.487Z",
+      "receipt": null,
+      "acquiredSession": true
+    }
+  ],
+  "transitions": [
+    {
+      "at": "2026-11-10T11:32:46.048Z",
+      "database": "stoquify_local_p04r06_20261109_full_r1",
+      "alias": "browser_en",
+      "kind": "revoke",
+      "actorId": "p04r06-browser_en",
+      "sessionIdHash": "d4f320fac0c34fbefa9d52058cd5b612011c0df6887cc72bf86cd95254e7ca52",
+      "tokenHash": "528df211dd400f9c4979633e4df86c5e5bcc8cedeba945aee11ed4685cb046d7",
+      "affected": 1,
+      "scope": "Exact acquired session only; same-actor siblings retained",
+      "evidence": "session-revoke-1794310366048-a7df54a4-6869-404d-bfe1-b3ff35a2d242.json"
+    },
+    {
+      "at": "2026-11-10T11:33:49.066Z",
+      "database": "stoquify_local_p04r06_20261109_full_r1",
+      "alias": "browser_fr",
+      "kind": "revoke",
+      "actorId": "p04r06-browser_fr",
+      "sessionIdHash": "8135de91112a3e32f1a1a2b60618e5b20a28586e0324ea75029e3a6eeadf3d6b",
+      "tokenHash": "9b61d1fd1c0b9e4ec307ec0a2531c25cdc98c67e601861e782dcff70c8a857fb",
+      "affected": 1,
+      "scope": "Exact acquired session only; same-actor siblings retained",
+      "evidence": "session-revoke-1794310429066-41897150-c723-4612-8589-fe518e1ed634.json"
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "context",
+      "closed": true
+    },
+    {
+      "kind": "context",
+      "closed": true
+    },
+    {
+      "kind": "context",
+      "closed": true
+    }
+  ],
+  "passed": false
+}

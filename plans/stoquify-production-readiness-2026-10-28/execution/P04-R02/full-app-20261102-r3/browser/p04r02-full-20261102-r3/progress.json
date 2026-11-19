@@ -1,0 +1,262 @@
+{
+  "startedAt": "2026-11-02T17:44:24.356Z",
+  "baseURL": "https://localhost:3192",
+  "evidenceClass": "real_full_application_https_browser_and_http_with_persisted_fixture_auth",
+  "harnessSha256": "1b805e678e50a8e4d232d08cceeef0fd9c914bbebc3055ba0a01a53851d6b798",
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+  "checks": [
+    {
+      "label": "real-ui-login-and-image-consumers-en",
+      "startedAt": "2026-11-02T17:44:25.001Z",
+      "passed": false,
+      "error": "locator.evaluate: EncodingError: The source image cannot be decoded."
+    },
+    {
+      "label": "real-ui-login-and-image-consumers-fr",
+      "startedAt": "2026-11-02T17:44:51.528Z",
+      "passed": false,
+      "error": "locator.evaluate: EncodingError: The source image cannot be decoded."
+    },
+    {
+      "label": "original-private-alias-denials-anonymous",
+      "startedAt": "2026-11-02T17:44:56.193Z",
+      "passed": false,
+      "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+    },
+    {
+      "label": "original-private-alias-denials-ui",
+      "startedAt": "2026-11-02T17:44:59.358Z",
+      "passed": false,
+      "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+    },
+    {
+      "label": "original-private-alias-denials-foreign",
+      "startedAt": "2026-11-02T17:45:01.842Z",
+      "passed": false,
+      "error": "Sign-in failed for foreign\n\n429 !== 200\n"
+    },
+    {
+      "label": "original-private-alias-denials-revocation",
+      "startedAt": "2026-11-02T17:45:01.914Z",
+      "passed": false,
+      "error": "Sign-in failed for revocation\n\n429 !== 200\n"
+    },
+    {
+      "label": "original-private-alias-denials-expiry",
+      "startedAt": "2026-11-02T17:45:01.978Z",
+      "passed": false,
+      "error": "Sign-in failed for expiry\n\n429 !== 200\n"
+    },
+    {
+      "label": "original-private-alias-denials-permissionChange",
+      "startedAt": "2026-11-02T17:45:02.022Z",
+      "passed": false,
+      "error": "Sign-in failed for permissionChange\n\n429 !== 200\n"
+    },
+    {
+      "label": "original-private-alias-denials-moduleChange",
+      "startedAt": "2026-11-02T17:45:02.066Z",
+      "passed": false,
+      "error": "Sign-in failed for moduleChange\n\n429 !== 200\n"
+    },
+    {
+      "label": "original-private-alias-denials-permissionDenied",
+      "startedAt": "2026-11-02T17:45:02.111Z",
+      "passed": false,
+      "error": "Sign-in failed for permissionDenied\n\n429 !== 200\n"
+    },
+    {
+      "label": "original-private-alias-denials-moduleDenied",
+      "startedAt": "2026-11-02T17:45:02.161Z",
+      "passed": false,
+      "error": "Sign-in failed for moduleDenied\n\n429 !== 200\n"
+    },
+    {
+      "label": "anonymous-both-delivery-urls",
+      "startedAt": "2026-11-02T17:45:02.197Z",
+      "passed": false,
+      "error": "anonymous unexpected route denial status"
+    },
+    {
+      "label": "foreign-both-delivery-urls",
+      "startedAt": "2026-11-02T17:45:04.545Z",
+      "passed": false,
+      "error": "Sign-in failed for foreign\n\n429 !== 200\n"
+    },
+    {
+      "label": "permissionDenied-both-delivery-urls",
+      "startedAt": "2026-11-02T17:45:04.582Z",
+      "passed": false,
+      "error": "Sign-in failed for permissionDenied\n\n429 !== 200\n"
+    },
+    {
+      "label": "moduleDenied-both-delivery-urls",
+      "startedAt": "2026-11-02T17:45:04.630Z",
+      "passed": false,
+      "error": "Sign-in failed for moduleDenied\n\n429 !== 200\n"
+    },
+    {
+      "label": "revocation-original-signed-cookie-replay",
+      "startedAt": "2026-11-02T17:45:04.663Z",
+      "passed": false,
+      "error": "Sign-in failed for revocation\n\n429 !== 200\n"
+    },
+    {
+      "label": "expiry-original-signed-cookie-replay",
+      "startedAt": "2026-11-02T17:45:04.712Z",
+      "passed": false,
+      "error": "Sign-in failed for expiry\n\n429 !== 200\n"
+    },
+    {
+      "label": "permissionChange-original-signed-cookie-replay",
+      "startedAt": "2026-11-02T17:45:04.750Z",
+      "passed": false,
+      "error": "Sign-in failed for permissionChange\n\n429 !== 200\n"
+    },
+    {
+      "label": "moduleChange-original-signed-cookie-replay",
+      "startedAt": "2026-11-02T17:45:04.786Z",
+      "passed": false,
+      "error": "Sign-in failed for moduleChange\n\n429 !== 200\n"
+    },
+    {
+      "label": "authorized-get-head-and-private-optimizer-denial",
+      "startedAt": "2026-11-02T17:45:04.817Z",
+      "passed": false,
+      "error": "Sign-in failed for ui\n\n429 !== 200\n"
+    },
+    {
+      "label": "original-private-alias-probe-coverage",
+      "startedAt": "2026-11-02T17:45:04.847Z",
+      "passed": false,
+      "error": "Original-alias probe coverage is incomplete\n\n0 !== 270\n"
+    },
+    {
+      "label": "browser-cache-and-runtime-errors",
+      "startedAt": "2026-11-02T17:45:04.849Z",
+      "passed": true,
+      "evidence": {
+        "privateImageResponses": 2,
+        "defaultCacheKept": true,
+        "pageErrors": 0
+      }
+    }
+  ],
+  "requests": [
+    {
+      "label": "private-alias-anonymous",
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "aliasSource": "public/images/cabin-1.jpg",
+      "variant": "canonical",
+      "kind": "route",
+      "status": 502,
+      "contentType": "text/plain",
+      "expected": "original-alias-denial-only"
+    },
+    {
+      "label": "private-alias-ui",
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "aliasSource": "public/images/cabin-1.jpg",
+      "variant": "canonical",
+      "kind": "route",
+      "status": 502,
+      "contentType": "text/plain",
+      "expected": "original-alias-denial-only"
+    },
+    {
+      "label": "anonymous",
+      "method": "GET",
+      "path": "/uploads/p04-upload-a/sentinel.png",
+      "status": 500,
+      "byteLength": 21,
+      "bodySha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+      "contentType": null,
+      "cacheControl": "private, no-store",
+      "expected": "denied"
+    }
+  ],
+  "pageErrors": [],
+  "externalRequestsBlocked": [],
+  "cacheEvents": [
+    {
+      "path": "/uploads/p04-upload-a/sentinel.png",
+      "status": 500,
+      "fromDiskCache": false,
+      "fromPrefetchCache": false,
+      "cacheControl": "private, no-store"
+    },
+    {
+      "path": "/uploads/p04-upload-a/sentinel.png",
+      "status": 500,
+      "fromDiskCache": false,
+      "fromPrefetchCache": false,
+      "cacheControl": "private, no-store"
+    }
+  ],
+  "unexpectedBrowserRequests": [],
+  "browserCachePolicy": "Default browser HTTP cache retained; no context.route, request interception, cache-disable command or forced cache mode",
+  "cookiesRecorded": "Names and secure/httpOnly properties only; values remain in memory",
+  "privateAliasPolicySha256": "262d6ba68e9e1adf26a25a8b6b32bad71ab44f81bb6106555b4658629fd56a13",
+  "privateAliasProbeSha256": "350ce96d6bf8b009e48ba5d64b46a2dff3a500d8f3f5f20bbe6b604bd20745aa",
+  "privateAliasScope": {
+    "mappings": [
+      {
+        "source": "public/images/cabin-1.jpg",
+        "uploadSource": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+        "sha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225",
+        "destination": "runtime/.private/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg"
+      },
+      {
+        "source": "public/images/cabin-2.jpg",
+        "uploadSource": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+        "sha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519",
+        "destination": "runtime/.private/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg"
+      },
+      {
+        "source": "public/images/profile.jpg",
+        "uploadSource": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+        "sha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2",
+        "destination": "runtime/.private/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg"
+      },
+      {
+        "source": "public/images/p04-private-alias.png",
+        "uploadSource": "public/uploads/p04-upload-a/sentinel.png",
+        "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+        "destination": "runtime/.private/uploads/p04-upload-a/sentinel.png"
+      }
+    ],
+    "positiveOriginalReadsPermitted": false,
+    "proxyMustValidateBeforeForwarding": true,
+    "syntheticAliasUrl": "/images/p04-private-alias.png",
+    "artifactScope": "Candidate-only fourth alias fixture; not a deployable production-policy artifact"
+  },
+  "fixtureAssetHashes": [
+    {
+      "organizationId": "p04-upload-a",
+      "fileName": "sentinel.png",
+      "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+      "byteLength": 70
+    },
+    {
+      "organizationId": "p04-upload-b",
+      "fileName": "sentinel.png",
+      "sha256": "13a70c1156151a2323af88801aeb7068712733dfb42ddccd2975486e2e2d09f8",
+      "byteLength": 70
+    },
+    {
+      "organizationId": "p04-upload-disabled",
+      "fileName": "sentinel.png",
+      "sha256": "d053a56cd4331f75c220f68ae11ac6d53dd2ee99591362a115e12b7d05cdb525",
+      "byteLength": 70
+    }
+  ],
+  "passed": false,
+  "denyProxy": {
+    "host": "127.0.0.1",
+    "port": 3194,
+    "externalForwarding": false
+  }
+}

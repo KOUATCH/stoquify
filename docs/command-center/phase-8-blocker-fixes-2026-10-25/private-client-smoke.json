@@ -1,0 +1,13 @@
+{
+  "productionAccess": false,
+  "writes": false,
+  "checks": [
+    "firmAdvisoryRevision all-field SELECT succeeds against replayed disposable schema",
+    "hrisPayrollHandoffPackage all-field SELECT succeeds against replayed disposable schema",
+    "hrisPayrollHandoffReceipt all-field SELECT succeeds against replayed disposable schema",
+    "commandCenterOccurrence all-field SELECT succeeds against replayed disposable schema",
+    "user all-field SELECT succeeds against replayed disposable schema",
+    "organization all-field SELECT succeeds against replayed disposable schema"
+  ],
+  "passed": true
+}

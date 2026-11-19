@@ -1,0 +1,437 @@
+[
+  {
+    "scenario": "LOCAL-CREDIT",
+    "organizationId": "org-full-pos-721c0322-9798-44e0-85d1-c4bf079570a3",
+    "before": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "balances": {
+        "TEST_STOCK": "100.00",
+        "TEST_GRNI": "0.00",
+        "TEST_AP": "0.00",
+        "TEST_CASH": "-200.00",
+        "TEST_CLAIM": "100.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpj45fc003ymaxgx0f1hoc5",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj47ju004xmaxg4lio97p0",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4al9006qmaxgvv5r1w6e",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4c5s007zmaxg6xgvhanw",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 1,
+      "transactions": 1,
+      "paid": "200.00",
+      "invoiceStatus": "PAID",
+      "outstanding": "0.00",
+      "supplierBalance": "0.00",
+      "credits": 0,
+      "returns": 1
+    },
+    "credited": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "balances": {
+        "TEST_AP": "100.00",
+        "TEST_CLAIM": "0.00",
+        "TEST_STOCK": "100.00",
+        "TEST_GRNI": "0.00",
+        "TEST_CASH": "-200.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpj4d36008wmaxgvr11c0ay",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj45fc003ymaxgx0f1hoc5",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj47ju004xmaxg4lio97p0",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4al9006qmaxgvv5r1w6e",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4c5s007zmaxg6xgvhanw",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 1,
+      "transactions": 1,
+      "paid": "200.00",
+      "invoiceStatus": "PAID",
+      "outstanding": "-100.00",
+      "supplierBalance": "-100.00",
+      "credits": 1,
+      "returns": 1
+    },
+    "restored": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "balances": {
+        "TEST_AP": "0.00",
+        "TEST_CLAIM": "100.00",
+        "TEST_STOCK": "100.00",
+        "TEST_GRNI": "0.00",
+        "TEST_CASH": "-200.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpj4d36008wmaxgvr11c0ay",
+          "status": "REVERSED"
+        },
+        {
+          "id": "cmvpj4dzm009lmaxg5md4a3ov",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj45fc003ymaxgx0f1hoc5",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj47ju004xmaxg4lio97p0",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4al9006qmaxgvv5r1w6e",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4c5s007zmaxg6xgvhanw",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 1,
+      "transactions": 1,
+      "paid": "200.00",
+      "invoiceStatus": "PAID",
+      "outstanding": "0.00",
+      "supplierBalance": "0.00",
+      "credits": 2,
+      "returns": 1
+    },
+    "creditId": "f70df560-3556-47ec-8566-b8074e259892",
+    "reversalId": "72bcd821-0725-41d2-92ea-625c35dcf776"
+  },
+  {
+    "scenario": "LOCAL-CORRECTION-RACE",
+    "organizationId": "org-full-pos-48a9b2f2-a19a-4d2a-b596-de2c75bac0b0",
+    "outcomes": [
+      "fulfilled",
+      "rejected"
+    ],
+    "after": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "balances": {
+        "TEST_AP": "100.00",
+        "TEST_CLAIM": "0.00",
+        "TEST_STOCK": "100.00",
+        "TEST_GRNI": "0.00",
+        "TEST_CASH": "-200.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpj4qu100j3maxgsbft5age",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4ifn00e5maxglfddxozo",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4lxe00f4maxgm77iubcf",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4p7y00gxmaxgv7s5165q",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4q4200i6maxgng0ikx14",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 1,
+      "transactions": 1,
+      "paid": "200.00",
+      "invoiceStatus": "PAID",
+      "outstanding": "-100.00",
+      "supplierBalance": "-100.00",
+      "credits": 1,
+      "returns": 1
+    }
+  },
+  {
+    "scenario": "LOCAL-CLOSED",
+    "organizationId": "org-full-pos-9c79caa0-d9e5-4ea5-bf5a-ffe1a1da9984",
+    "closedPeriodId": "cmvpj4rp600jumaxgizyzn9kq",
+    "reversalPeriodId": "cmvpj53bz00tcmaxgamyv0nvx",
+    "reopenEventId": "cmvpj54a100tlmaxg3e86gb1l",
+    "before": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "balances": {
+        "TEST_AP": "100.00",
+        "TEST_CLAIM": "0.00",
+        "TEST_STOCK": "100.00",
+        "TEST_GRNI": "0.00",
+        "TEST_CASH": "-200.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpj52p200slmaxgvb6z2u7w",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4v5500nnmaxg2nmz7a8b",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4xih00ommaxgbehrb0mz",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj50ec00qfmaxgpw4dj14n",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj51ji00romaxgo972z4mw",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 1,
+      "transactions": 1,
+      "paid": "200.00",
+      "invoiceStatus": "PAID",
+      "outstanding": "-100.00",
+      "supplierBalance": "-100.00",
+      "credits": 1,
+      "returns": 1
+    },
+    "restored": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "balances": {
+        "TEST_AP": "0.00",
+        "TEST_CLAIM": "100.00",
+        "TEST_STOCK": "100.00",
+        "TEST_GRNI": "0.00",
+        "TEST_CASH": "-200.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpj52p200slmaxgvb6z2u7w",
+          "status": "REVERSED"
+        },
+        {
+          "id": "cmvpj54oc00trmaxgusjuni6a",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4v5500nnmaxg2nmz7a8b",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4xih00ommaxgbehrb0mz",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj50ec00qfmaxgpw4dj14n",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj51ji00romaxgo972z4mw",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 1,
+      "transactions": 1,
+      "paid": "200.00",
+      "invoiceStatus": "PAID",
+      "outstanding": "0.00",
+      "supplierBalance": "0.00",
+      "credits": 2,
+      "returns": 1
+    },
+    "final": {
+      "stock": [
+        {
+          "quantity": "2.000",
+          "value": "200.00"
+        }
+      ],
+      "balances": {
+        "TEST_AP": "0.00",
+        "TEST_CLAIM": "0.00",
+        "TEST_STOCK": "200.00",
+        "TEST_GRNI": "0.00",
+        "TEST_CASH": "-200.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpj52p200slmaxgvb6z2u7w",
+          "status": "REVERSED"
+        },
+        {
+          "id": "cmvpj54oc00trmaxgusjuni6a",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4v5500nnmaxg2nmz7a8b",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj4xih00ommaxgbehrb0mz",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj50ec00qfmaxgpw4dj14n",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj51ji00romaxgo972z4mw",
+          "status": "REVERSED"
+        },
+        {
+          "id": "cmvpj559v00uimaxgc9h5r6tf",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 1,
+      "transactions": 1,
+      "paid": "200.00",
+      "invoiceStatus": "PAID",
+      "outstanding": "0.00",
+      "supplierBalance": "0.00",
+      "credits": 2,
+      "returns": 2
+    },
+    "contract": "Original posted journal metadata cannot change in a closed period. Existing controlled reopen is required; no period guard was relaxed."
+  },
+  {
+    "scenario": "LOCAL-CLOSED-NEW",
+    "organizationId": "org-full-pos-583374e6-3b68-439e-81ea-baadc515dcea",
+    "before": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "balances": {
+        "TEST_STOCK": "100.00",
+        "TEST_GRNI": "0.00",
+        "TEST_AP": "0.00",
+        "TEST_CASH": "-200.00",
+        "TEST_CLAIM": "100.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpj574u00zamaxgftuzprva",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj58eq0109maxgoa13z5i9",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj59uh0122maxgms5qj74a",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj5awi013bmaxgcncta4e7",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 1,
+      "transactions": 1,
+      "paid": "200.00",
+      "invoiceStatus": "PAID",
+      "outstanding": "0.00",
+      "supplierBalance": "0.00",
+      "credits": 0,
+      "returns": 1
+    },
+    "after": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "balances": {
+        "TEST_STOCK": "100.00",
+        "TEST_GRNI": "0.00",
+        "TEST_AP": "0.00",
+        "TEST_CASH": "-200.00",
+        "TEST_CLAIM": "100.00"
+      },
+      "journals": [
+        {
+          "id": "cmvpj574u00zamaxgftuzprva",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj58eq0109maxgoa13z5i9",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj59uh0122maxgms5qj74a",
+          "status": "POSTED"
+        },
+        {
+          "id": "cmvpj5awi013bmaxgcncta4e7",
+          "status": "POSTED"
+        }
+      ],
+      "supplierPayments": 1,
+      "transactions": 1,
+      "paid": "200.00",
+      "invoiceStatus": "PAID",
+      "outstanding": "0.00",
+      "supplierBalance": "0.00",
+      "credits": 0,
+      "returns": 1
+    }
+  }
+]

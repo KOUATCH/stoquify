@@ -1,0 +1,48 @@
+{
+  "status": "PASS_SCOPED_NATIVE_STEP_UP_ACTIONS",
+  "baselineReplay": false,
+  "sourceHashes": {
+    "lib/security/auth-session.ts": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c",
+    "services/security/step-up-auth.service.ts": "76b5d6b0c9015f2d12fcb4d6a74c479bf083eec5d2f22c54e9638d8ea0bf49a2",
+    "services/_shared/protect.ts": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+    "actions/security/step-up-auth.actions.ts": "515861a797fa76ee9ce571e9b503c27d8aec9c25af8d83ed50963681ee6601aa",
+    "actions/hris/employee.actions.ts": "ca64519515dcfb35b3f968c669f1d0230fd77ee572fa12a2f9ddb54169dbcc00",
+    "actions/hris/compensation.actions.ts": "3cb636db3bd9ce83f93aa1389a1ba0e34b76653ebe20d757d27b13028bdb2ba2"
+  },
+  "completedAt": "2026-10-26T13:53:29.841Z",
+  "steps": [
+    "anonymous-step-up-denied",
+    "login-alone-cannot-mutate-hr",
+    "invalid-and-oversized-password-denied",
+    "password-assurance-uses-server-session-and-tenant",
+    "five-failures-revoke-earlier-fresh-admission",
+    "expired-throttle-requires-new-password-proof",
+    "assurance-cannot-transfer-to-another-session",
+    "assurance-cannot-transfer-to-another-user",
+    "expired-future-and-wrong-tenant-assurance-denied",
+    "reusable-window-and-server-derived-hr-writes",
+    "fresh-auth-does-not-replace-permission",
+    "foreign-employee-read-and-write-denied",
+    "native-compensation-proposal-separation-and-contract-gate",
+    "payroll-handoff-admitted-with-permission-and-module",
+    "module-denial-blocks-employee-mutation",
+    "module-denial-blocks-compensation-mutation",
+    "module-denial-blocks-payroll-handoff",
+    "module-denial-blocks-selected-hr-reads",
+    "read-only-payroll-allows-reads-and-denies-writes",
+    "tenant-change-between-assurance-and-permission-reads-denied",
+    "company-change-invalidates-earlier-assurance",
+    "disabled-and-locked-account-cannot-step-up",
+    "step-up-audit-without-password-or-cookie-secrets",
+    "revoked-session-cannot-reverify-or-mutate",
+    "expired-session-cannot-reverify"
+  ],
+  "failures": [],
+  "cleanupComplete": true,
+  "limits": [
+    "Actual native auth and direct server-action invocation; no Next transport/browser claim",
+    "Guarded Prisma, request headers, server-only and cache revalidation adapters; explicit real-DB interleaving for tenant-race case",
+    "Synthetic database fixtures only; no deployment or provider claims",
+    "Compensation proposal and separation/missing-contract denial qualified; full approved-contract lifecycle remains development02 evidence"
+  ]
+}

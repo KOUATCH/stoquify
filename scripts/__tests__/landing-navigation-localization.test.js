@@ -188,8 +188,9 @@ describe("landing navigation and French public localization contract", () => {
     expect(main).toContain("<CinematicStory />")
     expect(main).toContain("<CinematicChapters />")
     expect(main).toContain("<CapabilityOverview />")
-    expect(chapters).toContain("<GettingStarted />")
-    expect(read("components/landing/landing-message-sections.tsx")).toContain('id="pricing"')
+    expect(chapters).toContain("<CinematicSetup />")
+    expect(chapters).toContain("<CinematicOffers />")
+    expect(read("components/landing/cinematic-offers.tsx")).toContain('id="pricing"')
   })
 
   it("provides four direct desktop links, complete mobile links, and scrollspy state", () => {

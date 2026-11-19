@@ -1,0 +1,110 @@
+{
+  "checkedAt": "2026-11-11T14:19:29.598Z",
+  "mode": "static",
+  "passed": true,
+  "classification": "Scoped no-emit TypeScript and lint; no full web build or deployment qualification",
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-production-static-20261111-e58509eeab",
+  "temporaryDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-production-static-20261111-e58509eeab\\temp",
+  "dependencies": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate",
+  "newCleanInstallClaimed": false,
+  "inputs": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\services\\communication\\accountant-client-invite-worker.service.ts",
+      "sha256": "5693c9285528a8f25e8d271f43b9627d62a43b57a1102e6716fdf5a8364e731e",
+      "bytes": 18824
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\services\\communication\\accountant-client-invite.provider.ts",
+      "sha256": "72808e37b96a0868625e394af67523322f3937aadf7a83530540fa18c222087a",
+      "bytes": 5082
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\referral-delivery-worker.ts",
+      "sha256": "b85441cc7126d030b315dfb5253ecbaefce678694195ed83434f303188e1e9e3",
+      "bytes": 5339
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\__tests__\\referral-delivery-worker.test.ts",
+      "sha256": "d95a102d73512c49c812a4c89c023e9f2d5b57df38959f624c8028fecadcb56e",
+      "bytes": 8029
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\server-only-node-shim.js",
+      "sha256": "0891eabe12b619467a1364ce6ec20bf3fee134498bd84a98652848168ff24cee",
+      "bytes": 256
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\package.json",
+      "sha256": "9519cb1792845b240c677a85e558eaec349ea835f0a196e13a0cb4501a42ca32",
+      "bytes": 34447
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "bytes": 759960
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\prisma\\schema.prisma",
+      "sha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+      "bytes": 362667
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\tsconfig.json",
+      "sha256": "d3579c5303333929f58ef96286529142b8e64137c59fb8a32b7c43598ac518c9",
+      "bytes": 6614
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\local-gates-network.cjs",
+      "sha256": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e",
+      "bytes": 835
+    }
+  ],
+  "unchangedInputs": true,
+  "executions": [
+    {
+      "label": "typecheck",
+      "began": "2026-11-11T14:18:12.435Z",
+      "ended": "2026-11-11T14:18:54.632Z",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\typescript\\bin\\tsc",
+        "--project",
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-production-static-20261111-e58509eeab\\tsconfig.json",
+        "--noEmit",
+        "--incremental",
+        "false"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "signal": null,
+      "privateOutput": {
+        "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-production-static-20261111-e58509eeab\\typecheck.private.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "label": "lint",
+      "began": "2026-11-11T14:18:54.633Z",
+      "ended": "2026-11-11T14:19:29.577Z",
+      "args": [
+        "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate\\node_modules\\eslint\\bin\\eslint.js",
+        "services/communication/accountant-client-invite-worker.service.ts",
+        "services/communication/accountant-client-invite.provider.ts",
+        "scripts/referral-delivery-worker.ts"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "signal": null,
+      "privateOutput": {
+        "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-production-static-20261111-e58509eeab\\lint.private.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "runner": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\qualify-preparation-static.cjs",
+    "sha256": "8691d46a7e3d29aff39afb78ce325e407d1ea5488d31bbbdc99f4898188cef03",
+    "bytes": 6016
+  }
+}

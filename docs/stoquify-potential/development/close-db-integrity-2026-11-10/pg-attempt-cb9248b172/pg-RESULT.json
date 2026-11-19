@@ -1,0 +1,46 @@
+{
+  "began": "2026-11-10T19:06:00.442Z",
+  "passed": false,
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-cb9248b172",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-cb9248b172",
+  "source": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-cb9248b172\\source",
+  "migrations": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-cb9248b172\\migration-source123",
+  "databases": {
+    "fresh": "stoquify_replay_close_monthly_20261110_cb9248b172",
+    "clean": "stoquify_replay_close_integrity_upgrade_20261110_cb9248b172",
+    "dirty": "stoquify_replay_close_integrity_corrupt_20261110_cb9248b172"
+  },
+  "runnerSha256": "37dc94db5e3c08a17ad9187bca15568eabced291928282abae5d73344f3495bf",
+  "checks": [
+    {
+      "name": "fresh123ReplayTwice",
+      "certification": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT"
+    },
+    {
+      "name": "structuralIntegrityAndMonthlyServices",
+      "passedTests": 20,
+      "integrityCases": 12,
+      "earnedMonthlyCases": 8,
+      "skipped": 0
+    },
+    {
+      "name": "populated122to123",
+      "exactFixtureAndRetainedBytesPreserved": true,
+      "existing122HistoryPreserved": true,
+      "deployments": 2,
+      "currentSchemaCertification": true
+    }
+  ],
+  "limitation": "Local PostgreSQL migration/scope qualification with synthetic DRAFT/authority/provider inputs and earned internal monthly regression. No production-size locking benchmark, provider authenticity, statutory, hosted recovery, delivery, browser or deployment claim.",
+  "catalogSha256": "968c1f6c7c45f26a8eb8068b551e67450142fccc119b84528e4f4424c64a2e66",
+  "privateClient": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-execution-clients-20261110-b96b309c4c\\clients\\current\\orm\\client",
+  "executionClientReceiptSha256": "f12b550df338bda9e32051a3b0635dd18f3a55909d3a2455be3f6fe4bc9bab55",
+  "failure": "Expected values to be strictly equal:\n\n'object' !== 'string'\n",
+  "privateFailure": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-cb9248b172\\failure.private.txt",
+    "sha256": "144fb3503c85cfd3e3256b6215bbd0547f5c0f76c0e1a4a5b9f5c227601fc2de",
+    "bytes": 792
+  },
+  "ownedClusterStopped": true,
+  "ended": "2026-11-10T19:09:38.096Z"
+}

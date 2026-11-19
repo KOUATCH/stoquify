@@ -1,4 +1,9 @@
 import "server-only"
+import { stableIdentityOrder, priorityExplanation } from "@/lib/dashboard/command-center-context"
+import { presentDailyAction, presentDailySignal } from "@/services/daily-habit/daily-habit-signal-presentation"
+import { presentManagerData } from "./manager-action-center-presentation"
+import { presentOwnerForecastMessage } from "@/services/owner-war-room/owner-signal-copy"
+import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
 
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { ForbiddenError } from "@/services/_shared/action-errors"
@@ -149,6 +154,8 @@ export async function getManagerActionCenterDataFromResolvedAccess(
     )
   }
 
+  // All source reads and generated signals share the same clock across awaits.
+  input = {...input, now: input.now ?? new Date()}
   const organizationId = access.organizationId
   const actorPermissions = input.accessContext.permissions
   const scope = {
@@ -200,6 +207,7 @@ export async function getManagerActionCenterDataFromResolvedAccess(
 
   const signals = buildBusinessSignalsFromSnapshots({
     organizationId,
+    now: input.now,
     snapshots: [
       tenantOperating,
       paymentTruth,
@@ -216,6 +224,7 @@ export async function getManagerActionCenterDataFromResolvedAccess(
   })
 
   return composeManagerActionCenterData({
+    locale: input.locale,
     organizationId,
     generatedAt: normalizeNow(input.now).toISOString(),
     snapshots: {
@@ -226,6 +235,7 @@ export async function getManagerActionCenterDataFromResolvedAccess(
     },
     actionQueue,
     assuranceIncidents: assuranceControlTower.incidents,
+    assuranceCoverage: assuranceControlTower.coverage,
     paymentReconciliationSignOff,
     clientMissingProofSource,
     assuranceHiddenByPermission: assuranceControlTower.hiddenByPermission,
@@ -293,11 +303,13 @@ export function composeManagerActionCenterData(
   const actionItems = input.actionQueue.actionItems
     .slice()
     .sort(sortActionItems)
+    .map(item => presentDailyAction(item, input.locale ?? "en"))
     .map((item) =>
       managerActionFromItem(
         item,
         signalModuleById.get(item.signalId) ?? "dashboard",
         now,
+        input.actionQueue.signals.find(signal => signal.id === item.signalId)?.expiresAt,
       ),
     )
     .concat(additionalActions)
@@ -309,7 +321,7 @@ export function composeManagerActionCenterData(
   })
   const runSheetGroups = buildRunSheetGroups(actionItems)
 
-  return {
+  return presentManagerData({
     organizationId: input.organizationId,
     generatedAt: input.generatedAt,
     periodStart: tenantOperating.periodStart,
@@ -383,7 +395,7 @@ export function composeManagerActionCenterData(
         moduleSlug: "inventory",
         requiredPermission: "inventory.read",
       }),
-      managerPayrollForecastKpi(tenantOperating),
+      managerPayrollForecastKpi(tenantOperating, input.locale ?? "en"),
       managerKpi({
         id: "manager-hidden-actions",
         title: "Hidden by permission",
@@ -404,13 +416,14 @@ export function composeManagerActionCenterData(
     ],
     insights: input.actionQueue.signals
       .slice(0, 8)
-      .map((signal) => createSignalInsight({ signal })),
+      .map((signal) => createSignalInsight({ signal: presentDailySignal(signal, input.locale ?? "en") })),
     actionItems,
     actionQueue: input.actionQueue,
     summary,
     clientMissingProofSource: input.clientMissingProofSource ?? null,
     assuranceIncidents: input.assuranceIncidents ?? [],
-  }
+    assuranceCoverage: input.assuranceCoverage,
+  }, input.locale ?? "en")
 }
 
 async function getSafePaymentReconciliationSignOffCommandState(
@@ -439,11 +452,19 @@ async function getSafeAssuranceControlTowerData(input: {
     return {
       incidents: data.incidents,
       hiddenByPermission: data.summary.hiddenByPermission,
+      coverage: {
+        state: "AVAILABLE" as const,
+        loaded: data.incidents.length,
+        limit: 25,
+        // The source limits rows before permission filtering; visible count alone cannot establish coverage.
+        possiblyTruncated: data.incidents.length + data.summary.hiddenByPermission >= 25,
+      },
     }
   } catch {
     return {
       incidents: [],
       hiddenByPermission: 0,
+      coverage: { state: "UNAVAILABLE" as const },
     }
   }
 }
@@ -471,7 +492,7 @@ function buildManagerCommandBrief(input: {
     organizationId: input.input.organizationId,
     title: "Manager daily run sheet",
     summary: buildManagerBriefSummary(input.summary),
-    conclusion: buildManagerBriefConclusion(input.summary),
+    conclusion: priorityExplanation(input.actionItems[0], "severity_deadline_score", input.input.locale),
     mode: "brief",
     generatedAt: input.input.generatedAt,
     periodStart: tenantOperating.periodStart,
@@ -613,10 +634,11 @@ function managerKpi(input: {
 
 function managerPayrollForecastKpi(
   snapshot: SnapshotResult<TenantOperatingMetrics>,
+  locale: "en" | "fr",
 ): BIKpiCard {
   const forecast = snapshot.metrics.payrollFinanceForecast
   const blocked = !forecast.authoritative || forecast.blockerCodes.length > 0
-  const blockers = payrollForecastBlockers(snapshot)
+  const blockers = payrollForecastBlockers(snapshot).map(blocker => presentSnapshotBlocker(blocker, locale))
   const route = payrollForecastRouteFor(forecast.blockerCodes)
   const nextAction = blockers.find((blocker) => blocker.nextAction)?.nextAction
 
@@ -624,8 +646,9 @@ function managerPayrollForecastKpi(
     id: "manager-payroll-forecast-proof",
     title: "Payroll forecast proof",
     detail: blocked
-      ? `${forecast.message}${nextAction ? ` ${nextAction}` : ""}`
-      : `Upcoming aggregate payroll obligations total ${forecast.totalUpcomingAmount}; person-level amounts stay inside payroll.`,
+      ? `${presentOwnerForecastMessage(forecast, locale)}${nextAction ? ` ${nextAction}` : ""}`
+      : locale === "fr" ? `Les engagements de paie à venir totalisent ${forecast.totalUpcomingAmount} ; les montants individuels restent dans la paie.`
+        : `Upcoming aggregate payroll obligations total ${forecast.totalUpcomingAmount}; person-level amounts stay inside payroll.`,
     value: forecast.totalUpcomingAmount,
     unit: "value",
     snapshot,
@@ -694,6 +717,7 @@ function managerActionFromItem(
   item: ActionItem,
   moduleSlug: CommercialModuleSlug,
   now: Date,
+  evidenceExpiry?: string,
 ): ManagerActionCenterAction {
   return {
     origin: "SIGNAL",
@@ -709,8 +733,9 @@ function managerActionFromItem(
     severity: item.severity,
     severityScore: item.severityScore,
     assignedRole: item.assignedRole,
-    dueAt: item.dueAt,
-    dueState: dueState(item.dueAt, now),
+    dueAt: evidenceExpiry ?? "",
+    dateKind: "evidence_expiry",
+    dueState: "scheduled",
     evidenceGrade: item.evidenceGrade,
     trustState: evidenceGradeToBITrustState(item.evidenceGrade),
     state: actionState(item),
@@ -742,7 +767,8 @@ function managerActionFromAssuranceIncident(
     severityScore: assuranceSeverityScore(incident.severity),
     assignedRole: ownerRoleToSignalRole(incident.ownerRole),
     dueAt,
-    dueState: dueState(dueAt, now),
+    dateKind: incident.dueAt ? "deadline" : "detected",
+    dueState: incident.dueAt ? dueState(dueAt, now) : "scheduled",
     evidenceGrade: incident.evidenceGrade,
     trustState: evidenceGradeToBITrustState(incident.evidenceGrade),
     state:
@@ -811,6 +837,7 @@ function managerActionFromClientMissingProofRequest(
       severityScore: missingProofSeverityScore(request.finding.severity),
       assignedRole: "accountant",
       dueAt: request.response.submittedAt,
+      dateKind: "submitted",
       waitingOn: "ACCOUNTANT_REVIEW",
       dueState: "scheduled",
       evidenceGrade: "operational",
@@ -845,6 +872,7 @@ function managerActionFromClientMissingProofRequest(
     severityScore: missingProofSeverityScore(request.finding.severity),
     assignedRole: "manager",
     dueAt: request.dueAt,
+    dateKind: "deadline",
     dueState: dueState(request.dueAt, now),
     evidenceGrade: "operational",
     trustState: evidenceGradeToBITrustState("operational"),
@@ -894,7 +922,8 @@ function managerActionFromClientMissingProofBlocker(
     severityScore: 80,
     assignedRole: "accountant",
     dueAt: generatedAt,
-    dueState: dueState(generatedAt, now),
+    dateKind: "generated",
+    dueState: "scheduled",
     evidenceGrade: "blocked",
     trustState: evidenceGradeToBITrustState("blocked"),
     state: "blocked",
@@ -950,7 +979,8 @@ function managerActionFromUnavailableClientMissingProof(
     severityScore: 80,
     assignedRole: "manager",
     dueAt: now.toISOString(),
-    dueState: "due_today",
+    dateKind: "generated",
+    dueState: "scheduled",
     evidenceGrade: "blocked",
     trustState: evidenceGradeToBITrustState("blocked"),
     state: "blocked",
@@ -1051,7 +1081,8 @@ function managerActionsFromPaymentReconciliationSignOff(
     severityScore: 88,
     assignedRole: "finance" as const,
     dueAt: candidate.periodEnd,
-    dueState: dueState(candidate.periodEnd, now),
+    dateKind: "period_end" as const,
+    dueState: "scheduled" as const,
     evidenceGrade,
     trustState: evidenceGradeToBITrustState(evidenceGrade),
     state: isAvailable ? ("ready" as const) : ("permission_denied" as const),
@@ -1139,7 +1170,7 @@ function sortActionItems(left: ActionItem, right: ActionItem) {
   const dueDelta =
     new Date(left.dueAt).getTime() - new Date(right.dueAt).getTime()
   if (dueDelta !== 0) return dueDelta
-  return right.severityScore - left.severityScore
+  return right.severityScore - left.severityScore || stableIdentityOrder(left, right)
 }
 
 function sortManagerActions(
@@ -1150,9 +1181,15 @@ function sortManagerActions(
     SEVERITY_RANK[right.severity] - SEVERITY_RANK[left.severity]
   if (severityDelta !== 0) return severityDelta
   const dueDelta =
-    new Date(left.dueAt).getTime() - new Date(right.dueAt).getTime()
-  if (dueDelta !== 0) return dueDelta
-  return right.severityScore - left.severityScore
+    deadlineRank(left) - deadlineRank(right)
+  if (!Number.isNaN(dueDelta) && dueDelta !== 0) return dueDelta
+  return right.severityScore - left.severityScore || stableIdentityOrder(left, right)
+}
+
+function deadlineRank(item: ManagerActionCenterAction) {
+  if (item.dateKind && item.dateKind !== "deadline") return Infinity
+  const time = new Date(item.dueAt).getTime()
+  return Number.isFinite(time) ? time : Infinity
 }
 
 function actionState(item: ActionItem): BIKpiState {

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "status": "pending_independent_review",
+  "at": "2026-11-09T17:13:54.830Z",
+  "preserved": {
+    "path": "browser/run-auth-transport-v2.cjs",
+    "sha256": "a70e1d5df2fcb24593c250e80a2c0d26a9e77b9840253d7500dfc1f90dfcc255"
+  },
+  "successor": {
+    "path": "browser/run-auth-transport-v3.cjs",
+    "sha256": "0e89ac37db95b2cb82be132c553664db550e895d04737c79d18136a219fc5574",
+    "planned": 116,
+    "output": "browser/auth-transport-v3/result.json"
+  },
+  "changes": [
+    "Remove Playwright default --disable-back-forward-cache only, retaining default browser cache and existing proxy/egress constraints.",
+    "Passive native pageshow/pagehide events include persisted/isTrusted, path-only location, document/page identity and timestamp.",
+    "Capture current native navigation type and reason strings, plus navigation response no-store/cache-control; no URL query, response bytes, cookie or token logging.",
+    "Use commit for back/forward navigation and document readiness/render observations before reload.",
+    "Explicitly distinguish observed native BFCache restoration from ordinary history navigation or ineligibility/not-used.",
+    "Native pageshow records only a private synthetic item presence boolean before later redirect/revalidation as an observation. Event-start DOM alone does not fail a gate; settled post-navigation render and response checks determine failures. Browser version retained."
+  ],
+  "product_modified": false,
+  "additional_fixture_mutation": false,
+  "source_reference": {
+    "path": "node_modules/playwright-core/lib/coreBundle.js",
+    "sha256": "6be5c2ea035554e9b184b1dbc7aa5e7f1fb428dd1b5c202022858dcfae9bee27"
+  },
+  "review_note": "Independent reviewer required transient pageshow canaries be observations, not instantaneous DOM-erasure assertions. Applied before admission. Historical navigation Response bodies are retained as observations only because Playwright may expose the original authorized Response on a BFCache hit. The separate actual next-read request and settled DOM assertions remain decisive. Persisted classification is scoped to the actual navigation start timestamp.",
+  "syntax_check": {
+    "command": "node --check browser/run-auth-transport-v3.cjs",
+    "exit_code": 0,
+    "application_executed": false
+  }
+}

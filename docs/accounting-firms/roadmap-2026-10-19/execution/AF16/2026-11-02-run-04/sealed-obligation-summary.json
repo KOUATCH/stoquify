@@ -1,0 +1,45 @@
+{
+  "startedAt": "2026-11-02T16:25:35.197Z",
+  "artifactSha256": "bed03f4b4ce2d88345a6f04244e9667c6fdbca9cf8f47d037810aa6423d43835",
+  "base": "https://localhost:3186",
+  "database": "stoquify_local_af16_20261102_obligation_r4",
+  "passed": true,
+  "evidenceClass": "Synthetic AF11 authenticated browser on sealed full application; local TLS with test certificate; not hosted TLS, predecessor rollback or production approval",
+  "buildId": "R3-zVTu3LoKCHOp2WTaZA",
+  "preverifiedFiles": 5284,
+  "fixtureSha256": "e431d3bc4b5070b63a75ed697dcd92144ad5bb8f3d02c2a2eb5a274f26fcfc5c",
+  "migrations": 120,
+  "clonedFrom": "stoquify_local_af16_20261025_af11_r1",
+  "credentials": {
+    "source": ".codex-tmp\\af16-release-20261102\\scripts\\fixtures\\obligation-register-browser.cjs",
+    "sourceSha256": "46ee53390833b1b224a8ed5fdb73c9f773d680fc25ffeb325d45f58a7ecd22cb",
+    "bodySha256": "31e5249ce74f67c79a4114ad707d78f39d5802e91eaf04752a21fb3e8cd8bca3",
+    "actors": [
+      "preparer",
+      "reviewer",
+      "owner"
+    ]
+  },
+  "certificate": {
+    "fingerprint256": "7E:81:75:8F:85:75:5F:F3:28:D2:72:4F:4F:F3:96:0C:A4:B9:7E:6D:4A:A7:03:76:E6:B2:8A:88:F4:96:DE:30",
+    "subjectAltName": "DNS:localhost, IP Address:127.0.0.1",
+    "selfSigned": true,
+    "operatingSystemTrustChanged": false
+  },
+  "listener": {
+    "tls": "127.0.0.1:3186",
+    "upstream": "127.0.0.1:53002"
+  },
+  "adapter": {
+    "source": ".codex-tmp\\af16-release-20261102\\scripts\\verify-obligation-register-browser.cjs",
+    "sourceSha256": "79cfb35713b58fa1ce466e6dc29c4238fd8b862455c70c31766c57b5dfecac05",
+    "generated": "scripts\\af16-sealed-obligation-20261102-r4.generated.cjs",
+    "generatedSha256": "bce8e2af1ee1f6abbe11e064da3b8279e1ca29fc19bce55c6fce24ec9593294b",
+    "businessAssertionsPreserved": true
+  },
+  "browserExitCode": 0,
+  "artifactUnchangedAfterBrowser": true,
+  "proxyStopped": true,
+  "serverStopped": true,
+  "finishedAt": "2026-11-02T16:29:16.436Z"
+}

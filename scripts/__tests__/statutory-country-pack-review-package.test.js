@@ -95,4 +95,25 @@ test("signature verification requires a different checker and retained verificat
   expect(assessSignatureVerification({ evidenceDir, decisionFile }).blockers).toContain(
     "maker_checker_separation_invalid",
   );
+
+  delete decision.reviewer.fullName;
+  decision.signedApprovalArtifact.signatureVerification.verifiedBy = "Checker";
+  fs.writeFileSync(decisionFile, JSON.stringify(decision));
+  expect(assessSignatureVerification({ evidenceDir, decisionFile }).blockers).toContain(
+    "maker_checker_separation_invalid",
+  );
+});
+
+test.each(["empty", "scalar", "duplicate", "unnamed"])("fixture workbook rejects %s review entries", (kind) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "tie-outs-"));
+  const workbook = path.join(root, "workbook.json");
+  const fixtureFamilies = ["a", "b", "c", "d"].map((fixtureFamily) => ({
+    fixtureFamily, independentReview: { decision: "APPROVED", outputs: [{ amount: "1.00" }] },
+  }));
+  if (kind === "empty") fixtureFamilies[0].independentReview = {};
+  if (kind === "scalar") fixtureFamilies[0].independentReview = true;
+  if (kind === "duplicate") fixtureFamilies[0].fixtureFamily = "b";
+  if (kind === "unnamed") fixtureFamilies[0].fixtureFamily = "";
+  fs.writeFileSync(workbook, JSON.stringify({ fixtureFamilies }));
+  expect(fixtureTieOutHashes(workbook).status).toBe("BLOCKED_INCOMPLETE_INDEPENDENT_REVIEW");
 });

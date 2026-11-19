@@ -1,0 +1,169 @@
+{
+  "phases": [
+    {
+      "name": "reference",
+      "organizationId": "synth12_douala",
+      "status": "passed",
+      "result": {
+        "locations": 3,
+        "products": 12,
+        "customers": 12,
+        "suppliers": 6,
+        "personas": 11
+      }
+    },
+    {
+      "name": "accounting-setup",
+      "organizationId": "synth12_douala",
+      "status": "passed",
+      "result": {
+        "accounts": 26,
+        "installedPostingRules": [
+          "POS-SALE-COMPLETION",
+          "POS-PAYMENT-RECEIPT",
+          "POS-REFUND",
+          "POS-VOID",
+          "DELIVERY-GOODS-ISSUE",
+          "DELIVERY-SALES-INVOICE",
+          "AP-SUPPLIER-INVOICE",
+          "AP-SUPPLIER-PAYMENT",
+          "AP-PURCHASE-RETURN",
+          "AP-SUPPLIER-CREDIT-NOTE",
+          "AR-CUSTOMER-SETTLEMENT",
+          "PAYROLL-RUN",
+          "PAYROLL-PAYMENT",
+          "PAYROLL-EMPLOYEE-RECEIVABLE",
+          "PAYROLL-EMPLOYEE-BALANCE-SETTLEMENT",
+          "INVENTORY-ADJUSTMENT"
+        ],
+        "pendingPostingRules": []
+      }
+    },
+    {
+      "name": "hris-drafts",
+      "organizationId": "synth12_douala",
+      "status": "passed",
+      "result": {
+        "employees": 12,
+        "contracts": 12,
+        "status": "Draft onboarding; activation and payroll readiness require controlled evidence workflows"
+      }
+    },
+    {
+      "name": "reference",
+      "organizationId": "synth12_yaounde",
+      "status": "passed",
+      "result": {
+        "locations": 3,
+        "products": 12,
+        "customers": 12,
+        "suppliers": 6,
+        "personas": 11
+      }
+    },
+    {
+      "name": "accounting-setup",
+      "organizationId": "synth12_yaounde",
+      "status": "passed",
+      "result": {
+        "accounts": 26,
+        "installedPostingRules": [
+          "POS-SALE-COMPLETION",
+          "POS-PAYMENT-RECEIPT",
+          "POS-REFUND",
+          "POS-VOID",
+          "DELIVERY-GOODS-ISSUE",
+          "DELIVERY-SALES-INVOICE",
+          "AP-SUPPLIER-INVOICE",
+          "AP-SUPPLIER-PAYMENT",
+          "AP-PURCHASE-RETURN",
+          "AP-SUPPLIER-CREDIT-NOTE",
+          "AR-CUSTOMER-SETTLEMENT",
+          "PAYROLL-RUN",
+          "PAYROLL-PAYMENT",
+          "PAYROLL-EMPLOYEE-RECEIVABLE",
+          "PAYROLL-EMPLOYEE-BALANCE-SETTLEMENT",
+          "INVENTORY-ADJUSTMENT"
+        ],
+        "pendingPostingRules": []
+      }
+    },
+    {
+      "name": "hris-drafts",
+      "organizationId": "synth12_yaounde",
+      "status": "passed",
+      "result": {
+        "employees": 12,
+        "contracts": 12,
+        "status": "Draft onboarding; activation and payroll readiness require controlled evidence workflows"
+      }
+    },
+    {
+      "name": "reference",
+      "organizationId": "synth12_bafoussam",
+      "status": "passed",
+      "result": {
+        "locations": 3,
+        "products": 12,
+        "customers": 12,
+        "suppliers": 6,
+        "personas": 11
+      }
+    },
+    {
+      "name": "accounting-setup",
+      "organizationId": "synth12_bafoussam",
+      "status": "passed",
+      "result": {
+        "accounts": 26,
+        "installedPostingRules": [
+          "POS-SALE-COMPLETION",
+          "POS-PAYMENT-RECEIPT",
+          "POS-REFUND",
+          "POS-VOID",
+          "DELIVERY-GOODS-ISSUE",
+          "DELIVERY-SALES-INVOICE",
+          "AP-SUPPLIER-INVOICE",
+          "AP-SUPPLIER-PAYMENT",
+          "AP-PURCHASE-RETURN",
+          "AP-SUPPLIER-CREDIT-NOTE",
+          "AR-CUSTOMER-SETTLEMENT",
+          "PAYROLL-RUN",
+          "PAYROLL-PAYMENT",
+          "PAYROLL-EMPLOYEE-RECEIVABLE",
+          "PAYROLL-EMPLOYEE-BALANCE-SETTLEMENT",
+          "INVENTORY-ADJUSTMENT"
+        ],
+        "pendingPostingRules": []
+      }
+    },
+    {
+      "name": "hris-drafts",
+      "organizationId": "synth12_bafoussam",
+      "status": "passed",
+      "result": {
+        "employees": 12,
+        "contracts": 12,
+        "status": "Draft onboarding; activation and payroll readiness require controlled evidence workflows"
+      }
+    }
+  ],
+  "issues": [
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "This invoice is no longer awaiting approval. Inspect its history."
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "This invoice is no longer awaiting approval. Inspect its history."
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "This invoice is no longer awaiting approval. Inspect its history."
+    }
+  ],
+  "scenarios": []
+}

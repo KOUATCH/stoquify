@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-10T10:31:33.743Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Evidence-only actual-runtime reconciliation recipe, not outcome acceptance",
+  "files": [
+    {
+      "path": "reconcile-runtime-attempt02.cjs",
+      "sha256": "922db2cce703c6084692bdff12a559807960e5431f868f8541cf150ba0ba6b4f"
+    },
+    {
+      "path": "inventory/test-case-map.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    },
+    {
+      "path": "candidate-context-attempt02.json",
+      "sha256": "5e698a5acf73e69c5584d5e310001770a9798faa77d96877a11fde2fa0c8b6c2"
+    }
+  ],
+  "syntaxExit": 0,
+  "sideEffects": "Read recorded JSON only; exclusively create verification-matrix-attempt02.json",
+  "reviewFindings": [
+    "Requires passing build and matching candidate/artifact identity across build, context and observed runtime.",
+    "Rejects duplicate and unknown observed case IDs; missing cases remain not_run.",
+    "Requires both top-level runtime and nested harness passed plus58 observed passes for matrix passed.",
+    "Preserves actual observed rows, nine inherited mappings and exact JSON pointers; never fabricates execution evidence.",
+    "No application, database, network or production effects."
+  ],
+  "conditions": [
+    "Execute only after actual runtime receipt exists.",
+    "Independently review raw HTTP/database/browser/cookie evidence before treating matrix counts as qualification.",
+    "Do not overwrite prior failed runtime or blocked evidence."
+  ],
+  "qualificationPassed": false
+}

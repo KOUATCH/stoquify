@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T12:42:19.569Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Frozen protected-session core source only; not whole runtime execution or observed outcome",
+  "files": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\runtime\\run-protected-core.cjs",
+      "sha256": "3bdc7a715fc4519c321c7391a205845c1ffed43a3f9d125014dd7c3fd9d38fa5"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\inventory\\test-case-map-original.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    }
+  ],
+  "predecessor": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261109-r1\\browser\\run-auth-r06-attempt02.cjs",
+    "sha256": "085d928a769795cb436325db2e81127d7e4661d23e2811a0ac19a29e355d4cd5",
+    "originalPlanCases": 58,
+    "originalPlanPreservedExactly": true
+  },
+  "admittedCases": 50,
+  "removedLogicalRequirements": [
+    "R06-C-login",
+    "R06-C-origin",
+    "R06-UI-en-authorized",
+    "R06-UI-en-invalidated-reload",
+    "R06-UI-en-restored",
+    "R06-UI-fr-authorized",
+    "R06-UI-fr-invalidated-reload",
+    "R06-UI-fr-restored"
+  ],
+  "findings": [
+    "All 50 retained assertions preserved; sign-out remains in this core. Changes are output/export, exact plan selection, deletion of eight separately replaced logical requirements and unused helpers, stronger organization canary exclusions.",
+    "Genuine old signed caches require issuer signature, payload/session/cookie lifetime and exact actual wire hashes; unchanged bytes and remaining validity before/after request asserted.",
+    "Native effects retain exact before/after snapshots, owned writes and explicitly allowed expired-session deletion/account-lock audit controls.",
+    "The expired cohort is sequential. Only the first retained-row request can claim that precondition; later missing-row replays cannot stand in for independently retained-expiry list-sessions/list-accounts/unlink probes."
+  ],
+  "conditionsBeforeExecution": [
+    "Bind exact bridge, controls, browser/proxy guard, fixtures, fresh artifact and current source in separate runtime recipe admission.",
+    "Provide separately reviewed credential/origin and six browser replacements; 50/50 alone cannot close 58 logical requirements.",
+    "Require three independently issued retained-expiry probes on this new artifact.",
+    "Direct API wrapper must supply all nonempty actor/email/organization/account canaries; child alone does not derive that list.",
+    "Final result must compare all 50 exact unique IDs to preserved plan and reconcile all 58 logical IDs explicitly."
+  ],
+  "qualificationPassed": false
+}

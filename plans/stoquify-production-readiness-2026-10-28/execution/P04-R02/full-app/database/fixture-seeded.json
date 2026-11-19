@@ -1,0 +1,123 @@
+{
+  "at": "2026-10-29T14:41:12.067Z",
+  "passed": true,
+  "database": "stoquify_local_p04r02_20261029_full_r1",
+  "organizations": [
+    "p04-upload-a",
+    "p04-upload-b",
+    "p04-upload-disabled"
+  ],
+  "actors": {
+    "ui": {
+      "id": "p04r02-user-ui",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-ui",
+      "permissions": [
+        "dashboard.read",
+        "inventory.items.read",
+        "inventory.items.update",
+        "inventory.brands.read",
+        "inventory.categories.read",
+        "inventory.units.read",
+        "taxes.read",
+        "locations.read"
+      ]
+    },
+    "foreign": {
+      "id": "p04r02-user-foreign",
+      "organizationId": "p04-upload-b",
+      "roleId": "p04r02-role-foreign",
+      "permissions": [
+        "dashboard.read",
+        "inventory.items.read"
+      ]
+    },
+    "revocation": {
+      "id": "p04r02-user-revocation",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-revocation",
+      "permissions": [
+        "dashboard.read",
+        "inventory.items.read",
+        "inventory.brands.read",
+        "inventory.categories.read",
+        "inventory.units.read",
+        "taxes.read",
+        "locations.read"
+      ]
+    },
+    "expiry": {
+      "id": "p04r02-user-expiry",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-expiry",
+      "permissions": [
+        "dashboard.read"
+      ]
+    },
+    "permissionChange": {
+      "id": "p04r02-user-permissionchange",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-permissionchange",
+      "permissions": [
+        "dashboard.read",
+        "inventory.items.read"
+      ]
+    },
+    "moduleChange": {
+      "id": "p04r02-user-modulechange",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-modulechange",
+      "permissions": [
+        "dashboard.read"
+      ]
+    },
+    "permissionDenied": {
+      "id": "p04r02-user-permissiondenied",
+      "organizationId": "p04-upload-a",
+      "roleId": "p04r02-role-permissiondenied",
+      "permissions": [
+        "inventory.items.read"
+      ]
+    },
+    "moduleDenied": {
+      "id": "p04r02-user-moduledenied",
+      "organizationId": "p04-upload-disabled",
+      "roleId": "p04r02-role-moduledenied",
+      "permissions": [
+        "dashboard.read",
+        "inventory.items.read"
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "p04r02-item-a",
+      "organizationId": "p04-upload-a",
+      "nameEn": "Qualification image item A",
+      "nameFr": "Article image de qualification A",
+      "imageUrl": "/uploads/p04-upload-a/sentinel.png",
+      "thumbnail": "/uploads/p04-upload-a/sentinel.png"
+    },
+    {
+      "id": "p04r02-item-b",
+      "organizationId": "p04-upload-b",
+      "nameEn": "Qualification image item B",
+      "nameFr": "Article image de qualification B",
+      "imageUrl": "/uploads/p04-upload-b/sentinel.png",
+      "thumbnail": "/uploads/p04-upload-b/sentinel.png"
+    },
+    {
+      "id": "p04r02-item-disabled",
+      "organizationId": "p04-upload-disabled",
+      "nameEn": "Qualification image item disabled",
+      "nameFr": "Article image de qualification désactivé",
+      "imageUrl": "/uploads/p04-upload-disabled/sentinel.png",
+      "thumbnail": "/uploads/p04-upload-disabled/sentinel.png"
+    }
+  ],
+  "passwordAlgorithm": "Argon2id(memoryCost=19456,timeCost=2,parallelism=1)",
+  "passwordSourceSha256": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+  "credentialAcquisition": "Actual POST /api/auth/sign-in/email; no preseeded sessions or synthetic cookies",
+  "privateFixturePath": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p04r02-fullapp-database-20261029-r1\\browser-fixture.private.json",
+  "sessionsInitially": 0
+}

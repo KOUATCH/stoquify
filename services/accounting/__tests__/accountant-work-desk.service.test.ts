@@ -155,8 +155,27 @@ it("projects task metadata without evidence bodies or employee identifiers", asy
   const result = await getAccountantWorkDesk(actor)
   expect(result.items[0]).toMatchObject({ urgency: "OVERDUE", owner: "ACCOUNTANT_REVIEW_TEAM", requestedByYou: true, nextAction: "REVIEW_RESPONSE" })
   expect(JSON.stringify(result)).not.toContain("private")
-  expect(access).toHaveBeenCalledTimes(2)
+  expect(access).toHaveBeenCalledTimes(3)
   expect(moduleAccess).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "client", moduleSlug: "close_assurance", mode: "enforce" }))
+})
+it("removes earlier client metadata and coverage counts after revocation during later fan-out", async () => {
+  mockGrant.mockResolvedValue([grant, { id: "g2", organizationId: "client-two", organization: { name: "Client Two" } }])
+  let laterClientRead = false
+  queue.mockImplementation(async ({ clientOrganizationId }) => {
+    if (clientOrganizationId === "client-two") laterClientRead = true
+    return { generatedAt: "2026-09-27T10:00:00Z", summary: { invalidEvidence: 1, truncated: false }, items: [item] }
+  })
+  access.mockImplementation(async ({ clientOrganizationId }) => {
+    if (clientOrganizationId === "client" && laterClientRead) throw new ForbiddenError("Managed engagement suspended")
+    return { organizationId: clientOrganizationId }
+  })
+  const result = await getAccountantWorkDesk(actor)
+  expect(result.clientsRead).toBe(1)
+  expect(result.unavailableClients).toBe(1)
+  expect(result.incompleteClients).toBe(1)
+  expect(result.items.every(row => row.clientOrganizationId === "client-two")).toBe(true)
+  expect(result.clientContinuations.every(row => row.clientOrganizationId === "client-two")).toBe(true)
+  expect(JSON.stringify(result)).not.toContain("Client One")
 })
 it("rejects missing permissions before querying tenant records", async () => {
   await expect(getAccountantWorkDesk({ ...actor, actorPermissions: [] })).rejects.toMatchObject({ code: "FORBIDDEN" })

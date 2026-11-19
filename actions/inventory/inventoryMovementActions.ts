@@ -15,7 +15,7 @@ import { executeTransferCommand } from "./transferLifecycleActions"
 import { loadTransferDetail } from "@/services/inventory/inventory-transfer-lifecycle.service"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { CreateTransferPayload, TransactionType, TransferStatus } from "@/types/inventoryMovementTypes"
-import { revalidatePath, revalidateTag } from "next/cache"
+import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation"
 
 async function requireInventoryHistoryReadAccess(input: { organizationId: string; resource: string; surface: string }) {
   const ctx = await requirePermission("inventory.levels.read", {
@@ -63,9 +63,7 @@ export const createLocationTransfer = inventoryAction(
       lines: data.lines,
     })
 
-    revalidateTag("transfers")
-    revalidateTag(`transfers-${ctx.orgId}`)
-    revalidatePath("/dashboard/inventory/transfers")
+    revalidateAfterCommit({ tags: ["transfers", `transfers-${ctx.orgId}`], paths: [{ path: "/dashboard/inventory/transfers" }] })
 
     return {
       success: true,
@@ -206,6 +204,7 @@ export const getInventoryTransactionsMovement = inventoryAction(
 
 export const reserveInventoryMovement = inventoryAction(
   async (input: {
+    idempotencyKey: string
     itemId: string
     locationId: string
     quantity: number
@@ -239,6 +238,7 @@ export const reserveInventoryMovement = inventoryAction(
     if (!moduleDecision.allowed) throw new ForbiddenError("Inventory module is not available for this organization")
 
     const result = await postInventoryReservation({
+      idempotencyKey: input.idempotencyKey,
       itemId,
       locationId,
       organizationId: ctx.orgId,
@@ -248,8 +248,7 @@ export const reserveInventoryMovement = inventoryAction(
       expiresAt,
     })
 
-    revalidateTag("inventory")
-    revalidateTag(`inventory-${organizationId}`)
+    revalidateAfterCommit({ tags: ["inventory", `inventory-${organizationId}`] })
 
     return {
       success: true,
@@ -292,8 +291,9 @@ export async function reserveInventory(
   reason: string,
   organizationId: string,
   expiresAt?: Date,
+  idempotencyKey?: string,
 ) {
-  return reserveInventoryMovement({ itemId, locationId, quantity, reason, organizationId, expiresAt })
+  return reserveInventoryMovement({ itemId, locationId, quantity, reason, organizationId, expiresAt, idempotencyKey: idempotencyKey ?? "" })
 }
 
 export const getStockMovementSummary = inventoryAction(

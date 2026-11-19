@@ -1,0 +1,73 @@
+{
+  "table": "audit_mv_receiver_2eecc8be43ea",
+  "evidence": [
+    {
+      "scenario": "outbox crash baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-e0bf61eb-edae-409d-a570-49e6610c8f81",
+      "exitCode": 73,
+      "original": {
+        "id": "cmvrsxyhv0013maucjkne3x03",
+        "organizationId": "org-full-pos-e0bf61eb-edae-409d-a570-49e6610c8f81",
+        "businessEventId": "cmvrsxyhu000zmauc5t3m4ru7",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.933a851f-0377-4713-9718-ad9aabd808a8",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:f00f2ad8-ae76-4bdb-80ad-2caec23b4553:NOTIFICATION:audit.mixed.recovery.933a851f-0377-4713-9718-ad9aabd808a8",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "status": "LOCKED",
+        "attempts": 1,
+        "maxAttempts": 5,
+        "availableAt": "2026-10-28T07:37:42.882Z",
+        "lockedAt": "2026-10-28T07:37:50.598Z",
+        "lockedBy": "crashed-baseline",
+        "correlationId": "97d39e5f-3c54-409f-81e6-a7809821522e"
+      },
+      "resumed": [
+        {
+          "messageId": "cmvrsxyhv0013maucjkne3x03",
+          "status": "SENT",
+          "processedAt": "2026-10-28T07:43:50.598Z"
+        }
+      ],
+      "effects": [
+        {
+          "key": "SYSTEM:f00f2ad8-ae76-4bdb-80ad-2caec23b4553:NOTIFICATION:audit.mixed.recovery.933a851f-0377-4713-9718-ad9aabd808a8",
+          "delivery_id": "cmvrsxyhv0013maucjkne3x03",
+          "requests": 2
+        }
+      ],
+      "auditId": "cmvrsy9x50001maywaz27pi53",
+      "state": {
+        "id": "cmvrsxyhv0013maucjkne3x03",
+        "organizationId": "org-full-pos-e0bf61eb-edae-409d-a570-49e6610c8f81",
+        "businessEventId": "cmvrsxyhu000zmauc5t3m4ru7",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.933a851f-0377-4713-9718-ad9aabd808a8",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:f00f2ad8-ae76-4bdb-80ad-2caec23b4553:NOTIFICATION:audit.mixed.recovery.933a851f-0377-4713-9718-ad9aabd808a8",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "correlationId": "97d39e5f-3c54-409f-81e6-a7809821522e",
+        "status": "SENT",
+        "attempts": 2,
+        "maxAttempts": 5,
+        "availableAt": "2026-10-28T07:37:42.882Z",
+        "lockedAt": null,
+        "lockedBy": null,
+        "processedAt": "2026-10-28T07:43:50.598Z",
+        "failedAt": null,
+        "lastErrorCode": null,
+        "lastErrorMessage": null,
+        "metadata": null,
+        "createdAt": "2026-10-28T07:37:42.882Z",
+        "updatedAt": "2026-10-28T07:37:57.679Z"
+      }
+    }
+  ]
+}

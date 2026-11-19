@@ -1,0 +1,37 @@
+{
+  "productionAccess": false,
+  "liveProvidersEnabled": false,
+  "results": [
+    {
+      "name": "catalog",
+      "exitCode": 0
+    },
+    {
+      "name": "history",
+      "exitCode": 0
+    },
+    {
+      "name": "migration-risk",
+      "exitCode": 0
+    },
+    {
+      "name": "release-secrets",
+      "exitCode": 1
+    },
+    {
+      "name": "candidate-lint",
+      "exitCode": null,
+      "error": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    }
+  ],
+  "retries": [
+    {
+      "name": "candidate-lint",
+      "exitCode": 0,
+      "timeoutMs": 600000,
+      "files": 3117,
+      "errors": 0,
+      "warnings": 22
+    }
+  ]
+}

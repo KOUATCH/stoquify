@@ -4,7 +4,7 @@ import { AccountantAccessStatus, Prisma } from "@prisma/client"
 import { expandPermissions, hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { isUsableAccount } from "@/services/roles/role-custodian-policy"
 import { db } from "@/prisma/db"
-import { BusinessRuleError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { AuthRequiredError, BusinessRuleError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { resolveAccountantClientAccess } from "./accountant-access.service"
 import { getCloseEvidenceReplacementInTx } from "./close-evidence-replacement.service"
@@ -21,10 +21,11 @@ import {
   type AccountantWorkClientPage,
 } from "./accountant-work-desk.contracts"
 
-type WorkDeskActor = {
+export type WorkDeskActor = {
   homeOrganizationId: string
   actorId: string
   actorPermissions: readonly string[]
+  session?: { id: string; token: string }
 }
 
 // Called only inside the desk's before/after client authorization boundary.
@@ -85,6 +86,9 @@ function responseNotificationKey(requestId: string, correlationId: string) {
 }
 
 async function assertActor(actor: WorkDeskActor) {
+  if (actor.session && !await db.session.findFirst({ where: {
+    id: actor.session.id, token: actor.session.token, userId: actor.actorId, expiresAt: { gt: new Date() },
+  }, select: { id: true } })) throw new AuthRequiredError()
   if (!hasRbacPermission(actor.actorPermissions, "accounting.audit.read") ||
       !hasRbacPermission(actor.actorPermissions, "accounting.close.accountant.review")) {
     throw new ForbiddenError("Accountant review access is required.")
@@ -156,11 +160,13 @@ export async function getAccountantWorkDesk(
     items: [], clientContinuations: [],
   }
   // Sequential, bounded reads avoid a pool burst across many client transactions.
+  const clientCoverage = new Map<string, number>()
   for (const grant of page) {
     try {
       const client = await readClientWork(actor, grant.organizationId, grant.organization.name)
       result.clientsRead += 1
       result.incompleteClients += client.incompleteClients
+      clientCoverage.set(grant.organizationId, client.incompleteClients)
       result.items.push(...client.items)
       result.clientContinuations.push(...client.clientContinuations)
     } catch (error) {
@@ -172,8 +178,31 @@ export async function getAccountantWorkDesk(
   // A home-role/module revocation during the last client read also invalidates
   // metadata collected earlier in this aggregate response.
   await assertActor(actor)
+  // Recheck earlier clients after fan-out, not only the last client read.
+  for (const [id, incomplete] of clientCoverage) {
+    try { await assertAccountantWorkClient(actor, id) }
+    catch (error) {
+      if (!(error instanceof ForbiddenError)) throw error
+      result.items = result.items.filter(row => row.clientOrganizationId !== id)
+      result.clientContinuations = result.clientContinuations.filter(row => row.clientOrganizationId !== id)
+      result.clientsRead -= 1
+      result.incompleteClients -= incomplete
+      result.unavailableClients += 1
+    }
+  }
   sortWorkItems(result.items)
   return result
+}
+
+/** Handover preview reuses the evidence desk; management authority alone is insufficient. */
+export async function getAccountantHandoverSummary(actor: WorkDeskActor, clientOrganizationId: string) {
+  await assertAccountantWorkClient(actor, clientOrganizationId)
+  const client = await db.organization.findUniqueOrThrow({ where: { id: clientOrganizationId }, select: { name: true } })
+  const result = await readClientWork(actor, clientOrganizationId, client.name)
+  await assertAccountantWorkClient(actor, clientOrganizationId)
+  return { generatedAt: result.generatedAt, awaitingClient: result.items.filter(i => i.owner === "CLIENT_RECIPIENT").length,
+    awaitingReviewTeam: result.items.filter(i => i.owner === "ACCOUNTANT_REVIEW_TEAM").length,
+    partial: result.incompleteClients > 0 || result.clientContinuations.some(c => c.requests || c.reviews) }
 }
 
 async function readClientWork(actor: WorkDeskActor, clientOrganizationId: string, clientName: string, page?: AccountantWorkClientPage): Promise<AccountantWorkDesk> {

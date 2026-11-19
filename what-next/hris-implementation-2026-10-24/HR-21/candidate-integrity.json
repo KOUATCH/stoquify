@@ -1,0 +1,1833 @@
+{
+  "createdAt": "2026-10-25T10:38:49.711Z",
+  "baseline": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "mode": "HR_CORE_WITH_HANDOFF",
+  "dependencies": [
+    {
+      "id": "HR-08",
+      "status": "VERIFIED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-08/evidence.json",
+      "evidenceHash": "65b9e56ec11b24a59311d762328a782468a2c9af10cf39f91a7a09f872c75373",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-09",
+      "status": "VERIFIED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-09/evidence.json",
+      "evidenceHash": "a49843091219a83ef8f5eb1b79af6660ab604c5d1b8eb6f886c81d8dcabecd4b",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-10",
+      "status": "VERIFIED_SCOPED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-10/evidence.json",
+      "evidenceHash": "2be20f3b3d50dcb3bf8013c6e698148af4157ba3e39093e21038534538a8bd8e",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-11",
+      "status": "VERIFIED_SCOPED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-11/evidence.json",
+      "evidenceHash": "b68c45a0b5c597188588f318e02336090708afec1a347c8d43d809d4ab1bc628",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-12",
+      "status": "VERIFIED_SCOPED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-12/evidence.json",
+      "evidenceHash": "561be3819757e71f437886cf3ec96029a2a7643eb45585e107288431c9bc5689",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-13",
+      "status": "VERIFIED_SCOPED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-13/evidence.json",
+      "evidenceHash": "6522e1c388c57144e7339303232287c7a6a5072c21cedff0fab0478114b11963",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-14",
+      "status": "VERIFIED_SCOPED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-14/evidence.json",
+      "evidenceHash": "a5333b57c0273822f136104240ccbd276e3a9d8608749f76d3890c52831464d1",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-15",
+      "status": "VERIFIED_SCOPED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-15/evidence.json",
+      "evidenceHash": "5c5230b84ff9e3aa1f281134ffa4e5c5b842c1d2dd73a7be9fa474219887020c",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-16",
+      "status": "VERIFIED_SCOPED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-16/evidence.json",
+      "evidenceHash": "c9824f5c31d85a94002106f36cd973fc82c39500a6183b482034654f1b20fca1",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-17",
+      "status": "VERIFIED_SCOPED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-17/evidence.json",
+      "evidenceHash": "e79b52cfdf89d6d566bb9835cf7e0328b13ee18a4d07e332041774103379cfc6",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-18",
+      "status": "VERIFIED_SCOPED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-18/evidence.json",
+      "evidenceHash": "5d2bd1dd56ab8b1e99b166f5f22bafebbd52a022816c84e7096633a9b3f6ec4c",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    },
+    {
+      "id": "HR-19",
+      "status": "VERIFIED_SCOPED",
+      "evidence": "what-next/hris-implementation-2026-10-24/HR-19/evidence.json",
+      "evidenceHash": "0cac98dd39edfa372437f272ca3d8cdaaaa766f775e144fb19e39b21607dfe7f",
+      "scope": "Historical engineering evidence; not pilot acceptance"
+    }
+  ],
+  "sourceCount": 236,
+  "unchanged": 233,
+  "changed": [
+    {
+      "path": "services/hris/employee-document.contract.ts",
+      "lastSlice": "HR-15",
+      "recordedHash": "73592e4a5abf8c9b5a7e5f043f50d5efcdb03a8ecfd802ed547a15724aa023a5",
+      "currentHash": "80570a57b7800e0bba454c5646414cc5f7fb1573eb53177afb19e5d07c875420",
+      "status": "CHANGED_REVIEW_REQUIRED"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-employee.service.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "168389273675f5fa40ff71c801cdf8b94d204a6059ba5e66ac4c992eaf2b6094",
+      "currentHash": "562712b5d4808b5238780780723b23fef0daab9a7f0814e943a27f92c27e0020",
+      "status": "CHANGED_REVIEW_REQUIRED"
+    },
+    {
+      "path": "services/payroll/employee.service.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "4048fd7f46ebb5bfc7a35f7bb542657bec8b344d3b6a55f780804dae2cb34393",
+      "currentHash": "bf3c588b3c839dde3477c05a42daaa614038e3bc69f48f1e94e39ea10ae75d17",
+      "status": "CHANGED_REVIEW_REQUIRED"
+    }
+  ],
+  "sources": [
+    {
+      "path": "actions/hris/__tests__/approval-inbox.actions.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "64ac3cf1df91bbaa66919ae3706d39115bcae19dcd45ebe570916e2c5da0cbe8",
+      "currentHash": "64ac3cf1df91bbaa66919ae3706d39115bcae19dcd45ebe570916e2c5da0cbe8",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/__tests__/contract-authoring.actions.test.ts",
+      "lastSlice": "HR-10",
+      "recordedHash": "b44c65ff090e248cae681ed43d77f73ece54408bbe201410b8bc3c871d0705cf",
+      "currentHash": "b44c65ff090e248cae681ed43d77f73ece54408bbe201410b8bc3c871d0705cf",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/__tests__/daily-queue.actions.test.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "3aedd99b6d6813ac2b8ff6d4a9270cccfa7e479e882c4cb837ae4df9fbac0808",
+      "currentHash": "3aedd99b6d6813ac2b8ff6d4a9270cccfa7e479e882c4cb837ae4df9fbac0808",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/__tests__/employee-import.actions.test.ts",
+      "lastSlice": "HR-11",
+      "recordedHash": "8fb76239fd645e76899a7b7068ce5383d7d6172eb3df9d86a10249a2a94e3c1c",
+      "currentHash": "8fb76239fd645e76899a7b7068ce5383d7d6172eb3df9d86a10249a2a94e3c1c",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/__tests__/employee.actions.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "c6f5e07a40f6a4711953806daee0ab6b618ee2fbeb74592a2ccd5202acb8786c",
+      "currentHash": "c6f5e07a40f6a4711953806daee0ab6b618ee2fbeb74592a2ccd5202acb8786c",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/__tests__/leave-entitlement.actions.test.ts",
+      "lastSlice": "HR-12",
+      "recordedHash": "a2d6741175d040450fae1b83562f961cee004ba790e2c01ef65eeec40c6abb48",
+      "currentHash": "a2d6741175d040450fae1b83562f961cee004ba790e2c01ef65eeec40c6abb48",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/__tests__/lifecycle-task.actions.test.ts",
+      "lastSlice": "HR-17",
+      "recordedHash": "147a720d3798f522973ddf633cfafc19ce10e79242bb0693ef346c7704395b13",
+      "currentHash": "147a720d3798f522973ddf633cfafc19ce10e79242bb0693ef346c7704395b13",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/__tests__/own-time.actions.test.ts",
+      "lastSlice": "HR-16",
+      "recordedHash": "355362c5e1579a04b5ce9384502b5369e36cb647c024bc7f7f0c498e965a0c0d",
+      "currentHash": "355362c5e1579a04b5ce9384502b5369e36cb647c024bc7f7f0c498e965a0c0d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/__tests__/payroll-handoff.actions.test.ts",
+      "lastSlice": "HR-19",
+      "recordedHash": "5b7ae17830d6cc05ea32cf53fa4035344fb72b64fbb056e2f061db0db3a58d8d",
+      "currentHash": "5b7ae17830d6cc05ea32cf53fa4035344fb72b64fbb056e2f061db0db3a58d8d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/__tests__/roster.actions.test.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "2d92d9733db16bd175e2b43347ff1d2fd0428ecb5530ec6fbbf59f43038396e1",
+      "currentHash": "2d92d9733db16bd175e2b43347ff1d2fd0428ecb5530ec6fbbf59f43038396e1",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/__tests__/workspace-setup.actions.test.ts",
+      "lastSlice": "HR-09",
+      "recordedHash": "1d4c251cf6f1aad7e72ef630f8d67be566f845705b9cfd45aade8375c20dabb0",
+      "currentHash": "1d4c251cf6f1aad7e72ef630f8d67be566f845705b9cfd45aade8375c20dabb0",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/approval-inbox.actions.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "9fe21fd989d792606a74d52ae8b29cfe9a78f7552033cf72f191fd1ad069fb4d",
+      "currentHash": "9fe21fd989d792606a74d52ae8b29cfe9a78f7552033cf72f191fd1ad069fb4d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/contract-authoring.actions.ts",
+      "lastSlice": "HR-10",
+      "recordedHash": "fffa81c40aa97208eb4dee6ec02c6caa856b6832b71ea6fe157fecdf3a7e9de6",
+      "currentHash": "fffa81c40aa97208eb4dee6ec02c6caa856b6832b71ea6fe157fecdf3a7e9de6",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/daily-queue.actions.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "3852900288d3465e151d5670297c0cd8493150409ee41db4c7f1b72d0d913f04",
+      "currentHash": "3852900288d3465e151d5670297c0cd8493150409ee41db4c7f1b72d0d913f04",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/employee-import.actions.ts",
+      "lastSlice": "HR-11",
+      "recordedHash": "bd662c50621d0e42b08331143d2900e9d2c6502c165416692b9bb88bd165fdcb",
+      "currentHash": "bd662c50621d0e42b08331143d2900e9d2c6502c165416692b9bb88bd165fdcb",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/employee.actions.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "23b0124ee0a5ebc4b467f2567129ab9a62fa0960da09117fd117bb6f05e8bffa",
+      "currentHash": "23b0124ee0a5ebc4b467f2567129ab9a62fa0960da09117fd117bb6f05e8bffa",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/leave-entitlement.actions.ts",
+      "lastSlice": "HR-12",
+      "recordedHash": "1530367bcd1cb81f2640ace4f5ac19cab87f39d1599dd5e02578e2035981f238",
+      "currentHash": "1530367bcd1cb81f2640ace4f5ac19cab87f39d1599dd5e02578e2035981f238",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/lifecycle-task.actions.ts",
+      "lastSlice": "HR-17",
+      "recordedHash": "1a6e12ba5a14cc64200575be8ed12d316ad60fa19d4a251dcbc8a816ffdff289",
+      "currentHash": "1a6e12ba5a14cc64200575be8ed12d316ad60fa19d4a251dcbc8a816ffdff289",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/operational-time.actions.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "430cb9cc823209020be53144eb043cf5baf8dae7531e7b4be7071e5f072db8af",
+      "currentHash": "430cb9cc823209020be53144eb043cf5baf8dae7531e7b4be7071e5f072db8af",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/own-time.actions.ts",
+      "lastSlice": "HR-16",
+      "recordedHash": "13c0cb148bd12a9844ea67eaae392e92e3b72995f8f0fec20b531992c5601e85",
+      "currentHash": "13c0cb148bd12a9844ea67eaae392e92e3b72995f8f0fec20b531992c5601e85",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/payroll-handoff.actions.ts",
+      "lastSlice": "HR-19",
+      "recordedHash": "bf360e4a2585fc97403309a97241e48d312e4c0a03a156e3ce16ce1644edee03",
+      "currentHash": "bf360e4a2585fc97403309a97241e48d312e4c0a03a156e3ce16ce1644edee03",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/people-authoring-read.actions.ts",
+      "lastSlice": "HR-10",
+      "recordedHash": "a158bc396b467a094839ac41f77a2e8f8481dd62bce1d5fa4ed7b9894a8ce7b8",
+      "currentHash": "a158bc396b467a094839ac41f77a2e8f8481dd62bce1d5fa4ed7b9894a8ce7b8",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/personal-correction.actions.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "0565feb7201539e0ab6493db8717d0b02c4b8ae11d0091cba013b2ebc99ca95f",
+      "currentHash": "0565feb7201539e0ab6493db8717d0b02c4b8ae11d0091cba013b2ebc99ca95f",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/roster.actions.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "b2746d85792f7cbab331ed382bc0973f4e907abb5dd641b91d7ac64396ad8b97",
+      "currentHash": "b2746d85792f7cbab331ed382bc0973f4e907abb5dd641b91d7ac64396ad8b97",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/time-review.actions.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "3d72cefafb2dfca9a0d5f51f7183367fb429d013ee6b683eeb28353aa4900511",
+      "currentHash": "3d72cefafb2dfca9a0d5f51f7183367fb429d013ee6b683eeb28353aa4900511",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "actions/hris/workspace-setup.actions.ts",
+      "lastSlice": "HR-09",
+      "recordedHash": "7dc3938f8684d638ed2384fe31b8037d04f4a68936946775b6a144ad699f2d88",
+      "currentHash": "7dc3938f8684d638ed2384fe31b8037d04f4a68936946775b6a144ad699f2d88",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx",
+      "lastSlice": "HR-10",
+      "recordedHash": "fc2a10e2f6854a91f79218cd2b4abad4541028efb026d8525b99663d398de6ba",
+      "currentHash": "fc2a10e2f6854a91f79218cd2b4abad4541028efb026d8525b99663d398de6ba",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/corrections/page.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "3f05086239c2279968d81aa8818591db27ca5e7ed876fb492f650011fcdd952c",
+      "currentHash": "3f05086239c2279968d81aa8818591db27ca5e7ed876fb492f650011fcdd952c",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/documents/page.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "c64b5d4f8a9c14864de6280ff3dafe028b17e358d3a6d3f68ab94eec7c1c009f",
+      "currentHash": "c64b5d4f8a9c14864de6280ff3dafe028b17e358d3a6d3f68ab94eec7c1c009f",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/error.tsx",
+      "lastSlice": "HR-08",
+      "recordedHash": "7fcbadf1885610399579c4a783701493ad52c488e56dbe8189612d5dc8ffc4f2",
+      "currentHash": "7fcbadf1885610399579c4a783701493ad52c488e56dbe8189612d5dc8ffc4f2",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/handoff/page.tsx",
+      "lastSlice": "HR-19",
+      "recordedHash": "cd85ae3905f4fee4585ed2efa2a4647f8710bf5be5d1550f1d33375e8773325d",
+      "currentHash": "cd85ae3905f4fee4585ed2efa2a4647f8710bf5be5d1550f1d33375e8773325d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/import/page.tsx",
+      "lastSlice": "HR-11",
+      "recordedHash": "a62295efbbce75b02d697dd19bb12a1d28c40ec1d6550f41925bfc2322f6258e",
+      "currentHash": "a62295efbbce75b02d697dd19bb12a1d28c40ec1d6550f41925bfc2322f6258e",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/leave/page.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "15220e862da7d21b38fa83a104b71c54261c9831f25dbcc7c5a3cc84afc39bc0",
+      "currentHash": "15220e862da7d21b38fa83a104b71c54261c9831f25dbcc7c5a3cc84afc39bc0",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/loading.tsx",
+      "lastSlice": "HR-08",
+      "recordedHash": "8bf5bcf6db643a7e98c2b76df4f4c179c4d14ee89b42dda1cdcc46838453b763",
+      "currentHash": "8bf5bcf6db643a7e98c2b76df4f4c179c4d14ee89b42dda1cdcc46838453b763",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/manage/page.tsx",
+      "lastSlice": "HR-10",
+      "recordedHash": "35ce443dcca748cb3509c5bb6b52acba5a1e3245b5573008ed82053e50df9791",
+      "currentHash": "35ce443dcca748cb3509c5bb6b52acba5a1e3245b5573008ed82053e50df9791",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/me/corrections/page.tsx",
+      "lastSlice": "HR-16",
+      "recordedHash": "50595d25f4c1e2dd5ff25b890a6967ffe031210703763b7429e637dd1ff67a5a",
+      "currentHash": "50595d25f4c1e2dd5ff25b890a6967ffe031210703763b7429e637dd1ff67a5a",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/me/documents/page.tsx",
+      "lastSlice": "HR-15",
+      "recordedHash": "bb1c67847fec0fa1e135a39247cd9e003b713e3fdb30b96665559b4ddfddf7c5",
+      "currentHash": "bb1c67847fec0fa1e135a39247cd9e003b713e3fdb30b96665559b4ddfddf7c5",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/me/schedule/page.tsx",
+      "lastSlice": "HR-13",
+      "recordedHash": "d55e29eeb8155a788519e23553431d6c46cf268693ec3fc234a32c099ed59935",
+      "currentHash": "d55e29eeb8155a788519e23553431d6c46cf268693ec3fc234a32c099ed59935",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/page.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "4afa35ccbc35b2649a917e23fe29da701045e1a9037ffeb22c0705d7b3645cab",
+      "currentHash": "4afa35ccbc35b2649a917e23fe29da701045e1a9037ffeb22c0705d7b3645cab",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/roster/page.tsx",
+      "lastSlice": "HR-13",
+      "recordedHash": "bb2e18b6d61ec05a1e0d2372c2f225ae32159f7bda7c5bfca8ce930d5039c742",
+      "currentHash": "bb2e18b6d61ec05a1e0d2372c2f225ae32159f7bda7c5bfca8ce930d5039c742",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/setup/page.tsx",
+      "lastSlice": "HR-09",
+      "recordedHash": "063d030ae1459dd834b9e3884e2aac4a7feed1aa2cd76ac6d81c56c5f049269a",
+      "currentHash": "063d030ae1459dd834b9e3884e2aac4a7feed1aa2cd76ac6d81c56c5f049269a",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/tasks/page.tsx",
+      "lastSlice": "HR-17",
+      "recordedHash": "7a2cbf7bca32e9c446b7184278ab5a75b8a7dfbada26df72d2aee4986c98bb7d",
+      "currentHash": "7a2cbf7bca32e9c446b7184278ab5a75b8a7dfbada26df72d2aee4986c98bb7d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/work/page.tsx",
+      "lastSlice": "HR-19",
+      "recordedHash": "03a159548757e4ba386bc20d5b7aefedad9ead0f5fa72d98939de7bd9f193c03",
+      "currentHash": "03a159548757e4ba386bc20d5b7aefedad9ead0f5fa72d98939de7bd9f193c03",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/work/review/page.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "ed63a4233d90b681befc5da04b52c3b93895f5fb746b46b65d8cf4962c51ac97",
+      "currentHash": "ed63a4233d90b681befc5da04b52c3b93895f5fb746b46b65d8cf4962c51ac97",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/api/hris/documents/route.ts",
+      "lastSlice": "HR-16",
+      "recordedHash": "bf4653b29db02734433f38306b7bd22507f05af8c214064c78fd910ab6e36f94",
+      "currentHash": "bf4653b29db02734433f38306b7bd22507f05af8c214064c78fd910ab6e36f94",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "app/api/hris/my-documents/route.ts",
+      "lastSlice": "HR-16",
+      "recordedHash": "a56944138d793e0fe200139dca6a58a09d826bd28d4c9c5743be961bc3fc7dbc",
+      "currentHash": "a56944138d793e0fe200139dca6a58a09d826bd28d4c9c5743be961bc3fc7dbc",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/controlled-review.fixture.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "36e4406daf28bc2cf6ba02baaa4869a9efc654ed93dd8e0eb47721f5f6257923",
+      "currentHash": "36e4406daf28bc2cf6ba02baaa4869a9efc654ed93dd8e0eb47721f5f6257923",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisApprovalInbox.test.tsx",
+      "lastSlice": "HR-14",
+      "recordedHash": "c59efdf6a28c3d98ba4cd01c0291276eddb82dabb0230141d5fa64fd53bfca52",
+      "currentHash": "c59efdf6a28c3d98ba4cd01c0291276eddb82dabb0230141d5fa64fd53bfca52",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisControlledReview.test.tsx",
+      "lastSlice": "HR-14",
+      "recordedHash": "121eb5a3591f4a315380434336d4850e757f6d352fcfdce80f2058becb2a8721",
+      "currentHash": "121eb5a3591f4a315380434336d4850e757f6d352fcfdce80f2058becb2a8721",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisDailyQueue.test.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "b1ef326738cb59889a3c19b626d342ee62dea82cdc36ffa55f55a31852dfbf78",
+      "currentHash": "b1ef326738cb59889a3c19b626d342ee62dea82cdc36ffa55f55a31852dfbf78",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisDocumentWorkspace.test.tsx",
+      "lastSlice": "HR-15",
+      "recordedHash": "6ddeea055ba4a3892cf7fc93ab6cbbee9b5d3c58210a89c3a373a95f6cadc957",
+      "currentHash": "6ddeea055ba4a3892cf7fc93ab6cbbee9b5d3c58210a89c3a373a95f6cadc957",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisLifecycleTasks.test.tsx",
+      "lastSlice": "HR-17",
+      "recordedHash": "8a309b4c08ba1d418145329c2b47e23479756c349409acd2df1454c6d29e5405",
+      "currentHash": "8a309b4c08ba1d418145329c2b47e23479756c349409acd2df1454c6d29e5405",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisOperationalTimePanels.test.tsx",
+      "lastSlice": "HR-12",
+      "recordedHash": "35bcf13066ac2390b09d1ac75d26b6134a3c517a2a4d0b4d6c18fe346bcaf612",
+      "currentHash": "35bcf13066ac2390b09d1ac75d26b6134a3c517a2a4d0b4d6c18fe346bcaf612",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisOperationalTimeRequestPanel.test.tsx",
+      "lastSlice": "HR-16",
+      "recordedHash": "583613c576c3b20516cb4b23e7f704714c7e400e6621576f7628e6265f868890",
+      "currentHash": "583613c576c3b20516cb4b23e7f704714c7e400e6621576f7628e6265f868890",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisPayrollHandoff.test.tsx",
+      "lastSlice": "HR-19",
+      "recordedHash": "8ebf0de3d0760433508816cb92e6b2586ddf91ba874b726a9fae6036f2f64af5",
+      "currentHash": "8ebf0de3d0760433508816cb92e6b2586ddf91ba874b726a9fae6036f2f64af5",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisPeopleAuthoring.test.tsx",
+      "lastSlice": "HR-10",
+      "recordedHash": "f0c7b070b5a460d6128dbcd45e90c6a3240a97e3b623ba792c3024bed3f8977c",
+      "currentHash": "f0c7b070b5a460d6128dbcd45e90c6a3240a97e3b623ba792c3024bed3f8977c",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisPersonalCorrectionWorkspace.test.tsx",
+      "lastSlice": "HR-16",
+      "recordedHash": "bd8d7dd69d4d8f7c485d5ddb07072b0528d2fce8d1e94382c94feecfd81ab4fe",
+      "currentHash": "bd8d7dd69d4d8f7c485d5ddb07072b0528d2fce8d1e94382c94feecfd81ab4fe",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisPersonalCorrectionWorkspaceClient.test.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "3a597083018a896237d55cd2109d00afd985e6bee5652df38202057f40e7693a",
+      "currentHash": "3a597083018a896237d55cd2109d00afd985e6bee5652df38202057f40e7693a",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/__tests__/HrisRosterWorkspace.test.tsx",
+      "lastSlice": "HR-13",
+      "recordedHash": "12294ade8aae9df00e2275ff8e81b63d138ce546652754a6776bf482343a13e5",
+      "currentHash": "12294ade8aae9df00e2275ff8e81b63d138ce546652754a6776bf482343a13e5",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisApprovalInbox.tsx",
+      "lastSlice": "HR-14",
+      "recordedHash": "1bf7c25b71db9c8c078783f8b94a2c09cdf464f10e7bcf9c042860e720fa882d",
+      "currentHash": "1bf7c25b71db9c8c078783f8b94a2c09cdf464f10e7bcf9c042860e720fa882d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisControlledReview.tsx",
+      "lastSlice": "HR-14",
+      "recordedHash": "15d2e14a17a38c4ae98b4c5c3d5b2e1d712f9f9aaaa750a4e3409ec038d7e2a7",
+      "currentHash": "15d2e14a17a38c4ae98b4c5c3d5b2e1d712f9f9aaaa750a4e3409ec038d7e2a7",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisDailyQueue.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "d691471d913bbfc4aed053222e37413200841df53272fe617035860bddcd43e6",
+      "currentHash": "d691471d913bbfc4aed053222e37413200841df53272fe617035860bddcd43e6",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisDailyQueueClient.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "d8ed097a0e1b998e48a36489e2d08472d1ef441b0f750c14e66c379923d5e64b",
+      "currentHash": "d8ed097a0e1b998e48a36489e2d08472d1ef441b0f750c14e66c379923d5e64b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisDocumentRetentionControls.tsx",
+      "lastSlice": "HR-15",
+      "recordedHash": "b4a019bd5ce0187789704ae2dd95fc27045116b31124893ea55aadb6e273d262",
+      "currentHash": "b4a019bd5ce0187789704ae2dd95fc27045116b31124893ea55aadb6e273d262",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisDocumentWorkspace.tsx",
+      "lastSlice": "HR-15",
+      "recordedHash": "5bd42c9b85b40aac9c6fc8892c899c0a677bed9d56f2c95e314ddd08a8352443",
+      "currentHash": "5bd42c9b85b40aac9c6fc8892c899c0a677bed9d56f2c95e314ddd08a8352443",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisDocumentWorkspaceClient.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "c1cbc9f3d2e752b6c9e27fae8c9445110f91aa1ff71e66c87818aa753d33ca1b",
+      "currentHash": "c1cbc9f3d2e752b6c9e27fae8c9445110f91aa1ff71e66c87818aa753d33ca1b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisEmployeeDirectoryTable.tsx",
+      "lastSlice": "HR-08",
+      "recordedHash": "348c7ce157077dbcc37d0c5ed6bafe119b1eed940ba521d12e0238105aaffaec",
+      "currentHash": "348c7ce157077dbcc37d0c5ed6bafe119b1eed940ba521d12e0238105aaffaec",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisEmployeeImport.tsx",
+      "lastSlice": "HR-11",
+      "recordedHash": "1ab7614b1e5e0a80362fa9b3b3cb1fe85adf3e1f4aa3621bdda422663b5258c0",
+      "currentHash": "1ab7614b1e5e0a80362fa9b3b3cb1fe85adf3e1f4aa3621bdda422663b5258c0",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisEmployeeImportClient.tsx",
+      "lastSlice": "HR-11",
+      "recordedHash": "dcc61bfa480944a03852ea66d24fe368e117ccc045ddbd691926e48ccb4a2331",
+      "currentHash": "dcc61bfa480944a03852ea66d24fe368e117ccc045ddbd691926e48ccb4a2331",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisEmployeeSelfService.tsx",
+      "lastSlice": "HR-16",
+      "recordedHash": "b3a43bf46c99590eac6f04967bec3690788a355d43ae953d914ec8b1ee1cd217",
+      "currentHash": "b3a43bf46c99590eac6f04967bec3690788a355d43ae953d914ec8b1ee1cd217",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisLeaveConversion.tsx",
+      "lastSlice": "HR-12",
+      "recordedHash": "ceb7267112539015ae164efef567a597480719187df1222668df078d4098a8a5",
+      "currentHash": "ceb7267112539015ae164efef567a597480719187df1222668df078d4098a8a5",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisLeaveManagement.tsx",
+      "lastSlice": "HR-12",
+      "recordedHash": "347083590cf3ca45b164d0a8166f0b38f9283a2225628b0ae45b6910e951b071",
+      "currentHash": "347083590cf3ca45b164d0a8166f0b38f9283a2225628b0ae45b6910e951b071",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisLeaveManagementClient.tsx",
+      "lastSlice": "HR-12",
+      "recordedHash": "d11582d16a841c3740bb93b7c56250d98099a9961bed2d26b72dcc0be3e002bc",
+      "currentHash": "d11582d16a841c3740bb93b7c56250d98099a9961bed2d26b72dcc0be3e002bc",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisLifecycleTasks.tsx",
+      "lastSlice": "HR-17",
+      "recordedHash": "ae7ab848ad4915f9af9f0fa9855d9ba47bfe3f12c48695d2e0ca101fd26d1181",
+      "currentHash": "ae7ab848ad4915f9af9f0fa9855d9ba47bfe3f12c48695d2e0ca101fd26d1181",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisLifecycleTasksClient.tsx",
+      "lastSlice": "HR-17",
+      "recordedHash": "c082edb53ca3c3001310312eb37155315f6d470122e3356756b08da211cfa92f",
+      "currentHash": "c082edb53ca3c3001310312eb37155315f6d470122e3356756b08da211cfa92f",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisManagerSelfService.tsx",
+      "lastSlice": "HR-14",
+      "recordedHash": "9754133e93820b06bf9c4e6604ffab9f582e897e006d6af8bc6d49b14476f1e7",
+      "currentHash": "9754133e93820b06bf9c4e6604ffab9f582e897e006d6af8bc6d49b14476f1e7",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisOperationalTimeApprovalPanel.tsx",
+      "lastSlice": "HR-14",
+      "recordedHash": "c16475ce1a020eae8afe7d64bc82cf585430ccf48011269ab9173b107a2075ce",
+      "currentHash": "c16475ce1a020eae8afe7d64bc82cf585430ccf48011269ab9173b107a2075ce",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisOperationalTimeRequestPanel.tsx",
+      "lastSlice": "HR-16",
+      "recordedHash": "ebb0575abf126b4d9fa7a2d625ef8e2ae068ce7369cf7bd9bb0db0ed0d26c330",
+      "currentHash": "ebb0575abf126b4d9fa7a2d625ef8e2ae068ce7369cf7bd9bb0db0ed0d26c330",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisPayrollHandoff.tsx",
+      "lastSlice": "HR-19",
+      "recordedHash": "b765ae21ff86b1f14ef825c0ac9ec9aa74050f080d0ebe46bc2991036819fdc0",
+      "currentHash": "b765ae21ff86b1f14ef825c0ac9ec9aa74050f080d0ebe46bc2991036819fdc0",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisPayrollHandoffClient.tsx",
+      "lastSlice": "HR-19",
+      "recordedHash": "471cb6825fbbc08ae13faa53b72a14c8fbcb3aac2c52de81558e15cde5eda00d",
+      "currentHash": "471cb6825fbbc08ae13faa53b72a14c8fbcb3aac2c52de81558e15cde5eda00d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisPeopleAuthoring.tsx",
+      "lastSlice": "HR-16",
+      "recordedHash": "09d06e08fa537ba03405811c5cf491c8231a2eff04a3630687f18b479dc49383",
+      "currentHash": "09d06e08fa537ba03405811c5cf491c8231a2eff04a3630687f18b479dc49383",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisPeopleAuthoringClient.tsx",
+      "lastSlice": "HR-10",
+      "recordedHash": "6fb416cd0387de6b95ce55508af76782c757b92e11bef768ae333a92c4001666",
+      "currentHash": "6fb416cd0387de6b95ce55508af76782c757b92e11bef768ae333a92c4001666",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisPersonalCorrectionWorkspace.tsx",
+      "lastSlice": "HR-16",
+      "recordedHash": "a0736624427d01a918409f487cc8bf6026081bcaaff8b269f3031998099d1af5",
+      "currentHash": "a0736624427d01a918409f487cc8bf6026081bcaaff8b269f3031998099d1af5",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisPersonalCorrectionWorkspaceClient.tsx",
+      "lastSlice": "HR-18",
+      "recordedHash": "456d2df8642ca3ba4f45b356bd86bae3f38d3a4cb0b2b83debde5bda6e2e2256",
+      "currentHash": "456d2df8642ca3ba4f45b356bd86bae3f38d3a4cb0b2b83debde5bda6e2e2256",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisRosterWorkspace.tsx",
+      "lastSlice": "HR-14",
+      "recordedHash": "0a79a3f526bd1c600fb25a3d4009089ac889c3c76b7b3897d368b01d6835568a",
+      "currentHash": "0a79a3f526bd1c600fb25a3d4009089ac889c3c76b7b3897d368b01d6835568a",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisRosterWorkspaceClient.tsx",
+      "lastSlice": "HR-13",
+      "recordedHash": "5be535e8c9a48a863a1f2aabe4f04ebc9da3cb8beb34f19086af5e2bafd35e27",
+      "currentHash": "5be535e8c9a48a863a1f2aabe4f04ebc9da3cb8beb34f19086af5e2bafd35e27",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisWorkspaceSetup.tsx",
+      "lastSlice": "HR-14",
+      "recordedHash": "6c23799590f3bfa5e0a58094125b40d1eaae16b74e5275934c8efb2c2607110f",
+      "currentHash": "6c23799590f3bfa5e0a58094125b40d1eaae16b74e5275934c8efb2c2607110f",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/HrisWorkspaceSetupClient.tsx",
+      "lastSlice": "HR-09",
+      "recordedHash": "d5d9defb2262a51bcb284f961cbffbbf1ba37af92a956786d3a582df23f87315",
+      "currentHash": "d5d9defb2262a51bcb284f961cbffbbf1ba37af92a956786d3a582df23f87315",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "components/hris/payroll-handoff-copy.ts",
+      "lastSlice": "HR-19",
+      "recordedHash": "33b649651d486bee509ca3bfb0842fecbf90497542c28144668298bccedc5923",
+      "currentHash": "33b649651d486bee509ca3bfb0842fecbf90497542c28144668298bccedc5923",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "config/__tests__/sidebar.test.ts",
+      "lastSlice": "HR-17",
+      "recordedHash": "ed085ea0faced4c6295658202c32a1f557ad2241c8c329338ebb7eac27e6533a",
+      "currentHash": "ed085ea0faced4c6295658202c32a1f557ad2241c8c329338ebb7eac27e6533a",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "config/permissions.ts",
+      "lastSlice": "HR-19",
+      "recordedHash": "c0cfcaf8a9093a24225129dd043fd1fca049c33b269ac870c53183e7c12720b1",
+      "currentHash": "c0cfcaf8a9093a24225129dd043fd1fca049c33b269ac870c53183e7c12720b1",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "lastSlice": "HR-17",
+      "recordedHash": "f77fa01107e4a521f82151647487b0342eee6190862d6f6f785acb6f330582a6",
+      "currentHash": "f77fa01107e4a521f82151647487b0342eee6190862d6f6f785acb6f330582a6",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-authoring-postgres.config.cjs",
+      "lastSlice": "HR-10",
+      "recordedHash": "d29307e90737e838f92ad14d1d5726d4a61f55df6bd2476413d57605928ed6ff",
+      "currentHash": "d29307e90737e838f92ad14d1d5726d4a61f55df6bd2476413d57605928ed6ff",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-correctness-postgres.config.cjs",
+      "lastSlice": "HR-14",
+      "recordedHash": "e119003c2feb0ebe77e464ee34a2e0592b291bc2899416adf9434fe861b2d6fe",
+      "currentHash": "e119003c2feb0ebe77e464ee34a2e0592b291bc2899416adf9434fe861b2d6fe",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-daily-queue-postgres.config.cjs",
+      "lastSlice": "HR-18",
+      "recordedHash": "68c1522065067512b2544abe8af6d4dd80ba8fbbfa66d7569d4dd88e5ac88c28",
+      "currentHash": "68c1522065067512b2544abe8af6d4dd80ba8fbbfa66d7569d4dd88e5ac88c28",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-documents-postgres.config.cjs",
+      "lastSlice": "HR-15",
+      "recordedHash": "aeb6b81432d33da41b01482e8db3442db6f58aefd81ba15cdbd8623db3f854a2",
+      "currentHash": "aeb6b81432d33da41b01482e8db3442db6f58aefd81ba15cdbd8623db3f854a2",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-handoff-postgres.config.cjs",
+      "lastSlice": "HR-19",
+      "recordedHash": "508ce29464983d7a19f9fb3dce42d9778ab5933dc4bb18e4ac4adb3c2b552ded",
+      "currentHash": "508ce29464983d7a19f9fb3dce42d9778ab5933dc4bb18e4ac4adb3c2b552ded",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-import-postgres.config.cjs",
+      "lastSlice": "HR-11",
+      "recordedHash": "bfeef1c3efbb4ca3a438624a67a45c6f14fb7104d2cad2b865d8f0dcc456a84d",
+      "currentHash": "bfeef1c3efbb4ca3a438624a67a45c6f14fb7104d2cad2b865d8f0dcc456a84d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-leave-postgres.config.cjs",
+      "lastSlice": "HR-12",
+      "recordedHash": "52573a50ea9b017fd04e5b4c4f4b8e8e1bcac770aa5acceba89629549cdb0c2b",
+      "currentHash": "52573a50ea9b017fd04e5b4c4f4b8e8e1bcac770aa5acceba89629549cdb0c2b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-lifecycle-tasks-postgres.config.cjs",
+      "lastSlice": "HR-17",
+      "recordedHash": "305b3f385f4d80d138615273e32087c86b6d9068fed9c48402890fe9c3045cf8",
+      "currentHash": "305b3f385f4d80d138615273e32087c86b6d9068fed9c48402890fe9c3045cf8",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-personal-corrections-postgres.config.cjs",
+      "lastSlice": "HR-16",
+      "recordedHash": "35d9482dcc912ed1f3ab7bcc9578031706008053e08bf5af0b938ed017acf6fb",
+      "currentHash": "35d9482dcc912ed1f3ab7bcc9578031706008053e08bf5af0b938ed017acf6fb",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-review-postgres.config.cjs",
+      "lastSlice": "HR-14",
+      "recordedHash": "5ef3c7bf181e4729a5be314b00780c5c6480ac178be72ef1ce0600ca04811ece",
+      "currentHash": "5ef3c7bf181e4729a5be314b00780c5c6480ac178be72ef1ce0600ca04811ece",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-roster-postgres.config.cjs",
+      "lastSlice": "HR-13",
+      "recordedHash": "8900cd9de9b1929e8ccf1f38d3aa875665e4a88efcaa59d01a86f76b98b622bb",
+      "currentHash": "8900cd9de9b1929e8ccf1f38d3aa875665e4a88efcaa59d01a86f76b98b622bb",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.hris-setup-postgres.config.cjs",
+      "lastSlice": "HR-09",
+      "recordedHash": "38a8c6a82f849d301bcdcf1bdd66eb3550ebbab1808a5a78515e1144b47c1994",
+      "currentHash": "38a8c6a82f849d301bcdcf1bdd66eb3550ebbab1808a5a78515e1144b47c1994",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.payroll-trust-spine.config.cjs",
+      "lastSlice": "HR-14",
+      "recordedHash": "da43ee692dcd1295ccac8255daa9a408090a9335628f4ab7a74d9d0dea8acb1b",
+      "currentHash": "da43ee692dcd1295ccac8255daa9a408090a9335628f4ab7a74d9d0dea8acb1b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "jest.setup.ts",
+      "lastSlice": "HR-09",
+      "recordedHash": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+      "currentHash": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "lastSlice": "HR-19",
+      "recordedHash": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb",
+      "currentHash": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/compliance-hris-role-seed.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "07f6491471068a153491a5ae62fe77c03a8402f5bb64cc988c2355c0c17b42e5",
+      "currentHash": "07f6491471068a153491a5ae62fe77c03a8402f5bb64cc988c2355c0c17b42e5",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261024143000_hris_schedule_revisions/migration.sql",
+      "lastSlice": "HR-13",
+      "recordedHash": "dc3624299c02bb358cada3293d86ec73f6431c087c8c421d43f6beb9383d8714",
+      "currentHash": "dc3624299c02bb358cada3293d86ec73f6431c087c8c421d43f6beb9383d8714",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261024150000_hris_employee_documents/migration.sql",
+      "lastSlice": "HR-15",
+      "recordedHash": "54617a571a7a32e340cf5436b988a39dcc9260c2da8e4af65aec8506682854c9",
+      "currentHash": "54617a571a7a32e340cf5436b988a39dcc9260c2da8e4af65aec8506682854c9",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261024150100_hris_document_evidence_guard/migration.sql",
+      "lastSlice": "HR-15",
+      "recordedHash": "42e4c17c0e04eaffcfeff9c7a649c11e3ce6c7ac7e6c130e56e0c47a8c0c3517",
+      "currentHash": "42e4c17c0e04eaffcfeff9c7a649c11e3ce6c7ac7e6c130e56e0c47a8c0c3517",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261024150200_hris_document_duplicate_evidence/migration.sql",
+      "lastSlice": "HR-15",
+      "recordedHash": "0ab06ce36165e1ccf63cc9e0130e6628b4be9b512853f1c3c296eb6b62714dc9",
+      "currentHash": "0ab06ce36165e1ccf63cc9e0130e6628b4be9b512853f1c3c296eb6b62714dc9",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261024150300_hris_document_storage_identity/migration.sql",
+      "lastSlice": "HR-15",
+      "recordedHash": "fc3202a8a00bf7212a0a9c068eae1417cbec9c3826bbb1f3550cfebb52fc9865",
+      "currentHash": "fc3202a8a00bf7212a0a9c068eae1417cbec9c3826bbb1f3550cfebb52fc9865",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261024150400_hris_document_legacy_evidence/migration.sql",
+      "lastSlice": "HR-15",
+      "recordedHash": "7670458f81dac1c5946f4818ee4fd262997d4edbf4e7c6cbf3bf51b465803aec",
+      "currentHash": "7670458f81dac1c5946f4818ee4fd262997d4edbf4e7c6cbf3bf51b465803aec",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261024160000_hris_personal_correction_cases/migration.sql",
+      "lastSlice": "HR-16",
+      "recordedHash": "8c6885dcdc012d8855ff796f376a635a755a618e9ef4479dca0944904e1cfa69",
+      "currentHash": "8c6885dcdc012d8855ff796f376a635a755a618e9ef4479dca0944904e1cfa69",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261024170000_hris_lifecycle_tasks/migration.sql",
+      "lastSlice": "HR-17",
+      "recordedHash": "f4cbe0129005fe9c0634ddfd6f78d349c34f66ed5a680196706f965a7aa69654",
+      "currentHash": "f4cbe0129005fe9c0634ddfd6f78d349c34f66ed5a680196706f965a7aa69654",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261024170000_hris_setup_reviewer_grants/migration.sql",
+      "lastSlice": "HR-09",
+      "recordedHash": "2b5ca60fa12d2aed9add8ec9895bfbabceb6f8d49423269fe26d12c5ac616a9b",
+      "currentHash": "2b5ca60fa12d2aed9add8ec9895bfbabceb6f8d49423269fe26d12c5ac616a9b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261025190000_hris_payroll_handoff/migration.sql",
+      "lastSlice": "HR-19",
+      "recordedHash": "8c8505a509ebfb59cc8bd30f326e8d3ba9663070255cf0919b0cdda2968c0776",
+      "currentHash": "8c8505a509ebfb59cc8bd30f326e8d3ba9663070255cf0919b0cdda2968c0776",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/migrations/20261025190100_hris_handoff_actor_guard/migration.sql",
+      "lastSlice": "HR-19",
+      "recordedHash": "37f0de12f2b315e05ef4a6489a81b5898b8cb7a50896361c97e29af60d679471",
+      "currentHash": "37f0de12f2b315e05ef4a6489a81b5898b8cb7a50896361c97e29af60d679471",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "lastSlice": "HR-19",
+      "recordedHash": "3b09b4e7dee2f19e7c12e603075e5cb230bd01f52efea784a95671635977bedd",
+      "currentHash": "3b09b4e7dee2f19e7c12e603075e5cb230bd01f52efea784a95671635977bedd",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/accounting/__tests__/journal-close-invalidation.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "db62244de2b0e4e38a59936d18b9e9298e9ebf84765d225215baafcfa7e5aae5",
+      "currentHash": "db62244de2b0e4e38a59936d18b9e9298e9ebf84765d225215baafcfa7e5aae5",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/approval-inbox.service.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "ba1eff261f8e83d9e1714670c8bd3f6897fac717c43f9e9423615c8684833b8d",
+      "currentHash": "ba1eff261f8e83d9e1714670c8bd3f6897fac717c43f9e9423615c8684833b8d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/approval-review.postgres.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "0fe018c73f88a2d01c083d0a53e62d736bf05521c78bf0aee75de5e1373701c7",
+      "currentHash": "0fe018c73f88a2d01c083d0a53e62d736bf05521c78bf0aee75de5e1373701c7",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/daily-queue.contract.test.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "bf420d12759056ca660f58cd36b25549594d253fad4757f4a51d437ad4ff7bf3",
+      "currentHash": "bf420d12759056ca660f58cd36b25549594d253fad4757f4a51d437ad4ff7bf3",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/daily-queue.postgres.test.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "69c39f85cd983797139c8f5b41598cf14c4c09f09b5170be7e5a49c9567612a3",
+      "currentHash": "69c39f85cd983797139c8f5b41598cf14c4c09f09b5170be7e5a49c9567612a3",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/document-evidence.service.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "e63197953c78b5fef7d00952f6b9983c23ebb5f158ec235d76a8efc4ac336f6e",
+      "currentHash": "e63197953c78b5fef7d00952f6b9983c23ebb5f158ec235d76a8efc4ac336f6e",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/employee-document.authorization.test.ts",
+      "lastSlice": "HR-15",
+      "recordedHash": "58a4f127d393299d9872c6e372c799fb55375a724c487974267f546cc7a0f6d5",
+      "currentHash": "58a4f127d393299d9872c6e372c799fb55375a724c487974267f546cc7a0f6d5",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/employee-document.contract.test.ts",
+      "lastSlice": "HR-15",
+      "recordedHash": "9d112b871ee2d123e7301dd503d4a55153b9b00331392eefbfb1a50a6d4bfd97",
+      "currentHash": "9d112b871ee2d123e7301dd503d4a55153b9b00331392eefbfb1a50a6d4bfd97",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/employee-document.postgres.test.ts",
+      "lastSlice": "HR-15",
+      "recordedHash": "0295d48670929bcae4db5838cda7ef479214817371fc5d3f2d57aa649f4143e0",
+      "currentHash": "0295d48670929bcae4db5838cda7ef479214817371fc5d3f2d57aa649f4143e0",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/employee-document.storage.test.ts",
+      "lastSlice": "HR-15",
+      "recordedHash": "cbca507d9383905e35dde1e6d96dcd4c3b53c3fe1b908ec432e38e54cc95fdf4",
+      "currentHash": "cbca507d9383905e35dde1e6d96dcd4c3b53c3fe1b908ec432e38e54cc95fdf4",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/employee-import.csv.test.ts",
+      "lastSlice": "HR-11",
+      "recordedHash": "7cb8d4e0f65e2237f86eb958f2dab7f266e99462a965504dd74bddd3be304893",
+      "currentHash": "7cb8d4e0f65e2237f86eb958f2dab7f266e99462a965504dd74bddd3be304893",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/employee-import.postgres.test.ts",
+      "lastSlice": "HR-11",
+      "recordedHash": "53b1ea436fdfe2622ad4dccb8e5a6515cd5ff611144cd772a153820cae3476e1",
+      "currentHash": "53b1ea436fdfe2622ad4dccb8e5a6515cd5ff611144cd772a153820cae3476e1",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/employee.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "6f2d1cb8332a200fbe95594a954b0d8dee81862bd497a6567de34397aec1d94e",
+      "currentHash": "6f2d1cb8332a200fbe95594a954b0d8dee81862bd497a6567de34397aec1d94e",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/hris-correctness.postgres.test.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "54ae41cacd48852ee04a1174638ee770259c8fb114025fdcd3883053b86f1ee4",
+      "currentHash": "54ae41cacd48852ee04a1174638ee770259c8fb114025fdcd3883053b86f1ee4",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/leave-balance.service.test.ts",
+      "lastSlice": "HR-12",
+      "recordedHash": "e7bd16ab9169491f0850c18f45d4c63552d9dca99d895cae7c53146dbd350952",
+      "currentHash": "e7bd16ab9169491f0850c18f45d4c63552d9dca99d895cae7c53146dbd350952",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/leave-entitlement.postgres.test.ts",
+      "lastSlice": "HR-12",
+      "recordedHash": "3c690de6dfb25e055c0ce43a5f07e215bbfdc29e151b7b8766edc647e2cfa310",
+      "currentHash": "3c690de6dfb25e055c0ce43a5f07e215bbfdc29e151b7b8766edc647e2cfa310",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/leave-policy.test.ts",
+      "lastSlice": "HR-12",
+      "recordedHash": "f1c32f7407519d76bf1f91fa4f8995b60f925062cdc8bdbff4a172423dd32efc",
+      "currentHash": "f1c32f7407519d76bf1f91fa4f8995b60f925062cdc8bdbff4a172423dd32efc",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/lifecycle-task.contract.test.ts",
+      "lastSlice": "HR-17",
+      "recordedHash": "fcab4d43da90dbe8eb1df6ec735588d1da8449d48a9c2d6f35f32940b64c074a",
+      "currentHash": "fcab4d43da90dbe8eb1df6ec735588d1da8449d48a9c2d6f35f32940b64c074a",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/lifecycle-task.postgres.test.ts",
+      "lastSlice": "HR-17",
+      "recordedHash": "f0bbf0c12948a30e71da1f788b62de843a002bd4990100b10cfb29895e5b9c5b",
+      "currentHash": "f0bbf0c12948a30e71da1f788b62de843a002bd4990100b10cfb29895e5b9c5b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/lifecycle.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "fea410448c2443be58eb55be4999b0e8e6cb317b097e9334b77fafbeaf463186",
+      "currentHash": "fea410448c2443be58eb55be4999b0e8e6cb317b097e9334b77fafbeaf463186",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/manager-self-service.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "78ada93e3b674017aa7d6027a788ad6ff0affed34015d28520050105c107f747",
+      "currentHash": "78ada93e3b674017aa7d6027a788ad6ff0affed34015d28520050105c107f747",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "13441a2a9e3b093412579fddb5d17e709335953a3ecfd06498961a39e13578d1",
+      "currentHash": "13441a2a9e3b093412579fddb5d17e709335953a3ecfd06498961a39e13578d1",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/operational-time.service.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "08119fdf4fccb0fa6e7581c64b102ba2cc525e61412151967213ba9b94a2aee3",
+      "currentHash": "08119fdf4fccb0fa6e7581c64b102ba2cc525e61412151967213ba9b94a2aee3",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/org-effective-scope.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "f44280363248c505d0134879569fe71d6fcee80522d3952dbebee2facc1e2ab7",
+      "currentHash": "f44280363248c505d0134879569fe71d6fcee80522d3952dbebee2facc1e2ab7",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/org.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "8202d97f3e736c6c434f815f9456fb25f2b2943c2f494c71d4b93bc46486b6bd",
+      "currentHash": "8202d97f3e736c6c434f815f9456fb25f2b2943c2f494c71d4b93bc46486b6bd",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/payroll-handoff.contract.test.ts",
+      "lastSlice": "HR-19",
+      "recordedHash": "d115bb9fd232763bfd935a84828fe0b7e41315abd1d78c4991192385ef5fc674",
+      "currentHash": "d115bb9fd232763bfd935a84828fe0b7e41315abd1d78c4991192385ef5fc674",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/payroll-handoff.postgres.test.ts",
+      "lastSlice": "HR-19",
+      "recordedHash": "87dcd659c1cf6538a6233a9680ec7f05425dba676176c5460d3023a4d112d04b",
+      "currentHash": "87dcd659c1cf6538a6233a9680ec7f05425dba676176c5460d3023a4d112d04b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/payroll-readiness-contract.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "e3c4c72aeb118a37cb0ac46d46390a450feb1da022b6e43d02c211297e25f011",
+      "currentHash": "e3c4c72aeb118a37cb0ac46d46390a450feb1da022b6e43d02c211297e25f011",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/people-authoring.postgres.test.ts",
+      "lastSlice": "HR-10",
+      "recordedHash": "7b030e97cb9982a265e52770963839987b7cb48c01fbf2f475a6600d116673e3",
+      "currentHash": "7b030e97cb9982a265e52770963839987b7cb48c01fbf2f475a6600d116673e3",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/people-directory-query.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "6744e4608ad4cf79a18317a7fbf78ba0571df97b9008c8c753a05f31694e25b0",
+      "currentHash": "6744e4608ad4cf79a18317a7fbf78ba0571df97b9008c8c753a05f31694e25b0",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/personal-correction.contract.test.ts",
+      "lastSlice": "HR-16",
+      "recordedHash": "3e8cae3152908bd998b631730a5a5a0b023b0d53ae4a43060696c29417b13df1",
+      "currentHash": "3e8cae3152908bd998b631730a5a5a0b023b0d53ae4a43060696c29417b13df1",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/personal-correction.postgres.test.ts",
+      "lastSlice": "HR-16",
+      "recordedHash": "bf70dd96db494a54cb4d9d7744a88d95d87a0ded53ffc9f7bb09cad5fd54c3ba",
+      "currentHash": "bf70dd96db494a54cb4d9d7744a88d95d87a0ded53ffc9f7bb09cad5fd54c3ba",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/roster.postgres.test.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "855fc37c25ce43ad727da5c4079de935b5b10cd430d1ad2722b7e66291a8df2c",
+      "currentHash": "855fc37c25ce43ad727da5c4079de935b5b10cd430d1ad2722b7e66291a8df2c",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/self-service.service.test.ts",
+      "lastSlice": "HR-16",
+      "recordedHash": "08174a5301235db8d0e3d39590cd9796aaf499d9cf41c923313bc3d9cde9a6c9",
+      "currentHash": "08174a5301235db8d0e3d39590cd9796aaf499d9cf41c923313bc3d9cde9a6c9",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/shift-plan.test.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "355eb15ea6fd6e8a378638cb73a74a59dcf8cde92de742cf439514896db1f9c2",
+      "currentHash": "355eb15ea6fd6e8a378638cb73a74a59dcf8cde92de742cf439514896db1f9c2",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/time-allocation.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "79b3f2a05e8c51464d5597650ae1b81471fe0959607ae22e0f818e31b5291f1a",
+      "currentHash": "79b3f2a05e8c51464d5597650ae1b81471fe0959607ae22e0f818e31b5291f1a",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/time-leave.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "3d341ec82b37afb282c8ef80716b162881ba79c959d7be591d1ff1835c1f1fc5",
+      "currentHash": "3d341ec82b37afb282c8ef80716b162881ba79c959d7be591d1ff1835c1f1fc5",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/workspace-setup.postgres.test.ts",
+      "lastSlice": "HR-09",
+      "recordedHash": "c6c8e919676080844ec972b1231f3cbe6324d1af77db457602dcfbaed21e278b",
+      "currentHash": "c6c8e919676080844ec972b1231f3cbe6324d1af77db457602dcfbaed21e278b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/__tests__/workspace-setup.test.ts",
+      "lastSlice": "HR-09",
+      "recordedHash": "a688012bc9ab412656cc14f81bbd53b2abd1bdb56eadac47978b09b5da1fba3c",
+      "currentHash": "a688012bc9ab412656cc14f81bbd53b2abd1bdb56eadac47978b09b5da1fba3c",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/approval-inbox.service.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "37daef7669f7d60ece5a483b0b119caddd83790f062edcdc46f67875f8375177",
+      "currentHash": "37daef7669f7d60ece5a483b0b119caddd83790f062edcdc46f67875f8375177",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/approval-review.service.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "48a67e43bab3d4878944c88f14567bb3010e93616b16a757b9bb0ba4339ac446",
+      "currentHash": "48a67e43bab3d4878944c88f14567bb3010e93616b16a757b9bb0ba4339ac446",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/attendance-correction.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "740335a7ebba3d189ca4144020be78c34eaee1f3822d5f4853d47ef9e4561f00",
+      "currentHash": "740335a7ebba3d189ca4144020be78c34eaee1f3822d5f4853d47ef9e4561f00",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/attendance-file.service.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "15ba33eca5782ec490fa0b86a1648d63d9168e700d16a685417f84dc560f2408",
+      "currentHash": "15ba33eca5782ec490fa0b86a1648d63d9168e700d16a685417f84dc560f2408",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/attendance-import.service.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "52025f0085c55b03dae5d475fbd7909b27d048545790756d6d067295165577f7",
+      "currentHash": "52025f0085c55b03dae5d475fbd7909b27d048545790756d6d067295165577f7",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/daily-queue.contract.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "fc574f141b12a109d0d994f6ae12ce0b8481df7367aca8b76acfa03dc720e98c",
+      "currentHash": "fc574f141b12a109d0d994f6ae12ce0b8481df7367aca8b76acfa03dc720e98c",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/daily-queue.service.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "ad0e19e1ba73f7f427ac1c93350c73c1626945d0edcc05e4af266ed3dbe67d60",
+      "currentHash": "ad0e19e1ba73f7f427ac1c93350c73c1626945d0edcc05e4af266ed3dbe67d60",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/daily-source.service.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "82f81b3fcf292d49da4ac7c169e63446bf0f24134c40a6408d636c47069afa9c",
+      "currentHash": "82f81b3fcf292d49da4ac7c169e63446bf0f24134c40a6408d636c47069afa9c",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/document-evidence.service.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "c2f83247f04954afb1a37c695ef2677bfd001f0a2b4ff2d559769a2e6d80d806",
+      "currentHash": "c2f83247f04954afb1a37c695ef2677bfd001f0a2b4ff2d559769a2e6d80d806",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/employee-document.authorization.ts",
+      "lastSlice": "HR-15",
+      "recordedHash": "481d989c6590a6e221a1bfdd9e65236add67303af8ad7c021e31de011d9e6676",
+      "currentHash": "481d989c6590a6e221a1bfdd9e65236add67303af8ad7c021e31de011d9e6676",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/employee-document.contract.ts",
+      "lastSlice": "HR-15",
+      "recordedHash": "73592e4a5abf8c9b5a7e5f043f50d5efcdb03a8ecfd802ed547a15724aa023a5",
+      "currentHash": "80570a57b7800e0bba454c5646414cc5f7fb1573eb53177afb19e5d07c875420",
+      "status": "CHANGED_REVIEW_REQUIRED"
+    },
+    {
+      "path": "services/hris/employee-document.http.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "d49f48a31b4c46c3d6427d726a7504a7989a62f1428d98adfe8c99b0d4b7f1bc",
+      "currentHash": "d49f48a31b4c46c3d6427d726a7504a7989a62f1428d98adfe8c99b0d4b7f1bc",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/employee-document.service.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "a7c29c08c0bb7a9a4709fd867eb74e75ceabaeff22eba9232af312479387c911",
+      "currentHash": "a7c29c08c0bb7a9a4709fd867eb74e75ceabaeff22eba9232af312479387c911",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/employee-document.storage.ts",
+      "lastSlice": "HR-15",
+      "recordedHash": "f9040726df44346edba0f7ac998ce7d2d17ec7ff853264a30a30c8450b158adf",
+      "currentHash": "f9040726df44346edba0f7ac998ce7d2d17ec7ff853264a30a30c8450b158adf",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/employee-import.csv.ts",
+      "lastSlice": "HR-11",
+      "recordedHash": "b68c276b4f67816719ba08020bbd3223308288d645b21f36bacace8c68350ea1",
+      "currentHash": "b68c276b4f67816719ba08020bbd3223308288d645b21f36bacace8c68350ea1",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/employee-import.service.ts",
+      "lastSlice": "HR-11",
+      "recordedHash": "2b4b5d18de14bfeaec393f33ad16e26018e13d18c4097553de57ce126aec02c5",
+      "currentHash": "2b4b5d18de14bfeaec393f33ad16e26018e13d18c4097553de57ce126aec02c5",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/employee.service.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "81122f76a60af1e425f9ec92434f9350c7f95e9ef245a0ace68a5ccffbd32840",
+      "currentHash": "81122f76a60af1e425f9ec92434f9350c7f95e9ef245a0ace68a5ccffbd32840",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/employment-projection.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "3071602f4e50aabcd3f7d33565228198a5cd820323db7eba7942dcbce4481ee4",
+      "currentHash": "3071602f4e50aabcd3f7d33565228198a5cd820323db7eba7942dcbce4481ee4",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/leave-allocation.service.ts",
+      "lastSlice": "HR-12",
+      "recordedHash": "4f5c0e2eccf76a64c0f06f67eccb7131f51f08f326e42c69e73b5c1f1fc9b513",
+      "currentHash": "4f5c0e2eccf76a64c0f06f67eccb7131f51f08f326e42c69e73b5c1f1fc9b513",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/leave-balance.service.ts",
+      "lastSlice": "HR-12",
+      "recordedHash": "3cf219f681835965d83b1c14072ec3ddef9d5b3561eaf887ed8ff8dfe0219770",
+      "currentHash": "3cf219f681835965d83b1c14072ec3ddef9d5b3561eaf887ed8ff8dfe0219770",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/leave-eligibility.service.ts",
+      "lastSlice": "HR-12",
+      "recordedHash": "53c5f6286fff0ac5ef414b434969d48bb0e211b25539f5d3c2eba15e9466f866",
+      "currentHash": "53c5f6286fff0ac5ef414b434969d48bb0e211b25539f5d3c2eba15e9466f866",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/leave-entitlement.service.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "be74982329e21888acfab3fbfff0babdf81ed741bb50ff4ef7d56b404adc3def",
+      "currentHash": "be74982329e21888acfab3fbfff0babdf81ed741bb50ff4ef7d56b404adc3def",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/leave-ledger-order.ts",
+      "lastSlice": "HR-12",
+      "recordedHash": "c8afbc3e3235dd4dbb54c18402b0289d8b2ddc14a9c29b7694a4aa3e791b2eb7",
+      "currentHash": "c8afbc3e3235dd4dbb54c18402b0289d8b2ddc14a9c29b7694a4aa3e791b2eb7",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/leave-policy.ts",
+      "lastSlice": "HR-12",
+      "recordedHash": "22b82cadca81c171c331d45d1291d40a6fd8bd74106c3ea2f70b149bc58df820",
+      "currentHash": "22b82cadca81c171c331d45d1291d40a6fd8bd74106c3ea2f70b149bc58df820",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/lifecycle-task-reschedule.service.ts",
+      "lastSlice": "HR-17",
+      "recordedHash": "2bec974fe8c74cac1d493b7efd67085ae18f0e12c38b661b7a853aebccefb7ef",
+      "currentHash": "2bec974fe8c74cac1d493b7efd67085ae18f0e12c38b661b7a853aebccefb7ef",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/lifecycle-task.contract.ts",
+      "lastSlice": "HR-17",
+      "recordedHash": "c30248eb40e105da3c4e46d86f94538c7e481d76b498a7325a1d070b7f9ae74d",
+      "currentHash": "c30248eb40e105da3c4e46d86f94538c7e481d76b498a7325a1d070b7f9ae74d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/lifecycle-task.service.ts",
+      "lastSlice": "HR-17",
+      "recordedHash": "53a3bbdd3499ee462ebced7affc2530bcec835847650e7f31a4a8227c1d052f8",
+      "currentHash": "53a3bbdd3499ee462ebced7affc2530bcec835847650e7f31a4a8227c1d052f8",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/lifecycle.service.ts",
+      "lastSlice": "HR-17",
+      "recordedHash": "e55f83bdc201a657f4f0ecb7b1d1837af25ff2f3fda875241c593c779bb3a09a",
+      "currentHash": "e55f83bdc201a657f4f0ecb7b1d1837af25ff2f3fda875241c593c779bb3a09a",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/manager-self-service.service.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "2bc70d90933e10bc518140b0e68f4a13faa09208e4dc45d3595dc906a7cab787",
+      "currentHash": "2bc70d90933e10bc518140b0e68f4a13faa09208e4dc45d3595dc906a7cab787",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/operational-attendance.service.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "db0ec656b09cd9c91be8a60671870af38d4f887d4bea3f6001e08a4b8ce6fd10",
+      "currentHash": "db0ec656b09cd9c91be8a60671870af38d4f887d4bea3f6001e08a4b8ce6fd10",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/operational-time.service.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "7f483d3f8ac304256e8709ffbc5614eed30b362a6fadd751be06e71e63debf6e",
+      "currentHash": "7f483d3f8ac304256e8709ffbc5614eed30b362a6fadd751be06e71e63debf6e",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/org.service.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "83adf41edc955cc71e14e6f8be6f0a4d9babff245605780b2d015a2e2a88670c",
+      "currentHash": "83adf41edc955cc71e14e6f8be6f0a4d9babff245605780b2d015a2e2a88670c",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/payment-destination.service.ts",
+      "lastSlice": "HR-11",
+      "recordedHash": "017ba200aff97fbd208f1aa6504b8b6f453b3a6a9316f7503c398a7df307b0f7",
+      "currentHash": "017ba200aff97fbd208f1aa6504b8b6f453b3a6a9316f7503c398a7df307b0f7",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/payroll-handoff-read.service.ts",
+      "lastSlice": "HR-19",
+      "recordedHash": "22f8c8c4f24d885a0e225455c2376d53e9997a0c617b14edd8cb7f7da8a379d6",
+      "currentHash": "22f8c8c4f24d885a0e225455c2376d53e9997a0c617b14edd8cb7f7da8a379d6",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/payroll-handoff.contract.ts",
+      "lastSlice": "HR-19",
+      "recordedHash": "463c2e73acc84aff1624c7990b297af1b2dace0bd30a0c229547c2c28360df82",
+      "currentHash": "463c2e73acc84aff1624c7990b297af1b2dace0bd30a0c229547c2c28360df82",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/payroll-handoff.service.ts",
+      "lastSlice": "HR-19",
+      "recordedHash": "2138d3f7ae43ad139fb1be68d3585113dc8bbf8abc9810138977c8dd6f448b8e",
+      "currentHash": "2138d3f7ae43ad139fb1be68d3585113dc8bbf8abc9810138977c8dd6f448b8e",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/people-authoring-read.service.ts",
+      "lastSlice": "HR-10",
+      "recordedHash": "b4f38141d5840f50e352e143b21a6d7a77ed4fe411ab7f82147c73676c5f615a",
+      "currentHash": "b4f38141d5840f50e352e143b21a6d7a77ed4fe411ab7f82147c73676c5f615a",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/people-directory-query.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "003488fdf9a5ec48a697f253daff8dd6bfc0faf417c1f826a2dafaedd2d3ece3",
+      "currentHash": "003488fdf9a5ec48a697f253daff8dd6bfc0faf417c1f826a2dafaedd2d3ece3",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/personal-correction.contract.ts",
+      "lastSlice": "HR-16",
+      "recordedHash": "a8947c200d9d698e6cffb1c63f3e9666a63caa1335b9f3c4d6646222c9ae85eb",
+      "currentHash": "a8947c200d9d698e6cffb1c63f3e9666a63caa1335b9f3c4d6646222c9ae85eb",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/personal-correction.service.ts",
+      "lastSlice": "HR-18",
+      "recordedHash": "73abbdb940fa2acd9c40341c3dffdd6e86cdf264e0986b75665fddcbd8e4d743",
+      "currentHash": "73abbdb940fa2acd9c40341c3dffdd6e86cdf264e0986b75665fddcbd8e4d743",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/review-lock.service.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "493cee7f615abf9630608855a6d10eb6922fe07ffb6f502bfa743c26c811793d",
+      "currentHash": "493cee7f615abf9630608855a6d10eb6922fe07ffb6f502bfa743c26c811793d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/roster-workspace.service.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "fcf6d569578663cb50865ae07cfc28ea9e24d42d70c0bee611b4430d0bab1917",
+      "currentHash": "fcf6d569578663cb50865ae07cfc28ea9e24d42d70c0bee611b4430d0bab1917",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/schedule-revision.service.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "0114bc0f9b854d2f588ca24eaa0e3cd3852e7c888ce224f278f7db982722d376",
+      "currentHash": "0114bc0f9b854d2f588ca24eaa0e3cd3852e7c888ce224f278f7db982722d376",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/self-service-boundary.service.ts",
+      "lastSlice": "HR-16",
+      "recordedHash": "71f948ef85467341fc78c63b881e17a1d574812ef501ff08aa00a16a426b3c6f",
+      "currentHash": "71f948ef85467341fc78c63b881e17a1d574812ef501ff08aa00a16a426b3c6f",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/self-service.service.ts",
+      "lastSlice": "HR-16",
+      "recordedHash": "70c6064b0f97d59e811b43643ff8689a32c244320e502f86f48d28dd00a4ef51",
+      "currentHash": "70c6064b0f97d59e811b43643ff8689a32c244320e502f86f48d28dd00a4ef51",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/setup-reviewer.service.ts",
+      "lastSlice": "HR-09",
+      "recordedHash": "009768fec2241d3a66c4bd1cb24e6400dde1c2fdef863ac1b67f3b961d98b72f",
+      "currentHash": "009768fec2241d3a66c4bd1cb24e6400dde1c2fdef863ac1b67f3b961d98b72f",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/shift-plan.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "d4067526f32d983e7dae8f3ca8f375ad4ad3654a5090128fffcda04f436e6941",
+      "currentHash": "d4067526f32d983e7dae8f3ca8f375ad4ad3654a5090128fffcda04f436e6941",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/time-allocation.ts",
+      "lastSlice": "HR-13",
+      "recordedHash": "7422a33e4938ebb5f92171efccd1c6a8d4f120460ca0771eafc2e7f7c2dc73bd",
+      "currentHash": "7422a33e4938ebb5f92171efccd1c6a8d4f120460ca0771eafc2e7f7c2dc73bd",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/time-leave.contract.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "a7a696f94c211f1e0ec82b69d555b890dce5d25949e8ada310cdb8346907df8f",
+      "currentHash": "a7a696f94c211f1e0ec82b69d555b890dce5d25949e8ada310cdb8346907df8f",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/time-leave.service.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "677aeaa61b8c672c385dc4c3e5082a12ca4ee89d7b7e78d31d406dd935615b54",
+      "currentHash": "677aeaa61b8c672c385dc4c3e5082a12ca4ee89d7b7e78d31d406dd935615b54",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/time-review.service.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "ae8292d5c6789e36039af4dd215d5aae324627d3a139d12742b896ee4620a97d",
+      "currentHash": "ae8292d5c6789e36039af4dd215d5aae324627d3a139d12742b896ee4620a97d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/hris/workspace-setup.service.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "d8aa79e00f81276861653ab64f12d2a120960e0e8a678f12d4f06a18c4eb84f7",
+      "currentHash": "d8aa79e00f81276861653ab64f12d2a120960e0e8a678f12d4f06a18c4eb84f7",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/authority-adapter-execution.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "b49574aad941f25c3deef0588c8a988441baecf5fb1862d4866a4359c90702be",
+      "currentHash": "b49574aad941f25c3deef0588c8a988441baecf5fb1862d4866a4359c90702be",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "f807c49bbf2f103edc3c2b9135129ead7d9d5f3d3404f34c8fb6404883b005f3",
+      "currentHash": "f807c49bbf2f103edc3c2b9135129ead7d9d5f3d3404f34c8fb6404883b005f3",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/declaration-lifecycle.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "05df0262130dc80b9fc93746708746dbb605010b002123e4c6ff53e454d6bb4d",
+      "currentHash": "05df0262130dc80b9fc93746708746dbb605010b002123e4c6ff53e454d6bb4d",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-compensation.service.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "8e4179b17c4b6abc55adc799ea98ee16e006527e2f5da5a68d42a17bfb2e868b",
+      "currentHash": "8e4179b17c4b6abc55adc799ea98ee16e006527e2f5da5a68d42a17bfb2e868b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-contract.service.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "5d108a3a51d1425d6858832c72771d2ad134157316f584ecb35a8064f9ecd2f1",
+      "currentHash": "5d108a3a51d1425d6858832c72771d2ad134157316f584ecb35a8064f9ecd2f1",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-control.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "4fbb7c277a4828e0fc48f676f0ba1a23cd3cdfff3aec8a8bec4373e580fcdeed",
+      "currentHash": "4fbb7c277a4828e0fc48f676f0ba1a23cd3cdfff3aec8a8bec4373e580fcdeed",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-employee.service.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "168389273675f5fa40ff71c801cdf8b94d204a6059ba5e66ac4c992eaf2b6094",
+      "currentHash": "562712b5d4808b5238780780723b23fef0daab9a7f0814e943a27f92c27e0020",
+      "status": "CHANGED_REVIEW_REQUIRED"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-immutability-migration.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "bc89fd20e8010fa66f7bf7aaec219df6a7cfa5c1094e820882c98ffc37df712b",
+      "currentHash": "bc89fd20e8010fa66f7bf7aaec219df6a7cfa5c1094e820882c98ffc37df712b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-payment-evidence.service.test.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "902107eaf18381abb0e78b33fedef38aee5a4602298615754b098d778c5e17c8",
+      "currentHash": "902107eaf18381abb0e78b33fedef38aee5a4602298615754b098d778c5e17c8",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-production-admission.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "b3cf113da4fd70243e50b318b42d18fc16a17846719ad84d997150d2925a7f59",
+      "currentHash": "b3cf113da4fd70243e50b318b42d18fc16a17846719ad84d997150d2925a7f59",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-provider-settlement-bridge.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "5ccdc6a6e63e4c49b393951031bde4592d1072bf9ffd84fa72d064659207e6c3",
+      "currentHash": "5ccdc6a6e63e4c49b393951031bde4592d1072bf9ffd84fa72d064659207e6c3",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-replay-authorization.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "1c81c3a1daa2a0edf265dc6f8d03703b2c581b3320e62fe56fb11ef3b09e653b",
+      "currentHash": "1c81c3a1daa2a0edf265dc6f8d03703b2c581b3320e62fe56fb11ef3b09e653b",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "800862dc345600b116dd3b98060acc9058868b866be1e1804231aac6d493bfa1",
+      "currentHash": "800862dc345600b116dd3b98060acc9058868b866be1e1804231aac6d493bfa1",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-transition-evidence.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "ec6244e6e9d5d7b13cfae21bf96a42b67512c4a1b74cc0db5fbfaa98c9949f0c",
+      "currentHash": "ec6244e6e9d5d7b13cfae21bf96a42b67512c4a1b74cc0db5fbfaa98c9949f0c",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-trust-spine-transition-migration.test.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "d0821f695c194c4fbde6eba434e2e0851066a54a5be611bd268d73fdf2581ff2",
+      "currentHash": "d0821f695c194c4fbde6eba434e2e0851066a54a5be611bd268d73fdf2581ff2",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/authority-adapter-execution.service.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "0da109ee754f485e81100eed3036e107c38e1344d16d626236066e8e20ade2e3",
+      "currentHash": "0da109ee754f485e81100eed3036e107c38e1344d16d626236066e8e20ade2e3",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/authority-adapter-worker.service.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "5e6b9622b29caf9a2ffcaa4a13d70379f103bd20e233642fffc2379a6dad5b02",
+      "currentHash": "5e6b9622b29caf9a2ffcaa4a13d70379f103bd20e233642fffc2379a6dad5b02",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/compensation.service.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "db387197f5dbaae1c8416a7e7ffde0cf40a7f21b391ea78d10f020ad145fc811",
+      "currentHash": "db387197f5dbaae1c8416a7e7ffde0cf40a7f21b391ea78d10f020ad145fc811",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/contract.service.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "f6ff163be50fba75409a58fdf3a0d2d5ef27e9828c9c09c4a71857b0fbdb56bc",
+      "currentHash": "f6ff163be50fba75409a58fdf3a0d2d5ef27e9828c9c09c4a71857b0fbdb56bc",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/declaration-lifecycle.service.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "624a0f0400a1f092ccad8850065fbffc5d85a4178640ec4d19491490765faf2e",
+      "currentHash": "624a0f0400a1f092ccad8850065fbffc5d85a4178640ec4d19491490765faf2e",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/employee.service.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "4048fd7f46ebb5bfc7a35f7bb542657bec8b344d3b6a55f780804dae2cb34393",
+      "currentHash": "bf3c588b3c839dde3477c05a42daaa614038e3bc69f48f1e94e39ea10ae75d17",
+      "status": "CHANGED_REVIEW_REQUIRED"
+    },
+    {
+      "path": "services/payroll/org-manager-scope.service.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "934204f3a9a6be4822832f2d86233c732db7234fd2df9e976f0a3f7ea9acd4af",
+      "currentHash": "934204f3a9a6be4822832f2d86233c732db7234fd2df9e976f0a3f7ea9acd4af",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/payment-evidence.service.ts",
+      "lastSlice": "HR-14",
+      "recordedHash": "6f7c922c66c24b338f0cc1e0131f6c1c82f889f3467199f8dc870768ece8d4b4",
+      "currentHash": "6f7c922c66c24b338f0cc1e0131f6c1c82f889f3467199f8dc870768ece8d4b4",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "78f115196eb25afe5751c5bc19304bdcc6257462f8a8af7ef3e8ece1d10c6046",
+      "currentHash": "78f115196eb25afe5751c5bc19304bdcc6257462f8a8af7ef3e8ece1d10c6046",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    },
+    {
+      "path": "services/payroll/payroll-production-admission.ts",
+      "lastSlice": "HR-08",
+      "recordedHash": "48b722fe75bc7db244d6ad8a2d394c08bb7a9449346c2959ed03e5552bf608da",
+      "currentHash": "48b722fe75bc7db244d6ad8a2d394c08bb7a9449346c2959ed03e5552bf608da",
+      "status": "UNCHANGED_FROM_LATEST_SCOPED_EVIDENCE"
+    }
+  ],
+  "migrations": [
+    {
+      "path": "prisma/migrations/20261024143000_hris_schedule_revisions/migration.sql",
+      "sha256": "dc3624299c02bb358cada3293d86ec73f6431c087c8c421d43f6beb9383d8714",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    },
+    {
+      "path": "prisma/migrations/20261024150000_hris_employee_documents/migration.sql",
+      "sha256": "54617a571a7a32e340cf5436b988a39dcc9260c2da8e4af65aec8506682854c9",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    },
+    {
+      "path": "prisma/migrations/20261024150100_hris_document_evidence_guard/migration.sql",
+      "sha256": "42e4c17c0e04eaffcfeff9c7a649c11e3ce6c7ac7e6c130e56e0c47a8c0c3517",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    },
+    {
+      "path": "prisma/migrations/20261024150200_hris_document_duplicate_evidence/migration.sql",
+      "sha256": "0ab06ce36165e1ccf63cc9e0130e6628b4be9b512853f1c3c296eb6b62714dc9",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    },
+    {
+      "path": "prisma/migrations/20261024150300_hris_document_storage_identity/migration.sql",
+      "sha256": "fc3202a8a00bf7212a0a9c068eae1417cbec9c3826bbb1f3550cfebb52fc9865",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    },
+    {
+      "path": "prisma/migrations/20261024150400_hris_document_legacy_evidence/migration.sql",
+      "sha256": "7670458f81dac1c5946f4818ee4fd262997d4edbf4e7c6cbf3bf51b465803aec",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    },
+    {
+      "path": "prisma/migrations/20261024160000_hris_personal_correction_cases/migration.sql",
+      "sha256": "8c6885dcdc012d8855ff796f376a635a755a618e9ef4479dca0944904e1cfa69",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    },
+    {
+      "path": "prisma/migrations/20261024170000_hris_lifecycle_tasks/migration.sql",
+      "sha256": "f4cbe0129005fe9c0634ddfd6f78d349c34f66ed5a680196706f965a7aa69654",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    },
+    {
+      "path": "prisma/migrations/20261024170000_hris_setup_reviewer_grants/migration.sql",
+      "sha256": "2b5ca60fa12d2aed9add8ec9895bfbabceb6f8d49423269fe26d12c5ac616a9b",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    },
+    {
+      "path": "prisma/migrations/20261025190000_hris_payroll_handoff/migration.sql",
+      "sha256": "8c8505a509ebfb59cc8bd30f326e8d3ba9663070255cf0919b0cdda2968c0776",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    },
+    {
+      "path": "prisma/migrations/20261025190100_hris_handoff_actor_guard/migration.sql",
+      "sha256": "37f0de12f2b315e05ef4a6489a81b5898b8cb7a50896361c97e29af60d679471",
+      "qualification": "Review originating slice for exact isolated application/replay; cumulative customer upgrade not proven"
+    }
+  ],
+  "limits": [
+    "Hash identity is not runtime or operator acceptance",
+    "Prior synchronized test schema is not cumulative migration proof",
+    "Synthetic browser transports do not qualify actual authenticated sessions",
+    "Document provider/key recovery and employer policy admission remain open"
+  ]
+}

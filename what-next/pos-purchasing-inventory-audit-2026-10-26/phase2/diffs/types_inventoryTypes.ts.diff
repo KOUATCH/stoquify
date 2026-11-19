@@ -1,0 +1,12 @@
+diff --git a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/types/inventoryTypes.ts b/types/inventoryTypes.ts
+index d49afffc..8c8861ad 100644
+--- a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/types/inventoryTypes.ts
++++ b/types/inventoryTypes.ts
+@@ -423,6 +423,7 @@ export interface CreateStockTransferRequest {
+ }
+ 
+ export interface ReserveInventoryRequest {
++  idempotencyKey: string
+   reservations: {
+     inventoryLevelId: any
+     itemId: string

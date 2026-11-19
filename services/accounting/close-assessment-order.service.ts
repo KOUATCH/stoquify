@@ -3,6 +3,7 @@ import "server-only"
 import { CloseRunStatus, Prisma, type CloseRun } from "@prisma/client"
 import { BusinessRuleError, ConflictError } from "@/services/_shared/action-errors"
 import type { ProofTrailBlocker } from "@/services/evidence/evidence-contracts"
+import type { CloseCurrentProof } from "./close-assurance-current-proof"
 
 type OrderedAssessment = Pick<CloseRun, "id" | "createdAt" | "status" | "voidedAt">
 export type CloseAssessmentOrder = { latest: OrderedAssessment | null; ambiguous: boolean }
@@ -11,6 +12,18 @@ export type CloseAssessmentSelection = {
   latestRunId: string | null
   latestCreatedAt: Date | null
   ambiguous: boolean
+}
+
+// Keep portfolio and detail selection semantics identical without reading or writing.
+export function applyCloseAssessmentSelection(proof: CloseCurrentProof, selection: CloseAssessmentSelection): CloseCurrentProof {
+  const blocker = closeAssessmentSelectionBlocker(selection)
+  return {
+    ...proof,
+    assessmentState: selection.state,
+    latestAssessmentCreatedAt: selection.latestCreatedAt?.toISOString() ?? null,
+    grade: blocker ? "blocked" : proof.grade,
+    blockers: blocker ? [blocker, ...proof.blockers] : proof.blockers,
+  }
 }
 
 // Creation and certification take this lock before any close-run row lock.

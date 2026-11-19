@@ -5,6 +5,7 @@ import { hashBusinessPayload, markBusinessEventAppliedInTx, recordBusinessEventI
 import { readReceiptRecognitionEvidence, readReceiptRecognitionSource, type ReceiptRecognitionSource } from "@/services/purchase-order/receipt-recognition-source"
 import { allocateReceiptCost, receiptCostAllocationSchema } from "@/services/inventory/receipt-cost-allocation"
 import { readInvoiceReceiptRecognition } from "./invoice-receipt-recognition"
+import { invoiceLineNet } from "./invoice-commercial-basis"
 
 const money = (value: Prisma.Decimal.Value) => new Prisma.Decimal(value).toDecimalPlaces(2)
 const quantity = (value: Prisma.Decimal.Value) => new Prisma.Decimal(value).toDecimalPlaces(3)
@@ -242,10 +243,13 @@ export async function resolveReceiptReturnRecognition(tx: Prisma.TransactionClie
       if (invoice.deletedAt || invoice.currency !== input.currency || !["POSTED", "PAYMENT_PENDING", "PAID"].includes(invoice.status) || !invoice.createdById || !invoice.approvedById || invoice.createdById === invoice.approvedById || !invoice.postedAt || !invoice.postedBusinessEventId || !invoice.ledgerPostingBatchId) throw review()
       const event = await tx.businessEvent.findFirst({ where: { id: invoice.postedBusinessEventId, organizationId: input.organizationId } })
       const recognition = record(record(invoice.metadata).receiptRecognition), allocations = recognition.allocations
-      const sourceHash = invoiceSourceHash(invoice), recognitionHash = source ? hashBusinessPayload(recognition) : null
+      const verified = source ? readInvoiceReceiptRecognition(recognition, {
+        organizationId: input.organizationId, supplierId: input.supplierId, invoiceId: invoice.id, currency: input.currency,
+        subtotal: invoice.subtotal, total: invoice.total, taxAmount: invoice.taxAmount, lines: invoice.lines,
+      }) : null
+      const sourceHash = verified?.invoiceSourceHash ?? invoiceSourceHash(invoice), recognitionHash = source ? hashBusinessPayload(recognition) : null
       if (!event || event.eventType !== "purchase.supplier_invoice.posted" || event.eventSource !== "INTERNAL" || event.schemaVersion !== 1 || event.status !== "APPLIED" || !event.processedAt || event.sourceType !== "SUPPLIER_INVOICE" || event.sourceId !== invoice.id || event.actorId !== invoice.approvedById || event.postingBatchId !== invoice.ledgerPostingBatchId || event.occurredAt.getTime() !== invoice.postedAt.getTime() || event.payloadHash !== hashBusinessPayload(event.payload)) throw review()
       if (source && (![1, 2, 3].includes(Number(recognition.version)) || recognition.organizationId !== input.organizationId || recognition.supplierId !== input.supplierId || recognition.invoiceId !== invoice.id || recognition.currency !== input.currency || recognition.invoiceSourceHash !== sourceHash || !Array.isArray(allocations) || record(event.payload).receiptRecognitionHash !== recognitionHash)) throw review()
-      if (source && recognition.version === 3) readInvoiceReceiptRecognition(recognition, { organizationId: input.organizationId, supplierId: input.supplierId, invoiceId: invoice.id, currency: input.currency, subtotal: invoice.subtotal, total: invoice.total, taxAmount: invoice.taxAmount, lines: invoice.lines })
       const batches = await tx.ledgerPostingBatch.findMany({ where: { organizationId: input.organizationId, sourceType: "SUPPLIER_INVOICE", sourceId: invoice.id }, include: { journalEntries: { include: { lines: { include: { account: true } }, reversedByEntries: { select: { id: true } } } }, sourceLinks: true } })
       const batch = batches[0], journal = batch?.journalEntries[0], link = batch?.sourceLinks[0]
       if (batches.length !== 1 || !batch || batch.id !== invoice.ledgerPostingBatchId || batch.reversedAt || batch.status === "REVERSED" || batch.journalEntries.some(entry => entry.status !== "POSTED" || !!entry.reversedAt || entry.reversedByEntries.length > 0)) throw review()
@@ -262,7 +266,7 @@ export async function resolveReceiptReturnRecognition(tx: Prisma.TransactionClie
         const lines = invoice.lines.filter(line => line.goodsReceiptLineId === receiptLineId)
         if (!lines.length) continue
         const q = lines.reduce((sum, line) => sum.plus(line.quantity), new Prisma.Decimal(0)), value = invoiceTotals.get(receiptLineId) ?? { quantity: new Prisma.Decimal(0), cost: new Prisma.Decimal(0) }
-        let cost = lines.reduce((sum, line) => sum.plus(money(line.quantity.times(line.unitCost))), new Prisma.Decimal(0))
+        let cost = lines.reduce((sum, line) => sum.plus(invoiceLineNet(line)), new Prisma.Decimal(0))
         if (source) {
           const matches = (allocations as unknown[]).map(record).filter(a => a.receiptLineId === receiptLineId), allocation = matches[0]
           if (matches.length !== 1 || !allocation || allocation.receiptId !== input.receiptId || allocation.receiptBatchId !== proof.receiptBatchId || allocation.receiptJournalId !== proof.receiptJournalId || allocation.receiptEvidenceHash !== proof.receiptEvidenceHash || typeof allocation.quantity !== "string" || typeof allocation.receiptCost !== "string" || typeof allocation.invoiceNet !== "string" || !/^\d+(?:\.\d+)?$/.test(allocation.quantity) || !/^\d+(?:\.\d+)?$/.test(allocation.receiptCost) || !/^\d+(?:\.\d+)?$/.test(allocation.invoiceNet) || !money(allocation.invoiceNet).eq(cost) || !quantity(allocation.quantity).eq(q)) throw review()

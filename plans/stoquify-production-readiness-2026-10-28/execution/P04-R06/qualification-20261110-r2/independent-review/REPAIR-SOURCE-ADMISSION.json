@@ -1,0 +1,405 @@
+{
+  "at": "2026-11-10T12:20:49.063Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Independent bounded source/test diff review; not executed or production qualification",
+  "files": [
+    {
+      "path": "lib/auth.ts",
+      "sha256": "a377af943776826d68385a01ebdfe3478aff5737c8de98395e2bebbd16d102ad",
+      "beforeSha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "c093f2c5a93498a75b013b525e9a22b452fca807266fb7203c08824a210bb19f",
+      "beforeSha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493"
+    },
+    {
+      "path": "lib/security/__tests__/auth-current-authority.test.ts",
+      "sha256": "9fc822b5297824bd7819454548e424f9cdd4e027ec0aae7d5d4fee37694e07d0",
+      "beforeSha256": "3b299762f485a4ab0f0ce9e281fcc2e7ac18ea20e61eebbb0c72dbba7744070c"
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "sha256": "ecd46caee366aa3d422426e63eb8081187fb79e9fd4226fee3e3d948e18d498e",
+      "beforeSha256": "4b402f487038b9c7c1d4b86b56e8f271e1303405a2a10ceb14bed23f0ab0ae09"
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "sha256": "27133096cb51f66699988b4ecab3c013cb899c96aaf0001b84d6e09ff4ff7a08",
+      "beforeSha256": "aae2f1a20add9453671f8c08c25eca1215dcb7e790a46b784d3d35cd01b1949a"
+    },
+    {
+      "path": "lib/security/__tests__/auth-request-bookkeeping.test.ts",
+      "sha256": "4f746cb0251104c080d8d41352500b67bdf3551aa5756b956ab388ee662d6b4d",
+      "beforeSha256": null
+    }
+  ],
+  "contextInputs": [
+    {
+      "path": "actions/security/account-session.actions.ts",
+      "beforeSha256": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+      "sha256": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8"
+    },
+    {
+      "path": "actions/users/self-profile.actions.ts",
+      "beforeSha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2",
+      "sha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/layout.tsx",
+      "beforeSha256": "c54995a81b0aceefed11ba83549198f7d59650add8ff9c011c9f40da6e1dbf36",
+      "sha256": "c54995a81b0aceefed11ba83549198f7d59650add8ff9c011c9f40da6e1dbf36"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/profile/page.tsx",
+      "beforeSha256": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc",
+      "sha256": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/layout.tsx",
+      "beforeSha256": "3961d8117888eddac195fc857c77729281ab3e6512b8738271dcc3b2ad00d5e3",
+      "sha256": "3961d8117888eddac195fc857c77729281ab3e6512b8738271dcc3b2ad00d5e3"
+    },
+    {
+      "path": "app/api/auth/[...all]/route.ts",
+      "beforeSha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b"
+    },
+    {
+      "path": "app/api/me/permissions/route.ts",
+      "beforeSha256": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+      "sha256": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f"
+    },
+    {
+      "path": "app/api/me/profile/route.ts",
+      "beforeSha256": "7b72f47e15810d348e52edbf9b15905477ee9d60e9bd90802ebe526889ef966e",
+      "sha256": "7b72f47e15810d348e52edbf9b15905477ee9d60e9bd90802ebe526889ef966e"
+    },
+    {
+      "path": "components/dashboard/DashboardRouteState.tsx",
+      "beforeSha256": "b2c69d73283f42828b20469596572d0b48666f676f8989c92ed0a7597497c9b3",
+      "sha256": "b2c69d73283f42828b20469596572d0b48666f676f8989c92ed0a7597497c9b3"
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "beforeSha256": "8457239b4dfaf0e9c76576826f36d4a7e72a2ad7c97e479a45716d8af3466232",
+      "sha256": "8457239b4dfaf0e9c76576826f36d4a7e72a2ad7c97e479a45716d8af3466232"
+    },
+    {
+      "path": "components/dashboard/Sidebar.tsx",
+      "beforeSha256": "6303191e68eedc1b3c86bc0112cb36c47a6295b79eb398bea5b11e874c4969bf",
+      "sha256": "6303191e68eedc1b3c86bc0112cb36c47a6295b79eb398bea5b11e874c4969bf"
+    },
+    {
+      "path": "components/i18n/ApplicationMessages.tsx",
+      "beforeSha256": "6c30db36ac3f2e9eef6ab2561316575fe47d98d5c14621304190ade600cf36cd",
+      "sha256": "6c30db36ac3f2e9eef6ab2561316575fe47d98d5c14621304190ade600cf36cd"
+    },
+    {
+      "path": "components/settings/SelfProfile.tsx",
+      "beforeSha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+      "sha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c"
+    },
+    {
+      "path": "design-system/stoquify/MASTER.md",
+      "beforeSha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+      "sha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6"
+    },
+    {
+      "path": "design-system/stoquify/pages/public-auth.md",
+      "beforeSha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+      "sha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897"
+    },
+    {
+      "path": "docs/ecc/WORKFLOW.md",
+      "beforeSha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c",
+      "sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c"
+    },
+    {
+      "path": "docs/ecc/command-registry.json",
+      "beforeSha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381"
+    },
+    {
+      "path": "hooks/self-profile-draft.ts",
+      "beforeSha256": "e131a85afc28617ff954dfd15e1800c262eb5a4f9dc7778ec346d5d9c2559ee9",
+      "sha256": "e131a85afc28617ff954dfd15e1800c262eb5a4f9dc7778ec346d5d9c2559ee9"
+    },
+    {
+      "path": "hooks/useSelfProfile.ts",
+      "beforeSha256": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6",
+      "sha256": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6"
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "beforeSha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+      "sha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757"
+    },
+    {
+      "path": "lib/auth-server.ts",
+      "beforeSha256": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+      "sha256": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728"
+    },
+    {
+      "path": "lib/auth.ts",
+      "beforeSha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5",
+      "sha256": "a377af943776826d68385a01ebdfe3478aff5737c8de98395e2bebbd16d102ad"
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "beforeSha256": "4b402f487038b9c7c1d4b86b56e8f271e1303405a2a10ceb14bed23f0ab0ae09",
+      "sha256": "ecd46caee366aa3d422426e63eb8081187fb79e9fd4226fee3e3d948e18d498e"
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "beforeSha256": "aae2f1a20add9453671f8c08c25eca1215dcb7e790a46b784d3d35cd01b1949a",
+      "sha256": "27133096cb51f66699988b4ecab3c013cb899c96aaf0001b84d6e09ff4ff7a08"
+    },
+    {
+      "path": "lib/security/audit-log.ts",
+      "beforeSha256": "b3cb587d4687f4a5114c07d8c238bc8ec916a2dab8f76c0f6b2b0995db16711d",
+      "sha256": "b3cb587d4687f4a5114c07d8c238bc8ec916a2dab8f76c0f6b2b0995db16711d"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "beforeSha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b",
+      "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "beforeSha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+      "sha256": "c093f2c5a93498a75b013b525e9a22b452fca807266fb7203c08824a210bb19f"
+    },
+    {
+      "path": "lib/security/dashboard-session-recovery.ts",
+      "beforeSha256": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a",
+      "sha256": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a"
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "beforeSha256": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb",
+      "sha256": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "beforeSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+    },
+    {
+      "path": "lib/security/server-authz.ts",
+      "beforeSha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+      "sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "beforeSha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b"
+    },
+    {
+      "path": "node_modules/@better-auth/core/dist/api/index.mjs",
+      "beforeSha256": "f8ea006e1cce3aa853f0d9e5242fb2a7327ae69c84b6a55d08b0f04ed5158ecf",
+      "sha256": "f8ea006e1cce3aa853f0d9e5242fb2a7327ae69c84b6a55d08b0f04ed5158ecf"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/index.mjs",
+      "beforeSha256": "9ccb59e0b6b519f681d0c9eab3f0a52c8847d6af843a48d014854a3801479c5f",
+      "sha256": "9ccb59e0b6b519f681d0c9eab3f0a52c8847d6af843a48d014854a3801479c5f"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+      "beforeSha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2",
+      "sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "beforeSha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/callback.mjs",
+      "beforeSha256": "bc4980902c0bca2863b4bb4c1d51a5c28ae3882565a320679a2eb1f84c38919e",
+      "sha256": "bc4980902c0bca2863b4bb4c1d51a5c28ae3882565a320679a2eb1f84c38919e"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/email-verification.mjs",
+      "beforeSha256": "9e33bab463d366c0e8fc947500fb98fe143228b14f69b9e247eec4215a224249",
+      "sha256": "9e33bab463d366c0e8fc947500fb98fe143228b14f69b9e247eec4215a224249"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/error.mjs",
+      "beforeSha256": "4edcaa5f7a88fae70c364c04fd2f3e05d91ecdeaed9c50ef0c172ab14f457803",
+      "sha256": "4edcaa5f7a88fae70c364c04fd2f3e05d91ecdeaed9c50ef0c172ab14f457803"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/ok.mjs",
+      "beforeSha256": "1ee6e836bb9986404eeaaa9052f7eca6d88134aa359774b46460714a9fa64daa",
+      "sha256": "1ee6e836bb9986404eeaaa9052f7eca6d88134aa359774b46460714a9fa64daa"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "beforeSha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "beforeSha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "beforeSha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+      "sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-out.mjs",
+      "beforeSha256": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3",
+      "sha256": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-up.mjs",
+      "beforeSha256": "452803772ba80e56b077ea8e1c65ccadd1ad0a2afa86d6f23e3f76b39b1b3d9e",
+      "sha256": "452803772ba80e56b077ea8e1c65ccadd1ad0a2afa86d6f23e3f76b39b1b3d9e"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/update-session.mjs",
+      "beforeSha256": "70860209765aab66ba8c2d973e30c648dbcc0ecc0221a1778af57233093761e2",
+      "sha256": "70860209765aab66ba8c2d973e30c648dbcc0ecc0221a1778af57233093761e2"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+      "beforeSha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/to-auth-endpoints.mjs",
+      "beforeSha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3",
+      "sha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3"
+    },
+    {
+      "path": "node_modules/better-auth/dist/context/create-context.mjs",
+      "beforeSha256": "519af35dd5e9454a41c4a8729c9bbeed69f7bbf8c80eefebdd747050b99ec153",
+      "sha256": "519af35dd5e9454a41c4a8729c9bbeed69f7bbf8c80eefebdd747050b99ec153"
+    },
+    {
+      "path": "node_modules/better-auth/dist/db/internal-adapter.mjs",
+      "beforeSha256": "dcfd03b6150fa74cc15d4c18bdb222e877be47c270d37ebaa44f2b3c16431777",
+      "sha256": "dcfd03b6150fa74cc15d4c18bdb222e877be47c270d37ebaa44f2b3c16431777"
+    },
+    {
+      "path": "node_modules/better-auth/dist/db/schema.mjs",
+      "beforeSha256": "a0ddffa656c4a42e9f2929eab5942108f7d0c3a221753768fdaf46b302eacd83",
+      "sha256": "a0ddffa656c4a42e9f2929eab5942108f7d0c3a221753768fdaf46b302eacd83"
+    },
+    {
+      "path": "node_modules/better-auth/dist/integrations/next-js.mjs",
+      "beforeSha256": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489",
+      "sha256": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489"
+    },
+    {
+      "path": "node_modules/better-auth/dist/oauth2/state.mjs",
+      "beforeSha256": "f2e9046f4df819c7923407cd56eca9a4a0765298a4b561436d36c57305530509",
+      "sha256": "f2e9046f4df819c7923407cd56eca9a4a0765298a4b561436d36c57305530509"
+    },
+    {
+      "path": "node_modules/better-auth/package.json",
+      "beforeSha256": "86e8f39e15e32e563f3a4b1307845155dbdbae63a6f1361060275a88bb29970a",
+      "sha256": "86e8f39e15e32e563f3a4b1307845155dbdbae63a6f1361060275a88bb29970a"
+    },
+    {
+      "path": "node_modules/better-call/dist/router.mjs",
+      "beforeSha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+      "sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480"
+    },
+    {
+      "path": "node_modules/rou3/dist/index.mjs",
+      "beforeSha256": "0f77b955be24584dad93ca5c232e1150fa9ee54a96b5e6483c05bfa4b338f1b0",
+      "sha256": "0f77b955be24584dad93ca5c232e1150fa9ee54a96b5e6483c05bfa4b338f1b0"
+    },
+    {
+      "path": "package-lock.json",
+      "beforeSha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "package.json",
+      "beforeSha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "beforeSha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+      "sha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39"
+    },
+    {
+      "path": "scripts/verify-agent-workflow-contract.js",
+      "beforeSha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29",
+      "sha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "beforeSha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+      "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+    },
+    {
+      "path": "services/modules/module-navigation.service.ts",
+      "beforeSha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf",
+      "sha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf"
+    },
+    {
+      "path": "services/security/account-session.service.ts",
+      "beforeSha256": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+      "sha256": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98"
+    },
+    {
+      "path": "services/users/self-profile-http.service.ts",
+      "beforeSha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3",
+      "sha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3"
+    },
+    {
+      "path": "services/users/self-profile-input.ts",
+      "beforeSha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf",
+      "sha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf"
+    },
+    {
+      "path": "services/users/self-profile.service.ts",
+      "beforeSha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17",
+      "sha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17"
+    }
+  ],
+  "sourceCount": 66,
+  "changedProductFiles": [
+    "lib/auth.ts",
+    "lib/security/credential-sign-in-outcome.ts"
+  ],
+  "changedExistingTests": [
+    "lib/security/__tests__/auth-current-authority.test.ts",
+    "lib/security/__tests__/auth-deactivation.test.ts",
+    "lib/security/__tests__/credential-sign-in-outcome.test.ts"
+  ],
+  "newTests": [
+    "lib/security/__tests__/auth-request-bookkeeping.test.ts"
+  ],
+  "findings": [],
+  "review": [
+    "Installed public formCsrfMiddleware is awaited before credential account lookup or future-lock audit; current-session guard/public-route admission otherwise unchanged.",
+    "Expired temporary-lock reset removed from before-hook, so no prevalidation reset on origin/validation/infrastructure failure.",
+    "Success requires a non-error payload with nonemptytoken anduserID; failures require APIError identity,statusCode401 and exact INVALID_EMAIL_OR_PASSWORD code matching installed SDK.",
+    "Unrecognized outcome returns{} before accountlookup/write/audit; no after-hook undefined return introduced.",
+    "Genuine expired-lock wrong password resets old count,unlocks/nulls expiry and records failure1; current genuine threshold4→5 and success semantics preserved.",
+    "Existing unrelated code/config/routes/dependencies not edited; before/current diff restricted to declared6files.",
+    "Mocked regressions target rejected guard ordering,no-write failure classes,success/wrongpassword/threshold/expiredlock controls and existing current-authority rules."
+  ],
+  "requiredBeforeAdvancement": [
+    "Passing admitted mocked run.",
+    "New current-source capture,normal isolated fullbuild/type/lint and new sealed artifact.",
+    "Actual origin/Fetch Metadata/no-private-byte/no-unauthorized-write cases for threshold and expired/futurelocks plus authorized and current-session controls.",
+    "Independently reviewed browser request-to-consumer contract and actual native/browser evidence.",
+    "Final independent outcome and publication review with owned cleanup."
+  ],
+  "limits": [
+    "Installed guard/persistence runtime behavior has not yet been executed for these new bytes.",
+    "Existing concurrent credential-counter update/audit transaction semantics outside the bounded rejection repair are not certified.",
+    "This source admission cannot upgrade R06,parentP04,V02 or production readiness."
+  ]
+}

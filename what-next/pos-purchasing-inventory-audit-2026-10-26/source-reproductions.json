@@ -1,0 +1,29 @@
+{
+  "executedAt": "2026-10-26T14:08:55.360Z",
+  "evidenceClass": "Source-extracted functions with mocked dependencies; NOT real PostgreSQL or full application execution",
+  "valuation": {
+    "quantityBefore": "3",
+    "valueBefore": "300.02",
+    "averageCostBefore": "100.01",
+    "quantityAfter": "0",
+    "valueAfter": "0",
+    "movementCost": "300.03",
+    "returnedCost": "300.03",
+    "discrepancy": "0.01"
+  },
+  "reservationBatch": {
+    "actionRejected": true,
+    "independentlyCompletedMockEffects": [
+      "available"
+    ]
+  },
+  "reservationRetry": {
+    "samePayload": true,
+    "keys": [
+      "stock-reservation:fixture-org:fixture-item:fixture-location:fixture-actor:1000",
+      "stock-reservation:fixture-org:fixture-item:fixture-location:fixture-actor:1001"
+    ],
+    "stable": false
+  },
+  "assertions": "passed; demonstrated current defects"
+}

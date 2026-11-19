@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-10T19:36:56.499Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "observationAccepted": true,
+  "evidenceClass": "mocked lifecycle control flow",
+  "tests": 11,
+  "passedTests": 11,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "cancelledTests": 0,
+  "todoTests": 0,
+  "sourceUnchanged": true,
+  "cases": [
+    {
+      "id": 1,
+      "name": "accepted preparation start identity permits owned shutdown"
+    },
+    {
+      "id": 2,
+      "name": "PID reuse with a changed start epoch is denied before termination"
+    },
+    {
+      "id": 3,
+      "name": "native start drift is denied despite matching PID file seconds"
+    },
+    {
+      "id": 4,
+      "name": "old baseline cannot masquerade as the active write targets"
+    },
+    {
+      "id": 5,
+      "name": "unexpected connected client prevents termination"
+    },
+    {
+      "id": 6,
+      "name": "normal shutdown retains failed session-query evidence while stopping owned cluster"
+    },
+    {
+      "id": 7,
+      "name": "normal shutdown retains missing cleanup evidence while stopping owned cluster"
+    },
+    {
+      "id": 8,
+      "name": "prequalification shutdown retains failed database inspection without deleting rows"
+    },
+    {
+      "id": 9,
+      "name": "runtime-start marker prevents the prequalification shutdown path"
+    },
+    {
+      "id": 10,
+      "name": "unknown owner never reaches the shutdown operation"
+    },
+    {
+      "id": 11,
+      "name": "baseline preservation failure never becomes a qualified cleanup"
+    }
+  ],
+  "files": [
+    {
+      "path": "independent-review/DATABASE-CURRENT-LIFECYCLE-TEST-RECIPE-ADMISSION.json",
+      "sha256": "97f527d33c2dc4903c9f6915cd01f25e1b36220b810a94a589f53b5221fff6bf"
+    },
+    {
+      "path": "database-current/unit/attempt01/result.json",
+      "sha256": "1766fa0ef53c3046475134f4797fc76acc70b79411223b094bf0152bc3827ed1"
+    },
+    {
+      "path": "database-current/unit/attempt01/stdout.tap",
+      "sha256": "78bbcea700a444de452213cfdea87075a6cd3c0cf87a2050a69b33745ace1427"
+    },
+    {
+      "path": "database-current/unit/attempt01/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "limitations": [
+    "Strict dependency mocks; no native database, app, browser, real process termination or production operation executed.",
+    "These eleven passes do not certify future native shutdown/recovery or application qualification."
+  ],
+  "qualificationPassed": false
+}

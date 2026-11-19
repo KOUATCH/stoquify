@@ -1,0 +1,150 @@
+import "server-only"
+import { createHash } from "node:crypto"
+import { z } from "zod"
+import { Prisma } from "@prisma/client"
+import { db } from "@/prisma/db"
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
+import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
+import { assertSetupAccount, assertSetupManager, assertSetupPilot, type SetupActor, type SetupGrant } from "./setup-reviewer.service"
+import { attendanceMetadata, correctionEvidenceSchema } from "./attendance-correction"
+import { createTimeFoundation, approveTimeFoundation, assignWorkSchedule, approveWorkSchedule, decideOperationalTimeRequest } from "./operational-time.service"
+
+const interval = { effectiveFrom: z.coerce.date(), effectiveTo: z.coerce.date() }
+export const setupGrantSchema = z.object({
+  reviewerUserId: z.string().min(1), employeeId: z.string().min(1).nullable(),
+  domain: z.enum(["TIME_POLICY", "WORK_SCHEDULE", "TIME_REQUEST"]),
+  authority: z.enum(["PEOPLE_READ", "APPROVAL_DECISION"]), ...interval,
+  reason: z.string().trim().min(8).max(800),
+}).strict().superRefine((v, c) => {
+  if (v.effectiveTo <= v.effectiveFrom) c.addIssue({ code: "custom", path: ["effectiveTo"], message: "End must follow start." })
+  if ((v.domain === "TIME_POLICY") !== (v.employeeId === null)) c.addIssue({ code: "custom", path: ["employeeId"], message: "Policy review covers the organization; other domains require one employee." })
+})
+export const setupUnitSchema = z.object({code: z.string().trim().min(1).max(40), name: z.string().trim().min(1).max(160), type: z.enum(["DEPARTMENT", "BRANCH", "TEAM"]), ...interval}).strict()
+const json = (value: unknown) => JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue
+const digest = (value: string) => "sha256:" + createHash("sha256").update(value).digest("hex")
+
+export async function saveSetupReviewer(input: SetupActor, raw: unknown, client = db) {
+  const value = setupGrantSchema.parse(raw)
+  return client.$transaction(async tx => {
+    await tx.$queryRaw`SELECT id FROM organizations WHERE id = ${input.organizationId} FOR UPDATE`
+    await assertSetupManager(tx, input)
+    await assertSetupAccount(tx, input.organizationId, value.reviewerUserId)
+    if (value.reviewerUserId === input.actorId) throw new BusinessRuleError("HRIS_SETUP_INDEPENDENT_REVIEWER_REQUIRED")
+    if (value.effectiveTo <= new Date()) throw new BusinessRuleError("HRIS_SETUP_REVIEWER_ALREADY_EXPIRED")
+    if (value.employeeId && !await tx.payrollEmployee.findFirst({where: {id: value.employeeId, organizationId: input.organizationId, deletedAt: null}, select: {id: true}})) throw new ForbiddenError("HRIS_SETUP_EMPLOYEE_UNAVAILABLE")
+    const reasonHash = digest(value.reason)
+    const id = digest(JSON.stringify([input.organizationId, input.actorId, value.reviewerUserId, value.employeeId, value.domain, value.authority, value.effectiveFrom, value.effectiveTo, reasonHash]))
+    const previous = await tx.$queryRaw<Array<{revokedAt: Date | null}>>`SELECT "revokedAt" FROM hris_setup_reviewer_grants WHERE id = ${id}`
+    if (previous.length) {
+      if (previous[0].revokedAt) throw new BusinessRuleError("HRIS_SETUP_GRANT_REVOKED: Review a new interval or reason before granting again.")
+      return {id}
+    }
+    await tx.$executeRaw`INSERT INTO hris_setup_reviewer_grants (id, "organizationId", "reviewerUserId", "employeeId", domain, authority, "effectiveFrom", "effectiveTo", "createdById", "reasonHash")
+      VALUES (${id}, ${input.organizationId}, ${value.reviewerUserId}, ${value.employeeId}, ${value.domain}, ${value.authority}, ${value.effectiveFrom}, ${value.effectiveTo}, ${input.actorId}, ${reasonHash})`
+    await tx.auditLog.create({data: {organizationId: input.organizationId, userId: input.actorId, entityType: "HrisSetupReviewerGrant", entityId: id, action: "HRIS_SETUP_REVIEWER_GRANTED", changes: json({...value, reason: undefined, reasonHash})}})
+    return {id}
+  })
+}
+
+export async function revokeSetupReviewer(input: SetupActor, id: string, client = db) {
+  return client.$transaction(async tx => {
+    await tx.$queryRaw`SELECT id FROM organizations WHERE id = ${input.organizationId} FOR UPDATE`
+    await assertSetupManager(tx, input)
+    const count = await tx.$executeRaw`UPDATE hris_setup_reviewer_grants SET "revokedAt" = CURRENT_TIMESTAMP WHERE id = ${id} AND "organizationId" = ${input.organizationId} AND "revokedAt" IS NULL`
+    if (count) await tx.auditLog.create({data: {organizationId: input.organizationId, userId: input.actorId, entityType: "HrisSetupReviewerGrant", entityId: id, action: "HRIS_SETUP_REVIEWER_REVOKED", changes: {retained: true}}})
+    return {revoked: true}
+  })
+}
+
+export async function createSetupUnit(input: SetupActor, raw: unknown, client = db) {
+  const value = setupUnitSchema.parse(raw)
+  if (value.effectiveTo <= value.effectiveFrom) throw new BusinessRuleError("HRIS_SETUP_INTERVAL_INVALID")
+  return client.$transaction(async tx => {
+    await tx.$queryRaw`SELECT id FROM organizations WHERE id = ${input.organizationId} FOR UPDATE`
+    await assertSetupManager(tx, input)
+    const unit = await tx.hrisOrgUnit.create({data: {...value, organizationId: input.organizationId}})
+    await tx.auditLog.create({data: {organizationId: input.organizationId, userId: input.actorId, entityType: "HrisOrgUnit", entityId: unit.id, action: "HRIS_SETUP_UNIT_CREATED", changes: json(value)}})
+    return {id: unit.id}
+  })
+}
+
+export async function getWorkspaceSetup(input: SetupActor, client = db) {
+  assertSetupPilot(input.organizationId)
+  if (!hasAnyRbacPermission(input.actorPermissions, ["hris.people.read", "hris.people.manage"])) throw new ForbiddenError("HRIS_SETUP_READ_REQUIRED")
+  return client.$transaction(async tx => {
+    await assertSetupAccount(tx, input.organizationId, input.actorId)
+    const roles = await tx.$queryRaw<Array<{permissions: string[]}>>`SELECT r.permissions FROM roles r JOIN "_UserRoles" m ON m."A" = r.id WHERE m."B" = ${input.actorId} AND r."organizationId" = ${input.organizationId} FOR SHARE OF r, m`
+    const permissions = roles.flatMap(r => r.permissions)
+    if (!hasAnyRbacPermission(permissions, ["hris.people.read", "hris.people.manage"])) throw new ForbiddenError("HRIS_SETUP_READ_REQUIRED")
+    const canManage = hasAnyRbacPermission(permissions, ["hris.people.manage"])
+    const allGrants = await tx.$queryRaw<SetupGrant[]>`SELECT id, "reviewerUserId", "employeeId", domain, authority, "effectiveFrom", "effectiveTo", "revokedAt" FROM hris_setup_reviewer_grants WHERE "organizationId" = ${input.organizationId} AND (${canManage} OR "reviewerUserId" = ${input.actorId}) ORDER BY "effectiveFrom" DESC`
+    const reviewerAccounts = await tx.user.findMany({where: {organizationId: input.organizationId, id: {in: [...new Set(allGrants.map(g => g.reviewerUserId))]}}, select: {id: true, isActive: true, isVerified: true, emailVerified: true, isLocked: true, lockedUntil: true, roles: {where: {organizationId: input.organizationId}, select: {permissions: true}}}})
+    const now = new Date()
+    const available = new Set(reviewerAccounts.filter(u => u.isActive && (u.isVerified || u.emailVerified) && (!u.isLocked || (u.lockedUntil && u.lockedUntil <= now)) && hasAnyRbacPermission(u.roles.flatMap(r => r.permissions), ["hris.people.read"])).map(u => u.id))
+    const scopedEmployees = await tx.payrollEmployee.findMany({where: {organizationId: input.organizationId, deletedAt: null, id: {in: allGrants.flatMap(g => g.employeeId ? [g.employeeId] : [])}}, select: {id: true}})
+    const availableEmployees = new Set(scopedEmployees.map(e => e.id))
+    const grants = allGrants.filter(g => available.has(g.reviewerUserId) && (!g.employeeId || availableEmployees.has(g.employeeId)) && !g.revokedAt && g.effectiveFrom <= now && g.effectiveTo > now)
+    const employeeIds = [...new Set(grants.flatMap(g => g.employeeId ? [g.employeeId] : []))]
+    const policyAccess = canManage || grants.some(g => g.domain === "TIME_POLICY")
+    const organization = await tx.organization.findUniqueOrThrow({where: {id: input.organizationId}, select: {name: true, country: true, timezone: true}})
+    const employees = await tx.payrollEmployee.findMany({where: {organizationId: input.organizationId, deletedAt: null, ...(canManage ? {} : {id: {in: employeeIds}})}, select: {id: true, displayName: true}, orderBy: {id: "asc"}, take: 201})
+    const users = canManage ? await tx.user.findMany({where: {organizationId: input.organizationId, id: {not: input.actorId}, isActive: true, OR: [{isVerified: true}, {emailVerified: true}]}, select: {id: true, name: true}, orderBy: {id: "asc"}, take: 250}) : []
+    const units = canManage ? await tx.hrisOrgUnit.findMany({where: {organizationId: input.organizationId}, select: {id: true, name: true, effectiveFrom: true, effectiveTo: true}}) : []
+    const calendars = policyAccess ? await tx.hrisWorkCalendar.findMany({where: {organizationId: input.organizationId}, select: {id: true, name: true, countryCode: true, timezone: true, holidays: {select: {name: true, holidayDate: true, paid: true}}, status: true, effectiveFrom: true, effectiveTo: true, sourceHash: true}, orderBy: {createdAt: "desc"}, take: 100}) : []
+    const policies = policyAccess ? await tx.hrisLeavePolicy.findMany({where: {organizationId: input.organizationId}, select: {id: true, name: true, status: true, countryCode: true, annualEntitlementMinutes: true, carryOverLimitMinutes: true, accrualRule: true, effectiveFrom: true, effectiveTo: true, sourceHash: true}, orderBy: {createdAt: "desc"}, take: 100}) : []
+    const domainEmployees = (domain: string) => canManage ? {} : {employeeId: {in: grants.filter(g => g.domain === domain).flatMap(g => g.employeeId ? [g.employeeId] : [])}}
+    const schedules = await tx.hrisWorkSchedule.findMany({where: {organizationId: input.organizationId, status: "DRAFT", ...domainEmployees("WORK_SCHEDULE")}, select: {id: true, employeeId: true, name: true, timezone: true, effectiveFrom: true, effectiveTo: true, sourceHash: true, weeklyPattern: true, calendarId: true, standardWeeklyMinutes: true}, take: 100})
+    const requests = await tx.hrisTimeRequest.findMany({where: {organizationId: input.organizationId, status: "REQUESTED", ...domainEmployees("TIME_REQUEST")}, select: {id: true, employeeId: true, type: true, requestedMinutes: true, periodStart: true, periodEnd: true, reason: true, metadata: true, requestEvidenceHash: true}, take: 100})
+    return json({organization, canManage, employees, users, units,
+      calendars: calendars.map(c => ({...c, details: {holidays: c.holidays.map(h => h.holidayDate.toISOString().slice(0,10) + " " + h.name + " " + (h.paid ? "paid / payé" : "unpaid / non payé")).join("; ") || "None / Aucun"}})),
+      policies: policies.map(p => ({...p, details: {annual: p.annualEntitlementMinutes, carryover: p.carryOverLimitMinutes, accrual: JSON.stringify(p.accrualRule), source: p.sourceHash}})),
+      schedules: schedules.map(s => ({...s, details: {employee: employees.find(e => e.id === s.employeeId)?.displayName ?? s.employeeId, calendar: s.calendarId, weekly: JSON.stringify(s.weeklyPattern), until: s.effectiveTo?.toISOString().slice(0,10) ?? "Open / Ouvert", source: s.sourceHash}})),
+      requests: requests.map(r => {
+        const correction = correctionEvidenceSchema.safeParse(attendanceMetadata(r.metadata).correction)
+        return {...r, metadata: undefined, details: {reason: r.reason, source: r.requestEvidenceHash, ...(correction.success ? {entry: correction.data.entryId, base: correction.data.baseHash, beforeWorked: correction.data.before.workedMinutes, afterWorked: correction.data.after.workedMinutes, beforeAbsent: correction.data.before.absenceMinutes, afterAbsent: correction.data.after.absenceMinutes} : {})}}
+      }),
+      grants: allGrants.map(g => ({...g, reviewerAvailable: available.has(g.reviewerUserId) && (!g.employeeId || availableEmployees.has(g.employeeId)), current: grants.some(a => a.id === g.id)})),
+      employeeLimitExceeded: employees.length > 200,
+      canEditIdentity: hasAnyRbacPermission(permissions, ["system.organization.update"]),
+    }) as unknown as WorkspaceSetup
+  })
+}
+
+type ReviewDetails = {details: Record<string, string | number>}
+export type WorkspaceSetup = {
+  organization: {name: string; country: string | null; timezone: string}; canManage: boolean; canEditIdentity: boolean; employeeLimitExceeded: boolean
+  employees: {id: string; displayName: string}[]; users: {id: string; name: string | null}[]
+  units: {id: string; name: string; effectiveFrom: string; effectiveTo: string | null}[]
+  calendars: (ReviewDetails & {id: string; name: string; status: string; countryCode: string; timezone: string; effectiveFrom: string; effectiveTo: string | null; sourceHash: string})[]
+  policies: (ReviewDetails & {id: string; name: string; status: string; countryCode: string; annualEntitlementMinutes: number; effectiveFrom: string; effectiveTo: string | null; sourceHash: string})[]
+  schedules: (ReviewDetails & {id: string; employeeId: string; name: string; timezone: string; effectiveFrom: string; effectiveTo: string | null; sourceHash: string; standardWeeklyMinutes: number})[]
+  requests: (ReviewDetails & {id: string; employeeId: string; type: string; requestedMinutes: number; periodStart: string; periodEnd: string; requestEvidenceHash: string})[]
+  grants: (Omit<SetupGrant, "effectiveFrom" | "effectiveTo" | "revokedAt"> & {effectiveFrom: string; effectiveTo: string; revokedAt: string | null; current: boolean; reviewerAvailable: boolean})[]
+}
+
+export async function executeWorkspaceSetup(actor: SetupActor, raw: unknown, client = db) {
+  assertSetupPilot(actor.organizationId)
+  const command = z.object({operation: z.enum(["GRANT", "REVOKE", "UNIT", "POLICY", "APPROVE_POLICY", "SCHEDULE", "APPROVE_SCHEDULE", "TIME_DECISION"]), data: z.record(z.unknown())}).strict().parse(raw)
+  if (command.operation === "GRANT") return saveSetupReviewer(actor, command.data, client)
+  if (command.operation === "REVOKE") return revokeSetupReviewer(actor, z.string().min(1).parse(command.data.id), client)
+  if (command.operation === "UNIT") return createSetupUnit(actor, command.data, client)
+  return client.$transaction(async tx => {
+    const manage = ["POLICY", "SCHEDULE"].includes(command.operation)
+    if (manage) {
+      await tx.$queryRaw`SELECT id FROM organizations WHERE id = ${actor.organizationId} FOR UPDATE`
+      await assertSetupManager(tx, actor)
+    } else {
+      await assertSetupAccount(tx, actor.organizationId, actor.actorId)
+    }
+    // Client payload cannot supply tenant, user or permissions. Review grants remain explicit.
+    const data = {...command.data, ...actor}
+    if (command.operation === "POLICY") return createTimeFoundation(data as never, tx)
+    if (command.operation === "SCHEDULE") return assignWorkSchedule(data as never, tx)
+    // Recheck role authority rather than trusting an old permissions snapshot at this new entry point.
+    const roles = await tx.$queryRaw<Array<{permissions: string[]}>>`SELECT r.permissions FROM roles r JOIN "_UserRoles" m ON m."A" = r.id WHERE m."B" = ${actor.actorId} AND r."organizationId" = ${actor.organizationId} FOR SHARE OF r, m`
+    data.actorPermissions = roles.flatMap(r => r.permissions)
+    if (command.operation === "APPROVE_POLICY") return approveTimeFoundation(data as never, tx)
+    if (command.operation === "APPROVE_SCHEDULE") return approveWorkSchedule(data as never, tx)
+    return decideOperationalTimeRequest(data as never, tx)
+  })
+}

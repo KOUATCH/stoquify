@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-11-10T19:12:18Z",
+  "evidenceClass": "Pure Node tests with synthetic temporary artifacts; real hash-bound metadata JSON shapes only",
+  "command": "node --test --test-reporter=tap --test-reporter-destination=PRIVATE-METADATA-TEST-OUTPUT-v3.tap verify-private-metadata-exclusion-v3.test.cjs",
+  "exclusiveOutputPrecheckPassed": true,
+  "recipeAdmission": "independent-review/PRIVATE-METADATA-RECIPE-ADMISSION-v3.json",
+  "helperSha256": "209d95b017d03fb4f4274e5cb242f0ef6af33b561598359eae73cb61d889b70f",
+  "testSha256": "1b048e064e6aa315e5608edefcb135813954d5773edbe94ecb0aa8725300b0f3",
+  "output": {"path":"PRIVATE-METADATA-TEST-OUTPUT-v3.tap","sha256":"74dccdeb22b6124df63a7e2983953ecf851afcd38a1df71ec26732d2a699e271"},
+  "toolChunkId": "d6338f",
+  "exitCode": 0,
+  "tests": 28,
+  "passed": 28,
+  "failed": 0,
+  "skipped": 0,
+  "durationMs": 1462.873,
+  "coverage": [
+    "Strict fixture and pack whole-file digest/path exclusions remain effective.",
+    "Private metadata documents and typed native readiness receipt hashes/paths are rejected.",
+    "Absolute and resolved relative external private client-root trace references are rejected, including dot-segment normalization.",
+    "Required shared/generated Prisma and engine code hashes and generic code basenames remain eligible under exact reviewed code fields.",
+    "Unknown policy kinds, unexpected metadata/credential fields, environment values, out-of-root command schema paths and unknown generated payloads fail closed.",
+    "All seven actual hash-bound metadata JSON shapes passed against synthetic allowed code/traces; referenced external files were not opened."
+  ],
+  "referencedExternalFilesOpened": false,
+  "temporaryFixtureCleanupCompleted": true,
+  "applicationExecution": false,
+  "databaseAccess": false,
+  "actualBuildOrArtifactVerification": false,
+  "qualificationPassed": false,
+  "priorFailurePreserved": "PRIVATE-METADATA-TEST-RESULT-v2.json",
+  "nextGate": "Independent outcome review, then integrate this exact helper in the separately admitted build/final verification recipes. Actual sealed runtime and trace exclusion evidence remains pending."
+}

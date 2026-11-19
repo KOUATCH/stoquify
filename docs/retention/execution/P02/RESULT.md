@@ -1,5 +1,7 @@
 # P02 — Execution result
 
+> **18 October 2026 verification continuation: PASS for the bounded reader, including its previously missing PostgreSQL evidence.** Current checks: 65/65 mocked tests and 18/18 real database tests, no skips. Persisted counts, uniqueness, tenant/permission/module denials, query caps, repeatable-read concurrency, rollback and actual backend failure propagation are verified. See [database closure and execution evidence](../P02-P06-verification-2026-10-18/P02_DATABASE_VERIFICATION.md). Session-subject/headers are a disclosed harness seam; human provenance remains UNKNOWN and D12 decisions remain unresolved. The historical DB blocker and restrictions below describe the 13 October run, superseded only within this dated bounded scope. No production behavior changed, no later prompt ran, and the historical P12 gate was not reevaluated.
+
 **PARTIAL — local outcome slice implemented and verified with pure/mocked tests; required real-database evidence is blocked.** Run: 13 October 2026. No later prompt was run.
 
 HEAD `6f7f6741cabfdeff61989a40455d6f3ea37b33c9`, branch `codex/migration-control-plane-release-2026-08-29`. [P01 revalidation](evidence/BASELINE_REVALIDATION.json): HEAD unchanged and all 81 selected source fingerprints matched at start. Initial checkout had 400 modified tracked files and 14,662 untracked entries; this is not a clean release candidate. Prior report, roadmap, prompt pack and P01 evidence are preserved. See [source trace](SOURCE_TRACE.md) and final [validation](evidence/VALIDATION.json) for exact scope/provenance.

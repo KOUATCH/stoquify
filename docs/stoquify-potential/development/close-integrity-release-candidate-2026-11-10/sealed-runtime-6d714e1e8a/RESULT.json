@@ -1,0 +1,58 @@
+{
+  "began": "2026-11-10T21:10:18.753Z",
+  "passed": false,
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-d581d56c11\\sealed-runtime-6d714e1e8a",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10\\sealed-runtime-6d714e1e8a",
+  "database": "stoquify_replay_close_monthly_20261110_00f0345d42",
+  "artifact": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\11\\02\\01a19e00-6435-7443-92d6-f2cf160728a8\\close-integrity-release-20261110-d581d56c11-artifact",
+  "sourceManifestSha256": "5927a9e593e1a5a467c1156dcd06feb2e64948e1c19e971c2a5688b760203093",
+  "runnerSha256": "3eb50aaebb019bd8d0ddac71c937a9875c50ccbb6c38cd3184cad55feb1f6af9",
+  "classification": "Actual content-verified standalone artifact, HTTPS auth/session checks and real browser close recovery with controlled synthetic authority changes; no development application or deployment",
+  "checks": [],
+  "artifactBefore": {
+    "sha256": "529513478dc7d5245a3ab1cf9ef35e30613004c1d1c9c0d8de80eda4699554ee",
+    "buildId": "9Rbh3LK-fOIO8T0G5B8S4",
+    "files": 6707
+  },
+  "certificate": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-d581d56c11\\sealed-runtime-6d714e1e8a\\localhost.crt",
+    "sha256": "60acfb30a6efac545937fd49e88bc3db111cd3c12c78c99cb753e587ac9a4708",
+    "bytes": 1134
+  },
+  "tlsGenerator": {
+    "path": "C:/Program Files/Git/mingw64/bin/openssl.exe",
+    "sha256": "9c677536ea80e3111fba62784024360e9ea2f1f20391452a6195454ea1fa3faa",
+    "bytes": 1001116
+  },
+  "runtimeSdk": {
+    "entry": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\11\\02\\01a19e00-6435-7443-92d6-f2cf160728a8\\close-integrity-release-20261110-d581d56c11-artifact\\runtime\\node_modules\\@prisma\\client\\default.js",
+    "schema": {
+      "path": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\11\\02\\01a19e00-6435-7443-92d6-f2cf160728a8\\close-integrity-release-20261110-d581d56c11-artifact\\runtime\\node_modules\\.prisma\\client\\schema.prisma",
+      "sha256": "f5c698cdcfb6514fcc52f3d8a6709b3eca095017c13b0dc669c5aa6cd9655486",
+      "bytes": 360507
+    },
+    "engine": {
+      "path": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\11\\02\\01a19e00-6435-7443-92d6-f2cf160728a8\\close-integrity-release-20261110-d581d56c11-artifact\\runtime\\node_modules\\.prisma\\client\\query_engine-windows.dll.node",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    }
+  },
+  "applicationPid": 13304,
+  "privateFailure": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-d581d56c11\\sealed-runtime-6d714e1e8a\\failure.private.txt",
+    "sha256": "c3e2032e7d2deff748fb146dd1d70d2cb08904c4803302137986f495448340d8",
+    "bytes": 570
+  },
+  "failure": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'https://localhost:3296'\n- 'https://127.0.0.1:3443'\n           ^\n",
+  "applicationTreeStopExitCode": 0,
+  "applicationStopped": true,
+  "ownedClusterStopped": true,
+  "portsReleased": true,
+  "artifactAfter": {
+    "sha256": "529513478dc7d5245a3ab1cf9ef35e30613004c1d1c9c0d8de80eda4699554ee",
+    "buildId": "9Rbh3LK-fOIO8T0G5B8S4",
+    "files": 6707
+  },
+  "artifactUnchanged": true,
+  "ended": "2026-11-10T21:11:08.079Z"
+}

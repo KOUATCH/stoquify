@@ -1,0 +1,51 @@
+{
+  "reviewedAt": "2026-11-04T09:29:59.0463375Z",
+  "reviewer": "r03_review",
+  "approvedForExecution": true,
+  "scope": "Fresh loopback-capable native retry01 with existing isolated recipe controls",
+  "files": [
+    {
+      "path": "database/run-native-retry01.cjs",
+      "sha256": "b19a0b5912ba8a3d2ff0918bdc26de5f5b0f195c7b8d480850ab386ad55ca1d3"
+    },
+    {
+      "path": "database/jest.native-retry01.config.cjs",
+      "sha256": "cb8c9f5fe38c65939e49eaee9b82221107fa870a1e339078b7eb5292021b3dcf"
+    },
+    {
+      "path": "database/isolation-guard.cjs",
+      "sha256": "0cf745ccdb7863c990c0795f1a4c824bc65479de74f8fe0948022c25e8d97906"
+    },
+    {
+      "path": "database/item-errors-retry01.postgres.test.ts",
+      "sha256": "7f276ca7ecdffc28c01e07d92d2ea5f234846ef06f42834e8ab816aaa598a85d"
+    },
+    {
+      "path": "database/RETRY01.md",
+      "sha256": "b4d61a73710f2b6cc48303709effd34886fc84b0363d024cc08b3554be691159"
+    }
+  ],
+  "target": ".codex-tmp/p04r03-qualification-20261104-r2; stoquify_local_p04_r03_20261104_r2",
+  "expectedTests": 43,
+  "reviewBasis": "Complete initial recipe reviewed; retry diffs inspected and only fresh target/evidence filenames changed",
+  "initialAttempt": {
+    "outcome": "EACCES before CREATE DATABASE, migrations or tests",
+    "dataRetained": true,
+    "processAbsentReported": true,
+    "cleanShutdownNotProven": true
+  },
+  "retainedControls": [
+    "OS env allowlist and explicit target URL/data-directory",
+    "No existing fixture reuse/reset",
+    "Private-client/schema/migration verification",
+    "Network/environment runtime guards",
+    "Source freeze and own process cleanup"
+  ],
+  "permittedEscalationPurpose": "Reach newly-created owned loopback PostgreSQL and allow reviewed runner process lifetime; no production or external provider network",
+  "conditions": [
+    "Root source-stable signal remains valid",
+    "Use exact reviewed runner; do not repoint target",
+    "Record escalation outcome and cleanup independently"
+  ],
+  "noProductOrTestEditsByReviewer": true
+}

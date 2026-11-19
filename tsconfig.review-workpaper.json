@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "paths": { "@/*": ["./*"], "@prisma/client": ["./.codex-tmp/af07-prisma/client"] }
+  },
+  "include": [
+    "services/accounting/review-workpaper*.ts",
+    "actions/accounting/review-workpaper.actions.ts",
+    "components/accounting/ReviewWorkpaperBinder.tsx",
+    "components/accounting/AccountantPortal.tsx",
+    "next-env.d.ts"
+  ]
+}

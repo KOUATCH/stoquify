@@ -1,0 +1,38 @@
+[
+  {
+    "locale": "en",
+    "scenario": "READ_PERMISSION_REVOCATION",
+    "status": "FAIL",
+    "retainedPrivateWorkspace": true,
+    "serverDenials": [
+      {
+        "forbidden": true,
+        "unauthorized": false,
+        "expired": false
+      },
+      {
+        "forbidden": true,
+        "unauthorized": false,
+        "expired": false
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "scenario": "CROSS_TENANT_PERIOD",
+    "status": "PASS"
+  },
+  {
+    "locale": "en",
+    "scenario": "SESSION_REVOCATION",
+    "status": "FAIL",
+    "retainedPrivateWorkspace": true,
+    "redirectedToLogin": false,
+    "serverDenials": []
+  },
+  {
+    "scenario": "HARNESS_FAILURE",
+    "status": "FAIL",
+    "error": "Expected real protected read denial"
+  }
+]

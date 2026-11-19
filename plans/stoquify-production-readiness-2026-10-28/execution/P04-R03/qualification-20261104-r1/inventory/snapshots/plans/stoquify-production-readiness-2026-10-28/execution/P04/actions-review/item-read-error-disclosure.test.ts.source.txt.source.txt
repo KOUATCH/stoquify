@@ -1,0 +1,63 @@
+/**
+ * P04 characterization only: passing means the current defect was reproduced.
+ * Actual action functions execute; every imported authority/service/cache/error
+ * dependency is mocked. Schema passthrough intentionally removes unrelated input
+ * validation from this response-redaction experiment. No DB, environment loading,
+ * network, credentials, provider, or filesystem writes are required by this test.
+ * The sentinel is synthetic, not a live database error or private record.
+ */
+jest.mock("@/actions/_shared/safe-action-responses", () => ({
+  safeLoggedActionErrorMessage: jest.fn(() => "Safe public message"),
+}))
+jest.mock("@/lib/item/schemas", () => ({
+  getItemSchema: { parse: (input: unknown) => input },
+  listItemsSchema: { parse: (input: unknown) => input },
+}))
+jest.mock("@/lib/item/revalidation", () => ({ revalidateItem: jest.fn() }))
+jest.mock("@/lib/security/rbac", () => ({ requirePermission: jest.fn() }))
+jest.mock("@/services/modules/module-entitlement.service", () => ({ observeModuleAccess: jest.fn() }))
+jest.mock("@/services/item/item.service", () => ({
+  getItemWithRelations: jest.fn(),
+  listItemsWithRelations: jest.fn(),
+}))
+jest.mock("@/services/_shared/action-errors", () => ({ ForbiddenError: class extends Error {} }))
+jest.mock("next/cache", () => ({ revalidatePath: jest.fn(), revalidateTag: jest.fn() }))
+
+import { getItemAction, listItemsAction } from "@/actions/item/items"
+import { requirePermission } from "@/lib/security/rbac"
+import { getItemWithRelations, listItemsWithRelations } from "@/services/item/item.service"
+import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+
+const sentinel = "P04_SYNTHETIC_PRIVATE_INTERNAL_DETAIL_DO_NOT_RETURN"
+const cases = [
+  ["getItemAction", getItemAction, getItemWithRelations],
+  ["listItemsAction", listItemsAction, listItemsWithRelations],
+] as const
+
+beforeEach(() => {
+  jest.resetAllMocks()
+  ;(requirePermission as jest.Mock).mockResolvedValue({
+    userId: "synthetic-actor", orgId: "synthetic-tenant", permissions: ["inventory.items.read"],
+  })
+})
+
+describe("P04 current item-read error-disclosure characterization (not acceptance)", () => {
+  it.each(cases)("%s exposes an injected service exception verbatim", async (_name, action, service) => {
+    ;(service as jest.Mock).mockRejectedValue(new Error(sentinel))
+    const result = await action({ id: "synthetic-item", organizationId: "forged-tenant" })
+    expect(result).toEqual({ success: false, error: sentinel })
+    expect(service).toHaveBeenCalledTimes(1)
+    expect(result).not.toHaveProperty("data")
+    expect(safeLoggedActionErrorMessage).not.toHaveBeenCalled()
+  })
+
+  it.each(cases)("%s blocks service execution on denial but exposes the denial exception", async (_name, action, service) => {
+    ;(requirePermission as jest.Mock).mockRejectedValue(new Error(sentinel))
+    const result = await action({ id: "synthetic-item", organizationId: "forged-tenant" })
+    expect(result).toEqual({ success: false, error: sentinel })
+    expect(service).not.toHaveBeenCalled()
+    expect(getItemWithRelations).not.toHaveBeenCalled()
+    expect(listItemsWithRelations).not.toHaveBeenCalled()
+    expect(result).not.toHaveProperty("data")
+  })
+})

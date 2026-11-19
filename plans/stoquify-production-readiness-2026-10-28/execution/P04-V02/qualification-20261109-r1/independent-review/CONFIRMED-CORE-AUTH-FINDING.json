@@ -1,0 +1,192 @@
+{
+  "at": "2026-11-09T18:09:16.142Z",
+  "reviewer": "/root/v02_review",
+  "finding": "confirmed_core_auth_stale_authority_after_persisted_session_revocation",
+  "proposedPackage": "P04-R06",
+  "implementationAuthorized": false,
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "sourceProgressSha256": "dd0a5024f48aab922824120a209abf4312524c2ae2574abac9fb6ea3b170de30",
+  "progressAt": "2026-11-09T18:09:10.570Z",
+  "prerequisites": {
+    "signedSessionAndProfile": true,
+    "transition": {
+      "kind": "revoke",
+      "alias": "authRevoked",
+      "affected": 1,
+      "evidence": "auth-transition-1794247606668-08ded327-1ea8-43c2-be56-b5fa7f9d3d2c.json"
+    },
+    "newIndependentSameActorSessionAlive": true
+  },
+  "cases": [
+    {
+      "id": "authRevoked-get-session",
+      "request": {
+        "id": "authRevoked-get-session",
+        "path": "/api/auth/get-session",
+        "method": "GET",
+        "status": 200,
+        "bytes": 744,
+        "sha256": "65ce6dcfc263bab5863250a37f4a8affe992a8d2fafbf9d069564143984fc85b",
+        "redirect": null,
+        "authResponseHeaders": [],
+        "contentType": "application/json",
+        "cacheControl": null,
+        "retryAfter": null,
+        "hasPrivateUser": true,
+        "hasSession": true,
+        "privateActorCanaries": true,
+        "hasTokenField": true
+      },
+      "cacheProof": {
+        "id": "authRevoked-get-session",
+        "startedAt": "2026-11-09T18:06:59.570Z",
+        "remainingSeconds": 286.8289999961853,
+        "passed": true,
+        "remainingAfterResponseSeconds": 286.7809998989105
+      },
+      "before": "snapshot-auth-authRevoked-get-session-before-1794247619542-2f914f71-c14b-4bf5-816b-889adf9cd779.json",
+      "after": "snapshot-auth-authRevoked-get-session-after-1794247621709-e43ff22d-9754-4a9e-838c-a42db3639ffd.json",
+      "changedTables": [],
+      "sessionAndAuditUnchanged": true
+    },
+    {
+      "id": "authRevoked-list-sessions",
+      "request": {
+        "id": "authRevoked-list-sessions",
+        "path": "/api/auth/list-sessions",
+        "method": "GET",
+        "status": 200,
+        "bytes": 400,
+        "sha256": "0b5d3a061799ab19f1d60f91f544627e96d7cccb8597e5cabf6c3d745cefb8a1",
+        "redirect": null,
+        "authResponseHeaders": [],
+        "contentType": "application/json",
+        "cacheControl": null,
+        "retryAfter": null,
+        "hasPrivateUser": false,
+        "hasSession": false,
+        "privateActorCanaries": true,
+        "hasTokenField": true
+      },
+      "cacheProof": {
+        "id": "authRevoked-list-sessions",
+        "startedAt": "2026-11-09T18:07:07.855Z",
+        "remainingSeconds": 278.5439999103546,
+        "passed": true,
+        "remainingAfterResponseSeconds": 278.5160000324249
+      },
+      "before": "snapshot-auth-authRevoked-list-sessions-before-1794247627825-4e526f27-cc2b-41f9-a279-247628431c02.json",
+      "after": "snapshot-auth-authRevoked-list-sessions-after-1794247629918-6773786f-f67c-4198-9105-867a38924d3c.json",
+      "changedTables": [],
+      "sessionAndAuditUnchanged": true
+    },
+    {
+      "id": "authRevoked-list-accounts",
+      "request": {
+        "id": "authRevoked-list-accounts",
+        "path": "/api/auth/list-accounts",
+        "method": "GET",
+        "status": 200,
+        "bytes": 482,
+        "sha256": "edcd3170a07573d9c814374a614c3892cbe66f77049e6d864145be66c6cf16d5",
+        "redirect": null,
+        "authResponseHeaders": [],
+        "contentType": "application/json",
+        "cacheControl": null,
+        "retryAfter": null,
+        "hasPrivateUser": false,
+        "hasSession": false,
+        "privateActorCanaries": true,
+        "hasTokenField": false
+      },
+      "cacheProof": {
+        "id": "authRevoked-list-accounts",
+        "startedAt": "2026-11-09T18:07:12.022Z",
+        "remainingSeconds": 274.3769998550415,
+        "passed": true,
+        "remainingAfterResponseSeconds": 274.3359999656677
+      },
+      "before": "snapshot-auth-authRevoked-list-accounts-before-1794247632003-02ea0310-c884-468f-ba0f-3571fa887f14.json",
+      "after": "snapshot-auth-authRevoked-list-accounts-after-1794247633983-20fbb9a9-d49c-45a7-bb22-87d9ebd0a7f7.json",
+      "changedTables": [],
+      "sessionAndAuditUnchanged": true
+    },
+    {
+      "id": "authRevoked-unlink",
+      "request": {
+        "id": "authRevoked-unlink",
+        "path": "/api/auth/unlink-account",
+        "method": "POST",
+        "status": 200,
+        "bytes": 15,
+        "sha256": "edc48cd3b0bc4fa7ba23aad40b8508a17d370ca38be174bae2a2f64634e65a2b",
+        "redirect": null,
+        "authResponseHeaders": [],
+        "contentType": "application/json",
+        "cacheControl": null,
+        "retryAfter": null,
+        "hasPrivateUser": false,
+        "hasSession": false,
+        "privateActorCanaries": false,
+        "hasTokenField": false
+      },
+      "cacheProof": {
+        "id": "authRevoked-unlink",
+        "startedAt": "2026-11-09T18:07:38.845Z",
+        "remainingSeconds": 247.55399990081787,
+        "passed": true,
+        "remainingAfterResponseSeconds": 247.5130000114441
+      },
+      "before": "snapshot-auth-authRevoked-unlink-before-1794247658818-c11ae34c-5c44-4229-9f79-c075811ee016.json",
+      "after": "snapshot-auth-authRevoked-unlink-after-1794247660742-d0800b08-9fd2-4e1c-93c1-2cfe4c56510b.json",
+      "changedTables": [
+        "accounts"
+      ],
+      "sessionAndAuditUnchanged": true,
+      "accountsBefore": 27,
+      "accountsAfter": 26
+    }
+  ],
+  "positiveAndDenialControls": [
+    {
+      "id": "authRevoked-get-session-fresh",
+      "passed": true
+    },
+    {
+      "id": "authRevoked-permissions",
+      "passed": true
+    },
+    {
+      "id": "authRevoked-profile",
+      "passed": true
+    },
+    {
+      "id": "authRevoked-profile-write",
+      "passed": true
+    },
+    {
+      "id": "authRevoked-profile-cache-override",
+      "passed": true
+    },
+    {
+      "id": "authRevoked-unlink-cache-override",
+      "passed": true
+    },
+    {
+      "id": "authRevoked-change-password-cache-override",
+      "passed": true
+    }
+  ],
+  "interpretation": [
+    "Default core reads return private user/session/account information despite native revocation. The independent new same-actor session makes list-sessions token disclosure distinguishable from replay of the already cached original session.",
+    "Default unlink changes authentication-account business state under the revoked session; this is not permitted session/security bookkeeping.",
+    "The queried disableCookieCache=false unlink/change-password variants denied without mutation. No query-override bypass is confirmed.",
+    "No raw secret values are published. Returned token fields do not establish session takeover.",
+    "This is a confirmed bounded finding from completed cases, not a final suite, browser, provider or cleanup verdict."
+  ],
+  "boundedRepairScope": "Enforce current persisted session and account authority for admitted core sensitive reads/account mutations while preserving authorized credential/session operations and existing reviewed profile behavior; refresh actual-source closure and test all affected routes before closure.",
+  "status": "requires_separate_bounded_repair_and_requalification"
+}

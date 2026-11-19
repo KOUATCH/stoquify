@@ -1,0 +1,63 @@
+{
+  "at": "2026-11-10T19:07:41.646Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "files": [
+    {
+      "path": "verify-private-metadata-exclusion-v2.cjs",
+      "sha256": "9d47c5c8e05fdf6caa229ad6e36ea89be88745cc7cdcf78e2e488697fa099a5a"
+    },
+    {
+      "path": "verify-private-metadata-exclusion-v2.test.cjs",
+      "sha256": "561208354f07d519bae54d59f02406efc9e6b45ef6693bc91e6f4d31fb469fdc"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/PRIVATE-METADATA-DISPOSITION.json",
+      "sha256": "fe5a21ce44f5f2910783d816824c56de3dd6ad809646e66dfef6b9ef76709abb"
+    },
+    {
+      "path": "inventory/private-metadata-policy-v2.json",
+      "sha256": "f6b24a709fbc2df9033c648afb8687bfcf46068dc299b299c050237d6cb551a3"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\pg-attempt-149fa2421b\\pg-PRIVATE_FIXTURE.json",
+      "sha256": "1fe896640c9d10be26bf93823d346c66b6ea4d707d9130fae9a3b31f8a20460c"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\pg-attempt-54a799a9fc\\pg-PRIVATE_FIXTURE.json",
+      "sha256": "b41b42cf84bc965a263e094baa1cc3e94753a198c97bb2ff00ac172baf56c385"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-ownership-qualification-2026-11-10\\pg-attempt-0e69f2030b\\pg-PRIVATE_FIXTURE.json",
+      "sha256": "ef5f463343e2c00c6666a30f5ef2ce4d2433d9305f69299e598b4070ec96deea"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\earned-close\\pg-attempt-ece011f832\\pg-PRIVATE_FIXTURE.json",
+      "sha256": "3abd13acd1adba63dc6e0e831c1e8e628883347f6180dd225074899adadc2086"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-PRIVATE_CLIENT.json",
+      "sha256": "1d6d226922ea6babab71bd7fc4130e1d836ad5a5885c0eb781ea84dea1ba1d84"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-client-e29eaa8acf\\pg-CLIENT_CONTEXT.json",
+      "sha256": "3db34836e9b6c1121b532843e4cf3e2caa5ba0fc0cf9d0ffd7b48a048543d7f0"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-client-e29eaa8acf\\pg-CLIENT_RESULT.json",
+      "sha256": "1d6d226922ea6babab71bd7fc4130e1d836ad5a5885c0eb781ea84dea1ba1d84"
+    }
+  ],
+  "scope": "Typed metadata exclusion helper source and24bounded synthetic Node tests only.",
+  "command": "node --test verify-private-metadata-exclusion-v2.test.cjs",
+  "facts": [
+    "Fixture metadata strict path/content gates remain; typed client code provenance does not taint legitimate shared code hashes or generic basenames.",
+    "Exact document hashes/paths and resolved external private-client roots in actual traces must be absent.",
+    "Strict known metadata shapes fail on extra credential fields/env values/unknown payload types.",
+    "Tests use only owned verified temporary directory,synthetic manifests/traces and7hash-bound metadata JSONs; deletion checks exact root,parent,prefix.",
+    "No external reference files,app,DB,build,client generation or network used."
+  ],
+  "testsExecuted": false,
+  "artifactExclusionVerified": false,
+  "qualificationPassed": false
+}

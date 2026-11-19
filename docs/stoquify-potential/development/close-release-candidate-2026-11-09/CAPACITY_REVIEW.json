@@ -1,0 +1,63 @@
+{
+  "checkedAt": "2026-11-09T16:58:13.835Z",
+  "approvedForPreparation": true,
+  "approvedForCopy": true,
+  "approvedForBuild": true,
+  "sourceInputs": [
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+    },
+    {
+      "path": "vendor/xlsx-0.20.3.tgz",
+      "sha256": "8dc73fc3b00203e72d176e85b50938627c7b086e607c682e8d3c22c02bb99fe8"
+    },
+    {
+      "path": "vendor/README.md",
+      "sha256": "6a2bf1e6d253a477692aaa6d6375cc6f085a77e09f30fb967993a130eae4220f"
+    },
+    {
+      "path": "scripts/ensure-prisma-client.js",
+      "sha256": "3ea590f5bda9f6b68f9be0cbe8442e18220b50c100c763c0a237c50d20297989"
+    },
+    {
+      "path": "scripts/candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    }
+  ],
+  "measurements": [
+    {
+      "path": "docs/stoquify-potential/development/close-release-candidate-2026-11-09/rawmeasurements.json",
+      "sha256": "640f0797af3e829208d311df558586fb97e00b909811c10f3b6ccaa8752aa271"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-release-candidate-2026-11-09/CACHE_CLEANUP.json",
+      "sha256": "fb50ef108fce4c412ec7006555d4a2342921255cb815861f9bc924f6126d1685"
+    }
+  ],
+  "sourceBytes": 235707348,
+  "archiveBytes": 90189047,
+  "dependencyBytes": 1175733068,
+  "compilerReserveBytes": 4545380488,
+  "artifactReserveBytes": 1467359580,
+  "additionalDatabaseReserveBytes": 268435456,
+  "filesystemOverheadReserveBytes": 134217728,
+  "minimumPreparationFreeBytes": 6466440351,
+  "minimumCopyFreeBytes": 6123766740,
+  "minimumBuildFreeBytes": 4948033672,
+  "artifactRoot": "C:/Users/J COMPUTER/.codex/visualizations/2026/11/02/01a19e00-6435-7443-92d6-f2cf160728a8",
+  "minimumArtifactFreeBytes": 1467359580,
+  "availablePreparationBytes": 6990708736,
+  "availableArtifactBytes": 4304175104,
+  "rationale": "Replace generic8GiB floor with source+archive+independent dependency copy plus1.5x measured prior full compiler output+1GiB, DB256MiB and filesystem128MiB reserves; artifact1.5x prior+1GiB on separate volume. Only obsolete generated cache was reclaimed.",
+  "priorSourceDependenciesAndArtifactPreserved": true,
+  "noCleanInstallClaim": true
+}

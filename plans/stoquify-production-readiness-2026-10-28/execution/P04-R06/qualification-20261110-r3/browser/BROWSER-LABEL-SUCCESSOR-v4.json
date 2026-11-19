@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-10T15:31:14.621Z",
+  "scope": "Qualification label and exact self-source receipt binding only; no observer assertion/transport/output path change",
+  "before": {
+    "path": "run-consumer-qualification-v3.cjs",
+    "sha256": "f4d6460b79cfff193de4b3f6cb48f21bb112dda367c0225a3fc5d13be4319c0a"
+  },
+  "after": {
+    "path": "run-consumer-qualification-v4.cjs",
+    "sha256": "d32b2e2afad066c1b0b734cfbac257af477c7321a04368c02c5e74c6895e3d8e"
+  },
+  "replacements": [
+    [
+      "qualification: '20261110-r2'",
+      "qualification: '20261110-r3'"
+    ],
+    [
+      "'run-consumer-qualification-v3.cjs'",
+      "'run-consumer-qualification-v4.cjs'"
+    ]
+  ],
+  "preservedPriorBytes": true,
+  "actualBrowserExecuted": false
+}

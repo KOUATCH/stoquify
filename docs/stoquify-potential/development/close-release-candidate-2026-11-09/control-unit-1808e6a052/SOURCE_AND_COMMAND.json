@@ -1,0 +1,138 @@
+{
+  "utc": "2026-11-09T17:38:16.428Z",
+  "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\candidate",
+  "sourceManifestSha256": "8c9723660c455a3cea75b4ab774d91844418e9397d7ed35da47fceef389168b3",
+  "runnerSha256": "5b00edd0d7e0fd6ddf194057bbbbdc96579e08b8ac6924be3d9486a5a79f0be2",
+  "files": [
+    {
+      "path": "tests/s10-s11/release-artifact.test.js",
+      "sha256": "2d6c7d31e35e4b7517942388398076824122b1a49c18322f3c79adb7473a0453"
+    },
+    {
+      "path": "tests/s10-s11/release-artifact-private-uploads.test.js",
+      "sha256": "bfcc0856cec266fe71f727b1da4a5eb7c7231babb33889c4c72208d8f7f1be73"
+    },
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"
+    },
+    {
+      "path": "scripts/promote-release-schema.cjs",
+      "sha256": "4528b01b3f231838cd8d98c8f5a50995c390df5d166ec3c2114c931375d9ed28"
+    },
+    {
+      "path": "scripts/prisma-production-migration-gate.js",
+      "sha256": "1ee29e6674f53eec17c473bb225bd6e5d83bfaa1453e5490ca4259eec3e72008"
+    },
+    {
+      "path": "scripts/prisma-migration-catalog-gate.js",
+      "sha256": "e68b9643afe1d6f41420ee9cf2c65431a30739615ad4be6e9920b2a16065aeaa"
+    },
+    {
+      "path": "scripts/prisma-migration-history-health-check.js",
+      "sha256": "3649474ae9fe17200f61caff5c286638300928b418a88d7e58da5ed476d2caf1"
+    },
+    {
+      "path": "scripts/release-secret-preflight.js",
+      "sha256": "d20efac2da7ef1767cffb0bf19a9825b9a41310edee1b64bd4248dcaa1638729"
+    },
+    {
+      "path": "scripts/candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    },
+    {
+      "path": "scripts/local-gates-network.cjs",
+      "sha256": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    }
+  ],
+  "priorResults": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\migration-release-2026-11-09\\artifact-control-unit.results.json",
+      "sha256": "71900d6065fe8fa50ef8c19900dfbd4aa7a14cada4b7add274809686612eae0b",
+      "suite": "tests/s10-s11/release-artifact.test.js",
+      "expectedPassed": 17
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\migration-release-2026-11-09\\artifact-private-assets-unit-qualified.results.json",
+      "sha256": "e2e32f9dbd58a166d373f3cef95be176983a9b11b11b849c0da0d047280544bc",
+      "suite": "tests/s10-s11/release-artifact-private-uploads.test.js",
+      "expectedPassed": 67
+    }
+  ],
+  "dependencyReceiptSha256": "222f9be18880373fb80171f95cf7aa4f252bc28c736ad930c44e340415b75f93",
+  "command": {
+    "executable": "C:\\Program Files\\nodejs\\node.exe",
+    "args": [
+      "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\candidate\\node_modules\\jest\\bin\\jest.js",
+      "--config",
+      "{\"rootDir\":\"E:\\\\ohada saas\\\\Focused projects\\\\stoquify\\\\.codex-tmp\\\\close-release-20261109-9cf90a4714\\\\candidate\",\"roots\":[\"E:\\\\ohada saas\\\\Focused projects\\\\stoquify\\\\.codex-tmp\\\\close-release-20261109-9cf90a4714\\\\candidate\\\\tests\\\\s10-s11\"],\"testEnvironment\":\"node\",\"transform\":{},\"setupFiles\":[],\"setupFilesAfterEnv\":[],\"testMatch\":[\"<rootDir>/tests/s10-s11/release-artifact.test.js\",\"<rootDir>/tests/s10-s11/release-artifact-private-uploads.test.js\"],\"collectCoverage\":false,\"cacheDirectory\":\"E:\\\\ohada saas\\\\Focused projects\\\\stoquify\\\\.codex-tmp\\\\close-release-20261109-9cf90a4714\\\\control-unit-private-1808e6a052\\\\jest-cache\"}",
+      "--runInBand",
+      "--no-cache",
+      "--runTestsByPath",
+      "tests/s10-s11/release-artifact.test.js",
+      "tests/s10-s11/release-artifact-private-uploads.test.js",
+      "--json",
+      "--outputFile",
+      "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-release-candidate-2026-11-09\\control-unit-1808e6a052\\results.json"
+    ],
+    "cwd": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\candidate"
+  },
+  "environmentVariableNames": [
+    "APPDATA",
+    "ComSpec",
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_TERMINAL_PROMPT",
+    "LOCALAPPDATA",
+    "NEXTAUTH_URL",
+    "NEXT_PUBLIC_BASE_URL",
+    "NEXT_TELEMETRY_DISABLED",
+    "NODE_ENV",
+    "NODE_OPTIONS",
+    "NUMBER_OF_PROCESSORS",
+    "PATHEXT",
+    "Path",
+    "ProgramFiles",
+    "ProgramFiles(x86)",
+    "SHADOW_DATABASE_URL",
+    "STOQUIFY_ACCOUNTANT_INVITE_LIVE_SENDS",
+    "STOQUIFY_STATEMENT_EMAIL_LIVE_SENDS",
+    "STOQUIFY_STATEMENT_WHATSAPP_LIVE_SENDS",
+    "SystemDrive",
+    "SystemRoot",
+    "TEMP",
+    "TEST_DATABASE_URL",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "databaseTargets": "Explicit disabled loopback port1 synthetic URLs; no application credentials inherited",
+  "networkPolicy": "Existing reviewed preload refuses non-loopback socket/DNS connections; selected tests inject all PostgreSQL clients and builds",
+  "configuration": {
+    "rootDir": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\candidate",
+    "roots": [
+      "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\candidate\\tests\\s10-s11"
+    ],
+    "testEnvironment": "node",
+    "transform": {},
+    "setupFiles": [],
+    "setupFilesAfterEnv": [],
+    "testMatch": [
+      "<rootDir>/tests/s10-s11/release-artifact.test.js",
+      "<rootDir>/tests/s10-s11/release-artifact-private-uploads.test.js"
+    ],
+    "collectCoverage": false,
+    "cacheDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\control-unit-private-1808e6a052\\jest-cache"
+  },
+  "evidenceClass": "Filesystem fixtures and injected build/migration/locking collaborators; no real build/database/browser certification"
+}

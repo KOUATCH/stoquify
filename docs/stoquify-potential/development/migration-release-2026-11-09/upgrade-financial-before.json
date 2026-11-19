@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "phase": "before",
+  "database": "stoquify_pos_audit_20261109_41893b6190",
+  "organizationId": "org-full-pos-f16b7a03-7c2a-4b1b-967a-c62b22e0ef5d",
+  "saleId": "sale-full-pos-f16b7a03-7c2a-4b1b-967a-c62b22e0ef5d",
+  "receiptIdentity": {
+    "saleId": "sale-full-pos-f16b7a03-7c2a-4b1b-967a-c62b22e0ef5d",
+    "status": "COMPLETED"
+  },
+  "sold": {
+    "outstanding": "4.00",
+    "bank": "0.00",
+    "paid": "6.00",
+    "balanced": true,
+    "journalCount": 2,
+    "snapshot": {
+      "status": "COMPLETED",
+      "paymentStatus": "PARTIAL",
+      "customerBalance": "4",
+      "stockQuantity": "4",
+      "stockAvailable": "4",
+      "stockValue": "16",
+      "stockVersion": 1,
+      "sessionExpected": "106",
+      "cashTotal": "6",
+      "creditTotal": "4",
+      "transactionCount": 1,
+      "drawerCurrent": "106",
+      "drawerExpected": "106",
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "6",
+          "status": "PAID"
+        },
+        {
+          "method": "CREDIT",
+          "amount": "4",
+          "status": "PENDING"
+        }
+      ],
+      "drawerTransactionCount": 2,
+      "registryCount": 1,
+      "movementCount": 1,
+      "journalCount": 2,
+      "batchCount": 2,
+      "ledgerCount": 1,
+      "receivableCount": 1,
+      "stateCount": 1,
+      "eventCount": 3,
+      "outboxCount": 3,
+      "auditCount": 4,
+      "ledgerAuditCount": 4,
+      "sourceLinkCount": 2
+    },
+    "documentId": "cmw9crx4i001umaj0ef9vg3nz"
+  },
+  "evidenceClass": "Real PostgreSQL sale on 120 migrations using frozen current writer and synthetic trusted service scope"
+}

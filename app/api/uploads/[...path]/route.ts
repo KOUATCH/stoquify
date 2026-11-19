@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { promises as fs } from "fs"
 import path from "path"
+import { isLegacyUploadComponent, readLegacyUpload } from "@/lib/media/legacy-upload-storage"
 import { jsonAuthzError, jsonErrorResponse } from "@/lib/error-handling/route-response"
 import { requireApiModuleAccess, requireApiSessionForCurrentOrg, requireAppPermission } from "@/lib/security/server-authz"
 
@@ -80,7 +80,7 @@ export async function GET(
       return jsonAuthzError("Forbidden", 403, ENDPOINT)
     }
 
-    if (!/^[a-zA-Z0-9._-]+$/.test(fileName) || fileName.includes("..")) {
+    if (!isLegacyUploadComponent(organizationId) || !isLegacyUploadComponent(fileName)) {
       return invalidFilePathResponse()
     }
 
@@ -89,16 +89,11 @@ export async function GET(
       return unsupportedFileTypeResponse()
     }
 
-    const orgDirectory = path.resolve(process.cwd(), "public", "uploads", organizationId)
-    const fullPath = path.resolve(orgDirectory, fileName)
-
-    if (!fullPath.startsWith(`${orgDirectory}${path.sep}`)) {
-      return invalidFilePathResponse()
-    }
-
+    let fileBuffer: Buffer
     try {
-      await fs.access(fullPath)
-    } catch {
+      fileBuffer = await readLegacyUpload(organizationId, fileName)
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error
       return jsonErrorResponse("File not found", {
         code: "NOT_FOUND",
         status: 404,
@@ -106,8 +101,6 @@ export async function GET(
         endpoint: ENDPOINT,
       })
     }
-
-    const fileBuffer = await fs.readFile(fullPath)
 
     return new NextResponse(fileBuffer, {
       headers: {

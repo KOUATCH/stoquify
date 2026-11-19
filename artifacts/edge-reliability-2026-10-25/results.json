@@ -1,0 +1,133 @@
+{
+  "date": "2026-10-25",
+  "origin": "http://localhost:3000",
+  "pluginVersion": "26.1021.31345",
+  "previousPluginVersion": "26.1013.40934",
+  "managedSettingsChanged": false,
+  "repairProven": false,
+  "observations": {
+    "cpuLoadPercent": 100,
+    "freeMemoryKiB": 3010404,
+    "totalMemoryKiB": 25021360,
+    "httpLogin": {
+      "status": 200,
+      "ms": 7946
+    },
+    "initialCreateTab": {
+      "error": "Timed out after 10000ms waiting for CDP command Page.navigate.",
+      "tabRemainedBlank": true
+    },
+    "nativeWindow": {
+      "accessibility": "unavailable",
+      "screenshot": "Displayed Codex rather than the target Edge content; not used as website evidence",
+      "focusCheck": "get_window_state timed out"
+    },
+    "rootCause": "Unproven. Inner debugger deadlines can fail before an explicit 30-second navigation/action deadline."
+  },
+  "checks": [
+    {
+      "operation": "landing navigation after load sample",
+      "ok": false,
+      "ms": 7500,
+      "error": "Error: Detached while handling command."
+    },
+    {
+      "operation": "landing screenshot following detach",
+      "ok": true,
+      "ms": 4688
+    },
+    {
+      "operation": "landing DOM measurement",
+      "ok": false,
+      "ms": 12357,
+      "error": "Error: CDP operation exceeded its deadline before command dispatch"
+    },
+    {
+      "operation": "cycle 1 workflow navigation",
+      "ok": false,
+      "ms": 1329,
+      "error": "Error: Debugger unattached"
+    },
+    {
+      "operation": "fresh tab workflow navigation",
+      "ok": false,
+      "ms": 10454,
+      "error": "Error: Timed out waiting for tab 1861543886 to navigate to http://localhost:3000/en/workflows."
+    },
+    {
+      "operation": "workflow screenshot",
+      "ok": true,
+      "ms": 3279
+    },
+    {
+      "operation": "cycle 1 login navigation",
+      "ok": true,
+      "ms": 4850
+    },
+    {
+      "operation": "cycle 1 login screenshot",
+      "ok": true,
+      "ms": 470
+    },
+    {
+      "operation": "cycle 1 register navigation",
+      "ok": true,
+      "ms": 7382
+    },
+    {
+      "operation": "cycle 1 register screenshot",
+      "ok": true,
+      "ms": 1656
+    },
+    {
+      "operation": "cycle 2 landing navigation",
+      "ok": false,
+      "ms": 10341,
+      "error": "Error: Timed out after 10000ms waiting for CDP command Page.navigate."
+    },
+    {
+      "operation": "cycle 2 workflow navigation",
+      "ok": true,
+      "ms": 6400
+    },
+    {
+      "operation": "cycle 2 workflow screenshot",
+      "ok": true,
+      "ms": 1553,
+      "url": "http://localhost:3000/en/workflows"
+    },
+    {
+      "operation": "cycle 2 login navigation",
+      "ok": true,
+      "ms": 5670
+    },
+    {
+      "operation": "cycle 2 login screenshot",
+      "ok": true,
+      "ms": 455,
+      "url": "http://localhost:3000/en/login"
+    },
+    {
+      "operation": "cycle 2 register navigation",
+      "ok": true,
+      "ms": 4208
+    },
+    {
+      "operation": "cycle 2 register screenshot",
+      "ok": true,
+      "ms": 687,
+      "url": "http://localhost:3000/en/register"
+    },
+    {
+      "operation": "explicit deadline landing link navigation",
+      "ok": false,
+      "ms": 11526,
+      "error": "Error: Error: Timed out after 3000ms waiting for selector internal:role=link[name=\"Stoquify\"s]: Timed out after 2989ms waiting for CDP command Runtime.evaluate.\nwaiting on click for selector internal:role=link[name=\"Stoquify\"s]\nLocator diagnostics: {\"kind\":\"action_failed\",\"action\":\"click\",\"locator\":\"internal:role=link[name=\\\"Stoquify\\\"s]\",\"matchCount\":1,\"matches\":[{\"ariaLabel\":null,\"disabled\":false,\"role\":null,\"tag\":\"a\",\"text\":\"OHADA operating systemOHADA operating system\",\"type\":null,\"visible\":true}],\"visibleCount\":1,\"truncated\":false}"
+    }
+  ],
+  "nextSupportedExperiment": "Fresh chat as documented at https://learn.chatgpt.com/docs/chrome-extension; user authorization requested.",
+  "cleanup": {
+    "explicitCloseError": "Debugger unattached",
+    "note": "No diagnostic tab marked for retention; normal turn cleanup should release task-created tabs."
+  }
+}

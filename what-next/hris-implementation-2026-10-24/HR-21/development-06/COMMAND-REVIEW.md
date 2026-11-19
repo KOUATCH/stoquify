@@ -1,0 +1,14 @@
+# Commands and side effects
+
+The workflow contract and command registry were inspected before verification. The workflow validator only reads the repository manifest; its output does not certify the remaining unclassified package commands.
+
+- `node .../prepare.cjs`: copies app routes and configuration into this evidence directory's ignored runtime and creates checked source junctions. No environment files, schema promotion or root configuration writes.
+- `node .../serve.cjs`: launches owned loopback Next development service on 35582 with a clean environment, random in-memory authentication secret and exact isolated database URL. Writes runtime output/context/server logs. Preload rejects external HTTP and root environment-file reads. Application actions mutate only the synthetic development tenant through native owners.
+- `node .../browser.cjs`: creates three synthetic credential identities and one tenant in the dedicated local HR database on 55464; directly seeds an ACTIVE employee prerequisite, calls native independently reviewed policy/schedule/entitlement services, then drives actual Next pages. Controlled fault injection changes only this fixture's request reason, reviewer permissions and assurance time. Exact-prefix/context/URL checks precede Prisma creation. Finally deletes the owned fixture and checks identity/session/account cleanup. Captured password requests are excluded; no storage state or traces are saved. Browser HTTP is restricted to loopback. No outbox worker runs.
+- `node .../preflight.cjs`: two negative child invocations replace a synthetic stale result and fail before loading Prisma or a browser. Writes a separate preflight result, never the actual browser result. No database effect.
+- `node node_modules/jest/bin/jest.js --config jest.hris-leave-browser.config.cjs --runInBand`: three focused UI suites with the inspected fresh-auth mocked action setup; no real application database/authentication claim. Writes test output.
+- `node .../typecheck.cjs <output> <two explicit roots>`: reads the current TypeScript configuration and imported source graph, checks the changed panel and regression with no emit/incremental output. Writes its diagnostic log only.
+- `npm run agent:workflow:check`: reviewed read-only contract validator; does not execute application commands.
+- Shutdown uses the saved launcher PID only after checking its command line, plus `pg_ctl` against the exact owned local HR data directory. No generic service termination, migrations, schema reset, production access or deployment.
+
+Prior failed browser attempts are preserved as timestamped result snapshots. The final seal must check current source hashes, actual browser status, cleanup, focused test counts and service shutdown; a failed or incomplete attempt cannot be promoted by a source-review verdict.

@@ -22,14 +22,19 @@ import {
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 import { Link } from "@/i18n/navigation"
+import { WorkflowStory } from "./workflow-story"
+import { WorkflowDetails } from "./workflow-details"
+import { additionalJourneys } from "./landing-workflow-library"
+import { useCinematicSignedIn } from "./cinematic-shell"
 import { productCommunicationCopy, workflowGuidance } from "./public-product-copy"
 import {
   getWorkflowAtlasOutcomesForRole,
   getWorkflowAtlasWorkflowsForSelection,
   workflowAtlasRoles,
+  workflowAtlasWorkflows,
   type WorkflowAtlasIconKey,
   type WorkflowAtlasOutcome,
   type WorkflowAtlasRole,
@@ -63,6 +68,9 @@ export function WorkflowAtlas() {
   const t = useTranslations("landing.workflowAtlas")
   const locale = useLocale() === "fr" ? "fr" : "en"
   const copy = productCommunicationCopy[locale]
+  const signedIn = useCinematicSignedIn()
+  const rootRef = useRef<HTMLElement>(null)
+  const text = (en: string, fr: string) => locale === "fr" ? fr : en
   const [activeRole, setActiveRole] = useState<ActiveRole>("all")
   const [activeOutcome, setActiveOutcome] = useState<ActiveOutcome>("all")
 
@@ -102,130 +110,124 @@ export function WorkflowAtlas() {
     setActiveOutcome("all")
   }
 
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root) return
+    let frame = 0
+    let arrivalFrame = 0
+    let highlightTimer = 0
+    let highlightedTarget: HTMLElement | null = null
+    const clearArrival = () => {
+      cancelAnimationFrame(arrivalFrame)
+      window.clearTimeout(highlightTimer)
+      highlightedTarget?.classList.remove("workflow-destination-highlight")
+      highlightedTarget = null
+    }
+    const highlightOnArrival = (target: HTMLElement) => {
+      const started = performance.now()
+      let settledFrames = 0
+      const checkArrival = () => {
+        const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0
+        const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+        const destination = Math.min(maxScroll, Math.max(0, window.scrollY + target.getBoundingClientRect().top - margin))
+        settledFrames = Math.abs(window.scrollY - destination) <= 2 ? settledFrames + 1 : 0
+        if (settledFrames >= 2) {
+          highlightedTarget = target
+          target.classList.add("workflow-destination-highlight")
+          highlightTimer = window.setTimeout(clearArrival, 1400)
+        } else if (performance.now() - started < 3000) {
+          // Check actual arrival, including no-op scrolls; interrupted scrolls must not flash a distant guide.
+          arrivalFrame = requestAnimationFrame(checkArrival)
+        }
+      }
+      arrivalFrame = requestAnimationFrame(checkArrival)
+    }
+    const isWorkflowHash = (hash: string) => workflowAtlasWorkflows.some(item => hash === `#workflow-${item.key}`) || additionalJourneys.some(item => hash === `#workflow-${item.id}`)
+    const scrollToHash = (hash: string, animate = false) => {
+      const isWorkflow = isWorkflowHash(hash)
+      if (!isWorkflow && hash !== "#workflow-finder" && hash !== "#workflow-specialists") return
+      clearArrival()
+      if (isWorkflow) {
+        setActiveRole("all")
+        setActiveOutcome("all")
+      }
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        frame = requestAnimationFrame(() => {
+          const target = root.querySelector<HTMLElement>(hash)
+          const details = isWorkflow ? target?.querySelector("details") : null
+          const summary = details?.querySelector("summary")
+          if (details && (!details.open || summary?.getAttribute("aria-expanded") === "false")) summary?.click()
+          const motionOff = window.matchMedia("(prefers-reduced-motion: reduce)").matches || root.closest(".motion-off")
+          target?.scrollIntoView({ block: "start", behavior: animate && !motionOff ? "smooth" : "instant" })
+          target?.focus({ preventScroll: true })
+          if (target && animate) highlightOnArrival(target)
+        })
+      })
+    }
+    const followHash = () => scrollToHash(window.location.hash)
+    const click = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href^="#workflow-"]') : null
+      if (!link || link.hasAttribute("download") || (link.target && link.target !== "_self")) return
+      if (!isWorkflowHash(link.hash) && link.hash !== "#workflow-finder" && link.hash !== "#workflow-specialists") return
+      // Update the URL without the browser's native jump, then scroll after filters render.
+      event.preventDefault()
+      if (link.hash !== window.location.hash) window.history.pushState(window.history.state, "", link.hash)
+      scrollToHash(link.hash, true)
+    }
+    followHash()
+    window.addEventListener("hashchange", followHash)
+    root.addEventListener("click", click)
+    const observer = typeof IntersectionObserver === "undefined" ? null : new IntersectionObserver(entries => {
+      for (const entry of entries) if (entry.isIntersecting) {
+        entry.target.classList.add("workflow-entered")
+        observer?.unobserve(entry.target)
+      }
+    }, { threshold: 0.08 })
+    root.querySelectorAll("section").forEach(section => observer?.observe(section))
+    return () => {
+      cancelAnimationFrame(frame)
+      clearArrival()
+      observer?.disconnect()
+      window.removeEventListener("hashchange", followHash)
+      root.removeEventListener("click", click)
+    }
+  }, [])
+
   return (
-    <main className="public-contour-page" data-workflow-atlas>
+    <main id="main" tabIndex={-1} ref={rootRef} className="workflow-atlas public-contour-page" data-workflow-atlas>
       <section
         id="workflow-atlas"
-        className="section-divider relative isolate overflow-hidden bg-[var(--ink-0)] px-6 py-14 lg:px-8"
+        className="workflow-opening px-6 lg:px-8"
       >
         <div className="relative mx-auto max-w-7xl">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(24rem,0.85fr)] lg:items-stretch">
-            <div className="flex min-h-[24rem] flex-col justify-center">
-              <div className="eyebrow mb-4">{copy.guideEyebrow}</div>
-              <h1 className="display max-w-3xl text-4xl text-[var(--text-hi)] sm:text-5xl lg:text-6xl">
-                {copy.guideTitle}
-              </h1>
-              <p className="mt-6 max-w-2xl body-text text-lg leading-8 text-[var(--text-lo)]">
-                {copy.guideIntro}
-              </p>
-              <p className="mt-4 max-w-2xl body-text text-sm leading-6 text-[var(--text-faint)]">{copy.guideNote}</p>
-              <div className="mt-7 grid gap-3 sm:grid-cols-3" data-workflow-hero-metrics>
-                <div className="rounded-lg border border-[var(--rule-1)] px-3 py-3">
-                  <div className="data-text text-[0.68rem] font-semibold uppercase text-[var(--accent-hi)]">
-                    {t("selectedRoleLabel")}
-                  </div>
-                  <div className="mt-1 body-text text-sm font-semibold text-[var(--text-hi)]">
-                    {selectedRoleText}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-[var(--rule-1)] px-3 py-3">
-                  <div className="data-text text-[0.68rem] font-semibold uppercase text-[var(--accent-hi)]">
-                    {t("selectedOutcomeLabel")}
-                  </div>
-                  <div className="mt-1 body-text text-sm font-semibold text-[var(--text-hi)]">
-                    {selectedOutcomeText}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-[var(--rule-1)] px-3 py-3">
-                  <div className="data-text text-[0.68rem] font-semibold uppercase text-[var(--accent-hi)]">
-                    {t("recommendedLabel")}
-                  </div>
-                  <div className="mt-1 body-text text-sm font-semibold text-[var(--text-hi)]">
-                    {visibleWorkflows.length}
-                  </div>
-                </div>
+          <div className="workflow-intro">
+            <div className="workflow-intro-copy">
+              <p className="eyebrow">{text("YOUR BUSINESS, CONNECTED", "VOTRE ENTREPRISE, CONNECTÉE")}</p>
+              <h1 className="display">{text("Every working day. One connected story.", "Chaque journée. Une histoire connectée.")}</h1>
+              <p className="workflow-lead">{text("From the first sale to the monthly close, see how your teams, payments and records work together.", "De la première vente à la clôture mensuelle, découvrez comment équipes, paiements et pièces se relient.")}</p>
+              <p className="workflow-scope">{text("POS & inventory. Suppliers & client invoices. Reconciliation & OHADA accounting. HRIS & payroll.", "Caisse et stocks. Fournisseurs et factures clients. Rapprochement et comptabilité OHADA. SIRH et paie.")}</p>
+              <div className="workflow-intro-actions">
+                <a className="button primary" href="#workflow-finder">{text("Find your workflow", "Trouver mon parcours")}<ArrowRight size={18} aria-hidden="true" /></a>
+                <Link className="text-link" href={signedIn ? "/dashboard" : "/login"}>{signedIn ? text("Open workspace", "Ouvrir l’espace") : copy.signIn}<ArrowUpRight size={17} aria-hidden="true" /></Link>
               </div>
+              <p className="workflow-guide-note">{copy.guideNote}</p>
+              <a href="#workflow-specialists" className="workflow-specialists-link">{text("Accounting firms & supporting workflows", "Cabinets et parcours complémentaires")}<ArrowRight size={16} aria-hidden="true" /></a>
             </div>
-
-            <aside
-              className="flex flex-col justify-between rounded-lg border border-[var(--rule-1)] bg-[var(--ink-1)]/95 p-5 shadow-2xl shadow-black/20 sm:p-6 lg:p-7"
-              data-workflow-hero-command
-            >
-              <div>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="data-text text-xs font-semibold uppercase text-[var(--accent-hi)]">
-                      {t("selectionLabel")}
-                    </div>
-                    <p className="mt-2 body-text text-sm leading-6 text-[var(--text-lo)]">
-                      {t("selectionAnnouncement", {
-                        count: visibleWorkflows.length,
-                        outcome: selectedOutcomeText,
-                        role: selectedRoleText,
-                      })}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={resetFilters}
-                    className="grid size-10 shrink-0 place-items-center rounded-lg border border-[var(--rule-1)] bg-[var(--ink-2)] text-[var(--text-lo)] transition hover:border-[var(--accent-hi)] hover:text-[var(--text-hi)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-hi)]"
-                    aria-label={t("resetFilters")}
-                    title={t("resetFilters")}
-                  >
-                    <RotateCcw className="size-4" aria-hidden="true" />
-                  </button>
-                </div>
-
-                <div className="mt-6 overflow-hidden rounded-lg border border-[var(--rule-1)] divide-y divide-[var(--rule-1)]" data-workflow-audience-panels>
-                  <div className="grid gap-4 py-4 sm:grid-cols-[2.5rem_minmax(0,1fr)]">
-                    <span className="grid size-10 place-items-center rounded-lg border border-[var(--accent-hi)]/35 text-[var(--accent-hi)]" aria-hidden="true">
-                      <ArrowUpRight className="size-5" />
-                    </span>
-                    <div>
-                      <div className="data-text text-xs font-semibold uppercase text-[var(--accent-hi)]">
-                        {t("prospectLabel")}
-                      </div>
-                      <h2 className="mt-1 body-text text-lg font-semibold text-[var(--text-hi)]">
-                        {t("prospectTitle")}
-                      </h2>
-                      <p className="mt-2 body-text text-sm leading-6 text-[var(--text-lo)]">
-                        {t("prospectBody")}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="grid gap-4 py-4 sm:grid-cols-[2.5rem_minmax(0,1fr)]">
-                    <span className="grid size-10 place-items-center rounded-lg border border-[var(--signal-up)]/35 text-[var(--signal-up)]" aria-hidden="true">
-                      <CheckCircle2 className="size-5" />
-                    </span>
-                    <div>
-                      <div className="data-text text-xs font-semibold uppercase text-[var(--accent-hi)]">
-                        {t("userLabel")}
-                      </div>
-                      <h2 className="mt-1 body-text text-lg font-semibold text-[var(--text-hi)]">
-                        {t("userTitle")}
-                      </h2>
-                      <p className="mt-2 body-text text-sm leading-6 text-[var(--text-lo)]">
-                        {t("userBody")}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Link
-                href="/login"
-                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--accent-hi)] px-4 py-3 body-text text-sm font-semibold text-[var(--ink-0)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-hi)]"
-              >
-                {copy.signIn}
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
-            </aside>
+            <WorkflowStory />
           </div>
 
           <div
             className="mt-8 rounded-lg border border-[var(--rule-1)] bg-[var(--ink-1)]/90 px-4 py-5 sm:px-5"
+            id="workflow-finder"
+            tabIndex={-1}
             data-workflow-decision-bar
           >
+            <div className="workflow-finder-heading">
+              <div><p className="eyebrow">{text("START WITH YOUR DAY", "PARTEZ DE VOTRE QUOTIDIEN")}</p><h2>{text("What would you like to move forward?", "Que souhaitez-vous faire avancer ?")}</h2></div>
+              <button type="button" className="workflow-reset" onClick={resetFilters}><RotateCcw size={16} aria-hidden="true" />{t("resetFilters")}</button>
+            </div>
             <div className="grid gap-6 xl:grid-cols-[0.78fr_1.22fr]">
               <div>
                 <div
@@ -237,8 +239,11 @@ export function WorkflowAtlas() {
                   </span>
                   {t("roleHubLabel")}
                 </div>
+                <select className="workflow-filter-select" aria-labelledby="workflow-role-label" value={activeRole} onChange={event => selectRole(event.target.value as ActiveRole)}>
+                  {roleButtons.map(({ key }) => <option key={key} value={key}>{t(`roles.${key}`)}</option>)}
+                </select>
                 <div
-                  className="mt-3 flex flex-wrap gap-2"
+                  className="workflow-filter-buttons mt-3 flex flex-wrap gap-2"
                   role="group"
                   aria-labelledby="workflow-role-label"
                   aria-label={t("roleLensLabel")}
@@ -262,7 +267,7 @@ export function WorkflowAtlas() {
                         )}
                       >
                         <Icon className="size-4" aria-hidden="true" />
-                        {t(`roles.${key}`)}
+                        <span className="workflow-filter-label">{t(`roles.${key}`)}</span>
                       </button>
                     )
                   })}
@@ -279,6 +284,9 @@ export function WorkflowAtlas() {
                   </span>
                   {t("outcomeChooserLabel")}
                 </div>
+                <select className="workflow-filter-select" aria-labelledby="workflow-outcome-label" value={activeOutcome} onChange={event => setActiveOutcome(event.target.value as ActiveOutcome)}>
+                  {outcomeButtons.map(({ key }) => <option key={key} value={key}>{t(`outcomes.${key}`)} ({outcomeCounts.get(key) || 0})</option>)}
+                </select>
                 <p id="workflow-outcome-context" className="mt-2 body-text text-sm leading-6 text-[var(--text-lo)]">
                   {t("outcomeContext", {
                     count: availableOutcomes.length,
@@ -286,7 +294,7 @@ export function WorkflowAtlas() {
                   })}
                 </p>
                 <div
-                  className="mt-3 flex flex-wrap gap-2"
+                  className="workflow-filter-buttons mt-3 flex flex-wrap gap-2"
                   role="group"
                   aria-labelledby="workflow-outcome-label"
                   aria-describedby="workflow-outcome-context"
@@ -315,7 +323,7 @@ export function WorkflowAtlas() {
                         )}
                       >
                         <Icon className="size-4" aria-hidden="true" />
-                        {t(`outcomes.${key}`)}
+                        <span className="workflow-filter-label">{t(`outcomes.${key}`)}</span>
                         <span
                           data-workflow-atlas-outcome-count={key}
                           className="grid min-w-6 place-items-center rounded-full border border-current/25 px-1.5 py-0.5 data-text text-[0.65rem]"
@@ -384,7 +392,7 @@ export function WorkflowAtlas() {
               </button>
             </div>
           ) : (
-            <div className="mt-8 grid gap-4 lg:grid-cols-3" data-workflow-recommendations>
+            <div key={`${activeRole}-${activeOutcome}`} className="mt-8 grid gap-4 lg:grid-cols-3" data-workflow-recommendations>
               {recommendedWorkflows.map((workflow, index) => (
                 <WorkflowPlaybookCard key={workflow.key} workflow={workflow} index={index} featured />
               ))}
@@ -443,16 +451,45 @@ export function WorkflowAtlas() {
           </div>
         </div>
       </section>
+      <section id="workflow-specialists" tabIndex={-1} className="workflow-specialists" aria-labelledby="workflow-specialists-title">
+        <div className="mx-auto max-w-7xl">
+          <p className="eyebrow">{text("MORE CONNECTED RESPONSIBILITIES", "D’AUTRES RESPONSABILITÉS CONNECTÉES")}</p>
+          <h2 id="workflow-specialists-title" className="display">{text("Your team. Your firm. The same supporting records.", "Votre équipe. Votre cabinet. Les mêmes justificatifs.")}</h2>
+          <p className="workflow-specialists-intro">{text("Explore the supporting journeys alongside the filtered guides above. Client access, evidence review, payments and starting records each have their own controls.", "Explorez les parcours complémentaires aux guides filtrés ci-dessus. Accès clients, revue des pièces, paiements et données initiales ont chacun leurs contrôles.")}</p>
+          <div className="workflow-specialists-grid">
+            {additionalJourneys.map(journey => {
+              const local = (value: readonly [string, string]) => value[locale === "fr" ? 1 : 0]
+              return <article key={journey.id} id={`workflow-${journey.id}`} tabIndex={-1}>
+                <div className="workflow-specialist-heading"><journey.icon size={23} aria-hidden="true" /><h3>{local(journey.label)}</h3></div>
+                <p>{local(journey.body)}</p>
+                <WorkflowDetails summary={<>{copy.details}<ChevronDown size={16} aria-hidden="true" /></>}>
+                  <h4>{local(journey.title)}</h4>
+                  <ol>{journey.steps.map(step => <li key={step[0]}>{local(step)}</li>)}</ol>
+                  <div className="workflow-specialist-evidence"><div><h4>{t("controlLabel")}</h4><ul>{journey.controls.map(control => <li key={control[0]}>{local(control)}</li>)}</ul></div><div><h4>{copy.records}</h4><ul>{journey.evidence.map(item => <li key={item[0]}>{local(item)}</li>)}</ul></div></div>
+                  <p className="workflow-specialist-review">{local(journey.review)}</p>
+                  <Link href={journey.source} className="workflow-specialists-link">{text("Open workspace step", "Ouvrir l’étape dans l’espace")}<ArrowUpRight size={16} aria-hidden="true" /></Link>
+                  <p className="workflow-guide-note">{text("Sign in with the required organization, client scope and permissions.", "Connectez-vous avec l’organisation, le périmètre client et les droits requis.")}</p>
+                </WorkflowDetails>
+              </article>
+            })}
+          </div>
+        </div>
+      </section>
       <section className="section-divider bg-[var(--paper-0)] px-6 py-14 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div><h2 className="display text-3xl text-[var(--text-hi)]">{copy.readyTitle}</h2><p className="body-text mt-3 max-w-2xl text-sm leading-7 text-[var(--text-lo)]">{copy.readyBody}</p></div>
-          <Link href="/register" className="body-text inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-[var(--color-brand-action)] px-5 py-3 text-sm font-semibold text-white">{copy.create}<ArrowRight className="size-4" aria-hidden="true" /></Link>
+          <Link href={signedIn ? "/dashboard" : "/register"} className="body-text inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-[var(--color-brand-action)] px-5 py-3 text-sm font-semibold text-white">{signedIn ? text("Open workspace", "Ouvrir l’espace") : copy.create}<ArrowRight className="size-4" aria-hidden="true" /></Link>
         </div>
       </section>
     </main>
   )
 
-  function WorkflowPlaybookCard({ workflow, index, featured = false }: { workflow: WorkflowAtlasWorkflow; index: number; featured?: boolean }) {
+}
+
+function WorkflowPlaybookCard({ workflow, index, featured = false }: { workflow: WorkflowAtlasWorkflow; index: number; featured?: boolean }) {
+    const t = useTranslations("landing.workflowAtlas")
+    const locale = useLocale() === "fr" ? "fr" : "en"
+    const copy = productCommunicationCopy[locale]
     const Icon = iconMap[workflow.icon]
     const guide = workflowGuidance[locale][workflow.key]
     const firstControl = workflow.controlKeys[0]
@@ -476,6 +513,7 @@ export function WorkflowAtlas() {
       <article
         id={featured ? undefined : `workflow-${workflow.key}`}
         data-workflow-atlas-section={workflow.key}
+        tabIndex={-1}
         className={classNames(
           "scroll-mt-24 rounded-xl border p-5",
           featured
@@ -514,6 +552,12 @@ export function WorkflowAtlas() {
           {guide.result}
         </p>
 
+        <WorkflowDetails summary={<>{copy.details}<ChevronDown className="size-4 shrink-0" aria-hidden="true" /></>}>
+        <div className="workflow-summary-path">
+          <div><span>{t("sourceLabel")}</span><p>{t(`workflows.${workflow.key}.source`)}</p></div>
+          <ArrowRight size={18} aria-hidden="true" />
+          <div><span>{t("destinationLabel")}</span><p>{t(`workflows.${workflow.key}.destination`)}</p></div>
+        </div>
         <div className="mt-4 flex flex-wrap gap-2" aria-label={t("roleLabel")}>
           {workflow.roles.map(role => <span key={role} className="body-text rounded-full border border-[var(--rule-2)] px-2.5 py-1 text-xs text-[var(--text-lo)]">{t(`roles.${role}`)}</span>)}
         </div>
@@ -522,8 +566,6 @@ export function WorkflowAtlas() {
           <p className="body-text mt-1 text-sm leading-6 text-[var(--text-lo)]">{guide.prerequisites}</p>
         </div>
 
-        <details className="group mt-5 border-t border-[var(--rule-2)]">
-          <summary className="body-text flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 py-3 text-sm font-semibold text-[var(--accent-hi)] [&::-webkit-details-marker]:hidden">{copy.details}<ChevronDown className="size-4 shrink-0 group-open:rotate-180" aria-hidden="true" /></summary>
           <div data-workflow-handoff className="mt-2">
             <h4 className="body-text font-semibold">{copy.handoff}</h4>
             <p className="body-text mt-2 text-sm leading-7 text-[var(--text-lo)]">{guide.handoff}</p>
@@ -614,10 +656,9 @@ export function WorkflowAtlas() {
               ))}
           </div>
         </div>
-        </details>
+        </WorkflowDetails>
       </article>
     )
-  }
 }
 
 function SummaryMetric({ label, value }: { label: string; value: string }) {

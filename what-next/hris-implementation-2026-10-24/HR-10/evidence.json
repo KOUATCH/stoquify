@@ -1,0 +1,375 @@
+{
+  "slice": "HR-10",
+  "status": "VERIFIED_SCOPED",
+  "createdAt": "2026-10-24T16:49:43.757Z",
+  "baselineHead": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "dirtyBaseline": true,
+  "commands": [
+    {
+      "command": "npm run agent:workflow:check",
+      "exitCode": 0,
+      "artifact": "workflow.log",
+      "class": "workflow"
+    },
+    {
+      "command": "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --runTestsByPath services/payroll/__tests__/payroll-employee.service.test.ts services/payroll/__tests__/payroll-contract.service.test.ts services/payroll/__tests__/payroll-payment-evidence.service.test.ts actions/hris/__tests__/employee.actions.test.ts actions/hris/__tests__/contract-authoring.actions.test.ts components/hris/__tests__/HrisPeopleAuthoring.test.tsx",
+      "exitCode": 0,
+      "artifact": "unit-final.log",
+      "class": "mocked",
+      "passed": 56
+    },
+    {
+      "command": "HRIS_CORRECTNESS_DATABASE_URL=<explicit-owned-loopback> node node_modules/jest/bin/jest.js --config jest.hris-authoring-postgres.config.cjs --runInBand",
+      "exitCode": 0,
+      "artifact": "postgres-browser-final.log",
+      "class": "postgres-and-rendered",
+      "passed": 13
+    },
+    {
+      "command": "HRIS_CORRECTNESS_DATABASE_URL=<explicit-owned-loopback> node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand",
+      "exitCode": 0,
+      "artifact": "prior-correctness-postgres.log",
+      "class": "postgres",
+      "passed": 60
+    },
+    {
+      "command": "node what-next/hris-implementation-2026-10-24/typecheck.cjs what-next/hris-implementation-2026-10-24/HR-10/typecheck-final.log components/hris/HrisPeopleAuthoringClient.tsx actions/hris/contract-authoring.actions.ts services/hris/__tests__/people-authoring.postgres.test.ts components/hris/__tests__/HrisPeopleAuthoring.test.tsx actions/hris/__tests__/contract-authoring.actions.test.ts app/[locale]/(dashboard)/dashboard/people/manage/page.tsx",
+      "exitCode": 0,
+      "artifact": "typecheck-final.log",
+      "class": "typescript"
+    }
+  ],
+  "browser": 10,
+  "review": "R1-R7 closed by independent source review",
+  "limitations": [
+    "Synthetic HTTP role boundary, not full Next/BetterAuth",
+    "No live activation, statutory approval, provider check or screen reader certification",
+    "Contract draft edit and component catalog authoring remain explicitly outside this entry page"
+  ],
+  "files": [
+    {
+      "path": "services/payroll/employee.service.ts",
+      "sha256": "4ea309a0304e1503703c74d0f3b67ef533a8311971711aed3214a9854f465949"
+    },
+    {
+      "path": "services/payroll/contract.service.ts",
+      "sha256": "b9fce155968a9163a0e1702d0cc14732d49617cdb002e681ee8a3106aebf4d72"
+    },
+    {
+      "path": "services/payroll/payment-evidence.service.ts",
+      "sha256": "20bc4c06858ffe4ce8bdecb5b51cd2cd2b70c2a4e8f1f5865bd49f45ffe8203c"
+    },
+    {
+      "path": "services/hris/payment-destination.service.ts",
+      "sha256": "017ba200aff97fbd208f1aa6504b8b6f453b3a6a9316f7503c398a7df307b0f7"
+    },
+    {
+      "path": "services/hris/people-authoring-read.service.ts",
+      "sha256": "b4f38141d5840f50e352e143b21a6d7a77ed4fe411ab7f82147c73676c5f615a"
+    },
+    {
+      "path": "actions/hris/people-authoring-read.actions.ts",
+      "sha256": "a158bc396b467a094839ac41f77a2e8f8481dd62bce1d5fa4ed7b9894a8ce7b8"
+    },
+    {
+      "path": "actions/hris/contract-authoring.actions.ts",
+      "sha256": "fffa81c40aa97208eb4dee6ec02c6caa856b6832b71ea6fe157fecdf3a7e9de6"
+    },
+    {
+      "path": "components/hris/HrisPeopleAuthoring.tsx",
+      "sha256": "824105691bed8e596010ac74e38fc416d84bf45186e070522d6914c4079f98fa"
+    },
+    {
+      "path": "components/hris/HrisPeopleAuthoringClient.tsx",
+      "sha256": "6fb416cd0387de6b95ce55508af76782c757b92e11bef768ae333a92c4001666"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/manage/page.tsx",
+      "sha256": "35ce443dcca748cb3509c5bb6b52acba5a1e3245b5573008ed82053e50df9791"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/page.tsx",
+      "sha256": "5449f0a61f454ec3b4a4721d1146dca5a98d7c28f0f61605efff4a233c777a7c"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx",
+      "sha256": "fc2a10e2f6854a91f79218cd2b4abad4541028efb026d8525b99663d398de6ba"
+    },
+    {
+      "path": "services/hris/__tests__/people-authoring.postgres.test.ts",
+      "sha256": "7b030e97cb9982a265e52770963839987b7cb48c01fbf2f475a6600d116673e3"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-employee.service.test.ts",
+      "sha256": "2f437a714cac0b0d599b7cd288be9f1983276c56367a6eea57ad50e906a1f176"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-contract.service.test.ts",
+      "sha256": "a9bad78bb636be0cc0ebc8ed2d071c5e9a488f76dd33baae3ff70064525580f0"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-payment-evidence.service.test.ts",
+      "sha256": "902107eaf18381abb0e78b33fedef38aee5a4602298615754b098d778c5e17c8"
+    },
+    {
+      "path": "components/hris/__tests__/HrisPeopleAuthoring.test.tsx",
+      "sha256": "f0c7b070b5a460d6128dbcd45e90c6a3240a97e3b623ba792c3024bed3f8977c"
+    },
+    {
+      "path": "actions/hris/__tests__/contract-authoring.actions.test.ts",
+      "sha256": "b44c65ff090e248cae681ed43d77f73ece54408bbe201410b8bc3c871d0705cf"
+    },
+    {
+      "path": "jest.hris-authoring-postgres.config.cjs",
+      "sha256": "d29307e90737e838f92ad14d1d5726d4a61f55df6bd2476413d57605928ed6ff"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/RESULT.md",
+      "sha256": "9e1b4dbf80c272c41b64deead099dd7bfe7061e28c4faf37b1a8012dcf341b05"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/PLAN.md",
+      "sha256": "ce72873d7fa346642d79a67eaa2b8d57c26cb28133b7d83f4f5a930a46b78461"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/INDEPENDENT-REVIEW.md",
+      "sha256": "36ae5b7cb7986617cd6bf5c886c7e2de3db053438a0ba3d576712cbbbd968fb4"
+    },
+    {
+      "path": "docs/ecc/cameroon-blueprint-execution-2026-10-07.md",
+      "sha256": "d991f9162d26a296c9300ec68ae4e5479b8c866c1fbe65e752175d031165eaa7"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/baseline-status.txt",
+      "sha256": "4283b7c0742677cf9935995c71c2f4eb54390c0ed5eeee9a6ad96ddedc0f7688"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/build.cjs",
+      "sha256": "a3a2231d0e4c3500874508976a4fd626f6857ebd4a055c6d0597988b38b0e97a"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/bundle.js",
+      "sha256": "7935e6c0c6c78527619e204604b6f925cc7be77e7210c25cc7d4227e8d1fd1d8"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/check.cjs",
+      "sha256": "96da1e69a20fa888352606c4888b67ed007e6821a4c1ca1e1c5b4c7d51a7a95b"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/en-1440-journey.png",
+      "sha256": "33ebd644af06dae3ca6c99e059e9039e0e56e763aba9e90d57921a0cd0a2bd4d"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/en-360-journey.png",
+      "sha256": "00d51eef555babb661faa94b8106a14e5872c23b7b42dba4ce15d9dba3804e91"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/en-768-journey.png",
+      "sha256": "24dec5e758931c405b3ebe6264c28a5521708a813dddbc20a8a17a9d3a8ca689"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/en-denied.png",
+      "sha256": "8f58dfbc561835564e61c6fd0f40971e07c590acc897510347038aba436206f9"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/en-limited.png",
+      "sha256": "2389fad67f8a29d5535c00cbbcff9979e5b1b4a4edbd2c464b42d476a5c66ad1"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/entry.tsx",
+      "sha256": "9f11a58ee78c1c6483ac94ad045a14ba2fcaaa1a9a657c9a963989bc29d08201"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/fr-1440-journey.png",
+      "sha256": "162b8e56ef4a3cfba51882395373b10d597e9567d1fe6ca99dffb5b7e1ea7f4f"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/fr-360-journey.png",
+      "sha256": "d93b9a38e8b157d356e93016e8313940d7e9820d9d5e196bbc93df05e8652d5c"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/fr-768-journey.png",
+      "sha256": "bca9a4a2cabf8691a0b32c098a67ce1c7c52ad30cdb4797edd20887693cd0224"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/fr-denied.png",
+      "sha256": "83526f15316d150f84ee53dcd6419cc1a707b4cad08eb48f5e883b10f25147b3"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/fr-limited.png",
+      "sha256": "cb96a60c0de1532e37062b75d4526b93e07c2e8d8dc2df43db355dc69d5377ae"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/link.cjs",
+      "sha256": "69ae25611b9d75553d0bff2ce41e13b7ab69f8e703a009f088b0859e2afe45d6"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/navigation.cjs",
+      "sha256": "01c850424f918c0c2018f9f35bf3a260d2276bb31c8818f8deb4fd2c846e0030"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/results.json",
+      "sha256": "4edde4d38608a15a364dd4259ac8150ef2242e6be91ddea3bfe674c86f4ac4bb"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/styles.css",
+      "sha256": "9382a636de16473d88a7857f45f66d7cd7903642a9b83efa103ca5fcd5a09035"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser/swc-loader.cjs",
+      "sha256": "765b6ff126ad09deef3e703da7419349e45c470c0623fdffca61d6cc203d0d99"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser-build-final.log",
+      "sha256": "76bcd79430d1d76d37a126e8d2195058ba8d217c681fb743643edc02eacc5251"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser-build.log",
+      "sha256": "76bcd79430d1d76d37a126e8d2195058ba8d217c681fb743643edc02eacc5251"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser-css.log",
+      "sha256": "9bed83ed6663c41f2a151882bbcc0d8dafe0847540d08e4d76619271fdbe8bba"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/browser-r1.log",
+      "sha256": "47e4702c5f7a00aaf2393d6d6a812744bbcd150cadc095dd3cc772a50996246c"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/cleanup.log",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/components_hris_HrisPeopleAuthoring.tsx.before-fix",
+      "sha256": "566f2ccec122d53f9884c188a13419687c29bbfbf37dd71d15fbeb80d7073ea8"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/components_hris_HrisPeopleAuthoring.tsx.before-races",
+      "sha256": "44fddfd5ac42377eb24e142b805f4bf39c80811ac8ef15269fe419d9bb093b56"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/fix-candidate.cjs",
+      "sha256": "ba2b09308c42c01d4f72ae5828f31006497dd5965baf31b637f3d4f54a9851f3"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/format.log",
+      "sha256": "677fdc4b9827c5b9c6beca540b1ef3630d5f560b2f5631c5db1cde2527f3b012"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/postgres-browser-final.log",
+      "sha256": "811149de912e66a3229a73289fa459a86f36a410247e4726b01d95d02d248d7f"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/postgres-browser-r2.log",
+      "sha256": "ffd6bf1a73e94ddd8b306ccb2d716896a3883d11f7ce8107a95e7751a81b1f54"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/postgres-r1.log",
+      "sha256": "ad83c92e97efbe4d5c180fd5ca275a75e105017e840f325f6e8182c548e3ed21"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/postgres-r2.log",
+      "sha256": "34f96b4bdc2144f95340b1896d11a416bf2df9f366c036a765deabe8bf993f56"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/postgres-r3.log",
+      "sha256": "43a2fea6eafd725060d1235db920f669a777dba2cf5a01ce1e3f52e79acef6d3"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/prior-correctness-postgres.log",
+      "sha256": "9b93da9afd1d553745f274a11ef6341e7613c4df8906334a81eb181fd2222418"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/refine-races.cjs",
+      "sha256": "d7bb60e6ad2404923cd0d1b47e5d17488cf45e4e818bccb31202ed2ea97e4170"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/refine-review.cjs",
+      "sha256": "56dfdf44d69e2faa1662ff00a1625a2e0eb9b93733b187a698f0a0b7afb76b5d"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/refine-ui.cjs",
+      "sha256": "11f03ea716efe322dfc0858e8d424e3fd49210ce6d9d95b1e63ec5ff4cc8efb0"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/seal-evidence.cjs",
+      "sha256": "f570e4e6431e47ca3a2667eada91250d61b521b1f9b81760bd529cb779e8a1fe"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/services_hris_people-authoring-read.service.ts.before-races",
+      "sha256": "7cefaf9915b80db52380d2bd814def2827ce60e8777074f90d88ad647ec00840"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/services_hris___tests___people-authoring.postgres.test.ts.before-races",
+      "sha256": "b8db325dbc2c43466c63baf3f1abbd4a83692436fa55b3a338b0649bd085188b"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/services_payroll_contract.service.ts.before-fix",
+      "sha256": "4c75b910414a4a308a14a3f5b00faf20fd8ff47dc7180927adb67296b930ce11"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/services_payroll_employee.service.ts.before-fix",
+      "sha256": "f7636838acb7b5cec19e3653308c364b38b02013a6ead3be52eae3d70a11d35e"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/services_payroll_payment-evidence.service.ts.before-races",
+      "sha256": "0db9ee5ccd71e62e1df2d96b8c0b5b61cc3a2c69f97b3772a9b53e0294c661d4"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/services_payroll___tests___payroll-contract.service.test.ts.before-fix",
+      "sha256": "5205016dbf417324d866f1eeb005b4ae50dc653e4558a459f5c72cd73e928a0a"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/services_payroll___tests___payroll-employee.service.test.ts.before-fix",
+      "sha256": "ab7b68f405a5683458ecfc620d7d72095e29e0f141dcef253f0df1d646969ffd"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/services_payroll___tests___payroll-payment-evidence.service.test.ts.before-races",
+      "sha256": "dae1b5b267db810445124db64b9b1e8159227b3ed84de57e4e3c7ce023d17afd"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/typecheck-final.log",
+      "sha256": "698cb814ddc4a30089e50d58e9c057bd7bf05f3afdd77425672ec11b9110c6a5"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/typecheck-r1.log",
+      "sha256": "386e837368760505054d696d4b4498e25088dbf77b575a8084d43be32c511d9c"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/typecheck-r2.log",
+      "sha256": "698cb814ddc4a30089e50d58e9c057bd7bf05f3afdd77425672ec11b9110c6a5"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/typecheck-r3.log",
+      "sha256": "7c5f6f0091cdb905d43315f193ecb0ca04171136a16727cc21bd2a4342dc7fc8"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/unit-final.log",
+      "sha256": "9e6a434a8dc87d0d88de40e44e04444c173428b1dbfdf3a54412ae3aaf0999a7"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/unit-r1.log",
+      "sha256": "1fc13b285f92683930a6b53d3ab2e509c4012eb231d3f4c91107162fd80ee570"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/unit-r2.log",
+      "sha256": "8879111769d594c7f4d9593eb4f3e7558affe3718c27a35d52e899a6841ad8e8"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/unit-r3.log",
+      "sha256": "697c83672ab1c13427a62af79f1f23dd1ea00fd2e658c5d7f9713f1b5538a1df"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/unit-r4.log",
+      "sha256": "6ed986b7d91cc2ec70b615d25e2de6327960ba2cc6be38f7862f19d88b867f36"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-10/workflow.log",
+      "sha256": "86136abc44dde2020666ec41f5257908e6e5d292251b9590da8755fd007cf5e0"
+    }
+  ]
+}

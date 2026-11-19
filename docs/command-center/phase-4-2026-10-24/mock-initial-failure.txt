@@ -1,0 +1,42 @@
+FAIL components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx (28.083 s)
+  ● OwnerWarRoomDashboard › keeps proof recovery available from the investigation view
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      401 | })
+      402 |
+    > 403 | it("discards an in-flight proof when refreshed authority removes the subject", async () => {
+          |     ^
+      404 |   let finish!: (value: unknown) => void
+      405 |   jest.mocked(getProofTrailAction).mockImplementationOnce(() => new Promise(resolve => {finish = resolve}) as never)
+      406 |   const input = buildData()
+
+      at components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx:403:5
+      at Object.<anonymous> (components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx:350:1)
+
+
+Summary of all failing tests
+FAIL components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx (28.083 s)
+  ● OwnerWarRoomDashboard › keeps proof recovery available from the investigation view
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      401 | })
+      402 |
+    > 403 | it("discards an in-flight proof when refreshed authority removes the subject", async () => {
+          |     ^
+      404 |   let finish!: (value: unknown) => void
+      405 |   jest.mocked(getProofTrailAction).mockImplementationOnce(() => new Promise(resolve => {finish = resolve}) as never)
+      406 |   const input = buildData()
+
+      at components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx:403:5
+      at Object.<anonymous> (components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx:350:1)
+
+
+Test Suites: 1 failed, 23 passed, 24 total
+Tests:       1 failed, 411 passed, 412 total
+Snapshots:   0 total
+Time:        223.184 s
+Ran all test suites.

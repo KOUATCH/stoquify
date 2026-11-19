@@ -1,0 +1,87 @@
+{
+  "at": "2026-11-10T19:40:13.743Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "publicationAccepted": true,
+  "qualificationPassed": false,
+  "blockedCheckpointAccepted": true,
+  "candidateId": null,
+  "artifactSha256": null,
+  "evidenceId": "E32",
+  "exactFrozenInputsRehashed": 40,
+  "sharedFiles": [
+    {
+      "path": "work-register.json",
+      "sha256": "e47adb50a334413ee194e6cede025c34ebc6a87df2a402529e7f003c8e1e17d5"
+    },
+    {
+      "path": "work-register.csv",
+      "sha256": "5a77fb40374987df6bf1d7fdbb6c0fe5d971732d13669bbd98b79043365e1631"
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "c45bc339b0518df31da5b557542d68a08462497a518e3badc12620f32dea3207"
+    },
+    {
+      "path": "mutation-log.md",
+      "sha256": "3b3bd7b283563816e49abb90bc3c048ac505ecad0ba7176f5c8e60da697b5750"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "sha256": "e3bdc42c0de622906d84c1c6527fff49d33f4e0812f7d89e49bc45c96c4088e1"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "sha256": "ba4c0bf3681886e16556d4a96fd366e618f3f9c59544b7612e6e58394d5a672d"
+    }
+  ],
+  "independentChecks": [
+    "All exact publication input hashes and six saved prepublication baselines unchanged.",
+    "Actual work register independently reconstructed from preserved baseline plus exact permitted R06/P04/V02 mutations; every other package and global field unchanged.",
+    "Historical E01-E31 unchanged; exactly E32 added with exact evidence paths; tasks, dependencies, decisions, deferred commitments and authorization preserved.",
+    "Actual JSON/20-column CSV mirror, exact append-only log, bounded roadmap tail and exact CURRENT/NEXT output equality independently checked.",
+    "All six owned repair source hashes still match; null candidate/artifact and blocked final verdict preserved.",
+    "Actual local validator succeeded in all nine checks; no native, browser, build or production qualification inferred."
+  ],
+  "counts": {
+    "packages": 59,
+    "domains": 57,
+    "decisions": 14,
+    "globalGates": 18,
+    "publicationChecks": 9
+  },
+  "files": [
+    {
+      "path": "independent-review/PUBLICATION-RECIPE-ADMISSION-attempt02.json",
+      "sha256": "f2bf31ec03626c4373d5adcfaee2ffb13db48b5988566a2fa21d84762c077939"
+    },
+    {
+      "path": "publication-written-attempt02.json",
+      "sha256": "3d153951b44643de1b69fa1062de5a4bc9a411706655c180c683c3e570cf80f0"
+    },
+    {
+      "path": "publication-validation-attempt02.json",
+      "sha256": "1a65e3e398c0be5c35120433eec96c75c4b3ac8b90a4165e3316c3fc82dd31a5"
+    },
+    {
+      "path": "publication-input-attempt02.json",
+      "sha256": "8aa1d0ff63c22461d299e947d9dc0962a87a10d71f3a204e590e12543200ae46"
+    },
+    {
+      "path": "RESULT-attempt02.md",
+      "sha256": "fe96cb326d47f5487cb1361090890938b74c99d9b58c9fc1784d5e10e8a0f2d9"
+    },
+    {
+      "path": "advancement-gates-attempt02.json",
+      "sha256": "1616de9dc73ae2bae1c859692c200aa366bbee72d7c948e845d6e51a997558ad"
+    },
+    {
+      "path": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW-attempt02.json",
+      "sha256": "1994afd88031a548ca5a9d733e20665879ebeb071099bd33038dc0009d17132d"
+    }
+  ],
+  "limits": [
+    "passed denotes publication accuracy and preservation only. P04-R06, parent P04/P04-V02 and production readiness remain blocked.",
+    "No actual new candidate, current database setup, build, real sessions or browser qualification was executed."
+  ]
+}

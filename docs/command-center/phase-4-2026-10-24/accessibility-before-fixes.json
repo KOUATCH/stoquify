@@ -1,0 +1,676 @@
+[
+  {
+    "locale": "en",
+    "surface": "daily-digest",
+    "mode": "Brief",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "daily-digest",
+    "mode": "Command",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "daily-digest",
+    "mode": "Investigate",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "owner-war-room",
+    "mode": "Brief",
+    "violations": [],
+    "incomplete": [
+      "aria-prohibited-attr",
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "owner-war-room",
+    "mode": "Command",
+    "violations": [],
+    "incomplete": [
+      "aria-prohibited-attr",
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "owner-war-room",
+    "mode": "Investigate",
+    "violations": [],
+    "incomplete": [
+      "aria-prohibited-attr",
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "manager-action-center",
+    "mode": "Brief",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "manager-action-center",
+    "mode": "Command",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "manager-action-center",
+    "mode": "Investigate",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "locations",
+    "mode": "Brief",
+    "violations": [
+      {
+        "id": "definition-list",
+        "impact": "serious",
+        "description": "Ensure <dl> elements are structured correctly",
+        "nodes": [
+          {
+            "target": [
+              ".lg\\:min-w-\\[340px\\]"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          },
+          {
+            "target": [
+              "article:nth-child(1) > .sm\\:grid-cols-2"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          },
+          {
+            "target": [
+              "article:nth-child(2) > .sm\\:grid-cols-2"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          },
+          {
+            "target": [
+              "article:nth-child(3) > .sm\\:grid-cols-2"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          }
+        ]
+      },
+      {
+        "id": "dlitem",
+        "impact": "serious",
+        "description": "Ensure <dt> and <dd> elements are contained by a <dl>",
+        "nodes": [
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(1) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(1) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(2) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(2) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(3) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(3) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          }
+        ]
+      }
+    ],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "locations",
+    "mode": "Command",
+    "violations": [
+      {
+        "id": "definition-list",
+        "impact": "serious",
+        "description": "Ensure <dl> elements are structured correctly",
+        "nodes": [
+          {
+            "target": [
+              ".lg\\:min-w-\\[340px\\]"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          }
+        ]
+      },
+      {
+        "id": "dlitem",
+        "impact": "serious",
+        "description": "Ensure <dt> and <dd> elements are contained by a <dl>",
+        "nodes": [
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          }
+        ]
+      }
+    ],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "en",
+    "surface": "locations",
+    "mode": "Investigate",
+    "violations": [
+      {
+        "id": "definition-list",
+        "impact": "serious",
+        "description": "Ensure <dl> elements are structured correctly",
+        "nodes": [
+          {
+            "target": [
+              ".lg\\:min-w-\\[340px\\]"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          }
+        ]
+      },
+      {
+        "id": "dlitem",
+        "impact": "serious",
+        "description": "Ensure <dt> and <dd> elements are contained by a <dl>",
+        "nodes": [
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > .sm\\:text-right.font-medium"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > .sm\\:text-right.font-medium"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > .sm\\:text-right.font-medium"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          }
+        ]
+      }
+    ],
+    "incomplete": [
+      "aria-prohibited-attr",
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "daily-digest",
+    "mode": "Synthèse",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "daily-digest",
+    "mode": "Pilotage",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "daily-digest",
+    "mode": "Examiner",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "owner-war-room",
+    "mode": "Synthèse",
+    "violations": [],
+    "incomplete": [
+      "aria-prohibited-attr",
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "owner-war-room",
+    "mode": "Pilotage",
+    "violations": [],
+    "incomplete": [
+      "aria-prohibited-attr",
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "owner-war-room",
+    "mode": "Examiner",
+    "violations": [],
+    "incomplete": [
+      "aria-prohibited-attr",
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "manager-action-center",
+    "mode": "Synthèse",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "manager-action-center",
+    "mode": "Pilotage",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "manager-action-center",
+    "mode": "Examiner",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "locations",
+    "mode": "Synthèse",
+    "violations": [
+      {
+        "id": "definition-list",
+        "impact": "serious",
+        "description": "Ensure <dl> elements are structured correctly",
+        "nodes": [
+          {
+            "target": [
+              ".lg\\:min-w-\\[340px\\]"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          },
+          {
+            "target": [
+              "article:nth-child(1) > .sm\\:grid-cols-2"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          },
+          {
+            "target": [
+              "article:nth-child(2) > .sm\\:grid-cols-2"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          },
+          {
+            "target": [
+              "article:nth-child(3) > .sm\\:grid-cols-2"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          }
+        ]
+      },
+      {
+        "id": "dlitem",
+        "impact": "serious",
+        "description": "Ensure <dt> and <dd> elements are contained by a <dl>",
+        "nodes": [
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(1) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(1) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(2) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(2) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(3) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              "article:nth-child(3) > .sm\\:grid-cols-2 > .sm\\:col-span-2 > .grid-cols-1.sm\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.2fr\\)\\].gap-1 > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          }
+        ]
+      }
+    ],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "locations",
+    "mode": "Pilotage",
+    "violations": [
+      {
+        "id": "definition-list",
+        "impact": "serious",
+        "description": "Ensure <dl> elements are structured correctly",
+        "nodes": [
+          {
+            "target": [
+              ".lg\\:min-w-\\[340px\\]"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          }
+        ]
+      },
+      {
+        "id": "dlitem",
+        "impact": "serious",
+        "description": "Ensure <dt> and <dd> elements are contained by a <dl>",
+        "nodes": [
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > dd"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          }
+        ]
+      }
+    ],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "locale": "fr",
+    "surface": "locations",
+    "mode": "Examiner",
+    "violations": [
+      {
+        "id": "definition-list",
+        "impact": "serious",
+        "description": "Ensure <dl> elements are structured correctly",
+        "nodes": [
+          {
+            "target": [
+              ".lg\\:min-w-\\[340px\\]"
+            ],
+            "summary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > div"
+          }
+        ]
+      },
+      {
+        "id": "dlitem",
+        "impact": "serious",
+        "description": "Ensure <dt> and <dd> elements are contained by a <dl>",
+        "nodes": [
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(1) > .flex-1.sm\\:flex.sm\\:justify-between > .sm\\:text-right.font-medium"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(2) > .flex-1.sm\\:flex.sm\\:justify-between > .sm\\:text-right.font-medium"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > dt"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          },
+          {
+            "target": [
+              ".items-start.flex.gap-2:nth-child(3) > .flex-1.sm\\:flex.sm\\:justify-between > .sm\\:text-right.font-medium"
+            ],
+            "summary": "Fix any of the following:\n  Description list item does not have a <dl> parent element"
+          }
+        ]
+      }
+    ],
+    "incomplete": [
+      "aria-prohibited-attr",
+      "color-contrast"
+    ]
+  }
+]

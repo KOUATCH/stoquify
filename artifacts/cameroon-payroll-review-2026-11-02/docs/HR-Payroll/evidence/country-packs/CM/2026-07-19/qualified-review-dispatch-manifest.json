@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "packetId": "CM-2026-qualified-review-dispatch-2026-07-20",
+  "preparedAt": "2026-07-20",
+  "status": "READY_FOR_EXTERNAL_REVIEW_DISPATCH",
+  "countryCode": "CM",
+  "countryPackPeriod": "2026",
+  "productionUseAllowed": false,
+  "operatorUpdatesAllowed": false,
+  "files": [
+    {
+      "file": "CNPS-Decree-2016-072-contribution-rates.pdf",
+      "byteLength": 2608628,
+      "sha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61"
+    },
+    {
+      "file": "CNPS-employer-general-rules.html",
+      "byteLength": 248633,
+      "sha256": "bc51f74de8dd3b0c7babd86e8f98d92dbdbece214480f66ac89c42d3e894a868"
+    },
+    {
+      "file": "manifest.json",
+      "byteLength": 2339,
+      "sha256": "852e4b07675504bdd20b36895c8aa468e89db258a999e6e013c27a7203bdd4a4"
+    },
+    {
+      "file": "artifact-integrity-2026-07-19.json",
+      "byteLength": 2205,
+      "sha256": "e57fc74454f5d97d9585a50fc620eec556cda34dc16300c2457616ec2b335e1b"
+    },
+    {
+      "file": "QUALIFIED_REVIEW_INTAKE.md",
+      "byteLength": 4004,
+      "sha256": "6036d478861d86b28be6e9c0cb3c30b9adf7f373715c0e55aa24f9c975d61618"
+    },
+    {
+      "file": "review-decision.template.json",
+      "byteLength": 2271,
+      "sha256": "5bbccf6c764b8cd20acd9c42aa40f4fd384f4a044f682cdc620c7736be54b9e9"
+    },
+    {
+      "file": "STATUTORY_GATE_UNBLOCK_HANDOFF_2026-07-19.md",
+      "byteLength": 3790,
+      "sha256": "fff8f6b144ad57ccc2f15f452a385806c0d0fa514f00decb4d96c041fc771f54"
+    }
+  ],
+  "requiredReturnArtifacts": [
+    "review-decision.json",
+    "signed approval artifact",
+    "independent fixture tie-out evidence when separate",
+    "additional authoritative sources relied on by the reviewer when applicable"
+  ],
+  "acceptanceCommand": "npm run statutory:country-pack:review:preflight",
+  "productionGateCommand": "npm run statutory:country-pack:gate",
+  "nonClaims": [
+    "This packet is not statutory, legal, tax, payroll, or production approval.",
+    "Engineering has not supplied reviewer decisions or signatures.",
+    "Production flags must not be edited directly to bypass evidence gates."
+  ]
+}

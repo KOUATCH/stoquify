@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T18:43:15.312Z",
+  "reviewer": "/root/audit_access_agents",
+  "sourceManifest": {
+    "path": "inventory/roadmap-source-manifest-r1.json",
+    "sha256": "d1698ad1701dd2da76999f367d0e15e09e6c711e89dafda23d49408448d9a08d",
+    "identitySha256": "04dc0a79755c41b22bd68be018e1cdca2cb96c3abc763f1338dea947165f3650",
+    "count": 9973
+  },
+  "classificationComplete": true,
+  "nonDocumentationSources": [
+    {
+      "path": "services/accounting/__tests__/close-assurance.service.test.ts",
+      "beforeSha256": "cc925bf2eed853c15908d7d4189acda0115e720e6b19b115495658e528908335",
+      "afterSha256": "c27a763925fa23a1e1d3ca7b9822638e18141a354336b5d90d8cd3c47faee90f",
+      "kind": "modified",
+      "classification": "focused_close_ownership_regression_tests"
+    },
+    {
+      "path": "services/accounting/__tests__/close-finding-assignee-authority.service.test.ts",
+      "beforeSha256": null,
+      "afterSha256": "13381a638b37d2d591d2067d144d37935a69dcd31f0415805db932a71731f1e3",
+      "kind": "added",
+      "classification": "focused_close_ownership_regression_tests"
+    },
+    {
+      "path": "services/accounting/close-assurance.service.ts",
+      "beforeSha256": "d5419090e28f4096015d4709c69cb4535a2e83bef5ccac85592a1e56423dd7f9",
+      "afterSha256": "2d0da62313e44e5239f4edd08307c21fd32362a399fe71a4aeb6ff1e7b137d29",
+      "kind": "modified",
+      "classification": "bounded_close_ownership_and_linked_resource_authority"
+    },
+    {
+      "path": "services/accounting/close-finding-assignee-authority.service.ts",
+      "beforeSha256": null,
+      "afterSha256": "8bd2d4face949d4eaa1e2a7a4e3b93a0c2fc715a7f50aa6f0e6434aee3b010cb",
+      "kind": "added",
+      "classification": "bounded_close_ownership_and_linked_resource_authority"
+    }
+  ],
+  "classificationSummary": {
+    "productSources": 2,
+    "focusedTests": 2,
+    "qualificationReceipts": 29,
+    "newPrivateMetadataReceipts": 1
+  },
+  "sourceInspection": [
+    {
+      "path": "services/accounting/close-finding-assignee-authority.service.ts",
+      "symbols": [
+        "prelockCloseFindingAssigneeOrganizationsInTx",
+        "lockCloseFindingAssigneeInTx"
+      ],
+      "effect": "New close finding assignee helper uses existing usable-account/role/module/managed-accountant rules and transactional locks; recipient contribution authority is revalidated without requiring recipient session or assignment authority."
+    },
+    {
+      "path": "services/accounting/close-assurance.service.ts",
+      "lines": [
+        23,
+        3297,
+        3326,
+        3396,
+        3413,
+        3433
+      ],
+      "effect": "Imports the new helper; assignment locks and revalidates assignee authority; comments and mutations validate linked run/period/organization parents. Existing shared auth/configuration/schema inputs are unchanged."
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-ownership-qualification-2026-11-10/ACCEPTANCE.md",
+      "effect": "Bounded close ownership/scope acceptance source; no production or whole-platform completion admitted."
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-ownership-qualification-2026-11-10/RESULT.md",
+      "effect": "Retained producer report claims scoped source/unit/native verification; no tests rerun or those claims recertified by this source refresh."
+    }
+  ],
+  "compatibility": {
+    "all68R06InputsMatch": true,
+    "schemaUnchanged": true,
+    "all122MigrationsUnchanged": true,
+    "packageLockAndAppConfigurationUnchanged": true,
+    "retainedFixtureDefinitionUnchanged": true,
+    "noAuthRouteOrBookkeepingSourceChangesInThisDelta": true,
+    "qualificationImportConsequence": "New close helper is part of current full application and must be included in successor build; R06 session/credential fixtures and selected auth contracts remain unchanged. This does not certify concurrent financial correctness."
+  },
+  "privateMetadata": {
+    "selection": "Every JSON source basename matching private[-_. ]*fixture or fixture[-_. ]*private, case-insensitive.",
+    "previousPolicyPath": "inventory/private-metadata-policy.json",
+    "previousPolicySha256": "a044327ea56b8488574704fdd8f25b7f46506f4dc45a9fdf4d900fff09ca33d6",
+    "previousThreeEntriesPreserved": true,
+    "files": [
+      {
+        "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-PRIVATE_FIXTURE.json",
+        "sha256": "1fe896640c9d10be26bf93823d346c66b6ea4d707d9130fae9a3b31f8a20460c",
+        "metadataOnly": true,
+        "externalReferencedFilesRead": false,
+        "safeShape": {
+          "topLevelKeys": [
+            "path",
+            "sha256",
+            "bytes",
+            "packs"
+          ],
+          "packCount": 1,
+          "packKeys": [
+            "path",
+            "sha256",
+            "bytes"
+          ],
+          "kindLabels": [],
+          "rawReferenceValuesPublished": false
+        },
+        "classification": "External fixture/pack path-digest-size metadata only; no embedded records or credentials"
+      },
+      {
+        "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-PRIVATE_FIXTURE.json",
+        "sha256": "b41b42cf84bc965a263e094baa1cc3e94753a198c97bb2ff00ac172baf56c385",
+        "metadataOnly": true,
+        "externalReferencedFilesRead": false,
+        "safeShape": {
+          "topLevelKeys": [
+            "path",
+            "sha256",
+            "bytes",
+            "packs"
+          ],
+          "packCount": 1,
+          "packKeys": [
+            "path",
+            "sha256",
+            "bytes"
+          ],
+          "kindLabels": [],
+          "rawReferenceValuesPublished": false
+        },
+        "classification": "External fixture/pack path-digest-size metadata only; no embedded records or credentials"
+      },
+      {
+        "path": "docs/stoquify-potential/development/close-ownership-qualification-2026-11-10/pg-attempt-0e69f2030b/pg-PRIVATE_FIXTURE.json",
+        "sha256": "ef5f463343e2c00c6666a30f5ef2ce4d2433d9305f69299e598b4070ec96deea",
+        "metadataOnly": true,
+        "externalReferencedFilesRead": false,
+        "safeShape": {
+          "topLevelKeys": [
+            "path",
+            "sha256",
+            "bytes",
+            "packs"
+          ],
+          "packCount": 1,
+          "packKeys": [
+            "path",
+            "sha256",
+            "bytes"
+          ],
+          "kindLabels": [],
+          "rawReferenceValuesPublished": false
+        },
+        "classification": "External fixture/pack path-digest-size metadata only; no embedded records or credentials"
+      },
+      {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/pg-attempt-ece011f832/pg-PRIVATE_FIXTURE.json",
+        "sha256": "3abd13acd1adba63dc6e0e831c1e8e628883347f6180dd225074899adadc2086",
+        "metadataOnly": true,
+        "externalReferencedFilesRead": false,
+        "safeShape": {
+          "topLevelKeys": [
+            "path",
+            "sha256",
+            "bytes",
+            "packs"
+          ],
+          "packCount": 2,
+          "packKeys": [
+            "kind",
+            "path",
+            "sha256",
+            "bytes"
+          ],
+          "kindLabels": [
+            "first",
+            "final"
+          ],
+          "rawReferenceValuesPublished": false
+        },
+        "classification": "External fixture/pack path-digest-size metadata only; no embedded records or credentials"
+      }
+    ],
+    "newProducer": {
+      "path": "docs/stoquify-potential/development/close-ownership-qualification-2026-11-10/pg-ownership-qualification.cjs",
+      "sha256": "843028863233a20c3537715fdeb2b60d2d22ea3400643e6d8e0ea9e333b20312",
+      "sourceLines": "123-129",
+      "classification": "Writer emits only path, digest and size for one private fixture and one pack. Referenced private files were not opened by this review."
+    },
+    "externalReferencedFilesRead": false,
+    "artifactRequirement": "New copied four-entry policy must bind actual sealed runtime/public/static whole-file hash and build-trace exclusion. Source-only classification is not actual build exclusion."
+  },
+  "concurrencyObservation": {
+    "otherResumeRecipe": "inventory/resume-20261110-r1/refresh-resume-source.cjs",
+    "notCreatedByThisAgent": true,
+    "action": "Single root owner must coordinate candidate/DB/build execution before shared r3 context or ports are used."
+  },
+  "acceptance": {
+    "sourcePreparationOnly": true,
+    "candidateCaptureAuthorizedByThisFile": false,
+    "databaseReuseAuthorizedByThisFile": false,
+    "buildAuthorizedByThisFile": false,
+    "qualificationPassed": false,
+    "independentRootAdmissionRequired": true
+  },
+  "limits": [
+    "Observed read interval is not an atomic repository lock; capture and prebuild must repeat exact full source and HEAD equality.",
+    "All source files were rehashed after classification; no final enumeration guarantee for additions created after the observation.",
+    "Historical receipts are included in source identity without granting their claims to the future artifact.",
+    "No external private referenced content opened; no private path values or credentials published."
+  ]
+}

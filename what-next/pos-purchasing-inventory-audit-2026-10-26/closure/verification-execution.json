@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-26",
+  "head": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "workflowCheck": {"command": "npm run agent:workflow:check", "exitCode": 0, "phase": "first verification"},
+  "typecheck": {"command": "node node_modules/typescript/bin/tsc -p tsconfig.workflow-closure.json --pretty false", "exitCode": 0, "toolSession": 40490, "diagnosticLog": "typecheck.log"},
+  "mocked": {"command": "node node_modules/jest/bin/jest.js --config jest.workflow-closure-ui.config.cjs --runInBand --json --outputFile what-next/pos-purchasing-inventory-audit-2026-10-26/closure/clone-action-hook-results.json", "exitCode": 0, "passed": 48, "toolSession": 76187},
+  "postgres": {"database": "stoquify_pos_audit_20261026_d30f", "host": "localhost", "authoringPassed": 5, "workerPassed": 2, "apPassed": 2, "note": "One authoring case prepares browser fixtures. Separate seed setup also passed."},
+  "upgrade": {"exitCode": 0, "toolSession": 24376, "beforeMigrations": 92, "afterMigrations": 120},
+  "restore": {"exitCode": 0, "toolSession": 8706, "matchedDataTables": 246},
+  "externalProvider": {"provider": "MTN MoMo", "status": "BLOCKED", "reason": "User confirmed no local sandbox configuration; no provider request made."},
+  "sourceBinding": "final-source-manifest.json",
+  "browserBinding": "browser-source-provenance.json",
+  "productionMutation": false,
+  "deployment": false,
+  "commitOrPush": false
+}

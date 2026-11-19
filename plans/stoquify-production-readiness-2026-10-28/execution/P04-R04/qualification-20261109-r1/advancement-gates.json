@@ -1,0 +1,68 @@
+{
+  "candidateId": "p04-r04-20261109-ef3f203a9ded",
+  "at": "2026-11-09T13:56:34.763Z",
+  "advanceLocalR04": true,
+  "advanceParentP04": false,
+  "productionReady": false,
+  "nextEligiblePackage": "P04-V02",
+  "gates": [
+    {
+      "id": "R04-G01",
+      "requirement": "Current source/guard/consumer snapshot and bounded repair",
+      "status": "passed",
+      "evidence": [
+        "source-before.json",
+        "inventory/call-chain-register.json",
+        "independent-review/SOURCE-REVIEW.json"
+      ]
+    },
+    {
+      "id": "R04-G02",
+      "requirement": "Isolated private-error negatives, both input forms and authorized/hook compatibility",
+      "status": "passed",
+      "evidence": [
+        "unit/attempt01/result.json",
+        "unit/attempt02/result.json",
+        "verification-matrix.json"
+      ]
+    },
+    {
+      "id": "R04-G03",
+      "requirement": "Native tenant/permission, authorized read, no unauthorized business changes and query recovery",
+      "status": "passed",
+      "evidence": [
+        "database/native-result.json",
+        "database/native-observations.json"
+      ]
+    },
+    {
+      "id": "R04-G04",
+      "requirement": "Static checks, candidate stability, cleanup and independent acceptance",
+      "status": "passed",
+      "evidence": [
+        "unit/typecheck01/result.json",
+        "unit/lint01/result.json",
+        "independent-review/ASSESSMENT.json"
+      ]
+    },
+    {
+      "id": "R04-G05",
+      "requirement": "Actual HTTP/browser/session and wider production admission",
+      "status": "not_qualified_remaining_work",
+      "requiredForLocalR04": false,
+      "evidence": [
+        "RESULT.md"
+      ]
+    }
+  ],
+  "remainingRequirements": [
+    "Native executes actual action, RBAC, service and PostgreSQL with Better Auth/Next transport stubs.",
+    "Unit invokes actual hook queryFn with mocked useQuery; no rendered UI.",
+    "No signed-cookie HTTP, session expiry/revocation/signature, browser recovery, full-app build, hosted/provider/operator or production proof.",
+    "Business-state equality is scoped to 24 named relation groups; security audit additions are classified separately.",
+    "P04-V01–V05 and P04-D01 remain open.",
+    "R01 production-role, custodian and actual transport obligations remain.",
+    "R02 original-owner, hosted and release obligations remain.",
+    "All production gates and deferred commitments remain unchanged."
+  ]
+}

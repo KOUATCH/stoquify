@@ -13,9 +13,10 @@ export const customerSettlementMethodSchema = z.enum([
 ])
 
 export const customerSettlementAllocationInputSchema = z.object({
-  salesOrderId: idSchema,
+  salesOrderId: idSchema.optional(),
+  customerReceivableDocumentId: idSchema.optional(),
   amount: moneySchema,
-})
+}).refine(value => Boolean(value.salesOrderId) !== Boolean(value.customerReceivableDocumentId), "Select one sales order or opening receivable.")
 
 export const collectCustomerSettlementInputSchema = z.object({
   customerId: idSchema,
@@ -25,11 +26,12 @@ export const collectCustomerSettlementInputSchema = z.object({
   idempotencyKey: z.string().trim().min(8).max(160),
   correlationId: z.string().trim().min(8).max(160),
   externalReference: z.string().trim().min(1).max(160).optional(),
+  paymentTransactionId: idSchema.optional(),
   documentHash: hashSchema,
   evidenceHash: hashSchema,
   notes: z.string().trim().min(1).max(1000).optional(),
   allocations: z.array(customerSettlementAllocationInputSchema).min(1).max(50),
-})
+}).refine(value => !value.paymentTransactionId || ["CARD", "MOBILE_MONEY", "BANK_TRANSFER"].includes(value.method), "Provider receipt evidence is available only for electronic collections.")
 
 export const reverseCustomerSettlementInputSchema = z.object({
   customerSettlementId: idSchema,

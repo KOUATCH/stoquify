@@ -121,7 +121,7 @@ async function nextEntryNumber(
   return `${prefix}-${compactDate(entryDate)}-${String(count + 1).padStart(4, "0")}`
 }
 
-async function assertEntryAccountsPostable(
+export async function assertEntryAccountsPostable(
   organizationId: string,
   accountIds: string[],
   tx: Prisma.TransactionClient,

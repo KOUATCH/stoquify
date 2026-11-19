@@ -1,0 +1,321 @@
+{
+  "generatedAt": "2026-10-29T11:04:04.059Z",
+  "tests": [
+    {
+      "path": "app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts",
+      "sha256": "90e355a44c9c8c471967d7dec586f5362165cf9dc25b30e8eb050067c7e930a8",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "submits a dispute with signed scope and hashed-metadata inputs",
+        "returns 200 for an exact idempotent replay",
+        "rejects missing tokens before parsing recipient evidence",
+        "rejects unsupported action types before service access",
+        "returns the safe error envelope when scoped action validation fails"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/customer-statements/[statementId]/__tests__/route.test.ts",
+      "sha256": "da2453071f8d2178c51e5ee1648d71717dbdb2f04bdc85de636b986d2e3c5cb9",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "returns a non-cacheable redacted statement through the signed access service",
+        "rejects missing tokens without looking up a statement",
+        "uses the safe error envelope for invalid or revoked access"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/internal/agents/reconcile-abandoned/__tests__/route.test.ts",
+      "sha256": "b048705d189e9fea3a5ac672ab1ff16f59507f52a51bef3aa01158b30117cae5",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "returns 503 when the server-side secret is missing",
+        "returns 401 before scheduler parsing for an unauthorized request",
+        "records a stable invocation around the complete reconciliation flow",
+        "returns a completed replay without executing the reconciler twice",
+        "returns 409 while the same invocation is still running",
+        "exposes authenticated cadence readiness without secret material",
+        "returns a sanitized 503 when readiness persistence is unavailable",
+        "does not expose a secondary failure while recording execution failure"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/me/permissions/__tests__/route.test.ts",
+      "sha256": "eadfdcc68bdfa3a94cb667fea8dbc4b8c2883d13a62378c03b13b66a555d3a7a",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "does not turn an unavailable authorization service into an empty grant set",
+        "returns only permission, organization, and role claims when RBAC context exists"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/receipts/[receiptId]/__tests__/route.test.ts",
+      "sha256": "a1348a1826371b9b273fbb653db5c6cffe57fc5086ed3dfa03d6f48ff753d7e2",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "passes signed receipt tokens to the public receipt service",
+        "rejects raw receipt-id lookup before public service access",
+        "rejects blank receipt tokens before public service access",
+        "returns the safe error envelope when token validation fails in the service"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/referrals/[referralCode]/__tests__/route.test.ts",
+      "sha256": "928a874b56ebc62bef27b6061588f3fab45fa0856c8444bee592d62a979f3707",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "records the click and redirects to non-cacheable attributed registration",
+        "forwards an accountant invite secret without putting it in logs",
+        "returns the safe not-found envelope for unknown attribution"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/security-txt/__tests__/route.test.ts",
+      "sha256": "9587384dbb465a75d14f75c88b577962e44c0875c970128c30b2ae35828ad6df",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "publishes a fresh security.txt policy with bounded cache headers"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/supplier-po-envelopes/[envelopeId]/__tests__/route.test.ts",
+      "sha256": "df3b8ac12799c47575f9537db7d2a499ef4e54a8cf0188b1cd3d41011685d522",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "returns private success and replay responses",
+        "keeps missing and revoked token denials private",
+        "rejects injected scope and excess quantity precision before invoking the service",
+        "preserves privacy for malformed JSON and query failure"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/uploads/[...path]/__tests__/route.test.ts",
+      "sha256": "6ea5d6a548545ba3df873319ccfa12c555a01a5390d65dcfc6ed16e16e3d187f",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "returns 401 before path, module, permission, or filesystem checks when RBAC context is missing",
+        "returns 403 for cross-organization asset paths before module or filesystem checks",
+        "requires dashboard module entitlement before RBAC permission or filesystem checks",
+        "requires dashboard.read before filesystem checks",
+        "blocks path traversal before filesystem checks",
+        "blocks unsupported file types before filesystem checks",
+        "serves same-organization supported image assets after guard checks pass"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/v1/organisations/[id]/briefItems/__tests__/route.test.ts",
+      "sha256": "da0f89f20e0bad122caf509b0acaf10770dec2f4df05790ebd49800c1e8d5547",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "returns 401 without calling module, permission, or item services when the API session is missing",
+        "returns 403 without calling module, permission, or item services when tenant authorization fails",
+        "requires the inventory module before checking inventory.items.read",
+        "requires inventory.items.read before listing same-org brief items",
+        "lists brief items only after tenant, module, and permission checks pass"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/v1/organisations/[id]/items/__tests__/route.test.ts",
+      "sha256": "24f1e5c354a02ab4af01b265ae204effe3b317efcbc8bcbe969cd34e9a091775",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "returns 401 without calling module, permission, or item services when the API session is missing",
+        "returns 403 without calling module, permission, or item services when tenant authorization fails",
+        "requires the inventory module before checking inventory.items.read",
+        "requires inventory.items.read before listing same-org items",
+        "lists items only after tenant, module, and permission checks pass"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "app/api/v1/organisations/__tests__/route.test.ts",
+      "sha256": "e4f8faa8a7bf1ea61b12346a90baaa326dbbb6055c892bc095c6856f27dc2507",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "returns 401 without module, permission, or data calls when RBAC context is missing",
+        "requires the settings module before checking system settings permission",
+        "requires MANAGE_SYSTEM_SETTINGS before returning organization metadata",
+        "returns only the server-resolved organization after tenant, module, and permission checks pass",
+        "returns an empty list when the server-resolved organization is missing",
+        "keeps POST closed"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/accounting/__tests__/customer-statement-access.service.test.ts",
+      "sha256": "e4274102c1ef0dbb831da28baa81aa856c0e4ee712f356f308b96d9f517caefe",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "returns a redacted view and appends only hashed request/access evidence",
+        "rejects revoked access before counters or view logs are written",
+        "revokes an active token by compare-and-set and records a redacted audit"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/accounting/__tests__/customer-statement-token.test.ts",
+      "sha256": "f08c471b0224d684a9a4de50f817bcc9f2c9f69a7ffdc1dda5466cbf1c30b073",
+      "evidenceClass": "pure_test_source_not_executed",
+      "caseNames": [
+        "signs a content-bound token with explicit recipient permissions",
+        "rejects expired tokens and unsafe secret or lifetime configuration"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/hris/__tests__/employee-document.authorization.test.ts",
+      "sha256": "58a4f127d393299d9872c6e372c799fb55375a724c487974267f546cc7a0f6d5",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "fresh server identity and enforce entitlement gate precede document owner",
+        "missing module access denied",
+        "revoked/expired session denied before permission lookup"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/hris/__tests__/employee-document.contract.test.ts",
+      "sha256": "9d112b871ee2d123e7301dd503d4a55153b9b00331392eefbfb1a50a6d4bfd97",
+      "evidenceClass": "pure_test_source_not_executed",
+      "caseNames": [
+        "accepts supported signature but does not claim a malware verdict",
+        "ciphertext is authenticated against tenant, identity, digest and length",
+        "signed grant rejects tampering, exact expiry and future issuance",
+        "missing grant secret and absent policy fail closed",
+        "policy is tenant/effective scoped and ambiguous codes fail closed"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/hris/__tests__/employee-document.postgres.test.ts",
+      "sha256": "c97c9f929b3d5dd6124af1e3bbf631c8d102d6103d877f415048382cd8b0afd7",
+      "evidenceClass": "real_database_test_source_not_executed",
+      "caseNames": [
+        "upload, quarantine, clean independent content review and current own download",
+        "cross tenant, unlinked user, metadata-only manager, wrong grant actor and revoked role denied",
+        "upload response loss exact retry and changed payload conflict retain one object",
+        "scanner failure and rejection remain inaccessible",
+        "expired document is actionable and competing replacements preserve lineage",
+        "hold, evidence binding and native employee evidence prevent deletion",
+        "uncertain deletion stays inaccessible, native evidence attach denied, exact retry completes tombstone",
+        "ownership is rechecked after waiting for the employee lock",
+        "revocation during provider fetch prevents returning the original",
+        "pending, rejected and deleted duplicate bytes do not block retained native evidence",
+        "provider configuration changes cannot redirect a retained original",
+        "legacy evidence first remains usable with its first pending, rejected or deleted stored copy",
+        "expired grants and the alternate item-media owner cannot retrieve HR originals",
+        "delete tombstone wins against a delayed upload and rejects later holds",
+        "rendered own upload, independent review and download in EN/FR"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/hris/__tests__/employee-document.storage.test.ts",
+      "sha256": "cbca507d9383905e35dde1e6d96dcd4c3b53c3fe1b908ec432e38e54cc95fdf4",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "disabled and non-HTTPS gateways fail closed",
+        "immutable upload must acknowledge exact ciphertext and object identity",
+        "delete requires durable tombstone acknowledgement and bounded reads",
+        "scan proof must describe exact plaintext digest",
+        "uploads and downloads can be independently disabled while cleanup stays available"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/item/__tests__/media-route.test.ts",
+      "sha256": "6753625222e275cede02ae7f081600ac69a55853dd8da01ab139ec27e42a41f8",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "denies anonymous reads before touching storage",
+        "denies missing permissions before touching storage",
+        "enforces module access",
+        "uses only the authenticated tenant and prevents shared caching",
+        "uses POS entitlement for POS-only picture readers"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/item/__tests__/media-upload-route.test.ts",
+      "sha256": "13b961918a5bbb66a66cc132d21bc33a946fe99e52c8ee8f42f41ac8e84d83ae",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "accepts the configured browser origin when Next.js uses an internal request URL",
+        "returns direct JSON for a picture over 1 MB",
+        "rejects cross-site uploads before reading the file",
+        "rejects unauthenticated uploads",
+        "preserves tenant, permission, and module denial",
+        "bounds multipart bodies even without a Content-Length header",
+        "rejects declared oversized bodies before upload",
+        "rejects a missing picture"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/pos/__tests__/public-receipt-token-registry.service.test.ts",
+      "sha256": "77a08cbf16e4589c4593f045667f7dfdd1f6b20ef71b3e2f8d32c0a08bbce344",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "issues v2 receipt tokens with hash-only registry and redacted audit evidence",
+        "requires an active registry row before public receipt access is allowed",
+        "rejects legacy tokens before registry lookup",
+        "lists receipt token management rows without exposing token secrets",
+        "searches completed receipt sales with tenant scope and token-count metadata",
+        "revokes receipt tokens with actor and reason audit evidence"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/pos/__tests__/public-receipt-token.test.ts",
+      "sha256": "449a4307d475a076aa5080ae45ca02f1d93bd1f69644f5d0e1a4223a73c5e908",
+      "evidenceClass": "pure_test_source_not_executed",
+      "caseNames": [
+        "verifies legacy signed unexpired receipt tokens for the bound sale",
+        "creates and verifies v2 receipt tokens with organization and jti binding",
+        "rejects tampered, mismatched, expired, and unconfigured tokens"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/purchase-order/__tests__/supplier-po-access-token.test.ts",
+      "sha256": "510aa13aa4da3ee0f3a393886dfeb509fd358ad696e19b7dd197525461e54193",
+      "evidenceClass": "pure_test_source_not_executed",
+      "caseNames": [
+        "binds invite-only access to the organization, PO, envelope and content hash",
+        "rejects expiry and unsafe signer configuration"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/purchase-order/__tests__/supplier-po-authority-boundary.test.ts",
+      "sha256": "230b4212870006a7598f13ed06f5675e4c3f2801998c279be335ca315e888b63",
+      "evidenceClass": "pure_test_source_not_executed",
+      "caseNames": [
+        "keeps supplier and buyer decisions out of authoritative write models",
+        "ships append-only database guards for envelopes, proposals, lines and states"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    },
+    {
+      "path": "services/users/__tests__/self-profile-http.service.test.ts",
+      "sha256": "8b927d7b143f8878c2cb491a7f3a141ae71d051befdb6f8d3e1df7fa00380fc5",
+      "evidenceClass": "mocked_test_source_not_executed",
+      "caseNames": [
+        "returns private no-store reads and only server-owned scope",
+        "accepts a reviewed JSON command through the same service",
+        "gives legacy callers review guidance without updating their account",
+        "keeps permission failures private and distinct from success"
+      ],
+      "requiresSideEffectReviewBeforeRun": true
+    }
+  ]
+}

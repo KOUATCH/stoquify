@@ -1,0 +1,84 @@
+{
+  "candidate_id": "p04-r01-20261103-b82be2ba13f7",
+  "status": "awaiting_final_independent_assessment",
+  "parent_p04": "blocked",
+  "production_ready": false,
+  "gates": [
+    {
+      "id": "R01-G01",
+      "name": "current source and authority contract",
+      "status": "pass",
+      "evidence": [
+        "source-before.json",
+        "call-chain-inventory.json",
+        "AUTHORITY-CONTRACT.md",
+        "owned-source.json"
+      ]
+    },
+    {
+      "id": "R01-G02",
+      "name": "isolated unit, types and lint",
+      "status": "pass",
+      "evidence": [
+        "unit/attempt06/result.json",
+        "unit/typecheck02/result.json",
+        "unit/lint01/result.json"
+      ]
+    },
+    {
+      "id": "R01-G03",
+      "name": "fresh current schema and native actions",
+      "status": "pass",
+      "evidence": [
+        "database/native-result-retry01.json",
+        "database/native-jest.json"
+      ]
+    },
+    {
+      "id": "R01-G04",
+      "name": "denied business-state preservation and recovery",
+      "status": "pass",
+      "evidence": [
+        "database/native-observations.json"
+      ]
+    },
+    {
+      "id": "R01-G05",
+      "name": "legitimate delegation and administration",
+      "status": "pass",
+      "evidence": [
+        "database/native-jest.json"
+      ]
+    },
+    {
+      "id": "R01-G06",
+      "name": "source identity and owned cleanup",
+      "status": "pass",
+      "evidence": [
+        "database/native-result-retry01.json"
+      ]
+    },
+    {
+      "id": "R01-G07",
+      "name": "independent local outcome review",
+      "status": "pending",
+      "evidence": [
+        "independent-review/ASSESSMENT.json"
+      ]
+    },
+    {
+      "id": "R01-G08",
+      "name": "actual HTTP/browser/production role census/release acceptance",
+      "status": "deferred",
+      "required_for_local_completion": false,
+      "owner_packages": [
+        "P04-V02",
+        "P04",
+        "release gates"
+      ],
+      "evidence": []
+    }
+  ],
+  "advance_local_r01": false,
+  "advance_parent": false
+}

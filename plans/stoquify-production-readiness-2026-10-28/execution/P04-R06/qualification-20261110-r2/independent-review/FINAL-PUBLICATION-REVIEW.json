@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:38:48.990Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Independent acceptance of actual accurate blocked E30 publication only",
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "artifactSha256": null,
+  "qualificationPassed": false,
+  "blockedCheckpointAccepted": true,
+  "files": [
+    {
+      "path": "independent-review/PUBLICATION-RECIPE-ADMISSION.json",
+      "sha256": "e07ca4176e50641412fc3b3faa22bbb249e991c01d798e941465cd49503c8ff5"
+    },
+    {
+      "path": "publication-written.json",
+      "sha256": "f023166beba4d0caccb79fa138fa03f83f3ea0de6a1fd905ae3998f3f630541c"
+    },
+    {
+      "path": "publication-validation.json",
+      "sha256": "49cb9c80680329f2e2cc75a287d522492c8fae8b66770153a95030585faf7c33"
+    },
+    {
+      "path": "publication-input.json",
+      "sha256": "3a7eda2fc99575b79116503861c005c9441ab4cb184f33afd524938c8e397883"
+    },
+    {
+      "path": "advancement-gates.json",
+      "sha256": "318963efa345459840def75f9d1a03f6bedb90b340c05a30ac55e09c21efd475"
+    },
+    {
+      "path": "RESULT.md",
+      "sha256": "c3041a213fc86f4d656d2f463c84ec0bbcd3955e0c621b768d01fe5b512a3d13"
+    },
+    {
+      "path": "CURRENT.md",
+      "sha256": "48b99669934e598abf6a29891cf5880fbf98420c70d9c4f11cbe25af4dabb647"
+    },
+    {
+      "path": "NEXT.md",
+      "sha256": "152177e845078d9ba0291504ef89d1f6a46357a60aeac7cb5bf6a50734325442"
+    },
+    {
+      "path": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW.json",
+      "sha256": "3bf8025fcc153bbc1f54de36c7c44c8f34ac36ad33450af557f3c5e270083ff8"
+    }
+  ],
+  "publishedFiles": [
+    {
+      "path": "work-register.json",
+      "sha256": "269a3a3cb7303380b10f04997448e2d37752495cdb90ed1cd35b36f77dcbc628"
+    },
+    {
+      "path": "work-register.csv",
+      "sha256": "ae0860fc52b2c4116bb63eddf88ec5dcf7832f4aff5e9f1efcdd85be8def3ad4"
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "bf0e957b6be42c09d47ed077ccf0980d25331d1e97d1fc744a9dd1008d62eb55"
+    },
+    {
+      "path": "mutation-log.md",
+      "sha256": "44f44a99ccffa1f3550ad8b7e9332c1ca8dc5d24b25ce0bc2d3fa921c2e03e76"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "sha256": "48b99669934e598abf6a29891cf5880fbf98420c70d9c4f11cbe25af4dabb647"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "sha256": "152177e845078d9ba0291504ef89d1f6a46357a60aeac7cb5bf6a50734325442"
+    }
+  ],
+  "observed": {
+    "validationChecksPassed": 9,
+    "validationChecksTotal": 9,
+    "packages": 59,
+    "domains": 57,
+    "globalDecisions": 14,
+    "globalGates": 18,
+    "historicalEvidencePreserved": 29,
+    "addedEvidence": "E30",
+    "currentCriticalInputsMatched": 68,
+    "status": "blocked",
+    "actualCasesExecuted": 0
+  },
+  "review": [
+    "Independently reconstructed the entire expected work register from the six-file baseline and exact admitted input; complete JSON equality passed.",
+    "Only R06 status/current-state/boundary/appended-task/evidence and parent P04/V02 summaries plus E30 changed; every unrelated package, dependency, top-level field, authorization and historical E01–E29 entry preserved.",
+    "Six published file hashes match writer receipt; CURRENT/NEXT match admitted exact local documents; roadmap prefix unchanged and mutation log is exact append-only.",
+    "Reviewed validator actual9/9 checks include CSV59x20, acyclic dependencies, historical evidence, all global fields, source binding and blocked outcome; immutable script/input hashes still match admission.",
+    "Current selected68 hashes still match. Full current source remains known to differ from frozen candidate; no current whole-checkout qualification claim is made.",
+    "No artifact, fullbuild, real-session or browser pass is invented; all107 cases remain unrun for newrepair bytes.",
+    "Exact next action is source reconciliation and successor capture/context/compatibility admission, followed by fresh capacity and reviewed recovery/build/runtime. Old stale-candidate retry remains ineligible."
+  ],
+  "remainingBlockers": [
+    "candidate_freshness",
+    "build_capacity",
+    "new_artifact_and_native_browser_qualification"
+  ],
+  "limitations": [
+    "passed:true applies to accurate local evidence publication only. P04-R06/P04-V02/parentP04 and production remain blocked.",
+    "No product, database, process or shared publication mutation was performed by this reviewer.",
+    "No commit, push, deployment or production change."
+  ]
+}

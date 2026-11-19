@@ -1,0 +1,4457 @@
+{
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "externalCallsPerformed": false,
+  "productionReadinessClaimed": false,
+  "value": {
+    "selectedDigestId": "owner-morning",
+    "digest": {
+      "organizationId": "synth12_yaounde",
+      "organizationName": "Mfoundi Office Supplies — Synthetic",
+      "generatedAt": "2026-10-28T20:00:00.000Z",
+      "periodStart": "2026-10-01T00:00:00.000Z",
+      "periodEnd": "2026-10-28T23:59:59.999Z",
+      "currency": "XAF",
+      "timezone": "Africa/Douala",
+      "digests": [
+        {
+          "id": "owner-morning",
+          "organizationId": "synth12_yaounde",
+          "audienceRole": "owner",
+          "generatedAt": "2026-10-28T20:00:00.000Z",
+          "periodStart": "2026-10-01T00:00:00.000Z",
+          "periodEnd": "2026-10-28T23:59:59.999Z",
+          "freshness": {
+            "state": "blocked",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+            "maxAgeMinutes": 1440,
+            "stale": false,
+            "staleReason": null
+          },
+          "commandBrief": {
+            "id": "owner-morning-brief",
+            "organizationId": "synth12_yaounde",
+            "title": "Owner morning digest",
+            "summary": "Cash truth, stock exposure, close pressure, and the highest visible action risks for today.",
+            "conclusion": "Review first: Close Blocker — leading risk score (75). Review blockers before acting.",
+            "mode": "brief",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "periodStart": "2026-10-01T00:00:00.000Z",
+            "periodEnd": "2026-10-28T23:59:59.999Z",
+            "state": "blocked",
+            "evidenceGrade": "blocked",
+            "trustState": "blocked",
+            "freshness": {
+              "state": "blocked",
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+              "maxAgeMinutes": 1440,
+              "stale": false,
+              "staleReason": null
+            },
+            "provenance": {
+              "organizationId": "synth12_yaounde",
+              "locationId": null,
+              "sourceKind": "tenant.operating",
+              "sourceId": null,
+              "sourceHash": "sha256:1a257e36fba2949df09b763ec1ceec3066b07d095bf882d9f7987dcd6e96ba80",
+              "sourceModules": [
+                "dashboard",
+                "sales",
+                "payments",
+                "inventory",
+                "purchasing",
+                "hris",
+                "payroll",
+                "accounting",
+                "close",
+                "compliance"
+              ],
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "periodStart": "2026-10-01T00:00:00.000Z",
+              "periodEnd": "2026-10-28T23:59:59.999Z"
+            },
+            "sourceModules": [
+              "dashboard",
+              "sales",
+              "payments",
+              "inventory",
+              "purchasing",
+              "hris",
+              "payroll",
+              "accounting",
+              "close",
+              "compliance"
+            ],
+            "blockers": [
+              {
+                "id": "close-evidence-unavailable",
+                "severity": "high",
+                "gate": "close_readiness",
+                "title": "Close evidence is unavailable",
+                "detail": "21 close evidence item(s) are unavailable for this organization.",
+                "sourceTables": [
+                  "close_evidence_items"
+                ],
+                "nextAction": "Regenerate or attach the missing close evidence."
+              },
+              {
+                "id": "close-periods-unreviewed",
+                "severity": "medium",
+                "gate": "close_readiness",
+                "title": "Accounting periods need close review",
+                "detail": "1 accounting period(s) have no close run in the selected scope.",
+                "sourceTables": [
+                  "accounting_periods",
+                  "close_runs"
+                ],
+                "nextAction": "Run Close Assurance for each uncovered accounting period."
+              },
+              {
+                "id": "close-evidence-unavailable",
+                "severity": "high",
+                "gate": "close_readiness",
+                "title": "Close evidence is unavailable",
+                "detail": "21 close evidence item(s) are unavailable for this organization.",
+                "sourceTables": [
+                  "close_evidence_items"
+                ],
+                "nextAction": "Regenerate or attach the missing close evidence."
+              },
+              {
+                "id": "close-periods-unreviewed",
+                "severity": "medium",
+                "gate": "close_readiness",
+                "title": "Accounting periods need close review",
+                "detail": "1 accounting period(s) have no close run in the selected scope.",
+                "sourceTables": [
+                  "accounting_periods",
+                  "close_runs"
+                ],
+                "nextAction": "Run Close Assurance for each uncovered accounting period."
+              }
+            ],
+            "redactions": [
+              {
+                "id": "inventory-loss-evidence-hashes-redacted",
+                "field": "records.evidence.*Hash",
+                "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+              }
+            ],
+            "primaryAction": {
+              "id": "act_bdeeab1a27432f736a9e35ff",
+              "label": "Resolve close blockers or attach missing evidence before certification.",
+              "href": "/en/dashboard/accounting/close",
+              "requiredPermission": "accounting.close.read",
+              "moduleSlug": "close_assurance",
+              "disabled": false,
+              "disabledReason": null
+            },
+            "drillThrough": {
+              "type": "route",
+              "label": "Open source surface",
+              "requiredPermission": "dashboard.read",
+              "available": false,
+              "unavailableReason": "You can view this digest. The Owner workspace requires organization-wide operating authority."
+            },
+            "reviewState": {
+              "organizationId": "synth12_yaounde",
+              "reviewerId": null,
+              "reviewerRole": "owner",
+              "state": "blocked",
+              "reviewedAt": null,
+              "previousReviewedAt": null,
+              "nextReviewDueAt": "2026-10-29T20:00:00.000Z",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                },
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ]
+            }
+          },
+          "changes": [
+            {
+              "id": "sig_bdeeab1a27432f736a9e35ff-change",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "close_assurance",
+              "requiredPermission": "accounting.close.read",
+              "title": "Close Blocker",
+              "detail": "Kontava detected a close blocker signal that needs review.",
+              "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+              "direction": "observed",
+              "severity": "high",
+              "state": "ready",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "close"
+              ],
+              "changedAt": "2026-10-28T20:00:00.000Z",
+              "previousValue": null,
+              "currentValue": 75,
+              "unit": "risk",
+              "format": "score",
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "close.readiness",
+                "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                "sourceModules": [
+                  "close"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "redactions": [],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Open action",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read"
+              },
+              "actionLink": {
+                "id": "sig_bdeeab1a27432f736a9e35ff-action",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read",
+                "moduleSlug": "close_assurance",
+                "disabled": false,
+                "disabledReason": null
+              }
+            },
+            {
+              "id": "sig_f5d8fbe140a036d8203d0cbf-change",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "inventory",
+              "requiredPermission": "inventory.levels.read",
+              "title": "Recorded inventory loss needs review",
+              "detail": "1 recorded inventory loss line(s) totaling 7200 XAF require evidence review. Approval attribution records authorization and does not identify who caused the loss.",
+              "businessImpact": "Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.",
+              "direction": "observed",
+              "severity": "medium",
+              "state": "ready",
+              "evidenceGrade": "operational",
+              "trustState": "operational",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": null,
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "inventory"
+              ],
+              "changedAt": "2026-10-28T20:00:00.000Z",
+              "previousValue": null,
+              "currentValue": 50,
+              "unit": "risk",
+              "format": "score",
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "inventory.loss",
+                "sourceId": "sig_f5d8fbe140a036d8203d0cbf",
+                "sourceHash": "sha256:88c8618dceb47b2c507ba62426bde5fb25a53cbcbe3df12000015c4b71f3469f",
+                "sourceModules": [
+                  "inventory"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "blockers": [],
+              "redactions": [
+                {
+                  "id": "inventory-loss-evidence-hashes-redacted",
+                  "field": "records.evidence.*Hash",
+                  "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                  "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                }
+              ],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Open action",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read"
+              },
+              "actionLink": {
+                "id": "sig_f5d8fbe140a036d8203d0cbf-action",
+                "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read",
+                "moduleSlug": "inventory",
+                "disabled": false,
+                "disabledReason": null
+              }
+            }
+          ],
+          "risks": [
+            {
+              "id": "act_bdeeab1a27432f736a9e35ff-risk",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "close_assurance",
+              "rank": 1,
+              "title": "Close Blocker",
+              "detail": "Resolve close blockers or attach missing evidence before certification.",
+              "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+              "severity": "high",
+              "severityScore": 75,
+              "moneyImpact": null,
+              "urgency": null,
+              "state": "ready",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "close"
+              ],
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "close.readiness",
+                "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                "sourceModules": [
+                  "close"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "redactions": [],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read"
+              },
+              "actionLink": {
+                "id": "act_bdeeab1a27432f736a9e35ff",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read",
+                "moduleSlug": "close_assurance",
+                "disabled": false,
+                "disabledReason": null
+              }
+            },
+            {
+              "id": "act_f5d8fbe140a036d8203d0cbf-risk",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "inventory",
+              "rank": 2,
+              "title": "Recorded inventory loss needs review",
+              "detail": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+              "businessImpact": "Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.",
+              "severity": "medium",
+              "severityScore": 50,
+              "moneyImpact": null,
+              "urgency": null,
+              "state": "ready",
+              "evidenceGrade": "operational",
+              "trustState": "operational",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": null,
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "inventory"
+              ],
+              "blockers": [],
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "inventory.loss",
+                "sourceId": "sig_f5d8fbe140a036d8203d0cbf",
+                "sourceHash": "sha256:88c8618dceb47b2c507ba62426bde5fb25a53cbcbe3df12000015c4b71f3469f",
+                "sourceModules": [
+                  "inventory"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "redactions": [
+                {
+                  "id": "inventory-loss-evidence-hashes-redacted",
+                  "field": "records.evidence.*Hash",
+                  "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                  "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                }
+              ],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read"
+              },
+              "actionLink": {
+                "id": "act_f5d8fbe140a036d8203d0cbf",
+                "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read",
+                "moduleSlug": "inventory",
+                "disabled": false,
+                "disabledReason": null
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act_bdeeab1a27432f736a9e35ff",
+              "label": "Resolve close blockers or attach missing evidence before certification.",
+              "href": "/en/dashboard/accounting/close",
+              "requiredPermission": "accounting.close.read",
+              "moduleSlug": "close_assurance",
+              "disabled": false,
+              "disabledReason": null
+            },
+            {
+              "id": "act_f5d8fbe140a036d8203d0cbf",
+              "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+              "href": "/en/dashboard/inventory/loss-control",
+              "requiredPermission": "inventory.levels.read",
+              "moduleSlug": "inventory",
+              "disabled": false,
+              "disabledReason": null
+            }
+          ],
+          "zones": [
+            {
+              "id": "owner-morning-zone",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "dashboard",
+              "title": "Owner morning digest",
+              "businessQuestion": "What should this role review today?",
+              "summary": "Cash truth, stock exposure, close pressure, and the highest visible action risks for today.",
+              "state": "blocked",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "payments",
+                "sales"
+              ],
+              "primaryMetric": {
+                "id": "dashboard-cash-collected",
+                "organizationId": "synth12_yaounde",
+                "moduleSlug": "dashboard",
+                "requiredPermission": "dashboard.read",
+                "title": "Cash collected",
+                "detail": "Collected cash from tenant operating snapshot.",
+                "value": 1730150,
+                "unit": "XAF",
+                "format": "currency",
+                "state": "blocked",
+                "evidenceGrade": "blocked",
+                "trustState": "blocked",
+                "freshness": {
+                  "state": "blocked",
+                  "generatedAt": "2026-10-28T20:00:00.000Z",
+                  "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                  "maxAgeMinutes": 1440,
+                  "stale": false,
+                  "staleReason": null
+                },
+                "provenance": {
+                  "organizationId": "synth12_yaounde",
+                  "locationId": null,
+                  "sourceKind": "tenant.operating",
+                  "sourceHash": "sha256:1a257e36fba2949df09b763ec1ceec3066b07d095bf882d9f7987dcd6e96ba80",
+                  "periodStart": "2026-10-01T00:00:00.000Z",
+                  "periodEnd": "2026-10-28T23:59:59.999Z",
+                  "sourceModules": [
+                    "payments",
+                    "sales"
+                  ],
+                  "generatedAt": "2026-10-28T20:00:00.000Z"
+                },
+                "blockers": [
+                  {
+                    "id": "close-evidence-unavailable",
+                    "severity": "high",
+                    "gate": "close_readiness",
+                    "title": "Close evidence is unavailable",
+                    "detail": "21 close evidence item(s) are unavailable for this organization.",
+                    "sourceTables": [
+                      "close_evidence_items"
+                    ],
+                    "nextAction": "Regenerate or attach the missing close evidence."
+                  },
+                  {
+                    "id": "close-periods-unreviewed",
+                    "severity": "medium",
+                    "gate": "close_readiness",
+                    "title": "Accounting periods need close review",
+                    "detail": "1 accounting period(s) have no close run in the selected scope.",
+                    "sourceTables": [
+                      "accounting_periods",
+                      "close_runs"
+                    ],
+                    "nextAction": "Run Close Assurance for each uncovered accounting period."
+                  }
+                ],
+                "redactions": [
+                  {
+                    "id": "payment-provider-identifiers-redacted",
+                    "field": "providerAccount.externalAccountHash",
+                    "reason": "Payment provider account identifiers remain server-side only in snapshot read models.",
+                    "policy": "KONTAVA_SENSITIVE_PAYMENT_EVIDENCE"
+                  }
+                ],
+                "drillThrough": {
+                  "type": "route",
+                  "label": "Open source surface",
+                  "requiredPermission": "dashboard.read",
+                  "available": false,
+                  "unavailableReason": "You can view this digest. The Owner workspace requires organization-wide operating authority."
+                },
+                "actionLink": null
+              },
+              "sections": [],
+              "cards": [
+                {
+                  "id": "dashboard-cash-collected",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "dashboard",
+                  "requiredPermission": "dashboard.read",
+                  "title": "Cash collected",
+                  "detail": "Collected cash from tenant operating snapshot.",
+                  "value": 1730150,
+                  "unit": "XAF",
+                  "format": "currency",
+                  "state": "blocked",
+                  "evidenceGrade": "blocked",
+                  "trustState": "blocked",
+                  "freshness": {
+                    "state": "blocked",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "tenant.operating",
+                    "sourceHash": "sha256:1a257e36fba2949df09b763ec1ceec3066b07d095bf882d9f7987dcd6e96ba80",
+                    "periodStart": "2026-10-01T00:00:00.000Z",
+                    "periodEnd": "2026-10-28T23:59:59.999Z",
+                    "sourceModules": [
+                      "payments",
+                      "sales"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "blockers": [
+                    {
+                      "id": "close-evidence-unavailable",
+                      "severity": "high",
+                      "gate": "close_readiness",
+                      "title": "Close evidence is unavailable",
+                      "detail": "21 close evidence item(s) are unavailable for this organization.",
+                      "sourceTables": [
+                        "close_evidence_items"
+                      ],
+                      "nextAction": "Regenerate or attach the missing close evidence."
+                    },
+                    {
+                      "id": "close-periods-unreviewed",
+                      "severity": "medium",
+                      "gate": "close_readiness",
+                      "title": "Accounting periods need close review",
+                      "detail": "1 accounting period(s) have no close run in the selected scope.",
+                      "sourceTables": [
+                        "accounting_periods",
+                        "close_runs"
+                      ],
+                      "nextAction": "Run Close Assurance for each uncovered accounting period."
+                    }
+                  ],
+                  "redactions": [
+                    {
+                      "id": "payment-provider-identifiers-redacted",
+                      "field": "providerAccount.externalAccountHash",
+                      "reason": "Payment provider account identifiers remain server-side only in snapshot read models.",
+                      "policy": "KONTAVA_SENSITIVE_PAYMENT_EVIDENCE"
+                    }
+                  ],
+                  "drillThrough": {
+                    "type": "route",
+                    "label": "Open source surface",
+                    "requiredPermission": "dashboard.read",
+                    "available": false,
+                    "unavailableReason": "You can view this digest. The Owner workspace requires organization-wide operating authority."
+                  },
+                  "actionLink": null
+                }
+              ],
+              "insights": [],
+              "risks": [
+                {
+                  "id": "act_bdeeab1a27432f736a9e35ff-risk",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "close_assurance",
+                  "rank": 1,
+                  "title": "Close Blocker",
+                  "detail": "Resolve close blockers or attach missing evidence before certification.",
+                  "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+                  "severity": "high",
+                  "severityScore": 75,
+                  "moneyImpact": null,
+                  "urgency": null,
+                  "state": "ready",
+                  "evidenceGrade": "blocked",
+                  "trustState": "blocked",
+                  "freshness": {
+                    "state": "fresh",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "sourceModules": [
+                    "close"
+                  ],
+                  "blockers": [
+                    {
+                      "id": "close-evidence-unavailable",
+                      "severity": "high",
+                      "gate": "close_readiness",
+                      "title": "Close evidence is unavailable",
+                      "detail": "21 close evidence item(s) are unavailable for this organization.",
+                      "sourceTables": [
+                        "close_evidence_items"
+                      ],
+                      "nextAction": "Regenerate or attach the missing close evidence."
+                    },
+                    {
+                      "id": "close-periods-unreviewed",
+                      "severity": "medium",
+                      "gate": "close_readiness",
+                      "title": "Accounting periods need close review",
+                      "detail": "1 accounting period(s) have no close run in the selected scope.",
+                      "sourceTables": [
+                        "accounting_periods",
+                        "close_runs"
+                      ],
+                      "nextAction": "Run Close Assurance for each uncovered accounting period."
+                    }
+                  ],
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "close.readiness",
+                    "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                    "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                    "sourceModules": [
+                      "close"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "redactions": [],
+                  "drillThrough": {
+                    "available": true,
+                    "type": "route",
+                    "label": "Resolve close blockers or attach missing evidence before certification.",
+                    "href": "/en/dashboard/accounting/close",
+                    "requiredPermission": "accounting.close.read"
+                  },
+                  "actionLink": {
+                    "id": "act_bdeeab1a27432f736a9e35ff",
+                    "label": "Resolve close blockers or attach missing evidence before certification.",
+                    "href": "/en/dashboard/accounting/close",
+                    "requiredPermission": "accounting.close.read",
+                    "moduleSlug": "close_assurance",
+                    "disabled": false,
+                    "disabledReason": null
+                  }
+                },
+                {
+                  "id": "act_f5d8fbe140a036d8203d0cbf-risk",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "inventory",
+                  "rank": 2,
+                  "title": "Recorded inventory loss needs review",
+                  "detail": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                  "businessImpact": "Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.",
+                  "severity": "medium",
+                  "severityScore": 50,
+                  "moneyImpact": null,
+                  "urgency": null,
+                  "state": "ready",
+                  "evidenceGrade": "operational",
+                  "trustState": "operational",
+                  "freshness": {
+                    "state": "fresh",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": null,
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "sourceModules": [
+                    "inventory"
+                  ],
+                  "blockers": [],
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "inventory.loss",
+                    "sourceId": "sig_f5d8fbe140a036d8203d0cbf",
+                    "sourceHash": "sha256:88c8618dceb47b2c507ba62426bde5fb25a53cbcbe3df12000015c4b71f3469f",
+                    "sourceModules": [
+                      "inventory"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "redactions": [
+                    {
+                      "id": "inventory-loss-evidence-hashes-redacted",
+                      "field": "records.evidence.*Hash",
+                      "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                      "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                    }
+                  ],
+                  "drillThrough": {
+                    "available": true,
+                    "type": "route",
+                    "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                    "href": "/en/dashboard/inventory/loss-control",
+                    "requiredPermission": "inventory.levels.read"
+                  },
+                  "actionLink": {
+                    "id": "act_f5d8fbe140a036d8203d0cbf",
+                    "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                    "href": "/en/dashboard/inventory/loss-control",
+                    "requiredPermission": "inventory.levels.read",
+                    "moduleSlug": "inventory",
+                    "disabled": false,
+                    "disabledReason": null
+                  }
+                }
+              ],
+              "flowSteps": [],
+              "actions": [
+                {
+                  "id": "act_bdeeab1a27432f736a9e35ff",
+                  "label": "Resolve close blockers or attach missing evidence before certification.",
+                  "href": "/en/dashboard/accounting/close",
+                  "requiredPermission": "accounting.close.read",
+                  "moduleSlug": "close_assurance",
+                  "disabled": false,
+                  "disabledReason": null
+                },
+                {
+                  "id": "act_f5d8fbe140a036d8203d0cbf",
+                  "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                  "href": "/en/dashboard/inventory/loss-control",
+                  "requiredPermission": "inventory.levels.read",
+                  "moduleSlug": "inventory",
+                  "disabled": false,
+                  "disabledReason": null
+                }
+              ],
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                },
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "redactions": [
+                {
+                  "id": "inventory-loss-evidence-hashes-redacted",
+                  "field": "records.evidence.*Hash",
+                  "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                  "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                }
+              ],
+              "drillThrough": {
+                "type": "route",
+                "label": "Open source surface",
+                "requiredPermission": "dashboard.read",
+                "available": false,
+                "unavailableReason": "You can view this digest. The Owner workspace requires organization-wide operating authority."
+              }
+            }
+          ],
+          "blockers": [
+            {
+              "id": "close-evidence-unavailable",
+              "severity": "high",
+              "gate": "close_readiness",
+              "title": "Close evidence is unavailable",
+              "detail": "21 close evidence item(s) are unavailable for this organization.",
+              "sourceTables": [
+                "close_evidence_items"
+              ],
+              "nextAction": "Regenerate or attach the missing close evidence."
+            },
+            {
+              "id": "close-periods-unreviewed",
+              "severity": "medium",
+              "gate": "close_readiness",
+              "title": "Accounting periods need close review",
+              "detail": "1 accounting period(s) have no close run in the selected scope.",
+              "sourceTables": [
+                "accounting_periods",
+                "close_runs"
+              ],
+              "nextAction": "Run Close Assurance for each uncovered accounting period."
+            },
+            {
+              "id": "close-evidence-unavailable",
+              "severity": "high",
+              "gate": "close_readiness",
+              "title": "Close evidence is unavailable",
+              "detail": "21 close evidence item(s) are unavailable for this organization.",
+              "sourceTables": [
+                "close_evidence_items"
+              ],
+              "nextAction": "Regenerate or attach the missing close evidence."
+            },
+            {
+              "id": "close-periods-unreviewed",
+              "severity": "medium",
+              "gate": "close_readiness",
+              "title": "Accounting periods need close review",
+              "detail": "1 accounting period(s) have no close run in the selected scope.",
+              "sourceTables": [
+                "accounting_periods",
+                "close_runs"
+              ],
+              "nextAction": "Run Close Assurance for each uncovered accounting period."
+            }
+          ],
+          "redactions": [
+            {
+              "id": "inventory-loss-evidence-hashes-redacted",
+              "field": "records.evidence.*Hash",
+              "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+              "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+            }
+          ]
+        },
+        {
+          "id": "finance-cash",
+          "organizationId": "synth12_yaounde",
+          "audienceRole": "finance",
+          "generatedAt": "2026-10-28T20:00:00.000Z",
+          "periodStart": "2026-10-01T00:00:00.000Z",
+          "periodEnd": "2026-10-28T23:59:59.999Z",
+          "freshness": {
+            "state": "blocked",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+            "maxAgeMinutes": 1440,
+            "stale": false,
+            "staleReason": null
+          },
+          "commandBrief": {
+            "id": "finance-cash-brief",
+            "organizationId": "synth12_yaounde",
+            "title": "Finance cash truth digest",
+            "summary": "Suspense, reconciliation, provider evidence, and cash collection review for the finance desk.",
+            "conclusion": "No permitted action is available in this scope.",
+            "mode": "brief",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "periodStart": "2026-10-01T00:00:00.000Z",
+            "periodEnd": "2026-10-28T23:59:59.999Z",
+            "state": "redacted",
+            "evidenceGrade": "blocked",
+            "trustState": "blocked",
+            "freshness": {
+              "state": "blocked",
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+              "maxAgeMinutes": 1440,
+              "stale": false,
+              "staleReason": null
+            },
+            "provenance": {
+              "organizationId": "synth12_yaounde",
+              "locationId": null,
+              "sourceKind": "tenant.operating",
+              "sourceId": null,
+              "sourceHash": "sha256:1a257e36fba2949df09b763ec1ceec3066b07d095bf882d9f7987dcd6e96ba80",
+              "sourceModules": [
+                "dashboard",
+                "sales",
+                "payments",
+                "inventory",
+                "purchasing",
+                "hris",
+                "payroll",
+                "accounting",
+                "close",
+                "compliance"
+              ],
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "periodStart": "2026-10-01T00:00:00.000Z",
+              "periodEnd": "2026-10-28T23:59:59.999Z"
+            },
+            "sourceModules": [
+              "dashboard",
+              "sales",
+              "payments",
+              "inventory",
+              "purchasing",
+              "hris",
+              "payroll",
+              "accounting",
+              "close",
+              "compliance"
+            ],
+            "blockers": [
+              {
+                "id": "close-evidence-unavailable",
+                "severity": "high",
+                "gate": "close_readiness",
+                "title": "Close evidence is unavailable",
+                "detail": "21 close evidence item(s) are unavailable for this organization.",
+                "sourceTables": [
+                  "close_evidence_items"
+                ],
+                "nextAction": "Regenerate or attach the missing close evidence."
+              },
+              {
+                "id": "close-periods-unreviewed",
+                "severity": "medium",
+                "gate": "close_readiness",
+                "title": "Accounting periods need close review",
+                "detail": "1 accounting period(s) have no close run in the selected scope.",
+                "sourceTables": [
+                  "accounting_periods",
+                  "close_runs"
+                ],
+                "nextAction": "Run Close Assurance for each uncovered accounting period."
+              }
+            ],
+            "redactions": [],
+            "primaryAction": {
+              "id": "finance-cash-open",
+              "label": "Open surface",
+              "href": "/en/dashboard/finance/cash-command",
+              "requiredPermission": "finance.read",
+              "moduleSlug": "finance",
+              "disabled": false,
+              "disabledReason": null
+            },
+            "drillThrough": {
+              "type": "route",
+              "label": "Open source surface",
+              "requiredPermission": "finance.read",
+              "available": true,
+              "href": "/en/dashboard/finance/cash-command"
+            },
+            "reviewState": {
+              "organizationId": "synth12_yaounde",
+              "reviewerId": null,
+              "reviewerRole": "finance",
+              "state": "not_started",
+              "reviewedAt": null,
+              "previousReviewedAt": null,
+              "nextReviewDueAt": "2026-10-29T20:00:00.000Z",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ]
+            }
+          },
+          "changes": [],
+          "risks": [],
+          "actions": [],
+          "zones": [
+            {
+              "id": "finance-cash-zone",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "finance",
+              "title": "Finance cash truth digest",
+              "businessQuestion": "What should this role review today?",
+              "summary": "Suspense, reconciliation, provider evidence, and cash collection review for the finance desk.",
+              "state": "redacted",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "payments",
+                "finance"
+              ],
+              "primaryMetric": {
+                "id": "finance-unresolved-suspense",
+                "organizationId": "synth12_yaounde",
+                "moduleSlug": "finance",
+                "requiredPermission": "finance.read",
+                "title": "Unresolved suspense",
+                "detail": "Open payment suspense value from the payment truth snapshot.",
+                "value": 0,
+                "unit": "XAF",
+                "format": "currency",
+                "state": "redacted",
+                "evidenceGrade": "reconciled",
+                "trustState": "reconciled",
+                "freshness": {
+                  "state": "fresh",
+                  "generatedAt": "2026-10-28T20:00:00.000Z",
+                  "sourceMaxUpdatedAt": "2026-10-29T09:10:39.876Z",
+                  "maxAgeMinutes": 1440,
+                  "stale": false,
+                  "staleReason": null
+                },
+                "provenance": {
+                  "organizationId": "synth12_yaounde",
+                  "locationId": null,
+                  "sourceKind": "payment.truth",
+                  "sourceHash": "sha256:e21d209eb7b614b2e8380689ac9a2e1e5cfb02da6baf2379a1c8319290cd3aa1",
+                  "periodStart": "2026-10-01T00:00:00.000Z",
+                  "periodEnd": "2026-10-28T23:59:59.999Z",
+                  "sourceModules": [
+                    "payments",
+                    "finance"
+                  ],
+                  "generatedAt": "2026-10-28T20:00:00.000Z"
+                },
+                "blockers": [],
+                "redactions": [
+                  {
+                    "id": "payment-provider-identifiers-redacted",
+                    "field": "providerAccount.externalAccountHash",
+                    "reason": "Payment provider account identifiers remain server-side only in snapshot read models.",
+                    "policy": "KONTAVA_SENSITIVE_PAYMENT_EVIDENCE"
+                  }
+                ],
+                "drillThrough": {
+                  "type": "route",
+                  "label": "Open source surface",
+                  "requiredPermission": "finance.read",
+                  "available": true,
+                  "href": "/en/dashboard/finance/cash-command"
+                },
+                "actionLink": null
+              },
+              "sections": [],
+              "cards": [
+                {
+                  "id": "finance-unresolved-suspense",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "finance",
+                  "requiredPermission": "finance.read",
+                  "title": "Unresolved suspense",
+                  "detail": "Open payment suspense value from the payment truth snapshot.",
+                  "value": 0,
+                  "unit": "XAF",
+                  "format": "currency",
+                  "state": "redacted",
+                  "evidenceGrade": "reconciled",
+                  "trustState": "reconciled",
+                  "freshness": {
+                    "state": "fresh",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": "2026-10-29T09:10:39.876Z",
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "payment.truth",
+                    "sourceHash": "sha256:e21d209eb7b614b2e8380689ac9a2e1e5cfb02da6baf2379a1c8319290cd3aa1",
+                    "periodStart": "2026-10-01T00:00:00.000Z",
+                    "periodEnd": "2026-10-28T23:59:59.999Z",
+                    "sourceModules": [
+                      "payments",
+                      "finance"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "blockers": [],
+                  "redactions": [
+                    {
+                      "id": "payment-provider-identifiers-redacted",
+                      "field": "providerAccount.externalAccountHash",
+                      "reason": "Payment provider account identifiers remain server-side only in snapshot read models.",
+                      "policy": "KONTAVA_SENSITIVE_PAYMENT_EVIDENCE"
+                    }
+                  ],
+                  "drillThrough": {
+                    "type": "route",
+                    "label": "Open source surface",
+                    "requiredPermission": "finance.read",
+                    "available": true,
+                    "href": "/en/dashboard/finance/cash-command"
+                  },
+                  "actionLink": null
+                }
+              ],
+              "insights": [],
+              "risks": [],
+              "flowSteps": [],
+              "actions": [],
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "redactions": [],
+              "drillThrough": {
+                "type": "route",
+                "label": "Open source surface",
+                "requiredPermission": "finance.read",
+                "available": true,
+                "href": "/en/dashboard/finance/cash-command"
+              }
+            }
+          ],
+          "blockers": [
+            {
+              "id": "close-evidence-unavailable",
+              "severity": "high",
+              "gate": "close_readiness",
+              "title": "Close evidence is unavailable",
+              "detail": "21 close evidence item(s) are unavailable for this organization.",
+              "sourceTables": [
+                "close_evidence_items"
+              ],
+              "nextAction": "Regenerate or attach the missing close evidence."
+            },
+            {
+              "id": "close-periods-unreviewed",
+              "severity": "medium",
+              "gate": "close_readiness",
+              "title": "Accounting periods need close review",
+              "detail": "1 accounting period(s) have no close run in the selected scope.",
+              "sourceTables": [
+                "accounting_periods",
+                "close_runs"
+              ],
+              "nextAction": "Run Close Assurance for each uncovered accounting period."
+            }
+          ],
+          "redactions": []
+        },
+        {
+          "id": "accountant-close",
+          "organizationId": "synth12_yaounde",
+          "audienceRole": "accountant",
+          "generatedAt": "2026-10-28T20:00:00.000Z",
+          "periodStart": "2026-10-01T00:00:00.000Z",
+          "periodEnd": "2026-10-28T23:59:59.999Z",
+          "freshness": {
+            "state": "blocked",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+            "maxAgeMinutes": 1440,
+            "stale": false,
+            "staleReason": null
+          },
+          "commandBrief": {
+            "id": "accountant-close-brief",
+            "organizationId": "synth12_yaounde",
+            "title": "Accountant close readiness digest",
+            "summary": "Close score, evidence coverage, open findings, and certification/export readiness.",
+            "conclusion": "Review first: Close Blocker — leading risk score (75). Review blockers before acting.",
+            "mode": "brief",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "periodStart": "2026-10-01T00:00:00.000Z",
+            "periodEnd": "2026-10-28T23:59:59.999Z",
+            "state": "blocked",
+            "evidenceGrade": "blocked",
+            "trustState": "blocked",
+            "freshness": {
+              "state": "blocked",
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+              "maxAgeMinutes": 1440,
+              "stale": false,
+              "staleReason": null
+            },
+            "provenance": {
+              "organizationId": "synth12_yaounde",
+              "locationId": null,
+              "sourceKind": "tenant.operating",
+              "sourceId": null,
+              "sourceHash": "sha256:1a257e36fba2949df09b763ec1ceec3066b07d095bf882d9f7987dcd6e96ba80",
+              "sourceModules": [
+                "dashboard",
+                "sales",
+                "payments",
+                "inventory",
+                "purchasing",
+                "hris",
+                "payroll",
+                "accounting",
+                "close",
+                "compliance"
+              ],
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "periodStart": "2026-10-01T00:00:00.000Z",
+              "periodEnd": "2026-10-28T23:59:59.999Z"
+            },
+            "sourceModules": [
+              "dashboard",
+              "sales",
+              "payments",
+              "inventory",
+              "purchasing",
+              "hris",
+              "payroll",
+              "accounting",
+              "close",
+              "compliance"
+            ],
+            "blockers": [
+              {
+                "id": "close-evidence-unavailable",
+                "severity": "high",
+                "gate": "close_readiness",
+                "title": "Close evidence is unavailable",
+                "detail": "21 close evidence item(s) are unavailable for this organization.",
+                "sourceTables": [
+                  "close_evidence_items"
+                ],
+                "nextAction": "Regenerate or attach the missing close evidence."
+              },
+              {
+                "id": "close-periods-unreviewed",
+                "severity": "medium",
+                "gate": "close_readiness",
+                "title": "Accounting periods need close review",
+                "detail": "1 accounting period(s) have no close run in the selected scope.",
+                "sourceTables": [
+                  "accounting_periods",
+                  "close_runs"
+                ],
+                "nextAction": "Run Close Assurance for each uncovered accounting period."
+              },
+              {
+                "id": "close-evidence-unavailable",
+                "severity": "high",
+                "gate": "close_readiness",
+                "title": "Close evidence is unavailable",
+                "detail": "21 close evidence item(s) are unavailable for this organization.",
+                "sourceTables": [
+                  "close_evidence_items"
+                ],
+                "nextAction": "Regenerate or attach the missing close evidence."
+              },
+              {
+                "id": "close-periods-unreviewed",
+                "severity": "medium",
+                "gate": "close_readiness",
+                "title": "Accounting periods need close review",
+                "detail": "1 accounting period(s) have no close run in the selected scope.",
+                "sourceTables": [
+                  "accounting_periods",
+                  "close_runs"
+                ],
+                "nextAction": "Run Close Assurance for each uncovered accounting period."
+              }
+            ],
+            "redactions": [],
+            "primaryAction": {
+              "id": "act_bdeeab1a27432f736a9e35ff",
+              "label": "Resolve close blockers or attach missing evidence before certification.",
+              "href": "/en/dashboard/accounting/close",
+              "requiredPermission": "accounting.close.read",
+              "moduleSlug": "close_assurance",
+              "disabled": false,
+              "disabledReason": null
+            },
+            "drillThrough": {
+              "type": "route",
+              "label": "Open source surface",
+              "requiredPermission": "accounting.close.read",
+              "available": true,
+              "href": "/en/dashboard/accounting/close"
+            },
+            "reviewState": {
+              "organizationId": "synth12_yaounde",
+              "reviewerId": null,
+              "reviewerRole": "accountant",
+              "state": "blocked",
+              "reviewedAt": null,
+              "previousReviewedAt": null,
+              "nextReviewDueAt": "2026-10-29T20:00:00.000Z",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                },
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ]
+            }
+          },
+          "changes": [
+            {
+              "id": "sig_bdeeab1a27432f736a9e35ff-change",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "close_assurance",
+              "requiredPermission": "accounting.close.read",
+              "title": "Close Blocker",
+              "detail": "Kontava detected a close blocker signal that needs review.",
+              "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+              "direction": "observed",
+              "severity": "high",
+              "state": "ready",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "close"
+              ],
+              "changedAt": "2026-10-28T20:00:00.000Z",
+              "previousValue": null,
+              "currentValue": 75,
+              "unit": "risk",
+              "format": "score",
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "close.readiness",
+                "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                "sourceModules": [
+                  "close"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "redactions": [],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Open action",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read"
+              },
+              "actionLink": {
+                "id": "sig_bdeeab1a27432f736a9e35ff-action",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read",
+                "moduleSlug": "close_assurance",
+                "disabled": false,
+                "disabledReason": null
+              }
+            }
+          ],
+          "risks": [
+            {
+              "id": "act_bdeeab1a27432f736a9e35ff-risk",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "close_assurance",
+              "rank": 1,
+              "title": "Close Blocker",
+              "detail": "Resolve close blockers or attach missing evidence before certification.",
+              "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+              "severity": "high",
+              "severityScore": 75,
+              "moneyImpact": null,
+              "urgency": null,
+              "state": "ready",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "close"
+              ],
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "close.readiness",
+                "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                "sourceModules": [
+                  "close"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "redactions": [],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read"
+              },
+              "actionLink": {
+                "id": "act_bdeeab1a27432f736a9e35ff",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read",
+                "moduleSlug": "close_assurance",
+                "disabled": false,
+                "disabledReason": null
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act_bdeeab1a27432f736a9e35ff",
+              "label": "Resolve close blockers or attach missing evidence before certification.",
+              "href": "/en/dashboard/accounting/close",
+              "requiredPermission": "accounting.close.read",
+              "moduleSlug": "close_assurance",
+              "disabled": false,
+              "disabledReason": null
+            }
+          ],
+          "zones": [
+            {
+              "id": "accountant-close-zone",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "close_assurance",
+              "title": "Accountant close readiness digest",
+              "businessQuestion": "What should this role review today?",
+              "summary": "Close score, evidence coverage, open findings, and certification/export readiness.",
+              "state": "blocked",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "accounting",
+                "close"
+              ],
+              "primaryMetric": {
+                "id": "close_assurance-close-readiness",
+                "organizationId": "synth12_yaounde",
+                "moduleSlug": "close_assurance",
+                "requiredPermission": "accounting.close.read",
+                "title": "Close readiness",
+                "detail": "Average readiness score from close readiness snapshot.",
+                "value": null,
+                "unit": "%",
+                "format": "score",
+                "state": "blocked",
+                "evidenceGrade": "blocked",
+                "trustState": "blocked",
+                "freshness": {
+                  "state": "blocked",
+                  "generatedAt": "2026-10-28T20:00:00.000Z",
+                  "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                  "maxAgeMinutes": 1440,
+                  "stale": false,
+                  "staleReason": null
+                },
+                "provenance": {
+                  "organizationId": "synth12_yaounde",
+                  "locationId": null,
+                  "sourceKind": "close.readiness",
+                  "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                  "periodStart": "2026-10-01T00:00:00.000Z",
+                  "periodEnd": "2026-10-28T23:59:59.999Z",
+                  "sourceModules": [
+                    "accounting",
+                    "close"
+                  ],
+                  "generatedAt": "2026-10-28T20:00:00.000Z"
+                },
+                "blockers": [
+                  {
+                    "id": "close-evidence-unavailable",
+                    "severity": "high",
+                    "gate": "close_readiness",
+                    "title": "Close evidence is unavailable",
+                    "detail": "21 close evidence item(s) are unavailable for this organization.",
+                    "sourceTables": [
+                      "close_evidence_items"
+                    ],
+                    "nextAction": "Regenerate or attach the missing close evidence."
+                  },
+                  {
+                    "id": "close-periods-unreviewed",
+                    "severity": "medium",
+                    "gate": "close_readiness",
+                    "title": "Accounting periods need close review",
+                    "detail": "1 accounting period(s) have no close run in the selected scope.",
+                    "sourceTables": [
+                      "accounting_periods",
+                      "close_runs"
+                    ],
+                    "nextAction": "Run Close Assurance for each uncovered accounting period."
+                  }
+                ],
+                "redactions": [],
+                "drillThrough": {
+                  "type": "route",
+                  "label": "Open source surface",
+                  "requiredPermission": "accounting.close.read",
+                  "available": true,
+                  "href": "/en/dashboard/accounting/close"
+                },
+                "actionLink": null
+              },
+              "sections": [],
+              "cards": [
+                {
+                  "id": "close_assurance-close-readiness",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "close_assurance",
+                  "requiredPermission": "accounting.close.read",
+                  "title": "Close readiness",
+                  "detail": "Average readiness score from close readiness snapshot.",
+                  "value": null,
+                  "unit": "%",
+                  "format": "score",
+                  "state": "blocked",
+                  "evidenceGrade": "blocked",
+                  "trustState": "blocked",
+                  "freshness": {
+                    "state": "blocked",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "close.readiness",
+                    "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                    "periodStart": "2026-10-01T00:00:00.000Z",
+                    "periodEnd": "2026-10-28T23:59:59.999Z",
+                    "sourceModules": [
+                      "accounting",
+                      "close"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "blockers": [
+                    {
+                      "id": "close-evidence-unavailable",
+                      "severity": "high",
+                      "gate": "close_readiness",
+                      "title": "Close evidence is unavailable",
+                      "detail": "21 close evidence item(s) are unavailable for this organization.",
+                      "sourceTables": [
+                        "close_evidence_items"
+                      ],
+                      "nextAction": "Regenerate or attach the missing close evidence."
+                    },
+                    {
+                      "id": "close-periods-unreviewed",
+                      "severity": "medium",
+                      "gate": "close_readiness",
+                      "title": "Accounting periods need close review",
+                      "detail": "1 accounting period(s) have no close run in the selected scope.",
+                      "sourceTables": [
+                        "accounting_periods",
+                        "close_runs"
+                      ],
+                      "nextAction": "Run Close Assurance for each uncovered accounting period."
+                    }
+                  ],
+                  "redactions": [],
+                  "drillThrough": {
+                    "type": "route",
+                    "label": "Open source surface",
+                    "requiredPermission": "accounting.close.read",
+                    "available": true,
+                    "href": "/en/dashboard/accounting/close"
+                  },
+                  "actionLink": null
+                }
+              ],
+              "insights": [],
+              "risks": [
+                {
+                  "id": "act_bdeeab1a27432f736a9e35ff-risk",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "close_assurance",
+                  "rank": 1,
+                  "title": "Close Blocker",
+                  "detail": "Resolve close blockers or attach missing evidence before certification.",
+                  "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+                  "severity": "high",
+                  "severityScore": 75,
+                  "moneyImpact": null,
+                  "urgency": null,
+                  "state": "ready",
+                  "evidenceGrade": "blocked",
+                  "trustState": "blocked",
+                  "freshness": {
+                    "state": "fresh",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "sourceModules": [
+                    "close"
+                  ],
+                  "blockers": [
+                    {
+                      "id": "close-evidence-unavailable",
+                      "severity": "high",
+                      "gate": "close_readiness",
+                      "title": "Close evidence is unavailable",
+                      "detail": "21 close evidence item(s) are unavailable for this organization.",
+                      "sourceTables": [
+                        "close_evidence_items"
+                      ],
+                      "nextAction": "Regenerate or attach the missing close evidence."
+                    },
+                    {
+                      "id": "close-periods-unreviewed",
+                      "severity": "medium",
+                      "gate": "close_readiness",
+                      "title": "Accounting periods need close review",
+                      "detail": "1 accounting period(s) have no close run in the selected scope.",
+                      "sourceTables": [
+                        "accounting_periods",
+                        "close_runs"
+                      ],
+                      "nextAction": "Run Close Assurance for each uncovered accounting period."
+                    }
+                  ],
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "close.readiness",
+                    "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                    "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                    "sourceModules": [
+                      "close"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "redactions": [],
+                  "drillThrough": {
+                    "available": true,
+                    "type": "route",
+                    "label": "Resolve close blockers or attach missing evidence before certification.",
+                    "href": "/en/dashboard/accounting/close",
+                    "requiredPermission": "accounting.close.read"
+                  },
+                  "actionLink": {
+                    "id": "act_bdeeab1a27432f736a9e35ff",
+                    "label": "Resolve close blockers or attach missing evidence before certification.",
+                    "href": "/en/dashboard/accounting/close",
+                    "requiredPermission": "accounting.close.read",
+                    "moduleSlug": "close_assurance",
+                    "disabled": false,
+                    "disabledReason": null
+                  }
+                }
+              ],
+              "flowSteps": [],
+              "actions": [
+                {
+                  "id": "act_bdeeab1a27432f736a9e35ff",
+                  "label": "Resolve close blockers or attach missing evidence before certification.",
+                  "href": "/en/dashboard/accounting/close",
+                  "requiredPermission": "accounting.close.read",
+                  "moduleSlug": "close_assurance",
+                  "disabled": false,
+                  "disabledReason": null
+                }
+              ],
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                },
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "redactions": [],
+              "drillThrough": {
+                "type": "route",
+                "label": "Open source surface",
+                "requiredPermission": "accounting.close.read",
+                "available": true,
+                "href": "/en/dashboard/accounting/close"
+              }
+            }
+          ],
+          "blockers": [
+            {
+              "id": "close-evidence-unavailable",
+              "severity": "high",
+              "gate": "close_readiness",
+              "title": "Close evidence is unavailable",
+              "detail": "21 close evidence item(s) are unavailable for this organization.",
+              "sourceTables": [
+                "close_evidence_items"
+              ],
+              "nextAction": "Regenerate or attach the missing close evidence."
+            },
+            {
+              "id": "close-periods-unreviewed",
+              "severity": "medium",
+              "gate": "close_readiness",
+              "title": "Accounting periods need close review",
+              "detail": "1 accounting period(s) have no close run in the selected scope.",
+              "sourceTables": [
+                "accounting_periods",
+                "close_runs"
+              ],
+              "nextAction": "Run Close Assurance for each uncovered accounting period."
+            },
+            {
+              "id": "close-evidence-unavailable",
+              "severity": "high",
+              "gate": "close_readiness",
+              "title": "Close evidence is unavailable",
+              "detail": "21 close evidence item(s) are unavailable for this organization.",
+              "sourceTables": [
+                "close_evidence_items"
+              ],
+              "nextAction": "Regenerate or attach the missing close evidence."
+            },
+            {
+              "id": "close-periods-unreviewed",
+              "severity": "medium",
+              "gate": "close_readiness",
+              "title": "Accounting periods need close review",
+              "detail": "1 accounting period(s) have no close run in the selected scope.",
+              "sourceTables": [
+                "accounting_periods",
+                "close_runs"
+              ],
+              "nextAction": "Run Close Assurance for each uncovered accounting period."
+            }
+          ],
+          "redactions": []
+        },
+        {
+          "id": "stockkeeper-stock",
+          "organizationId": "synth12_yaounde",
+          "audienceRole": "stockkeeper",
+          "generatedAt": "2026-10-28T20:00:00.000Z",
+          "periodStart": "2026-10-01T00:00:00.000Z",
+          "periodEnd": "2026-10-28T23:59:59.999Z",
+          "freshness": {
+            "state": "blocked",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+            "maxAgeMinutes": 1440,
+            "stale": false,
+            "staleReason": null
+          },
+          "commandBrief": {
+            "id": "stockkeeper-stock-brief",
+            "organizationId": "synth12_yaounde",
+            "title": "Stockkeeper stock-risk digest",
+            "summary": "Stock cash exposure, available quantity, negative stock, and stockout signals.",
+            "conclusion": "No permitted action is available in this scope.",
+            "mode": "brief",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "periodStart": "2026-10-01T00:00:00.000Z",
+            "periodEnd": "2026-10-28T23:59:59.999Z",
+            "state": "blocked",
+            "evidenceGrade": "blocked",
+            "trustState": "blocked",
+            "freshness": {
+              "state": "blocked",
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+              "maxAgeMinutes": 1440,
+              "stale": false,
+              "staleReason": null
+            },
+            "provenance": {
+              "organizationId": "synth12_yaounde",
+              "locationId": null,
+              "sourceKind": "tenant.operating",
+              "sourceId": null,
+              "sourceHash": "sha256:1a257e36fba2949df09b763ec1ceec3066b07d095bf882d9f7987dcd6e96ba80",
+              "sourceModules": [
+                "dashboard",
+                "sales",
+                "payments",
+                "inventory",
+                "purchasing",
+                "hris",
+                "payroll",
+                "accounting",
+                "close",
+                "compliance"
+              ],
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "periodStart": "2026-10-01T00:00:00.000Z",
+              "periodEnd": "2026-10-28T23:59:59.999Z"
+            },
+            "sourceModules": [
+              "dashboard",
+              "sales",
+              "payments",
+              "inventory",
+              "purchasing",
+              "hris",
+              "payroll",
+              "accounting",
+              "close",
+              "compliance"
+            ],
+            "blockers": [
+              {
+                "id": "close-evidence-unavailable",
+                "severity": "high",
+                "gate": "close_readiness",
+                "title": "Close evidence is unavailable",
+                "detail": "21 close evidence item(s) are unavailable for this organization.",
+                "sourceTables": [
+                  "close_evidence_items"
+                ],
+                "nextAction": "Regenerate or attach the missing close evidence."
+              },
+              {
+                "id": "close-periods-unreviewed",
+                "severity": "medium",
+                "gate": "close_readiness",
+                "title": "Accounting periods need close review",
+                "detail": "1 accounting period(s) have no close run in the selected scope.",
+                "sourceTables": [
+                  "accounting_periods",
+                  "close_runs"
+                ],
+                "nextAction": "Run Close Assurance for each uncovered accounting period."
+              }
+            ],
+            "redactions": [],
+            "primaryAction": {
+              "id": "stockkeeper-stock-open",
+              "label": "Open surface",
+              "href": "/en/dashboard/inventory/items",
+              "requiredPermission": "inventory.items.read",
+              "moduleSlug": "inventory",
+              "disabled": false,
+              "disabledReason": null
+            },
+            "drillThrough": {
+              "type": "route",
+              "label": "Open source surface",
+              "requiredPermission": "inventory.items.read",
+              "available": true,
+              "href": "/en/dashboard/inventory/items"
+            },
+            "reviewState": {
+              "organizationId": "synth12_yaounde",
+              "reviewerId": null,
+              "reviewerRole": "stockkeeper",
+              "state": "blocked",
+              "reviewedAt": null,
+              "previousReviewedAt": null,
+              "nextReviewDueAt": "2026-10-29T20:00:00.000Z",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ]
+            }
+          },
+          "changes": [],
+          "risks": [],
+          "actions": [],
+          "zones": [
+            {
+              "id": "stockkeeper-stock-zone",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "inventory",
+              "title": "Stockkeeper stock-risk digest",
+              "businessQuestion": "What should this role review today?",
+              "summary": "Stock cash exposure, available quantity, negative stock, and stockout signals.",
+              "state": "blocked",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "inventory"
+              ],
+              "primaryMetric": {
+                "id": "inventory-stock-cash-exposure",
+                "organizationId": "synth12_yaounde",
+                "moduleSlug": "inventory",
+                "requiredPermission": "inventory.read",
+                "title": "Stock cash exposure",
+                "detail": "Inventory value from the inventory cash snapshot.",
+                "value": 23846940,
+                "unit": "XAF",
+                "format": "currency",
+                "state": "ready",
+                "evidenceGrade": "operational",
+                "trustState": "operational",
+                "freshness": {
+                  "state": "fresh",
+                  "generatedAt": "2026-10-28T20:00:00.000Z",
+                  "sourceMaxUpdatedAt": "2026-10-29T11:43:28.737Z",
+                  "maxAgeMinutes": 1440,
+                  "stale": false,
+                  "staleReason": null
+                },
+                "provenance": {
+                  "organizationId": "synth12_yaounde",
+                  "locationId": null,
+                  "sourceKind": "inventory.cash",
+                  "sourceHash": "sha256:4fb595edb517312a10d488905b0685b70c2ceb73aa64559cf48f89714fce5319",
+                  "periodStart": "2026-10-01T00:00:00.000Z",
+                  "periodEnd": "2026-10-28T23:59:59.999Z",
+                  "sourceModules": [
+                    "inventory"
+                  ],
+                  "generatedAt": "2026-10-28T20:00:00.000Z"
+                },
+                "blockers": [],
+                "redactions": [],
+                "drillThrough": {
+                  "type": "route",
+                  "label": "Open source surface",
+                  "requiredPermission": "inventory.items.read",
+                  "available": true,
+                  "href": "/en/dashboard/inventory/items"
+                },
+                "actionLink": null
+              },
+              "sections": [],
+              "cards": [
+                {
+                  "id": "inventory-stock-cash-exposure",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "inventory",
+                  "requiredPermission": "inventory.read",
+                  "title": "Stock cash exposure",
+                  "detail": "Inventory value from the inventory cash snapshot.",
+                  "value": 23846940,
+                  "unit": "XAF",
+                  "format": "currency",
+                  "state": "ready",
+                  "evidenceGrade": "operational",
+                  "trustState": "operational",
+                  "freshness": {
+                    "state": "fresh",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": "2026-10-29T11:43:28.737Z",
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "inventory.cash",
+                    "sourceHash": "sha256:4fb595edb517312a10d488905b0685b70c2ceb73aa64559cf48f89714fce5319",
+                    "periodStart": "2026-10-01T00:00:00.000Z",
+                    "periodEnd": "2026-10-28T23:59:59.999Z",
+                    "sourceModules": [
+                      "inventory"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "blockers": [],
+                  "redactions": [],
+                  "drillThrough": {
+                    "type": "route",
+                    "label": "Open source surface",
+                    "requiredPermission": "inventory.items.read",
+                    "available": true,
+                    "href": "/en/dashboard/inventory/items"
+                  },
+                  "actionLink": null
+                }
+              ],
+              "insights": [],
+              "risks": [],
+              "flowSteps": [],
+              "actions": [],
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "redactions": [],
+              "drillThrough": {
+                "type": "route",
+                "label": "Open source surface",
+                "requiredPermission": "inventory.items.read",
+                "available": true,
+                "href": "/en/dashboard/inventory/items"
+              }
+            }
+          ],
+          "blockers": [
+            {
+              "id": "close-evidence-unavailable",
+              "severity": "high",
+              "gate": "close_readiness",
+              "title": "Close evidence is unavailable",
+              "detail": "21 close evidence item(s) are unavailable for this organization.",
+              "sourceTables": [
+                "close_evidence_items"
+              ],
+              "nextAction": "Regenerate or attach the missing close evidence."
+            },
+            {
+              "id": "close-periods-unreviewed",
+              "severity": "medium",
+              "gate": "close_readiness",
+              "title": "Accounting periods need close review",
+              "detail": "1 accounting period(s) have no close run in the selected scope.",
+              "sourceTables": [
+                "accounting_periods",
+                "close_runs"
+              ],
+              "nextAction": "Run Close Assurance for each uncovered accounting period."
+            }
+          ],
+          "redactions": []
+        },
+        {
+          "id": "end-of-day",
+          "organizationId": "synth12_yaounde",
+          "audienceRole": "end_of_day",
+          "generatedAt": "2026-10-28T20:00:00.000Z",
+          "periodStart": "2026-10-01T00:00:00.000Z",
+          "periodEnd": "2026-10-28T23:59:59.999Z",
+          "freshness": {
+            "state": "blocked",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+            "maxAgeMinutes": 1440,
+            "stale": false,
+            "staleReason": null
+          },
+          "commandBrief": {
+            "id": "end-of-day-brief",
+            "organizationId": "synth12_yaounde",
+            "title": "End-of-day pulse",
+            "summary": "A closing pulse across sales, cash collection, source links, and open command actions.",
+            "conclusion": "Review first: Close Blocker — leading risk score (75). Review blockers before acting.",
+            "mode": "brief",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "periodStart": "2026-10-01T00:00:00.000Z",
+            "periodEnd": "2026-10-28T23:59:59.999Z",
+            "state": "blocked",
+            "evidenceGrade": "blocked",
+            "trustState": "blocked",
+            "freshness": {
+              "state": "blocked",
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+              "maxAgeMinutes": 1440,
+              "stale": false,
+              "staleReason": null
+            },
+            "provenance": {
+              "organizationId": "synth12_yaounde",
+              "locationId": null,
+              "sourceKind": "tenant.operating",
+              "sourceId": null,
+              "sourceHash": "sha256:1a257e36fba2949df09b763ec1ceec3066b07d095bf882d9f7987dcd6e96ba80",
+              "sourceModules": [
+                "dashboard",
+                "sales",
+                "payments",
+                "inventory",
+                "purchasing",
+                "hris",
+                "payroll",
+                "accounting",
+                "close",
+                "compliance"
+              ],
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "periodStart": "2026-10-01T00:00:00.000Z",
+              "periodEnd": "2026-10-28T23:59:59.999Z"
+            },
+            "sourceModules": [
+              "dashboard",
+              "sales",
+              "payments",
+              "inventory",
+              "purchasing",
+              "hris",
+              "payroll",
+              "accounting",
+              "close",
+              "compliance"
+            ],
+            "blockers": [
+              {
+                "id": "close-evidence-unavailable",
+                "severity": "high",
+                "gate": "close_readiness",
+                "title": "Close evidence is unavailable",
+                "detail": "21 close evidence item(s) are unavailable for this organization.",
+                "sourceTables": [
+                  "close_evidence_items"
+                ],
+                "nextAction": "Regenerate or attach the missing close evidence."
+              },
+              {
+                "id": "close-periods-unreviewed",
+                "severity": "medium",
+                "gate": "close_readiness",
+                "title": "Accounting periods need close review",
+                "detail": "1 accounting period(s) have no close run in the selected scope.",
+                "sourceTables": [
+                  "accounting_periods",
+                  "close_runs"
+                ],
+                "nextAction": "Run Close Assurance for each uncovered accounting period."
+              },
+              {
+                "id": "close-evidence-unavailable",
+                "severity": "high",
+                "gate": "close_readiness",
+                "title": "Close evidence is unavailable",
+                "detail": "21 close evidence item(s) are unavailable for this organization.",
+                "sourceTables": [
+                  "close_evidence_items"
+                ],
+                "nextAction": "Regenerate or attach the missing close evidence."
+              },
+              {
+                "id": "close-periods-unreviewed",
+                "severity": "medium",
+                "gate": "close_readiness",
+                "title": "Accounting periods need close review",
+                "detail": "1 accounting period(s) have no close run in the selected scope.",
+                "sourceTables": [
+                  "accounting_periods",
+                  "close_runs"
+                ],
+                "nextAction": "Run Close Assurance for each uncovered accounting period."
+              }
+            ],
+            "redactions": [
+              {
+                "id": "inventory-loss-evidence-hashes-redacted",
+                "field": "records.evidence.*Hash",
+                "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+              }
+            ],
+            "primaryAction": {
+              "id": "act_bdeeab1a27432f736a9e35ff",
+              "label": "Resolve close blockers or attach missing evidence before certification.",
+              "href": "/en/dashboard/accounting/close",
+              "requiredPermission": "accounting.close.read",
+              "moduleSlug": "close_assurance",
+              "disabled": false,
+              "disabledReason": null
+            },
+            "drillThrough": {
+              "type": "route",
+              "label": "Open source surface",
+              "requiredPermission": "dashboard.read",
+              "available": false,
+              "unavailableReason": "You can view this digest. The Manager workspace requires organization-wide authority or an active managed-location assignment."
+            },
+            "reviewState": {
+              "organizationId": "synth12_yaounde",
+              "reviewerId": null,
+              "reviewerRole": "end_of_day",
+              "state": "blocked",
+              "reviewedAt": null,
+              "previousReviewedAt": null,
+              "nextReviewDueAt": "2026-10-29T20:00:00.000Z",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                },
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ]
+            }
+          },
+          "changes": [
+            {
+              "id": "sig_bdeeab1a27432f736a9e35ff-change",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "close_assurance",
+              "requiredPermission": "accounting.close.read",
+              "title": "Close Blocker",
+              "detail": "Kontava detected a close blocker signal that needs review.",
+              "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+              "direction": "observed",
+              "severity": "high",
+              "state": "ready",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "close"
+              ],
+              "changedAt": "2026-10-28T20:00:00.000Z",
+              "previousValue": null,
+              "currentValue": 75,
+              "unit": "risk",
+              "format": "score",
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "close.readiness",
+                "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                "sourceModules": [
+                  "close"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "redactions": [],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Open action",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read"
+              },
+              "actionLink": {
+                "id": "sig_bdeeab1a27432f736a9e35ff-action",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read",
+                "moduleSlug": "close_assurance",
+                "disabled": false,
+                "disabledReason": null
+              }
+            },
+            {
+              "id": "sig_f5d8fbe140a036d8203d0cbf-change",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "inventory",
+              "requiredPermission": "inventory.levels.read",
+              "title": "Recorded inventory loss needs review",
+              "detail": "1 recorded inventory loss line(s) totaling 7200 XAF require evidence review. Approval attribution records authorization and does not identify who caused the loss.",
+              "businessImpact": "Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.",
+              "direction": "observed",
+              "severity": "medium",
+              "state": "ready",
+              "evidenceGrade": "operational",
+              "trustState": "operational",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": null,
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "inventory"
+              ],
+              "changedAt": "2026-10-28T20:00:00.000Z",
+              "previousValue": null,
+              "currentValue": 50,
+              "unit": "risk",
+              "format": "score",
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "inventory.loss",
+                "sourceId": "sig_f5d8fbe140a036d8203d0cbf",
+                "sourceHash": "sha256:88c8618dceb47b2c507ba62426bde5fb25a53cbcbe3df12000015c4b71f3469f",
+                "sourceModules": [
+                  "inventory"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "blockers": [],
+              "redactions": [
+                {
+                  "id": "inventory-loss-evidence-hashes-redacted",
+                  "field": "records.evidence.*Hash",
+                  "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                  "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                }
+              ],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Open action",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read"
+              },
+              "actionLink": {
+                "id": "sig_f5d8fbe140a036d8203d0cbf-action",
+                "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read",
+                "moduleSlug": "inventory",
+                "disabled": false,
+                "disabledReason": null
+              }
+            }
+          ],
+          "risks": [
+            {
+              "id": "act_bdeeab1a27432f736a9e35ff-risk",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "close_assurance",
+              "rank": 1,
+              "title": "Close Blocker",
+              "detail": "Resolve close blockers or attach missing evidence before certification.",
+              "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+              "severity": "high",
+              "severityScore": 75,
+              "moneyImpact": null,
+              "urgency": null,
+              "state": "ready",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "close"
+              ],
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "close.readiness",
+                "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                "sourceModules": [
+                  "close"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "redactions": [],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read"
+              },
+              "actionLink": {
+                "id": "act_bdeeab1a27432f736a9e35ff",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read",
+                "moduleSlug": "close_assurance",
+                "disabled": false,
+                "disabledReason": null
+              }
+            },
+            {
+              "id": "act_f5d8fbe140a036d8203d0cbf-risk",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "inventory",
+              "rank": 2,
+              "title": "Recorded inventory loss needs review",
+              "detail": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+              "businessImpact": "Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.",
+              "severity": "medium",
+              "severityScore": 50,
+              "moneyImpact": null,
+              "urgency": null,
+              "state": "ready",
+              "evidenceGrade": "operational",
+              "trustState": "operational",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": null,
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "inventory"
+              ],
+              "blockers": [],
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "inventory.loss",
+                "sourceId": "sig_f5d8fbe140a036d8203d0cbf",
+                "sourceHash": "sha256:88c8618dceb47b2c507ba62426bde5fb25a53cbcbe3df12000015c4b71f3469f",
+                "sourceModules": [
+                  "inventory"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "redactions": [
+                {
+                  "id": "inventory-loss-evidence-hashes-redacted",
+                  "field": "records.evidence.*Hash",
+                  "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                  "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                }
+              ],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read"
+              },
+              "actionLink": {
+                "id": "act_f5d8fbe140a036d8203d0cbf",
+                "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read",
+                "moduleSlug": "inventory",
+                "disabled": false,
+                "disabledReason": null
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act_bdeeab1a27432f736a9e35ff",
+              "label": "Resolve close blockers or attach missing evidence before certification.",
+              "href": "/en/dashboard/accounting/close",
+              "requiredPermission": "accounting.close.read",
+              "moduleSlug": "close_assurance",
+              "disabled": false,
+              "disabledReason": null
+            },
+            {
+              "id": "act_f5d8fbe140a036d8203d0cbf",
+              "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+              "href": "/en/dashboard/inventory/loss-control",
+              "requiredPermission": "inventory.levels.read",
+              "moduleSlug": "inventory",
+              "disabled": false,
+              "disabledReason": null
+            }
+          ],
+          "zones": [
+            {
+              "id": "end-of-day-zone",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "dashboard",
+              "title": "End-of-day pulse",
+              "businessQuestion": "What should this role review today?",
+              "summary": "A closing pulse across sales, cash collection, source links, and open command actions.",
+              "state": "blocked",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "accounting"
+              ],
+              "primaryMetric": {
+                "id": "dashboard-source-links",
+                "organizationId": "synth12_yaounde",
+                "moduleSlug": "dashboard",
+                "requiredPermission": "dashboard.read",
+                "title": "Source links",
+                "detail": "Accounting source-link coverage visible in the tenant operating snapshot.",
+                "value": 82,
+                "unit": "links",
+                "format": "number",
+                "state": "blocked",
+                "evidenceGrade": "posted",
+                "trustState": "posted",
+                "freshness": {
+                  "state": "blocked",
+                  "generatedAt": "2026-10-28T20:00:00.000Z",
+                  "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                  "maxAgeMinutes": 1440,
+                  "stale": false,
+                  "staleReason": null
+                },
+                "provenance": {
+                  "organizationId": "synth12_yaounde",
+                  "locationId": null,
+                  "sourceKind": "tenant.operating",
+                  "sourceHash": "sha256:1a257e36fba2949df09b763ec1ceec3066b07d095bf882d9f7987dcd6e96ba80",
+                  "periodStart": "2026-10-01T00:00:00.000Z",
+                  "periodEnd": "2026-10-28T23:59:59.999Z",
+                  "sourceModules": [
+                    "accounting"
+                  ],
+                  "generatedAt": "2026-10-28T20:00:00.000Z"
+                },
+                "blockers": [
+                  {
+                    "id": "close-evidence-unavailable",
+                    "severity": "high",
+                    "gate": "close_readiness",
+                    "title": "Close evidence is unavailable",
+                    "detail": "21 close evidence item(s) are unavailable for this organization.",
+                    "sourceTables": [
+                      "close_evidence_items"
+                    ],
+                    "nextAction": "Regenerate or attach the missing close evidence."
+                  },
+                  {
+                    "id": "close-periods-unreviewed",
+                    "severity": "medium",
+                    "gate": "close_readiness",
+                    "title": "Accounting periods need close review",
+                    "detail": "1 accounting period(s) have no close run in the selected scope.",
+                    "sourceTables": [
+                      "accounting_periods",
+                      "close_runs"
+                    ],
+                    "nextAction": "Run Close Assurance for each uncovered accounting period."
+                  }
+                ],
+                "redactions": [
+                  {
+                    "id": "payment-provider-identifiers-redacted",
+                    "field": "providerAccount.externalAccountHash",
+                    "reason": "Payment provider account identifiers remain server-side only in snapshot read models.",
+                    "policy": "KONTAVA_SENSITIVE_PAYMENT_EVIDENCE"
+                  }
+                ],
+                "drillThrough": {
+                  "type": "route",
+                  "label": "Open source surface",
+                  "requiredPermission": "dashboard.read",
+                  "available": false,
+                  "unavailableReason": "You can view this digest. The Manager workspace requires organization-wide authority or an active managed-location assignment."
+                },
+                "actionLink": null
+              },
+              "sections": [],
+              "cards": [
+                {
+                  "id": "dashboard-source-links",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "dashboard",
+                  "requiredPermission": "dashboard.read",
+                  "title": "Source links",
+                  "detail": "Accounting source-link coverage visible in the tenant operating snapshot.",
+                  "value": 82,
+                  "unit": "links",
+                  "format": "number",
+                  "state": "blocked",
+                  "evidenceGrade": "posted",
+                  "trustState": "posted",
+                  "freshness": {
+                    "state": "blocked",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "tenant.operating",
+                    "sourceHash": "sha256:1a257e36fba2949df09b763ec1ceec3066b07d095bf882d9f7987dcd6e96ba80",
+                    "periodStart": "2026-10-01T00:00:00.000Z",
+                    "periodEnd": "2026-10-28T23:59:59.999Z",
+                    "sourceModules": [
+                      "accounting"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "blockers": [
+                    {
+                      "id": "close-evidence-unavailable",
+                      "severity": "high",
+                      "gate": "close_readiness",
+                      "title": "Close evidence is unavailable",
+                      "detail": "21 close evidence item(s) are unavailable for this organization.",
+                      "sourceTables": [
+                        "close_evidence_items"
+                      ],
+                      "nextAction": "Regenerate or attach the missing close evidence."
+                    },
+                    {
+                      "id": "close-periods-unreviewed",
+                      "severity": "medium",
+                      "gate": "close_readiness",
+                      "title": "Accounting periods need close review",
+                      "detail": "1 accounting period(s) have no close run in the selected scope.",
+                      "sourceTables": [
+                        "accounting_periods",
+                        "close_runs"
+                      ],
+                      "nextAction": "Run Close Assurance for each uncovered accounting period."
+                    }
+                  ],
+                  "redactions": [
+                    {
+                      "id": "payment-provider-identifiers-redacted",
+                      "field": "providerAccount.externalAccountHash",
+                      "reason": "Payment provider account identifiers remain server-side only in snapshot read models.",
+                      "policy": "KONTAVA_SENSITIVE_PAYMENT_EVIDENCE"
+                    }
+                  ],
+                  "drillThrough": {
+                    "type": "route",
+                    "label": "Open source surface",
+                    "requiredPermission": "dashboard.read",
+                    "available": false,
+                    "unavailableReason": "You can view this digest. The Manager workspace requires organization-wide authority or an active managed-location assignment."
+                  },
+                  "actionLink": null
+                }
+              ],
+              "insights": [],
+              "risks": [
+                {
+                  "id": "act_bdeeab1a27432f736a9e35ff-risk",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "close_assurance",
+                  "rank": 1,
+                  "title": "Close Blocker",
+                  "detail": "Resolve close blockers or attach missing evidence before certification.",
+                  "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+                  "severity": "high",
+                  "severityScore": 75,
+                  "moneyImpact": null,
+                  "urgency": null,
+                  "state": "ready",
+                  "evidenceGrade": "blocked",
+                  "trustState": "blocked",
+                  "freshness": {
+                    "state": "fresh",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "sourceModules": [
+                    "close"
+                  ],
+                  "blockers": [
+                    {
+                      "id": "close-evidence-unavailable",
+                      "severity": "high",
+                      "gate": "close_readiness",
+                      "title": "Close evidence is unavailable",
+                      "detail": "21 close evidence item(s) are unavailable for this organization.",
+                      "sourceTables": [
+                        "close_evidence_items"
+                      ],
+                      "nextAction": "Regenerate or attach the missing close evidence."
+                    },
+                    {
+                      "id": "close-periods-unreviewed",
+                      "severity": "medium",
+                      "gate": "close_readiness",
+                      "title": "Accounting periods need close review",
+                      "detail": "1 accounting period(s) have no close run in the selected scope.",
+                      "sourceTables": [
+                        "accounting_periods",
+                        "close_runs"
+                      ],
+                      "nextAction": "Run Close Assurance for each uncovered accounting period."
+                    }
+                  ],
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "close.readiness",
+                    "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                    "sourceHash": "sha256:e601e6f80de2ff4594188c40eb5a5b1faaf4bc2791c512a013c224e2a64dc274",
+                    "sourceModules": [
+                      "close"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "redactions": [],
+                  "drillThrough": {
+                    "available": true,
+                    "type": "route",
+                    "label": "Resolve close blockers or attach missing evidence before certification.",
+                    "href": "/en/dashboard/accounting/close",
+                    "requiredPermission": "accounting.close.read"
+                  },
+                  "actionLink": {
+                    "id": "act_bdeeab1a27432f736a9e35ff",
+                    "label": "Resolve close blockers or attach missing evidence before certification.",
+                    "href": "/en/dashboard/accounting/close",
+                    "requiredPermission": "accounting.close.read",
+                    "moduleSlug": "close_assurance",
+                    "disabled": false,
+                    "disabledReason": null
+                  }
+                },
+                {
+                  "id": "act_f5d8fbe140a036d8203d0cbf-risk",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "inventory",
+                  "rank": 2,
+                  "title": "Recorded inventory loss needs review",
+                  "detail": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                  "businessImpact": "Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.",
+                  "severity": "medium",
+                  "severityScore": 50,
+                  "moneyImpact": null,
+                  "urgency": null,
+                  "state": "ready",
+                  "evidenceGrade": "operational",
+                  "trustState": "operational",
+                  "freshness": {
+                    "state": "fresh",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": null,
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "sourceModules": [
+                    "inventory"
+                  ],
+                  "blockers": [],
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "inventory.loss",
+                    "sourceId": "sig_f5d8fbe140a036d8203d0cbf",
+                    "sourceHash": "sha256:88c8618dceb47b2c507ba62426bde5fb25a53cbcbe3df12000015c4b71f3469f",
+                    "sourceModules": [
+                      "inventory"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "redactions": [
+                    {
+                      "id": "inventory-loss-evidence-hashes-redacted",
+                      "field": "records.evidence.*Hash",
+                      "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                      "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                    }
+                  ],
+                  "drillThrough": {
+                    "available": true,
+                    "type": "route",
+                    "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                    "href": "/en/dashboard/inventory/loss-control",
+                    "requiredPermission": "inventory.levels.read"
+                  },
+                  "actionLink": {
+                    "id": "act_f5d8fbe140a036d8203d0cbf",
+                    "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                    "href": "/en/dashboard/inventory/loss-control",
+                    "requiredPermission": "inventory.levels.read",
+                    "moduleSlug": "inventory",
+                    "disabled": false,
+                    "disabledReason": null
+                  }
+                }
+              ],
+              "flowSteps": [],
+              "actions": [
+                {
+                  "id": "act_bdeeab1a27432f736a9e35ff",
+                  "label": "Resolve close blockers or attach missing evidence before certification.",
+                  "href": "/en/dashboard/accounting/close",
+                  "requiredPermission": "accounting.close.read",
+                  "moduleSlug": "close_assurance",
+                  "disabled": false,
+                  "disabledReason": null
+                },
+                {
+                  "id": "act_f5d8fbe140a036d8203d0cbf",
+                  "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                  "href": "/en/dashboard/inventory/loss-control",
+                  "requiredPermission": "inventory.levels.read",
+                  "moduleSlug": "inventory",
+                  "disabled": false,
+                  "disabledReason": null
+                }
+              ],
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                },
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "redactions": [
+                {
+                  "id": "inventory-loss-evidence-hashes-redacted",
+                  "field": "records.evidence.*Hash",
+                  "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                  "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                }
+              ],
+              "drillThrough": {
+                "type": "route",
+                "label": "Open source surface",
+                "requiredPermission": "dashboard.read",
+                "available": false,
+                "unavailableReason": "You can view this digest. The Manager workspace requires organization-wide authority or an active managed-location assignment."
+              }
+            }
+          ],
+          "blockers": [
+            {
+              "id": "close-evidence-unavailable",
+              "severity": "high",
+              "gate": "close_readiness",
+              "title": "Close evidence is unavailable",
+              "detail": "21 close evidence item(s) are unavailable for this organization.",
+              "sourceTables": [
+                "close_evidence_items"
+              ],
+              "nextAction": "Regenerate or attach the missing close evidence."
+            },
+            {
+              "id": "close-periods-unreviewed",
+              "severity": "medium",
+              "gate": "close_readiness",
+              "title": "Accounting periods need close review",
+              "detail": "1 accounting period(s) have no close run in the selected scope.",
+              "sourceTables": [
+                "accounting_periods",
+                "close_runs"
+              ],
+              "nextAction": "Run Close Assurance for each uncovered accounting period."
+            },
+            {
+              "id": "close-evidence-unavailable",
+              "severity": "high",
+              "gate": "close_readiness",
+              "title": "Close evidence is unavailable",
+              "detail": "21 close evidence item(s) are unavailable for this organization.",
+              "sourceTables": [
+                "close_evidence_items"
+              ],
+              "nextAction": "Regenerate or attach the missing close evidence."
+            },
+            {
+              "id": "close-periods-unreviewed",
+              "severity": "medium",
+              "gate": "close_readiness",
+              "title": "Accounting periods need close review",
+              "detail": "1 accounting period(s) have no close run in the selected scope.",
+              "sourceTables": [
+                "accounting_periods",
+                "close_runs"
+              ],
+              "nextAction": "Run Close Assurance for each uncovered accounting period."
+            }
+          ],
+          "redactions": [
+            {
+              "id": "inventory-loss-evidence-hashes-redacted",
+              "field": "records.evidence.*Hash",
+              "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+              "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+            }
+          ]
+        },
+        {
+          "id": "weekly",
+          "organizationId": "synth12_yaounde",
+          "audienceRole": "weekly",
+          "generatedAt": "2026-10-28T20:00:00.000Z",
+          "periodStart": "2026-10-22T00:00:00.000Z",
+          "periodEnd": "2026-10-28T23:59:59.999Z",
+          "freshness": {
+            "state": "blocked",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+            "maxAgeMinutes": 1440,
+            "stale": false,
+            "staleReason": null
+          },
+          "commandBrief": {
+            "id": "weekly-brief",
+            "organizationId": "synth12_yaounde",
+            "title": "Weekly business habit digest",
+            "summary": "Sales over seven UTC days ending on the report date, alongside current inventory balances, payment obligations and close readiness. Current balances are not seven-day totals.",
+            "conclusion": "Review first: Close Blocker — leading risk score (75). Review blockers before acting.",
+            "mode": "brief",
+            "generatedAt": "2026-10-28T20:00:00.000Z",
+            "periodStart": "2026-10-22T00:00:00.000Z",
+            "periodEnd": "2026-10-28T23:59:59.999Z",
+            "state": "blocked",
+            "evidenceGrade": "blocked",
+            "trustState": "blocked",
+            "freshness": {
+              "state": "blocked",
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+              "maxAgeMinutes": 1440,
+              "stale": false,
+              "staleReason": null
+            },
+            "provenance": {
+              "organizationId": "synth12_yaounde",
+              "locationId": null,
+              "sourceKind": "tenant.operating",
+              "sourceId": null,
+              "sourceHash": "sha256:e93ed266ec2fb42f10c4b1c5918e26bb530741df25f607075b25b51970374ad4",
+              "sourceModules": [
+                "dashboard",
+                "sales",
+                "payments",
+                "inventory",
+                "purchasing",
+                "hris",
+                "payroll",
+                "accounting",
+                "close",
+                "compliance"
+              ],
+              "generatedAt": "2026-10-28T20:00:00.000Z",
+              "periodStart": "2026-10-22T00:00:00.000Z",
+              "periodEnd": "2026-10-28T23:59:59.999Z"
+            },
+            "sourceModules": [
+              "dashboard",
+              "sales",
+              "payments",
+              "inventory",
+              "purchasing",
+              "hris",
+              "payroll",
+              "accounting",
+              "close",
+              "compliance"
+            ],
+            "blockers": [
+              {
+                "id": "close-evidence-unavailable",
+                "severity": "high",
+                "gate": "close_readiness",
+                "title": "Close evidence is unavailable",
+                "detail": "21 close evidence item(s) are unavailable for this organization.",
+                "sourceTables": [
+                  "close_evidence_items"
+                ],
+                "nextAction": "Regenerate or attach the missing close evidence."
+              },
+              {
+                "id": "close-periods-unreviewed",
+                "severity": "medium",
+                "gate": "close_readiness",
+                "title": "Accounting periods need close review",
+                "detail": "1 accounting period(s) have no close run in the selected scope.",
+                "sourceTables": [
+                  "accounting_periods",
+                  "close_runs"
+                ],
+                "nextAction": "Run Close Assurance for each uncovered accounting period."
+              },
+              {
+                "id": "close-evidence-unavailable",
+                "severity": "high",
+                "gate": "close_readiness",
+                "title": "Close evidence is unavailable",
+                "detail": "21 close evidence item(s) are unavailable for this organization.",
+                "sourceTables": [
+                  "close_evidence_items"
+                ],
+                "nextAction": "Regenerate or attach the missing close evidence."
+              },
+              {
+                "id": "close-periods-unreviewed",
+                "severity": "medium",
+                "gate": "close_readiness",
+                "title": "Accounting periods need close review",
+                "detail": "1 accounting period(s) have no close run in the selected scope.",
+                "sourceTables": [
+                  "accounting_periods",
+                  "close_runs"
+                ],
+                "nextAction": "Run Close Assurance for each uncovered accounting period."
+              }
+            ],
+            "redactions": [
+              {
+                "id": "inventory-loss-evidence-hashes-redacted",
+                "field": "records.evidence.*Hash",
+                "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+              }
+            ],
+            "primaryAction": {
+              "id": "act_bdeeab1a27432f736a9e35ff",
+              "label": "Resolve close blockers or attach missing evidence before certification.",
+              "href": "/en/dashboard/accounting/close",
+              "requiredPermission": "accounting.close.read",
+              "moduleSlug": "close_assurance",
+              "disabled": false,
+              "disabledReason": null
+            },
+            "drillThrough": {
+              "type": "route",
+              "label": "Open source surface",
+              "requiredPermission": "reports.read",
+              "available": true,
+              "href": "/en/dashboard/analytics"
+            },
+            "reviewState": {
+              "organizationId": "synth12_yaounde",
+              "reviewerId": null,
+              "reviewerRole": "weekly",
+              "state": "blocked",
+              "reviewedAt": null,
+              "previousReviewedAt": null,
+              "nextReviewDueAt": "2026-10-29T20:00:00.000Z",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                },
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ]
+            }
+          },
+          "changes": [
+            {
+              "id": "sig_bdeeab1a27432f736a9e35ff-change",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "close_assurance",
+              "requiredPermission": "accounting.close.read",
+              "title": "Close Blocker",
+              "detail": "Kontava detected a close blocker signal that needs review.",
+              "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+              "direction": "observed",
+              "severity": "high",
+              "state": "ready",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "close"
+              ],
+              "changedAt": "2026-10-28T20:00:00.000Z",
+              "previousValue": null,
+              "currentValue": 75,
+              "unit": "risk",
+              "format": "score",
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "close.readiness",
+                "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                "sourceHash": "sha256:6aab2cc399813a6674fc9f5468f455f3ead9c6ac05268c6dee83ee07cc2f6f01",
+                "sourceModules": [
+                  "close"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "redactions": [],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Open action",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read"
+              },
+              "actionLink": {
+                "id": "sig_bdeeab1a27432f736a9e35ff-action",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read",
+                "moduleSlug": "close_assurance",
+                "disabled": false,
+                "disabledReason": null
+              }
+            },
+            {
+              "id": "sig_f5d8fbe140a036d8203d0cbf-change",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "inventory",
+              "requiredPermission": "inventory.levels.read",
+              "title": "Recorded inventory loss needs review",
+              "detail": "1 recorded inventory loss line(s) totaling 7200 XAF require evidence review. Approval attribution records authorization and does not identify who caused the loss.",
+              "businessImpact": "Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.",
+              "direction": "observed",
+              "severity": "medium",
+              "state": "ready",
+              "evidenceGrade": "operational",
+              "trustState": "operational",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": null,
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "inventory"
+              ],
+              "changedAt": "2026-10-28T20:00:00.000Z",
+              "previousValue": null,
+              "currentValue": 50,
+              "unit": "risk",
+              "format": "score",
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "inventory.loss",
+                "sourceId": "sig_f5d8fbe140a036d8203d0cbf",
+                "sourceHash": "sha256:a63911e0923b8f3baeeecc57556546f1cbf3efeb2054b49d9f6a517233b8a3c4",
+                "sourceModules": [
+                  "inventory"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "blockers": [],
+              "redactions": [
+                {
+                  "id": "inventory-loss-evidence-hashes-redacted",
+                  "field": "records.evidence.*Hash",
+                  "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                  "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                }
+              ],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Open action",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read"
+              },
+              "actionLink": {
+                "id": "sig_f5d8fbe140a036d8203d0cbf-action",
+                "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read",
+                "moduleSlug": "inventory",
+                "disabled": false,
+                "disabledReason": null
+              }
+            }
+          ],
+          "risks": [
+            {
+              "id": "act_bdeeab1a27432f736a9e35ff-risk",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "close_assurance",
+              "rank": 1,
+              "title": "Close Blocker",
+              "detail": "Resolve close blockers or attach missing evidence before certification.",
+              "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+              "severity": "high",
+              "severityScore": 75,
+              "moneyImpact": null,
+              "urgency": null,
+              "state": "ready",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "close"
+              ],
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "close.readiness",
+                "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                "sourceHash": "sha256:6aab2cc399813a6674fc9f5468f455f3ead9c6ac05268c6dee83ee07cc2f6f01",
+                "sourceModules": [
+                  "close"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "redactions": [],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read"
+              },
+              "actionLink": {
+                "id": "act_bdeeab1a27432f736a9e35ff",
+                "label": "Resolve close blockers or attach missing evidence before certification.",
+                "href": "/en/dashboard/accounting/close",
+                "requiredPermission": "accounting.close.read",
+                "moduleSlug": "close_assurance",
+                "disabled": false,
+                "disabledReason": null
+              }
+            },
+            {
+              "id": "act_f5d8fbe140a036d8203d0cbf-risk",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "inventory",
+              "rank": 2,
+              "title": "Recorded inventory loss needs review",
+              "detail": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+              "businessImpact": "Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.",
+              "severity": "medium",
+              "severityScore": 50,
+              "moneyImpact": null,
+              "urgency": null,
+              "state": "ready",
+              "evidenceGrade": "operational",
+              "trustState": "operational",
+              "freshness": {
+                "state": "fresh",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": null,
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "inventory"
+              ],
+              "blockers": [],
+              "provenance": {
+                "organizationId": "synth12_yaounde",
+                "locationId": null,
+                "sourceKind": "inventory.loss",
+                "sourceId": "sig_f5d8fbe140a036d8203d0cbf",
+                "sourceHash": "sha256:a63911e0923b8f3baeeecc57556546f1cbf3efeb2054b49d9f6a517233b8a3c4",
+                "sourceModules": [
+                  "inventory"
+                ],
+                "generatedAt": "2026-10-28T20:00:00.000Z"
+              },
+              "redactions": [
+                {
+                  "id": "inventory-loss-evidence-hashes-redacted",
+                  "field": "records.evidence.*Hash",
+                  "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                  "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                }
+              ],
+              "drillThrough": {
+                "available": true,
+                "type": "route",
+                "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read"
+              },
+              "actionLink": {
+                "id": "act_f5d8fbe140a036d8203d0cbf",
+                "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                "href": "/en/dashboard/inventory/loss-control",
+                "requiredPermission": "inventory.levels.read",
+                "moduleSlug": "inventory",
+                "disabled": false,
+                "disabledReason": null
+              }
+            }
+          ],
+          "actions": [
+            {
+              "id": "act_bdeeab1a27432f736a9e35ff",
+              "label": "Resolve close blockers or attach missing evidence before certification.",
+              "href": "/en/dashboard/accounting/close",
+              "requiredPermission": "accounting.close.read",
+              "moduleSlug": "close_assurance",
+              "disabled": false,
+              "disabledReason": null
+            },
+            {
+              "id": "act_f5d8fbe140a036d8203d0cbf",
+              "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+              "href": "/en/dashboard/inventory/loss-control",
+              "requiredPermission": "inventory.levels.read",
+              "moduleSlug": "inventory",
+              "disabled": false,
+              "disabledReason": null
+            }
+          ],
+          "zones": [
+            {
+              "id": "weekly-zone",
+              "organizationId": "synth12_yaounde",
+              "moduleSlug": "analytics",
+              "title": "Weekly business habit digest",
+              "businessQuestion": "What should this role review today?",
+              "summary": "Sales over seven UTC days ending on the report date, alongside current inventory balances, payment obligations and close readiness. Current balances are not seven-day totals.",
+              "state": "blocked",
+              "evidenceGrade": "blocked",
+              "trustState": "blocked",
+              "freshness": {
+                "state": "blocked",
+                "generatedAt": "2026-10-28T20:00:00.000Z",
+                "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                "maxAgeMinutes": 1440,
+                "stale": false,
+                "staleReason": null
+              },
+              "sourceModules": [
+                "sales",
+                "pos"
+              ],
+              "primaryMetric": {
+                "id": "analytics-completed-sales",
+                "organizationId": "synth12_yaounde",
+                "moduleSlug": "analytics",
+                "requiredPermission": "analytics.read",
+                "title": "Completed sales",
+                "detail": "Completed sales revenue over the displayed seven-day UTC period, including the report date.",
+                "value": 269300,
+                "unit": "XAF",
+                "format": "currency",
+                "state": "blocked",
+                "evidenceGrade": "blocked",
+                "trustState": "blocked",
+                "freshness": {
+                  "state": "blocked",
+                  "generatedAt": "2026-10-28T20:00:00.000Z",
+                  "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                  "maxAgeMinutes": 1440,
+                  "stale": false,
+                  "staleReason": null
+                },
+                "provenance": {
+                  "organizationId": "synth12_yaounde",
+                  "locationId": null,
+                  "sourceKind": "tenant.operating",
+                  "sourceHash": "sha256:e93ed266ec2fb42f10c4b1c5918e26bb530741df25f607075b25b51970374ad4",
+                  "periodStart": "2026-10-22T00:00:00.000Z",
+                  "periodEnd": "2026-10-28T23:59:59.999Z",
+                  "sourceModules": [
+                    "sales",
+                    "pos"
+                  ],
+                  "generatedAt": "2026-10-28T20:00:00.000Z"
+                },
+                "blockers": [
+                  {
+                    "id": "close-evidence-unavailable",
+                    "severity": "high",
+                    "gate": "close_readiness",
+                    "title": "Close evidence is unavailable",
+                    "detail": "21 close evidence item(s) are unavailable for this organization.",
+                    "sourceTables": [
+                      "close_evidence_items"
+                    ],
+                    "nextAction": "Regenerate or attach the missing close evidence."
+                  },
+                  {
+                    "id": "close-periods-unreviewed",
+                    "severity": "medium",
+                    "gate": "close_readiness",
+                    "title": "Accounting periods need close review",
+                    "detail": "1 accounting period(s) have no close run in the selected scope.",
+                    "sourceTables": [
+                      "accounting_periods",
+                      "close_runs"
+                    ],
+                    "nextAction": "Run Close Assurance for each uncovered accounting period."
+                  }
+                ],
+                "redactions": [
+                  {
+                    "id": "payment-provider-identifiers-redacted",
+                    "field": "providerAccount.externalAccountHash",
+                    "reason": "Payment provider account identifiers remain server-side only in snapshot read models.",
+                    "policy": "KONTAVA_SENSITIVE_PAYMENT_EVIDENCE"
+                  }
+                ],
+                "drillThrough": {
+                  "type": "route",
+                  "label": "Open source surface",
+                  "requiredPermission": "reports.read",
+                  "available": true,
+                  "href": "/en/dashboard/analytics"
+                },
+                "actionLink": null
+              },
+              "sections": [],
+              "cards": [
+                {
+                  "id": "analytics-completed-sales",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "analytics",
+                  "requiredPermission": "analytics.read",
+                  "title": "Completed sales",
+                  "detail": "Completed sales revenue over the displayed seven-day UTC period, including the report date.",
+                  "value": 269300,
+                  "unit": "XAF",
+                  "format": "currency",
+                  "state": "blocked",
+                  "evidenceGrade": "blocked",
+                  "trustState": "blocked",
+                  "freshness": {
+                    "state": "blocked",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": "2026-10-29T11:46:01.625Z",
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "tenant.operating",
+                    "sourceHash": "sha256:e93ed266ec2fb42f10c4b1c5918e26bb530741df25f607075b25b51970374ad4",
+                    "periodStart": "2026-10-22T00:00:00.000Z",
+                    "periodEnd": "2026-10-28T23:59:59.999Z",
+                    "sourceModules": [
+                      "sales",
+                      "pos"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "blockers": [
+                    {
+                      "id": "close-evidence-unavailable",
+                      "severity": "high",
+                      "gate": "close_readiness",
+                      "title": "Close evidence is unavailable",
+                      "detail": "21 close evidence item(s) are unavailable for this organization.",
+                      "sourceTables": [
+                        "close_evidence_items"
+                      ],
+                      "nextAction": "Regenerate or attach the missing close evidence."
+                    },
+                    {
+                      "id": "close-periods-unreviewed",
+                      "severity": "medium",
+                      "gate": "close_readiness",
+                      "title": "Accounting periods need close review",
+                      "detail": "1 accounting period(s) have no close run in the selected scope.",
+                      "sourceTables": [
+                        "accounting_periods",
+                        "close_runs"
+                      ],
+                      "nextAction": "Run Close Assurance for each uncovered accounting period."
+                    }
+                  ],
+                  "redactions": [
+                    {
+                      "id": "payment-provider-identifiers-redacted",
+                      "field": "providerAccount.externalAccountHash",
+                      "reason": "Payment provider account identifiers remain server-side only in snapshot read models.",
+                      "policy": "KONTAVA_SENSITIVE_PAYMENT_EVIDENCE"
+                    }
+                  ],
+                  "drillThrough": {
+                    "type": "route",
+                    "label": "Open source surface",
+                    "requiredPermission": "reports.read",
+                    "available": true,
+                    "href": "/en/dashboard/analytics"
+                  },
+                  "actionLink": null
+                }
+              ],
+              "insights": [],
+              "risks": [
+                {
+                  "id": "act_bdeeab1a27432f736a9e35ff-risk",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "close_assurance",
+                  "rank": 1,
+                  "title": "Close Blocker",
+                  "detail": "Resolve close blockers or attach missing evidence before certification.",
+                  "businessImpact": "Close blockers delay reliable reporting and accountant review.",
+                  "severity": "high",
+                  "severityScore": 75,
+                  "moneyImpact": null,
+                  "urgency": null,
+                  "state": "ready",
+                  "evidenceGrade": "blocked",
+                  "trustState": "blocked",
+                  "freshness": {
+                    "state": "fresh",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": "2026-10-29T11:34:08.317Z",
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "sourceModules": [
+                    "close"
+                  ],
+                  "blockers": [
+                    {
+                      "id": "close-evidence-unavailable",
+                      "severity": "high",
+                      "gate": "close_readiness",
+                      "title": "Close evidence is unavailable",
+                      "detail": "21 close evidence item(s) are unavailable for this organization.",
+                      "sourceTables": [
+                        "close_evidence_items"
+                      ],
+                      "nextAction": "Regenerate or attach the missing close evidence."
+                    },
+                    {
+                      "id": "close-periods-unreviewed",
+                      "severity": "medium",
+                      "gate": "close_readiness",
+                      "title": "Accounting periods need close review",
+                      "detail": "1 accounting period(s) have no close run in the selected scope.",
+                      "sourceTables": [
+                        "accounting_periods",
+                        "close_runs"
+                      ],
+                      "nextAction": "Run Close Assurance for each uncovered accounting period."
+                    }
+                  ],
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "close.readiness",
+                    "sourceId": "sig_bdeeab1a27432f736a9e35ff",
+                    "sourceHash": "sha256:6aab2cc399813a6674fc9f5468f455f3ead9c6ac05268c6dee83ee07cc2f6f01",
+                    "sourceModules": [
+                      "close"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "redactions": [],
+                  "drillThrough": {
+                    "available": true,
+                    "type": "route",
+                    "label": "Resolve close blockers or attach missing evidence before certification.",
+                    "href": "/en/dashboard/accounting/close",
+                    "requiredPermission": "accounting.close.read"
+                  },
+                  "actionLink": {
+                    "id": "act_bdeeab1a27432f736a9e35ff",
+                    "label": "Resolve close blockers or attach missing evidence before certification.",
+                    "href": "/en/dashboard/accounting/close",
+                    "requiredPermission": "accounting.close.read",
+                    "moduleSlug": "close_assurance",
+                    "disabled": false,
+                    "disabledReason": null
+                  }
+                },
+                {
+                  "id": "act_f5d8fbe140a036d8203d0cbf-risk",
+                  "organizationId": "synth12_yaounde",
+                  "moduleSlug": "inventory",
+                  "rank": 2,
+                  "title": "Recorded inventory loss needs review",
+                  "detail": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                  "businessImpact": "Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.",
+                  "severity": "medium",
+                  "severityScore": 50,
+                  "moneyImpact": null,
+                  "urgency": null,
+                  "state": "ready",
+                  "evidenceGrade": "operational",
+                  "trustState": "operational",
+                  "freshness": {
+                    "state": "fresh",
+                    "generatedAt": "2026-10-28T20:00:00.000Z",
+                    "sourceMaxUpdatedAt": null,
+                    "maxAgeMinutes": 1440,
+                    "stale": false,
+                    "staleReason": null
+                  },
+                  "sourceModules": [
+                    "inventory"
+                  ],
+                  "blockers": [],
+                  "provenance": {
+                    "organizationId": "synth12_yaounde",
+                    "locationId": null,
+                    "sourceKind": "inventory.loss",
+                    "sourceId": "sig_f5d8fbe140a036d8203d0cbf",
+                    "sourceHash": "sha256:a63911e0923b8f3baeeecc57556546f1cbf3efeb2054b49d9f6a517233b8a3c4",
+                    "sourceModules": [
+                      "inventory"
+                    ],
+                    "generatedAt": "2026-10-28T20:00:00.000Z"
+                  },
+                  "redactions": [
+                    {
+                      "id": "inventory-loss-evidence-hashes-redacted",
+                      "field": "records.evidence.*Hash",
+                      "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                      "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                    }
+                  ],
+                  "drillThrough": {
+                    "available": true,
+                    "type": "route",
+                    "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                    "href": "/en/dashboard/inventory/loss-control",
+                    "requiredPermission": "inventory.levels.read"
+                  },
+                  "actionLink": {
+                    "id": "act_f5d8fbe140a036d8203d0cbf",
+                    "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                    "href": "/en/dashboard/inventory/loss-control",
+                    "requiredPermission": "inventory.levels.read",
+                    "moduleSlug": "inventory",
+                    "disabled": false,
+                    "disabledReason": null
+                  }
+                }
+              ],
+              "flowSteps": [],
+              "actions": [
+                {
+                  "id": "act_bdeeab1a27432f736a9e35ff",
+                  "label": "Resolve close blockers or attach missing evidence before certification.",
+                  "href": "/en/dashboard/accounting/close",
+                  "requiredPermission": "accounting.close.read",
+                  "moduleSlug": "close_assurance",
+                  "disabled": false,
+                  "disabledReason": null
+                },
+                {
+                  "id": "act_f5d8fbe140a036d8203d0cbf",
+                  "label": "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+                  "href": "/en/dashboard/inventory/loss-control",
+                  "requiredPermission": "inventory.levels.read",
+                  "moduleSlug": "inventory",
+                  "disabled": false,
+                  "disabledReason": null
+                }
+              ],
+              "blockers": [
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                },
+                {
+                  "id": "close-evidence-unavailable",
+                  "severity": "high",
+                  "gate": "close_readiness",
+                  "title": "Close evidence is unavailable",
+                  "detail": "21 close evidence item(s) are unavailable for this organization.",
+                  "sourceTables": [
+                    "close_evidence_items"
+                  ],
+                  "nextAction": "Regenerate or attach the missing close evidence."
+                },
+                {
+                  "id": "close-periods-unreviewed",
+                  "severity": "medium",
+                  "gate": "close_readiness",
+                  "title": "Accounting periods need close review",
+                  "detail": "1 accounting period(s) have no close run in the selected scope.",
+                  "sourceTables": [
+                    "accounting_periods",
+                    "close_runs"
+                  ],
+                  "nextAction": "Run Close Assurance for each uncovered accounting period."
+                }
+              ],
+              "redactions": [
+                {
+                  "id": "inventory-loss-evidence-hashes-redacted",
+                  "field": "records.evidence.*Hash",
+                  "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+                  "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+                }
+              ],
+              "drillThrough": {
+                "type": "route",
+                "label": "Open source surface",
+                "requiredPermission": "reports.read",
+                "available": true,
+                "href": "/en/dashboard/analytics"
+              }
+            }
+          ],
+          "blockers": [
+            {
+              "id": "close-evidence-unavailable",
+              "severity": "high",
+              "gate": "close_readiness",
+              "title": "Close evidence is unavailable",
+              "detail": "21 close evidence item(s) are unavailable for this organization.",
+              "sourceTables": [
+                "close_evidence_items"
+              ],
+              "nextAction": "Regenerate or attach the missing close evidence."
+            },
+            {
+              "id": "close-periods-unreviewed",
+              "severity": "medium",
+              "gate": "close_readiness",
+              "title": "Accounting periods need close review",
+              "detail": "1 accounting period(s) have no close run in the selected scope.",
+              "sourceTables": [
+                "accounting_periods",
+                "close_runs"
+              ],
+              "nextAction": "Run Close Assurance for each uncovered accounting period."
+            },
+            {
+              "id": "close-evidence-unavailable",
+              "severity": "high",
+              "gate": "close_readiness",
+              "title": "Close evidence is unavailable",
+              "detail": "21 close evidence item(s) are unavailable for this organization.",
+              "sourceTables": [
+                "close_evidence_items"
+              ],
+              "nextAction": "Regenerate or attach the missing close evidence."
+            },
+            {
+              "id": "close-periods-unreviewed",
+              "severity": "medium",
+              "gate": "close_readiness",
+              "title": "Accounting periods need close review",
+              "detail": "1 accounting period(s) have no close run in the selected scope.",
+              "sourceTables": [
+                "accounting_periods",
+                "close_runs"
+              ],
+              "nextAction": "Run Close Assurance for each uncovered accounting period."
+            }
+          ],
+          "redactions": [
+            {
+              "id": "inventory-loss-evidence-hashes-redacted",
+              "field": "records.evidence.*Hash",
+              "reason": "Source evidence hashes remain server-side; the snapshot exposes coverage only.",
+              "policy": "INVENTORY_LOSS_EVIDENCE_REDACTION"
+            }
+          ]
+        }
+      ],
+      "actionQueue": {
+        "summary": {
+          "total": 2,
+          "open": 2,
+          "assigned": 0,
+          "stale": 0,
+          "expired": 0,
+          "redacted": 1,
+          "bySeverity": {
+            "info": 0,
+            "low": 0,
+            "medium": 1,
+            "high": 1,
+            "critical": 0
+          },
+          "byRole": {
+            "accountant": 1,
+            "manager": 1
+          }
+        },
+        "filteredOutCount": 0
+      },
+      "summary": {
+        "digestCount": 6,
+        "visibleActionCount": 2,
+        "filteredOutActionCount": 0,
+        "staleSignalCount": 0,
+        "redactedSignalCount": 1,
+        "blockedDigestCount": 5,
+        "hiddenDigestCount": 1
+      }
+    }
+  }
+}

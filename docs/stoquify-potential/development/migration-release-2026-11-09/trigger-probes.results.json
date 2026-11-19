@@ -1,0 +1,1692 @@
+{
+  "stage": "executed",
+  "qualifiedDate": "20261109",
+  "startedAt": "2026-11-09T14:15:11.874Z",
+  "passed": true,
+  "runnerSha256": "db55aee0bf7e94cf40671a70a24149b5b70d17777a6be5e6fce74e2214ebe54e",
+  "targetManifestSha256": "0caca790ff0cf43d6ac8a04e9320088e940070700b4cd02bd3d126459a3ad713",
+  "workflowEvidenceSha256": "360a46ecd8640e75637ed1e6230b4212c93735e724d462226a85ae92cc293c20",
+  "probes": [
+    {
+      "name": "reversed-settlement-independent-actor-check",
+      "table": "customer_settlements",
+      "id": "cmw9c6di100dgmap005f5f0cl",
+      "expected": {
+        "sqlstate": "23514",
+        "message": "new row for relation \"customer_settlements\" violates check constraint \"customer_settlements_reversed_evidence_complete_check\"",
+        "constraint": "customer_settlements_reversed_evidence_complete_check"
+      },
+      "observed": {
+        "sqlstate": "23514",
+        "message": "new row for relation \"customer_settlements\" violates check constraint \"customer_settlements_reversed_evidence_complete_check\"",
+        "constraint": "customer_settlements_reversed_evidence_complete_check"
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "cf7c26904c01e7149756dff2ec633a75a040d66ea806c9fc7ff8ea924ff484dc",
+      "afterRowSha256": "cf7c26904c01e7149756dff2ec633a75a040d66ea806c9fc7ff8ea924ff484dc",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "reversed-settlement-document-hash-required",
+      "table": "customer_settlements",
+      "id": "cmw9c6di100dgmap005f5f0cl",
+      "expected": {
+        "sqlstate": "23514",
+        "message": "new row for relation \"customer_settlements\" violates check constraint \"customer_settlements_reversed_evidence_complete_check\"",
+        "constraint": "customer_settlements_reversed_evidence_complete_check"
+      },
+      "observed": {
+        "sqlstate": "23514",
+        "message": "new row for relation \"customer_settlements\" violates check constraint \"customer_settlements_reversed_evidence_complete_check\"",
+        "constraint": "customer_settlements_reversed_evidence_complete_check"
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "cf7c26904c01e7149756dff2ec633a75a040d66ea806c9fc7ff8ea924ff484dc",
+      "afterRowSha256": "cf7c26904c01e7149756dff2ec633a75a040d66ea806c9fc7ff8ea924ff484dc",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "reversed-settlement-evidence-hash-required",
+      "table": "customer_settlements",
+      "id": "cmw9c6di100dgmap005f5f0cl",
+      "expected": {
+        "sqlstate": "23514",
+        "message": "new row for relation \"customer_settlements\" violates check constraint \"customer_settlements_reversed_evidence_complete_check\"",
+        "constraint": "customer_settlements_reversed_evidence_complete_check"
+      },
+      "observed": {
+        "sqlstate": "23514",
+        "message": "new row for relation \"customer_settlements\" violates check constraint \"customer_settlements_reversed_evidence_complete_check\"",
+        "constraint": "customer_settlements_reversed_evidence_complete_check"
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "cf7c26904c01e7149756dff2ec633a75a040d66ea806c9fc7ff8ea924ff484dc",
+      "afterRowSha256": "cf7c26904c01e7149756dff2ec633a75a040d66ea806c9fc7ff8ea924ff484dc",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "receivable-document-update-immutable",
+      "table": "customer_receivable_documents",
+      "id": "cmw9c6csu00bvmap0rxok0tw7",
+      "expected": {
+        "sqlstate": "23000",
+        "message": "Cannot modify immutable customer receivable document cmw9c6csu00bvmap0rxok0tw7"
+      },
+      "observed": {
+        "sqlstate": "23000",
+        "message": "Cannot modify immutable customer receivable document cmw9c6csu00bvmap0rxok0tw7",
+        "constraint": null
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "2dbc080c91571f3478dafe8c84d64be727ca1ce70a925a23117467e670bb15fd",
+      "afterRowSha256": "2dbc080c91571f3478dafe8c84d64be727ca1ce70a925a23117467e670bb15fd",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "receivable-document-delete-immutable",
+      "table": "customer_receivable_documents",
+      "id": "cmw9c6csu00bvmap0rxok0tw7",
+      "expected": {
+        "sqlstate": "23000",
+        "message": "Cannot delete immutable customer receivable document cmw9c6csu00bvmap0rxok0tw7"
+      },
+      "observed": {
+        "sqlstate": "23000",
+        "message": "Cannot delete immutable customer receivable document cmw9c6csu00bvmap0rxok0tw7",
+        "constraint": null
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "2dbc080c91571f3478dafe8c84d64be727ca1ce70a925a23117467e670bb15fd",
+      "afterRowSha256": "2dbc080c91571f3478dafe8c84d64be727ca1ce70a925a23117467e670bb15fd",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "receivable-state-update-immutable",
+      "table": "customer_receivable_document_states",
+      "id": "cmw9c6ei800f5map0ykacdxpt",
+      "expected": {
+        "sqlstate": "23000",
+        "message": "Cannot modify immutable customer receivable state cmw9c6ei800f5map0ykacdxpt"
+      },
+      "observed": {
+        "sqlstate": "23000",
+        "message": "Cannot modify immutable customer receivable state cmw9c6ei800f5map0ykacdxpt",
+        "constraint": null
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "e0221a2453784f0921c672028fda861cde3bba1641d39339f5dff134e43ec414",
+      "afterRowSha256": "e0221a2453784f0921c672028fda861cde3bba1641d39339f5dff134e43ec414",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "receivable-state-delete-immutable",
+      "table": "customer_receivable_document_states",
+      "id": "cmw9c6ei800f5map0ykacdxpt",
+      "expected": {
+        "sqlstate": "23000",
+        "message": "Cannot delete immutable customer receivable state cmw9c6ei800f5map0ykacdxpt"
+      },
+      "observed": {
+        "sqlstate": "23000",
+        "message": "Cannot delete immutable customer receivable state cmw9c6ei800f5map0ykacdxpt",
+        "constraint": null
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "e0221a2453784f0921c672028fda861cde3bba1641d39339f5dff134e43ec414",
+      "afterRowSha256": "e0221a2453784f0921c672028fda861cde3bba1641d39339f5dff134e43ec414",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "settlement-allocation-relink-immutable",
+      "table": "customer_settlement_allocations",
+      "id": "cmw9c6dis00dkmap0e4eesirx",
+      "expected": {
+        "sqlstate": "23000",
+        "message": "Cannot relink customer settlement allocation cmw9c6dis00dkmap0e4eesirx from immutable receivable document"
+      },
+      "observed": {
+        "sqlstate": "23000",
+        "message": "Cannot relink customer settlement allocation cmw9c6dis00dkmap0e4eesirx from immutable receivable document",
+        "constraint": null
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "3eb48b7b0e86f0d312c05452618a803bbde264851883c16625e8c40e921d75e1",
+      "afterRowSha256": "3eb48b7b0e86f0d312c05452618a803bbde264851883c16625e8c40e921d75e1",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "posted-journal-cannot-return-to-draft",
+      "table": "journal_entries",
+      "id": "cmw9c6cyx00cbmap0st95e0ic",
+      "expected": {
+        "sqlstate": "23514",
+        "message": "Posted journals may only become reversed; reversed journals cannot change status"
+      },
+      "observed": {
+        "sqlstate": "23514",
+        "message": "Posted journals may only become reversed; reversed journals cannot change status",
+        "constraint": null
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "f7690325d60c75e4131a08ebf0c16b4dc965d707b2f46a444a92690741358eeb",
+      "afterRowSha256": "f7690325d60c75e4131a08ebf0c16b4dc965d707b2f46a444a92690741358eeb",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "reversed-journal-cannot-reactivate",
+      "table": "journal_entries",
+      "id": "cmw9c6dqd00dymap0arwj46zd",
+      "expected": {
+        "sqlstate": "23514",
+        "message": "Posted journals may only become reversed; reversed journals cannot change status"
+      },
+      "observed": {
+        "sqlstate": "23514",
+        "message": "Posted journals may only become reversed; reversed journals cannot change status",
+        "constraint": null
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "addb14abd4d59014238e37c84e256b5bd3caff02bd4d699fb156fe33eda521ee",
+      "afterRowSha256": "addb14abd4d59014238e37c84e256b5bd3caff02bd4d699fb156fe33eda521ee",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "posted-journal-line-edit-needs-compensation",
+      "table": "journal_entry_lines",
+      "id": "cmw9c6cyy00cdmap0lwwivy9s",
+      "expected": {
+        "sqlstate": "23514",
+        "message": "Posted journal lines require a compensating correction"
+      },
+      "observed": {
+        "sqlstate": "23514",
+        "message": "Posted journal lines require a compensating correction",
+        "constraint": null
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "c972ebac3f6ebdb22bfa65608749bc5851db741cc5dea7e7ebf49732fb388f9c",
+      "afterRowSha256": "c972ebac3f6ebdb22bfa65608749bc5851db741cc5dea7e7ebf49732fb388f9c",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "posted-journal-line-delete-needs-compensation",
+      "table": "journal_entry_lines",
+      "id": "cmw9c6cyy00cdmap0lwwivy9s",
+      "expected": {
+        "sqlstate": "23514",
+        "message": "Posted journal lines require a compensating correction"
+      },
+      "observed": {
+        "sqlstate": "23514",
+        "message": "Posted journal lines require a compensating correction",
+        "constraint": null
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": "c972ebac3f6ebdb22bfa65608749bc5851db741cc5dea7e7ebf49732fb388f9c",
+      "afterRowSha256": "c972ebac3f6ebdb22bfa65608749bc5851db741cc5dea7e7ebf49732fb388f9c",
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    },
+    {
+      "name": "journal-line-foreign-account-tenant-denied",
+      "table": "journal_entry_lines",
+      "id": "trigger-probe-ddb802fe-d17a-4164-88a7-27a86b8363c2",
+      "expected": {
+        "sqlstate": "23514",
+        "message": "Journal line, parent and account must belong to the same organization"
+      },
+      "observed": {
+        "sqlstate": "23514",
+        "message": "Journal line, parent and account must belong to the same organization",
+        "constraint": null
+      },
+      "statementRowCount": null,
+      "rolledBack": true,
+      "beforeRowSha256": null,
+      "afterRowSha256": null,
+      "beforeScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "afterScopeSha256": "9b193ee50bf0b20112ac98a5d99f3e4b712a6b464401c2193ba489a793625ad3",
+      "rowsAndCountsUnchanged": true,
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "Synthetic zero-tax financial fixture; no provider transfer or statutory qualification.",
+    "Service/action tenant and session/RBAC authorization remain separate. Separate foreign keys do not prove complete database tenant isolation.",
+    "No closed period is fabricated. Proper earned seal/reopen/write-denial qualification remains a separate period-control exercise.",
+    "Posted journal status and line guards are probed; blanket immutability of every journal header field is not claimed.",
+    "Sequences may advance in rolled-back transactions; retained rows/counts/hashes, not sequence counters, are compared."
+  ],
+  "identity": {
+    "database": "stoquify_pos_audit_20261109_44a94875d5",
+    "actor": "sales_release_fixture",
+    "host": "localhost",
+    "address": "127.0.0.1",
+    "port": 58033,
+    "schema": "public",
+    "dataDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5\\data",
+    "replicationRole": "origin",
+    "migrationCount": 121,
+    "migrationHistorySha256": "fb3390eacbf1b32cdb4bb5e7b4de1269afe1a7524b6c6822045d2edb35ad8af2"
+  },
+  "scope": {
+    "organizationId": "org-full-pos-869c900c-46bb-4312-b2a0-c0dfa496ee20",
+    "customerId": "customer-full-pos-869c900c-46bb-4312-b2a0-c0dfa496ee20",
+    "saleId": "sale-full-pos-869c900c-46bb-4312-b2a0-c0dfa496ee20",
+    "documentId": "cmw9c6csu00bvmap0rxok0tw7",
+    "stateId": "cmw9c6ei800f5map0ykacdxpt",
+    "settlementId": "cmw9c6di100dgmap005f5f0cl",
+    "allocationId": "cmw9c6dis00dkmap0e4eesirx",
+    "postedJournalId": "cmw9c6cyx00cbmap0st95e0ic",
+    "postedLineId": "cmw9c6cyy00cdmap0lwwivy9s",
+    "collectionJournalId": "cmw9c6dqd00dymap0arwj46zd",
+    "reversalJournalId": "cmw9c6el000fdmap0mml5vhfq",
+    "currency": "XAF",
+    "foreignAccountId": "cmw9c63jm0007map0mqrggi6l",
+    "foreignOrganizationId": "org-full-pos-d36cf06d-fada-4a86-af3c-5ff0b38247e7"
+  },
+  "guardInventory": {
+    "maxIdentifierLength": 63,
+    "triggers": [
+      {
+        "table": "accounting_periods",
+        "name": "a_period_control_transition",
+        "enabled": "O",
+        "functionName": "guard_period_control_transition",
+        "arguments": "",
+        "triggerDefinitionSha256": "8f0cbbce8684546c8bf61030755f1d0456c5c6de45a84be8ee84338761f12ecb",
+        "functionDefinitionSha256": "35e58ceae22164c746f9d060b30dd0469481ba11128c89cd90f7154ec32f2ae7"
+      },
+      {
+        "table": "accounting_periods",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_period_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "e2c007faab5e0ab5b23b97f0148e8c24c450424206e7f3e0e918d11844177a0d",
+        "functionDefinitionSha256": "3ff3832e1449d4360fafa65f3d1954fab13aabd29850e65815903e33690955b6"
+      },
+      {
+        "table": "accounting_source_links",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "1b027ce26004fc96cf2c0170f80b5bb808605fd7e1e37bcb40e0ec36728658af",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "audit_logs",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "a346415fc15a11118710fb30c99e98d45793bd2c70fdcfadf4c85017a8688816",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "balance_sheet_evidence",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "918aaa21fa3fd6bf5debea180c83582ee62a63a9149da7b823b7830d2d37c519",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "bank_balance_evidence",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "b44720ff16f59308db514d59aef0c6ac6f68c2892ba1d5b3888213a41e9a1877",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "business_events",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "7f2f2aca0b9e62808e7170347b4ee063113a0d0957bbbd90ed426be305f71103",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "chart_of_accounts",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "d70420c6a1f8a7f8a733c1bd05e1d8dc346efe02c8158e8ad909a30c20a750bc",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "customer_receivable_document_states",
+        "name": "customer_receivable_document_states_prevent_mutation_trigger",
+        "enabled": "O",
+        "functionName": "receivable_prevent_state_mutation",
+        "arguments": "",
+        "triggerDefinitionSha256": "17ea6baf33ad04e0c222c6f762989e0d1f49f1dda4d94d40c8a16092034f1877",
+        "functionDefinitionSha256": "6caa737555ee5769d22b67b0d13422e7f9aaf08655225b1fc639a3e0ef2935c6"
+      },
+      {
+        "table": "customer_receivable_documents",
+        "name": "customer_receivable_documents_prevent_mutation_trigger",
+        "enabled": "O",
+        "functionName": "receivable_prevent_document_mutation",
+        "arguments": "",
+        "triggerDefinitionSha256": "0747aee39cb12b1518d5951828afb6b3cb01e2cae7305a197622d022c075e4c6",
+        "functionDefinitionSha256": "575c2cc305ea87c2bbc93da6e274c410f2c2d51908dd06714786b06cc1649514"
+      },
+      {
+        "table": "customer_settlement_allocations",
+        "name": "customer_settlement_allocations_prevent_receivable_relink_trigg",
+        "enabled": "O",
+        "functionName": "receivable_prevent_allocation_relink",
+        "arguments": "",
+        "triggerDefinitionSha256": "79352053474fb8d26032f904716d9fba8aae07bd3573569084bdd6707ceb99e8",
+        "functionDefinitionSha256": "59b0c7d110b90675813b5bb34bed2d3101224873582b55a84c954920e126cd0f"
+      },
+      {
+        "table": "fiscal_documents",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "6b7af5113d43e28752b5e822d0247514a14d614cd89c916d87d98cdf97f14f62",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "fiscal_years",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "77b1acce741504b1e7c99304b2c7ae96a4c6c5d1cc502a077c7490fc6b7a8ed5",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "inventory_levels",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "6e6923485bc33f23b01732520985a4f673edd2da6475472856593743b7977c04",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "inventory_transactions",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "a7c7677d632b179a9d3d01f696c517538995d9cef1fdfa7f8702955e676c0587",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "items",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "45cd6a2da10b0a3626c6da548e87e2022c28c5a55957af443a1427a8a6af65c6",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "journal_entries",
+        "name": "a_journal_period_write",
+        "enabled": "O",
+        "functionName": "guard_journal_period_write",
+        "arguments": "",
+        "triggerDefinitionSha256": "90fe11f42e3f4e3d9f7755fd39a7206b852dcaadac7e55c18031c7c5b84f8669",
+        "functionDefinitionSha256": "1329356bc8d816af612578c0efa7b4f1b4e84cd85acafbdf2096c644fa07ba38"
+      },
+      {
+        "table": "journal_entries",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "c3d1954e65930f7197700d63db88c0f8c4da91c764bb7e943da7b07c688106af",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "journal_entries",
+        "name": "journal_entries_prevent_posted_draft",
+        "enabled": "O",
+        "functionName": "stoquify_guard_journal_posted_status",
+        "arguments": "",
+        "triggerDefinitionSha256": "15437c4255d87a209e0dbff7a03edf6f644219a2d66a26d11bfae140e99dd1fc",
+        "functionDefinitionSha256": "f169f542e1b3ff68ea25d087147aff8b0ad3f3b543983ec9a390a868ad7c88e6"
+      },
+      {
+        "table": "journal_entry_lines",
+        "name": "a_journal_period_write",
+        "enabled": "O",
+        "functionName": "guard_journal_period_write",
+        "arguments": "",
+        "triggerDefinitionSha256": "854d8855ae6954c72b1f65f25d9275590e987ba3b0857c761f56030104dd0fcb",
+        "functionDefinitionSha256": "1329356bc8d816af612578c0efa7b4f1b4e84cd85acafbdf2096c644fa07ba38"
+      },
+      {
+        "table": "journal_entry_lines",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "8dc4c88de0ddfa55b9042da63be3a40c2753f0dc6fbba56a1ef6d5b55d9fd5db",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "journal_entry_lines",
+        "name": "journal_entry_lines_guard_posted_tenant",
+        "enabled": "O",
+        "functionName": "stoquify_guard_journal_line_boundary",
+        "arguments": "",
+        "triggerDefinitionSha256": "1eadff8453773bc2ff97cc06a26dc2b6c19bebfe2ec117958fcbce8d9988016c",
+        "functionDefinitionSha256": "32762ea22bea321eae310c8d5b25521ece89d1e07c64b281cec22f98f30abb30"
+      },
+      {
+        "table": "journals",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "0a4d0f16051a0479b64b439260f7c6d89c369957263278ebabd92b86c4eaf485",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "ledger_posting_batches",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "64d8cf838cca00e036e7d5d056d6c79d3b974c40ae43e8c2f3b152152b005e22",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "locations",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "65ff24f7d8cbb72156c45575a49874393c6f44f01f8aa46a37af915e820da431",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "match_records",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "206ff5cb266c3b48f0889eb7c46ca7dd9c3525bcd294417e0a35c1b72fbe2f8f",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "organization_accounting_settings",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "b2075a4d8b0617a7a0ff9d94091ade3dd3e3e49d5f7274d718c7c6b6534a4ef0",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "organizations",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "32397f08f4065ba09166a77da49fec10c1780071971daaf8c21bcdc0ba8bd295",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payment_exceptions",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "f0dd5b95e60c438d0c0fd1b4c8aa27c8de44b9d3d2b47d25fc11d7486c393493",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payment_rails",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "4135a36c3efc02da8161731b24483cdbd5e38ad64b23916c66dad8628a907293",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payment_transactions",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "2ea1242ce4fa7dbdf1b0a01a0f250d06603e3eb10a5ee082f6db3af140cb4f50",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_declaration_evidence",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "84b6b75ec7ef56356744e5a9e51861c1a823894ea651c4887d55ac52de729cc1",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_declarations",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "e0cca2f2bf05d0957d94e3f09572a2feab2c90feb35b4511fe8e410e5b29800f",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_employee_balance_cases",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "ca8492dcada3dc7bd5118521dce350688400f0a7733f190123938c7cd828e80b",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_employee_balance_events",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "b1123cfb533c072ba8f3f03f1bca1572ea7e4bb7e641b3ba6262d74aab340d44",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_payment_allocations",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "30e93974e4afe26d2c673c4f19aa2589da41b246449d40193c08e15a7e6cfc28",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_payment_batches",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "682ed7aed34d5f1b42f1f2e415be3ffc836241a84d4f49d5f80b127aa8fe7486",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_payslips",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "7b817899a8025b606563411ddeddc2982904e439561a4da832930a1b9ec21d9e",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_periods",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "de00b23b6c988bc469f5a9e3d42698e3bcfcdef01bac8a94004c07331cb04be7",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_run_lines",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "d1fcd9c731bbfef300d81d283c612fb17cc052793cf96df78559644d47ec44d4",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_run_transitions",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "646a6c4d91dbab9426e224f6a2ba0df179292073c410bd3fdbf45a2239821af6",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "payroll_runs",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "190dbf2b3cfa2d5d4c5f470487b1be9fc1723036ea84ae52cae50593dfc90779",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "period_control_events",
+        "name": "period_control_event_retention",
+        "enabled": "O",
+        "functionName": "protect_period_control_event",
+        "arguments": "",
+        "triggerDefinitionSha256": "4e1f28e40f0242b53b960f3c5d63f28864f22fcd00030a2c66dcb6408fd85eb4",
+        "functionDefinitionSha256": "102acc4d5002f195a6007a465db71042b2a0c77e1fb31f4f4e7ad0ad3d0469be"
+      },
+      {
+        "table": "pos_commit_results",
+        "name": "pos_commit_results_enforce_lifecycle_trigger",
+        "enabled": "O",
+        "functionName": "pos_commit_results_enforce_lifecycle",
+        "arguments": "",
+        "triggerDefinitionSha256": "f335cdd313ad76ed1a5a99380862f17604a643bbcfa5e75ea622818c7cdd7587",
+        "functionDefinitionSha256": "5dfec8782eca41aace74544fe080d2fc6eafab18e9230b97d8016bdf122a46f1"
+      },
+      {
+        "table": "pos_commit_results",
+        "name": "pos_commit_results_enforce_scope_trigger",
+        "enabled": "O",
+        "functionName": "pos_commit_results_enforce_scope",
+        "arguments": "",
+        "triggerDefinitionSha256": "47472e1f5f96d3896993ff377608a85ee48f01fd9d1af63c6b9a6194d8ffa2bd",
+        "functionDefinitionSha256": "d6a3a616b9b56577bb1814181ae418c70890a15f8f8a2ce62f028cff36ea417e"
+      },
+      {
+        "table": "pos_offline_events",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "fd94b424e3ead0aab67dd4db630536eca442ead6d67e956ecee56db23565f72a",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "pos_offline_sync_certificates",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "5347710d87aa81154a854e1a8dee2e1af7185cfa1deb26d51913662bec9e626d",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "pos_offline_sync_conflicts",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "3762ff677156b9c19108e25956b2ebb440f6067beda1c8e3c40634056f74115b",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "provider_accounts",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "1571e1a12c7adf69964ba08f6e6b7c7fcf3ef9855281fec72011b77ff4f48cfc",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "provider_events",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "4aa0758a6b87df5d3caebeac1c98d91f59e42e56ae6aeda4bcfbbcaedb22cb85",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "reconciliation_no_activity_evidence",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "78a2f68fb7a24ec37eb871010ff76ab08ef3d3d1d560230dd1c7d8c29cfea63d",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "reconciliation_runs",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "244e3f60a978f76248be9ae34c752bd77dac447bea13012694a7a93045176b7e",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "settlement_accounts",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "1da411c2633559f118fe46fc56c138bd8d2d84c96f0e9f8b980a0d50c935cd3a",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "statement_files",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "060272491887752af14f65a3a8d88d0715226739d5acfb991fa77e7fc6b321ca",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "statement_lines",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "0b58feff601e7af02398b3dec8d1a2004cd45ef32e9c4c92626203ccde160a60",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "stock_adjustment_lines",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "892e829c21be02e1ebf75c3ba77bb59281bd593c316e6119fb73f3bc6aa32c5d",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "stock_adjustments",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "c0662214b209d34b576b6152d466a6013f68246bf066d820a9d4a582b5094f0f",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "stock_count_lines",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "4acfa3796a0269df1ac7c661123cc53e7aaf234ad8ca2fb03f1d86a73ae18757",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "stock_count_sessions",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "fe81a79f4bb7548721da866913eb78d0191cde4a9bb7df7a8e5d3fcd1cde966a",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "supplier_credit_notes",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "5a05d007acbc15c4bf3e06c082484f8ae35f8f027f98c1d4a9440963addf8dc2",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "supplier_invoice_match_exceptions",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "e1f2a3f48c611e0b66a0b1647e87aa6fc13a289c0c99e9e60a344cc0fa6d7c73",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "supplier_invoices",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "548c0f3aa42bed9e783ea6b376ecd6c7d212a2bad69081d4ba7388d5685fc82b",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "supplier_ledger_entries",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "8b1dcfe70c4c7fb5c16e9f12c20537a73cf056a0772b761d26a0643a62a33671",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "supplier_payment_allocations",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "2c36bdc08bd8b8132bf904666d06bd2b0b20a2c931146ffc98bfeced546282ba",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "supplier_payments",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "f572a25efa406e31e030e1dc1015b1620d6ff79565ff972e35bf90197d691804",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "table": "suspense_items",
+        "name": "close_source_revision_change",
+        "enabled": "O",
+        "functionName": "invalidate_close_on_source_change",
+        "arguments": "",
+        "triggerDefinitionSha256": "1fe80e668a489dd8d4a8056290e074e6492b154ef1d2e1bf9cc2eff71929fa59",
+        "functionDefinitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      }
+    ],
+    "functions": [
+      {
+        "name": "advance_close_source_revision",
+        "arguments": "org text, source_table text, source_id text, operation_name text",
+        "definitionSha256": "dad52145eb85dd644f8aeeb026331839cf7a7005c65444c3448219a53551b46b"
+      },
+      {
+        "name": "assert_journal_period_open",
+        "arguments": "org text, period_id text, economic_date timestamp without time zone",
+        "definitionSha256": "09c934d7b01c682fae817f8dd212f3cad8d26b3b2d245a7a46bd6fc2b14a01e5"
+      },
+      {
+        "name": "guard_journal_period_write",
+        "arguments": "",
+        "definitionSha256": "1329356bc8d816af612578c0efa7b4f1b4e84cd85acafbdf2096c644fa07ba38"
+      },
+      {
+        "name": "guard_period_control_transition",
+        "arguments": "",
+        "definitionSha256": "35e58ceae22164c746f9d060b30dd0469481ba11128c89cd90f7154ec32f2ae7"
+      },
+      {
+        "name": "invalidate_close_on_period_change",
+        "arguments": "",
+        "definitionSha256": "3ff3832e1449d4360fafa65f3d1954fab13aabd29850e65815903e33690955b6"
+      },
+      {
+        "name": "invalidate_close_on_source_change",
+        "arguments": "",
+        "definitionSha256": "38e7945847915e8eba492ecf8e303e2db0042f697324a419d3ed437e5e53db2a"
+      },
+      {
+        "name": "pos_commit_results_enforce_lifecycle",
+        "arguments": "",
+        "definitionSha256": "5dfec8782eca41aace74544fe080d2fc6eafab18e9230b97d8016bdf122a46f1"
+      },
+      {
+        "name": "pos_commit_results_enforce_scope",
+        "arguments": "",
+        "definitionSha256": "d6a3a616b9b56577bb1814181ae418c70890a15f8f8a2ce62f028cff36ea417e"
+      },
+      {
+        "name": "protect_period_control_event",
+        "arguments": "",
+        "definitionSha256": "102acc4d5002f195a6007a465db71042b2a0c77e1fb31f4f4e7ad0ad3d0469be"
+      },
+      {
+        "name": "receivable_prevent_allocation_relink",
+        "arguments": "",
+        "definitionSha256": "59b0c7d110b90675813b5bb34bed2d3101224873582b55a84c954920e126cd0f"
+      },
+      {
+        "name": "receivable_prevent_document_mutation",
+        "arguments": "",
+        "definitionSha256": "575c2cc305ea87c2bbc93da6e274c410f2c2d51908dd06714786b06cc1649514"
+      },
+      {
+        "name": "receivable_prevent_state_mutation",
+        "arguments": "",
+        "definitionSha256": "6caa737555ee5769d22b67b0d13422e7f9aaf08655225b1fc639a3e0ef2935c6"
+      },
+      {
+        "name": "stoquify_guard_journal_line_boundary",
+        "arguments": "",
+        "definitionSha256": "32762ea22bea321eae310c8d5b25521ece89d1e07c64b281cec22f98f30abb30"
+      },
+      {
+        "name": "stoquify_guard_journal_posted_status",
+        "arguments": "",
+        "definitionSha256": "f169f542e1b3ff68ea25d087147aff8b0ad3f3b543983ec9a390a868ad7c88e6"
+      }
+    ],
+    "checkConstraints": [
+      {
+        "table": "close_source_revisions",
+        "name": "close_source_revisions_revision_check",
+        "validated": true,
+        "definitionSha256": "516ba81339ddb3f3efa713b96c3db41dc02f1f28020309b82da585b1ddf37e37"
+      },
+      {
+        "table": "customer_receivable_document_states",
+        "name": "customer_receivable_document_states_hash_check",
+        "validated": true,
+        "definitionSha256": "fddec5e00bafe04b9192cd3a1c5556226b540fda84da181cd981d1779000c0ad"
+      },
+      {
+        "table": "customer_receivable_document_states",
+        "name": "customer_receivable_document_states_lineage_check",
+        "validated": true,
+        "definitionSha256": "37fee4d43799878852b05859a590d04501d73c912c01109a61b42a5533ec033f"
+      },
+      {
+        "table": "customer_receivable_document_states",
+        "name": "customer_receivable_document_states_money_check",
+        "validated": true,
+        "definitionSha256": "997735c480b43860f41566298e2dc93c9324f260fe650ca4f1345fcc26a8ebc0"
+      },
+      {
+        "table": "customer_receivable_document_states",
+        "name": "customer_receivable_document_states_reason_check",
+        "validated": true,
+        "definitionSha256": "611efd38264723a33a3eb183a2bbfa9cf6ad3740afadd458c8ac6e83824e918c"
+      },
+      {
+        "table": "customer_receivable_document_states",
+        "name": "customer_receivable_document_states_version_check",
+        "validated": true,
+        "definitionSha256": "3d68fb756a2b833a7000f5c66086429afe13f7a681f92fa282e7fe289038a88c"
+      },
+      {
+        "table": "customer_receivable_documents",
+        "name": "customer_receivable_documents_correction_check",
+        "validated": true,
+        "definitionSha256": "78bf2f30a2ca3bd1d65f2efe628fea5d28072a15b7f07040ab09093a06585236"
+      },
+      {
+        "table": "customer_receivable_documents",
+        "name": "customer_receivable_documents_hash_check",
+        "validated": true,
+        "definitionSha256": "a13b15738dc023b8d085ec7786c625a902d1b133584eed85d0c11d9226b1a7f9"
+      },
+      {
+        "table": "customer_receivable_documents",
+        "name": "customer_receivable_documents_identity_check",
+        "validated": true,
+        "definitionSha256": "0cbb18faa3fce7b821c6c4c92dba960b5b248567eefb5736a53992de38c82708"
+      },
+      {
+        "table": "customer_receivable_documents",
+        "name": "customer_receivable_documents_money_check",
+        "validated": true,
+        "definitionSha256": "440c37ef4ed345abc321a33445f51d5d728dad847f3de477178487e0fd246a3d"
+      },
+      {
+        "table": "customer_receivable_documents",
+        "name": "opening_receivable_origin",
+        "validated": true,
+        "definitionSha256": "6f3cfdc8ceb19ed7365f4db1bb741afba4d87215ae0552bfe19826dccd40be53"
+      },
+      {
+        "table": "customer_settlement_allocations",
+        "name": "opening_allocation_target",
+        "validated": true,
+        "definitionSha256": "e681f72ca3a39c13bf0c1a77e43ea4d22bba581d95ea0d8129360040b0210d73"
+      },
+      {
+        "table": "customer_settlements",
+        "name": "customer_settlements_reversed_evidence_complete_check",
+        "validated": true,
+        "definitionSha256": "336aa98d510fc445d5d311bbbe6d326b80a68080646d7e9a673f80e1e42a5fa9"
+      },
+      {
+        "table": "inventory_transactions",
+        "name": "inventory_transactions_reversal_control_check",
+        "validated": true,
+        "definitionSha256": "b0faba0e2e0da0b9d7452adfdb062fc0aeb72b75375d71f77344de45e761d140"
+      },
+      {
+        "table": "ledger_posting_batches",
+        "name": "ledger_posting_batches_cycle_scope_check",
+        "validated": true,
+        "definitionSha256": "e7b71b2399ab92fdc6530fcf9181b23a5333d3504490e775f4a5ab927d0317af"
+      },
+      {
+        "table": "pos_commit_results",
+        "name": "pos_commit_results_request_identity_check",
+        "validated": true,
+        "definitionSha256": "0d5ff0e0e9e598299df087424765fb4186a9d1505c30178fde0e0303523fc2ff"
+      },
+      {
+        "table": "pos_commit_results",
+        "name": "pos_commit_results_result_hash_check",
+        "validated": true,
+        "definitionSha256": "26d06485379f6d7e31778d903bbc67110273cc06e64346444a0246cf3d5a8892"
+      },
+      {
+        "table": "pos_commit_results",
+        "name": "pos_commit_results_state_shape_check",
+        "validated": true,
+        "definitionSha256": "3b3cd9f8ec176f2041d33b36296c3c93766b3bcb916f371c0c388b51cd8fdc2e"
+      }
+    ]
+  },
+  "before": [
+    {
+      "table": "customer_receivable_documents",
+      "totalCount": "11",
+      "scopedCount": "1",
+      "scopedRowsSha256": "2dbc080c91571f3478dafe8c84d64be727ca1ce70a925a23117467e670bb15fd"
+    },
+    {
+      "table": "customer_receivable_document_states",
+      "totalCount": "13",
+      "scopedCount": "3",
+      "scopedRowsSha256": "34f74e59fd74f0fd46e525abe186266a029d3152057c2f4f988f1bcff8308041"
+    },
+    {
+      "table": "customer_settlements",
+      "totalCount": "1",
+      "scopedCount": "1",
+      "scopedRowsSha256": "cf7c26904c01e7149756dff2ec633a75a040d66ea806c9fc7ff8ea924ff484dc"
+    },
+    {
+      "table": "customer_settlement_allocations",
+      "totalCount": "1",
+      "scopedCount": "1",
+      "scopedRowsSha256": "3eb48b7b0e86f0d312c05452618a803bbde264851883c16625e8c40e921d75e1"
+    },
+    {
+      "table": "customer_ledger_entries",
+      "totalCount": "13",
+      "scopedCount": "3",
+      "scopedRowsSha256": "255c1c6962b47f92964c46698f8401545dea2b184d9da29a5bc9ff518badf9f0"
+    },
+    {
+      "table": "sales_orders",
+      "totalCount": "17",
+      "scopedCount": "1",
+      "scopedRowsSha256": "9603131095d7ba0afb5384d92cf3ab47fb8291f99588a358a46e8021c8dfa622"
+    },
+    {
+      "table": "payments",
+      "totalCount": "22",
+      "scopedCount": "2",
+      "scopedRowsSha256": "c4f3ffa7263a021507d71173dc1a6affeecb9dedc19e8ac85cd4a35d3be7ecc5"
+    },
+    {
+      "table": "customers",
+      "totalCount": "17",
+      "scopedCount": "1",
+      "scopedRowsSha256": "98d6561462842e7849aac5bb93d878a91a7c9f55755ecebc0cea3159859773ef"
+    },
+    {
+      "table": "journal_entries",
+      "totalCount": "24",
+      "scopedCount": "4",
+      "scopedRowsSha256": "d81053289ae626fb6e92b433f473eda37f6f127f044858bddb482dd44c2add8d"
+    },
+    {
+      "table": "journal_entry_lines",
+      "totalCount": "70",
+      "scopedCount": "10",
+      "scopedRowsSha256": "a017eb1b39a5a26500e67fa56b208b8a10a3e3b6e6f7c3dad51702d329eaf822"
+    },
+    {
+      "table": "ledger_posting_batches",
+      "totalCount": "24",
+      "scopedCount": "4",
+      "scopedRowsSha256": "bab9cfbec192327adfbed94bc0dc2782e65a79d4fc8dcd43791a328929ab31a0"
+    },
+    {
+      "table": "accounting_source_links",
+      "totalCount": "24",
+      "scopedCount": "4",
+      "scopedRowsSha256": "878b731842deb4f50b4838deb05141abc16928c9e3c289783a7ace673974be23"
+    },
+    {
+      "table": "inventory_transactions",
+      "totalCount": "11",
+      "scopedCount": "1",
+      "scopedRowsSha256": "c47fb970eb87e5bab33506c38c08a340158b362eb8f471971f8d19188ea354c7"
+    },
+    {
+      "table": "pos_commit_results",
+      "totalCount": "11",
+      "scopedCount": "1",
+      "scopedRowsSha256": "0e96b77cf5abcc7797b0139de20be89614a63822ceb33541374be75c77174fde"
+    },
+    {
+      "table": "close_runs",
+      "totalCount": "3",
+      "scopedCount": "2",
+      "scopedRowsSha256": "a8cc60604f64d17adf54fcc9b199c74c7026df17b75bc58fae7794550bda49d5"
+    },
+    {
+      "table": "close_pack_exports",
+      "totalCount": "0",
+      "scopedCount": "0",
+      "scopedRowsSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "close_source_revisions",
+      "totalCount": "17",
+      "scopedCount": "1",
+      "scopedRowsSha256": "01c01f0e143ab0ffbb43be3cf4466f5e8684be06e07ca8cf33ba98dc8021cf93"
+    },
+    {
+      "table": "close_source_changes",
+      "totalCount": "531",
+      "scopedCount": "58",
+      "scopedRowsSha256": "2d5dda54db66f85ff85b36e0abf39d3ad9b9065e6815a1e98ecb232cc35ff547"
+    },
+    {
+      "table": "business_events",
+      "totalCount": "54",
+      "scopedCount": "9",
+      "scopedRowsSha256": "ac04d136a59775a0c61be5c3f887e69e79294fc9ad0fa34b6563331007d424b1"
+    },
+    {
+      "table": "business_event_outbox",
+      "totalCount": "59",
+      "scopedCount": "7",
+      "scopedRowsSha256": "65b6ddddadb951e95bb06a31b46e96f045f1820cded3178d44e35323a681fc34"
+    },
+    {
+      "table": "audit_logs",
+      "totalCount": "72",
+      "scopedCount": "13",
+      "scopedRowsSha256": "5fb36fa6c424178a9d1e20ca3104405bd8fad77d5045cc60a28a6f7e1d9443ef"
+    },
+    {
+      "table": "ledger_audit_events",
+      "totalCount": "50",
+      "scopedCount": "9",
+      "scopedRowsSha256": "a8916fb0d4ca1b74bd7e5c9f8e58a417751b2b0c58bbc6a8c2eb2c21dc53cb01"
+    }
+  ],
+  "closeEvidenceBefore": {
+    "revision": "58",
+    "changes": [
+      {
+        "table": "accounting_periods",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "6",
+        "last_revision": "6"
+      },
+      {
+        "table": "accounting_source_links",
+        "operation": "INSERT",
+        "count": "4",
+        "first_revision": "30",
+        "last_revision": "56"
+      },
+      {
+        "table": "business_events",
+        "operation": "INSERT",
+        "count": "7",
+        "first_revision": "17",
+        "last_revision": "57"
+      },
+      {
+        "table": "business_events",
+        "operation": "UPDATE",
+        "count": "6",
+        "first_revision": "20",
+        "last_revision": "58"
+      },
+      {
+        "table": "chart_of_accounts",
+        "operation": "INSERT",
+        "count": "6",
+        "first_revision": "7",
+        "last_revision": "15"
+      },
+      {
+        "table": "chart_of_accounts",
+        "operation": "UPDATE",
+        "count": "1",
+        "first_revision": "14",
+        "last_revision": "14"
+      },
+      {
+        "table": "fiscal_years",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "5",
+        "last_revision": "5"
+      },
+      {
+        "table": "inventory_levels",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "4",
+        "last_revision": "4"
+      },
+      {
+        "table": "inventory_levels",
+        "operation": "UPDATE",
+        "count": "1",
+        "first_revision": "18",
+        "last_revision": "18"
+      },
+      {
+        "table": "inventory_transactions",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "19",
+        "last_revision": "19"
+      },
+      {
+        "table": "items",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "3",
+        "last_revision": "3"
+      },
+      {
+        "table": "journal_entries",
+        "operation": "INSERT",
+        "count": "4",
+        "first_revision": "25",
+        "last_revision": "52"
+      },
+      {
+        "table": "journal_entries",
+        "operation": "UPDATE",
+        "count": "1",
+        "first_revision": "55",
+        "last_revision": "55"
+      },
+      {
+        "table": "journal_entry_lines",
+        "operation": "INSERT",
+        "count": "10",
+        "first_revision": "26",
+        "last_revision": "54"
+      },
+      {
+        "table": "journals",
+        "operation": "INSERT",
+        "count": "3",
+        "first_revision": "12",
+        "last_revision": "16"
+      },
+      {
+        "table": "ledger_posting_batches",
+        "operation": "INSERT",
+        "count": "4",
+        "first_revision": "23",
+        "last_revision": "50"
+      },
+      {
+        "table": "ledger_posting_batches",
+        "operation": "UPDATE",
+        "count": "4",
+        "first_revision": "24",
+        "last_revision": "51"
+      },
+      {
+        "table": "locations",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "2",
+        "last_revision": "2"
+      },
+      {
+        "table": "organizations",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "1",
+        "last_revision": "1"
+      }
+    ],
+    "invalidatedSentinels": [
+      {
+        "id": "cmw9c6ded00dcmap03dgq4sq8",
+        "status": "BLOCKED",
+        "stale_status": "EVIDENCE_STALE",
+        "source_code": "LEDGER_JOURNAL_POSTED"
+      },
+      {
+        "id": "cmw9c6e7500etmap0zcabs8s2",
+        "status": "BLOCKED",
+        "stale_status": "EVIDENCE_STALE",
+        "source_code": "LEDGER_JOURNAL_REVERSED"
+      }
+    ],
+    "limitation": "Observed after the real service chain; these are synthetic invalidation sentinels, not earned accountant certificates. Per-operation revision deltas require separately recorded stage snapshots."
+  },
+  "after": [
+    {
+      "table": "customer_receivable_documents",
+      "totalCount": "11",
+      "scopedCount": "1",
+      "scopedRowsSha256": "2dbc080c91571f3478dafe8c84d64be727ca1ce70a925a23117467e670bb15fd"
+    },
+    {
+      "table": "customer_receivable_document_states",
+      "totalCount": "13",
+      "scopedCount": "3",
+      "scopedRowsSha256": "34f74e59fd74f0fd46e525abe186266a029d3152057c2f4f988f1bcff8308041"
+    },
+    {
+      "table": "customer_settlements",
+      "totalCount": "1",
+      "scopedCount": "1",
+      "scopedRowsSha256": "cf7c26904c01e7149756dff2ec633a75a040d66ea806c9fc7ff8ea924ff484dc"
+    },
+    {
+      "table": "customer_settlement_allocations",
+      "totalCount": "1",
+      "scopedCount": "1",
+      "scopedRowsSha256": "3eb48b7b0e86f0d312c05452618a803bbde264851883c16625e8c40e921d75e1"
+    },
+    {
+      "table": "customer_ledger_entries",
+      "totalCount": "13",
+      "scopedCount": "3",
+      "scopedRowsSha256": "255c1c6962b47f92964c46698f8401545dea2b184d9da29a5bc9ff518badf9f0"
+    },
+    {
+      "table": "sales_orders",
+      "totalCount": "17",
+      "scopedCount": "1",
+      "scopedRowsSha256": "9603131095d7ba0afb5384d92cf3ab47fb8291f99588a358a46e8021c8dfa622"
+    },
+    {
+      "table": "payments",
+      "totalCount": "22",
+      "scopedCount": "2",
+      "scopedRowsSha256": "c4f3ffa7263a021507d71173dc1a6affeecb9dedc19e8ac85cd4a35d3be7ecc5"
+    },
+    {
+      "table": "customers",
+      "totalCount": "17",
+      "scopedCount": "1",
+      "scopedRowsSha256": "98d6561462842e7849aac5bb93d878a91a7c9f55755ecebc0cea3159859773ef"
+    },
+    {
+      "table": "journal_entries",
+      "totalCount": "24",
+      "scopedCount": "4",
+      "scopedRowsSha256": "d81053289ae626fb6e92b433f473eda37f6f127f044858bddb482dd44c2add8d"
+    },
+    {
+      "table": "journal_entry_lines",
+      "totalCount": "70",
+      "scopedCount": "10",
+      "scopedRowsSha256": "a017eb1b39a5a26500e67fa56b208b8a10a3e3b6e6f7c3dad51702d329eaf822"
+    },
+    {
+      "table": "ledger_posting_batches",
+      "totalCount": "24",
+      "scopedCount": "4",
+      "scopedRowsSha256": "bab9cfbec192327adfbed94bc0dc2782e65a79d4fc8dcd43791a328929ab31a0"
+    },
+    {
+      "table": "accounting_source_links",
+      "totalCount": "24",
+      "scopedCount": "4",
+      "scopedRowsSha256": "878b731842deb4f50b4838deb05141abc16928c9e3c289783a7ace673974be23"
+    },
+    {
+      "table": "inventory_transactions",
+      "totalCount": "11",
+      "scopedCount": "1",
+      "scopedRowsSha256": "c47fb970eb87e5bab33506c38c08a340158b362eb8f471971f8d19188ea354c7"
+    },
+    {
+      "table": "pos_commit_results",
+      "totalCount": "11",
+      "scopedCount": "1",
+      "scopedRowsSha256": "0e96b77cf5abcc7797b0139de20be89614a63822ceb33541374be75c77174fde"
+    },
+    {
+      "table": "close_runs",
+      "totalCount": "3",
+      "scopedCount": "2",
+      "scopedRowsSha256": "a8cc60604f64d17adf54fcc9b199c74c7026df17b75bc58fae7794550bda49d5"
+    },
+    {
+      "table": "close_pack_exports",
+      "totalCount": "0",
+      "scopedCount": "0",
+      "scopedRowsSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "close_source_revisions",
+      "totalCount": "17",
+      "scopedCount": "1",
+      "scopedRowsSha256": "01c01f0e143ab0ffbb43be3cf4466f5e8684be06e07ca8cf33ba98dc8021cf93"
+    },
+    {
+      "table": "close_source_changes",
+      "totalCount": "531",
+      "scopedCount": "58",
+      "scopedRowsSha256": "2d5dda54db66f85ff85b36e0abf39d3ad9b9065e6815a1e98ecb232cc35ff547"
+    },
+    {
+      "table": "business_events",
+      "totalCount": "54",
+      "scopedCount": "9",
+      "scopedRowsSha256": "ac04d136a59775a0c61be5c3f887e69e79294fc9ad0fa34b6563331007d424b1"
+    },
+    {
+      "table": "business_event_outbox",
+      "totalCount": "59",
+      "scopedCount": "7",
+      "scopedRowsSha256": "65b6ddddadb951e95bb06a31b46e96f045f1820cded3178d44e35323a681fc34"
+    },
+    {
+      "table": "audit_logs",
+      "totalCount": "72",
+      "scopedCount": "13",
+      "scopedRowsSha256": "5fb36fa6c424178a9d1e20ca3104405bd8fad77d5045cc60a28a6f7e1d9443ef"
+    },
+    {
+      "table": "ledger_audit_events",
+      "totalCount": "50",
+      "scopedCount": "9",
+      "scopedRowsSha256": "a8916fb0d4ca1b74bd7e5c9f8e58a417751b2b0c58bbc6a8c2eb2c21dc53cb01"
+    }
+  ],
+  "closeEvidenceAfter": {
+    "revision": "58",
+    "changes": [
+      {
+        "table": "accounting_periods",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "6",
+        "last_revision": "6"
+      },
+      {
+        "table": "accounting_source_links",
+        "operation": "INSERT",
+        "count": "4",
+        "first_revision": "30",
+        "last_revision": "56"
+      },
+      {
+        "table": "business_events",
+        "operation": "INSERT",
+        "count": "7",
+        "first_revision": "17",
+        "last_revision": "57"
+      },
+      {
+        "table": "business_events",
+        "operation": "UPDATE",
+        "count": "6",
+        "first_revision": "20",
+        "last_revision": "58"
+      },
+      {
+        "table": "chart_of_accounts",
+        "operation": "INSERT",
+        "count": "6",
+        "first_revision": "7",
+        "last_revision": "15"
+      },
+      {
+        "table": "chart_of_accounts",
+        "operation": "UPDATE",
+        "count": "1",
+        "first_revision": "14",
+        "last_revision": "14"
+      },
+      {
+        "table": "fiscal_years",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "5",
+        "last_revision": "5"
+      },
+      {
+        "table": "inventory_levels",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "4",
+        "last_revision": "4"
+      },
+      {
+        "table": "inventory_levels",
+        "operation": "UPDATE",
+        "count": "1",
+        "first_revision": "18",
+        "last_revision": "18"
+      },
+      {
+        "table": "inventory_transactions",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "19",
+        "last_revision": "19"
+      },
+      {
+        "table": "items",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "3",
+        "last_revision": "3"
+      },
+      {
+        "table": "journal_entries",
+        "operation": "INSERT",
+        "count": "4",
+        "first_revision": "25",
+        "last_revision": "52"
+      },
+      {
+        "table": "journal_entries",
+        "operation": "UPDATE",
+        "count": "1",
+        "first_revision": "55",
+        "last_revision": "55"
+      },
+      {
+        "table": "journal_entry_lines",
+        "operation": "INSERT",
+        "count": "10",
+        "first_revision": "26",
+        "last_revision": "54"
+      },
+      {
+        "table": "journals",
+        "operation": "INSERT",
+        "count": "3",
+        "first_revision": "12",
+        "last_revision": "16"
+      },
+      {
+        "table": "ledger_posting_batches",
+        "operation": "INSERT",
+        "count": "4",
+        "first_revision": "23",
+        "last_revision": "50"
+      },
+      {
+        "table": "ledger_posting_batches",
+        "operation": "UPDATE",
+        "count": "4",
+        "first_revision": "24",
+        "last_revision": "51"
+      },
+      {
+        "table": "locations",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "2",
+        "last_revision": "2"
+      },
+      {
+        "table": "organizations",
+        "operation": "INSERT",
+        "count": "1",
+        "first_revision": "1",
+        "last_revision": "1"
+      }
+    ],
+    "invalidatedSentinels": [
+      {
+        "id": "cmw9c6ded00dcmap03dgq4sq8",
+        "status": "BLOCKED",
+        "stale_status": "EVIDENCE_STALE",
+        "source_code": "LEDGER_JOURNAL_POSTED"
+      },
+      {
+        "id": "cmw9c6e7500etmap0zcabs8s2",
+        "status": "BLOCKED",
+        "stale_status": "EVIDENCE_STALE",
+        "source_code": "LEDGER_JOURNAL_REVERSED"
+      }
+    ],
+    "limitation": "Observed after the real service chain; these are synthetic invalidation sentinels, not earned accountant certificates. Per-operation revision deltas require separately recorded stage snapshots."
+  },
+  "guardInventoryAfterSha256": "17af5b78761caeaf9bff8b6f3aa18b1aebb2c8418f4d56610a1debfc7609342a",
+  "finishedAt": "2026-11-09T14:15:13.894Z"
+}

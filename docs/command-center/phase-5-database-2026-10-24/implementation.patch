@@ -1,0 +1,401 @@
+--- a/services/assurance/assurance-assignment.service.ts
++++ b/services/assurance/assurance-assignment.service.ts
+@@ -8,11 +8,12 @@
+ import { moduleForPath } from "@/services/modules/module-catalog.service"
+ import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.service"
+ import { isUsableAccount } from "@/services/roles/role-custodian-policy"
++import { assertAssuranceAssignmentScopeInTx } from "./assurance-assignment-scope"
+ import { assuranceAssignmentRevision } from "./assurance-assignment-revision"
+ import type { AssignWorkflowAssuranceIncidentInput } from "./assurance-incident-contracts"
+ 
+ type Account = Pick<User, "id" | "organizationId" | "isActive" | "isVerified" | "emailVerified" | "isLocked" | "lockedUntil">
+-type TenantRole = Pick<Role, "id" | "organizationId" | "permissions">
++type TenantRole = Pick<Role, "id" | "organizationId" | "permissions" | "code">
+ const activeStatuses = new Set(["OPEN", "ACKNOWLEDGED", "ASSIGNED", "IN_PROGRESS", "REOPENED"])
+ 
+ /** Existing incident/event/audit storage only. Caller owns the Serializable transaction.
+@@ -34,7 +35,7 @@
+     FROM "users" WHERE "organizationId" = ${input.organizationId}
+     AND "id" IN (${Prisma.join([...new Set([input.actorId, input.ownerId])].sort())}) ORDER BY "id" FOR SHARE`)
+   const roles = await tx.$queryRaw<TenantRole[]>(Prisma.sql`
+-    SELECT "id", "organizationId", "permissions" FROM "roles"
++    SELECT "id", "organizationId", "permissions", "code" FROM "roles"
+     WHERE "organizationId" = ${input.organizationId} ORDER BY "id" FOR SHARE`)
+   const memberships = await tx.$queryRaw<Array<{ roleId: string; userId: string }>>(Prisma.sql`
+     SELECT membership."A" AS "roleId", membership."B" AS "userId" FROM "_UserRoles" membership
+@@ -75,6 +76,12 @@
+   const incident = await tx.workflowAssuranceIncident.findFirst({where: {id: input.incidentId, organizationId: input.organizationId}, include: {definition: true}})
+   if (!incident) throw new NotFoundError("Workflow assurance incident not found.")
+   revalidate(incident.definition.requiredPermission)
++
++  const party = (id: string) => ({id, permissions: permissions(id), roleCodes: roles.filter(role =>
++    memberships.some(membership => membership.userId === id && membership.roleId === role.id)).map(role => role.code)})
++  const assignmentScope = await assertAssuranceAssignmentScopeInTx(tx, {
++    organizationId: input.organizationId, incident, actor: party(input.actorId), owner: party(input.ownerId),
++  })
+ 
+   // Definitions may use a broad module (finance) while their source route belongs
+   // to a narrower product (payment reconciliation). Require both, never infer
+@@ -133,7 +140,7 @@
+   const after = {status: updated.status, ownerId: updated.ownerId, assignedRole: updated.assignedRole, dueAt: updated.dueAt?.toISOString() ?? null}
+   const metadata = {assignmentRequestId: input.requestId, requestHash, expectedRevision: input.expectedRevision,
+     resultRevision: assuranceAssignmentRevision(updated), sourceHash: incident.sourceHash,
+-    sourceType: incident.sourceType, sourceFingerprint: incident.fingerprint, occurrenceCount: incident.occurrenceCount, before, after}
++    assignmentScope, sourceType: incident.sourceType, sourceFingerprint: incident.fingerprint, occurrenceCount: incident.occurrenceCount, before, after}
+   await tx.workflowAssuranceIncidentEvent.create({data: {organizationId: input.organizationId, incidentId: incident.id,
+     eventType: "ASSIGNED", fromStatus: incident.status, toStatus: updated.status, actorId: input.actorId,
+     message: "Workflow assurance incident assigned", metadata}})
+--- a/services/assurance/__tests__/assurance-assignment.service.test.ts
++++ b/services/assurance/__tests__/assurance-assignment.service.test.ts
+@@ -9,14 +9,14 @@
+ function record() {
+   return {id: "incident-1", organizationId: "org-1", status: "OPEN", ownerId: null, assignedRole: "finance",
+     dueAt: new Date("2026-10-30T00:00:00Z"), updatedAt: new Date("2026-10-24T12:00:00Z"), sourceHash: "source-1",
+-    moduleSlug: "finance", occurrenceCount: 1, fingerprint: "fingerprint-1", sourceType: "reconciliation.run", sourceId: "run-1",
++    workflow: "PAYMENT_RECONCILIATION", moduleSlug: "finance", occurrenceCount: 1, fingerprint: "fingerprint-1", checkKey: "payment_reconciliation.unsigned_run_sla.visible", sourceType: "reconciliation_runs", sourceId: "unsigned_ready_runs",
+     definition: {moduleSlug: "finance", actionRoute: "/dashboard/finance/reconciliation", requiredPermission: "payments.reconciliation.read", ownerRole: "finance"}}
+ }
+ function fixture() {
+   let current = record()
+   const events: any[] = []
+   const users = ["actor", "owner"].map(id => ({id, organizationId: "org-1", isActive: true, isVerified: true, emailVerified: false, isLocked: false, lockedUntil: null}))
+-  const roles = [{id: "role", organizationId: "org-1", permissions: ["controls.manage", "controls.audit.read", "payments.reconciliation.read"]}]
++  const roles = [{id: "role", code: "admin", organizationId: "org-1", permissions: ["controls.manage", "controls.audit.read", "payments.reconciliation.read"]}]
+   const memberships = users.map(u => ({userId: u.id, roleId: "role"}))
+   const sessions = [{id: "session", userId: "actor", expiresAt: expiry}]
+   let organizations = [{id: "org-1", requestedModules: [] as string[]}]
+--- a/docs/command-center/phase-0-2026-10-24/ACCEPTANCE_CHECKLIST.md
++++ b/docs/command-center/phase-0-2026-10-24/ACCEPTANCE_CHECKLIST.md
+@@ -162,3 +162,12 @@
+ [Continuation evidence](../phase-5-follow-through-2026-10-24/README.md) adds transactional module entitlement enforcement to assurance assignment, including narrower source destinations, dependencies, revocation on replay and authority expiry during result lookup. CC-05.2/05.6 now have additional mocked module-boundary evidence; source-specific location eligibility and real database proof remain open.
+ 
+ The [occurrence/storage contract](../phase-5-follow-through-2026-10-24/OCCURRENCE_AND_STORAGE_CONTRACT.md) defines identities, episodes, revision-bound review and future verification for CC-05.7/05.8. It is a design artifact, not implemented persistence. The [notification handoff](../phase-5-follow-through-2026-10-24/LOCATION_AND_NOTIFICATION_HANDOFF.md) traces existing delivery patterns for CC-06.7/06.8 without enabling or sending notifications. Full Phase 5 and Phase 6 checkboxes remain open.
++
++
++## Phase 5 disposable database evidence — 24 October 2026
++
++The user authorized disposable test-database verification. [Current evidence](../phase-5-database-2026-10-24/README.md) supersedes earlier not-run statements for this bounded assurance slice: **31 real PostgreSQL tests (26 assignment + 5 case identity), 126 mocked/pure/component tests, zero skipped**. The private cluster was stopped; production and the configured application database were not accessed. Existing schema/package/registry changes were preserved.
++
++CC-05.1–05.5 and CC-05.10 now have real assurance persistence, replay, concurrency, rollback, scope/history and new-session evidence. CC-05.2 adds active/undeleted POS location binding, same-tenant session/terminal checks and current actor/assignee authority; known aggregates require both parties to hold tenant-wide authority, and unknown sources fail closed. CC-05.6 adds assignment/replay revocation and concurrent account/manager changes; it does not certify every read or browser recovery.
++
++CC-05.7/05.8 gain existing assurance stable-case/deduplication, changed-source/reopen and definition-version evidence. CC-06.7/06.8 gain alert-row deduplication evidence only; no delivery occurred. Whole-phase checkboxes remain open for all-origin coordination, generic episode recurrence, durable review receipts, three-view integration and live rendered journeys. The disposable schema-model bootstrap is not migration-history rehearsal.
+--- a/docs/command-center/phase-0-2026-10-24/ACTION_SOURCE_MAP.md
++++ b/docs/command-center/phase-0-2026-10-24/ACTION_SOURCE_MAP.md
+@@ -105,3 +105,10 @@
+ Assurance assignment now reuses `evaluateModuleAccessInTx` in enforce/write mode for the definition module and narrower catalog destination module, with current grant dependencies and current actor/session checks on replay. Unknown/inconsistent module identity fails closed; only the existing `business-events` to `dashboard` alias is supported. No role wildcard bypasses entitlement.
+ 
+ [Occurrence/storage decisions](../phase-5-follow-through-2026-10-24/OCCURRENCE_AND_STORAGE_CONTRACT.md) keep source key, occurrence, evidence revision and command ID distinct. Assurance `occurrenceCount` is a detection counter, not a generic episode ID. [Location and notification handoff](../phase-5-follow-through-2026-10-24/LOCATION_AND_NOTIFICATION_HANDOFF.md) records remaining source-specific scope and transport gates. No schema, database or delivery worker was changed/executed by this continuation.
++
++
++## Phase 5 location and database update — 24 October 2026
++
++[Current disposable verification](../phase-5-database-2026-10-24/README.md) adds `assurance-assignment-scope.ts` to the source-owned assignment transaction. Registered POS cash-shortage incidents bind to the real same-tenant session, terminal and active/undeleted location; current location responsibility or existing tenant-wide authority is required independently for actor and assignee. The terminal's current-session pointer is not used for a historical closed shift. Explicit known registry aggregates require tenant-wide authority for both parties. Unknown/employee-bound sources are denied pending dedicated adapters. Client metadata never supplies authority.
++
++The existing incident event receives scope kind/fingerprint. Source/terminal/location locks and all previous session, permission, module, revision and replay controls remain in the same transaction. No source business command or producer activation changed. Real PostgreSQL verifies assignment persistence/races/rollback and existing case/alert-row deduplication; this is not generic episode storage, a three-page integration test or notification transport certification. The user-authorized cluster used synthetic data and was stopped. The repository schema and existing application database were unchanged by this work.
+--- a/design-system/stoquify/pages/command-center-shared.md
++++ b/design-system/stoquify/pages/command-center-shared.md
+@@ -89,3 +89,10 @@
+ [Continuation evidence](../../../docs/command-center/phase-5-follow-through-2026-10-24/README.md) adds current module/dependency enforcement at the existing assurance assignment source. A denied or read-only source module requires the existing source-access recovery; assignment retry cannot bypass current entitlement. No new frontend surface is added.
+ 
+ The occurrence and future storage contract distinguishes logical source, retained episode, evidence revision and command identity. Material evidence invalidates review; an old matching hash cannot restore a prior review automatically. Source disappearance remains uncertainty. Notifications remain subject to Phase 5 persistence/scope prerequisites and Phase 6 recipient/delivery gates; this continuation enables no delivery.
++
++
++## Phase 5 scope verification — 24 October 2026
++
++[Disposable database evidence](../../../docs/command-center/phase-5-database-2026-10-24/README.md) verifies source-owned assurance assignment with current POS location responsibility or tenant-wide authority, explicit tenant-wide aggregate handling, and denial for sources without a proven scope adapter. Both actor and assignee retain independent source/action permission and module requirements. Scope is resolved on the server and rechecked on replay.
++
++Real persistence, concurrent updates, rollback, revocation and existing assurance case/alert-row identity now have bounded PostgreSQL evidence. No frontend changed in this slice. This does not make generic signal follow-up persistent, turn a visit-only Owner review into a durable receipt, or certify all three projections. Whole-program acceptance remains governed by the checklist.
+--- /dev/null
++++ b/services/assurance/assurance-assignment-scope.ts
+@@ -0,0 +1,89 @@
++import "server-only"
++
++import { createHash } from "node:crypto"
++import { Prisma } from "@prisma/client"
++import { ForbiddenError } from "@/services/_shared/action-errors"
++import { resolveTenantWideOperatingAuthority } from "@/services/operating-access/operating-access-scope-contracts"
++
++// Explicit aggregate identities emitted by assurance-registry.service.ts. Unknown
++// employee/record sources need their own binding adapter, even for administrators.
++const aggregateSources = new Set([
++  JSON.stringify(["journal_entries", "posted_source_backed_entries"]),
++  JSON.stringify(["ledger_posting_batches", "posted_batches_missing_journal"]),
++  JSON.stringify(["journal_entries", "unbalanced_posted_entries"]),
++  JSON.stringify(["fiscal_documents", "final_documents_missing_hash"]),
++  JSON.stringify(["accounting_periods", "closed_period_late_postings"]),
++  JSON.stringify(["ledger_posting_batches", "failed_posting_batches"]),
++  JSON.stringify(["sales_orders", "completed_pos_sales_missing_payment"]),
++  JSON.stringify(["sales_orders", "completed_pos_sales_missing_receipt"]),
++  JSON.stringify(["inventory_transactions", "completed_pos_sales_missing_stock_movement"]),
++  JSON.stringify(["ledger_posting_batches", "completed_pos_sales_missing_ledger_source_link"]),
++  JSON.stringify(["payments", "network_tenders_missing_idempotency_hash"]),
++  JSON.stringify(["pos_offline_events", "offline_replay_sla"]),
++  JSON.stringify(["pos_offline_events", "accepted_events_missing_business_event"]),
++  JSON.stringify(["pos_offline_sync_conflicts", "sequence_hash_conflict_visibility"]),
++  JSON.stringify(["pos_offline_events", "blocked_events_missing_conflict_evidence"]),
++  JSON.stringify(["pos_offline_events", "replayed_events_missing_replay_proof"]),
++  JSON.stringify(["payment_exceptions", "overdue_serious_exceptions"]),
++  JSON.stringify(["suspense_items", "aged_suspense_missing_owner"]),
++  JSON.stringify(["provider_events", "stale_unmatched_provider_events"]),
++  JSON.stringify(["reconciliation_runs", "unsigned_ready_runs"]),
++  JSON.stringify(["reconciliation_runs", "signed_runs_stale_certificate_hash"]),
++  JSON.stringify(["purchase_orders", "po_approval_receipt_trace"]),
++  JSON.stringify(["goods_receipts", "received_goods_missing_stock_movement"]),
++  JSON.stringify(["supplier_invoices", "supplier_invoices_missing_three_way_match"]),
++  JSON.stringify(["supplier_invoices", "posted_supplier_invoices_missing_ap_proof"]),
++  JSON.stringify(["supplier_payments", "released_payments_missing_evidence"]),
++  JSON.stringify(["supplier_payments", "released_payments_pending_bank_change"]),
++  JSON.stringify(["stock_adjustments", "completed_adjustments_missing_evidence"]),
++  JSON.stringify(["payroll_payment_batches", "released_payroll_payments_missing_evidence"]),
++  JSON.stringify(["payroll_payment_batches", "payroll_payment_reconciliation_exceptions"]),
++  JSON.stringify(["payment_reconciliation_inbox_items", "provider_inbox_worker_sla"]),
++  JSON.stringify(["payroll_declarations", "payroll_declaration_lifecycle_exceptions"]),
++  JSON.stringify(["close_pack_exports", "payroll_stale_close_evidence"]),
++  JSON.stringify(["compliance_submissions", "submission_sla_aggregate"]),
++  JSON.stringify(["close_pack_exports", "certified_packs_with_open_findings"]),
++  JSON.stringify(["business_events", "event_status_aggregate"]),
++  JSON.stringify(["business_event_outbox", "outbox_sla_aggregate"]),
++])
++
++type Party = { id: string; permissions: readonly string[]; roleCodes: readonly string[] }
++
++/** Assignment scope only. Call after current accounts, roles and incident are
++ * locked. Never infer a location from incident metadata, labels or routes. */
++export async function assertAssuranceAssignmentScopeInTx(tx: Prisma.TransactionClient, input: {
++  organizationId: string
++  incident: { checkKey: string; sourceType: string; sourceId: string; workflow: string; moduleSlug: string }
++  actor: Party
++  owner: Party
++}) {
++  const wide = (party: Party) => Boolean(resolveTenantWideOperatingAuthority({
++    isSuperUser: party.permissions.includes("*"), roleCodes: party.roleCodes,
++  }))
++  const denied = () => new ForbiddenError("Current source location authority is required for the actor and assignee.")
++  if (input.incident.sourceType === "POSSession") {
++    if (input.incident.checkKey !== "pos.closed_shift_cash_shortage.review" || input.incident.workflow !== "POS" || input.incident.moduleSlug !== "pos") throw denied()
++    const sources = await tx.$queryRaw<Array<{ locationId: string }>>(Prisma.sql`
++      SELECT session."locationId" FROM "pos_sessions" session
++      INNER JOIN "pos_terminals" terminal ON terminal."id" = session."terminalId"
++        AND terminal."organizationId" = session."organizationId" AND terminal."locationId" = session."locationId"
++      WHERE session."id" = ${input.incident.sourceId}
++      AND session."organizationId" = ${input.organizationId} FOR SHARE OF session, terminal`)
++    if (sources.length !== 1) throw denied()
++    const locations = await tx.$queryRaw<Array<{ id: string; managerId: string | null }>>(Prisma.sql`
++      SELECT "id", "managerId" FROM "locations" WHERE "id" = ${sources[0].locationId}
++      AND "organizationId" = ${input.organizationId} AND "isActive" = true AND "deletedAt" IS NULL FOR SHARE`)
++    const location = locations[0]
++    if (locations.length !== 1 || [input.actor, input.owner].some(party => !wide(party) && location.managerId !== party.id)) throw denied()
++    return {kind: "LOCATION" as const, fingerprint: createHash("sha256").update(JSON.stringify([
++      "assurance-assignment-scope-v1", input.organizationId, "POSSession", input.incident.sourceId, location.id,
++    ])).digest("hex")}
++  }
++  // Known aggregate sources have no proven location binding and require
++  // tenant-wide authority. Unknown sources are denied until an adapter exists.
++  // Other payroll/financial permissions remain independently required.
++  if (!aggregateSources.has(JSON.stringify([input.incident.sourceType, input.incident.sourceId])) || !wide(input.actor) || !wide(input.owner)) throw denied()
++  return {kind: "TENANT" as const, fingerprint: createHash("sha256").update(JSON.stringify([
++    "assurance-assignment-scope-v1", input.organizationId, "TENANT", input.incident.sourceType, input.incident.sourceId,
++  ])).digest("hex")}
++}
+--- /dev/null
++++ b/services/assurance/__tests__/assurance-assignment-scope.test.ts
+@@ -0,0 +1,30 @@
++jest.mock("server-only",()=>({}))
++import {Prisma} from "@prisma/client"
++import {assertAssuranceAssignmentScopeInTx} from "../assurance-assignment-scope"
++const admin={id:"actor",roleCodes:["admin"],permissions:[]}
++const manager={id:"owner",roleCodes:["branch_manager"],permissions:[]}
++const pos={checkKey:"pos.closed_shift_cash_shortage.review",sourceType:"POSSession",sourceId:"session",workflow:"POS",moduleSlug:"pos"}
++const aggregate={checkKey:"payment_reconciliation.suspense_owner.required",sourceType:"suspense_items",sourceId:"aged_suspense_missing_owner",workflow:"PAYMENT_RECONCILIATION",moduleSlug:"finance"}
++function fixture(){
++ const raw=jest.fn(async(sql:Prisma.Sql)=>sql.strings.join('?').includes('FROM "pos_sessions"')?[{locationId:"branch"}]:[{id:"branch",managerId:"owner"}])
++ const tx={$queryRaw:raw} as unknown as Prisma.TransactionClient
++ return {raw,run:(overrides={})=>assertAssuranceAssignmentScopeInTx(tx,{organizationId:"org",incident:pos,actor:admin,owner:manager,...overrides})}
++}
++it("uses actual session/terminal binding and current manager, not metadata",async()=>{
++ const f=fixture();await expect(f.run()).resolves.toMatchObject({kind:"LOCATION",fingerprint:expect.any(String)})
++ const sql=f.raw.mock.calls[0][0];expect(sql.strings.join('?')).toContain('terminal."locationId" = session."locationId"');expect(sql.values).toEqual(["session","org"])
++})
++it("accepts a manager assigning to themself in their own location",async()=>{await expect(fixture().run({actor:manager})).resolves.toMatchObject({kind:"LOCATION"})})
++it.each(["actor","owner"])("refuses wrong-location %s",async party=>{await expect(fixture().run({[party]:{...manager,id:"outsider"}})).rejects.toThrow(/location authority/)})
++it.each([0,1])("refuses missing source or unavailable location at read %i",async n=>{
++ const f=fixture();if(n===0)f.raw.mockResolvedValueOnce([]);else f.raw.mockResolvedValueOnce([{locationId:"branch"}]).mockResolvedValueOnce([])
++ await expect(f.run()).rejects.toThrow(/location authority/)
++})
++it("does not accept POSSession from an unrelated producer",async()=>{await expect(fixture().run({incident:{...pos,checkKey:"other"}})).rejects.toThrow(/location authority/)})
++it("allows known aggregate coordination only to tenant-wide parties",async()=>{
++ await expect(fixture().run({incident:aggregate,owner:admin})).resolves.toMatchObject({kind:"TENANT"})
++ await expect(fixture().run({incident:aggregate})).rejects.toThrow(/location authority/)
++})
++it.each(["PayrollEmployee","unknown"])("refuses unsupported %s scope even for admin",async sourceType=>{
++ await expect(fixture().run({incident:{...aggregate,sourceType},owner:admin})).rejects.toThrow(/location authority/)
++})
+--- /dev/null
++++ b/services/assurance/__tests__/assurance-assignment.postgres.test.ts
+@@ -0,0 +1,166 @@
++import { randomUUID } from "node:crypto"
++import path from "node:path"
++import { Prisma, PrismaClient } from "@prisma/client"
++
++jest.mock("server-only", () => ({}))
++// A missing flag is an error, never a passing skipped certification.
++if (process.env.RUN_COMMAND_CENTER_ASSIGNMENT_POSTGRES !== "1") throw new Error("Disposable runner is required")
++const {assertDisposableDatabaseTarget}=require("../../../scripts/disposable-fixture-guard")
++const database=process.env.COMMAND_CENTER_DISPOSABLE_DATABASE!
++if (!/^stoquify_local_command_center_[a-f0-9]{10}$/.test(database ?? "")) throw new Error("Unexpected disposable database name")
++assertDisposableDatabaseTarget(process.env.DATABASE_URL,[database])
++const {db}=require("@/prisma/db") as {db: PrismaClient}
++const {assignWorkflowAssuranceIncident}=require("../assurance-incident.service") as typeof import("../assurance-incident.service")
++const {assuranceAssignmentRevision}=require("../assurance-assignment-revision") as typeof import("../assurance-assignment-revision")
++
++let definitionVersion=0
++const permissions=["controls.manage","controls.audit.read","payments.reconciliation.read","pos.transactions.read"]
++async function fixture(pos=false){
++  const id=randomUUID()
++  const organization=await db.organization.create({data:{name:"Synthetic Command Center",slug:"cc-"+id,currency:"XAF"}})
++  const role=await db.role.create({data:{organizationId:organization.id,code:"admin",nameEn:"Fixture admin",permissions}})
++  const makeUser=(tag:string)=>db.user.create({data:{organizationId:organization.id,email:`cc-${tag}-${id}@example.invalid`,isVerified:true,roles:{connect:{id:role.id}}}})
++  const actor=await makeUser("actor"),owner=await makeUser("owner"),other=await makeUser("other")
++  const session=await db.session.create({data:{userId:actor.id,token:randomUUID(),expiresAt:new Date(Date.now()+3_600_000)}})
++  let sourceId="aged_suspense_missing_owner",locationId:string|null=null
++  if(pos){
++    const location=await db.location.create({data:{organizationId:organization.id,name:"Synthetic branch",code:"A",managerId:owner.id}});locationId=location.id
++    const terminal=await db.pOSStation.create({data:{organizationId:organization.id,locationId:location.id,terminalNumber:"A",name:"Synthetic terminal"}})
++    const source=await db.pOSSession.create({data:{organizationId:organization.id,terminalId:terminal.id,locationId:location.id,userId:actor.id,sessionNumber:"A",status:"CLOSED"}});sourceId=source.id
++  }
++  const definition=await db.workflowAssuranceCheckDefinition.create({data:{checkKey:pos?"pos.closed_shift_cash_shortage.review":"payment_reconciliation.suspense_owner.required",version:++definitionVersion,workflow:pos?"POS":"PAYMENT_RECONCILIATION",moduleSlug:pos?"pos":"finance",invariantName:"Synthetic assignment control",executionMode:"SCHEDULED_SCAN",defaultSeverity:"HIGH",requiredPermission:pos?"pos.transactions.read":"payments.reconciliation.read",ownerRole:"finance",sourceTables:[],actionRoute:pos?"/dashboard/pos":"/dashboard/finance/reconciliation"}})
++  const incident=await db.workflowAssuranceIncident.create({data:{organizationId:organization.id,definitionId:definition.id,checkKey:definition.checkKey,definitionVersion:definition.version,workflow:definition.workflow,moduleSlug:definition.moduleSlug,sourceType:pos?"POSSession":"suspense_items",sourceId,sourceHash:"fixture-source-revision",fingerprint:"fixture-"+id,title:"Synthetic incident",detail:"Synthetic evidence",severity:"HIGH",actionRoute:definition.actionRoute,dueAt:new Date("2026-12-01T00:00:00Z")}})
++  const input={organizationId:organization.id,incidentId:incident.id,actorId:actor.id,ownerId:owner.id,session:{id:session.id,token:session.token},expectedRevision:assuranceAssignmentRevision(incident),requestId:randomUUID()}
++  const events=()=>db.workflowAssuranceIncidentEvent.count({where:{organizationId:organization.id,incidentId:incident.id,eventType:"ASSIGNED"}})
++  const audits=()=>db.auditLog.count({where:{organizationId:organization.id,entityId:incident.id,action:"WORKFLOW_ASSURANCE_INCIDENT_ASSIGNED"}})
++  const scopeRole=async(userId:string)=>{const r=await db.role.upsert({where:{organizationId_code:{organizationId:organization.id,code:"branch_manager"}},create:{organizationId:organization.id,code:"branch_manager",nameEn:"Fixture branch manager",permissions},update:{}});await db.user.update({where:{id:userId},data:{roles:{set:[{id:r.id}]}}})}
++  return {organization,role,actor,owner,other,session,definition,incident,input,locationId,events,audits,scopeRole}
++}
++async function row(id:string){return db.workflowAssuranceIncident.findUniqueOrThrow({where:{id}})}
++const pause=(ms:number)=>new Promise(resolve=>setTimeout(resolve,ms))
++async function waitForLock(fragment:string){
++  const until=Date.now()+7000
++  while(Date.now()<until){
++    const rows=await db.$queryRaw<Array<{n:bigint}>>`SELECT count(*)::bigint AS n FROM pg_stat_activity WHERE datname=current_database() AND pid<>pg_backend_pid() AND wait_event_type='Lock' AND query LIKE ${"%"+fragment+"%"}`
++    if(Number(rows[0].n)>0)return
++    await pause(20)
++  }
++  throw new Error("Expected competing PostgreSQL lock wait was not observed")
++}
++
++beforeAll(async()=>{
++  const actual=await db.$queryRaw<Array<{name:string;directory:string;address:string}>>`SELECT current_database() AS name,current_setting('data_directory') AS directory,host(inet_server_addr()) AS address`
++  expect(actual[0].name).toBe(database);expect(actual[0].address).toBe("127.0.0.1")
++  expect(path.resolve(actual[0].directory).toLowerCase()).toBe(path.resolve(process.env.COMMAND_CENTER_DISPOSABLE_CLUSTER!).toLowerCase())
++})
++afterAll(async()=>{await db.$disconnect()})
++
++it("persists assignment across a fresh client/session and replays without duplicate history",async()=>{
++ const f=await fixture();await assignWorkflowAssuranceIncident(f.input)
++ const fresh=new PrismaClient({datasources:{db:{url:process.env.DATABASE_URL}}})
++ try{const saved=await fresh.workflowAssuranceIncident.findUniqueOrThrow({where:{id:f.incident.id}});expect(saved.ownerId).toBe(f.owner.id);expect(saved.status).toBe("ASSIGNED");expect(saved.dueAt).toEqual(f.incident.dueAt)}finally{await fresh.$disconnect()}
++ const session=await db.session.create({data:{userId:f.actor.id,token:randomUUID(),expiresAt:new Date(Date.now()+60_000)}})
++ await assignWorkflowAssuranceIncident({...f.input,session:{id:session.id,token:session.token}})
++ expect(await f.events()).toBe(1);expect(await f.audits()).toBe(1)
++ const event=await db.workflowAssuranceIncidentEvent.findFirstOrThrow({where:{incidentId:f.incident.id}})
++ expect(event.metadata).toMatchObject({assignmentRequestId:f.input.requestId,assignmentScope:{kind:"TENANT"},before:{ownerId:null,status:"OPEN"},after:{ownerId:f.owner.id,status:"ASSIGNED"}})
++})
++it("rejects changed request intent without another write",async()=>{
++ const f=await fixture();await assignWorkflowAssuranceIncident(f.input)
++ await expect(assignWorkflowAssuranceIncident({...f.input,dueAt:null})).rejects.toThrow(/changed/)
++ expect(await f.events()).toBe(1)
++})
++it("allows only one competing assignment at the same revision",async()=>{
++ const f=await fixture();const result=await Promise.allSettled([assignWorkflowAssuranceIncident(f.input),assignWorkflowAssuranceIncident({...f.input,ownerId:f.other.id,requestId:randomUUID()})])
++ expect(result.filter(r=>r.status==="fulfilled")).toHaveLength(1);expect(result.filter(r=>r.status==="rejected")).toHaveLength(1)
++ expect(await f.events()).toBe(1);expect(await f.audits()).toBe(1)
++})
++it("converges simultaneous identical requests after recoverable conflict retry",async()=>{
++ const f=await fixture();const result=await Promise.allSettled([assignWorkflowAssuranceIncident(f.input),assignWorkflowAssuranceIncident(f.input)])
++ expect(result.some(r=>r.status==="fulfilled")).toBe(true)
++ await assignWorkflowAssuranceIncident(f.input)
++ expect(await f.events()).toBe(1);expect(await f.audits()).toBe(1)
++})
++it.each(["event","audit"])("rolls back assignment and all history when %s persistence fails",async phase=>{
++ const f=await fixture();const table=phase==="event"?"workflow_assurance_incident_events":"audit_logs",column=phase==="event"?"incidentId":"entityId"
++ // Controlled identifiers and fixture-generated cuid; executed only after private-cluster assertion.
++ if(!/^[a-z0-9]+$/.test(f.incident.id))throw Error("Unexpected fixture ID")
++ await db.$executeRawUnsafe(`CREATE FUNCTION cc_assignment_inject_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'synthetic assignment failure'; END $$`)
++ await db.$executeRawUnsafe(`CREATE TRIGGER cc_assignment_failure BEFORE INSERT ON "${table}" FOR EACH ROW WHEN (NEW."${column}"='${f.incident.id}') EXECUTE FUNCTION cc_assignment_inject_failure()`)
++ try{await expect(assignWorkflowAssuranceIncident(f.input)).rejects.toThrow();expect(await row(f.incident.id)).toMatchObject({status:"OPEN",ownerId:null});expect(await f.events()).toBe(0);expect(await f.audits()).toBe(0)}
++ finally{await db.$executeRawUnsafe(`DROP TRIGGER cc_assignment_failure ON "${table}"`);await db.$executeRawUnsafe('DROP FUNCTION cc_assignment_inject_failure()')}
++})
++it("denies a different tenant's incident and assignee",async()=>{
++ const a=await fixture(),b=await fixture()
++ await expect(assignWorkflowAssuranceIncident({...a.input,incidentId:b.incident.id})).rejects.toThrow(/not found/)
++ await expect(assignWorkflowAssuranceIncident({...a.input,ownerId:b.owner.id})).rejects.toThrow(/assignee/)
++ expect(await a.events()).toBe(0);expect(await b.events()).toBe(0)
++})
++it.each(["account","membership","session"])("rechecks persisted %s revocation on replay",async kind=>{
++ const f=await fixture();await assignWorkflowAssuranceIncident(f.input)
++ if(kind==="account")await db.user.update({where:{id:f.owner.id},data:{isActive:false}})
++ if(kind==="membership")await db.user.update({where:{id:f.actor.id},data:{roles:{set:[]}}})
++ if(kind==="session")await db.session.delete({where:{id:f.session.id}})
++ await expect(assignWorkflowAssuranceIncident(f.input)).rejects.toThrow();expect(await f.events()).toBe(1)
++})
++it("does not admit an assignment behind an in-flight account revocation",async()=>{
++ const f=await fixture();let entered!:()=>void,release!:()=>void
++ const ready=new Promise<void>(resolve=>entered=resolve),gate=new Promise<void>(resolve=>release=resolve)
++ const revocation=db.$transaction(async tx=>{await tx.user.update({where:{id:f.owner.id},data:{isActive:false}});entered();await gate},{timeout:15000})
++ await ready;const assignment=assignWorkflowAssuranceIncident(f.input).then(()=>"accepted",()=>"refused")
++ try{await waitForLock('FROM "users"')}finally{release()}
++ await revocation;expect(await assignment).toBe("refused");expect(await f.events()).toBe(0)
++})
++it("checks current module grants again on replay",async()=>{
++ const f=await fixture();await assignWorkflowAssuranceIncident(f.input)
++ await db.tenantModuleConfiguration.create({data:{organizationId:f.organization.id,manifestHash:"synthetic-empty-grants"}})
++ await expect(assignWorkflowAssuranceIncident(f.input)).rejects.toThrow(/module access/);expect(await f.events()).toBe(1)
++})
++it("accepts the actual POS location manager and retains scope history",async()=>{
++ const f=await fixture(true);await f.scopeRole(f.owner.id);await assignWorkflowAssuranceIncident(f.input)
++ expect(await f.events()).toBe(1)
++ const event=await db.workflowAssuranceIncidentEvent.findFirstOrThrow({where:{incidentId:f.incident.id}})
++ expect(event.metadata).toMatchObject({assignmentScope:{kind:"LOCATION",fingerprint:expect.any(String)}})
++})
++it.each(["owner","actor","inactive","deleted","foreign","foreign-location","foreign-terminal","terminal","unknown-check"])("rejects wrong or unavailable POS location authority: %s",async kind=>{
++ const f=await fixture(true);await f.scopeRole(f.owner.id)
++ const foreign=kind.startsWith("foreign")?await db.organization.create({data:{name:"Synthetic other tenant",slug:"cc-other-"+randomUUID()}}):null
++ if(kind==="owner")await db.location.update({where:{id:f.locationId!},data:{managerId:f.other.id}})
++ if(kind==="actor")await f.scopeRole(f.actor.id)
++ if(kind==="inactive")await db.location.update({where:{id:f.locationId!},data:{isActive:false}})
++ if(kind==="deleted")await db.location.update({where:{id:f.locationId!},data:{deletedAt:new Date()}})
++ if(kind==="foreign-location")await db.location.update({where:{id:f.locationId!},data:{organizationId:foreign!.id}})
++ if(kind==="foreign-terminal"){const source=await db.pOSSession.findUniqueOrThrow({where:{id:f.incident.sourceId}});await db.pOSStation.update({where:{id:source.terminalId},data:{organizationId:foreign!.id}})}
++ if(kind==="unknown-check"){await db.workflowAssuranceCheckDefinition.update({where:{id:f.definition.id},data:{checkKey:"synthetic.unsupported.pos"}});await db.workflowAssuranceIncident.update({where:{id:f.incident.id},data:{checkKey:"synthetic.unsupported.pos"}});f.input.expectedRevision=assuranceAssignmentRevision(await row(f.incident.id))}
++ if(kind==="foreign")await db.pOSSession.update({where:{id:f.incident.sourceId},data:{organizationId:foreign!.id}})
++ if(kind==="terminal"){
++  const other=await db.location.create({data:{organizationId:f.organization.id,name:"Other branch",code:"B"}})
++  const source=await db.pOSSession.findUniqueOrThrow({where:{id:f.incident.sourceId}});await db.pOSStation.update({where:{id:source.terminalId},data:{locationId:other.id}})
++ }
++ await expect(assignWorkflowAssuranceIncident(f.input)).rejects.toThrow(/location authority/);expect(await f.events()).toBe(0)
++})
++it("rechecks a manager replacement before replay",async()=>{
++ const f=await fixture(true);await f.scopeRole(f.owner.id);await assignWorkflowAssuranceIncident(f.input)
++ await db.location.update({where:{id:f.locationId!},data:{managerId:f.other.id}})
++ await expect(assignWorkflowAssuranceIncident(f.input)).rejects.toThrow(/location authority/);expect(await f.events()).toBe(1)
++})
++it("rejects a concurrent manager replacement before assignment commits",async()=>{
++ const f=await fixture(true);await f.scopeRole(f.owner.id);let entered!:()=>void,release!:()=>void
++ const ready=new Promise<void>(resolve=>entered=resolve),gate=new Promise<void>(resolve=>release=resolve)
++ const change=db.$transaction(async tx=>{await tx.location.update({where:{id:f.locationId!},data:{managerId:f.other.id}});entered();await gate},{timeout:15000})
++ await ready;const assignment=assignWorkflowAssuranceIncident(f.input).then(()=>"accepted",()=>"refused")
++ try{await waitForLock('FROM "locations"')}finally{release()}
++ await change;expect(await assignment).toBe("refused");expect(await f.events()).toBe(0)
++})
++it("does not infer aggregate location authority from a branch role or caller metadata",async()=>{
++ const f=await fixture();await f.scopeRole(f.owner.id)
++ await db.workflowAssuranceIncident.update({where:{id:f.incident.id},data:{metadata:{locationId:"invented",assignmentScope:{kind:"TENANT"}}}})
++ await expect(assignWorkflowAssuranceIncident({...f.input,expectedRevision:assuranceAssignmentRevision(await row(f.incident.id))})).rejects.toThrow(/location authority/)
++ expect(await f.events()).toBe(0)
++})
++
++it("denies unsupported employee-bound source assignment even to administrators",async()=>{
++ const f=await fixture();await db.workflowAssuranceIncident.update({where:{id:f.incident.id},data:{sourceType:"PayrollEmployee",sourceId:"unknown-employee"}})
++ await expect(assignWorkflowAssuranceIncident({...f.input,expectedRevision:assuranceAssignmentRevision(await row(f.incident.id))})).rejects.toThrow(/location authority/)
++ expect(await f.events()).toBe(0)
++})

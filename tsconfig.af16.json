@@ -1,0 +1,67 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "noEmit": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@prisma/client": [
+        "./.codex-tmp/af16-prisma/client"
+      ]
+    }
+  },
+  "include": [
+    "actions/accounting/accountant-access.actions.ts",
+    "services/accounting/accountant-access.service.ts",
+    "services/accounting/accountant-access.schemas.ts",
+    "services/accounting/accountant-portfolio.service.ts",
+    "services/accounting/accountant-portfolio-proof.service.ts",
+    "services/accounting/close-period-selection.service.ts",
+    "services/accounting/close-assurance-current-proof.ts",
+    "services/accounting/close-assessment-order.service.ts",
+    "services/accounting/close-assurance.service.ts",
+    "components/accounting/AccountantPortfolio.tsx",
+    "app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx",
+    "next-env.d.ts",
+    "actions/accounting/firm-engagement.actions.ts",
+    "actions/accounting/data-trust.actions.ts",
+    "actions/accounting/accountant-work-desk.actions.ts",
+    "components/accounting/FirmEngagementWorkspace.tsx",
+    "components/accounting/AccountantInvitationDelivery.tsx",
+    "app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx",
+    "actions/accounting/delegated-evidence-desk.actions.ts",
+    "components/accounting/AccountantWorkDesk.tsx",
+    "components/accounting/AccountantPortfolioWorkspace.tsx",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts",
+    "services/payments/statement-import.service.ts",
+    "services/reconciliation/account-close-coverage.service.ts",
+    "services/accounting/review-workpaper*.ts",
+    "actions/accounting/review-workpaper.actions.ts",
+    "components/accounting/ReviewWorkpaperBinder.tsx",
+    "components/accounting/AccountantPortal.tsx",
+    "services/onboarding/opening-position*.ts",
+    "actions/onboarding/opening-position.actions.ts",
+    "components/onboarding/OpeningPositionWorkbench.tsx",
+    "app/[locale]/(dashboard)/dashboard/accounting/opening-position/page.tsx",
+    "services/onboarding/opening-cutover*.ts",
+    "services/onboarding/opening-domain-source.ts",
+    "services/accounting/opening-*.service.ts",
+    "services/purchasing/opening-payable.service.ts",
+    "services/accounting/customer-settlement*.ts",
+    "actions/onboarding/opening-cutover.actions.ts",
+    "components/onboarding/OpeningCutoverPanel.tsx",
+    "services/onboarding/opening-readiness.ts",
+    "components/onboarding/OpeningReadinessPanel.tsx",
+    "services/compliance/obligation-register*.ts",
+    "actions/accounting/obligation-register.actions.ts",
+    "components/accounting/ObligationRegister.tsx",
+    "services/accounting/advisory-outcomes*.ts",
+    "actions/accounting/advisory-outcomes.actions.ts",
+    "components/accounting/AdvisoryOutcomesDesk.tsx",
+    "services/accounting/firm-practice*.ts",
+    "actions/accounting/firm-practice.actions.ts",
+    "components/accounting/FirmPracticeDesk.tsx"
+  ]
+}

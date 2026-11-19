@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T12:40:53.084Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "scope": "Pure observer evidence tests only; no app, real browser, database or network execution",
+  "passed": true,
+  "exitCode": 0,
+  "tests": 67,
+  "passedTests": 67,
+  "failed": 0,
+  "skipped": 0,
+  "sourceManifestSha256": "1c3e267a344c17795fc9819ea7bdce55a8aae0e3431b343ce407dc29d235ecd2",
+  "limitations": [
+    "The initial reviewer invocation failed before spawning because process is unavailable in the Node REPL; the subsequent exact inspected pure-test command completed successfully.",
+    "These checks do not establish runtime delivery, authorization or consumer behavior."
+  ]
+}

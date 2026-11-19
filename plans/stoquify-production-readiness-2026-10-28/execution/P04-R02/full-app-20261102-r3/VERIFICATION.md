@@ -1,0 +1,11 @@
+# R3 full application qualification recipe
+
+Fresh D:/p04-r02-fullapp-20261102-r3, requiring more than12GiB free at preparation. Root source snapshot plus private physical installed dependencies; no environment files copied. No clean-install claim. Prior r2 frozen candidate and failed artifact evidence remain unchanged.
+
+The source fixture explicitly adds public-control PNG and public/images/p04-private-alias.png, and extends only the candidate private-upload-aliases policy with one synthetic row. The three original private mappings remain exact. Root and candidate policy SHA, synthetic bytes and source additions/override are admitted explicitly. Root test:dev:startup registry fingerprint intentionally remains bound to the three-row root policy; that manifest lane is not claimed to run inside the fixture candidate. Root configuration tests and workflow contract passed before capture.
+
+Actual build: private Prisma generate with exact canonical output proof, then normal release:artifact -> build -> conditional local secrets preflight -> lint -> build:app. No schema promotion, migration or deployment. Actual artifact verification must reconcile four private aliases and all six upload mappings.
+
+Runtime requires successful bound build and fresh bound database readiness before process start. Application runs outside checkout with parent/global dependency fallback checks. HTTPS3192 proxies loopback standalone3193; external Node sockets/environment-file reads denied. Only synthetic actors/data. Exact270 original-alias probes are accepted by a bounded safety proxy only when upstream returns canonical safe denial bytes; unexpectedstatus/body is intercepted and fails qualification. No original positive reads or rendering. Synthetic alias tests exercise actual sign-in, positive/negative GET/HEAD, optimizer, expired/revoked/changedauthority and cache recovery. EN/FR actualitemconsumers are recorded separately.
+
+Final evidence distinguishes source preservation, native database effects, real HTTP, rendered/browser behavior and hosted/operator gates. Intentional synthetic lifecycle/session changes are not called whole-database invariance. Preserve before/after denial snapshots and report final deltas. Stop only owned processes and cluster after zero-other-client admission; retain data and failed receipts.

@@ -6,6 +6,7 @@ import { hasVerifiedReceiptPosting, receiptPostingEvidenceSelect } from "@/servi
 import { readReceiptRecognitionEvidence, readReceiptRecognitionSource, type ReceiptRecognitionSource } from "@/services/purchase-order/receipt-recognition-source"
 import { readReceiptReturnAllocations } from "./receipt-return-recognition"
 import { allocateReceiptCost, receiptCostAllocationSchema } from "@/services/inventory/receipt-cost-allocation"
+import { invoiceLineNet, readInvoiceCommercialMatch } from "./invoice-commercial-basis"
 
 const money = (value: Prisma.Decimal.Value) => new Prisma.Decimal(value).toDecimalPlaces(2)
 const quantity = (value: Prisma.Decimal.Value) => new Prisma.Decimal(value).toDecimalPlaces(3)
@@ -40,7 +41,7 @@ export type InvoiceReceiptRecognition = z.infer<typeof recognitionSchema>
 export type InvoiceReceiptRecognitionInput = {
   organizationId: string; supplierId: string; invoiceId: string; currency: string
   subtotal: Prisma.Decimal.Value; total: Prisma.Decimal.Value; taxAmount: Prisma.Decimal.Value
-  lines: Array<{ goodsReceiptLineId: string | null; quantity: Prisma.Decimal.Value; unitCost: Prisma.Decimal.Value }>
+  lines: Array<{ goodsReceiptLineId: string | null; quantity: Prisma.Decimal.Value; unitCost: Prisma.Decimal.Value; metadata?: unknown; taxRate?: Prisma.Decimal.Value; taxAmount?: Prisma.Decimal.Value }>
   // Presence of this property means recovery, including an absent legacy proof.
   retainedRecognition?: unknown
 }
@@ -53,7 +54,11 @@ export type InvoiceReceiptRecognitionResult = {
 function sourceHash(input: InvoiceReceiptRecognitionInput) {
   return hashBusinessPayload({ organizationId: input.organizationId, supplierId: input.supplierId, invoiceId: input.invoiceId, currency: input.currency,
     subtotal: money(input.subtotal).toFixed(2), total: money(input.total).toFixed(2), taxAmount: money(input.taxAmount).toFixed(2),
-    lines: input.lines.map(line => ({ receiptLineId: line.goodsReceiptLineId, quantity: quantity(line.quantity).toFixed(3), unitCost: money(line.unitCost).toFixed(2) }))
+    lines: input.lines.map(line => {
+      const commercial = readInvoiceCommercialMatch(line.metadata)
+      return { receiptLineId: line.goodsReceiptLineId, quantity: quantity(line.quantity).toFixed(3), unitCost: money(line.unitCost).toFixed(2),
+        ...(commercial ? { purchaseCommercial: commercial, taxRate: quantity(line.taxRate ?? 0).toFixed(3), taxAmount: money(line.taxAmount ?? 0).toFixed(2) } : {}) }
+    })
       .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))),
   })
 }
@@ -65,7 +70,7 @@ export function readInvoiceReceiptRecognition(value: unknown, input: InvoiceRece
   for (const allocation of proof.allocations) {
     const lines = input.lines.filter(line => line.goodsReceiptLineId === allocation.receiptLineId)
     const allocatedQuantity = lines.reduce((sum, line) => sum.plus(quantity(line.quantity)), new Prisma.Decimal(0))
-    const allocatedNet = lines.reduce((sum, line) => sum.plus(money(quantity(line.quantity).times(money(line.unitCost)))), new Prisma.Decimal(0))
+    const allocatedNet = lines.reduce((sum, line) => sum.plus(invoiceLineNet(line)), new Prisma.Decimal(0))
     if (!lines.length || !allocatedQuantity.eq(allocation.quantity) || !allocatedNet.eq(allocation.invoiceNet)) throw review("Receipt allocation does not cover its exact invoice lines.")
     if (allocation.costAllocation && (proof.version === 1 || allocation.costAllocation.quantity !== quantity(allocation.quantity).toFixed(3) || allocation.costAllocation.allocatedValue !== money(allocation.receiptCost).toFixed(2))) throw review("Receipt allocation policy does not match its retained cost.")
   }
@@ -76,7 +81,7 @@ export function readInvoiceReceiptRecognition(value: unknown, input: InvoiceRece
     for (const residual of proof.residualSources!) {
       const lines = input.lines.filter(line => line.goodsReceiptLineId === residual.receiptLineId)
       const q = lines.reduce((sum, line) => sum.plus(quantity(line.quantity)), new Prisma.Decimal(0))
-      const net = lines.reduce((sum, line) => sum.plus(money(quantity(line.quantity).times(money(line.unitCost)))), new Prisma.Decimal(0))
+      const net = lines.reduce((sum, line) => sum.plus(invoiceLineNet(line)), new Prisma.Decimal(0))
       if (!lines.length || q.lte(0) || !q.eq(residual.quantity) || !net.eq(residual.invoiceNet)) throw review("Retained non-stock treatment does not match its invoice lines.")
     }
   }
@@ -161,7 +166,7 @@ export async function resolveInvoiceReceiptRecognition(tx: Prisma.TransactionCli
     if (input.retainedRecognition != null) throw review("Previously recognized receipt accounting is no longer verified.")
     return legacy
   }
-  const invoiceNet = input.lines.reduce((sum, line) => sum.plus(money(quantity(line.quantity).times(money(line.unitCost)))), new Prisma.Decimal(0))
+  const invoiceNet = input.lines.reduce((sum, line) => sum.plus(invoiceLineNet(line)), new Prisma.Decimal(0))
   if (input.lines.some(line => quantity(line.quantity).lte(0) || money(line.unitCost).lt(0)) || !invoiceNet.eq(subtotal) || taxAmount.lt(0) || !subtotal.plus(taxAmount).eq(total)) throw review("Invoice quantities or totals do not match the receipt allocation source.")
   const isRecognizedLine = (receiptId: string, lineId: string) => recognized.has(receiptId) && (!markedSources.has(receiptId) || markedSources.get(receiptId)!.manifest.lines.some(line => line.receiptLineId === lineId && line.stockTracked))
   const recognizedLines = sources.filter(line => isRecognizedLine(line.goodsReceiptId, line.id)), recognizedIds = recognizedLines.map(line => line.id)
@@ -182,7 +187,7 @@ export async function resolveInvoiceReceiptRecognition(tx: Prisma.TransactionCli
   for (const line of input.lines) {
     if (!line.goodsReceiptLineId) continue
     const current = grouped.get(line.goodsReceiptLineId) ?? { quantity: new Prisma.Decimal(0), net: new Prisma.Decimal(0) }
-    grouped.set(line.goodsReceiptLineId, { quantity: current.quantity.plus(quantity(line.quantity)), net: current.net.plus(money(quantity(line.quantity).times(money(line.unitCost)))) })
+    grouped.set(line.goodsReceiptLineId, { quantity: current.quantity.plus(quantity(line.quantity)), net: current.net.plus(invoiceLineNet(line)) })
   }
   const retained = recovering ? readInvoiceReceiptRecognition(input.retainedRecognition, input) : null
   if (retained && (retained.version === 3) !== requiresSourceTreatment) throw review("The retained invoice uses a different receipt treatment. Its accounting requires source review rather than automatic conversion.")
@@ -206,7 +211,7 @@ export async function resolveInvoiceReceiptRecognition(tx: Prisma.TransactionCli
       if (!invoiceLines.length) continue
       const allocated = proof.allocations.find(a => a.receiptLineId === receiptLineId)
       const priorQuantity = invoiceLines.reduce((sum, line) => sum.plus(line.quantity), new Prisma.Decimal(0))
-      const priorNet = invoiceLines.reduce((sum, line) => sum.plus(money(line.quantity.times(line.unitCost))), new Prisma.Decimal(0))
+      const priorNet = invoiceLines.reduce((sum, line) => sum.plus(invoiceLineNet(line)), new Prisma.Decimal(0))
       if (!allocated || !quantity(allocated.quantity).eq(priorQuantity) || !money(allocated.invoiceNet).eq(priorNet)) throw review("An earlier invoice is missing its complete receipt allocation.")
     }
     const event = await tx.businessEvent.findFirst({ where: { id: invoice.postedBusinessEventId, organizationId: input.organizationId } })

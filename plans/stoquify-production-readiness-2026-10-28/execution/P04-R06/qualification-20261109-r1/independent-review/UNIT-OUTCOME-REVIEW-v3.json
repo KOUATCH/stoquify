@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-10T08:46:11.726Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Actual current-source mocked unit attempt03 only",
+  "inputsReceiptSha256": "7ff5831f41507b19c8c2069e6ebb1cb5dbc83d4d4bb7e4594ef1739e480c6503",
+  "admissionSha256": "48b0a6dab0468174b251b4cf0d3c9e8c4845b9ef74e09287ccaa9fcef4d0687d",
+  "evidence": [
+    {
+      "path": "unit/attempt03/jest.json",
+      "sha256": "65e8711339eeee4ca310f761f6096216341c7ef5f8a4e4d2faa0efc80361a2bd"
+    },
+    {
+      "path": "unit/attempt03/receipt.json",
+      "sha256": "cd8a65883a218ee217c8c95412bfc203b107e19c13267a41b194c48fd44a2ce7"
+    },
+    {
+      "path": "unit/attempt03/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "unit/attempt03/stderr.log",
+      "sha256": "b10cfe54cc281315ed1b1c216e2cc41894d9a3c870dede92b3744f5aafa50ff6"
+    }
+  ],
+  "counts": {
+    "passedTests": 87,
+    "failedTests": 0,
+    "pendingTests": 0,
+    "passedSuites": 4
+  },
+  "sourceAndRecipesStillMatch": true,
+  "limitations": [
+    "Mocked database/SDK imports only",
+    "No real-session, native database, typecheck, full-build or browser success claimed"
+  ]
+}

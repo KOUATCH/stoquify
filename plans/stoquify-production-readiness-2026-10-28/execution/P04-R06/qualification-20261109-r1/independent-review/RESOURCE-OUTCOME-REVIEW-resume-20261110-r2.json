@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-10T09:05:06.929Z",
+  "reviewer": "/root/r06_review",
+  "passed": false,
+  "scope": "Actual final capacity gate for unchanged isolated build retry",
+  "receipt": {
+    "path": "resource-resume-20261110-r2.json",
+    "sha256": "57b55df78eae89b66ab1180ec01d318a680a33b5fe78521d7810548bf80f2a4e"
+  },
+  "capturedAt": "2026-11-10T09:03:16.9258389Z",
+  "freeGiB": {
+    "physical": 4.461517333984375,
+    "commit": 3.3953819274902344,
+    "buildDrive": 22.039718627929688
+  },
+  "requiredGiB": {
+    "physical": 6,
+    "commit": 12,
+    "buildDrive": 12
+  },
+  "failures": [
+    "physical_memory_headroom",
+    "commit_headroom"
+  ],
+  "buildEligible": false,
+  "limitations": [
+    "Time-specific measurement, not an exact diagnosis of prior native OOM.",
+    "A future resource pass permits a reviewed attempt, not automatic qualification."
+  ]
+}

@@ -92,6 +92,15 @@ describe("Prisma migration catalog gate", () => {
     );
 
     expect(validateManifest(root).status).toBe("ready");
+
+    // A reviewed pair must not admit another migration at the same timestamp.
+    const third = path.join(root, "prisma/migrations/20260828090000_third");
+    fs.mkdirSync(third);
+    fs.writeFileSync(path.join(third, "migration.sql"), "SELECT 3;\n");
+    writeManifest(root);
+    expect(validateManifest(root).errors).toContain(
+      "duplicate_migration_timestamp_not_grandfathered",
+    );
   });
 
   it("fails on an unmanifested migration", () => {

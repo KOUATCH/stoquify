@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T15:31:33.985Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Actual reported six pure synthetic helper tests only",
+  "files": [
+    {
+      "path": "private-metadata-test-result.json",
+      "sha256": "7bf0bc7ccbb233a0fa9141c95c04cf25b9f4ebcf0dc6335d8ef358d00b2f1e85"
+    },
+    {
+      "path": "independent-review/PRIVATE-METADATA-TEST-ADMISSION.json",
+      "sha256": "696949baa62bc20681f9358d7d258119bcbe8d887b537a5184f291ed690829d3"
+    },
+    {
+      "path": "verify-private-metadata-exclusion.cjs",
+      "sha256": "4ebc6034ef45760738f686de16410665ec3fa7f1be52567a311ec13238630da8"
+    },
+    {
+      "path": "verify-private-metadata-exclusion.test.cjs",
+      "sha256": "006a138c7ea9e357292abc480b77b3657dba30d136feacfda8e731dd696d1244"
+    }
+  ],
+  "observed": {
+    "tests": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "exitCode": 0,
+    "toolChunk": "7f4e42"
+  },
+  "method": "Reconciled worker recorded actual tool exit/TAP case results with exact independently admitted source hashes. No duplicate test run.",
+  "limits": [
+    "No actual sealed artifact or referenced private external file was opened by these tests.",
+    "Live artifact exclusion and application/native/browser qualification remain pending."
+  ],
+  "qualificationPassed": false
+}

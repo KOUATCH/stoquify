@@ -63,6 +63,7 @@ import {
   postPayrollRun,
   reviewPayrollRun,
 } from "../payroll-control.service";
+import { historyFixture } from "@/tests/fixtures/payroll-history-proof";
 
 const mockRecordBusinessEventInTx = recordBusinessEventInTx as jest.Mock;
 const mockMarkBusinessEventAppliedInTx =
@@ -814,6 +815,18 @@ describe("postPayrollRun EMITTED -> POSTED", () => {
   });
 });
 describe("approvePayrollRun REVIEWED -> APPROVED", () => {
+  it("denies a new approval when its v2 observed prior payroll disappeared", async () => {
+    const { current } = historyFixture("org-1", "stale-approval");
+    const run = { ...reviewedRun, ...current, status: PayrollRunStatus.REVIEWED, version: 2 };
+    const tx = buildTx(run);
+    tx.payrollRun.findFirst.mockReset().mockResolvedValue(run);
+    Object.assign(tx.payrollRun, { findMany: jest.fn().mockResolvedValue([]) });
+    await expect(approvePayrollRun(approvalInput({ payrollRunId: run.id }), serializableClient(tx) as never))
+      .rejects.toMatchObject({ code: "CONFLICT", metadata: { domain: "payroll_history_proof", reason: "OBSERVED_HISTORY_CHANGED" } });
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
+    expect(tx.payrollRunTransition.create).not.toHaveBeenCalled();
+    expect(tx.payrollRun.updateMany).not.toHaveBeenCalled();
+  });
   it("atomically records the distinct approval event and compare-and-set transition", async () => {
     const tx = buildTx();
     const client = serializableClient(tx);
@@ -1083,4 +1096,36 @@ describe("approvePayrollRun REVIEWED -> APPROVED", () => {
       }),
     ).rejects.toMatchObject({ code: "INVALID_TRANSITION", status: 409 });
   });
+});
+
+test("denies new v2 combined posting when the old feature switch is disabled", async () => {
+  process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED = "false";
+  const { current } = historyFixture("org-1", "combined-v2");
+  const run = { ...reviewedRun, ...current, status: PayrollRunStatus.REVIEWED };
+  const tx = buildTx(run);
+  await expect(approveAndPostPayrollRun({
+    organizationId: "org-1", payrollRunId: run.id, approvedById: "approver-1",
+    actorPermissions: ["payroll.runs.approve"], lastAuthAt: FRESH_AUTH_AT, now: NOW,
+    idempotencyKey: "combined-v2-denial",
+  }, serializableClient(tx) as never)).rejects.toMatchObject({ code: "INVALID_TRANSITION", status: 409 });
+  expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
+  expect(mockCreateLedgerPostingBatch).not.toHaveBeenCalled();
+  expect(tx.payrollRun.updateMany).not.toHaveBeenCalled();
+});
+
+test.each(["review", "emit", "post"])("denies new %s transition when v2 history is stale", async stage => {
+  const { current } = historyFixture("org-1", "stale-" + stage);
+  const original = stage === "review" ? calculatedRun : stage === "emit" ? approvedEmissionRun : emittedRun;
+  const run = { ...original, ...current, status: original.status, version: original.version };
+  const tx = buildTx(run);
+  tx.payrollRun.findFirst.mockReset().mockResolvedValue(run);
+  Object.assign(tx.payrollRun, { findMany: jest.fn().mockResolvedValue([]) });
+  const input = { organizationId: "org-1", payrollRunId: run.id, actorId: "independent-actor", expectedVersion: run.version,
+    actorPermissions: ["payroll.runs.review", "payroll.runs.approve", "payroll.payslips.emit", "payroll.runs.post"],
+    lastAuthAt: FRESH_AUTH_AT, now: NOW, idempotencyKey: "stale-" + stage };
+  const command = stage === "review" ? reviewPayrollRun : stage === "emit" ? emitPayrollPayslips : postPayrollRun;
+  await expect(command(input, serializableClient(tx) as never)).rejects.toMatchObject({ code: "CONFLICT", metadata: { domain: "payroll_history_proof" } });
+  expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
+  expect(mockCreateLedgerPostingBatch).not.toHaveBeenCalled();
+  expect(tx.payrollRun.updateMany).not.toHaveBeenCalled();
 });

@@ -1,4 +1,5 @@
-import { promises as fs } from "fs"
+import { readLegacyUpload } from "@/lib/media/legacy-upload-storage"
+import { legacyUploadDestination } from "@/lib/media/legacy-upload-routing"
 import { GET } from "../route"
 import { requireApiModuleAccess, requireApiSessionForCurrentOrg, requireAppPermission } from "@/lib/security/server-authz"
 
@@ -23,13 +24,22 @@ jest.mock("next/server", () => ({
   },
 }))
 
-jest.mock("fs", () => ({
-  ...jest.requireActual("fs"),
-  promises: {
-    ...jest.requireActual("fs").promises,
-    access: jest.fn(),
-    readFile: jest.fn(),
-  },
+jest.mock("@/lib/media/legacy-upload-storage", () => ({
+  ...jest.requireActual("@/lib/media/legacy-upload-storage"),
+  readLegacyUpload: jest.fn(),
+}))
+
+// This lane tests route authorization and response behavior, without importing
+// the application logger/Prisma error graph. Canonical normalization has its own tests.
+jest.mock("@/lib/error-handling/route-response", () => ({
+  jsonAuthzError: (_error: string, status: number) => ({
+    status,
+    json: async () => ({ code: status === 401 ? "AUTH_REQUIRED" : "FORBIDDEN", error: status === 401 ? "Unauthenticated" : "Forbidden" }),
+  }),
+  jsonErrorResponse: (_error: unknown, options: any) => ({
+    status: options.status || 500,
+    json: async () => ({ code: options.code || "INTERNAL_ERROR", error: options.userMessage }),
+  }),
 }))
 
 jest.mock("@/lib/security/server-authz", () => ({
@@ -45,8 +55,7 @@ jest.mock("@/lib/logger", () => ({
 const mockRequireApiModuleAccess = requireApiModuleAccess as jest.Mock
 const mockRequireApiSessionForCurrentOrg = requireApiSessionForCurrentOrg as jest.Mock
 const mockRequireAppPermission = requireAppPermission as jest.Mock
-const mockAccess = fs.access as jest.Mock
-const mockReadFile = fs.readFile as jest.Mock
+const mockReadFile = readLegacyUpload as jest.Mock
 
 function params(pathSegments: string[]) {
   return { params: Promise.resolve({ path: pathSegments }) }
@@ -57,8 +66,43 @@ describe("GET /api/uploads/[...path]", () => {
     jest.clearAllMocks()
     mockRequireApiModuleAccess.mockResolvedValue({ allowed: true, error: null, status: 200 })
     mockRequireAppPermission.mockReturnValue(undefined)
-    mockAccess.mockResolvedValue(undefined)
     mockReadFile.mockResolvedValue(Buffer.from("image-bytes"))
+  })
+
+  const aliases = [
+    ["/images/cabin-1.jpg", "a032d164-c607-4d66-9050-367cf45f0008.jpg"],
+    ["/images/cabin-2.jpg", "f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg"],
+    ["/images/profile.jpg", "56492210-f588-4db0-a970-f245e574ab06.jpg"],
+  ]
+
+  test.each(aliases)("preserves authorized reads for private alias %s", async (alias, filename) => {
+    const user = { id: "synthetic-alias-owner", permissions: ["dashboard.read"], roles: [] }
+    mockRequireApiSessionForCurrentOrg.mockResolvedValue({
+      error: null, status: 200, organizationId: "cmp_org_005", session: { user },
+    })
+    const destination = legacyUploadDestination(alias)
+    expect(destination).toBe(`/api/uploads/cmp_org_005/${filename}`)
+    const response = await GET({} as any, params(destination!.slice("/api/uploads/".length).split("/"))) as any
+    expect(response.status).toBe(200)
+    expect(response.body).toEqual(Buffer.from("image-bytes"))
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store")
+    expect(mockReadFile).toHaveBeenCalledWith("cmp_org_005", filename)
+    expect(mockRequireApiModuleAccess).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "cmp_org_005", moduleSlug: "dashboard" }))
+    expect(mockRequireAppPermission).toHaveBeenCalledWith(user, "dashboard.read")
+    for (const guard of [mockRequireApiSessionForCurrentOrg, mockRequireApiModuleAccess, mockRequireAppPermission]) {
+      expect(guard.mock.invocationCallOrder[0]).toBeLessThan(mockReadFile.mock.invocationCallOrder[0])
+    }
+  })
+
+  test.each(aliases)("does not let the caller select a tenant for private alias %s", async alias => {
+    mockRequireApiSessionForCurrentOrg.mockResolvedValue({
+      error: null, status: 200, organizationId: "different-org", session: { user: { id: "other-user" } },
+    })
+    const destination = legacyUploadDestination(alias)!
+    const response = await GET({} as any, params(destination.slice("/api/uploads/".length).split("/")))
+    expect(response.status).toBe(403)
+    expect(await response.json()).toEqual({ code: "FORBIDDEN", error: "Forbidden" })
+    expect(mockReadFile).not.toHaveBeenCalled()
   })
 
   it("returns 401 before path, module, permission, or filesystem checks when RBAC context is missing", async () => {
@@ -76,7 +120,6 @@ describe("GET /api/uploads/[...path]", () => {
     expect(body).toMatchObject({ code: "AUTH_REQUIRED", error: "Unauthenticated" })
     expect(mockRequireApiModuleAccess).not.toHaveBeenCalled()
     expect(mockRequireAppPermission).not.toHaveBeenCalled()
-    expect(mockAccess).not.toHaveBeenCalled()
     expect(mockReadFile).not.toHaveBeenCalled()
   })
 
@@ -94,7 +137,7 @@ describe("GET /api/uploads/[...path]", () => {
     expect(response.status).toBe(403)
     expect(mockRequireApiModuleAccess).not.toHaveBeenCalled()
     expect(mockRequireAppPermission).not.toHaveBeenCalled()
-    expect(mockAccess).not.toHaveBeenCalled()
+    expect(mockReadFile).not.toHaveBeenCalled()
   })
 
   it("requires dashboard module entitlement before RBAC permission or filesystem checks", async () => {
@@ -120,7 +163,7 @@ describe("GET /api/uploads/[...path]", () => {
       audit: true,
     })
     expect(mockRequireAppPermission).not.toHaveBeenCalled()
-    expect(mockAccess).not.toHaveBeenCalled()
+    expect(mockReadFile).not.toHaveBeenCalled()
   })
 
   it("requires dashboard.read before filesystem checks", async () => {
@@ -139,7 +182,7 @@ describe("GET /api/uploads/[...path]", () => {
 
     expect(response.status).toBe(403)
     expect(mockRequireAppPermission).toHaveBeenCalledWith(user, "dashboard.read")
-    expect(mockAccess).not.toHaveBeenCalled()
+    expect(mockReadFile).not.toHaveBeenCalled()
   })
 
   it("blocks path traversal before filesystem checks", async () => {
@@ -156,7 +199,6 @@ describe("GET /api/uploads/[...path]", () => {
 
     expect(response.status).toBe(400)
     expect(body).toMatchObject({ code: "VALIDATION_ERROR", error: "Invalid file path" })
-    expect(mockAccess).not.toHaveBeenCalled()
     expect(mockReadFile).not.toHaveBeenCalled()
   })
 
@@ -174,7 +216,6 @@ describe("GET /api/uploads/[...path]", () => {
 
     expect(response.status).toBe(400)
     expect(body).toMatchObject({ code: "VALIDATION_ERROR", error: "Unsupported file type" })
-    expect(mockAccess).not.toHaveBeenCalled()
     expect(mockReadFile).not.toHaveBeenCalled()
   })
 
@@ -196,10 +237,37 @@ describe("GET /api/uploads/[...path]", () => {
       accessIntent: "read",
     }))
     expect(mockRequireAppPermission).toHaveBeenCalledWith(user, "dashboard.read")
-    expect(mockAccess).toHaveBeenCalledTimes(1)
     expect(mockReadFile).toHaveBeenCalledTimes(1)
+    expect(mockReadFile).toHaveBeenCalledWith("org-1", "item.webp")
+    expect(mockRequireApiSessionForCurrentOrg.mock.invocationCallOrder[0]).toBeLessThan(mockReadFile.mock.invocationCallOrder[0])
+    expect(mockRequireApiModuleAccess.mock.invocationCallOrder[0]).toBeLessThan(mockReadFile.mock.invocationCallOrder[0])
+    expect(mockRequireAppPermission.mock.invocationCallOrder[0]).toBeLessThan(mockReadFile.mock.invocationCallOrder[0])
+    expect(response.body).toEqual(Buffer.from("image-bytes"))
     expect(response.headers.get("Content-Type")).toBe("image/webp")
     expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff")
     expect(response.headers.get("Cache-Control")).toBe("private, no-store")
+  })
+
+  it("returns not-found after guards when the private asset is missing", async () => {
+    mockRequireApiSessionForCurrentOrg.mockResolvedValue({ error: null, status: 200, organizationId: "org-1", session: { user: { id: "user-1" } } })
+    mockReadFile.mockRejectedValueOnce(Object.assign(new Error("private path"), { code: "ENOENT" }))
+    const response = await GET({} as any, params(["org-1", "missing.png"]))
+    expect(response.status).toBe(404)
+    expect(await response.json()).toEqual({ code: "NOT_FOUND", error: "File not found" })
+  })
+
+  it("does not expose internal storage error details", async () => {
+    mockRequireApiSessionForCurrentOrg.mockResolvedValue({ error: null, status: 200, organizationId: "org-1", session: { user: { id: "user-1" } } })
+    mockReadFile.mockRejectedValueOnce(new Error("PRIVATE_VOLUME_SECRET"))
+    const response = await GET({} as any, params(["org-1", "item.png"]))
+    expect(response.status).toBe(500)
+    expect(JSON.stringify(await response.json())).not.toContain("PRIVATE_VOLUME_SECRET")
+  })
+
+  it("rejects an invalid organization path even when supplied by the mocked session", async () => {
+    mockRequireApiSessionForCurrentOrg.mockResolvedValue({ error: null, status: 200, organizationId: "../org-1", session: { user: { id: "user-1" } } })
+    const response = await GET({} as any, params(["../org-1", "item.png"]))
+    expect(response.status).toBe(400)
+    expect(mockReadFile).not.toHaveBeenCalled()
   })
 })

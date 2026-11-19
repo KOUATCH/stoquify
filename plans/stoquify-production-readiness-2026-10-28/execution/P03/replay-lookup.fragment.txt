@@ -1,0 +1,21 @@
+    if (receiptKey) {
+      const lockKey = JSON.stringify(["accountant-access-grant-command", organizationId, commandKey])
+      await tx.$queryRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))::text`)
+      const receipt = await tx.businessEvent.findUnique({ where: { organizationId_eventSource_idempotencyKey: {
+        organizationId, eventSource: "INTERNAL", idempotencyKey: receiptKey,
+      } } })
+      if (receipt) {
+        const payload = receipt.payload as { commandHash?: string; grantId?: string } | null
+        if (receipt.organizationId !== organizationId || receipt.actorId !== actorId ||
+          receipt.eventType !== "ACCOUNTANT_ACCESS_GRANT_COMMAND_APPLIED" || receipt.status !== "APPLIED" ||
+          !payload || payload.commandHash !== commandHash || !payload.grantId || receipt.sourceId !== payload.grantId ||
+          receipt.payloadHash !== hashBusinessPayload(payload)) throw new IdempotencyConflictError()
+        const grant = await tx.accountantAccessGrant.findFirst({ where: { id: payload.grantId, organizationId } })
+        if (!grant || grant.accountantUserId !== accountant.id || grant.consentGrantedById !== actorId ||
+          grant.status !== AccountantAccessStatus.ACTIVE || grant.revokedAt || grant.revokedById ||
+          !accountantScopeKeys(organizationId, accountant.id).includes(grant.activeScopeKey ?? "") || grant.expiresAt <= now) {
+          throw new ConflictError("The original accountant grant is no longer available for recovery. Refresh current access.")
+        }
+        return toDto(grant, now)
+      }
+    }

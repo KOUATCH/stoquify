@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-10T18:53:23.475Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "sourceInspectionAccepted": true,
+  "executionAdmitted": false,
+  "files": [
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+      "bytes": 362667
+    },
+    {
+      "path": "prisma/migrations/20261110190000_close_scope_integrity/migration.sql",
+      "sha256": "334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7",
+      "bytes": 12710
+    }
+  ],
+  "scope": "Concurrent Close schema/migration source inspection for R06 isolated candidate compatibility; no accounting behavior certification.",
+  "findings": [
+    "Schema adds composite scope relations and six mapped unique keys in Close/accounting models; previous identical-schema client/DB reuse evidence cannot be applied to this source.",
+    "Full SQL inspected: transactional fixed public tables; count-only legacy preflight; six unique indexes, fourteen composite foreign keys, one PL/pgSQL identity function and seven row triggers.",
+    "No external program/file/network, extension installation, dynamic SQL or cross-database operation observed.",
+    "Existing auth/session scalar models are outside the diff; production migration/legacy data remediation is outside this task."
+  ],
+  "requirements": [
+    "Capture fresh complete current source and selected-input successor including new schema and123migration identity.",
+    "Apply all admitted migrations only to newly named disposable qualification databases; preserve baseline databases and verify their native digests before/after.",
+    "Regenerate only new private candidate client; bind actual migration ledger/build-empty/native fixture evidence to exact target.",
+    "Keep full normal type/lint/build and107real-session/browser gates."
+  ],
+  "databaseAccess": false,
+  "migrationExecuted": false,
+  "qualificationPassed": false
+}

@@ -1,5 +1,6 @@
 jest.mock("@/prisma/db", () => {
   const tx = {
+    firmEngagementGrantLink: { findUnique: jest.fn().mockResolvedValue(null) },
     accountantAccessGrant: {
       findFirst: jest.fn(),
       findMany: jest.fn(),
@@ -18,7 +19,7 @@ jest.mock("@/prisma/db", () => {
   return {
     db: {
       ...tx,
-      user: { findUnique: jest.fn() },
+      user: { findUnique: jest.fn(), findMany: jest.fn().mockResolvedValue([]) },
       $transaction: jest.fn((callback) => callback(tx)),
     },
   }
@@ -299,12 +300,12 @@ describe("accountant access service", () => {
     ).toBeLessThan(mockDb.businessEvent.create.mock.invocationCallOrder[1])
   })
 
-  it("maps a concurrent active-scope unique race to the canonical conflict", async () => {
+  it.each([{ target: ["activeScopeKey"] }, { target: ["organizationId", "accountantUserId"] }])("maps a concurrent active-scope unique race $target to the canonical conflict", async ({ target }) => {
     mockDb.user.findUnique.mockResolvedValue({ id: "accountant-1", isActive: true })
     mockDb.accountantAccessGrant.findFirst.mockResolvedValue(null)
     mockDb.accountantAccessGrant.create.mockRejectedValue({
       code: "P2002",
-      meta: { target: ["activeScopeKey"] },
+      meta: { target },
     })
 
     await expect(
@@ -579,43 +580,5 @@ describe("accountant access service", () => {
     )
   })
 
-  it("builds a portfolio only from active, effective, unexpired grants", async () => {
-    mockDb.accountantAccessGrant.findMany.mockResolvedValue([
-      {
-        ...baseGrant,
-        organization: {
-          id: "client-org",
-          name: "Client One",
-          countryCode: "CM",
-          currency: "XAF",
-        },
-      },
-    ])
-    mockDb.closeRun.findFirst.mockResolvedValue({
-      periodId: "period-1",
-      status: "READY_FOR_REVIEW",
-      readinessScore: 92,
-      criticalBlockerCount: 0,
-      highBlockerCount: 1,
-      asOf: now,
-    })
-
-    const result = await getAccountantPortfolio("accountant-1", now)
-
-    expect(result.clientCount).toBe(1)
-    expect(result.clients[0].close?.blockerCount).toBe(1)
-    expect(mockDb.accountantAccessGrant.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
-          accountantUserId: "accountant-1",
-          status: AccountantAccessStatus.ACTIVE,
-          effectiveFrom: { lte: now },
-          expiresAt: { gt: now },
-          organization: {
-            is: { isActive: true, deletedAt: null },
-          },
-        }),
-      }),
-    )
-  })
+  // Portfolio read contracts and denial/pagination regressions live in accountant-portfolio.service.test.ts.
 })

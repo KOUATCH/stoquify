@@ -1,0 +1,711 @@
+diff --git a/actions/inventory/__tests__/inventoryReservationActions.test.ts b/actions/inventory/__tests__/inventoryReservationActions.test.ts
+index 7c9d1ff7..3a98c35f 100644
+--- a/actions/inventory/__tests__/inventoryReservationActions.test.ts
++++ b/actions/inventory/__tests__/inventoryReservationActions.test.ts
+@@ -1,7 +1,7 @@
+ import { revalidateTag } from "next/cache"
+ import { getAuthenticatedUser } from "@/lib/auth-server"
+ import { requirePermission } from "@/lib/security/rbac"
+-import { postInventoryReservation } from "@/services/inventory/inventory-stock-event.service"
++import { postInventoryReservation, postInventoryReservationBatch } from "@/services/inventory/inventory-stock-event.service"
+ import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+ import { reserveInventory as reserveBatch } from "../inventoryActions"
+ import { reserveInventory, reserveInventoryMovement } from "../inventoryMovementActions"
+@@ -10,7 +10,7 @@ jest.mock("@/lib/error-handling", () => ({ inventoryAction: (handler: unknown) =
+ jest.mock("@/lib/auth-server", () => ({ getAuthenticatedUser: jest.fn() }))
+ jest.mock("@/lib/security/rbac", () => ({ requirePermission: jest.fn() }))
+ jest.mock("@/services/modules/module-entitlement.service", () => ({ observeModuleAccess: jest.fn() }))
+-jest.mock("@/services/inventory/inventory-stock-event.service", () => ({ postInventoryReservation: jest.fn() }))
++jest.mock("@/services/inventory/inventory-stock-event.service", () => ({ postInventoryReservation: jest.fn(), postInventoryReservationBatch: jest.fn() }))
+ jest.mock("@/services/inventory/inventory-adjustment.service", () => ({}))
+ jest.mock("@/services/inventory/inventory-read.service", () => ({}))
+ jest.mock("@/services/inventory/inventory-transfer.service", () => ({}))
+@@ -20,18 +20,20 @@ jest.mock("next/cache", () => ({ revalidateTag: jest.fn(), revalidatePath: jest.
+ const permission = requirePermission as jest.Mock
+ const observe = observeModuleAccess as jest.Mock
+ const reserve = postInventoryReservation as jest.Mock
++const batch = postInventoryReservationBatch as jest.Mock
+ const expiresAt = new Date("2026-09-06T12:00:00Z")
+-const input = { organizationId: "org-session", itemId: "item-1", locationId: "loc-1", quantity: 3, reason: "Owned reservation", expiresAt }
++const input = { idempotencyKey: "reservation-owned-1", organizationId: "org-session", itemId: "item-1", locationId: "loc-1", quantity: 3, reason: "Owned reservation", expiresAt }
+ const adapters = [
+   { name: "movement", call: (organizationId = input.organizationId) => reserveInventoryMovement({ ...input, organizationId }), surface: "actions/inventory/inventoryMovementActions.ts:reserveInventoryMovement" },
+-  { name: "legacy batch", call: (organizationId = input.organizationId) => reserveBatch({ data: { organizationId, reservations: [{ inventoryLevelId: "level-1", itemId: input.itemId, locationId: input.locationId, quantity: input.quantity }] } }), surface: "actions/inventory/inventoryActions.ts:reserveInventory" },
++  { name: "legacy batch", call: (organizationId = input.organizationId) => reserveBatch({ data: { organizationId, idempotencyKey: input.idempotencyKey, reservations: [{ inventoryLevelId: "level-1", itemId: input.itemId, locationId: input.locationId, quantity: input.quantity }] } }), surface: "actions/inventory/inventoryActions.ts:reserveInventory" },
+ ]
+ 
+ beforeEach(() => {
+   jest.clearAllMocks()
+   permission.mockReset().mockResolvedValue({ orgId: "org-session", userId: "actor-session", permissions: ["inventory.levels.adjust"] })
+   observe.mockReset().mockResolvedValue({ allowed: true })
+-  reserve.mockReset().mockResolvedValue({ reservationId: "saved-1" })
++  reserve.mockReset().mockResolvedValue({ eventId: "saved-1" })
++  batch.mockReset().mockImplementation(reserve)
+   ;(getAuthenticatedUser as jest.Mock).mockReset().mockResolvedValue({ id: "legacy-auth-actor" })
+ })
+ 
+@@ -71,7 +73,8 @@ describe.each(adapters)("$name reservation authority", ({ call, surface }) => {
+     expect(permission).toHaveBeenCalledWith("inventory.levels.adjust", expect.objectContaining({ resource: "InventoryReservation", auditAllowed: true }))
+     expect(observe).toHaveBeenCalledWith({ organizationId: "org-session", userId: "actor-session", actorPermissions: ["inventory.levels.adjust"], moduleSlug: "inventory", surfaceType: "action", surface, accessIntent: "write", mode: "enforce", audit: true })
+     expect(reserve).toHaveBeenCalledTimes(1)
+-    expect(reserve).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-session", actorId: "actor-session", itemId: "item-1", locationId: "loc-1", quantity: 3 }))
++    expect(reserve).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-session", actorId: "actor-session", idempotencyKey: input.idempotencyKey }))
++    if (batch.mock.calls.length) expect(batch.mock.calls[0][0].lines).toEqual([expect.objectContaining({itemId: "item-1", locationId: "loc-1", quantity: 3})])
+   })
+ 
+   it("preserves a kernel failure without successful cache refresh", async () => {
+@@ -82,7 +85,7 @@ describe.each(adapters)("$name reservation authority", ({ call, surface }) => {
+ })
+ 
+ it("keeps reason/expiry and the positional compatibility entry behind the same guard", async () => {
+-  await reserveInventory(input.itemId, input.locationId, input.quantity, input.reason, input.organizationId, expiresAt)
++  await reserveInventory(input.itemId, input.locationId, input.quantity, input.reason, input.organizationId, expiresAt, input.idempotencyKey)
+   expect(reserve).toHaveBeenCalledWith({ ...input, actorId: "actor-session" })
+   permission.mockRejectedValueOnce(new Error("permission revoked"))
+   await expect(reserveInventory(input.itemId, input.locationId, input.quantity, input.reason, input.organizationId)).rejects.toThrow("permission revoked")
+@@ -91,6 +94,13 @@ it("keeps reason/expiry and the positional compatibility entry behind the same g
+ 
+ it("denies the entire legacy batch before its first stock effect", async () => {
+   observe.mockResolvedValueOnce({ allowed: false })
+-  await expect(reserveBatch({ data: { organizationId: input.organizationId, reservations: [1, 2].map(index => ({ inventoryLevelId: `level-${index}`, itemId: `item-${index}`, locationId: input.locationId, quantity: 1 })) } })).rejects.toThrow("Inventory module is not available")
++  await expect(reserveBatch({ data: { organizationId: input.organizationId, idempotencyKey: input.idempotencyKey, reservations: [1, 2].map(index => ({ inventoryLevelId: `level-${index}`, itemId: `item-${index}`, locationId: input.locationId, quantity: 1 })) } })).rejects.toThrow("Inventory module is not available")
+   expect(reserve).not.toHaveBeenCalled()
+ })
++
++it("submits multiple lines once under one retained batch identity", async () => {
++  const reservations = [1, 2].map(i => ({ inventoryLevelId: `level-${i}`, itemId: `item-${i}`, locationId: input.locationId, quantity: 1 }))
++  await reserveBatch({ data: { organizationId: input.organizationId, idempotencyKey: input.idempotencyKey, reservations } })
++  expect(batch).toHaveBeenCalledTimes(1)
++  expect(batch).toHaveBeenCalledWith(expect.objectContaining({ lines: reservations, idempotencyKey: input.idempotencyKey }))
++})
+diff --git a/actions/inventory/__tests__/transferLifecycleActions.test.ts b/actions/inventory/__tests__/transferLifecycleActions.test.ts
+index 7e7c37bf..2d904e99 100644
+--- a/actions/inventory/__tests__/transferLifecycleActions.test.ts
++++ b/actions/inventory/__tests__/transferLifecycleActions.test.ts
+@@ -71,3 +71,10 @@ it("keeps unexpected failures private", async () => {
+   expect(result.success).toBe(false)
+   expect(JSON.stringify(result.error)).not.toContain("private database detail")
+ })
++
++it.each([false, true])("preserves a committed transfer result when cache refresh fails (replayed=%s)", async replayed => {
++  ;(transitionStockTransfer as jest.Mock).mockResolvedValue({ transfer: { id: "transfer" }, replayed })
++  ;(revalidateTag as jest.Mock).mockImplementationOnce(() => { throw new Error("private cache failure") })
++  expect(await executeTransferCommand(input)).toMatchObject({ success: true, data: { transfer: { id: "transfer" }, replayed } })
++  expect(transitionStockTransfer).toHaveBeenCalledTimes(1)
++})
+diff --git a/actions/inventory/inventoryActions.ts b/actions/inventory/inventoryActions.ts
+index 898eba85..55aaf937 100644
+--- a/actions/inventory/inventoryActions.ts
++++ b/actions/inventory/inventoryActions.ts
+@@ -16,7 +16,7 @@ import {
+   toStockAdjustmentRecord,
+   toStockTransferRecord,
+ } from "@/services/inventory/inventory-read.service"
+-import { postInventoryReservation } from "@/services/inventory/inventory-stock-event.service"
++import { postInventoryReservationBatch } from "@/services/inventory/inventory-stock-event.service"
+ import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+ import { createStockTransfer as createStockTransferService } from "@/services/inventory/inventory-transfer.service"
+ import {
+@@ -345,20 +345,17 @@ export const reserveInventory = inventoryAction(
+       audit: true,
+     })
+     if (!moduleDecision.allowed) throw new ForbiddenError("Inventory module is not available for this organization")
+-    const reservations = await Promise.all(
+-      data.reservations.map((reservation) =>
+-        postInventoryReservation({
+-          itemId: reservation.itemId,
+-          locationId: reservation.locationId,
+-          organizationId: ctx.organizationId,
+-          quantity: reservation.quantity,
+-          actorId: ctx.userId,
+-          reason: "Inventory reserved",
+-        }),
+-      ),
+-    )
+-
+-    return { success: true, data: reservations }
++    const result = await postInventoryReservationBatch({
++      organizationId: ctx.organizationId,
++      actorId: ctx.userId,
++      idempotencyKey: data.idempotencyKey,
++      reason: "Inventory reserved",
++      lines: data.reservations,
++    })
++    return { success: true, data: data.reservations.map(line => ({
++      itemId: line.itemId, locationId: line.locationId, quantity: line.quantity,
++      eventId: result.eventId, idempotencyKey: result.idempotencyKey, replayed: result.replayed,
++    })) }
+   },
+   {
+     actionName: "reserveInventory",
+diff --git a/actions/inventory/inventoryMovementActions.ts b/actions/inventory/inventoryMovementActions.ts
+index 4c62468b..d3ae5633 100644
+--- a/actions/inventory/inventoryMovementActions.ts
++++ b/actions/inventory/inventoryMovementActions.ts
+@@ -15,7 +15,7 @@ import { executeTransferCommand } from "./transferLifecycleActions"
+ import { loadTransferDetail } from "@/services/inventory/inventory-transfer-lifecycle.service"
+ import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+ import type { CreateTransferPayload, TransactionType, TransferStatus } from "@/types/inventoryMovementTypes"
+-import { revalidatePath, revalidateTag } from "next/cache"
++import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation"
+ 
+ async function requireInventoryHistoryReadAccess(input: { organizationId: string; resource: string; surface: string }) {
+   const ctx = await requirePermission("inventory.levels.read", {
+@@ -63,9 +63,7 @@ export const createLocationTransfer = inventoryAction(
+       lines: data.lines,
+     })
+ 
+-    revalidateTag("transfers")
+-    revalidateTag(`transfers-${ctx.orgId}`)
+-    revalidatePath("/dashboard/inventory/transfers")
++    revalidateAfterCommit({ tags: ["transfers", `transfers-${ctx.orgId}`], paths: [{ path: "/dashboard/inventory/transfers" }] })
+ 
+     return {
+       success: true,
+@@ -206,6 +204,7 @@ export const getInventoryTransactionsMovement = inventoryAction(
+ 
+ export const reserveInventoryMovement = inventoryAction(
+   async (input: {
++    idempotencyKey: string
+     itemId: string
+     locationId: string
+     quantity: number
+@@ -239,6 +238,7 @@ export const reserveInventoryMovement = inventoryAction(
+     if (!moduleDecision.allowed) throw new ForbiddenError("Inventory module is not available for this organization")
+ 
+     const result = await postInventoryReservation({
++      idempotencyKey: input.idempotencyKey,
+       itemId,
+       locationId,
+       organizationId: ctx.orgId,
+@@ -248,8 +248,7 @@ export const reserveInventoryMovement = inventoryAction(
+       expiresAt,
+     })
+ 
+-    revalidateTag("inventory")
+-    revalidateTag(`inventory-${organizationId}`)
++    revalidateAfterCommit({ tags: ["inventory", `inventory-${organizationId}`] })
+ 
+     return {
+       success: true,
+@@ -292,8 +291,9 @@ export async function reserveInventory(
+   reason: string,
+   organizationId: string,
+   expiresAt?: Date,
++  idempotencyKey?: string,
+ ) {
+-  return reserveInventoryMovement({ itemId, locationId, quantity, reason, organizationId, expiresAt })
++  return reserveInventoryMovement({ itemId, locationId, quantity, reason, organizationId, expiresAt, idempotencyKey: idempotencyKey ?? "" })
+ }
+ 
+ export const getStockMovementSummary = inventoryAction(
+diff --git a/actions/inventory/transferLifecycleActions.ts b/actions/inventory/transferLifecycleActions.ts
+index dfdc4d46..677e1985 100644
+--- a/actions/inventory/transferLifecycleActions.ts
++++ b/actions/inventory/transferLifecycleActions.ts
+@@ -10,7 +10,7 @@ import { loadTransferDetail, transferWorkflowAvailability, transitionStockTransf
+ import { toLocationTransferDTO } from "@/services/inventory/inventory-read.service"
+ import { readTransferActivity } from "@/services/inventory/inventory-transfer-activity.service"
+ import type { TransferCommand, TransferDetail } from "@/types/transferLifecycle"
+-import { revalidatePath, revalidateTag } from "next/cache"
++import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation"
+ 
+ // Preserve safe business-rule explanations through the older inventory wrapper.
+ function withTransferErrors<I, O>(action: (input: I) => Promise<ServerActionResult<O>>) {
+@@ -54,9 +54,10 @@ export const getTransferDetail = inventoryAction(withTransferErrors(async (input
+ export const executeTransferCommand = inventoryAction(withTransferErrors(async (input: TransferCommand) => {
+   const ctx = await transferAccess(input.organizationId, input.transferId, true)
+   const result = await transitionStockTransfer({ ...input, organizationId: ctx.orgId, actorId: ctx.userId })
+-  for (const tag of ["transfers", `transfers-${ctx.orgId}`, `transfer-${input.transferId}`, "inventory", `inventory-${ctx.orgId}`]) revalidateTag(tag)
+-  revalidatePath("/[locale]/dashboard/inventory/transfers", "layout")
+-  revalidatePath("/[locale]/dashboard/inventory", "page")
++  revalidateAfterCommit({
++    tags: ["transfers", `transfers-${ctx.orgId}`, `transfer-${input.transferId}`, "inventory", `inventory-${ctx.orgId}`],
++    paths: [{ path: "/[locale]/dashboard/inventory/transfers", type: "layout" }, "/[locale]/dashboard/inventory"],
++  })
+   return { success: true, data: { transfer: toLocationTransferDTO(result.transfer), replayed: result.replayed } }
+ }), { actionName: "executeTransferCommand", component: "InventoryTransfers",
+   businessContext: { domain: "inventory", operation: "update", resourceType: "stock_transfer", criticalOperation: true },
+diff --git a/actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts b/actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts
+index efd48803..a846f42c 100644
+--- a/actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts
++++ b/actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts
+@@ -1,7 +1,8 @@
+ "use server"
+ 
+ import { requirePermission } from "@/lib/security/rbac"
+-import { BusinessRuleError } from "@/services/_shared/action-errors"
++import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
++import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+ import {
+   getGoodsReceipts,
+   getSummary,
+@@ -50,14 +51,20 @@ function toNumber(value: unknown): number {
+ }
+ 
+ async function scopedOrg(organizationId: string) {
+-  const { orgId } = await requirePermission("purchases.orders.read", {
++  const ctx = await requirePermission("purchases.orders.read", {
+     resource: "PurchaseOrder",
+     auditAllowed: false,
+   })
+-  if (organizationId !== orgId) {
++  if (organizationId !== ctx.orgId) {
+     throw new BusinessRuleError("You do not have access to this organization")
+   }
+-  return orgId
++  const access = await observeModuleAccess({
++    organizationId: ctx.orgId, userId: ctx.userId, actorPermissions: ctx.permissions,
++    moduleSlug: "purchasing", surfaceType: "action", surface: "GoodsReceiptAndSummary.read",
++    accessIntent: "read", mode: "enforce", audit: true,
++  })
++  if (!access.allowed) throw new ForbiddenError("Purchasing module read access is unavailable")
++  return ctx.orgId
+ }
+ 
+ export async function getGoodsReceiptsForPurchaseOrder(
+diff --git a/actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts b/actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts
+index 8fae0e33..bf309a1e 100644
+--- a/actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts
++++ b/actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts
+@@ -156,6 +156,16 @@ describe("purchaseOrderSystemAction controls", () => {
+     expect(updatePurchaseOrderService).toHaveBeenCalledTimes(1)
+   })
+ 
++  it.each(["create", "clone"])("preserves a successful %s result after cache failure", async operation => {
++    const service = operation === "create" ? createPurchaseOrderService : clonePurchaseOrderService
++    ;(service as jest.Mock).mockResolvedValueOnce(approvedPurchaseOrder)
++    ;(revalidatePath as jest.Mock).mockImplementationOnce(() => { throw new Error("private cache failure") })
++    const result = operation === "create"
++      ? await createPurchaseOrder({ organizationId: "org-session", supplierId: "supplier-1", locationId: "location-1", date: "2026-09-05", expectedDeliveryDate: "2026-09-06", paymentTerms: "Net 30", shippingCost: 0, orderLines: [{ itemId: "item-1", quantity: 1, unitPrice: 10 }] })
++      : await clonePurchaseOrder({ id: "po-1", organizationId: "org-session" })
++    expect(result).toMatchObject({ success: true })
++  })
++
+   it("returns actionable stale codes and redacts unexpected internal draft failures", async () => {
+     const payload = { id: "po-1", organizationId: "org-session", expectedRevision: "a".repeat(64), idempotencyKey: "draft-safe-error", notes: "Edit" }
+     ;(updatePurchaseOrderService as jest.Mock).mockRejectedValueOnce(new ApplicationError("CONFLICT", "Compare the current order", 409))
+@@ -262,6 +272,7 @@ describe("purchaseOrderSystemAction controls", () => {
+       id: "po-1",
+       organizationId: "org-session",
+       idempotencyKey: "receipt:command-denied",
++      receivedBy: "client-supplied-actor",
+       inspectionOutcome: "PASSED",
+       items: [{ lineId: "line-1", receivedQuantity: 2 }],
+     })
+diff --git a/actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts b/actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts
+index df23507c..0a8c8052 100644
+--- a/actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts
++++ b/actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts
+@@ -4,7 +4,7 @@ import { readPurchaseOrderDecisionHistory } from "@/services/purchase-order/purc
+ import { purchaseLifecyclePermission, purchaseLifecycleKindSchema, purchaseLifecycleRequestSchema, type PurchaseLifecycleRequest, type PurchaseLifecycleKind, type PurchaseLifecyclePreview, type PurchaseLifecycleReceipt } from "@/services/purchase-order/purchase-order-lifecycle-contracts";
+ import { executePurchaseOrderLifecycle as executeLifecycleService, getPurchaseOrderLifecyclePreview } from "@/services/purchase-order/purchase-order.service";
+ 
+-import { revalidatePath, revalidateTag } from "next/cache";
++import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation";
+ 
+ import { requirePermission } from "@/lib/security/rbac";
+ import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
+@@ -54,17 +54,12 @@ import type {
+ export type GoodsReceiptPayload = ClientGoodsReceiptPayload
+ 
+ function revalidatePurchaseOrderWorkflow(organizationId: string, id?: string) {
+-  revalidateTag("purchaseOrders")
+-  revalidateTag(`purchaseOrders-${organizationId}`)
+-  if (id) revalidateTag(`purchaseOrder-${id}`)
+-
+-  revalidatePath("/[locale]/dashboard/purchase-orders", "page")
+-  revalidatePath("/[locale]/dashboard/purchases", "page")
+-  if (id) {
+-    revalidatePath("/[locale]/dashboard/purchase-orders/[id]", "page")
+-    revalidatePath("/[locale]/dashboard/purchase-orders/[id]/edit", "page")
+-    revalidatePath("/[locale]/dashboard/purchases/[id]", "page")
+-  }
++  revalidateAfterCommit({
++    tags: ["purchaseOrders", `purchaseOrders-${organizationId}`, ...(id ? [`purchaseOrder-${id}`] : [])],
++    paths: ["/[locale]/dashboard/purchase-orders", "/[locale]/dashboard/purchases", ...(id ? [
++      "/[locale]/dashboard/purchase-orders/[id]", "/[locale]/dashboard/purchase-orders/[id]/edit", "/[locale]/dashboard/purchases/[id]",
++    ] : [])],
++  })
+ }
+ 
+ async function scopedOrg(
+diff --git a/actions/purchasing/__tests__/ap-control.actions.test.ts b/actions/purchasing/__tests__/ap-control.actions.test.ts
+index 93cc0921..9204b608 100644
+--- a/actions/purchasing/__tests__/ap-control.actions.test.ts
++++ b/actions/purchasing/__tests__/ap-control.actions.test.ts
+@@ -70,6 +70,7 @@ jest.mock("@/lib/security/auth-session", () => {
+ jest.mock("@/lib/logger", () => ({
+   logger: {
+     error: jest.fn(),
++    warn: jest.fn(),
+   },
+ }))
+ 
+@@ -98,7 +99,9 @@ const mockReleaseSupplierPaymentWithControls = releaseSupplierPaymentWithControl
+ const mockGetAPWorkbenchData = getAPWorkbenchData as jest.Mock
+ const mockRevalidatePath = revalidatePath as jest.Mock
+ 
++let currentActor = "actor-1"
+ function rbacContext(userId = "actor-1", permissions: string[] = []) {
++  currentActor = userId
+   return {
+     userId,
+     orgId: "org-1",
+@@ -142,9 +145,9 @@ function invoiceInput() {
+ describe("AP control actions", () => {
+   beforeEach(() => {
+     jest.clearAllMocks()
+-    mockRequireFreshAuth.mockResolvedValue({
+-      claims: { lastAuthAt: "2026-07-02T12:00:00.000Z" },
+-    })
++    mockRequireFreshAuth.mockImplementation(async () => ({
++      claims: { userId: currentActor, tenantId: "org-1", lastAuthAt: "2026-07-02T12:00:00.000Z" },
++    }))
+   })
+ 
+   it("requires reviewed preparation and never forwards a legacy client command to the writer", async () => {
+@@ -346,7 +349,7 @@ describe("AP control actions", () => {
+   })
+   it("binds approval to a retained request and the current verified session", async () => {
+     mockRequirePermission.mockResolvedValue(rbacContext("approver-1", ["purchasing.ap.payment.approve"]))
+-    mockRequireFreshAuth.mockResolvedValue({claims:{sessionId:"session-1",sessionToken:"session-token",lastAuthAt:new Date().toISOString()}})
++    mockRequireFreshAuth.mockResolvedValue({claims:{userId:currentActor,tenantId:"org-1",sessionId:"session-1",sessionToken:"session-token",lastAuthAt:new Date().toISOString()}})
+     ;(confirmPaymentRequestApproval as jest.Mock).mockResolvedValue({paymentRequestId:"p",status:"APPROVED",replayed:false})
+     const command={paymentRequestId:"p",expectedRevision:"a".repeat(64),idempotencyKey:"approval-1"}
+     expect((await approveSupplierPaymentAction(command)).success).toBe(true)
+@@ -354,6 +357,15 @@ describe("AP control actions", () => {
+     expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+   })
+ 
++  it("preserves a recorded approval after cache failure", async () => {
++    mockRequirePermission.mockResolvedValue(rbacContext("approver-1", ["purchasing.ap.payment.approve"]))
++    mockRequireFreshAuth.mockResolvedValue({claims:{userId:currentActor,tenantId:"org-1",sessionId:"session-1",sessionToken:"session-token"}})
++    ;(confirmPaymentRequestApproval as jest.Mock).mockResolvedValue({paymentRequestId:"p",status:"APPROVED",replayed:false})
++    ;(revalidatePath as jest.Mock).mockImplementationOnce(() => { throw new Error("private cache failure") })
++    expect(await approveSupplierPaymentAction({paymentRequestId:"p",expectedRevision:"a".repeat(64),idempotencyKey:"approval-cache"})).toMatchObject({success:true})
++    expect(confirmPaymentRequestApproval).toHaveBeenCalledTimes(1)
++  })
++
+   it("rejects the former release payload rather than inventing execution evidence", async () => {
+     mockRequirePermission.mockResolvedValue(rbacContext("treasury-1", ["purchasing.ap.payment.release"]))
+     mockReleaseSupplierPaymentWithControls.mockResolvedValue({
+@@ -382,7 +394,7 @@ describe("AP control actions", () => {
+   })
+   it("records execution using the authenticated session and reviewed strict command", async () => {
+     mockRequirePermission.mockResolvedValue(rbacContext("treasury-1", ["purchasing.ap.payment.release"]))
+-    mockRequireFreshAuth.mockResolvedValue({claims:{sessionId:"session-1",sessionToken:"token-1"}})
++    mockRequireFreshAuth.mockResolvedValue({claims:{userId:currentActor,tenantId:"org-1",sessionId:"session-1",sessionToken:"token-1"}})
+     ;(confirmPaymentRelease as jest.Mock).mockResolvedValue({paymentRequestId:"p",status:"RELEASED",replayed:false})
+     const command={draft:{paymentRequestId:"p",executionReference:"BANK/TXN-1",executedAt:"2026-09-08T12:00:00Z",evidenceUri:"https://example.invalid/record",evidenceSha256:"a".repeat(64)},expectedRevision:"b".repeat(64),idempotencyKey:"record-1"}
+     expect((await releaseSupplierPaymentAction(command)).success).toBe(true)
+diff --git a/actions/purchasing/ap-control.actions.ts b/actions/purchasing/ap-control.actions.ts
+index 21193c9c..41b7e2ec 100644
+--- a/actions/purchasing/ap-control.actions.ts
++++ b/actions/purchasing/ap-control.actions.ts
+@@ -4,7 +4,7 @@ import { paymentRequestApprovalSchema } from "@/services/purchasing/payment-requ
+ import { confirmPaymentRelease } from "@/services/purchasing/payment-release.service"
+ import { paymentReleaseCommandSchema } from "@/services/purchasing/payment-release-contracts"
+ 
+-import { revalidatePath } from "next/cache"
++import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation"
+ 
+ import { protect } from "@/services/_shared/protect"
+ import {
+@@ -29,10 +29,7 @@ function asRecord(input: unknown) {
+ }
+ 
+ function revalidateAPPaths() {
+-  revalidatePath("/dashboard/purchases/payables", "page")
+-  revalidatePath("/dashboard/finance/payables", "page")
+-  revalidatePath("/[locale]/dashboard/purchases/payables", "page")
+-  revalidatePath("/[locale]/dashboard/finance/payables", "page")
++  revalidateAfterCommit({ paths: ["/dashboard/purchases/payables", "/dashboard/finance/payables", "/[locale]/dashboard/purchases/payables", "/[locale]/dashboard/finance/payables"] })
+ }
+ 
+ const getWorkbench = protect<unknown, APWorkbenchData>(
+diff --git a/hooks/__tests__/useInventoryMovementQueries.reservation.test.tsx b/hooks/__tests__/useInventoryMovementQueries.reservation.test.tsx
+index 1aa80843..a015b3ab 100644
+--- a/hooks/__tests__/useInventoryMovementQueries.reservation.test.tsx
++++ b/hooks/__tests__/useInventoryMovementQueries.reservation.test.tsx
+@@ -13,10 +13,10 @@ let mockLocale: keyof typeof copy = "en"
+ jest.mock("next-intl", () => ({ useTranslations: () => (key: keyof typeof copy.en) => copy[mockLocale][key] }))
+ jest.mock("@/actions/inventory/inventoryMovementActions", () => ({ reserveInventory: jest.fn(), getInventoryTransactions: jest.fn(), getStockMovementSummary: jest.fn() }))
+ jest.mock("@/lib/notifications/notify", () => ({ notify: { success: jest.fn(), error: jest.fn() } }))
+-const request = { organizationId: "org-1", itemId: "item-1", locationId: "loc-1", quantity: 2, reason: "Customer order" }
++const request = { idempotencyKey: "retained-reservation-1", organizationId: "org-1", itemId: "item-1", locationId: "loc-1", quantity: 2, reason: "Customer order" }
+ 
+ function mount() {
+-  // The hook must override a provider's generic retry policy for this non-idempotent mutation.
++  // The hook must override a provider's generic retry policy until the caller explicitly resolves an uncertain reservation.
+   const client = new QueryClient({ defaultOptions: { mutations: { retry: 1, retryDelay: 0 } } })
+   const invalidate = jest.spyOn(client, "invalidateQueries")
+   const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={client}>{children}</QueryClientProvider>
+@@ -65,3 +65,12 @@ describe.each(["en", "fr"] as const)("%s reservation feedback", locale => {
+     client.clear()
+   })
+ })
++
++it("keeps the caller identity unchanged across an explicit retry", async () => {
++  (reserveInventory as jest.Mock).mockRejectedValueOnce(new Error("lost response")).mockResolvedValueOnce({success:true})
++  const { result, client } = mount()
++  await act(async () => { await result.current.mutateAsync(request).catch(() => undefined) })
++  await act(async () => { await result.current.mutateAsync(request) })
++  expect((reserveInventory as jest.Mock).mock.calls.map(args => args[6])).toEqual([request.idempotencyKey, request.idempotencyKey])
++  client.clear()
++})
+diff --git a/hooks/useInventoryMovementQueries.ts b/hooks/useInventoryMovementQueries.ts
+index 34d53c50..14cd0947 100644
+--- a/hooks/useInventoryMovementQueries.ts
++++ b/hooks/useInventoryMovementQueries.ts
+@@ -104,6 +104,7 @@ export function useInventoryReservation() {
+     meta: { operation: 'reserve', entity: 'Inventory', suppressSuccessNotification: true, suppressErrorNotification: true },
+     retry: false,
+     mutationFn: async ({
++      idempotencyKey,
+       itemId,
+       locationId,
+       quantity,
+@@ -111,6 +112,7 @@ export function useInventoryReservation() {
+       organizationId,
+       expiresAt,
+     }: {
++      idempotencyKey: string
+       itemId: string
+       locationId: string
+       quantity: number
+@@ -120,7 +122,7 @@ export function useInventoryReservation() {
+     }) => {
+       let response
+       try {
+-        response = await reserveInventory(itemId, locationId, quantity, reason, organizationId, expiresAt)
++        response = await reserveInventory(itemId, locationId, quantity, reason, organizationId, expiresAt, idempotencyKey)
+       } catch {
+         throw new Error(t("unknown"))
+       }
+diff --git a/services/inventory/inventory-stock-event.service.ts b/services/inventory/inventory-stock-event.service.ts
+index 065db183..2a7bd3f6 100644
+--- a/services/inventory/inventory-stock-event.service.ts
++++ b/services/inventory/inventory-stock-event.service.ts
+@@ -50,6 +50,9 @@ type StockEventLineInput = {
+   reservedQuantityToConsume?: Prisma.Decimal.Value
+   reversalOfTransactionId?: string | null
+   receiptValuation?: { version: 2; sourceGoodsReceiptLineId: string; allocatedValue: string; recognitionHash: string }
++  // Internal POS adapters only; never accept a client-supplied value override.
++  usePOSValuePool?: boolean
++  posReturnValuation?: { movementId: string; totalCost: Prisma.Decimal }
+ }
+ 
+ /** Internal handoff from a source owner that retains the prepared period locks. */
+@@ -199,7 +202,11 @@ export type InventoryReservationInput = {
+   reason: string
+   expiresAt?: Date | null
+   occurredAt?: Date
+-  idempotencyKey?: string
++  idempotencyKey: string
++}
++
++export type InventoryReservationBatchInput = Omit<InventoryReservationInput, "itemId" | "locationId" | "quantity"> & {
++  lines: Array<{ itemId: string; locationId: string; quantity: Prisma.Decimal.Value }>
+ }
+ 
+ export type DeliveryOrderReservationInput = {
+@@ -522,7 +529,17 @@ async function postStockLine(
+   const nextReserved = currentReserved.minus(reservedToConsume).toDecimalPlaces(3)
+   const nextAvailable = currentAvailable.plus(quantity).plus(reservedToConsume).toDecimalPlaces(3)
+   const allocatedValue = input.line.receiptValuation ? money(input.line.receiptValuation.allocatedValue) : null
+-  const valueDelta = allocatedValue === null ? unitCost.times(quantity).toDecimalPlaces(2) : quantity.lt(0) ? allocatedValue.negated() : allocatedValue
++  // The rounded display average cannot allocate the final cent of a value pool.
++  // Preserve the existing negative-stock policy until that policy is reviewed.
++  const posIssueValue = input.line.usePOSValuePool && quantity.lt(0) && currentOnHand.gt(0) && nextOnHand.gte(0) && currentTotalValue.gte(0)
++    ? nextOnHand.eq(0) ? currentTotalValue : currentTotalValue.times(quantity.abs()).div(currentOnHand).toDecimalPlaces(2)
++    : null
++  const posReturnValue = input.line.posReturnValuation && currentOnHand.gte(0)
++    ? input.line.posReturnValuation.totalCost : null
++  const valueDelta = allocatedValue !== null ? quantity.lt(0) ? allocatedValue.negated() : allocatedValue
++    : posIssueValue !== null ? posIssueValue.negated()
++    : posReturnValue !== null ? posReturnValue
++    : unitCost.times(quantity).toDecimalPlaces(2)
+   const retainedValue = currentTotalValue.plus(valueDelta).toDecimalPlaces(2)
+   if (allocatedValue !== null && (allocatedValue.lt(0) || retainedValue.lt(0) || nextOnHand.lt(0) || nextOnHand.eq(0) && !retainedValue.eq(0))) {
+     throw new BusinessRuleError("The retained return value does not reconcile with available inventory. Review the source movements before recording this return.", "REVIEW_REQUIRED")
+@@ -600,7 +617,7 @@ async function postStockLine(
+       batchNumber: input.line.batchNumber ?? null,
+       serialNumbers: input.line.serialNumbers ?? [],
+       expiryDate: input.line.expiryDate ?? null,
+-      reversalOfTransactionId: input.line.reversalOfTransactionId ?? null,
++      reversalOfTransactionId: input.line.posReturnValuation?.movementId ?? input.line.reversalOfTransactionId ?? null,
+       effectiveAt: input.effectiveAt,
+       recordedAt: input.recordedAt,
+       timeProvenance: InventoryTransactionTimeProvenance.EXPLICIT_SOURCE_TIME,
+@@ -863,6 +880,35 @@ async function postInventoryStockEvent(
+   return run(client)
+ }
+ 
++/** AF10 derives stock from approved evidence and verifies the single owning GL
++ * batch before using the existing valuation/event writer without a duplicate GL. */
++export async function postControlledOpeningStockInTx(tx: Prisma.TransactionClient, organizationId: string, executionId: string, sourceId: string, postingBatchId: string) {
++  const { approvedOpeningSourceInTx, openingMoney, retainOpeningOperationInTx } = await import("@/services/onboarding/opening-domain-source")
++  const { execution, source, target, at } = await approvedOpeningSourceInTx(tx, organizationId, executionId)
++  const row = source.stock.find(item => item.sourceId === sourceId)
++  if (!row) throw new BusinessRuleError("The approved opening stock source is unavailable.")
++  const batch = await tx.ledgerPostingBatch.findFirst({ where: { id: postingBatchId, organizationId, sourceId: executionId,
++    sourceType: "OPENING_BALANCE", postingPurpose: "OPENING_BALANCE", sourceVersion: execution.revision.revision, status: "POSTED" } })
++  const coverage = source.ledger.filter(line => line.domain === "STOCK" && line.side === "DEBIT" && line.account === row.account && line.covers.includes(sourceId))
++  if (!batch || coverage.length !== 1) throw new BusinessRuleError("Opening stock requires its approved, posted opening journal.")
++  const itemId = target("items", row.item), locationId = target("locations", row.location)
++  const result = await postInventoryStockEvent({
++    organizationId, eventType: "stock.opening_balance.posted", idempotencyKey: `opening:${executionId}:stock:${sourceId}`,
++    actorId: execution.approvedById, occurredAt: at, sourceType: "OPENING_BALANCE", sourceId: `${executionId}:${sourceId}`,
++    accountingPostingBatchId: postingBatchId, outboxEventName: "inventory.opening_stock.posted",
++    metadata: { openingExecutionId: executionId, openingSourceId: sourceId, manifestDigest: execution.manifestDigest },
++    lines: [{ itemId, locationId, quantity: row.quantity, unitCost: row.unitCost, movementType: "INITIAL_STOCK",
++      referenceType: "MANUAL", referenceId: `${executionId}:${sourceId}`, referenceNumber: `OPEN-${execution.revision.revision}`,
++      notes: `Approved opening source ${sourceId}` }],
++  }, tx)
++  if (result.replayed || result.movementTransactionIds.length !== 1 || !result.totalCost.eq(openingMoney(row.value))) {
++    throw new BusinessRuleError("Opening stock valuation did not match its approved source.")
++  }
++  const receipt = { movementId: result.movementTransactionIds[0], eventId: result.eventId, postingBatchId, itemId, locationId, totalCost: result.totalCost.toFixed(2) }
++  await retainOpeningOperationInTx(tx, { organizationId, executionId, domain: "STOCK", sourceId, source: row, receipt })
++  return receipt
++}
++
+ export function postOpeningStock(input: OpeningStockInput, client: DbClient = db) {
+   const quantity = decimal3(input.quantity)
+   const sourceId = `${input.itemId}:${input.locationId}`
+@@ -1100,6 +1146,7 @@ export function postPOSStockIssue(input: POSStockIssueInput, client: DbClient =
+         itemId: line.itemId,
+         locationId: input.locationId,
+         quantity: decimal3(line.quantity).times(-1),
++        usePOSValuePool: true,
+         unitCost: line.unitCost,
+         movementType: TransactionType.SALE,
+         referenceType: TransactionReferenceType.SALES_ORDER,
+@@ -1119,7 +1166,24 @@ export function postPOSStockReturn(input: POSStockReturnInput, client: DbClient
+     input.idempotencyKey ??
+     `pos-${input.correctionType.toLowerCase()}-stock:${input.organizationId}:${input.saleId}`
+ 
+-  return postInventoryStockEvent(
++  const run = async (tx: Prisma.TransactionClient) => {
++    const originals = await tx.inventoryTransaction.findMany({
++      where: { organizationId: input.organizationId, locationId: input.locationId,
++        referenceType: TransactionReferenceType.SALES_ORDER, referenceId: input.saleId, type: TransactionType.SALE },
++      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
++    })
++    const remaining = [...originals]
++    const lines = input.lines.map(line => {
++      const quantity = decimal3(line.quantity)
++      const index = remaining.findIndex(movement => movement.itemId === line.itemId && decimal3(movement.quantity).negated().eq(quantity))
++      const movement = index >= 0 ? remaining.splice(index, 1)[0] : null
++      if (!quantity.gt(0) || !movement || money(movement.totalCost).lt(0)) {
++        throw new BusinessRuleError("The original sale stock allocation requires review before restoration.", "REVIEW_REQUIRED")
++      }
++      return { ...line, posReturnValuation: { movementId: movement.id, totalCost: money(movement.totalCost) } }
++    })
++    if (remaining.length) throw new BusinessRuleError("The full sale stock allocation requires review before restoration.", "REVIEW_REQUIRED")
++    return postInventoryStockEvent(
+     {
+       organizationId: input.organizationId,
+       eventType: input.correctionType === "VOID" ? "pos.void.stock_returned" : "pos.refund.stock_returned",
+@@ -1137,11 +1201,12 @@ export function postPOSStockReturn(input: POSStockReturnInput, client: DbClient
+         orderNumber: input.orderNumber,
+         reason: input.reason,
+       },
+-      lines: input.lines.map((line) => ({
++      lines: lines.map((line) => ({
+         itemId: line.itemId,
+         locationId: input.locationId,
+         quantity: line.quantity,
+         unitCost: line.unitCost,
++        posReturnValuation: line.posReturnValuation,
+         movementType: TransactionType.SALES_RETURN,
+         referenceType: TransactionReferenceType.SALES_ORDER,
+         referenceId: input.saleId,
+@@ -1149,8 +1214,10 @@ export function postPOSStockReturn(input: POSStockReturnInput, client: DbClient
+         notes: line.notes ?? input.reason,
+       })),
+     },
+-    client,
++    tx,
+   )
++  }
++  return hasTransaction(client) ? client.$transaction(run) : run(client)
+ }
+ 
+ export function postDeliveryOrderReservation(
+@@ -1225,35 +1292,51 @@ export function postDeliveryOrderStockIssue(
+   )
+ }
+ 
+-export function postInventoryReservation(input: InventoryReservationInput, client: DbClient = db) {
+-  const idempotencyKey =
+-    input.idempotencyKey ??
+-    `stock-reservation:${input.organizationId}:${input.itemId}:${input.locationId}:${input.actorId}:${Date.now()}`
++export async function postInventoryReservation(input: InventoryReservationInput, client: DbClient = db) {
++  return postInventoryReservationBatch({ ...input, lines: [{ itemId: input.itemId, locationId: input.locationId, quantity: input.quantity }] }, client)
++}
++
++export async function postInventoryReservationBatch(input: InventoryReservationBatchInput, client: DbClient = db) {
++  if (typeof input.idempotencyKey !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$/.test(input.idempotencyKey)) {
++    throw new BusinessRuleError("A retained reservation request identity is required before reserving stock.", "REVIEW_REQUIRED")
++  }
++  if (!input.actorId || !Array.isArray(input.lines) || input.lines.length < 1 || input.lines.length > 100) {
++    throw new BusinessRuleError("A reservation requires an actor and between 1 and 100 stock lines.")
++  }
++  for (const line of input.lines) {
++    const quantity = new Prisma.Decimal(line.quantity)
++    if (!line.itemId || !line.locationId || !quantity.isFinite() || !quantity.gt(0) || !quantity.eq(decimal3(quantity))) {
++      throw new BusinessRuleError("Reservation lines require an item, location and positive quantity with at most three decimal places.")
++    }
++  }
++  // One event owns the entire intent; all lines share its transaction and replay hash.
++  const lines = [...input.lines].sort((a, b) => a.locationId.localeCompare(b.locationId) || a.itemId.localeCompare(b.itemId))
+ 
+   return postInventoryStockEvent(
+     {
+       organizationId: input.organizationId,
+       eventType: "stock.reservation.posted",
+-      idempotencyKey,
++      idempotencyKey: input.idempotencyKey,
+       actorId: input.actorId,
+       occurredAt: input.occurredAt,
+       requiresOpenPeriod: false,
+       outboxEventName: "inventory.reservation.posted",
+       metadata: {
++        actorId: input.actorId,
+         reason: input.reason,
+         expiresAt: input.expiresAt?.toISOString() ?? null,
+       },
+-      lines: [
++      lines: lines.map(line => (
+         {
+-          itemId: input.itemId,
+-          locationId: input.locationId,
+-          quantity: input.quantity,
++          itemId: line.itemId,
++          locationId: line.locationId,
++          quantity: line.quantity,
+           movementType: TransactionType.RESERVATION,
+           referenceType: TransactionReferenceType.MANUAL,
+           referenceNumber: "INVENTORY_RESERVATION",
+           notes: input.reason,
+-        },
+-      ],
++        }
++      )),
+     },
+     client,
+   )
+diff --git a/types/inventoryTypes.ts b/types/inventoryTypes.ts
+index d49afffc..8c8861ad 100644
+--- a/types/inventoryTypes.ts
++++ b/types/inventoryTypes.ts
+@@ -423,6 +423,7 @@ export interface CreateStockTransferRequest {
+ }
+ 
+ export interface ReserveInventoryRequest {
++  idempotencyKey: string
+   reservations: {
+     inventoryLevelId: any
+     itemId: string

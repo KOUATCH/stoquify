@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-11-09T20:01:46.425Z",
+  "passed": false,
+  "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   `Connecting to 'http://127.0.0.1:52343/en/public-contours.css' violates the following Content Security Policy directive: \"connect-src 'none'\". The action has been blocked.`\n+ ]\n- []\n",
+  "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   `Connecting to 'http://127.0.0.1:52343/en/public-contours.css' violates the following Content Security Policy directive: \"connect-src 'none'\". The action has been blocked.`\n+ ]\n- []\n\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\rendered-ui\\run-rendered.cjs:120:14)",
+  "results": [],
+  "errors": [],
+  "network": [
+    {
+      "url": "http://127.0.0.1:52343/en/fixture",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:52343/style.css",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:52343/bundle.js",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:52343/public-contours.css",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:52343/axe.js",
+      "allowed": true
+    }
+  ],
+  "downloads": [
+    {
+      "locale": "en",
+      "width": 390,
+      "name": "mocked-close-pack.json"
+    }
+  ],
+  "browserClosed": true,
+  "serverClosed": true,
+  "origin": "http://127.0.0.1:52343",
+  "evidenceClass": "Mocked auth/actions with real browser rendering only; no authenticated application/E2E/DB/hosted build.",
+  "limitations": [
+    "No visual regression baseline; screenshots are new observations.",
+    "Automated axe findings are recorded, not full accessibility or screen-reader certification.",
+    "No production origin, real sessions, statutory certificate or provider was exercised."
+  ]
+}

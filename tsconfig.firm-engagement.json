@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.accountant-portfolio.json",
+  "compilerOptions": { "paths": { "@/*": ["./*"], "@prisma/client": ["./.codex-tmp/af04-prisma/client"] } },
+  "include": ["actions/accounting/firm-engagement.actions.ts", "actions/accounting/data-trust.actions.ts", "actions/accounting/accountant-work-desk.actions.ts", "services/accounting/accountant-portfolio.service.ts", "next-env.d.ts"]
+}

@@ -1,0 +1,52 @@
+{
+  "at": "2026-11-10T12:19:13.702Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "New exclusive task directory and physical dependency copy only; no source capture,DB,application,build or production operation",
+  "files": [
+    {
+      "path": "stage-dependencies.cjs",
+      "sha256": "1eb3f0ca3d6fb8c39d52d0971bedd0ad7218cfe9597682c5682b18d26e542e84"
+    },
+    {
+      "path": "dependency-manifest.cjs",
+      "sha256": "9348c922ef7534c894f85a9192d80c86649130c9ace6215f78ee6520b1017030"
+    },
+    {
+      "path": "resource-initial.json",
+      "sha256": "e10433ad59ac24c4f18d847228d8312a9d963ef11255726b62e368a828714778"
+    },
+    {
+      "path": "../qualification-20261109-r1/dependency-reconciliation.json",
+      "sha256": "6626e0e29f73ef084f8318a0d968dabf84cff527e9c7a3cc1818f6adbd5564a6"
+    },
+    {
+      "path": "../qualification-20261109-r1/private-client-attempt02.json",
+      "sha256": "576e206e381c399afe72ac9a6a9c329a7486abf31fef1f77a41f51ff1581681c"
+    },
+    {
+      "path": "../qualification-20261109-r1/final-integrity-recovery-attempt04-v3.json",
+      "sha256": "4c5a80b8291ebdcc8b28528cf4ca6692e2e206925532f9387f00840adbcb3b4b"
+    },
+    {
+      "path": "../qualification-20261109-r1/independent-review/FINAL-OUTCOME-REVIEW-attempt02.json",
+      "sha256": "e1b0c516cc64f6f2eee913edf9aa19769562e9e2b26635584f17ff020ea8b795"
+    }
+  ],
+  "review": [
+    "Fixed absolute new storage D:/p04-r06-fullapp-20261110-r2 must not exist; realpath-verified historical roots remain read-only. New ownership file and copied manifest are exclusively created.",
+    "Observed initial PID must be absent; both historical database owners must be stopped with no postmasterPIDfile; all six ports on both loopback names must be free before write.",
+    "Fresh Dcapacity>=12GiB and under-one-hour initial memory evidence are prerequisites; later build requires fresh resource admission.",
+    "Archived expected152806-file manifest is SHA-bound to previously accepted reconciliation and copied compressed bytes. Current package/lock/schema remain equal to accepted sources before and after copy.",
+    "Robocopy uses fixed source/destination, no purge/move/delete flags, excludesjunctions/root.cache. Timed-out owned copy may stop only its still-pending childPID/tree. No unrelated process termination.",
+    "Eight bounded readers enumerate physical regular files, reject links and independently require exact destination and archived-source path/size/hash equality. No dependency module execution.",
+    "V02 generated client is explicitly not accepted as current; a reviewed canonical private client must be regenerated after current source capture.",
+    "Only new taskstorage/evidence files are written; every historical outcome remains intact."
+  ],
+  "allowedNext": "Execute exact staging recipe in the authorized isolated D directory; submit actual receipt for independent review before later preparation.",
+  "limits": [
+    "Reused dependency equivalence does not certify a clean install.",
+    "Capacity and dependency staging do not qualify the repaired application.",
+    "No source/product mutation,package installation,migration,server startup,commit,push or deployment."
+  ]
+}

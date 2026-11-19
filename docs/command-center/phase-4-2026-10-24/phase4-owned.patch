@@ -1,0 +1,899 @@
+--- a/components/bi/BIProofDrawerHost.tsx
++++ b/components/bi/BIProofDrawerHost.tsx
+@@ -1,6 +1,6 @@
+ "use client"
+ 
+-import { useState } from "react"
++import { useRef, useState } from "react"
+ import { Eye, LockKeyhole, RefreshCw, ShieldAlert } from "lucide-react"
+ 
+ import { ProofTrailDrawer } from "@/components/evidence/ProofTrailDrawer"
+@@ -24,6 +24,8 @@
+   error?: string | null
+   className?: string
+   locale?: "en" | "fr"
++  onCloseAutoFocus?: (event: Event) => void
++  keepTriggerFocusableWhileLoading?: boolean
+ }
+ 
+ export function BIProofDrawerHost({
+@@ -38,9 +40,12 @@
+   error = null,
+   className,
+   locale = "en",
++  onCloseAutoFocus,
++  keepTriggerFocusableWhileLoading = false,
+ }: BIProofDrawerHostProps) {
+   const resolvedTriggerLabel = triggerLabel ?? (locale === "fr" ? "Voir les preuves" : "View proof")
+   const resolvedLoadingLabel = loadingLabel ?? (locale === "fr" ? "Chargement des preuves" : "Loading proof")
++  const trigger = useRef<HTMLButtonElement>(null)
+   const [internalOpen, setInternalOpen] = useState(false)
+   const resolvedOpen = open ?? internalOpen
+   const setOpen = onOpenChange ?? setInternalOpen
+@@ -83,22 +88,25 @@
+         type="button"
+         size="sm"
+         variant="outline"
+-        disabled={isLoading}
++        ref={trigger}
++        disabled={isLoading && !keepTriggerFocusableWhileLoading}
++        aria-disabled={isLoading || undefined}
+         aria-busy={isLoading || undefined}
+         onClick={() => {
++          if (isLoading) return
+           onOpenSubject?.(subject)
+           setOpen(true)
+         }}
+         className={cn("rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]", className)}
+       >
+         {isLoading ? (
+-          <RefreshCw className="h-4 w-4 animate-spin" aria-hidden="true" />
++          <RefreshCw className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+         ) : (
+           <Eye className="h-4 w-4" aria-hidden="true" />
+         )}
+         {isLoading ? resolvedLoadingLabel : subject.label || resolvedTriggerLabel}
+       </Button>
+-      <ProofTrailDrawer locale={locale} open={resolvedOpen} onOpenChange={setOpen} proofTrail={proofTrail} isLoading={isLoading} error={error} />
++      <ProofTrailDrawer onCloseAutoFocus={onCloseAutoFocus ?? (event => { event.preventDefault(); trigger.current?.focus() })} locale={locale} open={resolvedOpen} onOpenChange={setOpen} proofTrail={proofTrail} isLoading={isLoading} error={error} />
+     </>
+   )
+ }
+--- a/components/evidence/ProofTrailDrawer.tsx
++++ b/components/evidence/ProofTrailDrawer.tsx
+@@ -23,6 +23,7 @@
+   isLoading?: boolean
+   error?: string | null
+   locale?: "en" | "fr"
++  onCloseAutoFocus?: (event: Event) => void
+ }
+ 
+ // Portals do not inherit the dashboard ancestor. Use the same product-token
+@@ -92,13 +93,13 @@
+   )
+ }
+ 
+-export function ProofTrailDrawer({ open, onOpenChange, proofTrail: sourceProof, isLoading = false, error = null, locale = "en" }: ProofTrailDrawerProps) {
++export function ProofTrailDrawer({ open, onOpenChange, proofTrail: sourceProof, isLoading = false, error = null, locale = "en", onCloseAutoFocus }: ProofTrailDrawerProps) {
+   const t = drawerCopy[locale]
+   const proofTrail = sourceProof ? presentProofTrail(sourceProof, locale) : null
+   const nodeLabels = new Map(proofTrail?.nodes.map(node => [node.id, node.label]))
+   return (
+     <Sheet open={open} onOpenChange={onOpenChange}>
+-      <SheetContent style={portalTokens} lang={locale} closeLabel={t.close} overlayClassName="motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none" className="w-full overflow-y-auto bg-[var(--product-canvas)] text-[var(--dash-text)] [overflow-wrap:anywhere] motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none motion-reduce:transition-none sm:max-w-2xl">
++      <SheetContent onCloseAutoFocus={onCloseAutoFocus} style={portalTokens} lang={locale} closeLabel={t.close} overlayClassName="motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none" className="w-full overflow-y-auto bg-[var(--product-canvas)] text-[var(--dash-text)] [overflow-wrap:anywhere] motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none motion-reduce:transition-none sm:max-w-2xl">
+         <SheetHeader className="pr-8">
+           <SheetTitle className="text-[var(--dash-text)]">{t.title}</SheetTitle>
+           <SheetDescription className="text-[var(--dash-text-soft)]">
+--- a/components/manager-action-center/ManagerActionCenterDashboard.tsx
++++ b/components/manager-action-center/ManagerActionCenterDashboard.tsx
+@@ -300,6 +300,16 @@
+           {copy[locale].hiddenNotice} ({data.summary.hiddenByPermission})
+         </p>
+       ) : null}
++      {data.assuranceCoverage?.state === "AVAILABLE" ? (
++        <div>
++          <p>{fr ? "Incidents d’assurance autorisés chargés" : "Authorized assurance incidents loaded"}: {data.assuranceCoverage.loaded}. {fr ? "Limite de la source avant filtrage des autorisations" : "Source limit before permission filtering"}: {data.assuranceCoverage.limit}.</p>
++          {data.assuranceCoverage.possiblyTruncated ? <p>{fr
++            ? "Couverture partielle possible : la limite de la source a été atteinte ; d’autres incidents peuvent exister."
++            : "Coverage may be partial: the source limit was reached; more incidents may exist."}</p> : null}
++        </div>
++      ) : <p>{data.assuranceCoverage?.state === "UNAVAILABLE"
++        ? fr ? "Les incidents d’assurance n’ont pas pu être chargés. Actualisez la vue pour réessayer ; leur absence ne confirme pas la fin du travail." : "Assurance incidents could not be loaded. Refresh the view to retry; their absence does not confirm completion."
++        : fr ? "La couverture des incidents d’assurance n’est pas confirmée." : "Assurance incident coverage is not confirmed."}</p>}
+       {source?.state === "AVAILABLE" ? (
+         <>
+           <p>
+--- a/components/manager-action-center/ManagerLocationActionCenterDashboard.tsx
++++ b/components/manager-action-center/ManagerLocationActionCenterDashboard.tsx
+@@ -1,5 +1,6 @@
+ "use client"
+ 
++import { biSeverityCopy } from "@/lib/dashboard/bi-presentation"
+ import { commandDateLabel, priorityExplanation } from "@/lib/dashboard/command-center-context"
+ import { presentDailyAction } from "@/services/daily-habit/daily-habit-signal-presentation"
+ import { CommandCenterRecovery } from "@/components/dashboard/CommandCenterRecovery"
+@@ -325,7 +326,7 @@
+               className={cn(dashboardRowClass, "grid min-w-0 gap-2 p-3 text-xs lg:min-w-[340px]")}
+             >
+               <MetaLine icon={<ShieldCheck className="h-4 w-4" />} label={t.authority}>
+-                {data.authority.basis}
++                {locale === "fr" ? "Responsable des sites attribués" : "Assigned location manager"}
+               </MetaLine>
+               <MetaLine icon={<Clock3 className="h-4 w-4" />} label={t.generated}>
+                 {formatDateTime(data.generatedAt, formatterLocale)}
+@@ -597,7 +598,7 @@
+                               ),
+                             )}
+                           >
+-                            {blocker.severity}
++                            {biSeverityCopy[locale][blocker.severity]}
+                           </Badge>
+                           <Badge
+                             variant="outline"
+@@ -787,9 +788,7 @@
+       <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+         <DetailLine label={locale === "fr" ? "Horodatage" : "Source time"}>{commandDateLabel(item.dueAt, "evidence_expiry", locale)}</DetailLine>
+         <DetailLine label={t.ownerRole}>{managerQueueCopy[locale].roles[item.assignedRole]}</DetailLine>
+-        <div className="sm:col-span-2">
+-          <DetailLine label={t.requiredPermission}>{item.requiredPermission}</DetailLine>
+-        </div>
++        <DetailLine className="sm:col-span-2" label={t.requiredPermission}>{item.requiredPermission}</DetailLine>
+       </dl>
+       {item.blockers.length > 0 || item.redactions.length > 0 ? (
+         <div className="mt-3 flex flex-wrap gap-2">
+@@ -986,9 +985,9 @@
+   )
+ }
+ 
+-function DetailLine({ label, children }: { label: string; children: React.ReactNode }) {
++function DetailLine({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
+   return (
+-    <div className="grid min-w-0 grid-cols-1 gap-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] sm:items-start sm:gap-3">
++    <div className={cn("grid min-w-0 grid-cols-1 gap-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] sm:items-start sm:gap-3", className)}>
+       <dt className="break-words text-[var(--dash-text-soft)]">{label}</dt>
+       <dd className="min-w-0 break-words font-medium text-[var(--dash-text)] sm:text-right">
+         {children}
+@@ -1007,16 +1006,14 @@
+   children: React.ReactNode
+ }) {
+   return (
+-    <div className="flex min-w-0 items-start gap-2">
+-      <span className="mt-0.5 shrink-0 text-[var(--dash-text-faint)]" aria-hidden="true">
+-        {icon}
+-      </span>
+-      <div className="min-w-0 flex-1 sm:flex sm:items-start sm:justify-between sm:gap-3">
+-        <dt className="break-words text-[var(--dash-text-soft)]">{label}</dt>
+-        <dd className="min-w-0 break-words font-medium text-[var(--dash-text)] sm:text-right">
+-          {children}
+-        </dd>
+-      </div>
++    <div className="grid min-w-0 grid-cols-1 gap-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] sm:items-start sm:gap-3">
++      <dt className="flex min-w-0 items-start gap-2 break-words text-[var(--dash-text-soft)]">
++        <span className="mt-0.5 shrink-0 text-[var(--dash-text-faint)]" aria-hidden="true">{icon}</span>
++        {label}
++      </dt>
++      <dd className="min-w-0 break-words pl-6 font-medium text-[var(--dash-text)] sm:pl-0 sm:text-right">
++        {children}
++      </dd>
+     </div>
+   )
+ }
+--- a/components/owner-war-room/OwnerWarRoomDashboard.tsx
++++ b/components/owner-war-room/OwnerWarRoomDashboard.tsx
+@@ -272,6 +272,7 @@
+   const commandMode = view.mode
+   const setCommandMode = (mode: BICommandMode) => update({mode})
+   const proofRequest = useRef(0)
++  const proofTrigger = useRef<HTMLElement | null>(null)
+   const [briefAcknowledged, setBriefAcknowledged] = useState(
+     data.morningBrief.acknowledgement.state === "acknowledged",
+   )
+@@ -291,7 +292,8 @@
+   )
+ 
+   function loadProofTrail(subject: { subjectType: OwnerWarRoomData["proofSubjects"][number]["subjectType"]; subjectId: string }) {
+-    if (!subject.subjectId) return
++    if (!subject.subjectId || isPending) return
++    proofTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+     const request = ++proofRequest.current
+     setProofTrail(null)
+     setProofError(null)
+@@ -344,6 +346,7 @@
+           <div className="flex flex-wrap items-center gap-2">
+             <Badge className={cn("border", dashboardToneClass("success"))}>{t.readOnly}</Badge>
+             <BIProofDrawerHost
++              keepTriggerFocusableWhileLoading
+               locale={locale}
+               isLoading={isPending}
+               error={proofError}
+@@ -351,6 +354,7 @@
+               proofTrail={proofTrail}
+               open={proofOpen}
+               onOpenChange={changeProofOpen}
++              onCloseAutoFocus={event => { event.preventDefault(); if (proofTrigger.current?.isConnected) proofTrigger.current.focus() }}
+               onOpenSubject={openBIProofTrail}
+               triggerLabel={t.openProof}
+             />
+@@ -489,9 +493,10 @@
+                     </div>
+                   </div>
+                 ) : null}
++                <p className="mt-3 text-sm text-[var(--dash-text-soft)]">{data.actionQueue.actionItems.length} {locale === "fr" ? "actions autorisées chargées ; toutes sont affichées ci-dessous." : "authorized actions loaded; all are shown below."}</p>
+                 <div className="mt-4 space-y-3">
+                   {data.actionQueue.actionItems.length ? (
+-                    data.actionQueue.actionItems.slice(0, 7).map((item) => (
++                    data.actionQueue.actionItems.map((item) => (
+                       <div key={item.id} className={cn(dashboardRowClass, "p-3")}>
+                         <div className="flex flex-col items-start justify-between gap-3 sm:flex-row">
+                           <div className="min-w-0">
+@@ -617,7 +622,8 @@
+                     <button
+                       key={subject.subjectType}
+                       type="button"
+-                      disabled={!subject.enabled || isPending}
++                      disabled={!subject.enabled}
++                      aria-disabled={isPending || undefined}
+                       onClick={() => openProofTrail(subject)}
+                       className={cn(
+                         "w-full rounded-lg border p-3 text-left transition",
+@@ -657,7 +663,7 @@
+                     <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>{t.moduleStateDetail}</p>
+                   </div>
+                   <Badge variant="outline" className={cn("border", dashboardToneClass(data.moduleControl.summary.wouldBlockCount ? "gold" : "success"))}>
+-                    {data.moduleControl.mode}
++                    {locale === "fr" ? {off: "Désactivé", observe: "Observation", enforce: "Application des contrôles"}[data.moduleControl.mode] : data.moduleControl.mode}
+                   </Badge>
+                 </div>
+                 <div className="mt-4 grid gap-3 md:grid-cols-3">
+--- a/design-system/stoquify/pages/command-center-shared.md
++++ b/design-system/stoquify/pages/command-center-shared.md
+@@ -69,3 +69,10 @@
+ A shared refresh control hides private content while checking access, confirms a new committed page payload, and exposes failure/retry when no replacement arrives. A successful reload does not certify source freshness or complete work. Payload replacement clears proof, agent and visit-only review state, even if generation timestamps are identical. Safe URL state restores only choices present in the new authorized payload. Source handoffs use native links and browser Back; no client-provided return URL is executed.
+ 
+ Reporting periods and Manager deadline classification use UTC. Manager/Owner header times use UTC; Digest generation time may use the declared organization timezone while its reporting period remains UTC. Each source-loading request uses one clock value. Evidence expiry, detection, submission, generation and reconciliation period end are distinct from a source-owned deadline. Missing expiry evidence is unavailable, never a synthetic deadline.
++
++
++## Phase 4 release review — 24 October 2026
++
++Canonical source-copy translation preserves authored evidence and technical identifiers. Optional proof focus hooks support the actual initiating control without changing source permissions. The location Manager definition lists use valid direct term/description groups. Source caps and unavailable reads must remain explicit.
++
++[Phase 4 evidence](../../../docs/command-center/phase-4-2026-10-24/README.md) and [localization inventory](../../../docs/command-center/phase-4-2026-10-24/LOCALIZATION_REVIEW.md) distinguish source, mocked, static, synthetic-browser and live/manual evidence. Release A remains pending human productivity, manual accessibility, live role/revocation and isolated release-build checks. Database changes and durable Work & Follow-up remain outside this phase.
+--- a/design-system/stoquify/pages/daily-digest.md
++++ b/design-system/stoquify/pages/daily-digest.md
+@@ -44,3 +44,10 @@
+ Reporting periods and Manager deadline classification use UTC. Manager/Owner header times use UTC; Digest generation time may use the declared organization timezone while its reporting period remains UTC. Each source-loading request uses one clock value. Evidence expiry, detection, submission, generation and reconciliation period end are distinct from a source-owned deadline. Missing expiry evidence is unavailable, never a synthetic deadline.
+ 
+ Digest role projections use risk score then stable identity. Generated priority copy uses the same leading action in EN/FR. Source links use the selected locale. Changes to agent access/proposal gates invalidate the panel state.
++
++
++## Phase 4 release review — 24 October 2026
++
++Freshness and unavailable source-action explanations use the reviewed EN/FR canonical-copy helper. Existing template, role, timezone, source-authority and visit-only review semantics remain in force.
++
++[Phase 4 evidence](../../../docs/command-center/phase-4-2026-10-24/README.md) and [localization inventory](../../../docs/command-center/phase-4-2026-10-24/LOCALIZATION_REVIEW.md) distinguish source, mocked, static, synthetic-browser and live/manual evidence. Release A remains pending human productivity, manual accessibility, live role/revocation and isolated release-build checks. Database changes and durable Work & Follow-up remain outside this phase.
+--- a/design-system/stoquify/pages/manager-action-center.md
++++ b/design-system/stoquify/pages/manager-action-center.md
+@@ -47,3 +47,10 @@
+ Reporting periods and Manager deadline classification use UTC. Manager/Owner header times use UTC; Digest generation time may use the declared organization timezone while its reporting period remains UTC. Each source-loading request uses one clock value. Evidence expiry, detection, submission, generation and reconciliation period end are distinct from a source-owned deadline. Missing expiry evidence is unavailable, never a synthetic deadline.
+ 
+ Tenant queue ranking is severity, actual source deadline, risk score, then stable action identity. Only real deadlines contribute to overdue/due-today lanes. Location signal queues use risk score then stable identity; evidence expiry does not create deadline urgency. Brief explanations name the actual leading item and preserve blocked-action limitations.
++
++
++## Phase 4 release review — 24 October 2026
++
++The tenant coverage panel distinguishes available, possibly capped (25 pre-permission source rows), unavailable and unconfirmed assurance coverage. Failed source loading is not completion. The location variant localizes authority/severity and canonical branch blockers, with valid metadata/action definition lists. No source query or persistence changed.
++
++[Phase 4 evidence](../../../docs/command-center/phase-4-2026-10-24/README.md) and [localization inventory](../../../docs/command-center/phase-4-2026-10-24/LOCALIZATION_REVIEW.md) distinguish source, mocked, static, synthetic-browser and live/manual evidence. Release A remains pending human productivity, manual accessibility, live role/revocation and isolated release-build checks. Database changes and durable Work & Follow-up remain outside this phase.
+--- a/design-system/stoquify/pages/owner-war-room.md
++++ b/design-system/stoquify/pages/owner-war-room.md
+@@ -43,3 +43,10 @@
+ Reporting periods and Manager deadline classification use UTC. Manager/Owner header times use UTC; Digest generation time may use the declared organization timezone while its reporting period remains UTC. Each source-loading request uses one clock value. Evidence expiry, detection, submission, generation and reconciliation period end are distinct from a source-owned deadline. Missing expiry evidence is unavailable, never a synthetic deadline.
+ 
+ Owner action/risk queues use risk score then stable identity. Queue explanations remain separate from the existing cash/close/payroll business recommendation and its permission gates. Proof requests clear prior evidence and ignore superseded/closed requests; replacing the authorized payload unmounts the drawer. Owner modes now restore from validated URL state.
++
++
++## Phase 4 release review — 24 October 2026
++
++Command displays every supplied authorized action with a loaded count; the previous seven-item cap is removed. Brief remains a preview. Proof close restores focus to its initiating header or Investigate control, including pending reads; closed/superseded responses remain ignored. Canonical source details/freshness and module-control labels support EN/FR.
++
++[Phase 4 evidence](../../../docs/command-center/phase-4-2026-10-24/README.md) and [localization inventory](../../../docs/command-center/phase-4-2026-10-24/LOCALIZATION_REVIEW.md) distinguish source, mocked, static, synthetic-browser and live/manual evidence. Release A remains pending human productivity, manual accessibility, live role/revocation and isolated release-build checks. Database changes and durable Work & Follow-up remain outside this phase.
+--- a/docs/command-center/phase-0-2026-10-24/ACCEPTANCE_CHECKLIST.md
++++ b/docs/command-center/phase-0-2026-10-24/ACCEPTANCE_CHECKLIST.md
+@@ -52,7 +52,7 @@
+ - [x] **CC-03.1** Priority explanation is generated from actual ranking and states the leading business reason.
+ - [x] **CC-03.2** Ties are deterministic for the same authorized inputs, including a final stable identity tie-break if needed.
+ - [x] **CC-03.3** Source deadlines do not roll forward on refresh; expiry/detection/submission/generated dates are labeled according to meaning.
+-- [ ] **CC-03.4** English and French service text, UI labels, accessible names and source links remain consistently localized.
++- [x] **CC-03.4** English and French service text, UI labels, accessible names and source links remain consistently localized.
+ - [x] **CC-03.5** Reporting boundaries and due-today timezone agree with the documented policy; test midnight boundaries and time offsets.
+ - [x] **CC-03.6** Source navigation/return restores valid queue context; internal return URLs are validated; modifier-click/native links work.
+ - [x] **CC-03.7** Refresh exposes pending/success/failure; retained data is not relabeled freshly verified after failure.
+@@ -61,17 +61,19 @@
+ 
+ Phase 3 evidence: [implementation and verification record](../phase-3-2026-10-24/README.md), F04/F05/F08/F09/F10. Checked entries mean bounded implementation plus source/mocked/synthetic-browser evidence, not live authorization or database certification. Server scope denial and organization/actor consistency tests remain in the selected suite. No arbitrary return URL is consumed; CC-03.6 uses validated local view state and native browser history.
+ 
+-CC-03.4 remains open for the complete source-copy/accessibility review: owned ranking, dates, recovery, Manager generated copy and canonical signal families are localized and tested; custom/source-authored strings are intentionally preserved. Synthetic fixtures are not a complete inventory of every upstream message. Full authenticated EN/FR journeys, assistive-technology checks and live revocation remain Phase 4 release evidence.
++CC-03.4 source-copy review completed in Phase 4: [localization inventory](../phase-4-2026-10-24/LOCALIZATION_REVIEW.md) covers current owned copy, source-derived static blockers, dynamic patterns, accessible names and destinations. Authored evidence and technical identifiers remain verbatim. This check is bounded to the reviewed producers/adapters; authenticated EN/FR journeys, human language review, assistive technology and live revocation remain separate release evidence.
+ 
+ ## Phase 4 — Release A gate (P1; QA + release owner)
+ 
+ - [ ] **CC-04.1** All applicable CC-01–CC-03 criteria pass with recorded evidence and remaining limitations.
+-- [ ] **CC-04.2** All three pages and both Manager scopes exercised in EN/FR at 375px, 768px and 1440px widths with recorded heights.
++- [x] **CC-04.2** All three pages and both Manager scopes exercised in EN/FR at 375px, 768px and 1440px widths with recorded heights.
+ - [ ] **CC-04.3** Keyboard order, visible/unobscured focus, mode states, filter labels, drawer focus return, status announcements, zoom/reflow and reduced motion verified.
+ - [ ] **CC-04.4** No inaccessible permitted work, false completion, silent truncation, or unresolved access leak remains in scope.
+-- [ ] **CC-04.5** Targeted shared-consumer regression checks pass; no unrelated theme or workflow change.
+-- [ ] **CC-04.6** Source inspection, mocked tests, DB tests, browser/manual checks and skips are reported separately; exact source revision and local-diff scope recorded.
+-- [ ] **CC-04.7** Release notes and scoped rollback prepared through existing release controls; Release A does not require new follow-up persistence.
++- [x] **CC-04.5** Targeted shared-consumer regression checks pass; no unrelated theme or workflow change.
++- [x] **CC-04.6** Source inspection, mocked tests, DB tests, browser/manual checks and skips are reported separately; exact source revision and local-diff scope recorded.
++- [x] **CC-04.7** Release notes and scoped rollback prepared through existing release controls; Release A does not require new follow-up persistence.
++
++Phase 4 evidence: [release review](../phase-4-2026-10-24/README.md). CC-04.2 is satisfied by eight isolated EN/FR rendered journeys (three modes, 375/768/1440×1000); it does not certify authenticated role coverage. Twenty-four automated accessibility scans pass after location definition-list repairs. CC-04.3 remains open for manual screen-reader/native-zoom and exhaustive keyboard checks. CC-04.4 retains a live-access/revocation gate despite passing local loaded-work, explicit source-cap, failure and private-state recovery checks. CC-04.1 remains open because the human CC-02.8 trial is unmeasured. The user signed into Edge, but browser attachment and native-window inspection timed out; this is a tooling limitation, not an application failure. No DB tests, business commands, build, migration or deployment were run. Release A is not approved.
+ 
+ ## Phase 5 — Work & Follow-up foundation (P2; backend + domain owners)
+ 
+--- a/docs/command-center/phase-0-2026-10-24/ACTION_SOURCE_MAP.md
++++ b/docs/command-center/phase-0-2026-10-24/ACTION_SOURCE_MAP.md
+@@ -87,3 +87,10 @@
+ ## Phase 3 projection update — 24 October 2026
+ 
+ The inventory above records the Phase 0 baseline. Current Command Center adapters label SIGNAL time as source evidence expiry; if the source signal is missing, the expiry is unavailable. ASSURANCE without a deadline uses detection time; submitted ACCOUNTANT_REQUEST responses use submission time; source failure/invalid-evidence rows use generation time; reconciliation candidates use period end. None of these non-deadline dates now creates overdue/due-today work. Source-owned assurance/request deadlines remain intact. Generic ActionQueue helpers and all completion authorities are unchanged. See the [Phase 3 report](../phase-3-2026-10-24/README.md).
++
++
++## Phase 4 coverage clarification — 24 October 2026
++
++Manager's existing assurance source requests at most 25 rows before permission filtering. The adapter now reports available loaded count, that source limit and possible truncation when visible plus permission-filtered rows reach the cap. Read failure reports unavailable; it does not establish zero work. Missing coverage metadata remains unconfirmed. No query, permission predicate, incident identity, assignment/resolution authority or database changed.
++
++Owner Command now renders every supplied authorized queue item; its former seven-item display cap is removed. Brief remains a preview. These disclosures describe loaded source coverage, not a guarantee that every organizational work item has been loaded. See the [Phase 4 report](../phase-4-2026-10-24/README.md).
+--- a/lib/dashboard/snapshot-source-blocker-presentation.ts
++++ b/lib/dashboard/snapshot-source-blocker-presentation.ts
+@@ -10,6 +10,84 @@
+ 
+ // Match source identity and exact canonical wording; never translate custom evidence.
+ const sourceCopy: Record<string, Translation> = {
++  "branch-location-required": {
++    "gate": "branch_operating_snapshot",
++    "en": {
++      "title": "Branch snapshot requires a location",
++      "detail": "A branch operating snapshot cannot be generated without a tenant-scoped locationId.",
++      "nextAction": "Select a branch or warehouse before requesting a branch snapshot."
++    },
++    "fr": {
++      "title": "Un site est requis pour l’instantané d’agence",
++      "detail": "Un instantané d’agence nécessite un site appartenant à l’organisation.",
++      "nextAction": "Sélectionnez une agence ou un entrepôt avant de demander cet instantané."
++    }
++  },
++  "branch-location-not-found": {
++    "gate": "tenant_isolation",
++    "en": {
++      "title": "Location is unavailable for this tenant",
++      "detail": "The requested location was not found inside the authenticated tenant scope.",
++      "nextAction": "Select a valid tenant location."
++    },
++    "fr": {
++      "title": "Le site est indisponible dans cette organisation",
++      "detail": "Le site demandé est introuvable dans le périmètre de l’organisation authentifiée.",
++      "nextAction": "Sélectionnez un site autorisé de l’organisation."
++    }
++  },
++  "branch-location-inactive": {
++    "gate": "branch_operating_snapshot",
++    "en": {
++      "title": "Location is inactive",
++      "detail": "The location exists but is inactive, so operating metrics may be partial.",
++      "nextAction": "Reactivate the location or choose another branch."
++    },
++    "fr": {
++      "title": "Le site est inactif",
++      "detail": "Le site existe mais est inactif ; les indicateurs opérationnels peuvent être partiels.",
++      "nextAction": "Réactivez le site ou choisissez une autre agence."
++    }
++  },
++  "branch-payroll-profitability-missing": {
++    "gate": "branch_payroll_profitability",
++    "en": {
++      "title": "Branch payroll cost allocation is missing",
++      "detail": "This branch has completed sales but no posted payroll run lines allocated to the branch, so branch profitability should not claim payroll-complete margin.",
++      "nextAction": "Assign payroll employees to branches and post the payroll run before relying on branch profitability."
++    },
++    "fr": {
++      "title": "L’affectation des coûts de paie au site est manquante",
++      "detail": "Ce site présente des ventes terminées mais aucune ligne de paie comptabilisée affectée ; sa marge ne peut pas être présentée comme intégrant toute la paie.",
++      "nextAction": "Affectez les salariés aux sites et comptabilisez la paie avant de vous fier à la rentabilité du site."
++    }
++  },
++  "branch-payroll-attendance-proof-missing": {
++    "gate": "branch_payroll_inputs",
++    "en": {
++      "title": "POS shift evidence is not frozen for payroll",
++      "detail": "POS sessions exist for this branch, but no frozen payroll attendance snapshots are available for the same period.",
++      "nextAction": "Review POS shifts and freeze payroll attendance snapshots before calculating labor-sensitive payroll inputs."
++    },
++    "fr": {
++      "title": "Les preuves des sessions de caisse ne sont pas figées pour la paie",
++      "detail": "Des sessions de caisse existent pour ce site, mais aucun instantané de présence figé n’est disponible pour la même période.",
++      "nextAction": "Examinez les sessions de caisse et figez les instantanés de présence avant de calculer les éléments de paie liés au temps de travail."
++    }
++  },
++  "branch-payroll-unallocated-lines-present": {
++    "gate": "branch_payroll_allocation",
++    "en": {
++      "title": "Payroll run lines lack branch allocation",
++      "detail": "Approved payroll run lines exist without employee branch allocation, so branch profitability may be incomplete.",
++      "nextAction": "Assign employee branch locations or reviewed cost centers before branch BI uses payroll cost allocation."
++    },
++    "fr": {
++      "title": "Des lignes de paie ne sont pas affectées à un site",
++      "detail": "Des lignes de paie approuvées n’ont pas d’affectation de site pour le salarié ; la rentabilité du site peut être incomplète.",
++      "nextAction": "Affectez les salariés aux sites ou à des centres de coûts vérifiés avant d’utiliser la répartition des coûts de paie."
++    }
++  },
+   "close-assessment-not-current": {
+     gate: "close_readiness",
+     en: { title: "Close assessment is historical", detail: "This assessment is not the latest assessment for its accounting period.", nextAction: "Open the latest close assessment before relying on certification." },
+--- a/services/daily-habit/daily-habit-digest-presentation.ts
++++ b/services/daily-habit/daily-habit-digest-presentation.ts
+@@ -1,3 +1,4 @@
++import { commandSourceText, commandSourceFreshness, commandSourceDrill } from "@/lib/dashboard/command-center-source-copy"
+ import type { BIDailyDigest, BIActionLink, BIDrillThrough, BIFreshness } from "@/services/bi/bi-contracts"
+ import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
+ 
+@@ -13,27 +14,25 @@
+ 
+ // Presentation only, after authority/filtering. Keep IDs, evidence, source hashes and values intact.
+ export function presentDailyDigest(digest: BIDailyDigest, locale: "en" | "fr"): BIDailyDigest {
+-  const freshness = (value: BIFreshness): BIFreshness => locale === "fr" && value.staleReason === "Signal is expired."
+-    ? { ...value, staleReason: "Le signal a expiré." }
+-    : value
++  const freshness = (value: BIFreshness) => commandSourceFreshness(value, locale)
+   const blockers = (values: BIDailyDigest["blockers"]) => values.map(value => presentSnapshotBlocker(value, locale))
+   const route = (href: string) => href === "/dashboard" || href.startsWith("/dashboard/") ? `/${locale}${href}` : href
+-  const action = (value: BIActionLink | null): BIActionLink | null => value ? { ...value, href: route(value.href) } : null
+-  const drill = (value: BIDrillThrough | null): BIDrillThrough | null => value ? { ...value, ...(value.available && value.href ? { href: route(value.href) } : {}) } : null
++  const action = (value: BIActionLink | null): BIActionLink | null => value ? { ...value, href: route(value.href), disabledReason: value.disabledReason ? commandSourceText(value.disabledReason, locale) : null } : null
++  const drill = (value: BIDrillThrough | null): BIDrillThrough | null => value ? { ...commandSourceDrill(value, locale), ...(value.available && value.href ? { href: route(value.href) } : {}) } : null
+   const risk = (value: BIDailyDigest["risks"][number]) => ({ ...value, freshness: freshness(value.freshness), blockers: blockers(value.blockers), drillThrough: drill(value.drillThrough)!, actionLink: action(value.actionLink) })
+   const template = locale === "fr" ? templates[digest.id] : undefined
+   const actions = digest.actions.map(value => action(value)!)
+   const primary = action(digest.commandBrief.primaryAction)
+   if (template && primary?.id === `${digest.id}-open`) primary.label = "Ouvrir l’espace"
+   const zones = digest.zones.map(zone => {
+-    const cards = zone.cards.map(card => ({ ...card, blockers: blockers(card.blockers), ...(template ? { title: template.metric, detail: template.detail, unit: template.unit ?? card.unit } : {}), drillThrough: drill(card.drillThrough)!, actionLink: action(card.actionLink) }))
++    const cards = zone.cards.map(card => ({ ...card, freshness: freshness(card.freshness), blockers: blockers(card.blockers), ...(template ? { title: template.metric, detail: template.detail, unit: template.unit ?? card.unit } : {}), drillThrough: drill(card.drillThrough)!, actionLink: action(card.actionLink) }))
+     if (template) for (const card of cards) card.drillThrough.label = "Ouvrir la source"
+     if (digest.id === "manager-run-sheet") for (const card of cards) {
+       if (card.state === "module_unavailable") card.detail = locale === "fr"
+         ? "Accès aux achats indisponible. Contactez l’administrateur."
+         : "Purchasing access is unavailable. Contact your administrator."
+     }
+-    return { ...zone, blockers: blockers(zone.blockers), risks: zone.risks.map(risk), ...(template ? { title: template.title, summary: template.summary, businessQuestion: "Que doit examiner ce rôle aujourd’hui ?" } : {}), cards, primaryMetric: cards.find(card => card.id === zone.primaryMetric?.id) ?? zone.primaryMetric, actions: zone.actions.map(value => action(value)!), drillThrough: drill(zone.drillThrough) }
++    return { ...zone, freshness: freshness(zone.freshness), blockers: blockers(zone.blockers), risks: zone.risks.map(risk), ...(template ? { title: template.title, summary: template.summary, businessQuestion: "Que doit examiner ce rôle aujourd’hui ?" } : {}), cards, primaryMetric: cards.find(card => card.id === zone.primaryMetric?.id) ?? zone.primaryMetric, actions: zone.actions.map(value => action(value)!), drillThrough: drill(zone.drillThrough) }
+   })
+   if (template) for (const zone of zones) if (zone.drillThrough) zone.drillThrough.label = "Ouvrir la source"
+   const briefDrill = drill(digest.commandBrief.drillThrough)
+@@ -42,6 +41,6 @@
+     ...digest, actions, zones, blockers: blockers(digest.blockers),
+     changes: digest.changes.map(change => ({ ...change, freshness: freshness(change.freshness), blockers: blockers(change.blockers), drillThrough: drill(change.drillThrough), actionLink: action(change.actionLink) })),
+     risks: digest.risks.map(risk),
+-    commandBrief: { ...digest.commandBrief, blockers: blockers(digest.commandBrief.blockers), reviewState: digest.commandBrief.reviewState ? { ...digest.commandBrief.reviewState, blockers: blockers(digest.commandBrief.reviewState.blockers) } : null, primaryAction: primary, drillThrough: briefDrill, ...(template ? { title: template.title, summary: template.summary } : {}) },
++    commandBrief: { ...digest.commandBrief, freshness: freshness(digest.commandBrief.freshness), blockers: blockers(digest.commandBrief.blockers), reviewState: digest.commandBrief.reviewState ? { ...digest.commandBrief.reviewState, blockers: blockers(digest.commandBrief.reviewState.blockers) } : null, primaryAction: primary, drillThrough: briefDrill, ...(template ? { title: template.title, summary: template.summary } : {}) },
+   }
+ }
+--- a/services/manager-action-center/__tests__/manager-action-center.service.test.ts
++++ b/services/manager-action-center/__tests__/manager-action-center.service.test.ts
+@@ -152,6 +152,21 @@
+     mockGetClientMissingCloseEvidenceRequestQueue.mockResolvedValue(
+       missingProofQueue(),
+     )
++  })
++
++  it.each([[0, 0, false], [1, 24, true], [25, 0, true]] as const)("discloses assurance coverage for %i visible and %i filtered source rows", async (visible, hidden, capped) => {
++    mockTenantReadSources()
++    mockGetAssuranceControlTowerData.mockResolvedValue({incidents: Array.from({length: visible}, (_, i) => ({...assuranceIncident(), id: `incident-${i}`})), summary: {hiddenByPermission: hidden}})
++    const data = await getManagerActionCenterData({accessContext: accessContext(), now: generatedAt})
++    expect(data.assuranceCoverage).toEqual({state: "AVAILABLE", loaded: visible, limit: 25, possiblyTruncated: capped})
++    expect(mockGetAssuranceControlTowerData).toHaveBeenCalledWith(expect.objectContaining({limit: 25}))
++  })
++
++  it("reports a failed assurance source instead of confirmed empty coverage", async () => {
++    mockTenantReadSources()
++    const data = await getManagerActionCenterData({accessContext: accessContext(), now: generatedAt})
++    expect(data.assuranceCoverage).toEqual({state: "UNAVAILABLE"})
++    expect(JSON.stringify(data)).not.toContain("assurance unavailable")
+   })
+ 
+   it("fails closed on a denied operating scope before downstream reads", async () => {
+--- a/services/manager-action-center/manager-action-center-contracts.ts
++++ b/services/manager-action-center/manager-action-center-contracts.ts
+@@ -125,6 +125,10 @@
+   hiddenByPermission: number
+ }
+ 
++export type ManagerAssuranceCoverage =
++  | { state: "AVAILABLE"; loaded: number; limit: number; possiblyTruncated: boolean }
++  | { state: "UNAVAILABLE" }
++
+ export type ManagerActionCenterData = {
+   organizationId: string
+   generatedAt: string
+@@ -138,6 +142,7 @@
+   actionQueue: ActionQueueResult
+   clientMissingProofSource: ClientMissingProofActionCenterSource | null
+   summary: ManagerActionCenterSummary
++  assuranceCoverage?: ManagerAssuranceCoverage
+   assuranceIncidents: AssuranceControlTowerIncident[]
+ }
+ 
+@@ -154,6 +159,7 @@
+   generatedAt: string
+   snapshots: ManagerActionCenterSnapshotBundle
+   actionQueue: ActionQueueResult
++  assuranceCoverage?: ManagerAssuranceCoverage
+   assuranceIncidents?: AssuranceControlTowerIncident[]
+   assuranceHiddenByPermission?: number
+   paymentReconciliationSignOff?: PaymentReconciliationSignOffCommandStateResult | null
+--- a/services/manager-action-center/manager-action-center-presentation.ts
++++ b/services/manager-action-center/manager-action-center-presentation.ts
+@@ -1,3 +1,4 @@
++import { commandSourceText, commandSourceFreshness, commandSourceDrill } from "@/lib/dashboard/command-center-source-copy"
+ import { localizePath } from "@/i18n/routing"
+ import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
+ import { priorityExplanation } from "@/lib/dashboard/command-center-context"
+@@ -30,6 +31,15 @@
+   "Open Close & Assurance and review the stored response evidence.": "Ouvrez Clôture et assurance et examinez les preuves de réponse enregistrées.",
+   "Open Close & Assurance and repair the stored request evidence.": "Ouvrez Clôture et assurance et corrigez les preuves de demande enregistrées.",
+   "Overdue": "En retard", "Due today": "Aujourd’hui", "Blocked": "Bloqué", "Waiting soon": "En attente", "Assigned": "Affecté", "Routine watch": "Suivi courant",
++  "Assurance incident requires action": "Un incident de contrôle nécessite une action",
++  "Open payables": "Ouvrir les dettes fournisseurs",
++  "Open payroll controls": "Ouvrir les contrôles de paie",
++  "Open inventory evidence": "Ouvrir les preuves de stock",
++  "Open close center": "Ouvrir le centre de clôture",
++  "Open ledger source": "Ouvrir la source comptable",
++  "Open compliance center": "Ouvrir le centre de conformité",
++  "Stored missing-proof request evidence is incomplete.": "Les preuves enregistrées de la demande sont incomplètes.",
++  "Stored missing-proof response evidence is incomplete.": "Les preuves enregistrées de la réponse sont incomplètes.",
+   "Open": "Ouvrir", "Open source workflow": "Ouvrir le processus source",
+   "Payroll forecast proof": "Preuves des prévisions de paie",
+   "Open Close & Assurance Center": "Ouvrir Clôture et assurance",
+@@ -55,20 +65,21 @@
+ 
+ export function presentManagerData(data: ManagerActionCenterData, locale: "en" | "fr"): ManagerActionCenterData {
+   const route = (href: string) => locale === "fr" ? localizePath(href, locale) : href
+-  const text = (value: string) => locale === "fr" ? french[value] ?? value.replace(/^Proof response submitted: /, "Réponse soumise : ").replace(/^Missing proof: /, "Preuve manquante : ") : value
++  const text = (value: string) => locale === "fr" ? french[value] ?? commandSourceText(value, locale).replace(/^Proof response submitted: /, "Réponse soumise : ").replace(/^Missing proof: /, "Preuve manquante : ") : value
+   const blockers = (items: ManagerActionCenterData["actionItems"][number]["blockers"]) => items.map(b => {
+     const localized = presentSnapshotBlocker(b, locale)
+     return {...localized, title: text(localized.title), detail: text(localized.detail), nextAction: localized.nextAction ? text(localized.nextAction) : localized.nextAction}
+   })
+   const link = (action: ManagerActionCenterData["actionItems"][number]["actionLink"]) => ({...action, label: text(action.label), href: route(action.href), disabledReason: action.disabledReason ? text(action.disabledReason) : null})
+-  const actionItems = data.actionItems.map(item => ({...item, title: text(item.title), nextStep: text(item.nextStep), actionPath: route(item.actionPath), actionLink: link(item.actionLink), blockers: blockers(item.blockers)}))
++  const actionItems = data.actionItems.map(item => ({...item, title: text(item.title), nextStep: text(item.nextStep), actionPath: route(item.actionPath), actionLink: link(item.actionLink), blockers: blockers(item.blockers), redactions: item.redactions.map(r => ({...r, reason: text(r.reason)}))}))
+   const s = data.summary
+   return {...data, actionItems,
+-    commandBrief: {...data.commandBrief, title: text(data.commandBrief.title),
++    commandBrief: {...data.commandBrief, freshness: commandSourceFreshness(data.commandBrief.freshness, locale), title: text(data.commandBrief.title),
+       summary: locale === "fr" ? `${s.total} actions visibles : ${s.overdue} en retard, ${s.critical + s.high} critiques ou élevées, ${s.blocked} bloquées et ${s.hiddenByPermission} masquées par les autorisations.` : data.commandBrief.summary,
+       conclusion: priorityExplanation(actionItems[0], "severity_deadline_score", locale),
+-      primaryAction: actionItems[0]?.actionLink ?? null, blockers: blockers(data.commandBrief.blockers)},
++      primaryAction: actionItems[0]?.actionLink ?? null, reviewState: data.commandBrief.reviewState ? {...data.commandBrief.reviewState, blockers: blockers(data.commandBrief.reviewState.blockers)} : null, blockers: blockers(data.commandBrief.blockers)},
+     runSheetGroups: data.runSheetGroups.map(group => ({...group, title: text(group.title), detail: text(group.detail), actions: group.actions.map(item => actionItems.find(action => action.id === item.id)!)})),
+-    kpis: data.kpis.map(card => ({...card, title: text(card.title), detail: card.detail ? text(card.detail) : card.detail, blockers: blockers(card.blockers), drillThrough: card.drillThrough?.available && card.drillThrough.href ? {...card.drillThrough, label: text(card.drillThrough.label), href: route(card.drillThrough.href)} : card.drillThrough})),
++    insights: data.insights.map(item => ({...item, freshness: commandSourceFreshness(item.freshness, locale), blockers: blockers(item.blockers), actionLink: item.actionLink ? link(item.actionLink) : null, drillThrough: commandSourceDrill(item.drillThrough, locale)})),
++    kpis: data.kpis.map(card => ({...card, freshness: commandSourceFreshness(card.freshness, locale), redactions: card.redactions.map(r => ({...r, reason: text(r.reason)})), title: text(card.title), detail: card.detail ? text(card.detail) : card.detail, blockers: blockers(card.blockers), drillThrough: card.drillThrough?.available && card.drillThrough.href ? {...card.drillThrough, label: text(card.drillThrough.label), href: route(card.drillThrough.href)} : commandSourceDrill(card.drillThrough, locale)})),
+   }
+ }
+--- a/services/manager-action-center/manager-action-center.service.ts
++++ b/services/manager-action-center/manager-action-center.service.ts
+@@ -235,6 +235,7 @@
+     },
+     actionQueue,
+     assuranceIncidents: assuranceControlTower.incidents,
++    assuranceCoverage: assuranceControlTower.coverage,
+     paymentReconciliationSignOff,
+     clientMissingProofSource,
+     assuranceHiddenByPermission: assuranceControlTower.hiddenByPermission,
+@@ -421,6 +422,7 @@
+     summary,
+     clientMissingProofSource: input.clientMissingProofSource ?? null,
+     assuranceIncidents: input.assuranceIncidents ?? [],
++    assuranceCoverage: input.assuranceCoverage,
+   }, input.locale ?? "en")
+ }
+ 
+@@ -450,11 +452,19 @@
+     return {
+       incidents: data.incidents,
+       hiddenByPermission: data.summary.hiddenByPermission,
++      coverage: {
++        state: "AVAILABLE" as const,
++        loaded: data.incidents.length,
++        limit: 25,
++        // The source limits rows before permission filtering; visible count alone cannot establish coverage.
++        possiblyTruncated: data.incidents.length + data.summary.hiddenByPermission >= 25,
++      },
+     }
+   } catch {
+     return {
+       incidents: [],
+       hiddenByPermission: 0,
++      coverage: { state: "UNAVAILABLE" as const },
+     }
+   }
+ }
+--- a/services/manager-action-center/manager-location-action-center.service.ts
++++ b/services/manager-action-center/manager-location-action-center.service.ts
+@@ -1,4 +1,6 @@
+ import "server-only"
++import { commandSourceText, commandSourceFreshness } from "@/lib/dashboard/command-center-source-copy"
++import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
+ import { stableIdentityOrder } from "@/lib/dashboard/command-center-context"
+ import { presentDailyAction, presentDailySignal } from "@/services/daily-habit/daily-habit-signal-presentation"
+ 
+@@ -102,7 +104,7 @@
+ 
+       return {
+         location,
+-        snapshot,
++        snapshot: {...snapshot, freshness: commandSourceFreshness(snapshot.freshness, input.locale ?? "en"), blockers: snapshot.blockers.map(b => presentSnapshotBlocker(b, input.locale ?? "en")), redactions: snapshot.redactions.map(r => ({...r, reason: commandSourceText(r.reason, input.locale ?? "en")}))},
+         actionQueue: {...actionQueue,
+           signals: actionQueue.signals.map(signal => presentDailySignal(signal, input.locale ?? "en")),
+           actionItems: actionQueue.actionItems.map(item => ({...presentDailyAction(item, input.locale ?? "en"), dueAt: actionQueue.signals.find(signal => signal.id === item.signalId)?.expiresAt ?? ""}))
+--- a/services/owner-war-room/owner-signal-copy.ts
++++ b/services/owner-war-room/owner-signal-copy.ts
+@@ -1,3 +1,5 @@
++import { commandSourceFreshness } from "@/lib/dashboard/command-center-source-copy"
++import { presentDailySignal } from "@/services/daily-habit/daily-habit-signal-presentation"
+ import type { ActionQueueResult, BusinessSignalType } from "@/services/signals/business-signal-contracts"
+ import type { OwnerLocale } from "./owner-war-room-copy"
+ import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
+@@ -96,6 +98,8 @@
+     })),
+     signals: queue.signals.map(signal => ({
+       ...signal,
++      freshness: commandSourceFreshness(signal.freshness, locale),
++      detail: presentDailySignal(signal, locale).detail,
+       title: title(signal.title, signal.signalType),
+       suggestedAction: step(signal.suggestedAction, signal.signalType),
+       businessImpact: impact(signal.businessImpact, signal.signalType),
+--- a/services/owner-war-room/owner-war-room.service.ts
++++ b/services/owner-war-room/owner-war-room.service.ts
+@@ -1,4 +1,5 @@
+ import "server-only"
++import { commandSourceFreshness } from "@/lib/dashboard/command-center-source-copy"
+ import { stableIdentityOrder, commandDateLabel } from "@/lib/dashboard/command-center-context"
+ 
+ import {
+@@ -241,6 +242,7 @@
+ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerWarRoomData {
+   const displaySnapshot = <T,>(snapshot: SnapshotResult<T>): SnapshotResult<T> => ({
+     ...snapshot,
++    freshness: commandSourceFreshness(snapshot.freshness, input.locale ?? "en"),
+     blockers: snapshot.blockers.map(blocker => presentSnapshotBlocker(blocker, input.locale ?? "en")),
+   })
+   input = {
+--- /dev/null
++++ b/lib/dashboard/command-center-source-copy.ts
+@@ -0,0 +1,29 @@
++import type { BIFreshness, BIDrillThrough } from "@/services/bi/bi-contracts"
++
++// Exact system-generated copy only. Authored evidence, identifiers and amounts stay intact.
++const french: Record<string, string> = {
++  "Signal is expired.": "Le signal a expiré.",
++  "Signal is suppressed.": "Le signal est masqué.",
++  "Signal is stale.": "Le signal est périmé.",
++  "Signal is resolved.": "Le signal est résolu.",
++  "Signal is dismissed.": "Le signal est écarté.",
++  "The source snapshot is blocked; clear blockers before drill-through can be trusted.": "L’instantané source est bloqué ; examinez ses blocages avant de vous fier aux détails.",
++  "No supported route or proof subject is available yet.": "Aucune destination ni source de preuve prise en charge n’est disponible pour le moment.",
++  "No proof subject is available for this command surface.": "Aucune source de preuve n’est disponible dans cette vue.",
++  "Branch operating snapshots expose aggregate payroll allocation and profitability only; person-level payroll values stay inside payroll.": "Les instantanés d’agence présentent uniquement les affectations de paie et la rentabilité agrégées ; les montants individuels restent dans la paie.",
++  "Manager action center exposes aggregate payroll forecast obligations only; person-level payroll values stay inside payroll.": "Le centre d’actions présente uniquement les engagements prévisionnels de paie agrégés ; les montants individuels restent dans la paie.",
++}
++
++export function commandSourceText(value: string, locale: "en" | "fr"): string {
++  if (locale !== "fr") return value
++  const age = /^Source data is (\d+) minutes old\.$/.exec(value)
++  return french[value] ?? (age ? `Les données sources datent de ${age[1]} minutes.` : value)
++}
++
++export function commandSourceFreshness<T extends Pick<BIFreshness, "staleReason">>(value: T, locale: "en" | "fr"): T {
++  return value.staleReason ? {...value, staleReason: commandSourceText(value.staleReason, locale)} : value
++}
++
++export function commandSourceDrill(value: BIDrillThrough, locale: "en" | "fr"): BIDrillThrough {
++  return value.available ? value : {...value, unavailableReason: commandSourceText(value.unavailableReason, locale)}
++}
+--- /dev/null
++++ b/components/daily-habit/__tests__/phase4-release.test.tsx
+@@ -0,0 +1,118 @@
++import fs from "node:fs"
++import path from "node:path"
++import ts from "typescript"
++import type { SnapshotBlocker } from "@/services/snapshots/snapshot-contracts"
++import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
++import { commandSourceText, commandSourceDrill } from "@/lib/dashboard/command-center-source-copy"
++import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
++import { presentManagerData } from "@/services/manager-action-center/manager-action-center-presentation"
++import { ManagerActionCenterDashboard } from "@/components/manager-action-center/ManagerActionCenterDashboard"
++import { OwnerWarRoomDashboard } from "@/components/owner-war-room/OwnerWarRoomDashboard"
++import { getProofTrailAction } from "@/actions/evidence/proof-trail.actions"
++import { owner, manager, proof } from "@/docs/command-center/phase-4-2026-10-24/fixtures"
++
++it.each(["en", "fr"] as const)("keeps all 25 supplied Owner actions reachable in Command (%s)", locale => {
++  window.history.replaceState({}, "", "?mode=command")
++  render(<OwnerWarRoomDashboard data={owner(locale)} locale={locale} title="Owner" subtitle="Fixture" />)
++  const links = screen.getAllByRole("link", {name: new RegExp(locale === "en" ? "^Open: Evidence to review" : "^Ouvrir : Preuve à examiner")})
++  expect(links).toHaveLength(25)
++  expect(new Set(links.map(link => link.getAttribute("href"))).size).toBe(25)
++})
++
++it.each(["en", "fr"] as const)("returns Owner proof focus to its actual trigger, including when closing a pending read (%s)", async locale => {
++  let resolve!: (value: unknown) => void
++  jest.mocked(getProofTrailAction).mockImplementationOnce(() => new Promise(done => {resolve = done}) as never)
++  render(<OwnerWarRoomDashboard data={owner(locale)} locale={locale} title="Owner" subtitle="Fixture" />)
++  const trigger = screen.getByRole("button", {name: locale === "en" ? "Reconciliation proof" : "Preuves du rapprochement"})
++  trigger.focus(); fireEvent.click(trigger)
++  expect(await screen.findByRole("dialog")).toBeVisible()
++  expect(screen.getByText(locale === "en" ? "Loading proof trail." : "Chargement de la piste de preuve.")).toBeVisible()
++  fireEvent.click(screen.getByRole("button", {name: locale === "en" ? "Close proof" : "Fermer la preuve"}))
++  await waitFor(() => expect(trigger).toHaveFocus())
++  await act(async () => resolve({success: true, data: proof}))
++  expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
++})
++
++it("localizes canonical unavailability and source age without altering custom evidence or destinations", () => {
++  expect(commandSourceText("Source data is 281 minutes old.", "fr")).toBe("Les données sources datent de 281 minutes.")
++  expect(commandSourceText("Source data is NaN minutes old.", "fr")).toBe("Source data is NaN minutes old.")
++  expect(commandSourceText("Reviewed by a named customer", "fr")).toBe("Reviewed by a named customer")
++  const drill = {available: false as const, type: "route" as const, label: "Custom evidence", requiredPermission: "dashboard.read", unavailableReason: "Signal is suppressed."}
++  expect(commandSourceDrill(drill, "fr")).toEqual({...drill, unavailableReason: "Le signal est masqué."})
++})
++
++it("localizes branch blockers only with matching identity, gate and canonical text", () => {
++  const source = {id: "branch-location-inactive", gate: "branch_operating_snapshot", severity: "medium" as const, title: "Location is inactive", detail: "The location exists but is inactive, so operating metrics may be partial.", nextAction: "Reactivate the location or choose another branch.", sourceTables: ["locations"]}
++  expect(presentSnapshotBlocker(source, "fr")).toMatchObject({title: "Le site est inactif", detail: expect.stringContaining("partiels"), sourceTables: ["locations"]})
++  expect(presentSnapshotBlocker({...source, gate: "custom"}, "fr")).toEqual({...source, gate: "custom"})
++  expect(presentSnapshotBlocker({...source, detail: "Custom account evidence"}, "fr").detail).toBe("Custom account evidence")
++  expect(presentSnapshotBlocker(source, "en")).toBe(source)
++})
++
++it("keeps Manager blocked drill-through unavailable and translates its explanation", () => {
++  const data = manager("en")
++  data.kpis = [owner("en").morningBrief.zones[0].cards[0]]
++  const card = data.kpis[0]
++  card.drillThrough = {available: false, type: "route", label: "Open manager actions", requiredPermission: "dashboard.read", unavailableReason: "The source snapshot is blocked; clear blockers before drill-through can be trusted."}
++  const before = JSON.stringify(data)
++  const result = presentManagerData(data, "fr")
++  expect(result.kpis[0].drillThrough).toMatchObject({available: false, unavailableReason: expect.stringContaining("instantané source est bloqué")})
++  expect(JSON.stringify(data)).toBe(before)
++})
++
++it.each(["en", "fr"] as const)("discloses capped and unavailable assurance coverage (%s)", locale => {
++  const data = manager(locale, 0)
++  data.assuranceCoverage = {state: "AVAILABLE", loaded: 1, limit: 25, possiblyTruncated: true}
++  const view = render(<ManagerActionCenterDashboard data={data} locale={locale} title="Manager" subtitle="Fixture" />)
++  expect(screen.getByText(locale === "en" ? /Coverage may be partial/ : /Couverture partielle possible/)).toBeVisible()
++  view.rerender(<ManagerActionCenterDashboard data={{...data, assuranceCoverage: {state: "UNAVAILABLE"}}} locale={locale} title="Manager" subtitle="Fixture" />)
++  expect(screen.getByText(locale === "en" ? /Assurance incidents could not be loaded/ : /Les incidents d’assurance n’ont pas pu être chargés/)).toBeVisible()
++})
++
++it("covers all six canonical branch blocker objects from the current source without changing evidence", () => {
++  const source = ts.createSourceFile("branch.ts", fs.readFileSync(path.join(process.cwd(), "services/snapshots/branch-operating-snapshot.service.ts"), "utf8"), ts.ScriptTarget.Latest, true)
++  const blockers: SnapshotBlocker[] = []
++  function visit(node: ts.Node) {
++    if (ts.isObjectLiteralExpression(node)) {
++      const text: Record<string, string> = {}
++      for (const property of node.properties) {
++        if (ts.isPropertyAssignment(property) && ts.isIdentifier(property.name) && ts.isStringLiteral(property.initializer)) text[property.name.text] = property.initializer.text
++      }
++      if (text.id?.startsWith("branch-") && text.title && text.gate) blockers.push({...text, severity: "high", sourceTables: ["preserved-source"]} as SnapshotBlocker)
++    }
++    ts.forEachChild(node, visit)
++  }
++  visit(source)
++  expect(blockers).toHaveLength(6)
++  for (const source of blockers) {
++    const original = JSON.stringify(source)
++    const french = presentSnapshotBlocker(source, "fr")
++    for (const field of ["title", "detail", "nextAction"] as const) if (source[field]) expect(french[field]).not.toBe(source[field])
++    expect(french).toMatchObject({id: source.id, gate: source.gate, sourceTables: source.sourceTables, severity: source.severity})
++    expect(JSON.stringify(source)).toBe(original)
++  }
++})
++
++it.each(["tenant-operating", "payment-truth", "inventory-cash", "close-readiness", "inventory-loss"])("reviews canonical static blocker copy from the current %s source", name => {
++  const source = ts.createSourceFile("source.ts", fs.readFileSync(path.join(process.cwd(), `services/snapshots/${name}-snapshot.service.ts`), "utf8"), ts.ScriptTarget.Latest, true)
++  const missing: string[] = []
++  let reviewed = 0
++  function visit(node: ts.Node) {
++    if (ts.isObjectLiteralExpression(node)) {
++      const text: Record<string, string> = {}
++      for (const property of node.properties) {
++        if (ts.isPropertyAssignment(property) && ts.isIdentifier(property.name) && ts.isStringLiteral(property.initializer)) text[property.name.text] = property.initializer.text
++      }
++      if (text.id && text.title && text.gate) {
++        reviewed++
++        const blocker = {...text, detail: text.detail ?? "Custom evidence", severity: "high", sourceTables: []} as SnapshotBlocker
++        const french = presentSnapshotBlocker(blocker, "fr")
++        for (const field of ["title", "detail", "nextAction"] as const) if (text[field] && french[field] === text[field]) missing.push(`${text.id}.${field}: ${text[field]}`)
++      }
++    }
++    ts.forEachChild(node, visit)
++  }
++  visit(source)
++  expect(reviewed).toBeGreaterThan(0)
++  expect(missing).toEqual([])
++})
+--- /dev/null
++++ b/components/daily-habit/__tests__/jest.phase4.config.cjs
+@@ -0,0 +1,36 @@
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../..')
++// Bounded mocked/pure UI lane. No Next config, env files or database setup.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root, testEnvironment: 'jsdom', collectCoverage: false,
++  moduleNameMapper: {'^@/(.*)$':'<rootDir>/$1', '^lucide-react$':'<rootDir>/node_modules/lucide-react/dist/cjs/lucide-react.js'},
++  setupFilesAfterEnv: ['<rootDir>/components/daily-habit/__tests__/phase3.setup.tsx'],
++  roots: ['<rootDir>/components/daily-habit/__tests__','<rootDir>/components/owner-war-room/__tests__','<rootDir>/components/bi/__tests__','<rootDir>/components/agents/__tests__','<rootDir>/services/owner-war-room/__tests__','<rootDir>/services/daily-habit/__tests__','<rootDir>/components/manager-action-center/__tests__','<rootDir>/services/manager-action-center/__tests__','<rootDir>/components/evidence/__tests__','<rootDir>/lib/dashboard/__tests__'],
++  testMatch: [
++    '<rootDir>/components/daily-habit/__tests__/phase4-release.test.tsx',
++    '<rootDir>/components/evidence/__tests__/ProofTrailDrawer.test.tsx',
++    '<rootDir>/components/evidence/__tests__/EvidenceGradeBadge.test.tsx',
++    '<rootDir>/components/bi/__tests__/BIEvidenceBadgeRow.test.tsx',
++    '<rootDir>/lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts',
++    '<rootDir>/lib/dashboard/__tests__/snapshot-source-blocker-presentation.test.ts',
++    '<rootDir>/services/daily-habit/__tests__/daily-habit-signal-presentation.test.ts',
++    '<rootDir>/services/owner-war-room/__tests__/owner-signal-copy.test.ts',
++
++    '<rootDir>/components/daily-habit/__tests__/phase3-context.test.tsx',
++    '<rootDir>/components/manager-action-center/__tests__/ManagerActionCenterDashboard.test.tsx',
++    '<rootDir>/components/manager-action-center/__tests__/ManagerLocationActionCenterDashboard.test.tsx',
++    '<rootDir>/components/manager-action-center/__tests__/PaymentReconciliationSignOffCommand.test.tsx',
++    '<rootDir>/services/manager-action-center/__tests__/manager-action-center.service.test.ts',
++    '<rootDir>/services/manager-action-center/__tests__/manager-action-center-query.service.test.ts',
++    '<rootDir>/services/manager-action-center/__tests__/manager-location-action-center.service.test.ts',
++    '<rootDir>/components/daily-habit/__tests__/modes.test.tsx',
++    '<rootDir>/components/daily-habit/__tests__/DailyHabitDigestDashboard.test.tsx',
++    '<rootDir>/components/daily-habit/__tests__/phase2-briefings.test.tsx',
++    '<rootDir>/components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx',
++    '<rootDir>/components/agents/__tests__/AgentCommandPanel.test.tsx',
++    '<rootDir>/components/bi/__tests__/BICommandBriefHeader.compact.test.tsx',
++    '<rootDir>/components/bi/__tests__/bi-command-primitives.test.tsx',
++    '<rootDir>/services/owner-war-room/__tests__/owner-war-room.service.test.ts',
++    '<rootDir>/services/daily-habit/__tests__/daily-habit-digest.service.test.ts',
++  ],
++})
+--- /dev/null
++++ b/components/daily-habit/__tests__/tsconfig.phase4.json
+@@ -0,0 +1,28 @@
++{
++  "extends": "../../../tsconfig.json",
++  "compilerOptions": {
++    "incremental": false,
++    "plugins": []
++  },
++  "include": [
++    "../../../next-env.d.ts",
++    "../DailyHabitDigestDashboard.tsx",
++    "../DigestSourceLimitations.tsx",
++    "../../agents/AgentCommandPanel.tsx",
++    "../../bi/BIWhatChangedStrip.tsx",
++    "../../owner-war-room/OwnerWarRoomDashboard.tsx",
++    "../../../services/owner-war-room/owner-war-room.service.ts",
++    "../../../services/daily-habit/daily-habit-digest.service.ts",
++    "../../../docs/command-center/phase-2-2026-10-24/owner-browser-fixture.tsx",
++    "phase2-fixtures.ts",
++    "../../manager-action-center/ManagerActionCenterDashboard.tsx",
++    "../../manager-action-center/ManagerLocationActionCenterDashboard.tsx",
++    "../../../services/manager-action-center/manager-action-center.service.ts",
++    "../../../services/manager-action-center/manager-location-action-center.service.ts",
++    "../../../app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx",
++    "../../../app/[locale]/(dashboard)/dashboard/manager-action-center/error.tsx",
++    "../../../app/[locale]/(dashboard)/dashboard/owner-war-room/error.tsx",
++    "../../../docs/command-center/phase-4-2026-10-24/fixtures.ts"
++  ],
++  "exclude": []
++}

@@ -1,0 +1,55 @@
+# Hardened close: production preparation — 9 November 2026
+
+Status: **IN PROGRESS — production promotion remains BLOCKED**. Hosting and the public domain are undecided. Live customer-statement delivery and accountant invitations remain required. No production database, provider send or deployment was executed.
+
+## Implemented controls
+
+- Reconciliation coverage admits retained independent approval and a current source hash. A self-hashed `SIGNED` row alone receives no credit.
+- New declared statement JSON binds its account, provider, currency and coverage dates to the raw file hash. Observed transaction dates remain separate. Legacy CSV/JSON arrays receive no implicit monthly coverage.
+- Period reconciliation derives an owned OPEN period's exact UTC boundaries. Signing rechecks that scope. Existing daily uniqueness remains enforced: a first-day daily run causes a conflict instead of being expanded or overwritten.
+- New close exports retain their exact UTF-8 document, a separate byte digest and request binding in the export transaction. An identical request recovers the original receipt/bytes; conflicting or ambiguous requests fail. Historical retrieval does not recertify a run.
+- Retrieval reuses current tenant/module/role/session authority. Certified document reads require persisted fresh authentication and export permission. Critical waiver owners cannot approve their own critical waiver; requester separation remains enforced.
+- The close workspace binds responses/cache/commands to actor, organization and period, hides unavailable authority, fences late completions and disables automatic command retries. Retained copies are explicitly historical. Trusted action responses now include server-derived actor and organization IDs.
+- An incomplete target template, offline production admission check and deployment runbook retain the existing secret, artifact and migration gates.
+
+## Verification
+
+| Evidence class | Current result | Limits |
+| --- | --- | --- |
+| Mocked services and real-protect adapters | 789 selected tests passed, 0 skipped | Domain persistence/identity dependencies are mocked. Additional monthly UI/read-contract checks are pending. |
+| Close jsdom components/hooks | 85 tests passed, 0 skipped | No database or real authentication. |
+| Pure release controls | 15 tests passed; the actual CLI rejects the incomplete template | No provider, DNS, hosted database or real delivery evidence. |
+| PostgreSQL 17: retention | Fresh 122-migration replay twice; populated 121→122 upgrade twice; 23 service/SQL tests passed | Exact DRAFT custody/recovery, concurrent retry, immutable fields/delete, live authority denial and audit rollback. No earned certified close. |
+| PostgreSQL 17: monthly producers | Fresh 122 replay twice; 12 cases passed | 11 producer cases and one real period-control SQL guard. Two reconciliation signatures were earned through import/run/independent sign services over synthetic raw payment facts. No journals, close runs or certified close exports were created. Existing CLOSED-period input denial is mocked-unit evidence. |
+| Rendered close UI | EN/FR ×390/1440; 32 recorded cases passed | Real components/hooks with mocked authentication/actions. Exact historical downloads, keyboard recovery, late-response fences, no external requests/errors/overflow. Axe: 0 violations; contrast incomplete. |
+| Static TypeScript/lint | Final check pending | Earlier checks caught and led to fixes for the missing server scope envelope, duplicate properties and archived evidence accidentally included as source. |
+| Current sealed full application / earned whole-close lifecycle | Not qualified by this packet yet | No new hosted-origin artifact, authenticated whole-application journey, earned T4 close certificate, seal/reopen/recertify lifecycle or live delivery claim. |
+
+Selected receipts: [service/action units](unit-f3a0a95023/verification.json), [close UI units](unit-c79cd0ddf4/verification.json), [release controls](controls-468cc2a459/verification.json), [retention database](pg-RETENTION_LATEST.json), [producer database](ca03-producer/pg-LATEST.json), [rendered UI](rendered-ui/RENDERED_UI_REPORT.md), [migration admission](RETENTION_CATALOG_ADMISSION.json), [workflow contract](WORKFLOW_FINAL.json).
+
+All owned database servers and completed browser fixtures were stopped. Existing application/test databases were neither reset nor dropped. Prisma generation used a separate private client; the shared client stayed unchanged. The first strict generated-schema byte assertion failed on Prisma formatting; its retained supplement proves exact schema-token equality and records both raw hashes without rewriting the failed receipt. Failed preliminary test/fixture attempts remain retained.
+
+## Migration and rollout
+
+Migration `20261109190000_close_pack_canonical_retention` adds three nullable fields, a hash/shape CHECK and retained-document update/delete guard. The first 121 migrations and existing populated receipt/history were preserved. The catalog contains 122 migrations and has identity `e894a828415592f4c2ab155993b1923ed12245374a21b0184ae8a375495190aa`. The fresh replay retains the known intentional schema residuals; it is not production approval for the historical baseline bridge.
+
+The expansion preserves historical null receipts and accepts old-client null inserts. Quiesce close exports during cutover, verify new receipts have all retention fields, and qualify any rollback writer for custody compatibility. Preserve original historical bytes after source invalidation. Do not backfill old receipts by regenerating documents.
+
+The previous [local candidate qualification](../close-release-candidate-2026-11-09/RESULT.md) remains historical, with build `wMWHmuVfpeP275uc-dCjr` and artifact digest `d925ed1f841c6d267d12108b7fd23361b3cee581f38adae78b8b1526aaa050d9`. Its Windows/x64 loopback-origin artifact does not contain these new changes and must not be promoted as this revision.
+
+## Remaining production gates
+
+| Gate | Accountable role | Required concrete evidence |
+| --- | --- | --- |
+| Actual target and format | Platform lead + domain owner | Selected provider/project/region/runtime, owned public HTTPS origin, protected deployment path and provider-compatible artifact. Vercel is a proposal; its Build Output adapter is unqualified. |
+| Current release and domain acceptance | QA + accounting owner | Current frozen source, target-platform build, authenticated full application and earned whole-close lifecycle; reviewed Cameroon configuration and accepted system-evidence limits. |
+| Production database and recovery | Database operator + independent checker | Exact direct endpoint/history/pending-risk decision, baseline adoption classification, protected secrets, hosted backup/PITR and measured accepted recovery drill. |
+| Live email and scheduled operations | Delivery owner + platform operator | Verified Resend sender/domain, owned-test statement and invitation delivery receipts, a qualified worker package, private tenant-scoped schedule/identity and operational recovery evidence. |
+| Source custody and review | Accounting/data owner | Available original statement documents in approved private custody, actual provider onboarding evidence and operator/domain acceptance. A hash does not establish original-document availability or provider authenticity. |
+| Promotion authorization | Release lead + independent checker | Protected checks, trusted source/artifact/plan digests, approved cohort/stop/rollback decisions and exact-byte promotion receipts. |
+
+Use [the deployment runbook](../../../release/HARDENED_CLOSE_PRODUCTION_DEPLOYMENT.md) and [the incomplete plan template](../../../../config/release/hardened-close-production.template.json). Unknown facts stay null. The offline check admits reviewed evidence for operator review; it neither authenticates external records nor authorizes deployment. The delivery defaults remain disabled until a controlled configuration is provisioned; they cannot be used as an exception to the required live-delivery scope.
+
+## Skills and next qualification
+
+Applied project release-gate/release-verification controls, the existing close engine's separation-of-duties policy and additive schema controls. UI changes preserve the approved design system. The next numbered qualification is **022**, an earned close/recovery lifecycle over authoritative producers and current authenticated application evidence; existing records/models must be reused.

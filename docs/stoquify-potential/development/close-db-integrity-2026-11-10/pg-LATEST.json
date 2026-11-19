@@ -1,0 +1,47 @@
+{
+  "began": "2026-11-10T19:15:10.872Z",
+  "passed": true,
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-db-integrity-2026-11-10\\pg-attempt-99a87606d0",
+  "source": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\source",
+  "migrations": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-db-integrity-20261110-99a87606d0\\migration-source123",
+  "databases": {
+    "fresh": "stoquify_replay_close_monthly_20261110_99a87606d0",
+    "clean": "stoquify_replay_close_integrity_upgrade_20261110_99a87606d0",
+    "dirty": "stoquify_replay_close_integrity_corrupt_20261110_99a87606d0"
+  },
+  "runnerSha256": "da3d109cd7f73ce953137e46e9fb383b030802d33277e33905355a42480c918c",
+  "checks": [
+    {
+      "name": "fresh123ReplayTwice",
+      "certification": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT"
+    },
+    {
+      "name": "structuralIntegrityAndMonthlyServices",
+      "passedTests": 20,
+      "integrityCases": 12,
+      "earnedMonthlyCases": 8,
+      "skipped": 0
+    },
+    {
+      "name": "populated122to123",
+      "exactFixtureAndRetainedBytesPreserved": true,
+      "existing122HistoryPreserved": true,
+      "deployments": 2,
+      "currentSchemaCertification": true
+    },
+    {
+      "name": "corrupt122UpgradeRejected",
+      "invalidCategories": 14,
+      "fixtureAndExistingHistoryUnchanged": true,
+      "noPartialDDL": true,
+      "intentionallyUnfinishedHistoryPreserved": true
+    }
+  ],
+  "limitation": "Local PostgreSQL migration/scope qualification with synthetic DRAFT/authority/provider inputs and earned internal monthly regression. No production-size locking benchmark, provider authenticity, statutory, hosted recovery, delivery, browser or deployment claim.",
+  "catalogSha256": "968c1f6c7c45f26a8eb8068b551e67450142fccc119b84528e4f4424c64a2e66",
+  "privateClient": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-execution-clients-20261110-b96b309c4c\\clients\\current\\orm\\client",
+  "executionClientReceiptSha256": "f12b550df338bda9e32051a3b0635dd18f3a55909d3a2455be3f6fe4bc9bab55",
+  "ownedClusterStopped": true,
+  "ended": "2026-11-10T19:18:56.855Z"
+}

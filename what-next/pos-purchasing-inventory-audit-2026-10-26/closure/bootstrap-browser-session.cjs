@@ -1,0 +1,4 @@
+const fs=require('node:fs'),path=require('node:path');const f=JSON.parse(fs.readFileSync('.codex-tmp/workflow-closure-private.json','utf8'));
+if(f.base!=='http://127.0.0.1:3168'||new URL(f.url).hostname!=='localhost'||new URL(f.url).pathname!=='/stoquify_pos_audit_20261026_d30f')throw Error('Wrong disposable target');
+async function main(){for(let n=0;n<90;n++){try{const r=await fetch(f.base+'/api/auth/sign-in/email',{method:'POST',headers:{'Content-Type':'application/json',Origin:f.base},body:JSON.stringify({email:f.actor.email,password:f.password}),signal:AbortSignal.timeout(180000)});if(!r.ok)throw Error('Sign-in HTTP '+r.status);console.log('Synthetic authenticated session refreshed; HTTP '+r.status);return}catch(e){if(n===89||String(e.message).includes('Sign-in'))throw e;await new Promise(r=>setTimeout(r,1000))}}}
+main().catch(e=>{console.error(e.message);process.exitCode=1});

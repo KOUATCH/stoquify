@@ -37,7 +37,7 @@ jest.mock("@/lib/security/auth-session", () => {
   }
 })
 
-jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn() } }))
+jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn(), warn: jest.fn() } }))
 jest.mock("@/services/modules/module-entitlement.service", () => ({
   observeModuleAccess: jest.fn(),
 }))
@@ -75,7 +75,7 @@ describe("HRIS payment destination actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockRequireFreshAuth.mockResolvedValue({
-      claims: { lastAuthAt: "2026-07-15T00:00:00.000Z" },
+      claims: { userId: "checker-1", tenantId: "org-1", lastAuthAt: "2026-07-15T00:00:00.000Z" },
     })
     mockGetStatus.mockResolvedValue({ organizationId: "org-1", employee: {} })
     mockRequestOwn.mockResolvedValue({
@@ -126,6 +126,7 @@ describe("HRIS payment destination actions", () => {
   })
 
   it("binds self-service identity to the session and drops submitted authority fields", async () => {
+    mockRequireFreshAuth.mockResolvedValue({ claims: { userId: "employee-user-1", tenantId: "org-1", lastAuthAt: "2026-07-15T00:00:00.000Z" } })
     mockRequirePermission.mockResolvedValue(
       rbacContext("employee-user-1", ["hris.self_service.request"]),
     )

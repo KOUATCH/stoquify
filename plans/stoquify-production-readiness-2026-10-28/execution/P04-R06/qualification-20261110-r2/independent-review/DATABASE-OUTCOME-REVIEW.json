@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:11:52.503Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "scope": "Actual fresh isolated database preparation plus exactly-once synthetic fixture seed",
+  "files": [
+    {
+      "path": "database/preparation.json",
+      "sha256": "66f7e5cb6da2e3cabd4d1abb4f6ea952918115883c6e1cc15725bcdffcf78ff3"
+    },
+    {
+      "path": "database/database-clones.json",
+      "sha256": "b6a99b3cdc1a6ec318f60f9fed9c310e2fe71a6df66f3c6fc25342c16678c45b"
+    },
+    {
+      "path": "database/fixture-seeded.json",
+      "sha256": "d3bdfb3eb09c8228fcd7f0dd16e5ef6dabcd5e0ee3f434ec6d07a212eb01d825"
+    },
+    {
+      "path": "database/fixture-readiness.json",
+      "sha256": "e87ef8b8834e95079e8a749fc0d2c164f87ae3cd5980495621df732f1fdd888d"
+    },
+    {
+      "path": "independent-review/DATABASE-PREPARATION-OUTCOME-REVIEW.json",
+      "sha256": "48da78d8a09bd557e72c04e4663e9196dce65998968ed8b40d79b7caf3bab059"
+    },
+    {
+      "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+      "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+    }
+  ],
+  "target": {
+    "host": "127.0.0.1",
+    "port": 55517,
+    "ownedPid": 21228,
+    "cluster": "D:\\p04-r06-fullapp-20261110-r2\\postgres",
+    "build": "stoquify_local_p04r06_20261110_build_r2",
+    "full": "stoquify_local_p04r06_20261110_full_r2"
+  },
+  "migrations": {
+    "count": 122,
+    "migrationsSha256": "18f667a29e31892e8b231a2b41e22760140154e3cbd9c350a0c075e9a3bd3d59",
+    "schemaSourceSha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39"
+  },
+  "fixture": {
+    "actors": 16,
+    "organizations": 2,
+    "accountsExpectedFromExactCommittedSeed": 32,
+    "initialSessions": 0,
+    "seedState": "ready",
+    "privateFixtureSha256": "9923d14f86a2140b3358d39e39af4a2aa33ca0a6a11c2ce856990fd3a4bd3207",
+    "distinctRandomPasswords": 16,
+    "passwordAlgorithm": "Argon2id memory19456 time2 parallelism1",
+    "permissions": "Exact four scoped grants per actor; no wildcard",
+    "productionDataCopied": false
+  },
+  "reviewed": [
+    "Preparation receipts, native identity/migration/246-empty-table gates and clean launcher outcome independently reconciled.",
+    "Seed resumes only once after exclusive not-started state; committed transaction and ready-state receipts bind the accepted candidate.",
+    "Private fixture was inspected in memory only for ready state, exact public actor metadata and16 distinct sufficiently long synthetic passwords; no credentials emitted or copied to evidence.",
+    "Current password implementation hash matches seeded Argon2 parameters; no product password behavior changed.",
+    "Exact source/DB recipe hashes remain intact after interruption; preparation was not repeated."
+  ],
+  "allowedNext": "Run already-admitted isolated build recipe with its fresh resource gates, empty build-database verification and canonical private client generation. Actual full build outcome still requires independent review before preflight/runtime.",
+  "limits": [
+    "Fixture readiness for actual runtime must be checked again after build:16 actors/32 accounts/zero sessions/audits and both native migration ledgers.",
+    "No real application login, denial or browser case has run on this candidate yet.",
+    "This is not production database, release or parent P04 admission."
+  ],
+  "qualificationPassed": false
+}

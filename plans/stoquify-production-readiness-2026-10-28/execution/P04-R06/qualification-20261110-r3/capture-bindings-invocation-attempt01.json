@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "toolChunkId": "7ff74e",
+  "exitCode": 1,
+  "stage": "Normalizing reviewed evidence inputs",
+  "cause": "The hash-check wrapper used node -e plus require, so the exact normalizer's command-line argument count assertion observed 1 instead of 2.",
+  "failedBeforeInputReadsAndWrites": true,
+  "recipeChanged": false,
+  "recovery": "Invoke the same admitted normalizer as a direct Node script after the already-passed input hash verification."
+}

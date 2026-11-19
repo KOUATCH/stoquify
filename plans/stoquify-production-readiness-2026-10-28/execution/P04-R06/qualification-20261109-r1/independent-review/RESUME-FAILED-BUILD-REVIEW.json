@@ -1,0 +1,45 @@
+{
+  "at": "2026-11-10T08:45:34.552Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Independent classification of preserved failed first build, not qualification or retry admission",
+  "inputs": [
+    {
+      "path": "run-build.cjs",
+      "sha256": "955eb4eb417c3455d90e5b79aaebbf0a2c269281641d20a87b4dbe63babc0096"
+    },
+    {
+      "path": "build-result.json",
+      "sha256": "7be3f73ee7597e9c41cd20d0415b6567bbb89014d81216a17ce5b7ce61caece5"
+    },
+    {
+      "path": "artifact-build-result.json",
+      "sha256": "d62df757d5f2aef75384c32fa1b90e7a395b6e96aad3c78abae5c95c5f2615a9"
+    },
+    {
+      "path": "artifact-build.log",
+      "sha256": "39d558434fb8aecb423ab887398163ac943d65e7eae2cdf0d4293a1e7c1fe201"
+    }
+  ],
+  "observed": {
+    "buildPassed": false,
+    "artifactExitCode": 1,
+    "timedOut": false,
+    "compileSucceeded": true,
+    "nextPhase": "Linting and checking validity of types",
+    "failure": "Fatal process out of memory: Zone",
+    "workerExitCode": 2147483651,
+    "artifactComplete": false
+  },
+  "assessment": [
+    "Compilation completed, but type checking did not complete; no valid build, artifact or runtime success can be inferred.",
+    "The emitted diagnostic is native V8 memory failure; neither a TypeScript source diagnostic nor a measured memory-root-cause proof.",
+    "The root auth.ts currently differs from this failed candidate by a type-only assertion. Current qualification needs refreshed source/provenance.",
+    "Any retry requires fresh resource and process ownership checks, exact independent recipe admission and all original type/build/runtime gates."
+  ],
+  "prohibitedShortcuts": [
+    "Do not skip TypeScript checks or weaken next build validation",
+    "Do not patch dependency implementation or silently override source",
+    "Do not overwrite failure evidence or claim prior inherited processes remain live"
+  ]
+}

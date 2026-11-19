@@ -1,0 +1,38 @@
+{
+  "reviewedAt": "2026-11-09T13:48:49.798Z",
+  "reviewer": "r04_review",
+  "passed": true,
+  "files": [
+    {
+      "path": "unit/typecheck.cjs",
+      "sha256": "a22c71d1fdbaf13c6857e3751fc7793ca7888cab4b9f8b1bff4c6b34060e5a5e"
+    },
+    {
+      "path": "unit/lint.cjs",
+      "sha256": "f696e732efa203f39e3d12504181bef381d0bb160498f621a3fd79c4901068f3"
+    },
+    {
+      "path": "unit/tsconfig.json",
+      "sha256": "196ac2a31b546b1eacd41a6b4e835bffd58cfd90d29b2aa80219105a1e722ca4"
+    },
+    {
+      "path": "unit/typecheck01/result.json",
+      "sha256": "3c1bd3c587f4ecee5ba859c7c3f147600e88dce2bb884d577edda07409b919fa"
+    },
+    {
+      "path": "unit/lint01/result.json",
+      "sha256": "cb249c8d98a59d3fc0a863b99edd987ed852677056d5ae96b91e941f94810921"
+    },
+    {
+      "path": "unit/lint01/eslint.json",
+      "sha256": "c5527df93ad28b9e3e4c2ae8c78d07639b09102b7d3b4dcd960dd9bcbde3262a"
+    }
+  ],
+  "typecheck": "Two owned entries/import closure including existing hook; noEmit, incremental:false, plugins:[]; exit0 and no diagnostics",
+  "lint": "Two owned files, no fix/cache; 0 errors and 0 warnings; hashes unchanged",
+  "limits": [
+    "Not a full build or complete checkout typecheck",
+    "Static compilers/lint do not execute application behavior"
+  ],
+  "noProductOrTestEditsByReviewer": true
+}

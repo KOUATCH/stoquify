@@ -1,0 +1,168 @@
+{
+  "passed": true,
+  "phase": "after",
+  "database": "stoquify_pos_audit_20261109_41893b6190",
+  "organizationId": "org-full-pos-f16b7a03-7c2a-4b1b-967a-c62b22e0ef5d",
+  "saleId": "sale-full-pos-f16b7a03-7c2a-4b1b-967a-c62b22e0ef5d",
+  "settlementId": "cmw9csuha0003magw84lgr3uq",
+  "independentCheckerId": "cmw9crwwn0018maj0uu2ivw7y",
+  "replayedOriginalSaleExactly": true,
+  "originalRegistryUnchanged": true,
+  "outstandingSequence": [
+    "4.00",
+    "0.00",
+    "4.00"
+  ],
+  "bankSequence": [
+    "0.00",
+    "4.00",
+    "0.00"
+  ],
+  "reopened": {
+    "outstanding": "4.00",
+    "bank": "0.00",
+    "paid": "6.00",
+    "balanced": true,
+    "journalCount": 2,
+    "snapshot": {
+      "status": "COMPLETED",
+      "paymentStatus": "PARTIAL",
+      "customerBalance": "4",
+      "stockQuantity": "4",
+      "stockAvailable": "4",
+      "stockValue": "16",
+      "stockVersion": 1,
+      "sessionExpected": "106",
+      "cashTotal": "6",
+      "creditTotal": "4",
+      "transactionCount": 1,
+      "drawerCurrent": "106",
+      "drawerExpected": "106",
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "6",
+          "status": "PAID"
+        },
+        {
+          "method": "CREDIT",
+          "amount": "4",
+          "status": "PENDING"
+        }
+      ],
+      "drawerTransactionCount": 2,
+      "registryCount": 1,
+      "movementCount": 1,
+      "journalCount": 2,
+      "batchCount": 2,
+      "ledgerCount": 1,
+      "receivableCount": 1,
+      "stateCount": 1,
+      "eventCount": 3,
+      "outboxCount": 3,
+      "auditCount": 4,
+      "ledgerAuditCount": 4,
+      "sourceLinkCount": 2
+    },
+    "documentId": "cmw9crx4i001umaj0ef9vg3nz"
+  },
+  "collected": {
+    "outstanding": "0.00",
+    "bank": "4.00",
+    "paid": "10.00",
+    "balanced": true,
+    "journalCount": 3,
+    "snapshot": {
+      "status": "COMPLETED",
+      "paymentStatus": "PARTIAL",
+      "customerBalance": "0",
+      "stockQuantity": "4",
+      "stockAvailable": "4",
+      "stockValue": "16",
+      "stockVersion": 1,
+      "sessionExpected": "106",
+      "cashTotal": "6",
+      "creditTotal": "4",
+      "transactionCount": 1,
+      "drawerCurrent": "106",
+      "drawerExpected": "106",
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "6",
+          "status": "PAID"
+        },
+        {
+          "method": "CREDIT",
+          "amount": "4",
+          "status": "PENDING"
+        }
+      ],
+      "drawerTransactionCount": 2,
+      "registryCount": 1,
+      "movementCount": 1,
+      "journalCount": 3,
+      "batchCount": 3,
+      "ledgerCount": 2,
+      "receivableCount": 1,
+      "stateCount": 2,
+      "eventCount": 5,
+      "outboxCount": 4,
+      "auditCount": 7,
+      "ledgerAuditCount": 5,
+      "sourceLinkCount": 3
+    },
+    "documentId": "cmw9crx4i001umaj0ef9vg3nz"
+  },
+  "reversed": {
+    "outstanding": "4.00",
+    "bank": "0.00",
+    "paid": "6.00",
+    "balanced": true,
+    "journalCount": 4,
+    "snapshot": {
+      "status": "COMPLETED",
+      "paymentStatus": "PARTIAL",
+      "customerBalance": "4",
+      "stockQuantity": "4",
+      "stockAvailable": "4",
+      "stockValue": "16",
+      "stockVersion": 1,
+      "sessionExpected": "106",
+      "cashTotal": "6",
+      "creditTotal": "4",
+      "transactionCount": 1,
+      "drawerCurrent": "106",
+      "drawerExpected": "106",
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "6",
+          "status": "PAID"
+        },
+        {
+          "method": "CREDIT",
+          "amount": "4",
+          "status": "PENDING"
+        }
+      ],
+      "drawerTransactionCount": 2,
+      "registryCount": 1,
+      "movementCount": 1,
+      "journalCount": 4,
+      "batchCount": 4,
+      "ledgerCount": 3,
+      "receivableCount": 1,
+      "stateCount": 3,
+      "eventCount": 7,
+      "outboxCount": 5,
+      "auditCount": 11,
+      "ledgerAuditCount": 7,
+      "sourceLinkCount": 4
+    },
+    "documentId": "cmw9crx4i001umaj0ef9vg3nz"
+  },
+  "collectionJournalId": "cmw9csulv000lmagwaplmbhwo",
+  "reversalJournalId": "cmw9csv23001mmagw1un6fwmp",
+  "evidenceClass": "Real PostgreSQL current frozen writer on upgraded 121-migration catalog; synthetic controls, no predecessor-artifact/session/statutory claim"
+}

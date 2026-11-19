@@ -221,7 +221,7 @@ function runTransactionWith(tx: unknown) {
     invitation.user.findFirst.mockImplementation(async args => args.where.id ? {
       id: "admin-1", isLocked: false, isVerified: true, emailVerified: true,
       organization: { name: "Demo Org", isActive: true, deletedAt: null },
-      roles: [{ permissions: ["users.invite", "users.roles.assign", "dashboard.read", "items.read"] }],
+      roles: [{ code: "manager", permissions: ["users.invite", "users.roles.assign", "dashboard.read", "items.read"] }],
     } : null)
     invitation.businessEvent = { findUnique: jest.fn().mockResolvedValue(null), create: jest.fn().mockResolvedValue({ id: "issue-1" }) }
     invitation.auditLog = { create: jest.fn() }
@@ -617,11 +617,11 @@ describe("user identity service creation and invite workflows", () => {
     })
 
     expect(result).toMatchObject({
-      error: "You cannot grant the selected role",
+      error: "Invitation authority changed. Refresh your session.",
       status: 403,
       data: null,
     })
-    expect(tx.user.findFirst).not.toHaveBeenCalled()
+    expect(tx.user.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: { id: inviteActor.id, organizationId: inviteActor.organizationId, isActive: true } }))
     expect(tx.invite.create).not.toHaveBeenCalled()
   })
 
@@ -644,11 +644,11 @@ describe("user identity service creation and invite workflows", () => {
     })
 
     expect(result).toMatchObject({
-      error: "You cannot grant the selected role",
+      error: "Invitation authority changed. Refresh your session.",
       status: 403,
       data: null,
     })
-    expect(tx.user.findFirst).not.toHaveBeenCalled()
+    expect(tx.user.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: { id: inviteActor.id, organizationId: inviteActor.organizationId, isActive: true } }))
     expect(tx.invite.create).not.toHaveBeenCalled()
   })
 

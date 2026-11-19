@@ -1,4 +1,5 @@
 import { headers } from "next/headers"
+import { isAPIError } from "better-auth/api"
 import { auth } from "@/lib/auth"
 import { db } from "@/prisma/db"
 import { RbacError, requireRbacContext, type RbacContext } from "@/lib/security/rbac"
@@ -19,6 +20,7 @@ export type AuthSessionClaims = {
   assuranceMethod: string | null
   assuranceOrganizationId: string | null
   assuranceLevel: number
+  assuranceLockedUntil?: number | null
   lastAuthAt: number
 }
 
@@ -59,6 +61,7 @@ type SessionAssuranceEvidence = {
   assuranceMethod: string | null
   assuranceOrganizationId: string | null
   assuranceLevel: number
+  assuranceLockedUntil: Date | null
 }
 
 function buildClaims(
@@ -84,12 +87,21 @@ function buildClaims(
     assuranceMethod: evidence.assuranceMethod,
     assuranceOrganizationId: evidence.assuranceOrganizationId,
     assuranceLevel: evidence.assuranceLevel,
+    assuranceLockedUntil: evidence.assuranceLockedUntil?.getTime() ?? null,
     lastAuthAt: evidence.assuranceVerifiedAt?.getTime() ?? 0,
   }
 }
 
 export async function requireSession(): Promise<VerifiedAuthSession> {
-  const raw = await auth.api.getSession({ headers: await headers() })
+  let raw: Awaited<ReturnType<typeof auth.api.getSession>>
+  try {
+    raw = await auth.api.getSession({ headers: await headers(), query: { disableCookieCache: true } })
+  } catch (error) {
+    if (isAPIError(error) && error.status === "UNAUTHORIZED" && error.body?.code === "CURRENT_SESSION_UNAVAILABLE") {
+      throw new RbacError("Authentication required", "UNAUTHENTICATED", 401)
+    }
+    throw error
+  }
   const parts = readSessionParts(raw)
 
   if (!parts.sessionId || !parts.sessionToken || !parts.userId) {
@@ -110,6 +122,7 @@ export async function requireSession(): Promise<VerifiedAuthSession> {
       assuranceMethod: true,
       assuranceOrganizationId: true,
       assuranceLevel: true,
+      assuranceLockedUntil: true,
     },
   })
 
@@ -147,6 +160,7 @@ export async function requireFreshAuth(
     !claims.assuranceOrganizationId ||
     claims.assuranceOrganizationId !== claims.tenantId ||
     claims.assuranceLevel < minimumLevel ||
+    (claims.assuranceLockedUntil != null && claims.assuranceLockedUntil > now) ||
     !Number.isFinite(claims.lastAuthAt) ||
     claims.lastAuthAt <= 0 ||
     claims.lastAuthAt > now ||

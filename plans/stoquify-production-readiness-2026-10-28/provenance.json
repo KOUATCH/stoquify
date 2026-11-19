@@ -1,0 +1,697 @@
+{
+  "capturedAt": "2026-10-28T13:28:26.401Z",
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "remote": "https://github.com/kouatch/stoquify.git",
+  "defaultBranchLocalRef": "origin/main",
+  "githubCli": "installed; auth status reports not logged in",
+  "sourcePolicy": "Targeted current source/evidence inspection, not a full new audit. HEAD alone does not identify dirty inputs. Capture execution candidate in P01.",
+  "freshChecks": [
+    {
+      "command": "npm run agent:workflow:check",
+      "result": "PASS",
+      "unclassifiedScripts": 196
+    }
+  ],
+  "notRun": [
+    "compiler",
+    "unit suites",
+    "real database tests",
+    "browser",
+    "build/install",
+    "migration",
+    "deployment"
+  ],
+  "hrDevelopment11Comparison": [
+    {
+      "file": "components/hris/HrisPayrollHandoff.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/HrisPayrollHandoffClient.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/useHrisFreshAuth.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/payroll-handoff-copy.ts",
+      "status": "match"
+    },
+    {
+      "file": "actions/hris/payroll-handoff.actions.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/payroll-handoff.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/payroll-handoff-read.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/payroll-handoff.contract.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/payroll-readiness-contract.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/time-leave.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/time-leave.contract.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/self-service-boundary.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/_shared/protect.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/security/step-up-auth.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/people/handoff/page.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/__tests__/HrisPayrollHandoff.test.tsx",
+      "status": "match"
+    },
+    {
+      "file": "actions/hris/__tests__/payroll-handoff.actions.test.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/__tests__/payroll-handoff.contract.test.ts",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/payroll-handoff-download.ts",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/__tests__/payroll-handoff-download.test.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/lifecycle.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/lifecycle-task.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/lifecycle-task.contract.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/approval-review.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/people-authoring-read.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "status": "changed"
+    },
+    {
+      "file": "services/hris/__tests__/lifecycle.service.test.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-control.service.test.ts",
+      "status": "changed"
+    },
+    {
+      "file": "components/hris/HrisPeopleAuthoring.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/HrisPeopleAuthoringClient.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/HrisControlledReview.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/HrisLifecycleTasks.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/HrisLifecycleTasksClient.tsx",
+      "status": "match"
+    },
+    {
+      "file": "actions/hris/lifecycle-task.actions.ts",
+      "status": "match"
+    },
+    {
+      "file": "actions/hris/lifecycle.actions.ts",
+      "status": "match"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/people/manage/page.tsx",
+      "status": "match"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/people/tasks/page.tsx",
+      "status": "match"
+    },
+    {
+      "file": "jest.hris-termination.config.cjs",
+      "status": "match"
+    },
+    {
+      "file": "actions/payroll/payroll-contract.actions.ts",
+      "status": "match"
+    },
+    {
+      "file": "actions/payroll/__tests__/payroll-contract.actions.test.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/payroll/contract.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/payroll/payment-evidence.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/document-evidence.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/contract.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "actions/hris/contract-authoring.actions.ts",
+      "status": "match"
+    },
+    {
+      "file": "actions/hris/employee.actions.ts",
+      "status": "match"
+    },
+    {
+      "file": "actions/hris/payment-destination.actions.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/__tests__/document-evidence.service.test.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/__tests__/payroll-readiness-contract.test.ts",
+      "status": "match"
+    },
+    {
+      "file": "jest.hris-hiring.config.cjs",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/HrisDocumentWorkspace.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/HrisDocumentWorkspaceClient.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/HrisDocumentRetentionControls.tsx",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/employee-document.service.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/employee-document.contract.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/employee-document.authorization.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/employee-document.http.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/employee-document.storage.ts",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/__tests__/employee-document.postgres.test.ts",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/__tests__/HrisDenialRecovery.test.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/__tests__/HrisDocumentTransport.test.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/__tests__/HrisDocumentWorkspace.test.tsx",
+      "status": "match"
+    },
+    {
+      "file": "app/api/hris/documents/route.ts",
+      "status": "match"
+    },
+    {
+      "file": "app/api/hris/my-documents/route.ts",
+      "status": "match"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/people/documents/page.tsx",
+      "status": "match"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/people/me/documents/page.tsx",
+      "status": "match"
+    },
+    {
+      "file": "what-next/hris-implementation-2026-10-24/HR-21/development-11/browser.cjs",
+      "status": "match"
+    },
+    {
+      "file": "what-next/hris-implementation-2026-10-24/HR-21/development-11/gateway.cjs",
+      "status": "match"
+    },
+    {
+      "file": "what-next/hris-implementation-2026-10-24/HR-21/development-11/helpers.cjs",
+      "status": "match"
+    },
+    {
+      "file": "what-next/hris-implementation-2026-10-24/HR-21/development-11/jest.config.cjs",
+      "status": "match"
+    },
+    {
+      "file": "what-next/hris-implementation-2026-10-24/HR-21/development-11/journey.cjs",
+      "status": "match"
+    },
+    {
+      "file": "what-next/hris-implementation-2026-10-24/HR-21/development-11/preload.cjs",
+      "status": "match"
+    },
+    {
+      "file": "what-next/hris-implementation-2026-10-24/HR-21/development-11/prepare.cjs",
+      "status": "match"
+    },
+    {
+      "file": "what-next/hris-implementation-2026-10-24/HR-21/development-11/serve.cjs",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/__tests__/HrisDenialRaces.test.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/hris/__tests__/HrisHiringSelectionDenial.test.tsx",
+      "status": "match"
+    },
+    {
+      "file": "services/hris/__tests__/approval-review.postgres.test.ts",
+      "status": "match"
+    },
+    {
+      "file": "jest.hris-review-postgres.config.cjs",
+      "status": "match"
+    }
+  ],
+  "publicPerformanceComparison": [
+    {
+      "file": "components/landing/cinematic-hero.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/landing/cinematic-shell.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/landing/preview-logo.tsx",
+      "status": "match"
+    },
+    {
+      "file": "components/landing/__tests__/CinematicLanding.test.tsx",
+      "status": "match"
+    },
+    {
+      "file": "public/landing/cinematic/stoquify-dashboard-en-480.webp",
+      "status": "match"
+    },
+    {
+      "file": "public/landing/cinematic/stoquify-dashboard-en-1000.webp",
+      "status": "match"
+    },
+    {
+      "file": "public/landing/cinematic/stoquify-dashboard-en-1600.webp",
+      "status": "match"
+    },
+    {
+      "file": "public/landing/cinematic/stoquify-dashboard-fr-480.webp",
+      "status": "match"
+    },
+    {
+      "file": "public/landing/cinematic/stoquify-dashboard-fr-1000.webp",
+      "status": "match"
+    },
+    {
+      "file": "public/landing/cinematic/stoquify-dashboard-fr-1600.webp",
+      "status": "match"
+    },
+    {
+      "file": "public/landing/cinematic/sme-bakery-aio-640.webp",
+      "status": "match"
+    }
+  ],
+  "fingerprints": [
+    {
+      "path": "C:/Users/J COMPUTER/.codex/visualizations/2026/10/28/01a1816a-fc89-7a00-9e6c-c83371785eb8/STOQUIFY_AUDIT_2026-10-28.md",
+      "sha256": "a94bf2db700442918b753966892598a545defba71396e09ef89433fbcffa66bd",
+      "bytes": 30402
+    },
+    {
+      "path": "C:/Users/J COMPUTER/.codex/visualizations/2026/10/28/01a1816a-fc89-7a00-9e6c-c83371785eb8/domain-coverage.csv",
+      "sha256": "cd5f5bae77bb8050f7f303c5fe527488e1253e226f182972a008a53d26dfaf64",
+      "bytes": 20746
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/ecc/WORKFLOW.md",
+      "sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c",
+      "bytes": 6784
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/ecc/command-registry.json",
+      "sha256": "3a6238bfb58176c8b04b5d1ca50375dc919f85fe8b8b3e83f5eb162262e2f27d",
+      "bytes": 11308
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/ecc/test-lanes.md",
+      "sha256": "5e87b8d6d504299f11e8f264f5d2e5308ad11ee9517572b26e8736732a5fcd6a",
+      "bytes": 10887
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "bytes": 34421
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/tsconfig.json",
+      "sha256": "0c962a9096ffd86762b02b43f31381e939f9ba5ba1e01898605ac6c3f8d76829",
+      "bytes": 6498
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/hris-implementation-2026-10-24/HR-21/development-11/RESULT.md",
+      "sha256": "e14763b0c18577a9b0c217dc4d050d866a8795c3ab277140a7e4a1de0f7ff3ea",
+      "bytes": 6149
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/hris-implementation-2026-10-24/HR-21/development-11/NEXT.md",
+      "sha256": "692f6f0af193054af3b5cb7646638aceb859a36d5e770873db4db730c06d3cb2",
+      "bytes": 1175
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/hris-implementation-2026-10-24/HR-21/development-11/evidence.json",
+      "sha256": "155b28d34f2dcd5d19f903aebdffd04e32d6c5d39091f67b792df1f7a66f1e47",
+      "bytes": 18186
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/hris/compensation.service.ts",
+      "sha256": "bae5b4011919bb97c0d6123248e1f2fcb69a13d65be987d1ddce5a39b1d8d9a4",
+      "bytes": 14452
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/hris/payroll-handoff.service.ts",
+      "sha256": "2138d3f7ae43ad139fb1be68d3585113dc8bbf8abc9810138977c8dd6f448b8e",
+      "bytes": 12898
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/pos-purchasing-inventory-audit-2026-10-26/mixed-version/REPORT.md",
+      "sha256": "ce8c36350ec75ffc377a507c43e93884aaa4828993dd287319f7381a0b02cecd",
+      "bytes": 15392
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/pos-purchasing-inventory-audit-2026-10-26/mixed-worker-close/REPORT.md",
+      "sha256": "8bac1b7752d5f46114eb167690eac4b2407480939a764522be673f289f9b15c5",
+      "bytes": 13111
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/purchase-order/purchase-order-authoring.service.ts",
+      "sha256": "1c4d84aa1f8755a257affc28b7d69e7bd0599493eca0133e861b8ee50c52d112",
+      "bytes": 20413
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/inventory/inventory-stock-event.service.ts",
+      "sha256": "d11c80f6cd502146b5abb7c2a5536c7fecfac11c24d868c8f9e6af67436cdca5",
+      "bytes": 50871
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/accounting-firms/roadmap-2026-10-19/execution/AF16/SEALED_ENGAGEMENT_BROWSER_2026-10-28.md",
+      "sha256": "3336ee6fa5f3ce217c7feb934c541d97498ecd005d7210fba5fa5cbb531a89f2",
+      "bytes": 11563
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/components/accounting/AccountantAccessManager.tsx",
+      "sha256": "e47c231a54828df40173c01b2735300e0770e1bbbe2ac2e8b050de35b5203c2a",
+      "bytes": 10028
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/components/accounting/FirmEngagementWorkspace.tsx",
+      "sha256": "9af4839ec7d33f099737bcea9460f12c55aac968e3a33367337e24301c5489bd",
+      "bytes": 17258
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/actions/accounting/accountant-access.actions.ts",
+      "sha256": "c249cfc4fbe94063cb3216e2b9a4b77628fd36928576545dc58cbed99d964445",
+      "bytes": 2981
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/accounting/accountant-access.service.ts",
+      "sha256": "877c8082feefef65245015da85904277719cb908f217add57cbfcdd952322e66",
+      "bytes": 14989
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/scripts/verify-firm-engagement-browser.cjs",
+      "sha256": "2615888316509f8e6ec2351537f1a4a3384f4dfed891297464962d0caceceb5d",
+      "bytes": 13451
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/artifacts/public-performance-2026-10-28/REVIEW.md",
+      "sha256": "e2ff6234bc951bfc58d5a7f140a54f2188886f9b7f6422561c0bb6a0e0da649e",
+      "bytes": 7668
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/artifacts/public-performance-2026-10-28/source-hashes.json",
+      "sha256": "4c05efb541571d8ab486f1abd3abb4ce759790594c5c29792b73e69661ab163e",
+      "bytes": 1714
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/components/landing/cinematic-hero.tsx",
+      "sha256": "3cc34463cf735f81dd784b2368be6e61f33cc450fca979b1557882f7aa4a3840",
+      "bytes": 13061
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/components/landing/cinematic-shell.tsx",
+      "sha256": "171221de7f73b132172a6ad33ae912ebdea13f0029e6e0d6d37d6552702c9494",
+      "bytes": 14752
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/compliance/obligation-register-source.ts",
+      "sha256": "1a08bdbc49642f8ebcdd9caa96a63e5bc1c817a9a7f1498785d3edea1180f349",
+      "bytes": 2863
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/regulatory/country-packs/registry.ts",
+      "sha256": "dd7cac8d10d2ad7239a6061ae4ab91853c671b0d127cfb2fed8553cfa6e834bb",
+      "bytes": 498
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/regulatory/country-packs/cameroon.ts",
+      "sha256": "7a71f2292074dabf54b4849eb14e41852dcc5ba6d84b8c564a123a39b497f303",
+      "bytes": 41078
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/payroll/payroll-production-admission.ts",
+      "sha256": "48b722fe75bc7db244d6ad8a2d394c08bb7a9449346c2959ed03e5552bf608da",
+      "bytes": 8607
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/payroll/payroll-final-release-readiness.service.ts",
+      "sha256": "f82d860cb180c96684afe7519d70a605d52113911c3282f940d3f8856fc03046",
+      "bytes": 62580
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/release/ARTIFACT_SCHEMA_PROMOTION.md",
+      "sha256": "7bcf2a0ebb5de17eda545f2b424562e76b0868a309e4f5b1ef5a43329dc821e5",
+      "bytes": 5653
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/.github/workflows/ci.yml",
+      "sha256": "c437d3df5ee41574ae5382c2ce2b0dd0cc4138f4f11da6a10853489143e474c4",
+      "bytes": 6243
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/scripts/release-artifact.cjs",
+      "sha256": "a79274e76d5d141ce436e1da0150c31d6324b2d64d4444340ae646a767cd2652",
+      "bytes": 6675
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/scripts/promote-release-schema.cjs",
+      "sha256": "4528b01b3f231838cd8d98c8f5a50995c390df5d166ec3c2114c931375d9ed28",
+      "bytes": 3620
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/retention/execution/STATUS.md",
+      "sha256": "45f0326f36d4f48ad4cdc3a6ad0baf5b723b4ed15c574c4d2be9ff334cbc3c1b",
+      "bytes": 11498
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/retention/implementation-prompts/00_START_HERE.md",
+      "sha256": "edf30d27a70cd783365d774e6d321cd391a2b91d0604bafb5efd3223f09f6fc3",
+      "bytes": 10135
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/organization/authorized-archive-contract.ts",
+      "sha256": "c356c8f9bb82312731b41c4dc11d9d4a07f81ea27d359652972838974d35e08d",
+      "bytes": 13531
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-lifecycle.service.ts",
+      "sha256": "3a5aeec79fa21f6ba15e122f74f139c6040d05deaabf684855450d5ebb2cd19b",
+      "bytes": 3436
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/accounting-firms/roadmap-2026-10-19/STATUS.md",
+      "sha256": "c92e74f0e6babefc874ecafb609fb5d99e4f712d62ca941e43d7c14362d16628",
+      "bytes": 12000
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/onboarding/opening-cutover.service.ts",
+      "sha256": "373ad201dc247868e0c95de3d99f1d8f2cb69481356879ea8aa124c569725b6f",
+      "bytes": 24533
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/pos-purchasing-inventory-audit-2026-10-26/close-browser/REPORT.md",
+      "sha256": "fae5870e189dcc01bbebd138c7f4324ef6ca78f5ea71aa24451fcc4d3cbff1f4",
+      "bytes": 16579
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/command-center/phase-13-source-integration-2026-10-26/REMAINING_GATES.md",
+      "sha256": "a47ffd437c350250fb1488bb9463e01bed300cede2ea0df89e2eae2800231ebe",
+      "bytes": 2671
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/command-center/persistence.service.ts",
+      "sha256": "f5f90773f327d978301492e3db48fd0702da5e7f83142522a24ff422e8426d96",
+      "bytes": 19569
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/lib/security/rbac.ts",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "bytes": 10696
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/lib/security/auth-session.ts",
+      "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c",
+      "bytes": 5556
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/_shared/protect.ts",
+      "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+      "bytes": 7550
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/payments/adapters/mobile-money-hmac.adapter.ts",
+      "sha256": "e617eb56d5696a1ffe7dfa05637c29b5518e88135c2796798730d9f4540f348b",
+      "bytes": 8469
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/payments/adapters/statement-pilot-format.ts",
+      "sha256": "17dfa3defff8fe0b65b778a28ff77628e24d90d4841748ad7242cac6f15d56db",
+      "bytes": 5746
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/hris/employee-document.storage.ts",
+      "sha256": "f9040726df44346edba0f7ac998ce7d2d17ec7ff853264a30a30c8450b158adf",
+      "bytes": 3542
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/pos/offline-sync.service.ts",
+      "sha256": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6",
+      "bytes": 69054
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/plans/stoquify-cameroon-hris-payroll-blueprint-2026-10-07.md",
+      "sha256": "6cde143cfc8559676b3337678d67f12c72f5355760dbec18629cf222ba422672",
+      "bytes": 34457
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/HRIS-Payroll/STOQUIFY_HRIS_PAYROLL_REALIZATION_ROADMAP_2026-07-19.md",
+      "sha256": "d65c954ffd2334da342b0761778de84816dfa5c13d35d29ea71947ad01b45a15",
+      "bytes": 3779
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/HRIS-Payroll/payroll-trust-spine-execution/EXECUTION_REGISTER.md",
+      "sha256": "33c55044c201795f5365adf3b1913f82ca04eea681cbc6fe4d850e64c3941cc3",
+      "bytes": 10677
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/payroll/payroll-control.service.ts",
+      "sha256": "e4684514143ff701ebbc1baef02fb6fddf12b5810a6ef11d81732df3e2f969b8",
+      "bytes": 414246
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/agents/agent-release-contracts.ts",
+      "sha256": "8734f75023bbcbca288ea415690a21b8290ac3b74847c5b2ed0dce4aaf1331e1",
+      "bytes": 5318
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/agents/command-agent.service.ts",
+      "sha256": "d9bc752701fa3e3f81400615b27bf71f3ed2ec2eff1291636a34e74774c5732d",
+      "bytes": 8022
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/services/ai/copilot-proposal-release.service.ts",
+      "sha256": "7664e53690f374b7863b9b9feee90da8fb042da1ad485c489832217de4193d60",
+      "bytes": 7524
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/design-system/stoquify/MASTER.md",
+      "sha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+      "bytes": 7598
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/design-system/stoquify/pages/command-center-shared.md",
+      "sha256": "042dff7edf6939287a3212454ef715ae6fda9e2febdb8796da8543dc149806fb",
+      "bytes": 13511
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/graphify-out/POST_SLICE_438_GRAPH_REFRESH_2026-08-09.md",
+      "sha256": "3ffd642637e6e4564e2bff621ddc60f70d0146707ebe78424f7ac3d7e87de6df",
+      "bytes": 3294
+    },
+    {
+      "path": "E:/ohada saas/Focused projects/stoquify/graphify-out/graph_components.json",
+      "sha256": "121586053933c16acf5cf873e9aaf42b9cb4b99848b29508a72dbee05308ada9",
+      "bytes": 888133
+    }
+  ]
+}

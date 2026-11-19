@@ -1,4 +1,7 @@
 import "server-only"
+import {Prisma} from "@prisma/client"
+import {db} from "@/prisma/db"
+import {currentHrisActor,lockedOwnEmployee,selfServiceTransaction,type SelfServiceClient} from "./self-service-boundary.service"
 
 import { z } from "zod"
 
@@ -34,21 +37,21 @@ export const HRIS_EMPLOYEE_SELF_SERVICE_OWNERSHIP = {
   mutationRule: "REQUESTS_NEVER_MUTATE_APPROVED_HRIS_OR_PAYROLL_TRUTH_DIRECTLY",
 } as const
 
-export async function getHrisEmployeeSelfService(
-  input: HrisEmployeeSelfServiceInput,
+async function buildHrisEmployeeSelfService(
+  input: HrisEmployeeSelfServiceInput, client:Prisma.TransactionClient,
 ) {
   const parsed = hrisEmployeeSelfServiceInputSchema.parse(input)
   if (!hasAnyRbacPermission(parsed.actorPermissions, SELF_SERVICE_READ_PERMISSIONS)) {
     throw new ForbiddenError("Missing permission for HRIS employee self-service.")
   }
 
-  const profile = await getOwnHrisEmployeeProfile(parsed)
+  const profile = await getOwnHrisEmployeeProfile(parsed,client)
   const [paymentStatus, attendanceStatus, operationalTime] = await Promise.all([
     profile.employee.status === "ACTIVE"
-      ? getOwnHrisPaymentDestinationStatus(parsed)
+      ? getOwnHrisPaymentDestinationStatus(parsed,client)
       : Promise.resolve(null),
-    getOwnHrisTimeLeaveAttendanceStatus({ ...parsed, limit: 1 }),
-    getOwnOperationalTime({ ...parsed, limit: 20 }),
+    getOwnHrisTimeLeaveAttendanceStatus({ ...parsed, limit: 1 },client),
+    getOwnOperationalTime({ ...parsed, limit: 20 },client),
   ])
   const latestAttendance = attendanceStatus.snapshots[0] ?? null
   const payment = paymentStatus?.employee ?? null
@@ -78,7 +81,7 @@ export async function getHrisEmployeeSelfService(
       socialIdentifierOnFile: profile.employee.evidence.hasSocialIdentifierHash,
       signedContractEvidenceOnFile:
         profile.employee.contractReadiness.hasSignedDocumentEvidence,
-      rawDocumentAccess: "NOT_CONFIGURED" as const,
+      rawDocumentAccess: "PROTECTED_WORKSPACE" as const,
     },
     contract: {
       activeContractCount: profile.employee.contractReadiness.activeContractCount,
@@ -123,6 +126,8 @@ export async function getHrisEmployeeSelfService(
         }
       : null,
     operationalTime: {
+      employeeId: operationalTime.employeeId,
+      correctionEntries: operationalTime.correctionEntries,
       balances: operationalTime.balances,
       requests: operationalTime.requests.map((request) => ({
         ...request,
@@ -168,11 +173,13 @@ export async function getHrisEmployeeSelfService(
       )
         ? "AVAILABLE" as const
         : "PERMISSION_REQUIRED" as const,
-      profileCorrectionRequest: "NOT_CONFIGURED" as const,
+      profileCorrectionRequest: "REVIEWED_WORKSPACE" as const,
     },
     dataOwnership: HRIS_EMPLOYEE_SELF_SERVICE_OWNERSHIP,
   }
 }
+
+export async function getHrisEmployeeSelfService(input:HrisEmployeeSelfServiceInput,client:SelfServiceClient=db){const parsed=hrisEmployeeSelfServiceInputSchema.parse(input);return selfServiceTransaction(client,async tx=>{const actor=await currentHrisActor(tx,parsed);await lockedOwnEmployee(tx,actor,false);return buildHrisEmployeeSelfService(actor,tx)})}
 
 export type HrisEmployeeSelfServiceResult = Awaited<
   ReturnType<typeof getHrisEmployeeSelfService>

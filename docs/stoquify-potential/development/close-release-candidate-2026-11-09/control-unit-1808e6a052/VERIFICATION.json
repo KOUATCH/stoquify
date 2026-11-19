@@ -1,0 +1,38 @@
+{
+  "utc": "2026-11-09T17:39:20.352Z",
+  "passed": true,
+  "sourceManifestSha256": "8c9723660c455a3cea75b4ab774d91844418e9397d7ed35da47fceef389168b3",
+  "runnerSha256": "5b00edd0d7e0fd6ddf194057bbbbdc96579e08b8ac6924be3d9486a5a79f0be2",
+  "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-release-20261109-9cf90a4714\\candidate",
+  "frozenSourceUnchanged": true,
+  "suites": [
+    {
+      "path": "tests/s10-s11/release-artifact.test.js",
+      "expectedPassed": 17,
+      "status": "passed",
+      "passed": 17,
+      "failed": 0
+    },
+    {
+      "path": "tests/s10-s11/release-artifact-private-uploads.test.js",
+      "expectedPassed": 67,
+      "status": "passed",
+      "passed": 67,
+      "failed": 0
+    }
+  ],
+  "counts": {
+    "passed": 84,
+    "failed": 0,
+    "pending": 0
+  },
+  "results": {
+    "path": "results.json",
+    "sha256": "bd985e588fb8059d0af0136429f5cf86744133900b2e6a46b1ec7cc46d5d8ef8"
+  },
+  "commandReceiptSha256": "d89a376bf08f1b5e5cba1bd37164ca0ad274cb9e68fd04c1175d94bb2db0a303",
+  "executionReceiptSha256": "f4826e4ec42ea725ef8312a277497f5cc19f4d12074de4b2049b7a72e17a04bf",
+  "evidenceClass": "Mocked promotion/locking and injected compilation with real owned filesystem/junction/tamper fixtures; one intentional broken-JavaScript node--check child",
+  "noApplicationBuildDatabaseMigrationOrBrowser": true,
+  "dependenciesReusedFromPriorInstallation": true
+}

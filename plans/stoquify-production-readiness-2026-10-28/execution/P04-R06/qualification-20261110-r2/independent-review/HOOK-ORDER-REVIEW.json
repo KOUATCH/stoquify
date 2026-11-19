@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-10T12:15:31.375Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Read-only current installed call-order and bounded repair design review; no source/outcome qualification",
+  "applicationInputs": [
+    {
+      "path": "lib/auth.ts",
+      "beforePath": "source-before/lib/auth.ts",
+      "beforeSha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5",
+      "currentSha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "beforePath": "source-before/lib/security/credential-sign-in-outcome.ts",
+      "beforeSha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+      "currentSha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "beforePath": "source-before/lib/security/trusted-origins.ts",
+      "beforeSha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+      "currentSha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b"
+    },
+    {
+      "path": "app/api/auth/[...all]/route.ts",
+      "beforePath": "source-before/app/api/auth/[...all]/route.ts",
+      "beforeSha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "currentSha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b"
+    }
+  ],
+  "installedInputs": [
+    {
+      "path": "node_modules/better-auth/dist/api/index.mjs",
+      "sha256": "9ccb59e0b6b519f681d0c9eab3f0a52c8847d6af843a48d014854a3801479c5f"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/to-auth-endpoints.mjs",
+      "sha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+      "sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/middlewares/origin-check.d.mts",
+      "sha256": "4d0602b6a8facd1512dca78f59ca7256b5dbb69e1ed7f232fe4c46379153e946"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490"
+    },
+    {
+      "path": "node_modules/@better-auth/core/dist/api/index.mjs",
+      "sha256": "f8ea006e1cce3aa853f0d9e5242fb2a7327ae69c84b6a55d08b0f04ed5158ecf"
+    },
+    {
+      "path": "node_modules/better-call/dist/router.mjs",
+      "sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480"
+    },
+    {
+      "path": "node_modules/better-call/dist/context.mjs",
+      "sha256": "473954515dcc93fbd826ff9e054fabd5891460e16a0cb8b0b1171f59c8ab495b"
+    },
+    {
+      "path": "node_modules/better-call/dist/endpoint.mjs",
+      "sha256": "dea53e9a16b5484100cdfbcc28ba645435e35f6eada9382b75dc8138877cb74a"
+    }
+  ],
+  "observedCallOrder": [
+    "HTTP router resolves method/path and parses allowed media/body, then runs global originCheckMiddleware before the wrapped auth endpoint. This global origin guard checks cookie requests and callbackURLs; cookie-free headerless requests may be admitted.",
+    "toAuthEndpoints invokes the application before-hook before endpoint body schema validation and endpoint middleware. Before-hook errors bypass the after-hook.",
+    "Application current before-hook can write ACCOUNT_LOCKED audit for future locks and unlock/reset an expired lock before endpoint formCsrfMiddleware.",
+    "signInEmail endpoint validates body and runs exported formCsrfMiddleware before credential lookup/verification. The middleware rejects actual cross-site form navigation and validates Origin for cookie/Fetch Metadata requests; existing native cookie-free/headerless calls remain admitted.",
+    "Endpoint APIErrors are caught by toAuthEndpoints and passed to application after-hook as context.returned; before-hook failures and ordinary thrown infrastructure errors follow distinct paths.",
+    "Application current after-hook classifies every non-success as password failure, so origin/validation/unverified/session-creation errors are not distinguished."
+  ],
+  "minimalRepairRecommendations": [
+    "Run the installed exported formCsrfMiddleware at the beginning of the credential-specific before-hook, before any account audit/write; do not reimplement origin matching or disallow supported native clients.",
+    "Remove expired-lock reset writes from before-hook; defer reset to a recognized actual credential outcome. This also avoids an expired reset before body validation or infrastructure failure.",
+    "Treat only an admitted successful credential result and SDK401 INVALID_EMAIL_OR_PASSWORD as eligible for credential bookkeeping; other APIErrors/transport/validation/unverified/session-creation outcomes must not mutate failure state or report a wrong password.",
+    "For recognized wrong password after an expired lock, preserve prior semantics deliberately: reset old expired counter, unlock/null lockedUntil, then record first failure; successful sign-in resets and records success as before.",
+    "Keep current-session protection and anonymous recovery flows unchanged. Future-lock legitimate audit behavior must remain intentional, with early origin admission ensuring rejected-origin requests do not reach it."
+  ],
+  "requiredSourceTests": [
+    "Origin/metadata rejection before all account writes/audits, including future and expired locks.",
+    "Validation, email-unverified, session-creation/infrastructure and unrelated errors no-op credential failure bookkeeping.",
+    "Successful sign-in, actual wrong password, threshold transition, expired-lock successful and failed credentials, inactive/indefinite/future locks.",
+    "Recognized SDK APIError status/code shape and unsupported/malformed outcomes fail closed for bookkeeping; current-session regression suites remain passing."
+  ],
+  "nativeRequirements": [
+    "Actual cross-site form and simple CORS requests with no cookies; persist actual Origin/Fetch Metadata/status/private-byte evidence and native before/after deltas.",
+    "Distinct fresh account state per active/threshold/expired-lock/future-lock probe; demonstrate no lock/unlock/counter/audit change on rejected requests.",
+    "Wrong/unknown-password origin probes and repeated requests near threshold; legitimate wrong-password and success controls with explicit UTC interpretation and actual bounds.",
+    "Rebuild a new source-bound artifact after repair; requalify inherited denial and browser consumer contracts against it."
+  ],
+  "limits": [
+    "This inspection establishes current source order; unexercised expired-lock/threshold impacts are source predictions until actual tests.",
+    "The already confirmed E29 actual bookkeeping defect remains in immutable r1 evidence.",
+    "No new business-policy gate is inferred from a valid-credential nonbrowser API client.",
+    "Concurrency/lost-update behavior outside this bounded request-admission repair is not certified."
+  ]
+}

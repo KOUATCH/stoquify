@@ -1,0 +1,57 @@
+{
+  "at": "2026-11-10T19:28:07.173Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "sourceInspectionAccepted": true,
+  "executionAdmitted": false,
+  "files": [
+    {
+      "path": "database-current/database-common.cjs",
+      "sha256": "bfa2e8b562d4b5dba3ecdedb14f2fd9d0e1d60adf24d6adb2c5a5fcdb54a1251"
+    },
+    {
+      "path": "database-current/baseline-snapshot.cjs",
+      "sha256": "724f3bd7b50c03c57fdbcc42dfeee80210967245619e132677aa68b36442e8fa"
+    },
+    {
+      "path": "database-current/lifecycle-guards.cjs",
+      "sha256": "b2be54a4b0f57f565f9936973966aa8f727e345a56033c9204612eb61f55e27e"
+    },
+    {
+      "path": "database-current/fixture-preflight.cjs",
+      "sha256": "4d556320ffd52ecfb615aa698c3c16717197183be63042198a4ea03584be5e79"
+    },
+    {
+      "path": "database-current/finalize.cjs",
+      "sha256": "47b3a8caaf91e735bcdc377691e534f174159f1c3d062e854a9dd32d502c01e8"
+    },
+    {
+      "path": "database-current/stop.cjs",
+      "sha256": "5e0f7be2b95713aafff2021ab0c1b218f60a1e9d64a2b1a8c006d8d9ff9d3892"
+    },
+    {
+      "path": "database-current/stop-before-qualification.cjs",
+      "sha256": "79c29453428e8b8ac670c3cb14873aa451fa5b554c0c9fb5cb754047a8e518d1"
+    }
+  ],
+  "closedFindings": [
+    "Current PIDfile/nativeepoch explicitly match accepted preparation postmaster identity; exact nativeepoch rechecked before stop.",
+    "Preflight rehashes all actual DB outcome bindings and requires privatefixture binding.",
+    "Both shutdown paths retain DBquery/preservation errors and still attempt independently ownership/start/no-client guarded stop; failed evidence stays passed:false.",
+    "Normalstop preserves missing or mismatched cleanup-receipt error and does not treat successful shutdown as accepted sessioncleanup."
+  ],
+  "facts": [
+    "Whole DBrecipe hashes checked at entry; exact newtarget/context/owner and oldbaseline proof retained.",
+    "Preflight current123ledger+16actors32accounts0sessions0audits and emptybuild; exact oldbaseline tuple/catalog unchanged.",
+    "Finalizer deletes only exact locked synthetic session IDs and asserts no other rows/business/audit changes.",
+    "Prequalificationstop rejects runtime marker/results, retains all rows/private files, no deletion.",
+    "Ownedstop preserves launcherdiagnostics and requires recordedPIDabsence,postmasterfileabsence,bothDBportsfree; abnormal launcher remains failed even if stopped."
+  ],
+  "remainingBeforeExecution": [
+    "Root mocked control-flow tests if run must be independently admitted/reported separately.",
+    "Actualcandidate and whole exact DB execution recipe admission; native preflight/cleanup/stop outcomes still unrun."
+  ],
+  "databaseAccess": false,
+  "processActions": false,
+  "qualificationPassed": false
+}

@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-02",
+  "reviewed": true,
+  "screenshots": ["client-revocation.png", "delivery-failure-pending-acceptance.png", "engagement-en-1440.png", "engagement-en-390.png", "engagement-fr-1440.png", "engagement-fr-390.png", "engagement-suspended.png", "module-locked.png", "permission-denied.png", "recovery-engagement-expiry-detail.png", "recovery-module-locked.png", "recovery-permission-denied.png", "recovery-session-revoked.png"],
+  "observations": [
+    "Reviewed all 13 captures through three contact sheets. English and French mobile workspace headings, explanations, refresh controls and focus outlines wrap within the captured panels.",
+    "Desktop client revocation capture shows the revoked reviewer row, a settled grant submit control and the saved-list reload action. Invitation capture separately labels pending acceptance and synthetic failed delivery.",
+    "Suspension is labelled in the engagement list. The expiry detail distinguishes expired preparer consent from revoked reviewer consent and the active engagement.",
+    "Module/session denial captures show a generic in-workspace alert with private client cards removed. Role-denied captures after reload show the initial route permission boundary.",
+    "No overlap or clipping observed within captured controls. Viewport captures do not show every below-fold form. Axe scope is the engagement workspace; French saved-list recovery copy is covered by the component test, not a French screenshot of that saved state."
+  ],
+  "evidenceClass": "Manual visual inspection, separate from four scoped axe scans and component checks"
+}

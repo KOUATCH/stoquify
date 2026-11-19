@@ -1,0 +1,71 @@
+{
+  "package": "P04-D01",
+  "at": "2026-11-09T17:44:52.822Z",
+  "decisionVerified": true,
+  "implementationAuthorized": false,
+  "implementationComplete": false,
+  "parentP04Accepted": false,
+  "productionReady": false,
+  "approvedPolicy": {
+    "option": "C",
+    "approver": "Kouatchoua Mark",
+    "roles": [
+      "product/accounting",
+      "security"
+    ],
+    "reportClasses": 14,
+    "classExceptions": "none stated"
+  },
+  "gates": [
+    {
+      "id": "D01-G01",
+      "requirement": "Current finance visibility source and 14-class matrix",
+      "status": "passed_source_inspection",
+      "evidence": [
+        "source-manifest.json",
+        "source-drift-check-20261109.json",
+        "DECISION.md"
+      ]
+    },
+    {
+      "id": "D01-G02",
+      "requirement": "Named product/accounting and security policy approval",
+      "status": "passed",
+      "evidence": [
+        "user-approval.json",
+        "decision-record.json"
+      ]
+    },
+    {
+      "id": "D01-G03",
+      "requirement": "Derived acceptance cases and independent decision review",
+      "status": "passed",
+      "evidence": [
+        "decision-record.json",
+        "../../P04-V02/qualification-20261109-r1/independent-review/D01-APPROVAL-REVIEW.json"
+      ]
+    },
+    {
+      "id": "D01-G04",
+      "requirement": "Implement and qualify approved creator/delegate restrictions",
+      "status": "not_started_separate_authorization",
+      "package": "P04-R05",
+      "evidence": [
+        "REPAIR-PROPOSAL.md",
+        "repair-package.json"
+      ]
+    },
+    {
+      "id": "D01-G05",
+      "requirement": "Byte delivery/provider/retention/release admission",
+      "status": "not_qualified",
+      "packages": [
+        "P27"
+      ],
+      "evidence": [
+        "DECISION.md"
+      ]
+    }
+  ],
+  "globalReleaseDecisionD01": "unchanged_and_separate"
+}

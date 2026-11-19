@@ -1,3 +1,4 @@
+import { persistenceEnabled } from "@/services/command-center/authority"
 import type { Metadata } from "next"
 
 import { DailyHabitDigestDashboard } from "@/components/daily-habit/DailyHabitDigestDashboard"
@@ -50,6 +51,7 @@ export default async function DailyHabitDigestPage({
 
       return (
         <DailyHabitDigestDashboard
+          followUpEnabled={persistenceEnabled()}
           data={data}
           locale={locale}
           commandAgentAccess={commandAgentAccess}

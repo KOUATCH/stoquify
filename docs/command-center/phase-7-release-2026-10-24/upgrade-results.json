@@ -1,0 +1,11 @@
+{
+  "database": "stoquify_local_command_center_e2e_cc2e4dea7c_upgrade",
+  "productionAccess": false,
+  "checks": [
+    "114-to-115 populated upgrade preserves predecessor user bytes",
+    "Actual promotion advisory lock excludes contenders and releases after failure",
+    "Old client writes coexist with new coordination rows; retained history rejects deletion",
+    "All 115 upgrade-ledger checksums match the captured catalog"
+  ],
+  "passed": true
+}

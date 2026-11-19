@@ -1,0 +1,74 @@
+{
+  "stage": "after-sale",
+  "utc": "2026-11-09T09:59:26.967Z",
+  "status": "PASS",
+  "evidenceClass": "Read-only database corroboration of actual authenticated UI mutations",
+  "sales": [
+    {
+      "id": "cmw8bvlv6000hmazcljtis2cw",
+      "orderNumber": "POS-SYNTHETIC_TILL-20261108-EUVIV",
+      "status": "COMPLETED",
+      "paymentStatus": "PARTIAL",
+      "total": "10",
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "6",
+          "status": "PAID"
+        },
+        {
+          "method": "CREDIT",
+          "amount": "4",
+          "status": "PENDING"
+        }
+      ]
+    }
+  ],
+  "customer": {
+    "currentBalance": "4"
+  },
+  "stock": {
+    "quantityOnHand": "4",
+    "quantityAvailable": "4",
+    "totalValue": "16"
+  },
+  "shifts": [
+    {
+      "expectedBalance": "106",
+      "cashTotal": "6",
+      "creditTotal": "4",
+      "transactionCount": 1
+    }
+  ],
+  "drawers": [
+    {
+      "currentBalance": "106",
+      "expectedBalance": "106"
+    }
+  ],
+  "accountBalancesDebitMinusCredit": {
+    "TEST_CASH": "6.00",
+    "TEST_AR": "4.00",
+    "TEST_REVENUE": "-10.00",
+    "TEST_COGS": "4.00",
+    "TEST_STOCK": "-4.00"
+  },
+  "journalCount": 2,
+  "settlements": [],
+  "documents": [
+    {
+      "id": "cmw939xau000vmatojel0y1bs",
+      "documentNumber": "AR-POS-SYNTHETIC_TILL-20261108-EUVIV",
+      "lifecycleStates": [
+        {
+          "status": "PARTIALLY_PAID",
+          "unpaidAmount": "4",
+          "paidAmount": "6",
+          "version": 1
+        }
+      ]
+    }
+  ],
+  "closeRuns": [],
+  "limitation": "Synthetic current-datamodel fixture; no migration history, custom-trigger or statutory certification"
+}

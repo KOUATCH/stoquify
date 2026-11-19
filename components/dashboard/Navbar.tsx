@@ -190,7 +190,7 @@ const Navbar = ({ session }: { session: any }) => {
     <header className="dashboard-enterprise-toolbar sticky top-0 z-20 isolate flex min-h-16 w-full max-w-full flex-wrap items-center gap-2 border-b border-[var(--product-border-subtle)] bg-[var(--product-chrome)] px-2 py-2 text-[var(--product-text)] sm:px-4 lg:px-5">
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="dashboard-top-button relative z-10 shrink-0 rounded-xl md:hidden">
+          <Button data-dashboard-navigation-trigger variant="outline" size="icon" className="dashboard-top-button relative z-10 shrink-0 rounded-xl md:hidden">
             <Menu className="h-5 w-5" aria-hidden="true" />
             <span className="sr-only">{locale === "fr" ? "Ouvrir le menu de navigation" : "Toggle navigation menu"}</span>
           </Button>

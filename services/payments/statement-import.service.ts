@@ -20,6 +20,7 @@ import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx 
 
 import type { ParsedStatementLine, PaymentProviderAdapter } from "./payment-ingestion.types"
 import { PaymentIngestionError } from "./payment-ingestion.types"
+import { STATEMENT_MAX_BYTES } from "./adapters/statement-pilot-format"
 import { sha256 } from "./adapters/mobile-money-hmac.adapter"
 
 export type ImportProviderStatementInput = {
@@ -65,13 +66,16 @@ function lineHash(line: ParsedStatementLine, fingerprint: string) {
   )
 }
 
-function duplicateFingerprints(lines: Array<{ fingerprint: string }>) {
+function duplicateFingerprints(lines: Array<{ fingerprint: string; line: ParsedStatementLine }>) {
   const seen = new Set<string>()
   const duplicates = new Set<string>()
 
   for (const line of lines) {
-    if (seen.has(line.fingerprint)) duplicates.add(line.fingerprint)
+    const identity = JSON.stringify([line.line.providerTransactionId ? "transaction" : "reference",
+      line.line.providerTransactionId ?? line.line.providerReference, line.line.direction])
+    if (seen.has(line.fingerprint) || seen.has(identity)) duplicates.add(line.fingerprint)
     seen.add(line.fingerprint)
+    seen.add(identity)
   }
 
   return duplicates
@@ -133,7 +137,8 @@ export async function importProviderStatement(
   input: ImportProviderStatementInput,
 ): Promise<ImportProviderStatementResult> {
   const correlationId = input.correlationId ?? randomUUID()
-  const maxFileBytes = input.maxFileBytes ?? 5 * 1024 * 1024
+  const maxFileBytes = Math.min(input.maxFileBytes ?? STATEMENT_MAX_BYTES, STATEMENT_MAX_BYTES)
+  if (!Number.isSafeInteger(maxFileBytes) || maxFileBytes < 1) throw new PaymentIngestionError("INVALID_PAYLOAD", "Invalid statement size limit.")
 
   if (payloadSize(input.rawContent) > maxFileBytes) {
     throw new PaymentIngestionError("PAYLOAD_TOO_LARGE", "Statement file exceeds the allowed size.", {
@@ -142,31 +147,7 @@ export async function importProviderStatement(
     })
   }
 
-  const parsed = input.adapter.parseStatement({
-    rawContent: input.rawContent,
-    fileName: input.fileName,
-  })
   const fileHash = sha256(input.rawContent)
-  if (parsed.lines.length === 0) {
-    throw new PaymentIngestionError(
-      "INVALID_PAYLOAD",
-      "Statement file did not contain importable lines.",
-      {
-        correlationId,
-        providerCode: input.adapter.providerCode,
-        fileHash,
-      },
-    )
-  }
-  const preparedLines = parsed.lines.map((line) => {
-    const fingerprint = input.adapter.fingerprintStatementLine(line)
-    return {
-      line,
-      fingerprint,
-      rawLineHash: line.rawLineHash ?? lineHash(line, fingerprint),
-    }
-  })
-  const duplicateInFile = duplicateFingerprints(preparedLines)
 
   return db.$transaction(async (tx) => {
     // Resolve retained work before admission, then acquire admission ahead of
@@ -186,7 +167,7 @@ export async function importProviderStatement(
         id: input.providerAccountId,
         organizationId: input.organizationId,
       },
-      select: { id: true, status: true },
+      select: { id: true, status: true, providerCode: true, currencyCode: true },
     })
 
     if (!providerAccount) {
@@ -219,16 +200,22 @@ export async function importProviderStatement(
         providerAccountId: providerAccount.id,
         fileHash,
       },
-      select: { id: true },
+      select: { id: true, sourceType: true, _count: { select: { lines: true } } },
     })
 
     if (existingFile) {
+      const retainedReceipt = await tx.paymentReconciliationInboxItem.findFirst({
+        where: { organizationId: input.organizationId, providerAccountId: providerAccount.id,
+          source: PaymentReconciliationInboxSource.STATEMENT_FILE, payloadHash: fileHash },
+        select: { idempotencyKey: true }, orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+      })
+      const receiptKey = retainedReceipt?.idempotencyKey ?? `statement:${providerAccount.id}:${fileHash}`
       const inbox = await tx.paymentReconciliationInboxItem.upsert({
         where: {
           organizationId_source_idempotencyKey: {
             organizationId: input.organizationId,
             source: PaymentReconciliationInboxSource.STATEMENT_FILE,
-            idempotencyKey: fileHash,
+            idempotencyKey: receiptKey,
           },
         },
         create: {
@@ -236,13 +223,13 @@ export async function importProviderStatement(
           providerAccountId: providerAccount.id,
           source: PaymentReconciliationInboxSource.STATEMENT_FILE,
           status: PaymentReconciliationInboxStatus.IGNORED,
-          idempotencyKey: fileHash,
+          idempotencyKey: receiptKey,
           externalId: input.fileName,
           payloadHash: fileHash,
           payloadSummary: {
             fileName: input.fileName ?? null,
-            sourceType: parsed.sourceType,
-            lineCount: parsed.lines.length,
+            sourceType: existingFile.sourceType,
+            lineCount: existingFile._count.lines,
           },
           processedAt: new Date(),
           correlationId,
@@ -266,7 +253,7 @@ export async function importProviderStatement(
         status: "DUPLICATE_FILE",
         statementFileId: existingFile.id,
         importedLineCount: 0,
-        duplicateLineCount: parsed.lines.length,
+        duplicateLineCount: existingFile._count.lines,
         fileHash,
         inboxItemId: inbox.id,
         correlationId,
@@ -274,6 +261,49 @@ export async function importProviderStatement(
     }
 
     if (!newWorkAdmitted) throw new PaymentIngestionError("INVALID_PAYLOAD", "Retained statement evidence changed while waiting; refresh and retry.")
+    const parsed = input.adapter.parseStatement({
+      rawContent: input.rawContent,
+      fileName: input.fileName,
+    })
+    if (parsed.lines.length === 0) {
+      throw new PaymentIngestionError(
+        "INVALID_PAYLOAD",
+        "Statement file did not contain importable lines.",
+        {
+          correlationId,
+          providerCode: input.adapter.providerCode,
+          fileHash,
+        },
+      )
+    }
+    const observedPeriodStart = parsed.lines.reduce((first, line) => line.occurredAt < first ? line.occurredAt : first, parsed.lines[0].occurredAt)
+    const observedPeriodEnd = parsed.lines.reduce((last, line) => line.occurredAt > last ? line.occurredAt : last, parsed.lines[0].occurredAt)
+    const declared = parsed.declaredCoverage
+    if (declared && (declared.providerAccountId !== providerAccount.id || declared.providerCode !== providerAccount.providerCode ||
+      declared.providerCode !== input.adapter.providerCode || declared.currencyCode !== providerAccount.currencyCode ||
+      !Number.isFinite(+declared.periodStart) || !Number.isFinite(+declared.periodEnd) || declared.periodStart > declared.periodEnd ||
+      parsed.lines.some(line => line.currencyCode !== declared.currencyCode || line.occurredAt < declared.periodStart || line.occurredAt > declared.periodEnd))) {
+      throw new PaymentIngestionError("INVALID_PAYLOAD", "Declared statement coverage does not match the provider account, currency or line dates.")
+    }
+    const periodStart = declared?.periodStart ?? observedPeriodStart
+    const periodEnd = declared?.periodEnd ?? observedPeriodEnd
+    const coverageMetadata = {
+      coverageKind: declared ? "DECLARED" : "OBSERVED",
+      observedPeriodStart: observedPeriodStart.toISOString(), observedPeriodEnd: observedPeriodEnd.toISOString(),
+      ...(declared ? { declaredCoverage: { formatVersion: declared.formatVersion, providerCode: declared.providerCode,
+        providerAccountId: declared.providerAccountId, currencyCode: declared.currencyCode,
+        periodStart: declared.periodStart.toISOString(), periodEnd: declared.periodEnd.toISOString(), sourceFileHash: fileHash } } : {}),
+    }
+    const preparedLines = parsed.lines.map((line) => {
+      const fingerprint = input.adapter.fingerprintStatementLine(line)
+      return {
+        line,
+        fingerprint,
+        rawLineHash: line.rawLineHash ?? lineHash(line, fingerprint),
+      }
+    })
+    const duplicateInFile = duplicateFingerprints(preparedLines)
+
     if (duplicateInFile.size > 0) {
       const exception = await tx.paymentException.create({
         data: {
@@ -304,11 +334,27 @@ export async function importProviderStatement(
       }
     }
 
+    // Group identities by direction, keeping the SQL expression bounded even at
+    // the format's 1000-row limit. Fees/reversals may share the original ID.
+    const identities = new Map<NonNullable<ParsedStatementLine["direction"]>, { transactions: string[]; references: string[] }>()
+    for (const { line } of preparedLines) {
+      const direction = line.direction ?? "UNKNOWN"
+      const group = identities.get(direction) ?? { transactions: [], references: [] }
+      if (line.providerTransactionId) group.transactions.push(line.providerTransactionId)
+      else if (line.providerReference) group.references.push(line.providerReference)
+      identities.set(direction, group)
+    }
     const existingLines = await tx.statementLine.findMany({
       where: {
         organizationId: input.organizationId,
         providerAccountId: providerAccount.id,
-        fingerprint: { in: preparedLines.map((line) => line.fingerprint) },
+        OR: [
+          { fingerprint: { in: preparedLines.map((line) => line.fingerprint) } },
+          ...[...identities].flatMap(([direction, group]) => [
+            { providerTransactionId: { in: group.transactions }, direction },
+            { providerTransactionId: null, providerReference: { in: group.references }, direction },
+          ]),
+        ],
       },
       select: { fingerprint: true },
     })
@@ -421,14 +467,15 @@ export async function importProviderStatement(
         sourceType: parsed.sourceType,
         fileName: input.fileName,
         fileHash,
-        periodStart: parsed.periodStart ?? parsed.lines[0].occurredAt,
-        periodEnd: parsed.periodEnd ?? parsed.lines[parsed.lines.length - 1].occurredAt,
+        periodStart,
+        periodEnd,
         status: StatementFileStatus.IMPORTED,
         importedById: input.importedById,
         correlationId,
         metadata: {
           lineCount: parsed.lines.length,
           adapter: input.adapter.providerCode,
+          ...coverageMetadata,
         },
       },
       select: { id: true },
@@ -463,7 +510,7 @@ export async function importProviderStatement(
         organizationId_source_idempotencyKey: {
           organizationId: input.organizationId,
           source: PaymentReconciliationInboxSource.STATEMENT_FILE,
-          idempotencyKey: fileHash,
+          idempotencyKey: `statement:${providerAccount.id}:${fileHash}`,
         },
       },
       create: {
@@ -471,7 +518,7 @@ export async function importProviderStatement(
         providerAccountId: providerAccount.id,
         source: PaymentReconciliationInboxSource.STATEMENT_FILE,
         status: PaymentReconciliationInboxStatus.RECEIVED,
-        idempotencyKey: fileHash,
+        idempotencyKey: `statement:${providerAccount.id}:${fileHash}`,
         externalId: input.fileName,
         payloadHash: fileHash,
         payloadSummary: {
@@ -498,6 +545,7 @@ export async function importProviderStatement(
 
     await recordBusinessEventInTx(tx, {
       organizationId: input.organizationId,
+      correlationId,
       eventType: "payment.statement.imported",
       eventSource: "IMPORT",
       idempotencyKey: `statement-file:${statementFile.id}:imported`,
@@ -513,8 +561,11 @@ export async function importProviderStatement(
         fileName: input.fileName ?? null,
         fileHash,
         lineCount: parsed.lines.length,
-        periodStart: parsed.periodStart ?? parsed.lines[0].occurredAt,
-        periodEnd: parsed.periodEnd ?? parsed.lines[parsed.lines.length - 1].occurredAt,
+        periodStart,
+        periodEnd,
+        coverageKind: coverageMetadata.coverageKind,
+        observedPeriodStart,
+        observedPeriodEnd,
         adapter: input.adapter.providerCode,
         correlationId,
       },

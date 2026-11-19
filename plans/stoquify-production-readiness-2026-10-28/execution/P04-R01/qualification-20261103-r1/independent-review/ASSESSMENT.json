@@ -1,0 +1,132 @@
+{
+  "reviewedAt": "2026-11-03T17:48:34.4261577Z",
+  "reviewer": "r01_independent_review",
+  "verdict": "accepted_local_P04_R01_completion",
+  "passed": true,
+  "localR01Accepted": true,
+  "implementationStatus": "verified_local_native_actions",
+  "parentP04Accepted": false,
+  "productionAccepted": false,
+  "candidateId": "p04-r01-20261103-e7ff3b08d605",
+  "sourceIdentity": "e7ff3b08d605aebbd4d74f1381055b72b422ba9f9de723fdacaf48753df301d4",
+  "sourceIdentityIndependentlyRecomputed": true,
+  "localBlockers": [],
+  "resolvedFinalBlocker": "Initial scope omitted delivery-issues caller; acceptance invalidated, source/test supplement captured, fix independently reviewed, expanded unit/static checks and fresh native retry02 passed",
+  "evidence": {
+    "sourceProductFiles": 18,
+    "ownedFiles": 32,
+    "preRepairSnapshots": 108,
+    "unitTestsPassed": 454,
+    "unitSuites": 17,
+    "unitFailed": 0,
+    "unitSkipped": 0,
+    "unitBoundInputs": 110,
+    "typecheck": "18 product entry files; noEmit; passed",
+    "lint": {
+      "files": 32,
+      "errors": 0,
+      "warnings": 0
+    },
+    "nativeTestsPassed": 39,
+    "nativeFailed": 0,
+    "nativeSkipped": 0,
+    "nativeMigrations": 121,
+    "nativeStableSourceEntries": 5206,
+    "matchedBusinessSnapshotPairs": 35,
+    "nativeObservations": 38,
+    "realLockWaitObserved": true,
+    "transactionRollbackVerified": true,
+    "actualActionExports": true,
+    "deliveryReadPositiveAndDenialVerified": true,
+    "betterAuthTransport": "stubbed",
+    "signedCookieHttp": "not run",
+    "browser": "not run"
+  },
+  "cleanup": {
+    "ownedClusterStopped": true,
+    "portReleased": true,
+    "port": 53776,
+    "ownedPid": 38328,
+    "remainingClients": 0,
+    "fixtureDatabaseRetained": "stoquify_local_p04_r01_20261103_r2",
+    "postmasterPidAbsentAtReview": true,
+    "previousR1ClusterRemainsStopped": true
+  },
+  "allowedEffects": [
+    "Security audit rows counted separately from business-state digests",
+    "Public redemption may add one synthetic abuse bucket; legacy reserved denial business state remained unchanged",
+    "Denied access-request application records FAILED/REVIEW_REQUIRED and revision change",
+    "Race fixture intentionally changes actorRole.code; remaining compared state unchanged",
+    "Positive controls deliberately mutate synthetic fixture records"
+  ],
+  "remainingRequirements": [
+    "P04-V01 admitted-surface/compiled-reachability qualification remains open",
+    "P04-V02 actual signed-cookie HTTP and browser restoration qualification remains open",
+    "Dedicated last-tenant-custodian PostgreSQL case not run; custody-specific cases are unit-tested",
+    "Production reserved-role and pending-invitation census/classification required before separately authorized remediation/release cutover",
+    "Legacy reserved invitations remain preserved and require reviewed replacement; no automatic reissue",
+    "Fresh full-app/release candidate, clean-install/build/deployment and hosted/provider/operator acceptance remain separate",
+    "All other P04 repairs/verification/decisions and deferred work remain unchanged"
+  ],
+  "nextEligiblePackage": "P04-R03",
+  "firstAction": "Refresh P04-F03 against actions/item/items.ts and the current safe-action error contract; capture source hashes and nine affected handler/catch paths before a bounded response repair",
+  "publicationReview": "Accepted separately in PUBLICATION-REVIEW.json; final controlled publication hashes and unchanged roadmap structures verified",
+  "files": [
+    {
+      "path": "candidate.json",
+      "sha256": "8182b33d086e99e9d55546f470b6854cc32b2cd3e71125f2bbef173eecd4689b"
+    },
+    {
+      "path": "owned-source.json",
+      "sha256": "7709316fe710224a11fffa684620c7a2ba7bf2136985817d5e9d9b3e8923d18c"
+    },
+    {
+      "path": "source-before.json",
+      "sha256": "068bb8e10d8e5397c60d50aefde03336fc6f53cfc6da302fb851e16b170af015"
+    },
+    {
+      "path": "source-before-supplement.json",
+      "sha256": "91d54f56ed7a279c3ddce259b6ae9e713cb9879e3c3ad719d7701478243f671f"
+    },
+    {
+      "path": "AUTHORITY-CONTRACT.md",
+      "sha256": "2022f8974111c38d50592838af45c6ebe9c9ac524a6953ccef5c82fa31622bd2"
+    },
+    {
+      "path": "call-chain-inventory.json",
+      "sha256": "78ada951440c3c4b65a4c5d713c7f55fef3ca5596b9f95006ee7eeb522956f9a"
+    },
+    {
+      "path": "verification-matrix.json",
+      "sha256": "649be0703d18c0ff30305e4cd5239b549911dd8c0464a348d899462e3ef8a50e"
+    },
+    {
+      "path": "independent-review/SOURCE-REVIEW.json",
+      "sha256": "5bc9bb6f1a6fb61f6b3f92940ebebcfeb800102ed1aa19d17591bc9b4a525f1b"
+    },
+    {
+      "path": "independent-review/SOURCE-REVIEW-FINAL.json",
+      "sha256": "5710dcdb16c528dd4494e1f98991e261e91b7b1c9e68a4b72cfe67e143e18bcc"
+    },
+    {
+      "path": "independent-review/UNIT-RECONCILIATION-FINAL.json",
+      "sha256": "0e48d99543171a499ac1313c1c59c007513ff90aa7c92925ac222efcfdaf0b62"
+    },
+    {
+      "path": "independent-review/NATIVE-RETRY02-REVIEW.json",
+      "sha256": "f0aea2a28937b203d2269186fd1275bdeef8388371dca6ec83c5dafddeb91b60"
+    },
+    {
+      "path": "independent-review/NATIVE-OUTCOME-FINAL.json",
+      "sha256": "86f5f95cda6c751f8be09a413dde8a8dc3d55c8b9135dc66714568c29d3c0e3b"
+    },
+    {
+      "path": "independent-review/ASSESSMENT-initial-invalidated.json",
+      "sha256": "6cfb615b9b7b7b68f56c92be85bdec2138d629096f966fe70f9c2a027c916fa2"
+    },
+    {
+      "path": "independent-review/ASSESSMENT-held.json",
+      "sha256": "7b019f89b259f2b374958c4649b3515f6551a68d0739731ae3df1d6db929397f"
+    }
+  ]
+}

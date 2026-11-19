@@ -1,0 +1,42 @@
+{
+  "priorCatalogSha256": "3f4c0d0880c659bd22e5f6551aae459924e57ed3baddcac89f4b2f5bc9cf1737",
+  "unchangedPriorMigrations": 121,
+  "generatedAt": "2026-11-09T19:29:40.061Z",
+  "status": "ready",
+  "hashContract": {
+    "version": "stoquify-migration-sql-sha256-v1",
+    "approvalIdentity": "canonicalLfSha256",
+    "transportIdentity": "rawSha256",
+    "encoding": "UTF-8",
+    "canonicalization": "Decode as UTF-8, normalize CRLF and lone CR line endings to LF, preserve every other byte represented by the decoded text, then SHA-256 hash the UTF-8 result."
+  },
+  "migrationCount": 122,
+  "manifestPresent": true,
+  "manifestSha256": "f3ea8e02edb3c5a478f2f42a71b547beae2cdabfca25a3c2ab8fbd8c09f44ee3",
+  "catalogSha256": "e894a828415592f4c2ab155993b1923ed12245374a21b0184ae8a375495190aa",
+  "unmanifested": [],
+  "missingFromCatalog": [],
+  "changed": [],
+  "duplicateTimestamps": [
+    {
+      "timestamp": "20260818120000",
+      "migrations": [
+        "20260818120000_governed_delivery_order_to_cash",
+        "20260818120000_pos_electronic_tender_authority"
+      ],
+      "grandfathered": true,
+      "reason": "Both full migration names were already applied before the timestamp-uniqueness ratchet. Preserve their immutable names and reject every new collision."
+    },
+    {
+      "timestamp": "20261024170000",
+      "migrations": [
+        "20261024170000_hris_lifecycle_tasks",
+        "20261024170000_hris_setup_reviewer_grants"
+      ],
+      "grandfathered": true,
+      "reason": "Exact existing pair reconciled on 2026-10-25 under the requested catalog-blocker repair. Both full names and unchanged SQL hashes were already applied in disposable rehearsals before this reconciliation (docs/command-center/phase-7-release-2026-10-24/migration-catalog.json and history-gate.json). Preserve those identities; production application status was not inspected. See docs/command-center/phase-8-blocker-fixes-2026-10-25/CATALOG_REVIEW.md. This exception admits no additional migration at this timestamp."
+    }
+  ],
+  "errors": [],
+  "secretValuePrinted": false
+}

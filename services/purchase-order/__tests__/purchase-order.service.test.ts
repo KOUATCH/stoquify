@@ -1,4 +1,5 @@
 import { purchaseOrderEditDefaults, purchaseOrderEditPayload } from "@/components/purchase-orders/purchase-order-edit-model"
+import { Prisma } from "@prisma/client"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
 import {
   markBusinessEventAppliedInTx,
@@ -456,8 +457,8 @@ describe("purchase-order.service controls", () => {
         where: { id: "line-1" },
         data: expect.objectContaining({
           itemId: "item-1",
-          orderedQuantity: 2,
-          unitCost: 50,
+          orderedQuantity: new Prisma.Decimal(2),
+          unitCost: new Prisma.Decimal(50),
         }),
       }),
     )
@@ -573,7 +574,8 @@ describe("purchase order editor financial round trip", () => {
     mockDb.$transaction.mockImplementation(async (handler) => handler(withOrderContext(tx)))
     const input = purchaseOrderEditPayload(source as never, "org-1", purchaseOrderEditDefaults(source as never), editContext(source))
     await updatePurchaseOrder({ ...input, ...editContext(source), updatedById: "editor-1" })
-    expect(tx.purchaseOrder.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ subtotal: 200, taxAmount: 38.5, discount: 10, shippingCost: 15, total: 243.5 }) }))
-    expect(tx.purchaseOrderLine.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ orderedQuantity: 2, unitCost: 100, taxRate: 19.25, taxAmount: 38.5, discount: 10, lineTotal: 228.5, notes: "Original supplier note" }) }))
+    const decimal = (value: number) => new Prisma.Decimal(value)
+    expect(tx.purchaseOrder.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ subtotal: decimal(200), taxAmount: decimal(38.5), discount: decimal(10), shippingCost: decimal(15), total: decimal(243.5) }) }))
+    expect(tx.purchaseOrderLine.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ orderedQuantity: decimal(2), unitCost: decimal(100), taxRate: decimal(19.25), taxAmount: decimal(38.5), discount: decimal(10), lineTotal: decimal(228.5), notes: "Original supplier note" }) }))
   })
 })

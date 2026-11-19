@@ -52,6 +52,7 @@ const readCompensation = protect<
   {
     permission: "hris.people.read",
     auditResource: "HrisEmployeeCompensation",
+    module: { moduleSlug: "payroll", surface: "hris.employee.compensation", accessIntent: "read", mode: "enforce" },
     auditAllowed: false,
     tenantGuard: "handler-derived",
   },
@@ -74,6 +75,7 @@ function compensationMutation<TInput, TResult>(
     {
       permission: "hris.people.manage",
       auditResource: "HrisEmployeeCompensation",
+      module: { moduleSlug: "payroll", surface: "hris.employee.compensation", accessIntent: "write", mode: "enforce" },
       freshAuth: true,
       tenantGuard: "handler-derived",
     },

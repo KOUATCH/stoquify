@@ -75,6 +75,25 @@ export function isPOSElectronicTenderMethod(
   return ELECTRONIC_TENDER_METHODS.has(method)
 }
 
+export async function lockElectronicTenderAuthoritiesInTx(
+  tx: Prisma.TransactionClient,
+  input: { organizationId: string; paymentTransactionIds: readonly string[] },
+) {
+  // Financial writers must hold native receipts before publishing source changes.
+  // A consistent order also covers split tenders claiming several receipts.
+  const ids = [...new Set(input.paymentTransactionIds.map(id => id.trim()).filter(Boolean))].sort()
+  for (const id of ids) {
+    const native = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+      SELECT "id" FROM "payment_transactions"
+      WHERE "organizationId" = ${input.organizationId} AND "id" = ${id}
+      FOR UPDATE
+    `)
+    if (native.length !== 1) {
+      throw new BusinessRuleError("Electronic tender authority evidence was not found for this organization")
+    }
+  }
+}
+
 export async function resolvePOSElectronicTenderAuthority(
   tx: Prisma.TransactionClient,
   input: POSElectronicTenderAuthorityInput,
@@ -108,7 +127,7 @@ export async function resolvePOSElectronicTenderAuthority(
       "Electronic tender authority evidence was not found for this organization",
     )
   }
-  if (transaction.legacyPaymentId) {
+  if (transaction.legacyPaymentId || transaction.ledgerPostingBatchId || transaction.sourceType === "CUSTOMER_SETTLEMENT") {
     throw new ConflictError("Electronic tender authority evidence has already been used")
   }
 
@@ -216,6 +235,10 @@ export async function resolvePOSElectronicTenderAuthority(
   }
 }
 
+// Customer collections use the same provider-authority checks without creating
+// a legacy POS Payment or a second financial posting.
+export const resolveElectronicTenderAuthority = resolvePOSElectronicTenderAuthority
+
 export async function claimPOSElectronicTenderAuthority(
   tx: Prisma.TransactionClient,
   input: {
@@ -230,6 +253,8 @@ export async function claimPOSElectronicTenderAuthority(
       organizationId: input.organizationId,
       providerAuthorityEventId: input.evidence.providerEventId,
       legacyPaymentId: null,
+      ledgerPostingBatchId: null,
+      OR: [{ sourceType: null }, { sourceType: { not: "CUSTOMER_SETTLEMENT" } }],
       state: {
         in: [PaymentTransactionState.CONFIRMED, PaymentTransactionState.SETTLED],
       },

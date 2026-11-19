@@ -130,6 +130,7 @@ async function loadRbacContextFromSession(session: Awaited<ReturnType<typeof get
       roles: {
         select: {
           id: true,
+          organizationId: true,
           nameEn: true,
           nameFr: true,
           code: true,
@@ -160,9 +161,10 @@ async function loadRbacContextFromSession(session: Awaited<ReturnType<typeof get
     throw new RbacError("Session organization is stale", "FORBIDDEN", 403)
   }
 
-  const rawPermissions = user.roles.flatMap((role) => role.permissions ?? [])
+  const tenantRoles = user.roles.filter((role) => role.organizationId === user.organizationId)
+  const rawPermissions = tenantRoles.flatMap((role) => role.permissions ?? [])
   const permissions = expandPermissions(rawPermissions)
-  const roles = user.roles.map((role) => ({
+  const roles = tenantRoles.map((role) => ({
     id: role.id,
     name: role.nameEn || role.nameFr || role.code,
     nameEn: role.nameEn,

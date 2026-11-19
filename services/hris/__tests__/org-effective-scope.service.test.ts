@@ -43,12 +43,12 @@ function buildClient(options: {
     auditLog: { create: jest.fn().mockResolvedValue({ id: "audit-1" }) },
     payrollEmployee: {
       findFirst: jest.fn().mockImplementation(({ where }: { where: Record<string, unknown> }) => {
-        if (where.userId) return Promise.resolve(options.actorExists === false ? null : { id: "manager-employee-1" })
+        if (where.userId) return Promise.resolve(options.actorExists === false ? null : { id: "manager-employee-1", status: "ACTIVE" })
         return Promise.resolve(options.targetOwned === false ? null : { id: String(where.id) })
       }),
     },
-    hrisReportingRelationship: { findMany: reportingFindMany },
-    hrisManagerDelegation: { findMany: jest.fn().mockResolvedValue(delegations) },
+    hrisReportingRelationship: { findMany: reportingFindMany, findFirst: jest.fn().mockResolvedValue(null) },
+    hrisManagerDelegation: { findMany: jest.fn().mockResolvedValue(delegations), findFirst: jest.fn().mockResolvedValue(null) },
   }
 }
 
@@ -186,5 +186,25 @@ describe("effective-dated HRIS manager scope", () => {
         changes: expect.objectContaining({ reason: "NO_ACTIVE_DURABLE_AUTHORITY" }),
       }),
     }))
+  })
+
+  it.each([2, 51, 200])("checks report %i directly with display limit one", async number => {
+    const employeeId = `emp-${number}`
+    const scopedClient = buildClient({ directRows: [relationship({reportEmployeeId: employeeId})] })
+    expect((await resolveHrisPeopleAccessScope(request({employeeId, limit: 1}), scopedClient as never)).employeeIds).toEqual([employeeId])
+    expect(scopedClient.hrisReportingRelationship.findMany.mock.calls[0][0]).toMatchObject({where: {reportEmployeeId: employeeId, AND: [expect.objectContaining({status: "ACTIVE"})]}, take: 1})
+  })
+
+  it("keeps all 200 authorization IDs independently of display pagination", async () => {
+    const scopedClient = buildClient({directRows: Array.from({length: 200}, (_, i) => relationship({id: `r-${i}`, reportEmployeeId: `e-${i}`}))})
+    expect((await resolveHrisPeopleAccessScope(request({limit: 1}), scopedClient as never)).employeeIds).toHaveLength(200)
+    expect(scopedClient.hrisReportingRelationship.findMany.mock.calls[0][0]).not.toHaveProperty("take")
+  })
+
+  it("never revives revoked durable authority through location compatibility", async () => {
+    const scopedClient = buildClient()
+    scopedClient.hrisReportingRelationship.findFirst.mockResolvedValue({id: "revoked"})
+    await expect(resolveHrisPeopleAccessScope(request({asOf: undefined}), scopedClient as never)).rejects.toBeInstanceOf(ForbiddenError)
+    expect(compatibilityScope).not.toHaveBeenCalled()
   })
 })

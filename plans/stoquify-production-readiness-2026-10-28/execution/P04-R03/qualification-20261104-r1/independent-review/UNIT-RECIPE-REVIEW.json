@@ -1,0 +1,42 @@
+{
+  "reviewedAt": "2026-11-04T09:27:24.2109050Z",
+  "reviewer": "r03_review",
+  "approvedForExecution": true,
+  "scope": "Baseline expected-red nine plain-service-error assertions then current isolated four-suite qualification",
+  "files": [
+    {
+      "path": "unit/run.cjs",
+      "sha256": "e6e4aedcf3ab29fe671c83f69a0c4eae70176d35c4ebc0dc3cb6eb7e6f1c7ba4"
+    },
+    {
+      "path": "unit/jest.config.cjs",
+      "sha256": "2dafa3d9dc10257b49cc94f2fd77499f6d5dd51a71e80b55a61594846d96cc8d"
+    },
+    {
+      "path": "unit/guard.cjs",
+      "sha256": "b850302d73df93faec3141541430664a5a7f752c720f8f9aec375cc84076e4dc"
+    },
+    {
+      "path": "unit/baseline-items.ts",
+      "sha256": "91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb"
+    }
+  ],
+  "baselineMatchesPreRepairSnapshot": true,
+  "privateClientFilesRecomputed": 26,
+  "reviewedControls": [
+    "nextJest without dir; no application configuration or environment loading",
+    "Explicit suites, OS environment allowlist and fresh attempt output",
+    "Environment-file read and net/tls/socket/fetch blocks",
+    "Database module default mock; actual safe canonical helper not mocked in new regression suite",
+    "Baseline import alias maps exact captured pre-repair bytes",
+    "Source and harness hashes recorded; source drift fails",
+    "No DB, provider, application host, browser or production effect"
+  ],
+  "resolvedPreparationFinding": "Malformed baseline mapper config detected by review and corrected before execution; original retained",
+  "limits": [
+    "Mocked service/guard evidence, not native persistence or browser evidence",
+    "Create/edit continuity suites retain their existing mock boundaries",
+    "Cache-invalidation failures occur after service success and do not imply rollback"
+  ],
+  "noProductOrTestEditsByReviewer": true
+}

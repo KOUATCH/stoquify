@@ -206,4 +206,17 @@ describe("HRIS manager self-service read model", () => {
     expect(mockDirectory).not.toHaveBeenCalled()
     expect(mockInbox).not.toHaveBeenCalled()
   })
+
+  it("derives reporting capabilities and approval visibility from complete server scope", async () => {
+    const directory = scopedDirectory()
+    directory.accessScope.authority.kind = "REPORTING_RELATIONSHIP"
+    directory.accessScope.authority.reportingLineAuthority = true
+    directory.accessScope.employeeIds.push("employee-out-of-scope")
+    mockDirectory.mockResolvedValue(directory)
+    const result = await getHrisManagerSelfService({organizationId: "org-1", actorId: "manager-user-1", actorPermissions: ["hris.people.read"], limit: 1})
+    expect(result.scope.directReportsClaimed).toBe(true)
+    expect(result.capabilities.reportingLineWorkflows.available).toBe(true)
+    expect(result.approvals).toHaveLength(2)
+    expect(result.capabilities.approvalDecisions.available).toBe(false)
+  })
 })

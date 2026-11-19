@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "command": "node --test plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/verify-private-metadata-exclusion.test.cjs",
+  "toolEvidence": { "chunkId": "7f4e42", "exitCode": 0, "wallTimeSeconds": 8.0071767 },
+  "admissionSha256": "696949baa62bc20681f9358d7d258119bcbe8d887b537a5184f291ed690829d3",
+  "tests": 6,
+  "pass": 6,
+  "fail": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "todo": 0,
+  "tapDurationMs": 935.6146,
+  "cases": [
+    { "name": "clean runtime and trace pass without opening nonexistent external fixtures", "passed": true, "durationMs": 74.2778 },
+    { "name": "renamed metadata content is rejected by exact digest", "passed": true, "durationMs": 55.3307 },
+    { "name": "renamed referenced fixture bytes are rejected by exact digest", "passed": true, "durationMs": 45.9895 },
+    { "name": "a private pack reference in actual trace fails", "passed": true, "durationMs": 149.2304 },
+    { "name": "changed candidate metadata fails source binding", "passed": true, "durationMs": 57.4762 },
+    { "name": "Windows backslash traversal in policy is rejected before any read", "passed": true, "durationMs": 37.4601 }
+  ],
+  "scope": "Pure synthetic temporary files only. No application, database, provider or actual referenced private fixture was opened. This is helper evidence, not actual artifact or runtime qualification."
+}

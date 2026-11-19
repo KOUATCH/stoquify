@@ -1,3 +1,4 @@
+import { persistenceEnabled } from "@/services/command-center/authority"
 import type { Metadata } from "next"
 
 import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
@@ -57,6 +58,7 @@ export default async function ManagerActionCenterPage({
       try {
         result = await getManagerActionCenterQuery({
           accessContext: ctx,
+          locale: resolvedLocale,
         })
       } catch (error) {
         if (error instanceof ForbiddenError) {
@@ -76,6 +78,7 @@ export default async function ManagerActionCenterPage({
       if (result.kind === "LOCATIONS") {
         return (
           <ManagerLocationActionCenterDashboard
+          followUpEnabled={persistenceEnabled()}
             data={result.data}
             locale={resolvedLocale}
             title={copy[resolvedLocale].title}
@@ -86,6 +89,7 @@ export default async function ManagerActionCenterPage({
 
       return (
         <ManagerActionCenterDashboard
+          followUpEnabled={persistenceEnabled()}
           data={result.data}
           locale={resolvedLocale}
           title={copy[resolvedLocale].title}

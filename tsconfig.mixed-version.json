@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.workflow-repairs.json",
+  "compilerOptions": { "types": ["node", "jest"] },
+  "include": [
+    "next-env.d.ts",
+    "services/inventory/__tests__/mixed-version.compatibility.postgres.test.ts",
+    "services/inventory/__tests__/mixed-version.worker.postgres.test.ts"
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "id": "P04-R06",
+  "title": "Enforce current session authority on protected core authentication operations",
+  "phase": 1,
+  "kind": "implementation",
+  "depends_on": [
+    "P01",
+    "P02",
+    "P04-R01"
+  ],
+  "milestone": "M1",
+  "owner_role": "Authentication/backend owner + independent security reviewer + database/browser QA",
+  "domains": [
+    "auth",
+    "security",
+    "users"
+  ],
+  "audit_gaps": [
+    "G04"
+  ],
+  "status": "not_started",
+  "current_state": "P04-V02 independently confirmed nine current-authority failures: three private core-auth reads and one authentication-account deletion after both actual session revocation and database expiry, plus cached core-session disclosure after account deactivation. Each denied mutation deleted one synthetic authentication account; repair remains unimplemented and unauthorized. Query-override controls denied correctly. Browser/provider/supplementary evidence and wider production gates remain separate.",
+  "tasks": [
+    "Refresh current auth catch-all, Better Auth configuration, core endpoint middleware and application guard call chains/hashes; reconcile exact endpoint behavior with P04-V02 evidence before editing.",
+    "Apply the smallest reviewed repair that requires current server-owned session and account eligibility for protected core reads/account mutations, preserving explicit anonymous authentication/recovery routes and legitimate signed-session operations.",
+    "Preserve the already working explicit disableCookieCache=true get-session, custom profile, tenant/module/media and query-tamper denials; do not infer a query-override exploit from source alone or edit installed dependency files as an untracked fix.",
+    "Requalify real signed-cache replay after session revocation, database expiry and relevant account-status changes; include authorized independent reads/writes and native before/after account/session/audit evidence.",
+    "Run selected actual browser recovery and provider continuity checks on a refreshed isolated build; obtain independent review and update P04-V02 evidence before advancing."
+  ],
+  "acceptance_criteria": [
+    "Revoked/expired or ineligible current authority receives no private actor/account/session fields or sibling token metadata from admitted protected core endpoints.",
+    "Denied account mutations preserve all authentication accounts and unauthorized session/business state; intended security bookkeeping is separately classified.",
+    "Authorized independent core reads and account/profile operations remain functional; existing caller-query negative controls remain denied without weakening public sign-in/recovery.",
+    "Real session, browser, native database and source/build evidence remain distinct and bind the refreshed candidate; required P04-V02 requalification and other parent gates stay open until independently accepted."
+  ],
+  "evidence_refs": [
+    "E26"
+  ],
+  "rollback_recovery": "Revert only owned repair while retaining production admission block; never restore weaker authority as an accepted release. Revoke synthetic sessions, stop owned local runtime/DB, retain evidence. No commit/push, production flags/data changes or deployment.",
+  "effort": "M",
+  "confidence": "high",
+  "model_tier": "strongest_available",
+  "execution_boundary": "One current-authority contract for protected core authentication operations. No implementation authorized by P04-V02 qualification. Broader browser freshness, provider, dependency upgrade or unrelated business changes require separate bounded review.",
+  "verification_recipes": [
+    "C01",
+    "C02",
+    "C05",
+    "C06",
+    "C07"
+  ],
+  "required_decisions": [],
+  "source_locations": [
+    "app/api/auth/[...all]/route.ts",
+    "lib/auth.ts",
+    "lib/security/auth-session.ts",
+    "lib/security/rbac.ts",
+    "plans/stoquify-production-readiness-2026-10-28/execution/P04-V02/qualification-20261109-r1/inventory/scope-and-guard-register.json"
+  ],
+  "branch_pr_workflow": "Future codex/ branch or explicitly owned local diff from approved candidate; inspect/stage only owned hunks if commit requested. PR/CI admin waits for authenticated authorization; never auto-merge/deploy.",
+  "evidence_record": {
+    "candidate_id": null,
+    "source_hashes": "execution/P04-V02/qualification-20261109-r1/inventory/source-manifest.json",
+    "commands": null,
+    "source_review": "execution/P04-R06/proposal-20261109-r1/PROPOSAL.md",
+    "mocked_tests": null,
+    "native_database": null,
+    "authenticated_browser": null,
+    "provider_hosted": null,
+    "operator": null,
+    "cleanup": null,
+    "reviewer": null
+  },
+  "parent_id": "P04",
+  "implementation_authorized": false,
+  "derived_from": "P04-V02"
+}

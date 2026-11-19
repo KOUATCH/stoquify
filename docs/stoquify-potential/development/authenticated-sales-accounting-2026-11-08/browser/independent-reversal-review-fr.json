@@ -1,0 +1,487 @@
+{
+  "utc": "2026-11-09T10:20:09.217Z",
+  "operations": [
+    {
+      "kind": "login",
+      "user": "reverser",
+      "locale": "fr",
+      "returnUrl": "/dashboard/finance/receivables/history?selected=cmw939xau000vmatojel0y1bs"
+    },
+    {
+      "kind": "click",
+      "role": "button",
+      "text": "Examiner l’annulation"
+    },
+    {
+      "kind": "fill",
+      "label": "Motif de l’annulation"
+    },
+    {
+      "kind": "file",
+      "label": "Fichier justificatif"
+    },
+    {
+      "kind": "check",
+      "label": "Je confirme l’annulation de ce paiement et le rétablissement de la créance affectée."
+    },
+    {
+      "kind": "audit",
+      "role": "region",
+      "text": "Paiements clients"
+    },
+    {
+      "kind": "click",
+      "role": "button",
+      "text": "Confirmer l’annulation"
+    },
+    {
+      "kind": "wait",
+      "label": "Mot de passe actuel",
+      "timeout": 60000
+    },
+    {
+      "kind": "inspect"
+    },
+    {
+      "kind": "screenshot"
+    }
+  ],
+  "results": [
+    {
+      "signedInRole": "reverser"
+    },
+    {
+      "operation": "login"
+    },
+    {
+      "operation": "click",
+      "role": "button",
+      "text": "Examiner l’annulation"
+    },
+    {
+      "operation": "fill",
+      "label": "Motif de l’annulation"
+    },
+    {
+      "operation": "file",
+      "label": "Fichier justificatif"
+    },
+    {
+      "operation": "check",
+      "label": "Je confirme l’annulation de ce paiement et le rétablissement de la créance affectée."
+    },
+    {
+      "accessibilityAudit": {
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+            "nodes": [
+              {
+                "target": [
+                  ".bg-destructive"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.59 (foreground color: #f8fafc, background color: #ef4444, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+              },
+              {
+                "target": [
+                  ".flex-wrap.gap-2.flex > .min-h-11.px-4.bg-background"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.05 (foreground color: #f7faf8, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ]
+          }
+        ],
+        "incompleteCount": 1,
+        "passes": 12
+      }
+    },
+    {
+      "operation": "audit",
+      "role": "region",
+      "text": "Paiements clients"
+    },
+    {
+      "operation": "click",
+      "role": "button",
+      "text": "Confirmer l’annulation"
+    },
+    {
+      "operation": "wait",
+      "label": "Mot de passe actuel"
+    },
+    {
+      "url": "http://127.0.0.1:3196/fr/dashboard/finance/receivables/history?selected=cmw939xau000vmatojel0y1bs",
+      "title": "Historique des créances clients | Stoquify",
+      "text": "Aller au contenu principal\nOuvrir le menu de navigation\n\nHistorique des créances clients\n\nFinance et contrôles / Finance / Historique des créances clients\n\nEN\nSR\n\nTableau pret\n\nHistorique des créances\nHistorique de l’organisation\nHistorique des créances clients\n\nConsultez les créances clients, leurs affectations, leur ancienneté et leur état de règlement dans le périmètre de votre organisation.\n\nNon certifié\n/ Le statut de comptabilisation est indiqué par poste. La certification de clôture n’est pas incluse.\nÀ la date du\n9 nov. 2026, 11:19\nConnu jusqu’au\n9 nov. 2026, 11:19\n\nCRÉANCES\n\n1\n\nSOLDE DES CRÉANCES (XAF)\n\n0 FCFA\n\nEN RETARD (XAF)\n\n0 FCFA\n\nCRÉANCES RÉGLÉES\n\n1\nHistorique opérationnel\n\nHistorique de l’organisation\n\n0 actions\nHistorique de l’organisation\n\nLe statut de comptabilisation est indiqué par poste. La certification de clôture n’est pas incluse.\n\nCréances clients\n\n1 créance\n\nHistorique de l’organisation\nRéessayer\nDu - À la date du\nRéinitialiser\nPOS-SYNTHETIC_TILL-20261108-EUVIV\nSynthetic credit customer / Sans retard\nRéglée\n0 FCFA\n\nNiveau de preuve: Créance comptabilisée\n\nOuvrir les détails\n\nLignes\n\n50\nPage 1\nAller à la page précédente\nAucune autre ligne\nFermer\nPOS-SYNTHETIC_TILL-20261108-EUVIV\n\nSynthetic credit customer / Document de créance client\n\nClient\nSynthetic credit customer\nÉchéance\n9 déc. 2026, 10:59\nConnu jusqu’au\n9 nov. 2026, 11:19\nCréance client\nClient\nSynthetic credit customer\nIdentifiant de référence\ncmw939xau000vmatojel0y1bs\nDevise\nXAF\nMontant initial\n10 FCFA\nMontant affecté\n10 FCFA\nSolde restant\n0 FCFA\nStatut\nRéglée\nAncienneté\nDate de facture\n9 nov. 2026, 10:59\nÉchéance\n9 déc. 2026, 10:59\nJours de retard\n-\nTranche d’ancienneté\nSans retard\nNiveau de preuve\nCréance comptabilisée\nAffectations\nPaiement\n4 FCFA / 9 nov. 2026, 01:00\nPaiements clients\nActualiser les paiements\n\nMontant dû actuel: 0 FCFA\n\nCette facture est en lecture seule selon vos droits ou son état actuel.\n\nL’annulation exige une autre personne autorisée et porte sur tout le paiement, y compris ses affectations à d’autres factures. Le paiement d’origine reste dans l’historique.\n\nCSET-20261109-B793B9EB61 · Comptabilisé\n\n4 FCFA · 09/11/2026\n\nAffecté à cette facture: 4 FCFA\n\nSYNTHETIC-BANK-20261109-UI-001\n\nAnnuler un paiement client\n\nCes données sont conservées pour réessayer à l’identique. Actualisez les paiements pour consulter le résultat actuel avant de réessayer.\n\nDate de l’annulation\nMotif de l’annulation\nFichier justificatif\n\nSeule l’empreinte du fichier est conservée. Gardez l’original hors de Stoquify avec la référence du paiement. Maximum 10 Mo.\n\nJe confirme l’annulation de ce paiement et le rétablissement de la créance affectée.\nRéessayer la même annulation\nConfirmez votre identité\n\nSaisissez votre mot de passe actuel, puis réessayez l’action de paiement. La vérification d’identité ne l’exécute pas.\n\nMot de passe actuel\nVérifier l’identité",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Notifications0",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Rechercher dans la navigation",
+          "placeholder": "Rechercher des modules",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Centre de pilotage menu",
+          "placeholder": null,
+          "text": "Centre de pilotagePilotage quotidien pour la direction et les responsables3",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Ventes menu",
+          "placeholder": null,
+          "text": "VentesClients, ventes et point de vente2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Finance menu",
+          "placeholder": null,
+          "text": "FinanceTrésorerie, rentabilité, paiements et rapprochement2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Se déconnecter",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Ouvrir le menu de navigation",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": "combobox",
+          "type": "search",
+          "id": "",
+          "name": null,
+          "label": "Rechercher une page ou un document",
+          "placeholder": "Rechercher une page ou un document",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Désactiver le son des notifications",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "radix-_r_a_",
+          "name": null,
+          "label": "Ouvrir le menu du compte",
+          "placeholder": null,
+          "text": "SR",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Réessayer",
+          "placeholder": null,
+          "text": "Réessayer",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": "text",
+          "id": "",
+          "name": null,
+          "label": "Recherche",
+          "placeholder": "Rechercher une créance",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Du - À la date du",
+          "placeholder": null,
+          "text": "Du - À la date du",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Réinitialiser",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Détails: POS-SYNTHETIC_TILL-20261108-EUVIV",
+          "placeholder": null,
+          "text": "Détails",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Ouvrir les détails: POS-SYNTHETIC_TILL-20261108-EUVIV",
+          "placeholder": null,
+          "text": "Ouvrir les détails",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": "combobox",
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Lignes",
+          "placeholder": null,
+          "text": "50",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Aller à la première page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Aller à la page précédente",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Aucune autre ligne",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Open issues overlay",
+          "placeholder": null,
+          "text": "-10 Issue",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Collapse issues badge",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "DIV",
+          "role": "dialog",
+          "type": null,
+          "id": "radix-_r_e_",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Fermer\nPOS-SYNTHETIC_TILL-20261108-EUVIV\n\nSynthetic credit customer / Document de créance client\n\nClient\nSynthetic credit customer\nÉchéance\n9 déc. 2026, 10:59\nConnu jusqu’au\n9 nov.",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Fermer",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Actualiser les paiements",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": "date",
+          "id": "_r_k_-date",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "",
+          "disabled": false,
+          "value": "2026-11-09"
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": null,
+          "id": "_r_k_-reason",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "",
+          "disabled": false,
+          "value": "Correction de la preuve bancaire de test"
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": "file",
+          "id": "_r_k_-file",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "",
+          "disabled": false,
+          "value": "C:\\fakepath\\synthetic-support.txt"
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": "checkbox",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "",
+          "disabled": false,
+          "value": "on"
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "submit",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Réessayer la même annulation",
+          "disabled": true
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": "password",
+          "id": "_r_k_-password",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "submit",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Vérifier l’identité",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "operation": "inspect"
+    },
+    {
+      "operation": "screenshot"
+    }
+  ]
+}

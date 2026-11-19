@@ -1,0 +1,37 @@
+diff --git a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts b/actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts
+index df23507c..0a8c8052 100644
+--- a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts
++++ b/actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts
+@@ -4,7 +4,7 @@ import { readPurchaseOrderDecisionHistory } from "@/services/purchase-order/purc
+ import { purchaseLifecyclePermission, purchaseLifecycleKindSchema, purchaseLifecycleRequestSchema, type PurchaseLifecycleRequest, type PurchaseLifecycleKind, type PurchaseLifecyclePreview, type PurchaseLifecycleReceipt } from "@/services/purchase-order/purchase-order-lifecycle-contracts";
+ import { executePurchaseOrderLifecycle as executeLifecycleService, getPurchaseOrderLifecyclePreview } from "@/services/purchase-order/purchase-order.service";
+ 
+-import { revalidatePath, revalidateTag } from "next/cache";
++import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation";
+ 
+ import { requirePermission } from "@/lib/security/rbac";
+ import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
+@@ -54,17 +54,12 @@ import type {
+ export type GoodsReceiptPayload = ClientGoodsReceiptPayload
+ 
+ function revalidatePurchaseOrderWorkflow(organizationId: string, id?: string) {
+-  revalidateTag("purchaseOrders")
+-  revalidateTag(`purchaseOrders-${organizationId}`)
+-  if (id) revalidateTag(`purchaseOrder-${id}`)
+-
+-  revalidatePath("/[locale]/dashboard/purchase-orders", "page")
+-  revalidatePath("/[locale]/dashboard/purchases", "page")
+-  if (id) {
+-    revalidatePath("/[locale]/dashboard/purchase-orders/[id]", "page")
+-    revalidatePath("/[locale]/dashboard/purchase-orders/[id]/edit", "page")
+-    revalidatePath("/[locale]/dashboard/purchases/[id]", "page")
+-  }
++  revalidateAfterCommit({
++    tags: ["purchaseOrders", `purchaseOrders-${organizationId}`, ...(id ? [`purchaseOrder-${id}`] : [])],
++    paths: ["/[locale]/dashboard/purchase-orders", "/[locale]/dashboard/purchases", ...(id ? [
++      "/[locale]/dashboard/purchase-orders/[id]", "/[locale]/dashboard/purchase-orders/[id]/edit", "/[locale]/dashboard/purchases/[id]",
++    ] : [])],
++  })
+ }
+ 
+ async function scopedOrg(

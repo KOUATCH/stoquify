@@ -1,0 +1,46 @@
+{
+  "revision": "6ee84a90c760d2864f6aef672d8b393ac2b65971",
+  "date": "2026-10-20",
+  "unit": {
+    "exitCode": 0,
+    "tests": 112,
+    "suites": 7
+  },
+  "postgres": {
+    "exitCode": 0,
+    "tests": 9,
+    "synthetic": true,
+    "database": "stoquify_local_af07_20261020_r1",
+    "host": "127.0.0.1",
+    "port": 55441,
+    "mocked": [
+      "server-only marker",
+      "database binding to explicit synthetic client"
+    ],
+    "transactionTimeoutMs": 15000,
+    "maxWaitMs": 10000
+  },
+  "types": {
+    "exitCode": 0,
+    "config": "tsconfig.provider-formats.json"
+  },
+  "workflow": {
+    "initialExitCode": 1,
+    "initialReason": "Unrelated reviewed script drift: scripts/prisma-dev-restart.ps1",
+    "finalExitCode": 0,
+    "registryEditedByAF07": false
+  },
+  "migrations": {
+    "exitCode": 0,
+    "count": 102,
+    "af07NewMigrations": 0
+  },
+  "browser": {
+    "status": "NOT_APPLICABLE",
+    "reason": "No UI/route change"
+  },
+  "liveProviders": "NOT_VERIFIED",
+  "productionDeployment": false,
+  "databaseServerStopped": true,
+  "finalSourceHashCheck": "PASS"
+}

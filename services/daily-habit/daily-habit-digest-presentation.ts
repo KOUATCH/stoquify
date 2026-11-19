@@ -1,3 +1,4 @@
+import { commandSourceText, commandSourceFreshness, commandSourceDrill } from "@/lib/dashboard/command-center-source-copy"
 import type { BIDailyDigest, BIActionLink, BIDrillThrough, BIFreshness } from "@/services/bi/bi-contracts"
 import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
 
@@ -13,27 +14,25 @@ const templates: Record<string, { title: string; summary: string; metric: string
 
 // Presentation only, after authority/filtering. Keep IDs, evidence, source hashes and values intact.
 export function presentDailyDigest(digest: BIDailyDigest, locale: "en" | "fr"): BIDailyDigest {
-  const freshness = (value: BIFreshness): BIFreshness => locale === "fr" && value.staleReason === "Signal is expired."
-    ? { ...value, staleReason: "Le signal a expiré." }
-    : value
+  const freshness = (value: BIFreshness) => commandSourceFreshness(value, locale)
   const blockers = (values: BIDailyDigest["blockers"]) => values.map(value => presentSnapshotBlocker(value, locale))
   const route = (href: string) => href === "/dashboard" || href.startsWith("/dashboard/") ? `/${locale}${href}` : href
-  const action = (value: BIActionLink | null): BIActionLink | null => value ? { ...value, href: route(value.href) } : null
-  const drill = (value: BIDrillThrough | null): BIDrillThrough | null => value ? { ...value, ...(value.available && value.href ? { href: route(value.href) } : {}) } : null
+  const action = (value: BIActionLink | null): BIActionLink | null => value ? { ...value, href: route(value.href), disabledReason: value.disabledReason ? commandSourceText(value.disabledReason, locale) : null } : null
+  const drill = (value: BIDrillThrough | null): BIDrillThrough | null => value ? { ...commandSourceDrill(value, locale), ...(value.available && value.href ? { href: route(value.href) } : {}) } : null
   const risk = (value: BIDailyDigest["risks"][number]) => ({ ...value, freshness: freshness(value.freshness), blockers: blockers(value.blockers), drillThrough: drill(value.drillThrough)!, actionLink: action(value.actionLink) })
   const template = locale === "fr" ? templates[digest.id] : undefined
   const actions = digest.actions.map(value => action(value)!)
   const primary = action(digest.commandBrief.primaryAction)
   if (template && primary?.id === `${digest.id}-open`) primary.label = "Ouvrir l’espace"
   const zones = digest.zones.map(zone => {
-    const cards = zone.cards.map(card => ({ ...card, blockers: blockers(card.blockers), ...(template ? { title: template.metric, detail: template.detail, unit: template.unit ?? card.unit } : {}), drillThrough: drill(card.drillThrough)!, actionLink: action(card.actionLink) }))
+    const cards = zone.cards.map(card => ({ ...card, freshness: freshness(card.freshness), blockers: blockers(card.blockers), ...(template ? { title: template.metric, detail: template.detail, unit: template.unit ?? card.unit } : {}), drillThrough: drill(card.drillThrough)!, actionLink: action(card.actionLink) }))
     if (template) for (const card of cards) card.drillThrough.label = "Ouvrir la source"
     if (digest.id === "manager-run-sheet") for (const card of cards) {
       if (card.state === "module_unavailable") card.detail = locale === "fr"
         ? "Accès aux achats indisponible. Contactez l’administrateur."
         : "Purchasing access is unavailable. Contact your administrator."
     }
-    return { ...zone, blockers: blockers(zone.blockers), risks: zone.risks.map(risk), ...(template ? { title: template.title, summary: template.summary, businessQuestion: "Que doit examiner ce rôle aujourd’hui ?" } : {}), cards, primaryMetric: cards.find(card => card.id === zone.primaryMetric?.id) ?? zone.primaryMetric, actions: zone.actions.map(value => action(value)!), drillThrough: drill(zone.drillThrough) }
+    return { ...zone, freshness: freshness(zone.freshness), blockers: blockers(zone.blockers), risks: zone.risks.map(risk), ...(template ? { title: template.title, summary: template.summary, businessQuestion: "Que doit examiner ce rôle aujourd’hui ?" } : {}), cards, primaryMetric: cards.find(card => card.id === zone.primaryMetric?.id) ?? zone.primaryMetric, actions: zone.actions.map(value => action(value)!), drillThrough: drill(zone.drillThrough) }
   })
   if (template) for (const zone of zones) if (zone.drillThrough) zone.drillThrough.label = "Ouvrir la source"
   const briefDrill = drill(digest.commandBrief.drillThrough)
@@ -42,6 +41,6 @@ export function presentDailyDigest(digest: BIDailyDigest, locale: "en" | "fr"): 
     ...digest, actions, zones, blockers: blockers(digest.blockers),
     changes: digest.changes.map(change => ({ ...change, freshness: freshness(change.freshness), blockers: blockers(change.blockers), drillThrough: drill(change.drillThrough), actionLink: action(change.actionLink) })),
     risks: digest.risks.map(risk),
-    commandBrief: { ...digest.commandBrief, blockers: blockers(digest.commandBrief.blockers), reviewState: digest.commandBrief.reviewState ? { ...digest.commandBrief.reviewState, blockers: blockers(digest.commandBrief.reviewState.blockers) } : null, primaryAction: primary, drillThrough: briefDrill, ...(template ? { title: template.title, summary: template.summary, conclusion: actions.length ? `${actions.length} action(s) visible(s) à examiner dans ce digest.` : "Aucune action visible à traiter dans ce digest pour le moment." } : {}) },
+    commandBrief: { ...digest.commandBrief, freshness: freshness(digest.commandBrief.freshness), blockers: blockers(digest.commandBrief.blockers), reviewState: digest.commandBrief.reviewState ? { ...digest.commandBrief.reviewState, blockers: blockers(digest.commandBrief.reviewState.blockers) } : null, primaryAction: primary, drillThrough: briefDrill, ...(template ? { title: template.title, summary: template.summary } : {}) },
   }
 }

@@ -391,6 +391,9 @@
     "quantity": "Invoice quantity",
     "cost": "Unit cost",
     "taxRate": "Tax rate (%)",
+    "taxAmount": "Tax amount from invoice",
+    "discount": "Line discount",
+    "freight": "Allocated freight",
     "remove": "Remove line",
     "notes": "Notes",
     "review": "Review preparation",
@@ -399,7 +402,10 @@
     "subtotal": "Subtotal",
     "tax": "Tax",
     "total": "Total",
-    "variance": "Price variance requires matching review",
+    "variance": "Amount discrepancy requires matching review",
+    "discountVariance": "Discount discrepancy",
+    "freightVariance": "Freight discrepancy",
+    "taxVariance": "Tax discrepancy",
     "confirm": "Save for approval",
     "edit": "Return to editing",
     "prepared": "Invoice preparation recorded",
@@ -412,7 +418,7 @@
     "new": "Prepare another invoice",
     "loading": "Loading current receipt sources…",
     "refresh": "Refresh sources",
-    "invalid": "Check the invoice dates, document link and checksum, and line quantities, prices and tax rates.",
+    "invalid": "Check the invoice dates, document link and checksum, and the quantity, price, discounts, freight and tax on each line.",
     "denied": "Your current session or role cannot prepare this invoice. Sign in with an authorized account.",
     "stale": "The reviewed information changed. Your draft is retained; refresh sources and review it again.",
     "unavailable": "The selected receipts, currency or accounting period cannot support this invoice. Check receiving, the remaining quantity and accounting setup.",
@@ -2363,6 +2369,15 @@
         "exportStartedMessage": "The signed certificate is being watermarked and logged.",
         "exportCompleteTitle": "Certificate exported",
         "exportCompleteMessage": "The signed reconciliation certificate download has started."
+      },
+      "runScope": {
+        "label": "Run coverage",
+        "daily": "Today (UTC)",
+        "accountingPeriod": "Full accounting period",
+        "periodLabel": "Open accounting period",
+        "choosePeriod": "Choose a stored open period",
+        "noPeriods": "No supported open period is available. Full-period runs require UTC day boundaries.",
+        "collisionWarning": "Daily and full-period runs cannot share this account's first period day. An existing run causes a conflict; its coverage will not be expanded. The server checks the current period before running."
       }
     },
     "trustBanner": {
@@ -2390,7 +2405,7 @@
       "fileNamePlaceholder": "Statement file name",
       "contentLabel": "Statement content",
       "contentPlaceholder": "Upload a CSV or JSON file, or paste its contents here.",
-      "formatHint": "Required columns: amount and date; transaction, reference, direction, fee, and currency are supported.",
+      "formatHint": "CSV/JSON arrays need a transaction or reference, direction, positive amount, currency and date. They retain observed transaction dates only and do not establish full-period coverage. Full-period coverage requires a raw stoquify-statement-v1 JSON envelope declaring the matching provider, account, currency and exact period supported by the statement.",
       "action": "Import statement",
       "historyTitle": "Recent statement evidence",
       "emptyHistory": "No statement file has been imported yet.",
@@ -3242,6 +3257,7 @@
       "refresh": "Load current evidence"
     },
     "shell": {
+      "todayActivity": "Today’s activity",
       "title": "Point of sale",
       "subtitle": "Focused cashier workstation",
       "scannerReady": "Scanner ready",
@@ -3364,7 +3380,7 @@
     "cart": {
       "title": "Cart",
       "walkIn": "Walk-in customer",
-      "empty": "Scan or select an item to start a persisted draft sale.",
+      "empty": "Scan or select an item to start a sale.",
       "lines": "{count} lines",
       "removeLine": "Remove {item} from cart",
       "quantityFor": "Quantity for {item}"
@@ -3410,6 +3426,30 @@
     },
     "receipt": {
       "options": "Receipt options",
+      "browserDelivery": "After a confirmed sale, open the purchase summary to print it or save it as a PDF. Automatic delivery is unavailable.",
+      "deliveryRestricted": "Ask an authorized cashier for a printed purchase summary. Automatic delivery is unavailable.",
+      "whatsApp": {
+        "available": "With customer consent, WhatsApp delivery starts after the sale is confirmed.",
+        "select": "Send receipt by WhatsApp",
+        "number": "Customer WhatsApp number with country code",
+        "incomplete": "Enter a WhatsApp number with a country code and confirm consent, or turn off WhatsApp for this sale.",
+        "review": "Review WhatsApp receipt",
+        "checkStatus": "Check WhatsApp status",
+        "checking": "Checking status…",
+        "order": "WhatsApp receipt for sale {number}",
+        "statusUnavailable": "The receipt status could not be checked. Try checking again.",
+        "retryRequest": "Retry receipt request",
+        "status": {
+          "REQUESTING": "Requesting WhatsApp delivery…",
+          "REQUEST_UNCONFIRMED": "The receipt request is unconfirmed. Check its status or retry the same request.",
+          "UNAVAILABLE": "WhatsApp delivery is unavailable for this sale. Use the printable receipt if available.",
+          "QUEUED": "WhatsApp receipt queued for delivery.",
+          "RETRYING": "A temporary issue interrupted WhatsApp delivery. A retry is scheduled.",
+          "ACCEPTED": "WhatsApp accepted the receipt for delivery.",
+          "UNCERTAIN": "WhatsApp acceptance is uncertain. Ask a manager to review this request before sending another receipt.",
+          "FAILED": "WhatsApp delivery failed. Use the printable receipt if available."
+        }
+      },
       "destination": "Receipt destination",
       "destinationRequired": "Enter a receipt destination before charging.",
       "destinationPlaceholders": {
@@ -3552,7 +3592,9 @@
       "standby": "Standby",
       "online": "Online",
       "offline": "Offline",
-      "notConfigured": "Not configured"
+      "notConfigured": "Not configured",
+      "browserPrint": "Browser printing",
+      "deviceHelp": "Barcode entry accepts a keyboard scanner or typing. Drawer status comes from the shift record. Receipts use the browser print dialog and its configured printers."
     },
     "featureGates": {
       "title": "Backend workflow needed",
@@ -6214,6 +6256,7 @@
     "positiveQuantity": "Enter a positive quantity with up to three decimal places."
   },
   "purchaseOrderClone": {
+    "recover": "Check original request",
     "button": "Clone as a draft",
     "pending": "Creating the draft…",
     "created": "New purchase-order draft created.",
@@ -6223,7 +6266,7 @@
     "unavailable": "The source order, supplier, delivery location or items are no longer available for a new order. Review the current records before trying again.",
     "stopped": "Purchasing is not accepting new orders. Existing orders and their permitted completion workflows remain available.",
     "unknownTitle": "The clone result could not be confirmed",
-    "unknown": "A draft may have been created. Check the most recent purchase orders before attempting another clone. This page will not send the request again.",
+    "unknown": "A draft may have been created. Check the original request or review saved authoring work and recent orders. Checking status does not create another order.",
     "openOrders": "Open purchase orders in a new tab",
     "draftOnly": "The copy is a draft. Submission and independent approval are still required."
   },
@@ -6686,7 +6729,7 @@
     "state": "Invoice state",
     "subtotal": "Subtotal",
     "tax": "Tax",
-    "variance": "Price variance",
+    "variance": "Matching variance",
     "document": "Open the maker’s source document",
     "lines": "Invoice lines",
     "lineTotal": "Line total",
@@ -6780,7 +6823,7 @@
     "state": "Invoice state",
     "subtotal": "Subtotal",
     "tax": "Tax",
-    "variance": "Price variance",
+    "variance": "Matching variance",
     "document": "Open the maker’s source document",
     "lines": "Invoice lines",
     "lineTotal": "Line total",

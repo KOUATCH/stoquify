@@ -1,0 +1,621 @@
+{
+  "startedAt": "2026-11-02T17:53:29.156Z",
+  "actualRuntimePath": "D:\\p04-r02-fullapp-20261102-r3\\runtime-retry01",
+  "runtimeStorage": "D:\\p04-r02-fullapp-20261102-r3",
+  "plannedRuntimePath": "D:\\p04-r02-fullapp-20261102-r3\\runtime",
+  "attempt": "retry01",
+  "runtimeHarnessSha256": "c020adc16a1348ffe94a3eb3ab49b3ba1babebb8d45b447cbb189d55371acdc3",
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+  "passed": false,
+  "cleanup": [],
+  "mutableRuntimeSubtrees": [
+    ".next/cache/images/"
+  ],
+  "optimizerRequests": [
+    {
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fuploads%2Fp04-upload-a%2Fsentinel.png&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fuploads%2Fp04-upload-a%2Fsentinel.png&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/%69mage?url=%2Fuploads%2Fp04-upload-a%2Fsentinel.png&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fapi%2Fuploads%2Fp04-upload-a%2Fsentinel.png&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fapi%2Fuploads%2Fp04-upload-a%2Fsentinel.png&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/%69mage?url=%2Fapi%2Fuploads%2Fp04-upload-a%2Fsentinel.png&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fimages%2Fp04-private-alias.png&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fimages%2Fp04-private-alias.png&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/%69mage?url=%2Fimages%2Fp04-private-alias.png&w=64&q=75",
+      "accept": "*/*"
+    },
+    {
+      "path": "/_next/image?url=%2Fp04-public-control.png&w=64&q=75",
+      "accept": "*/*"
+    }
+  ],
+  "originalAssetProtection": {
+    "blockedRequests": 0,
+    "scope": "Canonical originals and ordinary alias requests refused before upstream; exact marked alias probes reach upstream only for bounded validated denial evidence; positive reads use synthetic assets"
+  },
+  "privateAliasProbes": [
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 401,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 175,
+      "safeBodySha256": "677805ed257dde0e782ef9b1bb690a45f2c82589703aa119dddcd581269423f3",
+      "contract": "canonical-auth-denial"
+    },
+    {
+      "method": "HEAD",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 401,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 0,
+      "safeBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract": "empty-auth-denial-head"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "kind": "optimizer",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 400,
+      "upstreamContentType": "text/plain;charset=UTF-8",
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    },
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 164,
+      "safeBodySha256": "ddc1e32355e44260ee3881a1f69d11516aade2bf2ad0a88b29a3279bf9792113",
+      "contract": "canonical-auth-denial"
+    },
+    {
+      "method": "HEAD",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 0,
+      "safeBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract": "empty-auth-denial-head"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "kind": "optimizer",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 400,
+      "upstreamContentType": "text/plain;charset=UTF-8",
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    },
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 164,
+      "safeBodySha256": "ce5f03bfc4c861bd5f2d1bbc0e1eed505373e4b421f2e346a4aca20887b17fe0",
+      "contract": "canonical-auth-denial"
+    },
+    {
+      "method": "HEAD",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 0,
+      "safeBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract": "empty-auth-denial-head"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "kind": "optimizer",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 400,
+      "upstreamContentType": "text/plain;charset=UTF-8",
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    },
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 164,
+      "safeBodySha256": "0c6e2c698c101213d2413d6e35931ce290891b8ad8e8ee47d5b2e77c2da00bd8",
+      "contract": "canonical-auth-denial"
+    },
+    {
+      "method": "HEAD",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 0,
+      "safeBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract": "empty-auth-denial-head"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "kind": "optimizer",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 400,
+      "upstreamContentType": "text/plain;charset=UTF-8",
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    },
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 164,
+      "safeBodySha256": "ee2bb7e79e4b15ed03ba918212c17728975905dda15806b25d2cbe0941f9b9fd",
+      "contract": "canonical-auth-denial"
+    },
+    {
+      "method": "HEAD",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 0,
+      "safeBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract": "empty-auth-denial-head"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "kind": "optimizer",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 400,
+      "upstreamContentType": "text/plain;charset=UTF-8",
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    },
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 164,
+      "safeBodySha256": "04da0a3c2f41e74637884934d0a7da037bedd469919733351d9b5a38f9483424",
+      "contract": "canonical-auth-denial"
+    },
+    {
+      "method": "HEAD",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 0,
+      "safeBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract": "empty-auth-denial-head"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "kind": "optimizer",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 400,
+      "upstreamContentType": "text/plain;charset=UTF-8",
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    },
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 164,
+      "safeBodySha256": "50867f33875a5c2d01919002783b95e75052093c1051f9a64563a04b136b9bab",
+      "contract": "canonical-auth-denial"
+    },
+    {
+      "method": "HEAD",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 0,
+      "safeBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract": "empty-auth-denial-head"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "kind": "optimizer",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 400,
+      "upstreamContentType": "text/plain;charset=UTF-8",
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    },
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 164,
+      "safeBodySha256": "5628efb6438979ac657514fc50e489f57c1714331ed6783295594046d5c16125",
+      "contract": "canonical-auth-denial"
+    },
+    {
+      "method": "HEAD",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 0,
+      "safeBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract": "empty-auth-denial-head"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "kind": "optimizer",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 400,
+      "upstreamContentType": "text/plain;charset=UTF-8",
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    },
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 164,
+      "safeBodySha256": "e608c8d808415d9a394214ba5f305d8c30cfd79fc27cfe7283dd7d2d2a926bf4",
+      "contract": "canonical-auth-denial"
+    },
+    {
+      "method": "HEAD",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": true,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 403,
+      "upstreamContentType": "application/json",
+      "upstreamCacheControl": "private, no-store",
+      "safeBodyBytes": 0,
+      "safeBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contract": "empty-auth-denial-head"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/image?url=%2Fimages%2Fcabin-1.jpg&w=64&q=75",
+      "kind": "optimizer",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 400,
+      "upstreamContentType": "text/plain;charset=UTF-8",
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    }
+  ],
+  "aliasProbeHelperSha256": "350ce96d6bf8b009e48ba5d64b46a2dff3a500d8f3f5f20bbe6b604bd20745aa",
+  "transport": {
+    "externalOrigin": "https://localhost:3192",
+    "internalProtocol": "http",
+    "internalHostname": "localhost",
+    "standaloneHostname": "localhost",
+    "localhostAddresses": [
+      {
+        "address": "::1",
+        "family": 6
+      },
+      {
+        "address": "127.0.0.1",
+        "family": 4
+      }
+    ],
+    "reason": "Match NextURL loopback normalization with the initial request origin; preserve external HTTPS and Secure cookies"
+  },
+  "browserSourceReviewSha256": "12f0e55778291ca498299b7c09316a9d0061d860bfd5605b4a1b927f5f5f0a8a",
+  "dependencyIsolation": {
+    "outsideCheckout": true,
+    "globalSearchPaths": [
+      {
+        "path": "C:\\Users\\J COMPUTER\\.node_modules",
+        "exists": false
+      },
+      {
+        "path": "C:\\Users\\J COMPUTER\\.node_libraries",
+        "exists": false
+      },
+      {
+        "path": "C:\\Program Files\\nodejs\\lib\\node",
+        "exists": false
+      }
+    ],
+    "ancestorPaths": [
+      "D:\\p04-r02-fullapp-20261102-r3\\node_modules",
+      "D:\\node_modules"
+    ],
+    "nodePathAbsent": true,
+    "volumeNodeModulesAbsent": true,
+    "testDriver": "Root tooling remains separate; application cwd is the external runtime"
+  },
+  "seededPrivateOptimizerCache": {
+    "cacheKey": "azDZUiE5KestdQzuVX9jK4glMy9xju16joMadOLrlwg",
+    "parameters": {
+      "href": "/uploads/p04-upload-a/sentinel.png",
+      "width": 64,
+      "quality": 75,
+      "mimeType": ""
+    },
+    "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+    "synthetic": true,
+    "presentBeforeBrowser": true,
+    "presentAfterBrowser": true
+  },
+  "serverPid": 39172,
+  "browser": {
+    "passed": false,
+    "output": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\full-app-20261102-r3\\browser\\p04r02-full-20261102-r3-retry01",
+    "privateAliasProbeCoverage": null,
+    "checks": [
+      {
+        "label": "real-ui-login-and-image-consumers-en",
+        "passed": false,
+        "error": "locator.waitFor: Error: strict mode violation: locator('#item-overview-title') resolved to 2 elements:\n    1) <h1 id=\"item-overview-title\" class=\"break-words text-2xl font-semibold tracking-tight sm:text-3xl\">Qualification image item A</h1> aka getByRole('heading', { name: 'Qualification image item A' })\n    2) <h1 id=\"item-overview-title\" class=\"break-words text-2xl font-semibold tracking-tight sm:text-3xl\">Qualification image item A</h1> aka getByText('Qualification image item A').nth(1)\n\nCall log:\n\u001b[2m  - waiting for locator('#item-overview-title') to be visible\u001b[22m\n"
+      },
+      {
+        "label": "real-ui-login-and-image-consumers-fr",
+        "passed": true
+      },
+      {
+        "label": "original-private-alias-denials-anonymous",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "original-private-alias-denials-ui",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "original-private-alias-denials-foreign",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "original-private-alias-denials-revocation",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "original-private-alias-denials-expiry",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "original-private-alias-denials-permissionChange",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "original-private-alias-denials-moduleChange",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "original-private-alias-denials-permissionDenied",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "original-private-alias-denials-moduleDenied",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "anonymous-both-delivery-urls",
+        "passed": true
+      },
+      {
+        "label": "foreign-both-delivery-urls",
+        "passed": true
+      },
+      {
+        "label": "permissionDenied-both-delivery-urls",
+        "passed": true
+      },
+      {
+        "label": "moduleDenied-both-delivery-urls",
+        "passed": true
+      },
+      {
+        "label": "revocation-original-signed-cookie-replay",
+        "passed": false,
+        "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation"
+      },
+      {
+        "label": "expiry-original-signed-cookie-replay",
+        "passed": true
+      },
+      {
+        "label": "permissionChange-original-signed-cookie-replay",
+        "passed": true
+      },
+      {
+        "label": "moduleChange-original-signed-cookie-replay",
+        "passed": true
+      },
+      {
+        "label": "authorized-get-head-and-private-optimizer-denial",
+        "passed": true
+      },
+      {
+        "label": "original-private-alias-probe-coverage",
+        "passed": false,
+        "error": "Original-alias probe coverage is incomplete\n\n18 !== 270\n"
+      },
+      {
+        "label": "browser-cache-and-runtime-errors",
+        "passed": false,
+        "error": "Missing revoked browser response for /images/p04-private-alias.png"
+      }
+    ]
+  },
+  "error": "AssertionError [ERR_ASSERTION]: Browser or HTTP admission gate failed\n    at E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\full-app-20261102-r3\\run-runtime-retry01.cjs:50:335",
+  "proxyClosed": true,
+  "runtimeTermination": {
+    "pid": 39172,
+    "exitCode": 0
+  },
+  "serverExitCode": 1,
+  "runtimeIntegrity": {
+    "sealedFiles": 5310,
+    "allSealedBytesUnchanged": true,
+    "allowedImageCacheAdditions": [
+      {
+        "path": ".next/cache/images/azDZUiE5KestdQzuVX9jK4glMy9xju16joMadOLrlwg/3600.1793645708497.p04r02-full-synthetic.p04r02-full-synthetic.png",
+        "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d"
+      },
+      {
+        "path": ".next/cache/images/zcct8V3CcgLC3z3Mp_i4dQFQnS8Yz6hyvTcO0sN-brA/60.1793642365974.IXxDY8EofctWN1-U2xkXhfv4SBB3ENsfHHfWUCbj7nI.Vy8iNDYtMWExOWQ1OWM4Yjgi.png",
+        "sha256": "217c4363c1287dcb56375f94db191785fbf848107710db1f1c77d65026e3ee72"
+      }
+    ]
+  },
+  "artifactUnchanged": true,
+  "portsReleased": true,
+  "finishedAt": "2026-11-02T17:58:53.375Z"
+}

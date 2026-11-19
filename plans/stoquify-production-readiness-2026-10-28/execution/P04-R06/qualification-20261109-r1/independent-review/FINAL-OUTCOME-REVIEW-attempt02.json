@@ -1,0 +1,399 @@
+{
+  "at": "2026-11-10T11:56:56.442Z",
+  "reviewer": "/root/r06_review",
+  "package": "P04-R06",
+  "passed": false,
+  "blockedCheckpointAccepted": true,
+  "observationAccepted": true,
+  "status": "blocked",
+  "scope": "Independent final review of same-artifact isolated source/build/native/session/browser outcomes and stopped-environment evidence; not production admission",
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "sourceFiles": 9788,
+  "selectedInputs": 63,
+  "productionReady": false,
+  "advancementAllowed": false,
+  "observedOutcomes": {
+    "sourceAndArtifactBinding": true,
+    "mocked": {
+      "tests": 87,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 4
+    },
+    "fullBuild": {
+      "passed": true,
+      "configuredTypeAndLintChecksPassed": true,
+      "sealedFiles": 5305,
+      "cleanInstallReproducibilityQualified": false
+    },
+    "originalMainRuntime": {
+      "total": 58,
+      "passed": 53,
+      "failed": 5,
+      "qualificationPassed": false,
+      "immutable": true
+    },
+    "retainedExpirySupplement": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "additionalTo58": true
+    },
+    "credentialRecovery": {
+      "total": 4,
+      "passed": 4,
+      "explicitUtcAndActualBounds": true,
+      "originalTimestampFailurePreserved": true
+    },
+    "originRecovery": {
+      "total": 3,
+      "passed": 1,
+      "failed": 2,
+      "actualCrossSiteBrowserDenials": 2,
+      "deniedPrivateBytesExposed": false,
+      "newSessionsCreated": false,
+      "unauthorizedCredentialBookkeepingConfirmed": true
+    },
+    "latestBrowser": {
+      "total": 6,
+      "passed": 2,
+      "failed": 4,
+      "revokedReloadsPassed": 2,
+      "correctAuthorizedOrRestoredProfileViews": 4,
+      "currentSubjectSessionReadsPassed": 4,
+      "actualCanceledRscRequests": 8,
+      "screenshotsInspected": 6,
+      "nativeNoWritePairsPassed": 6,
+      "strictBrowserQualificationPassed": false
+    },
+    "logicalRequirements": {
+      "total": 58,
+      "satisfied": 53,
+      "unresolved": 5
+    },
+    "inheritedV02": [
+      {
+        "priorCase": "authRevoked-get-session",
+        "currentCase": "R06-N-revoked-get-session",
+        "successorDenialPassed": true,
+        "retainedExpirySupplement": null,
+        "historicalResultRewritten": false
+      },
+      {
+        "priorCase": "authRevoked-list-sessions",
+        "currentCase": "R06-N-revoked-list-sessions",
+        "successorDenialPassed": true,
+        "retainedExpirySupplement": null,
+        "historicalResultRewritten": false
+      },
+      {
+        "priorCase": "authRevoked-list-accounts",
+        "currentCase": "R06-N-revoked-list-accounts",
+        "successorDenialPassed": true,
+        "retainedExpirySupplement": null,
+        "historicalResultRewritten": false
+      },
+      {
+        "priorCase": "authRevoked-unlink",
+        "currentCase": "R06-N-revoked-unlink-account",
+        "successorDenialPassed": true,
+        "retainedExpirySupplement": null,
+        "historicalResultRewritten": false
+      },
+      {
+        "priorCase": "authExpired-get-session",
+        "currentCase": "R06-N-expired-get-session",
+        "successorDenialPassed": true,
+        "retainedExpirySupplement": null,
+        "historicalResultRewritten": false
+      },
+      {
+        "priorCase": "authExpired-list-sessions",
+        "currentCase": "R06-N-expired-list-sessions",
+        "successorDenialPassed": true,
+        "retainedExpirySupplement": "R06-E-retained-list-sessions",
+        "historicalResultRewritten": false
+      },
+      {
+        "priorCase": "authExpired-list-accounts",
+        "currentCase": "R06-N-expired-list-accounts",
+        "successorDenialPassed": true,
+        "retainedExpirySupplement": "R06-E-retained-list-accounts",
+        "historicalResultRewritten": false
+      },
+      {
+        "priorCase": "authExpired-unlink",
+        "currentCase": "R06-N-expired-unlink-account",
+        "successorDenialPassed": true,
+        "retainedExpirySupplement": "R06-E-retained-unlink-account",
+        "historicalResultRewritten": false
+      },
+      {
+        "priorCase": "inactive-cached-core-session",
+        "currentCase": "R06-N-inactive-get-session",
+        "successorDenialPassed": true,
+        "retainedExpirySupplement": null,
+        "historicalResultRewritten": false
+      }
+    ]
+  },
+  "confirmedDefects": [
+    {
+      "id": "rejected-origin-credential-bookkeeping",
+      "preExistingBySourceComparison": true,
+      "beforeRepairRuntimeReplayed": false,
+      "sourceHookSha256": "925fa82ff36df3177272633c4fc66f31c6dc158ce255a6a9ac6d088a183cd9cd",
+      "sourceHelperSha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+      "observed": "Two actual cookie-free cross-site browser requests returned403/private-free but each incremented the supplied fixture account failure count and changed lastFailedLogin/updatedAt with one LOGIN_FAILED audit event; sessions and other business/account rows unchanged.",
+      "cause": "The application after-hook treats any non-success APIError as failed credential verification, including earlier origin/Fetch Metadata rejection.",
+      "authenticationBypassEstablished": false,
+      "thresholdLockoutExercised": false,
+      "repairThisContinuation": false
+    }
+  ],
+  "unresolvedVerification": [
+    {
+      "id": "browser-required-response-lifecycle",
+      "logicalIds": [
+        "R06-UI-en-authorized",
+        "R06-UI-en-restored",
+        "R06-UI-fr-authorized",
+        "R06-UI-fr-restored"
+      ],
+      "observation": "Eight exact original-response/CDP-correlated RSC requests ended Network.loadingFailed net::ERR_ABORTED canceled:true. Complete proxy bytes and matching decoded lengths do not prove browser body hash or application consumption of those exact responses.",
+      "productRegressionEstablished": false,
+      "next": "Bind safe server-action identity, initiator, navigation/page lifecycle, exact response and current-profile consumer result; review any intentional-cancellation acceptance contract explicitly. Preserve all failures."
+    }
+  ],
+  "cleanup": {
+    "passed": true,
+    "ownedSessionsRemoved": 18,
+    "businessTables": 245,
+    "businessDigestBefore": "b98968efc4997740ea8e1ac453a4bde45b6395907178f3b76a0906888f646f1e",
+    "businessDigestAfter": "b98968efc4997740ea8e1ac453a4bde45b6395907178f3b76a0906888f646f1e",
+    "auditDigestBefore": "dfef19733c73c86411cd1b169e4c3fdb96368669279ea358b7b57c25dc7ad274",
+    "auditDigestAfter": "dfef19733c73c86411cd1b169e4c3fdb96368669279ea358b7b57c25dc7ad274",
+    "userAndAccountRowsUnchanged": true,
+    "remainingSyntheticSessions": 0,
+    "ownedPostgresPid": 6428,
+    "ownedPidAbsent": true,
+    "clusterStopped": true,
+    "databasesRetained": true,
+    "stopExitCode": 0,
+    "stopLauncherCompletedCleanly": true,
+    "portHostPairsReleased": [
+      {
+        "port": 3296,
+        "host": "127.0.0.1",
+        "released": true
+      },
+      {
+        "port": 3296,
+        "host": "localhost",
+        "released": true
+      },
+      {
+        "port": 3297,
+        "host": "127.0.0.1",
+        "released": true
+      },
+      {
+        "port": 3297,
+        "host": "localhost",
+        "released": true
+      },
+      {
+        "port": 3298,
+        "host": "127.0.0.1",
+        "released": true
+      },
+      {
+        "port": 3298,
+        "host": "localhost",
+        "released": true
+      },
+      {
+        "port": 3299,
+        "host": "127.0.0.1",
+        "released": true
+      },
+      {
+        "port": 3299,
+        "host": "localhost",
+        "released": true
+      },
+      {
+        "port": 55516,
+        "host": "127.0.0.1",
+        "released": true
+      },
+      {
+        "port": 55516,
+        "host": "localhost",
+        "released": true
+      }
+    ],
+    "sourceArtifactAndHeadPreserved": true
+  },
+  "independentChecks": [
+    "Recomputed both cleanup snapshot table/session/audit digests and compared embedded receipts against standalone native snapshots;18 unique idHash values removed, zero remain.",
+    "Compared cleanup user/account rows and all245 business table records; no business or audit delta.",
+    "Verified final preservation/reconciliation evidence hashes, all63 current critical input hashes and exact candidate/artifact identities.",
+    "Independently mapped all58 unique planned IDs to original and latest observed booleans;50 unaffected main + four credential cases mapped to one + three origin probes mapped to one + all6 latest browser cases;53satisfied/5unresolved.",
+    "Reviewed source-defined preservation/stop operations and actual exit0/PIDabsence/all10loopback-port proofs; no reviewer application/database mutation.",
+    "Nine inherited V02 failures each have passing successor denial evidence; expired list-sessions/accounts/unlink additionally have independently retained expired rows immediately before their own requests. Historical V02 counts stay frozen."
+  ],
+  "evidence": [
+    {
+      "path": "build-result-attempt02.json",
+      "sha256": "0124329359273775db300041794d1176abf9b308d1abc82b03b98f1c91f296f8"
+    },
+    {
+      "path": "unit/attempt03/jest.json",
+      "sha256": "65e8711339eeee4ca310f761f6096216341c7ef5f8a4e4d2faa0efc80361a2bd"
+    },
+    {
+      "path": "unit/attempt03/receipt.json",
+      "sha256": "cd8a65883a218ee217c8c95412bfc203b107e19c13267a41b194c48fd44a2ce7"
+    },
+    {
+      "path": "runtime-result-attempt02.json",
+      "sha256": "4459b141a394444372f88d3728b84f38d5adeb49eb840d382cc4725327fc92df"
+    },
+    {
+      "path": "browser/auth-r06-attempt02/result.json",
+      "sha256": "81a50e5a71168c93b4d2af6c9a21010cebeead3303f778cbafc70200f39e2878"
+    },
+    {
+      "path": "expiry-supplement-result-attempt02.json",
+      "sha256": "79625e82bb0bb9c7146aa3a2888d359a4a2fb6ac10aa094c03e3e308bd10d6f7"
+    },
+    {
+      "path": "recovery-result-attempt03.json",
+      "sha256": "d08ed69741d7b10165708cbc72ff4f354f43eb17fa3916a1af1e8f44cf7b508c"
+    },
+    {
+      "path": "browser-only-result-attempt04.json",
+      "sha256": "b7d842e28108eba900e3244239e6f1ed5302e62192edd322ba37ec40d98e537d"
+    },
+    {
+      "path": "browser/browser-diagnostic-attempt04/result.json",
+      "sha256": "e2bd19a57a0f635141891441cdbc62428ce312a8684a7c77b1a359d0b5fd5318"
+    },
+    {
+      "path": "recovery-reconciliation-attempt04-v2.json",
+      "sha256": "2ec0cfdbee0fb939f9993dc2aa2a824d9d99bec02e14d17c93e39209fb3b0796"
+    },
+    {
+      "path": "database/final-session-cleanup-attempt02.json",
+      "sha256": "5e4f5549c8adfcc1e66c1261580f8fe11d332f928401987713395f61bbdce7b0"
+    },
+    {
+      "path": "database/snapshot-final-session-cleanup-attempt02-before-1794311421685-7f07b129-b911-47f3-9380-19c61f31bb92.json",
+      "sha256": "40f1fa18a869eccfaa6b1f94ed43bf7434ff7bbe7c09ca84f036b4a363cd45c2"
+    },
+    {
+      "path": "database/snapshot-final-session-cleanup-attempt02-after-1794311424570-2fa23b26-8bc9-463d-9e84-66e75b21cc0b.json",
+      "sha256": "fdfe00cfa5247f90a7824d274bc42ae0cd7874369ae1d652a74dc039db66c882"
+    },
+    {
+      "path": "database/cleanup-attempt02.json",
+      "sha256": "826ffc7e39b4b0987898281de10a9b7f73f564d77490110adcc87d2c532c1d3d"
+    },
+    {
+      "path": "final-integrity-attempt02.json",
+      "sha256": "236e24f86b9f58b9df1992062f7c713a5a883160d4644b6b83a6804317d45ae1"
+    },
+    {
+      "path": "final-integrity-recovery-attempt04-v3.json",
+      "sha256": "4c5a80b8291ebdcc8b28528cf4ca6692e2e206925532f9387f00840adbcb3b4b"
+    },
+    {
+      "path": "independent-review/BUILD-OUTCOME-REVIEW-attempt02.json",
+      "sha256": "6252e699d36a046d940a81329eef1f6dd33cdbccb99491843a10b89270abad79"
+    },
+    {
+      "path": "independent-review/ARTIFACT-BYTE-REVIEW-attempt02.json",
+      "sha256": "5e5ec0d45cb4b0f31cc148f9733cd54504d787c43b2aed62231f1d59f49418b8"
+    },
+    {
+      "path": "independent-review/UNIT-OUTCOME-REVIEW-v3.json",
+      "sha256": "776aaf7bcd9a71ea0698776a78f51f427609f441ccb872eb480e7b4fe3ecff75"
+    },
+    {
+      "path": "independent-review/OBSERVED-RUNTIME-REVIEW-attempt02.json",
+      "sha256": "917054f7406bdf20e51ba3ba81cf829c9ea0e467dab417911edc06d71a020412"
+    },
+    {
+      "path": "independent-review/EXPIRY-SUPPLEMENT-OUTCOME-REVIEW-attempt02-v2.json",
+      "sha256": "483e9227e6aa3a0bf77b4882b945c6fd7cda5bdc356ba6aad5afc86835b7fe49"
+    },
+    {
+      "path": "independent-review/RECOVERY-OUTCOME-REVIEW-attempt03.json",
+      "sha256": "8ccbe5fef2bf100101616da953b7de43c06adc6f2e28d5e183721ee0d4b17e38"
+    },
+    {
+      "path": "independent-review/ORIGIN-DENIAL-INDEPENDENT-REVIEW-attempt03.json",
+      "sha256": "ff4b6ed474a318ac89cf6ccc157d3a7e125c886b352f38e548287ad34dd9c528"
+    },
+    {
+      "path": "independent-review/ORIGIN-DENIAL-BOOKKEEPING-SOURCE-attempt03.json",
+      "sha256": "5e271a8810a5d453d635cff61b5b17988309b841c8496506965493e338b344ae"
+    },
+    {
+      "path": "independent-review/RECOVERY-CORS-OBSERVER-CAVEAT-attempt03.json",
+      "sha256": "abf482f0c6834b78278009babd829575347523af5f1155e5fd73487170c41deb"
+    },
+    {
+      "path": "independent-review/BROWSER-ONLY-OUTCOME-REVIEW-attempt04.json",
+      "sha256": "59d86727f76dbc0baea6614dd131951ebe5c4b08e8f4360df7cb35c166d3f8b0"
+    },
+    {
+      "path": "independent-review/BROWSER-VISUAL-REVIEW-CORRECTION-attempt04.json",
+      "sha256": "525583938bb46e7ab25354315dbf53f27159e5a1f8277c1d11588c3ed858fbe0"
+    },
+    {
+      "path": "independent-review/BROWSER-DIAGNOSTIC-OUTCOME-REVIEW-attempt04.json",
+      "sha256": "406cee76f531bd45f75f2b1acf1bdc4ea150519a18166067b93d3af2db349de5"
+    },
+    {
+      "path": "independent-review/FINAL-RECOVERY-INTEGRITY-RECIPE-attempt04-v3.json",
+      "sha256": "8baa1640b6c48055c1fca13ba39869ee4d9b42da488cb7e7c6b75cb7ac3da51c"
+    },
+    {
+      "path": "independent-review/RECOVERY-RECONCILIATION-RECIPE-ADMISSION-attempt04-v2.json",
+      "sha256": "a74d55527d21f919018ca9962a2fe60802722da5832fce7a13512fb3710db40d"
+    },
+    {
+      "path": "REPAIR-HANDOFF-attempt02-v2.md",
+      "sha256": "e80c44e3a003725eef58a758d10ccafa4a1e4e635329b3268abb796aaaeb031e"
+    },
+    {
+      "path": "browser/BROWSER-LIFECYCLE-HANDOFF-attempt04-v2.md",
+      "sha256": "9cb5683bce705e5faa9a9b6c0356ec8360a55507ab69b4b186e89bfc72a3209b"
+    }
+  ],
+  "reviewFindings": [
+    "Base final-integrity currentCheckoutQualified:true is a source/artifact provenance assertion only; its own runtimeQualificationPassed:false and this review forbid interpreting it as overall R06 qualification.",
+    "Original expired-get-session removes the expired row; later original expired-labelled endpoints are post-cleanup replays. The three supplement cases separately supply retained-row preconditions.",
+    "The original timestamp failure remains failed; new four-case UTC verification supplies successor evidence without rewriting historic request bounds.",
+    "The original APIRequestContext foreign-Origin valid-credential success is not a browser auth bypass. Real-browser forbidden bookkeeping is independently proven; no unsupported new business-policy approval gate is created.",
+    "Frozen recovery03 calls Fetch Response.status() as a function; its generic catch does not independently establish CORS unreadability. Actual403/private-free original bytes, real request metadata and native mutation remain proven, including the separate form-navigation probe.",
+    "Browser review visual erratum corrects the FR invalidated screenshot to French (SHA0eb7b75b95d19e98d530146c09b40005170cb2f3f3ec3be52a24514012d8ad97); no localization defect is claimed and full localization is not certified.",
+    "Corrected reconciliationv2 restores numeric original passed53 alongside qualificationPassed:false; predecessor summary-label collision and raw outcomes preserved."
+  ],
+  "nextAction": "Refresh and hash credential before/after hooks, outcome helper, route adapter, trusted-origin configuration and installed origin/Fetch Metadata call chain; bind the two rejected browser requests to exact responses/native deltas and select the smallest bookkeeping repair.",
+  "requiredBeforeAdvancement": [
+    "Bounded origin-rejection bookkeeping repair with source/mocked and real-browser/native no-write negative/authorized-positive proof, including threshold and expired-lock cases.",
+    "Refresh candidate and rebuild after any product change; requalify affected current-session denial and authorized positive controls against the new artifact.",
+    "Resolve four strict EN/FR authorized/restored browser lifecycle gates with exact response-to-consumer evidence or separately reviewed intended-cancellation contract.",
+    "Independent source/execution/outcome review and truthful successor publication; parentP04/V02/production stay blocked meanwhile."
+  ],
+  "limitations": [
+    "No commit,push,production flags/data/schema/deployment changes.",
+    "No product fix performed during this qualification continuation.",
+    "No hosted provider,performance,complete accessibility/full localization or production readiness certification.",
+    "Shared E29 publication has not yet been independently accepted; separate actual publication review remains required."
+  ]
+}

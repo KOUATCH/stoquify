@@ -1,0 +1,16 @@
+{
+  "synthetic": true,
+  "checks": [
+    "Named firm preparer records one settlement-proof request through the protected composer."
+  ],
+  "screenshots": [
+    "request-composer-en.png",
+    "request-tracking-en.png",
+    "failure-preparer.png",
+    "failure-owner.png",
+    "failure-reviewer.png"
+  ],
+  "pageErrors": [],
+  "passed": false,
+  "failure": "locator.click: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('section[aria-labelledby=\"close-evidence-title\"]').getByRole('button', { name: 'Respond to request', exact: true })\u001b[22m\n"
+}

@@ -13,6 +13,8 @@ jest.mock("next/headers", () => ({
   headers: jest.fn(),
 }))
 
+jest.mock("better-auth/api", () => ({ isAPIError: (error: any) => error?.name === "APIError" }))
+
 jest.mock("@/lib/auth", () => ({
   auth: {
     api: {
@@ -60,7 +62,7 @@ const USER_ID = "user-1"
 const ORGANIZATION_ID = "org-1"
 
 const mockHeaders = headers as jest.Mock
-const mockGetSession = auth.api.getSession as jest.Mock
+const mockGetSession = auth.api.getSession as unknown as jest.Mock
 const mockFindSession = db.session.findFirst as jest.Mock
 const mockRequireRbacContext = requireRbacContext as jest.Mock
 
@@ -112,6 +114,10 @@ function assuranceEvidence(overrides: Record<string, unknown> = {}) {
 }
 
 describe("auth session assurance", () => {
+  it("rejects retained recent assurance while password re-verification is locked", async () => {
+    mockFindSession.mockResolvedValue(assuranceEvidence({ assuranceLockedUntil: new Date(NOW.getTime() + 60_000) }))
+    await expect(requireFreshAuth()).rejects.toBeInstanceOf(FreshAuthRequiredError)
+  })
   beforeEach(() => {
     jest.useFakeTimers()
     jest.setSystemTime(NOW)
@@ -142,6 +148,7 @@ describe("auth session assurance", () => {
         assuranceMethod: true,
         assuranceOrganizationId: true,
         assuranceLevel: true,
+        assuranceLockedUntil: true,
       },
     })
     expect(result.claims).toMatchObject({
@@ -164,6 +171,23 @@ describe("auth session assurance", () => {
       status: 401,
     })
     expect(mockRequireRbacContext).not.toHaveBeenCalled()
+  })
+
+  it("normalizes the current-account auth denial for application consumers", async () => {
+    mockGetSession.mockRejectedValue({ name: "APIError", status: "UNAUTHORIZED", body: { code: "CURRENT_SESSION_UNAVAILABLE" } })
+    await expect(requireSession()).rejects.toMatchObject({ name: "RbacError", code: "UNAUTHENTICATED", status: 401 })
+    expect(mockFindSession).not.toHaveBeenCalled()
+    expect(mockRequireRbacContext).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    new Error("synthetic store failure"),
+    { name: "APIError", status: "INTERNAL_SERVER_ERROR", body: { code: "CURRENT_SESSION_UNAVAILABLE" } },
+    { name: "APIError", status: "UNAUTHORIZED", body: { code: "OTHER_ERROR" } },
+  ])("does not conceal other authentication failures", async error => {
+    mockGetSession.mockRejectedValue(error)
+    await expect(requireSession()).rejects.toBe(error)
+    expect(mockFindSession).not.toHaveBeenCalled()
   })
 
   it("rejects an RBAC identity that differs from the bound session user", async () => {

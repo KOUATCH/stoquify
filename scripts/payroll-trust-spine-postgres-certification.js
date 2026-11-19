@@ -110,11 +110,17 @@ function approvalArtifacts(ids, contender) {
   };
 }
 
-async function prepareApprovalAttempt(connectionString, ids, artifacts) {
-  const client = new Client({ connectionString });
+async function prepareApprovalAttempt(connectionString, ids, artifacts, afterSnapshot) {
+  const client = new Client({ connectionString, connectionTimeoutMillis: 5000, query_timeout: 15000 });
   await client.connect();
-  await client.query("BEGIN ISOLATION LEVEL SERIALIZABLE");
   try {
+    await client.query("BEGIN ISOLATION LEVEL SERIALIZABLE");
+    await client.query("SET LOCAL statement_timeout = '10s'");
+    await client.query("SET LOCAL idle_in_transaction_session_timeout = '20s'");
+    if (afterSnapshot) {
+      await client.query('SELECT "status", "version" FROM "payroll_runs" WHERE "organizationId" = $1 AND "id" = $2', [ids.organizationId, ids.runId]);
+      await afterSnapshot();
+    }
     await client.query(
       `INSERT INTO "business_events" (
          "id", "organizationId", "eventType", "eventSource", "idempotencyKey",
@@ -155,7 +161,7 @@ async function prepareApprovalAttempt(connectionString, ids, artifacts) {
     );
     return client;
   } catch (error) {
-    await client.query("ROLLBACK");
+    await client.query("ROLLBACK").catch(() => {});
     await client.end();
     throw error;
   }
@@ -267,19 +273,34 @@ async function runCertification(safety) {
     await createReviewedRun(setup, raceIds, `race-${suffix}`);
     const contenderA = approvalArtifacts(raceIds, "a");
     const contenderB = approvalArtifacts(raceIds, "b");
-    const clientA = await prepareApprovalAttempt(safety.raw, raceIds, contenderA);
-    const clientB = await prepareApprovalAttempt(safety.raw, raceIds, contenderB);
-    const raceResults = await Promise.all([
-      finishApprovalAttempt(clientA, raceIds, contenderA, false),
-      finishApprovalAttempt(clientB, raceIds, contenderB, false),
-    ]);
+    // Both contenders establish their SERIALIZABLE snapshot before any write.
+    // Do not wait for both to finish preparation: close-source triggers serialize
+    // organization writes, so the first must be allowed to reach COMMIT.
+    let arrivals = 0;
+    let releaseSnapshots;
+    const snapshotsReady = new Promise(resolve => { releaseSnapshots = resolve; });
+    const afterSnapshot = async () => {
+      if (++arrivals === 2) releaseSnapshots();
+      await snapshotsReady;
+    };
+    const raceResults = await Promise.all([contenderA, contenderB].map(async artifacts => {
+      try {
+        const client = await prepareApprovalAttempt(safety.raw, raceIds, artifacts, afterSnapshot);
+        return await finishApprovalAttempt(client, raceIds, artifacts, false);
+      } catch (error) {
+        releaseSnapshots();
+        return { won: false, code: error.code || error.message, artifacts };
+      }
+    }));
     const raceState = await readAtomicState(setup, raceIds, [contenderA, contenderB]);
     const winner = raceResults.find((result) => result.won);
     const committedEventId = winner?.artifacts.eventId || null;
     add(
       "concurrent_approval_has_one_atomic_winner",
-      raceResults.filter((result) => result.won).length === 1 &&
+      arrivals === 2 &&
+        raceResults.filter((result) => result.won).length === 1 &&
         raceResults.filter((result) => !result.won).length === 1 &&
+        raceResults.filter((result) => !result.won).every(result => ['40001', '23505', 'CAS_LOST'].includes(result.code)) &&
         raceState.run?.status === "APPROVED" &&
         raceState.run?.version === 3 &&
         raceState.run?.approvedBusinessEventId === committedEventId &&
@@ -291,6 +312,7 @@ async function runCertification(safety) {
         raceState.outboxEventIds[0] === committedEventId &&
         raceState.auditCount === 1,
       {
+        snapshotContenders: arrivals,
         winners: raceResults.filter((result) => result.won).length,
         losers: raceResults.filter((result) => !result.won).length,
         loserCodes: raceResults.filter((result) => !result.won).map((result) => result.code),

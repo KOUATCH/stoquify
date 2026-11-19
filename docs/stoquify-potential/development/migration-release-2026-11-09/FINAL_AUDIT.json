@@ -1,0 +1,367 @@
+{
+  "auditedAt": "2026-11-09T15:27:02.886Z",
+  "mode": "Narrow file-only final report/receipt audit; no application/database command or test suite executed; full9300source/6709artifact rehash deliberately not repeated",
+  "passed": true,
+  "status": "FINAL_REPORT_AND_RECEIPTS_CONSISTENT_LOCAL_ONLY",
+  "reportSha256": "dad43936b7d555453cb216da6d30004ed14c6a281648b586fa4b08af99ecc0f2",
+  "finalQualificationSha256": "149bf61dff658d0b4434b9dbd39c31d5ef55ee5bf43147fb8dcde602e36f3b30",
+  "sourceManifestContentSha256": "a6e0b40433ec6faaadae9e2db14ddd972f0e30ecd0185646b8d7190ed91d2a06",
+  "artifactSha256": "a7e81563d896cc834a60c6b0a239fd20cd3fafc46fc466c3f3f212259d3a0c30",
+  "checks": [
+    {
+      "name": "All18finalselectedreceiptSHA256bindings",
+      "passed": true,
+      "receipts": 18,
+      "bindings": [
+        {
+          "path": "MIGRATION_REHEARSAL_RESULT.json",
+          "sha256": "22f604a9badafa62f362c5feb712021eef8434f93e5f52204561348a2736af12"
+        },
+        {
+          "path": "migrated-financial-kernels.results.json",
+          "sha256": "0caa6ade98fec080300e9240d6d10fcdf1de583c4019bc2a164cfc1a7d88ca32"
+        },
+        {
+          "path": "trigger-probes.results.json",
+          "sha256": "8b7eb340f3b2c1ab38f6a5824d24daa1a9e3ee48933a1db47b699d1b6ac36d06"
+        },
+        {
+          "path": "UPGRADE_PROOF_RESULT.json",
+          "sha256": "8bd7fe7ff59a8a8d07cbd81644608b3f5c7dfe31fa53cfb2b80c4797354b6631"
+        },
+        {
+          "path": "LOCK_RESTORE_SELECTED.json",
+          "sha256": "9025fd1cfc1954683d7bd470ad3ec71047aa5ba4f7bb66147c3c105b6ef20ee2"
+        },
+        {
+          "path": "CLEAN_INSTALL_SELECTED.json",
+          "sha256": "ce880a8f22f27f6b94fdc83fa83b1715f1cbf9a0f111b53c60d20c324c5219ba"
+        },
+        {
+          "path": "CLEAN_INSTALL_RESULT_ATTEMPT_2.json",
+          "sha256": "81b5b52f1f7e6d6537905eec3907b15cf3d078a165660ef566f15968050ef6ed"
+        },
+        {
+          "path": "CANDIDATE_NATIVE_READINESS.json",
+          "sha256": "1fcce2de7f25c97906bdbfc053d127871572ee8a1bebb4f3b788355030edf1d2"
+        },
+        {
+          "path": "WORKFLOW_SOURCE_BINDING.json",
+          "sha256": "d08e3f1bd635aee052fe01e49effed32b39b0d648c2917f857263fe1e32d71b4"
+        },
+        {
+          "path": "artifact-control-unit.results.json",
+          "sha256": "71900d6065fe8fa50ef8c19900dfbd4aa7a14cada4b7add274809686612eae0b"
+        },
+        {
+          "path": "artifact-private-assets-unit-qualified.results.json",
+          "sha256": "e2e32f9dbd58a166d373f3cef95be176983a9b11b11b849c0da0d047280544bc"
+        },
+        {
+          "path": "PRIVATE_ASSET_INPUT_SUPPLEMENT.json",
+          "sha256": "dc1ef40b73e132ef4a62a464a7fc32a9f06617693acded770bbd3c0d55a412ae"
+        },
+        {
+          "path": "ARTIFACT_QUALIFICATION.json",
+          "sha256": "93ef3a7d63f05a3faed184c7aef74eac74f4745c77e3c80acbf92dab51bf0ed2"
+        },
+        {
+          "path": "ARTIFACT_EMITTED_DIGEST.json",
+          "sha256": "0b981ad82d9ad01e1936758e6436b7f3e50ec8460333458942f0ae14cdc5da05"
+        },
+        {
+          "path": "LOCALHOST_PROMOTION_REFUSAL.json",
+          "sha256": "f3575f66dcf6e03ee7aa15d1dab54a53fa1273ceea094e1c414fa0140ada1640"
+        },
+        {
+          "path": "ARTIFACT_HTTP_SMOKE_RESULT.json",
+          "sha256": "e52767cb7f383e42067b9e79d02c4b937aa7c53c02326383a47faa8457ea3465"
+        },
+        {
+          "path": "PRODUCTION_SECRET_PREFLIGHT.json",
+          "sha256": "22edbd15666eef4edfa5b8a075e32fee3764b10fe43fe8ab6eae75742f0e6a3d"
+        },
+        {
+          "path": "DATABASE_TARGET.json",
+          "sha256": "0caca790ff0cf43d6ac8a04e9320088e940070700b4cd02bd3d126459a3ad713"
+        }
+      ]
+    },
+    {
+      "name": "Finalstatusandindependentevidencecounts",
+      "passed": true,
+      "sourceFiles": 9300,
+      "migrations": 121,
+      "kernelPassed": 16,
+      "kernelSkipped": 1,
+      "rollbackProbes": 13,
+      "mockedArtifactPassed": 84,
+      "upgradeApplicationTables": 246,
+      "restoreTablesIncludingHistory": 247,
+      "previousUiSourceRoots": 6
+    },
+    {
+      "name": "Trustedartifactmanifest/sourceidentityandbuildreceipts",
+      "passed": true,
+      "artifactFiles": 6709,
+      "artifactBuildId": "tRROCJHlhqUTyyQGm1mN6",
+      "manifestOnlyRehashed": true,
+      "fullRuntimeFileRehashRepeated": false,
+      "buildWarnings": 28,
+      "buildErrors": 0,
+      "staticPages": 11
+    },
+    {
+      "name": "ActualCLIlocalschemarefusalwithnativeV8coverage",
+      "passed": true,
+      "actualArtifactVerifyCalls": 1,
+      "lockCalls": 0,
+      "migrationLauncherCalls": 0,
+      "expectedCliExit": 1
+    },
+    {
+      "name": "FinalHTTPSauthenticationprotectedSSRandrevocationevidence",
+      "passed": true,
+      "classification": "Real HTTPS client requests through private loopback TLS proxy to actual sealed standalone application and Better Auth endpoints; no browser",
+      "protectedRoutes": 3,
+      "revokedRecovery": "streamed-next-redirect",
+      "financialWrites": 0,
+      "finalTransactionCounts": {
+        "sales": 0,
+        "settlements": 0,
+        "sessions": 0,
+        "posSessions": 0,
+        "journals": 0
+      },
+      "artifactUnchanged": true
+    },
+    {
+      "name": "RetainedfirstandsecondHTTPfailuresremainfalsewithcleanup",
+      "passed": true,
+      "retainedAttempts": [
+        {
+          "path": "artifact-http-attempts/01-cold-auth-timeout/ARTIFACT_HTTP_SMOKE_RESULT.json",
+          "sha256": "6def19db258b2fec7360af757b7e9a271ad7c09f1a7a68816570ccf7f63f56fd",
+          "passed": false,
+          "failure": "Owned HTTP request timed out",
+          "clusterStopped": true,
+          "applicationStopped": true,
+          "artifactUnchanged": true
+        },
+        {
+          "path": "artifact-http-attempts/02-streamed-recovery-status/ARTIFACT_HTTP_SMOKE_RESULT.json",
+          "sha256": "348334b585ba89daf40731453f8d13a19950e875bd148c792a4c7d09cf7186d6",
+          "passed": false,
+          "failure": "Revoked cookie must not authorize protected SSR",
+          "clusterStopped": true,
+          "applicationStopped": true,
+          "artifactUnchanged": true
+        }
+      ]
+    },
+    {
+      "name": "Ownedshutdownrecordedandfinalthreeportsabsent",
+      "passed": true,
+      "clusterStopped": true,
+      "listenerAbsenceRecordedFor": [
+        58033,
+        3296,
+        3443
+      ],
+      "scope": "Receipt consistency; no new port listener or PG command executed"
+    },
+    {
+      "name": "Exactlytwoproductionblockersandseparatelocalcompilerconditional",
+      "passed": true,
+      "productionBlockers": [
+        "statement_live_delivery_channel_enabled",
+        "accountant_invite_live_delivery_enabled"
+      ],
+      "productionReady": false,
+      "localCompilerConditional": true
+    },
+    {
+      "name": "Finalreportfactsboundariesandnohydratedbrowserorproductionapprovalclaim",
+      "passed": true,
+      "manualReview": "Final local approval is scoped; production, country/close, provider and hydrated browser boundaries remain explicit",
+      "suggestedCorrections": []
+    }
+  ],
+  "failures": [],
+  "syntax": [
+    {
+      "path": "artifact-http-smoke.cjs",
+      "sha256": "038a3b30270db5fcfe497f4f463a8b3ba4ceb7f180fc37cfcce085daf84ce9c4",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "path": "artifact-http-recovery.test.cjs",
+      "sha256": "e2ef9764851c8eea551bd57b4be50c407393bf9b81acb608b0438ae45b4881fa",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "path": "localhost-promotion-refusal.cjs",
+      "sha256": "371fbd5e7a5e2945d939aebf04fac666cd7e4ba639c784af2aee1d205a89fe82",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "path": "build-artifact.cjs",
+      "sha256": "a3f587cf313c3db44fdf93e212c13dca6449842174c15663ff957d9beef75b7a",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "path": "finalize-qualification.cjs",
+      "sha256": "9cb1f0448eef4745ebece381f4c334e9213dddf5bf55af0b6ea809fe9a26b86b",
+      "exitCode": 0,
+      "passed": true
+    }
+  ],
+  "references": [
+    {
+      "reference": "DATABASE_TARGET.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "CANDIDATE_TARGET.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "MIGRATION_SOURCE_PROVENANCE.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "CANDIDATE_SOURCE_MANIFEST.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "MIGRATION_REHEARSAL_RESULT.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "migrated-financial-kernels.results.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "sales-accounting-workflow.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "trigger-probes.results.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "CLEAN_INSTALL_SELECTED.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "CANDIDATE_NATIVE_READINESS.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "PRIVATE_ASSET_INPUT_SUPPLEMENT.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "WORKFLOW_SOURCE_BINDING.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "../authenticated-sales-accounting-2026-11-08/RESULT.md",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "UPGRADE_PROOF_RESULT.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "lock-restore-b968ba1b86/lock-probes.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "LOCK_RESTORE_SELECTED.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "ARTIFACT_QUALIFICATION.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "ARTIFACT_EMITTED_DIGEST.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "LOCALHOST_PROMOTION_REFUSAL.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "ARTIFACT_HTTP_SMOKE_RESULT.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "artifact-http-attempts/01-cold-auth-timeout/ARTIFACT_HTTP_SMOKE_RESULT.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "SEALED_NATIVE_DIAGNOSTIC.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "artifact-http-attempts/02-streamed-recovery-status/ARTIFACT_HTTP_SMOKE_RESULT.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "https://nextjs.org/docs/15/app/api-reference/functions/redirect",
+      "external": true,
+      "scope": "Link formatting only; external content not re-browsed"
+    },
+    {
+      "reference": "PRODUCTION_SECRET_PREFLIGHT.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "LOCAL_COMPILER_SECRET_PREFLIGHT.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "FINAL_QUALIFICATION.json",
+      "exists": true,
+      "selfCreatedByThisAudit": false
+    },
+    {
+      "reference": "FINAL_AUDIT.json",
+      "exists": true,
+      "selfCreatedByThisAudit": true
+    }
+  ],
+  "productionApproved": false,
+  "finishedAt": "2026-11-09T15:27:05.792Z"
+}

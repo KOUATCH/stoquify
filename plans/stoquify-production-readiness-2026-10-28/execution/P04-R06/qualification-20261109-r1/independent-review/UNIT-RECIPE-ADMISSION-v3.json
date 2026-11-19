@@ -1,0 +1,91 @@
+{
+  "at": "2026-11-10T08:44:54.744Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Pre-execution admission of exact attempt03 mocked unit retry only",
+  "priorAdmission": "UNIT-RECIPE-ADMISSION-v2.json",
+  "inputsReceiptSha256": "7ff5831f41507b19c8c2069e6ebb1cb5dbc83d4d4bb7e4594ef1739e480c6503",
+  "files": [
+    {
+      "path": "lib/auth.ts",
+      "sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5",
+      "actual": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b",
+      "actual": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b"
+    },
+    {
+      "path": "lib/security/__tests__/auth-current-authority.test.ts",
+      "sha256": "3b299762f485a4ab0f0ce9e281fcc2e7ac18ea20e61eebbb0c72dbba7744070c",
+      "actual": "3b299762f485a4ab0f0ce9e281fcc2e7ac18ea20e61eebbb0c72dbba7744070c"
+    },
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "sha256": "ac5b6a129cc5fff4816147d201fa06a9a10b610a9f206686c7cdbfd9f2314873",
+      "actual": "ac5b6a129cc5fff4816147d201fa06a9a10b610a9f206686c7cdbfd9f2314873"
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "sha256": "4b402f487038b9c7c1d4b86b56e8f271e1303405a2a10ceb14bed23f0ab0ae09",
+      "actual": "4b402f487038b9c7c1d4b86b56e8f271e1303405a2a10ceb14bed23f0ab0ae09"
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "sha256": "aae2f1a20add9453671f8c08c25eca1215dcb7e790a46b784d3d35cd01b1949a",
+      "actual": "aae2f1a20add9453671f8c08c25eca1215dcb7e790a46b784d3d35cd01b1949a"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+      "actual": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493"
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+      "actual": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b"
+    },
+    {
+      "path": "unit/run-v3.cjs",
+      "sha256": "455611ab9c2aa394f04e8bb9058068a581636767caaf66abd01f564ceaf92bd2",
+      "actual": "455611ab9c2aa394f04e8bb9058068a581636767caaf66abd01f564ceaf92bd2",
+      "syntaxExit": 0
+    },
+    {
+      "path": "unit/jest.config.cjs",
+      "sha256": "711c79123c48f8ad5f361017ebbb6166cb0fa73bdfaff51bcd5484ef24ca20cf",
+      "actual": "711c79123c48f8ad5f361017ebbb6166cb0fa73bdfaff51bcd5484ef24ca20cf",
+      "syntaxExit": 0
+    },
+    {
+      "path": "unit/preload.cjs",
+      "sha256": "d490eba5fa3fc86cc69ad08621c69e29e4f01a20470e7708f1d4ebca45b8639e",
+      "actual": "d490eba5fa3fc86cc69ad08621c69e29e4f01a20470e7708f1d4ebca45b8639e",
+      "syntaxExit": 0
+    },
+    {
+      "path": "unit/guard.cjs",
+      "sha256": "98382f3fa2922a93f55f89327f8a3b5997b991742797d1836d56e39607de21ca",
+      "actual": "98382f3fa2922a93f55f89327f8a3b5997b991742797d1836d56e39607de21ca",
+      "syntaxExit": 0
+    }
+  ],
+  "onlyRecipeChanges": [
+    "exclusive output directory attempt02 to attempt03",
+    "command label run-v2 to run-v3"
+  ],
+  "attemptOutputAbsentAtReview": true,
+  "isolation": [
+    "Allowlisted OS environment with synthetic test secret, no database/provider environment",
+    "Node network blocked before config and in test runtime",
+    "Environment file reads blocked",
+    "nextJest without dir avoids project config/env loading",
+    "In-band Jest with no cache, SWC lockfile update disabled"
+  ],
+  "sourceChange": "auth.ts typed spread assertion is the only selected source drift; current exact source rerun required",
+  "limitations": [
+    "Mocked unit evidence only; no real database, session or browser qualification",
+    "Source-controlled guard review does not certify a general sandbox"
+  ]
+}

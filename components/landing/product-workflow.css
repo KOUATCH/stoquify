@@ -1,0 +1,919 @@
+/* The existing public theme owns every color in this showcase. */
+.cinematic-home .workflow-showcase .showcase-inner {
+  align-items: stretch;
+  grid-template-columns: minmax(250px, 0.7fr) minmax(0, 1.65fr);
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.cinematic-home .workflow-showcase .demo-stage {
+  position: static;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border-left: 1px solid var(--line);
+}
+.cinematic-home .workflow-showcase .module-main {
+  animation: workflow-module-enter 180ms ease-out;
+  padding: 24px;
+}
+@keyframes workflow-module-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.cinematic-home .workflow-showcase .module-heading {
+  min-height: 76px;
+}
+.cinematic-home .workflow-showcase .module-preview {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 0 16px 0 0;
+  box-shadow: none;
+}
+.cinematic-home .workflow-showcase .module-preview-body {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 0;
+  flex: 1;
+}
+.cinematic-home .showcase-heading {
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+.cinematic-home .showcase-heading h2 {
+  font-size: clamp(28px, 3vw, 36px);
+  margin-top: 14px;
+}
+.cinematic-home .workflow-showcase .product-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+.cinematic-home .workflow-showcase .accordion {
+  margin-bottom: 0;
+}
+.cinematic-home .workflow-showcase .flow-tab {
+  font-size: 14px;
+  padding-block: 14px;
+}
+.cinematic-home .workflow-showcase .flow-descriptions .flow-copy {
+  grid-area: 1 / 1;
+  padding: 18px 0;
+  animation: none;
+  transition: opacity 180ms ease-out;
+}
+.cinematic-home .workflow-showcase .flow-descriptions { display: grid; }
+.cinematic-home .workflow-showcase .flow-copy[aria-hidden="true"] { visibility: hidden; opacity: 0; pointer-events: none; }
+.cinematic-home .workflow-showcase .active .flow-tab { color: var(--link); }
+.cinematic-home .workflow-showcase .flow-copy p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.cinematic-home .workflow-showcase .module-journey {
+  margin-top: auto;
+}
+.cinematic-home .showcase-context {
+  display: grid;
+  grid-column: 1 / -1;
+  padding: 24px;
+  border-top: 1px solid var(--line);
+}
+.cinematic-home .showcase-context-state {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+.cinematic-home .showcase-context-state[aria-hidden="true"] {
+  visibility: hidden;
+  pointer-events: none;
+}
+.cinematic-home .showcase-context .accounting-workflow-context {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.cinematic-home .showcase-context .accounting-workflow-context dl {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 24px;
+}
+.cinematic-home .workflow-showcase .module-heading h3 {
+  max-width: none;
+}
+.cinematic-home .workflow-showcase .module-chrome > span:last-child {
+  color: var(--muted);
+}
+.cinematic-home .workflow-showcase .module-heading .eyebrow {
+  color: var(--link);
+}
+.cinematic-home .product-workflow {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.cinematic-home .workflow-step-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  color: var(--link);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+.cinematic-home .workflow-viewport {
+  position: relative;
+  isolation: isolate;
+  min-height: 350px;
+}
+.cinematic-home .workflow-playback-indicator {
+  --workflow-indicator-duration: 360ms;
+  display: flex;
+  /* Overlapping hint states reserve the widest label without filling the preview. */
+  width: fit-content;
+  max-width: 100%;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  margin: 0 0 8px auto;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  transition: background-color var(--workflow-indicator-duration) ease-out, border-color var(--workflow-indicator-duration) ease-out, color var(--workflow-indicator-duration) ease-out;
+}
+.cinematic-home .product-workflow[data-playing="false"] .workflow-playback-indicator {
+  background: var(--raised);
+  border-color: var(--line);
+  color: var(--ink);
+  --workflow-indicator-duration: 180ms;
+}
+.cinematic-home .workflow-indicator-icon {
+  display: grid;
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+.cinematic-home .workflow-indicator-hints {
+  display: grid;
+  min-width: 0;
+}
+.cinematic-home .workflow-indicator-state {
+  grid-area: 1 / 1;
+  opacity: 0;
+  /* Reverse from the current opacity; no delayed visibility switch to interrupt. */
+  pointer-events: none;
+  transition: opacity var(--workflow-indicator-duration) ease-out;
+}
+.cinematic-home .workflow-indicator-state[data-active="true"] {
+  opacity: 1;
+}
+.cinematic-home .workflow-indicator-hints > .workflow-indicator-state {
+  /* All hint layers share one interruptible animation clock. */
+  transition: none;
+}
+@media (any-pointer: coarse) {
+  .cinematic-home .workflow-playback-indicator {
+    min-height: 44px;
+    gap: 6px;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+  }
+}
+.cinematic-home .workflow-flight-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+}
+.cinematic-home .workflow-flight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: calc(100% - 24px);
+  padding: 12px 14px;
+  border: 1px solid var(--link);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 12px 28px #0003;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0;
+}
+.cinematic-home .workflow-flight svg {
+  color: var(--link);
+  flex-shrink: 0;
+}
+.cinematic-home .workflow-record,
+.cinematic-home .workflow-card {
+  position: relative;
+}
+.cinematic-home .workflow-record > .workflow-arrival,
+.cinematic-home .workflow-card > .workflow-arrival {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--link);
+  border-radius: 8px;
+  background: var(--brand-soft);
+  opacity: 0;
+  pointer-events: none;
+}
+.cinematic-home .workflow-progress {
+  height: 2px;
+  margin-top: 20px;
+  background: var(--line);
+  overflow: hidden;
+}
+.cinematic-home .workflow-playhead {
+  display: block;
+  height: 100%;
+  background: var(--link);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.cinematic-home .workflow-evidence {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  background: var(--tint);
+  color: var(--link);
+}
+.cinematic-home .workflow-evidence > span {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+}
+.cinematic-home .workflow-evidence small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.cinematic-home .workflow-evidence strong {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.cinematic-home .workflow-evidence > svg {
+  flex-shrink: 0;
+}
+.cinematic-home .workflow-payment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--canvas);
+}
+.cinematic-home .workflow-payment > span {
+  display: grid;
+  gap: 5px;
+}
+.cinematic-home .workflow-payment small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.cinematic-home .workflow-payment strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.cinematic-home .workflow-payment > .workflow-payment-confirm {
+  display: flex;
+  align-items: center;
+  padding: 9px;
+  border-radius: 6px;
+  background: var(--tint);
+  border: 1px solid var(--link);
+  color: var(--ink);
+  font-size: 10px;
+}
+.cinematic-home [data-motion-off="true"] .workflow-flight-layer,
+.cinematic-home [data-motion-off="true"] .workflow-progress {
+  display: none;
+}
+.cinematic-home .workflow-topline {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 14px 0 20px;
+  border-top: 1px solid var(--line);
+}
+.cinematic-home .workflow-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.cinematic-home .workflow-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 22px 18px;
+  border: 1px solid var(--line);
+  background: var(--canvas);
+  border-radius: 12px;
+}
+.cinematic-home .workflow-card > strong {
+  font-size: clamp(18px, 1.8vw, 27px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+}
+.cinematic-home .workflow-card > small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.cinematic-home .workflow-ledger {
+  margin-top: 18px;
+}
+.cinematic-home .workflow-record {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+.cinematic-home .workflow-record > span {
+  flex: 1;
+  color: var(--muted);
+  min-width: 0;
+}
+.cinematic-home .workflow-record > strong {
+  font-weight: 500;
+  text-align: right;
+}
+.cinematic-home .workflow-record > svg {
+  color: var(--success);
+  flex-shrink: 0;
+}
+.cinematic-home .workflow-status {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--warning);
+  line-height: 1.6;
+}
+.cinematic-home .workflow-status.complete {
+  color: var(--success);
+}
+.cinematic-home .workflow-status > svg {
+  flex-shrink: 0;
+}
+.cinematic-home .workflow-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  margin-top: 18px;
+  padding: 14px;
+  background: var(--tint);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--ink);
+}
+.cinematic-home .workflow-result > svg {
+  color: var(--link);
+  flex-shrink: 0;
+}
+.cinematic-home .workflow-checkout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 18px;
+  align-items: center;
+}
+.cinematic-home .workflow-catalog {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.cinematic-home .workflow-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 18px 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--canvas);
+  text-align: center;
+}
+.cinematic-home .workflow-item > svg {
+  color: var(--link);
+  margin-bottom: 8px;
+  stroke-width: 1.3;
+}
+.cinematic-home .workflow-item > strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.cinematic-home .workflow-item > span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.cinematic-home .workflow-item > small {
+  font-size: 11px;
+  color: var(--link);
+  background: var(--tint);
+  border-radius: 20px;
+  padding: 2px 10px;
+}
+.cinematic-home .workflow-register {
+  grid-column: 1/-1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  padding-top: 8px;
+}
+.cinematic-home .workflow-receipt {
+  padding: 22px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--canvas);
+  box-shadow: 0 12px 30px #0002;
+}
+.cinematic-home .workflow-receipt-brand {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  margin-bottom: 4px;
+}
+.cinematic-home .workflow-receipt > small {
+  color: var(--muted);
+  font-size: 10px;
+}
+.cinematic-home .workflow-receipt .workflow-record {
+  font-size: 11px;
+  gap: 6px;
+}
+.cinematic-home .workflow-receipt .workflow-record strong {
+  white-space: nowrap;
+}
+.cinematic-home .workflow-total {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 18px 0;
+  border-top: 1px dashed var(--line);
+  font-size: 14px;
+}
+.cinematic-home .workflow-transfer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 70px minmax(0, 1fr);
+  gap: 12px;
+}
+.cinematic-home .workflow-transfer .workflow-card {
+  align-items: center;
+  padding: 18px 10px;
+  text-align: center;
+}
+.cinematic-home .workflow-transfer .workflow-card > strong {
+  font-size: 38px;
+}
+.cinematic-home .workflow-route {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.cinematic-home .workflow-route.in-transit {
+  color: var(--link);
+}
+.cinematic-home .workflow-route > span {
+  font-size: 18px;
+}
+.cinematic-home .workflow-route > small {
+  font-size: 10px;
+  text-align: center;
+}
+.cinematic-home .workflow-source {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.cinematic-home .workflow-source > svg {
+  color: var(--link);
+  flex-shrink: 0;
+}
+.cinematic-home .workflow-source > div {
+  flex: 1;
+  display: grid;
+  gap: 6px;
+}
+.cinematic-home .workflow-source small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.cinematic-home .workflow-source strong {
+  font-size: 14px;
+}
+.cinematic-home .workflow-journal {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 18px;
+}
+.cinematic-home .workflow-journal caption {
+  caption-side: bottom;
+  text-align: left;
+  font-size: 10px;
+  color: var(--muted);
+  padding-top: 10px;
+}
+.cinematic-home .workflow-journal :is(th, td) {
+  text-align: right;
+  padding: 12px 5px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 400;
+}
+.cinematic-home .workflow-journal th:first-child {
+  text-align: left;
+}
+.cinematic-home .workflow-journal thead {
+  color: var(--muted);
+}
+.cinematic-home .workflow-person {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 16px;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.cinematic-home .workflow-person > span {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  background: var(--tint);
+  color: var(--link);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cinematic-home .workflow-person > div {
+  display: grid;
+  gap: 8px;
+}
+.cinematic-home .workflow-person small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.cinematic-home .workflow-person strong {
+  font-size: 16px;
+  font-weight: 500;
+}
+.cinematic-home .workflow-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 24px;
+}
+.cinematic-home .workflow-steps button {
+  min-width: 0;
+  min-height: 68px;
+  padding: 12px 8px;
+  text-align: left;
+  border: 0;
+  border-top: 2px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.cinematic-home .workflow-steps button > span {
+  display: block;
+  font-size: 10px;
+  margin-bottom: 6px;
+  letter-spacing: 0.1em;
+}
+.cinematic-home .workflow-steps button[aria-pressed="true"] {
+  border-color: var(--brand-soft);
+  color: var(--ink);
+  background: var(--tint);
+  border-radius: 0 0 6px 6px;
+}
+.cinematic-home .workflow-steps button[aria-pressed="true"] > span {
+  color: var(--link);
+}
+.cinematic-home .workflow-steps button:hover {
+  background: var(--raised);
+}
+.cinematic-home .workflow-explanation {
+  min-height: 112px;
+  padding: 20px 0 12px;
+}
+.cinematic-home .workflow-explanation > div > strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.cinematic-home .workflow-explanation > div > p {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.cinematic-home .workflow-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.cinematic-home .workflow-controls > span {
+  flex: 1;
+  font-size: 10px;
+  color: var(--muted);
+}
+.cinematic-home .workflow-controls > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--ink);
+}
+.cinematic-home .workflow-controls > button:hover {
+  background: var(--raised);
+  border-color: var(--line);
+}
+.cinematic-home .product-workflow button:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 3px;
+}
+.cinematic-home .workflow-controls > button:focus-visible {
+  outline-width: 3px;
+  background: var(--raised);
+  border-color: var(--line);
+}
+@media (max-width: 1100px) {
+  .cinematic-home .workflow-showcase .module-main {
+    padding: 20px 16px;
+  }
+  .cinematic-home .workflow-checkout {
+    grid-template-columns: 1fr;
+  }
+  .cinematic-home .workflow-item {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 10px;
+    gap: 7px;
+  }
+  .cinematic-home .workflow-item > svg {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+  }
+  .cinematic-home .workflow-item > small,
+  .cinematic-home .workflow-register {
+    display: none;
+  }
+}
+@media (max-width: 900px) {
+  .cinematic-home .workflow-showcase .showcase-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cinematic-home .workflow-showcase .demo-stage {
+    position: static;
+    max-width: none;
+    margin: 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .cinematic-home .workflow-showcase .module-preview { border-radius: 0; }
+  .cinematic-home .workflow-showcase .showcase-context { order: 2; }
+  .cinematic-home .workflow-showcase .flow-copy {
+    min-height: 0;
+  }
+  .cinematic-home .workflow-showcase .module-heading {
+    min-height: 90px;
+  }
+  .cinematic-home .workflow-checkout {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+  .cinematic-home .workflow-item {
+    flex-direction: column;
+    padding: 18px 8px;
+  }
+  .cinematic-home .workflow-item > svg {
+    width: 30px;
+    height: 30px;
+  }
+  .cinematic-home .workflow-card > strong {
+    font-size: 24px;
+  }
+}
+
+/* The walkthrough and its instructions share one reading row on wide screens. */
+@media (min-width: 901px) {
+  .cinematic-home .workflow-showcase .product-workflow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 190px;
+    grid-template-rows: auto auto 1fr auto;
+    column-gap: 24px;
+    align-items: start;
+  }
+  .cinematic-home .workflow-showcase .workflow-step-heading { grid-column: 1 / -1; }
+  .cinematic-home .workflow-showcase .workflow-interaction { grid-column: 1; grid-row: 2 / 4; }
+  .cinematic-home .workflow-showcase .workflow-steps { grid-column: 2; grid-row: 2; grid-template-columns: 1fr; margin-top: 0; }
+  .cinematic-home .workflow-showcase .workflow-explanation { grid-column: 2; grid-row: 3; min-height: 0; }
+  .cinematic-home .workflow-showcase .workflow-controls { grid-column: 1 / -1; grid-row: 4; margin-top: 16px; align-self: end; }
+  .cinematic-home .workflow-showcase .workflow-checkout { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 12px; }
+  .cinematic-home .workflow-showcase .workflow-catalog { grid-template-columns: minmax(0, 1fr); }
+  .cinematic-home .workflow-showcase .workflow-item { flex-direction: row; flex-wrap: wrap; padding: 10px; gap: 8px; }
+  .cinematic-home .workflow-showcase .workflow-item > svg { width: 20px; height: 20px; margin: 0; }
+  .cinematic-home .workflow-showcase .workflow-register { display: none; }
+  .cinematic-home .workflow-showcase .workflow-receipt { padding: 12px; }
+  .cinematic-home .workflow-showcase .workflow-topline { padding: 8px 0 12px; }
+  .cinematic-home .workflow-showcase .workflow-record { padding-block: 10px; }
+  .cinematic-home .workflow-showcase .workflow-payment { padding: 10px; margin-top: 12px; }
+  .cinematic-home .workflow-showcase .workflow-result { min-height: 48px; padding: 10px; margin-top: 12px; }
+  .cinematic-home .workflow-showcase .workflow-progress { margin-top: 12px; }
+}
+@media (max-width: 540px) {
+  /* Give playback status its own row so long French hints cannot squeeze
+     between the buttons or change the walkthrough height during playback. */
+  .cinematic-home .workflow-showcase .workflow-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cinematic-home .workflow-showcase .workflow-controls > span { grid-column: 1 / -1; }
+  .cinematic-home .workflow-showcase .product-copy,
+  .cinematic-home .showcase-context { padding: 20px 16px; }
+  .cinematic-home .showcase-context .accounting-workflow-context dl { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+}
+@media (max-width: 540px) {
+  .cinematic-home .workflow-showcase .module-preview-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cinematic-home .workflow-showcase .module-preview-body > aside {
+    display: none;
+  }
+  .cinematic-home .workflow-checkout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .cinematic-home .workflow-item {
+    flex-direction: row;
+    padding: 10px;
+  }
+  .cinematic-home .workflow-item > svg {
+    width: 20px;
+    height: 20px;
+  }
+  .cinematic-home .workflow-receipt {
+    padding: 16px;
+  }
+  .cinematic-home .workflow-viewport {
+    min-height: 400px;
+  }
+  .cinematic-home .workflow-explanation {
+    min-height: 145px;
+  }
+  .cinematic-home .workflow-card {
+    padding: 18px 12px;
+  }
+  .cinematic-home .workflow-card > strong {
+    font-size: 20px;
+  }
+  .cinematic-home .workflow-transfer {
+    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr);
+  }
+  .cinematic-home .workflow-source {
+    flex-wrap: wrap;
+  }
+  .cinematic-home .workflow-steps button {
+    font-size: 11px;
+    padding-inline: 6px;
+  }
+}
+.cinematic-home .workflow-module-select { display: none; }
+.cinematic-home .workflow-showcase.section { padding-block: 64px; }
+.cinematic-home .workflow-showcase .workflow-step-heading { display: none; }
+/* Intrinsic sizing keeps every module and step in one shared frame. The inert
+   guides are static illustrations: only the selected workflow runs a timeline. */
+.cinematic-home .workflow-scene-stack,
+.cinematic-home .workflow-size-guide,
+.cinematic-home .workflow-step-labels,
+.cinematic-home .workflow-explanation,
+.cinematic-home .workflow-showcase .module-headings { display: grid; min-width: 0; }
+.cinematic-home .workflow-scene-stack > *,
+.cinematic-home .workflow-scene-reserve,
+.cinematic-home .workflow-step-labels > *,
+.cinematic-home .workflow-explanation > *,
+.cinematic-home .workflow-showcase .module-heading { grid-area: 1 / 1; min-width: 0; }
+.cinematic-home .workflow-size-guide,
+.cinematic-home .workflow-text-reserve,
+.cinematic-home .workflow-showcase .module-heading[aria-hidden="true"] { visibility: hidden; pointer-events: none; }
+/* One sizing layer serves the active preview or its placeholder. Keep its
+   progress footprint even when reduced motion hides the visible progress bar. */
+.cinematic-home .workflow-size-guide .workflow-progress { display: block; }
+.cinematic-home .workflow-steps button > .workflow-step-labels { display: grid; font-size: inherit; letter-spacing: normal; margin: 0; }
+.cinematic-home .workflow-steps button > .workflow-step-labels > span { min-width: 0; overflow-wrap: anywhere; }
+.cinematic-home .workflow-showcase .showcase-inner { grid-template-columns: minmax(320px, 0.66fr) minmax(0, 1fr); }
+.cinematic-home .workflow-showcase .product-copy { padding: 16px 20px; }
+.cinematic-home .workflow-showcase .flow-tab { padding-block: 10px; min-height: 44px; }
+.cinematic-home .workflow-showcase .flow-copy p { font-size: 13px; }
+.cinematic-home .workflow-showcase .module-main { padding: 16px 20px; }
+.cinematic-home .workflow-showcase .module-heading { min-height: 0; }
+.cinematic-home .workflow-showcase .module-heading h3 { font-size: 20px; margin: 0 0 16px; }
+.cinematic-home .workflow-showcase .module-chrome { height: 48px; padding: 10px 20px; }
+.cinematic-home .workflow-showcase .module-disclosure { padding: 10px 20px; }
+.cinematic-home .workflow-showcase .workflow-step-heading { padding-bottom: 10px; }
+.cinematic-home .workflow-showcase .workflow-viewport { min-height: 0; }
+.cinematic-home .workflow-showcase .workflow-playback-indicator { font-size: 11px; min-height: 32px; padding: 4px 8px; }
+.cinematic-home .workflow-showcase .workflow-evidence { padding: 8px 10px; margin-bottom: 10px; }
+.cinematic-home .workflow-showcase .workflow-topline { padding: 8px 0; }
+.cinematic-home .workflow-showcase .workflow-card { padding: 12px; gap: 8px; }
+.cinematic-home .workflow-showcase .workflow-card > strong { font-size: 22px; }
+.cinematic-home .workflow-showcase .workflow-ledger { margin-top: 10px; }
+.cinematic-home .workflow-showcase .workflow-record { padding-block: 8px; }
+.cinematic-home .workflow-showcase .workflow-result { min-height: 42px; padding: 8px 10px; margin-top: 10px; }
+.cinematic-home .workflow-showcase .workflow-payment { margin-top: 10px; padding: 8px; }
+.cinematic-home .workflow-showcase .workflow-total { padding: 10px 0; }
+.cinematic-home .workflow-showcase .workflow-person { padding: 12px; }
+.cinematic-home .workflow-showcase .workflow-source { padding: 12px; }
+.cinematic-home .workflow-showcase .workflow-journal { margin-top: 10px; }
+.cinematic-home .workflow-showcase .workflow-journal :is(th, td) { padding-block: 8px; }
+.cinematic-home .workflow-showcase .workflow-progress { margin-top: 10px; }
+.cinematic-home .workflow-showcase .workflow-explanation { min-height: 0; padding-top: 12px; }
+.cinematic-home .workflow-showcase .workflow-explanation p { line-height: 1.6; }
+.cinematic-home .workflow-showcase .workflow-steps { gap: 4px; margin-top: 12px; }
+.cinematic-home .workflow-showcase .workflow-steps button { min-height: 44px; padding: 8px; }
+.cinematic-home .workflow-showcase .workflow-steps button > span:first-child { margin-bottom: 2px; }
+.cinematic-home .workflow-showcase .workflow-controls { margin-top: 8px; }
+.cinematic-home .workflow-showcase .showcase-context { padding: 16px 20px; }
+.cinematic-home .showcase-context .accounting-workflow-context dl { font-size: 13px; line-height: 1.5; margin-top: 10px; }
+@media (min-width: 901px) {
+  .cinematic-home .workflow-showcase .product-workflow { grid-template-columns: minmax(0, 1fr) 170px; column-gap: 20px; }
+  .cinematic-home .workflow-showcase .workflow-steps { margin-top: 0; }
+}
+@media (max-width: 900px) {
+  .cinematic-home .workflow-showcase .showcase-inner { grid-template-columns: minmax(0, 1fr); }
+  .cinematic-home .workflow-showcase .flow-descriptions .flow-copy { padding: 12px 0 0; }
+  .cinematic-home .workflow-showcase .module-journey { margin-top: 4px; }
+}
+@media (max-width: 540px) {
+  .cinematic-home .workflow-showcase .product-copy,
+  .cinematic-home .workflow-showcase .module-main,
+  .cinematic-home .workflow-showcase .showcase-context { padding: 16px; }
+  .cinematic-home .workflow-showcase .accordion { display: none; }
+  .cinematic-home .workflow-module-select { display: grid; gap: 8px; font-size: 12px; color: var(--muted); }
+  .cinematic-home .workflow-module-select select { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; padding: 8px; background: var(--canvas); color: var(--ink); font: inherit; }
+  .cinematic-home .workflow-module-select select:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+  .cinematic-home .workflow-showcase .workflow-catalog { gap: 6px; }
+  .cinematic-home .workflow-showcase .workflow-item { padding: 8px; flex-wrap: wrap; }
+  .cinematic-home .workflow-showcase .workflow-receipt { padding: 10px; }
+  .cinematic-home .workflow-showcase .workflow-card > strong { font-size: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-home .workflow-showcase .module-main { animation: none; }
+  .cinematic-home .workflow-showcase .flow-copy { transition: none; }
+  .cinematic-home .workflow-playback-indicator,
+  .cinematic-home .workflow-indicator-state {
+    transition: none;
+  }
+  .cinematic-home .workflow-viewport {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+.cinematic-home.motion-off .workflow-showcase .flow-copy { transition: none; }
+.cinematic-home.motion-off .workflow-showcase .module-main { animation: none; }

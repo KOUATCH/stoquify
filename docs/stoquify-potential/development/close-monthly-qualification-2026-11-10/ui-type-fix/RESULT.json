@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-11-10T15:13:19.553Z",
+  "classification": "Minimal product type-narrowing correction; focused mocked verification only.",
+  "component": "components/finance/CustomerSettlementControls.tsx",
+  "beforeSha256": "c9b32fae6645a32bb72f8d2f3ce4929220d2e545bacb46fe3f943b680f0d585d",
+  "afterSha256": "1a08937f09bcbb906c365ce27f00898f96f54932cd33c93254e57c860e9d2f22",
+  "correction": "Remove unreachable AUTH_REQUIRED/FORBIDDEN/TENANT_SCOPE_VIOLATION comparisons from the later fallback after the earlier guard handles and exits those error codes. Keep SOD_VIOLATION mapping and validation/business/fresh-auth/authority branches.",
+  "receipts": [
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-2d2e071850/verification.json",
+      "sha256": "2d70904f3e340ac05757a4df699d9cf51479cb8e77a7e6169991ea633b6769b7",
+      "tests": 76,
+      "classification": "Mocked unit / protect adapter boundaries; no PostgreSQL/browser"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-7beb0ed572/verification.json",
+      "sha256": "660828c0441121c5d0f2f215266df81f4bfbfcda99c7e8627a04dc4b118889f7",
+      "tests": 22,
+      "classification": "jsdom components/mocked actions; no browser or DB"
+    }
+  ],
+  "skipped": 0,
+  "rootOwnsWholeProjectCompiler": true,
+  "applicationExecuted": false,
+  "databaseExecuted": false
+}

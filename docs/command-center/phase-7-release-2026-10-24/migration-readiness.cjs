@@ -1,0 +1,4 @@
+const fs=require('node:fs'),path=require('node:path'),{spawnSync}=require('node:child_process');
+const {state,environment,redact}=require('./environment.cjs');const s=state();
+const result=spawnSync(process.execPath,[path.join(s.candidate,'scripts/prisma-production-migration-gate.js'),'--mode','fail','--environment','local','--out',path.join(__dirname,'migration-readiness.md'),'--json-out',path.join(__dirname,'migration-readiness.json')],{cwd:s.candidate,env:environment(s,'test'),windowsHide:true,encoding:'utf8',timeout:120000});
+fs.writeFileSync(path.join(__dirname,'migration-readiness.log'),redact(result.stdout)+redact(result.stderr));fs.writeFileSync(path.join(__dirname,'migration-readiness-result.json'),JSON.stringify({exitCode:result.status,execute:false,environment:'local'}));console.log('Read-only readiness exit: '+result.status);process.exitCode=result.status??1;

@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-18",
+  "source": "Observed exec session completion, with corresponding saved browser results and traces",
+  "runs": [
+    { "command": "node docs/retention/execution/P08/evidence/browser-cashier.cjs", "session": 55419, "exit": 0, "result": "BROWSER_RECOVERY.json", "steps": 5 },
+    { "command": "node docs/retention/execution/P08/evidence/browser-manager.cjs", "session": 87287, "exit": 1, "result": "manager-1792342924972.json", "reason": "French destination name assertion did not match the existing nameEn source display" },
+    { "command": "node docs/retention/execution/P08/evidence/browser-manager.cjs", "session": 1367, "exit": 0, "result": "manager-1792343331471.json", "records": 10 },
+    { "command": "node docs/retention/execution/P08/evidence/application.cjs", "session": 70455, "exit": 1, "reason": "Intentional Ctrl+C after browser verification; isolated development server stopped" },
+    { "command": "node docs/retention/execution/P08/evidence/database.cjs stop", "exit": 0, "result": "pg-stop.execution.json" },
+    { "command": "node docs/retention/execution/P08/evidence/cleanup-check.cjs", "exit": 0, "result": "CLEANUP.json" }
+  ]
+}

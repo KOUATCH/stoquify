@@ -1,0 +1,109 @@
+{
+  "authorizedBy": "User instruction in this chat: execute P01, P02 and P03 automatically with independent review and isolated verification; no commit/push/production flags/production migrations/deploy.",
+  "approvedTechnicalScope": [
+    "P01 evidence/scope register",
+    "P02 compiler/check baseline and bounded reproduced verification fixes",
+    "P03 accountant grant pending/step-up investigation, proven bounded repair and isolated verification"
+  ],
+  "productionScope": "M1/M2 proposals remain unapproved for production. No external providers/statutory rates or live access admitted.",
+  "D01": {
+    "state": "approved_scoped_development_only",
+    "scope": "P01-P03 only; full M1/M2 launch decisions remain open"
+  },
+  "D02": {
+    "state": "assigned_for_this_execution",
+    "executor": "root assistant",
+    "independentReviewer": "separate read-only review agent",
+    "productionReleaseOwner": "unassigned"
+  },
+  "D12": {
+    "state": "open_not_blocking_P01_P03",
+    "resolveBefore": [
+      "P17 implementation/qualification",
+      "P21 implementation/qualification"
+    ],
+    "ownerRole": "Programme + relevant country/provider domain owner",
+    "reason": "Prior retention P19 hard prerequisite needs an explicit scope/sequence decision; no supersession made here."
+  },
+  "remainingDecisions": [
+    {
+      "id": "D03",
+      "owner": "Purchasing/POS + operations",
+      "resolveBefore": "P07",
+      "state": "open"
+    },
+    {
+      "id": "D04",
+      "owner": "Product + accountant",
+      "resolveBefore": "P09",
+      "state": "open"
+    },
+    {
+      "id": "D05",
+      "owner": "Country/payroll owner",
+      "resolveBefore": "P17",
+      "state": "open"
+    },
+    {
+      "id": "D06",
+      "owner": "Integration + provider operations",
+      "resolveBefore": "P16/P21/P22",
+      "state": "open"
+    },
+    {
+      "id": "D07",
+      "owner": "Commercial + privacy/legal + support",
+      "resolveBefore": "P05/P23/P24",
+      "state": "open"
+    },
+    {
+      "id": "D08",
+      "owner": "Release/SRE + repository administrator",
+      "resolveBefore": "P33",
+      "state": "open"
+    },
+    {
+      "id": "D09",
+      "owner": "Product + SRE",
+      "resolveBefore": "P29/P34",
+      "state": "open"
+    },
+    {
+      "id": "D10",
+      "owner": "Operations + business owner",
+      "resolveBefore": "P32",
+      "state": "open"
+    },
+    {
+      "id": "D11",
+      "owner": "Product + legal/design",
+      "resolveBefore": "P30",
+      "state": "open"
+    },
+    {
+      "id": "D12",
+      "owner": "Programme + domain owners",
+      "resolveBefore": "P17/P21 implementation and qualification; P35 scope closure",
+      "state": "open"
+    },
+    {
+      "id": "D13",
+      "owner": "Product + employer/accountant + support",
+      "resolveBefore": "P35/P36",
+      "state": "open"
+    },
+    {
+      "id": "D14",
+      "owner": "Product/programme",
+      "resolveBefore": "X01–X04",
+      "state": "open"
+    }
+  ],
+  "environment": {
+    "P01": "source/hash review only",
+    "P02": "Node compiler and inspected isolated workflow/Jest fixtures; no app environment or database",
+    "P03": "explicit unique disposable target, synthetic accounts/secrets and isolated runtime only; exact recipe must be reviewed before execution",
+    "productionFlagChanges": false
+  },
+  "candidateId": "p01-20261028-c0b0126975d7"
+}

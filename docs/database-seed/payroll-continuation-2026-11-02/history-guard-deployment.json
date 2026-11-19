@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-11-02T17:22:06.710Z",
+  "database": "stoquify_replay_dataset_20261028_01",
+  "migration": "20261102190000_payroll_history_proof_version_binding",
+  "status": "APPLIED_TO_OWNED_DISPOSABLE_DATABASE",
+  "applicationDatabaseChanged": false,
+  "before": {
+    "migrations": 120,
+    "runs": 0,
+    "periods": 0
+  },
+  "pending": [
+    "20261102190000_payroll_history_proof_version_binding"
+  ],
+  "sqlSha256": "6134a60bec2f4aead9d134ac16a28c50e8b724b0c2b3ea5dcde97c79485017ce",
+  "exitCode": 0,
+  "after": {
+    "migrations": 121,
+    "runs": 0,
+    "periods": 0
+  },
+  "trigger": {
+    "tgname": "payroll_run_history_proof_version_immutable",
+    "tgenabled": "O",
+    "definition": "CREATE TRIGGER payroll_run_history_proof_version_immutable BEFORE UPDATE OF metadata ON public.payroll_runs FOR EACH ROW EXECUTE FUNCTION payroll_run_history_proof_version_immutable()"
+  },
+  "finishedAt": "2026-11-02T17:22:21.885Z"
+}

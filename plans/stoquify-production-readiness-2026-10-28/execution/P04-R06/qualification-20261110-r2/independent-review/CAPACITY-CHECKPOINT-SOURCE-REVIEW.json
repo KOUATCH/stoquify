@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:28:57.060Z",
+  "reviewer": "/root/r06_review",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "passed": false,
+  "observationAccepted": true,
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "artifactSha256": null,
+  "scope": "Independent read-only current-root and frozen-candidate comparison at capacity suspension",
+  "frozenCandidateFiles": 9789,
+  "currentCapturedFiles": 9792,
+  "criticalInputs": 68,
+  "criticalInputsStillMatch": true,
+  "frozenCandidateStillMatches": true,
+  "currentCheckoutSourceMatches": false,
+  "currentHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "headUnchanged": true,
+  "currentRootManifestSha256": "a78c2b4d8a0d37d0adc3d642930f4304716009232de452899e86b3d4d7396f5d",
+  "candidateManifestSha256": "f6b4ff1065906271c68e8839519396e93e9712e0f2ebad2598ce3a1ea48137c5",
+  "currentRootDelta": [
+    {
+      "path": "actions/finance/__tests__/customer-settlement.actions.test.ts",
+      "beforeSha256": "1d0dfa4e384a9e2fc32815c32072abd89235304ca4955a2c0f7759a0ed8cd47c",
+      "afterSha256": "3cee2b5b6cf5f7df413db9a73028783c4ebe603424a66e5bea9766bbc373c1dc"
+    },
+    {
+      "path": "actions/finance/customer-settlement.actions.ts",
+      "beforeSha256": "e155ef594f1f8c409bc82e4b5ead9503d49ac6b0a0d93cc94e137ad6e975b59d",
+      "afterSha256": "fbaebb725ed973fe80a5b1d3765f9dd2c6252e405455b633534569840eee6d5b"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-665f772749/results.json",
+      "beforeSha256": null,
+      "afterSha256": "f0b896fb7007c345b48a686903f7e6e5939665e47f62bc2fff226cf063cfabbd"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-665f772749/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "5444cc9b9962b6f3eaca4b87a91d0fd41aa0fa9ec3f5c1d2c02fd34649e01f9e"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement-workbench.service.test.ts",
+      "beforeSha256": "f60cd1887999d7e81e9aac72b9ccfbc27e5f1cfc9a14cac2189f2d0fab69339f",
+      "afterSha256": "e84010ab07370e4a71a6252a7e2a4953d312deaa66ab8922c206c247c912831a"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement.service.test.ts",
+      "beforeSha256": "f1dfc30ba58d3e229d7dec19a66785d5c959597896ab31b8903e1826fd071e46",
+      "afterSha256": "9b8946ee48ac068789a2a9706039cf83256b8f56a571c9199ead86df024a1500"
+    },
+    {
+      "path": "services/accounting/customer-settlement-workbench.service.ts",
+      "beforeSha256": "42d3dee68338f985f95361663774199d57dccc8595afa3e7c00cbcdf0d106e97",
+      "afterSha256": "0864bde250c783471fd5ea4345f4772b76b0e2808b80876e2b161b53eb91eefc"
+    },
+    {
+      "path": "services/accounting/customer-settlement.schemas.ts",
+      "beforeSha256": "e734d2aae5761b19a2f02de495513ad8f9fcd180a678d4a26f4ae8b3440bbdf8",
+      "afterSha256": "e4938b2a6a708b1c919aed309cc7436ef2e0bbd3d2f2e66ce0b404ea89957daa"
+    },
+    {
+      "path": "services/accounting/customer-settlement.service.ts",
+      "beforeSha256": "2c6339a4b2feb6c5b6220013aa7960b109ee63746b48c591c44e3f40264aa637",
+      "afterSha256": "70e7cd975460b5b0bed0e43d2db522980146b61973fb25ca6d3b8eedc5dd693f"
+    },
+    {
+      "path": "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts",
+      "beforeSha256": "2818a6eb5e0006bbc38ae3e9b03d893a081402d303b543c65989282916af9bbf",
+      "afterSha256": "d130fb7b8fe5ebce9af62823b51a32d0da49fd70076b8662fb3889604a45532b"
+    },
+    {
+      "path": "services/payments/customer-settlement-payment-authority.service.ts",
+      "beforeSha256": null,
+      "afterSha256": "bd1eef39e66a9102f06a62c4359b5c91ba1d796b34e21f313721f9d3890cd678"
+    },
+    {
+      "path": "services/payments/pos-electronic-tender-authority.service.ts",
+      "beforeSha256": "4254e1991691fa9eaff1e455694ac3d2b30b6b31287b3158d5b3fc2786da3ba6",
+      "afterSha256": "f0614f708e100170cc143da3d8d135814ed95ba201dcfa1e798f2296c0276d55"
+    }
+  ],
+  "candidateDelta": [],
+  "sourceCaptureHelperSha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46",
+  "commandRegistrySha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+  "criticalInputManifestSha256": "e535b2e9cb694d09b67d64706e9fbbe2f89ac829b2297c86120ca83d012ac614",
+  "nextRequired": "Preserve concurrent changes and frozen candidate. Reconcile affected current source and admit a successor candidate/context/manifest before full-app build. Passing capacity alone is insufficient; existing exact-root guards must remain enabled.",
+  "limits": [
+    "This classifies source identity drift only; it does not review or reject the correctness of concurrent finance/payment changes.",
+    "All68 R06 inputs and six owned repair/test files retain their accepted hashes.",
+    "No unrelated file changed by reviewer; no app/DB/build execution.",
+    "Capture is an observed read interval, not a transactional snapshot of a concurrently edited root."
+  ],
+  "qualificationPassed": false
+}

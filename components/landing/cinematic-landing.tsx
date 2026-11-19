@@ -5,6 +5,7 @@ import { CinematicHero } from "./cinematic-hero"
 import { CinematicProduct, CinematicStory } from "./cinematic-product"
 import { CinematicChapters } from "./cinematic-chapters"
 import { CapabilityOverview } from "./capability-overview"
+import "./landing-production.css"
 
 export function CinematicLanding() {
   const mainRef = useRef<HTMLElement>(null)
@@ -43,7 +44,7 @@ export function CinematicLanding() {
   }, [])
 
   return (
-    <main id="main" ref={mainRef} tabIndex={-1}>
+    <main id="main" ref={mainRef} tabIndex={-1} className="public-contour-page landing-production">
       <CinematicHero />
       <CinematicProduct />
       <CinematicStory />

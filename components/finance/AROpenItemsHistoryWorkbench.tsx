@@ -1,6 +1,7 @@
 "use client"
 
 import { OpenItemsReturnLink } from "@/components/finance/OpenItemsReturnLink"
+import { CustomerSettlementControls } from "@/components/finance/CustomerSettlementControls"
 import { useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { CalendarClock, Database, HandCoins, UserRound } from "lucide-react"
@@ -35,6 +36,7 @@ export function AROpenItemsHistoryWorkbench() {
     isError,
     error,
     refetch,
+    settlementScope,
     updateFilters,
     resetFilters,
     selectRow,
@@ -147,7 +149,7 @@ export function AROpenItemsHistoryWorkbench() {
         { label: t("drawer.dueDate"), value: formatDate(row.dueDate, locale), icon: CalendarClock },
         { label: t("drawer.recordedThrough"), value: formatDate(result?.recordedThrough, locale), icon: Database },
       ]}
-      renderDrawer={(row) => <ARDrawer row={row} locale={locale} t={t} />}
+      renderDrawer={(row) => <ARDrawer row={row} locale={locale} t={t} current={!filters.dateTo} onChanged={refetch} settlementScope={settlementScope} />}
       selectedRow={selectedRow}
       selectedRowId={selectedRowId}
       onFilterChange={(patch) => {
@@ -181,7 +183,7 @@ export function AROpenItemsHistoryWorkbench() {
   )
 }
 
-function ARDrawer({ row, locale, t }: { row: AROpenItem; locale: string; t: ARHistoryT }) {
+function ARDrawer({ row, locale, t, current, onChanged, settlementScope }: { row: AROpenItem; locale: string; t: ARHistoryT; current: boolean; onChanged: () => unknown; settlementScope: ReturnType<typeof useAROpenItemsHistoryWorkbench>["settlementScope"] }) {
   return (
     <>
       <DetailSection title={t("drawer.openItem")}>
@@ -211,6 +213,7 @@ function ARDrawer({ row, locale, t }: { row: AROpenItem; locale: string; t: ARHi
           ))}
         </dl>
       </DetailSection>
+      {current && <CustomerSettlementControls customerId={row.customerId} referenceId={row.referenceId} locale={locale} onChanged={onChanged} scope={settlementScope} />}
     </>
   )
 }

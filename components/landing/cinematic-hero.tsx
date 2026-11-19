@@ -3,20 +3,21 @@
 import { useEffect, useRef } from "react"
 import { useLocale } from "next-intl"
 import { Link } from "@/i18n/navigation"
-import StoquifyLogo from "@/components/global/kit-logo"
-import { useCinematicLight, useCinematicMotionOff } from "./cinematic-shell"
+import { useCinematicMotionOff, useCinematicSignedIn } from "./cinematic-shell"
 
 export function CinematicHero() {
   const locale = useLocale()
   const t = (en: string, fr: string) => (locale === "fr" ? fr : en)
   const motionOff = useCinematicMotionOff()
-  const light = useCinematicLight()
+  const signedIn = useCinematicSignedIn()
   const sectionRef = useRef<HTMLElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const copyRef = useRef<HTMLDivElement>(null)
   const zoomRef = useRef<HTMLDivElement>(null)
   const noteRef = useRef<HTMLDivElement>(null)
   const cueRef = useRef<HTMLAnchorElement>(null)
+  const mobileEntryComplete = useRef(false)
+  const mobileHeadingComplete = useRef(false)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -26,21 +27,73 @@ export function CinematicHero() {
     const note = noteRef.current
     const cue = cueRef.current
     if (!section || !image || !copy || !zoom || !note || !cue) return
+    const sibling = section.nextElementSibling
+    const showcase = sibling instanceof HTMLElement && sibling.matches(".workflow-showcase")
+      ? sibling
+      : null
+    showcase?.setAttribute("data-hero-handoff", "")
+    const workflowPreview = showcase?.querySelector<HTMLElement>(".demo-stage")
+    const workflowHeading = showcase?.querySelector<HTMLElement>(".product-copy")
     const mobile = window.matchMedia(
       "(max-width: 760px), (max-height: 500px) and (pointer: coarse)",
     )
     let frame = 0
+    let mobileEntryStart: number | null = null
+    let mobileHeadingStart: number | null = null
     let failed = image.complete && image.naturalWidth === 0
     const update = () => {
+      cancelAnimationFrame(frame)
       frame = 0
       const staticScene = motionOff || mobile.matches || failed
-      const travel = Math.max(1, section.offsetHeight - window.innerHeight)
+      const scrollDistance = Math.max(0, -section.getBoundingClientRect().top)
+      // Keep the reveal pace; the remaining sticky scroll is a reading hold.
+      const travel = Math.max(
+        1,
+        Math.min(section.offsetHeight - window.innerHeight, window.innerHeight * 0.9),
+      )
       const progress = staticScene
         ? 0
         : Math.min(
             1,
-            Math.max(0, -section.getBoundingClientRect().top / travel),
+            scrollDistance / travel,
           )
+      // Preserve the full reading hold, then fade while the next section enters.
+      const exit = staticScene
+        ? 0
+        : Math.min(1, Math.max(0,
+            (scrollDistance - (section.offsetHeight - window.innerHeight)) /
+              (window.innerHeight * 0.55),
+          ))
+      const exitOpacity = 1 - exit * exit * (3 - 2 * exit)
+      showcase?.style.setProperty(
+        "--hero-entry-opacity",
+        String(staticScene ? 1 : 1 - exitOpacity),
+      )
+      if (mobile.matches && !motionOff && workflowPreview) {
+        showcase?.setAttribute("data-mobile-preview", "")
+        const bounds = workflowPreview.getBoundingClientRect()
+        const now = performance.now()
+        const headingBounds = (workflowHeading || workflowPreview).getBoundingClientRect()
+        if (mobileHeadingStart === null && headingBounds.top < window.innerHeight * 0.9 && headingBounds.bottom > 0)
+          mobileHeadingStart = now
+        const heading = mobileHeadingComplete.current ? 1 : mobileHeadingStart === null
+          ? 0 : Math.min(1, (now - mobileHeadingStart) / 600)
+        showcase?.style.setProperty("--mobile-heading-opacity", String(heading * heading * (3 - 2 * heading)))
+        if (heading === 1) mobileHeadingComplete.current = true
+        if (mobileEntryStart === null && bounds.top < window.innerHeight * 0.9 && bounds.bottom > 0)
+          // Keep the heading ahead on quick scrolls; each part still waits until in view.
+          mobileEntryStart = Math.max(now, (mobileHeadingStart ?? now) + 150)
+        const entry = mobileEntryComplete.current ? 1 : mobileEntryStart === null
+          ? 0 : Math.min(1, Math.max(0, (now - mobileEntryStart) / 750))
+        showcase?.style.setProperty("--mobile-preview-opacity", String(entry * entry * (3 - 2 * entry)))
+        if (entry === 1) mobileEntryComplete.current = true
+        if ((entry < 1 && mobileEntryStart !== null) || (heading < 1 && mobileHeadingStart !== null))
+          frame = requestAnimationFrame(update)
+      } else {
+        showcase?.removeAttribute("data-mobile-preview")
+        showcase?.style.removeProperty("--mobile-preview-opacity")
+        showcase?.style.removeProperty("--mobile-heading-opacity")
+      }
       const fade = Math.max(0, 1 - progress * 3.6)
       // Invisible CTAs must also leave keyboard navigation.
       copy.inert = fade < 0.05
@@ -77,19 +130,19 @@ export function CinematicHero() {
         (screenY - originY - progress * 0.02 * height) * imageScale
       const phase = Math.min(1, Math.max(0, (progress - 0.08) / 0.72))
       const ease = phase * phase * (3 - 2 * phase)
-      // Grow from the physical display; only recenter after the photograph fades.
-      const recenterPhase = Math.min(1, Math.max(0, (phase - 0.65) / 0.35))
+      // Recenter as the photograph fades so the larger screen stays in view.
+      const recenterPhase = Math.min(1, Math.max(0, (phase - 0.3) / 0.6))
       const recenter = recenterPhase * recenterPhase * (3 - 2 * recenterPhase)
       const startScale = (426 * cover * imageScale) / 1000
       const endScale = Math.min(
-        (width * 0.88) / 1000,
+        (width * 0.94) / 1000,
         Math.max(
           0.2,
-          (Math.min(height, window.innerHeight) - 150) / 520,
+          (Math.min(height, window.innerHeight) - 130) / 520,
         ),
-        1.12,
+        1.6,
       )
-      zoom.style.opacity = failed ? "0" : "1"
+      zoom.style.opacity = failed ? "0" : String(exitOpacity)
       zoom.style.visibility = failed ? "hidden" : "visible"
       zoom.style.left = anchoredX + (width / 2 - anchoredX) * recenter + "px"
       zoom.style.top =
@@ -101,6 +154,7 @@ export function CinematicHero() {
         "translate(-50%, -50%) scale(" +
         (startScale + (endScale - startScale) * ease) +
         ")"
+      zoom.setAttribute("data-positioned", "")
       zoom.style.borderRadius = 3 + ease * 9 + "px"
       const sceneFade = Math.min(1, phase / 0.65)
       image.style.opacity = String(
@@ -134,6 +188,11 @@ export function CinematicHero() {
     update()
     return () => {
       cancelAnimationFrame(frame)
+      showcase?.style.removeProperty("--hero-entry-opacity")
+      showcase?.removeAttribute("data-hero-handoff")
+      showcase?.style.removeProperty("--mobile-preview-opacity")
+      showcase?.style.removeProperty("--mobile-heading-opacity")
+      showcase?.removeAttribute("data-mobile-preview")
       observer?.disconnect()
       image.removeEventListener("load", loaded)
       image.removeEventListener("error", error)
@@ -158,7 +217,7 @@ export function CinematicHero() {
           className="hero-image"
           ref={imageRef}
           src="/landing/cinematic/sme-bakery-aio.webp"
-          srcSet="/landing/cinematic/sme-bakery-aio-960.webp 960w, /landing/cinematic/sme-bakery-aio.webp 1672w"
+          srcSet="/landing/cinematic/sme-bakery-aio-640.webp 640w, /landing/cinematic/sme-bakery-aio-960.webp 960w, /landing/cinematic/sme-bakery-aio.webp 1672w"
           sizes="100vw"
           alt=""
           width={1672}
@@ -166,6 +225,7 @@ export function CinematicHero() {
           fetchPriority="high"
         />
         <div className="hero-shade" />
+        <div className="public-contour-art" aria-hidden="true" />
         <div className="hero-copy" ref={copyRef}>
           <p className="hero-eyebrow">
             {t(
@@ -181,13 +241,13 @@ export function CinematicHero() {
           </h1>
           <p className="hero-intro">
             {t(
-              "Connect POS, stock, payment reconciliation and OHADA accounting with HRIS and payroll. Give every team a clear view of the work behind the numbers.",
-              "Reliez caisse, stocks, rapprochement des paiements et comptabilité OHADA au SIRH et à la paie. Donnez à chaque équipe une vision claire des opérations derrière les chiffres.",
+              "Connect sales, stock, payments and people records to your finance team and accounting firm. One workspace, from daily activity to close.",
+              "Reliez ventes, stocks, paiements et dossiers du personnel à votre équipe financière et à votre cabinet comptable. Un espace, de l’activité quotidienne à la clôture.",
             )}
           </p>
           <div className="hero-actions">
-            <Link className="button primary" href="/register">
-              {t("Create your account", "Créer votre compte")}
+            <Link className="button primary" href={signedIn ? "/dashboard" : "/contact"}>
+              {signedIn ? t("Open workspace", "Ouvrir l’espace") : t("Plan your workspace", "Préparer votre projet")}
               <span aria-hidden="true">↗︎</span>
             </Link>
             <Link className="button glass" href="/#showcase">
@@ -204,87 +264,27 @@ export function CinematicHero() {
         </div>
         <div
           className="zoom-preview"
-          style={{ visibility: "hidden" }}
           ref={zoomRef}
           aria-hidden="true"
           data-visual-classification="sample"
         >
-          <div className="zoom-head">
-            <StoquifyLogo
-              theme={light ? "light" : "dark"}
-              width={180}
-              height={42}
-              tagline=""
-            />
-            <small>{t("ILLUSTRATIVE WORKSPACE", "ESPACE ILLUSTRATIF")}</small>
-          </div>
-          <div className="zoom-body">
-            <aside>
-              {[
-                t("Overview", "Vue d’ensemble"),
-                t("Sales", "Ventes"),
-                t("Inventory", "Stocks"),
-                t("HRIS", "SIRH"),
-                t("Payroll", "Paie"),
-                t("Finance", "Finance"),
-                t("Accounting", "Comptabilité"),
-              ].map((label) => (
-                <div key={label}>{label}</div>
-              ))}
-            </aside>
-            <div>
-              <h2>
-                {t(
-                  "From daily activity to close review.",
-                  "De l’activité quotidienne à la clôture.",
-                )}
-              </h2>
-              <div className="zoom-kpis">
-                <span>
-                  {t("Sales records", "Ventes enregistrées")}
-                  <b>24</b>
-                </span>
-                <span>
-                  {t("Stock movements", "Mouvements de stock")}
-                  <b>18</b>
-                </span>
-                <span>
-                  {t("To review", "À vérifier")}
-                  <b>3</b>
-                </span>
-              </div>
-              <div className="hero-table">
-                <div>
-                  <span>{t("Source", "Origine")}</span>
-                  <span>{t("Workflow", "Parcours")}</span>
-                  <span>{t("Status", "Statut")}</span>
-                </div>
-                <div>
-                  <b>SALE-104</b>
-                  <span>{t("POS → Inventory", "Caisse → Stocks")}</span>
-                  <em>{t("Recorded", "Enregistré")}</em>
-                </div>
-                <div>
-                  <b>EMP-024</b>
-                  <span>{t("HRIS → Payroll", "SIRH → Paie")}</span>
-                  <em>{t("Inputs to review", "Données à vérifier")}</em>
-                </div>
-                <div>
-                  <b>REF-104</b>
-                  <span>
-                    {t("Reconciliation → Close", "Rapprochement → Clôture")}
-                  </span>
-                  <em>{t("Review pending", "À vérifier")}</em>
-                </div>
-              </div>
-              <p>
-                {t(
-                  "Sample records · Main shop · Not live data",
-                  "Données d’exemple · Boutique principale · Données non réelles",
-                )}
-              </p>
-            </div>
-          </div>
+          {/* Captured from the production dashboard components with fictional records. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="hero-dashboard-capture"
+            src={`/landing/cinematic/stoquify-dashboard-${locale === "fr" ? "fr" : "en"}.webp`}
+            srcSet={[480, 1000, 1600, 2400].map(width => `/landing/cinematic/stoquify-dashboard-${locale === "fr" ? "fr" : "en"}${width === 2400 ? "" : `-${width}`}.webp ${width}w`).join(", ")}
+            sizes="(max-width: 534px) 136px, (max-width: 760px) 25.5vw, (max-height: 500px) and (pointer: coarse) 25.5vw, (max-width: 1100px) 94vw, 1000px"
+            alt=""
+            width={2400}
+            height={1248}
+            fetchPriority="high"
+            decoding="async"
+            draggable={false}
+          />
+          <span className="hero-dashboard-disclosure">
+            {t("Actual dashboard · Sample data", "Tableau de bord réel · Données d’exemple")}
+          </span>
         </div>
         <Link
           className="scroll-cue"

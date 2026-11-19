@@ -4,7 +4,7 @@ import { paymentRequestApprovalSchema } from "@/services/purchasing/payment-requ
 import { confirmPaymentRelease } from "@/services/purchasing/payment-release.service"
 import { paymentReleaseCommandSchema } from "@/services/purchasing/payment-release-contracts"
 
-import { revalidatePath } from "next/cache"
+import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation"
 
 import { protect } from "@/services/_shared/protect"
 import {
@@ -29,10 +29,7 @@ function asRecord(input: unknown) {
 }
 
 function revalidateAPPaths() {
-  revalidatePath("/dashboard/purchases/payables", "page")
-  revalidatePath("/dashboard/finance/payables", "page")
-  revalidatePath("/[locale]/dashboard/purchases/payables", "page")
-  revalidatePath("/[locale]/dashboard/finance/payables", "page")
+  revalidateAfterCommit({ paths: ["/dashboard/purchases/payables", "/dashboard/finance/payables", "/[locale]/dashboard/purchases/payables", "/[locale]/dashboard/finance/payables"] })
 }
 
 const getWorkbench = protect<unknown, APWorkbenchData>(

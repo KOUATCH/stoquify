@@ -1,0 +1,57 @@
+41664442ef0825df374a293b8f56ff20
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+}
+_export(exports, {
+    get itemImageReferenceSchema () {
+        return itemImageReferenceSchema;
+    },
+    get itemNameEnSchema () {
+        return itemNameEnSchema;
+    },
+    get itemNonNegativeNumberSchema () {
+        return itemNonNegativeNumberSchema;
+    },
+    get itemOrganizationIdSchema () {
+        return itemOrganizationIdSchema;
+    },
+    get itemSkuSchema () {
+        return itemSkuSchema;
+    },
+    get nullableTrimmedItemText () {
+        return nullableTrimmedItemText;
+    },
+    get validateItemStockRange () {
+        return validateItemStockRange;
+    }
+});
+const _zod = require("zod");
+const itemOrganizationIdSchema = _zod.z.string().min(1, "Organization ID is required");
+const itemNameEnSchema = _zod.z.string().trim().min(1, "English name is required").max(255);
+const itemSkuSchema = _zod.z.string().trim().min(1, "SKU is required").max(128);
+function itemNonNegativeNumberSchema(message) {
+    const schema = _zod.z.coerce.number();
+    return message ? schema.min(0, message) : schema.min(0);
+}
+const nullableTrimmedItemText = (max)=>_zod.z.preprocess((value)=>typeof value === "string" && value.trim() === "" ? null : value, _zod.z.string().trim().max(max).nullable().optional());
+const itemImageReferenceSchema = _zod.z.string().trim().min(1, "Product image is required").refine((value)=>value.startsWith("/") || _zod.z.string().url().safeParse(value).success, "Product image must be a valid URL");
+function validateItemStockRange(data, ctx) {
+    if (data.maxStockLevel !== null && data.maxStockLevel !== undefined && data.maxStockLevel < data.minStockLevel) {
+        ctx.addIssue({
+            code: _zod.z.ZodIssueCode.custom,
+            message: "Maximum stock level must be greater than or equal to minimum stock level",
+            path: [
+                "maxStockLevel"
+            ]
+        });
+    }
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6XFxvaGFkYSBzYWFzXFxGb2N1c2VkIHByb2plY3RzXFxzdG9xdWlmeVxcbGliXFxpdGVtXFxmb3JtLXZhbGlkYXRpb24udHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgeiwgdHlwZSBSZWZpbmVtZW50Q3R4IH0gZnJvbSBcInpvZFwiXG5cbmV4cG9ydCBjb25zdCBpdGVtT3JnYW5pemF0aW9uSWRTY2hlbWEgPSB6LnN0cmluZygpLm1pbigxLCBcIk9yZ2FuaXphdGlvbiBJRCBpcyByZXF1aXJlZFwiKVxuXG5leHBvcnQgY29uc3QgaXRlbU5hbWVFblNjaGVtYSA9IHpcbiAgLnN0cmluZygpXG4gIC50cmltKClcbiAgLm1pbigxLCBcIkVuZ2xpc2ggbmFtZSBpcyByZXF1aXJlZFwiKVxuICAubWF4KDI1NSlcblxuZXhwb3J0IGNvbnN0IGl0ZW1Ta3VTY2hlbWEgPSB6XG4gIC5zdHJpbmcoKVxuICAudHJpbSgpXG4gIC5taW4oMSwgXCJTS1UgaXMgcmVxdWlyZWRcIilcbiAgLm1heCgxMjgpXG5cbmV4cG9ydCBmdW5jdGlvbiBpdGVtTm9uTmVnYXRpdmVOdW1iZXJTY2hlbWEobWVzc2FnZT86IHN0cmluZykge1xuICBjb25zdCBzY2hlbWEgPSB6LmNvZXJjZS5udW1iZXIoKVxuICByZXR1cm4gbWVzc2FnZSA/IHNjaGVtYS5taW4oMCwgbWVzc2FnZSkgOiBzY2hlbWEubWluKDApXG59XG5cbmV4cG9ydCBjb25zdCBudWxsYWJsZVRyaW1tZWRJdGVtVGV4dCA9IChtYXg6IG51bWJlcikgPT5cbiAgei5wcmVwcm9jZXNzKFxuICAgICh2YWx1ZSkgPT4gdHlwZW9mIHZhbHVlID09PSBcInN0cmluZ1wiICYmIHZhbHVlLnRyaW0oKSA9PT0gXCJcIiA/IG51bGwgOiB2YWx1ZSxcbiAgICB6LnN0cmluZygpLnRyaW0oKS5tYXgobWF4KS5udWxsYWJsZSgpLm9wdGlvbmFsKCksXG4gIClcblxuZXhwb3J0IGNvbnN0IGl0ZW1JbWFnZVJlZmVyZW5jZVNjaGVtYSA9IHpcbiAgLnN0cmluZygpXG4gIC50cmltKClcbiAgLm1pbigxLCBcIlByb2R1Y3QgaW1hZ2UgaXMgcmVxdWlyZWRcIilcbiAgLnJlZmluZShcbiAgICAodmFsdWUpID0+IHZhbHVlLnN0YXJ0c1dpdGgoXCIvXCIpIHx8IHouc3RyaW5nKCkudXJsKCkuc2FmZVBhcnNlKHZhbHVlKS5zdWNjZXNzLFxuICAgIFwiUHJvZHVjdCBpbWFnZSBtdXN0IGJlIGEgdmFsaWQgVVJMXCIsXG4gIClcblxuZXhwb3J0IGZ1bmN0aW9uIHZhbGlkYXRlSXRlbVN0b2NrUmFuZ2UoXG4gIGRhdGE6IHsgbWluU3RvY2tMZXZlbDogbnVtYmVyOyBtYXhTdG9ja0xldmVsPzogbnVtYmVyIHwgbnVsbCB9LFxuICBjdHg6IFJlZmluZW1lbnRDdHgsXG4pIHtcbiAgaWYgKFxuICAgIGRhdGEubWF4U3RvY2tMZXZlbCAhPT0gbnVsbCAmJlxuICAgIGRhdGEubWF4U3RvY2tMZXZlbCAhPT0gdW5kZWZpbmVkICYmXG4gICAgZGF0YS5tYXhTdG9ja0xldmVsIDwgZGF0YS5taW5TdG9ja0xldmVsXG4gICkge1xuICAgIGN0eC5hZGRJc3N1ZSh7XG4gICAgICBjb2RlOiB6LlpvZElzc3VlQ29kZS5jdXN0b20sXG4gICAgICBtZXNzYWdlOiBcIk1heGltdW0gc3RvY2sgbGV2ZWwgbXVzdCBiZSBncmVhdGVyIHRoYW4gb3IgZXF1YWwgdG8gbWluaW11bSBzdG9jayBsZXZlbFwiLFxuICAgICAgcGF0aDogW1wibWF4U3RvY2tMZXZlbFwiXSxcbiAgICB9KVxuICB9XG59XG4iXSwibmFtZXMiOlsiaXRlbUltYWdlUmVmZXJlbmNlU2NoZW1hIiwiaXRlbU5hbWVFblNjaGVtYSIsIml0ZW1Ob25OZWdhdGl2ZU51bWJlclNjaGVtYSIsIml0ZW1Pcmdhbml6YXRpb25JZFNjaGVtYSIsIml0ZW1Ta3VTY2hlbWEiLCJudWxsYWJsZVRyaW1tZWRJdGVtVGV4dCIsInZhbGlkYXRlSXRlbVN0b2NrUmFuZ2UiLCJ6Iiwic3RyaW5nIiwibWluIiwidHJpbSIsIm1heCIsIm1lc3NhZ2UiLCJzY2hlbWEiLCJjb2VyY2UiLCJudW1iZXIiLCJwcmVwcm9jZXNzIiwidmFsdWUiLCJudWxsYWJsZSIsIm9wdGlvbmFsIiwicmVmaW5lIiwic3RhcnRzV2l0aCIsInVybCIsInNhZmVQYXJzZSIsInN1Y2Nlc3MiLCJkYXRhIiwiY3R4IiwibWF4U3RvY2tMZXZlbCIsInVuZGVmaW5lZCIsIm1pblN0b2NrTGV2ZWwiLCJhZGRJc3N1ZSIsImNvZGUiLCJab2RJc3N1ZUNvZGUiLCJjdXN0b20iLCJwYXRoIl0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7OztRQTJCYUE7ZUFBQUE7O1FBdkJBQztlQUFBQTs7UUFZR0M7ZUFBQUE7O1FBZEhDO2VBQUFBOztRQVFBQztlQUFBQTs7UUFXQUM7ZUFBQUE7O1FBZUdDO2VBQUFBOzs7cUJBcENzQjtBQUUvQixNQUFNSCwyQkFBMkJJLE1BQUMsQ0FBQ0MsTUFBTSxHQUFHQyxHQUFHLENBQUMsR0FBRztBQUVuRCxNQUFNUixtQkFBbUJNLE1BQUMsQ0FDOUJDLE1BQU0sR0FDTkUsSUFBSSxHQUNKRCxHQUFHLENBQUMsR0FBRyw0QkFDUEUsR0FBRyxDQUFDO0FBRUEsTUFBTVAsZ0JBQWdCRyxNQUFDLENBQzNCQyxNQUFNLEdBQ05FLElBQUksR0FDSkQsR0FBRyxDQUFDLEdBQUcsbUJBQ1BFLEdBQUcsQ0FBQztBQUVBLFNBQVNULDRCQUE0QlUsT0FBZ0I7SUFDMUQsTUFBTUMsU0FBU04sTUFBQyxDQUFDTyxNQUFNLENBQUNDLE1BQU07SUFDOUIsT0FBT0gsVUFBVUMsT0FBT0osR0FBRyxDQUFDLEdBQUdHLFdBQVdDLE9BQU9KLEdBQUcsQ0FBQztBQUN2RDtBQUVPLE1BQU1KLDBCQUEwQixDQUFDTSxNQUN0Q0osTUFBQyxDQUFDUyxVQUFVLENBQ1YsQ0FBQ0MsUUFBVSxPQUFPQSxVQUFVLFlBQVlBLE1BQU1QLElBQUksT0FBTyxLQUFLLE9BQU9PLE9BQ3JFVixNQUFDLENBQUNDLE1BQU0sR0FBR0UsSUFBSSxHQUFHQyxHQUFHLENBQUNBLEtBQUtPLFFBQVEsR0FBR0MsUUFBUTtBQUczQyxNQUFNbkIsMkJBQTJCTyxNQUFDLENBQ3RDQyxNQUFNLEdBQ05FLElBQUksR0FDSkQsR0FBRyxDQUFDLEdBQUcsNkJBQ1BXLE1BQU0sQ0FDTCxDQUFDSCxRQUFVQSxNQUFNSSxVQUFVLENBQUMsUUFBUWQsTUFBQyxDQUFDQyxNQUFNLEdBQUdjLEdBQUcsR0FBR0MsU0FBUyxDQUFDTixPQUFPTyxPQUFPLEVBQzdFO0FBR0csU0FBU2xCLHVCQUNkbUIsSUFBOEQsRUFDOURDLEdBQWtCO0lBRWxCLElBQ0VELEtBQUtFLGFBQWEsS0FBSyxRQUN2QkYsS0FBS0UsYUFBYSxLQUFLQyxhQUN2QkgsS0FBS0UsYUFBYSxHQUFHRixLQUFLSSxhQUFhLEVBQ3ZDO1FBQ0FILElBQUlJLFFBQVEsQ0FBQztZQUNYQyxNQUFNeEIsTUFBQyxDQUFDeUIsWUFBWSxDQUFDQyxNQUFNO1lBQzNCckIsU0FBUztZQUNUc0IsTUFBTTtnQkFBQzthQUFnQjtRQUN6QjtJQUNGO0FBQ0YifQ==

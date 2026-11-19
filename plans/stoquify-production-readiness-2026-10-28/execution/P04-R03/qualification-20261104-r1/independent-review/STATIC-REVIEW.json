@@ -1,0 +1,38 @@
+{
+  "reviewedAt": "2026-11-04T09:32:21.8523340Z",
+  "reviewer": "r03_review",
+  "passed": true,
+  "typecheck": "Two owned entry files and their imported type closure; noEmit, no incremental metadata, no plugins; exit0 and empty diagnostic log",
+  "lint": "Both owned files,0warnings/errors, no source drift; no fixes/cache",
+  "files": [
+    {
+      "path": "unit/typecheck.cjs",
+      "sha256": "a22c71d1fdbaf13c6857e3751fc7793ca7888cab4b9f8b1bff4c6b34060e5a5e"
+    },
+    {
+      "path": "unit/tsconfig.json",
+      "sha256": "94dc7d42d4af948ee93a8c736cc024fa077a73f494a14f1e10cbb26b96cc01e6"
+    },
+    {
+      "path": "unit/typecheck01/result.json",
+      "sha256": "7fd7725b211bb88d7e0f5c1755646daf312038e5793341905a3c9ba5274c7f39"
+    },
+    {
+      "path": "unit/typecheck01/console.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "unit/lint.cjs",
+      "sha256": "f696e732efa203f39e3d12504181bef381d0bb160498f621a3fd79c4901068f3"
+    },
+    {
+      "path": "unit/lint01/result.json",
+      "sha256": "abc09a306d144ad2f99d2811a71d0e8c357adb0b01bca5dce5ea4fb4a797499a"
+    },
+    {
+      "path": "unit/lint01/eslint.json",
+      "sha256": "bc64c5638a856cf7f419cfd39a29289cd1edff18eb7606eedea80c326af528e9"
+    }
+  ],
+  "limits": "No clean install/full build or whole-checkout typecheck claim"
+}

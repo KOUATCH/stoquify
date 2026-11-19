@@ -336,6 +336,7 @@ describe("sidebar filtering and route matching", () => {
       "Compliance",
       "Finance",
       "HR & Payroll",
+      "HR Tasks",
       "Inventory",
       "People",
       "Purchases",

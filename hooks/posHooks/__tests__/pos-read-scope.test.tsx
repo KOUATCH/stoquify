@@ -4,6 +4,7 @@ import type { ReactNode } from "react"
 import { usePermissions } from "@/hooks/usePermissions"
 import { getPOSLocationsAction } from "@/actions/pos/catalog.actions"
 import { usePOSLocations } from "../usePosOperations"
+import { POS_READ_TIMEOUT_MS } from "../usePOSReadQuery"
 
 jest.mock("@/hooks/usePermissions", () => ({ usePermissions: jest.fn() }))
 jest.mock("@/actions/pos/catalog.actions", () => ({ getPOSLocationsAction: jest.fn(), getPOSTerminalsAction: jest.fn(), getPOSCatalogAction: jest.fn(), getPOSCustomersAction: jest.fn() }))
@@ -25,6 +26,35 @@ function setup() {
 }
 describe("POS current read scope", () => {
   beforeEach(() => { jest.resetAllMocks(); authority() })
+  afterEach(() => { jest.useRealTimers() })
+  it("ends a stalled read, allows an explicit retry, and ignores the late original response", async () => {
+    jest.useFakeTimers()
+    let finishOriginal!: (value: ReturnType<typeof resultFor>) => void
+    read.mockImplementationOnce(() => new Promise(resolve => { finishOriginal = resolve }))
+    const { result, unmount, client } = setup()
+    await act(async () => { await jest.advanceTimersByTimeAsync(POS_READ_TIMEOUT_MS + 1) })
+    expect(result.current.isLoading).toBe(false)
+    expect(result.current.isError).toBe(true)
+    expect(result.current.error).toMatchObject({ code: "POS_READ_TIMEOUT" })
+    expect(read).toHaveBeenCalledTimes(1)
+
+    const recovered = { ...resultFor(), data: [{ id: "recovered-location" }] }
+    read.mockResolvedValueOnce(recovered)
+    await act(async () => {
+      await result.current.retryRead()
+      await jest.advanceTimersByTimeAsync(1)
+    })
+    expect(result.current.data).toEqual(recovered)
+    expect(result.current.isError).toBe(false)
+    await act(async () => {
+      finishOriginal(resultFor())
+      await jest.advanceTimersByTimeAsync(1)
+    })
+    expect(result.current.data).toEqual(recovered)
+    expect(read).toHaveBeenCalledTimes(2)
+    unmount()
+    client.clear()
+  })
   it("does not turn a failed read into successful empty-capable data", async () => {
     read.mockResolvedValue({ success: false, data: null, error: "Database unavailable" })
     const { result } = setup()

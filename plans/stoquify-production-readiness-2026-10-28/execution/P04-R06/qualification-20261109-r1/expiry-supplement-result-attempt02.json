@@ -1,0 +1,1003 @@
+{
+  "startedAt": "2026-11-10T11:16:45.042Z",
+  "passed": true,
+  "scope": "Fresh, still-present expired native session per endpoint, with genuinely issued unexpired legacy signed cache",
+  "checks": [
+    {
+      "id": "R06-E-retained-list-sessions",
+      "path": "/api/auth/list-sessions",
+      "method": "GET",
+      "startedAt": "2026-11-10T11:17:41.037Z",
+      "passed": true,
+      "issuer": {
+        "alias": "expired",
+        "issuedAt": "2026-11-10T11:17:42.341Z",
+        "decodedSignedPayloadExpiresAt": 1794309771069,
+        "cachedSessionExpiresAt": 1794914271055,
+        "payloadSha256": "25e5da95fe0f78b6ff11c7da3800cf69fb5acd644a7b802a27026812779029b5",
+        "signatureVerified": true,
+        "taskSigningKeySha256": "2e57a3c554a386f3d948af993d3da7d532397d2b6a4f6a79796c5de27cfd2e11",
+        "tokenSha256": "282ad904d28ff385289e11be37c85c7bff6682ec492deb3b1ea219220fb9b70d",
+        "cookies": [
+          {
+            "name": "STOCKFLOW_LOCALE",
+            "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+            "expires": 1825845462.341,
+            "secure": false,
+            "httpOnly": false
+          },
+          {
+            "name": "__Secure-better-auth.session_token",
+            "valueSha256": "fed56aacb39dc5dc7a6d1dbebed18a7d8678ea9501205e4cd40e95c690de9acc",
+            "expires": 1794914262.341,
+            "secure": true,
+            "httpOnly": true
+          },
+          {
+            "name": "__Secure-better-auth.session_data",
+            "valueSha256": "627a4e472ac1e2d598d8e68a75429452aba25a1828f248c5f6e661937d3cc3d1",
+            "expires": 1794309762.341,
+            "secure": true,
+            "httpOnly": true
+          }
+        ],
+        "source": "actual_archived_BetterAuth_HTTP_credential_response"
+      },
+      "expiryControl": {
+        "at": "2026-11-10T11:17:52.805Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "alias": "expired",
+        "kind": "expire",
+        "actorId": "p04r06-expired",
+        "sessionIdHash": "a595290e2ccac27c8aec1c565524d8a40a83a25fd01905213c8c308010e2931b",
+        "tokenHash": "282ad904d28ff385289e11be37c85c7bff6682ec492deb3b1ea219220fb9b70d",
+        "affected": 1,
+        "scope": "Exact acquired session only; same-actor siblings retained",
+        "evidence": "session-expire-1794309472805-899921bc-926f-427f-a417-35921b269469.json"
+      },
+      "precondition": {
+        "at": "2026-11-10T11:17:54.793Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "sessionIdHash": "a595290e2ccac27c8aec1c565524d8a40a83a25fd01905213c8c308010e2931b",
+        "tokenSha256": "282ad904d28ff385289e11be37c85c7bff6682ec492deb3b1ea219220fb9b70d",
+        "userId": "p04r06-expired",
+        "retainedRowCount": 1,
+        "expiresAtRaw": "1970-01-01 01:00:00",
+        "expiresAtUtc": "1970-01-01T01:00:00.000Z",
+        "databaseNow": "2026-11-10T11:17:54.793Z",
+        "expired": true,
+        "sqlType": "timestamp without time zone",
+        "evidence": "snapshot-R06-E-retained-list-sessions-before-1794309474615-6274b6ba-cde4-4700-bf8b-b99c8f6b1e29.json"
+      },
+      "request": {
+        "at": "2026-11-10T11:18:06.393Z",
+        "status": 401,
+        "bytes": 74,
+        "bodySha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+        "headers": [
+          {
+            "name": "x-content-type-options",
+            "sha256": "f495210addd4c5882999afa5e924569823b6f504f3c95c760b36a0e1ba9e633e",
+            "bytes": 7
+          },
+          {
+            "name": "x-frame-options",
+            "sha256": "36aa3700fc28d74c58906b570aef1b1f96ea9a0d454a0ab2db99ade3eb942b8b",
+            "bytes": 4
+          },
+          {
+            "name": "x-xss-protection",
+            "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+            "bytes": 1
+          },
+          {
+            "name": "referrer-policy",
+            "sha256": "3359f2af82630b62ca23a733643656929141ff2f4fd1874f895e6444528e4529",
+            "bytes": 31
+          },
+          {
+            "name": "permissions-policy",
+            "sha256": "6b5093149525856805c7b4bcab497a202fc926e14bdd272cd142bfff4359702d",
+            "bytes": 40
+          },
+          {
+            "name": "cross-origin-opener-policy",
+            "sha256": "636646ce0490d0cbf958ebfa35139da0b1748819e05b14e86f275d7e7b9876c9",
+            "bytes": 11
+          },
+          {
+            "name": "cross-origin-resource-policy",
+            "sha256": "636646ce0490d0cbf958ebfa35139da0b1748819e05b14e86f275d7e7b9876c9",
+            "bytes": 11
+          },
+          {
+            "name": "origin-agent-cluster",
+            "sha256": "b71a80db33fdfadbd3feab9d266acedd27a908e27dc49ceda2d215231d7b33ef",
+            "bytes": 2
+          },
+          {
+            "name": "strict-transport-security",
+            "sha256": "dcd2270a895010108fc08d1b772c6f17bf08348387858eb8ffff18a75994b0dd",
+            "bytes": 35
+          },
+          {
+            "name": "content-security-policy",
+            "sha256": "a0eef10acb067e3a3bfe767fbf21a99cf9ddbf1cada3c82c33d156a160345120",
+            "bytes": 307
+          },
+          {
+            "name": "vary",
+            "sha256": "8986d5ef9783935f255d865bdeb741df99ba5b4469fb736984556268bab14e4d",
+            "bytes": 79
+          },
+          {
+            "name": "content-type",
+            "sha256": "bacb769b46f6d169fb227ea026550f411d46cbe66a9c2a6ba36449c8cf8e4dea",
+            "bytes": 16
+          },
+          {
+            "name": "date",
+            "sha256": "5eb6e952b8ae811a2b377db2f6fb0727aa5ccbc84eb38f7b627e9637870b6d8d",
+            "bytes": 29
+          },
+          {
+            "name": "connection",
+            "sha256": "ef4f616f9b068e6b527a81c47581f91cfea5f381da967bedb52ea8c53500328f",
+            "bytes": 10
+          },
+          {
+            "name": "keep-alive",
+            "sha256": "7ad43e6c952e60c5ec9b2f5db10e097ba3b7e8de249e219aa4f8625eeb75931b",
+            "bytes": 9
+          },
+          {
+            "name": "transfer-encoding",
+            "sha256": "59fdd34a0b323f6044e147b843d8ca246a9414d2c7a06c8e95a7e04c3cdaf395",
+            "bytes": 7
+          }
+        ],
+        "privateBytesAbsent": true,
+        "authorityFieldsAbsent": true,
+        "unexpiredLegacyCacheAtResponse": true,
+        "wire": {
+          "probeId": "887e76e5-abfb-4166-945b-4e2e1c38cdd4",
+          "at": "2026-11-10T11:17:55.235Z",
+          "method": "GET",
+          "path": "/api/auth/list-sessions",
+          "runtimeKind": "repaired",
+          "cookies": [
+            {
+              "name": "STOCKFLOW_LOCALE",
+              "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+              "length": 2
+            },
+            {
+              "name": "__Secure-better-auth.session_token",
+              "valueSha256": "fed56aacb39dc5dc7a6d1dbebed18a7d8678ea9501205e4cd40e95c690de9acc",
+              "length": 81
+            },
+            {
+              "name": "__Secure-better-auth.session_data",
+              "valueSha256": "627a4e472ac1e2d598d8e68a75429452aba25a1828f248c5f6e661937d3cc3d1",
+              "length": 976
+            }
+          ]
+        }
+      },
+      "effects": {
+        "before": "snapshot-R06-E-retained-list-sessions-before-1794309474615-6274b6ba-cde4-4700-bf8b-b99c8f6b1e29.json",
+        "after": "snapshot-R06-E-retained-list-sessions-after-1794309487845-ae58aad0-8e00-43c0-abfa-cf96572f8f46.json",
+        "businessEqual": true,
+        "auditsEqual": true,
+        "removedSessionIdHash": "a595290e2ccac27c8aec1c565524d8a40a83a25fd01905213c8c308010e2931b",
+        "removedSessions": 1,
+        "otherSessionRowsUnchanged": true,
+        "classification": "Exact native expiry cleanup of the one still-present owned target; no other persisted change"
+      },
+      "finishedAt": "2026-11-10T11:18:07.861Z"
+    },
+    {
+      "id": "R06-E-retained-list-accounts",
+      "path": "/api/auth/list-accounts",
+      "method": "GET",
+      "startedAt": "2026-11-10T11:18:07.861Z",
+      "passed": true,
+      "issuer": {
+        "alias": "expired",
+        "issuedAt": "2026-11-10T11:18:10.415Z",
+        "decodedSignedPayloadExpiresAt": 1794309807148,
+        "cachedSessionExpiresAt": 1794914307120,
+        "payloadSha256": "31c3c30e24de725f7a000cbc0d63e47a408675f00443d08d23ad63cdd74fde9d",
+        "signatureVerified": true,
+        "taskSigningKeySha256": "2e57a3c554a386f3d948af993d3da7d532397d2b6a4f6a79796c5de27cfd2e11",
+        "tokenSha256": "bcccbbeee6a02268442557795e1160866b9e0ec9369acf22f1bbea2ebeab2c26",
+        "cookies": [
+          {
+            "name": "STOCKFLOW_LOCALE",
+            "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+            "expires": 1825845490.415,
+            "secure": false,
+            "httpOnly": false
+          },
+          {
+            "name": "__Secure-better-auth.session_token",
+            "valueSha256": "2b213d70147475dbbacb350145bd8f2ca3e2a28e41a2d22d0a4c4121c0fe75c7",
+            "expires": 1794914290.415,
+            "secure": true,
+            "httpOnly": true
+          },
+          {
+            "name": "__Secure-better-auth.session_data",
+            "valueSha256": "e2a200fdcca461002e9378c5dcf3b210f7053eca5b50e355a73f3d28e8e310db",
+            "expires": 1794309790.415,
+            "secure": true,
+            "httpOnly": true
+          }
+        ],
+        "source": "actual_archived_BetterAuth_HTTP_credential_response"
+      },
+      "expiryControl": {
+        "at": "2026-11-10T11:18:30.724Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "alias": "expired",
+        "kind": "expire",
+        "actorId": "p04r06-expired",
+        "sessionIdHash": "49e526c5c731cd85264dd1490192911029d476f6ea8c297136a5f4a030525032",
+        "tokenHash": "bcccbbeee6a02268442557795e1160866b9e0ec9369acf22f1bbea2ebeab2c26",
+        "affected": 1,
+        "scope": "Exact acquired session only; same-actor siblings retained",
+        "evidence": "session-expire-1794309510724-876661e0-5202-4c51-98fa-7f1b40432fc5.json"
+      },
+      "precondition": {
+        "at": "2026-11-10T11:18:33.552Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "sessionIdHash": "49e526c5c731cd85264dd1490192911029d476f6ea8c297136a5f4a030525032",
+        "tokenSha256": "bcccbbeee6a02268442557795e1160866b9e0ec9369acf22f1bbea2ebeab2c26",
+        "userId": "p04r06-expired",
+        "retainedRowCount": 1,
+        "expiresAtRaw": "1970-01-01 01:00:00",
+        "expiresAtUtc": "1970-01-01T01:00:00.000Z",
+        "databaseNow": "2026-11-10T11:18:33.551Z",
+        "expired": true,
+        "sqlType": "timestamp without time zone",
+        "evidence": "snapshot-R06-E-retained-list-accounts-before-1794309513349-00ed248c-6ecc-4f17-b786-b8c8929af04c.json"
+      },
+      "request": {
+        "at": "2026-11-10T11:18:50.029Z",
+        "status": 401,
+        "bytes": 74,
+        "bodySha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+        "headers": [
+          {
+            "name": "x-content-type-options",
+            "sha256": "f495210addd4c5882999afa5e924569823b6f504f3c95c760b36a0e1ba9e633e",
+            "bytes": 7
+          },
+          {
+            "name": "x-frame-options",
+            "sha256": "36aa3700fc28d74c58906b570aef1b1f96ea9a0d454a0ab2db99ade3eb942b8b",
+            "bytes": 4
+          },
+          {
+            "name": "x-xss-protection",
+            "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+            "bytes": 1
+          },
+          {
+            "name": "referrer-policy",
+            "sha256": "3359f2af82630b62ca23a733643656929141ff2f4fd1874f895e6444528e4529",
+            "bytes": 31
+          },
+          {
+            "name": "permissions-policy",
+            "sha256": "6b5093149525856805c7b4bcab497a202fc926e14bdd272cd142bfff4359702d",
+            "bytes": 40
+          },
+          {
+            "name": "cross-origin-opener-policy",
+            "sha256": "636646ce0490d0cbf958ebfa35139da0b1748819e05b14e86f275d7e7b9876c9",
+            "bytes": 11
+          },
+          {
+            "name": "cross-origin-resource-policy",
+            "sha256": "636646ce0490d0cbf958ebfa35139da0b1748819e05b14e86f275d7e7b9876c9",
+            "bytes": 11
+          },
+          {
+            "name": "origin-agent-cluster",
+            "sha256": "b71a80db33fdfadbd3feab9d266acedd27a908e27dc49ceda2d215231d7b33ef",
+            "bytes": 2
+          },
+          {
+            "name": "strict-transport-security",
+            "sha256": "dcd2270a895010108fc08d1b772c6f17bf08348387858eb8ffff18a75994b0dd",
+            "bytes": 35
+          },
+          {
+            "name": "content-security-policy",
+            "sha256": "a0eef10acb067e3a3bfe767fbf21a99cf9ddbf1cada3c82c33d156a160345120",
+            "bytes": 307
+          },
+          {
+            "name": "vary",
+            "sha256": "8986d5ef9783935f255d865bdeb741df99ba5b4469fb736984556268bab14e4d",
+            "bytes": 79
+          },
+          {
+            "name": "content-type",
+            "sha256": "bacb769b46f6d169fb227ea026550f411d46cbe66a9c2a6ba36449c8cf8e4dea",
+            "bytes": 16
+          },
+          {
+            "name": "date",
+            "sha256": "4e8e13712a64161275d0a113a6c2281aaa26b1d37ae4adb258d442bb7055236a",
+            "bytes": 29
+          },
+          {
+            "name": "connection",
+            "sha256": "ef4f616f9b068e6b527a81c47581f91cfea5f381da967bedb52ea8c53500328f",
+            "bytes": 10
+          },
+          {
+            "name": "keep-alive",
+            "sha256": "7ad43e6c952e60c5ec9b2f5db10e097ba3b7e8de249e219aa4f8625eeb75931b",
+            "bytes": 9
+          },
+          {
+            "name": "transfer-encoding",
+            "sha256": "59fdd34a0b323f6044e147b843d8ca246a9414d2c7a06c8e95a7e04c3cdaf395",
+            "bytes": 7
+          }
+        ],
+        "privateBytesAbsent": true,
+        "authorityFieldsAbsent": true,
+        "unexpiredLegacyCacheAtResponse": true,
+        "wire": {
+          "probeId": "3d6a71c6-a503-47a8-ae3b-ee861fb5b699",
+          "at": "2026-11-10T11:18:33.920Z",
+          "method": "GET",
+          "path": "/api/auth/list-accounts",
+          "runtimeKind": "repaired",
+          "cookies": [
+            {
+              "name": "STOCKFLOW_LOCALE",
+              "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+              "length": 2
+            },
+            {
+              "name": "__Secure-better-auth.session_token",
+              "valueSha256": "2b213d70147475dbbacb350145bd8f2ca3e2a28e41a2d22d0a4c4121c0fe75c7",
+              "length": 79
+            },
+            {
+              "name": "__Secure-better-auth.session_data",
+              "valueSha256": "e2a200fdcca461002e9378c5dcf3b210f7053eca5b50e355a73f3d28e8e310db",
+              "length": 976
+            }
+          ]
+        }
+      },
+      "effects": {
+        "before": "snapshot-R06-E-retained-list-accounts-before-1794309513349-00ed248c-6ecc-4f17-b786-b8c8929af04c.json",
+        "after": "snapshot-R06-E-retained-list-accounts-after-1794309531963-daf09fd4-9c11-4f29-b8ce-1625c4220768.json",
+        "businessEqual": true,
+        "auditsEqual": true,
+        "removedSessionIdHash": "49e526c5c731cd85264dd1490192911029d476f6ea8c297136a5f4a030525032",
+        "removedSessions": 1,
+        "otherSessionRowsUnchanged": true,
+        "classification": "Exact native expiry cleanup of the one still-present owned target; no other persisted change"
+      },
+      "finishedAt": "2026-11-10T11:18:51.998Z"
+    },
+    {
+      "id": "R06-E-retained-unlink-account",
+      "path": "/api/auth/unlink-account",
+      "method": "POST",
+      "startedAt": "2026-11-10T11:18:51.998Z",
+      "passed": true,
+      "issuer": {
+        "alias": "expired",
+        "issuedAt": "2026-11-10T11:18:55.412Z",
+        "decodedSignedPayloadExpiresAt": 1794309856603,
+        "cachedSessionExpiresAt": 1794914343399,
+        "payloadSha256": "df358ff3044bfeb6f3bbeced8cea2843565842a242b4ccff87b9ab450e0652a8",
+        "signatureVerified": true,
+        "taskSigningKeySha256": "2e57a3c554a386f3d948af993d3da7d532397d2b6a4f6a79796c5de27cfd2e11",
+        "tokenSha256": "40d90a7e5c791e2d2ded4be3d38515ab07d58035de1e941a647299c3d164eb45",
+        "cookies": [
+          {
+            "name": "STOCKFLOW_LOCALE",
+            "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+            "expires": 1825845535.412,
+            "secure": false,
+            "httpOnly": false
+          },
+          {
+            "name": "__Secure-better-auth.session_token",
+            "valueSha256": "599855f8805540d7badb6d11efa63b704ead87ef1eae73d07681cb0277238ac8",
+            "expires": 1794914335.412,
+            "secure": true,
+            "httpOnly": true
+          },
+          {
+            "name": "__Secure-better-auth.session_data",
+            "valueSha256": "6d00d6e5782efecf16cd11916e1d00c777579d151310bb8919dc21112ffad651",
+            "expires": 1794309835.412,
+            "secure": true,
+            "httpOnly": true
+          }
+        ],
+        "source": "actual_archived_BetterAuth_HTTP_credential_response"
+      },
+      "expiryControl": {
+        "at": "2026-11-10T11:19:19.812Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "alias": "expired",
+        "kind": "expire",
+        "actorId": "p04r06-expired",
+        "sessionIdHash": "78710637e4887c16287c8acb4c31cfc4ee7a7b837fd841d5af69c84c727ded14",
+        "tokenHash": "40d90a7e5c791e2d2ded4be3d38515ab07d58035de1e941a647299c3d164eb45",
+        "affected": 1,
+        "scope": "Exact acquired session only; same-actor siblings retained",
+        "evidence": "session-expire-1794309559812-9f3a1ef5-41e5-435b-9b69-2572b51c3de6.json"
+      },
+      "precondition": {
+        "at": "2026-11-10T11:19:22.662Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "sessionIdHash": "78710637e4887c16287c8acb4c31cfc4ee7a7b837fd841d5af69c84c727ded14",
+        "tokenSha256": "40d90a7e5c791e2d2ded4be3d38515ab07d58035de1e941a647299c3d164eb45",
+        "userId": "p04r06-expired",
+        "retainedRowCount": 1,
+        "expiresAtRaw": "1970-01-01 01:00:00",
+        "expiresAtUtc": "1970-01-01T01:00:00.000Z",
+        "databaseNow": "2026-11-10T11:19:22.663Z",
+        "expired": true,
+        "sqlType": "timestamp without time zone",
+        "evidence": "snapshot-R06-E-retained-unlink-account-before-1794309562205-b416837b-c013-45cc-8378-65b6b418f084.json"
+      },
+      "request": {
+        "at": "2026-11-10T11:19:46.939Z",
+        "status": 401,
+        "bytes": 74,
+        "bodySha256": "1f82eedb64117146e218b41a55bfe4a1964d731c51d93e396180beae35f23663",
+        "headers": [
+          {
+            "name": "x-content-type-options",
+            "sha256": "f495210addd4c5882999afa5e924569823b6f504f3c95c760b36a0e1ba9e633e",
+            "bytes": 7
+          },
+          {
+            "name": "x-frame-options",
+            "sha256": "36aa3700fc28d74c58906b570aef1b1f96ea9a0d454a0ab2db99ade3eb942b8b",
+            "bytes": 4
+          },
+          {
+            "name": "x-xss-protection",
+            "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+            "bytes": 1
+          },
+          {
+            "name": "referrer-policy",
+            "sha256": "3359f2af82630b62ca23a733643656929141ff2f4fd1874f895e6444528e4529",
+            "bytes": 31
+          },
+          {
+            "name": "permissions-policy",
+            "sha256": "6b5093149525856805c7b4bcab497a202fc926e14bdd272cd142bfff4359702d",
+            "bytes": 40
+          },
+          {
+            "name": "cross-origin-opener-policy",
+            "sha256": "636646ce0490d0cbf958ebfa35139da0b1748819e05b14e86f275d7e7b9876c9",
+            "bytes": 11
+          },
+          {
+            "name": "cross-origin-resource-policy",
+            "sha256": "636646ce0490d0cbf958ebfa35139da0b1748819e05b14e86f275d7e7b9876c9",
+            "bytes": 11
+          },
+          {
+            "name": "origin-agent-cluster",
+            "sha256": "b71a80db33fdfadbd3feab9d266acedd27a908e27dc49ceda2d215231d7b33ef",
+            "bytes": 2
+          },
+          {
+            "name": "strict-transport-security",
+            "sha256": "dcd2270a895010108fc08d1b772c6f17bf08348387858eb8ffff18a75994b0dd",
+            "bytes": 35
+          },
+          {
+            "name": "content-security-policy",
+            "sha256": "a0eef10acb067e3a3bfe767fbf21a99cf9ddbf1cada3c82c33d156a160345120",
+            "bytes": 307
+          },
+          {
+            "name": "vary",
+            "sha256": "8986d5ef9783935f255d865bdeb741df99ba5b4469fb736984556268bab14e4d",
+            "bytes": 79
+          },
+          {
+            "name": "content-type",
+            "sha256": "bacb769b46f6d169fb227ea026550f411d46cbe66a9c2a6ba36449c8cf8e4dea",
+            "bytes": 16
+          },
+          {
+            "name": "date",
+            "sha256": "ed21e06e617fab4ca60b13ccad50e4357cd9cd24eefe28ac73bb58c6e8cbbba4",
+            "bytes": 29
+          },
+          {
+            "name": "connection",
+            "sha256": "ef4f616f9b068e6b527a81c47581f91cfea5f381da967bedb52ea8c53500328f",
+            "bytes": 10
+          },
+          {
+            "name": "keep-alive",
+            "sha256": "7ad43e6c952e60c5ec9b2f5db10e097ba3b7e8de249e219aa4f8625eeb75931b",
+            "bytes": 9
+          },
+          {
+            "name": "transfer-encoding",
+            "sha256": "59fdd34a0b323f6044e147b843d8ca246a9414d2c7a06c8e95a7e04c3cdaf395",
+            "bytes": 7
+          }
+        ],
+        "privateBytesAbsent": true,
+        "authorityFieldsAbsent": true,
+        "unexpiredLegacyCacheAtResponse": true,
+        "wire": {
+          "probeId": "b9b3f967-e5d1-4e21-82cf-63dd12cc29ac",
+          "at": "2026-11-10T11:19:23.087Z",
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "runtimeKind": "repaired",
+          "cookies": [
+            {
+              "name": "STOCKFLOW_LOCALE",
+              "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+              "length": 2
+            },
+            {
+              "name": "__Secure-better-auth.session_token",
+              "valueSha256": "599855f8805540d7badb6d11efa63b704ead87ef1eae73d07681cb0277238ac8",
+              "length": 81
+            },
+            {
+              "name": "__Secure-better-auth.session_data",
+              "valueSha256": "6d00d6e5782efecf16cd11916e1d00c777579d151310bb8919dc21112ffad651",
+              "length": 976
+            }
+          ]
+        }
+      },
+      "effects": {
+        "before": "snapshot-R06-E-retained-unlink-account-before-1794309562205-b416837b-c013-45cc-8378-65b6b418f084.json",
+        "after": "snapshot-R06-E-retained-unlink-account-after-1794309589226-cf2a9c2d-fadc-4fcb-989a-45f40380ec95.json",
+        "businessEqual": true,
+        "auditsEqual": true,
+        "removedSessionIdHash": "78710637e4887c16287c8acb4c31cfc4ee7a7b837fd841d5af69c84c727ded14",
+        "removedSessions": 1,
+        "otherSessionRowsUnchanged": true,
+        "classification": "Exact native expiry cleanup of the one still-present owned target; no other persisted change"
+      },
+      "finishedAt": "2026-11-10T11:19:49.253Z"
+    }
+  ],
+  "cleanup": [],
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "mainRunPassed": false,
+  "mainRunReceiptSha256": "4459b141a394444372f88d3728b84f38d5adeb49eb840d382cc4725327fc92df",
+  "planned": [
+    "R06-E-retained-list-sessions",
+    "R06-E-retained-list-accounts",
+    "R06-E-retained-unlink-account"
+  ],
+  "browserVersion": "149.0.7827.55",
+  "bridge": {
+    "startedAt": "2026-11-10T11:17:40.409Z",
+    "origin": "https://localhost:3296",
+    "switches": [
+      {
+        "event": "ready",
+        "kind": "legacy",
+        "pid": 21240,
+        "at": "2026-11-10T11:17:42.341Z",
+        "elapsedMs": 1274
+      },
+      {
+        "at": "2026-11-10T11:17:51.356Z",
+        "event": "stop",
+        "kind": "legacy",
+        "pid": 21240,
+        "exitCode": 0
+      },
+      {
+        "event": "exit",
+        "kind": "legacy",
+        "pid": 21240,
+        "code": 1,
+        "signal": null,
+        "at": "2026-11-10T11:17:51.412Z"
+      },
+      {
+        "event": "ready",
+        "kind": "repaired",
+        "pid": 19284,
+        "at": "2026-11-10T11:17:52.603Z",
+        "elapsedMs": 1180
+      },
+      {
+        "at": "2026-11-10T11:18:08.191Z",
+        "event": "stop",
+        "kind": "repaired",
+        "pid": 19284,
+        "exitCode": 0
+      },
+      {
+        "event": "exit",
+        "kind": "repaired",
+        "pid": 19284,
+        "code": 1,
+        "signal": null,
+        "at": "2026-11-10T11:18:08.263Z"
+      },
+      {
+        "event": "ready",
+        "kind": "legacy",
+        "pid": 2304,
+        "at": "2026-11-10T11:18:10.415Z",
+        "elapsedMs": 2139
+      },
+      {
+        "at": "2026-11-10T11:18:27.856Z",
+        "event": "stop",
+        "kind": "legacy",
+        "pid": 2304,
+        "exitCode": 0
+      },
+      {
+        "event": "exit",
+        "kind": "legacy",
+        "pid": 2304,
+        "code": 1,
+        "signal": null,
+        "at": "2026-11-10T11:18:27.956Z"
+      },
+      {
+        "event": "ready",
+        "kind": "repaired",
+        "pid": 27684,
+        "at": "2026-11-10T11:18:30.459Z",
+        "elapsedMs": 2487
+      },
+      {
+        "at": "2026-11-10T11:18:52.376Z",
+        "event": "stop",
+        "kind": "repaired",
+        "pid": 27684,
+        "exitCode": 0
+      },
+      {
+        "event": "exit",
+        "kind": "repaired",
+        "pid": 27684,
+        "code": 1,
+        "signal": null,
+        "at": "2026-11-10T11:18:52.463Z"
+      },
+      {
+        "event": "ready",
+        "kind": "legacy",
+        "pid": 15864,
+        "at": "2026-11-10T11:18:55.412Z",
+        "elapsedMs": 2928
+      },
+      {
+        "at": "2026-11-10T11:19:17.153Z",
+        "event": "stop",
+        "kind": "legacy",
+        "pid": 15864,
+        "exitCode": 0
+      },
+      {
+        "event": "exit",
+        "kind": "legacy",
+        "pid": 15864,
+        "code": 1,
+        "signal": null,
+        "at": "2026-11-10T11:19:17.248Z"
+      },
+      {
+        "event": "ready",
+        "kind": "repaired",
+        "pid": 8108,
+        "at": "2026-11-10T11:19:19.531Z",
+        "elapsedMs": 2263
+      },
+      {
+        "at": "2026-11-10T11:19:49.897Z",
+        "event": "stop",
+        "kind": "repaired",
+        "pid": 8108,
+        "exitCode": 0
+      },
+      {
+        "event": "exit",
+        "kind": "repaired",
+        "pid": 8108,
+        "code": 1,
+        "signal": null,
+        "at": "2026-11-10T11:19:50.008Z"
+      }
+    ],
+    "cohorts": [
+      {
+        "aliases": [
+          "expired"
+        ],
+        "bindings": {
+          "repairedCandidateId": "p04-r06-full-4661f767924e",
+          "repairedArtifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+          "legacyCandidateId": "p04-v02-full-6577e9e63dc7",
+          "legacyArtifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+          "legacyCompiledBrowserOrigin": "https://localhost:3196",
+          "legacyRuntimeHttpOrigin": "https://localhost:3296",
+          "legacyBrowserConsumerUsed": false,
+          "legacyAliasFixtureCount": 4,
+          "repairedAliasPolicyCount": 3,
+          "legacySourceSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+          "repairedSourceSchemaSha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+          "schemaCompatibilityReviewSha256": "01cd511c5635f2aadfb421245298e72b6c6ed3a1dd244ad711741980859d425f"
+        },
+        "switchedAt": "2026-11-10T11:17:52.603Z",
+        "sessions": [
+          {
+            "alias": "expired",
+            "issuedAt": "2026-11-10T11:17:42.341Z",
+            "decodedSignedPayloadExpiresAt": 1794309771069,
+            "cachedSessionExpiresAt": 1794914271055,
+            "payloadSha256": "25e5da95fe0f78b6ff11c7da3800cf69fb5acd644a7b802a27026812779029b5",
+            "signatureVerified": true,
+            "taskSigningKeySha256": "2e57a3c554a386f3d948af993d3da7d532397d2b6a4f6a79796c5de27cfd2e11",
+            "tokenSha256": "282ad904d28ff385289e11be37c85c7bff6682ec492deb3b1ea219220fb9b70d",
+            "cookies": [
+              {
+                "name": "STOCKFLOW_LOCALE",
+                "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+                "expires": 1825845462.341,
+                "secure": false,
+                "httpOnly": false
+              },
+              {
+                "name": "__Secure-better-auth.session_token",
+                "valueSha256": "fed56aacb39dc5dc7a6d1dbebed18a7d8678ea9501205e4cd40e95c690de9acc",
+                "expires": 1794914262.341,
+                "secure": true,
+                "httpOnly": true
+              },
+              {
+                "name": "__Secure-better-auth.session_data",
+                "valueSha256": "627a4e472ac1e2d598d8e68a75429452aba25a1828f248c5f6e661937d3cc3d1",
+                "expires": 1794309762.341,
+                "secure": true,
+                "httpOnly": true
+              }
+            ],
+            "source": "actual_archived_BetterAuth_HTTP_credential_response"
+          }
+        ],
+        "minimumCacheSecondsAtSwitch": 289.73800015449524
+      },
+      {
+        "aliases": [
+          "expired"
+        ],
+        "bindings": {
+          "repairedCandidateId": "p04-r06-full-4661f767924e",
+          "repairedArtifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+          "legacyCandidateId": "p04-v02-full-6577e9e63dc7",
+          "legacyArtifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+          "legacyCompiledBrowserOrigin": "https://localhost:3196",
+          "legacyRuntimeHttpOrigin": "https://localhost:3296",
+          "legacyBrowserConsumerUsed": false,
+          "legacyAliasFixtureCount": 4,
+          "repairedAliasPolicyCount": 3,
+          "legacySourceSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+          "repairedSourceSchemaSha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+          "schemaCompatibilityReviewSha256": "01cd511c5635f2aadfb421245298e72b6c6ed3a1dd244ad711741980859d425f"
+        },
+        "switchedAt": "2026-11-10T11:18:30.459Z",
+        "sessions": [
+          {
+            "alias": "expired",
+            "issuedAt": "2026-11-10T11:18:10.415Z",
+            "decodedSignedPayloadExpiresAt": 1794309807148,
+            "cachedSessionExpiresAt": 1794914307120,
+            "payloadSha256": "31c3c30e24de725f7a000cbc0d63e47a408675f00443d08d23ad63cdd74fde9d",
+            "signatureVerified": true,
+            "taskSigningKeySha256": "2e57a3c554a386f3d948af993d3da7d532397d2b6a4f6a79796c5de27cfd2e11",
+            "tokenSha256": "bcccbbeee6a02268442557795e1160866b9e0ec9369acf22f1bbea2ebeab2c26",
+            "cookies": [
+              {
+                "name": "STOCKFLOW_LOCALE",
+                "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+                "expires": 1825845490.415,
+                "secure": false,
+                "httpOnly": false
+              },
+              {
+                "name": "__Secure-better-auth.session_token",
+                "valueSha256": "2b213d70147475dbbacb350145bd8f2ca3e2a28e41a2d22d0a4c4121c0fe75c7",
+                "expires": 1794914290.415,
+                "secure": true,
+                "httpOnly": true
+              },
+              {
+                "name": "__Secure-better-auth.session_data",
+                "valueSha256": "e2a200fdcca461002e9378c5dcf3b210f7053eca5b50e355a73f3d28e8e310db",
+                "expires": 1794309790.415,
+                "secure": true,
+                "httpOnly": true
+              }
+            ],
+            "source": "actual_archived_BetterAuth_HTTP_credential_response"
+          }
+        ],
+        "minimumCacheSecondsAtSwitch": 279.9559998512268
+      },
+      {
+        "aliases": [
+          "expired"
+        ],
+        "bindings": {
+          "repairedCandidateId": "p04-r06-full-4661f767924e",
+          "repairedArtifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+          "legacyCandidateId": "p04-v02-full-6577e9e63dc7",
+          "legacyArtifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+          "legacyCompiledBrowserOrigin": "https://localhost:3196",
+          "legacyRuntimeHttpOrigin": "https://localhost:3296",
+          "legacyBrowserConsumerUsed": false,
+          "legacyAliasFixtureCount": 4,
+          "repairedAliasPolicyCount": 3,
+          "legacySourceSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+          "repairedSourceSchemaSha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+          "schemaCompatibilityReviewSha256": "01cd511c5635f2aadfb421245298e72b6c6ed3a1dd244ad711741980859d425f"
+        },
+        "switchedAt": "2026-11-10T11:19:19.531Z",
+        "sessions": [
+          {
+            "alias": "expired",
+            "issuedAt": "2026-11-10T11:18:55.412Z",
+            "decodedSignedPayloadExpiresAt": 1794309856603,
+            "cachedSessionExpiresAt": 1794914343399,
+            "payloadSha256": "df358ff3044bfeb6f3bbeced8cea2843565842a242b4ccff87b9ab450e0652a8",
+            "signatureVerified": true,
+            "taskSigningKeySha256": "2e57a3c554a386f3d948af993d3da7d532397d2b6a4f6a79796c5de27cfd2e11",
+            "tokenSha256": "40d90a7e5c791e2d2ded4be3d38515ab07d58035de1e941a647299c3d164eb45",
+            "cookies": [
+              {
+                "name": "STOCKFLOW_LOCALE",
+                "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+                "expires": 1825845535.412,
+                "secure": false,
+                "httpOnly": false
+              },
+              {
+                "name": "__Secure-better-auth.session_token",
+                "valueSha256": "599855f8805540d7badb6d11efa63b704ead87ef1eae73d07681cb0277238ac8",
+                "expires": 1794914335.412,
+                "secure": true,
+                "httpOnly": true
+              },
+              {
+                "name": "__Secure-better-auth.session_data",
+                "valueSha256": "6d00d6e5782efecf16cd11916e1d00c777579d151310bb8919dc21112ffad651",
+                "expires": 1794309835.412,
+                "secure": true,
+                "httpOnly": true
+              }
+            ],
+            "source": "actual_archived_BetterAuth_HTTP_credential_response"
+          }
+        ],
+        "minimumCacheSecondsAtSwitch": 275.88100004196167
+      }
+    ],
+    "wireReceipts": [
+      {
+        "probeId": "887e76e5-abfb-4166-945b-4e2e1c38cdd4",
+        "at": "2026-11-10T11:17:55.235Z",
+        "method": "GET",
+        "path": "/api/auth/list-sessions",
+        "runtimeKind": "repaired",
+        "cookies": [
+          {
+            "name": "STOCKFLOW_LOCALE",
+            "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+            "length": 2
+          },
+          {
+            "name": "__Secure-better-auth.session_token",
+            "valueSha256": "fed56aacb39dc5dc7a6d1dbebed18a7d8678ea9501205e4cd40e95c690de9acc",
+            "length": 81
+          },
+          {
+            "name": "__Secure-better-auth.session_data",
+            "valueSha256": "627a4e472ac1e2d598d8e68a75429452aba25a1828f248c5f6e661937d3cc3d1",
+            "length": 976
+          }
+        ]
+      },
+      {
+        "probeId": "3d6a71c6-a503-47a8-ae3b-ee861fb5b699",
+        "at": "2026-11-10T11:18:33.920Z",
+        "method": "GET",
+        "path": "/api/auth/list-accounts",
+        "runtimeKind": "repaired",
+        "cookies": [
+          {
+            "name": "STOCKFLOW_LOCALE",
+            "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+            "length": 2
+          },
+          {
+            "name": "__Secure-better-auth.session_token",
+            "valueSha256": "2b213d70147475dbbacb350145bd8f2ca3e2a28e41a2d22d0a4c4121c0fe75c7",
+            "length": 79
+          },
+          {
+            "name": "__Secure-better-auth.session_data",
+            "valueSha256": "e2a200fdcca461002e9378c5dcf3b210f7053eca5b50e355a73f3d28e8e310db",
+            "length": 976
+          }
+        ]
+      },
+      {
+        "probeId": "b9b3f967-e5d1-4e21-82cf-63dd12cc29ac",
+        "at": "2026-11-10T11:19:23.087Z",
+        "method": "POST",
+        "path": "/api/auth/unlink-account",
+        "runtimeKind": "repaired",
+        "cookies": [
+          {
+            "name": "STOCKFLOW_LOCALE",
+            "valueSha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+            "length": 2
+          },
+          {
+            "name": "__Secure-better-auth.session_token",
+            "valueSha256": "599855f8805540d7badb6d11efa63b704ead87ef1eae73d07681cb0277238ac8",
+            "length": 81
+          },
+          {
+            "name": "__Secure-better-auth.session_data",
+            "valueSha256": "6d00d6e5782efecf16cd11916e1d00c777579d151310bb8919dc21112ffad651",
+            "length": 976
+          }
+        ]
+      }
+    ],
+    "originalAssetsBlocked": 0,
+    "legacyUse": "Credential issuance and optional signed-cache materialization only; no old browser consumer",
+    "bindings": {
+      "repairedCandidateId": "p04-r06-full-4661f767924e",
+      "repairedArtifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+      "legacyCandidateId": "p04-v02-full-6577e9e63dc7",
+      "legacyArtifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+      "legacyCompiledBrowserOrigin": "https://localhost:3196",
+      "legacyRuntimeHttpOrigin": "https://localhost:3296",
+      "legacyBrowserConsumerUsed": false,
+      "legacyAliasFixtureCount": 4,
+      "repairedAliasPolicyCount": 3,
+      "legacySourceSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+      "repairedSourceSchemaSha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+      "schemaCompatibilityReviewSha256": "01cd511c5635f2aadfb421245298e72b6c6ed3a1dd244ad711741980859d425f"
+    },
+    "finishedAt": "2026-11-10T11:19:50.029Z",
+    "portsReleased": true
+  },
+  "portsReleased": true,
+  "artifactsAndRuntimeCopiesUnchanged": true,
+  "finishedAt": "2026-11-10T11:21:08.318Z"
+}

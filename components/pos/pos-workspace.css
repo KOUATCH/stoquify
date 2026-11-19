@@ -1,0 +1,50 @@
+/* The dashboard's horizontal overflow guards also create non-scrolling vertical
+   scroll containers. On POS, clip horizontally without capturing sticky headers
+   and checkout. :has scopes this to ancestors of the mounted workstation only. */
+:is(div, main):has([data-pos-workspace]) {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
+}
+
+[data-pos-workspace] { --pos-sidebar-width: 280px; }
+[data-pos-header] {
+  top: var(--pos-navbar-height, 64px) !important;
+  z-index: 35 !important;
+}
+.pos-persistent-search {
+  position: sticky;
+  top: var(--pos-search-top, 129px);
+  z-index: 20;
+  margin-bottom: 0.75rem;
+}
+[data-pos-workspace] :is(input, select, button, summary) {
+  scroll-margin-top: calc(var(--pos-search-top, 129px) + 72px);
+}
+[data-testid="pos-charge-summary"] { font-variant-numeric: tabular-nums; }
+
+/* POS tablets reuse the dashboard's existing accessible navigation drawer. */
+@media (max-width: 1279px) {
+  [data-pos-workspace] { --pos-sidebar-width: 0px; }
+  body:has([data-pos-workspace]) aside.dashboard-enterprise-sidebar { display: none !important; }
+  div:has(> #dashboard-main-content):has([data-pos-workspace]) { padding-left: 0 !important; }
+  body:has([data-pos-workspace]) [data-dashboard-navigation-trigger] { display: inline-flex !important; }
+  [data-pos-shortcuts] { display: none !important; }
+}
+
+
+/* Disclosure affordance remains visible when summaries use a flex layout. */
+[data-testid="pos-register-setup"] > summary::after,
+[data-testid="pos-device-status"] > summary::after {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  flex-shrink: 0;
+  margin-inline-start: 0.25rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+[data-testid="pos-register-setup"][open] > summary::after,
+[data-testid="pos-device-status"][open] > summary::after {
+  transform: rotate(225deg);
+}

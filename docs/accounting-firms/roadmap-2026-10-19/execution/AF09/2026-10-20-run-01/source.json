@@ -1,0 +1,22 @@
+{
+  "version": "opening-position-v1",
+  "country": "CM",
+  "currency": "XAF",
+  "cutoverDate": "2026-10-01",
+  "timezone": "Africa/Douala",
+  "evidenceReference": "synthetic:source-position-20260930",
+  "stock": [
+    { "sourceId": "stock-1", "item": "FLOUR", "location": "MAIN", "unit": "kg", "account": "STOCK", "quantity": "2.500", "unitCost": "10.00", "value": "25.00" }
+  ],
+  "openItems": [
+    { "sourceId": "ar-1", "kind": "AR", "counterparty": "CUSTOMER-1", "document": "INV-001", "account": "AR", "sourceDate": "2026-09-01", "dueDate": "2026-10-15", "currency": "XAF", "original": "120.00", "settled": "20.00", "outstanding": "100.00" },
+    { "sourceId": "ap-1", "kind": "AP", "counterparty": "SUPPLIER-1", "document": "BILL-001", "account": "AP", "sourceDate": "2026-09-02", "dueDate": "2026-10-16", "currency": "XAF", "original": "80.00", "settled": "30.00", "outstanding": "50.00" }
+  ],
+  "ledger": [
+    { "sourceId": "ledger-stock", "account": "STOCK", "domain": "STOCK", "side": "DEBIT", "amount": "25.00", "currency": "XAF", "covers": ["stock-1"] },
+    { "sourceId": "ledger-ar", "account": "AR", "domain": "AR", "side": "DEBIT", "amount": "100.00", "currency": "XAF", "covers": ["ar-1"] },
+    { "sourceId": "ledger-ap", "account": "AP", "domain": "AP", "side": "CREDIT", "amount": "50.00", "currency": "XAF", "covers": ["ap-1"] },
+    { "sourceId": "ledger-cash", "account": "CASH", "domain": "CASH", "side": "DEBIT", "amount": "25.00", "currency": "XAF", "covers": [] },
+    { "sourceId": "ledger-equity", "account": "EQUITY", "domain": "EQUITY", "side": "CREDIT", "amount": "100.00", "currency": "XAF", "covers": [] }
+  ]
+}

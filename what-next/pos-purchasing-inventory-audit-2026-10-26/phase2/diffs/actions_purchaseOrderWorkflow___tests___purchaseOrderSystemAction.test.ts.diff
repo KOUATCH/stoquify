@@ -1,0 +1,29 @@
+diff --git a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts b/actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts
+index 8fae0e33..bf309a1e 100644
+--- a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts
++++ b/actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts
+@@ -156,6 +156,16 @@ describe("purchaseOrderSystemAction controls", () => {
+     expect(updatePurchaseOrderService).toHaveBeenCalledTimes(1)
+   })
+ 
++  it.each(["create", "clone"])("preserves a successful %s result after cache failure", async operation => {
++    const service = operation === "create" ? createPurchaseOrderService : clonePurchaseOrderService
++    ;(service as jest.Mock).mockResolvedValueOnce(approvedPurchaseOrder)
++    ;(revalidatePath as jest.Mock).mockImplementationOnce(() => { throw new Error("private cache failure") })
++    const result = operation === "create"
++      ? await createPurchaseOrder({ organizationId: "org-session", supplierId: "supplier-1", locationId: "location-1", date: "2026-09-05", expectedDeliveryDate: "2026-09-06", paymentTerms: "Net 30", shippingCost: 0, orderLines: [{ itemId: "item-1", quantity: 1, unitPrice: 10 }] })
++      : await clonePurchaseOrder({ id: "po-1", organizationId: "org-session" })
++    expect(result).toMatchObject({ success: true })
++  })
++
+   it("returns actionable stale codes and redacts unexpected internal draft failures", async () => {
+     const payload = { id: "po-1", organizationId: "org-session", expectedRevision: "a".repeat(64), idempotencyKey: "draft-safe-error", notes: "Edit" }
+     ;(updatePurchaseOrderService as jest.Mock).mockRejectedValueOnce(new ApplicationError("CONFLICT", "Compare the current order", 409))
+@@ -262,6 +272,7 @@ describe("purchaseOrderSystemAction controls", () => {
+       id: "po-1",
+       organizationId: "org-session",
+       idempotencyKey: "receipt:command-denied",
++      receivedBy: "client-supplied-actor",
+       inspectionOutcome: "PASSED",
+       items: [{ lineId: "line-1", receivedQuantity: 2 }],
+     })

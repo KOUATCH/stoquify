@@ -1,0 +1,241 @@
+{
+  "passed": true,
+  "startedAt": "2026-11-09T18:04:11.549Z",
+  "origin": "https://127.0.0.1:3443",
+  "database": "stoquify_runtime_close_20261109_bb03af1c82",
+  "artifact": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\11\\02\\01a19e00-6435-7443-92d6-f2cf160728a8\\close-release-20261109-9cf90a4714-artifact",
+  "sourceManifestSha256": "8c9723660c455a3cea75b4ab774d91844418e9397d7ed35da47fceef389168b3",
+  "certificateSha256": "572bc93741ea5ccbec5a62f849e944c14ecf37990922a1f8ca4e74b9f896ceac",
+  "checks": [
+    {
+      "name": "actual-sign-in",
+      "httpStatus": 200,
+      "secureSessionCookie": true,
+      "persistedSession": true,
+      "cookieValuesRecorded": false
+    },
+    {
+      "name": "authenticated-close-SSR",
+      "httpStatus": 200,
+      "bytes": 533354,
+      "sha256": "1779deff3d1b5a7774f9a5eaab0296de3eacc6f339da94547f47b8d2d9dad10d",
+      "browserRendered": false
+    },
+    {
+      "name": "positive-comment",
+      "action": "commentOnCloseFindingAction",
+      "httpStatus": 200,
+      "status": 200,
+      "persistedAuthorBoundToActualSession": true,
+      "clientAuthorityIgnored": true
+    },
+    {
+      "name": "actual-password-step-up",
+      "persistedOrganizationBoundProof": true,
+      "fabricatedPositiveAssurance": false
+    },
+    {
+      "name": "module-suspended",
+      "action": "runCloseAssuranceAction",
+      "httpStatus": 200,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "module-suspended",
+      "action": "assignCloseFindingAction",
+      "httpStatus": 200,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "module-suspended",
+      "action": "commentOnCloseFindingAction",
+      "httpStatus": 200,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "module-suspended",
+      "action": "requestCloseWaiverAction",
+      "httpStatus": 200,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "module-suspended",
+      "action": "approveCloseWaiverAction",
+      "httpStatus": 200,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "module-suspended",
+      "action": "updateAccountantReviewAction",
+      "httpStatus": 200,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "module-suspended",
+      "action": "exportDraftClosePackAction",
+      "httpStatus": 200,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "module-suspended",
+      "action": "exportCertifiedClosePackAction",
+      "httpStatus": 200,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "stale-persisted-assurance",
+      "action": "approveCloseWaiverAction",
+      "httpStatus": 200,
+      "status": 403,
+      "code": "FRESH_AUTH_REQUIRED",
+      "businessRowsUnchanged": true,
+      "spoofedFreshnessIgnored": true
+    },
+    {
+      "name": "stale-persisted-assurance",
+      "action": "exportCertifiedClosePackAction",
+      "httpStatus": 200,
+      "status": 403,
+      "code": "FRESH_AUTH_REQUIRED",
+      "businessRowsUnchanged": true,
+      "spoofedFreshnessIgnored": true
+    },
+    {
+      "name": "revoked-old-cookie",
+      "action": "runCloseAssuranceAction",
+      "httpStatus": 200,
+      "status": 401,
+      "code": "AUTH_REQUIRED",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "revoked-old-cookie",
+      "action": "assignCloseFindingAction",
+      "httpStatus": 200,
+      "status": 401,
+      "code": "AUTH_REQUIRED",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "revoked-old-cookie",
+      "action": "commentOnCloseFindingAction",
+      "httpStatus": 200,
+      "status": 401,
+      "code": "AUTH_REQUIRED",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "revoked-old-cookie",
+      "action": "requestCloseWaiverAction",
+      "httpStatus": 200,
+      "status": 401,
+      "code": "AUTH_REQUIRED",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "revoked-old-cookie",
+      "action": "approveCloseWaiverAction",
+      "httpStatus": 200,
+      "status": 401,
+      "code": "AUTH_REQUIRED",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "revoked-old-cookie",
+      "action": "updateAccountantReviewAction",
+      "httpStatus": 200,
+      "status": 401,
+      "code": "AUTH_REQUIRED",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "revoked-old-cookie",
+      "action": "exportDraftClosePackAction",
+      "httpStatus": 200,
+      "status": 401,
+      "code": "AUTH_REQUIRED",
+      "businessRowsUnchanged": true
+    },
+    {
+      "name": "revoked-old-cookie",
+      "action": "exportCertifiedClosePackAction",
+      "httpStatus": 200,
+      "status": 401,
+      "code": "AUTH_REQUIRED",
+      "businessRowsUnchanged": true
+    }
+  ],
+  "evidenceClass": "Real loopback HTTPS requests to the newly sealed standalone artifact, real Better Auth sessions, and fresh isolated PostgreSQL persistence; no browser",
+  "limitations": [
+    "Synthetic local configuration, organization, role and unassessed DRAFT close-run fixture; no financial workflow, readiness certification, statutory certification or deployment.",
+    "Session assurance expiry is injected only after actual password step-up by aging the owned persisted timestamp; no positive assurance or session is fabricated.",
+    "Module suspension is an explicit synthetic persisted authority mutation for denial testing; no production module configuration is touched.",
+    "Only the owned loopback self-signed origin accepts a private TLS exception. SSR source is checked without browser/rendered accessibility claims."
+  ],
+  "artifactBefore": {
+    "sha256": "d925ed1f841c6d267d12108b7fd23361b3cee581f38adae78b8b1526aaa050d9",
+    "buildId": "wMWHmuVfpeP275uc-dCjr",
+    "files": 6707
+  },
+  "actionIds": {
+    "runCloseAssuranceAction": "405a7b09d3cf5c425a2562e56ed08e82e8f94a79f5",
+    "assignCloseFindingAction": "400370f29cc521187c4ef5c8b4cabcb2f827bbd04f",
+    "commentOnCloseFindingAction": "40588907552c5ccb6bb227905849ac63378fdf46b9",
+    "requestCloseWaiverAction": "407eeffd2a21f00e157f9af539e11ebd281af465e8",
+    "approveCloseWaiverAction": "405e9ce82e3ac6bec89518ec124ef95cf46b2097e5",
+    "updateAccountantReviewAction": "40cbf8ed40014db7563fd3e147241ad4c6943b9374",
+    "exportDraftClosePackAction": "40d66e7826484e799555a4388e8186a7731105f4b6",
+    "exportCertifiedClosePackAction": "40142804617858728bb43876255698c8e9b3b7fa88",
+    "stepUpWithPasswordAction": "40e8f8f09daa55aa1e9cdd58c11497ee5be714aae5"
+  },
+  "postmaster": {
+    "pid": 2212,
+    "startedAtSeconds": 1794247475
+  },
+  "migrations": {
+    "count": 121,
+    "historySha256": "fb3390eacbf1b32cdb4bb5e7b4de1269afe1a7524b6c6822045d2edb35ad8af2"
+  },
+  "fixture": {
+    "organizationId": "runtime-close-bb03af1c82",
+    "userId": "runtime-close-bb03af1c82-operator",
+    "periodId": "cmw9kmzrv000cma8gstvca1ei",
+    "closeRunId": "cmw9kmzs8000ema8gn0j75abs",
+    "classification": "Synthetic setup only: an explicitly unassessed DRAFT run. Actual comment mutation and authentication use HTTP."
+  },
+  "applicationPid": 20368,
+  "finalCounts": {
+    "comments": 1,
+    "exports": 0,
+    "sessions": 0,
+    "journals": 0,
+    "sales": 0,
+    "settlements": 0
+  },
+  "applicationStopped": true,
+  "clusterStopped": true,
+  "partialStartCleanup": false,
+  "artifactAfter": {
+    "sha256": "d925ed1f841c6d267d12108b7fd23361b3cee581f38adae78b8b1526aaa050d9",
+    "buildId": "wMWHmuVfpeP275uc-dCjr",
+    "files": 6707
+  },
+  "artifactUnchanged": true,
+  "finishedAt": "2026-11-09T18:06:20.098Z"
+}

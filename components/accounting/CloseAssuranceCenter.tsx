@@ -30,12 +30,13 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import type { CloseAssuranceDashboardData, CloseAssuranceFindingDto } from "@/actions/accounting/close-assurance.actions"
+import type { CloseAssuranceDashboardData, CloseAssuranceFindingDto, ClosePackExportReceipt } from "@/actions/accounting/close-assurance.actions"
 import type { ClosePackExportResult } from "@/services/accounting/close-assurance-pack.service"
 import {
   useAssignCloseFinding,
   useCloseAssurance,
   useCloseEvidenceGraph,
+  useClosePackExports,
   useCloseWaiver,
   useCommentOnCloseFinding,
   useExportClosePack,
@@ -74,6 +75,9 @@ const copy = {
     loadingBody: "Checking period close, ledger reconciliation, payment suspense, and data-trust evidence.",
     errorTitle: "Close assurance unavailable",
     retry: "Refresh",
+    accessDenied: "Access to close evidence denied",
+    accessDeniedBody: "Your current access could not be confirmed. Refresh after your access is restored, or sign in again.",
+    signInAgain: "Sign in again",
     run: "Run assessment",
     running: "Running",
     refresh: "Refresh",
@@ -143,6 +147,14 @@ const copy = {
     exportCertified: "Export certified JSON",
     exporting: "Exporting",
     lastExport: "Last export",
+    retainedExports: "Retained export receipts",
+    retainedExportsDescription: "Recover the original recorded file. A historical copy does not establish current certification.",
+    recoverExport: "Recover original JSON",
+    retainedUnavailable: "Original bytes unavailable for this receipt.",
+    retainedEmpty: "No retained export receipts for this assessment.",
+    retainedFailed: "Export receipts are unavailable. Refresh before recovering a file.",
+    historicalExport: "Historical recorded copy",
+    documentDigest: "Original file SHA-256",
     hash: "Hash",
     watermark: "Watermark",
     certifiedBlocked: "Certified export blocked",
@@ -202,6 +214,9 @@ const copy = {
     loadingBody: "Verification de la periode, du ledger, du suspense paiement et des preuves de confiance.",
     errorTitle: "Assurance de cloture indisponible",
     retry: "Actualiser",
+    accessDenied: "Accès aux preuves de clôture refusé",
+    accessDeniedBody: "Votre accès actuel n’a pas pu être confirmé. Actualisez après le rétablissement de vos droits, ou reconnectez-vous.",
+    signInAgain: "Se reconnecter",
     run: "Lancer l'evaluation",
     running: "Evaluation",
     refresh: "Actualiser",
@@ -253,6 +268,14 @@ const copy = {
     exportCertified: "Exporter JSON certifie",
     exporting: "Export",
     lastExport: "Dernier export",
+    retainedExports: "Reçus des exports conservés",
+    retainedExportsDescription: "Récupérez le fichier enregistré d’origine. Une copie historique ne prouve pas une certification actuelle.",
+    recoverExport: "Récupérer le JSON d’origine",
+    retainedUnavailable: "Les octets d’origine ne sont pas disponibles pour ce reçu.",
+    retainedEmpty: "Aucun reçu d’export conservé pour cette évaluation.",
+    retainedFailed: "Les reçus d’export sont indisponibles. Actualisez avant de récupérer un fichier.",
+    historicalExport: "Copie historique enregistrée",
+    documentDigest: "SHA-256 du fichier d’origine",
     hash: "Hash",
     watermark: "Filigrane",
     certifiedBlocked: "Export certifie bloque",
@@ -439,11 +462,25 @@ function downloadClosePack(result: ClosePackExportResult) {
 }
 
 export function CloseAssuranceCenter({
+  ...props
+}: CloseAssuranceCenterProps) {
+  const permissions = usePermissions()
+  const identity = JSON.stringify([permissions.user?.id, permissions.organizationId])
+  const periodKnownInCurrentScope = permissions.permissionState === "ready" && props.initialData?.organizationId === permissions.organizationId && props.initialData?.actorId === permissions.user?.id
+  // Fetch the private body through the current scoped protected action; an SSR
+  // response may have arrived before the client observed an identity change.
+  return <CloseAssuranceWorkspace key={identity} {...props} permissions={permissions}
+    initialPeriodId={props.initialPeriodId ?? (periodKnownInCurrentScope ? props.initialData?.period?.id ?? props.initialData?.periods.currentOpenPeriod?.id : null)}
+    initialData={null} />
+}
+
+function CloseAssuranceWorkspace({
   initialData = null,
   initialError = null,
   locale = "en",
   initialPeriodId = null,
-}: CloseAssuranceCenterProps) {
+  permissions,
+}: CloseAssuranceCenterProps & { permissions: ReturnType<typeof usePermissions> }) {
   const initialSelectedPeriodId = initialPeriodId ?? initialData?.period?.id ?? initialData?.periods.currentOpenPeriod?.id ?? ""
   const [selectedPeriodId, setSelectedPeriodId] = useState(initialSelectedPeriodId)
   const [selectedFindingId, setSelectedFindingId] = useState<string | null>(() => selectedOpenFinding(initialData?.findings ?? [])?.id ?? null)
@@ -462,6 +499,22 @@ export function CloseAssuranceCenter({
   const returnActionFocus = useRef(false)
   const [isClientReady, setIsClientReady] = useState(false)
   const t = copy[locale]
+  const authorityAvailable = permissions.permissionState === "ready" && Boolean(permissions.user?.id && permissions.organizationId) && permissions.hasPermission("accounting.close.read")
+  const clientScope = { actorId: permissions.user?.id, organizationId: permissions.organizationId, periodId: selectedPeriodId || undefined, enabled: authorityAvailable }
+  const initialQueryData = selectedPeriodId === initialSelectedPeriodId ? initialData : null
+  const query = useCloseAssurance({ ...clientScope, initialData: initialQueryData, locale })
+  const resolvedPeriodId = authorityAvailable && query.data?.actorId === permissions.user?.id && query.data?.organizationId === permissions.organizationId ? query.data?.period?.id : undefined
+  const contextKey = JSON.stringify([permissions.user?.id, permissions.organizationId, selectedPeriodId, resolvedPeriodId, authorityAvailable])
+  const context = useRef({ key: contextKey, revision: 0, mounted: true })
+  if (context.current.key !== contextKey) context.current = { key: contextKey, revision: context.current.revision + 1, mounted: true }
+  const [formContext, setFormContext] = useState(contextKey)
+  const contextPending = formContext !== contextKey
+  useEffect(() => { context.current.mounted = true; return () => { context.current.mounted = false; context.current.revision++ } }, [])
+  useEffect(() => {
+    setLastExport(null); setCommentBody(""); setWaiverReason(""); setReviewNotes(""); setPassword(""); setNeedsFreshAuth(false)
+    setAuthNotice(null); setActionError(null); setAuthPending(false); setSelectedFindingId(null); returnActionFocus.current = false
+    setFormContext(contextKey)
+  }, [contextKey])
 
   useEffect(() => {
     if (needsFreshAuth && !authPending) passwordInput.current?.focus()
@@ -484,34 +537,62 @@ export function CloseAssuranceCenter({
   useEffect(() => {
     setIsClientReady(true)
   }, [])
-  const initialQueryData = selectedPeriodId === initialSelectedPeriodId ? initialData : null
-
-  const query = useCloseAssurance({
-    periodId: selectedPeriodId || undefined,
-    initialData: initialQueryData,
-    locale,
-  })
-  const data = query.error && query.data ? {
+  // A refetch retains cached data while retries run. Hide it on the first
+  // authorization failure, before the query reaches its terminal error state.
+  const readError = query.error ?? query.failureReason
+  const currentReadErrorCode = readError && "code" in readError ? readError.code : null
+  const currentDenial = currentReadErrorCode === "FORBIDDEN" || currentReadErrorCode === "AUTH_REQUIRED" ? currentReadErrorCode : null
+  const denialScope = JSON.stringify([permissions.user?.id, permissions.organizationId, selectedPeriodId])
+  const [lastReadDenial, setLastReadDenial] = useState<{ scope: string; code: string; dataUpdatedAt: number } | null>(null)
+  const scopedReadDenial = lastReadDenial?.scope === denialScope ? lastReadDenial : null
+  // Starting a retry resets the error while retaining the previous private data.
+  // Only a newer successful response can release a recorded denial.
+  const readRestored = Boolean(scopedReadDenial && query.dataUpdatedAt > scopedReadDenial.dataUpdatedAt && !query.isFetching && !readError)
+  useEffect(() => {
+    if (currentDenial) setLastReadDenial({ scope: denialScope, code: currentDenial, dataUpdatedAt: query.dataUpdatedAt })
+    else if (readRestored) setLastReadDenial(null)
+  }, [currentDenial, query.dataUpdatedAt, readRestored, denialScope])
+  const readErrorCode = currentDenial ?? (readRestored ? null : scopedReadDenial?.code)
+  const readDenied = readErrorCode === "FORBIDDEN" || readErrorCode === "AUTH_REQUIRED"
+  const priorReadDenied = useRef(readDenied)
+  if (priorReadDenied.current !== readDenied) { context.current.revision++; priorReadDenied.current = readDenied }
+  const mutationScope = { ...clientScope, periodId: selectedPeriodId || resolvedPeriodId, enabled: authorityAvailable && !readDenied }
+  const data = !authorityAvailable || contextPending || readDenied || query.data?.actorId !== permissions.user?.id || query.data?.organizationId !== permissions.organizationId || (selectedPeriodId && query.data?.period?.id !== selectedPeriodId) ? null : query.error && query.data ? {
     ...query.data, currentProof: null,
     controls: { ...query.data.controls, certificationAvailable: false, certificationDisabledReason: "Current close evidence requires review." },
   } : query.data
-  const runMutation = useRunCloseAssurance(locale)
-  const assignMutation = useAssignCloseFinding(locale)
-  const commentMutation = useCommentOnCloseFinding(locale)
-  const waiverMutation = useCloseWaiver(locale)
-  const exportMutation = useExportClosePack(locale)
-  const reviewMutation = useUpdateAccountantReview(locale)
+  const runMutation = useRunCloseAssurance(locale, mutationScope)
+  const assignMutation = useAssignCloseFinding(locale, mutationScope)
+  const commentMutation = useCommentOnCloseFinding(locale, mutationScope)
+  const waiverMutation = useCloseWaiver(locale, mutationScope)
+  const exportMutation = useExportClosePack(locale, mutationScope)
+  const reviewMutation = useUpdateAccountantReview(locale, mutationScope)
   const graphQuery = useCloseEvidenceGraph({
+    ...clientScope,
     periodId: selectedPeriodId || data?.period?.id,
     closeRunId: data?.run.id ?? undefined,
-    enabled: Boolean(data?.period?.id),
+    enabled: authorityAvailable && !readDenied && Boolean(data?.period?.id),
   })
 
   const selectedFinding = useMemo(
     () => data?.findings.find((finding) => finding.id === selectedFindingId) ?? selectedOpenFinding(data?.findings ?? []),
     [data?.findings, selectedFindingId],
   )
-  const permissions = usePermissions()
+  const retainedQuery = useClosePackExports({ ...clientScope, closeRunId: data?.run.id, enabled: authorityAvailable && !readDenied && permissions.hasPermission("accounting.close.export") })
+  const exportReadDenied = Boolean(retainedQuery.error)
+  useEffect(() => { if (exportReadDenied) setLastExport(null) }, [exportReadDenied])
+  useEffect(() => {
+    if (!readDenied) return
+    setLastExport(null)
+    setCommentBody("")
+    setWaiverReason("")
+    setReviewNotes("")
+    setActionError(null)
+    setPassword("")
+    setNeedsFreshAuth(false)
+    setAuthNotice(null)
+    returnActionFocus.current = false
+  }, [readDenied])
   const allowed = (permission: string) => permissions.permissionState === "ready" && permissions.hasPermission(permission)
   const access = {
     run: allowed("accounting.close.run"),
@@ -525,19 +606,26 @@ export function CloseAssuranceCenter({
   const canRun = access.run && Boolean(data?.period?.id || selectedPeriodId)
   const canComment = access.comment && Boolean(selectedFinding?.id && data?.run.id && commentBody.trim().length >= 3 && !commentMutation.isPending)
   const canRequestWaiver = access.waiver && Boolean(selectedFinding?.id && waiverReason.trim().length >= 10 && !waiverMutation.request.isPending)
-  const canExportDraft = access.draftExport && Boolean(data?.controls.packExportAvailable && data.run.id && !exportMutation.draft.isPending)
-  const canExportCertified = access.certifiedExport && !query.error && Boolean(data?.currentProof && data.currentProof.grade !== "blocked" && data.controls.certificationAvailable && data.run.id && !exportMutation.certified.isPending)
+  const canExportDraft = access.draftExport && !exportReadDenied && Boolean(data?.controls.packExportAvailable && data.run.id && !exportMutation.draft.isPending)
+  const canExportCertified = access.certifiedExport && !query.error && !exportReadDenied && Boolean(data?.currentProof && data.currentProof.grade !== "blocked" && data.controls.certificationAvailable && data.run.id && !exportMutation.certified.isPending)
   const canUpdateReview = access.review && Boolean(data?.run.id && !reviewMutation.isPending)
 
-  async function withActionError(work: () => Promise<void>) {
+  async function withActionError(work: (current: () => boolean) => Promise<void>) {
+    if (!authorityAvailable || contextPending || readDenied) return
+    const revision = context.current.revision
+    const current = () => context.current.mounted && context.current.revision === revision
     returnActionFocus.current = false
     actionTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
     setActionError(null)
     setAuthNotice(null)
     try {
-      await work()
+      await work(current)
     } catch (error) {
-      if (error && typeof error === "object" && "code" in error && error.code === "FRESH_AUTH_REQUIRED") {
+      if (!current()) return
+      const code = error && typeof error === "object" && "code" in error ? error.code : null
+      if (code === "FORBIDDEN" || code === "AUTH_REQUIRED") {
+        setLastReadDenial({ scope: denialScope, code, dataUpdatedAt: query.dataUpdatedAt })
+      } else if (code === "FRESH_AUTH_REQUIRED") {
         setPassword("")
         setNeedsFreshAuth(true)
       } else setActionError(actionErrorMessage(error, t.errorTitle))
@@ -547,27 +635,31 @@ export function CloseAssuranceCenter({
   async function confirmIdentity() {
     if (authPending || !password) return
     const enteredPassword = password
+    const revision = context.current.revision
+    const current = () => context.current.mounted && context.current.revision === revision
     setPassword("")
     setAuthPending(true)
     setAuthNotice(null)
     try {
       const result = await stepUpWithPasswordAction({ password: enteredPassword })
+      if (!current()) return
       returnActionFocus.current = result.success
       setNeedsFreshAuth(!result.success)
       setAuthNotice(result.success ? t.identityVerified : result.code === "RATE_LIMITED" ? t.identityRateLimited : t.identityFailed)
     } catch {
-      setAuthNotice(t.identityFailed)
+      if (current()) setAuthNotice(t.identityFailed)
     } finally {
-      setAuthPending(false)
+      if (current()) setAuthPending(false)
     }
   }
 
   async function handleRun() {
     if (!canRun) return
-    await withActionError(async () => {
+    await withActionError(async current => {
       const periodId = selectedPeriodId || data?.period?.id
       if (!periodId) return
       const result = await runMutation.mutateAsync({ periodId })
+      if (!current()) return
       setSelectedPeriodId(result.period?.id ?? periodId)
       setSelectedFindingId(selectedOpenFinding(result.findings)?.id ?? null)
     })
@@ -582,34 +674,37 @@ export function CloseAssuranceCenter({
 
   async function handleComment() {
     if (!canComment) return
-    await withActionError(async () => {
+    await withActionError(async current => {
       if (!selectedFinding?.id) return
       await commentMutation.mutateAsync({
         findingId: selectedFinding.id,
         closeRunId: data?.run.id ?? undefined,
         body: commentBody,
       })
+      if (!current()) return
       setCommentBody("")
     })
   }
 
   async function handleWaiverRequest() {
     if (!canRequestWaiver) return
-    await withActionError(async () => {
+    await withActionError(async current => {
       if (!selectedFinding?.id) return
       await waiverMutation.request.mutateAsync({
         findingId: selectedFinding.id,
         reason: waiverReason,
       })
+      if (!current()) return
       setWaiverReason("")
     })
   }
 
   async function handleDraftExport() {
     if (!canExportDraft) return
-    await withActionError(async () => {
+    await withActionError(async current => {
       if (!data?.run.id) return
       const result = await exportMutation.draft.mutateAsync({ closeRunId: data.run.id })
+      if (!current()) return
       setLastExport(result)
       downloadClosePack(result)
     })
@@ -617,9 +712,10 @@ export function CloseAssuranceCenter({
 
   async function handleCertifiedExport() {
     if (!canExportCertified) return
-    await withActionError(async () => {
+    await withActionError(async current => {
       if (!data?.run.id) return
       const result = await exportMutation.certified.mutateAsync({ closeRunId: data.run.id })
+      if (!current()) return
       setLastExport(result)
       downloadClosePack(result)
     })
@@ -627,16 +723,45 @@ export function CloseAssuranceCenter({
 
   async function handleReviewUpdate() {
     if (!canUpdateReview) return
-    await withActionError(async () => {
+    await withActionError(async current => {
       if (!data?.run.id) return
       await reviewMutation.mutateAsync({
         closeRunId: data.run.id,
         status: reviewStatus,
         decisionNotes: reviewNotes.trim() || undefined,
       })
+      if (!current()) return
       setReviewNotes("")
     })
   }
+  async function handleRecoverExport(receipt: ClosePackExportReceipt) {
+    if (!access.draftExport || exportReadDenied || !receipt.retained) return
+    await withActionError(async current => {
+      const result = await exportMutation.recover.mutateAsync({ exportId: receipt.exportId, mode: receipt.mode })
+      if (!current()) return
+      setLastExport(result); downloadClosePack(result)
+    })
+  }
+  if (!authorityAvailable || contextPending) {
+    return <Panel title={permissions.permissionState === "loading" || contextPending ? t.loadingTitle : t.accessDenied}>
+      <div role="status" className="space-y-3 p-4 text-sm text-[var(--dash-text-soft)]">
+        <p>{permissions.permissionState === "loading" || contextPending ? t.loadingBody : t.accessDeniedBody}</p>
+        <Button type="button" onClick={() => { void permissions.refreshPermissions(); void query.refetch() }}>{t.retry}</Button>
+      </div>
+    </Panel>
+  }
+  if (readDenied) {
+    return <Panel title={t.accessDenied}>
+      <div role="alert" className="p-4 space-y-3">
+        <p className="text-sm text-[var(--dash-text-soft)]">{t.accessDeniedBody}</p>
+        <div className="flex flex-wrap gap-3">
+          <Button type="button" disabled={query.isFetching} onClick={() => { void query.refetch(); void permissions.refreshPermissions() }}>{t.retry}</Button>
+          {readErrorCode === "AUTH_REQUIRED" ? <a className="dashboard-button-secondary inline-flex min-h-11 items-center rounded-lg px-4 focus-visible:outline focus-visible:outline-2" href={`/${locale}/login`}>{t.signInAgain}</a> : null}
+        </div>
+      </div>
+    </Panel>
+  }
+
   if (query.isLoading && !data) {
     return (
       <Panel title={t.loadingTitle} description={t.loadingBody}>
@@ -884,7 +1009,13 @@ export function CloseAssuranceCenter({
         <ClosePackExportPanel
           data={data}
           locale={locale}
-          lastExport={lastExport}
+          lastExport={exportReadDenied ? null : lastExport}
+          receipts={exportReadDenied ? [] : retainedQuery.data ?? []}
+          receiptsLoading={retainedQuery.isFetching}
+          receiptsError={exportReadDenied}
+          canRecover={access.draftExport}
+          isRecovering={exportMutation.recover.isPending}
+          onRecover={handleRecoverExport}
           canExportDraft={canExportDraft}
           canExportCertified={canExportCertified}
           isExportingDraft={exportMutation.draft.isPending}
@@ -1440,6 +1571,12 @@ function ClosePackExportPanel({
   isExportingCertified,
   onDraftExport,
   onCertifiedExport,
+  receipts,
+  receiptsLoading,
+  receiptsError,
+  canRecover,
+  isRecovering,
+  onRecover,
 }: {
   data: CloseAssuranceDashboardData
   locale: Locale
@@ -1450,6 +1587,12 @@ function ClosePackExportPanel({
   isExportingCertified: boolean
   onDraftExport: () => Promise<void>
   onCertifiedExport: () => Promise<void>
+  receipts: ClosePackExportReceipt[]
+  receiptsLoading: boolean
+  receiptsError: boolean
+  canRecover: boolean
+  isRecovering: boolean
+  onRecover: (receipt: ClosePackExportReceipt) => Promise<void>
 }) {
   const t = copy[locale]
   const rawDisabledReason = data.run.id
@@ -1506,11 +1649,16 @@ function ClosePackExportPanel({
           <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.28)] p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-xs font-semibold uppercase text-[var(--dash-text-faint)]">{t.lastExport}</p>
-              <Badge variant="outline" className={cn("rounded-md", statusClass(lastExport.isCertified ? "READY" : "WARNING"))}>
-                {lastExport.mode}
+              <Badge variant="outline" className={cn("rounded-md", statusClass("WARNING"))}>
+                {lastExport.historicalNotice || lastExport.replayed ? t.historicalExport : lastExport.mode}
               </Badge>
             </div>
+            {lastExport.historicalNotice ? <p className="mt-3 text-xs text-[var(--dash-text-soft)]">{t.retainedExportsDescription}</p> : null}
             <dl className="mt-3 grid gap-2 text-sm">
+              <div className="min-w-0">
+                <dt className="text-xs font-semibold uppercase text-[var(--dash-text-faint)]">{t.documentDigest}</dt>
+                <dd className="mt-1 break-all text-[var(--dash-text-soft)]">{lastExport.documentDigest}</dd>
+              </div>
               <div className="min-w-0">
                 <dt className="text-xs font-semibold uppercase text-[var(--dash-text-faint)]">{t.hash}</dt>
                 <dd className="mt-1 break-all text-[var(--dash-text-soft)]">{lastExport.contentHash}</dd>
@@ -1522,6 +1670,19 @@ function ClosePackExportPanel({
             </dl>
           </div>
         ) : null}
+        {canRecover ? <section aria-label={t.retainedExports} className="rounded-lg border border-[var(--dash-border-subtle)] p-3">
+          <h3 className="text-sm font-semibold text-[var(--dash-text)]">{t.retainedExports}</h3>
+          <p className="mt-1 text-xs leading-5 text-[var(--dash-text-soft)]">{t.retainedExportsDescription}</p>
+          {receiptsError ? <p role="alert" className="mt-3 text-sm text-[var(--dash-warning)]">{t.retainedFailed}</p>
+            : receiptsLoading ? <p role="status" className="mt-3 text-sm text-[var(--dash-text-soft)]">{t.loadingBody}</p>
+              : receipts.length ? <ul className="mt-3 space-y-3">{receipts.map(receipt => <li key={receipt.exportId} className="space-y-2 border-t border-[var(--dash-border-subtle)] pt-3">
+                <p className="text-sm text-[var(--dash-text)]">{t.historicalExport} · {receipt.mode} · {formatDate(receipt.exportedAt, locale)}</p>
+                <p className="break-all text-xs text-[var(--dash-text-soft)]">{t.documentDigest}: {receipt.documentDigest ?? t.unavailable}</p>
+                {receipt.retained ? <Button type="button" variant="outline" className="min-h-11 whitespace-normal" disabled={isRecovering} onClick={() => { void onRecover(receipt) }}>
+                  {isRecovering ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}{t.recoverExport}
+                </Button> : <p className="text-xs text-[var(--dash-warning)]">{t.retainedUnavailable}</p>}
+              </li>)}</ul> : <p className="mt-3 text-sm text-[var(--dash-text-soft)]">{t.retainedEmpty}</p>}
+        </section> : null}
       </div>
     </Panel>
   )

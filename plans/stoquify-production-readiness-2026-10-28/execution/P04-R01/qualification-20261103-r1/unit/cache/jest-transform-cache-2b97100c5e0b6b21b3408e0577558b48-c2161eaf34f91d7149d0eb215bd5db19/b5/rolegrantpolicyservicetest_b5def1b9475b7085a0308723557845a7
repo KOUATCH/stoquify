@@ -1,0 +1,304 @@
+e2575460b678dbd6dbfe5a2765a2380f
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+const _permissions = require("@/config/permissions");
+const _rolegrantpolicyservice = require("../role-grant-policy.service");
+const grantAuthority = [
+    "users.invite",
+    "users.roles.assign"
+];
+describe("role grant policy", ()=>{
+    it.each([
+        "roles.permissions.assign",
+        "roles.permissions.remove",
+        "admin.role.assign"
+    ])("cannot grant %s through user-role assignment's shared legacy alias", (permission)=>{
+        expect((0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+            actorOrganizationId: "org-1",
+            actorPermissions: grantAuthority,
+            targetRole: {
+                code: "reader",
+                organizationId: "org-1",
+                permissions: [
+                    permission
+                ]
+            }
+        })).toMatchObject({
+            allowed: false,
+            reasonCode: "ACTOR_GRANT_CEILING_EXCEEDED"
+        });
+    });
+    it("cannot grant the broad legacy alias from a single canonical operation", ()=>{
+        expect((0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+            actorOrganizationId: "org-1",
+            actorPermissions: grantAuthority,
+            targetRole: {
+                code: "reader",
+                organizationId: "org-1",
+                permissions: [
+                    "ASSIGN_ROLES"
+                ]
+            }
+        })).toMatchObject({
+            allowed: false,
+            reasonCode: "ACTOR_GRANT_CEILING_EXCEEDED"
+        });
+    });
+    it("does not infer user-role assignment from permission editing authority", ()=>{
+        expect((0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+            actorOrganizationId: "org-1",
+            actorPermissions: [
+                "users.invite",
+                "roles.permissions.assign"
+            ],
+            targetRole: {
+                code: "reader",
+                organizationId: "org-1",
+                permissions: []
+            }
+        })).toMatchObject({
+            allowed: false,
+            reasonCode: "MISSING_GRANT_AUTHORITY"
+        });
+    });
+    it("preserves an explicitly stored legacy role-management grant", ()=>{
+        expect((0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+            actorOrganizationId: "org-1",
+            actorPermissions: [
+                "users.invite",
+                "ASSIGN_ROLES"
+            ],
+            targetRole: {
+                code: "reader",
+                organizationId: "org-1",
+                permissions: [
+                    "roles.permissions.remove",
+                    "users.roles.assign"
+                ]
+            }
+        })).toMatchObject({
+            allowed: true
+        });
+    });
+    it("rejects actors without role-assignment authority", ()=>{
+        const decision = (0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+            actorOrganizationId: "org-1",
+            actorPermissions: [
+                "users.invite",
+                "dashboard.read"
+            ],
+            targetRole: {
+                code: "reader",
+                organizationId: "org-1",
+                permissions: [
+                    "dashboard.read"
+                ]
+            }
+        });
+        expect(decision).toMatchObject({
+            allowed: false,
+            reasonCode: "MISSING_GRANT_AUTHORITY",
+            risk: "crit",
+            deniedPermissions: [
+                {
+                    permission: "users.roles.assign",
+                    risk: "crit"
+                }
+            ]
+        });
+    });
+    it("rejects target roles containing a wildcard", ()=>{
+        const decision = (0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+            actorOrganizationId: "org-1",
+            actorPermissions: [
+                ...grantAuthority,
+                "dashboard.read"
+            ],
+            targetRole: {
+                code: "reader",
+                organizationId: "org-1",
+                permissions: [
+                    "dashboard.read",
+                    "*"
+                ]
+            }
+        });
+        expect(decision).toMatchObject({
+            allowed: false,
+            reasonCode: "TARGET_ROLE_WILDCARD",
+            deniedPermissions: [
+                {
+                    permission: "*",
+                    risk: "crit"
+                }
+            ]
+        });
+    });
+    it("rejects target permissions above the actor's explicit grant ceiling", ()=>{
+        const decision = (0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+            actorOrganizationId: "org-1",
+            actorPermissions: [
+                ...grantAuthority,
+                "dashboard.read",
+                "*"
+            ],
+            targetRole: {
+                code: "reader",
+                organizationId: "org-1",
+                permissions: [
+                    "dashboard.read",
+                    "accounting.period.close"
+                ]
+            }
+        });
+        expect(decision).toMatchObject({
+            allowed: false,
+            reasonCode: "ACTOR_GRANT_CEILING_EXCEEDED",
+            deniedPermissions: [
+                {
+                    permission: "accounting.period.close",
+                    risk: "crit"
+                }
+            ]
+        });
+    });
+    it("rejects a target role owned by another tenant", ()=>{
+        const decision = (0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+            actorOrganizationId: "org-1",
+            actorPermissions: [
+                ...grantAuthority,
+                "dashboard.read"
+            ],
+            targetRole: {
+                code: "reader",
+                organizationId: "org-2",
+                permissions: [
+                    "dashboard.read"
+                ]
+            }
+        });
+        expect(decision).toMatchObject({
+            allowed: false,
+            reasonCode: "CROSS_TENANT_ROLE",
+            risk: "crit"
+        });
+    });
+    it("allows a same-tenant role within the actor's explicit grant ceiling", ()=>{
+        const decision = (0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+            actorOrganizationId: "org-1",
+            actorPermissions: [
+                ...grantAuthority,
+                "dashboard.read",
+                "inventory.read"
+            ],
+            targetRole: {
+                code: "reader",
+                organizationId: "org-1",
+                permissions: [
+                    "dashboard.read",
+                    "inventory.read"
+                ]
+            }
+        });
+        expect(decision).toEqual({
+            allowed: true,
+            reasonCode: "ROLE_GRANT_ALLOWED",
+            risk: "crit",
+            deniedPermissions: [],
+            safeMessage: null
+        });
+    });
+    it("allows a new administrator template to grant a canonical non-wildcard role", ()=>{
+        const administratorTemplatePermissions = [
+            "*",
+            ..._permissions.adminPermissions
+        ];
+        expect(administratorTemplatePermissions).toEqual(expect.arrayContaining([
+            "*",
+            "users.invite",
+            "users.roles.assign"
+        ]));
+        const decision = (0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+            actorOrganizationId: "org-1",
+            actorPermissions: administratorTemplatePermissions,
+            targetRole: {
+                code: "reader",
+                organizationId: "org-1",
+                permissions: [
+                    "dashboard.read",
+                    "users.invite",
+                    "users.roles.assign"
+                ]
+            }
+        });
+        expect(decision).toMatchObject({
+            allowed: true,
+            reasonCode: "ROLE_GRANT_ALLOWED",
+            deniedPermissions: []
+        });
+    });
+});
+it.each([
+    "admin",
+    " Administrator ",
+    "super_admin"
+])("denies a latent reserved %s invitation to a limited issuer", (code)=>{
+    expect((0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+        actorOrganizationId: "org-1",
+        actorPermissions: [
+            ...grantAuthority,
+            "dashboard.read"
+        ],
+        actorRoleCodes: [
+            "manager"
+        ],
+        targetRole: {
+            code,
+            organizationId: "org-1",
+            permissions: []
+        }
+    })).toMatchObject({
+        allowed: false,
+        reasonCode: "OPERATING_SCOPE_CEILING_EXCEEDED"
+    });
+});
+it("requires tenant-wide authority as well as explicit grant permission", ()=>{
+    const input = {
+        actorOrganizationId: "org-1",
+        actorPermissions: [
+            ...grantAuthority,
+            "dashboard.read"
+        ],
+        actorRoleCodes: [
+            "admin"
+        ],
+        targetRole: {
+            code: "administrator",
+            organizationId: "org-1",
+            permissions: [
+                "dashboard.read"
+            ]
+        }
+    };
+    expect((0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)(input).allowed).toBe(true);
+    expect((0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+        ...input,
+        actorRoleCodes: [
+            "manager"
+        ]
+    }).allowed).toBe(false);
+    expect((0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+        ...input,
+        actorPermissions: grantAuthority
+    }).allowed).toBe(false);
+    expect((0, _rolegrantpolicyservice.evaluateRoleGrantPolicy)({
+        ...input,
+        actorPermissions: [
+            "*"
+        ]
+    }).allowed).toBe(false);
+});
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6XFxvaGFkYSBzYWFzXFxGb2N1c2VkIHByb2plY3RzXFxzdG9xdWlmeVxcc2VydmljZXNcXHNlY3VyaXR5XFxfX3Rlc3RzX19cXHJvbGUtZ3JhbnQtcG9saWN5LnNlcnZpY2UudGVzdC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBhZG1pblBlcm1pc3Npb25zIH0gZnJvbSBcIkAvY29uZmlnL3Blcm1pc3Npb25zXCJcbmltcG9ydCB7IGV2YWx1YXRlUm9sZUdyYW50UG9saWN5IH0gZnJvbSBcIi4uL3JvbGUtZ3JhbnQtcG9saWN5LnNlcnZpY2VcIlxuXG5jb25zdCBncmFudEF1dGhvcml0eSA9IFtcInVzZXJzLmludml0ZVwiLCBcInVzZXJzLnJvbGVzLmFzc2lnblwiXVxuXG5kZXNjcmliZShcInJvbGUgZ3JhbnQgcG9saWN5XCIsICgpID0+IHtcbiAgaXQuZWFjaChbXCJyb2xlcy5wZXJtaXNzaW9ucy5hc3NpZ25cIiwgXCJyb2xlcy5wZXJtaXNzaW9ucy5yZW1vdmVcIiwgXCJhZG1pbi5yb2xlLmFzc2lnblwiXSkoXCJjYW5ub3QgZ3JhbnQgJXMgdGhyb3VnaCB1c2VyLXJvbGUgYXNzaWdubWVudCdzIHNoYXJlZCBsZWdhY3kgYWxpYXNcIiwgcGVybWlzc2lvbiA9PiB7XG4gICAgZXhwZWN0KGV2YWx1YXRlUm9sZUdyYW50UG9saWN5KHsgYWN0b3JPcmdhbml6YXRpb25JZDogXCJvcmctMVwiLCBhY3RvclBlcm1pc3Npb25zOiBncmFudEF1dGhvcml0eSwgdGFyZ2V0Um9sZTogeyBjb2RlOiBcInJlYWRlclwiLCBvcmdhbml6YXRpb25JZDogXCJvcmctMVwiLCBwZXJtaXNzaW9uczogW3Blcm1pc3Npb25dIH0gfSkpLnRvTWF0Y2hPYmplY3QoeyBhbGxvd2VkOiBmYWxzZSwgcmVhc29uQ29kZTogXCJBQ1RPUl9HUkFOVF9DRUlMSU5HX0VYQ0VFREVEXCIgfSlcbiAgfSlcbiAgaXQoXCJjYW5ub3QgZ3JhbnQgdGhlIGJyb2FkIGxlZ2FjeSBhbGlhcyBmcm9tIGEgc2luZ2xlIGNhbm9uaWNhbCBvcGVyYXRpb25cIiwgKCkgPT4ge1xuICAgIGV4cGVjdChldmFsdWF0ZVJvbGVHcmFudFBvbGljeSh7IGFjdG9yT3JnYW5pemF0aW9uSWQ6IFwib3JnLTFcIiwgYWN0b3JQZXJtaXNzaW9uczogZ3JhbnRBdXRob3JpdHksIHRhcmdldFJvbGU6IHsgY29kZTogXCJyZWFkZXJcIiwgb3JnYW5pemF0aW9uSWQ6IFwib3JnLTFcIiwgcGVybWlzc2lvbnM6IFtcIkFTU0lHTl9ST0xFU1wiXSB9IH0pKS50b01hdGNoT2JqZWN0KHsgYWxsb3dlZDogZmFsc2UsIHJlYXNvbkNvZGU6IFwiQUNUT1JfR1JBTlRfQ0VJTElOR19FWENFRURFRFwiIH0pXG4gIH0pXG4gIGl0KFwiZG9lcyBub3QgaW5mZXIgdXNlci1yb2xlIGFzc2lnbm1lbnQgZnJvbSBwZXJtaXNzaW9uIGVkaXRpbmcgYXV0aG9yaXR5XCIsICgpID0+IHtcbiAgICBleHBlY3QoZXZhbHVhdGVSb2xlR3JhbnRQb2xpY3koeyBhY3Rvck9yZ2FuaXphdGlvbklkOiBcIm9yZy0xXCIsIGFjdG9yUGVybWlzc2lvbnM6IFtcInVzZXJzLmludml0ZVwiLCBcInJvbGVzLnBlcm1pc3Npb25zLmFzc2lnblwiXSwgdGFyZ2V0Um9sZTogeyBjb2RlOiBcInJlYWRlclwiLCBvcmdhbml6YXRpb25JZDogXCJvcmctMVwiLCBwZXJtaXNzaW9uczogW10gfSB9KSkudG9NYXRjaE9iamVjdCh7IGFsbG93ZWQ6IGZhbHNlLCByZWFzb25Db2RlOiBcIk1JU1NJTkdfR1JBTlRfQVVUSE9SSVRZXCIgfSlcbiAgfSlcbiAgaXQoXCJwcmVzZXJ2ZXMgYW4gZXhwbGljaXRseSBzdG9yZWQgbGVnYWN5IHJvbGUtbWFuYWdlbWVudCBncmFudFwiLCAoKSA9PiB7XG4gICAgZXhwZWN0KGV2YWx1YXRlUm9sZUdyYW50UG9saWN5KHsgYWN0b3JPcmdhbml6YXRpb25JZDogXCJvcmctMVwiLCBhY3RvclBlcm1pc3Npb25zOiBbXCJ1c2Vycy5pbnZpdGVcIiwgXCJBU1NJR05fUk9MRVNcIl0sIHRhcmdldFJvbGU6IHsgY29kZTogXCJyZWFkZXJcIiwgb3JnYW5pemF0aW9uSWQ6IFwib3JnLTFcIiwgcGVybWlzc2lvbnM6IFtcInJvbGVzLnBlcm1pc3Npb25zLnJlbW92ZVwiLCBcInVzZXJzLnJvbGVzLmFzc2lnblwiXSB9IH0pKS50b01hdGNoT2JqZWN0KHsgYWxsb3dlZDogdHJ1ZSB9KVxuICB9KVxuICBpdChcInJlamVjdHMgYWN0b3JzIHdpdGhvdXQgcm9sZS1hc3NpZ25tZW50IGF1dGhvcml0eVwiLCAoKSA9PiB7XG4gICAgY29uc3QgZGVjaXNpb24gPSBldmFsdWF0ZVJvbGVHcmFudFBvbGljeSh7XG4gICAgICBhY3Rvck9yZ2FuaXphdGlvbklkOiBcIm9yZy0xXCIsXG4gICAgICBhY3RvclBlcm1pc3Npb25zOiBbXCJ1c2Vycy5pbnZpdGVcIiwgXCJkYXNoYm9hcmQucmVhZFwiXSxcbiAgICAgIHRhcmdldFJvbGU6IHsgY29kZTogXCJyZWFkZXJcIixcbiAgICAgICAgb3JnYW5pemF0aW9uSWQ6IFwib3JnLTFcIixcbiAgICAgICAgcGVybWlzc2lvbnM6IFtcImRhc2hib2FyZC5yZWFkXCJdLFxuICAgICAgfSxcbiAgICB9KVxuXG4gICAgZXhwZWN0KGRlY2lzaW9uKS50b01hdGNoT2JqZWN0KHtcbiAgICAgIGFsbG93ZWQ6IGZhbHNlLFxuICAgICAgcmVhc29uQ29kZTogXCJNSVNTSU5HX0dSQU5UX0FVVEhPUklUWVwiLFxuICAgICAgcmlzazogXCJjcml0XCIsXG4gICAgICBkZW5pZWRQZXJtaXNzaW9uczogW3sgcGVybWlzc2lvbjogXCJ1c2Vycy5yb2xlcy5hc3NpZ25cIiwgcmlzazogXCJjcml0XCIgfV0sXG4gICAgfSlcbiAgfSlcblxuICBpdChcInJlamVjdHMgdGFyZ2V0IHJvbGVzIGNvbnRhaW5pbmcgYSB3aWxkY2FyZFwiLCAoKSA9PiB7XG4gICAgY29uc3QgZGVjaXNpb24gPSBldmFsdWF0ZVJvbGVHcmFudFBvbGljeSh7XG4gICAgICBhY3Rvck9yZ2FuaXphdGlvbklkOiBcIm9yZy0xXCIsXG4gICAgICBhY3RvclBlcm1pc3Npb25zOiBbLi4uZ3JhbnRBdXRob3JpdHksIFwiZGFzaGJvYXJkLnJlYWRcIl0sXG4gICAgICB0YXJnZXRSb2xlOiB7IGNvZGU6IFwicmVhZGVyXCIsXG4gICAgICAgIG9yZ2FuaXphdGlvbklkOiBcIm9yZy0xXCIsXG4gICAgICAgIHBlcm1pc3Npb25zOiBbXCJkYXNoYm9hcmQucmVhZFwiLCBcIipcIl0sXG4gICAgICB9LFxuICAgIH0pXG5cbiAgICBleHBlY3QoZGVjaXNpb24pLnRvTWF0Y2hPYmplY3Qoe1xuICAgICAgYWxsb3dlZDogZmFsc2UsXG4gICAgICByZWFzb25Db2RlOiBcIlRBUkdFVF9ST0xFX1dJTERDQVJEXCIsXG4gICAgICBkZW5pZWRQZXJtaXNzaW9uczogW3sgcGVybWlzc2lvbjogXCIqXCIsIHJpc2s6IFwiY3JpdFwiIH1dLFxuICAgIH0pXG4gIH0pXG5cbiAgaXQoXCJyZWplY3RzIHRhcmdldCBwZXJtaXNzaW9ucyBhYm92ZSB0aGUgYWN0b3IncyBleHBsaWNpdCBncmFudCBjZWlsaW5nXCIsICgpID0+IHtcbiAgICBjb25zdCBkZWNpc2lvbiA9IGV2YWx1YXRlUm9sZUdyYW50UG9saWN5KHtcbiAgICAgIGFjdG9yT3JnYW5pemF0aW9uSWQ6IFwib3JnLTFcIixcbiAgICAgIGFjdG9yUGVybWlzc2lvbnM6IFsuLi5ncmFudEF1dGhvcml0eSwgXCJkYXNoYm9hcmQucmVhZFwiLCBcIipcIl0sXG4gICAgICB0YXJnZXRSb2xlOiB7IGNvZGU6IFwicmVhZGVyXCIsXG4gICAgICAgIG9yZ2FuaXphdGlvbklkOiBcIm9yZy0xXCIsXG4gICAgICAgIHBlcm1pc3Npb25zOiBbXCJkYXNoYm9hcmQucmVhZFwiLCBcImFjY291bnRpbmcucGVyaW9kLmNsb3NlXCJdLFxuICAgICAgfSxcbiAgICB9KVxuXG4gICAgZXhwZWN0KGRlY2lzaW9uKS50b01hdGNoT2JqZWN0KHtcbiAgICAgIGFsbG93ZWQ6IGZhbHNlLFxuICAgICAgcmVhc29uQ29kZTogXCJBQ1RPUl9HUkFOVF9DRUlMSU5HX0VYQ0VFREVEXCIsXG4gICAgICBkZW5pZWRQZXJtaXNzaW9uczogW3sgcGVybWlzc2lvbjogXCJhY2NvdW50aW5nLnBlcmlvZC5jbG9zZVwiLCByaXNrOiBcImNyaXRcIiB9XSxcbiAgICB9KVxuICB9KVxuXG4gIGl0KFwicmVqZWN0cyBhIHRhcmdldCByb2xlIG93bmVkIGJ5IGFub3RoZXIgdGVuYW50XCIsICgpID0+IHtcbiAgICBjb25zdCBkZWNpc2lvbiA9IGV2YWx1YXRlUm9sZUdyYW50UG9saWN5KHtcbiAgICAgIGFjdG9yT3JnYW5pemF0aW9uSWQ6IFwib3JnLTFcIixcbiAgICAgIGFjdG9yUGVybWlzc2lvbnM6IFsuLi5ncmFudEF1dGhvcml0eSwgXCJkYXNoYm9hcmQucmVhZFwiXSxcbiAgICAgIHRhcmdldFJvbGU6IHsgY29kZTogXCJyZWFkZXJcIixcbiAgICAgICAgb3JnYW5pemF0aW9uSWQ6IFwib3JnLTJcIixcbiAgICAgICAgcGVybWlzc2lvbnM6IFtcImRhc2hib2FyZC5yZWFkXCJdLFxuICAgICAgfSxcbiAgICB9KVxuXG4gICAgZXhwZWN0KGRlY2lzaW9uKS50b01hdGNoT2JqZWN0KHtcbiAgICAgIGFsbG93ZWQ6IGZhbHNlLFxuICAgICAgcmVhc29uQ29kZTogXCJDUk9TU19URU5BTlRfUk9MRVwiLFxuICAgICAgcmlzazogXCJjcml0XCIsXG4gICAgfSlcbiAgfSlcblxuICBpdChcImFsbG93cyBhIHNhbWUtdGVuYW50IHJvbGUgd2l0aGluIHRoZSBhY3RvcidzIGV4cGxpY2l0IGdyYW50IGNlaWxpbmdcIiwgKCkgPT4ge1xuICAgIGNvbnN0IGRlY2lzaW9uID0gZXZhbHVhdGVSb2xlR3JhbnRQb2xpY3koe1xuICAgICAgYWN0b3JPcmdhbml6YXRpb25JZDogXCJvcmctMVwiLFxuICAgICAgYWN0b3JQZXJtaXNzaW9uczogWy4uLmdyYW50QXV0aG9yaXR5LCBcImRhc2hib2FyZC5yZWFkXCIsIFwiaW52ZW50b3J5LnJlYWRcIl0sXG4gICAgICB0YXJnZXRSb2xlOiB7IGNvZGU6IFwicmVhZGVyXCIsXG4gICAgICAgIG9yZ2FuaXphdGlvbklkOiBcIm9yZy0xXCIsXG4gICAgICAgIHBlcm1pc3Npb25zOiBbXCJkYXNoYm9hcmQucmVhZFwiLCBcImludmVudG9yeS5yZWFkXCJdLFxuICAgICAgfSxcbiAgICB9KVxuXG4gICAgZXhwZWN0KGRlY2lzaW9uKS50b0VxdWFsKHtcbiAgICAgIGFsbG93ZWQ6IHRydWUsXG4gICAgICByZWFzb25Db2RlOiBcIlJPTEVfR1JBTlRfQUxMT1dFRFwiLFxuICAgICAgcmlzazogXCJjcml0XCIsXG4gICAgICBkZW5pZWRQZXJtaXNzaW9uczogW10sXG4gICAgICBzYWZlTWVzc2FnZTogbnVsbCxcbiAgICB9KVxuICB9KVxuXG4gIGl0KFwiYWxsb3dzIGEgbmV3IGFkbWluaXN0cmF0b3IgdGVtcGxhdGUgdG8gZ3JhbnQgYSBjYW5vbmljYWwgbm9uLXdpbGRjYXJkIHJvbGVcIiwgKCkgPT4ge1xuICAgIGNvbnN0IGFkbWluaXN0cmF0b3JUZW1wbGF0ZVBlcm1pc3Npb25zID0gW1wiKlwiLCAuLi5hZG1pblBlcm1pc3Npb25zXVxuXG4gICAgZXhwZWN0KGFkbWluaXN0cmF0b3JUZW1wbGF0ZVBlcm1pc3Npb25zKS50b0VxdWFsKFxuICAgICAgZXhwZWN0LmFycmF5Q29udGFpbmluZyhbXCIqXCIsIFwidXNlcnMuaW52aXRlXCIsIFwidXNlcnMucm9sZXMuYXNzaWduXCJdKSxcbiAgICApXG5cbiAgICBjb25zdCBkZWNpc2lvbiA9IGV2YWx1YXRlUm9sZUdyYW50UG9saWN5KHtcbiAgICAgIGFjdG9yT3JnYW5pemF0aW9uSWQ6IFwib3JnLTFcIixcbiAgICAgIGFjdG9yUGVybWlzc2lvbnM6IGFkbWluaXN0cmF0b3JUZW1wbGF0ZVBlcm1pc3Npb25zLFxuICAgICAgdGFyZ2V0Um9sZTogeyBjb2RlOiBcInJlYWRlclwiLFxuICAgICAgICBvcmdhbml6YXRpb25JZDogXCJvcmctMVwiLFxuICAgICAgICBwZXJtaXNzaW9uczogW1wiZGFzaGJvYXJkLnJlYWRcIiwgXCJ1c2Vycy5pbnZpdGVcIiwgXCJ1c2Vycy5yb2xlcy5hc3NpZ25cIl0sXG4gICAgICB9LFxuICAgIH0pXG5cbiAgICBleHBlY3QoZGVjaXNpb24pLnRvTWF0Y2hPYmplY3Qoe1xuICAgICAgYWxsb3dlZDogdHJ1ZSxcbiAgICAgIHJlYXNvbkNvZGU6IFwiUk9MRV9HUkFOVF9BTExPV0VEXCIsXG4gICAgICBkZW5pZWRQZXJtaXNzaW9uczogW10sXG4gICAgfSlcbiAgfSlcbn0pXG5cbml0LmVhY2goW1wiYWRtaW5cIiwgXCIgQWRtaW5pc3RyYXRvciBcIiwgXCJzdXBlcl9hZG1pblwiXSkoXCJkZW5pZXMgYSBsYXRlbnQgcmVzZXJ2ZWQgJXMgaW52aXRhdGlvbiB0byBhIGxpbWl0ZWQgaXNzdWVyXCIsIGNvZGUgPT4ge1xuICBleHBlY3QoZXZhbHVhdGVSb2xlR3JhbnRQb2xpY3koeyBhY3Rvck9yZ2FuaXphdGlvbklkOiBcIm9yZy0xXCIsIGFjdG9yUGVybWlzc2lvbnM6IFsuLi5ncmFudEF1dGhvcml0eSwgXCJkYXNoYm9hcmQucmVhZFwiXSwgYWN0b3JSb2xlQ29kZXM6IFtcIm1hbmFnZXJcIl0sIHRhcmdldFJvbGU6IHsgY29kZSwgb3JnYW5pemF0aW9uSWQ6IFwib3JnLTFcIiwgcGVybWlzc2lvbnM6IFtdIH0gfSkpLnRvTWF0Y2hPYmplY3QoeyBhbGxvd2VkOiBmYWxzZSwgcmVhc29uQ29kZTogXCJPUEVSQVRJTkdfU0NPUEVfQ0VJTElOR19FWENFRURFRFwiIH0pXG59KVxuaXQoXCJyZXF1aXJlcyB0ZW5hbnQtd2lkZSBhdXRob3JpdHkgYXMgd2VsbCBhcyBleHBsaWNpdCBncmFudCBwZXJtaXNzaW9uXCIsICgpID0+IHtcbiAgY29uc3QgaW5wdXQgPSB7IGFjdG9yT3JnYW5pemF0aW9uSWQ6IFwib3JnLTFcIiwgYWN0b3JQZXJtaXNzaW9uczogWy4uLmdyYW50QXV0aG9yaXR5LCBcImRhc2hib2FyZC5yZWFkXCJdLCBhY3RvclJvbGVDb2RlczogW1wiYWRtaW5cIl0sIHRhcmdldFJvbGU6IHsgY29kZTogXCJhZG1pbmlzdHJhdG9yXCIsIG9yZ2FuaXphdGlvbklkOiBcIm9yZy0xXCIsIHBlcm1pc3Npb25zOiBbXCJkYXNoYm9hcmQucmVhZFwiXSB9IH1cbiAgZXhwZWN0KGV2YWx1YXRlUm9sZUdyYW50UG9saWN5KGlucHV0KS5hbGxvd2VkKS50b0JlKHRydWUpXG4gIGV4cGVjdChldmFsdWF0ZVJvbGVHcmFudFBvbGljeSh7IC4uLmlucHV0LCBhY3RvclJvbGVDb2RlczogW1wibWFuYWdlclwiXSB9KS5hbGxvd2VkKS50b0JlKGZhbHNlKVxuICBleHBlY3QoZXZhbHVhdGVSb2xlR3JhbnRQb2xpY3koeyAuLi5pbnB1dCwgYWN0b3JQZXJtaXNzaW9uczogZ3JhbnRBdXRob3JpdHkgfSkuYWxsb3dlZCkudG9CZShmYWxzZSlcbiAgZXhwZWN0KGV2YWx1YXRlUm9sZUdyYW50UG9saWN5KHsgLi4uaW5wdXQsIGFjdG9yUGVybWlzc2lvbnM6IFtcIipcIl0gfSkuYWxsb3dlZCkudG9CZShmYWxzZSlcbn0pXG4iXSwibmFtZXMiOlsiZ3JhbnRBdXRob3JpdHkiLCJkZXNjcmliZSIsIml0IiwiZWFjaCIsInBlcm1pc3Npb24iLCJleHBlY3QiLCJldmFsdWF0ZVJvbGVHcmFudFBvbGljeSIsImFjdG9yT3JnYW5pemF0aW9uSWQiLCJhY3RvclBlcm1pc3Npb25zIiwidGFyZ2V0Um9sZSIsImNvZGUiLCJvcmdhbml6YXRpb25JZCIsInBlcm1pc3Npb25zIiwidG9NYXRjaE9iamVjdCIsImFsbG93ZWQiLCJyZWFzb25Db2RlIiwiZGVjaXNpb24iLCJyaXNrIiwiZGVuaWVkUGVybWlzc2lvbnMiLCJ0b0VxdWFsIiwic2FmZU1lc3NhZ2UiLCJhZG1pbmlzdHJhdG9yVGVtcGxhdGVQZXJtaXNzaW9ucyIsImFkbWluUGVybWlzc2lvbnMiLCJhcnJheUNvbnRhaW5pbmciLCJhY3Rv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

@@ -202,7 +202,7 @@ export default function ModernPurchaseOrderDetailPage({
   const approvalText = useTranslations("purchaseOrderApproval")
   const cloneText = useTranslations("purchaseOrderClone")
   const receivingText = useTranslations("purchaseReceiving")
-  const cloneController = usePurchaseOrderClone({ id, organizationId: organizationId ?? "", locale, allowed: Boolean(purchaseOrder?.capabilities.clone.allowed && organizationId) })
+  const cloneController = usePurchaseOrderClone({ id, organizationId: organizationId ?? "", actorId: currentUserId, locale, allowed: Boolean(purchaseOrder?.capabilities.clone.allowed && organizationId && currentUserId) })
 
   const receiveDeepLinkHandledRef = useRef(false)
   const receiveDeepLink = purchaseOrder
@@ -323,7 +323,7 @@ export default function ModernPurchaseOrderDetailPage({
                   className="dashboard-button-secondary rounded-lg"
                 >
                   <Copy className="w-4 h-4 mr-2" />
-                  {cloneController.pending ? cloneText("pending") : cloneText("button")}
+                  {cloneController.pending ? cloneText("pending") : cloneController.failure === "unknown" ? cloneText("recover") : cloneText("button")}
                 </Button>
               ) : null}
 
@@ -711,7 +711,7 @@ export default function ModernPurchaseOrderDetailPage({
                             disabled={cloneController.pending || cloneController.retryBlocked}
                           >
                             <Copy className="w-4 h-4 mr-2" />
-                            {cloneController.pending ? cloneText("pending") : cloneText("button")}
+                            {cloneController.pending ? cloneText("pending") : cloneController.failure === "unknown" ? cloneText("recover") : cloneText("button")}
                           </Button>
                           ) : null}
                           <Button

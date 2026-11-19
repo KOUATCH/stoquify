@@ -3,6 +3,7 @@ import type { Role } from "@prisma/client"
 import { permissionCandidates } from "@/lib/security/rbac-permissions"
 import { canGrantRolePermission } from "@/services/roles/role-permission-policy"
 import type { CustodianAccount } from "@/services/roles/role-custodian-policy"
+import { canGrantOperatingRole } from "@/services/operating-access/operating-access-grant-policy"
 
 export type AccessMember = CustodianAccount & { id: string; email: string; firstName: string | null; lastName: string | null; updatedAt: Date }
 export type AccessMembership = { roleId: string; userId: string }
@@ -13,13 +14,13 @@ export function hasMemberControl(permissions: readonly string[], operation: "ass
   return permissions.includes(required) || permissionCandidates(required).some(value => !value.includes(".") && value !== "*" && permissions.includes(value))
 }
 
-export function canGrantMemberRole(permissions: readonly string[], role: Pick<Role, "permissions">) {
+export function canGrantMemberRole(permissions: readonly string[], role: Pick<Role, "permissions" | "code">, actorRoleCodes: readonly string[] = []) {
   const stored = permissions.filter(value => value !== "*")
-  return hasMemberControl(stored, "assign") && role.permissions.every(value => value !== "*" && canGrantRolePermission(stored, value))
+  return canGrantOperatingRole({ permissions, roleCodes: actorRoleCodes }, role) && hasMemberControl(stored, "assign") && role.permissions.every(value => value !== "*" && canGrantRolePermission(stored, value))
 }
 
 export function memberAccessRevision(member: AccessMember, roleIds: string[], roles: Role[]) {
-  return accessDigest({ member: { id: member.id, email: member.email, firstName: member.firstName, lastName: member.lastName, updatedAt: member.updatedAt.toISOString(), isActive: member.isActive, isVerified: member.isVerified, emailVerified: member.emailVerified, isLocked: member.isLocked, lockedUntil: member.lockedUntil?.toISOString() ?? null }, roleIds: [...roleIds].sort(), roles: roles.map(role => ({ id: role.id, updatedAt: role.updatedAt.toISOString(), permissions: [...role.permissions].sort() })).sort((a, b) => a.id.localeCompare(b.id)) })
+  return accessDigest({ member: { id: member.id, email: member.email, firstName: member.firstName, lastName: member.lastName, updatedAt: member.updatedAt.toISOString(), isActive: member.isActive, isVerified: member.isVerified, emailVerified: member.emailVerified, isLocked: member.isLocked, lockedUntil: member.lockedUntil?.toISOString() ?? null }, roleIds: [...roleIds].sort(), roles: roles.map(role => ({ id: role.id, code: role.code, updatedAt: role.updatedAt.toISOString(), permissions: [...role.permissions].sort() })).sort((a, b) => a.id.localeCompare(b.id)) })
 }
 
 export function hasRecordedDeactivation(member: AccessMember, record: { entityId: string; changes: unknown } | null) {

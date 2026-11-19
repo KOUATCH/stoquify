@@ -1,0 +1,215 @@
+{
+  "schemaVersion": "1.0",
+  "countryCode": "CM",
+  "countryPackVersion": "CM-2026.1",
+  "reviewStatus": "PENDING_EXPERT_REVIEW",
+  "reviewerGeneratedTieOuts": false,
+  "canonicalization": {
+    "format": "RFC 8785 JSON Canonicalization Scheme or the repository review tool's stable-key JSON serialization",
+    "hashFormat": "sha256:<64 lowercase hexadecimal characters>",
+    "rule": "Hash only the completed independentReview object for each fixture family."
+  },
+  "fixtureFamilies": [
+    {
+      "fixtureFamily": "payroll.cnps.pensionRatesBps",
+      "implementedValue": {
+        "totalBps": 840,
+        "employerBps": 420,
+        "employeeBps": 420,
+        "monthlyCeilingXaf": 750000,
+        "annualCeilingXaf": 9000000
+      },
+      "candidateSources": [
+        "Decree No. 2016/072, Articles 3, 4 and 6",
+        "CNPS Statistical Yearbook 2025, pages 8-10",
+        "CNPS Official FAQ, pages 4-5"
+      ],
+      "proposedEffectiveWindow": {
+        "effectiveFrom": "2026-01-01",
+        "effectiveTo": null,
+        "reviewerConfirmation": null
+      },
+      "systemScenarios": [
+        {
+          "id": "PENSION_BELOW_CEILING",
+          "input": { "grossXaf": "500000.00" },
+          "systemOutput": {
+            "socialBaseXaf": "500000.00",
+            "employeeContributionXaf": "21000.00",
+            "employerContributionXaf": "21000.00",
+            "totalContributionXaf": "42000.00"
+          }
+        },
+        {
+          "id": "PENSION_AT_CEILING",
+          "input": { "grossXaf": "750000.00" },
+          "systemOutput": {
+            "socialBaseXaf": "750000.00",
+            "employeeContributionXaf": "31500.00",
+            "employerContributionXaf": "31500.00",
+            "totalContributionXaf": "63000.00"
+          }
+        },
+        {
+          "id": "PENSION_ABOVE_CEILING",
+          "input": { "grossXaf": "1000000.00" },
+          "systemOutput": {
+            "socialBaseXaf": "750000.00",
+            "employeeContributionXaf": "31500.00",
+            "employerContributionXaf": "31500.00",
+            "totalContributionXaf": "63000.00"
+          }
+        }
+      ],
+      "independentReview": {
+        "sourceProvision": null,
+        "2026ApplicabilityConclusion": null,
+        "independentlyCalculatedOutputs": [],
+        "roundingRule": null,
+        "ceilingTreatment": null,
+        "exceptionsAndLimitations": null,
+        "decision": null,
+        "reviewerComments": null
+      },
+      "independentFixtureTieOutHash": null
+    },
+    {
+      "fixtureFamily": "payroll.cnps.familyAllowanceRatesBps",
+      "implementedValue": {
+        "generalBps": 700,
+        "agricultureBps": 565,
+        "privateEducationBps": 370,
+        "paidBy": "EMPLOYER"
+      },
+      "candidateSources": [
+        "Decree No. 2016/072, Articles 2 and 10",
+        "CNPS Statistical Yearbook 2025, pages 8-10",
+        "Current CNPS employer-obligations page"
+      ],
+      "proposedEffectiveWindow": {
+        "effectiveFrom": "2026-01-01",
+        "effectiveTo": null,
+        "reviewerConfirmation": null
+      },
+      "systemScenarios": [
+        {
+          "id": "FAMILY_GENERAL",
+          "input": { "contributionBaseXaf": "100000.00", "sector": "GENERAL" },
+          "systemOutput": { "rateBps": 700, "employerContributionXaf": "7000.00" }
+        },
+        {
+          "id": "FAMILY_AGRICULTURE",
+          "input": { "contributionBaseXaf": "100000.00", "sector": "AGRICULTURE" },
+          "systemOutput": { "rateBps": 565, "employerContributionXaf": "5650.00" }
+        },
+        {
+          "id": "FAMILY_PRIVATE_EDUCATION",
+          "input": { "contributionBaseXaf": "100000.00", "sector": "PRIVATE_EDUCATION" },
+          "systemOutput": { "rateBps": 370, "employerContributionXaf": "3700.00" }
+        }
+      ],
+      "independentReview": {
+        "sourceProvision": null,
+        "2026ApplicabilityConclusion": null,
+        "independentlyCalculatedOutputs": [],
+        "roundingRule": null,
+        "sectorMappingAndEdgeCases": null,
+        "exceptionsAndLimitations": null,
+        "decision": null,
+        "reviewerComments": null
+      },
+      "independentFixtureTieOutHash": null
+    },
+    {
+      "fixtureFamily": "payroll.cnps.occupationalRiskRatesBps",
+      "implementedValue": {
+        "groupABps": 175,
+        "groupBBps": 250,
+        "groupCBps": 500,
+        "paidBy": "EMPLOYER",
+        "classificationRequired": true
+      },
+      "candidateSources": [
+        "Decree No. 2016/072, Articles 7-10 and Annex",
+        "CNPS Statistical Yearbook 2025, pages 8-10",
+        "CNPS Official FAQ, pages 4-5"
+      ],
+      "proposedEffectiveWindow": {
+        "effectiveFrom": "2026-01-01",
+        "effectiveTo": null,
+        "reviewerConfirmation": null
+      },
+      "systemScenarios": [
+        {
+          "id": "RISK_GROUP_A",
+          "input": { "contributionBaseXaf": "100000.00", "group": "A" },
+          "systemOutput": { "rateBps": 175, "employerContributionXaf": "1750.00" }
+        },
+        {
+          "id": "RISK_GROUP_B",
+          "input": { "contributionBaseXaf": "100000.00", "group": "B" },
+          "systemOutput": { "rateBps": 250, "employerContributionXaf": "2500.00" }
+        },
+        {
+          "id": "RISK_GROUP_C",
+          "input": { "contributionBaseXaf": "100000.00", "group": "C" },
+          "systemOutput": { "rateBps": 500, "employerContributionXaf": "5000.00" }
+        }
+      ],
+      "independentReview": {
+        "sourceProvision": null,
+        "2026ApplicabilityConclusion": null,
+        "independentlyCalculatedOutputs": [],
+        "roundingRule": null,
+        "classificationAndMixedActivityTreatment": null,
+        "exceptionsAndLimitations": null,
+        "decision": null,
+        "reviewerComments": null
+      },
+      "independentFixtureTieOutHash": null
+    },
+    {
+      "fixtureFamily": "payroll.cnps.employerRules",
+      "implementedValue": {
+        "registrationRequired": true,
+        "employeeDeclarationRequired": true,
+        "payrollBaseRequiresCnpsReview": true
+      },
+      "candidateSources": [
+        "Current CNPS employer-obligations page",
+        "CNPS employer general rules capture",
+        "CNPS Statistical Yearbook 2025, pages 8-10"
+      ],
+      "proposedEffectiveWindow": {
+        "effectiveFrom": "2026-01-01",
+        "effectiveTo": null,
+        "reviewerConfirmation": null
+      },
+      "systemScenarios": [
+        {
+          "id": "EMPLOYER_RULES_ASSERTION",
+          "input": {
+            "registeredEmployer": true,
+            "employeePayrollProcessed": true
+          },
+          "systemOutput": {
+            "employerCalculatesAndPaysTotal": true,
+            "employeeShareWithheldAtPayroll": true,
+            "declarationRequired": true
+          }
+        }
+      ],
+      "independentReview": {
+        "sourceProvision": null,
+        "2026ApplicabilityConclusion": null,
+        "currentRegistrationDeclarationAndPaymentWorkflow": null,
+        "timingAndExceptions": null,
+        "evidenceReviewed": [],
+        "decision": null,
+        "reviewerComments": null
+      },
+      "independentFixtureTieOutHash": null
+    }
+  ]
+}
+

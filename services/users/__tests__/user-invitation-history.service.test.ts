@@ -8,10 +8,10 @@ import { readUserInvitationHistory } from "../user-invitation-history.service"
 import { USER_INVITATION_EVENT } from "../user-invitation-delivery-contract"
 const permissions = ["users.invite", "users.roles.assign", "users.read", "items.read"]
 function setup() {
-  const invite = { id: "invite", organizationId: "org", roleId: "reader", token: "private-token", email: "private@example.invalid", status: "PENDING", expiresAt: new Date(Date.now() + 60000), role: { organizationId: "org", permissions: ["items.read"] } }
+  const invite = { id: "invite", organizationId: "org", roleId: "reader", token: "private-token", email: "private@example.invalid", status: "PENDING", expiresAt: new Date(Date.now() + 60000), role: { code: "reader", organizationId: "org", permissions: ["items.read"] } }
   const payload = { version: 1, organizationId: "org", inviteId: "invite", actorId: "issuer", roleId: "reader", tokenHash: "a".repeat(64), recipientHash: "b".repeat(64), requestFingerprint: "c".repeat(64), actorPermissions: permissions, rolePermissions: ["items.read"], locale: "en", companyName: "Company", roleName: "Reader", from: "invites@example.invalid", baseUrl: "https://example.invalid", expiresAt: invite.expiresAt.toISOString() }
   const event = { id: "event", eventType: USER_INVITATION_EVENT, eventSource: "API", schemaVersion: 1, actorId: "issuer", status: "APPLIED", payload, payloadHash: hashBusinessPayload(payload), idempotencyKey: "request", recordedAt: new Date(), outboxMessages: [{ status: "PENDING", attempts: 0, updatedAt: new Date(), payload, payloadHash: hashBusinessPayload(payload), idempotencyKey: "request" }] }
-  const actor = { id: "reviewer", isLocked: false, isVerified: true, emailVerified: true, organization: { name: "Company", isActive: true, deletedAt: null }, roles: [{ permissions }] }
+  const actor = { id: "reviewer", isLocked: false, isVerified: true, emailVerified: true, organization: { name: "Company", isActive: true, deletedAt: null }, roles: [{ code: "manager", permissions }] }
   const tx = { invite: { findFirst: jest.fn().mockResolvedValue(invite) }, user: { findFirst: jest.fn().mockResolvedValue(actor), findMany: jest.fn().mockResolvedValue([{ id: "issuer", firstName: "Ada", lastName: "Reviewer", name: null }]) }, businessEvent: { findFirst: jest.fn(), findMany: jest.fn().mockResolvedValue([event]) }, auditLog: { findFirst: jest.fn() } }
   ;(db.$transaction as jest.Mock).mockImplementation(async fn => fn(tx))
   ;(readInvitationRedemptionAuthority as jest.Mock).mockResolvedValue({ issueId: "event" })
@@ -23,7 +23,7 @@ it("does not label an older expanded role-control grant as verified evidence", a
   const { input, event, invite, actor } = setup()
   const current = [...permissions, "roles.permissions.remove"]
   input.actorPermissions = current
-  actor.roles = [{ permissions: current }]
+  actor.roles = [{ code: "manager", permissions: current }]
   invite.role.permissions = ["roles.permissions.remove"]
   event.payload.rolePermissions = [...invite.role.permissions]
   event.payload.actorPermissions = [...current, "ASSIGN_ROLES"]
@@ -50,7 +50,7 @@ it.each(["missing", "revoked", "above-ceiling", "users-read-revoked"])("denies %
   if (kind === "missing") tx.invite.findFirst.mockResolvedValue(null)
   if (kind === "revoked") tx.user.findFirst.mockResolvedValue(null)
   if (kind === "above-ceiling") invite.role.permissions = ["accounting.period.close"]
-  if (kind === "users-read-revoked") actor.roles = [{ permissions: permissions.filter(p => p !== "users.read") }]
+  if (kind === "users-read-revoked") actor.roles = [{ code: "manager", permissions: permissions.filter(p => p !== "users.read") }]
   expect((await readUserInvitationHistory(input)).data).toBeNull(); expect(tx.businessEvent.findMany).not.toHaveBeenCalled()
 })
 it.each(["bad-hash", "foreign-payload", "actor-mismatch", "unapplied", "unexpected-schema"])("marks %s evidence unavailable instead of displaying trusted details", async kind => {

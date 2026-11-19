@@ -1,0 +1,28 @@
+{
+  "began": "2026-11-09T20:00:34.600Z",
+  "passed": true,
+  "database": "stoquify_replay_close_producer_20261109_c5da73b635",
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-producer-20261109-c5da73b635",
+  "source": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-producer-20261109-c5da73b635\\source",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\ca03-producer\\pg-attempt-c5da73b635",
+  "privateClient": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-retention-client-20261109-b4075974cd\\orm\\client",
+  "catalogSha256": "e894a828415592f4c2ab155993b1923ed12245374a21b0184ae8a375495190aa",
+  "runnerSha256": "8ca134c34eeef5657b896ae002cd567b1560c4ee28902cb4249309619b2fc98f",
+  "checks": [
+    {
+      "name": "fresh122ReplayTwice",
+      "certification": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT"
+    },
+    {
+      "name": "actualProducerServiceCases",
+      "passedTests": 12,
+      "skipped": 0,
+      "sqlInventoryUnchanged": true,
+      "earnedSignatures": 2,
+      "noJournalsOrCloseCertificates": true
+    }
+  ],
+  "limitation": "Real isolated current producer service calls on synthetic inputs; no hosted/provider/sending/browser or whole-close certification claim.",
+  "ownedClusterStopped": true,
+  "ended": "2026-11-09T20:02:04.823Z"
+}

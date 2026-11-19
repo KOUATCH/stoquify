@@ -1,0 +1,14 @@
+"use client"
+import {useState} from "react"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import type {DocumentTransport,DocumentWorkspace} from "./HrisDocumentWorkspace"
+export function HrisDocumentRetentionControls({document:d,locale,execute,refresh}:{document:DocumentWorkspace["documents"][number];locale:"en"|"fr";execute:DocumentTransport;refresh:()=>Promise<unknown>}){
+ const t=(en:string,fr:string)=>locale==="fr"?fr:en,[operation,setOperation]=useState("HOLD"),[reason,setReason]=useState(""),[ack,setAck]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState("")
+ const canDelete=!d.legalHold&&!d.evidenceBound&&new Date(d.retainUntil)<=new Date()
+ return <details className="border-t pt-2"><summary>{t("Retention controls","Contrôles de conservation")}</summary><form className="space-y-2 pt-2" onSubmit={async e=>{e.preventDefault();setBusy(true);setMessage("");try{await execute(operation==="DELETE"?"DELETE":"RETAIN",operation==="DELETE"?{documentId:d.id}:{documentId:d.id,revision:d.revision,operation,reason});setAck(false);setMessage(t("Retention action recorded.","Action de conservation enregistrée."));await refresh()}catch{setMessage(t("Outcome unconfirmed. Refresh the document status before retrying; retained evidence and holds cannot be bypassed.","Résultat incertain. Actualisez le statut avant de réessayer ; les preuves conservées et les obligations de conservation restent protégées."))}finally{setBusy(false)}}}>
+ <label className="block">{t("Retention action","Action de conservation")}<select className="w-full border bg-background p-2" disabled={busy} value={operation} onChange={e=>{setOperation(e.target.value);setAck(false)}}><option value="HOLD">{t("Place hold","Suspendre la suppression")}</option><option value="RELEASE_HOLD">{t("Release hold","Lever la suspension")}</option><option value="BIND_EVIDENCE">{t("Permanently bind evidence","Lier la preuve définitivement")}</option>{canDelete&&<option value="DELETE">{t("Delete eligible original","Supprimer l’original admissible")}</option>}</select></label>
+ <label className="block">{t("Authorization reference or reason","Référence d’autorisation ou motif")}<Input disabled={busy} value={reason} minLength={8} maxLength={500} required onChange={e=>setReason(e.target.value)}/></label>
+ <label className="flex items-start gap-2"><input disabled={busy} type="checkbox" checked={ack} onChange={e=>setAck(e.target.checked)}/>{t("I checked the approved policy and the authority for this action.","J’ai vérifié la politique approuvée et l’autorisation de cette action.")}</label>
+ <Button disabled={busy||!ack||reason.trim().length<8} type="submit">{t("Record retention action","Enregistrer l’action de conservation")}</Button><p role="status">{message}</p></form></details>
+}

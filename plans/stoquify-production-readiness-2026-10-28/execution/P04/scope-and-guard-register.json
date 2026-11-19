@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "package": "P04",
+  "created_at": "2026-10-29T10:57:27.149Z",
+  "status": "assessment_complete_blocked",
+  "authorization": "User directed current-source scope/guard registration, isolated negative verification and independent review; no application fixes, commits, production changes or deployment.",
+  "candidate": "current dirty working tree; source fingerprints will bind evidence",
+  "production_scope": "No production admission implied. D01 production scope and external sign-off remain pending.",
+  "inventory_scope": {
+    "routes": "All current app/**/route.ts HTTP methods",
+    "pages": "All current app/**/page.tsx and enclosing layouts/middleware",
+    "actions": "All exported server-action entries and app-local inline actions"
+  },
+  "qualification_focus": [
+    "Live subject/session validity and revocation",
+    "Current tenant and changed permission boundaries",
+    "Resource ownership and forged identifiers",
+    "Location scope and module entitlement",
+    "Safe denial responses and no persisted writes",
+    "Uploads, downloads, exports and public capabilities"
+  ],
+  "roles": "Current persisted role membership and effective permissions, including reserved-code roles; exact definitions are recorded in guard review.",
+  "evidence_classes": [
+    "current source trace",
+    "mocked boundary test",
+    "real PostgreSQL with explicitly stubbed authentication transport",
+    "real HTTP/browser if executed"
+  ],
+  "rules": [
+    "A guard-name scan is discovery only.",
+    "Untraced paths are explicit blocking gaps.",
+    "Real database tests with a stubbed transport do not prove actual cookie/session transport or rendered UI restoration.",
+    "Confirmed defects receive bounded child packages; P04 cannot close with unresolved required children."
+  ],
+  "registers": {
+    "actions": "actions-review/",
+    "routes": "routes-review/",
+    "shared_guards": "guard-review/"
+  },
+  "rollback_recovery": "No application changes authorized in this qualification. Stop owned runtimes, retain synthetic evidence, verify source stability. Any future repair must preserve or strengthen authorization.",
+  "candidate_id": "p04-20261029-07216cdcb1fb",
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "source_manifest": "source-manifest.json",
+  "counts": {
+    "handlerFiles": 22,
+    "explicitHandlerMethods": 30,
+    "pages": 190,
+    "layouts": 21,
+    "appServerActionFunctions": 13,
+    "declaredSurfaceObjects": 146,
+    "actionSourceFiles": 217,
+    "actionModuleUseServerFiles": 209,
+    "actionExportRecords": 748,
+    "actionReviewedRecords": 72,
+    "actionInventoryOnlyRecords": 676,
+    "actionCallchainSourceReviewedRecords": 30,
+    "appModuleExportRecords": 2,
+    "appInlineRecords": 11,
+    "appInlineDelegateReviewed": 8,
+    "nonServerHelperFiles": 8,
+    "productionAdmittedByThisReview": 0,
+    "actionDirectExportRecords": 742,
+    "actionReexportRecords": 6,
+    "actionDistinctLocalImplementations": 738,
+    "actionAdditionalNamedDefaultAliases": 4,
+    "combinedActionExportAndInlineRecords": 761,
+    "distinctDeployedActionIDs": "not established; aliases and framework reachability require qualification"
+  },
+  "inventory_refs": {
+    "actions": "actions-review/server-action-exports.json",
+    "app_actions": "actions-review/app-local-server-actions.json",
+    "routes_pages_layouts": "routes-review/route-page-guard-register.json",
+    "surface_declarations": "routes-review/declared-route-surfaces.json"
+  },
+  "roles_qualified": [
+    {
+      "role": "anonymous/absent authority",
+      "boundary": "mocked API denial and synthetic public-static reproduction"
+    },
+    {
+      "role": "branch_manager",
+      "boundary": "real persisted same-tenant role, current permission reload and location-only operating scope"
+    },
+    {
+      "role": "branch_reader",
+      "boundary": "distinct recipient with dashboard.read and assigned location"
+    },
+    {
+      "role": "custom Admin",
+      "boundary": "reserved-code role with dashboard.read causes confirmed TENANT scope escalation after grant"
+    },
+    {
+      "role": "foreign-tenant admin wildcard",
+      "boundary": "real foreign role attached to actor is excluded from current tenant permissions"
+    },
+    {
+      "role": "inactive/locked/unverified actor or inactive/deleted organization",
+      "boundary": "native deny cases; changed persisted state"
+    }
+  ],
+  "guards": [
+    {
+      "id": "RBAC",
+      "source": "lib/security/rbac.ts",
+      "protects": "Fresh subject/current active user and org, tenant role projection and current permissions; Better Auth transport remains independent evidence obligation"
+    },
+    {
+      "id": "SESSION",
+      "source": "lib/security/auth-session.ts",
+      "protects": "Exact live session id/token/subject/expiry and tenant/time/level/lock-bound assurance"
+    },
+    {
+      "id": "PROTECT",
+      "source": "services/_shared/protect.ts",
+      "protects": "Configured permission/fresh-auth/module and supported tenant-field shapes before handler; handler owns arbitrary resource/location IDs"
+    },
+    {
+      "id": "API",
+      "source": "lib/security/server-authz.ts",
+      "protects": "Current actor/org API boundary, operation/module checks when caller invokes them"
+    },
+    {
+      "id": "MODULE",
+      "source": "services/modules/module-entitlement.service.ts",
+      "protects": "Enforced current grant/config state; observe mode is not enforcement"
+    },
+    {
+      "id": "OPERATING_SCOPE",
+      "source": "services/operating-access/operating-access-scope-contracts.ts",
+      "protects": "Location/tenant operating scope; confirmed reserved-code grant-ceiling defect"
+    }
+  ],
+  "outcomes": {
+    "native": {
+      "ordinary_passed": 23,
+      "security_failures": 1,
+      "auth_transport": "stubbed",
+      "denial_state": "No protected handler/private canary; unchanged persisted org/user-role/session/location/module state across two synthetic tenants; expected security audit writes excluded"
+    },
+    "mocked": {
+      "ordinary_passed": 109,
+      "defect_characterizations": 4,
+      "skipped": 0
+    },
+    "component_http": {
+      "private_static_sentinel_returned_anonymously": true,
+      "full_application": false
+    },
+    "actual_signed_cookie_browser": "not run",
+    "production_admitted": 0
+  },
+  "findings_ref": "findings-register.json",
+  "children_ref": "repair-and-qualification-packages.json",
+  "scope_decision": "Latest user request approves this bounded technical verification. D01 full production exposure approval remains open.",
+  "test_source_archive": "test-source-relocation.json"
+}

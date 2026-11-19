@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "package_id": "P04-V02",
+  "reviewed_at": "2026-11-09T16:18:26.732Z",
+  "status": "author_review_complete_independent_review_pending",
+  "files": [
+    {
+      "path": "browser/run-auth-transport.cjs",
+      "sha256": "e28aa8ecbc0d5a835f49c29bccde6e1f6d53e33efa19822636ef0a3d1dd36088"
+    },
+    {
+      "path": "database/auth-controls.cjs",
+      "sha256": "117989dac6e45a9f0ee2a3a0f17078829a791d27185395a76b9200599a0c8d3d"
+    }
+  ],
+  "entry_point": "runAuthTransport(fixture,controls)",
+  "effects": {
+    "sourceChanges": "None; new qualification evidence/harness only",
+    "database": "Creates ten exclusive synthetic actors across two seeded synthetic organizations; role/account/profile changes only those actors, plus existing inventory grant suspend/restore serialized. All database calls verify exact local cluster/data_directory and full database.",
+    "filesystem": "Exclusive browser/auth-transport directory, sanitized JSON/screenshots, inertsource snapshots; private generated credentials only D:/p04-v02-fullapp-20261109-r1/private/auth-transport-fixture.private.json",
+    "network": "HTTPS localhost3196 app; browser deny-only proxy127.0.0.1:3199; exact application URL validation on HTTP helpers. No liveprovider credentials or calls.",
+    "cleanup": "Individually attempted owned context/browser/proxy closure always followed by synthetic session cleanup and result persistence; permission/module/lifecycle controls restored in finally; failures retained."
+  },
+  "prerequisites": [
+    "Current sealed built artifact running",
+    "Owned exclusive full database seeded",
+    "Baseline browser/proxy closed",
+    "Inventory/dashboard grants restored",
+    "Independent review accepted before execution"
+  ],
+  "syntax_check": {
+    "command": "node --check each owned CJS file (browser repeated after final cache-lifetime changes)",
+    "exit_code": 0,
+    "checked_hashes": [
+      {
+        "path": "browser/run-auth-transport.cjs",
+        "sha256": "e28aa8ecbc0d5a835f49c29bccde6e1f6d53e33efa19822636ef0a3d1dd36088"
+      },
+      {
+        "path": "database/auth-controls.cjs",
+        "sha256": "117989dac6e45a9f0ee2a3a0f17078829a791d27185395a76b9200599a0c8d3d"
+      }
+    ],
+    "executed_app_or_database": false
+  },
+  "planned_checks": 91,
+  "limits": [
+    "No auth mocks",
+    "No signed-cookie construction",
+    "Only exact replay of cookies created by actual sign-in",
+    "No auth transport result yet",
+    "Source inventory remains runtime pending"
+  ],
+  "bookkeeping": "All old audit/session rows preserved except specifically enumerated same-actor session deletions or already-expired current-actor cleanup; zero unapproved session additions/updates; allowed actor/org audit types. Wrong credential counters and profile/unlink positives have exact table/field assertions.",
+  "cacheReplayPrerequisite": "Exact acquired signed session_data values retained by browser; original cookie expiry >10sec at every replay context; expired prerequisite classified incomplete. No expiry extension or synthetic signing. Actual request start (>2sec) and response end (>0sec) expiry evidence additionally enforced after database snapshots."
+}

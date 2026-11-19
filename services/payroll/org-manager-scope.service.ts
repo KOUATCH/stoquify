@@ -17,6 +17,7 @@ const managerScopedEmployeesInputSchema = z.object({
   actorPermissions: z.array(z.string().trim().min(1)).default([]),
   employeeId: z.string().trim().min(1).optional(),
   limit: z.coerce.number().int().min(1).max(250).default(100),
+  completeScope: z.boolean().default(false),
 })
 
 function safeJson(value: unknown): Prisma.InputJsonValue {
@@ -79,7 +80,7 @@ export async function getPayrollOrgManagerScopedEmployees(
           ...(parsed.employeeId ? { id: parsed.employeeId } : {}),
         },
         orderBy: [{ displayName: "asc" }],
-        take: parsed.limit,
+        ...(parsed.completeScope ? {} : { take: parsed.limit }),
         select: {
           id: true,
           employeeNumber: true,

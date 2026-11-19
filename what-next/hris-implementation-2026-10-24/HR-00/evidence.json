@@ -1,0 +1,56 @@
+{
+  "slice": "HR-00",
+  "status": "VERIFIED",
+  "timestamp": "2026-10-24T13:54:55.4001664Z",
+  "baselineCommit": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "dirtyBaseline": true,
+  "target": {
+    "host": "127.0.0.1",
+    "port": 55464,
+    "server": "PostgreSQL 17.5",
+    "setup": "schema sync only; no migration replay",
+    "schema": "public",
+    "database": "stoquify_local_hris_20261024"
+  },
+  "artifacts": [
+    "baseline-status.txt",
+    "baseline-hashes.json",
+    "inherited-owned-paths.diff",
+    "baseline-jest.json",
+    "postgres-rehearsal-and-ledger.json"
+  ],
+  "commands": [
+    {
+      "outcome": "PASS; 196 unclassified",
+      "lane": "source-contract",
+      "command": "npm run agent:workflow:check",
+      "exitCode": 0
+    },
+    {
+      "lane": "mocked",
+      "tests": 27,
+      "command": "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath services/hris/__tests__/operational-time-decision-concurrency.test.ts services/hris/__tests__/leave-balance.service.test.ts services/hris/__tests__/org-effective-scope.service.test.ts components/hris/__tests__/HrisApprovalInbox.test.tsx --json --outputFile=what-next/hris-implementation-2026-10-24/HR-00/baseline-jest.json",
+      "exitCode": 0
+    },
+    {
+      "explicitTargetVariable": "HRIS_CORRECTNESS_DATABASE_URL",
+      "lane": "real-postgresql",
+      "tests": 15,
+      "command": "node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand --no-cache --json --outputFile=what-next/hris-implementation-2026-10-24/HR-00/postgres-rehearsal-and-ledger.json",
+      "exitCode": 0
+    }
+  ],
+  "acceptance": [
+    "HR-00-AC01",
+    "HR-00-AC02",
+    "HR-00-AC03",
+    "HR-00-AC04",
+    "HR-00-AC05"
+  ],
+  "notRun": [
+    "browser",
+    "provider",
+    "qualified statutory review",
+    "migration replay"
+  ]
+}

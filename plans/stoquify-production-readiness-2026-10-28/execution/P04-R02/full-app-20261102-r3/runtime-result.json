@@ -1,0 +1,218 @@
+{
+  "startedAt": "2026-11-02T17:42:02.954Z",
+  "actualRuntimePath": "D:\\p04-r02-fullapp-20261102-r3\\runtime",
+  "runtimeStorage": "D:\\p04-r02-fullapp-20261102-r3",
+  "plannedRuntimePath": "D:\\p04-r02-fullapp-20261102-r3\\runtime",
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+  "passed": false,
+  "cleanup": [],
+  "mutableRuntimeSubtrees": [
+    ".next/cache/images/"
+  ],
+  "optimizerRequests": [],
+  "originalAssetProtection": {
+    "blockedRequests": 0,
+    "scope": "Canonical originals and ordinary alias requests refused before upstream; exact marked alias probes reach upstream only for bounded validated denial evidence; positive reads use synthetic assets"
+  },
+  "privateAliasProbes": [
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 500,
+      "upstreamContentType": null,
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    },
+    {
+      "method": "GET",
+      "path": "/images/cabin-1.jpg",
+      "kind": "route",
+      "validated": false,
+      "originalBytesForwarded": 0,
+      "upstreamStatus": 500,
+      "upstreamContentType": null,
+      "upstreamCacheControl": "private, no-store",
+      "reason": "Unsafe upstream status or headers"
+    }
+  ],
+  "aliasProbeHelperSha256": "350ce96d6bf8b009e48ba5d64b46a2dff3a500d8f3f5f20bbe6b604bd20745aa",
+  "browserSourceReviewSha256": "0077613a24d3beaae6413e68dc828bf30148621bf5dc7f1335eb7d6190849f48",
+  "dependencyIsolation": {
+    "outsideCheckout": true,
+    "globalSearchPaths": [
+      {
+        "path": "C:\\Users\\J COMPUTER\\.node_modules",
+        "exists": false
+      },
+      {
+        "path": "C:\\Users\\J COMPUTER\\.node_libraries",
+        "exists": false
+      },
+      {
+        "path": "C:\\Program Files\\nodejs\\lib\\node",
+        "exists": false
+      }
+    ],
+    "ancestorPaths": [
+      "D:\\p04-r02-fullapp-20261102-r3\\node_modules",
+      "D:\\node_modules"
+    ],
+    "nodePathAbsent": true,
+    "volumeNodeModulesAbsent": true,
+    "testDriver": "Root tooling remains separate; application cwd is the external runtime"
+  },
+  "seededPrivateOptimizerCache": {
+    "cacheKey": "azDZUiE5KestdQzuVX9jK4glMy9xju16joMadOLrlwg",
+    "parameters": {
+      "href": "/uploads/p04-upload-a/sentinel.png",
+      "width": 64,
+      "quality": 75,
+      "mimeType": ""
+    },
+    "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+    "synthetic": true,
+    "presentBeforeBrowser": true,
+    "presentAfterBrowser": true
+  },
+  "serverPid": 3608,
+  "browser": {
+    "passed": false,
+    "output": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\full-app-20261102-r3\\browser\\p04r02-full-20261102-r3",
+    "privateAliasProbeCoverage": null,
+    "checks": [
+      {
+        "label": "real-ui-login-and-image-consumers-en",
+        "passed": false,
+        "error": "locator.evaluate: EncodingError: The source image cannot be decoded."
+      },
+      {
+        "label": "real-ui-login-and-image-consumers-fr",
+        "passed": false,
+        "error": "locator.evaluate: EncodingError: The source image cannot be decoded."
+      },
+      {
+        "label": "original-private-alias-denials-anonymous",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "original-private-alias-denials-ui",
+        "passed": false,
+        "error": "Parent proxy did not validate a safe application denial\n+ actual - expected\n\n+ undefined\n- 'p04r02-r3'\n"
+      },
+      {
+        "label": "original-private-alias-denials-foreign",
+        "passed": false,
+        "error": "Sign-in failed for foreign\n\n429 !== 200\n"
+      },
+      {
+        "label": "original-private-alias-denials-revocation",
+        "passed": false,
+        "error": "Sign-in failed for revocation\n\n429 !== 200\n"
+      },
+      {
+        "label": "original-private-alias-denials-expiry",
+        "passed": false,
+        "error": "Sign-in failed for expiry\n\n429 !== 200\n"
+      },
+      {
+        "label": "original-private-alias-denials-permissionChange",
+        "passed": false,
+        "error": "Sign-in failed for permissionChange\n\n429 !== 200\n"
+      },
+      {
+        "label": "original-private-alias-denials-moduleChange",
+        "passed": false,
+        "error": "Sign-in failed for moduleChange\n\n429 !== 200\n"
+      },
+      {
+        "label": "original-private-alias-denials-permissionDenied",
+        "passed": false,
+        "error": "Sign-in failed for permissionDenied\n\n429 !== 200\n"
+      },
+      {
+        "label": "original-private-alias-denials-moduleDenied",
+        "passed": false,
+        "error": "Sign-in failed for moduleDenied\n\n429 !== 200\n"
+      },
+      {
+        "label": "anonymous-both-delivery-urls",
+        "passed": false,
+        "error": "anonymous unexpected route denial status"
+      },
+      {
+        "label": "foreign-both-delivery-urls",
+        "passed": false,
+        "error": "Sign-in failed for foreign\n\n429 !== 200\n"
+      },
+      {
+        "label": "permissionDenied-both-delivery-urls",
+        "passed": false,
+        "error": "Sign-in failed for permissionDenied\n\n429 !== 200\n"
+      },
+      {
+        "label": "moduleDenied-both-delivery-urls",
+        "passed": false,
+        "error": "Sign-in failed for moduleDenied\n\n429 !== 200\n"
+      },
+      {
+        "label": "revocation-original-signed-cookie-replay",
+        "passed": false,
+        "error": "Sign-in failed for revocation\n\n429 !== 200\n"
+      },
+      {
+        "label": "expiry-original-signed-cookie-replay",
+        "passed": false,
+        "error": "Sign-in failed for expiry\n\n429 !== 200\n"
+      },
+      {
+        "label": "permissionChange-original-signed-cookie-replay",
+        "passed": false,
+        "error": "Sign-in failed for permissionChange\n\n429 !== 200\n"
+      },
+      {
+        "label": "moduleChange-original-signed-cookie-replay",
+        "passed": false,
+        "error": "Sign-in failed for moduleChange\n\n429 !== 200\n"
+      },
+      {
+        "label": "authorized-get-head-and-private-optimizer-denial",
+        "passed": false,
+        "error": "Sign-in failed for ui\n\n429 !== 200\n"
+      },
+      {
+        "label": "original-private-alias-probe-coverage",
+        "passed": false,
+        "error": "Original-alias probe coverage is incomplete\n\n0 !== 270\n"
+      },
+      {
+        "label": "browser-cache-and-runtime-errors",
+        "passed": true
+      }
+    ]
+  },
+  "error": "AssertionError [ERR_ASSERTION]: Browser or HTTP admission gate failed\n    at E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\full-app-20261102-r3\\run-runtime.cjs:48:335",
+  "proxyClosed": true,
+  "runtimeTermination": {
+    "pid": 3608,
+    "exitCode": 0
+  },
+  "serverExitCode": 1,
+  "runtimeIntegrity": {
+    "sealedFiles": 5310,
+    "allSealedBytesUnchanged": true,
+    "allowedImageCacheAdditions": [
+      {
+        "path": ".next/cache/images/azDZUiE5KestdQzuVX9jK4glMy9xju16joMadOLrlwg/3600.1793645056835.p04r02-full-synthetic.p04r02-full-synthetic.png",
+        "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d"
+      }
+    ]
+  },
+  "artifactUnchanged": true,
+  "portsReleased": true,
+  "finishedAt": "2026-11-02T17:45:40.002Z"
+}

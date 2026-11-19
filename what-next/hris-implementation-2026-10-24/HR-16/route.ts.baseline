@@ -1,0 +1,32 @@
+import {NextResponse} from "next/server"
+import {z} from "zod"
+import {requireDocumentActor} from "@/services/hris/employee-document.authorization"
+import {listEmployeeDocuments,uploadEmployeeDocument,reviewEmployeeDocument,grantEmployeeDocument,downloadEmployeeDocument,retainEmployeeDocument,deleteEmployeeDocument} from "@/services/hris/employee-document.service"
+import {HR_DOCUMENT_MAX_BYTES} from "@/services/hris/employee-document.contract"
+import {ApplicationError,ForbiddenError} from "@/services/_shared/action-errors"
+import {jsonErrorResponse} from "@/lib/error-handling/route-response"
+import {buildTrustedOrigins} from "@/lib/security/trusted-origins"
+export const runtime="nodejs"
+const headers={"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer"}
+async function body(request:Request,max:number){
+ if(!request.body)throw new ApplicationError("VALIDATION_ERROR","Request body required",400)
+ const reader=request.body.getReader(),parts:Uint8Array[]=[];let size=0
+ try{while(true){const r=await reader.read();if(r.done)break;size+=r.value.length;if(size>max){await reader.cancel();throw new ApplicationError("VALIDATION_ERROR","File must be no larger than 5 MB",400)}parts.push(r.value)}}finally{reader.releaseLock()}
+ return Buffer.concat(parts)
+}
+function origin(request:Request){const allowed=buildTrustedOrigins([process.env.NEXTAUTH_URL??process.env.NEXT_PUBLIC_BASE_URL??"http://localhost:3000",process.env.NEXT_PUBLIC_BASE_URL]);if(!allowed.includes(request.headers.get("origin")??"")||request.headers.get("sec-fetch-site")==="cross-site")throw new ForbiddenError()}
+export async function GET(request:Request){try{const actor=await requireDocumentActor(false),url=new URL(request.url);return NextResponse.json(await listEmployeeDocuments(actor,url.searchParams.get("employeeId")??undefined),{headers})}catch(error){return jsonErrorResponse(error,{endpoint:"GET /api/hris/documents",userMessage:"Documents are unavailable."})}}
+export async function POST(request:Request){try{
+ origin(request)
+ const type=request.headers.get("content-type")??""
+ if(type.startsWith("multipart/form-data;")){
+  const actor=await requireDocumentActor(true),raw=await body(request,HR_DOCUMENT_MAX_BYTES+65536),form=await new Response(new Uint8Array(raw),{headers:{"Content-Type":type}}).formData(),file=form.get("file")
+  if(!file||typeof file==="string"||form.getAll("file").length!==1)throw new ApplicationError("VALIDATION_ERROR","Choose one document",400)
+  const input=JSON.parse(String(form.get("metadata"))),result=await uploadEmployeeDocument(actor,{...input,mimeType:file.type},new Uint8Array(await file.arrayBuffer()))
+  return NextResponse.json(result,{headers})
+ }
+ const raw=JSON.parse((await body(request,8192)).toString("utf8")),command=z.enum(["GRANT","DOWNLOAD","REVIEW","RETAIN","DELETE"]).parse(raw.command),actor=await requireDocumentActor(!["GRANT","DOWNLOAD"].includes(command))
+ if(command==="DOWNLOAD"){const r=await downloadEmployeeDocument(actor,z.string().max(4096).parse(raw.token));return new Response(new Uint8Array(r.bytes),{headers:{...headers,"Content-Type":r.mimeType,"Content-Disposition":`attachment; filename="${r.fileName}"`}})}
+ const result=command==="GRANT"?await grantEmployeeDocument(actor,z.string().uuid().parse(raw.documentId)):command==="REVIEW"?await reviewEmployeeDocument(actor,raw.input):command==="RETAIN"?await retainEmployeeDocument(actor,raw.input):await deleteEmployeeDocument(actor,z.string().uuid().parse(raw.documentId),undefined,z.string().trim().min(8).max(500).parse(raw.reason))
+ return NextResponse.json(result,{headers})
+ }catch(error){return jsonErrorResponse(error,{endpoint:"POST /api/hris/documents",userMessage:"Unable to complete the document request. Refresh its status before retrying."})}}

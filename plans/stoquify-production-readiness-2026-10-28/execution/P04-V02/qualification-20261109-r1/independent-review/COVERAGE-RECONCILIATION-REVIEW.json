@@ -1,0 +1,60 @@
+{
+  "at": "2026-11-09T18:45:17.379Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "authorRegister": {
+    "path": "inventory/findings-classification-final.json",
+    "sha256": "842c79f834dc4322d0fc34c61204c8e3c5690a50faf2f79c033bbb4e4a3af6f0"
+  },
+  "coverageDocument": {
+    "path": "inventory/COVERAGE-OUTCOME.md",
+    "sha256": "645bef0031c66804666f4ec822ed35dbd2c133d4eff06c4c8e66f8e5ebbcd74d"
+  },
+  "logicalGroups": 196,
+  "statuses": {
+    "observed_pass": 156,
+    "confirmed_product_failure": 17,
+    "independently_adjudicated_scoped_pass": 7,
+    "qualification_incomplete_native_visibility": 8,
+    "qualified_by_bounded_replay": 8
+  },
+  "rawExecutions": [
+    {
+      "file": "browser/p04v02-full-20261109-r1-attempt01/result.json",
+      "count": 22,
+      "passed": 21
+    },
+    {
+      "file": "browser/auth-transport-v4/result.json",
+      "count": 116,
+      "passed": 93
+    },
+    {
+      "file": "provider/attempt02/result.json",
+      "count": 23,
+      "passed": 23
+    },
+    {
+      "file": "browser/auth-supplement-03/result.json",
+      "count": 35,
+      "passed": 19
+    },
+    {
+      "file": "browser/auth-followup04/result.json",
+      "count": 11,
+      "passed": 8
+    }
+  ],
+  "summary": {
+    "raw207": {
+      "passed": 164,
+      "failed": 43
+    },
+    "logical196": {
+      "supportedSelectedScope": 171,
+      "productFailureGroups": 17,
+      "nativeVisibilityIncomplete": 8
+    }
+  },
+  "interpretation": "All 196 original/supplement logical selectors map to actual immutable results; eight replay selectors pass. Author narrative preserves raw failures, current-checkout/source limits, named-code capture limits and deferred native focus/BFCache/hosted scope."
+}

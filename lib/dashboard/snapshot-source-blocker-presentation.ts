@@ -10,6 +10,84 @@ type Translation = {
 
 // Match source identity and exact canonical wording; never translate custom evidence.
 const sourceCopy: Record<string, Translation> = {
+  "branch-location-required": {
+    "gate": "branch_operating_snapshot",
+    "en": {
+      "title": "Branch snapshot requires a location",
+      "detail": "A branch operating snapshot cannot be generated without a tenant-scoped locationId.",
+      "nextAction": "Select a branch or warehouse before requesting a branch snapshot."
+    },
+    "fr": {
+      "title": "Un site est requis pour l’instantané d’agence",
+      "detail": "Un instantané d’agence nécessite un site appartenant à l’organisation.",
+      "nextAction": "Sélectionnez une agence ou un entrepôt avant de demander cet instantané."
+    }
+  },
+  "branch-location-not-found": {
+    "gate": "tenant_isolation",
+    "en": {
+      "title": "Location is unavailable for this tenant",
+      "detail": "The requested location was not found inside the authenticated tenant scope.",
+      "nextAction": "Select a valid tenant location."
+    },
+    "fr": {
+      "title": "Le site est indisponible dans cette organisation",
+      "detail": "Le site demandé est introuvable dans le périmètre de l’organisation authentifiée.",
+      "nextAction": "Sélectionnez un site autorisé de l’organisation."
+    }
+  },
+  "branch-location-inactive": {
+    "gate": "branch_operating_snapshot",
+    "en": {
+      "title": "Location is inactive",
+      "detail": "The location exists but is inactive, so operating metrics may be partial.",
+      "nextAction": "Reactivate the location or choose another branch."
+    },
+    "fr": {
+      "title": "Le site est inactif",
+      "detail": "Le site existe mais est inactif ; les indicateurs opérationnels peuvent être partiels.",
+      "nextAction": "Réactivez le site ou choisissez une autre agence."
+    }
+  },
+  "branch-payroll-profitability-missing": {
+    "gate": "branch_payroll_profitability",
+    "en": {
+      "title": "Branch payroll cost allocation is missing",
+      "detail": "This branch has completed sales but no posted payroll run lines allocated to the branch, so branch profitability should not claim payroll-complete margin.",
+      "nextAction": "Assign payroll employees to branches and post the payroll run before relying on branch profitability."
+    },
+    "fr": {
+      "title": "L’affectation des coûts de paie au site est manquante",
+      "detail": "Ce site présente des ventes terminées mais aucune ligne de paie comptabilisée affectée ; sa marge ne peut pas être présentée comme intégrant toute la paie.",
+      "nextAction": "Affectez les salariés aux sites et comptabilisez la paie avant de vous fier à la rentabilité du site."
+    }
+  },
+  "branch-payroll-attendance-proof-missing": {
+    "gate": "branch_payroll_inputs",
+    "en": {
+      "title": "POS shift evidence is not frozen for payroll",
+      "detail": "POS sessions exist for this branch, but no frozen payroll attendance snapshots are available for the same period.",
+      "nextAction": "Review POS shifts and freeze payroll attendance snapshots before calculating labor-sensitive payroll inputs."
+    },
+    "fr": {
+      "title": "Les preuves des sessions de caisse ne sont pas figées pour la paie",
+      "detail": "Des sessions de caisse existent pour ce site, mais aucun instantané de présence figé n’est disponible pour la même période.",
+      "nextAction": "Examinez les sessions de caisse et figez les instantanés de présence avant de calculer les éléments de paie liés au temps de travail."
+    }
+  },
+  "branch-payroll-unallocated-lines-present": {
+    "gate": "branch_payroll_allocation",
+    "en": {
+      "title": "Payroll run lines lack branch allocation",
+      "detail": "Approved payroll run lines exist without employee branch allocation, so branch profitability may be incomplete.",
+      "nextAction": "Assign employee branch locations or reviewed cost centers before branch BI uses payroll cost allocation."
+    },
+    "fr": {
+      "title": "Des lignes de paie ne sont pas affectées à un site",
+      "detail": "Des lignes de paie approuvées n’ont pas d’affectation de site pour le salarié ; la rentabilité du site peut être incomplète.",
+      "nextAction": "Affectez les salariés aux sites ou à des centres de coûts vérifiés avant d’utiliser la répartition des coûts de paie."
+    }
+  },
   "close-assessment-not-current": {
     gate: "close_readiness",
     en: { title: "Close assessment is historical", detail: "This assessment is not the latest assessment for its accounting period.", nextAction: "Open the latest close assessment before relying on certification." },

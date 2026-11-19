@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-09T20:05:16.7964556+00:00",
+  "classification": "intentional_handoff_after_copy_during_serial_read_verification",
+  "serialIntegrityVerified": false,
+  "finalSchemaAssertionReached": false,
+  "process": {
+    "children": 0,
+    "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/stage-dependencies.cjs",
+    "readOperations": 273913,
+    "executable": "C:\\Program Files\\nodejs\\node.exe",
+    "parentPid": 24360,
+    "pid": 3764,
+    "readBytes": 5449565975,
+    "writeBytes": 6769221,
+    "createdAt": "2026-11-09T20:16:54.132452+01:00"
+  },
+  "stageScriptSha256": "510d6bb67276c28ce0bde94488077d22aa6c5986452257e41046992ac3b4b11c",
+  "copy": {
+    "mismatch": 0,
+    "copied": 152806,
+    "failed": 0,
+    "files": 152806,
+    "extra": 0,
+    "logSha256": "9dd9691e025b4068c85da3af323790c005ce9acc5aa07cc709034b2513d8f8fd"
+  },
+  "inputManifest": {
+    "compressedSha256": "306dafa0271600fb71cd921ee93542a695dc9eddc616ef21c72f0d995e788030",
+    "path": "D:\\p04-r06-fullapp-20261109-r1\\dependency-input-manifest.json.gz"
+  },
+  "source": "D:\\p04-v02-fullapp-20261109-r1\\source\\node_modules",
+  "destination": "D:\\p04-r06-fullapp-20261109-r1\\dependencies",
+  "stoppedAt": "2026-11-09T20:05:17.0998481+00:00",
+  "exactOwnedProcessStopped": true,
+  "passed": false,
+  "status": "interrupted_incomplete_integrity_verification"
+}

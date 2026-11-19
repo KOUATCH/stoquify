@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-09T19:38:16.497Z",
+  "baseline_map": "authority-map.json",
+  "implementation": "../REPAIR-CONTRACT.md",
+  "guard": {
+    "path": "lib/auth.ts",
+    "sha256": "6e40844d3bd3a4d93d95c1916418eada52d37c38aea313e760a9bd2f6f9bbe72",
+    "line": 56,
+    "entryHookLine": 169
+  },
+  "cache": {
+    "path": "lib/auth.ts",
+    "line": 89,
+    "authority": "disabled for existing and newly issued cookie caches"
+  },
+  "classes": {
+    "public_templates": "Existing native sign-in/recovery/token/state/origin rules; explicit allowlist",
+    "sign_out": "Native cleanup without current-account prerequisite",
+    "get_session": "Current session plus current account; native null when no current session",
+    "other_protected_http": "Fresh signed-token database session and immutable-subject current eligibility before native endpoint-specific authorization",
+    "pathless_server_api": "Protected by default; setPassword is currently the sole mapped pathless endpoint"
+  },
+  "applicationDenialNormalization": {
+    "path": "lib/security/auth-session.ts",
+    "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b",
+    "line": 100,
+    "recognized": "APIError UNAUTHORIZED with exact CURRENT_SESSION_UNAVAILABLE code",
+    "translated": "RbacError UNAUTHENTICATED401",
+    "otherErrors": "propagate unchanged"
+  },
+  "qualification": "Source and83mocked tests passed; real-session/native/browser evidence pending. No atomic concurrent-revocation or production-readiness claim."
+}

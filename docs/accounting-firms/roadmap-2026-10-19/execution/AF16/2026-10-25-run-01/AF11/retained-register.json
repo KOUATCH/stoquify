@@ -1,0 +1,153 @@
+{
+  "observedAt": "2026-10-25T13:58:53.511Z",
+  "clientOrganizationId": "af11-1792936726123-review-client",
+  "actorId": "af11-1792936726123-review-preparer",
+  "countryCode": "CM",
+  "sources": [
+    {
+      "code": "CLOSE_EVIDENCE_COLLECTION",
+      "countryCode": "CM",
+      "catalogVersion": "af11-operational-v1",
+      "packHash": null,
+      "sourceVersion": "close-evidence-collection-v1",
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "sourceCheckedOn": null,
+      "refreshBy": null,
+      "officialSources": [],
+      "sourceHash": "sha256:4ae762f8d8ae2fe20fc24a67066a68f4d205260e2ac79eae1d522a80441c0e72",
+      "classification": "OPERATIONAL",
+      "qualifiedReview": null,
+      "statutoryVerified": false,
+      "coverage": "OPERATIONAL"
+    },
+    {
+      "code": "CM_VAT_MONTHLY",
+      "countryCode": "CM",
+      "catalogVersion": "af11-operational-v1",
+      "packHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+      "sourceVersion": "CM-2026.1",
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "sourceCheckedOn": "2026-06-11",
+      "refreshBy": "2026-09-09T00:00:00.000Z",
+      "officialSources": [
+        {
+          "url": "https://www.impots.cm/fr/code-general-des-impots-mis-jour-au-1er-janvier-2025",
+          "retrievedOn": "2026-06-11"
+        },
+        {
+          "url": "https://www.impots.cm/fr/calendrier-fiscal",
+          "retrievedOn": "2026-06-11"
+        }
+      ],
+      "sourceHash": "sha256:ae45752e571b16481a56267c7f2e798506acdac2a76926bdb6e9b05d29d14d89",
+      "classification": "REGULATORY_REVIEW_REQUIRED",
+      "qualifiedReview": null,
+      "statutoryVerified": false,
+      "coverage": "EXPIRED"
+    },
+    {
+      "code": "CM_CNPS_EVIDENCE",
+      "countryCode": "CM",
+      "catalogVersion": "af11-operational-v1",
+      "packHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+      "sourceVersion": "CM-2026.1",
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "sourceCheckedOn": "2026-06-11",
+      "refreshBy": "2026-09-09T00:00:00.000Z",
+      "officialSources": [
+        {
+          "url": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes.pdf",
+          "retrievedOn": "2026-06-11"
+        },
+        {
+          "url": "https://www.cnps.cm/fr/employeurs/regles-generales-pour-les-employeurs1.html",
+          "retrievedOn": "2026-06-11"
+        }
+      ],
+      "sourceHash": "sha256:8584959cb96de6f503c766484917f000c91c339d1e0b1f7601734975bbb5bd8a",
+      "classification": "REGULATORY_REVIEW_REQUIRED",
+      "qualifiedReview": null,
+      "statutoryVerified": false,
+      "coverage": "EXPIRED"
+    }
+  ],
+  "periods": [
+    {
+      "id": "cmvnw8jdh001lmaxggejl29z1",
+      "name": "Synthetic September"
+    }
+  ],
+  "items": [
+    {
+      "instanceId": "54f18871-939c-4e72-a85b-a05fdbf6b9de",
+      "version": 2,
+      "code": "CLOSE_EVIDENCE_COLLECTION",
+      "periodId": "cmvnw8jdh001lmaxggejl29z1",
+      "ownerId": "af11-1792936726123-review-preparer",
+      "applicability": "APPLICABLE",
+      "dueAt": "2026-09-30T23:59:59.000Z",
+      "status": "FULFILLED_WITH_EVIDENCE",
+      "deadlineState": "OVERDUE",
+      "sourceChanged": false,
+      "evidenceChanged": false,
+      "source": {
+        "code": "CLOSE_EVIDENCE_COLLECTION",
+        "countryCode": "CM",
+        "catalogVersion": "af11-operational-v1",
+        "packHash": null,
+        "sourceVersion": "close-evidence-collection-v1",
+        "effectiveFrom": null,
+        "effectiveTo": null,
+        "sourceCheckedOn": null,
+        "refreshBy": null,
+        "officialSources": [],
+        "sourceHash": "sha256:4ae762f8d8ae2fe20fc24a67066a68f4d205260e2ac79eae1d522a80441c0e72",
+        "classification": "OPERATIONAL",
+        "qualifiedReview": null,
+        "statutoryVerified": false,
+        "coverage": "OPERATIONAL"
+      },
+      "retainedSourceVersion": "close-evidence-collection-v1",
+      "decision": "REVIEWED",
+      "evidenceId": "cmvnw8jh7001pmaxgbzcaaj5z",
+      "evidenceClass": "CLOSE_PACK",
+      "liveFilingAccepted": false,
+      "payrollRedacted": false,
+      "history": [
+        {
+          "version": 2,
+          "actorId": "af11-1792936726123-review-reviewer",
+          "at": "2026-10-25T13:58:53.091Z",
+          "reason": "Independent synthetic artifact collection review",
+          "decision": "REVIEWED",
+          "sourceVersion": "close-evidence-collection-v1",
+          "dueAt": "2026-09-30T23:59:59.000Z",
+          "applicability": "APPLICABLE"
+        },
+        {
+          "version": 1,
+          "actorId": "af11-1792936726123-review-preparer",
+          "at": "2026-10-25T13:58:52.059Z",
+          "reason": "Synthetic operational collection preparation",
+          "decision": "PREPARED",
+          "sourceVersion": "close-evidence-collection-v1",
+          "dueAt": "2026-09-30T23:59:59.000Z",
+          "applicability": "APPLICABLE"
+        }
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "cmvnw8jh7001pmaxgbzcaaj5z",
+      "periodId": "cmvnw8jdh001lmaxggejl29z1",
+      "code": "CLOSE_EVIDENCE_COLLECTION",
+      "label": "Close pack · 2026-10-25T13:58:50.780Z"
+    }
+  ],
+  "payrollIncluded": false,
+  "limit": 100
+}

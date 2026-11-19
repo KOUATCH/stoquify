@@ -41,6 +41,10 @@ const hasModuleModels = cachedPrisma?.pictureAsset
   && cachedPrisma.tenantModuleConfiguration
   && cachedPrisma.tenantModuleGrant
   && cachedPrisma.pOSCheckoutWorkspace
+  && cachedPrisma.firmEngagement
+  && cachedPrisma.firmEngagementAssignment
+  && cachedPrisma.firmEngagementGrantLink
+  && cachedPrisma.firmEngagementTransition
   && cachedPrisma.tenantModuleConfigurationCommand;
 
 export const db = (hasModuleModels && cachedPrisma) || new PrismaClient(prismaOptions);

@@ -13,10 +13,19 @@ let users: any[], roles: any[], memberships: any[], session: any, organization: 
 const account = (id: string) => ({ id, email: id + "@example.invalid", updatedAt: revision, isActive: true, isVerified: true, emailVerified: true, isLocked: false, lockedUntil: null })
 const run = (overrides: Partial<typeof input> = {}) => deactivateUserForOrganization({ ...input, ...overrides })
 const noChanges = () => { expect(tx.user.update).not.toHaveBeenCalled(); expect(tx.session.deleteMany).not.toHaveBeenCalled(); expect(tx.invite.update).not.toHaveBeenCalled(); expect(tx.auditLog.create).not.toHaveBeenCalled() }
+
+it("preserves the only tenant-wide grant custodian when another custodian has only ordinary roles", async () => {
+  roles[0].code = "permission_editor"; roles[1].code = "administrator"; roles[1].permissions = getAllPermissions()
+  await expect(run()).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" }); noChanges()
+})
+it("permits deactivation when another usable tenant-wide grant custodian remains", async () => {
+  roles[1].code = "administrator"; roles[1].permissions = getAllPermissions()
+  await expect(run()).resolves.toMatchObject({ id: "target" })
+})
 beforeEach(() => {
   jest.clearAllMocks()
   users = [account("actor"), account("target")]
-  roles = [{ id: "admin", permissions: getAllPermissions() }, { id: "reader", permissions: ["users.read"] }]
+  roles = [{ id: "admin", code: "admin", permissions: getAllPermissions() }, { id: "reader", code: "reader", permissions: ["users.read"] }]
   memberships = [{ userId: "actor", roleId: "admin" }, { userId: "target", roleId: "reader" }]
   session = { expiresAt: new Date(Date.now() + 600000), assuranceVerifiedAt: new Date(), assuranceOrganizationId: "org-1", assuranceMethod: "password", assuranceLevel: 1, assuranceLockedUntil: null }
   organization = { id: "org-1" }; receipt = null

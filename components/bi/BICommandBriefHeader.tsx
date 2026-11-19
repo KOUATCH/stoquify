@@ -104,7 +104,7 @@ export function BICommandBriefHeader({
           </div>
         </div>
 
-        <aside className={cn("flex w-full min-w-0 flex-col gap-3", compact ? "lg:w-[340px] lg:shrink-0" : "xl:w-[420px]")}>
+        <div className={cn("flex w-full min-w-0 flex-col gap-3", compact ? "lg:w-[340px] lg:shrink-0" : "xl:w-[420px]")}>
           <BICommandModeTabs value={mode} onValueChange={onModeChange} locale={locale} />
           <div className={cn(dashboardRowClass, "space-y-2 p-3 text-xs text-[var(--dash-text-soft)]")}>
             <MetaLine icon={<CalendarDays className="h-3.5 w-3.5" />} label={periodTimezone ? `${t.period} (${periodTimezone})` : t.period}>
@@ -123,7 +123,7 @@ export function BICommandBriefHeader({
             ) : null}
           </div>
           {brief.primaryAction ? <BIActionButton action={brief.primaryAction} locale={locale} context={brief.title} primary /> : null}
-        </aside>
+        </div>
       </div>
     </section>
   )

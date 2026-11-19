@@ -1,0 +1,127 @@
+{
+  "at": "2026-11-10T20:13:17.651Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "publicationAdmitted": true,
+  "qualificationPassed": false,
+  "expectedStatus": "blocked",
+  "expectedNewEvidenceId": "E33",
+  "candidateId": null,
+  "artifactSha256": null,
+  "files": [
+    {
+      "path": "publish-attempt03.cjs",
+      "sha256": "e5b5a062eab9839bd685c6176f7209a077a3b9476e3a0f66c16cfe7a2d3f834b"
+    },
+    {
+      "path": "validate-publication-attempt03.cjs",
+      "sha256": "583ffe0902884dd47e58840c66279cabb93cccf0430e1f2e06513b37357b1701"
+    },
+    {
+      "path": "publication-input-attempt03.json",
+      "sha256": "045c64df0fed8468a27c6faa74b1ded5e49e1c08e8177e9ff1e4b6b5b2947dc8"
+    },
+    {
+      "path": "RESULT-attempt03.md",
+      "sha256": "088353d2a9c606d7d4111da0bb17fb5ba59c075dcfde6bafd0b4d5ce2ed6c275"
+    },
+    {
+      "path": "CURRENT-attempt03.md",
+      "sha256": "98ab013578733c78bcf746198fafea8281d9e9f1d0e58303f0247cf3e77223b1"
+    },
+    {
+      "path": "NEXT-attempt03.md",
+      "sha256": "d04975b7dd6b947a21a679bc37236edc9a9e3aac198b069bf1e9c73da184cc0a"
+    },
+    {
+      "path": "advancement-gates-attempt03.json",
+      "sha256": "37735048845e65fbe4025e28a6dab71f738234a7e9c79c031d0de2b60274cbfd"
+    },
+    {
+      "path": "resource-current-schema-retry-ready-r1.json",
+      "sha256": "dc0548e1991e7e846fe59e4a2d77de30d87d26c6c53ee5d2190d229eab1b17dd"
+    },
+    {
+      "path": "publication-baseline-attempt03.json",
+      "sha256": "41f42673aa2821ccc0c7107d921a5ad3db078416ea28b73d1124342e60a00489"
+    },
+    {
+      "path": "independent-review/CAPACITY-RETRY-OUTCOME-REVIEW-r1.json",
+      "sha256": "ff49f4ec5233982fb72a7cd4cad65a20d3c9f2e38cbe15225b8b6a66502b5282"
+    },
+    {
+      "path": "EXECUTION-HANDOFF-current-schema-r1.md",
+      "sha256": "82e0f06bc3357cd0fcf85c85501999db2c2002493762e8162ca02ee6c3bcff8a"
+    },
+    {
+      "path": "execution-handoff-current-schema-r1.json",
+      "sha256": "ab79142f574653a3c5ea420c980f9d073026f1228beebbe59b2197936b87a744"
+    },
+    {
+      "path": "reused-evidence/independent-review/REPAIR-SOURCE-ADMISSION.json",
+      "sha256": "4993e10c3c40dd9e29e947db2533de7427d1e9cbe1290e61563aa4644936cca9"
+    },
+    {
+      "path": "publication-before-attempt03/work-register.json",
+      "sha256": "e47adb50a334413ee194e6cede025c34ebc6a87df2a402529e7f003c8e1e17d5"
+    },
+    {
+      "path": "publication-before-attempt03/work-register.csv",
+      "sha256": "5a77fb40374987df6bf1d7fdbb6c0fe5d971732d13669bbd98b79043365e1631"
+    },
+    {
+      "path": "publication-before-attempt03/ROADMAP.md",
+      "sha256": "c45bc339b0518df31da5b557542d68a08462497a518e3badc12620f32dea3207"
+    },
+    {
+      "path": "publication-before-attempt03/mutation-log.md",
+      "sha256": "3b3bd7b283563816e49abb90bc3c048ac505ecad0ba7176f5c8e60da697b5750"
+    },
+    {
+      "path": "publication-before-attempt03/execution/CURRENT.md",
+      "sha256": "e3bdc42c0de622906d84c1c6527fff49d33f4e0812f7d89e49bc45c96c4088e1"
+    },
+    {
+      "path": "publication-before-attempt03/execution/NEXT.md",
+      "sha256": "ba4c0bf3681886e16556d4a96fd366e618f3f9c59544b7612e6e58394d5a672d"
+    }
+  ],
+  "sharedBaselineFiles": [
+    {
+      "path": "work-register.json",
+      "sha256": "e47adb50a334413ee194e6cede025c34ebc6a87df2a402529e7f003c8e1e17d5"
+    },
+    {
+      "path": "work-register.csv",
+      "sha256": "5a77fb40374987df6bf1d7fdbb6c0fe5d971732d13669bbd98b79043365e1631"
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "c45bc339b0518df31da5b557542d68a08462497a518e3badc12620f32dea3207"
+    },
+    {
+      "path": "mutation-log.md",
+      "sha256": "3b3bd7b283563816e49abb90bc3c048ac505ecad0ba7176f5c8e60da697b5750"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "sha256": "e3bdc42c0de622906d84c1c6527fff49d33f4e0812f7d89e49bc45c96c4088e1"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "sha256": "ba4c0bf3681886e16556d4a96fd366e618f3f9c59544b7612e6e58394d5a672d"
+    }
+  ],
+  "scope": "Minimal successor E33 blocked checkpoint publication to six shared files, followed by exact local validator.",
+  "review": [
+    "Exact publisher/validator delta is successor filenames plus E33 only.",
+    "New resource receipt shows physical and D floors pass; commit 7.764385 GiB fails unchanged 12 GiB. Bounded source/ownership review is accepted; no attempt05, native, build, browser or test run is claimed.",
+    "Prior 9,988-source observation and E32 tests remain historical preparation; full current source equality remains required before capture.",
+    "All six E32 shared baselines still match; existing 59 packages, 57 domains, 14 decisions, 18 global gates, tasks, dependencies, authorizations, deferred scope and E01-E32 are preserved by the exact bounded writer/validator.",
+    "Saved CURRENT/NEXT links now resolve from both saved packet and shared execution locations."
+  ],
+  "limits": [
+    "Publication acceptance does not qualify R06 or production.",
+    "Rehash exact inputs before execution; any concurrent baseline difference must stop publication."
+  ]
+}

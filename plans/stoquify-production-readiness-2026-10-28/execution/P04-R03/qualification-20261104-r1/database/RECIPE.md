@@ -1,0 +1,13 @@
+# P04-R03 isolated native recipe
+
+Prepared 2026-11-04. Requires independent recipe review and root source-stable signal before execution.
+
+Command: node plans/stoquify-production-readiness-2026-10-28/execution/P04-R03/qualification-20261104-r1/database/run-native.cjs
+
+Creates exclusively .codex-tmp/p04r03-qualification-20261104-r1, with fresh PostgreSQL 17 cluster and stoquify_local_p04_r03_20261104_r1 database on an acquired 127.0.0.1-only port. Refuses existing output/root. Copies and replays all 121 current migrations into this fresh target; verifies migration checksums. Does not modify current schema/migrations or retained R01/R02 fixtures. Uses hash-verified private Prisma 6.19.3 client and installed-WASM canonical-schema compatibility proof. No package install or Prisma generate.
+
+Child environment uses OS-variable allowlist; no application .env files/Next config. Test guard blocks .env reads, network except the owned PostgreSQL endpoint and all fetch calls. No providers, application host or browser. Only fixture data, new cluster/logs/cache/schema/evidence writes. No production flags/data/deployment/commits. Runner captures current application dependency hashes before/after; refuses drift. Finally checks database identity/process ownership, stops only its cluster, proves port released, retains synthetic fixture data.
+
+43 expected tests: nine current DB-permission denials, nine unauthenticated transport denials, nine authorized read/write positives, eight foreign-item denials, one forged list scope positive and seven focused cases (second stock permission; authorized nonzero stock submission; foreign-location rollback; not-tracked business rule rollback; duplicate SKU; foreign relation Prisma exception; real trigger exception). Actual item action exports, RBAC, item and inventory services, safe error helpers and PostgreSQL execute. Better Auth getSession, Next headers/cache and server-only transport are stubbed. Session rows are persisted, but expiry/revocation/signatures/cookie cache are NOT certified by this recipe. No HTTP/browser/hosted/production acceptance.
+
+Denied cases compare count+SHA-256 snapshots for 24 named business relation groups spanning both fixture tenants; security audit rows are counted separately and allowed. This is not a whole-database zero-write claim. Positive stock cases cover policy-only and nonzero SUBMITTED adjustment/line creation with no stock or ledger posting; stock service rollback uses a real foreign-location rejection after an attempted policy update. New trigger injects a fixed synthetic private SQL exception for an actual Prisma error/transaction rollback, then is dropped in finally. Source/test inputs and test JSON/observations retained.

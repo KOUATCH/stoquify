@@ -1,3 +1,4 @@
+import type { CommandDateKind } from "@/lib/dashboard/command-center-context"
 import type {
   BIActionLink,
   BICommandBrief,
@@ -72,6 +73,7 @@ type ManagerActionCenterActionBase = {
   severityScore: number
   assignedRole: SignalOwnerRole
   dueAt: string
+  dateKind?: CommandDateKind
   waitingOn?: "ACCOUNTANT_REVIEW"
   dueState: ManagerActionDueState
   evidenceGrade: EvidenceGrade
@@ -123,6 +125,10 @@ export type ManagerActionCenterSummary = {
   hiddenByPermission: number
 }
 
+export type ManagerAssuranceCoverage =
+  | { state: "AVAILABLE"; loaded: number; limit: number; possiblyTruncated: boolean }
+  | { state: "UNAVAILABLE" }
+
 export type ManagerActionCenterData = {
   organizationId: string
   generatedAt: string
@@ -136,6 +142,7 @@ export type ManagerActionCenterData = {
   actionQueue: ActionQueueResult
   clientMissingProofSource: ClientMissingProofActionCenterSource | null
   summary: ManagerActionCenterSummary
+  assuranceCoverage?: ManagerAssuranceCoverage
   assuranceIncidents: AssuranceControlTowerIncident[]
 }
 
@@ -147,10 +154,12 @@ export type ManagerActionCenterSnapshotBundle = {
 }
 
 export type ComposeManagerActionCenterInput = {
+  locale?: "en" | "fr"
   organizationId: string
   generatedAt: string
   snapshots: ManagerActionCenterSnapshotBundle
   actionQueue: ActionQueueResult
+  assuranceCoverage?: ManagerAssuranceCoverage
   assuranceIncidents?: AssuranceControlTowerIncident[]
   assuranceHiddenByPermission?: number
   paymentReconciliationSignOff?: PaymentReconciliationSignOffCommandStateResult | null

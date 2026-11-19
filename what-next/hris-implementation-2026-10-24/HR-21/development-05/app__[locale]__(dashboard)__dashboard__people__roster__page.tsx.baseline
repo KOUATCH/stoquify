@@ -1,0 +1,10 @@
+import { HrisRosterWorkspaceClient } from "@/components/hris/HrisRosterWorkspaceClient"
+import { readRosterAction } from "@/actions/hris/roster.actions"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+import { pickLocale, localizePath } from "@/i18n/routing"
+export default async function RosterPage({params,searchParams}:{params:Promise<{locale:string}>;searchParams:Promise<{employeeId?:string;startDate?:string;payrollPeriodId?:string}>}){
+  const locale=pickLocale((await params).locale),query=await searchParams
+  const result=await readRosterAction({...query,startDate:query.startDate??new Date().toISOString().slice(0,10),days:7})
+  if(!result.success)return <DashboardRouteState kind={result.code==="FRESH_AUTH_REQUIRED"?"stale_session":result.status===403?"permission_denied":"error"} message={result.error} locale={locale} primaryHref={localizePath("/dashboard/people",locale)}/>
+  return <HrisRosterWorkspaceClient initial={result.data} locale={locale}/>
+}

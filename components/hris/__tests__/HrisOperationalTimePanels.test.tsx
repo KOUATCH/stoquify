@@ -1,3 +1,4 @@
+jest.mock("@/actions/hris/leave-entitlement.actions", () => ({ requestLeaveCancellationAction: jest.fn() }))
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 
 import {
@@ -43,6 +44,7 @@ describe("HRIS operational time self-service panels", () => {
       />,
     )
 
+    fireEvent.change(screen.getByLabelText("Leave policy"), { target: { value: "policy-1" } })
     fireEvent.change(screen.getByLabelText("Minutes"), {
       target: { value: "480" },
     })
@@ -65,7 +67,7 @@ describe("HRIS operational time self-service panels", () => {
       }),
     ))
     expect(await screen.findByRole("status")).toHaveTextContent(
-      "independent manager review",
+      "independent review",
     )
   })
 

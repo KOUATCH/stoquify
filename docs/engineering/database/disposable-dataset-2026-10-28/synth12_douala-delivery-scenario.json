@@ -1,0 +1,55 @@
+{
+  "organizationId": "synth12_douala",
+  "scenario": "synth12_douala:delivery-fixture:v1",
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "status": "completed",
+  "occurredAt": "2026-10-28T20:00:00.000Z",
+  "actorId": "synth12_douala_user_owner",
+  "orderId": "cmvtaz49e0039ma40xrxj7glt",
+  "orderNumber": "DO-B66E37B80B4436",
+  "reservationId": "cmvtaz4v8003uma40dgy654c5",
+  "goodsIssueId": "cmvtaz5bh004nma40m21j6a2y",
+  "billingOutcomeId": "cmvtaz62j005tma40yh1a7gcx",
+  "invoiceNumber": "INV-721384D9555637",
+  "receivableDocumentId": "cmvtaz6ix006bma40n9kskjx4",
+  "customerLedgerEntryId": "cmvtaz6mh006nma40wp2ofbzt",
+  "journalEntryIds": [
+    "cmvtaz5p10058ma4035hgi8m1",
+    "cmvtaz6a60060ma40vej1vtsr"
+  ],
+  "inventoryTransactionIds": [
+    "cmvtaz4yy0045ma40wt2ksjgk",
+    "cmvtaz5170047ma40386ebsi4",
+    "cmvtaz5eq004yma40793ijjk9",
+    "cmvtaz5fr0050ma407ohbsh4j"
+  ],
+  "fiscalDocumentId": "cmvtaz6pm006pma40tni3g2do",
+  "total": "10800.00",
+  "currency": "XAF",
+  "paymentStatus": "PENDING",
+  "document": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\engineering\\database\\disposable-dataset-2026-10-28\\synthetic-documents\\synth12_douala-delivery-fixture-v1.json",
+    "sha256": "39bbfae0ebf8677d00c2fd5fa76cab3bdeff1d2ea5efb14951bc5cfb969c00e3"
+  },
+  "commandKeys": [
+    "synth12_douala:delivery-fixture:v1:create",
+    "synth12_douala:delivery-fixture:v1:confirm",
+    "synth12_douala:delivery-fixture:v1:issue",
+    "synth12_douala:delivery-fixture:v1:bill"
+  ],
+  "exactReplayVerified": true,
+  "checks": [
+    "full quantity conservation",
+    "consumed reservation",
+    "stock movement/source tie-out",
+    "balanced posted journals",
+    "unpaid receivable and customer ledger tie-out",
+    "applied command events",
+    "stable exact replay"
+  ],
+  "limitations": [
+    "Direct service fixture; no HTTP action or browser authorization claim",
+    "No real delivery or settlement occurred",
+    "Any fiscal artifact/submission is locally queued sandbox evidence; no certification worker or provider was run"
+  ]
+}

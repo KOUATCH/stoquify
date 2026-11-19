@@ -1,0 +1,207 @@
+{
+  "startedAt": "2026-10-25T11:51:20.972Z",
+  "realAuthentication": true,
+  "actionMocks": false,
+  "productionAccess": false,
+  "checks": [
+    "Real credential login and database session",
+    "en manager-action-center: one main landmark and working keyboard skip link",
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Brief",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Command",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Investigate",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    "en Manager: keyboard queue disclosure",
+    "en owner-war-room: one main landmark and working keyboard skip link",
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Brief",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Command",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Investigate",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    }
+  ],
+  "audits": [
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Brief",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Command",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Investigate",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Brief",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Command",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "owner-war-room",
+      "mode": "Investigate",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    }
+  ],
+  "errors": [],
+  "blockedExternalRequests": 0,
+  "passed": false,
+  "failure": "AssertionError [ERR_ASSERTION]: false == true\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\command-center\\phase-9-parity-acceptance-2026-10-25\\acceptance-browser.cjs:27:514)",
+  "failureUrl": "http://127.0.0.1:61472/en/dashboard/owner-war-room?mode=command#dashboard-main-content",
+  "failureText": "Skip to main content\nOHADA OPERATING OS\nNotifications\n0\n\nPhase 9 disposable workspace\n\nDISPOSABLE ADMINISTRATOR\nSession\nMODULES\n10\nCOMMAND\n3\nDashboard\nOperating overview\nAnalytics\nBusiness pulse and reports\n3\nCommand Center\nOwner and manager daily command views\n3\nDaily Digest\nManager Action Center\nOwner War Room\nOPERATIONS\n3\nInventory\nItems, loss control, stock movements, transfers, and units\n6\nPurchases\nPurchase orders, suppliers, and AP workbench\n6\nSales\nCustomers, sales, and POS entry points\n3\nFINANCE & TRUST\n2\nAccounting\nLedger, close, reports, and controls\n2\nFinance\nCash, profitability, payments, and reconciliation\n9\nPEOPLE\n1\nHR & Payroll\nPayroll command center\n2\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n9\nMF\n\nmanager Fixture\n\nmanager@phase9.example.invalid\n\nOwner War Room\n\nCommand / Command Center / Owner War Room\n\nFR\nMF\nRefresh view\n\nPeriods and deadlines use UTC.\n\nA read-only, evidence-backed command center for cash truth, reconciliation pressure, stock exposure, supplier commitments, payroll exposure, close readiness, action pressure, and module state.\n\nBlocked\npartial\nevidence:\nPosted\nTrust: Posted\nOwner morning brief\n\nNo cash, close, or freshness blocker is visible in the current owner brief.\n\nEvidence and sources\nBrief\nCommand\nInvestigate\n\nPeriod (UTC): Oct 25 - Oct 25\n\nGenerated: Oct 25, 11:53 AM\n\nReview: blocked\n\nPhase 9 disposable workspace\n\nPeriod: Oct 25 - Oct 25\n\nRead-only\nReconciliation proof\nCritical actions\n0\nHigh-priority actions\n0\nStale indicators\n0\nBlocked indicators\n5\nControl strips\n\nCash, close, and module controls that need attention.\n\n5 Blocked / 0 Stale\nCash Leakage Radar MVP\nPartial\nevidence:\nOperational\n\nNo critical cash leakage signal is visible from the current payment snapshot.\n\n1 Blockers\n1 Redactions\nClose Autopilot strip\nPartial\nevidence:\nRaw\n\nClose readiness has no open blocker surfaced by the current snapshot.\n\n1 Blockers\nModule Control observe strip\nReady\nevidence:\nOperational\n\nModule observe mode is clean for the current tenant entitlement set.\n\nOwner action queue\n\nOpen an action to review its evidence and next step.\n\n2 authorized actions loaded; all are shown below.\n\nMedium\nevidence:\nRaw\nPurchase Order Receiving Delay\n\nFollow up pending purchase orders and receiving evidence.\n\nOpen: Purchase Order Receiving Delay\nPurchasing\npurchases.orders.read\n1 Redactions\nMedium\nevidence:\nRaw\nStockout Risk\n\nReview stock levels and confirm reorder or transfer action.\n\nOpen: Stockout Risk\nStockkeeper\ninventory.items.read\nCash at risk\n\nUnresolved payment suspense value that should be explained before owners trust cash.\n\nPartial\n\n0\n\nvalue\n\nevidence:\nOperational\n\nFreshness: Ready\n\nRequired permission: payments.reconciliation.read\n\nSource modules: payments, finance, accounting\n\n1 Blockers\n1 Redactions\nReconciliation exceptions\n\nOpen payment exceptions, critical issues, suspense items, and pending provider transactions.\n\nPartial\n\n0\n\nitems\n\nevidence:\nOperational\n\nFreshness: Ready\n\nRequired permission: payments.reconciliation.read\n\nSource modules: payments, finance, accounting\n\n1 Blockers\n1 Redactions\nStock cash exposure\n\nInventory value tied up in stock, with zero or negative-stock pressure highlighted.\n\nReady\n\n0\n\nvalue\n\nevidence:\nRaw\n\nFreshness: Ready\n\nRequired permission: inventory.read\n\nSource modules: inventory, purchasing, pos, accounting\n\nSupplier commitments\n\nPending purchase orders that may soon become cash obligations or receiving blockers.\n\nPartial\n\n1\n\norders\n\nevidence:\nRaw\n\nFreshness: Ready\n\nRequired permission: purchases.orders.read\n\nSource modules: purchasing, finance, accounting\n\n2 Blockers\n1 Redactions\nPayroll exposure\n\nUpcoming aggregate net pay and statutory liability total 0 XAF; person-level amounts stay inside payroll.\n\nPartial\n\n0\n\nvalue\n\nevidence:\nRaw\n\nFreshness: Ready\n\nRequired permission: payments.reconciliation.read\n\nSource modules: payroll, accounting, finance\n\n2 Redactions\nClose readiness\n\nOpen findings, unavailable evidence, readiness score, and close ",
+  "finishedAt": "2026-10-25T11:53:39.640Z"
+}

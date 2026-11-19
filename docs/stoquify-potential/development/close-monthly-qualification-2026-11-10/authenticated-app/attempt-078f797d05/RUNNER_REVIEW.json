@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-11-10T15:28:46.909Z",
+  "origin": "https://127.0.0.1:43882",
+  "route": "/en/dashboard/finance/receivables/history",
+  "classification": "Actual password/session/application/actions, synthetic source facts; no production artifact or live provider authenticity.",
+  "operations": [
+    "stale-assurance",
+    "verify-no-collection-before-manual-retry",
+    "verify-one-collection",
+    "revoke-collect-permission",
+    "restore-collect-permission",
+    "revoke-current-session"
+  ],
+  "effects": [
+    "Actual synthetic password sign-in and password re-verification",
+    "One exact provider-linked customer collection through UI",
+    "Private file selection/local hashing only",
+    "Scoped private controller handshake requests",
+    "Owned Edge/profile/screenshots"
+  ],
+  "boundaries": [
+    "Exact loopback origin and its HMR only",
+    "No app/DB startup or stop",
+    "No direct role/session/financial writes by runner",
+    "No sends, HAR, trace, network bodies, storageState or raw browser error stacks",
+    "Credentials/support/profile remain private"
+  ]
+}

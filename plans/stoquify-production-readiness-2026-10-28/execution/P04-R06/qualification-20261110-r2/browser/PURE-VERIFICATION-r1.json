@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-10T12:28:08.995Z",
+  "scope": "Pure helpers and mock protocol event stream only; no application/browser/database execution",
+  "workflow": {
+    "command": "npm run agent:workflow:check",
+    "exitCode": 0,
+    "unclassifiedScripts": 196
+  },
+  "syntax": {
+    "command": "node --check browser/run-consumer-qualification.cjs",
+    "exitCode": 0
+  },
+  "pure": {
+    "command": "node --test browser/consumer-evidence.test.cjs browser/flight-profile-evidence.test.cjs",
+    "exitCode": 0,
+    "passed": 53,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sourceManifestSha256": "3b36df21cc73c5df516407f862b962ac5ec72811beed10d825e847dc6584978b"
+}

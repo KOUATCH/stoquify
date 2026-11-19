@@ -1,0 +1,355 @@
+/** @jest-environment node */
+// Financial terminal states are earned. Raw provider confirmations are explicit
+// synthetic external inputs, not live-provider or signature-authenticity proof.
+import fs from "node:fs"
+import path from "node:path"
+import { createHash, randomBytes, randomUUID } from "node:crypto"
+import { Prisma } from "@prisma/client"
+import { db } from "@/prisma/db"
+import { REQUIRED_ACCOUNTING_MAPPINGS, REQUIRED_READY_POSTING_PURPOSES, REQUIRED_READY_POSTING_SOURCES, markAccountingSetupReady } from "@/services/accounting/accounting-settings.service"
+import { getDefaultPostingRuleTemplates } from "@/services/accounting/default-posting-rules.service"
+import { createPostingRule } from "@/services/accounting/posting-rules.service"
+import { createManualJournalEntry, ensureDefaultJournals } from "@/services/accounting/journals.service"
+import { collectCustomerSettlementWithControls } from "@/services/accounting/customer-settlement.service"
+import { stageOpeningPosition, getOpeningPositionWorkspace, reviewOpeningPosition } from "@/services/onboarding/opening-position.service"
+import { approveOpeningCutover, applyOpeningCutover } from "@/services/onboarding/opening-cutover.service"
+import type { OpeningMappings } from "@/services/onboarding/opening-position.contract"
+import { MobileMoneyHmacAdapter, sha256 } from "@/services/payments/adapters/mobile-money-hmac.adapter"
+import { importProviderStatement } from "@/services/payments/statement-import.service"
+import { runPaymentReconciliation } from "@/services/reconciliation/payment-reconciliation-run.service"
+import { previewReconciliationSignOff, signReconciliationRun } from "@/services/reconciliation/payment-reconciliation-certification.service"
+import { proposeBankBalanceEvidence, decideBankBalanceEvidence } from "@/services/reconciliation/bank-balance-evidence.service"
+import { readAccountCloseCoverage } from "@/services/reconciliation/account-close-coverage.service"
+import { createCloseControlScope } from "@/services/accounting/close-control-scope"
+import { proposeBalanceSheetEvidence, decideBalanceSheetEvidence } from "@/services/accounting/balance-sheet-evidence.service"
+import { runCloseAssurance, updateAccountantReview } from "@/services/accounting/close-assurance.service"
+import { getAccountantPortalData } from "@/services/accounting/data-trust.service"
+import { exportClosePack, getRetainedClosePackExport, type ClosePackExportResult } from "@/services/accounting/close-assurance-pack.service"
+import { closeAccountingPeriod } from "@/services/accounting/periods.service"
+import { addPOSCartLine, openPOSShift, commitPOSSale } from "@/services/pos/pos.service"
+import { acquirePOSCheckout, preparePOSCheckout } from "@/services/pos/checkout.service"
+import { posCartRevision } from "@/services/pos/cart-revision"
+
+const target = new URL(process.env.MONTHLY_CLOSE_POSTGRES_URL || "")
+if (target.hostname !== "localhost" || target.port !== "58033" || target.pathname !== "/" + process.env.MONTHLY_CLOSE_DATABASE_NAME ||
+  !/^\/stoquify_replay_close_monthly_20261110_[a-f0-9]{10}$/.test(target.pathname) || target.searchParams.get("schema") !== "public") throw Error("Exact new owned monthly-close database required")
+const privateDirectory = fs.realpathSync(process.env.MONTHLY_CLOSE_PRIVATE_DIRECTORY!)
+const start = new Date("2026-10-01T00:00:00.000Z"), end = new Date("2026-10-31T23:59:59.999Z")
+const rawHash = (text: string) => createHash("sha256").update(text, "utf8").digest("hex")
+const digest = (text: string) => "sha256:" + rawHash(text)
+const json = (value: unknown) => JSON.parse(JSON.stringify(value))
+const checks: Array<Record<string, unknown>> = []
+const auxiliary: Record<string, unknown> = {}
+let earnedInternalTerminalStates = false
+const limitation = "Actual isolated opening-receivable collection and October full-month internal close. Synthetic external opening positions/provider confirmation facts and initial approved mapping configuration; no new October sale, upstream provider processing/authenticity, statutory approval, live delivery, HTTP session or deployment claim."
+function support(name: string, value: unknown) {
+  if (!/^[a-z0-9-]+\.json$/.test(name)) throw Error("Owned private support name required")
+  const file = path.resolve(privateDirectory, name)
+  if (path.dirname(file) !== privateDirectory) throw Error("Private support escaped owned directory")
+  const content = JSON.stringify(value, null, 2) + "\n"; fs.writeFileSync(file, content, { flag: "wx" })
+  return { reference: "urn:stoquify:synthetic-monthly-close:" + name, hash: digest(content) }
+}
+const operatorPermissions = ["accounting.close.read", "accounting.close.run", "accounting.close.export", "accounting.close.certify", "accounting.close.finding.comment", "accounting.close.accountant.review", "accounting.setup.manage", "accounting.journal.create", "accounting.journal.post", "accounting.period.close", "inventory.stock.adjust", "inventory.adjust.approve", "purchasing.ap.invoice.post", "customers.update", "finance.receivables.read", "finance.receivables.collect", "payments.reconciliation.read", "payments.reconciliation.run", "payments.reconciliation.import", "payments.reconciliation.sign", "dashboard.read", "accounting.period.read", "accounting.reports.read"]
+async function actor(organizationId: string, name: string, permissions = operatorPermissions) {
+  const marker = "monthly-" + name + "-" + randomBytes(5).toString("hex")
+  const role = await db.role.create({ data: { organizationId, code: marker, nameEn: "Synthetic " + name, permissions } })
+  const user = await db.user.create({ data: { organizationId, email: marker + "@example.invalid", name: "Synthetic " + name, isActive: true, isVerified: true, emailVerified: true, roles: { connect: { id: role.id } } } })
+  const session = await db.session.create({ data: { userId: user.id, token: "monthly_session_" + randomBytes(32).toString("hex"), expiresAt: new Date(Date.now() + 3600000), assuranceVerifiedAt: new Date(), assuranceMethod: "password", assuranceOrganizationId: organizationId, assuranceLevel: 1 } })
+  return { user, role, session, permissions }
+}
+type Actor = Awaited<ReturnType<typeof actor>>
+const nativeControl = (a: Actor) => ({ actorId: a.user.id, actorPermissions: a.permissions, session: { id: a.session.id, token: a.session.token }, lastAuthAt: a.session.assuranceVerifiedAt! })
+const workpaperActor = (organizationId: string, a: Actor) => ({ homeOrganizationId: organizationId, ...nativeControl(a) })
+async function fixture(name: string, openingAmount = "300.00") {
+  const organizationId = "monthly-" + name + "-" + randomBytes(6).toString("hex")
+  const modules = ["accounting", "finance", "payment_reconciliation", "close_assurance", "inventory", "purchasing", "sales", "pos", "dashboard", "reports"]
+  // Raw admission/configuration only; no earned onboarding or country approval.
+  await db.organization.create({ data: { id: organizationId, slug: organizationId, name: "Synthetic monthly " + name, countryCode: "CM", country: "Cameroon", timezone: "Africa/Douala", currency: "XAF", requestedModules: modules, onboardingCompletedAt: new Date() } })
+  await db.tenantModuleConfiguration.create({ data: { organizationId, manifestHash: rawHash(organizationId), revision: 1, activeRevision: 1, selectedModules: modules, activeModules: modules } })
+  await db.tenantModuleGrant.createMany({ data: modules.map(moduleSlug => ({ organizationId, moduleSlug, status: "active", source: "manual_override" })) })
+  const preparer = await actor(organizationId, "preparer"), reviewer = await actor(organizationId, "reviewer"), collector = await actor(organizationId, "collector")
+  const cashier = await actor(organizationId, "cashier", ["pos.access", "pos.sale.create", "pos.shift.open", "pos.shift.close", "sales.read"])
+  const year = await db.fiscalYear.create({ data: { organizationId, name: "Synthetic 2026", startDate: new Date("2026-01-01T00:00:00Z"), endDate: new Date("2026-12-31T23:59:59.999Z") } })
+  const september = await db.accountingPeriod.create({ data: { organizationId, fiscalYearId: year.id, name: "Synthetic opening September", periodNumber: 9, startDate: new Date("2026-09-01T00:00:00Z"), endDate: new Date(+start - 1) } })
+  const period = await db.accountingPeriod.create({ data: { organizationId, fiscalYearId: year.id, name: "Synthetic full October", periodNumber: 10, startDate: start, endDate: end } })
+  const november = await db.accountingPeriod.create({ data: { organizationId, fiscalYearId: year.id, name: "Synthetic current November", periodNumber: 11, startDate: new Date("2026-11-01T00:00:00Z"), endDate: new Date("2026-11-30T23:59:59.999Z") } })
+  const accounts = new Map<string, Awaited<ReturnType<typeof db.chartOfAccount.create>>>()
+  for (const [i, mapping] of REQUIRED_ACCOUNTING_MAPPINGS.entries()) accounts.set(mapping.key, await db.chartOfAccount.create({ data: { organizationId, code: mapping.syscohadaClass + "80" + String(i + 1).padStart(2, "0"), mappingKey: mapping.key, type: mapping.type, normalBalance: mapping.normalBalance, syscohadaClass: mapping.syscohadaClass, syscohadaReference: "Synthetic configuration " + mapping.key, nameEn: "Synthetic " + mapping.key, currency: "XAF" } }))
+  const equity = await db.chartOfAccount.create({ data: { organizationId, code: "101800", nameEn: "Synthetic opening equity", type: "EQUITY", normalBalance: "CREDIT", currency: "XAF" } })
+  const suspense = await db.chartOfAccount.create({ data: { organizationId, code: "471800", nameEn: "Synthetic provider suspense", type: "LIABILITY", normalBalance: "CREDIT", currency: "XAF" } })
+  await ensureDefaultJournals(organizationId, preparer.user.id)
+  if (!await db.journal.findFirst({ where: { organizationId, type: "OPENING", isActive: true } })) await db.journal.create({ data: { organizationId, code: "AN", nameEn: "Synthetic opening", type: "OPENING" } })
+  for (const purpose of REQUIRED_READY_POSTING_PURPOSES) {
+    const template = getDefaultPostingRuleTemplates().find(candidate => candidate.postingPurpose === purpose)
+    await createPostingRule(organizationId, purpose === "CUSTOMER_SETTLEMENT" ? { code: "SYNTH_COLLECTION", nameEn: "Synthetic rail-specific collection", postingPurpose: purpose, sourceType: "CUSTOMER_SETTLEMENT", lines: [
+      ...([['CASH', 'CASH_ON_HAND'], ['MOBILE_MONEY', 'MOBILE_MONEY_CLEARING'], ['BANK_TRANSFER', 'BANK']] as const).map(([paymentMethod, mappingKey]) => ({ side: "DEBIT" as const, mappingKey, amountSource: "SOURCE_AMOUNT" as const, condition: { paymentMethod } })),
+      { side: "CREDIT", mappingKey: "ACCOUNTS_RECEIVABLE", amountSource: "SOURCE_AMOUNT" },
+    ] } : template ?? { code: "SYNTH_" + purpose, nameEn: "Synthetic readiness configuration " + purpose, postingPurpose: purpose, sourceType: REQUIRED_READY_POSTING_SOURCES[purpose], lines: [
+      { side: "DEBIT", mappingKey: "INVENTORY_VARIANCE", amountSource: "SOURCE_AMOUNT" }, { side: "CREDIT", mappingKey: purpose === "CASH_DRAWER_CLOSE" ? "CASH_ON_HAND" : "ACCOUNTS_PAYABLE", amountSource: "SOURCE_AMOUNT" },
+    ] }, preparer.user.id)
+  }
+  expect((await markAccountingSetupReady(organizationId, reviewer.user.id, { actorPermissions: reviewer.permissions, lastAuthAt: reviewer.session.assuranceVerifiedAt! }))?.setupStatus).toBe("READY")
+  const customer = await db.customer.create({ data: { organizationId, name: "Synthetic opening customer", currentBalance: "0.00" } })
+  const location = await db.location.create({ data: { organizationId, code: "MONTHLY", name: "Synthetic monthly counter", type: "STORE", allowNegativeStock: false } })
+  const terminal = await db.pOSStation.create({ data: { organizationId, locationId: location.id, terminalNumber: organizationId, name: "Synthetic auxiliary till", hasCashDrawer: true } })
+  const item = await db.item.create({ data: { organizationId, sku: organizationId, slug: organizationId, nameEn: "Synthetic nonstock zero-tax auxiliary service", imageUrls: [], trackInventory: false, sellingPrice: "100.00", costPrice: "0.00" } })
+  const account = (key: string) => { const value = accounts.get(key); if (!value) throw Error("Missing fixture mapping " + key); return value }
+  async function provider(method: "MOBILE_MONEY" | "BANK_TRANSFER") {
+    const providerCode = method === "MOBILE_MONEY" ? "MTN_MOMO" : "SYNTHETIC_BANK"
+    const ledger = account(method === "MOBILE_MONEY" ? "MOBILE_MONEY_CLEARING" : "BANK")
+    const rail = await db.paymentRail.create({ data: { organizationId, type: method, code: providerCode, name: "Synthetic " + method, currencyCode: "XAF" } })
+    const providerAccount = await db.providerAccount.create({ data: { organizationId, paymentRailId: rail.id, providerCode, displayName: "Synthetic " + method + " account", status: "ACTIVE", currencyCode: "XAF", externalAccountHash: rawHash(organizationId + method), settlementLedgerAccountId: ledger.id, suspenseLedgerAccountId: suspense.id } })
+    // Initial independently attributed mapping configuration, not an earned
+    // approval/transaction. No dedicated mapping-command owner exists here.
+    await db.settlementAccount.create({ data: { organizationId, providerAccountId: providerAccount.id, ledgerAccountId: ledger.id, approvalStatus: "APPROVED", requestedById: preparer.user.id, approvedById: reviewer.user.id, approvedAt: new Date(), effectiveFrom: start } })
+    return { method, account: providerAccount, ledger, adapter: new MobileMoneyHmacAdapter(providerCode) }
+  }
+  const mobile = await provider("MOBILE_MONEY"), bank = await provider("BANK_TRANSFER")
+  return { organizationId, preparer, reviewer, collector, cashier, customer, accounts, account, equity, suspense, september, period, november, location, terminal, item, mobile, bank, openingAmount }
+}
+type Fixture = Awaited<ReturnType<typeof fixture>>
+type Provider = Fixture["mobile"]
+async function applyOpening(f: Fixture) {
+  const scope = { clientOrganizationId: f.organizationId }
+  const source = { version: "opening-position-v1", country: "CM", currency: "XAF", cutoverDate: "2026-10-01", timezone: "Africa/Douala", evidenceReference: "synthetic:monthly-opening-position", stock: [], openItems: [
+    { sourceId: "opening-ar", kind: "AR", counterparty: "CUSTOMER", document: "SYNTHETIC-OPENING-AR", account: "AR", sourceDate: "2026-09-01", dueDate: "2026-10-31", currency: "XAF", original: f.openingAmount, settled: "0.00", outstanding: f.openingAmount },
+  ], ledger: [
+    { sourceId: "opening-ar-ledger", account: "AR", domain: "AR", side: "DEBIT", amount: f.openingAmount, currency: "XAF", covers: ["opening-ar"] },
+    { sourceId: "opening-equity-ledger", account: "EQUITY", domain: "EQUITY", side: "CREDIT", amount: f.openingAmount, currency: "XAF", covers: [] },
+  ] }
+  const controls = { version: "opening-controls-v1", evidenceReference: "synthetic:independent-monthly-opening-controls", country: "CM", currency: "XAF", cutoverDate: "2026-10-01", stock: "0.00", ar: f.openingAmount, ap: "0.00", debit: f.openingAmount, credit: f.openingAmount, quantities: [] }
+  const mappings: OpeningMappings = { accounts: [{ source: "AR", targetId: f.account("ACCOUNTS_RECEIVABLE").id }, { source: "EQUITY", targetId: f.equity.id }], customers: [{ source: "CUSTOMER", targetId: f.customer.id }], suppliers: [], items: [], locations: [] }
+  const staged = await stageOpeningPosition(workpaperActor(f.organizationId, f.preparer), { ...scope, sourceFilename: "opening-source.json", sourceContent: JSON.stringify(source), controlsFilename: "opening-controls.json", controlsContent: JSON.stringify(controls), mappings, expectedRevision: 0, idempotencyKey: randomUUID() })
+  const workspace = await getOpeningPositionWorkspace(workpaperActor(f.organizationId, f.reviewer), scope)
+  if (!workspace.current?.preview.canReview) throw Error("Opening preview not reviewable: " + JSON.stringify(workspace.current?.preview.issues))
+  await reviewOpeningPosition(workpaperActor(f.organizationId, f.reviewer), { ...scope, revisionId: staged.id, expectedDigest: workspace.current.preview.digest, decision: "REVIEWED", conclusion: "Independent review of synthetic source, control totals and mapped master records", idempotencyKey: randomUUID() })
+  const approval = await approveOpeningCutover(workpaperActor(f.organizationId, f.reviewer), { ...scope, revisionId: staged.id, expectedDigest: workspace.current.preview.digest, conclusion: "Independent client operator approves exactly reviewed synthetic opening receivable", idempotencyKey: randomUUID() })
+  const input = { ...scope, executionId: approval.id, confirmFinancialApply: true, idempotencyKey: randomUUID() }
+  expect(await applyOpeningCutover(workpaperActor(f.organizationId, f.reviewer), input)).toMatchObject({ status: "ACTIVE", replayed: false })
+  const document = await db.customerReceivableDocument.findFirstOrThrow({ where: { organizationId: f.organizationId, customerId: f.customer.id } })
+  return { document, input, approval }
+}
+async function observation(f: Fixture, provider: Provider, name: string, occurredAt: Date, currencyCode = "XAF") {
+  const identity = f.organizationId + "-" + name + "-" + randomBytes(4).toString("hex"), rawPayload = { syntheticExternalConfirmation: true, identity, amount: "100.00", currencyCode }
+  const event = await db.providerEvent.create({ data: { organizationId: f.organizationId, providerAccountId: provider.account.id, providerEventId: identity + "-event", providerTransactionId: identity, providerReference: identity, eventType: "SYNTHETIC_PAYMENT_CONFIRMED", status: "PROCESSED", signatureValid: true, direction: "INBOUND", amount: "100.00", currencyCode, occurredAt, processedAt: new Date(), rawPayload, rawPayloadHash: rawHash(JSON.stringify(rawPayload)) } })
+  const transaction = await db.paymentTransaction.create({ data: { organizationId: f.organizationId, providerAccountId: provider.account.id, providerAuthorityEventId: event.id, direction: "INBOUND", state: "CONFIRMED", amount: "100.00", currencyCode, providerTransactionId: identity, providerReference: identity, occurredAt, confirmedAt: occurredAt, payloadHash: rawHash(JSON.stringify(rawPayload)), idempotencyKey: identity, sourceType: "SYNTHETIC_EXTERNAL_CONFIRMATION_INPUT" } })
+  expect(transaction.legacyPaymentId).toBeNull(); expect(transaction.ledgerPostingBatchId).toBeNull()
+  return { event, transaction }
+}
+type Observation = Awaited<ReturnType<typeof observation>>
+function command(f: Fixture, documentId: string, method: "CASH" | "MOBILE_MONEY" | "BANK_TRANSFER", at: Date, receipt?: Observation, amount = "100.00") {
+  const id = randomUUID(), evidence = support("collection-input-" + id + ".json", { synthetic: true, organizationId: f.organizationId, customerId: f.customer.id, documentId, method, amount, economicDate: at.toISOString(), externalObservationId: receipt?.transaction.id ?? null })
+  return { customerId: f.customer.id, method, amount, settlementDate: at.toISOString(), idempotencyKey: id, correlationId: id,
+    documentHash: evidence.hash.slice(7), evidenceHash: rawHash(evidence.reference), allocations: [{ customerReceivableDocumentId: documentId, amount }],
+    ...(receipt ? { paymentTransactionId: receipt.transaction.id, externalReference: receipt.transaction.providerReference! } : {}) }
+}
+const collect = (f: Fixture, input: ReturnType<typeof command>) => collectCustomerSettlementWithControls(input, { organizationId: f.organizationId, actorId: f.collector.user.id, actorPermissions: f.collector.permissions, lastAuthAt: f.collector.session.assuranceVerifiedAt! })
+async function financial(f: Fixture) {
+  const where = { organizationId: f.organizationId }
+  const journals = await db.journalEntry.findMany({ where, orderBy: { id: "asc" }, include: { lines: true, sourceLinks: true } })
+  for (const row of journals) {
+    expect(row.status).toBe("POSTED"); expect(row.lines.reduce((sum, line) => sum.plus(line.debit).minus(line.credit), new Prisma.Decimal(0)).eq(0)).toBe(true)
+    expect(row.sourceLinks.some(link => link.postingBatchId === row.postingBatchId && link.sourceId === row.sourceId)).toBe(true)
+  }
+  // These complete native projections stay in harness-private evidence. Count
+  // equality alone would miss an unintended partial claim or source mutation.
+  const nativeTransactions = await db.paymentTransaction.findMany({ where, orderBy: { id: "asc" }, select: {
+    id: true, sourceType: true, sourceId: true, ledgerPostingBatchId: true, legacyPaymentId: true,
+    providerAuthorityEventId: true, providerAccountId: true, providerTransactionId: true, providerReference: true,
+    direction: true, state: true, amount: true, currencyCode: true, metadata: true, updatedAt: true,
+  } })
+  return { journals: journals.length, lines: journals.reduce((n, row) => n + row.lines.length, 0), batches: await db.ledgerPostingBatch.count({ where }), settlements: await db.customerSettlement.count({ where }), legacyPayments: await db.payment.count({ where }), completedSales: await db.salesOrder.count({ where: { ...where, status: "COMPLETED" } }), claimed: await db.paymentTransaction.count({ where: { ...where, OR: [{ legacyPaymentId: { not: null } }, { ledgerPostingBatchId: { not: null } }] } }), nativeTransactions, customerBalance: (await db.customer.findUniqueOrThrow({ where: { id: f.customer.id } })).currentBalance.toFixed(2) }
+}
+async function assess(f: Fixture) {
+  const run = await runCloseAssurance(f.organizationId, { periodId: f.period.id }, nativeControl(f.preparer))
+  const portal = await getAccountantPortalData({ organizationId: f.organizationId, periodId: f.period.id })
+  return { run, portal, safe: { runId: run.run.id, status: run.run.status, trustLevel: portal.certificate.level, blockers: portal.blockers.map(row => ({ id: row.id, severity: row.severity, gate: row.gate, title: row.title })), checklist: run.checklist.map(row => ({ key: row.key, status: row.status, blockerReason: row.blockerReason })) } }
+}
+let main: Fixture, opening: Awaited<ReturnType<typeof applyOpening>>, mobile: Observation, bank: Observation
+let cashCommand: ReturnType<typeof command>, mobileCommand: ReturnType<typeof command>, bankCommand: ReturnType<typeof command>
+let pack: ClosePackExportResult, race: Fixture, raceDocumentId: string, uiObservation: Observation
+let importedBank: Awaited<ReturnType<typeof importProviderStatement>>, importedMobile: Awaited<ReturnType<typeof importProviderStatement>>
+beforeAll(async () => {
+  expect(process.env.NODE_ENV).toBe("test")
+  expect((await db.$queryRaw<Array<{ name: string }>>`SELECT current_database() AS name`)[0].name).toBe(process.env.MONTHLY_CLOSE_DATABASE_NAME)
+  for (const service of [collectCustomerSettlementWithControls, stageOpeningPosition, reviewOpeningPosition, applyOpeningCutover, importProviderStatement, runPaymentReconciliation, signReconciliationRun, runCloseAssurance, exportClosePack, closeAccountingPeriod]) expect(jest.isMockFunction(service)).toBe(false)
+  main = await fixture("primary")
+}, 90000)
+afterAll(async () => {
+  try {
+    const where = main ? { organizationId: main.organizationId } : undefined
+    const counts = where ? { journals: await db.journalEntry.count({ where }), customerSettlements: await db.customerSettlement.count({ where }), claimedProviderTransactions: await db.paymentTransaction.count({ where: { ...where, sourceType: "CUSTOMER_SETTLEMENT", ledgerPostingBatchId: { not: null } } }), signedReconciliationRuns: await db.reconciliationRun.count({ where: { ...where, status: "SIGNED" } }), approvedBankBalanceEvidence: await db.bankBalanceEvidence.count({ where: { ...where, status: "APPROVED" } }), certifiedExports: await db.closePackExport.count({ where: { ...where, isCertified: true } }), periodCloseEvents: await db.periodControlEvent.count({ where: { ...where, operation: "CLOSE" } }), periodReopenEvents: await db.periodControlEvent.count({ where: { ...where, operation: "REOPEN" } }), providerAccounts: await db.providerAccount.count({ where }), activeOpeningExecutions: await db.financialOpeningExecution.count({ where: { ...where, status: "ACTIVE" } }), openingReceivables: await db.customerReceivableDocument.count({ where }), sales: await db.salesOrder.count({ where }), payrollRuns: await db.payrollRun.count({ where }), statutoryCertifiedDocuments: await db.fiscalDocument.count({ where: { ...where, status: "CERTIFIED" } }) } : null
+    fs.writeFileSync(process.env.MONTHLY_CLOSE_PROBE_EVIDENCE!, JSON.stringify({ checks, counts, auxiliary, earnedInternalTerminalStates, seededInternalFinancialTerminalStates: false, syntheticProviderConfirmationFacts: true, initialApprovedProviderMappingConfiguration: true, limitation }, null, 2) + "\n", { flag: "wx" })
+  } finally { await db.$disconnect() }
+})
+
+it("earns an independently reviewed opening receivable and exact opening replay", async () => {
+  opening = await applyOpening(main)
+  expect(await financial(main)).toMatchObject({ journals: 1, settlements: 0, claimed: 0, customerBalance: "300.00" })
+  expect(await applyOpeningCutover(workpaperActor(main.organizationId, main.reviewer), opening.input)).toMatchObject({ status: "ACTIVE", replayed: true })
+  expect(await financial(main)).toMatchObject({ journals: 1, settlements: 0, customerBalance: "300.00" })
+  const journal = await db.journalEntry.findFirstOrThrow({ where: { organizationId: main.organizationId } })
+  expect(journal.entryDate).toEqual(new Date("2026-09-30T23:00:00.000Z")); expect(journal.periodId).toBe(main.september.id)
+  checks.push({ name: "actual-approved-opening-and-replay", openingExecutionId: opening.approval.id, receivableDocumentId: opening.document.id, openingJournalId: journal.id, openingDate: journal.entryDate.toISOString(), openingAR: "300.00", newOctoberSale: false, financialState: await financial(main) })
+})
+
+it("posts dated cash, mobile and bank collections and earns native provider batch links without duplicate replay", async () => {
+  mobile = await observation(main, main.mobile, "october-mobile", new Date("2026-10-15T10:00:00Z")); bank = await observation(main, main.bank, "october-bank", new Date("2026-10-25T10:00:00Z"))
+  cashCommand = command(main, opening.document.id, "CASH", new Date("2026-10-05T10:00:00Z"))
+  mobileCommand = command(main, opening.document.id, "MOBILE_MONEY", mobile.transaction.occurredAt!, mobile)
+  bankCommand = command(main, opening.document.id, "BANK_TRANSFER", bank.transaction.occurredAt!, bank)
+  const receipts = []
+  for (const input of [cashCommand, mobileCommand, bankCommand]) {
+    const result = await collect(main, input); expect(result.replayed).toBe(false)
+    const before = await financial(main); expect((await collect(main, input)).replayed).toBe(true); expect(await financial(main)).toEqual(before)
+    if (input.paymentTransactionId) {
+      const native = await db.paymentTransaction.findUniqueOrThrow({ where: { id: input.paymentTransactionId } })
+      expect(native.sourceType).toBe("CUSTOMER_SETTLEMENT"); expect(native.sourceId).toBe(result.settlementId); expect(native.ledgerPostingBatchId).toBe(result.postingBatchId); expect(native.legacyPaymentId).toBeNull()
+      expect((await db.journalEntry.findUniqueOrThrow({ where: { id: result.journalEntryId } })).postingBatchId).toBe(native.ledgerPostingBatchId)
+    }
+    receipts.push({ settlementId: result.settlementId, journalEntryId: result.journalEntryId, nativePaymentTransactionId: input.paymentTransactionId ?? null })
+  }
+  expect(await financial(main)).toMatchObject({ journals: 4, settlements: 3, claimed: 2, customerBalance: "0.00", legacyPayments: 0, completedSales: 0 })
+  checks.push({ name: "actual-collections-and-provider-links", receipts, noSecondMonetaryPosting: true, exactReplaysPreserved: true, financialState: await financial(main) })
+})
+
+it("rejects foreign, wrong rail, amount, currency, mapping, reused receipt and changed replay without financial effects", async () => {
+  const f = await fixture("denials"), source = await applyOpening(f), receipt = await observation(f, f.bank, "valid-unclaimed", new Date("2026-10-25T11:00:00Z"))
+  const original = command(f, source.document.id, "BANK_TRANSFER", receipt.transaction.occurredAt!, receipt)
+  const usd = await observation(f, f.bank, "wrong-currency", new Date("2026-10-25T11:01:00Z"), "USD")
+  const negatives = [
+    { name: "foreign", input: { ...original, idempotencyKey: randomUUID(), correlationId: randomUUID(), paymentTransactionId: bank.transaction.id } },
+    { name: "rail", input: { ...original, idempotencyKey: randomUUID(), correlationId: randomUUID(), method: "MOBILE_MONEY" as const } },
+    { name: "amount", input: { ...original, idempotencyKey: randomUUID(), correlationId: randomUUID(), amount: "99.00", allocations: [{ customerReceivableDocumentId: source.document.id, amount: "99.00" }] } },
+    { name: "currency", input: { ...original, idempotencyKey: randomUUID(), correlationId: randomUUID(), paymentTransactionId: usd.transaction.id } },
+  ]
+  for (const test of negatives) { const before = await financial(f); await expect(collect(f, test.input)).rejects.toThrow(); expect(await financial(f)).toEqual(before) }
+  const mappingBefore = await financial(f)
+  await db.providerAccount.update({ where: { id: f.bank.account.id }, data: { settlementLedgerAccountId: f.account("CASH_ON_HAND").id } })
+  try { await expect(collect(f, { ...original, idempotencyKey: randomUUID(), correlationId: randomUUID() })).rejects.toThrow(); expect(await financial(f)).toEqual(mappingBefore) }
+  finally { await db.providerAccount.update({ where: { id: f.bank.account.id }, data: { settlementLedgerAccountId: f.bank.ledger.id } }) }
+  await collect(f, original)
+  const beforeReuse = await financial(f); await expect(collect(f, { ...original, idempotencyKey: randomUUID(), correlationId: randomUUID() })).rejects.toThrow(); expect(await financial(f)).toEqual(beforeReuse)
+  const primaryBefore = await financial(main); await expect(collect(main, { ...bankCommand, paymentTransactionId: receipt.transaction.id })).rejects.toThrow(); expect(await financial(main)).toEqual(primaryBefore)
+  auxiliary.denials = { organizationId: f.organizationId, negativeKinds: [...negatives.map(row => row.name), "mapping", "reused-native", "changed-primary-replay"], allNegativeFinancialSnapshotsUnchanged: true, financialState: await financial(f) }
+  checks.push({ name: "electronic-claim-denials-no-effects", negativeKinds: (auxiliary.denials as { negativeKinds: string[] }).negativeKinds, primaryUnchanged: true, auxiliaryOrganizationId: f.organizationId })
+})
+
+it("rolls back an injected claim failure and serializes actual POS versus collection and two collection contenders", async () => {
+  race = await fixture("race", "600.00"); const source = await applyOpening(race); raceDocumentId = source.document.id
+  const now = new Date(); expect(now >= race.november.startDate && now <= race.november.endDate).toBe(true)
+  const failing = await observation(race, race.mobile, "rollback-claim", now), failInput = command(race, source.document.id, "MOBILE_MONEY", now, failing)
+  const suffix = randomBytes(4).toString("hex"), fn = "monthly_claim_fault_" + suffix, trigger = fn + "_trigger"
+  const beforeFailure = await financial(race)
+  await db.$executeRawUnsafe(`CREATE FUNCTION ${fn}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.id = '${failing.transaction.id}' AND NEW."sourceType" = 'CUSTOMER_SETTLEMENT' THEN RAISE EXCEPTION 'Synthetic monthly claim boundary failure'; END IF; RETURN NEW; END $$`)
+  await db.$executeRawUnsafe(`CREATE TRIGGER ${trigger} BEFORE UPDATE ON payment_transactions FOR EACH ROW EXECUTE FUNCTION ${fn}()`)
+  try { await expect(collect(race, failInput)).rejects.toThrow(); expect(await financial(race)).toEqual(beforeFailure) }
+  finally { await db.$executeRawUnsafe(`DROP TRIGGER ${trigger} ON payment_transactions`); await db.$executeRawUnsafe(`DROP FUNCTION ${fn}()`) }
+  expect((await db.paymentTransaction.findUniqueOrThrow({ where: { id: failing.transaction.id } })).ledgerPostingBatchId).toBeNull()
+  const shared = await observation(race, race.mobile, "pos-versus-ar", now)
+  const shift = await openPOSShift({ organizationId: race.organizationId, userId: race.cashier.user.id, terminalId: race.terminal.id, locationId: race.location.id, openingBalance: 0 }); if (!shift) throw Error("Actual auxiliary POS shift did not open")
+  const checkout = { organizationId: race.organizationId, userId: race.cashier.user.id, terminalId: race.terminal.id, locationId: race.location.id, sessionId: shift.id, checkoutLeaseId: randomUUID() }
+  await acquirePOSCheckout(checkout); await addPOSCartLine({ ...checkout, itemId: race.item.id, quantity: 1 })
+  const cart = await db.salesOrder.findFirstOrThrow({ where: { organizationId: race.organizationId, sessionId: shift.id, status: "DRAFT" }, include: { lines: true } })
+  const posInput = { ...checkout, salesOrderId: cart.id, clientCommitId: "monthly:" + randomUUID(), expectedCartRevision: posCartRevision(cart), tenders: [{ method: "MOBILE_MONEY" as const, amount: 100, paymentTransactionId: shared.transaction.id }] }
+  await preparePOSCheckout(posInput)
+  const beforeCross = await financial(race)
+  const contenders = await Promise.allSettled([commitPOSSale(posInput), collect(race, command(race, source.document.id, "MOBILE_MONEY", now, shared))])
+  expect(contenders.filter(row => row.status === "fulfilled")).toHaveLength(1); expect(contenders.filter(row => row.status === "rejected")).toHaveLength(1)
+  const crossNative = await db.paymentTransaction.findUniqueOrThrow({ where: { id: shared.transaction.id } }), afterCross = await financial(race)
+  expect(Boolean(crossNative.legacyPaymentId) !== Boolean(crossNative.ledgerPostingBatchId)).toBe(true)
+  const posWon = Boolean(crossNative.legacyPaymentId)
+  expect(afterCross.journals - beforeCross.journals).toBe(posWon ? 2 : 1)
+  expect(afterCross.completedSales - beforeCross.completedSales).toBe(posWon ? 1 : 0)
+  expect(afterCross.settlements - beforeCross.settlements).toBe(posWon ? 0 : 1)
+  const arShared = await observation(race, race.mobile, "two-ar-contenders", now), arInput = command(race, source.document.id, "MOBILE_MONEY", now, arShared), beforeAR = await financial(race)
+  const ar = await Promise.allSettled([collect(race, arInput), collect(race, { ...arInput, idempotencyKey: randomUUID(), correlationId: randomUUID() })])
+  expect(ar.filter(row => row.status === "fulfilled")).toHaveLength(1); expect(ar.filter(row => row.status === "rejected")).toHaveLength(1)
+  const afterAR = await financial(race); expect(afterAR.journals - beforeAR.journals).toBe(1); expect(afterAR.settlements - beforeAR.settlements).toBe(1)
+  uiObservation = await observation(race, race.mobile, "reserved-actual-ui-input", new Date())
+  expect((await db.customer.findUniqueOrThrow({ where: { id: race.customer.id } })).currentBalance.gte(100)).toBe(true)
+  auxiliary.race = { organizationId: race.organizationId, injectedClaimFailureRolledBack: true, crossWorkflowContenders: 2, crossWorkflowFinancialWinners: 1, crossWorkflowWinner: posWon ? "POS" : "CUSTOMER_SETTLEMENT", twoCollectionContenders: 2, twoCollectionFinancialWinners: 1, financialState: afterAR, unclaimedUiObservationId: uiObservation.transaction.id, remainingOpeningAR: afterAR.customerBalance }
+  checks.push({ name: "actual-concurrent-claim-exclusion", actualPOSCommitContender: true, injectedClaimFailureRolledBack: true, eachNativeReceiptOneFinancialWinner: true, auxiliaryOrganizationId: race.organizationId })
+}, 120000)
+
+it("keeps the actual October close blocked before provider and schedule evidence", async () => {
+  const result = await assess(main); expect(result.run.run.status).toBe("BLOCKED")
+  await expect(exportClosePack(main.organizationId, { closeRunId: result.run.run.id!, mode: "CERTIFIED", correlationId: randomUUID() }, nativeControl(main.reviewer))).rejects.toThrow()
+  checks.push({ name: "assessment-before-provider-and-schedule-evidence", assessment: result.safe, certifiedExportDenied: true })
+})
+
+it("earns two complete-month statement imports and independent signatures but keeps absent bank and BS approval blocked", async () => {
+  const results = []
+  for (const [provider, receipt] of [[main.mobile, mobile], [main.bank, bank]] as const) {
+    const raw = JSON.stringify({ formatVersion: "stoquify-statement-v1", providerCode: provider.account.providerCode, providerAccountId: provider.account.id, currencyCode: "XAF", periodStart: start.toISOString(), periodEnd: end.toISOString(), lines: [{ providerTransactionId: receipt.transaction.providerTransactionId, providerReference: receipt.transaction.providerReference, direction: "CREDIT", amount: "100.00", currencyCode: "XAF", occurredAt: receipt.transaction.occurredAt!.toISOString() }] })
+    const imported = await importProviderStatement({ organizationId: main.organizationId, providerAccountId: provider.account.id, adapter: provider.adapter, rawContent: raw, importedById: main.preparer.user.id, correlationId: randomUUID() })
+    expect(imported.status).toBe("IMPORTED"); expect(imported.fileHash).toBe(sha256(raw))
+    if (provider.method === "MOBILE_MONEY") importedMobile = imported; else importedBank = imported
+    const run = await runPaymentReconciliation({ organizationId: main.organizationId, providerAccountId: provider.account.id, accountingPeriodId: main.period.id, runById: main.preparer.user.id, correlationId: randomUUID() })
+    expect(run.status).toBe("READY_FOR_SIGNOFF"); expect(run.matchCount).toBe(1); expect(run.exceptionCount).toBe(0)
+    const own = await previewReconciliationSignOff({ organizationId: main.organizationId, runId: run.runId, actorId: main.preparer.user.id, actorPermissions: main.preparer.permissions })
+    expect(own.canSign).toBe(false); expect(own.blocker).toBe("INDEPENDENT_SIGNER")
+    const preview = await previewReconciliationSignOff({ organizationId: main.organizationId, runId: run.runId, actorId: main.reviewer.user.id, actorPermissions: main.reviewer.permissions })
+    if (!preview.canSign || !preview.expectedEvidenceRevision || !preview.expectedSourceVersionHash) throw Error("Independent monthly sign-off blocked: " + preview.blocker)
+    await expect(signReconciliationRun({ organizationId: main.organizationId, runId: run.runId, signedById: main.preparer.user.id, expectedEvidenceRevision: preview.expectedEvidenceRevision, expectedSourceVersionHash: preview.expectedSourceVersionHash, control: { actorPermissions: main.preparer.permissions, lastAuthAt: main.preparer.session.assuranceVerifiedAt! }, correlationId: randomUUID() })).rejects.toThrow()
+    const signed = await signReconciliationRun({ organizationId: main.organizationId, runId: run.runId, signedById: main.reviewer.user.id, expectedEvidenceRevision: preview.expectedEvidenceRevision, expectedSourceVersionHash: preview.expectedSourceVersionHash, control: { actorPermissions: main.reviewer.permissions, lastAuthAt: main.reviewer.session.assuranceVerifiedAt! }, correlationId: randomUUID() })
+    expect(signed.outcome).toBe("SIGNED"); expect(signed.replayed).toBe(false)
+    results.push({ providerAccountId: provider.account.id, statementFileId: imported.statementFileId, statementHash: imported.fileHash, runId: run.runId, certificateHash: signed.certificateHash })
+  }
+  const coverage = await db.$transaction(tx => readAccountCloseCoverage(tx, createCloseControlScope(main.organizationId, main.period, new Date())))
+  expect(coverage.requiredAccountCount).toBe(2); expect(coverage.coveredAccountCount).toBe(2); expect(coverage.accounts.every(row => row.status === "RECONCILED")).toBe(true)
+  const result = await assess(main); expect(result.run.run.status).toBe("BLOCKED")
+  await expect(exportClosePack(main.organizationId, { closeRunId: result.run.run.id!, mode: "CERTIFIED", correlationId: randomUUID() }, nativeControl(main.reviewer))).rejects.toThrow()
+  checks.push({ name: "actual-monthly-import-independent-signatures", results, coverageRequired: 2, coverageReconciled: 2, missingBankAndBalanceSheetApprovalStillBlocked: true, assessment: result.safe })
+})
+
+it("earns bank and opening-aware balance-sheet approvals, T4 internal certification, exact retained replay and an actual October seal", async () => {
+  const bankInput = { providerAccountId: main.bank.account.id, periodId: main.period.id, statementFileId: importedBank.statementFileId!, idempotencyKey: randomUUID(), openingBalance: "0.00", closingBalance: "100.00", sourceReference: "urn:stoquify:synthetic-full-month-bank-statement", sourceDocumentHash: "sha256:" + importedBank.fileHash, timingItems: [] }
+  const proposedBank = await proposeBankBalanceEvidence(bankInput, { organizationId: main.organizationId, ...nativeControl(main.preparer) })
+  await expect(decideBankBalanceEvidence({ evidenceId: proposedBank.id, expectedEvidenceHash: proposedBank.evidenceHash, decision: "APPROVE" }, { organizationId: main.organizationId, ...nativeControl(main.preparer) })).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+  const approvedBank = await decideBankBalanceEvidence({ evidenceId: proposedBank.id, expectedEvidenceHash: proposedBank.evidenceHash, decision: "APPROVE" }, { organizationId: main.organizationId, ...nativeControl(main.reviewer) }); expect(approvedBank.status).toBe("APPROVED")
+  const schedules = []
+  const accounts = await db.chartOfAccount.findMany({ where: { organizationId: main.organizationId, isActive: true, deletedAt: null, children: { none: {} }, type: { in: ["ASSET", "CONTRA_ASSET", "LIABILITY", "EQUITY"] } }, orderBy: { id: "asc" } })
+  for (const account of accounts) {
+    const lines = await db.journalEntryLine.findMany({ where: { organizationId: main.organizationId, accountId: account.id, journalEntry: { entryDate: { lte: end }, status: { in: ["POSTED", "REVERSED"] } } }, orderBy: { id: "asc" }, include: { journalEntry: { select: { id: true, entryDate: true, sourceType: true, sourceId: true, postingBatchId: true, sourceLinks: true } } } })
+    let openingBalance = new Prisma.Decimal(0), additions = new Prisma.Decimal(0), reductions = new Prisma.Decimal(0)
+    for (const line of lines) {
+      const increase = account.normalBalance === "DEBIT" ? line.debit : line.credit, decrease = account.normalBalance === "DEBIT" ? line.credit : line.debit
+      if (line.journalEntry.entryDate < start) openingBalance = openingBalance.plus(increase).minus(decrease)
+      else { additions = additions.plus(increase); reductions = reductions.plus(decrease) }
+    }
+    const closingBalance = openingBalance.plus(additions).minus(reductions), active = lines.length > 0 || !openingBalance.eq(0)
+    if (account.id === main.account("ACCOUNTS_RECEIVABLE").id) expect([openingBalance.toFixed(2), reductions.toFixed(2), closingBalance.toFixed(2)]).toEqual(["300.00", "300.00", "0.00"])
+    if (account.id === main.equity.id) expect([openingBalance.toFixed(2), closingBalance.toFixed(2)]).toEqual(["300.00", "300.00"])
+    if ([main.account("CASH_ON_HAND").id, main.mobile.ledger.id, main.bank.ledger.id].includes(account.id)) expect([openingBalance.toFixed(2), additions.toFixed(2), closingBalance.toFixed(2)]).toEqual(["0.00", "100.00", "100.00"])
+    const source = support("schedule-" + account.id.toLowerCase() + ".json", { classification: "SYNTHETIC_INTERNAL_AND_OPENING_SOURCE", organizationId: main.organizationId, periodId: main.period.id, ledgerAccountId: account.id, lines: json(lines), openingExecutionId: opening.approval.id, retainedBankBalanceEvidenceId: approvedBank.id })
+    const proposal = await proposeBalanceSheetEvidence({ ledgerAccountId: account.id, periodId: main.period.id, currency: "XAF", idempotencyKey: randomUUID(), scheduleKind: account.mappingKey === "CASH_ON_HAND" ? "CASH" : account.mappingKey === "ACCOUNTS_RECEIVABLE" ? "RECEIVABLES" : "OTHER", basis: active ? "SUPPORTING_SCHEDULE" : "ZERO_ACTIVITY", explanation: "Synthetic retained opening and actual collection journals; independently reviewed internal support, no external attestation", sourceReference: source.reference, sourceDocumentHash: source.hash, items: active ? [{ reference: account.id, description: "Actual opening and October ledger movement", openingBalance: openingBalance.toFixed(2), additions: additions.toFixed(2), reductions: reductions.toFixed(2), closingBalance: closingBalance.toFixed(2), sourceReference: source.reference, sourceDocumentHash: source.hash }] : [] }, { organizationId: main.organizationId, ...nativeControl(main.preparer) })
+    const approved = await decideBalanceSheetEvidence({ evidenceId: proposal.id, expectedEvidenceHash: proposal.evidenceHash, decision: "APPROVE" }, { organizationId: main.organizationId, ...nativeControl(main.reviewer) }); expect(approved.status).toBe("APPROVED"); expect(approved.approvedById).not.toBe(approved.proposedById)
+    schedules.push({ accountId: account.id, evidenceId: approved.id, basis: active ? "SUPPORTING_SCHEDULE" : "ZERO_ACTIVITY", openingBalance: openingBalance.toFixed(2), closingBalance: closingBalance.toFixed(2) })
+  }
+  const current = await assess(main); expect(current.run.run.status).toBe("READY"); expect(current.portal.certificate.level).toBe("T4")
+  await updateAccountantReview(main.organizationId, { closeRunId: current.run.run.id!, status: "APPROVED_FOR_CLOSE", decisionNotes: "Independent review of synthetic opening, native collection-to-provider links, full-month signatures, exact bank roll-forward and supporting schedules" }, nativeControl(main.reviewer))
+  const exportInput = { closeRunId: current.run.run.id!, mode: "CERTIFIED" as const, correlationId: randomUUID() }
+  await expect(exportClosePack(main.organizationId, exportInput, nativeControl(main.preparer))).rejects.toThrow()
+  pack = await exportClosePack(main.organizationId, exportInput, nativeControl(main.reviewer)); expect(digest(pack.content)).toBe(pack.documentDigest)
+  const payload = JSON.parse(pack.content); expect(payload.period.id).toBe(main.period.id); expect(payload.certificationScope).toMatchObject({ systemEvidenceStatus: "SYSTEM_EVIDENCE_ONLY", statutoryReadinessStatus: "STATUTORY_BLOCKED", statutoryAuthorityStatus: "AUTHORITY_NOT_CONFIGURED" })
+  for (const a of [main.preparer, main.reviewer, main.collector, main.cashier]) expect(pack.content).not.toContain(a.session.token)
+  fs.writeFileSync(path.join(privateDirectory, "pack-" + pack.exportId + ".json"), pack.content, { flag: "wx" })
+  const before = await financial(main); const replay = await exportClosePack(main.organizationId, exportInput, nativeControl(main.reviewer)); expect(replay.replayed).toBe(true); expect(replay.content).toBe(pack.content); expect(await financial(main)).toEqual(before)
+  const closed = await closeAccountingPeriod(main.organizationId, main.period.id, main.reviewer.user.id, { expectedVersion: 0, actorPermissions: main.reviewer.permissions, lastAuthAt: main.reviewer.session.assuranceVerifiedAt! }); expect(closed).toMatchObject({ status: "CLOSED", controlVersion: 1 })
+  checks.push({ name: "actual-bank-bs-approval-certification-and-seal", bankEvidenceId: approvedBank.id, schedules, assessment: current.safe, exportId: pack.exportId, documentDigest: pack.documentDigest, periodControlVersion: 1, noStatutoryApproval: true })
+})
+
+it("denies new closed-period posting and new collection without financial effects and recovers the retained original", async () => {
+  const before = await financial(main)
+  const journal = await db.journal.findFirstOrThrow({ where: { organizationId: main.organizationId, type: "GENERAL", isDefault: true, isActive: true, allowManualEntries: true } })
+  await expect(createManualJournalEntry(main.organizationId, { journalId: journal.id, entryDate: new Date("2026-10-30T12:00:00Z"), memo: "Synthetic closed-period denial", lines: [{ accountId: main.account("INVENTORY_VARIANCE").id, debit: "1.00", credit: "0.00", currency: "XAF" }, { accountId: main.account("SALES_REVENUE").id, debit: "0.00", credit: "1.00", currency: "XAF" }] }, main.preparer.user.id)).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+  await expect(collect(main, command(main, opening.document.id, "CASH", new Date("2026-10-30T12:00:00Z"), undefined, "1.00"))).rejects.toThrow()
+  expect(await financial(main)).toEqual(before)
+  const retained = await getRetainedClosePackExport(main.organizationId, { exportId: pack.exportId, mode: "CERTIFIED" }, nativeControl(main.reviewer)); expect(retained.content).toBe(pack.content); expect(retained.documentDigest).toBe(pack.documentDigest)
+  expect((await db.closePackExport.findUniqueOrThrow({ where: { id: pack.exportId } })).canonicalContent).toBe(pack.content)
+  const ui = { organizationId: race.organizationId, collectorUserId: race.collector.user.id, reviewerUserId: race.reviewer.user.id, customerId: race.customer.id, documentId: raceDocumentId, paymentTransactionId: uiObservation.transaction.id, amount: "100.00", method: "MOBILE_MONEY", settlementDate: uiObservation.transaction.occurredAt!.toISOString() }
+  fs.writeFileSync(path.join(privateDirectory, "FIXTURE.json"), JSON.stringify({ organizationId: main.organizationId, reviewerUserId: main.reviewer.user.id, periodId: main.period.id, closeRunId: pack.closeRunId, exportId: pack.exportId, documentDigest: pack.documentDigest, contentHash: pack.contentHash, packPath: path.join(privateDirectory, "pack-" + pack.exportId + ".json"), ui }, null, 2) + "\n", { flag: "wx" })
+  earnedInternalTerminalStates = true
+  checks.push({ name: "actual-closed-period-denial-and-retained-recovery", closedManualPostingDenied: true, newCollectionDenied: true, collectionFirstFailureNotAttributedToPeriod: true, financialStateUnchanged: true, originalBytesRecovered: true, documentDigest: pack.documentDigest })
+})

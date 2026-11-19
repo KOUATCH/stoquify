@@ -1,0 +1,17 @@
+    // Statutory admission is deliberately unqualified, even when applicability is selected.
+    await panel.getByRole('combobox',{name:/^Obligation/}).selectOption('CM_VAT_MONTHLY')
+    await panel.getByRole('combobox',{name:/^Applicability/}).selectOption('APPLICABLE')
+    await panel.getByLabel('Operational target date (end of day UTC; not a legal deadline)',{exact:true}).fill('2026-09-30')
+    await panel.getByLabel('Reason / review conclusion (no payroll personal details)',{exact:true}).fill('Synthetic statutory candidate remains unqualified; no filing or country approval.')
+    await panel.getByRole('button',{name:'Save new revision',exact:true}).click()
+    await panel.getByText('Revision recorded; current register reloaded.',{exact:true}).waitFor()
+    const statutoryRow=panel.getByRole('heading',{name:/Cameroon VAT/}).locator('..')
+    await statutoryRow.getByText(/Unknown.*review required/).waitFor()
+    const candidateRevision=await db.firmObligationRevision.findFirstOrThrow({where:{organizationId:source.client,code:'CM_VAT_MONTHLY'}})
+    assert.equal(candidateRevision.sourceSnapshot.statutoryVerified,false)
+    assert.equal(candidateRevision.sourceSnapshot.qualifiedReview,null)
+    assert.notEqual(candidateRevision.sourceSnapshot.coverage,'OPERATIONAL')
+    assert.equal(await db.firmObligationRevision.count({where:{organizationId:source.client}}),3)
+    report.statutoryCandidate={code:'CM_VAT_MONTHLY',coverage:candidateRevision.sourceSnapshot.coverage,status:'UNKNOWN',statutoryVerified:false,qualifiedReview:null}
+    await panel.screenshot({path:path.join(out,'statutory-unknown.png')});report.screenshots.push('statutory-unknown.png')
+    check('Unqualified statutory candidate remains UNKNOWN despite selected applicability; retained source does not claim qualified review or statutory verification.')

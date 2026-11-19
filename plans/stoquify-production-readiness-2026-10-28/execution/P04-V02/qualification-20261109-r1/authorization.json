@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-09",
+  "packages": [
+    "P04-V02",
+    "P04-D01"
+  ],
+  "request": "Execute P04-V02 in isolation with real sessions, browser tests and independent review. Update evidence and the work register, and prepare P04-D01 for my decision. Preserve unrelated changes; no commits, deployment or production changes.",
+  "permitted": [
+    "Fresh isolated current-source candidate/build/runtime/database",
+    "Synthetic real signed-session fixtures and browser HTTP journeys",
+    "Local provider protocol fixtures",
+    "Independent review",
+    "Evidence and controlled work-register updates",
+    "Finance artifact visibility decision preparation"
+  ],
+  "prohibited": [
+    "Unsolicited product repairs",
+    "Commit or push",
+    "Production flag or data changes",
+    "Deployment",
+    "Approve P04-D01 on user behalf"
+  ],
+  "parentP04Accepted": false,
+  "productionAccepted": false
+}

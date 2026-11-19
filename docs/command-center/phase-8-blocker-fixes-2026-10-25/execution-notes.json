@@ -1,0 +1,24 @@
+{
+  "databaseInitialization": {
+    "initialAttempt": "Tool returned initdb.exe ETIMEDOUT at the original 60000 ms limit, before migrations or a database server were started by that attempt.",
+    "retry": "Verified the retained candidate hashes, used a new cluster-retry directory and a 240000 ms initialization limit. Fresh replay and repeated deployment succeeded.",
+    "partialClusterRetained": true
+  },
+  "unitDiscovery": {
+    "initialAttempts": "Interrupted while broad root discovery scanned generated trees; no passing result claimed.",
+    "finalAttempt": "Discovery restricted to the two relevant test directories; the same four suites passed 76 tests."
+  },
+  "lint": {
+    "initialAttempt": "240000 ms timeout, retained in release-gates.json.",
+    "retry": "Same directories/rules; 600000 ms limit. Passed 3117 files with 0 errors and 22 warnings."
+  },
+  "build": {
+    "initialAttempt": "Compilation succeeded in 12.9 minutes; wrapper reached the 1200000 ms timeout during type validation and confirmed zero orphaned build chains.",
+    "retry": "Same captured source and normal checks, candidate-owned cache retained, 1800000 ms limit. Failed on the shared generated client missing FirmAdvisoryRevision; result retained in compiler-retry-result.json.",
+    "privateClientRepair": "Generated a schema-matched client only in a private dependency overlay. Shared generated-client fingerprints unchanged; private read-only database smoke checks passed.",
+    "finalVerification": "Full all-diagnostic project type check followed by the normal captured build; see typecheck-result.json and compiler-final-result.json."
+  },
+  "productionAccess": false,
+  "liveProviderEnablement": false,
+  "sharedDependencyInstallationOrGeneration": false
+}

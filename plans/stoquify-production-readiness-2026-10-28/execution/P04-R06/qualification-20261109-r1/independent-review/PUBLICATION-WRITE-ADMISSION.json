@@ -1,0 +1,124 @@
+{
+  "at": "2026-11-10T09:06:47.405Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Exact bounded shared blocked-status publication mutation and input admission; actual publication review pending",
+  "files": [
+    {
+      "path": "publish-blocked.cjs",
+      "sha256": "4ebd79c3bab1f923572ea5d60004386fcdb54561c7d354494a1a57372781268f"
+    },
+    {
+      "path": "blocked-publication-inputs.json",
+      "sha256": "919911e033c800d607233d099732c0ac63ed12e05ec4f79c859241a9af2d1e7d"
+    },
+    {
+      "path": "validate-publication-v2.cjs",
+      "sha256": "28eac023336e84ff85c9f4a5c0ec7be5a58ba1f810c42b5c984bbfc97a839772"
+    },
+    {
+      "path": "publication-draft/CURRENT.md",
+      "sha256": "03593628ad4ee600987914bab0e7f91f66a964d880f7a91774ccf967070ecd9b"
+    },
+    {
+      "path": "publication-draft/NEXT.md",
+      "sha256": "9f4d0484a54f3214dd31bd47a8564791788e41b681375ca269023cb8f19399ab"
+    },
+    {
+      "path": "RESULT.md",
+      "sha256": "9e8716df75def70b775469770a57a0e8d3624f881508877733acc4e5b1a7ffb9"
+    },
+    {
+      "path": "PROGRESS.json",
+      "sha256": "11ff2f17fe7751811f08e7fd37fd945694ff898a4a45a32a51d19c07ed47e86a"
+    },
+    {
+      "path": "advancement-gates.json",
+      "sha256": "9444f2ab4409c69170d15bbdafc7c05cd524ac17256ca52eab53c9b1e6d8c709"
+    },
+    {
+      "path": "independent-review/FINAL-OUTCOME-REVIEW.json",
+      "sha256": "1d9b71c20aa39b74ad92a5dd02435a98b0b5520d9d007a749cca4346cf5e60cf"
+    }
+  ],
+  "baseline": [
+    {
+      "path": "work-register.json",
+      "beforeSha256": "cbdbb8a26f3d24a6a6be5bd636a4c6015794dda7401b8d6e39c9376e77e2e6ad",
+      "baselineSha256": "cbdbb8a26f3d24a6a6be5bd636a4c6015794dda7401b8d6e39c9376e77e2e6ad"
+    },
+    {
+      "path": "work-register.csv",
+      "beforeSha256": "074d62a565908d42d3d6cb5d3499dd637c38e0bd4a225c4e52140648b2f91d9f",
+      "baselineSha256": "074d62a565908d42d3d6cb5d3499dd637c38e0bd4a225c4e52140648b2f91d9f"
+    },
+    {
+      "path": "ROADMAP.md",
+      "beforeSha256": "4ffb4afe0c27e373c35358b517c2b7bb275c24d43d39adf036acb1ed478595f8",
+      "baselineSha256": "4ffb4afe0c27e373c35358b517c2b7bb275c24d43d39adf036acb1ed478595f8"
+    },
+    {
+      "path": "mutation-log.md",
+      "beforeSha256": "d041cbd5dfb9bc57a1ae7cb9601d996855a14671ed50e41e9a80018649111beb",
+      "baselineSha256": "d041cbd5dfb9bc57a1ae7cb9601d996855a14671ed50e41e9a80018649111beb"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "beforeSha256": "290d2d98f99ec61ce2259d8ab55fc9af72bf13aff2061bdb47e9cfab17c04d49",
+      "baselineSha256": "290d2d98f99ec61ce2259d8ab55fc9af72bf13aff2061bdb47e9cfab17c04d49"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "beforeSha256": "e886981372d1e8fee0729e3e98cb01fb6b7ba26f3d4146c13b52d2ba940142c6",
+      "baselineSha256": "e886981372d1e8fee0729e3e98cb01fb6b7ba26f3d4146c13b52d2ba940142c6"
+    }
+  ],
+  "candidateId": "p04-r06-full-4661f767924e",
+  "evidencePaths": [
+    "AUTHORIZATION.md",
+    "RESULT.md",
+    "PROGRESS.json",
+    "advancement-gates.json",
+    "REPAIR-CONTRACT.md",
+    "inventory/source-after-manifest-v4.json",
+    "inventory/authority-map-after-v4.json",
+    "inventory/resume-20261110-r1/RESUME-SOURCE-RECEIPT.md",
+    "inventory/resume-20261110-r1/FULL-SOURCE-COMPARISON.json",
+    "independent-review/REPAIR-SOURCE-ADMISSION-v3.json",
+    "unit/attempt03/jest.json",
+    "independent-review/UNIT-OUTCOME-REVIEW-v3.json",
+    "dependency-reconciliation.json",
+    "independent-review/PREPARATION-OUTCOME-REVIEW.json",
+    "build-result.json",
+    "artifact-build-result.json",
+    "artifact-build.log",
+    "independent-review/RESUME-FAILED-BUILD-REVIEW.json",
+    "candidate-refresh-attempt02.json",
+    "candidate-context-attempt02.json",
+    "candidate-admission-attempt02.json",
+    "type-config-input-equivalence-attempt02.json",
+    "resource-resume-20261110-r2.json",
+    "database/suspend-attempt02.json",
+    "blocked-integrity-attempt02.json",
+    "RETRY-HANDOFF-attempt02.md",
+    "independent-review/FINAL-OUTCOME-REVIEW.json"
+  ],
+  "reviewFindings": [
+    "All27 evidence references now exist, candidate identity agrees, overall independent outcome is false and actual cleanup passed.",
+    "Exact publisher script unchanged from structural review and syntax check passes.",
+    "All six current shared files still equal their preserved baseline before mutation.",
+    "Mutation is limited to R06 status/authorization/evidence, P04 and V02 summaries, E28, matching CSV, final roadmap action tail, append-only log and CURRENT/NEXT.",
+    "Historical evidence, packages, dependencies, domains, global decisions/gates and deferred work are preserved by the selected transformation and required validator.",
+    "Final source/current mocked evidence does not close native failure groups or approve production."
+  ],
+  "conditions": [
+    "Use exact frozen script/input/drafts; changes require renewed review.",
+    "Run the admitted publication validator after writing and review its actual result.",
+    "Obtain separate FINAL-PUBLICATION-REVIEW.json for actual accurate blocked publication.",
+    "Keep R06, P04, V02 and production blocked; no other implementation is authorized here."
+  ],
+  "limitations": [
+    "This admission does not itself prove final files were written correctly.",
+    "No successful R06 qualification or production readiness approval."
+  ]
+}

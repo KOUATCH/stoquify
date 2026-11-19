@@ -1,15 +1,22 @@
 /** @jest-environment node */
 import { readFileSync } from "node:fs"
-import { join } from "node:path"
+import { isAbsolute } from "node:path"
 import { db } from "@/prisma/db"
 import { createItem } from "@/services/item/item.service"
 import { getMasterDataOnboardingDashboard } from "../master-data-import.service"
 
 const target = new URL(process.env.DATABASE_URL ?? "")
-if (process.env.RUN_P07_POSTGRES !== "1" || target.hostname !== "localhost" || !/^\/stoquify_retention_p07_20261017_[a-f0-9]+$/.test(target.pathname) || target.searchParams.get("schema") !== "public") {
+if (process.env.RUN_P07_POSTGRES !== "1" || target.hostname !== "localhost" || !/^\/stoquify_retention_p07_\d{8}_[a-f0-9]+$/.test(target.pathname) || target.searchParams.get("schema") !== "public") {
   throw new Error("P07 PostgreSQL checks require the explicitly owned disposable target")
 }
-const fixture = JSON.parse(readFileSync(join(process.cwd(), "docs/retention/execution/P07/evidence/BROWSER_FIXTURE.json"), "utf8"))
+const fixturePath = process.env.OPENING_READINESS_FIXTURE_PATH
+if (!fixturePath || !isAbsolute(fixturePath)) {
+  throw new Error("An explicit absolute opening-readiness fixture path is required")
+}
+const fixture = JSON.parse(readFileSync(fixturePath, "utf8"))
+if (fixture.database !== target.pathname.slice(1)) {
+  throw new Error("Opening-readiness fixture does not belong to the selected disposable database")
+}
 
 describe("P07 real readiness and current item blocker", () => {
   afterAll(async () => db.$disconnect())

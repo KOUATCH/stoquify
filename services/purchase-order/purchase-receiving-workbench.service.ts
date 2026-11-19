@@ -11,6 +11,7 @@ import { purchaseReceivingCommandSchema, purchaseReceivingDecisionSchema, purcha
 import { receiveItems, resolveGoodsReceiptInspection } from "./purchase-order.service"
 import { hasVerifiedReceiptPosting, receiptPostingEvidenceSelect } from "./purchase-receipt-accounting-evidence"
 import { readReceiptRecognitionEvidence, readReceiptRecognitionSource } from "./receipt-recognition-source"
+import { assertLegacyPurchaseReceiptPricing, loadPurchaseReceiptCommercialBasis } from "./purchase-commercial-basis"
 
 const orderIdSchema = z.string().min(1).max(191)
 const eventKey = (request: string) => `purchase-receiving-decision:${request}`
@@ -50,6 +51,7 @@ async function loadOutcomes(tx: Prisma.TransactionClient, organizationId: string
         const evidence = await readReceiptRecognitionEvidence(tx, source)
         return [receipt.id, { stockStatus: !evidence.stockVerified ? "unverified" : source.manifest.lines.some(line => line.stockTracked) ? "recorded" : "unavailable", accountingStatus: evidence.accountingStatus === "POSTED" ? "posted" : evidence.accountingStatus === "NOT_REQUIRED" ? "not_required" : evidence.accountingStatus === "BLOCKED" ? "review_required" : "unverified", currency: source.manifest.currency }]
       }
+      if (receipt.lines.some(line => line.commercialBasis != null)) return [receipt.id, { stockStatus: "unverified", accountingStatus: "unverified", currency: null }]
     } catch (error) {
       if (error instanceof BusinessRuleError && error.code === "RECEIPT_EVIDENCE_REQUIRED") return [receipt.id, { stockStatus: "unverified", accountingStatus: "unverified", currency: null }]
       throw error
@@ -110,7 +112,7 @@ export async function getPurchaseReceivingWorkbench(orderIdInput: string, scopeI
       receipts.push({ id: r.id, number: r.receiptNumber, recordedAt: r.receiptDate.toISOString(), status: r.status, location: r.location.name, receiver: actorName(r.receivedBy), quantity: r.lines.reduce((sum,l) => sum.plus(l.receivedQuantity),new Prisma.Decimal(0)).toString(), value: r.lines.reduce((sum,l) => sum.plus(l.lineTotal),new Prisma.Decimal(0)).toString(), inspection: r.inspection ? { outcome: r.inspection.outcome, reason: r.inspection.reason, evidenceNotes: r.inspection.evidenceNotes, inspector: actorName(r.inspection.inspectedBy), inspectedById: r.inspection.inspectedById, at: r.inspection.inspectedAt.toISOString() } : null, resolution: r.inspectionResolution ? { decision: r.inspectionResolution.decision, reason: r.inspectionResolution.reason, resolver: actorName(r.inspectionResolution.resolvedBy), at: r.inspectionResolution.resolvedAt.toISOString() } : null, ...outcome, currency: outcome.currency ?? saved?.currency ?? null, decision: saved, canAccept: canResolve && r.inspection?.inspectedById !== scope.actorId, canReject: canResolve })
     }
     const lines = c.order.lines.map(l => ({ id: l.id, itemId: l.itemId, nameEn: l.item.nameEn, nameFr: l.item.nameFr ?? l.item.nameEn, ordered: l.orderedQuantity.toString(), received: l.receivedQuantity.toString(), held: (c.heldByLine.get(l.id) ?? new Prisma.Decimal(0)).toString(), available: Prisma.Decimal.max(0,l.orderedQuantity.minus(l.receivedQuantity).minus(c.heldByLine.get(l.id) ?? 0)).toString(), unitCost: l.unitCost.toString(), trackBatches: l.item.trackBatches, trackSerialNumbers: l.item.trackSerialNumbers, trackExpiry: l.item.trackExpiry, active: l.item.organizationId === scope.organizationId && l.item.isActive && !l.item.deletedAt }))
-    return { organizationId: scope.organizationId, actorId: scope.actorId, orderId, orderNumber: c.order.orderNumber, orderStatus: c.order.status, supplier: c.order.supplier.name, currency: c.order.organization.currency, checkedAt: new Date().toISOString(), revision: c.revision, locationId: c.order.locationId, location: c.order.location.name, canReviewAccounting: !!c.authority.canReviewAccounting && write.allowed && !c.order.deletedAt, canReceive: !!canWrite && c.order.location.isActive && !c.order.location.deletedAt && ["APPROVED", "PARTIALLY_RECEIVED"].includes(c.order.status) && lines.some(l => l.active && Number(l.available) > 0), lines, receipts, olderReceipts: rows.length > 100 }
+    return { organizationId: scope.organizationId, actorId: scope.actorId, orderId, orderNumber: c.order.orderNumber, orderStatus: c.order.status, supplier: c.order.supplier.name, currency: c.order.organization.currency, checkedAt: new Date().toISOString(), revision: c.revision, locationId: c.order.locationId, location: c.order.location.name, canReviewAccounting: !!c.authority.canReviewAccounting && write.allowed && !c.order.deletedAt, canReturn: !!c.authority.canReturn && write.allowed && !c.order.deletedAt, canReceive: !!canWrite && c.order.location.isActive && !c.order.location.deletedAt && ["APPROVED", "PARTIALLY_RECEIVED"].includes(c.order.status) && lines.some(l => l.active && Number(l.available) > 0), lines, receipts, olderReceipts: rows.length > 100 }
   }, { timeout: 15000 })
 }
 
@@ -124,28 +126,31 @@ async function previewInTx(tx: Prisma.TransactionClient, scope: PurchaseReceivin
     if (!location) throw new NotFoundError("Receiving location unavailable")
     locationName = location.name
     let serialQuantity = 0
-    lines = draft.items.map(item => {
+    const reviewedLines = draft.items.map(item => {
       const line = c.order.lines.find(l => l.id === item.lineId)
       if (!line || line.item.organizationId !== scope.organizationId || !line.item.isActive || line.item.deletedAt) throw new BusinessRuleError("A receiving item is unavailable.")
       if (line.orderedQuantity.minus(line.receivedQuantity).minus(c.heldByLine.get(line.id) ?? 0).lt(item.receivedQuantity)) throw new ConflictError("Available quantities changed. Review current receiving and held receipts.")
       if (item.unitPrice !== undefined && !line.unitCost.eq(item.unitPrice)) throw new ConflictError("Receiving must preserve the approved order cost.")
       if (line.item.trackExpiry && !item.expiryDate) throw new BusinessRuleError("Record an expiry date for the tracked item.")
       if (line.item.trackSerialNumbers) { if (!Number.isInteger(item.receivedQuantity)) throw new BusinessRuleError("Serial-tracked items require whole units."); serialQuantity += item.receivedQuantity }
-      return { id: line.id, nameEn: line.item.nameEn, nameFr: line.item.nameFr ?? line.item.nameEn, quantity: String(item.receivedQuantity), unitCost: line.unitCost.toString(), value: line.unitCost.mul(item.receivedQuantity).toDecimalPlaces(2,Prisma.Decimal.ROUND_HALF_UP).toString() }
+      return { id: line.id, nameEn: line.item.nameEn, nameFr: line.item.nameFr ?? line.item.nameEn, quantity: String(item.receivedQuantity), unitCost: line.unitCost.toString() }
     })
     if (serialQuantity > 5000) throw new BusinessRuleError("Receive at most 5000 serial-tracked units in one request.")
+    const commercial = await loadPurchaseReceiptCommercialBasis(tx, c.order, draft.items)
+    lines = reviewedLines.map(line => ({ ...line, value: commercial.get(line.id)!.net }))
     disposition = draft.inspectionOutcome === "PASSED" ? "RECEIVED" : "HELD"
-    evidence = { revision: c.revision, destination: location }
+    evidence = { revision: c.revision, destination: location, commercial: [...commercial] }
   } else {
     const receipt = await tx.goodsReceipt.findFirst({ where: { id: draft.goodsReceiptId, organizationId: scope.organizationId, purchaseOrderId: draft.orderId, deletedAt: null }, include: receiptInclude })
     if (!receipt) throw new NotFoundError("Goods receipt not found")
     if (receipt.status !== "HELD" || !receipt.inspection || receipt.inspectionResolution) throw new ConflictError("This inspection is no longer awaiting a decision.")
     if (!["APPROVED", "PARTIALLY_RECEIVED", "RECEIVED", "CANCELLED"].includes(c.order.status)) throw new BusinessRuleError("The order is unavailable for inspection resolution.")
     if (draft.decision === "ACCEPT" && receipt.inspection.inspectedById === scope.actorId) throw new BusinessRuleError("A different authorized receiver must accept this inspection.", "SOD_VIOLATION")
+    if (draft.decision === "ACCEPT") assertLegacyPurchaseReceiptPricing(c.order, receipt.lines)
     locationName = receipt.location.name
     disposition = draft.decision === "ACCEPT" ? "RECEIVED" : "REJECTED"
     lines = receipt.lines.map(l => ({ id: l.id, nameEn: l.item.nameEn, nameFr: l.item.nameFr ?? l.item.nameEn, quantity: l.receivedQuantity.toString(), unitCost: l.unitCost.toString(), value: l.lineTotal.toString() }))
-    evidence = { revision: c.revision, receipt: { id: receipt.id, status: receipt.status, payloadHash: receipt.payloadHash, inspection: receipt.inspection.id, updatedAt: receipt.updatedAt, lines: receipt.lines.map(l => ({ id: l.id, quantity: l.receivedQuantity.toString(), value: l.lineTotal.toString(), batch: l.batchNumber, expiry: l.expiryDate, serials: l.serialNumbers })) } }
+    evidence = { revision: c.revision, receipt: { id: receipt.id, status: receipt.status, payloadHash: receipt.payloadHash, inspection: receipt.inspection.id, updatedAt: receipt.updatedAt, lines: receipt.lines.map(l => ({ id: l.id, quantity: l.receivedQuantity.toString(), value: l.lineTotal.toString(), commercialBasis: l.commercialBasis, batch: l.batchNumber, expiry: l.expiryDate, serials: l.serialNumbers })) } }
   }
   return { organizationId: scope.organizationId, actorId: scope.actorId, orderId: draft.orderId, orderNumber: c.order.orderNumber, currency: c.order.organization.currency, location: locationName, revision: hashBusinessPayload({ draft, evidence }), draft, disposition, quantity: lines.reduce((s,l) => s.plus(l.quantity),new Prisma.Decimal(0)).toString(), value: lines.reduce((s,l) => s.plus(l.value),new Prisma.Decimal(0)).toString(), lines, requiresFreshAuth: draft.kind === "resolve" && !c.authority.fresh, checkedAt: new Date().toISOString() }
 }

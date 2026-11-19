@@ -1,0 +1,11 @@
+const fs=require('node:fs'),p='services/hris/__tests__/integrated-core-pilot.postgres.test.ts';let s=fs.readFileSync(p,'utf8');
+const anchor="  const contractId=(await createPayrollContract";
+if(!s.includes(anchor))throw Error('Native insert anchor missing');
+s=s.replace(anchor,()=>`  const linked=await db.payrollEmployee.findUniqueOrThrow({where:{id:employeeId}}),imported=(e.metadata as any).hrSourceData,native=(linked.metadata as any).hrSourceData;expect(native.sourceSystem).toBe('HRIS_NATIVE_PROFILE');expect(native.originSourceReference.sourceHash).toBe(imported.sourceHash);expect(native.sourceHash).not.toBe(imported.sourceHash)
+  const rollback={...actor(),employeeId,employeeNumber:e.employeeNumber,displayName:'Synthetic rollback must not persist',hireDate:e.hireDate,countryCode:e.countryCode,expectedUpdatedAt:linked.updatedAt.toISOString(),idempotencyKey:randomUUID()};await expect(db.$transaction(async tx=>{await upsertHrisEmployeeProfile(rollback,tx);throw Error('Synthetic intentional rollback')},{isolationLevel:'ReadCommitted'})).rejects.toThrow('Synthetic intentional rollback');expect((await db.payrollEmployee.findUniqueOrThrow({where:{id:employeeId}})).metadata).toEqual(linked.metadata);expect(await db.businessEvent.count({where:{organizationId:org,idempotencyKey:rollback.idempotencyKey}})).toBe(0)
+`+anchor);
+const second=" expect((await db.payrollEmployee.findMany({where:{organizationId:org}})).every(e=>e.status==='ACTIVE')).toBe(true);";
+if(!s.includes(second))throw Error('Correction anchor missing');
+s=s.replace(second,()=>` const corrected=await db.payrollEmployee.findUniqueOrThrow({where:{id:employees[0]}}),identity=(corrected.metadata as any).hrSourceData;expect(identity.sourceSystem).toBe('HRIS_NATIVE_PROFILE');expect(identity.originSourceReference.sourceSystem).toBe(HRIS_IMPORT_VERSION);const applied=(await getOwnCorrectionWorkspace(actor(4))).cases.find(x=>x.id===c.id);expect(applied).toBeDefined();const nativeEvents=await db.businessEvent.findMany({where:{organizationId:org,eventType:'payroll.employee.source_data.upserted',sourceId:employees[0]},orderBy:{createdAt:'asc'}});expect(new Set(nativeEvents.map(e=>(e.payload as any).sourceReference?.sourceHash)).size).toBe(3)
+`+second);
+fs.writeFileSync(p,s);

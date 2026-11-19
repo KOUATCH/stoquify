@@ -7,7 +7,7 @@ import { useFlushOfflinePOSQueue } from "@/hooks/posHooks/useOfflineSync"
 
 export const localOfflineCopy = {
   en: {
-    title: "Offline evidence on this browser", checking: "Checking local evidence…",
+    details: "Details and recovery", compactTitle: "Offline checkout unavailable", title: "Offline evidence on this browser", checking: "Checking local evidence…",
     unavailable: "Local evidence cannot be verified. Keep this browser's data and ask a manager for recovery before closing the shift.",
     unsupported: "Offline checkout is not available in this pilot. Keep pending evidence, reconnect and check the original operation. Do not take a second payment or clear browser data.",
     pending: "awaiting server acknowledgement", uncertain: "unconfirmed attempts", conflicts: "requiring review",
@@ -21,7 +21,7 @@ export const localOfflineCopy = {
     closeBlocked: "Shift close is blocked while local offline evidence is pending or cannot be verified. Reconnect and review the original operation.",
   },
   fr: {
-    title: "Preuves hors ligne dans ce navigateur", checking: "Vérification des preuves locales…",
+    details: "Détails et reprise", compactTitle: "Vente hors ligne indisponible", title: "Preuves hors ligne dans ce navigateur", checking: "Vérification des preuves locales…",
     unavailable: "Les preuves locales ne peuvent pas être vérifiées. Conservez les données du navigateur et demandez une reprise à un responsable avant de clôturer la session.",
     unsupported: "La vente hors ligne n'est pas disponible dans ce pilote. Conservez les preuves, reconnectez-vous et vérifiez l'opération d'origine. N'encaissez pas un second paiement et n'effacez pas les données du navigateur.",
     pending: "en attente d'accusé de réception", uncertain: "tentatives non confirmées", conflicts: "à examiner",
@@ -65,7 +65,7 @@ function QueueRecovery({ queue, sessionId, online, canSend, locale, refresh }: {
 // evidence. Scope changes remount the inventory and cannot show old tenant data.
 export function LocalOfflineRecovery(props: {
   organizationId?: string; userId?: string; locationId?: string | null; terminalId?: string | null
-  sessionId?: string | null; canRead: boolean; canSend: boolean; locale: "en" | "fr"
+  sessionId?: string | null; canRead: boolean; canSend: boolean; compact?: boolean; hideEmpty?: boolean; locale: "en" | "fr"
 }) {
   if (!props.organizationId || !props.userId || !props.canRead) return null
   return <LocalInventory key={`${props.organizationId}:${props.userId}:${props.locationId}:${props.terminalId}`} {...props} organizationId={props.organizationId} />
@@ -97,6 +97,18 @@ function LocalInventory(props: Parameters<typeof LocalOfflineRecovery>[0] & { or
     events.forEach(event => window.addEventListener(event, read))
     return () => { alive = false; window.clearInterval(tick); events.forEach(event => window.removeEventListener(event, read)) }
   }, [organizationId, locationId, terminalId, revision])
+  if (props.compact && !failed && queues !== null && !queues.some(queue => queue.pendingCount || queue.acknowledgedCount)) {
+    if (props.hideEmpty) return null
+    return <section aria-label={t.title} data-testid="local-offline-recovery" className="rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 py-2 text-xs text-[var(--dash-text-soft)]">
+      <details>
+        <summary className="cursor-pointer rounded-md py-1 focus-visible:outline focus-visible:outline-[var(--dash-brand)]"><span className="font-medium text-[var(--dash-text)]">{t.compactTitle}</span><span className="ml-2">{t.details}</span></summary>
+        <div className="space-y-2 pt-2">
+          <h2 className="font-semibold">{t.title}</h2><p>{t.unsupported}</p><p>{t.empty}</p>
+          <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal py-2" onClick={refresh}>{t.refresh}</Button>
+        </div>
+      </details>
+    </section>
+  }
   return <section aria-label={t.title} data-testid="local-offline-recovery" className="dashboard-landing-theme dark space-y-3 rounded-lg border border-[var(--dash-warning)] bg-[var(--dash-surface)] p-4 text-sm text-[var(--dash-text)]">
     <h2 className="font-semibold">{t.title}</h2>
     <p>{t.unsupported}</p>

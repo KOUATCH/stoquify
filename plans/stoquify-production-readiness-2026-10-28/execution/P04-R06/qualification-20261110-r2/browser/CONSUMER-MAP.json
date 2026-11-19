@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "packageId": "P04-R06",
+  "at": "2026-11-10T12:26:50.920Z",
+  "scope": "Read-only current consumer mapping for r2 observer; runtime binding to new candidate/artifact required separately",
+  "sourceFiles": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/profile/page.tsx",
+      "sha256": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc"
+    },
+    {
+      "path": "components/settings/SelfProfile.tsx",
+      "sha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c"
+    },
+    {
+      "path": "hooks/useSelfProfile.ts",
+      "sha256": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6"
+    },
+    {
+      "path": "actions/users/self-profile.actions.ts",
+      "sha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2"
+    },
+    {
+      "path": "services/users/self-profile.service.ts",
+      "sha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17"
+    },
+    {
+      "path": "components/dashboard/DashboardLanguageLink.tsx",
+      "sha256": "9a03f4a2233eb829c192f01b936295bb193b62e6639ac848f7c42afe90bc8e1d"
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "8457239b4dfaf0e9c76576826f36d4a7e72a2ad7c97e479a45716d8af3466232"
+    }
+  ],
+  "requiredReadChain": [
+    "ProfilePage requirePermission(profile.read) + requireSession",
+    "SelfProfile useSession identity check",
+    "useSelfProfile query -> getSelfProfileAction",
+    "requireSession -> getSelfProfile -> transaction current actor/org/permission/exact session",
+    "returned fields/email/checkedAt/snapshotHash -> query data -> displayed account fields and checkedAt"
+  ],
+  "speculativeChain": [
+    "Navbar -> DashboardLanguageLink -> standard Next Link to opposite locale",
+    "Next RSC prefetch headers + sanitized initiator stack",
+    "actual user locale link navigation + independently bracketed fresh profile read required"
+  ],
+  "compiledBinding": "Derive from new sealed server-reference-manifest node export getSelfProfileAction, exact source suffix and profile route worker; never persist encryptionKey",
+  "dataProof": "Exact bridge original decoded bytes SHA equals passive CDP bufferedData+dataReceived reconstructed bytes SHA; same root.a result parsed independently, actor/org/field/email/checkedAt bound to DOM; fresh user refresh separately bracketed",
+  "historicalFailuresPreserved": true
+}

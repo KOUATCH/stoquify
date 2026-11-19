@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-28",
+  "status": "SCOPED_LOCAL_VERIFICATION_COMPLETE",
+  "database": "localhost/stoquify_pos_audit_20261026_d30f/public",
+  "baseline": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "initialFullTestsPassed": 14,
+  "targetedTestsPassed": 8,
+  "overlappingTests": 4,
+  "distinctTestsPassed": 18,
+  "evidenceStages": 22,
+  "terminalDatabaseReadbacks": 16,
+  "residualFaultTriggers": 0,
+  "scopedTypeScript": "PASS",
+  "newApplicationDefectsConfirmed": 0,
+  "applicationChanges": 0,
+  "runSourceDrift": [],
+  "unrelatedFinalSourceDrift": ["tsconfig.json"],
+  "localRequestedChecksBlocked": [],
+  "remainingBroaderGates": [
+    "Production mixed Next artifacts, stale browser/server-action transport and authenticated cross-build journeys",
+    "Hosted worker routing/drain enforcement and actual receiver deduplication/recovery receipts",
+    "Pre-baseline source-derived delivery-key transition and reviewed mapping",
+    "Previously reproduced unsupported PO admission and restoration writer combinations"
+  ],
+  "excluded": ["MTN", "open operating and rollout policy decisions", "negative-stock certification"],
+  "productionDeploymentApproved": false
+}

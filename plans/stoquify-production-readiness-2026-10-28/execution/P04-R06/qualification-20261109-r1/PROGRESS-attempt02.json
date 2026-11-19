@@ -1,0 +1,100 @@
+{
+  "at": "2026-11-10T12:02:37.726Z",
+  "package": "P04-R06",
+  "status": "evidence_published_independently_accepted_R06_blocked",
+  "candidate": "p04-r06-full-4661f767924e",
+  "previousCheckpoint": "RESULT.md",
+  "capacity": "resource-retry-ready-20261110-r3.json",
+  "review": "independent-review/RESOURCE-OUTCOME-REVIEW-retry-ready-20261110-r3.json",
+  "advancement_allowed": false,
+  "production_ready": false,
+  "pending": [],
+  "database_resume": "database/resume-attempt02.json",
+  "database_reconciliation": "database/resume-reconciliation-attempt02.json",
+  "database_review": "independent-review/DATABASE-RESUME-OUTCOME-attempt02.json",
+  "startup_note": "Startup launcher timeout retained; actual owned database identity/readiness and unchanged fixture digests independently reconciled.",
+  "observed_lint": {
+    "errors": 0,
+    "warnings": 29,
+    "evidence": "artifact-build-attempt02.log",
+    "scope": "Normal full build completed with lint, compilation and type validation;29warnings/0errors."
+  },
+  "private_client": "private-client-attempt02.json",
+  "capacity_precompile": "resource-build-precompile-attempt02.json",
+  "observed_build": {
+    "compilation": "passed",
+    "type_validation": "passed",
+    "page_generation": "passed_11",
+    "artifact": "sealed_and_verified",
+    "runtime_files": 5305,
+    "evidence": "build-result-attempt02.json"
+  },
+  "build": "build-result-attempt02.json",
+  "artifact_sha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "build_review": "independent-review/BUILD-OUTCOME-REVIEW-attempt02.json",
+  "runtime_preflight": "independent-review/RUNTIME-PREFLIGHT-OUTCOME-attempt02.json",
+  "runtime_recipe": "independent-review/RUNTIME-RECIPE-ADMISSION-attempt02.json",
+  "main_runtime": "runtime-result-attempt02.json",
+  "main_observed_matrix": "verification-matrix-attempt02.json",
+  "main_counts": {
+    "groups": 58,
+    "passed": 53,
+    "failed": 5
+  },
+  "unresolved": [
+    "Two actual403 cross-site requests changed the supplied account failure count and emitted LOGIN_FAILED; pre-existing defect independently confirmed.",
+    "Four authorized/restored browser cases retain eight CDP-confirmed cancelled RSC responses; required-consumer lifecycle attribution remains open."
+  ],
+  "additional_scope": "Three separate retained-expired-row probes for inherited list-sessions/list-accounts/unlink cases; original replay sequence preserved.",
+  "observed_review": "independent-review/OBSERVED-RUNTIME-REVIEW-attempt02.json",
+  "browser_review": "independent-review/BROWSER-OUTCOME-REVIEW-attempt02.json",
+  "expiry_supplement": "expiry-supplement-result-attempt02.json",
+  "expiry_review": "independent-review/EXPIRY-SUPPLEMENT-OUTCOME-REVIEW-attempt02-v2.json",
+  "recovery_progress": "recovery-progress-attempt03.json",
+  "credential_recovery_observed": {
+    "passed": 4,
+    "total": 4,
+    "independent_review": "independent-review/RECOVERY-OUTCOME-REVIEW-attempt03.json"
+  },
+  "confirmed_origin_defect": {
+    "evidence": "recovery-result-attempt03.json",
+    "review": "independent-review/RECOVERY-OUTCOME-REVIEW-attempt03.json",
+    "observed": "Two real cross-site browser requests denied403 with no private authority bytes/cookies or session change; each increments failedLoginAttempts and writes LOGIN_FAILED.",
+    "source_inference_limit": "Probes used valid synthetic credentials; wrong-password and lock-threshold effects not tested."
+  },
+  "browser_attempt03": {
+    "passed": 1,
+    "failed": 5,
+    "product_failure_inferred": false,
+    "next": "Reviewed browser-only attempt04 to capture exact Chromium request completion and correct null-body observer race."
+  },
+  "browser_attempt04": {
+    "passed": 2,
+    "failed": 4,
+    "notRun": 0,
+    "observations": 6,
+    "cancellations": 8,
+    "receipt": "browser-only-result-attempt04.json",
+    "review": "independent-review/BROWSER-ONLY-OUTCOME-REVIEW-attempt04.json",
+    "visual_correction": "independent-review/BROWSER-VISUAL-REVIEW-CORRECTION-attempt04.json"
+  },
+  "reconciliation": "recovery-reconciliation-attempt04-v2.json",
+  "reconciliation_erratum": "Original reconciliation count label collided with its boolean outcome; original preserved and v2 separates qualificationPassed from passed count. Raw tests unchanged.",
+  "origin_source_review": "independent-review/ORIGIN-DENIAL-INDEPENDENT-REVIEW-attempt03.json",
+  "cors_observer_limit": "independent-review/RECOVERY-CORS-OBSERVER-CAVEAT-attempt03.json",
+  "inherited_v02_auth_cases": "Nine have passing successor evidence; original V02 counts and observations unchanged.",
+  "final_review": "independent-review/FINAL-OUTCOME-REVIEW-attempt02.json",
+  "final_integrity": "final-integrity-recovery-attempt04-v3.json",
+  "cleanup": {
+    "sessionsRemoved": 18,
+    "ownedClusterStopped": true,
+    "allOwnedPortsReleased": true,
+    "receipt": "database/cleanup-attempt02.json"
+  },
+  "publication": "publication-written-attempt02.json",
+  "publication_validation": "publication-validation-attempt02.json",
+  "shared_work_register_updated": true,
+  "finishedAt": "2026-11-10T12:02:37.726Z",
+  "publication_final_review": "independent-review/FINAL-PUBLICATION-REVIEW-attempt02.json",
+  "next_action": "Refresh current credential hook/SDK origin-admission call chains, perform bounded bookkeeping repair and resolve exact browser request/consumer lifecycle evidence; rebuild after product changes."
+}

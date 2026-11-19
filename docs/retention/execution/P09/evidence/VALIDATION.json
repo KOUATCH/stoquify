@@ -1,0 +1,64 @@
+{
+  "utc": "2026-10-18T17:36:56.754Z",
+  "head": "6ee84a90c760d2864f6aef672d8b393ac2b65971",
+  "baselineFileCount": 93,
+  "unownedDrift": [
+    {
+      "path": "components/landing/cinematic-hero.tsx",
+      "sha256": "452d551735ab977557336b0d3c493708ca1e10842fbf8d3262182de7ad311fea",
+      "currentSha256": "9f3383ceaa9c5776480f93d473bc0992e6c2242ff1fe0e0d22909d13d536ee15"
+    },
+    {
+      "path": "components/landing/cinematic.css",
+      "sha256": "332e8fa02554e7cd31c657fc30a01d60e07f477790f553add377cc089b80001a",
+      "currentSha256": "6a4742e2619b4be89b15a8056aff55161aedcb7cc2ad72a55b18046effe4fdf5"
+    }
+  ],
+  "onlyP09StatusRow": true,
+  "latestPureResult": "unit-1792344882953.results.json",
+  "passed": 47,
+  "suites": 1,
+  "failed": 0,
+  "skipped": 0,
+  "exitCode": 0,
+  "startedAt": "2026-10-18T17:34:42.953Z",
+  "finishedAt": "2026-10-18T17:34:51.937Z",
+  "p01SourceDrift": [
+    ".github/workflows/ci.yml",
+    "AGENTS.md",
+    "docs/ecc/WORKFLOW.md",
+    "docs/ecc/command-registry.json",
+    "docs/ecc/test-lanes.md",
+    "package-lock.json",
+    "package.json",
+    "prisma/schema.prisma",
+    "scripts/prisma-local-restore-rehearsal.js",
+    "services/accounting/close-assurance-pack.service.ts",
+    "services/onboarding/master-data-import.service.ts",
+    "services/pos/pos.service.ts",
+    "components/dashboard/Navbar.tsx",
+    "components/dashboard/Sidebar.tsx"
+  ],
+  "owned": [
+    {
+      "path": "services/organization/authorized-archive-contract.ts",
+      "sha256": "c356c8f9bb82312731b41c4dc11d9d4a07f81ea27d359652972838974d35e08d"
+    },
+    {
+      "path": "services/organization/__fixtures__/authorized-archive.v1.json",
+      "sha256": "f38fedc231e6789e896c90505ccff390c8761155578f0a41afdcdc088b624a2b"
+    },
+    {
+      "path": "services/organization/__tests__/authorized-archive-contract.test.ts",
+      "sha256": "31188bf90791b33db06da09713f70c0acfabcee35505f319a8cb8e26c13e356a"
+    },
+    {
+      "path": "jest.retention-archive.config.cjs",
+      "sha256": "5cd82f3d77b60d07a039e39349554ba68a5deb50e6580b962208e33b4b1ea4c5"
+    },
+    {
+      "path": "docs/retention/execution/STATUS.md",
+      "sha256": "a589d1fca2ef9c15ba326c9b739a63749fb28f876790362a9a0f13284d3d3964"
+    }
+  ]
+}

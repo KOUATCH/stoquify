@@ -1,0 +1,13 @@
+const fs=require('node:fs'),path=require('node:path');
+const {spawn,execFileSync}=require('node:child_process');
+const {state,environment,root}=require('./environment.cjs');
+const s=state(),log=fs.openSync(path.join(s.work,'app-server.log'),'a');
+if(JSON.parse(fs.readFileSync(path.join(__dirname,'compiler-final-result.json'))).exitCode!==0)throw Error('Successful compiled candidate required');
+const env=environment(s,'production');if(process.argv.includes('--disabled'))env.COMMAND_CENTER_PERSISTENCE_ENABLED='false';
+const child=spawn(process.execPath,[path.join(root,'node_modules/next/dist/bin/next'),'start','--hostname','127.0.0.1','--port',String(s.appPort)],{cwd:s.candidate,env,stdio:['ignore',log,log],windowsHide:true});fs.closeSync(log);
+fs.writeFileSync(path.join(s.work,'server-pid.json'),JSON.stringify({wrapper:process.pid,child:child.pid,candidate:s.candidate}));
+const stopFile=path.join(s.work,'stop-server');
+const timer=setInterval(()=>{if(fs.existsSync(stopFile)){clearInterval(timer);fs.unlinkSync(stopFile);try{execFileSync('taskkill',['/PID',String(child.pid),'/T','/F'],{windowsHide:true,stdio:'ignore'})}catch{} }},1000);
+child.on('exit',code=>{clearInterval(timer);process.exitCode=code===null?0:code});
+child.on('error',error=>{clearInterval(timer);console.error(error.message);process.exitCode=1});
+console.log(JSON.stringify({origin:s.origin,childPid:child.pid,featureEnabled:env.COMMAND_CENTER_PERSISTENCE_ENABLED==='true'}));

@@ -1,0 +1,79 @@
+{
+  "passed": true,
+  "scope": "Combined authenticated synthetic journey and recovery evidence, not one uninterrupted passing run",
+  "journeySource": "browser-attempt-04.json",
+  "journeyChecks": [
+    {
+      "clientGrant": "Client owner granted named preparer/reviewer through real existing protected form"
+    },
+    {
+      "setup": "Draft, assignment, explicit enrollment and activation; assignment alone did not create a link"
+    },
+    {
+      "handover": "Old assignment ended, incoming consent not transferred; explicit second enrollment; work rows unchanged"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "geometry": {
+        "client": 1112,
+        "scroll": 1112
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "geometry": {
+        "client": 358,
+        "scroll": 358
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "geometry": {
+        "client": 1112,
+        "scroll": 1112
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "geometry": {
+        "client": 358,
+        "scroll": 358
+      },
+      "keyboardRefresh": true,
+      "axeViolations": []
+    },
+    {
+      "revocation": "Real client owner form revokes enrolled incoming mandate"
+    },
+    {
+      "invitation": "Actual queued invitation, synthetic worker-failure state; retry visible, acceptance still pending, no grant and no provider called"
+    }
+  ],
+  "recoverySource": "browser-recovery.json",
+  "recoveryChecks": [
+    "Keyboard confirmation starts on Cancel; Escape returns focus to the triggering control without mutation",
+    "Persisted synthetic mandate expiry renders Expired after reauthorization",
+    "Aborted server-action read clears private cards; Retry reloads current authorized metadata",
+    "Persisted role removal replaces the entire workspace with the existing route permission boundary; restoring permission and reloading recovers",
+    "Persisted accounting-module removal denies and clears metadata; restoring the module recovers",
+    "Persisted session deletion denies subsequent reads and clears private cards"
+  ],
+  "harnessFailuresRetained": true,
+  "providerDeliveryPerformed": false,
+  "visualInspection": [
+    "engagement-en-390.png",
+    "engagement-fr-390.png",
+    "engagement-expiry-detail.png",
+    "permission-denied.png"
+  ]
+}

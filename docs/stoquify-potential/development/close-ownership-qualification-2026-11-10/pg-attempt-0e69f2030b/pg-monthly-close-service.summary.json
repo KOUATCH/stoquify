@@ -1,0 +1,76 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "actual-approved-opening-and-replay",
+      "passed": true
+    },
+    {
+      "name": "actual-collections-and-provider-links",
+      "passed": true
+    },
+    {
+      "name": "electronic-claim-denials-no-effects",
+      "passed": true
+    },
+    {
+      "name": "actual-concurrent-claim-exclusion",
+      "passed": true
+    },
+    {
+      "name": "assessment-before-provider-and-schedule-evidence",
+      "passed": true
+    },
+    {
+      "name": "actual-monthly-import-independent-signatures",
+      "passed": true
+    },
+    {
+      "name": "actual-bank-bs-approval-certification-and-seal",
+      "passed": true
+    },
+    {
+      "name": "actual-closed-period-denial-and-retained-recovery",
+      "passed": true
+    }
+  ],
+  "counts": {
+    "journals": 4,
+    "customerSettlements": 3,
+    "claimedProviderTransactions": 2,
+    "signedReconciliationRuns": 2,
+    "approvedBankBalanceEvidence": 1,
+    "certifiedExports": 1,
+    "periodCloseEvents": 1,
+    "periodReopenEvents": 0,
+    "providerAccounts": 2,
+    "activeOpeningExecutions": 1,
+    "openingReceivables": 1,
+    "sales": 0,
+    "payrollRuns": 0,
+    "statutoryCertifiedDocuments": 0
+  },
+  "auxiliary": {
+    "nativeClaimDenialsUnchanged": true,
+    "injectedClaimFailureRolledBack": true,
+    "crossWorkflowWinner": "POS",
+    "crossWorkflowContenders": 2,
+    "crossWorkflowFinancialWinners": 1,
+    "twoCollectionContenders": 2,
+    "twoCollectionFinancialWinners": 1,
+    "losingContenderCode": "CONFLICT",
+    "afterCrossStock": {
+      "quantity": "1.000",
+      "averageCost": "10.00",
+      "value": "10.00"
+    }
+  },
+  "earnedInternalTerminalStates": true,
+  "seededInternalFinancialTerminalStates": false,
+  "syntheticProviderConfirmationFacts": true,
+  "privateEvidence": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-ownership-20261110-0e69f2030b\\monthly-close-service-evidence.private.json",
+    "sha256": "a43e4a8a20e358e07e9e5a36b98c28f824bd7a83b08090cb9d447d01bb1df496",
+    "bytes": 38678
+  }
+}

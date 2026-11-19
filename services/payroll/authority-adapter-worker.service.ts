@@ -1,6 +1,7 @@
 import "server-only";
 import { assertPayrollProductionAdmissionInTx } from "./payroll-production-admission";
 import { NotFoundError } from "@/services/_shared/action-errors";
+import { evaluateSensitiveAction, assertSensitiveActionAllowed } from "@/services/controls/sensitive-action.service";
 
 import { z } from "zod";
 
@@ -28,10 +29,10 @@ const dateInputSchema = z.union([
 export const payrollAuthorityAdapterWorkerInputSchema = z.object({
   organizationId: idSchema,
   workerId: idSchema,
-  actorId: idSchema.optional(),
+  actorId: idSchema,
   actorPermissions: z
     .array(z.string().trim().min(1))
-    .default(["payroll.declarations.manage"]),
+    .default([]),
   amendmentApprovedById: idSchema.optional(),
   limit: z.number().int().positive().max(50).default(10),
   leaseSeconds: z.number().int().positive().max(900).default(60),
@@ -389,7 +390,15 @@ export async function processPayrollAuthorityAdapterWorkerBatch(
 ) {
   const parsed = payrollAuthorityAdapterWorkerInputSchema.parse(input);
   const now = parseDate(parsed.now, new Date());
-  const actorId = parsed.actorId ?? parsed.workerId;
+  const actorId = parsed.actorId;
+  // A worker identity is not permission or evidence of recent authentication.
+  // Validate the trusted caller's authority before leasing or external effects.
+  assertSensitiveActionAllowed(evaluateSensitiveAction({
+    action: "payroll.declaration.lifecycle", actorId,
+    organizationId: parsed.organizationId, actorPermissions: parsed.actorPermissions,
+    lastAuthAt: parsed.lastAuthAt, now,
+    resourceType: "PayrollAuthorityWorker", resourceId: parsed.workerId,
+  }));
   const lastAuthAt = parseDate(parsed.lastAuthAt, now);
   const adapter = deps.adapter ?? payrollSandboxAuthorityAdapter;
   const leaseExecutions =

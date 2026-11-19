@@ -1,0 +1,37 @@
+{
+  "columns": [
+    {
+      "column_name": "canonicalContent",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "canonicalContentSha256",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "exportRequestHash",
+      "data_type": "text",
+      "is_nullable": "YES"
+    }
+  ],
+  "trigger": [
+    {
+      "tgname": "close_pack_exports_retain_canonical_trigger",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER close_pack_exports_retain_canonical_trigger BEFORE DELETE OR UPDATE ON public.close_pack_exports FOR EACH ROW EXECUTE FUNCTION close_pack_exports_retain_canonical()"
+    }
+  ],
+  "constraint": [
+    {
+      "conname": "close_pack_exports_canonical_retention_shape",
+      "definition": "CHECK ((((\"canonicalContent\" IS NULL) AND (\"canonicalContentSha256\" IS NULL) AND (\"exportRequestHash\" IS NULL)) OR ((\"canonicalContent\" IS NOT NULL) AND (length(\"canonicalContent\") > 0) AND (\"canonicalContentSha256\" IS NOT NULL) AND (\"canonicalContentSha256\" ~ '^sha256:[a-f0-9]{64}$'::text) AND (\"exportRequestHash\" IS NOT NULL) AND (\"exportRequestHash\" ~ '^sha256:[a-f0-9]{64}$'::text) AND (\"canonicalContentSha256\" = ('sha256:'::text || encode(sha256(convert_to(\"canonicalContent\", 'UTF8'::name)), 'hex'::text))))))"
+    }
+  ],
+  "beforeInventory": {
+    "triggers": 142,
+    "checks": 231,
+    "functions": 76
+  }
+}

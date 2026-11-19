@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T15:03:04.904Z",
+  "reviewer": "/root/r06_review",
+  "passed": false,
+  "observationAccepted": true,
+  "scope": "Actual initial dependency-staging entry stopped before D directory creation or physical copy",
+  "files": [
+    {
+      "path": "dependency-staging.json",
+      "sha256": "ba5fc83e83fc787a6735ea1b33a12b10620b34dba9cb3a80c82a7bd67e5bf78d"
+    },
+    {
+      "path": "resource-precopy.json",
+      "sha256": "7198918ce95570a776838055602cb3ee93b1961282b49d7f4eb68a70e7151703"
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-RECIPE-ADMISSION.json",
+      "sha256": "eae9b8c370f6d743632a53813ef8f3120dfbab549d41e3c13ffe0017aea5ee31"
+    }
+  ],
+  "observed": {
+    "freePhysicalGiB": 4.430408477783203,
+    "freeCommitGiB": 10.062675476074219,
+    "requiredPhysicalGiB": 6,
+    "requiredCommitGiB": 12,
+    "failures": [
+      "physical_memory_headroom",
+      "commit_headroom"
+    ],
+    "successorDDirectoryAbsent": true,
+    "copyLogAbsent": true,
+    "copyStarted": false,
+    "candidateCaptureStarted": false,
+    "databaseStarted": false
+  },
+  "limits": [
+    "Initial earlier host observation did not guarantee this later entry; failed receipt retained.",
+    "No build or runtime capacity admission follows.",
+    "Any retry requires a separately named reviewed recipe and fresh applicable resource proof; no failed receipt overwritten."
+  ],
+  "qualificationPassed": false
+}

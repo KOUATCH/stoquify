@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "node:crypto"
+import type { Prisma } from "@prisma/client"
 import { db } from "@/prisma/db"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
@@ -83,7 +84,7 @@ type PublicReceiptTokenRegistryClient = {
   }
 }
 
-type RegistryClientInput = PublicReceiptTokenRegistryClient | typeof db
+type RegistryClientInput = PublicReceiptTokenRegistryClient | Pick<Prisma.TransactionClient, "salesOrder" | "publicReceiptAccessToken" | "auditLog">
 
 export function hashPublicReceiptToken(value: string) {
   return createHash("sha256").update(value).digest("hex")

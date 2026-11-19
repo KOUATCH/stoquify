@@ -1,0 +1,25 @@
+{
+  "environment": "Windows PowerShell; repository root; synthetic localhost database only",
+  "workflow": {
+    "command": "npm run agent:workflow:check",
+    "exitCode": 0,
+    "sessionId": 46398,
+    "evidenceSource": "Execution-tool completion observed before application/database checks"
+  },
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --project tsconfig.remaining-local.json --noEmit --incremental false",
+    "exitCode": 0,
+    "sessionId": 82271,
+    "diagnostics": [],
+    "scope": "Final B6 authority/recovery and B7 POS component, imported source and listed tests",
+    "evidenceSource": "Execution-tool completion after final UI source change"
+  },
+  "diffCheck": {
+    "command": "git diff --check -- actions/pos/tender.actions.ts services/pos/tender-write-access.ts services/pos/pos.service.ts components/pos/ProfessionalPOSSystem.tsx actions/pos/__tests__/tender.actions.test.ts services/pos/__tests__/pos.service.test.ts",
+    "exitCode": 0,
+    "notes": "Only existing Git CRLF normalization warnings; no whitespace errors"
+  },
+  "functionalBrowser": {"sessionId": 6233, "exitCode": 0},
+  "finalAccessibility": {"sessionId": 57713, "exitCode": 0},
+  "note": "This receipt records observed tool completions; machine-readable Jest and browser outputs are retained separately. It is not a CI or deployment approval."
+}

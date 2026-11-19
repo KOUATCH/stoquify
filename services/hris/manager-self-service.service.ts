@@ -54,7 +54,7 @@ export async function getHrisManagerSelfService(input: HrisManagerSelfServiceInp
     getManagedOperationalTimeInbox(parsed),
   ])
 
-  const allowedEmployeeIds = new Set(directory.employees.map((employee) => employee.id))
+  const allowedEmployeeIds = directory.accessScope.employeeIds === null ? null : new Set(directory.accessScope.employeeIds)
   const managedLocationsById = new Map(
     directory.accessScope.managedLocations.map((location) => [location.id, location]),
   )
@@ -96,7 +96,7 @@ export async function getHrisManagerSelfService(input: HrisManagerSelfServiceInp
   })
 
   const approvals = inbox.items
-    .filter((item) => allowedEmployeeIds.has(item.employee.id))
+    .filter((item) => allowedEmployeeIds === null || allowedEmployeeIds.has(item.employee.id))
     .map((item) => ({
       domain: item.domain,
       stage: item.stage,
@@ -131,7 +131,7 @@ export async function getHrisManagerSelfService(input: HrisManagerSelfServiceInp
         code: location.code,
       })),
       limitations: [...directory.accessScope.limitations],
-      directReportsClaimed: false as const,
+      directReportsClaimed: directory.accessScope.authority.kind === "REPORTING_RELATIONSHIP",
     },
     summary: {
       workforceCount: workforce.length,
@@ -156,8 +156,8 @@ export async function getHrisManagerSelfService(input: HrisManagerSelfServiceInp
         authority: "HRIS_PEOPLE_MANAGE_AND_SEPARATION_OF_DUTIES",
       },
       reportingLineWorkflows: {
-        available: false as const,
-        reasonCode: "REPORTING_LINE_AUTHORITY_NOT_MODELED",
+        available: directory.accessScope.authority.reportingLineAuthority,
+        reasonCode: directory.accessScope.authority.reportingLineAuthority ? "EFFECTIVE_MANAGER_AUTHORITY" : "NO_REPORTING_LINE_AUTHORITY",
       },
       leaveRequests: {
         available: true as const,

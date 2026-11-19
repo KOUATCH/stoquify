@@ -1,3 +1,4 @@
+import { lockHrisReviewContractInTx, lockHrisReviewEmployeeInTx } from "@/services/hris/review-lock.service"
 import "server-only"
 
 import {
@@ -17,6 +18,7 @@ import {
   NotFoundError,
 } from "@/services/_shared/action-errors"
 import {
+  hashBusinessPayload,
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
@@ -514,7 +516,13 @@ function mapContractForWorkflow(
 }
 
 function activeContractId(contracts: readonly PayrollContractWorkflowContract[]) {
-  return contracts.find((contract) => contract.status === PayrollContractStatus.ACTIVE)?.id ?? null
+  return contracts.find(currentlyEffectiveContract)?.id ?? null
+}
+
+function currentlyEffectiveContract(contract: PayrollContractWorkflowContract) {
+  const today = new Date().toISOString().slice(0, 10)
+  return contract.status === PayrollContractStatus.ACTIVE && contract.effectiveFrom.slice(0, 10) <= today
+    && (!contract.effectiveTo || contract.effectiveTo.slice(0, 10) >= today)
 }
 
 function contractEventPayload(
@@ -670,7 +678,7 @@ export async function getEmployeeContractWorkflow(
     summary: {
       totalEmployees: mappedEmployees.length,
       linkedEmployees: mappedEmployees.filter((employee) => employee.userMappingStatus === "linked").length,
-      activeContracts: allContracts.filter((contract) => statusSupportsPayrollEligibility(contract.status)).length,
+      activeContracts: allContracts.filter(currentlyEffectiveContract).length,
       payrollEligible: mappedEmployees.filter((employee) => employee.payrollEligible).length,
       redactedContracts: allContracts.filter((contract) => contract.redactions.length > 0).length,
     },
@@ -750,7 +758,20 @@ export async function createPayrollContract(
     throw new BusinessRuleError("Signed document evidence must be approved through the HRIS document workflow.")
   }
 
+  const requestHash = hashBusinessPayload({...parsed, actorId: undefined, actorPermissions: undefined, idempotencyKey: undefined})
   return inTransaction(client, async (tx) => {
+    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${"hris-contract:" + parsed.organizationId}, 0))::text`
+    await lockHrisReviewEmployeeInTx(tx, parsed.organizationId, parsed.employeeId)
+    if (parsed.idempotencyKey) {
+      const retained = await tx.businessEvent.findFirst({where: {organizationId: parsed.organizationId, idempotencyKey: parsed.idempotencyKey, eventType: "payroll.contract.lifecycle.created", status: "APPLIED"}})
+      if (retained) {
+        const payload = retained.payload as Record<string, unknown>
+        if (payload.requestHash !== requestHash) throw new ConflictError("Contract request changed after saving. Review before submitting again.")
+        const contract = await tx.payrollContract.findFirst({where: {id: String(payload.contractId), organizationId: parsed.organizationId, employeeId: parsed.employeeId, deletedAt: null}})
+        if (!contract) throw new NotFoundError("Saved contract is no longer available.")
+        return {contract: mapContractForWorkflow(contract, salaryRedactionFor({actorPermissions: parsed.actorPermissions, field: "contracts.baseSalary"})), businessEventId: retained.id}
+      }
+    }
     const employee = await tx.payrollEmployee.findFirst({
       where: {
         id: parsed.employeeId,
@@ -829,6 +850,7 @@ export async function createPayrollContract(
       contract,
       documentHash: parsed.signedDocumentHash ?? null,
       payload: contractEventPayload("created", contract, {
+        requestHash,
         employeeNumber: employee.employeeNumber,
         sourceReference: parsed.sourceReference ?? null,
       }),
@@ -879,6 +901,7 @@ export async function updatePayrollContract(
   assertPermission(parsed.actorPermissions, MANAGE_PERMISSIONS, "contract update")
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewContractInTx(tx, parsed.organizationId, parsed.contractId)
     const existing = await tx.payrollContract.findFirst({
       where: {
         id: parsed.contractId,
@@ -1025,6 +1048,7 @@ export async function terminatePayrollContract(
   const effectiveTo = parseDate(parsed.effectiveTo, "effectiveTo")
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewContractInTx(tx, parsed.organizationId, parsed.contractId)
     const existing = await tx.payrollContract.findFirst({
       where: {
         id: parsed.contractId,
@@ -1117,6 +1141,7 @@ export async function requestPayrollContractActivationFromHris(
   assertPermission(parsed.actorPermissions, HRIS_MANAGE_PERMISSIONS, "HRIS contract activation request")
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewContractInTx(tx, parsed.organizationId, parsed.contractId, parsed.employeeId)
     const existing = await tx.payrollContract.findFirst({
       where: {
         id: parsed.contractId,
@@ -1221,6 +1246,7 @@ export async function approvePayrollContractActivationFromHris(
   assertPermission(parsed.actorPermissions, HRIS_MANAGE_PERMISSIONS, "HRIS contract activation approval")
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewContractInTx(tx, parsed.organizationId, parsed.contractId, parsed.employeeId)
     const existing = await tx.payrollContract.findFirst({
       where: {
         id: parsed.contractId,

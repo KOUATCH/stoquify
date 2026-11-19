@@ -1,0 +1,51 @@
+{
+  "at": "2026-11-10T15:47:58.603Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Accepted actual physical isolated dependency staging only",
+  "receiptSha256": "0863e3fbe2b5c0426f4079aa8fc433478c32d6a54b2849e0369ff03f8366ecb8",
+  "files": [
+    {
+      "path": "dependency-staging-attempt03.json",
+      "sha256": "0863e3fbe2b5c0426f4079aa8fc433478c32d6a54b2849e0369ff03f8366ecb8"
+    },
+    {
+      "path": "resource-precopy-attempt03.json",
+      "sha256": "05aa9734487b9dc3ec3670276c1d0b2c60e0fedbcc1b1b190bfc00ce35efb0b7"
+    },
+    {
+      "path": "dependency-copy.log",
+      "sha256": "a81015b03833279a9a6cf01f2c5ae11363b587cb15eaa4d95629632bba6b05a1"
+    },
+    {
+      "path": "dependency-input-manifest.json.gz",
+      "sha256": "306dafa0271600fb71cd921ee93542a695dc9eddc616ef21c72f0d995e788030"
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-RECIPE-ADMISSION-attempt03.json",
+      "sha256": "fbf39c9fb8363685cffb362cac9afa7d6db9784cb6ccabb6f2a00698cdf440f6"
+    }
+  ],
+  "facts": {
+    "source": "D:\\p04-r06-fullapp-20261110-r2\\source\\node_modules",
+    "destination": "D:\\p04-r06-fullapp-20261110-r3\\dependencies",
+    "files": 152806,
+    "contentBytes": 2998378443,
+    "physicalCopyExact": true,
+    "frozenDependencyTreeUnchanged": true,
+    "copyExitCode": 1,
+    "runnerExitCode": 0,
+    "actualFreeBytesAfterCopy": 13455106048,
+    "buildReserveBytes": 12884901888,
+    "preservedFailedEntry": true,
+    "oldClusterStopped": true,
+    "newSourceAndPrivateDirectoriesAbsent": true,
+    "currentPackageLockSchemaBindingsUnchanged": true
+  },
+  "method": "Reconciled exact admitted recipe hashes, actual copy log, runner result, capacity and archive digests, source/dependency manifest identities and bounded live path/state checks. Accepted full destination/baseline hash equality from the reviewed executed runner; did not duplicate152806-file traversal.",
+  "nextEligible": "Run admitted late full-source refresh and bounded impact/metadata inspection; candidate capture still awaits their independent outcome and exact capture recipe.",
+  "newApplicationExecution": false,
+  "newDatabaseExecution": false,
+  "candidateCaptureAccepted": false,
+  "qualificationPassed": false
+}

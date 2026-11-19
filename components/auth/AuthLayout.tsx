@@ -41,7 +41,8 @@ export default function AuthLayout({ children, variant = "login", className }: A
     <main className={cn("auth-shell min-h-screen bg-[var(--auth-canvas)] text-[var(--auth-text)]", hasWorkspaceGuide ? "auth-contour-shell" : "auth-shell-grid", className)}>
       <header className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
         <Link href={localizePath("/", locale)} className="block min-w-0 max-w-[190px] sm:max-w-none">
-          <StoquifyLogo className="w-full" theme={isDarkTheme ? "dark" : "light"} width={212} height={48} tagline={pageCopy.common.brandSubtitle} />
+          <StoquifyLogo className="w-full dark:hidden" theme="light" width={212} height={48} tagline={pageCopy.common.brandSubtitle} />
+          <StoquifyLogo className="hidden w-full dark:inline-flex" theme="dark" width={212} height={48} tagline={pageCopy.common.brandSubtitle} />
         </Link>
         <div className="flex shrink-0 items-center gap-2">
           <Link href={targetLocaleHref} className="flex min-h-11 items-center gap-2 rounded-lg border border-[#9fb4bb]/35 px-3 text-sm font-semibold uppercase dark:border-white/20" aria-label={`${pageCopy.common.languageAria}: ${targetLocale.toUpperCase()}`}>

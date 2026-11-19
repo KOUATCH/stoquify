@@ -1,0 +1,40 @@
+{
+  "reviewedAt": "2026-11-04T09:33:22.8415105Z",
+  "reviewer": "r03_review",
+  "approvedForExecution": true,
+  "scope": "Fresh native retry02; correct fixture state-snapshot predicate only",
+  "files": [
+    {
+      "path": "database/run-native-retry02.cjs",
+      "sha256": "48a9b94ad9a3b196b4c1418c3b8624e7b18a9a9cebf065908b11d24a8a015d39"
+    },
+    {
+      "path": "database/jest.native-retry02.config.cjs",
+      "sha256": "b577d809a93d2524845a1638318b5ad8461b0da18d6d9bdcd23459b6140ac5f0"
+    },
+    {
+      "path": "database/isolation-guard.cjs",
+      "sha256": "0cf745ccdb7863c990c0795f1a4c824bc65479de74f8fe0948022c25e8d97906"
+    },
+    {
+      "path": "database/item-errors-retry02.postgres.test.ts",
+      "sha256": "37d393a208d360bf5b03ce6f2d42ed661f1406d86ee0846c223f358115f525e8"
+    },
+    {
+      "path": "database/RETRY02.md",
+      "sha256": "983e474995f81bdfa265d4d0f5fe1d021075b49c9f982c4479e0a7452bdbc2b4"
+    }
+  ],
+  "target": ".codex-tmp/p04r03-qualification-20261104-r3; stoquify_local_p04_r03_20261104_r3",
+  "expectedTests": 43,
+  "businessRelationGroups": 24,
+  "reviewBasis": "Exact retry01-to-retry02 diffs inspected: only target/output names and inventory_levels tenant traversal through items corrected; no production changes or weakened assertions",
+  "schemaPredicateReview": "All23explicit table mappings/predicate fields independently checked against current Prisma schema; UserRoles separately traverses user relation",
+  "previousAttempt": "121migrations passed;43tests failed before action assertions in state snapshot; clean cluster stop/portrelease recorded; no product acceptance",
+  "retainedControls": [
+    "All prior isolation/target/source/migration/cleanup controls",
+    "Same43action assertions retained",
+    "Earlier sources/receipts/fixtures retained; no reset"
+  ],
+  "noProductOrTestEditsByReviewer": true
+}

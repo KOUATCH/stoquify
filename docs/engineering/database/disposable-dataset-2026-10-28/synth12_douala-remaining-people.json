@@ -1,0 +1,131 @@
+{
+  "organizationId": "synth12_douala",
+  "scenarios": [
+    {
+      "scenario": "reviewed-encrypted-employee-document",
+      "result": {
+        "documentId": "70db4e18-1384-42e7-8c79-28645caeb09d",
+        "status": "AVAILABLE",
+        "originalSha256": "e1a2c09e7a96ec934b25ec0e4b5d33b53247391535b797e4b3fe2b5e21c14236",
+        "encryptedStorage": true,
+        "downloadRoundTrip": true,
+        "scannerIsSynthetic": true
+      }
+    },
+    {
+      "scenario": "personal-correction-independent-rejection",
+      "result": {
+        "caseId": "649800c3-f973-4dcc-9e13-e415f1b5adc5",
+        "status": "REJECTED",
+        "employeeUnchanged": true
+      }
+    },
+    {
+      "scenario": "onboarding-lifecycle-task-completion",
+      "result": {
+        "tasks": [
+          {
+            "id": "6c7befda-32ec-411f-9300-3f7a339a08b1",
+            "code": "HR_PREPARATION",
+            "status": "COMPLETED"
+          },
+          {
+            "id": "22f1bf01-5e8a-40c1-9865-75717b357de2",
+            "code": "APPLICATION_ACCESS",
+            "status": "COMPLETED"
+          },
+          {
+            "id": "bc2603e2-f117-4377-8df5-f03a003d3273",
+            "code": "EXTERNAL_ACCESS",
+            "status": "COMPLETED"
+          },
+          {
+            "id": "3fc8418a-3f54-4700-a53f-649c4ba9b928",
+            "code": "ASSETS",
+            "status": "COMPLETED"
+          }
+        ],
+        "authoritativeApprovalEventId": "cmvsezr0c01nbmatkz7dvqj67",
+        "externalProvisioningPerformed": false
+      }
+    },
+    {
+      "scenario": "company-holiday-and-reviewer-grant",
+      "result": {
+        "calendarId": "cmvtglt9x002dmav02y5pbq65",
+        "holidayId": "cmvtglt9y002fmav0kn1ca76s",
+        "reviewerGrantId": "sha256:0236ea563dd361e276c169006337d3ada2c24eafd1ae31bf20d6d9ea350b95a1",
+        "officialHolidayClaimed": false,
+        "schedulesChanged": false
+      }
+    },
+    {
+      "scenario": "rejected-attendance-source-and-resolved-anomaly",
+      "result": {
+        "batchId": "cmvtgltvr002pmav0qsqpe28r",
+        "anomalyId": "cmvtgltza002tmav0z87lfdy8",
+        "status": "RESOLVED",
+        "authoritativeEntryId": "cmvsf30b10748mausmvtlvn8g",
+        "rawEntryChanged": false
+      }
+    },
+    {
+      "scenario": "draft-nonstatutory-compensation",
+      "result": {
+        "rubriqueId": "cmvtglu94002zmav0ohel26us",
+        "assignmentId": "cmvtglur70039mav0fzbih245",
+        "status": "DRAFT",
+        "statutoryTreatmentApproved": false
+      }
+    },
+    {
+      "scenario": "supplier-csv-validation-and-import",
+      "result": {
+        "batches": [
+          {
+            "batchId": "cmvtgluz5003lmav01qnrg9hq",
+            "status": "BLOCKED",
+            "sourceSha256": "9bd8f2448fd692929e655d0b7ed422c374fcf0313ed44f99fe8dd415b1e924e9"
+          },
+          {
+            "batchId": "cmvtglv43003tmav06pe4gn2r",
+            "status": "COMMITTED",
+            "sourceSha256": "946cc1ae73aba24c8f8454467379d5625ec80e15a5f571af30c38b5c52caff9a"
+          }
+        ],
+        "approvalPolicy": "HIGH_RISK_SUPPLIER_INDEPENDENT_REVIEW",
+        "noOpeningBalanceOrTransactionImported": true
+      }
+    },
+    {
+      "scenario": "unsent-user-invitation-outbox",
+      "result": {
+        "inviteId": "cmvth3qxz0019ma0w1arzalh9",
+        "roleId": "role_1dc6ed54440a759080016f93e9b1fa9ed7d65aaf5ae975f48843cbbba37f7a6f",
+        "issueId": "cmvth3qyi001bma0wwru2vdef",
+        "delivery": "PENDING",
+        "replayed": true,
+        "externalEmailSent": false,
+        "legacyPresenceRoleUnchanged": true
+      }
+    }
+  ],
+  "issues": [],
+  "blockedTables": [
+    "payroll_periods",
+    "payroll_attendance_snapshots",
+    "payroll_runs",
+    "payroll_run_lines",
+    "payroll_run_transitions",
+    "payroll_payslips",
+    "payroll_payslip_lines",
+    "payroll_declarations",
+    "payroll_declaration_evidence",
+    "payroll_payment_batches",
+    "payroll_payment_allocations",
+    "payroll_employee_balance_cases",
+    "payroll_employee_balance_events",
+    "hris_payroll_handoff_packages",
+    "hris_payroll_handoff_receipts"
+  ]
+}

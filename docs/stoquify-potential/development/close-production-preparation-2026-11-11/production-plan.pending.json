@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "purpose": "hardened-close-production",
+  "evidenceMaxAgeHours": 24,
+  "target": {
+    "provider": null,
+    "projectId": null,
+    "region": null,
+    "origin": null,
+    "artifactFormat": "stoquify-standalone-v2",
+    "platform": null,
+    "architecture": null,
+    "nodeMajor": null
+  },
+  "candidate": {
+    "directory": null,
+    "sourceManifestSha256": null,
+    "artifactDirectory": null,
+    "artifactSha256": null,
+    "buildId": null,
+    "catalogSha256": null
+  },
+  "database": {
+    "provider": null,
+    "projectId": null,
+    "branchId": null,
+    "endpointHost": null,
+    "environment": "production",
+    "connectionMode": "direct",
+    "schema": "public"
+  },
+  "delivery": {
+    "statementChannel": "email",
+    "resendAccountId": null,
+    "statementSender": null,
+    "inviteSender": null
+  },
+  "evidence": {
+    "build": null,
+    "worker": null,
+    "hosting": null,
+    "database": null,
+    "recovery": null,
+    "sender": null,
+    "scheduler": null,
+    "statementAcceptance": null,
+    "inviteAcceptance": null
+  },
+  "localBaseline": {
+    "qualificationPath": "../close-integrity-release-candidate-2026-11-10-r2/FINAL_QUALIFICATION.json",
+    "qualificationSha256": "107771d7164d7d419c51b8c3a1b90d9632c3f1754e1f5cbea6148c900c992609",
+    "sourceManifestSha256": "cfcac6d0dfa217f3ad18ff27d16e46a55aa002bcbf77c91afc7e0b7082bfd544",
+    "artifactSha256": "6d0147749362b359969b6113bf3e6a94918dc6df8d19ee1fcc5c208db4724d2f",
+    "buildId": "4CtAnxpXoochpr8CsDOPH",
+    "interpretation": "Preserved historical Windows/x64 local-origin baseline. Subsequent source changes require a new target-compatible web and worker build and qualification. This object is context only and cannot satisfy any production evidence field."
+  }
+}

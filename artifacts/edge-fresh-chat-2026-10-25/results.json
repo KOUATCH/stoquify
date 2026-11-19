@@ -1,0 +1,93 @@
+{
+  "date": "2026-10-25",
+  "chatId": "01a17413-e483-7f83-b9d1-398c290db867",
+  "sourceChatId": "01a1491c-9a5e-78a3-b2a2-647195f18a8a",
+  "startedAt": "2026-10-25T17:22:16.814Z",
+  "finishedAt": "2026-10-25T17:23:24.265Z",
+  "origin": "http://localhost:3000",
+  "browser": {
+    "name": "Edge",
+    "id": "2",
+    "type": "extension",
+    "extensionInstanceId": "4479253f-ba43-4f7d-bba9-adad78c8a0af",
+    "pluginVersionPreviouslyReported": "26.1021.31345",
+    "currentPluginVersionIndependentlyRechecked": false
+  },
+  "sourceRevision": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "workingTree": "Extensively dirty before task; existing changes preserved.",
+  "acceptance": {
+    "requiredCompleteCycles": 2,
+    "completedCycles": 0,
+    "passed": false,
+    "repairProven": false,
+    "stopReason": "First navigation reproduced Page.navigate timeout. Stopped navigation retries as instructed."
+  },
+  "checks": [
+    {
+      "operation": "cycle 1 landing create and navigate",
+      "startedAt": "2026-10-25T17:22:16.817Z",
+      "ms": 11085,
+      "ok": false,
+      "requestedUrl": "http://localhost:3000/en",
+      "error": "Error: Timed out after 10000ms waiting for CDP command Page.navigate.",
+      "actualUrl": "about:blank",
+      "actualTitle": "about:blank",
+      "tabId": "1861543891"
+    },
+    {
+      "operation": "post-failure landing screenshot",
+      "startedAt": "2026-10-25T17:22:38.319Z",
+      "ms": 236,
+      "ok": true,
+      "actualUrl": "about:blank",
+      "actualTitle": "about:blank",
+      "file": "failed-landing.jpg"
+    }
+  ],
+  "renderedIdentity": {
+    "requested": "Stoquify landing",
+    "actual": "Empty dark about:blank surface; no Stoquify content",
+    "screenshotInspected": true
+  },
+  "missingChecks": [
+    "Cycle 1 landing rendered page screenshot and identity",
+    "Cycle 1 workflows navigation, screenshot and identity",
+    "Cycle 1 login navigation, screenshot and identity",
+    "Cycle 1 register navigation, screenshot and identity",
+    "Entire cycle 2: landing, workflows, login and register"
+  ],
+  "preview": {
+    "sandboxAttempt": {
+      "startedAt": "2026-10-25T17:22:48.8405256+00:00",
+      "requestedUrl": "http://localhost:3000/en",
+      "ms": 1681,
+      "ok": false,
+      "error": "An attempt was made to access a socket in a way forbidden by its access permissions. (localhost:3000)"
+    },
+    "approvedLocalHttpAttempt": {
+      "startedAt": "2026-10-25T17:23:02.9069585+00:00",
+      "requestedUrl": "http://localhost:3000/en",
+      "actualUrl": "http://localhost:3000/en",
+      "status": 200,
+      "ms": 6684,
+      "ok": true,
+      "title": "Stoquify | Sales, stock, HRIS and OHADA accounting"
+    },
+    "interpretation": "HTTP availability only, not rendered browser verification"
+  },
+  "workflowCheck": {
+    "command": "npm run agent:workflow:check",
+    "exitCode": 0,
+    "result": "passed; 196 package scripts outside reviewed manifest"
+  },
+  "unitTests": "Not run; no application source changes",
+  "databaseTests": "Not run",
+  "cleanup": {
+    "ok": true,
+    "ms": 20,
+    "operation": "close only task-owned tab"
+  },
+  "managedSettingsChanged": false,
+  "applicationSourceChanged": false,
+  "externalReportSent": false
+}

@@ -1,5 +1,6 @@
 import { requireFreshAuth } from "@/lib/security/auth-session"
 import { requirePermission } from "@/lib/security/rbac"
+import { purchaseReceivingAuthority } from "@/services/purchase-order/purchase-receiving-authority"
 import {
   postPurchaseReturn,
   postSupplierCreditNote,
@@ -8,6 +9,7 @@ import {
 } from "@/services/purchasing/purchase-return-credit.service"
 import {
   postPurchaseReturnAction,
+  postPurchaseReturnFromReceiptAction,
   postSupplierCreditNoteAction,
   reversePurchaseReturnAction,
   reverseSupplierCreditNoteAction,
@@ -38,7 +40,12 @@ jest.mock("@/lib/security/auth-session", () => ({
   requireFreshAuth: jest.fn(),
 }))
 
-jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn() } }))
+jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn(), warn: jest.fn() } }))
+
+jest.mock("@/services/purchase-order/purchase-receiving-authority", () => ({
+  ...jest.requireActual("@/services/purchase-order/purchase-receiving-authority"),
+  purchaseReceivingAuthority: jest.fn(),
+}))
 
 jest.mock("@/services/purchasing/purchase-return-credit.service", () => ({
   postPurchaseReturn: jest.fn(),
@@ -69,7 +76,7 @@ function context(permission: string) {
 describe("purchase return and supplier credit actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: "2026-08-19T09:00:00.000Z" } })
+    mockRequireFreshAuth.mockResolvedValue({ claims: { userId: "actor-1", tenantId: "org-1", sessionId: "session-1", sessionToken: "session-token", lastAuthAt: Date.now() } })
   })
 
   it("denies a purchase return before any stock or accounting mutation", async () => {
@@ -108,7 +115,40 @@ describe("purchase return and supplier credit actions", () => {
       postedById: "actor-1",
       purchaseOrderId: "po-1",
       goodsReceiptId: "gr-1",
-    }))
+    }), undefined, expect.objectContaining({ assertCurrentAuthority: expect.any(Function) }))
+  })
+
+  it("rechecks the server session inside the return writer using only trusted claims", async () => {
+    mockRequirePermission.mockResolvedValue(context("purchasing.returns.post"))
+    const tx = {}
+    ;(purchaseReceivingAuthority as jest.Mock).mockResolvedValue({ fresh: false })
+    mockPostPurchaseReturn.mockImplementationOnce(async (_input, _client, control) => control.assertCurrentAuthority(tx))
+    const result = await postPurchaseReturnAction({
+      purchaseOrderId: "po-1", goodsReceiptId: "gr-1", idempotencyKey: "return-idem-1",
+      reason: "Damaged goods", lines: [{ sourceGoodsReceiptLineId: "gr-line-1", quantity: "1.000" }],
+    })
+    expect(result).toMatchObject({ success: false, code: "FRESH_AUTH_REQUIRED" })
+    expect(purchaseReceivingAuthority).toHaveBeenCalledWith(tx, { organizationId: "org-1", actorId: "actor-1", sessionId: "session-1", sessionToken: "session-token" }, "return")
+  })
+
+  it("requires a reviewed source revision for the receipt workbench command", async () => {
+    const draft = {
+      purchaseOrderId: "po-1", goodsReceiptId: "gr-1", idempotencyKey: "return-idem-1",
+      reason: "Damaged goods", lines: [{ sourceGoodsReceiptLineId: "gr-line-1", quantity: "1.000" }],
+    }
+    expect(await postPurchaseReturnFromReceiptAction(draft)).toMatchObject({ success: false, code: "VALIDATION_ERROR" })
+    expect(mockPostPurchaseReturn).not.toHaveBeenCalled()
+    mockRequirePermission.mockResolvedValue(context("purchasing.returns.post"))
+    mockPostPurchaseReturn.mockResolvedValue({ replayed: true, purchaseReturn: {
+      id: "return-1", organizationId: "org-1", postedById: "actor-1", purchaseOrderId: "po-1", goodsReceiptId: "gr-1",
+      idempotencyKey: "return-idem-1", returnNumber: "PR-001", lines: [{ inventoryAmount: 50 }],
+    } })
+    expect(await postPurchaseReturnFromReceiptAction({ ...draft, expectedRevision: "1".repeat(64) })).toEqual({
+      success: true, data: {
+        organizationId: "org-1", actorId: "actor-1", purchaseOrderId: "po-1", goodsReceiptId: "gr-1",
+        requestReference: "return-idem-1", returnNumber: "PR-001", replayed: true,
+      },
+    })
   })
 
   it("denies a supplier credit before AP or supplier balance mutation", async () => {
@@ -132,7 +172,11 @@ describe("purchase return and supplier credit actions", () => {
 
   it("requires the critical AP credit permission and preserves source IDs", async () => {
     mockRequirePermission.mockResolvedValue(context("purchasing.ap.credit.post"))
-    mockPostSupplierCreditNote.mockResolvedValue({ supplierCreditNote: { id: "credit-1" }, replayed: false })
+    mockPostSupplierCreditNote.mockResolvedValue({
+      supplierCreditNote: { id: "credit-1", creditNoteNumber: "CN-001", currency: "XAF", total: { toFixed: () => "105.00" } },
+      replayed: false,
+      ledgerStatus: "POSTED",
+    })
 
     const result = await postSupplierCreditNoteAction({
       organizationId: "attacker-org",
@@ -148,6 +192,11 @@ describe("purchase return and supplier credit actions", () => {
     })
 
     expect(result.success).toBe(true)
+    expect(result.data).toEqual({
+      supplierCreditNote: { id: "credit-1", creditNoteNumber: "CN-001", currency: "XAF", total: "105.00" },
+      replayed: false,
+      ledgerStatus: "POSTED",
+    })
     expect(mockRequirePermission).toHaveBeenCalledWith(
       "purchasing.ap.credit.post",
       { resource: "SupplierCreditNote" },
@@ -201,14 +250,14 @@ describe("purchase return and supplier credit actions", () => {
     mockRequireFreshAuth.mockResolvedValueOnce({ claims: { userId: ctx.userId, tenantId: ctx.orgId, lastAuthAt: Date.now() } })
       .mockResolvedValueOnce({ claims: { userId: "different-user", tenantId: "other-tenant", lastAuthAt: Date.now() } })
     ;(service as jest.Mock).mockImplementation(async (_input, _client, control) => { await control.assertCurrentAuthority(); effects() })
-    expect(await action(input)).toMatchObject({ success: false, status: 401 })
+    expect(await action(input)).toMatchObject({ success: false, status: 401, code: "AUTH_REQUIRED" })
     expect(effects).not.toHaveBeenCalled()
   })
 
   it.each(reversals)("refuses mismatched entry claims before invoking $permission", async ({ action, service, permission, input }) => {
     mockRequirePermission.mockResolvedValue(context(permission))
     mockRequireFreshAuth.mockResolvedValue({ claims: { userId: "other-user", tenantId: "org-1", lastAuthAt: Date.now() } })
-    expect(await action(input)).toMatchObject({ success: false, status: 401 })
+    expect(await action(input)).toMatchObject({ success: false, status: 403, code: "FRESH_AUTH_REQUIRED" })
     expect(service).not.toHaveBeenCalled()
   })
 })

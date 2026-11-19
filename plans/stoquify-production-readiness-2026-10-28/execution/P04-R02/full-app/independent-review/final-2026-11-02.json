@@ -1,0 +1,88 @@
+{
+  "reviewedAt": "2026-11-02T14:54:50.399Z",
+  "reviewer": "full_app_review",
+  "status": "blocked",
+  "package": "P04-R02",
+  "gate": "G08",
+  "scope": "independent source, recipe and available evidence review; no application execution",
+  "sourceInspection": {
+    "currentFileCount": 9067,
+    "sourceManifestSha256": "fc43a3ecab799bf4abf86f4626e183286bfd357eb1602894508cbd3cce232590",
+    "sourceHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+    "drift": {
+      "added": [
+        "docs/payroll-blockers/evidence/postgres-run.json",
+        "docs/payroll-blockers/evidence/service-transactions.json",
+        "scripts/jest.payroll-blockers-postgres.config.cjs",
+        "scripts/payroll-blockers-postgres-target.cjs",
+        "scripts/run-payroll-blockers-postgres.cjs",
+        "tests/postgres/payroll-blockers/transactions.test.ts"
+      ],
+      "changed": [
+        "services/payroll/payroll-control.service.ts"
+      ],
+      "removed": []
+    },
+    "repairInputsUnchanged": true,
+    "originalAssetsAndMirrorsPreserved": true
+  },
+  "harnessOnlyVerification": {
+    "passed": true,
+    "count": 16,
+    "accepted": 4,
+    "rejected": 12,
+    "harnessSha256": "2f9f016d96ada285da4b6df30c9657bfc8ae82539bda85f203b6ba2e4f40c228",
+    "evidence": "../browser/denial-assertions-review.md",
+    "limit": "Pure VM assertions only; not application or browser qualification",
+    "source": "Browser worker-recorded embedded JSON receipt in Markdown; reviewer matched current harness SHA but did not rerun assertions"
+  },
+  "findings": [
+    {
+      "id": "IR-01",
+      "description": "Strict public denial-body validation",
+      "status": "source_resolved_pending_execution"
+    },
+    {
+      "id": "IR-02",
+      "description": "Alias, optimizer and revoked-browser no-write snapshot coverage",
+      "status": "source_resolved_pending_execution"
+    },
+    {
+      "id": "IR-03",
+      "description": "Bounded PID/path/port/time-bound restart cleanup and SQL-unavailable stop",
+      "status": "recipe_resolved_not_executed"
+    }
+  ],
+  "execution": {
+    "fullBuild": "not_run",
+    "freshDatabaseQueries": "not_run",
+    "realSessionHttp": "not_run",
+    "renderedBrowser": "not_run",
+    "databaseStatus": "stopped",
+    "databasePortAvailable": true
+  },
+  "blocker": {
+    "code": "ISOLATED_BUILD_STORAGE_UNAVAILABLE",
+    "priorDrive": "D:",
+    "availableVolumesBelowReviewed12GiB": true
+  },
+  "evidence": [
+    "../preparation-resume.json",
+    "../resume-2026-11-02/inspection.json",
+    "../database/resume-20261102-r1-preconditions.json",
+    "../browser/denial-assertions-review.md"
+  ],
+  "releaseGate": "Hosted ingress/CDN/operator evidence remains separate",
+  "prohibitedActionsExecutedByReviewer": [],
+  "advancement": "Restore or supply admitted isolated storage, capture and bind current candidate, validate retained disposable DB fixture, build actual artifact, execute strict real-session/browser gates and independently review outcomes",
+  "registerConsistency": {
+    "packages": 54,
+    "domains": 57,
+    "gates": 18,
+    "packageIdsPreserved": true,
+    "domainRegisterPreserved": true,
+    "dependenciesPreserved": true,
+    "resultAndGatesKeepR02Blocked": true,
+    "historicalRepairEvidenceDistinguished": true
+  }
+}

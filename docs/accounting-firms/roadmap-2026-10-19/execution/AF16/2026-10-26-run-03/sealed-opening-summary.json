@@ -1,0 +1,48 @@
+{
+  "startedAt": "2026-10-26T17:26:19.005Z",
+  "artifactSha256": "987da3ead9c716cdbf5d2a22ac1723aa8a8ed15113f40a6b8abd3c1fb64d151f",
+  "base": "https://localhost:3186",
+  "database": "stoquify_local_af16_20261026_opening_r3",
+  "passed": true,
+  "evidenceClass": "Synthetic AF09/AF10 authenticated browser on sealed full application; local TLS with test certificate; not hosted TLS, predecessor rollback or production approval",
+  "priorFailure": "blocked-local-connection-2.json",
+  "buildId": "eoW9-NZPj4rd9OHTZxMDM",
+  "preverifiedFiles": 5284,
+  "fixtureSha256": "14bf6e1c666a7662cffce6b984f7050e1091b74359cc1253b2a3afdca101775a",
+  "migrations": 120,
+  "clonedFrom": "stoquify_local_af16_20261025_af10_r1",
+  "certificate": {
+    "fingerprint256": "3F:2E:A7:0D:29:74:F2:BC:AF:36:BF:BA:DE:0C:1C:77:7F:E5:C3:A9:BB:4F:A6:0C:53:88:26:F8:76:EC:84:4D",
+    "subjectAltName": "DNS:localhost, IP Address:127.0.0.1",
+    "selfSigned": true,
+    "operatingSystemTrustChanged": false
+  },
+  "listener": {
+    "tls": "127.0.0.1:3186",
+    "upstream": "127.0.0.1:60565"
+  },
+  "adapter": {
+    "source": "scripts\\verify-opening-cutover-browser.cjs",
+    "sourceSha256": "96a62faf5b410d7cb298c168ab1d7b9f61900c5704cc9393b63864f840a299f2",
+    "generated": "scripts\\af16-sealed-opening-browser.generated.cjs",
+    "generatedSha256": "6b54238765f7684ea17bf032688b5df4bd6caaae916dfb73b37e67fdbeeeca71",
+    "adaptations": [
+      "../.codex-tmp/af10-prisma/client",
+      "path.join(privateRoot, \"af10-browser-private.json\")",
+      "docs/accounting-firms/roadmap-2026-10-19/execution/AF10/2026-10-20-run-01",
+      "\"55449\"",
+      "/stoquify_local_af10_20261020_r1",
+      "af01-host/af01-postgres",
+      "services/onboarding/__tests__/fixtures/",
+      "headless: true",
+      "reducedMotion: \"reduce\"",
+      "assert.equal(response.status(), 200, role + \" sign-in\")"
+    ],
+    "businessAssertionsPreserved": true
+  },
+  "browserExitCode": 0,
+  "artifactUnchangedAfterBrowser": true,
+  "proxyStopped": true,
+  "serverStopped": true,
+  "finishedAt": "2026-10-26T17:32:33.675Z"
+}

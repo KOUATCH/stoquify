@@ -1,0 +1,19 @@
+# HR-17 operations
+
+The additive task ledger migration follows HR-15/16. Native lifecycle approved/applied/rejected events synchronize tasks within the same employee transaction. Task identity is tenant + lifecycle request + task code. Approved and applied delivery share one set. Cancellation retains history and completed attestations. Task commands never change employee employment, user access or external services.
+
+For activation, configure reviewed `HRIS_LIFECYCLE_TASK_POLICIES_JSON` per employer: organizationId, version, approvalReference, effectiveFrom/effectiveTo, enabled, supportEn/supportFr, and starter/leaver arrays. Each array must contain HR_PREPARATION, APPLICATION_ACCESS, EXTERNAL_ACCESS and ASSETS exactly once, in dependency order. Each template requires ownerId, independent reviewerId, dueOffsetDays, dependsOn and evidenceInstructionsEn/evidenceInstructionsFr. Assign actual HR/IT/asset owners with narrow `hris.tasks.read` plus `hris.tasks.work` or `hris.tasks.review`; assignment grants no broader HR/document authority. No real employer policy is configured by this session.
+
+Navigate through **HR Tasks** to `/[locale]/dashboard/people/tasks`. Owners prepare retained ticket/checklist/provider receipt references. Reviewers independently verify the evidence and record a **REVIEWED_MANUAL_ATTESTATION**. This is not connector-confirmed execution. Optional HR document references require separate document and employee scope and permanently bind eligible originals. Avoid secrets or unnecessary personal data in textual references.
+
+Application access: use the existing authorized account administration workflow separately. The task owner never invokes account mutation. Starter completion requires the linked account to be usable; leaver completion requires it to be inactive. Other access controls/session/provider acceptance remain with those owners. External account and asset actions are manual-first, separately performed and evidenced. A reported failure remains FAILED with its history; RETRY only reopens work and performs no external call. Escalate through configured support; this slice sends no messages.
+
+Future departure changes: an independent HR reviewer with HR management authority cancels the old unapplied source and creates a replacement request. Another HR approver must approve the replacement. Old pending tasks remain cancelled; completed evidence remains retained. New tasks use the newly approved effective date. Current employment and user access are unchanged until their separate authorized workflows run.
+
+Revoked owner/reviewer: update the reviewed template's assignments. The configured replacement reviewer can access the matching task kind for REASSIGN only until assignment is recorded. Reassignment preserves history and returns work to OPEN for renewed evidence. Do not directly edit task rows.
+
+Pause creation/completion with enabled=false; keep reads, failure reporting, return and source cancellation available. Removing configuration also preserves cancellation projection when the table is installed. Do not drop the table or delete original evidence. Rollback is a pause, not erasure of completed work.
+
+Existing approved events from before activation require a bounded, reviewed backfill using `syncLifecycleTaskEventInTx` with their current canonical event identity and explicit employer scope. This implementation does not launch an unsolicited historical sweep. Validate selected current source events, owners and due dates before pilot. Native hook coverage applies to new source transitions; an empty task view alone is not proof all historical employment obligations were processed.
+
+Only the owned synthetic PostgreSQL was migrated here. Live external connectors, production migrations, user revocation, employee invitations and broad rollout were not performed. Preserve exact retry envelopes for uncertain commands and use refresh-only recovery after confirmed outcomes.

@@ -1,0 +1,14 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../../..');
+const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+const before=JSON.parse(fs.readFileSync(path.join(__dirname,'before-migrations.json')));
+const old=JSON.parse(fs.readFileSync(path.join(root,'.codex-tmp/phase8-before/prisma/migration-catalog-manifest.json')));
+const current=JSON.parse(fs.readFileSync(path.join(root,'prisma/migration-catalog-manifest.json')));
+const catalog=fs.readdirSync(path.join(root,'prisma/migrations')).filter(name=>fs.existsSync(path.join(root,'prisma/migrations',name,'migration.sql'))).sort().map(name=>({name,sha256:hash(fs.readFileSync(path.join(root,'prisma/migrations',name,'migration.sql')))}));
+const oldEntries=old.migrations || old.entries;const newEntries=current.migrations || current.entries;
+if(!Array.isArray(oldEntries)||!Array.isArray(newEntries))throw Error('Unexpected manifest shape');
+const changedSql=before.filter(prior=>!catalog.some(now=>now.name===prior.name&&now.sha256===prior.sha256));
+const changedEntries=oldEntries.filter(prior=>!newEntries.some(now=>JSON.stringify(now)===JSON.stringify(prior)));
+const report={originalSqlCount:before.length,currentSqlCount:catalog.length,originalManifestCount:oldEntries.length,currentManifestCount:newEntries.length,changedSql,changedManifestEntries:changedEntries,concurrentAdditions:catalog.filter(now=>!before.some(prior=>prior.name===now.name)),gateImplementationChanged:false,productionAccess:false};
+fs.writeFileSync(path.join(__dirname,'catalog-preservation.json'),JSON.stringify(report,null,2));
+console.log(JSON.stringify(report));if(changedSql.length||changedEntries.length)process.exitCode=1;

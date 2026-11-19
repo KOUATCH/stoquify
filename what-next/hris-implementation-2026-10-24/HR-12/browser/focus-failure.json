@@ -1,0 +1,68 @@
+{
+  "active": "<body><div id=\"root\"><main class=\"dashboard-landing-theme dark min-h-screen p-4\"><div class=\"dashboard-landing-content mx-auto max-w-5xl space-y-5\"><h1 class=\"text-2xl font-semibold\">Leave balances · Synthetic leave employee</h1><p>Only approved employee policies appear. Credits minus debits equals the current balance; future movements are listed separately. Undefined rules require HR review.</p><a class=\"underline\" href=\"/en/dashboard/people/setup\">Prepare or independently review policy rules</a><p role=\"status\" tabindex=\"-1\">Status refreshed. Review the movements below.</p><button class=\"dashboard-btn-secondary p-2\">Refresh status</button><section class=\"space-y-3 rounded-lg border border-white/20 p-4\"><h2 class=\"text-lg font-semibold\">Synthetic leave policy · 1 · 2026-01-01–—</h2><p>540 − 0 = <strong>540 min</strong> · Future credits / debits 0 / 0 min</p><p>As of 2026-10-24 · Open</p><details><summary>Explain this balance</summary><ul class=\"space-y-2 py-3\"><li class=\"break-all text-sm\">2026-01-01 · ACCRUAL · 480 min · cmvmo3all0001ma10cja5pops:cmvmo3alr0003ma10taksbyoz:2026-01-01:ACCRUAL</li><li class=\"break-all text-sm\">2026-01-02 · MANUAL_ADJUSTMENT · 60 min · leave-adjust:51eda5a468968432c3dbca06ddf3fd44c4acdaa633832cfd7cfe58377c528428</li></ul></details><form><fieldset class=\"flex flex-wrap items-end gap-2\"><label>Execute approved rules through<input class=\"dashboard-control w-full min-w-0 rounded border p-2\" max=\"2026-10-24\" required=\"\" type=\"date\" name=\"throughDate\"></label><button class=\"dashboard-btn-secondary p-2\">Execute due credits / settlement</button></fieldset></form><form><fieldset class=\"grid gap-3 md:grid-cols-2\"><legend>Reviewed manual adjustment</legend><label>Minutes (+ or −)<input class=\"dashboard-control w-full min-w-0 rounded border p-2\" step=\"1\" required=\"\" type=\"number\" name=\"minutes\"></label><label>Effective work date<input class=\"dashboard-control w-full min-w-0 rounded border p-2\" min=\"2026-01-01\" required=\"\" type=\"date\" name=\"effectiveAt\"></label><label>Reason<textarea class=\"dashboard-control w-full min-w-0 rounded border p-2\" name=\"reason\" minlength=\"8\" required=\"\"></textarea></label><label>Reviewed evidence reference<input class=\"dashboard-control w-full min-w-0 rounded border p-2\" minlength=\"8\" required=\"\" name=\"evidence\"></label><button class=\"dashboard-btn-primary p-2\">Post adjustment</button></fieldset></form></section><section><h2 class=\"text-lg font-semibold\">Cancellation review</h2></section></div></main></div><script src=\"/bundle.js\"></script></body>",
+  "forms": [
+    {
+      "valid": true,
+      "inputs": [
+        {
+          "name": "",
+          "valid": true,
+          "validation": ""
+        },
+        {
+          "name": "throughDate",
+          "value": "2026-10-10",
+          "valid": true,
+          "validation": ""
+        },
+        {
+          "name": "",
+          "value": "",
+          "valid": true,
+          "validation": ""
+        }
+      ]
+    },
+    {
+      "valid": true,
+      "inputs": [
+        {
+          "name": "",
+          "valid": true,
+          "validation": ""
+        },
+        {
+          "name": "minutes",
+          "value": "60",
+          "valid": true,
+          "validation": ""
+        },
+        {
+          "name": "effectiveAt",
+          "value": "2026-01-02",
+          "valid": true,
+          "validation": ""
+        },
+        {
+          "name": "reason",
+          "value": "Synthetic adjustment en",
+          "valid": true,
+          "validation": ""
+        },
+        {
+          "name": "evidence",
+          "value": "sha256:synthetic-en",
+          "valid": true,
+          "validation": ""
+        },
+        {
+          "name": "",
+          "value": "",
+          "valid": true,
+          "validation": ""
+        }
+      ]
+    }
+  ],
+  "status": "Status refreshed. Review the movements below."
+}

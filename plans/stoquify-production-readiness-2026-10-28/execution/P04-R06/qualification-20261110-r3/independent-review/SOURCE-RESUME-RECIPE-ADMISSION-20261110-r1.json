@@ -1,0 +1,46 @@
+{
+  "at": "2026-11-10T18:40:47.312Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "One read-only source freshness comparison with four exclusive successor receipts; no candidate/build/DB execution",
+  "files": [
+    {
+      "path": "inventory/resume-20261110-r1/refresh-resume-source.cjs",
+      "sha256": "b049b3d65ab16e5ce18edb15094c752bda2b5b5768806e8d31c7c42279eb9cff"
+    },
+    {
+      "path": "inventory/CURRENT-SOURCE-MANIFEST-r2.json",
+      "sha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699"
+    },
+    {
+      "path": "inventory/SELECTED-INPUTS-REFRESH-r2.json",
+      "sha256": "84d9461ce97882a29239857605eb662f319cc464303704ff78be26e610a54664"
+    },
+    {
+      "path": "inventory/private-metadata-policy.json",
+      "sha256": "a044327ea56b8488574704fdd8f25b7f46506f4dc45a9fdf4d900fff09ca33d6"
+    },
+    {
+      "path": "resource-capture-retry-ready-r2.json",
+      "sha256": "a9644ac4702e5ceb032266c5e2df4fd8ab846feed874ad0a742c4f6382cc824b"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\ecc\\command-registry.json",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381"
+    }
+  ],
+  "reviewed": [
+    "Exact preserved9942manifest identity and inert selector required",
+    "Fresh passing resource observation required before full bounded source scan",
+    "HEAD before/after, full-source delta, selected68 hashes/lengths and additional config/package/schema hashes recorded",
+    "Onlymetadata paths/hashes and same-read sizes published; no private reference targets opened",
+    "Every delta retained and requires independent successor classification; no automatic source admission",
+    "No node_modules traversal or source bodies retained"
+  ],
+  "candidateCaptureAccepted": false,
+  "qualificationPassed": false
+}

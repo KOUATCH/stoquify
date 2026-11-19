@@ -1,0 +1,44 @@
+{
+  "phase": "AF11",
+  "status": "IMPLEMENTED_UNVERIFIED",
+  "reason": "Qualified country review and current statutory definition evidence are missing; all statutory candidates remain UNKNOWN.",
+  "sourceHead": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "technicalVerification": {
+    "pureAndMocked": 112,
+    "component": 26,
+    "realPostgres": 14,
+    "cleanMigrations": 105,
+    "populatedUpgrade": "104 to 105 with replay",
+    "focusedTypes": "PASS",
+    "schema": "PASS",
+    "workflow": "PASS",
+    "browser": {
+      "journeyChecks": 5,
+      "scopedAxeScans": 4,
+      "violations": 0,
+      "pageErrors": 0
+    },
+    "sourceSnapshotMatches": true
+  },
+  "publication": {
+    "pairs": 69,
+    "pages": 255,
+    "headings": 490,
+    "supportingCopies": 12,
+    "priorMarkdownUnchanged": 61,
+    "visualReview": "Representative result/source/status/index PDF pages and French mobile UI inspected; no overlap or clipping observed.",
+    "lockRecovery": "Existing roadmap PDF was locked. User closed viewer; unmodified publisher then succeeded. Earlier failed logs retained."
+  },
+  "cleanup": {
+    "nextStopped": [
+      43960,
+      39820
+    ],
+    "postgresStopped": 37044,
+    "localDatabasesRetained": true,
+    "sourceSnapshotRetained": true,
+    "productionTouched": false
+  },
+  "productionPromotion": false,
+  "commitCreated": false
+}

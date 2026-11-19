@@ -5,22 +5,22 @@ const grantAuthority = ["users.invite", "users.roles.assign"]
 
 describe("role grant policy", () => {
   it.each(["roles.permissions.assign", "roles.permissions.remove", "admin.role.assign"])("cannot grant %s through user-role assignment's shared legacy alias", permission => {
-    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: grantAuthority, targetRole: { organizationId: "org-1", permissions: [permission] } })).toMatchObject({ allowed: false, reasonCode: "ACTOR_GRANT_CEILING_EXCEEDED" })
+    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: grantAuthority, targetRole: { code: "reader", organizationId: "org-1", permissions: [permission] } })).toMatchObject({ allowed: false, reasonCode: "ACTOR_GRANT_CEILING_EXCEEDED" })
   })
   it("cannot grant the broad legacy alias from a single canonical operation", () => {
-    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: grantAuthority, targetRole: { organizationId: "org-1", permissions: ["ASSIGN_ROLES"] } })).toMatchObject({ allowed: false, reasonCode: "ACTOR_GRANT_CEILING_EXCEEDED" })
+    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: grantAuthority, targetRole: { code: "reader", organizationId: "org-1", permissions: ["ASSIGN_ROLES"] } })).toMatchObject({ allowed: false, reasonCode: "ACTOR_GRANT_CEILING_EXCEEDED" })
   })
   it("does not infer user-role assignment from permission editing authority", () => {
-    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: ["users.invite", "roles.permissions.assign"], targetRole: { organizationId: "org-1", permissions: [] } })).toMatchObject({ allowed: false, reasonCode: "MISSING_GRANT_AUTHORITY" })
+    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: ["users.invite", "roles.permissions.assign"], targetRole: { code: "reader", organizationId: "org-1", permissions: [] } })).toMatchObject({ allowed: false, reasonCode: "MISSING_GRANT_AUTHORITY" })
   })
   it("preserves an explicitly stored legacy role-management grant", () => {
-    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: ["users.invite", "ASSIGN_ROLES"], targetRole: { organizationId: "org-1", permissions: ["roles.permissions.remove", "users.roles.assign"] } })).toMatchObject({ allowed: true })
+    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: ["users.invite", "ASSIGN_ROLES"], targetRole: { code: "reader", organizationId: "org-1", permissions: ["roles.permissions.remove", "users.roles.assign"] } })).toMatchObject({ allowed: true })
   })
   it("rejects actors without role-assignment authority", () => {
     const decision = evaluateRoleGrantPolicy({
       actorOrganizationId: "org-1",
       actorPermissions: ["users.invite", "dashboard.read"],
-      targetRole: {
+      targetRole: { code: "reader",
         organizationId: "org-1",
         permissions: ["dashboard.read"],
       },
@@ -38,7 +38,7 @@ describe("role grant policy", () => {
     const decision = evaluateRoleGrantPolicy({
       actorOrganizationId: "org-1",
       actorPermissions: [...grantAuthority, "dashboard.read"],
-      targetRole: {
+      targetRole: { code: "reader",
         organizationId: "org-1",
         permissions: ["dashboard.read", "*"],
       },
@@ -55,7 +55,7 @@ describe("role grant policy", () => {
     const decision = evaluateRoleGrantPolicy({
       actorOrganizationId: "org-1",
       actorPermissions: [...grantAuthority, "dashboard.read", "*"],
-      targetRole: {
+      targetRole: { code: "reader",
         organizationId: "org-1",
         permissions: ["dashboard.read", "accounting.period.close"],
       },
@@ -72,7 +72,7 @@ describe("role grant policy", () => {
     const decision = evaluateRoleGrantPolicy({
       actorOrganizationId: "org-1",
       actorPermissions: [...grantAuthority, "dashboard.read"],
-      targetRole: {
+      targetRole: { code: "reader",
         organizationId: "org-2",
         permissions: ["dashboard.read"],
       },
@@ -89,7 +89,7 @@ describe("role grant policy", () => {
     const decision = evaluateRoleGrantPolicy({
       actorOrganizationId: "org-1",
       actorPermissions: [...grantAuthority, "dashboard.read", "inventory.read"],
-      targetRole: {
+      targetRole: { code: "reader",
         organizationId: "org-1",
         permissions: ["dashboard.read", "inventory.read"],
       },
@@ -114,7 +114,7 @@ describe("role grant policy", () => {
     const decision = evaluateRoleGrantPolicy({
       actorOrganizationId: "org-1",
       actorPermissions: administratorTemplatePermissions,
-      targetRole: {
+      targetRole: { code: "reader",
         organizationId: "org-1",
         permissions: ["dashboard.read", "users.invite", "users.roles.assign"],
       },
@@ -126,4 +126,15 @@ describe("role grant policy", () => {
       deniedPermissions: [],
     })
   })
+})
+
+it.each(["admin", " Administrator ", "super_admin"])("denies a latent reserved %s invitation to a limited issuer", code => {
+  expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: [...grantAuthority, "dashboard.read"], actorRoleCodes: ["manager"], targetRole: { code, organizationId: "org-1", permissions: [] } })).toMatchObject({ allowed: false, reasonCode: "OPERATING_SCOPE_CEILING_EXCEEDED" })
+})
+it("requires tenant-wide authority as well as explicit grant permission", () => {
+  const input = { actorOrganizationId: "org-1", actorPermissions: [...grantAuthority, "dashboard.read"], actorRoleCodes: ["admin"], targetRole: { code: "administrator", organizationId: "org-1", permissions: ["dashboard.read"] } }
+  expect(evaluateRoleGrantPolicy(input).allowed).toBe(true)
+  expect(evaluateRoleGrantPolicy({ ...input, actorRoleCodes: ["manager"] }).allowed).toBe(false)
+  expect(evaluateRoleGrantPolicy({ ...input, actorPermissions: grantAuthority }).allowed).toBe(false)
+  expect(evaluateRoleGrantPolicy({ ...input, actorPermissions: ["*"] }).allowed).toBe(false)
 })

@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "packageId": "P04-R06",
+  "at": "2026-11-10T11:38:19.438Z",
+  "reviewer": "/root/r06_source_resume",
+  "observerAuthorshipDisclosed": true,
+  "independentAcceptanceOwner": "/root/r06_review",
+  "observationAccepted": true,
+  "passed": false,
+  "verdict": "ACTUAL_OUTCOMES_ACCEPTED_BROWSER_GATE_FAILED",
+  "result": {
+    "path": "browser/browser-diagnostic-attempt03/result.json",
+    "sha256": "98fa382cfdd46b3d4d589001cd03a55e41bd3f8a5fe997c6a7b00769abd4a6d4"
+  },
+  "summary": {
+    "planned": 6,
+    "passed": 1,
+    "failed": 5,
+    "notRun": 0,
+    "observations": 5,
+    "responses": 18,
+    "primaryBodyReadErrorsRetained": 8,
+    "independentlyRecoveredBodies": 0,
+    "incompleteResponseEvidence": 8
+  },
+  "visualInspection": {
+    "inspectedScreenshots": [
+      {
+        "label": "en-authorized",
+        "path": "/en/dashboard/profile",
+        "privateEmailVisible": true,
+        "loginVisible": false,
+        "profileUnavailable": false,
+        "textSha256": "0ceaba12021a3a75e8da0dc63a902645c8d4c94c1e4983efa6dbc19006a1dfaa",
+        "screenshot": "en-authorized.png",
+        "at": "2026-11-10T11:32:23.859Z",
+        "screenshotSha256": "c014b17d45cd31face738bb42099c92031b26b710be4c161de587843dff66dec",
+        "actualSha256": "c014b17d45cd31face738bb42099c92031b26b710be4c161de587843dff66dec",
+        "visuallyConfirmed": true
+      },
+      {
+        "label": "en-invalidated-reload",
+        "path": "/en/login",
+        "privateEmailVisible": false,
+        "loginVisible": true,
+        "profileUnavailable": false,
+        "textSha256": "a2bee6cbc617ddd2251444c3034000bbab4f31234dbe6b1ecd2ecc52c8b87e7f",
+        "screenshot": "en-invalidated-reload.png",
+        "at": "2026-11-10T11:32:50.117Z",
+        "screenshotSha256": "d15770a07d7cf250d0d858ab6a7a5a9ff771d1ee0628482e116a0b62240d905f",
+        "actualSha256": "d15770a07d7cf250d0d858ab6a7a5a9ff771d1ee0628482e116a0b62240d905f",
+        "visuallyConfirmed": true
+      },
+      {
+        "label": "en-restored",
+        "path": "/en/dashboard/profile",
+        "privateEmailVisible": true,
+        "loginVisible": false,
+        "profileUnavailable": false,
+        "textSha256": "d0b7be9c9763e21822639b481c45e45d748ffdfa435c35a1257c37d8920016f5",
+        "screenshot": "en-restored.png",
+        "at": "2026-11-10T11:32:58.132Z",
+        "screenshotSha256": "f2ccb4565fc4aabf04dbe1225534e9b1929fc190b0f97d8eb2fe47e667c6355c",
+        "actualSha256": "f2ccb4565fc4aabf04dbe1225534e9b1929fc190b0f97d8eb2fe47e667c6355c",
+        "visuallyConfirmed": true
+      },
+      {
+        "label": "fr-authorized",
+        "path": "/fr/dashboard/profile",
+        "privateEmailVisible": true,
+        "loginVisible": false,
+        "profileUnavailable": false,
+        "textSha256": "94de4c8c00eec263e87fcf1a8eeb129cebeb8b93f6989d80b79daa81482d15df",
+        "screenshot": "fr-authorized.png",
+        "at": "2026-11-10T11:33:26.879Z",
+        "screenshotSha256": "17e6562672801050e088c3f6f3ca1e95e0397533354069f4020450cb42a98912",
+        "actualSha256": "17e6562672801050e088c3f6f3ca1e95e0397533354069f4020450cb42a98912",
+        "visuallyConfirmed": true
+      },
+      {
+        "label": "fr-restored",
+        "path": "/fr/dashboard/profile",
+        "privateEmailVisible": true,
+        "loginVisible": false,
+        "profileUnavailable": false,
+        "textSha256": "8269966cac5a1f645c82501917ca00ecaf7484eac48afb9ec1a3ceda203d77e2",
+        "screenshot": "fr-restored.png",
+        "at": "2026-11-10T11:34:01.597Z",
+        "screenshotSha256": "141da7b88e56703df19982cd0d5a5f79a76f10f862dd5a39078c63994fa80dc6",
+        "actualSha256": "141da7b88e56703df19982cd0d5a5f79a76f10f862dd5a39078c63994fa80dc6",
+        "visuallyConfirmed": true
+      }
+    ],
+    "description": "Four authorized/restored EN/FR screenshots show the correct synthetic actor profile; EN revoked reload shows login without private profile/email/tenant shell. FR revoked screenshot is absent because observer predicate read document.body during a null-body navigation transition; no sixth screenshot claimed."
+  },
+  "responseClassification": {
+    "all18BridgeCapturesComplete": true,
+    "missing": [
+      {
+        "sequence": 2,
+        "label": "en-authorized",
+        "method": "GET",
+        "path": "/fr/dashboard/profile",
+        "status": 200,
+        "resourceType": "fetch",
+        "navigation": false,
+        "prefetch": true,
+        "contentType": "text/x-component",
+        "contentEncoding": "gzip",
+        "transportError": "Original browser response completion exceeded its bound",
+        "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 4,
+        "label": "en-authorized",
+        "method": "POST",
+        "path": "/en/dashboard/profile",
+        "status": 200,
+        "resourceType": "fetch",
+        "navigation": false,
+        "prefetch": false,
+        "contentType": "text/x-component",
+        "contentEncoding": "gzip",
+        "transportError": "Original browser response completion exceeded its bound",
+        "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 7,
+        "label": "en-restored",
+        "method": "GET",
+        "path": "/fr/dashboard/profile",
+        "status": 200,
+        "resourceType": "fetch",
+        "navigation": false,
+        "prefetch": true,
+        "contentType": "text/x-component",
+        "contentEncoding": "gzip",
+        "transportError": "Original browser response completion exceeded its bound",
+        "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 9,
+        "label": "en-restored",
+        "method": "POST",
+        "path": "/en/dashboard/profile",
+        "status": 200,
+        "resourceType": "fetch",
+        "navigation": false,
+        "prefetch": false,
+        "contentType": "text/x-component",
+        "contentEncoding": "gzip",
+        "transportError": "Original browser response completion exceeded its bound",
+        "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 11,
+        "label": "fr-authorized",
+        "method": "GET",
+        "path": "/en/dashboard/profile",
+        "status": 200,
+        "resourceType": "fetch",
+        "navigation": false,
+        "prefetch": true,
+        "contentType": "text/x-component",
+        "contentEncoding": "gzip",
+        "transportError": "Original browser response completion exceeded its bound",
+        "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 13,
+        "label": "fr-authorized",
+        "method": "POST",
+        "path": "/fr/dashboard/profile",
+        "status": 200,
+        "resourceType": "fetch",
+        "navigation": false,
+        "prefetch": false,
+        "contentType": "text/x-component",
+        "contentEncoding": "gzip",
+        "transportError": "Original browser response completion exceeded its bound",
+        "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 16,
+        "label": "fr-restored",
+        "method": "GET",
+        "path": "/en/dashboard/profile",
+        "status": 200,
+        "resourceType": "fetch",
+        "navigation": false,
+        "prefetch": true,
+        "contentType": "text/x-component",
+        "contentEncoding": "gzip",
+        "transportError": "Original browser response completion exceeded its bound",
+        "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ]
+      },
+      {
+        "sequence": 18,
+        "label": "fr-restored",
+        "method": "POST",
+        "path": "/fr/dashboard/profile",
+        "status": 200,
+        "resourceType": "fetch",
+        "navigation": false,
+        "prefetch": false,
+        "contentType": "text/x-component",
+        "contentEncoding": "gzip",
+        "transportError": "Original browser response completion exceeded its bound",
+        "bodyReadError": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+        "issues": [
+          "browser_transport_error",
+          "browser_response_completion_unconfirmed"
+        ]
+      }
+    ],
+    "conclusion": "Eight missing bodies are four Next RSC prefetch GETs and four profile RSC POSTs, all gzip text/x-component fetches, not document navigations. Independent original server bytes and downstream finish are proven; actual browser network completion/consumption is not proven by attempt03. No cancellation is asserted without CDP terminal evidence."
+  },
+  "nativeRecomparison": [
+    {
+      "id": "R06-UI-en-authorized",
+      "before": "snapshot-R06-UI-en-authorized-diagnostic03-before-1794310339742-caa16db9-75cf-4153-90a5-3e59ccb0f408.json",
+      "beforeSha256": "5ede0c27342b73bb1a1dcc2f74b085b7a89577e0f7858758502ddfb4f8b2ea1e",
+      "after": "snapshot-R06-UI-en-authorized-diagnostic03-after-1794310364701-21cd25df-5a62-48a6-9759-ad2f24041bc7.json",
+      "afterSha256": "08f4caa2b798ea8f28405abcb38b71ffca1dac847e16cea7cdb9b2d67e9860b8",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    },
+    {
+      "id": "R06-UI-en-invalidated-reload",
+      "before": "snapshot-R06-UI-en-invalidated-reload-diagnostic03-before-1794310367805-f0a87775-285e-479d-9ad8-bcfbb5461517.json",
+      "beforeSha256": "7afbc395594d85795692536ec95bb5ae8f30310376c93ab21d0a933447996955",
+      "after": "snapshot-R06-UI-en-invalidated-reload-diagnostic03-after-1794310373018-e605ed8e-0e37-4385-ab1e-a5766374b2ca.json",
+      "afterSha256": "c71b92af994545084fc62625183384261a096ac50bb31d70fbb565f6e21fa079",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    },
+    {
+      "id": "R06-UI-en-restored",
+      "before": "snapshot-R06-UI-en-restored-diagnostic03-before-1794310375766-6edf339a-66e9-4463-a721-aab971daa5b0.json",
+      "beforeSha256": "e45c96a9ef7537610ae26b34b43e3d472d9b7bb40a34ac114ad46e7234a03062",
+      "after": "snapshot-R06-UI-en-restored-diagnostic03-after-1794310399060-04ca8752-9c1d-4248-a544-914bba3e446a.json",
+      "afterSha256": "05bbdffba55b1612709074bdc8e3202d25cd50ddb3a598b307d5770a36a69f8a",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    },
+    {
+      "id": "R06-UI-fr-authorized",
+      "before": "snapshot-R06-UI-fr-authorized-diagnostic03-before-1794310402546-d24320a8-6911-4724-b051-491f6422c0c5.json",
+      "beforeSha256": "691ec3c7c72165a0081892367a37d58abaa4689abc9885f4f1414fc3e91f86a6",
+      "after": "snapshot-R06-UI-fr-authorized-diagnostic03-after-1794310427679-e0bd670c-f29f-4818-a17b-9afe6f8ba72d.json",
+      "afterSha256": "ace166b724904349af9a640d3ee68ea3344cd7d48aee18eae3d0d5b3741f2101",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    },
+    {
+      "id": "R06-UI-fr-invalidated-reload",
+      "before": "snapshot-R06-UI-fr-invalidated-reload-diagnostic03-before-1794310431794-00ae2021-b9c9-4fe5-b55b-5369fdc1b625.json",
+      "beforeSha256": "c6095413aaaf3f2f1cf7c1c26e86482d49dd116477a5854869535f9a0f9d1236",
+      "after": "snapshot-R06-UI-fr-invalidated-reload-diagnostic03-after-1794310435882-32e029eb-92b7-411b-9a0b-4b6ae6f9941d.json",
+      "afterSha256": "d3615bb286390cad0d1c04f640f3f10e7932175dd6c1af1369fc8a1b3f79fb68",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    },
+    {
+      "id": "R06-UI-fr-restored",
+      "before": "snapshot-R06-UI-fr-restored-diagnostic03-before-1794310438734-29d284b2-3ed3-4631-87d8-c3966400dffe.json",
+      "beforeSha256": "0937cb8cc9ef4c682ae37acf84c56ee1e635c78ced12c7affa7c1255a1ca3161",
+      "after": "snapshot-R06-UI-fr-restored-diagnostic03-after-1794310462644-eb85c69f-cc24-4f79-b80e-5578935d3ffe.json",
+      "afterSha256": "6b5a47632c26f27189dc04e4cd9cc3f061bc5b71eb153dacd26121b93165ee1d",
+      "businessTables": 245,
+      "businessEqual": true,
+      "tableRowsEqual": true,
+      "sessionsEqual": true,
+      "auditsEqual": true,
+      "usersEqual": true,
+      "accountsEqual": true
+    }
+  ],
+  "limitations": [
+    "Preserves attempt02 and attempt03 failures; no overall P04-R06 advancement.",
+    "No new browser/runtime/database actions by reviewer.",
+    "Authorship disclosed; primary reviewer must independently accept this evidence.",
+    "No accessibility, visual-design, mobile, BFCache or R07 certification."
+  ]
+}

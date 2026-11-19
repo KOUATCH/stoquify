@@ -1,3 +1,4 @@
+import { assertSetupReviewInTx } from "./setup-reviewer.service"
 import "server-only"
 
 import { createHash } from "node:crypto"
@@ -23,7 +24,16 @@ import {
   NotFoundError,
 } from "@/services/_shared/action-errors"
 import { resolveHrisPeopleAccessScope } from "@/services/hris/org.service"
+import { assertHrisLeaveDebitInTx, lockHrisLeaveLedgerInTx } from "./leave-ledger-order"
+import { attendanceMetadata, correctionEvidenceSchema, correctedAttendanceEntry, loadCorrectableAttendance, lockOperationalEmployeeInTx } from "./attendance-correction"
+import { allocateOperationalMinutes } from "./time-allocation"
+import { resolveLeaveAllocationInTx } from "./leave-allocation.service"
+import { readLeaveRules } from "./leave-policy"
+import { assertEmployeeLeaveEligibility } from "./leave-eligibility.service"
+import { assertLeavePolicyOpen, getHrisLeaveBalances } from "./leave-entitlement.service"
+import { hrisTimeLeaveAttendanceCertificationSchema } from "./time-leave.contract"
 import {
+  hashBusinessPayload,
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
@@ -45,8 +55,13 @@ const timeRequestSchema = actor.extend({
   periodStart: z.coerce.date(),
   periodEnd: z.coerce.date(),
   requestedMinutes: z.number().int().positive(),
+  quantity: z.number().positive().max(1440).optional(),
+  quantityUnit: z.enum(["MINUTES", "HOURS", "DAYS"]).optional(),
   proposedWorkedMinutes: z.number().int().nonnegative().optional(),
   proposedAbsenceMinutes: z.number().int().nonnegative().optional(),
+  targetTimeEntryId: z.string().trim().min(1).optional(),
+  expectedEntryHash: proofHash.optional(),
+  allocations: z.array(z.object({ workDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), minutes: z.number().int().positive() }).strict()).max(366).optional(),
   reason: z.string().trim().min(8).max(1000),
   requestEvidenceHash: proofHash,
   idempotencyKey: z.string().trim().min(8).max(160),
@@ -217,6 +232,7 @@ export async function createTimeFoundation(
 ) {
   const parsed = createTimeFoundationInputSchema.parse(input)
   assertPermission(parsed.actorPermissions, MANAGE, "time policy preparation")
+  try { new Intl.DateTimeFormat("en", {timeZone: parsed.timezone}).format() } catch { throw new BusinessRuleError("HRIS_TIMEZONE_INVALID") }
   if (parsed.effectiveTo && parsed.effectiveTo <= parsed.effectiveFrom) {
     throw new BusinessRuleError(
       "HRIS_TIME_EFFECTIVE_RANGE_INVALID: Effective-to must follow effective-from.",
@@ -286,8 +302,10 @@ export async function approveTimeFoundation(
   client: OperationalTimeClient = db,
 ) {
   const parsed = approveTimeFoundationInputSchema.parse(input)
-  assertPermission(parsed.actorPermissions, MANAGE, "time policy approval")
   return transaction(client, async (tx) => {
+    // Match controlled review and setup writers: organization, policy admission, source rows.
+    await tx.$queryRaw`SELECT id FROM organizations WHERE id = ${parsed.organizationId} FOR UPDATE`
+    if (!hasAnyRbacPermission(parsed.actorPermissions, MANAGE)) await assertSetupReviewInTx(tx, parsed, "TIME_POLICY")
     const [calendar, policy] = await Promise.all([
       tx.hrisWorkCalendar.findFirst({
         where: {
@@ -307,6 +325,16 @@ export async function approveTimeFoundation(
     if (!calendar || !policy) {
       throw new NotFoundError("Draft time foundation was not found.")
     }
+    if (calendar.countryCode !== policy.countryCode || calendar.effectiveFrom.getTime() !== policy.effectiveFrom.getTime() || calendar.effectiveTo?.getTime() !== policy.effectiveTo?.getTime()) throw new BusinessRuleError("HRIS_TIME_FOUNDATION_PAIR_MISMATCH")
+    if (attendanceMetadata(policy.accrualRule).schemaVersion === 1) {
+      const rules = readLeaveRules(policy)
+      const ids = await tx.payrollEmployee.count({ where: { organizationId: parsed.organizationId, id: { in: rules.employeeIds }, deletedAt: null, countryCode: policy.countryCode } })
+      if (ids !== rules.employeeIds.length) throw new BusinessRuleError("HRIS_LEAVE_ENROLLMENT_UNRESOLVED: Every enrolled employee must belong to this employer and policy country.")
+      const policyKey = JSON.stringify(["hris-leave-policy-approval", parsed.organizationId, policy.code])
+      await tx.$queryRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtextextended(${policyKey}, 0))::text`)
+      const active = await tx.hrisLeavePolicy.findMany({ where: { organizationId: parsed.organizationId, code: policy.code, status: "ACTIVE", effectiveFrom: policy.effectiveTo ? { lte: policy.effectiveTo } : undefined, OR: [{ effectiveTo: null }, { effectiveTo: { gte: policy.effectiveFrom } }] } })
+      if (active.some(row => { try { return readLeaveRules(row).employeeIds.some(id => rules.employeeIds.includes(id)) } catch { return true } })) throw new BusinessRuleError("HRIS_LEAVE_POLICY_OVERLAP: Resolve overlapping versions of the same leave type before approval.")
+    }
     const preparedById =
       typeof calendar.metadata === "object" && calendar.metadata
       && !Array.isArray(calendar.metadata)
@@ -319,17 +347,17 @@ export async function approveTimeFoundation(
       )
     }
     const now = new Date()
-    const [approvedCalendar, approvedPolicy] = await Promise.all([
-      tx.hrisWorkCalendar.update({
-        where: { id: calendar.id },
+    const [calendarClaim, policyClaim] = await Promise.all([
+      tx.hrisWorkCalendar.updateMany({
+        where: { id: calendar.id, status: HrisOperationalStatus.DRAFT },
         data: {
           status: HrisOperationalStatus.ACTIVE,
           reviewedById: parsed.actorId,
           reviewedAt: now,
         },
       }),
-      tx.hrisLeavePolicy.update({
-        where: { id: policy.id },
+      tx.hrisLeavePolicy.updateMany({
+        where: { id: policy.id, status: HrisOperationalStatus.DRAFT },
         data: {
           status: HrisOperationalStatus.ACTIVE,
           approvedById: parsed.actorId,
@@ -338,6 +366,9 @@ export async function approveTimeFoundation(
         },
       }),
     ])
+    if (calendarClaim.count !== 1 || policyClaim.count !== 1) throw new ConflictError("HRIS_TIME_FOUNDATION_ALREADY_DECIDED: Reload the current policy.")
+    const approvedCalendar = await tx.hrisWorkCalendar.findUniqueOrThrow({where: {id: calendar.id}})
+    const approvedPolicy = await tx.hrisLeavePolicy.findUniqueOrThrow({where: {id: policy.id}})
     await audit(tx, parsed, "HrisTimeFoundation", calendar.id,
       "HRIS_TIME_FOUNDATION_APPROVED", {
         calendarId: calendar.id,
@@ -348,96 +379,8 @@ export async function approveTimeFoundation(
   })
 }
 
-export const assignWorkScheduleInputSchema = actor.extend({
-  employeeId: z.string().trim().min(1),
-  calendarId: z.string().trim().min(1),
-  name: z.string().trim().min(1).max(160),
-  timezone: z.string().trim().min(1).max(80),
-  weeklyPattern: z.record(
-    z.string(),
-    z.number().int().nonnegative().max(1440),
-  ),
-  standardWeeklyMinutes: z.number().int().positive().max(10080),
-  effectiveFrom: z.coerce.date(),
-  effectiveTo: z.coerce.date().nullable().optional(),
-  sourceHash: proofHash,
-})
-
-export async function assignWorkSchedule(
-  input: z.input<typeof assignWorkScheduleInputSchema>,
-  client: OperationalTimeClient = db,
-) {
-  const parsed = assignWorkScheduleInputSchema.parse(input)
-  assertPermission(parsed.actorPermissions, MANAGE, "work schedule preparation")
-  await scopedEmployee(client, parsed)
-  const calendar = await client.hrisWorkCalendar.findFirst({
-    where: {
-      id: parsed.calendarId,
-      organizationId: parsed.organizationId,
-      status: HrisOperationalStatus.ACTIVE,
-    },
-    select: { id: true, timezone: true },
-  })
-  if (!calendar) throw new NotFoundError("Active work calendar was not found.")
-  if (calendar.timezone !== parsed.timezone) {
-    throw new BusinessRuleError(
-      "HRIS_SCHEDULE_TIMEZONE_MISMATCH: Schedule and calendar timezones must match.",
-    )
-  }
-  return client.hrisWorkSchedule.create({
-    data: {
-      organizationId: parsed.organizationId,
-      employeeId: parsed.employeeId,
-      calendarId: parsed.calendarId,
-      name: parsed.name,
-      timezone: parsed.timezone,
-      weeklyPattern: json(parsed.weeklyPattern),
-      standardWeeklyMinutes: parsed.standardWeeklyMinutes,
-      effectiveFrom: parsed.effectiveFrom,
-      effectiveTo: parsed.effectiveTo ?? null,
-      preparedById: parsed.actorId,
-      sourceHash: parsed.sourceHash,
-    },
-  })
-}
-
-export const approveWorkScheduleInputSchema = actor.extend({
-  scheduleId: z.string().trim().min(1),
-  employeeId: z.string().trim().min(1),
-  approvalEvidenceHash: proofHash,
-})
-
-export async function approveWorkSchedule(
-  input: z.input<typeof approveWorkScheduleInputSchema>,
-  client: OperationalTimeClient = db,
-) {
-  const parsed = approveWorkScheduleInputSchema.parse(input)
-  assertPermission(parsed.actorPermissions, MANAGE, "work schedule approval")
-  await scopedEmployee(client, parsed)
-  const schedule = await client.hrisWorkSchedule.findFirst({
-    where: {
-      id: parsed.scheduleId,
-      employeeId: parsed.employeeId,
-      organizationId: parsed.organizationId,
-      status: HrisOperationalStatus.DRAFT,
-    },
-  })
-  if (!schedule) throw new NotFoundError("Draft work schedule was not found.")
-  if (schedule.preparedById === parsed.actorId) {
-    throw new BusinessRuleError(
-      "SOD_VIOLATION: A schedule preparer cannot approve the same schedule.",
-    )
-  }
-  return client.hrisWorkSchedule.update({
-    where: { id: schedule.id },
-    data: {
-      status: HrisOperationalStatus.ACTIVE,
-      approvedById: parsed.actorId,
-      approvedAt: new Date(),
-      approvalEvidenceHash: parsed.approvalEvidenceHash,
-    },
-  })
-}
+export { prepareScheduleSchema as assignWorkScheduleInputSchema, approveScheduleSchema as approveWorkScheduleInputSchema,
+  prepareHrisWorkSchedule as assignWorkSchedule, approveHrisWorkSchedule as approveWorkSchedule } from "./schedule-revision.service"
 
 export async function requestOperationalTime(
   input: z.input<typeof timeRequestSchema>,
@@ -464,23 +407,6 @@ export async function requestOperationalTime(
       "HRIS_LEAVE_POLICY_REQUIRED: Leave requests require an active leave policy.",
     )
   }
-  if (parsed.leavePolicyId) {
-    const policy = await client.hrisLeavePolicy.findFirst({
-      where: {
-        id: parsed.leavePolicyId,
-        organizationId: parsed.organizationId,
-        status: HrisOperationalStatus.ACTIVE,
-        effectiveFrom: { lte: parsed.periodStart },
-        OR: [{ effectiveTo: null }, { effectiveTo: { gte: parsed.periodEnd } }],
-      },
-      select: { id: true },
-    })
-    if (!policy) {
-      throw new BusinessRuleError(
-        "HRIS_LEAVE_POLICY_NOT_EFFECTIVE: No active leave policy covers the request.",
-      )
-    }
-  }
   const sourceHash = hash({
     employeeId,
     type: parsed.type,
@@ -488,8 +414,17 @@ export async function requestOperationalTime(
     periodEnd: parsed.periodEnd.toISOString(),
     requestedMinutes: parsed.requestedMinutes,
     requestEvidenceHash: parsed.requestEvidenceHash,
+    leavePolicyId: parsed.leavePolicyId ?? null,
+    targetTimeEntryId: parsed.targetTimeEntryId ?? null,
+    expectedEntryHash: parsed.expectedEntryHash ?? null,
+    proposedWorkedMinutes: parsed.proposedWorkedMinutes ?? null,
+    proposedAbsenceMinutes: parsed.proposedAbsenceMinutes ?? null,
+    reason: parsed.reason,
+    ...(parsed.allocations ? { allocations: parsed.allocations } : {}),
+    ...(parsed.quantity !== undefined ? { quantity: parsed.quantity, quantityUnit: parsed.quantityUnit ?? "MINUTES" } : {}),
   })
   return transaction(client, async (tx) => {
+    await lockOperationalEmployeeInTx(tx, parsed.organizationId, employeeId)
     const existing = await tx.hrisTimeRequest.findUnique({
       where: {
         organizationId_idempotencyKey: {
@@ -499,12 +434,45 @@ export async function requestOperationalTime(
       },
     })
     if (existing) {
-      if (existing.sourceHash !== sourceHash) {
+      const legacyHash = hash({ employeeId, type: parsed.type, periodStart: parsed.periodStart.toISOString(),
+        periodEnd: parsed.periodEnd.toISOString(), requestedMinutes: parsed.requestedMinutes,
+        requestEvidenceHash: parsed.requestEvidenceHash })
+      const exactLegacy = existing.sourceHash === legacyHash
+        && existing.leavePolicyId === (parsed.leavePolicyId ?? null)
+        && existing.proposedWorkedMinutes === (parsed.proposedWorkedMinutes ?? null)
+        && existing.proposedAbsenceMinutes === (parsed.proposedAbsenceMinutes ?? null)
+        && parsed.quantity === undefined && existing.reason === parsed.reason && !parsed.targetTimeEntryId && !parsed.expectedEntryHash && !parsed.allocations
+      if (existing.sourceHash !== sourceHash && !exactLegacy) {
         throw new BusinessRuleError(
           "IDEMPOTENCY_CONFLICT: This request key was used for different time data.",
         )
       }
       return { request: existing, created: false }
+    }
+    let leaveAllocation: Awaited<ReturnType<typeof resolveLeaveAllocationInTx>> | undefined
+    if (parsed.type === "LEAVE") {
+      await assertEmployeeLeaveEligibility(tx, parsed.organizationId, employeeId, parsed.leavePolicyId!, parsed.periodStart, parsed.periodEnd)
+      await assertLeavePolicyOpen(tx, parsed.organizationId, employeeId, parsed.leavePolicyId!)
+      leaveAllocation = await resolveLeaveAllocationInTx(tx, { ...parsed, employeeId, leavePolicyId: parsed.leavePolicyId! })
+    }
+    let correction: z.output<typeof correctionEvidenceSchema> | undefined
+    if (parsed.type === HrisTimeRequestType.ATTENDANCE_CORRECTION) {
+      if (!parsed.targetTimeEntryId || !parsed.expectedEntryHash
+          || parsed.proposedWorkedMinutes === undefined || parsed.proposedAbsenceMinutes === undefined) {
+        throw new BusinessRuleError("HRIS_CORRECTION_VALUES_REQUIRED: Select an entry and provide both corrected values.")
+      }
+      const current = await loadCorrectableAttendance(tx, { organizationId: parsed.organizationId, employeeId }, parsed.targetTimeEntryId)
+      if (current.sourceHash !== parsed.expectedEntryHash) throw new ConflictError("HRIS_CORRECTION_STALE: Refresh the entry before requesting a correction.")
+      if (parsed.periodStart.getTime() !== current.entry.workDate.getTime() || parsed.periodEnd.getTime() !== current.entry.workDate.getTime()) {
+        throw new BusinessRuleError("HRIS_CORRECTION_DATE_MISMATCH: A correction must name its entry's exact work date.")
+      }
+      if (parsed.proposedWorkedMinutes + parsed.proposedAbsenceMinutes > current.entry.scheduledMinutes
+          || parsed.proposedWorkedMinutes < current.entry.overtimeMinutes) {
+        throw new BusinessRuleError("HRIS_CORRECTION_TOTALS_INVALID: Corrected minutes must reconcile with the scheduled entry and overtime.")
+      }
+      correction = { entryId: current.entry.id, baseHash: current.sourceHash,
+        before: { workedMinutes: current.entry.workedMinutes, absenceMinutes: current.entry.absenceMinutes },
+        after: { workedMinutes: parsed.proposedWorkedMinutes, absenceMinutes: parsed.proposedAbsenceMinutes } }
     }
     const request = await tx.hrisTimeRequest.create({
       data: {
@@ -514,7 +482,7 @@ export async function requestOperationalTime(
         type: parsed.type,
         periodStart: parsed.periodStart,
         periodEnd: parsed.periodEnd,
-        requestedMinutes: parsed.requestedMinutes,
+        requestedMinutes: leaveAllocation?.requestedMinutes ?? parsed.requestedMinutes,
         proposedWorkedMinutes: parsed.proposedWorkedMinutes,
         proposedAbsenceMinutes: parsed.proposedAbsenceMinutes,
         reason: parsed.reason,
@@ -522,12 +490,13 @@ export async function requestOperationalTime(
         requestEvidenceHash: parsed.requestEvidenceHash,
         sourceHash,
         idempotencyKey: parsed.idempotencyKey,
+        ...(correction || leaveAllocation || parsed.allocations ? { metadata: json({ ...(correction ? { correction } : {}), ...(leaveAllocation ? { allocations: leaveAllocation.allocations, ...(leaveAllocation.conversion ? {conversion: leaveAllocation.conversion} : {}) } : parsed.allocations ? { allocations: parsed.allocations } : {}) }) } : {}),
       },
     })
     await audit(tx, parsed, "HrisTimeRequest", request.id,
       `HRIS_${parsed.type}_REQUESTED`, {
         employeeId,
-        requestedMinutes: parsed.requestedMinutes,
+        requestedMinutes: leaveAllocation?.requestedMinutes ?? parsed.requestedMinutes,
         requestEvidencePresent: true,
         reasonIncluded: false,
       })
@@ -540,9 +509,10 @@ export async function decideOperationalTimeRequest(
   client: OperationalTimeClient = db,
 ) {
   const parsed = decisionSchema.parse(input)
-  assertPermission(parsed.actorPermissions, MANAGE, "time request decision")
-  await scopedEmployee(client, parsed)
   return transaction(client, async (tx) => {
+    if (hasAnyRbacPermission(parsed.actorPermissions, MANAGE)) await scopedEmployee(tx, parsed)
+    await lockOperationalEmployeeInTx(tx, parsed.organizationId, parsed.employeeId)
+    if (!hasAnyRbacPermission(parsed.actorPermissions, MANAGE)) await assertSetupReviewInTx(tx, parsed, "TIME_REQUEST", parsed.employeeId)
     const request = await tx.hrisTimeRequest.findFirst({
       where: {
         id: parsed.requestId,
@@ -563,6 +533,20 @@ export async function decideOperationalTimeRequest(
       )
     }
     const approved = parsed.decision === "APPROVE"
+    if (approved && request.type === HrisTimeRequestType.ATTENDANCE_CORRECTION) {
+      const correction = correctionEvidenceSchema.safeParse(attendanceMetadata(request.metadata).correction)
+      if (!correction.success) throw new BusinessRuleError("HRIS_CORRECTION_EVIDENCE_INCOMPLETE: Re-submit this correction with explicit reviewed values.")
+      const current = await loadCorrectableAttendance(tx, { organizationId: parsed.organizationId, employeeId: request.employeeId }, correction.data.entryId)
+      if (current.sourceHash !== correction.data.baseHash) throw new ConflictError("HRIS_CORRECTION_STALE: Another correction changed this entry; request a fresh review.")
+    }
+    if (approved) {
+      const sealed = await tx.payrollRun.findFirst({ where: {
+        organizationId: parsed.organizationId, deletedAt: null,
+        payrollPeriod: { periodStart: { lte: request.periodEnd }, periodEnd: { gte: request.periodStart } },
+        status: { in: ["CALCULATED", "REVIEWED", "APPROVED", "EMITTED", "POSTED", "PAID", "ARCHIVED"] },
+      }, select: { id: true } })
+      if (sealed) throw new BusinessRuleError("HRIS_TIME_CORRECTION_REQUIRES_PAYROLL_CORRECTION_RUN: Use the retained payroll adjustment workflow.")
+    }
     // Own the pending transition before creating any decision effects. The
     // transaction must abort on downstream errors, including for supplied tx clients.
     const claimed = await tx.hrisTimeRequest.updateMany({
@@ -585,20 +569,17 @@ export async function decideOperationalTimeRequest(
       request.type === HrisTimeRequestType.LEAVE
       && parsed.decision === "APPROVE"
     ) {
-      const balance = await tx.hrisLeaveBalanceEntry.aggregate({
-        where: {
-          organizationId: parsed.organizationId,
-          employeeId: request.employeeId,
-          leavePolicyId: request.leavePolicyId!,
-          effectiveAt: { lte: request.periodStart },
-        },
-        _sum: { deltaMinutes: true },
-      })
-      if ((balance._sum.deltaMinutes ?? 0) < request.requestedMinutes) {
-        throw new BusinessRuleError(
-          "HRIS_LEAVE_BALANCE_INSUFFICIENT: Approved leave cannot exceed the certified balance.",
-        )
+      if (!request.leavePolicyId) throw new BusinessRuleError("HRIS_LEAVE_POLICY_REQUIRED")
+      await assertEmployeeLeaveEligibility(tx, parsed.organizationId, request.employeeId, request.leavePolicyId, request.periodStart, request.periodEnd)
+      await assertLeavePolicyOpen(tx, parsed.organizationId, request.employeeId, request.leavePolicyId)
+      await resolveLeaveAllocationInTx(tx, { organizationId: parsed.organizationId, employeeId: request.employeeId, leavePolicyId: request.leavePolicyId, periodStart: request.periodStart, periodEnd: request.periodEnd, requestedMinutes: request.requestedMinutes, excludeRequestId: request.id, allocations: attendanceMetadata(request.metadata).allocations as Array<{workDate: string; minutes: number}> | undefined })
+      const leaveScope = {
+        organizationId: parsed.organizationId,
+        employeeId: request.employeeId,
+        leavePolicyId: request.leavePolicyId,
       }
+      await lockHrisLeaveLedgerInTx(tx, leaveScope)
+      await assertHrisLeaveDebitInTx(tx, leaveScope, request.periodStart, -request.requestedMinutes)
     }
     const now = new Date()
     const decisionEvent = approved && request.type === HrisTimeRequestType.LEAVE
@@ -650,6 +631,7 @@ export async function decideOperationalTimeRequest(
         approvalEvidenceHash: parsed.approvalEvidenceHash ?? null,
         decisionBusinessEventId: decisionEvent?.event.id ?? null,
         metadata: json({
+          ...attendanceMetadata(request.metadata),
           decisionReasonHash: hash(parsed.decisionReason),
           rawDecisionReasonStored: false,
         }),
@@ -690,151 +672,14 @@ export async function decideOperationalTimeRequest(
   })
 }
 
-export async function importOperationalTime(
-  input: z.input<typeof importSchema>,
-  client: OperationalTimeClient = db,
-) {
-  const parsed = importSchema.parse(input)
-  assertPermission(parsed.actorPermissions, MANAGE, "time import")
-  const employeeIds = [...new Set(parsed.entries.map((entry) => entry.employeeId))]
-  const employees = await client.payrollEmployee.findMany({
-    where: {
-      organizationId: parsed.organizationId,
-      id: { in: employeeIds },
-      deletedAt: null,
-    },
-    select: { id: true },
-  })
-  const known = new Set(employees.map((employee) => employee.id))
-  return transaction(client, async (tx) => {
-    const batch = await tx.hrisTimeImportBatch.create({
-      data: {
-        organizationId: parsed.organizationId,
-        sourceSystem: parsed.sourceSystem,
-        sourceFileName: parsed.sourceFileName,
-        sourceHash: parsed.sourceHash,
-        rowCount: parsed.entries.length,
-        importedById: parsed.actorId,
-        idempotencyKey: parsed.idempotencyKey,
-      },
-    })
-    let acceptedCount = 0
-    let rejectedCount = 0
-    for (const entry of parsed.entries) {
-      const issues: string[] = []
-      if (!known.has(entry.employeeId)) issues.push("UNKNOWN_EMPLOYEE")
-      if (
-        entry.workedMinutes + entry.absenceMinutes
-        !== entry.scheduledMinutes
-      ) issues.push("SCHEDULE_RECONCILIATION_MISMATCH")
-      if (entry.overtimeMinutes > entry.workedMinutes) {
-        issues.push("OVERTIME_EXCEEDS_WORKED")
-      }
-      const status = issues.length
-        ? HrisTimeEntryStatus.REJECTED
-        : HrisTimeEntryStatus.VALIDATED
-      const timeEntry = known.has(entry.employeeId)
-        ? await tx.hrisTimeEntry.create({
-            data: {
-              organizationId: parsed.organizationId,
-              importBatchId: batch.id,
-              employeeId: entry.employeeId,
-              workDate: entry.workDate,
-              scheduledMinutes: entry.scheduledMinutes,
-              workedMinutes: entry.workedMinutes,
-              overtimeMinutes: entry.overtimeMinutes,
-              absenceMinutes: entry.absenceMinutes,
-              status,
-              sourceRecordId: entry.sourceRecordId,
-              sourceHash: entry.sourceHash,
-            },
-          })
-        : null
-      if (issues.length) {
-        rejectedCount += 1
-        for (const code of issues) {
-          await tx.hrisAttendanceAnomaly.create({
-            data: {
-              organizationId: parsed.organizationId,
-              importBatchId: batch.id,
-              timeEntryId: timeEntry?.id ?? null,
-              employeeId: known.has(entry.employeeId)
-                ? entry.employeeId
-                : null,
-              code,
-              severity: code === "UNKNOWN_EMPLOYEE" ? "HIGH" : "MEDIUM",
-              evidenceHash: hash({
-                sourceHash: entry.sourceHash,
-                code,
-              }),
-              detail: json({
-                sourceRecordIdHash: hash(entry.sourceRecordId),
-                rawRecordIncluded: false,
-              }),
-            },
-          })
-        }
-      } else acceptedCount += 1
-    }
-    const finalized = await tx.hrisTimeImportBatch.update({
-      where: { id: batch.id },
-      data: {
-        status: rejectedCount
-          ? HrisTimeImportStatus.REJECTED
-          : HrisTimeImportStatus.VALIDATED,
-        acceptedCount,
-        rejectedCount,
-        validatedById: parsed.actorId,
-        validatedAt: new Date(),
-      },
-    })
-    await audit(tx, parsed, "HrisTimeImportBatch", batch.id,
-      "HRIS_TIME_IMPORT_VALIDATED", {
-        acceptedCount,
-        rejectedCount,
-        sourceHashPresent: true,
-      })
-    return finalized
-  })
-}
+export { importReviewedOperationalTime as importOperationalTime, resolveReviewedOperationalAnomaly as resolveOperationalTimeAnomaly } from "./attendance-import.service"
 
-export async function resolveOperationalTimeAnomaly(
-  input: z.input<typeof anomalyDecisionSchema>,
-  client: OperationalTimeClient = db,
+// Internal source projection shared by certification and payroll consumption.
+// It neither grants permissions nor fabricates an approval; callers own authorization.
+async function readOperationalAttendanceSource(
+  parsed: { organizationId: string; employeeId: string; payrollPeriodId: string },
+  client: OperationalTimeClient,
 ) {
-  const parsed = anomalyDecisionSchema.parse(input)
-  assertPermission(parsed.actorPermissions, MANAGE, "attendance anomaly resolution")
-  const anomaly = await client.hrisAttendanceAnomaly.findFirst({
-    where: {
-      id: parsed.anomalyId,
-      organizationId: parsed.organizationId,
-      status: HrisAttendanceAnomalyStatus.OPEN,
-    },
-  })
-  if (!anomaly) throw new NotFoundError("Open attendance anomaly was not found.")
-  return client.hrisAttendanceAnomaly.update({
-    where: { id: anomaly.id },
-    data: {
-      status: parsed.status,
-      resolvedById: parsed.actorId,
-      resolvedAt: new Date(),
-      resolutionHash: parsed.resolutionHash,
-    },
-  })
-}
-
-export async function buildOperationalAttendanceCertification(
-  input: z.input<typeof certificationSchema>,
-  client: OperationalTimeClient = db,
-) {
-  const parsed = certificationSchema.parse(input)
-  assertPermission(parsed.actorPermissions, READ, "attendance certification preparation")
-  await scopedEmployee(client, parsed)
-  if (parsed.preparedById === parsed.actorId) {
-    throw new BusinessRuleError(
-      "SOD_VIOLATION: Attendance preparer cannot certify their own period.",
-    )
-  }
   const period = await client.payrollPeriod.findFirst({
     where: {
       id: parsed.payrollPeriodId,
@@ -842,86 +687,46 @@ export async function buildOperationalAttendanceCertification(
     },
   })
   if (!period) throw new NotFoundError("Payroll period was not found.")
-  const [employee, schedule, policy, entries, requests, anomalies, imports, balance] =
-    await Promise.all([
-      client.payrollEmployee.findFirst({
-        where: {
-          id: parsed.employeeId,
-          organizationId: parsed.organizationId,
-          deletedAt: null,
-        },
-      }),
-      client.hrisWorkSchedule.findFirst({
-        where: {
-          organizationId: parsed.organizationId,
-          employeeId: parsed.employeeId,
-          status: HrisOperationalStatus.ACTIVE,
-          effectiveFrom: { lte: period.periodStart },
-          OR: [{ effectiveTo: null }, { effectiveTo: { gte: period.periodEnd } }],
-        },
-        include: { calendar: true },
-        orderBy: { effectiveFrom: "desc" },
-      }),
-      client.hrisLeavePolicy.findFirst({
-        where: {
-          organizationId: parsed.organizationId,
-          countryCode: period.countryCode,
-          status: HrisOperationalStatus.ACTIVE,
-          effectiveFrom: { lte: period.periodStart },
-          OR: [{ effectiveTo: null }, { effectiveTo: { gte: period.periodEnd } }],
-        },
-        orderBy: { effectiveFrom: "desc" },
-      }),
-      client.hrisTimeEntry.findMany({
-        where: {
-          organizationId: parsed.organizationId,
-          employeeId: parsed.employeeId,
-          workDate: { gte: period.periodStart, lte: period.periodEnd },
-          status: HrisTimeEntryStatus.VALIDATED,
-        },
-      }),
-      client.hrisTimeRequest.findMany({
-        where: {
-          organizationId: parsed.organizationId,
-          employeeId: parsed.employeeId,
-          periodStart: { lte: period.periodEnd },
-          periodEnd: { gte: period.periodStart },
-        },
-      }),
-      client.hrisAttendanceAnomaly.count({
-        where: {
-          organizationId: parsed.organizationId,
-          employeeId: parsed.employeeId,
-          status: HrisAttendanceAnomalyStatus.OPEN,
-        },
-      }),
-      client.hrisTimeImportBatch.findMany({
-        where: {
-          organizationId: parsed.organizationId,
-          entries: {
-            some: {
-              employeeId: parsed.employeeId,
-              workDate: { gte: period.periodStart, lte: period.periodEnd },
-            },
-          },
-        },
-        select: { sourceHash: true },
-      }),
-      client.hrisLeaveBalanceEntry.findMany({
-        where: {
-          organizationId: parsed.organizationId,
-          employeeId: parsed.employeeId,
-          effectiveAt: { lte: period.periodEnd },
-        },
-        select: { sourceHash: true, deltaMinutes: true },
-      }),
-    ])
-  if (!employee || !schedule || !policy) {
-    throw new BusinessRuleError(
-      "HRIS_TIME_FOUNDATION_INCOMPLETE: Employee, active schedule/calendar, and leave policy are required.",
-    )
+  const requests = await client.hrisTimeRequest.findMany({ where: {
+    organizationId: parsed.organizationId, employeeId: parsed.employeeId,
+    periodStart: { lte: period.periodEnd }, periodEnd: { gte: period.periodStart },
+  } })
+  const rangeStart = new Date(Math.min(period.periodStart.getTime(), ...requests.map(item=>item.periodStart.getTime())))
+  const rangeEnd = new Date(Math.max(period.periodEnd.getTime(), ...requests.map(item=>item.periodEnd.getTime())))
+  const [employee, schedules, policies, entries, anomalies, imports, balance] = await Promise.all([
+    client.payrollEmployee.findFirst({ where: { id: parsed.employeeId, organizationId: parsed.organizationId, deletedAt: null } }),
+    client.hrisWorkSchedule.findMany({ where: { organizationId: parsed.organizationId, employeeId: parsed.employeeId,
+      status: HrisOperationalStatus.ACTIVE, effectiveFrom: { lte: rangeEnd }, OR: [{effectiveTo:null},{effectiveTo:{gte:rangeStart}}],
+    }, include: {calendar:{include:{holidays:true}}}, orderBy:[{effectiveFrom:"desc"},{id:"asc"}] }),
+    client.hrisLeavePolicy.findMany({ where: { organizationId: parsed.organizationId, countryCode: period.countryCode,
+      status: HrisOperationalStatus.ACTIVE, AND: [
+        { effectiveFrom:{lte:rangeEnd}, OR:[{effectiveTo:null},{effectiveTo:{gte:rangeStart}}] },
+        { OR:[{accrualRule:{path:["employeeIds"],array_contains:[parsed.employeeId]}},{balanceEntries:{some:{organizationId:parsed.organizationId,employeeId:parsed.employeeId}}},
+          {requests:{some:{organizationId:parsed.organizationId,employeeId:parsed.employeeId,status:"APPROVED"}}}] },
+      ],
+    }, orderBy:[{id:"asc"}] }),
+    client.hrisTimeEntry.findMany({ where: {organizationId:parsed.organizationId,employeeId:parsed.employeeId,
+      workDate:{gte:rangeStart,lte:rangeEnd},status:HrisTimeEntryStatus.VALIDATED} }),
+    client.hrisAttendanceAnomaly.count({where:{organizationId:parsed.organizationId,employeeId:parsed.employeeId,status:HrisAttendanceAnomalyStatus.OPEN}}),
+    client.hrisTimeImportBatch.findMany({where:{organizationId:parsed.organizationId,entries:{some:{employeeId:parsed.employeeId,workDate:{gte:rangeStart,lte:rangeEnd}}}},select:{sourceHash:true,importedById:true}}),
+    client.hrisLeaveBalanceEntry.findMany({where:{organizationId:parsed.organizationId,employeeId:parsed.employeeId,effectiveAt:{lte:period.periodEnd}},select:{sourceHash:true,deltaMinutes:true}}),
+  ])
+  if (!employee || !schedules.length || !policies.length || policies.some(policy=>!policy.approvedById||!policy.approvalEvidenceHash)) {
+    throw new BusinessRuleError("HRIS_TIME_FOUNDATION_INCOMPLETE: Assign a reviewed employee schedule/calendar and explicitly enrolled leave policy.")
   }
-  const pending = requests.filter(
+  const pendingEmployment = attendanceMetadata(attendanceMetadata(employee.metadata).hrisLifecycle).pending
+  if (pendingEmployment) {
+    const effectiveAt = new Date(String(attendanceMetadata(pendingEmployment).effectiveAt ?? ""))
+    if (Number.isNaN(effectiveAt.getTime()) || effectiveAt <= period.periodEnd) {
+      throw new BusinessRuleError("HRIS_TIME_EMPLOYMENT_CHANGE_PENDING: Resolve the employment change affecting this period before certifying attendance.")
+    }
+  }
+  const relatedCorrections = await client.hrisTimeRequest.findMany({ where: {
+    organizationId: parsed.organizationId, employeeId: parsed.employeeId, type: "ATTENDANCE_CORRECTION",
+    status: {in:["REQUESTED","APPROVED"]}, periodStart:{lte:rangeEnd},periodEnd:{gte:rangeStart},
+  } })
+  const correctionSources = [...requests,...relatedCorrections.filter(item=>!requests.some(existing=>existing.id===item.id))]
+  const pending = correctionSources.filter(
     (request) => request.status === HrisTimeRequestStatus.REQUESTED,
   )
   if (anomalies || pending.length) {
@@ -939,58 +744,88 @@ export async function buildOperationalAttendanceCertification(
       request.status === HrisTimeRequestStatus.APPROVED
       && request.type === HrisTimeRequestType.OVERTIME,
   )
-  const totals = entries.reduce((result, entry) => ({
-    scheduledMinutes: result.scheduledMinutes + entry.scheduledMinutes,
-    workedMinutes: result.workedMinutes + entry.workedMinutes,
-    overtimeMinutes: result.overtimeMinutes + entry.overtimeMinutes,
-    absenceMinutes: result.absenceMinutes + entry.absenceMinutes,
-    leaveMinutes: result.leaveMinutes,
-  }), {
-    scheduledMinutes: 0,
-    workedMinutes: 0,
-    overtimeMinutes: 0,
-    absenceMinutes: 0,
-    leaveMinutes: approvedLeave.reduce(
-      (sum, request) => sum + request.requestedMinutes,
-      0,
-    ),
-  })
-  totals.absenceMinutes = Math.max(
-    0,
-    totals.scheduledMinutes - totals.workedMinutes - totals.leaveMinutes,
-  )
-  if (totals.scheduledMinutes <= 0) {
+  const corrected = entries.map(entry => correctedAttendanceEntry(entry, correctionSources))
+  const allocation = allocateOperationalMinutes({entries:corrected.map(item=>item.entry),requests,schedules,policies,
+    periodStart:period.periodStart,periodEnd:period.periodEnd,employmentStart:employee.hireDate,employmentEnd:employee.terminationDate})
+  const totals = allocation.totals
+  const policyHash = hash(policies.map(policy=>({id:policy.id,hash:policy.sourceHash,review:policy.approvalEvidenceHash,from:policy.effectiveFrom,to:policy.effectiveTo})))
+  const scheduleHash = hash(allocation.usedSchedules.map(item=>({id:item.id,hash:item.sourceHash,pattern:item.weeklyPattern,from:item.effectiveFrom,to:item.effectiveTo})).sort((a,b)=>a.id.localeCompare(b.id)))
+  const calendarHash = hash(allocation.usedSchedules.map(item=>({hash:item.calendar.sourceHash,holidays:[...item.calendar.holidays].sort((a,b)=>a.holidayDate.getTime()-b.holidayDate.getTime())})).sort((a,b)=>a.hash.localeCompare(b.hash)))
+  return {
+    preparedByIds: [...new Set(imports.map(item=>item.importedById))].sort(),
+    policy: {
+      countryCode: period.countryCode,
+      policyVersion: "OPERATIONAL_WORK_DATE_ALLOCATION_V1",
+      countryPolicyHash: policyHash,
+      companyPolicyHash: policyHash,
+      leavePolicyHash: policyHash,
+      overtimePolicyHash: policyHash,
+      scheduleHash,
+      holidayCalendarHash: calendarHash,
+      effectiveFrom: period.periodStart.toISOString(),
+      effectiveTo: period.periodEnd.toISOString(),
+      verificationStatus: "REVIEWED" as const,
+      reviewedById: policies[0].approvedById!,
+      reviewEvidenceHash: hash(policies.map(item=>({id:item.id,reviewer:item.approvedById,evidence:item.approvalEvidenceHash}))),
+    },
+    evidence: {
+      allocationVersion: 1 as const,
+      allocationHash: allocation.allocationHash,
+      policySourceHashes: policies.map(policy=>policy.sourceHash).sort(),
+      attendanceImportHash: hash({ imports: imports.map((item) => item.sourceHash).sort(), entries: corrected.map(item => item.sourceHash).sort() }),
+      leaveBalanceSnapshotHash: hash(balance.sort((a, b) => a.sourceHash.localeCompare(b.sourceHash))),
+      approvedLeaveRequestHashes: approvedLeave.map((item) => item.sourceHash).sort(),
+      approvedOvertimeRequestHashes: approvedOvertime.map((item) => item.sourceHash).sort(),
+      approvedCorrectionHashes: corrected.flatMap(item => item.appliedHashes).sort(),
+    },
+    totals,
+  }
+}
+
+/** Revalidate operational proof while holding the same employee lock as input writers. */
+export async function assertOperationalAttendanceCurrentInTx(
+  tx: Prisma.TransactionClient,
+  scope: { organizationId: string; employeeId: string; payrollPeriodId: string },
+  snapshotMetadata: unknown,
+) {
+  const payload = attendanceMetadata(attendanceMetadata(snapshotMetadata).sourcePayload)
+  if (payload.sourceSystem !== "STOQUIFY_HRIS_OPERATIONAL_TIME") return
+  await lockOperationalEmployeeInTx(tx, scope.organizationId, scope.employeeId)
+  const retained = hrisTimeLeaveAttendanceCertificationSchema.safeParse(payload)
+  if (!retained.success || retained.data.sourceRecordId !== scope.employeeId + ":" + scope.payrollPeriodId) {
+    throw new BusinessRuleError("HRIS_OPERATIONAL_ATTENDANCE_STALE: Re-certify complete operational attendance proof.")
+  }
+  const current = await readOperationalAttendanceSource(scope, tx)
+  const previous = { policy: retained.data.policy, evidence: retained.data.evidence, totals: retained.data.totals }
+  if (hashBusinessPayload(previous) !== hashBusinessPayload({policy:current.policy,evidence:current.evidence,totals:current.totals})) {
+    throw new BusinessRuleError("HRIS_OPERATIONAL_ATTENDANCE_STALE: Operational inputs changed; obtain a fresh independent certification before payroll calculation.")
+  }
+}
+
+export async function buildOperationalAttendanceCertification(
+  input: z.input<typeof certificationSchema>,
+  client: OperationalTimeClient = db,
+) {
+  const parsed = certificationSchema.parse(input)
+  assertPermission(parsed.actorPermissions, READ, "attendance certification preparation")
+  await scopedEmployee(client, parsed)
+  if (parsed.preparedById === parsed.actorId) {
     throw new BusinessRuleError(
-      "HRIS_TIME_ENTRIES_MISSING: Validated time entries are required for certification.",
+      "SOD_VIOLATION: Attendance preparer cannot certify their own period.",
     )
   }
+  const source = await readOperationalAttendanceSource(parsed, client)
+  if (!source.preparedByIds.length || source.preparedByIds.includes(parsed.actorId)) throw new BusinessRuleError("SOD_VIOLATION: Independent certification must exclude every importer contributing source evidence, including adjacent work dates.")
+  parsed.preparedById = source.preparedByIds[0]
+
+  const totals = source.totals
   const sourcePayload = {
     kind: "STOQUIFY_HRIS_TIME_LEAVE_ATTENDANCE_CERTIFICATION" as const,
     version: 1 as const,
     sourceSystem: "STOQUIFY_HRIS_OPERATIONAL_TIME",
     sourceRecordId: `${parsed.employeeId}:${parsed.payrollPeriodId}`,
     sourceRevision: 1,
-    policy: {
-      countryCode: period.countryCode,
-      policyVersion: `${policy.code}:${policy.version}`,
-      countryPolicyHash: policy.sourceHash,
-      companyPolicyHash: policy.sourceHash,
-      leavePolicyHash: policy.sourceHash,
-      overtimePolicyHash: policy.sourceHash,
-      scheduleHash: schedule.sourceHash,
-      holidayCalendarHash: schedule.calendar.sourceHash,
-      effectiveFrom: policy.effectiveFrom.toISOString(),
-      effectiveTo: policy.effectiveTo?.toISOString() ?? null,
-      verificationStatus: "REVIEWED" as const,
-      reviewedById: policy.approvedById!,
-      reviewEvidenceHash: policy.approvalEvidenceHash!,
-    },
-    evidence: {
-      attendanceImportHash: hash(imports.map((item) => item.sourceHash).sort()),
-      leaveBalanceSnapshotHash: hash(balance),
-      approvedLeaveRequestHashes: approvedLeave.map((item) => item.sourceHash).sort(),
-      approvedOvertimeRequestHashes: approvedOvertime.map((item) => item.sourceHash).sort(),
-    },
+    ...source,
     approval: {
       preparedById: parsed.preparedById,
       approvedById: parsed.actorId,
@@ -1035,7 +870,7 @@ export async function getOwnOperationalTime(
     parsed.organizationId,
     parsed.actorId,
   )
-  const [requests, balances] = await Promise.all([
+  const [requests, leave, entries, corrections] = await Promise.all([
     client.hrisTimeRequest.findMany({
       where: { organizationId: parsed.organizationId, employeeId },
       orderBy: { requestedAt: "desc" },
@@ -1048,27 +883,33 @@ export async function getOwnOperationalTime(
         periodEnd: true,
         requestedMinutes: true,
         requestedAt: true,
+        metadata: true,
       },
     }),
-    client.hrisLeaveBalanceEntry.groupBy({
-      by: ["leavePolicyId"],
-      where: { organizationId: parsed.organizationId, employeeId },
-      _sum: { deltaMinutes: true },
-    }),
+    getHrisLeaveBalances({ ...parsed, employeeId }, client),
+    client.hrisTimeEntry.findMany({ where: { organizationId: parsed.organizationId, employeeId, status: "VALIDATED" },
+      orderBy: [{ workDate: "desc" }, { id: "asc" }], take: parsed.limit }),
+    client.hrisTimeRequest.findMany({ where: { organizationId: parsed.organizationId, employeeId,
+      type: "ATTENDANCE_CORRECTION", status: "APPROVED" } }),
   ])
   return {
     employeeId,
-    requests,
-    balances: balances.map((item) => ({
-      leavePolicyId: item.leavePolicyId,
-      availableMinutes: item._sum.deltaMinutes ?? 0,
-    })),
+    requests: requests.map(({metadata, ...row}) => ({...row, conversion: attendanceMetadata(metadata).conversion ?? null})),
+    correctionEntries: entries.map(entry => {
+      const current = correctedAttendanceEntry(entry, corrections)
+      return { id: entry.id, workDate: entry.workDate.toISOString(), workedMinutes: current.entry.workedMinutes,
+        absenceMinutes: current.entry.absenceMinutes, scheduledMinutes: entry.scheduledMinutes, sourceHash: current.sourceHash }
+    }),
+    balances: leave.policies,
+    balanceAsOf: leave.asOf,
+    unresolvedPolicyCount: leave.unresolvedPolicyCount,
   }
 }
 
 export async function getManagedOperationalTimeInbox(
   input: z.input<typeof readSchema>,
   client: OperationalTimeClient = db,
+  selection?: { requestId: string },
 ) {
   const parsed = readSchema.parse(input)
   assertPermission(parsed.actorPermissions, READ, "managed time inbox read")
@@ -1077,6 +918,7 @@ export async function getManagedOperationalTimeInbox(
     where: {
       organizationId: parsed.organizationId,
       status: HrisTimeRequestStatus.REQUESTED,
+      ...(selection ? { id: selection.requestId } : {}),
       ...(scope.employeeIds === null
         ? {}
         : { employeeId: { in: scope.employeeIds } }),

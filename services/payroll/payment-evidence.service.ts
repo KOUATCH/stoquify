@@ -1,3 +1,4 @@
+import { lockHrisReviewEmployeeInTx, lockHrisReviewPaymentInTx } from "@/services/hris/review-lock.service"
 import "server-only"
 
 import { createHmac } from "node:crypto"
@@ -24,6 +25,7 @@ import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
+import { lockOperationalEmployeeInTx } from "@/services/hris/attendance-correction"
 import { validateHrisTimeLeaveAttendanceCertification } from "@/services/hris/time-leave.contract"
 import { evaluateRedaction, type RedactionDecision } from "@/services/security/redaction-policy.service"
 
@@ -645,6 +647,7 @@ function changeEventPayload(request: Prisma.PayrollPaymentDestinationChangeReque
 }
 
 async function findPaymentDestinationChangeForDecision(tx: Prisma.TransactionClient, organizationId: string, requestId: string) {
+  await lockHrisReviewPaymentInTx(tx, organizationId, requestId)
   const request = await tx.payrollPaymentDestinationChangeRequest.findFirst({
     where: { id: requestId, organizationId, deletedAt: null },
     include: { employee: true },
@@ -745,12 +748,13 @@ export async function requestPaymentDestinationChange(
   const destination = normalizeDestination(parsed)
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewEmployeeInTx(tx, parsed.organizationId, parsed.employeeId)
     const employee = await tx.payrollEmployee.findFirst({
       where: { id: parsed.employeeId, organizationId: parsed.organizationId, deletedAt: null },
     })
     if (!employee) throw new NotFoundError("Payroll employee was not found for this tenant.")
-    if (employee.status !== PayrollEmployeeStatus.ACTIVE) {
-      throw new BusinessRuleError("Payment destination changes require an active payroll employee.")
+    if (employee.status !== PayrollEmployeeStatus.ACTIVE && employee.status !== PayrollEmployeeStatus.DRAFT) {
+      throw new BusinessRuleError("Payment destination changes require a draft starter or active payroll employee.")
     }
 
     const existingOpen = await tx.payrollPaymentDestinationChangeRequest.findFirst({
@@ -945,11 +949,17 @@ export async function applyApprovedPaymentDestinationChange(
 ): Promise<PaymentDestinationMutationResult> {
   const parsed = applyApprovedPaymentDestinationChangeInputSchema.parse(input)
   assertPermission(parsed.actorPermissions, APPLY_PERMISSIONS, "approved payment destination application")
-
   return inTransaction(client, async (tx) => {
+    const target = await findPaymentDestinationChangeForDecision(tx, parsed.organizationId, parsed.paymentDestinationChangeRequestId)
+    await lockOperationalEmployeeInTx(tx, parsed.organizationId, target.employeeId)
+    await tx.$queryRaw`SELECT id FROM payroll_employees WHERE id = ${target.employeeId} AND "organizationId" = ${parsed.organizationId} FOR UPDATE`
+
     const existing = await findPaymentDestinationChangeForDecision(tx, parsed.organizationId, parsed.paymentDestinationChangeRequestId)
     if (existing.status !== PayrollPaymentDestinationChangeStatus.APPROVED) {
       throw new BusinessRuleError("Only approved payment destination changes can be applied.")
+    }
+    if (existing.employee.status !== PayrollEmployeeStatus.ACTIVE && existing.employee.status !== PayrollEmployeeStatus.DRAFT) {
+      throw new BusinessRuleError("Payment destination application requires a draft starter or active payroll employee.")
     }
     if (!existing.approvalEvidenceHash || !existing.approvedById) {
       throw new BusinessRuleError("Approved payment destination changes require approval evidence before application.")

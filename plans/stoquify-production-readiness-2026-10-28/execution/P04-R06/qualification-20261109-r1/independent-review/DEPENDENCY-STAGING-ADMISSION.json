@@ -1,0 +1,23 @@
+{
+  "at": "2026-11-09T19:16:24.314Z",
+  "reviewer": "/root/v02_review",
+  "verdict": "admit_physical_dependency_staging_only",
+  "recipe": "stage-dependencies.cjs",
+  "sha256": "510d6bb67276c28ce0bde94488077d22aa6c5986452257e41046992ac3b4b11c",
+  "syntaxExitCode": 0,
+  "target": "D:/p04-r06-fullapp-20261109-r1",
+  "archivedReadOnlyInput": "D:/p04-v02-fullapp-20261109-r1/source/node_modules",
+  "reviewedEffects": [
+    "Requires fresh exact target,12GiB free and stopped prior owned cluster.",
+    "Checks current package/lock/schema identity with archived sources and prior artifact receipt.",
+    "Creates only fresh task storage/ownership/manifest and packet log/result; copies physical files with robocopy /E, no /MIR, /MOVE, delete or install.",
+    "Rejects source symlinks, excludes dependency cache, verifies entire destination and rehashes archive unchanged.",
+    "Uses an environment allowlist for OS copy tool; no app imports/build/configuration/DB or network.",
+    "Failure leaves partial owned output/evidence for explicit disposition rather than deleting or overwriting."
+  ],
+  "limits": [
+    "Installed-dependency reuse is not clean-install reproducibility.",
+    "This does not admit later source capture/build/schema/fixture/runtime recipes.",
+    "Automatic filesystem approval still applies to creating the exact D: target."
+  ]
+}

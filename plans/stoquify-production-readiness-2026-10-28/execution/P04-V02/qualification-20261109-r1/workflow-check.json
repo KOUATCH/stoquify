@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-09T16:03:44.219Z",
+  "command": "npm run agent:workflow:check",
+  "exitCode": 0,
+  "output": "Workflow contract passed; 196 package scripts remain outside the reviewed manifest. No commands executed.",
+  "controls": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "9f1f9719670580b16f31e8aa74253a33503b3caa7e6c7752842d033ed58832fd"
+    },
+    {
+      "path": "docs/ecc/WORKFLOW.md",
+      "sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c"
+    },
+    {
+      "path": "docs/ecc/command-registry.json",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381"
+    },
+    {
+      "path": "docs/ecc/test-lanes.md",
+      "sha256": "d486db7afde813cb6a09be10b25ff01c01a54a7b43496875501c8272e8d14575"
+    },
+    {
+      "path": "docs/ecc/skill-routing.md",
+      "sha256": "a3ba210c95eabfbdeabc09a39d971cbadc20087a2c850bcf7c08c554560a66b1"
+    },
+    {
+      "path": "scripts/verify-agent-workflow-contract.js",
+      "sha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    }
+  ],
+  "authorization": "User explicitly requested isolated P04-V02 real sessions/browser and independent review plus P04-D01 decision preparation. No product fixes, commits, production flag/data changes or deployment."
+}

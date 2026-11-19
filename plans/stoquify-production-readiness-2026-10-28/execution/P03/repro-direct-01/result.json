@@ -1,0 +1,57 @@
+{
+  "mode": "direct",
+  "startedAt": "2026-10-28T17:24:29.378Z",
+  "events": [],
+  "steps": [
+    {
+      "name": "runtime-ready",
+      "at": 38993
+    }
+  ],
+  "pageErrors": [],
+  "passed": false,
+  "harnessSha256": "3045bc002ae61478fee3ddd9624bdd26b189f87abc1d4bde172f7929c9429ae4",
+  "interpretation": "Direct HTTP localhost differs in scheme/origin from proxied HTTPS; differential result alone cannot assign proxy cause.",
+  "artifact": {
+    "digest": "987da3ead9c716cdbf5d2a22ac1723aa8a8ed15113f40a6b8abd3c1fb64d151f",
+    "buildId": "eoW9-NZPj4rd9OHTZxMDM",
+    "files": 5284
+  },
+  "fixture": {
+    "database": "stoquify_local_af05_p03_direct_20261028_r1",
+    "host": "127.0.0.1",
+    "port": 53528,
+    "seedHash": "6fb09707bb3d8fa2301c3df58bd86444ed75286ddbb57d33c410d65e7b1e4c51",
+    "users": 5,
+    "organizations": 3,
+    "grants": 1
+  },
+  "base": "http://localhost:54712",
+  "secureSession": false,
+  "error": "Secure HttpOnly session",
+  "failureView": {
+    "path": "blank",
+    "statuses": [],
+    "buttons": [],
+    "passwordInputs": 0
+  },
+  "finalGrants": [
+    {
+      "id": "af05-manager-grant",
+      "actor": "af05-manager",
+      "status": "ACTIVE"
+    }
+  ],
+  "engagements": 0,
+  "journals": 0,
+  "cleanupErrors": [],
+  "browserStopped": true,
+  "databaseDisconnected": true,
+  "serverStopped": true,
+  "logClosed": true,
+  "clusterStopped": true,
+  "originalArtifactUnchanged": true,
+  "runtimeCopyUnchanged": true,
+  "portsReleased": true,
+  "finishedAt": "2026-10-28T17:27:00.410Z"
+}

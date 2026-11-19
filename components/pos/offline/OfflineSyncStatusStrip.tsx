@@ -16,6 +16,7 @@ type OfflineSyncStatusStripProps = {
   sessionId?: string | null
   locale?: "en" | "fr"
   className?: string
+  compact?: boolean
 }
 
 const copy = {
@@ -74,6 +75,7 @@ export function OfflineSyncStatusStrip({
   locale = "en",
   className,
   access,
+  compact = false,
 }: OfflineSyncStatusStripProps) {
   const { organizationId, userId, canRead } = access
   const [showReview, setShowReview] = useState(false)
@@ -133,6 +135,25 @@ export function OfflineSyncStatusStrip({
   const blockerCount = summary ? summary.closeBlockerCount : 0
   const stalePolicyCount = summary ? summary.stalePolicyDeviceCount : 0
   const blocked = conflictCount > 0 || blockerCount > 0 || stalePolicyCount > 0
+
+  if (compact) return <details data-testid="pos-offline-status" className={cn("rounded-lg border px-3 text-xs", blocked ? "border-[var(--dash-warning)]/45 bg-[var(--dash-warning-soft)]" : "border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]", className)}>
+    <summary className="flex min-h-10 cursor-pointer flex-wrap items-center gap-x-2 gap-y-1 rounded-md py-2 outline-offset-2 focus-visible:outline focus-visible:outline-[var(--dash-brand)]">
+      {blocked ? <AlertTriangle aria-hidden="true" className="h-4 w-4 shrink-0 text-[var(--dash-warning)]" /> : <Wifi aria-hidden="true" className="h-4 w-4 shrink-0" />}
+      <span className="font-semibold">{blocked ? t.blocked : hasDevice ? t.degraded : t.ready}</span>
+      {(pendingCount > 0 || conflictCount > 0 || blockerCount > 0) ? <span>{pendingCount} {t.pending} · {conflictCount} {t.conflicts} · {blockerCount} {t.blockers}</span> : null}
+      {stalePolicyCount > 0 ? <span>{stalePolicyCount} {t.stalePolicy}</span> : null}
+      <span className="ml-auto font-medium underline underline-offset-2">{locale === "fr" ? "Voir la reprise" : "Review recovery"}</span>
+    </summary>
+    <div className="space-y-2 pb-3">
+      <p>{blocked ? (locale === "fr" ? "La clôture de session est bloquée. Ouvrez les conflits pour examiner l’opération d’origine ; un responsable doit effectuer la correction autorisée. Conservez les preuves et ne recommencez pas le paiement." : "Shift close is blocked. Open the conflicts to inspect the original operation; a manager must make the permitted correction. Keep the evidence and do not take the payment again.") : hasDevice ? (locale === "fr" ? "Consultez les preuves de l’appareil inscrit avant toute reprise." : "Inspect the enrolled device evidence before recovery.") : t.noDevice}</p>
+      {data?.asOf ? <p className="text-[var(--dash-text-soft)]">{t.asOf} {formatAsOf(data.asOf, locale)}</p> : null}
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" variant="outline" className="h-auto min-h-10 whitespace-normal" aria-expanded={showReview} onClick={() => setShowReview(value => !value)}>{locale === "fr" ? "Examiner les conflits" : "Review conflicts"}</Button>
+        <Button type="button" variant="outline" className="min-h-10" onClick={() => query.refetch()}>{t.retry}</Button>
+      </div>
+      {showReview && data ? <OfflineConflictReview key={`${organizationId}:${userId}:${locationId}:${terminalId}`} conflicts={data.conflicts} count={conflictCount} access={access} locationId={locationId ?? undefined} terminalId={terminalId ?? undefined} /> : null}
+    </div>
+  </details>
 
   return (
     <><section className={cn(

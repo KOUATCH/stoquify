@@ -1,0 +1,1 @@
+const fs=require('node:fs');const p='components/hris/HrisWorkspaceSetup.tsx';let s=fs.readFileSync(p,'utf8');s=s.replace('g.revokedAt ? t("Revoked", "Révoqué")', 'g.revokedAt ? t("Revoked", "Révoqué") : !g.reviewerAvailable ? t("Account or role unavailable", "Compte ou rôle indisponible")');fs.writeFileSync(p,s);

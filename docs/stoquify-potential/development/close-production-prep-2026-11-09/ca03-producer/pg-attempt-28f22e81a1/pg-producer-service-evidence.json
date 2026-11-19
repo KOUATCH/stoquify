@@ -1,0 +1,49 @@
+{
+  "checks": [
+    {
+      "name": "actual-declared-import-period-run-independent-sign-coverage",
+      "organizationId": "ca03-c6fb5f3111-org",
+      "statementFileId": "cmw9oms4t000xmaakm6crdof3",
+      "sourceFileHash": "6094c807fd9c98bc4be91b693347f172f639f1c696eb1c06136c5b2849193853",
+      "runId": "cmw9omsjt0018maak87pi21ug",
+      "certificateHash": "07b2ac3fdf54661381fcc8f20b3702acdaa20b46f68738d40012b8d1e6051654",
+      "earnedReconciliationSignature": true,
+      "seededTerminalStatus": false,
+      "earnedCloseCertificate": false
+    },
+    {
+      "name": "legacy-observed-no-period-credit",
+      "actualSignedReconciliation": true,
+      "coverageBlocked": true,
+      "sourceMetadataPromoted": false
+    },
+    {
+      "name": "limited-daily-period-coexistence",
+      "dailyRunId": "cmw9omto9004gmaakwqwvs6zy",
+      "collisionDenied": true,
+      "noExpansionOrRewrite": true
+    },
+    {
+      "name": "period-scope-denial",
+      "kind": "foreign",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "period-scope-denial",
+      "kind": "mid-day",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "period-scope-denial",
+      "kind": "daily operation",
+      "allScopedCountsUnchanged": true
+    }
+  ],
+  "counts": {
+    "signedReconciliationRuns": 2,
+    "journals": 0,
+    "closeRuns": 0,
+    "certifiedCloseExports": 0
+  },
+  "limitation": "Actual import/matching/independent sign-off/coverage service lifecycle over synthetic raw confirmed-payment facts; no seeded READY/SIGNED/T4, posted ledger, earned close certificate, real provider, HTTP authentication or deployment claim."
+}

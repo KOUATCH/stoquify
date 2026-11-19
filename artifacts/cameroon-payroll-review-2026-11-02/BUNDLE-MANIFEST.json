@@ -1,0 +1,598 @@
+{
+  "preparedAt": "2026-11-02T16:43:20.622357+00:00",
+  "purpose": "Human review handoff; no approval or independent calculation attestation",
+  "contractId": "STOQUIFY-CM-PAYROLL-CALCULATION-2026-11-02-DRAFT-4",
+  "status": "PENDING_REVIEW",
+  "productionUseAllowed": false,
+  "pendingDecisions": 16,
+  "pendingIndependentFixtures": 22,
+  "historicalResearchSourceIntegrity": [
+    {
+      "id": "S-01",
+      "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+      "recordedSha256Matches": true
+    },
+    {
+      "id": "S-02",
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Decree-2016-072-contribution-rates.pdf",
+      "recordedSha256Matches": true
+    },
+    {
+      "id": "S-03",
+      "file": "docs/unblock/research/DGI-CGI-2024.pdf",
+      "recordedSha256Matches": true
+    },
+    {
+      "id": "S-04",
+      "file": "docs/unblock/research/DGI-finance-circular-2024.pdf",
+      "recordedSha256Matches": true
+    },
+    {
+      "id": "S-05",
+      "file": "docs/unblock/research/DGI-finance-circular-2025.pdf",
+      "recordedSha256Matches": true
+    },
+    {
+      "id": "S-06",
+      "file": "docs/unblock/research/DGI-finance-circular-2026.pdf",
+      "recordedSha256Matches": true
+    },
+    {
+      "id": "S-07",
+      "file": "docs/unblock/research/DGI-IRPP-bareme.pdf",
+      "recordedSha256Matches": true
+    },
+    {
+      "id": "S-08",
+      "file": "docs/unblock/research/DGI-TDL-bareme.pdf",
+      "recordedSha256Matches": true
+    },
+    {
+      "id": "S-09",
+      "file": "docs/unblock/research/DGI-IRPP-declaration-circular.pdf",
+      "recordedSha256Matches": true
+    },
+    {
+      "id": "S-10",
+      "file": "docs/database-seed/payroll-unblock-workpapers/DGI-finance-law-2025.pdf",
+      "recordedSha256Matches": true
+    }
+  ],
+  "files": [
+    {
+      "file": "docs/database-seed/PAYROLL-UNBLOCK-COMPLETION-PACKET.md",
+      "bytes": 19583,
+      "sha256": "959ecacde23caa5c472d98f279fcd68c292d64c445b0a7b81aa94d67c0c476f2"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-register.json",
+      "bytes": 803333,
+      "sha256": "08972bc63c8efa02eb24e1c80358e22e294edf14423b818516af2a154152e8a2"
+    },
+    {
+      "file": "docs/database-seed/PAYROLL-UNBLOCK-REGISTER.md",
+      "bytes": 369190,
+      "sha256": "a9260c13e77d8bf53345fdf9c0beeac2929be827574f0506520a1a8de28b6374"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/current-source-facts.json",
+      "bytes": 35584,
+      "sha256": "8e6eaac0fc27491d9e930e627511caaa12639004944fc98513e0398fab2d8c34"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+      "bytes": 9916419,
+      "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/DGI-finance-law-2025.pdf",
+      "bytes": 19399033,
+      "sha256": "e3d1c4ce54bbd8ee1536b1b7ec3d95eb840a4c25931297c3871782f2e614c546"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/engineering-source-integrity.json",
+      "bytes": 4478,
+      "sha256": "d8f46f37f3bf236f13b7b7db86436c9572f88d52bc9b3e1f46191fcaeb7a84f5"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/expanded-rule-review-worksheet.json",
+      "bytes": 19619,
+      "sha256": "09c481e9f1872d130f5f532771ec3b5c27a25abe47e0de6a649f0e02d2017a0a"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/fixture-review-workbook.working.json",
+      "bytes": 7632,
+      "sha256": "d44a5db1459e3f56166c0c327d284f788ee82ed1f3d9999be3973dfe638479ef"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/maker-checker-approval.working.json",
+      "bytes": 1584,
+      "sha256": "ca609783980e2941efe0ae25ed87251066537de6cd38d79cba6b1b8c46482889"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/official-source-candidates.json",
+      "bytes": 3207,
+      "sha256": "d2236b92d992434ef7b62d71fd7ee4bc8f9351b41a690cc550608c287583718f"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/pay-date-coverage.json",
+      "bytes": 17231,
+      "sha256": "7fa712a4283b70e41b861a4c1f71d17a1db914d7215b45b33b62171338b2c695"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/review-decision.return.working.json",
+      "bytes": 2615,
+      "sha256": "6fe371bb9bac4b78f3676eb5aa0215977e6f80eb2f0a5515e233ae4d5ca5fd09"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/reviewer-qualification-conflict.working.json",
+      "bytes": 1589,
+      "sha256": "7dd2408a5d5e6916cc751c957a16c444045ee65b3bb3cf471f9e996b49e67ce3"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-hash-verification.working.json",
+      "bytes": 2786,
+      "sha256": "6cdea247ac52c3cfe3e40e9aefb5a6bf67f89dfa32932a2dae68bde21faac1d2"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/DGI-BAREME-IRPP.pdf",
+      "bytes": 7707500,
+      "sha256": "12849667a567e97b91db220a59599a913c430d9bdaec978d7e45a1e13001899b"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/DGI-BAREME-TDL.pdf",
+      "bytes": 2296353,
+      "sha256": "86f20f63db144814f05628d0ffa314da18eedae5f77a5f5be77e15646801b710"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/DGI-CGI-2024.pdf",
+      "bytes": 9095444,
+      "sha256": "b90d94c360893c6c2f2237e6382f667f67cfd298de5d291977d93c896ff4a36b"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/DGI-CIRCULAIRE-LF2025.pdf",
+      "bytes": 17301900,
+      "sha256": "483999f0e56708a4c664c6c1febbd09d73a652c9f9194551470e6a30e1b3aef6"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/DGI-CIRCULAIRE-LF2026.pdf",
+      "bytes": 20347454,
+      "sha256": "d32730a7e8670a3d8a699338ff1bfd22f1941dbc6c8b6a3515c68417579c9ca1"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/DGI-documents-39.html",
+      "bytes": 55247,
+      "sha256": "c24069e613a4f53ca1179fee4108da643d34acae4af8dabd67a118c6dc912a0b"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/DGI-RETENUES-SOURCE-2025.pdf",
+      "bytes": 4902076,
+      "sha256": "ccf6f79dbd09409424bafd07e69e44bb9987796a93498f3eb426241c8c52ceda"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/DGI-RETENUES-SOURCE-2026.pdf",
+      "bytes": 1494608,
+      "sha256": "b2f8bdb811b41331bd52a7220c11b79689d3b3237b6a537122ae7ef1bc037f8a"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/DGI-search-2025.html",
+      "bytes": 48963,
+      "sha256": "21d63011972282245bab5d6d0fd8c71f716c097d65db99677e8446f685ddd710"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/retained-source-manifest.json",
+      "bytes": 7816,
+      "sha256": "6b760703a2b7bccf4ef45f9b3ad68a791dacd124b8a75c0003da72963754b698"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/artifact-integrity-2026-07-19.json",
+      "bytes": 2205,
+      "sha256": "e57fc74454f5d97d9585a50fc620eec556cda34dc16300c2457616ec2b335e1b"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/authoritative-source-supplement-2026-07-26.json",
+      "bytes": 5014,
+      "sha256": "b0a8fc1aedd3f7e75754a67e09088b450fd02cc5f522572638708f4af9ed3dfe"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Contribution-Scale-official-2025.jpg",
+      "bytes": 1476553,
+      "sha256": "ae152e77b7a26ab2a2270d032a256815e8f3544e66700f207191edf584ed2259"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Decree-2016-072-contribution-rates.pdf",
+      "bytes": 2608628,
+      "sha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-employer-general-rules.html",
+      "bytes": 248633,
+      "sha256": "bc51f74de8dd3b0c7babd86e8f98d92dbdbece214480f66ac89c42d3e894a868"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Employer-Obligations-current-2026-07-26.html",
+      "bytes": 231875,
+      "sha256": "8e319e856a0f473accac53587708523b7080c5aac5f6d8eb4e8bd5cb5bb8d743"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Official-FAQ-Decree-2016-072.pdf",
+      "bytes": 380118,
+      "sha256": "166f12931df869f4a6f96a977342ce18600ece1361535c96fc2e841f2ffb7d5d"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Statistical-Yearbook-2025.pdf",
+      "bytes": 2895247,
+      "sha256": "53a22ebb9a9bf31bc0c7c60f8cc0eed9383192ef4f0d6a309f2782ad60875504"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json",
+      "bytes": 2562,
+      "sha256": "661bec902f0c55d699c100c2b3ce1323de6f88813c2761a566e29806e91a2224"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/qualified-review-dispatch-manifest.json",
+      "bytes": 2138,
+      "sha256": "590f422b8ae5c4ca2b786d3b676c708ff1e5a97a77a7bf905336fd61370f28cd"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/QUALIFIED_REVIEW_DISPATCH_2026-07-20.md",
+      "bytes": 3793,
+      "sha256": "27aa5c4489dfa07efb978b5848948344ba259006886c972840fe55ba5dcb2853"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/QUALIFIED_REVIEW_INTAKE.md",
+      "bytes": 4004,
+      "sha256": "6036d478861d86b28be6e9c0cb3c30b9adf7f373715c0e55aa24f9c975d61618"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-decision.template.json",
+      "bytes": 2271,
+      "sha256": "5bbccf6c764b8cd20acd9c42aa40f4fd384f4a044f682cdc620c7736be54b9e9"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/evidence-index.json",
+      "bytes": 3404,
+      "sha256": "aad222adbc409daebe41729b716f41b12af8633b18c75cc82b54b31d43c4a720"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/expert-review-checklist.md",
+      "bytes": 2234,
+      "sha256": "4fd1e034373b63f08cd6efc6eec4e758eed6cb863330a5aed97e0ba69477ed71"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/FIELD_MAPPING.md",
+      "bytes": 2126,
+      "sha256": "1d8a0525e1a4cced71615112b86341e6897ba985b0ab96e9b2570157ccd6df41"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/fixture-review-workbook.template.json",
+      "bytes": 7159,
+      "sha256": "f28e3968c33c65828cb021262ea36ccda50d173c7e4cf0f0c2633f3d7035482b"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/maker-checker-approval.template.json",
+      "bytes": 1585,
+      "sha256": "49a3cc06d49a324d18f0e6fa79789e930e187148a78f4a2018c748726dfb64cd"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/POST_SIGNATURE_RUNBOOK.md",
+      "bytes": 3628,
+      "sha256": "551709d9c4764de12a3094984c514866f8274957a3f617b8c8ba570dab97aa53"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/README.md",
+      "bytes": 3357,
+      "sha256": "abc676b626602aa4f39dd2c8508a61ab2a5e3c2b01f0fdd74bb1ccff30976321"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/REGULATOR_CONFIRMATION_REQUEST_DRAFT.md",
+      "bytes": 2080,
+      "sha256": "78030aca7d5321555ca569ee34342ad7ee92d7f4593a086918464b41e060354a"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/review-decision.return.template.json",
+      "bytes": 2616,
+      "sha256": "d3c927cf27907e7c173e1fdc81a67d167b9ddafa02aa1d86c7e087f9c6f59b3d"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/reviewer-qualification-conflict.template.json",
+      "bytes": 1590,
+      "sha256": "ed0300c32271044bc693bd0b8071e60b1a5ceed5d2e14e758b093fa3a8633222"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/SIGNATURE_VERIFICATION_PROCEDURE.md",
+      "bytes": 2274,
+      "sha256": "9a69cfc2531d3d7b7815b2a0373ea6aeb6e132a4ad908f7ac5fa0456fc9a1dc4"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/source-hash-verification.template.json",
+      "bytes": 2481,
+      "sha256": "1abd60960b3b6dd67b5eb6600126300d0b75aa9b76162d01d0c58fb9bace070d"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package-manifest.json",
+      "bytes": 2480,
+      "sha256": "8ddec984509178bbd9b02f9deb015ea2df64d893e6731bfd39208feaa4ecdab5"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/STATUTORY_GATE_UNBLOCK_HANDOFF_2026-07-19.md",
+      "bytes": 3790,
+      "sha256": "fff8f6b144ad57ccc2f15f452a385806c0d0fa514f00decb4d96c041fc771f54"
+    },
+    {
+      "file": "docs/payroll-blockers/evidence/postgres-run.json",
+      "bytes": 23025,
+      "sha256": "644d855b8bef20d65bf8259bd4dfab27e1f12b9e0045bfe985574a271a636544"
+    },
+    {
+      "file": "docs/payroll-blockers/evidence/service-transactions.json",
+      "bytes": 3613,
+      "sha256": "3d497aafb4225ad16595ef28b7fd6d6015a2fdef4e98c497992783f1c9bb7cf3"
+    },
+    {
+      "file": "docs/payroll-blockers/evidence/target-guards.tap",
+      "bytes": 1129,
+      "sha256": "9aeac2ceb883350766e71531d7b7014a7f4a9d3350181ddba9d4419d3cd6f2da"
+    },
+    {
+      "file": "docs/payroll-blockers/evidence/trust-spine.json",
+      "bytes": 1211,
+      "sha256": "500342cb6a06323d4d4644a87a63387bd3c87ef096f4fbdad9cd75276e122d1f"
+    },
+    {
+      "file": "docs/payroll-blockers/evidence/unit-regression.json",
+      "bytes": 64158,
+      "sha256": "2de13a4f9085d98ca4cb0addbe17ae6d8481a188bf107f82cd8931d7436f117d"
+    },
+    {
+      "file": "docs/payroll-blockers/PAYROLL-CALCULATION-ENGINEERING-RESULTS.json",
+      "bytes": 3857,
+      "sha256": "4ee5927f432e8fa33f8773e2258a7ede4dda60100ddc044df08fd538175263ac"
+    },
+    {
+      "file": "docs/payroll-blockers/PAYROLL-UNBLOCK-REPORT-2026-11-02-ENGINEERING-V4.md",
+      "bytes": 7163,
+      "sha256": "15ccb3c2034ab8bf08026e3fc8470d697e3b9d08ff9b42f96c9fff2ca77eb6a2"
+    },
+    {
+      "file": "docs/unblock/PAYROLL-CALCULATION-CONTRACT.md",
+      "bytes": 62701,
+      "sha256": "8eb8829fa02b647089549428d6a43ebfae2443b9b8bbf4bcde50e3719e691783"
+    },
+    {
+      "file": "docs/unblock/PAYROLL-CALCULATION-CONTRACT.pdf",
+      "bytes": 64828,
+      "sha256": "06e28b00e3480eba8e501c4f048151203497a75f9064705f17cbca5a83fd1dc0"
+    },
+    {
+      "file": "docs/unblock/PAYROLL-CALCULATION-ENGINEERING-RESULTS.json",
+      "bytes": 8900,
+      "sha256": "1368c13061071111c494218503def76f04bc50836a487502b7bd44d35186ada0"
+    },
+    {
+      "file": "docs/unblock/PAYROLL-CALCULATION-OFFICIAL-RESEARCH.json",
+      "bytes": 24533,
+      "sha256": "4e7cc64410b8711630c6dfdac6bda99f20bdbdf077548b8462de8f35c612985c"
+    },
+    {
+      "file": "docs/unblock/PAYROLL-CALCULATION-REVIEW-RETURN.json",
+      "bytes": 96704,
+      "sha256": "30188c4c3cc4da9d9958be809ba785dd7e9dbebe6df3ca0c5801662f88d55e61"
+    },
+    {
+      "file": "docs/unblock/PAYROLL-CALCULATION-REVIEWER-CHECKLIST.md",
+      "bytes": 32223,
+      "sha256": "ba3da0673658fd14922762dd3aad4beb08b4b544ccd2fc414beb69383d081d0a"
+    },
+    {
+      "file": "docs/unblock/PAYROLL-CALCULATION-REVIEWER-CHECKLIST.pdf",
+      "bytes": 34567,
+      "sha256": "0ef67c98b2b6dcbceb7fcbeabf7ae436fd2d14c473d4d516d6049c9b0fa9a30c"
+    },
+    {
+      "file": "docs/unblock/PAYROLL-CALCULATION-SOURCE-MANIFEST.json",
+      "bytes": 46952,
+      "sha256": "d7d4ef53466b4604c6f96b56d5d6fcb435558a4c7ea3916835c2d34c39571376"
+    },
+    {
+      "file": "docs/unblock/research/CGI-2026-first-120.txt",
+      "bytes": 330595,
+      "sha256": "7bee3c12c71ac26bf7a75adb9f03f336ee187a9cbaeebeb8e1b5760ea33a57eb"
+    },
+    {
+      "file": "docs/unblock/research/CNPS-Decree-2016-072-contribution-rates-page-2.png",
+      "bytes": 814572,
+      "sha256": "ee3aed77ec75e4f0f61ecc786eeceab655da4f081d57b20698bc64b2802917b5"
+    },
+    {
+      "file": "docs/unblock/research/CNPS-decree.txt",
+      "bytes": 10378,
+      "sha256": "06c8f516725e13c1ed204e3da846262b187fbfdd0fa5edc22129a21e1dde6db3"
+    },
+    {
+      "file": "docs/unblock/research/CNPS-FAQ.txt",
+      "bytes": 38736,
+      "sha256": "f8b0e7e0b7b71e5f8baf802e4edd4e07fa4acfbfcf42f4b317cf6dceb56c6fc9"
+    },
+    {
+      "file": "docs/unblock/research/DGI-CGI-2024.pdf",
+      "bytes": 9095444,
+      "sha256": "b90d94c360893c6c2f2237e6382f667f67cfd298de5d291977d93c896ff4a36b"
+    },
+    {
+      "file": "docs/unblock/research/DGI-CGI-2024.txt",
+      "bytes": 2196837,
+      "sha256": "76a24df080e1ca011a88bd943c2696ebd14216859f7f18733b8290b4df0a7dc5"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2024-page-19.png",
+      "bytes": 590756,
+      "sha256": "eda44865f305031f9192c05ab4d21db8be1f91754880e2561fdb5582a19c66d6"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2024-page-2.png",
+      "bytes": 592251,
+      "sha256": "68c1e9b574851361a7b7998502102343430630fabdba163fa73702001d122dfa"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2024-page-3.png",
+      "bytes": 618408,
+      "sha256": "d3527b2defa11c294bae0f40163d526d19a3316cfe35621829a0af59882b4cd9"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2024.pdf",
+      "bytes": 20168612,
+      "sha256": "79221130d1e148f628611b1df2946eaf90d1816e390135c9d801c68ac2a83756"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2024.txt",
+      "bytes": 1214,
+      "sha256": "6f5d6c65afc7bab719828db385e31aec3622c2873525e38e6405be71786b8f94"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2025-page-1.png",
+      "bytes": 303861,
+      "sha256": "e233a270dfe3e26e0c0874daf93fa1b99261564e7c3fc7cb01bf7932360f9969"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2025-page-2.png",
+      "bytes": 457142,
+      "sha256": "4548585355e2329196c235abdb6c141a8456837c4d1a568a23636c979faf4744"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2025-page-3.png",
+      "bytes": 472404,
+      "sha256": "33d8ea2b2e5a9f9ff46e1b0b708d0aa43f6273812f675be6bd4c2e1553128fcc"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2025-page-4.png",
+      "bytes": 472645,
+      "sha256": "bae898b18d49d429cf682f66617004119d08cb70c783fb0e0200b964a3f069e5"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2025-page-5.png",
+      "bytes": 249245,
+      "sha256": "91eeb11b4d84cfdb228cc683009136bcd52e2811924dea6b7320be0bfc09e7cd"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2025-page-6.png",
+      "bytes": 348334,
+      "sha256": "d32c65819f3f47fc34c38cd0eb0c5191fa152be208050d978ca27d1657532151"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2025.pdf",
+      "bytes": 17301900,
+      "sha256": "483999f0e56708a4c664c6c1febbd09d73a652c9f9194551470e6a30e1b3aef6"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2025.txt",
+      "bytes": 1689,
+      "sha256": "6b0f4968bbd80d8e76be9b3875737e90f316bd713c8ab2cfd970b3fdb7615c53"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2026-page-1.png",
+      "bytes": 300893,
+      "sha256": "dde0914934f28c175d1f468a65f72bd2a076ab4dfa06c0d7427332d5012c08b2"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2026-page-2.png",
+      "bytes": 583688,
+      "sha256": "6b391b67c3abc0f31a1b96acef11b3a257246562f5df9464bf28e129054dc943"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2026-page-29.png",
+      "bytes": 591155,
+      "sha256": "582dec161d9551d36de673715ec97bb65526f05dd24866b16ce30c53633da32f"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2026-page-3.png",
+      "bytes": 584461,
+      "sha256": "0f3fb81f888b7cd56296568f2383bb02158f45cb36c9e18cfd9ad91aa9b3ebed"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2026-page-4.png",
+      "bytes": 419394,
+      "sha256": "1ebeb45ced4cf97c637d8a31236e6ee701dbcc9caf38bc2f1058659a9ef185b8"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2026.pdf",
+      "bytes": 20347454,
+      "sha256": "d32730a7e8670a3d8a699338ff1bfd22f1941dbc6c8b6a3515c68417579c9ca1"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-circular-2026.txt",
+      "bytes": 2672,
+      "sha256": "11cebb992dc6cf0cc246c3646ba84acb80a331e72d843cd599c0fac4fa33f7b6"
+    },
+    {
+      "file": "docs/unblock/research/DGI-finance-law-2025.txt",
+      "bytes": 4406,
+      "sha256": "652751a685ecdf3b999bcdb3059b2231d908f1d190555fd9ee02344a9221e699"
+    },
+    {
+      "file": "docs/unblock/research/DGI-IRPP-bareme-page-1.png",
+      "bytes": 167537,
+      "sha256": "088fc0e03ca2e7aa8dbde8ab234012637d439aec608aeeb4d295a24761513b93"
+    },
+    {
+      "file": "docs/unblock/research/DGI-IRPP-bareme.pdf",
+      "bytes": 7707500,
+      "sha256": "12849667a567e97b91db220a59599a913c430d9bdaec978d7e45a1e13001899b"
+    },
+    {
+      "file": "docs/unblock/research/DGI-IRPP-bareme.txt",
+      "bytes": 666995,
+      "sha256": "d33b183f2af88e03b358258ddc2e512a7a2c621959f3fd80aa7a2f96d4ed0de3"
+    },
+    {
+      "file": "docs/unblock/research/DGI-IRPP-declaration-circular-page-1.png",
+      "bytes": 198557,
+      "sha256": "3d11eee0ce1d5a3e0d750adfb0b034cddec5f1357b06f1990181df6213958bcf"
+    },
+    {
+      "file": "docs/unblock/research/DGI-IRPP-declaration-circular-page-2.png",
+      "bytes": 167681,
+      "sha256": "6c9c2e9a442821bec1f1a8f895ef02640ea74c57d53df2cc21980dd84d094fea"
+    },
+    {
+      "file": "docs/unblock/research/DGI-IRPP-declaration-circular-page-3.png",
+      "bytes": 417855,
+      "sha256": "7bc09eb5b3c59f8551bdaed3da0cd075c79652fffa9f4a7f3a983f09d2519750"
+    },
+    {
+      "file": "docs/unblock/research/DGI-IRPP-declaration-circular-page-4.png",
+      "bytes": 322431,
+      "sha256": "8c2f78f20cec4abcb53b5895adae3459de20ce2589167e6972234ffbdd69bbef"
+    },
+    {
+      "file": "docs/unblock/research/DGI-IRPP-declaration-circular.pdf",
+      "bytes": 8290329,
+      "sha256": "d3a067b9f637d5a192ec45c1fbf3a5f1d30fbfd3c838d0369d507dcd08e58af6"
+    },
+    {
+      "file": "docs/unblock/research/DGI-IRPP-declaration-circular.txt",
+      "bytes": 339,
+      "sha256": "4464258436e307a23c1b580beb2a580d16b889aaa47e01e403002321e0eee30d"
+    },
+    {
+      "file": "docs/unblock/research/DGI-TDL-bareme.pdf",
+      "bytes": 2296353,
+      "sha256": "86f20f63db144814f05628d0ffa314da18eedae5f77a5f5be77e15646801b710"
+    },
+    {
+      "file": "docs/unblock/research/DGI-TDL-bareme.txt",
+      "bytes": 207555,
+      "sha256": "4f0fd7dd5c15c3bf7440f3803decc7cd7dfe6bd6319bfeade43ab1620cc13fd1"
+    },
+    {
+      "file": "REQUEST-TO-REVIEWER.md",
+      "bytes": 1840,
+      "sha256": "9014f289047721e2fe8432407ed238bed62e2e692b0b51adae5cd6f49f1a8cd4"
+    },
+    {
+      "file": "START-HERE.md",
+      "bytes": 7493,
+      "sha256": "a3ad6e58eae9b122d635dadcc82fdc4db7d4ddef7c4655e2bd361fe295505cc4"
+    }
+  ]
+}

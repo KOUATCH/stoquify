@@ -1,0 +1,68 @@
+{
+  "startedAt": "2026-11-10T12:55:22.559Z",
+  "passed": true,
+  "root": "E:\\ohada saas\\Focused projects\\stoquify",
+  "storage": "D:\\p04-r06-fullapp-20261110-r2",
+  "source": "D:\\p04-r06-fullapp-20261110-r2\\source",
+  "commands": [
+    {
+      "label": "source-local-clone",
+      "file": "git",
+      "args": [
+        "clone",
+        "--no-checkout",
+        "--shared",
+        "--",
+        "E:\\ohada saas\\Focused projects\\stoquify",
+        "D:\\p04-r06-fullapp-20261110-r2\\source"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "source-local-index",
+      "file": "git",
+      "args": [
+        "read-tree",
+        "HEAD"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "sourceOverrides": [],
+  "sourceAdditions": [],
+  "dependencyReconciliationSha256": "c3a99b483c0d224e3737a4c4878905c0f112ed41f83f07b6e2d064f30056c2a5",
+  "repairAdmissionSha256": "4993e10c3c40dd9e29e947db2533de7427d1e9cbe1290e61563aa4644936cca9",
+  "privateAliasPolicy": {
+    "path": "config/private-upload-aliases.json",
+    "sha256": "9cc5f6ee3f72c4a6d5eed6759b9e8ad8ab7fab90f11a7010374419fb7a4778fc",
+    "rows": [
+      {
+        "source": "public/images/cabin-1.jpg",
+        "uploadSource": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+        "sha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225"
+      },
+      {
+        "source": "public/images/cabin-2.jpg",
+        "uploadSource": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+        "sha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519"
+      },
+      {
+        "source": "public/images/profile.jpg",
+        "uploadSource": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+        "sha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2"
+      }
+    ],
+    "unchanged": true
+  },
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "sourceFiles": 9789,
+  "assetCount": 3,
+  "dependencyManifest": {
+    "files": 152806,
+    "bytes": 2998378443,
+    "sha256": "885d34096b3dae7765633fff1ffdaeecee5c7ab07c4ae86723b63145eb4462e2",
+    "compressedSha256": "306dafa0271600fb71cd921ee93542a695dc9eddc616ef21c72f0d995e788030",
+    "path": "D:\\p04-r06-fullapp-20261110-r2\\dependency-input-manifest.json.gz"
+  },
+  "finishedAt": "2026-11-10T12:58:50.367Z"
+}

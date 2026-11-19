@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "package": "P04",
+  "findings": [
+    {
+      "id": "P04-A-F01",
+      "title": "Reserved role codes can grant tenant-wide operating scope outside the permission grant ceiling",
+      "classification": "confirmed_native_service_composition_defect",
+      "severity": "high",
+      "review": "independently source-reviewed by audit_roadmap_review; native characterization execution owned by root",
+      "runtimeEvidence": {
+        "executedBy": "root",
+        "receipt": "../native-authority-result.json",
+        "jest": "../native-authority-jest.json",
+        "test": "../guard-review/shared-guards.postgres.test.ts",
+        "outcome": "23 passed / 1 failed at final expected LOCATIONS, received TENANT assertion; harness exit 1; securityQualificationPassed:false",
+        "isolation": "dedicated local PostgreSQL database; real guards/role/member/operating-scope services; Better Auth transport and Next headers stubbed; cluster stopped; source hashes unchanged",
+        "limit": "Confirms native service composition and actual unexpected scope, not full signed-cookie HTTP action invocation or proof of downstream data exfiltration"
+      },
+      "affectedExports": [
+        "actions/roles/createRole.ts#default",
+        "actions/users/memberAccess.ts#changeMemberAccessAction",
+        "actions/owner-war-room/owner-war-room.actions.ts#getOwnerWarRoomAction",
+        "actions/manager-action-center/manager-action-center.actions.ts#getManagerActionCenterAction"
+      ],
+      "relatedUnqualifiedPaths": [
+        "invite role-grant policy",
+        "access-request role approval/application reuse member policy"
+      ],
+      "trigger": "A current narrow role manager holds roles.create, roles.permissions.assign, users.read, users.roles.assign and dashboard.read, but lacks tenant-wide operating authority. An unused Admin or Super Admin display name is created with only dashboard.read and then granted to a separate active tenant member.",
+      "sourceMechanism": "createRoleName turns display name into admin/super_admin. saveRole/checkPermissionChanges and canGrantMemberRole inspect permission arrays, not code-derived authority. resolveTenantWideOperatingAuthority treats those role codes as TENANT_WIDE; owner and manager server paths consume that decision.",
+      "impact": "Same-tenant location/operating scope expansion (not cross-tenant escape). Existing administrator code collision can block that particular name but unused admin/super_admin alternatives remain.",
+      "preconditions": [
+        "Fresh actor session with assuranceVerifiedAt within 300s and matching organization",
+        "Active verified actor/target, distinct users",
+        "Unused reserved code in same tenant",
+        "Role/member request UUIDs and fresh memberAccessRevision after creation",
+        "Target session/context obtained again after assignment revokes target sessions",
+        "Relevant dashboard module admitted for end-to-end action read"
+      ],
+      "evidenceRefs": [
+        {
+          "path": "actions/roles/createRole.ts",
+          "line": 13,
+          "sha256": "975bda73763e8ed1635a6b792afe60a3b5176f937387a3833aabc78ca9c2e6c5"
+        },
+        {
+          "path": "services/roles/role-write.service.ts",
+          "line": 70,
+          "sha256": "986e554af046c1c86064c129c8e48d00d07ee8f3f5e899dc922eb2d7b7a162fb"
+        },
+        {
+          "path": "lib/createRoleName.ts",
+          "line": 1,
+          "sha256": "5de89a8890c93a23753d1d30776049a7c2f0d3f711fe1f67becfb634a18873ee"
+        },
+        {
+          "path": "services/users/member-access-policy.ts",
+          "line": 16,
+          "sha256": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947"
+        },
+        {
+          "path": "services/users/member-access.service.ts",
+          "line": 57,
+          "sha256": "093e879a7c25777e43017d30f1ce71554ac78b8d7c5d708d742e913ce1183933"
+        },
+        {
+          "path": "services/operating-access/operating-access-scope-contracts.ts",
+          "line": 22,
+          "sha256": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10"
+        },
+        {
+          "path": "services/operating-access/operating-access-scope.service.ts",
+          "line": 74,
+          "sha256": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26"
+        },
+        {
+          "path": "services/owner-war-room/owner-war-room.service.ts",
+          "line": 168,
+          "sha256": "2309b26b40ee77ebc53e0f482a7be63d6d9283518fd4626db8bb1b135a747e74"
+        }
+      ],
+      "repairPackage": {
+        "suggestedId": "P04-R01",
+        "ownerRoles": [
+          "security engineer",
+          "identity/RBAC owner",
+          "operating-access owner"
+        ],
+        "scope": "Review code-derived authority as an explicit capability; stop arbitrary names from minting privileged operating scope; ensure all grant paths enforce scope ceiling and inventory existing custom reserved-code roles before any data remediation.",
+        "acceptance": [
+          "Narrow role creator/assigner cannot produce or delegate broader operating scope through any reserved-code spelling",
+          "Legitimate owner/admin provisioning retains intended scope by reviewed trusted policy",
+          "Existing custom reserved-code records are explicitly classified, not silently deleted/revoked",
+          "Native create+assign+fresh-context test shows no scope expansion; owner/manager negative reads return no disallowed location data"
+        ],
+        "rollback": "No migration/production flag change in this package; retain prior policy artifact and inventory; do not restore exploitable scope policy as an automatic rollback after admission.",
+        "gate": "Blocks operating-access/owner/manager production qualification until repaired and independently verified"
+      }
+    },
+    {
+      "id": "P04-A-F02",
+      "title": "Item action error responses expose arbitrary exception text",
+      "classification": "confirmed_mocked_action_error_disclosure",
+      "severity": "medium",
+      "review": "independently source-reviewed by audit_roadmap_review",
+      "runtimeEvidence": {
+        "executedBy": "root",
+        "receipt": "../mocked-tests-result.json",
+        "jest": "../mocked-tests-jest.json",
+        "test": "item-read-error-disclosure.test.ts",
+        "outcome": "4 characterization cases passed, reproducing sentinel disclosure through 2 actual read handlers on guard and service exceptions",
+        "isolation": "all imported authority/service/schema/cache/error dependencies explicitly mocked; no real DB/network",
+        "limit": "Synthetic injected error, not live private/DB payload; 7 additional mutation catches are source-only, not exercised by these 4 tests"
+      },
+      "affectedExports": [
+        "actions/item/items.ts#getItemAction",
+        "actions/item/items.ts#listItemsAction"
+      ],
+      "additionalSourceMatchedExports": [
+        "actions/item/items.ts#updateItemBasicInfoAction",
+        "actions/item/items.ts#updateItemDetailsAction",
+        "actions/item/items.ts#updateItemPricingAction",
+        "actions/item/items.ts#updateItemRelationsAction",
+        "actions/item/items.ts#updateItemStockAction",
+        "actions/item/items.ts#updateItemTrackingAction",
+        "actions/item/items.ts#deleteItemAction"
+      ],
+      "trigger": "A guard or service rejects with an Error containing internal details; catch returns error.message directly to the action caller.",
+      "impact": "Arbitrary supplied exception text reaches failed client response; actual live confidential/DB payload is not established by source-only review or synthetic injection.",
+      "evidenceRefs": [
+        {
+          "path": "actions/item/items.ts",
+          "line": 97,
+          "sha256": "91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb"
+        },
+        {
+          "path": "actions/item/items.ts",
+          "line": 118,
+          "sha256": "91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb"
+        },
+        {
+          "path": "actions/item/items.ts",
+          "line": 180,
+          "sha256": "91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb"
+        },
+        {
+          "path": "actions/item/items.ts",
+          "line": 302,
+          "sha256": "91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb"
+        }
+      ],
+      "repairPackage": {
+        "suggestedId": "P04-R03",
+        "ownerRoles": [
+          "application engineer",
+          "security reviewer"
+        ],
+        "scope": "Normalize error responses in this single actions/item/items.ts family using existing safe action helper. Keep explicit nonprivate not-found/business outcomes. Do not alter transaction logic.",
+        "acceptance": [
+          "Synthetic private sentinel absent from all failed responses for authorization and service exceptions",
+          "Denied guard never invokes item read/write service",
+          "Preserve successful response DTOs and explicit fixed Item not found result",
+          "Before-repair characterization is 4/4 reproduced; post-repair acceptance must assert sentinel absence, not presence."
+        ],
+        "rollback": "Revert only owned response-normalization hunks if regression; keep vulnerable endpoints outside production admission until corrected.",
+        "gate": "Blocks private-error response qualification for the affected entrypoints"
+      }
+    }
+  ],
+  "existingTestSourcesRead": [
+    {
+      "path": "actions/roles/__tests__/role-actions.test.ts",
+      "line": 1,
+      "sha256": "7509ec4e6c27f5063424b8b81f3b02a626378523796f1f7635ee839756233f06",
+      "evidenceClass": "existing mocked test source inspected, not executed; no native/HTTP certification"
+    },
+    {
+      "path": "actions/access-requests/__tests__/access-request.actions.test.ts",
+      "line": 1,
+      "sha256": "0c362df0f029dbe8ef1607e0e4c685887491b86d4b5e246c8f7a4c18098d955e",
+      "evidenceClass": "existing mocked test source inspected, not executed; no native/HTTP certification"
+    },
+    {
+      "path": "actions/accounting/__tests__/finance-statement-export.actions.test.ts",
+      "line": 1,
+      "sha256": "5cfd33c2945d4d1ccee978b599e40682a60e1bb0321a2046e0ff7648edb661ff",
+      "evidenceClass": "existing mocked test source inspected, not executed; no native/HTTP certification"
+    },
+    {
+      "path": "services/users/__tests__/member-access.service.test.ts",
+      "line": 1,
+      "sha256": "43a8c93b2e82eecdb58e4168a54db9efa5108907a022cec3b4445eb40e43d9f2",
+      "evidenceClass": "existing mocked test source inspected, not executed; no native/HTTP certification"
+    },
+    {
+      "path": "actions/item/__tests__/edit-item.action.test.ts",
+      "line": 1,
+      "sha256": "8666636a04f6e9be1e13f8ba8cc0e00196596cbfc1e12d4c8d7c76abad4d5fb2",
+      "evidenceClass": "existing mocked test source inspected, not executed; no native/HTTP certification"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "package": "P04-R02",
+  "candidate_binding": "candidate-binding.json",
+  "status": "blocked",
+  "implementation_performed": false,
+  "evidence_class": "current source plus real Next development router in sealed minimal fixture with synthetic authority; packer invoked with build stubbed",
+  "inventory": {
+    "assets": 3,
+    "total_bytes": 461134,
+    "lexical_references": 43,
+    "jsx_image_candidates": 16,
+    "live_database_reference_census": false,
+    "source_files_scanned": 3896
+  },
+  "http": {
+    "requests": 36,
+    "acceptance_satisfied": 17,
+    "acceptance_failed": 19,
+    "harness_completed": true,
+    "acceptance_passed": false,
+    "source": "http-before-01-result.json",
+    "actual_better_auth": false,
+    "real_database": false,
+    "full_app_or_production_build": false
+  },
+  "gates": [
+    {
+      "id": "R02-G01",
+      "name": "Original asset preservation and source reference inventory",
+      "status": "scoped_pass",
+      "evidence": [
+        "asset-inventory.json",
+        "inventory-review/source-reference-inventory.json",
+        "final-integrity.json"
+      ],
+      "limit": "Local filesystem/source inventory only; live stored references not queried."
+    },
+    {
+      "id": "R02-G02",
+      "name": "Denied API requests reveal no private bytes",
+      "status": "scoped_pass",
+      "evidence": [
+        "http-before-01-result.json"
+      ],
+      "limit": "Synthetic authority adapter controls admission; real session validation is not qualified."
+    },
+    {
+      "id": "R02-G03",
+      "name": "Denied legacy/direct/encoded/optimizer requests reveal no private bytes",
+      "status": "fail",
+      "evidence": [
+        "http-before-01-result.json"
+      ]
+    },
+    {
+      "id": "R02-G04",
+      "name": "Authorized exact-byte reads and private cache policy through both URLs",
+      "status": "partial_fail",
+      "evidence": [
+        "http-before-01-result.json"
+      ],
+      "limit": "Both direct URLs return bytes to valid actor; API is private/no-store, legacy GET/HEAD retain public cache headers."
+    },
+    {
+      "id": "R02-G05",
+      "name": "Private asset bytes excluded from public runtime artifacts",
+      "status": "fail",
+      "evidence": [
+        "publication-characterization.json"
+      ],
+      "limit": "All3 copies published under runtime/public by current packer with synthetic build structure; no actual production build or hosted artifact inspected."
+    },
+    {
+      "id": "R02-G06",
+      "name": "Cleanup and source stability",
+      "status": "scoped_cleanup_pass_whole_candidate_drift",
+      "evidence": [
+        "http-before-01-launch.json",
+        "final-integrity.json",
+        "drift-disposition.json"
+      ],
+      "limit": "36requests completed; runtime needed targeted termination, exit1 retained. Port released. Tested sources/assets stable;6 unrelated current sources changed."
+    },
+    {
+      "id": "R02-G07",
+      "name": "Independent review",
+      "status": "assessment_accepted_within_scope",
+      "evidence": [
+        "independent-review/ASSESSMENT.md"
+      ]
+    }
+  ],
+  "advance": false
+}

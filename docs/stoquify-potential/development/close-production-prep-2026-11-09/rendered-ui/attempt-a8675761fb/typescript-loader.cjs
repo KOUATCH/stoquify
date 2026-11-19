@@ -1,0 +1,1 @@
+const ts=require("E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\typescript");module.exports=s=>ts.transpileModule(s,{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true}}).outputText;

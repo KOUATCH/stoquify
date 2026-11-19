@@ -1,0 +1,3 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../../../..'),file=path.join(root,'components/accounting/AccountantAccessManager.tsx'),before=fs.readFileSync(path.join(__dirname,'AccountantAccessManager.before-U02.txt')),after=fs.readFileSync(path.join(__dirname,'AccountantAccessManager.U02-proposed.txt'));
+assert.equal(process.argv.length,2);assert(fs.readFileSync(file).equals(before),'Preserve concurrent edits');assert.equal(crypto.createHash('sha256').update(after).digest('hex'),'c3129f29837c47b4167d23f3bf63721b13fa5e07628aeef6f22492e0c6555a40');fs.writeFileSync(file,after);console.log('Applied reviewed U02 component delta only');

@@ -1,0 +1,17 @@
+# Independent review — development07
+
+Reviewer: `/root/hr09_independent_review`, read-only source inspection; no test execution or database access. Initial implementation verdict: **PASS_SCOPED_SOURCE_ONLY** for the three bounded fixes, subject to final execution evidence.
+
+1. The closure link opened the generic approval inbox, which excludes time requests and attendance corrections. It now opens the existing team time-request inbox. The browser journey follows the actual rendered link instead of substituting a URL.
+2. Schedule decisions did not reload the roster's local state. A dedicated async callback now reads the captured employee/date/period scope after receipt dismissal, using the existing lock/busy guard. It updates only roster data, preserving the attendance file, preview and import receipt. Read failure propagates to the controlled review, retaining the committed receipt without repeating the decision. Hard authority denial clears private roster/working state and presents a generic reload notice.
+3. Post-commit revalidation failure could make a completed import appear failed. The action now retains the native owner result when cache revalidation fails. The workspace's separate authorized READ still reports current-state refresh failure independently.
+
+The saved pre-change run reproduced five failing assertions across the UI and action regressions; 35 existing checks passed. Final counts belong in RESULT.md and unit-final.log.
+
+Reviewer requested a specific timezone-offset denial assertion rather than accepting any failed submission; the runner now requires HRIS_SHIFT_PLAN_INVALID and the offset/local-time detail. Additional regression checks cover preserving the selected attendance file, preview and retained import receipt through schedule publication refresh.
+
+Evidence boundaries: revoked-certifier coverage uses an actual authenticated HTTP server-action call, not a rendered permission-revocation journey. The fixture uses two adjacent one-day periods crossing a month boundary, not full-month certification. Original certificate status may become SUPERSEDED; its retained payload/hash/totals and original raw observation must remain unchanged. Hiring activation, payroll execution, provider delivery and production readiness remain outside this slice.
+
+Final evidence consistency review: **PASS_SCOPED**. Reviewer inspected the final result/log (15 connected stages, no failures or uncaught page errors, cleanup complete), native outcome and assertions, 41 tests across five suites, zero type diagnostics and owned-service shutdown. All34 source hashes and7 runtime hashes matched independently. No new material finding. The native zero-work certification block is explicitly asserted; corrected absence is0, the original metadata/hash/totals and raw observation are retained, and two linked certificates exist without a payroll run. The original-absence display limitation is disclosed in RESULT.md. This remains a read-only artifact review, not an independent rerun.
+
+Closure addendum: PASS_SCOPED maintained after independent review of the post-run configuration exception. Current root and retained runtime differ only by the runtime's generated-types include and the single documented unrelated documentation-entry exclusion. The current root digest matches the exact recorded digest. The seal accepts only that recorded tsconfig difference and rejects all other source/runtime/configuration drift; its exception record is itself sealed. Tested runtime and source remain unchanged.

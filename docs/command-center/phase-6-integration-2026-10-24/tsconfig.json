@@ -1,0 +1,18 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "plugins": []
+  },
+  "include": [
+    "../../../next-env.d.ts",
+    "../../../services/command-center/**/*.ts",
+    "../../../actions/command-center/**/*.ts",
+    "../../../components/command-center/**/*.tsx",
+    "../../../components/daily-habit/DailyHabitDigestDashboard.tsx",
+    "../../../components/manager-action-center/ManagerActionCenterDashboard.tsx",
+    "../../../components/manager-action-center/ManagerLocationActionCenterDashboard.tsx",
+    "../../../components/owner-war-room/OwnerWarRoomDashboard.tsx"
+  ],
+  "exclude": []
+}

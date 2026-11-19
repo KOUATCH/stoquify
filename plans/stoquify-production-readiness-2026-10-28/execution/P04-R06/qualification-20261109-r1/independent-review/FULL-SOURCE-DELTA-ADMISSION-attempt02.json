@@ -1,0 +1,59 @@
+{
+  "at": "2026-11-10T08:55:06.660Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Admit preserved full current source delta for an independently reviewed successor candidate refresh; not build or runtime success",
+  "currentManifestSha256": "762c971bba9a54bd51b7f120787986adc7c271e7d6fc8c49febe93c28a8de163",
+  "currentSourceIdentity": "ce65aec5d3b0da755510a454a989807a5b855543431aa58d41ad7224566dce6b",
+  "files": 9788,
+  "predecessorFiles": 9723,
+  "delta": {
+    "changed": 4,
+    "added": 65,
+    "missing": 0,
+    "unchanged": 9719
+  },
+  "evidence": [
+    {
+      "path": "inventory/resume-20261110-r1/FULL-SOURCE-COMPARISON.json",
+      "sha256": "4a4a940dbfede3d5c9e6c98abe0a2fc1df2e0d6e28149c096cdbc52e648d18cf"
+    },
+    {
+      "path": "inventory/resume-20261110-r1/CURRENT-FULL-SOURCE-MANIFEST.json",
+      "sha256": "762c971bba9a54bd51b7f120787986adc7c271e7d6fc8c49febe93c28a8de163"
+    },
+    {
+      "path": "inventory/resume-20261110-r1/CONCURRENT-DRIFT-DISPOSITION.json",
+      "sha256": "da2ea2ffe9c6995198d71e74e0ef6e7dcbd1c0459f4dd981a5ae467c0456f4b2"
+    }
+  ],
+  "independentChecks": [
+    "Recomputed complete manifest identity and predecessor/current delta counts.",
+    "Rehashed all69changed/added current root files; all match supplied current manifest.",
+    "63selected root/snapshot hashes independently verified in successor source admission.",
+    "Exact auth difference is one type assertion. Exact tsconfig difference broadens only plans preservation-copy exclusion.",
+    "65added files are54JSON,5Markdown,6text files under unrelated docs evidence;2other changed docs are preserved as current source, not endorsed as acceptance evidence.",
+    "Current isolated candidate has no plans directory and no plans source-manifest entries."
+  ],
+  "typecheckDisposition": {
+    "currentConfigSha256": "d8520694b9940364a676d62d757600ffb29718574e72c5752f8f4875021f4ccb",
+    "priorConfigSha256": "d942c27b9e4e277b542b9232da76073d625bdc3d59f089498057ac759a1daa57",
+    "change": "plans/**/preservation/before/source/** -> plans/**/preservation/**",
+    "impact": "Changes workspace compiler file selection; not erased or equivalent by assumption. Isolated source has no plans tree, so refresh must prove old/new parsed candidate file lists equal before mutation.",
+    "normalTypecheckRequired": true,
+    "existingExclusionsUnchanged": true
+  },
+  "conditions": [
+    "Exact refreshed source must equal the full9788manifest; no delta relaxation, overrides or silent omission.",
+    "Refresh recipe must retain all4prior versions,65new current docs and original failed output/evidence.",
+    "Recompute current full source and compare at execution time; drift stops refresh.",
+    "Prove old/new parsed isolated TypeScript input lists equal with source compiler before mutation; then keep ordinary type/lint checks enabled.",
+    "All63critical inputs and private aliases must match in source and candidate.",
+    "Fresh capacity, process ownership, isolated DB identity and separate build/runtime admission still required."
+  ],
+  "limitations": [
+    "Full source is the candidate selector scope, not every ignored/local workspace file.",
+    "No new migration, clean-install, build, native-session, database-effect or browser success.",
+    "Concurrent docs are preserved, not audited or approved by this receipt."
+  ]
+}

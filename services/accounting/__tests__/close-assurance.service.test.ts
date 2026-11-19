@@ -71,9 +71,14 @@ jest.mock("../accountant-access.service", () => ({
 }))
 
 jest.mock("../close-evidence-acceptance-authority.service", () => ({
+  lockCloseWriteAuthorityInTx: jest.fn(async () => ({ revalidate: jest.fn() })),
   lockCloseEvidenceAcceptanceAuthorityInTx: jest.fn(),
   lockCloseEvidenceWorkAuthorityInTx: jest.fn(async () => ({ revalidate: jest.fn() })),
   lockCloseEvidenceRecipientInTx: jest.fn(async () => ({ revalidate: jest.fn() })),
+}))
+jest.mock("../close-finding-assignee-authority.service", () => ({
+  prelockCloseFindingAssigneeOrganizationsInTx: jest.fn(async (_tx, input) => ({ ...input, homeOrganizationId: input.organizationId, organizations: [] })),
+  lockCloseFindingAssigneeInTx: jest.fn(async () => ({ revalidate: jest.fn() })),
 }))
 
 jest.mock("../close-evidence-replacement.service", () => ({
@@ -101,9 +106,10 @@ jest.mock("@/services/events/business-event.service", () => ({
 }))
 
 import { db } from "@/prisma/db"
-import { ForbiddenError } from "@/services/_shared/action-errors"
+import { ApplicationError, ForbiddenError } from "@/services/_shared/action-errors"
 import { resolveAccountantClientAccess } from "../accountant-access.service"
-import { lockCloseEvidenceAcceptanceAuthorityInTx, lockCloseEvidenceRecipientInTx, lockCloseEvidenceWorkAuthorityInTx } from "../close-evidence-acceptance-authority.service"
+import { lockCloseEvidenceAcceptanceAuthorityInTx, lockCloseEvidenceRecipientInTx, lockCloseEvidenceWorkAuthorityInTx, lockCloseWriteAuthorityInTx } from "../close-evidence-acceptance-authority.service"
+import { lockCloseFindingAssigneeInTx, prelockCloseFindingAssigneeOrganizationsInTx } from "../close-finding-assignee-authority.service"
 import { closeEvidenceReplacementSelection, getCloseEvidenceReplacementInTx, type CloseEvidenceReplacementBinding } from "../close-evidence-replacement.service"
 import { verifyCloseEvidenceCollectionReceipt } from "../close-evidence-collection"
 import { getAccountantPortalData } from "../data-trust.service"
@@ -128,6 +134,7 @@ import {
   getCloseEvidenceGraph,
   requestCloseWaiver,
   runCloseAssurance,
+  updateAccountantReview,
 } from "../close-assurance.service"
 
 const mockDb = db as unknown as {
@@ -191,9 +198,11 @@ const mockRecordBusinessEventInTx = recordBusinessEventInTx as jest.Mock
 const mockGetCloseEvidenceReplacementInTx = getCloseEvidenceReplacementInTx as jest.Mock
 const mockLockCloseEvidenceAcceptanceAuthorityInTx = lockCloseEvidenceAcceptanceAuthorityInTx as jest.Mock
 const mockRevalidateCloseEvidenceAcceptanceAuthority = jest.fn()
+const mockRevalidateCloseWriteAuthority = jest.fn()
 
 const period = {
   id: "period-1",
+  organizationId: "org-1",
   name: "June 2026",
   status: "OPEN",
   startDate: new Date("2026-06-01T00:00:00.000Z"),
@@ -548,6 +557,7 @@ function missingEvidenceFinding(overrides: Record<string, unknown> = {}) {
     organizationId: "client-org",
     periodId: period.id,
     closeRunId: "close-run-1",
+    closeRun: { id: "close-run-1", organizationId: overrides.organizationId ?? "client-org", periodId: overrides.periodId ?? period.id },
     status: "OPEN",
     severity: "HIGH",
     checklistItem: { status: "UNAVAILABLE", evidenceCount: 0 },
@@ -677,6 +687,10 @@ function acceptanceInput(overrides: Record<string, unknown> = {}) {
 }
 
 function seedCleanSources() {
+  jest.mocked(prelockCloseFindingAssigneeOrganizationsInTx).mockReset().mockImplementation(async (_tx, input) => ({ ...input, homeOrganizationId: input.organizationId, organizations: [] }))
+  jest.mocked(lockCloseFindingAssigneeInTx).mockReset().mockResolvedValue({ revalidate: jest.fn().mockResolvedValue(undefined) })
+  mockRevalidateCloseWriteAuthority.mockReset().mockResolvedValue(undefined)
+  jest.mocked(lockCloseWriteAuthorityInTx).mockReset().mockResolvedValue({ revalidate: mockRevalidateCloseWriteAuthority })
   mockDb.accountantComment.findMany.mockReset().mockImplementation(async () => {
     const reads = await Promise.all(mockDb.accountantComment.findFirst.mock.results.map(result => result.value))
     return [...new Map(reads.filter(row => row && ["CLIENT_ACTION_REQUIRED", "CLIENT_RESPONSE_SUBMITTED", "ACCOUNTANT_RESPONSE_ACCEPTED"].includes(row.visibility)).map(row => [row.id, { id: row.id }])).values()]
@@ -694,7 +708,7 @@ function seedCleanSources() {
     const result = await mockDb.closeRun.findFirst.mock.results.at(-1)?.value
     return result ? [result] : createdAssessment ? [createdAssessment] : []
   })
-  mockDb.accountingPeriod.findFirst.mockResolvedValue(period)
+  mockDb.accountingPeriod.findFirst.mockImplementation(async ({ where }) => ({ ...period, organizationId: where.organizationId ?? "org-1" }))
   mockDb.accountingPeriod.findMany.mockResolvedValue([period])
   mockDb.closeRun.findFirst.mockResolvedValue(null)
   mockDb.closeRun.updateMany.mockResolvedValue({ count: 1 })
@@ -775,6 +789,53 @@ describe("close assurance service", () => {
     jest.useRealTimers()
     mockDb.accountantComment.findFirst.mockReset()
     mockDb.closeAssuranceFinding.updateMany.mockReset()
+  })
+
+  it.each([
+    ["assessment", (control: any) => runCloseAssurance("org-1", { periodId: period.id }, control)],
+    ["assign", (control: any) => assignCloseFinding("org-1", { findingId: "finding-1" }, control)],
+    ["comment", (control: any) => commentOnCloseFinding("org-1", { closeRunId: "close-run-1", body: "A scoped comment." }, control)],
+    ["waiver-request", (control: any) => requestCloseWaiver("org-1", { findingId: "finding-1", reason: "A retained reason." }, control)],
+    ["waiver-approve", (control: any) => approveCloseWaiver("org-1", { findingId: "finding-1" }, control)],
+    ["review", (control: any) => updateAccountantReview("org-1", { closeRunId: "close-run-1", status: "OPEN" }, control)],
+  ] as const)("denies %s before business writes when live session authority is revoked", async (operation, invoke) => {
+    const control = { actorId: "actor-1", actorPermissions: ["*"], session: { id: "session-1", token: "synthetic-unit-session" },
+      freshAuth: { actorId: "actor-1", organizationId: "org-1", lastAuthAt: new Date() } }
+    jest.mocked(lockCloseWriteAuthorityInTx).mockRejectedValueOnce(new ApplicationError("AUTH_REQUIRED", "Session revoked.", 401))
+    await expect(invoke(control)).rejects.toMatchObject({ code: "AUTH_REQUIRED" })
+    expect(lockCloseWriteAuthorityInTx).toHaveBeenCalledWith(mockDb, {
+      homeOrganizationId: "org-1", organizationId: "org-1", actorId: "actor-1", session: control.session,
+    }, operation)
+    expect(mockDb.closeRun.create).not.toHaveBeenCalled()
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.accountantReview.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("rechecks assessment publication authority after collectors and retains only a blocked owned marker on revocation", async () => {
+    const control = { actorId: "actor-1", session: { id: "session-1", token: "synthetic-unit-session" } }
+    jest.mocked(lockCloseWriteAuthorityInTx)
+      .mockResolvedValueOnce({ revalidate: mockRevalidateCloseWriteAuthority })
+      .mockRejectedValueOnce(new ApplicationError("AUTH_REQUIRED", "Session revoked during collection.", 401))
+    await expect(runCloseAssurance("org-1", { periodId: period.id, correlationId: "revoked-assessment" }, control)).rejects.toMatchObject({ code: "AUTH_REQUIRED" })
+    expect(lockCloseWriteAuthorityInTx).toHaveBeenCalledTimes(2)
+    expect(mockDb.closeRun.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "RUNNING" }) }))
+    expect(mockDb.closeRun.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: "close-run-1", organizationId: "org-1", periodId: period.id, runById: "actor-1", correlationId: "revoked-assessment", status: "RUNNING" },
+      data: expect.objectContaining({ status: "BLOCKED" }),
+    }))
+    expect(mockDb.closeChecklistItem.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("revalidates after finding-lock waits before assignment writes", async () => {
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(missingEvidenceFinding({ organizationId: "org-1" }))
+    mockRevalidateCloseWriteAuthority.mockRejectedValueOnce(new ApplicationError("AUTH_REQUIRED", "Session expired while waiting.", 401))
+    await expect(assignCloseFinding("org-1", { findingId: "finding-1" }, { actorId: "actor-1" })).rejects.toMatchObject({ code: "AUTH_REQUIRED" })
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
 
   it("builds a live close readiness dashboard from close, reconciliation, suspense, and data-trust services", async () => {
@@ -1403,9 +1464,9 @@ describe("close assurance service", () => {
 
   it("retains a blocked failure state when collection fails before finalization", async () => {
     mockDb.accountingPeriod.findFirst.mockResolvedValueOnce(period).mockResolvedValueOnce(period).mockRejectedValueOnce(new Error("assessment source unavailable"))
-    await expect(runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })).rejects.toThrow("assessment source unavailable")
+    await expect(runCloseAssurance("org-1", { periodId: period.id, correlationId: "failed-collection" }, { actorId: "controller" })).rejects.toThrow("assessment source unavailable")
     expect(mockDb.closeRun.updateMany).toHaveBeenCalledWith({
-      where: { id: "close-run-1", organizationId: "org-1", status: "RUNNING" },
+      where: { id: "close-run-1", organizationId: "org-1", periodId: period.id, runById: "controller", correlationId: "failed-collection", status: "RUNNING" },
       data: expect.objectContaining({ status: "BLOCKED", metadata: expect.objectContaining({ assessmentFailure: "ASSESSMENT_FAILED" }) }),
     })
     expect(mockDb.closeChecklistItem.create).not.toHaveBeenCalled()
@@ -1413,9 +1474,9 @@ describe("close assurance service", () => {
 
   it("retains a blocked failure state when assessment persistence rolls back", async () => {
     mockDb.$transaction.mockImplementationOnce(callback => callback(mockDb)).mockRejectedValueOnce(new Error("transaction rolled back"))
-    await expect(runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })).rejects.toThrow("transaction rolled back")
+    await expect(runCloseAssurance("org-1", { periodId: period.id, correlationId: "failed-publication" }, { actorId: "controller" })).rejects.toThrow("transaction rolled back")
     expect(mockDb.closeRun.updateMany).toHaveBeenCalledWith(expect.objectContaining({
-      where: { id: "close-run-1", organizationId: "org-1", status: "RUNNING" }, data: expect.objectContaining({ status: "BLOCKED" }),
+      where: { id: "close-run-1", organizationId: "org-1", periodId: period.id, runById: "controller", correlationId: "failed-publication", status: "RUNNING" }, data: expect.objectContaining({ status: "BLOCKED" }),
     }))
   })
 
@@ -1426,7 +1487,7 @@ describe("close assurance service", () => {
       periodId: period.id,
       closeRunId: "close-run-1",
       status: "OPEN",
-      closeRun: { id: "close-run-1" },
+      closeRun: { id: "close-run-1", organizationId: "org-1", periodId: period.id },
     })
     mockDb.closeAssuranceFinding.update.mockResolvedValue({
       id: "finding-1",
@@ -1451,10 +1512,12 @@ describe("close assurance service", () => {
     const result = await assignCloseFinding(
       "org-1",
       { findingId: "finding-1", correlationId: "corr-assign" },
-      { actorId: "user-1" },
+      { actorId: "user-1", session: { id: "session", token: "synthetic-assignment-session" } },
     )
 
     expect(result.ownerId).toBe("user-1")
+    expect(prelockCloseFindingAssigneeOrganizationsInTx).toHaveBeenCalledWith(mockDb, { organizationId: "org-1", assigneeId: "user-1" })
+    expect(jest.mocked(prelockCloseFindingAssigneeOrganizationsInTx).mock.invocationCallOrder[0]).toBeLessThan(jest.mocked(lockCloseWriteAuthorityInTx).mock.invocationCallOrder[0])
     expect(mockDb.closeAssuranceFinding.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -1473,11 +1536,20 @@ describe("close assurance service", () => {
     )
   })
 
+  it("rejects an ineligible finding owner before assignment, audit or notification effects", async () => {
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({ id: "finding-1", organizationId: "org-1", periodId: period.id, closeRunId: "close-run-1", status: "OPEN", closeRun: { id: "close-run-1", organizationId: "org-1", periodId: period.id } })
+    jest.mocked(lockCloseFindingAssigneeInTx).mockRejectedValueOnce(new ForbiddenError())
+    await expect(assignCloseFinding("org-1", { findingId: "finding-1", assignedToId: "ineligible" }, { actorId: "assigner", session: { id: "session", token: "synthetic-assignment-session" } })).rejects.toMatchObject({ code: "FORBIDDEN" })
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
   it.each(["ASSIGNED", "IN_REVIEW", "REOPENED"])("preserves retained evidence requests when ordinary assignment targets a %s finding", async (status) => {
-    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({ id: "finding-1", organizationId: "org-1", periodId: period.id, closeRunId: "close-run-1", status, ownerId: "recipient-1", closeRun: { id: "close-run-1" } })
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({ id: "finding-1", organizationId: "org-1", periodId: period.id, closeRunId: "close-run-1", status, ownerId: "recipient-1", closeRun: { id: "close-run-1", organizationId: "org-1", periodId: period.id } })
     // Admission fails closed even if this old request's metadata is malformed.
     mockDb.accountantComment.findFirst.mockResolvedValue({ id: "retained-request" })
-    await expect(assignCloseFinding("org-1", { findingId: "finding-1", assignedToId: "recipient-1" }, { actorId: "user-1" })).rejects.toMatchObject({ code: "CONFLICT" })
+    await expect(assignCloseFinding("org-1", { findingId: "finding-1", assignedToId: "recipient-1" }, { actorId: "user-1", session: { id: "session", token: "synthetic-assignment-session" } })).rejects.toMatchObject({ code: "CONFLICT" })
     expect(mockDb.accountantComment.findFirst).toHaveBeenCalledWith({ where: { organizationId: "org-1", findingId: "finding-1", visibility: "CLIENT_ACTION_REQUIRED" }, select: { id: true } })
     expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "Serializable" })
     expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
@@ -1528,13 +1600,14 @@ describe("close assurance service", () => {
   })
 
   it("adds source-linked accountant comments to persisted close findings", async () => {
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun())
     mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({
       id: "finding-1",
       organizationId: "org-1",
       periodId: period.id,
       closeRunId: "close-run-1",
       status: "OPEN",
-      closeRun: { id: "close-run-1" },
+      closeRun: { id: "close-run-1", organizationId: "org-1", periodId: period.id },
     })
     mockDb.accountantComment.create.mockResolvedValue({
       id: "comment-1",
@@ -1565,6 +1638,95 @@ describe("close assurance service", () => {
         }),
       }),
     )
+  })
+
+  describe("close mutation scope consistency", () => {
+    const scope = { organizationId: "org-1", periodId: period.id, closeRunId: "close-run-1" }
+    const finding = () => ({ ...scope, id: "finding-1", status: "OPEN", closeRun: { id: scope.closeRunId, organizationId: scope.organizationId, periodId: scope.periodId }, checklistItemId: null })
+    const evidence = () => ({ ...scope, id: "evidence-1", checklistItemId: null, findingId: null })
+    const review = () => ({ ...scope, id: "review-1", status: "OPEN" })
+    const command = { closeRunId: scope.closeRunId, findingId: "finding-1", evidenceItemId: "evidence-1", reviewId: "review-1", body: "A current source-linked review note." }
+    function expectNoCommentEffects() {
+      expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+      expect(mockDb.accountantReview.create).not.toHaveBeenCalled()
+      expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+      expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+      expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+    }
+    beforeEach(() => {
+      mockDb.closeRun.findFirst.mockResolvedValue({ ...scope, id: scope.closeRunId, runById: "preparer" })
+      mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(finding())
+      mockDb.closeEvidenceItem.findFirst.mockResolvedValue(evidence())
+      mockDb.accountantReview.findFirst.mockResolvedValue(review())
+      mockDb.accountantComment.create.mockImplementation(async ({ data }) => ({ id: "comment-created", visibility: "INTERNAL", createdAt: new Date(), ...data }))
+      mockDb.accountantReview.create.mockImplementation(async ({ data }) => ({ id: "review-created", createdAt: new Date(), ...data }))
+    })
+    it("preserves valid run/finding/evidence/review multilinks in one scope", async () => {
+      await commentOnCloseFinding("org-1", command, { actorId: "reviewer" })
+      expect(mockDb.accountantComment.create).toHaveBeenCalledWith({ data: expect.objectContaining({ ...scope, findingId: "finding-1", evidenceItemId: "evidence-1", reviewId: "review-1" }) })
+      expect(mockDb.closeEvidenceItem.findFirst).toHaveBeenCalledWith({ where: { id: "evidence-1", organizationId: "org-1" }, include: { checklistItem: true } })
+      expect(mockDb.accountantReview.findFirst).toHaveBeenCalledWith({ where: { id: "review-1", organizationId: "org-1" } })
+    })
+    it("allows distinct finding links within the same run without inventing an owner restriction", async () => {
+      mockDb.closeEvidenceItem.findFirst.mockResolvedValue({ ...evidence(), findingId: "finding-2" })
+      mockDb.closeAssuranceFinding.findFirst.mockImplementation(async ({ where }) => ({ ...finding(), id: where.id }))
+      await expect(commentOnCloseFinding("org-1", command, { actorId: "reviewer" })).resolves.toMatchObject({ findingId: "finding-1", evidenceItemId: "evidence-1" })
+    })
+    it.each(["evidence", "review", "run"])("rejects a foreign secondary %s even when a local finding is valid", async target => {
+      if (target === "evidence") mockDb.closeEvidenceItem.findFirst.mockResolvedValue({ ...evidence(), organizationId: "foreign" })
+      if (target === "review") mockDb.accountantReview.findFirst.mockResolvedValue({ ...review(), organizationId: "foreign" })
+      if (target === "run") mockDb.closeRun.findFirst.mockResolvedValue(null)
+      await expect(commentOnCloseFinding("org-1", command, { actorId: "reviewer" })).rejects.toMatchObject({ code: "NOT_FOUND" })
+      expectNoCommentEffects()
+    })
+    it.each(["explicit-run", "evidence-run", "evidence-period", "review-run", "review-period"])("rejects conflicting %s links instead of applying target precedence", async target => {
+      const input = { ...command }
+      if (target === "explicit-run") {
+        input.closeRunId = "other-run"
+        mockDb.closeRun.findFirst.mockResolvedValue({ ...scope, id: "other-run", runById: "preparer" })
+      }
+      if (target === "evidence-run") mockDb.closeEvidenceItem.findFirst.mockResolvedValue({ ...evidence(), closeRunId: "other-run" })
+      if (target === "evidence-period") mockDb.closeEvidenceItem.findFirst.mockResolvedValue({ ...evidence(), periodId: "other-period" })
+      if (target === "review-run") mockDb.accountantReview.findFirst.mockResolvedValue({ ...review(), closeRunId: "other-run" })
+      if (target === "review-period") mockDb.accountantReview.findFirst.mockResolvedValue({ ...review(), periodId: "other-period" })
+      await expect(commentOnCloseFinding("org-1", input, { actorId: "reviewer" })).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+      expectNoCommentEffects()
+    })
+    it.each(["organization", "run", "period"])("rejects a corrupt finding checklist %s before waiver mutation", async field => {
+      const checklist = { id: "check-1", ...scope }
+      if (field === "organization") checklist.organizationId = "foreign"
+      if (field === "run") checklist.closeRunId = "other-run"
+      if (field === "period") checklist.periodId = "other-period"
+      mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({ ...finding(), checklistItemId: checklist.id, checklistItem: checklist })
+      await expect(requestCloseWaiver("org-1", { findingId: "finding-1", reason: "Reviewed timing-only waiver request." }, { actorId: "reviewer" })).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+      expectNoCommentEffects()
+    })
+    it.each(["checklist", "finding"])("checks an evidence item's optional %s relation even when no explicit finding is supplied", async target => {
+      if (target === "checklist") mockDb.closeEvidenceItem.findFirst.mockResolvedValue({ ...evidence(), checklistItemId: "check", checklistItem: { ...scope, id: "check", closeRunId: "other-run" } })
+      if (target === "finding") {
+        mockDb.closeEvidenceItem.findFirst.mockResolvedValue({ ...evidence(), findingId: "finding-2" })
+        mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({ ...finding(), id: "finding-2", periodId: "other-period" })
+      }
+      await expect(commentOnCloseFinding("org-1", { evidenceItemId: "evidence-1", body: command.body }, { actorId: "reviewer" })).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+      expectNoCommentEffects()
+    })
+    it.each(["foreign-run", "run-period", "missing-period", "foreign-period"])("rejects %s corruption in the finding's parent chain", async failure => {
+      if (failure === "foreign-run") mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({ ...finding(), closeRun: { ...finding().closeRun, organizationId: "foreign" } })
+      if (failure === "run-period") mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({ ...finding(), closeRun: { ...finding().closeRun, periodId: "other-period" } })
+      if (failure === "missing-period") mockDb.accountingPeriod.findFirst.mockResolvedValue(null)
+      if (failure === "foreign-period") mockDb.accountingPeriod.findFirst.mockResolvedValue({ id: period.id, organizationId: "foreign" })
+      await expect(commentOnCloseFinding("org-1", { findingId: "finding-1", body: command.body }, { actorId: "reviewer" })).rejects.toMatchObject({ code: failure === "foreign-run" ? "NOT_FOUND" : "BUSINESS_RULE_VIOLATION" })
+      expectNoCommentEffects()
+    })
+    it("requires the run's period to be owned before creating an accountant review", async () => {
+      mockDb.accountingPeriod.findFirst.mockResolvedValue(null)
+      await expect(updateAccountantReview("org-1", { closeRunId: scope.closeRunId, status: "OPEN" }, { actorId: "reviewer" })).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+      expectNoCommentEffects()
+    })
+    it("allows an accountant review for an owned run and period", async () => {
+      await expect(updateAccountantReview("org-1", { closeRunId: scope.closeRunId, status: "OPEN" }, { actorId: "reviewer" })).resolves.toMatchObject({ id: "review-created", status: "OPEN" })
+      expect(mockDb.accountantReview.create).toHaveBeenCalledWith({ data: expect.objectContaining({ ...scope, reviewerId: "reviewer", openedById: "preparer" }) })
+    })
   })
 
   it("creates an atomic delegated missing-proof request with audit and notification evidence", async () => {
@@ -1613,6 +1775,7 @@ describe("close assurance service", () => {
       clientOrganizationId: "client-org",
       accountantUserId: "accountant-1",
       capability: "REVIEW",
+      permission: "accounting.close.evidence.request",
       now,
       client: mockDb,
     })
@@ -3174,7 +3337,7 @@ describe("close assurance service", () => {
       dueAt: null,
       waiverRequestedById: "user-1",
       waiverRequestedAt: new Date("2026-06-15T11:00:00.000Z"),
-      closeRun: { id: "close-run-1" },
+      closeRun: { id: "close-run-1", organizationId: "org-1", periodId: period.id },
     })
     mockDb.closeAssuranceFinding.update.mockResolvedValue({
       id: "finding-1",
@@ -3240,7 +3403,7 @@ describe("close assurance service", () => {
       status: "IN_REVIEW",
       waiverRequestedById: "user-1",
       waiverRequestedAt: new Date("2026-06-15T12:00:00.000Z"),
-      closeRun: { id: "close-run-1" },
+      closeRun: { id: "close-run-1", organizationId: "org-1", periodId: period.id },
     })
 
     jest.useFakeTimers().setSystemTime(new Date("2026-06-15T12:04:00.000Z"))
@@ -3260,6 +3423,37 @@ describe("close assurance service", () => {
       ),
     ).rejects.toThrow(/requester cannot approve/i)
   })
+  it.each([
+    ["CRITICAL", "owner-1", false],
+    ["CRITICAL", "independent-approver", true],
+    ["HIGH", "owner-1", true],
+  ])("enforces assigned-owner separation for %s waivers approved by %s", async (severity, actorId, accepted) => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-06-15T12:04:00.000Z"))
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({
+      id: "finding-1", organizationId: "org-1", periodId: period.id,
+      closeRunId: "close-run-1", status: "IN_REVIEW", severity, ownerId: "owner-1",
+      waiverRequestedById: "requester-1", waiverRequestedAt: new Date("2026-06-15T12:00:00.000Z"),
+      closeRun: { id: "close-run-1", organizationId: "org-1", periodId: period.id },
+    })
+    mockDb.closeAssuranceFinding.update.mockResolvedValue({
+      id: "finding-1", domain: "LEDGER", severity, status: "WAIVED_WITH_APPROVAL",
+      title: "Finding", detail: "Retained reason", ownerId: "owner-1",
+      waiverRequestedById: "requester-1", waiverApprovedById: actorId,
+    })
+    const result = approveCloseWaiver("org-1", { findingId: "finding-1" }, {
+      actorId, freshAuth: { actorId, organizationId: "org-1", lastAuthAt: "2026-06-15T12:00:00.000Z" },
+    })
+    if (accepted) {
+      await expect(result).resolves.toMatchObject({ status: "WAIVED_WITH_APPROVAL" })
+      expect(mockDb.closeAssuranceFinding.update).toHaveBeenCalledTimes(1)
+    } else {
+      await expect(result).rejects.toThrow(/assigned owner cannot approve a critical close waiver/i)
+      expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+      expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+      expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+    }
+  })
+
   it("blocks draft journals and failed posting batches from period preflight", async () => {
     mockGetPeriodClosePreflight.mockResolvedValue({
       ...cleanPreflight(),
@@ -3451,7 +3645,7 @@ describe("close assurance service", () => {
       periodId: period.id,
       closeRunId: "close-run-1",
       status: "OPEN",
-      closeRun: { id: "close-run-1" },
+      closeRun: { id: "close-run-1", organizationId: "org-1", periodId: period.id },
     })
     mockDb.closeAssuranceFinding.update.mockResolvedValue({
       id: "finding-1",
@@ -3476,7 +3670,7 @@ describe("close assurance service", () => {
     await assignCloseFinding(
       "org-1",
       { findingId: "finding-1", assignedToId: "user-2", correlationId: "corr-assign" },
-      { actorId: "user-1" },
+      { actorId: "user-1", session: { id: "session", token: "synthetic-assignment-session" } },
     )
 
     expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(
@@ -3499,7 +3693,7 @@ describe("close assurance service", () => {
       severity: "HIGH",
       ownerId: "controller-1",
       dueAt: null,
-      closeRun: { id: "close-run-1" },
+      closeRun: { id: "close-run-1", organizationId: "org-1", periodId: period.id },
     })
     mockDb.closeAssuranceFinding.update.mockResolvedValue({
       id: "finding-1",

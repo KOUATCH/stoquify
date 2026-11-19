@@ -1,0 +1,19 @@
+[
+  {
+    "locale": "en",
+    "scenario": "POST_COMMIT_CACHE_AND_RESPONSE_RECOVERY",
+    "status": "PASS",
+    "runId": "cmvpn74o000klmack218s3dby",
+    "exportId": "cmvpn7qo800odmackfz4iadtk",
+    "hash": "sha256:83475ef4fbc3c7a55f35583a70d6f52f7bc2e596cb2e956a603be227dbb7de47",
+    "draftHash": "sha256:53e526d9d16d3c8cae79c713470cfd453ba1f70edfdc7afdc5fc04b7accee06e",
+    "certifiedCount": 1,
+    "lostSuccessfulResponse": false,
+    "cacheFaultProbeCount": 9
+  },
+  {
+    "scenario": "HARNESS_FAILURE",
+    "status": "FAIL",
+    "error": "locator.waitFor: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('listbox') to be visible\u001b[22m\n"
+  }
+]

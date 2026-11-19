@@ -1,0 +1,4063 @@
+{
+  "at": "2026-10-20T08:35:35.019Z",
+  "note": "All raw runtime results in this inventory predate this checkpoint rerun; none is a runtime execution by this review.",
+  "records": [
+    {
+      "file": "docs/retention/execution/P02/evidence/JEST_RESULTS_FINAL_02.json",
+      "type": "M",
+      "historical": true,
+      "sha256": "2a3aa7d8bbda95694b0a178c182f2703fbb737604bfc5f2139781fcb618d94be",
+      "success": true,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 3,
+      "assertions": [
+        {
+          "name": "uses fresh authorization, bounded scalar queries and one consistent snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "rejects a caller's foreign tenant before any domain read",
+          "status": "passed"
+        },
+        {
+          "name": "does not accept caller-supplied identity/provenance or as-of overrides",
+          "status": "passed"
+        },
+        {
+          "name": "stops a signed out authorization rejection",
+          "status": "passed"
+        },
+        {
+          "name": "stops a revoked authorization rejection",
+          "status": "passed"
+        },
+        {
+          "name": "stops a missing reports.read authorization rejection",
+          "status": "passed"
+        },
+        {
+          "name": "stops a missing sales.read authorization rejection",
+          "status": "passed"
+        },
+        {
+          "name": "enforces module denial",
+          "status": "passed"
+        },
+        {
+          "name": "rejects an unavailable organization before reading outcomes",
+          "status": "passed"
+        },
+        {
+          "name": "rejects an unavailable location before reading outcomes",
+          "status": "passed"
+        },
+        {
+          "name": "fails a truncated pOSCommitResult read instead of returning misleading counts",
+          "status": "passed"
+        },
+        {
+          "name": "fails a truncated businessEvent read instead of returning misleading counts",
+          "status": "passed"
+        },
+        {
+          "name": "propagates read failure rather than producing a zero cohort",
+          "status": "passed"
+        },
+        {
+          "name": "detects a foreign source row even if a query adapter returns one",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid dates before domain reads",
+          "status": "passed"
+        },
+        {
+          "name": "counts financial commit once across repeated reads and receipt completion",
+          "status": "passed"
+        },
+        {
+          "name": "does not report claimed/uncertain work as completed or require receipt success",
+          "status": "passed"
+        },
+        {
+          "name": "does not fabricate a missing/invalid commit time: null",
+          "status": "passed"
+        },
+        {
+          "name": "does not fabricate a missing/invalid commit time: Invalid Date",
+          "status": "passed"
+        },
+        {
+          "name": "removes conflicting sale identities instead of selecting a convenient row",
+          "status": "passed"
+        },
+        {
+          "name": "retains the original completion and an explicit refund correction",
+          "status": "passed"
+        },
+        {
+          "name": "retains the original completion and an explicit void correction",
+          "status": "passed"
+        },
+        {
+          "name": "shows a correction for an earlier sale without inventing an in-window completion",
+          "status": "passed"
+        },
+        {
+          "name": "allows database transaction time to precede the application occurrence timestamp",
+          "status": "passed"
+        },
+        {
+          "name": "removes conflicting correction records",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"eventType\":\"pos.sale.failed\"}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"status\":\"FAILED\"}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"status\":\"REJECTED\"}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"sourceType\":\"POS_SALE\"}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"eventSource\":\"WORKER\"}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"schemaVersion\":2}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"sourceId\":null}",
+          "status": "passed"
+        },
+        {
+          "name": "fails closed on cross-tenant commits and corrections, including mixed batches",
+          "status": "passed"
+        },
+        {
+          "name": "fails closed on foreign locations in a narrowed scope",
+          "status": "passed"
+        },
+        {
+          "name": "uses half-open time windows and excludes evidence recorded after as-of",
+          "status": "passed"
+        },
+        {
+          "name": "never emits payloads, actor IDs, money or fabricated role/human attribution",
+          "status": "passed"
+        },
+        {
+          "name": "retains unknown adoption on an empty read instead of calling it churn",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid/unbounded windows: {\"start\":null}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid/unbounded windows: {\"endExclusive\":\"2026-03-01T00:00:00.000Z\",\"asOf\":\"2026-04-01T00:00:00.000Z\"}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid/unbounded windows: {\"endExclusive\":\"2026-01-01T00:00:00.000Z\"}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid/unbounded windows: {\"asOf\":\"2026-01-01T00:00:00.000Z\"}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid/unbounded windows: {\"organizationId\":\" \"}",
+          "status": "passed"
+        },
+        {
+          "name": "computes explicit Week 1 eligibility, coverage and repeated work",
+          "status": "passed"
+        },
+        {
+          "name": "computes explicit Week 4 eligibility, coverage and repeated work",
+          "status": "passed"
+        },
+        {
+          "name": "computes explicit Week 8 eligibility, coverage and repeated work",
+          "status": "passed"
+        },
+        {
+          "name": "computes explicit Week 12 eligibility, coverage and repeated work",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the recent cohort immature for Week 1 even if an operation exists",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the recent cohort immature for Week 4 even if an operation exists",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the recent cohort immature for Week 8 even if an operation exists",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the recent cohort immature for Week 12 even if an operation exists",
+          "status": "passed"
+        },
+        {
+          "name": "excludes DEMO from human adoption",
+          "status": "passed"
+        },
+        {
+          "name": "excludes TEST from human adoption",
+          "status": "passed"
+        },
+        {
+          "name": "excludes AUTOMATED from human adoption",
+          "status": "passed"
+        },
+        {
+          "name": "does not turn PARTIAL coverage into inactivity even with some events",
+          "status": "passed"
+        },
+        {
+          "name": "does not turn MISSING coverage into inactivity even with some events",
+          "status": "passed"
+        },
+        {
+          "name": "keeps unknown provenance and calendar unknown",
+          "status": "passed"
+        },
+        {
+          "name": "does not infer activation from registration or sales",
+          "status": "passed"
+        },
+        {
+          "name": "uses the exclusive end as the maturity boundary",
+          "status": "passed"
+        },
+        {
+          "name": "reports an observed zero without labelling churn",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate organizations and mixed week denominators",
+          "status": "passed"
+        },
+        {
+          "name": "has no rate for an empty cohort",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid evidence: {\"scheduledTradingDays\":-1}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid evidence: {\"scheduledTradingDays\":8}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid evidence: {\"start\":null}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid evidence: {\"completedOperationIds\":[\" \"]}",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P03/evidence/FIXTURE_AND_IMPORT_RESULTS.json",
+      "type": "M superseded",
+      "historical": true,
+      "sha256": "91d4c17e4536ae7871479d44c875ce66df210fdb6c0c8c1bd1663abddfdcfd38",
+      "success": true,
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 3,
+      "assertions": [
+        {
+          "name": "reconciles against a separately hand-calculated control sheet",
+          "status": "passed"
+        },
+        {
+          "name": "retains each rejected source row and its independently stated rejection",
+          "status": "passed"
+        },
+        {
+          "name": "exposes an unbalanced opening ledger",
+          "status": "passed"
+        },
+        {
+          "name": "exposes a duplicated opening posting even when debits and credits remain balanced",
+          "status": "passed"
+        },
+        {
+          "name": "detects a balanced but incorrect control-account allocation",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate source identifiers in stock",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate source identifiers in openItems",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate source identifiers in ledger",
+          "status": "passed"
+        },
+        {
+          "name": "detects duplicate position and document under different source identifiers",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock quantity mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock sourceValue mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock unitCost mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock quantity mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock quantity mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock organizationId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock locationId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock itemId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock unit mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock reviewId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock ledgerEffect mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects foreign tenant in stock",
+          "status": "passed"
+        },
+        {
+          "name": "rejects foreign tenant in openItems",
+          "status": "passed"
+        },
+        {
+          "name": "rejects foreign tenant in ledger",
+          "status": "passed"
+        },
+        {
+          "name": "detects reused foreign tenant masters, independent of row IDs",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable outstandingAmount mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable settledBeforeCutover mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable currency mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable counterpartyId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable sourceDate mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "keeps AP obligation positive while the general-ledger control is credit",
+          "status": "passed"
+        },
+        {
+          "name": "requires exact retained coverage, not just balanced aggregate amounts",
+          "status": "passed"
+        },
+        {
+          "name": "does not permit the maker to be the synthetic reviewer",
+          "status": "passed"
+        },
+        {
+          "name": "does not treat a pending reviewer decision as approval",
+          "status": "passed"
+        },
+        {
+          "name": "rejects inconsistent local and UTC cutover dates",
+          "status": "passed"
+        },
+        {
+          "name": "keeps rejected rows out of accepted opening totals",
+          "status": "passed"
+        },
+        {
+          "name": "checks literal precision without binary floating-point arithmetic",
+          "status": "passed"
+        },
+        {
+          "name": "makes proposal rounding explicit with an independent half-cent example",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls builds a tenant-bound CUSTOMER template and validates one safe row",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls builds a tenant-bound SUPPLIER template and validates one safe row",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls builds a tenant-bound ITEM template and validates one safe row",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls blocks duplicate keys both inside the file and against tenant truth",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls returns safe row errors without echoing rejected cell content",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls counts required fields even when another field makes the row invalid",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary routes writes through current domain owners and never directly creates master records",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary does not expose opening-stock or balance fields in the item commit payload",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary contains no destructive or business-truth mutation SQL",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary assigns one canonical workflow route to the settings module",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P03/evidence/FIXTURE_AND_IMPORT_RESULTS_FINAL.json",
+      "type": "M",
+      "historical": true,
+      "sha256": "651bbd5a7c4202954603ae09c499b0206407e4da4850bb1727df0b57dea43756",
+      "success": true,
+      "passed": 48,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 3,
+      "assertions": [
+        {
+          "name": "reconciles against a separately hand-calculated control sheet",
+          "status": "passed"
+        },
+        {
+          "name": "retains each rejected source row and its independently stated rejection",
+          "status": "passed"
+        },
+        {
+          "name": "exposes an unbalanced opening ledger",
+          "status": "passed"
+        },
+        {
+          "name": "detects changed approved source totals even when the replacement remains internally balanced",
+          "status": "passed"
+        },
+        {
+          "name": "exposes a duplicated opening posting even when debits and credits remain balanced",
+          "status": "passed"
+        },
+        {
+          "name": "detects a balanced but incorrect control-account allocation",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate source identifiers in stock",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate source identifiers in openItems",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate source identifiers in ledger",
+          "status": "passed"
+        },
+        {
+          "name": "detects duplicate position and document under different source identifiers",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock quantity mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock sourceValue mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock unitCost mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock quantity mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock quantity mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock organizationId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock locationId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock itemId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock unit mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock reviewId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock ledgerEffect mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects foreign tenant in stock",
+          "status": "passed"
+        },
+        {
+          "name": "rejects foreign tenant in openItems",
+          "status": "passed"
+        },
+        {
+          "name": "rejects foreign tenant in ledger",
+          "status": "passed"
+        },
+        {
+          "name": "detects reused foreign tenant masters, independent of row IDs",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable outstandingAmount mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable settledBeforeCutover mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable currency mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable counterpartyId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable sourceDate mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "keeps AP obligation positive while the general-ledger control is credit",
+          "status": "passed"
+        },
+        {
+          "name": "requires exact retained coverage, not just balanced aggregate amounts",
+          "status": "passed"
+        },
+        {
+          "name": "does not permit the maker to be the synthetic reviewer",
+          "status": "passed"
+        },
+        {
+          "name": "does not treat a pending reviewer decision as approval",
+          "status": "passed"
+        },
+        {
+          "name": "rejects inconsistent local and UTC cutover dates",
+          "status": "passed"
+        },
+        {
+          "name": "keeps rejected rows out of accepted opening totals",
+          "status": "passed"
+        },
+        {
+          "name": "checks literal precision without binary floating-point arithmetic",
+          "status": "passed"
+        },
+        {
+          "name": "makes proposal rounding explicit with an independent half-cent example",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls builds a tenant-bound CUSTOMER template and validates one safe row",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls builds a tenant-bound SUPPLIER template and validates one safe row",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls builds a tenant-bound ITEM template and validates one safe row",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls blocks duplicate keys both inside the file and against tenant truth",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls returns safe row errors without echoing rejected cell content",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls counts required fields even when another field makes the row invalid",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary routes writes through current domain owners and never directly creates master records",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary does not expose opening-stock or balance fields in the item commit payload",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary contains no destructive or business-truth mutation SQL",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary assigns one canonical workflow route to the settings module",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P03/evidence/INVENTORY_BOUNDARY_RESULTS.json",
+      "type": "M selected; 29 filtered",
+      "historical": true,
+      "sha256": "3b35bb03b799b2a5d3360be59fcbcdbfa733f4cf51e4d59b8d388bce22c5be5a",
+      "success": true,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 29,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "posts opening stock through business-event evidence and an explicit ledger blocker",
+          "status": "passed"
+        },
+        {
+          "name": "posts purchase receipt stock through the inventory kernel with receipt evidence and a blocker",
+          "status": "pending"
+        },
+        {
+          "name": "records a source-bound zero-value receipt without a false ledger failure",
+          "status": "pending"
+        },
+        {
+          "name": "rejects positive or changed costs using a zero-value source exemption",
+          "status": "pending"
+        },
+        {
+          "name": "preserves the POSTED receipt batch and all stock on an exact applied replay",
+          "status": "pending"
+        },
+        {
+          "name": "preserves the REVERSED receipt batch and all stock on an exact applied replay",
+          "status": "pending"
+        },
+        {
+          "name": "preserves the FAILED receipt batch and all stock on an exact applied replay",
+          "status": "pending"
+        },
+        {
+          "name": "retains the posted batch before rejecting a replay payload conflict inside an existing transaction",
+          "status": "pending"
+        },
+        {
+          "name": "rejects a novel receipt event against a POSTED batch before event or stock mutation",
+          "status": "pending"
+        },
+        {
+          "name": "rejects a novel receipt event against a REVERSED batch before event or stock mutation",
+          "status": "pending"
+        },
+        {
+          "name": "does not label a retained RECEIVED stock event an applied replay",
+          "status": "pending"
+        },
+        {
+          "name": "does not label a retained FAILED stock event an applied replay",
+          "status": "pending"
+        },
+        {
+          "name": "rejects a retained batch identity conflict {\"organizationId\":\"other-org\"} without changing it",
+          "status": "pending"
+        },
+        {
+          "name": "rejects a retained batch identity conflict {\"sourceId\":\"other-receipt\"} without changing it",
+          "status": "pending"
+        },
+        {
+          "name": "rejects a retained batch identity conflict {\"postingPurpose\":\"SUPPLIER_INVOICE\"} without changing it",
+          "status": "pending"
+        },
+        {
+          "name": "posts a source-linked purchase return as a negative inventory movement tied to the AP batch",
+          "status": "pending"
+        },
+        {
+          "name": "reverses a purchase return by restoring stock and referencing the exact original movement",
+          "status": "pending"
+        },
+        {
+          "name": "uses verified fractional allocated cost for both movements and projection, consuming the final cent",
+          "status": "pending"
+        },
+        {
+          "name": "preserves an explicitly allocated zero even when nominal quantity times unit cost rounds positive",
+          "status": "pending"
+        },
+        {
+          "name": "restores the exact allocated cent when reversing a fractional return",
+          "status": "pending"
+        },
+        {
+          "name": "rejects projection value 0.01 versus final source allocation 0.00 instead of silently clamping",
+          "status": "pending"
+        },
+        {
+          "name": "rejects projection value 0.00 versus final source allocation 0.01 instead of silently clamping",
+          "status": "pending"
+        },
+        {
+          "name": "rejects unsupported explicit valuation before any stock transaction",
+          "status": "pending"
+        },
+        {
+          "name": "propagates allocation verification database failures without writing stock",
+          "status": "pending"
+        },
+        {
+          "name": "posts POS sale stock issue with stable POS event identity and no silent ledger blocker",
+          "status": "pending"
+        },
+        {
+          "name": "consumes reserved delivery stock without reducing available quantity twice",
+          "status": "pending"
+        },
+        {
+          "name": "rejects closed-period stock events before event or stock mutation",
+          "status": "passed"
+        },
+        {
+          "name": "rejects an idempotency conflict before stock mutation",
+          "status": "passed"
+        },
+        {
+          "name": "does not mutate stock when required conflict evidence cannot be recorded",
+          "status": "pending"
+        },
+        {
+          "name": "blocks generic manual correction helpers without an explicit idempotency key",
+          "status": "pending"
+        },
+        {
+          "name": "defers Close invalidation for a prepared same-transaction reversal without exposing control in the event payload",
+          "status": "pending"
+        },
+        {
+          "name": "refuses a prepared stock context from a different transaction before writes",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P04/evidence/RBAC_RESULTS.json",
+      "type": "M",
+      "historical": true,
+      "sha256": "7f817fce8c29172bd1c4afb1344e4aedfff4f32477c4f6c5e43af2fba74c5a9b",
+      "success": true,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "RBAC live session validation rejects a revoked session even when a cookie cache could still identify the user",
+          "status": "passed"
+        },
+        {
+          "name": "RBAC live session validation loads current permissions for a valid live session",
+          "status": "passed"
+        },
+        {
+          "name": "RBAC live session validation retains narrow stored grants when constructing server authority",
+          "status": "passed"
+        },
+        {
+          "name": "RBAC live session validation denies access when the session authority cannot be reached",
+          "status": "passed"
+        },
+        {
+          "name": "RBAC live session validation does not resolve a different active account through a reassigned email",
+          "status": "passed"
+        },
+        {
+          "name": "RBAC live session validation rejects an email-only session before looking up authority",
+          "status": "passed"
+        },
+        {
+          "name": "rbac tenant isolation allows access to the active organization without auditing a denial",
+          "status": "passed"
+        },
+        {
+          "name": "rbac tenant isolation denies cross-organization access even for wildcard users",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P04/evidence/ACCESS_RESULTS.json",
+      "type": "M",
+      "historical": true,
+      "sha256": "3c83ad2bd3e9a97292b5cb9702ab7c5b6c30003741a03acc0f41f2c3209466b1",
+      "success": true,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 7,
+      "assertions": [
+        {
+          "name": "inventory history background export service replays an identical request without rereading and rejects conflicting key reuse",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service resumes from persisted cursors, finalizes once, and streams verified content",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service keeps checkpoint metadata constant-sized across one hundred persisted chunks",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service dead-letters a job when snapshot continuity fails on its final attempt",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service crypto-shreds immediately and retries failed artifact deletion",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service audits dual-permission and fresh-auth denials before reading history",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service detects persisted payload tampering before exposing status",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service P04 denies a previously issued download after different tenant without reading artifacts",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service P04 denies a previously issued download after different actor without reading artifacts",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service P04 denies a previously issued download after removed export permission without reading artifacts",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service P04 denies a previously issued download after removed inventory permission without reading artifacts",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service P04 denies a previously issued download after expired token without reading artifacts",
+          "status": "passed"
+        },
+        {
+          "name": "inventory history background export service P04 hides another tenant's export job and refuses its worker claim",
+          "status": "passed"
+        },
+        {
+          "name": "protect passes input and RBAC context to the handler when authorized",
+          "status": "passed"
+        },
+        {
+          "name": "protect preserves only the allowlisted stopped-work reason on an authorized command denial",
+          "status": "passed"
+        },
+        {
+          "name": "protect preserves unrelated FORBIDDEN behavior without disclosing other metadata reasons",
+          "status": "passed"
+        },
+        {
+          "name": "protect rejects caller-supplied organization scope that does not pass RBAC context checks",
+          "status": "passed"
+        },
+        {
+          "name": "protect checks nested data organization scope before calling the handler",
+          "status": "passed"
+        },
+        {
+          "name": "protect allows reviewed handler-derived tenant scope without trusting caller organization fields",
+          "status": "passed"
+        },
+        {
+          "name": "protect blocks a protected action when module entitlement enforcement denies access",
+          "status": "passed"
+        },
+        {
+          "name": "protect does not call the handler when module observation fails",
+          "status": "passed"
+        },
+        {
+          "name": "protect requires fresh authentication when configured",
+          "status": "passed"
+        },
+        {
+          "name": "protect returns a step-up response when fresh authentication is stale",
+          "status": "passed"
+        },
+        {
+          "name": "protect does not leak unexpected error messages",
+          "status": "passed"
+        },
+        {
+          "name": "protect returns forbidden when the RBAC check fails",
+          "status": "passed"
+        },
+        {
+          "name": "module entitlement service normalizes registration module labels into canonical module slugs",
+          "status": "passed"
+        },
+        {
+          "name": "module entitlement service derives legacy full-suite observe entitlements when no requested modules exist",
+          "status": "passed"
+        },
+        {
+          "name": "module entitlement service keeps the core dashboard entitled under enforcement without requested modules",
+          "status": "passed"
+        },
+        {
+          "name": "module entitlement service keeps observe mode allowed while marking non-entitled modules as would-block even for wildcard RBAC",
+          "status": "passed"
+        },
+        {
+          "name": "module entitlement service flags required dependency gaps without hard denial in observe mode",
+          "status": "passed"
+        },
+        {
+          "name": "module entitlement service denies write access for read-only entitlements only when enforcement is requested",
+          "status": "passed"
+        },
+        {
+          "name": "module entitlement service writes observe-mode would-block audit logs without denying the request",
+          "status": "passed"
+        },
+        {
+          "name": "module entitlement service activates payment reconciliation with only its missing required dependencies",
+          "status": "passed"
+        },
+        {
+          "name": "module entitlement service does not duplicate already active modules but still records the admin decision",
+          "status": "passed"
+        },
+        {
+          "name": "operating access scope service exports the normalized tenant-wide authority used by feed gates",
+          "status": "passed"
+        },
+        {
+          "name": "operating access scope service grants tenant-wide scope to an authenticated super user",
+          "status": "passed"
+        },
+        {
+          "name": "operating access scope service grants tenant-wide scope only for an allowlisted administrator role",
+          "status": "passed"
+        },
+        {
+          "name": "operating access scope service does not treat dashboard.read alone as tenant-wide authority",
+          "status": "passed"
+        },
+        {
+          "name": "operating access scope service resolves multiple managed locations with a deterministic tenant-scoped query",
+          "status": "passed"
+        },
+        {
+          "name": "operating access scope service fails closed before location lookup when the Daily Truth permission is missing",
+          "status": "passed"
+        },
+        {
+          "name": "operating access scope service fails closed when an actor has no active managed locations",
+          "status": "passed"
+        },
+        {
+          "name": "operating access scope service records minimal allowed scope evidence",
+          "status": "passed"
+        },
+        {
+          "name": "operating access scope service records a denied decision without sensitive business data",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary allows only the granted client and actor, with current active organization predicates",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rejects revoked consent for every capability",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rejects expired at the exact boundary consent for every capability",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rejects scheduled consent for every capability",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rejects inactive client consent for every capability",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rejects deleted client consent for every capability",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rechecks the grant after revocation instead of reusing a previous allowed result",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary permits read-only portal reads while denying export and review",
+          "status": "passed"
+        },
+        {
+          "name": "P04 operating location boundary excludes a second tenant, another manager's location and inactive/deleted sites",
+          "status": "passed"
+        },
+        {
+          "name": "P04 operating location boundary denies a removed location assignment on the next resolution",
+          "status": "passed"
+        },
+        {
+          "name": "P04 read-only and export entitlement distinction evaluates read independently of RBAC wildcard",
+          "status": "passed"
+        },
+        {
+          "name": "P04 read-only and export entitlement distinction evaluates write independently of RBAC wildcard",
+          "status": "passed"
+        },
+        {
+          "name": "P04 read-only and export entitlement distinction evaluates export independently of RBAC wildcard",
+          "status": "passed"
+        },
+        {
+          "name": "P04 read-only and export entitlement distinction evaluates job independently of RBAC wildcard",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P05-P06-closure-2026-10-17/ui-green.results.json",
+      "type": "M",
+      "historical": true,
+      "sha256": "fd1980a5819a45aad435507f905b3171a2b10806422c7890318d758804f627fb",
+      "success": true,
+      "passed": 40,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "POS search keyboard scope keeps the search input and its focus while catalogue results load",
+          "status": "passed"
+        },
+        {
+          "name": "POS search keyboard scope labels search, clears it explicitly and leaves browser shortcuts alone",
+          "status": "passed"
+        },
+        {
+          "name": "POS search keyboard scope does not clear catalog search or move focus to tender from an open dialog",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout offers Resume beside disabled Charge and waits for cart validation without submitting a sale",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout keeps Charge disabled and the cart intact when resuming fails",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout does not resume a cart before register ownership is verified",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful NOT_FOUND review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful CART_CHANGED review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful CART_REVIEW_REQUIRED review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery requires another review after rechecking an unrecorded attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery requires a fresh review after losing register ownership",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery keeps Charge locked when cart review returns recovery.failed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery keeps Charge locked when cart review returns recovery.cartMismatch",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery automatically clears a verified obsolete attempt without submitting another sale",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery does not allow clearing an unresolved NOT_FOUND attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery does not allow clearing an unresolved PENDING attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery P05 retains original intent and reports uncertainty when the commit response is lost",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close retains a rejected requested quantity through refetch and saves an explicit correction",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close hides checkout during a shift read failure, retries the read and preserves entered quantities",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close requires an explicit count and submits a literal zero instead of falling back to expected cash",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected XAF cash 100 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected XAF cash 0 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected USD cash 100.25 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close does not require an explanation when a sub-franc XAF difference displays as zero",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close retains cent-level variance controls for currencies with decimal minor units",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close requires a variance explanation and keeps the dialog open when the server rejects the close",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close explains an offline close blocker without exposing its internal code",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close clears the count and explanation when the active shift identity changes",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem terminal availability prefers an available terminal and labels a terminal occupied by another shift",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem terminal availability explains an occupied terminal without offering a misleading open action",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit adds an in-stock catalog item when the cashier selects the product card",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit keeps seven long-name cart lines and their controls available",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit submits an active cash sale with a replay-safe non-statutory receipt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit selects the authenticated cashier's active location and terminal",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit clears the selected customer, search, and dialog when the cashier changes location",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit blocks a location change while the current draft contains cart lines",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery uses XAF precision for the opening balance",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery uses USD precision for the opening balance",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery retains opening float and explains stopped=true without success",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery retains opening float and explains stopped=false without success",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P05-P06-closure-2026-10-17/lifecycle.results.json",
+      "type": "D",
+      "historical": true,
+      "sha256": "04eb7217d18b63e3176dcc2a3368acbac11f1a9e013ba7851f2f1bf964cd640f",
+      "success": true,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "POS lifecycle PostgreSQL boundaries (disposable schema) renews the valid owner while preserving retained intent and denying expired, foreign and closed-shift renewal",
+          "status": "passed"
+        },
+        {
+          "name": "POS lifecycle PostgreSQL boundaries (disposable schema) fences renewal racing shift closure and rejects subsequent renewal",
+          "status": "passed"
+        },
+        {
+          "name": "POS lifecycle PostgreSQL boundaries (disposable schema) keeps every retained request discoverable while advancing a bounded reconciliation cursor",
+          "status": "passed"
+        },
+        {
+          "name": "POS lifecycle PostgreSQL boundaries (disposable schema) grants one of two concurrent owners and fences the losing tab's writes",
+          "status": "passed"
+        },
+        {
+          "name": "POS lifecycle PostgreSQL boundaries (disposable schema) preserves unknown intent across lease expiry and fences the previous tab",
+          "status": "passed"
+        },
+        {
+          "name": "POS lifecycle PostgreSQL boundaries (disposable schema) preserves a request through shift closure and proves its retired nonempty cart cannot submit later",
+          "status": "passed"
+        },
+        {
+          "name": "POS lifecycle PostgreSQL boundaries (disposable schema) rolls back retirement, ownership release and shift status together on a later failure",
+          "status": "passed"
+        },
+        {
+          "name": "POS lifecycle PostgreSQL boundaries (disposable schema) rejects a different tenant or cashier even when cart and session identifiers are known",
+          "status": "passed"
+        },
+        {
+          "name": "POS lifecycle PostgreSQL boundaries (disposable schema) serializes a cart edit racing shift closure and rejects every late edit",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P05-P06-closure-2026-10-17/full-commit.results.json",
+      "type": "D",
+      "historical": true,
+      "sha256": "19bdfe2b3894d3b392b80899719a0b734de0dbd0c236177fc6934df0897685e4",
+      "success": true,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "full POS commit real PostgreSQL kernels P05 rejects a substituted retained commit ID without financial effects and permits the original retry",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels P05 rejects foreign scope for recorded evidence and commit retry without changing effects",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels commits stock, cash, receivable, ledger, events and durable result exactly once under duplicate completion",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels preserves the original caller identity when a retry wins receipt completion",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels keeps a committed sale recoverable after receipt failure and rejects changed retry intent",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels rejects stale cart without partial financial effects",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels rejects insufficient stock without partial financial effects",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels invalidates previously certified close evidence in the sale transaction",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels recovers a signed offline event after sale commit but before server acknowledgement without another sale",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels retains an offline payload conflict without replacing accepted evidence or creating a sale",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels P06 concurrent original-event replay converges on one financial effect and one acknowledgement",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels P06 revocation after ingestion retains blocked evidence without committing a sale",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels P06 expired policy quarantines original signed evidence without a financial effect",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels P06 integrates durable browser queue, real ingestion and replay after lost HTTP responses",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels retries a serialization failure at sale evidence with one complete financial effect",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels rolls back every real kernel when durable commit-result finalization fails, preserving the retained request",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P06-operator-2026-10-17/ui.results.json",
+      "type": "M failed superseded",
+      "historical": true,
+      "sha256": "8e2a46a4bf3e173c7bb29e9647d95be3722617a054b6bd80f9fafb8d8df14036",
+      "success": false,
+      "passed": 60,
+      "failed": 3,
+      "skipped": 0,
+      "suites": 2,
+      "assertions": [
+        {
+          "name": "POS search keyboard scope keeps the search input and its focus while catalogue results load",
+          "status": "passed"
+        },
+        {
+          "name": "POS search keyboard scope labels search, clears it explicitly and leaves browser shortcuts alone",
+          "status": "passed"
+        },
+        {
+          "name": "POS search keyboard scope does not clear catalog search or move focus to tender from an open dialog",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout offers Resume beside disabled Charge and waits for cart validation without submitting a sale",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout keeps Charge disabled and the cart intact when resuming fails",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout does not resume a cart before register ownership is verified",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful NOT_FOUND review and retains the original request identifier",
+          "status": "failed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful CART_CHANGED review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful CART_REVIEW_REQUIRED review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery requires another review after rechecking an unrecorded attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery requires a fresh review after losing register ownership",
+          "status": "failed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery keeps Charge locked when cart review returns recovery.failed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery keeps Charge locked when cart review returns recovery.cartMismatch",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery automatically clears a verified obsolete attempt without submitting another sale",
+          "status": "failed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery does not allow clearing an unresolved NOT_FOUND attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery does not allow clearing an unresolved PENDING attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery P05 retains original intent and reports uncertainty when the commit response is lost",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close retains a rejected requested quantity through refetch and saves an explicit correction",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close hides checkout during a shift read failure, retries the read and preserves entered quantities",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close requires an explicit count and submits a literal zero instead of falling back to expected cash",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close blocks shift submission when a fresh local check finds pending evidence",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close blocks shift submission when a fresh local check finds storage unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected XAF cash 100 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected XAF cash 0 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected USD cash 100.25 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close does not require an explanation when a sub-franc XAF difference displays as zero",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close retains cent-level variance controls for currencies with decimal minor units",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close requires a variance explanation and keeps the dialog open when the server rejects the close",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close explains an offline close blocker without exposing its internal code",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close clears the count and explanation when the active shift identity changes",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem terminal availability prefers an available terminal and labels a terminal occupied by another shift",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem terminal availability explains an occupied terminal without offering a misleading open action",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit adds an in-stock catalog item when the cashier selects the product card",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit keeps seven long-name cart lines and their controls available",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit submits an active cash sale with a replay-safe non-statutory receipt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit selects the authenticated cashier's active location and terminal",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit clears the selected customer, search, and dialog when the cashier changes location",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit blocks a location change while the current draft contains cart lines",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery uses XAF precision for the opening balance",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery uses USD precision for the opening balance",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery retains opening float and explains stopped=true without success",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery retains opening float and explains stopped=false without success",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery awaits a durable claim before transport, then accepts same-identity duplicate acknowledgement",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains uncertain evidence after throw without inventing another identity",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains uncertain evidence after failed action without inventing another identity",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains evidence when acknowledgement is incomplete or mismatched",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains evidence when acknowledgement is incomplete or mismatched",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains evidence when acknowledgement is incomplete or mismatched",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains evidence when acknowledgement is incomplete or mismatched",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains partial or rejected batches for review instead of claiming all were synced",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery shows LEASE_ACTIVE without reporting an empty queue or calling transport",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery shows CONFLICT_REVIEW without reporting an empty queue or calling transport",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery does not report sync success when local acknowledgement persistence fails",
+          "status": "passed"
+        },
+        {
+          "name": "discovers unsent evidence by authenticated organization/station and sends the retained queue",
+          "status": "passed"
+        },
+        {
+          "name": "shows recovery rather than zero when storage cannot be read",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for offline",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for other session",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for denied",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for conflict",
+          "status": "passed"
+        },
+        {
+          "name": "does not read local records without current transaction access",
+          "status": "passed"
+        },
+        {
+          "name": "never labels acknowledged evidence as a confirmed payment",
+          "status": "passed"
+        },
+        {
+          "name": "renders French recovery and safe errors without exposing transport text",
+          "status": "passed"
+        },
+        {
+          "name": "drops the previous organization's counts immediately on scope change",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P06-operator-2026-10-17/ui-1792236995592.results.json",
+      "type": "M",
+      "historical": true,
+      "sha256": "e4f984540ec70b974e705232d6661ebf172da98e1447a36c3c9a79c40385d37a",
+      "success": true,
+      "passed": 64,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 3,
+      "assertions": [
+        {
+          "name": "POS search keyboard scope keeps the search input and its focus while catalogue results load",
+          "status": "passed"
+        },
+        {
+          "name": "POS search keyboard scope labels search, clears it explicitly and leaves browser shortcuts alone",
+          "status": "passed"
+        },
+        {
+          "name": "POS search keyboard scope does not clear catalog search or move focus to tender from an open dialog",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout offers Resume beside disabled Charge and waits for cart validation without submitting a sale",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout keeps Charge disabled and the cart intact when resuming fails",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout does not resume a cart before register ownership is verified",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful NOT_FOUND review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful CART_CHANGED review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful CART_REVIEW_REQUIRED review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery requires another review after rechecking an unrecorded attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery requires a fresh review after losing register ownership",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery keeps Charge locked when cart review returns recovery.failed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery keeps Charge locked when cart review returns recovery.cartMismatch",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery automatically clears a verified obsolete attempt without submitting another sale",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery does not allow clearing an unresolved NOT_FOUND attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery does not allow clearing an unresolved PENDING attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery P05 retains original intent and reports uncertainty when the commit response is lost",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close retains a rejected requested quantity through refetch and saves an explicit correction",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close hides checkout during a shift read failure, retries the read and preserves entered quantities",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close requires an explicit count and submits a literal zero instead of falling back to expected cash",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close blocks shift submission when a fresh local check finds pending evidence",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close blocks shift submission when a fresh local check finds storage unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected XAF cash 100 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected XAF cash 0 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected USD cash 100.25 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close does not require an explanation when a sub-franc XAF difference displays as zero",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close retains cent-level variance controls for currencies with decimal minor units",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close requires a variance explanation and keeps the dialog open when the server rejects the close",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close explains an offline close blocker without exposing its internal code",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close clears the count and explanation when the active shift identity changes",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem terminal availability prefers an available terminal and labels a terminal occupied by another shift",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem terminal availability explains an occupied terminal without offering a misleading open action",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit adds an in-stock catalog item when the cashier selects the product card",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit keeps seven long-name cart lines and their controls available",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit submits an active cash sale with a replay-safe non-statutory receipt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit selects the authenticated cashier's active location and terminal",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit clears the selected customer, search, and dialog when the cashier changes location",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit blocks a location change while the current draft contains cart lines",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery uses XAF precision for the opening balance",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery uses USD precision for the opening balance",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery retains opening float and explains stopped=true without success",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery retains opening float and explains stopped=false without success",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery awaits a durable claim before transport, then accepts same-identity duplicate acknowledgement",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains uncertain evidence after throw without inventing another identity",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains uncertain evidence after failed action without inventing another identity",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains evidence when acknowledgement is incomplete or mismatched",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains evidence when acknowledgement is incomplete or mismatched",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains evidence when acknowledgement is incomplete or mismatched",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains evidence when acknowledgement is incomplete or mismatched",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery retains partial or rejected batches for review instead of claiming all were synced",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery shows LEASE_ACTIVE without reporting an empty queue or calling transport",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery shows CONFLICT_REVIEW without reporting an empty queue or calling transport",
+          "status": "passed"
+        },
+        {
+          "name": "offline flush recovery does not report sync success when local acknowledgement persistence fails",
+          "status": "passed"
+        },
+        {
+          "name": "discovers unsent evidence by authenticated organization/station and sends the retained queue",
+          "status": "passed"
+        },
+        {
+          "name": "shows recovery rather than zero when storage cannot be read",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for offline",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for other session",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for denied",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for conflict",
+          "status": "passed"
+        },
+        {
+          "name": "does not read local records without current transaction access",
+          "status": "passed"
+        },
+        {
+          "name": "distinguishes a loading session from a known different session",
+          "status": "passed"
+        },
+        {
+          "name": "never labels acknowledged evidence as a confirmed payment",
+          "status": "passed"
+        },
+        {
+          "name": "renders French recovery and safe errors without exposing transport text",
+          "status": "passed"
+        },
+        {
+          "name": "drops the previous organization's counts immediately on scope change",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P06-operator-2026-10-17/panel-final.results.json",
+      "type": "M repeated subset",
+      "historical": true,
+      "sha256": "2c02c22c98ff2770bec65c4e979abb0e4b2fcdb7d3ce386f2ff7ef1b910319cb",
+      "success": true,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "discovers unsent evidence by authenticated organization/station and sends the retained queue",
+          "status": "passed"
+        },
+        {
+          "name": "shows recovery rather than zero when storage cannot be read",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for offline",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for other session",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for denied",
+          "status": "passed"
+        },
+        {
+          "name": "retains evidence and disables sending for conflict",
+          "status": "passed"
+        },
+        {
+          "name": "does not read local records without current transaction access",
+          "status": "passed"
+        },
+        {
+          "name": "distinguishes a loading session from a known different session",
+          "status": "passed"
+        },
+        {
+          "name": "never labels acknowledged evidence as a confirmed payment",
+          "status": "passed"
+        },
+        {
+          "name": "renders French recovery and safe errors without exposing transport text",
+          "status": "passed"
+        },
+        {
+          "name": "drops the previous organization's counts immediately on scope change",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P06-operator-2026-10-17/storage-1792236525804.results.json",
+      "type": "B isolated storage",
+      "historical": true,
+      "sha256": "70d3b693e80071038788223ce3602f67e484f020786e87946e1acad4ded18cd8",
+      "success": true,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "offline local POS queue with browser storage discovers local-only queues without server enrollment and blocks close across sessions",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage detects another tab's queue and distinguishes ingestion acknowledgement from financial completion",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage fails closed for an orphaned migration marker instead of reporting an empty inventory",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines altered payloads during inventory without deleting their evidence",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage P06 preserves unknown evidence through real browser offline and reconnect transitions",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage conserves concurrent acknowledgements across tabs, reload and a continuous hash chain",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage keeps final fiscal numbering unavailable to caller-controlled queue input",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines corrupt legacy bytes without resetting identities ({damaged-json)",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines corrupt legacy bytes without resetting identities ({})",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines corrupt legacy bytes without resetting identities ({\"queueVersion\":1,\"entries\":[]})",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage migrates legacy SYNCING evidence without replacing identities, and retains original bytes",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage recovers an interrupted migration after marker write failure",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not acknowledge an injected quota failure or lose previously committed evidence",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not acknowledge a transaction aborted after its write request",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage allows only one active cross-tab lease and retries original identities after tab termination",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage retains uncertain evidence, retries without a replacement identity and ignores stale responses",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage keeps conflict evidence and prevents sending newer events out of sequence",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage blocks changed legacy data and detects eviction instead of resurrecting a stale queue",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage blocks altered payload hashes and changes of cashier-session ownership",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage survives closing and reopening a persistent browser profile with an unresolved attempt",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage rejects unsupported or denied IndexedDB instead of silently falling back to localStorage",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not strand migrated attempts with an invalid or unbounded lease",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage caps each claim at the server limit and resumes remaining events in sequence",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P06-operator-2026-10-17/full-commit.results.json",
+      "type": "D",
+      "historical": true,
+      "sha256": "4d0eddfd6d712d2c9105f0a2a8c526dbfc419099ca023e2b33894ba9d0d19f23",
+      "success": true,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "full POS commit real PostgreSQL kernels P05 rejects a substituted retained commit ID without financial effects and permits the original retry",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels P05 rejects foreign scope for recorded evidence and commit retry without changing effects",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels commits stock, cash, receivable, ledger, events and durable result exactly once under duplicate completion",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels preserves the original caller identity when a retry wins receipt completion",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels keeps a committed sale recoverable after receipt failure and rejects changed retry intent",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels rejects stale cart without partial financial effects",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels rejects insufficient stock without partial financial effects",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels invalidates previously certified close evidence in the sale transaction",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels recovers a signed offline event after sale commit but before server acknowledgement without another sale",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels retains an offline payload conflict without replacing accepted evidence or creating a sale",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels P06 concurrent original-event replay converges on one financial effect and one acknowledgement",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels P06 revocation after ingestion retains blocked evidence without committing a sale",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels P06 expired policy quarantines original signed evidence without a financial effect",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels P06 integrates durable browser queue, real ingestion and replay after lost HTTP responses",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels retries a serialization failure at sale evidence with one complete financial effect",
+          "status": "passed"
+        },
+        {
+          "name": "full POS commit real PostgreSQL kernels rolls back every real kernel when durable commit-result finalization fails, preserving the retained request",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P07-media-2026-10-18/evidence/unit-1792340632787.results.json",
+      "type": "M",
+      "historical": true,
+      "sha256": "be9610ff97a6f19841ded3733c300e04bfd6e167890b3130e30c10d8932730cf",
+      "success": true,
+      "passed": 107,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 12,
+      "assertions": [
+        {
+          "name": "master-data approval and replay guards refuses commit without a recorded explicit approval",
+          "status": "passed"
+        },
+        {
+          "name": "master-data approval and replay guards requires a different authorized approver for a high-risk batch",
+          "status": "passed"
+        },
+        {
+          "name": "master-data approval and replay guards records approval when a different authorized user reviews the high-risk batch",
+          "status": "passed"
+        },
+        {
+          "name": "master-data approval and replay guards refuses a high-risk commit if stored approval evidence names the uploader",
+          "status": "passed"
+        },
+        {
+          "name": "master-data approval and replay guards classifies material master-data changes and bulk files as high risk",
+          "status": "passed"
+        },
+        {
+          "name": "master-data approval and replay guards refuses a batch target outside the permission-scoped command",
+          "status": "passed"
+        },
+        {
+          "name": "master-data approval and replay guards returns a committed batch on replay without calling a domain writer",
+          "status": "passed"
+        },
+        {
+          "name": "master-data approval and replay guards creates an immutable next mapping version for the tenant and target",
+          "status": "passed"
+        },
+        {
+          "name": "master-data approval and replay guards builds an evidence manifest with controls and result ids but no staged row values",
+          "status": "passed"
+        },
+        {
+          "name": "reconciles against a separately hand-calculated control sheet",
+          "status": "passed"
+        },
+        {
+          "name": "retains each rejected source row and its independently stated rejection",
+          "status": "passed"
+        },
+        {
+          "name": "exposes an unbalanced opening ledger",
+          "status": "passed"
+        },
+        {
+          "name": "detects changed approved source totals even when the replacement remains internally balanced",
+          "status": "passed"
+        },
+        {
+          "name": "exposes a duplicated opening posting even when debits and credits remain balanced",
+          "status": "passed"
+        },
+        {
+          "name": "detects a balanced but incorrect control-account allocation",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate source identifiers in stock",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate source identifiers in openItems",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate source identifiers in ledger",
+          "status": "passed"
+        },
+        {
+          "name": "detects duplicate position and document under different source identifiers",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock quantity mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock sourceValue mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock unitCost mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock quantity mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock quantity mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock organizationId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock locationId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock itemId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock unit mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock reviewId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects stock ledgerEffect mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects foreign tenant in stock",
+          "status": "passed"
+        },
+        {
+          "name": "rejects foreign tenant in openItems",
+          "status": "passed"
+        },
+        {
+          "name": "rejects foreign tenant in ledger",
+          "status": "passed"
+        },
+        {
+          "name": "detects reused foreign tenant masters, independent of row IDs",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable outstandingAmount mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable settledBeforeCutover mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable currency mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable counterpartyId mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "rejects opening receivable sourceDate mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "keeps AP obligation positive while the general-ledger control is credit",
+          "status": "passed"
+        },
+        {
+          "name": "requires exact retained coverage, not just balanced aggregate amounts",
+          "status": "passed"
+        },
+        {
+          "name": "does not permit the maker to be the synthetic reviewer",
+          "status": "passed"
+        },
+        {
+          "name": "does not treat a pending reviewer decision as approval",
+          "status": "passed"
+        },
+        {
+          "name": "rejects inconsistent local and UTC cutover dates",
+          "status": "passed"
+        },
+        {
+          "name": "keeps rejected rows out of accepted opening totals",
+          "status": "passed"
+        },
+        {
+          "name": "checks literal precision without binary floating-point arithmetic",
+          "status": "passed"
+        },
+        {
+          "name": "makes proposal rounding explicit with an independent half-cent example",
+          "status": "passed"
+        },
+        {
+          "name": "uploads only ciphertext and persists an owned durable reference",
+          "status": "passed"
+        },
+        {
+          "name": "rejects forged content and oversize files before provider writes",
+          "status": "passed"
+        },
+        {
+          "name": "does not mark a provider failure as a completed upload",
+          "status": "passed"
+        },
+        {
+          "name": "rejects another tenant's, deleted, or missing asset before attachment",
+          "status": "passed"
+        },
+        {
+          "name": "accepts unchanged legacy references but rejects new arbitrary URLs",
+          "status": "passed"
+        },
+        {
+          "name": "does not fetch or disclose an asset from another tenant",
+          "status": "passed"
+        },
+        {
+          "name": "decrypts authenticated bytes and verifies integrity",
+          "status": "passed"
+        },
+        {
+          "name": "rejects modified provider ciphertext",
+          "status": "passed"
+        },
+        {
+          "name": "never deletes an attached or foreign asset",
+          "status": "passed"
+        },
+        {
+          "name": "serializes deletion against attachment and keeps a retryable tombstone",
+          "status": "passed"
+        },
+        {
+          "name": "accepts the configured browser origin when Next.js uses an internal request URL",
+          "status": "passed"
+        },
+        {
+          "name": "rejects missing, cross-site, and spoofed origins",
+          "status": "passed"
+        },
+        {
+          "name": "rejects missing, cross-site, and spoofed origins",
+          "status": "passed"
+        },
+        {
+          "name": "rejects missing, cross-site, and spoofed origins",
+          "status": "passed"
+        },
+        {
+          "name": "returns direct JSON for a picture over 1 MB",
+          "status": "passed"
+        },
+        {
+          "name": "rejects cross-site uploads before reading the file",
+          "status": "passed"
+        },
+        {
+          "name": "rejects unauthenticated uploads",
+          "status": "passed"
+        },
+        {
+          "name": "preserves tenant, permission, and module denial",
+          "status": "passed"
+        },
+        {
+          "name": "bounds multipart bodies even without a Content-Length header",
+          "status": "passed"
+        },
+        {
+          "name": "rejects declared oversized bodies before upload",
+          "status": "passed"
+        },
+        {
+          "name": "rejects a missing picture",
+          "status": "passed"
+        },
+        {
+          "name": "opening guidance server scope queries only the fresh actor's tenant and readable targets, including the new guidance",
+          "status": "passed"
+        },
+        {
+          "name": "opening guidance server scope denies unauthorized actors before reading evidence",
+          "status": "passed"
+        },
+        {
+          "name": "opening guidance server scope denies a locked settings module before reading evidence",
+          "status": "passed"
+        },
+        {
+          "name": "opening guidance server scope ignores a spoofed tenant and denies a foreign batch",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls builds a tenant-bound CUSTOMER template and validates one safe row",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls builds a tenant-bound SUPPLIER template and validates one safe row",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls builds a tenant-bound ITEM template and validates one safe row",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls blocks duplicate keys both inside the file and against tenant truth",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls returns safe row errors without echoing rejected cell content",
+          "status": "passed"
+        },
+        {
+          "name": "governed master-data CSV controls counts required fields even when another field makes the row invalid",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance distinguishes UPLOADED without implying posted opening positions",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance distinguishes VALIDATED without implying posted opening positions",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance distinguishes APPROVED without implying posted opening positions",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance distinguishes COMMITTED without implying posted opening positions",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance distinguishes COMMITTING without implying posted opening positions",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance distinguishes BLOCKED without implying posted opening positions",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance keeps P03 stock, AR/AP and balanced ledger independent of master import",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance does not turn partial imports or waived milestones into completion",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance keeps older evidence distinct from a newer blocked batch",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance retains a blocked commit even when its batch is retryable APPROVED",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness guidance shows only authorized master targets and no row contents",
+          "status": "passed"
+        },
+        {
+          "name": "uses the real uploader and keeps earlier CSV references when uploading the next image",
+          "status": "passed"
+        },
+        {
+          "name": "keeps failed uploads out of CSV references and permits a French retry",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary routes writes through current domain owners and never directly creates master records",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary does not expose opening-stock or balance fields in the item commit payload",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary contains no destructive or business-truth mutation SQL",
+          "status": "passed"
+        },
+        {
+          "name": "master-data onboarding control boundary assigns one canonical workflow route to the settings module",
+          "status": "passed"
+        },
+        {
+          "name": "carries exactly one managed reference in version 2, without stock fields",
+          "status": "passed"
+        },
+        {
+          "name": "rejects missing/unmanaged reference ",
+          "status": "passed"
+        },
+        {
+          "name": "rejects missing/unmanaged reference https://example.com/image.png",
+          "status": "passed"
+        },
+        {
+          "name": "rejects missing/unmanaged reference /uploads/legacy.png",
+          "status": "passed"
+        },
+        {
+          "name": "rejects missing/unmanaged reference data:image/png;base64,aaa",
+          "status": "passed"
+        },
+        {
+          "name": "blocks unavailable media without disclosing another tenant or reference",
+          "status": "passed"
+        },
+        {
+          "name": "binds a different image to different source row and content hashes",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness panel renders the outstanding requirements and locale-aware routes in en",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness panel renders the outstanding requirements and locale-aware routes in fr",
+          "status": "passed"
+        },
+        {
+          "name": "opening readiness panel offers explicit refresh and disables duplicate refresh while pending",
+          "status": "passed"
+        },
+        {
+          "name": "retains separate en references, resets uploader and focuses copyable field",
+          "status": "passed"
+        },
+        {
+          "name": "retains separate fr references, resets uploader and focuses copyable field",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P07-media-2026-10-18/evidence/database-1792341206330.results.json",
+      "type": "D",
+      "historical": true,
+      "sha256": "b4604d751134ee787bde5b821d82c09dfd856f91a1e84bc0ff546d4127f0cee2",
+      "success": true,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "imports owned images through actual domain claims; preserves source/approval and repeated commit",
+          "status": "passed"
+        },
+        {
+          "name": "rejects foreign media at validation without revealing scope or creating items",
+          "status": "passed"
+        },
+        {
+          "name": "rejects missing media at validation without revealing scope or creating items",
+          "status": "passed"
+        },
+        {
+          "name": "rejects deleted media at validation without revealing scope or creating items",
+          "status": "passed"
+        },
+        {
+          "name": "rejects uploading media at validation without revealing scope or creating items",
+          "status": "passed"
+        },
+        {
+          "name": "rejects wrong-entity media at validation without revealing scope or creating items",
+          "status": "passed"
+        },
+        {
+          "name": "rechecks deletion after approval, preserves partial progress and resumes the same approved batch",
+          "status": "passed"
+        },
+        {
+          "name": "recovers a real interrupted checkpoint without a duplicate item or losing the claimed image",
+          "status": "passed"
+        },
+        {
+          "name": "rolls back the media claim when the item insert fails, then retries the original batch",
+          "status": "passed"
+        },
+        {
+          "name": "does not adopt a conflicting existing item's different image on retry",
+          "status": "passed"
+        },
+        {
+          "name": "creates a new default mapping version while retaining legacy mapping and changed-source approval boundaries",
+          "status": "passed"
+        },
+        {
+          "name": "serializes attachment against a concurrent cleanup claim",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P08/evidence/unit-1792343498866.results.json",
+      "type": "M",
+      "historical": true,
+      "sha256": "4cdb4b223d28280c819293790345c62b42df41096c8e8979297acdb0154bf036",
+      "success": true,
+      "passed": 201,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 9,
+      "assertions": [
+        {
+          "name": "does not present completed payroll activity as a risk (en)",
+          "status": "passed"
+        },
+        {
+          "name": "does not present completed payroll activity as a risk (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "preserves source meaning, localized labels and units for all six generated signal families (en)",
+          "status": "passed"
+        },
+        {
+          "name": "preserves source meaning, localized labels and units for all six generated signal families (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Operating destination authority preserves summaries but explains unavailable destinations (en)",
+          "status": "passed"
+        },
+        {
+          "name": "Operating destination authority preserves summaries but explains unavailable destinations (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Operating destination authority uses the destination's shared TENANT authority",
+          "status": "passed"
+        },
+        {
+          "name": "Operating destination authority uses the destination's shared LOCATIONS authority",
+          "status": "passed"
+        },
+        {
+          "name": "Operating destination authority uses the destination's shared DENIED authority",
+          "status": "passed"
+        },
+        {
+          "name": "Operating destination authority rejects inconsistent tenant/actor context, foreign scope and query failure",
+          "status": "passed"
+        },
+        {
+          "name": "Operating destination authority does not resolve operating scope without current module admission",
+          "status": "passed"
+        },
+        {
+          "name": "Dashboard and analytics workspace admission fails closed for absent decisions and keeps core and analytics grants independent",
+          "status": "passed"
+        },
+        {
+          "name": "Dashboard and analytics workspace admission does not advertise a destination permission the weekly reader lacks (en)",
+          "status": "passed"
+        },
+        {
+          "name": "Dashboard and analytics workspace admission does not advertise a destination permission the weekly reader lacks (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Dashboard and analytics workspace admission does not load a weekly window when analytics entitlement denies",
+          "status": "passed"
+        },
+        {
+          "name": "Purchasing source read authority restricts unavailable purchasing without hiding the Manager workspace (en)",
+          "status": "passed"
+        },
+        {
+          "name": "Purchasing source read authority restricts unavailable purchasing without hiding the Manager workspace (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Purchasing source read authority checks the purchasing read grant with server identity even for a summary-only manager",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory source read authority separates module, summary and item detail access across daily and weekly output (en)",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory source read authority separates module, summary and item detail access across daily and weekly output (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory source read authority uses one enforced source decision for inventory.read",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory source read authority uses one enforced source decision for inventory.items.read",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory source read authority uses one enforced source decision for inventory.levels.read",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory source read authority fails closed when inventory authority cannot be established",
+          "status": "passed"
+        },
+        {
+          "name": "Close Assurance source access restricts close evidence across daily and weekly output without clearing limitations (en)",
+          "status": "passed"
+        },
+        {
+          "name": "Close Assurance source access restricts close evidence across daily and weekly output without clearing limitations (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Close Assurance source access uses the current Close Assurance read decision (allowed=true)",
+          "status": "passed"
+        },
+        {
+          "name": "Close Assurance source access uses the current Close Assurance read decision (allowed=false)",
+          "status": "passed"
+        },
+        {
+          "name": "Close Assurance source access propagates a failed Close Assurance access read",
+          "status": "passed"
+        },
+        {
+          "name": "Finance and reconciliation source access fails closed across daily and weekly output while retaining source limitations (en)",
+          "status": "passed"
+        },
+        {
+          "name": "Finance and reconciliation source access fails closed across daily and weekly output while retaining source limitations (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Finance and reconciliation source access uses current server read decisions (allowed=true)",
+          "status": "passed"
+        },
+        {
+          "name": "Finance and reconciliation source access uses current server read decisions (allowed=false)",
+          "status": "passed"
+        },
+        {
+          "name": "Finance and reconciliation source access propagates an unavailable module decision instead of assuming access",
+          "status": "passed"
+        },
+        {
+          "name": "withholds payroll blocker details in every Digest representation without payroll read authority (en)",
+          "status": "passed"
+        },
+        {
+          "name": "withholds payroll blocker details in every Digest representation without payroll read authority (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "retains the inventory summary while independently gating every item handoff (en)",
+          "status": "passed"
+        },
+        {
+          "name": "retains the inventory summary while independently gating every item handoff (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "preserves an unavailable suspense total and its source handoff in en",
+          "status": "passed"
+        },
+        {
+          "name": "preserves an unavailable suspense total and its source handoff in fr",
+          "status": "passed"
+        },
+        {
+          "name": "Digest request period consistency keeps every source in the request's UTC day when loading crosses midnight",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window counts a current payment obligation once across daily and weekly workspaces",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window rejects foreign, daily-period and stale-clock weekly tenantOperating evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window rejects foreign, daily-period and stale-clock weekly paymentTruth evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window rejects foreign, daily-period and stale-clock weekly inventoryCash evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window rejects foreign, daily-period and stale-clock weekly closeReadiness evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window redacts weekly payroll evidence before serialization (en)",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window redacts weekly payroll evidence before serialization (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window binds weekly sources independently while preserving the requested daily scope: 2026-09-19T23:59:59.999Z",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window binds weekly sources independently while preserving the requested daily scope: 2026-01-02T12:00:00Z",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window binds weekly sources independently while preserving the requested daily scope: 2026-09-19T12:00:00Z",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window does not load or expose a weekly window without analytics permission",
+          "status": "passed"
+        },
+        {
+          "name": "Weekly Digest reporting window propagates a weekly query failure instead of substituting daily sales or zero",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit binds every owner handoff to the authorized source module in EN/FR",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit binds every manager handoff to the authorized source module in EN/FR",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit binds every finance handoff to the authorized source module in EN/FR",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit binds every accountant handoff to the authorized source module in EN/FR",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit binds every stockkeeper handoff to the authorized source module in EN/FR",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit preserves each metric source's fresh/fresh availability",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit preserves each metric source's stale/stale availability",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit preserves each metric source's partial/partial availability",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit preserves each metric source's empty/empty availability",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit preserves each metric source's failed/safe_error availability",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit preserves each metric source's blocked/blocked availability",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit preserves each metric source's building/loading availability",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit preserves each metric source's fresh/redacted availability",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit preserves each metric source's fresh/permission_denied availability",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit preserves each metric source's fresh/module_unavailable availability",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit distinguishes an absent close score from a measured zero and honors a stale source flag",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit reports populated signals as observations without inventing changes from their order",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit binds risk freshness and source module to the originating signal instead of the tenant summary",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit rejects foreign tenantOperating evidence before composing a digest",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit rejects foreign paymentTruth evidence before composing a digest",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit rejects foreign inventoryCash evidence before composing a digest",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit rejects foreign closeReadiness evidence before composing a digest",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit does not turn a critical source severity into an assessed urgency",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit treats expired evidence as stale without inventing a business blocker (en)",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit treats expired evidence as stale without inventing a business blocker (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit rejects foreign optional inventory-loss evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit localizes setup blockers across digest views without changing source evidence or custom messages",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit translates all seven templates while preserving IDs, authority, monetary values and evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit shows only the stockkeeper workspace for an inventory-only warehouse role",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit does not expose the owner workspace to a dashboard manager",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit fails closed when a dashboard role has no recognized cockpit audience",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit loads tenant name, currency and timezone inside the service boundary",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit checks the current payroll module before exposing payroll source details (allowed=true)",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit checks the current payroll module before exposing payroll source details (allowed=false)",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit does not fall back to unrestricted payroll details when the module check fails",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit loads one tenant Inventory Loss action for an entitled administrator",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit does not load tenant loss evidence for a location-responsibility role",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit does not evaluate inventory entitlement without Inventory Loss RBAC",
+          "status": "passed"
+        },
+        {
+          "name": "Daily Habit Digest role cockpit keeps non-inventory digests available when inventory entitlement denies",
+          "status": "passed"
+        },
+        {
+          "name": "shows employee balance handoffs only to permitted owner and finance audiences (en)",
+          "status": "passed"
+        },
+        {
+          "name": "shows employee balance handoffs only to permitted owner and finance audiences (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "localizes payroll limitations across every Digest representation without altering source evidence",
+          "status": "passed"
+        },
+        {
+          "name": "POS search keyboard scope keeps the search input and its focus while catalogue results load",
+          "status": "passed"
+        },
+        {
+          "name": "POS search keyboard scope labels search, clears it explicitly and leaves browser shortcuts alone",
+          "status": "passed"
+        },
+        {
+          "name": "POS search keyboard scope does not clear catalog search or move focus to tender from an open dialog",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout offers Resume beside disabled Charge and waits for cart validation without submitting a sale",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout keeps Charge disabled and the cart intact when resuming fails",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem resume at checkout does not resume a cart before register ownership is verified",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful NOT_FOUND review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful CART_CHANGED review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery unlocks Charge only after a successful CART_REVIEW_REQUIRED review and retains the original request identifier",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery requires another review after rechecking an unrecorded attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery requires a fresh review after losing register ownership",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery keeps Charge locked when cart review returns recovery.failed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery keeps Charge locked when cart review returns recovery.cartMismatch",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery automatically clears a verified obsolete attempt without submitting another sale",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery does not allow clearing an unresolved NOT_FOUND attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery does not allow clearing an unresolved PENDING attempt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem checkout recovery P05 retains original intent and reports uncertainty when the commit response is lost",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close retains a rejected requested quantity through refetch and saves an explicit correction",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close hides checkout during a shift read failure, retries the read and preserves entered quantities",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close requires an explicit count and submits a literal zero instead of falling back to expected cash",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close blocks shift submission when a fresh local check finds pending evidence",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close blocks shift submission when a fresh local check finds storage unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected XAF cash 100 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected XAF cash 0 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close fills expected USD cash 100.25 without submitting until confirmed",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close does not require an explanation when a sub-franc XAF difference displays as zero",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close retains cent-level variance controls for currencies with decimal minor units",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close requires a variance explanation and keeps the dialog open when the server rejects the close",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close explains an offline close blocker without exposing its internal code",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem shift close clears the count and explanation when the active shift identity changes",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem terminal availability prefers an available terminal and labels a terminal occupied by another shift",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem terminal availability explains an occupied terminal without offering a misleading open action",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit adds an in-stock catalog item when the cashier selects the product card",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit keeps seven long-name cart lines and their controls available",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit submits an active cash sale with a replay-safe non-statutory receipt",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit selects the authenticated cashier's active location and terminal",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit clears the selected customer, search, and dialog when the cashier changes location",
+          "status": "passed"
+        },
+        {
+          "name": "ProfessionalPOSSystem sale commit blocks a location change while the current draft contains cart lines",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery uses XAF precision for the opening balance",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery uses USD precision for the opening balance",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery retains opening float and explains stopped=true without success",
+          "status": "passed"
+        },
+        {
+          "name": "shift opening recovery retains opening float and explains stopped=false without success",
+          "status": "passed"
+        },
+        {
+          "name": "P08 pairs source identity and limitations with its permitted next step (en)",
+          "status": "passed"
+        },
+        {
+          "name": "P08 pairs source identity and limitations with its permitted next step (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "P08 does not offer navigation for an explicitly unavailable source or manufacture a source from a shared route",
+          "status": "passed"
+        },
+        {
+          "name": "clears agent state on workspace, source revision or tenant changes, but keeps it across display modes",
+          "status": "passed"
+        },
+        {
+          "name": "switches both UTC reporting-period labels independently of the local generation time (en)",
+          "status": "passed"
+        },
+        {
+          "name": "switches both UTC reporting-period labels independently of the local generation time (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "switches real mode content in en while retaining source warnings and disabled actions",
+          "status": "passed"
+        },
+        {
+          "name": "switches real mode content in fr while retaining source warnings and disabled actions",
+          "status": "passed"
+        },
+        {
+          "name": "opens source limitations without requiring a user to find the mode switcher",
+          "status": "passed"
+        },
+        {
+          "name": "restores the authorized workspace and mode from history while retaining unrelated URL fields",
+          "status": "passed"
+        },
+        {
+          "name": "does not make an unavailable workspace visible through URL state",
+          "status": "passed"
+        },
+        {
+          "name": "opens sources at the top while retaining the current view for Back (en)",
+          "status": "passed"
+        },
+        {
+          "name": "opens sources at the top while retaining the current view for Back (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "preserves native modified click behavior",
+          "status": "passed"
+        },
+        {
+          "name": "preserves native new tab behavior",
+          "status": "passed"
+        },
+        {
+          "name": "preserves native download behavior",
+          "status": "passed"
+        },
+        {
+          "name": "preserves native specific fragment behavior",
+          "status": "passed"
+        },
+        {
+          "name": "preserves native external link behavior",
+          "status": "passed"
+        },
+        {
+          "name": "localizes 1 recorded inventory loss lines without attributing causation or changing authority",
+          "status": "passed"
+        },
+        {
+          "name": "localizes 2 recorded inventory loss lines without attributing causation or changing authority",
+          "status": "passed"
+        },
+        {
+          "name": "localizes payroll review guidance while preserving evidence, all read requirements and custom wording",
+          "status": "passed"
+        },
+        {
+          "name": "localizes stockout guidance while retaining the exact source and item authority",
+          "status": "passed"
+        },
+        {
+          "name": "localizes canonical close guidance without modifying evidence, authority or custom text",
+          "status": "passed"
+        },
+        {
+          "name": "collapses restricted blockers without losing severity or changing source evidence",
+          "status": "passed"
+        },
+        {
+          "name": "restricts payment gates and source tables while retaining status, freshness and evidence (en)",
+          "status": "passed"
+        },
+        {
+          "name": "restricts payment gates and source tables while retaining status, freshness and evidence (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "restricts close evidence by gate and table without losing severity or evidence (en)",
+          "status": "passed"
+        },
+        {
+          "name": "restricts close evidence by gate and table without losing severity or evidence (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "owner-war-room read admission denies unavailable access before loading operating evidence (en)",
+          "status": "passed"
+        },
+        {
+          "name": "owner-war-room read admission denies unavailable access before loading operating evidence (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "owner-war-room read admission preserves retained reads and propagates failed access queries",
+          "status": "passed"
+        },
+        {
+          "name": "manager-action-center read admission denies unavailable access before loading operating evidence (en)",
+          "status": "passed"
+        },
+        {
+          "name": "manager-action-center read admission denies unavailable access before loading operating evidence (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "manager-action-center read admission preserves retained reads and propagates failed access queries",
+          "status": "passed"
+        },
+        {
+          "name": "manager-action-center-daily-close read admission denies unavailable access before loading operating evidence (en)",
+          "status": "passed"
+        },
+        {
+          "name": "manager-action-center-daily-close read admission denies unavailable access before loading operating evidence (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "manager-action-center-daily-close read admission preserves retained reads and propagates failed access queries",
+          "status": "passed"
+        },
+        {
+          "name": "Owner recovery messages (en) explains NO_ACTIVE_ORG without reading workspace evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Owner recovery messages (en) explains FORBIDDEN without reading workspace evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Owner recovery messages (en) localizes an authority rejection from the destination service and preserves its denied callback",
+          "status": "passed"
+        },
+        {
+          "name": "Owner recovery messages (fr) explains NO_ACTIVE_ORG without reading workspace evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Owner recovery messages (fr) explains FORBIDDEN without reading workspace evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Owner recovery messages (fr) localizes an authority rejection from the destination service and preserves its denied callback",
+          "status": "passed"
+        },
+        {
+          "name": "dailyDigest access recovery in en explains UNAUTHENTICATED without reading protected data",
+          "status": "passed"
+        },
+        {
+          "name": "dailyDigest access recovery in en explains NO_ACTIVE_ORG without reading protected data",
+          "status": "passed"
+        },
+        {
+          "name": "dailyDigest access recovery in en explains EMAIL_NOT_VERIFIED without reading protected data",
+          "status": "passed"
+        },
+        {
+          "name": "dailyDigest access recovery in en explains ACCOUNT_LOCKED without reading protected data",
+          "status": "passed"
+        },
+        {
+          "name": "dailyDigest access recovery in en explains FORBIDDEN without reading protected data",
+          "status": "passed"
+        },
+        {
+          "name": "dailyDigest access recovery in fr explains UNAUTHENTICATED without reading protected data",
+          "status": "passed"
+        },
+        {
+          "name": "dailyDigest access recovery in fr explains NO_ACTIVE_ORG without reading protected data",
+          "status": "passed"
+        },
+        {
+          "name": "dailyDigest access recovery in fr explains EMAIL_NOT_VERIFIED without reading protected data",
+          "status": "passed"
+        },
+        {
+          "name": "dailyDigest access recovery in fr explains ACCOUNT_LOCKED without reading protected data",
+          "status": "passed"
+        },
+        {
+          "name": "dailyDigest access recovery in fr explains FORBIDDEN without reading protected data",
+          "status": "passed"
+        },
+        {
+          "name": "keeps daily-digest behind its authoritative permission check",
+          "status": "passed"
+        },
+        {
+          "name": "preserves all-permission checks and object scope",
+          "status": "passed"
+        },
+        {
+          "name": "propagates source failures instead of rendering denial or empty data",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory item handoff read boundary denies missing entitlement before loading data (en)",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory item handoff read boundary denies missing entitlement before loading data (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory item handoff read boundary denies missing item permission before entitlement and data queries (en)",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory item handoff read boundary denies missing item permission before entitlement and data queries (fr)",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory item handoff read boundary preserves allowed retained reads with server-derived identity",
+          "status": "passed"
+        },
+        {
+          "name": "Inventory item handoff read boundary does not read data when entitlement lookup fails",
+          "status": "passed"
+        },
+        {
+          "name": "DailyHabitDigestDashboard role states explains missing workspaces and formats the server-owned timezone undefined",
+          "status": "passed"
+        },
+        {
+          "name": "DailyHabitDigestDashboard role states explains missing workspaces and formats the server-owned timezone America/New_York",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P09/evidence/unit-1792344882953.results.json",
+      "type": "M pure",
+      "historical": true,
+      "sha256": "d4a7e880e4ac38d301961e1a168986feeffe02a0b2280d1699dbd0fd56f61fe6",
+      "success": true,
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "accepts the exact bounded synthetic archive, never a complete tenant export",
+          "status": "passed"
+        },
+        {
+          "name": "independent reader reconstructs original IDs, attachments, two sites, positions and currency totals",
+          "status": "passed"
+        },
+        {
+          "name": "rejects file hash",
+          "status": "passed"
+        },
+        {
+          "name": "rejects byte count",
+          "status": "passed"
+        },
+        {
+          "name": "rejects row count",
+          "status": "passed"
+        },
+        {
+          "name": "rejects total count",
+          "status": "passed"
+        },
+        {
+          "name": "rejects declared total",
+          "status": "passed"
+        },
+        {
+          "name": "rejects missing bytes",
+          "status": "passed"
+        },
+        {
+          "name": "rejects unlisted file",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate path",
+          "status": "passed"
+        },
+        {
+          "name": "rejects missing category",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate category",
+          "status": "passed"
+        },
+        {
+          "name": "rejects false completeness",
+          "status": "passed"
+        },
+        {
+          "name": "rejects credentials included",
+          "status": "passed"
+        },
+        {
+          "name": "rejects authority substituted",
+          "status": "passed"
+        },
+        {
+          "name": "rejects manifest credential",
+          "status": "passed"
+        },
+        {
+          "name": "rejects unknown version",
+          "status": "passed"
+        },
+        {
+          "name": "rejects traversal",
+          "status": "passed"
+        },
+        {
+          "name": "rejects drive path",
+          "status": "passed"
+        },
+        {
+          "name": "rejects Windows reserved path",
+          "status": "passed"
+        },
+        {
+          "name": "rejects remote path",
+          "status": "passed"
+        },
+        {
+          "name": "rejects numeric money",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate currency",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invented included category",
+          "status": "passed"
+        },
+        {
+          "name": "rejects attachment media type",
+          "status": "passed"
+        },
+        {
+          "name": "detects omitted referenced evidence even when file hash and all counts are recomputed",
+          "status": "passed"
+        },
+        {
+          "name": "detects omitted referenced attachment even when descriptor and bytes are both removed",
+          "status": "passed"
+        },
+        {
+          "name": "rejects unauthorized record field password after resealing",
+          "status": "passed"
+        },
+        {
+          "name": "rejects unauthorized record field accessToken after resealing",
+          "status": "passed"
+        },
+        {
+          "name": "rejects unauthorized record field refreshToken after resealing",
+          "status": "passed"
+        },
+        {
+          "name": "rejects unauthorized record field encryptionKey after resealing",
+          "status": "passed"
+        },
+        {
+          "name": "rejects unauthorized record field providerPayload after resealing",
+          "status": "passed"
+        },
+        {
+          "name": "rejects unauthorized record field bankAccount after resealing",
+          "status": "passed"
+        },
+        {
+          "name": "requires externally approved sensitive scope, not self-authorization in a manifest",
+          "status": "passed"
+        },
+        {
+          "name": "rejects contact omitted from declared scope even when the caller allows it",
+          "status": "passed"
+        },
+        {
+          "name": "detects resealed foreign tenant",
+          "status": "passed"
+        },
+        {
+          "name": "detects resealed wrong link kind",
+          "status": "passed"
+        },
+        {
+          "name": "detects resealed removed mandatory evidence",
+          "status": "passed"
+        },
+        {
+          "name": "detects resealed duplicate IDs",
+          "status": "passed"
+        },
+        {
+          "name": "detects resealed unbalanced journal",
+          "status": "passed"
+        },
+        {
+          "name": "detects resealed broken position",
+          "status": "passed"
+        },
+        {
+          "name": "detects resealed unit mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "detects resealed negative transaction quantity",
+          "status": "passed"
+        },
+        {
+          "name": "detects resealed resealed stock arithmetic without transaction support",
+          "status": "passed"
+        },
+        {
+          "name": "detects resealed currency mismatch",
+          "status": "passed"
+        },
+        {
+          "name": "retains monetary precision beyond the JS safe integer range",
+          "status": "passed"
+        },
+        {
+          "name": "does not treat an absent currency total as zero",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P10/evidence/tests-1792351292853.results.json",
+      "type": "M",
+      "historical": true,
+      "sha256": "c2ec7a1d0455475ad7b67a7c55d3591094f454d1780e8d792894ee095ea8969c",
+      "success": true,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 4,
+      "assertions": [
+        {
+          "name": "RBAC live session validation rejects a revoked session even when a cookie cache could still identify the user",
+          "status": "passed"
+        },
+        {
+          "name": "RBAC live session validation loads current permissions for a valid live session",
+          "status": "passed"
+        },
+        {
+          "name": "RBAC live session validation retains narrow stored grants when constructing server authority",
+          "status": "passed"
+        },
+        {
+          "name": "RBAC live session validation denies access when the session authority cannot be reached",
+          "status": "passed"
+        },
+        {
+          "name": "RBAC live session validation does not resolve a different active account through a reassigned email",
+          "status": "passed"
+        },
+        {
+          "name": "RBAC live session validation rejects an email-only session before looking up authority",
+          "status": "passed"
+        },
+        {
+          "name": "rbac tenant isolation allows access to the active organization without auditing a denial",
+          "status": "passed"
+        },
+        {
+          "name": "rbac tenant isolation denies cross-organization access even for wildcard users",
+          "status": "passed"
+        },
+        {
+          "name": "explicit stop impact supports verified inventory operations while leaving unresolved continuation unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "explicit stop impact scopes accounting stop impacts to manual drafts without stopping reconciliation or close",
+          "status": "passed"
+        },
+        {
+          "name": "explicit stop impact binds operational dependency meaning into the reviewed policy hash",
+          "status": "passed"
+        },
+        {
+          "name": "explicit stop impact keeps stopping new work distinct from draining existing obligations",
+          "status": "passed"
+        },
+        {
+          "name": "explicit stop impact records a drained retained state only when every observation is zero",
+          "status": "passed"
+        },
+        {
+          "name": "explicit stop impact binds changing observations separately from stable policy meaning",
+          "status": "passed"
+        },
+        {
+          "name": "explicit stop impact marks reactivation explicitly for fresh readiness checks",
+          "status": "passed"
+        },
+        {
+          "name": "explicit stop impact rejects an invalid/core stop without throwing a dependency traversal error: settings",
+          "status": "passed"
+        },
+        {
+          "name": "explicit stop impact rejects an invalid/core stop without throwing a dependency traversal error: unknown-capability",
+          "status": "passed"
+        },
+        {
+          "name": "explicit stop impact propagates failed observations instead of reporting zero obligations",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary allows only the granted client and actor, with current active organization predicates",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rejects revoked consent for every capability",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rejects expired at the exact boundary consent for every capability",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rejects scheduled consent for every capability",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rejects inactive client consent for every capability",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rejects deleted client consent for every capability",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary rechecks the grant after revocation instead of reusing a previous allowed result",
+          "status": "passed"
+        },
+        {
+          "name": "P04 accountant consent boundary permits read-only portal reads while denying export and review",
+          "status": "passed"
+        },
+        {
+          "name": "P04 read-only and export entitlement distinction evaluates read independently of RBAC wildcard",
+          "status": "passed"
+        },
+        {
+          "name": "P04 read-only and export entitlement distinction evaluates write independently of RBAC wildcard",
+          "status": "passed"
+        },
+        {
+          "name": "P04 read-only and export entitlement distinction evaluates export independently of RBAC wildcard",
+          "status": "passed"
+        },
+        {
+          "name": "P04 read-only and export entitlement distinction evaluates job independently of RBAC wildcard",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P12/evidence/STORAGE_SANDBOX_RESULTS.json",
+      "type": "B sandbox attempt",
+      "historical": true,
+      "sha256": "0c633ad0df05ad1b80016ad2eb9495200c9a888a708d9f73ddc330193c9b22da",
+      "success": false,
+      "passed": 0,
+      "failed": 25,
+      "skipped": 0,
+      "suites": 0,
+      "assertions": [
+        {
+          "name": "offline local POS queue with browser storage discovers local-only queues without server enrollment and blocks close across sessions",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage detects another tab's queue and distinguishes ingestion acknowledgement from financial completion",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage fails closed for an orphaned migration marker instead of reporting an empty inventory",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not replace a damaged durable missing state with an empty legacy snapshot",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not replace a damaged durable null record with an empty legacy snapshot",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines altered payloads during inventory without deleting their evidence",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage P06 preserves unknown evidence through real browser offline and reconnect transitions",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage conserves concurrent acknowledgements across tabs, reload and a continuous hash chain",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage keeps final fiscal numbering unavailable to caller-controlled queue input",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines corrupt legacy bytes without resetting identities ({damaged-json)",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines corrupt legacy bytes without resetting identities ({})",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines corrupt legacy bytes without resetting identities ({\"queueVersion\":1,\"entries\":[]})",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage migrates legacy SYNCING evidence without replacing identities, and retains original bytes",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage recovers an interrupted migration after marker write failure",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not acknowledge an injected quota failure or lose previously committed evidence",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not acknowledge a transaction aborted after its write request",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage allows only one active cross-tab lease and retries original identities after tab termination",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage retains uncertain evidence, retries without a replacement identity and ignores stale responses",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage keeps conflict evidence and prevents sending newer events out of sequence",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage blocks changed legacy data and detects eviction instead of resurrecting a stale queue",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage blocks altered payload hashes and changes of cashier-session ownership",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage survives closing and reopening a persistent browser profile with an unresolved attempt",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage rejects unsupported or denied IndexedDB instead of silently falling back to localStorage",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not strand migrated attempts with an invalid or unbounded lease",
+          "status": "failed"
+        },
+        {
+          "name": "offline local POS queue with browser storage caps each claim at the server limit and resumes remaining events in sequence",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "file": "docs/retention/execution/P12/evidence/STORAGE_RESULTS.json",
+      "type": "B current isolated storage",
+      "historical": true,
+      "sha256": "58b196f4318376a776f2228763ad28ef1540320bf8f28201b5d5c89ea607a4b1",
+      "success": true,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "offline local POS queue with browser storage discovers local-only queues without server enrollment and blocks close across sessions",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage detects another tab's queue and distinguishes ingestion acknowledgement from financial completion",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage fails closed for an orphaned migration marker instead of reporting an empty inventory",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not replace a damaged durable missing state with an empty legacy snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not replace a damaged durable null record with an empty legacy snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines altered payloads during inventory without deleting their evidence",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage P06 preserves unknown evidence through real browser offline and reconnect transitions",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage conserves concurrent acknowledgements across tabs, reload and a continuous hash chain",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage keeps final fiscal numbering unavailable to caller-controlled queue input",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines corrupt legacy bytes without resetting identities ({damaged-json)",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines corrupt legacy bytes without resetting identities ({})",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage quarantines corrupt legacy bytes without resetting identities ({\"queueVersion\":1,\"entries\":[]})",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage migrates legacy SYNCING evidence without replacing identities, and retains original bytes",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage recovers an interrupted migration after marker write failure",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not acknowledge an injected quota failure or lose previously committed evidence",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not acknowledge a transaction aborted after its write request",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage allows only one active cross-tab lease and retries original identities after tab termination",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage retains uncertain evidence, retries without a replacement identity and ignores stale responses",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage keeps conflict evidence and prevents sending newer events out of sequence",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage blocks changed legacy data and detects eviction instead of resurrecting a stale queue",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage blocks altered payload hashes and changes of cashier-session ownership",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage survives closing and reopening a persistent browser profile with an unresolved attempt",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage rejects unsupported or denied IndexedDB instead of silently falling back to localStorage",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage does not strand migrated attempts with an invalid or unbounded lease",
+          "status": "passed"
+        },
+        {
+          "name": "offline local POS queue with browser storage caps each claim at the server limit and resumes remaining events in sequence",
+          "status": "passed"
+        }
+      ]
+    }
+  ]
+}

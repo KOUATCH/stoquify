@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T12:58:24.781Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Expanded runtime helper source review; full orchestration admission pending",
+  "files": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\runtime\\run-expanded.cjs",
+      "sha256": "bd064bf41b35e88f098789c3bb2dc76a2bb014d3098ebf9d02a2544feef819a3"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\runtime\\qualification-contract.json",
+      "sha256": "22d4543fef2795f838aa54c203be96ad0448b466f0b80f6d7104f863bf8d08e1"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\direct-api-driver.cjs",
+      "sha256": "8430cd241dcfa81199877b361e78fc4eadd592e3cc2b08d7e497162d223fca43"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\direct-api-child.cjs",
+      "sha256": "d3194e9b397bbabf393a490f335b31197432317e70ecca9e496a3e7d2f79cd3b"
+    }
+  ],
+  "requirements": {
+    "expandedTopLevel": 36,
+    "credential": 10,
+    "origin": 24,
+    "infrastructure": 2,
+    "retainedExpiry": 3,
+    "browser": 18,
+    "totalRawIncludingProtectedCore": 107,
+    "logical": 58
+  },
+  "reviewed": [
+    "Request helper binds original response ID/method/path/status/body bytes and digest to exact bridge capture, retains actual request time bounds and token/cookie redaction.",
+    "Native effect helpers compare all business tables, exact unrelated user fields, original session/audit preservation and exact added owned session/audit identities.",
+    "Credential timestamp interpretations use explicit UTC and persisted request bounds; intended known-account lock audits remain separate from rejected-origin no-write denials.",
+    "Finalizer always attempts login.restoreAll, including a committed setup whose evidence writing failed before local caller flag update; cleanup failures force passed:false.",
+    "Owned contexts/browser/deny proxy close are bounded; real expiry and browser helpers remain separately reported.",
+    "Infrastructure phase uses accepted same repaired artifact against verified unused loopback55518; normal DB55517 is restored in finally and explicit authorized login/get-session recovery required.",
+    "Direct API driver uses only fixed candidate loader/private files/native isolated target; all actor/email/org/secondary-account canaries supplied; no main checkout application imports.",
+    "Contract has57 exact auxiliary identities and50 protected IDs totaling107 actual observations; final evidence reconciliation must enforce them, not only report counts."
+  ],
+  "conditionsBeforeExecution": [
+    "Separately reviewed main orchestration must hash-bind all exact source/helper/admission files, actual accepted artifact and fixture identity.",
+    "Exact read-only source+fixture preflight outcomes require independent review before app execution.",
+    "Direct API child inherits reviewed synthetic environment/preload guard and same candidate source/native target only.",
+    "Final actual review must inspect negative bytes, all database brackets, genuine signed caches and consumer evidence; no source-only promotion."
+  ],
+  "qualificationPassed": false
+}

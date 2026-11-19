@@ -1,0 +1,382 @@
+{
+  "schemaVersion": 1,
+  "scope": "Owned disposable database people/onboarding continuation",
+  "database": "stoquify_replay_dataset_20261028_01",
+  "referenceClock": "2026-10-28T20:00:00.000Z",
+  "organizations": [
+    "synth12_douala",
+    "synth12_yaounde",
+    "synth12_bafoussam"
+  ],
+  "implementation": "prisma/disposable-remaining-people.ts",
+  "validation": {
+    "sourceInspection": true,
+    "syntaxTranspile": "PASS: 0 diagnostics",
+    "sourceOnlyCsvContractCheck": "PASS: AST-extracted exact fixture bytes analyzed by current CSV parser/default mapping; valid 1 row, zero errors; invalid 1 row, REQUIRED_FIELD_MISSING.",
+    "semanticTypecheck": "Root combined check pending",
+    "databaseExecution": "Not executed by this child; root executes guarded helper and retains per-organization results",
+    "renderedOrBrowserChecks": "Not performed by this child",
+    "graphEvidence": {
+      "path": "graphify-out/graph_actions.json",
+      "lastModified": "2026-08-09T11:14:24.889Z",
+      "employeeDocumentNodePresent": false,
+      "meaning": "Stale architectural reference; behavior established from current services and schema"
+    }
+  },
+  "configuration": {
+    "nodeEnv": "test",
+    "dateOnlyClockRequired": true,
+    "isolatedAuthenticationSecretMinimumBytes": 32,
+    "exactRolePermissions": {
+      "owner": [
+        "hris.tasks.read",
+        "hris.tasks.review"
+      ],
+      "payroll_administrator": [
+        "hris.tasks.read",
+        "hris.tasks.work"
+      ]
+    },
+    "runtimeConfiguration": "Synthetic document/correction/lifecycle policies, bounded setup pilot organizations and .invalid invite sender are scoped to helper execution and restored in finally.",
+    "providerPorts": "Encrypted local document store and exact generated-byte synthetic validator; no external malware, email, payroll, banking or regulatory provider invocation.",
+    "originalEmployeeInvariant": "Existing 36 employees, ACTIVE contracts, pending salary review, baseline profile/status and validated raw attendance stay unchanged.",
+    "newOperationalData": "One rejected attendance observation, one imported supplier and one PENDING unsent invitation per organization; draft allowance is future-dated and not approved.",
+    "replay": "Deterministic source files/keys, immutable file byte conflict checks, find-before-service for non-idempotent authoring, completed transitions skipped, access-download audit reused while retained encrypted bytes are rechecked."
+  },
+  "tables": [
+    {
+      "table": "hris_attendance_anomalies",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "rejected-attendance-source-and-resolved-anomaly",
+      "description": "One rejected source observation per organization (overtime exceeds worked minutes), resolved against the same employee/date's existing VALIDATED observation. Original attendance rows remain unchanged.",
+      "source": {
+        "path": "services/hris/attendance-import.service.ts",
+        "functions": "importReviewedOperationalTime; resolveReviewedOperationalAnomaly"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "hris_employee_documents",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "reviewed-encrypted-employee-document",
+      "description": "Generated synthetic PDF, actual SHA-256, AES-GCM storage, independent review and authorized decrypted byte round-trip. Explicit fixed-fixture scan adapter is not production malware certification.",
+      "source": {
+        "path": "services/hris/employee-document.service.ts",
+        "functions": "uploadEmployeeDocument; reviewEmployeeDocument; grantEmployeeDocument; downloadEmployeeDocument"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "hris_lifecycle_tasks",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "onboarding-lifecycle-task-completion",
+      "description": "Four dependency-ordered onboarding tasks per organization derived from an existing authoritative approved/applied ONBOARD event, independent submission/review and retained synthetic evidence. No real external access or asset transfer claim.",
+      "source": {
+        "path": "services/hris/lifecycle-task.service.ts",
+        "functions": "syncLifecycleTaskEventInTx; decideLifecycleTask"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "hris_payroll_handoff_packages",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Requires existing admitted payrollPeriodId and blocker-free readHandoffInputsInTx; freeze source, named independent recipient, fresh preview and retained manifest/CSV hashes.",
+      "source": {
+        "path": "services/hris/payroll-handoff.service.ts",
+        "functions": "previewPayrollHandoff; issuePayrollHandoff"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "hris_payroll_handoff_receipts",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Requires a genuine current handoff package; only its independent named recipient may acknowledge matched row IDs/hash.",
+      "source": {
+        "path": "services/hris/payroll-handoff.service.ts",
+        "functions": "acknowledgePayrollHandoff"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "hris_personal_correction_cases",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "personal-correction-independent-rejection",
+      "description": "Employee requests an unsupported display-name change; independent owner rejects it, preserving the employee profile and pending compensation/lifecycle baseline.",
+      "source": {
+        "path": "services/hris/personal-correction.service.ts",
+        "functions": "submitOwnCorrection; getCorrectionReview; decideCorrection"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "hris_public_holidays",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "company-holiday-and-reviewer-grant",
+      "description": "One explicitly synthetic company training closure in an independently approved, unassigned calendar. No statutory public-holiday or employee-schedule claim.",
+      "source": {
+        "path": "services/hris/operational-time.service.ts",
+        "functions": "createTimeFoundation; approveTimeFoundation"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "hris_setup_reviewer_grants",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "company-holiday-and-reviewer-grant",
+      "description": "Independent, effective-dated TIME_POLICY approval delegation; no legal expert qualification claimed.",
+      "source": {
+        "path": "services/hris/workspace-setup.service.ts",
+        "functions": "saveSetupReviewer"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "invites",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "unsent-user-invitation-outbox",
+      "description": "Normal invite issuance/replay to a synthetic .invalid recipient with a separately service-authored canonical self-service role and local PENDING outbox. Original role stays unchanged: current grant policy refuses its unmapped VIEW_OWN_PRESENCE, CLOCK_IN_OUT and VIEW_OWN_SCHEDULE entries. No delivery worker or external email called.",
+      "source": {
+        "path": "services/users/user-invitation-issuance.service.ts",
+        "functions": "issueUserInvitation"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "onboarding_import_batches",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "supplier-csv-validation-and-import",
+      "description": "One BLOCKED invalid CSV and one COMMITTED valid supplier CSV per organization, with exact retained source bytes/hashes and row/count evidence.",
+      "source": {
+        "path": "services/onboarding/master-data-import.service.ts",
+        "functions": "stageMasterDataImport; approveMasterDataImport; commitMasterDataImport"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "onboarding_import_issues",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "supplier-csv-validation-and-import",
+      "description": "Missing required supplier name creates a real validation issue; it is not silently bypassed.",
+      "source": {
+        "path": "services/onboarding/master-data-import.service.ts",
+        "functions": "stageMasterDataImport"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "onboarding_import_mappings",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "supplier-csv-validation-and-import",
+      "description": "Versioned default supplier mapping is created by the normal staging workflow.",
+      "source": {
+        "path": "services/onboarding/master-data-import.service.ts",
+        "functions": "stageMasterDataImport"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "onboarding_import_rows",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "supplier-csv-validation-and-import",
+      "description": "Invalid source row retained alongside one validated/committed supplier row; destination ID and source row hashes are linked.",
+      "source": {
+        "path": "services/onboarding/master-data-import.service.ts",
+        "functions": "stageMasterDataImport; commitMasterDataImport"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "onboarding_readiness_milestones",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "supplier-csv-validation-and-import",
+      "description": "Readiness milestone follows normal blocked-then-successful supplier import evidence.",
+      "source": {
+        "path": "services/onboarding/master-data-import.service.ts",
+        "functions": "stageMasterDataImport; commitMasterDataImport"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "payroll_attendance_snapshots",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Needs an admitted payroll period plus approved/certified attendance and resolved payroll input readiness. Raw monthly attendance does not constitute certification.",
+      "source": {
+        "path": "services/payroll/payroll-control.service.ts",
+        "functions": "freezeAttendanceSnapshot"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_declaration_evidence",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Requires a valid declaration, authorized preparation/review and real synthetic submission evidence through the declaration lifecycle. No invented regulatory submission receipt.",
+      "source": {
+        "path": "services/payroll/declaration-lifecycle.service.ts",
+        "functions": "recordPayrollDeclarationEvidence"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_declarations",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Requires admitted payroll result and reviewed payroll.declarations.default configuration effective at the required pay dates.",
+      "source": {
+        "path": "services/payroll/payroll-control.service.ts",
+        "functions": "preparePayrollDeclarations"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_employee_balance_cases",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Requires a POSTED CORRECTION run linked to its original run with matched statutory component-register and mapping proof; negative correction needs emitted payslip before employee receivable case.",
+      "source": {
+        "path": "services/payroll/payroll-employee-balance.service.ts",
+        "functions": "planPayrollEmployeeBalanceCasesForCorrectionRun"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_employee_balance_events",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Requires legitimate correction-run balance case; no artificial receivable/recovery history.",
+      "source": {
+        "path": "services/payroll/payroll-employee-balance.service.ts",
+        "functions": "planPayrollEmployeeBalanceCasesForCorrectionRun; balance-case lifecycle"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_employee_rubrique_assignments",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "draft-nonstatutory-compensation",
+      "description": "DRAFT 5000 XAF proposed allowance effective 2026-11-01, after the historical dataset boundary; no salary baseline change or calculation admission.",
+      "source": {
+        "path": "services/payroll/compensation.service.ts",
+        "functions": "assignEmployeeRubrique"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "payroll_payment_allocations",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Requires legitimate payroll batch and employee net-pay liabilities before allocation/reconciliation.",
+      "source": {
+        "path": "services/payroll/payroll-control.service.ts",
+        "functions": "requestPayrollPaymentBatch; releasePayrollPaymentBatch"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_payment_batches",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Requires actually posted payroll liabilities and appropriate payment/settlement evidence and independent release control.",
+      "source": {
+        "path": "services/payroll/payroll-control.service.ts",
+        "functions": "requestPayrollPaymentBatch; approvePayrollPaymentBatch; releasePayrollPaymentBatch"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_payslip_lines",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Requires emitted payslip and real calculation component identities/amounts.",
+      "source": {
+        "path": "services/payroll/payroll-control.service.ts",
+        "functions": "emitPayrollPayslips"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_payslips",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Requires actual accepted payroll run and employee lines; no fabricated statutory payslip.",
+      "source": {
+        "path": "services/payroll/payroll-control.service.ts",
+        "functions": "emitPayrollPayslips"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_periods",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Period creation rejects insufficiently reviewed CNPS/IRPP and missing approved production admission. Published CM-2026.1 does not cover 2025 pay dates.",
+      "source": {
+        "path": "services/payroll/payroll-control.service.ts",
+        "functions": "createPayrollPeriod; resolvePayrollCountryPackStatus"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_rubriques",
+      "status": "IMPLEMENTED_AWAITING_GUARDED_EXECUTION",
+      "scenario": "draft-nonstatutory-compensation",
+      "description": "DRAFT tenant-defined earning catalogue reference, deliberately without statutory parameter path or accepted tax/social treatment.",
+      "source": {
+        "path": "services/payroll/compensation.service.ts",
+        "functions": "upsertPayrollRubrique"
+      },
+      "evidenceAfterExecution": "docs/engineering/database/disposable-dataset-2026-10-28/<organizationId>-remaining-people.json",
+      "authoring": "NORMAL_SERVICE_WITH_EXPLICIT_SYNTHETIC_CONFIGURATION"
+    },
+    {
+      "table": "payroll_run_lines",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Lines must result from the actual admitted payroll calculation with accepted country rules and independent expected-result fixtures.",
+      "source": {
+        "path": "services/payroll/payroll-control.service.ts",
+        "functions": "calculatePayrollRun"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_run_transitions",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Transitions require genuine existing calculated runs and normal independent reviews. No direct fake lifecycle transition is inserted.",
+      "source": {
+        "path": "services/payroll/payroll-control.service.ts",
+        "functions": "calculatePayrollRun; reviewPayrollRun; approvePayrollRun; postPayrollRun"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    },
+    {
+      "table": "payroll_runs",
+      "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+      "reason": "Needs admitted period, certified snapshot and approved inputs; annual correctness additionally requires reviewed YTD/adjustment contract and service integration proof.",
+      "source": {
+        "path": "services/payroll/payroll-control.service.ts",
+        "functions": "calculatePayrollRun"
+      },
+      "unblockDocument": "docs/engineering/database/disposable-dataset-2026-10-28/PAYROLL-UNBLOCK.md",
+      "requires": "Source-backed effective-dated reviewed country packs, authentic legal-owner/reviewer approval and production admission; reviewed YTD contract/fixtures plus integration proof; then normal payroll lifecycle."
+    }
+  ]
+}
+

@@ -1,0 +1,57 @@
+{
+  "recordedAt": "2026-11-11T14:30:40.087Z",
+  "status": "QUALIFICATION_HARNESS_RESOLUTION_CORRECTED",
+  "failedAttempt": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\invite-pg-1e5157b710\\RESULT.json",
+    "sha256": "bdaecd05da252022a83b29bae0c86b15813d412784155a12c55af1d267449a4c",
+    "bytes": 12380
+  },
+  "failedCliExecution": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\invite-pg-1e5157b710\\actual-node-cli.execution.json",
+    "sha256": "73a0824cdf815fb57107774edb8ab658ef4d90ed30987a8c6dae062dbc6aa88c",
+    "bytes": 1508
+  },
+  "stderr": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-invite-pg-20261111-1e5157b710\\actual-node-cli.stderr.private.log",
+    "sha256": "21b6ae03e5de0b0027447d5e4be9996741644becb801001d8e132765d7aa5d68",
+    "bytes": 103
+  },
+  "originalRunner": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-invite-pg-20261111-1e5157b710\\qualify-invitation-postgres.before-resolution-fix.cjs",
+    "sha256": "dc47a0f38e5e263355988f7ac03ac91304cec99b3c2e311ebf61f32ef1f5d8b8",
+    "bytes": 26654
+  },
+  "correctedRunner": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\qualify-invitation-postgres.cjs",
+    "sha256": "9618d212ba62ed1230e536f7d8e45ebb22b0c3d439c4d22a8f98245e0f4c116d",
+    "bytes": 26678
+  },
+  "cause": "The preload intercepted @prisma/client and called createRequire.resolve for the same specifier, recursively entering its own Module._resolveFilename hook.",
+  "correction": "Resolve the qualified Prisma wrapper entry once before installing the hook, then return that fixed entry for @prisma/client. Existing adapter/tenant/SDK/env-read/network/source checks are unchanged.",
+  "reproduction": {
+    "resolutionOnly": true,
+    "beforeError": "RangeError",
+    "recursiveCallsObserved": 3125,
+    "noClientImported": true,
+    "noDatabaseOperation": true
+  },
+  "verification": {
+    "actualGeneratedPreloadParsed": true,
+    "actualGeneratedHookResolutionPassed": [
+      "@prisma/client",
+      "zod",
+      "resend",
+      "@/prisma/db"
+    ],
+    "externalCleanResolveUsesCleanCandidateParent": true,
+    "noClientImported": true,
+    "noDatabaseOperation": true,
+    "sourceBindingsUnchanged": true
+  },
+  "preservation": {
+    "failedReceiptsChanged": false,
+    "failedDatabaseResetOrDropped": false,
+    "oldAttemptNotRelabelled": true,
+    "newPrepareAndAbsentDatabaseRequired": true
+  }
+}

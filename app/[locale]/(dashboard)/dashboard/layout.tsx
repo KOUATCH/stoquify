@@ -67,7 +67,7 @@ export default async function DashboardLayout({
       <Sidebar session={shellSession} />
       <div className="flex min-h-screen min-w-0 flex-col overflow-x-hidden md:pl-[220px] lg:pl-[280px]">
         <Navbar session={shellSession} />
-        <main id="dashboard-main-content" tabIndex={-1} className="min-w-0 flex-1 scroll-mt-24 overflow-x-hidden">{children}</main>
+        <main id="dashboard-main-content" tabIndex={-1} className="min-w-0 flex-1 scroll-mt-24 overflow-x-hidden bg-[var(--product-canvas)]">{children}</main>
       </div>
     </div>
   )

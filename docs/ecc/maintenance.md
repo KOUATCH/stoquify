@@ -82,6 +82,43 @@ has the engine loaded. A real schema/version/engine change still requires
 generation: stop this project's Prisma-using processes before generating, then
 restart them. The startup guard does not automatically terminate other sessions.
 
+For a Windows development restart after editing the schema, run:
+
+```powershell
+npm run prisma:restart
+```
+
+This command uses PowerShell 7 (`pwsh`, already installed on the development
+machine). It identifies every Next server belonging to this checkout and their
+`dev-app-safe.js` launchers. It validates the whole list before stopping anything,
+waits for all verified servers to exit, and runs the installed Prisma `generate`
+command exactly once. It then starts all servers in hidden background processes,
+each with its original listening port/address and Turbopack choice.
+The new processes inherit the current terminal environment and reload the normal app configuration;
+custom environment overrides from the old terminal must be set here too.
+With no running server it generates and starts using the normal dev defaults.
+The command prints separate stdout/stderr log paths in an ignored
+`.next-prisma-restart-*` directory and returns after every server reports ready.
+Allow up to 180 seconds for startup. A failed launch, early exit or timeout returns
+a nonzero exit code with the relevant log path; other successful restarts remain
+running. Background servers continue running after the command returns.
+
+Before each launch it checks the saved address/port again. If another verified
+`dev-app-safe.js` server from this checkout has taken it, the command stops that
+launcher/server pair and reclaims the port, so the replacement loads the newly
+generated client. An `EADDRINUSE` race during startup triggers the same ownership
+check and retry, up to three launch attempts per server within the startup timeout.
+Each attempt has separate logs. Ports owned by unrelated or unverified processes
+are left untouched and reported with their PID; the command never switches ports.
+Continuous competing launches can still exhaust the retry limit.
+
+Unsupported launcher arguments, unverified process ownership,
+or failed generation stop the operation with an error. It does not kill unrelated
+Node processes, stop Prisma Studio, migrate/reset a database, or restart after
+failed generation. Close other processes using this generated client before retrying
+if they also hold the engine DLL. `npm run test:prisma:restart` checks process
+selection and lifecycle failure paths with mocked OS/application operations.
+
 ## Upgrade and rollback
 
 1. Record installed version, relevant content hashes, supported CLI/tool capabilities and current project checks. Do not export secrets or private session content.

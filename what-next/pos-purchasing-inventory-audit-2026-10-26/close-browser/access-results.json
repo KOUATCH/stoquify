@@ -1,0 +1,82 @@
+[
+  {
+    "locale": "en",
+    "scenario": "READ_PERMISSION_REVOCATION",
+    "status": "PASS",
+    "retainedPrivateWorkspace": false,
+    "serverDenials": [
+      {
+        "forbidden": true,
+        "authRequired": false,
+        "unauthorized": false,
+        "expired": false
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "scenario": "CROSS_TENANT_PERIOD",
+    "status": "PASS"
+  },
+  {
+    "locale": "en",
+    "scenario": "SESSION_REVOCATION",
+    "status": "PASS",
+    "retainedPrivateWorkspace": false,
+    "redirectedToLogin": false,
+    "serverDenials": [
+      {
+        "forbidden": false,
+        "authRequired": true,
+        "unauthorized": false,
+        "expired": false
+      },
+      {
+        "forbidden": false,
+        "authRequired": true,
+        "unauthorized": false,
+        "expired": false
+      }
+    ]
+  },
+  {
+    "locale": "fr",
+    "scenario": "READ_PERMISSION_REVOCATION",
+    "status": "PASS",
+    "retainedPrivateWorkspace": false,
+    "serverDenials": [
+      {
+        "forbidden": true,
+        "authRequired": false,
+        "unauthorized": false,
+        "expired": false
+      },
+      {
+        "forbidden": true,
+        "authRequired": false,
+        "unauthorized": false,
+        "expired": false
+      }
+    ]
+  },
+  {
+    "locale": "fr",
+    "scenario": "CROSS_TENANT_PERIOD",
+    "status": "PASS"
+  },
+  {
+    "locale": "fr",
+    "scenario": "SESSION_REVOCATION",
+    "status": "PASS",
+    "retainedPrivateWorkspace": false,
+    "redirectedToLogin": false,
+    "serverDenials": [
+      {
+        "forbidden": false,
+        "authRequired": true,
+        "unauthorized": false,
+        "expired": false
+      }
+    ]
+  }
+]

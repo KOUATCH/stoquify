@@ -1,0 +1,53 @@
+{
+  "slice": "HR-03",
+  "status": "VERIFIED",
+  "timestamp": "2026-10-24T14:47:46.3814543Z",
+  "baselineCommit": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "hashes": [
+    {
+      "path": "services/hris/time-allocation.ts",
+      "sha256": "7422a33e4938ebb5f92171efccd1c6a8d4f120460ca0771eafc2e7f7c2dc73bd"
+    },
+    {
+      "path": "services/hris/operational-time.service.ts",
+      "sha256": "f7d3725eaab69a2bdda5c7ab2d5bd7499c429eaff7f0c6a2832dd150479c4676"
+    },
+    {
+      "path": "services/hris/time-leave.contract.ts",
+      "sha256": "a7a696f94c211f1e0ec82b69d555b890dce5d25949e8ada310cdb8346907df8f"
+    },
+    {
+      "path": "services/hris/__tests__/time-allocation.test.ts",
+      "sha256": "79b3f2a05e8c51464d5597650ae1b81471fe0959607ae22e0f818e31b5291f1a"
+    },
+    {
+      "path": "services/hris/__tests__/hris-correctness.postgres.test.ts",
+      "sha256": "98dc786fd749854832b579b013dc661909c52835e61be73d1446658715aa4d49"
+    }
+  ],
+  "results": [
+    {
+      "lane": "unit",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-03/unit.json",
+      "passed": 19,
+      "exitCode": 0
+    },
+    {
+      "lane": "postgres",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-03/postgres-regression.json",
+      "passed": 39,
+      "exitCode": 0
+    },
+    {
+      "lane": "typecheck",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-03/typecheck.txt",
+      "diagnostics": 0,
+      "exitCode": 0
+    }
+  ],
+  "open": [],
+  "commands": [
+    "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath services/hris/__tests__/time-allocation.test.ts services/hris/__tests__/operational-time.service.test.ts --json --outputFile=what-next/hris-implementation-2026-10-24/HR-03/unit.json",
+    "node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand --no-cache --json --outputFile=what-next/hris-implementation-2026-10-24/HR-03/postgres-regression.json"
+  ]
+}

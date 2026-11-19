@@ -1,0 +1,89 @@
+{
+  "package_id": "P04-R06",
+  "updated_at": "2026-11-10T09:04:54.449Z",
+  "authorization": "AUTHORIZATION.md",
+  "status": "implemented_blocked_full_app_qualification_memory",
+  "source_before": "inventory/source-before-manifest.json",
+  "authority_map": "inventory/authority-map-after-v4.json",
+  "source_after": "inventory/source-after-manifest-v4.json",
+  "source_review": "independent-review/REPAIR-SOURCE-ADMISSION-v3.json",
+  "mocked_tests": {
+    "passed": 87,
+    "suites": 4,
+    "failed": 0,
+    "skipped": 0,
+    "result": "unit/attempt03/jest.json",
+    "review": "independent-review/UNIT-OUTCOME-REVIEW-v3.json",
+    "prior_revisions": [
+      "unit/attempt01/jest.json:83",
+      "unit/attempt02/jest.json:87"
+    ]
+  },
+  "full_app": {
+    "status": "successor_prepared_not_built; retry_blocked_by_fresh_host_capacity",
+    "candidate": "p04-r06-full-4661f767924e",
+    "database": {
+      "host": "127.0.0.1",
+      "port": 55516,
+      "migrations": 122,
+      "empty_business_tables_before_seed": 246,
+      "synthetic_actors": 10,
+      "organizations": 2,
+      "preseeded_sessions": 0,
+      "evidence": "independent-review/PREPARATION-OUTCOME-REVIEW.json",
+      "resume_health": "Both122migration ledgers checked;246emptybuildtables;10fixtureactors;0sessions/0audits. Ownedcluster stopped;bothDBs retained;0rowmutations.",
+      "cleanup": "database/suspend-attempt02.json"
+    },
+    "planned_groups": 58,
+    "inherited_failure_groups": 9,
+    "runtime_recipe": "independent-review/RUNTIME-RECIPE-ADMISSION-v2.json",
+    "build_recipe": "independent-review/RETRY-RECIPE-ADMISSION-attempt02.json",
+    "copy": {
+      "files": 152806,
+      "bytes_class": "2.792 GiB",
+      "failures": 0,
+      "mismatches": 0,
+      "extras": 0,
+      "verification": "Complete destination and archived dependency byte equality passed",
+      "evidence": "dependency-reconciliation.json"
+    },
+    "optimization": {
+      "serial": "Preserved as intentionally interrupted/incomplete after copy; no schema-failure or integrity-pass claim",
+      "parallel": "Complete full-byte verification passed; both trees unchanged relative to initial manifest"
+    },
+    "candidate_context": "candidate-context-attempt02.json",
+    "source_files": 9788,
+    "critical_source_inputs": 63,
+    "first_build_result": "build-result.json",
+    "first_build_failure": "Compilation succeeded; native V8 Fatal process out of memory: Zone during typecheck. No sealed artifact or session qualification.",
+    "predecessor_candidate": "p04-r06-full-ecf7a96c3112",
+    "successor_preparation": "candidate-refresh-attempt02.json",
+    "successor_review": "independent-review/CANDIDATE-REFRESH-OUTCOME-attempt02.json",
+    "runtime_recipe_note": "Original58-group recipe must be rebound and independently admitted to successor after successful build; not executed",
+    "prior_build_recipe": "independent-review/PREPARATION-BUILD-RECIPE-ADMISSION-v2.json"
+  },
+  "parent_p04": "blocked",
+  "production_readiness": "blocked",
+  "pending": [
+    "Successful full-app build and sealed artifact",
+    "Successor runtime recipe admission",
+    "Actual signed-session denial and authorized-positive outcomes",
+    "Per-request native database evidence",
+    "Rendered browser checks",
+    "Independent successful qualification outcome"
+  ],
+  "critical_source_inputs": 63,
+  "next_review_trigger": "Current resource/process/source refresh and bounded retry recipe",
+  "resume_date": "2026-11-10",
+  "current_source_note": "Selected63inputs include one preserved concurrent type-only auth annotation. Full-source refresh admits4changed files(auth,tsconfig,2docs)+65added docs; successor9788files. Typescript candidate file-selection equivalence passed; full typecheck has not passed.",
+  "memory_blocker": {
+    "free_commit_gib": 3.4,
+    "free_physical_gib": 4.46,
+    "required_commit_gib": 12,
+    "required_physical_gib": 6,
+    "disk_gate": "passed",
+    "evidence": "resource-resume-20261110-r2.json",
+    "action": "Free host memory, rerun reviewed capacity collector, then resume isolated build only after fresh gate passes."
+  },
+  "retry_handoff": "RETRY-HANDOFF-attempt02.md"
+}

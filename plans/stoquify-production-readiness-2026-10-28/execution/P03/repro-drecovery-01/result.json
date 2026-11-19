@@ -1,0 +1,3001 @@
+{
+  "mode": "drecovery",
+  "startedAt": "2026-10-29T08:12:56.323Z",
+  "events": [
+    {
+      "event": "proxy",
+      "method": "POST",
+      "hasNextAction": false,
+      "actionHash": null,
+      "contentType": "application/json",
+      "path": "/api/auth/sign-in/email",
+      "at": 1110380,
+      "bytes": 358,
+      "status": 200,
+      "responseContentType": "application/json",
+      "endedAt": 1151070
+    },
+    {
+      "event": "request",
+      "requestId": 1,
+      "actionHash": null,
+      "navigation": true,
+      "method": "GET",
+      "resourceType": "document",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1151267
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1151409,
+      "bytes": 122416,
+      "status": 200,
+      "responseContentType": "text/html; charset=utf-8",
+      "endedAt": 1153001
+    },
+    {
+      "event": "response",
+      "requestId": 1,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "at": 1152339
+    },
+    {
+      "event": "main-frame-navigation",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1152570
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/css/ec8abd60338da0b8.css",
+      "at": 1152696,
+      "bytes": 611,
+      "status": 200,
+      "responseContentType": "text/css; charset=UTF-8",
+      "endedAt": 1152949
+    },
+    {
+      "event": "request",
+      "requestId": 2,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "stylesheet",
+      "hasNextAction": false,
+      "path": "/_next/static/css/ec8abd60338da0b8.css",
+      "at": 1152702
+    },
+    {
+      "event": "request",
+      "requestId": 3,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "stylesheet",
+      "hasNextAction": false,
+      "path": "/_next/static/css/9ea6d2cb6d92b2de.css",
+      "at": 1152703
+    },
+    {
+      "event": "request",
+      "requestId": 4,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/webpack-98a800fa7faf205d.js",
+      "at": 1152705
+    },
+    {
+      "event": "request",
+      "requestId": 5,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/4bd1b696-100b9d70ed4e49c1.js",
+      "at": 1152705
+    },
+    {
+      "event": "request",
+      "requestId": 6,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/1255-fbff2a247371566e.js",
+      "at": 1152705
+    },
+    {
+      "event": "request",
+      "requestId": 7,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/main-app-e8de84fa21bd61f9.js",
+      "at": 1152705
+    },
+    {
+      "event": "request",
+      "requestId": 8,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/2619-024c323f8ca0f6aa.js",
+      "at": 1152710
+    },
+    {
+      "event": "request",
+      "requestId": 9,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/7290-d9c358d3f6ad96c7.js",
+      "at": 1152710
+    },
+    {
+      "event": "request",
+      "requestId": 10,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/4402-557683ac55f2a83a.js",
+      "at": 1152721
+    },
+    {
+      "event": "request",
+      "requestId": 11,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error-b21529068816a3f3.js",
+      "at": 1152722
+    },
+    {
+      "event": "request",
+      "requestId": 12,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found-bed815e245b5ee8b.js",
+      "at": 1152722
+    },
+    {
+      "event": "request",
+      "requestId": 13,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/accounting/error-3edd5f89c4d48a77.js",
+      "at": 1152722
+    },
+    {
+      "event": "request",
+      "requestId": 14,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/1567-89e94e171ca503d0.js",
+      "at": 1152725
+    },
+    {
+      "event": "request",
+      "requestId": 15,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/loading-7b48aacba2aa8583.js",
+      "at": 1152726
+    },
+    {
+      "event": "request",
+      "requestId": 16,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/238-fca121f7eed6a159.js",
+      "at": 1152726
+    },
+    {
+      "event": "request",
+      "requestId": 17,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/3171-53b6010cbacd2d08.js",
+      "at": 1152727
+    },
+    {
+      "event": "request",
+      "requestId": 18,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/9108-e02f1f102d8fe9f6.js",
+      "at": 1152727
+    },
+    {
+      "event": "request",
+      "requestId": 19,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/6664-ae70391308c4800e.js",
+      "at": 1152727
+    },
+    {
+      "event": "request",
+      "requestId": 20,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/422-b4bf089bb7d94242.js",
+      "at": 1152727
+    },
+    {
+      "event": "request",
+      "requestId": 21,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/6727-598b6792e37a8815.js",
+      "at": 1152730
+    },
+    {
+      "event": "request",
+      "requestId": 22,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/2454-1b6c0eafc72b44b1.js",
+      "at": 1152731
+    },
+    {
+      "event": "request",
+      "requestId": 23,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/5502-c7e3834cb93521f5.js",
+      "at": 1152731
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/css/9ea6d2cb6d92b2de.css",
+      "at": 1152736,
+      "bytes": 41782,
+      "status": 200,
+      "responseContentType": "text/css; charset=UTF-8",
+      "endedAt": 1152987
+    },
+    {
+      "event": "request",
+      "requestId": 24,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/8763-f26213d630608669.js",
+      "at": 1152740
+    },
+    {
+      "event": "request",
+      "requestId": 25,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/1003-5dabd06de679f333.js",
+      "at": 1152742
+    },
+    {
+      "event": "request",
+      "requestId": 26,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/4262-9862071a0fbec0f5.js",
+      "at": 1152742
+    },
+    {
+      "event": "request",
+      "requestId": 27,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/8808-302f7f3e1e3e8564.js",
+      "at": 1152742
+    },
+    {
+      "event": "request",
+      "requestId": 28,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/2716-7bbb798e9a4f4454.js",
+      "at": 1152742
+    },
+    {
+      "event": "request",
+      "requestId": 29,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/860-f0544d879e799297.js",
+      "at": 1152743
+    },
+    {
+      "event": "request",
+      "requestId": 30,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/8761-75e94e2c505a13a6.js",
+      "at": 1152743
+    },
+    {
+      "event": "request",
+      "requestId": 31,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/2344-e3157febcbc54001.js",
+      "at": 1152743
+    },
+    {
+      "event": "request",
+      "requestId": 32,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/3357-b0d060cd3b3d23e6.js",
+      "at": 1152744
+    },
+    {
+      "event": "request",
+      "requestId": 33,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/page-843b6358bd92cbda.js",
+      "at": 1152744
+    },
+    {
+      "event": "request",
+      "requestId": 34,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/5246-dde693d272eedef4.js",
+      "at": 1152744
+    },
+    {
+      "event": "request",
+      "requestId": 35,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/layout-3ad3e16317a53855.js",
+      "at": 1152745
+    },
+    {
+      "event": "request",
+      "requestId": 36,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/not-found-95a6af161aec56fe.js",
+      "at": 1152745
+    },
+    {
+      "event": "request",
+      "requestId": 37,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(auth)/layout-dce661f05543b9ea.js",
+      "at": 1152745
+    },
+    {
+      "event": "request",
+      "requestId": 38,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/layout-77ac24225c58315d.js",
+      "at": 1152745
+    },
+    {
+      "event": "request",
+      "requestId": 39,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/0e5ce63c-fcd0df0e31a72d43.js",
+      "at": 1152750
+    },
+    {
+      "event": "request",
+      "requestId": 40,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/8734-38263f05b4ce7193.js",
+      "at": 1152750
+    },
+    {
+      "event": "request",
+      "requestId": 41,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/1123-e17c2443db9a165c.js",
+      "at": 1152750
+    },
+    {
+      "event": "request",
+      "requestId": 42,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/3135-15168dba78247e79.js",
+      "at": 1152750
+    },
+    {
+      "event": "request",
+      "requestId": 43,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/251-3cc10e03a0b65b49.js",
+      "at": 1152751
+    },
+    {
+      "event": "request",
+      "requestId": 44,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/2052-cc3c84ee734b6c36.js",
+      "at": 1152751
+    },
+    {
+      "event": "request",
+      "requestId": 45,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/accounting/accountant-access/page-bf46b0f372c26468.js",
+      "at": 1152751
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/webpack-98a800fa7faf205d.js",
+      "at": 1152962,
+      "bytes": 1925,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1152982
+    },
+    {
+      "event": "response",
+      "requestId": 2,
+      "path": "/_next/static/css/ec8abd60338da0b8.css",
+      "status": 200,
+      "contentType": "text/css; charset=UTF-8",
+      "at": 1152966
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 2,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "stylesheet",
+      "hasNextAction": false,
+      "path": "/_next/static/css/ec8abd60338da0b8.css",
+      "at": 1152972
+    },
+    {
+      "event": "response",
+      "requestId": 3,
+      "path": "/_next/static/css/9ea6d2cb6d92b2de.css",
+      "status": 200,
+      "contentType": "text/css; charset=UTF-8",
+      "at": 1152979
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/4bd1b696-100b9d70ed4e49c1.js",
+      "at": 1153001,
+      "bytes": 54364,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153062
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 3,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "stylesheet",
+      "hasNextAction": false,
+      "path": "/_next/static/css/9ea6d2cb6d92b2de.css",
+      "at": 1153010
+    },
+    {
+      "event": "request",
+      "requestId": 46,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/7984-d23ccd6e45d3d897.js",
+      "at": 1153015
+    },
+    {
+      "event": "request",
+      "requestId": 47,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/3305-b002be46a3579218.js",
+      "at": 1153015
+    },
+    {
+      "event": "request",
+      "requestId": 48,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/611-d564a2f6ed90b01c.js",
+      "at": 1153016
+    },
+    {
+      "event": "request",
+      "requestId": 49,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/4567-1df8672fc850d771.js",
+      "at": 1153016
+    },
+    {
+      "event": "request",
+      "requestId": 50,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout-bf05f409e4a126fe.js",
+      "at": 1153017
+    },
+    {
+      "event": "request",
+      "requestId": 51,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error-481c7f79fa569d72.js",
+      "at": 1153017
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 1,
+      "actionHash": null,
+      "navigation": true,
+      "method": "GET",
+      "resourceType": "document",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1153027
+    },
+    {
+      "event": "response",
+      "requestId": 4,
+      "path": "/_next/static/chunks/webpack-98a800fa7faf205d.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153028
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 4,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/webpack-98a800fa7faf205d.js",
+      "at": 1153028
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/1255-fbff2a247371566e.js",
+      "at": 1153041,
+      "bytes": 46348,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153103
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/main-app-e8de84fa21bd61f9.js",
+      "at": 1153047,
+      "bytes": 570,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153071
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/4402-557683ac55f2a83a.js",
+      "at": 1153094,
+      "bytes": 5566,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153116
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error-b21529068816a3f3.js",
+      "at": 1153099,
+      "bytes": 2833,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153131
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found-bed815e245b5ee8b.js",
+      "at": 1153121,
+      "bytes": 7315,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153152
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/1567-89e94e171ca503d0.js",
+      "at": 1153143,
+      "bytes": 11851,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153176
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/loading-7b48aacba2aa8583.js",
+      "at": 1153152,
+      "bytes": 1266,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153229
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/2619-024c323f8ca0f6aa.js",
+      "at": 1153181,
+      "bytes": 3405,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153280
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/7290-d9c358d3f6ad96c7.js",
+      "at": 1153221,
+      "bytes": 6775,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153346
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/238-fca121f7eed6a159.js",
+      "at": 1153267,
+      "bytes": 2650,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153348
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/3171-53b6010cbacd2d08.js",
+      "at": 1153332,
+      "bytes": 7294,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153364
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/accounting/error-3edd5f89c4d48a77.js",
+      "at": 1153336,
+      "bytes": 2606,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153403
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/9108-e02f1f102d8fe9f6.js",
+      "at": 1153341,
+      "bytes": 3429,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153420
+    },
+    {
+      "event": "response",
+      "requestId": 5,
+      "path": "/_next/static/chunks/4bd1b696-100b9d70ed4e49c1.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153354
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 5,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/4bd1b696-100b9d70ed4e49c1.js",
+      "at": 1153354
+    },
+    {
+      "event": "response",
+      "requestId": 7,
+      "path": "/_next/static/chunks/main-app-e8de84fa21bd61f9.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153354
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 7,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/main-app-e8de84fa21bd61f9.js",
+      "at": 1153355
+    },
+    {
+      "event": "response",
+      "requestId": 10,
+      "path": "/_next/static/chunks/4402-557683ac55f2a83a.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153355
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 10,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/4402-557683ac55f2a83a.js",
+      "at": 1153355
+    },
+    {
+      "event": "response",
+      "requestId": 11,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error-b21529068816a3f3.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153355
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 11,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error-b21529068816a3f3.js",
+      "at": 1153355
+    },
+    {
+      "event": "response",
+      "requestId": 6,
+      "path": "/_next/static/chunks/1255-fbff2a247371566e.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153358
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 6,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/1255-fbff2a247371566e.js",
+      "at": 1153359
+    },
+    {
+      "event": "response",
+      "requestId": 12,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found-bed815e245b5ee8b.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153360
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 12,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found-bed815e245b5ee8b.js",
+      "at": 1153360
+    },
+    {
+      "event": "response",
+      "requestId": 14,
+      "path": "/_next/static/chunks/1567-89e94e171ca503d0.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153360
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 14,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/1567-89e94e171ca503d0.js",
+      "at": 1153360
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/6664-ae70391308c4800e.js",
+      "at": 1153380,
+      "bytes": 11028,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153426
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/422-b4bf089bb7d94242.js",
+      "at": 1153382,
+      "bytes": 2577,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153428
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/6727-598b6792e37a8815.js",
+      "at": 1153385,
+      "bytes": 3530,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153438
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/2454-1b6c0eafc72b44b1.js",
+      "at": 1153393,
+      "bytes": 5591,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153455
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/5502-c7e3834cb93521f5.js",
+      "at": 1153409,
+      "bytes": 7349,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153479
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/8763-f26213d630608669.js",
+      "at": 1153430,
+      "bytes": 9943,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153498
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/1003-5dabd06de679f333.js",
+      "at": 1153448,
+      "bytes": 4059,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153512
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/4262-9862071a0fbec0f5.js",
+      "at": 1153451,
+      "bytes": 2989,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153520
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/8808-302f7f3e1e3e8564.js",
+      "at": 1153456,
+      "bytes": 100792,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153666
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/2716-7bbb798e9a4f4454.js",
+      "at": 1153467,
+      "bytes": 4929,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153533
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/860-f0544d879e799297.js",
+      "at": 1153482,
+      "bytes": 3904,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153535
+    },
+    {
+      "event": "response",
+      "requestId": 15,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/loading-7b48aacba2aa8583.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153500
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 15,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/loading-7b48aacba2aa8583.js",
+      "at": 1153500
+    },
+    {
+      "event": "response",
+      "requestId": 8,
+      "path": "/_next/static/chunks/2619-024c323f8ca0f6aa.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153500
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 8,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/2619-024c323f8ca0f6aa.js",
+      "at": 1153500
+    },
+    {
+      "event": "response",
+      "requestId": 9,
+      "path": "/_next/static/chunks/7290-d9c358d3f6ad96c7.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153501
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 9,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/7290-d9c358d3f6ad96c7.js",
+      "at": 1153501
+    },
+    {
+      "event": "response",
+      "requestId": 16,
+      "path": "/_next/static/chunks/238-fca121f7eed6a159.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153501
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 16,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/238-fca121f7eed6a159.js",
+      "at": 1153501
+    },
+    {
+      "event": "response",
+      "requestId": 17,
+      "path": "/_next/static/chunks/3171-53b6010cbacd2d08.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153502
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 17,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/3171-53b6010cbacd2d08.js",
+      "at": 1153502
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/8761-75e94e2c505a13a6.js",
+      "at": 1153513,
+      "bytes": 15283,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153613
+    },
+    {
+      "event": "response",
+      "requestId": 13,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/accounting/error-3edd5f89c4d48a77.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153524
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 13,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/accounting/error-3edd5f89c4d48a77.js",
+      "at": 1153525
+    },
+    {
+      "event": "response",
+      "requestId": 18,
+      "path": "/_next/static/chunks/9108-e02f1f102d8fe9f6.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153525
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 18,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/9108-e02f1f102d8fe9f6.js",
+      "at": 1153526
+    },
+    {
+      "event": "response",
+      "requestId": 20,
+      "path": "/_next/static/chunks/422-b4bf089bb7d94242.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153526
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 20,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/422-b4bf089bb7d94242.js",
+      "at": 1153526
+    },
+    {
+      "event": "response",
+      "requestId": 19,
+      "path": "/_next/static/chunks/6664-ae70391308c4800e.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153527
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 19,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/6664-ae70391308c4800e.js",
+      "at": 1153528
+    },
+    {
+      "event": "response",
+      "requestId": 21,
+      "path": "/_next/static/chunks/6727-598b6792e37a8815.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153529
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 21,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/6727-598b6792e37a8815.js",
+      "at": 1153529
+    },
+    {
+      "event": "response",
+      "requestId": 22,
+      "path": "/_next/static/chunks/2454-1b6c0eafc72b44b1.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153529
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 22,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/2454-1b6c0eafc72b44b1.js",
+      "at": 1153530
+    },
+    {
+      "event": "response",
+      "requestId": 23,
+      "path": "/_next/static/chunks/5502-c7e3834cb93521f5.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153539
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 23,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/5502-c7e3834cb93521f5.js",
+      "at": 1153539
+    },
+    {
+      "event": "response",
+      "requestId": 24,
+      "path": "/_next/static/chunks/8763-f26213d630608669.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153570
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 24,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/8763-f26213d630608669.js",
+      "at": 1153570
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/2344-e3157febcbc54001.js",
+      "at": 1153571,
+      "bytes": 6586,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153629
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/3357-b0d060cd3b3d23e6.js",
+      "at": 1153572,
+      "bytes": 5454,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153633
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/page-843b6358bd92cbda.js",
+      "at": 1153577,
+      "bytes": 15833,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153646
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/5246-dde693d272eedef4.js",
+      "at": 1153599,
+      "bytes": 9487,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153681
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/layout-3ad3e16317a53855.js",
+      "at": 1153620,
+      "bytes": 1178,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153719
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/not-found-95a6af161aec56fe.js",
+      "at": 1153652,
+      "bytes": 5307,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153848
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(auth)/layout-dce661f05543b9ea.js",
+      "at": 1153667,
+      "bytes": 362,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153779
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/layout-77ac24225c58315d.js",
+      "at": 1153693,
+      "bytes": 581,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153929
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/0e5ce63c-fcd0df0e31a72d43.js",
+      "at": 1153698,
+      "bytes": 1562,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1153963
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/8734-38263f05b4ce7193.js",
+      "at": 1153699,
+      "bytes": 13219,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154463
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/1123-e17c2443db9a165c.js",
+      "at": 1153733,
+      "bytes": 13883,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154552
+    },
+    {
+      "event": "response",
+      "requestId": 25,
+      "path": "/_next/static/chunks/1003-5dabd06de679f333.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153811
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/3135-15168dba78247e79.js",
+      "at": 1153833,
+      "bytes": 3523,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154553
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/251-3cc10e03a0b65b49.js",
+      "at": 1153947,
+      "bytes": 4216,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154555
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 25,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/1003-5dabd06de679f333.js",
+      "at": 1153985
+    },
+    {
+      "event": "response",
+      "requestId": 26,
+      "path": "/_next/static/chunks/4262-9862071a0fbec0f5.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153986
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 26,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/4262-9862071a0fbec0f5.js",
+      "at": 1153986
+    },
+    {
+      "event": "response",
+      "requestId": 28,
+      "path": "/_next/static/chunks/2716-7bbb798e9a4f4454.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153987
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 28,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/2716-7bbb798e9a4f4454.js",
+      "at": 1153987
+    },
+    {
+      "event": "response",
+      "requestId": 29,
+      "path": "/_next/static/chunks/860-f0544d879e799297.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1153987
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 29,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/860-f0544d879e799297.js",
+      "at": 1153992
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/2052-cc3c84ee734b6c36.js",
+      "at": 1154465,
+      "bytes": 3735,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154654
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/accounting/accountant-access/page-bf46b0f372c26468.js",
+      "at": 1154548,
+      "bytes": 12307,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154677
+    },
+    {
+      "event": "response",
+      "requestId": 30,
+      "path": "/_next/static/chunks/8761-75e94e2c505a13a6.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154560
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 30,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/8761-75e94e2c505a13a6.js",
+      "at": 1154560
+    },
+    {
+      "event": "response",
+      "requestId": 31,
+      "path": "/_next/static/chunks/2344-e3157febcbc54001.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154561
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 31,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/2344-e3157febcbc54001.js",
+      "at": 1154561
+    },
+    {
+      "event": "response",
+      "requestId": 32,
+      "path": "/_next/static/chunks/3357-b0d060cd3b3d23e6.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154561
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 32,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/3357-b0d060cd3b3d23e6.js",
+      "at": 1154561
+    },
+    {
+      "event": "response",
+      "requestId": 33,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/page-843b6358bd92cbda.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154561
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 33,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/page-843b6358bd92cbda.js",
+      "at": 1154561
+    },
+    {
+      "event": "response",
+      "requestId": 34,
+      "path": "/_next/static/chunks/5246-dde693d272eedef4.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154562
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 34,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/5246-dde693d272eedef4.js",
+      "at": 1154565
+    },
+    {
+      "event": "response",
+      "requestId": 27,
+      "path": "/_next/static/chunks/8808-302f7f3e1e3e8564.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154565
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 27,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/8808-302f7f3e1e3e8564.js",
+      "at": 1154565
+    },
+    {
+      "event": "response",
+      "requestId": 35,
+      "path": "/_next/static/chunks/app/layout-3ad3e16317a53855.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154565
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 35,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/layout-3ad3e16317a53855.js",
+      "at": 1154566
+    },
+    {
+      "event": "response",
+      "requestId": 37,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(auth)/layout-dce661f05543b9ea.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154566
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 37,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(auth)/layout-dce661f05543b9ea.js",
+      "at": 1154566
+    },
+    {
+      "event": "response",
+      "requestId": 36,
+      "path": "/_next/static/chunks/app/not-found-95a6af161aec56fe.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154630
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 36,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/not-found-95a6af161aec56fe.js",
+      "at": 1154630
+    },
+    {
+      "event": "response",
+      "requestId": 38,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/layout-77ac24225c58315d.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154631
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 38,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/layout-77ac24225c58315d.js",
+      "at": 1154631
+    },
+    {
+      "event": "response",
+      "requestId": 39,
+      "path": "/_next/static/chunks/0e5ce63c-fcd0df0e31a72d43.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154631
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 39,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/0e5ce63c-fcd0df0e31a72d43.js",
+      "at": 1154631
+    },
+    {
+      "event": "main-frame-navigation",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1154631
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/7984-d23ccd6e45d3d897.js",
+      "at": 1154684,
+      "bytes": 7044,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154701
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/3305-b002be46a3579218.js",
+      "at": 1154718,
+      "bytes": 5367,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154745
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/611-d564a2f6ed90b01c.js",
+      "at": 1154742,
+      "bytes": 3471,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154821
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/4567-1df8672fc850d771.js",
+      "at": 1154745,
+      "bytes": 5227,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154820
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout-bf05f409e4a126fe.js",
+      "at": 1154747,
+      "bytes": 29920,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154834
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error-481c7f79fa569d72.js",
+      "at": 1154765,
+      "bytes": 2853,
+      "status": 200,
+      "responseContentType": "application/javascript; charset=UTF-8",
+      "endedAt": 1154826
+    },
+    {
+      "event": "response",
+      "requestId": 40,
+      "path": "/_next/static/chunks/8734-38263f05b4ce7193.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154766
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 40,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/8734-38263f05b4ce7193.js",
+      "at": 1154766
+    },
+    {
+      "event": "response",
+      "requestId": 42,
+      "path": "/_next/static/chunks/3135-15168dba78247e79.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154810
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 42,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/3135-15168dba78247e79.js",
+      "at": 1154813
+    },
+    {
+      "event": "response",
+      "requestId": 41,
+      "path": "/_next/static/chunks/1123-e17c2443db9a165c.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154813
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 41,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/1123-e17c2443db9a165c.js",
+      "at": 1154813
+    },
+    {
+      "event": "response",
+      "requestId": 43,
+      "path": "/_next/static/chunks/251-3cc10e03a0b65b49.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154817
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 43,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/251-3cc10e03a0b65b49.js",
+      "at": 1154817
+    },
+    {
+      "event": "response",
+      "requestId": 45,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/accounting/accountant-access/page-bf46b0f372c26468.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154818
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 45,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/accounting/accountant-access/page-bf46b0f372c26468.js",
+      "at": 1154818
+    },
+    {
+      "event": "response",
+      "requestId": 44,
+      "path": "/_next/static/chunks/2052-cc3c84ee734b6c36.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154818
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 44,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/2052-cc3c84ee734b6c36.js",
+      "at": 1154818
+    },
+    {
+      "event": "response",
+      "requestId": 46,
+      "path": "/_next/static/chunks/7984-d23ccd6e45d3d897.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154819
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 46,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/7984-d23ccd6e45d3d897.js",
+      "at": 1154819
+    },
+    {
+      "event": "response",
+      "requestId": 47,
+      "path": "/_next/static/chunks/3305-b002be46a3579218.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154838
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 47,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/3305-b002be46a3579218.js",
+      "at": 1154839
+    },
+    {
+      "event": "response",
+      "requestId": 48,
+      "path": "/_next/static/chunks/611-d564a2f6ed90b01c.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154859
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 48,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/611-d564a2f6ed90b01c.js",
+      "at": 1154868
+    },
+    {
+      "event": "response",
+      "requestId": 51,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error-481c7f79fa569d72.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154878
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 51,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error-481c7f79fa569d72.js",
+      "at": 1154879
+    },
+    {
+      "event": "response",
+      "requestId": 49,
+      "path": "/_next/static/chunks/4567-1df8672fc850d771.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154880
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 49,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/4567-1df8672fc850d771.js",
+      "at": 1154881
+    },
+    {
+      "event": "response",
+      "requestId": 50,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout-bf05f409e4a126fe.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "at": 1154881
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 50,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "script",
+      "hasNextAction": false,
+      "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout-bf05f409e4a126fe.js",
+      "at": 1154881
+    },
+    {
+      "event": "proxy",
+      "method": "POST",
+      "hasNextAction": true,
+      "actionHash": "bac6c622373633f2",
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1155164,
+      "bytes": 133,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1156941
+    },
+    {
+      "event": "request",
+      "requestId": 52,
+      "actionHash": "bac6c622373633f2",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1155174
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/en/dashboard",
+      "at": 1155225,
+      "bytes": 150,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1156340
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/en/dashboard/accounting/accountant-portal",
+      "at": 1155226,
+      "bytes": 174,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1156357
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/en/dashboard/accounting/accountant-portfolio",
+      "at": 1155227,
+      "bytes": 176,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1156344
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/en/dashboard/accounting/close",
+      "at": 1155251,
+      "bytes": 168,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1156345
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/fr/dashboard/accounting/accountant-access",
+      "at": 1155265,
+      "bytes": 107689,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1156484
+    },
+    {
+      "event": "request",
+      "requestId": 53,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard",
+      "at": 1155276
+    },
+    {
+      "event": "request",
+      "requestId": 54,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/accountant-portal",
+      "at": 1155277
+    },
+    {
+      "event": "request",
+      "requestId": 55,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/accountant-portfolio",
+      "at": 1155277
+    },
+    {
+      "event": "request",
+      "requestId": 56,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/close",
+      "at": 1155277
+    },
+    {
+      "event": "request",
+      "requestId": 57,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/fr/dashboard/accounting/accountant-access",
+      "at": 1155277
+    },
+    {
+      "event": "response",
+      "requestId": 53,
+      "path": "/en/dashboard",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1156308
+    },
+    {
+      "event": "response",
+      "requestId": 54,
+      "path": "/en/dashboard/accounting/accountant-portal",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1156321
+    },
+    {
+      "event": "response",
+      "requestId": 55,
+      "path": "/en/dashboard/accounting/accountant-portfolio",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1156329
+    },
+    {
+      "event": "response",
+      "requestId": 56,
+      "path": "/en/dashboard/accounting/close",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1156329
+    },
+    {
+      "event": "response",
+      "requestId": 57,
+      "path": "/fr/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1156354
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 53,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard",
+      "at": 1156363,
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 55,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/accountant-portfolio",
+      "at": 1156368,
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 56,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/close",
+      "at": 1156368,
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 54,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/accountant-portal",
+      "at": 1156369,
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 57,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/fr/dashboard/accounting/accountant-access",
+      "at": 1156488,
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "event": "response",
+      "requestId": 52,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1156945
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 52,
+      "actionHash": "bac6c622373633f2",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1156958
+    },
+    {
+      "event": "request",
+      "requestId": 58,
+      "actionHash": "1b7ebd18a4915beb",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1156959
+    },
+    {
+      "event": "proxy",
+      "method": "POST",
+      "hasNextAction": true,
+      "actionHash": "1b7ebd18a4915beb",
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1156989,
+      "bytes": 102717,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1157538
+    },
+    {
+      "event": "response",
+      "requestId": 58,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1157220
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 58,
+      "actionHash": "1b7ebd18a4915beb",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1157543,
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "event": "main-frame-navigation",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1157761
+    },
+    {
+      "event": "request",
+      "requestId": 59,
+      "actionHash": "8cf51acbd38f4e18",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1157965
+    },
+    {
+      "event": "proxy",
+      "method": "POST",
+      "hasNextAction": true,
+      "actionHash": "8cf51acbd38f4e18",
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1157994,
+      "bytes": 185,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1158974
+    },
+    {
+      "event": "response",
+      "requestId": 59,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1158985
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 59,
+      "actionHash": "8cf51acbd38f4e18",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1158985
+    },
+    {
+      "event": "request",
+      "requestId": 60,
+      "actionHash": "1b7ebd18a4915beb",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1159775
+    },
+    {
+      "event": "proxy",
+      "method": "POST",
+      "hasNextAction": true,
+      "actionHash": "1b7ebd18a4915beb",
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1160974,
+      "bytes": 401,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1162573
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 60,
+      "actionHash": "1b7ebd18a4915beb",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1162740,
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "event": "request",
+      "requestId": 61,
+      "actionHash": "1b7ebd18a4915beb",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1164006
+    },
+    {
+      "event": "proxy",
+      "method": "POST",
+      "hasNextAction": true,
+      "actionHash": "1b7ebd18a4915beb",
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1164041,
+      "bytes": 401,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1164589
+    },
+    {
+      "event": "response",
+      "requestId": 61,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1164616
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 61,
+      "actionHash": "1b7ebd18a4915beb",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1164616
+    },
+    {
+      "event": "request",
+      "requestId": 62,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1164620
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1164621,
+      "bytes": 102603,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1165520
+    },
+    {
+      "event": "response",
+      "requestId": 62,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1165077
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 62,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1165526,
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "event": "main-frame-navigation",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1165552
+    },
+    {
+      "event": "request",
+      "requestId": 63,
+      "actionHash": "1b7ebd18a4915beb",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1166284
+    },
+    {
+      "event": "proxy",
+      "method": "POST",
+      "hasNextAction": true,
+      "actionHash": "1b7ebd18a4915beb",
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1166297,
+      "bytes": 241,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1166583
+    },
+    {
+      "event": "response",
+      "requestId": 63,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1166582
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 63,
+      "actionHash": "1b7ebd18a4915beb",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1166602,
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "event": "request",
+      "requestId": 64,
+      "actionHash": "8cf51acbd38f4e18",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1167522
+    },
+    {
+      "event": "proxy",
+      "method": "POST",
+      "hasNextAction": true,
+      "actionHash": "8cf51acbd38f4e18",
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1167538,
+      "bytes": 186,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1168500
+    },
+    {
+      "event": "response",
+      "requestId": 64,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1168519
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 64,
+      "actionHash": "8cf51acbd38f4e18",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1168521,
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "event": "request",
+      "requestId": 65,
+      "actionHash": "1b7ebd18a4915beb",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1169182
+    },
+    {
+      "event": "proxy",
+      "method": "POST",
+      "hasNextAction": true,
+      "actionHash": "1b7ebd18a4915beb",
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1169209,
+      "bytes": 400,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1169638
+    },
+    {
+      "event": "response",
+      "requestId": 65,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1169647
+    },
+    {
+      "event": "requestfinished",
+      "requestId": 65,
+      "actionHash": "1b7ebd18a4915beb",
+      "navigation": false,
+      "method": "POST",
+      "resourceType": "fetch",
+      "hasNextAction": true,
+      "contentType": "text/plain;charset=UTF-8",
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1169651
+    },
+    {
+      "event": "request",
+      "requestId": 66,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1169651
+    },
+    {
+      "event": "proxy",
+      "method": "GET",
+      "hasNextAction": false,
+      "actionHash": null,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1169653,
+      "bytes": 102688,
+      "status": 200,
+      "responseContentType": "text/x-component",
+      "endedAt": 1170138
+    },
+    {
+      "event": "response",
+      "requestId": 66,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "status": 200,
+      "contentType": "text/x-component",
+      "at": 1169853
+    },
+    {
+      "event": "requestfailed",
+      "requestId": 66,
+      "actionHash": null,
+      "navigation": false,
+      "method": "GET",
+      "resourceType": "fetch",
+      "hasNextAction": false,
+      "path": "/en/dashboard/accounting/accountant-access",
+      "at": 1170144,
+      "error": "net::ERR_ABORTED"
+    }
+  ],
+  "steps": [
+    {
+      "name": "runtime-ready",
+      "at": 1099830
+    },
+    {
+      "name": "signed-in",
+      "at": 1151208
+    },
+    {
+      "name": "grant-form-ready",
+      "at": 1155297
+    },
+    {
+      "name": "preparer-submitted",
+      "at": 1156129
+    },
+    {
+      "name": "preparer-challenge-proven",
+      "at": 1157831
+    },
+    {
+      "name": "preparer-step-up",
+      "at": 1157845
+    },
+    {
+      "name": "confirmed-commit-response-dropped",
+      "at": 1162684
+    },
+    {
+      "name": "editable-fields-changed-while-original-command-retained",
+      "at": 1163775
+    },
+    {
+      "name": "explicit-same-command-retry",
+      "at": 1164051
+    },
+    {
+      "name": "preparer-committed",
+      "at": 1165401,
+      "grantId": "cmvtac0g4000lmaxkwz8qlzi7"
+    },
+    {
+      "name": "preparer-pending-resolved",
+      "at": 1165617
+    },
+    {
+      "name": "synthetic-assurance-expired-after-recovery",
+      "at": 1165664
+    },
+    {
+      "name": "reviewer-submitted",
+      "at": 1166323
+    },
+    {
+      "name": "reviewer-challenge-proven",
+      "at": 1167307
+    },
+    {
+      "name": "reviewer-step-up",
+      "at": 1167323
+    },
+    {
+      "name": "reviewer-committed",
+      "at": 1170177,
+      "grantId": "cmvtac6bm001bmaxkfp807ax0"
+    },
+    {
+      "name": "reviewer-pending-unresolved",
+      "at": 1260203
+    }
+  ],
+  "pageErrors": [],
+  "passed": false,
+  "harnessSha256": "a422d717ac10cec462f2a5ed64d130eb67830de36e1eef58979a5a14029932e5",
+  "interpretation": "Separately sealed UI plus replay-receipt recovery candidate using HTTPS; lost response, same-command recovery and next grant with renewed password confirmation. Current combined source security differences are not qualified.",
+  "artifact": {
+    "digest": "70d438cd2476ecb555973e1649499da9a6b948ce17e5e54d0b5956a9201e0fcd",
+    "buildId": "g4sPhC0i-iK5S2iPrw8Zo",
+    "files": 5284
+  },
+  "fixture": {
+    "database": "stoquify_local_af05_p03_drecovery_20261028_r1",
+    "host": "127.0.0.1",
+    "port": 53528,
+    "seedHash": "6fb09707bb3d8fa2301c3df58bd86444ed75286ddbb57d33c410d65e7b1e4c51",
+    "users": 5,
+    "organizations": 3,
+    "grants": 1
+  },
+  "base": "https://localhost:51772",
+  "secureSession": true,
+  "grantAttempts": [
+    {
+      "keyHash": "ffb97223178a2f88b7aa53ed4e3077ec0806b30e0dbafb53708a43be1b9a7f49",
+      "intentHash": "8e7a4bd8bc996ca3e7339fc638a954bb5656a499bcec4e9479dd38d7e50af3b8",
+      "at": 1156967
+    },
+    {
+      "keyHash": "ffb97223178a2f88b7aa53ed4e3077ec0806b30e0dbafb53708a43be1b9a7f49",
+      "intentHash": "8e7a4bd8bc996ca3e7339fc638a954bb5656a499bcec4e9479dd38d7e50af3b8",
+      "at": 1159776
+    },
+    {
+      "keyHash": "ffb97223178a2f88b7aa53ed4e3077ec0806b30e0dbafb53708a43be1b9a7f49",
+      "intentHash": "8e7a4bd8bc996ca3e7339fc638a954bb5656a499bcec4e9479dd38d7e50af3b8",
+      "at": 1164007
+    }
+  ],
+  "outcomeMarker": {
+    "statuses": [
+      "Confirm your password before changing access.",
+      ""
+    ],
+    "passwordInputs": 1,
+    "matchingBody": [
+      "Confirm your password before changing access."
+    ],
+    "labelCount": 1
+  },
+  "injectedLoss": {
+    "grantId": "cmvtac0g4000lmaxkwz8qlzi7",
+    "intentHash": "8e7a4bd8bc996ca3e7339fc638a954bb5656a499bcec4e9479dd38d7e50af3b8",
+    "keyHash": "ffb97223178a2f88b7aa53ed4e3077ec0806b30e0dbafb53708a43be1b9a7f49"
+  },
+  "retryOutcome": [
+    "Accountant access granted.",
+    ""
+  ],
+  "noDuplicateOrChangedConsent": true,
+  "firstPendingResolved": true,
+  "secondPendingResolved": false,
+  "finalGrants": [
+    {
+      "id": "af05-manager-grant",
+      "actor": "af05-manager",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "cmvtac0g4000lmaxkwz8qlzi7",
+      "actor": "af05-preparer",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "cmvtac6bm001bmaxkfp807ax0",
+      "actor": "af05-reviewer",
+      "status": "ACTIVE"
+    }
+  ],
+  "engagements": 0,
+  "journals": 0,
+  "cleanupErrors": [],
+  "browserStopped": true,
+  "databaseDisconnected": true,
+  "proxyStopped": true,
+  "serverStopped": true,
+  "logClosed": true,
+  "clusterStopped": true,
+  "comparisonArtifactUnchanged": true,
+  "runtimeCopyUnchanged": true,
+  "originalArtifactUnchanged": true,
+  "portsReleased": true,
+  "finishedAt": "2026-10-29T08:43:34.096Z"
+}

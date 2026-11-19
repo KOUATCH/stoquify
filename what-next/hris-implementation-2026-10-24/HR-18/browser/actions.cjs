@@ -1,0 +1,2 @@
+exports.getDailyHrisQueueAction=async()=>{const r=await fetch('/fixture/boot'+(sessionStorage.getItem('fail')?'?fail=1':''));return r.ok?{success:true,data:await r.json()}:{success:false,status:403,error:'Synthetic unavailable'}};
+for(const name of ['getHrisApprovalReviewAction','decideHrisApprovalInboxItemAction','getTimeApprovalReviewAction','decideReviewedTimeApprovalAction'])exports[name]=async()=>({success:false,status:403,error:'Mutations outside this read-only browser fixture'});

@@ -31,6 +31,14 @@ import {
   recordBusinessEventInTx,
   hashBusinessPayload,
 } from "@/services/events/business-event.service"
+import {
+  assertCustomerSettlementPaymentAuthorityReplay,
+  assertCustomerSettlementPaymentPostingAccount,
+  claimCustomerSettlementPaymentAuthority,
+  customerSettlementPaymentAuthorityMetadata,
+  resolveCustomerSettlementPaymentAuthority,
+  type CustomerSettlementPaymentAuthority,
+} from "@/services/payments/customer-settlement-payment-authority.service"
 
 import {
   collectCustomerSettlementInputSchema,
@@ -41,6 +49,7 @@ import { createCustomerLedgerEntry } from "./customer-ledger.service"
 import {
   CUSTOMER_RECEIVABLE_REFERENCE_TYPE,
   ensurePostedCustomerReceivableDocumentInTx,
+  loadCustomerReceivableWithLatestState,
 } from "./customer-receivable-document.service"
 import {
   recordCustomerReceivableSettlementAppliedInTx,
@@ -66,7 +75,8 @@ export type CustomerSettlementControlContext = {
 type CustomerSettlementClient = typeof db
 
 type NormalizedAllocation = {
-  salesOrderId: string
+  salesOrderId?: string
+  customerReceivableDocumentId?: string
   amount: Prisma.Decimal
 }
 
@@ -185,12 +195,17 @@ function settlementNumber(
 }
 
 function isPrismaCode(error: unknown, code: string) {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    (error as { code?: unknown }).code === code
-  )
+  if (!error || typeof error !== "object" || !("code" in error)) return false
+  let actual = (error as { code?: unknown }).code
+  if (actual === "P2010" && "meta" in error) {
+    const meta = (error as { meta?: { code?: unknown } }).meta
+    if (meta?.code === "40001" || meta?.code === "40P01") actual = "P2034"
+  }
+  return actual === code
+}
+
+function allocationIdentity(allocation: { salesOrderId?: string | null; customerReceivableDocumentId?: string | null }) {
+  return allocation.salesOrderId ?? `opening:${allocation.customerReceivableDocumentId}`
 }
 
 function normalizeCommand(
@@ -204,18 +219,18 @@ function normalizeCommand(
   }
 
   const settlementDate = normalizeDate(parsed.settlementDate, "Settlement date")
-  const allocations = parsed.allocations
+  const allocations: NormalizedAllocation[] = parsed.allocations
     .map((allocation) => ({
-      salesOrderId: requiredText(allocation.salesOrderId, "Sales order"),
+      ...(allocation.salesOrderId ? { salesOrderId: requiredText(allocation.salesOrderId, "Sales order") } : { customerReceivableDocumentId: allocation.customerReceivableDocumentId! }),
       amount: money(allocation.amount, "Allocation amount"),
     }))
-    .sort((left, right) => left.salesOrderId.localeCompare(right.salesOrderId))
+    .sort((left, right) => allocationIdentity(left).localeCompare(allocationIdentity(right)))
 
   if (allocations.some((allocation) => allocation.amount.lte(0))) {
     throw new BusinessRuleError("Settlement allocations must be greater than zero")
   }
 
-  const allocationIds = allocations.map((allocation) => allocation.salesOrderId)
+  const allocationIds = allocations.map(allocationIdentity)
   if (allocationIds.length !== new Set(allocationIds).size) {
     throw new BusinessRuleError("Settlement cannot contain duplicate sales-order allocations")
   }
@@ -244,8 +259,9 @@ function normalizeCommand(
     externalReference: parsed.externalReference ?? null,
     documentHash: parsed.documentHash.toLowerCase(),
     evidenceHash: parsed.evidenceHash.toLowerCase(),
+    ...(parsed.paymentTransactionId ? { paymentTransactionId: parsed.paymentTransactionId } : {}),
     allocations: allocations.map((allocation) => ({
-      salesOrderId: allocation.salesOrderId,
+      ...(allocation.salesOrderId ? { salesOrderId: allocation.salesOrderId } : { customerReceivableDocumentId: allocation.customerReceivableDocumentId }),
       amount: allocation.amount.toFixed(2),
     })),
   })
@@ -282,11 +298,11 @@ function assertReplayMatches(
   const storedAllocations = existing.allocations
     .map(
       (allocation) =>
-        `${allocation.salesOrderId}:${money(allocation.amount, "Stored allocation amount").toFixed(2)}`,
+        `${allocationIdentity(allocation)}:${money(allocation.amount, "Stored allocation amount").toFixed(2)}`,
     )
     .sort()
   const requestedAllocations = command.allocations.map(
-    (allocation) => `${allocation.salesOrderId}:${allocation.amount.toFixed(2)}`,
+    (allocation) => `${allocationIdentity(allocation)}:${allocation.amount.toFixed(2)}`,
   )
   if (storedAllocations.join("|") !== requestedAllocations.join("|")) {
     throw new ConflictError("Customer settlement replay allocations do not match")
@@ -390,6 +406,7 @@ async function postCustomerSettlementInTx(
     currency: string
     documentHash: string
     idempotencyPayloadHash: string
+    providerAuthority?: CustomerSettlementPaymentAuthority | null
   },
 ): Promise<SettlementPostingResult> {
   const period = await getOpenPeriodForDate(
@@ -552,6 +569,7 @@ async function postCustomerSettlementInTx(
       `Customer settlement posting rule ${rule.code} must debit the selected payment rail and credit accounts receivable for the exact settlement amount`,
     )
   }
+  assertCustomerSettlementPaymentPostingAccount(input.providerAuthority, postingLines)
 
   const postingMetadata = json({
     sourceVersion: CUSTOMER_SETTLEMENT_SOURCE_VERSION,
@@ -563,6 +581,7 @@ async function postCustomerSettlementInTx(
     postingRuleCode: rule.code,
     idempotencyPayloadHash: input.idempotencyPayloadHash,
     documentHash: input.documentHash,
+    ...(input.providerAuthority ? { providerAuthority: customerSettlementPaymentAuthorityMetadata(input.providerAuthority) } : {}),
   })
   const batch = await createLedgerPostingBatch(
     {
@@ -736,6 +755,18 @@ async function collectCustomerSettlementInTx(
   })
   if (existing) {
     assertReplayMatches(existing, command)
+    if (command.parsed.paymentTransactionId) {
+      await assertCustomerSettlementPaymentAuthorityReplay(tx, {
+        organizationId,
+        settlementId: existing.id,
+        postingBatchId: existing.ledgerPostingBatchId!,
+        paymentTransactionId: command.parsed.paymentTransactionId,
+        paymentMethod: existing.method,
+        amount: existing.amount,
+        currencyCode: normalizeCurrency(existing.currency),
+        metadata: existing.metadata,
+      })
+    }
     const sourceLink = await tx.accountingSourceLink.findFirst({
       where: {
         organizationId,
@@ -801,10 +832,16 @@ async function collectCustomerSettlementInTx(
     select: { id: true },
   })
   if (!customer) throw new NotFoundError("Active customer not found")
+  const currency = normalizeCurrency(organization.currency)
+  const providerAuthority = await resolveCustomerSettlementPaymentAuthority(tx, {
+    organizationId,
+    paymentMethod: command.parsed.method,
+    paymentTransactionId: command.parsed.paymentTransactionId,
+    amount: command.amount,
+    currencyCode: currency,
+  })
 
-  const salesOrderIds = command.allocations.map(
-    (allocation) => allocation.salesOrderId,
-  )
+  const salesOrderIds = command.allocations.flatMap(allocation => allocation.salesOrderId ? [allocation.salesOrderId] : [])
   const salesOrders = await tx.salesOrder.findMany({
     where: {
       id: { in: salesOrderIds },
@@ -825,7 +862,7 @@ async function collectCustomerSettlementInTx(
     Awaited<ReturnType<typeof ensurePostedCustomerReceivableDocumentInTx>>
   >()
   for (const allocation of command.allocations) {
-    const receivable = await ensurePostedCustomerReceivableDocumentInTx(tx, {
+    const receivable = allocation.salesOrderId ? await ensurePostedCustomerReceivableDocumentInTx(tx, {
       organizationId,
       customerId: customer.id,
       salesOrderId: allocation.salesOrderId,
@@ -833,7 +870,14 @@ async function collectCustomerSettlementInTx(
       metadata: {
         settlementCorrelationId: command.parsed.correlationId,
       },
-    })
+    }) : await (async () => {
+      const loaded = await loadCustomerReceivableWithLatestState(tx, organizationId, allocation.customerReceivableDocumentId!)
+      if (!loaded.document.openingRevisionId || loaded.document.customerId !== customer.id ||
+        !["ISSUED", "PARTIALLY_PAID"].includes(loaded.latestState.status) || command.settlementDate < loaded.document.issuedAt) {
+        throw new BusinessRuleError("Settlement must reference this customer's active opening receivable on or after cutover.")
+      }
+      return { document: loaded.document, state: loaded.latestState, replayed: true }
+    })()
     const openAmount = receivable.state.unpaidAmount
     if (openAmount.lte(0)) {
       throw new BusinessRuleError(
@@ -845,10 +889,9 @@ async function collectCustomerSettlementInTx(
         "Settlement allocation exceeds the receivable document open balance",
       )
     }
-    receivableBySalesOrder.set(allocation.salesOrderId, receivable)
+    receivableBySalesOrder.set(allocationIdentity(allocation), receivable)
   }
 
-  const currency = normalizeCurrency(organization.currency)
   const number = settlementNumber(
     organizationId,
     command.parsed.idempotencyKey,
@@ -877,6 +920,7 @@ async function collectCustomerSettlementInTx(
         sourceVersion: CUSTOMER_SETTLEMENT_SOURCE_VERSION,
         allocationCount: command.allocations.length,
         idempotencyPayloadHash: command.idempotencyPayloadHash,
+        ...(providerAuthority ? { providerAuthority: customerSettlementPaymentAuthorityMetadata(providerAuthority) } : {}),
       }),
     },
   })
@@ -885,7 +929,7 @@ async function collectCustomerSettlementInTx(
   const customerReceivableDocumentIds: string[] = []
   const settlementAllocations: Array<{ id: string }> = []
   for (const allocation of command.allocations) {
-    const receivable = receivableBySalesOrder.get(allocation.salesOrderId)
+    const receivable = receivableBySalesOrder.get(allocationIdentity(allocation))
     if (!receivable) {
       throw new ConflictError(
         "Settlement allocation receivable document evidence is missing",
@@ -937,7 +981,16 @@ async function collectCustomerSettlementInTx(
     currency,
     documentHash: command.parsed.documentHash.toLowerCase(),
     idempotencyPayloadHash: command.idempotencyPayloadHash,
+    providerAuthority,
   })
+  if (providerAuthority) {
+    await claimCustomerSettlementPaymentAuthority(tx, {
+      organizationId,
+      customerSettlementId: settlement.id,
+      postingBatchId: posting.postingBatchId,
+      evidence: providerAuthority,
+    })
+  }
   const eventResult = await recordBusinessEventInTx(tx, {
     organizationId,
     eventType: "customer.settlement.posted",
@@ -958,6 +1011,7 @@ async function collectCustomerSettlementInTx(
       ledgerPostingBatchId: posting.postingBatchId,
       journalEntryId: posting.journalEntryId,
       correlationId: command.parsed.correlationId,
+      ...(providerAuthority ? { providerAuthority: customerSettlementPaymentAuthorityMetadata(providerAuthority) } : {}),
     },
     occurredAt: command.settlementDate,
     actorId: actor.id,
@@ -1004,6 +1058,7 @@ async function collectCustomerSettlementInTx(
         postingRuleId: posting.postingRuleId,
         postingRuleCode: posting.postingRuleCode,
         accountingSourceLinkId: posting.sourceLinkId,
+        ...(providerAuthority ? { providerAuthority: customerSettlementPaymentAuthorityMetadata(providerAuthority) } : {}),
       }),
     },
     include: { allocations: true },
@@ -1027,6 +1082,7 @@ async function collectCustomerSettlementInTx(
           journalEntryId: posting.journalEntryId,
           businessEventId: eventResult.event.id,
           correlationId: command.parsed.correlationId,
+          ...(providerAuthority ? { providerAuthority: customerSettlementPaymentAuthorityMetadata(providerAuthority) } : {}),
         },
       }),
     },
@@ -1133,6 +1189,18 @@ export async function collectCustomerSettlementWithControls(
     }
     assertReplayMatches(existing, command)
     const ledgerEntryIds = ledgerEntryIdsForSettlement(existing)
+    if (command.parsed.paymentTransactionId) {
+      await assertCustomerSettlementPaymentAuthorityReplay(client, {
+        organizationId,
+        settlementId: existing.id,
+        postingBatchId: existing.ledgerPostingBatchId!,
+        paymentTransactionId: command.parsed.paymentTransactionId,
+        paymentMethod: existing.method,
+        amount: existing.amount,
+        currencyCode: normalizeCurrency(existing.currency),
+        metadata: existing.metadata,
+      })
+    }
 
     const [sourceLink, ledgerEntries] = await Promise.all([
       client.accountingSourceLink.findFirst({

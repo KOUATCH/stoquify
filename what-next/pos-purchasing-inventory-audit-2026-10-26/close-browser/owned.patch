@@ -1,0 +1,337 @@
+diff --git a/actions/accounting/__tests__/close-assurance.actions.test.ts b/actions/accounting/__tests__/close-assurance.actions.test.ts
+index b2d5ea5e..51a3f89b 100644
+--- a/actions/accounting/__tests__/close-assurance.actions.test.ts
++++ b/actions/accounting/__tests__/close-assurance.actions.test.ts
+@@ -73,6 +73,8 @@ jest.mock("next/cache", () => ({
+   revalidatePath: jest.fn(),
+ }))
+ 
++jest.mock("@/lib/logger", () => ({ logger: { warn: jest.fn() } }))
++
+ jest.mock("@/services/accounting/close-assurance.service", () => ({
+   acceptMissingCloseEvidenceResponse: jest.fn(),
+   getCloseAssuranceDashboard: jest.fn(),
+@@ -128,6 +130,15 @@ const mockExportClosePack = exportClosePack as jest.Mock
+ const mockRevalidatePath = revalidatePath as jest.Mock
+ 
+ describe("close assurance actions", () => {
++  it.each(["draft", "certified"])("preserves the committed %s export when cache refresh fails", async mode => {
++    mockRevalidatePath.mockImplementationOnce(() => { throw new Error("Synthetic post-commit cache failure") })
++    const action = mode === "draft" ? exportDraftClosePackAction : exportCertifiedClosePackAction
++    const response = await action({ closeRunId: "close-run-1" })
++    expect(response.success).toBe(true)
++    expect(response.data).toEqual({ exportId: "export-1", periodId: "period-1", contentHash: "sha256:close-pack" })
++    expect(mockExportClosePack).toHaveBeenCalledTimes(1)
++  })
++
+   beforeEach(() => {
+     jest.clearAllMocks()
+     setCloseAssuranceActionContextOverride(undefined)
+diff --git a/actions/accounting/close-assurance.actions.ts b/actions/accounting/close-assurance.actions.ts
+index 26370ffb..08d686cf 100644
+--- a/actions/accounting/close-assurance.actions.ts
++++ b/actions/accounting/close-assurance.actions.ts
+@@ -1,6 +1,6 @@
+ "use server"
+ 
+-import { revalidatePath } from "next/cache"
++import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation"
+ 
+ import {
+   FreshAuthRequiredError,
+@@ -63,9 +63,11 @@ export type {
+ }
+ 
+ function revalidateClosePaths(periodId?: string | null) {
+-  revalidatePath("/dashboard/accounting", "page")
+-  revalidatePath("/dashboard/accounting/close", "page")
+-  if (periodId) revalidatePath(`/dashboard/accounting/close/${periodId}`, "page")
++  revalidateAfterCommit({ paths: [
++    "/dashboard/accounting",
++    "/dashboard/accounting/close",
++    ...(periodId ? [`/dashboard/accounting/close/${periodId}`] : []),
++  ] })
+ }
+ 
+ const getDashboard = protect<unknown, CloseAssuranceDashboardData>(
+diff --git a/app/[locale]/(dashboard)/dashboard/accounting/setup/__tests__/page.test.tsx b/app/[locale]/(dashboard)/dashboard/accounting/setup/__tests__/page.test.tsx
+index 106d4057..18df3862 100644
+--- a/app/[locale]/(dashboard)/dashboard/accounting/setup/__tests__/page.test.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/setup/__tests__/page.test.tsx
+@@ -168,6 +168,22 @@ describe("AccountingSetupPage", () => {
+     expect(mockGetAccountingSetupDataAction).not.toHaveBeenCalled()
+   })
+ 
++  it("localizes the French period-closing control and retained closed status", async () => {
++    const frenchProps = { ...pageProps, params: Promise.resolve({ locale: "fr" }) }
++    const view = render(await AccountingSetupPage(frenchProps))
++    expect(screen.getByRole("button", { name: "Clôturer" })).toBeInTheDocument()
++    expect(screen.getByRole("heading", { name: "Périodes comptables" })).toBeInTheDocument()
++    expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument()
++
++    mockGetAccountingSetupDataAction.mockResolvedValue({
++      success: true,
++      data: { ...setupData, periods: setupData.periods.map(period => ({ ...period, status: "CLOSED" })) },
++    })
++    view.rerender(await AccountingSetupPage(frenchProps))
++    expect(screen.getByText("Clôturée")).toBeInTheDocument()
++    expect(screen.queryByRole("button", { name: "Clôturer" })).not.toBeInTheDocument()
++  })
++
+   it("keeps setup data action errors inside the setup access panel after permission succeeds", async () => {
+     mockGetAccountingSetupDataAction.mockResolvedValue({
+       success: false,
+diff --git a/app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx b/app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx
+index 6e2449ca..007c3817 100644
+--- a/app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx
+@@ -17,7 +17,6 @@ import {
+   AccountingPageShell,
+   AccountingPanel,
+   AccountingStatCard,
+-  accountingDate,
+ } from "../_components/accounting-ui"
+ import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
+ 
+@@ -49,6 +48,14 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
+   await checkPermission("accounting.setup.manage")
+ 
+   const { locale } = await params
++  const periodCopy = locale === "fr" ? {
++    title: "Périodes comptables", description: "Seules les périodes ouvertes peuvent recevoir des écritures.",
++    period: "Période", status: "Statut", close: "Clôturer", open: "Ouverte", closed: "Clôturée", to: "au",
++  } : {
++    title: "Accounting periods", description: "Only open periods can receive postings.",
++    period: "Period", status: "Status", close: "Close", open: "OPEN", closed: "CLOSED", to: "to",
++  }
++  const periodDate = new Intl.DateTimeFormat(locale === "fr" ? "fr" : "en", { dateStyle: "medium" })
+   const resolvedSearchParams = searchParams ? await searchParams : {}
+   const setupResponse = await getAccountingSetupDataAction({})
+   const setup = setupResponse.success ? (setupResponse.data as SetupData) : null
+@@ -93,7 +100,7 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
+       expectedVersion: Number(formData.get("expectedVersion") ?? NaN),
+     })
+ 
+-    redirect(resultPath(locale, result.success, result.success ? "Accounting period closed" : result.error))
++    redirect(resultPath(locale, result.success, result.success ? (locale === "fr" ? "Période comptable clôturée" : "Accounting period closed") : result.error))
+   }
+ 
+   async function markReady() {
+@@ -240,8 +247,8 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
+             </AccountingPanel>
+ 
+             <AccountingPanel
+-              title="Accounting periods"
+-              description="Only open periods can receive postings."
++              title={periodCopy.title}
++              description={periodCopy.description}
+               actions={
+                 <form action={markReady}>
+                   <button className="dashboard-button-create h-10 rounded-lg px-4 text-sm font-medium">Mark ready</button>
+@@ -250,12 +257,12 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
+             >
+               <div className="overflow-x-auto">
+                 <AccountingDataTable
+-                  caption={"Accounting periods"}
++                  caption={periodCopy.title}
+                   locale={locale === "fr" ? "fr" : "en"}
+                   columns={[
+-                    { label: "Period" },
++                    { label: periodCopy.period },
+                     { label: "Dates" },
+-                    { label: "Status" },
++                    { label: periodCopy.status },
+                     { label: "Action", className: "text-right" },
+                   ]}
+                   rows={setup.periods.map((period) => {
+@@ -263,8 +270,8 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
+                       id: period.id,
+                       searchText: [
+                         period.name,
+-                        accountingDate(period.startDate),
+-                        accountingDate(period.endDate),
++                        periodDate.format(new Date(period.startDate)),
++                        periodDate.format(new Date(period.endDate)),
+                         period.status,
+                       ]
+                         .filter((value) => value !== null && value !== undefined)
+@@ -274,10 +281,10 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
+                           {period.name}
+                         </div>,
+                         <div key="cell-1" className="text-[var(--dash-text-soft)]">
+-                          {accountingDate(period.startDate)} to {accountingDate(period.endDate)}
++                          {periodDate.format(new Date(period.startDate))} {periodCopy.to} {periodDate.format(new Date(period.endDate))}
+                         </div>,
+                         <div key="cell-2" className="text-[var(--dash-text-soft)]">
+-                          {period.status}
++                          {period.status === "OPEN" ? periodCopy.open : period.status === "CLOSED" ? periodCopy.closed : period.status}
+                         </div>,
+                         <div key="cell-3" className="text-right">
+                           {period.status === "OPEN" ? (
+@@ -285,7 +292,7 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
+                               <input type="hidden" name="periodId" value={period.id} />
+                               <input type="hidden" name="expectedVersion" value={period.controlVersion} />
+                               <button className="dashboard-button-secondary h-9 rounded-lg px-3 text-xs font-medium">
+-                                Close
++                                {periodCopy.close}
+                               </button>
+                             </form>
+                           ) : null}
+diff --git a/components/accounting/CloseAssuranceCenter.tsx b/components/accounting/CloseAssuranceCenter.tsx
+index a5769e5b..30aac706 100644
+--- a/components/accounting/CloseAssuranceCenter.tsx
++++ b/components/accounting/CloseAssuranceCenter.tsx
+@@ -74,6 +74,9 @@ const copy = {
+     loadingBody: "Checking period close, ledger reconciliation, payment suspense, and data-trust evidence.",
+     errorTitle: "Close assurance unavailable",
+     retry: "Refresh",
++    accessDenied: "Access to close evidence denied",
++    accessDeniedBody: "Your current access could not be confirmed. Refresh after your access is restored, or sign in again.",
++    signInAgain: "Sign in again",
+     run: "Run assessment",
+     running: "Running",
+     refresh: "Refresh",
+@@ -202,6 +205,9 @@ const copy = {
+     loadingBody: "Verification de la periode, du ledger, du suspense paiement et des preuves de confiance.",
+     errorTitle: "Assurance de cloture indisponible",
+     retry: "Actualiser",
++    accessDenied: "Accès aux preuves de clôture refusé",
++    accessDeniedBody: "Votre accès actuel n’a pas pu être confirmé. Actualisez après le rétablissement de vos droits, ou reconnectez-vous.",
++    signInAgain: "Se reconnecter",
+     run: "Lancer l'evaluation",
+     running: "Evaluation",
+     refresh: "Actualiser",
+@@ -491,7 +497,22 @@ export function CloseAssuranceCenter({
+     initialData: initialQueryData,
+     locale,
+   })
+-  const data = query.error && query.data ? {
++  // A refetch retains cached data while retries run. Hide it on the first
++  // authorization failure, before the query reaches its terminal error state.
++  const readError = query.error ?? query.failureReason
++  const currentReadErrorCode = readError && "code" in readError ? readError.code : null
++  const currentDenial = currentReadErrorCode === "FORBIDDEN" || currentReadErrorCode === "AUTH_REQUIRED" ? currentReadErrorCode : null
++  const [lastReadDenial, setLastReadDenial] = useState<{ code: string; dataUpdatedAt: number } | null>(null)
++  // Starting a retry resets the error while retaining the previous private data.
++  // Only a newer successful response can release a recorded denial.
++  const readRestored = Boolean(lastReadDenial && query.dataUpdatedAt > lastReadDenial.dataUpdatedAt && !query.isFetching && !readError)
++  useEffect(() => {
++    if (currentDenial) setLastReadDenial({ code: currentDenial, dataUpdatedAt: query.dataUpdatedAt })
++    else if (readRestored) setLastReadDenial(null)
++  }, [currentDenial, query.dataUpdatedAt, readRestored])
++  const readErrorCode = currentDenial ?? (readRestored ? null : lastReadDenial?.code)
++  const readDenied = readErrorCode === "FORBIDDEN" || readErrorCode === "AUTH_REQUIRED"
++  const data = readDenied ? null : query.error && query.data ? {
+     ...query.data, currentProof: null,
+     controls: { ...query.data.controls, certificationAvailable: false, certificationDisabledReason: "Current close evidence requires review." },
+   } : query.data
+@@ -512,6 +533,18 @@ export function CloseAssuranceCenter({
+     [data?.findings, selectedFindingId],
+   )
+   const permissions = usePermissions()
++  useEffect(() => {
++    if (!readDenied) return
++    setLastExport(null)
++    setCommentBody("")
++    setWaiverReason("")
++    setReviewNotes("")
++    setActionError(null)
++    setPassword("")
++    setNeedsFreshAuth(false)
++    setAuthNotice(null)
++    returnActionFocus.current = false
++  }, [readDenied])
+   const allowed = (permission: string) => permissions.permissionState === "ready" && permissions.hasPermission(permission)
+   const access = {
+     run: allowed("accounting.close.run"),
+@@ -637,6 +670,18 @@ export function CloseAssuranceCenter({
+       setReviewNotes("")
+     })
+   }
++  if (readDenied) {
++    return <Panel title={t.accessDenied}>
++      <div role="alert" className="p-4 space-y-3">
++        <p className="text-sm text-[var(--dash-text-soft)]">{t.accessDeniedBody}</p>
++        <div className="flex flex-wrap gap-3">
++          <Button type="button" disabled={query.isFetching} onClick={() => { void query.refetch(); void permissions.refreshPermissions() }}>{t.retry}</Button>
++          {readErrorCode === "AUTH_REQUIRED" ? <a className="dashboard-button-secondary inline-flex min-h-11 items-center rounded-lg px-4 focus-visible:outline focus-visible:outline-2" href={`/${locale}/login`}>{t.signInAgain}</a> : null}
++        </div>
++      </div>
++    </Panel>
++  }
++
+   if (query.isLoading && !data) {
+     return (
+       <Panel title={t.loadingTitle} description={t.loadingBody}>
+diff --git a/components/accounting/__tests__/CloseAssuranceCenter.test.tsx b/components/accounting/__tests__/CloseAssuranceCenter.test.tsx
+index cb298fbb..508c7245 100644
+--- a/components/accounting/__tests__/CloseAssuranceCenter.test.tsx
++++ b/components/accounting/__tests__/CloseAssuranceCenter.test.tsx
+@@ -145,9 +145,10 @@ function dashboardData(): CloseAssuranceDashboardData {
+   } as unknown as CloseAssuranceDashboardData
+ }
+ 
+-function setDashboardData(data: CloseAssuranceDashboardData) {
++function setDashboardData(data: CloseAssuranceDashboardData, dataUpdatedAt = 1) {
+   mockUseCloseAssurance.mockReturnValue({
+     data,
++    dataUpdatedAt,
+     isLoading: false,
+     isFetching: false,
+     error: null,
+@@ -235,7 +236,7 @@ describe("CloseAssuranceCenter", () => {
+     fireEvent.change(screen.getByPlaceholderText("Add source-linked review notes for this finding."), { target: { value: "Review notes" } })
+     fireEvent.change(screen.getByPlaceholderText("Document the compensating control or management-approved reason for this waiver request."), { target: { value: "A documented compensating control" } })
+     for (const name of ["Run assessment", "Assign to me", "Add comment", "Request waiver", "Export draft JSON", "Export certified JSON", "Save review"]) {
+-      const button = screen.getByRole("button", { name, exact: true })
++      const button = screen.getByRole("button", { name })
+       expect(button).toBeDisabled()
+       fireEvent.click(button)
+     }
+@@ -362,6 +363,28 @@ describe("CloseAssuranceCenter", () => {
+     expect(retry).toHaveBeenCalledTimes(1)
+   })
+ 
++  it.each([
++    ["FORBIDDEN", false], ["AUTH_REQUIRED", false], ["FORBIDDEN", true], ["AUTH_REQUIRED", true],
++  ])("removes private assessment and drafts after %s while retrying=%s", async (code, retrying) => {
++    const data = dashboardData()
++    const view = render(<CloseAssuranceCenter initialData={data} locale="en" />)
++    fireEvent.change(screen.getByRole("textbox", { name: "Decision notes" }), { target: { value: "Private review notes" } })
++    const denied = Object.assign(new Error("Private denial detail"), { code })
++    mockUseCloseAssurance.mockReturnValue({ data, error: retrying ? null : denied, failureReason: denied, dataUpdatedAt: 1, isLoading: false, isFetching: retrying, refetch: jest.fn() })
++    view.rerender(<CloseAssuranceCenter initialData={data} locale="en" />)
++    expect(screen.queryByTestId("close-readiness-workspace")).not.toBeInTheDocument()
++    expect(screen.queryByText("Private denial detail")).not.toBeInTheDocument()
++    expect(screen.getByRole("heading", { name: "Access to close evidence denied" })).toBeInTheDocument()
++    if (code === "AUTH_REQUIRED") expect(screen.getByRole("link", { name: "Sign in again" })).toHaveAttribute("href", "/en/login")
++    // Starting a retry clears query errors before a new protected read resolves.
++    mockUseCloseAssurance.mockReturnValue({ data, dataUpdatedAt: 1, error: null, failureReason: null, isLoading: false, isFetching: true, refetch: jest.fn() })
++    view.rerender(<CloseAssuranceCenter initialData={data} locale="en" />)
++    expect(screen.queryByTestId("close-readiness-workspace")).not.toBeInTheDocument()
++    setDashboardData(data, 2)
++    view.rerender(<CloseAssuranceCenter initialData={data} locale="en" />)
++    await waitFor(() => expect(screen.getByRole("textbox", { name: "Decision notes" })).toHaveValue(""))
++  })
++
+   it("updates the journey and center together when the live proof response changes", () => {
+     const initial = dashboardData()
+     initial.run.status = "CERTIFIED"
+@@ -386,7 +409,7 @@ describe("CloseAssuranceCenter", () => {
+     render(<CloseAssuranceCenter initialData={dashboardData()} locale="fr" />)
+     const notes = screen.getByRole("textbox", { name: "Notes de decision" })
+     fireEvent.change(notes, { target: { value: "Notes à conserver" } })
+-    fireEvent.click(screen.getByRole("button", { name: "Actualiser", exact: true }))
++    fireEvent.click(screen.getByRole("button", { name: "Actualiser" }))
+     expect(refreshPermissions).toHaveBeenCalledTimes(1)
+     expect(mockUseCloseAssurance.mock.results[0].value.refetch).toHaveBeenCalledTimes(1)
+     expect(notes).toHaveValue("Notes à conserver")
+@@ -473,7 +496,7 @@ describe("CloseAssuranceCenter", () => {
+         id: "evidence-1",
+         checklistItemId: "check-1",
+         findingId: null,
+-        evidenceType: "PAYMENT_RECONCILIATION_CERTIFICATE",
++        evidenceType: "RECONCILIATION_CERTIFICATE",
+         sourceTable: "payment_reconciliation_runs",
+         sourceType: "PaymentReconciliationRun",
+         sourceId: null,

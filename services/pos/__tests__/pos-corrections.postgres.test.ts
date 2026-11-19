@@ -26,7 +26,7 @@ import { db } from "@/prisma/db"
 import { postRefund } from "@/services/accounting/postings/post-refund"
 import { postVoid } from "@/services/accounting/postings/post-void"
 import { postPOSStockReturn } from "@/services/inventory/inventory-stock-event.service"
-import { refundPOSSale, voidPOSSale } from "../pos.service"
+import { getPOSSaleReturnPreview, refundPOSSale, voidPOSSale } from "../pos.service"
 
 const enabled = process.env.RUN_POS_CORRECTIONS_POSTGRES === "1"
 const suite = enabled ? describe : describe.skip
@@ -65,7 +65,7 @@ async function fixture() {
   await db.cashDrawerTransaction.create({ data: { cashDrawerId: drawerId, sessionId, userId, type: "OPENING_BALANCE", amount: 100, balanceBefore: 0, balanceAfter: 100 } })
   await db.salesOrder.create({ data: { id: salesOrderId, organizationId, locationId, terminalId, sessionId, customerId, createdById: userId, orderNumber: suffix, status: "COMPLETED", paymentStatus: "PAID", subtotal: 10, total: 10, lines: { create: { itemId, quantity: 1, unitPrice: 10, lineTotal: 10 } } } })
   const payment = await db.payment.create({ data: { organizationId, salesOrderId, paymentNumber: suffix, amount: 10, method: "CASH", status: "PAID", processedById: userId } })
-  return { organizationId, userId, locationId, terminalId, sessionId, salesOrderId, paymentId: payment.id, drawerId, olderDrawerId, reason: "Disposable correction verification" }
+  return { organizationId, userId, locationId, terminalId, sessionId, salesOrderId, paymentId: payment.id, drawerId, olderDrawerId, orderNumber: suffix, reason: "Disposable correction verification" }
 }
 
 suite("POS correction PostgreSQL transaction boundaries", () => {
@@ -105,6 +105,28 @@ suite("POS correction PostgreSQL transaction boundaries", () => {
     const session = await db.pOSSession.findUniqueOrThrow({ where: { id: input.sessionId } })
     expect(String(session.expectedBalance)).toBe("100")
     expect(session.transactionCount).toBe(0)
+  })
+
+  it("rechecks a scoped reviewed return, rejects changed totals, and reads the recorded outcome", async () => {
+    const input = await fixture()
+    const preview = await getPOSSaleReturnPreview(input)
+    if (!preview) throw new Error("Expected a reviewed cash sale")
+    expect(preview).toMatchObject({
+      saleId: input.salesOrderId,
+      status: "ELIGIBLE",
+      total: { amount: "10.00", currency: "XAF" },
+      lines: [{ quantity: "1", nameEn: "Untracked test item" }],
+    })
+    await expect(refundPOSSale({ ...input, reviewedTotal: { amount: "9.99", currency: "XAF" } }))
+      .rejects.toMatchObject({ code: "CONFLICT" })
+    expect(await db.paymentRefund.count({ where: { paymentId: input.paymentId } })).toBe(0)
+    await expect(refundPOSSale({ ...input, reviewedTotal: preview.total })).resolves.toMatchObject({
+      saleId: input.salesOrderId, totalRefunded: 10,
+    })
+    await expect(getPOSSaleReturnPreview(input)).resolves.toMatchObject({
+      saleId: input.salesOrderId, status: "RECORDED", total: { amount: "10.00", currency: "XAF" },
+    })
+    expect(await db.paymentRefund.count({ where: { paymentId: input.paymentId } })).toBe(1)
   })
 
   it("rolls back sale, payment, drawer, shift and refund rows after a later posting failure", async () => {

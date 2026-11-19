@@ -1,0 +1,31 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@prisma/client": [
+        "./.codex-tmp/af10-prisma/client"
+      ]
+    }
+  },
+  "include": [
+    "services/onboarding/opening-position*.ts",
+    "actions/onboarding/opening-position.actions.ts",
+    "components/onboarding/OpeningPositionWorkbench.tsx",
+    "components/accounting/AccountantPortfolio.tsx",
+    "app/[locale]/(dashboard)/dashboard/accounting/opening-position/page.tsx",
+    "next-env.d.ts",
+    "services/onboarding/opening-cutover*.ts",
+    "services/onboarding/opening-domain-source.ts",
+    "services/accounting/opening-*.service.ts",
+    "services/purchasing/opening-payable.service.ts",
+    "services/accounting/customer-settlement*.ts",
+    "actions/onboarding/opening-cutover.actions.ts",
+    "components/onboarding/OpeningCutoverPanel.tsx",
+    "services/onboarding/opening-readiness.ts",
+    "components/onboarding/OpeningReadinessPanel.tsx"
+  ]
+}

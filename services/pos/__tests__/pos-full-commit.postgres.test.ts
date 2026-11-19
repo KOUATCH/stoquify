@@ -4,6 +4,11 @@ import { Prisma } from "@prisma/client"
 
 jest.unmock("@/prisma/db")
 jest.unmock("@/lib/inventory/update-inventory-levels")
+// Services receive synthetic trusted controls below. Keep the real assurance
+// threshold without bootstrapping application auth; this is not session proof.
+jest.mock("@/lib/security/auth-session", () => ({
+  SESSION_ASSURANCE_LEVEL: { NONE: 0, PASSWORD: 1 },
+}))
 // Keep real receipt behavior; expose configurable exports for boundary timing/failure probes.
 jest.mock("../receipt.service", () => ({ ...jest.requireActual("../receipt.service") }))
 
@@ -16,6 +21,9 @@ import { postPOSStockIssue } from "@/services/inventory/inventory-stock-event.se
 import { postSale } from "@/services/accounting/postings/post-sale"
 import { postPayment } from "@/services/accounting/postings/post-payment"
 import { createCustomerLedgerEntry } from "@/services/accounting/customer-ledger.service"
+import { collectCustomerSettlementWithControls } from "@/services/accounting/customer-settlement.service"
+import { reverseCustomerSettlementWithControls } from "@/services/accounting/customer-settlement-reversal.service"
+import { getTrialBalance } from "@/services/accounting/reports.service"
 import { hashBusinessPayload, recordBusinessEventInTx } from "@/services/events/business-event.service"
 import { registerOfflineDevice, ingestOfflineSyncBatch, buildOfflineEventEntryHash, replayPendingOfflineSaleEnvelope } from "../offline-sync.service"
 import { assertNoQueuedCheckoutInTx } from "../checkout-state"
@@ -215,6 +223,121 @@ suite("full POS commit real PostgreSQL kernels", () => {
     const replay = await commitPOSSale(input.request)
     expect(replay.replayed).toBe(true)
     expect(await financialSnapshot(input)).toEqual(snapshot)
+  })
+
+  it("ties a POS credit sale to later bank collection, independent reversal and current close invalidation", async () => {
+    const input = await fixture()
+    for (const kernel of [collectCustomerSettlementWithControls, reverseCustomerSettlementWithControls, getTrialBalance]) {
+      expect(jest.isMockFunction(kernel)).toBe(false)
+    }
+    const receivableAccount = await db.chartOfAccount.findFirstOrThrow({ where: { organizationId: input.organizationId, code: "TEST_AR" } })
+    await db.chartOfAccount.update({ where: { id: receivableAccount.id }, data: { mappingKey: "ACCOUNTS_RECEIVABLE" } })
+    await db.chartOfAccount.create({ data: { organizationId: input.organizationId, code: "TEST_BANK", nameEn: "Synthetic bank collection", type: "ASSET", normalBalance: "DEBIT", currency: "XAF", mappingKey: "BANK" } })
+    await db.journal.create({ data: { organizationId: input.organizationId, code: "TEST_BANK", nameEn: "Synthetic bank", type: "BANK", isDefault: true } })
+    await db.postingRule.create({ data: { organizationId: input.organizationId, code: "TEST_AR_SETTLEMENT", nameEn: "Synthetic bank collection rule", sourceType: "CUSTOMER_SETTLEMENT", postingPurpose: "CUSTOMER_SETTLEMENT", lines: { create: [
+      { organizationId: input.organizationId, mappingKey: "BANK", lineNumber: 1, side: "DEBIT", amountSource: "SOURCE_AMOUNT" },
+      { organizationId: input.organizationId, mappingKey: "ACCOUNTS_RECEIVABLE", lineNumber: 2, side: "CREDIT", amountSource: "SOURCE_AMOUNT" },
+    ] } } })
+    const checker = await db.user.create({ data: { organizationId: input.organizationId, email: `${randomUUID()}@full-pos.invalid`, firstName: "Independent", lastName: "Checker", mfaBackupCodes: [] } })
+    const period = await db.accountingPeriod.findFirstOrThrow({ where: { organizationId: input.organizationId } })
+    await commitPOSSale(input.request)
+    const sold = await financialSnapshot(input)
+    const document = await db.customerReceivableDocument.findFirstOrThrow({ where: { organizationId: input.organizationId, sourceSalesOrderId: input.salesOrderId } })
+
+    async function assertTieOut(outstanding: string, bank: string, paid: string, status: "PARTIALLY_PAID" | "PAID") {
+      const [report, customer, entries, state, journals, snapshot] = await Promise.all([
+        getTrialBalance({ organizationId: input.organizationId, periodId: period.id, includeZeroBalance: true }),
+        db.customer.findUniqueOrThrow({ where: { id: input.customerId } }),
+        db.customerLedgerEntry.findMany({ where: { organizationId: input.organizationId, customerId: input.customerId } }),
+        db.customerReceivableDocumentState.findFirstOrThrow({ where: { organizationId: input.organizationId, documentId: document.id }, orderBy: { version: "desc" } }),
+        db.journalEntry.findMany({ where: { organizationId: input.organizationId }, include: { lines: true, sourceLinks: true } }),
+        financialSnapshot(input),
+      ])
+      const rows = new Map(report.rows.map(row => [row.code, row]))
+      expect(report.totals.isBalanced).toBe(true)
+      expect(rows.get("TEST_AR")).toMatchObject({ debitBalance: outstanding, creditBalance: "0.00" })
+      expect(rows.get("TEST_BANK")).toMatchObject({ debitBalance: bank, creditBalance: "0.00" })
+      expect(rows.get("TEST_CASH")).toMatchObject({ debitBalance: "6.00", creditBalance: "0.00" })
+      expect(rows.get("TEST_REVENUE")).toMatchObject({ activityDebit: "0.00", activityCredit: "10.00", creditBalance: "10.00" })
+      expect(rows.get("TEST_COGS")).toMatchObject({ activityDebit: "4.00", activityCredit: "0.00", debitBalance: "4.00" })
+      expect(rows.get("TEST_STOCK")).toMatchObject({ activityDebit: "0.00", activityCredit: "4.00", creditBalance: "4.00" })
+      expect(customer.currentBalance.toFixed(2)).toBe(outstanding)
+      expect(entries.reduce((total, entry) => total.plus(entry.debit).minus(entry.credit), new Prisma.Decimal(0)).toFixed(2)).toBe(outstanding)
+      expect(state).toMatchObject({ status })
+      expect(state.paidAmount.toFixed(2)).toBe(paid)
+      expect(state.unpaidAmount.toFixed(2)).toBe(outstanding)
+      expect(state.paidAmount.plus(state.unpaidAmount).eq(document.totalAmount)).toBe(true)
+      expect(journals.every(journal => ["POSTED", "REVERSED"].includes(journal.status)
+        && journal.lines.reduce((total, line) => total.plus(line.debit).minus(line.credit), new Prisma.Decimal(0)).eq(0)
+        && journal.sourceLinks.some(link => link.postingBatchId === journal.postingBatchId && link.sourceId === journal.sourceId))).toBe(true)
+      // Back-office bank collection does not rewrite POS tender history or touch the till/stock again.
+      expect(snapshot).toMatchObject({ status: sold.status, paymentStatus: sold.paymentStatus, payments: sold.payments,
+        stockQuantity: sold.stockQuantity, stockAvailable: sold.stockAvailable, stockValue: sold.stockValue, stockVersion: sold.stockVersion,
+        sessionExpected: sold.sessionExpected, cashTotal: sold.cashTotal, creditTotal: sold.creditTotal, transactionCount: sold.transactionCount,
+        drawerCurrent: sold.drawerCurrent, drawerExpected: sold.drawerExpected, drawerTransactionCount: sold.drawerTransactionCount,
+        movementCount: sold.movementCount, registryCount: sold.registryCount, receivableCount: sold.receivableCount })
+    }
+    async function effectsWithoutControlAudit() {
+      const { auditCount, ...snapshot } = await financialSnapshot(input)
+      return snapshot
+    }
+    await assertTieOut("4.00", "0.00", "6.00", "PARTIALLY_PAID")
+
+    // Synthetic certification sentinels test invalidation, not an actual reviewed accountant close.
+    const beforeCollectionClose = await db.closeRun.create({ data: { organizationId: input.organizationId, periodId: period.id, status: "CERTIFIED" } })
+    const collectedAt = new Date()
+    const command = { customerId: input.customerId, method: "BANK_TRANSFER" as const, amount: "4.00", settlementDate: collectedAt,
+      idempotencyKey: `pos-bank-collection:${randomUUID()}`, correlationId: `pos-bank-correlation:${randomUUID()}`,
+      externalReference: `synthetic-bank-evidence:${randomUUID()}`, documentHash: "a".repeat(64), evidenceHash: "b".repeat(64),
+      allocations: [{ salesOrderId: input.salesOrderId, amount: "4.00" }] }
+    const control = { organizationId: input.organizationId, actorId: input.userId, actorPermissions: ["finance.receivables.collect"], lastAuthAt: collectedAt }
+    const collected = await collectCustomerSettlementWithControls(command, control)
+    expect(collected.replayed).toBe(false)
+    expect(collected.settlement.allocations).toHaveLength(1)
+    expect(collected.settlement.allocations[0]).toMatchObject({ salesOrderId: input.salesOrderId, customerReceivableDocumentId: document.id })
+    expect(await db.closeRun.findUniqueOrThrow({ where: { id: beforeCollectionClose.id } })).toMatchObject({ status: "BLOCKED", metadata: { staleState: { status: "EVIDENCE_STALE" } } })
+    await assertTieOut("0.00", "4.00", "10.00", "PAID")
+    const collectionEffects = await effectsWithoutControlAudit()
+    expect(collectionEffects).toMatchObject({ journalCount: 3, batchCount: 3, ledgerCount: 2, stateCount: 2 })
+    expect(await collectCustomerSettlementWithControls(command, control)).toMatchObject({ settlementId: collected.settlementId, replayed: true })
+    expect(await effectsWithoutControlAudit()).toEqual(collectionEffects)
+    await expect(collectCustomerSettlementWithControls({ ...command, evidenceHash: "e".repeat(64) }, control)).rejects.toThrow("different payload")
+    expect(await effectsWithoutControlAudit()).toEqual(collectionEffects)
+    expect(await db.customerSettlement.count({ where: { organizationId: input.organizationId } })).toBe(1)
+    expect(await db.businessEvent.count({ where: { organizationId: input.organizationId, eventType: "customer.settlement.posted" } })).toBe(1)
+
+    const beforeReversalClose = await db.closeRun.create({ data: { organizationId: input.organizationId, periodId: period.id, status: "CERTIFIED" } })
+    const reversal = { customerSettlementId: collected.settlementId, reversalDate: new Date(), reason: "Synthetic reversal of duplicate bank collection evidence",
+      idempotencyKey: `pos-bank-reversal:${randomUUID()}`, correlationId: `pos-reversal-correlation:${randomUUID()}`,
+      documentHash: "c".repeat(64), evidenceHash: "d".repeat(64) }
+    const reversalControl = (actorId: string) => {
+      const lastAuthAt = new Date()
+      return { organizationId: input.organizationId, actorId, actorPermissions: ["finance.receivables.reverse"], freshAuth: { lastAuthAt,
+        claims: { userId: actorId, tenantId: input.organizationId, assuranceOrganizationId: input.organizationId, assuranceLevel: 1, lastAuthAt: lastAuthAt.getTime() } } }
+    }
+    await expect(reverseCustomerSettlementWithControls(reversal, reversalControl(input.userId))).rejects.toThrow("independent approval")
+    expect(await effectsWithoutControlAudit()).toEqual(collectionEffects)
+    const reversed = await reverseCustomerSettlementWithControls(reversal, reversalControl(checker.id))
+    expect(reversed).toMatchObject({ settlementId: collected.settlementId, status: "REVERSED", replayed: false })
+    expect(await db.closeRun.findUniqueOrThrow({ where: { id: beforeReversalClose.id } })).toMatchObject({ status: "BLOCKED", metadata: { staleState: { status: "EVIDENCE_STALE" } } })
+    await assertTieOut("4.00", "0.00", "6.00", "PARTIALLY_PAID")
+    const reversalEffects = await effectsWithoutControlAudit()
+    expect(reversalEffects).toMatchObject({ journalCount: 4, batchCount: 4, ledgerCount: 3, stateCount: 3 })
+    expect(await reverseCustomerSettlementWithControls(reversal, reversalControl(checker.id))).toMatchObject({ reversalJournalEntryId: reversed.reversalJournalEntryId, replayed: true })
+    expect(await effectsWithoutControlAudit()).toEqual(reversalEffects)
+    await expect(reverseCustomerSettlementWithControls({ ...reversal, evidenceHash: "f".repeat(64) }, reversalControl(checker.id))).rejects.toThrow()
+    expect(await effectsWithoutControlAudit()).toEqual(reversalEffects)
+    expect(await db.businessEvent.count({ where: { organizationId: input.organizationId, eventType: "customer.settlement.reversed" } })).toBe(1)
+    expect(await db.journalEntry.findUniqueOrThrow({ where: { id: collected.journalEntryId } })).toMatchObject({ status: "REVERSED" })
+    expect(await db.journalEntry.findUniqueOrThrow({ where: { id: reversed.reversalJournalEntryId } })).toMatchObject({ reversalOfEntryId: collected.journalEntryId, postedById: checker.id })
+    if (process.env.RETENTION_VERIFICATION_EVIDENCE_DIR) writeFileSync(join(process.env.RETENTION_VERIFICATION_EVIDENCE_DIR, "sales-accounting-workflow.json"), JSON.stringify({
+      synthetic: true, saleId: input.salesOrderId, receivableDocumentId: document.id, settlementId: collected.settlementId,
+      outstandingSequence: ["4.00", "0.00", "4.00"], bankSequence: ["0.00", "4.00", "0.00"],
+      stockQuantity: sold.stockQuantity, stockValue: sold.stockValue, revenue: "10.00", costOfGoodsSold: "4.00",
+      collectionJournalId: collected.journalEntryId, reversalJournalId: reversed.reversalJournalEntryId,
+      closeInvalidationIds: [beforeCollectionClose.id, beforeReversalClose.id],
+      limitation: "Real PostgreSQL service chain with synthetic zero-tax mappings and supplied trusted controls; no provider transfer, deployed role journey or reviewed close certification.",
+    }, null, 2))
   })
 
   it("preserves the original caller identity when a retry wins receipt completion", async () => {

@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-10T08:54:57.625Z",
+  "compiler_version": "5.8.3",
+  "compiler_sha256": "dd17428736a07e1db1a138d8a14295ddb2699ba780ee15038acdd2c6da5373a0",
+  "previous_config_sha256": "d942c27b9e4e277b542b9232da76073d625bdc3d59f089498057ac759a1daa57",
+  "current_config_sha256": "d8520694b9940364a676d62d757600ffb29718574e72c5752f8f4875021f4ccb",
+  "method": "rg enumerated existing .ts/.tsx under plans/**/preservation/** with hidden/ignored files included and installed-dependency folders excluded. Inspected TypeScript getRegularExpressionForWildcard/getRegexFromPattern applied actual include/exclude patterns to those paths. No project typecheck, build, application import or emitted execution.",
+  "preservation_candidates": [
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/preservation/before/source/lib/auth.ts",
+      "sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+      "bytes": 8383,
+      "old_selected": false,
+      "new_selected": false
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/preservation/before/source/lib/security/__tests__/auth-session.test.ts",
+      "sha256": "c6da5af178a02bb21aea9170457c60eafac2d6d078276fc28d0c909572d172b2",
+      "bytes": 6266,
+      "old_selected": false,
+      "new_selected": false
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/preservation/before/source/lib/security/auth-session.ts",
+      "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c",
+      "bytes": 5556,
+      "old_selected": false,
+      "new_selected": false
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/preservation/repair-r1/lib/auth.ts",
+      "sha256": "6e40844d3bd3a4d93d95c1916418eada52d37c38aea313e760a9bd2f6f9bbe72",
+      "bytes": 9842,
+      "old_selected": true,
+      "new_selected": false
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/preservation/repair-r1/lib/security/__tests__/auth-current-authority.test.ts",
+      "sha256": "e5c6577d17cf64caffdafd92396f0da68e28d46b967f7c39c0a08cd5383a5271",
+      "bytes": 5321,
+      "old_selected": false,
+      "new_selected": false
+    }
+  ],
+  "newly_excluded": [
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/preservation/repair-r1/lib/auth.ts",
+      "sha256": "6e40844d3bd3a4d93d95c1916418eada52d37c38aea313e760a9bd2f6f9bbe72",
+      "bytes": 9842,
+      "old_selected": true,
+      "new_selected": false
+    }
+  ],
+  "newly_included": [],
+  "current_workspace_effect": "Only preservation/repair-r1/lib/auth.ts is newly excluded; existing test files and before/source copies were already excluded.",
+  "isolated_candidate_effect": {
+    "plans_tree_exists": false,
+    "manifest_plans_entries": 0,
+    "interpretation": "Source candidate selection excludes plans entirely. This exclusion change removes no candidate-selected preservation files. Normal configured typecheck remains a separate required gate."
+  },
+  "limitations": "Incremental file selection only; import resolution can include explicitly imported files regardless of exclude. No assertion that all workspace type errors are resolved."
+}

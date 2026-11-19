@@ -1,4 +1,5 @@
 import "server-only"
+import { resolveTargetPeriod } from "./close-period-selection.service"
 
 import {
   AccountantReviewStatus,
@@ -18,14 +19,15 @@ import {
 import { randomUUID } from "node:crypto"
 import { buildCloseEvidenceCollectionReceipt, isCloseEvidenceCollectionEligible } from "./close-evidence-collection"
 import { closeEvidenceReplacementSelection, getCloseEvidenceReplacementInTx, parseCloseEvidenceReplacementBinding } from "./close-evidence-replacement.service"
-import { lockCloseEvidenceAcceptanceAuthorityInTx, lockCloseEvidenceWorkAuthorityInTx, lockCloseEvidenceRecipientInTx } from "./close-evidence-acceptance-authority.service"
+import { lockCloseEvidenceAcceptanceAuthorityInTx, lockCloseEvidenceWorkAuthorityInTx, lockCloseEvidenceRecipientInTx, lockCloseWriteAuthorityInTx } from "./close-evidence-acceptance-authority.service"
+import { lockCloseFindingAssigneeInTx, prelockCloseFindingAssigneeOrganizationsInTx } from "./close-finding-assignee-authority.service"
 import { CLOSE_RECIPIENT_REPLACED, readCloseEvidenceRecipient } from "./close-evidence-recipient.service"
 import { replaceMissingCloseEvidenceRecipientInputSchema } from "./close-assurance.schemas"
 
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
 import { deriveCloseCurrentProof, type CloseCurrentProof } from "./close-assurance-current-proof"
-import { closeAssessmentSelectionBlocker, deriveCloseAssessmentSelection, lockCloseAssessmentOrderInTx, readCloseAssessmentOrderInTx, readCloseAssessmentPublicationTimeInTx } from "./close-assessment-order.service"
+import { applyCloseAssessmentSelection, deriveCloseAssessmentSelection, lockCloseAssessmentOrderInTx, readCloseAssessmentOrderInTx, readCloseAssessmentPublicationTimeInTx } from "./close-assessment-order.service"
 import { lockCloseSourceRevisionInTx, guardCloseAssessmentPublicationInTx } from "./close-source-revision.service"
 import { readResolvedCloseEvidence } from "./close-evidence-resolution-records"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
@@ -1039,61 +1041,6 @@ async function listRecentPeriods(
     currentOpenPeriod: periodSummary(currentOpenPeriod),
     recentPeriods: periods.map((period) => periodSummary(period)!),
   }
-}
-
-async function resolveTargetPeriod(
-  organizationId: string,
-  periodId?: string | null,
-  client: DbClient = db,
-  now = new Date(),
-) {
-  if (periodId) {
-    const period = await client.accountingPeriod.findFirst({
-      where: { organizationId, id: periodId },
-      select: {
-        id: true,
-        name: true,
-        status: true,
-        startDate: true,
-        endDate: true,
-        organization: { select: { currency: true } },
-      },
-    })
-    if (!period) throw new NotFoundError("Accounting period not found")
-    return period
-  }
-
-  const current = await client.accountingPeriod.findFirst({
-    where: {
-      organizationId,
-      startDate: { lte: now },
-      endDate: { gte: now },
-    },
-    orderBy: { startDate: "desc" },
-    select: {
-      id: true,
-      name: true,
-      status: true,
-      startDate: true,
-      endDate: true,
-        organization: { select: { currency: true } },
-    },
-  })
-
-  if (current) return current
-
-  return client.accountingPeriod.findFirst({
-    where: { organizationId, status: AccountingPeriodStatus.OPEN },
-    orderBy: { startDate: "desc" },
-    select: {
-      id: true,
-      name: true,
-      status: true,
-      startDate: true,
-      endDate: true,
-        organization: { select: { currency: true } },
-    },
-  })
 }
 
 async function getPreflightSafe(
@@ -2563,6 +2510,9 @@ export async function runCloseAssurance(
   // Publish the in-flight assessment before any evidence collectors run, so a
   // concurrent source event has a persisted target to invalidate.
   const started = await db.$transaction(async (tx) => {
+    const authority = await lockCloseWriteAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId: control.actorId ?? "", session: control.session,
+    }, "assessment")
     await lockCloseAssessmentOrderInTx(tx, organizationId, period.id)
     const sourceRevision = await lockCloseSourceRevisionInTx(tx, organizationId)
     const currentPeriod = await tx.accountingPeriod.findFirst({ where: { id: period.id, organizationId }, select: { id: true } })
@@ -2572,6 +2522,7 @@ export async function runCloseAssurance(
     if (order.latest && createdAt.getTime() <= order.latest.createdAt.getTime()) {
       throw new ConflictError("The database clock has not advanced beyond the latest assessment. Wait briefly and retry; contact support if this persists.")
     }
+    await authority.revalidate(createdAt)
     const run = await tx.closeRun.create({
       data: {
         organizationId, periodId: period.id, status: CloseRunStatus.RUNNING,
@@ -2579,6 +2530,7 @@ export async function runCloseAssurance(
         metadata: jsonObject({ sourceRevision }),
       },
     })
+    await authority.revalidate()
     return { ...run, sourceRevision }
   }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
   try {
@@ -2586,9 +2538,14 @@ export async function runCloseAssurance(
   if (!draft.raw.period) throw new CloseAssuranceError("CloseBlocked", "The accounting period is no longer available.")
 
   const persisted = await db.$transaction(async (tx) => {
+    const authority = await lockCloseWriteAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId: control.actorId ?? "", session: control.session,
+    }, "assessment")
     if (!await guardCloseAssessmentPublicationInTx(tx, { organizationId, periodId: period.id, runId: started.id, sourceRevision: started.sourceRevision })) {
+      await authority.revalidate()
       return { id: started.id, periodId: period.id }
     }
+    await authority.revalidate()
     const completedData = {
         organizationId,
         periodId: draft.raw.period!.id,
@@ -2633,7 +2590,10 @@ export async function runCloseAssurance(
     })
     // Never overwrite an event's BLOCKED/stale decision with the collector's
     // older snapshot. The dashboard below reads the retained current run.
-    if (finalized.count !== 1) return { id: started.id, periodId: period.id }
+    if (finalized.count !== 1) {
+      await authority.revalidate()
+      return { id: started.id, periodId: period.id }
+    }
     const closeRun = { ...started, ...completedData }
 
     const checklistByKey = new Map<string, CloseChecklistItem>()
@@ -2834,6 +2794,7 @@ export async function runCloseAssurance(
       })
     }
 
+    await authority.revalidate()
     return closeRun
   }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
 
@@ -2846,7 +2807,7 @@ export async function runCloseAssurance(
     // A failed collector or persistence attempt cannot leave a successful run.
     // Preserve any prior source invalidation rather than replacing its reason.
     await db.closeRun.updateMany({
-      where: { id: started.id, organizationId, status: CloseRunStatus.RUNNING },
+      where: { id: started.id, organizationId, periodId: period.id, runById: control.actorId ?? null, correlationId, status: CloseRunStatus.RUNNING },
       data: { status: CloseRunStatus.BLOCKED, completedAt: new Date(), metadata: jsonObject({ assessmentFailure: "ASSESSMENT_FAILED", correlationId }) },
     })
     throw error
@@ -2909,15 +2870,7 @@ export async function getCloseAssuranceDashboard(
   const checklist = run.checklistItems.map(mapChecklistItem)
   const findings = run.findings.map(mapFinding)
   const evidenceItems = run.evidenceItems.map(mapEvidenceItem)
-  const currentProof = deriveCloseCurrentProof(run, now)
-  const selection = deriveCloseAssessmentSelection(assessmentOrder!, run)
-  currentProof.assessmentState = selection.state
-  currentProof.latestAssessmentCreatedAt = selection.latestCreatedAt?.toISOString() ?? null
-  const selectionBlocker = closeAssessmentSelectionBlocker(selection)
-  if (selectionBlocker) {
-    currentProof.blockers.unshift(selectionBlocker)
-    currentProof.grade = "blocked"
-  }
+  const currentProof = applyCloseAssessmentSelection(deriveCloseCurrentProof(run, now), deriveCloseAssessmentSelection(assessmentOrder!, run))
   const controls = closeControls({
     persisted: true, status: run.status, criticalBlockerCount: run.criticalBlockerCount,
     highBlockerCount: run.highBlockerCount, checklist, findings,
@@ -3239,6 +3192,47 @@ export async function getCloseEvidenceGraph(
   }
 }
 
+type CloseMutationScope = { organizationId: string; closeRunId: string; periodId: string }
+
+function assertCloseMutationScope(
+  row: CloseMutationScope,
+  scope: CloseMutationScope,
+) {
+  if (row.organizationId !== scope.organizationId || row.closeRunId !== scope.closeRunId || row.periodId !== scope.periodId) {
+    throw new BusinessRuleError("Close records must belong to the same organization, run and period.")
+  }
+}
+
+async function validateCloseRunForMutation(
+  tx: Prisma.TransactionClient | typeof db,
+  organizationId: string,
+  run: Pick<CloseRun, "id" | "organizationId" | "periodId"> | null,
+  expectedPeriodId?: string,
+) {
+  if (!run || run.organizationId !== organizationId) throw new NotFoundError("Close run not found")
+  if (expectedPeriodId !== undefined && run.periodId !== expectedPeriodId) {
+    throw new BusinessRuleError("Close records must belong to the same organization, run and period.")
+  }
+  const period = await tx.accountingPeriod.findFirst({
+    where: { id: run.periodId, organizationId },
+    select: { id: true, organizationId: true },
+  })
+  if (!period || period.id !== run.periodId || period.organizationId !== organizationId) {
+    throw new BusinessRuleError("The close run must reference an accounting period in its organization.")
+  }
+}
+
+async function loadCloseRunForMutation(
+  tx: Prisma.TransactionClient | typeof db,
+  organizationId: string,
+  closeRunId: string,
+) {
+  const run = await tx.closeRun.findFirst({ where: { id: closeRunId, organizationId } })
+  await validateCloseRunForMutation(tx, organizationId, run)
+  if (!run || run.id !== closeRunId) throw new NotFoundError("Close run not found")
+  return run
+}
+
 async function loadFindingForMutation(
   organizationId: string,
   findingId: string,
@@ -3246,9 +3240,15 @@ async function loadFindingForMutation(
 ) {
   const finding = await tx.closeAssuranceFinding.findFirst({
     where: { id: findingId, organizationId },
-    include: { closeRun: true },
+    include: { closeRun: true, checklistItem: true },
   })
-  if (!finding) throw new NotFoundError("Close finding not found")
+  if (!finding || finding.id !== findingId || finding.organizationId !== organizationId) throw new NotFoundError("Close finding not found")
+  if (!finding.closeRun || finding.closeRun.id !== finding.closeRunId) throw new NotFoundError("Close run not found")
+  await validateCloseRunForMutation(tx, organizationId, finding.closeRun, finding.periodId)
+  if (finding.checklistItemId) {
+    if (!finding.checklistItem || finding.checklistItem.id !== finding.checklistItemId) throw new NotFoundError("Close checklist item not found")
+    assertCloseMutationScope(finding.checklistItem, finding)
+  }
   return finding
 }
 
@@ -3288,6 +3288,16 @@ export async function assignCloseFinding(
   const correlationId = input.correlationId ?? randomUUID()
 
   return runMissingCloseEvidenceTransaction(async (tx) => {
+    if (!control.session?.id || !control.session.token) {
+      throw new ApplicationError("AUTH_REQUIRED", "A current authenticated session is required for this close operation.", 401)
+    }
+    if (!control.actorId) throw new ForbiddenError()
+    // Resolve only a home-organization hint before taking sorted organization
+    // locks. The exact recipient account is checked again under those locks.
+    const assigneeOrganizations = await prelockCloseFindingAssigneeOrganizationsInTx(tx, { organizationId, assigneeId: assignedToId })
+    const authority = await lockCloseWriteAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId: control.actorId ?? "", session: control.session,
+    }, "assign")
     const finding = await loadFindingForMutation(
       organizationId,
       input.findingId,
@@ -3313,6 +3323,9 @@ export async function assignCloseFinding(
       throw new ConflictError("This finding has an evidence request. Continue the existing request in the evidence workbench; ordinary assignment cannot change its response owner.")
     }
 
+    const assignee = await lockCloseFindingAssigneeInTx(tx, assigneeOrganizations)
+    await authority.revalidate()
+    await assignee.revalidate()
     const updated = await tx.closeAssuranceFinding.update({
       where: { id: finding.id },
       data: {
@@ -3380,6 +3393,8 @@ export async function assignCloseFinding(
       })
     }
 
+    await assignee.revalidate()
+    await authority.revalidate()
     return mapFinding(updated)
   })
 }
@@ -3392,49 +3407,40 @@ export async function commentOnCloseFinding(
   const correlationId = input.correlationId ?? randomUUID()
 
   return db.$transaction(async (tx) => {
-    let closeRunId = input.closeRunId ?? null
-    let periodId: string | null = null
-    let findingId = input.findingId ?? null
-    let evidenceItemId = input.evidenceItemId ?? null
-    let reviewId = input.reviewId ?? null
-
-    if (findingId) {
-      const finding = await loadFindingForMutation(
-        organizationId,
-        findingId,
-        tx,
-      )
-      assertFindingCanReceiveComment(finding.status)
-      closeRunId = finding.closeRunId
-      periodId = finding.periodId
-    } else if (evidenceItemId) {
-      const evidence = await tx.closeEvidenceItem.findFirst({
-        where: { id: evidenceItemId, organizationId },
-      })
-      if (!evidence) throw new NotFoundError("Close evidence item not found")
-      closeRunId = evidence.closeRunId
-      periodId = evidence.periodId
-    } else if (reviewId) {
-      const review = await tx.accountantReview.findFirst({
-        where: { id: reviewId, organizationId },
-      })
-      if (!review) throw new NotFoundError("Accountant review not found")
-      closeRunId = review.closeRunId
-      periodId = review.periodId
-    } else if (closeRunId) {
-      const run = await tx.closeRun.findFirst({
-        where: { id: closeRunId, organizationId },
-      })
-      if (!run) throw new NotFoundError("Close run not found")
-      periodId = run.periodId
-    }
-
-    if (!closeRunId || !periodId) {
+    const authority = await lockCloseWriteAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId: control.actorId ?? "", session: control.session,
+    }, "comment")
+    const findingId = input.findingId ?? null
+    const evidenceItemId = input.evidenceItemId ?? null
+    const reviewId = input.reviewId ?? null
+    const finding = findingId ? await loadFindingForMutation(organizationId, findingId, tx) : null
+    if (finding) assertFindingCanReceiveComment(finding.status)
+    const evidence = evidenceItemId ? await tx.closeEvidenceItem.findFirst({
+      where: { id: evidenceItemId, organizationId }, include: { checklistItem: true },
+    }) : null
+    if (evidenceItemId && (!evidence || evidence.id !== evidenceItemId || evidence.organizationId !== organizationId)) throw new NotFoundError("Close evidence item not found")
+    const review = reviewId ? await tx.accountantReview.findFirst({ where: { id: reviewId, organizationId } }) : null
+    if (reviewId && (!review || review.id !== reviewId || review.organizationId !== organizationId)) throw new NotFoundError("Accountant review not found")
+    const closeRunId = input.closeRunId ?? finding?.closeRunId ?? evidence?.closeRunId ?? review?.closeRunId
+    if (!closeRunId) {
       throw new BusinessRuleError(
         "A close run, finding, evidence item, or review is required for comments.",
       )
     }
+    const run = await loadCloseRunForMutation(tx, organizationId, closeRunId)
+    const periodId = run.periodId
+    const scope = { organizationId, closeRunId, periodId }
+    for (const target of [finding, evidence, review]) if (target) assertCloseMutationScope(target, scope)
+    if (evidence?.checklistItemId) {
+      if (!evidence.checklistItem || evidence.checklistItem.id !== evidence.checklistItemId) throw new NotFoundError("Close checklist item not found")
+      assertCloseMutationScope(evidence.checklistItem, scope)
+    }
+    if (evidence?.findingId) {
+      const evidenceFinding = await loadFindingForMutation(organizationId, evidence.findingId, tx)
+      assertCloseMutationScope(evidenceFinding, scope)
+    }
 
+    await authority.revalidate()
     const comment = await tx.accountantComment.create({
       data: {
         organizationId,
@@ -3479,6 +3485,7 @@ export async function commentOnCloseFinding(
       },
     })
 
+    await authority.revalidate()
     return {
       id: comment.id,
       findingId: comment.findingId,
@@ -3489,7 +3496,7 @@ export async function commentOnCloseFinding(
       visibility: comment.visibility,
       createdAt: comment.createdAt.toISOString(),
     }
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
 }
 
 type MissingCloseEvidenceCommentRecord = {
@@ -3829,6 +3836,7 @@ export async function requestMissingCloseEvidence(
       clientOrganizationId: input.clientOrganizationId,
       accountantUserId: actorId,
       capability: "REVIEW",
+      permission: "accounting.close.evidence.request",
       now,
       client: tx,
     })
@@ -4575,6 +4583,9 @@ export async function requestCloseWaiver(
   const correlationId = input.correlationId ?? randomUUID()
 
   return db.$transaction(async (tx) => {
+    const authority = await lockCloseWriteAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId: control.actorId ?? "", session: control.session,
+    }, "waiver-request")
     const finding = await loadFindingForMutation(
       organizationId,
       input.findingId,
@@ -4589,6 +4600,7 @@ export async function requestCloseWaiver(
       )
     }
 
+    await authority.revalidate()
     const updated = await tx.closeAssuranceFinding.update({
       where: { id: finding.id },
       data: {
@@ -4631,8 +4643,9 @@ export async function requestCloseWaiver(
       },
     })
 
+    await authority.revalidate()
     return mapFinding(updated)
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
 }
 
 export async function approveCloseWaiver(
@@ -4645,6 +4658,9 @@ export async function approveCloseWaiver(
   const correlationId = input.correlationId ?? randomUUID()
 
   return db.$transaction(async (tx) => {
+    const authority = await lockCloseWriteAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId: control.actorId ?? "", session: control.session,
+    }, "waiver-approve")
     const finding = await loadFindingForMutation(
       organizationId,
       input.findingId,
@@ -4661,7 +4677,14 @@ export async function approveCloseWaiver(
         "The waiver requester cannot approve the same close waiver.",
       )
     }
+    if (finding.severity === CloseFindingSeverity.CRITICAL && finding.ownerId === actorId) {
+      throw new CloseAssuranceError(
+        "SoDViolation",
+        "The assigned owner cannot approve a critical close waiver.",
+      )
+    }
 
+    await authority.revalidate()
     const updated = await tx.closeAssuranceFinding.update({
       where: { id: finding.id },
       data: {
@@ -4706,8 +4729,10 @@ export async function approveCloseWaiver(
       },
     })
 
+    requireFreshWaiverControl(organizationId, control, new Date())
+    await authority.revalidate()
     return mapFinding(updated)
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
 }
 
 export async function updateAccountantReview(
@@ -4718,11 +4743,12 @@ export async function updateAccountantReview(
   const correlationId = input.correlationId ?? randomUUID()
 
   return db.$transaction(async (tx) => {
-    const run = await tx.closeRun.findFirst({
-      where: { id: input.closeRunId, organizationId },
-    })
-    if (!run) throw new NotFoundError("Close run not found")
+    const authority = await lockCloseWriteAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId: control.actorId ?? "", session: control.session,
+    }, "review")
+    const run = await loadCloseRunForMutation(tx, organizationId, input.closeRunId)
 
+    await authority.revalidate()
     const review = await tx.accountantReview.create({
       data: {
         organizationId,
@@ -4768,6 +4794,7 @@ export async function updateAccountantReview(
       },
     })
 
+    await authority.revalidate()
     return {
       id: review.id,
       status: review.status,
@@ -4777,5 +4804,5 @@ export async function updateAccountantReview(
       decisionNotes: review.decisionNotes,
       createdAt: review.createdAt.toISOString(),
     }
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
 }

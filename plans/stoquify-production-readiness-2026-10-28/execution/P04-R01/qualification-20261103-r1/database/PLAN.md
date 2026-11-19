@@ -1,0 +1,13 @@
+# P04-R01 native qualification recipe
+
+Prepared 3 November 2026. Execution requires independent review of these files before starting any process. Product source is owned by other agents; this directory owns only qualification recipes, tests and evidence.
+
+The runner creates an entirely new PostgreSQL17 cluster under `.codex-tmp/p04r01-qualification-20261103-r1`, owned by this run, with a dynamically allocated IPv4 loopback port and user `p04r01`. The exact fresh database is `stoquify_local_p04_r01_20261103_r1`. No retained P03/R02 cluster, database, session or role is reused or mutated. Only this fresh target receives the complete copied current migration catalogue. Application `.env` files and ambient application variables are excluded. No provider delivery or application server is started.
+
+Preparation copies schema and migrations into a private scaffold and verifies exact hashes. Installed Prisma migrate deploy runs from that scaffold with explicit target variables and a minimal local config. A verified existing private Prisma generated client is used only after its file manifest and schema declaration compatibility match the captured current schema. This is real migration replay and PostgreSQL persistence evidence, not clean dependency-install/release proof.
+
+The Jest suite uses actual service and server-action exports, real RBAC/fresh-session reads and real persisted session rows. Better Auth transport, Next headers and cache invalidation are explicit stubs. This does not prove signed cookies, actual action HTTP routing or browser behavior. No application permission/scope service is mocked.
+
+Test cases cover reserved names/codes and preexisting latent roles, role update and assignment/reactivation, invitations, access-request decisions/application, normal privileged positives, safe denial and selected business-table digests, persisted authority/session changes, replay/conflict, actual concurrent lock waits and transaction rollback. Security/audit side effects are separately counted; denial digests must not silently omit business grants, invitations or outbox writes. All fixtures are synthetic.
+
+Runner logs/receipts are exclusive-create; fresh run directories are required. It captures tested source hashes before and after. On completion/failure, clients are closed and the exact current PID/data-directory identity is checked before stopping this owned cluster. Port release is verified. The cluster and database are retained; there is no recursive deletion, reset or cleanup of other work. A failed run remains failed and preserved; retries require a reviewed new run identity.

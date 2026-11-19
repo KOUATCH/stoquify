@@ -1,0 +1,15 @@
+  const commandKey = input.idempotencyKey?.trim()
+  if (input.idempotencyKey != null && (!commandKey || commandKey.length < 8 || commandKey.length > 191)) {
+    throw new BusinessRuleError("Accountant grant idempotency key is invalid.")
+  }
+  const receiptKey = commandKey ? `accountant-access-grant-command:${commandKey}` : null
+  const commandHash = receiptKey ? hashBusinessPayload({
+    organizationId, actorId, accountantUserId: accountant.id,
+    accountantEmail: input.accountantEmail.trim().toLowerCase(),
+    accountantFirmName: input.accountantFirmName,
+    accountantFirmRegistrationNumber: input.accountantFirmRegistrationNumber || null,
+    role: input.role, consentEvidenceHash: input.consentEvidenceHash,
+    // Omission must stay stable when a retry receives a later server clock.
+    effectiveFrom: input.effectiveFrom?.toISOString() ?? null,
+    expiresAt: input.expiresAt.toISOString(),
+  }) : null

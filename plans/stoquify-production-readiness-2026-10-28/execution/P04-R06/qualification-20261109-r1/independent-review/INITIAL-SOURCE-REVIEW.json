@@ -1,0 +1,80 @@
+{
+  "at": "2026-11-09T19:13:31.778Z",
+  "reviewer": "/root/v02_review",
+  "scope": "P04-R06 independent pre-repair inspection; no product edits or runtime execution",
+  "source": [
+    {
+      "path": "lib/auth.ts",
+      "sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9"
+    },
+    {
+      "path": "app/api/auth/[...all]/route.ts",
+      "sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "sha256": "4b402f487038b9c7c1d4b86b56e8f271e1303405a2a10ceb14bed23f0ab0ae09"
+    },
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "sha256": "c6da5af178a02bb21aea9170457c60eafac2d6d078276fc28d0c909572d172b2"
+    },
+    {
+      "path": "lib/security/__tests__/rbac.test.ts",
+      "sha256": "425064af9fe0e7cb814d8a5f3c982907900eec89d4316a1abe9e0058b42a85e8"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/to-auth-endpoints.mjs",
+      "sha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+      "sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123"
+    }
+  ],
+  "observations": [
+    "lib/auth.ts enables five-minute cookieCache; before-hook only checks email credential sign-in. Core catch-all delegates GET and all POST except reviewed update-user.",
+    "Application requireSession and RBAC already request disableCookieCache:true. requireSession mirrors exact session id/token/user/expiry; RBAC then checks active user, active tenant, lock state, verified email and tenant-scoped roles. These contracts must remain intact.",
+    "Core own-account operations must not silently inherit all RBAC tenant/role admission requirements. Current account eligibility can be checked without requiring an active tenant.",
+    "Existing active/lock semantics deny inactive accounts and permanent or future locks; elapsed temporary locks are eligible. Protected read admission should not unlock accounts or reset counters as a side effect.",
+    "Installed getSessionFromCtx is exported and invokes the raw getSession endpoint, not outer before/after hooks. It returns existing context.session early and merges caller ctx.query after config; an implementation using it must force server-owned context/query values rather than assume config wins.",
+    "Installed getSession may delete an expired session and ordinarily refresh valid sessions; disableRefresh:true avoids admission-driven renewal, while expired cleanup needs exact bookkeeping classification.",
+    "Disabling cookieCache prevents existing signed caches from being accepted, but runtime regression still needs actual pre-repair signed-cookie continuity; omitting the old cache precondition is not evidence."
+  ],
+  "recommendedBoundary": [
+    "Use a supported application-owned configuration/hook or equivalent reviewed boundary; no untracked installed dependency patch.",
+    "Explicitly map protected operations and preserve public authentication/recovery/callback/logout behavior. Inspect actual dispatch and internal API calls; do not infer HTTP absence from metadata.scope.",
+    "Before protected handlers, require current session/account authority. Preserve identity binding, query-negative behavior, custom profile guard and legitimate own-account operations.",
+    "If cookie cache is disabled, separately prove old signed-cache rejection and normal post-repair sign-in/session/account operation positives."
+  ],
+  "requiredRegressionEvidence": [
+    "Actual old signed cache replay for revoked and database-expired sessions on the refreshed artifact: get-session/list-sessions/list-accounts and unlink-account; no private fields or account changes.",
+    "Current inactive, permanent-lock, future-lock and elapsed-lock controls; legitimate independent actor works. Denied changes preserve accounts/business and classify only exact allowed session/security effects.",
+    "Caller disableCookieCache/disableRefresh variants, malformed or forged IDs, same-actor independent sibling and cross-actor session ownership controls.",
+    "Public sign-in/recovery method/origin continuity and reviewed update-user profile continuity, including independent authorized profile/account mutation.",
+    "Browser actual consumer and full-app provider continuity scoped to changed current-authority contract; R07/R08 findings remain separate and must not be incidentally repaired.",
+    "Fresh isolated build/source/artifact binding, native before/after records, exact owned cleanup, independent review and bounded work-register publication."
+  ],
+  "implementationAuthorization": "New user request authorizes bounded P04-R06 repair; reviewer owns only this independent-review directory.",
+  "readiness": "Parent P04 and production remain blocked; no commit/push/production flags/data migration/deployment."
+}

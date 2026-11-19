@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": [
+    "actions/accounting/accountant-access.actions.ts",
+    "services/accounting/accountant-access.service.ts",
+    "services/accounting/accountant-access.schemas.ts",
+    "services/accounting/accountant-portfolio.service.ts",
+    "services/accounting/accountant-portfolio-proof.service.ts",
+    "services/accounting/close-period-selection.service.ts",
+    "services/accounting/close-assurance-current-proof.ts",
+    "services/accounting/close-assessment-order.service.ts",
+    "services/accounting/close-assurance.service.ts",
+    "components/accounting/AccountantPortfolio.tsx",
+    "app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx",
+    "next-env.d.ts"
+  ]
+}

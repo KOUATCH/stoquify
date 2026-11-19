@@ -1,0 +1,81 @@
+"use client"
+
+import { useEffect, useRef, useState } from "react"
+import { useLocale } from "next-intl"
+import { ArrowRight, BarChart3, Building2, Check, Layers3, Package, Settings2, Users, Wallet } from "lucide-react"
+import { Link } from "@/i18n/navigation"
+import { PreviewLogo } from "./preview-logo"
+import { landingModuleCatalog } from "./landing-module-catalog-data"
+import type { OfferPath } from "./cinematic-offers-data"
+
+const groups = [
+  { id: "operations", label: ["Trade & stock", "Commerce et stock"], icon: Package },
+  { id: "finance", label: ["Money & records", "Finance et comptes"], icon: Wallet },
+  { id: "people", label: ["People & pay", "Personnel et paie"], icon: Users },
+  { id: "insights", label: ["Insight & reporting", "Analyses et rapports"], icon: BarChart3 },
+  { id: "foundation", label: ["Shared foundation", "Socle commun"], icon: Settings2 },
+] as const
+
+function revealCatalogItem(button: HTMLButtonElement | null, menu: HTMLDivElement | null, index: number) {
+  if (!button || !menu || !menu.clientHeight) return
+  if (index === 0) { menu.scrollTop = 0; return }
+  const b = button.getBoundingClientRect(), m = menu.getBoundingClientRect()
+  if (b.bottom > m.bottom) menu.scrollTop += b.bottom - m.bottom
+  else if (b.top < m.top) menu.scrollTop -= m.top - b.top
+}
+
+export function LandingModuleCatalog({ onChoosePath }: { onChoosePath: (path: OfferPath) => void }) {
+  const fr = useLocale() === "fr"
+  const text = (copy: readonly string[]) => copy[fr ? 1 : 0]
+  const [active, setActive] = useState(0)
+  const buttons = useRef<(HTMLButtonElement | null)[]>([])
+  const navigation = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const reveal = () => revealCatalogItem(buttons.current[active], navigation.current, active)
+    reveal()
+    window.addEventListener("resize", reveal)
+    return () => window.removeEventListener("resize", reveal)
+  }, [active])
+
+  return <section id="offers" className="section module-catalog" aria-labelledby="offers-title">
+    <div className="section-heading catalog-heading reveal">
+      <div><p className="eyebrow">{fr ? "VOS MODULES. LEURS RÔLES. LEURS LIENS." : "YOUR MODULES. THEIR ROLES. THEIR CONNECTIONS."}</p>
+        <h2 className="display" id="offers-title">{fr ? "Chaque équipe sait où travailler." : "A clear place for every team's work."}</h2></div>
+      <p className="section-lead">{fr ? "Découvrez les fonctions, les utilisateurs et les données partagées. Un module organise une partie du travail ; un parcours relie plusieurs équipes." : "Explore capabilities, users and shared records. A module organizes one part of the work; a workflow connects teams across it."}</p>
+    </div>
+    <div className="catalog-unit reveal">
+      <div className="catalog-navigation">
+        <div className="catalog-nav-heading"><Layers3 size={19} aria-hidden="true" /><strong>{fr ? "Explorer les fonctions" : "Explore capabilities"}</strong><small>18</small></div>
+        <label className="catalog-select"><span>{fr ? "Choisir un module ou espace" : "Choose a module or workspace"}</span><select value={active} onChange={event => setActive(Number(event.target.value))} aria-controls={`catalog-panel-${landingModuleCatalog[active].id}`}>
+          {groups.map(group => <optgroup key={group.id} label={text(group.label)}>{landingModuleCatalog.map((item, index) => item.group === group.id && <option key={item.id} value={index}>{text(item.name)}</option>)}</optgroup>)}
+        </select></label>
+        <div className="catalog-menu" ref={navigation} role="tablist" aria-orientation="vertical" aria-label={fr ? "Modules et espaces" : "Modules and workspaces"}>
+          {groups.map(group => <div className="catalog-group" key={group.id} role="presentation"><p><group.icon size={15} aria-hidden="true" />{text(group.label)}</p>
+            {landingModuleCatalog.map((item, index) => item.group === group.id && <button key={item.id} type="button" role="tab" id={`catalog-tab-${item.id}`} ref={el => { buttons.current[index] = el }} aria-selected={active === index} tabIndex={active === index ? 0 : -1} aria-controls={`catalog-panel-${item.id}`} onClick={() => setActive(index)} onFocus={() => revealCatalogItem(buttons.current[index], navigation.current, index)} onKeyDown={event => {
+              const next = event.key === "ArrowDown" ? (index + 1) % landingModuleCatalog.length : event.key === "ArrowUp" ? (index + landingModuleCatalog.length - 1) % landingModuleCatalog.length : event.key === "Home" ? 0 : event.key === "End" ? landingModuleCatalog.length - 1 : null
+              if (next === null) return
+              event.preventDefault(); setActive(next); buttons.current[next]?.focus({ preventScroll: true })
+            }}><span>{text(item.name)}</span><ArrowRight size={15} aria-hidden="true" /></button>)}
+          </div>)}
+        </div>
+      </div>
+      <div className="catalog-panels">
+        {landingModuleCatalog.map((item, index) => {
+          const group = groups.find(group => group.id === item.group)!
+          return <div className="catalog-panel" key={item.id} id={`catalog-panel-${item.id}`} role="tabpanel" aria-labelledby={`catalog-tab-${item.id}`} tabIndex={active === index ? 0 : -1} aria-hidden={active !== index} inert={active !== index}>
+            <div className="catalog-panel-bar"><PreviewLogo /><span>{item.id === "hris" ? (fr ? "ESPACE PERSONNEL" : "PEOPLE WORKSPACE") : text(group.label)}</span></div>
+            <div className="catalog-panel-body">
+              <div className="catalog-module-title"><group.icon size={28} aria-hidden="true" /><div><h3>{text(item.name)}</h3><p>{text(item.users)}</p></div></div>
+              <p className="catalog-purpose">{text(item.purpose)}</p>
+              <ul className="catalog-capabilities">{item.capabilities.map(capability => <li key={capability[0]}><Check size={17} aria-hidden="true" />{text(capability)}</li>)}</ul>
+              <div className="catalog-handoff"><div><span>{fr ? "À PARTIR DE" : "STARTS WITH"}</span><p>{text(item.input)}</p></div><ArrowRight size={20} aria-hidden="true" /><div><span>{fr ? "TRANSMET" : "CARRIES FORWARD"}</span><p>{text(item.output)}</p></div></div>
+              <div className="catalog-actions"><Link href={item.href}>{item.href.startsWith("/products") ? (fr ? "Découvrir les fonctions" : "Explore the capabilities") : (fr ? "Consulter le guide associé" : "Read the related guide")}<ArrowRight size={16} aria-hidden="true" /></Link><a href="#pricing" onClick={() => onChoosePath(item.path)}>{fr ? "Voir le parcours d’adoption" : "See the adoption path"}<ArrowRight size={16} aria-hidden="true" /></a></div>
+            </div>
+          </div>
+        })}
+      </div>
+      <div className="catalog-firm"><Building2 size={23} aria-hidden="true" /><div><strong>{fr ? "Avec votre cabinet comptable" : "Working with your accounting firm"}</strong><p>{fr ? "Mandat et accès autorisés → portefeuille clients → revue des pièces et de la clôture. Le cabinet collabore sur vos dossiers, dans le périmètre accordé." : "Authorized engagement and access → client portfolio → evidence and close review. Your firm collaborates on your records within the scope you grant."}</p></div><Link href="/#flow-tab-15">{fr ? "Explorer la collaboration" : "Explore collaboration"}<ArrowRight size={16} aria-hidden="true" /></Link></div>
+    </div>
+    <p className="catalog-availability">{fr ? "La disponibilité dépend des modules activés, des droits, des dépendances et du paramétrage validé. Les règles pays et les connexions prestataires sont à confirmer pour votre déploiement." : "Availability follows enabled modules, permissions, dependencies and reviewed configuration. Confirm country rules and provider connections for your rollout."}</p>
+  </section>
+}

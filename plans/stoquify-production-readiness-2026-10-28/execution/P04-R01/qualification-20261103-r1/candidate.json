@@ -1,0 +1,16 @@
+{
+  "candidate_id": "p04-r01-20261103-e7ff3b08d605",
+  "source_identity": "e7ff3b08d605aebbd4d74f1381055b72b422ba9f9de723fdacaf48753df301d4",
+  "baseline_head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "source_manifest": "owned-source.json",
+  "pre_repair_manifest": "source-before.json",
+  "scope": "32 owned files, including18 product files and14 tests; dirty checkout preserved; no built full-app artifact",
+  "not_claimed": [
+    "whole-checkout production qualification",
+    "actual HTTP/browser transport",
+    "deployed production role census"
+  ],
+  "source_identity_formula": "SHA-256 of UTF-8 JSON.stringify(owned-source.json.files.map(({path,sha256}) => ({path,sha256}))), retaining manifest array order",
+  "pre_repair_supplement": "source-before-supplement.json",
+  "supersedes": "candidate-initial.json"
+}

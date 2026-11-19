@@ -116,7 +116,7 @@ describe("buildTodaysOperatingTruthModel", () => {
       selectedLocationLabel: "All locations",
     })
 
-    expect(model.brief.title).toBe("Daily Business Confidence Brief")
+    expect(model.brief.title).toBe("Your activity today")
     expect(model.brief.summary).toContain("Tenant One")
     expect(model.brief.actions?.[0].href).toBe("/en/dashboard/owner-war-room")
     expect(model.kpis.map((kpi) => kpi.label)).toEqual([
@@ -126,7 +126,7 @@ describe("buildTodaysOperatingTruthModel", () => {
       "Stock risk",
       "Open obligations",
     ])
-    expect(model.status.title).toBe("Trust states")
+    expect(model.status.title).toBe("Live operating status")
     expect(model.status.items.map((item) => item.id)).toEqual([
       "pos",
       "stock",
@@ -159,6 +159,8 @@ describe("buildTodaysOperatingTruthModel", () => {
     expect(model.brief.state?.tone).toBe("success")
     expect(margin?.value).toBe("Non disponible")
     expect(margin?.proof?.state).toBe("unavailable")
+    expect(margin?.proof?.label).toBe("Justificatif indisponible")
+    expect(model.evidence.events.find(event => event.id === "activity-activity-1")?.stateLabel).toBe("EnregistrÃ©")
     expect(model.shortcuts.actions.some((action) => action.href === "/fr/dashboard/payroll")).toBe(true)
     expect(model.onboarding.steps.find((step) => step.id === "payroll_setup")?.stateLabel).toBe("Optionnel")
   })

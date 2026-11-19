@@ -41,7 +41,7 @@ The alternate existing `jest.ui-workflow-postgres.config.cjs` has no Prisma mock
 
 For auth changes, report permission/revocation cases and which persistence boundaries were mocked. For inventory, payroll, payments and POS, distinguish unit invariants from actual transaction rollback, uniqueness and concurrent contenders on PostgreSQL. For UI work, report keyboard, loading/error/empty/recovery and localization evidence separately from screenshots. For every run retain command, suite names, counts, target identity without secrets, date and source baseline; list not-run checks and skipped suites explicitly.
 
-The default coverage collection in `jest.config.ts` historically omits `services/`. A dedicated services coverage lane should report the selected service domains without implying whole-platform coverage. Adding coverage collection does not add missing database tests or turn mocked tests into database evidence. The implementation report records the separately integrated coverage scope and actual run status.
+The current default coverage collection in `jest.config.ts` includes `services/**/*.{js,jsx,ts,tsx}`. This configuration is not evidence that coverage was collected or that all service domains were exercised. A scoped services coverage run must report the selected domains and actual results without implying whole-platform coverage. Adding coverage collection does not add missing database tests or turn mocked tests into database evidence. The implementation report records the separately integrated coverage scope and actual run status.
 
 ## Maintenance and rollback
 

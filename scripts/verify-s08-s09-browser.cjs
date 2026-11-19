@@ -22,9 +22,9 @@ write('package.json', JSON.stringify({ private: true, name: 'operator-journey-fi
 write('tsconfig.json', JSON.stringify({ compilerOptions: { target: 'ES2017', lib: ['dom', 'esnext'], allowJs: true, skipLibCheck: true, strict: true, noEmit: true, esModuleInterop: true, module: 'esnext', moduleResolution: 'bundler', isolatedModules: true, jsx: 'preserve', baseUrl: root, paths: { '@/*': ['./*'] } }, include: ['**/*.ts', '**/*.tsx', '.next/types/**/*.ts'], exclude: ['node_modules'] }));
 const aliases = Object.fromEntries([
   'actions/purchasing/payment-release.actions', 'actions/security/step-up-auth.actions',
-  'actions/pos/checkout.actions', 'hooks/usePermissions', 'hooks/posHooks/usePosOperations',
+  'actions/pos/checkout.actions', 'actions/pos/whatsapp-receipt.actions', 'hooks/usePermissions', 'hooks/posHooks/usePosOperations',
   'hooks/posHooks/usePOSCheckoutLifecycle', 'components/notifications/NotificationProvider',
-  'components/pos/offline/OfflineSyncStatusStrip', 'components/pos/ReceiptTokenHistoryPanel', 'components/pos/ReceiptTokenControlStrip',
+  'components/pos/offline/OfflineSyncStatusStrip', 'components/pos/ReceiptTokenHistoryPanel', 'components/pos/ReceiptTokenControlStrip', 'components/pos/POSReturns',
 ].map(name => ['@/' + name + '$', path.join(root, 'tests/s08-s09/browser/adapters.tsx')]));
 // Next resolves server-action imports before webpack aliases; route the fixture
 // paths at the TypeScript resolver boundary too, so no real action is bundled.

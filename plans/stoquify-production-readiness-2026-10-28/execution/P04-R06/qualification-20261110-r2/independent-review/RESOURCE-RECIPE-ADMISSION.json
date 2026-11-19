@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-10T12:14:38.649Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Read-only host resource collector and new evidence receipt only; no build/database/runtime admission",
+  "files": [
+    {
+      "path": "resource-snapshot.ps1",
+      "sha256": "46fcf22a3615aca5a4c48da70cadf246da81479a30f6f4b43ed301672ff61534"
+    },
+    {
+      "path": "check-resources.cjs",
+      "sha256": "76ed28fd79069d9aed58c6d4ed9d2690008236cdaf0ad73516476f1429d150d4"
+    }
+  ],
+  "review": [
+    "PowerShell reads CIM memory/pagefiles/process identity, filesystem capacity and local listening ports; emits no command lines/environment/credentials.",
+    "No host/process/system-setting mutations; process-local ExecutionPolicy Bypass permits this inspected read-only body without changing machine policy.",
+    "Only write is an exclusive resource-*.json receipt under this new packet; fixed task path is D:/p04-r06-fullapp-20261110-r2.",
+    "Thresholds remain6GiB physical/12GiB commit/12GiB Dfree; capacity pass admits later reviewed attempts only, not successful qualification.",
+    "Port-inspection errors and any owned processes remain visible; later environment/DB/runtime admission must separately reject conflicting ownership/ports."
+  ],
+  "thresholds": {
+    "physicalFreeGiB": 6,
+    "commitFreeGiB": 12,
+    "buildDriveFreeGiB": 12
+  },
+  "allowedNext": "Execute exact collector to a new evidence-local resource receipt. No directory creation, database startup, migration, application or build authorized by this review."
+}

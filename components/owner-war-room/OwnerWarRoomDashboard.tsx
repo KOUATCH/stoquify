@@ -1,7 +1,12 @@
 "use client"
+import { FollowUpPanel } from "@/components/command-center/FollowUpPanel"
+
+import { useManagerView } from "@/components/manager-action-center/useManagerView"
+import { priorityExplanation } from "@/lib/dashboard/command-center-context"
+import { CommandCenterRecovery } from "@/components/dashboard/CommandCenterRecovery"
 
 import type { ReactNode } from "react"
-import { useMemo, useState, useTransition } from "react"
+import { useMemo, useRef, useState, useTransition } from "react"
 import { BIActionButton } from "@/components/bi/BIActionButton"
 import { BISeverityBadge } from "@/components/bi/BIStateBadge"
 import {
@@ -60,6 +65,7 @@ import type {
 } from "@/services/owner-war-room/owner-war-room-contracts"
 
 type OwnerWarRoomDashboardProps = {
+  followUpEnabled?: boolean
   data: OwnerWarRoomData
   locale: "en" | "fr"
   title: string
@@ -100,12 +106,12 @@ const copy = {
     readOnly: "Read-only",
     evidenceBacked: "Evidence-backed",
     observeMode: "Observe mode",
-    sinceYesterday: "Since yesterday",
-    sinceYesterdayDetail: "Important cash, close, evidence, and proof-linked movements opened in the last day.",
+    sinceYesterday: "Current observations",
+    sinceYesterdayDetail: "Current cash, close and evidence observations. Comparable historical snapshots are not available.",
     ownerRisks: "Owner risks",
     ownerRisksDetail: "Cash at risk, blocked close items, stale evidence, and stock-to-cash exposure ranked for today.",
     proofLinkedActions: "Top proof-linked actions",
-    proofLinkedActionsDetail: "Visible actions opened since yesterday with proof context already authorized for this user.",
+    proofLinkedActionsDetail: "Visible priorities with proof context already authorized for this user.",
     truthZones: "Business truth zones",
     briefProof: "Brief proof",
     acknowledgeBrief: "Acknowledge brief",
@@ -182,12 +188,12 @@ const copy = {
     readOnly: "Lecture seule",
     evidenceBacked: "Appuyé sur des preuves",
     observeMode: "Mode observation",
-    sinceYesterday: "Depuis hier",
-    sinceYesterdayDetail: "Évolutions de trésorerie, de clôture et de preuves au cours de la dernière journée.",
+    sinceYesterday: "Observations actuelles",
+    sinceYesterdayDetail: "Observations actuelles de trésorerie, de clôture et de preuves. Les instantanés historiques comparables ne sont pas disponibles.",
     ownerRisks: "Risques à examiner",
     ownerRisksDetail: "Trésorerie à risque, blocages de clôture, preuves périmées et exposition des stocks, classés pour aujourd’hui.",
     proofLinkedActions: "Actions prioritaires et preuves",
-    proofLinkedActionsDetail: "Actions ouvertes depuis hier et preuves accessibles selon vos droits.",
+    proofLinkedActionsDetail: "Priorités visibles et preuves accessibles selon vos droits.",
     truthZones: "Données métier et preuves",
     briefProof: "Preuve de la synthèse",
     acknowledgeBrief: "Marquer comme lu",
@@ -260,11 +266,15 @@ const stateTone: Record<OwnerWarRoomCardState, OwnerWarRoomTone> = {
   safe_error: "danger",
 }
 
-export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWarRoomDashboardProps) {
+function OwnerWarRoomDashboardContent({ data, locale, title, subtitle }: OwnerWarRoomDashboardProps) {
   const [proofTrail, setProofTrail] = useState<ProofTrailResult | null>(null)
   const [proofOpen, setProofOpen] = useState(false)
   const [proofError, setProofError] = useState<string | null>(null)
-  const [commandMode, setCommandMode] = useState<BICommandMode>(data.morningBrief.commandBrief.mode)
+  const { view, update } = useManagerView({sources: [], roles: [], defaultMode: data.morningBrief.commandBrief.mode})
+  const commandMode = view.mode
+  const setCommandMode = (mode: BICommandMode) => update({mode})
+  const proofRequest = useRef(0)
+  const proofTrigger = useRef<HTMLElement | null>(null)
   const [briefAcknowledged, setBriefAcknowledged] = useState(
     data.morningBrief.acknowledgement.state === "acknowledged",
   )
@@ -284,21 +294,27 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
   )
 
   function loadProofTrail(subject: { subjectType: OwnerWarRoomData["proofSubjects"][number]["subjectType"]; subjectId: string }) {
-    if (!subject.subjectId) return
+    if (!subject.subjectId || isPending) return
+    proofTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const request = ++proofRequest.current
+    setProofTrail(null)
     setProofError(null)
     setProofOpen(true)
     startTransition(async () => {
-      const response = await getProofTrailAction({
-        subjectType: subject.subjectType,
-        subjectId: subject.subjectId,
-      })
-      if (response.success) {
-        setProofTrail(response.data)
-        return
+      try {
+        const response = await getProofTrailAction({subjectType: subject.subjectType, subjectId: subject.subjectId})
+        if (request !== proofRequest.current) return
+        if (response.success) setProofTrail(response.data)
+        else setProofError(t.proofError)
+      } catch {
+        if (request === proofRequest.current) setProofError(t.proofError)
       }
-      setProofTrail(null)
-      setProofError(response.error || t.proofError)
     })
+  }
+
+  function changeProofOpen(open: boolean) {
+    if (!open) { proofRequest.current++; setProofTrail(null); setProofError(null) }
+    setProofOpen(open)
   }
 
   function openProofTrail(subject: OwnerWarRoomData["proofSubjects"][number]) {
@@ -311,12 +327,14 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
   }
 
   return (
-    <main aria-label={title} className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
+    <section aria-label={title} className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8">
         <p className="sr-only">{subtitle}</p>
         <BICommandBriefHeader
           compact
           locale={locale}
+          timezone="UTC"
+          periodTimezone="UTC"
           brief={data.morningBrief.commandBrief}
           mode={commandMode}
           onModeChange={setCommandMode}
@@ -330,14 +348,17 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
           <div className="flex flex-wrap items-center gap-2">
             <Badge className={cn("border", dashboardToneClass("success"))}>{t.readOnly}</Badge>
             <BIProofDrawerHost
+              keepTriggerFocusableWhileLoading
               locale={locale}
               isLoading={isPending}
               error={proofError}
               subject={briefProofSubject}
               proofTrail={proofTrail}
               open={proofOpen}
-              onOpenChange={setProofOpen}
+              onOpenChange={changeProofOpen}
+              onCloseAutoFocus={event => { event.preventDefault(); if (proofTrigger.current?.isConnected) proofTrigger.current.focus() }}
               onOpenSubject={openBIProofTrail}
+              triggerId="owner-brief-proof-trigger"
               triggerLabel={t.openProof}
             />
           </div>
@@ -357,7 +378,7 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
                 locale={locale}
                 items={data.morningBrief.priorityActions}
                 title={t.proofLinkedActions}
-                detail={t.proofLinkedActionsDetail}
+                detail={priorityExplanation(data.actionQueue.actionItems.find(item => item.id === data.morningBrief.priorityActions[0]?.id), "score", locale)}
                 maxItems={3}
               />
               <BIRiskOpportunityRadar
@@ -369,6 +390,7 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
               />
             </section>
             <BIWhatChangedStrip
+              contentKind="observations"
               locale={locale}
               changes={data.morningBrief.changes}
               title={t.sinceYesterday}
@@ -474,9 +496,10 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
                     </div>
                   </div>
                 ) : null}
+                <p className="mt-3 text-sm text-[var(--dash-text-soft)]">{data.actionQueue.actionItems.length} {locale === "fr" ? "actions autorisées chargées ; toutes sont affichées ci-dessous." : "authorized actions loaded; all are shown below."}</p>
                 <div className="mt-4 space-y-3">
                   {data.actionQueue.actionItems.length ? (
-                    data.actionQueue.actionItems.slice(0, 7).map((item) => (
+                    data.actionQueue.actionItems.map((item) => (
                       <div key={item.id} className={cn(dashboardRowClass, "p-3")}>
                         <div className="flex flex-col items-start justify-between gap-3 sm:flex-row">
                           <div className="min-w-0">
@@ -601,8 +624,10 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
                   {data.proofSubjects.map((subject) => (
                     <button
                       key={subject.subjectType}
+                      id={`owner-proof-${subject.subjectType}`}
                       type="button"
-                      disabled={!subject.enabled || isPending}
+                      disabled={!subject.enabled}
+                      aria-disabled={isPending || undefined}
                       onClick={() => openProofTrail(subject)}
                       className={cn(
                         "w-full rounded-lg border p-3 text-left transition",
@@ -642,7 +667,7 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
                     <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>{t.moduleStateDetail}</p>
                   </div>
                   <Badge variant="outline" className={cn("border", dashboardToneClass(data.moduleControl.summary.wouldBlockCount ? "gold" : "success"))}>
-                    {data.moduleControl.mode}
+                    {locale === "fr" ? {off: "Désactivé", observe: "Observation", enforce: "Application des contrôles"}[data.moduleControl.mode] : data.moduleControl.mode}
                   </Badge>
                 </div>
                 <div className="mt-4 grid gap-3 md:grid-cols-3">
@@ -671,7 +696,7 @@ export function OwnerWarRoomDashboard({ data, locale, title, subtitle }: OwnerWa
         ) : null}
       </div>
 
-    </main>
+    </section>
   )
 }
 
@@ -728,7 +753,7 @@ function formatMetric(value: number | null, unit: string, locale: string) {
 }
 
 function formatDate(value: string, locale: string) {
-  return new Intl.DateTimeFormat(locale, { month: "short", day: "numeric" }).format(new Date(value))
+  return new Intl.DateTimeFormat(locale, { timeZone: "UTC", month: "short", day: "numeric" }).format(new Date(value))
 }
 
 function severityToDashboardSeverity(severity: string): DashboardSeverity {
@@ -736,4 +761,8 @@ function severityToDashboardSeverity(severity: string): DashboardSeverity {
   if (severity === "medium") return "warning"
   if (severity === "low") return "info"
   return "info"
+}
+
+export function OwnerWarRoomDashboard(props: OwnerWarRoomDashboardProps) {
+  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><OwnerWarRoomDashboardContent {...props} />{props.followUpEnabled ? <div className="dashboard-landing-theme dark px-4 py-4"><div className="dashboard-landing-content mx-auto max-w-[1920px]"><FollowUpPanel key={`${props.data.organizationId}:${props.data.generatedAt}`} center="owner" periodStart={props.data.periodStart} periodEnd={props.data.periodEnd} locale={props.locale} /></div></div> : null}</CommandCenterRecovery>
 }

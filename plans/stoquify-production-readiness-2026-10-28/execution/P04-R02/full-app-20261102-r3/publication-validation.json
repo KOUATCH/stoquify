@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-02T18:21:28.628Z",
+  "passed": true,
+  "changedPackages": [
+    "P04",
+    "P04-R02"
+  ],
+  "statusChanges": [
+    "P04-R02"
+  ],
+  "parentStillBlocked": true,
+  "addedEvidence": [
+    "E22"
+  ],
+  "packages": 54,
+  "dependencyEdges": 183,
+  "domains": 57,
+  "auditGaps": 12,
+  "decisions": 14,
+  "productionGates": 18,
+  "unchangedTopLevelFields": [
+    "schema_version",
+    "plan_version",
+    "created_at",
+    "planning_only",
+    "repository",
+    "baseline_head",
+    "scope",
+    "domains",
+    "audit_gap_map",
+    "decisions",
+    "gates",
+    "scope_mutation_policy",
+    "execution_authorization"
+  ],
+  "deferredPackages": [
+    {
+      "id": "X01",
+      "status": "deferred"
+    },
+    {
+      "id": "X02",
+      "status": "deferred"
+    },
+    {
+      "id": "X03",
+      "status": "deferred"
+    },
+    {
+      "id": "X04",
+      "status": "deferred"
+    }
+  ],
+  "csv": {
+    "rows": 54,
+    "allFieldsReconciled": true,
+    "onlyChangedLines": [
+      5,
+      48
+    ]
+  },
+  "independentVerdict": "independent-review/ASSESSMENT.json",
+  "limits": "Semantic register and CSV reconciliation only; actual runtime/database/source evidence is referenced separately.",
+  "hardDependencyEdges": 176,
+  "conditionalDependencyEdges": 7,
+  "beforeDependencyEdges": 183,
+  "remainingRequirementsMatchIndependentAssessment": true,
+  "registerSha256": "1a03d104f4db15b7e1ddfd0d03505f75a8fb747518b09ad6d6f62c1579a3b60f",
+  "csvSha256": "a8d53050faac1cdfba579d262b0f7e90ceaf294fa247bdc1b5bc60bd104cd246"
+}

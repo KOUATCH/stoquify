@@ -1,0 +1,568 @@
+{
+  "schemaVersion": 1,
+  "package": "P04",
+  "entries": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx",
+      "line": 63,
+      "name": "createAccount",
+      "sha256": "fc416cb7d6f2fe65fb5a846a9bd0039cca1798f72d78d2f832c08bc0d8f75033",
+      "reviewLevel": "inline_action_delegate_source_reviewed",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx#inline:createAccount:63",
+      "downstreamAction": "actions/accounting/accounts.actions.ts#createChartAccountAction",
+      "boundaries": {
+        "actor": "delegated to current downstream protected action, not page-render context",
+        "tenant": "form scalar values parsed; no trusted organization/actor from client",
+        "permission": "downstream action permission (see referenced register entry)",
+        "location": "downstream service; pending full related-resource qualification",
+        "module": "downstream action/service; see explicit gaps"
+      },
+      "gaps": [
+        "P04-A-G02: direct inline-action negative invocation not runtime-qualified",
+        "P04-A-G01: downstream unresolved gaps inherit"
+      ],
+      "evidenceRefs": [
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx",
+          "line": 63,
+          "sha256": "fc416cb7d6f2fe65fb5a846a9bd0039cca1798f72d78d2f832c08bc0d8f75033"
+        },
+        {
+          "path": "actions/accounting/accounts.actions.ts",
+          "line": 91,
+          "sha256": "2ca2940a47151f474975e76c0e65b93bd60ec738c9945cf93fac84675c913202"
+        },
+        {
+          "path": "lib/security/rbac.ts",
+          "line": 87,
+          "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+        },
+        {
+          "path": "lib/security/auth-session.ts",
+          "line": 94,
+          "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+        },
+        {
+          "path": "services/_shared/protect.ts",
+          "line": 56,
+          "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+        },
+        {
+          "path": "services/accounting/accounts.service.ts",
+          "line": 50,
+          "sha256": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe"
+        },
+        {
+          "path": "services/accounting/accounts.service.ts",
+          "line": 147,
+          "sha256": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe"
+        },
+        {
+          "path": "services/accounting/accounts.service.ts",
+          "line": 230,
+          "sha256": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe"
+        }
+      ]
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx",
+      "line": 82,
+      "name": "archiveAccount",
+      "sha256": "fc416cb7d6f2fe65fb5a846a9bd0039cca1798f72d78d2f832c08bc0d8f75033",
+      "reviewLevel": "inline_action_delegate_source_reviewed",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx#inline:archiveAccount:82",
+      "downstreamAction": "actions/accounting/accounts.actions.ts#archiveChartAccountAction",
+      "boundaries": {
+        "actor": "delegated to current downstream protected action, not page-render context",
+        "tenant": "form scalar values parsed; no trusted organization/actor from client",
+        "permission": "downstream action permission (see referenced register entry)",
+        "location": "downstream service; pending full related-resource qualification",
+        "module": "downstream action/service; see explicit gaps"
+      },
+      "gaps": [
+        "P04-A-G02: direct inline-action negative invocation not runtime-qualified",
+        "P04-A-G01: downstream unresolved gaps inherit"
+      ],
+      "evidenceRefs": [
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx",
+          "line": 82,
+          "sha256": "fc416cb7d6f2fe65fb5a846a9bd0039cca1798f72d78d2f832c08bc0d8f75033"
+        },
+        {
+          "path": "actions/accounting/accounts.actions.ts",
+          "line": 120,
+          "sha256": "2ca2940a47151f474975e76c0e65b93bd60ec738c9945cf93fac84675c913202"
+        },
+        {
+          "path": "lib/security/rbac.ts",
+          "line": 87,
+          "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+        },
+        {
+          "path": "lib/security/auth-session.ts",
+          "line": 94,
+          "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+        },
+        {
+          "path": "services/_shared/protect.ts",
+          "line": 56,
+          "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+        },
+        {
+          "path": "services/accounting/accounts.service.ts",
+          "line": 50,
+          "sha256": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe"
+        },
+        {
+          "path": "services/accounting/accounts.service.ts",
+          "line": 147,
+          "sha256": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe"
+        },
+        {
+          "path": "services/accounting/accounts.service.ts",
+          "line": 230,
+          "sha256": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe"
+        }
+      ]
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+      "line": 82,
+      "name": "createEntry",
+      "sha256": "d5a28de76b364c63048053c550f688549d5cc3f7071dae2a1a0f96d0d155209e",
+      "reviewLevel": "inline_action_delegate_source_reviewed",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx#inline:createEntry:82",
+      "downstreamAction": "actions/accounting/journals.actions.ts#createManualJournalEntryAction",
+      "boundaries": {
+        "actor": "delegated to current downstream protected action, not page-render context",
+        "tenant": "form scalar values parsed; no trusted organization/actor from client",
+        "permission": "downstream action permission (see referenced register entry)",
+        "location": "downstream service; pending full related-resource qualification",
+        "module": "downstream action/service; see explicit gaps"
+      },
+      "gaps": [
+        "P04-A-G02: direct inline-action negative invocation not runtime-qualified",
+        "P04-A-G01: downstream unresolved gaps inherit"
+      ],
+      "evidenceRefs": [
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+          "line": 82,
+          "sha256": "d5a28de76b364c63048053c550f688549d5cc3f7071dae2a1a0f96d0d155209e"
+        },
+        {
+          "path": "actions/accounting/journals.actions.ts",
+          "line": 101,
+          "sha256": "7db51535d578c9810b9ea86aa641a35db0f08f91fe2f8c88581444bf4701de49"
+        },
+        {
+          "path": "lib/security/rbac.ts",
+          "line": 87,
+          "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+        },
+        {
+          "path": "lib/security/auth-session.ts",
+          "line": 94,
+          "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+        },
+        {
+          "path": "services/_shared/protect.ts",
+          "line": 56,
+          "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+        },
+        {
+          "path": "services/accounting/journals.service.ts",
+          "line": 304,
+          "sha256": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e"
+        },
+        {
+          "path": "services/accounting/posting.service.ts",
+          "line": 258,
+          "sha256": "d5e30c3138e178e98c4b4f1c0bbbbcd32919c16d1c9817c94fb6629b0558e06d"
+        }
+      ]
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "line": 65,
+      "name": "saveSettings",
+      "sha256": "338f6b7714d75ab5056c4f374106719068cc497fcb20c8defe5a0d46f866a751",
+      "reviewLevel": "inline_action_delegate_source_reviewed",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx#inline:saveSettings:65",
+      "downstreamAction": "actions/accounting/settings.actions.ts#updateAccountingSettingsAction",
+      "boundaries": {
+        "actor": "delegated to current downstream protected action, not page-render context",
+        "tenant": "form scalar values parsed; no trusted organization/actor from client",
+        "permission": "downstream action permission (see referenced register entry)",
+        "location": "downstream service; pending full related-resource qualification",
+        "module": "downstream action/service; see explicit gaps"
+      },
+      "gaps": [
+        "P04-A-G02: direct inline-action negative invocation not runtime-qualified",
+        "P04-A-G01: downstream unresolved gaps inherit"
+      ],
+      "evidenceRefs": [
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+          "line": 65,
+          "sha256": "338f6b7714d75ab5056c4f374106719068cc497fcb20c8defe5a0d46f866a751"
+        },
+        {
+          "path": "actions/accounting/settings.actions.ts",
+          "line": 106,
+          "sha256": "5e925b26445bf576b4179e4ce4a4b8335585c3f89b9b4b968db3a21517355d15"
+        },
+        {
+          "path": "lib/security/rbac.ts",
+          "line": 87,
+          "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+        },
+        {
+          "path": "lib/security/auth-session.ts",
+          "line": 94,
+          "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+        },
+        {
+          "path": "services/_shared/protect.ts",
+          "line": 56,
+          "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+        }
+      ]
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "line": 78,
+      "name": "ensureJournals",
+      "sha256": "338f6b7714d75ab5056c4f374106719068cc497fcb20c8defe5a0d46f866a751",
+      "reviewLevel": "inline_action_delegate_source_reviewed",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx#inline:ensureJournals:78",
+      "downstreamAction": "actions/accounting/settings.actions.ts#ensureDefaultJournalsAction",
+      "boundaries": {
+        "actor": "delegated to current downstream protected action, not page-render context",
+        "tenant": "form scalar values parsed; no trusted organization/actor from client",
+        "permission": "downstream action permission (see referenced register entry)",
+        "location": "downstream service; pending full related-resource qualification",
+        "module": "downstream action/service; see explicit gaps"
+      },
+      "gaps": [
+        "P04-A-G02: direct inline-action negative invocation not runtime-qualified",
+        "P04-A-G01: downstream unresolved gaps inherit"
+      ],
+      "evidenceRefs": [
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+          "line": 78,
+          "sha256": "338f6b7714d75ab5056c4f374106719068cc497fcb20c8defe5a0d46f866a751"
+        },
+        {
+          "path": "actions/accounting/settings.actions.ts",
+          "line": 119,
+          "sha256": "5e925b26445bf576b4179e4ce4a4b8335585c3f89b9b4b968db3a21517355d15"
+        },
+        {
+          "path": "lib/security/rbac.ts",
+          "line": 87,
+          "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+        },
+        {
+          "path": "lib/security/auth-session.ts",
+          "line": 94,
+          "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+        },
+        {
+          "path": "services/_shared/protect.ts",
+          "line": 56,
+          "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+        }
+      ]
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "line": 84,
+      "name": "createFiscalYear",
+      "sha256": "338f6b7714d75ab5056c4f374106719068cc497fcb20c8defe5a0d46f866a751",
+      "reviewLevel": "inline_action_delegate_source_reviewed",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx#inline:createFiscalYear:84",
+      "downstreamAction": "actions/accounting/settings.actions.ts#createFiscalYearAction",
+      "boundaries": {
+        "actor": "delegated to current downstream protected action, not page-render context",
+        "tenant": "form scalar values parsed; no trusted organization/actor from client",
+        "permission": "downstream action permission (see referenced register entry)",
+        "location": "downstream service; pending full related-resource qualification",
+        "module": "downstream action/service; see explicit gaps"
+      },
+      "gaps": [
+        "P04-A-G02: direct inline-action negative invocation not runtime-qualified",
+        "P04-A-G01: downstream unresolved gaps inherit"
+      ],
+      "evidenceRefs": [
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+          "line": 84,
+          "sha256": "338f6b7714d75ab5056c4f374106719068cc497fcb20c8defe5a0d46f866a751"
+        },
+        {
+          "path": "actions/accounting/settings.actions.ts",
+          "line": 142,
+          "sha256": "5e925b26445bf576b4179e4ce4a4b8335585c3f89b9b4b968db3a21517355d15"
+        },
+        {
+          "path": "lib/security/rbac.ts",
+          "line": 87,
+          "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+        },
+        {
+          "path": "lib/security/auth-session.ts",
+          "line": 94,
+          "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+        },
+        {
+          "path": "services/_shared/protect.ts",
+          "line": 56,
+          "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+        }
+      ]
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "line": 96,
+      "name": "closePeriod",
+      "sha256": "338f6b7714d75ab5056c4f374106719068cc497fcb20c8defe5a0d46f866a751",
+      "reviewLevel": "inline_action_delegate_source_reviewed",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx#inline:closePeriod:96",
+      "downstreamAction": "actions/accounting/settings.actions.ts#closeAccountingPeriodAction",
+      "boundaries": {
+        "actor": "delegated to current downstream protected action, not page-render context",
+        "tenant": "form scalar values parsed; no trusted organization/actor from client",
+        "permission": "downstream action permission (see referenced register entry)",
+        "location": "downstream service; pending full related-resource qualification",
+        "module": "downstream action/service; see explicit gaps"
+      },
+      "gaps": [
+        "P04-A-G02: direct inline-action negative invocation not runtime-qualified",
+        "P04-A-G01: downstream unresolved gaps inherit"
+      ],
+      "evidenceRefs": [
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+          "line": 96,
+          "sha256": "338f6b7714d75ab5056c4f374106719068cc497fcb20c8defe5a0d46f866a751"
+        },
+        {
+          "path": "actions/accounting/settings.actions.ts",
+          "line": 162,
+          "sha256": "5e925b26445bf576b4179e4ce4a4b8335585c3f89b9b4b968db3a21517355d15"
+        },
+        {
+          "path": "lib/security/rbac.ts",
+          "line": 87,
+          "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+        },
+        {
+          "path": "lib/security/auth-session.ts",
+          "line": 94,
+          "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+        },
+        {
+          "path": "services/_shared/protect.ts",
+          "line": 56,
+          "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+        }
+      ]
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "line": 106,
+      "name": "markReady",
+      "sha256": "338f6b7714d75ab5056c4f374106719068cc497fcb20c8defe5a0d46f866a751",
+      "reviewLevel": "inline_action_delegate_source_reviewed",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx#inline:markReady:106",
+      "downstreamAction": "actions/accounting/settings.actions.ts#markAccountingSetupReadyAction",
+      "boundaries": {
+        "actor": "delegated to current downstream protected action, not page-render context",
+        "tenant": "form scalar values parsed; no trusted organization/actor from client",
+        "permission": "downstream action permission (see referenced register entry)",
+        "location": "downstream service; pending full related-resource qualification",
+        "module": "downstream action/service; see explicit gaps"
+      },
+      "gaps": [
+        "P04-A-G02: direct inline-action negative invocation not runtime-qualified",
+        "P04-A-G01: downstream unresolved gaps inherit"
+      ],
+      "evidenceRefs": [
+        {
+          "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+          "line": 106,
+          "sha256": "338f6b7714d75ab5056c4f374106719068cc497fcb20c8defe5a0d46f866a751"
+        },
+        {
+          "path": "actions/accounting/settings.actions.ts",
+          "line": 191,
+          "sha256": "5e925b26445bf576b4179e4ce4a4b8335585c3f89b9b4b968db3a21517355d15"
+        },
+        {
+          "path": "lib/security/rbac.ts",
+          "line": 87,
+          "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+        },
+        {
+          "path": "lib/security/auth-session.ts",
+          "line": 94,
+          "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+        },
+        {
+          "path": "services/_shared/protect.ts",
+          "line": 56,
+          "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+        }
+      ]
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx",
+      "line": 21,
+      "name": "handleCreateItem",
+      "sha256": "69f50ac1c2c5c6b304af1f92853eda02819fa5e9d6a306f08a5606ad2fd8dd7e",
+      "reviewLevel": "inventory_only_not_guard_qualified",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx#inline:handleCreateItem:21",
+      "gaps": [
+        "P04-A-G01: app-local action full guard chain unresolved",
+        "P04-A-G02: no current action-negative evidence linked"
+      ],
+      "boundaries": {
+        "actor": "unverified",
+        "tenant": "unverified",
+        "permission": "unverified",
+        "location": "unverified",
+        "module": "unverified"
+      }
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx",
+      "line": 166,
+      "name": "<anonymous>",
+      "sha256": "69f50ac1c2c5c6b304af1f92853eda02819fa5e9d6a306f08a5606ad2fd8dd7e",
+      "reviewLevel": "inventory_only_not_guard_qualified",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx#inline:<anonymous>:166",
+      "gaps": [
+        "P04-A-G01: app-local action full guard chain unresolved",
+        "P04-A-G02: no current action-negative evidence linked"
+      ],
+      "boundaries": {
+        "actor": "unverified",
+        "tenant": "unverified",
+        "permission": "unverified",
+        "location": "unverified",
+        "module": "unverified"
+      }
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx",
+      "line": 14,
+      "name": "handleCreatePurchaseOrder",
+      "sha256": "7f2bb54e4676ff986298223db814ced82bac42a18fe86ffc210e1f8efaea5612",
+      "reviewLevel": "inventory_only_not_guard_qualified",
+      "admission": "blocked_pending_review",
+      "id": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx#inline:handleCreatePurchaseOrder:14",
+      "gaps": [
+        "P04-A-G01: app-local action full guard chain unresolved",
+        "P04-A-G02: no current action-negative evidence linked"
+      ],
+      "boundaries": {
+        "actor": "unverified",
+        "tenant": "unverified",
+        "permission": "unverified",
+        "location": "unverified",
+        "module": "unverified"
+      }
+    }
+  ],
+  "nonServerHelperFiles": [
+    {
+      "path": "actions/analytics/analytics/financial-reports.ts",
+      "sha256": "1b5d5c2276f1c31d7840682c0e5920671c1b99593e74b15932b6b53abb1d2208",
+      "exports": [
+        "*"
+      ],
+      "classification": "not_module_use_server; may be library/re-export dependency"
+    },
+    {
+      "path": "actions/brands/getOrgBrands.ts",
+      "sha256": "1da625bfe457d15ca34a481824cc4c451b4359314f25001cffc5ec1e22c2b79e",
+      "exports": [
+        "getOrgBrands",
+        "default"
+      ],
+      "classification": "not_module_use_server; may be library/re-export dependency"
+    },
+    {
+      "path": "actions/categories/getOrgCategories.ts",
+      "sha256": "21e197adbb2ceffc3b9621620c0e178d04bdbc3ad8151f5ba1e3450ff2977caf",
+      "exports": [
+        "default"
+      ],
+      "classification": "not_module_use_server; may be library/re-export dependency"
+    },
+    {
+      "path": "actions/pos/cache-revalidation.ts",
+      "sha256": "b689a0900302afa27bb4ffef59ef7e64ad6b3de73ff3acb1547799e7b99229c4",
+      "exports": [
+        "revalidatePOSAfterCommit"
+      ],
+      "classification": "not_module_use_server; may be library/re-export dependency"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/newPOActions.ts",
+      "sha256": "29f2b636b22ed068cf66b28c7f0dfc4336307414954626ed1f07d9eab9ac0f77",
+      "exports": [
+        "*"
+      ],
+      "classification": "not_module_use_server; may be library/re-export dependency"
+    },
+    {
+      "path": "actions/roles/role-auth.ts",
+      "sha256": "c87624aba019dad2124f0fac840358aba13e00066160604311b4ed253431ff98",
+      "exports": [
+        "ROLE_ACTION_PERMISSIONS",
+        "ROLE_AUTH_SURFACE",
+        "requireRoleAction",
+        "roleWriteContext",
+        "assertCanAssignPermissions"
+      ],
+      "classification": "not_module_use_server; may be library/re-export dependency"
+    },
+    {
+      "path": "actions/roles/role-utils.ts",
+      "sha256": "1f6ca8983a5d597bdf33bcb8ce14f2b54a96ba5b1232525d866545a020d809dd",
+      "exports": [
+        "displayRoleName",
+        "displayUserName",
+        "withDisplayRoleName"
+      ],
+      "classification": "not_module_use_server; may be library/re-export dependency"
+    },
+    {
+      "path": "actions/_shared/safe-action-responses.ts",
+      "sha256": "91f13d4ae5604a3eea684f1dc5513fdb1ca7c4e8421b26136046426a818afe88",
+      "exports": [
+        "safeSuccessActionErrorResult",
+        "safeStatusActionErrorResult",
+        "safeActionErrorMessage",
+        "safeLoggedActionErrorMessage",
+        "safeServerActionErrorResult",
+        "logSafeActionWarning"
+      ],
+      "classification": "not_module_use_server; may be library/re-export dependency"
+    }
+  ]
+}

@@ -17,6 +17,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { translatePurchaseAuthoringForm, type PurchaseAuthoringFormCopyKey } from "./purchase-authoring-form-copy"
 import { usePurchaseAuthoring } from "./use-purchase-authoring"
 import { PurchaseAuthoringPanel, purchaseAuthoringCopy } from "./PurchaseAuthoringPanel"
+import { formatPurchaseOrderMoney, previewPurchaseOrderLine, previewPurchaseOrderTotals } from "./purchase-order-money"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
@@ -104,6 +105,7 @@ interface DurableCreatePurchaseOrderFormProps {
   organizationId: string
   actorId: string
   locale: string
+  currency?: string
   canReadOrders: boolean
 }
 
@@ -129,6 +131,7 @@ function PurchaseOrderAuthoringForm({
   items = [],
   organizationId,
   locale,
+  currency = "XAF",
   canReadOrders,
 }: DurableCreatePurchaseOrderFormProps) {
   const router = useRouter()
@@ -136,7 +139,7 @@ function PurchaseOrderAuthoringForm({
   const dateLocale = locale === "fr" ? fr : enUS
   // This DayPicker version names day grid cells from their content, not labelDay.
   const calendarFormatters = { formatDay: (date: Date) => <><span aria-hidden="true">{format(date, "d")}</span><span className="sr-only">{format(date, "PPPP", { locale: dateLocale })}</span></> }
-  const formatCurrency = (amount: number) => new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-US", { style: "currency", currency: "XAF", minimumFractionDigits: 0 }).format(amount)
+  const formatCurrency = (amount: number) => formatPurchaseOrderMoney(amount, locale === "fr" ? "fr" : "en", currency)
   const authoringText = purchaseAuthoringCopy[locale === "fr" ? "fr" : "en"]
   const [currentStep, setCurrentStep] = useState<FormStep>('basic')
   const stepContent = useRef<HTMLDivElement>(null)
@@ -307,24 +310,8 @@ function PurchaseOrderAuthoringForm({
   }, [orderLines, warning, t])
 
   // Calculate totals
-  const calculateTotals = useCallback(() => {
-    let subtotal = 0
-    let totalTax = 0
-    let totalDiscount = 0
-
-    orderLines.forEach(line => {
-      const lineTotal = Number(line.quantity || NaN) * Number(line.unitPrice || NaN)
-      const tax = lineTotal * (Number(line.taxRate) / 100)
-      subtotal += lineTotal
-      totalTax += tax
-      totalDiscount += Number(line.discount)
-    })
-
-    const shippingCost = Number(form.getValues("shippingCost"))
-    const total = subtotal + totalTax + shippingCost - totalDiscount
-
-    return { subtotal, totalTax, totalDiscount, shippingCost, total, valid: Number.isFinite(total) }
-  }, [orderLines, form])
+  const shippingForPreview = form.watch("shippingCost")
+  const calculateTotals = useCallback(() => previewPurchaseOrderTotals(orderLines, shippingForPreview ?? 0), [orderLines, shippingForPreview])
 
   // Filter items for search
   const filteredItems = items.filter(item =>
@@ -764,9 +751,7 @@ function PurchaseOrderAuthoringForm({
                               </TableHeader>
                               <TableBody>
                                 {orderLines.map((line) => {
-                                  const lineTotal = Number(line.quantity || NaN) * Number(line.unitPrice || NaN)
-                                  const tax = lineTotal * (Number(line.taxRate) / 100)
-                                  const total = lineTotal + tax - Number(line.discount)
+                                  const total = previewPurchaseOrderLine(line)
                                   return (
                                     <TableRow key={line.id}>
                                       <TableCell>

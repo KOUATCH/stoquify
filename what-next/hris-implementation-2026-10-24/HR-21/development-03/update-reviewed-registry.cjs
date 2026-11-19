@@ -1,0 +1,13 @@
+const fs = require('node:fs');
+const crypto = require('node:crypto');
+const file = 'docs/ecc/command-registry.json';
+const test = 'lib/security/__tests__/rbac.test.ts';
+const text = fs.readFileSync(file, 'utf8');
+const entry = JSON.parse(text).commands['test:ecc:pilots'];
+const oldHash = entry.files[test];
+const newHash = crypto.createHash('sha256').update(fs.readFileSync(test, 'utf8').replace(/\r\n/g, '\n')).digest('hex');
+const before = JSON.stringify(test) + ': ' + JSON.stringify(oldHash);
+const after = JSON.stringify(test) + ': ' + JSON.stringify(newHash);
+if (text.split(before).length !== 2) throw Error('Expected exactly one reviewed test fingerprint');
+fs.writeFileSync(file, text.replace(before, after));
+console.log('Updated only the reviewed RBAC mocked-test fingerprint:', newHash);

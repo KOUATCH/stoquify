@@ -44,6 +44,7 @@ export function BICommandModeTabs({
             size="sm"
             variant="ghost"
             aria-pressed={active}
+            data-command-mode={mode}
             disabled={!ready}
             onClick={() => onValueChange?.(mode)}
             className={cn(

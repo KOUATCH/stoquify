@@ -1,0 +1,23 @@
+{
+  "at": "2026-11-09T19:58:19.271Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "scope": "Conditional read-only verification recipe; no actual copy outcome admitted",
+  "recipe": "reconcile-dependencies-v2.cjs",
+  "sha256": "7df532230a695c32d63875394e047c2d17d3311974f9fcd0824e505760175b82",
+  "syntaxExitCode": 0,
+  "conditions": [
+    "Original staging must finish first and retain its exact result.",
+    "Expected schema-only final assertion failure, successful copier exit, original compressed manifest and current schema review must match before verification.",
+    "Use only if persisted full equality proof is still needed after reviewing original final result/control flow; no concurrent reread while staging is active.",
+    "Preserve initial receipt and original sequential recipe."
+  ],
+  "review": [
+    "Enumerates complete archive/destination trees in original deterministic DFS order, excluding only existing .cache rule.",
+    "Rejects links/non-files, validates lstat for every file, hashes bytes using eight bounded local async readers, preserves indexed manifest order.",
+    "Requires exact full manifest deep equality with hash-bound preserved input; zero copier failures alone cannot pass.",
+    "No install, app/config loading, SQL, network, archive mutation or delete/move.",
+    "Writes one exclusive dependency-reconciliation.json and small progress records only."
+  ],
+  "actualVerificationExecuted": false
+}

@@ -1,0 +1,75 @@
+{
+  "startedAt": "2026-11-03T17:31:50.539Z",
+  "endedAt": "2026-11-03T17:32:05.130Z",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R01\\qualification-20261103-r1\\unit\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--runTestsByPath",
+    "services/security/__tests__/role-grant-policy.service.test.ts",
+    "services/users/__tests__/user-invitation-issuance.service.test.ts",
+    "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+    "services/users/__tests__/user-invitation-options.service.test.ts",
+    "services/users/__tests__/user-invitation-management.service.test.ts",
+    "services/users/__tests__/user-invitation-history.service.test.ts",
+    "services/users/__tests__/user-identity.service.test.ts",
+    "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R01\\qualification-20261103-r1\\unit\\attempt03\\jest.json"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "inputs": [
+    {
+      "file": "services/security/__tests__/role-grant-policy.service.test.ts",
+      "sha256": "bd77e4228a112c0bc18d496ffb6116b1b362fb4dc1789a182b1ba0f8068e3328"
+    },
+    {
+      "file": "services/users/__tests__/user-invitation-issuance.service.test.ts",
+      "sha256": "652690fc54d54275e19da547e9e0d585c9a2a23ca77001194578922f0ccc9ef9"
+    },
+    {
+      "file": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+      "sha256": "1e54d29fc1d17585a8c197097dfdb88729f70a4d5864554aaa42bc648dd72314"
+    },
+    {
+      "file": "services/users/__tests__/user-invitation-options.service.test.ts",
+      "sha256": "d14107386a6e45d5147678a8fdc4978eda272a7c89fba536315ff7dc9fa4fd7d"
+    },
+    {
+      "file": "services/users/__tests__/user-invitation-management.service.test.ts",
+      "sha256": "e5859792f4133406de07bb1b93974b18a97a2c314361178744262d6356e6c2f3"
+    },
+    {
+      "file": "services/users/__tests__/user-invitation-history.service.test.ts",
+      "sha256": "b6ea6021963edd80f7b6afea4a5e5d3aee1d0409209e71512acc55a5a668a211"
+    },
+    {
+      "file": "services/users/__tests__/user-identity.service.test.ts",
+      "sha256": "2809e80efe6ba75461166e6187bea04d02b2b11ad9ada3956397ed895e23a4dd"
+    },
+    {
+      "file": "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts",
+      "sha256": "d1bf028d2be2dd6a37dea536da528e2af4e3f10470905d0362d5ae65889bc4b4"
+    },
+    {
+      "file": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "file": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    }
+  ],
+  "result": {
+    "suites": 8,
+    "passed": 208,
+    "failed": 2,
+    "skipped": 0
+  },
+  "evidenceClass": "isolated mocked/pure tests; no database or HTTP qualification"
+}

@@ -1,0 +1,231 @@
+{
+  "at": "2026-11-10T11:38:24.695Z",
+  "reviewer": "/root/r06_review",
+  "passed": false,
+  "observationAccepted": true,
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "scope": "Actual attempt03 recovery review; accepted evidence contains two confirmed origin no-write failures and unresolved browser observations",
+  "checks": {
+    "completeActualResult": true,
+    "exactCandidateAndArtifact": true,
+    "originalRuntimeHashPreserved": true,
+    "originalBrowserHashPreserved": true,
+    "browserEmbeddedExact": true,
+    "cleanupComplete": true,
+    "allFourCredentialScenariosPassed": true,
+    "explicitUtcBoundsPassed": true,
+    "twoActualCrossSiteProvenances": true
+  },
+  "credentialEffects": [
+    {
+      "id": "R06-C-login-positive-utc",
+      "passed": true,
+      "before": "snapshot-R06-C-login-positive-utc-before-1794310261719-312c725a-46f6-4cfd-8154-05bcb71ca661.json",
+      "after": "snapshot-R06-C-login-positive-utc-after-1794310275646-6c82838a-f908-4500-b2e9-fa5aa099e06c.json",
+      "businessEqual": false,
+      "changedBusinessTables": [
+        "users"
+      ],
+      "sessionAdditions": 1,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [
+        {
+          "userId": "p04r06-active",
+          "action": "LOGIN_SUCCESS",
+          "entityType": "SecurityEvent"
+        }
+      ],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-C-login-wrong-password-utc",
+      "passed": true,
+      "before": "snapshot-R06-C-login-wrong-password-utc-before-1794310277700-b5a2741d-3dbb-4eda-8477-1b6df1c1043c.json",
+      "after": "snapshot-R06-C-login-wrong-password-utc-after-1794310280575-9ea14490-bca0-447e-b7bd-6bb742859557.json",
+      "businessEqual": false,
+      "changedBusinessTables": [
+        "users"
+      ],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [
+        {
+          "userId": "p04r06-active",
+          "action": "LOGIN_FAILED",
+          "entityType": "SecurityEvent"
+        }
+      ],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-C-login-inactive",
+      "passed": true,
+      "before": "snapshot-R06-C-login-inactive-before-1794310287690-3fd2b2e0-85b1-4cea-876f-e0126f5cdfad.json",
+      "after": "snapshot-R06-C-login-inactive-after-1794310290503-b7ab13d2-8a43-4899-a7a8-ad38b4bc28c3.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-C-login-locked-future",
+      "passed": true,
+      "before": "snapshot-R06-C-login-locked-future-before-1794310298730-29af7fbe-d2e5-4a59-a67b-b21d75c071c4.json",
+      "after": "snapshot-R06-C-login-locked-future-after-1794310302408-d1973f9b-4bfa-4a72-b640-831b3b70a64d.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [
+        {
+          "userId": "p04r06-locked_future",
+          "action": "ACCOUNT_LOCKED",
+          "entityType": "SecurityEvent"
+        }
+      ],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    }
+  ],
+  "cookieBearingOriginPassed": true,
+  "confirmedOriginNoWriteFailures": [
+    {
+      "id": "R06-C-origin-browser-navigate",
+      "captureId": "70bbd449-6824-433d-95bf-d842ddd60fac",
+      "status": 403,
+      "origin": "http://127.0.0.1:3298",
+      "fetchSite": "cross-site",
+      "fetchMode": "navigate",
+      "fetchDest": "document",
+      "cookieCount": 0,
+      "complete": true,
+      "privateAuthorityBytesAbsent": true,
+      "nativeSessionRowsUnchanged": true,
+      "failedLoginAttemptsBefore": 0,
+      "failedLoginAttemptsAfter": 1,
+      "changedOwnFields": [
+        "failedLoginAttempts",
+        "lastFailedLogin",
+        "updatedAt"
+      ],
+      "otherUserRowsUnchanged": true,
+      "addedAudits": [
+        {
+          "action": "LOGIN_FAILED",
+          "userId": "p04r06-active",
+          "organizationId": "p04-r06-a"
+        }
+      ],
+      "before": "snapshot-R06-C-origin-browser-navigate-before-1794310318320-8a21118c-888e-4850-8e6b-6972abb949c7.json",
+      "after": "snapshot-R06-C-origin-browser-navigate-after-1794310321077-9d87d316-dcce-457c-82be-d96dad813133.json",
+      "bodySha256": "831218014e59dee0bf7786bc53c8cd813f0e053ced0cc8684d7b47cda546b91a"
+    },
+    {
+      "id": "R06-C-origin-browser-cors",
+      "captureId": "e597760c-59ef-45cd-b83e-39eabc7cf583",
+      "status": 403,
+      "origin": "http://127.0.0.1:3298",
+      "fetchSite": "cross-site",
+      "fetchMode": "cors",
+      "fetchDest": "empty",
+      "cookieCount": 0,
+      "complete": true,
+      "privateAuthorityBytesAbsent": true,
+      "nativeSessionRowsUnchanged": true,
+      "failedLoginAttemptsBefore": 1,
+      "failedLoginAttemptsAfter": 2,
+      "changedOwnFields": [
+        "failedLoginAttempts",
+        "lastFailedLogin",
+        "updatedAt"
+      ],
+      "otherUserRowsUnchanged": true,
+      "addedAudits": [
+        {
+          "action": "LOGIN_FAILED",
+          "userId": "p04r06-active",
+          "organizationId": "p04-r06-a"
+        }
+      ],
+      "before": "snapshot-R06-C-origin-browser-cors-before-1794310329333-1abb8925-f142-4e5f-a11f-bfb98fe23cec.json",
+      "after": "snapshot-R06-C-origin-browser-cors-after-1794310332233-275e0be7-4065-433c-ae48-1d09475edec7.json",
+      "bodySha256": "c0efe3e4504d685256099acd2e7b3fd523c955b897306a0fbc54f8fa98f6c80d"
+    }
+  ],
+  "browser": {
+    "passed": false,
+    "summary": {
+      "planned": 6,
+      "passed": 1,
+      "failed": 5,
+      "notRun": 0,
+      "observations": 5,
+      "responses": 18,
+      "primaryBodyReadErrorsRetained": 8,
+      "independentlyRecoveredBodies": 0,
+      "incompleteResponseEvidence": 8
+    },
+    "failedCases": [
+      {
+        "id": "R06-UI-en-authorized",
+        "error": "Original browser response bytes incomplete or not independently attributable"
+      },
+      {
+        "id": "R06-UI-en-restored",
+        "error": "Original browser response bytes incomplete or not independently attributable"
+      },
+      {
+        "id": "R06-UI-fr-authorized",
+        "error": "Original browser response bytes incomplete or not independently attributable"
+      },
+      {
+        "id": "R06-UI-fr-invalidated-reload",
+        "error": "page.waitForFunction: TypeError: Cannot read properties of null (reading 'innerText')\n    at eval (eval at predicate (eval at evaluate (:303:30)), <anonymous>:1:192)\n    at predicate (eval at evaluate (:303:30), <anonymous>:7:27)\n    at next (eval at evaluate (:303:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:303:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:305:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+      },
+      {
+        "id": "R06-UI-fr-restored",
+        "error": "Original browser response bytes incomplete or not independently attributable"
+      }
+    ],
+    "nativeEffectsAllUnchanged": true,
+    "classification": "Four positive views retain eight incomplete Playwright RSC completion/body observations despite complete proxy bytes; FR invalidated observation additionally hit a document.body-null observer race. No product UI regression is inferred; new CDP-based observation remains separately pending."
+  },
+  "findings": [
+    "All four credential scenarios now have actual positive/negative database evidence with explicit UTC interpretation and exact request bounds; original timestamp failure remains historical.",
+    "Two real cookie-free cross-site browser requests reached the repaired runtime with actual Origin and Fetch Metadata and were denied403 without private authority bytes/cookies or session changes. Each nevertheless incremented supplied account failure count and appended LOGIN_FAILED. The required no-write origin gate fails.",
+    "This observed bookkeeping defect is distinct from authentication bypass or credential disclosure. Probes supplied valid synthetic credentials; password-independent/lock-threshold impact requires source attribution and future targeted verification, not an invented observed result.",
+    "The original cookie-free APIRequestContext success remains preserved and is not relabeled a browser bypass or a denial.",
+    "Source hook attribution and before-repair provenance are supplied by the separate source comparison review and must be bound in final publication."
+  ],
+  "evidence": [
+    {
+      "path": "recovery-result-attempt03.json",
+      "sha256": "d08ed69741d7b10165708cbc72ff4f354f43eb17fa3916a1af1e8f44cf7b508c"
+    },
+    {
+      "path": "browser/browser-diagnostic-attempt03/result.json",
+      "sha256": "98fa382cfdd46b3d4d589001cd03a55e41bd3f8a5fe997c6a7b00769abd4a6d4"
+    },
+    {
+      "path": "independent-review/RECOVERY-RECIPE-ADMISSION-attempt03.json",
+      "sha256": "e91d2589d795f86dbd235c8e839ebbd408a4eb56f19199c473eda08089fcc780"
+    },
+    {
+      "path": "independent-review/TIME-PROBE-OUTCOME-REVIEW-attempt02.json",
+      "sha256": "54318214a404475d5a326be10f72de443b199ed73fa689f410ccc9ea21a782ea"
+    }
+  ],
+  "requiredNext": "Complete separately admitted browser-only diagnostic; then stop owned resources and publish blocked outcome with bounded rejected-origin bookkeeping repair handoff.",
+  "overallQualificationPassed": false,
+  "productionReady": false
+}

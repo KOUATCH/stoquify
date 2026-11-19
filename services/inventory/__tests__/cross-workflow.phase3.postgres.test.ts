@@ -1,0 +1,243 @@
+import { randomUUID } from 'node:crypto'
+import { writeFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { setTimeout as delay } from 'node:timers/promises'
+import { Prisma, PrismaClient } from '@prisma/client'
+import { db } from '@/prisma/db'
+import { baseFixture, assertDisposableTarget } from './cross-workflow.phase3.fixture'
+import { createPurchaseOrder, getPurchaseOrderLifecyclePreview, executePurchaseOrderLifecycle, getPurchaseOrderApprovalPreview, approvePurchaseOrder } from '@/services/purchase-order/purchase-order.service'
+import { previewPurchaseReceiving, confirmPurchaseReceiving, getPurchaseReceivingWorkbench } from '@/services/purchase-order/purchase-receiving-workbench.service'
+import { commitPOSSale, refundPOSSale, voidPOSSale } from '@/services/pos/pos.service'
+import { acquirePOSCheckout, preparePOSCheckout } from '@/services/pos/checkout.service'
+import { posCartRevision } from '@/services/pos/cart-revision'
+import { postPOSStockIssue, postPOSStockReturn } from '../inventory-stock-event.service'
+import { postSale } from '@/services/accounting/postings/post-sale'
+
+const evidence: unknown[] = []
+beforeAll(() => { assertDisposableTarget(); for (const owner of [db.$transaction, confirmPurchaseReceiving, commitPOSSale, postPOSStockIssue, postPOSStockReturn, postSale]) expect(jest.isMockFunction(owner)).toBe(false) })
+afterAll(async () => { writeFileSync(join(process.env.RETENTION_VERIFICATION_EVIDENCE_DIR!, 'chain-reconciliation.json'), JSON.stringify(evidence, null, 2)); await db.$disconnect() })
+
+async function fixture() {
+  const f = await baseFixture(), organizationId = f.organizationId
+  const permissions = ['purchases.orders.create', 'purchases.orders.read', 'purchases.orders.update', 'purchases.orders.approve', 'purchases.orders.receive']
+  const role = await db.role.create({ data: { organizationId, code: 'CHAIN_BUYER', nameEn: 'Synthetic purchaser', permissions } })
+  const actor = async (suffix: string) => {
+    const user = await db.user.create({ data: { organizationId, email: `${randomUUID()}@chain.invalid`, firstName: suffix, lastName: 'Fixture', isActive: true, isVerified: true, emailVerified: true, mfaBackupCodes: [], roles: { connect: { id: role.id } } } })
+    const session = await db.session.create({ data: { userId: user.id, token: randomUUID(), expiresAt: new Date(Date.now() + 3600000), assuranceOrganizationId: organizationId, assuranceMethod: 'password', assuranceLevel: 1, assuranceVerifiedAt: new Date() } })
+    return { organizationId, actorId: user.id, sessionId: session.id, sessionToken: session.token }
+  }
+  const buyer = await actor('Buyer'), receiver = await actor('Independent approver and receiver')
+  const supplier = await db.supplier.create({ data: { organizationId, name: 'Synthetic supplier', code: randomUUID() } })
+  const accounts = await db.chartOfAccount.findMany({ where: { organizationId } })
+  const account = (code: string) => accounts.find(a => a.code === code)!.id
+  await db.journal.create({ data: { organizationId, code: 'TEST_GENERAL', nameEn: 'Synthetic reversal', type: 'GENERAL', isDefault: true } })
+  for (const [sourceType, postingPurpose] of [['POS_REFUND', 'REFUND'], ['POS_VOID', 'VOID']] as const) {
+    await db.postingRule.create({ data: { organizationId, code: sourceType, nameEn: sourceType, sourceType, postingPurpose, lines: { create: [
+      { organizationId, accountId: account('TEST_REVENUE'), lineNumber: 1, side: 'DEBIT', amountSource: 'NET_AMOUNT' },
+      { organizationId, accountId: account('TEST_CASH'), lineNumber: 2, side: 'CREDIT', amountSource: 'GROSS_AMOUNT' },
+      { organizationId, accountId: account('TEST_STOCK'), lineNumber: 3, side: 'DEBIT', amountSource: 'COST_AMOUNT' },
+      { organizationId, accountId: account('TEST_COGS'), lineNumber: 4, side: 'CREDIT', amountSource: 'COST_AMOUNT' },
+    ] } } })
+  }
+  return { ...f, buyer, receiver, roleId: role.id, supplierId: supplier.id }
+}
+type Fixture = Awaited<ReturnType<typeof fixture>>
+async function approvedOrder(f: Fixture, quantity: number, unitPrice: number) {
+  const today = new Date().toISOString().slice(0, 10)
+  const order = await createPurchaseOrder({ organizationId: f.organizationId, createdById: f.buyer.actorId, supplierId: f.supplierId, locationId: f.locationId, date: today, expectedDeliveryDate: today, shippingCost: 0, orderLines: [{ itemId: f.itemId, quantity, unitPrice, taxRate: 0, discount: 0 }] })
+  const submit = await getPurchaseOrderLifecyclePreview(order.id, f.buyer, 'submit')
+  await executePurchaseOrderLifecycle(order.id, f.buyer, { kind: 'submit', expectedRevision: submit.revision, idempotencyKey: `submit:${randomUUID()}` })
+  const approval = await getPurchaseOrderApprovalPreview(order.id, f.receiver)
+  await approvePurchaseOrder(order.id, f.organizationId, f.receiver.actorId, { ...f.receiver, expectedRevision: approval.revision, idempotencyKey: `approve:${randomUUID()}` })
+  return db.purchaseOrder.findUniqueOrThrow({ where: { id: order.id }, include: { lines: true } })
+}
+async function receivingCommand(f: Fixture, order: Awaited<ReturnType<typeof approvedOrder>>, quantity: number, held = false) {
+  const draft = { kind: 'receive' as const, orderId: order.id, inspectionOutcome: held ? 'FAILED' as const : 'PASSED' as const, ...(held ? { inspectionReason: 'Visible damage requires independent review' } : {}), items: [{ lineId: order.lines[0].id, receivedQuantity: quantity }] }
+  const preview = await previewPurchaseReceiving(draft, f.receiver)
+  return { draft, expectedRevision: preview.revision, idempotencyKey: `receive:${randomUUID()}` }
+}
+async function snapshot(f: Fixture) {
+  const scope = { organizationId: f.organizationId }
+  const level = await db.inventoryLevel.findUniqueOrThrow({ where: { itemId_locationId: { itemId: f.itemId, locationId: f.locationId } } })
+  const orders = await db.purchaseOrder.findMany({ where: scope, include: { lines: true }, orderBy: { orderNumber: 'asc' } })
+  const receipts = await db.goodsReceipt.findMany({ where: scope, orderBy: { receiptNumber: 'asc' } })
+  const movements = await db.inventoryTransaction.findMany({ where: scope, orderBy: { createdAt: 'asc' } })
+  const journals = await db.journalEntry.findMany({ where: scope, include: { lines: { include: { account: true } } }, orderBy: { createdAt: 'asc' } })
+  const batches = await db.ledgerPostingBatch.findMany({ where: scope, orderBy: { createdAt: 'asc' } })
+  const sales = await db.salesOrder.findMany({ where: scope, orderBy: { orderNumber: 'asc' } })
+  return {
+    organizationId: f.organizationId, stock: { quantity: level.quantityOnHand.toFixed(3), available: level.quantityAvailable.toFixed(3), reserved: level.quantityReserved.toFixed(3), value: level.totalValue.toFixed(2) },
+    orders: orders.map(o => ({ id: o.id, status: o.status, quantities: o.lines.map(l => l.receivedQuantity.toString()) })),
+    receipts: receipts.map(r => ({ id: r.id, status: r.status, posted: !!r.inventoryPostedAt })),
+    movements: movements.map(m => ({ id: m.id, type: m.type, quantity: m.quantity.toString(), value: m.totalCost.toFixed(2), source: m.referenceId, reverses: m.reversalOfTransactionId })),
+    journals: journals.map(j => ({ id: j.id, status: j.status, lines: j.lines.map(l => ({ account: l.account.code, debit: l.debit.toFixed(2), credit: l.credit.toFixed(2) })) })),
+    batches: batches.map(b => ({ source: b.sourceType, purpose: b.postingPurpose, status: b.status })),
+    sales: sales.map(s => ({ id: s.id, status: s.status, paymentStatus: s.paymentStatus })),
+    payments: (await db.payment.findMany({ where: scope, orderBy: { createdAt: 'asc' } })).map(p => ({ method: p.method, amount: p.amount.toFixed(2), status: p.status, refunded: p.refundedAmount.toFixed(2) })),
+    refunds: await db.paymentRefund.count({ where: scope }), commits: await db.pOSCommitResult.count({ where: scope }),
+    cash: (await db.cashDrawer.findUniqueOrThrow({ where: { id: f.drawerId } })).currentBalance.toFixed(2),
+    events: await db.businessEvent.count({ where: scope }), outbox: await db.businessEventOutbox.count({ where: scope }),
+  }
+}
+function balanced(s: Awaited<ReturnType<typeof snapshot>>) { for (const j of s.journals) expect(j.lines.reduce((sum, l) => sum.plus(l.debit).minus(l.credit), new Prisma.Decimal(0)).toFixed(2)).toBe('0.00') }
+async function receivePool(f: Fixture) {
+  const first = await approvedOrder(f, 1, 100), second = await approvedOrder(f, 2, 100.01)
+  await confirmPurchaseReceiving(await receivingCommand(f, first, 1), f.receiver)
+  const partial = await receivingCommand(f, second, 1)
+  const a = await confirmPurchaseReceiving(partial, f.receiver), afterPartial = await snapshot(f)
+  expect(afterPartial.stock).toMatchObject({ quantity: '2.000', value: '200.01' })
+  expect(afterPartial.orders.find(o => o.id === second.id)).toMatchObject({ status: 'PARTIALLY_RECEIVED' })
+  expect(await confirmPurchaseReceiving(partial, f.receiver)).toMatchObject({ ...a, replayed: true })
+  expect(await snapshot(f)).toEqual(afterPartial)
+  await expect(confirmPurchaseReceiving({ ...partial, draft: { ...partial.draft, items: [{ ...partial.draft.items[0], receivedQuantity: 2 }] } }, f.receiver)).rejects.toThrow()
+  await confirmPurchaseReceiving(await receivingCommand(f, second, 1), f.receiver)
+  const received = await snapshot(f)
+  expect(received.stock).toMatchObject({ quantity: '3.000', value: '300.02' })
+  expect(received.orders.every(o => o.status === 'RECEIVED')).toBe(true)
+  expect(received.receipts).toHaveLength(3)
+  evidence.push({ scenario: 'P3-RECEIVING', partial: afterPartial, full: received })
+}
+it.each(['refund', 'void'] as const)('P3-CHAIN receiving → checkout → %s reconciles retained stock, cash, journals and history', async kind => {
+  const f = await fixture(); await receivePool(f)
+  const received = await snapshot(f)
+  await commitPOSSale(f.request)
+  const sold = await snapshot(f); balanced(sold)
+  expect(sold.stock).toMatchObject({ quantity: '0.000', value: '0.00' })
+  expect(sold.cash).toBe('550.00'); expect(sold.commits).toBe(1)
+  expect(sold.payments).toEqual([{ method: 'CASH', amount: '450.00', status: 'PAID', refunded: '0.00' }])
+  expect(sold.journals.flatMap(j => j.lines).filter(l => l.account === 'TEST_COGS')).toEqual([{ account: 'TEST_COGS', debit: '300.02', credit: '0.00' }])
+  expect((await commitPOSSale(f.request)).replayed).toBe(true); expect(await snapshot(f)).toEqual(sold)
+  const correct = kind === 'refund' ? refundPOSSale : voidPOSSale
+  await correct({ ...f.request, reason: 'Full source correction' })
+  const corrected = await snapshot(f); balanced(corrected)
+  expect(corrected.stock).toEqual(received.stock); expect(corrected.cash).toBe('100.00')
+  expect(corrected.movements).toHaveLength(5)
+  expect(corrected.movements[4]).toMatchObject({ value: '300.02', reverses: corrected.movements[3].id })
+  expect(corrected.journals.flatMap(j => j.lines).filter(l => l.account === 'TEST_COGS').reduce((sum,l) => sum.plus(l.debit).minus(l.credit),new Prisma.Decimal(0)).toFixed(2)).toBe('0.00')
+  await expect(correct({ ...f.request, reason: 'Repeated correction' })).rejects.toThrow()
+  expect(await snapshot(f)).toEqual(corrected)
+  evidence.push({ scenario: `P3-CHAIN-${kind}`, received, sold, corrected, accountingLimit: 'Synthetic zero-tax rules; receiving accounting may be explicitly review-required, not assumed posted' })
+})
+it('P3-AUTH denies revoked receiving role/session and foreign destination before effects', async () => {
+  const f = await fixture(), order = await approvedOrder(f, 1, 100), command = await receivingCommand(f, order, 1), before = await snapshot(f)
+  await db.role.update({ where: { id: f.roleId }, data: { permissions: ['purchases.orders.read'] } })
+  await expect(confirmPurchaseReceiving(command, f.receiver)).rejects.toThrow(); expect(await snapshot(f)).toEqual(before)
+  await db.role.update({ where: { id: f.roleId }, data: { permissions: ['purchases.orders.read', 'purchases.orders.receive'] } })
+  await db.session.update({ where: { id: f.receiver.sessionId }, data: { expiresAt: new Date(0) } })
+  await expect(confirmPurchaseReceiving(command, f.receiver)).rejects.toThrow(); expect(await snapshot(f)).toEqual(before)
+  await db.session.update({ where: { id: f.receiver.sessionId }, data: { expiresAt: new Date(Date.now()+3600000) } })
+  const other = await fixture()
+  await expect(previewPurchaseReceiving({ ...command.draft, locationId: other.locationId }, f.receiver)).rejects.toThrow()
+  await expect(getPurchaseReceivingWorkbench(order.id, other.receiver)).rejects.toThrow()
+  expect(await snapshot(f)).toEqual(before)
+  evidence.push({ scenario: 'P3-AUTH', before, after: await snapshot(f), limitation: 'Current stored receiving authority; not browser session middleware or a same-tenant location-assignment policy' })
+})
+it('P3-HELD inspection prevents availability, stale review and self-acceptance; independent acceptance posts once', async () => {
+  const f = await fixture(), order = await approvedOrder(f, 2, 100)
+  const stale = await receivingCommand(f, order, 1), heldCommand = await receivingCommand(f, order, 1, true)
+  const held = await confirmPurchaseReceiving(heldCommand, f.receiver), before = await snapshot(f)
+  expect(before.stock).toMatchObject({ quantity: '0.000', value: '0.00' }); expect(before.movements).toHaveLength(0)
+  await expect(confirmPurchaseReceiving(stale, f.receiver)).rejects.toThrow(); expect(await snapshot(f)).toEqual(before)
+  const draft = { kind: 'resolve' as const, orderId: order.id, goodsReceiptId: held.goodsReceiptId, decision: 'ACCEPT' as const, reason: 'Independent reinspection accepted delivery' }
+  await expect(previewPurchaseReceiving(draft, f.receiver)).rejects.toMatchObject({ code: 'SOD_VIOLATION' })
+  const review = await previewPurchaseReceiving(draft, f.buyer)
+  const command = { draft, expectedRevision: review.revision, idempotencyKey: `resolve:${randomUUID()}` }
+  await confirmPurchaseReceiving(command, f.buyer)
+  const after = await snapshot(f); expect(after.stock).toMatchObject({ quantity: '1.000', value: '100.00' })
+  expect((await confirmPurchaseReceiving(command, f.buyer)).replayed).toBe(true); expect(await snapshot(f)).toEqual(after)
+  evidence.push({ scenario: 'P3-HELD', before, after })
+})
+
+it('P3-ACCOUNTING configured receiving accrual → sale → refund ties stock value to the general ledger', async () => {
+  const f = await fixture(), organizationId = f.organizationId
+  const stock = await db.chartOfAccount.findFirstOrThrow({ where: { organizationId, code: 'TEST_STOCK' } })
+  await db.chartOfAccount.update({ where: { id: stock.id }, data: { mappingKey: 'INVENTORY' } })
+  const accrual = await db.chartOfAccount.create({ data: { organizationId, code: 'TEST_GRNI', mappingKey: 'GRNI', nameEn: 'Synthetic goods received accrual', type: 'LIABILITY', normalBalance: 'CREDIT', currency: 'XAF' } })
+  await db.journal.create({ data: { organizationId, code: 'TEST_INVENTORY', nameEn: 'Synthetic receipt recognition', type: 'INVENTORY', isDefault: true } })
+  await db.postingRule.create({ data: { organizationId, code: 'TEST_GOODS_RECEIPT', nameEn: 'Synthetic receipt recognition', sourceType: 'GOODS_RECEIPT', postingPurpose: 'GOODS_RECEIPT', lines: { create: [
+    { organizationId, accountId: stock.id, lineNumber: 1, side: 'DEBIT', amountSource: 'COST_AMOUNT' },
+    { organizationId, accountId: accrual.id, lineNumber: 2, side: 'CREDIT', amountSource: 'COST_AMOUNT' },
+  ] } } })
+  await receivePool(f)
+  const received = await snapshot(f)
+  const balance = (s: typeof received, account: string) => s.journals.flatMap(j => j.lines).filter(l => l.account === account).reduce((sum,l) => sum.plus(l.debit).minus(l.credit),new Prisma.Decimal(0)).toFixed(2)
+  expect(received.journals).toHaveLength(3); balanced(received)
+  expect(balance(received,'TEST_STOCK')).toBe(received.stock.value); expect(balance(received,'TEST_GRNI')).toBe('-300.02')
+  expect(received.batches.every(b => b.status === 'POSTED')).toBe(true)
+  for (const order of received.orders) expect((await getPurchaseReceivingWorkbench(order.id,f.receiver)).receipts.every(r => r.accountingStatus === 'posted')).toBe(true)
+  await commitPOSSale(f.request); const sold = await snapshot(f); balanced(sold)
+  expect(sold.journals).toHaveLength(5); expect(balance(sold,'TEST_STOCK')).toBe(sold.stock.value); expect(balance(sold,'TEST_COGS')).toBe('300.02')
+  await refundPOSSale({ ...f.request, reason: 'Synthetic complete return' }); const corrected = await snapshot(f); balanced(corrected)
+  expect(corrected.journals).toHaveLength(6); expect(balance(corrected,'TEST_STOCK')).toBe(corrected.stock.value); expect(balance(corrected,'TEST_COGS')).toBe('0.00'); expect(balance(corrected,'TEST_GRNI')).toBe('-300.02')
+  evidence.push({ scenario: 'P3-ACCOUNTING', received, sold, corrected, limitation: 'Synthetic inventory/accrual rules, zero tax; supplier invoice/payment and statutory country chart not exercised' })
+})
+
+async function secondCheckout(f: Fixture) {
+  const id = randomUUID(), organizationId = f.organizationId, locationId = f.locationId
+  const user = await db.user.create({ data: { organizationId, email: `${id}@cashier.invalid`, firstName: 'Second', lastName: 'Cashier', mfaBackupCodes: [] } })
+  const terminal = await db.pOSStation.create({ data: { organizationId, locationId, terminalNumber: id, name: 'Second till', hasCashDrawer: true } })
+  const shift = await db.pOSSession.create({ data: { organizationId, locationId, terminalId: terminal.id, userId: user.id, sessionNumber: id, status: 'ACTIVE', openingBalance: 100, expectedBalance: 100 } })
+  await db.pOSStation.update({ where: { id: terminal.id }, data: { currentSessionId: shift.id } })
+  const drawer = await db.cashDrawer.create({ data: { terminalId: terminal.id, locationId, name: 'Second drawer', drawerNumber: id, currentBalance: 100, expectedBalance: 100, isOpen: true } })
+  await db.cashDrawerTransaction.create({ data: { cashDrawerId: drawer.id, sessionId: shift.id, userId: user.id, type: 'OPENING_BALANCE', amount: 100, balanceBefore: 0, balanceAfter: 100 } })
+  const cart = await db.salesOrder.create({ data: { organizationId, locationId, terminalId: terminal.id, sessionId: shift.id, customerId: f.customerId, createdById: user.id, orderNumber: id, subtotal: 450, total: 450, lines: { create: { itemId: f.itemId, quantity: 3, unitPrice: 150, lineTotal: 450 } } }, include: { lines: true } })
+  const scope = { organizationId, locationId, terminalId: terminal.id, sessionId: shift.id, userId: user.id, checkoutLeaseId: randomUUID() }
+  await acquirePOSCheckout(scope)
+  const command = { ...scope, salesOrderId: cart.id, clientCommitId: `pos:${randomUUID()}`, expectedCartRevision: posCartRevision(cart), tenders: [{ method: 'CASH' as const, amount: 450 }] }
+  await preparePOSCheckout(command)
+  return { command, drawerId: drawer.id }
+}
+it('P3-CONTENTION two checkout backends compete for the same received stock with one complete financial outcome', async () => {
+  const f = await fixture(); await receivePool(f); const second = await secondCheckout(f)
+  const observer = new PrismaClient(), level = await db.inventoryLevel.findUniqueOrThrow({ where: { itemId_locationId: { itemId: f.itemId, locationId: f.locationId } } })
+  let unlock!: () => void, reached!: () => void, holderPid = 0
+  const release = new Promise<void>(r => { unlock = r }), ready = new Promise<void>(r => { reached = r })
+  const holder = observer.$transaction(async tx => { const rows = await tx.$queryRaw<Array<{ pid: number }>>`SELECT id, pg_backend_pid() AS pid FROM inventory_levels WHERE id = ${level.id} FOR UPDATE`; holderPid = rows[0].pid; reached(); await release }, { timeout: 20000 })
+  await Promise.race([ready, holder.then(() => { throw new Error('Lock holder ended early') })])
+  const pending = Promise.allSettled([commitPOSSale(f.request), commitPOSSale(second.command)])
+  let blocked = 0, waits: Array<{ pid: number; query: string }> = []
+  try {
+    const deadline = Date.now()+7000
+    while (Date.now()<deadline) {
+      // Include indirect waits: checkout also locks shared organization/item state before stock.
+      waits = await db.$queryRaw<Array<{ pid: number; query: string }>>`WITH RECURSIVE blocked(pid) AS (SELECT pid FROM pg_stat_activity WHERE ${holderPid} = ANY(pg_blocking_pids(pid)) UNION SELECT a.pid FROM pg_stat_activity a JOIN blocked b ON b.pid = ANY(pg_blocking_pids(a.pid))) SELECT DISTINCT a.pid, a.query FROM pg_stat_activity a JOIN blocked b USING(pid) WHERE a.datname=current_database()`
+      blocked = waits.length; if (blocked >= 2) break; await delay(30)
+    }
+  } finally { unlock(); await holder; await observer.$disconnect() }
+  const results = await pending, after = await snapshot(f)
+  expect(blocked).toBeGreaterThanOrEqual(2)
+  expect(results.filter(r => r.status === 'fulfilled')).toHaveLength(1)
+  expect(after.stock).toMatchObject({ quantity: '0.000', available: '0.000', value: '0.00' })
+  expect(after.commits).toBe(1); expect(after.payments).toHaveLength(1); expect(after.journals).toHaveLength(2)
+  expect(after.sales.filter(s => s.status === 'COMPLETED')).toHaveLength(1); balanced(after)
+  const secondCash = (await db.cashDrawer.findUniqueOrThrow({ where: { id: second.drawerId } })).currentBalance
+  expect(secondCash.plus(after.cash).toFixed(2)).toBe('650.00')
+  evidence.push({ scenario: 'P3-CONTENTION', blockedBackends: blocked, waits, results: results.map(r=>r.status), secondCash: secondCash.toString(), after })
+})
+it('P3-RECEIPT-DUP concurrent duplicate receiving records one receipt and stock effect', async () => {
+  const f=await fixture(), order=await approvedOrder(f,1,100), command=await receivingCommand(f,order,1)
+  const results=await Promise.all([confirmPurchaseReceiving(command,f.receiver),confirmPurchaseReceiving(command,f.receiver)])
+  expect(results.map(r=>r.replayed).sort()).toEqual([false,true])
+  const after=await snapshot(f); expect(after.receipts).toHaveLength(1); expect(after.movements).toHaveLength(1)
+  expect(after.stock).toMatchObject({quantity:'1.000',value:'100.00'})
+  evidence.push({scenario:'P3-RECEIPT-DUP',results,after})
+})
+it('P3-RECEIPT-ROLLBACK final receipt-decision failure rolls back receipt, stock and accounting blockers; original retry succeeds', async () => {
+  const f=await fixture(), order=await approvedOrder(f,1,100), command=await receivingCommand(f,order,1), before=await snapshot(f)
+  const probe=`p3_${randomUUID().replaceAll('-','')}`
+  await db.$executeRawUnsafe(`CREATE SEQUENCE public."${probe}_count"`)
+  await db.$executeRawUnsafe(`CREATE FUNCTION public."${probe}"() RETURNS trigger AS $$ BEGIN IF NEW."organizationId"='${f.organizationId}' AND NEW."eventType"='purchase.receipt.recorded' THEN PERFORM nextval('public."${probe}_count"'); RAISE EXCEPTION 'phase3 final receipt failure'; END IF; RETURN NEW; END; $$ LANGUAGE plpgsql`)
+  await db.$executeRawUnsafe(`CREATE TRIGGER "${probe}" BEFORE INSERT ON public.business_events FOR EACH ROW EXECUTE FUNCTION public."${probe}"()`)
+  try {
+    await expect(confirmPurchaseReceiving(command,f.receiver)).rejects.toThrow()
+    expect((await db.$queryRawUnsafe<Array<{is_called:boolean}>>(`SELECT is_called FROM public."${probe}_count"`))[0].is_called).toBe(true)
+    expect(await snapshot(f)).toEqual(before)
+  } finally {
+    await db.$executeRawUnsafe(`DROP TRIGGER "${probe}" ON public.business_events`)
+    await db.$executeRawUnsafe(`DROP FUNCTION public."${probe}"()`)
+    await db.$executeRawUnsafe(`DROP SEQUENCE public."${probe}_count"`)
+  }
+  await confirmPurchaseReceiving(command,f.receiver)
+  const after=await snapshot(f); expect(after.receipts).toHaveLength(1); expect(after.movements).toHaveLength(1)
+  evidence.push({scenario:'P3-RECEIPT-ROLLBACK',before,after,finalFailureReached:true})
+})

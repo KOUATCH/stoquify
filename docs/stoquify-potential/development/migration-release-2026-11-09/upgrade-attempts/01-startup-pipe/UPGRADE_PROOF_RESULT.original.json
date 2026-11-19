@@ -1,0 +1,47 @@
+{
+  "passed": false,
+  "startedAt": "2026-11-09T14:17:25.454Z",
+  "database": "stoquify_pos_audit_20261109_2c73966d18",
+  "clusterDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5",
+  "sourceManifestSha256": "30c4cf3c26a58f9a218aaa31b68c919e1ece5afa288500f30b0588d7ce63f778",
+  "fixtureBinding": {
+    "source": "services/pos/__tests__/pos-full-commit.postgres.test.ts",
+    "sourceSha256": "c172e06b8f238817c89c32307e58bb0df4c8c00f6b0dcc1a1c88f66463d1bf8c",
+    "extractedFunctions": [
+      {
+        "name": "assertDisposableTarget",
+        "sha256": "189f5ed90ae03d44ef01258ead50d15938b53b97d7734e3c31294f633eaaf685"
+      },
+      {
+        "name": "fixture",
+        "sha256": "7ed1bc1fcf7a29a834ec4dcc569469b74eb42b53694556fca94fe99fc1d4e528"
+      },
+      {
+        "name": "financialSnapshot",
+        "sha256": "2c1edc85aefdfcd0c5640b95e98c23699d0774e0da852a62ced347ee37803a8d"
+      }
+    ],
+    "generatedSha256": "e113348fc21173fcda9504129bcf994452d68e962c4c1d656028a4d93fce581f",
+    "limitation": "Exact AST-extracted frozen fixture/snapshot functions with explicit imports and an equivalent Fixture type alias; no Jest suite registration is imported."
+  },
+  "boundary": {
+    "before": 120,
+    "after": 121,
+    "onlyAddedMigration": "20261102190000_payroll_history_proof_version_binding",
+    "lastSqlSha256": "6134a60bec2f4aead9d134ac16a28c50e8b724b0c2b3ea5dcde97c79485017ce"
+  },
+  "writer": "Same frozen current financial kernels before and after migration",
+  "limitations": [
+    "No actual deployed predecessor artifact was provided or qualified.",
+    "Synthetic zero-tax mappings and supplied trusted service controls; no browser/session/RBAC/provider/statutory certification.",
+    "Final migration adds a payroll metadata guard only; this proves narrow additive catalog compatibility with populated financial data, not arbitrary migrations."
+  ],
+  "failure": {
+    "name": "AggregateError",
+    "code": "ECONNREFUSED",
+    "message": ""
+  },
+  "clusterStopped": false,
+  "stopError": "pg-stop failed; inspect retained log\n\n1 !== 0\n",
+  "finishedAt": "2026-11-09T14:21:24.125Z"
+}

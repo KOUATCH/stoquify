@@ -1,4 +1,5 @@
 import "server-only";
+import type { Prisma } from "@prisma/client";
 
 import {
   readInventoryLossSummary,
@@ -24,6 +25,7 @@ type InventoryLossSummary = Awaited<
 
 export async function getInventoryLossSnapshot(
   input: SnapshotScopeInput,
+  client?: Prisma.TransactionClient,
 ): Promise<SnapshotResult<InventoryLossMetrics>> {
   const scope = normalizeSnapshotScope(input);
   const exclusivePeriodEnd = new Date(scope.periodEnd.getTime() + 1);
@@ -36,7 +38,7 @@ export async function getInventoryLossSnapshot(
       detailLimit: 0,
       groupLimit: 50,
     },
-    { now: () => new Date(scope.now) },
+    { now: () => new Date(scope.now), ...(client ? {client} : {}) },
   );
   const metrics = inventoryLossMetrics(source);
   const blockers = inventoryLossBlockers(metrics);

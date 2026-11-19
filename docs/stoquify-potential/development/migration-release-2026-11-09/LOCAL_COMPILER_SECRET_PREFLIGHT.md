@@ -1,0 +1,45 @@
+# Release Secret Preflight
+
+Generated: 2026-11-09T14:40:25.895Z
+Mode: `fail`
+Status: `conditional`
+
+## Summary
+
+- Checks ready: 19/21
+- Release enforcement: off
+- Blockers: 0
+- Warnings: 2
+- Secret value printed: no
+
+## Checks
+
+| Status | Check | Variable | Remediation |
+| --- | --- | --- | --- |
+| ready | public_identity_secret_present | PUBLIC_IDENTITY_ABUSE_HASH_SECRET | Configure the dedicated public-identity HMAC secret in the production environment. |
+| ready | public_identity_secret_strong | PUBLIC_IDENTITY_ABUSE_HASH_SECRET | Use a random secret with at least 32 characters and 12 distinct characters. |
+| ready | public_receipt_secret_present | AQSTOQFLOW_RECEIPT_TOKEN_SECRET | Configure the dedicated public-receipt signing secret in the production environment. |
+| ready | public_receipt_secret_strong | AQSTOQFLOW_RECEIPT_TOKEN_SECRET | Use a random secret with at least 32 characters and 12 distinct characters. |
+| ready | history_cursor_secret_present | AQSTOQFLOW_HISTORY_CURSOR_SECRET | Configure the dedicated transaction-history cursor signing secret in the production environment. |
+| ready | history_cursor_secret_strong | AQSTOQFLOW_HISTORY_CURSOR_SECRET | Use a random, purpose-specific secret that meets the release strength policy. |
+| ready | statement_token_secret_present | AQSTOQFLOW_STATEMENT_TOKEN_SECRET | Configure the dedicated customer-statement signing secret in production. |
+| ready | statement_token_secret_strong | AQSTOQFLOW_STATEMENT_TOKEN_SECRET | Use a strong, random, purpose-specific statement signing secret. |
+| ready | statement_delivery_encryption_key_present | AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY | Configure the AES-256 key used to seal statement delivery envelopes. |
+| ready | statement_delivery_encryption_key_valid | AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY | Use exactly 32 random bytes encoded as base64 or 64 hexadecimal characters. |
+| ready | accountant_invite_encryption_key_present | AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY | Configure the AES-256 key used to seal accountant invitation envelopes. |
+| ready | accountant_invite_encryption_key_valid | AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY | Use exactly 32 random bytes encoded as base64 or 64 hexadecimal characters. |
+| ready | public_app_url_present | NEXT_PUBLIC_BASE_URL | Configure the canonical public application URL used in signed referral links. |
+| ready | public_app_url_https | NEXT_PUBLIC_BASE_URL | Use a valid HTTPS origin for production referral links. |
+| blocked | statement_live_delivery_channel_enabled | n/a | Enable at least one live customer-statement channel: email or WhatsApp. |
+| ready | statement_email_provider_configured | RESEND_API_KEY | When statement email sends are enabled, configure RESEND_API_KEY and RESEND_FROM_EMAIL. |
+| ready | statement_whatsapp_provider_configured | WHATSAPP_ACCESS_TOKEN | When statement WhatsApp sends are enabled, configure WHATSAPP_PHONE_NUMBER_ID and WHATSAPP_ACCESS_TOKEN. |
+| blocked | accountant_invite_live_delivery_enabled | STOQUIFY_ACCOUNTANT_INVITE_LIVE_SENDS | Enable live accountant invitation delivery for production onboarding. |
+| ready | accountant_invite_provider_configured | RESEND_API_KEY | When accountant invitation sends are enabled, configure RESEND_API_KEY and an accountant or default Resend sender. |
+| ready | dedicated_secrets_are_distinct | n/a | Use separate random values for every signing, hashing, cursor, and envelope-encryption boundary. |
+| ready | dedicated_secrets_are_not_auth_secrets | n/a | Do not reuse AUTH_SECRET or NEXTAUTH_SECRET for any dedicated boundary secret. |
+
+## Safety
+
+- This preflight reads secret values only from the process environment.
+- It never writes, hashes, serializes, or prints secret values.
+- Local and preview environments report missing production secrets without blocking; release mode fails closed.

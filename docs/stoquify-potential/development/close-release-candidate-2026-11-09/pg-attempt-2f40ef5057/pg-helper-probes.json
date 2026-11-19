@@ -1,0 +1,260 @@
+{
+  "database": "stoquify_replay_close_authority_20261109_2f40ef5057",
+  "checks": [
+    {
+      "name": "allow",
+      "operation": "assessment",
+      "markers": 1
+    },
+    {
+      "name": "allow",
+      "operation": "assign",
+      "markers": 1
+    },
+    {
+      "name": "allow",
+      "operation": "comment",
+      "markers": 1
+    },
+    {
+      "name": "allow",
+      "operation": "waiver-request",
+      "markers": 1
+    },
+    {
+      "name": "allow",
+      "operation": "waiver-approve",
+      "markers": 1
+    },
+    {
+      "name": "allow",
+      "operation": "review",
+      "markers": 1
+    },
+    {
+      "name": "allow",
+      "operation": "draft-export",
+      "markers": 1
+    },
+    {
+      "name": "allow",
+      "operation": "certified-export",
+      "markers": 1
+    },
+    {
+      "name": "missing-permission",
+      "operation": "assessment",
+      "markers": 0
+    },
+    {
+      "name": "missing-permission",
+      "operation": "assign",
+      "markers": 0
+    },
+    {
+      "name": "missing-permission",
+      "operation": "comment",
+      "markers": 0
+    },
+    {
+      "name": "missing-permission",
+      "operation": "waiver-request",
+      "markers": 0
+    },
+    {
+      "name": "missing-permission",
+      "operation": "waiver-approve",
+      "markers": 0
+    },
+    {
+      "name": "missing-permission",
+      "operation": "review",
+      "markers": 0
+    },
+    {
+      "name": "missing-permission",
+      "operation": "draft-export",
+      "markers": 0
+    },
+    {
+      "name": "missing-permission",
+      "operation": "certified-export",
+      "markers": 0
+    },
+    {
+      "name": "missing-session",
+      "errorCode": "FRESH_AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "missing-session-assessment",
+      "errorCode": "AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "wrong-token",
+      "errorCode": "FRESH_AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "foreign-session",
+      "errorCode": "FRESH_AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "revoked-session",
+      "errorCode": "FRESH_AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "expired-session",
+      "errorCode": "FRESH_AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "foreign-actor",
+      "errorCode": "FORBIDDEN",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "inactive-actor",
+      "errorCode": "FORBIDDEN",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "locked-actor",
+      "errorCode": "FORBIDDEN",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "inactive-organization",
+      "errorCode": "FORBIDDEN",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "foreign-organization",
+      "errorCode": "FORBIDDEN",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "suspended-close",
+      "errorCode": "FORBIDDEN",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "read-only-close",
+      "errorCode": "FORBIDDEN",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "suspended-accounting",
+      "errorCode": "FORBIDDEN",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "expired-assurance",
+      "errorCode": "FRESH_AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "wrong-assurance-method",
+      "errorCode": "FRESH_AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "wrong-assurance-organization",
+      "errorCode": "FRESH_AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "locked-assurance",
+      "errorCode": "FRESH_AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "insufficient-assurance",
+      "errorCode": "FRESH_AUTH_REQUIRED",
+      "markers": 0,
+      "committedRestrictionBeforeAcquisition": true
+    },
+    {
+      "name": "held-authority-revocation-order",
+      "kind": "session",
+      "waiterPid": 6124,
+      "blockerPid": 17784,
+      "exactBlockingPidObserved": true,
+      "ownerCommitted": true,
+      "ownerRolledBack": false,
+      "markerCount": 1,
+      "subsequentAuthorityDenied": true
+    },
+    {
+      "name": "held-authority-revocation-order",
+      "kind": "role",
+      "waiterPid": 21884,
+      "blockerPid": 17784,
+      "exactBlockingPidObserved": true,
+      "ownerCommitted": true,
+      "ownerRolledBack": false,
+      "markerCount": 1,
+      "subsequentAuthorityDenied": true
+    },
+    {
+      "name": "held-authority-revocation-order",
+      "kind": "module",
+      "waiterPid": 25788,
+      "blockerPid": 17784,
+      "exactBlockingPidObserved": true,
+      "ownerCommitted": true,
+      "ownerRolledBack": false,
+      "markerCount": 1,
+      "subsequentAuthorityDenied": true
+    },
+    {
+      "name": "held-authority-revocation-order",
+      "kind": "session",
+      "waiterPid": 19396,
+      "blockerPid": 17784,
+      "exactBlockingPidObserved": true,
+      "ownerCommitted": false,
+      "ownerRolledBack": true,
+      "markerCount": 0,
+      "subsequentAuthorityDenied": true
+    },
+    {
+      "name": "real-expiry-after-business-lock-wait",
+      "waiterPid": 17784,
+      "blockerPid": 14836,
+      "exactBlockingPidObserved": true,
+      "assuranceAgeMsAfterWait": 300061,
+      "usedRealDatabaseClock": true,
+      "markers": 0
+    }
+  ],
+  "noFinancialOrCertificationRecords": {
+    "closeRuns": 0,
+    "exports": 0,
+    "journals": 0,
+    "sales": 0,
+    "settlements": 0
+  },
+  "limitation": "Real isolated helper/module/session/role/row-lock proof; audit markers only. No real login, close pack, certification, provider or application journey."
+}

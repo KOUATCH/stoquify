@@ -12,14 +12,14 @@ jest.mock("@/i18n/routing", () => ({ localizePath: (path: string, locale: string
 jest.mock("@/actions/purchaseOrderWorkflow/purchaseOrderSystemAction", () => ({ clonePurchaseOrder: jest.fn() }))
 jest.mock("@/lib/notifications/notify", () => ({ notify: { success: jest.fn() } }))
 const action = clonePurchaseOrder as jest.Mock
-const input = { id: "source-1", organizationId: "org-1", locale: "fr" as const, allowed: true }
+const input = { id: "source-1", organizationId: "org-1", actorId: "actor-1", locale: "fr" as const, allowed: true }
 function show(overrides = {}) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } })
   const invalidation = jest.spyOn(client, "invalidateQueries")
   const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={client}>{children}</QueryClientProvider>
   return { ...renderHook(() => usePurchaseOrderClone({ ...input, ...overrides }), { wrapper }), invalidation }
 }
-beforeEach(() => { jest.clearAllMocks() })
+beforeEach(() => { jest.clearAllMocks(); sessionStorage.clear() })
 describe("real purchase order clone controller", () => {
   it("does not call the action for a denied current capability", async () => {
     const { result } = show({ allowed: false })
@@ -31,7 +31,7 @@ describe("real purchase order clone controller", () => {
     action.mockResolvedValue({ success: true, data: { id: "new-draft", status: "DRAFT" }, canEdit })
     const { result, invalidation } = show()
     await act(async () => { await result.current.clone() })
-    expect(action).toHaveBeenCalledWith({ id: "source-1", organizationId: "org-1" })
+    expect(action).toHaveBeenCalledWith({ id: "source-1", organizationId: "org-1", requestId: expect.any(String) })
     expect(mockPush).toHaveBeenCalledWith(`/fr/dashboard/purchase-orders/new-draft${canEdit ? "/edit" : ""}`)
     expect(mockRefresh).toHaveBeenCalledTimes(1)
     expect(notify.success).toHaveBeenCalledTimes(1)
@@ -66,15 +66,36 @@ describe("real purchase order clone controller", () => {
   })
   it.each(["structured", "transport", "malformed"])("never resends an uncertain %s outcome", async type => {
     if (type === "transport") action.mockRejectedValue(new Error("transport"))
-    else action.mockResolvedValue(type === "structured" ? { success: false, failure: "unknown" } : { success: true, data: { id: "unexpected", status: "APPROVED" } })
+    else action.mockResolvedValue(type === "structured" ? { success: false, failure: "unknown" } : { success: true, data: { status: "DRAFT" } })
     const { result, invalidation } = show()
     await act(async () => { await result.current.clone() })
     await act(async () => { await result.current.clone() })
-    expect(action).toHaveBeenCalledTimes(1)
+    expect(action).toHaveBeenCalledTimes(2)
+    expect(action.mock.calls[1][0]).toMatchObject({ requestId: action.mock.calls[0][0].requestId, recoverOnly: true })
     expect(result.current.failure).toBe("unknown")
-    expect(result.current.retryBlocked).toBe(true)
+    expect(result.current.retryBlocked).toBe(false)
     expect(result.current.pending).toBe(false)
     expect(invalidation).not.toHaveBeenCalled()
     expect(mockPush).not.toHaveBeenCalled()
+  })
+  it("recovers the retained receipt after remount without resending a clone", async () => {
+    action.mockRejectedValue(new Error("lost reply"))
+    const first = show()
+    await act(async () => { await first.result.current.clone() })
+    first.unmount()
+    action.mockResolvedValue({ success: true, data: { id: "retained-order", status: "APPROVED" }, canEdit: true })
+    const second = show()
+    await act(async () => { await second.result.current.clone() })
+    expect(action).toHaveBeenCalledTimes(2)
+    expect(action.mock.calls[1][0]).toMatchObject({ requestId: action.mock.calls[0][0].requestId, recoverOnly: true })
+    expect(mockPush).toHaveBeenCalledWith("/fr/dashboard/purchase-orders/retained-order")
+  })
+  it("does not reuse another signed-in actor's retained identity", async () => {
+    sessionStorage.setItem("purchase-clone:org-1:previous-actor:source-1", "previous-request")
+    action.mockResolvedValue({ success: true, data: { id: "new-draft", status: "DRAFT" }, canEdit: true })
+    const { result } = show()
+    await act(async () => { await result.current.clone() })
+    expect(action.mock.calls[0][0].requestId).not.toBe("previous-request")
+    expect(action.mock.calls[0][0].recoverOnly).toBeUndefined()
   })
 })

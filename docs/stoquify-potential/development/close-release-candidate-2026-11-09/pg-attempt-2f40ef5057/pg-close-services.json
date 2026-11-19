@@ -1,0 +1,224 @@
+{
+  "checks": [
+    {
+      "name": "actual-service-workflow",
+      "synthetic": true,
+      "organizationId": "cr-2e36dd0101-org",
+      "periodId": "cmw9iq6un0009mah8vpfm6vqp",
+      "closeRunId": "cmw9iq6xh000dmah8vcm16g41",
+      "findingId": "cmw9iq98f000zmah8v9sr47ll",
+      "makerId": "cr-2e36dd0101-maker",
+      "checkerId": "cr-2e36dd0101-checker",
+      "commentId": "cmw9iq9ig001vmah8316prq62",
+      "reviewId": "cmw9iq9xm002lmah84a40hdy7",
+      "draftExportId": "cmw9iqa4c002vmah8m72dvh7n",
+      "draftContentHash": "sha256:eb9aa4676ed2af2dfe4ccaf296b4edd13b66eebd74f3793efb8fa044dc1d0545",
+      "actualAssessmentStatus": "BLOCKED",
+      "setupStatus": "IN_PROGRESS",
+      "limitation": "No credentials/session tokens. Service fixture is not an authenticated HTTP session or earned close certificate.",
+      "requestedStatus": "IN_REVIEW",
+      "approvedStatus": "WAIVED_WITH_APPROVAL",
+      "final": {
+        "runs": 1,
+        "findings": 1,
+        "comments": 1,
+        "reviews": 1,
+        "exports": 1,
+        "certifiedExports": 0,
+        "audit": 7,
+        "events": 7,
+        "outbox": 7,
+        "journals": 0,
+        "sales": 0,
+        "settlements": 0
+      }
+    },
+    {
+      "name": "actual-service-audit-rollback",
+      "allScopedBusinessCountsUnchanged": true,
+      "snapshot": {
+        "runs": 1,
+        "findings": 1,
+        "comments": 1,
+        "reviews": 1,
+        "exports": 1,
+        "certifiedExports": 0,
+        "audit": 7,
+        "events": 7,
+        "outbox": 7,
+        "journals": 0,
+        "sales": 0,
+        "settlements": 0
+      }
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "module",
+      "operation": "assessment",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "module",
+      "operation": "assign",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "module",
+      "operation": "comment",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "module",
+      "operation": "waiver-request",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "module",
+      "operation": "waiver-approve",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "module",
+      "operation": "review",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "module",
+      "operation": "draft-export",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "module",
+      "operation": "certified-export",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "role",
+      "operation": "assessment",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "role",
+      "operation": "assign",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "role",
+      "operation": "comment",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "role",
+      "operation": "waiver-request",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "role",
+      "operation": "waiver-approve",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "role",
+      "operation": "review",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "role",
+      "operation": "draft-export",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "role",
+      "operation": "certified-export",
+      "code": "FORBIDDEN",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "session",
+      "operation": "assessment",
+      "code": "AUTH_REQUIRED",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "session",
+      "operation": "assign",
+      "code": "AUTH_REQUIRED",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "session",
+      "operation": "comment",
+      "code": "AUTH_REQUIRED",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "session",
+      "operation": "waiver-request",
+      "code": "AUTH_REQUIRED",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "session",
+      "operation": "waiver-approve",
+      "code": "FRESH_AUTH_REQUIRED",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "session",
+      "operation": "review",
+      "code": "AUTH_REQUIRED",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "session",
+      "operation": "draft-export",
+      "code": "AUTH_REQUIRED",
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "actual-service-committed-revocation",
+      "kind": "session",
+      "operation": "certified-export",
+      "code": "FRESH_AUTH_REQUIRED",
+      "allScopedBusinessCountsUnchanged": true
+    }
+  ],
+  "limitation": "Real current-candidate service persistence and denied certification on deliberately incomplete synthetic setup; not an earned READY/T4 certificate, statutory setup, provider or authenticated browser proof."
+}

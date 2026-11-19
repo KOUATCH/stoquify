@@ -1,0 +1,84 @@
+{
+  "reviewedAt": "2026-11-09T13:55:11.813Z",
+  "reviewer": "r04_review",
+  "verdict": "accepted_local_P04_R04_completion",
+  "passed": true,
+  "localR04Accepted": true,
+  "implementationStatus": "verified_local_native_actions",
+  "candidateId": "p04-r04-20261109-ef3f203a9ded",
+  "sourceIdentity": "ef3f203a9ded326aaff0518413b3a6c062ebd438a4dff59a55eb8c2378d8ac45",
+  "currentProductSha256": "a51725ecd654eb17c350ff40749a6088b379fd433e5da2595268983bd3b8859e",
+  "testSha256": "b1d43e3ba41e0e08a7116407242c048938a1a4f96c608baac94f572db1c64455",
+  "parentP04Accepted": false,
+  "productionAccepted": false,
+  "localBlockers": [],
+  "evidence": {
+    "sourceFilesBaseline": 25,
+    "unit": {
+      "passed": 276,
+      "new": 58,
+      "continuity": 218,
+      "suites": 3,
+      "failed": 0,
+      "skipped": 0,
+      "inputsUnchanged": 26,
+      "baselineSelectedExpectedFailures": 2,
+      "baselineFiltered": 56
+    },
+    "static": {
+      "scopedTypecheckPassed": true,
+      "lintFiles": 2,
+      "lintErrors": 0,
+      "lintWarnings": 0
+    },
+    "native": {
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "migrations": 121,
+      "sourceInputsUnchanged": 5209,
+      "equalStatePairs": 36,
+      "businessGroups": 24,
+      "failedResponses": 9,
+      "authorizedResponses": 27,
+      "classifiedAuditAdditions": 4,
+      "actualPrismaFaultRestored": true
+    },
+    "cleanup": {
+      "clusterStopped": true,
+      "portReleased": true,
+      "remainingClients": [],
+      "pidIndependentlyAbsent": 22660,
+      "portIndependentlyAbsent": 55501
+    }
+  },
+  "reviewReceipts": [
+    "CONTRACT-REVIEW.md",
+    "SOURCE-REVIEW.json",
+    "UNIT-RECIPE-REVIEW.json",
+    "UNIT-RECONCILIATION.json",
+    "STATIC-REVIEW.json",
+    "NATIVE-RECIPE-REVIEW.json",
+    "NATIVE-RECONCILIATION.json",
+    "CLEANUP-REVIEW.json",
+    "MATRIX-RECONCILIATION.json",
+    "PUBLICATION-REVIEW.json"
+  ],
+  "limits": [
+    "Native executes actual action, RBAC, service and PostgreSQL with Better Auth/Next transport stubs.",
+    "Unit invokes actual hook queryFn with mocked useQuery; no rendered UI.",
+    "No signed-cookie HTTP, session expiry/revocation/signature, browser recovery, full-app build, hosted/provider/operator or production proof.",
+    "Business-state equality is scoped to 24 named relation groups; security audit additions are classified separately."
+  ],
+  "remainingRequirements": [
+    "P04-V01–V05 and P04-D01 remain open.",
+    "R01 production-role, custodian and actual transport obligations remain.",
+    "R02 original-owner, hosted and release obligations remain.",
+    "All production gates and deferred commitments remain unchanged."
+  ],
+  "nextEligiblePackage": "P04-V02",
+  "publicationReview": "accepted: PUBLICATION-REVIEW.json",
+  "publicationAccepted": true,
+  "noProductOrTestEditsByReviewer": true,
+  "publicationReviewedAt": "2026-11-09T14:00:26.712Z"
+}

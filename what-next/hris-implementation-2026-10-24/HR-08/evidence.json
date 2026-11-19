@@ -1,0 +1,694 @@
+{
+  "slice": "HR-08",
+  "status": "VERIFIED",
+  "timestamp": "2026-10-24T15:47:06.247Z",
+  "baselineCommit": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "scope": "Bounded engineering correctness; inherited dirty tree preserved; no legal/production/whole-platform certification",
+  "hashes": [
+    {
+      "path": "services/hris/org.service.ts",
+      "sha256": "83adf41edc955cc71e14e6f8be6f0a4d9babff245605780b2d015a2e2a88670c"
+    },
+    {
+      "path": "services/hris/employee.service.ts",
+      "sha256": "81122f76a60af1e425f9ec92434f9350c7f95e9ef245a0ace68a5ccffbd32840"
+    },
+    {
+      "path": "services/hris/manager-self-service.service.ts",
+      "sha256": "2bc70d90933e10bc518140b0e68f4a13faa09208e4dc45d3595dc906a7cab787"
+    },
+    {
+      "path": "services/payroll/org-manager-scope.service.ts",
+      "sha256": "934204f3a9a6be4822832f2d86233c732db7234fd2df9e976f0a3f7ea9acd4af"
+    },
+    {
+      "path": "services/hris/__tests__/org-effective-scope.service.test.ts",
+      "sha256": "f44280363248c505d0134879569fe71d6fcee80522d3952dbebee2facc1e2ab7"
+    },
+    {
+      "path": "services/hris/__tests__/org.service.test.ts",
+      "sha256": "8202d97f3e736c6c434f815f9456fb25f2b2943c2f494c71d4b93bc46486b6bd"
+    },
+    {
+      "path": "services/hris/__tests__/manager-self-service.service.test.ts",
+      "sha256": "78ada93e3b674017aa7d6027a788ad6ff0affed34015d28520050105c107f747"
+    },
+    {
+      "path": "services/payroll/employee.service.ts",
+      "sha256": "83d6f65b70bd3d6fcae1cbf0720085a2f2a7ae42c881fb475a14a6d6d06b6bc2"
+    },
+    {
+      "path": "services/hris/people-directory-query.ts",
+      "sha256": "003488fdf9a5ec48a697f253daff8dd6bfc0faf417c1f826a2dafaedd2d3ece3"
+    },
+    {
+      "path": "actions/hris/employee.actions.ts",
+      "sha256": "23b0124ee0a5ebc4b467f2567129ab9a62fa0960da09117fd117bb6f05e8bffa"
+    },
+    {
+      "path": "components/hris/HrisEmployeeDirectoryTable.tsx",
+      "sha256": "348c7ce157077dbcc37d0c5ed6bafe119b1eed940ba521d12e0238105aaffaec"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/page.tsx",
+      "sha256": "f26624e2275c3af289fe3223e802fddbcba1750543a5f6a89c08d4b98c1a7141"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/error.tsx",
+      "sha256": "7fcbadf1885610399579c4a783701493ad52c488e56dbe8189612d5dc8ffc4f2"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/loading.tsx",
+      "sha256": "8bf5bcf6db643a7e98c2b76df4f4c179c4d14ee89b42dda1cdcc46838453b763"
+    },
+    {
+      "path": "actions/hris/__tests__/employee.actions.test.ts",
+      "sha256": "c6f5e07a40f6a4711953806daee0ab6b618ee2fbeb74592a2ccd5202acb8786c"
+    },
+    {
+      "path": "services/hris/__tests__/people-directory-query.test.ts",
+      "sha256": "6744e4608ad4cf79a18317a7fbf78ba0571df97b9008c8c753a05f31694e25b0"
+    },
+    {
+      "path": "services/payroll/payroll-production-admission.ts",
+      "sha256": "48b722fe75bc7db244d6ad8a2d394c08bb7a9449346c2959ed03e5552bf608da"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "78f115196eb25afe5751c5bc19304bdcc6257462f8a8af7ef3e8ece1d10c6046"
+    },
+    {
+      "path": "services/payroll/declaration-lifecycle.service.ts",
+      "sha256": "624a0f0400a1f092ccad8850065fbffc5d85a4178640ec4d19491490765faf2e"
+    },
+    {
+      "path": "services/payroll/authority-adapter-execution.service.ts",
+      "sha256": "0da109ee754f485e81100eed3036e107c38e1344d16d626236066e8e20ade2e3"
+    },
+    {
+      "path": "services/payroll/authority-adapter-worker.service.ts",
+      "sha256": "5e6b9622b29caf9a2ffcaa4a13d70379f103bd20e233642fffc2379a6dad5b02"
+    },
+    {
+      "path": "services/payroll/__tests__/authority-adapter-execution.service.test.ts",
+      "sha256": "b49574aad941f25c3deef0588c8a988441baecf5fb1862d4866a4359c90702be"
+    },
+    {
+      "path": "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+      "sha256": "f807c49bbf2f103edc3c2b9135129ead7d9d5f3d3404f34c8fb6404883b005f3"
+    },
+    {
+      "path": "services/payroll/__tests__/declaration-lifecycle.service.test.ts",
+      "sha256": "05df0262130dc80b9fc93746708746dbb605010b002123e4c6ff53e454d6bb4d"
+    },
+    {
+      "path": "services/hris/leave-ledger-order.ts",
+      "sha256": "c8afbc3e3235dd4dbb54c18402b0289d8b2ddc14a9c29b7694a4aa3e791b2eb7"
+    },
+    {
+      "path": "services/hris/leave-balance.service.ts",
+      "sha256": "2c61e4e8fdc45d2d86041bb5a9fd86cb54bb2994afc9c648072cb9cae1d694c6"
+    },
+    {
+      "path": "services/hris/attendance-correction.ts",
+      "sha256": "740335a7ebba3d189ca4144020be78c34eaee1f3822d5f4853d47ef9e4561f00"
+    },
+    {
+      "path": "services/hris/operational-attendance.service.ts",
+      "sha256": "db0ec656b09cd9c91be8a60671870af38d4f887d4bea3f6001e08a4b8ce6fd10"
+    },
+    {
+      "path": "services/hris/operational-time.service.ts",
+      "sha256": "a83d342739c1b0d6cb7f6c4e5578cb6cfaaf6e2b184555ac6a2c5318d294ecee"
+    },
+    {
+      "path": "services/hris/time-allocation.ts",
+      "sha256": "7422a33e4938ebb5f92171efccd1c6a8d4f120460ca0771eafc2e7f7c2dc73bd"
+    },
+    {
+      "path": "services/hris/time-leave.contract.ts",
+      "sha256": "a7a696f94c211f1e0ec82b69d555b890dce5d25949e8ada310cdb8346907df8f"
+    },
+    {
+      "path": "services/hris/time-leave.service.ts",
+      "sha256": "677aeaa61b8c672c385dc4c3e5082a12ca4ee89d7b7e78d31d406dd935615b54"
+    },
+    {
+      "path": "services/hris/employment-projection.ts",
+      "sha256": "3071602f4e50aabcd3f7d33565228198a5cd820323db7eba7942dcbce4481ee4"
+    },
+    {
+      "path": "services/hris/lifecycle.service.ts",
+      "sha256": "9b1f2f7a572424a5ed417f53fdf0b53cf59be711ef7b7194a420aa4ecfc6b948"
+    },
+    {
+      "path": "components/hris/HrisOperationalTimeRequestPanel.tsx",
+      "sha256": "0301a807183898feb565c8ae3e40489e8dc932d1eeba1376a25dfd66797dc313"
+    },
+    {
+      "path": "components/hris/HrisEmployeeSelfService.tsx",
+      "sha256": "6cdbed35ad609094922eaecf1c33eedcc5407b9bcc225deee05fb1434e04f635"
+    },
+    {
+      "path": "services/hris/__tests__/hris-correctness.postgres.test.ts",
+      "sha256": "301e6ec966938b37d4b936addee14ccf733774910784a0f98ef2af225c3e35b1"
+    },
+    {
+      "path": "jest.hris-correctness-postgres.config.cjs",
+      "sha256": "e119003c2feb0ebe77e464ee34a2e0592b291bc2899416adf9434fe861b2d6fe"
+    },
+    {
+      "path": "services/hris/__tests__/leave-balance.service.test.ts",
+      "sha256": "be6bf2a9b3b99699dd25d053cf58db2ab98ff4598b5c7c99260410aeae8bbe81"
+    },
+    {
+      "path": "services/hris/__tests__/operational-time.service.test.ts",
+      "sha256": "c2a5048577f19a8752882ab3469eb6c1bfab436b4154746739f46cddb71b6c8f"
+    },
+    {
+      "path": "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+      "sha256": "d41e09c1dfcd315f4038c8ee2c0720e54e2e83d652e312f16e034c21fdb65f0e"
+    },
+    {
+      "path": "services/hris/__tests__/time-allocation.test.ts",
+      "sha256": "79b3f2a05e8c51464d5597650ae1b81471fe0959607ae22e0f818e31b5291f1a"
+    },
+    {
+      "path": "services/hris/__tests__/time-leave.service.test.ts",
+      "sha256": "3d341ec82b37afb282c8ef80716b162881ba79c959d7be591d1ff1835c1f1fc5"
+    },
+    {
+      "path": "services/hris/__tests__/lifecycle.service.test.ts",
+      "sha256": "fea410448c2443be58eb55be4999b0e8e6cb317b097e9334b77fafbeaf463186"
+    },
+    {
+      "path": "services/hris/__tests__/payroll-readiness-contract.test.ts",
+      "sha256": "e3c4c72aeb118a37cb0ac46d46390a450feb1da022b6e43d02c211297e25f011"
+    },
+    {
+      "path": "services/hris/__tests__/employee.service.test.ts",
+      "sha256": "6f2d1cb8332a200fbe95594a954b0d8dee81862bd497a6567de34397aec1d94e"
+    },
+    {
+      "path": "services/hris/__tests__/approval-inbox.service.test.ts",
+      "sha256": "ba1eff261f8e83d9e1714670c8bd3f6897fac717c43f9e9423615c8684833b8d"
+    },
+    {
+      "path": "components/hris/__tests__/HrisOperationalTimeRequestPanel.test.tsx",
+      "sha256": "f3a86e30705a1714211646cec38dfe0d26180ed791a878614610ff88f7eacf7b"
+    },
+    {
+      "path": "components/hris/__tests__/HrisOperationalTimePanels.test.tsx",
+      "sha256": "038dff90b1808b3b60f9f367e48b6c78c791294931b7e754ebc71dbc10982220"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-employee.service.test.ts",
+      "sha256": "ab7b68f405a5683458ecfc620d7d72095e29e0f141dcef253f0df1d646969ffd"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-production-admission.test.ts",
+      "sha256": "b3cf113da4fd70243e50b318b42d18fc16a17846719ad84d997150d2925a7f59"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-control.service.test.ts",
+      "sha256": "4fbb7c277a4828e0fc48f676f0ba1a23cd3cdfff3aec8a8bec4373e580fcdeed"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+      "sha256": "800862dc345600b116dd3b98060acc9058868b866be1e1804231aac6d493bfa1"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-transition-evidence.test.ts",
+      "sha256": "ec6244e6e9d5d7b13cfae21bf96a42b67512c4a1b74cc0db5fbfaa98c9949f0c"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-immutability-migration.test.ts",
+      "sha256": "bc89fd20e8010fa66f7bf7aaec219df6a7cfa5c1094e820882c98ffc37df712b"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-trust-spine-transition-migration.test.ts",
+      "sha256": "d0821f695c194c4fbde6eba434e2e0851066a54a5be611bd268d73fdf2581ff2"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-provider-settlement-bridge.service.test.ts",
+      "sha256": "5ccdc6a6e63e4c49b393951031bde4592d1072bf9ffd84fa72d064659207e6c3"
+    },
+    {
+      "path": "services/accounting/__tests__/journal-close-invalidation.service.test.ts",
+      "sha256": "db62244de2b0e4e38a59936d18b9e9298e9ebf84765d225215baafcfa7e5aae5"
+    },
+    {
+      "path": "actions/hris/operational-time.actions.ts",
+      "sha256": "430cb9cc823209020be53144eb043cf5baf8dae7531e7b4be7071e5f072db8af"
+    },
+    {
+      "path": "services/hris/self-service.service.ts",
+      "sha256": "f56758405d69c571dc3cf3ef5fef3f7cc1c238a305bffb5b5e49db554f9427e2"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-replay-authorization.test.ts",
+      "sha256": "1c81c3a1daa2a0edf265dc6f8d03703b2c581b3320e62fe56fb11ef3b09e653b"
+    }
+  ],
+  "reviewChangedFiles": [
+    "services/payroll/payroll-control.service.ts",
+    "services/payroll/declaration-lifecycle.service.ts",
+    "services/payroll/authority-adapter-worker.service.ts",
+    "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+    "services/payroll/__tests__/declaration-lifecycle.service.test.ts",
+    "services/hris/leave-balance.service.ts",
+    "services/hris/operational-time.service.ts",
+    "services/hris/lifecycle.service.ts",
+    "services/hris/__tests__/hris-correctness.postgres.test.ts",
+    "services/hris/__tests__/operational-time.service.test.ts",
+    "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+    "services/payroll/__tests__/payroll-replay-authorization.test.ts"
+  ],
+  "harnessHashes": [
+    {
+      "path": "jest.hris-correctness-postgres.config.cjs",
+      "sha256": "e119003c2feb0ebe77e464ee34a2e0592b291bc2899416adf9434fe861b2d6fe"
+    },
+    {
+      "path": "jest.payroll-trust-spine.config.cjs",
+      "sha256": "da43ee692dcd1295ccac8255daa9a408090a9335628f4ab7a74d9d0dea8acb1b"
+    },
+    {
+      "path": "jest.setup.ts",
+      "sha256": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/typecheck.cjs",
+      "sha256": "d8cb9a97c0d2020c623bb4e363554a16d2dad350d478c5c379de7ff53ae73e8e"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/run-review-check.cjs",
+      "sha256": "54b75c16db55b2cb57f29222655fe01d40ea9421e5e3342414a132ea9f47567c"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/write-review-evidence.cjs",
+      "sha256": "d90b3b0ad7b7dbf26cfbde7cfb85b97a37d3d99cc5b5dbc24b225d3631113b2d"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-02/browser/check.cjs",
+      "sha256": "7f7baaff51f1cd127c036bea9852c906d8adb4e9aa49607d4659c2f5d56a3a7a"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-02/browser/serve.cjs",
+      "sha256": "1a1202f9fe9e06eded215b88689fdfd223bac8bf2d0db0616834ccd7696d5018"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-06/browser/check.cjs",
+      "sha256": "572fec3c8a0c920e622019920ff5ad6a8b2a682af30f64b6a0d375d09b8966cf"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-06/browser/build.cjs",
+      "sha256": "a3a2231d0e4c3500874508976a4fd626f6857ebd4a055c6d0597988b38b0e97a"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/unit-review.json",
+      "sha256": "cf984f39a1e2451a8ad9787dac9e3ed92d1acc2b280d48272faaf4e76a7f335e"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/postgres-review.json",
+      "sha256": "c2b4b5757f1f670f1002f19d66f848fe12b80b5aaab994dc91f845fefdc91a50"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/typecheck-review.txt",
+      "sha256": "698cb814ddc4a30089e50d58e9c057bd7bf05f3afdd77425672ec11b9110c6a5"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/unit-review-run.json",
+      "sha256": "59a38c73bffd2ccb9d80db296808e7d1f9d5d411b10f463cb613b68940c73284"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/types-review-run.json",
+      "sha256": "158344a1ed36b916428dfb7c3d6e0207c58f6cb77ff1c22d65511bdcf00ec4be"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/workflow-review.json",
+      "sha256": "9cdb47c81c94eafefca6e0e269846156c264c81ae69550a827a721bf3bba55d9"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/independent-review.json",
+      "sha256": "69d41f0477908740e6ea926e65aa019c2b03a0d8556ff377fe4f4babe0a32c5f"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/INDEPENDENT_REVIEW.md",
+      "sha256": "745524b63b24d446aa98770801ae8709b8da6737eddf7c7c0c530ec50030bf6f"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/RESULT.md",
+      "sha256": "e7ad502c90c741c69dbdff6022ec79a929f5d3c47157324754fad0e2a742e343"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/ROLLBACK_AND_SUPPORT.md",
+      "sha256": "e687cae5d155cce2171c734970301293603a38af0d2f28b1de9fe5f9e69c76e9"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/environment-closeout.json",
+      "sha256": "53e41dc5b60274750a0301bd29ab031314a9a3b639356de2726f15d86e222943"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/cleanup-recovery.json",
+      "sha256": "d7f4962e853b82986b1dd64a6b0c680de725f07a40669e5f5a004196eaa05620"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/review-reproduction.json",
+      "sha256": "db18db2a6ab9bbbda7ae8f4cb52537b712b517b7c9c08a7e3a3ea4bc70809e01"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/unit-review-initial.json",
+      "sha256": "84dab7bb9a7403349b01e6cddc452229d7c14cb0bd619013f51b8411a78868c4"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-08/postgres-review-focused.json",
+      "sha256": "8a2638b477563da7bdb755e229d3453f39f819785cc83b1ca9564230d827b6a2"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-02/browser/results.json",
+      "sha256": "f5848307161b4bf99dc2bae091c8cc7a539ae4c16738ce6d256f3623ff4023ea"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-06/browser/results.json",
+      "sha256": "34bb530c9becf4636d2c756ae6671289edc61d87ae1c4285cd8f69417d7d5be8"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-02/browser/en-360.png",
+      "sha256": "d13a10368bc6b15b73b8c7441198e5acc5162edbcdb87237c64933222be80256"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-02/browser/en-768.png",
+      "sha256": "407187af793375e80cdf78eecfa5e1b8c95091aeefc9e516559e592204c51bd1"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-02/browser/en-1440.png",
+      "sha256": "516a7ad3a6bc96ff2d20ac00f08aa4537570093374fc5fe31f09bc30c28a1faa"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-02/browser/fr-360.png",
+      "sha256": "a9fe3bce774cc7b7cf2ebf192dc8698f46687a4d1db0fe693a94f717107487e3"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-02/browser/fr-768.png",
+      "sha256": "b71a6982d0b6ec025f130be87ddce2d2b87793383e6a877b6160bb3c217f9ef0"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-02/browser/fr-1440.png",
+      "sha256": "30056bbd2436fb6ca50749ffeb3ac5134fc2a07fdc4d9b09047c9aded63dad0a"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-06/browser/en-360.png",
+      "sha256": "f61a72c372667aed6148c7eb4b4afb9b6c1be266994fbaad01791514cb28d83a"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-06/browser/en-768.png",
+      "sha256": "ae5377d4606139aea29d119905a6fafb6f0b5134b54e3bfd15fa96651ea3626c"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-06/browser/en-1440.png",
+      "sha256": "1309264052755cfcef8eded2ab4694ea4f2efb80e28425002a65ac844a9a6776"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-06/browser/fr-360.png",
+      "sha256": "72d14d6aef0bec4d2aec51b81d399b936298bf2d97fb8b4d547e57baa2b97401"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-06/browser/fr-768.png",
+      "sha256": "285c97d4387b9393d6df6817b7f2747102f870c35a98b6412dbd41a6e4b2488d"
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-06/browser/fr-1440.png",
+      "sha256": "430a3191badad0eb149443d6d5bb6d8b5b17d354b537099dd4fad900297488e0"
+    }
+  ],
+  "results": [
+    {
+      "lane": "mocked/pure/component/source assertions",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-08/unit-review.json",
+      "passed": 327,
+      "suites": 29,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.payroll-trust-spine.config.cjs",
+        "--runInBand",
+        "--no-cache",
+        "--runTestsByPath",
+        "services/hris/__tests__/leave-balance.service.test.ts",
+        "services/hris/__tests__/operational-time.service.test.ts",
+        "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+        "services/hris/__tests__/time-allocation.test.ts",
+        "services/hris/__tests__/time-leave.service.test.ts",
+        "services/hris/__tests__/lifecycle.service.test.ts",
+        "services/hris/__tests__/payroll-readiness-contract.test.ts",
+        "services/hris/__tests__/org-effective-scope.service.test.ts",
+        "services/hris/__tests__/org.service.test.ts",
+        "services/hris/__tests__/employee.service.test.ts",
+        "services/hris/__tests__/manager-self-service.service.test.ts",
+        "services/hris/__tests__/approval-inbox.service.test.ts",
+        "services/hris/__tests__/people-directory-query.test.ts",
+        "actions/hris/__tests__/employee.actions.test.ts",
+        "components/hris/__tests__/HrisOperationalTimeRequestPanel.test.tsx",
+        "components/hris/__tests__/HrisOperationalTimePanels.test.tsx",
+        "services/payroll/__tests__/payroll-employee.service.test.ts",
+        "services/payroll/__tests__/payroll-production-admission.test.ts",
+        "services/payroll/__tests__/authority-adapter-execution.service.test.ts",
+        "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+        "services/payroll/__tests__/declaration-lifecycle.service.test.ts",
+        "services/payroll/__tests__/payroll-control.service.test.ts",
+        "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+        "services/payroll/__tests__/payroll-transition-evidence.test.ts",
+        "services/payroll/__tests__/payroll-immutability-migration.test.ts",
+        "services/payroll/__tests__/payroll-trust-spine-transition-migration.test.ts",
+        "services/payroll/__tests__/payroll-provider-settlement-bridge.service.test.ts",
+        "services/accounting/__tests__/journal-close-invalidation.service.test.ts",
+        "--json",
+        "services/payroll/__tests__/payroll-replay-authorization.test.ts",
+        "--outputFile=what-next/hris-implementation-2026-10-24/HR-08/unit-review.json"
+      ],
+      "startedAt": "2026-10-24T15:42:03.382Z",
+      "finishedAt": "2026-10-24T15:42:52.112Z"
+    },
+    {
+      "lane": "real PostgreSQL and embedded People browser matrix",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-08/postgres-review.json",
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.hris-correctness-postgres.config.cjs",
+        "--runInBand",
+        "--no-cache",
+        "--json",
+        "--outputFile=what-next/hris-implementation-2026-10-24/HR-08/postgres-review.json"
+      ],
+      "startedAt": "2026-10-24T15:42:35.116Z",
+      "finishedAt": "2026-10-24T15:44:32.880Z",
+      "explicitEnvironment": "HRIS_CORRECTNESS_DATABASE_URL=postgresql://hris_test@127.0.0.1:55464/stoquify_local_hris_20261024?schema=public"
+    },
+    {
+      "lane": "focused TypeScript",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-08/typecheck-review.txt",
+      "diagnostics": 0,
+      "exitCode": 0,
+      "command": [
+        "node",
+        "what-next/hris-implementation-2026-10-24/typecheck.cjs",
+        "what-next/hris-implementation-2026-10-24/HR-08/typecheck-review.txt",
+        "services/hris/leave-balance.service.ts",
+        "services/hris/operational-time.service.ts",
+        "services/hris/operational-attendance.service.ts",
+        "services/hris/time-leave.service.ts",
+        "services/hris/lifecycle.service.ts",
+        "services/hris/org.service.ts",
+        "services/hris/employee.service.ts",
+        "services/hris/manager-self-service.service.ts",
+        "services/payroll/employee.service.ts",
+        "services/payroll/payroll-control.service.ts",
+        "services/payroll/declaration-lifecycle.service.ts",
+        "services/payroll/authority-adapter-worker.service.ts",
+        "components/hris/HrisOperationalTimeRequestPanel.tsx",
+        "components/hris/HrisEmployeeDirectoryTable.tsx",
+        "app/[locale]/(dashboard)/dashboard/people/page.tsx",
+        "services/hris/__tests__/hris-correctness.postgres.test.ts",
+        "services/payroll/__tests__/payroll-replay-authorization.test.ts",
+        "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+        "services/payroll/__tests__/declaration-lifecycle.service.test.ts"
+      ],
+      "startedAt": "2026-10-24T15:42:13.433Z",
+      "finishedAt": "2026-10-24T15:43:24.689Z"
+    },
+    {
+      "lane": "attendance browser",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-02/browser/results.json",
+      "passed": 6,
+      "exitCode": 0,
+      "command": [
+        "node",
+        "what-next/hris-implementation-2026-10-24/HR-02/browser/check.cjs"
+      ],
+      "target": "127.0.0.1:18542; actual component with synthetic action"
+    },
+    {
+      "lane": "People browser",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-06/browser/results.json",
+      "passed": 6,
+      "exitCode": 0,
+      "command": "Embedded in complete PostgreSQL suite",
+      "target": "ephemeral loopback server; actual service/PostgreSQL with synthetic role boundary"
+    },
+    {
+      "lane": "workflow",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-08/workflow-review.json",
+      "passed": true,
+      "exitCode": 0,
+      "command": "npm run agent:workflow:check; final manifest revalidation via inspected validate() export",
+      "unclassifiedScripts": 196
+    },
+    {
+      "lane": "owned tracked diff whitespace",
+      "exitCode": 0,
+      "command": "git diff --check -- <review-owned source/test files and execution register>"
+    }
+  ],
+  "commands": [
+    [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--config",
+      "jest.payroll-trust-spine.config.cjs",
+      "--runInBand",
+      "--no-cache",
+      "--runTestsByPath",
+      "services/hris/__tests__/leave-balance.service.test.ts",
+      "services/hris/__tests__/operational-time.service.test.ts",
+      "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+      "services/hris/__tests__/time-allocation.test.ts",
+      "services/hris/__tests__/time-leave.service.test.ts",
+      "services/hris/__tests__/lifecycle.service.test.ts",
+      "services/hris/__tests__/payroll-readiness-contract.test.ts",
+      "services/hris/__tests__/org-effective-scope.service.test.ts",
+      "services/hris/__tests__/org.service.test.ts",
+      "services/hris/__tests__/employee.service.test.ts",
+      "services/hris/__tests__/manager-self-service.service.test.ts",
+      "services/hris/__tests__/approval-inbox.service.test.ts",
+      "services/hris/__tests__/people-directory-query.test.ts",
+      "actions/hris/__tests__/employee.actions.test.ts",
+      "components/hris/__tests__/HrisOperationalTimeRequestPanel.test.tsx",
+      "components/hris/__tests__/HrisOperationalTimePanels.test.tsx",
+      "services/payroll/__tests__/payroll-employee.service.test.ts",
+      "services/payroll/__tests__/payroll-production-admission.test.ts",
+      "services/payroll/__tests__/authority-adapter-execution.service.test.ts",
+      "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+      "services/payroll/__tests__/declaration-lifecycle.service.test.ts",
+      "services/payroll/__tests__/payroll-control.service.test.ts",
+      "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+      "services/payroll/__tests__/payroll-transition-evidence.test.ts",
+      "services/payroll/__tests__/payroll-immutability-migration.test.ts",
+      "services/payroll/__tests__/payroll-trust-spine-transition-migration.test.ts",
+      "services/payroll/__tests__/payroll-provider-settlement-bridge.service.test.ts",
+      "services/accounting/__tests__/journal-close-invalidation.service.test.ts",
+      "--json",
+      "services/payroll/__tests__/payroll-replay-authorization.test.ts",
+      "--outputFile=what-next/hris-implementation-2026-10-24/HR-08/unit-review.json"
+    ],
+    [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--config",
+      "jest.hris-correctness-postgres.config.cjs",
+      "--runInBand",
+      "--no-cache",
+      "--json",
+      "--outputFile=what-next/hris-implementation-2026-10-24/HR-08/postgres-review.json"
+    ],
+    [
+      "node",
+      "what-next/hris-implementation-2026-10-24/typecheck.cjs",
+      "what-next/hris-implementation-2026-10-24/HR-08/typecheck-review.txt",
+      "services/hris/leave-balance.service.ts",
+      "services/hris/operational-time.service.ts",
+      "services/hris/operational-attendance.service.ts",
+      "services/hris/time-leave.service.ts",
+      "services/hris/lifecycle.service.ts",
+      "services/hris/org.service.ts",
+      "services/hris/employee.service.ts",
+      "services/hris/manager-self-service.service.ts",
+      "services/payroll/employee.service.ts",
+      "services/payroll/payroll-control.service.ts",
+      "services/payroll/declaration-lifecycle.service.ts",
+      "services/payroll/authority-adapter-worker.service.ts",
+      "components/hris/HrisOperationalTimeRequestPanel.tsx",
+      "components/hris/HrisEmployeeDirectoryTable.tsx",
+      "app/[locale]/(dashboard)/dashboard/people/page.tsx",
+      "services/hris/__tests__/hris-correctness.postgres.test.ts",
+      "services/payroll/__tests__/payroll-replay-authorization.test.ts",
+      "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+      "services/payroll/__tests__/declaration-lifecycle.service.test.ts"
+    ],
+    [
+      "node",
+      "what-next/hris-implementation-2026-10-24/HR-02/browser/check.cjs"
+    ],
+    "Embedded in complete PostgreSQL suite",
+    "npm run agent:workflow:check; final manifest revalidation via inspected validate() export",
+    "git diff --check -- <review-owned source/test files and execution register>"
+  ],
+  "independentReview": "what-next/hris-implementation-2026-10-24/HR-08/independent-review.json",
+  "acceptance": {
+    "AC01": "PASS within documented scope",
+    "AC02": "PASS within documented scope",
+    "AC03": "PASS within documented scope",
+    "AC04": "PASS within documented scope",
+    "AC05": "PASS within documented scope",
+    "AC06": "PASS within documented scope"
+  },
+  "operationalPolicy": "Whole overnight shift belongs to its local start date",
+  "databaseTarget": {
+    "timestamp": "2026-10-24T15:47:06.247Z",
+    "database": "stoquify_local_hris_20261024",
+    "host": "127.0.0.1",
+    "port": 55464,
+    "schema": "public",
+    "remainingSyntheticOrganizations": 0,
+    "cleanupCheck": "SELECT 'remaining_test_organizations=' || count(*) FROM organizations WHERE slug LIKE 'hris-verification-%';",
+    "cleanupCheckExitCode": 0,
+    "postgresStop": {
+      "dataDirectory": "C:/Users/J COMPUTER/.codex/visualizations/2026/10/24/01a16e07-5033-74f0-a987-8d57c6717085/hris-postgres-20261024",
+      "command": "pg_ctl -D <exact dataDirectory> -m fast -w stop",
+      "exitCode": 0,
+      "result": "server stopped",
+      "filesRetained": true
+    },
+    "staticComponentHarness": {
+      "address": "127.0.0.1:18542",
+      "ownedExecSession": 40870,
+      "result": "terminated with Ctrl-C after six successful browser cases",
+      "terminationExitCode": 1
+    },
+    "databaseBrowserHarness": "ephemeral server and headless browser closed in test finally blocks",
+    "noProductionEffects": true
+  },
+  "open": [],
+  "limitations": [
+    "No production/legal certification",
+    "No production migration-trigger replay",
+    "No full authenticated-session or screen-reader certification",
+    "Reviewer made no edits or application/database test executions",
+    "Readiness remains BLOCKED for unrelated missing employee/contract/payment proof",
+    "Current payroll admission: CM/monthly/single employer",
+    "No elapsed-time/DST segmentation or retrospective employment correction workflow"
+  ],
+  "nextEligibleSlice": "HR-09; not started"
+}

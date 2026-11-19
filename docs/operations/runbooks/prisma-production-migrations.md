@@ -52,7 +52,7 @@ Its machine-readable contract is `prisma/migration-catalog-manifest.schema.json`
 - canonical CRLF SHA-256 is retained for cross-checkout history compatibility; and
 - every manifest entry includes the full migration name, path, byte length, and all three hashes.
 
-The exact existing `20260818120000` timestamp collision is grandfathered in `prisma/migration-catalog-exceptions.json`. Do not rename those applied migrations. Every new duplicate timestamp prefix fails the catalog gate.
+The exact existing `20260818120000` timestamp collision is grandfathered in `prisma/migration-catalog-exceptions.json`. A second exact pair, `20261024170000_hris_lifecycle_tasks` and `20261024170000_hris_setup_reviewer_grants`, was reconciled on 2026-10-25 after their full names and unchanged SQL were already applied in disposable rehearsals. Preserve these applied identities; this does not attest to production application status. The [catalog reconciliation review](../../command-center/phase-8-blocker-fixes-2026-10-25/CATALOG_REVIEW.md) records the evidence and limits. Every unlisted duplicate group, including a third name at either exception timestamp, still fails the catalog gate. Manifest admission does not replace target-history or target-pending risk approval.
 
 ## Destructive SQL approvals
 

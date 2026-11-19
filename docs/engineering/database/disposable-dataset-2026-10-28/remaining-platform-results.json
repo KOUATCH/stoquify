@@ -1,0 +1,328 @@
+{
+  "generatedAt": "2026-10-29T11:47:51.540Z",
+  "lane": "platform",
+  "scenarios": [
+    {
+      "organizationId": "synth12_douala",
+      "lane": "platform",
+      "result": {
+        "organizationId": "synth12_douala",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "outcomes": {
+          "module_composition": {
+            "commandId": "cmvtgz229001smaxgq399vaxt",
+            "state": "REQUESTED",
+            "replayed": true,
+            "activeModules": [
+              "accounting",
+              "administration",
+              "analytics",
+              "close_assurance",
+              "compliance",
+              "dashboard",
+              "finance",
+              "inventory",
+              "payment_reconciliation",
+              "payroll",
+              "pos",
+              "purchasing",
+              "reports",
+              "sales",
+              "settings"
+            ]
+          },
+          "compliance_sandbox_configuration": {
+            "result": {
+              "id": "cmvtgz2gg002omaxggr1qrd03",
+              "organizationId": "synth12_douala",
+              "countryCode": "CM",
+              "authorityChannel": "CM_DGI_E_SERVICES_PORTAL",
+              "adapterKey": "CM_DGI_SANDBOX",
+              "environment": "SANDBOX",
+              "status": "REQUIRES_CONFIGURATION",
+              "countryPackVersion": "CM-2026.1",
+              "countryPackResolutionHash": "sha256:b0bf43e0e980e79e6a338952e644292585bc1f21a69437fca6a3e1f21523806d",
+              "capabilityStatus": "REQUIRES_EXPERT_REVIEW",
+              "credentialReference": null,
+              "credentialExpiresAt": null,
+              "credentialRotatedAt": null,
+              "credentialRotatedById": null,
+              "officialSpecTitle": null,
+              "officialSpecVersion": null,
+              "officialSpecPublishedAt": null,
+              "officialSpecEffectiveFrom": null,
+              "officialSpecReference": null,
+              "officialSpecHash": null,
+              "reviewStatus": "REQUIRES_EXPERT_REVIEW",
+              "reviewedById": null,
+              "reviewedAt": null,
+              "reviewerQualification": null,
+              "reviewerConflictDeclared": null,
+              "reviewEvidenceHash": null,
+              "publicMetadata": null,
+              "configHash": "sha256:c757fc0d7420244b024c1c36596dfda1eb5a0ea47385192a312ddaff48007ab3",
+              "createdById": "synth12_douala_user_owner",
+              "updatedById": "synth12_douala_user_owner",
+              "approvedById": null,
+              "approvedAt": null,
+              "disabledAt": null,
+              "createdAt": "2026-10-29T11:38:11.632Z",
+              "updatedAt": "2026-10-29T11:38:11.632Z"
+            },
+            "limitation": "Sandbox configuration only; no credential, official specification, expert approval or authority submission invented."
+          },
+          "business_event_idempotency_conflict": {
+            "anomalyId": "cmvtgz2mb0034maxgygv7j3cv",
+            "externalDeliveryRequested": false
+          },
+          "agent_governance": {
+            "packageId": "cmvtgz2ot0039maxg2956x8p5",
+            "state": "PROVISIONED_INACTIVE",
+            "certification": "FAILED",
+            "externalActivation": false
+          },
+          "agent_runtime_and_proposal": {
+            "completedRunId": "cmvthbvby001cmazwomzfqwvm",
+            "inventoryRunId": "cmvthbw2w0025mazwy8ax1k5p",
+            "blockedRunId": "cmvthbviz001smazw5fcg4km6",
+            "proposalId": "cmvthbwhk002cmazw4r3dcxhx",
+            "modelProvider": "none",
+            "scope": "Actual blocked digest retained honestly; separate synthetic read-only inventory agent uses real inventory evidence. Production admission and external model transport are not exercised."
+          },
+          "assurance_control_plane": {
+            "invocation": "acquired",
+            "incidentId": "cmvthbxfk003amazwwutd2bzx",
+            "alertIds": [
+              "cmvthbxgw003emazwgvwjc3cj",
+              "cmvthbxka003mmazwn40leuim"
+            ],
+            "deliveriesAttempted": 0,
+            "waiverApproval": false
+          },
+          "command_center": {
+            "occurrenceId": "e012403e-0dcc-47bc-b073-43b36ccbcb7f",
+            "reviewCurrent": true,
+            "notices": 1,
+            "externalMessagesSent": 0
+          }
+        },
+        "issues": []
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "lane": "platform",
+      "result": {
+        "organizationId": "synth12_yaounde",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "outcomes": {
+          "module_composition": {
+            "commandId": "cmvtgz9jm007umaxg16k4cffx",
+            "state": "REQUESTED",
+            "replayed": true,
+            "activeModules": [
+              "accounting",
+              "administration",
+              "analytics",
+              "close_assurance",
+              "compliance",
+              "dashboard",
+              "finance",
+              "inventory",
+              "payment_reconciliation",
+              "payroll",
+              "pos",
+              "purchasing",
+              "reports",
+              "sales",
+              "settings"
+            ]
+          },
+          "compliance_sandbox_configuration": {
+            "result": {
+              "id": "cmvtgza17008qmaxggyvqy16s",
+              "organizationId": "synth12_yaounde",
+              "countryCode": "CM",
+              "authorityChannel": "CM_DGI_E_SERVICES_PORTAL",
+              "adapterKey": "CM_DGI_SANDBOX",
+              "environment": "SANDBOX",
+              "status": "REQUIRES_CONFIGURATION",
+              "countryPackVersion": "CM-2026.1",
+              "countryPackResolutionHash": "sha256:b0bf43e0e980e79e6a338952e644292585bc1f21a69437fca6a3e1f21523806d",
+              "capabilityStatus": "REQUIRES_EXPERT_REVIEW",
+              "credentialReference": null,
+              "credentialExpiresAt": null,
+              "credentialRotatedAt": null,
+              "credentialRotatedById": null,
+              "officialSpecTitle": null,
+              "officialSpecVersion": null,
+              "officialSpecPublishedAt": null,
+              "officialSpecEffectiveFrom": null,
+              "officialSpecReference": null,
+              "officialSpecHash": null,
+              "reviewStatus": "REQUIRES_EXPERT_REVIEW",
+              "reviewedById": null,
+              "reviewedAt": null,
+              "reviewerQualification": null,
+              "reviewerConflictDeclared": null,
+              "reviewEvidenceHash": null,
+              "publicMetadata": null,
+              "configHash": "sha256:c757fc0d7420244b024c1c36596dfda1eb5a0ea47385192a312ddaff48007ab3",
+              "createdById": "synth12_yaounde_user_owner",
+              "updatedById": "synth12_yaounde_user_owner",
+              "approvedById": null,
+              "approvedAt": null,
+              "disabledAt": null,
+              "createdAt": "2026-10-29T11:38:21.451Z",
+              "updatedAt": "2026-10-29T11:38:21.451Z"
+            },
+            "limitation": "Sandbox configuration only; no credential, official specification, expert approval or authority submission invented."
+          },
+          "business_event_idempotency_conflict": {
+            "anomalyId": "cmvtgza570096maxgt6ngl21o",
+            "externalDeliveryRequested": false
+          },
+          "agent_governance": {
+            "packageId": "cmvtgza7v009bmaxg7c8hdp1i",
+            "state": "PROVISIONED_INACTIVE",
+            "certification": "FAILED",
+            "externalActivation": false
+          },
+          "agent_runtime_and_proposal": {
+            "completedRunId": "cmvthc2lu005dmazwtjfc2mc8",
+            "inventoryRunId": "cmvthc2qw0066mazwyd1xof9j",
+            "blockedRunId": "cmvthc2n2005tmazwruzsa862",
+            "proposalId": "cmvthc2tb006dmazwbam5e1l1",
+            "modelProvider": "none",
+            "scope": "Actual blocked digest retained honestly; separate synthetic read-only inventory agent uses real inventory evidence. Production admission and external model transport are not exercised."
+          },
+          "assurance_control_plane": {
+            "invocation": "acquired",
+            "incidentId": "cmvthc378007nmazwcgdjpfy0",
+            "alertIds": [
+              "cmvthc37l007rmazw1u6ykdoi",
+              "cmvthc38e007zmazwwhkahk3i"
+            ],
+            "deliveriesAttempted": 0,
+            "waiverApproval": false
+          },
+          "command_center": {
+            "occurrenceId": "1f4dcc0c-9c4d-4728-aefc-aa30c37b3d66",
+            "reviewCurrent": true,
+            "notices": 1,
+            "externalMessagesSent": 0
+          }
+        },
+        "issues": []
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "lane": "platform",
+      "result": {
+        "organizationId": "synth12_bafoussam",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "outcomes": {
+          "module_composition": {
+            "commandId": "cmvtgzfn000dymaxg73s9fh0h",
+            "state": "REQUESTED",
+            "replayed": true,
+            "activeModules": [
+              "accounting",
+              "administration",
+              "analytics",
+              "close_assurance",
+              "compliance",
+              "dashboard",
+              "finance",
+              "inventory",
+              "payment_reconciliation",
+              "payroll",
+              "pos",
+              "purchasing",
+              "reports",
+              "sales",
+              "settings"
+            ]
+          },
+          "compliance_sandbox_configuration": {
+            "result": {
+              "id": "cmvtgzfzc00eumaxgbd9n4bf0",
+              "organizationId": "synth12_bafoussam",
+              "countryCode": "CM",
+              "authorityChannel": "CM_DGI_E_SERVICES_PORTAL",
+              "adapterKey": "CM_DGI_SANDBOX",
+              "environment": "SANDBOX",
+              "status": "REQUIRES_CONFIGURATION",
+              "countryPackVersion": "CM-2026.1",
+              "countryPackResolutionHash": "sha256:b0bf43e0e980e79e6a338952e644292585bc1f21a69437fca6a3e1f21523806d",
+              "capabilityStatus": "REQUIRES_EXPERT_REVIEW",
+              "credentialReference": null,
+              "credentialExpiresAt": null,
+              "credentialRotatedAt": null,
+              "credentialRotatedById": null,
+              "officialSpecTitle": null,
+              "officialSpecVersion": null,
+              "officialSpecPublishedAt": null,
+              "officialSpecEffectiveFrom": null,
+              "officialSpecReference": null,
+              "officialSpecHash": null,
+              "reviewStatus": "REQUIRES_EXPERT_REVIEW",
+              "reviewedById": null,
+              "reviewedAt": null,
+              "reviewerQualification": null,
+              "reviewerConflictDeclared": null,
+              "reviewEvidenceHash": null,
+              "publicMetadata": null,
+              "configHash": "sha256:c757fc0d7420244b024c1c36596dfda1eb5a0ea47385192a312ddaff48007ab3",
+              "createdById": "synth12_bafoussam_user_owner",
+              "updatedById": "synth12_bafoussam_user_owner",
+              "approvedById": null,
+              "approvedAt": null,
+              "disabledAt": null,
+              "createdAt": "2026-10-29T11:38:29.160Z",
+              "updatedAt": "2026-10-29T11:38:29.160Z"
+            },
+            "limitation": "Sandbox configuration only; no credential, official specification, expert approval or authority submission invented."
+          },
+          "business_event_idempotency_conflict": {
+            "anomalyId": "cmvtgzg3z00famaxgzvjkdrfg",
+            "externalDeliveryRequested": false
+          },
+          "agent_governance": {
+            "packageId": "cmvtgzg6c00ffmaxgv46t0wlj",
+            "state": "PROVISIONED_INACTIVE",
+            "certification": "FAILED",
+            "externalActivation": false
+          },
+          "agent_runtime_and_proposal": {
+            "completedRunId": "cmvthc7yp009omazwwpiqz811",
+            "inventoryRunId": "cmvthc84000ahmazweryhbipp",
+            "blockedRunId": "cmvthc80f00a4mazw0vdj3exy",
+            "proposalId": "cmvthc86h00aomazwnsp6s8fm",
+            "modelProvider": "none",
+            "scope": "Actual blocked digest retained honestly; separate synthetic read-only inventory agent uses real inventory evidence. Production admission and external model transport are not exercised."
+          },
+          "assurance_control_plane": {
+            "invocation": "acquired",
+            "incidentId": "cmvthc8i200bkmazwyci8aela",
+            "alertIds": [
+              "cmvthc8jk00bomazwefzg1dip",
+              "cmvthc8kx00bwmazwqmmqed6o"
+            ],
+            "deliveriesAttempted": 0,
+            "waiverApproval": false
+          },
+          "command_center": {
+            "occurrenceId": "61f255b9-6fdd-45ea-b7f9-56b75eebe6bd",
+            "reviewCurrent": true,
+            "notices": 1,
+            "externalMessagesSent": 0
+          }
+        },
+        "issues": []
+      }
+    }
+  ],
+  "issues": []
+}

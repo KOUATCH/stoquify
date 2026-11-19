@@ -1,0 +1,54 @@
+{
+  "began": "2026-11-11T14:27:19.849Z",
+  "ended": "2026-11-11T14:27:29.787Z",
+  "classification": "Pure/mocked offline deployment-admission tests; no provider, database, hosted runtime or production qualification",
+  "phase": "after",
+  "expectedFailure": false,
+  "exitCode": 0,
+  "error": null,
+  "signal": null,
+  "counts": {
+    "tests": 20,
+    "pass": 20,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "unchangedInputs": true,
+  "inputs": [
+    {
+      "path": "scripts/hardened-close-production-readiness.cjs",
+      "sha256": "04a9ccdf9c653328d39080dc2e1f603938332c0d1a71025029a1316d981d2a3e"
+    },
+    {
+      "path": "scripts/__tests__/hardened-close-production-readiness.node-test.cjs",
+      "sha256": "170fc7d420481b761aa8a310d9a3491f1993b4bb70980fb37873e11295c933f9"
+    },
+    {
+      "path": "config/release/hardened-close-production.template.json",
+      "sha256": "e0d650a5caac3fcf6579ef50d3ada363fe85aa3f1d2c0586da4d2d12f7c845d6"
+    },
+    {
+      "path": "scripts/release-secret-preflight.js",
+      "sha256": "d20efac2da7ef1767cffb0bf19a9825b9a41310edee1b64bd4248dcaa1638729"
+    },
+    {
+      "path": "scripts/prisma-production-migration-gate.js",
+      "sha256": "1ee29e6674f53eec17c473bb225bd6e5d83bfaa1453e5490ca4259eec3e72008"
+    },
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"
+    },
+    {
+      "path": "scripts/local-gates-network.cjs",
+      "sha256": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e"
+    }
+  ],
+  "privateOutput": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-production-readiness-20261111-8b12ea11\\final-after\\output.private.log",
+    "sha256": "25a9240f1355f6b4defb98fd8093facb505e6ee079162d9332ba1918d48b4e1c"
+  },
+  "temporaryDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-production-readiness-20261111-8b12ea11\\final-after\\temp",
+  "runnerSha256": "9df311d909dad7606fd3bb9bb82b0c168ccb0bb4c0a6cdb77bc014b53d7a9a42"
+}

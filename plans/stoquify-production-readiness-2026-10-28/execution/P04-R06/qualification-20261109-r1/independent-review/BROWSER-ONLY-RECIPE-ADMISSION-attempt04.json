@@ -1,0 +1,109 @@
+{
+  "at": "2026-11-10T11:41:49.954Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "scope": "Only six same-artifact browser continuity observations with passive exact browser network terminal-event correlation; no credential/origin replay or product change",
+  "files": [
+    {
+      "path": "run-browser-only-attempt04.cjs",
+      "sha256": "6504a346fcdb73e2dba74dbf3cdf8473f8ed0ed6f140c777660a5aed4565f771"
+    },
+    {
+      "path": "runtime-bridge-browser-attempt04.cjs",
+      "sha256": "b2348174fb1ecc1eae3f0dab9885869293c4e16e51dd736a0144ca1ab7db68f6"
+    },
+    {
+      "path": "browser/run-browser-diagnostic-attempt04.cjs",
+      "sha256": "a23bbe9ead520d0c0b359fd04907f017e4e7281115743ebbc14f56d7fd0ea0fe"
+    },
+    {
+      "path": "browser/DIAGNOSTIC-RECIPE-attempt04.md",
+      "sha256": "2f929ef96192424cc7b2c652b7dbfa4496ed9ca0ef086017beccad82db83d8a0"
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "276e495ce09869bf75d701607e3e6d209866d5d52062efdc8090add85a0b444f"
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "sha256": "254a9e6f3ec0eef369f13f4385553c0db6aa8e48428a951c6b7014d3688c47f7"
+    },
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "7a370fe26b060921635dd2d32c73fc777bdd9584f2f38582e422af78b26bb598"
+    },
+    {
+      "path": "environment-guard.cjs",
+      "sha256": "1e7ca667274a069547ec989391e9789716d6621d72c952806b24ead147f1d28e"
+    },
+    {
+      "path": "candidate-context-attempt02.json",
+      "sha256": "5e698a5acf73e69c5584d5e310001770a9798faa77d96877a11fde2fa0c8b6c2"
+    },
+    {
+      "path": "candidate-source-manifest-attempt02.json",
+      "sha256": "257c3d63ed464aeccb1ebb76f8b81fa95cf3747df755c2b557526bd102388ae0"
+    },
+    {
+      "path": "inventory/source-after-manifest-v4.json",
+      "sha256": "ec1a3785e9140629889e2dd4e8f4a5efa174088967ee1f3beb111838ce127e70"
+    },
+    {
+      "path": "inventory/test-case-map.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    },
+    {
+      "path": "build-result-attempt02.json",
+      "sha256": "0124329359273775db300041794d1176abf9b308d1abc82b03b98f1c91f296f8"
+    },
+    {
+      "path": "runtime-source-admission-attempt02.json",
+      "sha256": "105b1fa086ac5e63ec5d6b470b0ef3b143a11bca69f39b5f721c82e6c0c466d7"
+    },
+    {
+      "path": "runtime-result-attempt02.json",
+      "sha256": "4459b141a394444372f88d3728b84f38d5adeb49eb840d382cc4725327fc92df"
+    },
+    {
+      "path": "browser/auth-r06-attempt02/result.json",
+      "sha256": "81a50e5a71168c93b4d2af6c9a21010cebeead3303f778cbafc70200f39e2878"
+    },
+    {
+      "path": "recovery-result-attempt03.json",
+      "sha256": "d08ed69741d7b10165708cbc72ff4f354f43eb17fa3916a1af1e8f44cf7b508c"
+    },
+    {
+      "path": "browser/browser-diagnostic-attempt03/result.json",
+      "sha256": "98fa382cfdd46b3d4d589001cd03a55e41bd3f8a5fe997c6a7b00769abd4a6d4"
+    },
+    {
+      "path": "expiry-supplement-result-attempt02.json",
+      "sha256": "79625e82bb0bb9c7146aa3a2888d359a4a2fb6ac10aa094c03e3e308bd10d6f7"
+    },
+    {
+      "path": "independent-review/BUILD-OUTCOME-REVIEW-attempt02.json",
+      "sha256": "6252e699d36a046d940a81329eef1f6dd33cdbccb99491843a10b89270abad79"
+    },
+    {
+      "path": "independent-review/RECOVERY-OUTCOME-REVIEW-attempt03.json",
+      "sha256": "8ccbe5fef2bf100101616da953b7de43c06adc6f2e28d5e183721ee0d4b17e38"
+    }
+  ],
+  "reviewFindings": [
+    "Observer SHAa23bbe9ead520d0c0b359fd04907f017e4e7281115743ebbc14f56d7fd0ea0fe inspected in full. Uses new output/TLS/log names; historical02/03 hashes and outcomes preserved.",
+    "Passive CDP attaches before navigation; exact response capture ID, requestId/hop/method/URL hash/status and one response event must agree, with loadingFinished and fresh-network flags.",
+    "All selected CDP requests must have exact mapped original response and terminal evidence; missing/ambiguous IDs, redirects, cancellations, loadingFailed, stale cache/service-worker delivery, observer errors or byte mismatch fail.",
+    "Only bounded Playwright completion-observer timeout can be resolved by exact CDP loadingFinished. Actual network errors remain failed; every Playwright/CDP body error is retained.",
+    "Captured original compressed/decoded bytes must be complete with downstream finish and no early close. Retrieved Playwright/CDP bytes and actor classifications must match; server-side capture is never labeled application consumption.",
+    "Null-safe document.body predicate repairs only the prior observer race. All six identity/current-session, revoked-reload, fresh restoration and native no-write requirements remain.",
+    "Wrapper invokes only the browser observer with real paced sign-ins and exact acquired-session revocations; previous origin defect remains unresolved.63current inputs and sealed artifact/runtime copies rechecked."
+  ],
+  "executionConditions": [
+    "Only after prior03 has completed with all app ports released and unchanged artifacts.",
+    "Same synthetic database remains owned; no other app run in parallel.",
+    "Record actual outcomes and cleanup; overallR06 remains blocked by confirmed rejected-origin bookkeeping regardless of browser results."
+  ],
+  "productionChanges": false
+}

@@ -1,0 +1,56 @@
+{
+  "began": "2026-11-10T15:16:03.063Z",
+  "passed": true,
+  "database": "stoquify_replay_close_monthly_20261110_54a799a9fc",
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-monthly-20261110-54a799a9fc",
+  "source": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-monthly-20261110-54a799a9fc\\source",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\pg-attempt-54a799a9fc",
+  "privateClient": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-retention-client-20261109-b4075974cd\\orm\\client",
+  "catalogSha256": "e894a828415592f4c2ab155993b1923ed12245374a21b0184ae8a375495190aa",
+  "runnerSha256": "534d460d6ce4540352794d965ecadafecc7b977f3c2d049604f33aaba0843309",
+  "checks": [
+    {
+      "name": "fresh122ReplayTwice",
+      "certification": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT"
+    },
+    {
+      "name": "earnedMonthlyCloseServiceCases",
+      "passedTests": 8,
+      "skipped": 0,
+      "namedPhaseChecks": [
+        "actual-approved-opening-and-replay",
+        "actual-collections-and-provider-links",
+        "electronic-claim-denials-no-effects",
+        "actual-concurrent-claim-exclusion",
+        "assessment-before-provider-and-schedule-evidence",
+        "actual-monthly-import-independent-signatures",
+        "actual-bank-bs-approval-certification-and-seal",
+        "actual-closed-period-denial-and-retained-recovery"
+      ],
+      "earnedInternalTerminalStates": true,
+      "seededInternalFinancialTerminalStates": false,
+      "syntheticProviderConfirmationFacts": true,
+      "sqlInventoryUnchanged": true,
+      "scope": "Opening-receivable collection/monthly internal system certification only; no October new sale, live provider or statutory approval",
+      "observedCounts": {
+        "journals": 4,
+        "customerSettlements": 3,
+        "claimedProviderTransactions": 2,
+        "signedReconciliationRuns": 2,
+        "approvedBankBalanceEvidence": 1,
+        "certifiedExports": 1,
+        "periodCloseEvents": 1,
+        "periodReopenEvents": 0,
+        "providerAccounts": 2,
+        "activeOpeningExecutions": 1,
+        "openingReceivables": 1,
+        "sales": 0,
+        "payrollRuns": 0,
+        "statutoryCertifiedDocuments": 0
+      }
+    }
+  ],
+  "limitation": "Real isolated October opening-receivable collection/monthly-close with synthetic opening documents and raw provider confirmation observations. No October new sale, live provider authenticity/processing, statutory approval, hosted delivery or browser qualification is claimed.",
+  "ownedClusterStopped": true,
+  "ended": "2026-11-10T15:18:36.751Z"
+}

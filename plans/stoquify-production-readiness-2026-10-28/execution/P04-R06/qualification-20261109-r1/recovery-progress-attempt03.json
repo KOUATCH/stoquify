@@ -1,0 +1,1398 @@
+{
+  "startedAt": "2026-11-10T11:29:42.018Z",
+  "passed": false,
+  "checks": [
+    {
+      "id": "R06-C-login-positive-utc",
+      "startedAt": "2026-11-10T11:30:59.212Z",
+      "passed": true,
+      "authorityBefore": {
+        "at": "2026-11-10T11:31:01.870Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "interpretation": "Explicit AT TIME ZONE UTC; no global parser or writer changes",
+        "user": {
+          "id": "p04r06-active",
+          "organizationId": "p04-r06-a",
+          "isActive": true,
+          "isLocked": false,
+          "failedLoginAttempts": 0,
+          "lastLoginRaw": "2026-11-10 11:08:39.644",
+          "lastLoginUtc": "2026-11-10T11:08:39.644Z",
+          "lastFailedLoginRaw": null,
+          "lastFailedLoginUtc": null,
+          "lockedUntilRaw": null,
+          "lockedUntilUtc": null,
+          "lastLoginType": "timestamp without time zone",
+          "lastFailedLoginType": "timestamp without time zone",
+          "databaseNow": "2026-11-10T11:31:01.869Z"
+        }
+      },
+      "request": {
+        "id": "R06-C-login-positive-utc",
+        "method": "POST",
+        "path": "/api/auth/sign-in/email",
+        "status": 200,
+        "requestedAtMs": 1794310261892,
+        "finishedAtMs": 1794310274022,
+        "requestedAt": "2026-11-10T11:31:01.892Z",
+        "finishedAt": "2026-11-10T11:31:14.022Z",
+        "bytes": 375,
+        "bodySha256": "b66108aeddc364f060d90a01506ec473b484809f634b3075e4af152e765a22bd",
+        "capture": {
+          "captureId": "633d5ce6-4941-4718-8ccd-dbb623503483",
+          "at": "2026-11-10T11:31:14.010Z",
+          "method": "POST",
+          "path": "/api/auth/sign-in/email",
+          "urlSha256": "9f08a7eee231912d6524c3a9d4db91e6674c518718abef6487b428e3062ae718",
+          "status": 200,
+          "runtimeKind": "repaired",
+          "complete": true,
+          "aborted": false,
+          "downstreamFinished": true,
+          "downstreamClosedEarly": false,
+          "request": {
+            "origin": "https://localhost:3296",
+            "secFetchSite": null,
+            "secFetchMode": null,
+            "secFetchDest": null,
+            "purpose": null,
+            "secPurpose": null,
+            "contentType": "application/json",
+            "cookieCount": 0
+          },
+          "response": {
+            "contentType": "application/json",
+            "contentEncoding": null,
+            "location": null,
+            "authorityCookies": [
+              {
+                "sha256": "51d1eb714e6904ef3fd29e6ad1edbbfc807960d69b0b32935816565753a7e351",
+                "bytes": 84,
+                "nonemptyAuthority": false
+              },
+              {
+                "sha256": "226e6c63688162c3f59b20c482232a783093eb343ed05b20f23e0dc68eca849c",
+                "bytes": 170,
+                "nonemptyAuthority": true
+              }
+            ]
+          },
+          "upstreamComplete": true,
+          "upstreamEndedAt": "2026-11-10T11:31:14.013Z",
+          "wireBytes": 375,
+          "wireSha256": "b66108aeddc364f060d90a01506ec473b484809f634b3075e4af152e765a22bd",
+          "decodedBytes": 375,
+          "decodedSha256": "b66108aeddc364f060d90a01506ec473b484809f634b3075e4af152e765a22bd",
+          "containsActorCanary": {
+            "active": true,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "currentSessionSubject": {
+            "active": true,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "hasAuthorityFields": true,
+          "downstreamFinishedAt": "2026-11-10T11:31:14.014Z",
+          "downstreamClosedAt": "2026-11-10T11:31:14.015Z"
+        }
+      },
+      "authorityAfter": {
+        "at": "2026-11-10T11:31:14.094Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "interpretation": "Explicit AT TIME ZONE UTC; no global parser or writer changes",
+        "user": {
+          "id": "p04r06-active",
+          "organizationId": "p04-r06-a",
+          "isActive": true,
+          "isLocked": false,
+          "failedLoginAttempts": 0,
+          "lastLoginRaw": "2026-11-10 11:31:13.976",
+          "lastLoginUtc": "2026-11-10T11:31:13.976Z",
+          "lastFailedLoginRaw": null,
+          "lastFailedLoginUtc": null,
+          "lockedUntilRaw": null,
+          "lockedUntilUtc": null,
+          "lastLoginType": "timestamp without time zone",
+          "lastFailedLoginType": "timestamp without time zone",
+          "databaseNow": "2026-11-10T11:31:14.094Z"
+        }
+      },
+      "effects": {
+        "before": "snapshot-R06-C-login-positive-utc-before-1794310261719-312c725a-46f6-4cfd-8154-05bcb71ca661.json",
+        "after": "snapshot-R06-C-login-positive-utc-after-1794310275646-6c82838a-f908-4500-b2e9-fa5aa099e06c.json",
+        "businessEqual": false,
+        "changedBusinessTables": [
+          "users"
+        ],
+        "sessionsEqual": false,
+        "auditsEqual": false,
+        "changedOwnUserFields": [
+          "lastLogin",
+          "updatedAt"
+        ],
+        "addedSessions": [
+          {
+            "idHash": "d5b74028210e7a3d62897cd805fafe9f45d30f318c294dc340b10ebd776cbe5e",
+            "userId": "p04r06-active",
+            "expiresAt": "2026-11-17T11:31:13.957",
+            "createdAt": "2026-11-10T11:31:13.958",
+            "updatedAt": "2026-11-10T11:31:13.958",
+            "tokenSha256": "d5e1b748df77a9f5f1e14205b3fe3d73247fb084f0360f63d222706b1b37d6f5",
+            "rowSha256": "d9f8515c3d988124789eab6297e0c135dba90f9c4076f3a2640e0faced28047e"
+          }
+        ],
+        "addedAudits": [
+          {
+            "idHash": "238517368d07e9ee3bf8cf7534f166842c5da7316c5ead1aee4dbe6890c9e0e5",
+            "userId": "p04r06-active",
+            "organizationId": "p04-r06-a",
+            "entityType": "SecurityEvent",
+            "entityIdHash": "c81f18f8609882658bd5a2eb75c1fef1ef2f0cbf8a1a31098105faa214c443a6",
+            "action": "LOGIN_SUCCESS",
+            "createdAt": "2026-11-10T11:31:13.987",
+            "changes": {},
+            "rowSha256": "8557f8a8ba3fe5017e19560fd7528c278376c5c88dad60e6213f7afb306a4f16"
+          }
+        ]
+      },
+      "timestampAssertion": {
+        "field": "lastLogin",
+        "raw": "2026-11-10 11:31:13.976",
+        "utc": "2026-11-10T11:31:13.976Z",
+        "requestedAtMs": 1794310261892,
+        "finishedAtMs": 1794310274022
+      },
+      "finishedAt": "2026-11-10T11:31:15.689Z"
+    },
+    {
+      "id": "R06-C-login-wrong-password-utc",
+      "startedAt": "2026-11-10T11:31:15.693Z",
+      "passed": true,
+      "authorityBefore": {
+        "at": "2026-11-10T11:31:17.819Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "interpretation": "Explicit AT TIME ZONE UTC; no global parser or writer changes",
+        "user": {
+          "id": "p04r06-active",
+          "organizationId": "p04-r06-a",
+          "isActive": true,
+          "isLocked": false,
+          "failedLoginAttempts": 0,
+          "lastLoginRaw": "2026-11-10 11:31:13.976",
+          "lastLoginUtc": "2026-11-10T11:31:13.976Z",
+          "lastFailedLoginRaw": null,
+          "lastFailedLoginUtc": null,
+          "lockedUntilRaw": null,
+          "lockedUntilUtc": null,
+          "lastLoginType": "timestamp without time zone",
+          "lastFailedLoginType": "timestamp without time zone",
+          "databaseNow": "2026-11-10T11:31:17.819Z"
+        }
+      },
+      "request": {
+        "id": "R06-C-login-wrong-password-utc",
+        "method": "POST",
+        "path": "/api/auth/sign-in/email",
+        "status": 401,
+        "requestedAtMs": 1794310277838,
+        "finishedAtMs": 1794310278016,
+        "requestedAt": "2026-11-10T11:31:17.838Z",
+        "finishedAt": "2026-11-10T11:31:18.016Z",
+        "bytes": 74,
+        "bodySha256": "22f0e5ff60a25736cf3cbe76f78434d7251b3519d021b373366380e1d03388e2",
+        "capture": {
+          "captureId": "c103b65a-c9b0-47b8-8fd4-a6ccf1146c14",
+          "at": "2026-11-10T11:31:18.007Z",
+          "method": "POST",
+          "path": "/api/auth/sign-in/email",
+          "urlSha256": "9f08a7eee231912d6524c3a9d4db91e6674c518718abef6487b428e3062ae718",
+          "status": 401,
+          "runtimeKind": "repaired",
+          "complete": true,
+          "aborted": false,
+          "downstreamFinished": true,
+          "downstreamClosedEarly": false,
+          "request": {
+            "origin": "https://localhost:3296",
+            "secFetchSite": null,
+            "secFetchMode": null,
+            "secFetchDest": null,
+            "purpose": null,
+            "secPurpose": null,
+            "contentType": "application/json",
+            "cookieCount": 0
+          },
+          "response": {
+            "contentType": "application/json",
+            "contentEncoding": null,
+            "location": null,
+            "authorityCookies": [
+              {
+                "sha256": "da91baa97b2c05a57481bb55a447648d0bf2eb917625c5dea439d9cb7250f72a",
+                "bytes": 84,
+                "nonemptyAuthority": false
+              }
+            ]
+          },
+          "upstreamComplete": true,
+          "upstreamEndedAt": "2026-11-10T11:31:18.009Z",
+          "wireBytes": 74,
+          "wireSha256": "22f0e5ff60a25736cf3cbe76f78434d7251b3519d021b373366380e1d03388e2",
+          "decodedBytes": 74,
+          "decodedSha256": "22f0e5ff60a25736cf3cbe76f78434d7251b3519d021b373366380e1d03388e2",
+          "containsActorCanary": {
+            "active": false,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "currentSessionSubject": {
+            "active": false,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "hasAuthorityFields": false,
+          "downstreamFinishedAt": "2026-11-10T11:31:18.009Z",
+          "downstreamClosedAt": "2026-11-10T11:31:18.009Z"
+        }
+      },
+      "authorityAfter": {
+        "at": "2026-11-10T11:31:18.155Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "interpretation": "Explicit AT TIME ZONE UTC; no global parser or writer changes",
+        "user": {
+          "id": "p04r06-active",
+          "organizationId": "p04-r06-a",
+          "isActive": true,
+          "isLocked": false,
+          "failedLoginAttempts": 1,
+          "lastLoginRaw": "2026-11-10 11:31:13.976",
+          "lastLoginUtc": "2026-11-10T11:31:13.976Z",
+          "lastFailedLoginRaw": "2026-11-10 11:31:17.986",
+          "lastFailedLoginUtc": "2026-11-10T11:31:17.986Z",
+          "lockedUntilRaw": null,
+          "lockedUntilUtc": null,
+          "lastLoginType": "timestamp without time zone",
+          "lastFailedLoginType": "timestamp without time zone",
+          "databaseNow": "2026-11-10T11:31:18.155Z"
+        }
+      },
+      "effects": {
+        "before": "snapshot-R06-C-login-wrong-password-utc-before-1794310277700-b5a2741d-3dbb-4eda-8477-1b6df1c1043c.json",
+        "after": "snapshot-R06-C-login-wrong-password-utc-after-1794310280575-9ea14490-bca0-447e-b7bd-6bb742859557.json",
+        "businessEqual": false,
+        "changedBusinessTables": [
+          "users"
+        ],
+        "sessionsEqual": true,
+        "auditsEqual": false,
+        "changedOwnUserFields": [
+          "failedLoginAttempts",
+          "lastFailedLogin",
+          "updatedAt"
+        ],
+        "addedAudits": [
+          {
+            "idHash": "aae2afc137f51bc9846eecd0f88aaaba444f001bb9ba5c5bcd82b57a25407ad6",
+            "userId": "p04r06-active",
+            "organizationId": "p04-r06-a",
+            "entityType": "SecurityEvent",
+            "entityIdHash": "c81f18f8609882658bd5a2eb75c1fef1ef2f0cbf8a1a31098105faa214c443a6",
+            "action": "LOGIN_FAILED",
+            "createdAt": "2026-11-10T11:31:18.001",
+            "changes": {},
+            "rowSha256": "d0a013c30208d537891b44d95afaa43981b7a8f4b466b1b1f44dd3ae220acb33"
+          }
+        ]
+      },
+      "timestampAssertion": {
+        "field": "lastFailedLogin",
+        "raw": "2026-11-10 11:31:17.986",
+        "utc": "2026-11-10T11:31:17.986Z",
+        "requestedAtMs": 1794310277838,
+        "finishedAtMs": 1794310278016
+      },
+      "finishedAt": "2026-11-10T11:31:20.626Z"
+    },
+    {
+      "id": "R06-C-login-inactive",
+      "startedAt": "2026-11-10T11:31:20.636Z",
+      "passed": true,
+      "authorityBefore": {
+        "at": "2026-11-10T11:31:27.816Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "interpretation": "Explicit AT TIME ZONE UTC; no global parser or writer changes",
+        "user": {
+          "id": "p04r06-inactive",
+          "organizationId": "p04-r06-a",
+          "isActive": false,
+          "isLocked": false,
+          "failedLoginAttempts": 0,
+          "lastLoginRaw": "2026-11-10 11:09:13.822",
+          "lastLoginUtc": "2026-11-10T11:09:13.822Z",
+          "lastFailedLoginRaw": null,
+          "lastFailedLoginUtc": null,
+          "lockedUntilRaw": null,
+          "lockedUntilUtc": null,
+          "lastLoginType": "timestamp without time zone",
+          "lastFailedLoginType": "timestamp without time zone",
+          "databaseNow": "2026-11-10T11:31:27.816Z"
+        }
+      },
+      "request": {
+        "id": "R06-C-login-inactive",
+        "method": "POST",
+        "path": "/api/auth/sign-in/email",
+        "status": 403,
+        "requestedAtMs": 1794310287837,
+        "finishedAtMs": 1794310288203,
+        "requestedAt": "2026-11-10T11:31:27.837Z",
+        "finishedAt": "2026-11-10T11:31:28.203Z",
+        "bytes": 33,
+        "bodySha256": "104862f2b9eaadaee9eea8b7ea6719144e53d58b8bfc3c4b79d170a43090cfac",
+        "capture": {
+          "captureId": "a5af6e2e-9447-45dc-ace0-1625e2ad2ed2",
+          "at": "2026-11-10T11:31:28.197Z",
+          "method": "POST",
+          "path": "/api/auth/sign-in/email",
+          "urlSha256": "9f08a7eee231912d6524c3a9d4db91e6674c518718abef6487b428e3062ae718",
+          "status": 403,
+          "runtimeKind": "repaired",
+          "complete": true,
+          "aborted": false,
+          "downstreamFinished": true,
+          "downstreamClosedEarly": false,
+          "request": {
+            "origin": "https://localhost:3296",
+            "secFetchSite": null,
+            "secFetchMode": null,
+            "secFetchDest": null,
+            "purpose": null,
+            "secPurpose": null,
+            "contentType": "application/json",
+            "cookieCount": 0
+          },
+          "response": {
+            "contentType": "application/json",
+            "contentEncoding": null,
+            "location": null,
+            "authorityCookies": [
+              {
+                "sha256": "e5db101a5f205e84968f87a5a175bd1eb69598b96c61ad5dc36b58877d8ea4d8",
+                "bytes": 84,
+                "nonemptyAuthority": false
+              }
+            ]
+          },
+          "upstreamComplete": true,
+          "upstreamEndedAt": "2026-11-10T11:31:28.198Z",
+          "wireBytes": 33,
+          "wireSha256": "104862f2b9eaadaee9eea8b7ea6719144e53d58b8bfc3c4b79d170a43090cfac",
+          "decodedBytes": 33,
+          "decodedSha256": "104862f2b9eaadaee9eea8b7ea6719144e53d58b8bfc3c4b79d170a43090cfac",
+          "containsActorCanary": {
+            "active": false,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "currentSessionSubject": {
+            "active": false,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "hasAuthorityFields": false,
+          "downstreamFinishedAt": "2026-11-10T11:31:28.199Z",
+          "downstreamClosedAt": "2026-11-10T11:31:28.199Z"
+        }
+      },
+      "authorityAfter": {
+        "at": "2026-11-10T11:31:28.308Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "interpretation": "Explicit AT TIME ZONE UTC; no global parser or writer changes",
+        "user": {
+          "id": "p04r06-inactive",
+          "organizationId": "p04-r06-a",
+          "isActive": false,
+          "isLocked": false,
+          "failedLoginAttempts": 0,
+          "lastLoginRaw": "2026-11-10 11:09:13.822",
+          "lastLoginUtc": "2026-11-10T11:09:13.822Z",
+          "lastFailedLoginRaw": null,
+          "lastFailedLoginUtc": null,
+          "lockedUntilRaw": null,
+          "lockedUntilUtc": null,
+          "lastLoginType": "timestamp without time zone",
+          "lastFailedLoginType": "timestamp without time zone",
+          "databaseNow": "2026-11-10T11:31:28.308Z"
+        }
+      },
+      "effects": {
+        "before": "snapshot-R06-C-login-inactive-before-1794310287690-3fd2b2e0-85b1-4cea-876f-e0126f5cdfad.json",
+        "after": "snapshot-R06-C-login-inactive-after-1794310290503-b7ab13d2-8a43-4899-a7a8-ad38b4bc28c3.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsEqual": true,
+        "auditsEqual": true,
+        "addedAudits": []
+      },
+      "finishedAt": "2026-11-10T11:31:30.746Z"
+    },
+    {
+      "id": "R06-C-login-locked-future",
+      "startedAt": "2026-11-10T11:31:30.760Z",
+      "passed": true,
+      "authorityBefore": {
+        "at": "2026-11-10T11:31:38.965Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "interpretation": "Explicit AT TIME ZONE UTC; no global parser or writer changes",
+        "user": {
+          "id": "p04r06-locked_future",
+          "organizationId": "p04-r06-a",
+          "isActive": true,
+          "isLocked": true,
+          "failedLoginAttempts": 0,
+          "lastLoginRaw": "2026-11-10 11:06:37.424",
+          "lastLoginUtc": "2026-11-10T11:06:37.424Z",
+          "lastFailedLoginRaw": null,
+          "lastFailedLoginUtc": null,
+          "lockedUntilRaw": "2026-11-10 13:31:30.897",
+          "lockedUntilUtc": "2026-11-10T13:31:30.897Z",
+          "lastLoginType": "timestamp without time zone",
+          "lastFailedLoginType": "timestamp without time zone",
+          "databaseNow": "2026-11-10T11:31:38.965Z"
+        }
+      },
+      "request": {
+        "id": "R06-C-login-locked-future",
+        "method": "POST",
+        "path": "/api/auth/sign-in/email",
+        "status": 403,
+        "requestedAtMs": 1794310298972,
+        "finishedAtMs": 1794310299519,
+        "requestedAt": "2026-11-10T11:31:38.972Z",
+        "finishedAt": "2026-11-10T11:31:39.519Z",
+        "bytes": 56,
+        "bodySha256": "ca9663f583f46e017e62127898c1e19147a9122a1169f2c786e7641e738b702e",
+        "capture": {
+          "captureId": "bf7c8490-431f-4709-86bb-e9cb5ff66108",
+          "at": "2026-11-10T11:31:39.507Z",
+          "method": "POST",
+          "path": "/api/auth/sign-in/email",
+          "urlSha256": "9f08a7eee231912d6524c3a9d4db91e6674c518718abef6487b428e3062ae718",
+          "status": 403,
+          "runtimeKind": "repaired",
+          "complete": true,
+          "aborted": false,
+          "downstreamFinished": true,
+          "downstreamClosedEarly": false,
+          "request": {
+            "origin": "https://localhost:3296",
+            "secFetchSite": null,
+            "secFetchMode": null,
+            "secFetchDest": null,
+            "purpose": null,
+            "secPurpose": null,
+            "contentType": "application/json",
+            "cookieCount": 0
+          },
+          "response": {
+            "contentType": "application/json",
+            "contentEncoding": null,
+            "location": null,
+            "authorityCookies": [
+              {
+                "sha256": "bd624fb351f9b6f114be2b457d67b0c0806a58fad5c8ee17333ad2aad0b733f7",
+                "bytes": 84,
+                "nonemptyAuthority": false
+              }
+            ]
+          },
+          "upstreamComplete": true,
+          "upstreamEndedAt": "2026-11-10T11:31:39.509Z",
+          "wireBytes": 56,
+          "wireSha256": "ca9663f583f46e017e62127898c1e19147a9122a1169f2c786e7641e738b702e",
+          "decodedBytes": 56,
+          "decodedSha256": "ca9663f583f46e017e62127898c1e19147a9122a1169f2c786e7641e738b702e",
+          "containsActorCanary": {
+            "active": false,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "currentSessionSubject": {
+            "active": false,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "hasAuthorityFields": false,
+          "downstreamFinishedAt": "2026-11-10T11:31:39.511Z",
+          "downstreamClosedAt": "2026-11-10T11:31:39.512Z"
+        }
+      },
+      "authorityAfter": {
+        "at": "2026-11-10T11:31:39.671Z",
+        "database": "stoquify_local_p04r06_20261109_full_r1",
+        "interpretation": "Explicit AT TIME ZONE UTC; no global parser or writer changes",
+        "user": {
+          "id": "p04r06-locked_future",
+          "organizationId": "p04-r06-a",
+          "isActive": true,
+          "isLocked": true,
+          "failedLoginAttempts": 0,
+          "lastLoginRaw": "2026-11-10 11:06:37.424",
+          "lastLoginUtc": "2026-11-10T11:06:37.424Z",
+          "lastFailedLoginRaw": null,
+          "lastFailedLoginUtc": null,
+          "lockedUntilRaw": "2026-11-10 13:31:30.897",
+          "lockedUntilUtc": "2026-11-10T13:31:30.897Z",
+          "lastLoginType": "timestamp without time zone",
+          "lastFailedLoginType": "timestamp without time zone",
+          "databaseNow": "2026-11-10T11:31:39.670Z"
+        }
+      },
+      "effects": {
+        "before": "snapshot-R06-C-login-locked-future-before-1794310298730-29af7fbe-d2e5-4a59-a67b-b21d75c071c4.json",
+        "after": "snapshot-R06-C-login-locked-future-after-1794310302408-d1973f9b-4bfa-4a72-b640-831b3b70a64d.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsEqual": true,
+        "auditsEqual": false,
+        "addedAudits": [
+          {
+            "idHash": "1089be44a77ac0baffd78b2471d7952d9ae38755266bb4a1eba4482791a4ca1f",
+            "userId": "p04r06-locked_future",
+            "organizationId": "p04-r06-a",
+            "entityType": "SecurityEvent",
+            "entityIdHash": "1d8a57f1e670b22ac4730c1c04fb708ed0d21a983675614d0df939b424f3d482",
+            "action": "ACCOUNT_LOCKED",
+            "createdAt": "2026-11-10T11:31:39.489",
+            "changes": {},
+            "rowSha256": "10790733413026146c1e6b845d25078806fdbf15e8e7092e415aae140bb20666"
+          }
+        ]
+      },
+      "finishedAt": "2026-11-10T11:31:42.587Z"
+    },
+    {
+      "id": "R06-C-origin-cookie-bearing",
+      "startedAt": "2026-11-10T11:31:46.977Z",
+      "passed": true,
+      "request": {
+        "id": "R06-C-origin-cookie-bearing",
+        "method": "POST",
+        "path": "/api/auth/unlink-account",
+        "status": 403,
+        "requestedAtMs": 1794310308910,
+        "finishedAtMs": 1794310308967,
+        "requestedAt": "2026-11-10T11:31:48.910Z",
+        "finishedAt": "2026-11-10T11:31:48.967Z",
+        "bytes": 52,
+        "bodySha256": "c0efe3e4504d685256099acd2e7b3fd523c955b897306a0fbc54f8fa98f6c80d",
+        "capture": {
+          "captureId": "749f21fb-948c-4531-a784-a225e44c49df",
+          "at": "2026-11-10T11:31:48.961Z",
+          "method": "POST",
+          "path": "/api/auth/unlink-account",
+          "urlSha256": "3c95752af298dc9b1425dd97aa073ad98ef446b2ecf07a902ad02c16991abfdc",
+          "status": 403,
+          "runtimeKind": "repaired",
+          "complete": true,
+          "aborted": false,
+          "downstreamFinished": true,
+          "downstreamClosedEarly": false,
+          "request": {
+            "origin": "https://untrusted.example.invalid",
+            "secFetchSite": null,
+            "secFetchMode": null,
+            "secFetchDest": null,
+            "purpose": null,
+            "secPurpose": null,
+            "contentType": "application/json",
+            "cookieCount": 2
+          },
+          "response": {
+            "contentType": "application/json",
+            "contentEncoding": null,
+            "location": null,
+            "authorityCookies": []
+          },
+          "upstreamComplete": true,
+          "upstreamEndedAt": "2026-11-10T11:31:48.963Z",
+          "wireBytes": 52,
+          "wireSha256": "c0efe3e4504d685256099acd2e7b3fd523c955b897306a0fbc54f8fa98f6c80d",
+          "decodedBytes": 52,
+          "decodedSha256": "c0efe3e4504d685256099acd2e7b3fd523c955b897306a0fbc54f8fa98f6c80d",
+          "containsActorCanary": {
+            "active": false,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "currentSessionSubject": {
+            "active": false,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "hasAuthorityFields": false,
+          "downstreamFinishedAt": "2026-11-10T11:31:48.964Z",
+          "downstreamClosedAt": "2026-11-10T11:31:48.964Z"
+        }
+      },
+      "effects": {
+        "before": "snapshot-R06-C-origin-cookie-bearing-before-1794310308897-5426af26-ff13-4270-90a0-5967c3f67d4f.json",
+        "after": "snapshot-R06-C-origin-cookie-bearing-after-1794310311541-ae96595d-a8f5-4434-9644-4af15fbe54cd.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsEqual": true,
+        "auditsEqual": true
+      },
+      "finishedAt": "2026-11-10T11:31:51.551Z"
+    },
+    {
+      "id": "R06-C-origin-browser-navigate",
+      "startedAt": "2026-11-10T11:31:51.582Z",
+      "passed": false,
+      "requestedAt": "2026-11-10T11:31:58.342Z",
+      "finishedAt": "2026-11-10T11:32:01.125Z",
+      "browser": {
+        "mode": "navigate",
+        "result": {
+          "status": 403,
+          "path": "/api/auth/sign-in/email",
+          "responseCaptureId": "70bbd449-6824-433d-95bf-d842ddd60fac"
+        }
+      },
+      "effects": {
+        "before": "snapshot-R06-C-origin-browser-navigate-before-1794310318320-8a21118c-888e-4850-8e6b-6972abb949c7.json",
+        "after": "snapshot-R06-C-origin-browser-navigate-after-1794310321077-9d87d316-dcce-457c-82be-d96dad813133.json",
+        "businessEqual": false,
+        "changedBusinessTables": [
+          "users"
+        ],
+        "sessionsEqual": true,
+        "auditsEqual": false
+      },
+      "error": "Cross-site browser request changed persisted data"
+    },
+    {
+      "id": "R06-C-origin-browser-cors",
+      "startedAt": "2026-11-10T11:32:01.148Z",
+      "passed": false,
+      "requestedAt": "2026-11-10T11:32:09.342Z",
+      "finishedAt": "2026-11-10T11:32:12.276Z",
+      "browser": {
+        "mode": "cors",
+        "result": {
+          "resolved": false,
+          "errorName": "TypeError",
+          "bodyReadable": false
+        }
+      },
+      "effects": {
+        "before": "snapshot-R06-C-origin-browser-cors-before-1794310329333-1abb8925-f142-4e5f-a11f-bfb98fe23cec.json",
+        "after": "snapshot-R06-C-origin-browser-cors-after-1794310332233-275e0be7-4065-433c-ae48-1d09475edec7.json",
+        "businessEqual": false,
+        "changedBusinessTables": [
+          "users"
+        ],
+        "sessionsEqual": true,
+        "auditsEqual": false
+      },
+      "error": "Cross-site browser request changed persisted data"
+    }
+  ],
+  "requests": [
+    {
+      "id": "R06-C-login-positive-utc",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 200,
+      "requestedAtMs": 1794310261892,
+      "finishedAtMs": 1794310274022,
+      "requestedAt": "2026-11-10T11:31:01.892Z",
+      "finishedAt": "2026-11-10T11:31:14.022Z",
+      "bytes": 375,
+      "bodySha256": "b66108aeddc364f060d90a01506ec473b484809f634b3075e4af152e765a22bd",
+      "capture": {
+        "captureId": "633d5ce6-4941-4718-8ccd-dbb623503483",
+        "at": "2026-11-10T11:31:14.010Z",
+        "method": "POST",
+        "path": "/api/auth/sign-in/email",
+        "urlSha256": "9f08a7eee231912d6524c3a9d4db91e6674c518718abef6487b428e3062ae718",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": "https://localhost:3296",
+          "secFetchSite": null,
+          "secFetchMode": null,
+          "secFetchDest": null,
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": "application/json",
+          "cookieCount": 0
+        },
+        "response": {
+          "contentType": "application/json",
+          "contentEncoding": null,
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "51d1eb714e6904ef3fd29e6ad1edbbfc807960d69b0b32935816565753a7e351",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            },
+            {
+              "sha256": "226e6c63688162c3f59b20c482232a783093eb343ed05b20f23e0dc68eca849c",
+              "bytes": 170,
+              "nonemptyAuthority": true
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:31:14.013Z",
+        "wireBytes": 375,
+        "wireSha256": "b66108aeddc364f060d90a01506ec473b484809f634b3075e4af152e765a22bd",
+        "decodedBytes": 375,
+        "decodedSha256": "b66108aeddc364f060d90a01506ec473b484809f634b3075e4af152e765a22bd",
+        "containsActorCanary": {
+          "active": true,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": true,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": true,
+        "downstreamFinishedAt": "2026-11-10T11:31:14.014Z",
+        "downstreamClosedAt": "2026-11-10T11:31:14.015Z"
+      }
+    },
+    {
+      "id": "R06-C-login-wrong-password-utc",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 401,
+      "requestedAtMs": 1794310277838,
+      "finishedAtMs": 1794310278016,
+      "requestedAt": "2026-11-10T11:31:17.838Z",
+      "finishedAt": "2026-11-10T11:31:18.016Z",
+      "bytes": 74,
+      "bodySha256": "22f0e5ff60a25736cf3cbe76f78434d7251b3519d021b373366380e1d03388e2",
+      "capture": {
+        "captureId": "c103b65a-c9b0-47b8-8fd4-a6ccf1146c14",
+        "at": "2026-11-10T11:31:18.007Z",
+        "method": "POST",
+        "path": "/api/auth/sign-in/email",
+        "urlSha256": "9f08a7eee231912d6524c3a9d4db91e6674c518718abef6487b428e3062ae718",
+        "status": 401,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": "https://localhost:3296",
+          "secFetchSite": null,
+          "secFetchMode": null,
+          "secFetchDest": null,
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": "application/json",
+          "cookieCount": 0
+        },
+        "response": {
+          "contentType": "application/json",
+          "contentEncoding": null,
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "da91baa97b2c05a57481bb55a447648d0bf2eb917625c5dea439d9cb7250f72a",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:31:18.009Z",
+        "wireBytes": 74,
+        "wireSha256": "22f0e5ff60a25736cf3cbe76f78434d7251b3519d021b373366380e1d03388e2",
+        "decodedBytes": 74,
+        "decodedSha256": "22f0e5ff60a25736cf3cbe76f78434d7251b3519d021b373366380e1d03388e2",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:31:18.009Z",
+        "downstreamClosedAt": "2026-11-10T11:31:18.009Z"
+      }
+    },
+    {
+      "id": "R06-C-login-inactive",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 403,
+      "requestedAtMs": 1794310287837,
+      "finishedAtMs": 1794310288203,
+      "requestedAt": "2026-11-10T11:31:27.837Z",
+      "finishedAt": "2026-11-10T11:31:28.203Z",
+      "bytes": 33,
+      "bodySha256": "104862f2b9eaadaee9eea8b7ea6719144e53d58b8bfc3c4b79d170a43090cfac",
+      "capture": {
+        "captureId": "a5af6e2e-9447-45dc-ace0-1625e2ad2ed2",
+        "at": "2026-11-10T11:31:28.197Z",
+        "method": "POST",
+        "path": "/api/auth/sign-in/email",
+        "urlSha256": "9f08a7eee231912d6524c3a9d4db91e6674c518718abef6487b428e3062ae718",
+        "status": 403,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": "https://localhost:3296",
+          "secFetchSite": null,
+          "secFetchMode": null,
+          "secFetchDest": null,
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": "application/json",
+          "cookieCount": 0
+        },
+        "response": {
+          "contentType": "application/json",
+          "contentEncoding": null,
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "e5db101a5f205e84968f87a5a175bd1eb69598b96c61ad5dc36b58877d8ea4d8",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:31:28.198Z",
+        "wireBytes": 33,
+        "wireSha256": "104862f2b9eaadaee9eea8b7ea6719144e53d58b8bfc3c4b79d170a43090cfac",
+        "decodedBytes": 33,
+        "decodedSha256": "104862f2b9eaadaee9eea8b7ea6719144e53d58b8bfc3c4b79d170a43090cfac",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:31:28.199Z",
+        "downstreamClosedAt": "2026-11-10T11:31:28.199Z"
+      }
+    },
+    {
+      "id": "R06-C-login-locked-future",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 403,
+      "requestedAtMs": 1794310298972,
+      "finishedAtMs": 1794310299519,
+      "requestedAt": "2026-11-10T11:31:38.972Z",
+      "finishedAt": "2026-11-10T11:31:39.519Z",
+      "bytes": 56,
+      "bodySha256": "ca9663f583f46e017e62127898c1e19147a9122a1169f2c786e7641e738b702e",
+      "capture": {
+        "captureId": "bf7c8490-431f-4709-86bb-e9cb5ff66108",
+        "at": "2026-11-10T11:31:39.507Z",
+        "method": "POST",
+        "path": "/api/auth/sign-in/email",
+        "urlSha256": "9f08a7eee231912d6524c3a9d4db91e6674c518718abef6487b428e3062ae718",
+        "status": 403,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": "https://localhost:3296",
+          "secFetchSite": null,
+          "secFetchMode": null,
+          "secFetchDest": null,
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": "application/json",
+          "cookieCount": 0
+        },
+        "response": {
+          "contentType": "application/json",
+          "contentEncoding": null,
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "bd624fb351f9b6f114be2b457d67b0c0806a58fad5c8ee17333ad2aad0b733f7",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:31:39.509Z",
+        "wireBytes": 56,
+        "wireSha256": "ca9663f583f46e017e62127898c1e19147a9122a1169f2c786e7641e738b702e",
+        "decodedBytes": 56,
+        "decodedSha256": "ca9663f583f46e017e62127898c1e19147a9122a1169f2c786e7641e738b702e",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:31:39.511Z",
+        "downstreamClosedAt": "2026-11-10T11:31:39.512Z"
+      }
+    },
+    {
+      "id": "signin-active-1794310306485",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 200,
+      "requestedAtMs": 1794310306485,
+      "finishedAtMs": 1794310306970,
+      "requestedAt": "2026-11-10T11:31:46.485Z",
+      "finishedAt": "2026-11-10T11:31:46.970Z",
+      "bytes": 375,
+      "bodySha256": "8bcf2a6851a55a79052d58b514d4d3270f409a15b60630943763b9a3813d74f2",
+      "capture": {
+        "captureId": "848679f2-b487-467d-ae73-d17188e47845",
+        "at": "2026-11-10T11:31:46.965Z",
+        "method": "POST",
+        "path": "/api/auth/sign-in/email",
+        "urlSha256": "9f08a7eee231912d6524c3a9d4db91e6674c518718abef6487b428e3062ae718",
+        "status": 200,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": "https://localhost:3296",
+          "secFetchSite": null,
+          "secFetchMode": null,
+          "secFetchDest": null,
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": "application/json",
+          "cookieCount": 0
+        },
+        "response": {
+          "contentType": "application/json",
+          "contentEncoding": null,
+          "location": null,
+          "authorityCookies": [
+            {
+              "sha256": "7a1d53c00a4645b25d259a8e02086eadbf70b61b7f2c8e39bffaf0a8eff4381a",
+              "bytes": 84,
+              "nonemptyAuthority": false
+            },
+            {
+              "sha256": "f9538b0f911ef721de10f2738b0457b9a385e6de684e1172ae2c383d1fc2627d",
+              "bytes": 172,
+              "nonemptyAuthority": true
+            }
+          ]
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:31:46.966Z",
+        "wireBytes": 375,
+        "wireSha256": "8bcf2a6851a55a79052d58b514d4d3270f409a15b60630943763b9a3813d74f2",
+        "decodedBytes": 375,
+        "decodedSha256": "8bcf2a6851a55a79052d58b514d4d3270f409a15b60630943763b9a3813d74f2",
+        "containsActorCanary": {
+          "active": true,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": true,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": true,
+        "downstreamFinishedAt": "2026-11-10T11:31:46.967Z",
+        "downstreamClosedAt": "2026-11-10T11:31:46.967Z"
+      }
+    },
+    {
+      "id": "R06-C-origin-cookie-bearing",
+      "method": "POST",
+      "path": "/api/auth/unlink-account",
+      "status": 403,
+      "requestedAtMs": 1794310308910,
+      "finishedAtMs": 1794310308967,
+      "requestedAt": "2026-11-10T11:31:48.910Z",
+      "finishedAt": "2026-11-10T11:31:48.967Z",
+      "bytes": 52,
+      "bodySha256": "c0efe3e4504d685256099acd2e7b3fd523c955b897306a0fbc54f8fa98f6c80d",
+      "capture": {
+        "captureId": "749f21fb-948c-4531-a784-a225e44c49df",
+        "at": "2026-11-10T11:31:48.961Z",
+        "method": "POST",
+        "path": "/api/auth/unlink-account",
+        "urlSha256": "3c95752af298dc9b1425dd97aa073ad98ef446b2ecf07a902ad02c16991abfdc",
+        "status": 403,
+        "runtimeKind": "repaired",
+        "complete": true,
+        "aborted": false,
+        "downstreamFinished": true,
+        "downstreamClosedEarly": false,
+        "request": {
+          "origin": "https://untrusted.example.invalid",
+          "secFetchSite": null,
+          "secFetchMode": null,
+          "secFetchDest": null,
+          "purpose": null,
+          "secPurpose": null,
+          "contentType": "application/json",
+          "cookieCount": 2
+        },
+        "response": {
+          "contentType": "application/json",
+          "contentEncoding": null,
+          "location": null,
+          "authorityCookies": []
+        },
+        "upstreamComplete": true,
+        "upstreamEndedAt": "2026-11-10T11:31:48.963Z",
+        "wireBytes": 52,
+        "wireSha256": "c0efe3e4504d685256099acd2e7b3fd523c955b897306a0fbc54f8fa98f6c80d",
+        "decodedBytes": 52,
+        "decodedSha256": "c0efe3e4504d685256099acd2e7b3fd523c955b897306a0fbc54f8fa98f6c80d",
+        "containsActorCanary": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "currentSessionSubject": {
+          "active": false,
+          "foreign": false,
+          "revoked": false,
+          "expired": false,
+          "inactive": false,
+          "locked_indefinite": false,
+          "locked_future": false,
+          "expired_lock": false,
+          "browser_en": false,
+          "browser_fr": false
+        },
+        "hasAuthorityFields": false,
+        "downstreamFinishedAt": "2026-11-10T11:31:48.964Z",
+        "downstreamClosedAt": "2026-11-10T11:31:48.964Z"
+      }
+    }
+  ],
+  "signIns": [
+    {
+      "alias": "active",
+      "request": {
+        "id": "signin-active-1794310306485",
+        "method": "POST",
+        "path": "/api/auth/sign-in/email",
+        "status": 200,
+        "requestedAtMs": 1794310306485,
+        "finishedAtMs": 1794310306970,
+        "requestedAt": "2026-11-10T11:31:46.485Z",
+        "finishedAt": "2026-11-10T11:31:46.970Z",
+        "bytes": 375,
+        "bodySha256": "8bcf2a6851a55a79052d58b514d4d3270f409a15b60630943763b9a3813d74f2",
+        "capture": {
+          "captureId": "848679f2-b487-467d-ae73-d17188e47845",
+          "at": "2026-11-10T11:31:46.965Z",
+          "method": "POST",
+          "path": "/api/auth/sign-in/email",
+          "urlSha256": "9f08a7eee231912d6524c3a9d4db91e6674c518718abef6487b428e3062ae718",
+          "status": 200,
+          "runtimeKind": "repaired",
+          "complete": true,
+          "aborted": false,
+          "downstreamFinished": true,
+          "downstreamClosedEarly": false,
+          "request": {
+            "origin": "https://localhost:3296",
+            "secFetchSite": null,
+            "secFetchMode": null,
+            "secFetchDest": null,
+            "purpose": null,
+            "secPurpose": null,
+            "contentType": "application/json",
+            "cookieCount": 0
+          },
+          "response": {
+            "contentType": "application/json",
+            "contentEncoding": null,
+            "location": null,
+            "authorityCookies": [
+              {
+                "sha256": "7a1d53c00a4645b25d259a8e02086eadbf70b61b7f2c8e39bffaf0a8eff4381a",
+                "bytes": 84,
+                "nonemptyAuthority": false
+              },
+              {
+                "sha256": "f9538b0f911ef721de10f2738b0457b9a385e6de684e1172ae2c383d1fc2627d",
+                "bytes": 172,
+                "nonemptyAuthority": true
+              }
+            ]
+          },
+          "upstreamComplete": true,
+          "upstreamEndedAt": "2026-11-10T11:31:46.966Z",
+          "wireBytes": 375,
+          "wireSha256": "8bcf2a6851a55a79052d58b514d4d3270f409a15b60630943763b9a3813d74f2",
+          "decodedBytes": 375,
+          "decodedSha256": "8bcf2a6851a55a79052d58b514d4d3270f409a15b60630943763b9a3813d74f2",
+          "containsActorCanary": {
+            "active": true,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "currentSessionSubject": {
+            "active": true,
+            "foreign": false,
+            "revoked": false,
+            "expired": false,
+            "inactive": false,
+            "locked_indefinite": false,
+            "locked_future": false,
+            "expired_lock": false,
+            "browser_en": false,
+            "browser_fr": false
+          },
+          "hasAuthorityFields": true,
+          "downstreamFinishedAt": "2026-11-10T11:31:46.967Z",
+          "downstreamClosedAt": "2026-11-10T11:31:46.967Z"
+        }
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "at": "2026-11-10T11:31:20.815Z",
+      "database": "stoquify_local_p04r06_20261109_full_r1",
+      "alias": "inactive",
+      "state": "inactive",
+      "id": "p04r06-inactive",
+      "isActive": false,
+      "isLocked": false,
+      "lockedUntil": null,
+      "evidence": "actor-state-1794310280815-675d825f-d97d-415d-a6ec-a049f3be6b20.json"
+    },
+    {
+      "at": "2026-11-10T11:31:30.725Z",
+      "database": "stoquify_local_p04r06_20261109_full_r1",
+      "alias": "inactive",
+      "restored": true,
+      "exactPriorActiveLockAndUpdatedAt": true,
+      "evidence": "actor-restore-1794310290725-67301285-5a92-48dc-8730-50e6ccade80f.json"
+    },
+    {
+      "at": "2026-11-10T11:31:30.911Z",
+      "database": "stoquify_local_p04r06_20261109_full_r1",
+      "alias": "locked_future",
+      "state": "locked_future",
+      "id": "p04r06-locked_future",
+      "isActive": true,
+      "isLocked": true,
+      "lockedUntil": "2026-11-10T12:31:30.897Z",
+      "evidence": "actor-state-1794310290911-83abadee-c4d5-4965-80ea-fe668700768f.json"
+    },
+    {
+      "at": "2026-11-10T11:31:42.565Z",
+      "database": "stoquify_local_p04r06_20261109_full_r1",
+      "alias": "locked_future",
+      "restored": true,
+      "exactPriorActiveLockAndUpdatedAt": true,
+      "evidence": "actor-restore-1794310302565-37442aac-f0a8-4dc3-ae66-3bf2f8501096.json"
+    }
+  ],
+  "cleanup": [],
+  "scope": "Four credential scenarios, three origin/protocol probes, and the six original browser continuity scenarios. No retrospective replacement of failed observations.",
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "originalRuntimeResultSha256": "4459b141a394444372f88d3728b84f38d5adeb49eb840d382cc4725327fc92df",
+  "originalBrowserResultSha256": "81a50e5a71168c93b4d2af6c9a21010cebeead3303f778cbafc70200f39e2878",
+  "originalResultPreserved": true,
+  "currentCriticalInputs": 63,
+  "browserVersion": "149.0.7827.55"
+}

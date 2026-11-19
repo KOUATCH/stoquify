@@ -1,0 +1,32 @@
+{
+  "createdAt": "2026-11-09T19:27:38.695Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "scope": "Selected mocked unit tests only",
+  "tests": 83,
+  "suites": 4,
+  "failed": 0,
+  "skipped": 0,
+  "admittedInputsUnchanged": true,
+  "evidence": [
+    {
+      "path": "unit/attempt01/receipt.json",
+      "sha256": "9e2fc26c1ac9833a5271acbdc5169963ed3464d35416bd72feed086c5e63b9af"
+    },
+    {
+      "path": "unit/attempt01/jest.json",
+      "sha256": "d2191193a0bdaafa585a771b99dc36739a12dafbdb3b710f2207fad5b1f4424b"
+    },
+    {
+      "path": "unit/attempt01/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "unit/attempt01/stderr.log",
+      "sha256": "ce57bdeb2c89f174959f8a69def794fa5f7acb2fb91babe342cb1d27d7fe911b"
+    }
+  ],
+  "limitations": [
+    "All persistence and auth API dependencies mocked; actual database, real signed-cache continuity and browser checks still pending."
+  ]
+}

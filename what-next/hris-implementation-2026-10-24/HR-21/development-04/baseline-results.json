@@ -1,0 +1,81 @@
+{
+  "status": "FAILED",
+  "baselineReplay": true,
+  "sourceHashes": {
+    "lib/security/auth-session.ts": "2b30a84a707521f3681f5325ccbaf47d4eee57b06f1a47f2764553a6b9c0fa27",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "services/_shared/protect.ts": "a73256a2e81dcba710d45cff43e811c1b256043edf2c32391c9525543968fb97",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "actions/hris/employee.actions.ts": "23b0124ee0a5ebc4b467f2567129ab9a62fa0960da09117fd117bb6f05e8bffa",
+    "actions/hris/compensation.actions.ts": "c29fdd5d9b123e0bc741313bc8dda4dad2279e6883d63042c7fdeacaa79894e9"
+  },
+  "completedAt": "2026-10-26T13:55:05.595Z",
+  "steps": [
+    "anonymous-step-up-denied",
+    "login-alone-cannot-mutate-hr",
+    "invalid-and-oversized-password-denied",
+    "password-assurance-uses-server-session-and-tenant",
+    "assurance-cannot-transfer-to-another-session",
+    "assurance-cannot-transfer-to-another-user",
+    "expired-future-and-wrong-tenant-assurance-denied",
+    "reusable-window-and-server-derived-hr-writes",
+    "fresh-auth-does-not-replace-permission",
+    "foreign-employee-read-and-write-denied",
+    "native-compensation-proposal-separation-and-contract-gate",
+    "payroll-handoff-admitted-with-permission-and-module",
+    "module-denial-blocks-payroll-handoff",
+    "company-change-invalidates-earlier-assurance",
+    "step-up-audit-without-password-or-cookie-secrets",
+    "revoked-session-cannot-reverify-or-mutate",
+    "expired-session-cannot-reverify"
+  ],
+  "failures": [
+    {
+      "name": "five-failures-revoke-earlier-fresh-admission",
+      "error": "AssertionError",
+      "message": "Missing expected rejection (FreshAuthRequiredError)."
+    },
+    {
+      "name": "expired-throttle-requires-new-password-proof",
+      "error": "AssertionError",
+      "message": "Missing expected rejection (FreshAuthRequiredError)."
+    },
+    {
+      "name": "module-denial-blocks-employee-mutation",
+      "error": "AssertionError",
+      "message": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "module-denial-blocks-compensation-mutation",
+      "error": "AssertionError",
+      "message": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "module-denial-blocks-selected-hr-reads",
+      "error": "AssertionError",
+      "message": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "read-only-payroll-allows-reads-and-denies-writes",
+      "error": "AssertionError",
+      "message": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "tenant-change-between-assurance-and-permission-reads-denied",
+      "error": "AssertionError",
+      "message": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "disabled-and-locked-account-cannot-step-up",
+      "error": "AssertionError",
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'INTERNAL_ERROR'\n- 'AUTH_REQUIRED'\n"
+    }
+  ],
+  "cleanupComplete": true,
+  "limits": [
+    "Actual native auth and direct server-action invocation; no Next transport/browser claim",
+    "Guarded Prisma, request headers, server-only and cache revalidation adapters; explicit real-DB interleaving for tenant-race case",
+    "Synthetic database fixtures only; no deployment or provider claims",
+    "Compensation proposal and separation/missing-contract denial qualified; full approved-contract lifecycle remains development02 evidence"
+  ]
+}

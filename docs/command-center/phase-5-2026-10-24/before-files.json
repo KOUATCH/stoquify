@@ -1,0 +1,917 @@
+{
+  "head": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "files": [
+    {
+      "path": "actions/assurance/__tests__/pos-cash-shortage-resolution.actions.test.ts",
+      "sha256": "ed6059dabc5935aa4c207a19ff4b27ba00856ed40406588562a8c67107131178"
+    },
+    {
+      "path": "actions/assurance/__tests__/workflow-assurance-alert.actions.test.ts",
+      "sha256": "ceec8526aa831a1171d9df531aba878b6849841b384e4f4ded0bf81750303917"
+    },
+    {
+      "path": "actions/assurance/__tests__/workflow-assurance-control-tower.actions.test.ts",
+      "sha256": "dc0afc01a07f8e1593b620e396e43bfa9a16c393d290fa806db9ccc430e5d927"
+    },
+    {
+      "path": "actions/assurance/__tests__/workflow-assurance-incident.actions.test.ts",
+      "sha256": "f385c45f1300cd1158e5b505c8ec92d1db5f856eb9e0e40ec6b2c6bcf2a7664f"
+    },
+    {
+      "path": "actions/assurance/__tests__/workflow-assurance.actions.test.ts",
+      "sha256": "2df092cb8ee17bd4e30a1638d564b44309fb419f0e9b91bea81f6e4eeba33ce6"
+    },
+    {
+      "path": "actions/assurance/pos-cash-shortage-resolution.actions.ts",
+      "sha256": "862b113d70191082d899bcd53a734534f9752d347e8889f56bee7718569d2774"
+    },
+    {
+      "path": "actions/assurance/workflow-assurance-alert.actions.ts",
+      "sha256": "30c5a012b4b29282e18a37cfab1e90cb780d613c9ba428729b0a0601e54d5306"
+    },
+    {
+      "path": "actions/assurance/workflow-assurance-control-tower.actions.ts",
+      "sha256": "0805cdc74f00a5b04f8250410b33f30382a70b955b06827d11cfd6c6732fcb14"
+    },
+    {
+      "path": "actions/assurance/workflow-assurance-incident.actions.ts",
+      "sha256": "0d25e43b0d92746da11cd2da375631e4a167ec76ed61e96a33645a3b972507af"
+    },
+    {
+      "path": "actions/assurance/workflow-assurance.actions.ts",
+      "sha256": "0995aa087d3c8649e3962949eb014225b6e1c98d83a6434e13786ccdea2a79b8"
+    },
+    {
+      "path": "actions/manager-action-center/manager-action-center.actions.ts",
+      "sha256": "01e401ea7fcabefdbaedefe9b379ffb339f1e922c0e3230520daaa92aaa921e1"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx",
+      "sha256": "35e1a9628116872d63122d0bb0191360a5ae41d8ccb4096fe0e7d6ad5da0cfd7"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx",
+      "sha256": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx",
+      "sha256": "cf7a792922a181e56e2dc68205a47c024bedf173c8827d9413e42c829a7e6dd4"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx",
+      "sha256": "26d28b815cf2ccde2ebffa40e17cb47c9d5c717897134262224c8de5941d5311"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/manager-action-center/error.tsx",
+      "sha256": "e3f8376b31ad8de6aaf7992ab2b54e2384fb457e2617c1fb1733fc124c978993"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/manager-action-center/loading.tsx",
+      "sha256": "eb9ff5f4820716390c5be6a05a7be573edace14abb485ecb8975f3f808a51f55"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-access.tsx",
+      "sha256": "48477e86142b194dd82fbc2d90ea301552f103aaac08ec0789af8bf15ae99eb1"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx",
+      "sha256": "163a31006da4e3b28b9bbc3b88b4db7a4e3481a245dd6af7654060bfc9e944db"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/owner-war-room/error.tsx",
+      "sha256": "6d53eed0961f4c9cea7983058cc9cd2276b8d6569b9c26a6033da200f2b06cb9"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/owner-war-room/loading.tsx",
+      "sha256": "bc60860f5dca0f7d2d61e183ad1ff5d186e9b0e8210d9c2efe167b0044cecc61"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx",
+      "sha256": "dfce0aebe011b382d7c82b4d74fbf1132f961bdd3832a27bde6b9d4f7dc4084e"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx",
+      "sha256": "38fc1ffb9b7edbb731b85963d642c1283ca5f49c4d489d721c6f65c6058c2e27"
+    },
+    {
+      "path": "components/agents/AgentCommandPanel.tsx",
+      "sha256": "58b422729eb5f2c6b133e0ee296fe55d8febfe64c1a5ab08a86c3d118accc26b"
+    },
+    {
+      "path": "components/assurance/AssuranceControlTowerDashboard.tsx",
+      "sha256": "f67c82a44388e61ddb6befbaf899218c3fe8fb243b7dfa8b35e5e8a120195917"
+    },
+    {
+      "path": "components/assurance/AssuranceIncidentActions.tsx",
+      "sha256": "8b7d26f571cecb2f407251e28263416e45b16c405b2807d78156651e24e4f3a7"
+    },
+    {
+      "path": "components/assurance/AssuranceIncidentDetailView.tsx",
+      "sha256": "7fbf7ea530d49850f4ae18f5f4fe2c912059165e8d7db3bdd636a3fdae9ce64c"
+    },
+    {
+      "path": "components/assurance/__tests__/AssuranceIncidentActions.test.tsx",
+      "sha256": "ce75133258f77781e55dccf610178c414e8327a49d8fd5ba32c4110154d8cd4d"
+    },
+    {
+      "path": "components/bi/BIActionButton.tsx",
+      "sha256": "23cd5afecb56b966317058f5d0fc25b748466b8cc501510ca4786de6d31e1d24"
+    },
+    {
+      "path": "components/bi/BIActionPriorityBoard.tsx",
+      "sha256": "5dd7190211b724275bbf03628cb90d8d055d85c2db865ef5fd7bc6dcc1a284f3"
+    },
+    {
+      "path": "components/bi/BIBusinessTruthZone.tsx",
+      "sha256": "d7afcd73a55b655e1599c880ac43b3bdaae0a65f8bb9de1f32f56ccc531681a7"
+    },
+    {
+      "path": "components/bi/BICommandBriefHeader.tsx",
+      "sha256": "4e2c48b925b637bd1b3b7ad9a69aea1a71360cc58e6bbb708a6a714223e8fd35"
+    },
+    {
+      "path": "components/bi/BICommandModeTabs.tsx",
+      "sha256": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c"
+    },
+    {
+      "path": "components/bi/BIEmptyState.tsx",
+      "sha256": "b094440294125db14acf8b8aaae1c6c7bb5343e3cfc29c9c7322bf3634f3b683"
+    },
+    {
+      "path": "components/bi/BIEvidenceBadgeRow.tsx",
+      "sha256": "9a7d8dc11848021e07949bbbd12af37d298ffc638fb7bad8b23db00b4b5ec35b"
+    },
+    {
+      "path": "components/bi/BIKpiCard.tsx",
+      "sha256": "2dac5617e3fc0983efbd2efc7eb8264fdf4b78171dbdff17986adf38bf50c71b"
+    },
+    {
+      "path": "components/bi/BIProofDrawerHost.tsx",
+      "sha256": "fa3661fc5546260f2d5bc9318d77093c17494d7c3df838af30308c17ef643921"
+    },
+    {
+      "path": "components/bi/BIRiskOpportunityRadar.tsx",
+      "sha256": "76f4fbfd04b61abd95888d58f498934eb5754f83bd7869a7bc031dabc081d683"
+    },
+    {
+      "path": "components/bi/BIStateBadge.tsx",
+      "sha256": "bdb122d6f046402fdc5baa1636c8a11770d7f5f02ce58382fdd602f060ae81af"
+    },
+    {
+      "path": "components/bi/BIStateSurface.tsx",
+      "sha256": "002eda421e36f7caadeeff7da2eb9c23453f6543a5a60f7e0de1ca2789da27d9"
+    },
+    {
+      "path": "components/bi/BITrustLegend.tsx",
+      "sha256": "7547a1c6cde036b2da03d76b4063cc11ea2ff8ef1711e2870dd4fd2fff1d25a7"
+    },
+    {
+      "path": "components/bi/BIWhatChangedStrip.tsx",
+      "sha256": "825871744b3ff78e713b0567c5d586f747ddd520f8bf4922b73316a123b12e90"
+    },
+    {
+      "path": "components/bi/__tests__/BIActionButton.pending.test.tsx",
+      "sha256": "23e999011740bb024c97eac4e324b60b79b869584049f81c7bc48a586d43c865"
+    },
+    {
+      "path": "components/bi/__tests__/BIActionButton.test.tsx",
+      "sha256": "a77647fed06c8dfd0c39f15e4331035bba822d5b159b13c515f55ef231d79cac"
+    },
+    {
+      "path": "components/bi/__tests__/BICommandBriefHeader.compact.test.tsx",
+      "sha256": "768695c461e26f916dc9e82a32d48f049d4ef07782e45c7ada5b6a1975ef12d8"
+    },
+    {
+      "path": "components/bi/__tests__/BIEvidenceBadgeRow.test.tsx",
+      "sha256": "11c5a9f79e5a58da6ded5da003363b933369480d8df81b1566e678aa2c01d562"
+    },
+    {
+      "path": "components/bi/__tests__/bi-command-primitives.test.tsx",
+      "sha256": "52ce802e621c63e72c3528d130e200aff795b4d15c81677516ba87982076a5b3"
+    },
+    {
+      "path": "components/bi/index.ts",
+      "sha256": "3161191f41592f0962521d187427a5315b0334b7f8a135f2da662c7fb480f2cb"
+    },
+    {
+      "path": "components/daily-habit/DailyHabitDigestDashboard.module.css",
+      "sha256": "5c251e4844803ad09ea1edb476b3892bf9c3e7e9da888aae86b27d11b03257e3"
+    },
+    {
+      "path": "components/daily-habit/DailyHabitDigestDashboard.tsx",
+      "sha256": "d790d70cc0e496aa4b81b16e6b974c534e6c906f2759219e4405dc601f16f9da"
+    },
+    {
+      "path": "components/daily-habit/DigestSourceLimitations.tsx",
+      "sha256": "c25decd0e6d886d9568444a8cdf74f6d3df7d342d769ad9a3e46e0f1230c2394"
+    },
+    {
+      "path": "components/daily-habit/__tests__/DailyHabitDigestDashboard.test.tsx",
+      "sha256": "22866217f8890805d04d6e1d44a8f811ab70a26aa3143f953b1917a03461ed68"
+    },
+    {
+      "path": "components/daily-habit/__tests__/jest.phase2.config.cjs",
+      "sha256": "e854c855c4d8d10f6e61a8d1783ddf4f307ee5b412fd7f48379a8ac7d309dccf"
+    },
+    {
+      "path": "components/daily-habit/__tests__/jest.phase3.config.cjs",
+      "sha256": "2bc539e98f9596dbe15a65afb04972a8d86cbecb7373b956824df60725210a88"
+    },
+    {
+      "path": "components/daily-habit/__tests__/modes.test.tsx",
+      "sha256": "072c8c0e473879d2a7f039ab39d6dd6f68ff552e20b89e8df23df468ca55abb7"
+    },
+    {
+      "path": "components/daily-habit/__tests__/phase2-briefings.test.tsx",
+      "sha256": "e4da5c4e21242e31196021ad4c15fc72af7e8245b24eb465dedf10c732d665b3"
+    },
+    {
+      "path": "components/daily-habit/__tests__/phase2-fixtures.ts",
+      "sha256": "7bce2bae45227ed375ef09cb1334f58543f980476d839a13aadb66e0da1eae2f"
+    },
+    {
+      "path": "components/daily-habit/__tests__/phase2.setup.tsx",
+      "sha256": "149838f7fb03b9e71fe4aff4a630140b361daecf0d5546d96e8b2eea106bff22"
+    },
+    {
+      "path": "components/daily-habit/__tests__/phase3-context.test.tsx",
+      "sha256": "aebdd4925970017afc952352c4428689c50ec0615328a570609c0a9fd1310e45"
+    },
+    {
+      "path": "components/daily-habit/__tests__/phase3.setup.tsx",
+      "sha256": "4e96eaa436d566658555619706ce3acb3f7bbce3ad8d69a4ee2a177bc5950f3d"
+    },
+    {
+      "path": "components/daily-habit/__tests__/tsconfig.phase2.json",
+      "sha256": "b0d74b8a6f1d9e3fd67e2a00fd20b4da924e17f4bde4a63416748d07872d231c"
+    },
+    {
+      "path": "components/daily-habit/__tests__/tsconfig.phase3.json",
+      "sha256": "3b71927d30d9d85d7c5c7aafb18f41934318555a30ca35e86896db3332f2834e"
+    },
+    {
+      "path": "components/daily-habit/digest-blocker-groups.ts",
+      "sha256": "d3e99ccfb051487c88b9b1372ca26018285f9aa1f3defdc927c38a17602daaaa"
+    },
+    {
+      "path": "components/dashboard/BusinessRecordSearch.tsx",
+      "sha256": "d6c58517d037bd64d810fde743a25198af4b74fa432a7ea66e1af40aec7c8b9c"
+    },
+    {
+      "path": "components/dashboard/CommandCenterRecovery.tsx",
+      "sha256": "036861f1265190281ba2af226de552b63ab006aee4f0713e764faa3d2d04d7e4"
+    },
+    {
+      "path": "components/dashboard/DashboardErrorState.tsx",
+      "sha256": "27f1b92ffc47e4ddaf71da2c2013e96a4dedb60ec4a87053ee728354af93f76c"
+    },
+    {
+      "path": "components/dashboard/DashboardLanguageLink.tsx",
+      "sha256": "9a03f4a2233eb829c192f01b936295bb193b62e6639ac848f7c42afe90bc8e1d"
+    },
+    {
+      "path": "components/dashboard/DashboardLoadingState.tsx",
+      "sha256": "d246ad74a5559d0f7fa9a0ba90977dfd034894f9b434c771c19b6cd190213af1"
+    },
+    {
+      "path": "components/dashboard/DashboardMobileNavigation.tsx",
+      "sha256": "0c7a4512bbbc72def3733ed9bba53271cf3f29136ffc8c6a59117fefd791cfb8"
+    },
+    {
+      "path": "components/dashboard/DashboardRouteState.tsx",
+      "sha256": "b2c69d73283f42828b20469596572d0b48666f676f8989c92ed0a7597497c9b3"
+    },
+    {
+      "path": "components/dashboard/EnhancedEnterpriseDashboard.tsx",
+      "sha256": "edaeb9cce328365c72ab0fd6741b17d0a207dd8bfeb0374612eeee68a9513348"
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "8457239b4dfaf0e9c76576826f36d4a7e72a2ad7c97e479a45716d8af3466232"
+    },
+    {
+      "path": "components/dashboard/SessionRecoverySignOutButton.tsx",
+      "sha256": "f9ffe729473024b54161c30c64d59952c82afcc34dac2bd2c3af9847223bd7eb"
+    },
+    {
+      "path": "components/dashboard/Sidebar.tsx",
+      "sha256": "6384f83ae5804b9d05ece71cf14d8001806a043577064c8e9d08cdc6eb5ce39a"
+    },
+    {
+      "path": "components/dashboard/Tables/Invites.tsx",
+      "sha256": "512621d092ec92dd7f16bea8be0c9ed6f6e59fbee069e0b0d9f1697500fc10cb"
+    },
+    {
+      "path": "components/dashboard/Tables/ModalTableheader.tsx",
+      "sha256": "9ec7d9fb98ea613a33a9cf0f3277a26dc02c7e318633c63150bde6fe3d88325d"
+    },
+    {
+      "path": "components/dashboard/Tables/TableHeader.tsx",
+      "sha256": "eb0eae883c3b0ff14ae0696d4f7e36d67a0cd0610a38e0c1ef4eec52b29d4028"
+    },
+    {
+      "path": "components/dashboard/Tables/__tests__/spreadsheet-import.test.tsx",
+      "sha256": "9c45d7255781a30752bac2867b734e538a0b8341282043252d19e753311e5109"
+    },
+    {
+      "path": "components/dashboard/WorkspaceSectionNavigation.tsx",
+      "sha256": "d746a3a1b250c093e21a10969e3f19a786ddffb4d0c6770687e2e12cc29d593a"
+    },
+    {
+      "path": "components/dashboard/__tests__/BusinessRecordSearch.test.tsx",
+      "sha256": "aadf4bff9a15708586e2b121d82ef6e0cacfea56c6472cec3aa946f88d54a5ff"
+    },
+    {
+      "path": "components/dashboard/__tests__/DashboardAppearance.test.tsx",
+      "sha256": "c3159c77c7a234f1f9f967e2c930e14575e163613cf4d240562d26d959e11e4f"
+    },
+    {
+      "path": "components/dashboard/__tests__/DashboardErrorState.test.tsx",
+      "sha256": "b45d112307e478ced6ed314c48f93e0569ea7a0875c14e643a2f4684d179fd79"
+    },
+    {
+      "path": "components/dashboard/__tests__/DashboardLanguageLink.test.tsx",
+      "sha256": "1900fac704dac90ffd774c4c6bddfca81aeafc05784019539a438b61bb3880ff"
+    },
+    {
+      "path": "components/dashboard/__tests__/DashboardMobileNavigation.test.tsx",
+      "sha256": "0783429e75fa03bbcd0e884883e1d3c8181d4525dc8f7bd22fa3a148c67ba6b9"
+    },
+    {
+      "path": "components/dashboard/__tests__/DashboardPageAccess.test.tsx",
+      "sha256": "5121fba009331bb15364265d41bcb70ec2c9f4c91e89b6734236a9c708b86a03"
+    },
+    {
+      "path": "components/dashboard/__tests__/DashboardRouteState.test.tsx",
+      "sha256": "f5dcb0a281d9797ecbecfd373f5a562583927c7ade8bc5f431261025153b3319"
+    },
+    {
+      "path": "components/dashboard/__tests__/Delivery16-loading.test.tsx",
+      "sha256": "6e916607d4c71cb7884ea51a008b40dfee71ec4c40269427da71c19627413176"
+    },
+    {
+      "path": "components/dashboard/__tests__/Sidebar-current.test.tsx",
+      "sha256": "45c1bcb1227f36019244c58b176343166a193240902d3d3b041b319b01666482"
+    },
+    {
+      "path": "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "sha256": "55051f868477cbe1c9eaaa84df57d363c5afac3ecc04c09478030835a3d01ad1"
+    },
+    {
+      "path": "components/dashboard/__tests__/dashboard-localization.test.tsx",
+      "sha256": "d4690a62aba6f3ce7101d863b821e235557cd89814447a27ec3f786314ba140e"
+    },
+    {
+      "path": "components/dashboard/__tests__/todays-operating-truth.test.ts",
+      "sha256": "c8d68fe97e16285c5e0c376f7cac574c8e0be53d449b6de45303870bf1487033"
+    },
+    {
+      "path": "components/dashboard/categories/CategoriesPageClient.tsx",
+      "sha256": "faf0acd5c8697dd75962a810da4cbfdfa96d23fb39a0d529586c496f8692149d"
+    },
+    {
+      "path": "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+      "sha256": "1ea65e783ca746b950e89dd8dea19477df1da11e70694fa12d28c5427f69d09d"
+    },
+    {
+      "path": "components/dashboard/items/ModernItemFormForEditing.tsx",
+      "sha256": "95020e5a63647c4d730075e41886bf7b72dab45e35f73b32c3fbb8212fe2a1be"
+    },
+    {
+      "path": "components/dashboard/items/__tests__/ModernItemFormForEditing.test.tsx",
+      "sha256": "946bfac15eca1f71e357ee5a9918d1215463f8dc0dac0c8ff13ca299a6b961f9"
+    },
+    {
+      "path": "components/dashboard/primitives/__tests__/command-center-primitives.test.tsx",
+      "sha256": "a313700a0910d0db5b18dcb90718e4d30932f2669c24891ff52eb830d66ea879"
+    },
+    {
+      "path": "components/dashboard/primitives/command-center-primitives.tsx",
+      "sha256": "461eefefda04d625c5c0ac61fbc8b1cb18c6e2b2d25fff18cdf2adbb32d57253"
+    },
+    {
+      "path": "components/dashboard/primitives/index.ts",
+      "sha256": "c6cbbfc06bfab71ea494730d6d0cb107d35c7abcf2324f32c45b2922b49a312f"
+    },
+    {
+      "path": "components/dashboard/todays-operating-truth.ts",
+      "sha256": "4a4c3dbfd7457b0fbf6d4bd5c1da46976d46d3058afa387ac647506c82b45785"
+    },
+    {
+      "path": "components/dashboard/useShellPermissions.ts",
+      "sha256": "e1a68ed56528442d7adae42ae5d87becbc1a4321fb21ef4b1c60d079cca1c21c"
+    },
+    {
+      "path": "components/evidence/EvidenceGradeBadge.tsx",
+      "sha256": "3a4f634a3c5b785653f59d1336436536b8ef203a63f2dd546dc999b6b471aaf0"
+    },
+    {
+      "path": "components/evidence/ProofTrailDrawer.tsx",
+      "sha256": "ebdd94affc0af4d21705585ec0dfd08d3865c56204488f0f011154f9e1e7ec43"
+    },
+    {
+      "path": "components/evidence/__tests__/EvidenceGradeBadge.test.tsx",
+      "sha256": "ec374b5defcc9f1a05b83b410a90c5514bcee05d64520cb27e2ff6b0380a2e6c"
+    },
+    {
+      "path": "components/evidence/__tests__/ProofTrailDrawer.test.tsx",
+      "sha256": "8085d64d80245d163a136f0976b255e5ae3ec551411e1f3431cbd1d54b30209a"
+    },
+    {
+      "path": "components/evidence/proof-trail-presentation.ts",
+      "sha256": "24408416985bfd992ddb7b3204a22c1092b0957a9e767f48298d0b8746c67bab"
+    },
+    {
+      "path": "components/manager-action-center/BranchDailyCloseReviewCommand.tsx",
+      "sha256": "7922aed5e2f000178bcceffa20934ce18f1b6d7765fe743d5908173004378120"
+    },
+    {
+      "path": "components/manager-action-center/BranchDailyCloseSignOffCommand.tsx",
+      "sha256": "8b536ea7eb0888e8f4c15771731fc2214a5df34dabb5c84499f39846f7aed43d"
+    },
+    {
+      "path": "components/manager-action-center/BranchDailyCloseWorkspace.tsx",
+      "sha256": "0d30f90b103f9a9ff0be0ab18e51a7768d28ae36c53da39b88f22cb894f2fa28"
+    },
+    {
+      "path": "components/manager-action-center/ManagerActionCenterDashboard.tsx",
+      "sha256": "132bf8578c9aaae6218e426c724bd2fa6438c0b0982244fe5efb7d17dca009d3"
+    },
+    {
+      "path": "components/manager-action-center/ManagerActionQueue.tsx",
+      "sha256": "979e4297507a138d6c5fb2ffb3e8904ec7f437a0b81b965bf73fb2fdfe6ebaed"
+    },
+    {
+      "path": "components/manager-action-center/ManagerLocationActionCenterDashboard.tsx",
+      "sha256": "44655b82dc71441d32bf1aa4d136d6518b4953dc46043519339c0abd790ba9cd"
+    },
+    {
+      "path": "components/manager-action-center/PaymentReconciliationSignOffCommand.tsx",
+      "sha256": "b4f5cebab7ee6ff0d2a728f08a8454f8283c32a9ca0ad13c3d139a647bb9e736"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/BranchDailyCloseReviewCommand.test.tsx",
+      "sha256": "cd2ac025ca4b48354f39f3d718565ed9727d214c783049a52aece7e732c61029"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/BranchDailyCloseSignOffCommand.test.tsx",
+      "sha256": "0139fc2d63c1f51ce064a32b1151e326153a77c9b18aac6c2880ffc048c0fc7c"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/BranchDailyCloseWorkspace.test.tsx",
+      "sha256": "07508906b58fa1f2b8ad5d99e2c68ef11c955015d607fd41e669eeb2eadac52d"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/ManagerActionCenterDashboard.test.tsx",
+      "sha256": "5e2f6388d2b12e4758bd4f1a93c75d4c586681b7c4ecf34b8dcd802c089d0a3a"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/ManagerLocationActionCenterDashboard.test.tsx",
+      "sha256": "b88955e5a5f15b8ebf478e6b37c8ab0237be56cf7b26ad6e0b54fc5eca5b8253"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/PaymentReconciliationSignOffCommand.test.tsx",
+      "sha256": "a12e300188ffdf37cc027a22911ef1882e4d85cf3b4141822e609bc08fea8f35"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/jest.phase1.config.cjs",
+      "sha256": "b6a8f4bf48abf76f1e5df010dd2158c439f0021505cc1327fde0e732a88b5031"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/manager-fixtures.ts",
+      "sha256": "56aaa857fc45d31c936be2e26e5f595600a7f15657eb8607df425498f6a3e267"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/manager-location-fixtures.ts",
+      "sha256": "88d7f5dd3b29ffc2fa6f9ba9fa9db60d084d3f82fa50adaf19d04795bcf1d468"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/phase1.setup.tsx",
+      "sha256": "0653a94003cd209cbf57fe103f25a85eb02ed1abe74a66e4e421192dfdb683ad"
+    },
+    {
+      "path": "components/manager-action-center/__tests__/tsconfig.phase1.json",
+      "sha256": "7d62ff8f09782dcba8ee2237318d80819fea081269bfbca1528ae586c56388ba"
+    },
+    {
+      "path": "components/manager-action-center/useManagerView.ts",
+      "sha256": "68ff645b1a5b18555e32c9fb0fd8ff87278babdc280a906cb9589ad43cfa523c"
+    },
+    {
+      "path": "components/owner-war-room/OwnerWarRoomDashboard.tsx",
+      "sha256": "55b5fd80e6fbc771375e1cccd7568dcdd6c15138f03fce364c1ef4c5f157a6e9"
+    },
+    {
+      "path": "components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx",
+      "sha256": "66e406f429df1d172528191b3dfcf2c0173e31963973539065717b8abfdec147"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "8bfa8735dffb234c779ec7bc6326d6ec6aa515765a404a37060ed50dfcef40a9"
+    },
+    {
+      "path": "design-system/stoquify/pages/accountant-portfolio.md",
+      "sha256": "0686ea7280b44c394267f00ececa86ef64dec04b457e3a70019d1530b5cd480c"
+    },
+    {
+      "path": "design-system/stoquify/pages/ap-payment.md",
+      "sha256": "35bdaa3477584bd8f174d947555fdfa0c84b2f8405c2c01c9e3cf5451b1713a8"
+    },
+    {
+      "path": "design-system/stoquify/pages/command-center-shared.md",
+      "sha256": "6a16885d870fa96a560faa64a8d4106eec94e3850d38004bf88290c38d3b24e3"
+    },
+    {
+      "path": "design-system/stoquify/pages/daily-digest.md",
+      "sha256": "89ef619aac058a5f6afbc265287e8f96bd282a7154688095ecf08aaf00a4496d"
+    },
+    {
+      "path": "design-system/stoquify/pages/delegated-evidence-desk.md",
+      "sha256": "7a3286a24ab6f31e85b706121b4d4c712f17e76bf70baf9f6480d5129eec5534"
+    },
+    {
+      "path": "design-system/stoquify/pages/firm-engagements.md",
+      "sha256": "475c9bda6b54133c7e95632393b3f597565f07ff5c03d9e8a10daf070920d795"
+    },
+    {
+      "path": "design-system/stoquify/pages/inventory.md",
+      "sha256": "ddee72ccf246899a6ca2ab01f478257bcc5836ea05e5a4d451b546900013de6c"
+    },
+    {
+      "path": "design-system/stoquify/pages/manager-action-center.md",
+      "sha256": "d2e8fcd0fbd75b55be4ea13678a1ddb58546ef66890d7cece9e2b45fe8f5c9b9"
+    },
+    {
+      "path": "design-system/stoquify/pages/obligation-register.md",
+      "sha256": "0100c34200573862a59039b76bdcfe1d68a61b0ea2f127b221d72ef8f693873a"
+    },
+    {
+      "path": "design-system/stoquify/pages/owner-war-room.md",
+      "sha256": "73f7b9f130ed4005ed0d320ea7c7d1c379aff01f3abd5e315440c72219508185"
+    },
+    {
+      "path": "design-system/stoquify/pages/payables.md",
+      "sha256": "264fbcba9f9513cb7d1a554b3caf4468fb2616363e8c0fa603a54eab06ede642"
+    },
+    {
+      "path": "design-system/stoquify/pages/pos.md",
+      "sha256": "3b282b70e831aa0fd3690b3c097f79cc0bfc27edc402ec99c4cc198e16d94cfc"
+    },
+    {
+      "path": "design-system/stoquify/pages/public-auth.md",
+      "sha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897"
+    },
+    {
+      "path": "design-system/stoquify/pages/receivables.md",
+      "sha256": "7d6c9aec5331ed2742eef0ca2f6d41aff0d6f70e8c2bec0d5b37f8a14b177cb5"
+    },
+    {
+      "path": "design-system/stoquify/pages/sales.md",
+      "sha256": "4a65787d6d042940f902d1924ddc9bf4d3ca82c1cbb0e0044e0f0738155dc759"
+    },
+    {
+      "path": "docs/command-center/phase-0-2026-10-24/ACCEPTANCE_CHECKLIST.md",
+      "sha256": "b412996971d3ed11eeae2071d18ee4db46438dbb5ccfdd56c523b05855766050"
+    },
+    {
+      "path": "docs/command-center/phase-0-2026-10-24/ACTION_SOURCE_MAP.md",
+      "sha256": "af6a3a64c9a13613d27b83713dca691882ee56410b8f7852193fbb4f3dddd2d0"
+    },
+    {
+      "path": "docs/ecc/command-registry.json",
+      "sha256": "34a55213a029128b39252f5aa16b285ce6cea28c2293306f08e65f132b6e0c91"
+    },
+    {
+      "path": "lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts",
+      "sha256": "af84197dc79a955a3c1714c981323d6fe7445aae62dcb9197e5bab686cfc253f"
+    },
+    {
+      "path": "lib/dashboard/__tests__/snapshot-source-blocker-presentation.test.ts",
+      "sha256": "813ece13eb5fc82d2392f103583405d7351460640b5797cb2dcdbddef9b7ddd2"
+    },
+    {
+      "path": "lib/dashboard/bi-presentation.ts",
+      "sha256": "2f2c1a8b8c5811c1d3d4f68608e5dc13da94d2ea1be8a2018c4626a3b85a912a"
+    },
+    {
+      "path": "lib/dashboard/command-center-context.ts",
+      "sha256": "8487818d256d538489db8c6d5b9e4e67a34fc7057abee6a491bded32d4fb3905"
+    },
+    {
+      "path": "lib/dashboard/presentation.ts",
+      "sha256": "3fc70022c973a90361c0ff2e9540ab180cb7c6895a0a2af2fb4af2d2a57287c3"
+    },
+    {
+      "path": "lib/dashboard/role-label.ts",
+      "sha256": "519e515fd084a5ad1b70213aeac7198b743ea34ebb45d22696ec21765dd9e59d"
+    },
+    {
+      "path": "lib/dashboard/snapshot-blocker-presentation.ts",
+      "sha256": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62"
+    },
+    {
+      "path": "lib/dashboard/snapshot-source-blocker-presentation.ts",
+      "sha256": "47e104cdd3bd78376be22bc2820c30ca368e7b30f00f00870262383958c66cce"
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "sha256": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "sha256": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "86bb0302b5baf812b1e8b37cdb2edaba053517377a66dc46a08179a29732b0f8"
+    },
+    {
+      "path": "scripts/verify-agent-workflow-contract.js",
+      "sha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "a73256a2e81dcba710d45cff43e811c1b256043edf2c32391c9525543968fb97"
+    },
+    {
+      "path": "services/accounting/missing-close-evidence-request-queue-contracts.ts",
+      "sha256": "dc8cb9f6e5d6ed191be0c03b5ebbec39c1be47a90dcef2192c815da1efcd1bb3"
+    },
+    {
+      "path": "services/accounting/missing-close-evidence-request-queue.service.ts",
+      "sha256": "da6f105e4e834c4e3bbf505039d3fcc8eea39386e54f48e690fca818016eb33f"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-alert-delivery.service.test.ts",
+      "sha256": "a866be7b21e848a8248766ec756ea4bbbcb19bd69a043fc6230396f94429cb30"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-alert-recovery.service.test.ts",
+      "sha256": "ffa6c5df6fcff48c670029c4774e24b829a52abcd9031f2b3974b880cc18a4f0"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-control-tower.service.test.ts",
+      "sha256": "162c703098507ca4b0ee7c23dba88e086f92a648e80b47e95c94b90503d03c8c"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-incident-identity.postgres.test.ts",
+      "sha256": "1884d8366a19314732cc2589e9aaad68be478bdb2ee31a7fa31e13edbbe3b76d"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-incident.service.test.ts",
+      "sha256": "e66ce042012c8df1be5d55f6c678928c2591fc355ad30c65b88a5e9e72af381f"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-registry-contracts.test.ts",
+      "sha256": "1b7618b01c8a48426feacf4c134ada0d045dded0acc8384cc33fadf2ed94e7e7"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-registry-multi-finding-contracts.test.ts",
+      "sha256": "30ebf3e3598959d779755f63334d8718547bb38aeda2b9a17e68d6983588fce4"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-registry-persistence-contracts.test.ts",
+      "sha256": "26a5e2df48e2d9fd3985bd10cdfe36f421707ba3e12d5f91523372e5f8945dc0"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-registry-persistence.postgres.test.ts",
+      "sha256": "b4cd2e855021f3c18a505c9c634d00caa82bb1ec0b31ee003a5faf3ccbaddedf"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-registry-persistence.service.test.ts",
+      "sha256": "6948fcf8856747a18cccc1da77ecb511d85a22b4d496950b1ad653fe76739bc3"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-registry.service.test.ts",
+      "sha256": "77e14f89f623439593e98cbb7517d7adff4d82ec50fab8875cc63fcae67323f7"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-scheduler.service.test.ts",
+      "sha256": "090193f535d88769dc8b4158861ac0b87e9f8dfa5d6f1616b004566af124e254"
+    },
+    {
+      "path": "services/assurance/__tests__/payroll-observability-runbook.test.ts",
+      "sha256": "e453a4b6f076b17c0aeeafea0104da71d32d9aaa3a4e9534f5e1a61e0385cf59"
+    },
+    {
+      "path": "services/assurance/assurance-alert-delivery.service.ts",
+      "sha256": "653b9257f67c3b28ebbab20ab3f1d5890b040a11d141e27591c7ba9f5b0fc597"
+    },
+    {
+      "path": "services/assurance/assurance-alert-recovery.service.ts",
+      "sha256": "f640ca6257d7ad3766698df78d2e1a41b9c9f5b7a0b22c630826d7995fa5d8d8"
+    },
+    {
+      "path": "services/assurance/assurance-control-tower-contracts.ts",
+      "sha256": "712cb7c49b1f6b9ec4ae6579ff80e40c124d30a527c07ba6318847c586d6d7e0"
+    },
+    {
+      "path": "services/assurance/assurance-control-tower.service.ts",
+      "sha256": "d24b4c8b3cdac924ef39f1a50a55093281459e4ca866c02845af6daa0564ef8d"
+    },
+    {
+      "path": "services/assurance/assurance-incident-contracts.ts",
+      "sha256": "f6ffbbf45c1cfb66caa3dae12fde4c5160721b602da5996246ef2b041b2bd888"
+    },
+    {
+      "path": "services/assurance/assurance-incident.service.ts",
+      "sha256": "1017f7f1ddeaa218818c6aaad8fcf050e4b073de44eca6a49aaafc4b2392c0b0"
+    },
+    {
+      "path": "services/assurance/assurance-registry-contracts.ts",
+      "sha256": "7b4024be77ef33e77e38c084aed6c921740ad53b2390b62036e5e8f30a8b28d4"
+    },
+    {
+      "path": "services/assurance/assurance-registry-persistence-contracts.ts",
+      "sha256": "e8a854090042eccf953a246e3533d01007eb33199bb70870554388addf347346"
+    },
+    {
+      "path": "services/assurance/assurance-registry-persistence.service.ts",
+      "sha256": "5f0395314063cbb112a299bf9ebcf75500cf97a0262e080fcb373be0befe8e91"
+    },
+    {
+      "path": "services/assurance/assurance-registry.service.ts",
+      "sha256": "e96e38c948011dee8e7d1c1a23979d1a51c0e9e0f97cef605ff3585ab3c129de"
+    },
+    {
+      "path": "services/assurance/assurance-scheduler-contracts.ts",
+      "sha256": "e30aa71fbd8adb4b86aac61ade57447961cfc8f44f7bb1128c73d254bc3eb7d9"
+    },
+    {
+      "path": "services/assurance/assurance-scheduler.service.ts",
+      "sha256": "bc73ec70055d8e12b2d00fb65adbd6b5ad74e5ffdac3498be68c903367a32dc6"
+    },
+    {
+      "path": "services/bi/bi-contracts.ts",
+      "sha256": "0a74da86349a34680565349f58edc62c01fda35f04b94683be8380ec92685de6"
+    },
+    {
+      "path": "services/daily-habit/__tests__/close-route-access.test.tsx",
+      "sha256": "d7c6c54028e6db18446e190acf39a25ad999b1c379cc43bdd20cce1790653030"
+    },
+    {
+      "path": "services/daily-habit/__tests__/daily-habit-digest.service.test.ts",
+      "sha256": "379b60c7f5fba6340202da20532f462fc2a6c79e44aef09c22edc990db141a92"
+    },
+    {
+      "path": "services/daily-habit/__tests__/daily-habit-signal-presentation.test.ts",
+      "sha256": "05b94363ad92d624b2bb960b45aac679078e61a6287eccb436efe4c794906b6e"
+    },
+    {
+      "path": "services/daily-habit/__tests__/daily-habit-source-visibility.test.ts",
+      "sha256": "ced20cf4ea226b05c1fa1eeb0c1db6f3c84f893b641ec5fff98818be8dd396b4"
+    },
+    {
+      "path": "services/daily-habit/__tests__/inventory-route-access.test.tsx",
+      "sha256": "a4ee9a35a8b00998aee5226074bdd11fd3ed536077263e8207ec8aa7f45da6fd"
+    },
+    {
+      "path": "services/daily-habit/__tests__/operating-route-access.test.tsx",
+      "sha256": "494fb3ab0744c47ea6f3c59bc091bee88e51500ffb68f549202738e850b405eb"
+    },
+    {
+      "path": "services/daily-habit/__tests__/purchasing-route-access.test.tsx",
+      "sha256": "4f2a721941c98c23e3b65cb671fc1e7517844d46eed8394ff823aa09f162d138"
+    },
+    {
+      "path": "services/daily-habit/daily-habit-digest-contracts.ts",
+      "sha256": "1ba159dbb05b4e6ddf5300d5195f96bd020223c86703273f5f4339b552bfd285"
+    },
+    {
+      "path": "services/daily-habit/daily-habit-digest-presentation.ts",
+      "sha256": "44cb196925127dfc33e1c76cb90ffdfdfed6cd86f5c40d19edfc4ee6c1c4e3e6"
+    },
+    {
+      "path": "services/daily-habit/daily-habit-digest.service.ts",
+      "sha256": "b103d41e0164cfdb056159489cb792508fc9d0f90fb16e44451a630a20f17330"
+    },
+    {
+      "path": "services/daily-habit/daily-habit-signal-presentation.ts",
+      "sha256": "9ca3b088689040f570d33e8061f4d3ea62dbccb09e5a6383cb447b949bf6477e"
+    },
+    {
+      "path": "services/daily-habit/daily-habit-source-visibility.ts",
+      "sha256": "5419b7ec6d9f287b7db5eb6e375fcac210c3aed7896d6af484790c089c4799e7"
+    },
+    {
+      "path": "services/end-of-day-close/branch-daily-close-sign-off.service.ts",
+      "sha256": "b5a7df72c71cba86ac249857820c5f6dc7988201d0b9e5d2b1d19e01a3d0f807"
+    },
+    {
+      "path": "services/manager-action-center/__tests__/manager-action-center-query.service.test.ts",
+      "sha256": "97e1f7e320fbb0bfc5edf1c7c536157c59e3fa3dfb521f075383b20d67a08b89"
+    },
+    {
+      "path": "services/manager-action-center/__tests__/manager-action-center.service.test.ts",
+      "sha256": "9d17fc98c9dc42169334cdda218df331e57e47378bae1bb2158b2caf02ad9f85"
+    },
+    {
+      "path": "services/manager-action-center/__tests__/manager-location-action-center.service.test.ts",
+      "sha256": "79080852722e5a0b6cd2660e64092f79a24e5d3b7f63af05d7f3f23efb3c9230"
+    },
+    {
+      "path": "services/manager-action-center/manager-action-center-contracts.ts",
+      "sha256": "df42393138ca3422e8ce8067302a743bb1216701d59088735c298ff1ad24f0d2"
+    },
+    {
+      "path": "services/manager-action-center/manager-action-center-presentation.ts",
+      "sha256": "462e9ec90b6a4b52d9fb6960c053ecfc824d3f6e656621e5eb9e984dcc2cc829"
+    },
+    {
+      "path": "services/manager-action-center/manager-action-center-query-contracts.ts",
+      "sha256": "5899ce1e1a1dfc79fc7fab26cb3513a2d3f20f4b893a6765551a40c6669e5475"
+    },
+    {
+      "path": "services/manager-action-center/manager-action-center-query.service.ts",
+      "sha256": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295"
+    },
+    {
+      "path": "services/manager-action-center/manager-action-center.service.ts",
+      "sha256": "d62a39d5298dbd75e23fa3a8c79f613fe3e73321ef005a7159e188e992a43b80"
+    },
+    {
+      "path": "services/manager-action-center/manager-location-action-center-contracts.ts",
+      "sha256": "a5aaaa975c179fc552859ddf3fdc7a76f18f643abd1aba1e8d6a86ea190fc6b6"
+    },
+    {
+      "path": "services/manager-action-center/manager-location-action-center.service.ts",
+      "sha256": "4ee90b4a48043b922d2fef7d36d1f7cc04d2957351731ccf3acc3771bf7c3f14"
+    },
+    {
+      "path": "services/owner-war-room/__tests__/owner-signal-copy.test.ts",
+      "sha256": "07e173f60d04a5d23a7c4c248d1e3a00dc22cab1b5a45755782f26b2940c9f3e"
+    },
+    {
+      "path": "services/owner-war-room/__tests__/owner-war-room.service.test.ts",
+      "sha256": "6d8a570f7a36e2daa4385979e67d28ab1ae75718e9b059e77670496811d25062"
+    },
+    {
+      "path": "services/owner-war-room/owner-signal-copy.ts",
+      "sha256": "40e8a6c198d03700281c685467cee8b272c876c2c617abc1df020d898482b2ed"
+    },
+    {
+      "path": "services/owner-war-room/owner-war-room-contracts.ts",
+      "sha256": "11609f9e6c86b9da81acc93d350c6c09355bf9b82c45109e6326688ab51cf846"
+    },
+    {
+      "path": "services/owner-war-room/owner-war-room-copy.ts",
+      "sha256": "871034560344f998a255eb8222deecbd05de536a6982b7102eb26a0b442c87f7"
+    },
+    {
+      "path": "services/owner-war-room/owner-war-room.service.ts",
+      "sha256": "e98b7f58fb9ee3228775500872ac1107b0b349267bb310d75963afd3c1455a3e"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-sign-off-command-state-contracts.ts",
+      "sha256": "91cfa47bb50a0f3639d0667866ce672512b78a1b9f05838e687d7d355afa3bc4"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-sign-off-command-state.service.ts",
+      "sha256": "4cb0f4ee413aa537c52aa26f3d892f794c66a30b29142da0ecef5923b1e29e1f"
+    },
+    {
+      "path": "services/signals/__tests__/action-queue.service.test.ts",
+      "sha256": "4cec94f0a9dc9802df55b051d059ff0728fb1d87e233f5262ae9261004eaa387"
+    },
+    {
+      "path": "services/signals/__tests__/business-signal-rules.service.test.ts",
+      "sha256": "814fc045cd668f91f22acfe34e25b2fb32bcbf5eb5c051e39a36491701c5756f"
+    },
+    {
+      "path": "services/signals/__tests__/payroll-action-access.test.ts",
+      "sha256": "0daab085a13885753f856c9a09e83cf6cc44453da48ef8d6420a6d088fbc8d06"
+    },
+    {
+      "path": "services/signals/__tests__/signal-notification.service.test.ts",
+      "sha256": "ba7a957b4b095d78ffcb24c0b66d331c236ab5c23293206dece800e21470571c"
+    },
+    {
+      "path": "services/signals/action-queue.service.ts",
+      "sha256": "1f0f2c2bbfc5f474dd4474a3a53541d19eb728ca3b35d49b40e8cc700dc97002"
+    },
+    {
+      "path": "services/signals/business-signal-contracts.ts",
+      "sha256": "78d2d2cb487b963e447919f147f0e0ca85578bac7082f2f0feb63418a87800f2"
+    },
+    {
+      "path": "services/signals/business-signal-rules.service.ts",
+      "sha256": "5fa623dc2e6452723ad25cf22c5abced17ccc856d06a5fd064223c55bbf30f4a"
+    },
+    {
+      "path": "services/signals/business-signal.service.ts",
+      "sha256": "e1dea6604cdfb30cbcbcae8c2c80f0e898c5f474d65ec4cf51e919bd976f3af0"
+    },
+    {
+      "path": "services/signals/signal-notification.service.ts",
+      "sha256": "a9e48231e9eeafb019ad7e421a01c859dbfa6acae5552cbb0773316e49855574"
+    },
+    {
+      "path": "services/snapshots/snapshot-utils.ts",
+      "sha256": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4"
+    }
+  ]
+}

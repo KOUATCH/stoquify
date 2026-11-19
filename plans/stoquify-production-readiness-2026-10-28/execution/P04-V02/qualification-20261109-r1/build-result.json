@@ -1,0 +1,117 @@
+{
+  "startedAt": "2026-11-09T16:36:55.651Z",
+  "passed": true,
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "commands": [
+    {
+      "label": "client-generation",
+      "startedAt": "2026-11-09T16:37:30.798Z",
+      "args": [
+        "node_modules/prisma/build/index.js",
+        "generate"
+      ],
+      "pid": 32560,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "finishedAt": "2026-11-09T16:38:59.243Z"
+    },
+    {
+      "label": "artifact-build",
+      "startedAt": "2026-11-09T16:39:00.354Z",
+      "args": [
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "release:artifact",
+        "--",
+        "D:\\p04-v02-fullapp-20261109-r1\\artifact"
+      ],
+      "pid": 35724,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "finishedAt": "2026-11-09T17:13:19.663Z"
+    }
+  ],
+  "candidate": "D:\\p04-v02-fullapp-20261109-r1\\source",
+  "artifact": "D:\\p04-v02-fullapp-20261109-r1\\artifact",
+  "database": {
+    "host": "127.0.0.1",
+    "port": 55509,
+    "name": "stoquify_local_p04v02_20261109_build_r1",
+    "migrations": 121,
+    "synthetic": true
+  },
+  "environmentVariableNames": [
+    "APPDATA",
+    "AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY",
+    "AQSTOQFLOW_HISTORY_CURSOR_SECRET",
+    "AQSTOQFLOW_RECEIPT_TOKEN_SECRET",
+    "AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY",
+    "AQSTOQFLOW_STATEMENT_TOKEN_SECRET",
+    "AUTH_SECRET",
+    "BETTER_AUTH_SECRET",
+    "BUILD_APP_TIMEOUT_MS",
+    "CHECKPOINT_DISABLE",
+    "ComSpec",
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "LOCALAPPDATA",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_URL",
+    "NEXT_PUBLIC_APP_URL",
+    "NEXT_PUBLIC_BASE_URL",
+    "NEXT_TELEMETRY_DISABLED",
+    "NODE_OPTIONS",
+    "PATHEXT",
+    "PRISMA_HIDE_UPDATE_MESSAGE",
+    "PUBLIC_IDENTITY_ABUSE_HASH_SECRET",
+    "Path",
+    "STOQUIFY_ACCOUNTANT_INVITE_LIVE_SENDS",
+    "STOQUIFY_STATEMENT_EMAIL_LIVE_SENDS",
+    "STOQUIFY_STATEMENT_WHATSAPP_LIVE_SENDS",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "UPLOADTHING_TOKEN",
+    "USERPROFILE",
+    "windir"
+  ],
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "buildId": "LQivwlD0OejMX90O1VVa1",
+  "runtimeFiles": 5311,
+  "legacyUploads": [
+    {
+      "source": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "destination": "runtime/.private/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "sha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2"
+    },
+    {
+      "source": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "destination": "runtime/.private/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "sha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225"
+    },
+    {
+      "source": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "destination": "runtime/.private/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "sha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519"
+    },
+    {
+      "source": "public/uploads/p04-upload-a/sentinel.png",
+      "destination": "runtime/.private/uploads/p04-upload-a/sentinel.png",
+      "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d"
+    },
+    {
+      "source": "public/uploads/p04-upload-b/sentinel.png",
+      "destination": "runtime/.private/uploads/p04-upload-b/sentinel.png",
+      "sha256": "13a70c1156151a2323af88801aeb7068712733dfb42ddccd2975486e2e2d09f8"
+    },
+    {
+      "source": "public/uploads/p04-upload-disabled/sentinel.png",
+      "destination": "runtime/.private/uploads/p04-upload-disabled/sentinel.png",
+      "sha256": "d053a56cd4331f75c220f68ae11ac6d53dd2ee99591362a115e12b7d05cdb525"
+    }
+  ],
+  "finishedAt": "2026-11-09T17:14:17.408Z",
+  "clusterLifecycle": "Exclusively owned by database worker; build runner does not stop it"
+}

@@ -1,0 +1,34 @@
+e781ad163ed66fb7ee23880bfc0aefca
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "itemKeys", {
+    enumerable: true,
+    get: function() {
+        return itemKeys;
+    }
+});
+const itemKeys = {
+    all: [
+        'items'
+    ],
+    // Use a stable serialized value for params so the key doesn't churn on object identity
+    list: (params)=>[
+            ...itemKeys.all,
+            'list',
+            JSON.stringify(params ?? {})
+        ],
+    detail: (id)=>[
+            ...itemKeys.all,
+            'detail',
+            id ?? ''
+        ],
+    org: (organizationId)=>[
+            ...itemKeys.all,
+            'org',
+            organizationId ?? ''
+        ]
+};
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6XFxvaGFkYSBzYWFzXFxGb2N1c2VkIHByb2plY3RzXFxzdG9xdWlmeVxcbGliXFxpdGVtXFxpdGVtS2V5cy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgY29uc3QgaXRlbUtleXMgPSB7XG4gIGFsbDogWydpdGVtcyddIGFzIGNvbnN0LFxuICAvLyBVc2UgYSBzdGFibGUgc2VyaWFsaXplZCB2YWx1ZSBmb3IgcGFyYW1zIHNvIHRoZSBrZXkgZG9lc24ndCBjaHVybiBvbiBvYmplY3QgaWRlbnRpdHlcbiAgbGlzdDogKHBhcmFtcz86IFJlY29yZDxzdHJpbmcsIHVua25vd24+KSA9PlxuICAgIFsuLi5pdGVtS2V5cy5hbGwsICdsaXN0JywgSlNPTi5zdHJpbmdpZnkocGFyYW1zID8/IHt9KV0gYXMgY29uc3QsXG4gIGRldGFpbDogKGlkPzogc3RyaW5nKSA9PiBbLi4uaXRlbUtleXMuYWxsLCAnZGV0YWlsJywgaWQgPz8gJyddIGFzIGNvbnN0LFxuICBvcmc6IChvcmdhbml6YXRpb25JZD86IHN0cmluZykgPT5cbiAgICBbLi4uaXRlbUtleXMuYWxsLCAnb3JnJywgb3JnYW5pemF0aW9uSWQgPz8gJyddIGFzIGNvbnN0LFxufVxuIl0sIm5hbWVzIjpbIml0ZW1LZXlzIiwiYWxsIiwibGlzdCIsInBhcmFtcyIsIkpTT04iLCJzdHJpbmdpZnkiLCJkZXRhaWwiLCJpZCIsIm9yZyIsIm9yZ2FuaXphdGlvbklkIl0sIm1hcHBpbmdzIjoiOzs7OytCQUFhQTs7O2VBQUFBOzs7QUFBTixNQUFNQSxXQUFXO0lBQ3RCQyxLQUFLO1FBQUM7S0FBUTtJQUNkLHVGQUF1RjtJQUN2RkMsTUFBTSxDQUFDQyxTQUNMO2VBQUlILFNBQVNDLEdBQUc7WUFBRTtZQUFRRyxLQUFLQyxTQUFTLENBQUNGLFVBQVUsQ0FBQztTQUFHO0lBQ3pERyxRQUFRLENBQUNDLEtBQWdCO2VBQUlQLFNBQVNDLEdBQUc7WUFBRTtZQUFVTSxNQUFNO1NBQUc7SUFDOURDLEtBQUssQ0FBQ0MsaUJBQ0o7ZUFBSVQsU0FBU0MsR0FBRztZQUFFO1lBQU9RLGtCQUFrQjtTQUFHO0FBQ2xEIn0=

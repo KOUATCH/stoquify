@@ -2,6 +2,7 @@ import "server-only"
 import { Prisma } from "@prisma/client"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { bankBalanceHash, calculateBankBalance, type BankBalanceInput } from "./bank-balance-contract"
+import { hasDeclaredStatementCoverage } from "@/services/payments/statement-declared-coverage"
 
 export const BANK_BALANCE_RAILS = ["BANK_TRANSFER", "CHEQUE"] as const
 const fail = (message: string): never => { throw new BusinessRuleError(message) }
@@ -20,7 +21,7 @@ export async function readBankBalanceSnapshot(tx: Prisma.TransactionClient, orga
   const sharedSettlement = await tx.settlementAccount.count({ where: { organizationId, ledgerAccountId: ledger.id, providerAccountId: { not: account.id }, approvalStatus: "APPROVED", effectiveFrom: { lte: period.endDate }, OR: [{ effectiveTo: null }, { effectiveTo: { gte: period.startDate } }] } })
   if (shared || sharedSettlement) return fail("A bank ledger account shared with another provider cannot establish an account-specific balance.")
   const statement = await tx.statementFile.findFirst({ where: { id: input.statementFileId, organizationId, providerAccountId: account.id, createdAt: { lte: cutoff }, importedAt: { lte: cutoff }, status: { in: ["IMPORTED", "PROCESSED"] } } })
-  if (!statement || +statement.periodStart !== +period.startDate || +statement.periodEnd !== +period.endDate || (statement.fileHash.startsWith("sha256:") ? statement.fileHash : `sha256:${statement.fileHash}`) !== input.sourceDocumentHash) return fail("An imported statement with the exact period and matching document hash is required.")
+  if (!statement || !hasDeclaredStatementCoverage(statement, { ...account, organizationId }) || +statement.periodStart !== +period.startDate || +statement.periodEnd !== +period.endDate || (statement.fileHash.startsWith("sha256:") ? statement.fileHash : `sha256:${statement.fileHash}`) !== input.sourceDocumentHash) return fail("An imported statement with declared exact-period coverage and a matching document hash is required.")
   const [statementLines, ledgerLines] = await Promise.all([
     tx.statementLine.findMany({ where: { statementFileId: statement.id }, orderBy: { id: "asc" }, select: { id: true, organizationId: true, providerAccountId: true, amount: true, feeAmount: true, currencyCode: true, direction: true, occurredAt: true, rawLineHash: true, createdAt: true } }),
     tx.journalEntryLine.findMany({ where: { accountId: ledger.id, journalEntry: { entryDate: { lte: period.endDate }, status: { in: ["POSTED", "REVERSED"] } } }, orderBy: { id: "asc" },
@@ -58,7 +59,7 @@ export async function readBankBalanceSnapshot(tx: Prisma.TransactionClient, orga
   }
   return { version: 1, organizationId, providerAccountId: account.id, ledgerAccountId: ledger.id, periodId: period.id, currency: account.currencyCode,
     periodStart: period.startDate.toISOString(), periodEnd: period.endDate.toISOString(), statementFileId: statement.id, statementHash: statement.fileHash,
-    sourceHash: bankBalanceHash({ statementLines, ledgerLines,
+    sourceHash: bankBalanceHash({ statementLines, ledgerLines, statementCoverage: { fileHash: statement.fileHash, metadata: statement.metadata },
       account: { externalAccountHash: account.externalAccountHash, providerCode: account.providerCode, paymentRailId: account.paymentRailId },
       ledger: { id: ledger.id, code: ledger.code, currency: ledger.currency, type: ledger.type, normalBalance: ledger.normalBalance },
       settlementMappings: account.settlementAccounts.filter(row => row.approvalStatus === "APPROVED" && row.effectiveFrom <= period.endDate && (!row.effectiveTo || row.effectiveTo >= period.startDate)).sort((a, b) => a.id.localeCompare(b.id)),

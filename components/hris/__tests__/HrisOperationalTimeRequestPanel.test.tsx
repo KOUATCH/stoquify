@@ -1,0 +1,43 @@
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { requestOwnOperationalTimeAction } from "@/actions/hris/own-time.actions"
+import { HrisOperationalTimeRequestPanel } from "../HrisOperationalTimeRequestPanel"
+
+jest.mock("@/actions/hris/own-time.actions", () => ({ requestOwnOperationalTimeAction: jest.fn(), cancelOwnLeaveRequestAction: jest.fn() }))
+const action = jest.mocked(requestOwnOperationalTimeAction)
+const entry = { id: "entry-1", workDate: "2026-10-10T00:00:00.000Z", workedMinutes: 360, absenceMinutes: 120, scheduledMinutes: 480, sourceHash: "sha256:reviewed-entry" }
+
+beforeEach(() => {
+  jest.clearAllMocks()
+  Object.defineProperty(globalThis.crypto, "subtle", { configurable: true, value: { digest: jest.fn().mockResolvedValue(new Uint8Array(32).buffer) } })
+})
+
+it.each(["en", "fr"])("submits explicit reviewed values and retains them on a resolved error (%s)", async locale => {
+  action.mockResolvedValue({ success: false, error: "Source changed; refresh" } as never)
+  render(<HrisOperationalTimeRequestPanel requests={[]} balances={[]} correctionEntries={[entry]} enabled locale={locale} />)
+  fireEvent.change(screen.getByLabelText(locale === "fr" ? "Type de demande" : "Request type"), { target: { value: "ATTENDANCE_CORRECTION" } })
+  fireEvent.change(screen.getByLabelText(locale === "fr" ? "Présence importée" : "Imported work entry"), { target: { value: entry.id } })
+  const worked = screen.getByLabelText(locale === "fr" ? "Minutes travaillées corrigées" : "Corrected worked minutes")
+  const absence = screen.getByLabelText(locale === "fr" ? "Minutes d’absence corrigées" : "Corrected absence minutes")
+  fireEvent.change(worked, { target: { value: "480" } })
+  fireEvent.change(absence, { target: { value: "0" } })
+  const reason = screen.getByLabelText(locale === "fr" ? "Motif" : "Reason")
+  fireEvent.change(reason, { target: { value: "Missing time confirmed" } })
+  fireEvent.submit(reason.closest("form")!)
+  await waitFor(() => expect(action).toHaveBeenCalled())
+  expect(action).toHaveBeenCalledWith(expect.objectContaining({ targetTimeEntryId: entry.id, expectedEntryHash: entry.sourceHash,
+    periodStart: entry.workDate, periodEnd: entry.workDate, proposedWorkedMinutes: 480, proposedAbsenceMinutes: 0 }))
+  expect(await screen.findByRole("alert")).toHaveTextContent("Source changed")
+  expect(worked).toHaveValue(480)
+  expect(reason).toHaveValue("Missing time confirmed")
+})
+
+it("retains input after a thrown server/network error", async () => {
+  action.mockRejectedValue(new Error("synthetic unavailable"))
+  render(<HrisOperationalTimeRequestPanel requests={[]} balances={[{ leavePolicyId: "policy", availableMinutes: 480 }]} enabled />)
+  fireEvent.change(screen.getByLabelText("Minutes"), { target: { value: "120" } })
+  const reason = screen.getByLabelText("Reason")
+  fireEvent.change(reason, { target: { value: "Planned absence" } })
+  fireEvent.submit(reason.closest("form")!)
+  expect(await screen.findByRole("alert")).toHaveTextContent("entries are retained")
+  expect(reason).toHaveValue("Planned absence")
+})

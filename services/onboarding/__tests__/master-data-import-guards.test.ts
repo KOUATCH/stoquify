@@ -249,7 +249,7 @@ describe("master-data approval and replay guards", () => {
       target: "ITEM",
       fieldMap: defaultFieldMap("ITEM"),
     })
-    expect(result).toMatchObject({ organizationId: "org-1", target: "ITEM", version: 3, schemaVersion: "1" })
+    expect(result).toMatchObject({ organizationId: "org-1", target: "ITEM", version: 3, schemaVersion: "2" })
   })
 
   it("builds an evidence manifest with controls and result ids but no staged row values", () => {

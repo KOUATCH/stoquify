@@ -7,7 +7,7 @@ import { db } from "@/prisma/db"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { changeMemberAccessInTx } from "@/services/users/member-access.service"
 import { memberAccessRevision, accessDigest } from "@/services/users/member-access-policy"
-import { ConflictError } from "@/services/_shared/action-errors"
+import { ConflictError, ForbiddenError } from "@/services/_shared/action-errors"
 import { submitAccessRequest, listAccessRequests, withdrawAccessRequest, decideAccessRequest, applyAccessRequest, accessRequestReturnPath, canReviewAccessRequests, readAccessRequestHistory, previewAccessRequest } from "../access-request.service"
 
 const now = new Date("2026-10-04T10:00:00.000Z")
@@ -16,7 +16,7 @@ const admin = { orgId: "org", userId: "reviewer", permissions }
 const requester = { orgId: "org", userId: "requester", permissions: ["dashboard.read"] }
 const submit = { commandId: "bb7a2cdd-ac91-4c82-bf31-9d47e7bdf608", target: "items", reason: "Count the items" }
 const account = { id: "requester", email: "requester@example.invalid", firstName: null, lastName: null, updatedAt: now, isActive: true, isVerified: true, emailVerified: true, isLocked: false, lockedUntil: null }
-let tx: any, row: any, roles: any[], stored: string[], member: any, sqlCalls: { text: string; values: unknown[] }[], existing: boolean, appliedPermissions: string[], rollback: boolean
+let tx: any, row: any, roles: any[], stored: string[], member: any, sqlCalls: { text: string; values: unknown[] }[], existing: boolean, appliedPermissions: string[], rollback: boolean, actorCode: string
 const input = () => ({ id: row.id, revision: row.revision })
 const revision = () => memberAccessRevision(member, member.roles.map((r: any) => r.id), roles)
 const decision = (extra = {}) => ({ ...input(), decision: "APPROVED", reason: "Inventory duties", roleIds: ["stock"], memberRevision: revision(), ...extra })
@@ -24,8 +24,8 @@ const session = { id: "session", token: "unit-fixture" }
 
 beforeEach(() => {
   jest.clearAllMocks(); process.env.ACCESS_REQUEST_SUBMISSIONS_ENABLED = "true"; process.env.ACCESS_REQUEST_APPLICATION_ENABLED = "true"
-  stored = [...permissions]; sqlCalls = []; existing = true; rollback = false; appliedPermissions = ["inventory.items.read"]
-  roles = [{ id: "base", organizationId: "org", permissions: ["dashboard.read"], updatedAt: now }, { id: "stock", organizationId: "org", permissions: ["inventory.items.read"], updatedAt: now }]
+  stored = [...permissions]; sqlCalls = []; existing = true; rollback = false; appliedPermissions = ["inventory.items.read"]; actorCode = "location_manager"
+  roles = [{ id: "base", code: "base", organizationId: "org", permissions: ["dashboard.read"], updatedAt: now }, { id: "stock", code: "stock", organizationId: "org", permissions: ["inventory.items.read"], updatedAt: now }]
   member = { ...account, roles: [roles[0]] }
   row = { id: "request", organizationId: "org", requesterId: "requester", reviewerId: null, targetKey: "items", reason: submit.reason, submissionHash: accessDigest(submit), decision: "PENDING", application: "NOT_REQUIRED", revision: 1,
     createdAt: now, expiresAt: new Date(now.getTime() + 604800000), decidedAt: null, appliedAt: null, decisionReason: null, selectedRoleIds: [], memberRevision: null, applicationCommandId: null, applicationError: null, grantAuditId: null, due: false }
@@ -48,7 +48,7 @@ beforeEach(() => {
       return existing ? [row] : []
     }),
     user: { findFirst: jest.fn(async ({ where, select }: any) => {
-      if (where.id === "reviewer" || select.roles?.where) return { ...account, roles: [{ permissions: where.id === "requester" ? (changeMemberAccessInTx as jest.Mock).mock.calls.length ? appliedPermissions : ["dashboard.read"] : stored }] }
+      if (where.id === "reviewer" || select.roles?.where) return { ...account, roles: [{ code: where.id === "reviewer" ? actorCode : "requester", permissions: where.id === "requester" ? (changeMemberAccessInTx as jest.Mock).mock.calls.length ? appliedPermissions : ["dashboard.read"] : stored }] }
       return member
     }) },
     role: { findMany: jest.fn(async () => roles) },
@@ -56,7 +56,7 @@ beforeEach(() => {
   }
   ;(db.$transaction as jest.Mock).mockImplementation(async work => { const snapshot = { ...row }; try { return await work(tx) } catch (error) { row = snapshot; rollback = true; throw error } })
   ;(observeModuleAccess as jest.Mock).mockResolvedValue({ allowed: true })
-  ;(changeMemberAccessInTx as jest.Mock).mockResolvedValue({ auditId: "grant-audit" })
+  ;(changeMemberAccessInTx as jest.Mock).mockResolvedValue({ auditId: "grant-audit", replayed: true })
 })
 afterEach(() => { delete process.env.ACCESS_REQUEST_SUBMISSIONS_ENABLED; delete process.env.ACCESS_REQUEST_APPLICATION_ENABLED })
 
@@ -165,7 +165,7 @@ it("applies through the original grant service in the same transaction as its re
   expect(changeMemberAccessInTx).toHaveBeenCalledWith(tx, expect.objectContaining({ session, targetUserId: "requester", command: expect.objectContaining({ roleIds: ["base", "stock"], requestId: row.applicationCommandId }) }))
   expect(result).toMatchObject({ decision: "APPROVED", application: "APPLIED" })
   expect(tx.auditLog.create.mock.calls.at(-1)[0].data.action).toBe("ACCESS_REQUEST_APPLIED")
-  await applyAccessRequest(admin, input(), session); expect(changeMemberAccessInTx).toHaveBeenCalledTimes(1)
+  await applyAccessRequest(admin, input(), session); expect(changeMemberAccessInTx).toHaveBeenCalledTimes(2)
 })
 it("records a safe application failure after the grant transaction rolls back", async () => {
   await approve(); (changeMemberAccessInTx as jest.Mock).mockRejectedValue(new ConflictError("private stale record detail"))
@@ -192,7 +192,7 @@ it("does not replace a committed application with FAILED after a lost response",
   expect(row.application).toBe("APPLIED")
   expect(sqlCalls.some(c => c.text.includes("application = 'FAILED'"))).toBe(false)
   await applyAccessRequest(admin, input(), session)
-  expect(changeMemberAccessInTx).toHaveBeenCalledTimes(1)
+  expect(changeMemberAccessInTx).toHaveBeenCalledTimes(2)
 })
 it("verifies current requester permissions before returning the allowlisted path", async () => {
   await approve(); await applyAccessRequest(admin, input(), session)
@@ -227,4 +227,28 @@ it("reads safe history only after authorizing the request", async () => {
 it("rejects stale history views before loading audit events", async () => {
   await expect(readAccessRequestHistory(requester, { ...input(), revision: 9 })).rejects.toMatchObject({ code: "CONFLICT" })
   expect(sqlCalls.some(c => c.text.includes("audit_logs"))).toBe(false)
+})
+
+it.each(["admin", "administrator", "super_admin"])("excludes reserved %s role from limited reviewer preview and approval", async code => {
+  roles[1].code = code
+  expect((await previewAccessRequest(admin, input())).roles).toEqual([])
+  await expect(decideAccessRequest(admin, decision())).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(sqlCalls.some(call => call.text.startsWith("UPDATE"))).toBe(false); expect(tx.auditLog.create).not.toHaveBeenCalled()
+})
+it("denies composed tenant scope in approval even when the new role has an ordinary code", async () => {
+  roles[0].code = "admin"; roles[0].permissions = []; roles[1].permissions.push("dashboard.read")
+  expect((await previewAccessRequest(admin, input())).roles).toEqual([])
+  await expect(decideAccessRequest(admin, decision())).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(sqlCalls.some(call => call.text.startsWith("UPDATE"))).toBe(false); expect(tx.auditLog.create).not.toHaveBeenCalled()
+})
+it("allows a current tenant administrator to approve a reserved role within explicit grants", async () => {
+  actorCode = "admin"; roles[1].code = "administrator"
+  expect((await previewAccessRequest(admin, input())).roles).toHaveLength(1)
+  await expect(decideAccessRequest(admin, decision())).resolves.toMatchObject({ decision: "APPROVED", application: "PENDING" })
+})
+it("reauthorizes a recorded apply through the member grant boundary and preserves APPLIED after denial", async () => {
+  await approve(); await applyAccessRequest(admin, input(), session)
+  const saved = { ...row }; (changeMemberAccessInTx as jest.Mock).mockRejectedValue(new ForbiddenError())
+  await expect(applyAccessRequest(admin, input(), session)).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(row).toEqual(saved); expect(sqlCalls.some(call => call.text.includes("application = 'FAILED'"))).toBe(false)
 })

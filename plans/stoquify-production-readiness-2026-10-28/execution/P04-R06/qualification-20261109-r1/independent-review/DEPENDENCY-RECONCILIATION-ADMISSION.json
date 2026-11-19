@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-09T20:22:54.265Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "productChangesByReviewer": false,
+  "receiptSha256": "6626e0e29f73ef084f8318a0d968dabf84cff527e9c7a3cc1818f6adbd5564a6",
+  "scope": "Actual full byte equality after explicitly incomplete serial handoff",
+  "verifiedFileCount": 152806,
+  "verifiedBytes": 2998378443,
+  "physicalCopyExact": true,
+  "archivedInputUnchanged": true,
+  "serialChecksAssumedPassed": false,
+  "reviewMethod": "Frozen admitted verifier hashes both complete trees against preserved initial manifest; reviewed receipt and source/control bindings. No redundant third tree traversal.",
+  "generatedClientMustBeRegenerated": true,
+  "currentBindings": [
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39"
+    },
+    {
+      "path": "prisma/migrations/20261109190000_close_pack_canonical_retention/migration.sql",
+      "sha256": "61e5ff2bfd3209906d92ca36b923d5125242db76c8cae5d4bc1269897f76e6d8"
+    }
+  ],
+  "limitations": [
+    "Installed copy reuse does not prove clean installation reproducibility.",
+    "New schema/private generated client and isolated build remain separate pending gates."
+  ]
+}

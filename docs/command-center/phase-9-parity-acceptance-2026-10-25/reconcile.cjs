@@ -1,0 +1,19 @@
+// One-time, exact scoped reconciliation. Preserve pre-existing source bytes in ignored storage.
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'../../..'),backup=path.join(root,'.codex-tmp/phase9-source-before');
+fs.mkdirSync(backup,{recursive:true});
+function edit(file,transform){const target=path.join(root,file),before=fs.readFileSync(target,'utf8');const saved=path.join(backup,file);assert.ok(!fs.existsSync(saved),'Already reconciled: '+file);fs.mkdirSync(path.dirname(saved),{recursive:true});fs.writeFileSync(saved,before);const after=transform(before);assert.notEqual(after,before);fs.writeFileSync(target,after);return {file,before:hash(before),after:hash(after)}}
+const hash=s=>crypto.createHash('sha256').update(s).digest('hex');
+const results=[edit('prisma/schema.prisma',text=>{
+ const models={FirmObligationRevision:['organization'],HrisLifecycleTask:['employee'],HrisSetupReviewerGrant:['organization','reviewer','employee','grantor'],HrisPayrollHandoffPackage:['organization','payrollPeriod'],HrisPayrollHandoffReceipt:['organization','package']};
+ const maps={reviewer:'hris_setup_reviewer_tenant_fk',employee:'hris_setup_employee_tenant_fk',grantor:'hris_setup_grantor_tenant_fk'};
+ for(const [model,fields] of Object.entries(models))text=text.replace(new RegExp('model '+model+' \\{[\\s\\S]*?\\n\\}'),block=>{for(const field of fields){const re=new RegExp('(^[ \\t]*'+field+'\\s+[^\\r\\n]*@relation\\([^\\r\\n]*)(\\))','m');assert.match(block,re);block=block.replace(re,(_,line,end)=>{assert.ok(!line.includes('onUpdate:'));return line+', onUpdate: NoAction'+(model==='HrisSetupReviewerGrant'&&maps[field]?', map: "'+maps[field]+'"':'')+end})}return block});
+ const additions={
+  FirmObligationRevision:'  period AccountingPeriod @relation(fields: [periodId], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "firm_obligation_revisions_periodId_fkey")',
+  FirmAdvisoryRevision:'  actor User @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "firm_advisory_revisions_actorId_fkey")\n  engagement FirmEngagement @relation(fields: [engagementId, firmOrganizationId, clientOrganizationId], references: [id, firmOrganizationId, clientOrganizationId], onDelete: Restrict, onUpdate: Restrict, map: "firm_advisory_revisions_engagementId_firmOrganizationId_cl_fkey")\n  period AccountingPeriod @relation(fields: [clientOrganizationId, periodId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "firm_advisory_revisions_clientOrganizationId_periodId_fkey")',
+  User:'  firmAdvisoryRevisions FirmAdvisoryRevision[]',FirmEngagement:'  advisoryRevisions FirmAdvisoryRevision[]',AccountingPeriod:'  firmAdvisoryRevisions FirmAdvisoryRevision[]\n  firmObligationRevisions FirmObligationRevision[]'};
+ for(const [model,addition] of Object.entries(additions)){const marker='model '+model+' {';assert.ok(text.includes(marker));const newline=text.includes('\r\n')?'\r\n':'\n';text=text.replace(marker,marker+newline+addition.replaceAll('\n',newline))}
+ return text;
+})];
+for(const file of ['components/manager-action-center/ManagerActionCenterDashboard.tsx','components/manager-action-center/ManagerLocationActionCenterDashboard.tsx','components/owner-war-room/OwnerWarRoomDashboard.tsx','components/daily-habit/DailyHabitDigestDashboard.tsx'])results.push(edit(file,text=>{assert.equal((text.match(/<main\b/g)||[]).length,1);assert.equal((text.match(/<\/main>/g)||[]).length,1);const tag=file.includes('owner-war-room')?'section':'div';return text.replace('<main','<'+tag).replace('</main>','</'+tag+'>')}));
+fs.writeFileSync(path.join(__dirname,'source-changes.json'),JSON.stringify(results,null,2));console.log(JSON.stringify({changed:results.map(r=>r.file),migrationSqlChanged:false}));

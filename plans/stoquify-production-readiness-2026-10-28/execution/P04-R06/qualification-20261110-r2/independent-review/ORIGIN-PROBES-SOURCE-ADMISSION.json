@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T12:57:04.676Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Exact origin-probe helper source and pure evidence-classifier checks only; no app/browser/database execution",
+  "files": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\runtime\\run-origin-probes.cjs",
+      "sha256": "8b802095304ef10beb243620fbcfccfd2c656bfc49c5a5ae202a53cf67602265"
+    }
+  ],
+  "cases": 24,
+  "realBrowserDenialsPlanned": 20,
+  "caseIds": [
+    "R06-C-origin-native-own-positive",
+    "R06-C-origin-cookie-bearing",
+    "R06-C-origin-browser-near-threshold-navigate-known-1",
+    "R06-C-origin-browser-near-threshold-navigate-known-2",
+    "R06-C-origin-browser-near-threshold-navigate-wrong-1",
+    "R06-C-origin-browser-near-threshold-navigate-wrong-2",
+    "R06-C-origin-browser-near-threshold-cors-known-1",
+    "R06-C-origin-browser-near-threshold-cors-known-2",
+    "R06-C-origin-browser-near-threshold-cors-wrong-1",
+    "R06-C-origin-browser-near-threshold-cors-wrong-2",
+    "R06-C-origin-recovery-near-threshold",
+    "R06-C-origin-browser-expired-lock-navigate-known-1",
+    "R06-C-origin-browser-expired-lock-navigate-known-2",
+    "R06-C-origin-browser-expired-lock-navigate-wrong-1",
+    "R06-C-origin-browser-expired-lock-navigate-wrong-2",
+    "R06-C-origin-browser-expired-lock-cors-known-1",
+    "R06-C-origin-browser-expired-lock-cors-known-2",
+    "R06-C-origin-browser-expired-lock-cors-wrong-1",
+    "R06-C-origin-browser-expired-lock-cors-wrong-2",
+    "R06-C-origin-recovery-expired-lock",
+    "R06-C-origin-browser-future-lock-navigate-known-1",
+    "R06-C-origin-browser-future-lock-navigate-wrong-1",
+    "R06-C-origin-browser-future-lock-cors-known-1",
+    "R06-C-origin-browser-future-lock-cors-wrong-1"
+  ],
+  "pureChecks": [
+    {
+      "id": "exact-cors-negative",
+      "expectedAccepted": true,
+      "accepted": true,
+      "passed": true
+    },
+    {
+      "id": "read-body-TypeError",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "response-observed",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "response-status-present",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "cors-read-grant",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "wrong-origin",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "wrong-fetch-site",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "cookie-bearing-browser",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "organization-canary",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "missing-canary-classification",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "counter-write",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "audit-write",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "session-write",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "incomplete-upstream",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "wrong-original-url",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "id": "duplicate-browser-request",
+      "expectedAccepted": false,
+      "accepted": false,
+      "passed": true
+    }
+  ],
+  "pureExecution": {
+    "exitCode": 0,
+    "applicationExecuted": false,
+    "browserExecuted": false,
+    "databaseExecuted": false,
+    "networkStarted": false,
+    "scriptSha256": "0fd833cc244bb97b284bd6c34d7ae45acb604bc61827ac1c88cd8b29a1a20469",
+    "reviewerInstrumentationNotes": [
+      "Initial Node REPL direct file import did not support .cjs; createRequire/subprocess were used without application execution.",
+      "Initial synthetic positive fixture omitted capture.status and correctly failed; the complete fixture with403 passed while all15 mutated negative fixtures were rejected."
+    ]
+  },
+  "reviewed": [
+    "Native cookie-free/Fetch-Metadata-free valid own credentials are a positive, not an unsupported browser-denial premise.",
+    "Cookie-bearing foreign unlink remains403/no-private-bytes/no-writes.",
+    "Twenty real browser form/CORS denials over near-threshold8, expired-lock8, future-lock4; state configured once per repeated sequence so counter drift cannot be hidden by per-request reset.",
+    "Original unique-request response capture and native snapshots are retained before assertions; exact response identity/headers/canaries/cookies/status required.",
+    "CORS diagnosis uses Fetch status property and requires await-fetch TypeError with no Response observed plus exact completed403/no ACAO; later TypeError cannot certify unreadability.",
+    "Two legitimate same-origin recovery logins must work after repeated denial sequences.",
+    "Only inert fixed loopback attacker server is created by this helper; socket/server close is bounded and retained."
+  ],
+  "conditionsBeforeExecution": [
+    "Whole-wrapper exact helpers, source/artifact/native fixture admissions and admitted bridge-v2 required.",
+    "All24 exact IDs must be mandatory, with no failed or omitted group promoted from source-only evidence.",
+    "Wrapper must restore all remaining controlled fixture state and close contexts/bridge even after nested evidence failure.",
+    "Actual screenshots/bytes/DB effects still need independent outcome review."
+  ],
+  "qualificationPassed": false
+}

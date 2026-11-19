@@ -157,7 +157,8 @@ export async function resolveHrisPeopleAccessScope(
 ): Promise<HrisPeopleAccessScope> {
   const parsed = peopleScopeInputSchema.parse(input)
   const explicitAsOf = input.asOf !== undefined
-  const asOf = parsed.asOf ?? new Date()
+  const now = new Date()
+  const asOf = parsed.asOf ?? now
   assertPeopleReadPermission(parsed.actorPermissions)
 
   if (parsed.employeeId) {
@@ -206,16 +207,26 @@ export async function resolveHrisPeopleAccessScope(
       userId: parsed.actorId,
       deletedAt: null,
     },
-    select: { id: true },
+    select: { id: true, status: true },
   })
 
+  if (actorEmployee && actorEmployee.status !== "ACTIVE") {
+    throw new ForbiddenError("An active employee identity is required for manager authority.")
+  }
+  let hasDurableAuthority = false
   if (actorEmployee) {
-    const baseWhere = relationshipWhere(parsed.organizationId, asOf)
+    // Historical data requires the same authority to remain valid now. Display
+    // pagination never limits authorization; an exact target is checked in SQL.
+    const baseWhere = {
+      ...relationshipWhere(parsed.organizationId, asOf),
+      AND: explicitAsOf ? [relationshipWhere(parsed.organizationId, now)] : [],
+      ...(parsed.employeeId ? { reportEmployeeId: parsed.employeeId } : {}),
+    }
     const [directRows, delegations] = await Promise.all([
       client.hrisReportingRelationship.findMany({
         where: { ...baseWhere, managerEmployeeId: actorEmployee.id },
         select: relationshipSelect,
-        take: parsed.limit,
+        ...(parsed.employeeId ? { take: 1 } : {}),
       }),
       client.hrisManagerDelegation.findMany({
         where: {
@@ -225,9 +236,11 @@ export async function resolveHrisPeopleAccessScope(
           status: "ACTIVE",
           effectiveFrom: { lte: asOf },
           effectiveTo: { gt: asOf },
+          revokedAt: null,
+          delegatorEmployee: { status: "ACTIVE", deletedAt: null },
+          AND: [{ effectiveFrom: { lte: now }, effectiveTo: { gt: now } }],
         },
         select: { id: true, delegatorEmployeeId: true, scopeOrgUnitId: true },
-        take: parsed.limit,
       }),
     ]) as [RelationshipRow[], Array<{ id: string; delegatorEmployeeId: string; scopeOrgUnitId: string | null }>]
 
@@ -236,10 +249,13 @@ export async function resolveHrisPeopleAccessScope(
       const delegatedCandidates = await client.hrisReportingRelationship.findMany({
         where: {
           ...baseWhere,
-          managerEmployeeId: { in: [...new Set(delegations.map((item) => item.delegatorEmployeeId))] },
+          AND: [...baseWhere.AND, { OR: delegations.map((item) => ({
+            managerEmployeeId: item.delegatorEmployeeId,
+            ...(item.scopeOrgUnitId ? { reportAssignment: { orgUnitId: item.scopeOrgUnitId } } : {}),
+          })) }],
         },
         select: relationshipSelect,
-        take: parsed.limit,
+        ...(parsed.employeeId ? { take: 1 } : {}),
       }) as RelationshipRow[]
       delegatedRows = delegatedCandidates.filter((row) => delegations.some((delegation) =>
         delegation.delegatorEmployeeId === row.managerEmployeeId
@@ -249,7 +265,6 @@ export async function resolveHrisPeopleAccessScope(
 
     const directRelationshipIds = new Set(directRows.map((row) => row.id))
     const rows = [...directRows, ...delegatedRows.filter((row) => !directRelationshipIds.has(row.id))]
-      .slice(0, parsed.limit)
     const employeeIds = [...new Set(rows.map((row) => row.reportEmployeeId))]
     const matchingDelegationIds = delegations
       .filter((delegation) => delegatedRows.some((row) =>
@@ -283,7 +298,7 @@ export async function resolveHrisPeopleAccessScope(
         managedLocations: managedLocations(rows),
         employeeIds,
         limitations: [
-          "Scope is limited to active tenant-owned relationships at the requested effective time.",
+          "The same tenant-owned authority must be active both now and at the requested time; former managers have no historical access grant.",
           "Salary, identifiers, payment destinations, and raw documents remain separately permissioned.",
         ],
         auditEvidence: {
@@ -302,9 +317,14 @@ export async function resolveHrisPeopleAccessScope(
       })
       return scope
     }
+    const [priorRelationship, priorDelegation] = await Promise.all([
+      client.hrisReportingRelationship.findFirst({where: {organizationId: parsed.organizationId, managerEmployeeId: actorEmployee.id}, select: {id: true}}),
+      client.hrisManagerDelegation.findFirst({where: {organizationId: parsed.organizationId, delegateEmployeeId: actorEmployee.id}, select: {id: true}}),
+    ])
+    hasDurableAuthority = Boolean(priorRelationship || priorDelegation)
   }
 
-  if (explicitAsOf) {
+  if (explicitAsOf || hasDurableAuthority || parsed.delegationAuthority === "APPROVAL_DECISION") {
     await auditScope(client, parsed, "HRIS_EFFECTIVE_MANAGER_SCOPE_DENIED", {
       requestedEmployeeId: parsed.employeeId ?? null,
       asOf: asOf.toISOString(),
@@ -320,6 +340,7 @@ export async function resolveHrisPeopleAccessScope(
       actorPermissions: parsed.actorPermissions,
       employeeId: parsed.employeeId,
       limit: parsed.limit,
+      completeScope: true,
     }, client)
 
     const scope: HrisPeopleAccessScope = {
@@ -338,7 +359,7 @@ export async function resolveHrisPeopleAccessScope(
       limitations: [
         "Employees in a managed location are not represented as direct reports.",
         "Current Location.managerId evidence does not prove historical authority.",
-        "Delegation and temporary approver coverage are not yet modeled.",
+        "Location compatibility does not grant delegated or approval authority.",
         "Salary, identifiers, payment destinations, and raw documents remain excluded.",
       ],
     }

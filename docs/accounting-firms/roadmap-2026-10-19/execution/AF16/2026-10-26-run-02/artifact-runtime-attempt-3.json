@@ -1,0 +1,133 @@
+{
+  "attempt": 3,
+  "artifactSha256": "987da3ead9c716cdbf5d2a22ac1723aa8a8ed15113f40a6b8abd3c1fb64d151f",
+  "buildId": "eoW9-NZPj4rd9OHTZxMDM",
+  "runtime": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\10\\19\\01a1542f-53bc-7513-b68f-4bce330ca993\\af16-sealed-runtime-20261026",
+  "port": 53281,
+  "requestOrigin": "http://localhost:53281",
+  "listener": "127.0.0.1",
+  "copiedBytesVerified": true,
+  "reusedCopy": true,
+  "requestTimeoutMs": 120000,
+  "loopbackOnly": true,
+  "evidenceClass": "HTTP smoke of the sealed full application; not authenticated browser, TLS, prior-application rollback or production qualification",
+  "requests": [
+    {
+      "route": "/en",
+      "startedAt": 1793033597560,
+      "stage": "complete",
+      "status": 200,
+      "headersElapsedMs": 15181,
+      "elapsedMs": 25943
+    },
+    {
+      "route": "/en/login",
+      "startedAt": 1793033623503,
+      "stage": "complete",
+      "status": 200,
+      "headersElapsedMs": 215,
+      "elapsedMs": 291
+    },
+    {
+      "route": "/en/dashboard/accounting",
+      "startedAt": 1793033623795,
+      "stage": "complete",
+      "status": 307,
+      "headersElapsedMs": 16,
+      "elapsedMs": 19
+    },
+    {
+      "route": "/fr",
+      "startedAt": 1793033623814,
+      "stage": "complete",
+      "status": 200,
+      "headersElapsedMs": 354,
+      "elapsedMs": 453
+    },
+    {
+      "route": "/fr/login",
+      "startedAt": 1793033624267,
+      "stage": "complete",
+      "status": 200,
+      "headersElapsedMs": 73,
+      "elapsedMs": 124
+    },
+    {
+      "route": "/fr/dashboard/accounting",
+      "startedAt": 1793033624391,
+      "stage": "complete",
+      "status": 307,
+      "headersElapsedMs": 9,
+      "elapsedMs": 10
+    },
+    {
+      "route": "/1.png",
+      "startedAt": 1793033624402,
+      "stage": "complete",
+      "status": 200,
+      "headersElapsedMs": 13,
+      "elapsedMs": 15
+    },
+    {
+      "route": "/_next/static/chunks/0e5ce63c-fcd0df0e31a72d43.js",
+      "startedAt": 1793033624418,
+      "stage": "complete",
+      "status": 200,
+      "headersElapsedMs": 5,
+      "elapsedMs": 9
+    }
+  ],
+  "checks": [
+    {
+      "route": "/en",
+      "status": 200,
+      "html": true,
+      "elapsedMs": 25943
+    },
+    {
+      "route": "/en/login",
+      "status": 200,
+      "html": true,
+      "elapsedMs": 291
+    },
+    {
+      "route": "/en/dashboard/accounting",
+      "status": 307,
+      "anonymousLoginRedirect": true,
+      "elapsedMs": 19
+    },
+    {
+      "route": "/fr",
+      "status": 200,
+      "html": true,
+      "elapsedMs": 453
+    },
+    {
+      "route": "/fr/login",
+      "status": 200,
+      "html": true,
+      "elapsedMs": 124
+    },
+    {
+      "route": "/fr/dashboard/accounting",
+      "status": 307,
+      "anonymousLoginRedirect": true,
+      "elapsedMs": 10
+    },
+    {
+      "route": "/1.png",
+      "status": 200,
+      "digestMatched": true,
+      "elapsedMs": 15
+    },
+    {
+      "route": "/_next/static/chunks/0e5ce63c-fcd0df0e31a72d43.js",
+      "status": 200,
+      "digestMatched": true,
+      "elapsedMs": 9
+    }
+  ],
+  "passed": true,
+  "artifactUnchangedAfterRequests": true,
+  "serverStopped": true
+}

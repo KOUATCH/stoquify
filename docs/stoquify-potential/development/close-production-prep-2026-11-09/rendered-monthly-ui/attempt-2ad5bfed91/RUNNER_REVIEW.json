@@ -1,0 +1,101 @@
+{
+  "checkedAt": "2026-11-09T20:16:33.900Z",
+  "runnerSha256": "acee77a6a2e3ae4502d48cc0d3e73ee29a2995fdff47b2b23c3243d2c91d86cd",
+  "initial": [
+    {
+      "path": "app/globals.css",
+      "sha256": "07118192d482007650eeac42ccd1a37c0c9fbbd6f7cbaa199774a0f4728fdd9f"
+    },
+    {
+      "path": "app/public-contours.css",
+      "sha256": "bb07597416699370283bdbcad1fe3cd951090006e969040351623c5080217992"
+    },
+    {
+      "path": "components/finance/PaymentReconciliationWorkbench.tsx",
+      "sha256": "69b3a3a46fad91b3b3363c276db17219f1185c6768fc69e118c0c04ec6a1efa6"
+    },
+    {
+      "path": "hooks/payments/usePaymentReconciliationDashboard.ts",
+      "sha256": "afdf773380d51828b10244055dd249b8960386c45c044d775f20551e823c6ebd"
+    },
+    {
+      "path": "hooks/payments/usePaymentReconciliationWorkbench.ts",
+      "sha256": "8abef8e62167c28f6156a2908373865c8274f07e2cf9ca6ba936faa511650840"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "d103c6fdd1410d81f97b3f31eece91ab03c2e1ecb303d4608b56ce52153297a3"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "f905ff3df8b49442a4b5473071d11c89651dddc0c538c72c90f2476c7c98b2c0"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "tailwind.config.ts",
+      "sha256": "5929ece1e683fcba92d08ac5646cd15b32aaabf3cdcf31f838a091c78bef0f8a"
+    }
+  ],
+  "sourceReadySha256": "474b0134000dfd882cb81a151e7e4ca88dc36b90d5605a0c767a6decc64d51a5",
+  "classification": "Mocked auth/actions; real payment workbench, child components, read/run hooks and EN/FR messages. No authenticated application/E2E/DB/hosted build.",
+  "toolchain": "Installed Next bundled Webpack + explicit TypeScript loader + scoped existing CSS module; no Next/tsconfig/dotenv setup or Node polyfills",
+  "mockedBoundaries": [
+    "@/actions/evidence/proof-trail.actions",
+    "@/actions/payments/alert-scan-recovery.actions",
+    "@/actions/payments/exception-closure.actions",
+    "@/actions/payments/exception-link.actions",
+    "@/actions/payments/reconciliation-preparation.actions",
+    "@/actions/payments/reconciliation-sign-review.actions",
+    "@/actions/payments/reconciliation-workbench.actions",
+    "@/actions/payments/reconciliation.actions",
+    "@/actions/payments/suspense-resolution.actions",
+    "@/actions/security/step-up-auth.actions",
+    "@/components/notifications/NotificationProvider",
+    "@/hooks/usePermissions"
+  ],
+  "clientContracts": [
+    "services/evidence/evidence-contracts.ts",
+    "services/reconciliation/payment-exception-closure.contracts.ts",
+    "services/reconciliation/payment-exception-link.contracts.ts",
+    "services/reconciliation/payment-suspense-correction.contracts.ts",
+    "services/reconciliation/payment-suspense-resolution-recovery.contracts.ts",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts",
+    "services/reconciliation/reconciliation-certificate-export.contracts.ts",
+    "services/reconciliation/reconciliation-run-preparation.contracts.ts",
+    "services/reconciliation/reconciliation-sign-review.contracts.ts"
+  ],
+  "effects": [
+    "New owned bundle/CSS/receipts/screenshots",
+    "Ephemeral127.0.0.1 static listener",
+    "Owned headless installed Edge"
+  ],
+  "temporary": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\rendered-monthly-ui\\tmp-0c8b93",
+  "environmentVariableNames": [
+    "APPDATA",
+    "ComSpec",
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "LOCALAPPDATA",
+    "NEXT_TELEMETRY_DISABLED",
+    "NODE_ENV",
+    "NUMBER_OF_PROCESSORS",
+    "PATHEXT",
+    "Path",
+    "ProgramFiles",
+    "ProgramFiles(x86)",
+    "SHADOW_DATABASE_URL",
+    "SystemDrive",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ]
+}

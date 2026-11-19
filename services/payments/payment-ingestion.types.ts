@@ -73,6 +73,16 @@ export type ParsedStatement = {
   sourceType: string
   periodStart?: Date | null
   periodEnd?: Date | null
+  observedPeriodStart?: Date | null
+  observedPeriodEnd?: Date | null
+  declaredCoverage?: {
+    formatVersion: "stoquify-statement-v1"
+    providerCode: string
+    providerAccountId: string
+    currencyCode: string
+    periodStart: Date
+    periodEnd: Date
+  }
   lines: ParsedStatementLine[]
 }
 

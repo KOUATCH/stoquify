@@ -1,0 +1,174 @@
+{
+  "at": "2026-10-28T07:20:00.881Z",
+  "baselineDrift": [],
+  "currentDrift": [
+    {
+      "file": "actions/payroll/payroll-contract.actions.ts",
+      "finalSha256": "7b289c35809f29a33b20073af7415d7d43cc6c3d330ac6518989eb90cb18a5c9",
+      "disposition": "Concurrent HRIS/payroll work preserved; outside exercised purchasing/POS/stock and retained-close read paths"
+    },
+    {
+      "file": "actions/payroll/__tests__/payroll-contract.actions.test.ts",
+      "finalSha256": "d1f8859b17dfff806841a64698d4fb556d78b8a768bd9fd6dc68da9f2bee3ad9",
+      "disposition": "Concurrent HRIS/payroll work preserved; outside exercised purchasing/POS/stock and retained-close read paths"
+    },
+    {
+      "file": "services/hris/document-evidence.service.ts",
+      "finalSha256": "a846876ba1b97b41419854513a373116e847582f1e87132d0188c1d69ad8fd48",
+      "disposition": "Concurrent HRIS/payroll work preserved; outside exercised purchasing/POS/stock and retained-close read paths"
+    },
+    {
+      "file": "services/hris/lifecycle.service.ts",
+      "finalSha256": "df8fbb2f6b9765d162daedb6cdcb4f8a3ecd6b7e104f3132e4dffed6d4f5e0c2",
+      "disposition": "Concurrent HRIS/payroll work preserved; outside exercised purchasing/POS/stock and retained-close read paths"
+    },
+    {
+      "file": "services/hris/payroll-readiness-contract.ts",
+      "finalSha256": "9ce52a295d1468b43e88722a3bbc58933597353e87da9ca148a4d7599f453fd4",
+      "disposition": "Concurrent HRIS/payroll work preserved; outside exercised purchasing/POS/stock and retained-close read paths"
+    },
+    {
+      "file": "services/hris/__tests__/document-evidence.service.test.ts",
+      "finalSha256": "03993becf6aeaa25531583299f5db4f662d4786d3b5fe46913cf6b0e5c69f1ea",
+      "disposition": "Concurrent HRIS/payroll work preserved; outside exercised purchasing/POS/stock and retained-close read paths"
+    },
+    {
+      "file": "services/hris/__tests__/payroll-readiness-contract.test.ts",
+      "finalSha256": "eee8bef31664fe29b36af8c17a89fc0928dc01df2600faa494b5e51f5aebb072",
+      "disposition": "Concurrent HRIS/payroll work preserved; outside exercised purchasing/POS/stock and retained-close read paths"
+    }
+  ],
+  "owned": [
+    {
+      "file": "services/inventory/__tests__/mixed-version.compatibility.postgres.test.ts",
+      "sha256": "501cd150709079481b75544c77d3077880edcea9cad9a7c674082443f0d5d3ed"
+    },
+    {
+      "file": "services/inventory/__tests__/mixed-version.worker.postgres.test.ts",
+      "sha256": "d9c5615d5cca4ad65c6f05d14fc1e485262fae7beef4efecd6ed1801acc0b3f6"
+    },
+    {
+      "file": "jest.mixed-version.config.cjs",
+      "sha256": "d651ffc403271c82fb9677ee00f86e929b080f2d31e2533d7f874255791f627f"
+    },
+    {
+      "file": "jest.mixed-version-worker.config.cjs",
+      "sha256": "52a314a11cb2b86b4dc04f4962f953b94953e9ea0a1904df4c36ce3c0703cf21"
+    },
+    {
+      "file": "tsconfig.mixed-version.json",
+      "sha256": "866eab1340ee0f8c7ccd4955be5b88d7109aa5dec8c8f7bd78bc05a5077f6dfa"
+    }
+  ],
+  "evidence": [
+    {
+      "file": "check-evidence.cjs",
+      "sha256": "9a36ad5d7579dfc2aef0b5e7b51c1f0ce1d0f4040b37a549ba203c48d5eafe7a"
+    },
+    {
+      "file": "client-generation.json",
+      "sha256": "a2ae681e4dcf3f58065e275a276ef205e2e6c68567f203c0ec43fe3be2ceea7f"
+    },
+    {
+      "file": "close-read-initial-results.json",
+      "sha256": "5da3fa519c13a3db32ad7a13098ffa45ed2d6026af32d02fd40ded62c895dace"
+    },
+    {
+      "file": "close-read-results.json",
+      "sha256": "e052e7aaaa10726ae64b40737ea2600fdb8bdbc2a3b20f37efcc254041c10163"
+    },
+    {
+      "file": "close-read.cjs",
+      "sha256": "eeef032e093b673c2099135e6b8f827684516dac3d55fb4742f538aa3b8a11e6"
+    },
+    {
+      "file": "combined-reconciliation.json",
+      "sha256": "035d6a51ddf479a060bbdc5365b1873c9012b0751d5c382586a139ded939c97d"
+    },
+    {
+      "file": "database-readback.json",
+      "sha256": "6c3984df732dc9d76025df9aeb28af60655573080632b9e19b03569f39c213f0"
+    },
+    {
+      "file": "environment.cjs",
+      "sha256": "d10ce4c02ef6f388b1da475e22693c8865a210cdfefa6ae75f4edec7c5780653"
+    },
+    {
+      "file": "environment.json",
+      "sha256": "4a204ce2e9786e17fcf961c307c94c670d2e72f156ae7daca96f50edff4ea9e7"
+    },
+    {
+      "file": "final-source.json",
+      "sha256": "6601de718998884a064cabebfbab8123c24d75af1d1a758879e0c882b915473e"
+    },
+    {
+      "file": "finalize.cjs",
+      "sha256": "ef8c8803dd30791bcca8db667028be28dc5d66d817ead6f0f640ebeeac3a6b7e"
+    },
+    {
+      "file": "generate-client.cjs",
+      "sha256": "4396c56863731756d952adaa9b9222632a38b4d282bee6af6786e01cf99762fd"
+    },
+    {
+      "file": "initial-harness-results.json",
+      "sha256": "bb2bc00f089244661ec9865ab0872129a8fbd3544e359f13d22783b1e0b532c5"
+    },
+    {
+      "file": "initial-matrix-reconciliation.json",
+      "sha256": "331b304ae49146346417b15349882fdb92ea7ee4148b39596fcfec3fb1318d70"
+    },
+    {
+      "file": "initial-matrix-results.json",
+      "sha256": "d9ddb0966c6d4d3d343f470aca07f3079efff405b712ef3b63ab5902a6f1cbcd"
+    },
+    {
+      "file": "initial-matrix.log",
+      "sha256": "f9e3442a92900d8e81cf538b4ea1c6ae4c3e42a26da5a8161fdb60a3270c31ec"
+    },
+    {
+      "file": "preflight-reconciliation.json",
+      "sha256": "4522a495ce9e75e989ae5b11c44021b17491febe9320409829f946a8c7407836"
+    },
+    {
+      "file": "preflight-results.json",
+      "sha256": "86ec3dda1ca4d74e0dd9db3774168eb4fabc25824df0f656cea8c64964cb2514"
+    },
+    {
+      "file": "prepare.cjs",
+      "sha256": "7e2edf6885f18fad0d41ac8801eaba5d0a6b678128a1cceaf5f9a8fb07e213a1"
+    },
+    {
+      "file": "reconciliation.json",
+      "sha256": "2c13cbf1d2db103a36e9533359e847a0ca431a5f217e0f734affa43fb6da6060"
+    },
+    {
+      "file": "REPORT.md",
+      "sha256": "ce8c36350ec75ffc377a507c43e93884aaa4828993dd287319f7381a0b02cecd"
+    },
+    {
+      "file": "results.json",
+      "sha256": "1146a0832f044446b774be30ffe216070ab78297b317e7a4874b7ece5bdb6766"
+    },
+    {
+      "file": "resume-provenance.json",
+      "sha256": "048c13bbec6255673d43b8a556d089934d49f173384b05d800db79bbf8d465dc"
+    },
+    {
+      "file": "run.cjs",
+      "sha256": "731ab5c4ab35d0c89273bbc7c2c53f5ae578ffa84e2e9b4d6a21484654bc7fe2"
+    },
+    {
+      "file": "run.log",
+      "sha256": "134dc26ffca5089fda26a96190121d287438ba78b22c8d8948f53af47008c3a2"
+    },
+    {
+      "file": "start-source.json",
+      "sha256": "90628c21eab1981453e151685fbce05f650635035d35d2fc582079276ac5f7fb"
+    },
+    {
+      "file": "start-working-tree.txt",
+      "sha256": "77ef3d6a9d924f2db684a5507e738d965b4924547bc04ff59bf4ec77106e2e01"
+    }
+  ],
+  "targetedSecretScan": "PASS"
+}

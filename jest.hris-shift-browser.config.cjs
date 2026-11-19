@@ -1,0 +1,3 @@
+// Bounded mocked UI/action and pure allocation regressions; no database or app bootstrap.
+const shared=require('./jest.hris-fresh-auth-ui.config.cjs');
+module.exports={...shared,testTimeout:30000,roots:['<rootDir>/components/hris/__tests__','<rootDir>/actions/hris/__tests__','<rootDir>/services/hris/__tests__'],testMatch:['**/HrisRosterWorkspace.test.tsx','**/HrisRosterWorkspace.review.test.tsx','**/roster.actions.test.ts','**/shift-plan.test.ts','**/time-allocation.test.ts'],moduleNameMapper:{...shared.moduleNameMapper,'^server-only$':'<rootDir>/what-next/hris-implementation-2026-10-24/HR-21/development-07/server-only.cjs'}};

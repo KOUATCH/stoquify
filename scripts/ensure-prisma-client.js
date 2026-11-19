@@ -10,7 +10,9 @@ const { spawnSync } = require("child_process")
 // attributes. Their declaration order is irrelevant; field order inside an
 // index/unique constraint is not. Preserve quoted values and comments.
 function schemaTokens(schema) {
-  const tokenize = (value) => value.match(/\/\/[^\r\n]*|"(?:\\.|[^"\\])*"|[^\s"]+/g) || []
+  // Prisma also adds spaces around relation arguments and punctuation. Keep
+  // strings, comments and compound attribute names intact while tokenizing it.
+  const tokenize = (value) => value.match(/\/\/[^\r\n]*|"(?:\\.|[^"\\])*"|@@?[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*|[A-Za-z_]\w*|[+-]?\d+(?:\.\d+)?|[^\s"]/g) || []
   // Prisma also moves block attributes below fields declared after them.
   // Preserve field order and only relocate complete, single-line attributes.
   const fieldsFirst = schema.replace(/(^[ \t]*(?:model|view|type)\s+\w+[ \t]*\{[ \t]*\r?\n)([\s\S]*?)(^[ \t]*\})/gm, (block, header, body, closing) => {

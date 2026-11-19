@@ -1,0 +1,1696 @@
+{
+  "schema": "stoquify-payroll-calculation-review-working-form.v1",
+  "classification": "DRAFT_NOT_RUNTIME_COUNTRY_PACK_OR_APPROVAL",
+  "contractId": "STOQUIFY-CM-PAYROLL-CALCULATION-2026-11-02-DRAFT-4",
+  "preparedAt": "2026-10-29T12:30:39.884487+00:00",
+  "status": "PENDING_REVIEW",
+  "productionUseAllowed": false,
+  "recordedScope": {
+    "countryCode": "CM",
+    "frequency": "MONTHLY",
+    "currencyDefault": "XAF",
+    "proposedReleaseScope": "CM_PRIVATE_SME_MONTHLY_SINGLE_EMPLOYER",
+    "runtimeContractIdentifier": "stoquify-payroll-calculator.v1",
+    "dataset": "stoquify_replay_dataset_20261028_01",
+    "intendedPayDateStart": "2025-11-30",
+    "intendedPayDateEnd": "2026-10-31",
+    "observationCutoff": "2026-10-28"
+  },
+  "approvedScope": null,
+  "reviewer": {
+    "fullName": null,
+    "professionalCapacity": null,
+    "organization": null,
+    "qualificationReference": null,
+    "authority": null,
+    "conflictDeclaration": null
+  },
+  "reviewWindow": {
+    "startedAt": null,
+    "completedAt": null
+  },
+  "decisions": [
+    {
+      "id": "D-01",
+      "topic": "Applicable periods and population",
+      "reviewRequest": "**EXPERT DECISION REQUIRED.** Supply separate approved 2025 and 2026 applicability windows, employer/employee eligibility, residency or other classification needed by the formula, and version transitions. Confirm the single-employer scope and treatment of midyear joiners and prior-employer amounts. Existing evidence: current pack starts in 2026; 2025 scope is unresolved. Return: legal provisions, scope exclusions, effective rule versions. Fixtures: F-01, F-04, F-05. Affects ENG-02, ENG-03, ENG-07, ENG-08.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76; CNPS decree 2016/072 of 15 February 2016: Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5; DGI consolidated tax code, edition 2024: Arts 33–34 PDF p.57; art 65 bis pp.66–67; art 74 bis pp.70–71; DGI finance circular 2024: Section 1.15, paragraphs 112–113, PDF p.19; DGI finance circular 2026: Section 1.12, paragraphs 144–146, PDF p.29",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-01",
+        "F-04",
+        "F-05"
+      ],
+      "conditions": "Qualified reviewer: confirm complete 2025 amendment chain and operative dates, residency/treaty exclusions, employee/employer categories and whether exceptional income is supported or explicitly denied. Return signed 2025/2026 envelopes; do not extrapolate CM-2026.1 backwards.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "Use separate date-effective 2025 and 2026 envelopes. CGI arts 24–25 and 30 support residence/source-based scope, with treaty exceptions. The 2024 code already contains the benefit schedule and 4,800,000 FCFA expense cap, corroborated by circular 2024 paragraphs 112–113. Circular 2026 paragraphs 144–146 expressly changes the qualifying exceptional-income abatement from 25% to 35% for the 2026 reform. These are source-backed candidates, not an approved 2025 consolidated rule set.",
+      "remainingInput": "Qualified reviewer: confirm complete 2025 amendment chain and operative dates, residency/treaty exclusions, employee/employer categories and whether exceptional income is supported or explicitly denied. Return signed 2025/2026 envelopes; do not extrapolate CM-2026.1 backwards.",
+      "sourceIds": [
+        "S-01",
+        "S-02",
+        "S-03",
+        "S-04",
+        "S-06"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        },
+        {
+          "id": "S-02",
+          "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Decree-2016-072-contribution-rates.pdf",
+          "url": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes%202.pdf",
+          "sha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "provisions": "Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5",
+          "inspectionScope": "Retained signed decree/OCR inspected; temporal applicability and employer classification require review."
+        },
+        {
+          "id": "S-03",
+          "file": "docs/unblock/research/DGI-CGI-2024.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/CGI%202024%20version%20francaise.pdf",
+          "sha256": "b90d94c360893c6c2f2237e6382f667f67cfd298de5d291977d93c896ff4a36b",
+          "provisions": "Arts 33–34 PDF p.57; art 65 bis pp.66–67; art 74 bis pp.70–71",
+          "inspectionScope": "Targeted historical comparison; not a substitute for a complete 2025 amendment review."
+        },
+        {
+          "id": "S-04",
+          "file": "docs/unblock/research/DGI-finance-circular-2024.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/Circulaire%20LF%202024.pdf",
+          "sha256": "79221130d1e148f628611b1df2946eaf90d1816e390135c9d801c68ac2a83756",
+          "provisions": "Section 1.15, paragraphs 112–113, PDF p.19",
+          "inspectionScope": "Scanned contents and p.19 visually inspected; implementation text referred to in paragraph 113 not recovered."
+        },
+        {
+          "id": "S-06",
+          "file": "docs/unblock/research/DGI-finance-circular-2026.pdf",
+          "url": "https://impots.cm/sites/default/files/publications/circulaire%20lf%202026%20VF%20%281%29-compress%C3%A9.pdf",
+          "sha256": "d32730a7e8670a3d8a699338ff1bfd22f1941dbc6c8b6a3515c68417579c9ca1",
+          "provisions": "Section 1.12, paragraphs 144–146, PDF p.29",
+          "inspectionScope": "Contents and exceptional-income section visually inspected; not a full circular review."
+        }
+      ]
+    },
+    {
+      "id": "D-02",
+      "topic": "Period, cumulative or annualized algorithm",
+      "reviewRequest": "**EXPERT DECISION REQUIRED.** Select and fully specify the method, bracket period, annualization/proration factors if any, partial employment periods and regularization timing. Existing evaluator has period/YTD modes only. Return: executable formula and independent calculations, not a mode name alone. Fixtures: F-02, F-03, F-04. Affects ENG-02, ENG-06, ENG-07.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76; DGI indicative IRPP and other payroll withholding table: PDF p.1; gross monthly salary / IRPP / CAC columns",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-02",
+        "F-03",
+        "F-04"
+      ],
+      "conditions": "Reviewer must select monthly conversion/annualization, partial-year/joiner treatment, cap consumption and regularization. Do not feed annual thresholds directly into current-month gross or treat P(Y+A)−W as validated by these provisions. Resolve exceptional-income art 65 bis separately.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "CGI art 69 states annual progressive brackets; art 81 requires employer withholding at each payment. The DGI indicative table supplies monthly comparisons. Candidate annual ordinary-income model: G = approved annual taxable gross including approved benefits; E = min(30% × G, 4,800,000 FCFA); R = qualifying mandatory employee retirement contributions; B = G − E − R − 500,000 FCFA. Apply art 69 to the reviewed nonnegative taxable base and CAC = 10% of principal IRPP under art 71. This is an annual model proposal, not an approved monthly or YTD algorithm. The base definition and benefit construction need review before this notation is executable.",
+      "remainingInput": "Reviewer must select monthly conversion/annualization, partial-year/joiner treatment, cap consumption and regularization. Do not feed annual thresholds directly into current-month gross or treat P(Y+A)−W as validated by these provisions. Resolve exceptional-income art 65 bis separately.",
+      "sourceIds": [
+        "S-01",
+        "S-07"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        },
+        {
+          "id": "S-07",
+          "file": "docs/unblock/research/DGI-IRPP-bareme.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/BAREME%20IRPP_DSSI%20final.pdf",
+          "sha256": "12849667a567e97b91db220a59599a913c430d9bdaec978d7e45a1e13001899b",
+          "provisions": "PDF p.1; gross monthly salary / IRPP / CAC columns",
+          "inspectionScope": "Undated indicative table, first-page sample rows visually inspected. Effective applicability not established."
+        }
+      ]
+    },
+    {
+      "id": "D-03",
+      "topic": "Tax-year boundaries",
+      "reviewRequest": "**EXPERT DECISION REQUIRED.** Define year start/end, controlling date and time zone, year-reset behavior and cross-year corrections. State whether payroll tax year may follow accounting fiscal year. Existing policy does so when accounting settings exist. Fixtures: F-04, F-05, F-16. Affects ENG-03 through ENG-07.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-04",
+        "F-05",
+        "F-16"
+      ],
+      "conditions": "Reviewer to approve tax-year mapping for payroll and delayed/backdated/cross-year corrections; engineering to define the Cameroon local-date/time-zone conversion. The annual statement supports the calendar proposal but does not prescribe every internal YTD algorithm.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "CGI art 74 bis(5), PDF p.75, expressly requires the annual pay/withholding statement for the preceding calendar year. Arts 68 and 81 tie salary liability/withholding to availability/payment. Proposed tax accumulation window: January 1 through December 31, independent of the tenant accounting fiscal year, with actual payment/availability date recorded separately from earning period.",
+      "remainingInput": "Reviewer to approve tax-year mapping for payroll and delayed/backdated/cross-year corrections; engineering to define the Cameroon local-date/time-zone conversion. The annual statement supports the calendar proposal but does not prescribe every internal YTD algorithm.",
+      "sourceIds": [
+        "S-01"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        }
+      ]
+    },
+    {
+      "id": "D-04",
+      "topic": "Prior history membership and completeness",
+      "reviewRequest": "**EXPERT DECISION REQUIRED + ENGINEERING DESIGN.** Specify eligible statuses, prior-employer balances, off-cycle membership, currency separation and authoritative opening balances. Define proof of a genuine zero opening balance versus unavailable history. Proposed engineering rule: missing/stale/partial required history must block, with an explicit approved migration path. Fixtures: F-05, F-06, F-07, F-17. Affects ENG-02, ENG-03, ENG-04.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-05",
+        "F-06",
+        "F-07",
+        "F-17"
+      ],
+      "conditions": "Payroll reviewer/owner must decide prior-employer and off-cycle membership; engineering must map real payment/withholding facts to POSTED/PAID and correction statuses, gap detection and approved opening-balance migration. The statute does not define application statuses.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "Art 74 bis(2),(5) requires annual income and withholding information; art 80 accounts for source withholding/advances in annual liability. Preserve separate actual payments, withholding, remittance and supported opening balances. Proposed internal gate: required unavailable history is an error, while genuine zero requires affirmative evidence.",
+      "remainingInput": "Payroll reviewer/owner must decide prior-employer and off-cycle membership; engineering must map real payment/withholding facts to POSTED/PAID and correction statuses, gap detection and approved opening-balance migration. The statute does not define application statuses.",
+      "sourceIds": [
+        "S-01"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        }
+      ],
+      "engineeringSelectionIds": [
+        "ED-01"
+      ],
+      "engineeringProgress": "Selected/implemented only within the attached ED scope; statutory decision, independent review and overall acceptance remain pending."
+    },
+    {
+      "id": "D-05",
+      "topic": "Taxable and social bases",
+      "reviewRequest": "**EXPERT DECISION REQUIRED.** Define treatment of salary, paid/unpaid leave, overtime, taxable allowances, benefits in kind, deductions/recoveries and employee contributions. Specify each social-contribution base and cap independently, including annual versus monthly ceilings. Existing service computes components and a common capped social base; approve or replace that behavior explicitly. Fixtures: F-08, F-09, F-18. Affects ENG-02, ENG-06, ENG-07.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76; CNPS decree 2016/072 of 15 February 2016: Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5; DGI consolidated tax code, edition 2024: Arts 33–34 PDF p.57; art 65 bis pp.66–67; art 74 bis pp.70–71; DGI finance circular 2024: Section 1.15, paragraphs 112–113, PDF p.19",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-08",
+        "F-09",
+        "F-18"
+      ],
+      "conditions": "Reviewer must validate branch-specific remuneration/exemptions, benefit valuation denominator and anti-double-counting, cap allocation across irregular/multiple payments, sector/risk classification and current applicability. Do not import the tax 30% expense deduction into the social base without its own authority. The common capped service base conflicts with the proposed ATMP treatment. Leave/overtime/recovery amounts remain unresolved pending operative labour instruments and applicable collective agreements.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "CGI arts 31–34 support qualifying exemptions, inclusion/valuation of benefits and deduction of mandatory retirement contributions. Art 33 percentage valuations on gross taxable salary: housing 15%; electricity 4%; water 2%; each domestic worker 5%; each vehicle 10%; food 10%; telephone 5%; fuel 10%; guarding 5%; internet 5%. Unlisted benefits use actual cost; cash equivalents use actual amount unless expressly exempt. CNPS pension is 4.2% employee + 4.2% employer. Family rates are 7% general, 5.65% agricultural, 3.7% private education. Decree art 4 limits pension/family remuneration to 750,000 francs monthly / 9,000,000 annually. Occupational risk is employer-only A 1.75%, B 2.5%, C 5% on remuneration less professional expenses (art 8); art 4 does not extend that ceiling to occupational risk. Family contributions are also employer-only (art 10).",
+      "remainingInput": "Reviewer must validate branch-specific remuneration/exemptions, benefit valuation denominator and anti-double-counting, cap allocation across irregular/multiple payments, sector/risk classification and current applicability. Do not import the tax 30% expense deduction into the social base without its own authority. The common capped service base conflicts with the proposed ATMP treatment. Leave/overtime/recovery amounts remain unresolved pending operative labour instruments and applicable collective agreements.",
+      "sourceIds": [
+        "S-01",
+        "S-02",
+        "S-03",
+        "S-04"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        },
+        {
+          "id": "S-02",
+          "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Decree-2016-072-contribution-rates.pdf",
+          "url": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes%202.pdf",
+          "sha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "provisions": "Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5",
+          "inspectionScope": "Retained signed decree/OCR inspected; temporal applicability and employer classification require review."
+        },
+        {
+          "id": "S-03",
+          "file": "docs/unblock/research/DGI-CGI-2024.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/CGI%202024%20version%20francaise.pdf",
+          "sha256": "b90d94c360893c6c2f2237e6382f667f67cfd298de5d291977d93c896ff4a36b",
+          "provisions": "Arts 33–34 PDF p.57; art 65 bis pp.66–67; art 74 bis pp.70–71",
+          "inspectionScope": "Targeted historical comparison; not a substitute for a complete 2025 amendment review."
+        },
+        {
+          "id": "S-04",
+          "file": "docs/unblock/research/DGI-finance-circular-2024.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/Circulaire%20LF%202024.pdf",
+          "sha256": "79221130d1e148f628611b1df2946eaf90d1816e390135c9d801c68ac2a83756",
+          "provisions": "Section 1.15, paragraphs 112–113, PDF p.19",
+          "inspectionScope": "Scanned contents and p.19 visually inspected; implementation text referred to in paragraph 113 not recovered."
+        }
+      ]
+    },
+    {
+      "id": "D-06",
+      "topic": "Adjustment input dictionary",
+      "reviewRequest": "**EXPERT DECISION REQUIRED + PAYROLL OWNER.** For every inputKey, return source record/field, meaning, currency/unit, sign, applicable date, approval evidence, cap/rate, whether it changes the taxable base or final tax, and treatment when missing. No keys are selected yet. Proposed engineering rule: absent required input must not silently become zero. Fixtures: F-09, F-10. Affects ENG-02, ENG-03, ENG-06.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76; CNPS decree 2016/072 of 15 February 2016: Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-09",
+        "F-10"
+      ],
+      "conditions": "Payroll/engineering owners must bind each logical item to certified source fields, determine sign and stage, period allocation, required evidence, missing-input denial and actual evaluator keys. No invented field mapping or omission-as-zero is authorized.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "Prefill a proposed logical dictionary for professionalExpenseDeduction (30%, annual cap 4,800,000), mandatoryRetirementDeduction (actual qualifying employee contribution), annualSalaryAllowance (500,000), benefitValuations (art 33), professionalExpenseReimbursementExclusion (art 31 conditions), irppPrincipal and cacSurcharge (10% of principal). Exceptional income is a separate eligibility/calculation branch, not a generic percentage adjustment. Other payroll levies require their own obligation catalogue.",
+      "remainingInput": "Payroll/engineering owners must bind each logical item to certified source fields, determine sign and stage, period allocation, required evidence, missing-input denial and actual evaluator keys. No invented field mapping or omission-as-zero is authorized.",
+      "sourceIds": [
+        "S-01",
+        "S-02"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        },
+        {
+          "id": "S-02",
+          "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Decree-2016-072-contribution-rates.pdf",
+          "url": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes%202.pdf",
+          "sha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "provisions": "Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5",
+          "inspectionScope": "Retained signed decree/OCR inspected; temporal applicability and employer classification require review."
+        }
+      ],
+      "engineeringSelectionIds": [
+        "ED-01"
+      ],
+      "engineeringProgress": "Selected/implemented only within the attached ED scope; statutory decision, independent review and overall acceptance remain pending."
+    },
+    {
+      "id": "D-07",
+      "topic": "Brackets, reliefs and bounds",
+      "reviewRequest": "**EXPERT DECISION REQUIRED.** Supply actual brackets, ceiling inclusivity, rates, family/dependant treatment, contribution deductibility, minimum/maximum amounts and combination order. State whether reliefs are periodic, annual or cumulative and how caps are consumed across runs. Existing test values must not be copied. Fixtures: F-02, F-08, F-09, F-11. Affects ENG-02, ENG-06, ENG-07.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76; DGI consolidated tax code, edition 2024: Arts 33–34 PDF p.57; art 65 bis pp.66–67; art 74 bis pp.70–71; DGI finance circular 2024: Section 1.15, paragraphs 112–113, PDF p.19; DGI finance circular 2026: Section 1.12, paragraphs 144–146, PDF p.29",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-02",
+        "F-08",
+        "F-09",
+        "F-11"
+      ],
+      "conditions": "Reviewer to approve boundary/decimal representation, deduction order and monthly allocation, exceptional-income eligibility and three-year history, any dependant relief and other exemptions, and bounds. No independently verified basis was found here for a new dependant deduction or a universal minimum/maximum tax. The below-62,000 withholding exemption must not be generalized into exemption from every payroll levy.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "Populate annual IRPP brackets: first 2,000,000 FCFA at 10%; next 1,000,000 at 15%; next 2,000,000 at 25%; excess over 5,000,000 at 35% (art 69). Art 29 supplies annual salary allowance 500,000; art 34 supplies 30% expense deduction capped 4,800,000/year and mandatory retirement deduction; art 71 adds CAC equal to 10% of principal tax. Art 81 exempts gross monthly salary strictly below 62,000 from employer withholding; exactly 62,000 is not inside that exemption, although calculated liability can be zero. Art 65 bis adds conditional exceptional-income treatment, including the 2026 35% abatement; it is not a general bonus exemption.",
+      "remainingInput": "Reviewer to approve boundary/decimal representation, deduction order and monthly allocation, exceptional-income eligibility and three-year history, any dependant relief and other exemptions, and bounds. No independently verified basis was found here for a new dependant deduction or a universal minimum/maximum tax. The below-62,000 withholding exemption must not be generalized into exemption from every payroll levy.",
+      "sourceIds": [
+        "S-01",
+        "S-03",
+        "S-04",
+        "S-06"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        },
+        {
+          "id": "S-03",
+          "file": "docs/unblock/research/DGI-CGI-2024.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/CGI%202024%20version%20francaise.pdf",
+          "sha256": "b90d94c360893c6c2f2237e6382f667f67cfd298de5d291977d93c896ff4a36b",
+          "provisions": "Arts 33–34 PDF p.57; art 65 bis pp.66–67; art 74 bis pp.70–71",
+          "inspectionScope": "Targeted historical comparison; not a substitute for a complete 2025 amendment review."
+        },
+        {
+          "id": "S-04",
+          "file": "docs/unblock/research/DGI-finance-circular-2024.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/Circulaire%20LF%202024.pdf",
+          "sha256": "79221130d1e148f628611b1df2946eaf90d1816e390135c9d801c68ac2a83756",
+          "provisions": "Section 1.15, paragraphs 112–113, PDF p.19",
+          "inspectionScope": "Scanned contents and p.19 visually inspected; implementation text referred to in paragraph 113 not recovered."
+        },
+        {
+          "id": "S-06",
+          "file": "docs/unblock/research/DGI-finance-circular-2026.pdf",
+          "url": "https://impots.cm/sites/default/files/publications/circulaire%20lf%202026%20VF%20%281%29-compress%C3%A9.pdf",
+          "sha256": "d32730a7e8670a3d8a699338ff1bfd22f1941dbc6c8b6a3515c68417579c9ca1",
+          "provisions": "Section 1.12, paragraphs 144–146, PDF p.29",
+          "inspectionScope": "Contents and exceptional-income section visually inspected; not a full circular review."
+        }
+      ]
+    },
+    {
+      "id": "D-08",
+      "topic": "Money units and rounding",
+      "reviewRequest": "**EXPERT DECISION REQUIRED + ENGINEERING DESIGN.** Define currency amount unit, minor-unit conversion, precision and tie rule at each stage: input, adjustment, bracket slice, contribution, tax, correction delta and aggregate. Resolve `MinorUnits` field naming versus the service's Decimal arithmetic. Specify rounding residual handling; do not assume two decimals is a statutory rule. Fixtures: F-08, F-11, F-18. Affects ENG-02, ENG-06, ENG-07.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76; CNPS decree 2016/072 of 15 February 2016: Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5; DGI indicative IRPP and other payroll withholding table: PDF p.1; gross monthly salary / IRPP / CAC columns",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-08",
+        "F-11",
+        "F-18"
+      ],
+      "conditions": "Reviewer must supply applicable scale/tie rule and rounding stage for each tax/contribution, correction, total and declaration; engineering must reconcile unit names and residual allocation. Do not adopt two decimals or infer half-up/half-even from a few table rows.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "Official amounts are expressed in francs/FCFA: the CNPS ceiling is 750,000 francs, not 7,500 francs. Proposed contract display unit is one FCFA; require an explicit storage-unit conversion rather than infer units from MinorUnits names. Indicative-table p.1 shows gross 64,000 → principal IRPP 45 and CAC 4, and gross 65,000 → IRPP 110 and CAC 11. These are source comparison rows, not proof of a universal tie rule or intermediate rounding sequence.",
+      "remainingInput": "Reviewer must supply applicable scale/tie rule and rounding stage for each tax/contribution, correction, total and declaration; engineering must reconcile unit names and residual allocation. Do not adopt two decimals or infer half-up/half-even from a few table rows.",
+      "sourceIds": [
+        "S-01",
+        "S-02",
+        "S-07"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        },
+        {
+          "id": "S-02",
+          "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Decree-2016-072-contribution-rates.pdf",
+          "url": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes%202.pdf",
+          "sha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "provisions": "Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5",
+          "inspectionScope": "Retained signed decree/OCR inspected; temporal applicability and employer classification require review."
+        },
+        {
+          "id": "S-07",
+          "file": "docs/unblock/research/DGI-IRPP-bareme.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/BAREME%20IRPP_DSSI%20final.pdf",
+          "sha256": "12849667a567e97b91db220a59599a913c430d9bdaec978d7e45a1e13001899b",
+          "provisions": "PDF p.1; gross monthly salary / IRPP / CAC columns",
+          "inspectionScope": "Undated indicative table, first-page sample rows visually inspected. Effective applicability not established."
+        }
+      ],
+      "engineeringSelectionIds": [
+        "ED-01"
+      ],
+      "engineeringProgress": "Selected/implemented only within the attached ED scope; statutory decision, independent review and overall acceptance remain pending."
+    },
+    {
+      "id": "D-09",
+      "topic": "Negative tax, credits and refunds",
+      "reviewRequest": "**EXPERT DECISION REQUIRED.** Choose the permitted treatment of overwithholding: zero floor, carry-forward credit, refund, correction liability or another supported process; identify who may authorize it and its declaration/accounting effect. Existing evaluator floors negative raw tax before adjustments. Fixtures: F-12, F-14, F-16. Affects ENG-05, ENG-06, ENG-07.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76; DGI consolidated tax code, edition 2024: Arts 33–34 PDF p.57; art 65 bis pp.66–67; art 74 bis pp.70–71",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-12",
+        "F-14",
+        "F-16"
+      ],
+      "conditions": "Reviewer must distinguish employer correction from taxpayer annual claim, choose the allowed interim treatment, authority and evidence, and map approved credits/refunds into future withholding, declarations and ledger. Current zero floor is not approved merely because the annual refund procedure exists.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "CGI art 74 bis(4), 2026 PDF p.75 and 2024 p.71, allows an overpayment shown by the annual declaration to be refunded or applied to future taxes at the taxpayer’s request, after validation by competent services. Preserve an identifiable overpayment claim and the validation/request evidence. This establishes a procedure; it does not authorize automatic employer net-pay refunds or a silent negative-tax clamp.",
+      "remainingInput": "Reviewer must distinguish employer correction from taxpayer annual claim, choose the allowed interim treatment, authority and evidence, and map approved credits/refunds into future withholding, declarations and ledger. Current zero floor is not approved merely because the annual refund procedure exists.",
+      "sourceIds": [
+        "S-01",
+        "S-03"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        },
+        {
+          "id": "S-03",
+          "file": "docs/unblock/research/DGI-CGI-2024.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/CGI%202024%20version%20francaise.pdf",
+          "sha256": "b90d94c360893c6c2f2237e6382f667f67cfd298de5d291977d93c896ff4a36b",
+          "provisions": "Arts 33–34 PDF p.57; art 65 bis pp.66–67; art 74 bis pp.70–71",
+          "inspectionScope": "Targeted historical comparison; not a substitute for a complete 2025 amendment review."
+        }
+      ]
+    },
+    {
+      "id": "D-10",
+      "topic": "Corrections, replacements and reversals",
+      "reviewRequest": "**EXPERT DECISION REQUIRED + ENGINEERING DESIGN.** Define event identity, original/replacement chain, whether each event contributes full values or deltas, effective pay-date/year, inclusion/exclusion of reversals, and recalculation of downstream runs. Specify negative deltas and already paid/declared periods. Proposed invariant: one economic effect per chain, no double accumulation. Fixtures: F-13 through F-16, F-20. Affects ENG-02, ENG-03, ENG-05, ENG-07.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "An accountable owner decision is still required; no statutory answer is inferred.",
+      "legalReference": null,
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-13",
+        "F-14",
+        "F-15",
+        "F-16",
+        "F-20"
+      ],
+      "conditions": "Reviewer and engineering must decide replacement/delta semantics, reverse/reissue treatment, negative deltas, already-paid/declared cases and downstream recomputation. A legal provision about annual claims does not settle this data model.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "NO_DETERMINATIVE_SOURCE_FOUND",
+      "proposedTreatmentOrFormula": "No determinative official prescription for application correction/reversal identity or full-versus-delta storage was found in the reviewed sources. Retain the proposed invariant of one economic effect per correction chain, preserving actual payment/withholding and year attribution.",
+      "remainingInput": "Reviewer and engineering must decide replacement/delta semantics, reverse/reissue treatment, negative deltas, already-paid/declared cases and downstream recomputation. A legal provision about annual claims does not settle this data model.",
+      "sourceIds": [],
+      "sourceEvidence": []
+    },
+    {
+      "id": "D-11",
+      "topic": "Stored and presented amounts",
+      "reviewRequest": "**EXPERT DECISION REQUIRED + ACCOUNTING OWNER.** Identify which base is authoritative for YTD: raw current base, adjusted base or another explicitly defined amount. Define full/current/delta fields, withheld amount versus remitted amount, and mapping to register, payslip, liability, declaration and ledger. Preserve raw inputs and adjustment trace alongside authoritative outputs. Fixtures: F-09, F-13, F-18, F-19. Affects ENG-02, ENG-03, ENG-06, ENG-07.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76; CNPS decree 2016/072 of 15 February 2016: Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-09",
+        "F-13",
+        "F-18",
+        "F-19"
+      ],
+      "conditions": "Reviewer/accounting owner must select the authoritative YTD base, stored full/delta identities, payslip/declaration/journal mappings and net-pay reconciliation. Validate whether current incomeTaxAmount includes CAC; never assume it does.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "Arts 81–82 distinguish withholding shown on a payslip from later remittance; art 74 bis requires annual gross gains and withholding detail. Proposed distinct outputs: gross taxable income, professional-expense allowance, deductible pension, annual allowance allocation, net taxable base, principal IRPP, CAC, total tax withheld, remitted amount, each employee/employer social contribution, and correction deltas. Keep raw/current/annual bases and trace distinct; do not report employer charges as employee deductions.",
+      "remainingInput": "Reviewer/accounting owner must select the authoritative YTD base, stored full/delta identities, payslip/declaration/journal mappings and net-pay reconciliation. Validate whether current incomeTaxAmount includes CAC; never assume it does.",
+      "sourceIds": [
+        "S-01",
+        "S-02"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        },
+        {
+          "id": "S-02",
+          "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Decree-2016-072-contribution-rates.pdf",
+          "url": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes%202.pdf",
+          "sha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "provisions": "Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5",
+          "inspectionScope": "Retained signed decree/OCR inspected; temporal applicability and employer classification require review."
+        }
+      ],
+      "engineeringSelectionIds": [
+        "ED-03"
+      ],
+      "engineeringProgress": "Selected/implemented only within the attached ED scope; statutory decision, independent review and overall acceptance remain pending."
+    },
+    {
+      "id": "D-12",
+      "topic": "Same-day ordering and concurrent changes",
+      "reviewRequest": "**PAYROLL POLICY REVIEW + ENGINEERING DESIGN.** Reviewer defines legal ordering constraints; engineering selects stable sequence/version and transaction strategy. Cover two runs sharing a pay date, backdated input, concurrent correction/posting, retry and uncertain commit. Proposed acceptance: recompute/deny on stale history; no duplicate tax or writes after rollback. Fixtures: F-07, F-17, F-20. Affects ENG-03, ENG-04, ENG-07.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "An accountable owner decision is still required; no statutory answer is inferred.",
+      "legalReference": null,
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-07",
+        "F-17",
+        "F-20"
+      ],
+      "conditions": "Engineering owner must supply the transaction/locking or revision design and real PostgreSQL contention/rollback evidence; reviewer confirms same-day/off-cycle policy constraints. No external legal signature can substitute for concurrency tests.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "OWNER_ENGINEERING_DECISION",
+      "proposedTreatmentOrFormula": "Official sources reviewed do not select database isolation, ordering keys or retry mechanics. Retain the engineering proposal: stable sequence and history revision, conflict detection, atomic calculation persistence, stale-history recomputation/denial and idempotent retry.",
+      "remainingInput": "Engineering owner must supply the transaction/locking or revision design and real PostgreSQL contention/rollback evidence; reviewer confirms same-day/off-cycle policy constraints. No external legal signature can substitute for concurrency tests.",
+      "sourceIds": [],
+      "sourceEvidence": [],
+      "engineeringSelectionIds": [
+        "ED-02"
+      ],
+      "engineeringProgress": "Selected/implemented only within the attached ED scope; statutory decision, independent review and overall acceptance remain pending.",
+      "remainingEngineeringInput": "ED-02 transaction boundary and ED-05 scoped real database checks are complete. Future injected callers must own isolation/retry. New-run and correction creation, full lifecycle, approved same-day/off-cycle membership and approval-time stale-history checks remain pending. No statutory approval is implied."
+    },
+    {
+      "id": "D-13",
+      "topic": "Snapshot and evidence validity",
+      "reviewRequest": "**ENGINEERING DESIGN + REVIEWER ACCEPTANCE.** Define required history hashes/revisions, certified-input provenance, immutable calculation trace, invalidation triggers and authorized migration of older snapshots. Changes to rules, inputs or correction ancestry must invalidate affected acceptance evidence. Do not treat a syntactically valid hash as proof of a correct calculation. Fixtures: F-06, F-17, F-19, F-20. Affects ENG-03 through ENG-08.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "An accountable owner decision is still required; no statutory answer is inferred.",
+      "legalReference": null,
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-06",
+        "F-17",
+        "F-19",
+        "F-20"
+      ],
+      "conditions": "Engineering/QA owners must approve evidence schema, history revision, stale-data denial, migration and invalidation; reviewer accepts calculation trace sufficiency. Real evidence must come from execution, not hash-shaped placeholders.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "OWNER_ENGINEERING_DECISION",
+      "proposedTreatmentOrFormula": "Official sources reviewed do not establish application hash formats or snapshot-version semantics. Retain immutable bindings among certified inputs, rule version, source/approval artifacts, included history and correction ancestry, with downstream invalidation when dependencies change.",
+      "remainingInput": "Engineering/QA owners must approve evidence schema, history revision, stale-data denial, migration and invalidation; reviewer accepts calculation trace sufficiency. Real evidence must come from execution, not hash-shaped placeholders.",
+      "sourceIds": [],
+      "sourceEvidence": [],
+      "engineeringSelectionIds": [
+        "ED-03"
+      ],
+      "engineeringProgress": "Selected/implemented only within the attached ED scope; statutory decision, independent review and overall acceptance remain pending.",
+      "remainingEngineeringInput": "ED-03 implements version-2 observed-source fingerprints without rewriting legacy snapshots. Engineering/QA must implement and test history completeness, approval-time fingerprint comparison/invalidation, authorized migration and downstream lifecycle binding; reviewer must accept the trace for the approved calculation policy."
+    },
+    {
+      "id": "D-14",
+      "topic": "Independent acceptance tolerance",
+      "reviewRequest": "**EXPERT DECISION REQUIRED + QA.** Supply independent expected amounts for F-01 through F-22 as applicable, intermediate calculation steps, exact rounding and allowed tolerance. Default proposal for deterministic monetary fields is exact equality after the approved rounding rule; approve or replace it. Explain excluded fixtures; never equate exclusion with passing evidence. Affects ENG-07 and every implementation task.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI indicative IRPP and other payroll withholding table: PDF p.1; gross monthly salary / IRPP / CAC columns; DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76; CNPS decree 2016/072 of 15 February 2016: Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-01",
+        "F-02",
+        "F-03",
+        "F-04",
+        "F-05",
+        "F-06",
+        "F-07",
+        "F-08",
+        "F-09",
+        "F-10",
+        "F-11",
+        "F-12",
+        "F-13",
+        "F-14",
+        "F-15",
+        "F-16",
+        "F-17",
+        "F-18",
+        "F-19",
+        "F-20",
+        "F-21",
+        "F-22"
+      ],
+      "conditions": "Reviewer must confirm the undated table’s applicability and independently calculate the complete fixture suite with intermediate amounts. Benchmarks do not establish rounding, irregular-pay/YTD behavior or independent approval; all 22 expected-output records remain pending.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "Add official-table benchmark rows as a separate evidence class: gross 63,500 → IRPP 12 / CAC 1; 64,000 → 45 / 4; 65,000 → 110 / 11 (S-07 p.1). Extend F-02/F-08/F-09/F-11/F-18 for the 62,000 withholding boundary, each annual bracket, 750,000 branch-specific social cap, 4,800,000 annual expense cap, CAC separation and exceptional-income version transition. Proposed tolerance remains exact equality after approved rounding.",
+      "remainingInput": "Reviewer must confirm the undated table’s applicability and independently calculate the complete fixture suite with intermediate amounts. Benchmarks do not establish rounding, irregular-pay/YTD behavior or independent approval; all 22 expected-output records remain pending.",
+      "sourceIds": [
+        "S-07",
+        "S-01",
+        "S-02"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-07",
+          "file": "docs/unblock/research/DGI-IRPP-bareme.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/BAREME%20IRPP_DSSI%20final.pdf",
+          "sha256": "12849667a567e97b91db220a59599a913c430d9bdaec978d7e45a1e13001899b",
+          "provisions": "PDF p.1; gross monthly salary / IRPP / CAC columns",
+          "inspectionScope": "Undated indicative table, first-page sample rows visually inspected. Effective applicability not established."
+        },
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        },
+        {
+          "id": "S-02",
+          "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/CNPS-Decree-2016-072-contribution-rates.pdf",
+          "url": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes%202.pdf",
+          "sha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "provisions": "Arts 2–4, 8–10; PDF pp.1–3; classification annex pp.4–5",
+          "inspectionScope": "Retained signed decree/OCR inspected; temporal applicability and employer classification require review."
+        }
+      ],
+      "engineeringSelectionIds": [
+        "ED-04"
+      ],
+      "engineeringProgress": "Selected/implemented only within the attached ED scope; statutory decision, independent review and overall acceptance remain pending."
+    },
+    {
+      "id": "D-15",
+      "topic": "October and incomplete-period scope",
+      "reviewRequest": "**OWNER DECISION REQUIRED; EXPERT REVIEW IF PAY POLICY CHANGES.** Choose supported complete-period inputs through the approved cutoff, or explicitly retain October as pending. Do not infer missing observations or certify unobserved days. Record pay date, observation cutoff, affected employees and acceptance scope. Fixture: F-21. This resolves ENG-09 and constrains ENG-08; it is not a statutory signature substitute.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "An accountable owner decision is still required; no statutory answer is inferred.",
+      "legalReference": null,
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-21"
+      ],
+      "conditions": "Dataset owner must provide supported completion evidence or explicitly leave October pending. Any change in salary/absence projection policy requires payroll review; statutory sources do not justify fabricated attendance.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "OWNER_ENGINEERING_DECISION",
+      "proposedTreatmentOrFormula": "Official tax research cannot supply missing October attendance after 28 October or prove period completion. Preserve the observed cutoff and intended 31 October pay date as separate facts.",
+      "remainingInput": "Dataset owner must provide supported completion evidence or explicitly leave October pending. Any change in salary/absence projection policy requires payroll review; statutory sources do not justify fabricated attendance.",
+      "sourceIds": [],
+      "sourceEvidence": []
+    },
+    {
+      "id": "D-16",
+      "topic": "Chronological lifecycle and release boundary",
+      "reviewRequest": "**ENGINEERING/OPERATIONS DESIGN + LEGAL OWNER RELEASE.** Agree the run order and idempotency scope for each organization/month, employee population, retries, approval separation, posting, payslip, synthetic payment/declaration and close checks. Proposed sequence: resolve admitted rules and ready inputs; freeze; calculate/reconcile; independent approval; downstream lifecycle; replay. Source-backed rules and admission are prerequisites. Fixtures: F-18 through F-22. Affects ENG-07, ENG-08.",
+      "status": "PENDING_REVIEW",
+      "selectedTreatmentOrFormula": null,
+      "rationale": "Research proposal populated from the cited official provisions; the selected/approved treatment remains null.",
+      "legalReference": "DGI consolidated tax code, edition 2026: Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76; DGI non-professional annual declaration circular, 20 March 2024: PDF pp.1–4, particularly paragraph 12",
+      "sourceProvision": null,
+      "sourceArtifactFile": null,
+      "sourceArtifactSha256": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "openEndedRationale": null,
+      "coveredPopulation": null,
+      "exclusions": null,
+      "fixtureIds": [
+        "F-18",
+        "F-19",
+        "F-20",
+        "F-21",
+        "F-22"
+      ],
+      "conditions": "Reviewer to establish effective declaration calendars and employer/taxpayer classification, including 2025 rules and any extensions. Engineering/operations must agree chronological/idempotent execution; legal owner must complete actual admission. A research-backed deadline does not certify remittance or release.",
+      "reviewedBy": null,
+      "reviewedOn": null,
+      "engineeringOwnerAcceptance": null,
+      "researchStatus": "PARTIALLY_SOURCE_SUPPORTED_PROPOSAL",
+      "proposedTreatmentOrFormula": "CGI arts 81–82 require withholding at payment and remittance by the 15th of the following month. Art 74 bis(5) requires the preceding-calendar-year pay/withholding statement by 15 March. The 2026 art 74 bis(1) has category-specific annual taxpayer filing dates: 31 July for specified high personalities/public/parapublic employees, 30 September for private employees of DGE/CIME/CSI taxpayers, 31 October for other individuals. The 2024 circular’s June date must not be copied as the 2026 rule. Keep these obligations separate from the internal calculation/posting/release sequence.",
+      "remainingInput": "Reviewer to establish effective declaration calendars and employer/taxpayer classification, including 2025 rules and any extensions. Engineering/operations must agree chronological/idempotent execution; legal owner must complete actual admission. A research-backed deadline does not certify remittance or release.",
+      "sourceIds": [
+        "S-01",
+        "S-09"
+      ],
+      "sourceEvidence": [
+        {
+          "id": "S-01",
+          "file": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+          "url": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+          "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+          "provisions": "Arts 24–34, 65 bis, 67–71, 74 bis, 80–84; PDF pp.58–61, 70, 73–76",
+          "inspectionScope": "Text extraction of first 120 pages; targeted provisions inspected. Not an audit of the whole code."
+        },
+        {
+          "id": "S-09",
+          "file": "docs/unblock/research/DGI-IRPP-declaration-circular.pdf",
+          "url": "https://www.impots.cm/sites/default/files/documents/circulaire%20d%C3%A9claration%20IRPP.pdf",
+          "sha256": "d3a067b9f637d5a192ec45c1fbf3a5f1d30fbfd3c838d0369d507dcd08e58af6",
+          "provisions": "PDF pp.1–4, particularly paragraph 12",
+          "inspectionScope": "Cover, contents and p.4 visually inspected. Its June deadline must not override the differing 2026 code."
+        }
+      ],
+      "engineeringSelectionIds": [
+        "ED-04"
+      ],
+      "engineeringProgress": "Selected/implemented only within the attached ED scope; statutory decision, independent review and overall acceptance remain pending."
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "F-01",
+      "case": "November/December 2025 versus January 2026 applicability; rule-version boundary",
+      "primaryTasks": "ENG-02, ENG-03, ENG-08",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null,
+      "researchExpansion": "Include 2025/2026 exceptional-income transition, 62,000 withholding boundary, annual brackets, 750,000 pension/family versus uncapped ATMP, 4,800,000 expense cap, benefit valuations and separate CAC where relevant. Independent expected outputs and rounding remain pending."
+    },
+    {
+      "id": "F-02",
+      "case": "Period calculation below/at/above every bracket and final open bracket",
+      "primaryTasks": "ENG-02, ENG-06",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null,
+      "researchExpansion": "Include 2025/2026 exceptional-income transition, 62,000 withholding boundary, annual brackets, 750,000 pension/family versus uncapped ATMP, 4,800,000 expense cap, benefit valuations and separate CAC where relevant. Independent expected outputs and rounding remain pending."
+    },
+    {
+      "id": "F-03",
+      "case": "Two and three successive months with independent cumulative tax and prior withholding",
+      "primaryTasks": "ENG-02, ENG-07",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-04",
+      "case": "December/January reset and a non-calendar accounting year",
+      "primaryTasks": "ENG-03",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-05",
+      "case": "Midyear hire; genuine zero opening balance versus supported prior-employer balance",
+      "primaryTasks": "ENG-02, ENG-03",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-06",
+      "case": "Missing snapshot/hash/period, partial history and stale opening balance: deny",
+      "primaryTasks": "ENG-03",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-07",
+      "case": "Same-day regular/off-cycle runs; both permitted processing orders",
+      "primaryTasks": "ENG-04",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-08",
+      "case": "Each social base/cap and sector/risk classification; cap minus/at/plus one approved unit",
+      "primaryTasks": "ENG-02, ENG-06",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null,
+      "researchExpansion": "Include 2025/2026 exceptional-income transition, 62,000 withholding boundary, annual brackets, 750,000 pension/family versus uncapped ATMP, 4,800,000 expense cap, benefit valuations and separate CAC where relevant. Independent expected outputs and rounding remain pending."
+    },
+    {
+      "id": "F-09",
+      "case": "Base adjustment, relief, contribution deduction, cap and combined ordering",
+      "primaryTasks": "ENG-02, ENG-06",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null,
+      "researchExpansion": "Include 2025/2026 exceptional-income transition, 62,000 withholding boundary, annual brackets, 750,000 pension/family versus uncapped ATMP, 4,800,000 expense cap, benefit valuations and separate CAC where relevant. Independent expected outputs and rounding remain pending."
+    },
+    {
+      "id": "F-10",
+      "case": "Required adjustment absent, wrong unit/currency or unauthorized source: deny",
+      "primaryTasks": "ENG-02, ENG-03",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-11",
+      "case": "Fractional/tie rounding at every defined stage; minimum/maximum tax boundaries",
+      "primaryTasks": "ENG-06",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null,
+      "researchExpansion": "Include 2025/2026 exceptional-income transition, 62,000 withholding boundary, annual brackets, 750,000 pension/family versus uncapped ATMP, 4,800,000 expense cap, benefit valuations and separate CAC where relevant. Independent expected outputs and rounding remain pending."
+    },
+    {
+      "id": "F-12",
+      "case": "Prior withholding exceeds cumulative liability; chosen credit/refund behavior",
+      "primaryTasks": "ENG-06",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-13",
+      "case": "One correction: full replacement versus posted delta; no double accumulation",
+      "primaryTasks": "ENG-05",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-14",
+      "case": "Multiple chained corrections, including a negative delta",
+      "primaryTasks": "ENG-05, ENG-06",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-15",
+      "case": "Reversal and subsequent replacement; historical inclusion reconciles",
+      "primaryTasks": "ENG-05",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-16",
+      "case": "Correction crossing tax year, paid period or declaration boundary",
+      "primaryTasks": "ENG-03, ENG-05",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-17",
+      "case": "Concurrent run/correction/posting, stale revision, rollback and retry",
+      "primaryTasks": "ENG-04, ENG-07",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-18",
+      "case": "Allowance, benefit, recovery, paid/unpaid leave and overtime in composite register",
+      "primaryTasks": "ENG-07",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null,
+      "researchExpansion": "Include 2025/2026 exceptional-income transition, 62,000 withholding boundary, annual brackets, 750,000 pension/family versus uncapped ATMP, 4,800,000 expense cap, benefit valuations and separate CAC where relevant. Independent expected outputs and rounding remain pending."
+    },
+    {
+      "id": "F-19",
+      "case": "Register/payslip/ledger/declaration/payment equality and close invalidation",
+      "primaryTasks": "ENG-07",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-20",
+      "case": "Same-key replay, changed-payload replay, uncertain commit; no duplicate effect",
+      "primaryTasks": "ENG-04, ENG-05, ENG-07",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-21",
+      "case": "October partial input denied or explicitly pending; supported completed alternative",
+      "primaryTasks": "ENG-08 / ENG-09",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    },
+    {
+      "id": "F-22",
+      "case": "Agreed organization/month scope processed chronologically, then replayed",
+      "primaryTasks": "ENG-08",
+      "status": "PENDING_INDEPENDENT_REVIEW",
+      "inputs": null,
+      "expectedIntermediateAmounts": null,
+      "expectedOutput": null,
+      "expectedDenial": null,
+      "independentWorkingFile": null,
+      "independentWorkingSha256": null,
+      "methodToolVersion": null,
+      "comparisonTolerance": null,
+      "ruleVersion": null,
+      "sourceProvision": null,
+      "reviewEvidence": {
+        "reviewedBy": null,
+        "reviewedOn": null,
+        "legalRef": null,
+        "sourceEvidenceHash": null,
+        "coveredReviewTopics": []
+      },
+      "laterEngineeringLifecycleEvidence": null
+    }
+  ],
+  "adjustmentInputDictionary": [
+    {
+      "proposedLogicalKey": "professionalExpenseDeduction",
+      "stage": "SUBTRACT_FROM_GROSS",
+      "proposedTreatment": "30% of approved taxable gross, limited to 4,800,000 FCFA/year",
+      "sourceId": "S-01",
+      "provision": "CGI art 34",
+      "unit": "FCFA unless a rate",
+      "currency": "XAF",
+      "status": "PROPOSED_NOT_APPROVED",
+      "runtimeInputKey": null,
+      "certifiedSourceRecordField": null,
+      "allocationMethod": null,
+      "missingInputPolicy": "PROPOSED_DENY_IF_REQUIRED",
+      "reviewedBy": null
+    },
+    {
+      "proposedLogicalKey": "mandatoryRetirementDeduction",
+      "stage": "SUBTRACT_FROM_GROSS",
+      "proposedTreatment": "Actual qualifying mandatory employee retirement contribution; CNPS candidate 4.2% subject to approved branch base/cap",
+      "sourceId": "S-01",
+      "provision": "CGI art 34; S-02 arts 3–4",
+      "unit": "FCFA unless a rate",
+      "currency": "XAF",
+      "status": "PROPOSED_NOT_APPROVED",
+      "runtimeInputKey": null,
+      "certifiedSourceRecordField": null,
+      "allocationMethod": null,
+      "missingInputPolicy": "PROPOSED_DENY_IF_REQUIRED",
+      "reviewedBy": null
+    },
+    {
+      "proposedLogicalKey": "annualSalaryAllowance",
+      "stage": "SUBTRACT_FROM_ANNUAL_BASE",
+      "proposedTreatment": "500,000 FCFA/year; period allocation pending",
+      "sourceId": "S-01",
+      "provision": "CGI art 29",
+      "unit": "FCFA unless a rate",
+      "currency": "XAF",
+      "status": "PROPOSED_NOT_APPROVED",
+      "runtimeInputKey": null,
+      "certifiedSourceRecordField": null,
+      "allocationMethod": null,
+      "missingInputPolicy": "PROPOSED_DENY_IF_REQUIRED",
+      "reviewedBy": null
+    },
+    {
+      "proposedLogicalKey": "benefitValuations",
+      "stage": "GROSS_COMPOSITION",
+      "proposedTreatment": "Art 33 schedule or actual cost/amount where prescribed; avoid double counting",
+      "sourceId": "S-01",
+      "provision": "CGI arts 32–33",
+      "unit": "FCFA unless a rate",
+      "currency": "XAF",
+      "status": "PROPOSED_NOT_APPROVED",
+      "runtimeInputKey": null,
+      "certifiedSourceRecordField": null,
+      "allocationMethod": null,
+      "missingInputPolicy": "PROPOSED_DENY_IF_REQUIRED",
+      "reviewedBy": null
+    },
+    {
+      "proposedLogicalKey": "professionalExpenseReimbursementExclusion",
+      "stage": "GROSS_EXCLUSION_IF_ELIGIBLE",
+      "proposedTreatment": "Only qualifying professional expense reimbursements; evidence of purpose/use required",
+      "sourceId": "S-01",
+      "provision": "CGI art 31",
+      "unit": "FCFA unless a rate",
+      "currency": "XAF",
+      "status": "PROPOSED_NOT_APPROVED",
+      "runtimeInputKey": null,
+      "certifiedSourceRecordField": null,
+      "allocationMethod": null,
+      "missingInputPolicy": "PROPOSED_DENY_IF_REQUIRED",
+      "reviewedBy": null
+    },
+    {
+      "proposedLogicalKey": "irppPrincipal",
+      "stage": "PROGRESSIVE_TAX",
+      "proposedTreatment": "Annual 10/15/25/35% brackets; monthly method pending",
+      "sourceId": "S-01",
+      "provision": "CGI art 69",
+      "unit": "FCFA unless a rate",
+      "currency": "XAF",
+      "status": "PROPOSED_NOT_APPROVED",
+      "runtimeInputKey": null,
+      "certifiedSourceRecordField": null,
+      "allocationMethod": null,
+      "missingInputPolicy": "PROPOSED_DENY_IF_REQUIRED",
+      "reviewedBy": null
+    },
+    {
+      "proposedLogicalKey": "cacSurcharge",
+      "stage": "SEPARATE_TAX_COMPONENT",
+      "proposedTreatment": "10% of IRPP principal; rounding pending",
+      "sourceId": "S-01",
+      "provision": "CGI art 71",
+      "unit": "FCFA unless a rate",
+      "currency": "XAF",
+      "status": "PROPOSED_NOT_APPROVED",
+      "runtimeInputKey": null,
+      "certifiedSourceRecordField": null,
+      "allocationMethod": null,
+      "missingInputPolicy": "PROPOSED_DENY_IF_REQUIRED",
+      "reviewedBy": null
+    },
+    {
+      "proposedLogicalKey": "exceptionalIncome",
+      "stage": "SEPARATE_ELIGIBILITY_AND_ALGORITHM",
+      "proposedTreatment": "Art 65 bis conditional quotient/special-abatement branch; 2026 change 25% to 35%",
+      "sourceId": "S-06",
+      "provision": "Circular 2026 paragraphs 144–146",
+      "unit": "FCFA unless a rate",
+      "currency": "XAF",
+      "status": "PROPOSED_NOT_APPROVED",
+      "runtimeInputKey": null,
+      "certifiedSourceRecordField": null,
+      "allocationMethod": null,
+      "missingInputPolicy": "PROPOSED_DENY_IF_REQUIRED",
+      "reviewedBy": null
+    }
+  ],
+  "approvedRuleEnvelopes2025": null,
+  "approvedRuleEnvelopes2026": null,
+  "finalDecision": {
+    "decision": null,
+    "approvedDecisionIds": [],
+    "excludedDecisionIds": [],
+    "exclusionReasons": null,
+    "effectiveFrom": null,
+    "effectiveTo": null,
+    "conditions": null
+  },
+  "signedContract": {
+    "file": null,
+    "sha256": null,
+    "signedAt": null,
+    "signatureMethod": null
+  },
+  "independentChecker": {
+    "fullName": null,
+    "authority": null,
+    "conflictDeclaration": null,
+    "verifiedAt": null,
+    "verificationMethod": null,
+    "evidenceFile": null,
+    "evidenceSha256": null
+  },
+  "engineeringAcceptanceReference": null,
+  "datasetOwnerDecisionReference": null,
+  "legalOwnerIntakeReference": null,
+  "sourceManifest": "PAYROLL-CALCULATION-SOURCE-MANIFEST.json",
+  "researchUpdatedAt": "2026-10-29T12:52:40.365299+00:00",
+  "officialResearchFile": "PAYROLL-CALCULATION-OFFICIAL-RESEARCH.json",
+  "officialComparisonBenchmarks": [
+    {
+      "sourceId": "S-07",
+      "pdfPage": 1,
+      "grossMonthlyFCFA": 63500,
+      "irppPrincipalFCFA": 12,
+      "cacFCFA": 1,
+      "status": "UNDATED_INDICATIVE_NOT_APPROVED_FIXTURE"
+    },
+    {
+      "sourceId": "S-07",
+      "pdfPage": 1,
+      "grossMonthlyFCFA": 64000,
+      "irppPrincipalFCFA": 45,
+      "cacFCFA": 4,
+      "status": "UNDATED_INDICATIVE_NOT_APPROVED_FIXTURE"
+    },
+    {
+      "sourceId": "S-07",
+      "pdfPage": 1,
+      "grossMonthlyFCFA": 65000,
+      "irppPrincipalFCFA": 110,
+      "cacFCFA": 11,
+      "status": "UNDATED_INDICATIVE_NOT_APPROVED_FIXTURE"
+    }
+  ],
+  "engineeringUpdatedAt": "2026-11-02T16:31:06.083876+00:00",
+  "engineeringSelections": [
+    {
+      "id": "ED-01",
+      "decisions": [
+        "D-04",
+        "D-06",
+        "D-08"
+      ],
+      "tasks": [
+        "ENG-02",
+        "ENG-03",
+        "ENG-06"
+      ],
+      "status": "IMPLEMENTED_UNIT_VERIFIED",
+      "selection": "Unknown is not zero. Supported YTD evaluation requires both explicit prior base and prior withheld amounts; each named adjustment requires an own, explicit, finite value. Current base and monetary rule values reject NaN/Infinity. Explicit zero remains valid. The fixture adapter preserves absent history instead of defaulting to zero.",
+      "limit": "Does not certify the supplied history as complete, select the legal tax year/method, supply certified mappings, or change rounding/refund/rate policy."
+    },
+    {
+      "id": "ED-02",
+      "decisions": [
+        "D-12"
+      ],
+      "tasks": [
+        "ENG-04"
+      ],
+      "status": "ROOT_TRANSACTION_IMPLEMENTED_MOCK_VERIFIED",
+      "selection": "For an owning Prisma client, calculation uses the existing payroll transition helper: SERIALIZABLE transaction, at most three attempts for P2034/P2002, re-query idempotency on every attempt, return 409 after exhaustion, do not retry domain errors, redact unexpected internal errors. No external side effect is added to the retry callback. Current production caller audit: actions/payroll/payroll-control.actions.ts and prisma/disposable-business-workflows.ts both call calculatePayrollRun without an injected client, so both use the owning-client SERIALIZABLE/retry boundary. No additional production caller change is needed in this checkout. Future injected TransactionClient callers must establish isolation/retry explicitly; mocked callers are not database proof.",
+      "limit": "An injected TransactionClient inherits its caller transaction; caller owns isolation and retry. Same-day statutory membership, stale-history checks at approval/posting, real contention/rollback and uncertain-commit proof remain pending. This is not full ENG-04 completion."
+    },
+    {
+      "id": "ED-03",
+      "decisions": [
+        "D-11",
+        "D-13"
+      ],
+      "tasks": [
+        "ENG-03",
+        "ENG-07"
+      ],
+      "status": "PROOF_V2_IMPLEMENTED_UNIT_VERIFIED",
+      "selection": "New accumulator proofs use version 2 and bind each ordered prior run/line identity, employee, currency, pay date, run status, document hashes, calculation-snapshot hash and recorded line amounts. observedHistoryHash binds that observed list and is included in the accumulator hash. Missing snapshots remain explicitly null. Existing frozen records are not migrated or rewritten.",
+      "limit": "A fingerprint proves which source data was observed, not legal inclusion or completeness. Legacy proof reads remain supported. Approval-time comparison/invalidation and migration acceptance are not implemented by this slice."
+    },
+    {
+      "id": "ED-04",
+      "decisions": [
+        "D-14",
+        "D-16"
+      ],
+      "tasks": [
+        "ENG-07",
+        "ENG-08"
+      ],
+      "status": "VERIFICATION_AND_RELEASE_BOUNDARY_RECORDED",
+      "selection": "Keep mocked/unit, source-integrity, PDF, real-database, statutory-review and release evidence separate. Synthetic zero values and test-only review labels never populate canonical reviewer records. Keep the September-only runner and October pending scope until admitted rules and supported inputs exist.",
+      "limit": "Independent statutory F-01 through F-22 expected outputs, real integrated acceptance and production admission remain pending. No missing attendance is inferred."
+    },
+    {
+      "id": "ED-05",
+      "decisions": [
+        "D-12",
+        "D-13",
+        "D-14"
+      ],
+      "tasks": [
+        "ENG-04",
+        "ENG-07"
+      ],
+      "status": "SCOPED_REAL_POSTGRES_VERIFIED",
+      "selection": "Real PostgreSQL: 7/7 service transaction tests and 3/3 SQL approval/rollback checks passed on a fresh local database after 120 migrations. Existing mocked/unit regression: 152/152 tests across five suites passed. Disposable-target guards: 7/7 pure checks passed.",
+      "limit": "Full new-payroll creation with admitted statutory rules, cross-month history membership, approval-time stale-history comparison, real network-loss testing, and the complete downstream lifecycle remain unverified. The acknowledgement-loss test injects a client error after a real commit; it does not cut the network. SQL approval checks exercise migrations/triggers directly, not the full authenticated approval service.",
+      "evidence": "docs/payroll-blockers/evidence/postgres-run.json"
+    }
+  ],
+  "productionCallerAudit": {
+    "result": "Current production caller audit: actions/payroll/payroll-control.actions.ts and prisma/disposable-business-workflows.ts both call calculatePayrollRun without an injected client, so both use the owning-client SERIALIZABLE/retry boundary. No additional production caller change is needed in this checkout. Future injected TransactionClient callers must establish isolation/retry explicitly; mocked callers are not database proof.",
+    "scope": "Source search across actions, prisma, scripts and services excluding tests/generated runners; two production call sites found.",
+    "callers": [
+      {
+        "file": "actions/payroll/payroll-control.actions.ts",
+        "sha256": "a7d72904c319ec608c5b5303d263a94e9a4b99149b3f004ac4f36d36931e4b71"
+      },
+      {
+        "file": "prisma/disposable-business-workflows.ts",
+        "sha256": "856123487437d2f564bdc277af0fec1b9eee457d9ac3f00fe066ce8adc9c6e53"
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "at": "2026-11-10T10:58:20.209Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "scope": "Actual read-only source and retained fixture preflight; authorization to execute the frozen isolated runtime recipe",
+  "checks": {
+    "buildReviewAccepted": true,
+    "sourceGatePassed": true,
+    "zeroCurrentDelta": true,
+    "sourceFiles9788": true,
+    "all63CurrentHashes": true,
+    "all63ConsumerHashes": true,
+    "fixturePassed": true,
+    "identitiesExact": true,
+    "noFixtureMutations": true,
+    "retainedDigestsMatch": true,
+    "zeroSessionsAudits": true,
+    "fixture10actors20accounts": true,
+    "privateFixtureHash": true,
+    "unchangedRecipes": true,
+    "resumeReceiptMatches": true,
+    "reconciliationMatches": true
+  },
+  "evidence": [
+    {
+      "path": "runtime-source-admission-attempt02.json",
+      "sha256": "105b1fa086ac5e63ec5d6b470b0ef3b143a11bca69f39b5f721c82e6c0c466d7"
+    },
+    {
+      "path": "database/fixture-readiness-attempt02.json",
+      "sha256": "88a107ac4f34367d8b17dc5b768322e196c448a9ebeacda946149c90c1dbf509"
+    },
+    {
+      "path": "independent-review/BUILD-OUTCOME-REVIEW-attempt02.json",
+      "sha256": "6252e699d36a046d940a81329eef1f6dd33cdbccb99491843a10b89270abad79"
+    },
+    {
+      "path": "independent-review/RUNTIME-RECIPE-ADMISSION-attempt02.json",
+      "sha256": "c543f9366b37feda3efacaafcd1584a315251f892934b3c1cfc5d997776e4f87"
+    }
+  ],
+  "permittedNext": "Execute frozen run-runtime-attempt02.cjs against only the admitted local artifact, synthetic database and local ports; obtain independent actual-outcome review before qualification advancement.",
+  "limitations": [
+    "currentCheckoutQualified in source admission means source identity only, not successful runtime qualification.",
+    "Actual native and browser behavior and per-request database effects remain untested until runtime evidence is completed.",
+    "Original database launcher timeout remains recorded and reconciled."
+  ],
+  "runtimeQualification": false,
+  "productionReady": false
+}

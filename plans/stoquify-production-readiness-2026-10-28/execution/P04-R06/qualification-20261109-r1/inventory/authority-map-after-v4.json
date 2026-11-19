@@ -1,0 +1,746 @@
+{
+  "schema_version": 4,
+  "package_id": "P04-R06",
+  "captured_at": "2026-11-10T08:47:05.304Z",
+  "status": "resume_source_binding_pending_independent_admission_and_runtime",
+  "source_identity": "d156380731346ebfee88a9c7fcc936468e189e9ae4f949129366bc1836cd78c5",
+  "source_manifest": "source-after-manifest-v4.json",
+  "versions": {
+    "better_auth": "1.6.14",
+    "next": "15.5.27"
+  },
+  "counts": {
+    "http_candidate_paths": 30,
+    "protected_own_account": 17,
+    "optional_session_identity": 1,
+    "public_session_cleanup": 1,
+    "public_authentication_recovery_or_status": 11,
+    "pathless_server_api": 1
+  },
+  "pathless_server_api": {
+    "name": "setPassword",
+    "source": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+    "http_path": null,
+    "guard": "sensitiveSessionMiddleware; not an HTTP endpoint",
+    "current_guard": "Application before hook protected default, then existing sensitiveSessionMiddleware. Runtime not exercised; source and unit evidence only."
+  },
+  "operations": [
+    {
+      "id": "R06-BA01",
+      "path": "/api/auth/list-accounts",
+      "methods": [
+        "GET"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "line": 14,
+      "source_sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "existing_middleware": "sessionMiddleware",
+      "existing_guard": "Cache-accepting sessionMiddleware; current subject account metadata.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA02",
+      "path": "/api/auth/link-social",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "line": 68,
+      "source_sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "existing_middleware": "sessionMiddleware",
+      "existing_guard": "Cache-accepting sessionMiddleware; configured-provider and OAuth/link constraints; no hosted callback admission.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": "Google configured only when both provider credentials exist; hosted exchange is external, not a local positive.",
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA03",
+      "path": "/api/auth/unlink-account",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "line": 193,
+      "source_sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "existing_middleware": "freshSessionMiddleware",
+      "existing_guard": "Cache-accepting freshSessionMiddleware plus account ownership and last-account safeguard; test revoked session with two synthetic accounts.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA04",
+      "path": "/api/auth/get-access-token",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "line": 301,
+      "source_sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "existing_middleware": null,
+      "existing_guard": "resolveUserId uses current request session subject over caller userId, but getSessionFromCtx accepts cache; provider branch may refresh and write account credentials.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA05",
+      "path": "/api/auth/refresh-token",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "line": 338,
+      "source_sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "existing_middleware": null,
+      "existing_guard": "Same subject resolution as get-access-token; provider refresh/account update is separate external effect.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA06",
+      "path": "/api/auth/account-info",
+      "methods": [
+        "GET"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "line": 443,
+      "source_sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "existing_middleware": null,
+      "existing_guard": "resolveUserId then account/provider ownership; can refresh tokens/provider fetch; isolate and no live credentials.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA07",
+      "path": "/api/auth/callback/:id",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/callback.mjs",
+      "line": 21,
+      "source_sha256": "bc4980902c0bca2863b4bb4c1d51a5c28ae3882565a320679a2eb1f84c38919e",
+      "existing_middleware": null,
+      "existing_guard": "OAuth state/nonce/provider callback validation; POST normalizes into GET; token exchange cannot target live provider in qualification.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": "Google configured only when both provider credentials exist; hosted exchange is external, not a local positive.",
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA08",
+      "path": "/api/auth/send-verification-email",
+      "methods": [
+        "POST"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/email-verification.mjs",
+      "line": 36,
+      "source_sha256": "9e33bab463d366c0e8fc947500fb98fe143228b14f69b9e247eec4215a224249",
+      "existing_middleware": null,
+      "existing_guard": "App has no emailVerification.sendVerificationEmail callback; disabled here.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": "Delivery callback is not configured by current Better Auth options; public request handling must retain existing safe behavior.",
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA09",
+      "path": "/api/auth/verify-email",
+      "methods": [
+        "GET"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/email-verification.mjs",
+      "line": 110,
+      "source_sha256": "9e33bab463d366c0e8fc947500fb98fe143228b14f69b9e247eec4215a224249",
+      "existing_middleware": "originCheck((ctx) => ctx.query.callbackURL)",
+      "existing_guard": "Signed verification token/expiry and trusted callback; synthetic invalid token only unless fixture explicitly admitted.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA10",
+      "path": "/api/auth/error",
+      "methods": [
+        "GET"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/error.mjs",
+      "line": 346,
+      "source_sha256": "4edcaa5f7a88fae70c364c04fd2f3e05d91ecdeaed9c50ef0c172ab14f457803",
+      "existing_middleware": null,
+      "existing_guard": "Public provider error surface; supplied error text/redirect handling must not expose private state.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA11",
+      "path": "/api/auth/ok",
+      "methods": [
+        "GET"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/ok.mjs",
+      "line": 4,
+      "source_sha256": "1ee6e836bb9986404eeaaa9052f7eca6d88134aa359774b46460714a9fa64daa",
+      "existing_middleware": null,
+      "existing_guard": "Public liveness response; no tenant business state.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA12",
+      "path": "/api/auth/request-password-reset",
+      "methods": [
+        "POST"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "line": 20,
+      "source_sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "existing_middleware": "originCheck((ctx) => ctx.body.redirectTo)",
+      "existing_guard": "Origin-safe redirect; configured app has no sendResetPassword callback, so disabled request flow; do not infer application actions have no separate reset flow.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": "Delivery callback is not configured by current Better Auth options; public request handling must retain existing safe behavior.",
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA13",
+      "path": "/api/auth/reset-password/:token",
+      "methods": [
+        "GET"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "line": 83,
+      "source_sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "existing_middleware": "originCheck((ctx) => ctx.query.callbackURL)",
+      "existing_guard": "Verification token and expiry plus trusted callback URL.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA14",
+      "path": "/api/auth/reset-password",
+      "methods": [
+        "POST"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "line": 120,
+      "source_sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "existing_middleware": null,
+      "existing_guard": "Token/expiry/password bounds; consumes verification and updates credentials, revokeSessionsOnPasswordReset true. Only owned fixtures.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA15",
+      "path": "/api/auth/verify-password",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "line": 167,
+      "source_sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "existing_middleware": "sensitiveSessionMiddleware",
+      "existing_guard": "HTTP POST endpoint with password-string body and sensitiveSessionMiddleware. metadata.scope=server is descriptive; current router excludes only metadata.SERVER_ONLY. Actual valid-input authorized200; wrong-password400; anonymous401; foreign-origin403; revoked/expired default and query-variant401. No unauthorized native changes.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA16",
+      "path": "/api/auth/get-session",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "category": "optional_session_identity",
+      "source": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "line": 16,
+      "source_sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "existing_middleware": null,
+      "existing_guard": "Signed token and optional signed 300-second cookie cache; default may not query DB. POST declared but requires deferSessionRefresh, absent in app config.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "No or invalid authority returns no private identity; valid current active/unlocked subject returns normal own session. Do not require tenant/role/module for the core identity envelope.",
+      "configuration_limit": "POST declared but deferSessionRefresh absent; preserve unsupported405 behavior.",
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Fresh raw exported getSession() endpoint with cached context discarded and disableCookieCache/disableRefresh forced; anonymous native null retained; present session current active/notcurrentlylocked account required.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA17",
+      "path": "/api/auth/list-sessions",
+      "methods": [
+        "GET"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "line": 355,
+      "source_sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "existing_middleware": "sessionMiddleware",
+      "existing_guard": "Cache-accepting sessionMiddleware; lists active sessions for session subject. Treat sibling tokens returned as private.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA18",
+      "path": "/api/auth/revoke-session",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "line": 385,
+      "source_sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "existing_middleware": "sensitiveSessionMiddleware",
+      "existing_guard": "sensitiveSessionMiddleware cache disabled; only same-subject target token revoked; unknown/other subject token yields nondisclosing success.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA19",
+      "path": "/api/auth/revoke-sessions",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "line": 428,
+      "source_sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "existing_middleware": "sensitiveSessionMiddleware",
+      "existing_guard": "sensitiveSessionMiddleware cache disabled; deletes same subject sessions.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA20",
+      "path": "/api/auth/revoke-other-sessions",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "line": 458,
+      "source_sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "existing_middleware": "sensitiveSessionMiddleware",
+      "existing_guard": "sensitiveSessionMiddleware cache disabled; preserves current token, deletes other active same-subject sessions.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA21",
+      "path": "/api/auth/sign-in/social",
+      "methods": [
+        "POST"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "line": 39,
+      "source_sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+      "existing_middleware": null,
+      "existing_guard": "Google only when both configured values exist; isolate absent-provider/invalid state and origin negatives; hosted positive remains external.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": "Google configured only when both provider credentials exist; hosted exchange is external, not a local positive.",
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA22",
+      "path": "/api/auth/sign-in/email",
+      "methods": [
+        "POST"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "line": 143,
+      "source_sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+      "existing_middleware": "formCsrfMiddleware",
+      "existing_guard": "Credential sign-in, formCSRF/origin; app account lock/isActive hooks, verification required, custom password hash/verify; login/audit/session bookkeeping intended.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA23",
+      "path": "/api/auth/sign-out",
+      "methods": [
+        "POST"
+      ],
+      "category": "public_session_cleanup",
+      "source": "node_modules/better-auth/dist/api/routes/sign-out.mjs",
+      "line": 4,
+      "source_sha256": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3",
+      "existing_middleware": null,
+      "existing_guard": "Signed session token deletion and cookie clearing; classify intended session changes, no business writes.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Allow clearing/revoking own presented session even if inactive/locked/revoked; do not mint new authority.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA24",
+      "path": "/api/auth/sign-up/email",
+      "methods": [
+        "POST"
+      ],
+      "category": "public_authentication_recovery_or_status",
+      "source": "node_modules/better-auth/dist/api/routes/sign-up.mjs",
+      "line": 21,
+      "source_sha256": "452803772ba80e56b077ea8e1c65ccadd1ad0a2afa86d6f23e3f76b39b1b3d9e",
+      "existing_middleware": "formCsrfMiddleware",
+      "existing_guard": "Credentials enabled but app user.create.before refuses unknown emails; creation gate/duplicate handling, input:false organizationId/isVerified fields.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Preserve existing body/token/state/origin and provider/configuration checks; do not impose application RBAC.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Explicit application before-hook exception; existing native credential/recovery/origin/provider/cleanup rules remain.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA25",
+      "path": "/api/auth/update-session",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/update-session.mjs",
+      "line": 9,
+      "source_sha256": "70860209765aab66ba8c2d973e30c648dbcc0ecc0221a1778af57233093761e2",
+      "existing_middleware": "sessionMiddleware",
+      "existing_guard": "Cache-accepting sessionMiddleware; only configured writable additional session fields; none configured in app. Forged assurance/user/expiry fields must not write.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA26",
+      "path": "/api/auth/update-user",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+      "line": 12,
+      "source_sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "existing_middleware": "sessionMiddleware",
+      "existing_guard": "App POST interceptor replaces core endpoint with updateSelfProfileHttp: trusted origin, JSON, requireSession, review-hash/requestId and safe errors.",
+      "app_override": "POST routed to updateSelfProfileHttp; current RBAC, same-origin, strict input and audited self-profile service",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA27",
+      "path": "/api/auth/change-password",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+      "line": 75,
+      "source_sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "existing_middleware": "sensitiveSessionMiddleware",
+      "existing_guard": "sensitiveSessionMiddleware, password verification and bounds; optional own-session revocation.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": null,
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA28",
+      "path": "/api/auth/delete-user",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+      "line": 215,
+      "source_sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "existing_middleware": "sensitiveSessionMiddleware",
+      "existing_guard": "sensitiveSessionMiddleware; app user.deleteUser.enabled absent, disabled.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": "User deletion disabled in current application configuration.",
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA29",
+      "path": "/api/auth/delete-user/callback",
+      "methods": [
+        "GET"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+      "line": 321,
+      "source_sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "existing_middleware": "originCheck((ctx) => ctx.query.callbackURL)",
+      "existing_guard": "Deletion enabled flag absent; verification/session relation and trusted callback.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": "User deletion disabled in current application configuration.",
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "id": "R06-BA30",
+      "path": "/api/auth/change-email",
+      "methods": [
+        "POST"
+      ],
+      "category": "protected_own_account",
+      "source": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+      "line": 377,
+      "source_sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "existing_middleware": "sensitiveSessionMiddleware",
+      "existing_guard": "sensitiveSessionMiddleware; app user.changeEmail.enabled absent, disabled.",
+      "app_override": "Better Auth handler",
+      "required_current_authority": "Authentic current unexpired persisted session; same current subject; current user active and not indefinitely/future locked. Preserve endpoint-specific password/freshAge/ownership/origin checks.",
+      "configuration_limit": "Email change disabled in current application configuration.",
+      "runtime_status": "pending_final_source_candidate_and_runtime_admission",
+      "current_guard": "Application before hook resolves raw session with store failures propagated and requires authentic persisted unexpired session and current active/notcurrentlylocked user, followed by existing endpoint-specific controls; custom /update-user HTTP self-profile service retains requireSession/current transactional authority.",
+      "application_source_sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    }
+  ],
+  "current_authority_layers": [
+    {
+      "id": "AUTH-CORE",
+      "entry": "app/api/auth/[...all]/route.ts",
+      "config": "lib/auth.ts",
+      "facts": [
+        "GET delegates directly to Better Auth. POST only intercepts update-user.",
+        "cookieCache enabled with300-second lifetime. No application plugins configured.",
+        "App before/after hooks currently apply account lifecycle checks only to credential sign-in.",
+        "Default SDK sessionMiddleware/freshSessionMiddleware may accept signed cache before current DB lookup. freshAge proves age, not revocation.",
+        "sensitiveSessionMiddleware requests cache bypass, but getSessionFromCtx merges caller query after its config and short-circuits an existing context session; actual V02 query override bypass was not confirmed."
+      ]
+    },
+    {
+      "id": "APP-RBAC",
+      "entry": "lib/security/rbac.ts",
+      "facts": [
+        "auth.api.getSession explicitly requests disableCookieCache:true.",
+        "Current user is selected by immutable session user ID with isActive:true; active nondeleted org, current lock and email verification checked.",
+        "Current roles/grants loaded and stale organization mismatch denied. No role-name-only authority.",
+        "These are application tenant/permission checks, not a mandatory global policy for public or own-account core auth endpoints."
+      ]
+    },
+    {
+      "id": "APP-SESSION",
+      "entry": "lib/security/auth-session.ts",
+      "facts": [
+        "requireSession repeats current persisted session ID/token/user/expiry mirror check and delegates RBAC.",
+        "Fresh-auth assurance tied to current tenant/session and server-owned assurance metadata."
+      ]
+    },
+    {
+      "id": "SELF-PROFILE",
+      "entry": "services/users/self-profile-http.service.ts",
+      "facts": [
+        "Catch-all custom update-user uses reviewed profile service with current authority, strict input and origin checks; preserve this route."
+      ]
+    },
+    {
+      "id": "PROTECTED-ACTIONS",
+      "entry": "services/_shared/protect.ts",
+      "facts": [
+        "Permission, optional fresh auth, tenant and optional module gates are separate application action concerns."
+      ]
+    }
+  ],
+  "authority_policy": {
+    "recommended_core_boundary": [
+      "Validate signed cookie authority against current persisted session and current subject before protected core payload or mutation.",
+      "Deny missing/expired/revoked session and inactive/permanently locked/future-locked account without private data or unauthorized native writes.",
+      "Expired lock is not an active lock; preserve legitimate active account behavior.",
+      "Do not derive authority from supplied userId/email/orgId/role names; preserve SDK own-account selection.",
+      "Keep existing public auth/recovery/callback/cleanup behavior. Do not introduce tenant/module/role/email-verification requirements across all core own-account endpoints."
+    ],
+    "failure_behavior": "Nullable get-session may return null200 or explicit denial without private fields. Protected resource/action operations deny401/403; unsupported methods retain their source-grounded status. No raw tokens/passwords/cookies in evidence.",
+    "operation_selection": {
+      "policy": "Explicit public template allowlist; protected by default for all other operations including unknown future/pathless API operations.",
+      "public_templates": [
+        "/callback/:id",
+        "/send-verification-email",
+        "/verify-email",
+        "/error",
+        "/ok",
+        "/request-password-reset",
+        "/reset-password/:token",
+        "/reset-password",
+        "/sign-in/social",
+        "/sign-in/email",
+        "/sign-up/email"
+      ],
+      "cleanup_exception": "/sign-out",
+      "optional_identity": "/get-session",
+      "pathless_setPassword": "Protected default; no HTTP path.",
+      "source_binding": "node_modules/better-auth/dist/api/to-auth-endpoints.mjs sets hook ctx.path to endpoint.path, preserving :id/:token templates."
+    }
+  },
+  "source_cautions": [
+    "Before hooks run before endpoint execution; nested getSessionFromCtx uses the SDK route directly, not outer application hooks. Avoid recursive auth.api.getSession from its own before hook.",
+    "If a hook changes query, caller disableCookieCache=false must not override enforced freshness; preexisting ctx.context.session must not retain a stale cache.",
+    "Global cookieCache:false alone does not enforce current account lifecycle.",
+    "A short preflight query is not transaction-level proof against a simultaneous revocation between admission and mutation; no linearizability claim without explicit race evidence."
+  ],
+  "graph_evidence": {
+    "file": "graphify-out/graph_app.json",
+    "last_written": "2026-08-09T11:14:24.214Z",
+    "node_id": "api_auth_all_route_ts",
+    "community": 188,
+    "edges_for_node": 0,
+    "limitation": "August2026 graph is discovery-only and lacks this route import edges; live captured source governs all behavior."
+  },
+  "prior_evidence": {
+    "finding": "P04-V02 V02-F01/V02-F02",
+    "confirmed_groups": 9,
+    "unchanged_comparable_files": 36,
+    "additional_current_inputs": 12,
+    "not_a_current_runtime_pass": true
+  },
+  "before_map": "authority-map.json",
+  "repair_summary": {
+    "product_files": [
+      "lib/auth.ts",
+      "lib/security/auth-session.ts"
+    ],
+    "cookie_cache_enabled": false,
+    "current_authority_refresh": "Raw getSession() endpoint runs with forced GET/object+headers result, fresh cookie-cache-disabled/refresh-disabled query and discarded cached session context. Store failures propagate; callers cannot convert the fresh lookup to a cache read.",
+    "normalization": "Only SDK401 CURRENT_SESSION_UNAVAILABLE becomes existing RbacError401 in requireSession; unexpected errors propagate.",
+    "excluded_policy": "Core own-account admission does not add tenant membership, role, module or verified-email requirements. Existing application guard requirements remain."
+  },
+  "previous_after_map": "authority-map-after-v3.json",
+  "correction": {
+    "source": "lib/auth.ts",
+    "previous_helper": "getSessionFromCtx",
+    "current_lookup": "raw exported getSession() endpoint",
+    "reason": "getSessionFromCtx catches lookup failures and returns null; optional get-session must distinguish successful anonymous absence from failed authority lookup.",
+    "forced_inputs": {
+      "method": "GET",
+      "asResponse": false,
+      "returnHeaders": true,
+      "returnStatus": false,
+      "query": {
+        "disableCookieCache": true,
+        "disableRefresh": true
+      },
+      "cached_context_session": null
+    },
+    "failure_policy": "Lookup failures propagate; only a successful empty session lookup retains native get-session null semantics. Native raw lookup headers are forwarded into responseHeaders.",
+    "evidence_type": "Current source and newly authored unit regression; real runtime fault reproduction not claimed.",
+    "header_propagation": "Preserve each set-cookie using append; overwrite singleton headers using set, matching installed Better Auth helper. Store errors still propagate before any optional anonymous fallthrough."
+  },
+  "previous_snapshot_disposition": "V2 is pre-header-review historical source, not final admitted source.",
+  "resume_provenance": {
+    "original_before_map": {
+      "path": "authority-map.json",
+      "source_identity": "ddeb0b5ad000a37525c3bf3392b5821d2b80a397a26d8826eb5895f6e65f2a36",
+      "sha256": "19043060e47906edfc4b2135906a2a78c419f582a6899468f560bfab293edc9a"
+    },
+    "previous_repaired_map": {
+      "path": "authority-map-after-v3.json",
+      "source_identity": "074a713f341a1df2e57f1bf0b8704e3f61b8600c3d99709eb09fb7d02fc2a507",
+      "sha256": "a9c2de763549951c49776853617b5ca00eef7288968c80bc746e1ff766c3fb6c"
+    },
+    "current_type_assertion": "One unattributed concurrent type-only assertion at lib/auth.ts:63; emitted JS identical under inspected TS5.8.3; behavioral text retained as source-derived only.",
+    "erasure_receipt": "resume-20261110-r1/typescript-erasure.json",
+    "former_48_source_identity": "745a634e5640187a55216fabdc9e00118399aba672c6d8a3a31af0f1d4c22ef6"
+  }
+}

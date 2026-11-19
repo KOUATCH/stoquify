@@ -1,0 +1,121 @@
+{
+  "passed": true,
+  "publicationKind": "SANITIZED_SUPPLEMENT_TO_UNCHANGED_SYNTHETIC_EXPANDED_SUMMARY",
+  "checks": [
+    {
+      "name": "actual-approved-opening-and-replay",
+      "passed": true
+    },
+    {
+      "name": "actual-collections-and-provider-links",
+      "passed": true
+    },
+    {
+      "name": "electronic-claim-denials-no-effects",
+      "passed": true
+    },
+    {
+      "name": "actual-concurrent-claim-exclusion",
+      "passed": true
+    },
+    {
+      "name": "assessment-before-provider-and-schedule-evidence",
+      "passed": true
+    },
+    {
+      "name": "actual-monthly-import-independent-signatures",
+      "passed": true
+    },
+    {
+      "name": "actual-bank-bs-approval-certification-and-seal",
+      "passed": true
+    },
+    {
+      "name": "actual-closed-period-denial-and-retained-recovery",
+      "passed": true
+    }
+  ],
+  "counts": {
+    "journals": 4,
+    "customerSettlements": 3,
+    "claimedProviderTransactions": 2,
+    "signedReconciliationRuns": 2,
+    "approvedBankBalanceEvidence": 1,
+    "certifiedExports": 1,
+    "periodCloseEvents": 1,
+    "periodReopenEvents": 0,
+    "providerAccounts": 2,
+    "activeOpeningExecutions": 1,
+    "openingReceivables": 1,
+    "sales": 0,
+    "payrollRuns": 0,
+    "statutoryCertifiedDocuments": 0
+  },
+  "auxiliary": {
+    "denials": {
+      "negativeKinds": [
+        "foreign",
+        "rail",
+        "amount",
+        "currency",
+        "mapping",
+        "reused-native",
+        "changed-primary-replay"
+      ],
+      "allNegativeFinancialSnapshotsUnchanged": true
+    },
+    "race": {
+      "injectedClaimFailureRolledBack": true,
+      "claimFaultMarker": {
+        "reached": true,
+        "invocations": 1
+      },
+      "crossWorkflowContenders": 2,
+      "crossWorkflowFinancialWinners": 1,
+      "crossWorkflowWinner": "POS",
+      "twoCollectionContenders": 2,
+      "twoCollectionFinancialWinners": 1,
+      "trackedStockFixture": true,
+      "losingContenderCode": "CONFLICT",
+      "openingStock": {
+        "quantity": "2.000",
+        "averageCost": "10.00",
+        "value": "20.00"
+      },
+      "afterContentionStock": {
+        "quantity": "1.000",
+        "averageCost": "10.00",
+        "value": "10.00"
+      }
+    }
+  },
+  "earnedInternalTerminalStates": true,
+  "seededInternalFinancialTerminalStates": false,
+  "syntheticProviderConfirmationFacts": true,
+  "initialApprovedProviderMappingConfiguration": true,
+  "scope": "Internal opening-receivable collection and monthly close only; not an October new sale, live-provider authenticity/processing, statutory approval or deployment.",
+  "source": {
+    "originalExpandedSummary": {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-monthly-close-service.summary.json",
+      "sha256": "1c3bfeb4405f1b84b2bb9d2d826d7b55146f0fbb9eeb9f7ffbc051a0540c8b79",
+      "bytes": 16598
+    },
+    "privateExactPreservation": {
+      "path": ".codex-tmp/close-monthly-20261110-54a799a9fc/monthly-close-service-summary.expanded-original.json",
+      "sha256": "1c3bfeb4405f1b84b2bb9d2d826d7b55146f0fbb9eeb9f7ffbc051a0540c8b79",
+      "bytes": 16598
+    },
+    "originalQualificationReceipt": {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-RESULT.json",
+      "sha256": "6c26fe6b7970bd3feead668845c6099b08105469b40d97039528d96e36cce36f",
+      "bytes": 2718
+    },
+    "privateDetailedServiceEvidence": {
+      "path": ".codex-tmp/close-monthly-20261110-54a799a9fc/monthly-close-service-evidence.private.json",
+      "sha256": "9fac447d6f7b0acf1bb2ac25300c7bd22492c7ea126c1db5685fdbca80d166c2",
+      "bytes": 38678
+    },
+    "historicalQualificationRunnerSha256": "534d460d6ce4540352794d965ecadafecc7b977f3c2d049604f33aaba0843309"
+  },
+  "publicationNote": "This is a projection of retained executed evidence, not a new execution or replacement qualification. Original expanded public summary remains at its unchanged path for historical integrity references; it contains synthetic financial/source data and must not be described as counts-only or private."
+}

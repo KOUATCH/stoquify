@@ -1,0 +1,550 @@
+{
+  "phases": [
+    {
+      "name": "reference",
+      "organizationId": "synth12_douala",
+      "status": "passed",
+      "result": {
+        "locations": 3,
+        "products": 12,
+        "customers": 12,
+        "suppliers": 6,
+        "personas": 11
+      }
+    },
+    {
+      "name": "accounting-setup",
+      "organizationId": "synth12_douala",
+      "status": "passed",
+      "result": {
+        "accounts": 26,
+        "installedPostingRules": [
+          "POS-SALE-COMPLETION",
+          "POS-PAYMENT-RECEIPT",
+          "POS-REFUND",
+          "POS-VOID",
+          "DELIVERY-GOODS-ISSUE",
+          "DELIVERY-SALES-INVOICE",
+          "AP-SUPPLIER-INVOICE",
+          "AP-SUPPLIER-PAYMENT",
+          "AP-PURCHASE-RETURN",
+          "AP-SUPPLIER-CREDIT-NOTE",
+          "AR-CUSTOMER-SETTLEMENT",
+          "PAYROLL-RUN",
+          "PAYROLL-PAYMENT",
+          "PAYROLL-EMPLOYEE-RECEIVABLE",
+          "PAYROLL-EMPLOYEE-BALANCE-SETTLEMENT",
+          "INVENTORY-ADJUSTMENT"
+        ],
+        "pendingPostingRules": []
+      }
+    },
+    {
+      "name": "hris-drafts",
+      "organizationId": "synth12_douala",
+      "status": "passed",
+      "result": {
+        "employees": 12,
+        "contracts": 12,
+        "linkedApplicationUsers": 11,
+        "intentionallyUnmappedEmployees": 1,
+        "status": "Employee references prepared; lifecycle state is independently verified after business workflows"
+      }
+    },
+    {
+      "name": "reference",
+      "organizationId": "synth12_yaounde",
+      "status": "passed",
+      "result": {
+        "locations": 3,
+        "products": 12,
+        "customers": 12,
+        "suppliers": 6,
+        "personas": 11
+      }
+    },
+    {
+      "name": "accounting-setup",
+      "organizationId": "synth12_yaounde",
+      "status": "passed",
+      "result": {
+        "accounts": 26,
+        "installedPostingRules": [
+          "POS-SALE-COMPLETION",
+          "POS-PAYMENT-RECEIPT",
+          "POS-REFUND",
+          "POS-VOID",
+          "DELIVERY-GOODS-ISSUE",
+          "DELIVERY-SALES-INVOICE",
+          "AP-SUPPLIER-INVOICE",
+          "AP-SUPPLIER-PAYMENT",
+          "AP-PURCHASE-RETURN",
+          "AP-SUPPLIER-CREDIT-NOTE",
+          "AR-CUSTOMER-SETTLEMENT",
+          "PAYROLL-RUN",
+          "PAYROLL-PAYMENT",
+          "PAYROLL-EMPLOYEE-RECEIVABLE",
+          "PAYROLL-EMPLOYEE-BALANCE-SETTLEMENT",
+          "INVENTORY-ADJUSTMENT"
+        ],
+        "pendingPostingRules": []
+      }
+    },
+    {
+      "name": "hris-drafts",
+      "organizationId": "synth12_yaounde",
+      "status": "passed",
+      "result": {
+        "employees": 12,
+        "contracts": 12,
+        "linkedApplicationUsers": 11,
+        "intentionallyUnmappedEmployees": 1,
+        "status": "Employee references prepared; lifecycle state is independently verified after business workflows"
+      }
+    },
+    {
+      "name": "reference",
+      "organizationId": "synth12_bafoussam",
+      "status": "passed",
+      "result": {
+        "locations": 3,
+        "products": 12,
+        "customers": 12,
+        "suppliers": 6,
+        "personas": 11
+      }
+    },
+    {
+      "name": "accounting-setup",
+      "organizationId": "synth12_bafoussam",
+      "status": "passed",
+      "result": {
+        "accounts": 26,
+        "installedPostingRules": [
+          "POS-SALE-COMPLETION",
+          "POS-PAYMENT-RECEIPT",
+          "POS-REFUND",
+          "POS-VOID",
+          "DELIVERY-GOODS-ISSUE",
+          "DELIVERY-SALES-INVOICE",
+          "AP-SUPPLIER-INVOICE",
+          "AP-SUPPLIER-PAYMENT",
+          "AP-PURCHASE-RETURN",
+          "AP-SUPPLIER-CREDIT-NOTE",
+          "AR-CUSTOMER-SETTLEMENT",
+          "PAYROLL-RUN",
+          "PAYROLL-PAYMENT",
+          "PAYROLL-EMPLOYEE-RECEIVABLE",
+          "PAYROLL-EMPLOYEE-BALANCE-SETTLEMENT",
+          "INVENTORY-ADJUSTMENT"
+        ],
+        "pendingPostingRules": []
+      }
+    },
+    {
+      "name": "hris-drafts",
+      "organizationId": "synth12_bafoussam",
+      "status": "passed",
+      "result": {
+        "employees": 12,
+        "contracts": 12,
+        "linkedApplicationUsers": 11,
+        "intentionallyUnmappedEmployees": 1,
+        "status": "Employee references prepared; lifecycle state is independently verified after business workflows"
+      }
+    },
+    {
+      "name": "business-workflows",
+      "organizationId": "synth12_douala",
+      "status": "passed",
+      "result": {
+        "completed": 93,
+        "findings": [
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2025-11",
+            "message": "No published regulatory pack covers CM on 2025-11-30."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2025-12",
+            "message": "No published regulatory pack covers CM on 2025-12-31."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-01",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-02",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-03",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-04",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-05",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-06",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-07",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-08",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-09",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-10",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          }
+        ]
+      }
+    },
+    {
+      "name": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "status": "passed",
+      "result": {
+        "completed": 93,
+        "findings": [
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2025-11",
+            "message": "No published regulatory pack covers CM on 2025-11-30."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2025-12",
+            "message": "No published regulatory pack covers CM on 2025-12-31."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-01",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-02",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-03",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-04",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-05",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-06",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-07",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-08",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-09",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-10",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          }
+        ]
+      }
+    },
+    {
+      "name": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "status": "passed",
+      "result": {
+        "completed": 93,
+        "findings": [
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2025-11",
+            "message": "No published regulatory pack covers CM on 2025-11-30."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2025-12",
+            "message": "No published regulatory pack covers CM on 2025-12-31."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-01",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-02",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-03",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-04",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-05",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-06",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-07",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-08",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-09",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          },
+          {
+            "scenario": "payroll-period-prerequisite",
+            "month": "2026-10",
+            "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance."
+          }
+        ]
+      }
+    }
+  ],
+  "issues": [
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-11\",\"message\":\"No published regulatory pack covers CM on 2025-11-30.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-12\",\"message\":\"No published regulatory pack covers CM on 2025-12-31.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-01\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-02\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-03\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-04\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-05\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-06\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-07\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-08\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-09\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-10\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-11\",\"message\":\"No published regulatory pack covers CM on 2025-11-30.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-12\",\"message\":\"No published regulatory pack covers CM on 2025-12-31.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-01\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-02\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-03\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-04\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-05\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-06\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-07\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-08\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-09\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-10\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-11\",\"message\":\"No published regulatory pack covers CM on 2025-11-30.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-12\",\"message\":\"No published regulatory pack covers CM on 2025-12-31.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-01\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-02\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-03\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-04\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-05\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-06\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-07\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-08\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-09\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-10\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    }
+  ],
+  "scenarios": []
+}

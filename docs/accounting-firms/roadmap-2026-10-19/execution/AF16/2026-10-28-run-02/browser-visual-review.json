@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-28",
+  "reviewed": true,
+  "evidenceClass": "Manual inspection of retained failure screenshots; not an accessibility pass",
+  "screenshots": [
+    {
+      "file": "client-failure.png",
+      "observation": "English client-owner page at 1440x1000. The form displays Accountant access granted while the submit button reads Saving and is disabled. Reviewer email has been filled for the next operation. Labels, entered consent fields and status are readable in the capture. The first committed grant is confirmed separately by the database diagnostic."
+    },
+    {
+      "file": "failure.png",
+      "observation": "Blank manager page: the test had not yet navigated that browser page. This is a harness-stage capture, not evidence of a blank application route."
+    }
+  ],
+  "notExecuted": ["French layout", "mobile layout", "keyboard recovery matrix", "axe scans", "engagement lifecycle states"],
+  "diagnosticScreenshots": "Not produced: diagnostic timed out before its screenshot step."
+}

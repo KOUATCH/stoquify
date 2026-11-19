@@ -27,12 +27,12 @@ beforeEach(() => {
   ;(db.$transaction as jest.Mock).mockImplementation(fn => fn(db))
   ;(db.$executeRaw as jest.Mock).mockResolvedValue(0)
   ;(observeModuleAccess as jest.Mock).mockResolvedValue({ allowed: true })
-  ;(readCurrentInvitationIssuer as jest.Mock).mockResolvedValue({ permissions: ctx.permissions })
+  ;(readCurrentInvitationIssuer as jest.Mock).mockResolvedValue({ permissions: ctx.permissions, roleCodes: ["manager"] })
   ;(db.customerStatementDelivery.findMany as jest.Mock).mockResolvedValue([statement])
   ;(db.customerStatementDelivery.findFirst as jest.Mock).mockResolvedValue(null)
   ;(db.businessEventOutbox.findMany as jest.Mock).mockResolvedValue([{ id: "queue", attempts: 2 }])
-  ;(db.role.findMany as jest.Mock).mockResolvedValue([{ id: "role", organizationId: ctx.orgId, permissions: [] }])
-  ;(db.$queryRaw as jest.Mock).mockResolvedValue([{ id: "event", recordedAt: at, inviteId: "invite", email: "private@example.invalid" }])
+  ;(db.role.findMany as jest.Mock).mockResolvedValue([{ id: "role", code: "member", organizationId: ctx.orgId, permissions: [] }])
+  ;(db.$queryRaw as jest.Mock).mockResolvedValue([{ id: "event", recordedAt: at, inviteId: "invite", roleId: "role", email: "private@example.invalid" }])
   ;(db.businessEvent.findMany as jest.Mock).mockResolvedValue([event()])
 })
 
@@ -91,15 +91,15 @@ it("bounds a stalled source without dropping the other source", async () => {
   } finally { jest.useRealTimers() }
 })
 it("does not associate a changed invitation recipient with an older attempt", async () => {
-  ;(db.$queryRaw as jest.Mock).mockResolvedValue([{ id: "event", recordedAt: at, inviteId: "invite", email: "different@example.invalid" }])
+  ;(db.$queryRaw as jest.Mock).mockResolvedValue([{ id: "event", recordedAt: at, inviteId: "invite", roleId: "role", email: "different@example.invalid" }])
   const result = await readDeliveryIssues(ctx, { source: "invitations", state: "all" })
   expect(result.pages[0].rows[0]).toMatchObject({ state: "accepted", recipient: "•••" })
 })
 it("excludes ungrantable and cross-tenant roles before pagination and cursor resolution", async () => {
   ;(db.role.findMany as jest.Mock).mockResolvedValue([
-    { id: "role", organizationId: ctx.orgId, permissions: [] },
-    { id: "forbidden", organizationId: ctx.orgId, permissions: ["payroll.payments.reconcile"] },
-    { id: "foreign", organizationId: "other", permissions: [] },
+    { id: "role", code: "member", organizationId: ctx.orgId, permissions: [] },
+    { id: "forbidden", code: "controller", organizationId: ctx.orgId, permissions: ["payroll.payments.reconcile"] },
+    { id: "foreign", code: "member", organizationId: "other", permissions: [] },
   ])
   await readDeliveryIssues(ctx, { source: "invitations", invitationCursor: "anchor" })
   const queries = (db.$queryRaw as jest.Mock).mock.calls.map(call => call[0])
@@ -133,7 +133,7 @@ it.each(["hash", "duplicate", "tenant", "actor", "source"])("does not trust invi
   expect(result.pages[0].rows[0]).toMatchObject({ state: "unknown", reason: "invalidEvidence", attempts: null })
 })
 it("does not page a silently incomplete role authority universe", async () => {
-  ;(db.role.findMany as jest.Mock).mockResolvedValue(Array.from({ length: 1001 }, () => ({ id: "role", organizationId: ctx.orgId, permissions: [] })))
+  ;(db.role.findMany as jest.Mock).mockResolvedValue(Array.from({ length: 1001 }, () => ({ id: "role", code: "member", organizationId: ctx.orgId, permissions: [] })))
   expect((await readDeliveryIssues(ctx, { source: "invitations" })).pages[0].availability).toBe("unavailable")
   expect(db.$queryRaw).not.toHaveBeenCalled()
 })
@@ -151,4 +151,29 @@ it("keeps provider acceptance separate from unknown outcomes and missing evidenc
   expect(deliveryStatus("FAILED", "INVITATION_PROVIDER_OUTCOME_UNKNOWN")).toBe("unknown")
   expect(deliveryStatus("DEFERRED", "PROVIDER_OUTCOME_UNKNOWN")).toBe("unknown")
   expect(deliveryStatus(undefined, null)).toBe("unknown")
+})
+
+it("excludes reserved delivery rows before reading private candidates for a limited reviewer", async () => {
+  ;(db.role.findMany as jest.Mock).mockResolvedValue([{ id: "reserved", code: "admin", organizationId: ctx.orgId, permissions: [] }])
+  expect((await readDeliveryIssues(ctx, { source: "invitations", state: "all" })).pages[0]).toMatchObject({ availability: "ready", rows: [] })
+  expect(db.$queryRaw).not.toHaveBeenCalled(); expect(db.businessEvent.findMany).not.toHaveBeenCalled()
+})
+it("allows current privileged review of a code-bound reserved delivery without exposing private payload", async () => {
+  const actorPermissions = [...ctx.permissions, "dashboard.read"]
+  ;(readCurrentInvitationIssuer as jest.Mock).mockResolvedValue({ permissions: actorPermissions, roleCodes: ["administrator"] })
+  ;(db.role.findMany as jest.Mock).mockResolvedValue([{ id: "role", code: "admin", organizationId: ctx.orgId, permissions: [] }])
+  const bound = { ...payload, actorPermissions, roleCode: "admin", actorRoleCodes: ["admin"] }; const row = event()
+  row.payload = bound; row.payloadHash = JSON.stringify(bound); row.outboxMessages[0].payload = bound; row.outboxMessages[0].payloadHash = JSON.stringify(bound)
+  ;(db.businessEvent.findMany as jest.Mock).mockResolvedValue([row])
+  const result = await readDeliveryIssues({ ...ctx, permissions: actorPermissions }, { source: "invitations", state: "all" })
+  expect(result.pages[0].rows[0]).toMatchObject({ state: "accepted", recipient: "p•••@•••" })
+  expect(JSON.stringify(result)).not.toMatch(/private@example|tokenHash|actorRoleCodes|payloadHash/)
+  ;(readCurrentInvitationIssuer as jest.Mock).mockResolvedValue({ permissions: actorPermissions, roleCodes: ["manager"] })
+  expect((await readDeliveryIssues({ ...ctx, permissions: actorPermissions }, { source: "invitations", state: "all" })).pages[0].rows).toEqual([])
+})
+it("holds historical reserved evidence missing its original code approval", async () => {
+  const actorPermissions = [...ctx.permissions, "dashboard.read"]
+  ;(readCurrentInvitationIssuer as jest.Mock).mockResolvedValue({ permissions: actorPermissions, roleCodes: ["admin"] })
+  ;(db.role.findMany as jest.Mock).mockResolvedValue([{ id: "role", code: "admin", organizationId: ctx.orgId, permissions: [] }])
+  expect((await readDeliveryIssues({ ...ctx, permissions: actorPermissions }, { source: "invitations", state: "all" })).pages[0].rows[0]).toMatchObject({ state: "unknown", recipient: "•••", attempts: null, reason: "invalidEvidence" })
 })

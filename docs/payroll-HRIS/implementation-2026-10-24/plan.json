@@ -1,0 +1,1886 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-24",
+  "status": "PLANNED",
+  "purpose": "Planning manifest; execution status belongs in docs/ecc/cameroon-blueprint-execution-2026-10-07.md",
+  "assessment": "../hris-assessment-ohada-1-200-2026-10-24.md",
+  "baselineCommit": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "baselineIncludesDirtyWorkingTree": true,
+  "scope": {
+    "employees": "1–200",
+    "region": "OHADA zone",
+    "workforce": [
+      "office",
+      "shifts"
+    ],
+    "intent": "general-purpose HR"
+  },
+  "coreExecutionOrder": [
+    "HR-00",
+    "HR-01",
+    "HR-02",
+    "HR-03",
+    "HR-04",
+    "HR-05",
+    "HR-06",
+    "HR-07",
+    "HR-08",
+    "HR-09",
+    "HR-10",
+    "HR-11",
+    "HR-12",
+    "HR-13",
+    "HR-14",
+    "HR-15",
+    "HR-16",
+    "HR-17",
+    "HR-18",
+    "HR-19",
+    "HR-21"
+  ],
+  "livePayrollExecutionOrder": [
+    "HR-00",
+    "HR-01",
+    "HR-02",
+    "HR-03",
+    "HR-04",
+    "HR-05",
+    "HR-06",
+    "HR-07",
+    "HR-08",
+    "HR-09",
+    "HR-10",
+    "HR-11",
+    "HR-12",
+    "HR-13",
+    "HR-14",
+    "HR-15",
+    "HR-16",
+    "HR-17",
+    "HR-18",
+    "HR-19",
+    "HR-20A",
+    "HR-20B",
+    "HR-20C",
+    "HR-20D",
+    "HR-21"
+  ],
+  "optionalExpansion": [
+    "HR-22"
+  ],
+  "slices": [
+    {
+      "id": "HR-00",
+      "title": "Reconcile baseline and prepare isolated verification",
+      "phase": "Correctness",
+      "deps": [],
+      "owner": "HR technical lead and QA/platform",
+      "effort": "S",
+      "map": "Assessment F01–F08; blueprint 00/00b; existing realization and Trust Spine registers",
+      "paths": [
+        "docs/ecc/cameroon-blueprint-execution-2026-10-07.md",
+        "docs/HRIS-Payroll/payroll-trust-spine-execution/EXECUTION_REGISTER.md",
+        "docs/ecc/test-lanes.md",
+        "scripts/with-payroll-immutability-test-db.js",
+        "jest.payroll-trust-spine.config.cjs"
+      ],
+      "state": "The assessment establishes current source risks and 27 passing mocked tests. The historical program includes completed controls; no current disposable-database proof was established.",
+      "objective": "Make the next correctness change reproducible without reopening proven controls or touching a shared database.",
+      "tasks": [
+        "Record current commit, branch, owned-file diffs and hashes; reconcile findings against current source. Map each item to the existing register and retain historical completion evidence.",
+        "Record the confirmed 1–200/OHADA/office-and-shift product target. Preserve the existing single-employer/monthly Cameroon payroll envelope as a technical restriction; do not treat it as approval for every future customer.",
+        "Inventory writers and relevant callers for leave ledger, operational time, lifecycle and scope. Record root-client versus supplied-transaction ownership.",
+        "Inspect available database test runners and identify a specifically named disposable local/test target. Review all reset/migration/fixture side effects and authorization before provisioning. Never derive a target from application .env.",
+        "Prepare synthetic fixtures for own/team/HR roles, two tenants, 0/1/50/51/100/200 employees, multiple reports, time boundaries and independent actors. Reuse existing fixtures where suitable."
+      ],
+      "accept": [
+        "Each current finding is reproduced, narrowed or marked resolved with evidence; no stale report alone drives a code change.",
+        "A writer/transaction map and command preflight exist, with secrets excluded.",
+        "Disposable target identity, fixture namespace, cleanup bounds and ownership are documented; an authorized fixture rehearsal succeeds before any database-dependent closure.",
+        "Unspecified launch countries and policy decisions remain explicit; they do not delay generic correctness tests.",
+        "There is one next active slice. No old work package is reset or marked complete from this plan."
+      ],
+      "tests": [
+        "Source/graph/register reconciliation and reviewed workflow-contract check.",
+        "If an isolated target is authorized, one bounded creation/cleanup rehearsal; otherwise record ENVIRONMENT_REQUIRED, continue safe source/unit preparation and leave dependent acceptance open."
+      ],
+      "data": "No application schema change. Test provisioning may create and destroy only explicitly authorized disposable fixtures.",
+      "release": "Preparation only. No feature or payroll activation.",
+      "rollback": "Remove only task-owned test fixtures after resolving their absolute target; retain baseline and evidence.",
+      "decision": "Disposable database authorization/availability and actual pilot policy facts may be missing; elapsed time is not approval.",
+      "order": 1,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-00.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-00-AC01",
+          "text": "Each current finding is reproduced, narrowed or marked resolved with evidence; no stale report alone drives a code change."
+        },
+        {
+          "id": "HR-00-AC02",
+          "text": "A writer/transaction map and command preflight exist, with secrets excluded."
+        },
+        {
+          "id": "HR-00-AC03",
+          "text": "Disposable target identity, fixture namespace, cleanup bounds and ownership are documented; an authorized fixture rehearsal succeeds before any database-dependent closure."
+        },
+        {
+          "id": "HR-00-AC04",
+          "text": "Unspecified launch countries and policy decisions remain explicit; they do not delay generic correctness tests."
+        },
+        {
+          "id": "HR-00-AC05",
+          "text": "There is one next active slice. No old work package is reset or marked complete from this plan."
+        }
+      ]
+    },
+    {
+      "id": "HR-01",
+      "title": "Make leave ledger and audit atomic under concurrent debits",
+      "phase": "Correctness",
+      "deps": [
+        "HR-00"
+      ],
+      "owner": "HR backend, database engineer and QA",
+      "effort": "M",
+      "map": "F02/E05/E07; blueprint 05",
+      "paths": [
+        "services/hris/leave-balance.service.ts",
+        "actions/hris/leave-balance.actions.ts",
+        "services/hris/operational-time.service.ts",
+        "services/hris/__tests__/leave-balance.service.test.ts",
+        "services/hris/__tests__/operational-time-decision-concurrency.test.ts"
+      ],
+      "state": "Manual posting reads balance, creates entry and audits separately. Pending-decision ownership exists and must be preserved.",
+      "objective": "Ensure every leave mutation has one transaction owner and competing requests cannot overspend the same balance.",
+      "tasks": [
+        "Add a regression for the default action path and document the exact read/write/audit boundary.",
+        "Choose a per-tenant/employee/policy serialization strategy covering absent ledger rows and all relevant writers; use existing locking/serializable patterns with bounded retries, not a process-local mutex.",
+        "Support both root and supplied transaction clients without accidental nested commits; keep audit, ledger and applicable event/outbox effects together.",
+        "Bind replay to all semantic posting fields; retain exact replay and reject changed-payload reuse.",
+        "Cover two distinct approved leave requests as well as duplicate decisions on one request. Preserve immutable compensating entries and the existing compare-and-set decision claim."
+      ],
+      "accept": [
+        "With 480 minutes available, two concurrent independent 360-minute debits cannot both commit; the resulting ledger and response agree.",
+        "Faults at ledger/audit/event stages leave no partial effects or false success.",
+        "Same-key same-payload retry returns the original result; changed amount, policy, employee, date or semantic type conflicts.",
+        "Different tenants/employees/policies do not share an accidental global lock; scope/permission/SoD denials have no effects.",
+        "The supplied-transaction path propagates errors to its owner; retries cannot duplicate audit/events.",
+        "Real PostgreSQL concurrency and rollback evidence is saved before this slice is VERIFIED."
+      ],
+      "tests": [
+        "Focused mocked ledger and pending-decision suites, plus new meaningful regressions.",
+        "Disposable PostgreSQL barriers for competing debits, empty-ledger first writes, exact replay race and injected audit/event failure."
+      ],
+      "data": "Prefer no schema change. An additive uniqueness/locking aid is allowed only after an explicit design and migration/replay review.",
+      "release": "Do not enable the repaired path based on mocked tests alone. Keep affected mutation unavailable if real concurrency evidence fails.",
+      "rollback": "Disable the affected mutation path; retain all committed ledger and audit history. Never restore mutable balances by deleting history.",
+      "decision": "No legal entitlement values are invented; use synthetic minute balances.",
+      "order": 2,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-01.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-01-AC01",
+          "text": "With 480 minutes available, two concurrent independent 360-minute debits cannot both commit; the resulting ledger and response agree."
+        },
+        {
+          "id": "HR-01-AC02",
+          "text": "Faults at ledger/audit/event stages leave no partial effects or false success."
+        },
+        {
+          "id": "HR-01-AC03",
+          "text": "Same-key same-payload retry returns the original result; changed amount, policy, employee, date or semantic type conflicts."
+        },
+        {
+          "id": "HR-01-AC04",
+          "text": "Different tenants/employees/policies do not share an accidental global lock; scope/permission/SoD denials have no effects."
+        },
+        {
+          "id": "HR-01-AC05",
+          "text": "The supplied-transaction path propagates errors to its owner; retries cannot duplicate audit/events."
+        },
+        {
+          "id": "HR-01-AC06",
+          "text": "Real PostgreSQL concurrency and rollback evidence is saved before this slice is VERIFIED."
+        }
+      ]
+    },
+    {
+      "id": "HR-02",
+      "title": "Connect approved attendance corrections to certified revisions",
+      "phase": "Correctness",
+      "deps": [
+        "HR-01"
+      ],
+      "owner": "HR time/backend, payroll boundary reviewer and QA",
+      "effort": "M–L",
+      "map": "F01/E06; blueprint 04",
+      "paths": [
+        "services/hris/operational-time.service.ts",
+        "services/hris/time-leave.service.ts",
+        "services/hris/time-leave.contract.ts",
+        "services/hris/payroll-readiness-contract.ts",
+        "actions/hris/operational-time.actions.ts",
+        "components/hris/HrisOperationalTimeRequestPanel.tsx"
+      ],
+      "state": "Proposed minutes are stored but operational certification consumes original entries, fixes sourceRevision at 1 and does not receive correction values from the form.",
+      "objective": "Make approved correction evidence change exactly the intended next payroll input revision while preserving frozen history.",
+      "tasks": [
+        "Trace the operational request into the existing certified-snapshot correction path; select one authoritative source-revision owner.",
+        "Capture explicit before/after worked and absence values, target entry/date and reason. Bind all semantic correction fields to the evidence/replay identity.",
+        "Revalidate the reviewed source version before applying; conflicting corrections require re-review rather than last-write-wins.",
+        "Consume only approved corrections in certification, generate deterministic new revisions and invalidate affected readiness/approval evidence through existing services.",
+        "Update the smallest request UI needed to exercise this flow, with EN/FR labels, current values, pending/error states and authoritative outcomes.",
+        "Route changes after frozen/emitted/paid stages through supported correction/adjustment boundaries; do not edit retained snapshots."
+      ],
+      "accept": [
+        "A synthetic 360→480 minute approved correction produces 480 in the correct new certified revision; pending/rejected corrections produce no change.",
+        "The original imported evidence and prior certified revision remain retrievable and unchanged.",
+        "Retry returns the same revision; changed proposed values under the same key conflict; simultaneous stale corrections cannot silently overwrite.",
+        "Downstream readiness references the new input hash and cannot reuse stale approval evidence.",
+        "Frozen or paid cases either create the authorized linked adjustment or return a specific recoverable blocker with no history mutation.",
+        "UI validation and resolved/thrown errors preserve entered data; authorized employee identity is derived server-side."
+      ],
+      "tests": [
+        "Focused time-leave/operational-time/readiness tests with full import→request→approve→certify assertions.",
+        "Disposable PostgreSQL revision/replay/rollback and stale correction contenders; bounded EN/FR request-form browser proof."
+      ],
+      "data": "Reuse existing versioned snapshots; any additional operational revision reference must be additive and preserve legacy provenance.",
+      "release": "Release only the proved correction states. Unsupported historical adjustments remain explicitly blocked.",
+      "rollback": "Disable new correction promotion while retaining requests, revisions and history; resume from retained identities.",
+      "decision": "Multiple same-day corrections need a documented ordering/conflict policy.",
+      "order": 3,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-02.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-02-AC01",
+          "text": "A synthetic 360→480 minute approved correction produces 480 in the correct new certified revision; pending/rejected corrections produce no change."
+        },
+        {
+          "id": "HR-02-AC02",
+          "text": "The original imported evidence and prior certified revision remain retrievable and unchanged."
+        },
+        {
+          "id": "HR-02-AC03",
+          "text": "Retry returns the same revision; changed proposed values under the same key conflict; simultaneous stale corrections cannot silently overwrite."
+        },
+        {
+          "id": "HR-02-AC04",
+          "text": "Downstream readiness references the new input hash and cannot reuse stale approval evidence."
+        },
+        {
+          "id": "HR-02-AC05",
+          "text": "Frozen or paid cases either create the authorized linked adjustment or return a specific recoverable blocker with no history mutation."
+        },
+        {
+          "id": "HR-02-AC06",
+          "text": "UI validation and resolved/thrown errors preserve entered data; authorized employee identity is derived server-side."
+        }
+      ]
+    },
+    {
+      "id": "HR-03",
+      "title": "Allocate leave and overtime to the correct work periods",
+      "phase": "Correctness",
+      "deps": [
+        "HR-01",
+        "HR-02"
+      ],
+      "owner": "Time-domain engineer, HR policy reviewer and QA",
+      "effort": "M",
+      "map": "F01/F02/E06/E07; blueprint 04/05b",
+      "paths": [
+        "services/hris/operational-time.service.ts",
+        "services/hris/time-leave.contract.ts",
+        "services/hris/payroll-readiness-contract.ts",
+        "prisma/schema.prisma",
+        "services/hris/__tests__/operational-time.service.test.ts"
+      ],
+      "state": "Certification sums full overlapping leave requests and imported overtime; applicable schedule/policy and overtime-authorization semantics require explicit reconciliation.",
+      "objective": "Conserve minutes across periods and distinguish planned, worked, leave, absence and approved payable overtime.",
+      "tasks": [
+        "Define interval boundary, timezone, schedule and holiday semantics for supported office and overnight cases; distinguish shift ownership from accounting/payroll period allocation.",
+        "Allocate approved leave by covered scheduled work segments; do not charge the full request to every overlapping period.",
+        "Resolve policy per employee and effective segment, not one latest country policy; enforce compatibility when multiple leave types exist.",
+        "Reconcile overtime requests with recorded work and authorization; prevent imported and requested amounts being added twice.",
+        "Propagate changes through HR-02 revisions; unknown schedules or unresolved anomalies block certification with a remedy."
+      ],
+      "accept": [
+        "For a synthetic two-period leave request totaling 960 scheduled minutes, allocations of 480 and 480 sum to 960; boundary replays do not add minutes.",
+        "An overnight shift is allocated under the documented local-time/period policy without lost or duplicated time.",
+        "Approved overtime authorizes the actual eligible work once; an approval alone does not manufacture hours worked.",
+        "Multiple policies, part-days, holidays and effective schedule changes select the intended policy and inputs.",
+        "Totals reconcile with an explicit invariant table; contradictory records fail visibly instead of being silently clamped into readiness."
+      ],
+      "tests": [
+        "Table-driven minute conservation and timezone/period-boundary tests, including empty/invalid cases.",
+        "Integrated disposable-database certification with revisions and changed schedule/policy evidence; country values remain synthetic."
+      ],
+      "data": "Prefer service-contract changes. Add persisted allocation provenance only if current evidence cannot explain the split.",
+      "release": "Enable only tested schedule/policy combinations; no implied statutory overtime compliance.",
+      "rollback": "Prevent new certification for unsupported allocation versions; keep prior evidence addressable.",
+      "decision": "Qualified local rules determine payable overtime and leave eligibility; engineering must not guess them.",
+      "order": 4,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-03.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-03-AC01",
+          "text": "For a synthetic two-period leave request totaling 960 scheduled minutes, allocations of 480 and 480 sum to 960; boundary replays do not add minutes."
+        },
+        {
+          "id": "HR-03-AC02",
+          "text": "An overnight shift is allocated under the documented local-time/period policy without lost or duplicated time."
+        },
+        {
+          "id": "HR-03-AC03",
+          "text": "Approved overtime authorizes the actual eligible work once; an approval alone does not manufacture hours worked."
+        },
+        {
+          "id": "HR-03-AC04",
+          "text": "Multiple policies, part-days, holidays and effective schedule changes select the intended policy and inputs."
+        },
+        {
+          "id": "HR-03-AC05",
+          "text": "Totals reconcile with an explicit invariant table; contradictory records fail visibly instead of being silently clamped into readiness."
+        }
+      ]
+    },
+    {
+      "id": "HR-04",
+      "title": "Apply employment changes at their effective time",
+      "phase": "Correctness",
+      "deps": [
+        "HR-00"
+      ],
+      "owner": "HR lifecycle/backend, identity reviewer and QA",
+      "effort": "M–L",
+      "map": "F03/E04; blueprint 06",
+      "paths": [
+        "services/hris/lifecycle.service.ts",
+        "actions/hris/lifecycle.actions.ts",
+        "services/hris/movement-history.service.ts",
+        "services/hris/employee.service.ts",
+        "services/hris/contract.service.ts",
+        "services/hris/__tests__/lifecycle.service.test.ts"
+      ],
+      "state": "Applying an approved future event immediately mutates current employee status and target fields.",
+      "objective": "Separate approved, scheduled, effective and applied employment truth without changing past payroll evidence.",
+      "tasks": [
+        "Map all current lifecycle readers/writers and freeze current-time versus as-of semantics, timezone and exact effective boundary.",
+        "Retain approved future requests without changing present fields; use an existing job/worker pattern or explicit due-command, not an unowned timer.",
+        "At the due instant recheck employee/source version and apply once with transactionally linked history/events.",
+        "Handle due processing retries, changed employment state, suspension/reinstatement, termination/rehire and backdated conflicts.",
+        "Document contract, assignment, compensation and access obligations separately; do not claim an employee status change revokes sessions. Record narrow handoff events for later HR-17 tasks."
+      ],
+      "accept": [
+        "Approving/applying a termination effective tomorrow leaves today's status and eligible period data unchanged.",
+        "At/after the effective instant, repeated/concurrent due execution yields one authorized transition and one retained outcome.",
+        "Past, current and future projections are consistent for transfer and rehire; original history is preserved.",
+        "Backdated changes affecting frozen payroll follow the existing correction boundary and cannot rewrite paid evidence.",
+        "Stale status, changed target, revoked authority and failed audit/event writes produce no partial transition."
+      ],
+      "tests": [
+        "Controllable-clock unit cases immediately before/at/after the boundary, plus multiple lifecycle types.",
+        "Disposable PostgreSQL due-worker race, transaction rollback and recovery tests; no live employee transitions."
+      ],
+      "data": "May need an additive pending/effective transition index or relation; prefer existing state/evidence. Never reclassify historical events as newly certified.",
+      "release": "Keep scheduling unavailable until due execution and recovery are proved; current operations must not regress.",
+      "rollback": "Suspend due processing or affected commands, retain scheduled/committed events, and reconcile before resuming.",
+      "decision": "Choose the authoritative business timezone and access-removal ownership explicitly.",
+      "order": 5,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-04.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-04-AC01",
+          "text": "Approving/applying a termination effective tomorrow leaves today's status and eligible period data unchanged."
+        },
+        {
+          "id": "HR-04-AC02",
+          "text": "At/after the effective instant, repeated/concurrent due execution yields one authorized transition and one retained outcome."
+        },
+        {
+          "id": "HR-04-AC03",
+          "text": "Past, current and future projections are consistent for transfer and rehire; original history is preserved."
+        },
+        {
+          "id": "HR-04-AC04",
+          "text": "Backdated changes affecting frozen payroll follow the existing correction boundary and cannot rewrite paid evidence."
+        },
+        {
+          "id": "HR-04-AC05",
+          "text": "Stale status, changed target, revoked authority and failed audit/event writes produce no partial transition."
+        }
+      ]
+    },
+    {
+      "id": "HR-05",
+      "title": "Make manager authorization exact and temporally consistent",
+      "phase": "Correctness",
+      "deps": [
+        "HR-04"
+      ],
+      "owner": "HR IAM/security and backend",
+      "effort": "M",
+      "map": "F04/E03/E10; blueprint 03",
+      "paths": [
+        "services/hris/org.service.ts",
+        "services/hris/employee.service.ts",
+        "services/hris/manager-self-service.service.ts",
+        "services/hris/approval-inbox.service.ts",
+        "services/hris/__tests__/org-effective-scope.service.test.ts"
+      ],
+      "state": "Profile authorization passes limit 1 into a capped relationship list; temporal data and authorization inputs can diverge; manager capability copy is stale.",
+      "objective": "Authorize employee targets independently of list limits and apply one explicit current/historical access policy.",
+      "tasks": [
+        "Replace list-membership authorization for a requested employee with a bounded exact tenant/relationship/delegation check.",
+        "Separate authorized query predicates from display pagination so a scope is not silently truncated.",
+        "Specify how current caller authority and requested historical data intersect; an old relationship must not automatically grant current access.",
+        "Forward approved temporal parameters consistently to authorization and projection; retain the restricted location-manager fallback.",
+        "Derive manager capability flags from server authority. Do not grant hris.people.manage simply to make a team action work."
+      ],
+      "accept": [
+        "The second, 51st and 200th authorized report are accessible regardless of page size/order.",
+        "Foreign-tenant and unrelated employees fail before sensitive data is returned.",
+        "Expired/revoked delegation and relationship changes enforce the documented temporal access policy.",
+        "Read delegation cannot authorize approval; own-record access never becomes team-wide access.",
+        "Manager views omit salary/payment/private identifiers unless explicitly authorized; capability labels agree with the service."
+      ],
+      "tests": [
+        "Positive/negative relationship and delegation matrix with current/as-of dates, pagination independence and actor revocation.",
+        "Disposable-database target existence and relationship constraints; scoped API/browser tests with distinct fixture roles."
+      ],
+      "data": "Prefer query/service contracts; add indexes only after checking query plans on synthetic 200-person/team datasets.",
+      "release": "No manager expansion until denial cases pass. Preserve deny-by-default when recovery is uncertain.",
+      "rollback": "Restrict affected team access; never fall back to tenant-wide reads.",
+      "decision": "A product/security decision is required for former-manager historical access; record it in the slice contract.",
+      "order": 6,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-05.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-05-AC01",
+          "text": "The second, 51st and 200th authorized report are accessible regardless of page size/order."
+        },
+        {
+          "id": "HR-05-AC02",
+          "text": "Foreign-tenant and unrelated employees fail before sensitive data is returned."
+        },
+        {
+          "id": "HR-05-AC03",
+          "text": "Expired/revoked delegation and relationship changes enforce the documented temporal access policy."
+        },
+        {
+          "id": "HR-05-AC04",
+          "text": "Read delegation cannot authorize approval; own-record access never becomes team-wide access."
+        },
+        {
+          "id": "HR-05-AC05",
+          "text": "Manager views omit salary/payment/private identifiers unless explicitly authorized; capability labels agree with the service."
+        }
+      ]
+    },
+    {
+      "id": "HR-06",
+      "title": "Deliver complete server-side People discovery",
+      "phase": "Correctness",
+      "deps": [
+        "HR-05"
+      ],
+      "owner": "HR frontend/backend and QA",
+      "effort": "M",
+      "map": "F04/E02; blueprint 02",
+      "paths": [
+        "app/[locale]/(dashboard)/dashboard/people/page.tsx",
+        "actions/hris/employee.actions.ts",
+        "services/hris/employee.service.ts",
+        "services/payroll/employee.service.ts",
+        "components/hris/HrisEmployeeDirectoryTable.tsx",
+        "components/hr-payroll/HrPayrollTableControls.tsx"
+      ],
+      "state": "Route limit 50 and service max 100 feed local filtering and counts.",
+      "objective": "Make every authorized employee in a 200-person company findable with truthful filtered totals.",
+      "tasks": [
+        "Add bounded server search/filter/paging with stable ordering and a unique tie-breaker; return explicit authorized total and page metadata.",
+        "Apply the same tenant/manager/effective scope to page rows and counts. Avoid aggregate leaks and N+1 reads.",
+        "Keep filters, locale and pagination in shareable/restorable navigation; reset/clamp page after filters change.",
+        "Adapt only People table callers; do not break unrelated tables using the generic local-table hook.",
+        "Localize the touched People route/table and implement loading, filtered-empty, failed and denied states."
+      ],
+      "accept": [
+        "Datasets of 0/1/50/51/100/200 return correct scoped counts; the last employee is directly searchable.",
+        "Duplicate names and page changes do not duplicate or omit rows under stable data; concurrent-data consistency policy is documented.",
+        "Counts do not reveal other tenants or unauthorized teams; manager totals match their authorized subset.",
+        "EN/FR, keyboard, 360/768/1440 CSS-pixel viewports and filter/back navigation work.",
+        "A server failure is shown as failure, not zero employees; no attempt to fix the problem merely by increasing the cap."
+      ],
+      "tests": [
+        "Service/action pagination/search/count contract tests and component state tests.",
+        "Real-database scoped queries and browser last-record search, back navigation, empty/denied/error behavior."
+      ],
+      "data": "Normally none; optional scoped search indexes justified by measured synthetic query plans.",
+      "release": "Ship API and People UI together after scope tests; no whole-repository table refactor.",
+      "rollback": "Restore a compatible API/UI pair; if fallback is capped, explicitly label it incomplete or disable it.",
+      "decision": "Choose offset or cursor pagination with documented consistency and total-count semantics.",
+      "order": 7,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-06.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-06-AC01",
+          "text": "Datasets of 0/1/50/51/100/200 return correct scoped counts; the last employee is directly searchable."
+        },
+        {
+          "id": "HR-06-AC02",
+          "text": "Duplicate names and page changes do not duplicate or omit rows under stable data; concurrent-data consistency policy is documented."
+        },
+        {
+          "id": "HR-06-AC03",
+          "text": "Counts do not reveal other tenants or unauthorized teams; manager totals match their authorized subset."
+        },
+        {
+          "id": "HR-06-AC04",
+          "text": "EN/FR, keyboard, 360/768/1440 CSS-pixel viewports and filter/back navigation work."
+        },
+        {
+          "id": "HR-06-AC05",
+          "text": "A server failure is shown as failure, not zero employees; no attempt to fix the problem merely by increasing the cap."
+        }
+      ]
+    },
+    {
+      "id": "HR-07",
+      "title": "Verify existing payroll admission across all effect boundaries",
+      "phase": "Correctness",
+      "deps": [
+        "HR-00"
+      ],
+      "owner": "Payroll controls, security reviewer and QA",
+      "effort": "M",
+      "map": "F05/E12; blueprint 01 already implemented, release acceptance open",
+      "paths": [
+        "services/payroll/payroll-production-admission.ts",
+        "services/payroll/payroll-control.service.ts",
+        "services/payroll/declaration-lifecycle.service.ts",
+        "services/payroll/authority-adapter-execution.service.ts",
+        "services/payroll/authority-adapter-worker.service.ts",
+        "services/regulatory/country-packs/cameroon.ts",
+        "services/payroll/__tests__/payroll-production-admission.test.ts"
+      ],
+      "state": "Production admission exists; complete current runtime denial/recovery proof is still required.",
+      "objective": "Retain the existing gate and prove unsupported or stale payroll cannot create new financial or external effects.",
+      "tasks": [
+        "Inventory entry points from actions, services, queues, workers, legacy adapters and retries; map each to admission and retained recovery behavior.",
+        "Inspect before changing. Repair only demonstrated gate gaps and missing negative tests; do not build another admission system.",
+        "Cover unsupported country/frequency, draft/unreviewed components, missing scenario evidence, stale rules and source-input mismatch.",
+        "Prove exact committed replay retrieves retained outcomes without new effects even after a pack is retired; new effect-producing attempts recheck current authority.",
+        "Use local fake adapters and synthetic approved packs; never promote the bundled pack or submit a real payment/declaration."
+      ],
+      "accept": [
+        "Every inventoried new-effect path denies unsupported evidence before ledger/payslip/payment/queue/provider effects.",
+        "Missing or stale reviewed components cannot be hidden by a published country-pack header.",
+        "Exact valid recovery is not stranded by later policy retirement, and changed-payload replay conflicts.",
+        "Worker denial never calls even the fake adapter; financial transaction failures roll back.",
+        "CM monthly remains the actual technical envelope until later qualified work deliberately extends it; synthetic evidence is labeled."
+      ],
+      "tests": [
+        "Real-guard mocked service/action/worker cases; identify tests that mock the gate and do not count them as gate proof.",
+        "Disposable PostgreSQL zero-effect denial and exact-replay cases; provider calls intercepted by an explicitly fake test adapter."
+      ],
+      "data": "No rate/schema/status promotion expected. Any gate fix preserves retained historical evidence.",
+      "release": "This is admission assurance, not country payroll approval.",
+      "rollback": "Retain a closed gate for new effects; preserve historical retrieval and settlement recovery.",
+      "decision": "No qualified statutory release evidence currently assumed; HR-20A–D supplies a separate conditional track.",
+      "order": 8,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-07.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-07-AC01",
+          "text": "Every inventoried new-effect path denies unsupported evidence before ledger/payslip/payment/queue/provider effects."
+        },
+        {
+          "id": "HR-07-AC02",
+          "text": "Missing or stale reviewed components cannot be hidden by a published country-pack header."
+        },
+        {
+          "id": "HR-07-AC03",
+          "text": "Exact valid recovery is not stranded by later policy retirement, and changed-payload replay conflicts."
+        },
+        {
+          "id": "HR-07-AC04",
+          "text": "Worker denial never calls even the fake adapter; financial transaction failures roll back."
+        },
+        {
+          "id": "HR-07-AC05",
+          "text": "CM monthly remains the actual technical envelope until later qualified work deliberately extends it; synthetic evidence is labeled."
+        }
+      ]
+    },
+    {
+      "id": "HR-08",
+      "title": "Close the critical correctness gate",
+      "phase": "Correctness gate",
+      "deps": [
+        "HR-01",
+        "HR-02",
+        "HR-03",
+        "HR-04",
+        "HR-05",
+        "HR-06",
+        "HR-07"
+      ],
+      "owner": "QA/release assurance with domain and security reviewers",
+      "effort": "M",
+      "map": "F01–F05; blueprint 14 correctness subset; Trust Spine regression preservation",
+      "paths": [
+        "services/hris/__tests__",
+        "services/payroll/__tests__",
+        "components/hris/__tests__",
+        "docs/HRIS-Payroll/payroll-trust-spine-execution/EXECUTION_REGISTER.md",
+        "docs/ecc/test-lanes.md"
+      ],
+      "state": "Isolated fixes need integrated negative verification; historical passes cannot close new findings.",
+      "objective": "Produce one source-bound decision that the repaired HR correctness paths satisfy their invariants.",
+      "tasks": [
+        "Replay the integrated synthetic chain: time import→correction→independent approval→new certification→readiness; exercise a paid-period rejection/adjustment case.",
+        "Combine concurrent leave decisions, future termination, second-report scope and employee-200 search in the same candidate build.",
+        "Run targeted regressions for existing payroll transitions, admission, immutable history and relevant close invalidation; use actual current commands after inspection.",
+        "Reconcile every F01–F05 acceptance row to exact evidence, current file hashes and remaining restrictions.",
+        "Record VERIFIED or OPEN/BLOCKED by acceptance item. Continue unrelated safe planning while keeping affected feature promotion blocked."
+      ],
+      "accept": [
+        "All dependencies have current implementation and required unit/database/browser evidence, not just code-complete labels.",
+        "No unexplained critical/high invariant failure remains in the affected paths.",
+        "Database concurrency evidence includes contenders, expected winning result and cleanup proof; mocks are separately labeled.",
+        "Required role/EN-FR/viewport checks pass and unsupported states are honest.",
+        "A rollback rehearsal and support diagnosis are documented without manipulating real payroll.",
+        "The resulting decision does not assert legal, production or whole-platform certification."
+      ],
+      "tests": [
+        "Integrated synthetic acceptance matrix plus scoped regression suites and reviewed DB/browser runners.",
+        "Independent adversarial review by an available human/reviewer workflow; do not claim independence from self-review or spawn agents without authorization."
+      ],
+      "data": "No feature schema work; only previously authorized disposable fixtures.",
+      "release": "Required gate before routine-workflow rollout; later statutory and pilot gates remain separate.",
+      "rollback": "Keep failed capabilities unavailable and reopen the owning slice with retained evidence.",
+      "decision": "Unavailable independent reviewer or real-DB environment leaves that acceptance open; no fabricated sign-off.",
+      "order": 9,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-08.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-08-AC01",
+          "text": "All dependencies have current implementation and required unit/database/browser evidence, not just code-complete labels."
+        },
+        {
+          "id": "HR-08-AC02",
+          "text": "No unexplained critical/high invariant failure remains in the affected paths."
+        },
+        {
+          "id": "HR-08-AC03",
+          "text": "Database concurrency evidence includes contenders, expected winning result and cleanup proof; mocks are separately labeled."
+        },
+        {
+          "id": "HR-08-AC04",
+          "text": "Required role/EN-FR/viewport checks pass and unsupported states are honest."
+        },
+        {
+          "id": "HR-08-AC05",
+          "text": "A rollback rehearsal and support diagnosis are documented without manipulating real payroll."
+        },
+        {
+          "id": "HR-08-AC06",
+          "text": "The resulting decision does not assert legal, production or whole-platform certification."
+        }
+      ]
+    },
+    {
+      "id": "HR-09",
+      "title": "Make organization, policies and reviewer setup operable",
+      "phase": "Core HR",
+      "deps": [
+        "HR-08"
+      ],
+      "owner": "HR product owner and HRIS engineer",
+      "effort": "M",
+      "map": "Assessment proposals 1–3; blueprint 03/13",
+      "paths": [
+        "services/hris",
+        "actions/hris",
+        "components/hris",
+        "app/[locale]/(dashboard)/dashboard/people"
+      ],
+      "state": "Organization and delegation foundations exist; complete guided administration and small-employer reviewer setup are not established.",
+      "objective": "Let an authorized employer configure a usable HR workspace and independent review responsibilities without developer assistance.",
+      "tasks": [
+        "Reconcile the actual route and service inventory before selecting files; reuse organization, membership, policy and delegation owners.",
+        "Provide setup for employer identity, departments/locations as needed, timezone, responsible HR users and narrow manager decision scopes.",
+        "Make country/policy applicability explicit and effective-dated; show unsupported payroll capabilities without inventing statutory defaults.",
+        "Support the smallest employer with a separately authenticated authorized checker where independence is required; expose expired/missing reviewers and bounded delegation.",
+        "Provide empty, pending, denied and incomplete-setup states with direct corrective actions."
+      ],
+      "accept": [
+        "A one-employee employer and a 200-employee organization can complete appropriate setup without shared accounts or broad admin grants.",
+        "A team reviewer can act only on authorized domains and employees; read-only delegation cannot approve.",
+        "Incomplete mandatory configuration blocks only its dependent operation and explains the remedy.",
+        "Future organization changes and expired delegations respect HR-04/05 authority rules.",
+        "EN/FR setup is navigable by keyboard and works at 360/768/1440 pixels."
+      ],
+      "tests": [
+        "Service/action tests for scope and setup validation; real-database relationship/effective-date checks.",
+        "Browser journeys for owner, HR, narrow manager and unauthorized user; no superadmin-only acceptance."
+      ],
+      "data": "Prefer existing models. Any new configuration needs explicit ownership, effective dates and a reviewed additive migration.",
+      "release": "Enable setup only for pilot tenants after role checks.",
+      "rollback": "Disable new setup entry points while retaining existing approved configuration and audit history.",
+      "decision": "Collect actual pilot employer structure and reviewer identities before activation; basic correctness work does not depend on these facts.",
+      "order": 10,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-09.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-09-AC01",
+          "text": "A one-employee employer and a 200-employee organization can complete appropriate setup without shared accounts or broad admin grants."
+        },
+        {
+          "id": "HR-09-AC02",
+          "text": "A team reviewer can act only on authorized domains and employees; read-only delegation cannot approve."
+        },
+        {
+          "id": "HR-09-AC03",
+          "text": "Incomplete mandatory configuration blocks only its dependent operation and explains the remedy."
+        },
+        {
+          "id": "HR-09-AC04",
+          "text": "Future organization changes and expired delegations respect HR-04/05 authority rules."
+        },
+        {
+          "id": "HR-09-AC05",
+          "text": "EN/FR setup is navigable by keyboard and works at 360/768/1440 pixels."
+        }
+      ]
+    },
+    {
+      "id": "HR-10",
+      "title": "Complete guided employee, contract and compensation administration",
+      "phase": "Core HR",
+      "deps": [
+        "HR-09"
+      ],
+      "owner": "HRIS engineer with HR operations reviewer",
+      "effort": "L",
+      "map": "Assessment F06; blueprint 06/13",
+      "paths": [
+        "services/hris",
+        "actions/hris",
+        "components/hris",
+        "services/payroll/employee.service.ts"
+      ],
+      "state": "Employee, contract and compensation services exist, but critical authoring journeys and actionable profile remedies were not found.",
+      "objective": "Allow HR to add and maintain a person from draft through approved effective employment using the existing single employee master.",
+      "tasks": [
+        "Trace existing create, lifecycle, contract and compensation commands and their guards; implement thin operating forms over those owners.",
+        "Provide validation and duplicate handling for employee identity, employment dates and required country/employer inputs; do not demand irrelevant sensitive data.",
+        "Connect profile blockers to permitted repair actions; retain field values on failed validation.",
+        "Use review/apply transitions and scheduled effective dates for contract, compensation and payment-destination changes; display history and pending changes clearly.",
+        "Split this work into employee/contract and compensation child slices if required, with individual entry/exit evidence under this ID."
+      ],
+      "accept": [
+        "HR can create a draft, resolve missing data and reach active employment without database editing.",
+        "Duplicate employee numbers and linked-user collisions are handled without creating a second person; cross-tenant references are rejected.",
+        "A future transfer/termination/compensation change is visible as pending and leaves today's facts correct.",
+        "Sensitive changes retain independent approval and paid/frozen-evidence restrictions.",
+        "An authorized operator can resolve each supported profile blocker through a visible action; unsupported remedies are explicitly identified."
+      ],
+      "tests": [
+        "Service and action tests for create/update/replay/approval; database uniqueness and rollback tests.",
+        "EN/FR browser journeys for new starter, contract renewal, salary change and leaver scheduling with restricted roles."
+      ],
+      "data": "Use PayrollEmployee-backed HRIS ownership. New fields require a need, data classification and migration/backfill strategy.",
+      "release": "Pilot employee creation first; then enable each accepted maintenance flow.",
+      "rollback": "Disable individual new actions; preserve issued employee IDs, contracts, effective history and approval evidence.",
+      "decision": "Pilot mandatory employee fields and contract templates require HR agreement; legal wording is not generated as approved policy.",
+      "order": 11,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-10.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-10-AC01",
+          "text": "HR can create a draft, resolve missing data and reach active employment without database editing."
+        },
+        {
+          "id": "HR-10-AC02",
+          "text": "Duplicate employee numbers and linked-user collisions are handled without creating a second person; cross-tenant references are rejected."
+        },
+        {
+          "id": "HR-10-AC03",
+          "text": "A future transfer/termination/compensation change is visible as pending and leaves today's facts correct."
+        },
+        {
+          "id": "HR-10-AC04",
+          "text": "Sensitive changes retain independent approval and paid/frozen-evidence restrictions."
+        },
+        {
+          "id": "HR-10-AC05",
+          "text": "An authorized operator can resolve each supported profile blocker through a visible action; unsupported remedies are explicitly identified."
+        }
+      ]
+    },
+    {
+      "id": "HR-11",
+      "title": "Deliver safe employee import and reconciliation",
+      "phase": "Core HR",
+      "deps": [
+        "HR-10"
+      ],
+      "owner": "Data/HRIS engineer and HR operator",
+      "effort": "M",
+      "map": "Assessment F06; blueprint 02/13; migration follow-up",
+      "paths": [
+        "services/hris",
+        "actions/hris",
+        "components/hris",
+        "prisma/schema.prisma"
+      ],
+      "state": "A complete operator-owned employee import journey was not demonstrated.",
+      "objective": "Replace manual re-entry with a reviewable import that cannot silently duplicate or overwrite employees.",
+      "tasks": [
+        "Reuse existing import facilities if present; define explicit supported columns, formats and template version.",
+        "Build preview with field mapping, row-level errors, duplicate matches and totals before commit.",
+        "Bind commit to validated payload/version and actor scope; define all-or-nothing versus explicit per-row outcomes and deterministic retries.",
+        "Prohibit silent merges, implicit sensitive-field updates and cross-tenant IDs; route sensitive changes through existing approvals.",
+        "Produce import receipt and reconciliation report; neutralize spreadsheet formula execution in exported error reports and exclude unnecessary PII from logs."
+      ],
+      "accept": [
+        "A synthetic 200-person file previews and commits with reconciled accepted/rejected/unchanged counts.",
+        "Replaying the same import does not create duplicate employees; changed payload under the same key conflicts.",
+        "Bad rows and duplicate identities cannot disappear from totals; operator sees exactly what changed.",
+        "Failure/timeout yields a recoverable known status and retry semantics; imported approved history is never deleted by a generic undo.",
+        "Only authorized users can download source/error artifacts, with defined retention."
+      ],
+      "tests": [
+        "Parser and preview tests for formats, duplicate rows and malicious formula cells.",
+        "Database replay, interruption and atomicity tests; browser preview/correct/commit/reconcile journey."
+      ],
+      "data": "Add batch/row provenance only if existing ingestion models cannot provide it. Stage synthetic data before any customer migration.",
+      "release": "Preview first; enable commit after reconciliation and recovery demonstration.",
+      "rollback": "Disable import commits; correct imported facts with audited compensating changes. Remove only uncommitted staging data according to retention.",
+      "decision": "Agree input template and explicit partial-success policy before implementation.",
+      "order": 12,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-11.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-11-AC01",
+          "text": "A synthetic 200-person file previews and commits with reconciled accepted/rejected/unchanged counts."
+        },
+        {
+          "id": "HR-11-AC02",
+          "text": "Replaying the same import does not create duplicate employees; changed payload under the same key conflicts."
+        },
+        {
+          "id": "HR-11-AC03",
+          "text": "Bad rows and duplicate identities cannot disappear from totals; operator sees exactly what changed."
+        },
+        {
+          "id": "HR-11-AC04",
+          "text": "Failure/timeout yields a recoverable known status and retry semantics; imported approved history is never deleted by a generic undo."
+        },
+        {
+          "id": "HR-11-AC05",
+          "text": "Only authorized users can download source/error artifacts, with defined retention."
+        }
+      ]
+    },
+    {
+      "id": "HR-12",
+      "title": "Make leave entitlements and balances operational",
+      "phase": "Core HR",
+      "deps": [
+        "HR-10",
+        "HR-01",
+        "HR-03"
+      ],
+      "owner": "HRIS engineer and HR policy owner",
+      "effort": "M–L",
+      "map": "Assessment F02/F07; blueprint 05/05b",
+      "paths": [
+        "services/hris/leave-balance.service.ts",
+        "services/hris/operational-time.service.ts",
+        "actions/hris",
+        "components/hris"
+      ],
+      "state": "Requests and a ledger exist; automated accrual and complete policy/entitlement administration were not established.",
+      "objective": "Give each eligible employee an explainable, policy-correct balance and a complete request-to-cancellation journey.",
+      "tasks": [
+        "Make employee-specific effective policy eligibility explicit; remove arbitrary first-policy choice.",
+        "Define approved policy inputs for entitlement, accrual, carryover, expiry, negative balances and rounding; do not infer regional statutory rules.",
+        "Reuse the atomic ledger for grants/accrual/adjustments/cancellations with stable event keys and original-entry linkage.",
+        "Translate days/hours into schedule-aware stored quantities and show the employee's unit with a transparent calculation.",
+        "Provide balance explanation, HR adjustments with reasons, and reconciliation between opening balance, movements, reservations if used and closing balance."
+      ],
+      "accept": [
+        "Two eligible policies and a mid-period policy change resolve correctly without country-latest fallback.",
+        "Repeated accrual/carryover execution creates no duplicate credit; cancellation reverses exactly the applicable posted movement.",
+        "Partial days, overnight shifts and month-boundary leave obey HR-03 allocation and conserve totals.",
+        "The employee sees a reproducible balance explanation; insufficient balance rejects atomically under concurrency.",
+        "Undefined policy facts block the dependent calculation with an actionable message."
+      ],
+      "tests": [
+        "Synthetic employer-policy fixtures for accrual, carryover, expiry, cancellation and units.",
+        "Real-database parallel scheduler/request tests and ledger reconciliation; EN/FR employee/manager browser flow."
+      ],
+      "data": "Effective policy versions and immutable ledger links; review any additive migration and legacy balance opening entries.",
+      "release": "Start with explicitly approved manual entitlements; enable automated rules per accepted policy.",
+      "rollback": "Stop new accrual scheduling; retain posted entries and use authorized compensating ledger events.",
+      "decision": "HR must supply actual entitlement rules. Sample fixtures demonstrate computation, not local legal compliance.",
+      "order": 13,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-12.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-12-AC01",
+          "text": "Two eligible policies and a mid-period policy change resolve correctly without country-latest fallback."
+        },
+        {
+          "id": "HR-12-AC02",
+          "text": "Repeated accrual/carryover execution creates no duplicate credit; cancellation reverses exactly the applicable posted movement."
+        },
+        {
+          "id": "HR-12-AC03",
+          "text": "Partial days, overnight shifts and month-boundary leave obey HR-03 allocation and conserve totals."
+        },
+        {
+          "id": "HR-12-AC04",
+          "text": "The employee sees a reproducible balance explanation; insufficient balance rejects atomically under concurrency."
+        },
+        {
+          "id": "HR-12-AC05",
+          "text": "Undefined policy facts block the dependent calculation with an actionable message."
+        }
+      ]
+    },
+    {
+      "id": "HR-13",
+      "title": "Deliver office and shift scheduling with attendance closure",
+      "phase": "Core HR",
+      "deps": [
+        "HR-10",
+        "HR-12",
+        "HR-02",
+        "HR-03"
+      ],
+      "owner": "Workforce operations lead and HRIS engineer",
+      "effort": "L",
+      "map": "Assessment F01/F06; blueprint 04/13",
+      "paths": [
+        "services/hris/operational-time.service.ts",
+        "services/hris/time-leave.service.ts",
+        "actions/hris",
+        "components/hris",
+        "prisma/schema.prisma"
+      ],
+      "state": "Calendars, weekly patterns, schedule approvals and time foundations exist; complete roster planning and attendance closure were not demonstrated.",
+      "objective": "Let a manager publish who should work and let HR reconcile what was worked into a reliable certified period.",
+      "tasks": [
+        "Map existing schedule/calendar models; extend only gaps required for dated shifts, publication/versioning and employee assignments.",
+        "Provide office recurring patterns and dated shift rosters, including timezone, breaks, overnight shifts and coverage warnings.",
+        "Separate planned schedule, imported observations, approved corrections and certified payroll inputs; do not silently replace actual time with a plan.",
+        "Support previewed attendance imports with source identity, duplicates, errors and replay outcomes; reuse ingestion infrastructure.",
+        "Create a period closure desk with missing punches, overlaps, leave conflicts, overtime decisions, correction lineage and certification readiness; split planning and closure into bounded child slices if needed."
+      ],
+      "accept": [
+        "A seven-day mixed office/shift roster can be drafted, reviewed, published and changed with traceable versions.",
+        "An overnight shift spanning month end contributes once to each applicable period according to the agreed allocation contract.",
+        "Duplicate imports and replayed approvals do not duplicate worked time or overtime.",
+        "An unresolved material anomaly blocks certification; repairing it produces the correct new revision and invalidates stale readiness.",
+        "Supervisors see only their teams; employees see their own published schedule; low-width views remain usable."
+      ],
+      "tests": [
+        "Schedule and allocation tests, including timezone/DST where a configured zone requires it, holidays and overlapping shifts.",
+        "Database import/revision/replay tests; role-based browser schedule→import→resolve→certify journey."
+      ],
+      "data": "Add dated roster structures only where existing weekly-pattern models cannot meet accepted cases; preserve original observations.",
+      "release": "Pilot one office pattern and one shift team before wider publishing.",
+      "rollback": "Suspend publication/import/certification independently; retain last accepted roster and all time evidence.",
+      "decision": "Agree pilot shift patterns, break rules, overtime eligibility and actual attendance source; avoid biometric or surveillance scope by default.",
+      "order": 14,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-13.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-13-AC01",
+          "text": "A seven-day mixed office/shift roster can be drafted, reviewed, published and changed with traceable versions."
+        },
+        {
+          "id": "HR-13-AC02",
+          "text": "An overnight shift spanning month end contributes once to each applicable period according to the agreed allocation contract."
+        },
+        {
+          "id": "HR-13-AC03",
+          "text": "Duplicate imports and replayed approvals do not duplicate worked time or overtime."
+        },
+        {
+          "id": "HR-13-AC04",
+          "text": "An unresolved material anomaly blocks certification; repairing it produces the correct new revision and invalidates stale readiness."
+        },
+        {
+          "id": "HR-13-AC05",
+          "text": "Supervisors see only their teams; employees see their own published schedule; low-width views remain usable."
+        }
+      ]
+    },
+    {
+      "id": "HR-14",
+      "title": "Replace evidence-hash entry with usable controlled approvals",
+      "phase": "Core HR",
+      "deps": [
+        "HR-10",
+        "HR-12"
+      ],
+      "owner": "Frontend/HRIS engineer and controls reviewer",
+      "effort": "M",
+      "map": "Assessment F06/F07; blueprint 13",
+      "paths": [
+        "components/hris/HrisApprovalInbox.tsx",
+        "services/hris/approval-inbox.service.ts",
+        "actions/hris",
+        "design-system/stoquify/MASTER.md"
+      ],
+      "state": "Unified approvals and separation of duties exist; users must type an approval evidence hash and several forms use technical terms.",
+      "objective": "Make approvals understandable and accessible while binding each decision to the exact reviewed facts.",
+      "tasks": [
+        "Trace all supported approval domains and retain server authorization, maker-checker and stale-version guards.",
+        "Show before/after values, effective date, impact, source evidence, requester and policy context in plain language.",
+        "Capture acknowledgement, reason and eligible evidence references; generate a canonical reviewed-payload hash on the server. A hash alone is not proof of review.",
+        "Return domain errors and preserve drafts; provide direct remedies for missing requirements without giving the user broader rights.",
+        "Use existing dialog/design primitives, focus management, field labels, error summary and EN/FR translations; do not redesign the entire shell."
+      ],
+      "accept": [
+        "No ordinary reviewer must calculate or type a cryptographic hash.",
+        "Changing reviewed facts before submission causes a stale-review response and requires renewed review.",
+        "Self-approval, expired delegation and out-of-scope team approval remain denied on the server.",
+        "Keyboard focus enters/restores correctly, errors are announced and all content is usable at 360/768/1440 pixels in EN/FR.",
+        "Every supported domain displays a human-readable decision receipt with actor, scope, timestamp and version."
+      ],
+      "tests": [
+        "Component/action tests for stale submission, failure preservation and domain routing.",
+        "Database decision/audit atomicity checks where modified; browser keyboard and assistive-technology checks with recorded scope."
+      ],
+      "data": "Reuse existing evidence fields where sufficient; version the canonical payload without rewriting historical hashes.",
+      "release": "Enable accepted domains progressively, preserving server compatibility.",
+      "rollback": "Disable new review submission for affected domain; preserve decision history and do not restore unsafe hash-only semantics.",
+      "decision": "Evidence requirements vary by domain; document them before wiring forms.",
+      "order": 15,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-14.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-14-AC01",
+          "text": "No ordinary reviewer must calculate or type a cryptographic hash."
+        },
+        {
+          "id": "HR-14-AC02",
+          "text": "Changing reviewed facts before submission causes a stale-review response and requires renewed review."
+        },
+        {
+          "id": "HR-14-AC03",
+          "text": "Self-approval, expired delegation and out-of-scope team approval remain denied on the server."
+        },
+        {
+          "id": "HR-14-AC04",
+          "text": "Keyboard focus enters/restores correctly, errors are announced and all content is usable at 360/768/1440 pixels in EN/FR."
+        },
+        {
+          "id": "HR-14-AC05",
+          "text": "Every supported domain displays a human-readable decision receipt with actor, scope, timestamp and version."
+        }
+      ]
+    },
+    {
+      "id": "HR-15",
+      "title": "Deliver secure employee documents and expiry handling",
+      "phase": "Core HR",
+      "deps": [
+        "HR-10",
+        "HR-14"
+      ],
+      "owner": "HRIS/storage engineer and privacy/security reviewer",
+      "effort": "L",
+      "map": "Assessment F08; blueprint 12",
+      "paths": [
+        "services/hris",
+        "actions/hris",
+        "components/hris",
+        "prisma/schema.prisma"
+      ],
+      "state": "Document metadata/evidence foundations exist; original document delivery is explicitly unavailable in the assessed path.",
+      "objective": "Allow authorized users to upload, review, retrieve and maintain employment documents with controlled access and retention.",
+      "tasks": [
+        "Inventory existing storage, scanning, evidence and redaction services; reuse them and specify ownership of originals versus metadata.",
+        "Implement upload validation and quarantine/scan outcomes, protected retrieval, expiry and replacement links.",
+        "Authorize every retrieval against current tenant/employee/document permissions; avoid permanent public URLs and sensitive logs.",
+        "Separate employee-visible documents from restricted HR records and redacted evidence; record meaningful access/security events.",
+        "Define retention, deletion eligibility and legal-hold behavior from approved employer/country policy; add actionable expiry tasks without claiming automated legal compliance."
+      ],
+      "accept": [
+        "Cross-tenant, other-employee and unauthorized manager retrieval is denied, including guessed IDs and expired links.",
+        "Quarantined or rejected files cannot be downloaded through alternate routes.",
+        "Replacing a document preserves required version/evidence links; expired documents create a scoped actionable item.",
+        "Deletion cannot bypass a hold or required retained evidence; storage and metadata failures reconcile without orphan exposure.",
+        "Own-document upload/retrieval works in EN/FR and low-width views with clear scan/pending states."
+      ],
+      "tests": [
+        "Service/action authorization and storage-failure tests with fake storage in unit lane.",
+        "Isolated integration tests against a named test store for upload/quarantine/retrieval/deletion; role browser verification."
+      ],
+      "data": "Review object-key isolation, document states and retention metadata. No bulk movement of real originals during development.",
+      "release": "Pilot limited document types and an approved retention policy.",
+      "rollback": "Disable uploads/downloads separately; preserve protected originals and metadata for recovery.",
+      "decision": "Storage/scanning provider and approved retention/hold policy must be selected before live document handling.",
+      "order": 16,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-15.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-15-AC01",
+          "text": "Cross-tenant, other-employee and unauthorized manager retrieval is denied, including guessed IDs and expired links."
+        },
+        {
+          "id": "HR-15-AC02",
+          "text": "Quarantined or rejected files cannot be downloaded through alternate routes."
+        },
+        {
+          "id": "HR-15-AC03",
+          "text": "Replacing a document preserves required version/evidence links; expired documents create a scoped actionable item."
+        },
+        {
+          "id": "HR-15-AC04",
+          "text": "Deletion cannot bypass a hold or required retained evidence; storage and metadata failures reconcile without orphan exposure."
+        },
+        {
+          "id": "HR-15-AC05",
+          "text": "Own-document upload/retrieval works in EN/FR and low-width views with clear scan/pending states."
+        }
+      ]
+    },
+    {
+      "id": "HR-16",
+      "title": "Complete employee self-service and personal-data correction cases",
+      "phase": "Core HR",
+      "deps": [
+        "HR-12",
+        "HR-13",
+        "HR-14",
+        "HR-15"
+      ],
+      "owner": "HR product/UX owner and HRIS engineer",
+      "effort": "L",
+      "map": "Assessment F07/F08; blueprint 12/13",
+      "paths": [
+        "services/hris/manager-self-service.service.ts",
+        "services/hris",
+        "actions/hris",
+        "components/hris"
+      ],
+      "state": "Own views and time requests exist; personal-data correction intake is not configured and document access is incomplete.",
+      "objective": "Let employees complete routine requests and track resolution without exposing other employees or relying on HR chat messages.",
+      "tasks": [
+        "Derive the employee from authenticated identity for every own-data action; do not trust an employee ID from the browser.",
+        "Provide own profile, schedule, leave balance/requests, eligible documents and available payslips through existing boundaries.",
+        "Add personal-data correction cases with allowed fields, proposed values, assigned HR owner, status, review and audit trail; sensitive updates use existing approval services.",
+        "Show understandable days/hours and policy choices; preserve input on failed requests and expose next action/status.",
+        "Keep published payroll results immutable; distinguish a missing/unavailable payslip from a zero amount or completed payment."
+      ],
+      "accept": [
+        "An employee cannot switch identity through URL/body changes; an HR user in own-service mode receives only their own records.",
+        "A personal-data correction can be submitted, returned for information, approved or rejected and traced to its applied version.",
+        "Duplicate submission/retry does not open duplicate cases or apply a change twice.",
+        "Employees can request leave, correct attendance, retrieve an eligible document and follow status in EN/FR at 360 pixels.",
+        "Unavailable capabilities show truthful state and responsible next step; no fabricated success."
+      ],
+      "tests": [
+        "Action/service tests for identity binding, restricted fields and replay.",
+        "Database case/apply consistency and role browser tests including dual-role user, unlinked account and revoked employee access."
+      ],
+      "data": "Reuse existing case/workflow primitives where suitable; add only the minimal case model and evidence links if absent.",
+      "release": "Pilot with a small employee group and support owner before broad invitation.",
+      "rollback": "Disable affected submissions while retaining read/status access and all case history.",
+      "decision": "Agree employee-editable fields, correction reviewer and support ownership; do not require personal smartphones as the only access mode.",
+      "order": 17,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-16.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-16-AC01",
+          "text": "An employee cannot switch identity through URL/body changes; an HR user in own-service mode receives only their own records."
+        },
+        {
+          "id": "HR-16-AC02",
+          "text": "A personal-data correction can be submitted, returned for information, approved or rejected and traced to its applied version."
+        },
+        {
+          "id": "HR-16-AC03",
+          "text": "Duplicate submission/retry does not open duplicate cases or apply a change twice."
+        },
+        {
+          "id": "HR-16-AC04",
+          "text": "Employees can request leave, correct attendance, retrieve an eligible document and follow status in EN/FR at 360 pixels."
+        },
+        {
+          "id": "HR-16-AC05",
+          "text": "Unavailable capabilities show truthful state and responsible next step; no fabricated success."
+        }
+      ]
+    },
+    {
+      "id": "HR-17",
+      "title": "Make onboarding and offboarding tasks accountable",
+      "phase": "Core HR",
+      "deps": [
+        "HR-04",
+        "HR-10",
+        "HR-14",
+        "HR-15"
+      ],
+      "owner": "HR operations owner and HRIS engineer",
+      "effort": "M–L",
+      "map": "Assessment F08; lifecycle task proposal; blueprint 06/13",
+      "paths": [
+        "services/hris",
+        "actions/hris",
+        "components/hris",
+        "prisma/schema.prisma"
+      ],
+      "state": "The assessed read model explicitly reports TASK_LEDGER_NOT_CONFIGURED.",
+      "objective": "Turn approved employment events into assigned, dated tasks whose completion is evidenced and recoverable.",
+      "tasks": [
+        "Reuse existing workflow/task/event facilities; introduce an HR task ledger only if no owner can meet the accepted workflow.",
+        "Define minimal starter/leaver templates, owners, due dates, dependencies and completion evidence.",
+        "Tie task creation to approved lifecycle events/effective dates with idempotent event processing; handle reschedule/cancel without deleting history.",
+        "Separate employee status, application account access, external access and asset return; never infer one is complete because another changed.",
+        "Provide due/overdue views and failure/retry escalation; external actions require explicit configured connectors and appropriate authority."
+      ],
+      "accept": [
+        "A starter and leaver each generate exactly one task set under repeated event delivery.",
+        "Rescheduling a future departure updates pending tasks without prematurely terminating employment or revoking access.",
+        "Each required task has an owner and an evidence-backed outcome; checking a box cannot falsely assert an unperformed external action.",
+        "A failed access-removal integration remains visibly pending/failed with retry and escalation.",
+        "Restricted tasks and sensitive evidence are visible only to authorized owners/reviewers."
+      ],
+      "tests": [
+        "Event/state-machine and replay tests; real-database atomic task creation.",
+        "Browser starter/leaver journey and simulated connector failure with fake external services."
+      ],
+      "data": "Additive task/evidence relationships where required, retaining lifecycle event identity.",
+      "release": "Begin with manually evidenced tasks; enable each external action only after separate connector verification.",
+      "rollback": "Pause automatic task creation/external execution while preserving assigned work and event checkpoints.",
+      "decision": "Pilot must name HR, IT and asset owners plus completion evidence; no external messaging or account revocation is authorized by this planning document.",
+      "order": 18,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-17.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-17-AC01",
+          "text": "A starter and leaver each generate exactly one task set under repeated event delivery."
+        },
+        {
+          "id": "HR-17-AC02",
+          "text": "Rescheduling a future departure updates pending tasks without prematurely terminating employment or revoking access."
+        },
+        {
+          "id": "HR-17-AC03",
+          "text": "Each required task has an owner and an evidence-backed outcome; checking a box cannot falsely assert an unperformed external action."
+        },
+        {
+          "id": "HR-17-AC04",
+          "text": "A failed access-removal integration remains visibly pending/failed with retry and escalation."
+        },
+        {
+          "id": "HR-17-AC05",
+          "text": "Restricted tasks and sensitive evidence are visible only to authorized owners/reviewers."
+        }
+      ]
+    },
+    {
+      "id": "HR-18",
+      "title": "Build the daily HR work queue and trustworthy operating metrics",
+      "phase": "Core HR",
+      "deps": [
+        "HR-13",
+        "HR-14",
+        "HR-16",
+        "HR-17"
+      ],
+      "owner": "HR product owner and read-model/frontend engineer",
+      "effort": "M",
+      "map": "Assessment daily operating queue proposal; blueprint 13",
+      "paths": [
+        "services/hris",
+        "components/hris",
+        "actions/hris"
+      ],
+      "state": "Several read models and blockers exist; a complete owner-led daily operating queue is proposed.",
+      "objective": "Give HR and managers one reliable answer to what needs action today and why.",
+      "tasks": [
+        "Aggregate existing source states into scoped work items with owner, due date, reason and permitted next action.",
+        "Prioritize payroll-input blockers, unresolved attendance, pending reviews, contract/document expiry and starter/leaver tasks.",
+        "Deduplicate by source/event identity and close items only when source state satisfies its completion rule.",
+        "Add small useful metrics: headcount as-of, leave/attendance exceptions, overdue tasks, approval age and input readiness; expose filters and data timestamps.",
+        "Use existing notification infrastructure with preferences and delivery status; do not confuse notification delivery with task acknowledgement or completion."
+      ],
+      "accept": [
+        "Every displayed count reconciles to authorized detail rows for the same filters/as-of boundary.",
+        "A resolved source item disappears or becomes completed without duplicate residual tasks under event replay.",
+        "Managers cannot infer another team's salaries, documents or hidden case counts.",
+        "Each material blocker has an owner and a working permitted action or explicit external responsibility.",
+        "EN/FR UI is useful with zero employees and at 200 employees; stale/unavailable data is labelled."
+      ],
+      "tests": [
+        "Projection and deduplication tests; real-database source-to-count reconciliation.",
+        "Role-based browser checks and simulated stale/error states; performance measurements on 200 synthetic employees."
+      ],
+      "data": "Prefer derived projections over a second HR truth store; any cache needs invalidation and rebuild semantics.",
+      "release": "Pilot queue alongside source screens, reconcile counts, then make it the default HR landing view.",
+      "rollback": "Return landing navigation to existing pages; retain source records and projection rebuild capability.",
+      "decision": "Agree a small set of operational thresholds; avoid a predictive employee scoring or surveillance feature.",
+      "order": 19,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-18.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-18-AC01",
+          "text": "Every displayed count reconciles to authorized detail rows for the same filters/as-of boundary."
+        },
+        {
+          "id": "HR-18-AC02",
+          "text": "A resolved source item disappears or becomes completed without duplicate residual tasks under event replay."
+        },
+        {
+          "id": "HR-18-AC03",
+          "text": "Managers cannot infer another team's salaries, documents or hidden case counts."
+        },
+        {
+          "id": "HR-18-AC04",
+          "text": "Each material blocker has an owner and a working permitted action or explicit external responsibility."
+        },
+        {
+          "id": "HR-18-AC05",
+          "text": "EN/FR UI is useful with zero employees and at 200 employees; stale/unavailable data is labelled."
+        }
+      ]
+    },
+    {
+      "id": "HR-19",
+      "title": "Complete payroll-input readiness and external handoff",
+      "phase": "Core HR",
+      "deps": [
+        "HR-08",
+        "HR-11",
+        "HR-12",
+        "HR-13",
+        "HR-14"
+      ],
+      "owner": "HR/payroll integration engineer and payroll operator",
+      "effort": "M–L",
+      "map": "Assessment payroll handoff proposal; blueprint 04/11/13",
+      "paths": [
+        "services/hris",
+        "services/payroll",
+        "actions/hris",
+        "actions/payroll",
+        "components/hris"
+      ],
+      "state": "Readiness/snapshot and payroll foundations exist; a complete accepted core-HR-to-external-payroll handoff was not demonstrated.",
+      "objective": "Close an HR period into a versioned, reconcilable input package even when local automated payroll is unsupported.",
+      "tasks": [
+        "Reuse certified snapshots and readiness contracts; expose missing identity, contract, compensation, time, leave and approval blockers.",
+        "Freeze/export a manifest with employer, period, employee identities, source revisions, units, totals, schema version and limitations.",
+        "Make CSV/file exports safe for spreadsheet use and restricted by role; keep export hash, actor and generation record.",
+        "Define recipient acknowledgement and rejected-row correction workflow. Exported is not imported, calculated, paid or filed.",
+        "Invalidate/supersede stale packages when source changes require a correction; preserve the original and link its replacement."
+      ],
+      "accept": [
+        "A 200-person synthetic period exports exactly the eligible population with reconciled counts and supported input totals.",
+        "A material approved correction makes prior readiness/package stale and produces a traceable new version.",
+        "Missing mandatory inputs block final handoff; excluded employees and reasons remain visible.",
+        "The recipient can map IDs/units and reconcile rows without silent loss; rejected rows have a controlled resolution path.",
+        "No screen describes external export as payment/declaration completion or implies unsupported country payroll is enabled."
+      ],
+      "tests": [
+        "Manifest/schema, CSV safety and revision tests; database snapshot consistency and retry tests.",
+        "Browser prepare→resolve→export→acknowledge/reject→correct journey with a synthetic recipient fixture."
+      ],
+      "data": "Reuse immutable snapshots and output artifacts; add acknowledgement provenance only where absent.",
+      "release": "Enable core HR handoff for a named recipient/template after a dry run; leave live payroll admission unchanged.",
+      "rollback": "Disable new export generation; retain issued packages, supersession links and recipient outcomes.",
+      "decision": "Pilot must choose the payroll recipient and input contract; export alone does not establish country compliance.",
+      "order": 20,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-19.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-19-AC01",
+          "text": "A 200-person synthetic period exports exactly the eligible population with reconciled counts and supported input totals."
+        },
+        {
+          "id": "HR-19-AC02",
+          "text": "A material approved correction makes prior readiness/package stale and produces a traceable new version."
+        },
+        {
+          "id": "HR-19-AC03",
+          "text": "Missing mandatory inputs block final handoff; excluded employees and reasons remain visible."
+        },
+        {
+          "id": "HR-19-AC04",
+          "text": "The recipient can map IDs/units and reconcile rows without silent loss; rejected rows have a controlled resolution path."
+        },
+        {
+          "id": "HR-19-AC05",
+          "text": "No screen describes external export as payment/declaration completion or implies unsupported country payroll is enabled."
+        }
+      ]
+    },
+    {
+      "id": "HR-20A",
+      "title": "Establish the first live-payroll country's approved rule contract",
+      "phase": "Conditional live payroll",
+      "deps": [
+        "HR-07",
+        "HR-19"
+      ],
+      "owner": "Country payroll specialist and payroll technical lead",
+      "effort": "L",
+      "map": "Assessment F05; blueprint 07–11/15; country-pack provenance",
+      "paths": [
+        "services/payroll",
+        "services/compliance",
+        "prisma/schema.prisma",
+        "docs/ecc/cameroon-blueprint-execution-2026-10-07.md"
+      ],
+      "state": "Current production scope is Cameroon/monthly; the assessment found CNPS draft/source-checked and IRPP unreviewed. Existing admission must remain enforced.",
+      "objective": "Define an explicitly reviewed, effective-dated rule and output contract before enabling live calculations for the selected jurisdiction.",
+      "tasks": [
+        "Confirm one launch country, legal employer, pay frequency, workforce categories and effective period; preserve current supported envelope until a separately approved expansion.",
+        "Inventory implemented rules and gaps against authoritative current sources for tax, contributions, employment segments, declarations and payment obligations.",
+        "Record source URLs/documents, publication/effective dates, applicability, interpretation, examples, reviewer identity and approval status.",
+        "Resolve conflicting sources and exclusions with qualified reviewers; do not use AI or internal test success as statutory approval.",
+        "Create independently reviewed expected-value examples and a list of hard admission conditions; inspect existing draft pack provenance rather than replacing it."
+      ],
+      "accept": [
+        "Every in-scope obligation and exclusion maps to a current authoritative source and named qualified review outcome.",
+        "Expected values cover ordinary and boundary cases with independently explained derivations.",
+        "Unknown/expired/unreviewed obligations remain blocked; no country-pack status is promoted merely to make tests pass.",
+        "The country/employer/frequency/period envelope is explicit in UI and server admission.",
+        "No live output is generated by this research/contract slice."
+      ],
+      "tests": [
+        "Source/provenance consistency checks and admission-negative fixtures.",
+        "Review sign-off must be genuine external/domain review evidence, separate from code tests."
+      ],
+      "data": "Versioned source/review records only through existing ownership; no unsupported pack publication or rate edits on production.",
+      "release": "Contract acceptance only; does not authorize live payroll.",
+      "rollback": "Withdraw a superseded contract from new execution while retaining its review history.",
+      "decision": "This lane is conditional on choosing live payroll and a country. Missing qualified review is a launch blocker for that lane, not for core HR.",
+      "order": 21,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-20A.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-20A-AC01",
+          "text": "Every in-scope obligation and exclusion maps to a current authoritative source and named qualified review outcome."
+        },
+        {
+          "id": "HR-20A-AC02",
+          "text": "Expected values cover ordinary and boundary cases with independently explained derivations."
+        },
+        {
+          "id": "HR-20A-AC03",
+          "text": "Unknown/expired/unreviewed obligations remain blocked; no country-pack status is promoted merely to make tests pass."
+        },
+        {
+          "id": "HR-20A-AC04",
+          "text": "The country/employer/frequency/period envelope is explicit in UI and server admission."
+        },
+        {
+          "id": "HR-20A-AC05",
+          "text": "No live output is generated by this research/contract slice."
+        }
+      ]
+    },
+    {
+      "id": "HR-20B",
+      "title": "Close contribution, tax, rounding and year-to-date computation gaps",
+      "phase": "Conditional live payroll",
+      "deps": [
+        "HR-20A"
+      ],
+      "owner": "Payroll engineer and independent payroll reviewer",
+      "effort": "L",
+      "map": "Blueprint 07/08/09; calculation acceptance follow-up",
+      "paths": [
+        "services/payroll",
+        "prisma/schema.prisma"
+      ],
+      "state": "Existing engines and controls must be retained; this plan does not assert every historical calculation gap still exists.",
+      "objective": "Make the current calculator meet the reviewed HR-20A examples and full-run reconciliation contract.",
+      "tasks": [
+        "Reproduce remaining gaps against current source before edits; inventory per-component bases, exemptions, ceilings, rates and employer/employee shares.",
+        "Implement only approved rules with explicit monetary precision, rounding stage and deterministic ordering.",
+        "Resolve period/YTD context including prior runs, same-pay-date runs, reversals and adjustments without double counting.",
+        "Preserve immutable calculation snapshots, source provenance and admission checks; prohibit in-place mutation of paid/frozen results.",
+        "Split by contribution bases, tax/YTD and other charges into ordered child slices if the change exceeds one reviewable unit."
+      ],
+      "accept": [
+        "All HR-20A independently reviewed examples reconcile per component and at full-run gross/deductions/net/employer-cost totals.",
+        "Rerunning identical certified inputs and pack version produces identical outputs.",
+        "Prior-run/reversal/same-date cases preserve correct YTD balances and explain the included history.",
+        "Unsupported, stale or unreviewed rules fail before financial effects.",
+        "Existing immutable/replay/tenant protections pass relevant regression checks."
+      ],
+      "tests": [
+        "Pure calculation tests against independent expected values, not values generated by the implementation under test.",
+        "Database historical-context and adjustment tests; no real bank/tax submissions."
+      ],
+      "data": "Additive calculation context/provenance only if required; legacy recomputation requires a separate approved correction plan.",
+      "release": "Shadow comparison with accepted payroll reference; live activation remains blocked until HR-20D and HR-21.",
+      "rollback": "Stop new calculations using the affected version; retain historical snapshots and apply controlled corrections.",
+      "decision": "No speculative rates or tax formulas. A difference with the reference is investigated, not automatically assigned to either system.",
+      "order": 22,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-20B.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-20B-AC01",
+          "text": "All HR-20A independently reviewed examples reconcile per component and at full-run gross/deductions/net/employer-cost totals."
+        },
+        {
+          "id": "HR-20B-AC02",
+          "text": "Rerunning identical certified inputs and pack version produces identical outputs."
+        },
+        {
+          "id": "HR-20B-AC03",
+          "text": "Prior-run/reversal/same-date cases preserve correct YTD balances and explain the included history."
+        },
+        {
+          "id": "HR-20B-AC04",
+          "text": "Unsupported, stale or unreviewed rules fail before financial effects."
+        },
+        {
+          "id": "HR-20B-AC05",
+          "text": "Existing immutable/replay/tenant protections pass relevant regression checks."
+        }
+      ]
+    },
+    {
+      "id": "HR-20C",
+      "title": "Close employment-segment and proration computation gaps",
+      "phase": "Conditional live payroll",
+      "deps": [
+        "HR-20B",
+        "HR-03",
+        "HR-04"
+      ],
+      "owner": "Payroll/HRIS engineer and payroll policy reviewer",
+      "effort": "M–L",
+      "map": "Blueprint 10; effective-dated input integration",
+      "paths": [
+        "services/hris",
+        "services/payroll",
+        "prisma/schema.prisma"
+      ],
+      "state": "Effective lifecycle corrections must feed payroll; actual proration and segment gaps require current reproduction.",
+      "objective": "Calculate the reviewed consequences of starters, leavers and mid-period changes from consistent effective-dated employment segments.",
+      "tasks": [
+        "Derive nonoverlapping employment/compensation/policy segments from approved source history and certified time.",
+        "Implement reviewed proration and unpaid-period treatment with explicit boundary dates, timezone and rounding.",
+        "Handle mid-period salary/contract changes, leave impacts and backdated corrections without counting days or amounts twice.",
+        "Explain segment contributions in operator review and immutable calculation evidence.",
+        "Preserve paid-run adjustment workflows and reject contradictory/overlapping input histories."
+      ],
+      "accept": [
+        "Starter, leaver, mid-month salary change and unpaid-leave examples match HR-20A approved expected values.",
+        "Segment boundaries cover exactly the intended period with no gaps/overlaps unless an explicit inactive interval is represented.",
+        "Future changes do not affect current payroll; applicable backdated changes use a controlled adjustment path.",
+        "Repeated calculation and correction replay remain deterministic and idempotent.",
+        "Every prorated amount can be traced to dates, rule version, source revision and rounding."
+      ],
+      "tests": [
+        "Boundary/property tests for segment coverage and independently reviewed numeric cases.",
+        "Real-database lifecycle→certification→calculation integration with frozen/paid rejection and adjustment cases."
+      ],
+      "data": "Prefer derived versioned segment evidence; any persisted snapshot must preserve original effective history.",
+      "release": "Shadow payroll acceptance only until downstream outputs and pilot pass.",
+      "rollback": "Suspend affected run generation; preserve segment evidence and issued results.",
+      "decision": "Proration conventions must come from HR-20A, not an assumed calendar-day or fixed-30-day rule.",
+      "order": 23,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-20C.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-20C-AC01",
+          "text": "Starter, leaver, mid-month salary change and unpaid-leave examples match HR-20A approved expected values."
+        },
+        {
+          "id": "HR-20C-AC02",
+          "text": "Segment boundaries cover exactly the intended period with no gaps/overlaps unless an explicit inactive interval is represented."
+        },
+        {
+          "id": "HR-20C-AC03",
+          "text": "Future changes do not affect current payroll; applicable backdated changes use a controlled adjustment path."
+        },
+        {
+          "id": "HR-20C-AC04",
+          "text": "Repeated calculation and correction replay remain deterministic and idempotent."
+        },
+        {
+          "id": "HR-20C-AC05",
+          "text": "Every prorated amount can be traced to dates, rule version, source revision and rounding."
+        }
+      ]
+    },
+    {
+      "id": "HR-20D",
+      "title": "Validate declarations, settlement evidence and accounting tie-out",
+      "phase": "Conditional live payroll",
+      "deps": [
+        "HR-20C"
+      ],
+      "owner": "Payroll integration engineer, finance controller and country specialist",
+      "effort": "L",
+      "map": "Blueprint 11/14; existing payments/declarations/accounting controls",
+      "paths": [
+        "services/payroll",
+        "services/accounting",
+        "actions/payroll",
+        "services/payroll/authority-adapter-worker.service.ts",
+        "docs/HRIS-Payroll/payroll-trust-spine-execution/EXECUTION_REGISTER.md"
+      ],
+      "state": "Declaration, payment and accounting controls exist; complete current country/runtime acceptance is not established by historical internal completion.",
+      "objective": "Demonstrate that accepted payroll totals reach outputs and evidence through the existing controlled lifecycle without duplicate effects.",
+      "tasks": [
+        "Reconcile current authority output formats, required fields, payment instructions and deadlines to HR-20A contracts.",
+        "Tie employee/component/register totals to declaration totals, settlement obligations and balanced accounting entries with explicit rounding reconciliation.",
+        "Exercise queued/retried/timeout outcomes using fake providers and authorized test endpoints; keep exact committed replay recovery after pack retirement.",
+        "Distinguish prepared/exported/submitted/accepted/paid/reconciled states with evidence, identity and timestamps.",
+        "Verify rejection/correction, payment-return and close-readiness invalidation paths; split output/settlement/accounting child slices if required."
+      ],
+      "accept": [
+        "Every declared or posted amount reconciles to immutable accepted payroll sources; discrepancies block finalization.",
+        "Duplicate job delivery or timeout retry produces no duplicate payment/declaration/posting.",
+        "A successful export is not labelled authority acceptance; payment initiation is not labelled settled.",
+        "Paid/rejected/returned/corrected outcomes update reconciliation and close readiness with preserved history.",
+        "Current admission, tenant access, maker-checker and exact-replay recovery pass end-to-end tests."
+      ],
+      "tests": [
+        "Format/schema fixtures and control regression tests.",
+        "Real-database orchestration, reconciliation and rollback tests; authorized provider sandbox tests reported separately.",
+        "Domain reviewer accepts test artifacts; real filing/payment needs explicit separate operational authorization."
+      ],
+      "data": "Preserve existing ledgers/evidence owners. No production posting, bank action, filing or status promotion under this development prompt.",
+      "release": "Candidate live-payroll acceptance for HR-21; no automatic activation.",
+      "rollback": "Pause new effects and workers safely; reconcile ambiguous provider outcomes before retry; never erase ledger evidence.",
+      "decision": "Authority/provider test access and qualified acceptance are required where applicable; unavailable evidence stays an open gate.",
+      "order": 24,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-20D.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-20D-AC01",
+          "text": "Every declared or posted amount reconciles to immutable accepted payroll sources; discrepancies block finalization."
+        },
+        {
+          "id": "HR-20D-AC02",
+          "text": "Duplicate job delivery or timeout retry produces no duplicate payment/declaration/posting."
+        },
+        {
+          "id": "HR-20D-AC03",
+          "text": "A successful export is not labelled authority acceptance; payment initiation is not labelled settled."
+        },
+        {
+          "id": "HR-20D-AC04",
+          "text": "Paid/rejected/returned/corrected outcomes update reconciliation and close readiness with preserved history."
+        },
+        {
+          "id": "HR-20D-AC05",
+          "text": "Current admission, tenant access, maker-checker and exact-replay recovery pass end-to-end tests."
+        }
+      ]
+    },
+    {
+      "id": "HR-21",
+      "title": "Run the integrated core-HR pilot and make the launch decision",
+      "phase": "Pilot and release",
+      "deps": [
+        "HR-11",
+        "HR-16",
+        "HR-17",
+        "HR-18",
+        "HR-19"
+      ],
+      "owner": "QA/release lead, HR operator and accountable product owner",
+      "effort": "L",
+      "map": "Assessment roadmap acceptance; blueprint 14",
+      "paths": [
+        "docs/ecc/cameroon-blueprint-execution-2026-10-07.md",
+        "docs/ecc/test-lanes.md",
+        "tests/e2e",
+        "services/hris/__tests__",
+        "services/payroll"
+      ],
+      "state": "Current assessment evidence is limited to source, 27 mocked tests and selected superadmin browser views; complete user and database pilot proof is outstanding.",
+      "objective": "Decide whether a named pilot can complete its daily HR work safely in the selected delivery mode.",
+      "tasks": [
+        "Choose and record delivery mode HR_CORE_WITH_HANDOFF or LIVE_PAYROLL; LIVE_PAYROLL additionally requires HR-20A–D VERIFIED for its exact envelope.",
+        "Test an office team and a shift team with synthetic fixtures first; then use separately authorized pilot data and operators.",
+        "Rehearse setup/import→starter→contract/compensation→schedule→leave/correction→approval→certification→handoff plus employee documents/cases and leaver tasks.",
+        "Run tenant/role denial, 200-person discovery, failure/retry, accessibility, EN/FR, low-width and operational recovery checks; record performance rather than invent an SLA.",
+        "Train named HR/reviewer/support owners, provide runbooks, reconcile migration and define phased rollout/rollback; obtain an accountable launch decision based on evidence."
+      ],
+      "accept": [
+        "All mandatory journeys pass in the selected mode with no unresolved critical/high correctness or access issue.",
+        "Source, mocked tests, real-database tests, provider tests and browser/assistive checks are reported separately with exact baseline and artifacts.",
+        "The pilot HR operator completes daily tasks without developer/database intervention; employees and managers complete their own supported tasks.",
+        "Rollback/restore rehearsal, support ownership, migration reconciliation and monitoring actions are recorded.",
+        "Launch decision states remaining limitations and country envelope; HR_CORE cannot enable payroll effects and LIVE_PAYROLL cannot bypass HR-20A–D."
+      ],
+      "tests": [
+        "Reviewed bounded integration and browser lanes on current candidate; no blanket whole-repository test claim.",
+        "A separately authorized restore/recovery rehearsal and operator acceptance session.",
+        "For LIVE_PAYROLL, full-run country reference comparison and HR-20D evidence in addition to core acceptance."
+      ],
+      "data": "Customer migration, retention and rollback require a concrete reviewed target and explicit applicable authorization; fixtures do not authorize production writes.",
+      "release": "Named pilot first; broader rollout only after recorded acceptance and authorized release action.",
+      "rollback": "Stop new dependent operations, preserve issued evidence, restore/reconcile under tested runbook and communicate through an authorized incident owner.",
+      "decision": "Pilot company/country, actual users and deployment approval must be provided at execution time; this plan is not that approval.",
+      "order": 25,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-21.md",
+      "conditionalDependencies": [
+        {
+          "mode": "LIVE_PAYROLL",
+          "dependsOn": [
+            "HR-20D"
+          ],
+          "condition": "Verified for the exact country/employer/frequency/period"
+        }
+      ],
+      "acceptance": [
+        {
+          "id": "HR-21-AC01",
+          "text": "All mandatory journeys pass in the selected mode with no unresolved critical/high correctness or access issue."
+        },
+        {
+          "id": "HR-21-AC02",
+          "text": "Source, mocked tests, real-database tests, provider tests and browser/assistive checks are reported separately with exact baseline and artifacts."
+        },
+        {
+          "id": "HR-21-AC03",
+          "text": "The pilot HR operator completes daily tasks without developer/database intervention; employees and managers complete their own supported tasks."
+        },
+        {
+          "id": "HR-21-AC04",
+          "text": "Rollback/restore rehearsal, support ownership, migration reconciliation and monitoring actions are recorded."
+        },
+        {
+          "id": "HR-21-AC05",
+          "text": "Launch decision states remaining limitations and country envelope; HR_CORE cannot enable payroll effects and LIVE_PAYROLL cannot bypass HR-20A–D."
+        }
+      ]
+    },
+    {
+      "id": "HR-22",
+      "title": "Qualify each additional country or advanced capability",
+      "phase": "Expansion",
+      "deps": [
+        "HR-21"
+      ],
+      "owner": "Product owner, country specialist and platform lead",
+      "effort": "M per discovery; implementation estimated separately",
+      "map": "Blueprint 15; assessment deferred scope",
+      "paths": [
+        "services/hris",
+        "services/payroll",
+        "docs/ecc/cameroon-blueprint-execution-2026-10-07.md"
+      ],
+      "state": "The product target is OHADA-wide; implemented payroll support cannot be generalized to every member country.",
+      "objective": "Expand only where demand and independent acceptance justify a bounded capability.",
+      "tasks": [
+        "Select one country/capability from pilot evidence, with user problem, owner, expected value and exclusions.",
+        "For HR core, qualify language, employment data, leave/document policies, privacy and support needs with current authoritative review.",
+        "For live payroll, instantiate HR-20A–D for the new country and update admission only after independent reviewed evidence.",
+        "For recruitment/performance/training or advanced integrations, first demonstrate pilot demand and a small end-to-end use case; avoid an enterprise-suite rewrite.",
+        "Preserve per-country versioning, feature admission, migration/recovery and explicit unsupported combinations."
+      ],
+      "accept": [
+        "A country/capability has a scoped contract, demand evidence, owner, dependencies and testable acceptance before implementation.",
+        "Existing supported countries continue to pass relevant regression checks.",
+        "No regional toggle marks all OHADA jurisdictions supported.",
+        "New live payroll has country-specific HR-20A–D evidence and a renewed HR-21 launch decision.",
+        "Deferred features remain deferred where they do not improve the validated core workflow."
+      ],
+      "tests": [
+        "Country/capability regression impact analysis and a newly scoped acceptance plan.",
+        "Actual implementation tests belong to the resulting bounded follow-up slices."
+      ],
+      "data": "No migration or rule activation in this discovery slice.",
+      "release": "Decision and scoped backlog only; activation needs its own acceptance.",
+      "rollback": "Withdraw proposed scope without changing existing tenant behavior.",
+      "decision": "Additional countries and advanced modules are optional; the user has not selected them.",
+      "order": 26,
+      "status": "PLANNED",
+      "prompt": "prompts/HR-22.md",
+      "conditionalDependencies": [],
+      "acceptance": [
+        {
+          "id": "HR-22-AC01",
+          "text": "A country/capability has a scoped contract, demand evidence, owner, dependencies and testable acceptance before implementation."
+        },
+        {
+          "id": "HR-22-AC02",
+          "text": "Existing supported countries continue to pass relevant regression checks."
+        },
+        {
+          "id": "HR-22-AC03",
+          "text": "No regional toggle marks all OHADA jurisdictions supported."
+        },
+        {
+          "id": "HR-22-AC04",
+          "text": "New live payroll has country-specific HR-20A–D evidence and a renewed HR-21 launch decision."
+        },
+        {
+          "id": "HR-22-AC05",
+          "text": "Deferred features remain deferred where they do not improve the validated core workflow."
+        }
+      ]
+    }
+  ]
+}

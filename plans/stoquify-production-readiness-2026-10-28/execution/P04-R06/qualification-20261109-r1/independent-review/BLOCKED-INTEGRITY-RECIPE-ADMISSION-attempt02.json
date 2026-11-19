@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-10T09:01:01.774Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Exact final blocked-checkpoint integrity recipe only; not actual checkpoint or qualification outcome",
+  "file": {
+    "path": "check-blocked-integrity-attempt02-v2.cjs",
+    "sha256": "4f0abb6e498fa3ab46dc43323d754369684ef566379941156286e4f7624b4a25",
+    "syntaxExit": 0
+  },
+  "sideEffects": [
+    "Read source/evidence and hash exact selected file sets",
+    "Temporarily bind and close loopback verification ports",
+    "Exclusively create blocked-integrity-attempt02.json"
+  ],
+  "reviewFindings": [
+    "Requires exact current root/candidate manifest equality and four old changed-file hashes.",
+    "Original failed build recipe, result and logs must match preserved independent failure-review hashes.",
+    "Requires attempt02 build receipt/artifact/runtime absent and stopped owned cluster with no PID file.",
+    "Checks all four task ports on both 127.0.0.1 and localhost.",
+    "Requires a fresh designated failed resource receipt and does not silently advance when capacity becomes eligible.",
+    "passed:true means checkpoint preservation only; qualificationPassed, buildPassed, runtimePassed and productionReady remain explicitly false."
+  ],
+  "conditions": [
+    "Freeze and verify this exact script at execution.",
+    "Inspect actual candidate, cleanup, resources and checkpoint receipts before final independent outcome.",
+    "Do not treat a checkpoint pass as successful build, authentication, database restore or production qualification."
+  ]
+}

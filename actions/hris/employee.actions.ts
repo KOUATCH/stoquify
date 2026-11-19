@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 
 import { protect } from "@/services/_shared/protect"
+import { peopleDirectoryQuerySchema } from "@/services/hris/people-directory-query"
 import {
   getHrisEmployeeDirectory,
   getHrisEmployeeProfile,
@@ -36,6 +37,7 @@ function revalidateHrisEmployeePaths() {
 
 const readHrisEmployeeDirectory = protect<unknown, HrisEmployeeDirectoryResult>(
   {
+    module: { moduleSlug: "payroll", surface: "hris.employee.directory", accessIntent: "read", mode: "enforce" },
     permission: "hris.people.read",
     auditResource: "HrisEmployee",
     auditAllowed: false,
@@ -45,6 +47,7 @@ const readHrisEmployeeDirectory = protect<unknown, HrisEmployeeDirectoryResult>(
     const raw = asRecord(input)
     const limit = typeof raw.limit === "number" ? raw.limit : undefined
     const asOf = typeof raw.asOf === "string" || raw.asOf instanceof Date ? new Date(raw.asOf) : undefined
+    const query = peopleDirectoryQuerySchema.parse(raw)
 
     return getHrisEmployeeDirectory({
       organizationId: ctx.orgId,
@@ -52,6 +55,7 @@ const readHrisEmployeeDirectory = protect<unknown, HrisEmployeeDirectoryResult>(
       actorPermissions: ctx.permissions,
       ...(limit ? { limit } : {}),
       ...(asOf ? { asOf } : {}),
+      ...query,
     })
   },
 )
@@ -62,6 +66,7 @@ export async function getHrisEmployeeDirectoryAction(input: unknown = {}) {
 
 const readHrisEmployeeProfile = protect<unknown, HrisEmployeeProfileReadResult>(
   {
+    module: { moduleSlug: "payroll", surface: "hris.employee.profile", accessIntent: "read", mode: "enforce" },
     permission: "hris.people.read",
     auditResource: "HrisEmployee",
     auditAllowed: false,
@@ -86,6 +91,7 @@ export async function getHrisEmployeeProfileAction(input: unknown) {
 
 const readOwnHrisEmployeeProfile = protect<unknown, HrisEmployeeProfileReadResult>(
   {
+    module: { moduleSlug: "payroll", surface: "hris.employee.own-profile", accessIntent: "read", mode: "enforce" },
     permission: "hris.self_service.read",
     auditResource: "HrisEmployee",
     auditAllowed: false,
@@ -106,6 +112,7 @@ export async function getOwnHrisEmployeeProfileAction(input: unknown = {}) {
 
 const writeHrisEmployeeProfile = protect<unknown, Awaited<ReturnType<typeof upsertHrisEmployeeProfile>>>(
   {
+    module: { moduleSlug: "payroll", surface: "hris.employee.profile", accessIntent: "write", mode: "enforce" },
     permission: "hris.people.manage",
     auditResource: "HrisEmployee",
     freshAuth: true,

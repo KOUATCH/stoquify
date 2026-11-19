@@ -1,0 +1,153 @@
+{
+  "startedAt": "2026-11-09T13:46:03.080Z",
+  "endedAt": "2026-11-09T13:46:28.107Z",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R04\\qualification-20261109-r1\\unit\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--runTestsByPath",
+    "actions/item/__tests__/list-items-error-responses.action.test.ts",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R04\\qualification-20261109-r1\\unit\\attempt01\\jest.json",
+    "--testNamePattern",
+    "redacts plain service Error"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "inputs": [
+    {
+      "file": "actions/item/listItemsAction.ts",
+      "sha256": "a51725ecd654eb17c350ff40749a6088b379fd433e5da2595268983bd3b8859e"
+    },
+    {
+      "file": "hooks/itemsHooks/useItemHooks.ts",
+      "sha256": "26078150c12c0dcd08fe53a5aeb88b8216154fbc4e3887959cc1fce4f9e42d03"
+    },
+    {
+      "file": "actions/item/items.ts",
+      "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac"
+    },
+    {
+      "file": "actions/_shared/safe-action-responses.ts",
+      "sha256": "91f13d4ae5604a3eea684f1dc5513fdb1ca7c4e8421b26136046426a818afe88"
+    },
+    {
+      "file": "services/_shared/action-errors.ts",
+      "sha256": "15c7ddd4587b05978e3b5484af6a364fb46203dfbb964930f6f2ebc9962675f3"
+    },
+    {
+      "file": "lib/security/rbac.ts",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+    },
+    {
+      "file": "lib/security/auth-session.ts",
+      "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+    },
+    {
+      "file": "services/item/item.service.ts",
+      "sha256": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62"
+    },
+    {
+      "file": "lib/item/schemas.ts",
+      "sha256": "8aa71c280caf67f841bbc6100b0be51901de6549e76122fdad35aa4df088c4d2"
+    },
+    {
+      "file": "lib/item/form-validation.ts",
+      "sha256": "9b466bf1b3d91fb33fbdc337aab327a60809f038dce72a595fc82a6ad7708c1a"
+    },
+    {
+      "file": "lib/item/includes.ts",
+      "sha256": "a509c68ef78f808e2f7a00bf202285614fa47c1ea937488cb13139e809ba355e"
+    },
+    {
+      "file": "lib/item/itemKeys.ts",
+      "sha256": "39ef95adba792142943396140b1fe09317a9de07ecbdb6fc5247f9aa282fce79"
+    },
+    {
+      "file": "lib/error-handling/canonical.ts",
+      "sha256": "f29ffd68323259c447f051d34cbdf2ca5716a6f9ebf1f74c1e0d5a21d2da297a"
+    },
+    {
+      "file": "lib/error-handling/error-handler.ts",
+      "sha256": "246b2f97c703bde1f73659da5ce837b4a44f51e8bb7f17e748469af18d1e31ef"
+    },
+    {
+      "file": "lib/error-handling/types.ts",
+      "sha256": "93e12bdd1e2c8b190459d13d522bdc80988b7534767dcea0a3dfad2efeb91b5b"
+    },
+    {
+      "file": "lib/logger.ts",
+      "sha256": "12cf8521808a4b703a7dc93bf66e2287338f1792e5e363989e4bf500a8bff8ec"
+    },
+    {
+      "file": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "file": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "file": "tsconfig.json",
+      "sha256": "0c962a9096ffd86762b02b43f31381e939f9ba5ba1e01898605ac6c3f8d76829"
+    },
+    {
+      "file": ".eslintrc.json",
+      "sha256": "82d9c40e94e4eba05c53f4c6c9aebf62a3463583e1ccc5e2ad24c77882ab987a"
+    },
+    {
+      "file": "docs/ecc/WORKFLOW.md",
+      "sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c"
+    },
+    {
+      "file": "docs/ecc/command-registry.json",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381"
+    },
+    {
+      "file": "docs/ecc/test-lanes.md",
+      "sha256": "d486db7afde813cb6a09be10b25ff01c01a54a7b43496875501c8272e8d14575"
+    },
+    {
+      "file": "actions/_shared/__tests__/safe-action-responses.test.ts",
+      "sha256": "2aaa9bfd027d893af135df315a1c454aca2c99173835e06baea69bacb3fbbc1c"
+    },
+    {
+      "file": "actions/item/__tests__/item-error-responses.action.test.ts",
+      "sha256": "b7e9c630a6134254a209523b5104674a78d31d38d1b626241974d431ee64fd70"
+    },
+    {
+      "file": "actions/item/__tests__/list-items-error-responses.action.test.ts",
+      "sha256": "b1d43e3ba41e0e08a7116407242c048938a1a4f96c608baac94f572db1c64455"
+    }
+  ],
+  "harnessInputs": [
+    {
+      "file": "run.cjs",
+      "sha256": "a9d5b0ddfb5de4993dc35475b620867f2654e51bed8bb046b1fd3ee010d3e808"
+    },
+    {
+      "file": "jest.config.cjs",
+      "sha256": "0c462c0edca9afac344ef1dd3b70da6070a81405a20f5b7b4e89f53b89eddeb3"
+    },
+    {
+      "file": "guard.cjs",
+      "sha256": "b850302d73df93faec3141541430664a5a7f752c720f8f9aec375cc84076e4dc"
+    },
+    {
+      "file": "baseline-list.ts",
+      "sha256": "3f763ceea82658460f6e0ed339a8d1283c13080af25bf34b082877cab8e95f60"
+    }
+  ],
+  "changedInputs": [],
+  "result": {
+    "suites": 1,
+    "passed": 0,
+    "failed": 2,
+    "skipped": 56
+  },
+  "evidenceClass": "isolated mocked/pure tests; no database or HTTP qualification"
+}

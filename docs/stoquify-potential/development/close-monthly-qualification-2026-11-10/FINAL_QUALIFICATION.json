@@ -1,0 +1,129 @@
+{
+  "admittedAt": "2026-11-10T15:34:55.143Z",
+  "status": "LOCAL_MIXED_COLLECTION_MONTH_AND_AUTHENTICATED_UI_QUALIFIED_PRODUCTION_BLOCKED",
+  "classification": "Bounded synthetic local development qualification, separate mocked/static/PostgreSQL/rendered/real-auth evidence. No production artifact, live provider, statutory or global platform approval.",
+  "productSourceHashes": {
+    "services/accounting/customer-settlement.schemas.ts": "e4938b2a6a708b1c919aed309cc7436ef2e0bbd3d2f2e66ce0b404ea89957daa",
+    "services/accounting/customer-settlement.service.ts": "9d5a47154d5b46aeb370f9f5b0f76ed33f84680293038631e06d5e975023b294",
+    "services/payments/customer-settlement-payment-authority.service.ts": "8f45dda68550868c4eab65ab38a6e2c54dd6266f7c46495a767be6375eef24ed",
+    "services/payments/pos-electronic-tender-authority.service.ts": "fd03c611503c79638c99ad98380b0db90fc450cf6c3aa138d7b85d7d3435bd62",
+    "services/pos/pos.service.ts": "f272dafb5097b28c247db43138fccd79c7811acfccdc8cb7457c3497834a89a0",
+    "services/accounting/customer-settlement-workbench.service.ts": "0864bde250c783471fd5ea4345f4772b76b0e2808b80876e2b161b53eb91eefc",
+    "actions/finance/customer-settlement.actions.ts": "fbaebb725ed973fe80a5b1d3765f9dd2c6252e405455b633534569840eee6d5b",
+    "components/finance/CustomerSettlementControls.tsx": "1a08937f09bcbb906c365ce27f00898f96f54932cd33c93254e57c860e9d2f22",
+    "tsconfig.json": "d3579c5303333929f58ef96286529142b8e64137c59fb8a32b7c43598ac518c9",
+    ".eslintrc.json": "82d9c40e94e4eba05c53f4c6c9aebf62a3463583e1ccc5e2ad24c77882ab987a",
+    "prisma/schema.prisma": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+    "package-lock.json": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+  },
+  "evidence": {
+    "mockedUnits": [
+      {
+        "path": "unit-320cb51326/verification.json",
+        "sha256": "6675464747d15c173f46654d01a37733b31242f9a6dbb8edc0c6f0c6bb8e18dc",
+        "passed": 155,
+        "skipped": 0
+      },
+      {
+        "path": "ui-unit-2d2e071850/verification.json",
+        "sha256": "2d70904f3e340ac05757a4df699d9cf51479cb8e77a7e6169991ea633b6769b7",
+        "passed": 76,
+        "skipped": 0
+      },
+      {
+        "path": "ui-unit-7beb0ed572/verification.json",
+        "sha256": "660828c0441121c5d0f2f215266df81f4bfbfcda99c7e8627a04dc4b118889f7",
+        "passed": 22,
+        "skipped": 0
+      }
+    ],
+    "distinctJestSuites": 7,
+    "distinctJestExecutions": 253,
+    "compilerAndLint": {
+      "path": "static-c519a9b3bf/verification.json",
+      "sha256": "62f0279af5269e7dc5fb557802313a7eef7dc526e34079a3672d2096b42734e6",
+      "lintErrors": 0,
+      "lintWarnings": 2
+    },
+    "renderedMockedActions": {
+      "path": "rendered-ui/attempt-254a51fb41/RESULT.json",
+      "sha256": "df1a91f095f4eb8950a70a01d1d4336e2fcc7ed42fdadf2e2b309f0cc0b3d19d",
+      "cases": 48,
+      "sourceBinding": {
+        "path": "rendered-ui/attempt-254a51fb41/SOURCE_BINDING.json",
+        "sha256": "b55a5f93cd51c927ab0e4ffc6df6c465beadca110a55ffbf3f107b1120efadd5"
+      }
+    },
+    "isolatedPostgres": {
+      "path": "pg-attempt-54a799a9fc/pg-RESULT.json",
+      "sha256": "6c26fe6b7970bd3feead668845c6099b08105469b40d97039528d96e36cce36f",
+      "passed": 8,
+      "skipped": 0,
+      "sourceBinding": {
+        "path": "pg-attempt-54a799a9fc/pg-SOURCE_MANIFEST.json",
+        "sha256": "1b1631cea7e099c0e780445e552e6413cfa013eb49f5f51b68a36d097be5dd96"
+      },
+      "tests": {
+        "path": "pg-attempt-54a799a9fc/pg-monthly-close-tests.summary.json",
+        "sha256": "580e959af7ed99ecbc6b0dd38cf48a183246ebdb4f6e0d947a99e2346b6c75e2"
+      }
+    },
+    "sanitizedPublication": {
+      "path": "SANITIZED_PUBLICATION_ADMISSION.json",
+      "sha256": "461958229f98501edd102fff45aa3eb4d3bd671120a5df40d75dbc29118a16ec"
+    },
+    "authenticatedRuntime": {
+      "path": "authenticated-app/runtime-a912af197f/RESULT.json",
+      "sha256": "e7532ad6f84236977b8c8bdeb567e90631cacca823748b2d6245871de580a624",
+      "sourceManifestSha256": "1ccc2522b476470ac0a1fe2a7da9ed82ec36ef49ad806cb6a704c89861dbecff",
+      "sourceFiles": 4400
+    },
+    "authenticatedBrowser": {
+      "path": "authenticated-app/attempt-078f797d05/RESULT.json",
+      "sha256": "33f4841310649c932f301ca533b63e83e1cae0285cfe0c2c9eaaee0edfe961ae",
+      "steps": 7,
+      "transitions": 6,
+      "pageErrors": 0,
+      "consoleErrors": 0,
+      "sourceBinding": {
+        "path": "authenticated-app/attempt-078f797d05/SOURCE_BINDING.json",
+        "sha256": "84dde9f5219623f7da9c92588a40182bf7c6f110c4aebcdb94bad4a0ffa99963"
+      }
+    }
+  },
+  "isolation": {
+    "newAbsentDatabase": "stoquify_replay_close_monthly_20261110_54a799a9fc",
+    "migrationCatalog": "e894a828415592f4c2ab155993b1923ed12245374a21b0184ae8a375495190aa",
+    "migrations": 122,
+    "rootPrismaGeneration": false,
+    "rootBuild": false,
+    "cleanDependencyInstall": false,
+    "sourceBoundDevelopmentRuntime": true,
+    "originalOctoberPackAndFinancialFactsUnchangedDuringUI": true,
+    "allOwnedServersAndBrowsersStopped": true
+  },
+  "limits": [
+    "Primary October case has an approved opening receivable and cash/mobile/bank collections, no October new sale or stock activity.",
+    "Positive tracked-stock POS/COGS and contested native receipt are a separate November auxiliary case.",
+    "CONFIRMED provider observations and initial APPROVED account mapping are synthetic input/configuration; upstream provider authenticity is not earned.",
+    "Independent reconciliation/signatures, bank and balance-sheet approvals, internal T4 certification, retention and seal are earned through their owners; statutory status remains blocked.",
+    "The monthly case does not repeat reopen/recertification; the previous cash-only lifecycle remains separate historical evidence.",
+    "Live contention proves the observed winner/conflict/rollback, not every interleaving or execution of each raw SQLSTATE retry branch.",
+    "Authenticated English development app uses reused dependencies/private Prisma override. EN/FR mobile/desktop coverage is separately mocked-action rendering.",
+    "Support file selection retains a browser-computed fingerprint only; no original-document upload/custody or live delivery is established.",
+    "Rendered axe had zero violations and incomplete contrast; no full accessibility claim.",
+    "Historical expanded synthetic summaries remain unchanged for integrity references; sanitized supplements are the publication view."
+  ],
+  "remainingProductionGates": [
+    "Selected host/runtime/region and owned public HTTPS domain",
+    "Current target-platform build/artifact and protected promotion",
+    "Hosted database/migration adoption and measured backup/PITR recovery",
+    "Verified live statement and accountant invitation delivery plus owned scheduled workers",
+    "Original statement custody, provider onboarding and independent Cameroon/domain acceptance",
+    "Existing wider platform release gates and remaining CA-06 assignment/scope follow-up"
+  ],
+  "runnerSha256": "a242d4844326a8de47e09d7bcd82aa217c46ab0320ae7aab92ffd9799fc5f548",
+  "productionDeployed": false,
+  "realMessagesSent": false,
+  "commitCreated": false
+}

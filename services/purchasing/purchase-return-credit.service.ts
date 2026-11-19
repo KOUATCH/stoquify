@@ -29,7 +29,9 @@ import { allocateReceiptCost } from "@/services/inventory/receipt-cost-allocatio
 import { creditProofSchema, readSupplierCreditAllocationProof } from "./supplier-credit-allocation"
 import { lockJournalReversalCatalogInTx } from "@/services/accounting/journal-reversal-order.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
+import { purchaseReturnSourceInTx } from "./purchase-return-workbench.service"
 import { readInvoiceReceiptRecognition } from "./invoice-receipt-recognition"
+import { invoiceLineNet } from "./invoice-commercial-basis"
 import {
   postPurchaseReturnInputSchema,
   postSupplierCreditNoteInputSchema,
@@ -113,9 +115,9 @@ async function assertApprovedCreditPriceSource(
   const recognitionHash = hashBusinessPayload(recognition), effective = await readPurchaseReturnAccountingEvidence(tx, sourceReturn)
   const retained = effective.recognition?.invoiceProofs.filter(proof => proof.invoiceId === invoice.id) ?? []
   if (!effective.accountingComplete || effective.recognition?.status !== "VERIFIED" || retained.length !== 1 || retained[0].sourceHash !== recognition.invoiceSourceHash || retained[0].recognitionHash !== recognitionHash) throw review()
-  const subtotal = invoice.lines.reduce((sum, line) => sum.plus(money(line.quantity.times(line.unitCost))), new Prisma.Decimal(0))
+  const subtotal = invoice.lines.reduce((sum, line) => sum.plus(invoiceLineNet(line)), new Prisma.Decimal(0))
   const tax = invoice.lines.reduce((sum, line) => sum.plus(line.taxAmount), new Prisma.Decimal(0))
-  if (!subtotal.eq(invoice.subtotal) || !tax.eq(invoice.taxAmount) || !subtotal.plus(tax).eq(invoice.total) || invoice.lines.some(line => line.organizationId !== invoice.organizationId || line.supplierInvoiceId !== invoice.id || !money(line.quantity.times(line.unitCost)).plus(line.taxAmount).eq(line.lineTotal))) throw review()
+  if (!subtotal.eq(invoice.subtotal) || !tax.eq(invoice.taxAmount) || !subtotal.plus(tax).eq(invoice.total) || invoice.lines.some(line => line.organizationId !== invoice.organizationId || line.supplierInvoiceId !== invoice.id || !invoiceLineNet(line).plus(line.taxAmount).eq(line.lineTotal))) throw review()
   const approval = await tx.businessEvent.findFirst({ where: { id: invoice.postedBusinessEventId, organizationId: sourceReturn.organizationId } }), payload = objectRecord(approval?.payload)
   const documentHash = invoice.documentHash ?? `sha256:${hashBusinessPayload({ invoiceId: invoice.id, supplierId: invoice.supplierId, invoiceNumber: invoice.invoiceNumber, total: invoice.total.toFixed(2), currency: invoice.currency })}`
   if (!approval || approval.eventType !== "purchase.supplier_invoice.posted" || approval.eventSource !== "INTERNAL" || approval.schemaVersion !== 1 || approval.status !== "APPLIED" || !approval.processedAt || approval.payloadHash !== hashBusinessPayload(approval.payload) || approval.sourceType !== "SUPPLIER_INVOICE" || approval.sourceId !== invoice.id || approval.actorId !== invoice.approvedById || approval.postingBatchId !== invoice.ledgerPostingBatchId || approval.occurredAt.getTime() !== invoice.postedAt.getTime() || approval.documentHash !== documentHash || payload.invoiceId !== invoice.id || payload.supplierId !== invoice.supplierId || payload.invoiceNumber !== invoice.invoiceNumber || payload.total !== invoice.total.toFixed(2) || payload.currency !== invoice.currency || payload.makerId !== invoice.createdById || payload.approverId !== invoice.approvedById || payload.ledgerPostingBatchId !== invoice.ledgerPostingBatchId || payload.receiptRecognitionHash !== recognitionHash || !["MATCHED", "APPROVED_EXCEPTION"].includes(String(payload.matchStatus)) || objectRecord(approval.metadata).makerCheckerVerified !== true) throw review()
@@ -147,7 +149,9 @@ async function findReturnReplay(tx: Prisma.TransactionClient, organizationId: st
   })
 }
 
-export async function postPurchaseReturn(input: PostPurchaseReturnInput, client: DbClient = db) {
+export async function postPurchaseReturn(input: PostPurchaseReturnInput, client: DbClient = db, control?: {
+  assertCurrentAuthority: (tx: Prisma.TransactionClient) => Promise<void>
+}) {
   const parsed = postPurchaseReturnInputSchema.parse(input)
   const occurredAt = parseDate(parsed.occurredAt)
   const normalizedLines = parsed.lines
@@ -167,12 +171,14 @@ export async function postPurchaseReturn(input: PostPurchaseReturnInput, client:
     goodsReceiptId: parsed.goodsReceiptId,
     occurredAt: parsed.occurredAt ? occurredAt.toISOString() : null,
     reason: parsed.reason,
+    ...(parsed.expectedRevision ? { expectedRevision: parsed.expectedRevision } : {}),
     documentHash: parsed.documentHash ?? null,
     lines: normalizedLines,
   }
   const payloadHash = prefixedHash(payload)
 
   return inTransaction(client, async (tx) => {
+    await control?.assertCurrentAuthority(tx)
     const replay = await findReturnReplay(tx, parsed.organizationId, parsed.idempotencyKey)
     if (replay) {
       assertReplay(replay, payloadHash)
@@ -181,6 +187,7 @@ export async function postPurchaseReturn(input: PostPurchaseReturnInput, client:
 
     await tx.$queryRaw`SELECT s.id FROM suppliers s JOIN purchase_orders p ON p."supplierId" = s.id JOIN goods_receipts r ON r."purchaseOrderId" = p.id WHERE r.id = ${parsed.goodsReceiptId} AND r."organizationId" = ${parsed.organizationId} AND p."organizationId" = ${parsed.organizationId} AND s."organizationId" = ${parsed.organizationId} FOR UPDATE OF s`
     await lockSource(tx, "goods_receipts", parsed.organizationId, parsed.goodsReceiptId)
+    await control?.assertCurrentAuthority(tx)
     const lockedReplay = await findReturnReplay(tx, parsed.organizationId, parsed.idempotencyKey)
     if (lockedReplay) {
       assertReplay(lockedReplay, payloadHash)
@@ -206,6 +213,14 @@ export async function postPurchaseReturn(input: PostPurchaseReturnInput, client:
       || receipt.status === GoodsReceiptStatus.COMPLETED
     if (!inventoryPostedReceipt || !receipt.inventoryPostedAt) {
       throw new BusinessRuleError("Only inventory-posted goods receipts can be returned.")
+    }
+    if (parsed.expectedRevision) {
+      const source = await purchaseReturnSourceInTx(tx, parsed.organizationId, parsed.purchaseOrderId, parsed.goodsReceiptId)
+      if (source.revision !== parsed.expectedRevision) throw new ConflictError("The source receipt or its available stock changed after review.")
+      const available = new Map(source.lines.map(line => [line.id, line.available]))
+      if (normalizedLines.some(line => quantity(line.quantity).gt(available.get(line.sourceGoodsReceiptLineId) ?? 0))) {
+        throw new BusinessRuleError("Return quantity exceeds available inventory from the original receipt location.")
+      }
     }
     if (occurredAt < receipt.inventoryPostedAt) throw new BusinessRuleError("A return cannot precede its receipt inventory recognition.")
 
@@ -280,6 +295,7 @@ export async function postPurchaseReturn(input: PostPurchaseReturnInput, client:
       }
     })
 
+    await control?.assertCurrentAuthority(tx)
     const purchaseReturnId = randomUUID()
     const source = await readReceiptRecognitionSource(tx, parsed.organizationId, receipt.id)
     const currency = source?.manifest.currency ?? receipt.organization.currency
@@ -626,6 +642,7 @@ export async function postSupplierCreditNote(input: PostSupplierCreditNoteInput,
     supplierInvoiceId: parsed.supplierInvoiceId,
     creditNoteNumber: normalizeDocumentNumber(parsed.creditNoteNumber),
     creditDate: creditDate.toISOString(),
+    ...(parsed.expectedTotal === undefined ? {} : { expectedTotal: money(parsed.expectedTotal).toFixed(2) }),
     documentHash: parsed.documentHash,
     reason: parsed.reason,
     lines: mappings,
@@ -774,6 +791,9 @@ export async function postSupplierCreditNote(input: PostSupplierCreditNoteInput,
     const taxAmount = plans.reduce((total, line) => total.plus(line.taxAmount), new Prisma.Decimal(0)).toDecimalPlaces(2)
     const total = subtotal.plus(taxAmount).toDecimalPlaces(2)
     if (total.lt(0)) throw new BusinessRuleError("Supplier credit total cannot be negative.")
+    if (parsed.expectedTotal !== undefined && !total.eq(parsed.expectedTotal)) {
+      throw new ConflictError("The expected supplier credit amount changed. Review the current allocation.")
+    }
     const returnFunding = await assertPurchaseReturnClaimFunding(tx, sourceReturn, { currency: invoice.currency, sourceDate: creditDate,
       claims: plans.map(line => ({ returnLineId: line.sourcePurchaseReturnLineId, quantity: line.quantity, amount: line.claimAmount })) })
     const supplierCreditNoteId = randomUUID()

@@ -391,6 +391,9 @@
     "quantity": "Quantité facturée",
     "cost": "Coût unitaire",
     "taxRate": "Taux de taxe (%)",
+    "taxAmount": "Montant de taxe sur la facture",
+    "discount": "Remise sur la ligne",
+    "freight": "Frais de transport imputés",
     "remove": "Retirer la ligne",
     "notes": "Notes",
     "review": "Vérifier la préparation",
@@ -399,7 +402,10 @@
     "subtotal": "Sous-total",
     "tax": "Taxe",
     "total": "Total",
-    "variance": "L’écart de prix nécessite une revue du rapprochement",
+    "variance": "L’écart de montant nécessite une revue du rapprochement",
+    "discountVariance": "Écart de remise",
+    "freightVariance": "Écart de frais de transport",
+    "taxVariance": "Écart de taxe",
     "confirm": "Enregistrer pour approbation",
     "edit": "Revenir à la saisie",
     "prepared": "Préparation de facture enregistrée",
@@ -412,7 +418,7 @@
     "new": "Préparer une autre facture",
     "loading": "Chargement des réceptions actuelles…",
     "refresh": "Actualiser les sources",
-    "invalid": "Vérifiez les dates, le lien et l’empreinte du document, ainsi que les quantités, prix et taux de taxe.",
+    "invalid": "Vérifiez les dates, le lien et l’empreinte du document, ainsi que la quantité, le prix, la remise, le transport et la taxe de chaque ligne.",
     "denied": "Votre session ou votre rôle actuel ne permet pas cette préparation. Connectez-vous avec un compte autorisé.",
     "stale": "Les informations vérifiées ont changé. Votre brouillon est conservé ; actualisez les sources et vérifiez-le à nouveau.",
     "unavailable": "Les réceptions, la devise ou la période comptable ne permettent pas cette préparation. Vérifiez la réception, les quantités restantes et le paramétrage comptable.",
@@ -1277,20 +1283,20 @@
     }
   },
   "enterpriseDashboard": {
-    "title": "Tableau de bord operations",
-    "subtitle": "Vue en temps reel des ventes, du stock, des achats et de la sante des agences.",
-    "connected": "Donnees en direct",
-    "generated": "Mis a jour",
+    "title": "Tableau de bord des opérations",
+    "subtitle": "Vue en temps réel des ventes, du stock, des achats et de la santé des agences.",
+    "connected": "Données en direct",
+    "generated": "Mis à jour",
     "refresh": "Actualiser",
     "refreshing": "Actualisation",
-    "refreshStarted": "Actualisation du tableau de bord lancee",
-    "refreshStartedMessage": "Recuperation des dernieres donnees operationnelles.",
-    "refreshSuccess": "Tableau de bord actualise",
-    "refreshSuccessMessage": "Les dernieres donnees du tableau de bord sont visibles.",
-    "refreshError": "Echec de l'actualisation du tableau de bord",
+    "refreshStarted": "Actualisation du tableau de bord lancée",
+    "refreshStartedMessage": "Récupération des dernières données opérationnelles.",
+    "refreshSuccess": "Tableau de bord actualisé",
+    "refreshSuccessMessage": "Les dernières données du tableau de bord sont visibles.",
+    "refreshError": "Échec de l'actualisation du tableau de bord",
     "allLocations": "Tous les lieux",
     "filters": {
-      "period": "Periode",
+      "period": "Période",
       "location": "Lieu"
     },
     "periods": {
@@ -1302,7 +1308,7 @@
     "tabs": {
       "overview": "Vue d'ensemble",
       "inventory": "Inventaire",
-      "operations": "Operations"
+      "operations": "Opérations"
     },
     "metrics": {
       "revenue": "Revenu",
@@ -1313,29 +1319,29 @@
       "cashCollected": "Encaissements"
     },
     "metricDescriptions": {
-      "revenue": "Ventes terminees sur la periode selectionnee",
-      "orders": "Commandes terminees et livrees",
+      "revenue": "Ventes terminées sur la période sélectionnée",
+      "orders": "Commandes terminées et livrées",
       "customers": "Clients de cette organisation",
       "inventoryValue": "Valeur actuelle du stock suivi",
-      "averageOrderValue": "Revenu divise par les commandes terminees",
-      "cashCollected": "Paiements clients payes sur la periode"
+      "averageOrderValue": "Revenu divisé par les commandes terminées",
+      "cashCollected": "Paiements clients payés sur la période"
     },
     "sections": {
       "salesTrend": "Tendance des ventes",
-      "salesTrendDescription": "Evolution quotidienne du revenu et des commandes terminees.",
+      "salesTrendDescription": "Évolution quotidienne du revenu et des commandes terminées.",
       "topProducts": "Meilleurs produits",
-      "topProductsDescription": "Principaux contributeurs au revenu sur la periode.",
+      "topProductsDescription": "Principaux contributeurs au revenu sur la période.",
       "pendingActions": "Actions en attente",
-      "stockHealth": "Sante de l'inventaire",
-      "stockHealthDescription": "Etat du stock suivi dans le perimetre selectionne.",
+      "stockHealth": "Santé de l'inventaire",
+      "stockHealthDescription": "État du stock suivi dans le périmètre sélectionné.",
       "locationPerformance": "Performance par lieu",
       "locationPerformanceDescription": "Revenu, commandes et valeur du stock par agence.",
-      "alerts": "Alertes operationnelles",
+      "alerts": "Alertes opérationnelles",
       "alertsDescription": "Points importants qui demandent une attention.",
-      "recentActivity": "Activite recente",
+      "recentActivity": "Activité récente",
       "recentActivityDescription": "Derniers mouvements de ventes, achats et stock.",
       "quickActions": "Actions rapides",
-      "quickActionsDescription": "Passer de l'information a la surface operationnelle."
+      "quickActionsDescription": "Passer de l'information à l’action."
     },
     "stock": {
       "trackedItems": "Articles suivis",
@@ -1343,15 +1349,15 @@
       "lowStock": "Stock bas",
       "outOfStock": "Rupture",
       "overstock": "Surstock",
-      "reorderCandidates": "A reapprovisionner",
-      "availableUnits": "Unites disponibles",
-      "reservedUnits": "Unites reservees"
+      "reorderCandidates": "À réapprovisionner",
+      "availableUnits": "Unités disponibles",
+      "reservedUnits": "Unités réservées"
     },
     "empty": {
-      "topProducts": "Aucune vente produit trouvee pour cette periode.",
+      "topProducts": "Aucune vente produit trouvée pour cette période.",
       "alerts": "Aucune alerte operationnelle urgente pour le moment.",
-      "activity": "Aucune activite recente trouvee pour cette periode.",
-      "locations": "Aucun lieu actif trouve."
+      "activity": "Aucune activité récente trouvée pour cette période.",
+      "locations": "Aucun lieu actif trouvé."
     },
     "actions": {
       "view": "Voir",
@@ -1361,7 +1367,7 @@
       "purchases": "Achats",
       "finance": "Finance"
     },
-    "comparison": "vs periode precedente"
+    "comparison": "vs période precedente"
   },
   "cashDrawerDashboard": {
     "title": "Controle des caisses",
@@ -2363,6 +2369,15 @@
         "exportStartedMessage": "Le certificat signe est filigrane et journalise.",
         "exportCompleteTitle": "Certificat exporte",
         "exportCompleteMessage": "Le telechargement du certificat de rapprochement signe a demarre."
+      },
+      "runScope": {
+        "label": "Couverture du rapprochement",
+        "daily": "Aujourd’hui (UTC)",
+        "accountingPeriod": "Période comptable complète",
+        "periodLabel": "Période comptable ouverte",
+        "choosePeriod": "Choisir une période ouverte enregistrée",
+        "noPeriods": "Aucune période ouverte compatible n’est disponible. Le rapprochement complet exige des bornes de jour UTC.",
+        "collisionWarning": "Un rapprochement journalier et un rapprochement complet ne peuvent pas partager le premier jour de la période pour ce compte. Un rapprochement existant entraîne un conflit ; sa couverture ne sera pas étendue. Le serveur vérifie la période actuelle avant le lancement."
       }
     },
     "trustBanner": {
@@ -2390,7 +2405,7 @@
       "fileNamePlaceholder": "Nom du fichier de releve",
       "contentLabel": "Contenu du releve",
       "contentPlaceholder": "Chargez un fichier CSV ou JSON, ou collez son contenu ici.",
-      "formatHint": "Colonnes requises : amount et date; transaction, reference, direction, frais et devise sont pris en charge.",
+      "formatHint": "Les fichiers CSV ou tableaux JSON exigent une transaction ou référence, un sens, un montant positif, une devise et une date. Ils conservent uniquement les dates des transactions observées et ne prouvent pas une couverture complète. Une période complète exige une enveloppe JSON brute stoquify-statement-v1 déclarant le fournisseur, le compte, la devise et les bornes exactes justifiées par le relevé.",
       "action": "Importer le releve",
       "historyTitle": "Preuves de releve recentes",
       "emptyHistory": "Aucun fichier de releve n'a encore ete importe.",
@@ -3242,6 +3257,7 @@
       "refresh": "Charger les preuves actuelles"
     },
     "shell": {
+      "todayActivity": "Activité du jour",
       "title": "Point de vente",
       "subtitle": "Poste caisse concentre",
       "scannerReady": "Scanner pret",
@@ -3364,7 +3380,7 @@
     "cart": {
       "title": "Panier",
       "walkIn": "Client comptoir",
-      "empty": "Scannez ou selectionnez un article pour demarrer une vente brouillon persistante.",
+      "empty": "Scannez ou sélectionnez un article pour commencer une vente.",
       "lines": "{count} lignes",
       "removeLine": "Retirer {item} du panier",
       "quantityFor": "Quantité pour {item}"
@@ -3410,6 +3426,30 @@
     },
     "receipt": {
       "options": "Options recu",
+      "browserDelivery": "Une fois la vente confirmée, ouvrez le récapitulatif d’achat pour l’imprimer ou l’enregistrer en PDF. L’envoi automatique est indisponible.",
+      "deliveryRestricted": "Demandez un récapitulatif d’achat imprimé à une personne autorisée. L’envoi automatique est indisponible.",
+      "whatsApp": {
+        "available": "Avec l’accord du client, l’envoi par WhatsApp commence après confirmation de la vente.",
+        "select": "Envoyer le reçu par WhatsApp",
+        "number": "Numéro WhatsApp du client avec indicatif international",
+        "incomplete": "Saisissez un numéro WhatsApp avec son indicatif et confirmez l’accord du client, ou désactivez WhatsApp pour cette vente.",
+        "review": "Vérifier le reçu WhatsApp",
+        "checkStatus": "Vérifier le statut WhatsApp",
+        "checking": "Vérification du statut…",
+        "order": "Reçu WhatsApp de la vente {number}",
+        "statusUnavailable": "Le statut du reçu est indisponible. Réessayez la vérification.",
+        "retryRequest": "Relancer la demande de reçu",
+        "status": {
+          "REQUESTING": "Demande d’envoi par WhatsApp…",
+          "REQUEST_UNCONFIRMED": "La demande de reçu est incertaine. Vérifiez son statut ou relancez la même demande.",
+          "UNAVAILABLE": "L’envoi par WhatsApp est indisponible pour cette vente. Utilisez le reçu imprimable s’il est disponible.",
+          "QUEUED": "Le reçu WhatsApp est en attente d’envoi.",
+          "RETRYING": "Un problème temporaire a interrompu l’envoi WhatsApp. Une nouvelle tentative est prévue.",
+          "ACCEPTED": "WhatsApp a accepté le reçu pour livraison.",
+          "UNCERTAIN": "L’acceptation par WhatsApp est incertaine. Demandez à un responsable de vérifier la demande avant d’envoyer un autre reçu.",
+          "FAILED": "L’envoi par WhatsApp a échoué. Utilisez le reçu imprimable s’il est disponible."
+        }
+      },
       "destination": "Destination recu",
       "destinationRequired": "Saisissez une destination de recu avant d'encaisser.",
       "destinationPlaceholders": {
@@ -3552,7 +3592,9 @@
       "standby": "Veille",
       "online": "En ligne",
       "offline": "Hors ligne",
-      "notConfigured": "Non configurée"
+      "notConfigured": "Non configurée",
+      "browserPrint": "Impression depuis le navigateur",
+      "deviceHelp": "La saisie de codes-barres accepte une douchette clavier ou la saisie manuelle. L’état du tiroir provient du registre de session. Les reçus utilisent la fenêtre d’impression du navigateur et ses imprimantes configurées."
     },
     "featureGates": {
       "title": "Workflow backend requis",
@@ -6214,6 +6256,7 @@
     "positiveQuantity": "Saisissez une quantité positive avec au plus trois décimales."
   },
   "purchaseOrderClone": {
+    "recover": "Vérifier la demande initiale",
     "button": "Cloner en brouillon",
     "pending": "Création du brouillon…",
     "created": "Un nouveau brouillon de commande a été créé.",
@@ -6223,7 +6266,7 @@
     "unavailable": "La commande d’origine, le fournisseur, le lieu de livraison ou les articles ne sont plus disponibles pour une nouvelle commande. Vérifiez les documents actuels avant de réessayer.",
     "stopped": "Les achats n’acceptent plus de nouvelles commandes. Les commandes existantes et leurs opérations de finalisation autorisées restent accessibles.",
     "unknownTitle": "Le résultat du clonage n’a pas pu être confirmé",
-    "unknown": "Un brouillon a peut-être été créé. Vérifiez les commandes les plus récentes avant de recommencer. Cette page ne renverra pas la demande.",
+    "unknown": "Un brouillon a peut-être été créé. Vérifiez la demande initiale, le travail enregistré ou les commandes récentes. La vérification ne crée pas une autre commande.",
     "openOrders": "Ouvrir les bons de commande dans un nouvel onglet",
     "draftOnly": "La copie est un brouillon. La soumission et l’approbation indépendante restent obligatoires."
   },
@@ -6686,7 +6729,7 @@
     "state": "État de la facture",
     "subtotal": "Sous-total",
     "tax": "Taxe",
-    "variance": "Écart de prix",
+    "variance": "Écart de rapprochement",
     "document": "Ouvrir le document source de l’auteur",
     "lines": "Lignes de facture",
     "lineTotal": "Total de ligne",
@@ -6780,7 +6823,7 @@
     "state": "État de la facture",
     "subtotal": "Sous-total",
     "tax": "Taxe",
-    "variance": "Écart de prix",
+    "variance": "Écart de rapprochement",
     "document": "Ouvrir le document source de l’auteur",
     "lines": "Lignes de facture",
     "lineTotal": "Total de ligne",

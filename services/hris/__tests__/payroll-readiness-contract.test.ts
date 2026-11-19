@@ -118,6 +118,18 @@ function readinessExport(source = readyEmployeeSource()) {
 }
 
 describe("HRIS payroll readiness contract", () => {
+  it.each(["approvalEvidenceHash","requestBusinessEventId","approvalBusinessEventId","appliedBusinessEventId"] as const)("rejects absent payment %s on both sides of proof", field => {
+    const source=readyEmployeeSource()
+    source.paymentDestinationRequest![field]=null
+    ;(source.employeeMetadata as any).approvedPaymentDestinationEvidence[field]=null
+    expect(readinessExport(source).blockerCodes).toContain("HRIS_PAYROLL_PAYMENT_DESTINATION_PROOF_MISSING")
+  })
+  it("rejects absent activation event on both sides of contract proof",()=>{
+    const source=readyEmployeeSource()
+    source.contract!.activatedBusinessEventId=null
+    ;(source.contract!.metadata as any).hrisContractApproval.latest.activationBusinessEventId=null
+    expect(readinessExport(source).blockerCodes).toContain("HRIS_PAYROLL_CONTRACT_APPROVAL_PROOF_MISSING")
+  })
   it("certifies complete HRIS source proof without exposing salary values", () => {
     const result = readinessExport();
 

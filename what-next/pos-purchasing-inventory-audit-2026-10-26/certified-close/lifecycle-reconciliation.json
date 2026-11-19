@@ -1,0 +1,1842 @@
+[
+  {
+    "scenario": "BLOCKED_DRAFT",
+    "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+    "periodId": "cmvpl739c0005maeomy35mmm6",
+    "run": {
+      "id": "cmvpl7s5m00aqmaeo3tu2p0ex",
+      "status": "BLOCKED",
+      "readinessScore": 85,
+      "criticalBlockerCount": 0,
+      "highBlockerCount": 13,
+      "evidenceCoveragePct": 80,
+      "correlationId": "d50c0228-bd20-43b8-88fb-d15321a6be16",
+      "runById": "cmvpl745t0011maeoqzq9byjv",
+      "startedAt": "2026-10-26T18:25:51.830Z",
+      "completedAt": "2026-10-26T18:25:54.984Z",
+      "createdAt": "2026-10-26T18:25:51.940Z"
+    },
+    "checklist": [
+      {
+        "id": "cmvpl7uob00aymaeoruwohnao",
+        "key": "balance-sheet-reconciliation",
+        "domain": "LEDGER",
+        "status": "FAILED",
+        "severity": "HIGH",
+        "label": "Balance-sheet account reconciliations",
+        "detail": "0 of 13 account/currency schedules have current independent approval.",
+        "sourceService": "services/accounting/balance-sheet-close.service.ts",
+        "evidenceCount": 0,
+        "blockerReason": "Reconcile and independently approve each required account/currency schedule.",
+        "nextActionHref": "/dashboard/accounting/accountant-portal",
+        "ownerId": null,
+        "dueAt": null
+      },
+      {
+        "id": "cmvpl7unw00awmaeoelwz1h6z",
+        "key": "ledger-reconciliation",
+        "domain": "LEDGER",
+        "status": "PASSED",
+        "severity": "INFO",
+        "label": "Ledger balance and traceability",
+        "detail": "Posted ledger entries balance and retain posting/source traceability.",
+        "sourceService": "services/accounting/reconciliations.service.ts",
+        "evidenceCount": 1,
+        "blockerReason": null,
+        "nextActionHref": "/dashboard/accounting/reports/trial-balance",
+        "ownerId": null,
+        "dueAt": null
+      },
+      {
+        "id": "cmvpl7unk00aumaeoi3zd3swe",
+        "key": "period-close-preflight",
+        "domain": "LEDGER",
+        "status": "PASSED",
+        "severity": "INFO",
+        "label": "Period close preflight",
+        "detail": "No period close preflight blockers were detected.",
+        "sourceService": "services/accounting/periods.service.ts",
+        "evidenceCount": 1,
+        "blockerReason": null,
+        "nextActionHref": "/dashboard/accounting/control-center",
+        "ownerId": null,
+        "dueAt": null
+      },
+      {
+        "id": "cmvpl7ul800asmaeod3mmwwq7",
+        "key": "period-state",
+        "domain": "LEDGER",
+        "status": "PASSED",
+        "severity": "INFO",
+        "label": "Accounting period state",
+        "detail": "Synthetic open period is open and available for close readiness.",
+        "sourceService": "services/accounting/periods.service.ts",
+        "evidenceCount": 1,
+        "blockerReason": null,
+        "nextActionHref": "/dashboard/accounting/setup",
+        "ownerId": null,
+        "dueAt": null
+      },
+      {
+        "id": "cmvpl7uon00b0maeozm4ezdyh",
+        "key": "payment-reconciliation",
+        "domain": "PAYMENT_RECONCILIATION",
+        "status": "PASSED",
+        "severity": "INFO",
+        "label": "Payment reconciliation sign-off",
+        "detail": "1 supplier cash receipt review(s) retained as internal evidence; provider settlement and recipient identity are not certified by these reviews.",
+        "sourceService": "services/reconciliation/payment-close-evidence.service.ts",
+        "evidenceCount": 1,
+        "blockerReason": null,
+        "nextActionHref": "/dashboard/finance/reconciliation",
+        "ownerId": null,
+        "dueAt": null
+      },
+      {
+        "id": "cmvpl7upi00b2maeovrc58b7y",
+        "key": "suspense-exceptions",
+        "domain": "SUSPENSE",
+        "status": "PASSED",
+        "severity": "INFO",
+        "label": "Suspense and payment exceptions",
+        "detail": "No open close-blocking suspense items were detected.",
+        "sourceService": "services/reconciliation/payment-suspense-workflow.service.ts",
+        "evidenceCount": 0,
+        "blockerReason": null,
+        "nextActionHref": "/dashboard/finance/reconciliation",
+        "ownerId": null,
+        "dueAt": null
+      },
+      {
+        "id": "cmvpl7uqu00b6maeoi7jeokel",
+        "key": "inventory-valuation",
+        "domain": "INVENTORY_VALUATION",
+        "status": "PASSED",
+        "severity": "INFO",
+        "label": "Inventory valuation readiness",
+        "detail": "Inventory subledger value 200.00 reconciles to class 3 ledger value 200.00 XAF.",
+        "sourceService": "services/inventory/inventory-valuation.service.ts",
+        "evidenceCount": 1,
+        "blockerReason": null,
+        "nextActionHref": "/dashboard/inventory",
+        "ownerId": null,
+        "dueAt": null
+      },
+      {
+        "id": "cmvpl7urs00bamaeozprodn5v",
+        "key": "tax-payroll-ap-readiness",
+        "domain": "TAX",
+        "status": "PASSED",
+        "severity": "INFO",
+        "label": "AP, payroll, and compliance exposure",
+        "detail": "Purchasing and AP: ready; Payroll and declarations: ready; Compliance documents: ready",
+        "sourceService": "services/accounting/data-trust.service.ts",
+        "evidenceCount": 3,
+        "blockerReason": null,
+        "nextActionHref": "/dashboard/accounting/accountant-portal",
+        "ownerId": null,
+        "dueAt": null
+      },
+      {
+        "id": "cmvpl7urc00b8maeot1m1t6k4",
+        "key": "payroll-finance-forecast-proof",
+        "domain": "PAYROLL",
+        "status": "PASSED",
+        "severity": "INFO",
+        "label": "Payroll finance forecast proof",
+        "detail": "Aggregate payroll forecast is authoritative through 2026-10-26T23:59:59.999Z; net pay 0, statutory liabilities 0.",
+        "sourceService": "services/snapshots/tenant-operating-snapshot.service.ts",
+        "evidenceCount": 1,
+        "blockerReason": null,
+        "nextActionHref": "/dashboard/payroll/runs",
+        "ownerId": null,
+        "dueAt": null
+      },
+      {
+        "id": "cmvpl7upy00b4maeo4dntvkzt",
+        "key": "data-trust-provenance",
+        "domain": "DATA_TRUST",
+        "status": "WARNING",
+        "severity": "MEDIUM",
+        "label": "Data trust and provenance",
+        "detail": "Data-trust level T2; 13 blockers detected.",
+        "sourceService": "services/accounting/data-trust.service.ts",
+        "evidenceCount": 17,
+        "blockerReason": "49006 TEST_AR (XAF): Balance-sheet supporting evidence is missing.",
+        "nextActionHref": "/dashboard/accounting/accountant-portal",
+        "ownerId": null,
+        "dueAt": null
+      }
+    ],
+    "pack": {
+      "exportId": "cmvpl7wg400ecmaeo60y6dkjn",
+      "contentHash": "sha256:897be210e8754f8e2a706eca7b8cd8ae7cdc4e48296f5bf63794a5012c1faebf",
+      "mode": "DRAFT_NOT_CERTIFIED",
+      "watermarkId": "close-pack-draft-not-certified-cmvpl7s5m00aqmaeo3tu2p0ex-37d92eb0-aee",
+      "runId": "cmvpl7s5m00aqmaeo3tu2p0ex"
+    }
+  },
+  {
+    "scenario": "REAL_READY",
+    "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+    "periodId": "cmvpl739c0005maeomy35mmm6",
+    "schedules": [
+      {
+        "id": "cmvpl7xew00egmaeobnxvod9f",
+        "hash": "sha256:d0d18fbf98e7a81f17e698031b105fedf2852559f96cfdacc2bcc6b9d6abda75",
+        "accountCode": "59001",
+        "status": "APPROVED",
+        "balances": [
+          {
+            "reference": "cmvpl73h7000fmaeodew5rw99",
+            "description": "Synthetic ledger-supported schedule",
+            "openingBalance": "0.00",
+            "additions": "0.00",
+            "reductions": "200.00",
+            "closingBalance": "-200.00",
+            "sourceReference": "https://example.invalid/close-schedule/cmvpl73h7000fmaeodew5rw99",
+            "sourceDocumentHash": "sha256:cda85ab55a9906081c19ff4988edfc4c89675bc8d44b35d3b8f6decc206d4459"
+          }
+        ]
+      },
+      {
+        "id": "cmvpl7xv300eimaeovdm4dotb",
+        "hash": "sha256:23073c225e6db4a9e7f5fd9ff7fff7b2087577e6d8c3d601b06b53f374e93f20",
+        "accountCode": "59002",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl7yeq00ekmaeo03sxcy8p",
+        "hash": "sha256:f30b44070822d20dec67c2cfc9f70d0d1bbe9be9a433b39f48ba964e310c4154",
+        "accountCode": "59003",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl7yve00emmaeo2mlr4ymi",
+        "hash": "sha256:c6768dc2fae3f93fdf0a328dc653bdd612ba72569d4d21007cc690f3401e1eb7",
+        "accountCode": "59004",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl7zbi00eomaeoc9ao5bm7",
+        "hash": "sha256:dd96f2066698a0688c38c9aeb53bf51a96b7b5046a42d0c78baac74f0f344659",
+        "accountCode": "59005",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl7zlv00eqmaeo7u3nuit2",
+        "hash": "sha256:011eade565805c432910c5756dddc1c25ecba77c6a8effbd8e7a4376c2b3c3e5",
+        "accountCode": "49006",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl7zxf00esmaeoz2b41ntf",
+        "hash": "sha256:e7778fb91a241665aa9fe412a72bf751e4f4c03673102ee6f06d0f0aa28cc685",
+        "accountCode": "49007",
+        "status": "APPROVED",
+        "balances": [
+          {
+            "reference": "cmvpl74cq001tmaeod2h548ln",
+            "description": "Synthetic ledger-supported schedule",
+            "openingBalance": "0.00",
+            "additions": "200.00",
+            "reductions": "200.00",
+            "closingBalance": "0.00",
+            "sourceReference": "https://example.invalid/close-schedule/cmvpl74cq001tmaeod2h548ln",
+            "sourceDocumentHash": "sha256:0e903ac012af44cf73ebf5c80af098f883acc1014d11f41f2ae497c851e6a9d9"
+          }
+        ]
+      },
+      {
+        "id": "cmvpl805p00eumaeo2vf85blc",
+        "hash": "sha256:2dfc2dedca043539baa747d9590264d98564f31a11427bb361b6e1d1618cdcd8",
+        "accountCode": "49008",
+        "status": "APPROVED",
+        "balances": [
+          {
+            "reference": "cmvpl74bn001rmaeoz8fu75ah",
+            "description": "Synthetic ledger-supported schedule",
+            "openingBalance": "0.00",
+            "additions": "200.00",
+            "reductions": "200.00",
+            "closingBalance": "0.00",
+            "sourceReference": "https://example.invalid/close-schedule/cmvpl74bn001rmaeoz8fu75ah",
+            "sourceDocumentHash": "sha256:f2b1c4187899791bba7b5dea4d39949429e4c54b15cd80f9cd8f3ea7afa82692"
+          }
+        ]
+      },
+      {
+        "id": "cmvpl80gw00ewmaeo93b9pal8",
+        "hash": "sha256:6014af17aae37d4a85348d2723dc09a929dc60529cb4969406ad0c1563d6d8f4",
+        "accountCode": "49009",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl80ns00eymaeodv6rlc83",
+        "hash": "sha256:f0cf5591a0323f2411c248d276228eef1b7bc94d05bd06523c91fdc6e598ef9a",
+        "accountCode": "49010",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl80z300f0maeoib41gaye",
+        "hash": "sha256:daa44e2f13a9bd60d806a0fb682cccd876d6b65a47a2f8ce4fbab64d5d625412",
+        "accountCode": "39011",
+        "status": "APPROVED",
+        "balances": [
+          {
+            "reference": "cmvpl73g6000bmaeorml7jrvk",
+            "description": "Synthetic ledger-supported schedule",
+            "openingBalance": "0.00",
+            "additions": "200.00",
+            "reductions": "0.00",
+            "closingBalance": "200.00",
+            "sourceReference": "https://example.invalid/close-schedule/cmvpl73g6000bmaeorml7jrvk",
+            "sourceDocumentHash": "sha256:481e68e7b78d003db66635bf13b807d6b9f0c681ad0cb27104518aaa081d497b"
+          }
+        ]
+      },
+      {
+        "id": "cmvpl81bc00f2maeomollgpwb",
+        "hash": "sha256:35d802a75256d42ce8a19034fe0a49635e40d514d859055d9a39089779407252",
+        "accountCode": "49013",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl81ha00f4maeooj4ovg2z",
+        "hash": "sha256:e66c1e3cb289f0a1a6afae76a1a60e1c4cbbce9d7a94eb80f756aec00644e8fc",
+        "accountCode": "49014",
+        "status": "APPROVED",
+        "balances": []
+      }
+    ],
+    "run": {
+      "currentProof": {
+        "checkedAt": "2026-10-26T18:26:07.175Z",
+        "grade": "operational",
+        "blockers": [],
+        "assessmentState": "CURRENT",
+        "latestAssessmentCreatedAt": "2026-10-26T18:26:04.196Z"
+      },
+      "source": {
+        "mode": "CLOSE_ASSURANCE_CENTER",
+        "asOf": "2026-10-26T18:26:04.134Z",
+        "organizationScoped": true,
+        "persisted": true,
+        "trustLevel": "T4",
+        "provenance": "MIXED",
+        "sourceTables": [
+          "accounting_periods",
+          "journal_entries",
+          "journal_entry_lines",
+          "ledger_posting_batches",
+          "accounting_source_links",
+          "bank_balance_evidence",
+          "balance_sheet_evidence",
+          "close_source_changes",
+          "provider_accounts",
+          "payment_rails",
+          "chart_of_accounts",
+          "settlement_accounts",
+          "match_records",
+          "payment_transactions",
+          "provider_events",
+          "statement_files",
+          "statement_lines",
+          "reconciliation_runs",
+          "suspense_items",
+          "payment_exceptions",
+          "inventory_levels",
+          "inventory_transactions",
+          "stock_adjustments",
+          "stock_count_sessions",
+          "payroll_periods",
+          "payroll_runs",
+          "payroll_run_transitions",
+          "payroll_payment_batches",
+          "payroll_declarations",
+          "payroll_declaration_evidence",
+          "business_events",
+          "ledger_audit_events",
+          "audit_logs"
+        ]
+      },
+      "period": {
+        "id": "cmvpl739c0005maeomy35mmm6",
+        "name": "Synthetic open period",
+        "status": "OPEN",
+        "startDate": "2026-01-01T00:00:00.000Z",
+        "endDate": "2026-10-26T18:25:51.805Z"
+      },
+      "periods": {
+        "currentOpenPeriod": {
+          "id": "cmvpl739c0005maeomy35mmm6",
+          "name": "Synthetic open period",
+          "status": "OPEN",
+          "startDate": "2026-01-01T00:00:00.000Z",
+          "endDate": "2026-10-26T18:25:51.805Z"
+        },
+        "recentPeriods": [
+          {
+            "id": "cmvpl739c0005maeomy35mmm6",
+            "name": "Synthetic open period",
+            "status": "OPEN",
+            "startDate": "2026-01-01T00:00:00.000Z",
+            "endDate": "2026-10-26T18:25:51.805Z"
+          }
+        ]
+      },
+      "run": {
+        "id": "cmvpl81m100f6maeoqbuuzuac",
+        "status": "READY",
+        "readinessScore": 100,
+        "criticalBlockerCount": 0,
+        "highBlockerCount": 0,
+        "evidenceCoveragePct": 90,
+        "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+        "runById": "cmvpl745t0011maeoqzq9byjv",
+        "startedAt": "2026-10-26T18:26:04.134Z",
+        "completedAt": "2026-10-26T18:26:06.492Z",
+        "createdAt": "2026-10-26T18:26:04.196Z"
+      },
+      "summary": {
+        "checklistCount": 10,
+        "passedCount": 10,
+        "failedCount": 0,
+        "warningCount": 0,
+        "unavailableCount": 0,
+        "findingCount": 0,
+        "openFindingCount": 0,
+        "evidenceCount": 34,
+        "commentCount": 0
+      },
+      "provenance": [
+        {
+          "asOf": "2026-10-26T18:26:04.134Z",
+          "label": "Ledger and period close",
+          "provenance": "POSTED",
+          "periodStatus": "OPEN",
+          "sourceTables": [
+            "accounting_periods",
+            "journal_entries",
+            "journal_entry_lines",
+            "ledger_posting_batches"
+          ]
+        },
+        {
+          "asOf": "2026-10-26T18:26:04.134Z",
+          "label": "Payment reconciliation",
+          "reason": "Period evidence through 2026-10-26T18:26:04.134Z; unassigned organization-wide controls: 0 suspense, 0 exceptions.",
+          "provenance": "OPERATIONAL",
+          "periodStatus": "OPEN",
+          "sourceTables": [
+            "reconciliation_runs",
+            "suspense_items",
+            "payment_exceptions",
+            "provider_events",
+            "statement_files",
+            "statement_lines"
+          ]
+        },
+        {
+          "asOf": "2026-10-26T18:26:04.134Z",
+          "label": "Data trust",
+          "provenance": "POSTED",
+          "periodStatus": "OPEN",
+          "sourceTables": [
+            "journal_entries",
+            "journal_entry_lines",
+            "ledger_posting_batches",
+            "accounting_source_links",
+            "business_events",
+            "ledger_audit_events",
+            "audit_logs",
+            "provider_accounts",
+            "statement_files",
+            "statement_lines",
+            "reconciliation_runs",
+            "reconciliation_no_activity_evidence",
+            "bank_balance_evidence",
+            "balance_sheet_evidence",
+            "close_source_changes",
+            "payment_exceptions",
+            "payment_transactions",
+            "supplier_invoices",
+            "supplier_ledger_entries",
+            "supplier_invoice_match_exceptions",
+            "supplier_payment_allocations",
+            "supplier_credit_notes",
+            "supplier_payments",
+            "payroll_runs",
+            "payroll_run_transitions",
+            "payroll_run_lines",
+            "payroll_payslips",
+            "payroll_declarations",
+            "payroll_declaration_evidence",
+            "payroll_payment_batches",
+            "payroll_payment_allocations",
+            "fiscal_documents"
+          ]
+        },
+        {
+          "asOf": "2026-10-26T18:26:04.134Z",
+          "label": "Inventory valuation",
+          "provenance": "POSTED",
+          "periodStatus": "OPEN",
+          "sourceTables": [
+            "inventory_levels",
+            "inventory_transactions",
+            "stock_adjustments",
+            "stock_count_sessions",
+            "journal_entry_lines",
+            "business_events"
+          ]
+        },
+        {
+          "asOf": "2026-10-26T18:26:04.134Z",
+          "label": "Payroll finance forecast proof",
+          "provenance": "POSTED",
+          "periodStatus": "OPEN",
+          "sourceTables": [
+            "payroll_periods",
+            "payroll_runs",
+            "payroll_run_lines",
+            "payroll_payment_batches",
+            "payroll_declarations",
+            "payroll_declaration_evidence",
+            "payment_provider_accounts",
+            "accounting_source_links",
+            "ledger_posting_batches"
+          ]
+        }
+      ],
+      "checklist": [
+        {
+          "id": "cmvpl83fn00femaeoqdlhynqa",
+          "key": "balance-sheet-reconciliation",
+          "domain": "LEDGER",
+          "status": "PASSED",
+          "severity": "INFO",
+          "label": "Balance-sheet account reconciliations",
+          "detail": "13 of 13 account/currency schedules have current independent approval.",
+          "sourceService": "services/accounting/balance-sheet-close.service.ts",
+          "evidenceCount": 13,
+          "blockerReason": null,
+          "nextActionHref": "/dashboard/accounting/accountant-portal",
+          "ownerId": null,
+          "dueAt": null
+        },
+        {
+          "id": "cmvpl83fg00fcmaeoaow7himw",
+          "key": "ledger-reconciliation",
+          "domain": "LEDGER",
+          "status": "PASSED",
+          "severity": "INFO",
+          "label": "Ledger balance and traceability",
+          "detail": "Posted ledger entries balance and retain posting/source traceability.",
+          "sourceService": "services/accounting/reconciliations.service.ts",
+          "evidenceCount": 1,
+          "blockerReason": null,
+          "nextActionHref": "/dashboard/accounting/reports/trial-balance",
+          "ownerId": null,
+          "dueAt": null
+        },
+        {
+          "id": "cmvpl83f600famaeowg9r9sp1",
+          "key": "period-close-preflight",
+          "domain": "LEDGER",
+          "status": "PASSED",
+          "severity": "INFO",
+          "label": "Period close preflight",
+          "detail": "No period close preflight blockers were detected.",
+          "sourceService": "services/accounting/periods.service.ts",
+          "evidenceCount": 1,
+          "blockerReason": null,
+          "nextActionHref": "/dashboard/accounting/control-center",
+          "ownerId": null,
+          "dueAt": null
+        },
+        {
+          "id": "cmvpl83eo00f8maeolp2cd03k",
+          "key": "period-state",
+          "domain": "LEDGER",
+          "status": "PASSED",
+          "severity": "INFO",
+          "label": "Accounting period state",
+          "detail": "Synthetic open period is open and available for close readiness.",
+          "sourceService": "services/accounting/periods.service.ts",
+          "evidenceCount": 1,
+          "blockerReason": null,
+          "nextActionHref": "/dashboard/accounting/setup",
+          "ownerId": null,
+          "dueAt": null
+        },
+        {
+          "id": "cmvpl83fs00fgmaeorzceamtr",
+          "key": "payment-reconciliation",
+          "domain": "PAYMENT_RECONCILIATION",
+          "status": "PASSED",
+          "severity": "INFO",
+          "label": "Payment reconciliation sign-off",
+          "detail": "1 supplier cash receipt review(s) retained as internal evidence; provider settlement and recipient identity are not certified by these reviews.",
+          "sourceService": "services/reconciliation/payment-close-evidence.service.ts",
+          "evidenceCount": 1,
+          "blockerReason": null,
+          "nextActionHref": "/dashboard/finance/reconciliation",
+          "ownerId": null,
+          "dueAt": null
+        },
+        {
+          "id": "cmvpl83fw00fimaeo0w7azvci",
+          "key": "suspense-exceptions",
+          "domain": "SUSPENSE",
+          "status": "PASSED",
+          "severity": "INFO",
+          "label": "Suspense and payment exceptions",
+          "detail": "No open close-blocking suspense items were detected.",
+          "sourceService": "services/reconciliation/payment-suspense-workflow.service.ts",
+          "evidenceCount": 0,
+          "blockerReason": null,
+          "nextActionHref": "/dashboard/finance/reconciliation",
+          "ownerId": null,
+          "dueAt": null
+        },
+        {
+          "id": "cmvpl83g700fmmaeodozzyoho",
+          "key": "inventory-valuation",
+          "domain": "INVENTORY_VALUATION",
+          "status": "PASSED",
+          "severity": "INFO",
+          "label": "Inventory valuation readiness",
+          "detail": "Inventory subledger value 200.00 reconciles to class 3 ledger value 200.00 XAF.",
+          "sourceService": "services/inventory/inventory-valuation.service.ts",
+          "evidenceCount": 1,
+          "blockerReason": null,
+          "nextActionHref": "/dashboard/inventory",
+          "ownerId": null,
+          "dueAt": null
+        },
+        {
+          "id": "cmvpl83gm00fqmaeo1v59bd0n",
+          "key": "tax-payroll-ap-readiness",
+          "domain": "TAX",
+          "status": "PASSED",
+          "severity": "INFO",
+          "label": "AP, payroll, and compliance exposure",
+          "detail": "Purchasing and AP: ready; Payroll and declarations: ready; Compliance documents: ready",
+          "sourceService": "services/accounting/data-trust.service.ts",
+          "evidenceCount": 3,
+          "blockerReason": null,
+          "nextActionHref": "/dashboard/accounting/accountant-portal",
+          "ownerId": null,
+          "dueAt": null
+        },
+        {
+          "id": "cmvpl83gf00fomaeoyivsth4i",
+          "key": "payroll-finance-forecast-proof",
+          "domain": "PAYROLL",
+          "status": "PASSED",
+          "severity": "INFO",
+          "label": "Payroll finance forecast proof",
+          "detail": "Aggregate payroll forecast is authoritative through 2026-10-26T23:59:59.999Z; net pay 0, statutory liabilities 0.",
+          "sourceService": "services/snapshots/tenant-operating-snapshot.service.ts",
+          "evidenceCount": 1,
+          "blockerReason": null,
+          "nextActionHref": "/dashboard/payroll/runs",
+          "ownerId": null,
+          "dueAt": null
+        },
+        {
+          "id": "cmvpl83g000fkmaeoti4e67x1",
+          "key": "data-trust-provenance",
+          "domain": "DATA_TRUST",
+          "status": "PASSED",
+          "severity": "INFO",
+          "label": "Data trust and provenance",
+          "detail": "Data-trust level T4; 0 blockers detected.",
+          "sourceService": "services/accounting/data-trust.service.ts",
+          "evidenceCount": 17,
+          "blockerReason": null,
+          "nextActionHref": "/dashboard/accounting/accountant-portal",
+          "ownerId": null,
+          "dueAt": null
+        }
+      ],
+      "findings": [],
+      "evidenceItems": [
+        {
+          "id": "cmvpl83kq00gumaeoyf07tofg",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "SOURCE_LINK",
+          "sourceTable": "accounting_source_links",
+          "sourceType": "GOODS_RECEIPT",
+          "sourceId": "cmvpl78b30035maeon9uilarr",
+          "sourceLabel": "GOODS_RECEIPT GR-000001",
+          "sourceDate": "2026-10-26T18:25:28.996Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": {
+            "sourceLinkId": "cmvpl7ag40043maeosahrre2b",
+            "sourceNumber": "GR-000001",
+            "postingStatus": "POSTED",
+            "postingBatchId": "cmvpl78p0003hmaeosvb6sgat",
+            "journalEntryNumber": "APGR-20261026-0001"
+          }
+        },
+        {
+          "id": "cmvpl83kl00gsmaeozwvc32xn",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "SOURCE_LINK",
+          "sourceTable": "accounting_source_links",
+          "sourceType": "SUPPLIER_INVOICE",
+          "sourceId": "cmvpl7c8q004fmaeouxrjig4i",
+          "sourceLabel": "SUPPLIER_INVOICE SYNTH-4e758e0b-e2fb-482b-b842-dcf435d59df0",
+          "sourceDate": "2026-10-26T18:25:35.374Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": {
+            "sourceLinkId": "cmvpl7fda0052maeo7wq18bza",
+            "sourceNumber": "SYNTH-4e758e0b-e2fb-482b-b842-dcf435d59df0",
+            "postingStatus": "POSTED",
+            "postingBatchId": "cmvpl7fa0004vmaeoza65jvkn",
+            "journalEntryNumber": "APINV-20261026-0001"
+          }
+        },
+        {
+          "id": "cmvpl83ke00gqmaeo8f36aryo",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "SOURCE_LINK",
+          "sourceTable": "accounting_source_links",
+          "sourceType": "SUPPLIER_PAYMENT",
+          "sourceId": "95bc73b0-1af4-4202-aea1-7d888940afc0",
+          "sourceLabel": "SUPPLIER_PAYMENT SPAY-20261026-0001",
+          "sourceDate": "2026-10-26T18:25:41.934Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": {
+            "sourceLinkId": "cmvpl7kfj006vmaeogsjvv9z6",
+            "sourceNumber": "SPAY-20261026-0001",
+            "postingStatus": "POSTED",
+            "postingBatchId": "cmvpl7kd2006omaeoa257qv6e",
+            "journalEntryNumber": "APPAY-20261026-0001"
+          }
+        },
+        {
+          "id": "cmvpl83og00himaeo8t5fzn6a",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "PostingRule",
+          "sourceId": "cmvpl7mwy008mmaeozglip2oj",
+          "sourceLabel": "POSTING_RULE_CREATE - recorded",
+          "sourceDate": "2026-10-26T18:25:45.179Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83oc00hgmaeougeq7sex",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "PostingRule",
+          "sourceId": "cmvpl7mz6008tmaeohmim4r17",
+          "sourceLabel": "POSTING_RULE_CREATE - recorded",
+          "sourceDate": "2026-10-26T18:25:45.245Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83o500hemaeodfzclhyn",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "PostingRule",
+          "sourceId": "cmvpl7n1k0091maeo97gwhbdd",
+          "sourceLabel": "POSTING_RULE_CREATE - recorded",
+          "sourceDate": "2026-10-26T18:25:45.334Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83nz00hcmaeobav57erb",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "PostingRule",
+          "sourceId": "cmvpl7n520099maeobcvkki8s",
+          "sourceLabel": "POSTING_RULE_CREATE - recorded",
+          "sourceDate": "2026-10-26T18:25:45.476Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83nn00hamaeoweuvlqw5",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "PostingRule",
+          "sourceId": "cmvpl7n7i009kmaeo2oiwuecn",
+          "sourceLabel": "POSTING_RULE_CREATE - recorded",
+          "sourceDate": "2026-10-26T18:25:45.570Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83nf00h8maeohciuq1v8",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "PostingRule",
+          "sourceId": "cmvpl7naj009rmaeo61x8i6qf",
+          "sourceLabel": "POSTING_RULE_CREATE - recorded",
+          "sourceDate": "2026-10-26T18:25:45.675Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83mw00h6maeolsfe1b3w",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "audit_logs",
+          "sourceType": "AccountingSetup",
+          "sourceId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+          "sourceLabel": "ACCOUNTING_SETUP_LOCK_CONTROL - allowed",
+          "sourceDate": "2026-10-26T18:25:45.998Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83me00h4maeomd7w7lmw",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "OrganizationAccountingSettings",
+          "sourceId": null,
+          "sourceLabel": "ACCOUNTING_SETUP_READY - recorded",
+          "sourceDate": "2026-10-26T18:25:46.028Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83m400h2maeogluf93wv",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "audit_logs",
+          "sourceType": "SupplierPayment",
+          "sourceId": "95bc73b0-1af4-4202-aea1-7d888940afc0",
+          "sourceLabel": "SUPPLIER_PAYMENT_RECONCILIATION - recorded",
+          "sourceDate": "2026-10-26T18:25:48.296Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83lx00h0maeolrd8ornh",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "audit_logs",
+          "sourceType": "SupplierPayment",
+          "sourceId": "95bc73b0-1af4-4202-aea1-7d888940afc0",
+          "sourceLabel": "SUPPLIER_PAYMENT_RECONCILIATION - recorded",
+          "sourceDate": "2026-10-26T18:25:50.796Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83ln00gymaeoxe5gjqkp",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "CloseRun",
+          "sourceId": "cmvpl7s5m00aqmaeo3tu2p0ex",
+          "sourceLabel": "CLOSE_ASSURANCE_RUN_COMPLETED - recorded",
+          "sourceDate": "2026-10-26T18:25:56.500Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83lh00gwmaeo8x4rz1iq",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "ClosePackExport",
+          "sourceId": "cmvpl7wg400ecmaeo60y6dkjn",
+          "sourceLabel": "CLOSE_PACK_DRAFT_EXPORT - recorded",
+          "sourceDate": "2026-10-26T18:25:57.524Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83jy00gkmaeo2q5f5gmu",
+          "checklistItemId": "cmvpl83fs00fgmaeorzceamtr",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "business_events",
+          "sourceType": "SupplierCashReceiptReview",
+          "sourceId": "cmvpl7r2900aimaeofyqvhoub",
+          "sourceLabel": "Independently reviewed supplier cash receipt (internal attestation)",
+          "sourceDate": "2026-10-26T18:25:50.397Z",
+          "sourceHash": "0ec719d91229affeedd576cefe34e946d50851a8a5f3147991eaddd9a366b07d",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "95bc73b0-1af4-4202-aea1-7d888940afc0",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83jp00gimaeo15hrimre",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "supplier_invoices",
+          "sourceType": "ClosePayableBalanceClassification",
+          "sourceId": "cmvpl739c0005maeomy35mmm6",
+          "sourceLabel": "0 normal unpaid invoice(s); 0 AP control exception(s).",
+          "sourceDate": "2026-10-26T18:26:04.134Z",
+          "sourceHash": "2e03f92c5a217d1d5aa466ef4fbc7b2c4751b81a17b6d11648d384d084a195a7",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83j000ggmaeobs1mj9sh",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl81ha00f4maeooj4ovg2z",
+          "sourceLabel": "Balance sheet 49014 Synthetic INPUT_VAT (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:04.118Z",
+          "sourceHash": "sha256:e66c1e3cb289f0a1a6afae76a1a60e1c4cbbce9d7a94eb80f756aec00644e8fc",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83ig00gemaeodzvnoqnt",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl81bc00f2maeomollgpwb",
+          "sourceLabel": "Balance sheet 49013 Synthetic OUTPUT_VAT (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:03.923Z",
+          "sourceHash": "sha256:35d802a75256d42ce8a19034fe0a49635e40d514d859055d9a39089779407252",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83id00gcmaeotch8sg28",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl80ns00eymaeodv6rlc83",
+          "sourceLabel": "Balance sheet 49010 Synthetic STORE_CREDIT_LIABILITY (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:03.125Z",
+          "sourceHash": "sha256:f0cf5591a0323f2411c248d276228eef1b7bc94d05bd06523c91fdc6e598ef9a",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83i700gamaeogmw7259s",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl80gw00ewmaeo93b9pal8",
+          "sourceLabel": "Balance sheet 49009 Synthetic SUPPLIER_RETURN_CLAIM (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:02.848Z",
+          "sourceHash": "sha256:6014af17aae37d4a85348d2723dc09a929dc60529cb4969406ad0c1563d6d8f4",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83i400g8maeoc6e0wz3o",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl7zbi00eomaeoc9ao5bm7",
+          "sourceLabel": "Balance sheet 59005 Synthetic CHEQUE_CLEARING (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:01.381Z",
+          "sourceHash": "sha256:dd96f2066698a0688c38c9aeb53bf51a96b7b5046a42d0c78baac74f0f344659",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83i000g6maeoueimfj94",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl7yve00emmaeo2mlr4ymi",
+          "sourceLabel": "Balance sheet 59004 Synthetic MOBILE_MONEY_CLEARING (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:01.033Z",
+          "sourceHash": "sha256:c6768dc2fae3f93fdf0a328dc653bdd612ba72569d4d21007cc690f3401e1eb7",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83hx00g4maeoq6amq0er",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl7yeq00ekmaeo03sxcy8p",
+          "sourceLabel": "Balance sheet 59003 Synthetic CARD_CLEARING (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:00.338Z",
+          "sourceHash": "sha256:f30b44070822d20dec67c2cfc9f70d0d1bbe9be9a433b39f48ba964e310c4154",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83hs00g2maeo59ckdf5c",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl7xv300eimaeovdm4dotb",
+          "sourceLabel": "Balance sheet 59002 Synthetic BANK (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:25:59.630Z",
+          "sourceHash": "sha256:23073c225e6db4a9e7f5fd9ff7fff7b2087577e6d8c3d601b06b53f374e93f20",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83ho00g0maeoxey3wwu9",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl7zxf00esmaeoz2b41ntf",
+          "sourceLabel": "Balance sheet 49007 Synthetic payable (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:02.133Z",
+          "sourceHash": "sha256:e7778fb91a241665aa9fe412a72bf751e4f4c03673102ee6f06d0f0aa28cc685",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83hj00fymaeo6r6xyfne",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl805p00eumaeo2vf85blc",
+          "sourceLabel": "Balance sheet 49008 Synthetic GRNI (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:02.468Z",
+          "sourceHash": "sha256:2dfc2dedca043539baa747d9590264d98564f31a11427bb361b6e1d1618cdcd8",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83hd00fwmaeopfi433nj",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl7xew00egmaeobnxvod9f",
+          "sourceLabel": "Balance sheet 59001 TEST_CASH (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:25:59.074Z",
+          "sourceHash": "sha256:d0d18fbf98e7a81f17e698031b105fedf2852559f96cfdacc2bcc6b9d6abda75",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83h900fumaeoq8zi3uy0",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl80z300f0maeoib41gaye",
+          "sourceLabel": "Balance sheet 39011 TEST_STOCK (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:03.580Z",
+          "sourceHash": "sha256:daa44e2f13a9bd60d806a0fb682cccd876d6b65a47a2f8ce4fbab64d5d625412",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83gs00fsmaeo2fkb0mp8",
+          "checklistItemId": "cmvpl83fn00femaeoqdlhynqa",
+          "findingId": null,
+          "evidenceType": "AUDIT_LOG",
+          "sourceTable": "balance_sheet_evidence",
+          "sourceType": "BalanceSheetReconciliation",
+          "sourceId": "cmvpl7zlv00eqmaeo7u3nuit2",
+          "sourceLabel": "Balance sheet 49006 TEST_AR (XAF): RECONCILED",
+          "sourceDate": "2026-10-26T18:26:01.806Z",
+          "sourceHash": "sha256:011eade565805c432910c5756dddc1c25ecba77c6a8effbd8e7a4376c2b3c3e5",
+          "provenance": "OPERATIONAL",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83ph00hmmaeoawf86wmi",
+          "checklistItemId": "cmvpl83gf00fomaeoyivsth4i",
+          "findingId": null,
+          "evidenceType": "REPORT_EXPORT",
+          "sourceTable": "payroll_runs",
+          "sourceType": "PayrollFinanceForecastProof",
+          "sourceId": "sha256:1003abb99c3907faeb74fcde0101f50bfd953e2c66d953fe6f3b1e48c7a0420e",
+          "sourceLabel": "Authoritative payroll forecast proof: total upcoming 0",
+          "sourceDate": "2026-10-26T18:26:04.134Z",
+          "sourceHash": "sha256:1003abb99c3907faeb74fcde0101f50bfd953e2c66d953fe6f3b1e48c7a0420e",
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": {
+            "status": "AUTHORITATIVE",
+            "message": "No upcoming payroll periods, payment batches, or statutory declaration due dates are visible in the forecast horizon.",
+            "blockers": [],
+            "horizonEnd": "2026-10-26T23:59:59.999Z",
+            "reasonCode": "PAYROLL_FORECAST_NO_UPCOMING_PERIODS",
+            "redactions": [
+              {
+                "id": "payment-provider-identifiers-redacted",
+                "field": "providerAccount.externalAccountHash",
+                "policy": "KONTAVA_SENSITIVE_PAYMENT_EVIDENCE",
+                "reason": "Payment provider account identifiers remain server-side only in snapshot read models."
+              },
+              {
+                "id": "close-payroll-forecast-person-level-redacted",
+                "field": "payroll.personLevelAmounts",
+                "policy": "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
+                "reason": "Close assurance exposes aggregate payroll cash and statutory obligations only; person-level payroll values stay inside payroll."
+              }
+            ],
+            "sourceHash": "sha256:1003abb99c3907faeb74fcde0101f50bfd953e2c66d953fe6f3b1e48c7a0420e",
+            "generatedAt": "2026-10-26T18:26:04.134Z",
+            "nextPayDate": null,
+            "blockerCodes": [],
+            "horizonStart": "2026-10-26T00:00:00.000Z",
+            "authoritative": true,
+            "sourceModules": [
+              "dashboard",
+              "sales",
+              "payments",
+              "inventory",
+              "purchasing",
+              "hris",
+              "payroll",
+              "accounting",
+              "close",
+              "compliance"
+            ],
+            "payrollRunCount": 0,
+            "sourceLinkCount": 0,
+            "declarationCount": 0,
+            "evidenceHashCount": 0,
+            "paymentBatchCount": 0,
+            "payrollPeriodCount": 0,
+            "personLevelAmounts": "redacted",
+            "totalUpcomingAmount": 0,
+            "upcomingNetPayAmount": 0,
+            "certifiedInputRunCount": 0,
+            "nextDeclarationDueDate": null,
+            "registerToLedgerRunCount": 0,
+            "personLevelAmountsRedacted": true,
+            "certifiedInputProofHashCount": 0,
+            "upcomingStatutoryLiabilityAmount": 0
+          }
+        },
+        {
+          "id": "cmvpl83p100hkmaeoi0xds2rt",
+          "checklistItemId": "cmvpl83g700fmmaeodozzyoho",
+          "findingId": null,
+          "evidenceType": "REPORT_EXPORT",
+          "sourceTable": "inventory_transactions",
+          "sourceType": "InventoryValuationAnnex",
+          "sourceId": "cmvpl739c0005maeomy35mmm6",
+          "sourceLabel": "Inventory valuation annex PASSED: inventory 200.00 / class 3 200.00 XAF",
+          "sourceDate": "2026-10-26T18:26:04.134Z",
+          "sourceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5",
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": {
+            "asOf": "2026-10-26T18:26:04.134Z",
+            "failures": [],
+            "sourceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5",
+            "sourceCounts": {
+              "posMovementCount": 0,
+              "openingStockCount": 0,
+              "stockWriteOffCount": 0,
+              "inventoryLevelCount": 1,
+              "purchaseReceiptCount": 1,
+              "stockAdjustmentCount": 0,
+              "class3JournalLineCount": 1,
+              "stockBusinessEventCount": 2,
+              "stockCountVarianceCount": 0,
+              "inventoryTransactionCount": 1
+            },
+            "blockerStatus": "PASSED",
+            "mismatchAmount": "0.00",
+            "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+            "observationHash": "sha256:3ce548e48c7e6ce40f438eb13dbbc2b038357d850605306d63847a9543815aa4",
+            "recordedThrough": "2026-10-26T18:26:04.134Z",
+            "valuationMethod": "WEIGHTED_AVERAGE",
+            "accountingPeriodId": "cmvpl739c0005maeomy35mmm6",
+            "evidenceHashVersion": 1,
+            "class3LedgerBalanceTotal": "200.00",
+            "inventorySubledgerValueTotal": "200.00"
+          }
+        },
+        {
+          "id": "cmvpl83k500gmmaeob0g1a0uh",
+          "checklistItemId": "cmvpl83fg00fcmaeoaow7himw",
+          "findingId": null,
+          "evidenceType": "REPORT_EXPORT",
+          "sourceTable": "journal_entry_lines",
+          "sourceType": "TrialBalanceCurrency",
+          "sourceId": "XAF",
+          "sourceLabel": "Trial balance XAF: debit 600.00 / credit 600.00",
+          "sourceDate": "2026-10-26T18:26:04.134Z",
+          "sourceHash": null,
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        },
+        {
+          "id": "cmvpl83ka00gomaeo2v9yjpfb",
+          "checklistItemId": "cmvpl83g000fkmaeoti4e67x1",
+          "findingId": null,
+          "evidenceType": "DATA_TRUST_CERTIFICATE",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "DataTrustCertificate",
+          "sourceId": "dashboard/accounting/accountant-portal",
+          "sourceLabel": "Data trust T4 - CERTIFIED",
+          "sourceDate": "2026-10-26T18:26:04.134Z",
+          "sourceHash": "sha256:ffe94610922826f760e36b25984292007797e3ca927433a73199060b5fb64cea",
+          "provenance": "POSTED",
+          "available": true,
+          "unavailableReason": null,
+          "correlationId": "022e7b6a-162b-4103-ab8c-24179bd64485",
+          "metadata": null
+        }
+      ],
+      "comments": [],
+      "reviews": [],
+      "controls": {
+        "assignmentRequiresPermission": "accounting.close.finding.assign",
+        "waiverApprovalRequiresFreshAuth": true,
+        "certificationAvailable": true,
+        "certificationDisabledReason": null,
+        "packExportAvailable": true,
+        "packExportDisabledReason": "Draft close pack export is available; certified export still enforces readiness gates."
+      }
+    },
+    "blockers": [],
+    "cashReceipt": {
+      "id": "cmvpl7r2900aimaeofyqvhoub",
+      "status": "CASH_REVIEWED"
+    }
+  },
+  {
+    "scenario": "CERTIFICATION_DENIALS",
+    "permission": true,
+    "staleAuth": true,
+    "selfCertification": true,
+    "foreignTenant": true,
+    "obsoleteAssessment": true,
+    "financialState": {
+      "stock": [
+        {
+          "quantity": "2.000",
+          "value": "200.00"
+        }
+      ],
+      "journalCount": 3,
+      "returns": 0,
+      "payments": 1,
+      "transactions": 1
+    }
+  },
+  {
+    "scenario": "CERTIFY_ROLLBACK_AND_RACE",
+    "auditFailureRolledBack": true,
+    "attempts": [
+      "fulfilled",
+      "rejected"
+    ],
+    "review": {
+      "id": "cmvpl88p300i4maeoojtv4fpr",
+      "status": "APPROVED_FOR_CLOSE",
+      "reviewerId": "cmvpl7nlx00a6maeogm9bkud0",
+      "openedById": "cmvpl745t0011maeoqzq9byjv",
+      "reviewedAt": "2026-10-26T18:26:13.381Z",
+      "decisionNotes": "Independent synthetic close review after exact schedule reconciliation",
+      "createdAt": "2026-10-26T18:26:13.383Z"
+    },
+    "pack": {
+      "exportId": "cmvpl8cpp00iimaeowdh81b4w",
+      "contentHash": "sha256:c9f4f39bdab47c9e4560b3d2a64565c9d5abeade62c42371703977a8249370e2",
+      "mode": "CERTIFIED",
+      "watermarkId": "close-pack-certified-cmvpl81m100f6maeoqbuuzuac-cc4cab14-2dc",
+      "runId": "cmvpl81m100f6maeoqbuuzuac"
+    },
+    "financialState": {
+      "stock": [
+        {
+          "quantity": "2.000",
+          "value": "200.00"
+        }
+      ],
+      "journalCount": 3,
+      "returns": 0,
+      "payments": 1,
+      "transactions": 1
+    }
+  },
+  {
+    "scenario": "PERIOD_SEAL",
+    "auditRollback": true,
+    "seal": {
+      "id": "cmvpl8e4g00iumaeo41knpjht",
+      "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+      "periodId": "cmvpl739c0005maeomy35mmm6",
+      "version": 1,
+      "operation": "CLOSE",
+      "fromStatus": "OPEN",
+      "toStatus": "CLOSED",
+      "actorId": "cmvpl7nlx00a6maeogm9bkud0",
+      "reason": "Current independently certified close approval accepted",
+      "idempotencyKey": "close:cmvpl739c0005maeomy35mmm6:0",
+      "sourceRevision": "142",
+      "approval": {
+        "closeRunId": "cmvpl81m100f6maeoqbuuzuac",
+        "contentHash": "sha256:c9f4f39bdab47c9e4560b3d2a64565c9d5abeade62c42371703977a8249370e2",
+        "approvedById": "cmvpl7nlx00a6maeogm9bkud0",
+        "preparedById": "cmvpl745t0011maeoqzq9byjv",
+        "sourceRevision": "142",
+        "certifiedExportId": "cmvpl8cpp00iimaeowdh81b4w"
+      },
+      "createdAt": "2026-10-26T18:26:20.373Z"
+    },
+    "closedWriteDenied": true,
+    "financialState": {
+      "stock": [
+        {
+          "quantity": "2.000",
+          "value": "200.00"
+        }
+      ],
+      "journalCount": 3,
+      "returns": 0,
+      "payments": 1,
+      "transactions": 1
+    }
+  },
+  {
+    "scenario": "REOPEN_CORRECT_INVALIDATE",
+    "reopenEvent": {
+      "id": "cmvpl8f0100j0maeoh5huymhc",
+      "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+      "periodId": "cmvpl739c0005maeomy35mmm6",
+      "version": 2,
+      "operation": "REOPEN",
+      "fromStatus": "CLOSED",
+      "toStatus": "OPEN",
+      "actorId": "cmvpl7nlx00a6maeogm9bkud0",
+      "reason": "Controlled reopening for synthetic supplier return correction",
+      "idempotencyKey": "5b910a14-932b-42cb-bf4b-9576f55c55f5",
+      "sourceRevision": "142",
+      "approval": {
+        "closedAt": "2026-10-26T18:26:20.373Z",
+        "lockedAt": "2026-10-26T18:26:20.373Z",
+        "closedById": "cmvpl7nlx00a6maeogm9bkud0",
+        "priorControlEventId": "cmvpl8e4g00iumaeo41knpjht"
+      },
+      "createdAt": "2026-10-26T18:26:21.548Z"
+    },
+    "oldCertificate": {
+      "id": "cmvpl8cpp00iimaeowdh81b4w",
+      "hash": "sha256:c9f4f39bdab47c9e4560b3d2a64565c9d5abeade62c42371703977a8249370e2",
+      "metadata": {
+        "mode": "CERTIFIED",
+        "staleState": {
+          "status": "EVIDENCE_STALE",
+          "sourceId": "cmvpl739c0005maeomy35mmm6",
+          "operation": "UPDATE",
+          "detectedAt": "2026-10-26T19:26:21.567924+01:00",
+          "sourceCode": "CLOSE_SOURCE_REVISION_CHANGED",
+          "sourceTable": "accounting_periods",
+          "staleReason": "A financial source changed. Run a new close assessment.",
+          "sourceRevision": "143"
+        },
+        "trustLevel": "T4",
+        "redactionNote": "Secrets, raw provider payloads, credentials, and tenant internals are excluded from this close pack.",
+        "certificationBlockers": [],
+        "statutoryCertification": {
+          "blockers": [
+            "AUTHORITY_NOT_CONFIGURED",
+            "REQUIRES_EXPERT_REVIEW",
+            "COUNTRY_PACK_UNVERIFIED",
+            "ADAPTER_SANDBOX_ONLY"
+          ],
+          "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+          "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+          "statutoryReadinessStatus": "STATUTORY_BLOCKED"
+        },
+        "inventoryAnnexFreshness": {
+          "status": "FRESH",
+          "detectedAt": "2026-10-26T18:26:17.573Z",
+          "staleReason": null,
+          "newEvidenceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5",
+          "previousEvidenceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5"
+        },
+        "inventoryValuationAnnex": {
+          "asOf": "2026-10-26T18:26:04.134Z",
+          "failures": [],
+          "sourceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5",
+          "sourceCounts": {
+            "posMovementCount": 0,
+            "openingStockCount": 0,
+            "stockWriteOffCount": 0,
+            "inventoryLevelCount": 1,
+            "purchaseReceiptCount": 1,
+            "stockAdjustmentCount": 0,
+            "class3JournalLineCount": 1,
+            "stockBusinessEventCount": 2,
+            "stockCountVarianceCount": 0,
+            "inventoryTransactionCount": 1
+          },
+          "blockerStatus": "PASSED",
+          "mismatchAmount": "0.00",
+          "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+          "observationHash": "sha256:3ce548e48c7e6ce40f438eb13dbbc2b038357d850605306d63847a9543815aa4",
+          "recordedThrough": "2026-10-26T18:26:04.134Z",
+          "valuationMethod": "WEIGHTED_AVERAGE",
+          "accountingPeriodId": "cmvpl739c0005maeomy35mmm6",
+          "evidenceHashVersion": 1,
+          "class3LedgerBalanceTotal": "200.00",
+          "inventorySubledgerValueTotal": "200.00"
+        },
+        "pilotCycleCertification": {
+          "status": "NOT_APPLICABLE",
+          "auditLogRef": null,
+          "generatedAt": null,
+          "blockerCodes": [],
+          "blockerCount": 0,
+          "applicability": "NO_RECORDED_PAYROLL_PERIOD",
+          "payrollRunRef": null,
+          "certificateHash": null,
+          "runCertificates": [],
+          "missingSignoffRoles": [],
+          "closePeriodPayrollRunCount": 0,
+          "closePeriodPayrollPeriodCount": 0,
+          "expectedAdapterChaosReleaseGateHash": null,
+          "proofBackfillAdapterChaosMatchesExpected": null
+        }
+      }
+    },
+    "returnId": "4b041148-686c-4748-853f-a2c87efd19d1",
+    "corrected": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "journalCount": 4,
+      "returns": 1,
+      "payments": 1,
+      "transactions": 1
+    },
+    "staleAssessment": {
+      "id": "cmvpl8hf200krmaeoyrvzemqz",
+      "status": "BLOCKED",
+      "readinessScore": 85,
+      "criticalBlockerCount": 0,
+      "highBlockerCount": 13,
+      "evidenceCoveragePct": 80,
+      "correlationId": "ab0c4713-d1f7-4fd6-957b-3de466f9bf78",
+      "runById": "cmvpl745t0011maeoqzq9byjv",
+      "startedAt": "2026-10-26T18:26:24.595Z",
+      "completedAt": "2026-10-26T18:26:27.808Z",
+      "createdAt": "2026-10-26T18:26:24.681Z"
+    }
+  },
+  {
+    "scenario": "RECERTIFY_AND_RESEAL",
+    "schedules": [
+      {
+        "id": "cmvpl8kr100ofmaeojtjc69sq",
+        "hash": "sha256:74f4ae245c7d05895f7c657f171fec681f9de4304865a50bcd040a46d3bad423",
+        "accountCode": "59001",
+        "status": "APPROVED",
+        "balances": [
+          {
+            "reference": "cmvpl73h7000fmaeodew5rw99",
+            "description": "Synthetic ledger-supported schedule",
+            "openingBalance": "0.00",
+            "additions": "0.00",
+            "reductions": "200.00",
+            "closingBalance": "-200.00",
+            "sourceReference": "https://example.invalid/close-schedule/cmvpl73h7000fmaeodew5rw99",
+            "sourceDocumentHash": "sha256:cda85ab55a9906081c19ff4988edfc4c89675bc8d44b35d3b8f6decc206d4459"
+          }
+        ]
+      },
+      {
+        "id": "cmvpl8kxy00ohmaeo9k1y3yba",
+        "hash": "sha256:76cf58da42c8cfd1339b23e67c8204f0b476402dab5e1e2f31c478d5123693eb",
+        "accountCode": "59002",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl8l2u00ojmaeow7692ikv",
+        "hash": "sha256:d3bf81c2d60900df051b785b0d747cdc1f6ce7531905cc6296318b46b7cd89a7",
+        "accountCode": "59003",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl8l7f00olmaeo56py23th",
+        "hash": "sha256:5a0fb8403775c9b135f73ac7ea77d5724976b2d0370db380f2a14bee8a165b37",
+        "accountCode": "59004",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl8lcz00onmaeoslsoho3l",
+        "hash": "sha256:1c29921394292f7f83dd3c25cc454820feaebdf0e7f17299eaf9b5367b5ff815",
+        "accountCode": "59005",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl8lhz00opmaeo3999zsjv",
+        "hash": "sha256:d6171d96d89984667d9bdffaad205ef0416b5669b619950974d935d86ac5a94d",
+        "accountCode": "49006",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl8lmq00ormaeowfhp9h3r",
+        "hash": "sha256:14f03c27ac92142fbba568cd838d849cbbcaabde9e613d17269572f334c1383f",
+        "accountCode": "49007",
+        "status": "APPROVED",
+        "balances": [
+          {
+            "reference": "cmvpl74cq001tmaeod2h548ln",
+            "description": "Synthetic ledger-supported schedule",
+            "openingBalance": "0.00",
+            "additions": "200.00",
+            "reductions": "200.00",
+            "closingBalance": "0.00",
+            "sourceReference": "https://example.invalid/close-schedule/cmvpl74cq001tmaeod2h548ln",
+            "sourceDocumentHash": "sha256:0e903ac012af44cf73ebf5c80af098f883acc1014d11f41f2ae497c851e6a9d9"
+          }
+        ]
+      },
+      {
+        "id": "cmvpl8lux00otmaeopk5c1gf7",
+        "hash": "sha256:06de24dbd96c8862cee9c440533c8b2d224b04679f989e921a3dc7379bc393a5",
+        "accountCode": "49008",
+        "status": "APPROVED",
+        "balances": [
+          {
+            "reference": "cmvpl74bn001rmaeoz8fu75ah",
+            "description": "Synthetic ledger-supported schedule",
+            "openingBalance": "0.00",
+            "additions": "200.00",
+            "reductions": "200.00",
+            "closingBalance": "0.00",
+            "sourceReference": "https://example.invalid/close-schedule/cmvpl74bn001rmaeoz8fu75ah",
+            "sourceDocumentHash": "sha256:f2b1c4187899791bba7b5dea4d39949429e4c54b15cd80f9cd8f3ea7afa82692"
+          }
+        ]
+      },
+      {
+        "id": "cmvpl8m4v00ovmaeoz2iwsk6q",
+        "hash": "sha256:d74a5fd1afda6ad23ac63930769e2c45b4b36413c2155c96148782fa9062149d",
+        "accountCode": "49009",
+        "status": "APPROVED",
+        "balances": [
+          {
+            "reference": "cmvpl7mg5007umaeogc7s1319",
+            "description": "Synthetic ledger-supported schedule",
+            "openingBalance": "0.00",
+            "additions": "100.00",
+            "reductions": "0.00",
+            "closingBalance": "100.00",
+            "sourceReference": "https://example.invalid/close-schedule/cmvpl7mg5007umaeogc7s1319",
+            "sourceDocumentHash": "sha256:30207e7efb6566f54c49de1b2eb432b2912f2fc97d7ece1485d787d7f1ea507a"
+          }
+        ]
+      },
+      {
+        "id": "cmvpl8mah00oxmaeozca9g4fu",
+        "hash": "sha256:8b19e35413304ae72078d22c46b56e4b701a89a3f44ebe9be69d3ed3b5632f6c",
+        "accountCode": "49010",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl8mf000ozmaeokaakz2we",
+        "hash": "sha256:3e624ee62156bd8a7c17b64f0d469755719b681f19265d692b2acf5f0297810b",
+        "accountCode": "39011",
+        "status": "APPROVED",
+        "balances": [
+          {
+            "reference": "cmvpl73g6000bmaeorml7jrvk",
+            "description": "Synthetic ledger-supported schedule",
+            "openingBalance": "0.00",
+            "additions": "200.00",
+            "reductions": "100.00",
+            "closingBalance": "100.00",
+            "sourceReference": "https://example.invalid/close-schedule/cmvpl73g6000bmaeorml7jrvk",
+            "sourceDocumentHash": "sha256:481e68e7b78d003db66635bf13b807d6b9f0c681ad0cb27104518aaa081d497b"
+          }
+        ]
+      },
+      {
+        "id": "cmvpl8mqj00p1maeohd16ytir",
+        "hash": "sha256:cc36e73cab685712e909a1618bc7f747160133cc2d777be88b0984d97bb1d470",
+        "accountCode": "49013",
+        "status": "APPROVED",
+        "balances": []
+      },
+      {
+        "id": "cmvpl8n1100p3maeodk37gr6o",
+        "hash": "sha256:1d5c72ef17dcf61ea8eba14c554d976869763d0ed54b640fe05ad0f3907e196b",
+        "accountCode": "49014",
+        "status": "APPROVED",
+        "balances": []
+      }
+    ],
+    "run": {
+      "id": "cmvpl8nbo00p5maeof1f6lk94",
+      "status": "READY",
+      "readinessScore": 100,
+      "criticalBlockerCount": 0,
+      "highBlockerCount": 0,
+      "evidenceCoveragePct": 90,
+      "correlationId": "a311048c-bde4-4413-b602-48ba8481a394",
+      "runById": "cmvpl745t0011maeoqzq9byjv",
+      "startedAt": "2026-10-26T18:26:32.240Z",
+      "completedAt": "2026-10-26T18:26:37.181Z",
+      "createdAt": "2026-10-26T18:26:32.322Z"
+    },
+    "pack": {
+      "exportId": "cmvpl8u5a00rxmaeo2p0u5pj4",
+      "contentHash": "sha256:d678ea38d8270276958878af765bc1d6f7c0128270038795a0fd5046ec778312",
+      "mode": "CERTIFIED",
+      "watermarkId": "close-pack-certified-cmvpl8nbo00p5maeof1f6lk94-131302b1-3d8",
+      "runId": "cmvpl8nbo00p5maeof1f6lk94"
+    },
+    "seals": [
+      {
+        "id": "cmvpl8e4g00iumaeo41knpjht",
+        "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+        "periodId": "cmvpl739c0005maeomy35mmm6",
+        "version": 1,
+        "operation": "CLOSE",
+        "fromStatus": "OPEN",
+        "toStatus": "CLOSED",
+        "actorId": "cmvpl7nlx00a6maeogm9bkud0",
+        "reason": "Current independently certified close approval accepted",
+        "idempotencyKey": "close:cmvpl739c0005maeomy35mmm6:0",
+        "sourceRevision": "142",
+        "approval": {
+          "closeRunId": "cmvpl81m100f6maeoqbuuzuac",
+          "contentHash": "sha256:c9f4f39bdab47c9e4560b3d2a64565c9d5abeade62c42371703977a8249370e2",
+          "approvedById": "cmvpl7nlx00a6maeogm9bkud0",
+          "preparedById": "cmvpl745t0011maeoqzq9byjv",
+          "sourceRevision": "142",
+          "certifiedExportId": "cmvpl8cpp00iimaeowdh81b4w"
+        },
+        "createdAt": "2026-10-26T18:26:20.373Z"
+      },
+      {
+        "id": "cmvpl8f0100j0maeoh5huymhc",
+        "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+        "periodId": "cmvpl739c0005maeomy35mmm6",
+        "version": 2,
+        "operation": "REOPEN",
+        "fromStatus": "CLOSED",
+        "toStatus": "OPEN",
+        "actorId": "cmvpl7nlx00a6maeogm9bkud0",
+        "reason": "Controlled reopening for synthetic supplier return correction",
+        "idempotencyKey": "5b910a14-932b-42cb-bf4b-9576f55c55f5",
+        "sourceRevision": "142",
+        "approval": {
+          "closedAt": "2026-10-26T18:26:20.373Z",
+          "lockedAt": "2026-10-26T18:26:20.373Z",
+          "closedById": "cmvpl7nlx00a6maeogm9bkud0",
+          "priorControlEventId": "cmvpl8e4g00iumaeo41knpjht"
+        },
+        "createdAt": "2026-10-26T18:26:21.548Z"
+      },
+      {
+        "id": "cmvpl8uov00s3maeogteev9fv",
+        "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+        "periodId": "cmvpl739c0005maeomy35mmm6",
+        "version": 3,
+        "operation": "CLOSE",
+        "fromStatus": "OPEN",
+        "toStatus": "CLOSED",
+        "actorId": "cmvpl7nlx00a6maeogm9bkud0",
+        "reason": "Current independently certified close approval accepted",
+        "idempotencyKey": "close:cmvpl739c0005maeomy35mmm6:2",
+        "sourceRevision": "182",
+        "approval": {
+          "closeRunId": "cmvpl8nbo00p5maeof1f6lk94",
+          "contentHash": "sha256:d678ea38d8270276958878af765bc1d6f7c0128270038795a0fd5046ec778312",
+          "approvedById": "cmvpl7nlx00a6maeogm9bkud0",
+          "preparedById": "cmvpl745t0011maeoqzq9byjv",
+          "sourceRevision": "182",
+          "certifiedExportId": "cmvpl8u5a00rxmaeo2p0u5pj4"
+        },
+        "createdAt": "2026-10-26T18:26:41.732Z"
+      }
+    ],
+    "finalState": {
+      "stock": [
+        {
+          "quantity": "1.000",
+          "value": "100.00"
+        }
+      ],
+      "journalCount": 4,
+      "returns": 1,
+      "payments": 1,
+      "transactions": 1
+    },
+    "scope": "System-certified synthetic cash close; no provider or statutory certification"
+  }
+]

@@ -21,6 +21,11 @@ This file is a retrieval adapter for the existing product design. It introduces 
 | AP payment review and execution | [ap-payment](pages/ap-payment.md) | Dense review, approval and payment evidence |
 | Customer receivables | [receivables](pages/receivables.md) | Current invoice position, aging and Customer AR History |
 | Supplier payables | [payables](pages/payables.md) | Operational invoice position, aging and existing AP workflows |
+| Accountant client portfolio | [accountant-portfolio](pages/accountant-portfolio.md) | Authorized client pages, historical assessment versus current proof, existing evidence work desk |
+| Command Center shared behavior | [command-center-shared](pages/command-center-shared.md) | Phase 0 target contract; shared Work & Follow-up planned for Phases 5–6 |
+| Daily Digest | [daily-digest](pages/daily-digest.md) | Role-specific briefings, source limitations and planned personal follow-ups |
+| Manager Action Center | [manager-action-center](pages/manager-action-center.md) | Tenant/location work queues, source-owned commands and planned assignment/handoffs |
+| Owner War Room | [owner-war-room](pages/owner-war-room.md) | Business exposure, evidence, accountability and planned durable review receipts |
 
 Page contracts refine layout, density and workflow. They cannot replace the product brand, weaken authorization/tenant/privacy controls, turn missing evidence into success, or change server-owned financial truth. If source and documentation conflict, record the specific conflict and resolve it through a dated design/domain decision; do not let the last file read silently win.
 

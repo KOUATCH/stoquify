@@ -64,11 +64,11 @@ export async function runUserInvitationDeliveryWorker(input: { organizationId: s
       await settle("DEAD_LETTER", "INVITATION_DELIVERY_EVIDENCE_INVALID"); continue
     }
     const payload = parsed.data
-    if (!hasInvitationGrantEvidence(payload)) { await settle("DEAD_LETTER", "INVITATION_DELIVERY_EVIDENCE_INVALID"); continue }
-    const invitation = await db.invite.findFirst({ where: { id: payload.inviteId, organizationId: input.organizationId }, include: { role: { select: { organizationId: true, permissions: true } }, organization: { select: { isActive: true, deletedAt: true } } } })
+    const invitation = await db.invite.findFirst({ where: { id: payload.inviteId, organizationId: input.organizationId }, include: { role: { select: { code: true, organizationId: true, permissions: true } }, organization: { select: { isActive: true, deletedAt: true } } } })
     if (!invitation || invitation.status !== "PENDING" || invitation.expiresAt <= new Date() || invitation.expiresAt.toISOString() !== payload.expiresAt || invitation.roleId !== payload.roleId || invitationDigest(invitation.token) !== payload.tokenHash || invitationDigest(invitation.email) !== payload.recipientHash || !invitation.organization.isActive || invitation.organization.deletedAt || hashBusinessPayload([...new Set(invitation.role.permissions)].sort()) !== hashBusinessPayload(payload.rolePermissions)) {
       await settle("CANCELLED", "INVITATION_NO_LONGER_CURRENT"); continue
     }
+    if (!hasInvitationGrantEvidence(payload, invitation.role.code)) { await settle("DEAD_LETTER", "INVITATION_DELIVERY_EVIDENCE_INVALID"); continue }
     const issuer = await readCurrentInvitationIssuer(db, { organizationId: input.organizationId, actorId: payload.actorId, role: invitation.role })
     if (!issuer) { await settle("CANCELLED", "INVITATION_AUTHORITY_CHANGED"); continue }
     if (row.attempts >= row.maxAttempts || (deliveryMetadata.firstDispatchAt && Date.now() - Date.parse(deliveryMetadata.firstDispatchAt) >= SAFE_RETRY_MS)) {

@@ -11,9 +11,35 @@ import {
   receiveItems,
   resolveGoodsReceiptInspection,
 } from "../purchaseOrderSystemAction"
+
+describe("durable legacy clone routing", () => {
+  it.each([true, false])("recovers the retained owner with rollout enabled=%s", async enabled => {
+    ;(purchaseAuthoringRolloutEnabled as jest.Mock).mockReturnValue(enabled)
+    ;(hasRetainedPurchaseAuthoringIntent as jest.Mock).mockResolvedValue(true)
+    ;(createPurchaseOrderFromLegacyIntent as jest.Mock).mockResolvedValue({ receipt: { orderId: "retained-po" } })
+    ;(getPurchaseOrderById as jest.Mock).mockResolvedValue({ id: "retained-po", status: "DRAFT" })
+    const result = await clonePurchaseOrder({ id: "source-po", organizationId: "org-session", requestId: "b9c051cb-d0b2-4eff-b0e8-ced5caa3aaa4", recoverOnly: true })
+    expect(result.success).toBe(true)
+    expect(clonePurchaseOrderService).not.toHaveBeenCalled()
+    expect(createPurchaseOrderFromLegacyIntent).toHaveBeenCalledWith(expect.objectContaining({ orgId: "org-session", userId: "actor-session", sessionId: "current-session" }), expect.objectContaining({ kind: "clone" }))
+  })
+  it("never falls back to legacy creation when an uncertain request has no retained intent", async () => {
+    const result = await clonePurchaseOrder({ id: "source-po", organizationId: "org-session", requestId: "b9c051cb-d0b2-4eff-b0e8-ced5caa3aaa4", recoverOnly: true })
+    expect(result.success).toBe(false)
+    expect(clonePurchaseOrderService).not.toHaveBeenCalled()
+    expect(createPurchaseOrderFromLegacyIntent).not.toHaveBeenCalled()
+  })
+  it("requires a caller-retained identity when authoring rollout is enabled", async () => {
+    ;(purchaseAuthoringRolloutEnabled as jest.Mock).mockReturnValue(true)
+    expect((await clonePurchaseOrder({ id: "source-po", organizationId: "org-session" })).success).toBe(false)
+    expect(clonePurchaseOrderService).not.toHaveBeenCalled()
+  })
+})
 import { requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { requireSession } from "@/lib/security/auth-session"
+import { createPurchaseOrderFromLegacyIntent, hasRetainedPurchaseAuthoringIntent, purchaseAuthoringRolloutEnabled } from "@/services/purchase-order/purchase-order-authoring.service"
+jest.mock("@/services/purchase-order/purchase-order-authoring.service", () => ({ createPurchaseOrderFromLegacyIntent: jest.fn(), hasRetainedPurchaseAuthoringIntent: jest.fn(), purchaseAuthoringRolloutEnabled: jest.fn() }))
 import { revalidatePath } from "next/cache"
 import { ApplicationError, BusinessRuleError } from "@/services/_shared/action-errors"
 import {
@@ -82,6 +108,8 @@ const approvedPurchaseOrder = {
 
 beforeEach(() => {
   jest.clearAllMocks()
+  ;(purchaseAuthoringRolloutEnabled as jest.Mock).mockReturnValue(false)
+  ;(hasRetainedPurchaseAuthoringIntent as jest.Mock).mockResolvedValue(false)
   ;(observeModuleAccess as jest.Mock).mockReset().mockResolvedValue({ allowed: true })
   ;(requireSession as jest.Mock).mockResolvedValue({ claims: { userId: "actor-session", tenantId: "org-session", sessionId: "current-session", sessionToken: "server-session-token" } })
   mockRequirePermission.mockResolvedValue({
@@ -154,6 +182,16 @@ describe("purchaseOrderSystemAction controls", () => {
     const result = await updatePurchaseOrder({ id: "po-1", organizationId: "org-session", expectedRevision: "a".repeat(64), idempotencyKey: "draft-cache-retry", notes: "Edit" })
     expect(result).toMatchObject({ success: true, data: saved })
     expect(updatePurchaseOrderService).toHaveBeenCalledTimes(1)
+  })
+
+  it.each(["create", "clone"])("preserves a successful %s result after cache failure", async operation => {
+    const service = operation === "create" ? createPurchaseOrderService : clonePurchaseOrderService
+    ;(service as jest.Mock).mockResolvedValueOnce(approvedPurchaseOrder)
+    ;(revalidatePath as jest.Mock).mockImplementationOnce(() => { throw new Error("private cache failure") })
+    const result = operation === "create"
+      ? await createPurchaseOrder({ organizationId: "org-session", supplierId: "supplier-1", locationId: "location-1", date: "2026-09-05", expectedDeliveryDate: "2026-09-06", paymentTerms: "Net 30", shippingCost: 0, orderLines: [{ itemId: "item-1", quantity: 1, unitPrice: 10 }] })
+      : await clonePurchaseOrder({ id: "po-1", organizationId: "org-session" })
+    expect(result).toMatchObject({ success: true })
   })
 
   it("returns actionable stale codes and redacts unexpected internal draft failures", async () => {
@@ -262,6 +300,7 @@ describe("purchaseOrderSystemAction controls", () => {
       id: "po-1",
       organizationId: "org-session",
       idempotencyKey: "receipt:command-denied",
+      receivedBy: "client-supplied-actor",
       inspectionOutcome: "PASSED",
       items: [{ lineId: "line-1", receivedQuantity: 2 }],
     })

@@ -1,0 +1,70 @@
+{
+  "slice": "HR-05",
+  "status": "VERIFIED",
+  "timestamp": "2026-10-24T15:11:03.618Z",
+  "baselineCommit": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "scope": "Engineering verification only; inherited dirty tree preserved; no legal or production certification",
+  "hashes": [
+    {
+      "path": "services/hris/org.service.ts",
+      "sha256": "83adf41edc955cc71e14e6f8be6f0a4d9babff245605780b2d015a2e2a88670c"
+    },
+    {
+      "path": "services/hris/employee.service.ts",
+      "sha256": "81122f76a60af1e425f9ec92434f9350c7f95e9ef245a0ace68a5ccffbd32840"
+    },
+    {
+      "path": "services/hris/manager-self-service.service.ts",
+      "sha256": "2bc70d90933e10bc518140b0e68f4a13faa09208e4dc45d3595dc906a7cab787"
+    },
+    {
+      "path": "services/payroll/org-manager-scope.service.ts",
+      "sha256": "934204f3a9a6be4822832f2d86233c732db7234fd2df9e976f0a3f7ea9acd4af"
+    },
+    {
+      "path": "services/hris/__tests__/org-effective-scope.service.test.ts",
+      "sha256": "f44280363248c505d0134879569fe71d6fcee80522d3952dbebee2facc1e2ab7"
+    },
+    {
+      "path": "services/hris/__tests__/org.service.test.ts",
+      "sha256": "8202d97f3e736c6c434f815f9456fb25f2b2943c2f494c71d4b93bc46486b6bd"
+    },
+    {
+      "path": "services/hris/__tests__/manager-self-service.service.test.ts",
+      "sha256": "78ada93e3b674017aa7d6027a788ad6ff0affed34015d28520050105c107f747"
+    }
+  ],
+  "results": [
+    {
+      "lane": "mocked/pure/source assertions",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-06/unit.json",
+      "success": true,
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "lane": "real PostgreSQL",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-05/postgres.json",
+      "success": true,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 39,
+      "exitCode": 0
+    },
+    {
+      "lane": "focused TypeScript",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-05/typecheck.txt",
+      "success": true,
+      "exitCode": 0
+    }
+  ],
+  "commands": [
+    "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath services/hris/__tests__/org-effective-scope.service.test.ts services/hris/__tests__/org.service.test.ts services/hris/__tests__/employee.service.test.ts services/hris/__tests__/manager-self-service.service.test.ts services/hris/__tests__/approval-inbox.service.test.ts actions/hris/__tests__/employee.actions.test.ts services/hris/__tests__/people-directory-query.test.ts services/payroll/__tests__/payroll-employee.service.test.ts --json --outputFile=what-next/hris-implementation-2026-10-24/HR-06/unit.json",
+    "node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand --no-cache --testNamePattern=HR-05 --json --outputFile=what-next/hris-implementation-2026-10-24/HR-05/postgres.json"
+  ],
+  "databaseTarget": "Task-owned loopback 127.0.0.1:55464 / stoquify_local_hris_20261024 / public; synthetic namespace and bounded cleanup; cluster stopped after verification",
+  "browser": "what-next/hris-implementation-2026-10-24/HR-06/browser/results.json",
+  "open": []
+}

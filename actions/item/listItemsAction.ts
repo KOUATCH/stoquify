@@ -1,7 +1,9 @@
 'use server'
 
+import { safeLoggedActionErrorMessage } from '@/actions/_shared/safe-action-responses';
 import { listItemsSchema } from '@/lib/item/schemas';
 import { requirePermission } from '@/lib/security/rbac';
+import { ZodError } from 'zod';
 import {
   listItemsWithRelations,
   type PaginatedItemsWithRelations,
@@ -69,8 +71,33 @@ export async function listItemsAction(
       data,
     }
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : 'Failed to list items'
+    let userMessage = 'Failed to list items'
+    if (error instanceof ZodError) {
+      userMessage = 'Invalid input. Please review the form and try again.'
+    } else if (error instanceof Error && 'code' in error) {
+      // Codes select fixed public text; exception messages never cross this boundary.
+      switch (error.code) {
+        case 'UNAUTHENTICATED':
+        case 'NO_ACTIVE_ORG':
+          userMessage = 'Unauthenticated'
+          break
+        case 'FORBIDDEN':
+          userMessage = 'Forbidden'
+          break
+        case 'ACCOUNT_LOCKED':
+          userMessage = 'Account is locked'
+          break
+        case 'EMAIL_NOT_VERIFIED':
+          userMessage = 'Email verification required'
+          break
+      }
+    }
+    const message = safeLoggedActionErrorMessage(
+      'List items action failed',
+      error,
+      { action: 'actions/item/listItemsAction.ts#listItemsAction' },
+      userMessage,
+    )
     return { success: false, error: message }
   }
 }

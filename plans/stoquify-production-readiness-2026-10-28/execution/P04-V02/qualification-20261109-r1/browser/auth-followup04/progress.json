@@ -1,0 +1,3715 @@
+{
+  "startedAt": "2026-11-09T18:37:02.562Z",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "harnessSha256": "763024da1a2476845155aaa43dd23ee9635d075e5ea5dacda583fc7e67aae15a",
+  "baseURL": "https://localhost:3196",
+  "evidenceClass": "actual_https_application_real_signed_sessions_native_database_and_Chromium",
+  "checks": [
+    {
+      "id": "authBrowserRevoked-en-authorized-recovery",
+      "startedAt": "2026-11-09T18:37:13.037Z",
+      "passed": true,
+      "effects": {
+        "before": "snapshot-auth-authBrowserRevoked-en-authorized-recovery-before-1794249438262-a0e77a27-f813-4061-84f7-23679cc4a5c5.json",
+        "after": "snapshot-auth-authBrowserRevoked-en-authorized-recovery-after-1794249441121-bc322806-d13f-4f2f-a9e8-4e434cb2f1cb.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 1,
+        "sessionCountAfter": 1,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      },
+      "detail": {
+        "label": "authBrowserRevoked-en-authorized-recovery",
+        "pageId": "auth-page-1",
+        "nativeHistory": {
+          "documentId": "mw9lsbzs-e08p3a5ooj6",
+          "events": [
+            {
+              "documentId": "mw9lsbzs-e08p3a5ooj6",
+              "event": "pageshow",
+              "persisted": false,
+              "isTrusted": true,
+              "path": "/en/dashboard/inventory/items",
+              "at": 1794249435722,
+              "visibility": "visible",
+              "privateContentPresent": false
+            }
+          ],
+          "navigation": [
+            {
+              "type": "navigate",
+              "transferSize": 140805,
+              "encodedBodySize": 140505,
+              "activationStart": 0,
+              "deliveryType": "",
+              "notRestoredReasons": []
+            }
+          ]
+        },
+        "nativeLifecycleEvidence": [
+          {
+            "pageId": "auth-page-1",
+            "observedAt": "2026-11-09T18:37:15.727Z",
+            "documentId": "mw9lsbzs-e08p3a5ooj6",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249435722,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "path": "/en/dashboard/inventory/items",
+        "privateItemVisible": true,
+        "loginVisible": false,
+        "textSha256": "c97061bf8e0dc8d04b4fd54d4674eecced38ec8793b2f27ee5119ab843abd190",
+        "textLength": 1421,
+        "screenshot": "authBrowserRevoked-en-authorized-recovery.png",
+        "at": "2026-11-09T18:37:18.739Z",
+        "actualRefresh": {
+          "clickedAt": 1794249438316,
+          "completion": {
+            "events": [
+              {
+                "kind": "refresh-completed-success",
+                "type": "success",
+                "at": 1794249438529
+              }
+            ],
+            "loginVisible": false
+          },
+          "actionResponses": [
+            {
+              "caseId": "authBrowserRevoked-en-authorized-recovery",
+              "path": "/en/dashboard/inventory/items",
+              "status": 200,
+              "at": 1794249438526,
+              "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+              "bytes": 506,
+              "sha256": "75db4a32ab3b37a874bf8dc086cb0dc56d4530d2e08d3821ede7fdf3e5ada2d4",
+              "failedEnvelope": false,
+              "successEnvelope": true,
+              "recognizedDenialCodes": [],
+              "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+              "privateItemBytes": true,
+              "captureComplete": true
+            }
+          ]
+        }
+      },
+      "finishedAt": "2026-11-09T18:37:21.170Z"
+    },
+    {
+      "id": "authBrowserExpiry-en-authorized-recovery",
+      "startedAt": "2026-11-09T18:37:21.175Z",
+      "passed": true,
+      "effects": {
+        "before": "snapshot-auth-authBrowserExpiry-en-authorized-recovery-before-1794249449215-3c21c379-31b2-4011-995f-218001ee7ddd.json",
+        "after": "snapshot-auth-authBrowserExpiry-en-authorized-recovery-after-1794249451529-e2efcaef-a004-4079-b73a-a123c0616f03.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 2,
+        "sessionCountAfter": 2,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      },
+      "detail": {
+        "label": "authBrowserExpiry-en-authorized-recovery",
+        "pageId": "auth-page-2",
+        "nativeHistory": {
+          "documentId": "mw9lsk3g-b0vmdw4ya1q",
+          "events": [
+            {
+              "documentId": "mw9lsk3g-b0vmdw4ya1q",
+              "event": "pageshow",
+              "persisted": false,
+              "isTrusted": true,
+              "path": "/en/dashboard/inventory/items",
+              "at": 1794249446469,
+              "visibility": "visible",
+              "privateContentPresent": false
+            }
+          ],
+          "navigation": [
+            {
+              "type": "navigate",
+              "transferSize": 140757,
+              "encodedBodySize": 140457,
+              "activationStart": 0,
+              "deliveryType": "",
+              "notRestoredReasons": []
+            }
+          ]
+        },
+        "nativeLifecycleEvidence": [
+          {
+            "pageId": "auth-page-2",
+            "observedAt": "2026-11-09T18:37:26.471Z",
+            "documentId": "mw9lsk3g-b0vmdw4ya1q",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249446469,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "path": "/en/dashboard/inventory/items",
+        "privateItemVisible": true,
+        "loginVisible": false,
+        "textSha256": "e688cc546fea6d2bccec199bcaa272d43917f589d89fae3ae5e956e99b3b12e8",
+        "textLength": 1418,
+        "screenshot": "authBrowserExpiry-en-authorized-recovery.png",
+        "at": "2026-11-09T18:37:29.469Z",
+        "actualRefresh": {
+          "clickedAt": 1794249449226,
+          "completion": {
+            "events": [
+              {
+                "kind": "refresh-completed-success",
+                "type": "success",
+                "at": 1794249449362
+              }
+            ],
+            "loginVisible": false
+          },
+          "actionResponses": [
+            {
+              "caseId": "authBrowserExpiry-en-authorized-recovery",
+              "path": "/en/dashboard/inventory/items",
+              "status": 200,
+              "at": 1794249449363,
+              "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+              "bytes": 506,
+              "sha256": "bd042e1dcffc560446130635307b7807238a6c3c6272ea83a8c21e0edeb285dd",
+              "failedEnvelope": false,
+              "successEnvelope": true,
+              "recognizedDenialCodes": [],
+              "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+              "privateItemBytes": true,
+              "captureComplete": true
+            }
+          ]
+        }
+      },
+      "finishedAt": "2026-11-09T18:37:31.571Z"
+    },
+    {
+      "id": "authBrowserPermission-en-authorized-recovery",
+      "startedAt": "2026-11-09T18:37:31.580Z",
+      "passed": true,
+      "effects": {
+        "before": "snapshot-auth-authBrowserPermission-en-authorized-recovery-before-1794249459012-95b7ae38-c99c-4105-8e17-c9421658a4c9.json",
+        "after": "snapshot-auth-authBrowserPermission-en-authorized-recovery-after-1794249462037-e7ce2059-5b24-41af-aa29-2031abbeaa5e.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 3,
+        "sessionCountAfter": 3,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      },
+      "detail": {
+        "label": "authBrowserPermission-en-authorized-recovery",
+        "pageId": "auth-page-3",
+        "nativeHistory": {
+          "documentId": "mw9lssc6-rsi4ifeb8bi",
+          "events": [
+            {
+              "documentId": "mw9lssc6-rsi4ifeb8bi",
+              "event": "pageshow",
+              "persisted": false,
+              "isTrusted": true,
+              "path": "/en/dashboard/inventory/items",
+              "at": 1794249456436,
+              "visibility": "visible",
+              "privateContentPresent": false
+            }
+          ],
+          "navigation": [
+            {
+              "type": "navigate",
+              "transferSize": 140812,
+              "encodedBodySize": 140512,
+              "activationStart": 0,
+              "deliveryType": "",
+              "notRestoredReasons": []
+            }
+          ]
+        },
+        "nativeLifecycleEvidence": [
+          {
+            "pageId": "auth-page-3",
+            "observedAt": "2026-11-09T18:37:36.439Z",
+            "documentId": "mw9lssc6-rsi4ifeb8bi",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249456436,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "path": "/en/dashboard/inventory/items",
+        "privateItemVisible": true,
+        "loginVisible": false,
+        "textSha256": "23804044ff4e6523f0f608476438810006bb83a350e37fbc4ebdd56c22a7ffdc",
+        "textLength": 1430,
+        "screenshot": "authBrowserPermission-en-authorized-recovery.png",
+        "at": "2026-11-09T18:37:39.602Z",
+        "actualRefresh": {
+          "clickedAt": 1794249459045,
+          "completion": {
+            "events": [
+              {
+                "kind": "refresh-completed-success",
+                "type": "success",
+                "at": 1794249459273
+              }
+            ],
+            "loginVisible": false
+          },
+          "actionResponses": [
+            {
+              "caseId": "authBrowserPermission-en-authorized-recovery",
+              "path": "/en/dashboard/inventory/items",
+              "status": 200,
+              "at": 1794249459274,
+              "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+              "bytes": 506,
+              "sha256": "272796ef63379315a9947e0173fe720253f179785386a31aa2701c681a6d1386",
+              "failedEnvelope": false,
+              "successEnvelope": true,
+              "recognizedDenialCodes": [],
+              "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+              "privateItemBytes": true,
+              "captureComplete": true
+            }
+          ]
+        }
+      },
+      "finishedAt": "2026-11-09T18:37:42.076Z"
+    },
+    {
+      "id": "authBrowserModule-en-authorized-recovery",
+      "startedAt": "2026-11-09T18:37:42.095Z",
+      "passed": true,
+      "effects": {
+        "before": "snapshot-auth-authBrowserModule-en-authorized-recovery-before-1794249470837-740f67d8-784f-4836-96b6-d81383da54ac.json",
+        "after": "snapshot-auth-authBrowserModule-en-authorized-recovery-after-1794249473832-bf89e5fb-4f03-42e5-83bc-bf45e8c9af5a.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 4,
+        "sessionCountAfter": 4,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      },
+      "detail": {
+        "label": "authBrowserModule-en-authorized-recovery",
+        "pageId": "auth-page-4",
+        "nativeHistory": {
+          "documentId": "mw9lt0pw-an9looh9d6l",
+          "events": [
+            {
+              "documentId": "mw9lt0pw-an9looh9d6l",
+              "event": "pageshow",
+              "persisted": false,
+              "isTrusted": true,
+              "path": "/en/dashboard/inventory/items",
+              "at": 1794249467896,
+              "visibility": "visible",
+              "privateContentPresent": false
+            }
+          ],
+          "navigation": [
+            {
+              "type": "navigate",
+              "transferSize": 140760,
+              "encodedBodySize": 140460,
+              "activationStart": 0,
+              "deliveryType": "",
+              "notRestoredReasons": []
+            }
+          ]
+        },
+        "nativeLifecycleEvidence": [
+          {
+            "pageId": "auth-page-4",
+            "observedAt": "2026-11-09T18:37:47.899Z",
+            "documentId": "mw9lt0pw-an9looh9d6l",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249467896,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "path": "/en/dashboard/inventory/items",
+        "privateItemVisible": true,
+        "loginVisible": false,
+        "textSha256": "2c8d3777d50169657c069b5847ce3a947a7d855a087ddeb8e8bf0ce89300e080",
+        "textLength": 1418,
+        "screenshot": "authBrowserModule-en-authorized-recovery.png",
+        "at": "2026-11-09T18:37:51.052Z",
+        "actualRefresh": {
+          "clickedAt": 1794249470848,
+          "completion": {
+            "events": [
+              {
+                "kind": "refresh-completed-success",
+                "type": "success",
+                "at": 1794249470958
+              }
+            ],
+            "loginVisible": false
+          },
+          "actionResponses": [
+            {
+              "caseId": "authBrowserModule-en-authorized-recovery",
+              "path": "/en/dashboard/inventory/items",
+              "status": 200,
+              "at": 1794249470957,
+              "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+              "bytes": 506,
+              "sha256": "b8e3a89459ede0b610e4361b7e430971ed873b6ab6dfdf0c0d238fb95bce5da2",
+              "failedEnvelope": false,
+              "successEnvelope": true,
+              "recognizedDenialCodes": [],
+              "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+              "privateItemBytes": true,
+              "captureComplete": true
+            }
+          ]
+        }
+      },
+      "finishedAt": "2026-11-09T18:37:53.855Z"
+    },
+    {
+      "id": "authBrowserRevoked-fr-authorized-recovery",
+      "startedAt": "2026-11-09T18:37:53.875Z",
+      "passed": true,
+      "effects": {
+        "before": "snapshot-auth-authBrowserRevoked-fr-authorized-recovery-before-1794249480560-dc269684-0280-4e1a-a8ad-60365b1f79a5.json",
+        "after": "snapshot-auth-authBrowserRevoked-fr-authorized-recovery-after-1794249482652-119af4e1-2335-4c52-b917-b795d2923123.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 5,
+        "sessionCountAfter": 5,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      },
+      "detail": {
+        "label": "authBrowserRevoked-fr-authorized-recovery",
+        "pageId": "auth-page-5",
+        "nativeHistory": {
+          "documentId": "mw9lt917-ya89tg6v8hi",
+          "events": [
+            {
+              "documentId": "mw9lt917-ya89tg6v8hi",
+              "event": "pageshow",
+              "persisted": false,
+              "isTrusted": true,
+              "path": "/fr/dashboard/inventory/items",
+              "at": 1794249478067,
+              "visibility": "visible",
+              "privateContentPresent": false
+            }
+          ],
+          "navigation": [
+            {
+              "type": "navigate",
+              "transferSize": 153276,
+              "encodedBodySize": 152976,
+              "activationStart": 0,
+              "deliveryType": "",
+              "notRestoredReasons": []
+            }
+          ]
+        },
+        "nativeLifecycleEvidence": [
+          {
+            "pageId": "auth-page-5",
+            "observedAt": "2026-11-09T18:37:58.109Z",
+            "documentId": "mw9lt917-ya89tg6v8hi",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249478067,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "path": "/fr/dashboard/inventory/items",
+        "privateItemVisible": true,
+        "loginVisible": false,
+        "textSha256": "4ef439ab236f4821471b4a856e401d2c62d42fad96e103a7712f8c58f0cd021e",
+        "textLength": 1623,
+        "screenshot": "authBrowserRevoked-fr-authorized-recovery.png",
+        "at": "2026-11-09T18:38:00.797Z",
+        "actualRefresh": {
+          "clickedAt": 1794249480581,
+          "completion": {
+            "events": [
+              {
+                "kind": "refresh-completed-success",
+                "type": "success",
+                "at": 1794249480677
+              }
+            ],
+            "loginVisible": false
+          },
+          "actionResponses": [
+            {
+              "caseId": "authBrowserRevoked-fr-authorized-recovery",
+              "path": "/fr/dashboard/inventory/items",
+              "status": 200,
+              "at": 1794249480676,
+              "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+              "bytes": 506,
+              "sha256": "73a1dd5e5df01df9599245b441b1e822f1588a3fc8451da8d5eaf25d1d495613",
+              "failedEnvelope": false,
+              "successEnvelope": true,
+              "recognizedDenialCodes": [],
+              "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+              "privateItemBytes": true,
+              "captureComplete": true
+            }
+          ]
+        }
+      },
+      "finishedAt": "2026-11-09T18:38:02.690Z"
+    },
+    {
+      "id": "authBrowserExpiry-fr-authorized-recovery",
+      "startedAt": "2026-11-09T18:38:02.718Z",
+      "passed": true,
+      "effects": {
+        "before": "snapshot-auth-authBrowserExpiry-fr-authorized-recovery-before-1794249491284-64960854-4b26-449d-acb1-dc36ab1c1b47.json",
+        "after": "snapshot-auth-authBrowserExpiry-fr-authorized-recovery-after-1794249493484-f0105828-5075-4bc7-a0a1-34cea1202896.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 6,
+        "sessionCountAfter": 6,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      },
+      "detail": {
+        "label": "authBrowserExpiry-fr-authorized-recovery",
+        "pageId": "auth-page-6",
+        "nativeHistory": {
+          "documentId": "mw9lth7r-k9003nu7qwf",
+          "events": [
+            {
+              "documentId": "mw9lth7r-k9003nu7qwf",
+              "event": "pageshow",
+              "persisted": false,
+              "isTrusted": true,
+              "path": "/fr/dashboard/inventory/items",
+              "at": 1794249488749,
+              "visibility": "visible",
+              "privateContentPresent": false
+            }
+          ],
+          "navigation": [
+            {
+              "type": "navigate",
+              "transferSize": 153275,
+              "encodedBodySize": 152975,
+              "activationStart": 0,
+              "deliveryType": "",
+              "notRestoredReasons": []
+            }
+          ]
+        },
+        "nativeLifecycleEvidence": [
+          {
+            "pageId": "auth-page-6",
+            "observedAt": "2026-11-09T18:38:08.751Z",
+            "documentId": "mw9lth7r-k9003nu7qwf",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249488749,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "path": "/fr/dashboard/inventory/items",
+        "privateItemVisible": true,
+        "loginVisible": false,
+        "textSha256": "feafd80c41fb08f7b090da9e6b90f3e64cfd37fbf598e7e3129b095666ece04c",
+        "textLength": 1620,
+        "screenshot": "authBrowserExpiry-fr-authorized-recovery.png",
+        "at": "2026-11-09T18:38:11.547Z",
+        "actualRefresh": {
+          "clickedAt": 1794249491306,
+          "completion": {
+            "events": [
+              {
+                "kind": "refresh-completed-success",
+                "type": "success",
+                "at": 1794249491423
+              }
+            ],
+            "loginVisible": false
+          },
+          "actionResponses": [
+            {
+              "caseId": "authBrowserExpiry-fr-authorized-recovery",
+              "path": "/fr/dashboard/inventory/items",
+              "status": 200,
+              "at": 1794249491423,
+              "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+              "bytes": 506,
+              "sha256": "113fb9f8f7ddcb78f362e64e8553a4596192566d736423167cc960b34c87c796",
+              "failedEnvelope": false,
+              "successEnvelope": true,
+              "recognizedDenialCodes": [],
+              "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+              "privateItemBytes": true,
+              "captureComplete": true
+            }
+          ]
+        }
+      },
+      "finishedAt": "2026-11-09T18:38:13.523Z"
+    },
+    {
+      "id": "authBrowserPermission-fr-authorized-recovery",
+      "startedAt": "2026-11-09T18:38:13.537Z",
+      "passed": true,
+      "effects": {
+        "before": "snapshot-auth-authBrowserPermission-fr-authorized-recovery-before-1794249501712-2d3bfd1b-e7e9-466b-9c65-a63f476c22a8.json",
+        "after": "snapshot-auth-authBrowserPermission-fr-authorized-recovery-after-1794249503715-0f321683-99a4-4ede-a5f6-d38687633c5d.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 7,
+        "sessionCountAfter": 7,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      },
+      "detail": {
+        "label": "authBrowserPermission-fr-authorized-recovery",
+        "pageId": "auth-page-7",
+        "nativeHistory": {
+          "documentId": "mw9ltpil-qilomd734wc",
+          "events": [
+            {
+              "documentId": "mw9ltpil-qilomd734wc",
+              "event": "pageshow",
+              "persisted": false,
+              "isTrusted": true,
+              "path": "/fr/dashboard/inventory/items",
+              "at": 1794249499735,
+              "visibility": "visible",
+              "privateContentPresent": false
+            }
+          ],
+          "navigation": [
+            {
+              "type": "navigate",
+              "transferSize": 153283,
+              "encodedBodySize": 152983,
+              "activationStart": 0,
+              "deliveryType": "",
+              "notRestoredReasons": []
+            }
+          ]
+        },
+        "nativeLifecycleEvidence": [
+          {
+            "pageId": "auth-page-7",
+            "observedAt": "2026-11-09T18:38:19.741Z",
+            "documentId": "mw9ltpil-qilomd734wc",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249499735,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "path": "/fr/dashboard/inventory/items",
+        "privateItemVisible": true,
+        "loginVisible": false,
+        "textSha256": "847e5d31e791b616e4759da8a62b05c5fa3ef35de9ce4f54726afae8e621ee76",
+        "textLength": 1632,
+        "screenshot": "authBrowserPermission-fr-authorized-recovery.png",
+        "at": "2026-11-09T18:38:21.928Z",
+        "actualRefresh": {
+          "clickedAt": 1794249501731,
+          "completion": {
+            "events": [
+              {
+                "kind": "refresh-completed-success",
+                "type": "success",
+                "at": 1794249501809
+              }
+            ],
+            "loginVisible": false
+          },
+          "actionResponses": [
+            {
+              "caseId": "authBrowserPermission-fr-authorized-recovery",
+              "path": "/fr/dashboard/inventory/items",
+              "status": 200,
+              "at": 1794249501809,
+              "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+              "bytes": 506,
+              "sha256": "299cc5e3eb264247c87d4dccba253cae23d6e55bf383841c0546d8d354e86a70",
+              "failedEnvelope": false,
+              "successEnvelope": true,
+              "recognizedDenialCodes": [],
+              "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+              "privateItemBytes": true,
+              "captureComplete": true
+            }
+          ]
+        }
+      },
+      "finishedAt": "2026-11-09T18:38:23.730Z"
+    },
+    {
+      "id": "authBrowserModule-fr-authorized-recovery",
+      "startedAt": "2026-11-09T18:38:23.748Z",
+      "passed": true,
+      "effects": {
+        "before": "snapshot-auth-authBrowserModule-fr-authorized-recovery-before-1794249511913-f5d5510c-348c-4a49-9467-ded2065fa20f.json",
+        "after": "snapshot-auth-authBrowserModule-fr-authorized-recovery-after-1794249514022-46185168-571c-425a-bdb8-d47b122b64d0.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 8,
+        "sessionCountAfter": 8,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      },
+      "detail": {
+        "label": "authBrowserModule-fr-authorized-recovery",
+        "pageId": "auth-page-8",
+        "nativeHistory": {
+          "documentId": "mw9ltxly-hsnugggmj4",
+          "events": [
+            {
+              "documentId": "mw9ltxly-hsnugggmj4",
+              "event": "pageshow",
+              "persisted": false,
+              "isTrusted": true,
+              "path": "/fr/dashboard/inventory/items",
+              "at": 1794249509806,
+              "visibility": "visible",
+              "privateContentPresent": false
+            }
+          ],
+          "navigation": [
+            {
+              "type": "navigate",
+              "transferSize": 153272,
+              "encodedBodySize": 152972,
+              "activationStart": 0,
+              "deliveryType": "",
+              "notRestoredReasons": []
+            }
+          ]
+        },
+        "nativeLifecycleEvidence": [
+          {
+            "pageId": "auth-page-8",
+            "observedAt": "2026-11-09T18:38:29.808Z",
+            "documentId": "mw9ltxly-hsnugggmj4",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249509806,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "path": "/fr/dashboard/inventory/items",
+        "privateItemVisible": true,
+        "loginVisible": false,
+        "textSha256": "dfe4c89d2862d89d5c5cae9cf30921f0eb0df4c6feb612bb4ca492ee92fd3735",
+        "textLength": 1620,
+        "screenshot": "authBrowserModule-fr-authorized-recovery.png",
+        "at": "2026-11-09T18:38:32.135Z",
+        "actualRefresh": {
+          "clickedAt": 1794249511938,
+          "completion": {
+            "events": [
+              {
+                "kind": "refresh-completed-success",
+                "type": "success",
+                "at": 1794249512026
+              }
+            ],
+            "loginVisible": false
+          },
+          "actionResponses": [
+            {
+              "caseId": "authBrowserModule-fr-authorized-recovery",
+              "path": "/fr/dashboard/inventory/items",
+              "status": 200,
+              "at": 1794249512025,
+              "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+              "bytes": 506,
+              "sha256": "66b96a1924d152ee65d2591df88ac35cacb779ffdb33fc4b8e0b00195edfb075",
+              "failedEnvelope": false,
+              "successEnvelope": true,
+              "recognizedDenialCodes": [],
+              "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+              "privateItemBytes": true,
+              "captureComplete": true
+            }
+          ]
+        }
+      },
+      "finishedAt": "2026-11-09T18:38:34.044Z"
+    },
+    {
+      "id": "authBrowserRevoked-en-denial-envelope-refresh",
+      "startedAt": "2026-11-09T18:38:34.070Z",
+      "passed": false,
+      "effects": {
+        "before": "snapshot-auth-authBrowserRevoked-en-denial-envelope-refresh-before-1794249524179-e6498bfb-64d2-4a36-81a3-6b76bf841d62.json",
+        "after": "snapshot-auth-authBrowserRevoked-en-denial-envelope-refresh-after-1794249527048-39e476e4-5479-4698-8329-d0a0cef6cb13.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": false,
+        "sessionCountBefore": 6,
+        "sessionCountAfter": 6,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      },
+      "error": "Explicit denied action envelope required for client recovery finding",
+      "failureClass": "observed_assertion_failure",
+      "finishedAt": "2026-11-09T18:38:47.069Z"
+    },
+    {
+      "id": "authBrowserExpiry-en-denial-envelope-refresh",
+      "startedAt": "2026-11-09T18:38:47.100Z",
+      "passed": false,
+      "effects": {
+        "before": "snapshot-auth-authBrowserExpiry-en-denial-envelope-refresh-before-1794249534391-fbd5c841-3eae-4403-a4c7-7e2831f49be9.json",
+        "after": "snapshot-auth-authBrowserExpiry-en-denial-envelope-refresh-after-1794249536760-067b9686-40ac-4ebb-94ec-1afc7af173b5.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": true,
+        "auditsChanged": false,
+        "sessionCountBefore": 7,
+        "sessionCountAfter": 6,
+        "newAuditKinds": [],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 1,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 0
+        }
+      },
+      "error": "Explicit denied action envelope required for client recovery finding",
+      "failureClass": "observed_assertion_failure",
+      "finishedAt": "2026-11-09T18:38:56.799Z"
+    },
+    {
+      "id": "authBrowserPermission-en-denial-envelope-refresh",
+      "startedAt": "2026-11-09T18:38:56.909Z",
+      "passed": false,
+      "effects": {
+        "before": "snapshot-auth-authBrowserPermission-en-denial-envelope-refresh-before-1794249544871-2929f696-266e-48e2-90ac-d49a4d1008e1.json",
+        "after": "snapshot-auth-authBrowserPermission-en-denial-envelope-refresh-after-1794249546974-d253e876-d9a7-4cd6-a367-f21dc6cdb585.json",
+        "businessEqual": true,
+        "changedBusinessTables": [],
+        "sessionsChanged": false,
+        "auditsChanged": true,
+        "sessionCountBefore": 7,
+        "sessionCountAfter": 7,
+        "newAuditKinds": [
+          {
+            "action": "PERMISSION_DENIED",
+            "entityType": "SecurityEvent",
+            "userId": "p04v02-auth-authbrowserpermission",
+            "organizationId": "p04-upload-a"
+          }
+        ],
+        "classifiedBookkeeping": {
+          "existingSessionsPreserved": true,
+          "newSessions": 0,
+          "allowedCurrentActorDeletions": 0,
+          "existingAuditsPreserved": true,
+          "allowedNewAudits": 1
+        }
+      },
+      "error": "Explicit denied action envelope required for client recovery finding",
+      "failureClass": "observed_assertion_failure",
+      "finishedAt": "2026-11-09T18:39:07.001Z"
+    }
+  ],
+  "requests": [
+    {
+      "id": "warm-authBrowserRevoked",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 779,
+      "sha256": "43e4c5ad71b10c24bb03457eeea5af7399016962f937f2f3ed5579a4f9ad3998",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    },
+    {
+      "id": "warm-authBrowserExpiry",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 774,
+      "sha256": "9500ac8bb85c0dbdd6c33ab41efb63e0aec75ecaa9dfa3a131eabdce76a922cd",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    },
+    {
+      "id": "warm-authBrowserPermission",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 794,
+      "sha256": "af336f017250e572be4729df2b03c245ec85f8ac74674b7ff002b81fff805eba",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    },
+    {
+      "id": "warm-authBrowserModule",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 774,
+      "sha256": "391bfbe33864b4165c9e3819d1844828cf16370876a24cf618678fe7fc6c0d5d",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    },
+    {
+      "id": "warm-authBrowserRevoked",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 779,
+      "sha256": "265c7812f60510883817b5e4a0651fa81682f59940b214497e300012f80298ec",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    },
+    {
+      "id": "warm-authBrowserExpiry",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 774,
+      "sha256": "e8a32172a791713866a99061879e8092dc80f50ac44c5f175ce5b7d3931437cf",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    },
+    {
+      "id": "warm-authBrowserPermission",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 794,
+      "sha256": "9013e913c34c45f21705dd1696f401bb7a55760fc3b49f32facb2b33d7e30042",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    },
+    {
+      "id": "warm-authBrowserModule",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 774,
+      "sha256": "988c8e40f3c28050bb57bfbbacabf46c5a98c5a6be213ad4e51a0ed037252f84",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    },
+    {
+      "id": "warm-authBrowserRevoked",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 779,
+      "sha256": "7460a3df59112fb961a0851c42723a37821d21bafe6353c8ad657806a764def4",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    },
+    {
+      "id": "warm-authBrowserExpiry",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 774,
+      "sha256": "ec681d287c69b93e6c76583ac51df54b554e275aa63bc83bfefcf627b80c1e1e",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    },
+    {
+      "id": "warm-authBrowserPermission",
+      "path": "/api/auth/get-session",
+      "method": "GET",
+      "status": 200,
+      "bytes": 794,
+      "sha256": "450d39f1eea66ace5dd020ca54568647fdefba21d3319f48f526b565aa0e92f2",
+      "redirect": null,
+      "authResponseHeaders": [],
+      "contentType": "application/json",
+      "cacheControl": null,
+      "retryAfter": null,
+      "hasPrivateUser": true,
+      "hasSession": true,
+      "privateActorCanaries": true,
+      "hasTokenField": true
+    }
+  ],
+  "signIns": [
+    {
+      "actor": "authBrowserRevoked",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249433058,
+      "completedAt": 1794249433691,
+      "waitMs": 0,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    },
+    {
+      "actor": "authBrowserExpiry",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249443944,
+      "completedAt": 1794249444406,
+      "waitMs": 2759,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    },
+    {
+      "actor": "authBrowserPermission",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249454669,
+      "completedAt": 1794249455117,
+      "waitMs": 3068,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    },
+    {
+      "actor": "authBrowserModule",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249465371,
+      "completedAt": 1794249465858,
+      "waitMs": 3262,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    },
+    {
+      "actor": "authBrowserRevoked",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249476110,
+      "completedAt": 1794249476715,
+      "waitMs": 2218,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    },
+    {
+      "actor": "authBrowserExpiry",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249486970,
+      "completedAt": 1794249487368,
+      "waitMs": 4240,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    },
+    {
+      "actor": "authBrowserPermission",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249497626,
+      "completedAt": 1794249498061,
+      "waitMs": 4055,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    },
+    {
+      "actor": "authBrowserModule",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249508317,
+      "completedAt": 1794249508706,
+      "waitMs": 4558,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    },
+    {
+      "actor": "authBrowserRevoked",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249518956,
+      "completedAt": 1794249519407,
+      "waitMs": 4886,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    },
+    {
+      "actor": "authBrowserExpiry",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249529670,
+      "completedAt": 1794249530160,
+      "waitMs": 2557,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    },
+    {
+      "actor": "authBrowserPermission",
+      "channel": "transport",
+      "attempt": 1,
+      "startedAt": 1794249540419,
+      "completedAt": 1794249540816,
+      "waitMs": 3501,
+      "status": 200,
+      "retryAfter": null,
+      "retryPlanned": false
+    }
+  ],
+  "browserObservations": [
+    {
+      "label": "authBrowserRevoked-en-authorized-recovery-warm",
+      "pageId": "auth-page-1",
+      "nativeHistory": {
+        "documentId": "mw9lsbzs-e08p3a5ooj6",
+        "events": [
+          {
+            "documentId": "mw9lsbzs-e08p3a5ooj6",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249435722,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140805,
+            "encodedBodySize": 140505,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-1",
+          "observedAt": "2026-11-09T18:37:15.727Z",
+          "documentId": "mw9lsbzs-e08p3a5ooj6",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249435722,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "9ec82e19420ee1ec98005158c160fb6eaeb79ec78975e8d1e1a7e6c3a5b05a34",
+      "textLength": 1316,
+      "screenshot": "authBrowserRevoked-en-authorized-recovery-warm.png",
+      "at": "2026-11-09T18:37:16.183Z"
+    },
+    {
+      "label": "authBrowserRevoked-en-authorized-recovery",
+      "pageId": "auth-page-1",
+      "nativeHistory": {
+        "documentId": "mw9lsbzs-e08p3a5ooj6",
+        "events": [
+          {
+            "documentId": "mw9lsbzs-e08p3a5ooj6",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249435722,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140805,
+            "encodedBodySize": 140505,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-1",
+          "observedAt": "2026-11-09T18:37:15.727Z",
+          "documentId": "mw9lsbzs-e08p3a5ooj6",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249435722,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "c97061bf8e0dc8d04b4fd54d4674eecced38ec8793b2f27ee5119ab843abd190",
+      "textLength": 1421,
+      "screenshot": "authBrowserRevoked-en-authorized-recovery.png",
+      "at": "2026-11-09T18:37:18.739Z",
+      "actualRefresh": {
+        "clickedAt": 1794249438316,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249438529
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserRevoked-en-authorized-recovery",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249438526,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "75db4a32ab3b37a874bf8dc086cb0dc56d4530d2e08d3821ede7fdf3e5ada2d4",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "authBrowserExpiry-en-authorized-recovery-warm",
+      "pageId": "auth-page-2",
+      "nativeHistory": {
+        "documentId": "mw9lsk3g-b0vmdw4ya1q",
+        "events": [
+          {
+            "documentId": "mw9lsk3g-b0vmdw4ya1q",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249446469,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140757,
+            "encodedBodySize": 140457,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-2",
+          "observedAt": "2026-11-09T18:37:26.471Z",
+          "documentId": "mw9lsk3g-b0vmdw4ya1q",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249446469,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "17957dc853d3a7ddc185836df8f0984c64b7a84dc63741bd3d4e97d7cce85f02",
+      "textLength": 1313,
+      "screenshot": "authBrowserExpiry-en-authorized-recovery-warm.png",
+      "at": "2026-11-09T18:37:26.934Z"
+    },
+    {
+      "label": "authBrowserExpiry-en-authorized-recovery",
+      "pageId": "auth-page-2",
+      "nativeHistory": {
+        "documentId": "mw9lsk3g-b0vmdw4ya1q",
+        "events": [
+          {
+            "documentId": "mw9lsk3g-b0vmdw4ya1q",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249446469,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140757,
+            "encodedBodySize": 140457,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-2",
+          "observedAt": "2026-11-09T18:37:26.471Z",
+          "documentId": "mw9lsk3g-b0vmdw4ya1q",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249446469,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "e688cc546fea6d2bccec199bcaa272d43917f589d89fae3ae5e956e99b3b12e8",
+      "textLength": 1418,
+      "screenshot": "authBrowserExpiry-en-authorized-recovery.png",
+      "at": "2026-11-09T18:37:29.469Z",
+      "actualRefresh": {
+        "clickedAt": 1794249449226,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249449362
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserExpiry-en-authorized-recovery",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249449363,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "bd042e1dcffc560446130635307b7807238a6c3c6272ea83a8c21e0edeb285dd",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "authBrowserPermission-en-authorized-recovery-warm",
+      "pageId": "auth-page-3",
+      "nativeHistory": {
+        "documentId": "mw9lssc6-rsi4ifeb8bi",
+        "events": [
+          {
+            "documentId": "mw9lssc6-rsi4ifeb8bi",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249456436,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140812,
+            "encodedBodySize": 140512,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-3",
+          "observedAt": "2026-11-09T18:37:36.439Z",
+          "documentId": "mw9lssc6-rsi4ifeb8bi",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249456436,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "cb53d45dade01b0e41e34183e7191a75384eda07dd9213164792807ae8d3a790",
+      "textLength": 1325,
+      "screenshot": "authBrowserPermission-en-authorized-recovery-warm.png",
+      "at": "2026-11-09T18:37:37.039Z"
+    },
+    {
+      "label": "authBrowserPermission-en-authorized-recovery",
+      "pageId": "auth-page-3",
+      "nativeHistory": {
+        "documentId": "mw9lssc6-rsi4ifeb8bi",
+        "events": [
+          {
+            "documentId": "mw9lssc6-rsi4ifeb8bi",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249456436,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140812,
+            "encodedBodySize": 140512,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-3",
+          "observedAt": "2026-11-09T18:37:36.439Z",
+          "documentId": "mw9lssc6-rsi4ifeb8bi",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249456436,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "23804044ff4e6523f0f608476438810006bb83a350e37fbc4ebdd56c22a7ffdc",
+      "textLength": 1430,
+      "screenshot": "authBrowserPermission-en-authorized-recovery.png",
+      "at": "2026-11-09T18:37:39.602Z",
+      "actualRefresh": {
+        "clickedAt": 1794249459045,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249459273
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserPermission-en-authorized-recovery",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249459274,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "272796ef63379315a9947e0173fe720253f179785386a31aa2701c681a6d1386",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "authBrowserModule-en-authorized-recovery-warm",
+      "pageId": "auth-page-4",
+      "nativeHistory": {
+        "documentId": "mw9lt0pw-an9looh9d6l",
+        "events": [
+          {
+            "documentId": "mw9lt0pw-an9looh9d6l",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249467896,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140760,
+            "encodedBodySize": 140460,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-4",
+          "observedAt": "2026-11-09T18:37:47.899Z",
+          "documentId": "mw9lt0pw-an9looh9d6l",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249467896,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "6ad645867500f2cb47b73e377841eaa02b1d3e5e0c004fed67345f7055a83f8e",
+      "textLength": 1313,
+      "screenshot": "authBrowserModule-en-authorized-recovery-warm.png",
+      "at": "2026-11-09T18:37:48.499Z"
+    },
+    {
+      "label": "authBrowserModule-en-authorized-recovery",
+      "pageId": "auth-page-4",
+      "nativeHistory": {
+        "documentId": "mw9lt0pw-an9looh9d6l",
+        "events": [
+          {
+            "documentId": "mw9lt0pw-an9looh9d6l",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249467896,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140760,
+            "encodedBodySize": 140460,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-4",
+          "observedAt": "2026-11-09T18:37:47.899Z",
+          "documentId": "mw9lt0pw-an9looh9d6l",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249467896,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "2c8d3777d50169657c069b5847ce3a947a7d855a087ddeb8e8bf0ce89300e080",
+      "textLength": 1418,
+      "screenshot": "authBrowserModule-en-authorized-recovery.png",
+      "at": "2026-11-09T18:37:51.052Z",
+      "actualRefresh": {
+        "clickedAt": 1794249470848,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249470958
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserModule-en-authorized-recovery",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249470957,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "b8e3a89459ede0b610e4361b7e430971ed873b6ab6dfdf0c0d238fb95bce5da2",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "authBrowserRevoked-fr-authorized-recovery-warm",
+      "pageId": "auth-page-5",
+      "nativeHistory": {
+        "documentId": "mw9lt917-ya89tg6v8hi",
+        "events": [
+          {
+            "documentId": "mw9lt917-ya89tg6v8hi",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249478067,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 153276,
+            "encodedBodySize": 152976,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-5",
+          "observedAt": "2026-11-09T18:37:58.109Z",
+          "documentId": "mw9lt917-ya89tg6v8hi",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/fr/dashboard/inventory/items",
+          "at": 1794249478067,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/fr/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "a8b8e2bc4add34a4c37f81bfffb949cabbaf9bd9cfad0d338bdd6b3149f3f21c",
+      "textLength": 1522,
+      "screenshot": "authBrowserRevoked-fr-authorized-recovery-warm.png",
+      "at": "2026-11-09T18:37:58.611Z"
+    },
+    {
+      "label": "authBrowserRevoked-fr-authorized-recovery",
+      "pageId": "auth-page-5",
+      "nativeHistory": {
+        "documentId": "mw9lt917-ya89tg6v8hi",
+        "events": [
+          {
+            "documentId": "mw9lt917-ya89tg6v8hi",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249478067,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 153276,
+            "encodedBodySize": 152976,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-5",
+          "observedAt": "2026-11-09T18:37:58.109Z",
+          "documentId": "mw9lt917-ya89tg6v8hi",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/fr/dashboard/inventory/items",
+          "at": 1794249478067,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/fr/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "4ef439ab236f4821471b4a856e401d2c62d42fad96e103a7712f8c58f0cd021e",
+      "textLength": 1623,
+      "screenshot": "authBrowserRevoked-fr-authorized-recovery.png",
+      "at": "2026-11-09T18:38:00.797Z",
+      "actualRefresh": {
+        "clickedAt": 1794249480581,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249480677
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserRevoked-fr-authorized-recovery",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249480676,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "73a1dd5e5df01df9599245b441b1e822f1588a3fc8451da8d5eaf25d1d495613",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "authBrowserExpiry-fr-authorized-recovery-warm",
+      "pageId": "auth-page-6",
+      "nativeHistory": {
+        "documentId": "mw9lth7r-k9003nu7qwf",
+        "events": [
+          {
+            "documentId": "mw9lth7r-k9003nu7qwf",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249488749,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 153275,
+            "encodedBodySize": 152975,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-6",
+          "observedAt": "2026-11-09T18:38:08.751Z",
+          "documentId": "mw9lth7r-k9003nu7qwf",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/fr/dashboard/inventory/items",
+          "at": 1794249488749,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/fr/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "f149aa5d779852a2b2f59235a416371e704cd7eb827f0c806e0ccc0ba4927f54",
+      "textLength": 1519,
+      "screenshot": "authBrowserExpiry-fr-authorized-recovery-warm.png",
+      "at": "2026-11-09T18:38:09.317Z"
+    },
+    {
+      "label": "authBrowserExpiry-fr-authorized-recovery",
+      "pageId": "auth-page-6",
+      "nativeHistory": {
+        "documentId": "mw9lth7r-k9003nu7qwf",
+        "events": [
+          {
+            "documentId": "mw9lth7r-k9003nu7qwf",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249488749,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 153275,
+            "encodedBodySize": 152975,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-6",
+          "observedAt": "2026-11-09T18:38:08.751Z",
+          "documentId": "mw9lth7r-k9003nu7qwf",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/fr/dashboard/inventory/items",
+          "at": 1794249488749,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/fr/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "feafd80c41fb08f7b090da9e6b90f3e64cfd37fbf598e7e3129b095666ece04c",
+      "textLength": 1620,
+      "screenshot": "authBrowserExpiry-fr-authorized-recovery.png",
+      "at": "2026-11-09T18:38:11.547Z",
+      "actualRefresh": {
+        "clickedAt": 1794249491306,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249491423
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserExpiry-fr-authorized-recovery",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249491423,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "113fb9f8f7ddcb78f362e64e8553a4596192566d736423167cc960b34c87c796",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "authBrowserPermission-fr-authorized-recovery-warm",
+      "pageId": "auth-page-7",
+      "nativeHistory": {
+        "documentId": "mw9ltpil-qilomd734wc",
+        "events": [
+          {
+            "documentId": "mw9ltpil-qilomd734wc",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249499735,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 153283,
+            "encodedBodySize": 152983,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-7",
+          "observedAt": "2026-11-09T18:38:19.741Z",
+          "documentId": "mw9ltpil-qilomd734wc",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/fr/dashboard/inventory/items",
+          "at": 1794249499735,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/fr/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "85044220677c43ae4cc600e70d9086a56522875cd7d6bc87d6331418650c48c5",
+      "textLength": 1531,
+      "screenshot": "authBrowserPermission-fr-authorized-recovery-warm.png",
+      "at": "2026-11-09T18:38:19.990Z"
+    },
+    {
+      "label": "authBrowserPermission-fr-authorized-recovery",
+      "pageId": "auth-page-7",
+      "nativeHistory": {
+        "documentId": "mw9ltpil-qilomd734wc",
+        "events": [
+          {
+            "documentId": "mw9ltpil-qilomd734wc",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249499735,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 153283,
+            "encodedBodySize": 152983,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-7",
+          "observedAt": "2026-11-09T18:38:19.741Z",
+          "documentId": "mw9ltpil-qilomd734wc",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/fr/dashboard/inventory/items",
+          "at": 1794249499735,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/fr/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "847e5d31e791b616e4759da8a62b05c5fa3ef35de9ce4f54726afae8e621ee76",
+      "textLength": 1632,
+      "screenshot": "authBrowserPermission-fr-authorized-recovery.png",
+      "at": "2026-11-09T18:38:21.928Z",
+      "actualRefresh": {
+        "clickedAt": 1794249501731,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249501809
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserPermission-fr-authorized-recovery",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249501809,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "299cc5e3eb264247c87d4dccba253cae23d6e55bf383841c0546d8d354e86a70",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "authBrowserModule-fr-authorized-recovery-warm",
+      "pageId": "auth-page-8",
+      "nativeHistory": {
+        "documentId": "mw9ltxly-hsnugggmj4",
+        "events": [
+          {
+            "documentId": "mw9ltxly-hsnugggmj4",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249509806,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 153272,
+            "encodedBodySize": 152972,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-8",
+          "observedAt": "2026-11-09T18:38:29.808Z",
+          "documentId": "mw9ltxly-hsnugggmj4",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/fr/dashboard/inventory/items",
+          "at": 1794249509806,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/fr/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "a5afe9e8d009975973f82d890329d34ad123e609ff4bb39b82c1ad00f08446f1",
+      "textLength": 1519,
+      "screenshot": "authBrowserModule-fr-authorized-recovery-warm.png",
+      "at": "2026-11-09T18:38:30.299Z"
+    },
+    {
+      "label": "authBrowserModule-fr-authorized-recovery",
+      "pageId": "auth-page-8",
+      "nativeHistory": {
+        "documentId": "mw9ltxly-hsnugggmj4",
+        "events": [
+          {
+            "documentId": "mw9ltxly-hsnugggmj4",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/fr/dashboard/inventory/items",
+            "at": 1794249509806,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 153272,
+            "encodedBodySize": 152972,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-8",
+          "observedAt": "2026-11-09T18:38:29.808Z",
+          "documentId": "mw9ltxly-hsnugggmj4",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/fr/dashboard/inventory/items",
+          "at": 1794249509806,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/fr/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "dfe4c89d2862d89d5c5cae9cf30921f0eb0df4c6feb612bb4ca492ee92fd3735",
+      "textLength": 1620,
+      "screenshot": "authBrowserModule-fr-authorized-recovery.png",
+      "at": "2026-11-09T18:38:32.135Z",
+      "actualRefresh": {
+        "clickedAt": 1794249511938,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249512026
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserModule-fr-authorized-recovery",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249512025,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "66b96a1924d152ee65d2591df88ac35cacb779ffdb33fc4b8e0b00195edfb075",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "authBrowserRevoked-en-denial-envelope-refresh-warm",
+      "pageId": "auth-page-9",
+      "nativeHistory": {
+        "documentId": "mw9lu5y6-ef8nl6462sw",
+        "events": [
+          {
+            "documentId": "mw9lu5y6-ef8nl6462sw",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249520757,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140800,
+            "encodedBodySize": 140500,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-9",
+          "observedAt": "2026-11-09T18:38:40.759Z",
+          "documentId": "mw9lu5y6-ef8nl6462sw",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249520757,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "9ec82e19420ee1ec98005158c160fb6eaeb79ec78975e8d1e1a7e6c3a5b05a34",
+      "textLength": 1316,
+      "screenshot": "authBrowserRevoked-en-denial-envelope-refresh-warm.png",
+      "at": "2026-11-09T18:38:41.371Z"
+    },
+    {
+      "label": "authBrowserRevoked-en-denial-envelope-refresh",
+      "pageId": "auth-page-9",
+      "nativeHistory": {
+        "documentId": "mw9lu5y6-ef8nl6462sw",
+        "events": [
+          {
+            "documentId": "mw9lu5y6-ef8nl6462sw",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249520757,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140800,
+            "encodedBodySize": 140500,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-9",
+          "observedAt": "2026-11-09T18:38:40.759Z",
+          "documentId": "mw9lu5y6-ef8nl6462sw",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249520757,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "9617df008e468382a5134e2bb16a4001c9529a1495cb31fdaea20ccb32454b64",
+      "textLength": 1421,
+      "screenshot": "authBrowserRevoked-en-denial-envelope-refresh.png",
+      "at": "2026-11-09T18:38:44.412Z",
+      "actualRefresh": {
+        "clickedAt": 1794249524211,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249524327
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserRevoked-en-denial-envelope-refresh",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249524326,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 695,
+            "sha256": "6ffdfbd1cc933a2d2e5c79ca44e15dabdd84cfa352e678738e92f4a1c294cddd",
+            "failedEnvelope": true,
+            "successEnvelope": false,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "authBrowserExpiry-en-denial-envelope-refresh-warm",
+      "pageId": "auth-page-10",
+      "nativeHistory": {
+        "documentId": "mw9luech-u7puq0ldg9i",
+        "events": [
+          {
+            "documentId": "mw9luech-u7puq0ldg9i",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249532051,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140757,
+            "encodedBodySize": 140457,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-10",
+          "observedAt": "2026-11-09T18:38:52.059Z",
+          "documentId": "mw9luech-u7puq0ldg9i",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249532051,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "17957dc853d3a7ddc185836df8f0984c64b7a84dc63741bd3d4e97d7cce85f02",
+      "textLength": 1313,
+      "screenshot": "authBrowserExpiry-en-denial-envelope-refresh-warm.png",
+      "at": "2026-11-09T18:38:52.477Z"
+    },
+    {
+      "label": "authBrowserExpiry-en-denial-envelope-refresh",
+      "pageId": "auth-page-10",
+      "nativeHistory": {
+        "documentId": "mw9luech-u7puq0ldg9i",
+        "events": [
+          {
+            "documentId": "mw9luech-u7puq0ldg9i",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249532051,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140757,
+            "encodedBodySize": 140457,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-10",
+          "observedAt": "2026-11-09T18:38:52.059Z",
+          "documentId": "mw9luech-u7puq0ldg9i",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249532051,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "1f399e74998ba5c237ded4e1e41e3cb533a3670a05057cefabebc2378cfd3d05",
+      "textLength": 1418,
+      "screenshot": "authBrowserExpiry-en-denial-envelope-refresh.png",
+      "at": "2026-11-09T18:38:54.618Z",
+      "actualRefresh": {
+        "clickedAt": 1794249534425,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249534526
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserExpiry-en-denial-envelope-refresh",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249534525,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 696,
+            "sha256": "a0b2e6abe5fc6e03e3018c474a02ec473ea0082b45f338edaba803f1d49ab4af",
+            "failedEnvelope": true,
+            "successEnvelope": false,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "authBrowserPermission-en-denial-envelope-refresh-warm",
+      "pageId": "auth-page-11",
+      "nativeHistory": {
+        "documentId": "mw9lumi6-okv2v3p216s",
+        "events": [
+          {
+            "documentId": "mw9lumi6-okv2v3p216s",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249542188,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140811,
+            "encodedBodySize": 140511,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-11",
+          "observedAt": "2026-11-09T18:39:02.192Z",
+          "documentId": "mw9lumi6-okv2v3p216s",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249542188,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "cb53d45dade01b0e41e34183e7191a75384eda07dd9213164792807ae8d3a790",
+      "textLength": 1325,
+      "screenshot": "authBrowserPermission-en-denial-envelope-refresh-warm.png",
+      "at": "2026-11-09T18:39:02.747Z"
+    },
+    {
+      "label": "authBrowserPermission-en-denial-envelope-refresh",
+      "pageId": "auth-page-11",
+      "nativeHistory": {
+        "documentId": "mw9lumi6-okv2v3p216s",
+        "events": [
+          {
+            "documentId": "mw9lumi6-okv2v3p216s",
+            "event": "pageshow",
+            "persisted": false,
+            "isTrusted": true,
+            "path": "/en/dashboard/inventory/items",
+            "at": 1794249542188,
+            "visibility": "visible",
+            "privateContentPresent": false
+          }
+        ],
+        "navigation": [
+          {
+            "type": "navigate",
+            "transferSize": 140811,
+            "encodedBodySize": 140511,
+            "activationStart": 0,
+            "deliveryType": "",
+            "notRestoredReasons": []
+          }
+        ]
+      },
+      "nativeLifecycleEvidence": [
+        {
+          "pageId": "auth-page-11",
+          "observedAt": "2026-11-09T18:39:02.192Z",
+          "documentId": "mw9lumi6-okv2v3p216s",
+          "event": "pageshow",
+          "persisted": false,
+          "isTrusted": true,
+          "path": "/en/dashboard/inventory/items",
+          "at": 1794249542188,
+          "visibility": "visible",
+          "privateContentPresent": false
+        }
+      ],
+      "path": "/en/dashboard/inventory/items",
+      "privateItemVisible": true,
+      "loginVisible": false,
+      "textSha256": "57cf037b8c5d522a231f298d204e8e13c78414912a5ad5ec770d039a21590c8e",
+      "textLength": 1430,
+      "screenshot": "authBrowserPermission-en-denial-envelope-refresh.png",
+      "at": "2026-11-09T18:39:05.084Z",
+      "actualRefresh": {
+        "clickedAt": 1794249544880,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249544989
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserPermission-en-denial-envelope-refresh",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249544986,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 725,
+            "sha256": "2746a1ea303a5748ddddfb412e71032d5fdb01cdca178cd14b6fe522603a619d",
+            "failedEnvelope": true,
+            "successEnvelope": false,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      }
+    }
+  ],
+  "nativePageLifecycle": [
+    {
+      "pageId": "auth-page-1",
+      "observedAt": "2026-11-09T18:37:15.727Z",
+      "documentId": "mw9lsbzs-e08p3a5ooj6",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/en/dashboard/inventory/items",
+      "at": 1794249435722,
+      "visibility": "visible",
+      "privateContentPresent": false
+    },
+    {
+      "pageId": "auth-page-2",
+      "observedAt": "2026-11-09T18:37:26.471Z",
+      "documentId": "mw9lsk3g-b0vmdw4ya1q",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/en/dashboard/inventory/items",
+      "at": 1794249446469,
+      "visibility": "visible",
+      "privateContentPresent": false
+    },
+    {
+      "pageId": "auth-page-3",
+      "observedAt": "2026-11-09T18:37:36.439Z",
+      "documentId": "mw9lssc6-rsi4ifeb8bi",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/en/dashboard/inventory/items",
+      "at": 1794249456436,
+      "visibility": "visible",
+      "privateContentPresent": false
+    },
+    {
+      "pageId": "auth-page-4",
+      "observedAt": "2026-11-09T18:37:47.899Z",
+      "documentId": "mw9lt0pw-an9looh9d6l",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/en/dashboard/inventory/items",
+      "at": 1794249467896,
+      "visibility": "visible",
+      "privateContentPresent": false
+    },
+    {
+      "pageId": "auth-page-5",
+      "observedAt": "2026-11-09T18:37:58.109Z",
+      "documentId": "mw9lt917-ya89tg6v8hi",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/fr/dashboard/inventory/items",
+      "at": 1794249478067,
+      "visibility": "visible",
+      "privateContentPresent": false
+    },
+    {
+      "pageId": "auth-page-6",
+      "observedAt": "2026-11-09T18:38:08.751Z",
+      "documentId": "mw9lth7r-k9003nu7qwf",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/fr/dashboard/inventory/items",
+      "at": 1794249488749,
+      "visibility": "visible",
+      "privateContentPresent": false
+    },
+    {
+      "pageId": "auth-page-7",
+      "observedAt": "2026-11-09T18:38:19.741Z",
+      "documentId": "mw9ltpil-qilomd734wc",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/fr/dashboard/inventory/items",
+      "at": 1794249499735,
+      "visibility": "visible",
+      "privateContentPresent": false
+    },
+    {
+      "pageId": "auth-page-8",
+      "observedAt": "2026-11-09T18:38:29.808Z",
+      "documentId": "mw9ltxly-hsnugggmj4",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/fr/dashboard/inventory/items",
+      "at": 1794249509806,
+      "visibility": "visible",
+      "privateContentPresent": false
+    },
+    {
+      "pageId": "auth-page-9",
+      "observedAt": "2026-11-09T18:38:40.759Z",
+      "documentId": "mw9lu5y6-ef8nl6462sw",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/en/dashboard/inventory/items",
+      "at": 1794249520757,
+      "visibility": "visible",
+      "privateContentPresent": false
+    },
+    {
+      "pageId": "auth-page-10",
+      "observedAt": "2026-11-09T18:38:52.059Z",
+      "documentId": "mw9luech-u7puq0ldg9i",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/en/dashboard/inventory/items",
+      "at": 1794249532051,
+      "visibility": "visible",
+      "privateContentPresent": false
+    },
+    {
+      "pageId": "auth-page-11",
+      "observedAt": "2026-11-09T18:39:02.192Z",
+      "documentId": "mw9lumi6-okv2v3p216s",
+      "event": "pageshow",
+      "persisted": false,
+      "isTrusted": true,
+      "path": "/en/dashboard/inventory/items",
+      "at": 1794249542188,
+      "visibility": "visible",
+      "privateContentPresent": false
+    }
+  ],
+  "navigationResponses": [
+    {
+      "pageId": "auth-page-1",
+      "at": "2026-11-09T18:37:14.183Z",
+      "origin": "https://localhost:3196",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    },
+    {
+      "pageId": "auth-page-2",
+      "at": "2026-11-09T18:37:24.659Z",
+      "origin": "https://localhost:3196",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    },
+    {
+      "pageId": "auth-page-3",
+      "at": "2026-11-09T18:37:35.352Z",
+      "origin": "https://localhost:3196",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    },
+    {
+      "pageId": "auth-page-4",
+      "at": "2026-11-09T18:37:46.175Z",
+      "origin": "https://localhost:3196",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    },
+    {
+      "pageId": "auth-page-5",
+      "at": "2026-11-09T18:37:56.975Z",
+      "origin": "https://localhost:3196",
+      "path": "/fr/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    },
+    {
+      "pageId": "auth-page-6",
+      "at": "2026-11-09T18:38:07.592Z",
+      "origin": "https://localhost:3196",
+      "path": "/fr/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    },
+    {
+      "pageId": "auth-page-7",
+      "at": "2026-11-09T18:38:18.338Z",
+      "origin": "https://localhost:3196",
+      "path": "/fr/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    },
+    {
+      "pageId": "auth-page-8",
+      "at": "2026-11-09T18:38:28.862Z",
+      "origin": "https://localhost:3196",
+      "path": "/fr/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    },
+    {
+      "pageId": "auth-page-9",
+      "at": "2026-11-09T18:38:39.645Z",
+      "origin": "https://localhost:3196",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    },
+    {
+      "pageId": "auth-page-10",
+      "at": "2026-11-09T18:38:50.519Z",
+      "origin": "https://localhost:3196",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    },
+    {
+      "pageId": "auth-page-11",
+      "at": "2026-11-09T18:39:01.103Z",
+      "origin": "https://localhost:3196",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "pragma": null,
+      "fromServiceWorker": false
+    }
+  ],
+  "externalBlocked": [],
+  "pageErrors": [],
+  "passed": false,
+  "cachePolicy": "Default browser cache. No route interception, no cache disable, no synthetic signed cookies. Replay contexts receive exact cookies acquired by actual credential sign-in.",
+  "scopeLimits": [
+    "Bounded followup only:8 authorized recovery Refresh positives with awaited completion, plus3 EN denied-envelope corroboration and recovery gates. Original161+35 groups remain separately retained.",
+    "No hosted OAuth/provider positive",
+    "No item form or other business write is submitted.",
+    "Ordinary native browser behavior is retained; no BFCache restoration is forced."
+  ],
+  "plannedChecks": [
+    "authBrowserRevoked-en-authorized-recovery",
+    "authBrowserExpiry-en-authorized-recovery",
+    "authBrowserPermission-en-authorized-recovery",
+    "authBrowserModule-en-authorized-recovery",
+    "authBrowserRevoked-fr-authorized-recovery",
+    "authBrowserExpiry-fr-authorized-recovery",
+    "authBrowserPermission-fr-authorized-recovery",
+    "authBrowserModule-fr-authorized-recovery",
+    "authBrowserRevoked-en-denial-envelope-refresh",
+    "authBrowserExpiry-en-denial-envelope-refresh",
+    "authBrowserPermission-en-denial-envelope-refresh"
+  ],
+  "browserCacheConfiguration": {
+    "removedPlaywrightDefaultArgs": [
+      "--disable-back-forward-cache"
+    ],
+    "forcedEligibility": false,
+    "responseHeadersModified": false,
+    "serviceWorkers": "blocked",
+    "claim": "Native BFCache is permitted but eligibility and use depend on actual Chromium/application behavior. History traversal alone does not prove a BFCache hit."
+  },
+  "cookieClassifications": [
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 87,
+      "sha256": "e8d3ecd68a1d4534461000db84434f0d1d87dbb81563477f40041b1c159ebdb9",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1220,
+      "sha256": "e8a4750bc16d2796e2060840d8085723c739b22a573ab09e112b0d778590e181",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 87,
+      "sha256": "e8d3ecd68a1d4534461000db84434f0d1d87dbb81563477f40041b1c159ebdb9",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1220,
+      "sha256": "e8a4750bc16d2796e2060840d8085723c739b22a573ab09e112b0d778590e181",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 81,
+      "sha256": "994f47cce21a94c3013f498027bd82a49f4a81a3de0808edcebcf752aea08e8e",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1214,
+      "sha256": "15ab8c63b4dcf978c0cb64e18be0d7c7c0c11dd9a5b9553f3cb0c30990865de3",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 81,
+      "sha256": "994f47cce21a94c3013f498027bd82a49f4a81a3de0808edcebcf752aea08e8e",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1214,
+      "sha256": "15ab8c63b4dcf978c0cb64e18be0d7c7c0c11dd9a5b9553f3cb0c30990865de3",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 79,
+      "sha256": "9bf5480f053d702fbc2e88e075ba4fe8dd8c90bcb0a386d09b7f0bf17bd0d9fd",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1240,
+      "sha256": "c1f5bafe9bca8bb337fe44f6a1a373274ee04900d2d9cb30adbae280a3462000",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 79,
+      "sha256": "9bf5480f053d702fbc2e88e075ba4fe8dd8c90bcb0a386d09b7f0bf17bd0d9fd",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1240,
+      "sha256": "c1f5bafe9bca8bb337fe44f6a1a373274ee04900d2d9cb30adbae280a3462000",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 79,
+      "sha256": "0a957b9fe5df3ef3254482433cf22af206d0d75ee122b21980b0072b371119af",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1214,
+      "sha256": "00ca5150af51e2f5c7be85b4e2a5de8ccfe31896224df8bc2aafc2a4f235092d",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 79,
+      "sha256": "0a957b9fe5df3ef3254482433cf22af206d0d75ee122b21980b0072b371119af",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1214,
+      "sha256": "00ca5150af51e2f5c7be85b4e2a5de8ccfe31896224df8bc2aafc2a4f235092d",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 81,
+      "sha256": "92bf4c9bf74abe5853b094f69241eca1ebe3d2c6b48dca5a6128319f72555207",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1220,
+      "sha256": "c4c8f12899f168b6f2c39ce412abb2345a2f49323740f66ffa3b09430cf0ae7d",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 81,
+      "sha256": "92bf4c9bf74abe5853b094f69241eca1ebe3d2c6b48dca5a6128319f72555207",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1220,
+      "sha256": "c4c8f12899f168b6f2c39ce412abb2345a2f49323740f66ffa3b09430cf0ae7d",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 87,
+      "sha256": "0615537fcc8de3deffa254fd5f829c8a8d16d434eaa3aa819a6679b67d274b94",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1214,
+      "sha256": "1fcd0df5099bafebf413d3b9506a3d3d163eacbc00a1c03b4106f9ab7e9970e9",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 87,
+      "sha256": "0615537fcc8de3deffa254fd5f829c8a8d16d434eaa3aa819a6679b67d274b94",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1214,
+      "sha256": "1fcd0df5099bafebf413d3b9506a3d3d163eacbc00a1c03b4106f9ab7e9970e9",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 81,
+      "sha256": "93b72f5b00f59ab7722a52319abdb02381c3605db54ee2027e6de35e1e3f7643",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1240,
+      "sha256": "543aa3c8adda4cc60bc712ce31265b7315aeedff2c2760073062c1754d3eef79",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 81,
+      "sha256": "93b72f5b00f59ab7722a52319abdb02381c3605db54ee2027e6de35e1e3f7643",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1240,
+      "sha256": "543aa3c8adda4cc60bc712ce31265b7315aeedff2c2760073062c1754d3eef79",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 79,
+      "sha256": "c64b755d4a5b3c1a08a02a4c9e0b23eacb77e1c1191af60e146e8a61629b01cb",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1214,
+      "sha256": "09e088aba05f1d9eda0e577b3f873da4c5186d26f4d58686c625f1e10490bad1",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 79,
+      "sha256": "c64b755d4a5b3c1a08a02a4c9e0b23eacb77e1c1191af60e146e8a61629b01cb",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1214,
+      "sha256": "09e088aba05f1d9eda0e577b3f873da4c5186d26f4d58686c625f1e10490bad1",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 83,
+      "sha256": "bab2b5b907f9aa8e6ecb96757e444ddeb75c6a40dab70b44d7ec9dea28754f66",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1220,
+      "sha256": "a011bededd09db1b19bb0a36d8687d56bf2307d7808322e9c83ac12b16001072",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 83,
+      "sha256": "bab2b5b907f9aa8e6ecb96757e444ddeb75c6a40dab70b44d7ec9dea28754f66",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1220,
+      "sha256": "a011bededd09db1b19bb0a36d8687d56bf2307d7808322e9c83ac12b16001072",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 81,
+      "sha256": "0dc456b7383b98959f23b090252e9e47db91bc15312655df0884d0dc063058df",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1214,
+      "sha256": "16c494faa7e5238da29477731bd716a5bd3594d6c946b8fb576f0ea73211349b",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 81,
+      "sha256": "0dc456b7383b98959f23b090252e9e47db91bc15312655df0884d0dc063058df",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1214,
+      "sha256": "16c494faa7e5238da29477731bd716a5bd3594d6c946b8fb576f0ea73211349b",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 79,
+      "sha256": "225cbb8634833d86ba7f0c9e6793bbe06d32edea10529db6df1bf195cf113dc8",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1240,
+      "sha256": "1cb718182051e378f8c05c0e682475b3475b2f14eec07abbbb3666664c41e28e",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "STOCKFLOW_LOCALE",
+      "length": 2,
+      "sha256": "dbd3a49d0d906b4ed9216b73330d2fb080ef2f758c12f3885068222e5e17151c",
+      "category": "verified_non_secret_locale"
+    },
+    {
+      "name": "__Secure-better-auth.session_token",
+      "length": 79,
+      "sha256": "225cbb8634833d86ba7f0c9e6793bbe06d32edea10529db6df1bf195cf113dc8",
+      "category": "sensitive_cookie"
+    },
+    {
+      "name": "__Secure-better-auth.session_data",
+      "length": 1240,
+      "sha256": "1cb718182051e378f8c05c0e682475b3475b2f14eec07abbbb3666664c41e28e",
+      "category": "sensitive_cookie"
+    }
+  ],
+  "actionResponses": [
+    {
+      "caseId": "authBrowserRevoked-en-authorized-recovery",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249438526,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 506,
+      "sha256": "75db4a32ab3b37a874bf8dc086cb0dc56d4530d2e08d3821ede7fdf3e5ada2d4",
+      "failedEnvelope": false,
+      "successEnvelope": true,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": true,
+      "captureComplete": true
+    },
+    {
+      "caseId": "authBrowserExpiry-en-authorized-recovery",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249449363,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 506,
+      "sha256": "bd042e1dcffc560446130635307b7807238a6c3c6272ea83a8c21e0edeb285dd",
+      "failedEnvelope": false,
+      "successEnvelope": true,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": true,
+      "captureComplete": true
+    },
+    {
+      "caseId": "authBrowserPermission-en-authorized-recovery",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249459274,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 506,
+      "sha256": "272796ef63379315a9947e0173fe720253f179785386a31aa2701c681a6d1386",
+      "failedEnvelope": false,
+      "successEnvelope": true,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": true,
+      "captureComplete": true
+    },
+    {
+      "caseId": "authBrowserModule-en-authorized-recovery",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249470957,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 506,
+      "sha256": "b8e3a89459ede0b610e4361b7e430971ed873b6ab6dfdf0c0d238fb95bce5da2",
+      "failedEnvelope": false,
+      "successEnvelope": true,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": true,
+      "captureComplete": true
+    },
+    {
+      "caseId": "authBrowserRevoked-fr-authorized-recovery",
+      "path": "/fr/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249480676,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 506,
+      "sha256": "73a1dd5e5df01df9599245b441b1e822f1588a3fc8451da8d5eaf25d1d495613",
+      "failedEnvelope": false,
+      "successEnvelope": true,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": true,
+      "captureComplete": true
+    },
+    {
+      "caseId": "authBrowserExpiry-fr-authorized-recovery",
+      "path": "/fr/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249491423,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 506,
+      "sha256": "113fb9f8f7ddcb78f362e64e8553a4596192566d736423167cc960b34c87c796",
+      "failedEnvelope": false,
+      "successEnvelope": true,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": true,
+      "captureComplete": true
+    },
+    {
+      "caseId": "authBrowserPermission-fr-authorized-recovery",
+      "path": "/fr/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249501809,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 506,
+      "sha256": "299cc5e3eb264247c87d4dccba253cae23d6e55bf383841c0546d8d354e86a70",
+      "failedEnvelope": false,
+      "successEnvelope": true,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": true,
+      "captureComplete": true
+    },
+    {
+      "caseId": "authBrowserModule-fr-authorized-recovery",
+      "path": "/fr/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249512025,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 506,
+      "sha256": "66b96a1924d152ee65d2591df88ac35cacb779ffdb33fc4b8e0b00195edfb075",
+      "failedEnvelope": false,
+      "successEnvelope": true,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": true,
+      "captureComplete": true
+    },
+    {
+      "caseId": "authBrowserRevoked-en-denial-envelope-refresh",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249524326,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 695,
+      "sha256": "6ffdfbd1cc933a2d2e5c79ca44e15dabdd84cfa352e678738e92f4a1c294cddd",
+      "failedEnvelope": true,
+      "successEnvelope": false,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": false,
+      "captureComplete": true
+    },
+    {
+      "caseId": "authBrowserExpiry-en-denial-envelope-refresh",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249534525,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 696,
+      "sha256": "a0b2e6abe5fc6e03e3018c474a02ec473ea0082b45f338edaba803f1d49ab4af",
+      "failedEnvelope": true,
+      "successEnvelope": false,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": false,
+      "captureComplete": true
+    },
+    {
+      "caseId": "authBrowserPermission-en-denial-envelope-refresh",
+      "path": "/en/dashboard/inventory/items",
+      "status": 200,
+      "at": 1794249544986,
+      "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+      "bytes": 725,
+      "sha256": "2746a1ea303a5748ddddfb412e71032d5fdb01cdca178cd14b6fe522603a619d",
+      "failedEnvelope": true,
+      "successEnvelope": false,
+      "recognizedDenialCodes": [],
+      "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+      "privateItemBytes": false,
+      "captureComplete": true
+    }
+  ],
+  "refreshCompletions": [
+    {
+      "caseId": "authBrowserRevoked-en-authorized-recovery",
+      "clickedAt": 1794249438316,
+      "at": 1794249438568,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249438529
+        }
+      ],
+      "loginVisible": false
+    },
+    {
+      "caseId": "authBrowserExpiry-en-authorized-recovery",
+      "clickedAt": 1794249449226,
+      "at": 1794249449404,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249449362
+        }
+      ],
+      "loginVisible": false
+    },
+    {
+      "caseId": "authBrowserPermission-en-authorized-recovery",
+      "clickedAt": 1794249459045,
+      "at": 1794249459481,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249459273
+        }
+      ],
+      "loginVisible": false
+    },
+    {
+      "caseId": "authBrowserModule-en-authorized-recovery",
+      "clickedAt": 1794249470848,
+      "at": 1794249470995,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249470958
+        }
+      ],
+      "loginVisible": false
+    },
+    {
+      "caseId": "authBrowserRevoked-fr-authorized-recovery",
+      "clickedAt": 1794249480581,
+      "at": 1794249480709,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249480677
+        }
+      ],
+      "loginVisible": false
+    },
+    {
+      "caseId": "authBrowserExpiry-fr-authorized-recovery",
+      "clickedAt": 1794249491306,
+      "at": 1794249491463,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249491423
+        }
+      ],
+      "loginVisible": false
+    },
+    {
+      "caseId": "authBrowserPermission-fr-authorized-recovery",
+      "clickedAt": 1794249501731,
+      "at": 1794249501841,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249501809
+        }
+      ],
+      "loginVisible": false
+    },
+    {
+      "caseId": "authBrowserModule-fr-authorized-recovery",
+      "clickedAt": 1794249511938,
+      "at": 1794249512062,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249512026
+        }
+      ],
+      "loginVisible": false
+    },
+    {
+      "caseId": "authBrowserRevoked-en-denial-envelope-refresh",
+      "clickedAt": 1794249524211,
+      "at": 1794249524357,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249524327
+        }
+      ],
+      "loginVisible": false
+    },
+    {
+      "caseId": "authBrowserExpiry-en-denial-envelope-refresh",
+      "clickedAt": 1794249534425,
+      "at": 1794249534565,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249534526
+        }
+      ],
+      "loginVisible": false
+    },
+    {
+      "caseId": "authBrowserPermission-en-denial-envelope-refresh",
+      "clickedAt": 1794249544880,
+      "at": 1794249545018,
+      "events": [
+        {
+          "kind": "refresh-completed-success",
+          "type": "success",
+          "at": 1794249544989
+        }
+      ],
+      "loginVisible": false
+    }
+  ],
+  "fixturePreparation": "database/followup04-readiness.json",
+  "retainedR3Fixture": true,
+  "browserVersion": "149.0.7827.55",
+  "fixtureTransitions": [
+    {
+      "caseId": "authBrowserRevoked-en-denial-envelope-refresh",
+      "transition": {
+        "kind": "revoke",
+        "alias": "authBrowserRevoked",
+        "affected": 3,
+        "evidence": "auth-transition-1794249522073-18cca36f-04de-4b5f-9167-a8bae36cc91c.json"
+      }
+    },
+    {
+      "caseId": "authBrowserExpiry-en-denial-envelope-refresh",
+      "transition": {
+        "kind": "expire",
+        "alias": "authBrowserExpiry",
+        "affected": 3,
+        "evidence": "auth-transition-1794249533032-e1f416ca-685e-4156-9296-abade0e698e0.json"
+      }
+    },
+    {
+      "caseId": "authBrowserPermission-en-denial-envelope-refresh",
+      "transition": {
+        "kind": "removePermission",
+        "alias": "authBrowserPermission",
+        "affected": 1,
+        "evidence": "auth-transition-1794249543249-888244ec-3333-49f9-94c8-f5ea4d4e8046.json"
+      }
+    }
+  ],
+  "cleanupAttempts": [
+    {
+      "kind": "browser",
+      "closed": true
+    },
+    {
+      "kind": "proxy",
+      "closed": true
+    }
+  ],
+  "publication": {
+    "stage": "browser-cleanup-completed",
+    "at": "2026-11-09T18:39:07.252Z",
+    "planned": 11,
+    "executed": 11,
+    "passed": 8,
+    "failed": 3
+  },
+  "secretHandling": {
+    "policy": "Only verified STOCKFLOW_LOCALE en/fr is excluded. All other cookie values, fixture passwords and returned session tokens remain sensitive. Recursive redaction precedes an unchanged final raw-value leak scan.",
+    "registeredSensitiveValues": 43,
+    "redactions": [],
+    "scanPassed": true
+  }
+}

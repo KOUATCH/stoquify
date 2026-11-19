@@ -1,0 +1,939 @@
+{
+  "generatedAt": "2026-10-29T12:18:30.770Z",
+  "classification": "STATIC_SOURCE_EXTRACTION_NOT_RUNTIME_VALIDATION",
+  "headerHashIsUnsealedPlaceholder": true,
+  "header": {
+    "countryCode": "CM",
+    "countryName": {
+      "en": "Cameroon",
+      "fr": "Cameroun"
+    },
+    "currencyCode": "XAF",
+    "packVersion": "CM-2026.1",
+    "schemaVersion": "country-pack.v1",
+    "status": "PUBLISHED",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": null,
+    "verifiedOn": "2026-06-11",
+    "verifiedBy": "Codex regulatory source pass; legal-owner approval required before statutory publication",
+    "hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "capabilityMatrix": {
+      "taxes.vat": "SUPPORTED",
+      "taxes.filing": "SUPPORTED",
+      "payroll.cnps": "SUPPORTED_DRAFT",
+      "payroll.irpp": "REQUIRES_EXPERT_REVIEW",
+      "identifiers.niu": "SUPPORTED",
+      "identifiers.rccm": "PARTIALLY_SUPPORTED",
+      "filings": "SUPPORTED",
+      "labels": "SUPPORTED",
+      "holidays": "PARTIALLY_SUPPORTED",
+      "payments.mobileMoney": "PARTIALLY_SUPPORTED",
+      "compliance.eInvoicing": "REQUIRES_EXPERT_REVIEW"
+    },
+    "legalRefs": [
+      {
+        "id": "CM_DGI_CGI_2025",
+        "title": "Code General des Impots mis a jour au 1er janvier 2025",
+        "jurisdiction": "CM",
+        "issuedBy": "Direction Generale des Impots du Cameroun",
+        "sourceUrl": "https://www.impots.cm/fr/code-general-des-impots-mis-jour-au-1er-janvier-2025",
+        "documentDate": "2025-01-01",
+        "retrievedOn": "2026-06-11"
+      },
+      {
+        "id": "CM_DGI_CALENDRIER_FISCAL",
+        "title": "Calendrier fiscal",
+        "jurisdiction": "CM",
+        "issuedBy": "Direction Generale des Impots du Cameroun",
+        "sourceUrl": "https://www.impots.cm/fr/calendrier-fiscal",
+        "retrievedOn": "2026-06-11"
+      },
+      {
+        "id": "CM_DGI_IMMATRICULATION",
+        "title": "Immatriculation fiscale des contribuables",
+        "jurisdiction": "CM",
+        "issuedBy": "Direction Generale des Impots du Cameroun",
+        "sourceUrl": "https://www.impots.cm/fr/immatriculation",
+        "retrievedOn": "2026-06-11"
+      },
+      {
+        "id": "CM_DGI_ESERVICES",
+        "title": "DGI e-services and DSF submission services",
+        "jurisdiction": "CM",
+        "issuedBy": "Direction Generale des Impots du Cameroun",
+        "sourceUrl": "https://www.impots.cm/",
+        "retrievedOn": "2026-06-11"
+      },
+      {
+        "id": "CM_DGI_EINVOICING_REVIEW_REQUIRED",
+        "title": "Cameroon e-invoicing and fiscal certification metadata requiring official technical and legal review",
+        "jurisdiction": "CM",
+        "issuedBy": "Direction Generale des Impots du Cameroun",
+        "sourceUrl": "https://www.impots.cm/",
+        "retrievedOn": "2026-06-11",
+        "notes": "Placeholder reference for roadmap metadata only. Exact e-invoicing mandate, API, portal workflow, certification timing, and artifact requirements require official DGI specifications and qualified expert review before production automation."
+      },
+      {
+        "id": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+        "title": "Decret fixant les taux de cotisations sociales et les plafonds des remunerations",
+        "jurisdiction": "CM",
+        "issuedBy": "Presidence de la Republique du Cameroun / CNPS",
+        "sourceUrl": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes.pdf",
+        "documentDate": "2016-02-15",
+        "retrievedOn": "2026-06-11"
+      },
+      {
+        "id": "CM_CNPS_EMPLOYER_RULES",
+        "title": "Regles generales pour les employeurs",
+        "jurisdiction": "CM",
+        "issuedBy": "Caisse Nationale de Prevoyance Sociale",
+        "sourceUrl": "https://www.cnps.cm/fr/employeurs/regles-generales-pour-les-employeurs1.html",
+        "retrievedOn": "2026-06-11"
+      },
+      {
+        "id": "CM_HOLIDAY_LEGAL_CALENDAR",
+        "title": "Cameroon public holiday calendar control",
+        "jurisdiction": "CM",
+        "issuedBy": "Government of Cameroon",
+        "sourceUrl": "https://www.spm.gov.cm/",
+        "retrievedOn": "2026-06-11",
+        "notes": "Annual public-holiday exceptions and movable religious holidays must be loaded from official government communiques before payroll or banking cut-off automation."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "parameterPath": "payroll.cnps.pensionRatesBps",
+      "envelopes": [
+        {
+          "value": {
+            "total": 840,
+            "employer": 420,
+            "employee": 420,
+            "monthlyCeilingMinorUnits": 750000,
+            "annualCeilingMinorUnits": 9000000,
+            "requiredReviewedCoverage": [
+              "pensionContributionRates",
+              "pensionContributionCeiling",
+              "employeeEmployerPensionSplit"
+            ]
+          },
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-26",
+          "verifiedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "verificationStatus": "SOURCE_CHECKED"
+        }
+      ],
+      "capability": "SUPPORTED_DRAFT"
+    },
+    {
+      "parameterPath": "payroll.cnps.familyAllowanceRatesBps",
+      "envelopes": [
+        {
+          "value": {
+            "general": 700,
+            "agriculture": 565,
+            "privateEducation": 370,
+            "paidBy": "EMPLOYER",
+            "requiredReviewedCoverage": [
+              "familyAllowanceSectorRates",
+              "familyAllowanceSectorClassification",
+              "familyAllowanceEmployerLiability"
+            ]
+          },
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-26",
+          "verifiedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "verificationStatus": "SOURCE_CHECKED"
+        }
+      ],
+      "capability": "SUPPORTED_DRAFT"
+    },
+    {
+      "parameterPath": "payroll.cnps.occupationalRiskRatesBps",
+      "envelopes": [
+        {
+          "value": {
+            "groupA": 175,
+            "groupB": 250,
+            "groupC": 500,
+            "paidBy": "EMPLOYER",
+            "classificationRequired": true,
+            "requiredReviewedCoverage": [
+              "occupationalRiskGroupRates",
+              "occupationalRiskGroupClassification",
+              "occupationalRiskEmployerLiability"
+            ]
+          },
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-26",
+          "verifiedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "verificationStatus": "SOURCE_CHECKED"
+        }
+      ],
+      "capability": "SUPPORTED_DRAFT"
+    },
+    {
+      "parameterPath": "payroll.cnps.employerRules",
+      "envelopes": [
+        {
+          "value": {
+            "registrationRequired": true,
+            "employeeDeclarationRequired": true,
+            "payrollBaseRequiresCnpsReview": true
+          },
+          "legalRef": "CM_CNPS_EMPLOYER_RULES",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-26",
+          "verifiedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "verificationStatus": "SOURCE_CHECKED"
+        }
+      ],
+      "capability": "SUPPORTED_DRAFT"
+    },
+    {
+      "parameterPath": "payroll.irpp.incomeTaxRules",
+      "envelopes": [
+        {
+          "value": {
+            "productionCalculationSupported": false,
+            "calculationMode": "OFFICIAL_IRPP_FORMULA_REVIEW_REQUIRED",
+            "employeeWithholdingRequired": true,
+            "declarationCode": "IRPP",
+            "requiredReviewedCoverage": [
+              "taxableSalaryBase",
+              "familyQuotientOrDependentTreatment",
+              "bracketsAndRates",
+              "deductibleEmployeeContributions",
+              "withholdingRounding",
+              "monthlyAndAnnualRegularization"
+            ]
+          },
+          "legalRef": "CM_DGI_CGI_2025",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-11",
+          "verifiedBy": "Codex regulatory source pass; legal-owner approval required before statutory publication",
+          "verificationStatus": "REQUIRES_EXPERT_REVIEW",
+          "notes": "Blocks production payroll income-tax withholding until reviewed IRPP formulas, bases, reliefs, caps, rounding, and YTD regularization fixtures are loaded."
+        }
+      ],
+      "capability": "REQUIRES_EXPERT_REVIEW"
+    },
+    {
+      "parameterPath": "payroll.productionAdmission",
+      "envelopes": null,
+      "capability": null
+    },
+    {
+      "parameterPath": "payroll.compensation.allowances",
+      "envelopes": null,
+      "capability": null
+    },
+    {
+      "parameterPath": "payroll.compensation.benefits",
+      "envelopes": null,
+      "capability": null
+    },
+    {
+      "parameterPath": "payroll.compensation.deductions",
+      "envelopes": null,
+      "capability": null
+    },
+    {
+      "parameterPath": "payroll.attendance.leave",
+      "envelopes": null,
+      "capability": null
+    },
+    {
+      "parameterPath": "payroll.attendance.overtime",
+      "envelopes": null,
+      "capability": null
+    },
+    {
+      "parameterPath": "payroll.composite.registerTieOut",
+      "envelopes": null,
+      "capability": null
+    },
+    {
+      "parameterPath": "payroll.declarations.default",
+      "envelopes": null,
+      "capability": null
+    },
+    {
+      "parameterPath": "taxes.vat.standardRateBps",
+      "envelopes": [
+        {
+          "value": 1925,
+          "legalRef": "CM_DGI_CGI_2025",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-11",
+          "verifiedBy": "Codex regulatory source pass; legal-owner approval required before statutory publication",
+          "verificationStatus": "SOURCE_CHECKED",
+          "notes": "Stored in basis points to avoid float drift. Legal owner must re-check against the active CGI before statutory pack promotion."
+        }
+      ],
+      "capability": "SUPPORTED"
+    },
+    {
+      "parameterPath": "taxes.withholding.supplierPayments",
+      "envelopes": null,
+      "capability": null
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "cm-vat-standard-2026",
+      "countryCode": "CM",
+      "parameterPath": "taxes.vat.standardRateBps",
+      "date": "2026-06-11",
+      "purpose": "POS_SALE_TAX",
+      "expectedValue": 1925,
+      "expectedLegalRef": "CM_DGI_CGI_2025",
+      "expectedPackVersion": "CM-2026.1"
+    },
+    {
+      "id": "cm-cnps-pension-2026",
+      "countryCode": "CM",
+      "parameterPath": "payroll.cnps.pensionRatesBps",
+      "date": "2026-06-11",
+      "purpose": "PAYROLL",
+      "expectedValue": {
+        "total": 840,
+        "employer": 420,
+        "employee": 420,
+        "monthlyCeilingMinorUnits": 750000,
+        "annualCeilingMinorUnits": 9000000,
+        "requiredReviewedCoverage": [
+          "pensionContributionRates",
+          "pensionContributionCeiling",
+          "employeeEmployerPensionSplit"
+        ]
+      },
+      "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      "expectedPackVersion": "CM-2026.1",
+      "calculationScenario": {
+        "input": {
+          "grossAmount": "1000000.00"
+        },
+        "expectedOutput": {
+          "status": "CALCULATED",
+          "applied": true,
+          "grossAmount": "1000000.00",
+          "socialBaseAmount": "750000.00",
+          "employeePensionRateBps": "420",
+          "employerPensionRateBps": "420",
+          "employeePensionContributionAmount": "31500.00",
+          "employerPensionContributionAmount": "31500.00",
+          "totalPensionContributionAmount": "63000.00",
+          "currency": "XAF"
+        },
+        "reviewStatus": "SOURCE_CHECKED",
+        "reviewEvidence": {
+          "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "reviewedOn": "2026-06-26",
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "coveredReviewTopics": [
+            "pensionContributionRates",
+            "pensionContributionCeiling",
+            "employeeEmployerPensionSplit"
+          ]
+        },
+        "notes": "Pins the CNPS pension ceiling plus employee and employer contribution rates from the regulator-confirmed country-pack envelope."
+      }
+    },
+    {
+      "id": "cm-cnps-family-allowance-2026",
+      "countryCode": "CM",
+      "parameterPath": "payroll.cnps.familyAllowanceRatesBps",
+      "date": "2026-06-11",
+      "purpose": "PAYROLL_CNPS_FAMILY_ALLOWANCE",
+      "expectedValue": {
+        "general": 700,
+        "agriculture": 565,
+        "privateEducation": 370,
+        "paidBy": "EMPLOYER",
+        "requiredReviewedCoverage": [
+          "familyAllowanceSectorRates",
+          "familyAllowanceSectorClassification",
+          "familyAllowanceEmployerLiability"
+        ]
+      },
+      "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      "expectedPackVersion": "CM-2026.1",
+      "calculationScenario": {
+        "input": {
+          "contributionBaseAmount": "100000.00",
+          "sector": "GENERAL"
+        },
+        "expectedOutput": {
+          "status": "CALCULATED",
+          "applied": true,
+          "contributionBaseAmount": "100000.00",
+          "familyAllowanceSector": "GENERAL",
+          "familyAllowanceRateBps": "700",
+          "familyAllowanceContributionAmount": "7000.00",
+          "currency": "XAF"
+        },
+        "reviewStatus": "SOURCE_CHECKED",
+        "reviewEvidence": {
+          "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "reviewedOn": "2026-06-26",
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "coveredReviewTopics": [
+            "familyAllowanceSectorRates",
+            "familyAllowanceSectorClassification",
+            "familyAllowanceEmployerLiability"
+          ]
+        },
+        "notes": "Pins the general-sector CNPS family allowance employer contribution from the regulator-confirmed country-pack envelope."
+      }
+    },
+    {
+      "id": "cm-cnps-family-allowance-agriculture-2026",
+      "countryCode": "CM",
+      "parameterPath": "payroll.cnps.familyAllowanceRatesBps",
+      "date": "2026-06-11",
+      "purpose": "PAYROLL_CNPS_FAMILY_ALLOWANCE_AGRICULTURE",
+      "expectedValue": {
+        "general": 700,
+        "agriculture": 565,
+        "privateEducation": 370,
+        "paidBy": "EMPLOYER",
+        "requiredReviewedCoverage": [
+          "familyAllowanceSectorRates",
+          "familyAllowanceSectorClassification",
+          "familyAllowanceEmployerLiability"
+        ]
+      },
+      "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      "expectedPackVersion": "CM-2026.1",
+      "calculationScenario": {
+        "input": {
+          "contributionBaseAmount": "100000.00",
+          "sector": "AGRICULTURE"
+        },
+        "expectedOutput": {
+          "status": "CALCULATED",
+          "applied": true,
+          "contributionBaseAmount": "100000.00",
+          "familyAllowanceSector": "AGRICULTURE",
+          "familyAllowanceRateBps": "565",
+          "familyAllowanceContributionAmount": "5650.00",
+          "currency": "XAF"
+        },
+        "reviewStatus": "SOURCE_CHECKED",
+        "reviewEvidence": {
+          "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "reviewedOn": "2026-06-26",
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "coveredReviewTopics": [
+            "familyAllowanceSectorRates",
+            "familyAllowanceSectorClassification",
+            "familyAllowanceEmployerLiability"
+          ]
+        },
+        "notes": "Pins the agriculture-sector CNPS family allowance employer contribution from the regulator-confirmed country-pack envelope."
+      }
+    },
+    {
+      "id": "cm-cnps-family-allowance-private-education-2026",
+      "countryCode": "CM",
+      "parameterPath": "payroll.cnps.familyAllowanceRatesBps",
+      "date": "2026-06-11",
+      "purpose": "PAYROLL_CNPS_FAMILY_ALLOWANCE_PRIVATE_EDUCATION",
+      "expectedValue": {
+        "general": 700,
+        "agriculture": 565,
+        "privateEducation": 370,
+        "paidBy": "EMPLOYER",
+        "requiredReviewedCoverage": [
+          "familyAllowanceSectorRates",
+          "familyAllowanceSectorClassification",
+          "familyAllowanceEmployerLiability"
+        ]
+      },
+      "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      "expectedPackVersion": "CM-2026.1",
+      "calculationScenario": {
+        "input": {
+          "contributionBaseAmount": "100000.00",
+          "sector": "PRIVATE_EDUCATION"
+        },
+        "expectedOutput": {
+          "status": "CALCULATED",
+          "applied": true,
+          "contributionBaseAmount": "100000.00",
+          "familyAllowanceSector": "PRIVATE_EDUCATION",
+          "familyAllowanceRateBps": "370",
+          "familyAllowanceContributionAmount": "3700.00",
+          "currency": "XAF"
+        },
+        "reviewStatus": "SOURCE_CHECKED",
+        "reviewEvidence": {
+          "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "reviewedOn": "2026-06-26",
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "coveredReviewTopics": [
+            "familyAllowanceSectorRates",
+            "familyAllowanceSectorClassification",
+            "familyAllowanceEmployerLiability"
+          ]
+        },
+        "notes": "Pins the private-education-sector CNPS family allowance employer contribution from the regulator-confirmed country-pack envelope."
+      }
+    },
+    {
+      "id": "cm-cnps-occupational-risk-2026",
+      "countryCode": "CM",
+      "parameterPath": "payroll.cnps.occupationalRiskRatesBps",
+      "date": "2026-06-11",
+      "purpose": "PAYROLL_CNPS_OCCUPATIONAL_RISK",
+      "expectedValue": {
+        "groupA": 175,
+        "groupB": 250,
+        "groupC": 500,
+        "paidBy": "EMPLOYER",
+        "classificationRequired": true,
+        "requiredReviewedCoverage": [
+          "occupationalRiskGroupRates",
+          "occupationalRiskGroupClassification",
+          "occupationalRiskEmployerLiability"
+        ]
+      },
+      "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      "expectedPackVersion": "CM-2026.1",
+      "calculationScenario": {
+        "input": {
+          "contributionBaseAmount": "100000.00",
+          "group": "A"
+        },
+        "expectedOutput": {
+          "status": "CALCULATED",
+          "applied": true,
+          "contributionBaseAmount": "100000.00",
+          "occupationalRiskGroup": "A",
+          "occupationalRiskRateBps": "175",
+          "occupationalRiskContributionAmount": "1750.00",
+          "currency": "XAF"
+        },
+        "reviewStatus": "SOURCE_CHECKED",
+        "reviewEvidence": {
+          "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "reviewedOn": "2026-06-26",
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "coveredReviewTopics": [
+            "occupationalRiskGroupRates",
+            "occupationalRiskGroupClassification",
+            "occupationalRiskEmployerLiability"
+          ]
+        },
+        "notes": "Pins the group A CNPS occupational-risk employer contribution from the regulator-confirmed country-pack envelope."
+      }
+    },
+    {
+      "id": "cm-cnps-occupational-risk-group-b-2026",
+      "countryCode": "CM",
+      "parameterPath": "payroll.cnps.occupationalRiskRatesBps",
+      "date": "2026-06-11",
+      "purpose": "PAYROLL_CNPS_OCCUPATIONAL_RISK_GROUP_B",
+      "expectedValue": {
+        "groupA": 175,
+        "groupB": 250,
+        "groupC": 500,
+        "paidBy": "EMPLOYER",
+        "classificationRequired": true,
+        "requiredReviewedCoverage": [
+          "occupationalRiskGroupRates",
+          "occupationalRiskGroupClassification",
+          "occupationalRiskEmployerLiability"
+        ]
+      },
+      "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      "expectedPackVersion": "CM-2026.1",
+      "calculationScenario": {
+        "input": {
+          "contributionBaseAmount": "100000.00",
+          "group": "B"
+        },
+        "expectedOutput": {
+          "status": "CALCULATED",
+          "applied": true,
+          "contributionBaseAmount": "100000.00",
+          "occupationalRiskGroup": "B",
+          "occupationalRiskRateBps": "250",
+          "occupationalRiskContributionAmount": "2500.00",
+          "currency": "XAF"
+        },
+        "reviewStatus": "SOURCE_CHECKED",
+        "reviewEvidence": {
+          "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "reviewedOn": "2026-06-26",
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "coveredReviewTopics": [
+            "occupationalRiskGroupRates",
+            "occupationalRiskGroupClassification",
+            "occupationalRiskEmployerLiability"
+          ]
+        },
+        "notes": "Pins the group B CNPS occupational-risk employer contribution from the regulator-confirmed country-pack envelope."
+      }
+    },
+    {
+      "id": "cm-cnps-occupational-risk-group-c-2026",
+      "countryCode": "CM",
+      "parameterPath": "payroll.cnps.occupationalRiskRatesBps",
+      "date": "2026-06-11",
+      "purpose": "PAYROLL_CNPS_OCCUPATIONAL_RISK_GROUP_C",
+      "expectedValue": {
+        "groupA": 175,
+        "groupB": 250,
+        "groupC": 500,
+        "paidBy": "EMPLOYER",
+        "classificationRequired": true,
+        "requiredReviewedCoverage": [
+          "occupationalRiskGroupRates",
+          "occupationalRiskGroupClassification",
+          "occupationalRiskEmployerLiability"
+        ]
+      },
+      "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      "expectedPackVersion": "CM-2026.1",
+      "calculationScenario": {
+        "input": {
+          "contributionBaseAmount": "100000.00",
+          "group": "C"
+        },
+        "expectedOutput": {
+          "status": "CALCULATED",
+          "applied": true,
+          "contributionBaseAmount": "100000.00",
+          "occupationalRiskGroup": "C",
+          "occupationalRiskRateBps": "500",
+          "occupationalRiskContributionAmount": "5000.00",
+          "currency": "XAF"
+        },
+        "reviewStatus": "SOURCE_CHECKED",
+        "reviewEvidence": {
+          "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "reviewedOn": "2026-06-26",
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "coveredReviewTopics": [
+            "occupationalRiskGroupRates",
+            "occupationalRiskGroupClassification",
+            "occupationalRiskEmployerLiability"
+          ]
+        },
+        "notes": "Pins the group C CNPS occupational-risk employer contribution from the regulator-confirmed country-pack envelope."
+      }
+    },
+    {
+      "id": "cm-cnps-employer-rules-2026",
+      "countryCode": "CM",
+      "parameterPath": "payroll.cnps.employerRules",
+      "date": "2026-06-11",
+      "purpose": "PAYROLL_EMPLOYER_RULES",
+      "expectedValue": {
+        "registrationRequired": true,
+        "employeeDeclarationRequired": true,
+        "payrollBaseRequiresCnpsReview": true
+      },
+      "expectedLegalRef": "CM_CNPS_EMPLOYER_RULES",
+      "expectedPackVersion": "CM-2026.1"
+    },
+    {
+      "id": "cm-irpp-income-tax-rules-review-required-2026",
+      "countryCode": "CM",
+      "parameterPath": "payroll.irpp.incomeTaxRules",
+      "date": "2026-06-11",
+      "purpose": "PAYROLL_IRPP_INCOME_TAX",
+      "expectedValue": {
+        "productionCalculationSupported": false,
+        "calculationMode": "OFFICIAL_IRPP_FORMULA_REVIEW_REQUIRED",
+        "employeeWithholdingRequired": true,
+        "declarationCode": "IRPP",
+        "requiredReviewedCoverage": [
+          "taxableSalaryBase",
+          "familyQuotientOrDependentTreatment",
+          "bracketsAndRates",
+          "deductibleEmployeeContributions",
+          "withholdingRounding",
+          "monthlyAndAnnualRegularization"
+        ]
+      },
+      "expectedLegalRef": "CM_DGI_CGI_2025",
+      "expectedPackVersion": "CM-2026.1",
+      "notes": "Explicit full-production blocker until reviewed IRPP calculation fixtures are loaded."
+    }
+  ],
+  "families": [
+    {
+      "family": "CNPS_PENSION",
+      "label": "CNPS pension",
+      "parameterPaths": [
+        "payroll.cnps.pensionRatesBps"
+      ],
+      "capabilityPath": "payroll.cnps",
+      "purposeMatchers": [
+        "PAYROLL_CNPS_PENSION"
+      ]
+    },
+    {
+      "family": "CNPS_FAMILY_ALLOWANCE",
+      "label": "CNPS family allowance",
+      "parameterPaths": [
+        "payroll.cnps.familyAllowanceRatesBps"
+      ],
+      "capabilityPath": "payroll.cnps",
+      "purposeMatchers": [
+        "PAYROLL_CNPS_FAMILY_ALLOWANCE"
+      ]
+    },
+    {
+      "family": "CNPS_OCCUPATIONAL_RISK",
+      "label": "CNPS occupational risk",
+      "parameterPaths": [
+        "payroll.cnps.occupationalRiskRatesBps"
+      ],
+      "capabilityPath": "payroll.cnps",
+      "purposeMatchers": [
+        "PAYROLL_CNPS_OCCUPATIONAL_RISK"
+      ]
+    },
+    {
+      "family": "IRPP_PERIOD",
+      "label": "IRPP period calculation",
+      "parameterPaths": [
+        "payroll.irpp.incomeTaxRules"
+      ],
+      "capabilityPath": "payroll.irpp",
+      "purposeMatchers": [
+        "PAYROLL_IRPP_PERIOD_CALCULATION"
+      ]
+    },
+    {
+      "family": "IRPP_YTD",
+      "label": "IRPP YTD regularization",
+      "parameterPaths": [
+        "payroll.irpp.incomeTaxRules"
+      ],
+      "capabilityPath": "payroll.irpp",
+      "purposeMatchers": [
+        "PAYROLL_IRPP_YTD_REGULARIZATION"
+      ],
+      "requiredLifecycleProofFields": [
+        "yearToDatePolicyHash",
+        "yearToDateAccumulatorHash",
+        "registerProofHash",
+        "payslipProofHash"
+      ]
+    },
+    {
+      "family": "IRPP_ADJUSTMENTS",
+      "label": "IRPP period adjustments",
+      "parameterPaths": [
+        "payroll.irpp.incomeTaxRules"
+      ],
+      "capabilityPath": "payroll.irpp",
+      "purposeMatchers": [
+        "PAYROLL_IRPP_PERIOD_ADJUSTMENTS"
+      ]
+    },
+    {
+      "family": "IRPP_CORRECTIONS",
+      "label": "IRPP correction replay",
+      "parameterPaths": [
+        "payroll.irpp.incomeTaxRules"
+      ],
+      "capabilityPath": "payroll.irpp",
+      "purposeMatchers": [
+        "PAYROLL_IRPP_YTD_CORRECTION_REPLAY"
+      ],
+      "requiredLifecycleProofFields": [
+        "yearToDatePolicyHash",
+        "yearToDateAccumulatorHash",
+        "originalRunDocumentHash",
+        "originalRunEvidenceHash",
+        "originalCalculationHash",
+        "correctionBasisHash",
+        "correctionEvidenceHash",
+        "registerProofHash",
+        "payslipProofHash",
+        "ledgerPostingProofHash",
+        "declarationProofHash",
+        "paymentProofHash"
+      ]
+    },
+    {
+      "family": "ALLOWANCES_BENEFITS",
+      "label": "Allowances and benefits",
+      "parameterPaths": [
+        "payroll.compensation.allowances",
+        "payroll.compensation.benefits"
+      ],
+      "capabilityPath": "payroll.compensation",
+      "purposeMatchers": [
+        "PAYROLL_ALLOWANCE",
+        "PAYROLL_BENEFIT"
+      ],
+      "requiredPurposeMatchers": [
+        "PAYROLL_ALLOWANCE_TAXABLE",
+        "PAYROLL_BENEFIT_IN_KIND"
+      ]
+    },
+    {
+      "family": "DEDUCTIONS_RECOVERIES",
+      "label": "Deductions and recoveries",
+      "parameterPaths": [
+        "payroll.compensation.deductions"
+      ],
+      "capabilityPath": "payroll.compensation",
+      "purposeMatchers": [
+        "PAYROLL_DEDUCTION_RECOVERY"
+      ],
+      "requiredPurposeMatchers": [
+        "PAYROLL_DEDUCTION_RECOVERY"
+      ]
+    },
+    {
+      "family": "LEAVE_OVERTIME",
+      "label": "Leave and overtime",
+      "parameterPaths": [
+        "payroll.attendance.leave",
+        "payroll.attendance.overtime"
+      ],
+      "capabilityPath": "payroll.attendance",
+      "purposeMatchers": [
+        "PAYROLL_LEAVE",
+        "PAYROLL_OVERTIME"
+      ],
+      "requiredPurposeMatchers": [
+        "PAYROLL_LEAVE_PAID",
+        "PAYROLL_LEAVE_UNPAID",
+        "PAYROLL_OVERTIME"
+      ]
+    },
+    {
+      "family": "COMPOSITE_REGISTER_TIE_OUT",
+      "label": "Composite payroll register tie-out",
+      "parameterPaths": [
+        "payroll.composite.registerTieOut"
+      ],
+      "capabilityPath": "payroll.composite.registerTieOut",
+      "purposeMatchers": [
+        "PAYROLL_COMPOSITE_REGISTER_TIE_OUT"
+      ],
+      "requiredPurposeMatchers": [
+        "PAYROLL_COMPOSITE_REGISTER_TIE_OUT"
+      ]
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "services/regulatory/country-packs/cameroon.constants.ts",
+      "sha256": "dae6e3ec4720d94637d234337e4343bcbfaea2d4094f01e3813ab3b533c1fbf3"
+    },
+    {
+      "file": "services/regulatory/country-packs/cameroon.ts",
+      "sha256": "7a71f2292074dabf54b4849eb14e41852dcc5ba6d84b8c564a123a39b497f303"
+    },
+    {
+      "file": "services/payroll/payroll-statutory-scenario-coverage.service.ts",
+      "sha256": "fcb45d7526c5645f3bff933bb41d33a0cf79299b69eb483d5fc98cacb46ea89d"
+    },
+    {
+      "file": "services/regulatory/country-packs/schemas.ts",
+      "sha256": "8df503c514dbd2c034287150b8b868d1bc3f3257e9f2606f36ff5a35f635ffe8"
+    },
+    {
+      "file": "services/regulatory/country-packs/registry.ts",
+      "sha256": "dd7cac8d10d2ad7239a6061ae4ab91853c671b0d127cfb2fed8553cfa6e834bb"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "sha256": "410fe7b962e51ee8f043d1ed14cbdd7084079cb3f873557cd01f49716ded2723"
+    },
+    {
+      "file": "services/payroll/payroll-tax-rule-evaluator.ts",
+      "sha256": "76e28a77468c23805bcc3579b9db22b171e460274ac8b15460127df6fb461483"
+    },
+    {
+      "file": "services/payroll/payroll-production-admission.ts",
+      "sha256": "48b722fe75bc7db244d6ad8a2d394c08bb7a9449346c2959ed03e5552bf608da"
+    },
+    {
+      "file": "services/payroll/payroll-country-pack-review-intake.service.ts",
+      "sha256": "fced7c9eeb0c41d104a169e712e95e0b0565189dee8c3f6de91988cffe789154"
+    },
+    {
+      "file": "services/payroll/payroll-country-pack-review-intake-persistence.service.ts",
+      "sha256": "83381897ec2e5a603ff370dde7f66aecc8cf01ab236725d363e3749c746472f6"
+    },
+    {
+      "file": "services/payroll/payroll-country-pack-fixture-runner.ts",
+      "sha256": "8d4c3d978986fcc30cb3571807c0e254cb4b43d41d3c7403075286aa4b0ec71f"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "sha256": "6704f26093f6d57452393c797773ed6c271dccc3cc5ed46261dcca587160ba5c"
+    },
+    {
+      "file": "prisma/disposable-business-workflows.ts",
+      "sha256": "856123487437d2f564bdc277af0fec1b9eee457d9ac3f00fe066ce8adc9c6e53"
+    },
+    {
+      "file": "prisma/disposable-people-workflows.ts",
+      "sha256": "23705449d6599da86a55a6e227250f088c4b4eb87eb6b01cbf2bde49dbe7ac6b"
+    },
+    {
+      "file": "scripts/statutory-country-pack-review-package.js",
+      "sha256": "464c53b8bbdb42a049ae4f370072c31159bd361c1ffb7085dae3381c25d1e34d"
+    },
+    {
+      "file": "scripts/statutory-country-pack-review-preflight.js",
+      "sha256": "9838c7e7a3b9b43830019a8ad21c6af717502266ff3d5dcff74b233e73d2eeb1"
+    }
+  ],
+  "engineeringRefresh": {
+    "at": "2026-10-29T13:23:51.355314+00:00",
+    "reason": "Only input validation, transaction boundary, observed-history proof and fixture-input omission handling changed. Pack values, review states and coverage-family definitions were preserved.",
+    "changedAnchors": [
+      {
+        "file": "services/payroll/payroll-control.service.ts",
+        "beforeSha256": "e4684514143ff701ebbc1baef02fb6fddf12b5810a6ef11d81732df3e2f969b8",
+        "afterSha256": "7f3fadf24a0ffa8d15dcf1090dd8e4710dbb84135cc447fd9de8e3c6e75daa76"
+      },
+      {
+        "file": "services/payroll/payroll-tax-rule-evaluator.ts",
+        "beforeSha256": "00dd40f683e138c426220ac36461e0f190a565e9d79b55b7678b030bc7b664cb",
+        "afterSha256": "76e28a77468c23805bcc3579b9db22b171e460274ac8b15460127df6fb461483"
+      },
+      {
+        "file": "services/payroll/payroll-country-pack-fixture-runner.ts",
+        "beforeSha256": "7a4141b3a67196f800dc3c206c919a6cbd043a85acc50b9273fae8121499997c",
+        "afterSha256": "8d4c3d978986fcc30cb3571807c0e254cb4b43d41d3c7403075286aa4b0ec71f"
+      }
+    ],
+    "evidence": "docs/unblock/PAYROLL-CALCULATION-ENGINEERING-RESULTS.json"
+  },
+  "databaseVerificationRefresh": {
+    "at": "2026-11-02T16:31:06.083876+00:00",
+    "reason": "Export-only visibility of existing helper for real database tests; no calculation semantics changed.",
+    "evidence": "docs/payroll-blockers/evidence/postgres-run.json"
+  }
+}

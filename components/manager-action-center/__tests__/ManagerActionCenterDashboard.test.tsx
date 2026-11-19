@@ -1,371 +1,128 @@
-import type { SVGProps } from "react";
-import { render, screen } from "@testing-library/react";
-
-jest.mock("lucide-react", () => {
-  const createIcon = (name: string) => {
-    const Icon = (props: SVGProps<SVGSVGElement>) => (
-      <svg data-testid={`icon-${name}`} {...props} />
-    );
-    return Icon;
-  };
-
-  return new Proxy(
-    { __esModule: true },
-    {
-      get(target, prop: string) {
-        if (prop in target) return target[prop as keyof typeof target];
-        return createIcon(prop);
-      },
-    },
-  );
-});
-
-jest.mock(
-  "@/components/manager-action-center/PaymentReconciliationSignOffCommand",
-  () => ({
-    PaymentReconciliationSignOffCommand: ({
-      command,
-    }: {
-      command: { provider: { displayName: string } };
-    }) => (
-      <button type="button" data-testid="reconciliation-sign-command">
-        Sign {command.provider.displayName}
-      </button>
-    ),
-  }),
-);
-
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { ManagerActionCenterDashboard } from "../ManagerActionCenterDashboard";
+import { buildData, reconciliationAction } from "./manager-fixtures";
 import type { ManagerActionCenterData } from "@/services/manager-action-center/manager-action-center-contracts";
-import type { BIFreshness, BIProvenance } from "@/services/bi/bi-contracts";
 
-const generatedAt = "2026-06-20T10:00:00.000Z";
+const renderData = (data = many(25), locale: "en" | "fr" = "en") => render(<ManagerActionCenterDashboard data={data} locale={locale} title="Manager Action Center" subtitle="Operating work" />);
+function many(count: number) {
+  const data = buildData();
+  data.actionItems = Array.from({ length: count }, (_, i) => ({ ...data.actionItems[0], id: `action-${i}`, title: `Action ${i}`, assignedRole: i % 2 ? "manager" as const : "finance" as const, origin: i % 2 ? "ASSURANCE" as const : "SIGNAL" as const }));
+  data.runSheetGroups[0].actions = data.actionItems;
+  data.runSheetGroups[0].count = count;
+  return data;
+}
+function command() { fireEvent.click(screen.getByRole("button", { name: "Command", exact: true })); }
 
-const freshness: BIFreshness = {
-  state: "fresh",
-  generatedAt,
-  sourceMaxUpdatedAt: generatedAt,
-  maxAgeMinutes: 1440,
-  stale: false,
-  staleReason: null,
-};
-
-const provenance: BIProvenance = {
-  organizationId: "org-1",
-  locationId: null,
-  sourceKind: "tenant.operating",
-  sourceHash: "tenant-hash",
-  sourceModules: ["dashboard", "payments"],
-  generatedAt,
-  periodStart: "2026-06-01T00:00:00.000Z",
-  periodEnd: "2026-06-20T23:59:59.999Z",
-};
-
-const actionLink = {
-  id: "action-link-1",
-  label: "Open",
-  href: "/dashboard/finance/payments/reconciliation",
-  requiredPermission: "payments.reconciliation.read",
-  moduleSlug: "payment_reconciliation" as const,
-  disabled: false,
-  disabledReason: null,
-};
-
-describe("ManagerActionCenterDashboard", () => {
-  it("renders the daily run sheet above generic KPI grids", () => {
-    render(
-      <ManagerActionCenterDashboard
-        data={buildData()}
-        locale="en"
-        title="Manager Action Center"
-        subtitle="Handle today's operating work."
-      />,
-    );
-
-    expect(
-      screen.getByRole("heading", { name: "Manager daily run sheet" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Do first today" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Daily run sheet" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getAllByText("Resolve payment suspense").length,
-    ).toBeGreaterThan(0);
-    expect(screen.getByText("Critical pressure")).toBeInTheDocument();
+describe("Manager functional modes and complete queue", () => {
+  it("shows a three-item Brief, a complete Command queue, and separate Investigate evidence", () => {
+    renderData();
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("region", { name: "Manager Action Center: Brief" })).toBeInTheDocument();
+    expect(screen.getByText("3 priorities shown / 25 authorized actions loaded")).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Complete action queue" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "View complete queue" }));
+    expect(screen.getByRole("button", { name: "Command", exact: true })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("region", { name: "Manager Action Center: Command" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Do first today" })).not.toBeInTheDocument();
+    const ids: string[] = [];
+    for (let page = 1; page <= 3; page++) {
+      const summaries = document.querySelectorAll('#manager-queue-title ~ div details > summary');
+      ids.push(...Array.from(summaries).map(node => node.textContent!.split(" — ")[0]));
+      if (page < 3) fireEvent.click(screen.getByRole("button", { name: "Next page" }));
+    }
+    expect(ids).toEqual(Array.from({length: 25}, (_, i) => `Action ${i}`));
+    expect(new Set(ids).size).toBe(25);
+    expect(screen.getByText("25 authorized actions loaded · 25 matching filters · 5 shown")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Investigate", exact: true }));
+    expect(screen.getByRole("region", { name: "Manager Action Center: Investigate" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Business signals" })).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Complete action queue" })).not.toBeInTheDocument();
   });
 
-  it("renders the executable reconciliation control only for the command discriminant", () => {
-    render(
-      <ManagerActionCenterDashboard
-        data={buildData(reconciliationAction(true))}
-        locale="fr"
-        title="Centre d'actions manager"
-        subtitle="Travail operationnel."
-      />,
-    );
-
-    expect(screen.getByTestId("reconciliation-sign-command")).toHaveTextContent(
-      "Sign MTN settlement",
-    );
-    expect(
-      screen.getAllByText("Valider le rapprochement des paiements").length,
-    ).toBeGreaterThan(0);
-    expect(
-      screen.getAllByText(
-        "Verifier les totaux fournisseur et appliquer une validation independante avec une authentification recente.",
-      ).length,
-    ).toBeGreaterThan(0);
+  it.each([0, 1, 10])("reconciles loaded, filtered and displayed counts for %i actions", count => {
+    renderData(many(count)); command();
+    expect(screen.getByText(`${count} authorized actions loaded · ${count} matching filters · ${count} shown`)).toBeVisible();
+    if (!count) expect(screen.getByText("No permitted actions are available in this scope.")).toBeVisible();
   });
 
-  it("keeps a read-only reconciliation source action link-only", () => {
-    render(
-      <ManagerActionCenterDashboard
-        data={buildData(reconciliationAction(false))}
-        locale="en"
-        title="Manager Action Center"
-        subtitle="Operating work."
-      />,
-    );
-
-    expect(
-      screen.queryByTestId("reconciliation-sign-command"),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.getAllByText(
-        "Review the ready reconciliation evidence. Signing is unavailable for this actor.",
-      ).length,
-    ).toBeGreaterThan(0);
+  it("filters by source and role, resets pagination, distinguishes no matches, and clears filters", () => {
+    renderData(); command();
+    fireEvent.click(screen.getByRole("button", { name: "Next page" }));
+    fireEvent.change(screen.getByLabelText("Source", { selector: "select" }), {target: {value: "SIGNAL"}});
+    expect(screen.getByText("Page 1 / 2")).toBeVisible();
+    fireEvent.change(screen.getByLabelText("Responsible role"), {target: {value: "manager"}});
+    expect(screen.getByText("No actions match these filters.")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", {name: "Clear filters"}));
+    expect(screen.getByText("25 authorized actions loaded · 25 matching filters · 10 shown")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", {name: "Overdue (0)"}));
+    expect(screen.getByLabelText("Urgency lanes", {selector: "select"})).toHaveValue("overdue");
+    expect(screen.getByText("No actions match these filters.")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", {name: "Critical / high (25)"}));
+    expect(screen.getByText("25 authorized actions loaded · 25 matching filters · 10 shown")).toBeVisible();
   });
 
-  it("wraps long business-signal action labels within the action surface", () => {
-    const label =
-      "Settle, refund, or review employee balance recovery cases before payment and close claims are trusted.";
-    const data = buildData();
-    data.insights = [
-      {
-        id: "insight-1",
-        organizationId: "org-1",
-        moduleSlug: "payroll",
-        sourceModules: ["payroll"],
-        title: "Employee balance recovery requires action",
-        detail: "An open recovery case needs review.",
-        businessImpact: "Payroll and close claims remain blocked.",
-        severity: "high",
-        state: "ready",
-        evidenceGrade: "operational",
-        trustState: "operational",
-        freshness,
-        blockers: [],
-        redactions: [],
-        actionLink: { ...actionLink, label },
-        drillThrough: null,
-      },
-    ];
+  it("restores safe deep links and popstate, sanitizes unauthorized values and clamps pages", () => {
+    window.history.replaceState({}, "", "?mode=command&source=SIGNAL&role=finance&page=2&location=secret");
+    renderData();
+    expect(screen.getByText("Page 2 / 2")).toBeVisible();
+    expect(window.location.search).not.toContain("secret");
+    act(() => { window.history.replaceState({}, "", "?mode=investigate"); window.dispatchEvent(new PopStateEvent("popstate")); });
+    expect(screen.getByRole("region", {name: "Manager Action Center: Investigate"})).toBeInTheDocument();
+    act(() => { window.history.replaceState({}, "", "?mode=evil&source=secret&role=admin&urgency=evil&page=-2"); window.dispatchEvent(new PopStateEvent("popstate")); });
+    expect(screen.getByRole("region", {name: "Manager Action Center: Brief"})).toBeInTheDocument();
+    command();
+    expect(screen.getByText("25 authorized actions loaded · 25 matching filters · 10 shown")).toBeVisible();
+    act(() => { window.history.replaceState({}, "", "?mode=command&page=999999"); window.dispatchEvent(new PopStateEvent("popstate")); });
+    expect(screen.getByText("Page 3 / 3")).toBeVisible();
+  });
 
-    render(
-      <ManagerActionCenterDashboard
-        data={data}
-        locale="en"
-        title="Manager Action Center"
-        subtitle="Operating work."
-      />,
-    );
+  it("removes revoked action details when a refreshed authorized payload shrinks", () => {
+    const result = renderData(); command();
+    const detail = document.querySelector('#manager-queue-title ~ div details')!;
+    detail.setAttribute("open", "");
+    expect(within(detail as HTMLElement).getByRole("heading", {name: "Action 0"})).toBeVisible();
+    result.rerender(<ManagerActionCenterDashboard data={many(0)} locale="en" title="Manager Action Center" subtitle="Operating work" />);
+    expect(screen.queryByText("Action 0")).not.toBeInTheDocument();
+    expect(screen.getByText("No permitted actions are available in this scope.")).toBeVisible();
+  });
 
-    expect(screen.getByRole("link", { name: label })).toHaveClass(
-      "h-auto",
-      "max-w-full",
-      "whitespace-normal",
-      "break-words",
-      "text-left",
-    );
+  it.each(["en", "fr"] as const)("retains %s reconciliation source handoff in expanded details", locale => {
+    const data = buildData(reconciliationAction(true));
+    window.history.replaceState({}, "", "?mode=command");
+    renderData(data, locale);
+    document.querySelector('#manager-queue-title ~ div details')!.setAttribute("open", "");
+    expect(screen.getByRole("link", {name: "open"})).toHaveAttribute("href", `/${locale}/dashboard/finance/reconciliation?reviewRun=run-ready-1`);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("keeps disabled actions unavailable and normal source links localized", () => {
+    const data = buildData(reconciliationAction(false));
+    data.actionItems[0].actionLink = {...data.actionItems[0].actionLink, disabled: true, disabledReason: "Access changed"};
+    window.history.replaceState({}, "", "?mode=command"); renderData(data, "fr");
+    const detail = document.querySelector('#manager-queue-title ~ div details')!; detail.setAttribute("open", "");
+    expect(within(detail as HTMLElement).getByRole("button")).toBeDisabled();
+    expect(within(detail as HTMLElement).queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.getByText("Access changed")).toBeVisible();
+  });
+
+  it("discloses capped accountant coverage and links to the source", () => {
+    const data = many(0);
+    data.clientMissingProofSource = { state: "AVAILABLE", reason: null, queue: {
+      requests: Array.from({length: 100}, () => ({})), controls: {maxItems: 100}, summary: {truncated: true}, blockers: [], nextCursor: "private-cursor"
+    }} as unknown as ManagerActionCenterData["clientMissingProofSource"];
+    renderData(data);
+    expect(screen.getByText(/Partial coverage: more requests/)).toBeVisible();
+    expect(screen.getByRole("link", {name: "Open Accounting Close"})).toHaveAttribute("href", "/en/dashboard/accounting/close");
+    expect(window.location.search).not.toContain("private-cursor");
+  });
+
+  it.each(["HIDDEN", "UNAVAILABLE"] as const)("distinguishes %s source coverage from empty work", state => {
+    const data = many(0);
+    data.clientMissingProofSource = state === "HIDDEN" ? {state, reason: "RBAC_REQUIRED", queue: null} : {state, reason: "SOURCE_READ_FAILED", queue: null};
+    renderData(data); command();
+    expect(screen.getByText(state === "HIDDEN" ? /Accountant requests are restricted/ : /Accountant requests could not be loaded/)).toBeVisible();
+    expect(screen.getByText("No permitted actions are available in this scope.")).toBeVisible();
+    if (state === "UNAVAILABLE") expect(screen.getByRole("button", {name: "Retry loading"})).toBeVisible();
   });
 });
-
-function buildData(
-  actionOverride?: ManagerActionCenterData["actionItems"][number],
-): ManagerActionCenterData {
-  const action = actionOverride ?? {
-    origin: "SIGNAL" as const,
-    kind: "LINK" as const,
-    sourceCommand: null,
-    id: "act-1",
-    signalId: "sig-1",
-    title: "Resolve payment suspense",
-    nextStep: "Classify or match suspense items before cash review.",
-    actionPath: "/dashboard/finance/payments/reconciliation",
-    requiredPermission: "payments.reconciliation.read",
-    status: "open" as const,
-    severity: "critical" as const,
-    severityScore: 98,
-    assignedRole: "finance" as const,
-    dueAt: "2026-06-20T12:00:00.000Z",
-    dueState: "due_today" as const,
-    evidenceGrade: "blocked" as const,
-    trustState: "blocked" as const,
-    state: "blocked" as const,
-    blockers: [],
-    redactions: [],
-    actionLink,
-  };
-
-  return {
-    organizationId: "org-1",
-    generatedAt,
-    periodStart: "2026-06-01T00:00:00.000Z",
-    periodEnd: "2026-06-20T23:59:59.999Z",
-    commandBrief: {
-      id: "manager-daily-run-sheet:org-1",
-      organizationId: "org-1",
-      title: "Manager daily run sheet",
-      summary:
-        "1 visible action: 0 overdue, 1 critical or high, 0 blocked, and 0 hidden by permission.",
-      conclusion: "Handle critical pressure before scanning routine KPIs.",
-      mode: "brief",
-      generatedAt,
-      periodStart: "2026-06-01T00:00:00.000Z",
-      periodEnd: "2026-06-20T23:59:59.999Z",
-      state: "blocked",
-      evidenceGrade: "blocked",
-      trustState: "blocked",
-      freshness,
-      provenance,
-      sourceModules: ["dashboard", "payments"],
-      blockers: [],
-      redactions: [],
-      primaryAction: actionLink,
-      drillThrough: null,
-      reviewState: {
-        organizationId: "org-1",
-        reviewerId: null,
-        reviewerRole: "manager",
-        state: "blocked",
-        reviewedAt: null,
-        previousReviewedAt: null,
-        nextReviewDueAt: null,
-        freshness,
-        blockers: [],
-      },
-    },
-    runSheetGroups: [
-      {
-        id: "critical",
-        title: "Critical pressure",
-        detail:
-          "Critical or high-risk actions that can block cash, stock, close, or control trust.",
-        state: "blocked",
-        count: 1,
-        actions: [action],
-      },
-    ],
-    kpis: [],
-    insights: [],
-    actionItems: [action],
-    actionQueue: {
-      organizationId: "org-1",
-      generatedAt,
-      signals: [],
-      actionItems: [],
-      filteredOutCount: 0,
-      summary: {
-        total: 1,
-        open: 1,
-        assigned: 0,
-        stale: 0,
-        expired: 0,
-        redacted: 0,
-        bySeverity: {
-          info: 0,
-          low: 0,
-          medium: 0,
-          high: 0,
-          critical: 1,
-        },
-        byRole: { finance: 1 },
-      },
-    },
-    summary: {
-      total: 1,
-      open: 1,
-      assigned: 0,
-      stale: 0,
-      expired: 0,
-      critical: 1,
-      high: 0,
-      redacted: 0,
-      blocked: 1,
-      overdue: 0,
-      dueToday: 1,
-      hiddenByPermission: 0,
-    },
-    assuranceIncidents: [],
-  };
-}
-
-function reconciliationAction(
-  executable: boolean,
-): ManagerActionCenterData["actionItems"][number] {
-  const linkAction = buildData().actionItems[0];
-  const command = {
-    commandId: "payment-reconciliation-sign:run-ready-1",
-    actionPath: "/dashboard/finance/reconciliation" as const,
-    requiredPermission: "payments.reconciliation.sign" as const,
-    source: {
-      type: "ReconciliationRun" as const,
-      id: "run-ready-1",
-      status: "READY_FOR_SIGNOFF" as const,
-      updatedAt: "2026-06-20T09:30:00.000Z",
-      versionHash: `sha256:${"a".repeat(64)}`,
-    },
-    provider: {
-      id: "provider-account-1",
-      displayName: "MTN settlement",
-      currencyCode: "XAF",
-    },
-    businessDate: "2026-06-20T00:00:00.000Z",
-    periodStart: "2026-06-20T00:00:00.000Z",
-    periodEnd: "2026-06-20T23:59:59.999Z",
-    makerActorId: "maker-1",
-    totals: {
-      internalAmount: "10000.00",
-      externalAmount: "10000.00",
-      matchedAmount: "10000.00",
-      suspenseAmount: "0.00",
-    },
-    matchCount: 1,
-    exceptionCount: 0,
-  };
-  const base = {
-    ...linkAction,
-    origin: "SOURCE_COMMAND" as const,
-    id: command.commandId,
-    signalId: command.source.id,
-    title: "Sign payment reconciliation",
-    nextStep: "Server-owned reconciliation action.",
-    actionPath: command.actionPath,
-    requiredPermission: executable
-      ? command.requiredPermission
-      : "payments.reconciliation.read",
-    state: executable ? ("ready" as const) : ("permission_denied" as const),
-    actionLink: {
-      ...actionLink,
-      href: command.actionPath,
-    },
-  };
-
-  if (executable) {
-    return {
-      ...base,
-      kind: "PAYMENT_RECONCILIATION_SIGN_OFF",
-      sourceCommand: command,
-    };
-  }
-
-  return {
-    ...base,
-    kind: "LINK",
-    sourceCommand: null,
-  };
-}

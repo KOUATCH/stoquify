@@ -1,0 +1,599 @@
+{
+  "generatedAt": "2026-10-29T12:18:30.770Z",
+  "classification": "ENGINEERING_PREPARATION_NOT_APPROVED_COUNTRY_PACK",
+  "runtimeImportAllowed": false,
+  "rules": [
+    {
+      "parameterPath": "payroll.cnps.pensionRatesBps",
+      "envelopes": [
+        {
+          "value": {
+            "total": 840,
+            "employer": 420,
+            "employee": 420,
+            "monthlyCeilingMinorUnits": 750000,
+            "annualCeilingMinorUnits": 9000000,
+            "requiredReviewedCoverage": [
+              "pensionContributionRates",
+              "pensionContributionCeiling",
+              "employeeEmployerPensionSplit"
+            ]
+          },
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-26",
+          "verifiedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "verificationStatus": "SOURCE_CHECKED"
+        }
+      ],
+      "capability": "SUPPORTED_DRAFT",
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": [
+        {
+          "id": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "title": "Decret fixant les taux de cotisations sociales et les plafonds des remunerations",
+          "jurisdiction": "CM",
+          "issuedBy": "Presidence de la Republique du Cameroun / CNPS",
+          "sourceUrl": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes.pdf",
+          "documentDate": "2016-02-15",
+          "retrievedOn": "2026-06-11"
+        }
+      ]
+    },
+    {
+      "parameterPath": "payroll.cnps.familyAllowanceRatesBps",
+      "envelopes": [
+        {
+          "value": {
+            "general": 700,
+            "agriculture": 565,
+            "privateEducation": 370,
+            "paidBy": "EMPLOYER",
+            "requiredReviewedCoverage": [
+              "familyAllowanceSectorRates",
+              "familyAllowanceSectorClassification",
+              "familyAllowanceEmployerLiability"
+            ]
+          },
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-26",
+          "verifiedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "verificationStatus": "SOURCE_CHECKED"
+        }
+      ],
+      "capability": "SUPPORTED_DRAFT",
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": [
+        {
+          "id": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "title": "Decret fixant les taux de cotisations sociales et les plafonds des remunerations",
+          "jurisdiction": "CM",
+          "issuedBy": "Presidence de la Republique du Cameroun / CNPS",
+          "sourceUrl": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes.pdf",
+          "documentDate": "2016-02-15",
+          "retrievedOn": "2026-06-11"
+        }
+      ]
+    },
+    {
+      "parameterPath": "payroll.cnps.occupationalRiskRatesBps",
+      "envelopes": [
+        {
+          "value": {
+            "groupA": 175,
+            "groupB": 250,
+            "groupC": 500,
+            "paidBy": "EMPLOYER",
+            "classificationRequired": true,
+            "requiredReviewedCoverage": [
+              "occupationalRiskGroupRates",
+              "occupationalRiskGroupClassification",
+              "occupationalRiskEmployerLiability"
+            ]
+          },
+          "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-26",
+          "verifiedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "verificationStatus": "SOURCE_CHECKED"
+        }
+      ],
+      "capability": "SUPPORTED_DRAFT",
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": [
+        {
+          "id": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+          "title": "Decret fixant les taux de cotisations sociales et les plafonds des remunerations",
+          "jurisdiction": "CM",
+          "issuedBy": "Presidence de la Republique du Cameroun / CNPS",
+          "sourceUrl": "https://www.cnps.cm/images/documentutile/decret%20fixant%20taux%20de%20cotisations%20sociales%20et%20plafonds%20des%20rmunrations_baremes.pdf",
+          "documentDate": "2016-02-15",
+          "retrievedOn": "2026-06-11"
+        }
+      ]
+    },
+    {
+      "parameterPath": "payroll.cnps.employerRules",
+      "envelopes": [
+        {
+          "value": {
+            "registrationRequired": true,
+            "employeeDeclarationRequired": true,
+            "payrollBaseRequiresCnpsReview": true
+          },
+          "legalRef": "CM_CNPS_EMPLOYER_RULES",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-26",
+          "verifiedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+          "verificationStatus": "SOURCE_CHECKED"
+        }
+      ],
+      "capability": "SUPPORTED_DRAFT",
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": [
+        {
+          "id": "CM_CNPS_EMPLOYER_RULES",
+          "title": "Regles generales pour les employeurs",
+          "jurisdiction": "CM",
+          "issuedBy": "Caisse Nationale de Prevoyance Sociale",
+          "sourceUrl": "https://www.cnps.cm/fr/employeurs/regles-generales-pour-les-employeurs1.html",
+          "retrievedOn": "2026-06-11"
+        }
+      ]
+    },
+    {
+      "parameterPath": "payroll.irpp.incomeTaxRules",
+      "envelopes": [
+        {
+          "value": {
+            "productionCalculationSupported": false,
+            "calculationMode": "OFFICIAL_IRPP_FORMULA_REVIEW_REQUIRED",
+            "employeeWithholdingRequired": true,
+            "declarationCode": "IRPP",
+            "requiredReviewedCoverage": [
+              "taxableSalaryBase",
+              "familyQuotientOrDependentTreatment",
+              "bracketsAndRates",
+              "deductibleEmployeeContributions",
+              "withholdingRounding",
+              "monthlyAndAnnualRegularization"
+            ]
+          },
+          "legalRef": "CM_DGI_CGI_2025",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-11",
+          "verifiedBy": "Codex regulatory source pass; legal-owner approval required before statutory publication",
+          "verificationStatus": "REQUIRES_EXPERT_REVIEW",
+          "notes": "Blocks production payroll income-tax withholding until reviewed IRPP formulas, bases, reliefs, caps, rounding, and YTD regularization fixtures are loaded."
+        }
+      ],
+      "capability": "REQUIRES_EXPERT_REVIEW",
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": [
+        {
+          "id": "CM_DGI_CGI_2025",
+          "title": "Code General des Impots mis a jour au 1er janvier 2025",
+          "jurisdiction": "CM",
+          "issuedBy": "Direction Generale des Impots du Cameroun",
+          "sourceUrl": "https://www.impots.cm/fr/code-general-des-impots-mis-jour-au-1er-janvier-2025",
+          "documentDate": "2025-01-01",
+          "retrievedOn": "2026-06-11"
+        }
+      ]
+    },
+    {
+      "parameterPath": "payroll.productionAdmission",
+      "envelopes": null,
+      "capability": null,
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": []
+    },
+    {
+      "parameterPath": "payroll.compensation.allowances",
+      "envelopes": null,
+      "capability": null,
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": []
+    },
+    {
+      "parameterPath": "payroll.compensation.benefits",
+      "envelopes": null,
+      "capability": null,
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": []
+    },
+    {
+      "parameterPath": "payroll.compensation.deductions",
+      "envelopes": null,
+      "capability": null,
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": []
+    },
+    {
+      "parameterPath": "payroll.attendance.leave",
+      "envelopes": null,
+      "capability": null,
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": []
+    },
+    {
+      "parameterPath": "payroll.attendance.overtime",
+      "envelopes": null,
+      "capability": null,
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": []
+    },
+    {
+      "parameterPath": "payroll.composite.registerTieOut",
+      "envelopes": null,
+      "capability": null,
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": []
+    },
+    {
+      "parameterPath": "payroll.declarations.default",
+      "envelopes": null,
+      "capability": null,
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": []
+    },
+    {
+      "parameterPath": "taxes.vat.standardRateBps",
+      "envelopes": [
+        {
+          "value": 1925,
+          "legalRef": "CM_DGI_CGI_2025",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-11",
+          "verifiedBy": "Codex regulatory source pass; legal-owner approval required before statutory publication",
+          "verificationStatus": "SOURCE_CHECKED",
+          "notes": "Stored in basis points to avoid float drift. Legal owner must re-check against the active CGI before statutory pack promotion."
+        }
+      ],
+      "capability": "SUPPORTED",
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": [
+        {
+          "id": "CM_DGI_CGI_2025",
+          "title": "Code General des Impots mis a jour au 1er janvier 2025",
+          "jurisdiction": "CM",
+          "issuedBy": "Direction Generale des Impots du Cameroun",
+          "sourceUrl": "https://www.impots.cm/fr/code-general-des-impots-mis-jour-au-1er-janvier-2025",
+          "documentDate": "2025-01-01",
+          "retrievedOn": "2026-06-11"
+        }
+      ]
+    },
+    {
+      "parameterPath": "taxes.withholding.supplierPayments",
+      "envelopes": null,
+      "capability": null,
+      "proposed2025Envelope": null,
+      "proposed2026Envelope": null,
+      "reviewDecision": null,
+      "sourceCandidates": []
+    }
+  ],
+  "scenarioFamilies": [
+    {
+      "family": "CNPS_PENSION",
+      "label": "CNPS pension",
+      "parameterPaths": [
+        "payroll.cnps.pensionRatesBps"
+      ],
+      "capabilityPath": "payroll.cnps",
+      "purposeMatchers": [
+        "PAYROLL_CNPS_PENSION"
+      ],
+      "requiredReviewTopics": [
+        "pensionContributionRates",
+        "pensionContributionCeiling",
+        "employeeEmployerPensionSplit"
+      ],
+      "existingFixtureIds": [],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    },
+    {
+      "family": "CNPS_FAMILY_ALLOWANCE",
+      "label": "CNPS family allowance",
+      "parameterPaths": [
+        "payroll.cnps.familyAllowanceRatesBps"
+      ],
+      "capabilityPath": "payroll.cnps",
+      "purposeMatchers": [
+        "PAYROLL_CNPS_FAMILY_ALLOWANCE"
+      ],
+      "requiredReviewTopics": [
+        "familyAllowanceSectorRates",
+        "familyAllowanceSectorClassification",
+        "familyAllowanceEmployerLiability"
+      ],
+      "existingFixtureIds": [
+        "cm-cnps-family-allowance-2026",
+        "cm-cnps-family-allowance-agriculture-2026",
+        "cm-cnps-family-allowance-private-education-2026"
+      ],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    },
+    {
+      "family": "CNPS_OCCUPATIONAL_RISK",
+      "label": "CNPS occupational risk",
+      "parameterPaths": [
+        "payroll.cnps.occupationalRiskRatesBps"
+      ],
+      "capabilityPath": "payroll.cnps",
+      "purposeMatchers": [
+        "PAYROLL_CNPS_OCCUPATIONAL_RISK"
+      ],
+      "requiredReviewTopics": [
+        "occupationalRiskGroupRates",
+        "occupationalRiskGroupClassification",
+        "occupationalRiskEmployerLiability"
+      ],
+      "existingFixtureIds": [
+        "cm-cnps-occupational-risk-2026",
+        "cm-cnps-occupational-risk-group-b-2026",
+        "cm-cnps-occupational-risk-group-c-2026"
+      ],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    },
+    {
+      "family": "IRPP_PERIOD",
+      "label": "IRPP period calculation",
+      "parameterPaths": [
+        "payroll.irpp.incomeTaxRules"
+      ],
+      "capabilityPath": "payroll.irpp",
+      "purposeMatchers": [
+        "PAYROLL_IRPP_PERIOD_CALCULATION"
+      ],
+      "requiredReviewTopics": [
+        "taxableSalaryBase",
+        "familyQuotientOrDependentTreatment",
+        "bracketsAndRates",
+        "deductibleEmployeeContributions",
+        "withholdingRounding",
+        "monthlyAndAnnualRegularization"
+      ],
+      "existingFixtureIds": [],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    },
+    {
+      "family": "IRPP_YTD",
+      "label": "IRPP YTD regularization",
+      "parameterPaths": [
+        "payroll.irpp.incomeTaxRules"
+      ],
+      "capabilityPath": "payroll.irpp",
+      "purposeMatchers": [
+        "PAYROLL_IRPP_YTD_REGULARIZATION"
+      ],
+      "requiredLifecycleProofFields": [
+        "yearToDatePolicyHash",
+        "yearToDateAccumulatorHash",
+        "registerProofHash",
+        "payslipProofHash"
+      ],
+      "requiredReviewTopics": [
+        "taxableSalaryBase",
+        "familyQuotientOrDependentTreatment",
+        "bracketsAndRates",
+        "deductibleEmployeeContributions",
+        "withholdingRounding",
+        "monthlyAndAnnualRegularization"
+      ],
+      "existingFixtureIds": [],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    },
+    {
+      "family": "IRPP_ADJUSTMENTS",
+      "label": "IRPP period adjustments",
+      "parameterPaths": [
+        "payroll.irpp.incomeTaxRules"
+      ],
+      "capabilityPath": "payroll.irpp",
+      "purposeMatchers": [
+        "PAYROLL_IRPP_PERIOD_ADJUSTMENTS"
+      ],
+      "requiredReviewTopics": [
+        "taxableSalaryBase",
+        "familyQuotientOrDependentTreatment",
+        "bracketsAndRates",
+        "deductibleEmployeeContributions",
+        "withholdingRounding",
+        "monthlyAndAnnualRegularization"
+      ],
+      "existingFixtureIds": [],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    },
+    {
+      "family": "IRPP_CORRECTIONS",
+      "label": "IRPP correction replay",
+      "parameterPaths": [
+        "payroll.irpp.incomeTaxRules"
+      ],
+      "capabilityPath": "payroll.irpp",
+      "purposeMatchers": [
+        "PAYROLL_IRPP_YTD_CORRECTION_REPLAY"
+      ],
+      "requiredLifecycleProofFields": [
+        "yearToDatePolicyHash",
+        "yearToDateAccumulatorHash",
+        "originalRunDocumentHash",
+        "originalRunEvidenceHash",
+        "originalCalculationHash",
+        "correctionBasisHash",
+        "correctionEvidenceHash",
+        "registerProofHash",
+        "payslipProofHash",
+        "ledgerPostingProofHash",
+        "declarationProofHash",
+        "paymentProofHash"
+      ],
+      "requiredReviewTopics": [
+        "taxableSalaryBase",
+        "familyQuotientOrDependentTreatment",
+        "bracketsAndRates",
+        "deductibleEmployeeContributions",
+        "withholdingRounding",
+        "monthlyAndAnnualRegularization"
+      ],
+      "existingFixtureIds": [],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    },
+    {
+      "family": "ALLOWANCES_BENEFITS",
+      "label": "Allowances and benefits",
+      "parameterPaths": [
+        "payroll.compensation.allowances",
+        "payroll.compensation.benefits"
+      ],
+      "capabilityPath": "payroll.compensation",
+      "purposeMatchers": [
+        "PAYROLL_ALLOWANCE",
+        "PAYROLL_BENEFIT"
+      ],
+      "requiredPurposeMatchers": [
+        "PAYROLL_ALLOWANCE_TAXABLE",
+        "PAYROLL_BENEFIT_IN_KIND"
+      ],
+      "requiredReviewTopics": [],
+      "existingFixtureIds": [],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    },
+    {
+      "family": "DEDUCTIONS_RECOVERIES",
+      "label": "Deductions and recoveries",
+      "parameterPaths": [
+        "payroll.compensation.deductions"
+      ],
+      "capabilityPath": "payroll.compensation",
+      "purposeMatchers": [
+        "PAYROLL_DEDUCTION_RECOVERY"
+      ],
+      "requiredPurposeMatchers": [
+        "PAYROLL_DEDUCTION_RECOVERY"
+      ],
+      "requiredReviewTopics": [],
+      "existingFixtureIds": [],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    },
+    {
+      "family": "LEAVE_OVERTIME",
+      "label": "Leave and overtime",
+      "parameterPaths": [
+        "payroll.attendance.leave",
+        "payroll.attendance.overtime"
+      ],
+      "capabilityPath": "payroll.attendance",
+      "purposeMatchers": [
+        "PAYROLL_LEAVE",
+        "PAYROLL_OVERTIME"
+      ],
+      "requiredPurposeMatchers": [
+        "PAYROLL_LEAVE_PAID",
+        "PAYROLL_LEAVE_UNPAID",
+        "PAYROLL_OVERTIME"
+      ],
+      "requiredReviewTopics": [],
+      "existingFixtureIds": [],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    },
+    {
+      "family": "COMPOSITE_REGISTER_TIE_OUT",
+      "label": "Composite payroll register tie-out",
+      "parameterPaths": [
+        "payroll.composite.registerTieOut"
+      ],
+      "capabilityPath": "payroll.composite.registerTieOut",
+      "purposeMatchers": [
+        "PAYROLL_COMPOSITE_REGISTER_TIE_OUT"
+      ],
+      "requiredPurposeMatchers": [
+        "PAYROLL_COMPOSITE_REGISTER_TIE_OUT"
+      ],
+      "requiredReviewTopics": [],
+      "existingFixtureIds": [],
+      "independentExpectedResults": null,
+      "reviewer": null,
+      "reviewDate": null,
+      "legalEvidence": null,
+      "decision": null
+    }
+  ]
+}

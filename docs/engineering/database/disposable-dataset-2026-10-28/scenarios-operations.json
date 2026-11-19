@@ -1,0 +1,17 @@
+{
+  "label": "scenarios-operations",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "prisma/disposable-scenarios.ts",
+    "--skip-count"
+  ],
+  "startedAt": "2026-10-28T19:35:33.976Z",
+  "finishedAt": "2026-10-28T19:36:52.499Z",
+  "exitCode": 1,
+  "errorCode": null
+}

@@ -1,0 +1,82 @@
+{
+  "slice": "HR-01",
+  "status": "VERIFIED",
+  "timestamp": "2026-10-24T13:58:56.2315228Z",
+  "baselineCommit": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "hashes": [
+    {
+      "path": "services/hris/leave-ledger-order.ts",
+      "sha256": "c8afbc3e3235dd4dbb54c18402b0289d8b2ddc14a9c29b7694a4aa3e791b2eb7"
+    },
+    {
+      "path": "services/hris/leave-balance.service.ts",
+      "sha256": "ea8df8fca6e9f9b52400e2634a66868f39dd7421a42e6a382aa2dd6563e549dd"
+    },
+    {
+      "path": "services/hris/operational-time.service.ts",
+      "sha256": "d710c908715c9f52efbbf281539b6dab84cea0811c41c78e4fdf112d80b82fd9"
+    },
+    {
+      "path": "services/hris/__tests__/leave-balance.service.test.ts",
+      "sha256": "be6bf2a9b3b99699dd25d053cf58db2ab98ff4598b5c7c99260410aeae8bbe81"
+    },
+    {
+      "path": "services/hris/__tests__/operational-time.service.test.ts",
+      "sha256": "fb1030d7284e96ec970f7742bd07ba51dadcf71a6748db8503055e1e28120c26"
+    },
+    {
+      "path": "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+      "sha256": "90acf17ac8f6b85fc737c1d6803210880f55bb6a491c06631a71725f997c446d"
+    },
+    {
+      "path": "services/hris/__tests__/hris-correctness.postgres.test.ts",
+      "sha256": "4dd9198d2210c5ba7a67d9b3e247b8df56361ba861b5a0eac5ca676bb29a8e33"
+    },
+    {
+      "path": "jest.hris-correctness-postgres.config.cjs",
+      "sha256": "e119003c2feb0ebe77e464ee34a2e0592b291bc2899416adf9434fe861b2d6fe"
+    }
+  ],
+  "acceptance": [
+    "HR-01-AC01",
+    "HR-01-AC02",
+    "HR-01-AC03",
+    "HR-01-AC04",
+    "HR-01-AC05",
+    "HR-01-AC06"
+  ],
+  "commands": [
+    {
+      "tests": 24,
+      "command": "node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand --no-cache --json --outputFile=what-next/hris-implementation-2026-10-24/HR-01/postgres.json",
+      "lane": "real-postgresql",
+      "exitCode": 0,
+      "cleanup": "PASS",
+      "target": "127.0.0.1:55464/stoquify_local_hris_20261024"
+    },
+    {
+      "lane": "mocked",
+      "command": "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath services/hris/__tests__/leave-balance.service.test.ts services/hris/__tests__/operational-time-decision-concurrency.test.ts services/hris/__tests__/operational-time.service.test.ts",
+      "tests": 13,
+      "exitCode": 0
+    },
+    {
+      "lane": "focused-typecheck",
+      "command": "TypeScript createProgram: leave-ledger-order.ts, leave-balance.service.ts, operational-time.service.ts, hris-correctness.postgres.test.ts; repository options; noEmit=true incremental=false",
+      "diagnostics": 0,
+      "exitCode": 0
+    }
+  ],
+  "artifacts": [
+    "RESULT.md",
+    "postgres.json",
+    "postgres-cleanup-timeout.json",
+    "typecheck.txt"
+  ],
+  "notRun": [
+    "browser",
+    "provider",
+    "migration replay",
+    "deployment"
+  ]
+}

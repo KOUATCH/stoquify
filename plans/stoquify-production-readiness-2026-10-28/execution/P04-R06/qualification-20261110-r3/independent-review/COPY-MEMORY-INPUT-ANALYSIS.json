@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T15:05:14.255Z",
+  "reviewer": "/root/r06_review",
+  "scope": "Read-only exact input sizes for preparation-only memory budget; no resource admission",
+  "compressedSha256": "306dafa0271600fb71cd921ee93542a695dc9eddc616ef21c72f0d995e788030",
+  "manifestSha256": "885d34096b3dae7765633fff1ffdaeecee5c7ab07c4ae86723b63145eb4462e2",
+  "files": 152806,
+  "compressedBytes": 6768937,
+  "uncompressedManifestBytes": 25523251,
+  "totalContentBytes": 2998378443,
+  "largestEightFileBytes": [
+    148386816,
+    148386816,
+    148372992,
+    46090566,
+    40270377,
+    27555840,
+    24393728,
+    24393728
+  ],
+  "maxEightSimultaneousWholeFileBytes": 607850863,
+  "limits": [
+    "Eight full-file buffers are not total process memory; parsed manifests/path objects/results, garbage collection, hashing/native allocations and robocopy overhead also require conservative provision.",
+    "A fixed streaming chunk or explicit staging-only heap cap can constrain separate components; no full-build gate is modified.",
+    "Host capacity must be freshly checked under an independently admitted exact copy recipe."
+  ]
+}

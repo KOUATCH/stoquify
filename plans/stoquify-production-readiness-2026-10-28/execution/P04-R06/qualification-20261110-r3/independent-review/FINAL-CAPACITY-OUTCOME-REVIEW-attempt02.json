@@ -1,0 +1,232 @@
+{
+  "at": "2026-11-10T19:37:52.515Z",
+  "reviewer": "/root/r06_review",
+  "packageId": "P04-R06",
+  "passed": false,
+  "blockedCheckpointAccepted": true,
+  "observationAccepted": true,
+  "candidateId": null,
+  "artifactSha256": null,
+  "qualificationPassed": false,
+  "verdict": "BLOCKED_CAPACITY_BEFORE_CURRENT_CANDIDATE_CAPTURE",
+  "source": {
+    "observedFiles": 9988,
+    "identitySha256": "0b8354d4f340ad5b82931e2e18e3e01a7ba18cfd089351a2536b41e23891332c",
+    "manifestSha256": "c346a34aaf073e4ee3ac1246863adbf751869400331755c69c698235e4623064",
+    "expectedFutureCandidateId": "p04-r06-r3-0b8354d4f340",
+    "currentSelectedInputsRehashed": 68,
+    "currentSelectedInputMismatches": [],
+    "currentOwnedRepairFilesRehashed": 6,
+    "currentOwnedRepairMismatches": [],
+    "schemaSha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+    "baselineSelectedInputsUnchanged": 67,
+    "currentMigrationCount": 123,
+    "baselineMigrationCount": 122,
+    "currentMigrationExecutions": 0,
+    "fullCurrentSourceRevalidated": false,
+    "limitation": "The full 9,988-file snapshot is time-bound source evidence. Future capture must prove complete current source and HEAD equality; this review rehashed only selected and owned files."
+  },
+  "evidenceLanes": {
+    "sourceInspection": {
+      "accepted": true,
+      "executionAdmittedBySourceReview": false
+    },
+    "historicalMockedAuthentication": {
+      "passed": 116,
+      "suites": 5,
+      "failed": 0,
+      "skipped": 0,
+      "newTestRun": false,
+      "copyHashesAndSixOwnedSourceHashesRevalidated": true,
+      "limit": "Evidence for unchanged authentication repair source only. Current schema/client and native behavior are not qualified by the historical mocked run."
+    },
+    "pureMetadataHelpers": {
+      "passed": 28,
+      "failed": 0,
+      "newTestRun": true,
+      "priorV2FailurePreserved": true,
+      "actualArtifactVerified": false
+    },
+    "mockedLifecycleControlFlow": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "newTestRun": true,
+      "nativeLifecycleExecuted": false
+    },
+    "currentBuild": {
+      "executed": false,
+      "artifactBuilt": false
+    },
+    "currentNativeDatabase": {
+      "queriesExecuted": false,
+      "retainedBaselineRequeried": false,
+      "newTargetsCreated": false,
+      "migrationsExecuted": 0,
+      "fixturesSeeded": false
+    },
+    "currentRealSessionsAndBrowser": {
+      "executed": 0,
+      "plannedRawCases": 107,
+      "plannedLogicalRequirements": 58,
+      "plannedMandatoryAuxiliaryProofs": 57
+    }
+  },
+  "capacity": {
+    "initialPassingObservation": "resource-capture-retry-ready-r2.json",
+    "latestObservation": "resource-capture-entry-attempt04.json",
+    "latestCapturedAt": "2026-11-10T19:06:18.2055601Z",
+    "latestFreePhysicalGiB": 7.8671112060546875,
+    "latestFreeCommitGiB": 11.301101684570312,
+    "requiredFreePhysicalGiB": 6,
+    "requiredFreeCommitGiB": 12,
+    "requiredFreeDDriveGiB": 12,
+    "dDriveFreeGiBAtFailedEntry": 12.531044006347656,
+    "latestFailures": [
+      "commit_headroom"
+    ],
+    "freshMeasurementTakenByReview": false,
+    "thresholdsWeakened": false
+  },
+  "preservation": {
+    "acceptedDependencyFiles": 152806,
+    "dependencyTraversalRepeated": false,
+    "originalFailuresAndE31Preserved": true,
+    "newStorageEntries": [
+      "dependencies",
+      "ownership.json"
+    ],
+    "retainedOwnerAndFixtureHashesMatch": true,
+    "retainedRecordedPidAbsent": true,
+    "oldClustersStopped": 3,
+    "scopedFreePortObservations": 14,
+    "retainedFixtureCountsAreHistoricalOnly": true
+  },
+  "requiredBeforeAdvancement": [
+    "Actual capacity-changing event, followed by a fresh passing unchanged 6 GiB physical / 12 GiB commit / 12 GiB D gate.",
+    "Exact current source, HEAD and 68-input equality; if drift exists, preserve it and obtain a successor capture binding before use.",
+    "Capture and independently accept the new candidate; admit and verify new isolated current-schema targets while preserving both old baseline databases.",
+    "Generate the current private client and pass the full unweakened build/type/lint/artifact gates.",
+    "Pass all 107 native/browser cases with evidence for all 58 logical requirements and 57 mandatory auxiliary proofs, then owned cleanup, preservation and independent final review."
+  ],
+  "nextAction": {
+    "condition": "After an actual capacity-changing event; unchanged gates must pass and source/HEAD equality must still hold",
+    "resourceCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/check-resources.cjs resource-current-schema-retry-ready-r1.json",
+    "candidateCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/prepare-candidate-attempt05.cjs",
+    "admissionCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/admit-candidate-attempt05.cjs",
+    "handoff": "EXECUTION-HANDOFF-current-schema-r1.md"
+  },
+  "parentP04Blocked": true,
+  "parentV02Blocked": true,
+  "productionReadinessBlocked": true,
+  "files": [
+    {
+      "path": "capacity-checkpoint-current-schema.json",
+      "sha256": "086652f612dca5fadc119fe5ccbe8b909710b68fc03fba2540f0dcee07a0c2b2"
+    },
+    {
+      "path": "independent-review/CAPACITY-CHECKPOINT-CURRENT-SCHEMA-OUTCOME-REVIEW.json",
+      "sha256": "bc8b23095875f78135a7316b8b30d3fdd8cee99053b3b36d88380873d8df7e93"
+    },
+    {
+      "path": "execution-handoff-current-schema-r1.json",
+      "sha256": "ab79142f574653a3c5ea420c980f9d073026f1228beebbe59b2197936b87a744"
+    },
+    {
+      "path": "EXECUTION-HANDOFF-current-schema-r1.md",
+      "sha256": "82e0f06bc3357cd0fcf85c85501999db2c2002493762e8162ca02ee6c3bcff8a"
+    },
+    {
+      "path": "preparation-attempt04.json",
+      "sha256": "aa9016065419c9b8a5e60850b3ef56aee2d2da6a4286e0fdd6ed6bbe01b14e27"
+    },
+    {
+      "path": "resource-capture-entry-attempt04.json",
+      "sha256": "fa2d24f07e0ff0552b0aa5a7350fc66f459327881ddfa42fd29e4db43142ca37"
+    },
+    {
+      "path": "resource-capture-retry-ready-r2.json",
+      "sha256": "a9644ac4702e5ceb032266c5e2df4fd8ab846feed874ad0a742c4f6382cc824b"
+    },
+    {
+      "path": "independent-review/CANDIDATE-ENTRY-CAPACITY-OUTCOME-attempt04.json",
+      "sha256": "4b72acc0d85e9763e33d360b83af541096d32d2762f0a17fd14d2ffc71603288"
+    },
+    {
+      "path": "independent-review/CANDIDATE-PREPARATION-RECIPE-ADMISSION-attempt05.json",
+      "sha256": "494bf0a3be45734cf19680b5955707aeb2d905f7d7073dcd1316f430acad343a"
+    },
+    {
+      "path": "independent-review/SOURCE-RESUME-OUTCOME-REVIEW-r2.json",
+      "sha256": "79151ccad74deaa2769d5281bbc1c30372dfabaee1866196de56badf4dbd76d9"
+    },
+    {
+      "path": "independent-review/CAPTURE-SOURCE-ADMISSION-resume-r2.json",
+      "sha256": "e97d177d0f9fbafd5faf4cfae1a2c1e2b3b909dd2e1b84771dbe3d9ae5910c2f"
+    },
+    {
+      "path": "inventory/source-after-manifest-runtime-v2.json",
+      "sha256": "e319b9c3ad8394030de8f1cd26db8f0139e8d6763dba9fc5ea41d9e2efbcbabc"
+    },
+    {
+      "path": "inventory/private-metadata-policy-v2.json",
+      "sha256": "f6b24a709fbc2df9033c648afb8687bfcf46068dc299b299c050237d6cb551a3"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/CURRENT-SOURCE-MANIFEST.json",
+      "sha256": "c346a34aaf073e4ee3ac1246863adbf751869400331755c69c698235e4623064"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/MIGRATION-SOURCE-REFRESH.json",
+      "sha256": "bf9fad5af1fe9a8440e3ec8939c81a2b3be622e1ada7589a36645cf20ad73228"
+    },
+    {
+      "path": "independent-review/PRIVATE-METADATA-TEST-OUTCOME-REVIEW-v3.json",
+      "sha256": "20c284341de85fa33ef409941f741421b07b075f9f1ecb21e9f21557f6507656"
+    },
+    {
+      "path": "independent-review/DATABASE-CURRENT-LIFECYCLE-TEST-OUTCOME-REVIEW.json",
+      "sha256": "075eec1b4581c24b813138c752ddf3122ff4c962bc8f218fac5b92293b3bdfde"
+    },
+    {
+      "path": "independent-review/DATABASE-CURRENT-PREPARATION-SOURCE-REVIEW.json",
+      "sha256": "fb823289137502324c03e6890c5bfa07b5f5cbb782df1ec4d1dfa78d3a536ab6"
+    },
+    {
+      "path": "independent-review/DATABASE-CURRENT-LIFECYCLE-SOURCE-REVIEW.json",
+      "sha256": "dd98a05280df111904b13ec190608d0528ce6e92983e9ece9d4211236484c8e3"
+    },
+    {
+      "path": "independent-review/CURRENT-ORCHESTRATOR-SOURCE-REVIEW.json",
+      "sha256": "6f39264b1b8031c75e625b820abaf95c51104da7c8c0f50763b2dd59329f1ccc"
+    },
+    {
+      "path": "independent-review/RUNTIME-CURRENT-HELPER-SOURCE-REVIEW.json",
+      "sha256": "8a8a54afe2cf4c3315a403824df1c5343528d35d992fa0554c6db14fa021b3de"
+    },
+    {
+      "path": "reused-evidence/MANIFEST.json",
+      "sha256": "2d01675030d37199ab7570870a9a29e896cc61eb934f353bd6fa06d1db49e316"
+    },
+    {
+      "path": "reused-evidence/independent-review/REPAIR-SOURCE-ADMISSION.json",
+      "sha256": "4993e10c3c40dd9e29e947db2533de7427d1e9cbe1290e61563aa4644936cca9"
+    },
+    {
+      "path": "reused-evidence/independent-review/UNIT-OUTCOME-REVIEW.json",
+      "sha256": "70144c056ef2ff4a7dd04b88753ec84cdcb8ba49a97bef1fed21a56a1a990a96"
+    },
+    {
+      "path": "reused-evidence/unit/attempt01/receipt.json",
+      "sha256": "1ce6f6ba26f642a1420c54dcaa9ccb7d6882e31c19eaababf7920df6d784dedf"
+    },
+    {
+      "path": "reused-evidence/unit/attempt01/jest.json",
+      "sha256": "6a1390a0248fc6686d7dd9096bb4c834583b6ce4a22fd7dbb04597e9ade8e63b"
+    },
+    {
+      "path": "reused-evidence/inventory/repair-owned-files.json",
+      "sha256": "947b5da57354ecb09673c594b60c2d66bcef5998ce6c72d96bf561aadeeda8e6"
+    }
+  ]
+}

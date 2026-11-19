@@ -1,0 +1,59 @@
+{
+  "status": "FAILED",
+  "steps": [],
+  "failures": [
+    {
+      "name": "BusinessRuleError",
+      "message": "HRIS_SCHEDULE_WEEKLY_TOTAL_INVALID: Use an explicit dated off-day for zero work."
+    }
+  ],
+  "pageErrors": [],
+  "sourceHashes": {
+    "components/hris/HrisRosterWorkspace.tsx": "6ebb4a71dfde44843c9a641046be88ee765d5702a64877959dd1cfc3820cfc84",
+    "components/hris/HrisRosterWorkspaceClient.tsx": "7f9d27e74a4edf8aae63ab74d6b7f79395727c1f55fdaefdc7bad9a273887d8b",
+    "components/hris/HrisControlledReview.tsx": "2ca09f7b5c89138a2dae0f9285ffa4b99175d50d02185b3e8084bc62ea2a4981",
+    "components/hris/HrisOperationalTimeRequestPanel.tsx": "0860281fd7613893a677223317fba63701cd38a8701503ecf9741be195e8282f",
+    "components/hris/HrisOperationalTimeApprovalPanel.tsx": "bacc445bdade618dc596bfe0a8e973fb6f4b508c92a098893fc4a91af274f403",
+    "components/hris/useHrisFreshAuth.tsx": "7ef5ea8b6a795520c2cd8b90d99aef20721147037d3e20d8ffd20262db9be44e",
+    "actions/hris/roster.actions.ts": "3bacf3938768b3862c53659966831f1d5318c0ee362b3c2f920113bdbc11aae8",
+    "actions/hris/own-time.actions.ts": "13c0cb148bd12a9844ea67eaae392e92e3b72995f8f0fec20b531992c5601e85",
+    "actions/hris/time-review.actions.ts": "3d72cefafb2dfca9a0d5f51f7183367fb429d013ee6b683eeb28353aa4900511",
+    "services/hris/shift-plan.ts": "d4067526f32d983e7dae8f3ca8f375ad4ad3654a5090128fffcda04f436e6941",
+    "services/hris/schedule-revision.service.ts": "0114bc0f9b854d2f588ca24eaa0e3cd3852e7c888ce224f278f7db982722d376",
+    "services/hris/roster-workspace.service.ts": "fcf6d569578663cb50865ae07cfc28ea9e24d42d70c0bee611b4430d0bab1917",
+    "services/hris/attendance-file.service.ts": "15ba33eca5782ec490fa0b86a1648d63d9168e700d16a685417f84dc560f2408",
+    "services/hris/attendance-import.service.ts": "52025f0085c55b03dae5d475fbd7909b27d048545790756d6d067295165577f7",
+    "services/hris/operational-time.service.ts": "7f483d3f8ac304256e8709ffbc5614eed30b362a6fadd751be06e71e63debf6e",
+    "services/hris/operational-attendance.service.ts": "db0ec656b09cd9c91be8a60671870af38d4f887d4bea3f6001e08a4b8ce6fd10",
+    "services/hris/attendance-correction.ts": "740335a7ebba3d189ca4144020be78c34eaee1f3822d5f4853d47ef9e4561f00",
+    "services/hris/time-allocation.ts": "7422a33e4938ebb5f92171efccd1c6a8d4f120460ca0771eafc2e7f7c2dc73bd",
+    "services/hris/time-leave.service.ts": "677aeaa61b8c672c385dc4c3e5082a12ca4ee89d7b7e78d31d406dd935615b54",
+    "services/hris/time-review.service.ts": "ae8292d5c6789e36039af4dd215d5aae324627d3a139d12742b896ee4620a97d",
+    "services/hris/self-service-boundary.service.ts": "71f948ef85467341fc78c63b881e17a1d574812ef501ff08aa00a16a426b3c6f",
+    "app/[locale]/(dashboard)/dashboard/people/roster/page.tsx": "35062517907dca334de5d4345e17270b45ae6465275e96e53429df394a7d58da",
+    "app/[locale]/(dashboard)/dashboard/people/me/schedule/page.tsx": "bd1b3d84988f12f8acbbd68bbff064c1cb11a8abf7180eef1ff0bb5198751b50",
+    "app/[locale]/(dashboard)/dashboard/people/me/page.tsx": "edf50fae1328707190d62c6558bf1a5a8e8c10ebff1cde0853257b942dd46f9c",
+    "app/[locale]/(dashboard)/dashboard/people/team/page.tsx": "1626811f612143215215f7e85209d5a4571f5bbd253ffcbc121e5bafa446751e",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-07/browser.cjs": "cb03e5161d747e8244086d8d27f8766a1df5fc4d912de54fbf960d476d2f3504",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-07/journey.cjs": "285003f4d8600dc899e4caaee187f2ed242cd0b1ba879b34e4bc3ce7f4d904c8",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-07/native.cjs": "15a4c82e5bd7184e12bf7d2e13c595d955780a9a37e5bf0dc9a64d40e391b94d",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-07/preload.cjs": "fe92094492c3a3166c88497a093b24c971818dd1ca571892a22c341b23feee65",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-07/serve.cjs": "1f8044e11a228ecd283618521c23dfd1a8908b8f7d65847de29d22e15e820ca3",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-07/preflight.cjs": "a020d71ec0b4d76b889c43f28938fa71ec75fa5e00e83e84175ed7fc1e082977",
+    "components/hris/__tests__/HrisRosterWorkspace.review.test.tsx": "90e93537c764e7f2d18dbe5e239ef709d3a9bc3eb04c287f13b9aa2ee3294617",
+    "actions/hris/__tests__/roster.actions.test.ts": "676944b7da1237f547c5a25fc44d0d3590d8c87cdb27776b717d76e545bc71b8",
+    "jest.hris-shift-browser.config.cjs": "f2fb5f003f03332ecd24566d31a08152a2de108dd0c7b4f4ae706b251319759c"
+  },
+  "runtimeHashes": {
+    "next.config.mjs": "1769a31215594f5c4b66ad6fc7407ab2771812ff90157385f5c9a5b47b3f9a4e",
+    "middleware.ts": "5ab2f985ba452717f361e0f4e29eaaedb646202a83dd58b83412b24e9c88f180",
+    "package.json": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+    "tsconfig.json": "536c9595cca3f1e5c844c43864794f83fe7799fe16dfbf9f9d14dc5d28a448c5",
+    "next-env.d.ts": "b174774e0c60dc97e3f1ab18c46f243592be8a93b1d744d77e7d4400fee4ba7a",
+    "postcss.config.mjs": "da1e5e8147fb42cbc582a60607fea0df35171ae60bd5617846c841568bbe2272",
+    "tailwind.config.ts": "5929ece1e683fcba92d08ac5646cd15b32aaabf3cdcf31f838a091c78bef0f8a"
+  },
+  "databaseClientCreated": true,
+  "cleanupComplete": true,
+  "completedAt": "2026-10-26T16:24:44.283Z"
+}

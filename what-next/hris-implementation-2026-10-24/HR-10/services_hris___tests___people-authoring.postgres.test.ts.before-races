@@ -1,0 +1,139 @@
+import { randomUUID } from "node:crypto"
+import { db } from "@/prisma/db"
+import { upsertHrisEmployeeProfile } from "../employee.service"
+import { createPayrollContract, getEmployeeContractWorkflow } from "@/services/payroll/contract.service"
+import { requestHrisContractDocumentEvidence, approveHrisContractDocumentEvidence } from "../document-evidence.service"
+import { requestHrisContractActivation, approveHrisContractActivation } from "../contract.service"
+import { requestHrisEmployeeLifecycle, approveHrisEmployeeLifecycle, applyApprovedHrisEmployeeLifecycle } from "../lifecycle.service"
+import { requestHrisPaymentDestinationChange, approveHrisPaymentDestinationChange, applyApprovedHrisPaymentDestinationChange } from "../payment-destination.service"
+import { requestHrisSalaryChange, approveHrisSalaryChange, applyApprovedHrisSalaryChange } from "../compensation.service"
+import { getPeopleAuthoring } from "../people-authoring-read.service"
+import { decideHrisApprovalInboxItem } from "../approval-inbox.service"
+
+jest.mock("@/prisma/db",()=>{
+  const {PrismaClient}=require("@prisma/client"),url=process.env.HRIS_CORRECTNESS_DATABASE_URL
+  if(url!=="postgresql://hris_test@127.0.0.1:55464/stoquify_local_hris_20261024?schema=public")throw Error("Owned explicit database required")
+  return {db:new PrismaClient({datasources:{db:{url}},transactionOptions:{maxWait:15000,timeout:25000}})}
+})
+const ns="hris-authoring-"+randomUUID(),org=ns+"-a",foreign=ns+"-b",actors=[ns+"-maker",ns+"-checker",ns+"-applier",ns+"-limited",ns+"-denied"]
+const permissions=["hris.people.manage","hris.people.read","payroll.contracts.manage","payroll.contracts.read","EMPLOYEE_SALARY_READ"]
+const actor=(i=0)=>({organizationId:org,actorId:actors[i],actorPermissions:i===4?[]:i===3?["hris.people.manage","hris.people.read"]:permissions})
+const today=new Date().toISOString().slice(0,10),later=new Date(Date.now()+30*86400000).toISOString().slice(0,10),end=new Date(Date.now()+365*86400000).toISOString().slice(0,10)
+const reason={decisionReason:"Synthetic independent review",approvalEvidenceHash:"sha256:synthetic-reviewed"}
+const profile=(extra:Record<string,unknown>={})=>({...actor(),createOnly:true,employeeNumber:randomUUID(),displayName:"Synthetic starter",hireDate:today,countryCode:"CM",idempotencyKey:randomUUID(),...extra})
+const contract=(employeeId:string,extra:Record<string,unknown>={})=>({...actor(),employeeId,contractNumber:randomUUID(),type:"CDI" as const,effectiveFrom:today,baseSalary:"150000",currency:"XAF",workingHoursPerMonth:"160",idempotencyKey:randomUUID(),...extra})
+let starter:string,currentContract:string
+beforeAll(async()=>{
+  process.env.HRIS_SETUP_PILOT_ORGANIZATIONS=org
+  process.env.PAYROLL_PAYMENT_DESTINATION_HASH_SECRET="synthetic-only-hr10-secret-never-production-0123456789"
+  for(const id of [org,foreign])await db.organization.create({data:{id,name:"Synthetic authoring employer",slug:id,country:"CM",timezone:"Africa/Douala"}})
+  for(let i=0;i<actors.length;i++){await db.user.create({data:{id:actors[i],organizationId:org,email:actors[i]+"@example.invalid",isVerified:true,name:"Synthetic operator "+i}});await db.role.create({data:{organizationId:org,code:actors[i],nameEn:actors[i],permissions:actor(i).actorPermissions,users:{connect:{id:actors[i]}}}})}
+})
+afterAll(async()=>{try{
+  await db.payrollSalaryChangeRequest.deleteMany({where:{organizationId:org}})
+  await db.payrollPaymentDestinationChangeRequest.deleteMany({where:{organizationId:org}})
+  await db.payrollContract.deleteMany({where:{organizationId:org}})
+  await db.payrollEmployee.deleteMany({where:{organizationId:{in:[org,foreign]}}})
+  await db.organization.deleteMany({where:{id:{in:[org,foreign]}}})
+  expect(await db.organization.count({where:{id:{in:[org,foreign]}}})).toBe(0)
+}finally{delete process.env.HRIS_SETUP_PILOT_ORGANIZATIONS;await db.$disconnect()}},120000)
+
+test("draft creation has one effect on concurrent exact retry and rejects changed payload",async()=>{
+  const input=profile();const results=await Promise.all([upsertHrisEmployeeProfile(input),upsertHrisEmployeeProfile(input)])
+  expect(results[0].payrollEmployee.id).toBe(results[1].payrollEmployee.id);starter=results[0].payrollEmployee.id
+  expect(results[0].payrollEmployee.status).toBe("DRAFT")
+  expect(await db.auditLog.count({where:{organizationId:org,entityId:starter}})).toBe(1)
+  await expect(upsertHrisEmployeeProfile({...input,displayName:"Changed"})).rejects.toThrow(/changed/)
+})
+test("duplicate numbers and linked accounts cannot silently merge or create a second person",async()=>{
+  const first=profile({userId:actors[4]});await upsertHrisEmployeeProfile(first)
+  await expect(upsertHrisEmployeeProfile({...first,idempotencyKey:randomUUID()})).rejects.toThrow(/already exists/)
+  await expect(upsertHrisEmployeeProfile(profile({userId:actors[4]}))).rejects.toThrow(/already exists/)
+  const number=randomUUID(),outcomes=await Promise.allSettled([upsertHrisEmployeeProfile(profile({employeeNumber:number})),upsertHrisEmployeeProfile(profile({employeeNumber:number}))])
+  expect(outcomes.filter(r=>r.status==="fulfilled")).toHaveLength(1)
+  expect(await db.payrollEmployee.count({where:{organizationId:org,employeeNumber:number}})).toBe(1)
+})
+test("foreign user/location and explicit foreign employee targets are rejected",async()=>{
+  const user=await db.user.create({data:{organizationId:foreign,email:randomUUID()+"@example.invalid"}})
+  await expect(upsertHrisEmployeeProfile(profile({userId:user.id}))).rejects.toThrow(/organization/)
+  await expect(upsertHrisEmployeeProfile(profile({locationId:"foreign-location"}))).rejects.toThrow()
+  await expect(upsertHrisEmployeeProfile(profile({createOnly:false,employeeId:"foreign-employee",expectedUpdatedAt:new Date().toISOString()}))).rejects.toThrow(/does not match/)
+})
+test("profile edit binds version, preserves omitted legal name and distinguishes explicit clearing on replay",async()=>{
+  const created=await upsertHrisEmployeeProfile(profile({legalName:"Synthetic legal name",department:"Office"})),row=created.payrollEmployee
+  const input={...actor(),employeeId:row.id,employeeNumber:row.employeeNumber,displayName:"Corrected display",hireDate:today,countryCode:"CM",expectedUpdatedAt:row.updatedAt.toISOString(),idempotencyKey:randomUUID()}
+  const updated=await upsertHrisEmployeeProfile(input);expect(updated.payrollEmployee.legalName).toBe("Synthetic legal name")
+  expect((await upsertHrisEmployeeProfile(input)).payrollEmployee.id).toBe(row.id)
+  await expect(upsertHrisEmployeeProfile({...input,department:null})).rejects.toThrow(/changed/)
+  await expect(upsertHrisEmployeeProfile({...input,idempotencyKey:randomUUID(),displayName:"Stale"})).rejects.toThrow(/changed after/)
+})
+test("outer rollback leaves no employee, event or audit",async()=>{
+  const input=profile();await expect(db.$transaction(async tx=>{await upsertHrisEmployeeProfile(input,tx);throw Error("synthetic rollback")})).rejects.toThrow("synthetic rollback")
+  expect(await db.payrollEmployee.count({where:{organizationId:org,employeeNumber:input.employeeNumber}})).toBe(0)
+  expect(await db.businessEvent.count({where:{organizationId:org,idempotencyKey:input.idempotencyKey}})).toBe(0)
+})
+test("contract create concurrent replay is exact and redacted using current permissions",async()=>{
+  const input=contract(starter),results=await Promise.all([createPayrollContract(input),createPayrollContract(input)])
+  currentContract=results[0].contract.id;expect(results[1].contract.id).toBe(currentContract)
+  await expect(createPayrollContract({...input,baseSalary:"160000"})).rejects.toThrow(/changed/)
+  const redacted=await createPayrollContract({...input,actorPermissions:["payroll.contracts.manage"]});expect(redacted.contract.baseSalary).toBe("[REDACTED:PAYROLL]")
+  expect(await db.payrollContract.count({where:{organizationId:org,contractNumber:input.contractNumber}})).toBe(1)
+})
+test("starter reaches active through document, contract, payment and employment owners without direct record changes",async()=>{
+  const context={...actor(),employeeId:starter,contractId:currentContract}
+  await requestHrisContractDocumentEvidence({...context,artifactHash:"sha256:synthetic-document",malwareScanEvidenceHash:"sha256:synthetic-scan",malwareScanProvider:"Synthetic scanner",malwareScannedAt:today,signedAt:today,retentionPolicyCode:"SYNTHETIC",retentionBasis:"Synthetic test retention",retainUntil:end})
+  await expect(approveHrisContractDocumentEvidence({...context,...reason})).rejects.toThrow()
+  await approveHrisContractDocumentEvidence({...context,...actor(1),...reason})
+  await requestHrisContractActivation({...context,reason:"Synthetic agreed contract",requestEvidenceHash:"sha256:synthetic-request"})
+  await expect(approveHrisContractActivation({...context,...reason})).rejects.toThrow()
+  await approveHrisContractActivation({...context,...actor(1),...reason})
+  const payment=await requestHrisPaymentDestinationChange({...actor(),employeeId:starter,paymentMethod:"CASH",requestReason:"Synthetic cash destination",evidenceDocumentHash:"sha256:synthetic-payment"})
+  const paymentId=payment.paymentDestinationChange.id
+  await approveHrisPaymentDestinationChange({...actor(1),employeeId:starter,paymentDestinationChangeRequestId:paymentId,...reason})
+  await expect(applyApprovedHrisPaymentDestinationChange({...actor(1),employeeId:starter,paymentDestinationChangeRequestId:paymentId})).rejects.toThrow()
+  await applyApprovedHrisPaymentDestinationChange({...actor(2),employeeId:starter,paymentDestinationChangeRequestId:paymentId})
+  const request=await requestHrisEmployeeLifecycle({...actor(),employeeId:starter,type:"ONBOARD",effectiveAt:today,reason:"Synthetic approved starter",evidenceHash:"sha256:synthetic-onboard"})
+  const decision={employeeId:starter,requestId:request.workflow.requestId}
+  await expect(approveHrisEmployeeLifecycle({...actor(),...decision,...reason})).rejects.toThrow()
+  await approveHrisEmployeeLifecycle({...actor(1),...decision,...reason})
+  await applyApprovedHrisEmployeeLifecycle({...actor(2),...decision})
+  expect((await db.payrollEmployee.findUniqueOrThrow({where:{id:starter}})).status).toBe("ACTIVE")
+})
+test("future salary retains today's current contract and requires three independent actors",async()=>{
+  const request=await requestHrisSalaryChange({...actor(),employeeId:starter,sourceContractId:currentContract,proposedBaseSalary:"175000",effectiveFrom:later,requestReason:"Synthetic future increase",evidenceDocumentHash:"sha256:synthetic-salary"})
+  const id=request.salaryChange.id
+  const context={employeeId:starter,salaryChangeRequestId:id}
+  await expect(approveHrisSalaryChange({...actor(),...context,...reason})).rejects.toThrow()
+  await approveHrisSalaryChange({...actor(1),...context,...reason})
+  await expect(applyApprovedHrisSalaryChange({...actor(1),...context})).rejects.toThrow()
+  await applyApprovedHrisSalaryChange({...actor(2),...context})
+  const view=await getEmployeeContractWorkflow({...actor(),employeeId:starter});expect(view.employees[0].activeContractId).toBe(currentContract)
+  expect(view.summary.activeContracts).toBe(1)
+})
+test("scheduled leaver remains active today and retry remains scheduled",async()=>{
+  const request=await requestHrisEmployeeLifecycle({...actor(),employeeId:starter,type:"TERMINATE",effectiveAt:later,reason:"Synthetic future departure",evidenceHash:"sha256:synthetic-leaver"})
+  const context={employeeId:starter,requestId:request.workflow.requestId}
+  await approveHrisEmployeeLifecycle({...actor(1),...context,...reason})
+  for(let i=0;i<2;i++)expect(await applyApprovedHrisEmployeeLifecycle({...actor(2),...context})).toMatchObject({applied:false})
+  expect((await db.payrollEmployee.findUniqueOrThrow({where:{id:starter}})).status).toBe("ACTIVE")
+  const view=await getPeopleAuthoring(actor(),starter);expect(view.selected.lifecycle.type).toBe("TERMINATE")
+})
+test("authoring read rejects revoked live authority and redacts salaries",async()=>{
+  const limited=await getPeopleAuthoring(actor(3),starter);expect(limited.canAuthorContract).toBe(false)
+  expect(limited.selected.contracts.every((c:any)=>c.baseSalary===null&&!c.canReviewAmounts)).toBe(true)
+  await expect(getPeopleAuthoring({...actor(),actorId:actors[4]},starter)).rejects.toThrow()
+  await expect(getPeopleAuthoring(actor(),"foreign-employee")).rejects.toThrow()
+})
+
+test("rendered EN/FR starter renewal salary and leaver journeys",async()=>{
+  const http=require("node:http"),fs=require("node:fs"),path=require("node:path"),directory=path.resolve("what-next/hris-implementation-2026-10-24/HR-10/browser")
+  const commands:Record<string,(input:any)=>Promise<any>>={PROFILE:upsertHrisEmployeeProfile,CONTRACT_CREATE:createPayrollContract,DOCUMENT_REQUEST:requestHrisContractDocumentEvidence,CONTRACT_REQUEST:requestHrisContractActivation,INBOX:decideHrisApprovalInboxItem,LIFECYCLE_REQUEST:requestHrisEmployeeLifecycle,LIFECYCLE_APPROVE:approveHrisEmployeeLifecycle,LIFECYCLE_APPLY:applyApprovedHrisEmployeeLifecycle,SALARY_REQUEST:requestHrisSalaryChange,SALARY_APPROVE:approveHrisSalaryChange,SALARY_APPLY:applyApprovedHrisSalaryChange,PAYMENT_REQUEST:requestHrisPaymentDestinationChange,PAYMENT_APPROVE:approveHrisPaymentDestinationChange,PAYMENT_APPLY:applyApprovedHrisPaymentDestinationChange}
+  const server=http.createServer(async(req:any,res:any)=>{const name=/fixtureRole=([^;]+)/.exec(req.headers.cookie||"")?.[1]??"denied",index=["maker","checker","applier","limited","denied"].indexOf(name),context=actor(index<0?4:index)
+    try {
+      if(req.url.startsWith("/api")){res.setHeader("Content-Type","application/json");if(req.method==="POST"){let body="";for await(const chunk of req){body+=chunk;if(body.length>32000)throw Error("Body too large")};const command=JSON.parse(body);await getPeopleAuthoring(context);const operation=commands[command.operation];if(!operation)throw Error("Unknown command");const data=await operation({...command.data,...context});res.end(JSON.stringify({success:true,data}));return}const employeeId=new URL(req.url,"http://localhost").searchParams.get("employeeId");res.end(JSON.stringify(await getPeopleAuthoring(context,employeeId??undefined)));return}
+      if(["/bundle.js","/styles.css"].includes(req.url)){res.setHeader("Content-Type",req.url.endsWith("css")?"text/css":"text/javascript");res.end(fs.readFileSync(path.join(directory,req.url.slice(1))));return}
+      res.setHeader("Content-Type","text/html; charset=utf-8");res.end('<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/styles.css"></head><body><div id="root"></div><script src="/bundle.js"></script></body></html>')
+    }catch(error){res.statusCode=403;res.end(JSON.stringify({success:false,error:error instanceof Error?error.message:"Unavailable"}))}
+  });await new Promise<void>(r=>server.listen(0,"127.0.0.1",r))
+  try{await require("../../../what-next/hris-implementation-2026-10-24/HR-10/browser/check.cjs")(`http://127.0.0.1:${server.address().port}`)}finally{await new Promise<void>(r=>server.close(r))}
+},240000)

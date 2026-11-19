@@ -1,0 +1,100 @@
+{
+  "generatedAt": "2026-11-02T16:31:06.083876+00:00",
+  "contractId": "STOQUIFY-CM-PAYROLL-CALCULATION-2026-11-02-DRAFT-4",
+  "classification": "ENGINEERING_EVIDENCE_WITH_STATUTORY_APPROVALS_PENDING",
+  "sources": [
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "sha256": "410fe7b962e51ee8f043d1ed14cbdd7084079cb3f873557cd01f49716ded2723"
+    },
+    {
+      "file": "scripts/run-payroll-blockers-postgres.cjs",
+      "sha256": "09582fe77447a7bce6ad77674ac0dd4ba648b2cf21106c37ffb9e29be1557a95"
+    },
+    {
+      "file": "scripts/payroll-blockers-postgres-target.cjs",
+      "sha256": "f7a29b4388ba31e2203793dd1764924cfa8e2a5dfdbfde1b49423a08fe8d3cfe"
+    },
+    {
+      "file": "scripts/jest.payroll-blockers-postgres.config.cjs",
+      "sha256": "3d904ffe39354ae457ba9c0155bc17eeb1343c78a85f8fc632ec4a2c6f418a8b"
+    },
+    {
+      "file": "tests/postgres/payroll-blockers/transactions.test.ts",
+      "sha256": "166c9ea5aa0029dd1037b64db2ad22acbfb02f362085d649168ecc42b07a3995"
+    },
+    {
+      "file": "scripts/payroll-trust-spine-postgres-certification.js",
+      "sha256": "177db62483a4d07f40fc298d286d11bf564aaac2aa94c6da02afbc5fc11affe1"
+    },
+    {
+      "file": "scripts/__tests__/payroll-blockers-target.node.test.cjs",
+      "sha256": "d2c5cb5db07fc265351e5cde3fad1810e3aae61ede00fb3b4d0ade86849cfbf4"
+    },
+    {
+      "file": "docs/payroll-blockers/update_packet.py",
+      "sha256": "b6d26f8a4975440e659cc293af207625ec2a02139274088705b72a1ca07dd593"
+    },
+    {
+      "file": "docs/payroll-blockers/publish_packet.py",
+      "sha256": "b51b597025852f4716d092a9a7a01f377b4894eb6bc07ebc8a79253f77c0c009"
+    },
+    {
+      "file": "docs/unblock/render_calculation_review_pdf.py",
+      "sha256": "893432a1f9d1652c8534b90dbae76bfbb49324f0c5b17ddf3f813a3f3c4dec8e"
+    }
+  ],
+  "documents": [
+    {
+      "file": "docs/payroll-blockers/PAYROLL-CALCULATION-CONTRACT.md",
+      "sha256": "2dda4656d19b6774921509ec0dd38eda28e51d313b272e53bc36e93752119e30"
+    },
+    {
+      "file": "docs/payroll-blockers/PAYROLL-CALCULATION-REVIEWER-CHECKLIST.md",
+      "sha256": "99240e43284b889fab33d7aeee0dadcc4c0957789ef9ba04c61654a69c9f6900"
+    },
+    {
+      "file": "docs/payroll-blockers/PAYROLL-UNBLOCK-REGISTER.md",
+      "sha256": "a96d71a3af828ed5fd42b8390be531ea32dc1f6ce5068126c9f703d31a5947da"
+    },
+    {
+      "file": "docs/payroll-blockers/PAYROLL-UNBLOCK-REPORT-2026-11-02-ENGINEERING-V4.md",
+      "sha256": "15ccb3c2034ab8bf08026e3fc8470d697e3b9d08ff9b42f96c9fff2ca77eb6a2"
+    }
+  ],
+  "reviewReturnSha256": "30188c4c3cc4da9d9958be809ba785dd7e9dbebe6df3ca0c5801662f88d55e61",
+  "statutoryDecisionsPending": 16,
+  "independentFixtureOutputsPending": 22,
+  "historicalResearchManifest": "docs/unblock/PAYROLL-CALCULATION-SOURCE-MANIFEST.json",
+  "researchNotReperformed": true,
+  "counts": {
+    "VERIFIED": 8,
+    "RECORDED": 90,
+    "PENDING_HUMAN": 319,
+    "OPTIONAL_OR_CONDITIONAL": 52,
+    "PENDING_INDEPENDENT_RECOMPUTATION": 18,
+    "PENDING_RESEARCH": 49,
+    "CONDITIONAL": 15,
+    "BLOCKED": 42,
+    "PENDING_ENGINEERING": 7,
+    "COMPLETED_ENGINEERING": 1
+  },
+  "evidence": [
+    {
+      "file": "docs/payroll-blockers/evidence/postgres-run.json",
+      "sha256": "644d855b8bef20d65bf8259bd4dfab27e1f12b9e0045bfe985574a271a636544"
+    },
+    {
+      "file": "docs/payroll-blockers/evidence/service-transactions.json",
+      "sha256": "3d497aafb4225ad16595ef28b7fd6d6015a2fdef4e98c497992783f1c9bb7cf3"
+    },
+    {
+      "file": "docs/payroll-blockers/evidence/trust-spine.json",
+      "sha256": "500342cb6a06323d4d4644a87a63387bd3c87ef096f4fbdad9cd75276e122d1f"
+    },
+    {
+      "file": "docs/payroll-blockers/evidence/unit-regression.json",
+      "sha256": "2de13a4f9085d98ca4cb0addbe17ae6d8481a188bf107f82cd8931d7436f117d"
+    }
+  ]
+}

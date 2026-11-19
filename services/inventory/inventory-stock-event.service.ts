@@ -50,6 +50,10 @@ type StockEventLineInput = {
   reservedQuantityToConsume?: Prisma.Decimal.Value
   reversalOfTransactionId?: string | null
   receiptValuation?: { version: 2; sourceGoodsReceiptLineId: string; allocatedValue: string; recognitionHash: string }
+  acquisitionValue?: string
+  // Internal POS adapters only; never accept a client-supplied value override.
+  usePOSValuePool?: boolean
+  posReturnValuation?: { movementId: string; totalCost: Prisma.Decimal }
 }
 
 /** Internal handoff from a source owner that retains the prepared period locks. */
@@ -121,6 +125,7 @@ export type GoodsReceiptStockLineInput = {
   locationId: string
   quantity: Prisma.Decimal.Value
   unitCost: Prisma.Decimal.Value
+  acquisitionValue?: string
   purchaseOrderId?: string | null
   goodsReceiptLineId?: string | null
   notes?: string | null
@@ -199,7 +204,11 @@ export type InventoryReservationInput = {
   reason: string
   expiresAt?: Date | null
   occurredAt?: Date
-  idempotencyKey?: string
+  idempotencyKey: string
+}
+
+export type InventoryReservationBatchInput = Omit<InventoryReservationInput, "itemId" | "locationId" | "quantity"> & {
+  lines: Array<{ itemId: string; locationId: string; quantity: Prisma.Decimal.Value }>
 }
 
 export type DeliveryOrderReservationInput = {
@@ -522,7 +531,18 @@ async function postStockLine(
   const nextReserved = currentReserved.minus(reservedToConsume).toDecimalPlaces(3)
   const nextAvailable = currentAvailable.plus(quantity).plus(reservedToConsume).toDecimalPlaces(3)
   const allocatedValue = input.line.receiptValuation ? money(input.line.receiptValuation.allocatedValue) : null
-  const valueDelta = allocatedValue === null ? unitCost.times(quantity).toDecimalPlaces(2) : quantity.lt(0) ? allocatedValue.negated() : allocatedValue
+  // The rounded display average cannot allocate the final cent of a value pool.
+  // Preserve the existing negative-stock policy until that policy is reviewed.
+  const posIssueValue = input.line.usePOSValuePool && quantity.lt(0) && currentOnHand.gt(0) && nextOnHand.gte(0) && currentTotalValue.gte(0)
+    ? nextOnHand.eq(0) ? currentTotalValue : currentTotalValue.times(quantity.abs()).div(currentOnHand).toDecimalPlaces(2)
+    : null
+  const posReturnValue = input.line.posReturnValuation && currentOnHand.gte(0)
+    ? input.line.posReturnValuation.totalCost : null
+  const valueDelta = allocatedValue !== null ? quantity.lt(0) ? allocatedValue.negated() : allocatedValue
+    : input.line.acquisitionValue !== undefined ? money(input.line.acquisitionValue)
+    : posIssueValue !== null ? posIssueValue.negated()
+    : posReturnValue !== null ? posReturnValue
+    : unitCost.times(quantity).toDecimalPlaces(2)
   const retainedValue = currentTotalValue.plus(valueDelta).toDecimalPlaces(2)
   if (allocatedValue !== null && (allocatedValue.lt(0) || retainedValue.lt(0) || nextOnHand.lt(0) || nextOnHand.eq(0) && !retainedValue.eq(0))) {
     throw new BusinessRuleError("The retained return value does not reconcile with available inventory. Review the source movements before recording this return.", "REVIEW_REQUIRED")
@@ -600,7 +620,7 @@ async function postStockLine(
       batchNumber: input.line.batchNumber ?? null,
       serialNumbers: input.line.serialNumbers ?? [],
       expiryDate: input.line.expiryDate ?? null,
-      reversalOfTransactionId: input.line.reversalOfTransactionId ?? null,
+      reversalOfTransactionId: input.line.posReturnValuation?.movementId ?? input.line.reversalOfTransactionId ?? null,
       effectiveAt: input.effectiveAt,
       recordedAt: input.recordedAt,
       timeProvenance: InventoryTransactionTimeProvenance.EXPLICIT_SOURCE_TIME,
@@ -639,6 +659,7 @@ function stockEventPayload(input: StockEventInput, postingBatchId?: string) {
       serialNumbers: line.serialNumbers ?? [],
       expiryDate: line.expiryDate?.toISOString() ?? null,
       ...(line.receiptValuation ? { receiptValuation: line.receiptValuation } : {}),
+      ...(line.acquisitionValue !== undefined ? { acquisitionValue: line.acquisitionValue } : {}),
     })),
     metadata: input.metadata ?? {},
   }
@@ -863,6 +884,35 @@ async function postInventoryStockEvent(
   return run(client)
 }
 
+/** AF10 derives stock from approved evidence and verifies the single owning GL
+ * batch before using the existing valuation/event writer without a duplicate GL. */
+export async function postControlledOpeningStockInTx(tx: Prisma.TransactionClient, organizationId: string, executionId: string, sourceId: string, postingBatchId: string) {
+  const { approvedOpeningSourceInTx, openingMoney, retainOpeningOperationInTx } = await import("@/services/onboarding/opening-domain-source")
+  const { execution, source, target, at } = await approvedOpeningSourceInTx(tx, organizationId, executionId)
+  const row = source.stock.find(item => item.sourceId === sourceId)
+  if (!row) throw new BusinessRuleError("The approved opening stock source is unavailable.")
+  const batch = await tx.ledgerPostingBatch.findFirst({ where: { id: postingBatchId, organizationId, sourceId: executionId,
+    sourceType: "OPENING_BALANCE", postingPurpose: "OPENING_BALANCE", sourceVersion: execution.revision.revision, status: "POSTED" } })
+  const coverage = source.ledger.filter(line => line.domain === "STOCK" && line.side === "DEBIT" && line.account === row.account && line.covers.includes(sourceId))
+  if (!batch || coverage.length !== 1) throw new BusinessRuleError("Opening stock requires its approved, posted opening journal.")
+  const itemId = target("items", row.item), locationId = target("locations", row.location)
+  const result = await postInventoryStockEvent({
+    organizationId, eventType: "stock.opening_balance.posted", idempotencyKey: `opening:${executionId}:stock:${sourceId}`,
+    actorId: execution.approvedById, occurredAt: at, sourceType: "OPENING_BALANCE", sourceId: `${executionId}:${sourceId}`,
+    accountingPostingBatchId: postingBatchId, outboxEventName: "inventory.opening_stock.posted",
+    metadata: { openingExecutionId: executionId, openingSourceId: sourceId, manifestDigest: execution.manifestDigest },
+    lines: [{ itemId, locationId, quantity: row.quantity, unitCost: row.unitCost, movementType: "INITIAL_STOCK",
+      referenceType: "MANUAL", referenceId: `${executionId}:${sourceId}`, referenceNumber: `OPEN-${execution.revision.revision}`,
+      notes: `Approved opening source ${sourceId}` }],
+  }, tx)
+  if (result.replayed || result.movementTransactionIds.length !== 1 || !result.totalCost.eq(openingMoney(row.value))) {
+    throw new BusinessRuleError("Opening stock valuation did not match its approved source.")
+  }
+  const receipt = { movementId: result.movementTransactionIds[0], eventId: result.eventId, postingBatchId, itemId, locationId, totalCost: result.totalCost.toFixed(2) }
+  await retainOpeningOperationInTx(tx, { organizationId, executionId, domain: "STOCK", sourceId, source: row, receipt })
+  return receipt
+}
+
 export function postOpeningStock(input: OpeningStockInput, client: DbClient = db) {
   const quantity = decimal3(input.quantity)
   const sourceId = `${input.itemId}:${input.locationId}`
@@ -955,13 +1005,13 @@ export function postManualStockCorrection(input: ManualStockCorrectionInput, cli
 }
 
 export async function postGoodsReceiptStock(input: GoodsReceiptStockInput, client: DbClient = db) {
-  if (input.receiptRecognitionNotRequired) {
+  if (input.receiptRecognitionNotRequired || input.lines.some(line => line.acquisitionValue !== undefined)) {
     const source = await readReceiptRecognitionSource(client, input.organizationId, input.receiptId)
-    if (!source || !source.inventoryValue.eq(0) || source.sourceHash !== input.documentHash || source.manifest.effectiveAt !== input.occurredAt?.toISOString() || source.manifest.acceptance.actorId !== input.receivedById || input.lines.some(line => {
+    if (!source || Boolean(input.receiptRecognitionNotRequired) !== source.inventoryValue.eq(0) || source.sourceHash !== input.documentHash || source.manifest.effectiveAt !== input.occurredAt?.toISOString() || source.manifest.acceptance.actorId !== input.receivedById || input.lines.some(line => {
       const retained = source.manifest.lines.find(candidate => candidate.receiptLineId === line.goodsReceiptLineId)
-      return !retained?.stockTracked || retained.itemId !== line.itemId || source.manifest.locationId !== line.locationId || !decimal3(retained.quantity).eq(line.quantity) || !money(retained.unitCost).eq(line.unitCost) || retained.batchNumber !== (line.batchNumber ?? null) || retained.expiryDate !== (line.expiryDate?.toISOString() ?? null) || hashBusinessPayload(retained.serialNumbers) !== hashBusinessPayload([...(line.serialNumbers ?? [])].sort())
+      return !retained?.stockTracked || retained.itemId !== line.itemId || source.manifest.locationId !== line.locationId || !decimal3(retained.quantity).eq(line.quantity) || !money(retained.unitCost).eq(line.unitCost) || retained.commercialBasis?.net !== line.acquisitionValue || retained.batchNumber !== (line.batchNumber ?? null) || retained.expiryDate !== (line.expiryDate?.toISOString() ?? null) || hashBusinessPayload(retained.serialNumbers) !== hashBusinessPayload([...(line.serialNumbers ?? [])].sort())
     })) {
-      throw new BusinessRuleError("A zero-value stock receipt must retain its verified acceptance source.")
+      throw new BusinessRuleError("The stock receipt must retain its verified acceptance and valuation source.")
     }
   }
   const idempotencyKey =
@@ -993,6 +1043,7 @@ export async function postGoodsReceiptStock(input: GoodsReceiptStockInput, clien
         locationId: line.locationId,
         quantity: line.quantity,
         unitCost: line.unitCost,
+        acquisitionValue: line.acquisitionValue,
         movementType: TransactionType.PURCHASE_RECEIPT,
         referenceType: TransactionReferenceType.GOODS_RECEIPT,
         referenceId: input.receiptId,
@@ -1100,6 +1151,7 @@ export function postPOSStockIssue(input: POSStockIssueInput, client: DbClient = 
         itemId: line.itemId,
         locationId: input.locationId,
         quantity: decimal3(line.quantity).times(-1),
+        usePOSValuePool: true,
         unitCost: line.unitCost,
         movementType: TransactionType.SALE,
         referenceType: TransactionReferenceType.SALES_ORDER,
@@ -1119,7 +1171,24 @@ export function postPOSStockReturn(input: POSStockReturnInput, client: DbClient 
     input.idempotencyKey ??
     `pos-${input.correctionType.toLowerCase()}-stock:${input.organizationId}:${input.saleId}`
 
-  return postInventoryStockEvent(
+  const run = async (tx: Prisma.TransactionClient) => {
+    const originals = await tx.inventoryTransaction.findMany({
+      where: { organizationId: input.organizationId, locationId: input.locationId,
+        referenceType: TransactionReferenceType.SALES_ORDER, referenceId: input.saleId, type: TransactionType.SALE },
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    })
+    const remaining = [...originals]
+    const lines = input.lines.map(line => {
+      const quantity = decimal3(line.quantity)
+      const index = remaining.findIndex(movement => movement.itemId === line.itemId && decimal3(movement.quantity).negated().eq(quantity))
+      const movement = index >= 0 ? remaining.splice(index, 1)[0] : null
+      if (!quantity.gt(0) || !movement || money(movement.totalCost).lt(0)) {
+        throw new BusinessRuleError("The original sale stock allocation requires review before restoration.", "REVIEW_REQUIRED")
+      }
+      return { ...line, posReturnValuation: { movementId: movement.id, totalCost: money(movement.totalCost) } }
+    })
+    if (remaining.length) throw new BusinessRuleError("The full sale stock allocation requires review before restoration.", "REVIEW_REQUIRED")
+    return postInventoryStockEvent(
     {
       organizationId: input.organizationId,
       eventType: input.correctionType === "VOID" ? "pos.void.stock_returned" : "pos.refund.stock_returned",
@@ -1137,11 +1206,12 @@ export function postPOSStockReturn(input: POSStockReturnInput, client: DbClient 
         orderNumber: input.orderNumber,
         reason: input.reason,
       },
-      lines: input.lines.map((line) => ({
+      lines: lines.map((line) => ({
         itemId: line.itemId,
         locationId: input.locationId,
         quantity: line.quantity,
         unitCost: line.unitCost,
+        posReturnValuation: line.posReturnValuation,
         movementType: TransactionType.SALES_RETURN,
         referenceType: TransactionReferenceType.SALES_ORDER,
         referenceId: input.saleId,
@@ -1149,8 +1219,10 @@ export function postPOSStockReturn(input: POSStockReturnInput, client: DbClient 
         notes: line.notes ?? input.reason,
       })),
     },
-    client,
+    tx,
   )
+  }
+  return hasTransaction(client) ? client.$transaction(run) : run(client)
 }
 
 export function postDeliveryOrderReservation(
@@ -1225,35 +1297,51 @@ export function postDeliveryOrderStockIssue(
   )
 }
 
-export function postInventoryReservation(input: InventoryReservationInput, client: DbClient = db) {
-  const idempotencyKey =
-    input.idempotencyKey ??
-    `stock-reservation:${input.organizationId}:${input.itemId}:${input.locationId}:${input.actorId}:${Date.now()}`
+export async function postInventoryReservation(input: InventoryReservationInput, client: DbClient = db) {
+  return postInventoryReservationBatch({ ...input, lines: [{ itemId: input.itemId, locationId: input.locationId, quantity: input.quantity }] }, client)
+}
+
+export async function postInventoryReservationBatch(input: InventoryReservationBatchInput, client: DbClient = db) {
+  if (typeof input.idempotencyKey !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$/.test(input.idempotencyKey)) {
+    throw new BusinessRuleError("A retained reservation request identity is required before reserving stock.", "REVIEW_REQUIRED")
+  }
+  if (!input.actorId || !Array.isArray(input.lines) || input.lines.length < 1 || input.lines.length > 100) {
+    throw new BusinessRuleError("A reservation requires an actor and between 1 and 100 stock lines.")
+  }
+  for (const line of input.lines) {
+    const quantity = new Prisma.Decimal(line.quantity)
+    if (!line.itemId || !line.locationId || !quantity.isFinite() || !quantity.gt(0) || !quantity.eq(decimal3(quantity))) {
+      throw new BusinessRuleError("Reservation lines require an item, location and positive quantity with at most three decimal places.")
+    }
+  }
+  // One event owns the entire intent; all lines share its transaction and replay hash.
+  const lines = [...input.lines].sort((a, b) => a.locationId.localeCompare(b.locationId) || a.itemId.localeCompare(b.itemId))
 
   return postInventoryStockEvent(
     {
       organizationId: input.organizationId,
       eventType: "stock.reservation.posted",
-      idempotencyKey,
+      idempotencyKey: input.idempotencyKey,
       actorId: input.actorId,
       occurredAt: input.occurredAt,
       requiresOpenPeriod: false,
       outboxEventName: "inventory.reservation.posted",
       metadata: {
+        actorId: input.actorId,
         reason: input.reason,
         expiresAt: input.expiresAt?.toISOString() ?? null,
       },
-      lines: [
+      lines: lines.map(line => (
         {
-          itemId: input.itemId,
-          locationId: input.locationId,
-          quantity: input.quantity,
+          itemId: line.itemId,
+          locationId: line.locationId,
+          quantity: line.quantity,
           movementType: TransactionType.RESERVATION,
           referenceType: TransactionReferenceType.MANUAL,
           referenceNumber: "INVENTORY_RESERVATION",
           notes: input.reason,
-        },
-      ],
+        }
+      )),
     },
     client,
   )

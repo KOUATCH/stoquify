@@ -1,0 +1,54 @@
+{
+  "began": "2026-11-11T14:07:55.473Z",
+  "ended": "2026-11-11T14:08:03.105Z",
+  "classification": "Pure/mocked offline deployment-admission tests; no provider, database, hosted runtime or production qualification",
+  "phase": "before",
+  "expectedFailure": true,
+  "exitCode": 1,
+  "error": null,
+  "signal": null,
+  "counts": {
+    "tests": 19,
+    "pass": 15,
+    "fail": 4,
+    "skipped": 0,
+    "todo": 0
+  },
+  "unchangedInputs": true,
+  "inputs": [
+    {
+      "path": "scripts/hardened-close-production-readiness.cjs",
+      "sha256": "82d88b392cf64f230ff3d96e0e3e1077e7cd268868f62bb37184230911fa5196"
+    },
+    {
+      "path": "scripts/__tests__/hardened-close-production-readiness.node-test.cjs",
+      "sha256": "4ea75dca4075a8ca9880946e77288bf0f86526f3cd20c7994a67c28507e2e4c3"
+    },
+    {
+      "path": "config/release/hardened-close-production.template.json",
+      "sha256": "d2e45c8bf5483d41a5b89d154d9496351d1b8963c749ef539fdeae9fd816a8e6"
+    },
+    {
+      "path": "scripts/release-secret-preflight.js",
+      "sha256": "d20efac2da7ef1767cffb0bf19a9825b9a41310edee1b64bd4248dcaa1638729"
+    },
+    {
+      "path": "scripts/prisma-production-migration-gate.js",
+      "sha256": "1ee29e6674f53eec17c473bb225bd6e5d83bfaa1453e5490ca4259eec3e72008"
+    },
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"
+    },
+    {
+      "path": "scripts/local-gates-network.cjs",
+      "sha256": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e"
+    }
+  ],
+  "privateOutput": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-production-readiness-20261111-8b12ea11\\before\\output.private.log",
+    "sha256": "7e657b7864de07eb9d0cd6cf57c0f069ed5fa4af5400319917380e5292f2533c"
+  },
+  "temporaryDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-production-readiness-20261111-8b12ea11\\before\\temp",
+  "runnerSha256": "aa23491682d0bad68119780b6d71c1ae075bc716c3e4dfee0c3d78219dedd041"
+}

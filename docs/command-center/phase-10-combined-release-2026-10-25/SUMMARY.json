@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-10-25T16:41:24.691Z",
+  "localVerificationPassed": true,
+  "productionReleaseApproved": false,
+  "productionAccess": false,
+  "capturedFiles": 7719,
+  "sourceFingerprintSha256": "98eabe646f33b854a9f31b96bf23de52aedad8417d9a043175a9a941fd52eb2f",
+  "tests": {
+    "mockedPureComponent": 744,
+    "realPostgres": 64,
+    "total": 808
+  },
+  "buildPassed": true,
+  "migrations": 120,
+  "unexpectedSchemaDifferences": 0,
+  "browser": {
+    "checks": 40,
+    "audits": 24,
+    "violations": 0,
+    "nativeJourneyChecks": 14,
+    "rollbackChecks": 5,
+    "publicChecks": 18
+  },
+  "workspaceMatchesCandidate": true,
+  "sharedClientUnchanged": true,
+  "disposableEnvironmentStopped": true,
+  "openGates": [
+    "Human screen-reader and native zoom acceptance",
+    "Representative-user productivity and realistic-load capacity",
+    "Clean locked-install trusted release artifact and production target/policy controls",
+    "Production-policy HTTPS and live-delivery requirements; providers intentionally disabled here",
+    "Approved policy content for the new publication-pending public routes before public launch"
+  ],
+  "evidenceClasses": [
+    "source inspection",
+    "mocked/pure/component",
+    "real PostgreSQL",
+    "authenticated browser",
+    "visual screenshot inspection",
+    "human acceptance remains open"
+  ]
+}

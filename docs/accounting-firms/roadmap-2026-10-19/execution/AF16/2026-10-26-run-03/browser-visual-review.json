@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-26",
+  "passedWithinInspectedScope": true,
+  "method": "Direct image inspection of all eight retained browser screenshots",
+  "screenshots": [
+    "cutover-approval-form-en-1440.png",
+    "cutover-approved-en-1440.png",
+    "cutover-rollback-retry-en-1440.png",
+    "cutover-active-en-1440.png",
+    "cutover-active-en-390.png",
+    "cutover-active-fr-1440.png",
+    "cutover-active-fr-390.png",
+    "cutover-denied-en-1440.png"
+  ],
+  "observations": [
+    "Approval, pending apply, uncertain outcome and applied/reconciled states are visually distinct and include text labels",
+    "Keyboard focus is visible on the approval conclusion and confirmation checkbox",
+    "French and English retained-result text and long hashes wrap within the mobile panel",
+    "No visible overlap or horizontal clipping in inspected panels; screenshots are viewport captures at their recorded scroll positions",
+    "The module-denial screenshot clears the controlled-cutover result panel; the separate preview panel remains visible, so this is not a whole-page data-clearing claim"
+  ],
+  "limitations": "Visual inspection of these captured states only. Six automated axe scans are recorded separately. No screen-reader or whole-application accessibility certification."
+}

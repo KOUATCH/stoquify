@@ -1,0 +1,38 @@
+{
+  "started": "2026-11-10T15:10:56.514Z",
+  "finished": "2026-11-10T15:11:10.145Z",
+  "args": [
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\unit-a4c675dcdd\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--runTestsByPath",
+    "services/accounting/__tests__/customer-settlement.service.test.ts",
+    "services/payments/__tests__/customer-settlement-payment-authority.service.test.ts",
+    "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts",
+    "services/pos/__tests__/pos.service.test.ts",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\unit-a4c675dcdd\\results.json"
+  ],
+  "exitCode": 0,
+  "error": null,
+  "passed": true,
+  "passedTests": 155,
+  "failedTests": 0,
+  "skipped": 0,
+  "unchangedInputs": true,
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-monthly-qualification-2026-11-10\\unit-a4c675dcdd",
+  "suiteHashes": {
+    "services/accounting/__tests__/customer-settlement.service.test.ts": "8399d46123ce9082e53f7945be5c922465eb1639686fc24d9a5ca84ad8480362",
+    "services/payments/__tests__/customer-settlement-payment-authority.service.test.ts": "38df32b19a32fda7a13667ba4a6a17d2d987bebbbd264aa0ccf261fa676a7fee",
+    "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts": "05a89ae10abba804974f45337b9f6c8f4ab8b5e7e6de7ec9be0fdd8ba7ea54ef",
+    "services/pos/__tests__/pos.service.test.ts": "f550afa3ab7ea91912f74ffb401f1758bd73656e1a3cbf1d19e83ef8935aa589",
+    "scripts/local-gates-network.cjs": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e",
+    "package-lock.json": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+  },
+  "runnerSha256": "437b4906ac2f134b2e3f13def72f88148e94e2fc6a390cb0e404869274894dd6",
+  "configSha256": "276e6e43ddb8e28650c3e1c54773f66889299a485e919c386dae6b99b8617701",
+  "evidenceClass": "Mocked unit / protect adapter boundaries; no PostgreSQL/browser"
+}

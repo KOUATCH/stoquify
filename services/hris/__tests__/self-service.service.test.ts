@@ -1,3 +1,4 @@
+jest.mock("@/services/hris/self-service-boundary.service",()=>({selfServiceTransaction:(_client:unknown,fn:(tx:unknown)=>unknown)=>fn({}),currentHrisActor:async(_tx:unknown,actor:unknown)=>actor,lockedOwnEmployee:async()=>({id:"synthetic-own"})}))
 jest.mock("@/services/hris/employee.service", () => ({
   getOwnHrisEmployeeProfile: jest.fn(),
 }))
@@ -137,9 +138,9 @@ describe("HRIS employee self-service read model", () => {
 
     const result = await getHrisEmployeeSelfService(input)
 
-    expect(mockOwnProfile).toHaveBeenCalledWith(input)
-    expect(mockOwnPayment).toHaveBeenCalledWith(input)
-    expect(mockOwnAttendance).toHaveBeenCalledWith({ ...input, limit: 1 })
+    expect(mockOwnProfile).toHaveBeenCalledWith(input,expect.anything())
+    expect(mockOwnPayment).toHaveBeenCalledWith(input,expect.anything())
+    expect(mockOwnAttendance).toHaveBeenCalledWith({ ...input, limit: 1 },expect.anything())
     expect(result.profile).toMatchObject({
       employeeNumber: "EMP-001",
       displayName: "Alice Ngono",

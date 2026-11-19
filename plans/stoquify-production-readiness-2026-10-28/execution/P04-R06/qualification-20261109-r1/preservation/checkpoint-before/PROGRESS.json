@@ -1,0 +1,79 @@
+{
+  "package_id": "P04-R06",
+  "updated_at": "2026-11-10T08:48:35.993Z",
+  "authorization": "AUTHORIZATION.md",
+  "status": "implemented_pending_real_session_database_browser_qualification",
+  "source_before": "inventory/source-before-manifest.json",
+  "authority_map": "inventory/authority-map.json",
+  "source_after": "inventory/source-after-manifest-v3.json",
+  "source_review": "independent-review/REPAIR-SOURCE-ADMISSION-v2.json",
+  "mocked_tests": {
+    "passed": 87,
+    "suites": 4,
+    "failed": 0,
+    "skipped": 0,
+    "result": "unit/attempt03/jest.json",
+    "review": "independent-review/UNIT-OUTCOME-REVIEW-v3.json",
+    "prior_revisions": [
+      "unit/attempt01/jest.json:83",
+      "unit/attempt02/jest.json:87"
+    ]
+  },
+  "full_app": {
+    "status": "first_build_failed_native_memory_exhaustion; current-source_successor_preparation; retry_held_for_host_memory_capacity",
+    "candidate": "p04-r06-full-ecf7a96c3112",
+    "database": {
+      "host": "127.0.0.1",
+      "port": 55516,
+      "migrations": 122,
+      "empty_business_tables_before_seed": 246,
+      "synthetic_actors": 10,
+      "organizations": 2,
+      "preseeded_sessions": 0,
+      "evidence": "independent-review/PREPARATION-OUTCOME-REVIEW.json",
+      "resume_health": "Owned server exists; resumed state checking pending"
+    },
+    "planned_groups": 58,
+    "inherited_failure_groups": 9,
+    "runtime_recipe": "independent-review/RUNTIME-RECIPE-ADMISSION-v2.json",
+    "build_recipe": "independent-review/PREPARATION-BUILD-RECIPE-ADMISSION-v2.json",
+    "copy": {
+      "files": 152806,
+      "bytes_class": "2.792 GiB",
+      "failures": 0,
+      "mismatches": 0,
+      "extras": 0,
+      "verification": "Complete destination and archived dependency byte equality passed",
+      "evidence": "dependency-reconciliation.json"
+    },
+    "optimization": {
+      "serial": "Preserved as intentionally interrupted/incomplete after copy; no schema-failure or integrity-pass claim",
+      "parallel": "Complete full-byte verification passed; both trees unchanged relative to initial manifest"
+    },
+    "candidate_context": "candidate-context.json",
+    "source_files": 9723,
+    "critical_source_inputs": 63,
+    "first_build_result": "build-result.json",
+    "first_build_failure": "Compilation succeeded; native V8 Fatal process out of memory: Zone during typecheck. No sealed artifact or session qualification."
+  },
+  "parent_p04": "blocked",
+  "production_readiness": "blocked",
+  "pending": [
+    "Full isolated build and artifact identity",
+    "Actual signed legacy-cache denial and authorized-positive tests",
+    "Per-request native database evidence",
+    "Rendered browser continuity",
+    "Independent full outcome review and cleanup",
+    "Final work-register publication"
+  ],
+  "critical_source_inputs": 63,
+  "next_review_trigger": "Current resource/process/source refresh and bounded retry recipe",
+  "resume_date": "2026-11-10",
+  "current_source_note": "One concurrent type-only annotation in lib/auth.ts; current c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5 differs from first candidate. Preserve and rebind before retry.",
+  "memory_blocker": {
+    "free_commit_gib": 2.84,
+    "free_physical_gib": 3.7,
+    "observation": "Resumed read-only host check; no R06 Node process remains",
+    "action": "User asked to close unused memory-heavy applications; do not stop unrelated processes. Retry requires fresh capacity admission."
+  }
+}

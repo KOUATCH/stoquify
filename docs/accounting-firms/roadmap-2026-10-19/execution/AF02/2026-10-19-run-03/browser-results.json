@@ -1,0 +1,80 @@
+{
+  "synthetic": true,
+  "authentication": "Better Auth email/password; real protected actions and PostgreSQL",
+  "checks": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "keyboardSubmitAndHeadingRecovery": true,
+      "geometry": {
+        "client": 1112,
+        "scroll": 1112
+      },
+      "axeViolations": []
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "keyboardSubmitAndHeadingRecovery": true,
+      "geometry": {
+        "client": 358,
+        "scroll": 358
+      },
+      "axeViolations": []
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "keyboardSubmitAndHeadingRecovery": true,
+      "geometry": {
+        "client": 1112,
+        "scroll": 1112
+      },
+      "axeViolations": []
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "keyboardSubmitAndHeadingRecovery": true,
+      "geometry": {
+        "client": 358,
+        "scroll": 358
+      },
+      "axeViolations": []
+    },
+    {
+      "traversal": "105 unique authorized clients / 6 real service pages"
+    },
+    {
+      "transientFailure": "one browser transport failure injected; private cards removed and real action retry succeeds"
+    },
+    {
+      "evidenceNavigation": "real guarded portal route; client and period preserved"
+    },
+    {
+      "revokedGrant": "removed on refresh; direct portal revisit does not expose client name"
+    },
+    {
+      "permissionLossAndSessionRevocation": "private cards removed; existing server guard/login recovery respected; restored permission reload succeeds"
+    },
+    {
+      "moduleLock": "existing server route gate prevents portfolio mount"
+    }
+  ],
+  "screenshots": [
+    "portfolio-en-1440.png",
+    "portfolio-en-390.png",
+    "portfolio-fr-1440.png",
+    "portfolio-fr-390.png",
+    "transport-failure-retry.png",
+    "portal-client-period.png",
+    "changed-grant-empty.png",
+    "permission-denied.png",
+    "stale-session.png",
+    "module-locked-en.png",
+    "module-locked-fr.png"
+  ],
+  "pageErrors": [],
+  "passed": true,
+  "sessionsRevokedAfterCapture": true
+}

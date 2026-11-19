@@ -1,0 +1,2 @@
+const path=require('node:path');const root=path.resolve(__dirname,'../../..');
+module.exports=require(path.join(root,'node_modules/next/jest'))()({rootDir:root,testEnvironment:'node',roots:['<rootDir>/services/assurance/__tests__'],testMatch:['**/assurance-assignment.postgres.test.ts','**/assurance-incident-identity.postgres.test.ts'],moduleNameMapper:{'^@/(.*)$':'<rootDir>/$1'},setupFilesAfterEnv:[],testTimeout:45000,maxWorkers:1});

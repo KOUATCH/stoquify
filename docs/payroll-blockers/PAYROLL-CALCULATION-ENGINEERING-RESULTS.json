@@ -1,0 +1,64 @@
+{
+  "schema": "stoquify-payroll-blockers-engineering.v2",
+  "generatedAt": "2026-11-02T16:31:06.083876+00:00",
+  "contractId": "STOQUIFY-CM-PAYROLL-CALCULATION-2026-11-02-DRAFT-4",
+  "selectedSkill": "aqstoqflow-payroll-kernel-hardener",
+  "phase": "Phase 0: real transaction verification and harness repair",
+  "statutoryApprovalRecorded": false,
+  "productionUseAllowed": false,
+  "selection": {
+    "id": "ED-05",
+    "decisions": [
+      "D-12",
+      "D-13",
+      "D-14"
+    ],
+    "tasks": [
+      "ENG-04",
+      "ENG-07"
+    ],
+    "status": "SCOPED_REAL_POSTGRES_VERIFIED",
+    "selection": "Real PostgreSQL: 7/7 service transaction tests and 3/3 SQL approval/rollback checks passed on a fresh local database after 120 migrations. Existing mocked/unit regression: 152/152 tests across five suites passed. Disposable-target guards: 7/7 pure checks passed.",
+    "limit": "Full new-payroll creation with admitted statutory rules, cross-month history membership, approval-time stale-history comparison, real network-loss testing, and the complete downstream lifecycle remain unverified. The acknowledgement-loss test injects a client error after a real commit; it does not cut the network. SQL approval checks exercise migrations/triggers directly, not the full authenticated approval service.",
+    "evidence": "docs/payroll-blockers/evidence/postgres-run.json"
+  },
+  "database": {
+    "file": "docs/payroll-blockers/evidence/postgres-run.json",
+    "sha256": "644d855b8bef20d65bf8259bd4dfab27e1f12b9e0045bfe985574a271a636544",
+    "migrations": 120,
+    "serviceTests": 7,
+    "sqlChecks": 3,
+    "applicationDatabaseChanged": false
+  },
+  "unit": {
+    "passed": 152,
+    "suites": 5,
+    "file": "docs/payroll-blockers/evidence/unit-regression.json",
+    "sha256": "2de13a4f9085d98ca4cb0addbe17ae6d8481a188bf107f82cd8931d7436f117d"
+  },
+  "guardChecks": {
+    "passed": 7,
+    "file": "docs/payroll-blockers/evidence/target-guards.tap"
+  },
+  "workflow": "Initial PASS; 2 November recheck FAIL due unrelated test:dev:startup -> next.config.mjs fingerprint drift. Not repaired in this scope.",
+  "runtimeChange": "Only export/document existing transaction helper for direct database tests; implementation body unchanged.",
+  "harnessFix": "Avoid sequential preparation deadlock under organization close-source triggers; synchronize initial snapshots, finish each contender independently, bound timeouts, assert valid serialization/uniqueness conflict.",
+  "limits": "Full new-payroll creation with admitted statutory rules, cross-month history membership, approval-time stale-history comparison, real network-loss testing, and the complete downstream lifecycle remain unverified. The acknowledgement-loss test injects a client error after a real commit; it does not cut the network. SQL approval checks exercise migrations/triggers directly, not the full authenticated approval service.",
+  "sourceHashes": {
+    "services/payroll/payroll-control.service.ts": "410fe7b962e51ee8f043d1ed14cbdd7084079cb3f873557cd01f49716ded2723",
+    "scripts/run-payroll-blockers-postgres.cjs": "09582fe77447a7bce6ad77674ac0dd4ba648b2cf21106c37ffb9e29be1557a95",
+    "scripts/payroll-blockers-postgres-target.cjs": "f7a29b4388ba31e2203793dd1764924cfa8e2a5dfdbfde1b49423a08fe8d3cfe",
+    "scripts/jest.payroll-blockers-postgres.config.cjs": "3d904ffe39354ae457ba9c0155bc17eeb1343c78a85f8fc632ec4a2c6f418a8b",
+    "tests/postgres/payroll-blockers/transactions.test.ts": "166c9ea5aa0029dd1037b64db2ad22acbfb02f362085d649168ecc42b07a3995",
+    "scripts/payroll-trust-spine-postgres-certification.js": "177db62483a4d07f40fc298d286d11bf564aaac2aa94c6da02afbc5fc11affe1"
+  },
+  "remainingParentTasks": [
+    "ENG-02",
+    "ENG-03",
+    "ENG-04",
+    "ENG-05",
+    "ENG-06",
+    "ENG-07",
+    "ENG-08"
+  ]
+}

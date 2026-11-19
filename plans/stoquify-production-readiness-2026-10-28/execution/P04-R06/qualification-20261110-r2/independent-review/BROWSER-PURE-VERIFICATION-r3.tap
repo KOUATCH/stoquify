@@ -1,0 +1,412 @@
+TAP version 13
+# Subtest: denied bytes reject an organization-only private leak
+ok 1 - denied bytes reject an organization-only private leak
+  ---
+  duration_ms: 3.7089
+  type: 'test'
+  ...
+# Subtest: denied bytes reject actor-id-only and email-only private leaks
+ok 2 - denied bytes reject actor-id-only and email-only private leaks
+  ---
+  duration_ms: 8.2785
+  type: 'test'
+  ...
+# Subtest: denied bytes accept explicitly classified safe content
+ok 3 - denied bytes accept explicitly classified safe content
+  ---
+  duration_ms: 0.5999
+  type: 'test'
+  ...
+# Subtest: denied bytes reject absent or empty classification
+ok 4 - denied bytes reject absent or empty classification
+  ---
+  duration_ms: 0.404
+  type: 'test'
+  ...
+# Subtest: canceled original bytes require exact profile consumer, retaining strict failure
+ok 5 - canceled original bytes require exact profile consumer, retaining strict failure
+  ---
+  duration_ms: 1.9487
+  type: 'test'
+  ...
+# Subtest: rejects missing bridge
+ok 6 - rejects missing bridge
+  ---
+  duration_ms: 0.3267
+  type: 'test'
+  ...
+# Subtest: rejects wrong response id
+ok 7 - rejects wrong response id
+  ---
+  duration_ms: 0.3148
+  type: 'test'
+  ...
+# Subtest: rejects wrong full URL
+ok 8 - rejects wrong full URL
+  ---
+  duration_ms: 0.2886
+  type: 'test'
+  ...
+# Subtest: rejects wrong method
+ok 9 - rejects wrong method
+  ---
+  duration_ms: 0.7225
+  type: 'test'
+  ...
+# Subtest: rejects ambiguous response
+ok 10 - rejects ambiguous response
+  ---
+  duration_ms: 1.0661
+  type: 'test'
+  ...
+# Subtest: rejects redirect hop
+ok 11 - rejects redirect hop
+  ---
+  duration_ms: 0.6379
+  type: 'test'
+  ...
+# Subtest: rejects unfinished original
+ok 12 - rejects unfinished original
+  ---
+  duration_ms: 0.2729
+  type: 'test'
+  ...
+# Subtest: rejects downstream abort
+ok 13 - rejects downstream abort
+  ---
+  duration_ms: 0.231
+  type: 'test'
+  ...
+# Subtest: rejects stream unsupported
+ok 14 - rejects stream unsupported
+  ---
+  duration_ms: 0.239
+  type: 'test'
+  ...
+# Subtest: rejects overflow
+ok 15 - rejects overflow
+  ---
+  duration_ms: 0.3077
+  type: 'test'
+  ...
+# Subtest: rejects missing stream event
+ok 16 - rejects missing stream event
+  ---
+  duration_ms: 0.437
+  type: 'test'
+  ...
+# Subtest: rejects duplicate browser bytes
+ok 17 - rejects duplicate browser bytes
+  ---
+  duration_ms: 12.7359
+  type: 'test'
+  ...
+# Subtest: rejects wrong byte hash
+ok 18 - rejects wrong byte hash
+  ---
+  duration_ms: 0.3794
+  type: 'test'
+  ...
+# Subtest: rejects wrong actor flags
+ok 19 - rejects wrong actor flags
+  ---
+  duration_ms: 0.2285
+  type: 'test'
+  ...
+# Subtest: rejects disk cache
+ok 20 - rejects disk cache
+  ---
+  duration_ms: 0.1922
+  type: 'test'
+  ...
+# Subtest: rejects unobserved terminal
+ok 21 - rejects unobserved terminal
+  ---
+  duration_ms: 0.1901
+  type: 'test'
+  ...
+# Subtest: rejects real network failure
+ok 22 - rejects real network failure
+  ---
+  duration_ms: 3.4872
+  type: 'test'
+  ...
+# Subtest: rejects blocked cancellation
+ok 23 - rejects blocked cancellation
+  ---
+  duration_ms: 0.3342
+  type: 'test'
+  ...
+# Subtest: rejects wrong compiled action
+ok 24 - rejects wrong compiled action
+  ---
+  duration_ms: 0.9122
+  type: 'test'
+  ...
+# Subtest: rejects wrong CDP action
+ok 25 - rejects wrong CDP action
+  ---
+  duration_ms: 0.5265
+  type: 'test'
+  ...
+# Subtest: rejects missing CDP action
+ok 26 - rejects missing CDP action
+  ---
+  duration_ms: 0.6716
+  type: 'test'
+  ...
+# Subtest: rejects wrong actor
+ok 27 - rejects wrong actor
+  ---
+  duration_ms: 0.4366
+  type: 'test'
+  ...
+# Subtest: rejects wrong tenant
+ok 28 - rejects wrong tenant
+  ---
+  duration_ms: 0.2745
+  type: 'test'
+  ...
+# Subtest: rejects missing root result
+ok 29 - rejects missing root result
+  ---
+  duration_ms: 0.2685
+  type: 'test'
+  ...
+# Subtest: rejects different browser root
+ok 30 - rejects different browser root
+  ---
+  duration_ms: 0.4321
+  type: 'test'
+  ...
+# Subtest: rejects unconsumed profile
+ok 31 - rejects unconsumed profile
+  ---
+  duration_ms: 0.4432
+  type: 'test'
+  ...
+# Subtest: rejects stale DOM
+ok 32 - rejects stale DOM
+  ---
+  duration_ms: 18.1853
+  type: 'test'
+  ...
+# Subtest: rejects wrong displayed fields
+ok 33 - rejects wrong displayed fields
+  ---
+  duration_ms: 0.3787
+  type: 'test'
+  ...
+# Subtest: rejects wrong checked time
+ok 34 - rejects wrong checked time
+  ---
+  duration_ms: 0.2816
+  type: 'test'
+  ...
+# Subtest: rejects wrong consumed route
+ok 35 - rejects wrong consumed route
+  ---
+  duration_ms: 1.4913
+  type: 'test'
+  ...
+# Subtest: rejects DOM after observation window
+ok 36 - rejects DOM after observation window
+  ---
+  duration_ms: 0.3033
+  type: 'test'
+  ...
+# Subtest: rejects request before observation window
+ok 37 - rejects request before observation window
+  ---
+  duration_ms: 0.2532
+  type: 'test'
+  ...
+# Subtest: rejects terminal before response
+ok 38 - rejects terminal before response
+  ---
+  duration_ms: 0.2436
+  type: 'test'
+  ...
+# Subtest: rejects terminal after observation window
+ok 39 - rejects terminal after observation window
+  ---
+  duration_ms: 0.2302
+  type: 'test'
+  ...
+# Subtest: rejects missing observation window
+ok 40 - rejects missing observation window
+  ---
+  duration_ms: 0.2553
+  type: 'test'
+  ...
+# Subtest: rejects two DOM events matching one response
+ok 41 - rejects two DOM events matching one response
+  ---
+  duration_ms: 0.2593
+  type: 'test'
+  ...
+# Subtest: rejects same formatted-time responses competing for one DOM event
+ok 42 - rejects same formatted-time responses competing for one DOM event
+  ---
+  duration_ms: 0.2618
+  type: 'test'
+  ...
+# Subtest: rejects missing response-to-DOM uniqueness set
+ok 43 - rejects missing response-to-DOM uniqueness set
+  ---
+  duration_ms: 0.2285
+  type: 'test'
+  ...
+# Subtest: required cancellation cannot pass on bytes alone
+ok 44 - required cancellation cannot pass on bytes alone
+  ---
+  duration_ms: 0.209
+  type: 'test'
+  ...
+# Subtest: speculative cancellation requires established purpose and same-context real navigation
+ok 45 - speculative cancellation requires established purpose and same-context real navigation
+  ---
+  duration_ms: 0.3836
+  type: 'test'
+  ...
+# Subtest: CDP stream keeps prefix before chunks even when chunks arrive before enable reply
+ok 46 - CDP stream keeps prefix before chunks even when chunks arrive before enable reply
+  ---
+  duration_ms: 4.5462
+  type: 'test'
+  ...
+# Subtest: binds only the root action result and emits hashes, not private field values
+ok 47 - binds only the root action result and emits hashes, not private field values
+  ---
+  duration_ms: 5.8812
+  type: 'test'
+  ...
+# Subtest: accepts inline action result and escaped literal dollar string
+ok 48 - accepts inline action result and escaped literal dollar string
+  ---
+  duration_ms: 1.1467
+  type: 'test'
+  ...
+# Subtest: resolves bounded action references with normalized hexadecimal ids
+ok 49 - resolves bounded action references with normalized hexadecimal ids
+  ---
+  duration_ms: 1.635
+  type: 'test'
+  ...
+# Subtest: does not treat embedded model-looking text as a Flight model
+ok 50 - does not treat embedded model-looking text as a Flight model
+  ---
+  duration_ms: 2.4454
+  type: 'test'
+  ...
+# Subtest: skips length-prefixed text and module hints before real action result
+ok 51 - skips length-prefixed text and module hints before real action result
+  ---
+  duration_ms: 1.1038
+  type: 'test'
+  ...
+# Subtest: rejects missing root action
+ok 52 - rejects missing root action
+  ---
+  duration_ms: 0.5262
+  type: 'test'
+  ...
+# Subtest: rejects unrelated successful model
+ok 53 - rejects unrelated successful model
+  ---
+  duration_ms: 1.4872
+  type: 'test'
+  ...
+# Subtest: rejects cyclic action
+ok 54 - rejects cyclic action
+  ---
+  duration_ms: 0.8664
+  type: 'test'
+  ...
+# Subtest: rejects duplicate model id
+ok 55 - rejects duplicate model id
+  ---
+  duration_ms: 1.0841
+  type: 'test'
+  ...
+# Subtest: rejects truncated frame
+ok 56 - rejects truncated frame
+  ---
+  duration_ms: 1.402
+  type: 'test'
+  ...
+# Subtest: rejects truncated binary frame
+ok 57 - rejects truncated binary frame
+  ---
+  duration_ms: 0.6165
+  type: 'test'
+  ...
+# Subtest: rejects failed action result
+ok 58 - rejects failed action result
+  ---
+  duration_ms: 0.8578
+  type: 'test'
+  ...
+# Subtest: rejects missing actor
+ok 59 - rejects missing actor
+  ---
+  duration_ms: 0.8609
+  type: 'test'
+  ...
+# Subtest: rejects unresolved actor
+ok 60 - rejects unresolved actor
+  ---
+  duration_ms: 0.5328
+  type: 'test'
+  ...
+# Subtest: rejects invalid snapshot
+ok 61 - rejects invalid snapshot
+  ---
+  duration_ms: 0.5556
+  type: 'test'
+  ...
+# Subtest: rejects invalid checked time
+ok 62 - rejects invalid checked time
+  ---
+  duration_ms: 0.6249
+  type: 'test'
+  ...
+# Subtest: rejects unexpected field
+ok 63 - rejects unexpected field
+  ---
+  duration_ms: 0.4896
+  type: 'test'
+  ...
+# Subtest: rejects unresolved field
+ok 64 - rejects unresolved field
+  ---
+  duration_ms: 0.4559
+  type: 'test'
+  ...
+# Subtest: rejects missing update authority
+ok 65 - rejects missing update authority
+  ---
+  duration_ms: 1.8792
+  type: 'test'
+  ...
+# Subtest: extracts exact compiled export binding without exposing manifest encryption key
+ok 66 - extracts exact compiled export binding without exposing manifest encryption key
+  ---
+  duration_ms: 0.7508
+  type: 'test'
+  ...
+# Subtest: rejects absent, ambiguous and wrong-worker compiled action bindings
+ok 67 - rejects absent, ambiguous and wrong-worker compiled action bindings
+  ---
+  duration_ms: 50.9706
+  type: 'test'
+  ...
+1..67
+# tests 67
+# suites 0
+# pass 67
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 393.2537

@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-10T18:50:15.576Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "structuralReviewOnly": true,
+  "publicationAdmitted": false,
+  "files": [
+    {
+      "path": "prepare-publication-baseline-attempt02.cjs",
+      "sha256": "e3782ba8c106da1a9f1a9f0518b818f07d9fa8c36a02694f4f6c8741c38e0862"
+    },
+    {
+      "path": "publication-baseline-attempt02.json",
+      "sha256": "bfcb7d63d3045216d0f827a73f96f110b41141a2ee5a3ac75d6722dd5dbde091"
+    },
+    {
+      "path": "publish-attempt02.cjs",
+      "sha256": "5466453a4604b7c4257223d09a0d96103fd165f2dbb381b872fcfa81604a3460"
+    },
+    {
+      "path": "validate-publication-attempt02.cjs",
+      "sha256": "434830bac23d8b4d37ebe498dcc8d40fd9a2a5a313c71e5e73451d487e3d099a"
+    },
+    {
+      "path": "publish.cjs",
+      "sha256": "bdb57f8420680ee56b0a0e0c836eb9e5bcd6af1044cc4a09d8ae16bc1ea4f250"
+    },
+    {
+      "path": "validate-publication.cjs",
+      "sha256": "43927bc0c4f6ff25e6782fb2a6dd00aa94fe3d7c476e3cf39457a3d010aa3db1"
+    }
+  ],
+  "baselineFiles": [
+    {
+      "path": "work-register.json",
+      "sha256": "b4241d2b0cc69f38decaa4b7cdfc517457a63f4bbee2a324b2a9a6770aac9b5f"
+    },
+    {
+      "path": "work-register.csv",
+      "sha256": "19616be86edcf34bd950b7df4a875ee989af6a450a61e0b01d6c3c24ac99a78a"
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "4d0565760b8d60d94736b86d9262c6cd8500bd8134c6725833f07c794a7f14be"
+    },
+    {
+      "path": "mutation-log.md",
+      "sha256": "ce5eb5b1a5e50f16c469bf673f4008632dbc7b58126363abb43a59291a2d039a"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "sha256": "03efa8f66e2d1180474a64138fb5ef6fd762a96533ab96347892d06f1328dc9c"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "sha256": "8a10d563fdca386f9548ccc0a754834b405ebde06a3cf417decc5d23342a9d88"
+    }
+  ],
+  "facts": [
+    "All six E32 baseline copies match both published E31 hashes and present shared bytes.",
+    "Successor publisher/validator diffs change only E32 and successor baseline/local-output names.",
+    "Exact unrelated-package/top-level/dependency/authorization/history preservation remains; R06 tasks are unchanged.",
+    "Verified branch still requires 58 logical obligations, 107 raw cases, 57 exact auxiliary proofs with candidate/artifact/receipt bindings."
+  ],
+  "limits": [
+    "No publication input or final actual outcome is admitted by this source review.",
+    "Current source capture is held separately for newly observed schema drift."
+  ],
+  "qualificationPassed": false
+}

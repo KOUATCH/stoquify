@@ -1,0 +1,75 @@
+{
+  "packageId": "P04-R06",
+  "startedAt": "2026-11-10T19:36:00.250Z",
+  "completedAt": "2026-11-10T19:36:00.571Z",
+  "evidenceClass": "mocked lifecycle control flow",
+  "command": {
+    "executable": "C:\\Program Files\\nodejs\\node.exe",
+    "args": [
+      "--test",
+      "--test-reporter=tap",
+      "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r3\\database-current\\lifecycle-guards.test.cjs"
+    ]
+  },
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "counts": {
+    "tests": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+  },
+  "passed": true,
+  "sourceUnchanged": true,
+  "before": [
+    {
+      "path": "lifecycle-guards.cjs",
+      "sha256": "b2be54a4b0f57f565f9936973966aa8f727e345a56033c9204612eb61f55e27e"
+    },
+    {
+      "path": "stop.cjs",
+      "sha256": "5e0f7be2b95713aafff2021ab0c1b218f60a1e9d64a2b1a8c006d8d9ff9d3892"
+    },
+    {
+      "path": "stop-before-qualification.cjs",
+      "sha256": "79c29453428e8b8ac670c3cb14873aa451fa5b554c0c9fb5cb754047a8e518d1"
+    },
+    {
+      "path": "lifecycle-guards.test.cjs",
+      "sha256": "f159d887d0a4920e1853cb630bc6be764ecf00fc1bfc2f0d308dd1bbc96cd457"
+    },
+    {
+      "path": "run-lifecycle-tests.cjs",
+      "sha256": "c9ec515e71955711280b86d022757b4794786da59a1d3dd67f88e616f4e5d092"
+    }
+  ],
+  "after": [
+    {
+      "path": "lifecycle-guards.cjs",
+      "sha256": "b2be54a4b0f57f565f9936973966aa8f727e345a56033c9204612eb61f55e27e"
+    },
+    {
+      "path": "stop.cjs",
+      "sha256": "5e0f7be2b95713aafff2021ab0c1b218f60a1e9d64a2b1a8c006d8d9ff9d3892"
+    },
+    {
+      "path": "stop-before-qualification.cjs",
+      "sha256": "79c29453428e8b8ac670c3cb14873aa451fa5b554c0c9fb5cb754047a8e518d1"
+    },
+    {
+      "path": "lifecycle-guards.test.cjs",
+      "sha256": "f159d887d0a4920e1853cb630bc6be764ecf00fc1bfc2f0d308dd1bbc96cd457"
+    },
+    {
+      "path": "run-lifecycle-tests.cjs",
+      "sha256": "c9ec515e71955711280b86d022757b4794786da59a1d3dd67f88e616f4e5d092"
+    }
+  ],
+  "stdoutSha256": "78bbcea700a444de452213cfdea87075a6cd3c0cf87a2050a69b33745ace1427",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "applicationEnvironmentLoaded": false,
+  "nativeDatabaseExecuted": false,
+  "browserExecuted": false,
+  "processTerminationExecuted": false
+}

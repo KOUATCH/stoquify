@@ -1,0 +1,55 @@
+{
+  "organizationId": "synth12_bafoussam",
+  "scenario": "synth12_bafoussam:delivery-fixture:v1",
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "status": "completed",
+  "occurredAt": "2026-10-28T20:00:00.000Z",
+  "actorId": "synth12_bafoussam_user_owner",
+  "orderId": "cmvtaznpm00ihma40rrc1jewm",
+  "orderNumber": "DO-F7D9618527F305",
+  "reservationId": "cmvtaznx600j2ma401ml4iuvs",
+  "goodsIssueId": "cmvtazo6d00jvma408pcxt7b1",
+  "billingOutcomeId": "cmvtazoth00l1ma40wjptrs6e",
+  "invoiceNumber": "INV-DA45C47AFF3305",
+  "receivableDocumentId": "cmvtazp1c00ljma40l93gfy17",
+  "customerLedgerEntryId": "cmvtazp4100lvma409k9mn0az",
+  "journalEntryIds": [
+    "cmvtazoj300kgma40jxjnbw0b",
+    "cmvtazox800l8ma40pm9tsskz"
+  ],
+  "inventoryTransactionIds": [
+    "cmvtaznzi00jdma40hfoikjfv",
+    "cmvtazo0i00jfma408b155dkg",
+    "cmvtazob300k6ma40av4qvm7k",
+    "cmvtazoe400k8ma40vx3o9s1m"
+  ],
+  "fiscalDocumentId": "cmvtazp6b00lxma40irymuj1r",
+  "total": "10800.00",
+  "currency": "XAF",
+  "paymentStatus": "PENDING",
+  "document": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\engineering\\database\\disposable-dataset-2026-10-28\\synthetic-documents\\synth12_bafoussam-delivery-fixture-v1.json",
+    "sha256": "97651d04453d077db0d6321d292bb60c170421dcc40624e8f9aaeb7a33a9785d"
+  },
+  "commandKeys": [
+    "synth12_bafoussam:delivery-fixture:v1:create",
+    "synth12_bafoussam:delivery-fixture:v1:confirm",
+    "synth12_bafoussam:delivery-fixture:v1:issue",
+    "synth12_bafoussam:delivery-fixture:v1:bill"
+  ],
+  "exactReplayVerified": true,
+  "checks": [
+    "full quantity conservation",
+    "consumed reservation",
+    "stock movement/source tie-out",
+    "balanced posted journals",
+    "unpaid receivable and customer ledger tie-out",
+    "applied command events",
+    "stable exact replay"
+  ],
+  "limitations": [
+    "Direct service fixture; no HTTP action or browser authorization claim",
+    "No real delivery or settlement occurred",
+    "Any fiscal artifact/submission is locally queued sandbox evidence; no certification worker or provider was run"
+  ]
+}

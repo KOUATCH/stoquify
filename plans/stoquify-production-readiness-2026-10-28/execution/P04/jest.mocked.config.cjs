@@ -1,0 +1,3 @@
+const path=require('node:path'),nextJest=require('next/jest');
+const root=path.resolve(__dirname,'../../../..'),paths=require('./mocked-test-paths.json');
+module.exports=nextJest()({rootDir:root,roots:[...new Set(paths.map(p=>path.dirname(path.join(root,p))))],testEnvironment:'node',setupFilesAfterEnv:[path.join(__dirname,'environment-read-guard.cjs')],moduleNameMapper:{'^@prisma/client$':path.join(root,'.codex-tmp/p03-grant-20261028-r1/native-client/node_modules/.prisma/client/index.js'),'^@/(.*)$':'<rootDir>/$1'},testMatch:['**/*.test.ts'],testTimeout:30000,collectCoverage:false,cacheDirectory:path.join(__dirname,'.jest-mocked-cache')});

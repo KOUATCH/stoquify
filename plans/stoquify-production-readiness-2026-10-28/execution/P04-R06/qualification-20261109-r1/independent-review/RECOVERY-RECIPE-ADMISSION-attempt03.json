@@ -1,0 +1,119 @@
+{
+  "at": "2026-11-10T11:29:20.491Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "scope": "New isolated evidence recovery for four credential scenarios, three origin protocol probes and six browser continuity cases; no application repair or retrospective passing of original53/58 run",
+  "files": [
+    {
+      "path": "run-recovery-attempt03.cjs",
+      "sha256": "5e8ae85a334338de1248db64157b32976d02a8dbccbcf40fc14afeae7383096e"
+    },
+    {
+      "path": "runtime-bridge-recovery-attempt03.cjs",
+      "sha256": "5d8454e9ae37a091610c8f16ab439b5b3343aa094499e50cc734715a226548ad"
+    },
+    {
+      "path": "database/read-authority-utc-attempt03.cjs",
+      "sha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8"
+    },
+    {
+      "path": "browser/run-browser-diagnostic-attempt03.cjs",
+      "sha256": "666abbcdc483e6b001d706361eb676275efde2682dc6dd1e200b31f204588bd4"
+    },
+    {
+      "path": "browser/DIAGNOSTIC-RECIPE-attempt03.md",
+      "sha256": "8a3aef70033648cb6dab8152e52e2ddbae626b9b2f50268330288ed8660b02f7"
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "276e495ce09869bf75d701607e3e6d209866d5d52062efdc8090add85a0b444f"
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "sha256": "254a9e6f3ec0eef369f13f4385553c0db6aa8e48428a951c6b7014d3688c47f7"
+    },
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "7a370fe26b060921635dd2d32c73fc777bdd9584f2f38582e422af78b26bb598"
+    },
+    {
+      "path": "environment-guard.cjs",
+      "sha256": "1e7ca667274a069547ec989391e9789716d6621d72c952806b24ead147f1d28e"
+    },
+    {
+      "path": "candidate-context-attempt02.json",
+      "sha256": "5e698a5acf73e69c5584d5e310001770a9798faa77d96877a11fde2fa0c8b6c2"
+    },
+    {
+      "path": "candidate-source-manifest-attempt02.json",
+      "sha256": "257c3d63ed464aeccb1ebb76f8b81fa95cf3747df755c2b557526bd102388ae0"
+    },
+    {
+      "path": "build-result-attempt02.json",
+      "sha256": "0124329359273775db300041794d1176abf9b308d1abc82b03b98f1c91f296f8"
+    },
+    {
+      "path": "runtime-result-attempt02.json",
+      "sha256": "4459b141a394444372f88d3728b84f38d5adeb49eb840d382cc4725327fc92df"
+    },
+    {
+      "path": "browser/auth-r06-attempt02/result.json",
+      "sha256": "81a50e5a71168c93b4d2af6c9a21010cebeead3303f778cbafc70200f39e2878"
+    },
+    {
+      "path": "runtime-source-admission-attempt02.json",
+      "sha256": "105b1fa086ac5e63ec5d6b470b0ef3b143a11bca69f39b5f721c82e6c0c466d7"
+    },
+    {
+      "path": "expiry-supplement-result-attempt02.json",
+      "sha256": "79625e82bb0bb9c7146aa3a2888d359a4a2fb6ac10aa094c03e3e308bd10d6f7"
+    },
+    {
+      "path": "inventory/source-after-manifest-v4.json",
+      "sha256": "ec1a3785e9140629889e2dd4e8f4a5efa174088967ee1f3beb111838ce127e70"
+    },
+    {
+      "path": "inventory/test-case-map.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    },
+    {
+      "path": "independent-review/BUILD-OUTCOME-REVIEW-attempt02.json",
+      "sha256": "6252e699d36a046d940a81329eef1f6dd33cdbccb99491843a10b89270abad79"
+    },
+    {
+      "path": "independent-review/EXPIRY-SUPPLEMENT-OUTCOME-REVIEW-attempt02-v2.json",
+      "sha256": "483e9227e6aa3a0bf77b4882b945c6fd7cda5bdc356ba6aad5afc86835b7fe49"
+    },
+    {
+      "path": "independent-review/TIME-PROBE-OUTCOME-REVIEW-attempt02.json",
+      "sha256": "54318214a404475d5a326be10f72de443b199ed73fa689f410ccc9ea21a782ea"
+    },
+    {
+      "path": "independent-review/BROWSER-OBSERVER-RECIPE-ADMISSION-attempt03.json",
+      "sha256": "4c82eae4a9594562c6e99def46bc034c9e70e78c636ade0c08839a665e2f124b"
+    }
+  ],
+  "reviewFindings": [
+    "Credential timestamp interpretation uses explicit SQL UTC with raw text/type and exact actual request bounds; no global pg parser/writer or product change. All four scenarios have independent before/after snapshots, exact own-user fields/session/audit expectations and unavailable-account state restoration.",
+    "Cookie-bearing forged-origin unlink and two actual cookie-free browser requests from the owned127.0.0.1:3298 origin require observed Origin/Fetch-Metadata,403, private-free authority response and no database changes. A synthetic forged-Origin API request is not mislabeled a browser.",
+    "The cross-site form navigation and simple CORS fetch must actually reach the native guard, with captured exact original response. CORS fetch additionally requires unreadable browser body. No OPTIONS/preflight behavior is inferred.",
+    "Capture bridge tees original compressed bytes while preserving body/cache behavior, adds only correlation header, decodes actual identity/gzip/br/deflate with32MiB bound, and records upstream/downstream completion/abort status and hashed payloads. No raw body/cookie value is published.",
+    "Six browser assertions and every primary body/transport error are retained; direct bytes must match bridge capture and fallback is admitted only for exact complete original response plus browser completion.",
+    "Current63critical source inputs, source/artifact/runtime-copy identities, original outcome hashes, private target identity, deny proxy and owned loopback lifecycle remain required. All outputs/TLS/log names are new."
+  ],
+  "authorizedIsolatedEffects": [
+    "Real sign-in sessions and exact expected security bookkeeping for synthetic actors only.",
+    "One wrong-password counter/audit transition, temporary inactive/locked fixture states with restoration, and exact owned browser session revocations.",
+    "Owned local app/HTTPS capture bridge3296/app3297/cross-site fixture3298/deny proxy3299 and browser lifecycle.",
+    "New evidence receipts only; no historical result mutation."
+  ],
+  "acceptanceLimits": [
+    "This admission authorizes observation, not any inferred product-policy exemption.",
+    "Original five failed groups remain failed historical observations; final requirements need explicit independently reviewed evidence reconciliation.",
+    "Real browser origin results must be reconciled with repository policy/provenance before resolving the original unsupported/nonbrowser test premise.",
+    "No full-suite/production/reproducible-install claim follows from this narrow recovery."
+  ],
+  "productionChanges": false
+}

@@ -13,10 +13,10 @@ let mockLocale: keyof typeof copy = "en"
 jest.mock("next-intl", () => ({ useTranslations: () => (key: keyof typeof copy.en) => copy[mockLocale][key] }))
 jest.mock("@/actions/inventory/inventoryMovementActions", () => ({ reserveInventory: jest.fn(), getInventoryTransactions: jest.fn(), getStockMovementSummary: jest.fn() }))
 jest.mock("@/lib/notifications/notify", () => ({ notify: { success: jest.fn(), error: jest.fn() } }))
-const request = { organizationId: "org-1", itemId: "item-1", locationId: "loc-1", quantity: 2, reason: "Customer order" }
+const request = { idempotencyKey: "retained-reservation-1", organizationId: "org-1", itemId: "item-1", locationId: "loc-1", quantity: 2, reason: "Customer order" }
 
 function mount() {
-  // The hook must override a provider's generic retry policy for this non-idempotent mutation.
+  // The hook must override a provider's generic retry policy until the caller explicitly resolves an uncertain reservation.
   const client = new QueryClient({ defaultOptions: { mutations: { retry: 1, retryDelay: 0 } } })
   const invalidate = jest.spyOn(client, "invalidateQueries")
   const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={client}>{children}</QueryClientProvider>
@@ -64,4 +64,13 @@ describe.each(["en", "fr"] as const)("%s reservation feedback", locale => {
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ["inventory"] })
     client.clear()
   })
+})
+
+it("keeps the caller identity unchanged across an explicit retry", async () => {
+  (reserveInventory as jest.Mock).mockRejectedValueOnce(new Error("lost response")).mockResolvedValueOnce({success:true})
+  const { result, client } = mount()
+  await act(async () => { await result.current.mutateAsync(request).catch(() => undefined) })
+  await act(async () => { await result.current.mutateAsync(request) })
+  expect((reserveInventory as jest.Mock).mock.calls.map(args => args[6])).toEqual([request.idempotencyKey, request.idempotencyKey])
+  client.clear()
 })

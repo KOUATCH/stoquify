@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "package": "P04-R02",
+  "candidate_id": "p04-r02-20261029-e2cf325ec4db",
+  "status": "blocked",
+  "implementation_performed": true,
+  "scoped_implementation_verified": true,
+  "advance_parent": false,
+  "prior_gates": "../advancement-gates.json",
+  "gates": [
+    {
+      "id": "R02-G01",
+      "status": "scoped_pass",
+      "name": "Original/mirror/private-copy reconciliation",
+      "evidence": [
+        "final-integrity.json",
+        "packing/private-publication.json"
+      ],
+      "limit": "3 known local assets; no live database reference census."
+    },
+    {
+      "id": "R02-G02",
+      "status": "scoped_pass",
+      "name": "Denied API requests expose no bytes and no observed private-file reads",
+      "evidence": [
+        "http/development-run-04-result.json",
+        "http/production-run-03-result.json"
+      ],
+      "limit": "Synthetic authority adapter; actual session lifecycle remains unqualified."
+    },
+    {
+      "id": "R02-G03",
+      "status": "scoped_pass",
+      "name": "Legacy aliases and optimizer including surviving private cache deny private bytes",
+      "evidence": [
+        "http/development-run-04-result.json",
+        "http/production-run-03-result.json"
+      ]
+    },
+    {
+      "id": "R02-G04",
+      "status": "scoped_pass",
+      "name": "Both authorized URL forms return exact bytes with private no-store",
+      "evidence": [
+        "http/development-run-04-result.json",
+        "http/production-run-03-result.json"
+      ]
+    },
+    {
+      "id": "R02-G05",
+      "status": "scoped_pass",
+      "name": "Private packing and independent manifest verification",
+      "evidence": [
+        "packing/jest-result.json",
+        "packing/private-publication.json"
+      ],
+      "limit": "Actual packer with stub build; no full application artifact."
+    },
+    {
+      "id": "R02-G06",
+      "status": "scoped_pass",
+      "name": "Exercised source stability, original preservation and listener cleanup",
+      "evidence": [
+        "final-integrity.json"
+      ],
+      "limit": "Whole checkout changes concurrently; nine unrelated drift files preserved."
+    },
+    {
+      "id": "R02-G07",
+      "status": "pass_scoped",
+      "name": "Independent review",
+      "evidence": [
+        "independent-review/ASSESSMENT.md"
+      ]
+    },
+    {
+      "id": "R02-G08",
+      "status": "not_run",
+      "name": "Local full application artifact, persisted auth and private browser qualification",
+      "evidence": [],
+      "limit": "Required for local R02 package/parent advancement. Use only isolated synthetic tenants and disposable data; no deployment required."
+    },
+    {
+      "id": "R02-G09",
+      "status": "not_run",
+      "name": "Hosted ingress/CDN/operator cutover",
+      "evidence": [],
+      "required_for_local_r02_completion": false,
+      "limit": "Separate release requirement; does not require deployment to close local R02. Approved hosted targets, cache/ingress/operator evidence remain future release work."
+    }
+  ]
+}

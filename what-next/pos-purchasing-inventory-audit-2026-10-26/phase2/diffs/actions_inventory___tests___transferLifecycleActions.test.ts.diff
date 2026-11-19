@@ -1,0 +1,15 @@
+diff --git a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/actions/inventory/__tests__/transferLifecycleActions.test.ts b/actions/inventory/__tests__/transferLifecycleActions.test.ts
+index 7e7c37bf..2d904e99 100644
+--- a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/actions/inventory/__tests__/transferLifecycleActions.test.ts
++++ b/actions/inventory/__tests__/transferLifecycleActions.test.ts
+@@ -71,3 +71,10 @@ it("keeps unexpected failures private", async () => {
+   expect(result.success).toBe(false)
+   expect(JSON.stringify(result.error)).not.toContain("private database detail")
+ })
++
++it.each([false, true])("preserves a committed transfer result when cache refresh fails (replayed=%s)", async replayed => {
++  ;(transitionStockTransfer as jest.Mock).mockResolvedValue({ transfer: { id: "transfer" }, replayed })
++  ;(revalidateTag as jest.Mock).mockImplementationOnce(() => { throw new Error("private cache failure") })
++  expect(await executeTransferCommand(input)).toMatchObject({ success: true, data: { transfer: { id: "transfer" }, replayed } })
++  expect(transitionStockTransfer).toHaveBeenCalledTimes(1)
++})

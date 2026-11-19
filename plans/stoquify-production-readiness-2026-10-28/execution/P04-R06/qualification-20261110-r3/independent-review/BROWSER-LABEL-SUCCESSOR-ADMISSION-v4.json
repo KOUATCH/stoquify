@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T15:32:50.826Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Source admission of browser observer label/self-hash successor only; actual browser execution remains gated",
+  "files": [
+    {
+      "path": "browser/run-consumer-qualification-v3.cjs",
+      "sha256": "f4d6460b79cfff193de4b3f6cb48f21bb112dda367c0225a3fc5d13be4319c0a"
+    },
+    {
+      "path": "browser/run-consumer-qualification-v4.cjs",
+      "sha256": "d32b2e2afad066c1b0b734cfbac257af477c7321a04368c02c5e74c6895e3d8e"
+    },
+    {
+      "path": "browser/BROWSER-LABEL-SUCCESSOR-v4.json",
+      "sha256": "e8bbc7a8231bf9b020d60b24e65ba5afaf80775516fa4359c31166ca9b5ad9b4"
+    },
+    {
+      "path": "browser/browser-protocol-v3.cjs",
+      "sha256": "ab98d36dac6326b3c45c5ab65b31c034ba3567e97d91118ea319f3679d19d256"
+    },
+    {
+      "path": "browser/consumer-evidence-v2.cjs",
+      "sha256": "dcc42c28244da7282b1989049c78f69c96c2ed45e0529d310c7a3f40d9958cb4"
+    },
+    {
+      "path": "browser/flight-profile-evidence.cjs",
+      "sha256": "9c8aece7411279a75969059e69a7536e1f5fc6c2bdc2ff4921e366708851e0cd"
+    },
+    {
+      "path": "browser/private-canaries.cjs",
+      "sha256": "ccf6d3f65436fe95db508fce6d89db93c7d53bdf5fe7e449265178e7312a51ae"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\browser\\OBSERVER-SOURCE-MANIFEST-r3.json",
+      "sha256": "1c3e267a344c17795fc9819ea7bdce55a8aae0e3431b343ce407dc29d235ecd2"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\independent-review\\BROWSER-OBSERVER-RECIPE-ADMISSION-r3.json",
+      "sha256": "6aa4bc8b21cc30adb5771667ddbaeed984e5318f4f2e3f01234bcdb06790e648"
+    }
+  ],
+  "syntaxExitCode": 0,
+  "changes": [
+    "qualification metadata20261110-r2 to20261110-r3",
+    "self sourceFiles entry v3 to v4"
+  ],
+  "review": [
+    "Independently reconstructed exact two substitutions and proved complete source equality otherwise.",
+    "All18 browser obligations, authorization/denial/recovery assertions, actual byte/DOM/Next-Action correlation and native no-write gates unchanged.",
+    "Original v3 observer and r2 evidence remain preserved; no historical failure rewritten and no new browser test claimed.",
+    "Imported protocol/consumer/Flight/canary helpers retain their previously admitted hashes.",
+    "Wrapper may point to v4 only within separately admitted full-runtime recipe after accepted candidate/artifact/native preflights."
+  ],
+  "actualBrowserRun": false,
+  "qualificationPassed": false
+}

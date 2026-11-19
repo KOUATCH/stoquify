@@ -1,0 +1,223 @@
+[
+  {
+    "source": {
+      "table_name": "accountant_client_invites",
+      "name": "accountant_client_invites_key_check",
+      "type": "c",
+      "definition": "CHECK ((((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191)) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))"
+    },
+    "restored": {
+      "table_name": "accountant_client_invites",
+      "name": "accountant_client_invites_key_check",
+      "type": "c",
+      "definition": "CHECK (((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))"
+    },
+    "canonicalDefinition": "CHECK (((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))",
+    "columnTypesAndCollationsSha256": "590fb65a91a55cf342e3baa496b96e15cfca8242f893de78b0736a4a5fcf0c97",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "branch_daily_close_runs",
+      "name": "branch_daily_close_runs_readiness_check",
+      "type": "c",
+      "definition": "CHECK ((((\"readinessState\")::text = ANY ((ARRAY['READY_FOR_REVIEW'::character varying, 'ACTION_REQUIRED'::character varying, 'NO_ACTIVITY'::character varying, 'UNAVAILABLE'::character varying])::text[])) AND ((\"evidenceCoverageState\")::text = ANY ((ARRAY['PARTIAL'::character varying, 'COMPLETE'::character varying])::text[]))))"
+    },
+    "restored": {
+      "table_name": "branch_daily_close_runs",
+      "name": "branch_daily_close_runs_readiness_check",
+      "type": "c",
+      "definition": "CHECK ((((\"readinessState\")::text = ANY (ARRAY[('READY_FOR_REVIEW'::character varying)::text, ('ACTION_REQUIRED'::character varying)::text, ('NO_ACTIVITY'::character varying)::text, ('UNAVAILABLE'::character varying)::text])) AND ((\"evidenceCoverageState\")::text = ANY (ARRAY[('PARTIAL'::character varying)::text, ('COMPLETE'::character varying)::text]))))"
+    },
+    "canonicalDefinition": "CHECK ((((\"readinessState\")::text = ANY (ARRAY[('READY_FOR_REVIEW'::character varying)::text, ('ACTION_REQUIRED'::character varying)::text, ('NO_ACTIVITY'::character varying)::text, ('UNAVAILABLE'::character varying)::text])) AND ((\"evidenceCoverageState\")::text = ANY (ARRAY[('PARTIAL'::character varying)::text, ('COMPLETE'::character varying)::text]))))",
+    "columnTypesAndCollationsSha256": "c20fe47f1faf9006a832679ac79bae648aba25abbd9922450687aa6328fb7b35",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "customer_statement_deliveries",
+      "name": "customer_statement_deliveries_key_check",
+      "type": "c",
+      "definition": "CHECK ((((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191)) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))"
+    },
+    "restored": {
+      "table_name": "customer_statement_deliveries",
+      "name": "customer_statement_deliveries_key_check",
+      "type": "c",
+      "definition": "CHECK (((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))"
+    },
+    "canonicalDefinition": "CHECK (((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))",
+    "columnTypesAndCollationsSha256": "378b13f26677dfc69aa4bd0a65922f7eac485000b6407b50d5b9f242ba0558c9",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "customer_statement_recipient_actions",
+      "name": "customer_statement_recipient_actions_key_check",
+      "type": "c",
+      "definition": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    "restored": {
+      "table_name": "customer_statement_recipient_actions",
+      "name": "customer_statement_recipient_actions_key_check",
+      "type": "c",
+      "definition": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    "canonicalDefinition": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))",
+    "columnTypesAndCollationsSha256": "89354a7357b13ca298b39650f96ceeff8501c538172e69399deca5d0d63a2496",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "customer_statement_recipient_actions",
+      "name": "customer_statement_recipient_actions_note_check",
+      "type": "c",
+      "definition": "CHECK ((((char_length(btrim(\"recipientNote\")) >= 3) AND (char_length(btrim(\"recipientNote\")) <= 500)) AND (\"noteHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"payloadHash\" ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    "restored": {
+      "table_name": "customer_statement_recipient_actions",
+      "name": "customer_statement_recipient_actions_note_check",
+      "type": "c",
+      "definition": "CHECK (((char_length(btrim(\"recipientNote\")) >= 3) AND (char_length(btrim(\"recipientNote\")) <= 500) AND (\"noteHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"payloadHash\" ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    "canonicalDefinition": "CHECK (((char_length(btrim(\"recipientNote\")) >= 3) AND (char_length(btrim(\"recipientNote\")) <= 500) AND (\"noteHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"payloadHash\" ~ '^[0-9a-f]{64}$'::text)))",
+    "columnTypesAndCollationsSha256": "89354a7357b13ca298b39650f96ceeff8501c538172e69399deca5d0d63a2496",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "customer_statement_snapshots",
+      "name": "customer_statement_identity_check",
+      "type": "c",
+      "definition": "CHECK ((((char_length(btrim(\"statementNumber\")) >= 8) AND (char_length(btrim(\"statementNumber\")) <= 80)) AND ((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"generatedById\")) > 0) AND (char_length(btrim(\"businessEventId\")) > 0) AND ((\"supersedesStatementId\" IS NULL) OR (\"supersedesStatementId\" <> id))))"
+    },
+    "restored": {
+      "table_name": "customer_statement_snapshots",
+      "name": "customer_statement_identity_check",
+      "type": "c",
+      "definition": "CHECK (((char_length(btrim(\"statementNumber\")) >= 8) AND (char_length(btrim(\"statementNumber\")) <= 80) AND ((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"generatedById\")) > 0) AND (char_length(btrim(\"businessEventId\")) > 0) AND ((\"supersedesStatementId\" IS NULL) OR (\"supersedesStatementId\" <> id))))"
+    },
+    "canonicalDefinition": "CHECK (((char_length(btrim(\"statementNumber\")) >= 8) AND (char_length(btrim(\"statementNumber\")) <= 80) AND ((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"generatedById\")) > 0) AND (char_length(btrim(\"businessEventId\")) > 0) AND ((\"supersedesStatementId\" IS NULL) OR (\"supersedesStatementId\" <> id))))",
+    "columnTypesAndCollationsSha256": "9064e951f2d44960a35ca53609ab508ce6cb0454288d76e49e379800dffee266",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "goods_receipt_inspection_resolutions",
+      "name": "goods_receipt_inspection_resolutions_command_evidence_check",
+      "type": "c",
+      "definition": "CHECK ((((char_length(btrim((\"idempotencyKey\")::text)) >= 8) AND (char_length(btrim((\"idempotencyKey\")::text)) <= 191)) AND ((\"idempotencyKey\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"payloadHash\")::text ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    "restored": {
+      "table_name": "goods_receipt_inspection_resolutions",
+      "name": "goods_receipt_inspection_resolutions_command_evidence_check",
+      "type": "c",
+      "definition": "CHECK (((char_length(btrim((\"idempotencyKey\")::text)) >= 8) AND (char_length(btrim((\"idempotencyKey\")::text)) <= 191) AND ((\"idempotencyKey\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"payloadHash\")::text ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    "canonicalDefinition": "CHECK (((char_length(btrim((\"idempotencyKey\")::text)) >= 8) AND (char_length(btrim((\"idempotencyKey\")::text)) <= 191) AND ((\"idempotencyKey\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"payloadHash\")::text ~ '^[0-9a-f]{64}$'::text)))",
+    "columnTypesAndCollationsSha256": "951609a3dc68b100ffe0acd48194ba019b57519a686d3dd7ec0e7bc22141f480",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "pos_commit_results",
+      "name": "pos_commit_results_request_identity_check",
+      "type": "c",
+      "definition": "CHECK ((((char_length(btrim((\"clientCommitId\")::text)) >= 8) AND (char_length(btrim((\"clientCommitId\")::text)) <= 191)) AND ((\"clientCommitId\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"requestHash\")::text ~ '^[0-9a-f]{64}$'::text) AND (\"requestSchemaVersion\" > 0)))"
+    },
+    "restored": {
+      "table_name": "pos_commit_results",
+      "name": "pos_commit_results_request_identity_check",
+      "type": "c",
+      "definition": "CHECK (((char_length(btrim((\"clientCommitId\")::text)) >= 8) AND (char_length(btrim((\"clientCommitId\")::text)) <= 191) AND ((\"clientCommitId\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"requestHash\")::text ~ '^[0-9a-f]{64}$'::text) AND (\"requestSchemaVersion\" > 0)))"
+    },
+    "canonicalDefinition": "CHECK (((char_length(btrim((\"clientCommitId\")::text)) >= 8) AND (char_length(btrim((\"clientCommitId\")::text)) <= 191) AND ((\"clientCommitId\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"requestHash\")::text ~ '^[0-9a-f]{64}$'::text) AND (\"requestSchemaVersion\" > 0)))",
+    "columnTypesAndCollationsSha256": "9ea6232783d68766eae99ab0704236965b925561261d597a59e40bd9ad81e424",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "referral_attributions",
+      "name": "referral_attributions_text_check",
+      "type": "c",
+      "definition": "CHECK ((((length(btrim(\"sourceId\")) >= 1) AND (length(btrim(\"sourceId\")) <= 191)) AND ((length(btrim(campaign)) >= 1) AND (length(btrim(campaign)) <= 120)) AND ((length(btrim(\"createdById\")) >= 1) AND (length(btrim(\"createdById\")) <= 191))))"
+    },
+    "restored": {
+      "table_name": "referral_attributions",
+      "name": "referral_attributions_text_check",
+      "type": "c",
+      "definition": "CHECK (((length(btrim(\"sourceId\")) >= 1) AND (length(btrim(\"sourceId\")) <= 191) AND ((length(btrim(campaign)) >= 1) AND (length(btrim(campaign)) <= 120)) AND ((length(btrim(\"createdById\")) >= 1) AND (length(btrim(\"createdById\")) <= 191))))"
+    },
+    "canonicalDefinition": "CHECK (((length(btrim(\"sourceId\")) >= 1) AND (length(btrim(\"sourceId\")) <= 191) AND ((length(btrim(campaign)) >= 1) AND (length(btrim(campaign)) <= 120)) AND ((length(btrim(\"createdById\")) >= 1) AND (length(btrim(\"createdById\")) <= 191))))",
+    "columnTypesAndCollationsSha256": "1fc5a1f8e26fd89b757ea1399bf585f1a323014bcb8cf5462d75f89644533c90",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "supplier_po_access_tokens",
+      "name": "supplier_po_access_tokens_key_check",
+      "type": "c",
+      "definition": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    "restored": {
+      "table_name": "supplier_po_access_tokens",
+      "name": "supplier_po_access_tokens_key_check",
+      "type": "c",
+      "definition": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    "canonicalDefinition": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))",
+    "columnTypesAndCollationsSha256": "5e9b1408f139723b91581f78709cc7d0a2d8b2e67995580654831c3de75a30b9",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "supplier_po_envelopes",
+      "name": "supplier_po_envelopes_key_check",
+      "type": "c",
+      "definition": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0) AND (char_length(btrim(\"createdById\")) > 0)))"
+    },
+    "restored": {
+      "table_name": "supplier_po_envelopes",
+      "name": "supplier_po_envelopes_key_check",
+      "type": "c",
+      "definition": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0) AND (char_length(btrim(\"createdById\")) > 0)))"
+    },
+    "canonicalDefinition": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0) AND (char_length(btrim(\"createdById\")) > 0)))",
+    "columnTypesAndCollationsSha256": "20981eaa08c63d3c71052a6a4da2f8a4410fc43c5786d785e46b605e7448621a",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "supplier_po_proposals",
+      "name": "supplier_po_proposals_key_check",
+      "type": "c",
+      "definition": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    "restored": {
+      "table_name": "supplier_po_proposals",
+      "name": "supplier_po_proposals_key_check",
+      "type": "c",
+      "definition": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    "canonicalDefinition": "CHECK (((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))",
+    "columnTypesAndCollationsSha256": "5c0af6af165be945e018ec824d2dd3beae20fcfa6045885ca3ad2d6a39271fad",
+    "passed": true
+  },
+  {
+    "source": {
+      "table_name": "supplier_po_proposals",
+      "name": "supplier_po_proposals_note_check",
+      "type": "c",
+      "definition": "CHECK ((((\"supplierNote\" IS NULL) AND (\"noteHash\" IS NULL)) OR (((char_length(btrim(\"supplierNote\")) >= 3) AND (char_length(btrim(\"supplierNote\")) <= 500)) AND (\"noteHash\" IS NOT NULL))))"
+    },
+    "restored": {
+      "table_name": "supplier_po_proposals",
+      "name": "supplier_po_proposals_note_check",
+      "type": "c",
+      "definition": "CHECK ((((\"supplierNote\" IS NULL) AND (\"noteHash\" IS NULL)) OR ((char_length(btrim(\"supplierNote\")) >= 3) AND (char_length(btrim(\"supplierNote\")) <= 500) AND (\"noteHash\" IS NOT NULL))))"
+    },
+    "canonicalDefinition": "CHECK ((((\"supplierNote\" IS NULL) AND (\"noteHash\" IS NULL)) OR ((char_length(btrim(\"supplierNote\")) >= 3) AND (char_length(btrim(\"supplierNote\")) <= 500) AND (\"noteHash\" IS NOT NULL))))",
+    "columnTypesAndCollationsSha256": "5c0af6af165be945e018ec824d2dd3beae20fcfa6045885ca3ad2d6a39271fad",
+    "passed": true
+  }
+]

@@ -12,6 +12,8 @@ import type {
 } from "../payment-ingestion.types"
 import { PaymentIngestionError } from "../payment-ingestion.types"
 
+import { statementDocument, statementField, statementMoney, statementDate, STATEMENT_FORMAT_VERSION } from "./statement-pilot-format"
+
 function header(headers: ProviderWebhookHeaders, name: string) {
   const value = headers[name] ?? headers[name.toLowerCase()] ?? headers[name.toUpperCase()]
   return Array.isArray(value) ? value[0] : value
@@ -98,20 +100,6 @@ function maskReference(value: string | null) {
   return `${value.slice(0, 2)}****${value.slice(-2)}`
 }
 
-function csvRows(rawContent: string): Record<string, unknown>[] {
-  const rows = rawContent
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-  if (rows.length < 2) return []
-
-  const headers = rows[0].split(",").map((part) => part.trim())
-  return rows.slice(1).map((row, index) => {
-    const values = row.split(",").map((part) => part.trim())
-    return Object.fromEntries(headers.map((key, valueIndex) => [key, values[valueIndex] ?? ""])) as Record<string, string>
-  }).map((row, index) => ({ ...row, lineNumber: String(index + 1) }))
-}
-
 export class MobileMoneyHmacAdapter implements PaymentProviderAdapter {
   readonly railType = "MOBILE_MONEY" as const
 
@@ -173,45 +161,53 @@ export class MobileMoneyHmacAdapter implements PaymentProviderAdapter {
   }
 
   parseStatement(input: StatementParseInput): ParsedStatement {
-    const trimmed = input.rawContent.trim()
-    const rows: Record<string, unknown>[] = trimmed.startsWith("[")
-      ? (JSON.parse(trimmed) as Record<string, unknown>[])
-      : csvRows(trimmed)
-
-    if (!Array.isArray(rows) || rows.length === 0) {
-      throw new PaymentIngestionError("INVALID_PAYLOAD", "Statement file did not contain importable lines.")
-    }
-
+    const { rows, declaredCoverage } = statementDocument(input.rawContent)
+    if (declaredCoverage && declaredCoverage.providerCode !== this.providerCode)
+      throw new PaymentIngestionError("INVALID_PAYLOAD", "Statement provider identity does not match its adapter.")
     const lines = rows.map((row, index): ParsedStatementLine => {
-      const amount = numberValue(row.amount)
-      const occurredAt = dateValue(row.occurredAt ?? row.date ?? row.timestamp)
-      if (amount === null || !occurredAt) {
-        throw new PaymentIngestionError("INVALID_PAYLOAD", "Statement line amount and date are required.")
-      }
-
+      const amount = statementMoney(row.amount)!
+      const occurredAt = statementDate(statementField(row, "occurredAt", "date", "timestamp"))!
+      const direction = parseLineDirection(row.direction)
+      const currencyCode = stringValue(statementField(row, "currencyCode", "currency"))
+      const providerTransactionId = stringValue(statementField(row, "providerTransactionId", "transactionId"))
+      const providerReference = stringValue(statementField(row, "providerReference", "reference"))
+      const lineNumber = row.lineNumber === undefined ? index + 1
+        : typeof row.lineNumber === "number" || (typeof row.lineNumber === "string" && /^[1-9]\d*$/.test(row.lineNumber.trim()))
+          ? Number(row.lineNumber) : NaN
+      if (direction === "UNKNOWN" || !currencyCode || !/^[A-Z]{3}$/.test(currencyCode)
+        || (!providerTransactionId && !providerReference) || !Number.isSafeInteger(lineNumber) || lineNumber < 1 || lineNumber > 2147483647)
+        throw new PaymentIngestionError("INVALID_PAYLOAD", "Statement line requires an identity, direction, uppercase currency and positive line number.")
       const counterparty = stringValue(row.counterparty ?? row.customerMsisdn)
 
       return {
-        lineNumber: Number(row.lineNumber ?? index + 1),
-        providerTransactionId: stringValue(row.providerTransactionId ?? row.transactionId),
-        providerReference: stringValue(row.providerReference ?? row.reference),
-        direction: parseLineDirection(row.direction),
+        lineNumber,
+        providerTransactionId,
+        providerReference,
+        direction,
         amount,
-        feeAmount: numberValue(row.feeAmount ?? row.fee),
-        currencyCode: stringValue(row.currencyCode ?? row.currency) ?? "XAF",
+        feeAmount: statementMoney(statementField(row, "feeAmount", "fee"), true),
+        currencyCode,
         occurredAt,
-        postedAt: dateValue(row.postedAt),
+        postedAt: statementDate(row.postedAt, true),
         description: stringValue(row.description),
         counterpartyMasked: maskReference(counterparty),
         counterpartyHash: counterparty ? sha256(counterparty) : null,
-        metadata: row as Prisma.InputJsonObject,
+        metadata: { formatVersion: STATEMENT_FORMAT_VERSION, fingerprintVersion: 1 },
       }
     })
 
+    const observedPeriodStart = lines.reduce<Date | null>((min, line) => (!min || line.occurredAt < min ? line.occurredAt : min), null)
+    const observedPeriodEnd = lines.reduce<Date | null>((max, line) => (!max || line.occurredAt > max ? line.occurredAt : max), null)
+    if (declaredCoverage && lines.some(line => line.currencyCode !== declaredCoverage.currencyCode ||
+      line.occurredAt < declaredCoverage.periodStart || line.occurredAt > declaredCoverage.periodEnd))
+      throw new PaymentIngestionError("INVALID_PAYLOAD", "Statement lines must match the declared currency and coverage bounds.")
+
     return {
       sourceType: "MOBILE_MONEY_STATEMENT",
-      periodStart: lines.reduce<Date | null>((min, line) => (!min || line.occurredAt < min ? line.occurredAt : min), null),
-      periodEnd: lines.reduce<Date | null>((max, line) => (!max || line.occurredAt > max ? line.occurredAt : max), null),
+      periodStart: declaredCoverage?.periodStart ?? observedPeriodStart,
+      periodEnd: declaredCoverage?.periodEnd ?? observedPeriodEnd,
+      observedPeriodStart, observedPeriodEnd,
+      ...(declaredCoverage ? { declaredCoverage } : {}),
       lines,
     }
   }

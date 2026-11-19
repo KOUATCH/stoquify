@@ -1,0 +1,61 @@
+{
+  "phase": "AF12",
+  "date": "2026-10-25",
+  "phaseStatus": "VERIFIED",
+  "regressions": {
+    "pureMocked": 127,
+    "component": 8,
+    "total": 135
+  },
+  "af12": {
+    "distinctScenarios": 10,
+    "databaseScenarios": 9,
+    "pureDurationScenarios": 1,
+    "fullPass": 9,
+    "freshnessPass": 3,
+    "authorityPass": 1,
+    "ownerPass": 1,
+    "overlappingTargetedRuns": true
+  },
+  "browser": {
+    "checks": 9,
+    "axeScans": 8,
+    "violations": 0,
+    "pageErrors": 0,
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "viewports": [
+      "1440x1000",
+      "390x1000"
+    ]
+  },
+  "migrations": {
+    "clean": 118,
+    "before": 105,
+    "after": 118,
+    "operationalTablesPreserved": 9,
+    "replay": true
+  },
+  "types": "PASS",
+  "workflow": "PASS",
+  "productionDeployment": false,
+  "livePilotBaseline": false,
+  "releaseQualification": "AF16 NOT_RUN",
+  "publication": {
+    "pairs": 76,
+    "pages": 271,
+    "headingsChecked": 528,
+    "unrelatedSourcesPreserved": 66,
+    "errors": 0
+  },
+  "cleanup": {
+    "application": "Owned AF12 process tree identity checked and stopped",
+    "databaseCluster": "C:/Users/J COMPUTER/.codex/visualizations/2026/10/19/01a1542f-53bc-7513-b68f-4bce330ca993/af01-host/af01-postgres",
+    "clusterStopped": true,
+    "retainedDatabases": true,
+    "stdout": "waiting for server to shut down...... done\r\nserver stopped\r\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,441 @@
+// Real PostgreSQL, current services and actual server-action exports.
+// Better Auth transport/Next request context are stubs: this is NOT HTTP/browser evidence.
+jest.mock("server-only", () => ({}))
+jest.mock("next/headers", () => ({ headers: jest.fn(async () => new Headers()) }))
+jest.mock("next/cache", () => ({ revalidatePath: jest.fn() }))
+jest.mock("@/lib/auth", () => ({ auth: { api: { getSession: jest.fn() } } }))
+jest.mock("@/prisma/db", () => {
+  const { PrismaClient } = require("@prisma/client")
+  const target = process.env.P04R01_DATABASE_URL
+  if (process.env.NODE_ENV !== "test" || !target || !process.env.P04R01_CLUSTER) throw Error("Explicit R01 target required")
+  const url = new URL(target)
+  if (url.hostname !== "127.0.0.1" || url.port !== process.env.P04R01_PORT || url.username !== "p04r01" || url.pathname !== "/stoquify_local_p04_r01_20261103_r2") throw Error("Wrong R01 target")
+  return { db: new PrismaClient({ datasources: { db: { url: target } }, transactionOptions: { maxWait: 15000, timeout: 30000 } }) }
+})
+
+import { createHash, randomBytes, randomUUID } from "node:crypto"
+import fs from "node:fs"
+import path from "node:path"
+import { Client } from "pg"
+import { readDeliveryIssues } from "@/services/communication/delivery-issues.service"
+import { db } from "@/prisma/db"
+import { auth } from "@/lib/auth"
+import { requireRbacContext } from "@/lib/security/rbac"
+import { createOrganizationRole, updateOrganizationRole } from "@/services/roles/role.service"
+import { changeMemberAccess } from "@/services/users/member-access.service"
+import { getMemberAccess } from "@/services/users/member-access-read.service"
+import { resolveOperatingAccessScope } from "@/services/operating-access/operating-access-scope.service"
+import { issueUserInvitation } from "@/services/users/user-invitation-issuance.service"
+import { readInvitationRedemptionAuthority } from "@/services/users/user-invitation-redemption-authority.service"
+import { invitationRevision } from "@/services/users/invitation-revision"
+import { deactivateUserForOrganization } from "@/services/users/user-lifecycle.service"
+import { acceptInvitationWorkflow } from "@/services/users/user-identity.service"
+import { hashBusinessPayload } from "@/services/events/business-event.service"
+import { invitationDigest } from "@/services/users/user-invitation-delivery-contract"
+import createRole from "@/actions/roles/createRole"
+import { updateRole } from "@/actions/roles/updateRole"
+import { changeMemberAccessAction } from "@/actions/users/memberAccess"
+import { sendInvite } from "@/actions/users/sendInvite"
+import { submitAccessRequestAction, previewAccessRequestAction, decideAccessRequestAction, applyAccessRequestAction } from "@/actions/access-requests/access-request.actions"
+
+const getSession = auth.api.getSession as unknown as jest.Mock
+const permissions = ["dashboard.read", "roles.read", "roles.create", "roles.update", "roles.permissions.assign", "roles.permissions.remove", "users.read", "users.invite", "users.roles.assign", "users.roles.remove", "users.activate", "users.deactivate", "inventory.items.read"]
+const observations: unknown[] = []
+let serial = 0
+const digest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex")
+beforeAll(async () => {
+  const directory = await db.$queryRawUnsafe<Array<{ data_directory: string }>>("SHOW data_directory")
+  expect(fs.realpathSync(directory[0].data_directory).toLowerCase()).toBe(fs.realpathSync(process.env.P04R01_CLUSTER!).toLowerCase())
+})
+afterAll(async () => {
+  await db.$disconnect()
+  fs.writeFileSync(path.join(process.env.P04R01_EVIDENCE!, "native-observations-retry02.json"), JSON.stringify({ evidenceClass: "real database/action composition; authentication transport stubbed", observations }, null, 2), { flag: "wx" })
+})
+beforeEach(() => { getSession.mockReset() })
+
+async function fixture(privileged = false) {
+  const prefix = "r01-" + ++serial + "-" + randomUUID().slice(0, 8)
+  const org = prefix + "-org", foreign = prefix + "-foreign", actor = prefix + "-actor", recipient = prefix + "-recipient"
+  await db.organization.createMany({ data: [org, foreign].map(id => ({ id, name: id, slug: id, requestedModules: ["dashboard", "settings", "inventory"] })) })
+  const actorRole = await db.role.create({ data: { id: prefix + "-actor-role", code: privileged ? "administrator" : "branch_manager", nameEn: "Delegator", organizationId: org, permissions } })
+  const readerRole = await db.role.create({ data: { id: prefix + "-reader-role", code: "branch_reader", nameEn: "Reader", organizationId: org, permissions: ["dashboard.read"] } })
+  await db.user.create({ data: { id: actor, name: actor, email: actor + "@example.invalid", organizationId: org, emailVerified: true, isVerified: true, roles: { connect: { id: actorRole.id } } } })
+  await db.user.create({ data: { id: recipient, name: recipient, email: recipient + "@example.invalid", organizationId: org, emailVerified: true, isVerified: true, roles: { connect: { id: readerRole.id } } } })
+  const makeSession = (id: string) => db.session.create({ data: { id: prefix + "-" + id + "-session", token: randomUUID(), userId: id, expiresAt: new Date(Date.now() + 3600000), assuranceVerifiedAt: new Date(), assuranceMethod: "password", assuranceOrganizationId: org, assuranceLevel: 1 } })
+  const session = await makeSession(actor), recipientSession = await makeSession(recipient)
+  await db.location.createMany({ data: [
+    { id: prefix + "-a", name: "Actor branch", code: "A", organizationId: org, managerId: actor },
+    { id: prefix + "-b", name: "Recipient branch", code: "B", organizationId: org, managerId: recipient },
+    { id: prefix + "-private", name: "PRIVATE_BRANCH_CANARY", code: "C", organizationId: org },
+  ] })
+  const f = { prefix, org, foreign, actor, recipient, actorRole, readerRole, session, recipientSession }
+  actAs(f)
+  return f
+}
+type Fixture = Awaited<ReturnType<typeof fixture>>
+function actAs(f: Fixture, recipient = false) {
+  const userId = recipient ? f.recipient : f.actor, session = recipient ? f.recipientSession : f.session
+  getSession.mockResolvedValue({ session: { id: session.id, token: session.token }, user: { id: userId, organizationId: f.org } })
+}
+const ctx = (f: Fixture) => ({ orgId: f.org, userId: f.actor, isSuperUser: false, session: { id: f.session.id, token: f.session.token } })
+async function role(f: Fixture, code: string, grants = ["dashboard.read"], foreign = false) {
+  return db.role.create({ data: { code, nameEn: "Synthetic " + code, organizationId: foreign ? f.foreign : f.org, permissions: grants } })
+}
+async function state(f: Fixture, omitRequests = false, omitActorRole = false) {
+  const tables = ["organizations", "users", "roles", "sessions", "accounts", "password_history", "locations", "invites", "access_requests", "business_events", "business_event_outbox", "business_event_audits", "tenant_module_configurations", "tenant_module_grants", "tenant_module_configuration_commands"]
+  const result: Record<string, { count: number; sha256: string }> = {}
+  // Hash full synthetic rows, never print tokens or payloads. Auth/security audit rows are explicitly separate.
+  for (const table of tables) {
+    if (omitRequests && table === "access_requests") continue
+    const where = table === "organizations" ? 'id = ANY($1::text[])' : ["sessions", "accounts", "password_history"].includes(table) ? '"userId" IN (SELECT id FROM users WHERE "organizationId"=ANY($1::text[]))' : '"organizationId" = ANY($1::text[])'
+    let rows = await db.$queryRawUnsafe<Array<Record<string, unknown>>>(`SELECT to_jsonb(t) AS value FROM "${table}" t WHERE ${where}`, [f.org, f.foreign])
+    if (omitActorRole && table === "roles") rows = rows.filter(row => (row.value as any).id !== f.actorRole.id)
+    const values = rows.map(row => JSON.stringify(row.value)).sort()
+    result[table] = { count: values.length, sha256: digest(values) }
+  }
+  const memberships = await db.$queryRawUnsafe<Array<Record<string, unknown>>>('SELECT m."A",m."B" FROM "_UserRoles" m JOIN users u ON u.id=m."B" WHERE u."organizationId"=ANY($1::text[]) ORDER BY m."A",m."B"', [f.org, f.foreign])
+  result.memberships = { count: memberships.length, sha256: digest(memberships) }
+  return result
+}
+async function deny(f: Fixture, name: string, work: () => Promise<unknown>, action = false) {
+  const before = await state(f), auditBefore = await db.auditLog.count({ where: { organizationId: { in: [f.org, f.foreign] } } })
+  if (action) {
+    const response: any = await work()
+    expect(response.success === false || response.status === 403).toBe(true)
+    if (response.reason !== undefined) expect(["restricted", "session", "fresh-auth", "stale"]).toContain(response.reason)
+    else { expect([401,403,404,409]).toContain(response.status); expect(response.code).not.toMatch(/INTERNAL|DATABASE|UNKNOWN/) }
+    expect(response.data == null).toBe(true)
+    expect(JSON.stringify(response)).not.toContain("PRIVATE_BRANCH_CANARY")
+    expect(JSON.stringify(response)).not.toContain(f.session.token)
+  } else await expect(work()).rejects.toMatchObject({ code: expect.stringMatching(/FORBIDDEN|FRESH_AUTH_REQUIRED|UNAUTHENTICATED|NOT_FOUND|CONFLICT|IDEMPOTENCY_CONFLICT/) })
+  const after = await state(f)
+  expect(after).toEqual(before)
+  observations.push({ name, before, after, securityAuditRowsAdded: (await db.auditLog.count({ where: { organizationId: { in: [f.org, f.foreign] } } })) - auditBefore })
+}
+async function command(f: Fixture, additions: string[]) {
+  const preview = await getMemberAccess({ organizationId: f.org, actorId: f.actor, targetUserId: f.recipient })
+  return { requestId: randomUUID(), expectedRevision: preview.revision, operation: "roles" as const, roleIds: [...new Set([...preview.roleIds, ...additions])], reason: "Synthetic bounded qualification" }
+}
+async function assign(f: Fixture, additions: string[]) {
+  return changeMemberAccess({ organizationId: f.org, actorId: f.actor, targetUserId: f.recipient, session: f.session, command: await command(f, additions) })
+}
+async function recipientScope(f: Fixture) {
+  // Database-owned role load without pretending this is an actual new signed login.
+  const user = await db.user.findUniqueOrThrow({ where: { id: f.recipient }, include: { roles: { where: { organizationId: f.org } } } })
+  return resolveOperatingAccessScope({ orgId: f.org, userId: f.recipient, roles: user.roles, permissions: user.roles.flatMap(r => r.permissions), isSuperUser: false })
+}
+
+it.each(["Admin", "Administrator", "Super Admin", "  ADMIN  "])("denies reserved creation %s through the real action", async name => {
+  const f = await fixture()
+  await deny(f, "create:" + name, () => createRole({ name, permissions: ["dashboard.read"], organizationId: f.org }, { requestId: randomUUID() }), true)
+  expect(await recipientScope(f)).toMatchObject({ allowed: true, scope: { kind: "LOCATIONS", locationIds: [f.prefix + "-b"] } })
+})
+it.each(["admin", "administrator", "super_admin", " ADMIN "])("denies existing reserved role %s and hides it in the assignment catalogue", async code => {
+  const f = await fixture(), reserved = await role(f, code)
+  const preview = await getMemberAccess({ organizationId: f.org, actorId: f.actor, targetUserId: f.recipient })
+  expect(preview.catalogue.find(r => r.id === reserved.id)?.canAssign).toBe(false)
+  const input = await command(f, [reserved.id])
+  await deny(f, "assign:" + code, () => changeMemberAccessAction(f.recipient, input), true)
+})
+it("denies latent reserved role assignment with an empty permission array", async () => {
+  const f = await fixture(), reserved = await role(f, "admin", [])
+  await deny(f, "empty-reserved-assignment", () => assign(f, [reserved.id]))
+})
+it("denies ordinary dashboard assignment that activates an existing latent reserved role", async () => {
+  const f = await fixture(), reserved = await role(f, "admin", []), dashboard = await role(f, "daily_reader")
+  await db.role.update({ where: { id: f.readerRole.id }, data: { permissions: [] } })
+  await db.user.update({ where: { id: f.recipient }, data: { roles: { connect: { id: reserved.id } } } })
+  await deny(f, "latent-plus-ordinary-dashboard", () => assign(f, [dashboard.id]))
+  expect(await recipientScope(f)).toMatchObject({ allowed: false })
+})
+it("denies adding dashboard to an ordinary role held beside a latent reserved role", async () => {
+  const f = await fixture(), reserved = await role(f, "admin", [])
+  await db.role.update({ where: { id: f.readerRole.id }, data: { permissions: [] } })
+  await db.user.update({ where: { id: f.recipient }, data: { roles: { connect: { id: reserved.id } } } })
+  const current = await db.role.findUniqueOrThrow({ where: { id: f.readerRole.id } })
+  await deny(f, "role-edit-latent-activation", () => updateRole(current.id, { permissions: ["dashboard.read"] }, { requestId: randomUUID(), expectedUpdatedAt: current.updatedAt.toISOString() }), true)
+})
+it("denies adding authority to an existing reserved role", async () => {
+  const f = await fixture(), reserved = await role(f, "admin", [])
+  await deny(f, "reserved-update", () => updateOrganizationRole({ ctx: ctx(f), id: reserved.id, data: { permissions: ["dashboard.read"] }, command: { requestId: randomUUID(), expectedUpdatedAt: reserved.updatedAt.toISOString() } }))
+})
+it("permits trusted tenant administrator create/update/assign and ordinary delegate assignment", async () => {
+  const f = await fixture(true)
+  const created: any = await createRole({ name: "Admin", permissions: ["dashboard.read"], organizationId: f.org }, { requestId: randomUUID() })
+  expect(created.success).toBe(true)
+  const updated: any = await updateRole(created.data.id, { permissions: ["dashboard.read", "inventory.items.read"] }, { requestId: randomUUID(), expectedUpdatedAt: created.data.updatedAt.toISOString() })
+  expect(updated.success).toBe(true)
+  const assigned = await changeMemberAccessAction(f.recipient, await command(f, [created.data.id]))
+  expect(assigned.success).toBe(true)
+  expect(await recipientScope(f)).toMatchObject({ allowed: true, scope: { kind: "TENANT" } })
+  expect(await db.session.count({ where: { userId: f.recipient } })).toBe(0)
+  const limited = await fixture(), ordinary = await role(limited, "inventory_reader", ["inventory.items.read"])
+  expect((await assign(limited, [ordinary.id])).replayed).toBe(false)
+  expect(await recipientScope(limited)).toMatchObject({ scope: { kind: "LOCATIONS" } })
+  observations.push({ name: "trusted-admin-positive", tenantScope:true, recipientSessionsRevoked:true, ordinaryDelegatePositive:true })
+})
+it("rechecks current code authority on a role creation replay after admin code loss", async () => {
+  const f = await fixture(true), input = { ctx: ctx(f), data: { name: "Admin", permissions: ["dashboard.read"], organizationId: f.org }, command: { requestId: randomUUID() } }
+  await createOrganizationRole(input)
+  await db.role.update({ where: { id: f.actorRole.id }, data: { code: "former_administrator" } })
+  await deny(f, "create-replay-code-loss", () => createOrganizationRole(input))
+})
+it("rechecks removed reserved membership even when every explicit permission remains",async()=>{
+  const f=await fixture(), reserved=await role(f,"admin",[])
+  await db.user.update({where:{id:f.actor},data:{roles:{connect:{id:reserved.id}}}})
+  const input={ctx:ctx(f),data:{name:"Super Admin",permissions:["dashboard.read"],organizationId:f.org},command:{requestId:randomUUID()}}
+  await createOrganizationRole(input)
+  await db.user.update({where:{id:f.actor},data:{roles:{disconnect:{id:reserved.id}}}})
+  expect((await db.role.findUniqueOrThrow({where:{id:f.actorRole.id}})).permissions).toEqual(permissions)
+  await deny(f,"create-replay-membership-loss",()=>createOrganizationRole(input))
+})
+it("rechecks current code authority on member assignment replay", async () => {
+  const f = await fixture(true), reserved = await role(f, "admin"), cmd = await command(f, [reserved.id])
+  const input = { organizationId: f.org, actorId: f.actor, targetUserId: f.recipient, session: f.session, command: cmd }
+  const first = await changeMemberAccess(input)
+  expect((await changeMemberAccess(input)).replayed).toBe(true)
+  await db.role.update({ where: { id: f.actorRole.id }, data: { code: "former_administrator" } })
+  await deny(f, "member-replay-code-loss", () => changeMemberAccess(input))
+  expect(first.sessionsRevoked).toBe(1)
+})
+it("denies changed-payload replay and stale reviewed role definitions without writes", async () => {
+  const f = await fixture(), ordinary = await role(f, "inventory_reader", ["inventory.items.read"]), cmd = await command(f, [ordinary.id])
+  await changeMemberAccess({ organizationId:f.org,actorId:f.actor,targetUserId:f.recipient,session:f.session,command:cmd })
+  await deny(f,"replay-payload-conflict",()=>changeMemberAccess({organizationId:f.org,actorId:f.actor,targetUserId:f.recipient,session:f.session,command:{...cmd,reason:"Changed synthetic reason"}}))
+  const fresh = await fixture(), target = await role(fresh, "ordinary", [])
+  const reviewed = await command(fresh,[target.id])
+  await db.role.update({where:{id:target.id},data:{code:"admin",updatedAt:new Date(target.updatedAt.getTime()+1)}})
+  await deny(fresh,"target-code-changed-same-permissions",()=>changeMemberAccess({organizationId:fresh.org,actorId:fresh.actor,targetUserId:fresh.recipient,session:fresh.session,command:reviewed}))
+})
+it.each(["expired", "revoked", "permission-revoked"])("real action denies %s persisted authority despite stale transport", async kind => {
+  const f = await fixture(true)
+  if(kind === "expired") await db.session.update({where:{id:f.session.id},data:{expiresAt:new Date(0)}})
+  if(kind === "revoked") await db.session.delete({where:{id:f.session.id}})
+  if(kind === "permission-revoked") await db.role.update({where:{id:f.actorRole.id},data:{permissions:["dashboard.read"]}})
+  await deny(f,"session:"+kind,()=>createRole({name:"Admin",permissions:["dashboard.read"],organizationId:f.org},{requestId:randomUUID()}),true)
+})
+it("denies foreign role and forged organization through current boundaries", async()=>{
+  const f=await fixture(true), foreign=await role(f,"admin",["dashboard.read"],true)
+  await deny(f,"foreign-role",()=>assign(f,[foreign.id]))
+  await deny(f,"forged-organization",()=>createRole({name:"Ordinary",permissions:["dashboard.read"],organizationId:f.foreign},{requestId:randomUUID()}),true)
+})
+
+it.each(["admin","administrator","super_admin"])("real invitation action denies reserved %s without invite/event/outbox writes",async code=>{
+  const f=await fixture(), reserved=await role(f,code)
+  await deny(f,"invite:"+code,()=>sendInvite({email:f.prefix+"-invite@example.invalid",roleId:reserved.id,requestId:randomUUID(),locale:"en"}),true)
+})
+it("allows privileged reserved invitation/replay and rejects stored issuer code loss and stale redemption",async()=>{
+  const f=await fixture(true), reserved=await role(f,"admin"), input={actor:{id:f.actor,organizationId:f.org},actorPermissions:permissions,email:f.prefix+"-invite@example.invalid",roleId:reserved.id,requestId:randomUUID(),locale:"en" as const}
+  const issued:any=await issueUserInvitation(input); expect(issued.status).toBe(200)
+  expect((await issueUserInvitation(input)).data).toMatchObject({replayed:true})
+  const invite=await db.invite.findUniqueOrThrow({where:{id:issued.data.inviteId},include:{role:true}})
+  expect(await readInvitationRedemptionAuthority(db,invite)).not.toBeNull()
+  expect(await db.$transaction(tx=>readInvitationRedemptionAuthority(tx,invite,tx))).not.toBeNull()
+  await db.role.update({where:{id:f.actorRole.id},data:{code:"former_administrator"}})
+  const before=await state(f)
+  expect((await issueUserInvitation(input)).status).toBe(403)
+  expect(await readInvitationRedemptionAuthority(db,invite)).toBeNull()
+  expect(await db.$transaction(tx=>readInvitationRedemptionAuthority(tx,invite,tx))).toBeNull()
+  expect(await state(f)).toEqual(before)
+  observations.push({name:"invite-replay-current-code-loss",before,after:await state(f),redemptionDenied:true})
+})
+it("denies replacing a reserved invitation after the issuer loses tenant authority",async()=>{
+  const f=await fixture(true), reserved=await role(f,"admin"), ordinary=await role(f,"ordinary")
+  const email=f.prefix+"-replace@example.invalid"
+  const issued:any=await issueUserInvitation({actor:{id:f.actor,organizationId:f.org},actorPermissions:permissions,email,roleId:reserved.id,requestId:randomUUID()})
+  expect(issued.status).toBe(200)
+  const invite=await db.invite.findUniqueOrThrow({where:{id:issued.data.inviteId}})
+  await db.role.update({where:{id:f.actorRole.id},data:{code:"former_administrator"}})
+  await deny(f,"invite-replacement-code-loss",()=>sendInvite({email,roleId:ordinary.id,requestId:randomUUID(),replace:{inviteId:invite.id,revision:invitationRevision(invite),reason:"Synthetic replacement"}}),true)
+})
+it("allows ordinary invitation for a limited delegate and rejects target code drift at redemption",async()=>{
+  const f=await fixture(), ordinary=await role(f,"ordinary"), response:any=await sendInvite({email:f.prefix+"-normal@example.invalid",roleId:ordinary.id,requestId:randomUUID()})
+  expect(response.status).toBe(200)
+  let invite=await db.invite.findUniqueOrThrow({where:{id:response.data.inviteId},include:{role:true}})
+  expect(await readInvitationRedemptionAuthority(db,invite)).not.toBeNull()
+  await db.role.update({where:{id:ordinary.id},data:{code:"admin"}})
+  invite=await db.invite.findUniqueOrThrow({where:{id:invite.id},include:{role:true}})
+  const before=await state(f)
+  expect(await readInvitationRedemptionAuthority(db,invite)).toBeNull()
+  expect(await state(f)).toEqual(before)
+})
+
+it.each(["admin", "ordinary"])("qualifies historical %s invitation redemption with recorded legacy provenance",async code=>{
+  const f=await fixture(true), target=await role(f,code)
+  const issued:any=await issueUserInvitation({actor:{id:f.actor,organizationId:f.org},actorPermissions:permissions,email:f.prefix+"-template@example.invalid",roleId:target.id,requestId:randomUUID()})
+  expect(issued.status).toBe(200)
+  const original=await db.businessEvent.findUniqueOrThrow({where:{id:issued.data.issueId}})
+  const legacy=await db.invite.create({data:{organizationId:f.org,roleId:target.id,email:f.prefix+"-legacy@example.invalid",token:randomBytes(32).toString("hex"),expiresAt:new Date(Date.now()+3600000)}})
+  const payload:any={...(original.payload as object),inviteId:legacy.id,tokenHash:invitationDigest(legacy.token),recipientHash:invitationDigest(legacy.email),expiresAt:legacy.expiresAt.toISOString(),requestFingerprint:digest(legacy.id)}
+  delete payload.roleCode;delete payload.actorRoleCodes
+  await db.businessEvent.create({data:{organizationId:f.org,eventType:original.eventType,eventSource:"API",schemaVersion:1,idempotencyKey:"legacy/"+legacy.id,payload,payloadHash:hashBusinessPayload(payload),actorId:f.actor,sourceId:legacy.id,occurredAt:new Date(),status:"APPLIED",processedAt:new Date()}})
+  const before=await state(f), abuseBefore=await db.publicIdentityAbuseBucket.count()
+  const response=await acceptInvitationWorkflow({token:legacy.token,password:"R01!"+randomBytes(24).toString("base64url")+"9a",firstName:"Synthetic",lastName:"Recipient"},{ipAddress:null})
+  if(code==="admin"){
+    expect(response).toMatchObject({status:403,data:null,code:"INVITATION_REISSUE_REQUIRED"})
+    expect(await state(f)).toEqual(before)
+    expect((await db.invite.findUniqueOrThrow({where:{id:legacy.id}})).status).toBe("PENDING")
+  }else{
+    expect(response.status).toBe(200)
+    expect((await db.invite.findUniqueOrThrow({where:{id:legacy.id}})).status).toBe("ACCEPTED")
+    expect(await db.account.count({where:{userId:response.data!.id}})).toBe(1)
+    expect(await db.passwordHistory.count({where:{userId:response.data!.id}})).toBe(1)
+  }
+  observations.push({name:"legacy-redemption:"+code,status:response.status,allowedAbuseBucketsAdded:(await db.publicIdentityAbuseBucket.count())-abuseBefore,businessUnchanged:code==="admin"})
+})
+
+async function deactivate(f:Fixture){
+  const member=await db.user.findUniqueOrThrow({where:{id:f.recipient}})
+  await deactivateUserForOrganization({organizationId:f.org,actorId:f.actor,targetUserId:f.recipient,session:f.session,command:{requestId:randomUUID(),expectedUpdatedAt:member.updatedAt.toISOString(),reason:"Synthetic qualification deactivation"}})
+}
+it("denies reserved reactivation by a limited delegate and permits the legitimate administrator",async()=>{
+  const f=await fixture(true), reserved=await role(f,"admin")
+  await db.user.update({where:{id:f.recipient},data:{roles:{connect:{id:reserved.id}}}})
+  await deactivate(f)
+  await db.role.update({where:{id:f.actorRole.id},data:{code:"former_administrator"}})
+  const cmd={...await command(f,[]),operation:"reactivate" as const}
+  await deny(f,"reserved-reactivation",()=>changeMemberAccess({organizationId:f.org,actorId:f.actor,targetUserId:f.recipient,session:f.session,command:cmd}))
+  await db.role.update({where:{id:f.actorRole.id},data:{code:"administrator"}})
+  const permitted={...await command(f,[]),operation:"reactivate" as const}
+  expect((await changeMemberAccess({organizationId:f.org,actorId:f.actor,targetUserId:f.recipient,session:f.session,command:permitted})).operation).toBe("reactivate")
+  expect(await recipientScope(f)).toMatchObject({scope:{kind:"TENANT"}})
+})
+it("permits ordinary reactivation by a limited delegate with genuine deactivation evidence",async()=>{
+  const f=await fixture();await deactivate(f)
+  const cmd={...await command(f,[]),operation:"reactivate" as const}
+  expect((await changeMemberAccess({organizationId:f.org,actorId:f.actor,targetUserId:f.recipient,session:f.session,command:cmd})).operation).toBe("reactivate")
+  expect(await recipientScope(f)).toMatchObject({scope:{kind:"LOCATIONS"}})
+})
+
+async function request(f:Fixture){
+  actAs(f,true)
+  const submitted:any=await submitAccessRequestAction({commandId:randomUUID(),target:"items",reason:"Synthetic inventory duty"})
+  expect(submitted.success).toBe(true)
+  actAs(f)
+  const preview:any=await previewAccessRequestAction({id:submitted.data.id,revision:submitted.data.revision})
+  expect(preview.success).toBe(true)
+  return {row:submitted.data,preview:preview.data}
+}
+it("access-request preview/decision excludes reserved roles and preserves denied rows",async()=>{
+  const f=await fixture(), reserved=await role(f,"admin",["inventory.items.read"]), r=await request(f)
+  expect(r.preview.roles.some((entry:any)=>entry.id===reserved.id)).toBe(false)
+  await deny(f,"access-decision-reserved",()=>decideAccessRequestAction({id:r.row.id,revision:r.row.revision,decision:"APPROVED",reason:"Synthetic decision",roleIds:[reserved.id],memberRevision:r.preview.memberRevision}),true)
+})
+it("authorized access-request decision/application commits and replays exactly once",async()=>{
+  const f=await fixture(), ordinary=await role(f,"inventory_reader",["inventory.items.read"]), r=await request(f)
+  const decision:any=await decideAccessRequestAction({id:r.row.id,revision:r.row.revision,decision:"APPROVED",reason:"Synthetic decision",roleIds:[ordinary.id],memberRevision:r.preview.memberRevision})
+  expect(decision.success).toBe(true)
+  const applied:any=await applyAccessRequestAction({id:decision.data.id,revision:decision.data.revision})
+  expect(applied).toMatchObject({success:true,data:{application:"APPLIED"}})
+  const before=await state(f)
+  expect(await applyAccessRequestAction({id:applied.data.id,revision:applied.data.revision})).toMatchObject({success:true,data:{application:"APPLIED"}})
+  expect(await state(f)).toEqual(before)
+  expect(await recipientScope(f)).toMatchObject({scope:{kind:"LOCATIONS"}})
+})
+it("access-request application rejects code revocation and records only bounded FAILED evidence",async()=>{
+  const f=await fixture(true), reserved=await role(f,"admin",["inventory.items.read"]), r=await request(f)
+  const decision:any=await decideAccessRequestAction({id:r.row.id,revision:r.row.revision,decision:"APPROVED",reason:"Synthetic decision",roleIds:[reserved.id],memberRevision:r.preview.memberRevision})
+  expect(decision.success).toBe(true)
+  await db.role.update({where:{id:f.actorRole.id},data:{code:"former_administrator"}})
+  const before=await state(f,true)
+  const denied=await applyAccessRequestAction({id:decision.data.id,revision:decision.data.revision})
+  expect(denied.success).toBe(false)
+  expect(await state(f,true)).toEqual(before)
+  const row:any=(await db.$queryRawUnsafe<any[]>('SELECT application,"applicationError",revision FROM access_requests WHERE id=$1',decision.data.id))[0]
+  expect(row).toMatchObject({application:"FAILED",applicationError:"REVIEW_REQUIRED",revision:decision.data.revision+1})
+  observations.push({name:"access-application-code-loss",before,after:await state(f,true),allowedRequestTransition:row})
+})
+it("APPLIED reserved access-request replay rejects subsequent issuer code loss without rewriting receipt",async()=>{
+  const f=await fixture(true), reserved=await role(f,"admin",["inventory.items.read"]), r=await request(f)
+  const decision:any=await decideAccessRequestAction({id:r.row.id,revision:r.row.revision,decision:"APPROVED",reason:"Synthetic decision",roleIds:[reserved.id],memberRevision:r.preview.memberRevision})
+  expect(decision.success).toBe(true)
+  const applied:any=await applyAccessRequestAction({id:decision.data.id,revision:decision.data.revision})
+  expect(applied).toMatchObject({success:true,data:{application:"APPLIED"}})
+  await db.role.update({where:{id:f.actorRole.id},data:{code:"former_administrator"}})
+  await deny(f,"applied-access-replay-code-loss",()=>applyAccessRequestAction({id:applied.data.id,revision:applied.data.revision}),true)
+})
+
+it("waits on the real organization lock then denies revoked authority without unauthorized writes",async()=>{
+  const f=await fixture(true), reserved=await role(f,"admin"), cmd=await command(f,[reserved.id]), before=await state(f,false,true)
+  const blocker=new Client({connectionString:process.env.P04R01_DATABASE_URL,application_name:"r01-blocker"});await blocker.connect()
+  let outcome:Promise<any>|undefined
+  try{
+    await blocker.query("BEGIN")
+    await blocker.query('SELECT id FROM organizations WHERE id=$1 FOR UPDATE',[f.org])
+    outcome=changeMemberAccess({organizationId:f.org,actorId:f.actor,targetUserId:f.recipient,session:f.session,command:cmd}).then(value=>({value}),error=>({error}))
+    let waiting=false
+    for(let n=0;n<100;n++){
+      const rows=(await blocker.query("SELECT pid FROM pg_stat_activity WHERE datname=current_database() AND pid<>pg_backend_pid() AND wait_event_type='Lock'")).rows
+      if(rows.length){waiting=true;break}await new Promise(resolve=>setTimeout(resolve,30))
+    }
+    expect(waiting).toBe(true)
+    await blocker.query('UPDATE roles SET code=$1 WHERE id=$2',["former_administrator",f.actorRole.id])
+    await blocker.query("COMMIT")
+    expect((await outcome).error).toMatchObject({code:"FORBIDDEN"})
+    expect(await state(f,false,true)).toEqual(before)
+    expect((await db.role.findUniqueOrThrow({where:{id:f.actorRole.id}})).code).toBe("former_administrator")
+    observations.push({name:"lock-race-code-revocation",actualWaitObserved:waiting,before,after:await state(f,false,true),allowedFixtureMutation:"actorRole.code only"})
+  }finally{try{await blocker.query("ROLLBACK")}finally{await blocker.end()}if(outcome)await outcome}
+})
+it("rolls back membership and target-session revocation when receipt persistence fails",async()=>{
+  const f=await fixture(), ordinary=await role(f,"inventory_reader",["inventory.items.read"]), cmd=await command(f,[ordinary.id])
+  const client=new Client({connectionString:process.env.P04R01_DATABASE_URL,application_name:"r01-failure-injection"});await client.connect()
+  // Exact synthetic target condition, no production configuration or broad trigger.
+  const literal=f.recipient.replaceAll("'","''")
+  await client.query(`CREATE FUNCTION r01_fail_audit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW."entityId"='${literal}' AND NEW.action='MEMBER_ACCESS_CHANGED' THEN RAISE EXCEPTION 'synthetic R01 receipt failure'; END IF; RETURN NEW; END $$`)
+  await client.query('CREATE TRIGGER r01_fail_audit BEFORE INSERT ON audit_logs FOR EACH ROW EXECUTE FUNCTION r01_fail_audit()')
+  const before=await state(f)
+  try{
+    await expect(changeMemberAccess({organizationId:f.org,actorId:f.actor,targetUserId:f.recipient,session:f.session,command:cmd})).rejects.toBeDefined()
+    expect(await state(f)).toEqual(before)
+    observations.push({name:"transaction-rollback-after-session-delete",before,after:await state(f)})
+  }finally{await client.query('DROP TRIGGER r01_fail_audit ON audit_logs');await client.query('DROP FUNCTION r01_fail_audit()');await client.end()}
+  expect((await changeMemberAccess({organizationId:f.org,actorId:f.actor,targetUserId:f.recipient,session:f.session,command:cmd})).sessionsRevoked).toBe(1)
+})
+
+it("delivery issues admit authorized reserved invitations and exclude them after current code loss",async()=>{
+  const f=await fixture(true), reserved=await role(f,"admin")
+  const issued:any=await issueUserInvitation({actor:{id:f.actor,organizationId:f.org},actorPermissions:permissions,email:f.prefix+"-delivery@example.invalid",roleId:reserved.id,requestId:randomUUID()})
+  expect(issued.status).toBe(200)
+  const reader={orgId:f.org,userId:f.actor,permissions}
+  let before=await state(f)
+  const authorized=await readDeliveryIssues(reader,{source:"invitations",state:"all"})
+  expect(authorized.pages[0]).toMatchObject({availability:"ready",rows:[{id:issued.data.issueId,state:"queued",recipient:"r•••@•••",reason:"none"}]})
+  expect(await state(f)).toEqual(before)
+  await db.role.update({where:{id:f.actorRole.id},data:{code:"former_administrator"}})
+  before=await state(f)
+  const denied=await readDeliveryIssues(reader,{source:"invitations",state:"all"})
+  expect(denied.pages[0]).toMatchObject({availability:"ready",rows:[],nextCursor:null,windowLimited:false})
+  expect(JSON.stringify(denied)).not.toContain(issued.data.issueId)
+  const cursor=await readDeliveryIssues(reader,{source:"invitations",state:"all",invitationCursor:issued.data.issueId})
+  expect(cursor.pages[0]).toMatchObject({availability:"unavailable",rows:[],nextCursor:null})
+  expect(JSON.stringify(cursor)).not.toContain(issued.data.issueId)
+  expect(await state(f)).toEqual(before)
+  observations.push({name:"delivery-reserved-current-code-loss",before,after:await state(f),authorizedRow:true,deniedRows:0,reservedCursorDenied:true})
+})
+
+it("delivery issues retain ordinary legacy evidence and deny missing stored reviewer authority",async()=>{
+  const f=await fixture(), ordinary=await role(f,"ordinary")
+  const issued:any=await issueUserInvitation({actor:{id:f.actor,organizationId:f.org},actorPermissions:permissions,email:f.prefix+"-template-delivery@example.invalid",roleId:ordinary.id,requestId:randomUUID()})
+  expect(issued.status).toBe(200)
+  const original=await db.businessEvent.findUniqueOrThrow({where:{id:issued.data.issueId}})
+  const legacy=await db.invite.create({data:{organizationId:f.org,roleId:ordinary.id,email:f.prefix+"-legacy-delivery@example.invalid",token:randomBytes(32).toString("hex"),expiresAt:new Date(Date.now()+3600000)}})
+  const payload:any={...(original.payload as object),inviteId:legacy.id,tokenHash:invitationDigest(legacy.token),recipientHash:invitationDigest(legacy.email),expiresAt:legacy.expiresAt.toISOString(),requestFingerprint:digest(legacy.id)}
+  delete payload.roleCode;delete payload.actorRoleCodes
+  const payloadHash=hashBusinessPayload(payload),idempotencyKey="legacy-delivery/"+legacy.id
+  const legacyEvent=await db.businessEvent.create({data:{organizationId:f.org,eventType:original.eventType,eventSource:"API",schemaVersion:1,idempotencyKey,payload,payloadHash,actorId:f.actor,sourceId:legacy.id,occurredAt:new Date(),status:"APPLIED",processedAt:new Date(),outboxMessages:{create:{organizationId:f.org,channel:"EMAIL",eventName:"identity.user_invitation.email.v1",idempotencyKey,payload,payloadHash,status:"SENT",attempts:1}}}})
+  const reader={orgId:f.org,userId:f.actor,permissions}
+  let before=await state(f)
+  const authorized=await readDeliveryIssues(reader,{source:"invitations",state:"all"})
+  expect(authorized.pages[0].availability).toBe("ready")
+  expect(authorized.pages[0].rows.find(row=>row.id===legacyEvent.id)).toMatchObject({state:"accepted",recipient:"r•••@•••",attempts:1,reason:"none"})
+  expect(JSON.stringify(authorized)).not.toContain(legacy.email)
+  expect(JSON.stringify(authorized)).not.toContain(legacy.token)
+  expect(await state(f)).toEqual(before)
+  await db.role.update({where:{id:f.actorRole.id},data:{permissions:["dashboard.read"]}})
+  before=await state(f)
+  const denied=await readDeliveryIssues(reader,{source:"invitations",state:"all"})
+  expect(denied.pages[0]).toMatchObject({availability:"restricted",rows:[],nextCursor:null})
+  expect(await state(f)).toEqual(before)
+  observations.push({name:"delivery-ordinary-legacy-evidence",before,after:await state(f),legacyEvidencePositive:true,storedRevocationDenied:true})
+})

@@ -1,0 +1,212 @@
+"use client"
+
+import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
+import { accountantAccessCopy, accountantAccessLabel } from "./accountantAccessCopy"
+import type { Locale } from "@/types/bilingual"
+
+import { useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
+
+import {
+  inviteAccountantAccessAction,
+  revokeAccountantAccessAction,
+} from "@/actions/accounting/accountant-access.actions"
+import type { AccountantAccessGrantDto } from "@/services/accounting/accountant-access.service"
+import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+import { firmEngagementCopy } from "./firm-engagement-copy"
+
+function toAbsoluteIsoDateTime(
+  value: FormDataEntryValue | null,
+): string | undefined {
+  if (typeof value !== "string" || value.length === 0) return undefined
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString()
+}
+
+function formatConsentInstant(value: string, locale: Locale): string {
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return value
+  return new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZoneName: "short",
+  }).format(parsed)
+}
+export function AccountantAccessManager({
+  initialGrants,
+  locale = "en",
+}: {
+  initialGrants: AccountantAccessGrantDto[]
+  locale?: Locale
+}) {
+  const t = accountantAccessCopy[locale]
+  const router = useRouter()
+  const [message, setMessage] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
+  const [operation, setOperation] = useState<{ kind: "grant" | "revoke"; input: Record<string, unknown> } | null>(null)
+  const [fresh, setFresh] = useState(false)
+  const ft = firmEngagementCopy[locale]
+
+  function run(next: NonNullable<typeof operation>) {
+    setOperation(next)
+    setMessage(null)
+    startTransition(async () => {
+      try {
+        const result = next.kind === "grant" ? await inviteAccountantAccessAction(next.input) : await revokeAccountantAccessAction(next.input)
+        if (result.success) {
+          setOperation(null); setFresh(false)
+          setMessage(next.kind === "grant" ? ("outcome" in result.data && result.data.outcome === "INVITED" ? t.queued : t.granted) : ("status" in result.data && result.data.status === "EXPIRED" ? t.expired : t.revoked))
+          router.refresh()
+        } else if (result.code === "FRESH_AUTH_REQUIRED") { setFresh(true); setMessage(ft.fresh) }
+        else if (result.retryable || result.code === "INTERNAL_ERROR") setMessage(ft.uncertain)
+        else { setOperation(null); setMessage(ft.rejected) }
+      } catch { setMessage(ft.uncertain) }
+    })
+  }
+  function grant(formData: FormData) {
+    run({ kind: "grant", input: {
+        accountantEmail: formData.get("accountantEmail"),
+        accountantFirmName: formData.get("accountantFirmName"),
+        accountantFirmRegistrationNumber:
+          formData.get("accountantFirmRegistrationNumber") || null,
+        role: formData.get("role"),
+        consentEvidenceHash: formData.get("consentEvidenceHash"),
+        effectiveFrom: toAbsoluteIsoDateTime(formData.get("effectiveFrom")) ?? new Date().toISOString(),
+        expiresAt: toAbsoluteIsoDateTime(formData.get("expiresAt")),
+        idempotencyKey: crypto.randomUUID(), locale: locale === "fr" ? "FR" : "EN",
+      } })
+  }
+
+  function revoke(grantId: string) {
+    const reason = window.prompt(`${t.revokeReason}\n${ft.consequence}`)
+    if (!reason) return
+    run({ kind: "revoke", input: { grantId, reason } })
+  }
+
+  return (
+    <div className="space-y-6">
+      <form onSubmit={(event) => {
+        event.preventDefault()
+        grant(new FormData(event.currentTarget))
+      }} className="dashboard-glass-panel grid min-w-0 gap-4 rounded-lg p-5 md:grid-cols-2">
+        <div className="md:col-span-2">
+          <h2 className="font-semibold">{t.invite}</h2>
+          <p className="mt-1 text-sm text-[var(--dash-text-soft)]">
+            {t.invitationHelp}
+          </p>
+          <p className="mt-2 text-sm">{locale === "fr" ? "Pour renouveler un mandat actif, révoquez-le puis accordez un nouveau mandat avec un nouveau consentement et une nouvelle échéance. Le cabinet doit rattacher le nouveau mandat." : "To renew an active mandate, revoke it and grant a new mandate with fresh consent and expiry. The firm must explicitly enroll the new mandate."}</p>
+        </div>
+        <label className="text-sm">
+          {t.email}
+          <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="accountantEmail" type="email" required />
+        </label>
+        <label className="text-sm">
+          {t.firm}
+          <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="accountantFirmName" required />
+        </label>
+        <label className="text-sm">
+          {t.registration}
+          <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="accountantFirmRegistrationNumber" />
+        </label>
+        <label className="text-sm">
+          {t.role}
+          <select className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="role" defaultValue="READ_ONLY">
+            <option value="READ_ONLY">{t.roles.READ_ONLY}</option>
+            <option value="REVIEWER">{t.roles.REVIEWER}</option>
+            <option value="PREPARER">{t.roles.PREPARER}</option>
+          </select>
+        </label>
+        <label className="text-sm">
+          {t.effective}
+          <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3 [color-scheme:dark]" name="effectiveFrom" type="datetime-local" />
+        </label>
+        <label className="text-sm">
+          {t.expires}
+          <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3 [color-scheme:dark]" name="expiresAt" type="datetime-local" required />
+        </label>
+        <label className="text-sm md:col-span-2">
+          {t.consent}
+          <input
+            className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3 font-mono text-xs"
+            name="consentEvidenceHash"
+            placeholder="sha256:…"
+            pattern="sha256:[A-Fa-f0-9]{64}"
+            required
+          />
+        </label>
+        <button className="dashboard-button-create min-h-11 w-fit rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50" disabled={isPending || !!operation}>
+          {isPending ? t.saving : t.submit}
+        </button>
+        {message ? <p role="status" className="self-center text-sm md:col-span-2">{message}</p> : null}
+      </form>
+      {operation && <div className="dashboard-glass-panel space-y-3 rounded-lg p-5">
+        {fresh && <form onSubmit={e => {
+          e.preventDefault(); const form = e.currentTarget, password = String(new FormData(form).get("password")); form.reset()
+          startTransition(async () => {
+            try { const r = await stepUpWithPasswordAction({ password }); if (r.success) { setFresh(false); setMessage(null) } else setMessage(ft.identityFailed) }
+            catch { setMessage(ft.identityFailed) }
+          })
+        }}><label>{ft.password}<input className="dashboard-control ml-2 min-h-11 rounded-lg px-3" name="password" type="password" autoComplete="current-password" required /></label>
+          <button className="dashboard-button-secondary min-h-11 rounded-lg px-3" disabled={isPending}>{ft.verify}</button></form>}
+        <button className="dashboard-button-secondary min-h-11 rounded-lg px-3" disabled={isPending || fresh} onClick={() => run(operation)}>{ft.retry}</button>
+      </div>}
+
+      <div className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg">
+        <AccountingDataTable
+          caption={t.caption}
+          emptyMessage={t.empty}
+          locale={locale}
+          columns={[
+            { label: t.firmColumn },
+            { label: t.role },
+            { label: t.status },
+            { label: t.expiry },
+            { label: t.action },
+          ]}
+          rows={initialGrants.map((grant) => {
+            return {
+              id: grant.id,
+              searchText: [
+                grant.accountantFirmName,
+                grant.accountantEmail ?? grant.accountantUserId,
+                accountantAccessLabel(t.roles, grant.role),
+                accountantAccessLabel(t.statuses, grant.status),
+                formatConsentInstant(grant.expiresAt, locale),
+              ]
+                .filter((value) => value !== null && value !== undefined)
+                .join(" "),
+              cells: [
+                <div key="cell-0"><p>{grant.accountantFirmName}</p><p className="break-all text-sm">{grant.accountantName || grant.accountantEmail || grant.accountantUserId}</p>
+                  {grant.accountantName && <p className="break-all text-sm">{grant.accountantEmail}</p>}</div>,
+                <div key="cell-1">{accountantAccessLabel(t.roles, grant.role)}</div>,
+                <div key="cell-2">{accountantAccessLabel(t.statuses, grant.status)}</div>,
+                <div key="cell-3">
+                  <time dateTime={grant.expiresAt} title={grant.expiresAt}>
+                    {formatConsentInstant(grant.expiresAt, locale)}
+                  </time>
+                </div>,
+                <div key="cell-4">
+                  {["ACTIVE", "SCHEDULED"].includes(grant.status) ? (
+                    <button
+                      className="min-h-10 rounded-md px-2 text-[var(--dash-danger)] underline focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]"
+                      disabled={isPending || !!operation}
+                      onClick={() => revoke(grant.id)}
+                      type="button"
+                    >
+                      {t.revoke}
+                    </button>
+                  ) : (
+                    "—"
+                  )}
+                </div>,
+              ],
+            }
+          })}
+        />
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,64 @@
+{
+  "at": "2026-10-20T08:50:44.535Z",
+  "status": "PASS",
+  "head": "6ee84a90c760d2864f6aef672d8b393ac2b65971",
+  "initialTracked": 61,
+  "initialUntracked": 567,
+  "selectedFiles": 768,
+  "ownedDrift": [
+    {
+      "path": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "sha256": "914400499178046f65f375892daf49bd14a3b7e47c7be6776b36b674b0ddc999",
+      "current": "3f8dc07caabd51e8904edbce8299c0b6d2ff08eec9abf0a50b4c39ad5883b2c2"
+    },
+    {
+      "path": "docs/retention/execution/P12/DAYS_31_60_EXECUTION_ORDER.md",
+      "sha256": "0685dbcd0755623b0138535c696db1c900004f3a0c6ab7edb508d83bd284cb4a",
+      "current": "f33188da0b546d7acc84e9197018710a7ccf11c0d7a206d4f51ac523ef1a7619"
+    },
+    {
+      "path": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "sha256": "c2596b157e1ed1bab70666e6c6d78ccc4a6330352bdbf31e8970eb50bf004b28",
+      "current": "206085a19b52bb8f4d73fa285c098c8d2c1f2484eb0cac34108cce39ccf045d4"
+    },
+    {
+      "path": "docs/retention/execution/P12/RESULT.md",
+      "sha256": "55de2b7a93dedf821ac8af19ada4d0512ebe52897689724d7b0c206d8ebe86d4",
+      "current": "8188230e2ea6adbabfd34f444eedf4a4b5231b3b518c494860c75c94711cd823"
+    },
+    {
+      "path": "docs/retention/execution/STATUS.md",
+      "sha256": "1d58d06f7c4e0ed6a9b6d1238ace469f51a63bbae8b315b858e908f1eb16e824",
+      "current": "45f0326f36d4f48ad4cdc3a6ad0baf5b723b4ed15c574c4d2be9ff334cbc3c1b"
+    }
+  ],
+  "unownedDrift": [
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "cfb3104d2af2fd80f4e7aeb2ea3df1e35a40070962341f2b859b4640d1336cd2",
+      "current": "69b4bfef70d412d0023efe1089e019d2f74178013c61bdbefbf6aa746013d0d1"
+    },
+    {
+      "path": "services/accounting/accountant-access.service.ts",
+      "sha256": "e1876cad16017a4858b8b02918e046bbb3faf2ea073c4f85d3a6157886219804",
+      "current": "5a60f58b097fd4413f032c55c35186500cc3c089c48c9ebcdeccdcefd8d5edf6"
+    }
+  ],
+  "nonP12StatusUnchanged": true,
+  "priorDocumentsPreserved": true,
+  "originalCriteria": 42,
+  "acceptance": {
+    "PASS": 41,
+    "PARTIAL": 1
+  },
+  "workflowExit": 0,
+  "pureTests": 13,
+  "newDatabaseTests": 0,
+  "newBrowserTests": 0,
+  "packetDrift": [
+    "docs/retention/execution/STATUS.md"
+  ],
+  "localLinksChecked": 76,
+  "downstreamDependenciesChecked": true,
+  "problems": []
+}

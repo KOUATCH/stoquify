@@ -1,0 +1,1907 @@
+{
+  "status": "SYNTHETIC_SCENARIOS_WITH_REGULATORY_BLOCKERS",
+  "fullSystemReady": false,
+  "database": "stoquify_replay_dataset_20261028_01",
+  "historyStart": "2025-11-01",
+  "historyEnd": "2026-10-28",
+  "monthlyTradingComplete": true,
+  "organizationMonths": 36,
+  "historicalPurchases": 108,
+  "historicalSales": 432,
+  "historicalInvoiceBlockers": 18,
+  "additionalScenarioCount": 36,
+  "unexpectedIssues": [],
+  "models": 242,
+  "tables": 247,
+  "populatedTables": 227,
+  "pendingTables": 0,
+  "counts": {
+    "_UserRoles": 38,
+    "_prisma_migrations": 120,
+    "access_requests": 3,
+    "accountant_access_grants": 8,
+    "accountant_client_invite_states": 3,
+    "accountant_client_invites": 3,
+    "accountant_comments": 23,
+    "accountant_reviews": 15,
+    "accounting_periods": 86,
+    "accounting_source_links": 1421,
+    "accounts": 38,
+    "agent_activation_approvals": 12,
+    "agent_activation_owners": 18,
+    "agent_activation_packages": 6,
+    "agent_cost_ledger": 6,
+    "agent_definitions": 2,
+    "agent_evidence_links": 33,
+    "agent_feedback": 3,
+    "agent_pilot_certifications": 3,
+    "agent_policy_incidents": 3,
+    "agent_reconciler_invocations": 6,
+    "agent_runs": 9,
+    "agent_skill_definitions": 2,
+    "agent_steps": 18,
+    "agent_tool_definitions": 2,
+    "ai_action_proposals": 3,
+    "audit_logs": 9344,
+    "balance_sheet_evidence": 50,
+    "bank_balance_evidence": 1,
+    "branch_daily_close_runs": 4,
+    "branch_daily_close_sign_offs": 1,
+    "brands": 9,
+    "business_event_anomalies": 3,
+    "business_event_audits": 7523,
+    "business_event_outbox": 4965,
+    "business_events": 4071,
+    "cash_drawer_transactions": 636,
+    "cash_drawers": 84,
+    "cash_shortage_policies": 3,
+    "categories": 9,
+    "chart_of_accounts": 107,
+    "close_assurance_findings": 236,
+    "close_checklist_items": 130,
+    "close_evidence_items": 576,
+    "close_evidence_notifications": 9,
+    "close_pack_exports": 13,
+    "close_runs": 13,
+    "close_source_changes": 26781,
+    "close_source_revisions": 5,
+    "command_center_events": 6,
+    "command_center_notices": 3,
+    "command_center_occurrences": 3,
+    "command_center_preferences": 3,
+    "command_center_review_receipts": 3,
+    "command_center_review_states": 3,
+    "compliance_adapter_configs": 3,
+    "compliance_evidence": 3,
+    "compliance_submissions": 3,
+    "customer_ledger_entries": 15,
+    "customer_locations": 72,
+    "customer_receivable_document_states": 15,
+    "customer_receivable_documents": 9,
+    "customer_settlement_allocations": 6,
+    "customer_settlements": 6,
+    "customer_statement_access_logs": 30,
+    "customer_statement_access_tokens": 3,
+    "customer_statement_deliveries": 3,
+    "customer_statement_delivery_states": 3,
+    "customer_statement_recipient_action_states": 3,
+    "customer_statement_recipient_actions": 3,
+    "customer_statement_snapshots": 3,
+    "customers": 39,
+    "daily_sales_report_cash_events": 576,
+    "daily_sales_report_items": 864,
+    "daily_sales_reports": 72,
+    "delivery_billing_lines": 6,
+    "delivery_billing_outcomes": 3,
+    "delivery_goods_issue_lines": 6,
+    "delivery_goods_issues": 3,
+    "delivery_reservation_lines": 6,
+    "delivery_reservations": 3,
+    "document_sequences": 9,
+    "expense_categories": 6,
+    "expenses": 216,
+    "financial_opening_executions": 1,
+    "financial_opening_operations": 1,
+    "financial_opening_revisions": 1,
+    "firm_advisory_revisions": 4,
+    "firm_engagement_assignments": 8,
+    "firm_engagement_grant_links": 8,
+    "firm_engagement_transitions": 4,
+    "firm_engagements": 4,
+    "firm_obligation_revisions": 3,
+    "firm_practice_revisions": 9,
+    "fiscal_document_lines": 6,
+    "fiscal_documents": 3,
+    "fiscal_sequences": 3,
+    "fiscal_years": 8,
+    "goods_receipt_inspection_resolutions": 3,
+    "goods_receipt_inspections": 120,
+    "goods_receipt_lines": 1407,
+    "goods_receipts": 120,
+    "hris_attendance_anomalies": 3,
+    "hris_employee_documents": 3,
+    "hris_employment_assignments": 36,
+    "hris_leave_balance_entries": 39,
+    "hris_leave_policies": 6,
+    "hris_lifecycle_tasks": 12,
+    "hris_manager_delegations": 3,
+    "hris_org_units": 15,
+    "hris_payroll_handoff_packages": 0,
+    "hris_payroll_handoff_receipts": 0,
+    "hris_personal_correction_cases": 3,
+    "hris_positions": 18,
+    "hris_public_holidays": 3,
+    "hris_reporting_relationships": 33,
+    "hris_setup_reviewer_grants": 3,
+    "hris_time_entries": 13035,
+    "hris_time_import_batches": 39,
+    "hris_time_requests": 12,
+    "hris_work_calendars": 6,
+    "hris_work_schedules": 36,
+    "inventory_levels": 111,
+    "inventory_transactions": 2853,
+    "invites": 3,
+    "item_suppliers": 72,
+    "items": 39,
+    "journal_entries": 1421,
+    "journal_entry_lines": 3802,
+    "journals": 40,
+    "ledger_audit_events": 4292,
+    "ledger_posting_batches": 1421,
+    "legacy_production_batches": 0,
+    "legacy_recipe_ingredients": 0,
+    "legacy_recipes": 0,
+    "locations": 10,
+    "match_records": 3,
+    "onboarding_import_batches": 6,
+    "onboarding_import_issues": 3,
+    "onboarding_import_mappings": 3,
+    "onboarding_import_rows": 6,
+    "onboarding_readiness_milestones": 3,
+    "organization_accounting_settings": 5,
+    "organizations": 5,
+    "password_history": 0,
+    "payment_exceptions": 8,
+    "payment_rails": 4,
+    "payment_reconciliation_inbox_items": 15,
+    "payment_refunds": 3,
+    "payment_transactions": 6,
+    "payments": 477,
+    "payroll_attendance_snapshots": 0,
+    "payroll_contracts": 36,
+    "payroll_declaration_evidence": 0,
+    "payroll_declarations": 0,
+    "payroll_employee_balance_cases": 0,
+    "payroll_employee_balance_events": 0,
+    "payroll_employee_rubrique_assignments": 3,
+    "payroll_employees": 36,
+    "payroll_payment_allocations": 0,
+    "payroll_payment_batches": 0,
+    "payroll_payment_destination_change_requests": 36,
+    "payroll_payslip_lines": 0,
+    "payroll_payslips": 0,
+    "payroll_periods": 0,
+    "payroll_rubriques": 3,
+    "payroll_run_lines": 0,
+    "payroll_run_transitions": 0,
+    "payroll_runs": 0,
+    "payroll_salary_change_requests": 3,
+    "period_control_events": 1,
+    "picture_assets": 6,
+    "pos_cash_shortage_worker_checkpoints": 3,
+    "pos_checkout_workspaces": 84,
+    "pos_commit_results": 477,
+    "pos_offline_devices": 6,
+    "pos_offline_events": 12,
+    "pos_offline_sync_batches": 12,
+    "pos_offline_sync_certificates": 6,
+    "pos_offline_sync_conflicts": 9,
+    "pos_sessions": 84,
+    "pos_terminals": 87,
+    "posting_rule_lines": 331,
+    "posting_rules": 66,
+    "provider_accounts": 4,
+    "provider_events": 1,
+    "public_identity_abuse_buckets": 3,
+    "public_receipt_access_tokens": 3,
+    "purchase_order_authoring_drafts": 3,
+    "purchase_order_lines": 1410,
+    "purchase_orders": 123,
+    "purchase_return_lines": 3,
+    "purchase_returns": 3,
+    "reconciliation_no_activity_evidence": 3,
+    "reconciliation_runs": 4,
+    "referral_attribution_events": 6,
+    "referral_attributions": 6,
+    "roles": 41,
+    "sales_order_lines": 1419,
+    "sales_orders": 480,
+    "serial_numbers": 6,
+    "sessions": 1907,
+    "settlement_accounts": 4,
+    "statement_files": 4,
+    "statement_lines": 4,
+    "stock_adjustment_lines": 3,
+    "stock_adjustments": 3,
+    "stock_count_lines": 6,
+    "stock_count_sessions": 3,
+    "stock_transfer_lines": 6,
+    "stock_transfers": 3,
+    "supplier_bank_accounts": 9,
+    "supplier_bank_change_requests": 9,
+    "supplier_credit_note_lines": 3,
+    "supplier_credit_notes": 3,
+    "supplier_invoice_lines": 1407,
+    "supplier_invoice_match_exceptions": 3,
+    "supplier_invoices": 120,
+    "supplier_ledger_entries": 108,
+    "supplier_payment_allocations": 12,
+    "supplier_payments": 12,
+    "supplier_po_access_logs": 33,
+    "supplier_po_access_tokens": 3,
+    "supplier_po_envelopes": 3,
+    "supplier_po_proposal_lines": 3,
+    "supplier_po_proposal_states": 6,
+    "supplier_po_proposals": 3,
+    "suppliers": 21,
+    "suspense_items": 2,
+    "tax_rates": 3,
+    "tenant_module_configuration_commands": 6,
+    "tenant_module_configurations": 3,
+    "tenant_module_grants": 45,
+    "tenant_module_lifecycle_events": 24,
+    "tenant_module_lifecycle_operations": 3,
+    "tenant_module_lifecycle_steps": 15,
+    "three_way_matches": 120,
+    "units": 3,
+    "users": 38,
+    "verifications": 0,
+    "workflow_assurance_alert_deliveries": 9,
+    "workflow_assurance_check_definitions": 39,
+    "workflow_assurance_check_findings": 9,
+    "workflow_assurance_check_runs": 24,
+    "workflow_assurance_incident_events": 15,
+    "workflow_assurance_incidents": 3,
+    "workflow_assurance_waivers": 3
+  },
+  "integrity": {
+    "passed": true,
+    "checks": 1124
+  },
+  "replay": {
+    "database": "stoquify_replay_dataset_20261028_01",
+    "checkedAt": "2026-10-29T13:42:05.542Z",
+    "passed": true,
+    "before": "22f16a64f21beb05028dc20ae2a7d10528ba2492cb4482eebfa28d5d5fa778f2",
+    "after": "22f16a64f21beb05028dc20ae2a7d10528ba2492cb4482eebfa28d5d5fa778f2",
+    "scope": [
+      "access_requests",
+      "accountant_access_grants",
+      "accountant_client_invite_states",
+      "accountant_client_invites",
+      "accountant_comments",
+      "accountant_reviews",
+      "accounting_source_links",
+      "agent_activation_approvals",
+      "agent_activation_owners",
+      "agent_activation_packages",
+      "agent_cost_ledger",
+      "agent_definitions",
+      "agent_evidence_links",
+      "agent_feedback",
+      "agent_pilot_certifications",
+      "agent_policy_incidents",
+      "agent_reconciler_invocations",
+      "agent_runs",
+      "agent_skill_definitions",
+      "agent_steps",
+      "agent_tool_definitions",
+      "ai_action_proposals",
+      "balance_sheet_evidence",
+      "bank_balance_evidence",
+      "branch_daily_close_runs",
+      "branch_daily_close_sign_offs",
+      "brands",
+      "business_event_anomalies",
+      "business_events",
+      "cash_shortage_policies",
+      "categories",
+      "chart_of_accounts",
+      "close_assurance_findings",
+      "close_checklist_items",
+      "close_evidence_items",
+      "close_evidence_notifications",
+      "close_pack_exports",
+      "close_runs",
+      "command_center_events",
+      "command_center_notices",
+      "command_center_occurrences",
+      "command_center_preferences",
+      "command_center_review_receipts",
+      "command_center_review_states",
+      "compliance_adapter_configs",
+      "compliance_submissions",
+      "customer_ledger_entries",
+      "customer_locations",
+      "customer_receivable_document_states",
+      "customer_receivable_documents",
+      "customer_settlement_allocations",
+      "customer_settlements",
+      "customer_statement_access_tokens",
+      "customer_statement_deliveries",
+      "customer_statement_delivery_states",
+      "customer_statement_recipient_action_states",
+      "customer_statement_recipient_actions",
+      "customer_statement_snapshots",
+      "customers",
+      "daily_sales_report_cash_events",
+      "daily_sales_report_items",
+      "daily_sales_reports",
+      "delivery_billing_lines",
+      "delivery_billing_outcomes",
+      "delivery_goods_issue_lines",
+      "delivery_goods_issues",
+      "delivery_reservation_lines",
+      "delivery_reservations",
+      "expense_categories",
+      "expenses",
+      "financial_opening_executions",
+      "financial_opening_operations",
+      "financial_opening_revisions",
+      "firm_advisory_revisions",
+      "firm_engagement_assignments",
+      "firm_engagement_grant_links",
+      "firm_engagement_transitions",
+      "firm_engagements",
+      "firm_obligation_revisions",
+      "firm_practice_revisions",
+      "fiscal_document_lines",
+      "fiscal_documents",
+      "fiscal_sequences",
+      "goods_receipt_inspection_resolutions",
+      "goods_receipt_lines",
+      "goods_receipts",
+      "hris_attendance_anomalies",
+      "hris_employee_documents",
+      "hris_employment_assignments",
+      "hris_leave_balance_entries",
+      "hris_lifecycle_tasks",
+      "hris_manager_delegations",
+      "hris_org_units",
+      "hris_payroll_handoff_packages",
+      "hris_payroll_handoff_receipts",
+      "hris_personal_correction_cases",
+      "hris_positions",
+      "hris_public_holidays",
+      "hris_reporting_relationships",
+      "hris_setup_reviewer_grants",
+      "hris_time_entries",
+      "hris_time_requests",
+      "inventory_levels",
+      "inventory_transactions",
+      "invites",
+      "item_suppliers",
+      "items",
+      "journal_entries",
+      "journal_entry_lines",
+      "ledger_posting_batches",
+      "locations",
+      "match_records",
+      "onboarding_import_batches",
+      "onboarding_import_issues",
+      "onboarding_import_mappings",
+      "onboarding_import_rows",
+      "onboarding_readiness_milestones",
+      "organizations",
+      "payment_exceptions",
+      "payment_rails",
+      "payment_reconciliation_inbox_items",
+      "payment_refunds",
+      "payment_transactions",
+      "payroll_attendance_snapshots",
+      "payroll_contracts",
+      "payroll_declaration_evidence",
+      "payroll_declarations",
+      "payroll_employee_balance_cases",
+      "payroll_employee_balance_events",
+      "payroll_employee_rubrique_assignments",
+      "payroll_employees",
+      "payroll_payment_allocations",
+      "payroll_payment_batches",
+      "payroll_payslip_lines",
+      "payroll_payslips",
+      "payroll_periods",
+      "payroll_rubriques",
+      "payroll_run_lines",
+      "payroll_run_transitions",
+      "payroll_runs",
+      "payroll_salary_change_requests",
+      "period_control_events",
+      "picture_assets",
+      "pos_cash_shortage_worker_checkpoints",
+      "pos_commit_results",
+      "pos_offline_devices",
+      "pos_offline_events",
+      "pos_offline_sync_batches",
+      "pos_offline_sync_certificates",
+      "pos_offline_sync_conflicts",
+      "provider_accounts",
+      "provider_events",
+      "public_identity_abuse_buckets",
+      "public_receipt_access_tokens",
+      "purchase_order_authoring_drafts",
+      "purchase_order_lines",
+      "purchase_orders",
+      "purchase_return_lines",
+      "purchase_returns",
+      "reconciliation_no_activity_evidence",
+      "reconciliation_runs",
+      "referral_attribution_events",
+      "referral_attributions",
+      "roles",
+      "sales_order_lines",
+      "sales_orders",
+      "serial_numbers",
+      "settlement_accounts",
+      "statement_files",
+      "statement_lines",
+      "stock_adjustment_lines",
+      "stock_adjustments",
+      "stock_count_lines",
+      "stock_count_sessions",
+      "stock_transfer_lines",
+      "stock_transfers",
+      "supplier_credit_note_lines",
+      "supplier_credit_notes",
+      "supplier_invoice_lines",
+      "supplier_invoice_match_exceptions",
+      "supplier_invoices",
+      "supplier_payment_allocations",
+      "supplier_payments",
+      "supplier_po_access_tokens",
+      "supplier_po_envelopes",
+      "supplier_po_proposal_lines",
+      "supplier_po_proposal_states",
+      "supplier_po_proposals",
+      "suppliers",
+      "suspense_items",
+      "tax_rates",
+      "tenant_module_configuration_commands",
+      "tenant_module_configurations",
+      "tenant_module_grants",
+      "tenant_module_lifecycle_events",
+      "tenant_module_lifecycle_operations",
+      "tenant_module_lifecycle_steps",
+      "users",
+      "workflow_assurance_alert_deliveries",
+      "workflow_assurance_check_definitions",
+      "workflow_assurance_check_findings",
+      "workflow_assurance_check_runs",
+      "workflow_assurance_incident_events",
+      "workflow_assurance_incidents",
+      "workflow_assurance_waivers"
+    ],
+    "execution": {
+      "history": {
+        "label": "history",
+        "args": [
+          "-r",
+          "ts-node/register/transpile-only",
+          "-r",
+          "./scripts/register-server-only-shim.js",
+          "-r",
+          "tsconfig-paths/register",
+          "prisma/disposable-history.ts"
+        ],
+        "startedAt": "2026-10-29T13:36:13.288Z",
+        "finishedAt": "2026-10-29T13:37:19.387Z",
+        "exitCode": 0,
+        "errorCode": null
+      },
+      "scenarios": {
+        "label": "scenarios",
+        "args": [
+          "-r",
+          "ts-node/register/transpile-only",
+          "-r",
+          "./scripts/register-server-only-shim.js",
+          "-r",
+          "tsconfig-paths/register",
+          "prisma/disposable-scenarios.ts"
+        ],
+        "startedAt": "2026-10-29T13:37:37.529Z",
+        "finishedAt": "2026-10-29T13:38:15.163Z",
+        "exitCode": 0,
+        "errorCode": null
+      },
+      "remaining": {
+        "label": "remaining",
+        "args": [
+          "-r",
+          "ts-node/register/transpile-only",
+          "-r",
+          "./scripts/register-server-only-shim.js",
+          "-r",
+          "tsconfig-paths/register",
+          "prisma/disposable-remaining.ts",
+          "all"
+        ],
+        "startedAt": "2026-10-29T13:39:13.688Z",
+        "finishedAt": "2026-10-29T13:40:27.612Z",
+        "exitCode": 0,
+        "errorCode": null
+      },
+      "orderedAfterBaseline": true
+    },
+    "excludes": "Authentication/read-audit records may grow. Comparison covers listed business counts, posted ledger totals and retained inventory, sales, invoice, delivery, HR, payment, reconciliation, certificates and remaining-table business states.",
+    "remainingExclusions": {
+      "tables": [
+        "customer_statement_access_logs",
+        "supplier_po_access_logs"
+      ],
+      "fields": {
+        "customer_statement_access_tokens": [
+          "lastAccessedAt",
+          "accessCount"
+        ],
+        "supplier_po_access_tokens": [
+          "lastAccessedAt",
+          "accessCount"
+        ],
+        "public_receipt_access_tokens": [
+          "lastAccessedAt",
+          "accessCount"
+        ]
+      },
+      "allTables": [
+        "createdAt",
+        "updatedAt"
+      ],
+      "reason": "Read-access logs and access-use counters are observable read-audit noise; all remaining business states, evidence hashes, decisions, effective dates and relations are preserved."
+    }
+  },
+  "sourceTypecheck": {
+    "own": [],
+    "importedSourceDiagnosticCount": 0,
+    "evidence": "Source type checking only; no code executed, no database or browser validation."
+  },
+  "payrollIssues": [
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-11\",\"message\":\"No published regulatory pack covers CM on 2025-11-30.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-12\",\"message\":\"No published regulatory pack covers CM on 2025-12-31.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-01\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-02\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-03\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-04\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-05\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-06\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-07\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-08\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-09\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_douala",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-10\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-11\",\"message\":\"No published regulatory pack covers CM on 2025-11-30.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-12\",\"message\":\"No published regulatory pack covers CM on 2025-12-31.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-01\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-02\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-03\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-04\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-05\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-06\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-07\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-08\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-09\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_yaounde",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-10\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-11\",\"message\":\"No published regulatory pack covers CM on 2025-11-30.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2025-12\",\"message\":\"No published regulatory pack covers CM on 2025-12-31.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-01\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-02\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-03\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-04\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-05\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-06\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-07\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-08\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-09\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    },
+    {
+      "phase": "business-workflows",
+      "organizationId": "synth12_bafoussam",
+      "message": "{\"scenario\":\"payroll-period-prerequisite\",\"month\":\"2026-10\",\"message\":\"CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.\"}"
+    }
+  ],
+  "pictureUnitTests": {
+    "passed": true,
+    "testsPassed": 15,
+    "testsFailed": 0,
+    "evidenceClass": "MOCKED_UNIT_TESTS_NO_DATABASE_OR_NETWORK"
+  },
+  "baseline": {
+    "populatedTables": 111,
+    "pendingBusinessScenarioTables": 131,
+    "physicalTables": 247
+  },
+  "organizationScope": {
+    "core": [
+      "synth12_douala",
+      "synth12_yaounde",
+      "synth12_bafoussam"
+    ],
+    "auxiliary": [
+      "synth12_opening_aux",
+      "synth12_close_aux"
+    ],
+    "monthlyHistoryAppliesTo": "Three core organizations only; auxiliary capability tenants have no claimed twelve-month trading history."
+  },
+  "remaining": {
+    "baselineTables": 131,
+    "populated": 116,
+    "empty": 15,
+    "statusCounts": {
+      "POPULATED_SCENARIO_VERIFIED": 116,
+      "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE": 15
+    },
+    "assessment": {
+      "baselineTables": 131,
+      "newlyPopulated": 116,
+      "remainingEmpty": 15,
+      "unresolved": 0,
+      "byStatus": {
+        "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE": 15,
+        "POPULATED_SCENARIO_VERIFIED": 116
+      }
+    },
+    "checks": 43,
+    "passed": true,
+    "lanes": [
+      {
+        "lane": "commerce",
+        "source": "remaining-all-results.json",
+        "organizationExecutions": 3,
+        "issues": 0
+      },
+      {
+        "lane": "people",
+        "source": "remaining-all-results.json",
+        "organizationExecutions": 3,
+        "issues": 0
+      },
+      {
+        "lane": "firm-close",
+        "source": "remaining-all-results.json",
+        "organizationExecutions": 3,
+        "issues": 0
+      },
+      {
+        "lane": "platform",
+        "source": "remaining-all-results.json",
+        "organizationExecutions": 3,
+        "issues": 0
+      },
+      {
+        "lane": "stock-pos",
+        "source": "remaining-all-results.json",
+        "organizationExecutions": 3,
+        "issues": 0
+      }
+    ],
+    "verification": {
+      "baselineTables": 131,
+      "populated": 116,
+      "empty": 15,
+      "coverage": [
+        {
+          "table": "access_requests",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Missing inventory read permission requested by each synthetic employee self-service persona; actual submission service and stable UUID command key; remains pending independent review.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "accountant_access_grants",
+          "count": 8,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Client-owner synthetic consent document hashes authorize two named independent firm staff through grantAccountantAccess; reciprocal multi-organization test engagements and one auxiliary client.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "accountant_client_invite_states",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Normal encrypted pending invitation state for a nonexistent reserved-domain synthetic accountant; local outbox only.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "accountant_client_invites",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "One replayable pending accountant invitation per core organization with actual synthetic consent bytes; private encryption key retained in ignored artifacts.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "accountant_comments",
+          "count": 23,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Accountant close commentary and missing-evidence request against a real finding. Correlation lookup prevents append-only replay duplication.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "accountant_reviews",
+          "count": 15,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "OPEN independent accountant review for blocked close runs; separately PREPARED and independently REVIEWED auxiliary pre-cutover workpapers when all four schedules reconcile.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_activation_approvals",
+          "count": 12,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Prepare/review a synthetic package, assign six owners with independent backup and acceptance, record distinct synthetic product/security application approvals and provision inactive shadow configuration.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_activation_owners",
+          "count": 18,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Prepare/review a synthetic package, assign six owners with independent backup and acceptance, record distinct synthetic product/security application approvals and provision inactive shadow configuration.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_activation_packages",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Prepare/review a synthetic package, assign six owners with independent backup and acceptance, record distinct synthetic product/security application approvals and provision inactive shadow configuration.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_cost_ledger",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Retain observed zero-token/zero-external-cost usage of the completed deterministic local run.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_definitions",
+          "count": 2,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Insert exact code-manifest reference definitions using the shipped provisioning structure, then activate only SHADOW definitions through release control. Includes an explicitly labelled local inventory-kernel reference registry using the shipped inventory tool contract.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_evidence_links",
+          "count": 33,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Read the actual blocked Daily Digest without altering its grade; separately run an explicitly synthetic inventory agent using shipped readInventoryCashSnapshot metadata and actual available inventory evidence. Exercise an unregistered-tool policy rejection.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_feedback",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Record the synthetic run owner's helpful feedback via the scoped application service.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_pilot_certifications",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Execute actual release readiness evaluation, retain the observed missing-certification/transport findings, and record a FAILED local pilot result.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_policy_incidents",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Read the actual blocked Daily Digest without altering its grade; separately run an explicitly synthetic inventory agent using shipped readInventoryCashSnapshot metadata and actual available inventory evidence. Exercise an unregistered-tool policy rejection.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_reconciler_invocations",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Acquire a real local scheduler-envelope lease, execute actual release control reconciliation, complete with observed warnings and assert exact replay.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_runs",
+          "count": 9,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Read the actual blocked Daily Digest without altering its grade; separately run an explicitly synthetic inventory agent using shipped readInventoryCashSnapshot metadata and actual available inventory evidence. Exercise an unregistered-tool policy rejection.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_skill_definitions",
+          "count": 2,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Insert exact code-manifest reference definitions using the shipped provisioning structure, then activate only SHADOW definitions through release control. Includes an explicitly labelled local inventory-kernel reference registry using the shipped inventory tool contract.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_steps",
+          "count": 18,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Read the actual blocked Daily Digest without altering its grade; separately run an explicitly synthetic inventory agent using shipped readInventoryCashSnapshot metadata and actual available inventory evidence. Exercise an unregistered-tool policy rejection.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "agent_tool_definitions",
+          "count": 2,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Insert exact code-manifest reference definitions using the shipped provisioning structure, then activate only SHADOW definitions through release control. Includes an explicitly labelled local inventory-kernel reference registry using the shipped inventory tool contract.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "ai_action_proposals",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Create a proposal bound to the completed actual inventory snapshot run, then reject it through the scoped application service.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "balance_sheet_evidence",
+          "count": 50,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Core September owner-capital schedule from retained controlled postings, independently reviewed by the owner. Auxiliary September zero-activity ledger schedules are service-verified and approved by a distinct synthetic checker. New source revisions create new independently reviewed evidence; stale earlier proof is retained and never overwritten.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "bank_balance_evidence",
+          "count": 1,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Auxiliary September imported exact-period statement has 1,000 XAF unrecorded credit; actual evidence proposal retains a 1,000 XAF closing difference and remains PROPOSED.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "branch_daily_close_runs",
+          "count": 4,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "September 28 branch review through current persisted operating scope; auxiliary real admin role guarantees legitimate scope. Previously null core location manager references are safely assigned to the actual seeded manager, with explicit synthetic configuration provenance and no claim that an appointment approval workflow ran.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "branch_daily_close_sign_offs",
+          "count": 1,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Actual separate auxiliary checker signed the September 28 branch review to ACTIVE after IN_REVIEW readiness. Core branch reviews remain honestly blocked by their source findings; existing location-manager fixtures establish legitimate scope.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "business_event_anomalies",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Submit one isolated synthetic control event and a different payload with the same idempotency key; assert rejection and retained anomaly.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "cash_shortage_policies",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "cash-shortage-policy-and-idle-worker-checkpoint",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "close_assurance_findings",
+          "count": 236,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Actual September close assessments retain findings from the real ledger, country setup, reconciliation, payroll and source coverage collectors.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "close_checklist_items",
+          "count": 130,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Checklist generated by actual close assurance; failed and unavailable checks remain visible.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "close_evidence_items",
+          "count": 576,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Source-bound close evidence collected by the current service, preserving unavailable evidence rather than inserting fake documents.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "close_evidence_notifications",
+          "count": 9,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Verified missing-evidence request followed by dedicated tenant-scoped NOTIFICATION-only local inbox publication. Actual retained event, request, audit and payload hashes validated by the publisher; duplicate replay must create no extra rows. No email/network transport exists on this path.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "close_pack_exports",
+          "count": 13,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "DRAFT_NOT_CERTIFIED exports of actual retained close runs with service-generated hashes and retained JSON bytes.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "close_runs",
+          "count": 13,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Current-source September assessments per core organization plus auxiliary September; deterministic source-revision correlation keys retain prior assessments and reuse unchanged current proof.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "command_center_events",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "command_center_notices",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "command_center_occurrences",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "command_center_preferences",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "command_center_review_receipts",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "command_center_review_states",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Observe actual branch stock/loss/receiving snapshots, save in-app preferences, assign the actionable follow-up to its authenticated owner, retain an in-app notice and record an evidence-bound review.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "compliance_adapter_configs",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Configure Cameroon sandbox through the actual country adapter service without credentials or official specification.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "customer_statement_access_logs",
+          "count": 30,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "customer-statement-consent-response-referral",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "customer_statement_access_tokens",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "customer-statement-consent-response-referral",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "customer_statement_deliveries",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "customer-statement-consent-response-referral",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "customer_statement_delivery_states",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "customer-statement-consent-response-referral",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "customer_statement_recipient_action_states",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "customer-statement-consent-response-referral",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "customer_statement_recipient_actions",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "customer-statement-consent-response-referral",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "customer_statement_snapshots",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "customer-statement-consent-response-referral",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "daily_sales_report_cash_events",
+          "count": 576,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "twelve-month-expense-and-daily-sales-projections",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "daily_sales_report_items",
+          "count": 864,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "twelve-month-expense-and-daily-sales-projections",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "daily_sales_reports",
+          "count": 72,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "twelve-month-expense-and-daily-sales-projections",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "expense_categories",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "twelve-month-expense-and-daily-sales-projections",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "expenses",
+          "count": 216,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "twelve-month-expense-and-daily-sales-projections",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "financial_opening_executions",
+          "count": 1,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Auxiliary financially empty client: independent source review, separate client operator approval, controlled financial apply to ACTIVE, and exact apply replay.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "financial_opening_operations",
+          "count": 1,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Exactly one controlled ledger-domain opening receipt for the balanced 2,500,000 XAF cash/capital opening, verified against persisted execution reconciliation.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "financial_opening_revisions",
+          "count": 1,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Retained actual synthetic source and independent control JSON, exact account mappings, staged digest and independent preview review.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "firm_advisory_revisions",
+          "count": 4,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Auxiliary pre-cutover September schedules support actual DRAFT, independent REVIEW, client AGREE and authenticated workspace DELIVER revisions; narrative expressly preserves the unresolved bank discrepancy and excludes audit opinion.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "firm_engagement_assignments",
+          "count": 8,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Explicit current named owner and manager assignments inside each synthetic client consent and engagement window.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "firm_engagement_grant_links",
+          "count": 8,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Explicit service enrollment of each exact consent grant after its named staff assignment.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "firm_engagement_transitions",
+          "count": 4,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "DRAFT to ACTIVE only after actual assignment/enrollment, current staff, consent, role and time-window checks.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "firm_engagements",
+          "count": 4,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Three cyclic synthetic firm/client capability scenarios and one auxiliary client engagement; existing core identity and trading data are preserved.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "firm_obligation_revisions",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Actual operational CLOSE_EVIDENCE_COLLECTION obligation per cyclic client period, retained source hash, assigned owner and overdue open evidence collection.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "firm_practice_revisions",
+          "count": 9,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Actual plan (240 minutes), partial effort declaration (90 minutes) and XAF 75,000 fee budget per synthetic engagement/September. Each remains a manual declaration, not realized revenue or profitability.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "fiscal_sequences",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "locked-unissued-synthetic-fiscal-sequence",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "goods_receipt_inspection_resolutions",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "held-serialized-receipt-independent-acceptance-and-invoice-exception",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "hris_attendance_anomalies",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "rejected-attendance-source-and-resolved-anomaly",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "hris_employee_documents",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "reviewed-encrypted-employee-document",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "hris_lifecycle_tasks",
+          "count": 12,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "onboarding-lifecycle-task-completion",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "hris_payroll_handoff_packages",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Requires existing admitted payrollPeriodId and blocker-free readHandoffInputsInTx; freeze source, named independent recipient, fresh preview and retained manifest/CSV hashes."
+        },
+        {
+          "table": "hris_payroll_handoff_receipts",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Requires a genuine current handoff package; only its independent named recipient may acknowledge matched row IDs/hash."
+        },
+        {
+          "table": "hris_personal_correction_cases",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "personal-correction-independent-rejection",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "hris_public_holidays",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "company-holiday-and-reviewer-grant",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "hris_setup_reviewer_grants",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "company-holiday-and-reviewer-grant",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "invites",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "unsent-user-invitation-outbox",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "onboarding_import_batches",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "supplier-csv-validation-and-import",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "onboarding_import_issues",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "supplier-csv-validation-and-import",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "onboarding_import_mappings",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "supplier-csv-validation-and-import",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "onboarding_import_rows",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "supplier-csv-validation-and-import",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "onboarding_readiness_milestones",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "supplier-csv-validation-and-import",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "payment_refunds",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "cash-pos-sale-refund-stock-cash-ledger-round-trip",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "payroll_attendance_snapshots",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Needs an admitted payroll period plus approved/certified attendance and resolved payroll input readiness. Raw monthly attendance does not constitute certification."
+        },
+        {
+          "table": "payroll_declaration_evidence",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Requires a valid declaration, authorized preparation/review and real synthetic submission evidence through the declaration lifecycle. No invented regulatory submission receipt."
+        },
+        {
+          "table": "payroll_declarations",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Requires admitted payroll result and reviewed payroll.declarations.default configuration effective at the required pay dates."
+        },
+        {
+          "table": "payroll_employee_balance_cases",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Requires a POSTED CORRECTION run linked to its original run with matched statutory component-register and mapping proof; negative correction needs emitted payslip before employee receivable case."
+        },
+        {
+          "table": "payroll_employee_balance_events",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Requires legitimate correction-run balance case; no artificial receivable/recovery history."
+        },
+        {
+          "table": "payroll_employee_rubrique_assignments",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "draft-nonstatutory-compensation",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "payroll_payment_allocations",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Requires legitimate payroll batch and employee net-pay liabilities before allocation/reconciliation."
+        },
+        {
+          "table": "payroll_payment_batches",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Requires actually posted payroll liabilities and appropriate payment/settlement evidence and independent release control."
+        },
+        {
+          "table": "payroll_payslip_lines",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Requires emitted payslip and real calculation component identities/amounts."
+        },
+        {
+          "table": "payroll_payslips",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Requires actual accepted payroll run and employee lines; no fabricated statutory payslip."
+        },
+        {
+          "table": "payroll_periods",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Period creation rejects insufficiently reviewed CNPS/IRPP and missing approved production admission. Published CM-2026.1 does not cover 2025 pay dates."
+        },
+        {
+          "table": "payroll_rubriques",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "draft-nonstatutory-compensation",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "payroll_run_lines",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Lines must result from the actual admitted payroll calculation with accepted country rules and independent expected-result fixtures."
+        },
+        {
+          "table": "payroll_run_transitions",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Transitions require genuine existing calculated runs and normal independent reviews. No direct fake lifecycle transition is inserted."
+        },
+        {
+          "table": "payroll_runs",
+          "count": 0,
+          "status": "BLOCKED_SOURCE_CONFIRMED_PREREQUISITE",
+          "scenario": "Deferred payroll lifecycle; no records fabricated while the upstream admission gate is blocked.",
+          "remainingPrerequisite": "Needs admitted period, certified snapshot and approved inputs; annual correctness additionally requires reviewed YTD/adjustment contract and service integration proof."
+        },
+        {
+          "table": "period_control_events",
+          "count": 1,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Separate synth12_close_aux minimally funded August period receives normal accounting setup readiness, documented 1,000,000 XAF owner contribution via maker/checker journal posting, fourteen independently approved account schedules, actual owner close assessment, independent checker certified system-evidence export and controlled CLOSE event. Replay validates the retained CLOSED period, posted funding journal and exact approval/event rather than resealing. Core October periods remain OPEN; opening auxiliary September bank exceptions remain negative cases. Verified actual state: August CLOSED, controlVersion 1, retained CLOSE event linked to independently exported certified system-evidence pack.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "picture_assets",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "encrypted-local-managed-image-lifecycle",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "pos_cash_shortage_worker_checkpoints",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "cash-shortage-policy-and-idle-worker-checkpoint",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "pos_offline_devices",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "signed-offline-session-and-signature-quarantine",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "pos_offline_events",
+          "count": 12,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "signed-offline-session-and-signature-quarantine",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "pos_offline_sync_batches",
+          "count": 12,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "signed-offline-session-and-signature-quarantine",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "pos_offline_sync_certificates",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "signed-offline-session-and-signature-quarantine",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "pos_offline_sync_conflicts",
+          "count": 9,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "signed-offline-session-and-signature-quarantine",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "provider_events",
+          "count": 1,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Normal captureProviderEvent validates a locally generated HMAC over the exact retained synthetic orphan credit payload, then proves DUPLICATE replay. This is no claim of receipt from an external bank.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "public_identity_abuse_buckets",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "receipt-access-and-public-abuse-boundary",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "public_receipt_access_tokens",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "receipt-access-and-public-abuse-boundary",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "purchase_order_authoring_drafts",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "purchase-authoring-and-supplier-proposal",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "reconciliation_no_activity_evidence",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "independently-reviewed-no-activity-evidence",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "referral_attribution_events",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "customer-statement-consent-response-referral",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "referral_attributions",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "customer-statement-consent-response-referral",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "serial_numbers",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "held-serialized-receipt-independent-acceptance-and-invoice-exception",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "supplier_invoice_match_exceptions",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "held-serialized-receipt-independent-acceptance-and-invoice-exception",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "supplier_po_access_logs",
+          "count": 33,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "purchase-authoring-and-supplier-proposal",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "supplier_po_access_tokens",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "purchase-authoring-and-supplier-proposal",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "supplier_po_envelopes",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "purchase-authoring-and-supplier-proposal",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "supplier_po_proposal_lines",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "purchase-authoring-and-supplier-proposal",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "supplier_po_proposal_states",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "purchase-authoring-and-supplier-proposal",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "supplier_po_proposals",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "purchase-authoring-and-supplier-proposal",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "suspense_items",
+          "count": 2,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Normal reconciliation creates two distinct OPEN orphan cases: a 250 XAF provider event and 1,000 XAF statement line with no internal payment. Their actual IDs and states are returned for root verification.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "tenant_module_configuration_commands",
+          "count": 6,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "tenant_module_configurations",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "tenant_module_grants",
+          "count": 45,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "tenant_module_lifecycle_events",
+          "count": 24,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "tenant_module_lifecycle_operations",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "tenant_module_lifecycle_steps",
+          "count": 15,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Save and apply current module selection without stopping work; migrate verified existing legacy grants; retain real preparation results.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "workflow_assurance_alert_deliveries",
+          "count": 9,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Let actual release reconciliation queue its deduplicated incident webhook notice; assert PENDING and never call dispatch.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "workflow_assurance_check_definitions",
+          "count": 39,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Create a separate APPROVED synthetic release with genuinely missing owner assignments; run actual control-plane reconciliation to observe RELEASE_OWNERS_INCOMPLETE, retain the finding/incident and acknowledge it. Primary release remains PROVISIONED_INACTIVE. Run the actual balanced-ledger registry check.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "workflow_assurance_check_findings",
+          "count": 9,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Create a separate APPROVED synthetic release with genuinely missing owner assignments; run actual control-plane reconciliation to observe RELEASE_OWNERS_INCOMPLETE, retain the finding/incident and acknowledge it. Primary release remains PROVISIONED_INACTIVE. Run the actual balanced-ledger registry check.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "workflow_assurance_check_runs",
+          "count": 24,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Create a separate APPROVED synthetic release with genuinely missing owner assignments; run actual control-plane reconciliation to observe RELEASE_OWNERS_INCOMPLETE, retain the finding/incident and acknowledge it. Primary release remains PROVISIONED_INACTIVE. Run the actual balanced-ledger registry check.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "workflow_assurance_incident_events",
+          "count": 15,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Create a separate APPROVED synthetic release with genuinely missing owner assignments; run actual control-plane reconciliation to observe RELEASE_OWNERS_INCOMPLETE, retain the finding/incident and acknowledge it. Primary release remains PROVISIONED_INACTIVE. Run the actual balanced-ledger registry check.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "workflow_assurance_incidents",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Create a separate APPROVED synthetic release with genuinely missing owner assignments; run actual control-plane reconciliation to observe RELEASE_OWNERS_INCOMPLETE, retain the finding/incident and acknowledge it. Primary release remains PROVISIONED_INACTIVE. Run the actual balanced-ledger registry check.",
+          "remainingPrerequisite": null
+        },
+        {
+          "table": "workflow_assurance_waivers",
+          "count": 3,
+          "status": "POPULATED_SCENARIO_VERIFIED",
+          "scenario": "Request a time-limited test-only waiver with a retained document hash while keeping the actual incident active and activation disabled.",
+          "remainingPrerequisite": null
+        }
+      ],
+      "fingerprintTables": [
+        "access_requests",
+        "accountant_access_grants",
+        "accountant_client_invite_states",
+        "accountant_client_invites",
+        "accountant_comments",
+        "accountant_reviews",
+        "agent_activation_approvals",
+        "agent_activation_owners",
+        "agent_activation_packages",
+        "agent_cost_ledger",
+        "agent_definitions",
+        "agent_evidence_links",
+        "agent_feedback",
+        "agent_pilot_certifications",
+        "agent_policy_incidents",
+        "agent_reconciler_invocations",
+        "agent_runs",
+        "agent_skill_definitions",
+        "agent_steps",
+        "agent_tool_definitions",
+        "ai_action_proposals",
+        "balance_sheet_evidence",
+        "bank_balance_evidence",
+        "branch_daily_close_runs",
+        "branch_daily_close_sign_offs",
+        "business_event_anomalies",
+        "cash_shortage_policies",
+        "close_assurance_findings",
+        "close_checklist_items",
+        "close_evidence_items",
+        "close_evidence_notifications",
+        "close_pack_exports",
+        "close_runs",
+        "command_center_events",
+        "command_center_notices",
+        "command_center_occurrences",
+        "command_center_preferences",
+        "command_center_review_receipts",
+        "command_center_review_states",
+        "compliance_adapter_configs",
+        "customer_statement_access_tokens",
+        "customer_statement_deliveries",
+        "customer_statement_delivery_states",
+        "customer_statement_recipient_action_states",
+        "customer_statement_recipient_actions",
+        "customer_statement_snapshots",
+        "daily_sales_report_cash_events",
+        "daily_sales_report_items",
+        "daily_sales_reports",
+        "expense_categories",
+        "expenses",
+        "financial_opening_executions",
+        "financial_opening_operations",
+        "financial_opening_revisions",
+        "firm_advisory_revisions",
+        "firm_engagement_assignments",
+        "firm_engagement_grant_links",
+        "firm_engagement_transitions",
+        "firm_engagements",
+        "firm_obligation_revisions",
+        "firm_practice_revisions",
+        "fiscal_sequences",
+        "goods_receipt_inspection_resolutions",
+        "hris_attendance_anomalies",
+        "hris_employee_documents",
+        "hris_lifecycle_tasks",
+        "hris_payroll_handoff_packages",
+        "hris_payroll_handoff_receipts",
+        "hris_personal_correction_cases",
+        "hris_public_holidays",
+        "hris_setup_reviewer_grants",
+        "invites",
+        "onboarding_import_batches",
+        "onboarding_import_issues",
+        "onboarding_import_mappings",
+        "onboarding_import_rows",
+        "onboarding_readiness_milestones",
+        "payment_refunds",
+        "payroll_attendance_snapshots",
+        "payroll_declaration_evidence",
+        "payroll_declarations",
+        "payroll_employee_balance_cases",
+        "payroll_employee_balance_events",
+        "payroll_employee_rubrique_assignments",
+        "payroll_payment_allocations",
+        "payroll_payment_batches",
+        "payroll_payslip_lines",
+        "payroll_payslips",
+        "payroll_periods",
+        "payroll_rubriques",
+        "payroll_run_lines",
+        "payroll_run_transitions",
+        "payroll_runs",
+        "period_control_events",
+        "picture_assets",
+        "pos_cash_shortage_worker_checkpoints",
+        "pos_offline_devices",
+        "pos_offline_events",
+        "pos_offline_sync_batches",
+        "pos_offline_sync_certificates",
+        "pos_offline_sync_conflicts",
+        "provider_events",
+        "public_identity_abuse_buckets",
+        "public_receipt_access_tokens",
+        "purchase_order_authoring_drafts",
+        "reconciliation_no_activity_evidence",
+        "referral_attribution_events",
+        "referral_attributions",
+        "serial_numbers",
+        "supplier_invoice_match_exceptions",
+        "supplier_po_access_tokens",
+        "supplier_po_envelopes",
+        "supplier_po_proposal_lines",
+        "supplier_po_proposal_states",
+        "supplier_po_proposals",
+        "suspense_items",
+        "tenant_module_configuration_commands",
+        "tenant_module_configurations",
+        "tenant_module_grants",
+        "tenant_module_lifecycle_events",
+        "tenant_module_lifecycle_operations",
+        "tenant_module_lifecycle_steps",
+        "workflow_assurance_alert_deliveries",
+        "workflow_assurance_check_definitions",
+        "workflow_assurance_check_findings",
+        "workflow_assurance_check_runs",
+        "workflow_assurance_incident_events",
+        "workflow_assurance_incidents",
+        "workflow_assurance_waivers"
+      ],
+      "fingerprintExclusions": {
+        "tables": [
+          "customer_statement_access_logs",
+          "supplier_po_access_logs"
+        ],
+        "fields": {
+          "customer_statement_access_tokens": [
+            "lastAccessedAt",
+            "accessCount"
+          ],
+          "supplier_po_access_tokens": [
+            "lastAccessedAt",
+            "accessCount"
+          ],
+          "public_receipt_access_tokens": [
+            "lastAccessedAt",
+            "accessCount"
+          ]
+        },
+        "allTables": [
+          "createdAt",
+          "updatedAt"
+        ],
+        "reason": "Read-access logs and access-use counters are observable read-audit noise; all remaining business states, evidence hashes, decisions, effective dates and relations are preserved."
+      },
+      "retainedDocumentCount": 705
+    }
+  }
+}

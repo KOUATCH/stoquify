@@ -1,0 +1,1 @@
+const fs=require('node:fs');const p='components/hris/HrisWorkspaceSetup.tsx';let s=fs.readFileSync(p,'utf8').replace('localizePath("/dashboard/users", locale)','localizePath("/dashboard/settings/users", locale)');fs.writeFileSync(p,s);

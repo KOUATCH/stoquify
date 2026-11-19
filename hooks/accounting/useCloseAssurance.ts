@@ -1,6 +1,8 @@
 "use client"
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useEffect, useRef } from "react"
+import { createCorrelationId } from "@/lib/error-handling/canonical"
 
 import {
   approveCloseWaiverAction,
@@ -8,6 +10,8 @@ import {
   commentOnCloseFindingAction,
   exportCertifiedClosePackAction,
   exportDraftClosePackAction,
+  listClosePackExportsAction,
+  getRetainedClosePackExportAction,
   getCloseAssuranceDashboardAction,
   getCloseEvidenceGraphAction,
   requestCloseWaiverAction,
@@ -21,18 +25,56 @@ import type { Locale } from "@/types/bilingual"
 
 export const closeAssuranceKeys = {
   all: ["accounting-close-assurance"] as const,
-  dashboard: (organizationId = "current", periodId = "current", locale: Locale = "en") =>
-    [...closeAssuranceKeys.all, "dashboard", organizationId, periodId, locale] as const,
-  evidence: (organizationId = "current", periodId = "current", closeRunId = "live", findingId = "all") =>
-    [...closeAssuranceKeys.all, "evidence", organizationId, periodId, closeRunId, findingId] as const,
+  dashboard: (organizationId = "unavailable", periodId = "current", locale: Locale = "en", actorId = "unavailable") =>
+    [...closeAssuranceKeys.all, "dashboard", actorId, organizationId, periodId, locale] as const,
+  evidence: (organizationId = "unavailable", periodId = "current", closeRunId = "live", findingId = "all", actorId = "unavailable") =>
+    [...closeAssuranceKeys.all, "evidence", actorId, organizationId, periodId, closeRunId, findingId] as const,
+  exports: (organizationId: string, actorId: string, periodId: string, closeRunId: string) =>
+    [...closeAssuranceKeys.all, "exports", actorId, organizationId, periodId, closeRunId] as const,
 }
 
-type UseCloseAssuranceOptions = {
+export type CloseAssuranceClientScope = {
+  actorId?: string | null
   organizationId?: string | null
   periodId?: string | null
+  enabled?: boolean
+}
+type UseCloseAssuranceOptions = CloseAssuranceClientScope & {
   locale?: Locale
   initialData?: CloseAssuranceDashboardData | null
-  enabled?: boolean
+}
+
+function changedScope() { return Object.assign(new Error("The workspace context changed. Refresh before continuing."), { code: "CLIENT_SCOPE_CHANGED" }) }
+function useClientScope(scope?: CloseAssuranceClientScope) {
+  const active = Boolean(scope?.actorId && scope.organizationId && scope.enabled !== false)
+  const key = JSON.stringify([scope?.actorId, scope?.organizationId, scope?.periodId, active])
+  const current = useRef({ key, revision: 0, active })
+  const mounted = useRef(true)
+  if (current.current.key !== key) current.current = { key, revision: current.current.revision + 1, active }
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; current.current.revision++ } }, [])
+  const capture = () => { if (!mounted.current || !current.current.active) throw changedScope(); return current.current.revision }
+  const accepts = (revision: number | undefined) => mounted.current && current.current.active && revision === current.current.revision
+  return { active, capture, accepts, async run<T>(work: () => Promise<T>) {
+    const revision = capture(); const value = await work(); if (!accepts(revision)) throw changedScope(); return value
+  } }
+}
+function usePrivateQueryLifetime(key: readonly string[], active: boolean) {
+  const client = useQueryClient(), identity = JSON.stringify(key)
+  const revision = useRef(0), latestIdentity = useRef(identity)
+  latestIdentity.current = identity
+  useEffect(() => {
+    revision.current++
+    const clear = () => { void client.cancelQueries({ queryKey: key, exact: true }); client.removeQueries({ queryKey: key, exact: true }) }
+    if (!active) clear()
+    return () => {
+      const stopped = ++revision.current
+      // Strict Mode may immediately restore this same observer. A genuine
+      // unmount or changed scope still removes its private query record.
+      void Promise.resolve().then(() => { if (revision.current === stopped || latestIdentity.current !== identity) clear() })
+    }
+    // Keys contain only primitive scope fields; their serialized identity is stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [client, identity, active])
 }
 
 const copy = {
@@ -111,26 +153,31 @@ function unwrapAssessment<T>(result: { success: boolean; data: T | null; error: 
 }
 
 function organizationKey(options?: UseCloseAssuranceOptions) {
-  return options?.organizationId || "current"
+  return options?.organizationId || "unavailable"
 }
 
 function periodKey(options?: UseCloseAssuranceOptions) {
-  return options?.periodId || options?.initialData?.period?.id || "current"
+  return options?.periodId || "current"
 }
 
 export function useCloseAssurance(options: UseCloseAssuranceOptions = {}) {
   const locale = options.locale ?? "en"
   const organizationId = organizationKey(options)
   const periodId = periodKey(options)
-
-  return useQuery({
-    queryKey: closeAssuranceKeys.dashboard(organizationId, periodId, locale),
-    queryFn: async () => unwrap(await getCloseAssuranceDashboardAction({ periodId: options.periodId ?? undefined })),
-    initialData: options.initialData ?? undefined,
-    enabled: options.enabled ?? true,
+  const scope = useClientScope(options), key = closeAssuranceKeys.dashboard(organizationId, periodId, locale, options.actorId || "unavailable")
+  usePrivateQueryLifetime(key, scope.active)
+  const query = useQuery({
+    queryKey: key,
+    queryFn: () => scope.run(async () => {
+      const data = unwrap(await getCloseAssuranceDashboardAction({ periodId: options.periodId ?? undefined }))
+      if (data.organizationId !== organizationId || data.actorId !== options.actorId) throw changedScope()
+      return data
+    }),
+    enabled: scope.active,
     staleTime: 45_000,
     gcTime: 5 * 60_000,
   })
+  return { ...query, data: scope.active && query.data?.organizationId === organizationId && query.data.actorId === options.actorId ? query.data : undefined }
 }
 
 export function useCloseEvidenceGraph(options: UseCloseAssuranceOptions & { closeRunId?: string | null; findingId?: string | null } = {}) {
@@ -138,78 +185,94 @@ export function useCloseEvidenceGraph(options: UseCloseAssuranceOptions & { clos
   const periodId = periodKey(options)
   const closeRunId = options.closeRunId || "live"
   const findingId = options.findingId || "all"
-
-  return useQuery<CloseEvidenceGraphDto>({
-    queryKey: closeAssuranceKeys.evidence(organizationId, periodId, closeRunId, findingId),
-    queryFn: async () =>
-      unwrap(
+  const scope = useClientScope(options), key = closeAssuranceKeys.evidence(organizationId, periodId, closeRunId, findingId, options.actorId || "unavailable")
+  usePrivateQueryLifetime(key, scope.active)
+  const query = useQuery<CloseEvidenceGraphDto>({
+    queryKey: key,
+    queryFn: () => scope.run(async () => unwrap(
         await getCloseEvidenceGraphAction({
           periodId: options.periodId ?? undefined,
           closeRunId: options.closeRunId ?? undefined,
           findingId: options.findingId ?? undefined,
         }),
-      ),
-    enabled: options.enabled ?? Boolean(options.periodId || options.closeRunId),
+      )),
+    enabled: scope.active && Boolean(options.periodId || options.closeRunId),
     staleTime: 45_000,
     gcTime: 5 * 60_000,
   })
+  return { ...query, data: scope.active ? query.data : undefined }
 }
 
-export function useRunCloseAssurance(locale: Locale = "en", organizationId = "current") {
+export function useRunCloseAssurance(locale: Locale = "en", clientScope?: CloseAssuranceClientScope) {
   const queryClient = useQueryClient()
   const notifications = useNotifications()
   const t = copy[locale]
+  const scope = useClientScope(clientScope)
 
   return useMutation({
+    onMutate: scope.capture,
     retry: false,
     meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: { periodId: string; correlationId?: string }) => {
       notifications.info(t.runStartedTitle, t.runStartedBody)
-      return unwrapAssessment(await runCloseAssuranceAction(input), locale)
+      return scope.run(async () => {
+        const data = unwrapAssessment(await runCloseAssuranceAction(input), locale)
+        if (data.organizationId !== clientScope?.organizationId || data.actorId !== clientScope?.actorId) throw changedScope()
+        return data
+      })
     },
-    onSuccess: (data) => {
+    onSuccess: (data, _input, revision) => {
+      if (!scope.accepts(revision)) return
       queryClient.setQueryData(
-        closeAssuranceKeys.dashboard(organizationId, data.period?.id ?? "current", locale),
+        closeAssuranceKeys.dashboard(clientScope!.organizationId!, data.period?.id ?? "current", locale, clientScope!.actorId!),
         data,
       )
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
-      queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.dashboard(organizationId, data.period?.id ?? "current", locale) })
+      queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.dashboard(clientScope!.organizationId!, data.period?.id ?? "current", locale, clientScope!.actorId!) })
       notifications.success(t.runSuccessTitle, `${data.run.status} - ${data.run.readinessScore}%`)
     },
-    onError: (error: Error) => {
+    onError: (error: Error, _input, revision) => {
+      if (!scope.accepts(revision)) return
       if (!needsIdentityVerification(error)) notifications.error(t.runErrorTitle, error.message)
     },
   })
 }
 
-export function useAssignCloseFinding(locale: Locale = "en") {
+export function useAssignCloseFinding(locale: Locale = "en", clientScope?: CloseAssuranceClientScope) {
   const queryClient = useQueryClient()
   const notifications = useNotifications()
   const t = copy[locale]
+  const scope = useClientScope(clientScope)
 
   return useMutation({
+    retry: false,
+    onMutate: scope.capture,
     meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
-    mutationFn: async (input: { findingId: string; assignedToId?: string; correlationId?: string }) => {
+    mutationFn: (input: { findingId: string; assignedToId?: string; correlationId?: string }) => scope.run(async () => {
       const result = await assignCloseFindingAction(input)
       if (!result.success && result.code === "CONFLICT") {
         throw Object.assign(new Error(t.assignRequestConflict), { code: result.code })
       }
       return unwrap(result)
-    },
-    onSuccess: () => {
+    }),
+    onSuccess: (_data, _input, revision) => {
+      if (!scope.accepts(revision)) return
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.assignSuccessTitle, "")
     },
-    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
+    onError: (error: Error, _input, revision) => { if (scope.accepts(revision) && !needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 }
 
-export function useCommentOnCloseFinding(locale: Locale = "en") {
+export function useCommentOnCloseFinding(locale: Locale = "en", clientScope?: CloseAssuranceClientScope) {
   const queryClient = useQueryClient()
   const notifications = useNotifications()
   const t = copy[locale]
+  const scope = useClientScope(clientScope)
 
   return useMutation({
+    retry: false,
+    onMutate: scope.capture,
     meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: {
       closeRunId?: string
@@ -218,87 +281,112 @@ export function useCommentOnCloseFinding(locale: Locale = "en") {
       reviewId?: string
       body: string
       correlationId?: string
-    }) => unwrap(await commentOnCloseFindingAction(input)),
-    onSuccess: () => {
+    }) => scope.run(async () => unwrap(await commentOnCloseFindingAction(input))),
+    onSuccess: (_data, _input, revision) => {
+      if (!scope.accepts(revision)) return
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.commentSuccessTitle, "")
     },
-    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
+    onError: (error: Error, _input, revision) => { if (scope.accepts(revision) && !needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 }
 
-export function useCloseWaiver(locale: Locale = "en") {
+export function useCloseWaiver(locale: Locale = "en", clientScope?: CloseAssuranceClientScope) {
   const queryClient = useQueryClient()
   const notifications = useNotifications()
   const t = copy[locale]
+  const scope = useClientScope(clientScope)
 
   const request = useMutation({
+    retry: false,
+    onMutate: scope.capture,
     meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: { findingId: string; reason: string; correlationId?: string }) =>
-      unwrap(await requestCloseWaiverAction(input)),
-    onSuccess: () => {
+      scope.run(async () => unwrap(await requestCloseWaiverAction(input))),
+    onSuccess: (_data, _input, revision) => {
+      if (!scope.accepts(revision)) return
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.waiverRequestedTitle, "")
     },
-    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
+    onError: (error: Error, _input, revision) => { if (scope.accepts(revision) && !needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 
   const approve = useMutation({
+    retry: false,
+    onMutate: scope.capture,
     meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: { findingId: string; correlationId?: string }) =>
-      unwrap(await approveCloseWaiverAction(input)),
-    onSuccess: () => {
+      scope.run(async () => unwrap(await approveCloseWaiverAction(input))),
+    onSuccess: (_data, _input, revision) => {
+      if (!scope.accepts(revision)) return
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.waiverApprovedTitle, "")
     },
-    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
+    onError: (error: Error, _input, revision) => { if (scope.accepts(revision) && !needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 
   return { request, approve }
 }
 
-export function useUpdateAccountantReview(locale: Locale = "en") {
+export function useUpdateAccountantReview(locale: Locale = "en", clientScope?: CloseAssuranceClientScope) {
   const queryClient = useQueryClient()
   const notifications = useNotifications()
   const t = copy[locale]
+  const scope = useClientScope(clientScope)
 
   return useMutation({
+    retry: false,
+    onMutate: scope.capture,
     meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: {
       closeRunId: string
       status: "OPEN" | "CHANGES_REQUESTED" | "READY_TO_CLOSE" | "APPROVED_FOR_CLOSE" | "REJECTED" | "CANCELLED"
       decisionNotes?: string
       correlationId?: string
-    }) => unwrap(await updateAccountantReviewAction(input)),
-    onSuccess: () => {
+    }) => scope.run(async () => unwrap(await updateAccountantReviewAction(input))),
+    onSuccess: (_data, _input, revision) => {
+      if (!scope.accepts(revision)) return
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.reviewUpdatedTitle, "")
     },
-    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
+    onError: (error: Error, _input, revision) => { if (scope.accepts(revision) && !needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 }
 
-export function useExportClosePack(locale: Locale = "en") {
+export function useExportClosePack(locale: Locale = "en", clientScope?: CloseAssuranceClientScope) {
   const queryClient = useQueryClient()
   const notifications = useNotifications()
   const t = copy[locale]
+  const scope = useClientScope(clientScope)
+  const attempts = useRef(new Map<string, string>())
+  const correlation = (input: { closeRunId: string; correlationId?: string }, mode: string) => {
+    if (input.correlationId) return input
+    const key = JSON.stringify([clientScope?.actorId, clientScope?.organizationId, clientScope?.periodId, input.closeRunId, mode])
+    if (!attempts.current.has(key)) attempts.current.set(key, createCorrelationId("close_export"))
+    return { ...input, correlationId: attempts.current.get(key)! }
+  }
+  useEffect(() => { attempts.current.clear() }, [scope.active, clientScope?.actorId, clientScope?.organizationId, clientScope?.periodId])
 
   const draft = useMutation({
+    retry: false,
+    onMutate: scope.capture,
     meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: { closeRunId: string; correlationId?: string }) =>
-      unwrap(await exportDraftClosePackAction({ ...input, mode: "DRAFT_NOT_CERTIFIED" })),
-    onSuccess: (data) => {
+      scope.run(async () => unwrap(await exportDraftClosePackAction({ ...correlation(input, "DRAFT_NOT_CERTIFIED"), mode: "DRAFT_NOT_CERTIFIED" }))),
+    onSuccess: (data, _input, revision) => {
+      if (!scope.accepts(revision)) return
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.exportDraftTitle, data.contentHash)
     },
-    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
+    onError: (error: Error, _input, revision) => { if (scope.accepts(revision) && !needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 
   const certified = useMutation({
+    onMutate: scope.capture,
     retry: false,
     meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
-    mutationFn: async (input: { closeRunId: string; correlationId?: string }) => {
-      const result = await exportCertifiedClosePackAction({ ...input, mode: "CERTIFIED" })
+    mutationFn: (input: { closeRunId: string; correlationId?: string }) => scope.run(async () => {
+      const result = await exportCertifiedClosePackAction({ ...correlation(input, "CERTIFIED"), mode: "CERTIFIED" })
       if (!result.success && result.code === "FRESH_AUTH_REQUIRED") {
         throw Object.assign(new Error(t.freshAuthRequired), { code: result.code })
       }
@@ -309,18 +397,37 @@ export function useExportClosePack(locale: Locale = "en") {
         throw Object.assign(new Error(t.certificationBlocked), { code: result.code })
       }
       return unwrapAssessment(result, locale)
-    },
-    onSuccess: (data) => {
+    }),
+    onSuccess: (data, _input, revision) => {
+      if (!scope.accepts(revision)) return
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.exportCertifiedTitle, data.contentHash)
     },
-    onError: async (error: Error) => {
+    onError: async (error: Error, _input, revision) => {
+      if (!scope.accepts(revision)) return
       // A refused certification can persist evidence invalidation. Reload the
       // read models before allowing another deliberate certification attempt.
       await queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
-      if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message)
+      if (scope.accepts(revision) && !needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message)
     },
   })
 
-  return { draft, certified }
+  const recover = useMutation({
+    onMutate: scope.capture, retry: false,
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
+    mutationFn: (input: { exportId: string; mode: "CERTIFIED" | "DRAFT_NOT_CERTIFIED" }) =>
+      scope.run(async () => unwrap(await getRetainedClosePackExportAction(input))),
+  })
+  return { draft, certified, recover }
+}
+
+export function useClosePackExports(options: CloseAssuranceClientScope & { closeRunId?: string | null }) {
+  const scope = useClientScope(options), key = closeAssuranceKeys.exports(options.organizationId || "unavailable", options.actorId || "unavailable", options.periodId || "current", options.closeRunId || "unavailable")
+  const active = scope.active && Boolean(options.closeRunId)
+  usePrivateQueryLifetime(key, active)
+  const query = useQuery({ queryKey: key, enabled: active, retry: false,
+    queryFn: () => scope.run(async () => unwrap(await listClosePackExportsAction({ closeRunId: options.closeRunId! }))),
+    staleTime: 0, meta: { suppressErrorNotification: true },
+  })
+  return { ...query, data: active && !query.error ? query.data : undefined }
 }

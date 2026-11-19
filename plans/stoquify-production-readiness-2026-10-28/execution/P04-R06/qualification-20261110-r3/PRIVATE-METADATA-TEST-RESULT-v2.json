@@ -1,0 +1,27 @@
+{
+  "evidenceClass": "Pure Node tests with synthetic temporary artifacts; real hash-bound metadata JSON shapes only",
+  "command": "node --test verify-private-metadata-exclusion-v2.test.cjs",
+  "helperSha256": "9d47c5c8e05fdf6caa229ad6e36ea89be88745cc7cdcf78e2e488697fa099a5a",
+  "testSha256": "561208354f07d519bae54d59f02406efc9e6b45ef6693bc91e6f4d31fb469fdc",
+  "recipeAdmission": "independent-review/PRIVATE-METADATA-RECIPE-ADMISSION-v2.json",
+  "toolChunkId": "939018",
+  "exitCode": 1,
+  "tests": 24,
+  "passed": 23,
+  "failed": 1,
+  "skipped": 0,
+  "durationMs": 1547.1478,
+  "failure": {
+    "test": "the seven admitted real metadata shapes work with synthetic allowed code only",
+    "message": "Expected executable dependency provenance",
+    "location": "verify-private-metadata-exclusion-v2.cjs:70",
+    "classification": "Verification helper classified nativeBinding as executable code. Actual metadata field points to the CANDIDATE_NATIVE_READINESS.json receipt. Separate engines entries describe the executable dependencies."
+  },
+  "referencedExternalFilesOpened": false,
+  "temporaryFixtureCleanupCompleted": true,
+  "applicationExecution": false,
+  "databaseAccess": false,
+  "actualBuildOrArtifactVerification": false,
+  "qualificationPassed": false,
+  "preservation": "Do not overwrite this failed run or its admitted v2 source. Repair classification in named successor helper/tests and independently admit them before execution."
+}

@@ -176,7 +176,7 @@ export function HrisManagerSelfService({ model, approvalsHref, locale }: Props) 
         )}
       </section>
 
-      <HrisOperationalTimeApprovalPanel requests={model.operationalTime.requests} />
+      <HrisOperationalTimeApprovalPanel requests={model.operationalTime.requests} locale={locale} />
 
       <section aria-labelledby="pending-heading">
         <div className="mb-3 flex items-center gap-2">

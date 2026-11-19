@@ -1,0 +1,231 @@
+{
+  "at": "2026-11-17T11:28:37.857Z",
+  "reviewer": "/root/r06_capacity_review",
+  "packageId": "P04-R06",
+  "passed": false,
+  "observationAccepted": true,
+  "blockedCheckpointAccepted": true,
+  "qualificationPassed": false,
+  "candidateId": null,
+  "artifactSha256": null,
+  "verdict": "CAPACITY_RETRY_DENIED_BEFORE_CAPTURE",
+  "capacity": {
+    "receipt": "resource-current-schema-retry-ready-r2.json",
+    "capturedAt": "2026-11-17T11:25:32.8150734Z",
+    "freePhysicalGiB": 4.0414886474609375,
+    "freeCommitGiB": 9.081867218017578,
+    "freeDDriveGiB": 14.44775390625,
+    "requiredPhysicalGiB": 6,
+    "requiredCommitGiB": 12,
+    "requiredDDriveGiB": 12,
+    "failures": [
+      "physical_memory_headroom",
+      "commit_headroom"
+    ],
+    "newMeasurementByReviewer": false,
+    "sourceRecipesUnchanged": true,
+    "thresholdsUnchanged": true,
+    "recordedScopedListeningPorts": [],
+    "portInspectionError": null,
+    "recordedCollectorProcesses": [
+      {
+        "pid": 30220,
+        "recordedName": "node.exe",
+        "absentNow": true
+      }
+    ]
+  },
+  "source": {
+    "selectedInputsRehashed": 68,
+    "ownedRepairFilesRehashed": 6,
+    "selectedInputMismatches": [
+      {
+        "path": "components/dashboard/Navbar.tsx",
+        "expectedSha256": "8457239b4dfaf0e9c76576826f36d4a7e72a2ad7c97e479a45716d8af3466232",
+        "actualSha256": "d1d1b271ee62c8fdca2a611e9696fadb6fea27bf6829aecc418f0a2406fef455"
+      },
+      {
+        "path": "package.json",
+        "expectedSha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+        "actualSha256": "9519cb1792845b240c677a85e558eaec349ea835f0a196e13a0cb4501a42ca32"
+      }
+    ],
+    "ownedRepairMismatches": [],
+    "fullSourceScanPerformed": false,
+    "currentFullSourceEqualityEstablished": false,
+    "savedFullSourceObservationFiles": 9988,
+    "savedFullSourceIdentity": "0b8354d4f340ad5b82931e2e18e3e01a7ba18cfd089351a2536b41e23891332c",
+    "limit": "The bounded current rehash found drift in components/dashboard/Navbar.tsx and package.json; six owned repair files still match. No full source scan or HEAD reconciliation was performed. The saved 9988-file observation is historical, and fresh source/HEAD reconciliation and renewed admission are mandatory before future capture.",
+    "selectedInputsUnchanged": false,
+    "ownedRepairFilesUnchanged": true
+  },
+  "preservation": {
+    "newStorageEntries": [
+      "dependencies",
+      "ownership.json"
+    ],
+    "absentSuccessorOutputs": [
+      "source-snapshot.json.gz",
+      "root-source-manifest.json",
+      "candidate-source-manifest.json",
+      "candidate-context.json",
+      "candidate-admission.json",
+      "preparation-attempt02.json",
+      "preparation-attempt03.json",
+      "preparation-attempt05.json",
+      "resource-capture-entry-attempt05.json",
+      "build-result.json",
+      "private-client.json",
+      "runtime-source-admission.json",
+      "runtime-result.json",
+      "database/retained-preparation.json",
+      "database/retained-resume.json",
+      "database/fixture-preflight.json",
+      "database/final-session-cleanup.json",
+      "database/cleanup.json",
+      "database-current/preparation.json",
+      "database-current/fixture-seeded.json",
+      "database-current/fixture-preflight.json",
+      "database-current/final-session-cleanup.json",
+      "database-current/cleanup.json",
+      "database-current/cleanup-before-qualification.json",
+      "runtime-current/execution-started.json",
+      "database-current/database-clones.json",
+      "database-current/fixture-readiness.json",
+      "final-integrity.json",
+      "qualification-result.json"
+    ],
+    "clusters": [
+      {
+        "storage": "D:\\p04-r06-fullapp-20261110-r2",
+        "ownerSha256": "61a7cb0e376ec8e8727cfde9f4063c00d66f0faa1e3871236b2d08e917e4df54",
+        "state": "stopped",
+        "postmasterFileAbsent": true,
+        "recordedPid": 21228,
+        "recordedPidAbsent": true
+      },
+      {
+        "storage": "D:\\p04-r06-fullapp-20261109-r1",
+        "ownerSha256": "118c5040d2b39bd47d8a0d4f37e2772e1ac544bbf29f1b9006334e4c887a6e86",
+        "state": "stopped",
+        "postmasterFileAbsent": true,
+        "recordedPid": 6428,
+        "recordedPidAbsent": true
+      },
+      {
+        "storage": "D:\\p04-v02-fullapp-20261109-r1",
+        "ownerSha256": "eb99fae9196e6c7271819460eb825c31bfd453fd56575baef0bb1e4907265aca",
+        "state": "stopped",
+        "postmasterFileAbsent": true,
+        "recordedPid": 34440,
+        "recordedPidAbsent": true
+      }
+    ],
+    "retainedRecordedPid": 21228,
+    "retainedRecordedPidAbsent": true,
+    "privateFixtureHashUnchanged": true,
+    "nativeDatabaseQueried": false,
+    "dependencyTraversalRepeated": false,
+    "newStorageOwnershipSha256": "d56bd810eaa5cc707181bcff1aae686116716f1e853ee89c67b2481fca8f67ec",
+    "unexpectedSuccessorOutputs": [],
+    "E33SharedFilesUnchanged": [
+      {
+        "path": "work-register.json",
+        "sha256": "822fc01daab1ef1b4b970fdfe18286c360156c8c5ca17bb3452aab2a759c0d30"
+      },
+      {
+        "path": "work-register.csv",
+        "sha256": "ec4870d4432f68cf734f22d618158e748d13c1f146ef5188118ea040d9832d9f"
+      },
+      {
+        "path": "ROADMAP.md",
+        "sha256": "0795eacf6bbcae9571e2541959a2add7b9d222c46b83f7b6f6b4822320ca135f"
+      },
+      {
+        "path": "mutation-log.md",
+        "sha256": "b9b63020f2de7923b0eeb58338ec8df5a7e5db1355c5f9f10018756d8a83808d"
+      },
+      {
+        "path": "execution/CURRENT.md",
+        "sha256": "98ab013578733c78bcf746198fafea8281d9e9f1d0e58303f0247cf3e77223b1"
+      },
+      {
+        "path": "execution/NEXT.md",
+        "sha256": "d04975b7dd6b947a21a679bc37236edc9a9e3aac198b069bf1e9c73da184cc0a"
+      }
+    ],
+    "processInspection": {
+      "readOnly": true,
+      "recordedPids": [
+        21228,
+        6428,
+        34440,
+        30220
+      ],
+      "allRecordedPidsAbsent": true,
+      "receiptChunks": [
+        "1779d1",
+        "460f01"
+      ],
+      "nativeDatabaseQueried": false
+    }
+  },
+  "execution": {
+    "candidateCaptured": false,
+    "attempt05Run": false,
+    "newDatabaseStarted": false,
+    "currentMigrationExecutions": 0,
+    "buildRun": false,
+    "runtimeRun": false,
+    "currentActualCasesRun": 0,
+    "requiredActualCases": 107,
+    "newMockedTestsRun": false
+  },
+  "nextAction": {
+    "condition": "A further actual capacity-changing event, followed by a new receipt using unchanged thresholds; if capacity passes, reconcile current full source and HEAD, resolve the two selected-input drifts, and renew source admission before any capture.",
+    "resourceCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/check-resources.cjs resource-current-schema-retry-ready-r3.json",
+    "conditionalCapture": "A newly named source-reconciled candidate recipe requires independent admission; saved prepare-candidate-attempt05.cjs must not run unchanged.",
+    "handoff": "EXECUTION-HANDOFF-current-schema-r1.md"
+  },
+  "limits": [
+    "No capacity repoll, full source/dependency scan, app load, native database query or process termination by this review.",
+    "Current source inspection is bounded to 68 selected inputs and six owned repair bindings. Two selected inputs differ from their saved hashes; historical source equality is not carried forward.",
+    "Historical helper/authentication tests and retained fixture/database proofs were not rerun. This review adds no mocked unit, real database, rendered/browser or build evidence.",
+    "The recorded stopped owners, matching ownership hashes, absent postmaster.pid files and absent recorded PIDs support inherited stopped ownership; no live PostgreSQL query was performed.",
+    "R06, parent P04/P04-V02 and production readiness remain blocked; this is accepted blocked evidence, not qualification."
+  ],
+  "files": [
+    {
+      "path": "resource-current-schema-retry-ready-r2.json",
+      "sha256": "352f828ce91c36daf4aaabf328a82263fcaad677cd15ca7492d2e8fc1b3fe7d4"
+    },
+    {
+      "path": "check-resources.cjs",
+      "sha256": "76ed28fd79069d9aed58c6d4ed9d2690008236cdaf0ad73516476f1429d150d4"
+    },
+    {
+      "path": "resource-snapshot.ps1",
+      "sha256": "53ed40de3b8ae063f3fc5d08ce948cf108ea633efc005e4563b2093a02c123d0"
+    },
+    {
+      "path": "inventory/source-after-manifest-runtime-v2.json",
+      "sha256": "e319b9c3ad8394030de8f1cd26db8f0139e8d6763dba9fc5ea41d9e2efbcbabc"
+    },
+    {
+      "path": "reused-evidence/inventory/repair-owned-files.json",
+      "sha256": "947b5da57354ecb09673c594b60c2d66bcef5998ce6c72d96bf561aadeeda8e6"
+    },
+    {
+      "path": "capacity-checkpoint-current-schema.json",
+      "sha256": "086652f612dca5fadc119fe5ccbe8b909710b68fc03fba2540f0dcee07a0c2b2"
+    },
+    {
+      "path": "independent-review/CAPACITY-RETRY-OUTCOME-REVIEW-r1.json",
+      "sha256": "ff49f4ec5233982fb72a7cd4cad65a20d3c9f2e38cbe15225b8b6a66502b5282"
+    },
+    {
+      "path": "independent-review/FINAL-PUBLICATION-REVIEW-attempt03.json",
+      "sha256": "879c757dd88d4c756384db1997a4dfac93c703fda32e720a7b5efec79e33cbf5"
+    }
+  ]
+}

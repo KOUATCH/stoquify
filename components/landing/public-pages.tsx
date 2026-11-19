@@ -1,0 +1,209 @@
+"use client"
+
+import type { ReactNode } from "react"
+import { useLocale, useTranslations } from "next-intl"
+import { ArrowRight, Check, Layers3, ShieldCheck } from "lucide-react"
+import { Link } from "@/i18n/navigation"
+import { cinematicModules, CinematicModuleScene, type CinematicModuleId } from "./cinematic-modules"
+import { moduleOffers, offerPaths, type OfferCopy, type OfferPath } from "./cinematic-offers-data"
+import { CinematicOffers } from "./cinematic-offers"
+import { CinematicSetup } from "./cinematic-setup"
+import { useCinematicSignedIn } from "./cinematic-shell"
+import { productDestinations } from "./public-page-routes"
+import { workflowAtlasWorkflows } from "./workflow-atlas-data"
+import { LandingModuleCatalog } from "./landing-module-catalog"
+import { landingModuleCatalog } from "./landing-module-catalog-data"
+import { PreviewLogo } from "./preview-logo"
+import "./landing-production.css"
+import "./public-detail.css"
+
+function useCopy() {
+  const fr = useLocale() === "fr"
+  return (en: string, french: string) => fr ? french : en
+}
+
+function PageFrame({ title, intro, eyebrow, children, className = "detail-page", navigation }: { title: string; intro: string; eyebrow: string; children: ReactNode; className?: string; navigation?: ReactNode }) {
+  const t = useCopy()
+  return <main id="main" tabIndex={-1} className={`public-detail ${className}`}>
+    <div className="section detail-heading">
+      <nav aria-label={t("Breadcrumb", "Fil d’Ariane")} className="detail-breadcrumb">
+        <Link href="/">{t("Home", "Accueil")}</Link><span aria-hidden="true">/</span><span>{eyebrow}</span>
+      </nav>
+      <p className="eyebrow">{eyebrow}</p>
+      <h1 className="display">{title}</h1>
+      <p className="detail-intro">{intro}</p>
+      {navigation}
+    </div>
+    {children}
+  </main>
+}
+
+function AccessNote() {
+  const t = useCopy()
+  return <p className="detail-access"><ShieldCheck size={19} aria-hidden="true" />
+    {t("Your organization, role and enabled modules determine workspace access. Creating an account does not activate every module.", "Votre organisation, votre rôle et les modules activés déterminent vos accès. Créer un compte n’active pas tous les modules.")}
+  </p>
+}
+
+function AccountActions({ workspace = "/dashboard" }: { workspace?: string }) {
+  const t = useCopy()
+  const signedIn = useCinematicSignedIn()
+  return <div className="detail-actions">
+    <Link className="button primary" href={signedIn ? workspace : "/register"} prefetch={false}>
+      {signedIn ? t("Open your workspace", "Ouvrir votre espace") : t("Create your account", "Créer votre compte")} <ArrowRight size={18} aria-hidden="true" />
+    </Link>
+    {!signedIn && <Link className="button outline" href={workspace} prefetch={false}>{t("Already have an account? Sign in", "Déjà un compte ? Connectez-vous")}</Link>}
+  </div>
+}
+
+function PlanningActions({ interest, workspace = "/dashboard" }: { interest: OfferPath; workspace?: string }) {
+  const t = useCopy()
+  const signedIn = useCinematicSignedIn()
+  if (signedIn) return <AccountActions workspace={workspace} />
+  return <div className="detail-actions">
+    <Link className="button primary" href={`/contact?interest=${interest}`}>{t("Plan your workspace", "Préparer votre projet")}<ArrowRight size={18} aria-hidden="true" /></Link>
+    <Link className="button outline" href={workspace} prefetch={false}>{t("Already a customer? Sign in", "Déjà client ? Connectez-vous")}</Link>
+  </div>
+}
+
+export function ProductsPage() {
+  const t = useCopy()
+  return <PageFrame eyebrow={t("Products", "Produits")} title={t("One workspace. Every part of your day.", "Un espace. Chaque aspect de votre journée.")}
+    intro={t("Explore how sales, stock, people and financial records connect. Choose a module to see its role, its dependencies and where to begin.", "Découvrez les liens entre ventes, stocks, personnel et données financières. Choisissez un module pour comprendre son rôle, ses dépendances et par où commencer.")}>
+    <LandingModuleCatalog />
+    <section className="section" aria-labelledby="product-previews">
+      <h2 id="product-previews">{t("Take a closer look.", "Découvrez les espaces en détail.")}</h2>
+      <p>{t("Open a product guide for its capabilities, sample workspace and connected tasks.", "Ouvrez un guide produit pour découvrir ses fonctions, son aperçu et les tâches associées.")}</p>
+      <div className="detail-route-grid">{cinematicModules.map(module => <Link href={`/products/${module.id}`} key={module.id}>
+        <module.icon size={21} aria-hidden="true" /><span>{t(module.label[0], module.label[1])}</span><ArrowRight size={18} aria-hidden="true" />
+      </Link>)}</div>
+    </section>
+    <section className="section detail-next"><h2>{t("Start with a connected workflow.", "Commencez par un parcours connecté.")}</h2><p>{t("Compare the three adoption paths, then prepare your workspace at your own pace.", "Comparez les trois parcours d’adoption, puis préparez votre espace à votre rythme.")}</p>
+      <div className="detail-actions"><Link className="button primary" href="/pricing">{t("Compare offers", "Comparer les offres")}</Link><Link className="button outline" href="/get-started">{t("Plan your setup", "Préparer votre configuration")}</Link></div>
+    </section>
+  </PageFrame>
+}
+
+export function PublicPolicyPage({ kind, policyUrl }: { kind: "privacy" | "terms"; policyUrl: string | null }) {
+  const t = useCopy()
+  const title = kind === "privacy" ? t("Privacy policy", "Politique de confidentialité") : t("Terms of use", "Conditions d’utilisation")
+  return <PageFrame eyebrow={t("Public information", "Informations publiques")} title={title}
+    intro={policyUrl ? t("Read the published document before continuing.", "Consultez le document publié avant de poursuivre.") : t("Stoquify is still under development. The approved document is not yet published.", "Stoquify est encore en développement. Le document approuvé n’est pas encore publié.")}>
+    <section className="section detail-start-actions"><div className="detail-card">
+      <ShieldCheck size={26} aria-hidden="true" /><h2>{policyUrl ? t("Published document", "Document publié") : t("Publication pending", "Publication en préparation")}</h2>
+      <p>{policyUrl ? t("Use the link below to read the full document.", "Utilisez le lien ci-dessous pour consulter le document complet.") : t("This page shows the document’s availability. It does not contain policy or contractual terms. Approved content is required before public launch.", "Cette page indique la disponibilité du document. Elle ne contient ni politique ni conditions contractuelles. Un contenu approuvé est nécessaire avant le lancement public.")}</p>
+      <div className="detail-actions">
+        {policyUrl && <a className="button primary" href={policyUrl}>{t("Read the document", "Consulter le document")}<ArrowRight size={18} aria-hidden="true" /></a>}
+        <Link className="button outline" href="/register" prefetch={false}>{t("Return to registration", "Revenir à l’inscription")}</Link>
+        <Link className="text-link" href="/contact">{t("Workspace planning", "Préparer votre projet")}</Link>
+      </div>
+    </div></section>
+  </PageFrame>
+}
+
+export function PublicNotFound() {
+  const t = useCopy()
+  return <PageFrame eyebrow="404" title={t("Page not found.", "Page introuvable.")}
+    intro={t("This product or offer is not available at this address. Explore the current catalogue to find your next step.", "Ce produit ou cette offre n’est pas disponible à cette adresse. Consultez le catalogue actuel pour choisir votre prochaine étape.")}>
+    <div className="section detail-start-actions"><div className="detail-actions">
+      <Link className="button primary" href="/products">{t("Explore products", "Explorer les produits")}</Link>
+      <Link className="button outline" href="/pricing">{t("Compare offers", "Comparer les offres")}</Link>
+    </div></div>
+  </PageFrame>
+}
+
+export function ProductPage({ id }: { id: CinematicModuleId }) {
+  const t = useCopy()
+  const routeLabel = useTranslations("landing.workflowAtlas.routeLabels")
+  const product = cinematicModules.find(item => item.id === id)!
+  const destination = productDestinations[id]
+  const workflow = workflowAtlasWorkflows.find(item => item.key === destination.workflow)!
+  const offer = moduleOffers[id]
+  const path = offerPaths.find(item => item.id === offer.path)!
+  const presentation = landingModuleCatalog.find(item => item.href === `/products/${id}`)!
+  const text = (copy: OfferCopy) => t(copy[0], copy[1])
+  return <PageFrame className="detail-page product-page" eyebrow={text(product.label)} title={text(product.title)} intro={text(product.body)}>
+    <section className="section" aria-label={t("Capabilities and workspace preview", "Fonctions et aperçu de l’espace")}><div className="detail-product-grid detail-product-unit">
+      <div className="detail-product-copy">
+        <p className="eyebrow">{t("IN YOUR WORKSPACE", "DANS VOTRE ESPACE")}</p>
+        <h2>{text(offer.relation)}</h2><p>{text(offer.note)}</p>
+        <p className="detail-users">{text(presentation.users)}</p>
+        <ul className="detail-checklist">{presentation.capabilities.map(capability => <li key={capability[0]}><Check size={18} aria-hidden="true" />{text(capability)}</li>)}</ul>
+        <PlanningActions interest={offer.path} workspace={destination.workspace} /><AccessNote />
+        <Link className="text-link" href={`/workflows#workflow-${destination.workflow}`}>{t("Follow the complete workflow", "Suivre le parcours complet")} <ArrowRight size={17} aria-hidden="true" /></Link>
+      </div>
+      <figure className="detail-preview">
+        <div className="detail-preview-brand"><PreviewLogo /><span>{t("SAMPLE WORKSPACE", "EXEMPLE D’ESPACE")}</span></div>
+        <CinematicModuleScene module={id} />
+        <figcaption>{t("Illustrative example · Fictional records · Not live business data", "Exemple illustratif · Données fictives · Aucune donnée réelle")}</figcaption>
+      </figure>
+      <dl className="detail-handoff"><div><dt>{t("Starts with", "À partir de")}</dt><dd>{text(presentation.input)}</dd></div><div><dt>{t("Carries forward", "Transmet")}</dt><dd>{text(presentation.output)}</dd></div></dl>
+    </div></section>
+    <section className="section detail-workspace">
+      <h2>{t("Continue in the connected system.", "Poursuivez dans le système connecté.")}</h2>
+      <p>{t("These links open the real workspace. If you are signed out, sign in first to continue to your selected destination.", "Ces liens ouvrent l’espace réel. Si vous êtes déconnecté, identifiez-vous pour rejoindre la destination choisie.")}</p>
+      <div className="detail-route-grid">{workflow.routes.map(route => <Link key={route.href} href={route.href} prefetch={false}><Layers3 size={18} aria-hidden="true" />{routeLabel(route.labelKey)}<ArrowRight size={17} aria-hidden="true" /></Link>)}</div>
+    </section>
+    <section className="section detail-next"><p className="eyebrow">{t("RELATED OFFER", "OFFRE ASSOCIÉE")}</p><h2>{text(path.name)}</h2><p>{text(path.scope)}</p>
+      <div className="detail-actions"><Link className="button primary" href={`/offers/${path.id}`}>{t("Explore the offer", "Découvrir l’offre")}</Link><Link className="button outline" href="/products">{t("All products", "Tous les produits")}</Link></div>
+    </section>
+  </PageFrame>
+}
+
+export function PricingPage() {
+  const t = useCopy()
+  return <PageFrame className="pricing-page" eyebrow={t("Offers & pricing", "Offres et tarifs")} title={t("Choose the scope that fits your business.", "Choisissez le périmètre adapté à votre entreprise.")}
+    navigation={<nav className="pricing-page-nav" aria-label={t("On this page", "Sur cette page")}>
+      <a href="#pricing">{t("Compare starting points", "Comparer les parcours")}<ArrowRight size={16} aria-hidden="true" /></a>
+      <a href="#rollout-cost">{t("Understand the cost", "Comprendre le coût")}</a>
+      <a href="#decision-title">{t("Before you choose", "Avant de choisir")}</a>
+      <a href="#offers">{t("Explore all modules", "Explorer les modules")}</a>
+    </nav>}
+    intro={t("Compare three starting points, explore their modules and review what to prepare. Your agreed scope determines your tailored quote.", "Comparez trois points de départ, explorez leurs modules et les éléments à préparer. Le périmètre convenu détermine votre devis personnalisé.")}>
+    <CinematicOffers standalone />
+  </PageFrame>
+}
+
+export function OfferPage({ id }: { id: OfferPath }) {
+  const t = useCopy()
+  const path = offerPaths.find(item => item.id === id)!
+  const text = (copy: OfferCopy) => t(copy[0], copy[1])
+  const modules = cinematicModules.filter(module => moduleOffers[module.id].path === id)
+  return <PageFrame className="detail-page offer-page" eyebrow={t("Your starting point", "Votre point de départ")} title={text(path.name)} intro={text(path.description)}>
+    <section className="section detail-product-grid">
+      <div><p className="eyebrow">{t("WHO IT IS FOR", "POUR QUI")}</p><h2>{text(path.verb)}</h2><p>{text(path.audience)}</p><p>{text(path.reason)}</p>
+        <ul className="detail-checklist">{path.points.map(point => <li key={point[0]}><Check size={19} aria-hidden="true" />{text(point)}</li>)}</ul>
+      </div>
+      <aside className="detail-quote" aria-label={t("Commercial scope", "Périmètre commercial")}>
+        <p className="eyebrow">{t("SCOPE BEFORE COMMITMENT", "LE PÉRIMÈTRE AVANT L’ENGAGEMENT")}</p><h2>{t("Tailored quote", "Sur devis")}</h2><p>{text(path.scope)}</p>
+        <h3>{t("Prepare to discuss", "À préciser")}</h3><p>{text(path.discuss)}</p><PlanningActions interest={id} /><AccessNote />
+        <p className="detail-small">{t("No order or subscription is created here. Pricing, activation and rollout terms must be agreed separately.", "Aucune commande ni aucun abonnement n’est créé ici. Tarifs, activation et déploiement sont à convenir séparément.")}</p>
+      </aside>
+    </section>
+    <section className="section"><h2>{t("Explore the related modules.", "Explorez les modules associés.")}</h2><div className="detail-card-grid detail-inline-grid">
+      {modules.map(module => <Link className="detail-card" key={module.id} href={`/products/${module.id}`}><module.icon size={25} aria-hidden="true" /><h3>{text(module.label)}</h3><p>{text(moduleOffers[module.id].note)}</p><span className="detail-card-link">{t("Explore module", "Découvrir le module")} <ArrowRight size={17} aria-hidden="true" /></span></Link>)}
+    </div><Link className="detail-card-link" href="/products#offers">{t("Explore the full module catalogue", "Explorer le catalogue complet des modules")}<ArrowRight size={17} aria-hidden="true" /></Link></section>
+    <section className="section detail-next"><h2>{t("Turn your choice into a practical start.", "Transformez votre choix en démarrage concret.")}</h2>
+      <div className="detail-actions"><Link className="button primary" href="/get-started">{t("Prepare your workspace", "Préparer votre espace")}</Link><Link className="button outline" href={`/workflows#workflow-${path.workflow}`}>{t("Explore this workflow", "Explorer ce parcours")}</Link><Link className="text-link" href="/pricing">{t("Compare all offers", "Comparer toutes les offres")}</Link></div>
+    </section>
+  </PageFrame>
+}
+
+export function GettingStartedPage() {
+  const t = useCopy()
+  const steps = [
+    { title: t("Confirm your modules", "Confirmez vos modules"), body: t("Review the modules enabled for your organization before configuring operations.", "Examinez les modules activés pour votre organisation avant de configurer l’activité."), href: "/dashboard/settings/modules" },
+    { title: t("Set up your locations", "Configurez vos sites"), body: t("Prepare shops and warehouses to keep each operation in the right location.", "Préparez boutiques et entrepôts pour rattacher chaque opération au bon site."), href: "/dashboard/settings/locations" },
+    { title: t("Give your team the right access", "Attribuez les accès adaptés"), body: t("Review team members and roles with your organization administrator.", "Vérifiez les membres de l’équipe et leurs rôles avec l’administrateur de votre organisation."), href: "/dashboard/settings/users" },
+    { title: t("Review your accounting foundation", "Vérifiez votre socle comptable"), body: t("Check accounting setup and opening records before recording live activity.", "Vérifiez la configuration comptable et les données d’ouverture avant d’enregistrer l’activité réelle."), href: "/dashboard/accounting" },
+  ]
+  return <PageFrame className="detail-page getting-started-page" eyebrow={t("Getting started", "Bien démarrer")} title={t("From your first account to your first working day.", "Du premier compte à la première journée d’activité.")}
+    intro={t("Create your administrator account, verify your email, then prepare the workspace with your team. Follow the steps that match your role.", "Créez votre compte administrateur, vérifiez votre e-mail, puis préparez l’espace avec votre équipe. Suivez les étapes correspondant à votre rôle.")}>
+    <div className="section detail-start-actions"><AccountActions /><AccessNote /><p>{t("Joining an existing team or accounting firm? Use the invitation from its administrator. If you are still choosing your scope, prepare your project first.", "Vous rejoignez une équipe ou un cabinet existant ? Utilisez l’invitation de son administrateur. Si vous définissez encore votre périmètre, préparez d’abord votre projet.")}</p><Link className="detail-card-link" href="/contact">{t("Prepare your project", "Préparer votre projet")}<ArrowRight size={17} aria-hidden="true" /></Link></div>
+    <CinematicSetup showGuideLink={false} />
+    <section className="section"><h2>{t("Your setup destinations.", "Vos points d’entrée pour la configuration.")}</h2><p>{t("Sign in to continue. Each destination checks your existing access; administrators may need to complete these steps for your team.", "Connectez-vous pour continuer. Chaque destination vérifie vos accès ; certaines étapes nécessitent l’intervention de votre administrateur.")}</p>
+      <ol className="detail-card-grid detail-inline-grid detail-setup-list">{steps.map((step, index) => <li className="detail-card" key={step.href}><span className="detail-step">0{index + 1}</span><h3>{step.title}</h3><p>{step.body}</p><Link className="detail-card-link" href={step.href} prefetch={false}>{t("Open workspace step", "Ouvrir cette étape")} <ArrowRight size={18} aria-hidden="true" /></Link></li>)}</ol>
+    </section>
+    <section className="section detail-next"><h2>{t("Choose your first workflow.", "Choisissez votre premier parcours.")}</h2><p>{t("Use the workflow catalogue to connect the right tasks, people and records.", "Utilisez le catalogue des parcours pour relier les tâches, les équipes et les pièces nécessaires.")}</p><Link className="button primary" href="/workflows">{t("Open the workflow catalogue", "Ouvrir le catalogue des parcours")}</Link></section>
+  </PageFrame>
+}

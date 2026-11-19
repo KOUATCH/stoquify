@@ -1,0 +1,15 @@
+{
+  "name": "independent-reversal-review-fr",
+  "operations": [
+    { "kind": "login", "user": "reverser", "locale": "fr", "returnUrl": "/dashboard/finance/receivables/history?selected=cmw939xau000vmatojel0y1bs" },
+    { "kind": "click", "role": "button", "text": "Examiner l’annulation" },
+    { "kind": "fill", "label": "Motif de l’annulation", "value": "Correction de la preuve bancaire de test" },
+    { "kind": "file", "label": "Fichier justificatif" },
+    { "kind": "check", "label": "Je confirme l’annulation de ce paiement et le rétablissement de la créance affectée." },
+    { "kind": "audit", "role": "region", "text": "Paiements clients" },
+    { "kind": "click", "role": "button", "text": "Confirmer l’annulation" },
+    { "kind": "wait", "label": "Mot de passe actuel", "timeout": 60000 },
+    { "kind": "inspect" },
+    { "kind": "screenshot" }
+  ]
+}

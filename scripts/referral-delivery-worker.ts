@@ -1,3 +1,5 @@
+import "./server-only-node-shim"
+
 type ReferralDeliveryWorkerArguments = {
   organizationId: string
   workerId: string
@@ -27,6 +29,10 @@ Options:
   --worker-id <id>       Stable worker identity (or STOQUIFY_REFERRAL_DELIVERY_WORKER_ID)
   --limit <count>        Maximum requests per queue (default: 25, maximum: 100)
   --help                 Show this help
+
+Exit 0: help or batch processing completed; inspect each queue result for holds or failures.
+Exit 1: invocation failed or an outcome is UNCONFIRMED; review retained requests before retrying.
+PROCESSING, LEASE_LOST and DEFERRED do not confirm provider delivery.
 `
 
 function parseLimit(value: string | undefined) {
@@ -126,21 +132,37 @@ export async function executeReferralDeliveryWorker(
   return { help: false, statements, accountantInvites }
 }
 
-async function main() {
-  const arguments_ = parseReferralDeliveryWorkerArgs(process.argv.slice(2))
-  if (arguments_.help) {
-    process.stdout.write(HELP)
-    return
+export async function runReferralDeliveryWorkerCli(
+  argv: readonly string[] = process.argv.slice(2),
+  environment: WorkerEnvironment = process.env,
+  dependencies?: ReferralDeliveryWorkerDependencies,
+) {
+  try {
+    const arguments_ = parseReferralDeliveryWorkerArgs(argv, environment)
+    if (arguments_.help) {
+      process.stdout.write(HELP)
+      return 0
+    }
+    const result = await executeReferralDeliveryWorker(arguments_, dependencies)
+    process.stdout.write(`${JSON.stringify(result)}\n`)
+    const unconfirmed = [result.statements, result.accountantInvites].some(
+      (batch) => Array.isArray(batch) && batch.some((item) => item?.status === "UNCONFIRMED"),
+    )
+    if (unconfirmed) {
+      process.stderr.write("Referral delivery outcome is unconfirmed. Review retained requests before retrying.\n")
+      return 1
+    }
+    return 0
+  } catch {
+    process.stderr.write(
+      "Referral delivery worker failed. Verify tenant/worker arguments and inspect the scoped delivery queue.\n",
+    )
+    return 1
   }
-  const result = await executeReferralDeliveryWorker(arguments_)
-  process.stdout.write(`${JSON.stringify(result)}\n`)
 }
 
 if (require.main === module) {
-  void main().catch((error: unknown) => {
-    const message =
-      error instanceof Error ? error.message : "Referral delivery worker failed."
-    process.stderr.write(`${message}\n`)
-    process.exitCode = 1
+  void runReferralDeliveryWorkerCli().then((exitCode) => {
+    process.exitCode = exitCode
   })
 }

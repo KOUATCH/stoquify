@@ -1,0 +1,127 @@
+diff --git a/.codex-tmp/af16-release-20261026/components/accounting/AccountantAccessManager.tsx b/components/accounting/AccountantAccessManager.tsx
+index 7aeeb809..dcffc514 100644
+--- a/.codex-tmp/af16-release-20261026/components/accounting/AccountantAccessManager.tsx
++++ b/components/accounting/AccountantAccessManager.tsx
+@@ -4,7 +4,7 @@ import { AccountingDataTable } from "@/components/accounting/AccountingDataTable
+ import { accountantAccessCopy, accountantAccessLabel } from "./accountantAccessCopy"
+ import type { Locale } from "@/types/bilingual"
+ 
+-import { useState, useTransition } from "react"
++import { useRef, useState } from "react"
+ import { useRouter } from "next/navigation"
+ 
+ import {
+@@ -45,28 +45,58 @@ export function AccountantAccessManager({
+   const t = accountantAccessCopy[locale]
+   const router = useRouter()
+   const [message, setMessage] = useState<string | null>(null)
+-  const [isPending, startTransition] = useTransition()
++  const [isPending, setPending] = useState(false)
++  const inFlight = useRef(false)
++  const [saved, setSaved] = useState(false)
+   const [operation, setOperation] = useState<{ kind: "grant" | "revoke"; input: Record<string, unknown> } | null>(null)
++  const operationRef = useRef<typeof operation>(null)
+   const [fresh, setFresh] = useState(false)
+   const ft = firmEngagementCopy[locale]
+ 
+-  function run(next: NonNullable<typeof operation>) {
++  function retainOperation(next: typeof operation) {
++    operationRef.current = next
+     setOperation(next)
++  }
++
++  async function run(next: NonNullable<typeof operation>) {
++    if (inFlight.current || (operationRef.current && operationRef.current !== next)) return
++    inFlight.current = true
++    setPending(true)
++    retainOperation(next)
++    setSaved(false)
+     setMessage(null)
+-    startTransition(async () => {
+-      try {
+-        const result = next.kind === "grant" ? await inviteAccountantAccessAction(next.input) : await revokeAccountantAccessAction(next.input)
+-        if (result.success) {
+-          setOperation(null); setFresh(false)
+-          setMessage(next.kind === "grant" ? ("outcome" in result.data && result.data.outcome === "INVITED" ? t.queued : t.granted) : ("status" in result.data && result.data.status === "EXPIRED" ? t.expired : t.revoked))
+-          router.refresh()
+-        } else if (result.code === "FRESH_AUTH_REQUIRED") { setFresh(true); setMessage(ft.fresh) }
+-        else if (result.retryable || result.code === "INTERNAL_ERROR") setMessage(ft.uncertain)
+-        else { setOperation(null); setMessage(ft.rejected) }
+-      } catch { setMessage(ft.uncertain) }
+-    })
++    let confirmed = false
++    try {
++      const result = next.kind === "grant" ? await inviteAccountantAccessAction(next.input) : await revokeAccountantAccessAction(next.input)
++      if (result.success) {
++        retainOperation(null); setFresh(false)
++        setMessage(next.kind === "grant" ? ("outcome" in result.data && result.data.outcome === "INVITED" ? t.queued : t.granted) : ("status" in result.data && result.data.status === "EXPIRED" ? t.expired : t.revoked))
++        setSaved(true)
++        confirmed = true
++      } else if (result.code === "FRESH_AUTH_REQUIRED") { setFresh(true); setMessage(ft.fresh) }
++      else if (result.retryable || result.code === "INTERNAL_ERROR") setMessage(ft.uncertain)
++      else { retainOperation(null); setMessage(ft.rejected) }
++    } catch { setMessage(ft.uncertain) }
++    finally { inFlight.current = false; setPending(false) }
++    if (confirmed) {
++      try { router.refresh() }
++      catch { /* The command is confirmed; the explicit reload remains available. */ }
++    }
++  }
++
++  async function confirmIdentity(password: string) {
++    if (inFlight.current || !operationRef.current || !fresh) return
++    inFlight.current = true
++    setPending(true)
++    try {
++      const result = await stepUpWithPasswordAction({ password })
++      if (result.success) { setFresh(false); setMessage(null) }
++      else setMessage(ft.identityFailed)
++    } catch { setMessage(ft.identityFailed) }
++    finally { inFlight.current = false; setPending(false) }
+   }
+   function grant(formData: FormData) {
++    if (inFlight.current || operationRef.current) return
+     run({ kind: "grant", input: {
+         accountantEmail: formData.get("accountantEmail"),
+         accountantFirmName: formData.get("accountantFirmName"),
+@@ -81,6 +111,7 @@ export function AccountantAccessManager({
+   }
+ 
+   function revoke(grantId: string) {
++    if (inFlight.current || operationRef.current) return
+     const reason = window.prompt(`${t.revokeReason}\n${ft.consequence}`)
+     if (!reason) return
+     run({ kind: "revoke", input: { grantId, reason } })
+@@ -88,7 +119,10 @@ export function AccountantAccessManager({
+ 
+   return (
+     <div className="space-y-6">
+-      <form action={grant} className="dashboard-glass-panel grid min-w-0 gap-4 rounded-lg p-5 md:grid-cols-2">
++      <form onSubmit={(event) => {
++        event.preventDefault()
++        grant(new FormData(event.currentTarget))
++      }} className="dashboard-glass-panel grid min-w-0 gap-4 rounded-lg p-5 md:grid-cols-2">
+         <div className="md:col-span-2">
+           <h2 className="font-semibold">{t.invite}</h2>
+           <p className="mt-1 text-sm text-[var(--dash-text-soft)]">
+@@ -139,13 +173,16 @@ export function AccountantAccessManager({
+         </button>
+         {message ? <p role="status" className="self-center text-sm md:col-span-2">{message}</p> : null}
+       </form>
++      {saved && !operation && !isPending && <div className="dashboard-glass-panel space-y-3 rounded-lg p-5">
++        <p>{locale === "fr" ? "La modification a été enregistrée. Si elle ne figure pas dans la liste, actualisez-la avant une autre modification." : "The change was saved. If it is not shown in the list, refresh it before making another change."}</p>
++        <button type="button" className="dashboard-button-secondary min-h-11 rounded-lg px-3" onClick={() => { if (!inFlight.current && !operationRef.current) window.location.reload() }}>
++          {locale === "fr" ? "Actualiser la liste" : "Refresh current list"}
++        </button>
++      </div>}
+       {operation && <div className="dashboard-glass-panel space-y-3 rounded-lg p-5">
+         {fresh && <form onSubmit={e => {
+           e.preventDefault(); const form = e.currentTarget, password = String(new FormData(form).get("password")); form.reset()
+-          startTransition(async () => {
+-            try { const r = await stepUpWithPasswordAction({ password }); if (r.success) { setFresh(false); setMessage(null) } else setMessage(ft.identityFailed) }
+-            catch { setMessage(ft.identityFailed) }
+-          })
++          void confirmIdentity(password)
+         }}><label>{ft.password}<input className="dashboard-control ml-2 min-h-11 rounded-lg px-3" name="password" type="password" autoComplete="current-password" required /></label>
+           <button className="dashboard-button-secondary min-h-11 rounded-lg px-3" disabled={isPending}>{ft.verify}</button></form>}
+         <button className="dashboard-button-secondary min-h-11 rounded-lg px-3" disabled={isPending || fresh} onClick={() => run(operation)}>{ft.retry}</button>

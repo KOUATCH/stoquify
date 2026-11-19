@@ -79,10 +79,22 @@ function decimal(
   label: string,
 ) {
   try {
-    return new Prisma.Decimal(value ?? 0);
+    const amount = new Prisma.Decimal(value ?? 0);
+    if (!amount.isFinite()) throw new Error("Non-finite decimal");
+    return amount;
   } catch {
     throw new BusinessRuleError(`${label} must be a valid decimal amount.`);
   }
+}
+
+function requireDecimalInput(
+  value: Prisma.Decimal.Value | null | undefined,
+  label: string,
+) {
+  if (value == null || (typeof value === "string" && !value.trim())) {
+    throw new BusinessRuleError(`${label} is required; supply an explicit amount, including zero.`);
+  }
+  return decimal(value, label);
 }
 
 function optionalDecimal(
@@ -105,6 +117,8 @@ function assertSupportedRule(rule: PayrollTaxRule, capabilityStatus: string) {
 }
 
 function sortedBrackets(brackets: PayrollTaxBracket[]) {
+  // Validate before sorting: NaN/Infinity must not participate in comparisons.
+  brackets.forEach(validateBracket);
   return [...brackets].sort((left, right) => {
     if (left.upToAmount == null && right.upToAmount == null) return 0;
     if (left.upToAmount == null) return 1;
@@ -161,8 +175,11 @@ function adjustmentInputAmount(
 ) {
   const inputKey = adjustment.inputKey?.trim();
   if (!inputKey) return new Prisma.Decimal(0);
-  return decimal(
-    input.adjustmentValues?.[inputKey] ?? 0,
+  const values = input.adjustmentValues;
+  return requireDecimalInput(
+    values && Object.prototype.hasOwnProperty.call(values, inputKey)
+      ? values[inputKey]
+      : undefined,
     `Payroll tax adjustment input ${inputKey}`,
   );
 }
@@ -338,7 +355,7 @@ export function evaluatePayrollTaxRule(
   input: PayrollTaxRuleEvaluationInput,
 ): PayrollTaxRuleEvaluationResult {
   const capabilityStatus = String(input.capabilityStatus);
-  const taxableBaseAmount = decimal(
+  const taxableBaseAmount = requireDecimalInput(
     input.taxableBaseAmount,
     "Payroll taxable base",
   );
@@ -388,6 +405,11 @@ export function evaluatePayrollTaxRule(
     throw new BusinessRuleError(
       "Payroll tax rule calculation mode is unsupported or missing.",
     );
+  }
+
+  if (calculationMode === "PROGRESSIVE_YTD") {
+    requireDecimalInput(input.ytdTaxableBaseAmount, "Payroll YTD taxable base");
+    requireDecimalInput(input.ytdTaxWithheldAmount, "Payroll YTD tax withheld");
   }
 
   const taxableBaseAdjustment = applyAdjustments(

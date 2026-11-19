@@ -1,0 +1,544 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "qualification_review_r2",
+  "at": "2026-11-02T18:17:13.571Z",
+  "evidenceClass": "independent_source_recipe_and_actual_outcome_review",
+  "verdict": "accepted_local_P04_R02_completion",
+  "passed": true,
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+  "reviewerExecution": "Read-only inspection and cross-checks; no app, DB or browser execution by reviewer.",
+  "scope": {
+    "legacy": "/uploads/{tenant}/{file}",
+    "guarded": "/api/uploads/{tenant}/{file}",
+    "originalPrivateAliases": 3,
+    "syntheticQualificationAliases": 1,
+    "originalPositiveReads": 0,
+    "qualificationPolicy": "Explicit candidate-only fourth synthetic alias; not a deployable production-policy artifact."
+  },
+  "actualBrowser": {
+    "checks": 22,
+    "passedChecks": 22,
+    "recordedHttpRequests": 352,
+    "originalAliasProbes": 270,
+    "parentBrowserMethodPathStatusBodyHashMultisetsMatch": true,
+    "allOriginalProbesValidated": true,
+    "originalPrivateBytesForwarded": 0,
+    "authorizedGets": 16,
+    "authorizedHeads": 3,
+    "allAuthorizedGetBodiesExactCanary": true,
+    "allAuthorizedHeadsEmpty": true,
+    "signInAttempts": 18,
+    "allSignInsFirstAttempt200": true,
+    "browserStopped": true,
+    "denyProxyStoppedAndPortReleased": true,
+    "cleanupErrors": []
+  },
+  "database": {
+    "readOnlyAdmission": "Three catalogs and 120 migrations checked; original template schema matched the frozen candidate. Not a fresh migration replay.",
+    "noBusinessWriteSnapshotPairs": 20,
+    "snapshotFiles": 40,
+    "tablesPerSnapshot": 245,
+    "allPairsMatched": true,
+    "unchangedSeedBusinessTables": 242,
+    "documentedChangedTables": [
+      "roles",
+      "tenant_module_grants",
+      "users"
+    ],
+    "normalizedChangedTableDigestsMatchSeed": true,
+    "sessionsRetained": 33,
+    "expiredSessionsRetained": 2,
+    "auditRowsRetained": 82,
+    "moduleFinalState": "active revision5",
+    "permissionChangeFinalState": "dashboard.read removed",
+    "fixtureReadyForFreshRepeat": false,
+    "postmasterPid": 32788,
+    "stopped": true,
+    "portAvailable": true,
+    "emptyClientInventories": 2
+  },
+  "preservation": {
+    "frozenSourceFiles": 9136,
+    "assetAnnex": 6,
+    "sealedRuntimeFiles": 5310,
+    "allSealedBytesUnchanged": true,
+    "originalsAndMirrors": 3,
+    "privateAliasSourcesPreserved": 3,
+    "allowedCacheAdditions": [
+      {
+        "path": ".next/cache/images/azDZUiE5KestdQzuVX9jK4glMy9xju16joMadOLrlwg/3600.1793646380335.p04r02-full-synthetic.p04r02-full-synthetic.png",
+        "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d"
+      },
+      {
+        "path": ".next/cache/images/zcct8V3CcgLC3z3Mp_i4dQFQnS8Yz6hyvTcO0sN-brA/60.1793643036629.IXxDY8EofctWN1-U2xkXhfv4SBB3ENsfHHfWUCbj7nI.Vy8iNDYtMWExOWQ1OWM4Yjgi.png",
+        "sha256": "217c4363c1287dcb56375f94db191785fbf848107710db1f1c77d65026e3ee72"
+      }
+    ],
+    "seededPrivateOptimizerCacheSurvived": true,
+    "finalIntegrityChecks": 12,
+    "allFinalIntegrityChecksPassed": true,
+    "selectedReceiptHashesMatch": true,
+    "rootHeadUnchanged": true,
+    "rootDrift": {
+      "added": 73,
+      "changed": 10,
+      "removed": 0,
+      "selectedInputs": []
+    },
+    "rootDriftPreserved": true
+  },
+  "priorFailedAttemptsPreserved": true,
+  "localBlockers": [],
+  "remainingRequirements": [
+    "Qualify the latest whole checkout and production policy after concurrent payroll/migration changes; this verdict binds only the frozen candidate.",
+    "Original-tenant stored/computed reference census, original-owner authorized HTTP reads and hosted ingress/CDN/old-copy/cache purge/operator cutover remain release requirements.",
+    "Physical dependency copy was isolated but is not a clean lockfile install or a production reproducibility certification.",
+    "EN/FR media consumers passed; full localization, accessibility, uploads and business mutations were not qualified.",
+    "Fixture reuse requires reviewed bounded recovery; retained expired sessions and removed permission must not be silently reset.",
+    "P04 and wider production readiness remain blocked by other packages/gates. Next priority is P04-R01; no authorization to implement P04-R01 or P04-R03 follows from this review."
+  ],
+  "evidenceBindings": [
+    {
+      "path": "candidate-context.json",
+      "sha256": "546b7badcf6153d523ea94833c9e036272b576eb0c60d9d7e142fb9191e0b2a6"
+    },
+    {
+      "path": "candidate-source-manifest.json",
+      "sha256": "751045d66e27d414f5fd8543a1ace7798fd000e67b07d3c0b1779d87de338f8b"
+    },
+    {
+      "path": "root-source-manifest.json",
+      "sha256": "9e0560db93f50fb1b84d3e8303f4ff538b51d6f1e405fb893801b0e1261a78f1"
+    },
+    {
+      "path": "candidate-admission.json",
+      "sha256": "bf91ff3f69f9bb2f16360955d2c39dccb33ca03429cde1d77ea798fac26ed3c0"
+    },
+    {
+      "path": "build-result.json",
+      "sha256": "e768849e3d8318f72284582b777af0908a7b05df8edc995aff1b2151ca401075"
+    },
+    {
+      "path": "verified-artifact-manifest.json",
+      "sha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8"
+    },
+    {
+      "path": "runtime-result.json",
+      "sha256": "7dc1dd851aed3f55d0ea53294126ccec5b002e4d20e2b778646b583bdf7b14fa"
+    },
+    {
+      "path": "runtime-result-retry01.json",
+      "sha256": "35ee828dbb37903649630fd4837cff7b47e0d4fd1a1770e2e98064ed88193359"
+    },
+    {
+      "path": "runtime-result-retry02.json",
+      "sha256": "cb89466d8690ee8ca39dee7b0309689cbcca48ed3c04c36cbc27e8c4ac385c51"
+    },
+    {
+      "path": "run-runtime-retry02.cjs",
+      "sha256": "217c90f23179d1fad2df9bc08e578fd5c5e8d1857c5aa46aa0633abb4b3724ce"
+    },
+    {
+      "path": "browser/p04r02-full-20261102-r3-retry02/result.json",
+      "sha256": "22e861a8c73d86aabd457d6af51f2b355fac95b74013c1584f8ba366336d8da5"
+    },
+    {
+      "path": "browser/source-review-20261102-r3-retry02.json",
+      "sha256": "e680bdbac91fe39c97068bbdbb39b7f4a1264cb96d06e163b795e96558d82b60"
+    },
+    {
+      "path": "database/resume-20261102-r3-readiness.json",
+      "sha256": "498837d43a933f07c6f08707573f413e7b54d3a8ba2dd86c71bb32ea7cd504a0"
+    },
+    {
+      "path": "database/reference-inventory.json",
+      "sha256": "5cf35cb6cce64b4cd4dbc19d0e6c1e994567f5d5fd7a5c38f1ce1a9f85cba572"
+    },
+    {
+      "path": "database/final-fixture-integrity.json",
+      "sha256": "174a30f6bfb079c09af7cc8430a855873e158b3413d49739610ce19a34a9b47e"
+    },
+    {
+      "path": "database/final-fixture-reconciliation.json",
+      "sha256": "e428a840c5e3e234db49e16b0ad35cae57547af18d6f385b3a52b51d84ae637c"
+    },
+    {
+      "path": "database/resume-20261102-r3-guarded-stop-1793643230069.json",
+      "sha256": "66bf4d974eeae6bc58c7e0815fbc8254fc36d7c1419c6bdca081e291f34f5740"
+    },
+    {
+      "path": "final-integrity-retry02.json",
+      "sha256": "797b7ee3ebbb18c5331fc87f5d3a815b80f8c9b4f3b98845342bb3f3aadf11e9"
+    }
+  ],
+  "snapshotPairs": [
+    {
+      "before": "snapshot-original-alias-anonymous-before-1793642809451-2d7880a6-0798-4fa6-89ab-a3cbf26722c4.json",
+      "after": "snapshot-original-alias-anonymous-after-1793642812429-bdfda730-ef8c-423d-9b75-cfb6757664d3.json",
+      "digest": "da422f92232db3627c2823015d02a2f6f5bb8b5f9857205dd2cc7219fa12af30",
+      "matched": true
+    },
+    {
+      "before": "snapshot-original-alias-ui-before-1793642816219-3ea1ffb0-49c6-4f1c-8679-3b22c9545530.json",
+      "after": "snapshot-original-alias-ui-after-1793642819761-1fbbb995-20ed-47bb-81a3-5af008263f3b.json",
+      "digest": "0b02a0faf615e485f9d4bee6c3dae8e52fb0ad9522615837c67dea186448eca1",
+      "matched": true
+    },
+    {
+      "before": "snapshot-original-alias-foreign-before-1793642826509-f3535460-1482-4f15-8609-552fbfd52c74.json",
+      "after": "snapshot-original-alias-foreign-after-1793642827976-4e4f4267-dcf1-49c2-9ebc-04b2b1fdee96.json",
+      "digest": "bc419d935224745419ecb5745d7be1551d663414eb03aa0a856809ac7882748d",
+      "matched": true
+    },
+    {
+      "before": "snapshot-original-alias-revocation-before-1793642837207-b2c511fa-4da3-4f0d-b8f9-45619cd85e40.json",
+      "after": "snapshot-original-alias-revocation-after-1793642838746-075c0b9c-5eea-4bb3-a281-d6868a667b83.json",
+      "digest": "e864f4079ba6f6140aaa4317737ff97e041db9a463109d0d9db92e3644dd4400",
+      "matched": true
+    },
+    {
+      "before": "snapshot-original-alias-expiry-before-1793642848282-1f6c50c1-05a3-4f43-a5d1-b33eec667618.json",
+      "after": "snapshot-original-alias-expiry-after-1793642850111-c234309f-b39d-4067-8538-c0f65a5fc78c.json",
+      "digest": "7e23508fa402d637b1eb10595e0ed8d8458c2f42e3d28711a355945af6a59f21",
+      "matched": true
+    },
+    {
+      "before": "snapshot-original-alias-permissionChange-before-1793642858575-a0d6b89d-fea1-4e88-b2e4-d5e96c213afc.json",
+      "after": "snapshot-original-alias-permissionChange-after-1793642860075-7e56d08f-611c-4030-bfdd-2f749f438d73.json",
+      "digest": "085289300103617121c78a8adb26858d09a80fb93e35a8c8b344a864c488944d",
+      "matched": true
+    },
+    {
+      "before": "snapshot-original-alias-moduleChange-before-1793642869205-4fbe551f-6014-4c6c-8b17-18f876e72737.json",
+      "after": "snapshot-original-alias-moduleChange-after-1793642871118-816bb06f-cb33-41b2-bae8-c7d5135efc9d.json",
+      "digest": "6ced6358b19cace5cdd088d13a7bd998cc87903203aa26b0e14a0b36ef5425a1",
+      "matched": true
+    },
+    {
+      "before": "snapshot-original-alias-permissionDenied-before-1793642880074-b224a1da-9ed0-44cd-8f2c-1d08cc58a123.json",
+      "after": "snapshot-original-alias-permissionDenied-after-1793642882303-d1ec1eac-9c0c-4890-a751-6e5d07a74dc1.json",
+      "digest": "318a2f0008fc40f8fa3a0e95f92ce2a71e80736036e42192f178c7f468fb6c2c",
+      "matched": true
+    },
+    {
+      "before": "snapshot-original-alias-moduleDenied-before-1793642890620-0462e959-c118-43cf-bef4-6f47dca08296.json",
+      "after": "snapshot-original-alias-moduleDenied-after-1793642892265-939f483c-f95f-4599-acc3-f0ed3eb1753d.json",
+      "digest": "1669b6af9536e2c2af896816d04a987d106d9a405105cc6f5778d8834533a628",
+      "matched": true
+    },
+    {
+      "before": "snapshot-anonymous-before-1793642893755-12752ffc-ffdd-4496-9f7e-57f54a43f2d5.json",
+      "after": "snapshot-anonymous-after-1793642896073-1401ae56-58c7-49f0-92e3-5ef4b9489a3b.json",
+      "digest": "1669b6af9536e2c2af896816d04a987d106d9a405105cc6f5778d8834533a628",
+      "matched": true
+    },
+    {
+      "before": "snapshot-anonymous-encoded-aliases-before-1793642897429-aec3b8d2-11e0-49e5-b092-c1170df51d22.json",
+      "after": "snapshot-anonymous-encoded-aliases-after-1793642899161-fbdbbb87-a296-49f0-8ab6-af911dcdb629.json",
+      "digest": "1669b6af9536e2c2af896816d04a987d106d9a405105cc6f5778d8834533a628",
+      "matched": true
+    },
+    {
+      "before": "snapshot-foreign-before-1793642901031-172286c4-64e2-45fa-9b8b-644a1f84f343.json",
+      "after": "snapshot-foreign-after-1793642903369-0eba1a14-6da2-4e98-b24c-a2511658af24.json",
+      "digest": "9dab38fe8dcf3d414ac71935befe77d8305cc8b1ec03eaff58275d267365117b",
+      "matched": true
+    },
+    {
+      "before": "snapshot-permissionDenied-before-1793642911583-99935f1f-bdc3-4dbd-a927-42107a4a4ff8.json",
+      "after": "snapshot-permissionDenied-after-1793642914009-cfc8fd75-58a5-4779-b9c6-9856fa297729.json",
+      "digest": "10cd9a225bbbfa5bc797c000f4d9788bd827e6111d15e2741bdba9cbbf0ca4ab",
+      "matched": true
+    },
+    {
+      "before": "snapshot-moduleDenied-before-1793642922231-1e4bd698-86b1-4e90-ad0f-bdd015db2cd5.json",
+      "after": "snapshot-moduleDenied-after-1793642924337-8ef9cd20-06d3-4b46-827a-ee8bee198d19.json",
+      "digest": "48228f3e84d328fc811fb3e94442abaa63a75540b91fec5d09ef1f9efcdabb39",
+      "matched": true
+    },
+    {
+      "before": "snapshot-revocation-after-before-1793642935423-b18a07d0-96ee-4069-a335-65939d822269.json",
+      "after": "snapshot-revocation-after-after-1793642937791-e133ab74-39e7-4cfe-9b76-3e70d9cc737d.json",
+      "digest": "b3cf8618fcadd8af9d6d39740a150038565c2eddf5fcb0667b2c034f83bb3fdc",
+      "matched": true
+    },
+    {
+      "before": "snapshot-revoked-browser-restoration-before-1793642939217-ed68195d-896e-41a3-af92-57699edef173.json",
+      "after": "snapshot-revoked-browser-restoration-after-1793642942136-62e3bdaa-d226-40ea-b23d-cabfd305f747.json",
+      "digest": "b3cf8618fcadd8af9d6d39740a150038565c2eddf5fcb0667b2c034f83bb3fdc",
+      "matched": true
+    },
+    {
+      "before": "snapshot-expiry-after-before-1793642944403-f6e28776-8520-4a82-939c-d19cc8ade3fa.json",
+      "after": "snapshot-expiry-after-after-1793642946433-e375efe9-4f32-4a5b-9f09-79ee3a0d80be.json",
+      "digest": "730ea7d1623c9208814b31f47536e8767a18da859dfea58ebee648ae460aaf50",
+      "matched": true
+    },
+    {
+      "before": "snapshot-permissionChange-after-before-1793642955030-9b3ac04f-e8a4-44ba-9421-864e7f0a6f25.json",
+      "after": "snapshot-permissionChange-after-after-1793642957202-e2ac8b22-41cd-40cb-840a-1e03bf5ca9db.json",
+      "digest": "dae2cf7da88f278937ae91faeb198b1be20e9556c4cb9fbad953932e1b548fd6",
+      "matched": true
+    },
+    {
+      "before": "snapshot-moduleChange-after-before-1793642965735-b86f80b4-9d9f-4626-851e-a6b5712703db.json",
+      "after": "snapshot-moduleChange-after-after-1793642968117-7ccea475-2fd9-4989-9485-2ddbe93dc570.json",
+      "digest": "2e5614172738525b7b93b727108f0e42aaebda3abefc221bdd8f2b0a5b4368c9",
+      "matched": true
+    },
+    {
+      "before": "snapshot-authorized-and-optimizer-denials-before-1793642975983-36b38a22-9f22-4cab-b153-58abb521b116.json",
+      "after": "snapshot-authorized-and-optimizer-denials-after-1793642978105-8118efac-571e-4d71-9f1b-7f50f1ed7cba.json",
+      "digest": "ce17d09dd0754488d22c392b3aa0a75d5f52849b6c936b14dac3ac328f9feeee",
+      "matched": true
+    }
+  ],
+  "snapshotEvidence": [
+    {
+      "path": "database/snapshot-original-alias-anonymous-before-1793642809451-2d7880a6-0798-4fa6-89ab-a3cbf26722c4.json",
+      "sha256": "7fcf299813aa3f5597c14957b00ee5e0c39b54a2a3314fba52924ed147831114",
+      "businessSha256": "da422f92232db3627c2823015d02a2f6f5bb8b5f9857205dd2cc7219fa12af30",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-anonymous-after-1793642812429-bdfda730-ef8c-423d-9b75-cfb6757664d3.json",
+      "sha256": "7d78bc9bde59330674cd50683faeb974997cedacabad32b4347dc990da5336bb",
+      "businessSha256": "da422f92232db3627c2823015d02a2f6f5bb8b5f9857205dd2cc7219fa12af30",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-ui-before-1793642816219-3ea1ffb0-49c6-4f1c-8679-3b22c9545530.json",
+      "sha256": "7847c17726dba2f1491b6a9a131bd23e497bb4504ce89e7b2d63d135ee503049",
+      "businessSha256": "0b02a0faf615e485f9d4bee6c3dae8e52fb0ad9522615837c67dea186448eca1",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-ui-after-1793642819761-1fbbb995-20ed-47bb-81a3-5af008263f3b.json",
+      "sha256": "f390aac10dc710de4ce5a10f919e35d275d92c0506b24d7eb87c092b180d774c",
+      "businessSha256": "0b02a0faf615e485f9d4bee6c3dae8e52fb0ad9522615837c67dea186448eca1",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-foreign-before-1793642826509-f3535460-1482-4f15-8609-552fbfd52c74.json",
+      "sha256": "838f634546953af1c0366969a0b002fc05006cf7695f02fb74280a4b011b9885",
+      "businessSha256": "bc419d935224745419ecb5745d7be1551d663414eb03aa0a856809ac7882748d",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-foreign-after-1793642827976-4e4f4267-dcf1-49c2-9ebc-04b2b1fdee96.json",
+      "sha256": "327453008c4dbb7ae3e291d23425eebc36b038dea02149ac459d0f4bcb554e2f",
+      "businessSha256": "bc419d935224745419ecb5745d7be1551d663414eb03aa0a856809ac7882748d",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-revocation-before-1793642837207-b2c511fa-4da3-4f0d-b8f9-45619cd85e40.json",
+      "sha256": "d9d03c1c91c97c06f48db9e68a62f59026d3b5631290a1d4d4c44a570b11ec4a",
+      "businessSha256": "e864f4079ba6f6140aaa4317737ff97e041db9a463109d0d9db92e3644dd4400",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-revocation-after-1793642838746-075c0b9c-5eea-4bb3-a281-d6868a667b83.json",
+      "sha256": "a0bc2ad591797ade71ef3653edc5361ac2424195753a23ead72d39b732383199",
+      "businessSha256": "e864f4079ba6f6140aaa4317737ff97e041db9a463109d0d9db92e3644dd4400",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-expiry-before-1793642848282-1f6c50c1-05a3-4f43-a5d1-b33eec667618.json",
+      "sha256": "497045862bac2cd597e91b971aea62bc44c6c5b90188a4fcc711b47eb0300723",
+      "businessSha256": "7e23508fa402d637b1eb10595e0ed8d8458c2f42e3d28711a355945af6a59f21",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-expiry-after-1793642850111-c234309f-b39d-4067-8538-c0f65a5fc78c.json",
+      "sha256": "7f915398a962e027027ac4ab8da76508b2a99718761941cad259c3f7db6090dc",
+      "businessSha256": "7e23508fa402d637b1eb10595e0ed8d8458c2f42e3d28711a355945af6a59f21",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-permissionChange-before-1793642858575-a0d6b89d-fea1-4e88-b2e4-d5e96c213afc.json",
+      "sha256": "b814264d6e826833d1c43982143df91e50c65ffc6106f217cbad1888c2227dda",
+      "businessSha256": "085289300103617121c78a8adb26858d09a80fb93e35a8c8b344a864c488944d",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-permissionChange-after-1793642860075-7e56d08f-611c-4030-bfdd-2f749f438d73.json",
+      "sha256": "de910e6306d6dabfbc006e061c666a0457dab00bf1e8083b7b68c0655e9ec390",
+      "businessSha256": "085289300103617121c78a8adb26858d09a80fb93e35a8c8b344a864c488944d",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-moduleChange-before-1793642869205-4fbe551f-6014-4c6c-8b17-18f876e72737.json",
+      "sha256": "613a1acb2198201eeaa0cafd8458d3a9b28648248726dd0dc7e82b795e691a9a",
+      "businessSha256": "6ced6358b19cace5cdd088d13a7bd998cc87903203aa26b0e14a0b36ef5425a1",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-moduleChange-after-1793642871118-816bb06f-cb33-41b2-bae8-c7d5135efc9d.json",
+      "sha256": "60a7e8d8f02ec1ac7b55f5814a413507fd1d46c3416dcf8ed16dc2f53a498eb3",
+      "businessSha256": "6ced6358b19cace5cdd088d13a7bd998cc87903203aa26b0e14a0b36ef5425a1",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-permissionDenied-before-1793642880074-b224a1da-9ed0-44cd-8f2c-1d08cc58a123.json",
+      "sha256": "d0c6f781f0653a68c3069d41e4a37fda5990a052018454833dae69f050a571b6",
+      "businessSha256": "318a2f0008fc40f8fa3a0e95f92ce2a71e80736036e42192f178c7f468fb6c2c",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-permissionDenied-after-1793642882303-d1ec1eac-9c0c-4890-a751-6e5d07a74dc1.json",
+      "sha256": "b6976ad7002db9ea42d874cc0e3e476c818491752223247c049d7a2690854ee7",
+      "businessSha256": "318a2f0008fc40f8fa3a0e95f92ce2a71e80736036e42192f178c7f468fb6c2c",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-moduleDenied-before-1793642890620-0462e959-c118-43cf-bef4-6f47dca08296.json",
+      "sha256": "4802ae0092c4b1974f19d2e9b9892c397987769fd545a281d4d1d8f6b018e02b",
+      "businessSha256": "1669b6af9536e2c2af896816d04a987d106d9a405105cc6f5778d8834533a628",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-original-alias-moduleDenied-after-1793642892265-939f483c-f95f-4599-acc3-f0ed3eb1753d.json",
+      "sha256": "1508bceacd4b33c3f348b4b38f502864f0f3385aeece35e247571ba2fa68de2f",
+      "businessSha256": "1669b6af9536e2c2af896816d04a987d106d9a405105cc6f5778d8834533a628",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-anonymous-before-1793642893755-12752ffc-ffdd-4496-9f7e-57f54a43f2d5.json",
+      "sha256": "3ce3ffcb911a595167acbec9ea3352b1d03a2348b36c9e92f211f6f80821116f",
+      "businessSha256": "1669b6af9536e2c2af896816d04a987d106d9a405105cc6f5778d8834533a628",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-anonymous-after-1793642896073-1401ae56-58c7-49f0-92e3-5ef4b9489a3b.json",
+      "sha256": "aa9a60577597a3c86a9f331d281f32a187f294f60db81463a8f0e75fdff50076",
+      "businessSha256": "1669b6af9536e2c2af896816d04a987d106d9a405105cc6f5778d8834533a628",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-anonymous-encoded-aliases-before-1793642897429-aec3b8d2-11e0-49e5-b092-c1170df51d22.json",
+      "sha256": "f8716b00688bb8b558c759ae1177002ff390c0f67c15c01d23cbea08241975bf",
+      "businessSha256": "1669b6af9536e2c2af896816d04a987d106d9a405105cc6f5778d8834533a628",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-anonymous-encoded-aliases-after-1793642899161-fbdbbb87-a296-49f0-8ab6-af911dcdb629.json",
+      "sha256": "19ff388566d8c21c6cb0d010d5e586f8903953537dbcb18b2dcbd05f0132a2c5",
+      "businessSha256": "1669b6af9536e2c2af896816d04a987d106d9a405105cc6f5778d8834533a628",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-foreign-before-1793642901031-172286c4-64e2-45fa-9b8b-644a1f84f343.json",
+      "sha256": "bbd27d06eef8b9e1c0707282bb1709c32b798fc53e89a53f3ea75300a0a4e1d7",
+      "businessSha256": "9dab38fe8dcf3d414ac71935befe77d8305cc8b1ec03eaff58275d267365117b",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-foreign-after-1793642903369-0eba1a14-6da2-4e98-b24c-a2511658af24.json",
+      "sha256": "81b76d1459d28ca161cd1837e95308c5ceb07b65576a3b59faf9bdf3ed6f5d43",
+      "businessSha256": "9dab38fe8dcf3d414ac71935befe77d8305cc8b1ec03eaff58275d267365117b",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-permissionDenied-before-1793642911583-99935f1f-bdc3-4dbd-a927-42107a4a4ff8.json",
+      "sha256": "ef33c6222b5103144dad943e0ae2ab1fb37005ce583e57e98dab16072d524386",
+      "businessSha256": "10cd9a225bbbfa5bc797c000f4d9788bd827e6111d15e2741bdba9cbbf0ca4ab",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-permissionDenied-after-1793642914009-cfc8fd75-58a5-4779-b9c6-9856fa297729.json",
+      "sha256": "6aa0b01721f207c3dbfd8332ff106125c032d2ab84e07903bb9cbb3e8a7b4846",
+      "businessSha256": "10cd9a225bbbfa5bc797c000f4d9788bd827e6111d15e2741bdba9cbbf0ca4ab",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-moduleDenied-before-1793642922231-1e4bd698-86b1-4e90-ad0f-bdd015db2cd5.json",
+      "sha256": "c77b8a7ddd04eb8dc8526474f4d0655b42c6e7a0333e8efaf2496cf7ad7791cc",
+      "businessSha256": "48228f3e84d328fc811fb3e94442abaa63a75540b91fec5d09ef1f9efcdabb39",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-moduleDenied-after-1793642924337-8ef9cd20-06d3-4b46-827a-ee8bee198d19.json",
+      "sha256": "bd68637c093923f662b7f0742d4b02d2d3b48245432dfdc1e6015654bd4e433b",
+      "businessSha256": "48228f3e84d328fc811fb3e94442abaa63a75540b91fec5d09ef1f9efcdabb39",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-revocation-after-before-1793642935423-b18a07d0-96ee-4069-a335-65939d822269.json",
+      "sha256": "084a2cb43cff61a4a548beeb3e5387388610beff859815bd7c7f4fe655c176ee",
+      "businessSha256": "b3cf8618fcadd8af9d6d39740a150038565c2eddf5fcb0667b2c034f83bb3fdc",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-revocation-after-after-1793642937791-e133ab74-39e7-4cfe-9b76-3e70d9cc737d.json",
+      "sha256": "0cf58724b5ad22ac48b2ac48f66b152a849655964781ab231e8f0fb8ed0fd55e",
+      "businessSha256": "b3cf8618fcadd8af9d6d39740a150038565c2eddf5fcb0667b2c034f83bb3fdc",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-revoked-browser-restoration-before-1793642939217-ed68195d-896e-41a3-af92-57699edef173.json",
+      "sha256": "35799b3ef9b808294589b3d979999c7ce0245f88e5b5f45374b7edc5cbaedf26",
+      "businessSha256": "b3cf8618fcadd8af9d6d39740a150038565c2eddf5fcb0667b2c034f83bb3fdc",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-revoked-browser-restoration-after-1793642942136-62e3bdaa-d226-40ea-b23d-cabfd305f747.json",
+      "sha256": "02413d5b178f75d73383251965b0c714ecd48539033bcde8c68e3517770dab4c",
+      "businessSha256": "b3cf8618fcadd8af9d6d39740a150038565c2eddf5fcb0667b2c034f83bb3fdc",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-expiry-after-before-1793642944403-f6e28776-8520-4a82-939c-d19cc8ade3fa.json",
+      "sha256": "d7d80cb9f6748c58a8695019fa83f15fe926d8e1788e68e867ae5c504688ae1e",
+      "businessSha256": "730ea7d1623c9208814b31f47536e8767a18da859dfea58ebee648ae460aaf50",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-expiry-after-after-1793642946433-e375efe9-4f32-4a5b-9f09-79ee3a0d80be.json",
+      "sha256": "835a5bbd4fb10aaa05aa6a04239d37a047064f5336166f002a9c0572a97f650f",
+      "businessSha256": "730ea7d1623c9208814b31f47536e8767a18da859dfea58ebee648ae460aaf50",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-permissionChange-after-before-1793642955030-9b3ac04f-e8a4-44ba-9421-864e7f0a6f25.json",
+      "sha256": "76d22ff86b624ce9ab24fe7ed754ffd93556efad398ac90e2e85ae03e9878fcd",
+      "businessSha256": "dae2cf7da88f278937ae91faeb198b1be20e9556c4cb9fbad953932e1b548fd6",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-permissionChange-after-after-1793642957202-e2ac8b22-41cd-40cb-840a-1e03bf5ca9db.json",
+      "sha256": "b47f4f61fcc155992cba1973ec056a8de1e66ffc530c924999cc7044fc9f1c64",
+      "businessSha256": "dae2cf7da88f278937ae91faeb198b1be20e9556c4cb9fbad953932e1b548fd6",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-moduleChange-after-before-1793642965735-b86f80b4-9d9f-4626-851e-a6b5712703db.json",
+      "sha256": "820d684bb7f598faaa4b8ef772c6fb4a56c0b5ee4aa3176cf316df641c081f59",
+      "businessSha256": "2e5614172738525b7b93b727108f0e42aaebda3abefc221bdd8f2b0a5b4368c9",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-moduleChange-after-after-1793642968117-7ccea475-2fd9-4989-9485-2ddbe93dc570.json",
+      "sha256": "f69df3440aed49bd038ddf353de99063087c4cc313db3e1648e3bb54891c5b0e",
+      "businessSha256": "2e5614172738525b7b93b727108f0e42aaebda3abefc221bdd8f2b0a5b4368c9",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-authorized-and-optimizer-denials-before-1793642975983-36b38a22-9f22-4cab-b153-58abb521b116.json",
+      "sha256": "4862b02ed9d5ccc1e40cfff446ca0b05a6182c42a5cf9dbb8b5833433b0a564d",
+      "businessSha256": "ce17d09dd0754488d22c392b3aa0a75d5f52849b6c936b14dac3ac328f9feeee",
+      "tableCount": 245
+    },
+    {
+      "path": "database/snapshot-authorized-and-optimizer-denials-after-1793642978105-8118efac-571e-4d71-9f1b-7f50f1ed7cba.json",
+      "sha256": "37c1d62af2eef26e21bf19e1e390594fae55153a57b2b01ba1203f4a4956b9f6",
+      "businessSha256": "ce17d09dd0754488d22c392b3aa0a75d5f52849b6c936b14dac3ac328f9feeee",
+      "tableCount": 245
+    }
+  ],
+  "registerPublication": "Review separately against publication-before; no register mutation performed by this reviewer.",
+  "localR02Accepted": true,
+  "parentP04Accepted": false,
+  "productionAccepted": false,
+  "nextEligiblePackage": "P04-R01"
+}

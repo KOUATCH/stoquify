@@ -1,0 +1,150 @@
+{
+  "at": "2026-11-09T18:23:41.221Z",
+  "reviewer": "/root/v02_review",
+  "verdict": "passed_bounded_local_provider_protocol",
+  "artifactBinding": {
+    "candidateId": "p04-v02-full-6577e9e63dc7",
+    "artifactDigest": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0"
+  },
+  "planned": 23,
+  "executed": 23,
+  "passed": 23,
+  "failed": 0,
+  "caseSummary": [
+    {
+      "id": "public-config-get",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "id": "public-config-head",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "id": "implicit-options",
+      "status": 204,
+      "passed": true
+    },
+    {
+      "id": "unsupported-put",
+      "status": 405,
+      "passed": true
+    },
+    {
+      "id": "unsupported-delete",
+      "status": 405,
+      "passed": true
+    },
+    {
+      "id": "unknown-slug",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "id": "invalid-action",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "id": "missing-discriminator-no-op",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "id": "callback-missing-signature",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "id": "callback-invalid-signature",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "id": "callback-tampered-signed-origin",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "id": "callback-origin-header-without-signature",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "id": "callback-valid-signature-invalid-body",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "id": "error-hook-missing-signature",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "id": "error-hook-invalid-signature",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "id": "anonymous-upload-denied",
+      "status": 500,
+      "passed": true
+    },
+    {
+      "id": "authorized-legacy-upload-managed-control-only",
+      "status": 500,
+      "passed": true
+    },
+    {
+      "id": "read-only-actor-upload-denied",
+      "status": 500,
+      "passed": true
+    },
+    {
+      "id": "module-disabled-upload-denied",
+      "status": 500,
+      "passed": true
+    },
+    {
+      "id": "foreign-origin-upload-denied",
+      "status": 500,
+      "passed": true
+    },
+    {
+      "id": "signed-error-hook-positive",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "id": "signed-callback-positive",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "id": "signed-callback-replay-no-business-effect",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "nativeDatabase": {
+    "pairsIndependentlyReconciled": 23,
+    "businessAccountsUnchanged": true,
+    "sessionsUnchanged": true,
+    "oldAuditRowsPreserved": true,
+    "classifiedAddedAudits": 1,
+    "moduleDenialActorAndSurfaceVerified": true
+  },
+  "currentAuthorityProofVerified": true,
+  "callbackMessages": 2,
+  "receiverStopped": true,
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "limitations": [
+    "Uses the actual built UploadThing wrapper with a synthetic signing key and task-owned loopback callback receiver.",
+    "Signed callback/error and replay behavior are local protocol observations; no hosted provider account, storage, CDN or external ingress admission.",
+    "Legacy upload500 responses are the current safe middleware error envelope. Exact current actor/role/module preconditions and source refusal support the legacy-disabled interpretation; generic500 alone is insufficient.",
+    "No configured Google/OAuth provider ownership positive is supplied by this suite.",
+    "Full readiness and final cluster/source cleanup remain separate."
+  ]
+}

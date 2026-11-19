@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import { useMemo, useState, useTransition, type FormEvent } from "react"
 import { OpeningReadinessPanel } from "./OpeningReadinessPanel"
+import { ItemImportImages } from "./ItemImportImages"
 
 import {
   approveMasterDataImportAction,
@@ -87,6 +88,9 @@ export function MasterDataOnboardingWorkbench({
       case "DUPLICATE_IN_FILE": return t("issues.duplicateInFile", { field })
       case "DUPLICATE_IN_TENANT": return t("issues.duplicateInTenant", { field })
       case "FIELD_INVALID": return t("issues.fieldInvalid", { field })
+      case "ITEM_MEDIA_UNAVAILABLE": return locale === "fr"
+        ? "Utilisez une image disponible envoyée dans cette organisation, puis validez un fichier corrigé."
+        : "Use an available image uploaded to this organization, then validate a corrected file."
       default: return t("issues.generic")
     }
   }
@@ -390,6 +394,8 @@ export function MasterDataOnboardingWorkbench({
           <p className="mt-1 text-sm text-[var(--dash-text-soft)]">{t("states.noBatch.message")}</p>
         </section>
       )}
+
+      {target === "ITEM" && canWrite && <ItemImportImages organizationId={initialData.organizationId} locale={locale} />}
 
       <OpeningReadinessPanel data={initialData.openingReadiness} refreshing={busy || refreshing} onRefresh={() => {
         setBatch(null)

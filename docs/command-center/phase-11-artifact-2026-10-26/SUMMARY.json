@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-10-26T14:04:54.813Z",
+  "cleanInstallPassed": true,
+  "lifecycleStrategy": "npm ci --ignore-scripts, explicit private Prisma generation, native smoke",
+  "mockedPureTestsPassed": 744,
+  "databaseTestsRerun": false,
+  "browserTestsRerun": false,
+  "fullBuildRerun": false,
+  "artifactPrepared": false,
+  "artifactPrerequisite": "blocked",
+  "artifactBlockers": [
+    "public_app_url_https",
+    "statement_live_delivery_channel_enabled",
+    "accountant_invite_live_delivery_enabled"
+  ],
+  "productionReleaseApproved": false,
+  "productionAccess": false,
+  "preservation": {
+    "candidateDrift": [],
+    "workspaceDrift": [
+      "actions/hris/__tests__/compensation.actions.test.ts",
+      "actions/hris/__tests__/employee.actions.test.ts",
+      "actions/hris/__tests__/lifecycle.actions.test.ts",
+      "actions/hris/__tests__/payment-destination.actions.test.ts",
+      "actions/hris/__tests__/time-leave.actions.test.ts",
+      "actions/hris/compensation.actions.ts",
+      "actions/hris/employee.actions.ts",
+      "actions/security/__tests__/step-up-auth.actions.test.ts",
+      "actions/security/step-up-auth.actions.ts",
+      "app/[locale]/(home)/layout.tsx",
+      "app/api/uploadthing/core.ts",
+      "lib/security/__tests__/auth-session.test.ts",
+      "lib/security/auth-session.ts",
+      "services/_shared/__tests__/protect.test.ts",
+      "services/_shared/protect.ts",
+      "services/security/__tests__/step-up-auth.service.test.ts",
+      "services/security/step-up-auth.service.ts",
+      "tsconfig.json"
+    ],
+    "newSources": [
+      "app/api/uploadthing/__tests__/metadata-loading.test.ts",
+      "jest.hris-admission.config.cjs",
+      "lib/__tests__/public-session.test.ts",
+      "lib/public-session.ts",
+      "scripts/finalize-af16-build-followup.cjs",
+      "scripts/prepare-af16-build-database.cjs",
+      "scripts/run-af16-release-candidate.cjs",
+      "scripts/verify-af16-build-publication.py"
+    ],
+    "sharedClientUnchanged": true,
+    "sourceFiles": 4257,
+    "applicationFilesEditedByThisPhase": 0,
+    "databaseStarted": false,
+    "productionAccess": false
+  }
+}

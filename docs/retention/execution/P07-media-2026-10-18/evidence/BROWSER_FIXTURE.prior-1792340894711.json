@@ -1,0 +1,46 @@
+{
+  "database": "stoquify_retention_p07_20261018_1574a9f2e0",
+  "organizationId": "p07-org-e24b36edfb7c",
+  "foreignOrganizationId": "p07-foreign-e24b36edfb7c",
+  "actors": {
+    "maker": {
+      "id": "p07-maker-e24b36edfb7c",
+      "email": "p07-maker-e24b36edfb7c@retention.invalid"
+    },
+    "checker": {
+      "id": "p07-checker-e24b36edfb7c",
+      "email": "p07-checker-e24b36edfb7c@retention.invalid"
+    },
+    "foreign": {
+      "id": "p07-foreign-e24b36edfb7c",
+      "email": "p07-foreign-e24b36edfb7c@retention.invalid"
+    },
+    "denied": {
+      "id": "p07-denied-e24b36edfb7c",
+      "email": "p07-denied-e24b36edfb7c@retention.invalid"
+    }
+  },
+  "permissions": [
+    "dashboard.read",
+    "customers.read",
+    "customers.create",
+    "purchases.suppliers.read",
+    "purchases.suppliers.create",
+    "inventory.items.read",
+    "inventory.items.create"
+  ],
+  "csv": {
+    "CUSTOMER": "code,name\ncustomer-a,Synthetic customer\n",
+    "SUPPLIER": "code,name\nsupplier-a,Synthetic supplier\n",
+    "ITEM": "sku,nameEn,nameFr\nitem-each,Synthetic EA,Article EA\nitem-weight,Synthetic KG,Article KG\n"
+  },
+  "media": [
+    "/api/media/b2fe5245-8b20-43e1-ad8b-8aa989cd0ef0",
+    "/api/media/92a0ad94-ae95-4d4e-ac4d-083c3d3de943"
+  ],
+  "foreignMedia": "/api/media/8b8b9098-5ea5-45c3-bef3-406e0d4f7e37",
+  "mediaBoundary": "Synthetic pre-existing ready assets; no provider upload/read proof",
+  "sourceVersion": "opening-fixture-v1",
+  "sourceSha256": "780e9561efc0d434bb4f6991aef6e22276793dba28eba62aae7dd43c6996c587",
+  "passwordKind": "known synthetic credential; no real customer"
+}

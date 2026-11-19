@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-10T15:55:45.901Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "files": [
+    {
+      "path": "prepare-capture-bindings-v2.cjs",
+      "sha256": "9a42664f8792ea7106eefebdc29c99b180eeacb1efc43830af2a9caf0ace4868"
+    },
+    {
+      "path": "inventory/CURRENT-SOURCE-MANIFEST-r2.json",
+      "sha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699"
+    },
+    {
+      "path": "inventory/SELECTED-INPUTS-REFRESH-r2.json",
+      "sha256": "84d9461ce97882a29239857605eb662f319cc464303704ff78be26e610a54664"
+    },
+    {
+      "path": "inventory/PRIVATE-METADATA-DISPOSITION-r3.json",
+      "sha256": "ed075393100cad5edfc1a78ef161bfa9f42d136dc22a00e80838870abbed4a9c"
+    },
+    {
+      "path": "dependency-staging-attempt03.json",
+      "sha256": "0863e3fbe2b5c0426f4079aa8fc433478c32d6a54b2849e0369ff03f8366ecb8"
+    },
+    {
+      "path": "independent-review/LATE-SOURCE-OUTCOME-REVIEW.json",
+      "sha256": "619d5949939fa087c634357b8d5a297dd905990f435f3a0bde8a775c7074e7e9"
+    }
+  ],
+  "scope": "Evidence-only normalization into three exclusive inventory files, no D/app/DB mutation",
+  "entry": "prepare-capture-bindings-v2.cjs",
+  "outputs": [
+    "inventory/capture-input.json",
+    "inventory/source-after-manifest-runtime.json",
+    "inventory/private-metadata-policy.json"
+  ],
+  "requiresCurrentInputHashVerificationBeforeExecution": true,
+  "candidateCaptureAccepted": false,
+  "qualificationPassed": false
+}

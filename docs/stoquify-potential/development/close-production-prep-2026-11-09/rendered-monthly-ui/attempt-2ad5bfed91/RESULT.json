@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-11-09T20:17:34.841Z",
+  "passed": false,
+  "error": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('MOCKED AUTH / ACTIONS · STATIC LOOPBACK FIXTURE · NO DATABASE') to be visible\u001b[22m\n",
+  "stack": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('MOCKED AUTH / ACTIONS · STATIC LOOPBACK FIXTURE · NO DATABASE') to be visible\u001b[22m\n\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\rendered-monthly-ui\\run-rendered.cjs:81:146)",
+  "results": [],
+  "errors": [
+    "process is not defined"
+  ],
+  "network": [
+    {
+      "url": "http://127.0.0.1:49423/en/fixture",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:49423/style.css",
+      "allowed": true
+    },
+    {
+      "url": "http://127.0.0.1:49423/bundle.js",
+      "allowed": true
+    }
+  ],
+  "browserClosed": true,
+  "serverClosed": true,
+  "origin": "http://127.0.0.1:49423",
+  "evidenceClass": "Mocked auth/actions with real browser rendering only; no authenticated application/E2E/DB/hosted build.",
+  "limitations": [
+    "No visual baseline or full accessibility/screen-reader certification.",
+    "Notifications are captured mock provider calls; real toast transport is not exercised.",
+    "Synthetic periods/accounts/statements; no financial coverage or monthly certificate is established."
+  ]
+}

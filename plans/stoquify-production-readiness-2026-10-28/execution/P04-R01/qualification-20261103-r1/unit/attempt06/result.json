@@ -1,0 +1,490 @@
+{
+  "startedAt": "2026-11-03T17:34:25.219Z",
+  "endedAt": "2026-11-03T17:35:01.973Z",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R01\\qualification-20261103-r1\\unit\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--runTestsByPath",
+    "services/security/__tests__/role-grant-policy.service.test.ts",
+    "services/users/__tests__/user-invitation-issuance.service.test.ts",
+    "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+    "services/users/__tests__/user-invitation-options.service.test.ts",
+    "services/users/__tests__/user-invitation-management.service.test.ts",
+    "services/users/__tests__/user-invitation-history.service.test.ts",
+    "services/users/__tests__/user-identity.service.test.ts",
+    "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts",
+    "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+    "services/roles/__tests__/role.service.test.ts",
+    "services/users/__tests__/member-access.service.test.ts",
+    "services/users/__tests__/user-lifecycle.service.test.ts",
+    "services/access-requests/__tests__/access-request.service.test.ts",
+    "actions/roles/__tests__/role-actions.test.ts",
+    "actions/users/__tests__/member-access.actions.test.ts",
+    "actions/access-requests/__tests__/access-request.actions.test.ts",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R01\\qualification-20261103-r1\\unit\\attempt06\\jest.json"
+  ],
+  "exitCode": 0,
+  "signal": null,
+  "inputs": [
+    {
+      "file": "actions/access-requests/__tests__/access-request.actions.test.ts",
+      "sha256": "0c362df0f029dbe8ef1607e0e4c685887491b86d4b5e246c8f7a4c18098d955e"
+    },
+    {
+      "file": "actions/access-requests/access-request.actions.ts",
+      "sha256": "c2c82db8999272b4042870998c9515ed351ee6bdd1194bf33cfe34d8fa982fcf"
+    },
+    {
+      "file": "actions/roles/__tests__/role-actions.test.ts",
+      "sha256": "7509ec4e6c27f5063424b8b81f3b02a626378523796f1f7635ee839756233f06"
+    },
+    {
+      "file": "actions/roles/createRole.ts",
+      "sha256": "975bda73763e8ed1635a6b792afe60a3b5176f937387a3833aabc78ca9c2e6c5"
+    },
+    {
+      "file": "actions/roles/getOrgRoles.ts",
+      "sha256": "fb44435011405aff0914235e9015ded367c9170b8bb2a8cc234b845e17b4acbe"
+    },
+    {
+      "file": "actions/roles/getRoleById.ts",
+      "sha256": "3e4ca78e6fdd9569184bbba962b1675a6536be63dcfdab8127b30d9f496870d4"
+    },
+    {
+      "file": "actions/roles/getRoleEditor.ts",
+      "sha256": "5065ead28b91412149f465d503336ab3721e1eaf034475d21f2f9d3a8c583852"
+    },
+    {
+      "file": "actions/roles/role-auth.ts",
+      "sha256": "c87624aba019dad2124f0fac840358aba13e00066160604311b4ed253431ff98"
+    },
+    {
+      "file": "actions/roles/role-utils.ts",
+      "sha256": "1f6ca8983a5d597bdf33bcb8ce14f2b54a96ba5b1232525d866545a020d809dd"
+    },
+    {
+      "file": "actions/roles/updateRole.ts",
+      "sha256": "b117ab151a5048a5d19fa73c279c1db84f98625ea0b05ce6e449534cc4e77b36"
+    },
+    {
+      "file": "actions/users/__tests__/cancelInvite.test.ts",
+      "sha256": "8d0880ef2a97cf80c3a0fd58354fdcc95441d8d4de1a498706b7f54b43235582"
+    },
+    {
+      "file": "actions/users/__tests__/getInvitationHistory.test.ts",
+      "sha256": "446437d97fa70bd861e33ed78da551c242b9191f8a6ce5e288b6ffa1936fc1a1"
+    },
+    {
+      "file": "actions/users/__tests__/getOrgInvites.test.ts",
+      "sha256": "4850b694209dfc2e0d0f0daed366089e6ba25e7923d4c120e3f99776947748fd"
+    },
+    {
+      "file": "actions/users/__tests__/member-access.actions.test.ts",
+      "sha256": "a2f964d5c68a069caccc5cd3f05e9f3960e448c4d5fd8ec17eb50e7a4f63e1de"
+    },
+    {
+      "file": "actions/users/__tests__/member-history.actions.test.ts",
+      "sha256": "4acb650dc73de296820f125525797978eea1fb4fcdd1ce12e2c1f0429de8ee77"
+    },
+    {
+      "file": "actions/users/__tests__/member-lifecycle.actions.test.ts",
+      "sha256": "bdf5504652791dc0d77d1be1ab5c82c2e3e1528f3337ed2a9695c0f68c2efb13"
+    },
+    {
+      "file": "actions/users/__tests__/public-identity-actions.test.ts",
+      "sha256": "28c6710e6a187f38fbd2ba8c725b9245d082217255cade71a471f1e80fd5c5e6"
+    },
+    {
+      "file": "actions/users/__tests__/self-profile.actions.test.ts",
+      "sha256": "9286b60f6c72ec3fcb49f09232b3d434b33574a1d989161620d9c187aa7a37c3"
+    },
+    {
+      "file": "actions/users/__tests__/sendInvite.authorization.test.ts",
+      "sha256": "6fcefbaa06b19bab752fca21e4e8764a326671ef729de842568971c5ace1bf04"
+    },
+    {
+      "file": "actions/users/__tests__/updateUserPassword.test.ts",
+      "sha256": "eb584b428585f0ff5ef1f2f1d3984654dbd61a4557be71c0ecbcc1f00762c961"
+    },
+    {
+      "file": "actions/users/cancelInvite.ts",
+      "sha256": "86b7317f0ba4afad9c2a482736b9a51368b2221b312e8f8997f27bb9be20a243"
+    },
+    {
+      "file": "actions/users/createInvitedUser.ts",
+      "sha256": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c"
+    },
+    {
+      "file": "actions/users/createUser.ts",
+      "sha256": "7a9035aee995fa2e6437a705120f38c8379511308b56aefaa2185237c985c836"
+    },
+    {
+      "file": "actions/users/deleteUser.ts",
+      "sha256": "9da69cb55c5a83bad6c4b2eb0cec1a33d6e61839e65c860a093105f980eb64d4"
+    },
+    {
+      "file": "actions/users/getInvitationHistory.ts",
+      "sha256": "26cef822d040e5ccb5a16156b738ef1ffbab8e8a40e7b6a0d5b9eee10e088363"
+    },
+    {
+      "file": "actions/users/getOrgInvites.ts",
+      "sha256": "5a02f2e757858922d0d9537f4c02ac42d8cc5e5bab4544c13cf527b9d7d4ee77"
+    },
+    {
+      "file": "actions/users/getOrgUsers.ts",
+      "sha256": "fbf600c4f408f935b817fe73e09a8ced9c8fa28275508d2cf3ebfb3d07dfa716"
+    },
+    {
+      "file": "actions/users/getUserById.ts",
+      "sha256": "6a56c74589fe72280b474ae6e176dcdd8c950deec29e828333843dfe720cabe0"
+    },
+    {
+      "file": "actions/users/memberAccess.ts",
+      "sha256": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb"
+    },
+    {
+      "file": "actions/users/memberHistory.ts",
+      "sha256": "ebc7378784926ab106137f6adf708aefb192bf216e3baa36b64f1711589069c1"
+    },
+    {
+      "file": "actions/users/resendVerificationCode.ts",
+      "sha256": "12d54e11839bd912327fb3a6e1945945f08a7504cf2b7675bd759db26b469359"
+    },
+    {
+      "file": "actions/users/self-profile.actions.ts",
+      "sha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2"
+    },
+    {
+      "file": "actions/users/sendInvite.ts",
+      "sha256": "8b201c204f756194f0bc3c2d4e5f003d0183938499648e9ef4a0d3adde9acca4"
+    },
+    {
+      "file": "actions/users/sendResetLink.ts",
+      "sha256": "71e3e919281e989ea5798e01f0a48e6b0d83b4cbf6d259cf82b5d0ff29dc6106"
+    },
+    {
+      "file": "actions/users/updateUserPassword.ts",
+      "sha256": "34030a5460ab97b7dab3dcfe3a62595b07dd0db49e87df146739bbeac4e276ad"
+    },
+    {
+      "file": "actions/users/verifyOtp.ts",
+      "sha256": "b6e6d9696f8e66718d38942b1738830a5816ae18dfdbfe472ab4b8e086579331"
+    },
+    {
+      "file": "docs/ecc/command-registry.json",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381"
+    },
+    {
+      "file": "lib/auth.ts",
+      "sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9"
+    },
+    {
+      "file": "lib/createRoleName.ts",
+      "sha256": "5de89a8890c93a23753d1d30776049a7c2f0d3f711fe1f67becfb634a18873ee"
+    },
+    {
+      "file": "lib/security/auth-session.ts",
+      "sha256": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c"
+    },
+    {
+      "file": "lib/security/rbac-permissions.ts",
+      "sha256": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb"
+    },
+    {
+      "file": "lib/security/rbac.ts",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+    },
+    {
+      "file": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "file": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "file": "prisma/db.ts",
+      "sha256": "ca3e3237f1007f9af20ba28c888a69b57e9a3d9b10a06ede46ac69c8762d20dc"
+    },
+    {
+      "file": "prisma/schema.prisma",
+      "sha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+    },
+    {
+      "file": "services/_shared/action-errors.ts",
+      "sha256": "15c7ddd4587b05978e3b5484af6a364fb46203dfbb964930f6f2ebc9962675f3"
+    },
+    {
+      "file": "services/_shared/protect.ts",
+      "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c"
+    },
+    {
+      "file": "services/access-requests/__tests__/access-request-entry.test.ts",
+      "sha256": "efe21a3a9b4cd4f9a9c11959a44fb1427849de68b8cc0cc9917c09aa937e4602"
+    },
+    {
+      "file": "services/access-requests/__tests__/access-request.service.test.ts",
+      "sha256": "4f22c0c7a6528514162943fced419872b55bc0a9b88b6446e4f055530227fee2"
+    },
+    {
+      "file": "services/access-requests/access-request-contracts.ts",
+      "sha256": "6381479aee305676f50f22ea9d20e942a76e73c943b57511ae38608e0b350aa4"
+    },
+    {
+      "file": "services/access-requests/access-request-entry.ts",
+      "sha256": "2fa13c037a9241bd4df6cf4d9096fa294f10496a1717f2d317c35d974423661c"
+    },
+    {
+      "file": "services/access-requests/access-request.service.ts",
+      "sha256": "62d1450906441480457297948dc16125bbc31dcf71b07669c81015ebd2b04a3e"
+    },
+    {
+      "file": "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts",
+      "sha256": "d1bf028d2be2dd6a37dea536da528e2af4e3f10470905d0362d5ae65889bc4b4"
+    },
+    {
+      "file": "services/communication/user-invitation-delivery-worker.service.ts",
+      "sha256": "f59eb5ee842e9a63afdcc553f918427a89fc49527d6571eb2d1714e61ff9ca2c"
+    },
+    {
+      "file": "services/operating-access/__tests__/operating-access-retention-boundary.test.ts",
+      "sha256": "96c95945ff1055fe264dd823abfc6b3332632b794f8a4be0c0662d742a524db1"
+    },
+    {
+      "file": "services/operating-access/__tests__/operating-access-scope.service.test.ts",
+      "sha256": "0bd2d77967843db57a81273028b64fef22471598461bda2a195fe79124b32516"
+    },
+    {
+      "file": "services/operating-access/operating-access-scope-contracts.ts",
+      "sha256": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10"
+    },
+    {
+      "file": "services/operating-access/operating-access-scope.service.ts",
+      "sha256": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26"
+    },
+    {
+      "file": "services/roles/__tests__/role.service.test.ts",
+      "sha256": "aa60d143299be2096d360683403132ab17e6b12460785e91979dc9aedb2e1bae"
+    },
+    {
+      "file": "services/roles/role-command.ts",
+      "sha256": "d4984668d49ef4f2e91f5f86b7a2d1d19b4f1b6e5fc973b17abd9818749a2d1c"
+    },
+    {
+      "file": "services/roles/role-custodian-policy.ts",
+      "sha256": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142"
+    },
+    {
+      "file": "services/roles/role-editor.service.ts",
+      "sha256": "968c4ffe3bb88318c352481c86731d4a439e5e8ce42f619a3b71efa82ed65251"
+    },
+    {
+      "file": "services/roles/role-permission-policy.ts",
+      "sha256": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267"
+    },
+    {
+      "file": "services/roles/role-write.service.ts",
+      "sha256": "12735d1f2860265f4a098b57c14a18373059b93aa6fef19309bf1dad67a99208"
+    },
+    {
+      "file": "services/roles/role.service.ts",
+      "sha256": "4c8013cea94f4e6f40f7ef446feda698bde55dc117659062f18ce9aa91d67f31"
+    },
+    {
+      "file": "services/security/__tests__/role-grant-policy.service.test.ts",
+      "sha256": "bd77e4228a112c0bc18d496ffb6116b1b362fb4dc1789a182b1ba0f8068e3328"
+    },
+    {
+      "file": "services/security/role-grant-policy.service.ts",
+      "sha256": "6d42a728c6fa72b037a2a9e798a81ca2ea2cd0bae6c5a0d5cfa81095739cfaa6"
+    },
+    {
+      "file": "services/users/__tests__/member-access.service.test.ts",
+      "sha256": "f08b067a54e9abbe40b7f324e4f50c847954f14092f83202ecdac014743e601f"
+    },
+    {
+      "file": "services/users/__tests__/member-history.service.test.ts",
+      "sha256": "b3a9214b62f274cd45404304d669b2b5538025df509f49175b09d607c1ff58ca"
+    },
+    {
+      "file": "services/users/__tests__/registration-input.test.ts",
+      "sha256": "10eddaf93aa475fb9ea4d00ca96c25330048d71b7eeb1ffb19574461ce33da99"
+    },
+    {
+      "file": "services/users/__tests__/self-profile-http.service.test.ts",
+      "sha256": "8b927d7b143f8878c2cb491a7f3a141ae71d051befdb6f8d3e1df7fa00380fc5"
+    },
+    {
+      "file": "services/users/__tests__/self-profile.service.test.ts",
+      "sha256": "20aad80c866e145777082359b8a3cf964bf15ed29b9413a3c34dee4147d29e1b"
+    },
+    {
+      "file": "services/users/__tests__/user-identity.service.test.ts",
+      "sha256": "cf939d5648c7b39d560512687b8f8d1bae9a1cce858a08ef508aeb0dee130fbf"
+    },
+    {
+      "file": "services/users/__tests__/user-invitation-history.service.test.ts",
+      "sha256": "b6ea6021963edd80f7b6afea4a5e5d3aee1d0409209e71512acc55a5a668a211"
+    },
+    {
+      "file": "services/users/__tests__/user-invitation-issuance.service.test.ts",
+      "sha256": "652690fc54d54275e19da547e9e0d585c9a2a23ca77001194578922f0ccc9ef9"
+    },
+    {
+      "file": "services/users/__tests__/user-invitation-management.service.test.ts",
+      "sha256": "e5859792f4133406de07bb1b93974b18a97a2c314361178744262d6356e6c2f3"
+    },
+    {
+      "file": "services/users/__tests__/user-invitation-options.service.test.ts",
+      "sha256": "d14107386a6e45d5147678a8fdc4978eda272a7c89fba536315ff7dc9fa4fd7d"
+    },
+    {
+      "file": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+      "sha256": "1e54d29fc1d17585a8c197097dfdb88729f70a4d5864554aaa42bc648dd72314"
+    },
+    {
+      "file": "services/users/__tests__/user-lifecycle.service.test.ts",
+      "sha256": "b5fd8e668cdf1dd9cb16791b2a63ba85bafb02e22c7c3ee173e348ac4956875e"
+    },
+    {
+      "file": "services/users/__tests__/user-password-change.service.test.ts",
+      "sha256": "34ecbb34727b59d3c2b49539f1e66d7d2dc27bb9daa316c7c5ef7356da57c559"
+    },
+    {
+      "file": "services/users/invitation-input.ts",
+      "sha256": "c7e8c48397d238b3d04699c646817ebbc1fa96991aa24685b43de2fb4bda4847"
+    },
+    {
+      "file": "services/users/invitation-revision.ts",
+      "sha256": "c46ccc217f3aa3cfc17f91474f3dab2896ed3f0094ad1eee7f3e2311081d35d4"
+    },
+    {
+      "file": "services/users/member-access-input.ts",
+      "sha256": "30c52c5944c8db3155fa63d71edc922f67961114bac968f979b3506c89754047"
+    },
+    {
+      "file": "services/users/member-access-policy.ts",
+      "sha256": "4f243dccab69936a22d12cd3a2a996ed1561f21098bcd8ec4d1ab36fb7acafe2"
+    },
+    {
+      "file": "services/users/member-access-read.service.ts",
+      "sha256": "2e9c81dc78a1e0fc77cffab474127861fbdb39af4a85fed9fd7942be0e769a8e"
+    },
+    {
+      "file": "services/users/member-access.service.ts",
+      "sha256": "7bd7063d54219f81a686d86c5c7adc096b6d5436c5943092bdf3044144ab621c"
+    },
+    {
+      "file": "services/users/member-history-input.ts",
+      "sha256": "466440fe0a9acc3a9cdc2944cd459ca78657a450c0e8ed6b1007bd2f1d31ed58"
+    },
+    {
+      "file": "services/users/member-history.service.ts",
+      "sha256": "7484079fe7930e92d2d73068088fea8fe300f537e2dccc9d0a9707fbd7edec4e"
+    },
+    {
+      "file": "services/users/password-change-input.ts",
+      "sha256": "b4da497f08dbb05e8f026bd70812b789ea256520837250ce65fed5c0abea75e2"
+    },
+    {
+      "file": "services/users/password-recovery-input.ts",
+      "sha256": "954d418b860d58d1a5667fd18f823cbe70321d4857b950ae9ed6e2d62b0eac9f"
+    },
+    {
+      "file": "services/users/registration-input.ts",
+      "sha256": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294"
+    },
+    {
+      "file": "services/users/self-profile-http.service.ts",
+      "sha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3"
+    },
+    {
+      "file": "services/users/self-profile-input.ts",
+      "sha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf"
+    },
+    {
+      "file": "services/users/self-profile.service.ts",
+      "sha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17"
+    },
+    {
+      "file": "services/users/user-deactivation-input.ts",
+      "sha256": "05608dcd80012423167e6794f3fb1177f35d005d13d19df408b9d12aab01b47b"
+    },
+    {
+      "file": "services/users/user-identity.service.ts",
+      "sha256": "56ad6de3fcb1d33340db63e093338532e1d78c75513165fc44951c7261236820"
+    },
+    {
+      "file": "services/users/user-invitation-authority.service.ts",
+      "sha256": "727ae4905f6309f8830d7e74cd2fcc426e00d3aeb3dd5ad4780376aed4cfb246"
+    },
+    {
+      "file": "services/users/user-invitation-delivery-contract.ts",
+      "sha256": "08bdf37292f34ccdf3f0db5b123205e3a273d5bd33894cab99896a8c651f7a4c"
+    },
+    {
+      "file": "services/users/user-invitation-history.service.ts",
+      "sha256": "e1ad93a0db15e825384afb8989dc08d44426cd2255a38611ab0a5b3910608930"
+    },
+    {
+      "file": "services/users/user-invitation-issuance.service.ts",
+      "sha256": "b2bbec58e59c2c9eff8c5d83c423c015be8bb748f55d20ac2191d9ac9f1b42ef"
+    },
+    {
+      "file": "services/users/user-invitation-management.service.ts",
+      "sha256": "bfa07e94e621a73e3c8137e990e33c375b19cc48c3a30cd036f6a573521d240c"
+    },
+    {
+      "file": "services/users/user-invitation-options.service.ts",
+      "sha256": "0b5c386ada487563f2507a0aaa1694d84e2c8cb131d22478a8689ff552106482"
+    },
+    {
+      "file": "services/users/user-invitation-redemption-authority.service.ts",
+      "sha256": "c245173a19baf119e7564f5a258ced87328b29c23f83c2d68f6ab8b6d014b2b3"
+    },
+    {
+      "file": "services/users/user-lifecycle.service.ts",
+      "sha256": "738769a59e641a09e5cb8f6d3fbf86eee498f8483a606e8461179f59f30a6024"
+    },
+    {
+      "file": "services/users/user-password-change.service.ts",
+      "sha256": "c2d2dfa70823eb59deac2ada64f7dd1da44db9b9ae13dd59aa9c7107f7ef2dc8"
+    },
+    {
+      "file": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+      "sha256": "b73e096b2735e99e913ca32ec4ad0dca28ce0fbbd5d37b1f2ee4457fa81fea50"
+    },
+    {
+      "file": "services/operating-access/operating-access-grant-policy.ts",
+      "sha256": "32800a7d0d7b7a69928b1eda16de2da1602d9570420bae33d3410543b669df6e"
+    }
+  ],
+  "harnessInputs": [
+    {
+      "file": "run.cjs",
+      "sha256": "1a46761b2e3a94df1468cc23dafbd500a8368dd8b9c4821382dcb3cfaa21f0b7"
+    },
+    {
+      "file": "jest.config.cjs",
+      "sha256": "df9d93ed6ed4c4e154949a4ff78627f68b934663384a597d87ff036a388fbbf5"
+    },
+    {
+      "file": "guard.cjs",
+      "sha256": "b850302d73df93faec3141541430664a5a7f752c720f8f9aec375cc84076e4dc"
+    }
+  ],
+  "changedInputs": [],
+  "result": {
+    "suites": 16,
+    "passed": 432,
+    "failed": 0,
+    "skipped": 0
+  },
+  "evidenceClass": "isolated mocked/pure tests; no database or HTTP qualification"
+}

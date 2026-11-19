@@ -1,0 +1,490 @@
+{
+  "report": {
+    "observedAt": "2026-10-25T12:35:18.613Z",
+    "actorId": "af12-1792930801400-af13-journey-reviewer",
+    "mode": "manager",
+    "coverage": "EXPLICIT_ENGAGEMENT_PERIODS",
+    "cohortCount": 1,
+    "economicsIncluded": true,
+    "cohorts": [
+      {
+        "clientOrganizationId": "af12-1792930801400-af13-journey-client",
+        "periodId": "cmvnspi1w001lmao04ouweuww",
+        "engagementId": "cmvnsphcc0007mao0zqifnq0q",
+        "periodName": "AF12 September",
+        "periodStart": "2026-09-01T00:00:00.000Z",
+        "periodEnd": "2026-09-30T23:59:59.999Z",
+        "staff": [
+          {
+            "id": "af12-1792930801400-af13-journey-preparer",
+            "name": "preparer"
+          },
+          {
+            "id": "af12-1792930801400-af13-journey-reviewer",
+            "name": "reviewer"
+          }
+        ],
+        "records": [
+          {
+            "id": "cmvnt8s1n004jmaa4q8j5yc1t",
+            "recordKey": "effort:6afee87b-a07c-419b-a537-7f0123d5bc19",
+            "version": 3,
+            "payload": {
+              "kind": "EFFORT",
+              "minutes": 90,
+              "workDate": "2026-09-16",
+              "advisoryRevisionId": null,
+              "reviewDecisionId": null
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-preparer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": "af12-1792930801400-af13-journey-reviewer",
+            "operation": "REVIEW",
+            "reason": "Independent browser review of correction",
+            "createdAt": "2026-10-25T12:35:03.036Z"
+          },
+          {
+            "id": "cmvnspl8d0031mao0q733hj46",
+            "recordKey": "effort:manual-1",
+            "version": 3,
+            "payload": {
+              "kind": "EFFORT",
+              "minutes": 180,
+              "workDate": "2026-09-15",
+              "advisoryRevisionId": null,
+              "reviewDecisionId": null
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-preparer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": "af12-1792930801400-af13-journey-reviewer",
+            "operation": "REVIEW",
+            "reason": "Reviewed manual declaration",
+            "createdAt": "2026-10-25T12:20:07.741Z"
+          },
+          {
+            "id": "cmvnspltj0039mao0jul1kaxj",
+            "recordKey": "fee:EUR",
+            "version": 1,
+            "payload": {
+              "kind": "FEE",
+              "currency": "EUR",
+              "amount": "150.00"
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:08.503Z"
+          },
+          {
+            "id": "cmvnt8zjc005bmaa4xtzxg3so",
+            "recordKey": "fee:USD",
+            "version": 1,
+            "payload": {
+              "kind": "FEE",
+              "currency": "USD",
+              "amount": "30.00"
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic separate USD planning budget",
+            "createdAt": "2026-10-25T12:35:12.745Z"
+          },
+          {
+            "id": "cmvnsplgv0035mao0j23vjx4m",
+            "recordKey": "fee:XAF",
+            "version": 1,
+            "payload": {
+              "kind": "FEE",
+              "currency": "XAF",
+              "amount": "90000.00"
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:08.048Z"
+          },
+          {
+            "id": "cmvnspnls003hmao0yn0n1nr2",
+            "recordKey": "plan:af12-1792930801400-af13-journey-preparer",
+            "version": 2,
+            "payload": {
+              "kind": "PLAN",
+              "assigneeId": "af12-1792930801400-af13-journey-preparer",
+              "minutes": 420
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:10.816Z"
+          },
+          {
+            "id": "cmvnspjdi002lmao00okfmh6g",
+            "recordKey": "plan:af12-1792930801400-af13-journey-reviewer",
+            "version": 1,
+            "payload": {
+              "kind": "PLAN",
+              "assigneeId": "af12-1792930801400-af13-journey-reviewer",
+              "minutes": 600
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-reviewer",
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:05.335Z"
+          },
+          {
+            "id": "cmvnspn61003dmao016tin9k1",
+            "recordKey": "plan:unassigned",
+            "version": 2,
+            "payload": {
+              "kind": "PLAN",
+              "assigneeId": null,
+              "minutes": 120
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:10.249Z"
+          }
+        ],
+        "history": [
+          {
+            "id": "cmvnt8s1n004jmaa4q8j5yc1t",
+            "recordKey": "effort:6afee87b-a07c-419b-a537-7f0123d5bc19",
+            "version": 3,
+            "payload": {
+              "kind": "EFFORT",
+              "minutes": 90,
+              "workDate": "2026-09-16",
+              "advisoryRevisionId": null,
+              "reviewDecisionId": null
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-preparer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": "af12-1792930801400-af13-journey-reviewer",
+            "operation": "REVIEW",
+            "reason": "Independent browser review of correction",
+            "createdAt": "2026-10-25T12:35:03.036Z"
+          },
+          {
+            "id": "cmvnt7s8w002pmaa478z8j1bh",
+            "recordKey": "effort:6afee87b-a07c-419b-a537-7f0123d5bc19",
+            "version": 2,
+            "payload": {
+              "kind": "EFFORT",
+              "minutes": 90,
+              "workDate": "2026-09-16",
+              "advisoryRevisionId": null,
+              "reviewDecisionId": null
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-preparer",
+            "actorId": "af12-1792930801400-af13-journey-preparer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic browser correction retained",
+            "createdAt": "2026-10-25T12:34:16.640Z"
+          },
+          {
+            "id": "cmvnt7knd0025maa4ujaqcyi3",
+            "recordKey": "effort:6afee87b-a07c-419b-a537-7f0123d5bc19",
+            "version": 1,
+            "payload": {
+              "kind": "EFFORT",
+              "minutes": 60,
+              "workDate": "2026-09-16",
+              "advisoryRevisionId": null,
+              "reviewDecisionId": null
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-preparer",
+            "actorId": "af12-1792930801400-af13-journey-preparer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic browser manual declaration",
+            "createdAt": "2026-10-25T12:34:06.793Z"
+          },
+          {
+            "id": "cmvnspl8d0031mao0q733hj46",
+            "recordKey": "effort:manual-1",
+            "version": 3,
+            "payload": {
+              "kind": "EFFORT",
+              "minutes": 180,
+              "workDate": "2026-09-15",
+              "advisoryRevisionId": null,
+              "reviewDecisionId": null
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-preparer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": "af12-1792930801400-af13-journey-reviewer",
+            "operation": "REVIEW",
+            "reason": "Reviewed manual declaration",
+            "createdAt": "2026-10-25T12:20:07.741Z"
+          },
+          {
+            "id": "cmvnspkua002xmao07pdtkt3l",
+            "recordKey": "effort:manual-1",
+            "version": 2,
+            "payload": {
+              "kind": "EFFORT",
+              "minutes": 180,
+              "workDate": "2026-09-15",
+              "advisoryRevisionId": null,
+              "reviewDecisionId": null
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-preparer",
+            "actorId": "af12-1792930801400-af13-journey-preparer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:07.234Z"
+          },
+          {
+            "id": "cmvnspkbl002tmao05bo6wled",
+            "recordKey": "effort:manual-1",
+            "version": 1,
+            "payload": {
+              "kind": "EFFORT",
+              "minutes": 120,
+              "workDate": "2026-09-15",
+              "advisoryRevisionId": null,
+              "reviewDecisionId": null
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-preparer",
+            "actorId": "af12-1792930801400-af13-journey-preparer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:06.561Z"
+          },
+          {
+            "id": "cmvnspltj0039mao0jul1kaxj",
+            "recordKey": "fee:EUR",
+            "version": 1,
+            "payload": {
+              "kind": "FEE",
+              "currency": "EUR",
+              "amount": "150.00"
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:08.503Z"
+          },
+          {
+            "id": "cmvnt8zjc005bmaa4xtzxg3so",
+            "recordKey": "fee:USD",
+            "version": 1,
+            "payload": {
+              "kind": "FEE",
+              "currency": "USD",
+              "amount": "30.00"
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic separate USD planning budget",
+            "createdAt": "2026-10-25T12:35:12.745Z"
+          },
+          {
+            "id": "cmvnsplgv0035mao0j23vjx4m",
+            "recordKey": "fee:XAF",
+            "version": 1,
+            "payload": {
+              "kind": "FEE",
+              "currency": "XAF",
+              "amount": "90000.00"
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:08.048Z"
+          },
+          {
+            "id": "cmvnspnls003hmao0yn0n1nr2",
+            "recordKey": "plan:af12-1792930801400-af13-journey-preparer",
+            "version": 2,
+            "payload": {
+              "kind": "PLAN",
+              "assigneeId": "af12-1792930801400-af13-journey-preparer",
+              "minutes": 420
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:10.816Z"
+          },
+          {
+            "id": "cmvnspj0q002hmao02xcslfu7",
+            "recordKey": "plan:af12-1792930801400-af13-journey-preparer",
+            "version": 1,
+            "payload": {
+              "kind": "PLAN",
+              "assigneeId": "af12-1792930801400-af13-journey-preparer",
+              "minutes": 300
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-preparer",
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:04.874Z"
+          },
+          {
+            "id": "cmvnspjdi002lmao00okfmh6g",
+            "recordKey": "plan:af12-1792930801400-af13-journey-reviewer",
+            "version": 1,
+            "payload": {
+              "kind": "PLAN",
+              "assigneeId": "af12-1792930801400-af13-journey-reviewer",
+              "minutes": 600
+            },
+            "subjectUserId": "af12-1792930801400-af13-journey-reviewer",
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:05.335Z"
+          },
+          {
+            "id": "cmvnspn61003dmao016tin9k1",
+            "recordKey": "plan:unassigned",
+            "version": 2,
+            "payload": {
+              "kind": "PLAN",
+              "assigneeId": null,
+              "minutes": 120
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:10.249Z"
+          },
+          {
+            "id": "cmvnspjup002pmao0rjdto4nu",
+            "recordKey": "plan:unassigned",
+            "version": 1,
+            "payload": {
+              "kind": "PLAN",
+              "assigneeId": null,
+              "minutes": 240
+            },
+            "subjectUserId": null,
+            "recordedById": "af12-1792930801400-af13-journey-reviewer",
+            "actorId": "af12-1792930801400-af13-journey-reviewer",
+            "reviewedById": null,
+            "operation": "SAVE",
+            "reason": "Synthetic staffing decision",
+            "createdAt": "2026-10-25T12:20:05.953Z"
+          }
+        ],
+        "summary": {
+          "allocation": [
+            {
+              "assigneeId": "af12-1792930801400-af13-journey-preparer",
+              "plannedMinutes": 420,
+              "recordedMinutes": 270,
+              "declarationCount": 2,
+              "effortVarianceMinutes": -150,
+              "recordingCoverage": "PARTIAL_DECLARATIONS",
+              "reviewedDeclarations": 2
+            },
+            {
+              "assigneeId": "af12-1792930801400-af13-journey-reviewer",
+              "plannedMinutes": 600,
+              "recordedMinutes": null,
+              "declarationCount": 0,
+              "effortVarianceMinutes": null,
+              "recordingCoverage": "UNKNOWN",
+              "reviewedDeclarations": 0
+            },
+            {
+              "assigneeId": null,
+              "plannedMinutes": 120,
+              "recordedMinutes": null,
+              "declarationCount": 0,
+              "effortVarianceMinutes": null,
+              "recordingCoverage": "UNKNOWN",
+              "reviewedDeclarations": 0
+            }
+          ],
+          "plannedSubtotalMinutes": 1140,
+          "missingPlans": 0,
+          "economics": [
+            {
+              "currency": "EUR",
+              "feeBudget": "150.00",
+              "feePerPlannedHour": "7.89",
+              "actualFeeVariance": null,
+              "profitability": null
+            },
+            {
+              "currency": "USD",
+              "feeBudget": "30.00",
+              "feePerPlannedHour": "1.58",
+              "actualFeeVariance": null,
+              "profitability": null
+            },
+            {
+              "currency": "XAF",
+              "feeBudget": "90000.00",
+              "feePerPlannedHour": "4736.84",
+              "actualFeeVariance": null,
+              "profitability": null
+            }
+          ],
+          "corrections": 4,
+          "limitations": "Manual declarations are partial; missing effort is unknown. Plans are estimates. Fee per planned hour uses the supplied plan subtotal, not capacity, revenue, realization or profit. No payroll, monitoring or FX conversion."
+        },
+        "canManage": true,
+        "canReadEconomics": true,
+        "advisoryReferences": [],
+        "reviewReferences": [],
+        "referencesPartial": false
+      }
+    ]
+  },
+  "contentHash": "sha256:fae3990753a6d92f5341435d2748b6c135bf1ca587d569ab6be043eeb9f16987",
+  "watermarkId": "wm_079be4281c92bb45e9740bef",
+  "notice": "Firm-confidential manual declarations and planning estimates; not a client close deliverable or certified financial report."
+}

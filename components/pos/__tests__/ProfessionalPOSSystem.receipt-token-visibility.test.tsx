@@ -1,9 +1,19 @@
 import { render } from "@testing-library/react"
+jest.mock("@/components/pos/offline/LocalOfflineRecovery", () => ({
+  LocalOfflineRecovery: () => <div data-testid="local-offline-recovery" />,
+  localOfflineCopy: { en: { closeBlocked: "Local offline evidence blocks shift close" }, fr: { closeBlocked: "Preuves hors ligne" } },
+}))
+// Receipt-capability wiring is independent of responsive checkout presentation.
+jest.mock("@/components/pos/POSCheckoutShell", () => ({
+  POSCheckoutShell: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}))
 jest.mock("@/hooks/posHooks/usePOSCheckoutLifecycle", () => ({ usePOSCheckoutLifecycle: () => ({
   ready: true, busy: false, leaseId: "00000000-0000-4000-8000-000000000001", error: null, snapshot: null,
   acceptedCartId: null, acceptCart: jest.fn(), refresh: jest.fn(), command: jest.fn(),
 }) }))
 jest.mock("@/actions/pos/checkout.actions", () => ({ retainLegacyPOSCheckoutAction: jest.fn().mockResolvedValue({ success: true, data: null }) }))
+jest.mock("@/actions/pos/whatsapp-receipt.actions", () => ({}))
+jest.mock("@/components/pos/POSReturns", () => ({ POSReturns: () => null }))
 jest.mock("@/hooks/usePermissions", () => ({ usePermissions: () => ({ user: { id: "cashier-1" }, organizationId: "org-1", hasPermission: () => false }) }))
 
 const mockNotifications = {

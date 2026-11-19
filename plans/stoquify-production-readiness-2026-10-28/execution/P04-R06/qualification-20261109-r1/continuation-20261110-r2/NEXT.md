@@ -1,0 +1,19 @@
+# Next eligible action
+
+**Continue P04-R06 with the bounded rejected-origin bookkeeping repair.** The isolated full build passed, and the nine inherited stale-session failures now have passing successor denial evidence. R06 remains blocked because two real cross-site browser requests received 403 but each increased the supplied account's failure count and wrote a `LOGIN_FAILED` event. They exposed no private authority bytes and created no sessions. Independent source comparison places this defect before the R06 repair; that does not waive the failing gate.
+
+**Exact first action:** refresh the hashes and call order for the credential before/after hooks, credential outcome helper, auth route, trusted-origin configuration and installed SDK origin/Fetch Metadata checks. Bind the observed rejected-request database deltas to those current inputs, then prepare the smallest reviewed correction under the [bounded repair handoff](P04-R06/qualification-20261109-r1/REPAIR-HANDOFF-attempt02-v2.md).
+
+**Evidence to advance:** origin/transport-rejected requests must not change account failure counters, login timestamps, lock state or authentication sessions, and must not emit misleading password-failure events. Genuine wrong-password counting, successful sign-in, inactive/locked-account denials and fresh-session protections must remain functional. Include wrong/unknown-password origin probes, repeated requests near the lock threshold and the expired-temporary-lock path; those impacts were not proved by the current two valid-credential probes. Correct the documented CORS observer error before relying on browser body-readability assertions.
+
+After any product change, refresh the isolated candidate and build a new artifact; rerun the affected real-session, database and EN/FR browser checks. Preserve every earlier result and obtain independent source/outcome review plus owned cleanup. The present artifact cannot certify changed code. The [latest result](P04-R06/qualification-20261109-r1/RESULT-attempt02.md) records the actual browser outcome and any remaining evidence limits.
+
+**Browser verification still open:** the final six-case attempt passed both revoked-session reloads, while four authorized/restored cases retained eight Chromium-confirmed cancellations. All six visible states matched expectations and native snapshots were unchanged, but cancellation intent is not yet established. Follow the [browser lifecycle handoff](P04-R06/qualification-20261109-r1/browser/BROWSER-LIFECYCLE-HANDOFF-attempt04-v2.md): bind the actual POST action identifier and GET prefetch to their current consumers, capture the cancellation cause and consumed result, then obtain independent acceptance of the required-read boundary. Do not silently exclude cancelled responses or relabel them as completed reads.
+
+The original V02 counts remain historical: 196 logical groups (171 scoped qualified, 17 product-failure groups, eight unexercised native-visibility prerequisites), plus 11 separate replay/corroboration records. Passing successor evidence does not rewrite those observations or admit all of V02.
+
+After R06 qualifies, the recommended subsequent order remains **R08 → R07**, followed by affected V02 requalification. R05 creator/delegate implementation is separate. R05/R07/R08 implementation remains unauthorized by this request. P04-D01 option C remains approved by Kouatchoua Mark for both product/accounting and security across 14 report classes; global release decision D01 is unchanged.
+
+Parent P04 and production remain blocked by the remaining repairs, V01/V03/V04/V05, visibility/BFCache, broader current-checkout, hosted and operator evidence, and other release gates. All 59 packages, 57 domains and deferred commitments remain preserved.
+
+No commit, push, production flag/data migration or deployment.

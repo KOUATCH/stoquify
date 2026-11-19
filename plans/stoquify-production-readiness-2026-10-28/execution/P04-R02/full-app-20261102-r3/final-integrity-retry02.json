@@ -1,0 +1,894 @@
+{
+  "startedAt": "2026-11-02T18:14:11.324Z",
+  "evidenceClass": "source_artifact_preservation_and_receipt_reconciliation",
+  "selectedReceipts": {
+    "build": "build-result.json",
+    "runtime": "runtime-result-retry02.json",
+    "databaseStop": "database/resume-20261102-r3-guarded-stop-1793643230069.json"
+  },
+  "checks": [
+    {
+      "name": "frozen-candidate",
+      "passed": true,
+      "evidence": {
+        "files": 9136,
+        "sourceHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+        "allSourceHashesUnchanged": true,
+        "sourceManifestSha256": "ea52ca48cadd3e7676378235d5efeac4ad4c1f42bc59eb6c4e18c8740f53726f",
+        "assetAnnexCount": 6
+      }
+    },
+    {
+      "name": "current-root-drift",
+      "passed": true,
+      "evidence": {
+        "beforeHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+        "currentHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+        "headUnchanged": true,
+        "beforeFiles": 9134,
+        "currentFiles": 9207,
+        "drift": {
+          "added": [
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-04/orchestration-sources.json",
+              "sha256": "8d168bffebd493b04c03ea974c051469805fd9e7bd58d71f36ad1db70ae5a9ca"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-04/publication-verification.json",
+              "sha256": "9051c2b9cb960219012e736706e3e5cf31181878104e2f8beaf4dd097bab5a88"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-04/verification-summary.json",
+              "sha256": "52890c031ab70b73fb07b129c3c8c57ff26a03ce49b3e354c27b428fd3f202e3"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-04/visual-review.json",
+              "sha256": "baf3a5ab64b8b5a7573bd6014230da941bdb13feaeb0bd008963e4125e3252bd"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-04/workflow-check.json",
+              "sha256": "1007cd235efd6917d1eec0ea9a9836aa14d4fd86a52e9712ec9dfff3314f569b"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/AP-2025-ADMISSION-FINDING.md",
+              "sha256": "97e3298b3c8f8968f0dcc4afab9f61387b55964408e65ed71be0ce716ad0a795"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/CONTINUATION-REPORT.md",
+              "sha256": "bbb827a750c9df75addac8642225f00f741ce52e7c8d977d7f23462c90dee549"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/PAYROLL-UNBLOCK-REGISTER.md",
+              "sha256": "cbbf41fa52368c308ed2b4772ac492af737dd3c7683b6f1eea7b233b6fc3a268"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/REVIEWER-HANDOFF.md",
+              "sha256": "2b7ac8582745355a96a819c2cd6da89e596570c666b6b684f13bfad74cc652c6"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/02378204-5845-4c4a-9c0e-bd2bc0de8a8a-PAYROLL-UNBLOCK-REGISTER.md",
+              "sha256": "cbbf41fa52368c308ed2b4772ac492af737dd3c7683b6f1eea7b233b6fc3a268"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/57652552-203d-408e-b594-8abd220b0f82-payroll-unblock-register.json",
+              "sha256": "5caf9fdf6c5cf37e5c8028f812aefdd36eed7c967bc15afb3c8db61a98e7a13a"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/5e760cc8-9f8c-491c-9708-db9309d112a2-PAYROLL-UNBLOCK-COMPLETION-PACKET.md",
+              "sha256": "959ecacde23caa5c472d98f279fcd68c292d64c445b0a7b81aa94d67c0c476f2"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/70793bc8-68d2-46f6-85b5-243d908554ea-payroll-unblock-register.json",
+              "sha256": "08972bc63c8efa02eb24e1c80358e22e294edf14423b818516af2a154152e8a2"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/7c5ca408-3492-4d08-a578-3d9ed0c6a07c-PAYROLL-UNBLOCK-REGISTER.md",
+              "sha256": "a9260c13e77d8bf53345fdf9c0beeac2929be827574f0506520a1a8de28b6374"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/e18b9196-e848-40b5-a9f6-a6a2db16946e-PAYROLL-UNBLOCK-COMPLETION-PACKET.md",
+              "sha256": "1076a135c29db890f64f81e45cda6a3c8688ba8af5d1f753b2231bc32f0c7be0"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/continuation-summary.json",
+              "sha256": "93306c923884de6d8f87fd906e6212ea1e52c41f1e73a0e67163fc8a1168da6a"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/database-inspection.json",
+              "sha256": "90c55b2f4f3bd94c622811d8c15af916f1a3287932cb18a4b329a49f392f5763"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-guard-deployment.json",
+              "sha256": "e8c465fa81dd7f0bd5264893bbc996b70104f6d9391b24cc275014dbb59cdcac"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-before.json",
+              "sha256": "a18ce1a7abcce8d1c6993e75f60c1f7f164a8eb6f4065b86d4de7c76de4e0505"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-legacy-delete-finding.md",
+              "sha256": "fa6507202c113e87514b81a810eff0c71fa10b64b8967733435bf0c5ff8f56e9"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-1/postgres-run.json",
+              "sha256": "3e5457d6b8f411ea7f3a4a107c6184efd019acb898e3070de3acd8d22d5cc6ea"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-1/service-transactions.json",
+              "sha256": "a5725325e62a0123d13067a2e2423189021c5fa2fafad4b45e3958d0d7173098"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-1/trust-spine.json",
+              "sha256": "e01fd2271b51b2a69aedd79f494751d5ffd884f7f138b0c68bdadeb40673d2e3"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-1/trust-spine.md",
+              "sha256": "8095d2ee60494d88d02658dcd065d06b8fa50e2ca6fcac1e95c171909ce13736"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-2/postgres-run.json",
+              "sha256": "48866018c3989ddfdd1b183e0a76d5a9d25a3e443659f5f4ab1ea7be1b7fea09"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-2/service-transactions.json",
+              "sha256": "ff9b6b8b22e5309faa29a2b98ef4176ee09508e7e225fec270a28b3786d8c67f"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-2/trust-spine.json",
+              "sha256": "590dae7ed72be9530a4e947d8d4c3d606e93beca940e00f088b2bf7d7537fb53"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-2/trust-spine.md",
+              "sha256": "d98b11bb7c3908926cc5116faf02f9179cb9ff6e9eb6b49ce8b95e57066dcc85"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres/postgres-run.json",
+              "sha256": "6a817fbd155cd61f7287529cab81538c3007bb8e67c9207968265744507ca8a9"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres/service-transactions.json",
+              "sha256": "a7073de26b89c5f464c16de593f72d020e3ff457ba5657ddd4e58f40d9ab50fd"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres/trust-spine.json",
+              "sha256": "803d06a5aaf9881c7ab0a7b43e104692219cb67cd3742ab090f7ebee78945e4a"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres/trust-spine.md",
+              "sha256": "7e27243a0b99ab1e133b151cdc25f1463006963170baea8949ea5762f643fd27"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-tests-typecheck.json",
+              "sha256": "395590d9d308b2f503e8d1bf04983792614fbda907fb3a5c1557f659feb2e66e"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/history-proof-unit.json",
+              "sha256": "74cf3aa3003d1ce314494577577e5fff115d90d0b2b12d121f93871df68ebdb9"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/migration-catalog-before.json",
+              "sha256": "8c0e9ec27147fe1326525387e212c646e77b5ed53b44faca88a48d40fc2521f2"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/migration-catalog-proposed.json",
+              "sha256": "eb559d84f6c5860e5672095190fd7a8e2f596442b761b3ffa904e749d44d7ada"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/migration-catalog-replaced-original.json",
+              "sha256": "8c0e9ec27147fe1326525387e212c646e77b5ed53b44faca88a48d40fc2521f2"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/migration-catalog-review.json",
+              "sha256": "0bc55e52ae9ad57b371eea7cbd52d6a84bc4ca8b55be4ae40a52733c1409754c"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/migration-catalog-validation.json",
+              "sha256": "8d1895e789560c7b6de40a905f3f64a2af60d44ce2abf9569aff241ef1916857"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/payroll-continuation-2026-11-02T16-51-23-786Z.json",
+              "sha256": "c0d8bb93a9093c019f717a56184b22033cdd89074a0953df5d08b7c4258e4252"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/payroll-continuation-execution.json",
+              "sha256": "707fb46312e0b20efb0e6a9c4380bc7fef52557966e552837ca2d7ee17081796"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/payroll-continuation-plan.json",
+              "sha256": "96bbdb637ca2557fd2e997a8942838932451f2ba8f90d56d55a628c0c425b656"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/payroll-continuation-results.json",
+              "sha256": "c0d8bb93a9093c019f717a56184b22033cdd89074a0953df5d08b7c4258e4252"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/pdf-verification.json",
+              "sha256": "fa1e8b2dc08369838ff2f716a745c956585914afe1a15925e762349c37164671"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/review-preflight.json",
+              "sha256": "154e8e5146dc40277feae96de905572f7731be9a138676fa0f292d00c9445659"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/typecheck.json",
+              "sha256": "73157805f6203f558e9337efd0f3f0ead3553946ec3c1513a24aa0d48d242a7f"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/whole-dataset-verification-before.json",
+              "sha256": "326c717da88f2f75a6f9a11ec8ab293ab768985d09b47eafc303b340c72ec6b8"
+            },
+            {
+              "path": "docs/database-seed/payroll-continuation-2026-11-02/whole-dataset-verification.json",
+              "sha256": "aebbbefdb628794475bf0723d821b721bfa54654bdce03d3d302ff353e588786"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/AP-2025-ADMISSION-FINDING.md",
+              "sha256": "97e3298b3c8f8968f0dcc4afab9f61387b55964408e65ed71be0ce716ad0a795"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/REVIEWER-HANDOFF.md",
+              "sha256": "2b7ac8582745355a96a819c2cd6da89e596570c666b6b684f13bfad74cc652c6"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/cgi-2025-recovery-attempts.json",
+              "sha256": "13aae080bfa9cfa77e83a1630657557289fcb85076c2e6ad3764da66c6ad69f5"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/existing-source-integrity-refresh.json",
+              "sha256": "4efb766ec42f1a7a53ed0683a74f3905115174374db9bc934293639df230668f"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/pdf-inspection.json",
+              "sha256": "1c73c417d1e2fb48fcf0baf546d82788cd5e7cf4da13148a0a900ca9eff99acf"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/preparation-verification.json",
+              "sha256": "15210a77b6d229b9271862762af3eb9679786ba9801861d736a5939d52d1fa11"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/retained-source-manifest.json",
+              "sha256": "6b760703a2b7bccf4ef45f9b3ad68a791dacd124b8a75c0003da72963754b698"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/reviewer-return-inventory.json",
+              "sha256": "9ead6a1a53ae94efe4b99fb640eea1f70fa383e89d9f4c392b9f2cf660fa6055"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/source-gap-matrix.json",
+              "sha256": "2e6dd96ba6b590b691dd106c09d61c7823f3fc94fd7a9f1d370c7d7b786c894a"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/source-inspection-provenance.json",
+              "sha256": "05251f2edb997f69c15ff2d7c6493c46c80d516bf7f6e037fb6032017105cdf2"
+            },
+            {
+              "path": "prisma/disposable-payroll-continuation.ts",
+              "sha256": "27a117204f15d1911178dd1ade34a4129e037f17d85f2d9739d239f1270dfb4e"
+            },
+            {
+              "path": "prisma/migrations/20261102190000_payroll_history_proof_version_binding/migration.sql",
+              "sha256": "6134a60bec2f4aead9d134ac16a28c50e8b724b0c2b3ea5dcde97c79485017ce"
+            },
+            {
+              "path": "scripts/__tests__/disposable-payroll-continuation.node-test.cjs",
+              "sha256": "4cd139a53e9498dca6cc5443b6c69afde507d150c09798edf962e49580ed7b71"
+            },
+            {
+              "path": "scripts/__tests__/payroll-blockers-runner.node.test.cjs",
+              "sha256": "aa40279dc19b9c70834e8fe6e5d5e8f6195acbc6a038105371f0594500ae92ab"
+            },
+            {
+              "path": "scripts/apply-disposable-payroll-history-guard.cjs",
+              "sha256": "fa7c780376f09e44bde34937e2e4c6da78139d2450d65d9335b8f8d80922219d"
+            },
+            {
+              "path": "scripts/check-payroll-continuation-types.cjs",
+              "sha256": "6ef202791c7b578d4586344ed496eb9dd0236f5d870aee84bf7ad144f79165b5"
+            },
+            {
+              "path": "scripts/disposable-payroll-continuation-plan.cjs",
+              "sha256": "2c5aa064bfa43f9e063960ca9a020618a30c4f279698c697b5c9e4f1a87a6dd8"
+            },
+            {
+              "path": "scripts/inspect-disposable-payroll-continuation.cjs",
+              "sha256": "7cc395bc07bdc5c02c08ead3c95963d47a9c9ab6fa7194a7c42db4fe663f4f4f"
+            },
+            {
+              "path": "scripts/report-payroll-continuation.cjs",
+              "sha256": "89c414142007876a4da664d1de4c28dd5926c0436a8875a30240c2100cd39902"
+            },
+            {
+              "path": "scripts/run-disposable-payroll-continuation.cjs",
+              "sha256": "fbcc5457a51e9612a68540472c49f856286872ef8e9ffa73e64ce662e0b42260"
+            },
+            {
+              "path": "scripts/verify-af16-obligation-publication.py",
+              "sha256": "a1b4aaa1ab8f7802fcd901d700ef8628c14d0a2f994db298ab2a76a6c68eef5d"
+            },
+            {
+              "path": "services/payroll/__tests__/payroll-history-proof.test.ts",
+              "sha256": "2187227837b60331ccfb7857087a573dd57e7439f0072a14e2d70fa28259596d"
+            },
+            {
+              "path": "services/payroll/payroll-history-proof.ts",
+              "sha256": "dc448640187ae97c3b681793511b512e64366848de3a520fb7ce37118df8d959"
+            },
+            {
+              "path": "tests/fixtures/payroll-history-proof.ts",
+              "sha256": "2ffcee25e5f3b161497b8a5adb94eef9652967248c8f69a24f8f461c0a8d5621"
+            },
+            {
+              "path": "tests/postgres/payroll-blockers/history-proof.test.ts",
+              "sha256": "f3620f3bfc4aa5b109b7e543b998967e63cd87036e859d6faca2a6f1a780aa9d"
+            }
+          ],
+          "changed": [
+            {
+              "path": "docs/database-seed/PAYROLL-UNBLOCK-COMPLETION-PACKET.md",
+              "beforeSha256": "959ecacde23caa5c472d98f279fcd68c292d64c445b0a7b81aa94d67c0c476f2",
+              "sha256": "1076a135c29db890f64f81e45cda6a3c8688ba8af5d1f753b2231bc32f0c7be0"
+            },
+            {
+              "path": "docs/database-seed/PAYROLL-UNBLOCK-REGISTER.md",
+              "beforeSha256": "a9260c13e77d8bf53345fdf9c0beeac2929be827574f0506520a1a8de28b6374",
+              "sha256": "cbbf41fa52368c308ed2b4772ac492af737dd3c7683b6f1eea7b233b6fc3a268"
+            },
+            {
+              "path": "docs/database-seed/payroll-unblock-register.json",
+              "beforeSha256": "08972bc63c8efa02eb24e1c80358e22e294edf14423b818516af2a154152e8a2",
+              "sha256": "ce94e5471c93c92e4abe73f5eadab30a889c7cc859ebb335049d30747cb2eb63"
+            },
+            {
+              "path": "docs/engineering/database/disposable-dataset-2026-10-28/verification.json",
+              "beforeSha256": "326c717da88f2f75a6f9a11ec8ab293ab768985d09b47eafc303b340c72ec6b8",
+              "sha256": "aebbbefdb628794475bf0723d821b721bfa54654bdce03d3d302ff353e588786"
+            },
+            {
+              "path": "docs/engineering/database/disposable-dataset-2026-10-28/verify.json",
+              "beforeSha256": "276b10041986681d907d05a7e20930bad5e2d73c2347739eeb9b9224d6d5ca3f",
+              "sha256": "d195263e808e16bef9d61e668a5e79d4b3eeae63ec44c454cba0e9b9936496e0"
+            },
+            {
+              "path": "prisma/migration-catalog-manifest.json",
+              "beforeSha256": "8c0e9ec27147fe1326525387e212c646e77b5ed53b44faca88a48d40fc2521f2",
+              "sha256": "eb559d84f6c5860e5672095190fd7a8e2f596442b761b3ffa904e749d44d7ada"
+            },
+            {
+              "path": "scripts/run-payroll-blockers-postgres.cjs",
+              "beforeSha256": "09582fe77447a7bce6ad77674ac0dd4ba648b2cf21106c37ffb9e29be1557a95",
+              "sha256": "bb4984988c5d37b81a8069b747de14f2c53fe021c258d900f480480826711cdf"
+            },
+            {
+              "path": "services/payroll/__tests__/payroll-control.service.test.ts",
+              "beforeSha256": "6b453aca8c9ded35fe8914b781e4a55a34c99ea9199058b74ccfd49062b5efa1",
+              "sha256": "7d5ba59165116b8453525d956b5f34a54050891ef8ec57314c54f15d01011353"
+            },
+            {
+              "path": "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+              "beforeSha256": "800862dc345600b116dd3b98060acc9058868b866be1e1804231aac6d493bfa1",
+              "sha256": "5e9a0ad8468be87dea14a1e33b88a54d6e32be370db73c90b639f5611eb2fff6"
+            },
+            {
+              "path": "services/payroll/payroll-control.service.ts",
+              "beforeSha256": "410fe7b962e51ee8f043d1ed14cbdd7084079cb3f873557cd01f49716ded2723",
+              "sha256": "c63014192e78d8db77ebdb8af1099455a4b92f3aed9b032f4d2a6a6f2772a9d1"
+            }
+          ],
+          "removed": []
+        },
+        "capturedRootSourceUnchanged": false,
+        "selectedInputDrift": [],
+        "unrelatedDriftPreserved": [
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-04/orchestration-sources.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-04/publication-verification.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-04/verification-summary.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-04/visual-review.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-04/workflow-check.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/AP-2025-ADMISSION-FINDING.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/CONTINUATION-REPORT.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/PAYROLL-UNBLOCK-REGISTER.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/REVIEWER-HANDOFF.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/02378204-5845-4c4a-9c0e-bd2bc0de8a8a-PAYROLL-UNBLOCK-REGISTER.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/57652552-203d-408e-b594-8abd220b0f82-payroll-unblock-register.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/5e760cc8-9f8c-491c-9708-db9309d112a2-PAYROLL-UNBLOCK-COMPLETION-PACKET.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/70793bc8-68d2-46f6-85b5-243d908554ea-payroll-unblock-register.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/7c5ca408-3492-4d08-a578-3d9ed0c6a07c-PAYROLL-UNBLOCK-REGISTER.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/canonical-report-backups/e18b9196-e848-40b5-a9f6-a6a2db16946e-PAYROLL-UNBLOCK-COMPLETION-PACKET.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/continuation-summary.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/database-inspection.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-guard-deployment.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-before.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-legacy-delete-finding.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-1/postgres-run.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-1/service-transactions.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-1/trust-spine.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-1/trust-spine.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-2/postgres-run.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-2/service-transactions.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-2/trust-spine.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres-attempt-2/trust-spine.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres/postgres-run.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres/service-transactions.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres/trust-spine.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-postgres/trust-spine.md",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-tests-typecheck.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/history-proof-unit.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/migration-catalog-before.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/migration-catalog-proposed.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/migration-catalog-replaced-original.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/migration-catalog-review.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/migration-catalog-validation.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/payroll-continuation-2026-11-02T16-51-23-786Z.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/payroll-continuation-execution.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/payroll-continuation-plan.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/payroll-continuation-results.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/pdf-verification.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/review-preflight.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/typecheck.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/whole-dataset-verification-before.json",
+          "docs/database-seed/payroll-continuation-2026-11-02/whole-dataset-verification.json",
+          "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/AP-2025-ADMISSION-FINDING.md",
+          "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/REVIEWER-HANDOFF.md",
+          "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/cgi-2025-recovery-attempts.json",
+          "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/existing-source-integrity-refresh.json",
+          "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/pdf-inspection.json",
+          "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/preparation-verification.json",
+          "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/retained-source-manifest.json",
+          "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/reviewer-return-inventory.json",
+          "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/source-gap-matrix.json",
+          "docs/database-seed/payroll-unblock-workpapers/source-research-2026-11-02/source-inspection-provenance.json",
+          "prisma/disposable-payroll-continuation.ts",
+          "prisma/migrations/20261102190000_payroll_history_proof_version_binding/migration.sql",
+          "scripts/__tests__/disposable-payroll-continuation.node-test.cjs",
+          "scripts/__tests__/payroll-blockers-runner.node.test.cjs",
+          "scripts/apply-disposable-payroll-history-guard.cjs",
+          "scripts/check-payroll-continuation-types.cjs",
+          "scripts/disposable-payroll-continuation-plan.cjs",
+          "scripts/inspect-disposable-payroll-continuation.cjs",
+          "scripts/report-payroll-continuation.cjs",
+          "scripts/run-disposable-payroll-continuation.cjs",
+          "scripts/verify-af16-obligation-publication.py",
+          "services/payroll/__tests__/payroll-history-proof.test.ts",
+          "services/payroll/payroll-history-proof.ts",
+          "tests/fixtures/payroll-history-proof.ts",
+          "tests/postgres/payroll-blockers/history-proof.test.ts",
+          "docs/database-seed/PAYROLL-UNBLOCK-COMPLETION-PACKET.md",
+          "docs/database-seed/PAYROLL-UNBLOCK-REGISTER.md",
+          "docs/database-seed/payroll-unblock-register.json",
+          "docs/engineering/database/disposable-dataset-2026-10-28/verification.json",
+          "docs/engineering/database/disposable-dataset-2026-10-28/verify.json",
+          "prisma/migration-catalog-manifest.json",
+          "scripts/run-payroll-blockers-postgres.cjs",
+          "services/payroll/__tests__/payroll-control.service.test.ts",
+          "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+          "services/payroll/payroll-control.service.ts"
+        ],
+        "disposition": "Inspection only. No root application source was restored, removed or rewritten by this recipe."
+      }
+    },
+    {
+      "name": "repair-inputs",
+      "passed": true,
+      "evidence": {
+        "count": 8,
+        "rows": [
+          {
+            "path": "config/private-upload-aliases.json",
+            "expectedSha256": "9cc5f6ee3f72c4a6d5eed6759b9e8ad8ab7fab90f11a7010374419fb7a4778fc",
+            "currentRootSha256": "9cc5f6ee3f72c4a6d5eed6759b9e8ad8ab7fab90f11a7010374419fb7a4778fc",
+            "candidateSha256": "262d6ba68e9e1adf26a25a8b6b32bad71ab44f81bb6106555b4658629fd56a13"
+          },
+          {
+            "path": "lib/media/legacy-upload-routing.ts",
+            "expectedSha256": "6db25cc3f3486854115529b46d2eb6e60031708bbe5dac298c6c0a8ca31660f0",
+            "currentRootSha256": "6db25cc3f3486854115529b46d2eb6e60031708bbe5dac298c6c0a8ca31660f0",
+            "candidateSha256": "6db25cc3f3486854115529b46d2eb6e60031708bbe5dac298c6c0a8ca31660f0"
+          },
+          {
+            "path": "lib/media/__tests__/legacy-upload-routing.test.ts",
+            "expectedSha256": "7b385f84c2111316b7340caec3c6ea583b5b1e7e1a9b1780fab190353e26e56c",
+            "currentRootSha256": "7b385f84c2111316b7340caec3c6ea583b5b1e7e1a9b1780fab190353e26e56c",
+            "candidateSha256": "7b385f84c2111316b7340caec3c6ea583b5b1e7e1a9b1780fab190353e26e56c"
+          },
+          {
+            "path": "app/api/uploads/[...path]/__tests__/route.test.ts",
+            "expectedSha256": "19aea14cbb9b714a995d03338f388ea4d8b36485595e38e193447381f84f01ed",
+            "currentRootSha256": "19aea14cbb9b714a995d03338f388ea4d8b36485595e38e193447381f84f01ed",
+            "candidateSha256": "19aea14cbb9b714a995d03338f388ea4d8b36485595e38e193447381f84f01ed"
+          },
+          {
+            "path": "next.config.mjs",
+            "expectedSha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf",
+            "currentRootSha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf",
+            "candidateSha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf"
+          },
+          {
+            "path": "docs/ecc/command-registry.json",
+            "expectedSha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+            "currentRootSha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+            "candidateSha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381"
+          },
+          {
+            "path": "scripts/release-artifact.cjs",
+            "expectedSha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c",
+            "currentRootSha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c",
+            "candidateSha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"
+          },
+          {
+            "path": "tests/s10-s11/release-artifact-private-uploads.test.js",
+            "expectedSha256": "bfcc0856cec266fe71f727b1da4a5eb7c7231babb33889c4c72208d8f7f1be73",
+            "currentRootSha256": "bfcc0856cec266fe71f727b1da4a5eb7c7231babb33889c4c72208d8f7f1be73",
+            "candidateSha256": "bfcc0856cec266fe71f727b1da4a5eb7c7231babb33889c4c72208d8f7f1be73"
+          }
+        ],
+        "allUnchanged": true
+      }
+    },
+    {
+      "name": "browser-consumer-inputs",
+      "passed": true,
+      "evidence": {
+        "count": 17,
+        "rows": [
+          {
+            "path": "app/[locale]/(auth)/login/page.tsx",
+            "expectedSha256": "9eb5c6d5289a4aa2ba23c182ffdd0099bf11a397b8e5c2942c95570021cafa83",
+            "historicalSha256": "9eb5c6d5289a4aa2ba23c182ffdd0099bf11a397b8e5c2942c95570021cafa83",
+            "approvedSourceChange": false,
+            "currentRootSha256": "9eb5c6d5289a4aa2ba23c182ffdd0099bf11a397b8e5c2942c95570021cafa83",
+            "candidateSha256": "9eb5c6d5289a4aa2ba23c182ffdd0099bf11a397b8e5c2942c95570021cafa83",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "components/auth/EnhancedLoginForm.tsx",
+            "expectedSha256": "fc091271c4cb5daf21997743db32c31a86662c9f64c80aeb9d37f67d9bfab28d",
+            "historicalSha256": "fc091271c4cb5daf21997743db32c31a86662c9f64c80aeb9d37f67d9bfab28d",
+            "approvedSourceChange": false,
+            "currentRootSha256": "fc091271c4cb5daf21997743db32c31a86662c9f64c80aeb9d37f67d9bfab28d",
+            "candidateSha256": "fc091271c4cb5daf21997743db32c31a86662c9f64c80aeb9d37f67d9bfab28d",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
+            "expectedSha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+            "historicalSha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+            "approvedSourceChange": false,
+            "currentRootSha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+            "candidateSha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/page.tsx",
+            "expectedSha256": "e4881c2d87de049e6711200edd442298cdbb20644398025146a50054481cfa5f",
+            "historicalSha256": "e4881c2d87de049e6711200edd442298cdbb20644398025146a50054481cfa5f",
+            "approvedSourceChange": false,
+            "currentRootSha256": "e4881c2d87de049e6711200edd442298cdbb20644398025146a50054481cfa5f",
+            "candidateSha256": "e4881c2d87de049e6711200edd442298cdbb20644398025146a50054481cfa5f",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx",
+            "expectedSha256": "7f277f865e3af7b9271c620183245c540b73ec78bd824aa7b17da52036bcd6db",
+            "historicalSha256": "7f277f865e3af7b9271c620183245c540b73ec78bd824aa7b17da52036bcd6db",
+            "approvedSourceChange": false,
+            "currentRootSha256": "7f277f865e3af7b9271c620183245c540b73ec78bd824aa7b17da52036bcd6db",
+            "candidateSha256": "7f277f865e3af7b9271c620183245c540b73ec78bd824aa7b17da52036bcd6db",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+            "expectedSha256": "9d2016d412e6155349617b0f348f69213360003ea6093af62e5b0ddf6713df2e",
+            "historicalSha256": "9d2016d412e6155349617b0f348f69213360003ea6093af62e5b0ddf6713df2e",
+            "approvedSourceChange": false,
+            "currentRootSha256": "9d2016d412e6155349617b0f348f69213360003ea6093af62e5b0ddf6713df2e",
+            "candidateSha256": "9d2016d412e6155349617b0f348f69213360003ea6093af62e5b0ddf6713df2e",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "components/ui/groups/inventory/ItemManagement.tsx",
+            "expectedSha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+            "historicalSha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+            "approvedSourceChange": false,
+            "currentRootSha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+            "candidateSha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "components/dashboard/items/ModernItemFormForEditing.tsx",
+            "expectedSha256": "95020e5a63647c4d730075e41886bf7b72dab45e35f73b32c3fbb8212fe2a1be",
+            "historicalSha256": "95020e5a63647c4d730075e41886bf7b72dab45e35f73b32c3fbb8212fe2a1be",
+            "approvedSourceChange": false,
+            "currentRootSha256": "95020e5a63647c4d730075e41886bf7b72dab45e35f73b32c3fbb8212fe2a1be",
+            "candidateSha256": "95020e5a63647c4d730075e41886bf7b72dab45e35f73b32c3fbb8212fe2a1be",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "components/inventory/items/ItemOverview.tsx",
+            "expectedSha256": "03df33410da0cab66ced6dd321e634ca07a30386a0718932ceb1cf66b67e08e0",
+            "historicalSha256": "03df33410da0cab66ced6dd321e634ca07a30386a0718932ceb1cf66b67e08e0",
+            "approvedSourceChange": false,
+            "currentRootSha256": "03df33410da0cab66ced6dd321e634ca07a30386a0718932ceb1cf66b67e08e0",
+            "candidateSha256": "03df33410da0cab66ced6dd321e634ca07a30386a0718932ceb1cf66b67e08e0",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "lib/security/server-authz.ts",
+            "expectedSha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+            "historicalSha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+            "approvedSourceChange": false,
+            "currentRootSha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+            "candidateSha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "lib/security/rbac.ts",
+            "expectedSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+            "historicalSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+            "approvedSourceChange": false,
+            "currentRootSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+            "candidateSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "lib/auth.ts",
+            "expectedSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+            "historicalSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+            "approvedSourceChange": false,
+            "currentRootSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+            "candidateSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "app/api/uploads/[...path]/route.ts",
+            "expectedSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+            "historicalSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+            "approvedSourceChange": false,
+            "currentRootSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+            "candidateSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "design-system/stoquify/MASTER.md",
+            "expectedSha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+            "historicalSha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+            "approvedSourceChange": false,
+            "currentRootSha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+            "candidateSha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "design-system/stoquify/pages/public-auth.md",
+            "expectedSha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+            "historicalSha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+            "approvedSourceChange": false,
+            "currentRootSha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+            "candidateSha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "design-system/stoquify/pages/inventory.md",
+            "expectedSha256": "ddee72ccf246899a6ca2ab01f478257bcc5836ea05e5a4d451b546900013de6c",
+            "historicalSha256": "ddee72ccf246899a6ca2ab01f478257bcc5836ea05e5a4d451b546900013de6c",
+            "approvedSourceChange": false,
+            "currentRootSha256": "ddee72ccf246899a6ca2ab01f478257bcc5836ea05e5a4d451b546900013de6c",
+            "candidateSha256": "ddee72ccf246899a6ca2ab01f478257bcc5836ea05e5a4d451b546900013de6c",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "plans/stoquify-production-readiness-2026-10-28/execution/P03/run-final-browser.cjs",
+            "expectedSha256": "a422d717ac10cec462f2a5ed64d130eb67830de36e1eef58979a5a14029932e5",
+            "historicalSha256": "a422d717ac10cec462f2a5ed64d130eb67830de36e1eef58979a5a14029932e5",
+            "approvedSourceChange": false,
+            "currentRootSha256": "a422d717ac10cec462f2a5ed64d130eb67830de36e1eef58979a5a14029932e5",
+            "candidateSha256": null,
+            "candidateScope": "historical-evidence-outside-source-candidate"
+          }
+        ],
+        "allApplicableHashesUnchanged": true
+      }
+    },
+    {
+      "name": "originals-and-recovery-mirrors",
+      "passed": true,
+      "evidence": {
+        "count": 3,
+        "inventoryUnchanged": true,
+        "rows": [
+          {
+            "path": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+            "expectedSha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2",
+            "originalSha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2",
+            "mirrorSha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2",
+            "contentsServedByThisScript": false
+          },
+          {
+            "path": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+            "expectedSha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225",
+            "originalSha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225",
+            "mirrorSha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225",
+            "contentsServedByThisScript": false
+          },
+          {
+            "path": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+            "expectedSha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519",
+            "originalSha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519",
+            "mirrorSha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519",
+            "contentsServedByThisScript": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "runtime-outside-checkout",
+      "passed": true,
+      "evidence": {
+        "runtimePath": "D:\\p04-r02-fullapp-20261102-r3\\runtime-retry02",
+        "outsideCheckout": true
+      }
+    },
+    {
+      "name": "runtime-receipt-path-binding",
+      "passed": true,
+      "evidence": {
+        "actualRuntimePath": "D:\\p04-r02-fullapp-20261102-r3\\runtime-retry02",
+        "runtimeStorage": "D:\\p04-r02-fullapp-20261102-r3",
+        "plannedRuntimePath": "D:\\p04-r02-fullapp-20261102-r3\\runtime",
+        "limit": "Receipt path binding only; filesystem ownership and content proof require the runtime copy to exist."
+      }
+    },
+    {
+      "name": "external-runtime-ownership",
+      "passed": true,
+      "evidence": {
+        "runtimeStorage": "D:\\p04-r02-fullapp-20261102-r3",
+        "actualRuntimePath": "D:\\p04-r02-fullapp-20261102-r3\\runtime-retry02",
+        "ownerSha256": "fe07521b832edd75ca43e90f301a01c1aa4a13b6f486ecdce88c8a8169104aaa",
+        "ownerBinding": {
+          "root": "E:\\ohada saas\\Focused projects\\stoquify",
+          "candidateId": "p04-r02-full-ea52ca48cadd",
+          "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8"
+        },
+        "realPathsMatch": true,
+        "dependencyIsolationReceipt": {
+          "outsideCheckout": true,
+          "globalSearchPaths": [
+            {
+              "path": "C:\\Users\\J COMPUTER\\.node_modules",
+              "exists": false
+            },
+            {
+              "path": "C:\\Users\\J COMPUTER\\.node_libraries",
+              "exists": false
+            },
+            {
+              "path": "C:\\Program Files\\nodejs\\lib\\node",
+              "exists": false
+            }
+          ],
+          "ancestorPaths": [
+            "D:\\p04-r02-fullapp-20261102-r3\\node_modules",
+            "D:\\node_modules"
+          ],
+          "nodePathAbsent": true,
+          "volumeNodeModulesAbsent": true,
+          "testDriver": "Root tooling remains separate; application cwd is the external runtime"
+        }
+      }
+    },
+    {
+      "name": "private-alias-fixture-policy",
+      "passed": true,
+      "evidence": {
+        "originalAliasesPreserved": 3,
+        "explicitSyntheticAliases": 1,
+        "rootPolicySha256": "9cc5f6ee3f72c4a6d5eed6759b9e8ad8ab7fab90f11a7010374419fb7a4778fc",
+        "candidatePolicySha256": "262d6ba68e9e1adf26a25a8b6b32bad71ab44f81bb6106555b4658629fd56a13",
+        "limit": "Original three approved-private mappings unchanged; one explicit synthetic policy row and public canary are added only for local real-session qualification. This is not a production artifact."
+      }
+    },
+    {
+      "name": "sealed-artifact",
+      "passed": true,
+      "evidence": {
+        "buildId": "q-WJVh-fXAvnfdxBpP6wn",
+        "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+        "files": 5310,
+        "privateMappings": [
+          {
+            "source": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+            "destination": "runtime/.private/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+            "sha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2"
+          },
+          {
+            "source": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+            "destination": "runtime/.private/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+            "sha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225"
+          },
+          {
+            "source": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+            "destination": "runtime/.private/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+            "sha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519"
+          },
+          {
+            "source": "public/uploads/p04-upload-a/sentinel.png",
+            "destination": "runtime/.private/uploads/p04-upload-a/sentinel.png",
+            "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d"
+          },
+          {
+            "source": "public/uploads/p04-upload-b/sentinel.png",
+            "destination": "runtime/.private/uploads/p04-upload-b/sentinel.png",
+            "sha256": "13a70c1156151a2323af88801aeb7068712733dfb42ddccd2975486e2e2d09f8"
+          },
+          {
+            "source": "public/uploads/p04-upload-disabled/sentinel.png",
+            "destination": "runtime/.private/uploads/p04-upload-disabled/sentinel.png",
+            "sha256": "d053a56cd4331f75c220f68ae11ac6d53dd2ee99591362a115e12b7d05cdb525"
+          }
+        ],
+        "sealedBytesUnchanged": true
+      }
+    },
+    {
+      "name": "runtime-preservation",
+      "passed": true,
+      "evidence": {
+        "actualRuntimePath": "D:\\p04-r02-fullapp-20261102-r3\\runtime-retry02",
+        "sealedFiles": 5310,
+        "allSealedBytesUnchanged": true,
+        "allowedImageCacheAdditions": [
+          {
+            "path": ".next/cache/images/azDZUiE5KestdQzuVX9jK4glMy9xju16joMadOLrlwg/3600.1793646380335.p04r02-full-synthetic.p04r02-full-synthetic.png",
+            "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d"
+          },
+          {
+            "path": ".next/cache/images/zcct8V3CcgLC3z3Mp_i4dQFQnS8Yz6hyvTcO0sN-brA/60.1793643036629.IXxDY8EofctWN1-U2xkXhfv4SBB3ENsfHHfWUCbj7nI.Vy8iNDYtMWExOWQ1OWM4Yjgi.png",
+            "sha256": "217c4363c1287dcb56375f94db191785fbf848107710db1f1c77d65026e3ee72"
+          }
+        ]
+      }
+    },
+    {
+      "name": "selected-outcome-receipts",
+      "passed": true,
+      "evidence": {
+        "buildPassed": true,
+        "runtimePassed": true,
+        "runtimePortsReleased": true,
+        "runtimeCleanupErrors": [],
+        "databaseStopped": true,
+        "databasePortAvailable": true,
+        "evidenceLimit": "Reconciled receipt claims only; no new runtime or database execution"
+      }
+    }
+  ],
+  "integrityPassed": true,
+  "executionReceiptsReconciled": true,
+  "limitations": [
+    "This script does not query the database, inspect or stop processes, issue HTTP requests, or run a browser.",
+    "Database/browser outcomes and cleanup are reconciled from selected receipts, not re-executed.",
+    "Independent outcome review and the work-register decision remain separate; this receipt does not promote P04-R02.",
+    "Concurrent root drift is recorded separately; no whole-working-tree stability claim is made when drift exists."
+  ],
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "receiptSummary": {
+    "build": {
+      "path": "build-result.json",
+      "present": true,
+      "sha256": "e768849e3d8318f72284582b777af0908a7b05df8edc995aff1b2151ca401075",
+      "passed": true
+    },
+    "runtime": {
+      "path": "runtime-result-retry02.json",
+      "present": true,
+      "sha256": "cb89466d8690ee8ca39dee7b0309689cbcca48ed3c04c36cbc27e8c4ac385c51",
+      "passed": true
+    },
+    "databaseStop": {
+      "path": "database/resume-20261102-r3-guarded-stop-1793643230069.json",
+      "present": true,
+      "sha256": "66bf4d974eeae6bc58c7e0815fbc8254fc36d7c1419c6bdca081e291f34f5740",
+      "passed": true
+    }
+  },
+  "finishedAt": "2026-11-02T18:16:06.015Z"
+}

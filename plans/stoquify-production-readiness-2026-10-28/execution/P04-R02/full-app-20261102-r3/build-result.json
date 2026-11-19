@@ -1,0 +1,116 @@
+{
+  "startedAt": "2026-11-02T17:01:54.404Z",
+  "passed": true,
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "commands": [
+    {
+      "label": "client-generation",
+      "startedAt": "2026-11-02T17:02:19.755Z",
+      "args": [
+        "node_modules/prisma/build/index.js",
+        "generate"
+      ],
+      "pid": 9928,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "finishedAt": "2026-11-02T17:04:12.183Z"
+    },
+    {
+      "label": "artifact-build",
+      "startedAt": "2026-11-02T17:04:12.862Z",
+      "args": [
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "release:artifact",
+        "--",
+        "D:\\p04-r02-fullapp-20261102-r3\\artifact"
+      ],
+      "pid": 15936,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "finishedAt": "2026-11-02T17:41:18.970Z"
+    }
+  ],
+  "candidate": "D:\\p04-r02-fullapp-20261102-r3\\source",
+  "artifact": "D:\\p04-r02-fullapp-20261102-r3\\artifact",
+  "database": {
+    "host": "127.0.0.1",
+    "port": 53528,
+    "name": "stoquify_local_p04r02_20261029_build_r1",
+    "migrations": 120,
+    "synthetic": true
+  },
+  "environmentVariableNames": [
+    "APPDATA",
+    "AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY",
+    "AQSTOQFLOW_HISTORY_CURSOR_SECRET",
+    "AQSTOQFLOW_RECEIPT_TOKEN_SECRET",
+    "AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY",
+    "AQSTOQFLOW_STATEMENT_TOKEN_SECRET",
+    "AUTH_SECRET",
+    "BETTER_AUTH_SECRET",
+    "BUILD_APP_TIMEOUT_MS",
+    "CHECKPOINT_DISABLE",
+    "ComSpec",
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "LOCALAPPDATA",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_URL",
+    "NEXT_PUBLIC_APP_URL",
+    "NEXT_PUBLIC_BASE_URL",
+    "NEXT_TELEMETRY_DISABLED",
+    "NODE_OPTIONS",
+    "PATHEXT",
+    "PRISMA_HIDE_UPDATE_MESSAGE",
+    "PUBLIC_IDENTITY_ABUSE_HASH_SECRET",
+    "Path",
+    "STOQUIFY_ACCOUNTANT_INVITE_LIVE_SENDS",
+    "STOQUIFY_STATEMENT_EMAIL_LIVE_SENDS",
+    "STOQUIFY_STATEMENT_WHATSAPP_LIVE_SENDS",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "windir"
+  ],
+  "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+  "buildId": "q-WJVh-fXAvnfdxBpP6wn",
+  "runtimeFiles": 5310,
+  "legacyUploads": [
+    {
+      "source": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "destination": "runtime/.private/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "sha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2"
+    },
+    {
+      "source": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "destination": "runtime/.private/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "sha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225"
+    },
+    {
+      "source": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "destination": "runtime/.private/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "sha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519"
+    },
+    {
+      "source": "public/uploads/p04-upload-a/sentinel.png",
+      "destination": "runtime/.private/uploads/p04-upload-a/sentinel.png",
+      "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d"
+    },
+    {
+      "source": "public/uploads/p04-upload-b/sentinel.png",
+      "destination": "runtime/.private/uploads/p04-upload-b/sentinel.png",
+      "sha256": "13a70c1156151a2323af88801aeb7068712733dfb42ddccd2975486e2e2d09f8"
+    },
+    {
+      "source": "public/uploads/p04-upload-disabled/sentinel.png",
+      "destination": "runtime/.private/uploads/p04-upload-disabled/sentinel.png",
+      "sha256": "d053a56cd4331f75c220f68ae11ac6d53dd2ee99591362a115e12b7d05cdb525"
+    }
+  ],
+  "finishedAt": "2026-11-02T17:41:43.163Z",
+  "clusterLifecycle": "Exclusively owned by database worker; build runner does not stop it"
+}

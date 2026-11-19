@@ -179,6 +179,12 @@ async function persistFailedStepUp(
       data: {
         assuranceFailureCount: failureCount,
         assuranceLockedUntil: lockedUntil,
+        ...(lockedUntil ? {
+          assuranceVerifiedAt: null,
+          assuranceMethod: null,
+          assuranceOrganizationId: null,
+          assuranceLevel: SESSION_ASSURANCE_LEVEL.NONE,
+        } : {}),
       },
     })
 

@@ -1,0 +1,106 @@
+{
+  "package": "P04-R02",
+  "reviewDate": "2026-10-29",
+  "evidenceClass": "source-inspection-only",
+  "runtimeTestsExecutedByThisReviewer": false,
+  "applicationChangesMade": false,
+  "scope": "Legacy local image reads, stored URL compatibility and release packaging; managed media is inspected only to distinguish current producers.",
+  "sourceIdentity": "source-reference-inventory.json#sourceManifest; dependency-source-evidence.json for installed Next and dated graph provenance",
+  "reviewedTraces": [
+    {
+      "id": "TRACE-01",
+      "kind": "current-upload-producer",
+      "entrypoints": ["actions/storage/photo-upload-actions.ts:7", "app/api/media/upload/route.ts:42", "components/FormInputs/EnhancedImageUploadButton.tsx:70"],
+      "chain": ["requireInventoryPhotoWrite", "uploadItemPicture", "encrypted provider object + PictureAsset", "/api/media/{uuid}"],
+      "evidence": ["actions/storage/photo-upload-actions.ts:10", "app/api/media/upload/route.ts:54", "services/media/picture.service.ts:30", "services/media/picture.service.ts:54", "services/media/picture.service.ts:59", "lib/media/policy.ts:4"],
+      "conclusion": "These reviewed producers no longer write public/uploads. Provider public-read ACL applies to encrypted managed bytes and does not establish legacy local upload behavior. No provider was contacted."
+    },
+    {
+      "id": "TRACE-02",
+      "kind": "legacy-configuration-not-file-producer",
+      "evidence": ["actions/storage/storage-config-actions.ts:24", "actions/storage/storage-config-actions.ts:81", "actions/storage/storage-config-actions.ts:109", "actions/storage/storage-config-actions.ts:150", "types/storage.ts"],
+      "conclusion": "The /uploads/{org} localStoragePath field survives as configuration metadata. Current update rejects local mode/path changes and does not create upload directories."
+    },
+    {
+      "id": "TRACE-03",
+      "kind": "retained-reference-compatibility",
+      "evidence": ["services/media/picture.service.ts:72", "services/media/picture.service.ts:118", "services/item/item.service.ts:676", "services/item/item.service.ts:1115", "services/item/item.service.ts:1164", "services/item/item.service.ts:1271", "services/item/__tests__/picture.service.test.ts:49", "services/item/__tests__/edit-item.service.test.ts:144"],
+      "conclusion": "Item updates explicitly retain previously stored nonmanaged image references. New item references are checked by claimItemPictures. Deleting an unattached legacy reference is rejected. A repair must not silently delete or rewrite retained images."
+    },
+    {
+      "id": "TRACE-04",
+      "kind": "legacy-api-read",
+      "evidence": ["app/api/uploads/[...path]/route.ts:43", "app/api/uploads/[...path]/route.ts:60", "app/api/uploads/[...path]/route.ts:64", "app/api/uploads/[...path]/route.ts:79", "app/api/uploads/[...path]/route.ts:84", "app/api/uploads/[...path]/route.ts:92", "app/api/uploads/[...path]/route.ts:119"],
+      "conclusion": "API checks fresh session/org, equal path org, dashboard module admission and dashboard.read before reading public/uploads/{org}/{file}; returns private,no-store. It is tenant-scoped, not item/location-scoped. Exact filename grammar is ASCII alphanumeric/dot/underscore/hyphen without '..'; supported jpg/jpeg/png/gif/webp only."
+    },
+    {
+      "id": "TRACE-05",
+      "kind": "static-bypass-and-packaging",
+      "evidence": ["middleware.ts:150", "middleware.ts:221", "next.config.mjs:33", "next.config.mjs:165", "scripts/release-artifact.cjs:54", "scripts/candidate-snapshot.cjs:33", ".gitignore:67"],
+      "conclusion": "Current middleware bypasses dotted non-API paths and has no upload-specific guard. Release preparation recursively copies all public files, including ignored uploads, into runtime/public. Git-based candidate capture omits ignored untracked uploads. A source fingerprint alone does not attest which legacy private bytes enter the runtime artifact."
+    },
+    {
+      "id": "TRACE-06",
+      "kind": "seed-and-audit-scope",
+      "evidence": ["prisma/comprehensive-seed.ts:82", "prisma/comprehensive-seed.ts:260", "prisma/comprehensive-seed.ts:427", "scripts/audit-picture-storage.cjs:2", "scripts/audit-picture-storage.cjs:8"],
+      "conclusion": "Comprehensive seed writes /seed-images assets, not /uploads. audit-picture-storage inventories legacy references across items, categories, brands and users but loads env and opens a DB; it was inspected only, not executed. Current DB prevalence, missing assets and ownership associations remain unknown."
+    },
+    {
+      "id": "TRACE-07",
+      "kind": "browser-url-consumers",
+      "evidence": ["components/FormInputs/EnhancedImageUploadButton.tsx:127", "components/dashboard/items/ModernItemFormForEditing.tsx:429", "components/dashboard/items/ModernItemFormForEditing.tsx:435", "components/pos/ProfessionalPOSSystem.tsx:1887", "components/pos/ProfessionalPOSSystem.tsx:2611", "components/ui/groups/inventory/ItemManagement.tsx:223", "components/inventory/CreateItemWizard.tsx:1623", "components/UserDropdownMenu.tsx:50"],
+      "conclusion": "Dynamic item previews/POS use raw stored image URLs in native img; edited item Next/Image explicitly uses unoptimized. AvatarImage accepts avatarUrl. Retaining same-origin legacy URL behavior avoids data rewrites; authenticated cookies must reach the read endpoint. This is source dataflow, not rendered/browser qualification."
+    },
+    {
+      "id": "TRACE-08",
+      "kind": "additional-persisted-reference-surfaces",
+      "evidence": ["services/category/category.schemas.ts:30", "services/category/category.service.ts:141", "services/category/category.service.ts:197", "services/brand/brand.schemas.ts:30", "services/brand/brand.service.ts:117", "services/brand/brand.service.ts:168", "components/categories/ModernCategoryForm.tsx:264", "components/brands/ModernBrandForm.tsx:419"],
+      "conclusion": "Categories accept stored image URL strings; brand writes require absolute URL syntax. Their forms accept URL text. This is reference persistence, not a local file producer. Historical users/category/brand references must remain in the migration/compatibility inventory even though the current item uploader uses managed media."
+    }
+  ],
+  "constraints": [
+    {"id":"C01","kind":"two-url-boundary","requirement":"Apply the same current authority decision to /uploads/{org}/{file} and /api/uploads/{org}/{file}; successful direct API tests alone cannot qualify the static URL."},
+    {"id":"C02","kind":"valid-reads","requirement":"Keep eligible same-org reads byte-identical with correct image MIME and private,no-store. Existing references must not be broken by blocking all uploads indiscriminately."},
+    {"id":"C03","kind":"policy-decision","requirement":"The legacy API currently uses dashboard.read/dashboard module while managed media uses inventory/POS permissions and corresponding modules. Preserve and explicitly state the chosen existing legacy policy during a bounded repair. Broader item/location privacy or different policy requires a reviewed decision and resource mapping; do not infer it from path organization."},
+    {"id":"C04","kind":"encoding","requirement":"Test raw and percent-encoded path routing at HTTP level: encoded ordinary filename characters, encoded slashes/backslashes/dot segments, double encoding, repeated separators and Unicode/space filenames. Define compatibility for already stored encodings instead of decoding recursively."},
+    {"id":"C05","kind":"image-optimizer","requirement":"Installed Next 15.5.27 internal image fetch uses a fresh request without original headers/cookies; protected image optimization therefore loses session. Keep authenticated consumers unoptimized/native img. A cold optimizer request must expose no bytes; existing public cache entries require explicit invalidation/rebuild evidence. Cache key includes href,width,quality,mimeType, not identity, and optimized response is public-cacheable."},
+    {"id":"C06","kind":"origin-and-cdn","requirement":"Middleware protection alone does not qualify independently served public files, old runtime artifacts, direct object URLs or cached CDN/optimizer copies. Deny/remove private content from public packaging and verify origin/CDN routing and purge evidence before deployment; never roll back to public exposure."},
+    {"id":"C07","kind":"filesystem","requirement":"Legacy path containment must cover real filesystem symlink/junction escape if private storage is introduced. No symlinks were observed in this three-file workspace inventory, but API path.resolve containment alone is not a realpath guarantee."},
+    {"id":"C08","kind":"nonmutating-read","requirement":"Reads/denials must not mutate asset bytes or business rows. Module admission with audit:true may intentionally emit security audit evidence; distinguish permitted audit events from forbidden business/asset mutations."},
+    {"id":"C09","kind":"inventory-limits","requirement":"This local metadata snapshot covers 3 JPG files in 1 org directory only. No DB association, external storage, deployed volume, live CDN or cache inventory was accessed. Parent may copy into an explicitly isolated fixture and bind hashes."}
+  ],
+  "repairOptions": [
+    {"id":"OPTION-A","assessment":"preferred-complete-boundary","description":"Place legacy bytes outside any public/static root, route both legacy and API URLs through one shared authenticated read implementation, and fail/exclude private uploads in public artifact packaging. Preserve original URLs and eligible bytes. Prepare a manifest-bound copy/verify/recovery plan; do not automatically move/delete production data."},
+    {"id":"OPTION-B","assessment":"bounded-interim-only","description":"Rewrite /uploads to the existing guarded API before static dispatch, explicitly cover URI normalization and image optimizer routing, and deny public-file inclusion/direct static hosting. If bytes remain public and independent origin/CDN serving is possible, this cannot close the full production gate."},
+    {"id":"OPTION-C","assessment":"deferred-migration","description":"Migrate retained legacy references to managed media using independently verified ownership, cryptographic byte checks and reversible reference mapping. This is broader data work with provider and approval gates; it is not necessary for the first isolated two-URL qualification and is not authorized by this source inventory."}
+  ],
+  "testMatrix": [
+    {"id":"T01","lane":"isolated-real-HTTP","case":"Anonymous GET of each fixture through both URL forms","acceptance":"Denied status; response contains no fixture byte sequence and hash differs from asset; no filesystem asset changes."},
+    {"id":"T02","lane":"isolated-real-HTTP","case":"Authenticated tenant B requests tenant A asset through both URL forms","acceptance":"403 or equivalent deny; zero private image bytes; no forbidden writes."},
+    {"id":"T03","lane":"isolated-real-HTTP","case":"Tenant A with current required permission and module reads all eligible same-org fixtures through both URL forms","acceptance":"200, exact SHA-256 equality, matching MIME/length, nosniff, private,no-store; preserves valid reads."},
+    {"id":"T04","lane":"isolated-real-auth","case":"Expired then revoked sessions reuse both URLs","acceptance":"Fresh authentication denies; no image bytes. Stub-only contexts must be labeled and do not prove revocation."},
+    {"id":"T05","lane":"isolated-real-auth","case":"Remove dashboard.read or deny dashboard module after successful read","acceptance":"Next request denies both URLs without private bytes, even when cookies/URLs are unchanged; capture allowed audit separately."},
+    {"id":"T06","lane":"isolated-real-HTTP","case":"Benign percent encoding of admitted filename characters","acceptance":"Both URL forms normalize once and either return authorized exact bytes consistently or reject by an explicit compatibility rule; anonymous/foreign requests remain denied."},
+    {"id":"T07","lane":"isolated-real-HTTP","case":"Encoded traversal/slashes/backslashes, double encoding, malformed escapes, extra/missing segments, query suffix and repeated separators","acceptance":"No path escapes, alternate public dispatch or bytes from a nonadmitted file; deny/error responses contain no filesystem paths or secrets."},
+    {"id":"T08","lane":"isolated-real-HTTP","case":"Missing supported asset, unsupported extension, mixed-case permitted extension","acceptance":"Defined safe 404/400 or successful valid read; both URLs keep equivalent authority and MIME policy."},
+    {"id":"T09","lane":"isolated-real-HTTP","case":"HEAD, Range, conditional ETag/If-Modified-Since on allowed and denied contexts","acceptance":"No body/private byte disclosure for denied contexts; no 206/304 cache bypass; permitted behavior documented without relying on GET-only unit mocks."},
+    {"id":"T10","lane":"isolated-real-HTTP-optimizer","case":"Cold /_next/image?url=<encoded legacy URL>&w=...&q=... for both aliases; allowed then anonymous/foreign repeat","acceptance":"No unauthenticated image delivery. Protected browser images render through native img/unoptimized. Cache effects measured and clearly separated from original-byte comparison because optimization transforms bytes."},
+    {"id":"T11","lane":"isolated-cutover-cache","case":"Fixture cache warmed under old public route, then candidate repair","acceptance":"Cached private image cannot be fetched after cutover; require purge/new cache namespace plus evidence for origin/edge caches before production admission."},
+    {"id":"T12","lane":"isolated-packaging","case":"Prepare candidate from synthetic public/uploads sentinel and inspect sealed runtime/public manifest","acceptance":"No private legacy bytes publicly packaged; pipeline rejects or redirects to private manifest-bound storage. Candidate source hash and artifact file hash coverage explicitly reconciled."},
+    {"id":"T13","lane":"isolated-filesystem","case":"Symlink/junction fixture pointing beyond allowed org root when supported","acceptance":"Read denied; external sentinel unread. Skip with limitation if platform privileges prevent fixture creation."},
+    {"id":"T14","lane":"rendered-browser","case":"Item edit, upload preview, item list, POS thumbnail/dialog and legacy avatar fixture","acceptance":"Eligible images render with session cookies; foreign/private images fail without leaked bytes; no image optimizer credential loss or broken legitimate thumbnails."},
+    {"id":"T15","lane":"isolated-recovery","case":"Private copy interrupted before/after verification, missing file, rollback","acceptance":"No loss/overwrite of original bytes; resume by manifest/hash; maintain deny boundary during recovery; never restore public exposure as rollback."}
+  ],
+  "existingTestsInspectedNotExecuted": [
+    {"path":"app/api/uploads/[...path]/__tests__/route.test.ts","coverage":"7 mocked route tests cover session, tenant, module, permission, traversal, extension and allowed API read; filesystem/auth/NextResponse are mocked; no legacy static URL, real cookies, Next optimizer, HTTP encoding, deployment or CDN coverage."},
+    {"path":"services/item/__tests__/picture.service.test.ts","coverage":"Retained legacy reference compatibility is asserted; no deployed file read."},
+    {"path":"services/item/__tests__/edit-item.service.test.ts","coverage":"Mixed managed and retained legacy image references are asserted."},
+    {"path":"services/onboarding/__tests__/item-import-media.test.ts","coverage":"New unmanaged legacy import references are rejected."}
+  ],
+  "advancementEvidence": [
+    "A candidate source digest, copied-fixture manifest and runtime identity for the explicitly isolated test target.",
+    "Per-URL denial response/body checks and valid-read byte/hash checks; status codes alone are insufficient.",
+    "Explicit auth-adapter/mock inventory: an isolated harness using stubbed sessions qualifies route composition only, not real session revocation.",
+    "Independent review of implementation and test observations; unresolved cache, deployment, DB inventory and permission-policy decisions remain blocked/deferred explicitly."
+  ]
+}

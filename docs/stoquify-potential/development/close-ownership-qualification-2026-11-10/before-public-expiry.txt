@@ -1,0 +1,335 @@
+/** @jest-environment node */
+// Only initial authority configuration and OPEN/DRAFT scope entities are seeded.
+// No READY/T4/SIGNED/CERTIFIED financial state, provider or browser is fabricated.
+import fs from "node:fs"
+import path from "node:path"
+import { createHash, randomBytes, randomUUID } from "node:crypto"
+import { Prisma } from "@prisma/client"
+import { db } from "@/prisma/db"
+import { assignCloseFinding, commentOnCloseFinding, updateAccountantReview } from "@/services/accounting/close-assurance.service"
+import { executeFirmEngagementCommand } from "@/services/accounting/firm-engagement.service"
+import { prelockCloseFindingAssigneeOrganizationsInTx, lockCloseFindingAssigneeInTx } from "@/services/accounting/close-finding-assignee-authority.service"
+
+const target = new URL(process.env.MONTHLY_CLOSE_POSTGRES_URL || "")
+if (target.hostname !== "localhost" || target.port !== "58033" || target.pathname !== "/" + process.env.MONTHLY_CLOSE_DATABASE_NAME ||
+  !/^\/stoquify_replay_close_monthly_20261110_[a-f0-9]{10}$/.test(target.pathname) || target.searchParams.get("schema") !== "public") throw Error("Exact new owned close-ownership database required")
+const evidencePath = path.resolve(process.env.OWNERSHIP_CLOSE_PROBE_EVIDENCE || "")
+const privateContext = fs.realpathSync(path.dirname(process.env.MONTHLY_CLOSE_PRIVATE_DIRECTORY!))
+if (path.dirname(evidencePath) !== privateContext || !path.basename(evidencePath).endsWith(".private.json")) throw Error("Exact owned private ownership evidence path required")
+const hash = (value: string) => createHash("sha256").update(value).digest("hex")
+const checks: Array<Record<string, unknown>> = []
+const proof = (name: string, metrics: Record<string, unknown>) => checks.push({ name, passed: true, ...metrics })
+const closePermissions = ["accounting.close.read", "accounting.close.finding.comment"]
+const operatorPermissions = [...closePermissions, "accounting.close.finding.assign", "accounting.close.accountant.review", "accounting.close.accountant.invite", "accounting.audit.read"]
+const farFuture = new Date("2099-01-01T00:00:00.000Z")
+const unique = (label: string) => "ownership-" + label + "-" + randomBytes(6).toString("hex")
+
+async function organization(label: string) {
+  const id = unique(label), modules = ["accounting", "close_assurance"]
+  await db.organization.create({ data: { id, slug: id, name: "Synthetic ownership " + label, requestedModules: modules, countryCode: "CM", currency: "XAF", timezone: "Africa/Douala" } })
+  await db.tenantModuleConfiguration.create({ data: { organizationId: id, manifestHash: hash(id), revision: 1, activeRevision: 1, selectedModules: modules, activeModules: modules } })
+  await db.tenantModuleGrant.createMany({ data: modules.map(moduleSlug => ({ organizationId: id, moduleSlug, status: "active", source: "manual_override" })) })
+  return id
+}
+async function person(organizationId: string, label: string, permissions = closePermissions) {
+  const marker = unique(label)
+  const role = await db.role.create({ data: { organizationId, code: marker, nameEn: "Synthetic " + label, permissions } })
+  const user = await db.user.create({ data: { organizationId, email: marker + "@example.invalid", name: "Synthetic " + label, isActive: true, isVerified: true, emailVerified: true, roles: { connect: { id: role.id } } } })
+  return { user, role, permissions }
+}
+type Person = Awaited<ReturnType<typeof person>>
+async function operator(organizationId: string, label: string) {
+  const candidate = await person(organizationId, label, operatorPermissions)
+  const session = await db.session.create({ data: { userId: candidate.user.id, token: "ownership_session_" + randomBytes(32).toString("hex"), expiresAt: farFuture, assuranceVerifiedAt: new Date(), assuranceMethod: "password", assuranceOrganizationId: organizationId, assuranceLevel: 1 } })
+  return { ...candidate, session }
+}
+type Operator = Awaited<ReturnType<typeof operator>>
+const control = (actor: Operator) => ({ actorId: actor.user.id, actorPermissions: actor.permissions, session: { id: actor.session.id, token: actor.session.token }, lastAuthAt: actor.session.assuranceVerifiedAt! })
+async function fixture() {
+  const clientId = await organization("client"), foreignId = await organization("foreign")
+  const actor = await operator(clientId, "operator"), owner = await person(clientId, "local-owner")
+  const organizations = new Set([clientId, foreignId])
+  return { clientId, foreignId, actor, owner, organizations }
+}
+type Fixture = Awaited<ReturnType<typeof fixture>>
+async function period(organizationId: string, label = "period") {
+  const year = await db.fiscalYear.create({ data: { organizationId, name: unique(label), startDate: new Date("2024-01-01T00:00:00.000Z"), endDate: new Date("2024-12-31T23:59:59.999Z") } })
+  return db.accountingPeriod.create({ data: { organizationId, fiscalYearId: year.id, name: "Synthetic historical January", periodNumber: 1, startDate: new Date("2024-01-01T00:00:00.000Z"), endDate: new Date("2024-01-31T23:59:59.999Z") } })
+}
+async function graph(f: Fixture, organizationId = f.clientId) {
+  const ownedPeriod = await period(organizationId)
+  const run = await db.closeRun.create({ data: { organizationId, periodId: ownedPeriod.id, runById: f.actor.user.id } })
+  const scope = { organizationId, periodId: ownedPeriod.id, closeRunId: run.id }
+  const checklist = await db.closeChecklistItem.create({ data: { ...scope, key: unique("check"), domain: "AUDIT", severity: "HIGH", status: "FAILED", label: "Synthetic scope check", detail: "Unresolved fixture finding", sourceService: "ownership-qualification" } })
+  const finding = await db.closeAssuranceFinding.create({ data: { ...scope, checklistItemId: checklist.id, domain: "AUDIT", severity: "HIGH", title: "Synthetic scope finding", detail: "Initial OPEN input, not an earned assessment", sourceService: "ownership-qualification" } })
+  const evidence = await db.closeEvidenceItem.create({ data: { ...scope, checklistItemId: checklist.id, findingId: finding.id, evidenceType: "AUDIT_LOG", sourceLabel: "Synthetic scope pointer", provenance: "SYNTHETIC_UNVERIFIED", available: false, unavailableReason: "Only scope relations are fixture inputs" } })
+  const review = await db.accountantReview.create({ data: { ...scope } })
+  return { period: ownedPeriod, run, checklist, finding, evidence, review, scope }
+}
+type Graph = Awaited<ReturnType<typeof graph>>
+async function grant(f: Fixture, candidate: Person, role: "READ_ONLY" | "REVIEWER" | "PREPARER" = "REVIEWER", effectiveFrom = new Date(Date.now() - 3600000), expiresAt = farFuture) {
+  // Initial named consent is synthetic configuration, not earned onboarding.
+  return db.accountantAccessGrant.create({ data: { organizationId: f.clientId, accountantUserId: candidate.user.id, accountantFirmName: "Synthetic firm", role, activeScopeKey: `${f.clientId}:${candidate.user.id}`, consentGrantedById: f.actor.user.id, consentEvidenceHash: "sha256:" + hash(unique("consent")), effectiveFrom, expiresAt } })
+}
+async function external(f: Fixture, role: "READ_ONLY" | "REVIEWER" | "PREPARER" = "REVIEWER") {
+  // Home sorts before client, exercising the prelock's two-organization order.
+  const homeId = await organization("a-firm"); f.organizations.add(homeId)
+  const candidate = await person(homeId, "external-owner"), consent = await grant(f, candidate, role)
+  return { homeId, candidate, grant: consent }
+}
+async function managed(f: Fixture, role: "REVIEWER" | "PREPARER" = "PREPARER", assignmentScope: "READ_ONLY" | "REVIEWER" | "PREPARER" = role) {
+  const delegated = await external(f, role), manager = await operator(delegated.homeId, "firm-manager")
+  await grant(f, manager, "REVIEWER")
+  const actor = { homeOrganizationId: delegated.homeId, actorId: manager.user.id, session: { id: manager.session.id, token: manager.session.token } }
+  const terms = { effectiveFrom: delegated.grant.effectiveFrom, expiresAt: delegated.grant.expiresAt }
+  const created = await executeFirmEngagementCommand(actor, { command: "CREATE", clientOrganizationId: f.clientId, ownerUserId: manager.user.id, scope: role, ...terms, idempotencyKey: unique("create") })
+  const assigned = await executeFirmEngagementCommand(actor, { command: "ASSIGN", engagementId: created.engagementId, expectedVersion: 0, accountantUserId: delegated.candidate.user.id, expectedAssignmentVersion: 0, scope: assignmentScope, ...terms, idempotencyKey: unique("assign") })
+  await executeFirmEngagementCommand(actor, { command: "ENROLL", engagementId: created.engagementId, expectedVersion: 0, grantId: delegated.grant.id, idempotencyKey: unique("enroll") })
+  const active = await executeFirmEngagementCommand(actor, { command: "TRANSITION", engagementId: created.engagementId, expectedVersion: 0, status: "ACTIVE", reason: "Explicit activation of synthetic configured consent", idempotencyKey: unique("activate") })
+  return { ...delegated, manager, actor, active, assigned }
+}
+async function snapshot(f: Fixture) {
+  const where = { organizationId: { in: [...f.organizations].sort() } }, orderBy = { id: "asc" as const }
+  // Exact projections stay in memory only; private evidence receives safe metrics.
+  return JSON.stringify({
+    runs: await db.closeRun.findMany({ where, orderBy }), findings: await db.closeAssuranceFinding.findMany({ where, orderBy }),
+    checklists: await db.closeChecklistItem.findMany({ where, orderBy }), evidence: await db.closeEvidenceItem.findMany({ where, orderBy }),
+    comments: await db.accountantComment.findMany({ where, orderBy }), reviews: await db.accountantReview.findMany({ where, orderBy }),
+    audits: await db.ledgerAuditEvent.findMany({ where, orderBy }), events: await db.businessEvent.findMany({ where, orderBy }),
+    eventAudits: await db.businessEventAudit.findMany({ where, orderBy }), outbox: await db.businessEventOutbox.findMany({ where, orderBy }),
+    journals: await db.journalEntry.findMany({ where, orderBy }), batches: await db.ledgerPostingBatch.findMany({ where, orderBy }),
+  })
+}
+async function denied(f: Fixture, invoke: () => Promise<unknown>, codes = ["FORBIDDEN"]) {
+  const before = await snapshot(f)
+  let failure: { code?: string } | undefined
+  try { await invoke() } catch (error) { failure = error as { code?: string } }
+  expect(failure).toBeDefined(); expect(codes).toContain(failure!.code)
+  expect(await snapshot(f)).toBe(before)
+}
+const assign = (f: Fixture, g: Graph, ownerId?: string) => assignCloseFinding(f.clientId, { findingId: g.finding.id, ...(ownerId ? { assignedToId: ownerId } : {}), correlationId: randomUUID() }, control(f.actor))
+const comment = (f: Fixture, input: { findingId?: string; evidenceItemId?: string; reviewId?: string; closeRunId?: string }) => commentOnCloseFinding(f.clientId, { ...input, body: "Synthetic bounded scope review comment", correlationId: randomUUID() }, control(f.actor))
+async function assertAssigned(f: Fixture, g: Graph, ownerId: string) {
+  const finding = await db.closeAssuranceFinding.findUniqueOrThrow({ where: { id: g.finding.id } })
+  expect(finding).toMatchObject({ ownerId, assignedById: f.actor.user.id, status: "ASSIGNED", organizationId: f.clientId, closeRunId: g.run.id, periodId: g.period.id })
+  expect(await db.ledgerAuditEvent.count({ where: { organizationId: f.clientId, resourceId: g.finding.id, action: "CLOSE_FINDING_ASSIGNED" } })).toBe(1)
+  const events = await db.businessEvent.findMany({ where: { organizationId: f.clientId, sourceId: g.finding.id, eventType: "close.assurance.finding.assigned" }, include: { outboxMessages: true } })
+  expect(events).toHaveLength(1); expect(events[0].payload).toMatchObject({ ownerId, findingId: g.finding.id, closeRunId: g.run.id, periodId: g.period.id })
+  expect(events[0].outboxMessages).toHaveLength(1)
+}
+beforeAll(async () => {
+  expect(process.env.NODE_ENV).toBe("test")
+  const [identity] = await db.$queryRaw<Array<{ name: string; port: number }>>(Prisma.sql`SELECT current_database() AS name, inet_server_port() AS port`)
+  expect(identity).toEqual({ name: process.env.MONTHLY_CLOSE_DATABASE_NAME, port: 58033 })
+})
+afterAll(async () => {
+  fs.writeFileSync(evidencePath, JSON.stringify({ checks, syntheticInitialAuthorityConfiguration: true, financialTerminalStatesSeeded: false, noProviderOrBrowserCalls: true,
+    limits: ["Initial consent and module/user/role configuration are synthetic source facts.", "Only OPEN/DRAFT close graph inputs are seeded; no assessment/certification claim follows.", "Managed positive activation uses existing CREATE/ASSIGN/ENROLL/TRANSITION owners.", "Expiry case supplies a future publication time under actual helper locks; it is not a full-service elapsed-clock wait.", "This is service-level scope rejection, not a new direct-SQL composite constraint."] }, null, 2) + "\n", { flag: "wx" })
+  await db.$disconnect()
+})
+
+it("assigns eligible client-local and default owners without a recipient session", async () => {
+  const f = await fixture(), explicit = await graph(f), implicit = await graph(f)
+  expect(await db.session.count({ where: { userId: f.owner.user.id } })).toBe(0)
+  expect(f.owner.permissions).not.toContain("accounting.close.finding.assign")
+  await assign(f, explicit, f.owner.user.id); await assertAssigned(f, explicit, f.owner.user.id)
+  await assign(f, implicit); await assertAssigned(f, implicit, f.actor.user.id)
+  proof("eligible-client-local-owners", { assignments: 2, noRecipientSessionRequired: true, noRecipientAssignmentPermissionRequired: true })
+})
+
+it("assigns legacy delegated preparers and reviewers for a historical period", async () => {
+  for (const role of ["PREPARER", "REVIEWER"] as const) {
+    const f = await fixture(), delegated = await external(f, role), g = await graph(f)
+    expect(g.period.endDate < delegated.grant.effectiveFrom).toBe(true)
+    expect(delegated.candidate.permissions).not.toContain("accounting.close.accountant.review")
+    expect(await db.session.count({ where: { userId: delegated.candidate.user.id } })).toBe(0)
+    await assign(f, g, delegated.candidate.user.id); await assertAssigned(f, g, delegated.candidate.user.id)
+  }
+  proof("eligible-legacy-delegated-contributors", { assignments: 2, roles: ["PREPARER", "REVIEWER"], historicalPeriodOutsideCurrentGrantWindowAllowed: true })
+})
+
+it("assigns managed delegated preparers and reviewers after actual engagement activation", async () => {
+  for (const role of ["PREPARER", "REVIEWER"] as const) {
+    const f = await fixture(), delegated = await managed(f, role), g = await graph(f)
+    expect(delegated.active.status).toBe("ACTIVE")
+    expect((await db.accountantAccessGrant.findUniqueOrThrow({ where: { id: delegated.grant.id } })).activeScopeKey).toBe(`managed:${f.clientId}:${delegated.candidate.user.id}`)
+    await assign(f, g, delegated.candidate.user.id); await assertAssigned(f, g, delegated.candidate.user.id)
+  }
+  proof("eligible-managed-delegated-contributors", { assignments: 2, roles: ["PREPARER", "REVIEWER"], engagementActivationEarnedThroughOwners: true, initialConsentSynthetic: true })
+})
+
+it("rejects ineligible local accounts without domain, audit or workflow effects", async () => {
+  const variants = ["missing", "foreign-without-mandate", "inactive", "unverified", "locked", "missing-comment", "missing-read", "foreign-role-membership"] as const
+  for (const variant of variants) {
+    const f = await fixture(), g = await graph(f); let ownerId = f.owner.user.id
+    if (variant === "missing") ownerId = unique("nonexistent-user")
+    if (variant === "foreign-without-mandate") ownerId = (await person(f.foreignId, "foreign-owner")).user.id
+    if (variant === "inactive") await db.user.update({ where: { id: ownerId }, data: { isActive: false } })
+    if (variant === "unverified") await db.user.update({ where: { id: ownerId }, data: { isVerified: false, emailVerified: false } })
+    if (variant === "locked") await db.user.update({ where: { id: ownerId }, data: { isLocked: true, lockedUntil: farFuture } })
+    if (variant === "missing-comment") await db.role.update({ where: { id: f.owner.role.id }, data: { permissions: ["accounting.close.read"] } })
+    if (variant === "missing-read") await db.role.update({ where: { id: f.owner.role.id }, data: { permissions: ["accounting.close.finding.comment"] } })
+    if (variant === "foreign-role-membership") {
+      const foreign = await person(f.foreignId, "foreign-role")
+      await db.role.update({ where: { id: f.owner.role.id }, data: { permissions: [] } })
+      await db.user.update({ where: { id: ownerId }, data: { roles: { connect: { id: foreign.role.id } } } })
+    }
+    await denied(f, () => assign(f, g, ownerId))
+  }
+  proof("ineligible-local-owners-no-effects", { variants: [...variants], exactSnapshotsUnchanged: true })
+})
+
+it("rejects invalid delegated mandates without side effects", async () => {
+  const variants = ["read-only", "expired", "future", "revoked", "wrong-scope", "other-named-user", "managed-key-without-link"] as const
+  for (const variant of variants) {
+    const f = await fixture(), delegated = await external(f, variant === "read-only" ? "READ_ONLY" : "REVIEWER"), g = await graph(f)
+    if (variant === "expired") await db.accountantAccessGrant.update({ where: { id: delegated.grant.id }, data: { effectiveFrom: new Date("2020-01-01"), expiresAt: new Date("2021-01-01") } })
+    if (variant === "future") await db.accountantAccessGrant.update({ where: { id: delegated.grant.id }, data: { effectiveFrom: new Date("2098-01-01") } })
+    if (variant === "revoked") await db.accountantAccessGrant.update({ where: { id: delegated.grant.id }, data: { status: "REVOKED", activeScopeKey: null, revokedAt: new Date(), revokedById: f.actor.user.id } })
+    if (variant === "wrong-scope") await db.accountantAccessGrant.update({ where: { id: delegated.grant.id }, data: { activeScopeKey: unique("unrelated-key") } })
+    if (variant === "other-named-user") {
+      await db.accountantAccessGrant.update({ where: { id: delegated.grant.id }, data: { activeScopeKey: null } })
+      await grant(f, await person(delegated.homeId, "other-named-accountant"), "REVIEWER")
+    }
+    if (variant === "managed-key-without-link") await db.accountantAccessGrant.update({ where: { id: delegated.grant.id }, data: { activeScopeKey: `managed:${f.clientId}:${delegated.candidate.user.id}` } })
+    await denied(f, () => assign(f, g, delegated.candidate.user.id))
+  }
+  proof("invalid-delegated-grants-no-effects", { variants: [...variants], exactSnapshotsUnchanged: true })
+})
+
+it("rejects managed restrictions and lost module authority without side effects", async () => {
+  const variants = ["suspended", "assignment-ended", "read-only-assignment", "home-module-suspended", "client-module-read-only", "home-inactive"] as const
+  for (const variant of variants) {
+    const f = await fixture(), delegated = await managed(f, "PREPARER", variant === "read-only-assignment" ? "READ_ONLY" : "PREPARER"), g = await graph(f)
+    if (variant === "suspended") await executeFirmEngagementCommand(delegated.actor, { command: "TRANSITION", engagementId: delegated.active.engagementId, expectedVersion: 1, status: "SUSPENDED", reason: "Synthetic explicit suspension before assignment", idempotencyKey: unique("suspend") })
+    if (variant === "assignment-ended") await executeFirmEngagementCommand(delegated.actor, { command: "REMOVE_ASSIGNMENT", engagementId: delegated.active.engagementId, expectedVersion: 1, assignmentId: delegated.assigned.assignmentId!, expectedAssignmentVersion: 1, reason: "Synthetic explicit removal before assignment", idempotencyKey: unique("remove") })
+    if (variant === "home-module-suspended") await db.tenantModuleGrant.updateMany({ where: { organizationId: delegated.homeId, moduleSlug: "accounting" }, data: { status: "suspended" } })
+    if (variant === "client-module-read-only") await db.tenantModuleGrant.updateMany({ where: { organizationId: f.clientId, moduleSlug: "close_assurance" }, data: { status: "read_only", readOnly: true } })
+    if (variant === "home-inactive") await db.organization.update({ where: { id: delegated.homeId }, data: { isActive: false } })
+    await denied(f, () => assign(f, g, delegated.candidate.user.id))
+  }
+  proof("managed-restrictions-no-effects", { variants: [...variants], exactSnapshotsUnchanged: true })
+})
+
+it("preserves individually targeted and aligned multi-target comments", async () => {
+  const f = await fixture(), g = await graph(f)
+  const targets = [{ findingId: g.finding.id }, { closeRunId: g.run.id }, { evidenceItemId: g.evidence.id }, { reviewId: g.review.id }, { findingId: g.finding.id, closeRunId: g.run.id }, { findingId: g.finding.id, evidenceItemId: g.evidence.id, reviewId: g.review.id, closeRunId: g.run.id }]
+  for (const input of targets) {
+    const result = await comment(f, input)
+    expect(await db.accountantComment.findUniqueOrThrow({ where: { id: result.id } })).toMatchObject({ ...g.scope, ...input, authorId: f.actor.user.id })
+  }
+  expect(await db.accountantComment.count({ where: { organizationId: f.clientId } })).toBe(6)
+  expect(await db.ledgerAuditEvent.count({ where: { organizationId: f.clientId, action: "CLOSE_ACCOUNTANT_COMMENT_ADDED" } })).toBe(6)
+  expect(await db.businessEvent.count({ where: { organizationId: f.clientId, eventType: "close.assurance.accountant_comment.added" } })).toBe(6)
+  proof("aligned-comment-targets", { comments: 6, individuallyTargetedVariants: 4, alignedMultiTargetVariants: 2 })
+})
+
+it("rejects every inconsistent or missing secondary comment association", async () => {
+  const f = await fixture(), local = await graph(f), other = await graph(f), foreign = await graph(f, f.foreignId)
+  const cases = [
+    { input: { findingId: local.finding.id, evidenceItemId: foreign.evidence.id }, code: "NOT_FOUND" },
+    { input: { findingId: local.finding.id, reviewId: foreign.review.id }, code: "NOT_FOUND" },
+    { input: { findingId: local.finding.id, closeRunId: other.run.id }, code: "BUSINESS_RULE_VIOLATION" },
+    { input: { findingId: local.finding.id, evidenceItemId: other.evidence.id }, code: "BUSINESS_RULE_VIOLATION" },
+    { input: { evidenceItemId: local.evidence.id, reviewId: other.review.id }, code: "BUSINESS_RULE_VIOLATION" },
+    { input: { findingId: local.finding.id, evidenceItemId: unique("missing-evidence") }, code: "NOT_FOUND" },
+  ]
+  for (const test of cases) await denied(f, () => comment(f, test.input), [test.code])
+  proof("mixed-comment-targets-no-effects", { variants: ["foreign-evidence", "foreign-review", "conflicting-explicit-run", "different-owned-period", "different-owned-run", "missing-secondary"], exactSnapshotsUnchanged: true })
+})
+
+it("rejects corrupt finding, evidence and checklist parent tuples before mutations", async () => {
+  const variants = ["foreign-run", "foreign-period", "run-foreign-period", "different-checklist-run", "foreign-checklist", "different-checklist-period", "evidence-foreign-finding", "evidence-foreign-checklist"] as const
+  for (const variant of variants) {
+    const f = await fixture(), local = await graph(f), other = await graph(f), foreign = await graph(f, f.foreignId)
+    if (variant === "foreign-run") await db.closeAssuranceFinding.update({ where: { id: local.finding.id }, data: { closeRunId: foreign.run.id } })
+    if (variant === "foreign-period") await db.closeAssuranceFinding.update({ where: { id: local.finding.id }, data: { periodId: foreign.period.id } })
+    if (variant === "run-foreign-period") await db.closeRun.update({ where: { id: local.run.id }, data: { periodId: foreign.period.id } })
+    if (variant === "different-checklist-run") await db.closeAssuranceFinding.update({ where: { id: local.finding.id }, data: { checklistItemId: other.checklist.id } })
+    if (variant === "foreign-checklist") await db.closeAssuranceFinding.update({ where: { id: local.finding.id }, data: { checklistItemId: foreign.checklist.id } })
+    if (variant === "different-checklist-period") await db.closeChecklistItem.update({ where: { id: local.checklist.id }, data: { periodId: other.period.id } })
+    if (variant === "evidence-foreign-finding") await db.closeEvidenceItem.update({ where: { id: local.evidence.id }, data: { findingId: foreign.finding.id } })
+    if (variant === "evidence-foreign-checklist") await db.closeEvidenceItem.update({ where: { id: local.evidence.id }, data: { checklistItemId: foreign.checklist.id } })
+    if (variant.startsWith("evidence-")) await denied(f, () => comment(f, { evidenceItemId: local.evidence.id }), ["BUSINESS_RULE_VIOLATION", "NOT_FOUND"])
+    else {
+      await denied(f, () => assign(f, local, f.owner.user.id), ["BUSINESS_RULE_VIOLATION", "NOT_FOUND"])
+      await denied(f, () => comment(f, { findingId: local.finding.id }), ["BUSINESS_RULE_VIOLATION", "NOT_FOUND"])
+    }
+  }
+  proof("corrupt-finding-graph-no-effects", { variants: [...variants], exactSnapshotsUnchanged: true, serviceScopeOnlyNoNewSqlConstraint: true })
+})
+
+it("creates an owned review and rejects a run pointing at a foreign period", async () => {
+  const f = await fixture(), good = await graph(f), corrupt = await graph(f), foreign = await graph(f, f.foreignId)
+  const review = await updateAccountantReview(f.clientId, { closeRunId: good.run.id, status: "OPEN", decisionNotes: "Synthetic scope-only review", correlationId: randomUUID() }, control(f.actor))
+  expect(await db.accountantReview.findUniqueOrThrow({ where: { id: review.id } })).toMatchObject({ ...good.scope, reviewerId: f.actor.user.id, status: "OPEN" })
+  await db.closeRun.update({ where: { id: corrupt.run.id }, data: { periodId: foreign.period.id } })
+  await denied(f, () => updateAccountantReview(f.clientId, { closeRunId: corrupt.run.id, status: "OPEN", correlationId: randomUUID() }, control(f.actor)), ["NOT_FOUND", "BUSINESS_RULE_VIOLATION"])
+  proof("owned-review-period", { validReviewCreated: true, foreignParentPeriodDeniedWithoutEffects: true })
+})
+
+function gate() { let release!: () => void; const promise = new Promise<void>(resolve => { release = resolve }); return { promise, release } }
+async function waitForBlockedBy(pid: number) {
+  const deadline = Date.now() + 10000
+  while (Date.now() < deadline) {
+    const [observed] = await db.$queryRaw<Array<{ waiting: boolean }>>(Prisma.sql`SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND pid<>pg_backend_pid() AND ${pid} = ANY(pg_blocking_pids(pid))) AS waiting`)
+    if (observed.waiting) return
+  }
+  throw Error("Owned role writer did not produce an observable PostgreSQL lock wait")
+}
+
+it("denies actual assignment after an observed persisted recipient role revocation wins", async () => {
+  const f = await fixture(), g = await graph(f), held = gate(), finish = gate(); let writerPid = 0
+  const before = await snapshot(f)
+  const revoke = db.$transaction(async tx => {
+    await tx.role.update({ where: { id: f.owner.role.id }, data: { permissions: [] } })
+    writerPid = (await tx.$queryRaw<Array<{ pid: number }>>(Prisma.sql`SELECT pg_backend_pid() AS pid`))[0].pid
+    held.release(); await finish.promise
+  }, { timeout: 30000 })
+  await held.promise
+  let assignment: Promise<unknown> | undefined, settled: PromiseSettledResult<unknown>[] = []
+  try {
+    // The handler is attached before the releasing transaction can settle.
+    assignment = assign(f, g, f.owner.user.id).then(() => ({ accepted: true }), error => ({ accepted: false, code: (error as { code?: string }).code }))
+    await waitForBlockedBy(writerPid)
+  } finally {
+    finish.release()
+    settled = await Promise.allSettled([revoke, assignment ?? Promise.resolve(undefined)])
+  }
+  expect(settled[0].status).toBe("fulfilled"); expect(settled[1]).toEqual({ status: "fulfilled", value: { accepted: false, code: "FORBIDDEN" } })
+  expect(await snapshot(f)).toBe(before)
+  proof("persisted-recipient-role-revocation-wins", { actualPublicService: true, exactBlockingWriterPidObserved: true, committedRevocationWins: true, exactSnapshotsUnchanged: true })
+}, 60000)
+
+it("rechecks persisted recipient grant expiry at a supplied future publication time under real locks", async () => {
+  const f = await fixture(), delegated = await external(f, "PREPARER"), expiry = new Date(Date.now() + 60000)
+  await db.accountantAccessGrant.update({ where: { id: delegated.grant.id }, data: { expiresAt: expiry } })
+  const before = await snapshot(f)
+  await db.$transaction(async tx => {
+    const locked = await prelockCloseFindingAssigneeOrganizationsInTx(tx, { organizationId: f.clientId, assigneeId: delegated.candidate.user.id })
+    const authority = await lockCloseFindingAssigneeInTx(tx, locked)
+    await authority.revalidate()
+    await expect(authority.revalidate(new Date(expiry.getTime() + 1))).rejects.toMatchObject({ code: "FORBIDDEN" })
+  }, { isolationLevel: "Serializable" })
+  expect(await snapshot(f)).toBe(before)
+  proof("recipient-expiry-at-publication-time", { realPersistedHelperLocks: true, explicitFuturePublicationTimestamp: true, fullPublicServiceElapsedClockRace: false, expiredGrantDenied: true, exactSnapshotsUnchanged: true })
+})
+
+it("rolls assignment, audit and workflow publication back after an observed audit boundary fault", async () => {
+  const f = await fixture(), g = await graph(f), suffix = randomBytes(5).toString("hex"), fn = "ownership_audit_fault_" + suffix, sequence = fn + "_reached", trigger = fn + "_trigger"
+  const before = await snapshot(f)
+  await db.$executeRawUnsafe(`CREATE SEQUENCE ${sequence}`)
+  try {
+    await db.$executeRawUnsafe(`CREATE FUNCTION ${fn}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW."organizationId" = '${f.clientId}' AND NEW."resourceId" = '${g.finding.id}' AND NEW.action = 'CLOSE_FINDING_ASSIGNED' THEN PERFORM nextval('${sequence}'); RAISE EXCEPTION 'Synthetic close assignment audit boundary failure'; END IF; RETURN NEW; END $$`)
+    await db.$executeRawUnsafe(`CREATE TRIGGER ${trigger} BEFORE INSERT ON ledger_audit_events FOR EACH ROW EXECUTE FUNCTION ${fn}()`)
+    await denied(f, () => assign(f, g, f.owner.user.id), ["INTERNAL_ERROR"])
+    const [marker] = await db.$queryRawUnsafe<Array<{ last_value: bigint; is_called: boolean }>>(`SELECT last_value, is_called FROM ${sequence}`)
+    expect(marker.is_called).toBe(true); expect(String(marker.last_value)).toBe("1")
+    expect(await snapshot(f)).toBe(before)
+  } finally {
+    await db.$executeRawUnsafe(`DROP TRIGGER IF EXISTS ${trigger} ON ledger_audit_events`)
+    await db.$executeRawUnsafe(`DROP FUNCTION IF EXISTS ${fn}()`)
+    await db.$executeRawUnsafe(`DROP SEQUENCE ${sequence}`)
+  }
+  proof("assignment-audit-failure-rollback", { faultBoundaryObservedExactlyOnce: true, exactSnapshotsUnchanged: true, ownedFaultObjectsRemoved: true })
+})

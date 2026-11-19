@@ -301,6 +301,7 @@ describe("HRIS time, leave, and attendance boundary", () => {
       metadata: { sourcePayload: certificationManifest(1) },
     })
     const client = {
+      $queryRaw: jest.fn().mockResolvedValue([{ isolationLevel: "read committed" }]),
       payrollPeriod: { findFirst: jest.fn().mockResolvedValue(payrollPeriod()) },
       payrollAttendanceSnapshot: {
         findFirst: jest.fn()
@@ -373,6 +374,7 @@ describe("HRIS time, leave, and attendance boundary", () => {
   it("requires a payroll correction run after calculation is sealed", async () => {
     mockScope.mockResolvedValue(adminScope())
     const client = {
+      $queryRaw: jest.fn().mockResolvedValue([{ isolationLevel: "read committed" }]),
       payrollPeriod: { findFirst: jest.fn().mockResolvedValue(payrollPeriod()) },
       payrollAttendanceSnapshot: {
         findFirst: jest.fn()

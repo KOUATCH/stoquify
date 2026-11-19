@@ -1,0 +1,98 @@
+{
+  "at": "2026-10-18T20:23:16.312Z",
+  "status": "PASS",
+  "head": "6ee84a90c760d2864f6aef672d8b393ac2b65971",
+  "initialTrackedChanges": 28,
+  "initialUntracked": 313,
+  "selectedBaselineFiles": 673,
+  "drift": [
+    {
+      "path": "components/landing/__tests__/CinematicLanding.test.tsx",
+      "sha256": "9cf7ce43ea2b94ae8c01c105b041b1d67972faad863af848dbe2ed42cb665cd7",
+      "currentSha256": "c55610952b7a738632f5829d20b863cc4e2409c26c1d4de61b930fc58b006d23",
+      "classification": "concurrent unrelated landing work; preserved"
+    },
+    {
+      "path": "components/landing/__tests__/workflow-atlas.test.tsx",
+      "sha256": "098c0dbf52181de7e631987910931b80daaca80225eb465a9468c19c974fe6ed",
+      "currentSha256": "743073c25f9808245ffb361b2984705325bddd6f18dd9122ebc812def487d4f9",
+      "classification": "concurrent unrelated landing work; preserved"
+    },
+    {
+      "path": "components/landing/cinematic-business-story.tsx",
+      "sha256": "0f9e6e314f98e5d602fdbd16329b1c7f5922ae717dd875b93622dbaf754e985b",
+      "currentSha256": "7d552804c1155bc2badff7ea8c6c3e0e6b83f966f3a1d9124f68ab3888e22044",
+      "classification": "concurrent unrelated landing work; preserved"
+    },
+    {
+      "path": "components/landing/cinematic.css",
+      "sha256": "88e54f15baa610694c651c9b3fbc35412b407b272bf4bf069ae2b20b99a9f367",
+      "currentSha256": "585ea6ec8c04afa996d2ed76a8828baa0be6ba929f7a95034798f932f6bbfdd9",
+      "classification": "concurrent unrelated landing work; preserved"
+    },
+    {
+      "path": "docs/retention/execution/P02/RESULT.md",
+      "sha256": "05cbd0a7b9210d40cd3252bda1eb2b0c35321de8aa8aeaf27e8aa763c1f0be6d",
+      "currentSha256": "82bdfe22cc089e4fb15c3301f38d7b67016fe2e8efff75ac65e04e2c5ffbe21f",
+      "classification": "owned"
+    },
+    {
+      "path": "docs/retention/execution/P06/RESULT.md",
+      "sha256": "e8a8f776e870eb97ca6be6dcaf7fa5eb84f4e9a1f6545c1034225c654a033788",
+      "currentSha256": "47909fa2651f6bc1270b439e67ca36ad93447f52b6ea7eac9c118aa933be06a8",
+      "classification": "owned"
+    },
+    {
+      "path": "docs/retention/execution/STATUS.md",
+      "sha256": "18af829b7ec916f90ae7c4dda5fdfacdfd0baddf79829e294aa733133ac995a9",
+      "currentSha256": "1d58d06f7c4e0ed6a9b6d1238ace469f51a63bbae8b315b858e908f1eb16e824",
+      "classification": "owned"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-outcomes.postgres.test.ts",
+      "sha256": null,
+      "currentSha256": "4381bf5a740d7a77feecfaf50650a8c1e40f92b93f4425e388f3074727c235ca",
+      "classification": "owned"
+    }
+  ],
+  "historicalResultsPreserved": [
+    "docs/retention/execution/P02/RESULT.md",
+    "docs/retention/execution/P06/RESULT.md"
+  ],
+  "unownedRegisterRowsPreserved": true,
+  "postCheckSourceHashesMatch": true,
+  "checks": {
+    "mocked": 65,
+    "database": 18,
+    "fixtureSetup": 1,
+    "operatorSteps": 7,
+    "serverCloseBlockers": 3,
+    "readStateSteps": 2
+  },
+  "cleanup": {
+    "utc": "2026-10-18T20:21:35.708Z",
+    "ports": [
+      {
+        "port": 64728,
+        "closed": true,
+        "code": "ECONNREFUSED"
+      },
+      {
+        "port": 3192,
+        "closed": true,
+        "code": "ECONNREFUSED"
+      }
+    ],
+    "success": true,
+    "retainedDisposableDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\retention-p02-p06-refresh-bb98aca78f",
+    "applicationOutput": ".next-retention-p02-p06-refresh-session-lekXKs",
+    "deletedData": false
+  },
+  "localLinksChecked": 38,
+  "limitations": [
+    "Selected-hash preservation, not exhaustive all-file attribution",
+    "Initial unstyled offline screenshot retained; cause not isolated",
+    "P02 session-subject/headers seam; no human cohort or financial producer proof",
+    "No later prompt or historical checkpoint reevaluation"
+  ]
+}

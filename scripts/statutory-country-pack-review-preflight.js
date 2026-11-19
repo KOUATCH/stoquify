@@ -1,12 +1,15 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { assessSignatureVerification } = require("./statutory-country-pack-review-package");
 
 const SHA256 = /^[a-f0-9]{64}$/;
 const TIE_OUT_HASH = /^sha256:[a-f0-9]{64}$/;
-const DECISIONS = new Set(["APPROVED", "REJECTED", "CHANGES_REQUIRED"]);
+const DECISIONS = new Set(["APPROVED", "REJECTED", "CHANGES_REQUIRED", "MORE_EVIDENCE_REQUIRED"]);
+const REVIEWED_STATUSES = new Set(["EXPERT_REVIEWED", "REGULATOR_CONFIRMED"]);
 const isText = (value) => typeof value === "string" && value.trim().length > 0;
 const validDate = (value) => isText(value) && !Number.isNaN(Date.parse(value));
+const validInterval = (from, to) => validDate(from) && (to == null || (validDate(to) && Date.parse(to) >= Date.parse(from)));
 const sha256 = (file) => crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex");
 
 function readJson(file) {
@@ -60,7 +63,7 @@ function assessPacket({ evidenceDir, decisionFile }) {
 
   const familyFailures = requiredFamilies.filter((family) => {
     const item = fixtureDecisions.find((candidate) => candidate.fixtureFamily === family);
-    return !item || !DECISIONS.has(item.decision) || !isText(item.sourceProvision) || !validDate(item.effectiveFrom) || !TIE_OUT_HASH.test(item.independentFixtureTieOutHash || "") || (item.effectiveTo != null && !validDate(item.effectiveTo));
+    return !item || !DECISIONS.has(item.decision) || !isText(item.sourceProvision) || !validInterval(item.effectiveFrom, item.effectiveTo) || !TIE_OUT_HASH.test(item.independentFixtureTieOutHash || "");
   });
   const unexpected = fixtureDecisions.filter((item) => !requiredFamilies.includes(item.fixtureFamily)).map((item) => item.fixtureFamily);
   add("fixture_family_decisions_complete", requiredFamilies.length > 0 && familyFailures.length === 0 && unexpected.length === 0, "Qualified reviewer", "Decision, source provision, dates, and independent tie-out hash for every family", [...familyFailures.map((item) => `incomplete ${item}`), ...unexpected.map((item) => `unexpected ${item}`)].join("; ") || "All required fixture decisions are complete.");
@@ -70,20 +73,30 @@ function assessPacket({ evidenceDir, decisionFile }) {
   add("all_required_fixture_families_approved", allApproved, "Qualified reviewer", "Explicit APPROVED decision for every required fixture family", allApproved ? "All required families approved." : "One or more required families are not approved.");
 
   const final = decision.finalDecision || {};
-  const finalConsistent = final.decision === "APPROVED" && decision.decisionStatus === "APPROVED" && decision.productionUseAllowed === true && validDate(final.effectiveFrom) && JSON.stringify([...(final.approvedFixtureFamilies || [])].sort()) === JSON.stringify([...requiredFamilies].sort()) && (final.excludedFixtureFamilies || []).length === 0;
+  const withinReviewedIntervals = fixtureDecisions.every((item) => Date.parse(final.effectiveFrom) >= Date.parse(item.effectiveFrom)
+    && (item.effectiveTo == null || (final.effectiveTo != null && Date.parse(final.effectiveTo) <= Date.parse(item.effectiveTo))));
+  const finalConsistent = final.decision === "APPROVED" && decision.decisionStatus === "APPROVED" && decision.productionUseAllowed === true && validInterval(final.effectiveFrom, final.effectiveTo) && withinReviewedIntervals && JSON.stringify([...(final.approvedFixtureFamilies || [])].sort()) === JSON.stringify([...requiredFamilies].sort()) && (final.excludedFixtureFamilies || []).length === 0;
   add("final_decision_consistent", finalConsistent, "Qualified reviewer", "Approved final decision consistent with every fixture decision and effective date", finalConsistent ? "Final decision is internally consistent." : "Final approval is absent or inconsistent.");
 
   const signed = decision.signedApprovalArtifact || {};
   const metadataComplete = isText(signed.file) && path.basename(signed.file) === signed.file && SHA256.test(signed.sha256 || "") && validDate(signed.signedAt) && isText(signed.signatureMethod);
   add("signed_approval_metadata_complete", metadataComplete, "Qualified reviewer", "Signed artifact filename, SHA-256, signature timestamp, and method", metadataComplete ? "Signed-artifact metadata complete." : "Signed-artifact metadata is incomplete or invalid.");
   const signedFile = metadataComplete ? path.join(evidenceDir, signed.file) : null;
-  const signedVerified = Boolean(signedFile && fs.existsSync(signedFile) && sha256(signedFile) === signed.sha256);
-  add("signed_approval_artifact_verified", signedVerified, "Authorized checker", "Retained signed artifact matching the decision SHA-256", signedVerified ? "Signed artifact hash verified." : "Signed artifact missing or hash mismatch.");
+  const signatureVerification = assessSignatureVerification({ evidenceDir, decisionFile });
+  const signedVerified = Boolean(signedFile && fs.existsSync(signedFile) && sha256(signedFile) === signed.sha256 && signatureVerification.ready);
+  add("signed_approval_artifact_verified", signedVerified, "Authorized checker", "Matching signed artifact, accepted signature method, and separate checker with retained verification evidence", signedVerified ? "Artifact bytes and checker evidence verified; signature authenticity is the checker's attestation." : `Signature/checker evidence incomplete: ${signatureVerification.blockers.join(", ")}`);
 
   const acceptanceComplete = checks.slice(0, 11).every((check) => check.passed);
-  const safeManifest = acceptanceComplete
-    ? (manifest.productionUseAllowed === false && manifest.reviewStatus === "PENDING_EXPERT_REVIEW") || (manifest.productionUseAllowed === true && manifest.reviewStatus === "APPROVED")
-    : manifest.productionUseAllowed === false && manifest.reviewStatus === "PENDING_EXPERT_REVIEW";
+  const approval = manifest.requiredApproval || {};
+  const pendingManifest = manifest.productionUseAllowed === false && manifest.reviewStatus === "PENDING_EXPERT_REVIEW"
+    && (manifest.artifacts || []).every((artifact) => artifact.productionUseAllowed !== true && !REVIEWED_STATUSES.has(artifact.reviewStatus));
+  const reviewedManifest = manifest.productionUseAllowed === true && REVIEWED_STATUSES.has(manifest.reviewStatus)
+    && approval.reviewerIdentity === reviewer.fullName && approval.reviewedAt === window.completedAt
+    && approval.effectiveFrom === final.effectiveFrom && (approval.effectiveTo ?? null) === (final.effectiveTo ?? null)
+    && approval.approvalArtifactFile === signed.file && approval.approvalArtifactHash === signed.sha256
+    && JSON.stringify([...(approval.approvedFixtureFamilies || [])].sort()) === JSON.stringify([...requiredFamilies].sort())
+    && (manifest.artifacts || []).every((artifact) => artifact.productionUseAllowed === true && REVIEWED_STATUSES.has(artifact.reviewStatus));
+  const safeManifest = pendingManifest || (acceptanceComplete && reviewedManifest);
   add("manifest_transition_not_premature", safeManifest, "Authorized maker/checker", "Manifest remains fail-closed until review evidence is complete", safeManifest ? "Manifest state is safe for the packet state." : "Manifest claims approval before evidence acceptance is complete.");
 
   const ready = acceptanceComplete && checks.every((check) => check.passed);

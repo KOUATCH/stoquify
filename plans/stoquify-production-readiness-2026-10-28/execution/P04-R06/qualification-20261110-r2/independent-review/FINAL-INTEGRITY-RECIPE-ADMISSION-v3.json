@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:15:45.167Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Read-only final source/artifact/process preservation proof after reviewed owned session cleanup and cluster stop",
+  "files": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\final-integrity-v3.cjs",
+      "sha256": "31d9988d630575ecbdbdf7c3368389fbf5b650d9a18487d7dd54b84cf5bf92ab"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\finalize.cjs",
+      "sha256": "853e7be2c20ddad2ba5175a95044f76feb874265bce8b52f452d940e48c323dd"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\stop.cjs",
+      "sha256": "0e88776d266504f5aa19578c5c2d4ffa11564e2a34b41a15b21bb0b915ed54de"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\database-common.cjs",
+      "sha256": "22d6005ff8ac2355837e339c621819ce2411ba6322bc1febe2d0edfe52661be8"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\fixture-control.cjs",
+      "sha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\fixture-definition.cjs",
+      "sha256": "1e37557aef27d8797850f8704288d61c3d33943928e86124e1145244171a4bfe"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\verify-generated-schema.cjs",
+      "sha256": "f0c73d0ed95fa45c328006c04607b8b129b7347400a3d96292914aa4170d1d93"
+    }
+  ],
+  "reviewed": [
+    "Requires actual independent runtime observation acceptance even if qualification failed; raw failure remains false.",
+    "Exact synthetic session cleanup leaves no sessions and preserves every business/audit digest.",
+    "Actual owned PID absence now required using read-only signal0/ESRCH; live/reused/ambiguous process is a reconciliation failure and is never terminated by verifier.",
+    "Both runtime copies, sealed current/legacy artifacts, canonical generated schema, all current/candidate source entries,68 critical inputs, selected archived dependencies and HEAD revalidated.",
+    "All three owned cluster markers remain stopped and all seven loopback ports are tested on IPv4 and localhost (14 checks).",
+    "One exclusive final-integrity receipt only; passed means preservation verified, not product or production admission."
+  ],
+  "conditionsBeforeExecution": [
+    "Actual runtime outcome and native session/cluster cleanup must already be accepted; preserve launcher errors/ETIMEDOUT explicitly if observed.",
+    "Current source drift, unexpected process/client, occupied port or integrity mismatch must block advancement for bounded reconciliation.",
+    "No repeated session cleanup, process stop or source correction performed by this verifier."
+  ],
+  "qualificationPassed": false,
+  "predecessor": {
+    "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION.json",
+    "sha256": "27690c3c1c4ef82a355a271f8ca543bee84a3663b1944fc858c737a81568eea5"
+  },
+  "successorDelta": "Only admission filename and active r2 build receipt; source-identity field and all process/integrity/native cleanup gates unchanged.",
+  "predecessorAdmissionSha256": "cb8ac1dccb64dd5d077d00478be1a36349ff501c2128d6792eb2c58891ce43ed"
+}

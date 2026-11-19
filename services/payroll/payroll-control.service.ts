@@ -1,5 +1,6 @@
 import { createHash } from "crypto";
 import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service";
+import { assertPayrollHistoryCurrent, hasPayrollHistoryV2Evidence } from "@/services/payroll/payroll-history-proof";
 import {
   AccountingPostingPurpose,
   AccountingSourceType,
@@ -73,6 +74,8 @@ import {
   type HrisPayrollReadinessExport,
 } from "@/services/hris/payroll-readiness-contract";
 import { validateHrisTimeLeaveAttendanceCertification } from "@/services/hris/time-leave.contract";
+import { assertOperationalCorrectionsCertified, lockOperationalEmployeeInTx } from "@/services/hris/attendance-correction";
+import { assertOperationalAttendanceCurrentInTx } from "@/services/hris/operational-time.service";
 import { assertPayrollCertifiedInputProofMetadata, payrollCertifiedInputProofFromMetadata } from "@/services/payroll/certified-input-proof";
 import {
   getCountryPack,
@@ -1597,7 +1600,8 @@ function prismaConflictCode(error: unknown) {
   return typeof code === "string" ? code : null;
 }
 
-async function inPayrollTransitionTransaction<T>(
+/** @internal Shared lifecycle boundary, also exercised against disposable PostgreSQL. */
+export async function inPayrollTransitionTransaction<T>(
   client: DbClient,
   work: (tx: Prisma.TransactionClient) => Promise<T>,
 ) {
@@ -2504,9 +2508,31 @@ function buildPayrollYearToDateAccumulatorProof(input: {
       .toDecimalPlaces(2);
   }
 
+  // Bind source identity and bytes, not only totals and separately sorted hashes.
+  // This is evidence of the observed history, not certification of its completeness.
+  const priorLineEvidence = input.priorLines.map((line) => ({
+    runId: line.sourceRunId,
+    lineId: line.id,
+    employeeId: line.employeeId,
+    currency: line.currency,
+    payDate: line.sourcePayDate,
+    runStatus: line.sourceRunStatus,
+    runDocumentHash: line.sourceRunDocumentHash,
+    lineDocumentHash: line.documentHash ?? null,
+    calculationSnapshotHash: line.calculationSnapshot == null
+      ? null
+      : prefixedHash(line.calculationSnapshot),
+    recordedLineAmounts: Object.fromEntries(
+      PAYROLL_COMPONENT_PROOF_AMOUNT_KEYS.map((key) => [
+        key,
+        lineComponentDecimal(line, key)?.toString() ?? null,
+      ]),
+    ),
+  }));
+
   const payload = {
     kind: "AQSTOQFLOW_PAYROLL_YEAR_TO_DATE_ACCUMULATOR_PROOF" as const,
-    version: 1 as const,
+    version: 2 as const,
     accumulatorBasis:
       "POSTED_PAID_PRIOR_LINES_PLUS_CURRENT_EFFECTIVE_LINE" as const,
     employeeId: input.employeeId,
@@ -2522,6 +2548,8 @@ function buildPayrollYearToDateAccumulatorProof(input: {
     priorRunLineDocumentHashes: priorRunLineDocumentHashes.sort(),
     missingPriorCalculationSnapshotCount,
     missingPriorLineDocumentHashCount,
+    priorLineEvidence,
+    observedHistoryHash: prefixedHash(priorLineEvidence),
     priorAmounts: payrollYearToDateAmountStrings(priorAmounts),
     currentAmounts: payrollYearToDateAmountStrings(input.currentAmounts),
     yearToDateAmounts: payrollYearToDateAmountStrings(yearToDateAmounts),
@@ -5796,6 +5824,7 @@ export async function freezeAttendanceSnapshot(
   }
 
   return inTransaction(client, async (tx) => {
+    await lockOperationalEmployeeInTx(tx, parsed.organizationId, parsed.employeeId);
     const period = await tx.payrollPeriod.findFirst({
       where: {
         id: parsed.payrollPeriodId,
@@ -5839,13 +5868,17 @@ export async function freezeAttendanceSnapshot(
       where: {
         id: parsed.employeeId,
         organizationId: parsed.organizationId,
-        status: PayrollEmployeeStatus.ACTIVE,
+        hireDate: { lte: period.periodEnd },
+        OR: [
+          { status: PayrollEmployeeStatus.ACTIVE, OR: [{ terminationDate: null }, { terminationDate: { gt: period.periodStart } }] },
+          { status: PayrollEmployeeStatus.TERMINATED, terminationDate: { gt: period.periodStart } },
+        ],
         deletedAt: null,
       },
     });
-    if (!employee)
+    if (!employee || (employee.terminationDate && employee.terminationDate <= employee.hireDate))
       throw new BusinessRuleError(
-        "Attendance can only be frozen for an active payroll employee.",
+        "Attendance can only be frozen for an active employee or a dated leaver whose employment intersects this period.",
       );
 
     const existing = await tx.payrollAttendanceSnapshot.findFirst({
@@ -5992,7 +6025,9 @@ export async function calculatePayrollRun(
     employeeIds: [...(parsed.employeeIds ?? [])].sort(),
   });
 
-  return inTransaction(client, async (tx) => {
+  // Reuse the transition transaction/retry boundary. A supplied TransactionClient
+  // inherits its caller's transaction; that caller owns isolation and retry.
+  return inPayrollTransitionTransaction(client, async (tx) => {
     const existing = await tx.payrollRun.findFirst({
       where: {
         organizationId: parsed.organizationId,
@@ -6240,6 +6275,14 @@ export async function calculatePayrollRun(
       assertPayrollInputReadiness(lifecycleReadinessVerdict);
     }
 
+    const attendanceEmployees = await tx.payrollEmployee.findMany({
+      where: { organizationId: parsed.organizationId, status: PayrollEmployeeStatus.ACTIVE, deletedAt: null,
+        ...(parsed.employeeIds ? { id: { in: parsed.employeeIds } } : {}) },
+      select: { id: true }, orderBy: { id: "asc" },
+    });
+    for (const employee of attendanceEmployees) {
+      await lockOperationalEmployeeInTx(tx, parsed.organizationId, employee.id);
+    }
     const employees = await tx.payrollEmployee.findMany({
       where: {
         organizationId: parsed.organizationId,
@@ -6300,6 +6343,12 @@ export async function calculatePayrollRun(
       },
     });
 
+    for (const employee of employees) {
+      await assertOperationalCorrectionsCertified(tx,
+        { organizationId: parsed.organizationId, employeeId: employee.id }, period, employee.attendanceSnapshots[0]?.metadata);
+      await assertOperationalAttendanceCurrentInTx(tx,
+        { organizationId: parsed.organizationId, employeeId: employee.id, payrollPeriodId: period.id }, employee.attendanceSnapshots[0]?.metadata);
+    }
     const inputReadinessVerdict = buildPayrollInputReadinessVerdict({
       organizationId: parsed.organizationId,
       period,
@@ -7090,6 +7139,7 @@ export async function calculatePayrollRun(
         preparedById: parsed.preparedById,
         metadata: safeJson({
           gate: "012-payroll-presence-engine",
+          yearToDateProofVersion: 2,
           idempotencyPayloadHash,
           countryPackStatus: countryPack,
           statutoryScenarioCoverage,
@@ -7549,6 +7599,7 @@ export async function reviewPayrollRun(
         parsed.payrollRunId,
         PayrollRunStatus.REVIEWED,
       );
+      await authorizePayrollRunTransition(tx, parsed, "payroll.run.review", payrollRun, payrollRun.preparedById);
       return {
         payrollRun,
         businessEventId: replay.businessEventId,
@@ -7562,6 +7613,7 @@ export async function reviewPayrollRun(
         organizationId: parsed.organizationId,
         deletedAt: null,
       },
+      include: { payrollPeriod: { select: { payDate: true } }, lines: true },
     });
     if (!run) throw new NotFoundError("Payroll run not found");
     assertPayrollTransitionSource(run, parsed, PayrollRunStatus.CALCULATED);
@@ -7575,6 +7627,7 @@ export async function reviewPayrollRun(
       run,
       run.preparedById,
     );
+    await assertPayrollHistoryCurrent(tx, parsed.organizationId, run.id, run);
 
     const eventPayload = {
       payloadVersion: 1,
@@ -7699,6 +7752,7 @@ export async function approvePayrollRun(
         parsed.payrollRunId,
         PayrollRunStatus.APPROVED,
       );
+      await authorizePayrollRunTransition(tx, parsed, "payroll.run.approve", payrollRun, payrollRun.preparedById);
       return {
         payrollRun,
         businessEventId: replay.businessEventId,
@@ -7712,7 +7766,7 @@ export async function approvePayrollRun(
         organizationId: parsed.organizationId,
         deletedAt: null,
       },
-      include: { payrollPeriod: true },
+      include: { payrollPeriod: true, lines: true },
     });
     if (!run) throw new NotFoundError("Payroll run not found");
     assertPayrollTransitionSource(run, parsed, PayrollRunStatus.REVIEWED);
@@ -7733,6 +7787,7 @@ export async function approvePayrollRun(
       run,
       run.preparedById,
     );
+    await assertPayrollHistoryCurrent(tx, parsed.organizationId, run.id, run);
 
     const eventPayload = {
       payloadVersion: 1,
@@ -7909,6 +7964,7 @@ export async function emitPayrollPayslips(
           "Emitted payroll run evidence is missing.",
         );
       }
+      await authorizePayrollRunTransition(tx, parsed, "payroll.payslips.emit", payrollRun);
       return {
         payrollRun,
         businessEventId: replay.businessEventId,
@@ -7951,6 +8007,7 @@ export async function emitPayrollPayslips(
       "payroll.payslips.emit",
       run,
     );
+    await assertPayrollHistoryCurrent(tx, parsed.organizationId, run.id, run);
     assertPayrollProductionAdmission(run);
 
     const legalProvenance = legalProvenanceFromMetadata(run.metadata);
@@ -8215,6 +8272,7 @@ export async function postPayrollRun(
           "Posted payroll run ledger evidence is missing.",
         );
       }
+      await authorizePayrollRunTransition(tx, parsed, "payroll.run.post", payrollRun, payrollRun.approvedById);
       return {
         payrollRun,
         ledgerPostingBatchId: payrollRun.ledgerPostingBatchId,
@@ -8269,6 +8327,7 @@ export async function postPayrollRun(
       run,
       run.approvedById,
     );
+    await assertPayrollHistoryCurrent(tx, parsed.organizationId, run.id, run);
     assertPayrollProductionAdmission(run);
 
     const accountingPeriod = await getOpenPeriodForDate(
@@ -8560,33 +8619,6 @@ export async function approveAndPostPayrollRun(
     });
     if (!run) throw new NotFoundError("Payroll run not found");
 
-    if (run.status === PayrollRunStatus.POSTED) {
-      assertIdempotencyPayloadMatches(
-        run.metadata,
-        approvalPayloadHash,
-        "Payroll run approval idempotency key was reused with a different payload.",
-      );
-      return {
-        payrollRun: run,
-        ledgerPostingBatchId: run.ledgerPostingBatchId,
-        businessEventId: run.postedBusinessEventId,
-        ledgerStatus: "IDEMPOTENT_REPLAY" as const,
-      };
-    }
-
-    if (
-      run.status !== PayrollRunStatus.CALCULATED &&
-      run.status !== PayrollRunStatus.REVIEWED
-    ) {
-      throw new BusinessRuleError(
-        "Only calculated or reviewed payroll runs can be approved and posted.",
-      );
-    }
-    if (run.lines.length === 0)
-      throw new BusinessRuleError(
-        "Payroll run has no calculated employee lines.",
-      );
-
     const correctionMetadata = payrollRunCorrectionMetadata(run);
 
     const controlDecision = evaluateSensitiveAction({
@@ -8609,6 +8641,38 @@ export async function approveAndPostPayrollRun(
     });
     await auditSensitiveActionDecision(tx, controlDecision);
     assertSensitiveActionAllowed(controlDecision);
+
+    if (run.status === PayrollRunStatus.POSTED) {
+      assertIdempotencyPayloadMatches(
+        run.metadata,
+        approvalPayloadHash,
+        "Payroll run approval idempotency key was reused with a different payload.",
+      );
+      return {
+        payrollRun: run,
+        ledgerPostingBatchId: run.ledgerPostingBatchId,
+        businessEventId: run.postedBusinessEventId,
+        ledgerStatus: "IDEMPOTENT_REPLAY" as const,
+      };
+    }
+
+    if (hasPayrollHistoryV2Evidence(run)) {
+      throw payrollTrustSpineError("INVALID_TRANSITION",
+        "Payroll runs with v2 history evidence require the independent payroll lifecycle commands.", 409);
+    }
+    if (
+      run.status !== PayrollRunStatus.CALCULATED &&
+      run.status !== PayrollRunStatus.REVIEWED
+    ) {
+      throw new BusinessRuleError(
+        "Only calculated or reviewed payroll runs can be approved and posted.",
+      );
+    }
+    if (run.lines.length === 0)
+      throw new BusinessRuleError(
+        "Payroll run has no calculated employee lines.",
+      );
+
     assertPayrollProductionAdmission(run);
 
     const accountingPeriod = await getOpenPeriodForDate(
@@ -9043,6 +9107,15 @@ export async function requestPayrollPaymentBatch(
         requestPayloadHash,
         "Payroll payment request idempotency key was reused with a different payload.",
       );
+      const decision = evaluateSensitiveAction({
+        action: "payroll.payment.request", actorId: parsed.requestedById,
+        organizationId: parsed.organizationId, actorPermissions: parsed.actorPermissions,
+        lastAuthAt: parsed.lastAuthAt, now: parseDate(parsed.now, paymentDate),
+        resourceType: "PayrollPaymentBatch", resourceId: existing.id,
+        amount: existing.amount, currency: existing.currency,
+      });
+      await auditSensitiveActionDecision(tx, decision);
+      assertSensitiveActionAllowed(decision);
       return {
         payrollPaymentBatch: existing,
         created: false,
@@ -9447,6 +9520,16 @@ export async function approvePayrollPaymentBatch(
         approvalPayloadHash,
         "Payroll payment approval idempotency key was reused with a different payload.",
       );
+      const decision = evaluateSensitiveAction({
+        action: "payroll.payment.approve", actorId: parsed.approvedById,
+        organizationId: parsed.organizationId, actorPermissions: parsed.actorPermissions,
+        lastAuthAt: parsed.lastAuthAt, now: approvedAt,
+        resourceType: "PayrollPaymentBatch", resourceId: paymentBatch.id,
+        subjectActorId: paymentBatch.requestedById,
+        amount: paymentBatch.amount, currency: paymentBatch.currency,
+      });
+      await auditSensitiveActionDecision(tx, decision);
+      assertSensitiveActionAllowed(decision);
       return {
         payrollPaymentBatch: paymentBatch,
         approved: false,
@@ -9636,6 +9719,16 @@ export async function releasePayrollPaymentBatch(
         releasePayloadHash,
         "Payroll payment release idempotency key was reused with a different payload.",
       );
+      const decision = evaluateSensitiveAction({
+        action: "payroll.payment.release", actorId: parsed.releasedById,
+        organizationId: parsed.organizationId, actorPermissions: parsed.actorPermissions,
+        lastAuthAt: parsed.lastAuthAt, now: releasedAt,
+        resourceType: "PayrollPaymentBatch", resourceId: paymentBatch.id,
+        subjectActorId: paymentBatch.approvedById,
+        amount: paymentBatch.amount, currency: paymentBatch.currency,
+      });
+      await auditSensitiveActionDecision(tx, decision);
+      assertSensitiveActionAllowed(decision);
       return {
         payrollPaymentBatch: paymentBatch,
         postingBatchId: paymentBatch.ledgerPostingBatchId,

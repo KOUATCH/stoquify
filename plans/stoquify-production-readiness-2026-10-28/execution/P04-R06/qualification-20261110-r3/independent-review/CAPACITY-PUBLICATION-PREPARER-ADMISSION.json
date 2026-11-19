@@ -1,0 +1,61 @@
+{
+  "at": "2026-11-10T16:06:44.607Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "files": [
+    {
+      "path": "prepare-capacity-publication.cjs",
+      "sha256": "51c5e31dbe841c9a1935cd76e7610a84ed7674b1f428a60ba0b6b6544ac58ccc"
+    },
+    {
+      "path": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW.json",
+      "sha256": "62fb15d44d202a24fa728c41b68df1e3315a9f4856df480c33d9e149f67a7793"
+    },
+    {
+      "path": "capacity-checkpoint.json",
+      "sha256": "2d646f2a1c1497f6fabcdb1c03427f87df7f5ba900e39e74d5b1384e7e693f20"
+    },
+    {
+      "path": "dependency-staging-attempt03.json",
+      "sha256": "0863e3fbe2b5c0426f4079aa8fc433478c32d6a54b2849e0369ff03f8366ecb8"
+    },
+    {
+      "path": "preparation.json",
+      "sha256": "f2e03f764cfebb01bfce8758904a40ffbc4fb43c26243b850a7832da33c63b90"
+    },
+    {
+      "path": "resource-capture-retry-ready-r1.json",
+      "sha256": "9d7608cb7d8d5dfb32d0b9a13df9388af947b4b132045ec0845163511837363f"
+    },
+    {
+      "path": "inventory/CURRENT-SOURCE-MANIFEST-r2.json",
+      "sha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699"
+    },
+    {
+      "path": "inventory/SELECTED-INPUTS-REFRESH-r2.json",
+      "sha256": "84d9461ce97882a29239857605eb662f319cc464303704ff78be26e610a54664"
+    },
+    {
+      "path": "RETRY-HANDOFF.md",
+      "sha256": "67599a2250fc01f2205ed6b7eb07ba408e9f963b39bece23a81d8c26e383053b"
+    }
+  ],
+  "scope": "Prepare five exclusive local evidence documents only; no shared publication admission",
+  "entry": "prepare-capacity-publication.cjs",
+  "outputs": [
+    "RESULT.md",
+    "CURRENT.md",
+    "NEXT.md",
+    "advancement-gates.json",
+    "publication-input.json"
+  ],
+  "reviewed": [
+    "Actual accepted blocked checkpoint and null candidate/artifact identity asserted",
+    "Source/mock/dependency preparation separated from no native/build/browser execution",
+    "Historical116 mocked passes explicitly not rerun; database counts historical",
+    "Fresh capacity and exact source equality required before immutable retry",
+    "E31 publication preserves prior E01-E30 and existing tasks/authorizations in prepared narrative"
+  ],
+  "finalPublicationNeedsExactInputReview": true,
+  "qualificationPassed": false
+}

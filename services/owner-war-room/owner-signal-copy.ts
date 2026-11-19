@@ -1,3 +1,5 @@
+import { commandSourceFreshness } from "@/lib/dashboard/command-center-source-copy"
+import { presentDailySignal } from "@/services/daily-habit/daily-habit-signal-presentation"
 import type { ActionQueueResult, BusinessSignalType } from "@/services/signals/business-signal-contracts"
 import type { OwnerLocale } from "./owner-war-room-copy"
 import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
@@ -96,6 +98,8 @@ export function presentOwnerActionQueue(queue: ActionQueueResult, locale: OwnerL
     })),
     signals: queue.signals.map(signal => ({
       ...signal,
+      freshness: commandSourceFreshness(signal.freshness, locale),
+      detail: presentDailySignal(signal, locale).detail,
       title: title(signal.title, signal.signalType),
       suggestedAction: step(signal.suggestedAction, signal.signalType),
       businessImpact: impact(signal.businessImpact, signal.signalType),

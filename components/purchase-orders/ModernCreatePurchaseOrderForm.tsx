@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { formatCurrency } from "@/lib/formatCurrency"
+import { formatPurchaseOrderMoney, previewPurchaseOrderLine, previewPurchaseOrderTotals } from "./purchase-order-money"
 import { generatePONumber } from "@/lib/generatePONumber"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -46,7 +46,7 @@ import {
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { getModuleOperationErrorReason, type ModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -102,6 +102,8 @@ interface ModernCreatePurchaseOrderFormProps {
   locations?: Array<{ id: string; name: string; address?: string; type?: string }>
   items?: Array<{ id: string; name: string; sku: string; description?: string; costPrice?: number; thumbnail?: string }>
   organizationId: string
+  currency: string
+  locale: "en" | "fr"
 }
 
 const FORM_STEPS = [
@@ -121,9 +123,12 @@ export function ModernCreatePurchaseOrderForm({
   suppliers = [],
   locations = [],
   items = [],
-  organizationId
+  organizationId,
+  currency,
+  locale,
 }: ModernCreatePurchaseOrderFormProps) {
   const router = useRouter()
+  const formatCurrency = (amount: number) => formatPurchaseOrderMoney(amount, locale, currency)
   const t = useTranslations("moduleComposition.stop")
   const [currentStep, setCurrentStep] = useState<FormStep>('basic')
   const [completedSteps, setCompletedSteps] = useState<Set<FormStep>>(new Set())
@@ -284,24 +289,8 @@ export function ModernCreatePurchaseOrderForm({
   }, [orderLines, warning])
 
   // Calculate totals
-  const calculateTotals = useCallback(() => {
-    let subtotal = 0
-    let totalTax = 0
-    let totalDiscount = 0
-
-    orderLines.forEach(line => {
-      const lineTotal = line.quantity * line.unitPrice
-      const tax = lineTotal * (line.taxRate / 100)
-      subtotal += lineTotal
-      totalTax += tax
-      totalDiscount += line.discount
-    })
-
-    const shippingCost = form.getValues("shippingCost") || 0
-    const total = subtotal + totalTax + shippingCost - totalDiscount
-
-    return { subtotal, totalTax, totalDiscount, shippingCost, total }
-  }, [orderLines, form])
+  const shippingForPreview = form.watch("shippingCost")
+  const calculateTotals = useCallback(() => previewPurchaseOrderTotals(orderLines, shippingForPreview ?? 0), [orderLines, shippingForPreview])
 
   // Filter items for search
   const filteredItems = items.filter(item =>
@@ -328,6 +317,7 @@ export function ModernCreatePurchaseOrderForm({
   }
 
   // Actual form submission after confirmation
+  const creationRequest = useRef<string | null>(null)
   const handleConfirmedSubmit = async () => {
     const data = form.getValues()
 
@@ -343,6 +333,8 @@ export function ModernCreatePurchaseOrderForm({
     try {
       if (action) {
         const formData = new FormData()
+        creationRequest.current ??= crypto.randomUUID()
+        formData.set("requestId", creationRequest.current)
         Object.entries(data).forEach(([key, value]) => {
           if (value instanceof Date) {
             formData.append(key, value.toISOString())
@@ -826,9 +818,7 @@ export function ModernCreatePurchaseOrderForm({
                               </TableHeader>
                               <TableBody>
                                 {orderLines.map((line) => {
-                                  const lineTotal = line.quantity * line.unitPrice
-                                  const tax = lineTotal * (line.taxRate / 100)
-                                  const total = lineTotal + tax - line.discount
+                                  const total = previewPurchaseOrderLine(line)
                                   return (
                                     <TableRow key={line.id}>
                                       <TableCell>

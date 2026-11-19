@@ -1,0 +1,100 @@
+9ae474cddf4dbd4ad0c20e0698ec7630
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+}
+_export(exports, {
+    get POST () {
+        return POST;
+    },
+    get runtime () {
+        return runtime;
+    }
+});
+const _server = require("next/server");
+const _routeresponse = require("@/lib/error-handling/route-response");
+const _policy = require("@/lib/media/policy");
+const _trustedorigins = require("@/lib/security/trusted-origins");
+const _pictureauthorization = require("@/services/media/picture-authorization");
+const _pictureservice = require("@/services/media/picture.service");
+const _actionerrors = require("@/services/_shared/action-errors");
+const runtime = "nodejs";
+const ENDPOINT = "POST /api/media/upload";
+const MAX_REQUEST_BYTES = _policy.PICTURE_MAX_BYTES + 64 * 1024;
+const invalid = (message)=>new _actionerrors.ApplicationError("VALIDATION_ERROR", message, 400);
+async function readUpload(request) {
+    const contentType = request.headers.get("content-type") ?? "";
+    if (!contentType.startsWith("multipart/form-data;") || !request.body) throw invalid("Choose an image to upload.");
+    if (Number(request.headers.get("content-length")) > MAX_REQUEST_BYTES) throw invalid("Images must be no larger than 4 MB.");
+    const reader = request.body.getReader();
+    const chunks = [];
+    let size = 0;
+    try {
+        while(true){
+            const { value, done } = await reader.read();
+            if (done) break;
+            size += value.length;
+            if (size > MAX_REQUEST_BYTES) {
+                await reader.cancel();
+                throw invalid("Images must be no larger than 4 MB.");
+            }
+            chunks.push(value);
+        }
+    } finally{
+        reader.releaseLock();
+    }
+    let data;
+    try {
+        data = await new Response(new Uint8Array(Buffer.concat(chunks)).buffer, {
+            headers: {
+                "content-type": contentType
+            }
+        }).formData();
+    } catch  {
+        throw invalid("The image upload was incomplete. Please retry.");
+    }
+    const files = data.getAll("file");
+    if (files.length !== 1 || typeof files[0] === "string") throw invalid("Choose one image to upload.");
+    return files[0];
+}
+async function POST(request) {
+    try {
+        // Multipart forms can otherwise be submitted cross-site with session cookies.
+        // Next.js may use an internal hostname in request.url. Trust configured app
+        // origins, never a forwarded host supplied by the request.
+        const trusted = (0, _trustedorigins.buildTrustedOrigins)([
+            process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000",
+            process.env.NEXT_PUBLIC_BASE_URL,
+            "http://localhost:3000",
+            "http://127.0.0.1:3000"
+        ]);
+        if (!trusted.includes(request.headers.get("origin") ?? "") || request.headers.get("sec-fetch-site") === "cross-site") throw new _actionerrors.ForbiddenError();
+        const organizationId = request.headers.get("x-organization-id")?.trim();
+        if (!organizationId) throw invalid("Organization ID is required");
+        const ctx = await (0, _pictureauthorization.requireInventoryPhotoWrite)(organizationId, ENDPOINT, "api");
+        const file = await readUpload(request);
+        const url = await (0, _pictureservice.uploadItemPicture)(file, ctx.orgId, ctx.userId);
+        // A plain JSON response is independent of page rendering and action queues.
+        return _server.NextResponse.json({
+            success: true,
+            url
+        }, {
+            headers: {
+                "Cache-Control": "no-store"
+            }
+        });
+    } catch (error) {
+        return (0, _routeresponse.jsonErrorResponse)(error, {
+            endpoint: ENDPOINT,
+            userMessage: "Unable to upload this image. Please retry."
+        });
+    }
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6XFxvaGFkYSBzYWFzXFxGb2N1c2VkIHByb2plY3RzXFxzdG9xdWlmeVxcYXBwXFxhcGlcXG1lZGlhXFx1cGxvYWRcXHJvdXRlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IE5leHRSZXNwb25zZSB9IGZyb20gXCJuZXh0L3NlcnZlclwiXG5pbXBvcnQgeyBqc29uRXJyb3JSZXNwb25zZSB9IGZyb20gXCJAL2xpYi9lcnJvci1oYW5kbGluZy9yb3V0ZS1yZXNwb25zZVwiXG5pbXBvcnQgeyBQSUNUVVJFX01BWF9CWVRFUyB9IGZyb20gXCJAL2xpYi9tZWRpYS9wb2xpY3lcIlxuaW1wb3J0IHsgYnVpbGRUcnVzdGVkT3JpZ2lucyB9IGZyb20gXCJAL2xpYi9zZWN1cml0eS90cnVzdGVkLW9yaWdpbnNcIlxuaW1wb3J0IHsgcmVxdWlyZUludmVudG9yeVBob3RvV3JpdGUgfSBmcm9tIFwiQC9zZXJ2aWNlcy9tZWRpYS9waWN0dXJlLWF1dGhvcml6YXRpb25cIlxuaW1wb3J0IHsgdXBsb2FkSXRlbVBpY3R1cmUgfSBmcm9tIFwiQC9zZXJ2aWNlcy9tZWRpYS9waWN0dXJlLnNlcnZpY2VcIlxuaW1wb3J0IHsgQXBwbGljYXRpb25FcnJvciwgRm9yYmlkZGVuRXJyb3IgfSBmcm9tIFwiQC9zZXJ2aWNlcy9fc2hhcmVkL2FjdGlvbi1lcnJvcnNcIlxuXG5leHBvcnQgY29uc3QgcnVudGltZSA9IFwibm9kZWpzXCJcbmNvbnN0IEVORFBPSU5UID0gXCJQT1NUIC9hcGkvbWVkaWEvdXBsb2FkXCJcbmNvbnN0IE1BWF9SRVFVRVNUX0JZVEVTID0gUElDVFVSRV9NQVhfQllURVMgKyA2NCAqIDEwMjRcbmNvbnN0IGludmFsaWQgPSAobWVzc2FnZTogc3RyaW5nKSA9PiBuZXcgQXBwbGljYXRpb25FcnJvcihcIlZBTElEQVRJT05fRVJST1JcIiwgbWVzc2FnZSwgNDAwKVxuXG5hc3luYyBmdW5jdGlvbiByZWFkVXBsb2FkKHJlcXVlc3Q6IFJlcXVlc3QpIHtcbiAgY29uc3QgY29udGVudFR5cGUgPSByZXF1ZXN0LmhlYWRlcnMuZ2V0KFwiY29udGVudC10eXBlXCIpID8/IFwiXCJcbiAgaWYgKCFjb250ZW50VHlwZS5zdGFydHNXaXRoKFwibXVsdGlwYXJ0L2Zvcm0tZGF0YTtcIikgfHwgIXJlcXVlc3QuYm9keSkgdGhyb3cgaW52YWxpZChcIkNob29zZSBhbiBpbWFnZSB0byB1cGxvYWQuXCIpXG4gIGlmIChOdW1iZXIocmVxdWVzdC5oZWFkZXJzLmdldChcImNvbnRlbnQtbGVuZ3RoXCIpKSA+IE1BWF9SRVFVRVNUX0JZVEVTKSB0aHJvdyBpbnZhbGlkKFwiSW1hZ2VzIG11c3QgYmUgbm8gbGFyZ2VyIHRoYW4gNCBNQi5cIilcbiAgY29uc3QgcmVhZGVyID0gcmVxdWVzdC5ib2R5LmdldFJlYWRlcigpXG4gIGNvbnN0IGNodW5rczogVWludDhBcnJheVtdID0gW11cbiAgbGV0IHNpemUgPSAwXG4gIHRyeSB7XG4gICAgd2hpbGUgKHRydWUpIHtcbiAgICAgIGNvbnN0IHsgdmFsdWUsIGRvbmUgfSA9IGF3YWl0IHJlYWRlci5yZWFkKClcbiAgICAgIGlmIChkb25lKSBicmVha1xuICAgICAgc2l6ZSArPSB2YWx1ZS5sZW5ndGhcbiAgICAgIGlmIChzaXplID4gTUFYX1JFUVVFU1RfQllURVMpIHtcbiAgICAgICAgYXdhaXQgcmVhZGVyLmNhbmNlbCgpXG4gICAgICAgIHRocm93IGludmFsaWQoXCJJbWFnZXMgbXVzdCBiZSBubyBsYXJnZXIgdGhhbiA0IE1CLlwiKVxuICAgICAgfVxuICAgICAgY2h1bmtzLnB1c2godmFsdWUpXG4gICAgfVxuICB9IGZpbmFsbHkgeyByZWFkZXIucmVsZWFzZUxvY2soKSB9XG4gIGxldCBkYXRhOiBGb3JtRGF0YVxuICB0cnkge1xuICAgIGRhdGEgPSBhd2FpdCBuZXcgUmVzcG9uc2UobmV3IFVpbnQ4QXJyYXkoQnVmZmVyLmNvbmNhdChjaHVua3MpKS5idWZmZXIsIHsgaGVhZGVyczogeyBcImNvbnRlbnQtdHlwZVwiOiBjb250ZW50VHlwZSB9IH0pLmZvcm1EYXRhKClcbiAgfSBjYXRjaCB7IHRocm93IGludmFsaWQoXCJUaGUgaW1hZ2UgdXBsb2FkIHdhcyBpbmNvbXBsZXRlLiBQbGVhc2UgcmV0cnkuXCIpIH1cbiAgY29uc3QgZmlsZXMgPSBkYXRhLmdldEFsbChcImZpbGVcIilcbiAgaWYgKGZpbGVzLmxlbmd0aCAhPT0gMSB8fCB0eXBlb2YgZmlsZXNbMF0gPT09IFwic3RyaW5nXCIpIHRocm93IGludmFsaWQoXCJDaG9vc2Ugb25lIGltYWdlIHRvIHVwbG9hZC5cIilcbiAgcmV0dXJuIGZpbGVzWzBdXG59XG5cbmV4cG9ydCBhc3luYyBmdW5jdGlvbiBQT1NUKHJlcXVlc3Q6IFJlcXVlc3QpIHtcbiAgdHJ5IHtcbiAgICAvLyBNdWx0aXBhcnQgZm9ybXMgY2FuIG90aGVyd2lzZSBiZSBzdWJtaXR0ZWQgY3Jvc3Mtc2l0ZSB3aXRoIHNlc3Npb24gY29va2llcy5cbiAgICAvLyBOZXh0LmpzIG1heSB1c2UgYW4gaW50ZXJuYWwgaG9zdG5hbWUgaW4gcmVxdWVzdC51cmwuIFRydXN0IGNvbmZpZ3VyZWQgYXBwXG4gICAgLy8gb3JpZ2lucywgbmV2ZXIgYSBmb3J3YXJkZWQgaG9zdCBzdXBwbGllZCBieSB0aGUgcmVxdWVzdC5cbiAgICBjb25zdCB0cnVzdGVkID0gYnVpbGRUcnVzdGVkT3JpZ2lucyhbXG4gICAgICBwcm9jZXNzLmVudi5ORVhUQVVUSF9VUkwgPz8gcHJvY2Vzcy5lbnYuTkVYVF9QVUJMSUNfQkFTRV9VUkwgPz8gXCJodHRwOi8vbG9jYWxob3N0OjMwMDBcIixcbiAgICAgIHByb2Nlc3MuZW52Lk5FWFRfUFVCTElDX0JBU0VfVVJMLCBcImh0dHA6Ly9sb2NhbGhvc3Q6MzAwMFwiLCBcImh0dHA6Ly8xMjcuMC4wLjE6MzAwMFwiLFxuICAgIF0pXG4gICAgaWYgKCF0cnVzdGVkLmluY2x1ZGVzKHJlcXVlc3QuaGVhZGVycy5nZXQoXCJvcmlnaW5cIikgPz8gXCJcIikgfHwgcmVxdWVzdC5oZWFkZXJzLmdldChcInNlYy1mZXRjaC1zaXRlXCIpID09PSBcImNyb3NzLXNpdGVcIikgdGhyb3cgbmV3IEZvcmJpZGRlbkVycm9yKClcbiAgICBjb25zdCBvcmdhbml6YXRpb25JZCA9IHJlcXVlc3QuaGVhZGVycy5nZXQoXCJ4LW9yZ2FuaXphdGlvbi1pZFwiKT8udHJpbSgpXG4gICAgaWYgKCFvcmdhbml6YXRpb25JZCkgdGhyb3cgaW52YWxpZChcIk9yZ2FuaXphdGlvbiBJRCBpcyByZXF1aXJlZFwiKVxuICAgIGNvbnN0IGN0eCA9IGF3YWl0IHJlcXVpcmVJbnZlbnRvcnlQaG90b1dyaXRlKG9yZ2FuaXphdGlvbklkLCBFTkRQT0lOVCwgXCJhcGlcIilcbiAgICBjb25zdCBmaWxlID0gYXdhaXQgcmVhZFVwbG9hZChyZXF1ZXN0KVxuICAgIGNvbnN0IHVybCA9IGF3YWl0IHVwbG9hZEl0ZW1QaWN0dXJlKGZpbGUsIGN0eC5vcmdJZCwgY3R4LnVzZXJJZClcbiAgICAvLyBBIHBsYWluIEpTT04gcmVzcG9uc2UgaXMgaW5kZXBlbmRlbnQgb2YgcGFnZSByZW5kZXJpbmcgYW5kIGFjdGlvbiBxdWV1ZXMuXG4gICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHsgc3VjY2VzczogdHJ1ZSwgdXJsIH0sIHsgaGVhZGVyczogeyBcIkNhY2hlLUNvbnRyb2xcIjogXCJuby1zdG9yZVwiIH0gfSlcbiAgfSBjYXRjaCAoZXJyb3IpIHtcbiAgICByZXR1cm4ganNvbkVycm9yUmVzcG9uc2UoZXJyb3IsIHsgZW5kcG9pbnQ6IEVORFBPSU5ULCB1c2VyTWVzc2FnZTogXCJVbmFibGUgdG8gdXBsb2FkIHRoaXMgaW1hZ2UuIFBsZWFzZSByZXRyeS5cIiB9KVxuICB9XG59XG4iXSwibmFtZXMiOlsiUE9TVCIsInJ1bnRpbWUiLCJFTkRQT0lOVCIsIk1BWF9SRVFVRVNUX0JZVEVTIiwiUElDVFVSRV9NQVhfQllURVMiLCJpbnZhbGlkIiwibWVzc2FnZSIsIkFwcGxpY2F0aW9uRXJyb3IiLCJyZWFkVXBsb2FkIiwicmVxdWVzdCIsImNvbnRlbnRUeXBlIiwiaGVhZGVycyIsImdldCIsInN0YXJ0c1dpdGgiLCJib2R5IiwiTnVtYmVyIiwicmVhZGVyIiwiZ2V0UmVhZGVyIiwiY2h1bmtzIiwic2l6ZSIsInZhbHVlIiwiZG9uZSIsInJlYWQiLCJsZW5ndGgiLCJjYW5jZWwiLCJwdXNoIiwicmVsZWFzZUxvY2siLCJkYXRhIiwiUmVzcG9uc2UiLCJVaW50OEFycmF5IiwiQnVmZmVyIiwiY29uY2F0IiwiYnVmZmVyIiwiZm9ybURhdGEiLCJmaWxlcyIsImdldEFsbCIsInRydXN0ZWQiLCJidWlsZFRydXN0ZWRPcmlnaW5zIiwicHJvY2VzcyIsImVudiIsIk5FWFRBVVRIX1VSTCIsIk5FWFRfUFVCTElDX0JBU0VfVVJMIiwiaW5jbHVkZXMiLCJGb3JiaWRkZW5FcnJvciIsIm9yZ2FuaXphdGlvbklkIiwidHJpbSIsImN0eCIsInJlcXVpcmVJbnZlbnRvcnlQaG90b1dyaXRlIiwiZmlsZSIsInVybCIsInVwbG9hZEl0ZW1QaWN0dXJlIiwib3JnSWQiLCJ1c2VySWQiLCJOZXh0UmVzcG9uc2UiLCJqc29uIiwic3VjY2VzcyIsImVycm9yIiwianNvbkVycm9yUmVzcG9uc2UiLCJlbmRwb2ludCIsInVzZXJNZXNzYWdlIl0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7OztRQXlDc0JBO2VBQUFBOztRQWpDVEM7ZUFBQUE7Ozt3QkFSZ0I7K0JBQ0s7d0JBQ0E7Z0NBQ0U7c0NBQ087Z0NBQ1Q7OEJBQ2U7QUFFMUMsTUFBTUEsVUFBVTtBQUN2QixNQUFNQyxXQUFXO0FBQ2pCLE1BQU1DLG9CQUFvQkMseUJBQWlCLEdBQUcsS0FBSztBQUNuRCxNQUFNQyxVQUFVLENBQUNDLFVBQW9CLElBQUlDLDhCQUFnQixDQUFDLG9CQUFvQkQsU0FBUztBQUV2RixlQUFlRSxXQUFXQyxPQUFnQjtJQUN4QyxNQUFNQyxjQUFjRCxRQUFRRSxPQUFPLENBQUNDLEdBQUcsQ0FBQyxtQkFBbUI7SUFDM0QsSUFBSSxDQUFDRixZQUFZRyxVQUFVLENBQUMsMkJBQTJCLENB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

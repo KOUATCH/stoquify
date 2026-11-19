@@ -17,7 +17,6 @@ import {
   AccountingPageShell,
   AccountingPanel,
   AccountingStatCard,
-  accountingDate,
 } from "../_components/accounting-ui"
 import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
@@ -49,6 +48,14 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
   await checkPermission("accounting.setup.manage")
 
   const { locale } = await params
+  const periodCopy = locale === "fr" ? {
+    title: "Périodes comptables", description: "Seules les périodes ouvertes peuvent recevoir des écritures.",
+    period: "Période", status: "Statut", close: "Clôturer", open: "Ouverte", closed: "Clôturée", to: "au",
+  } : {
+    title: "Accounting periods", description: "Only open periods can receive postings.",
+    period: "Period", status: "Status", close: "Close", open: "OPEN", closed: "CLOSED", to: "to",
+  }
+  const periodDate = new Intl.DateTimeFormat(locale === "fr" ? "fr" : "en", { dateStyle: "medium" })
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const setupResponse = await getAccountingSetupDataAction({})
   const setup = setupResponse.success ? (setupResponse.data as SetupData) : null
@@ -93,7 +100,7 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
       expectedVersion: Number(formData.get("expectedVersion") ?? NaN),
     })
 
-    redirect(resultPath(locale, result.success, result.success ? "Accounting period closed" : result.error))
+    redirect(resultPath(locale, result.success, result.success ? (locale === "fr" ? "Période comptable clôturée" : "Accounting period closed") : result.error))
   }
 
   async function markReady() {
@@ -240,8 +247,8 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
             </AccountingPanel>
 
             <AccountingPanel
-              title="Accounting periods"
-              description="Only open periods can receive postings."
+              title={periodCopy.title}
+              description={periodCopy.description}
               actions={
                 <form action={markReady}>
                   <button className="dashboard-button-create h-10 rounded-lg px-4 text-sm font-medium">Mark ready</button>
@@ -250,12 +257,12 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
             >
               <div className="overflow-x-auto">
                 <AccountingDataTable
-                  caption={"Accounting periods"}
+                  caption={periodCopy.title}
                   locale={locale === "fr" ? "fr" : "en"}
                   columns={[
-                    { label: "Period" },
+                    { label: periodCopy.period },
                     { label: "Dates" },
-                    { label: "Status" },
+                    { label: periodCopy.status },
                     { label: "Action", className: "text-right" },
                   ]}
                   rows={setup.periods.map((period) => {
@@ -263,8 +270,8 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
                       id: period.id,
                       searchText: [
                         period.name,
-                        accountingDate(period.startDate),
-                        accountingDate(period.endDate),
+                        periodDate.format(new Date(period.startDate)),
+                        periodDate.format(new Date(period.endDate)),
                         period.status,
                       ]
                         .filter((value) => value !== null && value !== undefined)
@@ -274,10 +281,10 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
                           {period.name}
                         </div>,
                         <div key="cell-1" className="text-[var(--dash-text-soft)]">
-                          {accountingDate(period.startDate)} to {accountingDate(period.endDate)}
+                          {periodDate.format(new Date(period.startDate))} {periodCopy.to} {periodDate.format(new Date(period.endDate))}
                         </div>,
                         <div key="cell-2" className="text-[var(--dash-text-soft)]">
-                          {period.status}
+                          {period.status === "OPEN" ? periodCopy.open : period.status === "CLOSED" ? periodCopy.closed : period.status}
                         </div>,
                         <div key="cell-3" className="text-right">
                           {period.status === "OPEN" ? (
@@ -285,7 +292,7 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
                               <input type="hidden" name="periodId" value={period.id} />
                               <input type="hidden" name="expectedVersion" value={period.controlVersion} />
                               <button className="dashboard-button-secondary h-9 rounded-lg px-3 text-xs font-medium">
-                                Close
+                                {periodCopy.close}
                               </button>
                             </form>
                           ) : null}

@@ -1,0 +1,192 @@
+{
+  "at": "2026-11-10T20:10:37.314Z",
+  "reviewer": "/root/r06_review",
+  "packageId": "P04-R06",
+  "passed": false,
+  "observationAccepted": true,
+  "blockedCheckpointAccepted": true,
+  "qualificationPassed": false,
+  "candidateId": null,
+  "artifactSha256": null,
+  "verdict": "CAPACITY_RETRY_DENIED_BEFORE_CAPTURE",
+  "capacity": {
+    "receipt": "resource-current-schema-retry-ready-r1.json",
+    "capturedAt": "2026-11-10T20:08:31.2495121Z",
+    "freePhysicalGiB": 6.714748382568359,
+    "freeCommitGiB": 7.764385223388672,
+    "freeDDriveGiB": 12.531044006347656,
+    "requiredPhysicalGiB": 6,
+    "requiredCommitGiB": 12,
+    "requiredDDriveGiB": 12,
+    "failures": [
+      "commit_headroom"
+    ],
+    "newMeasurementByReviewer": false,
+    "sourceRecipesUnchanged": true,
+    "thresholdsUnchanged": true,
+    "recordedScopedListeningPorts": [],
+    "portInspectionError": null,
+    "recordedCollectorProcesses": [
+      {
+        "pid": 4124,
+        "recordedName": "node.exe",
+        "absentNow": true
+      }
+    ]
+  },
+  "source": {
+    "selectedInputsRehashed": 68,
+    "ownedRepairFilesRehashed": 6,
+    "selectedInputMismatches": [],
+    "ownedRepairMismatches": [],
+    "fullSourceScanPerformed": false,
+    "currentFullSourceEqualityEstablished": false,
+    "savedFullSourceObservationFiles": 9988,
+    "savedFullSourceIdentity": "0b8354d4f340ad5b82931e2e18e3e01a7ba18cfd089351a2536b41e23891332c",
+    "limit": "The bounded rehash confirms only selected and owned files. Complete source and HEAD equality remains mandatory before future capture."
+  },
+  "preservation": {
+    "newStorageEntries": [
+      "dependencies",
+      "ownership.json"
+    ],
+    "absentSuccessorOutputs": [
+      "source-snapshot.json.gz",
+      "root-source-manifest.json",
+      "candidate-source-manifest.json",
+      "candidate-context.json",
+      "candidate-admission.json",
+      "preparation-attempt02.json",
+      "preparation-attempt03.json",
+      "preparation-attempt05.json",
+      "resource-capture-entry-attempt05.json",
+      "build-result.json",
+      "private-client.json",
+      "runtime-source-admission.json",
+      "runtime-result.json",
+      "database/retained-preparation.json",
+      "database/retained-resume.json",
+      "database/fixture-preflight.json",
+      "database/final-session-cleanup.json",
+      "database/cleanup.json",
+      "database-current/preparation.json",
+      "database-current/fixture-seeded.json",
+      "database-current/fixture-preflight.json",
+      "database-current/final-session-cleanup.json",
+      "database-current/cleanup.json",
+      "database-current/cleanup-before-qualification.json",
+      "runtime-current/execution-started.json",
+      "database-current/database-clones.json",
+      "database-current/fixture-readiness.json",
+      "final-integrity.json",
+      "qualification-result.json"
+    ],
+    "clusters": [
+      {
+        "storage": "D:\\p04-r06-fullapp-20261110-r2",
+        "ownerSha256": "61a7cb0e376ec8e8727cfde9f4063c00d66f0faa1e3871236b2d08e917e4df54",
+        "state": "stopped",
+        "postmasterFileAbsent": true
+      },
+      {
+        "storage": "D:\\p04-r06-fullapp-20261109-r1",
+        "ownerSha256": "118c5040d2b39bd47d8a0d4f37e2772e1ac544bbf29f1b9006334e4c887a6e86",
+        "state": "stopped",
+        "postmasterFileAbsent": true
+      },
+      {
+        "storage": "D:\\p04-v02-fullapp-20261109-r1",
+        "ownerSha256": "eb99fae9196e6c7271819460eb825c31bfd453fd56575baef0bb1e4907265aca",
+        "state": "stopped",
+        "postmasterFileAbsent": true
+      }
+    ],
+    "retainedRecordedPid": 21228,
+    "retainedRecordedPidAbsent": true,
+    "privateFixtureHashUnchanged": true,
+    "nativeDatabaseQueried": false,
+    "dependencyTraversalRepeated": false,
+    "E32SharedFilesUnchanged": [
+      {
+        "path": "work-register.json",
+        "sha256": "e47adb50a334413ee194e6cede025c34ebc6a87df2a402529e7f003c8e1e17d5"
+      },
+      {
+        "path": "work-register.csv",
+        "sha256": "5a77fb40374987df6bf1d7fdbb6c0fe5d971732d13669bbd98b79043365e1631"
+      },
+      {
+        "path": "ROADMAP.md",
+        "sha256": "c45bc339b0518df31da5b557542d68a08462497a518e3badc12620f32dea3207"
+      },
+      {
+        "path": "mutation-log.md",
+        "sha256": "3b3bd7b283563816e49abb90bc3c048ac505ecad0ba7176f5c8e60da697b5750"
+      },
+      {
+        "path": "execution/CURRENT.md",
+        "sha256": "e3bdc42c0de622906d84c1c6527fff49d33f4e0812f7d89e49bc45c96c4088e1"
+      },
+      {
+        "path": "execution/NEXT.md",
+        "sha256": "ba4c0bf3681886e16556d4a96fd366e618f3f9c59544b7612e6e58394d5a672d"
+      }
+    ]
+  },
+  "execution": {
+    "candidateCaptured": false,
+    "attempt05Run": false,
+    "newDatabaseStarted": false,
+    "currentMigrationExecutions": 0,
+    "buildRun": false,
+    "runtimeRun": false,
+    "currentActualCasesRun": 0,
+    "requiredActualCases": 107,
+    "newMockedTestsRun": false
+  },
+  "nextAction": {
+    "condition": "A further actual capacity-changing event, followed by a new receipt using unchanged thresholds and exact source/HEAD reconciliation.",
+    "resourceCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/check-resources.cjs resource-current-schema-retry-ready-r2.json",
+    "conditionalCapture": "prepare-candidate-attempt05.cjs",
+    "handoff": "EXECUTION-HANDOFF-current-schema-r1.md"
+  },
+  "limits": [
+    "No capacity repoll, full source/dependency scan, app load, native database query or process termination by this review.",
+    "Historical helper/authentication tests and retained fixture/database proofs are unchanged; none was rerun.",
+    "R06, parent P04/P04-V02 and production readiness remain blocked; this is accepted blocked evidence, not qualification."
+  ],
+  "files": [
+    {
+      "path": "resource-current-schema-retry-ready-r1.json",
+      "sha256": "dc0548e1991e7e846fe59e4a2d77de30d87d26c6c53ee5d2190d229eab1b17dd"
+    },
+    {
+      "path": "check-resources.cjs",
+      "sha256": "76ed28fd79069d9aed58c6d4ed9d2690008236cdaf0ad73516476f1429d150d4"
+    },
+    {
+      "path": "resource-snapshot.ps1",
+      "sha256": "53ed40de3b8ae063f3fc5d08ce948cf108ea633efc005e4563b2093a02c123d0"
+    },
+    {
+      "path": "inventory/source-after-manifest-runtime-v2.json",
+      "sha256": "e319b9c3ad8394030de8f1cd26db8f0139e8d6763dba9fc5ea41d9e2efbcbabc"
+    },
+    {
+      "path": "reused-evidence/inventory/repair-owned-files.json",
+      "sha256": "947b5da57354ecb09673c594b60c2d66bcef5998ce6c72d96bf561aadeeda8e6"
+    },
+    {
+      "path": "capacity-checkpoint-current-schema.json",
+      "sha256": "086652f612dca5fadc119fe5ccbe8b909710b68fc03fba2540f0dcee07a0c2b2"
+    },
+    {
+      "path": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW-attempt02.json",
+      "sha256": "1994afd88031a548ca5a9d733e20665879ebeb071099bd33038dc0009d17132d"
+    },
+    {
+      "path": "independent-review/FINAL-PUBLICATION-REVIEW-attempt02.json",
+      "sha256": "51b86346247e55d97f65e5f59e5c4d8abd97fd14013862e26c4fc9440b107e55"
+    }
+  ]
+}

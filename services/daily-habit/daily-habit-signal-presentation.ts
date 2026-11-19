@@ -9,6 +9,25 @@ const closeNextStep = "Resolve close blockers or attach missing evidence before 
 const frenchCloseTitle = "Blocage de clôture"
 const frenchCloseNextStep = "Examinez les blocages de clôture et joignez les preuves manquantes avant toute certification."
 
+const operatingCopy: Record<string, string> = {
+  "Cash Drawer Variance": "Écart de caisse",
+  "Kontava detected a cash drawer variance signal that needs review.": "Un écart de caisse doit être examiné.",
+  "Review drawer movements and attach variance evidence.": "Examinez les mouvements de caisse et joignez les justificatifs de l’écart.",
+  "Cash variance can hide leakage, posting drift, or process breakdown.": "Un écart de caisse peut révéler des pertes, des erreurs de comptabilisation ou une défaillance du processus.",
+  "Duplicate Provider Reference": "Référence de prestataire en double",
+  "Kontava detected a duplicate provider reference signal that needs review.": "Une référence de prestataire en double doit être examinée.",
+  "Investigate duplicate provider reference before matching or close.": "Examinez la référence de prestataire en double avant le rapprochement ou la clôture.",
+  "Duplicate provider references can indicate replay, duplicate capture, or reconciliation error.": "Des références de prestataire en double peuvent signaler une répétition, une double saisie ou une erreur de rapprochement.",
+  "Refund Void Spike": "Hausse des remboursements et annulations",
+  "Kontava detected a refund void spike signal that needs review.": "Une hausse des remboursements ou annulations doit être examinée.",
+  "Review refund and void evidence for the affected period.": "Examinez les justificatifs des remboursements et annulations de la période concernée.",
+  "Refund or void spikes can point to cash leakage or control weakness.": "Une hausse des remboursements ou annulations peut signaler des pertes de trésorerie ou une faiblesse des contrôles.",
+  "Dead Stock Cash Exposure": "Trésorerie immobilisée dans les stocks dormants",
+  "Kontava detected a dead stock cash exposure signal that needs review.": "La trésorerie immobilisée dans les stocks dormants doit être examinée.",
+  "Review slow-moving stock and decide markdown, transfer, or supplier action.": "Examinez les stocks à faible rotation et décidez d’une remise, d’un transfert ou d’une action fournisseur.",
+  "Dead stock traps working capital that could fund faster-moving inventory.": "Les stocks dormants immobilisent un fonds de roulement qui pourrait financer des stocks à rotation plus rapide.",
+}
+
 const inventoryLossCopy: Record<string, string> = {
   "Recorded inventory loss needs review": "Des pertes de stock enregistrées doivent être examinées",
   "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.": "Examinez les preuves d’ajustement, la valorisation et l’attribution de l’approbation avant de vous fier aux totaux des pertes enregistrées.",
@@ -30,6 +49,10 @@ const payrollCopy: Record<string, string> = {
 }
 
 export function presentDailySignal(signal: BusinessSignal, locale: "en" | "fr"): BusinessSignal {
+  if (locale === "fr" && ["cash_drawer_variance", "duplicate_provider_reference", "refund_void_spike", "dead_stock_cash_exposure"].includes(signal.signalType)) return {
+    ...signal, title: operatingCopy[signal.title] ?? signal.title, detail: operatingCopy[signal.detail] ?? signal.detail,
+    suggestedAction: operatingCopy[signal.suggestedAction] ?? signal.suggestedAction, businessImpact: operatingCopy[signal.businessImpact] ?? signal.businessImpact,
+  }
   if (locale === "fr" && signal.signalType === "inventory_loss_review") {
     const { lossLineCount: count, totalLossValue: amount, currency } = signal.payload
     const expected = `${count} recorded inventory loss line(s) totaling ${amount} ${currency} require evidence review. Approval attribution records authorization and does not identify who caused the loss.`
@@ -91,6 +114,9 @@ export function presentDailySignal(signal: BusinessSignal, locale: "en" | "fr"):
 }
 
 export function presentDailyAction(item: ActionItem, locale: "en" | "fr"): ActionItem {
+  if (locale === "fr" && ["cash_drawer_variance", "duplicate_provider_reference", "refund_void_spike", "dead_stock_cash_exposure"].includes(item.signalType)) return {
+    ...item, title: operatingCopy[item.title] ?? item.title, nextStep: operatingCopy[item.nextStep] ?? item.nextStep,
+  }
   if (locale === "fr" && item.signalType === "inventory_loss_review") return {
     ...item, title: inventoryLossCopy[item.title] ?? item.title, nextStep: inventoryLossCopy[item.nextStep] ?? item.nextStep,
   }

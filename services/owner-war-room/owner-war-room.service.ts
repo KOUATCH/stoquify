@@ -1,4 +1,7 @@
 import "server-only"
+import { weakestEvidenceGrade } from "@/services/snapshots/snapshot-utils"
+import { commandSourceFreshness } from "@/lib/dashboard/command-center-source-copy"
+import { stableIdentityOrder, commandDateLabel } from "@/lib/dashboard/command-center-context"
 
 import {
   evidenceGradeToBITrustState,
@@ -88,6 +91,8 @@ const OWNER_STOCK_WORKSPACE = "/dashboard/inventory/items"
 
 export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<OwnerWarRoomData> {
   await requireOwnerWarRoomTenantAuthority(input)
+  // Pin the request clock before source reads can cross a UTC-day boundary.
+  input = {...input, now: input.now ?? new Date()}
 
   const scope = {
     organizationId: input.organizationId,
@@ -117,6 +122,7 @@ export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<Own
 
   const signals = buildBusinessSignalsFromSnapshots({
     organizationId: input.organizationId,
+    now: input.now,
     snapshots: [
       tenantOperating,
       paymentTruth,
@@ -237,6 +243,7 @@ async function loadOwnerWarRoomInventoryLoss(
 export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerWarRoomData {
   const displaySnapshot = <T,>(snapshot: SnapshotResult<T>): SnapshotResult<T> => ({
     ...snapshot,
+    freshness: commandSourceFreshness(snapshot.freshness, input.locale ?? "en"),
     blockers: snapshot.blockers.map(blocker => presentSnapshotBlocker(blocker, input.locale ?? "en")),
   })
   input = {
@@ -381,7 +388,7 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
       unit: "modules",
       tone: input.moduleControl.summary.wouldBlockCount > 0 ? "gold" : "success",
       state: input.moduleControl.summary.wouldBlockCount > 0 ? "upgrade_request" : "ready",
-      evidenceGrade: input.moduleControl.summary.wouldBlockCount > 0 ? "operational" : "posted",
+      evidenceGrade: "operational",
       freshness: {
         ...DEFAULT_FRESHNESS,
         generatedAt: input.moduleControl.generatedAt,
@@ -413,7 +420,7 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
       id: "close_autopilot",
       title: ownerText("Close Autopilot strip", input.locale),
       detail:
-        closeReadiness.metrics.openFindingCount > 0
+        closeReadiness.metrics.openFindingCount > 0 || closeReadiness.blockers.length > 0 || closeReadiness.status !== "fresh"
           ? ownerText("The close still has findings or unavailable evidence. Work the blockers before signoff.", input.locale)
           : ownerText("Close readiness has no open blocker surfaced by the current snapshot.", input.locale),
       severity: closeReadiness.metrics.criticalOpenFindingCount > 0 ? "critical" : closeReadiness.metrics.openFindingCount > 0 ? "high" : "info",
@@ -577,10 +584,8 @@ function buildOwnerMorningBrief({
     proofLinkedActionCount: proofLinkedActionItems.length,
   }
   const freshness = aggregateBriefFreshness(input.generatedAt, [tenantOperating, paymentTruth, inventoryCash, closeReadiness])
-  const evidenceGrade = strongestVisibleGrade([
-    ...cards.map((item) => item.evidenceGrade),
-    ...priorityActions.map((item) => item.evidenceGrade),
-  ])
+  const financialSnapshots = [tenantOperating, paymentTruth, inventoryCash, closeReadiness]
+  const evidenceGrade = weakestEvidenceGrade(financialSnapshots.map(snapshot => snapshot.evidenceGrade))
   const state = morningBriefState({
     summary,
     blockedCloseItems: headlineMetrics.blockedCloseItems,
@@ -596,7 +601,8 @@ function buildOwnerMorningBrief({
     ...strips.flatMap((item) => item.redactions),
     ...priorityActions.flatMap((item) => item.redactions),
   ])
-  const recommendation = buildMorningBriefRecommendation(headlineMetrics, input.actorPermissions, input.locale)
+  const recommendation = buildMorningBriefRecommendation(headlineMetrics, input.actorPermissions, input.locale,
+    state !== "ready" || financialSnapshots.some(snapshot => snapshot.status !== "fresh" || snapshot.blockers.length > 0))
   const proofDrawerSubjects = proofSubjects.map((subject) => proofSubjectToBI(input.organizationId, subject, input.locale))
   const zones = buildOwnerMorningBriefZones(input)
 
@@ -675,10 +681,10 @@ function buildOwnerMorningBriefChanges(input: {
       organizationId: input.input.organizationId,
       moduleSlug: "payment_reconciliation",
       requiredPermission: "payments.reconciliation.read",
-      title: ownerText("Cash at risk is visible since yesterday", input.input.locale),
+      title: ownerText("Current cash at risk", input.input.locale),
       detail: ownerText("Open suspense value is still present in the payment truth snapshot.", input.input.locale),
       businessImpact: ownerText("Daily cash remains ambiguous until suspense is explained with reconciliation evidence.", input.input.locale),
-      direction: "new",
+      direction: "observed",
       severity: paymentTruth.metrics.criticalExceptionCount > 0 ? "critical" : "high",
       state: ownerStateToBIState(stateFromSnapshot(paymentTruth)),
       evidenceGrade: paymentTruth.evidenceGrade,
@@ -714,7 +720,7 @@ function buildOwnerMorningBriefChanges(input: {
       title: ownerText("Close blockers need owner attention", input.input.locale),
       detail: ownerText("The close readiness snapshot still has blocked runs, critical findings, or unavailable evidence.", input.input.locale),
       businessImpact: ownerText("Reporting confidence stays limited until close evidence is cleared.", input.input.locale),
-      direction: "new",
+      direction: "observed",
       severity: closeReadiness.metrics.blockedCloseRunCount > 0 || closeReadiness.metrics.criticalOpenFindingCount > 0 ? "critical" : "high",
       state: ownerStateToBIState(stateFromSnapshot(closeReadiness)),
       evidenceGrade: closeReadiness.evidenceGrade,
@@ -752,7 +758,7 @@ function buildOwnerMorningBriefChanges(input: {
       title: ownerText("Evidence freshness needs review", input.input.locale),
       detail: ownerText("One or more owner-war-room evidence surfaces are stale or signal-stale.", input.input.locale),
       businessImpact: ownerText("The owner should refresh the underlying workflow before trusting the morning view.", input.input.locale),
-      direction: "changed",
+      direction: "observed",
       severity: "medium",
       state: "stale",
       evidenceGrade: "operational",
@@ -791,7 +797,7 @@ function buildOwnerMorningBriefChanges(input: {
       title: item.title,
       detail: item.nextStep,
       businessImpact: signal?.businessImpact ?? ownerText("A proof-linked action is open for owner review.", input.input.locale),
-      direction: "new",
+      direction: "observed",
       severity: item.severity,
       state: actionItemState(item),
       evidenceGrade: item.evidenceGrade,
@@ -977,7 +983,7 @@ function buildOwnerMorningBriefRisks(input: {
   }
 
   return risks
-    .sort((left, right) => right.severityScore - left.severityScore)
+    .sort((left, right) => right.severityScore - left.severityScore || stableIdentityOrder(left, right))
     .slice(0, 3)
     .map((risk, index) => ({ ...risk, rank: index + 1 }))
 }
@@ -1207,7 +1213,7 @@ function priorityActionFromItem(input: {
     evidenceGrade: input.item.evidenceGrade,
     trustState: evidenceGradeToBITrustState(input.item.evidenceGrade),
     freshness: freshnessFromSignal(input.signal, input.generatedAt, input.locale),
-    dueLabel: dueLabel(input.item.dueAt, input.locale),
+    dueLabel: commandDateLabel(input.signal?.expiresAt ?? "", "evidence_expiry", input.locale),
     ownerLabel: input.locale === "fr" ? {
       owner: "Dirigeant", accountant: "Comptable", finance: "Finance", stockkeeper: "Gestionnaire de stock",
       purchasing: "Achats", payroll: "Paie", manager: "Responsable",
@@ -1358,6 +1364,7 @@ function buildMorningBriefRecommendation(
   input: OwnerWarRoomData["morningBrief"]["headlineMetrics"],
   actorPermissions: readonly string[] = [],
   locale: OwnerLocale = "en",
+  incompleteCoverage = false,
 ): { conclusion: string; action: BIActionLink | null } {
   const review = (label: string, frenchLabel: string, href: string, permission: string, moduleSlug: BIActionLink["moduleSlug"]) => {
     const allowed = hasRbacPermission(actorPermissions, permission)
@@ -1393,6 +1400,9 @@ function buildMorningBriefRecommendation(
   }
   if (input.staleEvidenceItems > 0) {
     return { conclusion: ownerText("Refresh stale evidence before using this view as today's owner truth.", locale), action: null }
+  }
+  if (incompleteCoverage) {
+    return { conclusion: ownerText("Some indicators are blocked or incomplete. Review the source limitations before relying on this brief.", locale), action: null }
   }
   return { conclusion: ownerText("No cash, close, or freshness blocker is visible in the current owner brief.", locale), action: null }
 }
@@ -1490,7 +1500,7 @@ function latestDateString(values: string[]) {
 function sortActionItems(left: ActionItem, right: ActionItem) {
   const score = right.severityScore - left.severityScore
   if (score !== 0) return score
-  return new Date(left.dueAt).getTime() - new Date(right.dueAt).getTime()
+  return stableIdentityOrder(left, right)
 }
 
 function isOnOrAfter(value: string, cutoff: Date) {

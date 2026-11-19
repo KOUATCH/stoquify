@@ -1,0 +1,178 @@
+TAP version 13
+# Subtest: typed fixture and client documents pass with no external references opened
+ok 1 - typed fixture and client documents pass with no external references opened
+  ---
+  duration_ms: 66.0761
+  type: 'test'
+  ...
+# Subtest: required public code digest and generic generated basename remain eligible
+ok 2 - required public code digest and generic generated basename remain eligible
+  ---
+  duration_ms: 48.7438
+  type: 'test'
+  ...
+# Subtest: required engine code remains eligible with distinct private receipt bytes excluded
+ok 3 - required engine code remains eligible with distinct private receipt bytes excluded
+  ---
+  duration_ms: 48.0805
+  type: 'test'
+  ...
+# Subtest: renamed native readiness receipt bytes are denied
+ok 4 - renamed native readiness receipt bytes are denied
+  ---
+  duration_ms: 43.183
+  type: 'test'
+  ...
+# Subtest: native readiness receipt path in trace is denied
+ok 5 - native readiness receipt path in trace is denied
+  ---
+  duration_ms: 42.6804
+  type: 'test'
+  ...
+# Subtest: code path cannot masquerade as native readiness metadata
+ok 6 - code path cannot masquerade as native readiness metadata
+  ---
+  duration_ms: 43.4916
+  type: 'test'
+  ...
+# Subtest: renamed fixture content remains denied
+ok 7 - renamed fixture content remains denied
+  ---
+  duration_ms: 43.1935
+  type: 'test'
+  ...
+# Subtest: renamed pack content remains denied
+ok 8 - renamed pack content remains denied
+  ---
+  duration_ms: 41.6292
+  type: 'test'
+  ...
+# Subtest: private fixture filename in actual trace remains denied
+ok 9 - private fixture filename in actual trace remains denied
+  ---
+  duration_ms: 44.3269
+  type: 'test'
+  ...
+# Subtest: renamed client metadata document bytes remain denied
+ok 10 - renamed client metadata document bytes remain denied
+  ---
+  duration_ms: 39.6147
+  type: 'test'
+  ...
+# Subtest: client metadata basename in output remains denied
+ok 11 - client metadata basename in output remains denied
+  ---
+  duration_ms: 34.9711
+  type: 'test'
+  ...
+# Subtest: absolute private client root in trace is denied
+ok 12 - absolute private client root in trace is denied
+  ---
+  duration_ms: 38.0067
+  type: 'test'
+  ...
+# Subtest: relative trace resolving to private client root is denied
+ok 13 - relative trace resolving to private client root is denied
+  ---
+  duration_ms: 39.4704
+  type: 'test'
+  ...
+# Subtest: normalized dot segments cannot hide a private client trace
+ok 14 - normalized dot segments cannot hide a private client trace
+  ---
+  duration_ms: 37.3382
+  type: 'test'
+  ...
+# Subtest: different root with a common prefix remains eligible
+ok 15 - different root with a common prefix remains eligible
+  ---
+  duration_ms: 38.9179
+  type: 'test'
+  ...
+# Subtest: private provenance path in sealed manifest is denied
+ok 16 - private provenance path in sealed manifest is denied
+  ---
+  duration_ms: 37.3328
+  type: 'test'
+  ...
+# Subtest: unknown metadata kind is not silently allowed
+ok 17 - unknown metadata kind is not silently allowed
+  ---
+  duration_ms: 28.954
+  type: 'test'
+  ...
+# Subtest: fixture cannot opt into document-only policy
+ok 18 - fixture cannot opt into document-only policy
+  ---
+  duration_ms: 24.6413
+  type: 'test'
+  ...
+# Subtest: fixture payload cannot masquerade as client metadata
+ok 19 - fixture payload cannot masquerade as client metadata
+  ---
+  duration_ms: 24.0655
+  type: 'test'
+  ...
+# Subtest: unexpected credential field in client metadata fails closed
+ok 20 - unexpected credential field in client metadata fails closed
+  ---
+  duration_ms: 31.7167
+  type: 'test'
+  ...
+# Subtest: environment values are rejected in context metadata
+ok 21 - environment values are rejected in context metadata
+  ---
+  duration_ms: 35.911
+  type: 'test'
+  ...
+# Subtest: command schema argument cannot point outside private root
+ok 22 - command schema argument cannot point outside private root
+  ---
+  duration_ms: 41.6515
+  type: 'test'
+  ...
+# Subtest: unknown generated payload is not classified as public code
+ok 23 - unknown generated payload is not classified as public code
+  ---
+  duration_ms: 31.8891
+  type: 'test'
+  ...
+# Subtest: hash drift rejects altered metadata
+ok 24 - hash drift rejects altered metadata
+  ---
+  duration_ms: 36.9567
+  type: 'test'
+  ...
+# Subtest: policy traversal is denied before reading outside candidate
+ok 25 - policy traversal is denied before reading outside candidate
+  ---
+  duration_ms: 25.4724
+  type: 'test'
+  ...
+# Subtest: duplicate metadata policy is denied
+ok 26 - duplicate metadata policy is denied
+  ---
+  duration_ms: 41.0353
+  type: 'test'
+  ...
+# Subtest: missing actual build traces cannot pass
+ok 27 - missing actual build traces cannot pass
+  ---
+  duration_ms: 45.8279
+  type: 'test'
+  ...
+# Subtest: the seven admitted real metadata shapes work with synthetic allowed code only
+ok 28 - the seven admitted real metadata shapes work with synthetic allowed code only
+  ---
+  duration_ms: 139.5098
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1462.873

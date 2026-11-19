@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.workflow-repairs.json",
+  "include": [
+    "next-env.d.ts",
+    "services/inventory/__tests__/cross-workflow.phase3.fixture.ts",
+    "services/inventory/__tests__/cross-workflow.phase3.postgres.test.ts"
+  ],
+  "exclude": ["node_modules"]
+}

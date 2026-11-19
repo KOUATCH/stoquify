@@ -1,0 +1,79 @@
+const { test, beforeEach, afterEach } = require('node:test');
+const assert = require('node:assert/strict'), fs = require('node:fs'), path = require('node:path'), os = require('node:os'), crypto = require('node:crypto');
+const { assess, publicOrigin, publicAddress } = require('../hardened-close-production-readiness.cjs');
+const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+let directory, plan, environment, proofs, artifact;
+function save(name, value) {
+  const filename = path.join(directory, name + '.json'); fs.writeFileSync(filename, JSON.stringify(value)); return { path: filename, sha256: hash(fs.readFileSync(filename)) };
+}
+function update(name, patch) { proofs[name] = { ...proofs[name], ...patch }; plan.evidence[name] = save(name, proofs[name]); }
+const run = () => assess(plan, { base: directory, environment, now: new Date('2026-11-09T20:00:00Z'), trustedPlan: true, verifyArtifact: () => artifact });
+beforeEach(() => {
+  directory = fs.mkdtempSync(path.join(os.tmpdir(), 'stoquify-production-gate-unit-'));
+  fs.mkdirSync(path.join(directory, 'prisma')); fs.writeFileSync(path.join(directory, 'prisma/migration-catalog-manifest.json'), '{}');
+  fs.writeFileSync(path.join(directory, 'package-lock.json'), '{"lockfileVersion":3,"packages":{}}');
+  plan = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config/release/hardened-close-production.template.json')));
+  plan.target = { provider: 'synthetic-node-host', projectId: 'fixture-project', region: 'fixture-region', origin: 'https://pilot.synthetic-owned.org', platform: 'linux', architecture: 'x64', nodeMajor: 22, artifactFormat: 'stoquify-standalone-v2' };
+  artifact = { buildId: 'fixture-build', source: [{ path: 'fixture.js', sha256: hash('fixture') }], files: [{ path: 'runtime/node_modules/.prisma/client/libquery_engine-debian-openssl-3.0.x.so.node', sha256: hash('engine') }] };
+  plan.candidate = { directory, artifactDirectory: directory, sourceManifestSha256: hash(JSON.stringify(artifact.source)), artifactSha256: hash('synthetic-artifact'), buildId: artifact.buildId, catalogSha256: hash('{}') };
+  plan.database = { provider: 'synthetic-db-host', projectId: 'fixture-db-project', branchId: 'fixture-branch', endpointHost: 'db.synthetic-owned.org', environment: 'production', connectionMode: 'direct', schema: 'public' };
+  plan.delivery = { statementChannel: 'email', resendAccountId: 'fixture-resend-account', statementSender: 'statements@synthetic-owned.org', inviteSender: 'invites@synthetic-owned.org' };
+  environment = { NODE_ENV: 'production', VERCEL_ENV: 'production', AQSTOQFLOW_DATABASE_TARGET: 'production', DATABASE_URL: 'postgresql://fixture-user:fixture-password@db.synthetic-owned.org/fixture?schema=public&sslmode=require',
+    AUTH_SECRET: hash('unit-auth'), NEXTAUTH_URL: plan.target.origin, NEXT_PUBLIC_BASE_URL: plan.target.origin, STOQUIFY_STATEMENT_EMAIL_LIVE_SENDS: '1', STOQUIFY_ACCOUNTANT_INVITE_LIVE_SENDS: '1',
+    RESEND_API_KEY: 'synthetic-private-provider-key', RESEND_FROM_EMAIL: plan.delivery.statementSender, STOQUIFY_ACCOUNTANT_INVITE_FROM_EMAIL: plan.delivery.inviteSender };
+  for (const key of ['PUBLIC_IDENTITY_ABUSE_HASH_SECRET', 'AQSTOQFLOW_RECEIPT_TOKEN_SECRET', 'AQSTOQFLOW_HISTORY_CURSOR_SECRET', 'AQSTOQFLOW_STATEMENT_TOKEN_SECRET', 'AQSTOQFLOW_STATEMENT_DELIVERY_ENCRYPTION_KEY', 'AQSTOQFLOW_ACCOUNTANT_INVITE_ENCRYPTION_KEY']) environment[key] = hash('unit-fixture-' + key);
+  const record = save('raw-provider-fixture', { classification: 'Synthetic unit fixture; no external acceptance', requestId: 'fixture-request' });
+  const common = { observedAt: '2026-11-09T19:00:00Z', sourceManifestSha256: plan.candidate.sourceManifestSha256, artifactSha256: plan.candidate.artifactSha256, buildId: plan.candidate.buildId, origin: plan.target.origin, observer: 'fixture-observer', externalRecordId: 'fixture-external-id', records: [record] };
+  proofs = {
+    build: { ...common, kind: 'build', platform: 'linux', architecture: 'x64', nodeMajor: 22, artifactFormat: plan.target.artifactFormat, catalogSha256: plan.candidate.catalogSha256, runtimeQualificationId: 'fixture-runtime', privateConfigExclusionReportId: 'fixture-exclusion' },
+    worker: { ...common, kind: 'worker', platform: 'linux', architecture: 'x64', nodeMajor: 22, sourceEntryPoint: 'scripts/referral-delivery-worker.ts', packageLockSha256: hash(fs.readFileSync(path.join(directory, 'package-lock.json'))), workerArtifactSha256: hash('synthetic-worker-artifact'), runtimeQualificationId: 'fixture-worker-runtime', nativeRuntimeQualificationId: 'fixture-worker-native', privateConfigExclusionReportId: 'fixture-worker-exclusion', consumerCapabilities: ['statement-email', 'accountant-invitation-email'] },
+    hosting: { ...common, kind: 'hosting', provider: plan.target.provider, projectId: plan.target.projectId, region: plan.target.region, protectedEnvironmentId: 'fixture-protected-env', promotionMechanismId: 'fixture-promotion', requiredChecksExportId: 'fixture-checks', tlsVerificationId: 'fixture-tls', resolvedAddresses: ['8.8.8.8'] },
+    database: { ...common, kind: 'database', ...plan.database, catalogSha256: plan.candidate.catalogSha256, targetHistoryReportId: 'fixture-history', pendingRiskReportId: 'fixture-risk', baselineDecisionId: 'fixture-baseline' },
+    recovery: { ...common, kind: 'recovery', databaseProjectId: plan.database.projectId, databaseBranchId: plan.database.branchId, retentionDays: 7, approvedRpoSeconds: 60, approvedRtoSeconds: 600, measuredRpoSeconds: 10, measuredRtoSeconds: 300, providerBackupExportId: 'fixture-backup', restoreDrillId: 'fixture-restore', recoveryPoint: 'fixture-point', incidentCommander: 'fixture-commander', recoveryOperator: 'fixture-recovery-operator', domainAcceptor: 'fixture-domain-acceptor' },
+    sender: { ...common, kind: 'sender', provider: 'resend', accountId: plan.delivery.resendAccountId, domainStatus: 'verified', domainId: 'fixture-domain', dnsVerificationId: 'fixture-dns', senders: [plan.delivery.statementSender, plan.delivery.inviteSender] },
+    scheduler: { ...common, kind: 'scheduler', provider: 'fixture-private-scheduler', scheduleId: 'fixture-schedule', executionId: 'fixture-run', workerRevision: 'fixture-worker', consumerCapabilities: ['statement-email', 'accountant-invitation-email'], invocationKind: 'private-cli', entryPoint: 'scripts/referral-delivery-worker.ts', organizationIds: ['fixture-tenant'], workerId: 'fixture-worker', limit: 25, jobIdentityId: 'fixture-iam', secretManagerBindingId: 'fixture-secret-ref', signedInvocationReceiptId: 'fixture-signed-control-plane-event' },
+  };
+  proofs.scheduler.workerArtifactSha256 = proofs.worker.workerArtifactSha256;
+  for (const [name, capability, sender] of [['statementAcceptance', 'statement-email', plan.delivery.statementSender], ['inviteAcceptance', 'accountant-invitation-email', plan.delivery.inviteSender]]) proofs[name] = { ...common, kind: name, provider: 'resend', accountId: plan.delivery.resendAccountId, capability, sender, recipientClass: 'owned-test', recipientReference: 'fixture-owned-recipient', deliveryId: 'fixture-delivery', idempotencyKey: 'fixture-queue-key', messageId: 'fixture-message', providerRequestId: 'fixture-request', providerHttpStatus: 200, eventType: 'email.delivered', providerEventId: 'fixture-event', operatorReceiptId: 'fixture-operator-receipt' };
+  for (const [name, value] of Object.entries(proofs)) plan.evidence[name] = save(name, value);
+});
+afterEach(() => { const target = path.resolve(directory), parent = fs.realpathSync(os.tmpdir()); assert.equal(path.dirname(fs.realpathSync(target)), parent); assert.match(path.basename(target), /^stoquify-production-gate-unit-/); fs.rmSync(target, { recursive: true }); });
+test('complete synthetic file admission permits operator review only, with no deployment approval', () => { const result = run(); assert.deepEqual(result.blockers, []); assert(result.readyForOperatorReview); assert.equal(result.deploymentApproved, false); assert.equal(result.schemaPromoted, false); assert.equal(result.applicationDeployed, false); });
+test('undecided shipped template stays blocked without contacting anything', () => { const template = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config/release/hardened-close-production.template.json'))); const result = assess(template, { environment: {}, trustedPlan: false }); assert.equal(result.status, 'BLOCKED'); assert(result.blockers.includes('target_origin_not_public_https')); assert(result.blockers.includes('plan_digest_not_independently_pinned')); });
+test('rejects credentialed, loopback, private, reserved and ambiguous origins', () => { for (const origin of ['http://public.org', 'https://localhost', 'https://127.0.0.1', 'https://10.0.0.1', 'https://[::1]', 'https://[2001:db8::1]', 'https://foo.invalid', 'https://foo.test', 'https://foo.example', 'https://example.com', 'https://foo.internal', 'https://user:password@public.org', 'https://public.org/path', 'https://public.org:8443', 'https://public.org/', 'https://public.org?x=1']) assert.equal(publicOrigin(origin), false, origin); });
+test('rejects non-public DNS address evidence', () => { for (const address of ['127.0.0.1', '10.1.2.3', '172.16.0.1', '192.168.0.2', '100.64.1.2', '169.254.1.1', '192.0.2.1', '198.51.100.2', '203.0.113.3', '224.0.0.1', '::1', 'fc00::1', 'fe80::1', '2001:db8::1', '::ffff:8.8.8.8']) assert.equal(publicAddress(address), false, address); assert(publicAddress('2606:4700:4700::1111')); });
+test('does not print private connection or secret values or their hashes', () => { const report = JSON.stringify(run()); for (const [key, value] of Object.entries(environment)) if (/SECRET|ENCRYPTION_KEY|API_KEY|DATABASE_URL/.test(key)) { assert(!report.includes(value)); assert(!report.includes(hash(value))); } });
+test('actual verifier failure blocks admission', () => { const result = assess(plan, { environment, base: directory, trustedPlan: true, verifyArtifact: () => { throw Error('tampered'); } }); assert(result.blockers.includes('actual_artifact_verification_failed')); });
+test('requires a strong effective runtime auth secret with the actual nullish preference', () => {
+  for (const value of [undefined, '', 'short', 'a'.repeat(64)]) {
+    environment.AUTH_SECRET = value;
+    delete environment.NEXTAUTH_SECRET;
+    assert(run().blockers.includes('runtime_auth_secret_missing_or_weak'));
+  }
+  environment.NEXTAUTH_SECRET = hash('fallback-runtime-secret');
+  assert(run().blockers.includes('runtime_auth_secret_missing_or_weak'));
+  delete environment.AUTH_SECRET;
+  assert(!run().blockers.includes('runtime_auth_secret_missing_or_weak'));
+});
+test('Windows native artifact cannot pass a declared Linux build', () => { artifact.files[0].path = 'runtime/node_modules/.prisma/client/query_engine-windows.dll.node'; assert(run().blockers.includes('artifact_native_platform_mismatch')); });
+test('unqualified Vercel provider adapter stays blocked', () => { plan.target.provider = 'vercel'; update('hosting', { provider: 'vercel' }); assert(run().blockers.includes('vercel_build_output_adapter_not_qualified')); });
+test('rejects raw evidence tamper even when summary is unchanged', () => { fs.appendFileSync(proofs.sender.records[0].path, 'changed'); assert(run().blockers.includes('evidence_sender_missing_invalid_stale_or_changed')); });
+test('rejects boolean-only acceptance records', () => { update('inviteAcceptance', { records: [], accepted: true }); assert(run().blockers.includes('evidence_inviteAcceptance_missing_invalid_stale_or_changed')); });
+test('rejects stale/future acceptance, wrong source or origin, missing message ID and provider rejection', () => {
+  for (const patch of [{ observedAt: '2026-11-01T00:00:00Z' }, { observedAt: '2026-11-10T00:00:00Z' }, { sourceManifestSha256: hash('wrong') }, { origin: 'https://other.synthetic-owned.org' }]) { const original = proofs.statementAcceptance; update('statementAcceptance', patch); assert(run().blockers.includes('evidence_statementAcceptance_missing_invalid_stale_or_changed')); proofs.statementAcceptance = original; update('statementAcceptance', {}); }
+  update('statementAcceptance', { messageId: '', providerHttpStatus: 429 }); assert(run().blockers.includes('provider_statementAcceptance_acceptance_missing'));
+});
+test('requires both features live, production environment and exact sender/origin/direct DB binding', () => { environment.STOQUIFY_ACCOUNTANT_INVITE_LIVE_SENDS = '0'; environment.NODE_ENV = 'test'; environment.NEXTAUTH_URL = 'https://other.synthetic-owned.org'; environment.DIRECT_URL = 'postgresql://other@db.synthetic-owned.org/other'; const result = run(); for (const blocker of ['both_email_capabilities_must_be_explicitly_enabled_in_controlled_environment', 'controlled_environment_must_be_production', 'origin_environment_mismatch_NEXTAUTH_URL', 'private_database_direct_url_mismatch']) assert(result.blockers.includes(blocker)); });
+test('unscoped scheduler and missing independent recovery facts fail closed', () => { update('scheduler', { organizationIds: [], signedInvocationReceiptId: '' }); update('recovery', { measuredRtoSeconds: 999, domainAcceptor: '' }); const result = run(); assert(result.blockers.includes('both_delivery_worker_schedule_evidence_missing')); assert(result.blockers.includes('hosted_recovery_or_named_approval_evidence_missing')); });
+test('web and scheduler evidence alone cannot replace a qualified delivery worker', () => { plan.evidence.worker = null; const result = run(); assert.equal(result.readyForOperatorReview, false); assert(result.blockers.includes('evidence_worker_missing_invalid_stale_or_changed')); });
+test('worker runtime must match source, dependencies, platform and both capabilities', () => {
+  const original = proofs.worker;
+  for (const patch of [{ sourceManifestSha256: hash('other-source') }, { packageLockSha256: hash('other-lock') }, { platform: 'win32' }, { architecture: 'arm64' }, { nodeMajor: 20 }, { sourceEntryPoint: 'other-worker.ts' }, { runtimeQualificationId: '' }, { nativeRuntimeQualificationId: '' }, { privateConfigExclusionReportId: '' }, { consumerCapabilities: ['statement-email'] }]) {
+    update('worker', patch); const result = run(); assert.equal(result.readyForOperatorReview, false); assert(result.blockers.some(id => id.startsWith('evidence_worker_') || id === 'qualified_delivery_worker_runtime_missing_or_mismatched'));
+    proofs.worker = original; update('worker', {});
+  }
+});
+test('scheduled invocation must identify the exact qualified worker artifact', () => { update('scheduler', { workerArtifactSha256: hash('other-worker') }); assert(run().blockers.includes('both_delivery_worker_schedule_evidence_missing')); });
+test('web artifact digest cannot be reused as the separate worker runtime', () => { update('worker', { workerArtifactSha256: plan.candidate.artifactSha256 }); update('scheduler', { workerArtifactSha256: plan.candidate.artifactSha256 }); assert(run().blockers.includes('delivery_worker_must_have_separate_artifact_identity')); });
+test('changed candidate lock cannot reuse an older worker qualification', () => { fs.appendFileSync(path.join(directory, 'package-lock.json'), '\n'); assert(run().blockers.includes('qualified_delivery_worker_runtime_missing_or_mismatched')); });
+test('rejects string-coerced recovery values and private raw evidence paths', () => { update('recovery', { measuredRpoSeconds: '0' }); const privatePath = path.join(directory, '.env'); fs.writeFileSync(privatePath, 'DO_NOT_HASH=synthetic-private-value'); update('sender', { records: [{ path: privatePath, sha256: '0'.repeat(64) }] }); const result = run(); assert(result.blockers.includes('hosted_recovery_or_named_approval_evidence_missing')); assert(result.blockers.includes('evidence_sender_missing_invalid_stale_or_changed')); assert(!JSON.stringify(result).includes(privatePath)); });

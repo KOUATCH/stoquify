@@ -21,7 +21,7 @@ import { assertPOSShiftOpeningAccessInTx, POSShiftOpeningAccessError, POS_SHIFT_
 import { assertPOSCartWriteAccessInTx, POSCartWriteAccessError, POS_CART_WRITE_POLICY_VERSION, type POSCartWriteScope } from "./cart-write-access"
 import { posCartRevision } from "./cart-revision"
 import { assertCheckoutLeaseInTx, retireShiftDraftsInTx, retainedCheckoutRequest } from "./checkout-state"
-import { assertPOSTenderWriteAccessInTx, auditPOSTenderWriteDenial, type POSTenderWriteScope } from "./tender-write-access"
+import { assertPOSTenderWriteAccessInTx, assertPOSInteractiveAuthorityInTx, auditPOSTenderWriteDenial, type POSTenderWriteScope, type POSInteractiveAuthority } from "./tender-write-access"
 import { postRefund } from "@/services/accounting/postings/post-refund"
 import { postPayment } from "@/services/accounting/postings/post-payment"
 import { postSale } from "@/services/accounting/postings/post-sale"
@@ -47,6 +47,8 @@ import {
 } from "@/services/inventory/inventory-stock-event.service"
 import {
   claimPOSElectronicTenderAuthority,
+  isPOSElectronicTenderMethod,
+  lockElectronicTenderAuthoritiesInTx,
   resolvePOSElectronicTenderAuthority,
   type POSElectronicTenderAuthorityEvidence,
 } from "@/services/payments/pos-electronic-tender-authority.service"
@@ -659,6 +661,12 @@ function shiftCloseCommandHash(input: {
 function prismaErrorCode(error: unknown) {
   if (!error || typeof error !== "object" || !("code" in error)) return null
   const code = (error as { code?: unknown }).code
+  // Prisma exposes serialization/deadlock failures from explicit authority
+  // locks as raw-query errors. Retry the whole transaction as for P2034.
+  if (code === "P2010" && "meta" in error) {
+    const meta = (error as { meta?: { code?: unknown } }).meta
+    if (meta?.code === "40001" || meta?.code === "40P01") return "P2034"
+  }
   return typeof code === "string" ? code : null
 }
 
@@ -2163,7 +2171,7 @@ export async function getPOSSaleCommitStatus(rawInput: UserScoped) {
   })
 }
 
-export async function commitPOSSale(rawInput: UserScoped) {
+export async function commitPOSSale(rawInput: UserScoped, authority?: POSInteractiveAuthority) {
   const input = commitSaleSchema.parse(rawInput)
   const writeScope: POSTenderWriteScope = { organizationId: rawInput.organizationId, userId: rawInput.userId, salesOrderId: input.salesOrderId, operation: "commit" }
   assertSupportedSaleTenders(input.tenders)
@@ -2171,6 +2179,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
   const requestHash = posSaleCommitRequestHash(rawInput, input)
 
   const runCommit = async (tx: Prisma.TransactionClient) => {
+    if (authority) await assertPOSInteractiveAuthorityInTx(tx, writeScope, authority)
     const existingCommit = await tx.pOSCommitResult.findUnique({
       where: {
         organizationId_terminalId_clientCommitId: {
@@ -2338,18 +2347,6 @@ export async function commitPOSSale(rawInput: UserScoped) {
       .reduce((sum, allocation) => addMoney(sum, allocation.amount), new Prisma.Decimal(0))
       .toDecimalPlaces(2)
     const amountPaid = total.minus(onAccountAmount).toDecimalPlaces(2)
-    const providerAuthorities: Array<POSElectronicTenderAuthorityEvidence | null> = []
-    for (const allocation of allocations) {
-      providerAuthorities.push(await resolvePOSElectronicTenderAuthority(tx, {
-        organizationId: rawInput.organizationId,
-        paymentMethod: allocation.paymentMethod,
-        paymentTransactionId: allocation.tender.paymentTransactionId,
-        amount: allocation.amount,
-        currencyCode: sale.organization.currency,
-      }))
-    }
-    assertUniquePOSElectronicTenderAuthority(providerAuthorities)
-
     const commitRegistry = await tx.pOSCommitResult.create({
       data: {
         organizationId: rawInput.organizationId,
@@ -2410,6 +2407,26 @@ export async function commitPOSSale(rawInput: UserScoped) {
     if (onAccountAmount.gt(0) && customer.code === "WALK_IN") {
       throw new BusinessRuleError("On-account tender requires an attached customer")
     }
+
+    await lockElectronicTenderAuthoritiesInTx(tx, {
+      organizationId: rawInput.organizationId,
+      paymentTransactionIds: allocations.flatMap(allocation =>
+        isPOSElectronicTenderMethod(allocation.paymentMethod) && allocation.tender.paymentTransactionId
+          ? [allocation.tender.paymentTransactionId]
+          : [],
+      ),
+    })
+    const providerAuthorities: Array<POSElectronicTenderAuthorityEvidence | null> = []
+    for (const allocation of allocations) {
+      providerAuthorities.push(await resolvePOSElectronicTenderAuthority(tx, {
+        organizationId: rawInput.organizationId,
+        paymentMethod: allocation.paymentMethod,
+        paymentTransactionId: allocation.tender.paymentTransactionId,
+        amount: allocation.amount,
+        currencyCode: sale.organization.currency,
+      }))
+    }
+    assertUniquePOSElectronicTenderAuthority(providerAuthorities)
 
     const inventoryTransactionIds: string[] = []
     const now = new Date()
@@ -2901,7 +2918,10 @@ export async function commitPOSSale(rawInput: UserScoped) {
           }
           break
         }
-        if (errorCode === "P2034" && attempt === 0) continue
+        if (errorCode === "P2034") {
+          if (attempt === 0) continue
+          throw new ApplicationError("DATABASE_CONFLICT", "POS sale could not be serialized safely; retry the retained request", 409)
+        }
       }
       if (error instanceof ApplicationError) throw error
       throw new ApplicationError(
@@ -2983,6 +3003,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
 
 const correctionSaleInclude = {
   customer: { select: { id: true, code: true } },
+  organization: { select: { currency: true } },
   lines: {
     include: {
       item: {
@@ -3347,21 +3368,138 @@ async function reverseSessionTotals(
   }
 }
 
+type RefundReviewPayment = Pick<CorrectionSale["payments"][number], "id" | "deletedAt" | "method" | "status" | "amount" | "refundedAmount">
+
+function hasPriorRefund(payment: {
+  refundedAmount: Prisma.Decimal | null
+  refunds: { status: RefundStatus }[]
+}) {
+  return toDecimal(payment.refundedAmount).gt(0) ||
+    payment.refunds.some((refund) => refund.status !== RefundStatus.CANCELLED)
+}
+
 function assertNoPriorRefunds(sale: CorrectionSale) {
-  const refundedPayment = sale.payments.find((payment) =>
-    payment.refunds.some((refund) => refund.status !== RefundStatus.CANCELLED),
-  )
+  const refundedPayment = sale.payments.find(hasPriorRefund)
 
   if (refundedPayment) {
     throw new BusinessRuleError(`Payment ${refundedPayment.paymentNumber} already has a refund`)
   }
 }
 
-export async function refundPOSSale(rawInput: UserScoped) {
+function summarizeRefundablePayments<T extends RefundReviewPayment>(payments: T[]) {
+  const refundablePayments = payments.filter((payment) => (
+    !payment.deletedAt &&
+    payment.method === PaymentMethod.CASH &&
+    (payment.status === PaymentStatus.PAID || payment.status === PaymentStatus.PARTIAL) &&
+    toDecimal(payment.amount).minus(toDecimal(payment.refundedAmount)).gt(0)
+  ))
+  const totalRefundable = refundablePayments.reduce(
+    (total, payment) => total.plus(toDecimal(payment.amount).minus(toDecimal(payment.refundedAmount))),
+    new Prisma.Decimal(0),
+  ).toDecimalPlaces(2)
+  return { refundablePayments, totalRefundable }
+}
+
+export async function getPOSSaleReturnPreview(input: {
+  organizationId: string
+  userId: string
+  locationId: string
+  terminalId: string
+  sessionId: string
+  orderNumber: string
+}) {
+  await requireActiveCorrectionSession(db, input)
+
+  const sale = await db.salesOrder.findFirst({
+    where: {
+      organizationId: input.organizationId,
+      locationId: input.locationId,
+      terminalId: input.terminalId,
+      sessionId: input.sessionId,
+      orderNumber: input.orderNumber,
+      channel: "POS",
+      status: { in: [SalesOrderStatus.COMPLETED, SalesOrderStatus.RETURNED] },
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      orderNumber: true,
+      total: true,
+      status: true,
+      paymentStatus: true,
+      organization: { select: { currency: true } },
+      lines: {
+        select: {
+          id: true,
+          quantity: true,
+          item: { select: { nameEn: true, nameFr: true, sku: true } },
+        },
+      },
+      payments: {
+        where: { organizationId: input.organizationId, deletedAt: null },
+        select: {
+          id: true,
+          deletedAt: true,
+          method: true,
+          status: true,
+          amount: true,
+          refundedAmount: true,
+          refunds: {
+            where: { organizationId: input.organizationId },
+            select: { amount: true, status: true },
+          },
+        },
+      },
+    },
+  })
+  if (!sale) return null
+
+  const total = toDecimal(sale.total)
+  const { refundablePayments, totalRefundable } = summarizeRefundablePayments(sale.payments)
+  const recordedAmount = sale.payments.flatMap((payment) => payment.refunds)
+    .filter((refund) => refund.status === RefundStatus.PROCESSED)
+    .reduce((amount, refund) => amount.plus(refund.amount), new Prisma.Decimal(0))
+
+  let status: "ELIGIBLE" | "RECORDED" | "UNSUPPORTED"
+  if (
+    sale.status === SalesOrderStatus.RETURNED &&
+    sale.paymentStatus === PaymentStatus.REFUNDED &&
+    sale.payments.every((payment) => payment.method === PaymentMethod.CASH) &&
+    recordedAmount.gt(0) && recordedAmount.eq(total)
+  ) {
+    status = "RECORDED"
+  } else if (
+    sale.status === SalesOrderStatus.COMPLETED &&
+    sale.lines.length > 0 &&
+    sale.payments.every((payment) => payment.method === PaymentMethod.CASH && !hasPriorRefund(payment)) &&
+    refundablePayments.length > 0 && totalRefundable.eq(total)
+  ) {
+    status = "ELIGIBLE"
+  } else {
+    status = "UNSUPPORTED"
+  }
+
+  return {
+    saleId: sale.id,
+    orderNumber: sale.orderNumber,
+    status,
+    total: { amount: total.toFixed(2), currency: sale.organization.currency },
+    lines: sale.lines.map((line) => ({
+      id: line.id,
+      quantity: line.quantity.toString(),
+      ...line.item,
+    })),
+  }
+}
+
+export type POSSaleReturnPreview = NonNullable<Awaited<ReturnType<typeof getPOSSaleReturnPreview>>>
+
+export async function refundPOSSale(rawInput: UserScoped, authority?: POSInteractiveAuthority) {
   const input = refundPOSSaleSchema.parse(rawInput)
   const writeScope: POSTenderWriteScope = { organizationId: rawInput.organizationId, userId: rawInput.userId, salesOrderId: input.salesOrderId, operation: "refund" }
 
   return db.$transaction(async (tx) => {
+    if (authority) await assertPOSInteractiveAuthorityInTx(tx, writeScope, authority)
     await assertPOSTenderWriteAccessInTx(tx, writeScope)
     const now = new Date()
     const sale = await loadCompletedSaleForCorrection(tx, {
@@ -3386,21 +3524,16 @@ export async function refundPOSSale(rawInput: UserScoped) {
     if (payments.some((payment) => payment.method === PaymentMethod.CREDIT)) {
       throw new BusinessRuleError("On-account POS sales must be voided or settled before refunding")
     }
-    const refundablePayments = payments.filter((payment) => {
-      const refundedAmount = toDecimal(payment.refundedAmount)
-      return (
-        payment.method !== PaymentMethod.CREDIT &&
-        payment.method !== PaymentMethod.MIXED &&
-        (payment.status === PaymentStatus.PAID || payment.status === PaymentStatus.PARTIAL) &&
-        toDecimal(payment.amount).minus(refundedAmount).gt(0)
-      )
-    })
-    const totalRefundable = refundablePayments
-      .reduce((total, payment) => total.plus(toDecimal(payment.amount).minus(toDecimal(payment.refundedAmount))), new Prisma.Decimal(0))
-      .toDecimalPlaces(2)
+    const { refundablePayments, totalRefundable } = summarizeRefundablePayments(payments)
 
     if (refundablePayments.length === 0 || !totalRefundable.eq(toDecimal(sale.total))) {
       throw new BusinessRuleError("Only fully paid, unrefunded POS sales can be refunded in this workflow")
+    }
+    if (input.reviewedTotal && (
+      !totalRefundable.eq(input.reviewedTotal.amount) ||
+      sale.organization.currency !== input.reviewedTotal.currency
+    )) {
+      throw new ConflictError("Refund total changed; review the sale before refunding it")
     }
 
     const cashOutflow = sumPaymentMethod(refundablePayments, PaymentMethod.CASH)
@@ -3571,11 +3704,12 @@ export async function refundPOSSale(rawInput: UserScoped) {
   })
 }
 
-export async function voidPOSSale(rawInput: UserScoped) {
+export async function voidPOSSale(rawInput: UserScoped, authority?: POSInteractiveAuthority) {
   const input = voidPOSSaleSchema.parse(rawInput)
   const writeScope: POSTenderWriteScope = { organizationId: rawInput.organizationId, userId: rawInput.userId, salesOrderId: input.salesOrderId, operation: "void" }
 
   return db.$transaction(async (tx) => {
+    if (authority) await assertPOSInteractiveAuthorityInTx(tx, writeScope, authority)
     await assertPOSTenderWriteAccessInTx(tx, writeScope)
     const now = new Date()
     const sale = await loadCompletedSaleForCorrection(tx, {

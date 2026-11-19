@@ -1,0 +1,60 @@
+{
+  "artifactSha256": "987da3ead9c716cdbf5d2a22ac1723aa8a8ed15113f40a6b8abd3c1fb64d151f",
+  "buildId": "eoW9-NZPj4rd9OHTZxMDM",
+  "runtime": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\10\\19\\01a1542f-53bc-7513-b68f-4bce330ca993\\af16-sealed-runtime-20261026",
+  "port": 54402,
+  "copiedBytesVerified": true,
+  "reusedCopy": true,
+  "requestTimeoutMs": 120000,
+  "loopbackOnly": true,
+  "evidenceClass": "HTTP smoke of the sealed full application; not authenticated browser, TLS, prior-application rollback or production qualification",
+  "requests": [
+    {
+      "route": "/en",
+      "startedAt": 1793033361928,
+      "stage": "complete",
+      "status": 200,
+      "headersElapsedMs": 16349,
+      "elapsedMs": 34885
+    },
+    {
+      "route": "/en/login",
+      "startedAt": 1793033396814,
+      "stage": "complete",
+      "status": 200,
+      "headersElapsedMs": 366,
+      "elapsedMs": 536
+    },
+    {
+      "route": "/en/dashboard/accounting",
+      "startedAt": 1793033397350,
+      "stage": "body",
+      "status": 307,
+      "headersElapsedMs": 36
+    }
+  ],
+  "checks": [
+    {
+      "route": "/en",
+      "status": 200,
+      "html": true,
+      "elapsedMs": 34885
+    },
+    {
+      "route": "/en/login",
+      "status": 200,
+      "html": true,
+      "elapsedMs": 536
+    }
+  ],
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'http://localhost:54402'\n- 'http://127.0.0.1:54402'\n          ^\n\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\scripts\\verify-af16-artifact-runtime.cjs:101:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "failedRequest": {
+    "route": "/en/dashboard/accounting",
+    "startedAt": 1793033397350,
+    "stage": "body",
+    "status": 307,
+    "headersElapsedMs": 36
+  },
+  "serverStopped": true
+}

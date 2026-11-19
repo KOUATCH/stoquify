@@ -27,6 +27,14 @@ export type AccountingRouteSurface = {
 
 export const accountingRouteCatalog: AccountingRouteSurface[] = [
   {
+    key: "accounting-opening-position",
+    route: "/dashboard/accounting/opening-position",
+    resource: "FinancialOpeningRevision",
+    title: "Opening position preview",
+    permissions: ["accounting.close.read"],
+    module: { moduleSlug: "accounting", surface: "accounting-opening-position", accessIntent: "read", mode: "enforce" },
+  },
+  {
     key: "accounting-dashboard",
     route: "/dashboard/accounting",
     resource: "AccountingDashboard",
@@ -53,6 +61,7 @@ export const accountingRouteCatalog: AccountingRouteSurface[] = [
     resource: "AccountingAccountantPortal",
     title: "Accountant portfolio",
     permissions: ["accounting.audit.read"],
+    module: { moduleSlug: "accounting", surface: "accounting-accountant-portfolio", accessIntent: "read", mode: "enforce" },
   },
   {
     key: "accounting-accounts",

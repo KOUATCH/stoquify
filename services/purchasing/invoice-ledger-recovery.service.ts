@@ -1,4 +1,5 @@
 import "server-only"
+import { invoiceLineNet } from "./invoice-commercial-basis"
 import { Prisma } from "@prisma/client"
 import { db } from "@/prisma/db"
 import { resolveInvoiceReceiptRecognition } from "./invoice-receipt-recognition"
@@ -51,7 +52,7 @@ async function source(tx: Prisma.TransactionClient, invoiceId: string, scope: In
   const liabilities = await tx.supplierLedgerEntry.findMany({ where: { organizationId: scope.organizationId, referenceType: "SUPPLIER_INVOICE", referenceId: invoice.id } })
   const liability = liabilities[0]
   if (liabilities.length !== 1 || !liability || liability.supplierId !== invoice.supplierId || liability.type !== "PURCHASE" || !liability.debit.eq(invoice.total) || !liability.credit.eq(0) || liability.entryDate.getTime() !== invoice.invoiceDate.getTime()) throw evidenceRequired()
-  const subtotal = invoice.lines.reduce((sum, line) => sum.plus(line.quantity.times(line.unitCost).toDecimalPlaces(2)), new Prisma.Decimal(0))
+  const subtotal = invoice.lines.reduce((sum, line) => sum.plus(invoiceLineNet(line)), new Prisma.Decimal(0))
   const tax = invoice.lines.reduce((sum, line) => sum.plus(line.taxAmount), new Prisma.Decimal(0))
   if (!invoice.lines.length || invoice.lines.some(line => line.organizationId !== scope.organizationId) || !subtotal.eq(invoice.subtotal) || !tax.eq(invoice.taxAmount) || !subtotal.plus(tax).minus(invoice.discount).eq(invoice.total) || invoice.discount.gt(0)) throw evidenceRequired()
   return { invoice, approval, liability, documentHash, match }

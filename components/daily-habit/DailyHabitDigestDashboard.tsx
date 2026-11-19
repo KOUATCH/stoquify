@@ -1,11 +1,16 @@
 "use client"
+import { FollowUpPanel } from "@/components/command-center/FollowUpPanel"
+
+import { CommandCenterRecovery } from "@/components/dashboard/CommandCenterRecovery"
 
 import { useEffect, useMemo, useState, type MouseEvent } from "react"
 import Link from "next/link"
+import { localizePath } from "@/i18n/routing"
 import { useRouter } from "next/navigation"
 import { CalendarDays, EyeOff, LayoutList, LockKeyhole } from "lucide-react"
 import { AgentCommandPanel } from "@/components/agents/AgentCommandPanel"
 import styles from "./DailyHabitDigestDashboard.module.css"
+import { DigestSourceLimitations } from "./DigestSourceLimitations"
 
 import {
   BICommandBriefHeader,
@@ -27,6 +32,7 @@ import type { DailyHabitDigestData } from "@/services/daily-habit/daily-habit-di
 import type { CommandAgentSurfaceAccess } from "@/services/agents/command-agent-contracts"
 
 type DailyHabitDigestDashboardProps = {
+  followUpEnabled?: boolean
   data: DailyHabitDigestData
   locale: "en" | "fr"
   commandAgentAccess?: CommandAgentSurfaceAccess
@@ -46,9 +52,11 @@ const copy = {
     signals: "Digest signals", signalsDetail: "Business signals derived from existing snapshots and permission-filtered for this role.",
     radar: "Digest risk radar", radarDetail: "Visible signal-backed risks ranked for the selected role.",
     sourceLinks: "Read-only links to the source workflow.", open: "Open", hiddenAction: "Hidden",
+    nextStep: "Next step", sourceUnavailable: "Source unavailable", sourceStale: "Source is stale — check current evidence in the source workflow.",
+    sourceLimited: "Source evidence is incomplete — review its limitations before acting.",
     roles: { owner: "Owner", manager: "Manager", finance: "Finance", accountant: "Accountant", stockkeeper: "Stockkeeper", end_of_day: "End of day", weekly: "Weekly" },
-    viewTitles: { brief: "Summary and changes", command: "Actions and risks", investigate: "Source details" },
-    viewHelp: { brief: "Review the key figures and changes, then switch to Command for next steps.", command: "Open the permitted source workflows to act. This digest does not execute or approve work.", investigate: "Inspect the source view and its limitations before relying on the figures." },
+    viewTitles: { brief: "Summary and observations", command: "Actions and risks", investigate: "Source details" },
+    viewHelp: { brief: "Review current figures and observations, then switch to Command for next steps.", command: "Open the permitted source workflows to act. This digest does not execute or approve work.", investigate: "Inspect the source view and its limitations before relying on the figures." },
     limitations: "Source limitations", blockers: "Blockers", redactions: "Redactions", inspect: "Inspect sources", noSources: "No source view is available for this workspace.",
     title: "Daily Habit Digest",
     subtitle: "Your permission-aware daily and weekly workspaces, built from existing operating signals.",
@@ -69,9 +77,11 @@ const copy = {
     signals: "Signaux du digest", signalsDetail: "Signaux métier issus des instantanés existants et filtrés selon les autorisations de ce rôle.",
     radar: "Risques du digest", radarDetail: "Risques visibles issus des signaux, classés pour le rôle sélectionné.",
     sourceLinks: "Liens en lecture seule vers le processus source.", open: "Ouvrir", hiddenAction: "Masqué",
+    nextStep: "Prochaine étape", sourceUnavailable: "Source indisponible", sourceStale: "Source ancienne — vérifiez les preuves actuelles dans le processus source.",
+    sourceLimited: "Les preuves sources sont incomplètes — examinez leurs limites avant d’agir.",
     roles: { owner: "Dirigeant", manager: "Responsable", finance: "Finance", accountant: "Comptable", stockkeeper: "Magasinier", end_of_day: "Fin de journée", weekly: "Hebdomadaire" },
-    viewTitles: { brief: "Synthèse et évolutions", command: "Actions et risques", investigate: "Détails des sources" },
-    viewHelp: { brief: "Examinez les chiffres clés et les évolutions, puis passez en mode Pilotage pour les prochaines étapes.", command: "Ouvrez les processus sources autorisés pour agir. Ce digest n’exécute et n’approuve aucune opération.", investigate: "Examinez la vue source et ses limites avant de vous fier aux chiffres." },
+    viewTitles: { brief: "Synthèse et observations", command: "Actions et risques", investigate: "Détails des sources" },
+    viewHelp: { brief: "Examinez les chiffres et observations actuels, puis passez en mode Pilotage pour les prochaines étapes.", command: "Ouvrez les processus sources autorisés pour agir. Ce digest n’exécute et n’approuve aucune opération.", investigate: "Examinez la vue source et ses limites avant de vous fier aux chiffres." },
     limitations: "Limites des sources", blockers: "Blocages", redactions: "Données masquées", inspect: "Examiner les sources", noSources: "Aucune vue source n’est disponible pour cet espace.",
     title: "Digest quotidien",
     subtitle: "Vos espaces quotidiens et hebdomadaires selon vos permissions, issus des signaux opérationnels existants.",
@@ -89,7 +99,7 @@ const copy = {
   },
 } as const
 
-export function DailyHabitDigestDashboard({
+function DailyHabitDigestDashboardContent({
   data,
   locale,
   commandAgentAccess = DISABLED_COMMAND_AGENT_ACCESS,
@@ -143,9 +153,15 @@ export function DailyHabitDigestDashboard({
   }
 
   return (
-    <main onClickCapture={openSourceAtTop} className={cn(styles.root, "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]")}>
+    <div onClickCapture={openSourceAtTop} className={cn(styles.root, "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]")}>
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8">
-        <section className={cn(dashboardPanelClass, "p-4 md:p-5")}>
+        {selectedDigest ? <>
+          <BICommandBriefHeader compact
+            brief={{ ...selectedDigest.commandBrief, title: t.title }} mode={mode}
+            onModeChange={nextMode => selectView(selectedDigest.id, nextMode)}
+            locale={locale} timezone={timezone} periodTimezone="UTC" />
+          <p className="text-sm text-[var(--dash-text-soft)]">{data.organizationName ?? data.organizationId} · {t.roles[selectedDigest.audienceRole as keyof typeof t.roles] ?? selectedDigest.audienceRole} · {t.currency}: {data.currency} · {locale === "fr" ? "Fuseau horaire" : "Time zone"}: {timezone}</p>
+        </> : <section className={cn(dashboardPanelClass, "p-4 md:p-5")}>
           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div className="min-w-0 space-y-3">
               <div className="flex flex-wrap items-center gap-2">
@@ -165,12 +181,12 @@ export function DailyHabitDigestDashboard({
               </div>
               <dl className="mt-3 grid gap-2 text-xs text-[var(--dash-text-soft)]">
                 <MetaLine label={`${t.generated} (${timezone})`} value={formatDateTime(data.generatedAt, formatterLocale, timezone)} />
-                <MetaLine label={`${t.period} (UTC)`} value={`${formatDate(selectedDigest?.periodStart ?? data.periodStart, formatterLocale, "UTC")} - ${formatDate(selectedDigest?.periodEnd ?? data.periodEnd, formatterLocale, "UTC")}`} />
+                <MetaLine label={`${t.period} (UTC)`} value={`${formatDate(data.periodStart, formatterLocale, "UTC")} - ${formatDate(data.periodEnd, formatterLocale, "UTC")}`} />
                 <MetaLine label={t.currency} value={data.currency} />
                 <MetaLine label={t.workspaces} value={data.summary.digestCount.toLocaleString(formatterLocale)} />              </dl>
             </div>
           </div>
-        </section>
+        </section>}
 
         <section className={cn(dashboardPanelClass, "p-3")}>
           <div className="-m-1.5 flex gap-2 overflow-x-auto p-1.5">
@@ -202,48 +218,16 @@ export function DailyHabitDigestDashboard({
 
         {selectedDigest ? (
           <>
-            <AgentCommandPanel
-              key={`${data.organizationId}:${data.generatedAt}:${selectedDigest.id}:${selectedDigest.periodStart}:${selectedDigest.periodEnd}:${locale}`}
-              access={commandAgentAccess}
-              proposalDraftsEnabled={proposalDraftsEnabled}
-              digestId={selectedDigest.id}
-              periodStart={selectedDigest.periodStart}
-              periodEnd={selectedDigest.periodEnd}
-              locale={locale}
-            />
-            <BICommandBriefHeader
-
-              brief={selectedDigest.commandBrief}
-              mode={mode}
-              onModeChange={nextMode => selectView(selectedDigest.id, nextMode)}
-              locale={locale}
-              timezone={timezone}
-              periodTimezone="UTC"
-            />
-
-            {selectedDigest.blockers.length > 0 || selectedDigest.redactions.length > 0 ? (
-              <section className={cn(dashboardPanelClass, "border-[var(--dash-gold)] p-4")} aria-label={t.limitations}>
-                <h2 className="text-sm font-semibold text-[var(--dash-text)]">{t.limitations}</h2>
-                <p className="mt-1 text-sm text-[var(--dash-text-soft)]">
-                  {t.blockers}: {selectedDigest.blockers.length.toLocaleString(formatterLocale)} · {t.redactions}: {selectedDigest.redactions.length.toLocaleString(formatterLocale)}
-                </p>
-                <ul className="mt-2 space-y-1 text-sm text-[var(--dash-text-soft)]">
-                  {selectedDigest.blockers.map((blocker, index) => (
-                    <li key={blocker.id + "-" + index}>
-                      <details className="min-w-0 rounded-md [overflow-wrap:anywhere] open:bg-white/[0.035] open:p-2">
-                        <summary className="cursor-pointer rounded-md py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]">{blocker.title}</summary>
-                        <p className="mt-2">{blocker.detail}</p>
-                        {blocker.nextAction ? <p className="mt-2 text-[var(--dash-text)]"><span className="font-semibold">{locale === "fr" ? "Prochaine étape" : "Next step"}: </span>{blocker.nextAction}</p> : null}
-                      </details>
-                    </li>
-                  ))}
-                </ul>
-                {mode !== "investigate" ? <Button type="button" variant="outline" size="sm" className="mt-3" disabled={!ready} onClick={() => selectView(selectedDigest.id, "investigate")} aria-controls="daily-digest-view">{t.inspect}</Button> : null}
-              </section>
-            ) : null}
+            {mode === "brief" ? <>
+              <DigestActions digest={selectedDigest} emptyLabel={t.noActions} title={locale === "fr" ? "Priorité à examiner" : "Priority to review"} locale={locale} maxItems={1} />
+              {selectedDigest.actions.length > 1 ? <Button type="button" variant="outline" onClick={() => selectView(selectedDigest.id, "command")}>{locale === "fr" ? "Voir les actions de la synthèse" : "View digest actions"} ({selectedDigest.actions.length})</Button> : null}
+            </> : null}
+            <DigestSourceLimitations digest={selectedDigest} locale={locale}>
+              {mode !== "investigate" ? <Button type="button" variant="outline" size="sm" className="mt-3" disabled={!ready} onClick={() => selectView(selectedDigest.id, "investigate")} aria-controls="daily-digest-view">{t.inspect}</Button> : null}
+            </DigestSourceLimitations>
 
             <section id="daily-digest-view" aria-label={t.viewTitles[mode]} className="space-y-4">
-              <div className={cn(dashboardPanelClass, "p-4")}>
+              <div className="space-y-1">
                 <h2 className="text-base font-semibold text-[var(--dash-text)]">{t.viewTitles[mode]}</h2>
                 <p role="status" className={cn("mt-1 text-sm", dashboardMutedTextClass)}>{t.viewHelp[mode]}</p>
               </div>
@@ -267,6 +251,15 @@ export function DailyHabitDigestDashboard({
                 )) : <p role="status" className={cn(dashboardPanelClass, "p-4", dashboardMutedTextClass)}>{t.noSources}</p>
               )}
             </section>
+            <AgentCommandPanel compactUnavailable
+              key={`${data.organizationId}:${data.generatedAt}:${selectedDigest.id}:${selectedDigest.periodStart}:${selectedDigest.periodEnd}:${locale}:${JSON.stringify(commandAgentAccess)}:${proposalDraftsEnabled}`}
+              access={commandAgentAccess}
+              proposalDraftsEnabled={proposalDraftsEnabled}
+              digestId={selectedDigest.id}
+              periodStart={selectedDigest.periodStart}
+              periodEnd={selectedDigest.periodEnd}
+              locale={locale}
+            />
           </>
         ) : (
           <section className={cn(dashboardPanelClass, "p-6")} role="status">
@@ -297,7 +290,7 @@ export function DailyHabitDigestDashboard({
           </section>
         ) : null}
       </div>
-    </main>
+    </div>
   )
 }
 
@@ -306,11 +299,13 @@ function DigestActions({
   title,
   emptyLabel,
   locale,
+  maxItems = digest.actions.length,
 }: {
   digest: BIDailyDigest
   title: string
   emptyLabel: string
   locale: "en" | "fr"
+  maxItems?: number
 }) {
   return (
     <section className={cn(dashboardPanelClass, "min-w-0 p-4")}>
@@ -320,30 +315,42 @@ function DigestActions({
           <p className={cn("mt-1 text-sm", dashboardMutedTextClass)}>{copy[locale].sourceLinks}</p>
         </div>
         <span className="rounded-md border border-[var(--dash-border-subtle)] px-2 py-1 text-xs text-[var(--dash-text-soft)]">
-          {digest.actions.length}
+          {Math.min(maxItems, digest.actions.length)} / {digest.actions.length}
         </span>
       </div>
       <div className="mt-4 space-y-3">
-        {digest.actions.length ? digest.actions.map((action) => (
-          <article key={action.id} className={cn(dashboardRowClass, "p-3")}>
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-[var(--dash-text)]">{action.label}</p>
-                {action.disabled && action.disabledReason ? <p className="mt-1 text-xs text-[var(--dash-text-soft)]">{action.disabledReason}</p> : null}
+        {digest.actions.length ? digest.actions.slice(0, maxItems).map((action) => {
+          // Match by the server-owned action identity, never by a translated label
+          // or route shared by several signals. Do not invent a source when absent.
+          const source = digest.risks.find(risk => risk.actionLink?.id === action.id)
+          const unavailable = source?.drillThrough.available === false
+          const disabled = action.disabled || unavailable
+          const warning = unavailable || ["safe_error", "module_unavailable", "permission_denied"].includes(source?.state ?? "") ? copy[locale].sourceUnavailable
+            : source?.freshness.stale || source?.state === "stale" ? copy[locale].sourceStale
+              : source && source.state !== "ready" ? copy[locale].sourceLimited : null
+          return (
+          <article key={action.id} aria-label={source?.title ?? action.label} className={cn(dashboardRowClass, "p-3")}>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0 flex-1 basis-48 [overflow-wrap:anywhere]">
+                <p className="text-sm font-semibold text-[var(--dash-text)]">{source?.title ?? action.label}</p>
+                {source ? <p className="mt-2 text-sm"><span className="font-semibold">{copy[locale].nextStep}: </span>{action.label}</p> : null}
+                {warning ? <p className="mt-2 text-sm text-[var(--dash-text-soft)]">{warning}</p> : null}
+                {disabled && action.disabledReason ? <p className="mt-1 text-xs text-[var(--dash-text-soft)]">{action.disabledReason}</p> : null}
+                {source?.drillThrough.available === false ? <p className="mt-1 text-sm">{source.drillThrough.unavailableReason}</p> : null}
               </div>
-              <Button asChild={!action.disabled} disabled={action.disabled} title={action.disabledReason ?? undefined} size="sm" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-                {action.disabled ? (
+              <Button asChild={!disabled} disabled={disabled} title={action.disabledReason ?? undefined} size="sm" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
+                {disabled ? (
                   <span>
                     <EyeOff className="h-4 w-4" aria-hidden="true" />
-                    {copy[locale].hiddenAction}
+                    {unavailable ? copy[locale].sourceUnavailable : copy[locale].hiddenAction}
                   </span>
                 ) : (
-                  <Link href={action.href} prefetch={false}>{copy[locale].open}</Link>
+                  <Link href={localizePath(action.href.replace(/^\/(en|fr)(?=\/)/, ""), locale)} prefetch={false} aria-label={`${copy[locale].open}: ${source?.title ?? action.label}`}>{copy[locale].open}</Link>
                 )}
               </Button>
             </div>
           </article>
-        )) : (
+        )}) : (
           <p className="text-sm text-[var(--dash-text-soft)]">{emptyLabel}</p>
         )}
       </div>
@@ -372,4 +379,8 @@ function formatDateTime(value: string, locale: string, timeZone: string) {
     minute: "2-digit",
     timeZone,
   }).format(new Date(value))
+}
+
+export function DailyHabitDigestDashboard(props: DailyHabitDigestDashboardProps) {
+  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><DailyHabitDigestDashboardContent {...props} />{props.followUpEnabled ? <div className="dashboard-landing-theme dark px-4 py-4"><div className="dashboard-landing-content mx-auto max-w-[1920px]"><FollowUpPanel key={`${props.data.organizationId}:${props.data.generatedAt}`} center="digest" periodStart={props.data.periodStart} periodEnd={props.data.periodEnd} locale={props.locale} /></div></div> : null}</CommandCenterRecovery>
 }

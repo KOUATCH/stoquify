@@ -1,0 +1,25 @@
+diff --git a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/actions/purchasing/ap-control.actions.ts b/actions/purchasing/ap-control.actions.ts
+index 21193c9c..41b7e2ec 100644
+--- a/what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/baseline/actions/purchasing/ap-control.actions.ts
++++ b/actions/purchasing/ap-control.actions.ts
+@@ -4,7 +4,7 @@ import { paymentRequestApprovalSchema } from "@/services/purchasing/payment-requ
+ import { confirmPaymentRelease } from "@/services/purchasing/payment-release.service"
+ import { paymentReleaseCommandSchema } from "@/services/purchasing/payment-release-contracts"
+ 
+-import { revalidatePath } from "next/cache"
++import { revalidateAfterCommit } from "@/services/_shared/cache-revalidation"
+ 
+ import { protect } from "@/services/_shared/protect"
+ import {
+@@ -29,10 +29,7 @@ function asRecord(input: unknown) {
+ }
+ 
+ function revalidateAPPaths() {
+-  revalidatePath("/dashboard/purchases/payables", "page")
+-  revalidatePath("/dashboard/finance/payables", "page")
+-  revalidatePath("/[locale]/dashboard/purchases/payables", "page")
+-  revalidatePath("/[locale]/dashboard/finance/payables", "page")
++  revalidateAfterCommit({ paths: ["/dashboard/purchases/payables", "/dashboard/finance/payables", "/[locale]/dashboard/purchases/payables", "/[locale]/dashboard/finance/payables"] })
+ }
+ 
+ const getWorkbench = protect<unknown, APWorkbenchData>(

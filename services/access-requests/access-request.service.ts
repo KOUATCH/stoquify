@@ -8,6 +8,8 @@ import { ApplicationError, BusinessRuleError, ConflictError, ForbiddenError, Ide
 import { isUsableAccount } from "@/services/roles/role-custodian-policy"
 import { accessDigest, canGrantMemberRole, hasMemberControl, memberAccessRevision } from "@/services/users/member-access-policy"
 import { changeMemberAccessInTx } from "@/services/users/member-access.service"
+import { canGrantRolePermission } from "@/services/roles/role-permission-policy"
+import { canChangeOperatingRoleSet } from "@/services/operating-access/operating-access-grant-policy"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { accessTargets, accessTargetInput, submitAccessRequestInput, requestRevisionInput, decideAccessRequestInput, requestListInput, requestHistoryInput, accessRequestEvent, type AccessRequestHistory, type AccessRequestReview, type AccessRequestView, type AccessRequestList } from "./access-request-contracts"
 
@@ -28,25 +30,25 @@ export class AccessRequestModuleUnavailable extends BusinessRuleError {}
 
 // This is current authority for the narrowly registered task, not a role label.
 export function canReviewAccessRequests(permissions: readonly string[]) {
-  return hasRbacPermission(permissions, "users.read") && hasMemberControl(permissions, "assign") && canGrantMemberRole(permissions, { permissions: [...accessTargets.items.permissions] })
+  return hasRbacPermission(permissions, "users.read") && hasMemberControl(permissions, "assign") && accessTargets.items.permissions.every(permission => canGrantRolePermission(permissions.filter(value => value !== "*"), permission))
 }
 
 async function actorInTx(tx: Tx, ctx: Actor) {
   const actor = await tx.user.findFirst({ where: { id: ctx.userId, organizationId: ctx.orgId, organization: { isActive: true, deletedAt: null } },
-    select: { isActive: true, isVerified: true, emailVerified: true, isLocked: true, lockedUntil: true, roles: { where: { organizationId: ctx.orgId }, select: { permissions: true } } } })
+    select: { isActive: true, isVerified: true, emailVerified: true, isLocked: true, lockedUntil: true, roles: { where: { organizationId: ctx.orgId }, select: { code: true, permissions: true } } } })
   if (!actor || !isUsableAccount(actor, new Date())) throw new ForbiddenError()
-  return actor.roles.flatMap(role => role.permissions)
+  return { permissions: actor.roles.flatMap(role => role.permissions), roleCodes: actor.roles.map(role => role.code) }
 }
 
-async function transaction<T>(ctx: Actor, run: (tx: Tx, grants: string[]) => Promise<T>) {
+async function transaction<T>(ctx: Actor, run: (tx: Tx, grants: string[], roleCodes: string[]) => Promise<T>) {
   if (!ctx.orgId || !ctx.userId) throw new ForbiddenError()
   return db.$transaction(async tx => {
     await tx.$executeRaw`SET LOCAL statement_timeout = '3000ms'`
     // Same lock order as the existing role/member services. It serializes
     // duplicate submissions, decisions, withdrawal and grant application.
     await tx.$queryRaw`SELECT id FROM organizations WHERE id = ${ctx.orgId} FOR UPDATE`
-    const grants = await actorInTx(tx, ctx)
-    return run(tx, grants)
+    const authority = await actorInTx(tx, ctx)
+    return run(tx, authority.permissions, authority.roleCodes)
   }, { isolationLevel: "ReadCommitted", timeout: 15000, maxWait: 1000 })
 }
 
@@ -159,13 +161,13 @@ export async function withdrawAccessRequest(ctx: Actor, input: unknown) {
 // role state in one locked transaction. A preview is never grant authority.
 export async function previewAccessRequest(ctx: Actor, input: unknown): Promise<AccessRequestReview> {
   const command = requestRevisionInput.parse(input)
-  return transaction(ctx, async (tx, grants) => {
+  return transaction(ctx, async (tx, grants, roleCodes) => {
     const row = await readRow(tx, ctx, command.id, grants)
     reviewer(ctx, grants, row)
     if (row.revision !== command.revision || row.decision !== "PENDING" || row.due) throw new ConflictError("Reload this request.")
     const { member, roles, revision } = await reviewSnapshot(tx, ctx, row)
     return { request: row.id, revision: row.revision, memberRevision: revision, existingRoleCount: member.roles.length,
-      roles: roles.filter(role => !member.roles.some(existing => existing.id === role.id) && [ctx.permissions, grants].every(authority => canGrantMemberRole(authority, role)))
+      roles: roles.filter(role => !member.roles.some(existing => existing.id === role.id) && [ctx.permissions, grants].every(authority => canGrantMemberRole(authority, role, roleCodes)) && canChangeOperatingRoleSet({ permissions: grants, roleCodes }, member.roles, [...member.roles, role]))
         .map(role => ({ id: role.id, nameEn: role.nameEn, nameFr: role.nameFr, permissions: [...role.permissions].sort() })) }
   })
 }
@@ -173,7 +175,7 @@ export async function previewAccessRequest(ctx: Actor, input: unknown): Promise<
 async function reviewSnapshot(tx: Tx, ctx: Actor, row: Row) {
   const member = await tx.user.findFirst({ where: { id: row.requesterId, organizationId: ctx.orgId }, select: {
     id: true, email: true, firstName: true, lastName: true, updatedAt: true, isActive: true, isVerified: true, emailVerified: true, isLocked: true, lockedUntil: true,
-    roles: { select: { id: true, organizationId: true, permissions: true } } } })
+    roles: { select: { id: true, organizationId: true, code: true, permissions: true } } } })
   if (!member || !isUsableAccount(member, new Date()) || member.roles.some(role => role.organizationId !== ctx.orgId)) throw new BusinessRuleError("The member needs administrator review.")
   const roles = await tx.role.findMany({ where: { organizationId: ctx.orgId }, orderBy: { id: "asc" } })
   return { member, roles, revision: memberAccessRevision(member, member.roles.map(role => role.id), roles) }
@@ -181,7 +183,7 @@ async function reviewSnapshot(tx: Tx, ctx: Actor, row: Row) {
 
 export async function decideAccessRequest(ctx: Actor, input: unknown) {
   const command = decideAccessRequestInput.parse(input)
-  return transaction(ctx, async (tx, grants) => {
+  return transaction(ctx, async (tx, grants, roleCodes) => {
     const row = await readRow(tx, ctx, command.id, grants)
     reviewer(ctx, grants, row)
     if (row.revision !== command.revision || row.decision !== "PENDING" || row.due) throw new ConflictError("Reload this request; it changed or expired.")
@@ -191,7 +193,8 @@ export async function decideAccessRequest(ctx: Actor, input: unknown) {
     let roleIds: string[] = []
     if (command.decision === "APPROVED") {
       const roles = tenantRoles.filter(role => command.roleIds.includes(role.id))
-      if (!roles.length || roles.length !== command.roleIds.length || roles.some(role => !canGrantMemberRole(grants, role) || !canGrantMemberRole(ctx.permissions, role))) throw new ForbiddenError()
+      if (!roles.length || roles.length !== command.roleIds.length || roles.some(role => !canGrantMemberRole(grants, role, roleCodes) || !canGrantMemberRole(ctx.permissions, role, roleCodes))) throw new ForbiddenError()
+      if (!canChangeOperatingRoleSet({ permissions: grants, roleCodes }, member.roles, [...member.roles, ...roles])) throw new ForbiddenError()
       if (roles.some(role => member.roles.some(existing => existing.id === role.id))) throw new ConflictError("Select only new roles.")
       if (!hasAllRbacPermissions([...member.roles.flatMap(role => role.permissions), ...roles.flatMap(role => role.permissions)], [...accessTargets.items.permissions])) throw new BusinessRuleError("The selected roles do not provide the requested access.")
       roleIds = [...new Set([...member.roles.map(role => role.id), ...command.roleIds])].sort()
@@ -239,10 +242,13 @@ export async function applyAccessRequest(ctx: Actor, input: unknown, session: Se
       const row = await readRow(tx, ctx, command.id, grants)
       reviewer(ctx, grants, row)
       if (row.reviewerId !== ctx.userId || row.decision !== "APPROVED") throw new ForbiddenError()
-      if (row.application === "APPLIED") return view(row, ctx, grants)
-      if (row.revision !== command.revision || !row.memberRevision || !row.applicationCommandId) throw new ConflictError("Reload the approved request.")
+      if ((row.application !== "APPLIED" && row.revision !== command.revision) || !row.memberRevision || !row.applicationCommandId) throw new ConflictError("Reload the approved request.")
       const receipt = await changeMemberAccessInTx(tx, { organizationId: ctx.orgId, actorId: ctx.userId, targetUserId: row.requesterId, session,
         command: { requestId: row.applicationCommandId, expectedRevision: row.memberRevision, roleIds: row.selectedRoleIds, operation: "roles", reason: `Access request ${row.id}` } })
+      if (row.application === "APPLIED") {
+        if (!receipt.replayed) throw new BusinessRuleError("The recorded grant needs administrator review.")
+        return view(row, ctx, grants)
+      }
       const member = await tx.user.findFirst({ where: { id: row.requesterId, organizationId: ctx.orgId }, select: { isActive: true, isVerified: true, emailVerified: true, isLocked: true, lockedUntil: true, roles: { where: { organizationId: ctx.orgId }, select: { permissions: true } } } })
       if (!member || !isUsableAccount(member, new Date()) || !hasAllRbacPermissions(member.roles.flatMap(role => role.permissions), [...accessTargets.items.permissions])) throw new BusinessRuleError("Effective permission verification failed.")
       const rows = await tx.$queryRaw<Row[]>(Prisma.sql`UPDATE access_requests SET application = 'APPLIED', "appliedAt" = CURRENT_TIMESTAMP, "grantAuditId" = ${receipt.auditId}, "applicationError" = NULL,

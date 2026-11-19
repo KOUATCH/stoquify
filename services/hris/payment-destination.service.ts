@@ -260,6 +260,7 @@ async function readForEmployee(
       "payroll.payment_destination.read",
     ),
     employeeId: input.employeeId,
+    includeInactive: true,
     limit: 1,
   }, client)
   const employee = mapReadiness(result)

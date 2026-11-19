@@ -75,7 +75,7 @@ function toActionResult(result: PasswordStepUpResult): StepUpAuthActionResult {
 function isAuthenticationBoundaryError(error: unknown) {
   if (!error || typeof error !== "object") return false
   const code = (error as { code?: unknown }).code
-  return code === "UNAUTHENTICATED" || code === "NO_ACTIVE_ORG" || code === "FORBIDDEN"
+  return code === "UNAUTHENTICATED" || code === "NO_ACTIVE_ORG" || code === "FORBIDDEN" || code === "ACCOUNT_LOCKED"
 }
 
 export async function stepUpWithPasswordAction(input: {

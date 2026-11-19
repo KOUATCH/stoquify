@@ -790,8 +790,8 @@ function toTaxEvaluationInput(
 
   return {
     taxableBaseAmount,
-    ytdTaxableBaseAmount: decimalInput(input.ytdTaxableBaseAmount, 0),
-    ytdTaxWithheldAmount: decimalInput(input.ytdTaxWithheldAmount, 0),
+    ytdTaxableBaseAmount: decimalInput(input.ytdTaxableBaseAmount),
+    ytdTaxWithheldAmount: decimalInput(input.ytdTaxWithheldAmount),
     adjustmentValues: isRecord(input.adjustmentValues)
       ? (input.adjustmentValues as Record<string, Prisma.Decimal.Value>)
       : undefined,

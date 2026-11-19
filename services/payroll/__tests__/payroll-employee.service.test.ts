@@ -1,3 +1,5 @@
+// Domain-unit fixtures isolate SQL locking; HR-14 PostgreSQL tests exercise real locks and concurrent decisions.
+jest.mock("@/services/hris/review-lock.service",()=>({lockHrisReviewEmployeeInTx:jest.fn(),lockHrisReviewContractInTx:jest.fn(),lockHrisReviewSalaryInTx:jest.fn(),lockHrisReviewPaymentInTx:jest.fn(),lockHrisReviewAssignmentInTx:jest.fn()}))
 import {
   PayrollAttendanceSnapshotStatus,
   PayrollContractStatus,
@@ -39,6 +41,8 @@ const mockedMarkBusinessEventAppliedInTx = markBusinessEventAppliedInTx as jest.
 
 function buildTx() {
   return {
+    $queryRaw: jest.fn().mockResolvedValue([]),
+    businessEvent: {findFirst: jest.fn().mockResolvedValue(null)},
     organization: {
       findFirst: jest.fn(),
     },
@@ -418,6 +422,27 @@ describe("payroll employee source-data service", () => {
     )
   })
 
+  it("records native effective facts and retains imported lineage on an edit", async () => {
+    const tx=buildTx();useTransaction(tx);tx.organization.findFirst.mockResolvedValue({id:"org-1"});
+    const origin={sourceSystem:"CSV_IMPORT",sourceRecordId:"row-7",sourceHash:"sha256:import-original",updatedAt:"2026-01-01T00:00:00.000Z"};
+    const existing={...employeeSourceRow({metadata:{hrSourceData:origin}}),updatedAt:new Date("2026-10-01T00:00:00.000Z")};
+    tx.payrollEmployee.findMany.mockResolvedValue([existing]);tx.payrollEmployee.update.mockImplementation(async ({data}:any)=>({...existing,...data}));
+    const command={organizationId:"org-1",actorId:"hr-1",actorPermissions:["hris.people.manage"],employeeId:existing.id,expectedUpdatedAt:existing.updatedAt.toISOString(),employeeNumber:existing.employeeNumber,displayName:"Corrected name",hireDate:existing.hireDate,countryCode:"CM",idempotencyKey:"native-edit-1"};
+    const result=await upsertPayrollEmployeeSourceProfile(command);
+    const source=(result.payrollEmployee.metadata as any).hrSourceData;
+    expect(source).toMatchObject({sourceSystem:"HRIS_NATIVE_PROFILE",originSourceReference:origin,updatedById:"hr-1"});
+    expect(source.sourceHash).toMatch(/^sha256:[a-f0-9]{64}$/);expect(source.sourceHash).not.toBe(origin.sourceHash);
+    const event=mockedRecordBusinessEventInTx.mock.calls.at(-1)![1];expect(event.payload.sourceReference.sourceHash).toBe(source.sourceHash);expect(source.sourceRecordId).toBe(event.payload.requestPayloadHash);
+    tx.businessEvent.findFirst.mockResolvedValue({id:"retained-event",payload:{employeeId:existing.id,requestPayloadHash:event.payload.requestPayloadHash}});tx.payrollEmployee.findFirst.mockResolvedValue(result.payrollEmployee);
+    const replay=await upsertPayrollEmployeeSourceProfile(command);expect(replay.payrollEmployee.metadata).toEqual(result.payrollEmployee.metadata);expect(tx.payrollEmployee.update).toHaveBeenCalledTimes(1);expect(mockedRecordBusinessEventInTx).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["hr-1",null])("only mints native creation provenance for an identified actor: %s",async actorId=>{
+    const tx=buildTx();useTransaction(tx);tx.organization.findFirst.mockResolvedValue({id:"org-1"});tx.payrollEmployee.findMany.mockResolvedValue([]);tx.payrollEmployee.create.mockImplementation(async ({data}:any)=>({id:"emp-new",...data}));
+    const result=await upsertPayrollEmployeeSourceProfile({organizationId:"org-1",actorId,actorPermissions:["hris.people.manage"],createOnly:true,employeeNumber:"NEW",displayName:"Native draft",hireDate:new Date("2026-01-01"),countryCode:"CM",idempotencyKey:"native-new"});
+    const source=(result.payrollEmployee.metadata as any).hrSourceData;expect(source.sourceSystem).toBe(actorId?"HRIS_NATIVE_PROFILE":null);expect(source.sourceHash).toEqual(actorId?expect.stringMatching(/^sha256:[a-f0-9]{64}$/):null);
+  });
+
   it("rejects an employee-user mapping when the user is not in the same tenant", async () => {
     const tx = buildTx()
     useTransaction(tx)
@@ -569,6 +594,20 @@ describe("payroll employee source-data service", () => {
 
     expect(tx.payrollEmployee.update).not.toHaveBeenCalled()
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+  it("routes active employment field changes through lifecycle instead of overwriting movement truth",async()=>{
+    const tx=buildTx();useTransaction(tx)
+    tx.organization.findFirst.mockResolvedValue({id:"org-1"})
+    tx.payrollEmployee.findMany.mockResolvedValue([employeeSourceRow()])
+    await expect(upsertPayrollEmployeeSourceProfile({organizationId:"org-1",actorId:"hr-1",actorPermissions:["hris.people.manage"],
+      employeeNumber:"EMP-001",displayName:"Synthetic employee",hireDate:"2025-01-01",department:"Changed outside lifecycle"})).rejects.toThrow("lifecycle workflow")
+    expect(tx.payrollEmployee.update).not.toHaveBeenCalled()
+  })
+  it("does not mark a future approved lifecycle change due before its effective instant",async()=>{
+    const client={payrollEmployee:{findMany:jest.fn().mockResolvedValue([employeeSourceRow({userId:null,metadata:{hrisLifecycle:{pending:{status:"APPROVED",effectiveAt:"2026-10-25T00:00:00Z"}}}})])},user:{findMany:jest.fn().mockResolvedValue([])},auditLog:{create:jest.fn()}}
+    const input={organizationId:"org-1",actorId:"hr-1",actorPermissions:["hris.people.read"]}
+    expect((await getPayrollEmployeeSourceData({...input,asOf:new Date("2026-10-24T23:59:59Z")},client as never)).employees[0].blockers).not.toContain("LIFECYCLE_REQUEST_PENDING")
+    expect((await getPayrollEmployeeSourceData({...input,asOf:new Date("2026-10-25T00:00:00Z")},client as never)).employees[0].blockers).toContain("LIFECYCLE_REQUEST_PENDING")
   })
   it("attaches HR evidence references without storing document payloads", async () => {
     const tx = buildTx()

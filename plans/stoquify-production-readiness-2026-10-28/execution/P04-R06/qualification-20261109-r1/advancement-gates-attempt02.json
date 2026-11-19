@@ -1,0 +1,165 @@
+{
+  "package_id": "P04-R06",
+  "updated_at": "2026-11-10T11:58:26.713Z",
+  "status": "blocked_origin_bookkeeping_and_browser_lifecycle",
+  "advancement_allowed": false,
+  "gates": [
+    {
+      "id": "source-authority-refresh",
+      "status": "passed",
+      "evidence": [
+        "inventory/source-before-manifest.json",
+        "inventory/authority-map.json",
+        "inventory/source-after-manifest-v4.json",
+        "inventory/authority-map-after-v4.json",
+        "inventory/resume-20261110-r1/FULL-SOURCE-COMPARISON.json",
+        "candidate-refresh-attempt02.json",
+        "independent-review/CANDIDATE-REFRESH-OUTCOME-attempt02.json",
+        "independent-review/RUNTIME-PREFLIGHT-OUTCOME-attempt02.json"
+      ]
+    },
+    {
+      "id": "bounded-independent-source-review",
+      "status": "passed",
+      "evidence": [
+        "independent-review/REPAIR-SOURCE-ADMISSION-v3.json"
+      ],
+      "prior_revision_evidence": [
+        "independent-review/REPAIR-SOURCE-ADMISSION.json",
+        "independent-review/REPAIR-SOURCE-ADMISSION-v2.json"
+      ]
+    },
+    {
+      "id": "isolated-mocked-regressions",
+      "status": "passed",
+      "evidence": [
+        "unit/attempt03/jest.json",
+        "independent-review/UNIT-OUTCOME-REVIEW-v3.json"
+      ],
+      "passed": 87,
+      "skipped": 0,
+      "prior_revision_evidence": [
+        "unit/attempt01/jest.json",
+        "independent-review/UNIT-OUTCOME-REVIEW.json",
+        "unit/attempt02/jest.json",
+        "independent-review/UNIT-OUTCOME-REVIEW-v2.json"
+      ]
+    },
+    {
+      "id": "fresh-full-app-build",
+      "status": "passed",
+      "evidence": [
+        "build-result-attempt02.json",
+        "independent-review/BUILD-OUTCOME-REVIEW-attempt02.json"
+      ],
+      "previous_evidence": [
+        "build-result.json",
+        "artifact-build-result.json",
+        "artifact-build.log",
+        "independent-review/RESUME-FAILED-BUILD-REVIEW.json"
+      ]
+    },
+    {
+      "id": "genuine-signed-cache-denials",
+      "status": "passed",
+      "evidence": [
+        "runtime-result-attempt02.json",
+        "expiry-supplement-result-attempt02.json",
+        "independent-review/EXPIRY-SUPPLEMENT-OUTCOME-REVIEW-attempt02-v2.json"
+      ],
+      "previous_evidence": [],
+      "reason": "Main invalid-session denials plus three independently reviewed retained-expired-row probes pass; post-cleanup replays remain separately classified."
+    },
+    {
+      "id": "authorized-positive-operations",
+      "status": "passed",
+      "evidence": [
+        "runtime-result-attempt02.json",
+        "verification-matrix-attempt02.json",
+        "independent-review/OBSERVED-RUNTIME-REVIEW-attempt02.json",
+        "recovery-result-attempt03.json",
+        "independent-review/RECOVERY-OUTCOME-REVIEW-attempt03.json"
+      ],
+      "previous_evidence": [],
+      "reason": "Original authorized core operations and four explicitly UTC-bound credential successor cases independently accepted."
+    },
+    {
+      "id": "native-database-state",
+      "status": "failed",
+      "evidence": [
+        "runtime-result-attempt02.json",
+        "verification-matrix-attempt02.json",
+        "independent-review/OBSERVED-RUNTIME-REVIEW-attempt02.json",
+        "recovery-result-attempt03.json",
+        "independent-review/RECOVERY-OUTCOME-REVIEW-attempt03.json",
+        "independent-review/ORIGIN-DENIAL-INDEPENDENT-REVIEW-attempt03.json"
+      ],
+      "previous_evidence": [],
+      "reason": "Protected-session denial effects and credential effects qualify, but two denied cross-site browser requests changed failed-login bookkeeping."
+    },
+    {
+      "id": "rendered-browser-continuity",
+      "status": "failed",
+      "evidence": [
+        "runtime-result-attempt02.json",
+        "verification-matrix-attempt02.json",
+        "independent-review/OBSERVED-RUNTIME-REVIEW-attempt02.json",
+        "browser-only-result-attempt04.json",
+        "independent-review/BROWSER-ONLY-OUTCOME-REVIEW-attempt04.json",
+        "independent-review/BROWSER-VISUAL-REVIEW-CORRECTION-attempt04.json"
+      ],
+      "previous_evidence": [],
+      "reason": "Both revoked reloads pass; four authorized/restored strict cases fail because eight exact CDP-correlated RSC requests were cancelled. All six visible states match and native pairs are unchanged; cancellation intent remains unresolved."
+    },
+    {
+      "id": "independent-outcome-review",
+      "status": "failed",
+      "evidence": [
+        "independent-review/FINAL-OUTCOME-REVIEW-attempt02.json"
+      ],
+      "previous_evidence": [
+        "independent-review/FINAL-OUTCOME-REVIEW.json"
+      ],
+      "blocked_checkpoint_accepted": true,
+      "reason": "Independent review accepts the evidence and accurate blocked checkpoint, not qualification or advancement."
+    },
+    {
+      "id": "owned-runtime-cleanup",
+      "status": "passed",
+      "evidence": [
+        "database/final-session-cleanup-attempt02.json",
+        "database/cleanup-attempt02.json",
+        "final-integrity-attempt02.json",
+        "final-integrity-recovery-attempt04-v3.json",
+        "independent-review/FINAL-OUTCOME-REVIEW-attempt02.json"
+      ],
+      "previous_evidence": [
+        "database/suspend-attempt02.json"
+      ],
+      "reason": "18 synthetic sessions removed; business/audit digests preserved; owned PID absent and all five ports released on both localhost names."
+    }
+  ],
+  "parent_p04": "blocked",
+  "production": "blocked",
+  "successor": {
+    "candidate_id": "p04-r06-full-4661f767924e",
+    "prepared": true,
+    "build_status": "passed_independently_reviewed",
+    "evidence": "candidate-refresh-attempt02.json"
+  },
+  "retry_resource": "resource-retry-ready-20261110-r3.json",
+  "previous_checkpoint": "advancement-gates.json",
+  "candidate_id": "p04-r06-full-4661f767924e",
+  "required_logical_groups": 58,
+  "artifact_sha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "reconciliation": "recovery-reconciliation-attempt04-v2.json",
+  "outcome_receipts": {
+    "runtime": "runtime-result-attempt02.json",
+    "reconciliation": "recovery-reconciliation-attempt04-v2.json",
+    "expiry": "expiry-supplement-result-attempt02.json",
+    "recovery": "recovery-result-attempt03.json",
+    "browser": "browser-only-result-attempt04.json",
+    "integrity": "final-integrity-recovery-attempt04-v3.json",
+    "review": "independent-review/FINAL-OUTCOME-REVIEW-attempt02.json"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-26",
+  "scope": "AF16 sealed-build AF09–AF10 synthetic opening browser verification",
+  "developmentStep": "PASS",
+  "releaseStatus": "IMPLEMENTED_UNVERIFIED",
+  "productionDecision": "NO_GO",
+  "pilot": "PILOT_PREPARED; live validation deferred",
+  "buildId": "eoW9-NZPj4rd9OHTZxMDM",
+  "artifactSha256": "987da3ead9c716cdbf5d2a22ac1723aa8a8ed15113f40a6b8abd3c1fb64d151f",
+  "sourceAndArtifact": "5284 sealed files and source identity verified before and after browser; runtime copy verified before startup; no rebuild",
+  "workflow": "Initial and final checks PASS; 196 scripts unclassified; no registry hash refresh",
+  "browser": {
+    "workflowChecks": 10,
+    "independentIdentities": 3,
+    "secureHttpOnlyCookies": true,
+    "scopedAxeScans": 6,
+    "axeViolations": 0,
+    "pageErrors": 0,
+    "screenshotsInspected": 8,
+    "locales": ["en", "fr"],
+    "viewportWidths": [1440, 390],
+    "localTls": "Self-signed test certificate; trust exception confined to isolated browser contexts"
+  },
+  "database": "Fresh owned synthetic clone; 120 migration checksums matched; actual protected actions and transaction/recovery assertions; original selected client remains without opening writes",
+  "publication": {
+    "markdownPdfPairs": 92,
+    "pages": 309,
+    "priorMarkdownPreservedOutsideFiveOwnedUpdates": 85,
+    "passed": true,
+    "visualReview": "PASS after fixing the STATUS heading"
+  },
+  "retainedFailures": ["Initial restricted connection EACCES", "Host-context connection ECONNREFUSED before database recovery", "Database startup wait expired before recovery completed", "Initial document visual review found a malformed STATUS heading, subsequently corrected"],
+  "cleanup": "Application child, local HTTPS proxy and owned database stopped cleanly; synthetic clone, artifact and private fixtures retained",
+  "notRunThisStep": ["New unit suites", "Full build/type/lint", "New migration replay", "New export verification", "Previous-application rollback", "Fresh-install lifecycle/clean build", "Hosted deployment", "Live pilot validation"],
+  "nextStep": "Sealed-build AF03–AF05 firm engagement browser lifecycle on a fresh synthetic clone",
+  "remainingGates": ["Other selected-scope sealed browser journeys", "Identified compatible predecessor artifact and rollback rehearsal", "Fresh-install lifecycle/clean-build qualification", "Agreed performance/error budgets", "AF11 qualified country evidence", "Hosted release and operations"],
+  "excluded": ["AF14", "AF15"]
+}

@@ -27,6 +27,7 @@ import {
 import { postGoodsReceiptStock } from "@/services/inventory/inventory-stock-event.service"
 import { createReceiptRecognitionSourceInTx, type ReceiptRecognitionSource } from "./receipt-recognition-source"
 import { postReceiptRecognitionInTx } from "./receipt-recognition.service"
+import { assertLegacyPurchaseReceiptPricing, loadPurchaseReceiptCommercialBasis, pricePurchaseOrderLine, purchaseMoney, purchaseOrderTotal } from "./purchase-commercial-basis"
 import { Prisma, type GoodsReceiptStatus, type PurchaseOrderStatus } from "@prisma/client"
 import type { Decimal } from "@prisma/client/runtime/library"
 import type {
@@ -118,30 +119,27 @@ export function canReceivePurchaseOrderStatus(status: PurchaseOrderStatus) {
 
 // ── Calculation helpers ───────────────────────────────────────────────────────
 
-function calcLine(qty: number, unitPrice: number, taxRate = 0, discount = 0) {
-  const subtotal = qty * unitPrice
-  const taxAmount = (subtotal * taxRate) / 100
-  return { taxAmount, lineTotal: subtotal + taxAmount - discount }
-}
-
-function calcOrderTotals(lines: CreatePurchaseOrderInput["orderLines"], shippingCost = 0) {
-  let subtotal = 0, taxAmount = 0, discount = 0
+function calcOrderTotals(lines: CreatePurchaseOrderInput["orderLines"], shippingCost: Prisma.Decimal.Value = 0) {
+  let subtotal = purchaseMoney(), taxAmount = purchaseMoney(), discount = purchaseMoney()
   for (const l of lines) {
-    subtotal  += l.quantity * l.unitPrice
-    taxAmount += calcLine(l.quantity, l.unitPrice, l.taxRate, l.discount).taxAmount
-    discount  += l.discount ?? 0
+    const price = pricePurchaseOrderLine({ quantity: l.quantity, unitCost: l.unitPrice, taxRate: l.taxRate, discount: l.discount })
+    subtotal = subtotal.plus(price.subtotal)
+    taxAmount = taxAmount.plus(price.taxAmount)
+    discount = discount.plus(price.discount)
   }
-  return { subtotal, taxAmount, discount, total: subtotal + taxAmount + shippingCost - discount }
+  return { subtotal, taxAmount, discount, total: purchaseOrderTotal(subtotal, discount, taxAmount, shippingCost) }
 }
 
 function lineDataFromOrderLine(line: OrderLineInput) {
-  const { taxAmount, lineTotal } = calcLine(line.quantity, line.unitPrice, line.taxRate, line.discount)
+  const { orderedQuantity, unitCost, taxAmount, taxRate, discount, lineTotal } = pricePurchaseOrderLine({
+    quantity: line.quantity, unitCost: line.unitPrice, taxRate: line.taxRate, discount: line.discount,
+  })
   return {
     itemId:          line.itemId,
-    orderedQuantity: line.quantity,
-    unitCost:        line.unitPrice,
-    discount:        line.discount ?? 0,
-    taxRate:         line.taxRate ?? 0,
+    orderedQuantity,
+    unitCost,
+    discount,
+    taxRate,
     taxAmount,
     lineTotal,
     notes:           line.notes ?? "",
@@ -394,6 +392,7 @@ async function applyInventoryReceipt(
     serialNumbers?: string[]
   },
 ) {
+  const retained = params.recognitionSource.manifest.lines.find(line => line.receiptLineId === params.receiptLineId)
   await postGoodsReceiptStock(
     {
       organizationId: params.organizationId,
@@ -410,6 +409,7 @@ async function applyInventoryReceipt(
           locationId: params.locationId,
           quantity: params.qty,
           unitCost: params.unitCost,
+          ...(retained?.commercialBasis ? { acquisitionValue: retained.commercialBasis.net } : {}),
           goodsReceiptLineId: params.receiptLineId,
           notes: "Goods received via purchase order",
           batchNumber: params.batchNumber ?? null,
@@ -570,24 +570,11 @@ export async function createPurchaseOrderInTx(tx: Prisma.TransactionClient, inpu
         status:              "DRAFT",
         subtotal:            totals.subtotal,
         taxAmount:           totals.taxAmount,
-        shippingCost:        input.shippingCost ?? 0,
+        shippingCost:        purchaseMoney(input.shippingCost),
         discount:            totals.discount,
         total:               totals.total,
         lines: {
-          create: input.orderLines.map(l => {
-            const { taxAmount, lineTotal } = calcLine(l.quantity, l.unitPrice, l.taxRate, l.discount)
-            return {
-              itemId:           l.itemId,
-              orderedQuantity:  l.quantity,
-              unitCost:         l.unitPrice,
-              discount:         l.discount ?? 0,
-              taxRate:          l.taxRate ?? 0,
-              taxAmount,
-              lineTotal,
-              notes:            l.notes ?? "",
-              receivedQuantity: 0,
-            }
-          }),
+          create: input.orderLines.map(line => ({ ...lineDataFromOrderLine(line), receivedQuantity: 0 })),
         },
       },
       include: standardInclude,
@@ -637,7 +624,7 @@ export async function updatePurchaseOrder(input: UpdatePurchaseOrderInput) {
       const location = await tx.location.findFirst({ where: { id: input.locationId, organizationId: input.organizationId } })
       if (!location) throw new NotFoundError("Location not found or does not belong to this organisation")
     }
-    const shippingCost = input.shippingCost ?? existing.shippingCost
+    const shippingCost = purchaseMoney(input.shippingCost ?? existing.shippingCost)
     let totals: { subtotal: Prisma.Decimal | number; taxAmount: Prisma.Decimal | number; discount: Prisma.Decimal | number; total: Prisma.Decimal | number } = {
       subtotal: existing.subtotal, taxAmount: existing.taxAmount, discount: existing.discount, total: existing.total,
     }
@@ -646,12 +633,12 @@ export async function updatePurchaseOrder(input: UpdatePurchaseOrderInput) {
         assertUniqueItems(input.orderLines)
         const items = await tx.item.findMany({ where: { id: { in: input.orderLines.map(line => line.itemId) }, organizationId: input.organizationId }, select: { id: true } })
         if (items.length !== input.orderLines.length) throw new NotFoundError("One or more items not found in this organisation")
-        totals = calcOrderTotals(input.orderLines, toN(shippingCost))
+        totals = calcOrderTotals(input.orderLines, shippingCost)
       } else {
         totals = { subtotal: 0, taxAmount: 0, discount: 0, total: shippingCost }
       }
     } else if (input.shippingCost !== undefined) {
-      totals.total = new Prisma.Decimal(existing.subtotal).plus(existing.taxAmount).minus(existing.discount).plus(shippingCost)
+      totals.total = purchaseOrderTotal(existing.subtotal, existing.discount, existing.taxAmount, shippingCost)
     }
     await tx.purchaseOrder.update({
       where: { id: input.id, organizationId: input.organizationId, deletedAt: null, status: "DRAFT" },
@@ -1118,10 +1105,12 @@ export async function receiveItems(input: ReceiveItemsInput, scopeInput?: Purcha
         },
       })
 
+      const commercial = await loadPurchaseReceiptCommercialBasis(tx, po, items)
       const persistedLines = new Map<string, string>()
       for (const item of items) {
         const line = lineMap.get(item.lineId)!
         const unitCost = toN(line.unitCost)
+        const basis = commercial.get(line.id)!
         const receiptLine = await tx.goodsReceiptLine.create({
           data: {
             goodsReceiptId: receipt.id,
@@ -1129,7 +1118,8 @@ export async function receiveItems(input: ReceiveItemsInput, scopeInput?: Purcha
             itemId: line.itemId,
             receivedQuantity: item.receivedQuantity,
             unitCost,
-            lineTotal: line.unitCost.mul(item.receivedQuantity).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP),
+            lineTotal: basis.net,
+            commercialBasis: basis,
             notes: item.notes ?? "",
             batchNumber: item.batchNumber ?? null,
             expiryDate: item.expiryDate ? new Date(item.expiryDate) : null,
@@ -1354,6 +1344,8 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
               itemId: true,
               receivedQuantity: true,
               unitCost: true,
+              lineTotal: true,
+              commercialBasis: true,
               batchNumber: true,
               expiryDate: true,
               serialNumbers: true,
@@ -1373,8 +1365,9 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
       }
       if (!authority.fresh) throw new BusinessRuleError("Verify your current password before resolving this inspection.", "FRESH_AUTH_REQUIRED")
       if (input.decision === "ACCEPT" && receipt.inspection.inspectedById === input.resolvedById) throw new BusinessRuleError("A different authorized receiver must review and accept a failed or incomplete inspection.", "SOD_VIOLATION")
-      const order = await tx.purchaseOrder.findFirst({ where: { id: receipt.purchaseOrderId, organizationId: input.organizationId, deletedAt: null }, select: { status: true } })
+      const order = await tx.purchaseOrder.findFirst({ where: { id: receipt.purchaseOrderId, organizationId: input.organizationId, deletedAt: null }, select: { id: true, organizationId: true, status: true, shippingCost: true, lines: { select: { id: true, orderedQuantity: true, unitCost: true, discount: true, taxRate: true, taxAmount: true } } } })
       if (!order || !["APPROVED", "PARTIALLY_RECEIVED", "RECEIVED", "CANCELLED"].includes(order.status)) throw new BusinessRuleError("This order is not available for inspection resolution.")
+      if (input.decision === "ACCEPT") assertLegacyPurchaseReceiptPricing(order, receipt.lines)
       const location = await tx.location.findFirst({ where: { id: receipt.locationId, organizationId: input.organizationId, isActive: true, deletedAt: null }, select: { id: true } })
       if (input.decision === "ACCEPT" && !location) throw new BusinessRuleError("The retained receiving location must be active before inventory can be released.")
 
@@ -1651,12 +1644,12 @@ export async function clonePurchaseOrder(input: ClonePurchaseOrderInput, created
       })
 
       const newLines = await tx.purchaseOrderLine.findMany({ where: { purchaseOrderId: po.id } })
-      const sub  = newLines.reduce((s, l) => s + toN(l.unitCost) * toN(l.orderedQuantity), 0)
-      const tax  = newLines.reduce((s, l) => s + toN(l.taxAmount), 0)
-      const disc = newLines.reduce((s, l) => s + toN(l.discount), 0)
+      const sub = newLines.reduce((sum, line) => sum.plus(purchaseMoney(new Prisma.Decimal(line.unitCost).mul(line.orderedQuantity))), purchaseMoney())
+      const tax = newLines.reduce((sum, line) => sum.plus(line.taxAmount), purchaseMoney())
+      const disc = newLines.reduce((sum, line) => sum.plus(line.discount), purchaseMoney())
       await tx.purchaseOrder.update({
         where: { id: po.id },
-        data: { subtotal: sub, taxAmount: tax, discount: disc, total: sub + tax + toN(po.shippingCost) - disc },
+        data: { subtotal: sub, taxAmount: tax, discount: disc, total: purchaseOrderTotal(sub, disc, tax, po.shippingCost) },
       })
     }
 

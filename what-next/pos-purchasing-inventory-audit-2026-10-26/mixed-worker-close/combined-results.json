@@ -1,0 +1,95 @@
+{
+  "at": "2026-10-28T08:00:15.325Z",
+  "tests": [
+    {
+      "name": "recovers a real baseline process exit on current after a durable consumer effect",
+      "status": "passed",
+      "evidence": "initial-full-results.json"
+    },
+    {
+      "name": "recovers a real current process exit on baseline after a durable consumer effect",
+      "status": "passed",
+      "evidence": "initial-full-results.json"
+    },
+    {
+      "name": "preserves retry delay and dead-letter state from baseline to current",
+      "status": "passed",
+      "evidence": "initial-full-results.json"
+    },
+    {
+      "name": "preserves retry delay and dead-letter state from current to baseline",
+      "status": "passed",
+      "evidence": "initial-full-results.json"
+    },
+    {
+      "name": "recovers a lost HTTP acknowledgement from baseline with current",
+      "status": "passed",
+      "evidence": "initial-full-results.json"
+    },
+    {
+      "name": "recovers a lost HTTP acknowledgement from current with baseline",
+      "status": "passed",
+      "evidence": "initial-full-results.json"
+    },
+    {
+      "name": "fences a late baseline acknowledgement after current takes over (success)",
+      "status": "passed",
+      "evidence": "results.json"
+    },
+    {
+      "name": "fences a late baseline acknowledgement after current takes over (failure)",
+      "status": "passed",
+      "evidence": "results.json"
+    },
+    {
+      "name": "fences a late current acknowledgement after baseline takes over (success)",
+      "status": "passed",
+      "evidence": "results.json"
+    },
+    {
+      "name": "fences a late current acknowledgement after baseline takes over (failure)",
+      "status": "passed",
+      "evidence": "results.json"
+    },
+    {
+      "name": "baseline refuses another HTTP attempt for an exhausted expired lease",
+      "status": "passed",
+      "evidence": "initial-full-results.json"
+    },
+    {
+      "name": "current refuses another HTTP attempt for an exhausted expired lease",
+      "status": "passed",
+      "evidence": "initial-full-results.json"
+    },
+    {
+      "name": "hands earned close writes and recovery from baseline to current",
+      "status": "passed",
+      "evidence": "initial-full-results.json"
+    },
+    {
+      "name": "hands earned close writes and recovery from current to baseline",
+      "status": "passed",
+      "evidence": "initial-full-results.json"
+    },
+    {
+      "name": "protects a live outbox lease across baseline to current and foreign scope",
+      "status": "passed",
+      "evidence": "results.json"
+    },
+    {
+      "name": "protects a live outbox lease across current to baseline and foreign scope",
+      "status": "passed",
+      "evidence": "results.json"
+    },
+    {
+      "name": "checks explicit close denials for retained baseline to current artifacts",
+      "status": "passed",
+      "evidence": "results.json"
+    },
+    {
+      "name": "checks explicit close denials for retained current to baseline artifacts",
+      "status": "passed",
+      "evidence": "results.json"
+    }
+  ]
+}

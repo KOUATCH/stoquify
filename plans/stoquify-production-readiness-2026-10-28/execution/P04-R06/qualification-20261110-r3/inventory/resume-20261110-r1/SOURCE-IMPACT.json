@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-10T18:43:49.033Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r3",
+  "sourceIdentitySha256": "04dc0a79755c41b22bd68be018e1cdca2cb96c3abc763f1338dea947165f3650",
+  "sourceManifestSha256": "0a69e88e6040d07fe70eaa3bb68f53875dabfc46c439736028981a935456dbe2",
+  "sourceComparisonSha256": "cddb6f6a8fb5df64150d1e0d8a2d3dc5eac443f135d2ca24f68c370659c7deaa",
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "files": 9973,
+  "deltaSummary": { "modified": 2, "added": 31, "removed": 0, "nonDocumentationPaths": 4, "documentationAdditions": 29 },
+  "currentSourceBindings": [
+    { "path": "services/accounting/close-assurance.service.ts", "sha256": "2d0da62313e44e5239f4edd08307c21fd32362a399fe71a4aeb6ff1e7b137d29", "matchesResumeManifest": true },
+    { "path": "services/accounting/__tests__/close-assurance.service.test.ts", "sha256": "c27a763925fa23a1e1d3ca7b9822638e18141a354336b5d90d8cd3c47faee90f", "matchesResumeManifest": true },
+    { "path": "services/accounting/close-finding-assignee-authority.service.ts", "sha256": "8bd2d4face949d4eaa1e2a7a4e3b93a0c2fc715a7f50aa6f0e6434aee3b010cb", "matchesResumeManifest": true },
+    { "path": "services/accounting/__tests__/close-finding-assignee-authority.service.test.ts", "sha256": "13381a638b37d2d591d2067d144d37935a69dcd31f0415805db932a71731f1e3", "matchesResumeManifest": true }
+  ],
+  "allFourStillMatchAtInspection": true,
+  "relevance": [
+    "The caller adds the finding-assignee authority helper, validates organization/run/period consistency for mutation targets and revalidates assignment recipients. These are concurrent accounting Close mutation changes, preserved without approving their behavior.",
+    "The new helper imports existing Prisma, shared permission/error/module/account-usability and managed-accountant helpers. Database queries and locks are inside exported transaction functions; inspection found no top-level query or startup. It reads recipient authority as a Close assignee rather than creating a login/session route.",
+    "The two test files belong to accounting Close. They are outside the existing R06 lib/security mocked-test roots. Their assertions/results are not promoted into R06 evidence.",
+    "The full source delta contains no authentication/profile input, package, configuration, schema or migration changes. All 68 selected R06 hashes match; tsconfig.json and next.config.mjs also match the separately admitted 9942 baseline. No import of the new Close helper/service was found in the inspected lib/auth, lib/security and self-profile call chains.",
+    "The unchanged schema and migration directory retain the previous 122-migration source compatibility. The source inspection does not prove retained database continuity; its existing stop/resume/preflight gates remain required.",
+    "The complete successor candidate must include these concurrent source changes and undergo the existing full build/type/lint gates. R06 does not certify accounting Close assignment, transaction or concurrency behavior."
+  ],
+  "privateMetadataDisposition": "PRIVATE-METADATA-DISPOSITION.json",
+  "captureRequirements": [
+    "Independently accept this new 9973-file source identity and bounded impact disposition; do not consume the old 9942-bound capture retry.",
+    "Create named successor full-source capture input and four-row private metadata policy. Reuse the unchanged normalized 68-input inventory only with explicit equality proof.",
+    "Runtime owner must recheck current full source, HEAD, resource gates and retained dependency integrity before writing the new isolated candidate. Any later source drift remains visible and requires reconciliation.",
+    "Preserve E31 and every earlier source/capacity/capture receipt. No source override, rollback of concurrent work, migration, deployment or production change is authorized."
+  ],
+  "evidenceClass": "Current source/JSON metadata inspection only",
+  "applicationExecution": false,
+  "databaseAccess": false,
+  "buildExecution": false,
+  "qualificationPassed": false
+}

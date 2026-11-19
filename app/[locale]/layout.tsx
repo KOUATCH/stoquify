@@ -24,10 +24,7 @@ export default async function LocaleLayout({
   }
 
   setRequestLocale(locale)
-  const messages = (await import(`@/messages/${locale}.json`)).default
-
-  const paymentRequest = (await import(`@/messages/payment-request/${locale}.json`)).default
-  const paymentExecution = (await import(`@/messages/payment-execution/${locale}.json`)).default
-  const paymentPostingRecovery = (await import(`@/messages/payment-posting-recovery/${locale}.json`)).default
-  return <NextIntlClientProvider locale={locale} messages={{ ...messages, paymentRequest, paymentExecution, paymentPostingRecovery }}><DocumentLanguage locale={locale as Locale} />{children}</NextIntlClientProvider>
+  // Route layouts own message delivery so client navigation cannot retain the
+  // public bundle when entering authentication or the application workspace.
+  return <NextIntlClientProvider locale={locale} messages={{}}><DocumentLanguage locale={locale as Locale} />{children}</NextIntlClientProvider>
 }

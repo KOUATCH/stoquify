@@ -1,0 +1,20 @@
+const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+module.exports=async origin=>{const browser=await chromium.launch({headless:true}),results=[];try{
+ for(const locale of ['en','fr'])for(const domain of ['document','time']){
+  const t=(en,fr)=>locale==='en'?en:fr,context=await browser.newContext({viewport:{width:360,height:900}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await context.addCookies([{name:'fixtureRole',value:'checker',url:origin}]);await page.goto(origin+'/'+locale+'/'+(domain==='time'?'dashboard/people/team':domain));const trigger=page.getByRole('button',{name:domain==='time'?t('Reject','Rejeter'):t('Review request','Vérifier la demande'),exact:true});await trigger.focus();await page.keyboard.press('Enter');const dialog=page.getByRole('dialog');await dialog.getByRole('checkbox').first().waitFor();
+  assert(await page.evaluate(()=>document.activeElement?.tagName==='H2'));
+  for(let i=0;i<18;i++){await page.keyboard.press('Tab');assert(await page.evaluate(()=>!!document.activeElement.closest('[role="dialog"]')))}
+  for(const width of [360,768,1440]){await page.setViewportSize({width,height:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert(await dialog.evaluate(e=>e.scrollWidth<=e.clientWidth));await page.screenshot({path:path.join(__dirname,`${locale}-${domain}-${width}.png`)});results.push({locale,domain,width,noOverflow:true,keyboardTrap:true,focusEntry:true})}
+  await page.keyboard.press('Escape');await trigger.waitFor();assert(await trigger.evaluate(e=>document.activeElement===e));await trigger.click();await dialog.getByRole('checkbox').first().waitFor();
+  const fill=async()=>{await dialog.getByRole('textbox').fill('Synthetic independent review of facts');for(const box of await dialog.getByRole('checkbox').all())await box.check()};await fill();
+  if(domain==='document'){
+   await page.request.post(origin+'/fixture/stale',{data:{locale}});await dialog.getByRole('button',{name:t('Confirm decision','Confirmer la décision'),exact:true}).click();await dialog.getByRole('alert').waitFor();assert.equal(await dialog.getByRole('textbox').inputValue(),'Synthetic independent review of facts');assert(await dialog.getByRole('button',{name:t('Confirm decision','Confirmer la décision'),exact:true}).isDisabled());await dialog.getByRole('button',{name:t('Load current facts','Charger les faits actuels'),exact:true}).click();await dialog.getByRole('checkbox').first().waitFor();assert(!await dialog.getByRole('checkbox').last().isChecked());await fill();
+  }
+  await dialog.getByRole('button',{name:t('Confirm decision','Confirmer la décision'),exact:true}).click();
+  if(domain==='document'&&locale==='en'){const recovery=dialog.getByRole('button',{name:t('Recover decision receipt','Récupérer le reçu'),exact:true});await recovery.waitFor();assert(await dialog.getByRole('textbox').isDisabled());await recovery.click()}
+  await dialog.getByRole('heading',{name:t('Decision receipt','Reçu de décision'),exact:true}).waitFor();assert((await dialog.textContent()).includes('Synthetic reviewer 1'));await page.screenshot({path:path.join(__dirname,`${locale}-${domain}-receipt.png`)});results.push({locale,domain,receipt:true,stale:domain==='document',recovered:domain==='document'&&locale==='en',focusReturn:true});assert.deepEqual(errors,[]);await context.close();
+ }
+ const context=await browser.newContext(),page=await context.newPage();await context.addCookies([{name:'fixtureRole',value:'denied',url:origin}]);await page.goto(origin+'/en/document');await page.getByRole('button',{name:'Review request',exact:true}).click();await page.getByRole('alert').waitFor();assert.equal(await page.getByRole('checkbox').count(),0);results.push({role:'denied',valuesHidden:true});await context.close();
+ fs.writeFileSync(path.join(__dirname,'results.json'),JSON.stringify(results,null,2));return results
+}finally{await browser.close()}};

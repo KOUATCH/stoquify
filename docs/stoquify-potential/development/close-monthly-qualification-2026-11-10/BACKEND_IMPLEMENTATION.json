@@ -1,0 +1,66 @@
+{
+  "checkedAt": "2026-11-10T14:38:20.027Z",
+  "status": "BACKEND_UNIT_QUALIFIED_NATIVE_DATABASE_PENDING",
+  "productFiles": [
+    {
+      "path": "services/accounting/customer-settlement.schemas.ts",
+      "sha256": "e4938b2a6a708b1c919aed309cc7436ef2e0bbd3d2f2e66ce0b404ea89957daa"
+    },
+    {
+      "path": "services/accounting/customer-settlement.service.ts",
+      "sha256": "1ac164a091a4061fffd6ac467f475a8b2ecdec941c98543f04e26d0c711e8191"
+    },
+    {
+      "path": "services/payments/pos-electronic-tender-authority.service.ts",
+      "sha256": "f0614f708e100170cc143da3d8d135814ed95ba201dcfa1e798f2296c0276d55"
+    },
+    {
+      "path": "services/payments/customer-settlement-payment-authority.service.ts",
+      "sha256": "02d58827d5063d500dba358b6544a7df0617d0dd1860fc395bf608b524799d69"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement.service.test.ts",
+      "sha256": "ccbcf7de7218411e6f39abe2285ec8eafd75616977e41cf5d09d8774502a5a97"
+    },
+    {
+      "path": "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts",
+      "sha256": "d130fb7b8fe5ebce9af62823b51a32d0da49fd70076b8662fb3889604a45532b"
+    },
+    {
+      "path": "services/payments/__tests__/customer-settlement-payment-authority.service.test.ts",
+      "sha256": "38df32b19a32fda7a13667ba4a6a17d2d987bebbbd264aa0ccf261fa676a7fee"
+    }
+  ],
+  "units": {
+    "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-5cb9a01c49/verification.json",
+    "sha256": "e7082e4d49917fb90ba3ef405c4ffdc8ad75a92a5f55a6bf63194b2d348c953f"
+  },
+  "unitTests": 86,
+  "scopedLint": {
+    "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/backend-lint-3548b5114c/RESULT.json",
+    "sha256": "294b522589dbb98bfa17cbb7733b5cb5d02879c36809f2651e904778c102b9da"
+  },
+  "lintErrors": 0,
+  "lintWarnings": 0,
+  "retainedFailedUnitAttempt": {
+    "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-06c5587a73/verification.json",
+    "sha256": "d5d0964a20eba051ed74bbd396b2d006d51e03b87fa197f76386effb6060baf0"
+  },
+  "invariants": [
+    "Optional provider mode preserves absent-key manual hashes and behavior",
+    "Native org/event/account/rail/state/amount/currency authority uses existing validator",
+    "Exact native row locks before receivable or source-publication mutation",
+    "One existing collection posting is linked by CAS; no second monetary posting",
+    "POS and collection CAS exclude prior ledger/customer/POS claims",
+    "Exact and uniqueness-race replay verify original native pointer and exact original posting lines",
+    "Captured proof and native claim remain retained across bookkeeping reversal; provider refunds are not performed"
+  ],
+  "notRun": [
+    "Real PostgreSQL concurrency or rollback",
+    "Full project TypeScript",
+    "Authenticated interface",
+    "Production/provider execution"
+  ],
+  "schemaChanged": false,
+  "productionTouched": false
+}

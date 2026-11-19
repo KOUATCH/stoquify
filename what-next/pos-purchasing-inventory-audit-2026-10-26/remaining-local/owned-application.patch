@@ -1,0 +1,204 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\remaining-local\\baseline\\actions\\pos\\tender.actions.ts" b/actions/pos/tender.actions.ts
+index 03dfc73f..05824396 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\remaining-local\\baseline\\actions\\pos\\tender.actions.ts"	
++++ b/actions/pos/tender.actions.ts
+@@ -4,6 +4,8 @@ import { revalidatePOSAfterCommit } from "./cache-revalidation"
+ import { preparePOSCheckout } from "@/services/pos/checkout.service"
+ import { checkoutLeaseSchema } from "@/services/pos/pos.schemas"
+ import { protect } from "@/services/_shared/protect"
++import { requireSession } from "@/lib/security/auth-session"
++import { ForbiddenError } from "@/services/_shared/action-errors"
+ import { commitPOSSale, refundPOSSale, voidPOSSale } from "@/services/pos/pos.service"
+ import {
+   commitSaleSchema,
+@@ -44,12 +46,14 @@ export const commitPOSSaleAction = protect(
+   },
+   async (input: unknown, ctx) => {
+     const parsed = commitSaleSchema.merge(checkoutLeaseSchema).parse(input)
++    const { claims } = await requireSession()
++    if (claims.userId !== ctx.userId || claims.tenantId !== ctx.orgId) throw new ForbiddenError("Current POS session is required.")
+     await preparePOSCheckout({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
+     const sale = await commitPOSSale({
+       ...parsed,
+       organizationId: ctx.orgId,
+       userId: ctx.userId,
+-    })
++    }, { sessionId: claims.sessionId, sessionToken: claims.sessionToken })
+ 
+     revalidatePOSSaleTags(parsed)
+     return sale
+@@ -68,7 +72,8 @@ export const refundPOSSaleAction = protect(
+   },
+   async (input: unknown, ctx) => {
+     const parsed = refundPOSSaleSchema.parse(input)
+-    const refund = await refundPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
++    if (!ctx.freshAuth) throw new ForbiddenError("Fresh authentication is required.")
++    const refund = await refundPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId }, { sessionId: ctx.freshAuth.claims.sessionId, sessionToken: ctx.freshAuth.claims.sessionToken })
+ 
+     revalidatePOSSaleTags(parsed)
+     return refund
+@@ -87,7 +92,8 @@ export const voidPOSSaleAction = protect(
+   },
+   async (input: unknown, ctx) => {
+     const parsed = voidPOSSaleSchema.parse(input)
+-    const voided = await voidPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
++    if (!ctx.freshAuth) throw new ForbiddenError("Fresh authentication is required.")
++    const voided = await voidPOSSale({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId }, { sessionId: ctx.freshAuth.claims.sessionId, sessionToken: ctx.freshAuth.claims.sessionToken })
+ 
+     revalidatePOSSaleTags(parsed)
+     return voided
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\remaining-local\\baseline\\services\\pos\\tender-write-access.ts" b/services/pos/tender-write-access.ts
+index 306c984a..7ca8c546 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\remaining-local\\baseline\\services\\pos\\tender-write-access.ts"	
++++ b/services/pos/tender-write-access.ts
+@@ -2,7 +2,9 @@ import "server-only"
+ 
+ import type { Prisma } from "@prisma/client"
+ import { db } from "@/prisma/db"
+-import { ApplicationError } from "@/services/_shared/action-errors"
++import { ApplicationError, ForbiddenError } from "@/services/_shared/action-errors"
++import { expandPermissions, hasRbacPermission } from "@/lib/security/rbac-permissions"
++import { isUsableAccount } from "@/services/roles/role-custodian-policy"
+ import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.service"
+ 
+ export const POS_TENDER_WRITE_POLICY_VERSION = "2026-09-13.1"
+@@ -13,6 +15,29 @@ export type POSTenderWriteScope = {
+   operation: "commit" | "refund" | "void"
+ }
+ 
++/** Supplied by the authenticated action, never parsed from a tender payload.
++ * Offline replay has its own retained-device admission contract. */
++export type POSInteractiveAuthority = { sessionId: string; sessionToken: string }
++
++export async function assertPOSInteractiveAuthorityInTx(
++  tx: Prisma.TransactionClient, scope: POSTenderWriteScope, authority: POSInteractiveAuthority,
++) {
++  // Follow the purchasing authority lock order. Revocations either precede
++  // this decision or wait for its financial transaction to finish.
++  await tx.$queryRaw`SELECT id FROM organizations WHERE id = ${scope.organizationId} AND "isActive" = true AND "deletedAt" IS NULL FOR SHARE`
++  await tx.$queryRaw`SELECT id FROM users WHERE id = ${scope.userId} AND "organizationId" = ${scope.organizationId} FOR SHARE`
++  await tx.$queryRaw`SELECT r.id FROM roles r JOIN "_UserRoles" membership ON membership."A" = r.id WHERE membership."B" = ${scope.userId} AND r."organizationId" = ${scope.organizationId} ORDER BY r.id FOR SHARE OF r, membership`
++  const actor = await tx.user.findFirst({ where: { id: scope.userId, organizationId: scope.organizationId, organization: { isActive: true, deletedAt: null } }, select: { isActive: true, isVerified: true, emailVerified: true, isLocked: true, lockedUntil: true, roles: { where: { organizationId: scope.organizationId }, select: { permissions: true } } } })
++  const now = new Date(), permissions = expandPermissions(actor?.roles.flatMap(role => role.permissions) ?? [])
++  const permission = scope.operation === "commit" ? "pos.use" : `pos.transactions.${scope.operation}`
++  if (!actor || !isUsableAccount(actor, now) || !hasRbacPermission(permissions, permission)) throw new ForbiddenError("Current POS authority is required.")
++  await tx.$queryRaw`SELECT id FROM sessions WHERE id = ${authority.sessionId} AND "userId" = ${scope.userId} FOR SHARE`
++  const checkedAt = new Date()
++  const session = await tx.session.findFirst({ where: { id: authority.sessionId, token: authority.sessionToken, userId: scope.userId, expiresAt: { gt: checkedAt } }, select: { assuranceOrganizationId: true, assuranceVerifiedAt: true, assuranceLevel: true, assuranceMethod: true, assuranceLockedUntil: true } })
++  if (!session) throw new ForbiddenError("Your session expired or was revoked. Sign in again.")
++  if (scope.operation !== "commit" && !(session.assuranceOrganizationId === scope.organizationId && session.assuranceMethod === "password" && session.assuranceLevel >= 1 && session.assuranceVerifiedAt && session.assuranceVerifiedAt <= checkedAt && checkedAt.getTime() - session.assuranceVerifiedAt.getTime() <= 300000 && (!session.assuranceLockedUntil || session.assuranceLockedUntil <= checkedAt))) throw new ForbiddenError("Fresh authentication is required to correct this sale.")
++}
++
+ export class POSTenderWriteAccessError extends ApplicationError {
+   constructor(operation: POSTenderWriteScope["operation"]) {
+     super("FORBIDDEN", "Writable POS access and its required dependencies are needed for this operation.", 403, true, {
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\remaining-local\\baseline\\services\\pos\\pos.service.ts" b/services/pos/pos.service.ts
+index d14d18a2..dbef93fd 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\remaining-local\\baseline\\services\\pos\\pos.service.ts"	
++++ b/services/pos/pos.service.ts
+@@ -21,7 +21,7 @@ import { assertPOSShiftOpeningAccessInTx, POSShiftOpeningAccessError, POS_SHIFT_
+ import { assertPOSCartWriteAccessInTx, POSCartWriteAccessError, POS_CART_WRITE_POLICY_VERSION, type POSCartWriteScope } from "./cart-write-access"
+ import { posCartRevision } from "./cart-revision"
+ import { assertCheckoutLeaseInTx, retireShiftDraftsInTx, retainedCheckoutRequest } from "./checkout-state"
+-import { assertPOSTenderWriteAccessInTx, auditPOSTenderWriteDenial, type POSTenderWriteScope } from "./tender-write-access"
++import { assertPOSTenderWriteAccessInTx, assertPOSInteractiveAuthorityInTx, auditPOSTenderWriteDenial, type POSTenderWriteScope, type POSInteractiveAuthority } from "./tender-write-access"
+ import { postRefund } from "@/services/accounting/postings/post-refund"
+ import { postPayment } from "@/services/accounting/postings/post-payment"
+ import { postSale } from "@/services/accounting/postings/post-sale"
+@@ -659,6 +659,12 @@ function shiftCloseCommandHash(input: {
+ function prismaErrorCode(error: unknown) {
+   if (!error || typeof error !== "object" || !("code" in error)) return null
+   const code = (error as { code?: unknown }).code
++  // Prisma exposes serialization/deadlock failures from explicit authority
++  // locks as raw-query errors. Retry the whole transaction as for P2034.
++  if (code === "P2010" && "meta" in error) {
++    const meta = (error as { meta?: { code?: unknown } }).meta
++    if (meta?.code === "40001" || meta?.code === "40P01") return "P2034"
++  }
+   return typeof code === "string" ? code : null
+ }
+ 
+@@ -2163,7 +2169,7 @@ export async function getPOSSaleCommitStatus(rawInput: UserScoped) {
+   })
+ }
+ 
+-export async function commitPOSSale(rawInput: UserScoped) {
++export async function commitPOSSale(rawInput: UserScoped, authority?: POSInteractiveAuthority) {
+   const input = commitSaleSchema.parse(rawInput)
+   const writeScope: POSTenderWriteScope = { organizationId: rawInput.organizationId, userId: rawInput.userId, salesOrderId: input.salesOrderId, operation: "commit" }
+   assertSupportedSaleTenders(input.tenders)
+@@ -2171,6 +2177,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
+   const requestHash = posSaleCommitRequestHash(rawInput, input)
+ 
+   const runCommit = async (tx: Prisma.TransactionClient) => {
++    if (authority) await assertPOSInteractiveAuthorityInTx(tx, writeScope, authority)
+     const existingCommit = await tx.pOSCommitResult.findUnique({
+       where: {
+         organizationId_terminalId_clientCommitId: {
+@@ -2901,7 +2908,10 @@ export async function commitPOSSale(rawInput: UserScoped) {
+           }
+           break
+         }
+-        if (errorCode === "P2034" && attempt === 0) continue
++        if (errorCode === "P2034") {
++          if (attempt === 0) continue
++          throw new ApplicationError("DATABASE_CONFLICT", "POS sale could not be serialized safely; retry the retained request", 409)
++        }
+       }
+       if (error instanceof ApplicationError) throw error
+       throw new ApplicationError(
+@@ -3357,11 +3367,12 @@ function assertNoPriorRefunds(sale: CorrectionSale) {
+   }
+ }
+ 
+-export async function refundPOSSale(rawInput: UserScoped) {
++export async function refundPOSSale(rawInput: UserScoped, authority?: POSInteractiveAuthority) {
+   const input = refundPOSSaleSchema.parse(rawInput)
+   const writeScope: POSTenderWriteScope = { organizationId: rawInput.organizationId, userId: rawInput.userId, salesOrderId: input.salesOrderId, operation: "refund" }
+ 
+   return db.$transaction(async (tx) => {
++    if (authority) await assertPOSInteractiveAuthorityInTx(tx, writeScope, authority)
+     await assertPOSTenderWriteAccessInTx(tx, writeScope)
+     const now = new Date()
+     const sale = await loadCompletedSaleForCorrection(tx, {
+@@ -3571,11 +3582,12 @@ export async function refundPOSSale(rawInput: UserScoped) {
+   })
+ }
+ 
+-export async function voidPOSSale(rawInput: UserScoped) {
++export async function voidPOSSale(rawInput: UserScoped, authority?: POSInteractiveAuthority) {
+   const input = voidPOSSaleSchema.parse(rawInput)
+   const writeScope: POSTenderWriteScope = { organizationId: rawInput.organizationId, userId: rawInput.userId, salesOrderId: input.salesOrderId, operation: "void" }
+ 
+   return db.$transaction(async (tx) => {
++    if (authority) await assertPOSInteractiveAuthorityInTx(tx, writeScope, authority)
+     await assertPOSTenderWriteAccessInTx(tx, writeScope)
+     const now = new Date()
+     const sale = await loadCompletedSaleForCorrection(tx, {
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\remaining-local\\baseline\\components\\pos\\ProfessionalPOSSystem.tsx" b/components/pos/ProfessionalPOSSystem.tsx
+index fef1db02..78a67fef 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\what-next\\pos-purchasing-inventory-audit-2026-10-26\\remaining-local\\baseline\\components\\pos\\ProfessionalPOSSystem.tsx"	
++++ b/components/pos/ProfessionalPOSSystem.tsx
+@@ -1909,7 +1909,12 @@ function POSWorkspace() {
+                             </div>
+                           </div>
+ 
+-                          <div className="mt-3 overflow-x-auto rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.48)]">
++                          <div
++                            role="region"
++                            aria-label={`${itemLabel} — ${t("catalog.sku")} / ${t("catalog.barcode")}`}
++                            tabIndex={0}
++                            className="pointer-events-auto mt-3 overflow-x-auto rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.48)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--dash-brand)]"
++                          >
+                             <div className="flex min-w-max items-center gap-2 px-2 py-1.5 text-[10px] leading-none">
+                               <span className={cn("shrink-0 font-semibold uppercase tracking-normal", posMutedTextClass)}>
+                                 {t("catalog.sku")}
+@@ -1957,7 +1962,7 @@ function POSWorkspace() {
+                             <div className={cn(posMetricValueClass, "text-[#f1d28a]")}>{inCartQuantity}</div>
+                           </div>
+                         </div>
+-                        <Progress value={stockProgress(item, displayedOnHand)} className="h-1.5 bg-[rgba(84,112,122,0.36)]" />
++                        <Progress aria-hidden="true" value={stockProgress(item, displayedOnHand)} className="h-1.5 bg-[rgba(84,112,122,0.36)]" />
+                         <div className="flex min-w-0 items-center gap-2">
+                           <POSButton
+                             type="button"

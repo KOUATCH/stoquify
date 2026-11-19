@@ -25,7 +25,7 @@ jest.mock("@/prisma/db", () => ({
     providerAccount: { findFirst: jest.fn() },
     statementFile: { findFirst: jest.fn(), create: jest.fn() },
     statementLine: { findMany: jest.fn(), createMany: jest.fn() },
-    paymentReconciliationInboxItem: { upsert: jest.fn() },
+    paymentReconciliationInboxItem: { upsert: jest.fn(), findFirst: jest.fn() },
     paymentException: { create: jest.fn(), findFirst: jest.fn() },
     closeRun: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
     closePackExport: { findFirst: jest.fn(), update: jest.fn() },
@@ -41,7 +41,7 @@ const mockedDb = db as unknown as {
   providerAccount: { findFirst: jest.Mock }
   statementFile: { findFirst: jest.Mock; create: jest.Mock }
   statementLine: { findMany: jest.Mock; createMany: jest.Mock }
-  paymentReconciliationInboxItem: { upsert: jest.Mock }
+  paymentReconciliationInboxItem: { upsert: jest.Mock; findFirst: jest.Mock }
   paymentException: { create: jest.Mock; findFirst: jest.Mock }
   closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
   closePackExport: { findFirst: jest.Mock; update: jest.Mock }
@@ -82,12 +82,14 @@ describe("statement import ingestion", () => {
     mockedDb.providerAccount.findFirst.mockResolvedValue({
       id: "provider-account-1",
       status: ProviderAccountStatus.ACTIVE,
+      providerCode: "mtn-momo", currencyCode: "XAF",
     })
     mockedDb.statementFile.findFirst.mockResolvedValue(null)
     mockedDb.statementLine.findMany.mockResolvedValue([])
     mockedDb.statementFile.create.mockResolvedValue({ id: "statement-file-1" })
     mockedDb.statementLine.createMany.mockResolvedValue({ count: 1 })
     mockedDb.paymentReconciliationInboxItem.upsert.mockResolvedValue({ id: "inbox-1" })
+    mockedDb.paymentReconciliationInboxItem.findFirst.mockResolvedValue(null)
     mockedDb.paymentException.create.mockResolvedValue({ id: "exception-1" })
     mockedDb.paymentException.findFirst.mockResolvedValue(null)
     mockedDb.closeRun.findMany.mockResolvedValue([])
@@ -102,6 +104,39 @@ describe("statement import ingestion", () => {
       ...args.data,
       outboxMessages: args.data.outboxMessages.create,
     }))
+  })
+
+  const declaredStatement = (changes: Record<string, unknown> = {}) => JSON.stringify({ formatVersion: "stoquify-statement-v1", providerCode: "mtn-momo",
+    providerAccountId: "provider-account-1", currencyCode: "XAF", periodStart: "2026-06-01T00:00:00.000Z", periodEnd: "2026-06-30T23:59:59.999Z",
+    lines: JSON.parse(statementContent()), ...changes })
+
+  it("binds declared coverage to the original raw file hash and preserves observed dates separately", async () => {
+    const rawContent = declaredStatement()
+    await importProviderStatement({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter, rawContent })
+    expect(mockedDb.statementFile.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({
+      fileHash: sha256(rawContent), periodStart: new Date("2026-06-01T00:00:00Z"), periodEnd: new Date("2026-06-30T23:59:59.999Z"),
+      metadata: expect.objectContaining({ coverageKind: "DECLARED", observedPeriodStart: "2026-06-14T10:00:00.000Z", observedPeriodEnd: "2026-06-14T10:00:00.000Z",
+        declaredCoverage: expect.objectContaining({ providerAccountId: "provider-account-1", currencyCode: "XAF", sourceFileHash: sha256(rawContent) }),
+      }),
+    }) }))
+    const changed = declaredStatement({ periodStart: "2026-06-02T00:00:00.000Z" })
+    expect(sha256(changed)).not.toBe(sha256(rawContent))
+  })
+
+  it.each(["account", "provider", "currency"])("rejects declared %s identity mismatches before importing", async kind => {
+    if (kind === "provider") mockedDb.providerAccount.findFirst.mockResolvedValue({ id: "provider-account-1", status: ProviderAccountStatus.ACTIVE, providerCode: "other", currencyCode: "XAF" })
+    const rawContent = declaredStatement(kind === "account" ? { providerAccountId: "foreign-account" } : kind === "currency" ? { currencyCode: "USD", lines: JSON.parse(statementContent()).map((line: object) => ({ ...line, currencyCode: "USD" })) } : {})
+    await expect(importProviderStatement({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter, rawContent })).rejects.toThrow(/does not match/)
+    expect(mockedDb.statementFile.create).not.toHaveBeenCalled(); expect(mockedDb.statementLine.createMany).not.toHaveBeenCalled()
+  })
+
+  it("never promotes legacy transaction edges into declared statement coverage", async () => {
+    await importProviderStatement({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter, rawContent: statementContent() })
+    expect(mockedDb.statementFile.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({
+      periodStart: new Date("2026-06-14T10:00:00Z"), periodEnd: new Date("2026-06-14T10:00:00Z"),
+      metadata: expect.objectContaining({ coverageKind: "OBSERVED" }),
+    }) }))
+    expect(mockedDb.statementFile.create.mock.calls[0][0].data.metadata).not.toHaveProperty("declaredCoverage")
   })
 
   it("refuses vanished retained work without silently bypassing new-work admission", async () => {
@@ -274,7 +309,7 @@ describe("statement import ingestion", () => {
   })
   it("treats a repeated statement file hash as an idempotent duplicate", async () => {
     const rawContent = statementContent()
-    mockedDb.statementFile.findFirst.mockResolvedValue({ id: "statement-file-1" })
+    mockedDb.statementFile.findFirst.mockResolvedValue({ id: "statement-file-1", sourceType: "MOBILE_MONEY_STATEMENT", _count: { lines: 1 } })
 
     const result = await importProviderStatement({
       organizationId: "org-1",
@@ -460,7 +495,21 @@ describe("statement import ingestion", () => {
         fileHash: sha256("[]"),
       }),
     })
-    expect(mockedDb.$transaction).not.toHaveBeenCalled()
+    expect(mockedDb.statementLine.createMany).not.toHaveBeenCalled()
     expect(mockedDb.statementFile.create).not.toHaveBeenCalled()
   })
+  it("replays historical bytes without reinterpreting them with the strict parser", async () => {
+    mockedDb.statementFile.findFirst.mockResolvedValue({ id: "legacy", sourceType: "LEGACY", _count: { lines: 3 } })
+    const legacy = Object.create(adapter); legacy.parseStatement = jest.fn(() => { throw Error("must not parse") })
+    const result = await importProviderStatement({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter: legacy, rawContent: "ambiguous old bytes" })
+    expect(result).toMatchObject({ status: "DUPLICATE_FILE", duplicateLineCount: 3 })
+    expect(legacy.parseStatement).not.toHaveBeenCalled()
+  })
+  it("blocks changed monetary content for the same transaction identity within a file", async () => {
+    const line = JSON.parse(statementContent())[0]
+    const result = await importProviderStatement({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter, rawContent: JSON.stringify([line, {...line, amount:"10001"}]) })
+    expect(result.status).toBe("DUPLICATE_LINE")
+    expect(mockedDb.statementFile.create).not.toHaveBeenCalled()
+  })
+
 })

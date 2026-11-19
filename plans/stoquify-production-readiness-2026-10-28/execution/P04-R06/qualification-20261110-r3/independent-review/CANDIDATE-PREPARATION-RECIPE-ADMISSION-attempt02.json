@@ -1,0 +1,127 @@
+{
+  "at": "2026-11-10T16:00:37.236Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "files": [
+    {
+      "path": "prepare-candidate-attempt02.cjs",
+      "sha256": "7c2465b39dd18da7b77cef8e44ee6bb8a580a6bcebe67cef1a03f30343becf5c"
+    },
+    {
+      "path": "admit-candidate-attempt02.cjs",
+      "sha256": "4d82c8b03ef2edc5e5e6700d3f326c931d311ad492c02fb0bddf6e126adfc5ad"
+    },
+    {
+      "path": "check-resources.cjs",
+      "sha256": "76ed28fd79069d9aed58c6d4ed9d2690008236cdaf0ad73516476f1429d150d4"
+    },
+    {
+      "path": "resource-snapshot.ps1",
+      "sha256": "53ed40de3b8ae063f3fc5d08ce948cf108ea633efc005e4563b2093a02c123d0"
+    },
+    {
+      "path": "inventory/capture-input.json",
+      "sha256": "27b0a6716caa514b16c172d5341b4f998a388556063006241b5374f39651036d"
+    },
+    {
+      "path": "inventory/source-after-manifest-runtime.json",
+      "sha256": "6a5e5b0c5237159fbdf321a0f8d2c3df33229ba50907238fa03550cc5a673cc3"
+    },
+    {
+      "path": "inventory/private-metadata-policy.json",
+      "sha256": "a044327ea56b8488574704fdd8f25b7f46506f4dc45a9fdf4d900fff09ca33d6"
+    },
+    {
+      "path": "inventory/CURRENT-SOURCE-MANIFEST-r2.json",
+      "sha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699"
+    },
+    {
+      "path": "independent-review/CAPTURE-SOURCE-ADMISSION.json",
+      "sha256": "ebf471abe8a32ab883077a70231efe92b392dea77cbe42acb18987d341c9871e"
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+      "sha256": "dbf7007e9e23e7c2b54b0ef726c2949b67a13eb7b72363279d4d4b7a93142617"
+    },
+    {
+      "path": "dependency-staging-attempt03.json",
+      "sha256": "0863e3fbe2b5c0426f4079aa8fc433478c32d6a54b2849e0369ff03f8366ecb8"
+    },
+    {
+      "path": "dependency-input-manifest.json.gz",
+      "sha256": "306dafa0271600fb71cd921ee93542a695dc9eddc616ef21c72f0d995e788030"
+    },
+    {
+      "path": "D:/p04-r06-fullapp-20261110-r3/ownership.json",
+      "sha256": "d56bd810eaa5cc707181bcff1aae686116716f1e853ee89c67b2481fca8f67ec"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\asset-inventory.json",
+      "sha256": "e64ad097bc3891a4f8cebb8ff1dc60ad04d6bf398f32f229c1a9ee7d5a3404cf"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\private-alias-exclusion-20261102\\asset-decision.json",
+      "sha256": "17fd4e881fdf511b01d43def19aa7d8a4bd6029bd5604bd09d0f73c05a1882dd"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\config\\private-upload-aliases.json",
+      "sha256": "9cc5f6ee3f72c4a6d5eed6759b9e8ad8ab7fab90f11a7010374419fb7a4778fc"
+    },
+    {
+      "path": "reused-evidence/MANIFEST.json",
+      "sha256": "2d01675030d37199ab7570870a9a29e896cc61eb934f353bd6fa06d1db49e316"
+    },
+    {
+      "path": "reused-evidence/independent-review/UNIT-OUTCOME-REVIEW.json",
+      "sha256": "70144c056ef2ff4a7dd04b88753ec84cdcb8ba49a97bef1fed21a56a1a990a96"
+    },
+    {
+      "path": "reused-evidence/independent-review/REPAIR-SOURCE-ADMISSION.json",
+      "sha256": "4993e10c3c40dd9e29e947db2533de7427d1e9cbe1290e61563aa4644936cca9"
+    },
+    {
+      "path": "preparation.json",
+      "sha256": "f2e03f764cfebb01bfce8758904a40ffbc4fb43c26243b850a7832da33c63b90"
+    },
+    {
+      "path": "resource-capture-entry.json",
+      "sha256": "5f2dedd96e18c891e908a21d589f07372a8143fb294432eb5996bee72fe0daf3"
+    },
+    {
+      "path": "independent-review/CANDIDATE-ENTRY-CAPACITY-OUTCOME.json",
+      "sha256": "a01b5cbfadd514c45bcabe7b2ab5fc0968f773fd95d9ccbb44468aaefa31871b"
+    },
+    {
+      "path": "independent-review/CANDIDATE-PREPARATION-RECIPE-ADMISSION.json",
+      "sha256": "aeeaef8fa6b846d1a8899c35ba11a7b7655798dbda619a65a67bdfefcbcee978"
+    }
+  ],
+  "entries": [
+    "prepare-candidate-attempt02.cjs",
+    "admit-candidate-attempt02.cjs"
+  ],
+  "scope": "Exclusive successor capture retry; only output/admission basenames and preserved failed-entry/no-output assertions differ",
+  "controls": [
+    "Fresh6/12/12 resource gate before capture; E archive bound/reserve and D source allocation+12GiB reserve",
+    "Exact current HEAD and full9942 files must equal admitted manifest before any clone/copy",
+    "Only new D r3 source and dependency paths; preserved old r2 tree and DB unchanged",
+    "Private upload annex retains3 existing classified-private originals and policy, no serving",
+    "No source overrides/additions, no configuration/flags weakened",
+    "Postcapture full candidate/current source+HEAD+68 inputs and12GiB free gate precedes independent outcome",
+    "No application/DB startup, migrations, build or deployment"
+  ],
+  "candidateIdExpected": "p04-r06-r3-4ea56948b133",
+  "qualificationPassed": false,
+  "priorFailurePreserved": true,
+  "unchangedResourceThresholds": {
+    "physicalGiB": 6,
+    "commitGiB": 12,
+    "buildDriveGiB": 12
+  },
+  "entryCurrentlyEligible": false,
+  "reason": "Latest resource-capture-retry-ready-r1.json still fails commit headroom; entry must collect fresh passing capacity and exact full source identity before any capture mutation"
+}

@@ -7,7 +7,7 @@ import { hasInvitationGrantEvidence, invitationDeliveryPayload, invitationDigest
 
 type Invitation = {
   id: string; organizationId: string; roleId: string; email: string; token: string; expiresAt: Date
-  role: { organizationId: string; permissions: string[] }
+  role: { code: string; organizationId: string; permissions: string[] }
 }
 type Evidence = Pick<BusinessEvent, "id" | "organizationId" | "eventType" | "eventSource" | "schemaVersion" | "status" | "actorId" | "sourceId" | "payload" | "payloadHash">
 type Reader = Pick<Prisma.TransactionClient, "businessEvent" | "user">
@@ -42,17 +42,17 @@ export async function readInvitationRedemptionAuthority(tx: Reader, invite: Invi
     || payload.actorId !== event.actorId || payload.tokenHash !== tokenHash
     || payload.recipientHash !== invitationDigest(invite.email.trim().toLowerCase())
     || payload.expiresAt !== invite.expiresAt.toISOString()
-    || !hasInvitationGrantEvidence(payload)) return null
+    || !hasInvitationGrantEvidence(payload, invite.role.code)) return null
 
   if (lock) {
     const organizations = await lock.$queryRaw<{ isActive: boolean; deletedAt: Date | null }[]>`
       SELECT "isActive", "deletedAt" FROM organizations WHERE id = ${invite.organizationId} FOR SHARE`
     if (!organizations[0]?.isActive || organizations[0].deletedAt) return null
-    const roles = await lock.$queryRaw<{ organizationId: string; permissions: string[] }[]>`
-      SELECT "organizationId", permissions FROM roles
+    const roles = await lock.$queryRaw<{ code: string; organizationId: string; permissions: string[] }[]>`
+      SELECT code, "organizationId", permissions FROM roles
       WHERE id = ${invite.roleId} AND "organizationId" = ${invite.organizationId} FOR SHARE`
     const role = roles[0]
-    if (!role || !samePermissions(role.permissions, payload.rolePermissions)) return null
+    if (!role || !samePermissions(role.permissions, payload.rolePermissions) || !hasInvitationGrantEvidence(payload, role.code)) return null
     const actors = await lock.$queryRaw<{ isActive: boolean; isLocked: boolean; lockedUntil: Date | null; isVerified: boolean; emailVerified: boolean }[]>`
       SELECT "isActive", "isLocked", "lockedUntil", "isVerified", "emailVerified" FROM users
       WHERE id = ${payload.actorId} AND "organizationId" = ${invite.organizationId} FOR SHARE`
@@ -62,12 +62,12 @@ export async function readInvitationRedemptionAuthority(tx: Reader, invite: Invi
     // Lock both the role and its membership: deleting the assignment revokes
     // authority even if the role itself has not changed. Use these locked rows,
     // not a later read that could include newly added, unlocked memberships.
-    const actorRoles = await lock.$queryRaw<{ permissions: string[] }[]>`
-      SELECT r.permissions FROM roles r INNER JOIN "_UserRoles" membership ON membership."A" = r.id
+    const actorRoles = await lock.$queryRaw<{ code: string; permissions: string[] }[]>`
+      SELECT r.code, r.permissions FROM roles r INNER JOIN "_UserRoles" membership ON membership."A" = r.id
       WHERE membership."B" = ${payload.actorId} AND r."organizationId" = ${invite.organizationId}
       ORDER BY r.id FOR SHARE OF r, membership`
     const actorPermissions = actorRoles.flatMap(row => row.permissions)
-    if (!evaluateRoleGrantPolicy({ actorOrganizationId: invite.organizationId, actorPermissions, targetRole: role }).allowed) return null
+    if (!evaluateRoleGrantPolicy({ actorOrganizationId: invite.organizationId, actorPermissions, actorRoleCodes: actorRoles.map(row => row.code), targetRole: role }).allowed) return null
   } else {
     if (invite.role.organizationId !== invite.organizationId || !samePermissions(invite.role.permissions, payload.rolePermissions)
       || !await readCurrentInvitationIssuer(tx, { organizationId: invite.organizationId, actorId: payload.actorId, role: invite.role })) return null

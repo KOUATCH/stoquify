@@ -1,0 +1,73 @@
+[
+  {
+    "scenario": "legacy restoration writer after repaired issue",
+    "status": "UNSUPPORTED",
+    "issued": {
+      "eventId": "cmvpq8us40001max0i385z07n",
+      "idempotencyKey": "pos-sale-stock:org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4:e5c6fdb1-846a-4edc-ad8a-156a31fe4068",
+      "documentHash": "sha256:2ba1a3a4d29455eb149d2330daedc62bc20f71fb45fe79d79b784775aaa9d610",
+      "movementTransactionIds": [
+        "cmvpq8uvv0007max0zn4rph6d"
+      ],
+      "totalCost": "300.02",
+      "replayed": false
+    },
+    "replay": {
+      "eventId": "cmvpq8us40001max0i385z07n",
+      "idempotencyKey": "pos-sale-stock:org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4:e5c6fdb1-846a-4edc-ad8a-156a31fe4068",
+      "documentHash": "sha256:2ba1a3a4d29455eb149d2330daedc62bc20f71fb45fe79d79b784775aaa9d610",
+      "movementTransactionIds": [],
+      "totalCost": "0",
+      "replayed": true
+    },
+    "issuedState": {
+      "organizationId": "org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4",
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "reserved": "0.000"
+      },
+      "orders": 0,
+      "receipts": 0,
+      "movements": 1,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    },
+    "retainedIssueCost": "300.02",
+    "restored": {
+      "eventId": "cmvpq912w0001matgzijx4znt",
+      "idempotencyKey": "pos-refund-stock:org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4:e5c6fdb1-846a-4edc-ad8a-156a31fe4068",
+      "documentHash": "sha256:3377dc6ff67d82841cded0debcff9cd635db197b328e7ddb8896df60da199e90",
+      "movementTransactionIds": [
+        "cmvpq916k0007matgg5esmk42"
+      ],
+      "totalCost": "300.03",
+      "replayed": false
+    },
+    "retry": {
+      "eventId": "cmvpq912w0001matgzijx4znt",
+      "idempotencyKey": "pos-refund-stock:org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4:e5c6fdb1-846a-4edc-ad8a-156a31fe4068",
+      "documentHash": "sha256:3377dc6ff67d82841cded0debcff9cd635db197b328e7ddb8896df60da199e90",
+      "movementTransactionIds": [],
+      "totalCost": "0",
+      "replayed": true
+    },
+    "state": {
+      "organizationId": "org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4",
+      "stock": {
+        "quantity": "3.000",
+        "value": "300.03",
+        "reserved": "0.000"
+      },
+      "orders": 0,
+      "receipts": 0,
+      "movements": 2,
+      "commits": 0,
+      "payments": 0,
+      "journals": []
+    },
+    "valueDrift": "0.01",
+    "reason": "Baseline return arithmetic predates B1; do not route new restoration writes back to that writer."
+  }
+]

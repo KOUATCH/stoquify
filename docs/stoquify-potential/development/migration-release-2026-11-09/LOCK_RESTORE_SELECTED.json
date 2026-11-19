@@ -1,0 +1,44 @@
+{
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\migration-release-2026-11-09\\restore-parser-certification-d16c9c7277",
+  "began": "2026-11-09T14:30:45.607Z",
+  "passed": true,
+  "originalEvidence": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\migration-release-2026-11-09\\lock-restore-b968ba1b86",
+  "sourceDatabase": "stoquify_pos_audit_20261109_44a94875d5",
+  "restoredDatabase": "stoquify_restore_sales_20261109_b968ba1b86",
+  "dump": {
+    "privatePath": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5\\lock-restore-b968ba1b86\\synthetic-financial-backup.dump",
+    "sha256": "1a0f3ef18604885e7abf1736d32efd0256444da9b49d0deaa591231d08d6aff2",
+    "bytes": 1670112
+  },
+  "originalResultSha256": "d9d16772745eddae4815ab6bf1c244f0f83d6a424dba2343f5de7b8998dcc1a3",
+  "sourceBeforeSha256": "24d6c6eb2e41262c2fddd8c1a52ca0f07f49ee8acb0b9b2bd4bf4eec2e23b410",
+  "restoredBeforeSha256": "4fcda652a70cf9639a43945eb92134001203705f876737b15a2a981ab96c5f4c",
+  "differencesSha256": "0cdd6b22e1f2e5a4a2ea450cecc9ec1c66645e3d7ec3494e88468c5429a19f8b",
+  "runnerSha256": "6ab80487c63d4105374abb853941ba0534d1af572044a4ba3dcc1ccd6c132673",
+  "limitations": [
+    "Synthetic local restore only; no production backup, hosted recovery or SLA/RPO/RTO certification",
+    "No production schema promotion or application deployment invoked"
+  ],
+  "checks": [
+    {
+      "name": "Exact paired PostgreSQL parser proof in rolled-back TEMP scaffolds",
+      "passed": true,
+      "checks": 13
+    },
+    {
+      "name": "Restored financial data and migration checksums match; source/restored public schemas and rows unchanged by proof",
+      "passed": true,
+      "allPublicTables": 247,
+      "nonemptyTables": 45,
+      "sequences": 1,
+      "triggers": 141,
+      "constraints": 1130,
+      "checkConstraints": 230,
+      "functions": 75,
+      "financialSnapshotSha256": "b5d9628f6662b9e650ca23a129ff5c066a86b98fd09c02bbd50db62e35c60491",
+      "tableProfilesSha256": "9f2b2e1a412b13a63b5c2bf28e4d04ba1f155c182b541e23a1bd654b158352c1"
+    }
+  ],
+  "ownedClusterStopped": true,
+  "ended": "2026-11-09T14:31:09.455Z"
+}

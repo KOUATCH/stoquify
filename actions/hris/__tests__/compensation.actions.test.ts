@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 import { FreshAuthRequiredError, requireFreshAuth } from "@/lib/security/auth-session"
 import { requirePermission } from "@/lib/security/rbac"
@@ -36,7 +37,7 @@ jest.mock("@/lib/security/auth-session", () => {
   }
 })
 
-jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn() } }))
+jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn(), warn: jest.fn() } }))
 jest.mock("@/services/modules/module-entitlement.service", () => ({
   observeModuleAccess: jest.fn(),
 }))
@@ -72,8 +73,9 @@ function rbacContext(userId: string, permissions: string[]) {
 describe("HRIS compensation actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(observeModuleAccess as jest.Mock).mockResolvedValue({ allowed: true })
     mockRequireFreshAuth.mockResolvedValue({
-      claims: { lastAuthAt: "2026-07-15T00:00:00.000Z" },
+      claims: { userId: "checker-1", tenantId: "org-1", lastAuthAt: "2026-07-15T00:00:00.000Z" },
     })
     mockGetCompensation.mockResolvedValue({ organizationId: "org-1", assignments: [] })
     mockRequestAssignment.mockResolvedValue({

@@ -33,6 +33,17 @@ export type PurchasesRouteSurface = {
 }
 
 export const purchasesRouteCatalog: PurchasesRouteSurface[] = [
+  {
+    key: "purchases-supplier-credit",
+    route: "/dashboard/purchases/payables/credit",
+    resource: "SupplierCreditNote",
+    title: "Record supplier credit",
+    permissions: ["purchasing.ap.credit.post"],
+    permissionDeniedTitle: { en: "Supplier credits are unavailable for this role", fr: "Les avoirs fournisseurs sont indisponibles pour ce rôle" },
+    permissionDeniedMessage: { en: "Ask your administrator to review supplier credit access.", fr: "Demandez à votre administrateur de vérifier l’accès aux avoirs fournisseurs." },
+    primaryHref: "/dashboard/purchases/payables",
+    module: { moduleSlug: "purchasing", surface: "/dashboard/purchases/payables/credit", accessIntent: "read", mode: "enforce" },
+  },
   { key: "purchases-payment-reconciliation", route: "/dashboard/purchases/payables/payments/reconcile", resource: "SupplierPayment", title: "Supplier payment evidence", permissions: ["payments.reconciliation.read", "accounting.journal.read"], permissionMode: "all", permissionDeniedTitle: { en: "Payment evidence is unavailable for this role", fr: "Les preuves de paiement sont indisponibles pour ce rôle" }, permissionDeniedMessage: { en: "Ask your administrator to review reconciliation and journal read access.", fr: "Demandez à l’administrateur de vérifier les droits de lecture du rapprochement et des écritures." }, primaryHref: "/dashboard/purchases/payables", modules: [{ moduleSlug: "purchasing", surface: "/dashboard/purchases/payables/payments/reconcile", accessIntent: "read", mode: "enforce" }, { moduleSlug: "payment_reconciliation", surface: "/dashboard/purchases/payables/payments/reconcile", accessIntent: "read", mode: "enforce" }] },
   { key: "purchases-payment-recovery", route: "/dashboard/purchases/payables/payments/recovery", resource: "SupplierPayment", title: "Recover supplier payment posting", permissions: ["purchasing.ap.payment.release"], permissionDeniedTitle: { en: "Payment posting recovery is unavailable for this role", fr: "La reprise comptable des paiements est indisponible pour ce rôle" }, permissionDeniedMessage: { en: "Ask the administrator to review supplier payment recovery access.", fr: "Demandez à l’administrateur de vérifier les droits de reprise des paiements fournisseurs." }, primaryHref: "/dashboard/purchases/payables", module: { moduleSlug: "purchasing", surface: "/dashboard/purchases/payables/payments/recovery", accessIntent: "read", mode: "enforce" } },
   { key: "purchases-payment-record", route: "/dashboard/purchases/payables/payments/record", resource: "SupplierPayment", title: "Record a supplier payment", permissions: ["purchasing.ap.payment.release"], permissionDeniedTitle: { en: "Payment recording is unavailable for this role", fr: "L’enregistrement des paiements est indisponible pour ce rôle" }, permissionDeniedMessage: { en: "Ask the administrator to review supplier payment execution-recording access.", fr: "Demandez à l’administrateur de vérifier les droits d’enregistrement des paiements fournisseurs." }, primaryHref: "/dashboard/purchases/payables", module: { moduleSlug: "purchasing", surface: "/dashboard/purchases/payables/payments/record", accessIntent: "read", mode: "enforce" } },

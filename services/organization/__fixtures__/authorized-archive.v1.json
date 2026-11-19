@@ -1,0 +1,287 @@
+{
+  "manifest": {
+    "schemaVersion": "stoquify.authorized-archive/1-draft",
+    "profile": "p09-synthetic-retail",
+    "archiveId": "p09-fixture-v1",
+    "organizationId": "synthetic-org",
+    "generatedAt": "2026-10-18T00:00:00Z",
+    "source": {
+      "revision": "p09-hand-authored-fixture-v1",
+      "snapshotId": "synthetic-snapshot-1",
+      "basis": "synthetic-fixture"
+    },
+    "authority": {
+      "ownerId": "owner",
+      "decisionId": "synthetic-owner-decision",
+      "policyVersion": "p09-proposed-v1",
+      "sensitiveScopes": [
+        "party.contact"
+      ]
+    },
+    "completeness": "partial",
+    "coverage": [
+      {
+        "category": "organization-settings",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "roles-membership",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "locations",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "item-unit-tax-codes",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "customer-supplier-masters",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "opening-closing-positions",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "sales-returns-shifts",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "stock-receiving-transfers",
+        "status": "blocked",
+        "reason": "No DTO/runtime extraction or complete evidence for this category in P09; P16 mapping required.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "purchasing-ap",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "payments-reconciliation-ar",
+        "status": "blocked",
+        "reason": "No DTO/runtime extraction or complete evidence for this category in P09; P16 mapping required.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "journals-source-links",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "close-review-comments",
+        "status": "blocked",
+        "reason": "No DTO/runtime extraction or complete evidence for this category in P09; P16 mapping required.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "audit-approvals",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "attachments",
+        "status": "included",
+        "reason": "Only the bounded synthetic DTO rows listed in this file; no full domain completeness claim.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "import-provenance",
+        "status": "blocked",
+        "reason": "No DTO/runtime extraction or complete evidence for this category in P09; P16 mapping required.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "offline-pending",
+        "status": "blocked",
+        "reason": "No DTO/runtime extraction or complete evidence for this category in P09; P16 mapping required.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "analytics-reports",
+        "status": "blocked",
+        "reason": "No DTO/runtime extraction or complete evidence for this category in P09; P16 mapping required.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "commercial-lifecycle",
+        "status": "blocked",
+        "reason": "No DTO/runtime extraction or complete evidence for this category in P09; P16 mapping required.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "payroll",
+        "status": "excluded",
+        "reason": "Outside P01 pilot.",
+        "owner": "Data/export engineer"
+      },
+      {
+        "category": "credentials",
+        "status": "excluded",
+        "reason": "Passwords, authentication/session/provider/receipt tokens and encryption keys never travel.",
+        "owner": "Data/export engineer"
+      }
+    ],
+    "files": [
+      {
+        "path": "records/locations.json",
+        "category": "locations",
+        "mediaType": "application/json",
+        "byteLength": 255,
+        "sha256": "sha256:45abc5cff8918177008dfdfbd254533c2a9843910a45f3c901825c0e874c27ff",
+        "recordCount": 2
+      },
+      {
+        "path": "records/organization-settings.json",
+        "category": "organization-settings",
+        "mediaType": "application/json",
+        "byteLength": 223,
+        "sha256": "sha256:27959424704d1d799025778be528ad4ef3871191a27f3749dda24be4bc7b73ef",
+        "recordCount": 1
+      },
+      {
+        "path": "records/roles-membership.json",
+        "category": "roles-membership",
+        "mediaType": "application/json",
+        "byteLength": 675,
+        "sha256": "sha256:a350c89effe282504f435c68c9bf9c10003b8d7dddce0f9e813f5aa112b3b97e",
+        "recordCount": 4
+      },
+      {
+        "path": "records/item-unit-tax-codes.json",
+        "category": "item-unit-tax-codes",
+        "mediaType": "application/json",
+        "byteLength": 228,
+        "sha256": "sha256:60bedc460b01a519164b56febc0c5a61547721031ff12ba873f4f17478e39b72",
+        "recordCount": 1
+      },
+      {
+        "path": "records/customer-supplier-masters.json",
+        "category": "customer-supplier-masters",
+        "mediaType": "application/json",
+        "byteLength": 380,
+        "sha256": "sha256:b257501f9dff67ce3367ff2238af0db29d5e6d8dc09df28983fa6a1be5086df3",
+        "recordCount": 2
+      },
+      {
+        "path": "records/attachments.json",
+        "category": "attachments",
+        "mediaType": "application/json",
+        "byteLength": 407,
+        "sha256": "sha256:85d5ccc1ad1783af2fc565167d434d6a119817f3a03269e7eaabb477fa690f07",
+        "recordCount": 2
+      },
+      {
+        "path": "records/sales-returns-shifts.json",
+        "category": "sales-returns-shifts",
+        "mediaType": "application/json",
+        "byteLength": 557,
+        "sha256": "sha256:0bba4285ee23296a56f31af2ab3673931ccb0aceef53ec2fdc61e111c86bb8a6",
+        "recordCount": 1
+      },
+      {
+        "path": "records/purchasing-ap.json",
+        "category": "purchasing-ap",
+        "mediaType": "application/json",
+        "byteLength": 570,
+        "sha256": "sha256:313bdce23741effa8d78fbde3ec3b85b883e91085cb91c52eb4b5bcdc84388e0",
+        "recordCount": 1
+      },
+      {
+        "path": "records/journals-source-links.json",
+        "category": "journals-source-links",
+        "mediaType": "application/json",
+        "byteLength": 1223,
+        "sha256": "sha256:93d3681cdc4ba9bfcabe998073b2da03bdfa52b69e5342d9852732a92e06cdaa",
+        "recordCount": 4
+      },
+      {
+        "path": "records/audit-approvals.json",
+        "category": "audit-approvals",
+        "mediaType": "application/json",
+        "byteLength": 265,
+        "sha256": "sha256:6d1377040a1e6bfe04e9accef5466b2a21b433215fb544577e7a49d60e11c4e7",
+        "recordCount": 1
+      },
+      {
+        "path": "records/opening-closing-positions.json",
+        "category": "opening-closing-positions",
+        "mediaType": "application/json",
+        "byteLength": 479,
+        "sha256": "sha256:60f8cbf01635b03d69f812ae4d5ffc69d633332bde40ce15a6d7782bc1d43af3",
+        "recordCount": 2
+      },
+      {
+        "path": "attachments/receipt.txt",
+        "category": "attachments",
+        "mediaType": "text/plain",
+        "byteLength": 44,
+        "sha256": "sha256:502e9b3cbd485bb65e3f465cda107ee8e198759c95281cceb91f71c64b31e9bf",
+        "recordCount": 0
+      },
+      {
+        "path": "attachments/receipt-of-goods.txt",
+        "category": "attachments",
+        "mediaType": "text/plain",
+        "byteLength": 47,
+        "sha256": "sha256:dafc8f64b894b3f02c9bf5f99501fd4fe6755b0a4b9e17d9905196dea8a6db6a",
+        "recordCount": 0
+      }
+    ],
+    "controls": {
+      "recordCount": 21,
+      "transactionTotals": [
+        {
+          "currency": "XAF",
+          "amount": "2050.00"
+        }
+      ],
+      "debitTotals": [
+        {
+          "currency": "XAF",
+          "amount": "2050.00"
+        }
+      ],
+      "creditTotals": [
+        {
+          "currency": "XAF",
+          "amount": "2050.00"
+        }
+      ]
+    }
+  },
+  "files": {
+    "records/locations.json": "[\n  {\n    \"kind\": \"location\",\n    \"id\": \"site-a\",\n    \"organizationId\": \"synthetic-org\",\n    \"name\": \"Synthetic main shop\"\n  },\n  {\n    \"kind\": \"location\",\n    \"id\": \"site-b\",\n    \"organizationId\": \"synthetic-org\",\n    \"name\": \"Synthetic warehouse\"\n  }\n]\n",
+    "records/organization-settings.json": "[\n  {\n    \"kind\": \"settings\",\n    \"id\": \"settings\",\n    \"organizationId\": \"synthetic-org\",\n    \"currency\": \"XAF\",\n    \"currencyScale\": 2,\n    \"timezone\": \"Africa/Douala\",\n    \"locales\": [\n      \"fr\",\n      \"en\"\n    ]\n  }\n]\n",
+    "records/roles-membership.json": "[\n  {\n    \"kind\": \"role\",\n    \"id\": \"owner-role\",\n    \"organizationId\": \"synthetic-org\",\n    \"code\": \"OWNER\",\n    \"permissions\": [\n      \"fixture.review\"\n    ]\n  },\n  {\n    \"kind\": \"role\",\n    \"id\": \"cashier-role\",\n    \"organizationId\": \"synthetic-org\",\n    \"code\": \"CASHIER\",\n    \"permissions\": [\n      \"fixture.sale\"\n    ]\n  },\n  {\n    \"kind\": \"principal\",\n    \"id\": \"owner\",\n    \"organizationId\": \"synthetic-org\",\n    \"roleId\": \"owner-role\",\n    \"locationIds\": [\n      \"site-a\",\n      \"site-b\"\n    ]\n  },\n  {\n    \"kind\": \"principal\",\n    \"id\": \"cashier\",\n    \"organizationId\": \"synthetic-org\",\n    \"roleId\": \"cashier-role\",\n    \"locationIds\": [\n      \"site-a\"\n    ]\n  }\n]\n",
+    "records/item-unit-tax-codes.json": "[\n  {\n    \"kind\": \"item\",\n    \"id\": \"item-a\",\n    \"organizationId\": \"synthetic-org\",\n    \"sku\": \"SYNTHETIC-001\",\n    \"nameEn\": \"Fixture item\",\n    \"nameFr\": \"Article fictif\",\n    \"unitCode\": \"EACH\",\n    \"quantityScale\": 0\n  }\n]\n",
+    "records/customer-supplier-masters.json": "[\n  {\n    \"kind\": \"party\",\n    \"id\": \"customer-a\",\n    \"organizationId\": \"synthetic-org\",\n    \"partyType\": \"customer\",\n    \"name\": \"Synthetic customer\",\n    \"contact\": {\n      \"email\": \"synthetic@example.invalid\"\n    }\n  },\n  {\n    \"kind\": \"party\",\n    \"id\": \"supplier-a\",\n    \"organizationId\": \"synthetic-org\",\n    \"partyType\": \"supplier\",\n    \"name\": \"Synthetic supplier\"\n  }\n]\n",
+    "records/attachments.json": "[\n  {\n    \"kind\": \"evidence\",\n    \"id\": \"receipt-evidence\",\n    \"organizationId\": \"synthetic-org\",\n    \"attachmentPath\": \"attachments/receipt.txt\",\n    \"description\": \"Synthetic sale receipt\"\n  },\n  {\n    \"kind\": \"evidence\",\n    \"id\": \"purchase-evidence\",\n    \"organizationId\": \"synthetic-org\",\n    \"attachmentPath\": \"attachments/receipt-of-goods.txt\",\n    \"description\": \"Synthetic receipt of goods\"\n  }\n]\n",
+    "records/sales-returns-shifts.json": "[\n  {\n    \"kind\": \"transaction\",\n    \"id\": \"sale-a\",\n    \"organizationId\": \"synthetic-org\",\n    \"transactionType\": \"sale\",\n    \"partyId\": \"customer-a\",\n    \"itemId\": \"item-a\",\n    \"locationId\": \"site-a\",\n    \"actorId\": \"cashier\",\n    \"evidenceIds\": [\n      \"receipt-evidence\"\n    ],\n    \"quantity\": \"1\",\n    \"unitCode\": \"EACH\",\n    \"total\": {\n      \"currency\": \"XAF\",\n      \"amount\": \"1250.00\"\n    },\n    \"effectiveAt\": \"2026-10-18T00:00:00Z\",\n    \"recordedAt\": \"2026-10-18T00:00:00Z\",\n    \"sourceModel\": \"SalesOrder\",\n    \"sourceId\": \"source-sale-a\"\n  }\n]\n",
+    "records/purchasing-ap.json": "[\n  {\n    \"kind\": \"transaction\",\n    \"id\": \"purchase-a\",\n    \"organizationId\": \"synthetic-org\",\n    \"transactionType\": \"purchase\",\n    \"partyId\": \"supplier-a\",\n    \"itemId\": \"item-a\",\n    \"locationId\": \"site-a\",\n    \"actorId\": \"owner\",\n    \"evidenceIds\": [\n      \"purchase-evidence\"\n    ],\n    \"quantity\": \"2\",\n    \"unitCode\": \"EACH\",\n    \"total\": {\n      \"currency\": \"XAF\",\n      \"amount\": \"800.00\"\n    },\n    \"effectiveAt\": \"2026-10-18T00:00:00Z\",\n    \"recordedAt\": \"2026-10-18T00:00:00Z\",\n    \"sourceModel\": \"PurchaseOrder\",\n    \"sourceId\": \"source-purchase-a\"\n  }\n]\n",
+    "records/journals-source-links.json": "[\n  {\n    \"kind\": \"posting\",\n    \"id\": \"sale-debit\",\n    \"organizationId\": \"synthetic-org\",\n    \"transactionId\": \"sale-a\",\n    \"accountCode\": \"FIXTURE-CASH\",\n    \"debit\": {\n      \"currency\": \"XAF\",\n      \"amount\": \"1250.00\"\n    },\n    \"credit\": {\n      \"currency\": \"XAF\",\n      \"amount\": \"0\"\n    }\n  },\n  {\n    \"kind\": \"posting\",\n    \"id\": \"sale-credit\",\n    \"organizationId\": \"synthetic-org\",\n    \"transactionId\": \"sale-a\",\n    \"accountCode\": \"FIXTURE-SALES\",\n    \"debit\": {\n      \"currency\": \"XAF\",\n      \"amount\": \"0\"\n    },\n    \"credit\": {\n      \"currency\": \"XAF\",\n      \"amount\": \"1250.00\"\n    }\n  },\n  {\n    \"kind\": \"posting\",\n    \"id\": \"purchase-debit\",\n    \"organizationId\": \"synthetic-org\",\n    \"transactionId\": \"purchase-a\",\n    \"accountCode\": \"FIXTURE-STOCK\",\n    \"debit\": {\n      \"currency\": \"XAF\",\n      \"amount\": \"800.00\"\n    },\n    \"credit\": {\n      \"currency\": \"XAF\",\n      \"amount\": \"0\"\n    }\n  },\n  {\n    \"kind\": \"posting\",\n    \"id\": \"purchase-credit\",\n    \"organizationId\": \"synthetic-org\",\n    \"transactionId\": \"purchase-a\",\n    \"accountCode\": \"FIXTURE-AP\",\n    \"debit\": {\n      \"currency\": \"XAF\",\n      \"amount\": \"0\"\n    },\n    \"credit\": {\n      \"currency\": \"XAF\",\n      \"amount\": \"800.00\"\n    }\n  }\n]\n",
+    "records/audit-approvals.json": "[\n  {\n    \"kind\": \"approval\",\n    \"id\": \"review-sale\",\n    \"organizationId\": \"synthetic-org\",\n    \"transactionId\": \"sale-a\",\n    \"reviewerId\": \"owner\",\n    \"evidenceId\": \"receipt-evidence\",\n    \"decision\": \"approved\",\n    \"recordedAt\": \"2026-10-18T00:00:00Z\"\n  }\n]\n",
+    "records/opening-closing-positions.json": "[\n  {\n    \"kind\": \"stock-position\",\n    \"id\": \"position-a\",\n    \"organizationId\": \"synthetic-org\",\n    \"itemId\": \"item-a\",\n    \"locationId\": \"site-a\",\n    \"unitCode\": \"EACH\",\n    \"opening\": \"5\",\n    \"movement\": \"1\",\n    \"closing\": \"6\"\n  },\n  {\n    \"kind\": \"stock-position\",\n    \"id\": \"position-b\",\n    \"organizationId\": \"synthetic-org\",\n    \"itemId\": \"item-a\",\n    \"locationId\": \"site-b\",\n    \"unitCode\": \"EACH\",\n    \"opening\": \"7\",\n    \"movement\": \"0\",\n    \"closing\": \"7\"\n  }\n]\n",
+    "attachments/receipt.txt": "SYNTHETIC ONLY: sale-a, 1 EACH, XAF 1250.00\n",
+    "attachments/receipt-of-goods.txt": "SYNTHETIC ONLY: purchase-a, 2 EACH, XAF 800.00\n"
+  }
+}

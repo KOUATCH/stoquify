@@ -1,0 +1,742 @@
+[
+  {
+    "file": "services/inventory/inventory-adjustment-reversal.service.ts",
+    "line": 526,
+    "code": "const updated = await tx.inventoryLevel.updateMany({"
+  },
+  {
+    "file": "services/inventory/inventory-adjustment.service.ts",
+    "line": 511,
+    "code": "const update = await tx.inventoryLevel.updateMany({"
+  },
+  {
+    "file": "services/inventory/inventory-adjustment.service.ts",
+    "line": 527,
+    "code": "await tx.inventoryLevel.create({"
+  },
+  {
+    "file": "services/inventory/inventory-stock-event.service.ts",
+    "line": 408,
+    "code": "const update = await tx.inventoryLevel.updateMany({"
+  },
+  {
+    "file": "services/inventory/inventory-stock-event.service.ts",
+    "line": 550,
+    "code": "const update = await tx.inventoryLevel.updateMany({"
+  },
+  {
+    "file": "services/inventory/inventory-stock-event.service.ts",
+    "line": 567,
+    "code": "await tx.inventoryLevel.create({"
+  },
+  {
+    "file": "services/inventory/inventory-transfer-lifecycle.service.ts",
+    "line": 151,
+    "code": "const destination = await tx.inventoryLevel.upsert({ where: { itemId_locationId: { itemId: line.itemId, locationId: transfer.toLocationId } },"
+  },
+  {
+    "file": "services/inventory/inventory-transfer-lifecycle.service.ts",
+    "line": 164,
+    "code": "const changed = await tx.inventoryLevel.updateMany({ where: { id: source.id, version: source.version,"
+  },
+  {
+    "file": "services/inventory/inventory-transfer-lifecycle.service.ts",
+    "line": 170,
+    "code": "const destinationChanged = await tx.inventoryLevel.updateMany({ where: { id: destination.id, version: destination.version },"
+  },
+  {
+    "file": "services/inventory/inventory-transfer-lifecycle.service.ts",
+    "line": 186,
+    "code": "const changed = await tx.inventoryLevel.updateMany({ where: { id: destination.id, version: destination.version,"
+  },
+  {
+    "file": "services/inventory/inventory-transfer.service.ts",
+    "line": 405,
+    "code": "const sourceUpdate = await tx.inventoryLevel.updateMany({"
+  },
+  {
+    "file": "services/inventory/inventory-transfer.service.ts",
+    "line": 453,
+    "code": "const destinationUpdate = await tx.inventoryLevel.updateMany({"
+  },
+  {
+    "file": "services/inventory/inventory-transfer.service.ts",
+    "line": 472,
+    "code": "await tx.inventoryLevel.create({"
+  },
+  {
+    "file": "services/order-to-cash/delivery-order.service.ts",
+    "line": 339,
+    "code": "const order = await tx.salesOrder.create({"
+  },
+  {
+    "file": "services/order-to-cash/delivery-order.service.ts",
+    "line": 455,
+    "code": "await tx.salesOrderLine.update({ where: { id: line.id }, data: { reservedQuantity: line.quantity } })"
+  },
+  {
+    "file": "services/order-to-cash/delivery-order.service.ts",
+    "line": 457,
+    "code": "const transition = await tx.salesOrder.updateMany({"
+  },
+  {
+    "file": "services/order-to-cash/delivery-order.service.ts",
+    "line": 617,
+    "code": "await tx.salesOrderLine.update({"
+  },
+  {
+    "file": "services/order-to-cash/delivery-order.service.ts",
+    "line": 632,
+    "code": "const transition = await tx.salesOrder.updateMany({"
+  },
+  {
+    "file": "services/order-to-cash/delivery-order.service.ts",
+    "line": 898,
+    "code": "await tx.salesOrderLine.update({ where: { id: line.id }, data: { billedQuantity: line.deliveredQuantity } })"
+  },
+  {
+    "file": "services/order-to-cash/delivery-order.service.ts",
+    "line": 900,
+    "code": "const transition = await tx.salesOrder.updateMany({"
+  },
+  {
+    "file": "services/pos/checkout-state.ts",
+    "line": 20,
+    "code": "const updated = await tx.pOSCheckoutWorkspace.updateMany({"
+  },
+  {
+    "file": "services/pos/checkout-state.ts",
+    "line": 47,
+    "code": "const retired = await tx.salesOrder.updateMany({ where: {"
+  },
+  {
+    "file": "services/pos/checkout-state.ts",
+    "line": 55,
+    "code": "await tx.pOSCheckoutWorkspace.updateMany({ where: checkoutScope(scope), data: { leaseId: null, leaseExpiresAt: null } })"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 24,
+    "code": "const workspace = await tx.pOSCheckoutWorkspace.upsert({ where: { sessionId: request.sessionId }, create: scope, update: {} })"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 28,
+    "code": "if (!retained) await tx.pOSCheckoutWorkspace.update({ where: { sessionId: request.sessionId }, data: { pendingRequest: request as Prisma.InputJsonValue } })"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 70,
+    "code": "const renewed = await tx.pOSCheckoutWorkspace.updateMany({ where: {"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 84,
+    "code": "await tx.pOSCheckoutWorkspace.upsert({ where: { sessionId: input.sessionId },"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 87,
+    "code": "const claimed = await tx.pOSCheckoutWorkspace.updateMany({ where: {"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 116,
+    "code": "const retired = await tx.salesOrder.updateMany({ where: {"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 132,
+    "code": "await tx.pOSCheckoutWorkspace.update({ where: { sessionId: workspace.sessionId }, data: { pendingRequest: Prisma.DbNull } })"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 170,
+    "code": "await tx.pOSCheckoutWorkspace.update({ where: { sessionId: input.sessionId }, data: { pendingRequest: request as Prisma.InputJsonValue } })"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 196,
+    "code": "await tx.salesOrder.update({ where: { id: source.id }, data: { posCartState: \"PARKED\", version: { increment: 1 } } })"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 209,
+    "code": "if (active.id === source.id) await tx.salesOrderLine.update({ where: { id: line.id }, data: { unitPrice, taxRate, ...amounts } })"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 210,
+    "code": "else await tx.salesOrderLine.create({ data: { salesOrderId: active.id, itemId: line.itemId, quantity: line.quantity, discount: line.discount, unitPrice, taxRate, ...amounts } })"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 212,
+    "code": "if (active.id !== source.id) await tx.salesOrder.update({ where: { id: source.id }, data: { posCartState: \"RETIRED\", version: { increment: 1 } } })"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 215,
+    "code": "await tx.salesOrder.update({ where: { id: active.id }, data: { version: { increment: 1 } } })"
+  },
+  {
+    "file": "services/pos/checkout.service.ts",
+    "line": 216,
+    "code": "if (pending) await tx.pOSCheckoutWorkspace.update({ where: { sessionId: input.sessionId }, data: { pendingRequest: { ...pending, _cartReview: true } as Prisma.InputJsonValue } })"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 934,
+    "code": "return tx.salesOrder.create({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 970,
+    "code": "return tx.salesOrder.update({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 1239,
+    "code": "const created = await tx.pOSSession.create({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 1276,
+    "code": "? await tx.cashDrawer.update({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 1284,
+    "code": ": await tx.cashDrawer.create({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 1418,
+    "code": "const sessionTransition = await tx.pOSSession.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 1432,
+    "code": "const drawerTransition = await tx.cashDrawer.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 1773,
+    "code": "await tx.salesOrderLine.update({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 1784,
+    "code": "await tx.salesOrderLine.create({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 1876,
+    "code": "await tx.salesOrderLine.delete({ where: { id: line.id } })"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 1896,
+    "code": "await tx.salesOrderLine.update({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 1930,
+    "code": "await tx.salesOrderLine.delete({ where: { id: line.id } })"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 2353,
+    "code": "const commitRegistry = await tx.pOSCommitResult.create({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 2368,
+    "code": "const sessionClaim = await tx.pOSSession.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 2393,
+    "code": "const saleClaim = await tx.salesOrder.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 2473,
+    "code": "const sessionTransition = await tx.pOSSession.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 2503,
+    "code": "const drawerTransition = await tx.cashDrawer.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 2536,
+    "code": "const payment = await tx.payment.create({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 2585,
+    "code": "const updatedSale = await tx.salesOrder.update({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 2820,
+    "code": "const commitTransition = await tx.pOSCommitResult.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 2944,
+    "code": "const completion = await db.pOSCommitResult.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 3276,
+    "code": "const drawerTransition = await tx.cashDrawer.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 3323,
+    "code": "const sessionTransition = await tx.pOSSession.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 3417,
+    "code": "const saleTransition = await tx.salesOrder.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 3474,
+    "code": "await tx.payment.update({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 3612,
+    "code": "const saleTransition = await tx.salesOrder.updateMany({"
+  },
+  {
+    "file": "services/pos/pos.service.ts",
+    "line": 3692,
+    "code": "await tx.payment.update({"
+  },
+  {
+    "file": "services/pos/terminal-management.service.ts",
+    "line": 157,
+    "code": "await client.cashDrawer.create({"
+  },
+  {
+    "file": "services/pos/terminal-management.service.ts",
+    "line": 316,
+    "code": "await tx.cashDrawer.create({"
+  },
+  {
+    "file": "services/pos/terminal-management.service.ts",
+    "line": 378,
+    "code": "if (moving) await tx.cashDrawer.updateMany({ where: { terminalId }, data: { locationId: location.id } })"
+  },
+  {
+    "file": "services/purchase-order/purchase-order-amendment.service.ts",
+    "line": 94,
+    "code": "for(const l of r.lines)if(!l.quantity.eq(l.line.orderedQuantity))await tx.purchaseOrderLine.update({where:{id:l.line.id,purchaseOrderId:r.order.id},data:{orderedQuantity:l.quantity,taxAmount:l.taxAmount,lineTotal:l.lineTotal}})"
+  },
+  {
+    "file": "services/purchase-order/purchase-order-amendment.service.ts",
+    "line": 95,
+    "code": "await tx.purchaseOrder.update({where:{id:r.order.id,organizationId:scope.organizationId},data:{expectedDeliveryDate:r.expectedDeliveryDate,subtotal:r.subtotal,taxAmount:r.taxAmount,discount:r.discount,total:r.total,status,approvedAt:now,approvedById:scope.actorId}})"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 242,
+    "code": "await tx.purchaseOrderLine.delete({ where: { id: currentLine.id } })"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 247,
+    "code": "await tx.purchaseOrderLine.update({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 256,
+    "code": "const created = await tx.purchaseOrderLine.create({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 559,
+    "code": "const po = await tx.purchaseOrder.create({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 656,
+    "code": "await tx.purchaseOrder.update({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 777,
+    "code": "await tx.purchaseOrder.update({ where: { id, organizationId: scope.organizationId, deletedAt: null, status: po.status }, data: {"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 845,
+    "code": "await tx.purchaseOrder.update({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 1092,
+    "code": "const receipt = await tx.goodsReceipt.create({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 1125,
+    "code": "const receiptLine = await tx.goodsReceiptLine.create({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 1145,
+    "code": "const lineClaim = await tx.purchaseOrderLine.updateMany({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 1183,
+    "code": "await tx.purchaseOrder.update({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 1407,
+    "code": "await tx.goodsReceipt.update({ where: { id: receipt.id }, data: { status: receiptStatus, inventoryPostedAt: input.decision === \"ACCEPT\" ? resolvedAt : null } })"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 1454,
+    "code": "const lineClaim = await tx.purchaseOrderLine.updateMany({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 1490,
+    "code": "await tx.purchaseOrder.update({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 1620,
+    "code": "const po = await tx.purchaseOrder.create({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 1638,
+    "code": "await tx.purchaseOrderLine.createMany({"
+  },
+  {
+    "file": "services/purchase-order/purchase-order.service.ts",
+    "line": 1657,
+    "code": "await tx.purchaseOrder.update({"
+  },
+  {
+    "file": "services/purchasing/ap-control.service.ts",
+    "line": 2060,
+    "code": "const invoice = await tx.supplierInvoice.create({"
+  },
+  {
+    "file": "services/purchasing/ap-control.service.ts",
+    "line": 2303,
+    "code": "const postedInvoice = await tx.supplierInvoice.update({"
+  },
+  {
+    "file": "services/purchasing/ap-control.service.ts",
+    "line": 2858,
+    "code": "const claim = await tx.supplierInvoice.updateMany({"
+  },
+  {
+    "file": "services/purchasing/ap-control.service.ts",
+    "line": 3040,
+    "code": "const postedInvoice = await tx.supplierInvoice.update({"
+  },
+  {
+    "file": "services/purchasing/ap-control.service.ts",
+    "line": 3544,
+    "code": "const payment = request ? await tx.supplierPayment.update({ where: { id: request.payment.id }, data: paymentData, include: { allocations: true } }) : await tx.supplierPayment.create(paymentWrite)"
+  },
+  {
+    "file": "services/purchasing/ap-control.service.ts",
+    "line": 3837,
+    "code": "const payment = await tx.supplierPayment.update({"
+  },
+  {
+    "file": "services/purchasing/ap-control.service.ts",
+    "line": 3874,
+    "code": "await tx.supplierInvoice.update({"
+  },
+  {
+    "file": "services/purchasing/ap-control.service.ts",
+    "line": 4030,
+    "code": "const releasedPayment = await tx.supplierPayment.update({"
+  },
+  {
+    "file": "services/purchasing/invoice-correction.service.ts",
+    "line": 121,
+    "code": "const updated = await tx.supplierInvoice.update({ where: { id: invoice.id }, data: { invoiceDate: new Date(draft.invoiceDate + \"T00:00:00Z\"), dueDate: draft.dueDate ? new Date(draft.dueDate + \"T00:00:00Z\") : null, subtotal: p.subtotal, taxAmount: p.tax, total: p.total, status: p.variance.gt(0) ? \"DISPUTED\" : \"MATCHED\", notes: draft.notes ?? null, documentHash: `sha256:${draft.documentSha256}`, evidenceHash: `sha256:${hashBusinessPayload({ draft, total: p.total.toFixed(2) })}`, duplicateFingerprint: duplicateFingerprint({ organizationId: scope.organizationId, supplierId: invoice.supplierId, invoiceNumber: invoice.invoiceNumber, currency: invoice.currency, total: p.total }), lines: { create: p.lines.map(row => ({ organizationId: scope.organizationId, purchaseOrderLineId: row.purchaseOrderLineId, goodsReceiptLineId: row.goodsReceiptLineId, itemId: row.itemId, description: row.description, quantity: row.quantity, unitCost: row.unitCost, taxRate: row.taxRate, taxAmount: row.taxAmount, lineTotal: row.lineTotal, matchStatus: row.priceVariance.eq(0) ? \"MATCHED\" : \"EXCEPTION\" })) } }, include: { lines: true } })"
+  },
+  {
+    "file": "services/purchasing/invoice-correction.service.ts",
+    "line": 129,
+    "code": "await tx.supplierInvoice.update({ where: { id: invoice.id }, data: { metadata: json({ ...record(invoice.metadata), currentPreparationEventId: event.event.id, countryPackStatus: p.country.countryPackStatus, countryCode: p.country.countryCode, countryPackVersion: p.country.countryPackVersion, countryPackResolutionHash: p.country.countryPackResolutionHash, taxTreatmentStatus: p.country.taxTreatmentStatus, withholdingTreatmentStatus: p.country.withholdingTreatmentStatus, countryPackErrorCode: p.country.errorCode ?? null, countryPackErrorMessage: p.country.errorMessage ?? null, operatorActionRequired: p.country.operatorActionRequired }) } })"
+  },
+  {
+    "file": "services/purchasing/invoice-ledger-recovery.service.ts",
+    "line": 121,
+    "code": "await tx.supplierInvoice.update({ where: { id: invoice.id }, data: { metadata: { ...record(invoice.metadata), ...p.country, ledgerStatus: posting.ledgerStatus, ledgerBlockerCode: posting.blockerCode ?? null, ledgerBlockerMessage: posting.blockerMessage ?? null, journalEntryId: posting.journalEntryId ?? null, accountingSourceLinkId: posting.accountingSourceLinkId ?? null, ledgerRecoveryEventId: recorded.event.id } as Prisma.InputJsonValue } })"
+  },
+  {
+    "file": "services/purchasing/opening-payable.service.ts",
+    "line": 18,
+    "code": "const invoice = await tx.supplierInvoice.create({ data: {"
+  },
+  {
+    "file": "services/purchasing/opening-payable.service.ts",
+    "line": 38,
+    "code": "await tx.supplierInvoice.update({ where: { id: invoice.id }, data: { postedBusinessEventId: event.event.id } })"
+  },
+  {
+    "file": "services/purchasing/payment-posting-recovery.service.ts",
+    "line": 83,
+    "code": "await tx.supplierPayment.update({where:{id:payment.id},data:{metadata:{...record(payment.metadata),ledgerStatus:\"POSTED\",ledgerBlockerCode:null,ledgerBlockerMessage:null,journalEntryId:posting.journalEntryId,accountingSourceLinkId:posting.accountingSourceLinkId,reconciliationStatus:\"AWAITING_STATEMENT_MATCH\",paymentExceptionId:next.id,postingRecoveryEventId:event.event.id}}})"
+  },
+  {
+    "file": "services/purchasing/payment-request.service.ts",
+    "line": 49,
+    "code": "await tx.supplierPayment.create({data:{id,organizationId:scope.organizationId,supplierId:draft.supplierId,bankAccountId:draft.bankAccountId,paymentNumber:`REQ-${id}`,status:\"DRAFT\",method:draft.method,amount:new Prisma.Decimal(preview.total),currency:preview.currency,paymentDate:new Date(draft.paymentDate+\"T00:00:00Z\"),idempotencyKey:key,documentHash:`sha256:${draft.documentSha256}`,evidenceHash:`sha256:${hashBusinessPayload(payload)}`,requestedById:scope.actorId,notes:draft.notes,metadata:{requestVersion:1,requestHash},allocations:{create:draft.allocations.map(row=>({organizationId:scope.organizationId,supplierInvoiceId:row.supplierInvoiceId,amount:new Prisma.Decimal(row.amount)}))}}})"
+  },
+  {
+    "file": "services/purchasing/payment-request.service.ts",
+    "line": 92,
+    "code": "await tx.supplierPayment.update({where:{id:request.payment.id},data:{approvedAt,metadata:{...(result.supplierPayment.metadata as Record<string,Prisma.InputJsonValue>),requestApprovalKey:parsed.idempotencyKey,requestApprovalRevision:parsed.expectedRevision}}})"
+  },
+  {
+    "file": "services/purchasing/purchase-return-credit.service.ts",
+    "line": 849,
+    "code": "const created = await tx.supplierCreditNote.create({"
+  },
+  {
+    "file": "services/purchasing/purchase-return-credit.service.ts",
+    "line": 1024,
+    "code": "const created = await tx.supplierCreditNote.create({"
+  },
+  {
+    "file": "services/purchasing/supplier-payment-balance.ts",
+    "line": 18,
+    "code": "await tx.supplierInvoice.update({ where: { id: invoice.id, organizationId }, data: { status } })"
+  },
+  {
+    "file": "prisma/compliance-hris-role-seed.ts",
+    "line": 582,
+    "code": "await input.prisma.cashDrawer.upsert({"
+  },
+  {
+    "file": "prisma/compliance-hris-role-seed.ts",
+    "line": 617,
+    "code": "await input.prisma.inventoryLevel.upsert({"
+  },
+  {
+    "file": "prisma/comprehensive-seed.ts",
+    "line": 1840,
+    "code": "await prisma.inventoryLevel.createMany({"
+  },
+  {
+    "file": "prisma/comprehensive-seed.ts",
+    "line": 1923,
+    "code": "await prisma.cashDrawer.createMany({"
+  },
+  {
+    "file": "prisma/comprehensive-seed.ts",
+    "line": 1942,
+    "code": "await prisma.pOSSession.createMany({"
+  },
+  {
+    "file": "prisma/comprehensive-seed.ts",
+    "line": 1981,
+    "code": "await prisma.purchaseOrder.createMany({"
+  },
+  {
+    "file": "prisma/comprehensive-seed.ts",
+    "line": 2017,
+    "code": "await prisma.purchaseOrderLine.createMany({"
+  },
+  {
+    "file": "prisma/comprehensive-seed.ts",
+    "line": 2042,
+    "code": "await prisma.goodsReceipt.createMany({"
+  },
+  {
+    "file": "prisma/comprehensive-seed.ts",
+    "line": 2061,
+    "code": "await prisma.goodsReceiptLine.createMany({"
+  },
+  {
+    "file": "prisma/comprehensive-seed.ts",
+    "line": 2083,
+    "code": "await prisma.salesOrder.createMany({"
+  },
+  {
+    "file": "prisma/comprehensive-seed.ts",
+    "line": 2119,
+    "code": "await prisma.salesOrderLine.createMany({"
+  },
+  {
+    "file": "prisma/comprehensive-seed.ts",
+    "line": 2141,
+    "code": "await prisma.payment.createMany({"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 117,
+    "code": "await safeDelete(\"payments\", () => prisma.payment.deleteMany())"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 118,
+    "code": "await safeDelete(\"sales_order_lines\", () => prisma.salesOrderLine.deleteMany())"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 119,
+    "code": "await safeDelete(\"sales_orders\", () => prisma.salesOrder.deleteMany())"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 123,
+    "code": "await safeDelete(\"goods_receipt_lines\", () => prisma.goodsReceiptLine.deleteMany())"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 124,
+    "code": "await safeDelete(\"goods_receipts\", () => prisma.goodsReceipt.deleteMany())"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 125,
+    "code": "await safeDelete(\"purchase_order_lines\", () => prisma.purchaseOrderLine.deleteMany())"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 126,
+    "code": "await safeDelete(\"purchase_orders\", () => prisma.purchaseOrder.deleteMany())"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 131,
+    "code": "await safeDelete(\"pos_sessions\", () => prisma.pOSSession.deleteMany())"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 132,
+    "code": "await safeDelete(\"cash_drawers\", () => prisma.cashDrawer.deleteMany())"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 135,
+    "code": "await safeDelete(\"inventory_levels\", () => prisma.inventoryLevel.deleteMany())"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 488,
+    "code": "await prisma.inventoryLevel.create({"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 883,
+    "code": "const session = await prisma.pOSSession.create({"
+  },
+  {
+    "file": "prisma/seed.ts",
+    "line": 907,
+    "code": "const drawer = await prisma.cashDrawer.create({"
+  },
+  {
+    "file": "prisma/systematic-reseed-financial-repair.ts",
+    "line": 126,
+    "code": "await tx.supplierInvoice.update({ where: { id: invoice.id }, data: { subtotal: totals.subtotal, taxAmount: totals.taxAmount, total: totals.total } });"
+  },
+  {
+    "file": "prisma/systematic-reseed-inventory.ts",
+    "line": 134,
+    "code": "const repaired = await tx.inventoryLevel.updateMany({ where: { id: level.id, version: level.version }, data: {"
+  },
+  {
+    "file": "scripts/boost-pos-demo-stock.ts",
+    "line": 229,
+    "code": "await tx.inventoryLevel.update({"
+  },
+  {
+    "file": "scripts/boost-pos-demo-stock.ts",
+    "line": 242,
+    "code": "await tx.inventoryLevel.create({"
+  },
+  {
+    "file": "scripts/customer-e2e-fixture.js",
+    "line": 211,
+    "code": "await prisma.salesOrder.deleteMany({"
+  },
+  {
+    "file": "scripts/customer-e2e-fixture.js",
+    "line": 456,
+    "code": "await tx.salesOrder.create({"
+  },
+  {
+    "file": "scripts/customer-statement-browser-fixture.ts",
+    "line": 162,
+    "code": "await db.salesOrder.upsert({"
+  },
+  {
+    "file": "scripts/modern-modules-lifecycle-fixture.ts",
+    "line": 79,
+    "code": "await tx.inventoryLevel.upsert({ where: { itemId_locationId: { itemId: item.id, locationId: locations[0].id } }, update: {}, create: { itemId: item.id, locationId: locations[0].id, quantityOnHand: 10, quantityAvailable: 10 } })"
+  },
+  {
+    "file": "scripts/purchasing-ap-consolidation-gate.js",
+    "line": 110,
+    "code": "\"tx.purchaseOrder.update(\","
+  },
+  {
+    "file": "scripts/purchasing-ap-consolidation-gate.js",
+    "line": 127,
+    "code": "\"tx.goodsReceipt.create(\","
+  },
+  {
+    "file": "scripts/purchasing-ap-consolidation-gate.js",
+    "line": 128,
+    "code": "\"tx.goodsReceiptLine.create(\","
+  },
+  {
+    "file": "scripts/purchasing-ap-consolidation-gate.js",
+    "line": 129,
+    "code": "\"tx.purchaseOrderLine.updateMany(\","
+  },
+  {
+    "file": "scripts/purchasing-ap-consolidation-gate.js",
+    "line": 143,
+    "code": "\"tx.purchaseOrderLine.updateMany(\","
+  },
+  {
+    "file": "scripts/purchasing-ap-consolidation-gate.js",
+    "line": 145,
+    "code": "\"tx.goodsReceipt.update(\","
+  },
+  {
+    "file": "scripts/purchasing-ap-consolidation-gate.js",
+    "line": 202,
+    "code": "apControl.includes(\"tx.supplierInvoice.updateMany(\") &&"
+  },
+  {
+    "file": "scripts/report-trust-export-gate.js",
+    "line": 2803,
+    "code": "!service.includes(\"tx.payment.create(\")"
+  },
+  {
+    "file": "scripts/supplier-po-ack-e2e-fixture.js",
+    "line": 187,
+    "code": "const inventoryLevel = await tx.inventoryLevel.create({"
+  },
+  {
+    "file": "scripts/supplier-po-ack-e2e-fixture.js",
+    "line": 198,
+    "code": "const purchaseOrder = await tx.purchaseOrder.create({"
+  }
+]

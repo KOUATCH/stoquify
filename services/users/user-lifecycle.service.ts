@@ -9,6 +9,7 @@ import { hashBusinessPayload } from "@/services/events/business-event.service"
 import { invitationRevision } from "./invitation-revision"
 import { USER_INVITATION_DELIVERY } from "./user-invitation-delivery-contract"
 import { userDeactivationCommand, type UserDeactivationCommand, type UserDeactivationReceipt } from "./user-deactivation-input"
+import { hasTenantWideOperatingGrantAuthority } from "@/services/operating-access/operating-access-grant-policy"
 
 type Member = CustodianAccount & { id: string; email: string; updatedAt: Date }
 type Membership = { roleId: string; userId: string }
@@ -72,6 +73,8 @@ export async function deactivateUserForOrganization(input: {
     if (user.updatedAt.toISOString() !== new Date(command.expectedUpdatedAt).toISOString()) throw new ConflictError("The account changed. Refresh and review it before continuing.")
     if (!user.isActive) throw new ConflictError("The account is already inactive. Refresh the member list.")
     if (isRoleCustodian(user, permissionsFor(user.id), now) && !users.some(other => other.id !== user.id && isRoleCustodian(other, permissionsFor(other.id), now))) throw new BusinessRuleError("Keep another active administrator able to manage roles and invite members before deactivating this account.")
+    const tenantCustodian = (account: Member) => isRoleCustodian(account, permissionsFor(account.id), now) && hasTenantWideOperatingGrantAuthority({ permissions: permissionsFor(account.id), roleCodes: roles.filter(role => members.some(member => member.userId === account.id && member.roleId === role.id)).map(role => role.code) })
+    if (tenantCustodian(user) && !users.some(other => other.id !== user.id && tenantCustodian(other))) throw new BusinessRuleError("Keep an active administrator able to restore tenant-wide operating access.")
     const pendingInvitesCancelled = await cancelRecipientInvitations(tx, { organizationId: input.organizationId, actorId: input.actorId, email: user.email, command })
     const revoked = await tx.session.deleteMany({ where: { userId: user.id } })
     const updatedAt = new Date(Math.max(now.getTime(), user.updatedAt.getTime() + 1))

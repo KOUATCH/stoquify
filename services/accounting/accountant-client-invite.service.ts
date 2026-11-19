@@ -496,6 +496,7 @@ export async function inviteOrGrantAccountantAccess(
         effectiveFrom: input.effectiveFrom,
         expiresAt: input.expiresAt,
         correlationId: input.correlationId,
+        idempotencyKey: input.idempotencyKey,
       },
       now,
     )

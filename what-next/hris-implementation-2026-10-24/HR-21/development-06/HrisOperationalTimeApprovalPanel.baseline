@@ -1,0 +1,7 @@
+"use client"
+import {HrisControlledReview} from "./HrisControlledReview"
+type RequestRow={id:string;type:string;employeeId:string;periodStart:string;periodEnd:string;requestedMinutes:number;requestedAt:string;canDecide:boolean;employee:{displayName:string}}
+export function HrisOperationalTimeApprovalPanel({requests,locale="en"}:{requests:RequestRow[];locale?:"en"|"fr"}){
+ const t=(en:string,fr:string)=>locale==="fr"?fr:en
+ return <section aria-labelledby="time-approval-heading"><h2 id="time-approval-heading">{t("Time-management approvals","Validations du temps de travail")}</h2><div className="grid gap-3">{requests.map(r=><article key={r.id} className="rounded border p-3"><h3>{r.employee.displayName} · {r.type.replaceAll("_"," ")}</h3><p>{r.requestedMinutes} min · {new Date(r.periodStart).toLocaleDateString(locale)} – {new Date(r.periodEnd).toLocaleDateString(locale)}</p><div className="flex flex-wrap gap-2">{(["APPROVE","REJECT"] as const).map(decision=><HrisControlledReview key={decision} disabled={!r.canDecide} locale={locale} label={decision==="APPROVE"?t("Approve","Approuver"):t("Reject","Rejeter")} target={{domain:"TIME_REQUEST",decision,sourceId:r.id,employeeId:r.employeeId}}/>)}</div></article>)}{!requests.length&&<p>{t("No pending time requests.","Aucune demande de temps en attente.")}</p>}</div></section>
+}

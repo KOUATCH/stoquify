@@ -1,0 +1,797 @@
+{
+  "candidateId": "p04-r04-20261109-ef3f203a9ded",
+  "scope": "One sibling list action; both object and positional forms; current source bound",
+  "currentSource": {
+    "path": "actions/item/listItemsAction.ts",
+    "sha256": "a51725ecd654eb17c350ff40749a6088b379fd433e5da2595268983bd3b8859e"
+  },
+  "preRepairSource": {
+    "path": "source-before/actions/item/listItemsAction.ts.source.txt",
+    "sha256": "3f763ceea82658460f6e0ed339a8d1283c13080af25bf34b082877cab8e95f60",
+    "catchLines": "71-75",
+    "historicalLocatorCorrection": "Original supplemental76-80 was inaccurate; historical artifact retained unchanged"
+  },
+  "unit": {
+    "receipt": "unit/attempt02/result.json",
+    "jest": "unit/attempt02/jest.json",
+    "total": 276,
+    "newTests": 58,
+    "continuityTests": 218,
+    "failed": 0,
+    "skipped": 0,
+    "inputsUnchanged": 26,
+    "assertions": [
+      {
+        "name": "object list-action boundary redacts plain service Error",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts thrown string",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts unknown provider code",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts Prisma request error",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts Prisma missing record",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts typed business error",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts typed not-found error",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts non-exposing typed error",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts message-shaped object",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts null thrown value",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary denies UNAUTHENTICATED with fixed recovery text and no service invocation",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary denies NO_ACTIVE_ORG with fixed recovery text and no service invocation",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary denies FORBIDDEN with fixed recovery text and no service invocation",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary denies ACCOUNT_LOCKED with fixed recovery text and no service invocation",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary denies EMAIL_NOT_VERIFIED with fixed recovery text and no service invocation",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts arbitrary guard failures before reads",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary preserves fresh-authentication recovery",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary preserves framework control flow NEXT_NOT_FOUND",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary preserves normalized inputs, server tenant and success envelope",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary keeps empty results successful",
+        "status": "passed"
+      },
+      {
+        "name": "object list-action boundary redacts service validation issues and paths",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts plain service Error",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts thrown string",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts unknown provider code",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts Prisma request error",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts Prisma missing record",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts typed business error",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts typed not-found error",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts non-exposing typed error",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts message-shaped object",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts null thrown value",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary denies UNAUTHENTICATED with fixed recovery text and no service invocation",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary denies NO_ACTIVE_ORG with fixed recovery text and no service invocation",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary denies FORBIDDEN with fixed recovery text and no service invocation",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary denies ACCOUNT_LOCKED with fixed recovery text and no service invocation",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary denies EMAIL_NOT_VERIFIED with fixed recovery text and no service invocation",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts arbitrary guard failures before reads",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary preserves fresh-authentication recovery",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary preserves framework control flow NEXT_NOT_FOUND",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary preserves normalized inputs, server tenant and success envelope",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary keeps empty results successful",
+        "status": "passed"
+      },
+      {
+        "name": "positional list-action boundary redacts service validation issues and paths",
+        "status": "passed"
+      },
+      {
+        "name": "rejects malformed arguments %j before guard/service",
+        "status": "passed"
+      },
+      {
+        "name": "rejects malformed arguments null before guard/service",
+        "status": "passed"
+      },
+      {
+        "name": "rejects malformed arguments 42 before guard/service",
+        "status": "passed"
+      },
+      {
+        "name": "rejects malformed arguments {} before guard/service",
+        "status": "passed"
+      },
+      {
+        "name": "rejects malformed arguments {\"organizationId\":\"org\",\"page\":0} before guard/service",
+        "status": "passed"
+      },
+      {
+        "name": "rejects malformed arguments {\"organizationId\":\"org\",\"pageSize\":201} before guard/service",
+        "status": "passed"
+      },
+      {
+        "name": "rejects malformed arguments {\"organizationId\":\"org\",\"sortBy\":\"PRIVATE_R04_CANARY_customer_margin_42\"} before guard/service",
+        "status": "passed"
+      },
+      {
+        "name": "rejects malformed arguments \"org\" before guard/service",
+        "status": "passed"
+      },
+      {
+        "name": "rejects malformed arguments \"org\" before guard/service",
+        "status": "passed"
+      },
+      {
+        "name": "preserves all object filters, sorting and numeric coercion",
+        "status": "passed"
+      },
+      {
+        "name": "preserves positional fallback defaults for nonmatching optional types",
+        "status": "passed"
+      },
+      {
+        "name": "hook query function passes successful action data through unchanged",
+        "status": "passed"
+      },
+      {
+        "name": "hook query function exposes only the safe action message",
+        "status": "passed"
+      },
+      {
+        "name": "hook keeps queries disabled without organization context",
+        "status": "passed"
+      }
+    ]
+  },
+  "baseline": {
+    "receipt": "unit/attempt01/result.json",
+    "selectedExpectedFailures": 2,
+    "filtered": 56,
+    "relocation": "unit/baseline-source-relocation.json"
+  },
+  "native": {
+    "status": "passed",
+    "receipt": "database/native-result.json",
+    "jest": "database/native-jest.json",
+    "observations": "database/native-observations.json",
+    "passed": 34,
+    "failed": 0,
+    "skipped": 0,
+    "sourceInputs": 5209,
+    "migrationsVerified": 121,
+    "businessRelationGroups": 24,
+    "statePairs": 36,
+    "deniedOrFailed": 9,
+    "authorizedReads": 27,
+    "allowedSecurityAuditAdditions": 4,
+    "sourceUnchanged": true,
+    "migrationsUnchanged": true,
+    "clusterStopped": true,
+    "portReleased": true,
+    "remainingClients": [],
+    "assertions": [
+      {
+        "name": "object input denies revoked current database permission",
+        "status": "passed",
+        "observationIndices": [
+          0
+        ]
+      },
+      {
+        "name": "positional input denies revoked current database permission",
+        "status": "passed",
+        "observationIndices": [
+          1
+        ]
+      },
+      {
+        "name": "object input denies unauthenticated transport",
+        "status": "passed",
+        "observationIndices": [
+          2
+        ]
+      },
+      {
+        "name": "positional input denies unauthenticated transport",
+        "status": "passed",
+        "observationIndices": [
+          3
+        ]
+      },
+      {
+        "name": "object input returns authorized rows and related DTOs",
+        "status": "passed",
+        "observationIndices": [
+          4
+        ]
+      },
+      {
+        "name": "positional input returns authorized rows and related DTOs",
+        "status": "passed",
+        "observationIndices": [
+          5
+        ]
+      },
+      {
+        "name": "object input ignores forged organization in favor of current actor scope",
+        "status": "passed",
+        "observationIndices": [
+          6
+        ]
+      },
+      {
+        "name": "positional input ignores forged organization in favor of current actor scope",
+        "status": "passed",
+        "observationIndices": [
+          7
+        ]
+      },
+      {
+        "name": "object input preserves search pagination",
+        "status": "passed",
+        "observationIndices": [
+          8
+        ]
+      },
+      {
+        "name": "positional input preserves search pagination",
+        "status": "passed",
+        "observationIndices": [
+          9
+        ]
+      },
+      {
+        "name": "object input preserves empty pagination semantics",
+        "status": "passed",
+        "observationIndices": [
+          10
+        ]
+      },
+      {
+        "name": "positional input preserves empty pagination semantics",
+        "status": "passed",
+        "observationIndices": [
+          11
+        ]
+      },
+      {
+        "name": "preserves authorized categoryId filter",
+        "status": "passed",
+        "observationIndices": [
+          12
+        ]
+      },
+      {
+        "name": "preserves authorized brandId filter",
+        "status": "passed",
+        "observationIndices": [
+          13
+        ]
+      },
+      {
+        "name": "preserves authorized unitId filter",
+        "status": "passed",
+        "observationIndices": [
+          14
+        ]
+      },
+      {
+        "name": "preserves authorized taxRateId filter",
+        "status": "passed",
+        "observationIndices": [
+          15
+        ]
+      },
+      {
+        "name": "foreign categoryId filter reveals no foreign rows",
+        "status": "passed",
+        "observationIndices": [
+          16
+        ]
+      },
+      {
+        "name": "foreign brandId filter reveals no foreign rows",
+        "status": "passed",
+        "observationIndices": [
+          17
+        ]
+      },
+      {
+        "name": "foreign unitId filter reveals no foreign rows",
+        "status": "passed",
+        "observationIndices": [
+          18
+        ]
+      },
+      {
+        "name": "foreign taxRateId filter reveals no foreign rows",
+        "status": "passed",
+        "observationIndices": [
+          19
+        ]
+      },
+      {
+        "name": "search matches authorized nameEn",
+        "status": "passed",
+        "observationIndices": [
+          20
+        ]
+      },
+      {
+        "name": "search matches authorized nameFr",
+        "status": "passed",
+        "observationIndices": [
+          21
+        ]
+      },
+      {
+        "name": "search matches authorized sku",
+        "status": "passed",
+        "observationIndices": [
+          22
+        ]
+      },
+      {
+        "name": "search matches authorized barcode",
+        "status": "passed",
+        "observationIndices": [
+          23
+        ]
+      },
+      {
+        "name": "preserves isActive=true filter",
+        "status": "passed",
+        "observationIndices": [
+          24
+        ]
+      },
+      {
+        "name": "preserves isActive=false filter",
+        "status": "passed",
+        "observationIndices": [
+          25
+        ]
+      },
+      {
+        "name": "preserves nameEn sorting",
+        "status": "passed",
+        "observationIndices": [
+          26
+        ]
+      },
+      {
+        "name": "preserves costPrice sorting",
+        "status": "passed",
+        "observationIndices": [
+          27
+        ]
+      },
+      {
+        "name": "preserves sellingPrice sorting",
+        "status": "passed",
+        "observationIndices": [
+          28
+        ]
+      },
+      {
+        "name": "object input rejects invalid pagination without writes",
+        "status": "passed",
+        "observationIndices": [
+          29
+        ]
+      },
+      {
+        "name": "positional input rejects invalid pagination without writes",
+        "status": "passed",
+        "observationIndices": [
+          30
+        ]
+      },
+      {
+        "name": "normalizes actual Prisma query failure and restores the fixture schema",
+        "status": "passed",
+        "observationIndices": [
+          31
+        ]
+      },
+      {
+        "name": "object input works again after a legitimate permission restoration",
+        "status": "passed",
+        "observationIndices": [
+          32,
+          33
+        ]
+      },
+      {
+        "name": "positional input works again after a legitimate permission restoration",
+        "status": "passed",
+        "observationIndices": [
+          34,
+          35
+        ]
+      }
+    ],
+    "observationIndex": [
+      {
+        "index": 0,
+        "name": "object:permission-revoked",
+        "success": false,
+        "securityAuditRowsAdded": 1
+      },
+      {
+        "index": 1,
+        "name": "positional:permission-revoked",
+        "success": false,
+        "securityAuditRowsAdded": 1
+      },
+      {
+        "index": 2,
+        "name": "object:unauthenticated",
+        "success": false,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 3,
+        "name": "positional:unauthenticated",
+        "success": false,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 4,
+        "name": "object:authorized",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 5,
+        "name": "positional:authorized",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 6,
+        "name": "object:forged-organization",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 7,
+        "name": "positional:forged-organization",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 8,
+        "name": "object:search-page",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 9,
+        "name": "positional:search-page",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 10,
+        "name": "object:empty",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 11,
+        "name": "positional:empty",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 12,
+        "name": "filter:categoryId",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 13,
+        "name": "filter:brandId",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 14,
+        "name": "filter:unitId",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 15,
+        "name": "filter:taxRateId",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 16,
+        "name": "foreign-filter:categoryId",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 17,
+        "name": "foreign-filter:brandId",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 18,
+        "name": "foreign-filter:unitId",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 19,
+        "name": "foreign-filter:taxRateId",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 20,
+        "name": "search:nameEn",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 21,
+        "name": "search:nameFr",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 22,
+        "name": "search:sku",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 23,
+        "name": "search:barcode",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 24,
+        "name": "active:true",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 25,
+        "name": "active:false",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 26,
+        "name": "sort:nameEn",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 27,
+        "name": "sort:costPrice",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 28,
+        "name": "sort:sellingPrice",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 29,
+        "name": "object:invalid-page",
+        "success": false,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 30,
+        "name": "positional:invalid-page",
+        "success": false,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 31,
+        "name": "database:query-fault",
+        "success": false,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 32,
+        "name": "object:recovery-revoked",
+        "success": false,
+        "securityAuditRowsAdded": 1
+      },
+      {
+        "index": 33,
+        "name": "object:recovery-authorized",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      },
+      {
+        "index": 34,
+        "name": "positional:recovery-revoked",
+        "success": false,
+        "securityAuditRowsAdded": 1
+      },
+      {
+        "index": 35,
+        "name": "positional:recovery-authorized",
+        "success": true,
+        "securityAuditRowsAdded": 0
+      }
+    ]
+  },
+  "limitations": [
+    "Unit authority/services/useQuery mocked; actual helper/schema and hook queryFn execute",
+    "Native Better Auth/Next transport stubbed; no signed-cookie/session-expiry/revocation/browser proof",
+    "No full build, hosted/provider/operator or production acceptance"
+  ],
+  "remainingPackage": "P04-V02",
+  "evidenceHashes": [
+    {
+      "path": "candidate.json",
+      "sha256": "79497f516ac4edec12b979ee7310a0d9fa19cf25a37951b1708618bdb6cff502"
+    },
+    {
+      "path": "owned-source.json",
+      "sha256": "f9d379e749c65a972914324b16b959efde0e41b052d88cb1f4d82453229fd257"
+    },
+    {
+      "path": "unit/attempt01/result.json",
+      "sha256": "1fc8ae9fa6b6d83683b41ef3dbae4dd520c88e92702175d01a511e823c1b1341"
+    },
+    {
+      "path": "unit/attempt02/result.json",
+      "sha256": "1df22ae31dc2b36240fc15f46a64e799d7491f3cafee3ed6c2196d7324572af4"
+    },
+    {
+      "path": "unit/attempt02/jest.json",
+      "sha256": "00f9bd92201b9fd9be2bc388003386377ad0152f5ce72fd51d736de5f0c40d72"
+    },
+    {
+      "path": "unit/typecheck01/result.json",
+      "sha256": "3c1bd3c587f4ecee5ba859c7c3f147600e88dce2bb884d577edda07409b919fa"
+    },
+    {
+      "path": "unit/lint01/result.json",
+      "sha256": "cb249c8d98a59d3fc0a863b99edd987ed852677056d5ae96b91e941f94810921"
+    },
+    {
+      "path": "database/native-result.json",
+      "sha256": "9e5efe7ab0f512a17a63c99a40dd4a6f5b80ad233474c1dcd9d5d40bf52469f9"
+    },
+    {
+      "path": "database/native-jest.json",
+      "sha256": "002ce1d03100c0e3c63cceeb2688bb5debb991b453a32f7da4643b211fa22722"
+    },
+    {
+      "path": "database/native-observations.json",
+      "sha256": "fac79084e5abfabcf510ed77ae4ebe357db373095129037ab64768bb52ce2fc5"
+    },
+    {
+      "path": "database/test-source-relocation.json",
+      "sha256": "f7f4411405badd8519c544211b5fa865df51fff4d538dc0d5d9e24389bf2b7ed"
+    }
+  ]
+}

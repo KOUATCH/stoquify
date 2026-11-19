@@ -1,0 +1,17 @@
+{
+  "label": "remaining-platform",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "prisma/disposable-remaining.ts",
+    "platform"
+  ],
+  "startedAt": "2026-10-29T11:46:57.892Z",
+  "finishedAt": "2026-10-29T11:48:28.098Z",
+  "exitCode": 0,
+  "errorCode": null
+}

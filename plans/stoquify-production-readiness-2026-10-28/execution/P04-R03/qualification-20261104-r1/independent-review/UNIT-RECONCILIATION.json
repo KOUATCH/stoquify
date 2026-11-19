@@ -1,0 +1,45 @@
+{
+  "reviewedAt": "2026-11-04T09:31:08.926Z",
+  "reviewer": "r03_review",
+  "passed": true,
+  "candidateId": "p04-r03-20261104-9c1182e0773a",
+  "sourceIdentity": "9c1182e0773a164e5484eae301ee6ea7ddd5c5db17f2acf75d5407725078f0b2",
+  "ownedSourceHashesRecomputed": 2,
+  "current": {
+    "suites": 4,
+    "passed": 224,
+    "failed": 0,
+    "skipped": 0,
+    "sourceInputsRecomputed": 26,
+    "harnessInputsRecomputed": 3
+  },
+  "baseline": {
+    "expectedRed": 9,
+    "actualSentinelReturned": true,
+    "explicitlyFilteredAssertions": 203,
+    "archivedBytesMatch": true
+  },
+  "suiteBreakdown": [
+    {
+      "path": "actions/item/__tests__/item-error-responses.action.test.ts",
+      "tests": 212
+    },
+    {
+      "path": "actions/item/__tests__/edit-item.action.test.ts",
+      "tests": 5
+    },
+    {
+      "path": "actions/_shared/__tests__/safe-action-responses.test.ts",
+      "tests": 6
+    },
+    {
+      "path": "actions/item/__tests__/create-item-entitlement-observe.action.test.ts",
+      "tests": 1
+    }
+  ],
+  "limits": [
+    "Mocked services/guards and real normalization/schemas; no native persistence or browser proof.",
+    "The existing create/edit continuity tests retain their own mocks.",
+    "Post-write cache failures prove safe responses only, not transaction rollback."
+  ]
+}

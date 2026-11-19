@@ -1,0 +1,390 @@
+{
+  "auditedAt": "2026-11-09T14:35:19.216Z",
+  "mode": "Read-only evidence/source audit; no database, application build or test suite executed",
+  "auditedReport": {
+    "path": "RESULT.md",
+    "sha256": "15fdd4fc331a5073ad12461550063a834fedadc5787a142a8b411736ec2e65df"
+  },
+  "source": {
+    "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+    "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-accounting-release-20261109-ffb02aacd5\\candidate",
+    "manifestContentSha256": "a6e0b40433ec6faaadae9e2db14ddd972f0e30ecd0185646b8d7190ed91d2a06",
+    "manifestFileSha256": "30c4cf3c26a58f9a218aaa31b68c919e1ece5afa288500f30b0588d7ce63f778",
+    "migrationCatalogSha256": "3f4c0d0880c659bd22e5f6551aae459924e57ed3baddcac89f4b2f5bc9cf1737"
+  },
+  "passedScopes": [
+    {
+      "name": "Candidate identity and retained amendment/archive chain",
+      "files": 9300,
+      "sourceDigest": "a6e0b40433ec6faaadae9e2db14ddd972f0e30ecd0185646b8d7190ed91d2a06",
+      "evidence": [
+        {
+          "path": "SOURCE_AMENDMENT_FINALIZED.json",
+          "sha256": "d85b5c1d10b75a987cdd21b1f6539d3e0d3b95cf934ceb42fb05a369dee0ea04"
+        },
+        {
+          "path": "ROOT_BINDING_REVIEW.json",
+          "sha256": "ab716ba8afd787381d12c89a1531c731523c29fe065f9f1691b11dc9d0d80f29"
+        }
+      ]
+    },
+    {
+      "name": "All121 migration SQL raw hashes bind current root, frozen migration source and frozen release candidate",
+      "migrations": 121,
+      "last": "20261102190000_payroll_history_proof_version_binding",
+      "evidence": [
+        {
+          "path": "MIGRATION_SOURCE_PROVENANCE.json",
+          "sha256": "3262f491d9932ecb07994d7ad76103a9caf444b4b8cee9b40665cb0ba0a637d1"
+        }
+      ],
+      "allFrozenMigrationHelperFilesVerified": 165,
+      "frozenHelperFileManifestSha256": "470e4c1924f49d8b7bdb24514f5884c1a7783bc8031ebaffcb5b9c5f7df41a7a"
+    },
+    {
+      "name": "Fresh replay receipts, exact histories and retained intentional residuals",
+      "databases": 2,
+      "migrationsEach": 121,
+      "triggersEach": 141,
+      "checkConstraintsEach": 230,
+      "intentionalResidualStatements": 240,
+      "unexpectedResidualStatements": 0,
+      "evidence": [
+        {
+          "path": "MIGRATION_REHEARSAL_RESULT.json",
+          "sha256": "22f604a9badafa62f362c5feb712021eef8434f93e5f52204561348a2736af12"
+        },
+        {
+          "path": "fresh-replay-certification.json",
+          "sha256": "76cf5723ceea05c2d2271a5bc9a5212520fd4ccf7ece18c6bfdc31095ab567ea"
+        }
+      ]
+    },
+    {
+      "name": "Real migrated financial kernels:16passed and1optional browser/offline integration skip",
+      "passed": 16,
+      "skipped": 1,
+      "skippedTest": "full POS commit real PostgreSQL kernels P06 integrates durable browser queue, real ingestion and replay after lost HTTP responses",
+      "dependencyBoundary": "Current frozen application source; reviewed installed test/CLI dependencies. Clean artifact dependencies qualified separately.",
+      "evidence": [
+        {
+          "path": "migrated-financial-kernels.results.json",
+          "sha256": "0caa6ade98fec080300e9240d6d10fcdf1de583c4019bc2a164cfc1a7d88ca32"
+        },
+        {
+          "path": "migrated-financial-kernels.execution.json",
+          "sha256": "99e3dec485e4451953886ff042bc7511fa6bfaa965c393299f80c3662886aa9c"
+        },
+        {
+          "path": "ORM_PROVENANCE.json",
+          "sha256": "aa570c48900ab45440dc9f6b57872068504c55da9bc59a6785b147603a8c126b"
+        }
+      ]
+    },
+    {
+      "name": "13 target-bound rollback probes and22 scoped snapshots",
+      "probes": 13,
+      "scopeTables": 22,
+      "limitations": [
+        "Synthetic zero-tax financial fixture; no provider transfer or statutory qualification.",
+        "Service/action tenant and session/RBAC authorization remain separate. Separate foreign keys do not prove complete database tenant isolation.",
+        "No closed period is fabricated. Proper earned seal/reopen/write-denial qualification remains a separate period-control exercise.",
+        "Posted journal status and line guards are probed; blanket immutability of every journal header field is not claimed.",
+        "Sequences may advance in rolled-back transactions; retained rows/counts/hashes, not sequence counters, are compared."
+      ],
+      "evidence": [
+        {
+          "path": "trigger-probes.results.json",
+          "sha256": "8b7eb340f3b2c1ab38f6a5824d24daa1a9e3ee48933a1db47b699d1b6ac36d06"
+        }
+      ],
+      "exactObservedSqlstateAndMessageVerified": true,
+      "errorAssertionsVerified": 13
+    },
+    {
+      "name": "Populated120to121 narrow additive upgrade and original246application-table preservation",
+      "beforeMigrations": 120,
+      "afterMigrations": 121,
+      "preservedApplicationTables": 246,
+      "onlyAddedMigration": "20261102190000_payroll_history_proof_version_binding",
+      "limitations": [
+        "No actual deployed predecessor artifact was provided or qualified.",
+        "Synthetic zero-tax mappings and supplied trusted service controls; no browser/session/RBAC/provider/statutory certification.",
+        "Final migration adds a payroll metadata guard only; this proves narrow additive catalog compatibility with populated financial data, not arbitrary migrations."
+      ],
+      "evidence": [
+        {
+          "path": "UPGRADE_PROOF_RESULT.json",
+          "sha256": "8bd7fe7ff59a8a8d07cbd81644608b3f5c7dfe31fa53cfb2b80c4797354b6631"
+        },
+        {
+          "path": "UPGRADE_TARGET.json",
+          "sha256": "f4c2b0c50a1bbbc4cd7656612d833423b0b14e0950b35fdcb06b52a6e3bdeef3"
+        }
+      ]
+    },
+    {
+      "name": "Source-bound real exported promotion-lock API",
+      "checks": 3,
+      "remainingOwnedLocks": 0,
+      "actualPromotionInvoked": false,
+      "evidence": [
+        {
+          "path": "lock-restore-b968ba1b86/lock-probes.json",
+          "sha256": "aed5fda161fc605c87757b55b8b57bac55af44b40d5b057e145d45fa6cd92eda"
+        }
+      ]
+    },
+    {
+      "name": "Synthetic custom-format restore247tables with exact13PostgreSQL parser metadata proof",
+      "publicTablesIncludingHistory": 247,
+      "nonemptyTables": 45,
+      "checkConstraints": 230,
+      "reviewedParserDifferences": 13,
+      "dumpSha256": "1a0f3ef18604885e7abf1736d32efd0256444da9b49d0deaa591231d08d6aff2",
+      "limitations": [
+        "Synthetic local restore only; no production backup, hosted recovery or SLA/RPO/RTO certification",
+        "No production schema promotion or application deployment invoked"
+      ],
+      "evidence": [
+        {
+          "path": "LOCK_RESTORE_SELECTED.json",
+          "sha256": "9025fd1cfc1954683d7bd470ad3ec71047aa5ba4f7bb66147c3c105b6ef20ee2"
+        }
+      ]
+    },
+    {
+      "name": "84 mocked artifact/private-asset assertions separate from compilation",
+      "passed": 84,
+      "classification": "Mocked/filesystem fixture tests; no build or promotion",
+      "evidence": [
+        {
+          "path": "artifact-control-unit.results.json",
+          "sha256": "71900d6065fe8fa50ef8c19900dfbd4aa7a14cada4b7add274809686612eae0b"
+        },
+        {
+          "path": "artifact-private-assets-unit-qualified.results.json",
+          "sha256": "e2e32f9dbd58a166d373f3cef95be176983a9b11b11b849c0da0d047280544bc"
+        }
+      ]
+    },
+    {
+      "name": "Selected clean locked offline installation and separate native readiness",
+      "ciLifecycleDisabled": true,
+      "prismaVersion": "6.19.3",
+      "engineRevision": "c2990dca591cba766e3b7ef5d9e8a84796e47ab7",
+      "noDatabaseConnection": true,
+      "limitations": "Clean package installation plus explicitly checksum-bound previously cached native engine inputs; not a fresh engine download or general lifecycle certification",
+      "evidence": [
+        {
+          "path": "CLEAN_INSTALL_SELECTED.json",
+          "sha256": "ce880a8f22f27f6b94fdc83fa83b1715f1cbf9a0f111b53c60d20c324c5219ba"
+        },
+        {
+          "path": "CLEAN_INSTALL_RESULT_ATTEMPT_2.json",
+          "sha256": "81b5b52f1f7e6d6537905eec3907b15cf3d078a165660ef566f15968050ef6ed"
+        },
+        {
+          "path": "CANDIDATE_NATIVE_READINESS.json",
+          "sha256": "1fcce2de7f25c97906bdbfc053d127871572ee8a1bebb4f3b788355030edf1d2"
+        }
+      ]
+    },
+    {
+      "name": "Earlier authenticated UI evidence binds six current production roots only",
+      "sourceRoots": 6,
+      "evidenceClass": {
+        "earlierAuthenticatedInterface": "Actual sign-in and financial writers in the development application; current datamodel bootstrap, not migrated schema or sealed runtime.",
+        "migratedFinancialKernels": "Current frozen financial services with real PostgreSQL and all 121 migrations, supplied trusted controls and synthetic zero-tax mappings.",
+        "artifact": "Separate build/runtime receipts are required. Source equality alone is not a rendered standalone runtime check."
+      },
+      "evidence": [
+        {
+          "path": "WORKFLOW_SOURCE_BINDING.json",
+          "sha256": "d08e3f1bd635aee052fe01e49effed32b39b0d648c2917f857263fe1e32d71b4"
+        }
+      ]
+    },
+    {
+      "name": "Two production delivery blockers remain explicitly open",
+      "blockers": [
+        "statement_live_delivery_channel_enabled",
+        "accountant_invite_live_delivery_enabled"
+      ],
+      "productionReady": false,
+      "evidence": [
+        {
+          "path": "PRODUCTION_SECRET_PREFLIGHT.json",
+          "sha256": "22edbd15666eef4edfa5b8a075e32fee3764b10fe43fe8ab6eae75742f0e6a3d"
+        },
+        {
+          "path": "production-secrets-preflight.execution.json",
+          "sha256": "3acc58567a4694aac3dd3460380c2e720b9be348cbae5d2a6276f3104fc2575b"
+        }
+      ]
+    }
+  ],
+  "pendingGates": [
+    {
+      "name": "Actual full application artifact",
+      "status": "IN_PROGRESS",
+      "reason": "Build is running independently; this audit does not certify its future result."
+    },
+    {
+      "name": "Sealed runtime smoke/authentication",
+      "status": "PENDING",
+      "reason": "Prior authenticated development evidence is bound separately, not a sealed runtime check."
+    },
+    {
+      "name": "Production delivery configuration",
+      "status": "BLOCKED",
+      "blockers": [
+        "statement_live_delivery_channel_enabled",
+        "accountant_invite_live_delivery_enabled"
+      ]
+    },
+    {
+      "name": "Hosted promotion/deployment, protected release approval, real predecessor artifact compatibility, live provider, country setup and operational recovery objectives",
+      "status": "OUTSIDE_THIS_SYNTHETIC_RUN"
+    }
+  ],
+  "failures": [],
+  "suggestedReportCorrections": [
+    {
+      "severity": "small clarity improvement",
+      "location": "Real promotion lock row",
+      "suggestion": "Add a direct link to lock-restore-b968ba1b86/lock-probes.json so the narrow exported-API proof is immediately traceable."
+    },
+    {
+      "severity": "finalization requirement",
+      "location": "Full application artifact / Sealed runtime / final status",
+      "suggestion": "Keep pending until their own receipts exist, then record exact artifact digest, runtime boundaries and actual shutdown receipt. Do not turn the overall report into production readiness."
+    }
+  ],
+  "retainedFailures": [
+    {
+      "path": "lock-restore-b968ba1b86/RESULT.json",
+      "status": "failed strict text comparison; preserved",
+      "resolvedBy": "LOCK_RESTORE_SELECTED.json exact PostgreSQL parser proof"
+    },
+    {
+      "path": "artifact-private-assets-unit.results.json",
+      "status": "initial sandbox/junction fixture failure; preserved",
+      "resolvedBy": "artifact-private-assets-unit-qualified.results.json"
+    },
+    {
+      "path": "CLEAN_INSTALL_RESULT.json",
+      "status": "initial offline metadata-cache miss; preserved",
+      "resolvedBy": "CLEAN_INSTALL_SELECTED.json"
+    }
+  ],
+  "syntax": [
+    {
+      "path": "migration-rehearsal.cjs",
+      "sha256": "3cff0586b9582407d002ce5d37718bba791fc8c4e37e487e6dbc278d1711ded6",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "path": "lock-restore-qualification.cjs",
+      "sha256": "6ab80487c63d4105374abb853941ba0534d1af572044a4ba3dcc1ccd6c132673",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "path": "financial-qualification.cjs",
+      "sha256": "6c6eed2366f9cb7e1a32369ad0d1ad84af81df5d684aee9498b5ab983352668f",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "path": "trigger-probes.cjs",
+      "sha256": "db55aee0bf7e94cf40671a70a24149b5b70d17777a6be5e6fce74e2214ebe54e",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "path": "upgrade-proof.cjs",
+      "sha256": "d6e1348336df4cb5793f61f5cc6b74f55339e920b746924f5abba2fc1980d25b",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "path": "candidate-validation.cjs",
+      "sha256": "05ad5a55ca8b9a682cf399e0b6a9b9b9243b4dd3d115e8eda7fc37ec08a984b9",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "path": "workflow-source-binding.cjs",
+      "sha256": "7f6e7447c9b92f3de11a480aa94e8dd69b46388ef5d577cae0ac1d4b45dfc7a2",
+      "exitCode": 0,
+      "passed": true
+    }
+  ],
+  "references": [
+    {
+      "reference": "DATABASE_TARGET.json",
+      "exists": true
+    },
+    {
+      "reference": "CANDIDATE_TARGET.json",
+      "exists": true
+    },
+    {
+      "reference": "MIGRATION_SOURCE_PROVENANCE.json",
+      "exists": true
+    },
+    {
+      "reference": "CANDIDATE_SOURCE_MANIFEST.json",
+      "exists": true
+    },
+    {
+      "reference": "MIGRATION_REHEARSAL_RESULT.json",
+      "exists": true
+    },
+    {
+      "reference": "migrated-financial-kernels.results.json",
+      "exists": true
+    },
+    {
+      "reference": "sales-accounting-workflow.json",
+      "exists": true
+    },
+    {
+      "reference": "trigger-probes.results.json",
+      "exists": true
+    },
+    {
+      "reference": "CLEAN_INSTALL_SELECTED.json",
+      "exists": true
+    },
+    {
+      "reference": "CANDIDATE_NATIVE_READINESS.json",
+      "exists": true
+    },
+    {
+      "reference": "WORKFLOW_SOURCE_BINDING.json",
+      "exists": true
+    },
+    {
+      "reference": "../authenticated-sales-accounting-2026-11-08/RESULT.md",
+      "exists": true
+    },
+    {
+      "reference": "UPGRADE_PROOF_RESULT.json",
+      "exists": true
+    },
+    {
+      "reference": "LOCK_RESTORE_SELECTED.json",
+      "exists": true
+    },
+    {
+      "reference": "PRODUCTION_SECRET_PREFLIGHT.json",
+      "exists": true
+    }
+  ],
+  "passed": true,
+  "scope": "Independent read-only audit of completed qualification evidence as of auditedAt; pending build/runtime gates excluded",
+  "completedAt": "2026-11-09T14:36:43.918Z"
+}

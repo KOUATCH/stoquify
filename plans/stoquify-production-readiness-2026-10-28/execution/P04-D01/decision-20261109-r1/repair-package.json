@@ -1,0 +1,77 @@
+{
+  "id": "P04-R05",
+  "title": "Enforce approved finance export-job visibility and explicit inspection grants",
+  "phase": 1,
+  "kind": "implementation",
+  "depends_on": [
+    "P01",
+    "P02",
+    "P04-R01",
+    "P04-D01"
+  ],
+  "milestone": "M1",
+  "owner_role": "Accounting/backend + security reviewer + database/browser QA",
+  "domains": [
+    "accounting",
+    "finance",
+    "security"
+  ],
+  "audit_gaps": [
+    "G04"
+  ],
+  "status": "not_started",
+  "current_state": "Option C approved by Kouatchoua Mark on 2026-11-09. Current same-tenant report-job status lacks creator/delegate scope; bounded repair derived but not authorized or implemented. Byte-delivery implementation and hosted admission remain separate P27/provider/retention commitments.",
+  "tasks": [
+    "Refresh current finance export creation/status/grant call chains and hashes; map all 14 classes and current tenant/class/module/object authority.",
+    "Thread current server-owned actor into job-status inspection and restrict metadata/locator to creator or explicit active same-tenant job/hash inspection grant; deny uniformly without existence leakage.",
+    "Implement the smallest compatible named grant/revocation contract within current grantor and recipient authority; inspect existing infrastructure first, no onward delegation or role-name bypass.",
+    "Retain authorized historical status for expired artifacts without locator/bytes and preserve separately authorized aggregate queue summary.",
+    "Qualify actual independent signed-session positives/negatives and database unchanged-state evidence, including grant/permission/session revocation and browser recovery; obtain independent review."
+  ],
+  "acceptance_criteria": [
+    "Approved creator/delegate metadata policy applies to every admitted status caller and all 14 classes without weakening current authority.",
+    "Wrong tenant, forged/unowned job/hash, revoked or expired grant and lost permission expose no protected metadata/locator; denied requests cause no unauthorized writes.",
+    "Authorized creator/delegate inspection and historical expired-artifact status without locator work; aggregate summary remains separately scoped.",
+    "Byte-delivery cases remain explicitly unexecuted until P27/provider/retention requirements are implemented and qualified; metadata evidence never admits file delivery."
+  ],
+  "evidence_refs": [
+    "E27"
+  ],
+  "rollback_recovery": "Revert only owned repair and keep visibility admission blocked; fail closed when grants cannot be verified. Preserve data/audit evidence. No production migrations, flags or deployment.",
+  "effort": "M",
+  "confidence": "high",
+  "model_tier": "strongest_available",
+  "execution_boundary": "Bounded finance job-status/inspection-grant repair only, separately authorized before implementation. Any schema changes require their own reviewed local migration/recovery recipe. No new byte-delivery path in this package.",
+  "verification_recipes": [
+    "C01",
+    "C02",
+    "C05",
+    "C06",
+    "C07"
+  ],
+  "required_decisions": [],
+  "source_locations": [
+    "actions/accounting/finance-statement-export.actions.ts",
+    "services/accounting/finance-statement-export.service.ts",
+    "services/accounting/finance-statement-export-operations.service.ts",
+    "components/DataTableComponents/finance-accounting-contracts.ts",
+    "plans/stoquify-production-readiness-2026-10-28/execution/P04-D01/decision-20261109-r1/REPAIR-PROPOSAL.md"
+  ],
+  "branch_pr_workflow": "Future codex/ branch or explicitly owned local diff from approved candidate; inspect/stage only owned hunks if commit requested. PR/CI admin waits for authenticated authorization; never auto-merge/deploy.",
+  "evidence_record": {
+    "candidate_id": null,
+    "source_hashes": "execution/P04-D01/decision-20261109-r1/source-manifest.json",
+    "commands": null,
+    "source_review": "execution/P04-D01/decision-20261109-r1/REPAIR-PROPOSAL.md",
+    "mocked_tests": null,
+    "native_database": null,
+    "authenticated_browser": null,
+    "provider_hosted": null,
+    "operator": null,
+    "cleanup": null,
+    "reviewer": null
+  },
+  "parent_id": "P04",
+  "implementation_authorized": false,
+  "policy_decision": "P04-D01"
+}

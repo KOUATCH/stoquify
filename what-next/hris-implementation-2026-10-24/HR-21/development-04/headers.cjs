@@ -1,0 +1,1 @@
+const {AsyncLocalStorage}=require('node:async_hooks');const scope=new AsyncLocalStorage();exports.withHeaders=(headers,run)=>scope.run(headers,run);exports.headers=async()=>{const h=scope.getStore();if(!h)throw Error('Explicit request context required');return h};

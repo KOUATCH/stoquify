@@ -9,6 +9,7 @@ import {
   Prisma,
 } from "@prisma/client"
 import { createHash } from "node:crypto"
+import { accountingPeriodReconciliationScope } from "../reconciliation-period-scope"
 
 import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.service"
 import { db } from "@/prisma/db"
@@ -27,6 +28,7 @@ import {
   getReconciliationRunDetail,
   signReconciliationRun,
   previewReconciliationSignOff,
+  validateReconciliationRunEvidenceInTx,
   type SignReconciliationRunInput,
 } from "../payment-reconciliation-certification.service"
 
@@ -509,6 +511,40 @@ describe("payment reconciliation certification service", () => {
     mockedDb.$queryRaw.mockResolvedValue([{ ...readyRun().accountingPeriod, organizationId: "org-1", id: "other-period" }])
     await expect(signReconciliationRun(signInput())).rejects.toThrow(/period.*changed/i)
     expect(mockedDb.reconciliationRun.updateMany).not.toHaveBeenCalled()
+  })
+
+  function fullPeriodRun() {
+    const period = { ...readyRun().accountingPeriod, endDate: new Date("2026-06-30T23:59:59.999Z") }
+    const periodEnd = new Date(+period.endDate + 1)
+    const run = readyRun({ accountingPeriod: period, businessDate: period.startDate, periodStart: period.startDate, periodEnd,
+      metadata: { scope: accountingPeriodReconciliationScope("org-1", "provider-account-1", period.id, period.startDate, periodEnd) } })
+    return { period, run }
+  }
+
+  it("admits current full-period scope to the existing evidence checks without declaring a lifecycle earned", async () => {
+    const { period, run } = fullPeriodRun()
+    mockedDb.$queryRaw.mockResolvedValue([{ ...period, organizationId: "org-1" }])
+    mockedDb.accountingPeriod.findFirst.mockResolvedValue(period)
+    await expect(validateReconciliationRunEvidenceInTx(mockedDb as any, run as any, "org-1")).resolves.toMatchObject({ period })
+    expect(mockBuildEvidenceManifest).toHaveBeenCalledWith(mockedDb, expect.objectContaining({ periodStart: run.periodStart, periodEnd: run.periodEnd, requireCompleteCoverage: true }))
+    expect(mockedDb.reconciliationRun.updateMany).not.toHaveBeenCalled()
+  })
+
+  it.each(["scope hash", "scope account", "run start", "run end", "stored start", "stored end", "misaligned stored end"])("denies changed full-period %s before source/signature writes", async kind => {
+    const { period, run: initial } = fullPeriodRun(), run: any = initial
+    const current = { ...period }
+    if (kind === "scope hash") run.metadata.scope.scopeHash = "sha256:" + "f".repeat(64)
+    if (kind === "scope account") run.metadata.scope.providerAccountId = "foreign"
+    if (kind === "run start") run.periodStart = new Date("2026-06-02")
+    if (kind === "run end") run.periodEnd = new Date("2026-06-30")
+    if (kind === "stored start") current.startDate = new Date("2026-05-31")
+    if (kind === "stored end") current.endDate = new Date("2026-06-29T23:59:59.999Z")
+    if (kind === "misaligned stored end") current.endDate = new Date("2026-06-30T12:00:00Z")
+    mockedDb.$queryRaw.mockResolvedValue([{ ...current, organizationId: "org-1" }])
+    mockedDb.accountingPeriod.findFirst.mockResolvedValue(current)
+    await expect(validateReconciliationRunEvidenceInTx(mockedDb as any, run, "org-1")).rejects.toThrow(/accounting-period scope changed/)
+    expect(mockedDb.providerEvent.count).not.toHaveBeenCalled(); expect(mockedDb.reconciliationRun.updateMany).not.toHaveBeenCalled()
+    expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
   })
 
   it("returns run detail proof subjects and certification blockers without mutating the run", async () => {

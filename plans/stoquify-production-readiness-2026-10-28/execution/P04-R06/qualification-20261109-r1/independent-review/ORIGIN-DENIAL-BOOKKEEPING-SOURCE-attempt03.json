@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "packageId": "P04-R06",
+  "at": "2026-11-10T11:38:48.413Z",
+  "reviewer": "/root/r06_source_resume",
+  "findingId": "E29",
+  "classification": "CONFIRMED_ORIGIN_DENIAL_CREDENTIAL_BOOKKEEPING_DEFECT_PRESENT_IN_CAPTURED_BASELINE",
+  "passed": false,
+  "sourceInspectionOnly": true,
+  "baseline": {
+    "beforeAuthPath": "inventory/source-before/lib/auth.ts.source.txt",
+    "beforeAuthSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+    "currentAuthPath": "lib/auth.ts",
+    "currentAuthSha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5",
+    "afterHookExactEqual": true,
+    "afterHookSlice": "from after: async (ctx: any) => { through request-hooks object, before trustedOrigins",
+    "afterHookSha256": "925fa82ff36df3177272633c4fc66f31c6dc158ce255a6a9ac6d088a183cd9cd",
+    "helperPath": "lib/security/credential-sign-in-outcome.ts",
+    "beforeHelperSha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+    "currentHelperSha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+    "helperByteIdentical": true
+  },
+  "causalChain": [
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "lines": [
+        143,
+        146
+      ],
+      "fact": "Credential endpoint uses formCsrfMiddleware before credential verification."
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+      "lines": [
+        108,
+        140,
+        142
+      ],
+      "fact": "Untrusted origin or cross-site navigation yields APIError FORBIDDEN."
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/to-auth-endpoints.mjs",
+      "lines": [
+        99,
+        147,
+        149
+      ],
+      "fact": "Endpoint APIError is retained as context.returned and passed to after-hooks."
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "lines": [
+        21,
+        25
+      ],
+      "fact": "Any APIError maps to false; no distinction between wrong credentials and earlier policy denial."
+    },
+    {
+      "path": "lib/auth.ts",
+      "lines": [
+        224,
+        251,
+        252,
+        257,
+        263
+      ],
+      "fact": "False outcome for existing active writable user increments failedLoginAttempts, updates lastFailedLogin and emits LOGIN_FAILED or ACCOUNT_LOCKED. No policy-denial discrimination."
+    }
+  ],
+  "actualNativeEffects": [
+    {
+      "id": "R06-C-origin-browser-navigate",
+      "before": "snapshot-R06-C-origin-browser-navigate-before-1794310318320-8a21118c-888e-4850-8e6b-6972abb949c7.json",
+      "beforeSha256": "be5c23aa545934d83398318a758c8333be71021ce8b7246a277817a20d3bd1ab",
+      "after": "snapshot-R06-C-origin-browser-navigate-after-1794310321077-9d87d316-dcce-457c-82be-d96dad813133.json",
+      "afterSha256": "346f8f71126ae7316c776493f99ecae255d6efab9fe4d7bdf7af86686d05264e",
+      "sessionsIdentical": true,
+      "accountsIdentical": true,
+      "users": [
+        {
+          "idHash": "2dc296c1608c8089810e2dcd05a01e0ebed084b492cad1999f54b5a8d2b4348f",
+          "isActiveFixture": true,
+          "fields": [
+            "failedLoginAttempts",
+            "lastFailedLogin",
+            "updatedAt"
+          ]
+        }
+      ],
+      "addedAudits": [
+        {
+          "idHash": "726703e6e8ecf178252adc683d8620719805980e6ff1c911d15e55a107945993",
+          "userId": "p04r06-active",
+          "organizationId": "p04-r06-a",
+          "entityType": "SecurityEvent",
+          "entityIdHash": "c81f18f8609882658bd5a2eb75c1fef1ef2f0cbf8a1a31098105faa214c443a6",
+          "action": "LOGIN_FAILED",
+          "createdAt": "2026-11-10T11:31:58.466",
+          "changes": {},
+          "rowSha256": "b14d6940b12bdc70dc11d9a9f46dbe343caf3d73cc1ff4192a79be37e29f3980"
+        }
+      ],
+      "tableCount": 245,
+      "changedTables": [
+        "users"
+      ]
+    },
+    {
+      "id": "R06-C-origin-browser-cors",
+      "before": "snapshot-R06-C-origin-browser-cors-before-1794310329333-1abb8925-f142-4e5f-a11f-bfb98fe23cec.json",
+      "beforeSha256": "54135ed67d7ff5c0930d5041b9296b81efb92c1f7f7c955d52f294432ad6a3e0",
+      "after": "snapshot-R06-C-origin-browser-cors-after-1794310332233-275e0be7-4065-433c-ae48-1d09475edec7.json",
+      "afterSha256": "9f91283a11fff9aabbb26193340efab47e5e19e4897d59a5b6d3f8e29c79e787",
+      "sessionsIdentical": true,
+      "accountsIdentical": true,
+      "users": [
+        {
+          "idHash": "2dc296c1608c8089810e2dcd05a01e0ebed084b492cad1999f54b5a8d2b4348f",
+          "isActiveFixture": true,
+          "fields": [
+            "failedLoginAttempts",
+            "lastFailedLogin",
+            "updatedAt"
+          ]
+        }
+      ],
+      "addedAudits": [
+        {
+          "idHash": "62886a733edce2e681f8a93acda329ed8419cac999cda1ceab89a2e0bc52537a",
+          "userId": "p04r06-active",
+          "organizationId": "p04-r06-a",
+          "entityType": "SecurityEvent",
+          "entityIdHash": "c81f18f8609882658bd5a2eb75c1fef1ef2f0cbf8a1a31098105faa214c443a6",
+          "action": "LOGIN_FAILED",
+          "createdAt": "2026-11-10T11:32:09.542",
+          "changes": {},
+          "rowSha256": "1a51a69bb2c3828a580c97b0a4f72caac64b4b4bde5cae0a993091bdc9f1b593"
+        }
+      ],
+      "tableCount": 245,
+      "changedTables": [
+        "users"
+      ]
+    }
+  ],
+  "actualProtocolStatus": {
+    "navigation": "403 observed by real browser",
+    "cors": "browser TypeError/unreadable response; primary runtime ingress review establishes403",
+    "sessionRowsUnchanged": true,
+    "accountRowsUnchanged": true
+  },
+  "boundedRepairScope": {
+    "implementation": [
+      "lib/security/credential-sign-in-outcome.ts: distinguish confirmed credential success, native invalid-email/password result, and non-credential policy/transport/infrastructure outcomes; retain fail-closed authority behavior.",
+      "lib/auth.ts sign-in after-hook only: apply wrong-password counters/lock threshold exclusively to confirmed credential failure; no account counters, failed-login timestamps or LOGIN_FAILED for origin/CSRF rejection. Preserve successful-login bookkeeping and return contract.",
+      "Relevant credential-outcome and auth-hook tests; no route whitelist expansion, session-cache relaxation or change to native origin checks."
+    ],
+    "verification": [
+      "Mocked outcome matrix covers success, INVALID_EMAIL_OR_PASSWORD, INVALID_ORIGIN, CROSS_SITE_NAVIGATION_LOGIN_BLOCKED, malformed/missing outcomes, session creation failure and noncredential errors.",
+      "Isolated real-browser foreign-origin form and simple fetch deny with no unauthorized changes in all245business tables, session/account/user rows; preserve approved narrowly scoped security audit policy separately if requested.",
+      "Actual same-origin correct-password login still creates one own session and LOGIN_SUCCESS, resets failures and records UTC lastLogin.",
+      "Actual wrong-password request increments only own allowed failure fields once, emits expected audit and preserves threshold/lock behavior; inactive/locked and all anonymous auth routes retain their existing semantics.",
+      "Independent review binds new source, artifact and real-session evidence; rerun affected current-authority tests."
+    ],
+    "policyBoundary": "The earlier cookie-free native/APIRequestContext foreign-Origin sign-in policy remains a separate unresolved R06-C-origin acceptance question; E29 denial-side-effects repair cannot waive or silently redefine it."
+  },
+  "attributionLimit": "Byte-identical before/current after-hook and helper establish source-level pre-existence. No pre-repair runtime replay was performed; historical runtime equivalence is not certified.",
+  "sourceBindings": [
+    {
+      "path": "lib/auth.ts",
+      "sha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5"
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493"
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "sha256": "aae2f1a20add9453671f8c08c25eca1215dcb7e790a46b784d3d35cd01b1949a"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+      "sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/to-auth-endpoints.mjs",
+      "sha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3"
+    }
+  ],
+  "limits": [
+    "No product or existing harness edits for this source finding.",
+    "No HTTP/database/browser execution by this source review.",
+    "E29 remains blocked; no implementation authorized in this lane this turn."
+  ]
+}

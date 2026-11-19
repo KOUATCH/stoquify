@@ -1,0 +1,39 @@
+{
+  "at": "2026-11-10T11:27:23.936Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Standalone six-case browser observer source admission only; does not authorize an unreviewed runtime wrapper/bridge",
+  "files": [
+    {
+      "path": "browser/run-browser-diagnostic-attempt03.cjs",
+      "sha256": "666abbcdc483e6b001d706361eb676275efde2682dc6dd1e200b31f204588bd4"
+    },
+    {
+      "path": "browser/DIAGNOSTIC-RECIPE-attempt03.md",
+      "sha256": "8a3aef70033648cb6dab8152e52e2ddbae626b9b2f50268330288ed8660b02f7"
+    },
+    {
+      "path": "inventory/test-case-map.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "276e495ce09869bf75d701607e3e6d209866d5d52062efdc8090add85a0b444f"
+    }
+  ],
+  "reviewFindings": [
+    "Preserves exact six planned IDs, own identity/current native session positives, same-context revocation reload denial, fresh-context restoration and native no-write snapshots.",
+    "Records safe response/request/redirect/prefetch metadata before any body access; original missing-body and transport errors are retained.",
+    "Independent original-response receipt must match correlation ID/method/path/status and complete non-aborted upstream/downstream delivery with decoded hashes and actor classification. Successful Playwright body bytes must match independently captured bytes as well.",
+    "Missing Playwright body access is accepted only with preserved error, browser response completion and exact full independent original bytes; it does not silently exempt canceled/prefetched responses or infer client consumption.",
+    "No replay, early close, unknown completion, unavailable decoded bytes, absent metadata, body/hash/actor mismatch or browser transport error can pass.",
+    "New output directory and final receipt are exclusive; original attempt02 is referenced and never rewritten."
+  ],
+  "requiredBeforeExecution": [
+    "Independently admit exact runtime wrapper and original-response capture bridge, including encoding/completion/redaction and environment/process boundaries.",
+    "Bind identical candidate/artifact and retained synthetic fixture.",
+    "Maintain deny proxy and owned browser lifecycle/cleanup."
+  ],
+  "runtimeExecutionAdmitted": false,
+  "productionChanges": false
+}

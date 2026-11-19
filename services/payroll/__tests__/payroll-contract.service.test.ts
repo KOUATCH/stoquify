@@ -1,3 +1,5 @@
+// Domain-unit fixtures isolate SQL locking; HR-14 PostgreSQL tests exercise real locks and concurrent decisions.
+jest.mock("@/services/hris/review-lock.service",()=>({lockHrisReviewEmployeeInTx:jest.fn(),lockHrisReviewContractInTx:jest.fn(),lockHrisReviewSalaryInTx:jest.fn(),lockHrisReviewPaymentInTx:jest.fn(),lockHrisReviewAssignmentInTx:jest.fn()}))
 import {
   PayrollContractStatus,
   PayrollContractType,
@@ -49,6 +51,8 @@ const mockedMarkBusinessEventAppliedInTx = markBusinessEventAppliedInTx as jest.
 
 function buildTx() {
   return {
+    $queryRaw: jest.fn().mockResolvedValue([]),
+    businessEvent: {findFirst: jest.fn().mockResolvedValue(null)},
     payrollEmployee: {
       findFirst: jest.fn(),
       findMany: jest.fn(),

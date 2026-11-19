@@ -1,0 +1,701 @@
+{
+  "at": "2026-10-18T19:57:14.989Z",
+  "files": [
+    {
+      "file": "services/analytics/retention-outcomes.service.ts",
+      "sha256": "21935e0365d1616ddeb756274ecc142f00be6a4aea8ad42fd414fb534f30470e",
+      "matches": [
+        {
+          "line": 5,
+          "text": "import { assertCanUseOrganization, requireAllPermissions, RbacError } from \"@/lib/security/rbac\""
+        },
+        {
+          "line": 10,
+          "text": "export const RETENTION_SOURCE_LIMIT = 1000"
+        },
+        {
+          "line": 23,
+          "text": "  const ctx = await requireAllPermissions([\"reports.read\", \"sales.read\"], { resource: \"RetentionOutcomes\" })"
+        },
+        {
+          "line": 27,
+          "text": "    organizationId: ctx.orgId, userId: ctx.userId, actorPermissions: ctx.permissions,"
+        },
+        {
+          "line": 32,
+          "text": "  const scope: OutcomeWindow = { ...input, organizationId: ctx.orgId, asOf: new Date() }"
+        },
+        {
+          "line": 38,
+          "text": "    if (scope.locationId && !await tx.location.findFirst({ where: { id: scope.locationId, organizationId: ctx.orgId }, select: { id: true } })) {"
+        },
+        {
+          "line": 44,
+          "text": "      where: { organizationId: ctx.orgId, ...location, createdAt: { lte: scope.asOf },"
+        },
+        {
+          "line": 46,
+          "text": "      select: retentionCommitSelect, orderBy: [{ createdAt: \"asc\" }, { id: \"asc\" }], take: RETENTION_SOURCE_LIMIT + 1,"
+        },
+        {
+          "line": 49,
+          "text": "      where: { organizationId: ctx.orgId, ...location, eventSource: \"POS\","
+        },
+        {
+          "line": 52,
+          "text": "      select: retentionCorrectionSelect, orderBy: [{ occurredAt: \"asc\" }, { id: \"asc\" }], take: RETENTION_SOURCE_LIMIT + 1,"
+        },
+        {
+          "line": 54,
+          "text": "    if (commits.length > RETENTION_SOURCE_LIMIT || corrections.length > RETENTION_SOURCE_LIMIT) {"
+        },
+        {
+          "line": 58,
+          "text": "  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })"
+        }
+      ]
+    },
+    {
+      "file": "services/analytics/retention-cohorts.ts",
+      "sha256": "ee7e00f02132f7e2edb4b6866701c4de78a48b0cd702b1b22f948bd69d0fe4f6",
+      "matches": [
+        {
+          "line": 11,
+          "text": "  traffic: \"HUMAN\" | \"DEMO\" | \"TEST\" | \"AUTOMATED\" | \"UNKNOWN\""
+        },
+        {
+          "line": 16,
+          "text": "export type RetentionWindowState = \"NOT_ACTIVATED\" | \"EXCLUDED\" | \"IMMATURE\" | \"NOT_SCHEDULED\" | \"UNKNOWN\" | \"OBSERVED_REPEAT\" | \"NO_OBSERVED_REPEAT\""
+        },
+        {
+          "line": 18,
+          "text": "/** This consumes qualified human outcomes, never raw page visits or unclassified"
+        },
+        {
+          "line": 32,
+          "text": "  else if (input.traffic !== \"HUMAN\" || input.scheduledTradingDays === null || input.coverage !== \"COMPLETE\") state = \"UNKNOWN\""
+        },
+        {
+          "line": 38,
+          "text": "/** One segment/activation cohort and one week per call. Unknown observations are"
+        },
+        {
+          "line": 46,
+          "text": "  const repeated = count(\"OBSERVED_REPEAT\"), noObservedRepeat = count(\"NO_OBSERVED_REPEAT\"), unknown = count(\"UNKNOWN\")"
+        },
+        {
+          "line": 48,
+          "text": "  return { version: RETENTION_COHORT_VERSION, cohortSize: rows.length, eligible: observed + unknown,"
+        },
+        {
+          "line": 49,
+          "text": "    observed, repeated, noObservedRepeat, unknown, immature: count(\"IMMATURE\"), excluded: count(\"EXCLUDED\"),"
+        },
+        {
+          "line": 52,
+          "text": "    missingObservationRate: observed + unknown ? unknown / (observed + unknown) : null, rows }"
+        }
+      ]
+    },
+    {
+      "file": "services/onboarding/master-data-import.service.ts",
+      "sha256": "905ce04f033e6b61b82ddc3269a7fd311bd0eb60060f308843abd7d0a882e449",
+      "matches": [
+        {
+          "line": 2,
+          "text": "import { buildOpeningReadiness, type OpeningReadiness } from \"./opening-readiness\""
+        },
+        {
+          "line": 47,
+          "text": "    \"customer or supplier current balances\","
+        },
+        {
+          "line": 48,
+          "text": "    \"opening accounting balances\","
+        },
+        {
+          "line": 49,
+          "text": "    \"inventory opening quantities or stock movements\","
+        },
+        {
+          "line": 50,
+          "text": "    \"journal or ledger postings\","
+        },
+        {
+          "line": 270,
+          "text": "  openingReadiness: OpeningReadiness"
+        },
+        {
+          "line": 1179,
+          "text": "    openingReadiness: buildOpeningReadiness(milestones, summaries),"
+        }
+      ]
+    },
+    {
+      "file": "services/inventory/inventory-stock-event.service.ts",
+      "sha256": "98b1acd43cd596edd4be633d1edff6847dc7a4337ddaf03e93409d8da4b1f668",
+      "matches": [
+        {
+          "line": 866,
+          "text": "export function postOpeningStock(input: OpeningStockInput, client: DbClient = db) {"
+        },
+        {
+          "line": 885,
+          "text": "        blockerCode: \"OPENING_STOCK_LEDGER_REVIEW\","
+        }
+      ]
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "sha256": "d6c63a80e00326ac805e69bdc84678aeb1f3308b5b8a79f172fcab10b2a139df",
+      "matches": [
+        {
+          "line": 2166,
+          "text": "export async function commitPOSSale(rawInput: UserScoped) {"
+        }
+      ]
+    },
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "sha256": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+      "matches": [
+        {
+          "line": 238,
+          "text": "export async function getAccountingSettings(organizationId: string) {"
+        }
+      ]
+    },
+    {
+      "file": "services/pos/offline-sync.service.ts",
+      "sha256": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6",
+      "matches": [
+        {
+          "line": 1268,
+          "text": "function isOfflinePOSReplayAuthorizedForCurrentDeployment() {"
+        },
+        {
+          "line": 1270,
+          "text": "    process.env.NODE_ENV === \"test\" &&"
+        },
+        {
+          "line": 1276,
+          "text": "  if (!isOfflinePOSReplayAuthorizedForCurrentDeployment()) {"
+        },
+        {
+          "line": 1278,
+          "text": "      \"Offline POS capture and replay are disabled for the authorized development-only cash pilot.\","
+        }
+      ]
+    },
+    {
+      "file": "lib/pos/offline-local-queue.ts",
+      "sha256": "3c162bc149b144c31000fc382bd9bbd657a236ccdd63f4001fc34b3d90b965db",
+      "matches": [
+        {
+          "line": 175,
+          "text": "  return new OfflineQueueRecoveryError(\"Offline queue quarantined. Existing evidence was retained; manager recovery is required before further capture or sync.\")"
+        },
+        {
+          "line": 314,
+          "text": "export async function inspectOfflineLocalQueues(scope: {"
+        },
+        {
+          "line": 374,
+          "text": "export async function assertNoLocalOfflineWork(scope: Parameters<typeof inspectOfflineLocalQueues>[0]) {"
+        },
+        {
+          "line": 375,
+          "text": "  const queues = await inspectOfflineLocalQueues(scope)"
+        },
+        {
+          "line": 542,
+          "text": "    // Never send newer events ahead of an in-flight or quarantined predecessor."
+        }
+      ]
+    },
+    {
+      "file": "actions/accounting/data-trust.actions.ts",
+      "sha256": "e6e31dcc477b3ff533ec4dda4331d3ea680cf7f399f6e42410b21627429fd2a0",
+      "matches": [
+        {
+          "line": 18,
+          "text": "import { protect, type ProtectedActionContext } from \"@/services/_shared/protect\""
+        },
+        {
+          "line": 26,
+          "text": "const getPortal = protect<unknown, AccountantPortalData>("
+        },
+        {
+          "line": 28,
+          "text": "    permission: \"accounting.audit.read\","
+        },
+        {
+          "line": 38,
+          "text": "      capability: \"READ\","
+        },
+        {
+          "line": 54,
+          "text": "const exportTrustPack = protect<unknown, AccountantTrustPackExport>("
+        },
+        {
+          "line": 56,
+          "text": "    permission: \"accounting.exports.create\","
+        },
+        {
+          "line": 67,
+          "text": "      capability: \"EXPORT\","
+        },
+        {
+          "line": 87,
+          "text": "function verifiedFreshAuthTime(ctx: ProtectedActionContext): Date {"
+        }
+      ]
+    },
+    {
+      "file": "services/_shared/protect.ts",
+      "sha256": "a73256a2e81dcba710d45cff43e811c1b256043edf2c32391c9525543968fb97",
+      "matches": [
+        {
+          "line": 10,
+          "text": "import { observeModuleAccess } from \"@/services/modules/module-entitlement.service\""
+        },
+        {
+          "line": 86,
+          "text": "      if (options.module) {"
+        },
+        {
+          "line": 87,
+          "text": "        const decision = await observeModuleAccess({"
+        },
+        {
+          "line": 91,
+          "text": "          moduleSlug: options.module.moduleSlug,"
+        },
+        {
+          "line": 92,
+          "text": "          surfaceType: options.module.surfaceType ?? \"action\","
+        },
+        {
+          "line": 93,
+          "text": "          surface: options.module.surface ?? options.permission,"
+        },
+        {
+          "line": 94,
+          "text": "          accessIntent: options.module.accessIntent ?? \"read\","
+        },
+        {
+          "line": 95,
+          "text": "          mode: options.module.mode ?? \"enforce\","
+        },
+        {
+          "line": 96,
+          "text": "          audit: options.module.audit,"
+        }
+      ]
+    },
+    {
+      "file": "services/accounting/data-trust.service.ts",
+      "sha256": "84c4e6c8af07a3bea534fa09a3448156c81978d0c8b07a8d05b283f8eb4a36ca",
+      "matches": [
+        {
+          "line": 36,
+          "text": "  evaluateAndAuditSensitiveAction,"
+        },
+        {
+          "line": 178,
+          "text": "export type ExportAccountantTrustPackServiceInput ="
+        },
+        {
+          "line": 2604,
+          "text": "export async function exportAccountantTrustPack("
+        },
+        {
+          "line": 2605,
+          "text": "  input: ExportAccountantTrustPackServiceInput,"
+        },
+        {
+          "line": 2625,
+          "text": "    const decision = await evaluateAndAuditSensitiveAction(tx, {"
+        }
+      ]
+    },
+    {
+      "file": "services/pos/__tests__/retention-offline-operator.browser-fixture.test.ts",
+      "sha256": "dd4ed45c246753ccf92cf656916e1924c27de1582e29f19a8899ea340f4144f3",
+      "matches": [
+        {
+          "line": 11,
+          "text": "function assertDisposableTarget() {"
+        },
+        {
+          "line": 15,
+          "text": "  const target = new URL(process.env.DATABASE_URL ?? \"\")"
+        },
+        {
+          "line": 16,
+          "text": "  const name = process.env.POS_DISPOSABLE_DATABASE_NAME ?? \"\""
+        },
+        {
+          "line": 17,
+          "text": "  if (target.hostname !== \"localhost\" || !/^stoquify_pos_audit_\\d{8}_[a-f0-9]+$/.test(name)"
+        },
+        {
+          "line": 19,
+          "text": "    throw new Error(\"Refusing full POS commit tests outside the recorded disposable database\")"
+        },
+        {
+          "line": 26,
+          "text": "  assertDisposableTarget()"
+        },
+        {
+          "line": 83,
+          "text": "const suite = process.env.RUN_RETENTION_BROWSER_FIXTURE === '1' ? describe : describe.skip"
+        }
+      ]
+    },
+    {
+      "file": "package.json",
+      "sha256": "21a30b394c82bb245487b96eec11710abeeafdeef2ce805ac4d54897f8c2755b",
+      "matches": [
+        {
+          "line": 6,
+          "text": "    \"agent:workflow:check\": \"node scripts/verify-agent-workflow-contract.js\","
+        }
+      ]
+    },
+    {
+      "file": "jest.payroll-trust-spine.config.cjs",
+      "sha256": "da43ee692dcd1295ccac8255daa9a408090a9335628f4ab7a74d9d0dea8acb1b",
+      "matches": [
+        {
+          "line": 6,
+          "text": " * focused control tests bounded without changing their transforms or setup."
+        },
+        {
+          "line": 23,
+          "text": "  testEnvironment: \"jsdom\","
+        },
+        {
+          "line": 24,
+          "text": "  setupFilesAfterEnv: [\"<rootDir>/jest.setup.ts\"],"
+        },
+        {
+          "line": 40,
+          "text": "  transform: {"
+        },
+        {
+          "line": 41,
+          "text": "    \"^.+\\\\.(js|jsx|ts|tsx)$\": \"next/dist/build/swc/jest-transformer\","
+        },
+        {
+          "line": 48,
+          "text": "  transformIgnorePatterns: ["
+        }
+      ]
+    },
+    {
+      "file": "jest.setup.ts",
+      "sha256": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+      "matches": [
+        {
+          "line": 12,
+          "text": "jest.mock('next/navigation', () => ({"
+        },
+        {
+          "line": 28,
+          "text": "jest.mock('@/prisma/db', () => ({"
+        },
+        {
+          "line": 54,
+          "text": "jest.mock('@uploadthing/react', () => ({"
+        },
+        {
+          "line": 62,
+          "text": "jest.mock('@/components/notifications/NotificationProvider', () => ({"
+        },
+        {
+          "line": 74,
+          "text": "jest.mock('@/lib/generateSKU', () => ({"
+        },
+        {
+          "line": 79,
+          "text": "jest.mock('@/lib/generateSlug', () => ({"
+        },
+        {
+          "line": 84,
+          "text": "jest.mock('@/lib/inventory/update-inventory-levels', () => ({"
+        },
+        {
+          "line": 89,
+          "text": "jest.mock('@/lib/item/revalidation', () => ({"
+        }
+      ]
+    },
+    {
+      "file": "lib/pos/__tests__/offline-local-queue.test.ts",
+      "sha256": "8e5ee8f5d4c71f5455b5eedd6bcb3cd03492329ea0ee1e43c204c63d602fc897",
+      "matches": [
+        {
+          "line": 3,
+          "text": "import { mkdtempSync, readFileSync, rmSync } from \"node:fs\""
+        },
+        {
+          "line": 40,
+          "text": "    await new Promise<void>(resolve => server.listen(0, \"127.0.0.1\", resolve))"
+        },
+        {
+          "line": 44,
+          "text": "    browser = await chromium.launch({ headless: true })"
+        },
+        {
+          "line": 48,
+          "text": "  afterAll(async () => {"
+        },
+        {
+          "line": 53,
+          "text": "  it(\"discovers local-only queues without server enrollment and blocks close across sessions\", async () => {"
+        },
+        {
+          "line": 65,
+          "text": "  it(\"detects another tab's queue and distinguishes ingestion acknowledgement from financial completion\", async () => {"
+        },
+        {
+          "line": 78,
+          "text": "  it(\"fails closed for an orphaned migration marker instead of reporting an empty inventory\", async () => {"
+        },
+        {
+          "line": 104,
+          "text": "  it(\"quarantines altered payloads during inventory without deleting their evidence\", async () => {"
+        },
+        {
+          "line": 122,
+          "text": "  it(\"P06 preserves unknown evidence through real browser offline and reconnect transitions\", async () => {"
+        },
+        {
+          "line": 160,
+          "text": "  it(\"conserves concurrent acknowledgements across tabs, reload and a continuous hash chain\", async () => {"
+        },
+        {
+          "line": 176,
+          "text": "  it(\"keeps final fiscal numbering unavailable to caller-controlled queue input\", async () => {"
+        },
+        {
+          "line": 194,
+          "text": "  it(\"migrates legacy SYNCING evidence without replacing identities, and retains original bytes\", async () => {"
+        },
+        {
+          "line": 214,
+          "text": "  it(\"recovers an interrupted migration after marker write failure\", async () => {"
+        },
+        {
+          "line": 230,
+          "text": "  it(\"does not acknowledge an injected quota failure or lose previously committed evidence\", async () => {"
+        },
+        {
+          "line": 246,
+          "text": "  it(\"does not acknowledge a transaction aborted after its write request\", async () => {"
+        },
+        {
+          "line": 265,
+          "text": "  it(\"allows only one active cross-tab lease and retries original identities after tab termination\", async () => {"
+        },
+        {
+          "line": 282,
+          "text": "  it(\"retains uncertain evidence, retries without a replacement identity and ignores stale responses\", async () => {"
+        },
+        {
+          "line": 301,
+          "text": "  it(\"keeps conflict evidence and prevents sending newer events out of sequence\", async () => {"
+        },
+        {
+          "line": 314,
+          "text": "  it(\"blocks changed legacy data and detects eviction instead of resurrecting a stale queue\", async () => {"
+        },
+        {
+          "line": 331,
+          "text": "  it(\"blocks altered payload hashes and changes of cashier-session ownership\", async () => {"
+        },
+        {
+          "line": 345,
+          "text": "  it(\"survives closing and reopening a persistent browser profile with an unresolved attempt\", async () => {"
+        },
+        {
+          "line": 349,
+          "text": "      persistent = await chromium.launchPersistentContext(profile, { headless: true })"
+        },
+        {
+          "line": 357,
+          "text": "      persistent = await chromium.launchPersistentContext(profile, { headless: true })"
+        },
+        {
+          "line": 366,
+          "text": "      const expectedPrefix = resolve(tmpdir()) + sep + \"stoquify-offline-test-\""
+        },
+        {
+          "line": 367,
+          "text": "      if (!absoluteProfile.startsWith(expectedPrefix)) throw new Error(\"Refusing unexpected test-profile cleanup path\")"
+        },
+        {
+          "line": 369,
+          "text": "      rmSync(absoluteProfile, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })"
+        },
+        {
+          "line": 373,
+          "text": "  it(\"rejects unsupported or denied IndexedDB instead of silently falling back to localStorage\", async () => {"
+        },
+        {
+          "line": 385,
+          "text": "  it(\"does not strand migrated attempts with an invalid or unbounded lease\", async () => {"
+        },
+        {
+          "line": 396,
+          "text": "  it(\"caps each claim at the server limit and resumes remaining events in sequence\", async () => {"
+        }
+      ]
+    }
+  ],
+  "graph": {
+    "path": "graphify-out/graph.json",
+    "sha256": "0194632742d6adfc606bcb099830bddc06460aeb413da42b951898bb57832cab",
+    "freshness": "August discovery evidence, not live behavior",
+    "nodes": [
+      {
+        "label": "getAccountingSettings()",
+        "file_type": "code",
+        "source_file": "services\\accounting\\accounting-settings.service.ts",
+        "source_location": "L204",
+        "id": "accounting_accounting_settings_service_getaccountingsettings",
+        "community": 8,
+        "norm_label": "getaccountingsettings()"
+      },
+      {
+        "label": "commitPOSSale()",
+        "file_type": "code",
+        "source_file": "services\\pos\\pos.service.ts",
+        "source_location": "L950",
+        "id": "pos_pos_service_commitpossale",
+        "community": 4,
+        "norm_label": "commitpossale()"
+      },
+      {
+        "label": "registry.ts",
+        "file_type": "code",
+        "source_file": "services\\regulatory\\country-packs\\registry.ts",
+        "source_location": "L1",
+        "id": "services_regulatory_country_packs_registry_ts",
+        "community": 16,
+        "norm_label": "registry.ts"
+      }
+    ],
+    "edges": [
+      {
+        "relation": "contains",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\accounting\\accounting-settings.service.ts",
+        "source_location": "L204",
+        "weight": 1,
+        "_src": "services_accounting_accounting_settings_service_ts",
+        "_tgt": "accounting_accounting_settings_service_getaccountingsettings",
+        "source": "services_accounting_accounting_settings_service_ts",
+        "target": "accounting_accounting_settings_service_getaccountingsettings",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\accounting\\accounting-settings.service.ts",
+        "source_location": "L211",
+        "weight": 1,
+        "_src": "accounting_accounting_settings_service_ensureaccountingsettings",
+        "_tgt": "accounting_accounting_settings_service_getaccountingsettings",
+        "source": "accounting_accounting_settings_service_getaccountingsettings",
+        "target": "accounting_accounting_settings_service_ensureaccountingsettings",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "services\\accounting\\control-center.service.ts",
+        "source_location": "L306",
+        "weight": 1,
+        "_src": "accounting_control_center_service_getaccountingcontrolcenterdata",
+        "_tgt": "accounting_accounting_settings_service_getaccountingsettings",
+        "source": "accounting_accounting_settings_service_getaccountingsettings",
+        "target": "accounting_control_center_service_getaccountingcontrolcenterdata"
+      },
+      {
+        "relation": "calls",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "services\\pos\\pos.service.ts",
+        "source_location": "L1435",
+        "weight": 1,
+        "_src": "pos_pos_service_commitpossale",
+        "_tgt": "pos_money_moneytonumber",
+        "source": "pos_money_moneytonumber",
+        "target": "pos_pos_service_commitpossale"
+      },
+      {
+        "relation": "contains",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\pos\\pos.service.ts",
+        "source_location": "L950",
+        "weight": 1,
+        "_src": "services_pos_pos_service_ts",
+        "_tgt": "pos_pos_service_commitpossale",
+        "source": "services_pos_pos_service_ts",
+        "target": "pos_pos_service_commitpossale",
+        "confidence_score": 1
+      },
+      {
+        "relation": "calls",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "services\\pos\\pos.service.ts",
+        "source_location": "L1403",
+        "weight": 1,
+        "_src": "pos_pos_service_commitpossale",
+        "_tgt": "pos_receipt_service_getsalesreceipt",
+        "source": "pos_pos_service_commitpossale",
+        "target": "pos_receipt_service_getsalesreceipt"
+      },
+      {
+        "relation": "calls",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "services\\pos\\pos.service.ts",
+        "source_location": "L1411",
+        "weight": 1,
+        "_src": "pos_pos_service_commitpossale",
+        "_tgt": "pos_receipt_service_sendreceipt",
+        "source": "pos_pos_service_commitpossale",
+        "target": "pos_receipt_service_sendreceipt"
+      },
+      {
+        "relation": "contains",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\registry.ts",
+        "source_location": "L8",
+        "weight": 1,
+        "_src": "services_regulatory_country_packs_registry_ts",
+        "_tgt": "country_packs_registry_getcountrypacks",
+        "source": "services_regulatory_country_packs_registry_ts",
+        "target": "country_packs_registry_getcountrypacks",
+        "confidence_score": 1
+      },
+      {
+        "relation": "contains",
+        "confidence": "EXTRACTED",
+        "source_file": "services\\regulatory\\country-packs\\registry.ts",
+        "source_location": "L12",
+        "weight": 1,
+        "_src": "services_regulatory_country_packs_registry_ts",
+        "_tgt": "country_packs_registry_getcountrypack",
+        "source": "services_regulatory_country_packs_registry_ts",
+        "target": "country_packs_registry_getcountrypack",
+        "confidence_score": 1
+      }
+    ]
+  }
+}

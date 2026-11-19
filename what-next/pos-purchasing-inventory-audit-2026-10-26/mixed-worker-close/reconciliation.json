@@ -1,0 +1,631 @@
+{
+  "table": "audit_mv_receiver_f03caf7c711d",
+  "evidence": [
+    {
+      "scenario": "outbox live lease baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-3dcf71f1-63af-455a-b7b8-1e3ea648ee7e",
+      "activeLeasePreserved": {
+        "id": "cmvrtkn800013ma5ofj1w8yu9",
+        "organizationId": "org-full-pos-3dcf71f1-63af-455a-b7b8-1e3ea648ee7e",
+        "businessEventId": "cmvrtkn7z000zma5ok6542uak",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.e1938301-1940-462a-b257-f1527d3ff82e",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:a6b2ce14-af97-41e6-9e79-11c60a6bad42:NOTIFICATION:audit.mixed.recovery.e1938301-1940-462a-b257-f1527d3ff82e",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "correlationId": "c30466ef-b44b-4711-adfe-06f9854e8af1",
+        "status": "LOCKED",
+        "attempts": 2,
+        "maxAttempts": 5,
+        "availableAt": "2026-10-28T07:55:21.359Z",
+        "lockedAt": "2026-10-28T08:01:21.459Z",
+        "lockedBy": "reused-worker-id",
+        "processedAt": null,
+        "failedAt": null,
+        "lastErrorCode": null,
+        "lastErrorMessage": null,
+        "metadata": null,
+        "createdAt": "2026-10-28T07:55:21.359Z",
+        "updatedAt": "2026-10-28T07:55:33.291Z"
+      },
+      "state": {
+        "id": "cmvrtkn800013ma5ofj1w8yu9",
+        "organizationId": "org-full-pos-3dcf71f1-63af-455a-b7b8-1e3ea648ee7e",
+        "businessEventId": "cmvrtkn7z000zma5ok6542uak",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.e1938301-1940-462a-b257-f1527d3ff82e",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:a6b2ce14-af97-41e6-9e79-11c60a6bad42:NOTIFICATION:audit.mixed.recovery.e1938301-1940-462a-b257-f1527d3ff82e",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "correlationId": "c30466ef-b44b-4711-adfe-06f9854e8af1",
+        "status": "SENT",
+        "attempts": 2,
+        "maxAttempts": 5,
+        "availableAt": "2026-10-28T07:55:21.359Z",
+        "lockedAt": null,
+        "lockedBy": null,
+        "processedAt": "2026-10-28T07:55:57.419Z",
+        "failedAt": null,
+        "lastErrorCode": null,
+        "lastErrorMessage": null,
+        "metadata": null,
+        "createdAt": "2026-10-28T07:55:21.359Z",
+        "updatedAt": "2026-10-28T07:55:57.838Z"
+      },
+      "effects": [],
+      "scope": "Lease control probe; no external effect dispatched"
+    },
+    {
+      "scenario": "outbox live lease current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-71a3b896-10f0-4b5d-b626-4a3d3628962d",
+      "activeLeasePreserved": {
+        "id": "cmvrtlg7u0027ma5o0plwq6jd",
+        "organizationId": "org-full-pos-71a3b896-10f0-4b5d-b626-4a3d3628962d",
+        "businessEventId": "cmvrtlg7t0023ma5omdwnep0r",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.7f9554b9-d5de-4831-8d4f-8f9fc8ded99b",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:de5db425-4628-4229-a0df-28630662add9:NOTIFICATION:audit.mixed.recovery.7f9554b9-d5de-4831-8d4f-8f9fc8ded99b",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "correlationId": "cf3b5137-2cf9-4d24-9b05-9d823621a470",
+        "status": "LOCKED",
+        "attempts": 2,
+        "maxAttempts": 5,
+        "availableAt": "2026-10-28T07:55:58.937Z",
+        "lockedAt": "2026-10-28T08:01:59.153Z",
+        "lockedBy": "reused-worker-id",
+        "processedAt": null,
+        "failedAt": null,
+        "lastErrorCode": null,
+        "lastErrorMessage": null,
+        "metadata": null,
+        "createdAt": "2026-10-28T07:55:58.937Z",
+        "updatedAt": "2026-10-28T07:56:20.893Z"
+      },
+      "state": {
+        "id": "cmvrtlg7u0027ma5o0plwq6jd",
+        "organizationId": "org-full-pos-71a3b896-10f0-4b5d-b626-4a3d3628962d",
+        "businessEventId": "cmvrtlg7t0023ma5omdwnep0r",
+        "channel": "NOTIFICATION",
+        "eventName": "audit.mixed.recovery.7f9554b9-d5de-4831-8d4f-8f9fc8ded99b",
+        "destination": "synthetic-postgres-receiver",
+        "idempotencyKey": "SYSTEM:de5db425-4628-4229-a0df-28630662add9:NOTIFICATION:audit.mixed.recovery.7f9554b9-d5de-4831-8d4f-8f9fc8ded99b",
+        "payloadHash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+        "payload": {
+          "synthetic": true
+        },
+        "correlationId": "cf3b5137-2cf9-4d24-9b05-9d823621a470",
+        "status": "SENT",
+        "attempts": 2,
+        "maxAttempts": 5,
+        "availableAt": "2026-10-28T07:55:58.937Z",
+        "lockedAt": null,
+        "lockedBy": null,
+        "processedAt": "2026-10-28T07:57:15.378Z",
+        "failedAt": null,
+        "lastErrorCode": null,
+        "lastErrorMessage": null,
+        "metadata": null,
+        "createdAt": "2026-10-28T07:55:58.937Z",
+        "updatedAt": "2026-10-28T07:57:16.143Z"
+      },
+      "effects": [],
+      "scope": "Lease control probe; no external effect dispatched"
+    },
+    {
+      "scenario": "late webhook success baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-0bdbb146-2f90-4128-8f57-4e955a95b390",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "effects": [
+        {
+          "key": "183d81ecde0b584ab67921e8eb494848bd24da1932049b4022e586ef62e8cc3d",
+          "delivery_id": "cmvrtn5bc003ama5o3cf73quc",
+          "requests": 2
+        }
+      ],
+      "activeLeasePreserved": {
+        "id": "cmvrtn5bc003ama5o3cf73quc",
+        "organizationId": "org-full-pos-0bdbb146-2f90-4128-8f57-4e955a95b390",
+        "incidentId": "cmvrtn57k0038ma5o6jpg7rwy",
+        "channel": "WEBHOOK",
+        "status": "PROCESSING",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": null,
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": "2001-01-01T00:06:00.000Z",
+        "lockedAt": "2001-01-01T00:06:00.000Z",
+        "lockedBy": "reused-worker-id",
+        "externalReference": null,
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:57:18.120Z",
+        "updatedAt": "2026-10-28T07:57:39.377Z"
+      },
+      "state": {
+        "id": "cmvrtn5bc003ama5o3cf73quc",
+        "organizationId": "org-full-pos-0bdbb146-2f90-4128-8f57-4e955a95b390",
+        "incidentId": "cmvrtn57k0038ma5o6jpg7rwy",
+        "channel": "WEBHOOK",
+        "status": "DELIVERED",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": "2001-01-01T00:06:00.000Z",
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": "synthetic-mixed-receiver",
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:57:18.120Z",
+        "updatedAt": "2026-10-28T07:57:39.823Z"
+      },
+      "older": {
+        "ready": true,
+        "delivered": 0,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      },
+      "newer": {
+        "ready": true,
+        "delivered": 1,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      }
+    },
+    {
+      "scenario": "late webhook failure baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-0f57a519-5c2d-4c38-b276-7bdca41ff581",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "effects": [
+        {
+          "key": "7e4e1e5cd76fa4d1ce54257f0d7847b4cc3e16d95577bc619b90a67a999b733e",
+          "delivery_id": "cmvrtnngp004dma5o4noybi02",
+          "requests": 2
+        }
+      ],
+      "activeLeasePreserved": {
+        "id": "cmvrtnngp004dma5o4noybi02",
+        "organizationId": "org-full-pos-0f57a519-5c2d-4c38-b276-7bdca41ff581",
+        "incidentId": "cmvrtnnfs004bma5o3wfz18tg",
+        "channel": "WEBHOOK",
+        "status": "PROCESSING",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": null,
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": "2001-01-01T00:06:00.000Z",
+        "lockedAt": "2001-01-01T00:06:00.000Z",
+        "lockedBy": "reused-worker-id",
+        "externalReference": null,
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:57:41.641Z",
+        "updatedAt": "2026-10-28T07:57:57.933Z"
+      },
+      "state": {
+        "id": "cmvrtnngp004dma5o4noybi02",
+        "organizationId": "org-full-pos-0f57a519-5c2d-4c38-b276-7bdca41ff581",
+        "incidentId": "cmvrtnnfs004bma5o3wfz18tg",
+        "channel": "WEBHOOK",
+        "status": "DELIVERED",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": "2001-01-01T00:06:00.000Z",
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": "synthetic-mixed-receiver",
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:57:41.641Z",
+        "updatedAt": "2026-10-28T07:57:58.348Z"
+      },
+      "older": {
+        "ready": true,
+        "delivered": 0,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      },
+      "newer": {
+        "ready": true,
+        "delivered": 1,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      }
+    },
+    {
+      "scenario": "late webhook success current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-74e56d0a-c5b7-4585-9402-c553ed8aaaaf",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "effects": [
+        {
+          "key": "a57487de445ee27be328a3edd56bf771089cfca9ff34d2556545032b50f1edb7",
+          "delivery_id": "cmvrto1a9005gma5oyr3782wm",
+          "requests": 2
+        }
+      ],
+      "activeLeasePreserved": {
+        "id": "cmvrto1a9005gma5oyr3782wm",
+        "organizationId": "org-full-pos-74e56d0a-c5b7-4585-9402-c553ed8aaaaf",
+        "incidentId": "cmvrto197005ema5o2eipmscb",
+        "channel": "WEBHOOK",
+        "status": "PROCESSING",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": null,
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": "2001-01-01T00:06:00.000Z",
+        "lockedAt": "2001-01-01T00:06:00.000Z",
+        "lockedBy": "reused-worker-id",
+        "externalReference": null,
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:57:59.553Z",
+        "updatedAt": "2026-10-28T07:58:10.028Z"
+      },
+      "state": {
+        "id": "cmvrto1a9005gma5oyr3782wm",
+        "organizationId": "org-full-pos-74e56d0a-c5b7-4585-9402-c553ed8aaaaf",
+        "incidentId": "cmvrto197005ema5o2eipmscb",
+        "channel": "WEBHOOK",
+        "status": "DELIVERED",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": "2001-01-01T00:06:00.000Z",
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": "synthetic-mixed-receiver",
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:57:59.553Z",
+        "updatedAt": "2026-10-28T07:58:10.379Z"
+      },
+      "older": {
+        "ready": true,
+        "delivered": 0,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      },
+      "newer": {
+        "ready": true,
+        "delivered": 1,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      }
+    },
+    {
+      "scenario": "late webhook failure current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-784132e9-df2f-4f83-9fc7-70dc41dbe7f3",
+      "logicalClock": "2001-01-01T00:00:00.000Z",
+      "effects": [
+        {
+          "key": "7047374bab1c4dd222d231335cf38c76f5c272e2683dda19dccb3bf68c889d30",
+          "delivery_id": "cmvrto9yd006jma5oe8e2asci",
+          "requests": 2
+        }
+      ],
+      "activeLeasePreserved": {
+        "id": "cmvrto9yd006jma5oe8e2asci",
+        "organizationId": "org-full-pos-784132e9-df2f-4f83-9fc7-70dc41dbe7f3",
+        "incidentId": "cmvrto9y4006hma5or3agyuec",
+        "channel": "WEBHOOK",
+        "status": "PROCESSING",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": null,
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": "2001-01-01T00:06:00.000Z",
+        "lockedAt": "2001-01-01T00:06:00.000Z",
+        "lockedBy": "reused-worker-id",
+        "externalReference": null,
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:58:10.788Z",
+        "updatedAt": "2026-10-28T07:58:19.076Z"
+      },
+      "state": {
+        "id": "cmvrto9yd006jma5oe8e2asci",
+        "organizationId": "org-full-pos-784132e9-df2f-4f83-9fc7-70dc41dbe7f3",
+        "incidentId": "cmvrto9y4006hma5or3agyuec",
+        "channel": "WEBHOOK",
+        "status": "DELIVERED",
+        "dedupeKey": "created:same-mixed-synthetic-source",
+        "recipientId": null,
+        "recipientRole": null,
+        "title": "Stoquify agent runtime control requires attention",
+        "message": "Review the linked Workflow Assurance incident.",
+        "actionRoute": "/dashboard/assurance",
+        "deliveredAt": "2001-01-01T00:06:00.000Z",
+        "failedAt": null,
+        "failureCode": null,
+        "failureReason": null,
+        "attemptCount": 2,
+        "nextAttemptAt": null,
+        "lockedAt": null,
+        "lockedBy": null,
+        "externalReference": "synthetic-mixed-receiver",
+        "metadata": {
+          "reason": "created",
+          "severity": "BLOCKING",
+          "sourceHash": "same-mixed-synthetic-source"
+        },
+        "createdAt": "2026-10-28T07:58:10.788Z",
+        "updatedAt": "2026-10-28T07:58:19.389Z"
+      },
+      "older": {
+        "ready": true,
+        "delivered": 0,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      },
+      "newer": {
+        "ready": true,
+        "delivered": 1,
+        "retried": 0,
+        "failed": 0,
+        "deadLettered": 0
+      }
+    },
+    {
+      "scenario": "specific close denials baseline -> current",
+      "status": "PASS",
+      "organizationId": "org-full-pos-7b685ccd-918b-42f7-9346-804e45e510bc",
+      "runId": "cmvrtdvp20001mamgvirjs6u6",
+      "denials": [
+        {
+          "source": "baseline",
+          "kind": "permission",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "Missing accounting.close.certify permission."
+          }
+        },
+        {
+          "source": "baseline",
+          "kind": "self-certification",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "The close runner cannot certify the same close pack."
+          }
+        },
+        {
+          "source": "baseline",
+          "kind": "foreign-tenant",
+          "error": {
+            "name": "NotFoundError",
+            "code": "NOT_FOUND",
+            "message": "Close run not found"
+          }
+        },
+        {
+          "source": "baseline",
+          "kind": "stale-authentication",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "FRESH_AUTH_REQUIRED",
+            "message": "Fresh authentication is required to certify a close pack."
+          }
+        },
+        {
+          "source": "current",
+          "kind": "permission",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "Missing accounting.close.certify permission."
+          }
+        },
+        {
+          "source": "current",
+          "kind": "self-certification",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "The close runner cannot certify the same close pack."
+          }
+        },
+        {
+          "source": "current",
+          "kind": "foreign-tenant",
+          "error": {
+            "name": "NotFoundError",
+            "code": "NOT_FOUND",
+            "message": "Close run not found"
+          }
+        },
+        {
+          "source": "current",
+          "kind": "stale-authentication",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "FRESH_AUTH_REQUIRED",
+            "message": "Fresh authentication is required to certify a close pack."
+          }
+        }
+      ],
+      "exportsBefore": 3,
+      "exportsAfter": 3
+    },
+    {
+      "scenario": "specific close denials current -> baseline",
+      "status": "PASS",
+      "organizationId": "org-full-pos-4f1c5808-dd23-4a7f-9b18-0145376e85ba",
+      "runId": "cmvrtihl90001maws6g7qksda",
+      "denials": [
+        {
+          "source": "current",
+          "kind": "permission",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "Missing accounting.close.certify permission."
+          }
+        },
+        {
+          "source": "current",
+          "kind": "self-certification",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "The close runner cannot certify the same close pack."
+          }
+        },
+        {
+          "source": "current",
+          "kind": "foreign-tenant",
+          "error": {
+            "name": "NotFoundError",
+            "code": "NOT_FOUND",
+            "message": "Close run not found"
+          }
+        },
+        {
+          "source": "current",
+          "kind": "stale-authentication",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "FRESH_AUTH_REQUIRED",
+            "message": "Fresh authentication is required to certify a close pack."
+          }
+        },
+        {
+          "source": "baseline",
+          "kind": "permission",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "Missing accounting.close.certify permission."
+          }
+        },
+        {
+          "source": "baseline",
+          "kind": "self-certification",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "The close runner cannot certify the same close pack."
+          }
+        },
+        {
+          "source": "baseline",
+          "kind": "foreign-tenant",
+          "error": {
+            "name": "NotFoundError",
+            "code": "NOT_FOUND",
+            "message": "Close run not found"
+          }
+        },
+        {
+          "source": "baseline",
+          "kind": "stale-authentication",
+          "error": {
+            "name": "BusinessRuleError",
+            "code": "FRESH_AUTH_REQUIRED",
+            "message": "Fresh authentication is required to certify a close pack."
+          }
+        }
+      ],
+      "exportsBefore": 3,
+      "exportsAfter": 3
+    }
+  ]
+}

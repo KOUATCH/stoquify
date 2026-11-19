@@ -325,6 +325,8 @@ export type BIRiskRank = {
   evidenceGrade: EvidenceGrade
   trustState: BITrustState
   freshness: BIFreshness
+  /** Optional source identity for grouping repeated authorized evidence. */
+  provenance?: BIProvenance | null
   sourceModules: SnapshotSourceModule[]
   blockers: BIBlocker[]
   redactions: BIRedaction[]

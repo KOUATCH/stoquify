@@ -32,7 +32,10 @@ import {
   approveHrisEmployeeLifecycle,
   getHrisEmployeeLifecycleTimeline,
   requestHrisEmployeeLifecycle,
+  employeeSnapshot,
 } from "../lifecycle.service"
+import { hashBusinessPayload } from "@/services/events/business-event.service"
+import { projectEmploymentAsOf } from "../employment-projection"
 
 const mockedRecordBusinessEventInTx = recordBusinessEventInTx as jest.Mock
 const mockedMarkBusinessEventAppliedInTx = markBusinessEventAppliedInTx as jest.Mock
@@ -98,7 +101,10 @@ function pending(overrides: Record<string, unknown> = {}) {
 
 function buildTx(initial = employee()) {
   let current = initial
+  const workflow=(current.metadata as any)?.hrisLifecycle?.pending
+  if(workflow&&!workflow.sourceStateHash)workflow.sourceStateHash=`sha256:${hashBusinessPayload(employeeSnapshot(current))}`
   const tx = {
+    $queryRaw: jest.fn().mockResolvedValue([{isolationLevel:"read committed"}]),
     payrollEmployee: {
       findFirst: jest.fn(async () => current),
       update: jest.fn(async ({ data }: { data: Record<string, unknown> }) => {
@@ -110,18 +116,19 @@ function buildTx(initial = employee()) {
     payrollAttendanceSnapshot: { findFirst: jest.fn().mockResolvedValue(null) },
     payrollContract: {
       findFirst: jest.fn().mockResolvedValue({ id: "contract-1" }),
-      updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      findMany: jest.fn().mockResolvedValue([]), update: jest.fn().mockResolvedValue({}),
     },
     payrollEmployeeRubriqueAssignment: {
-      updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      findMany: jest.fn().mockResolvedValue([]), update: jest.fn().mockResolvedValue({}),
     },
-    businessEvent: { findMany: jest.fn().mockResolvedValue([]) },
+    businessEvent: { findMany: jest.fn().mockResolvedValue([]), findFirst: jest.fn().mockResolvedValue(null) },
     auditLog: { create: jest.fn().mockResolvedValue({ id: "audit-1" }) },
   }
   return tx
 }
 
 describe("HRIS employee lifecycle service", () => {
+  afterEach(()=>jest.useRealTimers())
   beforeEach(() => {
     jest.clearAllMocks()
     mockedRecordBusinessEventInTx.mockImplementation(async (_tx, input) => ({
@@ -141,7 +148,7 @@ describe("HRIS employee lifecycle service", () => {
       actorPermissions: ["hris.people.manage"],
       employeeId: "emp-1",
       type: "TRANSFER",
-      effectiveAt: "2026-08-01",
+      effectiveAt: new Date("2026-08-01"),
       reason: "Move closer to the new operating team",
       evidenceHash: "sha256:transfer-evidence",
       target: { locationId: "loc-2", department: "Finance" },
@@ -171,7 +178,7 @@ describe("HRIS employee lifecycle service", () => {
       actorPermissions: ["hris.people.manage"],
       employeeId: "emp-1",
       type: "ONBOARD",
-      effectiveAt: "2026-08-01",
+      effectiveAt: new Date("2026-08-01"),
       reason: "Attempt duplicate onboarding",
       evidenceHash: "sha256:onboarding-evidence",
     }, tx as never)).rejects.toBeInstanceOf(BusinessRuleError)
@@ -265,8 +272,8 @@ describe("HRIS employee lifecycle service", () => {
       status: PayrollEmployeeStatus.TERMINATED,
       terminationDate: "2026-08-01T00:00:00.000Z",
     })
-    expect(tx.payrollContract.updateMany).toHaveBeenCalledTimes(2)
-    expect(tx.payrollEmployeeRubriqueAssignment.updateMany).toHaveBeenCalledTimes(2)
+    expect(tx.payrollContract.findMany).toHaveBeenCalled()
+    expect(tx.payrollEmployeeRubriqueAssignment.findMany).toHaveBeenCalled()
     expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
       eventType: "hris.employee.lifecycle.applied",
     }))
@@ -331,5 +338,38 @@ describe("HRIS employee lifecycle service", () => {
     expect(tx.auditLog.create).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ action: "HRIS_EMPLOYEE_LIFECYCLE_TIMELINE_READ" }),
     }))
+  })
+
+  it("retains a future termination and applies exactly at the effective instant",async()=>{
+    jest.useFakeTimers({doNotFake:["nextTick","setImmediate"]}).setSystemTime(new Date("2026-07-31T23:59:59Z"))
+    const tx=buildTx(employee({metadata:{hrisLifecycle:{pending:pending({status:"APPROVED",approvedById:"checker",approvalEvidenceHash:"sha256:approval-proof"})}}}))
+    const input={organizationId:"org-1",actorId:"checker",actorPermissions:["hris.people.manage"],employeeId:"emp-1",requestId:"event-requested"}
+    const scheduled=await applyApprovedHrisEmployeeLifecycle(input,tx as never)
+    expect(scheduled).toMatchObject({applied:false,employee:{status:"ACTIVE"}})
+    expect(tx.payrollEmployee.update).not.toHaveBeenCalled()
+    expect(tx.payrollContract.update).not.toHaveBeenCalled()
+    jest.setSystemTime(new Date("2026-08-01T00:00:00Z"))
+    expect(await applyApprovedHrisEmployeeLifecycle(input,tx as never)).toMatchObject({applied:true,employee:{status:"TERMINATED"}})
+  })
+
+  it("rejects changed source fields and revoked authority before applying",async()=>{
+    const tx=buildTx(employee({metadata:{hrisLifecycle:{pending:pending({status:"APPROVED",approvedById:"checker",approvalEvidenceHash:"sha256:approval-proof"})}}}))
+    await tx.payrollEmployee.update({data:{department:"Changed after request"}})
+    tx.payrollEmployee.update.mockClear()
+    const input={organizationId:"org-1",actorId:"checker",actorPermissions:["hris.people.manage"],employeeId:"emp-1",requestId:"event-requested"}
+    await expect(applyApprovedHrisEmployeeLifecycle(input,tx as never)).rejects.toThrow("SOURCE_CHANGED")
+    await expect(applyApprovedHrisEmployeeLifecycle({...input,actorPermissions:[]},tx as never)).rejects.toThrow("Missing permission")
+    expect(tx.payrollEmployee.update).not.toHaveBeenCalled()
+  })
+
+  it("projects applied transfer and rehire history without turning future approvals into facts",()=>{
+    const before=employeeSnapshot(employee())
+    const transfer={...before,department:"Finance"}
+    const rehire={...transfer,hireDate:"2026-10-01T00:00:00.000Z"}
+    const events=[{id:"transfer",payload:{effectiveAt:"2026-08-01T00:00:00Z",before,after:transfer}},{id:"rehire",payload:{effectiveAt:"2026-10-01T00:00:00Z",before:transfer,after:rehire}}]
+    expect(projectEmploymentAsOf(rehire,events,new Date("2026-07-01Z")).state).toEqual(before)
+    expect(projectEmploymentAsOf(rehire,events,new Date("2026-09-01Z")).state).toEqual(transfer)
+    expect(projectEmploymentAsOf(rehire,events,new Date("2027-01-01Z")).state).toEqual(rehire)
+    expect(()=>projectEmploymentAsOf(rehire,[{id:"legacy",payload:{effectiveAt:"2026-10-01T00:00:00Z"}}],new Date("2026-07-01Z"))).toThrow("HISTORY_UNPROVEN")
   })
 })

@@ -1,0 +1,152 @@
+import "server-only"
+import {randomUUID,createCipheriv} from "node:crypto"
+import {Prisma} from "@prisma/client"
+import {db} from "@/prisma/db"
+import {z} from "zod"
+import {BusinessRuleError,ConflictError,ForbiddenError,NotFoundError} from "@/services/_shared/action-errors"
+import {hasAnyRbacPermission} from "@/lib/security/rbac-permissions"
+import {assertSetupAccount} from "./setup-reviewer.service"
+import {resolveHrisPeopleAccessScope} from "./org.service"
+import {lockHrisReviewEmployeeInTx} from "./review-lock.service"
+import {documentInputSchema,documentPolicies,validateEmployeeDocument,encryptEmployeeDocument,decryptEmployeeDocument,digest,issueDocumentGrant,parseDocumentGrant,type DocumentPolicy,type HrisDocumentActor} from "./employee-document.contract"
+import {runtimeDocumentPorts,type EmployeeDocumentPorts} from "./employee-document.storage"
+
+type Tx=Prisma.TransactionClient
+type DocumentRow={id:string;storageProvider:string;organizationId:string;employeeId:string;uploadedById:string;idempotencyKey:string;requestHash:string;title:string;mimeType:string;byteLength:number;sha256:string;encryptionKey:string;encryptionIv:string;encryptionTag:string;policy:DocumentPolicy;employeeVisible:boolean;status:string;scanProof:unknown;reviewProof:any;revision:number;replacesDocumentId:string|null;expiresAt:Date|null;retainUntil:Date;legalHold:boolean;evidenceBoundAt:Date|null;createdAt:Date}
+const forbidden=()=>new ForbiddenError("HRIS_DOCUMENT_ACCESS_DENIED")
+const missing=()=>new NotFoundError("HRIS_DOCUMENT_UNAVAILABLE")
+const json=(v:unknown)=>JSON.parse(JSON.stringify(v)) as Prisma.InputJsonValue
+function checkStore(r:DocumentRow,p:EmployeeDocumentPorts){if(r.storageProvider!==p.store.name)throw new BusinessRuleError("HRIS_DOCUMENT_STORAGE_IDENTITY_MISMATCH")}
+const objectKey=(r:DocumentRow)=>`hris/${r.organizationId}/${r.id}`
+const transaction=<T>(run:(tx:Tx)=>Promise<T>)=>db.$transaction(run,{isolationLevel:Prisma.TransactionIsolationLevel.ReadCommitted,maxWait:15000,timeout:25000})
+async function account(tx:Tx,actor:HrisDocumentActor){
+ await assertSetupAccount(tx,actor.organizationId,actor.actorId)
+ const roles=await tx.$queryRaw<Array<{permissions:string[]}>>`SELECT r.permissions FROM roles r JOIN "_UserRoles" m ON m."A"=r.id WHERE m."B"=${actor.actorId} AND r."organizationId"=${actor.organizationId} FOR SHARE OF r,m`
+ const live=roles.flatMap(r=>r.permissions);return {...actor,actorPermissions:actor.actorPermissions.filter(p=>live.includes(p))}
+}
+async function scope(tx:Tx,actor:HrisDocumentActor,employeeId?:string,write=false){
+ const own=await tx.payrollEmployee.findMany({where:{organizationId:actor.organizationId,userId:actor.actorId,deletedAt:null},select:{id:true},take:2})
+ if(own.length>1)throw forbidden()
+ if(actor.ownOnly&&(!own[0]||employeeId&&employeeId!==own[0].id||!hasAnyRbacPermission(actor.actorPermissions,[write?"hris.self_service.request":"hris.self_service.read"])))throw forbidden()
+ const target=employeeId??own[0]?.id;if(!target)throw missing()
+ const isOwn=own[0]?.id===target
+ if(isOwn&&hasAnyRbacPermission(actor.actorPermissions,[write?"hris.self_service.request":"hris.self_service.read"]))return {employeeId:target,own:true}
+ if(!hasAnyRbacPermission(actor.actorPermissions,[write?"hris.documents.manage":"hris.documents.read"]))throw forbidden()
+ await resolveHrisPeopleAccessScope({...actor,employeeId:target,limit:1,asOf:new Date()},tx)
+ return {employeeId:target,own:false}
+}
+async function row(tx:Tx,actor:HrisDocumentActor,id:string,write=false,expectedEmployeeId?:string){
+ if(!z.string().uuid().safeParse(id).success)throw missing()
+ const identity=await tx.$queryRaw<Array<{employeeId:string}>>`SELECT "employeeId" FROM hris_employee_documents WHERE id=${id} AND "organizationId"=${actor.organizationId} AND (${expectedEmployeeId??null}::text IS NULL OR "employeeId"=${expectedEmployeeId??null})`
+ if(!identity[0])throw missing();const access=await scope(tx,actor,identity[0].employeeId,write)
+ await lockHrisReviewEmployeeInTx(tx,actor.organizationId,access.employeeId)
+ const rows=await tx.$queryRaw<DocumentRow[]>`SELECT * FROM hris_employee_documents WHERE id=${id} AND "organizationId"=${actor.organizationId} FOR UPDATE`
+ const lockedAccess=await scope(tx,actor,access.employeeId,write)
+ const value=rows[0];if(!value||(lockedAccess.own&&!value.employeeVisible))throw missing()
+ return value
+}
+function publicRow(r:DocumentRow){return {id:r.id,employeeId:r.employeeId,title:r.title,mimeType:r.mimeType,byteLength:r.byteLength,status:r.status,revision:r.revision,employeeVisible:r.employeeVisible,replacesDocumentId:r.replacesDocumentId,expiresAt:r.expiresAt?.toISOString()??null,retainUntil:r.retainUntil.toISOString(),legalHold:r.legalHold,evidenceBound:!!r.evidenceBoundAt,createdAt:r.createdAt.toISOString(),policy:{code:r.policy.code,version:r.policy.version,nameEn:r.policy.nameEn,nameFr:r.policy.nameFr},needsReplacement:!!r.expiresAt&&r.expiresAt<=new Date()&&r.status==="AVAILABLE"}}
+async function audit(tx:Tx,a:HrisDocumentActor,r:DocumentRow,action:string,extra:Record<string,unknown>={}){await tx.auditLog.create({data:{organizationId:a.organizationId,userId:a.actorId,entityType:"HrisEmployeeDocument",entityId:r.id,action,changes:json({employeeId:r.employeeId,revision:r.revision,...extra})}})}
+async function nativeEvidence(tx:Tx,r:DocumentRow){return tx.$queryRaw<Array<{id:string}>>`SELECT id FROM payroll_contracts WHERE "organizationId"=${r.organizationId} AND "employeeId"=${r.employeeId} AND (metadata::text LIKE ${"%"+r.sha256+"%"} OR "signedDocumentHash" LIKE ${"%"+r.sha256+"%"}) UNION ALL SELECT id FROM payroll_employees WHERE "organizationId"=${r.organizationId} AND id=${r.employeeId} AND metadata::text LIKE ${"%"+r.sha256+"%"}`}
+function readable(r:DocumentRow,a?:HrisDocumentActor){if(["AVAILABLE","SUPERSEDED"].includes(r.status))return;if(r.status==="PENDING_REVIEW"&&a&&a.actorId!==r.uploadedById&&hasAnyRbacPermission(a.actorPermissions,["hris.documents.manage"])&&(r.scanProof as {verdict?:string})?.verdict==="CLEAN")return;throw missing()}
+function reencrypt(bytes:Uint8Array,r:DocumentRow){const c=createCipheriv("aes-256-gcm",Buffer.from(r.encryptionKey,"base64"),Buffer.from(r.encryptionIv,"base64"));c.setAAD(Buffer.from(`hris-document-v1:${r.organizationId}:${r.id}`));const out=Buffer.concat([c.update(bytes),c.final()]);if(c.getAuthTag().toString("base64")!==r.encryptionTag)throw new ConflictError("HRIS_DOCUMENT_REPLAY_CONFLICT");return out}
+
+export async function listEmployeeDocuments(actor:HrisDocumentActor,employeeId?:string){return transaction(async tx=>{
+ const a=await account(tx,actor),initial=await scope(tx,a,employeeId)
+ await lockHrisReviewEmployeeInTx(tx,a.organizationId,initial.employeeId)
+ const access=await scope(tx,a,initial.employeeId)
+ const rows=await tx.$queryRaw<DocumentRow[]>`SELECT * FROM hris_employee_documents WHERE "organizationId"=${a.organizationId} AND "employeeId"=${access.employeeId} AND (${!access.own} OR "employeeVisible"=true) ORDER BY "createdAt" DESC,id LIMIT 201`
+ // This workspace is employee-scoped and bounded; no silent partial history.
+ return {employeeId:access.employeeId,documents:rows.slice(0,200).map(publicRow),historyTruncated:rows.length>200,policies:documentPolicies(a.organizationId).filter(p=>!access.own||p.employeeMayUpload&&p.employeeVisible).map(p=>({code:p.code,nameEn:p.nameEn,nameFr:p.nameFr})),canReview:!a.ownOnly&&hasAnyRbacPermission(a.actorPermissions,["hris.documents.manage"]),canRetain:!a.ownOnly&&hasAnyRbacPermission(a.actorPermissions,["hris.documents.retention"])}
+})}
+
+export async function uploadEmployeeDocument(actor:HrisDocumentActor,raw:unknown,bytes:Uint8Array,ports?:EmployeeDocumentPorts){
+ const input=documentInputSchema.parse(raw),file=validateEmployeeDocument(bytes,input.mimeType)
+ const requestHash=digest(JSON.stringify({...input,sha256:file.sha256,byteLength:file.byteLength}))
+ let provider=ports
+ const saved=await transaction(async tx=>{
+  const a=await account(tx,actor),initial=await scope(tx,a,input.employeeId,true)
+  await lockHrisReviewEmployeeInTx(tx,a.organizationId,initial.employeeId)
+  const access=await scope(tx,a,initial.employeeId,true)
+  // Actor replay key is shared across employees. Serialize it before looking up.
+  await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${a.organizationId+":"+a.actorId+":"+input.idempotencyKey},0))`
+  const old=await tx.$queryRaw<DocumentRow[]>`SELECT * FROM hris_employee_documents WHERE "organizationId"=${a.organizationId} AND "uploadedById"=${a.actorId} AND "idempotencyKey"=${input.idempotencyKey} FOR UPDATE`
+  if(old[0]){if(old[0].employeeId!==access.employeeId||old[0].requestHash!==requestHash)throw new ConflictError("HRIS_DOCUMENT_REPLAY_CONFLICT");if(access.own&&!old[0].employeeVisible)throw forbidden();return old[0]}
+  const policy=documentPolicies(a.organizationId).find(p=>p.code===input.policyCode);if(!policy||access.own&&(!policy.employeeMayUpload||!policy.employeeVisible))throw new BusinessRuleError("HRIS_DOCUMENT_POLICY_UNAVAILABLE")
+  const employee=await tx.payrollEmployee.findFirst({where:{id:access.employeeId,organizationId:a.organizationId,deletedAt:null},select:{countryCode:true}})
+  if(!employee||employee.countryCode!==policy.countryCode)throw new BusinessRuleError("HRIS_DOCUMENT_POLICY_COUNTRY_MISMATCH")
+  if(input.replacesDocumentId){const parent=await row(tx,a,input.replacesDocumentId,true,access.employeeId);if(parent.status!=="AVAILABLE"||parent.policy.documentKind!==policy.documentKind)throw new ConflictError("HRIS_DOCUMENT_REPLACEMENT_UNAVAILABLE")}
+  provider??=runtimeDocumentPorts()
+  const id=randomUUID(),encrypted=encryptEmployeeDocument(bytes,a.organizationId,id),retainUntil=new Date(Date.now()+policy.retentionDays*86400000)
+  const rows=await tx.$queryRaw<DocumentRow[]>`INSERT INTO hris_employee_documents (id,"storageProvider","organizationId","employeeId","uploadedById","idempotencyKey","requestHash",title,"mimeType","byteLength",sha256,"encryptionKey","encryptionIv","encryptionTag",policy,"employeeVisible","replacesDocumentId","expiresAt","retainUntil") VALUES (${id},${provider.store.name},${a.organizationId},${access.employeeId},${a.actorId},${input.idempotencyKey},${requestHash},${input.title},${file.mimeType},${file.byteLength},${file.sha256},${encrypted.encryptionKey},${encrypted.encryptionIv},${encrypted.encryptionTag},${JSON.stringify(policy)}::jsonb,${policy.employeeVisible},${input.replacesDocumentId??null},${input.expiresAt?new Date(input.expiresAt):null},${retainUntil}) RETURNING *`
+  await audit(tx,a,rows[0],"HRIS_DOCUMENT_UPLOAD_RESERVED");return rows[0]
+ })
+ if(!["UPLOADING","QUARANTINED"].includes(saved.status))return publicRow(saved)
+ provider??=runtimeDocumentPorts();checkStore(saved,provider)
+ // Immutable object identity + deterministic ciphertext makes exact retries safe.
+ await provider.store.put(objectKey(saved),reencrypt(bytes,saved))
+ await transaction(async tx=>{const a=await account(tx,actor),r=await row(tx,a,saved.id,true);if(r.status==="UPLOADING"){await tx.$executeRaw`UPDATE hris_employee_documents SET status='QUARANTINED',revision=revision+1,"updatedAt"=CURRENT_TIMESTAMP WHERE id=${r.id}`;await audit(tx,a,r,"HRIS_DOCUMENT_QUARANTINED")}})
+ const verdict=await provider.scanner.scan(bytes,saved.sha256)
+ const scannerName=provider.scanner.name
+ if(verdict.sha256!==saved.sha256||!["CLEAN","REJECTED"].includes(verdict.verdict)||!verdict.reference)throw new BusinessRuleError("HRIS_DOCUMENT_SCAN_UNVERIFIED")
+ return transaction(async tx=>{
+  const a=await account(tx,actor),r=await row(tx,a,saved.id,true)
+  if(r.status!=="QUARANTINED")return publicRow(r)
+  const proof={sha256:verdict.sha256,verdict:verdict.verdict,referenceHash:digest(verdict.reference),provider:scannerName,scannedAt:new Date().toISOString()}
+  const rows=await tx.$queryRaw<DocumentRow[]>`UPDATE hris_employee_documents SET status=${verdict.verdict==="CLEAN"?"PENDING_REVIEW":"REJECTED"},"scanProof"=${JSON.stringify(proof)}::jsonb,revision=revision+1,"updatedAt"=CURRENT_TIMESTAMP WHERE id=${r.id} RETURNING *`
+  await audit(tx,a,rows[0],"HRIS_DOCUMENT_SCAN_RECORDED",{verdict:verdict.verdict});return publicRow(rows[0])
+ })
+}
+
+const reviewSchema=z.object({documentId:z.string().uuid(),revision:z.number().int().positive(),decision:z.enum(["APPROVE","REJECT"]),acknowledged:z.literal(true),reason:z.string().trim().min(8).max(500)}).strict()
+export async function reviewEmployeeDocument(actor:HrisDocumentActor,raw:unknown){const input=reviewSchema.parse(raw);return transaction(async tx=>{
+ const a=await account(tx,actor);if(!hasAnyRbacPermission(a.actorPermissions,["hris.documents.manage"]))throw forbidden()
+ const r=await row(tx,a,input.documentId,true);if(r.uploadedById===a.actorId)throw new ForbiddenError("Independent document review is required.")
+ const envelope=digest(JSON.stringify({...input,actorId:a.actorId}));if(r.reviewProof?.envelope===envelope)return publicRow(r)
+ if(r.status!=="PENDING_REVIEW"||r.revision!==input.revision)throw new ConflictError("HRIS_DOCUMENT_REVIEW_STALE")
+ if(input.decision==="APPROVE"&&r.replacesDocumentId){const parent=await row(tx,a,r.replacesDocumentId,true);if(parent.status!=="AVAILABLE")throw new ConflictError("HRIS_DOCUMENT_REPLACEMENT_STALE");await tx.$executeRaw`UPDATE hris_employee_documents SET status='SUPERSEDED',revision=revision+1,"updatedAt"=CURRENT_TIMESTAMP WHERE id=${parent.id}`}
+ const proof={envelope,actorId:a.actorId,decidedAt:new Date().toISOString(),decision:input.decision,reasonHash:digest(input.reason)}
+ const legacyBound=input.decision==="APPROVE"&&(await nativeEvidence(tx,r)).length>0
+ const rows=await tx.$queryRaw<DocumentRow[]>`UPDATE hris_employee_documents SET status=${input.decision==="APPROVE"?"AVAILABLE":"REJECTED"},"reviewProof"=${JSON.stringify(proof)}::jsonb,"evidenceBoundAt"=COALESCE("evidenceBoundAt",${legacyBound?new Date():null}),revision=revision+1,"updatedAt"=CURRENT_TIMESTAMP WHERE id=${r.id} RETURNING *`
+ await audit(tx,a,rows[0],"HRIS_DOCUMENT_REVIEWED",{decision:input.decision});return publicRow(rows[0])
+})}
+
+export async function grantEmployeeDocument(actor:HrisDocumentActor,id:string){return transaction(async tx=>{
+ const a=await account(tx,actor),r=await row(tx,a,id);readable(r,a)
+ const grant=issueDocumentGrant({documentId:r.id,organizationId:a.organizationId,actorId:a.actorId,revision:r.revision});await audit(tx,a,r,"HRIS_DOCUMENT_DOWNLOAD_GRANTED");return grant
+})}
+export async function downloadEmployeeDocument(actor:HrisDocumentActor,token:string,ports?:EmployeeDocumentPorts){
+ const grant=parseDocumentGrant(token);if(grant.actorId!==actor.actorId||grant.organizationId!==actor.organizationId)throw forbidden()
+ const authorize=async(tx:Tx)=>{parseDocumentGrant(token);const a=await account(tx,actor),r=await row(tx,a,grant.documentId);readable(r,a);if(r.revision!==grant.revision)throw new ConflictError("HRIS_DOCUMENT_LINK_STALE");return {a,r}}
+ const {r}=await transaction(authorize),provider=ports??runtimeDocumentPorts("download");checkStore(r,provider);const bytes=decryptEmployeeDocument(await provider.store.get(objectKey(r)),r)
+ // Storage latency must not allow revoked access, an expired grant or a new hold/revision to bypass the second check.
+ await transaction(async tx=>{const current=await authorize(tx);await audit(tx,current.a,current.r,"HRIS_DOCUMENT_DOWNLOADED")})
+ return {bytes,mimeType:r.mimeType,fileName:`document-${r.id}.${r.mimeType==="application/pdf"?"pdf":r.mimeType==="image/png"?"png":"jpg"}`}
+}
+
+export async function retainEmployeeDocument(actor:HrisDocumentActor,raw:unknown){
+ const input=z.object({documentId:z.string().uuid(),revision:z.number().int().positive(),operation:z.enum(["HOLD","RELEASE_HOLD","BIND_EVIDENCE"]),reason:z.string().trim().min(8).max(500)}).strict().parse(raw)
+ return transaction(async tx=>{const a=await account(tx,actor);if(!hasAnyRbacPermission(a.actorPermissions,["hris.documents.retention"]))throw forbidden();const r=await row(tx,a,input.documentId,true)
+  if(["DELETE_PENDING","DELETED"].includes(r.status))throw new ConflictError("HRIS_DOCUMENT_DELETE_ALREADY_CLAIMED")
+  if(r.revision!==input.revision)throw new ConflictError("HRIS_DOCUMENT_REVIEW_STALE")
+  if(input.operation==="BIND_EVIDENCE"){readable(r);await tx.$executeRaw`UPDATE hris_employee_documents SET "evidenceBoundAt"=COALESCE("evidenceBoundAt",CURRENT_TIMESTAMP),revision=revision+1 WHERE id=${r.id}`}
+  else await tx.$executeRaw`UPDATE hris_employee_documents SET "legalHold"=${input.operation==="HOLD"},"holdReasonHash"=${digest(input.reason)},revision=revision+1 WHERE id=${r.id}`
+  await audit(tx,a,r,"HRIS_DOCUMENT_RETENTION_CHANGED",{operation:input.operation});return {id:r.id,status:input.operation}
+ })
+}
+export async function deleteEmployeeDocument(actor:HrisDocumentActor,id:string,ports?:EmployeeDocumentPorts,reason="Retention expiry cleanup"){
+ z.string().trim().min(8).max(500).parse(reason)
+ const r=await transaction(async tx=>{const a=await account(tx,actor);if(!hasAnyRbacPermission(a.actorPermissions,["hris.documents.retention"]))throw forbidden();const r=await row(tx,a,id,true)
+  if(r.status==="DELETED")return r
+  // Native contract evidence may refer to an original hash without the storage link.
+  const bound=await nativeEvidence(tx,r)
+  if(r.legalHold||r.evidenceBoundAt||r.retainUntil>new Date()||bound.length)throw new BusinessRuleError("HRIS_DOCUMENT_RETAINED")
+  const successors=await tx.$queryRaw<Array<{id:string}>>`SELECT id FROM hris_employee_documents WHERE "replacesDocumentId"=${r.id} AND status IN ('UPLOADING','QUARANTINED','PENDING_REVIEW') LIMIT 1`
+  if(successors.length)throw new ConflictError("HRIS_DOCUMENT_REPLACEMENT_PENDING")
+  if(r.status!=="DELETE_PENDING"){await tx.$executeRaw`UPDATE hris_employee_documents SET status='DELETE_PENDING',revision=revision+1 WHERE id=${r.id}`;await audit(tx,a,r,"HRIS_DOCUMENT_DELETE_CLAIMED",{reasonHash:digest(reason)})};return r
+ })
+ if(r.status==="DELETED")return {id,status:"DELETED"}
+ // Gateway DELETE must retain a tombstone: delayed PUT for this identity must be rejected.
+ const provider=ports??runtimeDocumentPorts("delete");checkStore(r,provider);await provider.store.remove(objectKey(r))
+ return transaction(async tx=>{const a=await account(tx,actor);if(!hasAnyRbacPermission(a.actorPermissions,["hris.documents.retention"]))throw forbidden();const current=await row(tx,a,id,true);if(current.status==="DELETED")return {id,status:"DELETED"};if(current.status!=="DELETE_PENDING")throw new ConflictError("HRIS_DOCUMENT_DELETE_STALE");await tx.$executeRaw`UPDATE hris_employee_documents SET status='DELETED',revision=revision+1,"updatedAt"=CURRENT_TIMESTAMP WHERE id=${id}`;await audit(tx,a,current,"HRIS_DOCUMENT_DELETED");return {id,status:"DELETED"}})
+}

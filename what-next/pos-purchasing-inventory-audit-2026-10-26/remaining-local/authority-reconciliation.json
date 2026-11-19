@@ -1,0 +1,219 @@
+[
+  {
+    "scenario": "LOCAL-POS-AUTH",
+    "kind": "role",
+    "organizationId": "org-full-pos-0fbdd695-ccfc-4103-ad62-10c68a81a8c0",
+    "before": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    },
+    "after": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    }
+  },
+  {
+    "scenario": "LOCAL-POS-AUTH",
+    "kind": "session",
+    "organizationId": "org-full-pos-070f8711-7a6d-4679-960c-aa09c2c24915",
+    "before": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    },
+    "after": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    }
+  },
+  {
+    "scenario": "LOCAL-POS-AUTH",
+    "kind": "account",
+    "organizationId": "org-full-pos-71c93800-f709-4681-8689-55abb28220ed",
+    "before": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    },
+    "after": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    }
+  },
+  {
+    "scenario": "LOCAL-POS-CORRECTION",
+    "operation": "refund",
+    "organizationId": "org-full-pos-e7144c44-ef6b-4165-92cb-371d95dab7ca",
+    "before": {
+      "quantity": "0.000",
+      "value": "0.00",
+      "commits": 1,
+      "payments": 1,
+      "sale": "COMPLETED"
+    },
+    "after": {
+      "quantity": "0.000",
+      "value": "0.00",
+      "commits": 1,
+      "payments": 1,
+      "sale": "COMPLETED"
+    }
+  },
+  {
+    "scenario": "LOCAL-POS-CORRECTION",
+    "operation": "void",
+    "organizationId": "org-full-pos-9178670e-4cae-4ebe-80f5-a79aad38d5ae",
+    "before": {
+      "quantity": "0.000",
+      "value": "0.00",
+      "commits": 1,
+      "payments": 1,
+      "sale": "COMPLETED"
+    },
+    "after": {
+      "quantity": "0.000",
+      "value": "0.00",
+      "commits": 1,
+      "payments": 1,
+      "sale": "COMPLETED"
+    }
+  },
+  {
+    "scenario": "LOCAL-POS-ALLOWED",
+    "operation": "refund",
+    "organizationId": "org-full-pos-62c62967-41e2-4696-8d97-207846e292eb",
+    "after": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 1,
+      "payments": 1,
+      "sale": "RETURNED"
+    }
+  },
+  {
+    "scenario": "LOCAL-POS-ALLOWED",
+    "operation": "void",
+    "organizationId": "org-full-pos-28617b93-7cfe-4ef3-b41d-d88fbb57b16e",
+    "after": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 1,
+      "payments": 1,
+      "sale": "CANCELLED"
+    }
+  },
+  {
+    "scenario": "LOCAL-POS-WAIT",
+    "kind": "role",
+    "organizationId": "org-full-pos-8e840e74-39a2-4c33-85e7-96f940b5ff29",
+    "waits": [
+      {
+        "pid": 18620,
+        "query": "SELECT id FROM users WHERE id = $1 AND \"organizationId\" = $2 FOR SHARE"
+      }
+    ],
+    "outcome": {
+      "ok": false,
+      "code": "FORBIDDEN"
+    },
+    "before": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    },
+    "after": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    }
+  },
+  {
+    "scenario": "LOCAL-POS-WAIT",
+    "kind": "session",
+    "organizationId": "org-full-pos-d7831999-8599-4848-9465-74853b675369",
+    "waits": [
+      {
+        "pid": 10836,
+        "query": "SELECT id FROM users WHERE id = $1 AND \"organizationId\" = $2 FOR SHARE"
+      }
+    ],
+    "outcome": {
+      "ok": false,
+      "code": "FORBIDDEN"
+    },
+    "before": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    },
+    "after": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    }
+  },
+  {
+    "scenario": "LOCAL-POS-LOCATION",
+    "organizationId": "org-full-pos-6af4d732-72a3-4320-8b10-0e23fd7a3321",
+    "before": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    },
+    "after": {
+      "quantity": "3.000",
+      "value": "300.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    },
+    "policy": "No user-location assignment relation exists; active tenant/terminal/shift binding is enforced."
+  },
+  {
+    "scenario": "LOCAL-RECEIVING-RACE",
+    "organizationId": "org-full-pos-23b87c42-a12e-4b32-a067-c98734ad901d",
+    "waits": [
+      {
+        "pid": 18620,
+        "query": "SELECT s.id FROM suppliers s JOIN purchase_orders p ON p.\"supplierId\" = s.id WHERE p.id = $1 AND p.\"organizationId\" = $2 AND s.\"organizationId\" = $3 FOR UPDATE OF s"
+      },
+      {
+        "pid": 18044,
+        "query": "UPDATE \"public\".\"roles\" SET \"permissions\" = $1, \"updatedAt\" = $2 WHERE (\"public\".\"roles\".\"id\" = $3 AND 1=1) RETURNING \"public\".\"roles\".\"id\", \"public\".\"roles\".\"code\", \"public\".\"roles\".\"description\", \"public\".\"roles\".\"nameEn\", \"public\".\"roles\".\"nameFr\", \"public\".\"roles\".\"permissions\", \"public\".\"roles\".\"organizationId\", \"public\".\"roles\".\"createdAt\", \"public\".\"roles\".\"updatedAt\""
+      }
+    ],
+    "after": {
+      "quantity": "1.000",
+      "value": "100.00",
+      "commits": 0,
+      "payments": 0,
+      "sale": "DRAFT"
+    }
+  }
+]

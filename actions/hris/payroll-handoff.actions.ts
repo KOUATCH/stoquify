@@ -1,0 +1,24 @@
+'use server'
+import {protect} from '@/services/_shared/protect'
+import {ForbiddenError} from '@/services/_shared/action-errors'
+import {getPayrollHandoffWorkspace,previewPayrollHandoff,issuePayrollHandoff,getPayrollHandoffPackage,acknowledgePayrollHandoff} from '@/services/hris/payroll-handoff.service'
+import type {SelfServiceActor} from '@/services/hris/self-service-boundary.service'
+function boundary<T>(permission:string,intent:'read'|'write',fn:(actor:SelfServiceActor,input:unknown)=>Promise<T>){return protect<unknown,T>({permission,freshAuth:true,tenantGuard:'handler-derived',module:{moduleSlug:'payroll',surface:'hris.payroll.handoff',accessIntent:intent,mode:'enforce'}},async(input,ctx)=>{
+ if(ctx.freshAuth?.claims.userId!==ctx.userId||ctx.freshAuth?.claims.tenantId!==ctx.orgId)throw new ForbiddenError('Refresh your session.')
+ return fn({organizationId:ctx.orgId,actorId:ctx.userId,actorPermissions:ctx.permissions},input)
+})}
+const workspace=boundary('hris.handoff.read','read',actor=>getPayrollHandoffWorkspace(actor))
+const preview=boundary('hris.handoff.read','read',previewPayrollHandoff)
+const issue=boundary('hris.handoff.export','write',issuePayrollHandoff)
+const retained=boundary('hris.handoff.read','read',async(actor,input)=>{
+ const {csvBytes,...pack}=await getPayrollHandoffPackage(actor,input)
+ // Transport retained bytes explicitly: a leading UTF-8 marker must survive
+ // server-action text decoding so the downloaded file still matches csvHash.
+ return {...pack,csvBase64:Buffer.from(csvBytes,'utf8').toString('base64')}
+})
+const receive=boundary('hris.handoff.receive','write',acknowledgePayrollHandoff)
+export async function getPayrollHandoffWorkspaceAction(input:unknown={}){return workspace(input)}
+export async function previewPayrollHandoffAction(input:unknown){return preview(input)}
+export async function issuePayrollHandoffAction(input:unknown){return issue(input)}
+export async function getPayrollHandoffPackageAction(input:unknown){return retained(input)}
+export async function acknowledgePayrollHandoffAction(input:unknown){return receive(input)}

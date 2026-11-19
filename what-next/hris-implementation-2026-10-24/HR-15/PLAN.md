@@ -1,0 +1,17 @@
+# HR-15 — Protected employee documents
+
+IN_PROGRESS after HR-14 sealed VERIFIED_SCOPED (132 hashes, zero drift). Automatic ordered execution and independent reviewer authorized. Baseline HEAD remains 9ab93a2a1d81e37ef7e0b10357885b48a3bc5886 plus preserved shared edits.
+
+Preflight: HRIS signed-document metadata/independent review exists but original retrieval is explicitly unavailable. Operational scan service was not found; scan hashes in existing metadata are caller evidence, not a runtime verdict. Item media already uses AES-GCM ciphertext with tenant/object AAD and identity-before-provider writes. Its item download route and legacy public/uploads route must not serve HR documents. Graph manifests are historical July/August discovery data; current source controls behavior.
+
+Ordered implementation:
+1. Add one immutable document-version model tied to the existing employee, with distinct validity/retention, immutable policy snapshot, replacement lineage, upload/scan/review/deletion state, bounded encrypted-object identity and audit links. Additive schema only; no bulk originals movement. Explicit raw-document permissions supplement existing own/team scope; no implicit grants to existing roles.
+2. Bounded file validation and a distinct protected storage/scanner contract. Reuse existing ciphertext mechanics/provider library, not item/public routes. Runtime scanner verdict must be bound to exact bytes/digest. Unconfigured scanner/policy fails closed. Named local synthetic object store/scanner used only for isolated verification; live provider choice/qualified retention remain deployment inputs, never invented from OHADA membership.
+3. Upload identity before provider contact; quarantine until trusted scan and independent domain review. Exact retry and uncertain upload/delete recovery retain provider identity. Download issuance/redemption rechecks current identity, tenant, employee mapping, explicit raw permission/visibility, state and short expiry. Response is private attachment; no provider URL/key disclosed.
+4. Replacement links preserve original evidence. Validity expiry creates scoped actionable replacement work. Retention expiry is separate and does not bypass holds or bound evidence. Hold/evidence/deletion races share document/employee serialization; tombstones retained.
+5. EN/FR own and authorized HR document workspace with pending/quarantine/denied/retry states, review facts/acknowledgement, expiry action, protected download and clear hold/retention status. Existing navigation/primitives.
+6. Independent review, unit/action/storage failure tests; real owned PostgreSQL plus named test store/scanner protocol; browser roles/locales/widths; evidence and existing execution register.
+
+Initial owned surfaces: new services/hris employee-document policy/contract/adapter/service modules; new HR document actions and API upload/download routes; new HR document UI/routes; narrow permission registry/navigation additions; additive Prisma model/migration; focused tests/config and this evidence directory. Any native document-evidence integration will be declared after source tracing. Do not modify generic item storage or weaken its existing routes.
+
+No production migration, live upload, provider activation, automatic retention law, real file purge, deployment or messages. Live admission remains disabled until reviewed storage/scanning configuration and employer retention/hold policy are provided. This does not prevent safe implementation and synthetic verification of the complete workflow.

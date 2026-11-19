@@ -1,0 +1,2018 @@
+{
+  "schemaVersion": 1,
+  "package": "P04-R01",
+  "generatedAt": "2026-11-03T17:38:44.258Z",
+  "scope": "Evidence mapping only; not independent acceptance or a release certificate",
+  "unit": {
+    "receipt": "unit/attempt06/result.json",
+    "receiptSha256": "f02a6e819e9355a8e5556e3cc49b8b46df0600d51aa638cac7a2274097019ac7",
+    "jest": "unit/attempt06/jest.json",
+    "jestSha256": "baf1fbdb5c0aa68f98e8e41e3b5c52773895fcd0d8a922e4d087598149676a13",
+    "suites": 16,
+    "passed": 432,
+    "failed": 0,
+    "skipped": 0,
+    "changedInputs": []
+  },
+  "native": {
+    "status": "passed_native_service_action_composition",
+    "source": "database/authority.postgres.test.ts",
+    "sourceSha256": "682c449e780c5af664911b1ffcf5fd767eff9cf465bb0a346ba3bb80c0c18a1a",
+    "declarations": 26,
+    "expandedIntendedTests": 37,
+    "earlierFailedReceipt": "database/native-result.json",
+    "earlierFailure": "Schema admission harness preflight; no native test result",
+    "transport": "Better Auth getSession and Next headers/cache stubbed; persisted DB authority and actual server-action exports executed",
+    "receipt": "database/native-result-retry01.json",
+    "receiptSha256": "55636916200b65001ef83382cd08455bff8325688fafa2761b1f8ebc6d2b6b5d",
+    "testReceipt": "database/native-jest.json",
+    "testReceiptSha256": "18428d3172fdcb6767771e97bce336138eedd08cfc2900058d802d68a680cb8e",
+    "observations": "database/native-observations.json",
+    "observationsSha256": "ae476b10bae6c320a8c6a8ecef3d1b06c879708b6f6e92495a1ce43c85212582",
+    "passed": 37,
+    "failed": 0,
+    "skipped": 0,
+    "migrationsVerified": 121,
+    "sourceUnchanged": true,
+    "migrationsUnchanged": true,
+    "remainingClients": [],
+    "cleanup": {
+      "clusterStopped": true,
+      "portReleased": true,
+      "databasesRetained": [
+        "stoquify_local_p04_r01_20261103_r1"
+      ]
+    },
+    "finishedAt": "2026-11-03T17:37:49.351Z"
+  },
+  "independentAcceptance": false,
+  "parentP04Accepted": false,
+  "productionAccepted": false,
+  "obligations": [
+    {
+      "id": "R01-O01",
+      "obligation": "Reserved codes are latent authority; normalization and missing-code handling",
+      "source": [
+        "services/operating-access/operating-access-grant-policy.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 0,
+            "name": "treats admin as latent authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 1,
+            "name": "treats administrator as latent authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 2,
+            "name": "treats super_admin as latent authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 3,
+            "name": "treats  ADMIN  as latent authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 4,
+            "name": "treats Administrator as latent authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 5,
+            "name": "treats Super_Admin as latent authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 6,
+            "name": "fails closed on missing target code undefined",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 7,
+            "name": "fails closed on missing target code null",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 8,
+            "name": "fails closed on missing target code ",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 9,
+            "name": "fails closed on missing target code  ",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 10,
+            "name": "does not turn an inert reserved code into effective grant authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+            "assertionIndex": 11,
+            "name": "recognizes current stored wildcard without changing separate permission ceilings",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 40,
+            "name": "operating-scope grant ceiling denies creation of latent reserved Admin without trusting context",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 41,
+            "name": "operating-scope grant ceiling denies creation of latent reserved Administrator without trusting context",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 42,
+            "name": "operating-scope grant ceiling denies creation of latent reserved Super Admin without trusting context",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 43,
+            "name": "operating-scope grant ceiling denies creation of latent reserved  SUPER   ADMIN  without trusting context",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 44,
+            "name": "operating-scope grant ceiling allows an authorized tenant administrator to create a reserved role",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 12,
+            "name": "denies a latent reserved admin invitation to a limited issuer",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 13,
+            "name": "denies a latent reserved  Administrator  invitation to a limited issuer",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 14,
+            "name": "denies a latent reserved super_admin invitation to a limited issuer",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 15,
+            "name": "requires tenant-wide authority as well as explicit grant permission",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 127,
+            "declaration": "it.each([\"Admin\", \"Administrator\", \"Super Admin\", \"  ADMIN  \"])(\"denies reserved creation %s through the real action\", async name => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 0,
+                "name": "denies reserved creation Admin through the real action",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 1,
+                "name": "denies reserved creation Administrator through the real action",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 2,
+                "name": "denies reserved creation Super Admin through the real action",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 3,
+                "name": "denies reserved creation   ADMIN   through the real action",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 139,
+            "declaration": "it(\"denies latent reserved role assignment with an empty permission array\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 8,
+                "name": "denies latent reserved role assignment with an empty permission array",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Native creation covers four display spellings; missing-code shape is pure/unit evidence."
+    },
+    {
+      "id": "R01-O02",
+      "obligation": "Explicit permission ceilings remain independent of code or wildcard authority",
+      "source": [
+        "services/roles/role-permission-policy.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 0,
+            "name": "role grant policy cannot grant roles.permissions.assign through user-role assignment's shared legacy alias",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 1,
+            "name": "role grant policy cannot grant roles.permissions.remove through user-role assignment's shared legacy alias",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 2,
+            "name": "role grant policy cannot grant admin.role.assign through user-role assignment's shared legacy alias",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 3,
+            "name": "role grant policy cannot grant the broad legacy alias from a single canonical operation",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 4,
+            "name": "role grant policy does not infer user-role assignment from permission editing authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 5,
+            "name": "role grant policy preserves an explicitly stored legacy role-management grant",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 6,
+            "name": "role grant policy rejects actors without role-assignment authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 7,
+            "name": "role grant policy rejects target roles containing a wildcard",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 8,
+            "name": "role grant policy rejects target permissions above the actor's explicit grant ceiling",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 9,
+            "name": "role grant policy rejects a target role owned by another tenant",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 10,
+            "name": "role grant policy allows a same-tenant role within the actor's explicit grant ceiling",
+            "status": "passed"
+          },
+          {
+            "suite": "services/security/__tests__/role-grant-policy.service.test.ts",
+            "assertionIndex": 11,
+            "name": "role grant policy allows a new administrator template to grant a canonical non-wildcard role",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 15,
+            "name": "authoritative role commands requires removal authority for explicit empty permissions",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 17,
+            "name": "authoritative role commands cannot grant removal authority through the shared assignment alias",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 22,
+            "name": "authoritative role commands rejects critical grants via a wildcard",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 15,
+            "name": "requires distinct removal authority even when assignment is held",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 17,
+            "name": "does not infer assignment authority from *",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 18,
+            "name": "does not infer assignment authority from roles.permissions.assign",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 19,
+            "name": "does not infer assignment authority from users.roles.remove",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 20,
+            "name": "does not grant a role containing wildcard",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 161,
+            "declaration": "it(\"permits trusted tenant administrator create/update/assign and ordinary delegate assignment\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 12,
+                "name": "permits trusted tenant administrator create/update/assign and ordinary delegate assignment",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 209,
+            "declaration": "it.each([\"expired\", \"revoked\", \"permission-revoked\"])(\"real action denies %s persisted authority despite stale transport\", async kind => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 17,
+                "name": "real action denies expired persisted authority despite stale transport",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 18,
+                "name": "real action denies revoked persisted authority despite stale transport",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 19,
+                "name": "real action denies permission-revoked persisted authority despite stale transport",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Native positives use explicit persisted grants; exhaustive alias-risk combinations remain unit coverage."
+    },
+    {
+      "id": "R01-O03",
+      "obligation": "Role edits cannot activate tenant access through reserved or composed ordinary roles",
+      "source": [
+        "services/roles/role-write.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 45,
+            "name": "operating-scope grant ceiling denies additions on an existing empty reserved role",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 46,
+            "name": "operating-scope grant ceiling allows metadata-only reserved edits and removal-only changes",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 47,
+            "name": "operating-scope grant ceiling denies ordinary-role edits activating tenant scope in an existing member",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 48,
+            "name": "operating-scope grant ceiling allows and records an authorized composed grant, then denies replay after authority loss",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 150,
+            "declaration": "it(\"denies adding dashboard to an ordinary role held beside a latent reserved role\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 10,
+                "name": "denies adding dashboard to an ordinary role held beside a latent reserved role",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 157,
+            "declaration": "it(\"denies adding authority to an existing reserved role\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 11,
+                "name": "denies adding authority to an existing reserved role",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 161,
+            "declaration": "it(\"permits trusted tenant administrator create/update/assign and ordinary delegate assignment\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 12,
+                "name": "permits trusted tenant administrator create/update/assign and ordinary delegate assignment",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Metadata-only edits retain immutable codes; role grant audit records original operating authority for replay."
+    },
+    {
+      "id": "R01-O04",
+      "obligation": "Member assignments reject latent and composed elevation; previews agree",
+      "source": [
+        "services/users/member-access.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 35,
+            "name": "denies a limited actor's empty reserved admin assignment without effects",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 36,
+            "name": "denies a limited actor's empty reserved administrator assignment without effects",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 37,
+            "name": "denies a limited actor's empty reserved super_admin assignment without effects",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 38,
+            "name": "denies a limited actor's empty reserved  ADMIN  assignment without effects",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 39,
+            "name": "denies ordinary dashboard addition that activates an existing empty reserved role",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 40,
+            "name": "allows the same composed grant for a current tenant administrator",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 43,
+            "name": "binds stored role code changes into the reviewed member revision",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 132,
+            "declaration": "it.each([\"admin\", \"administrator\", \"super_admin\", \" ADMIN \"])(\"denies existing reserved role %s and hides it in the assignment catalogue\", async code => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 4,
+                "name": "denies existing reserved role admin and hides it in the assignment catalogue",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 5,
+                "name": "denies existing reserved role administrator and hides it in the assignment catalogue",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 6,
+                "name": "denies existing reserved role super_admin and hides it in the assignment catalogue",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 7,
+                "name": "denies existing reserved role  ADMIN  and hides it in the assignment catalogue",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 139,
+            "declaration": "it(\"denies latent reserved role assignment with an empty permission array\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 8,
+                "name": "denies latent reserved role assignment with an empty permission array",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 143,
+            "declaration": "it(\"denies ordinary dashboard assignment that activates an existing latent reserved role\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 9,
+                "name": "denies ordinary dashboard assignment that activates an existing latent reserved role",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 161,
+            "declaration": "it(\"permits trusted tenant administrator create/update/assign and ordinary delegate assignment\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 12,
+                "name": "permits trusted tenant administrator create/update/assign and ordinary delegate assignment",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 200,
+            "declaration": "it(\"denies changed-payload replay and stale reviewed role definitions without writes\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 16,
+                "name": "denies changed-payload replay and stale reviewed role definitions without writes",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Member revisions bind code. Native denial checks include same-tenant private-branch canary and exact synthetic row hashes."
+    },
+    {
+      "id": "R01-O05",
+      "obligation": "Replays reauthorize original role and member grants after actor authority loss",
+      "source": [
+        "services/roles/role-write.service.ts",
+        "services/users/member-access.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 24,
+            "name": "authoritative role commands replays the same create without another write or audit",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 25,
+            "name": "authoritative role commands replays the same update and rejects changed reuse",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 26,
+            "name": "authoritative role commands rejects a replay when the saved role has changed again",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 48,
+            "name": "operating-scope grant ceiling allows and records an authorized composed grant, then denies replay after authority loss",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 49,
+            "name": "operating-scope grant ceiling denies reserved create replay after actor code loss",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 0,
+            "name": "records an assignment, revokes sessions and replays exactly once",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 21,
+            "name": "rechecks authority before returning an idempotent receipt",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 41,
+            "name": "rechecks a composed grant replay after actor tenant authority is removed",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 176,
+            "declaration": "it(\"rechecks current code authority on a role creation replay after admin code loss\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 13,
+                "name": "rechecks current code authority on a role creation replay after admin code loss",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 182,
+            "declaration": "it(\"rechecks removed reserved membership even when every explicit permission remains\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 14,
+                "name": "rechecks removed reserved membership even when every explicit permission remains",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 191,
+            "declaration": "it(\"rechecks current code authority on member assignment replay\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 15,
+                "name": "rechecks current code authority on member assignment replay",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 200,
+            "declaration": "it(\"denies changed-payload replay and stale reviewed role definitions without writes\", async () => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 16,
+                "name": "denies changed-payload replay and stale reviewed role definitions without writes",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Recorded original grant semantics are used rather than treating the elevated current state as preexisting authorization."
+    },
+    {
+      "id": "R01-O06",
+      "obligation": "Reactivation treats inactive recipients as having no effective authority",
+      "source": [
+        "services/users/member-access.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 24,
+            "name": "reactivates through matching evidence without changing identity or verification",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 25,
+            "name": "rejects unsupported reactivation missing",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 26,
+            "name": "rejects unsupported reactivation outdated",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 27,
+            "name": "rejects unsupported reactivation unverified",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 28,
+            "name": "rejects unsupported reactivation temporary-lock",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 29,
+            "name": "rejects unsupported reactivation active",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 30,
+            "name": "rejects unsupported reactivation authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 31,
+            "name": "rejects unsupported reactivation ceiling",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 42,
+            "name": "does not reactivate existing reserved authority for a limited actor",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 290,
+            "declaration": "it(\"denies reserved reactivation by a limited delegate and permits the legitimate administrator\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 29,
+                "name": "denies reserved reactivation by a limited delegate and permits the legitimate administrator",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 302,
+            "declaration": "it(\"permits ordinary reactivation by a limited delegate with genuine deactivation evidence\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 30,
+                "name": "permits ordinary reactivation by a limited delegate with genuine deactivation evidence",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Positive native reactivation requires a real synthetic deactivation receipt; no arbitrary unlock is admitted."
+    },
+    {
+      "id": "R01-O07",
+      "obligation": "Fresh persisted sessions, actor grants and tenant boundaries govern actions",
+      "source": [
+        "lib/security/rbac.ts",
+        "lib/security/auth-session.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "actions/roles/__tests__/role-actions.test.ts",
+            "assertionIndex": 4,
+            "name": "role actions service boundary does not call the role service when the user lacks roles.read",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/roles/__tests__/role-actions.test.ts",
+            "assertionIndex": 6,
+            "name": "role actions service boundary does not create a role when the user lacks roles.create",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/roles/__tests__/role-actions.test.ts",
+            "assertionIndex": 7,
+            "name": "role actions service boundary requires fresh authentication before role writes",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/roles/__tests__/role-actions.test.ts",
+            "assertionIndex": 11,
+            "name": "role actions service boundary rejects an assurance identity or tenant that disagrees with current RBAC",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/users/__tests__/member-access.actions.test.ts",
+            "assertionIndex": 0,
+            "name": "uses only server-derived organization, actor and session authority",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/users/__tests__/member-access.actions.test.ts",
+            "assertionIndex": 1,
+            "name": "rejects session/context disagreement",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/users/__tests__/member-access.actions.test.ts",
+            "assertionIndex": 2,
+            "name": "rejects session/context disagreement",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/users/__tests__/member-access.actions.test.ts",
+            "assertionIndex": 3,
+            "name": "does not fabricate a receipt after service denial",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/access-requests/__tests__/access-request.actions.test.ts",
+            "assertionIndex": 0,
+            "name": "derives the actor from the current session and forwards the untrusted command separately",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/access-requests/__tests__/access-request.actions.test.ts",
+            "assertionIndex": 1,
+            "name": "rejects fresh-auth userId identity mismatch before applying",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/access-requests/__tests__/access-request.actions.test.ts",
+            "assertionIndex": 2,
+            "name": "rejects fresh-auth tenantId identity mismatch before applying",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/access-requests/__tests__/access-request.actions.test.ts",
+            "assertionIndex": 3,
+            "name": "passes fresh session proof only to the grant application service",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 2,
+            "name": "rejects invalid current session missing",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 3,
+            "name": "rejects invalid current session expired",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 4,
+            "name": "rejects invalid current session old",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 5,
+            "name": "rejects invalid current session future",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 6,
+            "name": "rejects invalid current session method",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 7,
+            "name": "rejects invalid current session organization",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 8,
+            "name": "rejects invalid current session locked",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 13,
+            "name": "rejects foreign role IDs without effects",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 0,
+            "name": "role organization boundaries rejects a foreign organization even for wildcard context false",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 1,
+            "name": "role organization boundaries rejects a foreign organization even for wildcard context true",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 3,
+            "name": "role organization boundaries rejects a supplied foreign organization before any transaction",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 4,
+            "name": "role organization boundaries cannot edit a foreign or missing role",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 209,
+            "declaration": "it.each([\"expired\", \"revoked\", \"permission-revoked\"])(\"real action denies %s persisted authority despite stale transport\", async kind => {",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 17,
+                "name": "real action denies expired persisted authority despite stale transport",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 18,
+                "name": "real action denies revoked persisted authority despite stale transport",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 19,
+                "name": "real action denies permission-revoked persisted authority despite stale transport",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 216,
+            "declaration": "it(\"denies foreign role and forged organization through current boundaries\", async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 20,
+                "name": "denies foreign role and forged organization through current boundaries",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Native action exports use real persisted session rows, but Better Auth transport and Next headers/cache are stubbed. No real signed-cookie result is implied."
+    },
+    {
+      "id": "R01-O08",
+      "obligation": "Invitation issue, replacement and replay require current persisted code authority",
+      "source": [
+        "services/users/user-invitation-issuance.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/users/__tests__/user-invitation-issuance.service.test.ts",
+            "assertionIndex": 8,
+            "name": "propagates an audit failure so the transaction cannot commit partial issuance",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-issuance.service.test.ts",
+            "assertionIndex": 12,
+            "name": "requires an explicit current revision to replace a pending invitation and preserves the old queue",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-issuance.service.test.ts",
+            "assertionIndex": 13,
+            "name": "cannot replace a higher-privilege invitation with a lower role to evade the existing grant ceiling",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-issuance.service.test.ts",
+            "assertionIndex": 14,
+            "name": "denies a reserved admin role before any invitation or queue write",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-issuance.service.test.ts",
+            "assertionIndex": 15,
+            "name": "denies a reserved administrator role before any invitation or queue write",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-issuance.service.test.ts",
+            "assertionIndex": 16,
+            "name": "denies a reserved super_admin role before any invitation or queue write",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-issuance.service.test.ts",
+            "assertionIndex": 17,
+            "name": "records code authority and rechecks a privileged issuer on replay",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-options.service.test.ts",
+            "assertionIndex": 2,
+            "name": "offers only same-tenant grantable roles in en",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-options.service.test.ts",
+            "assertionIndex": 3,
+            "name": "offers only same-tenant grantable roles in fr",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-options.service.test.ts",
+            "assertionIndex": 10,
+            "name": "does not enumerate roles after current stored assignment authority is revoked",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-options.service.test.ts",
+            "assertionIndex": 11,
+            "name": "filters latent reserved options until current stored tenant authority is present",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 222,
+            "declaration": "it.each([\"admin\",\"administrator\",\"super_admin\"])(\"real invitation action denies reserved %s without invite/event/outbox writes\",async code=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 21,
+                "name": "real invitation action denies reserved admin without invite/event/outbox writes",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 22,
+                "name": "real invitation action denies reserved administrator without invite/event/outbox writes",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 23,
+                "name": "real invitation action denies reserved super_admin without invite/event/outbox writes",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 226,
+            "declaration": "it(\"allows privileged reserved invitation/replay and rejects stored issuer code loss and stale redemption\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 24,
+                "name": "allows privileged reserved invitation/replay and rejects stored issuer code loss and stale redemption",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 241,
+            "declaration": "it(\"denies replacing a reserved invitation after the issuer loses tenant authority\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 25,
+                "name": "denies replacing a reserved invitation after the issuer loses tenant authority",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 250,
+            "declaration": "it(\"allows ordinary invitation for a limited delegate and rejects target code drift at redemption\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 26,
+                "name": "allows ordinary invitation for a limited delegate and rejects target code drift at redemption",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Native issue persists isolated event/outbox data; no provider is contacted. Replacement checks the old and new target role."
+    },
+    {
+      "id": "R01-O09",
+      "obligation": "Redemption retains historical provenance and checks locked current target/issuer codes",
+      "source": [
+        "services/users/user-invitation-redemption-authority.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+            "assertionIndex": 28,
+            "name": "holds the issuance, organization, role, issuer and actual memberships through commit",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+            "assertionIndex": 29,
+            "name": "uses the locked target role rather than the pre-hash role snapshot",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+            "assertionIndex": 30,
+            "name": "rejects legacy reserved authority and preserves evidence (locked=false)",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+            "assertionIndex": 31,
+            "name": "rejects legacy reserved authority and preserves evidence (locked=true)",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+            "assertionIndex": 32,
+            "name": "requires the current issuer code even with unchanged permissions (locked=false)",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+            "assertionIndex": 33,
+            "name": "requires the current issuer code even with unchanged permissions (locked=true)",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+            "assertionIndex": 34,
+            "name": "accepts a recorded privileged grant still held at redemption (locked=false)",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+            "assertionIndex": 35,
+            "name": "accepts a recorded privileged grant still held at redemption (locked=true)",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-redemption-authority.service.test.ts",
+            "assertionIndex": 36,
+            "name": "rejects a code changed during password hashing with identical permissions",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 17,
+            "name": "current invitation redemption claims the current invitation before credentials and persists audit in the same transaction",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 18,
+            "name": "current invitation redemption refuses disabled before credentials",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 19,
+            "name": "current invitation redemption refuses deleted before credentials",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 20,
+            "name": "current invitation redemption refuses foreign-role before credentials",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 21,
+            "name": "current invitation redemption refuses wildcard-role before credentials",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 22,
+            "name": "current invitation redemption does not overwrite concurrent redemption, cancellation, reissue or authority change",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 23,
+            "name": "current invitation redemption rechecks expiry after password hashing",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 24,
+            "name": "current invitation redemption keeps invalid passwords from consuming the invitation",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 25,
+            "name": "current invitation redemption rejects unrecorded approval before hashing or consuming a link",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 26,
+            "name": "current invitation redemption rechecks authority with locks after hashing and rejects a changed approval",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 27,
+            "name": "current invitation redemption does not claim success if mandatory audit persistence fails",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 28,
+            "name": "current invitation redemption rejects malformed tokens and hides invalid invitation metadata",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 226,
+            "declaration": "it(\"allows privileged reserved invitation/replay and rejects stored issuer code loss and stale redemption\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 24,
+                "name": "allows privileged reserved invitation/replay and rejects stored issuer code loss and stale redemption",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 250,
+            "declaration": "it(\"allows ordinary invitation for a limited delegate and rejects target code drift at redemption\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 26,
+                "name": "allows ordinary invitation for a limited delegate and rejects target code drift at redemption",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 262,
+            "declaration": "it.each([\"admin\", \"ordinary\"])(\"qualifies historical %s invitation redemption with recorded legacy provenance\",async code=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 27,
+                "name": "qualifies historical admin invitation redemption with recorded legacy provenance",
+                "status": "passed"
+              },
+              {
+                "assertionIndex": 28,
+                "name": "qualifies historical ordinary invitation redemption with recorded legacy provenance",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Historical ordinary grants remain usable only under current ordinary-role authority; historical reserved grants missing contemporaneous code evidence fail closed. Code drift during password hashing is mocked coverage; actual locked DB role/issuer checks and complete legacy redemption are separately covered by the mapped native cases."
+    },
+    {
+      "id": "R01-O10",
+      "obligation": "Invitation delivery, options and history retain current authority without enabling a provider",
+      "source": [
+        "services/communication/user-invitation-delivery-worker.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts",
+            "assertionIndex": 2,
+            "name": "is disabled by default without querying or transmitting anything",
+            "status": "passed"
+          },
+          {
+            "suite": "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts",
+            "assertionIndex": 17,
+            "name": "does not dispatch legacy-reserved authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts",
+            "assertionIndex": 18,
+            "name": "does not dispatch code-drift authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts",
+            "assertionIndex": 19,
+            "name": "does not dispatch issuer-code-revoked authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts",
+            "assertionIndex": 20,
+            "name": "delivers a recorded reserved grant only while privileged authority remains",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-options.service.test.ts",
+            "assertionIndex": 11,
+            "name": "filters latent reserved options until current stored tenant authority is present",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-history.service.test.ts",
+            "assertionIndex": 10,
+            "name": "denies revoked without exposing decision records",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-history.service.test.ts",
+            "assertionIndex": 12,
+            "name": "denies users-read-revoked without exposing decision records",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-history.service.test.ts",
+            "assertionIndex": 18,
+            "name": "marks a pending link without current authority for review and does not invent older decisions",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-management.service.test.ts",
+            "assertionIndex": 1,
+            "name": "denies missing authority before tenant/object lookup",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-management.service.test.ts",
+            "assertionIndex": 5,
+            "name": "cannot mutate an invitation when issuer",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-management.service.test.ts",
+            "assertionIndex": 6,
+            "name": "cannot mutate an invitation when role",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-invitation-management.service.test.ts",
+            "assertionIndex": 8,
+            "name": "propagates mandatory audit failure so cancellation can roll back",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "not_covered_by_native_recipe",
+        "cases": []
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Only mocked worker/adapter and read-model evidence in this packet; no native worker/provider execution or hosted mail acceptance."
+    },
+    {
+      "id": "R01-O11",
+      "obligation": "Access-request preview, decision, apply and applied replay share the grant ceiling",
+      "source": [
+        "services/access-requests/access-request.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 27,
+            "name": "applies through the original grant service in the same transaction as its receipt",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 28,
+            "name": "records a safe application failure after the grant transaction rolls back",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 31,
+            "name": "does not replace a committed application with FAILED after a lost response",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 37,
+            "name": "excludes reserved admin role from limited reviewer preview and approval",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 38,
+            "name": "excludes reserved administrator role from limited reviewer preview and approval",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 39,
+            "name": "excludes reserved super_admin role from limited reviewer preview and approval",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 40,
+            "name": "denies composed tenant scope in approval even when the new role has an ordinary code",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 41,
+            "name": "allows a current tenant administrator to approve a reserved role within explicit grants",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 42,
+            "name": "reauthorizes a recorded apply through the member grant boundary and preserves APPLIED after denial",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/access-requests/__tests__/access-request.actions.test.ts",
+            "assertionIndex": 1,
+            "name": "rejects fresh-auth userId identity mismatch before applying",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/access-requests/__tests__/access-request.actions.test.ts",
+            "assertionIndex": 2,
+            "name": "rejects fresh-auth tenantId identity mismatch before applying",
+            "status": "passed"
+          },
+          {
+            "suite": "actions/access-requests/__tests__/access-request.actions.test.ts",
+            "assertionIndex": 3,
+            "name": "passes fresh session proof only to the grant application service",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 318,
+            "declaration": "it(\"access-request preview/decision excludes reserved roles and preserves denied rows\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 31,
+                "name": "access-request preview/decision excludes reserved roles and preserves denied rows",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 323,
+            "declaration": "it(\"authorized access-request decision/application commits and replays exactly once\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 32,
+                "name": "authorized access-request decision/application commits and replays exactly once",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 334,
+            "declaration": "it(\"access-request application rejects code revocation and records only bounded FAILED evidence\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 33,
+                "name": "access-request application rejects code revocation and records only bounded FAILED evidence",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 347,
+            "declaration": "it(\"APPLIED reserved access-request replay rejects subsequent issuer code loss without rewriting receipt\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 34,
+                "name": "APPLIED reserved access-request replay rejects subsequent issuer code loss without rewriting receipt",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Denied approval must not mutate the request. A failed apply may record bounded FAILED/REVIEW_REQUIRED evidence while preserving role/member/session business state."
+    },
+    {
+      "id": "R01-O12",
+      "obligation": "Removal and deactivation retain one usable tenant-wide grant custodian where one existed",
+      "source": [
+        "services/roles/role-write.service.ts",
+        "services/users/member-access.service.ts",
+        "services/users/user-lifecycle.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 32,
+            "name": "authoritative role commands does not remove the final active role custodian",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 33,
+            "name": "authoritative role commands preserves the last custodian's explicit user-role assignment authority",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 34,
+            "name": "authoritative role commands does not count another permission editor without user-role assignment as a custodian",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 35,
+            "name": "authoritative role commands allows a custodian change when another active qualified member remains",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 50,
+            "name": "operating-scope grant ceiling retains the last effective tenant grant custodian when dashboard authority is removed",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 23,
+            "name": "retains the last usable administrator",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 44,
+            "name": "preserves the last tenant-wide grant custodian despite another permission-only custodian",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-lifecycle.service.test.ts",
+            "assertionIndex": 0,
+            "name": "preserves the only tenant-wide grant custodian when another custodian has only ordinary roles",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-lifecycle.service.test.ts",
+            "assertionIndex": 1,
+            "name": "permits deactivation when another usable tenant-wide grant custodian remains",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-lifecycle.service.test.ts",
+            "assertionIndex": 30,
+            "name": "preserves the last real custodian even when the actor has permission-edit aliases",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-lifecycle.service.test.ts",
+            "assertionIndex": 31,
+            "name": "allows deactivation when another qualified custodian remains",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "not_covered_by_native_recipe",
+        "cases": []
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Custodian-specific negative/positive coverage is currently mocked/unit only; the native source has no dedicated last-tenant-custodian test. Do not claim native recovery certification."
+    },
+    {
+      "id": "R01-O13",
+      "obligation": "Denied mutations preserve business rows; lock races and failed receipts roll back",
+      "source": [
+        "services/users/member-access.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 0,
+            "name": "records an assignment, revokes sessions and replays exactly once",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 13,
+            "name": "rejects foreign role IDs without effects",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 35,
+            "name": "denies a limited actor's empty reserved admin assignment without effects",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 36,
+            "name": "denies a limited actor's empty reserved administrator assignment without effects",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 37,
+            "name": "denies a limited actor's empty reserved super_admin assignment without effects",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/member-access.service.test.ts",
+            "assertionIndex": 38,
+            "name": "denies a limited actor's empty reserved  ADMIN  assignment without effects",
+            "status": "passed"
+          },
+          {
+            "suite": "services/roles/__tests__/role.service.test.ts",
+            "assertionIndex": 27,
+            "name": "authoritative role commands does not report success if the mandatory audit fails",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 28,
+            "name": "records a safe application failure after the grant transaction rolls back",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 29,
+            "name": "rolls back if effective permission verification fails after a grant",
+            "status": "passed"
+          },
+          {
+            "suite": "services/access-requests/__tests__/access-request.service.test.ts",
+            "assertionIndex": 31,
+            "name": "does not replace a committed application with FAILED after a lost response",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "passed_native_service_action_composition",
+        "cases": [
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 357,
+            "declaration": "it(\"waits on the real organization lock then denies revoked authority without unauthorized writes\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 35,
+                "name": "waits on the real organization lock then denies revoked authority without unauthorized writes",
+                "status": "passed"
+              }
+            ]
+          },
+          {
+            "source": "database/authority.postgres.test.ts",
+            "line": 379,
+            "declaration": "it(\"rolls back membership and target-session revocation when receipt persistence fails\",async()=>{",
+            "executionStatus": "passed",
+            "tests": [
+              {
+                "assertionIndex": 36,
+                "name": "rolls back membership and target-session revocation when receipt persistence fails",
+                "status": "passed"
+              }
+            ]
+          }
+        ],
+        "receipt": "database/native-result-retry01.json",
+        "testReceipt": "database/native-jest.json"
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Native observations hash 16 named synthetic business tables plus memberships; security audit deltas and documented abuse/request transitions are separate permitted effects. Unit mocks alone do not prove transactions."
+    },
+    {
+      "id": "R01-O14",
+      "obligation": "Fresh-tenant owner bootstrap remains distinct from delegation",
+      "source": [
+        "services/users/user-identity.service.ts"
+      ],
+      "unit": {
+        "status": "passed_selected_assertions",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": [
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 31,
+            "name": "user identity service creation and invite workflows preserves the legacy registration conflict response without creating an organization",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 32,
+            "name": "user identity service creation and invite workflows creates the legacy owner administrator role with canonical explicit permissions",
+            "status": "passed"
+          },
+          {
+            "suite": "services/users/__tests__/user-identity.service.test.ts",
+            "assertionIndex": 40,
+            "name": "user identity service creation and invite workflows persists v2 registration onboarding context and creates a verified workflow payload",
+            "status": "passed"
+          }
+        ]
+      },
+      "native": {
+        "status": "not_covered_by_native_recipe",
+        "cases": []
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Source inspection and mocked bootstrap positives only. No new real tenant registration or production bootstrap was performed."
+    },
+    {
+      "id": "R01-O15",
+      "obligation": "Source, harness and isolation provenance remain reviewable and failed attempts retained",
+      "source": [
+        "source-before.json",
+        "unit/attempt06/result.json"
+      ],
+      "unit": {
+        "status": "not_claimed",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": []
+      },
+      "native": {
+        "status": "not_covered_by_native_recipe",
+        "cases": []
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Attempt06 records 432 passed, zero failed/skipped and no bound input drift. Native retry01 records 37/37, 121 migrations verified, unchanged source/migrations, zero remaining clients and stopped/released owned cluster. Initial failed preflight retained."
+    },
+    {
+      "id": "R01-O16",
+      "obligation": "Actual signed-session HTTP/browser consumers",
+      "source": [
+        "P04-V02"
+      ],
+      "unit": {
+        "status": "not_claimed",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": []
+      },
+      "native": {
+        "status": "not_covered_by_native_recipe",
+        "cases": []
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "Deferred to P04-V02. No Next server, real Better Auth HTTP/cookie flow, browser restoration/cache behavior or full-app artifact is qualified by these unit/native action tests."
+    },
+    {
+      "id": "R01-O17",
+      "obligation": "Existing production-role census, reviewed remediation and hosted/operator acceptance",
+      "source": [
+        "production release work"
+      ],
+      "unit": {
+        "status": "not_claimed",
+        "evidence": "unit/attempt06/jest.json",
+        "tests": []
+      },
+      "native": {
+        "status": "not_covered_by_native_recipe",
+        "cases": []
+      },
+      "httpBrowser": {
+        "status": "not_run",
+        "ownerPackage": "P04-V02"
+      },
+      "limitation": "No production database queried. Existing reserved custom roles and grants require an authorized production census and separate remediation decision; no roles, flags, production migrations or deployment changed."
+    }
+  ],
+  "candidate": {
+    "candidate_id": "p04-r01-20261103-b82be2ba13f7",
+    "source_identity": "b82be2ba13f73f78db1f539ad5f867962b9b6c1a3f44cd2264ae9f138d0a5e8a",
+    "baseline_head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+    "source_manifest": "owned-source.json",
+    "pre_repair_manifest": "source-before.json",
+    "scope": "30 owned files, including17 product files and13 tests; dirty checkout preserved; no built full-app artifact",
+    "not_claimed": [
+      "whole-checkout production qualification",
+      "actual HTTP/browser transport",
+      "deployed production role census"
+    ]
+  },
+  "executed_native_source_relocation": {
+    "receipt": "database/test-source-relocation.json",
+    "retained_source": "database/authority.postgres.test.ts.source.txt",
+    "original_executed_source": "database/authority.postgres.test.ts"
+  }
+}

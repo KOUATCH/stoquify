@@ -1,0 +1,38 @@
+{
+  "utc": "2026-11-09T14:26:31.673Z",
+  "database": "stoquify_replay_20261109_44a94875d5",
+  "api": "scripts/promote-release-schema.cjs:withMigrationLock",
+  "apiSha256": "4528b01b3f231838cd8d98c8f5a50995c390df5d166ec3c2114c931375d9ed28",
+  "candidateManifestSha256": "30c4cf3c26a58f9a218aaa31b68c919e1ece5afa288500f30b0588d7ce63f778",
+  "sourceBinding": [
+    {
+      "path": "scripts/promote-release-schema.cjs",
+      "sha256": "4528b01b3f231838cd8d98c8f5a50995c390df5d166ec3c2114c931375d9ed28"
+    },
+    {
+      "path": "scripts/prisma-production-migration-gate.js",
+      "sha256": "1ee29e6674f53eec17c473bb225bd6e5d83bfaa1453e5490ca4259eec3e72008"
+    }
+  ],
+  "passed": true,
+  "checks": [
+    {
+      "name": "Contender refused without running its operation or disturbing owner",
+      "passed": true,
+      "ownerPid": 32952,
+      "ownedAdvisoryLocksWhileHeld": 1
+    },
+    {
+      "name": "Operation failure unlocks; subsequent owner reacquires and completes",
+      "passed": true
+    },
+    {
+      "name": "Owned holder termination aborts operation, rejects success, and releases lock for reacquisition",
+      "passed": true,
+      "terminatedPid": 32896,
+      "rejection": "Client has encountered a connection error and is not queryable"
+    }
+  ],
+  "localProductionTargetRefused": true,
+  "remainingOwnedLocks": 0
+}

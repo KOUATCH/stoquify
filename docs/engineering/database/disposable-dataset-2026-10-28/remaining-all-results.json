@@ -1,0 +1,1899 @@
+{
+  "generatedAt": "2026-10-29T13:39:28.331Z",
+  "lane": "all",
+  "scenarios": [
+    {
+      "organizationId": "synth12_douala",
+      "lane": "commerce",
+      "result": {
+        "scenarios": [
+          {
+            "name": "customer-statement-consent-response-referral",
+            "result": {
+              "statementId": "cmvtg8tv5001dmabs80c218ry",
+              "deliveryId": "2c016687-0e5d-44c0-a71f-044d01a14a2f",
+              "responseId": "cmvtg8u9u0027mabsww6jexk4",
+              "closingBalance": "10800.00",
+              "status": "QUEUED",
+              "externalDeliveryPerformed": false,
+              "referralAttributionId": "f1ea213e-606b-4b6f-90da-a89e50118846"
+            }
+          },
+          {
+            "name": "purchase-authoring-and-supplier-proposal",
+            "result": {
+              "draftId": "dd09bc9b-4223-402f-a034-2137ddc3fdbb",
+              "orderId": "cmvtg57bu001bmaf4h1czxhko",
+              "envelopeId": "cmvtg58ax0025maf4o9np3iab",
+              "proposalId": "cmvtg58gc002pmaf40288rwu1",
+              "status": "BUYER_REJECTED",
+              "externalDeliveryPerformed": false
+            }
+          },
+          {
+            "name": "receipt-access-and-public-abuse-boundary",
+            "result": {
+              "receiptTokenId": "cmvtg58mw0031maf4q67bfjfk",
+              "abuseBucketId": "cmvtg58pd0036maf4y0dejtr7",
+              "requestCount": 4,
+              "denied": true
+            }
+          },
+          {
+            "name": "signed-offline-session-and-signature-quarantine",
+            "result": {
+              "deviceId": "cmvthhxej001ema0gb0wxkaiw",
+              "eventIds": [
+                "cmvthhxme001sma0g44auaf0m",
+                "cmvthhxr40027ma0gx2ce1ahd"
+              ],
+              "validEvidenceStatus": "PENDING_REPLAY",
+              "rejectedSignatureStatus": "QUARANTINED",
+              "conflicts": [
+                {
+                  "id": "cmvthhxrc0029ma0gq892c2p7",
+                  "type": "SIGNATURE_INVALID"
+                }
+              ],
+              "financialPostingPerformed": false
+            }
+          },
+          {
+            "name": "cash-shortage-policy-and-idle-worker-checkpoint",
+            "result": {
+              "policyId": "cmvth1bh6002omajg0o11g7ob",
+              "status": "APPROVED",
+              "checkpoint": {
+                "id": "cmvth1blx0032majgizfse4iz",
+                "organizationId": "synth12_douala",
+                "checkKey": "pos.closed_shift_cash_shortage.review",
+                "workerKey": "pos.cash_shortage.review.checkpoint.v1",
+                "status": "PENDING",
+                "recordedFromInclusive": "2026-10-28T00:00:00.000Z",
+                "recordedThroughExclusive": "2026-10-28T20:00:00.000Z",
+                "cursor": null,
+                "lastProcessedCursor": null,
+                "attempt": 0,
+                "leaseOwnerId": null,
+                "leaseToken": null,
+                "leaseExpiresAt": null,
+                "lastErrorCode": null,
+                "lastErrorMessage": null,
+                "nextAttemptAt": null,
+                "completedAt": null,
+                "deadLetteredAt": null,
+                "deadLetterReason": null,
+                "correlationId": "synth12_douala:remaining:cash-worker",
+                "metadata": {
+                  "classification": "SYNTHETIC_TEST_ONLY",
+                  "dispatchPerformed": false
+                },
+                "createdAt": "2026-10-29T11:39:56.805Z",
+                "updatedAt": "2026-10-29T13:39:36.827Z"
+              },
+              "externalDispatchPerformed": false
+            }
+          },
+          {
+            "name": "independently-reviewed-no-activity-evidence",
+            "result": {
+              "evidenceId": "cmvthe1cr001qma7k1kmum3ti",
+              "status": "APPROVED",
+              "providerAccountId": "synth12_douala_manual_bank_provider",
+              "periodId": "cmvselfjj002uma3oet646g7i"
+            }
+          },
+          {
+            "name": "twelve-month-expense-and-daily-sales-projections",
+            "result": {
+              "expenseCount": 72,
+              "dailyReports": 24,
+              "reportLines": 288,
+              "cashEvents": 192,
+              "periods": 12,
+              "additionalFinancialPostingPerformed": false
+            }
+          },
+          {
+            "name": "locked-unissued-synthetic-fiscal-sequence",
+            "result": {
+              "sequenceId": "synth12_douala_fiscal_synthetic_locked",
+              "status": "LOCKED",
+              "legalDocumentIssued": false
+            }
+          },
+          {
+            "name": "local-encrypted-picture-lifecycle",
+            "result": {
+              "version": 1,
+              "classification": "SYNTHETIC_TEST_ONLY",
+              "organizationId": "synth12_douala",
+              "storageMode": "LOCAL_TEST_TRANSPORT_ONLY",
+              "externalCommunicationPerformed": false,
+              "catalogItemLinked": false,
+              "attachmentMeaning": "claimItemPictures reservation only; no item or ordinary application media route is linked",
+              "attached": {
+                "id": "2d40177a-fc4e-4e07-8e54-f86eb62a0ccc",
+                "reference": "/api/media/2d40177a-fc4e-4e07-8e54-f86eb62a0ccc",
+                "providerKey": "local-test:2d40177a-fc4e-4e07-8e54-f86eb62a0ccc",
+                "providerLocator": "local-test-picture:2d40177a-fc4e-4e07-8e54-f86eb62a0ccc",
+                "plaintextFile": "synthetic-documents/synth12_douala-remaining-picture-attached.png",
+                "plaintextSha256": "9dca41fd561b4c30442d3e3ad3c7af264dbf10b07beeff05f9748cda88c11739",
+                "byteLength": 157,
+                "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_douala/2d40177a-fc4e-4e07-8e54-f86eb62a0ccc.bin",
+                "ciphertextSha256": "4ca462c5a29db8b507d60d9fb41192480bb9d1fcf918459a7d37187adcf3ee1f",
+                "status": "ready",
+                "attachedAt": "2026-10-28T20:00:00.000Z",
+                "tombstoneFile": null
+              },
+              "orphan": {
+                "id": "0253a4fc-60f3-40c3-be7e-ab53316d1f7a",
+                "reference": "/api/media/0253a4fc-60f3-40c3-be7e-ab53316d1f7a",
+                "providerKey": "local-test:0253a4fc-60f3-40c3-be7e-ab53316d1f7a",
+                "providerLocator": "local-test-picture:0253a4fc-60f3-40c3-be7e-ab53316d1f7a",
+                "plaintextFile": "synthetic-documents/synth12_douala-remaining-picture-orphan.png",
+                "plaintextSha256": "fbd08fd83ebf452167573e6eca4ed73967332da9f2a3dd23dbd87732b8513242",
+                "byteLength": 155,
+                "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_douala/0253a4fc-60f3-40c3-be7e-ab53316d1f7a.bin",
+                "ciphertextSha256": "cdffda180704dd929b193dee2508d86307ba039f4701049df09ebdbe92120b5c",
+                "status": "deleted",
+                "attachedAt": null,
+                "tombstoneFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_douala/0253a4fc-60f3-40c3-be7e-ab53316d1f7a.deleted.json"
+              },
+              "checks": {
+                "roundTrip": true,
+                "wrongTenantReadDenied": true,
+                "wrongTenantClaimDenied": true,
+                "tamperDenied": true,
+                "attachedDeleteDenied": true,
+                "orphanDeleted": true,
+                "deletedReadDenied": true,
+                "invalidMimeDenied": true,
+                "defaultTransportDenied": true
+              }
+            }
+          }
+        ],
+        "issues": [],
+        "blockedTables": []
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "lane": "people",
+      "result": {
+        "organizationId": "synth12_douala",
+        "scenarios": [
+          {
+            "scenario": "reviewed-encrypted-employee-document",
+            "result": {
+              "documentId": "70db4e18-1384-42e7-8c79-28645caeb09d",
+              "status": "AVAILABLE",
+              "originalSha256": "e1a2c09e7a96ec934b25ec0e4b5d33b53247391535b797e4b3fe2b5e21c14236",
+              "encryptedStorage": true,
+              "downloadRoundTrip": true,
+              "scannerIsSynthetic": true
+            }
+          },
+          {
+            "scenario": "personal-correction-independent-rejection",
+            "result": {
+              "caseId": "649800c3-f973-4dcc-9e13-e415f1b5adc5",
+              "status": "REJECTED",
+              "employeeUnchanged": true
+            }
+          },
+          {
+            "scenario": "onboarding-lifecycle-task-completion",
+            "result": {
+              "tasks": [
+                {
+                  "id": "6c7befda-32ec-411f-9300-3f7a339a08b1",
+                  "code": "HR_PREPARATION",
+                  "status": "COMPLETED"
+                },
+                {
+                  "id": "22f1bf01-5e8a-40c1-9865-75717b357de2",
+                  "code": "APPLICATION_ACCESS",
+                  "status": "COMPLETED"
+                },
+                {
+                  "id": "bc2603e2-f117-4377-8df5-f03a003d3273",
+                  "code": "EXTERNAL_ACCESS",
+                  "status": "COMPLETED"
+                },
+                {
+                  "id": "3fc8418a-3f54-4700-a53f-649c4ba9b928",
+                  "code": "ASSETS",
+                  "status": "COMPLETED"
+                }
+              ],
+              "authoritativeApprovalEventId": "cmvsezr0c01nbmatkz7dvqj67",
+              "externalProvisioningPerformed": false
+            }
+          },
+          {
+            "scenario": "company-holiday-and-reviewer-grant",
+            "result": {
+              "calendarId": "cmvtglt9x002dmav02y5pbq65",
+              "holidayId": "cmvtglt9y002fmav0kn1ca76s",
+              "reviewerGrantId": "sha256:0236ea563dd361e276c169006337d3ada2c24eafd1ae31bf20d6d9ea350b95a1",
+              "officialHolidayClaimed": false,
+              "schedulesChanged": false
+            }
+          },
+          {
+            "scenario": "rejected-attendance-source-and-resolved-anomaly",
+            "result": {
+              "batchId": "cmvtgltvr002pmav0qsqpe28r",
+              "anomalyId": "cmvtgltza002tmav0z87lfdy8",
+              "status": "RESOLVED",
+              "authoritativeEntryId": "cmvsf30b10748mausmvtlvn8g",
+              "rawEntryChanged": false
+            }
+          },
+          {
+            "scenario": "draft-nonstatutory-compensation",
+            "result": {
+              "rubriqueId": "cmvtglu94002zmav0ohel26us",
+              "assignmentId": "cmvtglur70039mav0fzbih245",
+              "status": "DRAFT",
+              "statutoryTreatmentApproved": false
+            }
+          },
+          {
+            "scenario": "supplier-csv-validation-and-import",
+            "result": {
+              "batches": [
+                {
+                  "batchId": "cmvtgluz5003lmav01qnrg9hq",
+                  "status": "BLOCKED",
+                  "sourceSha256": "9bd8f2448fd692929e655d0b7ed422c374fcf0313ed44f99fe8dd415b1e924e9"
+                },
+                {
+                  "batchId": "cmvtglv43003tmav06pe4gn2r",
+                  "status": "COMMITTED",
+                  "sourceSha256": "946cc1ae73aba24c8f8454467379d5625ec80e15a5f571af30c38b5c52caff9a"
+                }
+              ],
+              "approvalPolicy": "HIGH_RISK_SUPPLIER_INDEPENDENT_REVIEW",
+              "noOpeningBalanceOrTransactionImported": true
+            }
+          },
+          {
+            "scenario": "unsent-user-invitation-outbox",
+            "result": {
+              "inviteId": "cmvth3qxz0019ma0w1arzalh9",
+              "roleId": "role_1dc6ed54440a759080016f93e9b1fa9ed7d65aaf5ae975f48843cbbba37f7a6f",
+              "issueId": "cmvth3qyi001bma0wwru2vdef",
+              "delivery": "PENDING",
+              "replayed": true,
+              "externalEmailSent": false,
+              "legacyPresenceRoleUnchanged": true
+            }
+          }
+        ],
+        "issues": [],
+        "blockedTables": [
+          "payroll_periods",
+          "payroll_attendance_snapshots",
+          "payroll_runs",
+          "payroll_run_lines",
+          "payroll_run_transitions",
+          "payroll_payslips",
+          "payroll_payslip_lines",
+          "payroll_declarations",
+          "payroll_declaration_evidence",
+          "payroll_payment_batches",
+          "payroll_payment_allocations",
+          "payroll_employee_balance_cases",
+          "payroll_employee_balance_events",
+          "hris_payroll_handoff_packages",
+          "hris_payroll_handoff_receipts"
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "lane": "firm-close",
+      "result": {
+        "organizationId": "synth12_douala",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "findings": [
+          {
+            "scenario": "inventory-access-request",
+            "status": "COMPLETE",
+            "detail": {
+              "id": "2f48f0ca4eb59a1120322a64e88da34299b2bb0c5fad73b5af5baeb36f5614f4",
+              "decision": "PENDING",
+              "application": "NOT_REQUIRED"
+            }
+          },
+          {
+            "scenario": "pending-accountant-invitation",
+            "status": "COMPLETE",
+            "detail": {
+              "outcome": "INVITED",
+              "inviteId": "c8f36467-a42e-433e-acf6-2519a14215a0",
+              "delivery": "LOCAL_OUTBOX_ONLY; workers disabled; no email sent"
+            }
+          },
+          {
+            "scenario": "consented-firm-engagement",
+            "status": "COMPLETE",
+            "detail": "cmvtgt9pe0031ma80s80ipgv5"
+          },
+          {
+            "scenario": "firm-practice-plan-effort-budget",
+            "status": "COMPLETE",
+            "detail": [
+              {
+                "id": "cmvtgtcjk004dma800xfett4v",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgtd90004hma80wtquuxf2",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgtdyb004lma80vwl5ohkk",
+                "version": 1,
+                "replayed": true
+              }
+            ]
+          },
+          {
+            "scenario": "operational-obligation-register",
+            "status": "COMPLETE",
+            "detail": {
+              "instanceId": "eb882c58-e669-4f0e-8e3d-02de0579d9d0",
+              "version": 1,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "branch-daily-review",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvth7xbu001zmafce1j6lf16",
+              "status": "BLOCKED",
+              "blockerCount": 3,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "auxiliary-controlled-opening",
+            "status": "COMPLETE",
+            "detail": {
+              "organizationId": "synth12_opening_aux",
+              "personas": 3,
+              "locations": 1,
+              "chartAccounts": 7,
+              "executionId": "cmvth84410047mafcjujcu3mh",
+              "status": "ACTIVE",
+              "replayed": true,
+              "reconciliation": {
+                "debit": "2500000.00",
+                "lines": [
+                  {
+                    "debit": "2500000.00",
+                    "credit": "0.00",
+                    "sourceId": "opening-cash",
+                    "accountId": "cmvth81za002rmafcxwbklmpj",
+                    "difference": "0.00"
+                  },
+                  {
+                    "debit": "0.00",
+                    "credit": "2500000.00",
+                    "sourceId": "opening-capital",
+                    "accountId": "cmvth8222002vmafcywhqydrl",
+                    "difference": "0.00"
+                  }
+                ],
+                "credit": "2500000.00",
+                "details": [],
+                "version": "opening-reconciliation-v1",
+                "currency": "XAF",
+                "cutoverAt": "2026-09-30T23:00:00.000Z",
+                "operations": [
+                  {
+                    "domain": "LEDGER",
+                    "sourceId": "cmvth832o0041mafcykn181p5",
+                    "receiptHash": "sha256:7eca69ee31440b8c07b9b4e35856fc90b00b7cd7f9ec9e4fa8ab1a7a71f64a3f"
+                  }
+                ],
+                "reconciled": true,
+                "revisionId": "cmvth832o0041mafcykn181p5",
+                "executionId": "cmvth84410047mafcjujcu3mh",
+                "journalEntryId": "cmvth84ji004fmafcou2ats9t",
+                "manifestDigest": "sha256:7645614856a10e0e852e3bc85840a1714fd02aed40a14c6afcdee7856510b1cf"
+              }
+            }
+          },
+          {
+            "scenario": "auxiliary-firm-engagement",
+            "status": "COMPLETE",
+            "detail": "cmvth8ge500bnmafc5ig22v6u"
+          },
+          {
+            "scenario": "capital-support-independent-review",
+            "status": "COMPLETE",
+            "detail": {
+              "evidenceId": "cmvtjeyaw002oma7wearf722b",
+              "status": "APPROVED"
+            }
+          },
+          {
+            "scenario": "september-close-assessment",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvtjeyj5002qma7wbcl0yfqj",
+              "status": "BLOCKED",
+              "highBlockers": 25,
+              "criticalBlockers": 0,
+              "draftExportId": "cmvtjf46l008sma7wvxkrmwcg"
+            }
+          },
+          {
+            "scenario": "local-evidence-inbox-publication",
+            "status": "COMPLETE",
+            "detail": {
+              "before": 3,
+              "after": 3,
+              "publication": [],
+              "replay": [],
+              "delivery": "AUTHENTICATED_SYNTHETIC_LOCAL_INBOX_ONLY",
+              "externalCommunicationPerformed": false
+            }
+          },
+          {
+            "scenario": "provider-event-and-suspense",
+            "status": "COMPLETE",
+            "detail": {
+              "providerEventRecordId": "cmvth8691005pmafcu2xcbpu2",
+              "replayStatus": "DUPLICATE",
+              "reconciliationRunId": "cmvth86ww0061mafcyh8i6ll1",
+              "suspense": [
+                {
+                  "id": "cmvth871j0065mafc52418jqk",
+                  "status": "OPEN",
+                  "amount": "250.00",
+                  "currencyCode": "XAF"
+                },
+                {
+                  "id": "cmvth874d006bmafcy7ho3ok3",
+                  "status": "OPEN",
+                  "amount": "1000.00",
+                  "currencyCode": "XAF"
+                }
+              ],
+              "externalProviderContacted": false
+            }
+          },
+          {
+            "scenario": "bank-balance-unmatched-statement-negative-case",
+            "status": "COMPLETE",
+            "detail": {
+              "evidenceId": "cmvth87gr006fmafc9h81ilje",
+              "status": "PROPOSED",
+              "exactDifferenceXAF": "1000.00",
+              "financialPostingInvented": false
+            }
+          },
+          {
+            "scenario": "auxiliary-branch-review-and-signature",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvth8ngl00d1mafcchgprf2a",
+              "status": "IN_REVIEW",
+              "signOffId": "cmvth8o2r00ddmafc606kkt2i",
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "auxiliary-zero-activity-support",
+            "status": "COMPLETE",
+            "detail": [
+              {
+                "id": "cmvthszm20095majcd7dq2a42",
+                "status": "APPROVED",
+                "account": "571100"
+              },
+              {
+                "id": "cmvthszrp0097majco4jb1mcz",
+                "status": "APPROVED",
+                "account": "101100"
+              },
+              {
+                "id": "cmvthszzc0099majceakq8ci2",
+                "status": "APPROVED",
+                "account": "411100"
+              },
+              {
+                "id": "cmvtht06w009bmajcbzqws736",
+                "status": "APPROVED",
+                "account": "401100"
+              },
+              {
+                "id": "cmvtht0so009dmajc5vj3r0pn",
+                "status": "APPROVED",
+                "account": "311100"
+              },
+              {
+                "id": "cmvtht1pk009fmajcx0tsi73f",
+                "status": "APPROVED",
+                "account": "521100"
+              },
+              {
+                "id": "cmvtht20q009hmajc4o0i0za0",
+                "status": "APPROVED",
+                "account": "471900"
+              }
+            ]
+          },
+          {
+            "scenario": "auxiliary-close-assessment",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvtht28l009jmajcfrdvdlcq",
+              "status": "BLOCKED",
+              "highBlockers": 4,
+              "criticalBlockers": 3,
+              "draftExportId": "cmvtht4kb00dtmajcn9patakj"
+            }
+          },
+          {
+            "scenario": "auxiliary-advisory-lifecycle",
+            "status": "COMPLETE",
+            "detail": {
+              "engagementId": "cmvth8ge500bnmafc5ig22v6u",
+              "advisoryRevisionId": "cmvtht98200ehmajckhd5u6g1",
+              "publication": "AUTHENTICATED_LOCAL_WORKSPACE_ONLY",
+              "version": 4
+            }
+          },
+          {
+            "scenario": "period-control-event",
+            "status": "BLOCKED",
+            "detail": {
+              "code": "BUSINESS_RULE_VIOLATION",
+              "message": "Accounting period cannot be closed: 2 open payment reconciliation exceptions must be resolved; 2 open payment reconciliation suspense items must be resolved; 1 payment reconciliation run must be signed or voided",
+              "prerequisites": "Resolve real close blockers, independently certify the current completed-period close pack, then invoke closeAccountingPeriod. Core October periods stay OPEN."
+            }
+          },
+          {
+            "scenario": "clean-auxiliary-independent-period-closure",
+            "status": "COMPLETE",
+            "detail": {
+              "organizationId": "synth12_close_aux",
+              "periodId": "synth12_close_aux_period_2026_08",
+              "status": "CLOSED",
+              "eventId": "cmvtir4yf007mma54wklul3po",
+              "certifiedExportId": "cmvtir4r8007gma5448t71y5w",
+              "replayed": true,
+              "certification": "APPLICATION_SYSTEM_EVIDENCE_ONLY; statutory authority remains unconfigured"
+            }
+          }
+        ],
+        "issues": [],
+        "externalCommunicationPerformed": false
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "lane": "platform",
+      "result": {
+        "organizationId": "synth12_douala",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "outcomes": {
+          "module_composition": {
+            "commandId": "cmvtgz229001smaxgq399vaxt",
+            "state": "REQUESTED",
+            "replayed": true,
+            "activeModules": [
+              "accounting",
+              "administration",
+              "analytics",
+              "close_assurance",
+              "compliance",
+              "dashboard",
+              "finance",
+              "inventory",
+              "payment_reconciliation",
+              "payroll",
+              "pos",
+              "purchasing",
+              "reports",
+              "sales",
+              "settings"
+            ]
+          },
+          "compliance_sandbox_configuration": {
+            "result": {
+              "id": "cmvtgz2gg002omaxggr1qrd03",
+              "organizationId": "synth12_douala",
+              "countryCode": "CM",
+              "authorityChannel": "CM_DGI_E_SERVICES_PORTAL",
+              "adapterKey": "CM_DGI_SANDBOX",
+              "environment": "SANDBOX",
+              "status": "REQUIRES_CONFIGURATION",
+              "countryPackVersion": "CM-2026.1",
+              "countryPackResolutionHash": "sha256:b0bf43e0e980e79e6a338952e644292585bc1f21a69437fca6a3e1f21523806d",
+              "capabilityStatus": "REQUIRES_EXPERT_REVIEW",
+              "credentialReference": null,
+              "credentialExpiresAt": null,
+              "credentialRotatedAt": null,
+              "credentialRotatedById": null,
+              "officialSpecTitle": null,
+              "officialSpecVersion": null,
+              "officialSpecPublishedAt": null,
+              "officialSpecEffectiveFrom": null,
+              "officialSpecReference": null,
+              "officialSpecHash": null,
+              "reviewStatus": "REQUIRES_EXPERT_REVIEW",
+              "reviewedById": null,
+              "reviewedAt": null,
+              "reviewerQualification": null,
+              "reviewerConflictDeclared": null,
+              "reviewEvidenceHash": null,
+              "publicMetadata": null,
+              "configHash": "sha256:c757fc0d7420244b024c1c36596dfda1eb5a0ea47385192a312ddaff48007ab3",
+              "createdById": "synth12_douala_user_owner",
+              "updatedById": "synth12_douala_user_owner",
+              "approvedById": null,
+              "approvedAt": null,
+              "disabledAt": null,
+              "createdAt": "2026-10-29T11:38:11.632Z",
+              "updatedAt": "2026-10-29T11:38:11.632Z"
+            },
+            "limitation": "Sandbox configuration only; no credential, official specification, expert approval or authority submission invented."
+          },
+          "business_event_idempotency_conflict": {
+            "anomalyId": "cmvtgz2mb0034maxgygv7j3cv",
+            "externalDeliveryRequested": false
+          },
+          "agent_governance": {
+            "packageId": "cmvtgz2ot0039maxg2956x8p5",
+            "state": "PROVISIONED_INACTIVE",
+            "certification": "FAILED",
+            "externalActivation": false
+          },
+          "agent_runtime_and_proposal": {
+            "completedRunId": "cmvthbvby001cmazwomzfqwvm",
+            "inventoryRunId": "cmvthbw2w0025mazwy8ax1k5p",
+            "blockedRunId": "cmvthbviz001smazw5fcg4km6",
+            "proposalId": "cmvthbwhk002cmazw4r3dcxhx",
+            "modelProvider": "none",
+            "scope": "Actual blocked digest retained honestly; separate synthetic read-only inventory agent uses real inventory evidence. Production admission and external model transport are not exercised."
+          },
+          "assurance_control_plane": {
+            "invocation": "replayed",
+            "incidentId": "cmvthbxfk003amazwwutd2bzx",
+            "alertIds": [
+              "cmvthbxgw003emazwgvwjc3cj",
+              "cmvthbxka003mmazwn40leuim",
+              "cmvthc366007jmazwpko4k9gb",
+              "cmvthc8oh00c8mazw1kmeq96r"
+            ],
+            "deliveriesAttempted": 0,
+            "waiverApproval": false
+          },
+          "command_center": {
+            "occurrenceId": "e012403e-0dcc-47bc-b073-43b36ccbcb7f",
+            "reviewCurrent": true,
+            "notices": 1,
+            "externalMessagesSent": 0
+          }
+        },
+        "issues": []
+      }
+    },
+    {
+      "organizationId": "synth12_douala",
+      "lane": "stock-pos",
+      "result": {
+        "organizationId": "synth12_douala",
+        "scenarios": [
+          {
+            "scenario": "held-serialized-receipt-independent-acceptance-and-invoice-exception",
+            "result": {
+              "itemId": "synth12_douala_remaining_serial_item",
+              "masterReferenceEvidenceSha256": "cb55b7767ff133c97b81878fc37fcdcba63e0967bd246ffd35f5991fe86cad60",
+              "orderId": "cmvth5h33001bmahsk28lvop4",
+              "receiptId": "cmvth5i9t001xmahsoyzt0mw5",
+              "resolutionId": "cmvth5isd002bmahsxv8n2rz8",
+              "serialIds": [
+                "cmvth5j3b0031mahsyb0flduy",
+                "cmvth5j3b0032mahsig57lacf"
+              ],
+              "stockQuantity": "2",
+              "stockValue": "2000.00",
+              "invoiceId": "cmvth5jzy003lmahsew6vr58v",
+              "exceptionId": "cmvth5kjl003zmahsynkw2a9t",
+              "exceptionStatus": "REJECTED",
+              "invoicePosted": false
+            }
+          },
+          {
+            "scenario": "cash-pos-sale-refund-stock-cash-ledger-round-trip",
+            "result": {
+              "saleId": "cmvth5lg30055mahs4moltayy",
+              "refundId": "cmvth5n0a0078mahs4c9zg9dl",
+              "total": "17500",
+              "status": "RETURNED",
+              "postingBatchId": "cmvth5n2k007amahsqspdrc95",
+              "sessionId": "cmvth5l3y004xmahsq786o9mx",
+              "netInventoryQuantity": 0,
+              "netCash": 0,
+              "evidenceSha256": "71d79976b45ded3af7e8eb68f050c6aadd5d63c950f1666facb65b8af80787af"
+            }
+          }
+        ],
+        "issues": [],
+        "blockedTables": []
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "lane": "commerce",
+      "result": {
+        "scenarios": [
+          {
+            "name": "customer-statement-consent-response-referral",
+            "result": {
+              "statementId": "cmvtg8z080046mabsh3wdgsxg",
+              "deliveryId": "5593956d-79ce-4ba6-9fc9-2a7a52d7c55f",
+              "responseId": "cmvtg8z6g0050mabszi9mqbp3",
+              "closingBalance": "10800.00",
+              "status": "QUEUED",
+              "externalDeliveryPerformed": false,
+              "referralAttributionId": "66a04c68-f440-4a97-b15d-5aa13e2f7122"
+            }
+          },
+          {
+            "name": "purchase-authoring-and-supplier-proposal",
+            "result": {
+              "draftId": "562be697-94cb-41cd-a62e-f46ee0cb4e76",
+              "orderId": "cmvtg5bot004imaf473tgid1z",
+              "envelopeId": "cmvtg5cm6005cmaf4kp7gxi0f",
+              "proposalId": "cmvtg5cqj005wmaf4jgmb7s5h",
+              "status": "BUYER_REJECTED",
+              "externalDeliveryPerformed": false
+            }
+          },
+          {
+            "name": "receipt-access-and-public-abuse-boundary",
+            "result": {
+              "receiptTokenId": "cmvtg5cuc0068maf4fdxlhy1i",
+              "abuseBucketId": "cmvtg5cvv006dmaf4nuasceez",
+              "requestCount": 4,
+              "denied": true
+            }
+          },
+          {
+            "name": "signed-offline-session-and-signature-quarantine",
+            "result": {
+              "deviceId": "cmvthi8vh0049ma0g9i2tnivv",
+              "eventIds": [
+                "cmvthi8zx004nma0g7w21t07c",
+                "cmvthi93s0052ma0ggklgxr9v"
+              ],
+              "validEvidenceStatus": "PENDING_REPLAY",
+              "rejectedSignatureStatus": "QUARANTINED",
+              "conflicts": [
+                {
+                  "id": "cmvthi93y0054ma0glscohsa3",
+                  "type": "SIGNATURE_INVALID"
+                }
+              ],
+              "financialPostingPerformed": false
+            }
+          },
+          {
+            "name": "cash-shortage-policy-and-idle-worker-checkpoint",
+            "result": {
+              "policyId": "cmvth1plk005rmajgm65pblrv",
+              "status": "APPROVED",
+              "checkpoint": {
+                "id": "cmvth1ppj0065majgecjroo8m",
+                "organizationId": "synth12_yaounde",
+                "checkKey": "pos.closed_shift_cash_shortage.review",
+                "workerKey": "pos.cash_shortage.review.checkpoint.v1",
+                "status": "PENDING",
+                "recordedFromInclusive": "2026-10-28T00:00:00.000Z",
+                "recordedThroughExclusive": "2026-10-28T20:00:00.000Z",
+                "cursor": null,
+                "lastProcessedCursor": null,
+                "attempt": 0,
+                "leaseOwnerId": null,
+                "leaseToken": null,
+                "leaseExpiresAt": null,
+                "lastErrorCode": null,
+                "lastErrorMessage": null,
+                "nextAttemptAt": null,
+                "completedAt": null,
+                "deadLetteredAt": null,
+                "deadLetterReason": null,
+                "correlationId": "synth12_yaounde:remaining:cash-worker",
+                "metadata": {
+                  "classification": "SYNTHETIC_TEST_ONLY",
+                  "dispatchPerformed": false
+                },
+                "createdAt": "2026-10-29T11:40:15.079Z",
+                "updatedAt": "2026-10-29T13:40:04.277Z"
+              },
+              "externalDispatchPerformed": false
+            }
+          },
+          {
+            "name": "independently-reviewed-no-activity-evidence",
+            "result": {
+              "evidenceId": "cmvthe98p003hma7kznxm0xzv",
+              "status": "APPROVED",
+              "providerAccountId": "synth12_yaounde_manual_bank_provider",
+              "periodId": "cmvselpqk00gima3o9uaze4vs"
+            }
+          },
+          {
+            "name": "twelve-month-expense-and-daily-sales-projections",
+            "result": {
+              "expenseCount": 72,
+              "dailyReports": 24,
+              "reportLines": 288,
+              "cashEvents": 192,
+              "periods": 12,
+              "additionalFinancialPostingPerformed": false
+            }
+          },
+          {
+            "name": "locked-unissued-synthetic-fiscal-sequence",
+            "result": {
+              "sequenceId": "synth12_yaounde_fiscal_synthetic_locked",
+              "status": "LOCKED",
+              "legalDocumentIssued": false
+            }
+          },
+          {
+            "name": "local-encrypted-picture-lifecycle",
+            "result": {
+              "version": 1,
+              "classification": "SYNTHETIC_TEST_ONLY",
+              "organizationId": "synth12_yaounde",
+              "storageMode": "LOCAL_TEST_TRANSPORT_ONLY",
+              "externalCommunicationPerformed": false,
+              "catalogItemLinked": false,
+              "attachmentMeaning": "claimItemPictures reservation only; no item or ordinary application media route is linked",
+              "attached": {
+                "id": "40eb6f86-8323-447a-a991-fab634446d69",
+                "reference": "/api/media/40eb6f86-8323-447a-a991-fab634446d69",
+                "providerKey": "local-test:40eb6f86-8323-447a-a991-fab634446d69",
+                "providerLocator": "local-test-picture:40eb6f86-8323-447a-a991-fab634446d69",
+                "plaintextFile": "synthetic-documents/synth12_yaounde-remaining-picture-attached.png",
+                "plaintextSha256": "ead1ec309d5541f1c2d7255e3f8e9d102e289d25f558ed3609e07790686fc974",
+                "byteLength": 158,
+                "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_yaounde/40eb6f86-8323-447a-a991-fab634446d69.bin",
+                "ciphertextSha256": "af0591299a5dcb80d35ec1b1a2236cd908fcb8a16513e53ce713e1d7553a8560",
+                "status": "ready",
+                "attachedAt": "2026-10-28T20:00:00.000Z",
+                "tombstoneFile": null
+              },
+              "orphan": {
+                "id": "2e209888-60ed-4f7a-9c3b-562319538876",
+                "reference": "/api/media/2e209888-60ed-4f7a-9c3b-562319538876",
+                "providerKey": "local-test:2e209888-60ed-4f7a-9c3b-562319538876",
+                "providerLocator": "local-test-picture:2e209888-60ed-4f7a-9c3b-562319538876",
+                "plaintextFile": "synthetic-documents/synth12_yaounde-remaining-picture-orphan.png",
+                "plaintextSha256": "d18793676f45c6a870b457fccf586e924b2cdafc992f72d43e886f60f3a8d42b",
+                "byteLength": 156,
+                "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_yaounde/2e209888-60ed-4f7a-9c3b-562319538876.bin",
+                "ciphertextSha256": "ae5c74258016c66e6e665a74ee610a19d95a03578764513c5e7d42e125820600",
+                "status": "deleted",
+                "attachedAt": null,
+                "tombstoneFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_yaounde/2e209888-60ed-4f7a-9c3b-562319538876.deleted.json"
+              },
+              "checks": {
+                "roundTrip": true,
+                "wrongTenantReadDenied": true,
+                "wrongTenantClaimDenied": true,
+                "tamperDenied": true,
+                "attachedDeleteDenied": true,
+                "orphanDeleted": true,
+                "deletedReadDenied": true,
+                "invalidMimeDenied": true,
+                "defaultTransportDenied": true
+              }
+            }
+          }
+        ],
+        "issues": [],
+        "blockedTables": []
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "lane": "people",
+      "result": {
+        "organizationId": "synth12_yaounde",
+        "scenarios": [
+          {
+            "scenario": "reviewed-encrypted-employee-document",
+            "result": {
+              "documentId": "5299b27a-1b78-4207-bcb4-98b6759118c5",
+              "status": "AVAILABLE",
+              "originalSha256": "83ca072e739a651d5e2a9fe2f2c93c305432f6f8490571b7593168cdf96e513a",
+              "encryptedStorage": true,
+              "downloadRoundTrip": true,
+              "scannerIsSynthetic": true
+            }
+          },
+          {
+            "scenario": "personal-correction-independent-rejection",
+            "result": {
+              "caseId": "1b542856-6786-43e6-8439-e6e1f151a579",
+              "status": "REJECTED",
+              "employeeUnchanged": true
+            }
+          },
+          {
+            "scenario": "onboarding-lifecycle-task-completion",
+            "result": {
+              "tasks": [
+                {
+                  "id": "17b689ab-014f-4c2f-aca2-7747c75d09c8",
+                  "code": "HR_PREPARATION",
+                  "status": "COMPLETED"
+                },
+                {
+                  "id": "1ec70f46-2da9-4067-a186-db42312f3e35",
+                  "code": "APPLICATION_ACCESS",
+                  "status": "COMPLETED"
+                },
+                {
+                  "id": "cea4e335-ebfe-4010-809c-59a7e24b4a62",
+                  "code": "EXTERNAL_ACCESS",
+                  "status": "COMPLETED"
+                },
+                {
+                  "id": "e9400fdd-c77c-4090-adfb-4f4a43fe1632",
+                  "code": "ASSETS",
+                  "status": "COMPLETED"
+                }
+              ],
+              "authoritativeApprovalEventId": "cmvsf428d09gimaus61qo0vmx",
+              "externalProvisioningPerformed": false
+            }
+          },
+          {
+            "scenario": "company-holiday-and-reviewer-grant",
+            "result": {
+              "calendarId": "cmvtgm03m006fmav001pp4ude",
+              "holidayId": "cmvtgm03n006hmav0xawykjby",
+              "reviewerGrantId": "sha256:890d0e02eed7eea5eec5b46fba5b4153f92e705e5f9ef207c5a5f3e78cd88452",
+              "officialHolidayClaimed": false,
+              "schedulesChanged": false
+            }
+          },
+          {
+            "scenario": "rejected-attendance-source-and-resolved-anomaly",
+            "result": {
+              "batchId": "cmvtgm0a2006rmav0yvh7oofj",
+              "anomalyId": "cmvtgm0ai006vmav0vdy4069r",
+              "status": "RESOLVED",
+              "authoritativeEntryId": "cmvsf4mb70gbymausfwn2ej26",
+              "rawEntryChanged": false
+            }
+          },
+          {
+            "scenario": "draft-nonstatutory-compensation",
+            "result": {
+              "rubriqueId": "cmvtgm0dk0071mav0qbvldmvx",
+              "assignmentId": "cmvtgm0h1007bmav07psp1xaw",
+              "status": "DRAFT",
+              "statutoryTreatmentApproved": false
+            }
+          },
+          {
+            "scenario": "supplier-csv-validation-and-import",
+            "result": {
+              "batches": [
+                {
+                  "batchId": "cmvtgm0lk007nmav0v3kcz3sn",
+                  "status": "BLOCKED",
+                  "sourceSha256": "9bd8f2448fd692929e655d0b7ed422c374fcf0313ed44f99fe8dd415b1e924e9"
+                },
+                {
+                  "batchId": "cmvtgm0r3007vmav03dbxle5y",
+                  "status": "COMMITTED",
+                  "sourceSha256": "946cc1ae73aba24c8f8454467379d5625ec80e15a5f571af30c38b5c52caff9a"
+                }
+              ],
+              "approvalPolicy": "HIGH_RISK_SUPPLIER_INDEPENDENT_REVIEW",
+              "noOpeningBalanceOrTransactionImported": true
+            }
+          },
+          {
+            "scenario": "unsent-user-invitation-outbox",
+            "result": {
+              "inviteId": "cmvth3ud4002rma0wcpi1wd1l",
+              "roleId": "role_2365447ae469ad41c32c4b2ff3975bd368207cf64a1e56ce84507367f3a98f88",
+              "issueId": "cmvth3udg002tma0w87zjid16",
+              "delivery": "PENDING",
+              "replayed": true,
+              "externalEmailSent": false,
+              "legacyPresenceRoleUnchanged": true
+            }
+          }
+        ],
+        "issues": [],
+        "blockedTables": [
+          "payroll_periods",
+          "payroll_attendance_snapshots",
+          "payroll_runs",
+          "payroll_run_lines",
+          "payroll_run_transitions",
+          "payroll_payslips",
+          "payroll_payslip_lines",
+          "payroll_declarations",
+          "payroll_declaration_evidence",
+          "payroll_payment_batches",
+          "payroll_payment_allocations",
+          "payroll_employee_balance_cases",
+          "payroll_employee_balance_events",
+          "hris_payroll_handoff_packages",
+          "hris_payroll_handoff_receipts"
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "lane": "firm-close",
+      "result": {
+        "organizationId": "synth12_yaounde",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "findings": [
+          {
+            "scenario": "inventory-access-request",
+            "status": "COMPLETE",
+            "detail": {
+              "id": "cb67beda1ff143830c19d7949d125d3573b1b77ae6497453e4f289aa31c5d6a3",
+              "decision": "PENDING",
+              "application": "NOT_REQUIRED"
+            }
+          },
+          {
+            "scenario": "pending-accountant-invitation",
+            "status": "COMPLETE",
+            "detail": {
+              "outcome": "INVITED",
+              "inviteId": "6704a9ce-e7c2-423a-9bea-47c6974b9a94",
+              "delivery": "LOCAL_OUTBOX_ONLY; workers disabled; no email sent"
+            }
+          },
+          {
+            "scenario": "consented-firm-engagement",
+            "status": "COMPLETE",
+            "detail": "cmvtgtqz600e1ma80i068tsn5"
+          },
+          {
+            "scenario": "firm-practice-plan-effort-budget",
+            "status": "COMPLETE",
+            "detail": [
+              {
+                "id": "cmvtgtrq500fdma802mzlmtx4",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgtrw900fhma806m9najuc",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgts4p00flma80xcnqlum4",
+                "version": 1,
+                "replayed": true
+              }
+            ]
+          },
+          {
+            "scenario": "operational-obligation-register",
+            "status": "COMPLETE",
+            "detail": {
+              "instanceId": "8bb831d6-673f-4b41-96ac-eceab54f248a",
+              "version": 1,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "branch-daily-review",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvth95a300fjmafcoi3ei60v",
+              "status": "BLOCKED",
+              "blockerCount": 3,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "capital-support-independent-review",
+            "status": "COMPLETE",
+            "detail": {
+              "evidenceId": "cmvtjfy8h00buma7wnwumpd72",
+              "status": "APPROVED"
+            }
+          },
+          {
+            "scenario": "september-close-assessment",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvtjfyj900bwma7wqtopf4rk",
+              "status": "BLOCKED",
+              "highBlockers": 25,
+              "criticalBlockers": 0,
+              "draftExportId": "cmvtjg4ap00hyma7whkzygn1b"
+            }
+          },
+          {
+            "scenario": "local-evidence-inbox-publication",
+            "status": "COMPLETE",
+            "detail": {
+              "before": 3,
+              "after": 3,
+              "publication": [],
+              "replay": [],
+              "delivery": "AUTHENTICATED_SYNTHETIC_LOCAL_INBOX_ONLY",
+              "externalCommunicationPerformed": false
+            }
+          }
+        ],
+        "issues": [],
+        "externalCommunicationPerformed": false
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "lane": "platform",
+      "result": {
+        "organizationId": "synth12_yaounde",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "outcomes": {
+          "module_composition": {
+            "commandId": "cmvtgz9jm007umaxg16k4cffx",
+            "state": "REQUESTED",
+            "replayed": true,
+            "activeModules": [
+              "accounting",
+              "administration",
+              "analytics",
+              "close_assurance",
+              "compliance",
+              "dashboard",
+              "finance",
+              "inventory",
+              "payment_reconciliation",
+              "payroll",
+              "pos",
+              "purchasing",
+              "reports",
+              "sales",
+              "settings"
+            ]
+          },
+          "compliance_sandbox_configuration": {
+            "result": {
+              "id": "cmvtgza17008qmaxggyvqy16s",
+              "organizationId": "synth12_yaounde",
+              "countryCode": "CM",
+              "authorityChannel": "CM_DGI_E_SERVICES_PORTAL",
+              "adapterKey": "CM_DGI_SANDBOX",
+              "environment": "SANDBOX",
+              "status": "REQUIRES_CONFIGURATION",
+              "countryPackVersion": "CM-2026.1",
+              "countryPackResolutionHash": "sha256:b0bf43e0e980e79e6a338952e644292585bc1f21a69437fca6a3e1f21523806d",
+              "capabilityStatus": "REQUIRES_EXPERT_REVIEW",
+              "credentialReference": null,
+              "credentialExpiresAt": null,
+              "credentialRotatedAt": null,
+              "credentialRotatedById": null,
+              "officialSpecTitle": null,
+              "officialSpecVersion": null,
+              "officialSpecPublishedAt": null,
+              "officialSpecEffectiveFrom": null,
+              "officialSpecReference": null,
+              "officialSpecHash": null,
+              "reviewStatus": "REQUIRES_EXPERT_REVIEW",
+              "reviewedById": null,
+              "reviewedAt": null,
+              "reviewerQualification": null,
+              "reviewerConflictDeclared": null,
+              "reviewEvidenceHash": null,
+              "publicMetadata": null,
+              "configHash": "sha256:c757fc0d7420244b024c1c36596dfda1eb5a0ea47385192a312ddaff48007ab3",
+              "createdById": "synth12_yaounde_user_owner",
+              "updatedById": "synth12_yaounde_user_owner",
+              "approvedById": null,
+              "approvedAt": null,
+              "disabledAt": null,
+              "createdAt": "2026-10-29T11:38:21.451Z",
+              "updatedAt": "2026-10-29T11:38:21.451Z"
+            },
+            "limitation": "Sandbox configuration only; no credential, official specification, expert approval or authority submission invented."
+          },
+          "business_event_idempotency_conflict": {
+            "anomalyId": "cmvtgza570096maxgt6ngl21o",
+            "externalDeliveryRequested": false
+          },
+          "agent_governance": {
+            "packageId": "cmvtgza7v009bmaxg7c8hdp1i",
+            "state": "PROVISIONED_INACTIVE",
+            "certification": "FAILED",
+            "externalActivation": false
+          },
+          "agent_runtime_and_proposal": {
+            "completedRunId": "cmvthc2lu005dmazwtjfc2mc8",
+            "inventoryRunId": "cmvthc2qw0066mazwyd1xof9j",
+            "blockedRunId": "cmvthc2n2005tmazwruzsa862",
+            "proposalId": "cmvthc2tb006dmazwbam5e1l1",
+            "modelProvider": "none",
+            "scope": "Actual blocked digest retained honestly; separate synthetic read-only inventory agent uses real inventory evidence. Production admission and external model transport are not exercised."
+          },
+          "assurance_control_plane": {
+            "invocation": "replayed",
+            "incidentId": "cmvthc378007nmazwcgdjpfy0",
+            "alertIds": [
+              "cmvthc37l007rmazw1u6ykdoi",
+              "cmvthc38e007zmazwwhkahk3i",
+              "cmvthc8tt00cmmazwdo47kiy5"
+            ],
+            "deliveriesAttempted": 0,
+            "waiverApproval": false
+          },
+          "command_center": {
+            "occurrenceId": "1f4dcc0c-9c4d-4728-aefc-aa30c37b3d66",
+            "reviewCurrent": true,
+            "notices": 1,
+            "externalMessagesSent": 0
+          }
+        },
+        "issues": []
+      }
+    },
+    {
+      "organizationId": "synth12_yaounde",
+      "lane": "stock-pos",
+      "result": {
+        "organizationId": "synth12_yaounde",
+        "scenarios": [
+          {
+            "scenario": "held-serialized-receipt-independent-acceptance-and-invoice-exception",
+            "result": {
+              "itemId": "synth12_yaounde_remaining_serial_item",
+              "masterReferenceEvidenceSha256": "352fe570771ef14d40afbbebf40ab64e0ff4ae070994d9cdbe42f27784ad24aa",
+              "orderId": "cmvth5qkw009jmahswezq89qu",
+              "receiptId": "cmvth5rix00a5mahsh3m2gpfx",
+              "resolutionId": "cmvth5rxu00ajmahs49gxap8g",
+              "serialIds": [
+                "cmvth5s4y00b9mahslon4xyjq",
+                "cmvth5s4y00bamahs7k2xb3zn"
+              ],
+              "stockQuantity": "2",
+              "stockValue": "2000.00",
+              "invoiceId": "cmvth5st600btmahssqajtipe",
+              "exceptionId": "cmvth5ted00c7mahstaxwu5hn",
+              "exceptionStatus": "REJECTED",
+              "invoicePosted": false
+            }
+          },
+          {
+            "scenario": "cash-pos-sale-refund-stock-cash-ledger-round-trip",
+            "result": {
+              "saleId": "cmvth5u9v00ddmahs2a2v2yly",
+              "refundId": "cmvth5v6e00fgmahsb95pv2k9",
+              "total": "17500",
+              "status": "RETURNED",
+              "postingBatchId": "cmvth5v8t00fimahs95q3apuk",
+              "sessionId": "cmvth5u3k00d5mahsdlw4ky8t",
+              "netInventoryQuantity": 0,
+              "netCash": 0,
+              "evidenceSha256": "4b639efbbf9cd0c55b8c1921900e2e420d816e230c293cbd4dddb458c0a666fa"
+            }
+          }
+        ],
+        "issues": [],
+        "blockedTables": []
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "lane": "commerce",
+      "result": {
+        "scenarios": [
+          {
+            "name": "customer-statement-consent-response-referral",
+            "result": {
+              "statementId": "cmvtg92nl006zmabs1n727w49",
+              "deliveryId": "c8524a28-f7e9-47c6-8651-93220123689e",
+              "responseId": "cmvtg92xy007tmabsi1td98mr",
+              "closingBalance": "10800.00",
+              "status": "QUEUED",
+              "externalDeliveryPerformed": false,
+              "referralAttributionId": "e85b812b-0907-4af9-a6c6-e1c8c9e72b62"
+            }
+          },
+          {
+            "name": "purchase-authoring-and-supplier-proposal",
+            "result": {
+              "draftId": "e998ea41-d19d-4210-a91c-29417b6605a1",
+              "orderId": "cmvtg5fkt007pmaf4uhx1e93u",
+              "envelopeId": "cmvtg5g5l008jmaf4r7gds7sm",
+              "proposalId": "cmvtg5ga80093maf4o1qhw9oy",
+              "status": "BUYER_REJECTED",
+              "externalDeliveryPerformed": false
+            }
+          },
+          {
+            "name": "receipt-access-and-public-abuse-boundary",
+            "result": {
+              "receiptTokenId": "cmvtg5gdt009fmaf4827er42z",
+              "abuseBucketId": "cmvtg5gf0009kmaf4excfktmb",
+              "requestCount": 4,
+              "denied": true
+            }
+          },
+          {
+            "name": "signed-offline-session-and-signature-quarantine",
+            "result": {
+              "deviceId": "cmvthiizg0074ma0gd14xmgzd",
+              "eventIds": [
+                "cmvthij2t007ima0gpsky7h0c",
+                "cmvthij6q007xma0gcos5pkpi"
+              ],
+              "validEvidenceStatus": "PENDING_REPLAY",
+              "rejectedSignatureStatus": "QUARANTINED",
+              "conflicts": [
+                {
+                  "id": "cmvthij73007zma0gq71b7ery",
+                  "type": "SIGNATURE_INVALID"
+                }
+              ],
+              "financialPostingPerformed": false
+            }
+          },
+          {
+            "name": "cash-shortage-policy-and-idle-worker-checkpoint",
+            "result": {
+              "policyId": "cmvth24dj008umajgtjlipe77",
+              "status": "APPROVED",
+              "checkpoint": {
+                "id": "cmvth24jw0098majg1dcanttg",
+                "organizationId": "synth12_bafoussam",
+                "checkKey": "pos.closed_shift_cash_shortage.review",
+                "workerKey": "pos.cash_shortage.review.checkpoint.v1",
+                "status": "PENDING",
+                "recordedFromInclusive": "2026-10-28T00:00:00.000Z",
+                "recordedThroughExclusive": "2026-10-28T20:00:00.000Z",
+                "cursor": null,
+                "lastProcessedCursor": null,
+                "attempt": 0,
+                "leaseOwnerId": null,
+                "leaseToken": null,
+                "leaseExpiresAt": null,
+                "lastErrorCode": null,
+                "lastErrorMessage": null,
+                "nextAttemptAt": null,
+                "completedAt": null,
+                "deadLetteredAt": null,
+                "deadLetterReason": null,
+                "correlationId": "synth12_bafoussam:remaining:cash-worker",
+                "metadata": {
+                  "classification": "SYNTHETIC_TEST_ONLY",
+                  "dispatchPerformed": false
+                },
+                "createdAt": "2026-10-29T11:40:34.312Z",
+                "updatedAt": "2026-10-29T13:40:16.502Z"
+              },
+              "externalDispatchPerformed": false
+            }
+          },
+          {
+            "name": "independently-reviewed-no-activity-evidence",
+            "result": {
+              "evidenceId": "cmvtheig50058ma7kq0pc2rnv",
+              "status": "APPROVED",
+              "providerAccountId": "synth12_bafoussam_manual_bank_provider",
+              "periodId": "cmvselyvb00u6ma3ok248ksy8"
+            }
+          },
+          {
+            "name": "twelve-month-expense-and-daily-sales-projections",
+            "result": {
+              "expenseCount": 72,
+              "dailyReports": 24,
+              "reportLines": 288,
+              "cashEvents": 192,
+              "periods": 12,
+              "additionalFinancialPostingPerformed": false
+            }
+          },
+          {
+            "name": "locked-unissued-synthetic-fiscal-sequence",
+            "result": {
+              "sequenceId": "synth12_bafoussam_fiscal_synthetic_locked",
+              "status": "LOCKED",
+              "legalDocumentIssued": false
+            }
+          },
+          {
+            "name": "local-encrypted-picture-lifecycle",
+            "result": {
+              "version": 1,
+              "classification": "SYNTHETIC_TEST_ONLY",
+              "organizationId": "synth12_bafoussam",
+              "storageMode": "LOCAL_TEST_TRANSPORT_ONLY",
+              "externalCommunicationPerformed": false,
+              "catalogItemLinked": false,
+              "attachmentMeaning": "claimItemPictures reservation only; no item or ordinary application media route is linked",
+              "attached": {
+                "id": "727781ef-5f13-46c7-94e5-3733e925e04e",
+                "reference": "/api/media/727781ef-5f13-46c7-94e5-3733e925e04e",
+                "providerKey": "local-test:727781ef-5f13-46c7-94e5-3733e925e04e",
+                "providerLocator": "local-test-picture:727781ef-5f13-46c7-94e5-3733e925e04e",
+                "plaintextFile": "synthetic-documents/synth12_bafoussam-remaining-picture-attached.png",
+                "plaintextSha256": "156f9cd3de28879ddf1a89f9de1dbc316ba55a0099e7c9ddd806f88d2852fb13",
+                "byteLength": 160,
+                "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_bafoussam/727781ef-5f13-46c7-94e5-3733e925e04e.bin",
+                "ciphertextSha256": "83e86a564dc3be26dcec13eeb4d9a81b4cab27f64ef726c5b03703d720c6b665",
+                "status": "ready",
+                "attachedAt": "2026-10-28T20:00:00.000Z",
+                "tombstoneFile": null
+              },
+              "orphan": {
+                "id": "deedb3a9-1a15-4194-8795-b7a7c94d08c8",
+                "reference": "/api/media/deedb3a9-1a15-4194-8795-b7a7c94d08c8",
+                "providerKey": "local-test:deedb3a9-1a15-4194-8795-b7a7c94d08c8",
+                "providerLocator": "local-test-picture:deedb3a9-1a15-4194-8795-b7a7c94d08c8",
+                "plaintextFile": "synthetic-documents/synth12_bafoussam-remaining-picture-orphan.png",
+                "plaintextSha256": "048a6b459f5c949adee1fbc9cf69d4a5ec770fc32b8699e357aa46e2612e937d",
+                "byteLength": 158,
+                "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_bafoussam/deedb3a9-1a15-4194-8795-b7a7c94d08c8.bin",
+                "ciphertextSha256": "4d246faf21e833b1c6c7debf60370d279794e3e3a5edb9b92b8a292ff77ca413",
+                "status": "deleted",
+                "attachedAt": null,
+                "tombstoneFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_bafoussam/deedb3a9-1a15-4194-8795-b7a7c94d08c8.deleted.json"
+              },
+              "checks": {
+                "roundTrip": true,
+                "wrongTenantReadDenied": true,
+                "wrongTenantClaimDenied": true,
+                "tamperDenied": true,
+                "attachedDeleteDenied": true,
+                "orphanDeleted": true,
+                "deletedReadDenied": true,
+                "invalidMimeDenied": true,
+                "defaultTransportDenied": true
+              }
+            }
+          }
+        ],
+        "issues": [],
+        "blockedTables": []
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "lane": "people",
+      "result": {
+        "organizationId": "synth12_bafoussam",
+        "scenarios": [
+          {
+            "scenario": "reviewed-encrypted-employee-document",
+            "result": {
+              "documentId": "f6a653f9-50b6-47e1-b000-145ab6f254ea",
+              "status": "AVAILABLE",
+              "originalSha256": "c2f3c4a0bae34fd595e558d2121a8fef89cf21885c4ae05a059fcd86f2829574",
+              "encryptedStorage": true,
+              "downloadRoundTrip": true,
+              "scannerIsSynthetic": true
+            }
+          },
+          {
+            "scenario": "personal-correction-independent-rejection",
+            "result": {
+              "caseId": "4ebf517f-50f6-4754-9da6-04ced6193cd2",
+              "status": "REJECTED",
+              "employeeUnchanged": true
+            }
+          },
+          {
+            "scenario": "onboarding-lifecycle-task-completion",
+            "result": {
+              "tasks": [
+                {
+                  "id": "5395da66-32d0-43e9-882f-231f75386e72",
+                  "code": "HR_PREPARATION",
+                  "status": "COMPLETED"
+                },
+                {
+                  "id": "8b67a6a2-689e-4f18-b40c-4bcc6391e250",
+                  "code": "APPLICATION_ACCESS",
+                  "status": "COMPLETED"
+                },
+                {
+                  "id": "3fac8fff-f439-4eda-a563-16329ac4a9a4",
+                  "code": "EXTERNAL_ACCESS",
+                  "status": "COMPLETED"
+                },
+                {
+                  "id": "2dc2fc24-e42a-4a94-8362-4840ca295760",
+                  "code": "ASSETS",
+                  "status": "COMPLETED"
+                }
+              ],
+              "authoritativeApprovalEventId": "cmvsf5hqw0io8mausqwq0l5a5",
+              "externalProvisioningPerformed": false
+            }
+          },
+          {
+            "scenario": "company-holiday-and-reviewer-grant",
+            "result": {
+              "calendarId": "cmvtgm7es00ahmav08grun8vm",
+              "holidayId": "cmvtgm7et00ajmav0rbej99l5",
+              "reviewerGrantId": "sha256:76a0352c1c1520255e0f88e9119aec6840007635c9106f28d7a9f832ae45fe4c",
+              "officialHolidayClaimed": false,
+              "schedulesChanged": false
+            }
+          },
+          {
+            "scenario": "rejected-attendance-source-and-resolved-anomaly",
+            "result": {
+              "batchId": "cmvtgm7r600atmav0oj283965",
+              "anomalyId": "cmvtgm7rn00axmav0blunnip5",
+              "status": "RESOLVED",
+              "authoritativeEntryId": "cmvsf65q90pjomaus0ut1zasa",
+              "rawEntryChanged": false
+            }
+          },
+          {
+            "scenario": "draft-nonstatutory-compensation",
+            "result": {
+              "rubriqueId": "cmvtgm83e00b3mav05wynlmdm",
+              "assignmentId": "cmvtgm8bo00bdmav00l5q0bmn",
+              "status": "DRAFT",
+              "statutoryTreatmentApproved": false
+            }
+          },
+          {
+            "scenario": "supplier-csv-validation-and-import",
+            "result": {
+              "batches": [
+                {
+                  "batchId": "cmvtgm8n800bpmav04yz56acw",
+                  "status": "BLOCKED",
+                  "sourceSha256": "9bd8f2448fd692929e655d0b7ed422c374fcf0313ed44f99fe8dd415b1e924e9"
+                },
+                {
+                  "batchId": "cmvtgm8sm00bxmav0j3qiiw9b",
+                  "status": "COMMITTED",
+                  "sourceSha256": "946cc1ae73aba24c8f8454467379d5625ec80e15a5f571af30c38b5c52caff9a"
+                }
+              ],
+              "approvalPolicy": "HIGH_RISK_SUPPLIER_INDEPENDENT_REVIEW",
+              "noOpeningBalanceOrTransactionImported": true
+            }
+          },
+          {
+            "scenario": "unsent-user-invitation-outbox",
+            "result": {
+              "inviteId": "cmvth3xb90049ma0wi5d844n6",
+              "roleId": "role_428e69847fc25596f792d0a70e8f17205a07b8cdf1968571788aca556162d193",
+              "issueId": "cmvth3xbi004bma0wavck3mxc",
+              "delivery": "PENDING",
+              "replayed": true,
+              "externalEmailSent": false,
+              "legacyPresenceRoleUnchanged": true
+            }
+          }
+        ],
+        "issues": [],
+        "blockedTables": [
+          "payroll_periods",
+          "payroll_attendance_snapshots",
+          "payroll_runs",
+          "payroll_run_lines",
+          "payroll_run_transitions",
+          "payroll_payslips",
+          "payroll_payslip_lines",
+          "payroll_declarations",
+          "payroll_declaration_evidence",
+          "payroll_payment_batches",
+          "payroll_payment_allocations",
+          "payroll_employee_balance_cases",
+          "payroll_employee_balance_events",
+          "hris_payroll_handoff_packages",
+          "hris_payroll_handoff_receipts"
+        ]
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "lane": "firm-close",
+      "result": {
+        "organizationId": "synth12_bafoussam",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "findings": [
+          {
+            "scenario": "inventory-access-request",
+            "status": "COMPLETE",
+            "detail": {
+              "id": "491ed4174c25496d94067140800ce3a3e373c5f9dab6e89d8bd9acfc0b27ca0e",
+              "decision": "PENDING",
+              "application": "NOT_REQUIRED"
+            }
+          },
+          {
+            "scenario": "pending-accountant-invitation",
+            "status": "COMPLETE",
+            "detail": {
+              "outcome": "INVITED",
+              "inviteId": "134d4f2b-d4fb-42b8-a47a-e09ce8010b70",
+              "delivery": "LOCAL_OUTBOX_ONLY; workers disabled; no email sent"
+            }
+          },
+          {
+            "scenario": "consented-firm-engagement",
+            "status": "COMPLETE",
+            "detail": "cmvtgtz1200ozma8013fbtj3i"
+          },
+          {
+            "scenario": "firm-practice-plan-effort-budget",
+            "status": "COMPLETE",
+            "detail": [
+              {
+                "id": "cmvtgu09n00qbma80g56doo15",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgu0gs00qfma80mec3qoyh",
+                "version": 1,
+                "replayed": true
+              },
+              {
+                "id": "cmvtgu0qm00qjma80n5jgnzgj",
+                "version": 1,
+                "replayed": true
+              }
+            ]
+          },
+          {
+            "scenario": "operational-obligation-register",
+            "status": "COMPLETE",
+            "detail": {
+              "instanceId": "be3d5709-0633-4663-94aa-f58c9a8e6c30",
+              "version": 1,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "branch-daily-review",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvth9iar00hpmafc01rcnr4m",
+              "status": "BLOCKED",
+              "blockerCount": 3,
+              "replayed": true
+            }
+          },
+          {
+            "scenario": "capital-support-independent-review",
+            "status": "COMPLETE",
+            "detail": {
+              "evidenceId": "cmvtjglvg00kmma7wxwaahucp",
+              "status": "APPROVED"
+            }
+          },
+          {
+            "scenario": "september-close-assessment",
+            "status": "COMPLETE",
+            "detail": {
+              "runId": "cmvtjgm1800koma7wrpmkavyn",
+              "status": "BLOCKED",
+              "highBlockers": 25,
+              "criticalBlockers": 0,
+              "draftExportId": "cmvtjgqg300qqma7wf4ukam6z"
+            }
+          },
+          {
+            "scenario": "local-evidence-inbox-publication",
+            "status": "COMPLETE",
+            "detail": {
+              "before": 3,
+              "after": 3,
+              "publication": [],
+              "replay": [],
+              "delivery": "AUTHENTICATED_SYNTHETIC_LOCAL_INBOX_ONLY",
+              "externalCommunicationPerformed": false
+            }
+          }
+        ],
+        "issues": [],
+        "externalCommunicationPerformed": false
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "lane": "platform",
+      "result": {
+        "organizationId": "synth12_bafoussam",
+        "classification": "SYNTHETIC_TEST_ONLY",
+        "outcomes": {
+          "module_composition": {
+            "commandId": "cmvtgzfn000dymaxg73s9fh0h",
+            "state": "REQUESTED",
+            "replayed": true,
+            "activeModules": [
+              "accounting",
+              "administration",
+              "analytics",
+              "close_assurance",
+              "compliance",
+              "dashboard",
+              "finance",
+              "inventory",
+              "payment_reconciliation",
+              "payroll",
+              "pos",
+              "purchasing",
+              "reports",
+              "sales",
+              "settings"
+            ]
+          },
+          "compliance_sandbox_configuration": {
+            "result": {
+              "id": "cmvtgzfzc00eumaxgbd9n4bf0",
+              "organizationId": "synth12_bafoussam",
+              "countryCode": "CM",
+              "authorityChannel": "CM_DGI_E_SERVICES_PORTAL",
+              "adapterKey": "CM_DGI_SANDBOX",
+              "environment": "SANDBOX",
+              "status": "REQUIRES_CONFIGURATION",
+              "countryPackVersion": "CM-2026.1",
+              "countryPackResolutionHash": "sha256:b0bf43e0e980e79e6a338952e644292585bc1f21a69437fca6a3e1f21523806d",
+              "capabilityStatus": "REQUIRES_EXPERT_REVIEW",
+              "credentialReference": null,
+              "credentialExpiresAt": null,
+              "credentialRotatedAt": null,
+              "credentialRotatedById": null,
+              "officialSpecTitle": null,
+              "officialSpecVersion": null,
+              "officialSpecPublishedAt": null,
+              "officialSpecEffectiveFrom": null,
+              "officialSpecReference": null,
+              "officialSpecHash": null,
+              "reviewStatus": "REQUIRES_EXPERT_REVIEW",
+              "reviewedById": null,
+              "reviewedAt": null,
+              "reviewerQualification": null,
+              "reviewerConflictDeclared": null,
+              "reviewEvidenceHash": null,
+              "publicMetadata": null,
+              "configHash": "sha256:c757fc0d7420244b024c1c36596dfda1eb5a0ea47385192a312ddaff48007ab3",
+              "createdById": "synth12_bafoussam_user_owner",
+              "updatedById": "synth12_bafoussam_user_owner",
+              "approvedById": null,
+              "approvedAt": null,
+              "disabledAt": null,
+              "createdAt": "2026-10-29T11:38:29.160Z",
+              "updatedAt": "2026-10-29T11:38:29.160Z"
+            },
+            "limitation": "Sandbox configuration only; no credential, official specification, expert approval or authority submission invented."
+          },
+          "business_event_idempotency_conflict": {
+            "anomalyId": "cmvtgzg3z00famaxgzvjkdrfg",
+            "externalDeliveryRequested": false
+          },
+          "agent_governance": {
+            "packageId": "cmvtgzg6c00ffmaxgv46t0wlj",
+            "state": "PROVISIONED_INACTIVE",
+            "certification": "FAILED",
+            "externalActivation": false
+          },
+          "agent_runtime_and_proposal": {
+            "completedRunId": "cmvthc7yp009omazwwpiqz811",
+            "inventoryRunId": "cmvthc84000ahmazweryhbipp",
+            "blockedRunId": "cmvthc80f00a4mazw0vdj3exy",
+            "proposalId": "cmvthc86h00aomazwnsp6s8fm",
+            "modelProvider": "none",
+            "scope": "Actual blocked digest retained honestly; separate synthetic read-only inventory agent uses real inventory evidence. Production admission and external model transport are not exercised."
+          },
+          "assurance_control_plane": {
+            "invocation": "replayed",
+            "incidentId": "cmvthc8i200bkmazwyci8aela",
+            "alertIds": [
+              "cmvthc8jk00bomazwefzg1dip",
+              "cmvthc8kx00bwmazwqmmqed6o"
+            ],
+            "deliveriesAttempted": 0,
+            "waiverApproval": false
+          },
+          "command_center": {
+            "occurrenceId": "61f255b9-6fdd-45ea-b7f9-56b75eebe6bd",
+            "reviewCurrent": true,
+            "notices": 1,
+            "externalMessagesSent": 0
+          }
+        },
+        "issues": []
+      }
+    },
+    {
+      "organizationId": "synth12_bafoussam",
+      "lane": "stock-pos",
+      "result": {
+        "organizationId": "synth12_bafoussam",
+        "scenarios": [
+          {
+            "scenario": "held-serialized-receipt-independent-acceptance-and-invoice-exception",
+            "result": {
+              "itemId": "synth12_bafoussam_remaining_serial_item",
+              "masterReferenceEvidenceSha256": "92bfc2a5ad267d68afc90fbe78142019ece40d30d46d55b30229e48791ed9d70",
+              "orderId": "cmvth5ykv00hrmahsg98t8dpk",
+              "receiptId": "cmvth5zaa00idmahs4a324tfi",
+              "resolutionId": "cmvth5zm900irmahs1ckmm5kr",
+              "serialIds": [
+                "cmvth5zrv00jhmahssitk39nm",
+                "cmvth5zrv00jimahsldy7y5vq"
+              ],
+              "stockQuantity": "2",
+              "stockValue": "2000.00",
+              "invoiceId": "cmvth60gc00k1mahsgfbqhmx6",
+              "exceptionId": "cmvth60ts00kfmahs7tgjy7tk",
+              "exceptionStatus": "REJECTED",
+              "invoicePosted": false
+            }
+          },
+          {
+            "scenario": "cash-pos-sale-refund-stock-cash-ledger-round-trip",
+            "result": {
+              "saleId": "cmvth61hl00llmahs327qpq9m",
+              "refundId": "cmvth62c400nomahs0fisfapd",
+              "total": "17500",
+              "status": "RETURNED",
+              "postingBatchId": "cmvth62dd00nqmahslvrxgozg",
+              "sessionId": "cmvth61bh00ldmahsywfzgavt",
+              "netInventoryQuantity": 0,
+              "netCash": 0,
+              "evidenceSha256": "fa45a5a5f8c624b1dc1a67517b99bdcd361a5d62ed99853d1786252f2c8d8005"
+            }
+          }
+        ],
+        "issues": [],
+        "blockedTables": []
+      }
+    }
+  ],
+  "issues": []
+}

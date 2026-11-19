@@ -7,6 +7,21 @@ import { ApplicationError, BusinessRuleError, NotFoundError } from "@/services/_
 
 const unavailable = () => new ApplicationError("INTERNAL_ERROR", "Online image storage is unavailable. Please try again or contact your administrator.", 503, true)
 
+/** Explicit server-only test dependency. Never construct this from request input.
+ * Normal callers retain UploadThing and its HTTPS allowlist. */
+export interface PictureTestTransport {
+  kind: "local-test"
+  put(id: string, ciphertext: Uint8Array): Promise<{ byteLength: number; sha256: string }>
+  get(id: string): Promise<Response>
+  remove(id: string): Promise<boolean>
+}
+function assertTestTransport(transport?: PictureTestTransport) {
+  if (transport && (process.env.NODE_ENV !== "test" || transport.kind !== "local-test")) throw unavailable()
+}
+function assertLocalAsset(asset: { id: string; providerKey: string | null; providerUrl: string | null }) {
+  if (asset.providerKey !== `local-test:${asset.id}` || asset.providerUrl !== `local-test-picture:${asset.id}`) throw unavailable()
+}
+
 function provider() {
   if (!process.env.UPLOADTHING_TOKEN) throw unavailable()
   return new UTApi({
@@ -27,12 +42,13 @@ export function validatePictureBytes(bytes: Uint8Array, mimeType: string) {
   }
 }
 
-export async function uploadItemPicture(file: File, organizationId: string, userId: string) {
+export async function uploadItemPicture(file: File, organizationId: string, userId: string, transport?: PictureTestTransport) {
+  assertTestTransport(transport)
   if (!file || typeof file.arrayBuffer !== "function" || file.size < 12 || file.size > PICTURE_MAX_BYTES ||
       !(PICTURE_MIME_TYPES as readonly string[]).includes(file.type)) {
     throw new BusinessRuleError("Choose a JPEG, PNG, GIF or WebP image no larger than 4 MB.")
   }
-  const client = provider()
+  const client = transport ? null : provider()
   const bytes = new Uint8Array(await file.arrayBuffer())
   validatePictureBytes(bytes, file.type)
   const id = randomUUID()
@@ -50,12 +66,19 @@ export async function uploadItemPicture(file: File, organizationId: string, user
     encryptionKey: key.toString("base64"), encryptionIv: iv.toString("base64"), encryptionTag: cipher.getAuthTag().toString("base64"),
   } })
   try {
-    const result = await client.uploadFiles(new UTFile([encrypted], `${id}.bin`, { type: "application/octet-stream", customId: id }), {
-      acl: "public-read", contentDisposition: "attachment",
-    })
-    if (result.error || !result.data?.key || result.data.size !== bytes.length || result.data.customId !== id) throw unavailable()
-    const providerUrl = checkedProviderUrl(result.data.ufsUrl)
-    await db.pictureAsset.update({ where: { id }, data: { providerKey: result.data.key, providerUrl, status: "ready" } })
+    let providerKey: string, providerUrl: string
+    if (transport) {
+      const stored = await transport.put(id, encrypted)
+      if (stored.byteLength !== encrypted.length || stored.sha256 !== createHash("sha256").update(encrypted).digest("hex")) throw unavailable()
+      providerKey = `local-test:${id}`; providerUrl = `local-test-picture:${id}`
+    } else {
+      const result = await client!.uploadFiles(new UTFile([encrypted], `${id}.bin`, { type: "application/octet-stream", customId: id }), {
+        acl: "public-read", contentDisposition: "attachment",
+      })
+      if (result.error || !result.data?.key || result.data.size !== bytes.length || result.data.customId !== id) throw unavailable()
+      providerKey = result.data.key; providerUrl = checkedProviderUrl(result.data.ufsUrl)
+    }
+    await db.pictureAsset.update({ where: { id }, data: { providerKey, providerUrl, status: "ready" } })
     return `${MEDIA_URL_PREFIX}${id}`
   } catch {
     // The uploading row remains a retryable cleanup candidate, addressed by customId.
@@ -80,10 +103,12 @@ export async function claimItemPictures(tx: Prisma.TransactionClient, organizati
   }
 }
 
-export async function readItemPicture(id: string, organizationId: string) {
+export async function readItemPicture(id: string, organizationId: string, transport?: PictureTestTransport) {
+  assertTestTransport(transport)
   const asset = await db.pictureAsset.findFirst({ where: { id, organizationId, entityType: "item", status: "ready" } })
   if (!asset?.providerKey || !asset.providerUrl) throw new NotFoundError("Image not found")
-  const response = await fetch(checkedProviderUrl(asset.providerUrl), { cache: "no-store", signal: AbortSignal.timeout(15000), redirect: "error" })
+  if (transport) assertLocalAsset(asset)
+  const response = transport ? await transport.get(id) : await fetch(checkedProviderUrl(asset.providerUrl), { cache: "no-store", signal: AbortSignal.timeout(15000), redirect: "error" })
   if (!response.ok) throw unavailable()
   if (!response.body || asset.byteLength > PICTURE_MAX_BYTES) throw unavailable()
   const reader = response.body.getReader()
@@ -113,18 +138,21 @@ function checkedProviderUrl(value: string) {
   return url.origin + url.pathname
 }
 
-export async function deleteUnattachedPicture(reference: string, organizationId: string, userId: string) {
+export async function deleteUnattachedPicture(reference: string, organizationId: string, userId: string, transport?: PictureTestTransport) {
+  assertTestTransport(transport)
   const id = mediaIdFromUrl(reference)
   if (!id) throw new BusinessRuleError("Saved and legacy images are retained until a verified cleanup.")
   const asset = await db.pictureAsset.findFirst({ where: { id, organizationId, createdById: userId, entityType: "item", attachedAt: null } })
   if (!asset) throw new NotFoundError("Unattached image not found")
   if (asset.status === "deleted") return
+  if (transport) assertLocalAsset(asset)
+  else if (asset.providerUrl?.startsWith("local-test-picture:")) throw unavailable()
   const claim = await db.pictureAsset.updateMany({
     where: { id, organizationId, createdById: userId, attachedAt: null, status: { in: ["ready", "deleting"] } },
     data: { status: "deleting" },
   })
   if (claim.count !== 1) throw new BusinessRuleError("This image is in use or still uploading.")
-  const result = await provider().deleteFiles(id, { keyType: "customId" })
-  if (!result.success) throw unavailable()
+  const removed = transport ? await transport.remove(id) : (await provider().deleteFiles(id, { keyType: "customId" })).success
+  if (!removed) throw unavailable()
   await db.pictureAsset.update({ where: { id }, data: { status: "deleted" } })
 }

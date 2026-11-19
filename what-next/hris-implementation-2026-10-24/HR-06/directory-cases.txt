@@ -1,0 +1,35 @@
+
+describe("HR-06 real scoped discovery", () => {
+  const admin = {organizationId: orgs[1], actorId: `${namespace}-b-admin`, actorPermissions: ["hris.people.read", "hris.people.manage"], page: 1, limit: 25}
+  beforeAll(async () => {
+    await db.user.create({data: {id: admin.actorId, organizationId: orgs[1], email: `${admin.actorId}@example.invalid`}})
+  })
+  it.each([0,1,50,51,100,200])("finds the last employee and pages exactly %i records", async count => {
+    await db.payrollEmployee.deleteMany({where: {organizationId: orgs[1]}})
+    await db.payrollEmployee.createMany({data: Array.from({length: count}, (_, i) => ({id: `${namespace}-discovery-${String(i).padStart(3,"0")}`, organizationId: orgs[1], employeeNumber: String(i), displayName: i === count-1 ? "ZZ Synthetic last employee" : "Duplicate synthetic name", status: "ACTIVE", department: "RH", hireDate: date}))})
+    const first = await getHrisEmployeeDirectory(admin)
+    expect(first.pagination).toMatchObject({total: count, authorizedTotal: count})
+    const ids = []
+    for (let page=1; page<=first.pagination!.totalPages; page++) {
+      const result = page === 1 ? first : await getHrisEmployeeDirectory({...admin,page})
+      ids.push(...result.employees.map(e=>e.id))
+    }
+    expect(ids).toHaveLength(count)
+    expect(new Set(ids).size).toBe(count)
+    const last = await getHrisEmployeeDirectory({...admin, search: "ZZ Synthetic", department: "rh", status: "ACTIVE", page: 99})
+    expect(last.pagination).toMatchObject({total: count ? 1 : 0, page: 1, authorizedTotal: count})
+    expect(last.employees).toHaveLength(count ? 1 : 0)
+    expect((await getHrisEmployeeDirectory({...admin, search: "Foreign absent"})).pagination!.total).toBe(0)
+  })
+  it("counts only the manager's current reports and returns redacted exact profiles", async () => {
+    const manager = {organizationId: orgs[0], actorId: actors[1], actorPermissions: ["hris.people.read"], page: 1, limit: 25}
+    const directory = await getHrisEmployeeDirectory(manager)
+    // HR-05 closed report 200; 199 current relationships remain.
+    expect(directory.pagination).toMatchObject({total: 199, authorizedTotal: 199})
+    expect((await getHrisEmployeeDirectory({...manager,search: "ZZ Synthetic"})).pagination!.total).toBe(0)
+    const profile = await getHrisEmployeeProfile({...manager,employeeId: `${namespace}-report-002`})
+    expect(profile.employee.id).toBe(`${namespace}-report-002`)
+    expect(profile.employee.userMapping).not.toHaveProperty("userId")
+    expect(JSON.stringify(profile.employee)).not.toMatch(/bankAccount|taxIdentifierHash|socialIdentifierHash|baseSalary/)
+  })
+})

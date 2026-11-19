@@ -1,0 +1,51 @@
+43557dedd8dc64860424b54a76a7f34f
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+}
+_export(exports, {
+    get canChangeRolePermissions () {
+        return canChangeRolePermissions;
+    },
+    get canGrantRolePermission () {
+        return canGrantRolePermission;
+    },
+    get isRoleControlPermission () {
+        return isRoleControlPermission;
+    }
+});
+const _rbacpermissions = require("@/lib/security/rbac-permissions");
+const roleControls = [
+    "users.roles.assign",
+    "users.roles.remove",
+    "users.activate",
+    "admin.role.assign",
+    "roles.permissions.assign",
+    "roles.permissions.remove"
+];
+const controlMeanings = (permission)=>roleControls.filter((required)=>permission === required || !permission.includes(".") && permission !== "*" && (0, _rbacpermissions.hasRbacPermission)([
+            permission
+        ], required));
+const isRoleControlPermission = (permission)=>controlMeanings(permission).length > 0;
+function hasStoredControl(storedPermissions, required) {
+    // A shared alias is authority only when it was actually stored. Expanding a
+    // different canonical operation first would manufacture that legacy grant.
+    return storedPermissions.includes(required) || (0, _rbacpermissions.permissionCandidates)(required).some((candidate)=>!candidate.includes(".") && candidate !== "*" && storedPermissions.includes(candidate));
+}
+function canChangeRolePermissions(storedPermissions, operation) {
+    const required = "roles.permissions." + operation;
+    return hasStoredControl(storedPermissions, required);
+}
+function canGrantRolePermission(storedPermissions, permission) {
+    const controls = controlMeanings(permission);
+    if (controls.length) return controls.every((required)=>hasStoredControl(storedPermissions, required));
+    return (0, _rbacpermissions.hasRbacPermission)(storedPermissions, permission);
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6XFxvaGFkYSBzYWFzXFxGb2N1c2VkIHByb2plY3RzXFxzdG9xdWlmeVxcc2VydmljZXNcXHJvbGVzXFxyb2xlLXBlcm1pc3Npb24tcG9saWN5LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IGhhc1JiYWNQZXJtaXNzaW9uLCBwZXJtaXNzaW9uQ2FuZGlkYXRlcyB9IGZyb20gXCJAL2xpYi9zZWN1cml0eS9yYmFjLXBlcm1pc3Npb25zXCJcblxuY29uc3Qgcm9sZUNvbnRyb2xzID0gW1widXNlcnMucm9sZXMuYXNzaWduXCIsIFwidXNlcnMucm9sZXMucmVtb3ZlXCIsIFwidXNlcnMuYWN0aXZhdGVcIiwgXCJhZG1pbi5yb2xlLmFzc2lnblwiLCBcInJvbGVzLnBlcm1pc3Npb25zLmFzc2lnblwiLCBcInJvbGVzLnBlcm1pc3Npb25zLnJlbW92ZVwiXSBhcyBjb25zdFxuY29uc3QgY29udHJvbE1lYW5pbmdzID0gKHBlcm1pc3Npb246IHN0cmluZykgPT4gcm9sZUNvbnRyb2xzLmZpbHRlcihyZXF1aXJlZCA9PiBwZXJtaXNzaW9uID09PSByZXF1aXJlZCB8fCAoIXBlcm1pc3Npb24uaW5jbHVkZXMoXCIuXCIpICYmIHBlcm1pc3Npb24gIT09IFwiKlwiICYmIGhhc1JiYWNQZXJtaXNzaW9uKFtwZXJtaXNzaW9uXSwgcmVxdWlyZWQpKSlcblxuZXhwb3J0IGNvbnN0IGlzUm9sZUNvbnRyb2xQZXJtaXNzaW9uID0gKHBlcm1pc3Npb246IHN0cmluZykgPT4gY29udHJvbE1lYW5pbmdzKHBlcm1pc3Npb24pLmxlbmd0aCA+IDBcblxuZnVuY3Rpb24gaGFzU3RvcmVkQ29udHJvbChzdG9yZWRQZXJtaXNzaW9uczogcmVhZG9ubHkgc3RyaW5nW10sIHJlcXVpcmVkOiBzdHJpbmcpIHtcbiAgLy8gQSBzaGFyZWQgYWxpYXMgaXMgYXV0aG9yaXR5IG9ubHkgd2hlbiBpdCB3YXMgYWN0dWFsbHkgc3RvcmVkLiBFeHBhbmRpbmcgYVxuICAvLyBkaWZmZXJlbnQgY2Fub25pY2FsIG9wZXJhdGlvbiBmaXJzdCB3b3VsZCBtYW51ZmFjdHVyZSB0aGF0IGxlZ2FjeSBncmFudC5cbiAgcmV0dXJuIHN0b3JlZFBlcm1pc3Npb25zLmluY2x1ZGVzKHJlcXVpcmVkKSB8fCBwZXJtaXNzaW9uQ2FuZGlkYXRlcyhyZXF1aXJlZCkuc29tZShjYW5kaWRhdGUgPT5cbiAgICAhY2FuZGlkYXRlLmluY2x1ZGVzKFwiLlwiKSAmJiBjYW5kaWRhdGUgIT09IFwiKlwiICYmIHN0b3JlZFBlcm1pc3Npb25zLmluY2x1ZGVzKGNhbmRpZGF0ZSksXG4gIClcbn1cblxuLy8gVXNlIHN0b3JlZCBncmFudHMsIG5vdCBleHBhbmRlZCBSQkFDIGNsYWltczogYm90aCBjYW5vbmljYWwgb3BlcmF0aW9ucyBzaGFyZVxuLy8gaGlzdG9yaWNhbCBhbGlhc2VzLCBhbmQgZXhwYW5zaW9uIGxvc2VzIHdoaWNoIG9wZXJhdGlvbiB3YXMgYWN0dWFsbHkgYXNzaWduZWQuXG5leHBvcnQgZnVuY3Rpb24gY2FuQ2hhbmdlUm9sZVBlcm1pc3Npb25zKHN0b3JlZFBlcm1pc3Npb25zOiByZWFkb25seSBzdHJpbmdbXSwgb3BlcmF0aW9uOiBcImFzc2lnblwiIHwgXCJyZW1vdmVcIikge1xuICBjb25zdCByZXF1aXJlZCA9IFwicm9sZXMucGVybWlzc2lvbnMuXCIgKyBvcGVyYXRpb25cbiAgcmV0dXJuIGhhc1N0b3JlZENvbnRyb2woc3RvcmVkUGVybWlzc2lvbnMsIHJlcXVpcmVkKVxufVxuXG5leHBvcnQgZnVuY3Rpb24gY2FuR3JhbnRSb2xlUGVybWlzc2lvbihzdG9yZWRQZXJtaXNzaW9uczogcmVhZG9ubHkgc3RyaW5nW10sIHBlcm1pc3Npb246IHN0cmluZykge1xuICBjb25zdCBjb250cm9scyA9IGNvbnRyb2xNZWFuaW5ncyhwZXJtaXNzaW9uKVxuICBpZiAoY29udHJvbHMubGVuZ3RoKSByZXR1cm4gY29udHJvbHMuZXZlcnkocmVxdWlyZWQgPT4gaGFzU3RvcmVkQ29udHJvbChzdG9yZWRQZXJtaXNzaW9ucywgcmVxdWlyZWQpKVxuICByZXR1cm4gaGFzUmJhY1Blcm1pc3Npb24oc3RvcmVkUGVybWlzc2lvbnMsIHBlcm1pc3Npb24pXG59XG4iXSwibmFtZXMiOlsiY2FuQ2hhbmdlUm9sZVBlcm1pc3Npb25zIiwiY2FuR3JhbnRSb2xlUGVybWlzc2lvbiIsImlzUm9sZUNvbnRyb2xQZXJtaXNzaW9uIiwicm9sZUNvbnRyb2xzIiwiY29udHJvbE1lYW5pbmdzIiwicGVybWlzc2lvbiIsImZpbHRlciIsInJlcXVpcmVkIiwiaW5jbHVkZXMiLCJoYXNSYmFjUGVybWlzc2lvbiIsImxlbmd0aCIsImhhc1N0b3JlZENvbnRyb2wiLCJzdG9yZWRQZXJtaXNzaW9ucyIsInBlcm1pc3Npb25DYW5kaWRhdGVzIiwic29tZSIsImNhbmRpZGF0ZSIsIm9wZXJhdGlvbiIsImNvbnRyb2xzIiwiZXZlcnkiXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O1FBaUJnQkE7ZUFBQUE7O1FBS0FDO2VBQUFBOztRQWpCSEM7ZUFBQUE7OztpQ0FMMkM7QUFFeEQsTUFBTUMsZUFBZTtJQUFDO0lBQXNCO0lBQXNCO0lBQWtCO0lBQXFCO0lBQTRCO0NBQTJCO0FBQ2hLLE1BQU1DLGtCQUFrQixDQUFDQyxhQUF1QkYsYUFBYUcsTUFBTSxDQUFDQyxDQUFBQSxXQUFZRixlQUFlRSxZQUFhLENBQUNGLFdBQVdHLFFBQVEsQ0FBQyxRQUFRSCxlQUFlLE9BQU9JLElBQUFBLGtDQUFpQixFQUFDO1lBQUNKO1NBQVcsRUFBRUU7QUFFeEwsTUFBTUwsMEJBQTBCLENBQUNHLGFBQXVCRCxnQkFBZ0JDLFlBQVlLLE1BQU0sR0FBRztBQUVwRyxTQUFTQyxpQkFBaUJDLGlCQUFvQyxFQUFFTCxRQUFnQjtJQUM5RSw0RUFBNEU7SUFDNUUsMkVBQTJFO0lBQzNFLE9BQU9LLGtCQUFrQkosUUFBUSxDQUFDRCxhQUFhTSxJQUFBQSxxQ0FBb0IsRUFBQ04sVUFBVU8sSUFBSSxDQUFDQyxDQUFBQSxZQUNqRixDQUFDQSxVQUFVUCxRQUFRLENBQUMsUUFBUU8sY0FBYyxPQUFPSCxrQkFBa0JKLFFBQVEsQ0FBQ087QUFFaEY7QUFJTyxTQUFTZix5QkFBeUJZLGlCQUFvQyxFQUFFSSxTQUE4QjtJQUMzRyxNQUFNVCxXQUFXLHVCQUF1QlM7SUFDeEMsT0FBT0wsaUJBQWlCQyxtQkFBbUJMO0FBQzdDO0FBRU8sU0FBU04sdUJBQXVCVyxpQkFBb0MsRUFBRVAsVUFBa0I7SUFDN0YsTUFBTVksV0FBV2IsZ0JBQWdCQztJQUNqQyxJQUFJWSxTQUFTUCxNQUFNLEVBQUUsT0FBT08sU0FBU0MsS0FBSyxDQUFDWCxDQUFBQSxXQUFZSSxpQkFBaUJDLG1CQUFtQkw7SUFDM0YsT0FBT0UsSUFBQUEsa0NBQWlCLEVBQUNHLG1CQUFtQlA7QUFDOUMifQ==

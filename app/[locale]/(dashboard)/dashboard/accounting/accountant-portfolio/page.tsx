@@ -1,15 +1,13 @@
 import { BriefcaseBusiness } from "lucide-react"
 
-import { getAccountantPortfolioAction } from "@/actions/accounting/accountant-access.actions"
-import { AccountantPortfolio } from "@/components/accounting/AccountantPortfolio"
-import { AccountantWorkDesk } from "@/components/accounting/AccountantWorkDesk"
+import { AccountantPortfolioWorkspace } from "@/components/accounting/AccountantPortfolioWorkspace"
+import { accountantPortfolioCopy } from "@/components/accounting/accountant-portfolio-copy"
 import { checkPermission } from "@/config/useAuth"
 import { AccountingPageShell } from "../_components/accounting-ui"
 import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
-async function AccountantPortfolioPageImpl(locale: string) {
+async function AccountantPortfolioPageImpl(locale: string, query: Record<string, string | string[] | undefined>) {
   await checkPermission("accounting.audit.read")
-  const response = await getAccountantPortfolioAction()
   const fr = locale === "fr"
 
   return (
@@ -19,16 +17,11 @@ async function AccountantPortfolioPageImpl(locale: string) {
       description={fr ? "Seuls les clients avec un mandat de consentement actif et non expiré sont visibles." : "Only clients with active, unexpired consent mandates are visible."}
       icon={BriefcaseBusiness}
     >
-      {response.success ? (
-        <>
-          <AccountantWorkDesk locale={locale} />
-          <AccountantPortfolio portfolio={response.data} locale={locale} />
-        </>
-      ) : (
-        <div className="rounded-xl border border-destructive/30 p-5 text-sm text-destructive">
-          {response.error}
-        </div>
-      )}
+      <AccountantPortfolioWorkspace locale={locale} initialInput={{
+        search: typeof query.search === "string" ? query.search : "",
+        cursor: typeof query.cursor === "string" ? query.cursor : undefined,
+        pageSize: typeof query.pageSize === "string" ? Number(query.pageSize) : 10,
+      }} />
     </AccountingPageShell>
   )
 }
@@ -42,9 +35,13 @@ export default async function AccountingRoutePage(props: any = {}) {
     throw new Error("Missing accounting route surface definition: accounting-accountant-portfolio")
   }
 
+  const params = await ((props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }))
+  const copy = accountantPortfolioCopy[params.locale === "fr" ? "fr" : "en"]
   return withAccountingSurfaceAccess({
-    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
-    surface,
-    onAllowed: async (_context, locale) => AccountantPortfolioPageImpl(locale),
+    params: Promise.resolve(params),
+    surface: { ...surface, module: surface.module ? { ...surface.module,
+      moduleLockedTitle: copy.errors.locked_module[0], moduleLockedMessage: copy.errors.locked_module[1],
+    } : undefined },
+    onAllowed: async (_context, locale) => AccountantPortfolioPageImpl(locale, await props.searchParams ?? {}),
   })
 }

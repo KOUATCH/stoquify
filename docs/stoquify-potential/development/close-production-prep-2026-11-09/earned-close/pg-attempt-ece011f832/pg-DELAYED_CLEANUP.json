@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-11-09T20:51:53.239Z",
+  "passed": true,
+  "status": "OWNED_CLUSTER_STOP_CONFIRMED_AFTER_PG_CTL_WAIT_TIMEOUT",
+  "originalReceipt": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\earned-close\\pg-attempt-ece011f832\\pg-RESULT.json",
+    "sha256": "6a08e744aeba95f92438801ca0fbea13f05644865a6dcc3e53c665634a8026c6",
+    "bytes": 2302
+  },
+  "target": {
+    "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5",
+    "host": "127.0.0.1",
+    "port": 58033,
+    "database": "stoquify_replay_close_earned_20261109_ece011f832"
+  },
+  "pgCtlStatusExitCode": 3,
+  "postmasterPidAbsent": true,
+  "portReleased": true,
+  "safeShutdownLogLines": [
+    "2026-11-09 21:47:45.974 CET [24780] LOG:  received fast shutdown request",
+    "2026-11-09 21:47:46.247 CET [24552] LOG:  checkpoint starting: shutdown immediate",
+    "2026-11-09 21:49:14.194 CET [24552] LOG:  checkpoint complete: wrote 2542 buffers (15.5%); 0 WAL file(s) added, 0 removed, 1 recycled; write=3.504 s, sync=84.034 s, total=88.006 s; sync files=2308, longest=0.584 s, average=0.037 s; distance=18779 kB, estimate=18779 kB; lsn=0/12D34140, redo lsn=0/12D34140",
+    "2026-11-09 21:49:27.646 CET [24780] LOG:  database system is shut down"
+  ],
+  "observation": "Checkpoint log records total88.006s including sync84.034s; original pg_ctl wait returned1 before clean shutdown. C-drive free217MiB and E-drive2.06GiB were observed later; no causal attribution is made."
+}

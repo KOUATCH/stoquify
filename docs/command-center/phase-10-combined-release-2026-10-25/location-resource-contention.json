@@ -1,0 +1,17 @@
+{
+  "startedAt": "2026-10-25T13:26:04.503Z",
+  "realAuthentication": true,
+  "actionMocks": false,
+  "productionAccess": false,
+  "checks": [],
+  "audits": [],
+  "errors": [],
+  "failures": [],
+  "blockedExternalRequests": 0,
+  "passed": false,
+  "failure": "page.goto: net::ERR_CONNECTION_RESET at http://127.0.0.1:51784/en/login?returnUrl=/dashboard/manager-action-center\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:51784/en/login?returnUrl=/dashboard/manager-action-center\", waiting until \"load\"\u001b[22m\n\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\command-center\\phase-10-combined-release-2026-10-25\\acceptance-browser.cjs:11:13)",
+  "failureUrl": "about:blank",
+  "focusAtFailure": "<body style=\"font-family: system-ui, sans-serif; font-size: 75%\">\n  <div id=\"content\"><!---->\n    <div id=\"main-frame-error\" class=\"interstitial-wrapper \">\n      <div id=\"main-content\">\n        <div class=\"icon icon-elixir-thinking\"></div>\n        <div id=\"main-message\">\n          <h1>\n            <span>Hmmm… can't reach this page</span>\n          </h1>\n          <!--?lit$737715300$-->\n            <p>The connection was reset.</p>\n          \n          <div id=\"diagnose-frame\" class=\"hidden\"></div>\n\n          <!--?lit$737715300$-->\n            <div id=\"suggestions-list\">\n              <p><!--?lit$737715300$-->Try:</p>\n              <ul class=\"\">\n                <!--?lit$737715300$--><!---->\n                  <li>Checking the connection</li>\n                <!----><!---->\n                  <li><a href=\"#buttons\" onclick=\"toggleHelpBox()\">Checking the proxy and the firewall</a></li>\n                <!---->\n              </ul>\n            </div>\n          \n\n          <div class=\"error-code\"",
+  "failureText": "Hmmm… can't reach this page\n\nThe connection was reset.\n\nTry:\n\nChecking the connection\nChecking the proxy and the firewall\nERR_CONNECTION_RESET\nRefresh\nMicrosoft Edge",
+  "finishedAt": "2026-10-25T13:29:41.283Z"
+}

@@ -1,5 +1,8 @@
 "use client"
 
+import { PreviewLogo } from "./preview-logo"
+import "./landing-sections.css"
+
 import { useRef, useState } from "react"
 import { useLocale } from "next-intl"
 import {
@@ -9,12 +12,15 @@ import {
   Users,
   ClipboardCheck,
   ArrowRight,
+  ArrowUpRight,
 } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { cinematicModules } from "./cinematic-modules"
+import { useCinematicSignedIn } from "./cinematic-shell"
 
-export function CinematicSetup() {
+export function CinematicSetup({ showGuideLink = true }: { showGuideLink?: boolean }) {
   const locale = useLocale()
+  const signedIn = useCinematicSignedIn()
   const t = (en: string, fr: string) => (locale === "fr" ? fr : en)
   const [active, setActive] = useState(0)
   const buttons = useRef<(HTMLButtonElement | null)[]>([])
@@ -32,6 +38,9 @@ export function CinematicSetup() {
         "Your organization starts here.",
         "Votre organisation prend place.",
       ),
+      prepare: t("Business name, country, currency and an email you can verify.", "Nom de l’entreprise, pays, devise et e-mail à vérifier."),
+      result: t("A verified administrator account for your organization.", "Un compte administrateur vérifié pour votre organisation."),
+      next: t("Define locations, responsibilities and your starting modules.", "Définir les sites, responsabilités et modules de départ."),
     },
     {
       title: t("Prepare your operations", "Préparez votre activité"),
@@ -40,6 +49,9 @@ export function CinematicSetup() {
         "Confirmez les modules activés, configurez boutiques et entrepôts, puis attribuez les accès adaptés à chaque membre de l’équipe.",
       ),
       preview: t("A place for every team.", "Une place pour chaque équipe."),
+      prepare: t("Your sites, team list and the work each person should access.", "Vos sites, votre équipe et les tâches accessibles à chacun."),
+      result: t("Configured locations and scoped team access.", "Des sites configurés et des accès délimités pour l’équipe."),
+      next: t("Prepare and review the records needed for your first workflow.", "Préparer et vérifier les données du premier parcours."),
     },
     {
       title: t(
@@ -54,16 +66,19 @@ export function CinematicSetup() {
         "Start with the right foundations.",
         "Partez sur de bonnes bases.",
       ),
+      prepare: t("Item lists, opening quantities, balances and supporting records.", "Articles, quantités initiales, soldes et pièces justificatives."),
+      result: t("Reviewed starting records and a clear first workflow.", "Des données initiales vérifiées et un premier parcours défini."),
+      next: t("Begin within your approved scope; follow the source record through each handoff.", "Démarrer dans le périmètre approuvé et suivre chaque transmission."),
     },
   ]
 
   return (
     <section
-      className="section onboarding split"
+      className="section onboarding"
       id="start"
       aria-labelledby="setup-title"
     >
-      <div className="setup-copy reveal">
+      <div className="section-heading setup-heading reveal">
         <p className="eyebrow">
           {t("A PRACTICAL START", "UN DÉMARRAGE CONCRET")}
         </p>
@@ -79,6 +94,9 @@ export function CinematicSetup() {
             "Du compte à la première opération, avancez avec une vision claire de chaque étape.",
           )}
         </p>
+      </div>
+      <div className="setup-unit reveal">
+      <div className="setup-copy">
         <div className="setup-steps">
           {steps.map((step, index) => (
             <div
@@ -122,39 +140,40 @@ export function CinematicSetup() {
                   </span>
                 </button>
               </h3>
-              <div id={`setup-copy-${index}`} hidden={active !== index}>
-                <p>{step.body}</p>
-              </div>
             </div>
           ))}
         </div>
-        <Link className="button primary" href="/register">
-          {t("Create your account", "Créer votre compte")}{" "}
-          <ArrowRight size={16} aria-hidden="true" />
-        </Link>
-        <p className="setup-scope">
-          {t(
-            "Module availability, team permissions and country settings determine what you can use.",
-            "Les modules disponibles, les droits d’accès et les paramètres du pays déterminent les fonctions utilisables.",
-          )}
-        </p>
+        <div className="setup-descriptions">
+          {steps.map((step, index) => (
+            <div key={index} id={`setup-copy-${index}`} className="setup-description" aria-hidden={active !== index} inert={active !== index}>
+              <p>{step.body}</p>
+              <dl className="setup-step-guide">
+                <div><dt>{t("Bring", "À préparer")}</dt><dd>{step.prepare}</dd></div>
+                <div><dt>{t("You’ll have", "Résultat")}</dt><dd>{step.result}</dd></div>
+                <div><dt>{t("Then", "Ensuite")}</dt><dd>{step.next}</dd></div>
+              </dl>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div
-        className="setup-preview reveal"
+        className="setup-preview"
         id="setup-preview"
         role="region"
         aria-labelledby={`setup-step-${active}`}
         data-visual-classification="sample"
       >
         <div className="setup-preview-bar">
-          <strong>Stoquify</strong>
+          <PreviewLogo />
           <span>{t("WORKSPACE SETUP", "CONFIGURATION")}</span>
           <b>0{active + 1} / 03</b>
         </div>
-        <div className="setup-scene" key={active} data-step={active}>
-          <h3>{steps[active].preview}</h3>
-          {active === 0 && (
+        <div className="setup-scenes">
+        {steps.map((step, index) => (
+        <div className="setup-scene" key={index} data-step={index} aria-hidden={active !== index} inert={active !== index}>
+          <h3>{step.preview}</h3>
+          {index === 0 && (
             <div className="setup-account">
               <div className="setup-identity">
                 <span className="setup-icon">
@@ -204,7 +223,7 @@ export function CinematicSetup() {
               </div>
             </div>
           )}
-          {active === 1 && (
+          {index === 1 && (
             <div className="setup-operations">
               <div className="setup-locations">
                 <span>
@@ -238,7 +257,7 @@ export function CinematicSetup() {
               </p>
             </div>
           )}
-          {active === 2 && (
+          {index === 2 && (
             <div className="setup-readiness">
               {[
                 [
@@ -281,12 +300,33 @@ export function CinematicSetup() {
             </div>
           )}
         </div>
+        ))}
+        </div>
         <p className="setup-preview-note">
           {t(
             "Illustrative setup · No account is created in this preview",
             "Configuration illustrative · Aucun compte créé dans cet aperçu",
           )}
         </p>
+      </div>
+      <div className="setup-actions">
+        <div className="setup-action-links">
+          <Link className="button primary" href={signedIn ? "/dashboard/settings/modules" : "/register"}>
+            {signedIn ? t("Prepare your workspace", "Préparer votre espace") : t("Create your account", "Créer votre compte")}{" "}
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+          {showGuideLink && <Link className="text-link setup-guide-link" href="/get-started">
+            {t("Follow the setup guide", "Suivre le guide de démarrage")}
+            <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>}
+        </div>
+        <p className="setup-scope">
+          {t(
+            "Module availability, team permissions and country settings determine what you can use.",
+            "Les modules disponibles, les droits d’accès et les paramètres du pays déterminent les fonctions utilisables.",
+          )}
+        </p>
+      </div>
       </div>
     </section>
   )

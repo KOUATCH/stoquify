@@ -1,0 +1,72 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P08\\evidence\\DailyHabitDigestDashboard.tsx.before" "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\daily-habit\\DailyHabitDigestDashboard.tsx"
+index e72e1224..fa655f13 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P08\\evidence\\DailyHabitDigestDashboard.tsx.before"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\daily-habit\\DailyHabitDigestDashboard.tsx"	
+@@ -46,6 +46,8 @@ const copy = {
+     signals: "Digest signals", signalsDetail: "Business signals derived from existing snapshots and permission-filtered for this role.",
+     radar: "Digest risk radar", radarDetail: "Visible signal-backed risks ranked for the selected role.",
+     sourceLinks: "Read-only links to the source workflow.", open: "Open", hiddenAction: "Hidden",
++    nextStep: "Next step", sourceUnavailable: "Source unavailable", sourceStale: "Source is stale — check current evidence in the source workflow.",
++    sourceLimited: "Source evidence is incomplete — review its limitations before acting.",
+     roles: { owner: "Owner", manager: "Manager", finance: "Finance", accountant: "Accountant", stockkeeper: "Stockkeeper", end_of_day: "End of day", weekly: "Weekly" },
+     viewTitles: { brief: "Summary and changes", command: "Actions and risks", investigate: "Source details" },
+     viewHelp: { brief: "Review the key figures and changes, then switch to Command for next steps.", command: "Open the permitted source workflows to act. This digest does not execute or approve work.", investigate: "Inspect the source view and its limitations before relying on the figures." },
+@@ -69,6 +71,8 @@ const copy = {
+     signals: "Signaux du digest", signalsDetail: "Signaux métier issus des instantanés existants et filtrés selon les autorisations de ce rôle.",
+     radar: "Risques du digest", radarDetail: "Risques visibles issus des signaux, classés pour le rôle sélectionné.",
+     sourceLinks: "Liens en lecture seule vers le processus source.", open: "Ouvrir", hiddenAction: "Masqué",
++    nextStep: "Prochaine étape", sourceUnavailable: "Source indisponible", sourceStale: "Source ancienne — vérifiez les preuves actuelles dans le processus source.",
++    sourceLimited: "Les preuves sources sont incomplètes — examinez leurs limites avant d’agir.",
+     roles: { owner: "Dirigeant", manager: "Responsable", finance: "Finance", accountant: "Comptable", stockkeeper: "Magasinier", end_of_day: "Fin de journée", weekly: "Hebdomadaire" },
+     viewTitles: { brief: "Synthèse et évolutions", command: "Actions et risques", investigate: "Détails des sources" },
+     viewHelp: { brief: "Examinez les chiffres clés et les évolutions, puis passez en mode Pilotage pour les prochaines étapes.", command: "Ouvrez les processus sources autorisés pour agir. Ce digest n’exécute et n’approuve aucune opération.", investigate: "Examinez la vue source et ses limites avant de vous fier aux chiffres." },
+@@ -324,26 +328,38 @@ function DigestActions({
+         </span>
+       </div>
+       <div className="mt-4 space-y-3">
+-        {digest.actions.length ? digest.actions.map((action) => (
+-          <article key={action.id} className={cn(dashboardRowClass, "p-3")}>
+-            <div className="flex items-start justify-between gap-3">
+-              <div className="min-w-0">
+-                <p className="text-sm font-semibold text-[var(--dash-text)]">{action.label}</p>
+-                {action.disabled && action.disabledReason ? <p className="mt-1 text-xs text-[var(--dash-text-soft)]">{action.disabledReason}</p> : null}
++        {digest.actions.length ? digest.actions.map((action) => {
++          // Match by the server-owned action identity, never by a translated label
++          // or route shared by several signals. Do not invent a source when absent.
++          const source = digest.risks.find(risk => risk.actionLink?.id === action.id)
++          const unavailable = source?.drillThrough.available === false
++          const disabled = action.disabled || unavailable
++          const warning = unavailable || ["safe_error", "module_unavailable", "permission_denied"].includes(source?.state ?? "") ? copy[locale].sourceUnavailable
++            : source?.freshness.stale || source?.state === "stale" ? copy[locale].sourceStale
++              : source && source.state !== "ready" ? copy[locale].sourceLimited : null
++          return (
++          <article key={action.id} aria-label={source?.title ?? action.label} className={cn(dashboardRowClass, "p-3")}>
++            <div className="flex flex-wrap items-start justify-between gap-3">
++              <div className="min-w-0 flex-1 basis-48 [overflow-wrap:anywhere]">
++                <p className="text-sm font-semibold text-[var(--dash-text)]">{source?.title ?? action.label}</p>
++                {source ? <p className="mt-2 text-sm"><span className="font-semibold">{copy[locale].nextStep}: </span>{action.label}</p> : null}
++                {warning ? <p className="mt-2 text-sm text-[var(--dash-text-soft)]">{warning}</p> : null}
++                {disabled && action.disabledReason ? <p className="mt-1 text-xs text-[var(--dash-text-soft)]">{action.disabledReason}</p> : null}
++                {source?.drillThrough.available === false ? <p className="mt-1 text-sm">{source.drillThrough.unavailableReason}</p> : null}
+               </div>
+-              <Button asChild={!action.disabled} disabled={action.disabled} title={action.disabledReason ?? undefined} size="sm" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
+-                {action.disabled ? (
++              <Button asChild={!disabled} disabled={disabled} title={action.disabledReason ?? undefined} size="sm" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
++                {disabled ? (
+                   <span>
+                     <EyeOff className="h-4 w-4" aria-hidden="true" />
+-                    {copy[locale].hiddenAction}
++                    {unavailable ? copy[locale].sourceUnavailable : copy[locale].hiddenAction}
+                   </span>
+                 ) : (
+-                  <Link href={action.href} prefetch={false}>{copy[locale].open}</Link>
++                  <Link href={action.href} prefetch={false} aria-label={`${copy[locale].open}: ${source?.title ?? action.label}`}>{copy[locale].open}</Link>
+                 )}
+               </Button>
+             </div>
+           </article>
+-        )) : (
++        )}) : (
+           <p className="text-sm text-[var(--dash-text-soft)]">{emptyLabel}</p>
+         )}
+       </div>

@@ -1,0 +1,401 @@
+{
+  "at": "2026-10-26T20:48:02.538Z",
+  "results": [
+    {
+      "scenario": "durable handoff baseline -> current",
+      "status": "PASS",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-7422e947-1a6f-4b34-8fa4-ab743a9a12be",
+        "stock": {
+          "quantity": "0.000",
+          "value": "0.00",
+          "reserved": "0.000"
+        },
+        "orders": 1,
+        "receipts": 0,
+        "movements": 0,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": []
+    },
+    {
+      "scenario": "durable handoff current -> baseline",
+      "status": "PASS",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-3557173e-6e8b-4a9e-8ff0-6d41f4565951",
+        "stock": {
+          "quantity": "0.000",
+          "value": "0.00",
+          "reserved": "0.000"
+        },
+        "orders": 1,
+        "receipts": 0,
+        "movements": 0,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": []
+    },
+    {
+      "scenario": "current flag transitions and old reader",
+      "status": "PASS",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-f1ec32ca-eaf4-42d7-8bba-8de175db5dd2",
+        "stock": {
+          "quantity": "0.000",
+          "value": "0.00",
+          "reserved": "0.000"
+        },
+        "orders": 2,
+        "receipts": 0,
+        "movements": 0,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": []
+    },
+    {
+      "scenario": "write-stop and discard handoff",
+      "status": "PASS",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-910faf0e-6c41-4c12-9045-080a247bb39b",
+        "stock": {
+          "quantity": "0.000",
+          "value": "0.00",
+          "reserved": "0.000"
+        },
+        "orders": 0,
+        "receipts": 0,
+        "movements": 0,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": []
+    },
+    {
+      "scenario": "new admissions and older client contract",
+      "status": "PASS",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-c9b188af-7a4a-4307-98f9-5777914eaeee",
+        "stock": {
+          "quantity": "0.000",
+          "value": "0.00",
+          "reserved": "0.000"
+        },
+        "orders": 3,
+        "receipts": 0,
+        "movements": 0,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": []
+    },
+    {
+      "scenario": "pre-adapter legacy rollback",
+      "status": "UNSUPPORTED",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-ecac0a46-a770-47d6-82ab-de3484c17b78",
+        "stock": {
+          "quantity": "0.000",
+          "value": "0.00",
+          "reserved": "0.000"
+        },
+        "orders": 4,
+        "receipts": 0,
+        "movements": 0,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": []
+    },
+    {
+      "scenario": "mixed current flags at first admission",
+      "status": "UNSUPPORTED",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-9fc65c51-8526-4f76-b141-c10a086000d5",
+        "stock": {
+          "quantity": "0.000",
+          "value": "0.00",
+          "reserved": "0.000"
+        },
+        "orders": 2,
+        "receipts": 0,
+        "movements": 0,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": []
+    },
+    {
+      "scenario": "POS receipt handoff baseline -> current",
+      "status": "PASS",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-fe068bcc-b828-4ebd-be7c-4322d50b10c7",
+        "stock": {
+          "quantity": "0.000",
+          "value": "0.00",
+          "reserved": "0.000"
+        },
+        "orders": 0,
+        "receipts": 0,
+        "movements": 1,
+        "commits": 1,
+        "payments": 1,
+        "journals": [
+          {
+            "id": "cmvpq3q2r000lma7s3ryq171b",
+            "lines": [
+              {
+                "account": "TEST_AR",
+                "debit": "450",
+                "credit": "0"
+              },
+              {
+                "account": "TEST_REVENUE",
+                "debit": "0",
+                "credit": "450"
+              },
+              {
+                "account": "TEST_COGS",
+                "debit": "300.03",
+                "credit": "0"
+              },
+              {
+                "account": "TEST_STOCK",
+                "debit": "0",
+                "credit": "300.03"
+              }
+            ]
+          },
+          {
+            "id": "cmvpq3q8j0010ma7sufij6gsk",
+            "lines": [
+              {
+                "account": "TEST_CASH",
+                "debit": "450",
+                "credit": "0"
+              },
+              {
+                "account": "TEST_AR",
+                "debit": "0",
+                "credit": "450"
+              }
+            ]
+          }
+        ]
+      },
+      "movements": [
+        {
+          "id": "cmvpq3pv40009ma7s2mjwlt1u",
+          "quantity": "-3",
+          "totalCost": "300.03",
+          "type": "SALE"
+        }
+      ]
+    },
+    {
+      "scenario": "POS receipt handoff current -> baseline",
+      "status": "PASS",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-276844df-eea7-4eb0-9435-cac19c85efcf",
+        "stock": {
+          "quantity": "0.000",
+          "value": "0.00",
+          "reserved": "0.000"
+        },
+        "orders": 0,
+        "receipts": 0,
+        "movements": 1,
+        "commits": 1,
+        "payments": 1,
+        "journals": [
+          {
+            "id": "cmvpq400w000lmatsey5g38d6",
+            "lines": [
+              {
+                "account": "TEST_AR",
+                "debit": "450",
+                "credit": "0"
+              },
+              {
+                "account": "TEST_REVENUE",
+                "debit": "0",
+                "credit": "450"
+              },
+              {
+                "account": "TEST_COGS",
+                "debit": "300.03",
+                "credit": "0"
+              },
+              {
+                "account": "TEST_STOCK",
+                "debit": "0",
+                "credit": "300.03"
+              }
+            ]
+          },
+          {
+            "id": "cmvpq40440010matsvgq3abs1",
+            "lines": [
+              {
+                "account": "TEST_CASH",
+                "debit": "450",
+                "credit": "0"
+              },
+              {
+                "account": "TEST_AR",
+                "debit": "0",
+                "credit": "450"
+              }
+            ]
+          }
+        ]
+      },
+      "movements": [
+        {
+          "id": "cmvpq3zx70009matssdvw796b",
+          "quantity": "-3",
+          "totalCost": "300.03",
+          "type": "SALE"
+        }
+      ]
+    },
+    {
+      "scenario": "receiving handoff baseline -> current",
+      "status": "PASS",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-dab6a538-9c2c-4f8e-af15-0d8a47ea1e17",
+        "stock": {
+          "quantity": "3.000",
+          "value": "300.00",
+          "reserved": "0.000"
+        },
+        "orders": 1,
+        "receipts": 1,
+        "movements": 1,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": [
+        {
+          "id": "cmvpq4aee000qma4g8eytib9c",
+          "quantity": "3",
+          "totalCost": "300",
+          "type": "PURCHASE_RECEIPT"
+        }
+      ]
+    },
+    {
+      "scenario": "mixed-process stock competition",
+      "status": "PASS",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-62cb8260-419d-4eaa-8fad-5952be668171",
+        "stock": {
+          "quantity": "0.000",
+          "value": "0.00",
+          "reserved": "0.000"
+        },
+        "orders": 0,
+        "receipts": 0,
+        "movements": 1,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": [
+        {
+          "id": "cmvpq4jc30007ma2gcqmnxf3u",
+          "quantity": "-3",
+          "totalCost": "300.03",
+          "type": "SALE"
+        }
+      ]
+    },
+    {
+      "scenario": "reservation payload-version boundary",
+      "status": "PASS",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-31811b50-5413-4612-898e-e610cad49471",
+        "stock": {
+          "quantity": "3.000",
+          "value": "300.03",
+          "reserved": "2.000"
+        },
+        "orders": 0,
+        "receipts": 0,
+        "movements": 2,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": [
+        {
+          "id": "cmvpq4tjj0007ma6g5hvg89ir",
+          "quantity": "0",
+          "totalCost": "0",
+          "type": "RESERVATION"
+        },
+        {
+          "id": "cmvpq4zcw0007ma0syqst0yhg",
+          "quantity": "0",
+          "totalCost": "0",
+          "type": "RESERVATION"
+        }
+      ]
+    },
+    {
+      "scenario": "legacy restoration writer after repaired issue",
+      "status": "UNSUPPORTED",
+      "retainedStateMatches": true,
+      "state": {
+        "organizationId": "org-full-pos-b07ee7c9-f9fe-4e94-bd4b-b2b4703af8d4",
+        "stock": {
+          "quantity": "3.000",
+          "value": "300.03",
+          "reserved": "0.000"
+        },
+        "orders": 0,
+        "receipts": 0,
+        "movements": 2,
+        "commits": 0,
+        "payments": 0,
+        "journals": []
+      },
+      "movements": [
+        {
+          "id": "cmvpq8uvv0007max0zn4rph6d",
+          "quantity": "-3",
+          "totalCost": "300.02",
+          "type": "SALE"
+        },
+        {
+          "id": "cmvpq916k0007matgg5esmk42",
+          "quantity": "3",
+          "totalCost": "300.03",
+          "type": "SALES_RETURN"
+        }
+      ]
+    }
+  ]
+}

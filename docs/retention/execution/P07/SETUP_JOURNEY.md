@@ -1,3 +1,5 @@
+> **18 October 2026 continuation:** The item-import/media blocker is resolved for the tested tenant-owned-media path. The complete synthetic import journey and recovery checks passed. See [current result](../P07-media-2026-10-18/RESULT.md) and [compatibility/recovery rules](../P07-media-2026-10-18/COMPATIBILITY_AND_RECOVERY.md). The original 17 October record below is retained as historical evidence; provider success and live cutover remain unproved.
+
 # P07 — Guided setup journey
 
 17 October 2026. Scope: master import followed by opening-position guidance. This is not a cutover posting engine. See [RESULT](RESULT.md) for executed verification and limitations.

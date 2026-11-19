@@ -1,0 +1,53 @@
+{
+  "status": "PASS_SCOPED",
+  "steps": [
+    "native-http-login",
+    "wrong-password-cleared-no-write",
+    "cancel-preserves-draft-and-focus",
+    "verification-does-not-auto-submit",
+    "explicit-retry-saves-one-profile",
+    "expired-assurance-french-narrow-gate-and-focus",
+    "french-password-confirmation-refreshes-authorized-handoff",
+    "verification-does-not-override-revoked-permission",
+    "fresh-password-does-not-override-payroll-module-denial"
+  ],
+  "failures": [],
+  "browserErrors": [],
+  "failedRequests": [
+    "/en/dashboard/people/manage: net::ERR_ABORTED",
+    "/en/dashboard/people/manage: net::ERR_ABORTED",
+    "/fr/dashboard/people/handoff: net::ERR_ABORTED",
+    "/fr/dashboard/people/handoff: net::ERR_ABORTED",
+    "/fr/dashboard/people/handoff: net::ERR_ABORTED"
+  ],
+  "sourceHashes": {
+    "components/hris/useHrisFreshAuth.tsx": "7ef5ea8b6a795520c2cd8b90d99aef20721147037d3e20d8ffd20262db9be44e",
+    "components/hris/HrisRosterWorkspaceClient.tsx": "7f9d27e74a4edf8aae63ab74d6b7f79395727c1f55fdaefdc7bad9a273887d8b",
+    "components/hris/HrisLeaveManagementClient.tsx": "46b1809ec8b74afd700b1104dc9404368a38d24c29d84f9bf579e407de2a0c16",
+    "components/hris/HrisPayrollHandoffClient.tsx": "165840d0ff7052f427de478a19fbcda7f7948a58a3b99803a95eef0e6b2f3295",
+    "components/hris/HrisControlledReview.tsx": "2ca09f7b5c89138a2dae0f9285ffa4b99175d50d02185b3e8084bc62ea2a4981",
+    "components/hris/HrisOperationalTimeRequestPanel.tsx": "0860281fd7613893a677223317fba63701cd38a8701503ecf9741be195e8282f",
+    "components/hris/__tests__/HrisFreshAuth.test.tsx": "11ca781c1dd890d528079ac98f0966b3b23120f8902be513ea54301b5e644b52",
+    "jest.hris-fresh-auth-ui.config.cjs": "991fb7572c54ff0cd5bc98e1e68d79dc8cb1f44a9fad148ead0916550cff842e",
+    "app/[locale]/(dashboard)/dashboard/people/work/page.tsx": "f863d21cb2c410248592b46946351480c27ba6169aa7d5a20c3cf0ecc6cccbbf",
+    "app/[locale]/(dashboard)/dashboard/people/tasks/page.tsx": "37aa97d0343a69b3c2db6d8aff734b922ff645772da6d15d30842d07f0cfb504",
+    "app/[locale]/(dashboard)/dashboard/people/handoff/page.tsx": "3096aed24900b53fe0ff6b17ca18768d228141592d8f9d309b4ef8407b8a0ecf",
+    "app/[locale]/(dashboard)/dashboard/people/me/schedule/page.tsx": "bd1b3d84988f12f8acbbd68bbff064c1cb11a8abf7180eef1ff0bb5198751b50",
+    "app/[locale]/(dashboard)/dashboard/people/corrections/page.tsx": "a933994e9d70303705359bfa7e8fa7755d9d0615360bdbf752c43794c847411c",
+    "app/[locale]/(dashboard)/dashboard/people/me/corrections/page.tsx": "82fbf5ab13035fe143f3799c306514690162fd2983322ce2638729d511b4ce94",
+    "app/[locale]/(dashboard)/dashboard/people/roster/page.tsx": "35062517907dca334de5d4345e17270b45ae6465275e96e53429df394a7d58da",
+    "components/hris/HrisPeopleAuthoring.tsx": "86d556310896a74d42a743ddbe05cdd83e962c77f601f9f29dd998fd6353a760",
+    "components/hris/__tests__/HrisPeopleAuthoring.test.tsx": "02408920507baf904c24b80d7ef0e5bd64e1e09c4dac6c027e73925b5335cb0d",
+    "components/hris/__tests__/HrisControlledReview.test.tsx": "ae0eb2f52e35a0f417042573cc927a32a0e8989485e19766deb1cf45e6e56630",
+    "components/hris/__tests__/fresh-auth.setup.cjs": "a657874f56e424958c8cd7033ebcef12310dcb48ebd7361e5d6b0017d9808265",
+    "components/hris/HrisPersonalCorrectionWorkspaceClient.tsx": "0ba6a5fa96f7068873e7e70f2759261c59b19493ff3869886433b862680d9441",
+    "components/hris/HrisLifecycleTasksClient.tsx": "da4385ceecadb317951e3bcd3935e4821cb88ab18f4c09c3772d5ad4fbca4a36",
+    "components/hris/HrisDailyQueueClient.tsx": "773d382e1e9431130c429b2ff9efbd8eb904502a232f41eb6e758c879a709a33",
+    "components/hris/HrisPersonalCorrectionWorkspace.tsx": "f14bde4173f2849a0504034f6d4bf1bc266ccd57870f77ef674e17e35ddfbf72",
+    "components/hris/HrisLifecycleTasks.tsx": "e8cc8fa40ce164e2920b9eb3143a53155e16d6a93c1baf9e8a2ad0f51ae80f4d",
+    "components/hris/__tests__/HrisPersonalCorrectionWorkspace.test.tsx": "d073996e3c93ccd02a77d76f760ca81604d29b480a198c789271482dba8fee65",
+    "components/hris/__tests__/HrisLifecycleTasks.test.tsx": "831378e2dd8ba3685cb0e9a35b9c7b0f3860a9b76c2070f622520b5ab0c68f27"
+  },
+  "cleanupComplete": true,
+  "completedAt": "2026-10-26T14:58:11.169Z"
+}

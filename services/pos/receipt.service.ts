@@ -293,11 +293,14 @@ function resolveReceiptLegalDeliveryStatus(input: {
   }
 }
 
+type ReceiptReadClient = Pick<Prisma.TransactionClient, "salesOrder" | "fiscalDocument" | "businessEventOutbox">
+
 async function getReceiptCertificationStatus(
   organizationId: string,
   salesOrderId: string,
+  client: ReceiptReadClient,
 ): Promise<ReceiptCertificationStatus> {
-  const fiscalDocument = await db.fiscalDocument.findFirst({
+  const fiscalDocument = await client.fiscalDocument.findFirst({
     where: {
       organizationId,
       sourceType: AccountingSourceType.POS_SALE,
@@ -314,11 +317,11 @@ async function getReceiptCertificationStatus(
   })
 
   if (!fiscalDocument) {
-    if (!("businessEventOutbox" in db)) {
+    if (!("businessEventOutbox" in client)) {
       return emptyReceiptCertificationStatus()
     }
 
-    const request = await db.businessEventOutbox.findFirst({
+    const request = await client.businessEventOutbox.findFirst({
       where: {
         organizationId,
         channel: "FISCALIZATION",
@@ -381,20 +384,22 @@ type FindSalesReceiptOptions = {
   includeCustomerContact?: boolean
   receiptAccessToken?: string | null
   issuePublicReceiptToken?: boolean
+  locale?: ReceiptLocale
 }
 
 async function findSalesReceipt(
-  salesOrderId: string,
+  selector: Prisma.SalesOrderWhereInput,
   organizationId?: string,
   options: FindSalesReceiptOptions = {},
+  client: ReceiptReadClient = db,
 ): Promise<SalesReceiptPayload> {
   const includeCustomerContact = options.includeCustomerContact !== false
   const privatePersonSelect = includeCustomerContact ? { email: true } : {}
   const privateCustomerSelect = includeCustomerContact ? { email: true, phone: true, currentBalance: true } : {}
 
-  const sale = await db.salesOrder.findFirst({
+  const sale = await client.salesOrder.findFirst({
     where: {
-      id: salesOrderId,
+      ...selector,
       deletedAt: null,
       ...(organizationId ? { organizationId } : {}),
     },
@@ -489,13 +494,13 @@ async function findSalesReceipt(
     throw new NotFoundError("Receipt not found")
   }
 
-  const locale = (sale.customer?.preferredLocale || sale.organization.defaultLocale || "EN") as ReceiptLocale
+  const locale = options.locale ?? ((sale.customer?.preferredLocale || sale.organization.defaultLocale || "EN") as ReceiptLocale)
   const cashier = sale.session?.user
     ? displayName(sale.session.user.firstName, sale.session.user.lastName, optionalStringField(sale.session.user, "email"))
     : displayName(sale.createdBy?.firstName, sale.createdBy?.lastName, optionalStringField(sale.createdBy, "email"))
   const primaryPayment = sale.payments[0]
   const firstTaxRate = sale.lines.find((line) => moneyToNumber(line.taxRate) > 0)?.taxRate
-  const certification = await getReceiptCertificationStatus(sale.organization.id, sale.id)
+  const certification = await getReceiptCertificationStatus(sale.organization.id, sale.id, client)
   let receiptAccessToken = options.receiptAccessToken ?? null
 
   if (!receiptAccessToken && options.issuePublicReceiptToken !== false) {
@@ -608,7 +613,7 @@ async function recordDeliveryAudit(
 
 export async function getSalesReceipt(rawInput: unknown): Promise<SalesReceiptPayload> {
   const input = getSalesReceiptSchema.parse(rawInput)
-  return findSalesReceipt(input.salesOrderId, input.organizationId)
+  return findSalesReceipt({ id: input.salesOrderId }, input.organizationId)
 }
 
 /**
@@ -619,10 +624,43 @@ export async function getSalesReceipt(rawInput: unknown): Promise<SalesReceiptPa
  */
 export async function getPOSSaleCommitReceipt(rawInput: unknown): Promise<SalesReceiptPayload> {
   const input = getSalesReceiptSchema.parse(rawInput)
-  return findSalesReceipt(input.salesOrderId, input.organizationId, {
+  return findSalesReceipt({ id: input.salesOrderId }, input.organizationId, {
     includeCustomerContact: false,
     issuePublicReceiptToken: false,
   })
+}
+
+type POSReceiptPrintSelection = { salesOrderId: string; actorId: string } | { orderNumber: string }
+
+/** Private, read-only receipt lookup used by cashier print and reprint. */
+export async function getPOSReceiptPrintPreview(input: {
+  organizationId: string
+  locationId: string
+  locale: ReceiptLocale
+  selection: POSReceiptPrintSelection
+}, client: ReceiptReadClient = db) {
+  const { organizationId, locationId, locale, selection } = input
+  const posSession = { organizationId, locationId }
+  const selector: Prisma.SalesOrderWhereInput = {
+    channel: "POS",
+    status: "COMPLETED",
+    locationId,
+    location: { is: { organizationId, isActive: true, deletedAt: null } },
+    customer: { is: { organizationId } },
+    terminal: { is: { organizationId, locationId } },
+  }
+  if ("salesOrderId" in selection) {
+    selector.id = selection.salesOrderId
+    selector.session = { is: { ...posSession, userId: selection.actorId } }
+  } else {
+    selector.orderNumber = selection.orderNumber
+    selector.session = { is: posSession }
+  }
+  return findSalesReceipt(selector, organizationId, {
+    locale,
+    includeCustomerContact: false,
+    issuePublicReceiptToken: false,
+  }, client)
 }
 
 export async function getPublicSalesReceipt(rawInput: unknown): Promise<SalesReceiptPayload> {
@@ -633,7 +671,7 @@ export async function getPublicSalesReceipt(rawInput: unknown): Promise<SalesRec
     salesOrderId: input.salesOrderId,
   })
 
-  const payload = await findSalesReceipt(input.salesOrderId, access.organizationId, {
+  const payload = await findSalesReceipt({ id: input.salesOrderId }, access.organizationId, {
     includeCustomerContact: false,
     receiptAccessToken: input.receiptAccessToken,
     issuePublicReceiptToken: false,
@@ -658,7 +696,7 @@ export async function sendReceipt(
   provider: ReceiptDeliveryProvider = defaultReceiptProvider,
 ): Promise<ReceiptDeliveryResult> {
   const input = sendReceiptServiceSchema.parse(rawInput)
-  const receipt = await findSalesReceipt(input.salesOrderId, input.organizationId)
+  const receipt = await findSalesReceipt({ id: input.salesOrderId }, input.organizationId)
   const locale = input.locale || receipt.receipt.locale
 
   if (input.channel === "NONE") {

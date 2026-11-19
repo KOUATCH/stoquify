@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "purpose": "hardened-close-production",
+  "evidenceMaxAgeHours": 24,
+  "target": {
+    "provider": null,
+    "projectId": null,
+    "region": null,
+    "origin": null,
+    "artifactFormat": "stoquify-standalone-v2",
+    "platform": null,
+    "architecture": null,
+    "nodeMajor": null
+  },
+  "candidate": {
+    "directory": null,
+    "sourceManifestSha256": null,
+    "artifactDirectory": null,
+    "artifactSha256": null,
+    "buildId": null,
+    "catalogSha256": null
+  },
+  "database": {
+    "provider": null,
+    "projectId": null,
+    "branchId": null,
+    "endpointHost": null,
+    "environment": "production",
+    "connectionMode": "direct",
+    "schema": "public"
+  },
+  "delivery": {
+    "statementChannel": "email",
+    "resendAccountId": null,
+    "statementSender": null,
+    "inviteSender": null
+  },
+  "evidence": {
+    "build": null,
+    "worker": null,
+    "hosting": null,
+    "database": null,
+    "recovery": null,
+    "sender": null,
+    "scheduler": null,
+    "statementAcceptance": null,
+    "inviteAcceptance": null
+  }
+}

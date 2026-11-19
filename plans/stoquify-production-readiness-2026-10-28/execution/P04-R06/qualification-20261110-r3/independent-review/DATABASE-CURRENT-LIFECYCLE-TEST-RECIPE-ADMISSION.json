@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-10T19:35:45.747Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "executionAdmitted": true,
+  "entry": "database-current/run-lifecycle-tests.cjs",
+  "files": [
+    {
+      "path": "database-current/lifecycle-guards.cjs",
+      "sha256": "b2be54a4b0f57f565f9936973966aa8f727e345a56033c9204612eb61f55e27e"
+    },
+    {
+      "path": "database-current/stop.cjs",
+      "sha256": "5e0f7be2b95713aafff2021ab0c1b218f60a1e9d64a2b1a8c006d8d9ff9d3892"
+    },
+    {
+      "path": "database-current/stop-before-qualification.cjs",
+      "sha256": "79c29453428e8b8ac670c3cb14873aa451fa5b554c0c9fb5cb754047a8e518d1"
+    },
+    {
+      "path": "database-current/lifecycle-guards.test.cjs",
+      "sha256": "f159d887d0a4920e1853cb630bc6be764ecf00fc1bfc2f0d308dd1bbc96cd457"
+    },
+    {
+      "path": "database-current/run-lifecycle-tests.cjs",
+      "sha256": "c9ec515e71955711280b86d022757b4794786da59a1d3dd67f88e616f4e5d092"
+    }
+  ],
+  "scope": "Eleven mocked lifecycle safety/control-flow cases only.",
+  "review": [
+    "Strict VM dependency allowlists replace database, process, network and private fixture access. Real filesystem reads are limited to the named helper definitions.",
+    "Child environment contains only required OS variables plus NODE_ENV=test. Exclusive attempt01 output, 60-second timeout, bounded output, raw TAP and stderr plus exit diagnostics retained.",
+    "All five source hashes are captured before and after; pass requires exact 11/11 counts, zero failed/skipped, exit zero without launcher error, and unchanged sources.",
+    "Ownership/start/target/client mismatches prohibit termination; failed cleanup or native inspection remains failed while independently owned exclusive shutdown may proceed."
+  ],
+  "limitations": [
+    "This is mocked control flow, not a native database or real process-lifecycle qualification.",
+    "No application, build, migration, browser or production operation is admitted."
+  ],
+  "qualificationPassed": false
+}

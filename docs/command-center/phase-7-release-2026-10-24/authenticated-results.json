@@ -1,0 +1,43 @@
+{
+  "startedAt": "2026-10-25T09:04:51.914Z",
+  "origin": "http://127.0.0.1:55885",
+  "database": "stoquify_local_command_center_e2e_cc2e4dea7c",
+  "realAuthentication": true,
+  "actionMocks": false,
+  "checks": [
+    "Browser credential login created a real BetterAuth session",
+    "Real server actions persisted assignment and UTC deadline for both source families",
+    "Personal Digest reads the real persisted assignments",
+    "Owner view persists an evidence-bound review through its real protected action",
+    "Real purchase receiving review/confirm created one receipt and stock movement; no direct fixture completion update",
+    "en manager-action-center: authoritative source clearance and review invalidation visible",
+    "en daily-digest: authoritative source clearance and review invalidation visible",
+    "en owner-war-room: authoritative source clearance and review invalidation visible",
+    "fr manager-action-center: authoritative source clearance and review invalidation visible",
+    "fr daily-digest: authoritative source clearance and review invalidation visible",
+    "fr owner-war-room: authoritative source clearance and review invalidation visible",
+    "A fresh browser context and new authenticated session retain the same source-confirmed outcomes",
+    "Foreign location request denied without private rows; scope reset recovers",
+    "Revoked real sessions deny further reads and clear private follow-up rows"
+  ],
+  "errors": [],
+  "blockedExternalRequests": 0,
+  "continuationOf": "authenticated-source-results.json",
+  "occurrences": [
+    {
+      "id": "87a38190-b779-43d0-b263-40fe2dd697a7",
+      "sourceKey": "receiving",
+      "condition": "CLEAR",
+      "ownerId": "cmvmsvykp0004mafwd93ftpus"
+    },
+    {
+      "id": "97a61d98-14c0-49b4-9c23-14259fb60c86",
+      "sourceKey": "stockout",
+      "condition": "CLEAR",
+      "ownerId": "cmvmsvykp0004mafwd93ftpus"
+    }
+  ],
+  "revokedSyntheticSessionCount": 4,
+  "passed": true,
+  "finishedAt": "2026-10-25T09:07:05.943Z"
+}

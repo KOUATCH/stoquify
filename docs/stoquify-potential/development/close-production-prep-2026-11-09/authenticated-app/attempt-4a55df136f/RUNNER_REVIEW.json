@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-11-10T07:22:56.272Z",
+  "origin": "https://127.0.0.1:43872",
+  "classification": "Actual authenticated current-source DEVELOPMENT application. Schema-only module override and read-only reused dependencies; not a sealed production artifact or hosted release.",
+  "auth": "Actual BetterAuth password UI and actual protected server actions; no auth/action mocks.",
+  "orderedOperations": [
+    "stale-proof",
+    "suspend-close-module",
+    "restore-close-module",
+    "revoke-current-session"
+  ],
+  "effects": [
+    "Owned headless installed Edge/profile",
+    "Actual synthetic sign-in, optional password step-up and retained-export reads/audits",
+    "Private wx handshake requests only",
+    "Private downloaded UTF8 bytes",
+    "Public safe screenshots and digest/status-only receipts"
+  ],
+  "boundaries": [
+    "Exact TLS loopback origin only",
+    "Only matching loopback Next HMR websocket allowed",
+    "No app/server/DB startup or teardown",
+    "No role/session/financial writes by browser runner",
+    "No emails",
+    "No credentials/cookies/network bodies/HAR/trace/storageState published"
+  ],
+  "fixtureIds": {
+    "organizationId": "earned-close-47ca06e2d609",
+    "actorId": "cmw9qdg4a000oma00rmt1p6y8",
+    "periodId": "cmw9qdg5i000uma00ow8kyk6u",
+    "originalRunId": "cmw9qfuwm00l1ma00ci9x6iac",
+    "originalExportId": "ace22446-9b9c-4ebe-a50a-ba5e22e93342"
+  },
+  "expectedDocumentDigest": "sha256:6a20e8fd9babd4230d1103c207e5ed2c516d737bf909217b55413732c196bafc",
+  "sourceBindingSha256": "dc648d7af48008efa53cf23a84705fa14b914494faf322c6d55e14d873b4a066"
+}

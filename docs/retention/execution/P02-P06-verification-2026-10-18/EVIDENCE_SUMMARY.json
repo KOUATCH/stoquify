@@ -1,0 +1,681 @@
+{
+  "at": "2026-10-18T20:21:38.407Z",
+  "target": {
+    "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\retention-p02-p06-refresh-bb98aca78f",
+    "database": "stoquify_pos_audit_20261018_bb98aca78f",
+    "host": "localhost",
+    "port": 64728,
+    "user": "retention_fixture",
+    "createdAt": "2026-10-18T20:02:43.386Z",
+    "method": "new cluster; schema generated from current repository datamodel; no data clone"
+  },
+  "application": {
+    "pid": 22012,
+    "origin": "http://127.0.0.1:3192",
+    "database": "stoquify_pos_audit_20261018_bb98aca78f",
+    "distDir": ".next-retention-p02-p06-refresh-session-lekXKs",
+    "tsconfig": ".next-retention-p02-p06-refresh-session-lekXKs.tsconfig.json",
+    "utc": "2026-10-18T20:11:26.920Z",
+    "ambientEnvValuesBlocked": true
+  },
+  "schema": {
+    "source": "prisma/schema.prisma",
+    "sha256": "a2ce0a3139d98928e20e347e9903e475ca38d9bed5a564a037d33f97b25b062b",
+    "sqlSha256": "c35e5c8ba7d321d5c806d1f03b624a7fe706339ecc4b437740f630e82f11cffd",
+    "limitation": "Datamodel bootstrap, not migration-history or custom-trigger certification"
+  },
+  "workflow": {
+    "command": "npm run agent:workflow:check",
+    "start": "2026-10-18T20:01:47.399Z",
+    "end": "2026-10-18T20:02:39.946Z",
+    "exitCode": 0,
+    "error": null
+  },
+  "clientShape": "-- This is an empty migration.",
+  "tests": [
+    {
+      "file": "browser-fixture.results.json",
+      "sha256": "0e65ab63879cd58fe18479918ad836dc5e40f611e023f4ff0fcf129a5a7ca777",
+      "success": true,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "P05/P06 owned synthetic browser fixture creates a verified cashier and retained original sale for actual application recovery",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "p02-unit-1792353981196.results.json",
+      "sha256": "4ef446a2a3efa5b42f65a9d47d94aa285191327a06000b0144773eeb6dce0277",
+      "success": true,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 3,
+      "assertions": [
+        {
+          "name": "uses fresh authorization, bounded scalar queries and one consistent snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "rejects a caller's foreign tenant before any domain read",
+          "status": "passed"
+        },
+        {
+          "name": "does not accept caller-supplied identity/provenance or as-of overrides",
+          "status": "passed"
+        },
+        {
+          "name": "stops a signed out authorization rejection",
+          "status": "passed"
+        },
+        {
+          "name": "stops a revoked authorization rejection",
+          "status": "passed"
+        },
+        {
+          "name": "stops a missing reports.read authorization rejection",
+          "status": "passed"
+        },
+        {
+          "name": "stops a missing sales.read authorization rejection",
+          "status": "passed"
+        },
+        {
+          "name": "enforces module denial",
+          "status": "passed"
+        },
+        {
+          "name": "rejects an unavailable organization before reading outcomes",
+          "status": "passed"
+        },
+        {
+          "name": "rejects an unavailable location before reading outcomes",
+          "status": "passed"
+        },
+        {
+          "name": "fails a truncated pOSCommitResult read instead of returning misleading counts",
+          "status": "passed"
+        },
+        {
+          "name": "fails a truncated businessEvent read instead of returning misleading counts",
+          "status": "passed"
+        },
+        {
+          "name": "propagates read failure rather than producing a zero cohort",
+          "status": "passed"
+        },
+        {
+          "name": "detects a foreign source row even if a query adapter returns one",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid dates before domain reads",
+          "status": "passed"
+        },
+        {
+          "name": "counts financial commit once across repeated reads and receipt completion",
+          "status": "passed"
+        },
+        {
+          "name": "does not report claimed/uncertain work as completed or require receipt success",
+          "status": "passed"
+        },
+        {
+          "name": "does not fabricate a missing/invalid commit time: null",
+          "status": "passed"
+        },
+        {
+          "name": "does not fabricate a missing/invalid commit time: Invalid Date",
+          "status": "passed"
+        },
+        {
+          "name": "removes conflicting sale identities instead of selecting a convenient row",
+          "status": "passed"
+        },
+        {
+          "name": "retains the original completion and an explicit refund correction",
+          "status": "passed"
+        },
+        {
+          "name": "retains the original completion and an explicit void correction",
+          "status": "passed"
+        },
+        {
+          "name": "shows a correction for an earlier sale without inventing an in-window completion",
+          "status": "passed"
+        },
+        {
+          "name": "allows database transaction time to precede the application occurrence timestamp",
+          "status": "passed"
+        },
+        {
+          "name": "removes conflicting correction records",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"eventType\":\"pos.sale.failed\"}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"status\":\"FAILED\"}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"status\":\"REJECTED\"}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"sourceType\":\"POS_SALE\"}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"eventSource\":\"WORKER\"}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"schemaVersion\":2}",
+          "status": "passed"
+        },
+        {
+          "name": "does not promote unsupported correction evidence: {\"sourceId\":null}",
+          "status": "passed"
+        },
+        {
+          "name": "fails closed on cross-tenant commits and corrections, including mixed batches",
+          "status": "passed"
+        },
+        {
+          "name": "fails closed on foreign locations in a narrowed scope",
+          "status": "passed"
+        },
+        {
+          "name": "uses half-open time windows and excludes evidence recorded after as-of",
+          "status": "passed"
+        },
+        {
+          "name": "never emits payloads, actor IDs, money or fabricated role/human attribution",
+          "status": "passed"
+        },
+        {
+          "name": "retains unknown adoption on an empty read instead of calling it churn",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid/unbounded windows: {\"start\":null}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid/unbounded windows: {\"endExclusive\":\"2026-03-01T00:00:00.000Z\",\"asOf\":\"2026-04-01T00:00:00.000Z\"}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid/unbounded windows: {\"endExclusive\":\"2026-01-01T00:00:00.000Z\"}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid/unbounded windows: {\"asOf\":\"2026-01-01T00:00:00.000Z\"}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid/unbounded windows: {\"organizationId\":\" \"}",
+          "status": "passed"
+        },
+        {
+          "name": "computes explicit Week 1 eligibility, coverage and repeated work",
+          "status": "passed"
+        },
+        {
+          "name": "computes explicit Week 4 eligibility, coverage and repeated work",
+          "status": "passed"
+        },
+        {
+          "name": "computes explicit Week 8 eligibility, coverage and repeated work",
+          "status": "passed"
+        },
+        {
+          "name": "computes explicit Week 12 eligibility, coverage and repeated work",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the recent cohort immature for Week 1 even if an operation exists",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the recent cohort immature for Week 4 even if an operation exists",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the recent cohort immature for Week 8 even if an operation exists",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the recent cohort immature for Week 12 even if an operation exists",
+          "status": "passed"
+        },
+        {
+          "name": "excludes DEMO from human adoption",
+          "status": "passed"
+        },
+        {
+          "name": "excludes TEST from human adoption",
+          "status": "passed"
+        },
+        {
+          "name": "excludes AUTOMATED from human adoption",
+          "status": "passed"
+        },
+        {
+          "name": "does not turn PARTIAL coverage into inactivity even with some events",
+          "status": "passed"
+        },
+        {
+          "name": "does not turn MISSING coverage into inactivity even with some events",
+          "status": "passed"
+        },
+        {
+          "name": "keeps unknown provenance and calendar unknown",
+          "status": "passed"
+        },
+        {
+          "name": "does not infer activation from registration or sales",
+          "status": "passed"
+        },
+        {
+          "name": "uses the exclusive end as the maturity boundary",
+          "status": "passed"
+        },
+        {
+          "name": "reports an observed zero without labelling churn",
+          "status": "passed"
+        },
+        {
+          "name": "rejects duplicate organizations and mixed week denominators",
+          "status": "passed"
+        },
+        {
+          "name": "has no rate for an empty cohort",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid evidence: {\"scheduledTradingDays\":-1}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid evidence: {\"scheduledTradingDays\":8}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid evidence: {\"start\":null}",
+          "status": "passed"
+        },
+        {
+          "name": "rejects invalid evidence: {\"completedOperationIds\":[\" \"]}",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "retention-db-1792354248182.results.json",
+      "sha256": "22d6b3bcd6e6d9073f994099f905e1ef65f882e7626c07349e2a49938f2d5ad5",
+      "success": false,
+      "passed": 17,
+      "failed": 1,
+      "skipped": 0,
+      "suites": 0,
+      "assertions": [
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL reads persisted finalized/uncertain/corrected rows with independent counts and scalar-only output",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL preserves persisted uniqueness under concurrent retries and rejects changed-payload reuse",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL updates COMMITTED to COMPLETED without counting a second operation and rejects conflicting durable observations",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL uses inclusive start/exclusive end, recording cutoff and excludes invalid durable observations",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL denies foreign tenant and foreign/missing site with real RBAC and persisted location reads",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL observes persisted removal of reports.read on the next read",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL observes persisted removal of sales.read on the next read",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL denies a managed module with no grants through the real entitlement service",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL observes persisted inactive authority changes",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL observes persisted locked authority changes",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL observes persisted organization authority changes",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL rejects absent/stale session subjects without treating the harness as cookie validation",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL fails closed above the actual commit source cap rather than returning partial zeros",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL fails closed above the actual correction source cap rather than returning partial zeros",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL rejects invalid/future/oversize windows and ignores caller as-of/provenance overrides",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL keeps one RepeatableRead snapshot across a real concurrent correction committed between source queries",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL does not count a rolled-back persisted intent",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL propagates real PostgreSQL backend termination rather than producing a successful zero report",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "file": "retention-db-1792354347784.results.json",
+      "sha256": "a5693e588a00ccd813e3be14440bb6ee78b4a317933dc36af2c25fefb2df8fa8",
+      "success": true,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 1,
+      "assertions": [
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL reads persisted finalized/uncertain/corrected rows with independent counts and scalar-only output",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL preserves persisted uniqueness under concurrent retries and rejects changed-payload reuse",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL updates COMMITTED to COMPLETED without counting a second operation and rejects conflicting durable observations",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL uses inclusive start/exclusive end, recording cutoff and excludes invalid durable observations",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL denies foreign tenant and foreign/missing site with real RBAC and persisted location reads",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL observes persisted removal of reports.read on the next read",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL observes persisted removal of sales.read on the next read",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL denies a managed module with no grants through the real entitlement service",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL observes persisted inactive authority changes",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL observes persisted locked authority changes",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL observes persisted organization authority changes",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL rejects absent/stale session subjects without treating the harness as cookie validation",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL fails closed above the actual commit source cap rather than returning partial zeros",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL fails closed above the actual correction source cap rather than returning partial zeros",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL rejects invalid/future/oversize windows and ignores caller as-of/provenance overrides",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL keeps one RepeatableRead snapshot across a real concurrent correction committed between source queries",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL does not count a rolled-back persisted intent",
+          "status": "passed"
+        },
+        {
+          "name": "P02 outcome reader on explicit disposable PostgreSQL propagates real PostgreSQL backend termination rather than producing a successful zero report",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "browser": [
+    {
+      "file": "browser-1792354378317.json",
+      "sha256": "99a8ddcc1f1e00ca92f7b19c52cef8cdaa9ecdd2e0377fda626282f23c6e20ee",
+      "utc": "2026-10-18T20:12:58.317Z",
+      "steps": [
+        "Never-uploaded evidence visible; local close prevented before any close action",
+        "Actual authenticated signed ingestion committed; response lost; immutable evidence remains UNCERTAIN",
+        "Reload/reconnect and keyboard retry acknowledge the same event once; no sale/payment/stock/ledger effects",
+        "Unauthenticated action and spoofed tenant denied without an extra batch",
+        "expired policy/device: real server conflict, retained evidence and manager path; no retry/clear escape",
+        "revoked policy/device: real server conflict, retained evidence and manager path; no retry/clear escape",
+        "French manager recovery and retained counts survive route reload at mobile width"
+      ],
+      "fixture": "org-full-pos-19d151b9-96d0-4d65-a81c-20c0363ac3a5",
+      "origin": "http://127.0.0.1:3192",
+      "browser": "149.0.7827.55",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "before": {
+        "commits": 0,
+        "payments": 0,
+        "movements": 0,
+        "journals": 0,
+        "postings": 0,
+        "stock": "5",
+        "shift": "ACTIVE"
+      },
+      "dropProof": {
+        "id": "cmve9nt9k0011maykin44axfg",
+        "status": "PENDING_REPLAY",
+        "payloadHash": "54dc3860d9aa20ba9a8b2d70f46b24a6dacb7d0062919e56c4f54e14e00f4013"
+      },
+      "unauthenticatedBoundary": {
+        "status": 307,
+        "destination": "/en/login"
+      },
+      "after": {
+        "commits": 0,
+        "payments": 0,
+        "movements": 0,
+        "journals": 0,
+        "postings": 0,
+        "stock": "5",
+        "shift": "ACTIVE"
+      },
+      "status": "PASS"
+    },
+    {
+      "file": "read-states-1792354719659.json",
+      "sha256": "b42514c74aff1e56c72db8a6cc6b03724641b9354b78a19a3725914b16b3b8e5",
+      "utc": "2026-10-18T20:18:20.031Z",
+      "steps": [
+        "French local evidence remains readable and retained at 390px during remote read failures; unverified session cannot send",
+        "Actual browser offline transition keeps local evidence and recovery copy visible"
+      ],
+      "scope": "actual authenticated app; injected remote read failures; synthetic local-only evidence; no sync submission",
+      "colors": {
+        "background": "rgb(21, 32, 39)",
+        "color": "rgb(247, 250, 248)",
+        "width": 390
+      },
+      "failedRemotePosts": 3,
+      "status": "PASS"
+    },
+    {
+      "file": "read-states-1792354860401.json",
+      "sha256": "6be83769489946b059af1598b13d08acddcb718c2417c68efca55bf2acaf3235",
+      "utc": "2026-10-18T20:20:49.712Z",
+      "steps": [
+        "French local evidence remains readable and retained at 390px during remote read failures; unverified session cannot send",
+        "Actual browser offline transition keeps local evidence and recovery copy visible"
+      ],
+      "scope": "actual authenticated app; injected remote read failures; synthetic local-only evidence; no sync submission",
+      "colors": {
+        "background": "rgb(21, 32, 39)",
+        "color": "rgb(247, 250, 248)",
+        "width": 390
+      },
+      "failedRemotePosts": 3,
+      "offlineColors": {
+        "background": "rgb(21, 32, 39)",
+        "color": "rgb(247, 250, 248)",
+        "width": 390
+      },
+      "status": "PASS"
+    },
+    {
+      "file": "server-close-1792354740792.json",
+      "sha256": "fb3a18924eb44339c81d7483029ed121e27a389f1e10d4d1a7581520d26f2f9c",
+      "utc": "2026-10-18T20:18:20.355Z",
+      "fixture": "org-full-pos-19d151b9-96d0-4d65-a81c-20c0363ac3a5",
+      "browser": "149.0.7827.55",
+      "scope": "new browser context with no local queue; same authenticated cashier and persisted server blockers",
+      "status": "PASS",
+      "blockers": 3,
+      "closePosts": 1,
+      "shift": "ACTIVE",
+      "financialCommits": 0
+    }
+  ],
+  "source": [
+    {
+      "file": "services/analytics/retention-outcomes.service.ts",
+      "sha256": "21935e0365d1616ddeb756274ecc142f00be6a4aea8ad42fd414fb534f30470e"
+    },
+    {
+      "file": "services/analytics/retention-outcomes.ts",
+      "sha256": "1be4474706826281f519cde87e6e79d50d96fe1f0f918b93ed0c137d62c20479"
+    },
+    {
+      "file": "services/analytics/retention-cohorts.ts",
+      "sha256": "ee7e00f02132f7e2edb4b6866701c4de78a48b0cd702b1b22f948bd69d0fe4f6"
+    },
+    {
+      "file": "services/analytics/__tests__/retention-outcomes.postgres.test.ts",
+      "sha256": "4381bf5a740d7a77feecfaf50650a8c1e40f92b93f4425e388f3074727c235ca"
+    },
+    {
+      "file": "lib/security/rbac.ts",
+      "sha256": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376"
+    },
+    {
+      "file": "services/modules/module-entitlement.service.ts",
+      "sha256": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+    },
+    {
+      "file": "services/pos/offline-sync.service.ts",
+      "sha256": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6"
+    },
+    {
+      "file": "services/pos/__tests__/retention-offline-operator.browser-fixture.test.ts",
+      "sha256": "dd4ed45c246753ccf92cf656916e1924c27de1582e29f19a8899ea340f4144f3"
+    },
+    {
+      "file": "lib/pos/offline-local-queue.ts",
+      "sha256": "3c162bc149b144c31000fc382bd9bbd657a236ccdd63f4001fc34b3d90b965db"
+    },
+    {
+      "file": "components/pos/offline/LocalOfflineRecovery.tsx",
+      "sha256": "d48e4a044bed31e252442724297575eea0e4d2cb66e59d2df2a7e1273013ce7d"
+    },
+    {
+      "file": "components/pos/ProfessionalPOSSystem.tsx",
+      "sha256": "23522cd9b4a4b4738ef7ed78610396f1e778e72ccd530e0b035f844207e9034a"
+    },
+    {
+      "file": "actions/pos/sync.actions.ts",
+      "sha256": "495d576666ce7b230b38ce4642cb2b1497c777dfa9cced9d401ceb64482007ae"
+    },
+    {
+      "file": "prisma/schema.prisma",
+      "sha256": "a2ce0a3139d98928e20e347e9903e475ca38d9bed5a564a037d33f97b25b062b"
+    },
+    {
+      "file": "node_modules/.prisma/client/schema.prisma",
+      "sha256": "2d2886740ad5a4aaf5e31cb599f876f3e0eb862a04b00b9f48ee2c286cc0e936"
+    },
+    {
+      "file": "prisma/db.ts",
+      "sha256": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b"
+    },
+    {
+      "file": "scripts/dev-app-safe.js",
+      "sha256": "b0a1fe5fc5ff3923c7430ae2813e1df816b13725176754d78b208b723535f52f"
+    },
+    {
+      "file": "next.config.mjs",
+      "sha256": "1769a31215594f5c4b66ad6fc7407ab2771812ff90157385f5c9a5b47b3f9a4e"
+    }
+  ],
+  "graph": {
+    "freshness": "August discovery evidence; current source verified",
+    "nodes": [
+      {
+        "label": "commitPOSSale()",
+        "file_type": "code",
+        "source_file": "services\\pos\\pos.service.ts",
+        "source_location": "L950",
+        "id": "pos_pos_service_commitpossale",
+        "community": 4,
+        "norm_label": "commitpossale()"
+      }
+    ]
+  },
+  "limits": [
+    "P02 HTTP/session subject stubbed; persisted RBAC/module/source/transactions real",
+    "P06 actual authenticated app, fixture-generated signatures; no production capture/replay",
+    "No migration-history/custom-trigger, customer, provider, expert or production restore proof"
+  ]
+}

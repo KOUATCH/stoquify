@@ -1,0 +1,31 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07-media-2026-10-18\\evidence\\master-data-csv.test.ts.before" "b/E:\\ohada saas\\Focused projects\\stoquify\\services\\onboarding\\__tests__\\master-data-csv.test.ts"
+index 2e940f9f..3497183a 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07-media-2026-10-18\\evidence\\master-data-csv.test.ts.before"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\services\\onboarding\\__tests__\\master-data-csv.test.ts"	
+@@ -10,7 +10,7 @@ import {
+ const validRows: Record<MasterDataImportTarget, string> = {
+   CUSTOMER: "C-001,Ada Market,ada@example.com,+237600000000,Douala,TAX-1,30,1000,EN,true",
+   SUPPLIER: "S-001,Cacao Supply,Mina,mina@example.com,+237611111111,Douala,Douala,Littoral,1000,CM,TAX-2,30,5000,FR,true",
+-  ITEM: "SKU-001,Cocoa,Noyer,Cocoa item,Article cacao,100,150",
++  ITEM: "SKU-001,Cocoa,Noyer,Cocoa item,Article cacao,100,150,/api/media/11111111-1111-4111-8111-111111111111",
+ }
+ 
+ describe("governed master-data CSV controls", () => {
+@@ -32,7 +32,7 @@ describe("governed master-data CSV controls", () => {
+       errorRecordCount: 0,
+       duplicateRecordCount: 0,
+     })
+-    expect(Object.values(analysis.sourceRequiredFieldTotals)).toEqual([1, 1])
++    expect(Object.values(analysis.sourceRequiredFieldTotals)).toEqual(target === "ITEM" ? [1, 1, 1] : [1, 1])
+   })
+ 
+   it("blocks duplicate keys both inside the file and against tenant truth", () => {
+@@ -69,7 +69,7 @@ describe("governed master-data CSV controls", () => {
+       content: `${template.content.trimEnd()}\nSKU-1,Valid name,,,,not-a-number,10\n`,
+       fieldMap: defaultFieldMap("ITEM"),
+     })
+-    expect(analysis.sourceRequiredFieldTotals).toEqual({ sku: 1, nameEn: 1 })
++    expect(analysis.sourceRequiredFieldTotals).toEqual({ sku: 1, nameEn: 1, imageUrls: 0 })
+     expect(analysis.validRecordCount).toBe(0)
+   })
+ })

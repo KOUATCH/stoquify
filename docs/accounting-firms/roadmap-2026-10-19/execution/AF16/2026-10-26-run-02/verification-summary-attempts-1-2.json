@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-26",
+  "workflow": "PASS",
+  "clientGeneration": "PASS",
+  "lint": {
+    "errors": 0,
+    "warnings": 24
+  },
+  "preflight": {
+    "status": "conditional",
+    "releaseEnforced": false,
+    "warnings": [
+      "statement_live_delivery_channel_enabled",
+      "accountant_invite_live_delivery_enabled"
+    ]
+  },
+  "artifactBuild": "BLOCKED_BY_EXISTING_BUILD",
+  "retryPrecheck": "REFUSED_COMPETING_BUILD",
+  "compiler": "NOT_RUN",
+  "artifactSealing": "NOT_RUN",
+  "artifactVerification": "NOT_RUN",
+  "newBrowserChecks": "NOT_RUN",
+  "production": "NO_GO",
+  "formalAF16": "IMPLEMENTED_UNVERIFIED",
+  "pilot": "PILOT_PREPARED",
+  "liveValidation": "DEFERRED"
+}

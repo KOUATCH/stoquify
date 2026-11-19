@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: requires three distinct consecutive rendered frames
+ok 1 - requires three distinct consecutive rendered frames
+  ---
+  duration_ms: 6.9126
+  type: 'test'
+  ...
+# Subtest: persistent duplicate IDs fail even when only one is visible
+ok 2 - persistent duplicate IDs fail even when only one is visible
+  ---
+  duration_ms: 0.9542
+  type: 'test'
+  ...
+# Subtest: two visible matching headings cannot pass
+ok 3 - two visible matching headings cannot pass
+  ---
+  duration_ms: 0.5276
+  type: 'test'
+  ...
+# Subtest: transient duplicate resets stability before convergence
+ok 4 - transient duplicate resets stability before convergence
+  ---
+  duration_ms: 0.4803
+  type: 'test'
+  ...
+# Subtest: wrong title, hidden heading, loading document and wrong route fail
+ok 5 - wrong title, hidden heading, loading document and wrong route fail
+  ---
+  duration_ms: 2.69
+  type: 'test'
+  ...
+# Subtest: repeated frame timestamps do not establish stability
+ok 6 - repeated frame timestamps do not establish stability
+  ---
+  duration_ms: 0.4633
+  type: 'test'
+  ...
+# Subtest: login recovery requires actual login path and unique visible email input
+ok 7 - login recovery requires actual login path and unique visible email input
+  ---
+  duration_ms: 0.6392
+  type: 'test'
+  ...
+# Subtest: serializes mixed UI and API submissions from the previous completion
+ok 8 - serializes mixed UI and API submissions from the previous completion
+  ---
+  duration_ms: 6.8885
+  type: 'test'
+  ...
+# Subtest: waits only the remaining gap after other work
+ok 9 - waits only the remaining gap after other work
+  ---
+  duration_ms: 0.9423
+  type: 'test'
+  ...
+# Subtest: allows exactly one 429 retry after a full quiet window
+ok 10 - allows exactly one 429 retry after a full quiet window
+  ---
+  duration_ms: 1.0778
+  type: 'test'
+  ...
+# Subtest: a second 429 is returned as failure without further retry
+ok 11 - a second 429 is returned as failure without further retry
+  ---
+  duration_ms: 0.8934
+  type: 'test'
+  ...
+# Subtest: does not retry status 400
+ok 12 - does not retry status 400
+  ---
+  duration_ms: 1.0141
+  type: 'test'
+  ...
+# Subtest: does not retry status 401
+ok 13 - does not retry status 401
+  ---
+  duration_ms: 0.5518
+  type: 'test'
+  ...
+# Subtest: does not retry status 403
+ok 14 - does not retry status 403
+  ---
+  duration_ms: 0.6643
+  type: 'test'
+  ...
+# Subtest: does not retry status 500
+ok 15 - does not retry status 500
+  ---
+  duration_ms: 0.3904
+  type: 'test'
+  ...
+# Subtest: does not retry status 502
+ok 16 - does not retry status 502
+  ---
+  duration_ms: 1.3257
+  type: 'test'
+  ...
+# Subtest: requires the exact bounded X-Retry-After value before retrying
+ok 17 - requires the exact bounded X-Retry-After value before retrying
+  ---
+  duration_ms: 7.1966
+  type: 'test'
+  ...
+# Subtest: failed submission still preserves pacing for the next actor
+ok 18 - failed submission still preserves pacing for the next actor
+  ---
+  duration_ms: 1.5447
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 564.9812

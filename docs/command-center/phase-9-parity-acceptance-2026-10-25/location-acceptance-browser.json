@@ -1,0 +1,207 @@
+{
+  "startedAt": "2026-10-25T12:20:42.131Z",
+  "realAuthentication": true,
+  "actionMocks": false,
+  "productionAccess": false,
+  "checks": [
+    "Real credential login and database session",
+    "en restricted user: assigned-location authority and no foreign-location label",
+    "en manager-action-center: one main landmark and working keyboard skip link",
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Brief",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Command",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Investigate",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    "fr restricted user: assigned-location authority and no foreign-location label",
+    "fr manager-action-center: one main landmark and working keyboard skip link",
+    {
+      "locale": "fr",
+      "surface": "manager-action-center",
+      "mode": "Synthèse",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "fr",
+      "surface": "manager-action-center",
+      "mode": "Pilotage",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "fr",
+      "surface": "manager-action-center",
+      "mode": "Examiner",
+      "keyboard": true,
+      "focus": {
+        "active": true,
+        "visible": true,
+        "obscured": false,
+        "outline": "solid",
+        "outlineWidth": "2px",
+        "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+      },
+      "reflowWidths": [
+        320,
+        390,
+        768,
+        1440
+      ]
+    }
+  ],
+  "audits": [
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Brief",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Command",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "en",
+      "surface": "manager-action-center",
+      "mode": "Investigate",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "fr",
+      "surface": "manager-action-center",
+      "mode": "Synthèse",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "fr",
+      "surface": "manager-action-center",
+      "mode": "Pilotage",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    },
+    {
+      "locale": "fr",
+      "surface": "manager-action-center",
+      "mode": "Examiner",
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "aria-valid-attr-value",
+        "color-contrast"
+      ]
+    }
+  ],
+  "errors": [],
+  "failures": [],
+  "blockedExternalRequests": 0,
+  "violationCount": 0,
+  "passed": true,
+  "finishedAt": "2026-10-25T12:22:07.200Z"
+}

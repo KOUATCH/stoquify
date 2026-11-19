@@ -1,0 +1,286 @@
+{
+  "checkedAt": "2026-11-11T14:54:34.802Z",
+  "status": "SCOPED_PREPARATION_VERIFIED_PRODUCTION_BLOCKED",
+  "selectedSkill": "017-aqstoqflow-enterprise-release-gate",
+  "verification": {
+    "mockedInvitationTests": 46,
+    "mockedCliTests": 18,
+    "pureReadinessTests": 20,
+    "realPostgresTests": 17,
+    "actualNodeEmptyQueueCli": true,
+    "freshCatalogMigrations": 123,
+    "freshDeployments": 2,
+    "scopedTypeScriptAndLintPassed": true,
+    "originalDatabasesAndQualifiedClientsUnchanged": true,
+    "ownedPostgresStopped": true
+  },
+  "production": {
+    "approved": false,
+    "deployed": false,
+    "schemaPromoted": false,
+    "liveMessagesSent": false,
+    "newTargetCandidateBuilt": false,
+    "newWorkerPackageQualified": false
+  },
+  "sourceScope": "Owned changed inputs and frozen worker import closure; not a new full application build or production candidate qualification",
+  "sourceInputs": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\services\\communication\\accountant-client-invite-worker.service.ts",
+      "sha256": "5693c9285528a8f25e8d271f43b9627d62a43b57a1102e6716fdf5a8364e731e",
+      "bytes": 18824
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\services\\communication\\__tests__\\accountant-client-invite-worker.service.test.ts",
+      "sha256": "39392b8d66f10f99492ccd20c8e35651cc23e920ae983a26c522dbf299f1cc4c",
+      "bytes": 19983
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\services\\communication\\accountant-client-invite.provider.ts",
+      "sha256": "72808e37b96a0868625e394af67523322f3937aadf7a83530540fa18c222087a",
+      "bytes": 5082
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\services\\communication\\__tests__\\accountant-client-invite.provider.test.ts",
+      "sha256": "3eb4c29f7e9c2aa2087583df3dc04c3b789b642df89e9d2e18a4df65a878e264",
+      "bytes": 4787
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\referral-delivery-worker.ts",
+      "sha256": "b85441cc7126d030b315dfb5253ecbaefce678694195ed83434f303188e1e9e3",
+      "bytes": 5339
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\__tests__\\referral-delivery-worker.test.ts",
+      "sha256": "d95a102d73512c49c812a4c89c023e9f2d5b57df38959f624c8028fecadcb56e",
+      "bytes": 8029
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\package.json",
+      "sha256": "9519cb1792845b240c677a85e558eaec349ea835f0a196e13a0cb4501a42ca32",
+      "bytes": 34447
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "bytes": 759960
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\hardened-close-production-readiness.cjs",
+      "sha256": "04a9ccdf9c653328d39080dc2e1f603938332c0d1a71025029a1316d981d2a3e",
+      "bytes": 18859
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\scripts\\__tests__\\hardened-close-production-readiness.node-test.cjs",
+      "sha256": "170fc7d420481b761aa8a310d9a3491f1993b4bb70980fb37873e11295c933f9",
+      "bytes": 15876
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\config\\release\\hardened-close-production.template.json",
+      "sha256": "e0d650a5caac3fcf6579ef50d3ada363fe85aa3f1d2c0586da4d2d12f7c845d6",
+      "bytes": 1066
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\release\\HARDENED_CLOSE_PRODUCTION_DEPLOYMENT.md",
+      "sha256": "a1290bd5bb22eea79c8682474b61f05d967cb2a573c1266d9cf8ecbece3aa86c",
+      "bytes": 22382
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\prisma\\schema.prisma",
+      "sha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+      "bytes": 362667
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\prisma\\migration-catalog-manifest.json",
+      "sha256": "2f75aa91184a92eb558d5c55b6f8f1c2e824c8b1fd7e6ce451b330814656cbdd",
+      "bytes": 63838
+    }
+  ],
+  "evidence": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\RESULT.md",
+      "sha256": "88ea75c20051cad59c74b1deca51d048ed835765d9728ce183a320f8ecf0e55a",
+      "bytes": 12971
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\production-plan.pending.json",
+      "sha256": "db91e86a7ba617aa25fe0e97c44079e00be64b5d306047c3b461ffc0df3d2921",
+      "bytes": 1830
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\PRODUCTION_BLOCKERS_FINAL.json",
+      "sha256": "1db04bc31f70177d6536508f33bc5e38ebf05d7804f782fba0cc75a52e32af28",
+      "bytes": 4815
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\INVITATION_REGRESSION_BASELINE.json",
+      "sha256": "6bb303f890702a729b9e4edb6d6a23db1d7cff32ceb7f9b4f88bea40e5e03f30",
+      "bytes": 17224
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\INVITATION_UNIT_QUALIFICATION.json",
+      "sha256": "c53e0ba72d1636a6ee58c58e0f3fc3a5382011c693ac0426e4ad59f1594136bb",
+      "bytes": 17280
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\CLI_QUALIFICATION.json",
+      "sha256": "6b068fdedbdb7db0e17236a432c4215f37aac14a80a0fc71317c0e5f72730225",
+      "bytes": 4130
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\STATIC_QUALIFICATION.json",
+      "sha256": "019a53282994be147f0710aa2ada65cd94f56a2321f21551bf377f412372b0d8",
+      "bytes": 4803
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\READINESS_BEFORE.json",
+      "sha256": "2a61874bdb946a75954df4bddb587c2047efbbcf265ce21a9eb72045b9e4053f",
+      "bytes": 2044
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\READINESS_AFTER.json",
+      "sha256": "4e5e32fe200cc1793ad049728d3f92b4e3f1ff4468a23753b8eabca1db3620ce",
+      "bytes": 2042
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\READINESS_FINAL_AFTER.json",
+      "sha256": "db23ad2b0955e68541c50cb0ad25da847717d0d2a2b6707d2e5e59c05b76c7dd",
+      "bytes": 2054
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\SDK_PROVENANCE_SUPPLEMENT.json",
+      "sha256": "3e3bb52b7c160a33db44311a8d2abc8e5ac0cc017a5b3daf8e3953e89a4b1df2",
+      "bytes": 15450
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\INVITE_PG_RESOLUTION_CORRECTION.json",
+      "sha256": "4c6255824ccb03fd94b048524f44f57a287950a4e44f82b1321e9528df06964b",
+      "bytes": 2688
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\ENV_GUARD_CORRECTION.json",
+      "sha256": "cf7d81399bff34f27b54453b7b4e8f0486ef1100c20a79205d9a599b8356ff67",
+      "bytes": 3353
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\probe-invitation-env-paths.cjs",
+      "sha256": "5bc5a2d3f00cc0415cc2bf736c99a374e7958b7927c6a8fe76b279698232b7ed",
+      "bytes": 7903
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\qualify-invitation-unit.cjs",
+      "sha256": "aef927e04d152645b73ec6306b028c5565c244b691814de51e28f16cc7f22f0d",
+      "bytes": 10086
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\qualify-invitation-postgres.cjs",
+      "sha256": "1a39c17d106e68d3a325d5ebf8c3495177164103c1e650d7be004ae7b95b1913",
+      "bytes": 28926
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\invite-worker.postgres.test.ts",
+      "sha256": "83759aae4ede79e9dfa5478db9e17e9ecbb9904eb5bd80df4b9b7db520626c4d",
+      "bytes": 19336
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\qualify-preparation-static.cjs",
+      "sha256": "8691d46a7e3d29aff39afb78ce325e407d1ea5488d31bbbdc99f4898188cef03",
+      "bytes": 6016
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\run-readiness-tests.cjs",
+      "sha256": "9df311d909dad7606fd3bb9bb82b0c168ccb0bb4c0a6cdb77bc014b53d7a9a42",
+      "bytes": 3673
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\assess-pending-plan.cjs",
+      "sha256": "82e3954f97624b48d8f8eaee71f38f4211e850a9bbdf94a5a24fffc793a181b3",
+      "bytes": 3153
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\invite-pg-e5b08bad7a\\TARGET.json",
+      "sha256": "255e7424f711548560d8b173db148cfbed16ddd291789e6fc108b93d3d1c6648",
+      "bytes": 10968
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\invite-pg-e5b08bad7a\\RESULT.json",
+      "sha256": "9b9ad3ce33d47579df26c373e702ad39891ed092dc89fc0b847d51bdbc9aa1f4",
+      "bytes": 15914
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\invite-pg-e5b08bad7a\\TEST_RESULTS.json",
+      "sha256": "34ef71e911b8ba2747d93596f2101ccc62cd2326ab749496010f61467502cc0d",
+      "bytes": 2869
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\invite-pg-e5b08bad7a\\actual-node-cli.execution.json",
+      "sha256": "b32e4a0fb7127b24f613a23473595c0a38d7d4b127bd9906bd774bad2c08d6ac",
+      "bytes": 1507
+    }
+  ],
+  "failedAttempt": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\invite-pg-1e5157b710\\RESULT.json",
+    "sha256": "bdaecd05da252022a83b29bae0c86b15813d412784155a12c55af1d267449a4c",
+    "bytes": 12380
+  },
+  "remainingBlockers": [
+    "target_provider_missing",
+    "target_projectId_missing",
+    "target_region_missing",
+    "target_platform_missing",
+    "target_architecture_missing",
+    "target_platform_unsupported",
+    "target_architecture_unsupported",
+    "target_node_version_missing",
+    "target_origin_not_public_https",
+    "database_provider_missing",
+    "database_projectId_missing",
+    "database_branchId_missing",
+    "database_endpoint_not_public",
+    "delivery_resendAccountId_missing",
+    "delivery_statementSender_missing",
+    "delivery_inviteSender_missing",
+    "both_email_capabilities_must_be_explicitly_enabled_in_controlled_environment",
+    "sender_environment_binding_mismatch",
+    "origin_environment_mismatch_NEXTAUTH_URL",
+    "runtime_auth_secret_missing_or_weak",
+    "secret_preflight_public_identity_secret_present",
+    "secret_preflight_public_identity_secret_strong",
+    "secret_preflight_public_receipt_secret_present",
+    "secret_preflight_public_receipt_secret_strong",
+    "secret_preflight_history_cursor_secret_present",
+    "secret_preflight_history_cursor_secret_strong",
+    "secret_preflight_statement_token_secret_present",
+    "secret_preflight_statement_token_secret_strong",
+    "secret_preflight_statement_delivery_encryption_key_present",
+    "secret_preflight_statement_delivery_encryption_key_valid",
+    "secret_preflight_accountant_invite_encryption_key_present",
+    "secret_preflight_accountant_invite_encryption_key_valid",
+    "secret_preflight_public_app_url_present",
+    "secret_preflight_public_app_url_https",
+    "secret_preflight_statement_live_delivery_channel_enabled",
+    "secret_preflight_accountant_invite_live_delivery_enabled",
+    "existing_production_target_decision_blocked",
+    "production_target_attestation_missing",
+    "private_database_url_missing_or_invalid",
+    "candidate_sourceManifestSha256_missing",
+    "candidate_artifactSha256_missing",
+    "candidate_catalogSha256_missing",
+    "candidate_build_id_missing",
+    "candidate_paths_missing",
+    "evidence_build_missing_invalid_stale_or_changed",
+    "evidence_worker_missing_invalid_stale_or_changed",
+    "evidence_hosting_missing_invalid_stale_or_changed",
+    "evidence_database_missing_invalid_stale_or_changed",
+    "evidence_recovery_missing_invalid_stale_or_changed",
+    "evidence_sender_missing_invalid_stale_or_changed",
+    "evidence_scheduler_missing_invalid_stale_or_changed",
+    "evidence_statementAcceptance_missing_invalid_stale_or_changed",
+    "evidence_inviteAcceptance_missing_invalid_stale_or_changed"
+  ],
+  "nextNumberedSkill": "017 on the selected production target; no new feature expansion is proposed",
+  "runner": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-preparation-2026-11-11\\qualify-preparation.cjs",
+    "sha256": "5ef1dcfb81079e973acdff6bc9f6288c2ba6d907fd751b6606e69ce3d746a4ec",
+    "bytes": 10862
+  }
+}

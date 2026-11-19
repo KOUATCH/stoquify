@@ -1,6 +1,7 @@
 import "server-only"
 
 import { createHash } from "node:crypto"
+import { safeCsvValue } from "@/services/security/export-csv"
 
 import { db } from "@/prisma/db"
 import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
@@ -69,12 +70,6 @@ function normalizeNow(value: Date | undefined) {
   const now = value ?? new Date()
   if (Number.isNaN(now.getTime())) throw new BusinessRuleError("AR export generation time is invalid")
   return now
-}
-
-function safeCsvValue(value: unknown) {
-  const text = value === null || value === undefined ? "" : String(value)
-  const formulaSafe = /^[\s\u0000-\u001f]*[=+@-]/u.test(text) ? `'${text}` : text
-  return `"${formulaSafe.replace(/"/g, '""')}"`
 }
 
 function csvRow(values: readonly unknown[]) {

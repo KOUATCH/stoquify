@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T12:58:24.786Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Read-only source/artifact and isolated native fixture preflight with exclusive new evidence receipts",
+  "files": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\admit-runtime-source.cjs",
+      "sha256": "3014505d8149e4b9aac3eb7f4eaf6f556db76d5400058eaad17490c873a5573f"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\fixture-preflight.cjs",
+      "sha256": "0e405a07dd33a90347e6e9b92905bb43c8551366a8992e8f6f19e71d99d17895"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\database-common.cjs",
+      "sha256": "22d6005ff8ac2355837e339c621819ce2411ba6322bc1febe2d0edfe52661be8"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\fixture-control.cjs",
+      "sha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\fixture-definition.cjs",
+      "sha256": "1e37557aef27d8797850f8704288d61c3d33943928e86124e1145244171a4bfe"
+    }
+  ],
+  "reviewed": [
+    "Full current/candidate source equality,68 current input hashes, exact sealed artifact/source verified.",
+    "Actual native database identity, both122migration ledgers,16expectedactiveverifiedactors/32accounts/no sessions or audits, empty build DB and fresh all-table snapshot checked.",
+    "No app start, source product mutation, fixture reseed or migration; only own new preflight receipts/snapshot written."
+  ],
+  "conditions": [
+    "Execute only after actual build/artifact outcome independently accepted and exact reviewed database preparation/fixtures available.",
+    "Submit both actual preflight receipts for independent outcome review before main runtime execution.",
+    "A source receipt currentCheckoutQualified refers only to exact captured source identity, not runtime/product qualification."
+  ],
+  "qualificationPassed": false
+}

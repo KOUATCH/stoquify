@@ -1,0 +1,60 @@
+{
+  "startedAt": "2026-11-03T17:32:10.371Z",
+  "endedAt": "2026-11-03T17:32:24.762Z",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R01\\qualification-20261103-r1\\unit\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--runTestsByPath",
+    "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+    "services/roles/__tests__/role.service.test.ts",
+    "services/users/__tests__/member-access.service.test.ts",
+    "services/users/__tests__/user-lifecycle.service.test.ts",
+    "services/access-requests/__tests__/access-request.service.test.ts",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R01\\qualification-20261103-r1\\unit\\attempt10\\jest.json"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "inputs": [
+    {
+      "file": "services/operating-access/__tests__/operating-access-grant-policy.test.ts",
+      "sha256": "b73e096b2735e99e913ca32ec4ad0dca28ce0fbbd5d37b1f2ee4457fa81fea50"
+    },
+    {
+      "file": "services/roles/__tests__/role.service.test.ts",
+      "sha256": "df84878ab942ce1a90e65873a446088e9e58dd7c7f8e7723c6edd70421bcfcf4"
+    },
+    {
+      "file": "services/users/__tests__/member-access.service.test.ts",
+      "sha256": "f08b067a54e9abbe40b7f324e4f50c847954f14092f83202ecdac014743e601f"
+    },
+    {
+      "file": "services/users/__tests__/user-lifecycle.service.test.ts",
+      "sha256": "b5fd8e668cdf1dd9cb16791b2a63ba85bafb02e22c7c3ee173e348ac4956875e"
+    },
+    {
+      "file": "services/access-requests/__tests__/access-request.service.test.ts",
+      "sha256": "4f22c0c7a6528514162943fced419872b55bc0a9b88b6446e4f055530227fee2"
+    },
+    {
+      "file": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "file": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    }
+  ],
+  "result": {
+    "suites": 5,
+    "passed": 189,
+    "failed": 1,
+    "skipped": 0
+  },
+  "evidenceClass": "isolated mocked/pure tests; no database or HTTP qualification"
+}

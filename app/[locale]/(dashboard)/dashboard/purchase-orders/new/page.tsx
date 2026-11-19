@@ -8,7 +8,7 @@ import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { getAuthenticatedUser } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
 import { localizedRedirect } from "@/i18n/server-routing"
-import { getPurchaseOrderFormOptions } from "@/services/purchase-order/purchase-order.service"
+import { getPurchaseOrderCurrency, getPurchaseOrderFormOptions } from "@/services/purchase-order/purchase-order.service"
 import { routeByKey, withPurchaseOrdersSurfaceAccess } from "../purchase-orders-route-access"
 
 async function handleCreatePurchaseOrder(formData: FormData) {
@@ -21,6 +21,7 @@ async function handleCreatePurchaseOrder(formData: FormData) {
 
   const result = await createPurchaseOrder({
     organizationId: user.organizationId,
+    requestId: String(formData.get("requestId") || "") || undefined,
     supplierId: String(formData.get("supplierId") ?? ""),
     locationId: String(formData.get("locationId") ?? ""),
     date: String(formData.get("date") ?? ""),
@@ -51,13 +52,13 @@ export default async function CreatePurchaseOrderPage() {
     params: Promise.resolve({ locale }),
     surface,
     onAllowed: async (_ctx, _ctxLocale) => {
-      const options = await getPurchaseOrderFormOptions(_ctx.orgId)
+      const [options, currency] = await Promise.all([getPurchaseOrderFormOptions(_ctx.orgId), getPurchaseOrderCurrency(_ctx.orgId)])
 
       // Explicit opt-in after migration and recovery verification. Default keeps
       // the existing creation path available. During rollback, disable authoring
       // writes but keep this UI on so prepared requests can still be resolved.
       if (process.env.PURCHASE_ORDER_AUTHORING_UI_ENABLED === "true") {
-        return <DurableCreatePurchaseOrderForm actorId={_ctx.userId} locale={locale}
+        return <DurableCreatePurchaseOrderForm actorId={_ctx.userId} locale={locale} currency={currency}
           canReadOrders={hasRbacPermission(_ctx.permissions, "purchases.orders.read")}
           organizationId={_ctx.orgId} suppliers={options.suppliers} locations={options.locations} items={options.items} />
       }
@@ -69,6 +70,8 @@ export default async function CreatePurchaseOrderPage() {
           locations={options.locations}
           items={options.items}
           organizationId={_ctx.orgId}
+          locale={locale}
+          currency={currency}
         />
       )
     },

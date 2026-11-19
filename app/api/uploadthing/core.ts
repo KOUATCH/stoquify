@@ -1,15 +1,13 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import {
-  requireAnyAppPermission,
-  requireApiModuleAccess,
-  requireApiSessionForCurrentOrg,
-} from "@/lib/security/server-authz";
-import { AuthRequiredError, BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors";
 
 const f = createUploadthing();
 const UPLOADTHING_SURFACE = "POST /api/uploadthing";
 
 export async function requireUploadAuth() {
+  // RootLayout reads upload metadata on public pages. Load the authorization
+  // graph only when an upload is actually checked, retaining every guard below.
+  const { requireAnyAppPermission, requireApiModuleAccess, requireApiSessionForCurrentOrg } = await import("@/lib/security/server-authz");
+  const { AuthRequiredError, ForbiddenError } = await import("@/services/_shared/action-errors");
   const authz = await requireApiSessionForCurrentOrg();
   if (authz.error || !authz.session?.user || !authz.organizationId) {
     throw new AuthRequiredError("Unauthorized");
@@ -48,6 +46,7 @@ export const ourFileRouter = {
   itemImageUpload: f({ image: { maxFileSize: "1MB" } })
     .middleware(async () => {
       await requireUploadAuth()
+      const { BusinessRuleError } = await import("@/services/_shared/action-errors")
       throw new BusinessRuleError("Use the managed image upload control to upload pictures.")
     })
     .onUploadComplete(async () => ({})),

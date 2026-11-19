@@ -1,0 +1,1122 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-11-10T14:53:10.816Z",
+  "finishedAt": "2026-11-10T14:53:48.126Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r3",
+  "scope": "Read-only source freshness and retained-fixture source compatibility; no candidate/app/DB/build mutation",
+  "scriptSha256": "ce4b21a1c440b6797f52d65c9e5bf235365fa1bf4e2b2f933348f7b7f06fd3a1",
+  "sourceSelectorSha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46",
+  "commandRegistrySha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+  "baselineInputs": [
+    {
+      "path": "candidate-source-manifest.json",
+      "sha256": "c3a3db592e71a26bbbc10033a2c8c3cb088fbd313b55f65bdb9d1c978d830737"
+    },
+    {
+      "path": "root-source-manifest.json",
+      "sha256": "1341b8809a3c8e57cb698a143308181b88891fa796a4c97a47f8ef8478cd8384"
+    },
+    {
+      "path": "candidate-context.json",
+      "sha256": "d953368da04a8a13742ca3647f559d5b43183f34dc5d608a68f623e4a46da754"
+    },
+    {
+      "path": "inventory/source-after-manifest.json",
+      "sha256": "e535b2e9cb694d09b67d64706e9fbbe2f89ac829b2297c86120ca83d012ac614"
+    },
+    {
+      "path": "inventory/repair-owned-files.json",
+      "sha256": "947b5da57354ecb09673c594b60c2d66bcef5998ce6c72d96bf561aadeeda8e6"
+    },
+    {
+      "path": "inventory/authority-map.json",
+      "sha256": "48613a3ffd06c5f072c8192f398ea14cb74f62f894771f0a4194faf7901b4953"
+    },
+    {
+      "path": "independent-review/CAPACITY-CHECKPOINT-SOURCE-REVIEW.json",
+      "sha256": "93c673303173aa2488553e153797df1996b53fbdc444aaf9beb687469b2c466a"
+    },
+    {
+      "path": "independent-review/CURRENT-SOURCE-MANIFEST-at-capacity.json",
+      "sha256": "644d7b344824b5ae4eb6f7095fb0fab3c839fb45e78a35a651b26aca47df321e"
+    }
+  ],
+  "frozenCandidateId": "p04-r06-r2-f6b4ff106590",
+  "baselineCount": 9789,
+  "baselineIdentitySha256": "f6b4ff1065906271c68e8839519396e93e9712e0f2ebad2598ce3a1ea48137c5",
+  "currentCount": 9870,
+  "currentIdentitySha256": "ef671868747c6e6726ac88751169d4a26eace15ea54ccb3122348a32045f5ac8",
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "currentVsFrozen": [
+    {
+      "path": "actions/finance/__tests__/customer-settlement.actions.test.ts",
+      "beforeSha256": "1d0dfa4e384a9e2fc32815c32072abd89235304ca4955a2c0f7759a0ed8cd47c",
+      "afterSha256": "0a716b4d8241ce3d2ef36dd44fc8cbd0bf5517d36eb8e307b4514ec65795876f",
+      "kind": "modified"
+    },
+    {
+      "path": "actions/finance/customer-settlement.actions.ts",
+      "beforeSha256": "e155ef594f1f8c409bc82e4b5ead9503d49ac6b0a0d93cc94e137ad6e975b59d",
+      "afterSha256": "fbaebb725ed973fe80a5b1d3765f9dd2c6252e405455b633534569840eee6d5b",
+      "kind": "modified"
+    },
+    {
+      "path": "components/finance/CustomerSettlementControls.tsx",
+      "beforeSha256": "09a401b8023615b9333444a43136696da2734fe10b9b54de071c8fae593a7ce4",
+      "afterSha256": "aef41c8e626222eebed779c1b1a95fd6d70b2b62571f9eb4283827a8191879a9",
+      "kind": "modified"
+    },
+    {
+      "path": "components/finance/__tests__/CustomerSettlementControls.test.tsx",
+      "beforeSha256": "f1e36589ee2a98a1e0488eabaa71eb174fdd229064b0213c54b56c55d8cb0e7e",
+      "afterSha256": "2c6258d66a455e8f1ea2cff5cf57b1653f204f7ab29b9ecd64504a8683eb743f",
+      "kind": "modified"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/BACKEND_IMPLEMENTATION.json",
+      "beforeSha256": null,
+      "afterSha256": "da9781a5c42724dcd35b9c545b6b2c46299f981488a5bce3a3f29b891f316bd9",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/BANK_APPROVAL_FIXTURE_REVIEW.md",
+      "beforeSha256": null,
+      "afterSha256": "e67e251b1c97b7917f45234ae6ac9dc57b86bdd0358633fb4381e08808527677",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/CASE_PLAN.md",
+      "beforeSha256": null,
+      "afterSha256": "93129d3e3565134227759d8627b4e93bbbe713b63945146c8a7c8c5013dec9f3",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/FAULT_PROOF_REVIEW.md",
+      "beforeSha256": null,
+      "afterSha256": "d6ac793419b253ebe72bcae3c2dc6a175940dc7080d661743827c36b78535908",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/NATIVE_SNAPSHOT_REVIEW.md",
+      "beforeSha256": null,
+      "afterSha256": "2885412989640f1de3a1db5baad2f545152d9282265bce3aabc9f74f0b4eb410",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/UI_PROJECTION_RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "03bcd7497a11045ca542ea0b83f1106b4aa6fa995ff8b06f1d809a1ce7fb545f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/backend-lint-3548b5114c/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "294b522589dbb98bfa17cbb7733b5cb5d02879c36809f2651e904778c102b9da",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/backend-lint-3548b5114c/eslint.json",
+      "beforeSha256": null,
+      "afterSha256": "67b850a274e7474c7a78b8ba95dc75b7b438ada3f801388eb803d2a5722f10c1",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/mixed-month.before-bank-sod.txt",
+      "beforeSha256": null,
+      "afterSha256": "1b50484aa17b6dcb590e822160c20fc56ef4d75b4aec8bf245ae8aa00e59a4f5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/mixed-month.before-fault-proof.txt",
+      "beforeSha256": null,
+      "afterSha256": "ca702590f79f358846998880e10e8968ce48ebce0d5acc966de85607e5eed60f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/mixed-month.before-native-snapshot.txt",
+      "beforeSha256": null,
+      "afterSha256": "e7f1dcb495d548826006f393421a0a51bbb0b1f525a90739331298fb85998a77",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-LATEST.json",
+      "beforeSha256": null,
+      "afterSha256": "f3c2793c671bdf8e5d2ce472be16a2c6b7502c76308951170c7fbed18ebf5c07",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-HISTORY.json",
+      "beforeSha256": null,
+      "afterSha256": "ec448bf5a75babd4d2384879f962993ab02f18c270469ae0db8a27a9c81b4523",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-IDENTITY.json",
+      "beforeSha256": null,
+      "afterSha256": "b01ad520b5e333a88eb05e5f48b3d8c46fa8fc5b450a8d4081bd76f290eab566",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-PRIVATE_FIXTURE.json",
+      "beforeSha256": null,
+      "afterSha256": "1fe896640c9d10be26bf93823d346c66b6ea4d707d9130fae9a3b31f8a20460c",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "f3c2793c671bdf8e5d2ce472be16a2c6b7502c76308951170c7fbed18ebf5c07",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-RUNTIME_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "934f4f0e8763a5f1a343009978aa90c50bc86e4dfaae7ba49bfec0f997925c01",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-SOURCE_MANIFEST.json",
+      "beforeSha256": null,
+      "afterSha256": "e66e0d9990ecf4661e805e3c1fd342af3d0c76b258ddcab7a430bb8d894cca62",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-SQL_INVENTORY.json",
+      "beforeSha256": null,
+      "afterSha256": "69f32c3cbcd47a6daf233bbb7e22b206a8f38b7b88495976a2720734d52d45ea",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-TARGET.json",
+      "beforeSha256": null,
+      "afterSha256": "192d1c8354c792346d6b8a3402139bcc9cb64f49d5b954eb1f55d3f2c7a9e40d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-fresh122.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "407a99ba66bf00151676291dea036182642ac60828ede5a2e41496d2da31f5f3",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-fresh122.json",
+      "beforeSha256": null,
+      "afterSha256": "c0908141c5f2c6afea8cc3d2001811753a0278fac57829fe27f2bbacfd0588c2",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-fresh122.md",
+      "beforeSha256": null,
+      "afterSha256": "c7b74115da482d04736e6493e5ff28e898ffd91658e48753f4094c6428a9dbbe",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-monthly-close-lifecycle.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "857cb0f0b44fc16e9145ae6e916ecbc549b5e3655cb2c998029469923ee9a533",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-monthly-close-service.summary.json",
+      "beforeSha256": null,
+      "afterSha256": "8f49c06fbed09468c9e7c100760415b5d4aeb4bc92e32e42fe944034f7bfc09c",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-monthly-close-tests.summary.json",
+      "beforeSha256": null,
+      "afterSha256": "20802e9ebf4a3748358dda4f6d403987a54768f0a8c446c756dcfd93c098c965",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-start.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "93f49780906e6c10cb29257bdc7aaae21825ad3b38c5a0190788c2f01eabc5df",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-stop.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "5ff72dc5ff4360058a4a4204dc3257c362556d04f402c46a0072a7128a960c5d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-HISTORY.json",
+      "beforeSha256": null,
+      "afterSha256": "3306d12babb857127e8e0e29c63503223656be38df444f65a92f8bbc487f31c5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-IDENTITY.json",
+      "beforeSha256": null,
+      "afterSha256": "b01ad520b5e333a88eb05e5f48b3d8c46fa8fc5b450a8d4081bd76f290eab566",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "22f58dab40268dbcac39fd8941dc10eab5f5c8e8d9c319f621bb8578052df3cf",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-RUNTIME_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "bce6da56df59772bad494e8d65a6539d5da2c93674b73c36e23de9605987bd7a",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-SOURCE_MANIFEST.json",
+      "beforeSha256": null,
+      "afterSha256": "2c00cad1696dca1e94f335ba8e9cf385f1e273863a5a53c1f339c46ff31a0c9a",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-TARGET.json",
+      "beforeSha256": null,
+      "afterSha256": "97000b44f5381786c70c4668ef96e1e01861574a336430936e580a75941d3b1d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-fresh122.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "97ab4c21505c05939cc53eb67a2c214c69481376b00baa902b06051b5aecda05",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-fresh122.json",
+      "beforeSha256": null,
+      "afterSha256": "3ad54bb6e8222768e4462f5063cc57806ee889cfcdf1cea7a45a5f00bb919723",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-fresh122.md",
+      "beforeSha256": null,
+      "afterSha256": "b7d98d30280849bd78051020d751492d8c5ca825a87ddb580f21fe59115c3bc1",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-monthly-close-lifecycle.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "b7bb3417027e86f7c824c4dc0a4a1192c6707c6f201dc8adf44a567237c67b5a",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-monthly-close-tests.summary.json",
+      "beforeSha256": null,
+      "afterSha256": "98f32cc2089ca425a4b8e6576f08f5768b955557328500ccf538434850d17edb",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-start.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "98cb845f35d339d9a00dddaa7cce494bbfa79e335b07142eb12d536d71bd3606",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-stop.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "f92f3c4359ae874cb48cde8f59610494d5930d8f971c564cf90b0ee734231de3",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/RENDERED_COLLECTION_REPORT.md",
+      "beforeSha256": null,
+      "afterSha256": "b7c7948394cb1e8e864a8deb67c28a0d5bc56e3e9f0af3b2c30d69a0dd7919e7",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-6b30aaf6d4/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "7314e2e1e12655cbf7c4d0731961e7e96334635756a103982277782a5410d2f1",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-6b30aaf6d4/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "f2260217348125fd008cb1cb839ad5d0497003a16aa65a06441969cc71efdbf2",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-6b30aaf6d4/SOURCE_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "abffe82ef92b2525236ef9e463a384c7f5af0ce15fce9ca4c9f1f81cbc8e7a8b",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-6b30aaf6d4/run-rendered.before-explicit-read-fix.txt",
+      "beforeSha256": null,
+      "afterSha256": "109dc86bfd501c4426f6bc19825dc841c0a9d1cde092672b74f7d07c9447a185",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-8ad9963652/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "db2d31cdcc28f5baf76fe1eed340285ab6ede806854e6ebe77a194a52fd38c96",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-8ad9963652/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "7be82f69eed07169382d5b7e524e7a77db98209648aa26feb5bd54803fac9476",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-8ad9963652/run-rendered.before-alias-fix.txt",
+      "beforeSha256": null,
+      "afterSha256": "6b21033419594dd2b2d534c3eb7f72b7f873e3579de59bd8fa07951449895433",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-ae1a16083f/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "b01b1eb28b90553777d5c45872c787ee16889af7cb4739c3624fb15d3c69539d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-ae1a16083f/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "b5c36ed4bc1533a69d336442bdd51bc749f112aa5dc43febdc90a59775d95ea5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-ae1a16083f/SOURCE_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "dfca35472a377066cc877b73042eee9f7534a626a21cca402964574761498243",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-ae1a16083f/run-rendered.before-option-wait-fix.txt",
+      "beforeSha256": null,
+      "afterSha256": "cb188fb955adbc3541b1a52ca066e2b191e89525b3a7766a5b029869c3d9d87f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-cb414ee6ae/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "64b20bb204bb59d7c2a56c1b38dae1a677d6eb5424c6f5b653395c7222fe7f76",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-cb414ee6ae/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "61ab7ad6be37d232f580324429d40ec2cc91127645a214f33d71e6147c489fad",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-cb414ee6ae/SOURCE_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "39e09d7f935845ace95c5fe13e512e9f579e301027bbe48c8046780c1fef4cbd",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0d0d1362cd/results.json",
+      "beforeSha256": null,
+      "afterSha256": "7799065081d18e30067159a44624fcdba167dd3e763d98b88a08c2d0d12cd0c8",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0d0d1362cd/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "e4256bcd1517e812c224127b6757dc82d125a0274c0038f315c21a5954dc1c98",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0db5ef7563/results.json",
+      "beforeSha256": null,
+      "afterSha256": "73bf4f2e0ea8e415376f5fabbef34d42f4d8b3b77811efab04041c1470b78e24",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0db5ef7563/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "6806fde0ace6ddbb327376bd67805f3bfd1cf1bc4ab874ec46a711ae4d7331bf",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0fb604a518/results.json",
+      "beforeSha256": null,
+      "afterSha256": "b2f80774b6ddc764b84f2849f0a76be532a7710fbb1e8d29a3aaa9e38edf42bb",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0fb604a518/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "f6c96e8daba2f2a4d1c886790527c9b7109bbfdc465a9d1733d56f6c77236564",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-2b53ecc476/results.json",
+      "beforeSha256": null,
+      "afterSha256": "127d363c2848bcb8814f14de13095f13ca8b028f54a7bf779d1f36f7f2c4159c",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-2b53ecc476/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "0c064227992679d65d069e04062e893e8158f184d4c5c309ab561b50ddc385e6",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-44d2c1bb9f/results.json",
+      "beforeSha256": null,
+      "afterSha256": "471b46f57bd4fc8c0643121669e22262b8f0a4177865372bf53d5e40c0286698",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-44d2c1bb9f/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "c2be65cb1e4b8c0f1094985ae0b255c88d0763a65ea080a6bbded6930e6a165b",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-7782d994d4/results.json",
+      "beforeSha256": null,
+      "afterSha256": "0b566979f0ed03306d4d869ca1a000f35b62d9e17d3f78a07bab569ec0017552",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-7782d994d4/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "b03006c455c65513ff0024a66b388d7b0f19672751cd2bddc60e47062569da82",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-fa212601c7/results.json",
+      "beforeSha256": null,
+      "afterSha256": "b375949e9c309b171595cfff6b8b0ae828fbeda04588e406b3d363d437d5ba64",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-fa212601c7/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "a519e94d8b3175f8da047646c319cad1efc9443b5b26a79efc5783147daddd37",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-qualification.before-textencoder.txt",
+      "beforeSha256": null,
+      "afterSha256": "f36813a4840c9fe368f1377d838f8789869b75b362899f5e33d00ee36525325f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-06c5587a73/results.json",
+      "beforeSha256": null,
+      "afterSha256": "acf9639e1f8aaef389573819eda59831a6f4d8f4aae3d3bd833df342f174e7ad",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-06c5587a73/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "d5d0964a20eba051ed74bbd396b2d006d51e03b87fa197f76386effb6060baf0",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-096cd89c5a/results.json",
+      "beforeSha256": null,
+      "afterSha256": "d80caf3bc5a3a37fdfca8345775853de7c28704ee8d78e07b79ba3dd80198305",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-096cd89c5a/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "963e53d5a75e912b0f5425cce6a592c5b047d0f1d8aa08c1448475ef6680654c",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-5cb9a01c49/results.json",
+      "beforeSha256": null,
+      "afterSha256": "3ed8ae6a7f854ee45b9e3a2c6149fc9d0f8f2e03ecee0fed421ebda21d53d5e6",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-5cb9a01c49/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "e7082e4d49917fb90ba3ef405c4ffdc8ad75a92a5f55a6bf63194b2d348c953f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-665f772749/results.json",
+      "beforeSha256": null,
+      "afterSha256": "f0b896fb7007c345b48a686903f7e6e5939665e47f62bc2fff226cf063cfabbd",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-665f772749/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "5444cc9b9962b6f3eaca4b87a91d0fd41aa0fa9ec3f5c1d2c02fd34649e01f9e",
+      "kind": "added"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement-workbench.service.test.ts",
+      "beforeSha256": "f60cd1887999d7e81e9aac72b9ccfbc27e5f1cfc9a14cac2189f2d0fab69339f",
+      "afterSha256": "e84010ab07370e4a71a6252a7e2a4953d312deaa66ab8922c206c247c912831a",
+      "kind": "modified"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement.service.test.ts",
+      "beforeSha256": "f1dfc30ba58d3e229d7dec19a66785d5c959597896ab31b8903e1826fd071e46",
+      "afterSha256": "ccbcf7de7218411e6f39abe2285ec8eafd75616977e41cf5d09d8774502a5a97",
+      "kind": "modified"
+    },
+    {
+      "path": "services/accounting/customer-settlement-workbench.service.ts",
+      "beforeSha256": "42d3dee68338f985f95361663774199d57dccc8595afa3e7c00cbcdf0d106e97",
+      "afterSha256": "0864bde250c783471fd5ea4345f4772b76b0e2808b80876e2b161b53eb91eefc",
+      "kind": "modified"
+    },
+    {
+      "path": "services/accounting/customer-settlement.schemas.ts",
+      "beforeSha256": "e734d2aae5761b19a2f02de495513ad8f9fcd180a678d4a26f4ae8b3440bbdf8",
+      "afterSha256": "e4938b2a6a708b1c919aed309cc7436ef2e0bbd3d2f2e66ce0b404ea89957daa",
+      "kind": "modified"
+    },
+    {
+      "path": "services/accounting/customer-settlement.service.ts",
+      "beforeSha256": "2c6339a4b2feb6c5b6220013aa7960b109ee63746b48c591c44e3f40264aa637",
+      "afterSha256": "1ac164a091a4061fffd6ac467f475a8b2ecdec941c98543f04e26d0c711e8191",
+      "kind": "modified"
+    },
+    {
+      "path": "services/payments/__tests__/customer-settlement-payment-authority.service.test.ts",
+      "beforeSha256": null,
+      "afterSha256": "38df32b19a32fda7a13667ba4a6a17d2d987bebbbd264aa0ccf261fa676a7fee",
+      "kind": "added"
+    },
+    {
+      "path": "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts",
+      "beforeSha256": "2818a6eb5e0006bbc38ae3e9b03d893a081402d303b543c65989282916af9bbf",
+      "afterSha256": "d130fb7b8fe5ebce9af62823b51a32d0da49fd70076b8662fb3889604a45532b",
+      "kind": "modified"
+    },
+    {
+      "path": "services/payments/customer-settlement-payment-authority.service.ts",
+      "beforeSha256": null,
+      "afterSha256": "02d58827d5063d500dba358b6544a7df0617d0dd1860fc395bf608b524799d69",
+      "kind": "added"
+    },
+    {
+      "path": "services/payments/pos-electronic-tender-authority.service.ts",
+      "beforeSha256": "4254e1991691fa9eaff1e455694ac3d2b30b6b31287b3158d5b3fc2786da3ba6",
+      "afterSha256": "f0614f708e100170cc143da3d8d135814ed95ba201dcfa1e798f2296c0276d55",
+      "kind": "modified"
+    }
+  ],
+  "currentVsCapacity": [
+    {
+      "path": "actions/finance/__tests__/customer-settlement.actions.test.ts",
+      "beforeSha256": "3cee2b5b6cf5f7df413db9a73028783c4ebe603424a66e5bea9766bbc373c1dc",
+      "afterSha256": "0a716b4d8241ce3d2ef36dd44fc8cbd0bf5517d36eb8e307b4514ec65795876f",
+      "kind": "modified"
+    },
+    {
+      "path": "components/finance/CustomerSettlementControls.tsx",
+      "beforeSha256": "09a401b8023615b9333444a43136696da2734fe10b9b54de071c8fae593a7ce4",
+      "afterSha256": "aef41c8e626222eebed779c1b1a95fd6d70b2b62571f9eb4283827a8191879a9",
+      "kind": "modified"
+    },
+    {
+      "path": "components/finance/__tests__/CustomerSettlementControls.test.tsx",
+      "beforeSha256": "f1e36589ee2a98a1e0488eabaa71eb174fdd229064b0213c54b56c55d8cb0e7e",
+      "afterSha256": "2c6258d66a455e8f1ea2cff5cf57b1653f204f7ab29b9ecd64504a8683eb743f",
+      "kind": "modified"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/BACKEND_IMPLEMENTATION.json",
+      "beforeSha256": null,
+      "afterSha256": "da9781a5c42724dcd35b9c545b6b2c46299f981488a5bce3a3f29b891f316bd9",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/BANK_APPROVAL_FIXTURE_REVIEW.md",
+      "beforeSha256": null,
+      "afterSha256": "e67e251b1c97b7917f45234ae6ac9dc57b86bdd0358633fb4381e08808527677",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/CASE_PLAN.md",
+      "beforeSha256": null,
+      "afterSha256": "93129d3e3565134227759d8627b4e93bbbe713b63945146c8a7c8c5013dec9f3",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/FAULT_PROOF_REVIEW.md",
+      "beforeSha256": null,
+      "afterSha256": "d6ac793419b253ebe72bcae3c2dc6a175940dc7080d661743827c36b78535908",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/NATIVE_SNAPSHOT_REVIEW.md",
+      "beforeSha256": null,
+      "afterSha256": "2885412989640f1de3a1db5baad2f545152d9282265bce3aabc9f74f0b4eb410",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/UI_PROJECTION_RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "03bcd7497a11045ca542ea0b83f1106b4aa6fa995ff8b06f1d809a1ce7fb545f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/backend-lint-3548b5114c/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "294b522589dbb98bfa17cbb7733b5cb5d02879c36809f2651e904778c102b9da",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/backend-lint-3548b5114c/eslint.json",
+      "beforeSha256": null,
+      "afterSha256": "67b850a274e7474c7a78b8ba95dc75b7b438ada3f801388eb803d2a5722f10c1",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/mixed-month.before-bank-sod.txt",
+      "beforeSha256": null,
+      "afterSha256": "1b50484aa17b6dcb590e822160c20fc56ef4d75b4aec8bf245ae8aa00e59a4f5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/mixed-month.before-fault-proof.txt",
+      "beforeSha256": null,
+      "afterSha256": "ca702590f79f358846998880e10e8968ce48ebce0d5acc966de85607e5eed60f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/mixed-month.before-native-snapshot.txt",
+      "beforeSha256": null,
+      "afterSha256": "e7f1dcb495d548826006f393421a0a51bbb0b1f525a90739331298fb85998a77",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-LATEST.json",
+      "beforeSha256": null,
+      "afterSha256": "f3c2793c671bdf8e5d2ce472be16a2c6b7502c76308951170c7fbed18ebf5c07",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-HISTORY.json",
+      "beforeSha256": null,
+      "afterSha256": "ec448bf5a75babd4d2384879f962993ab02f18c270469ae0db8a27a9c81b4523",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-IDENTITY.json",
+      "beforeSha256": null,
+      "afterSha256": "b01ad520b5e333a88eb05e5f48b3d8c46fa8fc5b450a8d4081bd76f290eab566",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-PRIVATE_FIXTURE.json",
+      "beforeSha256": null,
+      "afterSha256": "1fe896640c9d10be26bf93823d346c66b6ea4d707d9130fae9a3b31f8a20460c",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "f3c2793c671bdf8e5d2ce472be16a2c6b7502c76308951170c7fbed18ebf5c07",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-RUNTIME_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "934f4f0e8763a5f1a343009978aa90c50bc86e4dfaae7ba49bfec0f997925c01",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-SOURCE_MANIFEST.json",
+      "beforeSha256": null,
+      "afterSha256": "e66e0d9990ecf4661e805e3c1fd342af3d0c76b258ddcab7a430bb8d894cca62",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-SQL_INVENTORY.json",
+      "beforeSha256": null,
+      "afterSha256": "69f32c3cbcd47a6daf233bbb7e22b206a8f38b7b88495976a2720734d52d45ea",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-TARGET.json",
+      "beforeSha256": null,
+      "afterSha256": "192d1c8354c792346d6b8a3402139bcc9cb64f49d5b954eb1f55d3f2c7a9e40d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-fresh122.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "407a99ba66bf00151676291dea036182642ac60828ede5a2e41496d2da31f5f3",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-fresh122.json",
+      "beforeSha256": null,
+      "afterSha256": "c0908141c5f2c6afea8cc3d2001811753a0278fac57829fe27f2bbacfd0588c2",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-fresh122.md",
+      "beforeSha256": null,
+      "afterSha256": "c7b74115da482d04736e6493e5ff28e898ffd91658e48753f4094c6428a9dbbe",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-monthly-close-lifecycle.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "857cb0f0b44fc16e9145ae6e916ecbc549b5e3655cb2c998029469923ee9a533",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-monthly-close-service.summary.json",
+      "beforeSha256": null,
+      "afterSha256": "8f49c06fbed09468c9e7c100760415b5d4aeb4bc92e32e42fe944034f7bfc09c",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-monthly-close-tests.summary.json",
+      "beforeSha256": null,
+      "afterSha256": "20802e9ebf4a3748358dda4f6d403987a54768f0a8c446c756dcfd93c098c965",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-start.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "93f49780906e6c10cb29257bdc7aaae21825ad3b38c5a0190788c2f01eabc5df",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-stop.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "5ff72dc5ff4360058a4a4204dc3257c362556d04f402c46a0072a7128a960c5d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-HISTORY.json",
+      "beforeSha256": null,
+      "afterSha256": "3306d12babb857127e8e0e29c63503223656be38df444f65a92f8bbc487f31c5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-IDENTITY.json",
+      "beforeSha256": null,
+      "afterSha256": "b01ad520b5e333a88eb05e5f48b3d8c46fa8fc5b450a8d4081bd76f290eab566",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "22f58dab40268dbcac39fd8941dc10eab5f5c8e8d9c319f621bb8578052df3cf",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-RUNTIME_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "bce6da56df59772bad494e8d65a6539d5da2c93674b73c36e23de9605987bd7a",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-SOURCE_MANIFEST.json",
+      "beforeSha256": null,
+      "afterSha256": "2c00cad1696dca1e94f335ba8e9cf385f1e273863a5a53c1f339c46ff31a0c9a",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-TARGET.json",
+      "beforeSha256": null,
+      "afterSha256": "97000b44f5381786c70c4668ef96e1e01861574a336430936e580a75941d3b1d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-fresh122.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "97ab4c21505c05939cc53eb67a2c214c69481376b00baa902b06051b5aecda05",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-fresh122.json",
+      "beforeSha256": null,
+      "afterSha256": "3ad54bb6e8222768e4462f5063cc57806ee889cfcdf1cea7a45a5f00bb919723",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-fresh122.md",
+      "beforeSha256": null,
+      "afterSha256": "b7d98d30280849bd78051020d751492d8c5ca825a87ddb580f21fe59115c3bc1",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-monthly-close-lifecycle.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "b7bb3417027e86f7c824c4dc0a4a1192c6707c6f201dc8adf44a567237c67b5a",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-monthly-close-tests.summary.json",
+      "beforeSha256": null,
+      "afterSha256": "98f32cc2089ca425a4b8e6576f08f5768b955557328500ccf538434850d17edb",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-start.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "98cb845f35d339d9a00dddaa7cce494bbfa79e335b07142eb12d536d71bd3606",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-bed5458361/pg-stop.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "f92f3c4359ae874cb48cde8f59610494d5930d8f971c564cf90b0ee734231de3",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/RENDERED_COLLECTION_REPORT.md",
+      "beforeSha256": null,
+      "afterSha256": "b7c7948394cb1e8e864a8deb67c28a0d5bc56e3e9f0af3b2c30d69a0dd7919e7",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-6b30aaf6d4/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "7314e2e1e12655cbf7c4d0731961e7e96334635756a103982277782a5410d2f1",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-6b30aaf6d4/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "f2260217348125fd008cb1cb839ad5d0497003a16aa65a06441969cc71efdbf2",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-6b30aaf6d4/SOURCE_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "abffe82ef92b2525236ef9e463a384c7f5af0ce15fce9ca4c9f1f81cbc8e7a8b",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-6b30aaf6d4/run-rendered.before-explicit-read-fix.txt",
+      "beforeSha256": null,
+      "afterSha256": "109dc86bfd501c4426f6bc19825dc841c0a9d1cde092672b74f7d07c9447a185",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-8ad9963652/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "db2d31cdcc28f5baf76fe1eed340285ab6ede806854e6ebe77a194a52fd38c96",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-8ad9963652/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "7be82f69eed07169382d5b7e524e7a77db98209648aa26feb5bd54803fac9476",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-8ad9963652/run-rendered.before-alias-fix.txt",
+      "beforeSha256": null,
+      "afterSha256": "6b21033419594dd2b2d534c3eb7f72b7f873e3579de59bd8fa07951449895433",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-ae1a16083f/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "b01b1eb28b90553777d5c45872c787ee16889af7cb4739c3624fb15d3c69539d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-ae1a16083f/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "b5c36ed4bc1533a69d336442bdd51bc749f112aa5dc43febdc90a59775d95ea5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-ae1a16083f/SOURCE_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "dfca35472a377066cc877b73042eee9f7534a626a21cca402964574761498243",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-ae1a16083f/run-rendered.before-option-wait-fix.txt",
+      "beforeSha256": null,
+      "afterSha256": "cb188fb955adbc3541b1a52ca066e2b191e89525b3a7766a5b029869c3d9d87f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-cb414ee6ae/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "64b20bb204bb59d7c2a56c1b38dae1a677d6eb5424c6f5b653395c7222fe7f76",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-cb414ee6ae/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "61ab7ad6be37d232f580324429d40ec2cc91127645a214f33d71e6147c489fad",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-cb414ee6ae/SOURCE_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "39e09d7f935845ace95c5fe13e512e9f579e301027bbe48c8046780c1fef4cbd",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0d0d1362cd/results.json",
+      "beforeSha256": null,
+      "afterSha256": "7799065081d18e30067159a44624fcdba167dd3e763d98b88a08c2d0d12cd0c8",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0d0d1362cd/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "e4256bcd1517e812c224127b6757dc82d125a0274c0038f315c21a5954dc1c98",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0db5ef7563/results.json",
+      "beforeSha256": null,
+      "afterSha256": "73bf4f2e0ea8e415376f5fabbef34d42f4d8b3b77811efab04041c1470b78e24",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0db5ef7563/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "6806fde0ace6ddbb327376bd67805f3bfd1cf1bc4ab874ec46a711ae4d7331bf",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0fb604a518/results.json",
+      "beforeSha256": null,
+      "afterSha256": "b2f80774b6ddc764b84f2849f0a76be532a7710fbb1e8d29a3aaa9e38edf42bb",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-0fb604a518/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "f6c96e8daba2f2a4d1c886790527c9b7109bbfdc465a9d1733d56f6c77236564",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-2b53ecc476/results.json",
+      "beforeSha256": null,
+      "afterSha256": "127d363c2848bcb8814f14de13095f13ca8b028f54a7bf779d1f36f7f2c4159c",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-2b53ecc476/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "0c064227992679d65d069e04062e893e8158f184d4c5c309ab561b50ddc385e6",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-44d2c1bb9f/results.json",
+      "beforeSha256": null,
+      "afterSha256": "471b46f57bd4fc8c0643121669e22262b8f0a4177865372bf53d5e40c0286698",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-44d2c1bb9f/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "c2be65cb1e4b8c0f1094985ae0b255c88d0763a65ea080a6bbded6930e6a165b",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-7782d994d4/results.json",
+      "beforeSha256": null,
+      "afterSha256": "0b566979f0ed03306d4d869ca1a000f35b62d9e17d3f78a07bab569ec0017552",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-7782d994d4/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "b03006c455c65513ff0024a66b388d7b0f19672751cd2bddc60e47062569da82",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-fa212601c7/results.json",
+      "beforeSha256": null,
+      "afterSha256": "b375949e9c309b171595cfff6b8b0ae828fbeda04588e406b3d363d437d5ba64",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-fa212601c7/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "a519e94d8b3175f8da047646c319cad1efc9443b5b26a79efc5783147daddd37",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-qualification.before-textencoder.txt",
+      "beforeSha256": null,
+      "afterSha256": "f36813a4840c9fe368f1377d838f8789869b75b362899f5e33d00ee36525325f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-06c5587a73/results.json",
+      "beforeSha256": null,
+      "afterSha256": "acf9639e1f8aaef389573819eda59831a6f4d8f4aae3d3bd833df342f174e7ad",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-06c5587a73/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "d5d0964a20eba051ed74bbd396b2d006d51e03b87fa197f76386effb6060baf0",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-096cd89c5a/results.json",
+      "beforeSha256": null,
+      "afterSha256": "d80caf3bc5a3a37fdfca8345775853de7c28704ee8d78e07b79ba3dd80198305",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-096cd89c5a/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "963e53d5a75e912b0f5425cce6a592c5b047d0f1d8aa08c1448475ef6680654c",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-5cb9a01c49/results.json",
+      "beforeSha256": null,
+      "afterSha256": "3ed8ae6a7f854ee45b9e3a2c6149fc9d0f8f2e03ecee0fed421ebda21d53d5e6",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-5cb9a01c49/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "e7082e4d49917fb90ba3ef405c4ffdc8ad75a92a5f55a6bf63194b2d348c953f",
+      "kind": "added"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement.service.test.ts",
+      "beforeSha256": "9b8946ee48ac068789a2a9706039cf83256b8f56a571c9199ead86df024a1500",
+      "afterSha256": "ccbcf7de7218411e6f39abe2285ec8eafd75616977e41cf5d09d8774502a5a97",
+      "kind": "modified"
+    },
+    {
+      "path": "services/accounting/customer-settlement.service.ts",
+      "beforeSha256": "70e7cd975460b5b0bed0e43d2db522980146b61973fb25ca6d3b8eedc5dd693f",
+      "afterSha256": "1ac164a091a4061fffd6ac467f475a8b2ecdec941c98543f04e26d0c711e8191",
+      "kind": "modified"
+    },
+    {
+      "path": "services/payments/__tests__/customer-settlement-payment-authority.service.test.ts",
+      "beforeSha256": null,
+      "afterSha256": "38df32b19a32fda7a13667ba4a6a17d2d987bebbbd264aa0ccf261fa676a7fee",
+      "kind": "added"
+    },
+    {
+      "path": "services/payments/customer-settlement-payment-authority.service.ts",
+      "beforeSha256": "bd1eef39e66a9102f06a62c4359b5c91ba1d796b34e21f313721f9d3890cd678",
+      "afterSha256": "02d58827d5063d500dba358b6544a7df0617d0dd1860fc395bf608b524799d69",
+      "kind": "modified"
+    }
+  ],
+  "selected68Match": true,
+  "selected68FrozenMatch": true,
+  "schemaMigrationFixtureCompatible": true,
+  "qualificationPassed": false,
+  "sourceQualificationOnly": true,
+  "limits": [
+    "Observed read interval is not an atomic snapshot of a concurrently edited workspace.",
+    "Concurrent finance/accounting changes are preserved; byte equality does not approve their behavior.",
+    "Frozen r2 packet and candidate were read only; runtime owner independently captures and admits the successor.",
+    "Full build/type/lint, real sessions, actual browser consumption and native no-write gates remain required."
+  ]
+}

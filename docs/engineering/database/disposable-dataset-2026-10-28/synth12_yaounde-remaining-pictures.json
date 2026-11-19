@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "organizationId": "synth12_yaounde",
+  "storageMode": "LOCAL_TEST_TRANSPORT_ONLY",
+  "externalCommunicationPerformed": false,
+  "catalogItemLinked": false,
+  "attachmentMeaning": "claimItemPictures reservation only; no item or ordinary application media route is linked",
+  "attached": {
+    "id": "40eb6f86-8323-447a-a991-fab634446d69",
+    "reference": "/api/media/40eb6f86-8323-447a-a991-fab634446d69",
+    "providerKey": "local-test:40eb6f86-8323-447a-a991-fab634446d69",
+    "providerLocator": "local-test-picture:40eb6f86-8323-447a-a991-fab634446d69",
+    "plaintextFile": "synthetic-documents/synth12_yaounde-remaining-picture-attached.png",
+    "plaintextSha256": "ead1ec309d5541f1c2d7255e3f8e9d102e289d25f558ed3609e07790686fc974",
+    "byteLength": 158,
+    "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_yaounde/40eb6f86-8323-447a-a991-fab634446d69.bin",
+    "ciphertextSha256": "af0591299a5dcb80d35ec1b1a2236cd908fcb8a16513e53ce713e1d7553a8560",
+    "status": "ready",
+    "attachedAt": "2026-10-28T20:00:00.000Z",
+    "tombstoneFile": null
+  },
+  "orphan": {
+    "id": "2e209888-60ed-4f7a-9c3b-562319538876",
+    "reference": "/api/media/2e209888-60ed-4f7a-9c3b-562319538876",
+    "providerKey": "local-test:2e209888-60ed-4f7a-9c3b-562319538876",
+    "providerLocator": "local-test-picture:2e209888-60ed-4f7a-9c3b-562319538876",
+    "plaintextFile": "synthetic-documents/synth12_yaounde-remaining-picture-orphan.png",
+    "plaintextSha256": "d18793676f45c6a870b457fccf586e924b2cdafc992f72d43e886f60f3a8d42b",
+    "byteLength": 156,
+    "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_yaounde/2e209888-60ed-4f7a-9c3b-562319538876.bin",
+    "ciphertextSha256": "ae5c74258016c66e6e665a74ee610a19d95a03578764513c5e7d42e125820600",
+    "status": "deleted",
+    "attachedAt": null,
+    "tombstoneFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_yaounde/2e209888-60ed-4f7a-9c3b-562319538876.deleted.json"
+  },
+  "checks": {
+    "roundTrip": true,
+    "wrongTenantReadDenied": true,
+    "wrongTenantClaimDenied": true,
+    "tamperDenied": true,
+    "attachedDeleteDenied": true,
+    "orphanDeleted": true,
+    "deletedReadDenied": true,
+    "invalidMimeDenied": true,
+    "defaultTransportDenied": true
+  }
+}

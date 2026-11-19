@@ -38,10 +38,10 @@ export async function getPayrollFinanceForecast(input: {
   scope: NormalizedSnapshotScope
   paymentTruth: SnapshotResult<PaymentTruthMetrics> | null
   currency: string
-}): Promise<PayrollFinanceForecastResult> {
+}, client: Prisma.TransactionClient = db): Promise<PayrollFinanceForecastResult> {
   const horizon = payrollForecastHorizon(input.scope)
   const runInclude = PAYROLL_FORECAST_RUN_INCLUDE
-  const periods: PayrollForecastPeriod[] = await db.payrollPeriod.findMany({
+  const periods: PayrollForecastPeriod[] = await client.payrollPeriod.findMany({
     where: {
       organizationId: input.scope.organizationId,
       payDate: { gte: horizon.start, lte: horizon.end },
@@ -59,7 +59,7 @@ export async function getPayrollFinanceForecast(input: {
     },
     orderBy: { payDate: "asc" },
   })
-  const declarationRuns: PayrollForecastRun[] = await db.payrollRun.findMany({
+  const declarationRuns: PayrollForecastRun[] = await client.payrollRun.findMany({
     where: {
       organizationId: input.scope.organizationId,
       deletedAt: null,
@@ -116,7 +116,7 @@ export async function getPayrollFinanceForecast(input: {
   const paymentBatchIds = Array.from(
     new Set(runs.flatMap((run) => run.paymentBatches.map((batch) => batch.id))),
   )
-  const sourceLinks = await db.accountingSourceLink.findMany({
+  const sourceLinks = await client.accountingSourceLink.findMany({
     where: {
       organizationId: input.scope.organizationId,
       OR: [
@@ -167,7 +167,7 @@ export async function getPayrollFinanceForecast(input: {
     ({ batch }) => batch.status !== PayrollPaymentBatchStatus.SETTLED,
   )
   const partialIds = paymentBatches.filter(({batch}) => batch.status === PayrollPaymentBatchStatus.PARTIALLY_SETTLED).map(({batch}) => batch.id)
-  const settlementEvents = partialIds.length ? await db.businessEvent.findMany({
+  const settlementEvents = partialIds.length ? await client.businessEvent.findMany({
     where: {organizationId: input.scope.organizationId, sourceType: AccountingSourceType.PAYROLL_PAYMENT, sourceId: {in: partialIds}, eventType: "payroll.payment_batch.reconciled"},
     select: {id:true, organizationId:true, sourceId:true, status:true, payload:true, processedAt:true},
   }) : []

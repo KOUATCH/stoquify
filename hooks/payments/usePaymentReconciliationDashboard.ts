@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import { useTranslations } from "next-intl"
 import { usePermissions } from "@/hooks/usePermissions"
 import type { ReconciliationCertificateExportCommand } from "@/services/reconciliation/reconciliation-certificate-export.contracts"
@@ -137,11 +137,28 @@ export function useImportProviderStatement() {
 
 export function useRunPaymentReconciliation() {
   const queryClient = useQueryClient()
+  const authority = usePermissions()
+  const authorityKey = JSON.stringify([authority.organizationId, authority.user?.id, authority.permissionState, authority.hasPermission("payments.reconciliation.run")])
+  const active = useRef<{ key: string; mounted: boolean }>({ key: authorityKey, mounted: true })
+  if (active.current.key !== authorityKey) active.current = { key: authorityKey, mounted: true }
+  useEffect(() => { active.current.mounted = true; return () => { active.current.mounted = false } }, [])
 
   return useMutation({
-    mutationFn: async (input: { providerAccountId: string; businessDate: Date | string; correlationId?: string }) =>
-      unwrapPaymentReconciliationActionResult(await runPaymentReconciliationAction(input)),
-    onSuccess: () => invalidateReconciliation(queryClient),
+    retry: false,
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
+    mutationFn: async (input: { providerAccountId: string; businessDate?: Date | string; accountingPeriodId?: string; correlationId?: string }) => {
+      const request = active.current
+      if (!request.mounted || authority.permissionState !== "ready" || !authority.organizationId || !authority.user?.id || !authority.hasPermission("payments.reconciliation.run"))
+        throw Object.assign(new Error("Refresh the current workspace and permissions."), { code: "FORBIDDEN" })
+      const result = unwrapPaymentReconciliationActionResult(await runPaymentReconciliationAction(input))
+      if (request !== active.current || !request.mounted || result.scope.organizationId !== authority.organizationId || result.scope.actorId !== authority.user.id)
+        throw Object.assign(new Error("Refresh the current workspace and permissions."), { code: "TENANT_SCOPE_VIOLATION" })
+      return result
+    },
+    onSuccess: result => {
+      if (active.current.mounted && authority.permissionState === "ready" && result.scope.organizationId === authority.organizationId && result.scope.actorId === authority.user?.id)
+        invalidateReconciliation(queryClient)
+    },
   })
 }
 

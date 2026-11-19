@@ -62,10 +62,22 @@ describe("accountant access actions", () => {
 
   it("lists the client tenant register and the actor portfolio from session scope", async () => {
     await getAccountantAccessRegisterAction({ organizationId: "attacker-org" })
-    await getAccountantPortfolioAction({ accountantUserId: "attacker-user" })
+    await getAccountantPortfolioAction({})
 
     expect(mockRegister).toHaveBeenCalledWith("client-org")
-    expect(mockPortfolio).toHaveBeenCalledWith("client-owner")
+    expect(mockPortfolio).toHaveBeenCalledWith(
+      {
+        homeOrganizationId: "client-org",
+        actorId: "client-owner",
+        actorPermissions: ["accounting.audit.read", "accounting.close.accountant.invite"],
+      },
+      { search: "", pageSize: 10 },
+    )
+  })
+
+  it("rejects caller-supplied portfolio identity before invoking the service", async () => {
+    await expect(getAccountantPortfolioAction({ accountantUserId: "attacker-user" })).rejects.toThrow()
+    expect(mockPortfolio).not.toHaveBeenCalled()
   })
 
   it("derives grantor and client identity from the protected context", async () => {

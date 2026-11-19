@@ -1,0 +1,78 @@
+{
+  "at": "2026-11-10T08:59:31.465Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Exact owned local database suspension and conditional resume recipes only; no observed cleanup or recovery outcome",
+  "files": [
+    {
+      "path": "database/suspend-attempt02.cjs",
+      "sha256": "abd9b652f9be35677d23389b43ecea3e2ea120e4ffbd7cbb773c0d0b2f5b3b3f",
+      "syntaxExit": 0
+    },
+    {
+      "path": "database/resume-attempt02.cjs",
+      "sha256": "07631000975036671b9f191346c786f5285ecbe0292bebbcce1f667cd8628789",
+      "syntaxExit": 0
+    },
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "7a370fe26b060921635dd2d32c73fc777bdd9584f2f38582e422af78b26bb598",
+      "syntaxExit": 0
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "276e495ce09869bf75d701607e3e6d209866d5d52062efdc8090add85a0b444f",
+      "syntaxExit": 0
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "sha256": "254a9e6f3ec0eef369f13f4385553c0db6aa8e48428a951c6b7014d3688c47f7",
+      "syntaxExit": 0
+    },
+    {
+      "path": "check-resources-attempt02-v2.cjs",
+      "sha256": "1e4255e45b06aebea9bc5094c7a08c890032199b0c33aeb3b0d5758710bb19ae",
+      "syntaxExit": 0
+    },
+    {
+      "path": "resource-snapshot-attempt02.ps1",
+      "sha256": "f7c83e373431777de4abad4daafb440b7d2db66e726038a37eb8001e6bc9c326"
+    }
+  ],
+  "target": {
+    "storage": "D:/p04-r06-fullapp-20261109-r1",
+    "cluster": "D:/p04-r06-fullapp-20261109-r1/postgres",
+    "host": "127.0.0.1",
+    "port": 55516,
+    "databases": [
+      "stoquify_local_p04r06_20261109_build_r1",
+      "stoquify_local_p04r06_20261109_full_r1"
+    ]
+  },
+  "reviewFindings": [
+    "Suspension verifies exact ownership, PID file, cluster path, port and live database data-directory identity before pg_ctl.",
+    "Both databases must retain matching exact migration ledgers; build database must remain empty.",
+    "Full database must contain only the exact ten fixture actor identities, no sessions and no audit rows; other business state is captured with complete sorted digests.",
+    "Other client connections are rejected twice before stopping; unrelated processes are never targeted.",
+    "Only pg_ctl for the exact owned cluster performs stop/start. Database files and private synthetic fixtures remain retained; prior owner metadata is preserved before updating live ownership state.",
+    "Resume requires fresh passing capacity, absent PID file and free loopback port before startup.",
+    "Resume verifies build migration/emptiness and complete full-database business/session/audit digests against suspended state; no creation, migration, seeding or application call occurs.",
+    "Failure cleanup stops only the just-started owned PID when its exact cluster PID still matches."
+  ],
+  "sideEffects": [
+    "New sanitized snapshot and result receipts under the package",
+    "Owned PostgreSQL stop or start and its local log/PID files",
+    "Preserved prior and updated current cluster-owner metadata"
+  ],
+  "conditions": [
+    "Do not infer success from admission; inspect actual suspend/resume and checkpoint receipts.",
+    "Do not resume while capacity fails.",
+    "If owner, PID, clients, paths or fixture state differ, stop and preserve evidence; do not broaden targets.",
+    "No production data, migration, secret output, deployment or unrelated process termination."
+  ],
+  "limitations": [
+    "Database preparation and retained-state proof are not native authentication denial/positive evidence.",
+    "Stopping an idle cluster is not a successful database restore test.",
+    "The capacity gate remains a time-specific conservative heuristic."
+  ]
+}

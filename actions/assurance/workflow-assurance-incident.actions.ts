@@ -1,6 +1,8 @@
 "use server"
 
 import { z } from "zod"
+import { requireSession } from "@/lib/security/auth-session"
+import { ForbiddenError } from "@/services/_shared/action-errors"
 
 import { protect } from "@/services/_shared/protect"
 import {
@@ -33,7 +35,8 @@ const resolveIncidentSchema = incidentTransitionSchema.extend({
 const assignIncidentSchema = z.object({
   incidentId: idSchema,
   ownerId: idSchema,
-  assignedRole: z.string().min(2).max(80).optional(),
+  expectedRevision: z.string().regex(/^[a-f0-9]{64}$/),
+  requestId: z.string().uuid(),
   dueAt: optionalDateSchema,
 })
 
@@ -88,10 +91,13 @@ const assignIncident = protect<AssignWorkflowAssuranceIncidentActionInput, Workf
   },
   async (input, ctx) => {
     const parsed = assignIncidentSchema.parse(input)
+    const verified = await requireSession()
+    if (verified.ctx.orgId !== ctx.orgId || verified.ctx.userId !== ctx.userId) throw new ForbiddenError("Assignment context changed. Refresh the source view.")
     return assignWorkflowAssuranceIncident({
       ...parsed,
       organizationId: ctx.orgId,
       actorId: ctx.userId,
+      session: { id: verified.claims.sessionId, token: verified.claims.sessionToken },
     })
   },
 )

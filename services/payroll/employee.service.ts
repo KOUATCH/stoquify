@@ -1,4 +1,5 @@
 import "server-only"
+import { lockHrisReviewEmployeeInTx } from "@/services/hris/review-lock.service"
 
 import { createHash } from "crypto"
 import {
@@ -46,6 +47,9 @@ const payrollEmployeeProfileInputSchema = z.object({
   actorId: z.string().trim().min(1).optional().nullable(),
   actorPermissions: z.array(z.string().trim().min(1)).default([]),
   idempotencyKey: z.string().trim().min(1).optional(),
+  createOnly: z.boolean().optional(),
+  employeeId: z.string().trim().min(1).optional(),
+  expectedUpdatedAt: z.string().datetime().optional(),
   employeeNumber: z.string().trim().min(1).max(64),
   displayName: z.string().trim().min(1).max(160),
   legalName: z.string().trim().min(1).max(200).optional().nullable(),
@@ -71,6 +75,10 @@ const employeeSourceDataInputSchema = z.object({
   userId: z.string().trim().min(1).optional(),
   limit: z.number().int().positive().max(100).default(50),
   asOf: z.coerce.date().optional(),
+  page: z.number().int().min(1).max(100000).optional(),
+  search: z.string().trim().max(120).optional(),
+  status: z.nativeEnum(PayrollEmployeeStatus).optional(),
+  department: z.string().trim().max(120).optional(),
   moduleDecision: z.custom<ModuleEntitlementDecision>().optional().nullable(),
 })
 
@@ -142,6 +150,7 @@ export type PayrollEmployeeSourceDataResult = {
   organizationId: string
   asOf: string
   employees: PayrollEmployeeSourceDataRecord[]
+  pagination?: { page: number; pageSize: number; total: number; totalPages: number; authorizedTotal: number }
   summary: {
     totalEmployees: number
     linkedUsers: number
@@ -237,10 +246,12 @@ function evidenceReferencesFromMetadata(metadata: unknown): PayrollHrEvidenceRef
     }))
 }
 
-function hasOpenHrisLifecycleRequest(metadata: unknown) {
+function hasOpenHrisLifecycleRequest(metadata: unknown, asOf: Date) {
   const lifecycle = metadataRecord(metadataRecord(metadata).hrisLifecycle)
   const pending = metadataRecord(lifecycle.pending)
-  return pending.status === "REQUESTED" || pending.status === "APPROVED"
+  const effectiveAt=typeof pending.effectiveAt === "string" ? new Date(pending.effectiveAt) : null
+  return (pending.status === "REQUESTED" || pending.status === "APPROVED")
+    && (!effectiveAt || !Number.isFinite(effectiveAt.getTime()) || effectiveAt <= asOf)
 }
 
 function mergeEvidenceReferences(
@@ -261,8 +272,11 @@ function buildEmployeeMetadata(
   existingMetadata: unknown,
   input: z.output<typeof payrollEmployeeProfileInputSchema>,
   now: Date,
+  nativeSource?: { sourceSystem: string; sourceRecordId: string; sourceHash: string },
 ) {
   const existing = metadataRecord(existingMetadata)
+  const previousSource = metadataRecord(existing.hrSourceData)
+  const source = input.sourceReference ?? nativeSource
   const evidenceReferences = mergeEvidenceReferences(
     existing,
     normalizeEvidenceReferences(input.evidenceReferences, input.actorId, now),
@@ -272,9 +286,11 @@ function buildEmployeeMetadata(
     ...existing,
     hrSourceData: {
       ...(metadataRecord(existing.hrSourceData)),
-      sourceSystem: input.sourceReference?.sourceSystem ?? null,
-      sourceRecordId: input.sourceReference?.sourceRecordId ?? null,
-      sourceHash: input.sourceReference?.sourceHash ?? null,
+      sourceSystem: source?.sourceSystem ?? null,
+      sourceRecordId: source?.sourceRecordId ?? null,
+      sourceHash: source?.sourceHash ?? null,
+      ...(nativeSource && !input.sourceReference && previousSource.sourceSystem && previousSource.sourceSystem !== "HRIS_NATIVE_PROFILE"
+        ? { originSourceReference: { sourceSystem: previousSource.sourceSystem, sourceRecordId: previousSource.sourceRecordId ?? null, sourceHash: previousSource.sourceHash ?? null, updatedAt: previousSource.updatedAt ?? null } } : {}),
       updatedAt: now.toISOString(),
       updatedById: input.actorId ?? null,
       gate: "aqstoqflow-hrpayroll-07-source-data-foundation",
@@ -426,7 +442,7 @@ function mapEmployeeSourceRecord(
   const blockers: string[] = []
 
   if (employee.status !== PayrollEmployeeStatus.ACTIVE) blockers.push("EMPLOYEE_NOT_ACTIVE")
-  if (hasOpenHrisLifecycleRequest(employee.metadata)) blockers.push("LIFECYCLE_REQUEST_PENDING")
+  if (hasOpenHrisLifecycleRequest(employee.metadata, asOf)) blockers.push("LIFECYCLE_REQUEST_PENDING")
   if (userMappingState !== "LINKED") blockers.push("USER_MAPPING_NOT_READY")
   if (activeContracts.length === 0) blockers.push("ACTIVE_CONTRACT_MISSING")
   if (activeContracts.length > 0 && !hasSignedDocumentEvidence) blockers.push("CONTRACT_EVIDENCE_MISSING")
@@ -486,6 +502,12 @@ export async function getPayrollEmployeeSourceData(
   const parsed = employeeSourceDataInputSchema.parse(input)
   assertPermission(parsed.actorPermissions, READ_PERMISSIONS, "payroll employee source-data read")
 
+  // Count and rows share a repeatable-read snapshot within each directory request.
+  // New navigation requests see current data and may therefore move page boundaries.
+  if (parsed.page !== undefined && hasRootTransaction(client)) {
+    return client.$transaction(tx => getPayrollEmployeeSourceData(parsed, tx), { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
+  }
+
   const asOf = parsed.asOf ?? new Date()
   const salaryDecision = evaluateRedaction({
     field: "PayrollEmployeeSourceData.salaryAmounts",
@@ -500,16 +522,29 @@ export async function getPayrollEmployeeSourceData(
     moduleDecision: parsed.moduleDecision ?? null,
   })
 
-  const employees = await client.payrollEmployee.findMany({
-    where: {
+  const scopeWhere: Prisma.PayrollEmployeeWhereInput = {
       organizationId: parsed.organizationId,
       deletedAt: null,
       ...(parsed.employeeId ? { id: parsed.employeeId } : {}),
       ...(!parsed.employeeId && parsed.employeeIds ? { id: { in: parsed.employeeIds } } : {}),
       ...(parsed.userId ? { userId: parsed.userId } : {}),
-    },
-    orderBy: [{ displayName: "asc" }],
+  }
+  const where: Prisma.PayrollEmployeeWhereInput = {
+    ...scopeWhere,
+    ...(parsed.status ? {status: parsed.status} : {}),
+    ...(parsed.department ? {department: {equals: parsed.department, mode: "insensitive"}} : {}),
+    ...(parsed.search ? {OR: ["displayName", "jobTitle", "department"].map(field => ({[field]: {contains: parsed.search, mode: "insensitive"}}))} : {}),
+  }
+  const counts = parsed.page !== undefined ? await Promise.all([
+    client.payrollEmployee.count({where}), client.payrollEmployee.count({where: scopeWhere}),
+  ]) : null
+  const totalPages = counts ? Math.max(1, Math.ceil(counts[0] / parsed.limit)) : 1
+  const page = Math.min(parsed.page ?? 1, totalPages)
+  const employees = await client.payrollEmployee.findMany({
+    where,
+    orderBy: [{ displayName: "asc" }, { id: "asc" }],
     take: parsed.limit,
+    ...(counts ? {skip: (page - 1) * parsed.limit} : {}),
     include: {
       contracts: {
         where: { deletedAt: null },
@@ -574,6 +609,7 @@ export async function getPayrollEmployeeSourceData(
     organizationId: parsed.organizationId,
     asOf: asOf.toISOString(),
     employees: records,
+    ...(counts ? {pagination: {page, pageSize: parsed.limit, total: counts[0], totalPages, authorizedTotal: counts[1]}} : {}),
     summary: {
       totalEmployees: records.length,
       linkedUsers: records.filter((employee) => employee.userMapping.state === "LINKED").length,
@@ -611,6 +647,9 @@ export async function upsertPayrollEmployeeSourceProfile(
   const statusProvided = Object.prototype.hasOwnProperty.call(rawInput, "status")
   const now = new Date()
   const requestPayloadHash = `sha256:${hashBusinessPayload({
+    ...(parsed.createOnly !== undefined ? {createOnly: parsed.createOnly} : {}),
+    ...(parsed.employeeId ? {employeeId: parsed.employeeId, expectedUpdatedAt: parsed.expectedUpdatedAt} : {}),
+    ...((parsed.createOnly || parsed.employeeId) ? {providedFields: Object.keys(rawInput).filter(key => key in payrollEmployeeProfileInputSchema.shape && !["actorId", "actorPermissions", "idempotencyKey"].includes(key)).sort()} : {}),
     employeeNumber: parsed.employeeNumber,
     displayName: parsed.displayName,
     legalName: parsed.legalName ?? null,
@@ -626,8 +665,24 @@ export async function upsertPayrollEmployeeSourceProfile(
     sourceReference: parsed.sourceReference ?? null,
     evidenceHashes: parsed.evidenceReferences.map((reference) => reference.documentHash).sort(),
   })}`
+  const sourceEventKey = parsed.idempotencyKey ??
+    `payroll-employee-source:upsert:${parsed.organizationId}:${parsed.employeeNumber}:${requestPayloadHash}`
 
   return inTransaction(client, async (tx) => {
+    // Serialize all profile writers sharing the number/account identity boundary.
+    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${"hris-profile:" + parsed.organizationId}, 0))::text`
+    if (parsed.createOnly && (parsed.employeeId || parsed.status !== PayrollEmployeeStatus.DRAFT)) throw new BusinessRuleError("New HR profiles must be separate drafts.")
+    if ((parsed.createOnly || parsed.employeeId) && !parsed.countryCode) throw new BusinessRuleError("Choose the employee's applicable country before saving.")
+    {
+      const retained = await tx.businessEvent.findFirst({where: {organizationId: parsed.organizationId, idempotencyKey: sourceEventKey, eventType: "payroll.employee.source_data.upserted", status: "APPLIED"}})
+      if (retained) {
+        const payload = metadataRecord(retained.payload)
+        if (payload.requestPayloadHash !== requestPayloadHash) throw new ConflictError("The employee request changed after it was saved. Reload before submitting a new change.")
+        const employee = await tx.payrollEmployee.findFirst({where: {id: String(payload.employeeId), organizationId: parsed.organizationId, deletedAt: null}})
+        if (!employee) throw new NotFoundError("The saved employee is no longer available.")
+        return {payrollEmployee: employee, created: false, businessEventId: retained.id, evidenceReferenceCount: evidenceReferencesFromMetadata(employee.metadata).length}
+      }
+    }
     const organization = await tx.organization.findFirst({
       where: { id: parsed.organizationId, deletedAt: null },
       select: { id: true },
@@ -666,6 +721,7 @@ export async function upsertPayrollEmployeeSourceProfile(
         employeeNumber: true,
         userId: true,
         displayName: true,
+        legalName: true,
         status: true,
         hireDate: true,
         terminationDate: true,
@@ -675,6 +731,7 @@ export async function upsertPayrollEmployeeSourceProfile(
         jobTitle: true,
         costCenter: true,
         metadata: true,
+        updatedAt: true,
       },
     })
 
@@ -684,34 +741,63 @@ export async function upsertPayrollEmployeeSourceProfile(
     }
 
     const existing = duplicateMatches[0] ?? null
+    if (parsed.createOnly && existing) throw new ConflictError("Employee number or linked account already exists. Open the existing person instead of creating a duplicate.")
+    if (parsed.employeeId) {
+      if (!existing || existing.id !== parsed.employeeId) throw new ConflictError("Employee number or linked account does not match the profile being edited.")
+      if (!parsed.expectedUpdatedAt || existing.updatedAt.toISOString() !== parsed.expectedUpdatedAt) throw new ConflictError("The employee changed after you opened it. Reload and review your draft.")
+      if (existing.employeeNumber !== parsed.employeeNumber) throw new BusinessRuleError("Employee-number correction requires controlled reconciliation.")
+      if (existing.status !== PayrollEmployeeStatus.DRAFT && normalizeCountryCode(parsed.countryCode) !== existing.countryCode) throw new BusinessRuleError("An active employee country change requires reviewed employment migration.")
+    }
     if (existing?.userId && parsed.userId && existing.userId !== parsed.userId) {
       throw new ConflictError("Payroll employee is already linked to a different user.")
     }
     if (existing && statusProvided && existing.status !== parsed.status) {
       throw new BusinessRuleError("Existing employee status changes require the HRIS lifecycle workflow.")
     }
+    if (existing && existing.status !== PayrollEmployeeStatus.DRAFT) {
+      const changedDate = existing.hireDate.getTime() !== parsed.hireDate.getTime()
+        || (parsed.terminationDate !== undefined && (existing.terminationDate?.getTime() ?? null) !== (parsed.terminationDate?.getTime() ?? null))
+      const changedTarget = (["locationId", "department", "jobTitle", "costCenter"] as const)
+        .some(field => parsed[field] !== undefined && (parsed[field] ?? null) !== (existing[field] ?? null))
+      if (changedDate || changedTarget) throw new BusinessRuleError("Employment date and assignment changes require the HRIS lifecycle workflow.")
+    }
 
-    const metadata = safeJson(buildEmployeeMetadata(existing?.metadata, parsed, now))
     const data = {
       userId: userIdProvided ? parsed.userId ?? null : undefined,
       employeeNumber: parsed.employeeNumber,
       displayName: parsed.displayName,
-      legalName: parsed.legalName ?? null,
+      legalName: parsed.legalName === undefined ? undefined : parsed.legalName,
       status: existing && !statusProvided ? undefined : parsed.status,
       hireDate: parsed.hireDate,
-      terminationDate: parsed.terminationDate ?? null,
+      terminationDate: parsed.terminationDate === undefined ? existing?.terminationDate ?? null : parsed.terminationDate,
       countryCode: normalizeCountryCode(parsed.countryCode),
-      locationId,
-      department: parsed.department ?? null,
-      jobTitle: parsed.jobTitle ?? null,
-      costCenter: parsed.costCenter ?? null,
-      metadata,
+      locationId: parsed.locationId === undefined ? existing?.locationId ?? null : locationId,
+      department: parsed.department === undefined ? existing?.department ?? null : parsed.department,
+      jobTitle: parsed.jobTitle === undefined ? existing?.jobTitle ?? null : parsed.jobTitle,
+      costCenter: parsed.costCenter === undefined ? existing?.costCenter ?? null : parsed.costCenter,
     }
+
+    // Native writes are their own source. Keep imported provenance without claiming
+    // that an old external hash describes a newly edited profile.
+    const nativeSource = parsed.actorId && !parsed.sourceReference ? {
+      sourceSystem: "HRIS_NATIVE_PROFILE",
+      sourceRecordId: requestPayloadHash,
+      sourceHash: `sha256:${hashBusinessPayload({
+        organizationId: parsed.organizationId, employeeId: existing?.id ?? null,
+        actorId: parsed.actorId, requestPayloadHash,
+        previousSourceHash: metadataRecord(metadataRecord(existing?.metadata).hrSourceData).sourceHash ?? null,
+        profile: { ...data, userId: data.userId === undefined ? existing?.userId ?? null : data.userId,
+          legalName: data.legalName === undefined ? existing?.legalName ?? null : data.legalName,
+          status: data.status ?? existing?.status ?? parsed.status },
+      })}`,
+    } : undefined
+    const metadata = safeJson(buildEmployeeMetadata(existing?.metadata, parsed, now, nativeSource))
 
     const employee = existing
       ? await tx.payrollEmployee.update({
-          where: { id: existing.id },
-          data,
+          where: { id: existing.id, organizationId: parsed.organizationId, updatedAt: existing.updatedAt,
+            metadata: { equals: existing.metadata === null ? Prisma.AnyNull : existing.metadata as Prisma.InputJsonValue } },
+          data: { ...data, metadata },
         })
       : await tx.payrollEmployee.create({
           data: {
@@ -738,16 +824,14 @@ export async function upsertPayrollEmployeeSourceProfile(
       eventType: "payroll.employee.source_data.upserted",
       eventSource: "INTERNAL",
       schemaVersion: 1,
-      idempotencyKey:
-        parsed.idempotencyKey ??
-        `payroll-employee-source:upsert:${parsed.organizationId}:${parsed.employeeNumber}:${requestPayloadHash}`,
+      idempotencyKey: sourceEventKey,
       payload: {
         employeeId: employee.id,
         employeeNumber: employee.employeeNumber,
         displayName: employee.displayName,
         status: employee.status,
         userLinked: Boolean(employee.userId),
-        sourceReference: parsed.sourceReference ?? null,
+        sourceReference: parsed.sourceReference ?? nativeSource ?? null,
         evidenceHashes: references.map((reference) => reference.documentHash).sort(),
         requestPayloadHash,
       },
@@ -808,6 +892,7 @@ export async function attachPayrollEmployeeEvidenceReferences(
   const now = new Date()
 
   return inTransaction(client, async (tx) => {
+    await lockHrisReviewEmployeeInTx(tx, parsed.organizationId, parsed.employeeId)
     const employee = await tx.payrollEmployee.findFirst({
       where: {
         id: parsed.employeeId,

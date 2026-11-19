@@ -18,6 +18,7 @@ jest.mock("@/lib/security/auth-session", () => {
   return {
     FreshAuthRequiredError: MockFreshAuthRequiredError,
     requireFreshAuth: jest.fn(),
+    requireSession: jest.fn(),
   }
 })
 
@@ -51,7 +52,7 @@ jest.mock("@/services/pos/pos.service", () => ({
   voidPOSSale: jest.fn(),
 }))
 
-import { requireFreshAuth } from "@/lib/security/auth-session"
+import { requireFreshAuth, requireSession } from "@/lib/security/auth-session"
 import { requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { commitPOSSale, refundPOSSale, voidPOSSale } from "@/services/pos/pos.service"
@@ -59,6 +60,7 @@ import { commitPOSSale, refundPOSSale, voidPOSSale } from "@/services/pos/pos.se
 import { commitPOSSaleAction, refundPOSSaleAction, voidPOSSaleAction } from "../tender.actions"
 
 const mockRequireFreshAuth = requireFreshAuth as jest.Mock
+const interactiveAuthority = { sessionId: "auth-session-1", sessionToken: "synthetic-session-token" }
 const mockRequirePermission = requirePermission as jest.Mock
 const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockCommitPOSSale = commitPOSSale as jest.Mock
@@ -117,7 +119,9 @@ function expectPosModuleGate(surface: string, permissions: string[]) {
 describe("POS tender actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: Date.now() } })
+    const claims = { ...interactiveAuthority, userId: "cashier-1", tenantId: "org-1", lastAuthAt: Date.now() }
+    mockRequireFreshAuth.mockResolvedValue({ claims })
+    ;(requireSession as jest.Mock).mockResolvedValue({ claims })
     mockRequirePermission.mockResolvedValue(rbacContext())
     mockObserveModuleAccess.mockResolvedValue({ allowed: true, wouldBlock: false })
     mockCommitPOSSale.mockResolvedValue({
@@ -168,7 +172,7 @@ describe("POS tender actions", () => {
       ...saleInput,
       organizationId: "org-1",
       userId: "cashier-1",
-    })
+    }, interactiveAuthority)
     expect(mockRevalidateTag).toHaveBeenCalledWith("pos-cart")
     expect(preparePOSCheckout).toHaveBeenCalledWith({ ...saleInput, organizationId: "org-1", userId: "cashier-1" })
     expect((preparePOSCheckout as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan(mockCommitPOSSale.mock.invocationCallOrder[0])
@@ -183,6 +187,18 @@ describe("POS tender actions", () => {
       expect(mockCommitPOSSale).toHaveBeenCalledTimes(1)
       expect(mockRevalidateTag).toHaveBeenCalledWith("customer-ar")
     } finally { warn.mockRestore() }
+  })
+
+  it("does not trust client-supplied authentication claims", async () => {
+    await commitPOSSaleAction({ ...saleInput, authSessionId: "forged", authSessionToken: "forged" })
+    expect(mockCommitPOSSale).toHaveBeenCalledWith(expect.not.objectContaining({ authSessionId: "forged" }), interactiveAuthority)
+  })
+
+  it("denies a session that changed organization after the protected action check", async () => {
+    ;(requireSession as jest.Mock).mockResolvedValueOnce({ claims: { ...interactiveAuthority, userId: "cashier-1", tenantId: "another-org" } })
+    expect(await commitPOSSaleAction(saleInput)).toMatchObject({ success: false, code: "FORBIDDEN" })
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
+    expect(preparePOSCheckout).not.toHaveBeenCalled()
   })
 
   it("does not submit if durable request retention fails", async () => {
@@ -248,7 +264,7 @@ describe("POS tender actions", () => {
       ...correctionInput,
       organizationId: "org-1",
       userId: "cashier-1",
-    })
+    }, interactiveAuthority)
     expect(mockRevalidateTag).toHaveBeenCalledWith("pos-cart")
   })
 
@@ -291,7 +307,7 @@ describe("POS tender actions", () => {
       ...correctionInput,
       organizationId: "org-1",
       userId: "cashier-1",
-    })
+    }, interactiveAuthority)
     expect(mockRevalidateTag).toHaveBeenCalledWith("pos-cart")
   })
 

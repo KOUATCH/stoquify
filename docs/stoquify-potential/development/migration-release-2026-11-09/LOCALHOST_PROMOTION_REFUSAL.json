@@ -1,0 +1,56 @@
+{
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\migration-release-2026-11-09\\localhost-promotion-refusal-cbb4e03a8c",
+  "began": "2026-11-09T15:02:43.227Z",
+  "passed": true,
+  "classification": "Actual named CLI refusal of explicitly owned localhost target; no production promotion",
+  "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-accounting-release-20261109-ffb02aacd5\\candidate",
+  "database": "stoquify_replay_20261109_44a94875d5",
+  "sourceManifestSha256": "a6e0b40433ec6faaadae9e2db14ddd972f0e30ecd0185646b8d7190ed91d2a06",
+  "emittedDigestReceiptSha256": "0b981ad82d9ad01e1936758e6436b7f3e50ec8460333458942f0ae14cdc5da05",
+  "artifactSha256": "a7e81563d896cc834a60c6b0a239fd20cd3fafc46fc466c3f3f212259d3a0c30",
+  "buildId": "tRROCJHlhqUTyyQGm1mN6",
+  "artifactQualificationSha256": "93ef3a7d63f05a3faed184c7aef74eac74f4745c77e3c80acbf92dab51bf0ed2",
+  "privateConfigurationSha256": "83f6ce4f9074ab2fac181c27e2d55dd6b3f794d1d7536dd1f2d8a11918e5b84f",
+  "sourceBinding": [
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "scripts/promote-release-schema.cjs",
+      "sha256": "4528b01b3f231838cd8d98c8f5a50995c390df5d166ec3c2114c931375d9ed28"
+    },
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c"
+    },
+    {
+      "path": "scripts/prisma-production-migration-gate.js",
+      "sha256": "1ee29e6674f53eec17c473bb225bd6e5d83bfaa1453e5490ca4259eec3e72008"
+    },
+    {
+      "path": "scripts/local-gates-network.cjs",
+      "sha256": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e"
+    }
+  ],
+  "runnerSha256": "371fbd5e7a5e2945d939aebf04fac666cd7e4ba639c784af2aee1d205a89fe82",
+  "checks": [
+    {
+      "name": "Actual named npm command rejects localhost after trusted artifact verification",
+      "passed": true,
+      "exitCode": 1,
+      "refusal": "database_target_is_local"
+    },
+    {
+      "name": "Native coverage proves exported lock and migration child launcher were never called",
+      "passed": true,
+      "lockCalls": 0,
+      "migrationLauncherCalls": 0,
+      "actualArtifactVerificationCalls": 1
+    }
+  ],
+  "ownedClusterStoppedBeforeAndAfter": true,
+  "databasePromoted": false,
+  "applicationDeployed": false,
+  "ended": "2026-11-09T15:03:08.861Z"
+}

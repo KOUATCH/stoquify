@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto"
 import { z } from "zod"
 import { isRoleControlPermission } from "@/services/roles/role-permission-policy"
+import { resolveTenantWideOperatingAuthority } from "@/services/operating-access/operating-access-scope-contracts"
 import { evaluateRoleGrantPolicy } from "@/services/security/role-grant-policy.service"
 
 export const USER_INVITATION_EVENT = "identity.user_invitation.issued.v1"
@@ -15,16 +16,22 @@ export const invitationDeliveryPayload = z.object({
   tokenHash: z.string().length(64), recipientHash: z.string().length(64),
   actorPermissions: z.array(z.string()), rolePermissions: z.array(z.string()),
   actorPermissionBasis: z.literal("stored-grants").optional(),
+  roleCode: z.string().min(1).optional(), actorRoleCodes: z.array(z.string()).optional(),
   locale: z.enum(["en", "fr"]), companyName: z.string(), roleName: z.string(),
   baseUrl: z.string().url(), from: z.string().email(), expiresAt: z.string().datetime(),
   replacement: z.object({ previousRevision: z.string().length(64), reason: z.string().min(3).max(500) }).optional(),
 }).strict()
 export type InvitationDeliveryPayload = z.infer<typeof invitationDeliveryPayload>
 
-export function hasInvitationGrantEvidence(payload: InvitationDeliveryPayload) {
+export function hasInvitationGrantEvidence(payload: InvitationDeliveryPayload, currentRoleCode?: string) {
+  const code = payload.roleCode ?? currentRoleCode
+  if (!code || (currentRoleCode !== undefined && payload.roleCode !== undefined && payload.roleCode !== currentRoleCode)) return false
+  // Old ordinary-role receipts remain usable; never infer a historical issuer
+  // ceiling for a reserved role from authority the issuer acquired later.
+  if (resolveTenantWideOperatingAuthority({ isSuperUser: false, roleCodes: [code] }) && (!payload.roleCode || !payload.actorRoleCodes)) return false
   if (payload.rolePermissions.some(isRoleControlPermission) && payload.actorPermissionBasis !== "stored-grants") return false
-  return evaluateRoleGrantPolicy({ actorOrganizationId: payload.organizationId, actorPermissions: payload.actorPermissions,
-    targetRole: { organizationId: payload.organizationId, permissions: payload.rolePermissions } }).allowed
+  return evaluateRoleGrantPolicy({ actorOrganizationId: payload.organizationId, actorPermissions: payload.actorPermissions, actorRoleCodes: payload.actorRoleCodes ?? [],
+    targetRole: { code, organizationId: payload.organizationId, permissions: payload.rolePermissions } }).allowed
 }
 
 export function invitationDeliveryConfiguration(environment = process.env) {

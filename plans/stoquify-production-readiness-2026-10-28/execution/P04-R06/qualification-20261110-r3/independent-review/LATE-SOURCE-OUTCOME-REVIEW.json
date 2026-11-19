@@ -1,0 +1,106 @@
+{
+  "at": "2026-11-10T15:55:45.882Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Actual late source/impact/config/metadata compatibility acceptance for subsequent exact candidate capture",
+  "files": [
+    {
+      "path": "inventory/CURRENT-SOURCE-MANIFEST-r2.json",
+      "sha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699"
+    },
+    {
+      "path": "inventory/SOURCE-REFRESH-r2.json",
+      "sha256": "d01bedbc61c603e73376d529aa84a6b85a37430d04ab79ed06d95875cf168a2b"
+    },
+    {
+      "path": "inventory/SELECTED-INPUTS-REFRESH-r2.json",
+      "sha256": "84d9461ce97882a29239857605eb662f319cc464303704ff78be26e610a54664"
+    },
+    {
+      "path": "inventory/RETAINED-FIXTURE-SOURCE-COMPATIBILITY-r2.json",
+      "sha256": "a66946d3c60e21e28a077f3baa3e662687a5a0ab6e134d1b41b4c07296fa5daa"
+    },
+    {
+      "path": "inventory/SOURCE-SIZES-r2.json",
+      "sha256": "c127a54e99c7609d6988836eddd77144bbbf17898bd8d0c8354fde3fab18744f"
+    },
+    {
+      "path": "inventory/SOURCE-IMPACT-r2.json",
+      "sha256": "19fb4fa4fc472a64c2eb55daf54f3024cb8759ce2a846e8ddbc215df010f36b1"
+    },
+    {
+      "path": "inventory/SOURCE-DELTA-CLASSIFICATION-r3.json",
+      "sha256": "cd2e5d4e59654db0c4c8cbe6b6777e4422490c3261e244603f3ee7a081e81ce8"
+    },
+    {
+      "path": "inventory/PRIVATE-METADATA-DISPOSITION-r3.json",
+      "sha256": "ed075393100cad5edfc1a78ef161bfa9f42d136dc22a00e80838870abbed4a9c"
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+      "sha256": "dbf7007e9e23e7c2b54b0ef726c2949b67a13eb7b72363279d4d4b7a93142617"
+    }
+  ],
+  "sourceManifestSha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699",
+  "sourceIdentitySha256": "4ea56948b133706d3dc0531852f7dd37da41f40bb6968604e822dae3bb10ac74",
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "sourceFiles": 9942,
+  "selectedInputs": 68,
+  "selectedCurrentAndFrozenMatch": true,
+  "changedNonDocPaths": [
+    "actions/finance/__tests__/customer-settlement.actions.test.ts",
+    "actions/finance/customer-settlement.actions.ts",
+    "components/finance/CustomerSettlementControls.tsx",
+    "components/finance/__tests__/CustomerSettlementControls.test.tsx",
+    "services/accounting/__tests__/customer-settlement-workbench.service.test.ts",
+    "services/accounting/__tests__/customer-settlement.service.test.ts",
+    "services/accounting/customer-settlement-workbench.service.ts",
+    "services/accounting/customer-settlement.schemas.ts",
+    "services/accounting/customer-settlement.service.ts",
+    "services/payments/__tests__/customer-settlement-payment-authority.service.test.ts",
+    "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts",
+    "services/payments/customer-settlement-payment-authority.service.ts",
+    "services/payments/pos-electronic-tender-authority.service.ts",
+    "services/pos/__tests__/pos.service.test.ts",
+    "services/pos/pos.service.ts",
+    "tsconfig.json"
+  ],
+  "deltaVsFrozen": {
+    "modified": 14,
+    "added": 153,
+    "removed": 0
+  },
+  "configDisposition": {
+    "onlyAddedExclude": "plans/**/source-before/**",
+    "rootHistoricalCopiesNewlyExcluded": 32,
+    "candidatePlansFiles": 0,
+    "candidateSelectedBefore": 2058,
+    "candidateSelectedAfter": 2058,
+    "compilerOptionsUnchanged": true,
+    "mockedUnitSelectionUnaffected": true,
+    "sourceOnly": true
+  },
+  "metadataDisposition": {
+    "files": 3,
+    "metadataOnly": true,
+    "externalReferencedFilesRead": false,
+    "firstFinalLabelExtensionOnly": true,
+    "requiredArtifactAbsence": "Exact metadata/referenced whole-file digests and paths/build traces, no embedded-substring claim"
+  },
+  "retainedFixtureCompatibility": {
+    "schema": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+    "migrations": 122,
+    "migrationsSha256": "18f667a29e31892e8b231a2b41e22760140154e3cbd9c350a0c075e9a3bd3d59",
+    "privateFixtureSha256": "9923d14f86a2140b3358d39e39af4a2aa33ca0a6a11c2ce856990fd3a4bd3207",
+    "sourceCompatible": true,
+    "nativeContinuityUnproven": true
+  },
+  "sourceCaptureEligible": true,
+  "candidateCaptureAccepted": false,
+  "qualificationPassed": false,
+  "limitations": [
+    "Current source read intervals are not atomic; exact capture equality and post-capture source admission remain required.",
+    "Finance/payment/POS concurrent edits preserved and included in full build; their business behavior is outside R06 qualification.",
+    "No build/native/browser execution by this review; old116 mocked passes can be reused only after candidate/source/dependency binding, never called a new run."
+  ]
+}

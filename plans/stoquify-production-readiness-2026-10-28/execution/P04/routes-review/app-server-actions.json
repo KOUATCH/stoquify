@@ -1,0 +1,96 @@
+{
+  "evidenceClass": "source_inventory_only",
+  "actions": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx",
+      "line": 63,
+      "symbol": "createAccount",
+      "directive": "inline",
+      "body": "async function createAccount(formData: FormData) {\n    \"use server\"\n    const result = await createChartAccountAction({\n      code: String(formData.get(\"code\") || \"\"),\n      nameEn: String(formData.get(\"nameEn\") || \"\"),\n      nameFr: String(formData.get(\"nameFr\") || \"\"),\n      type: String(formData.get(\"type\") || \"ASSET\"),\n      normalBalance: String(formData.get(\"normalBalance\") || \"DEBIT\"),\n      currency: String(formData.get(\"currency\") || \"\"),\n      syscohadaClass: String(formData.get(\"syscohadaClass\") || \"\"),\n      syscohadaReference: String(formData.get(\"syscohadaReference\") || \"\"),\n      mappingKey: String(formData.get(\"mappingKey\") || \"\"),\n      isControlAccount: formData.get(\"isControlAccount\") === \"on\",\n      allowManualPost: formData.get(\"allowManualPost\") === \"on\",\n    })\n\n    redirect(resultPath(locale, result.success, result.success ? \"Account created\" : result.error))\n  }"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx",
+      "line": 82,
+      "symbol": "archiveAccount",
+      "directive": "inline",
+      "body": "async function archiveAccount(formData: FormData) {\n    \"use server\"\n    const result = await archiveChartAccountAction({\n      accountId: String(formData.get(\"accountId\") || \"\"),\n    })\n\n    redirect(resultPath(locale, result.success, result.success ? \"Account archived\" : result.error))\n  }"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+      "line": 82,
+      "symbol": "createEntry",
+      "directive": "inline",
+      "body": "async function createEntry(formData: FormData) {\n    \"use server\"\n    const lines = [0, 1, 2, 3, 4, 5]\n      .map((index) => ({\n        accountId: String(formData.get(`accountId-${index}`) || \"\"),\n        description: String(formData.get(`description-${index}`) || \"\"),\n        debit: String(formData.get(`debit-${index}`) || \"\"),\n        credit: String(formData.get(`credit-${index}`) || \"\"),\n        currency: String(formData.get(\"currency\") || \"XAF\"),\n      }))\n      .filter((line) => line.accountId && (line.debit || line.credit))\n\n    const result = await createManualJournalEntryAction({\n      journalId: String(formData.get(\"journalId\") || \"\"),\n      entryDate: String(formData.get(\"entryDate\") || \"\"),\n      memo: String(formData.get(\"memo\") || \"\"),\n      reference: String(formData.get(\"reference\") || \"\"),\n      lines,\n    })\n\n    if (result.success) return { success: true as const }\n    return { success: false as const, error: result.error, code: result.code, reason: getModuleOperationErrorReason(result) }\n  }"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "line": 65,
+      "symbol": "saveSettings",
+      "directive": "inline",
+      "body": "async function saveSettings(formData: FormData) {\n    \"use server\"\n    const result = await updateAccountingSettingsAction({\n      countryPack: String(formData.get(\"countryPack\") || \"OHADA\"),\n      baseCurrency: String(formData.get(\"baseCurrency\") || \"XAF\"),\n      fiscalYearStartMonth: Number(formData.get(\"fiscalYearStartMonth\") || 1),\n      fiscalYearStartDay: Number(formData.get(\"fiscalYearStartDay\") || 1),\n      setupStatus: \"IN_PROGRESS\",\n    })\n\n    redirect(resultPath(locale, result.success, result.success ? \"Accounting settings saved\" : result.error))\n  }"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "line": 78,
+      "symbol": "ensureJournals",
+      "directive": "inline",
+      "body": "async function ensureJournals() {\n    \"use server\"\n    const result = await ensureDefaultJournalsAction({})\n    redirect(resultPath(locale, result.success, result.success ? \"Default journals ensured\" : result.error))\n  }"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "line": 84,
+      "symbol": "createFiscalYear",
+      "directive": "inline",
+      "body": "async function createFiscalYear(formData: FormData) {\n    \"use server\"\n    const result = await createFiscalYearAction({\n      name: String(formData.get(\"name\") || \"\"),\n      startDate: String(formData.get(\"startDate\") || \"\"),\n      endDate: String(formData.get(\"endDate\") || \"\"),\n      createMonthlyPeriods: true,\n    })\n\n    redirect(resultPath(locale, result.success, result.success ? \"Fiscal year created\" : result.error))\n  }"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "line": 96,
+      "symbol": "closePeriod",
+      "directive": "inline",
+      "body": "async function closePeriod(formData: FormData) {\n    \"use server\"\n    const result = await closeAccountingPeriodAction({\n      periodId: String(formData.get(\"periodId\") || \"\"),\n      expectedVersion: Number(formData.get(\"expectedVersion\") ?? NaN),\n    })\n\n    redirect(resultPath(locale, result.success, result.success ? (locale === \"fr\" ? \"Période comptable clôturée\" : \"Accounting period closed\") : result.error))\n  }"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "line": 106,
+      "symbol": "markReady",
+      "directive": "inline",
+      "body": "async function markReady() {\n    \"use server\"\n    const result = await markAccountingSetupReadyAction({})\n    redirect(resultPath(locale, result.success, result.success ? \"Accounting setup marked ready\" : result.error))\n  }"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx",
+      "line": 21,
+      "symbol": "handleCreateItem",
+      "directive": "inline",
+      "body": "async function handleCreateItem(formData: FormData) {\n  \"use server\"\n\n  await checkPermission(\"inventory.items.create\")\n\n  const user = await getAuthenticatedUser()\n  if (!user?.organizationId) {\n    return {\n      success: false,\n      error: \"Organization not found\",\n    }\n  }\n\n  const text = (key: string) => String(formData.get(key) ?? \"\").trim()\n  const optionalText = (key: string) => {\n    const value = text(key)\n    return value.length > 0 ? value : null\n  }\n\n  const parseNumber = (\n    key: string,\n    options: {\n      required?: boolean\n      fallback?: number | null\n      min?: number\n      max?: number\n    } = {},\n  ) => {\n    const value = text(key)\n\n    if (!value) {\n      return options.required ? Number.NaN : (options.fallback ?? null)\n    }\n\n    const parsed = Number(value)\n    if (!Number.isFinite(parsed)) {\n      return Number.NaN\n    }\n\n    if (typeof options.min === \"number\" && parsed < options.min) {\n      return Number.NaN\n    }\n\n    if (typeof options.max === \"number\" && parsed > options.max) {\n      return Number.NaN\n    }\n\n    return parsed\n  }\n\n  const toBoolean = (key: string, fallback: boolean) => {\n    const raw = formData.get(key)\n    if (raw === null) return fallback\n    if (typeof raw !== \"string\") return fallback\n\n    const normalized = raw.trim().toLowerCase()\n    if ([\"true\", \"1\", \"on\", \"yes\"].includes(normalized)) {\n      return true\n    }\n    if ([\"false\", \"0\", \"off\", \"no\"].includes(normalized)) {\n      return false\n    }\n\n    return fallback\n  }\n\n  const openingQuantity = parseNumber(\"initialInventory.quantity\", { fallback: 0, min: 0 })\n  const openingLocationId = optionalText(\"initialInventory.locationId\")\n  const initialInventory = typeof openingQuantity === \"number\" && openingQuantity > 0\n    ? {\n        locationId: openingLocationId ?? \"\",\n        quantity: openingQuantity,\n        unitCost: parseNumber(\"initialInventory.unitCost\", { fallback: 0, min: 0 }) ?? 0,\n        notes: optionalText(\"initialInventory.notes\") ?? undefined,\n        referenceNumber: optionalText(\"initialInventory.referenceNumber\") ?? undefined,\n      }\n    : undefined\n\n  const data = {\n    nameEn: text(\"nameEn\"),\n    nameFr: optionalText(\"nameFr\"),\n    descriptionEn: optionalText(\"descriptionEn\"),\n    descriptionFr: optionalText(\"descriptionFr\"),\n    sku: optionalText(\"sku\") || generateSimpleSKU(9, \"ITEM\"),\n    costPrice: parseNumber(\"costPrice\", { required: true, fallback: 0, min: 0 }),\n    sellingPrice: parseNumber(\"sellingPrice\", { required: true, fallback: 0, min: 0 }),\n    tax: parseNumber(\"tax\", { min: 0, max: 1000 }),\n    thumbnail: optionalText(\"thumbnail\"),\n    imageUrls: optionalText(\"imageUrls\"),\n    organizationId: user.organizationId,\n    categoryId: optionalText(\"categoryId\"),\n    brandId: optionalText(\"brandId\"),\n    unitId: optionalText(\"unitId\"),\n    taxRateId: optionalText(\"taxRateId\"),\n    barcode: optionalText(\"barcode\"),\n    weight: parseNumber(\"weight\", { min: 0 }),\n    dimensions: optionalText(\"dimensions\"),\n    minStockLevel: parseNumber(\"minStockLevel\", { required: true, fallback: 0, min: 0 }),\n    maxStockLevel: parseNumber(\"maxStockLevel\", { fallback: null, min: 0 }),\n    unitOfMeasure: optionalText(\"unitOfMeasure\"),\n    isActive: toBoolean(\"isActive\", true),\n    isSerialTracked: toBoolean(\"isSerialTracked\", false),\n    slug: optionalText(\"slug\"),\n    initialInventory,\n  }\n\n  const result = await createItemAction(data)\n\n  if (!result.success) {\n    return {\n      success: false,\n      error: result.error,\n    }\n  }\n\n  const locale = pickLocale(await getLocale())\n  const destination = `/${locale}/dashboard/inventory/items`\n  revalidatePath(destination)\n\n  return {\n    success: true,\n    redirect: destination,\n  }\n}"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx",
+      "line": 166,
+      "symbol": "<anonymous>",
+      "directive": "inline",
+      "body": "async () => {\n              \"use server\"\n              await localizedRedirect(\"/dashboard/inventory/items\")\n            }"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
+      "line": 335,
+      "symbol": "InventoryRoutePage",
+      "directive": "file",
+      "body": "export default async function InventoryRoutePage(props: any = {}) {\r\n  const surface = routeByKey(\"inventory-items\")\r\n\r\n  if (!surface) {\r\n    throw new Error(\"Missing inventory route surface definition: inventory-items\")\r\n  }\r\n\r\n  return withInventorySurfaceAccess({\r\n    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: \"en\" }),\r\n    surface,\r\n    onAllowed: async () => ItemsPageImpl(props),\r\n  })\r\n}"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/items/page.tsx",
+      "line": 17,
+      "symbol": "ItemsPage",
+      "directive": "file",
+      "body": "export default async function ItemsPage({\n  params,\n}: {\n  params: Promise<{ locale: string }>\n}) {\n  const surface = routeByKey(\"items-dashboard\")\n\n  if (!surface) {\n    throw new Error(\"Missing items route surface definition: items-dashboard\")\n  }\n\n  return withItemsSurfaceAccess({\n    params,\n    surface,\n    onAllowed: async () => {\n      const locale = pickLocale((await params).locale)\n      const t = await getTranslations()\n      const user = await getAuthenticatedUser()\n      const userOrg = user?.organizationId\n\n      if (!userOrg) {\n        return (\n          <div className=\"container py-8\">\n            <div className=\"text-sm text-muted-foreground\">{t(\"purchaseOrders.orgRequired.subtitle\")}</div>\n          </div>\n        )\n      }\n\n      const [itemsRes, brandsRes, unitsRes, taxRatesRes, catsRes] = await Promise.all([\n        getBriefOrgItems(userOrg).catch(() => null),\n        getOrgBrands(userOrg).catch(() => null),\n        getOrgUnits(userOrg).catch(() => null),\n        getOrgTaxRates(userOrg).catch(() => null),\n        getOrgCategories(userOrg).catch(() => null),\n      ])\n\n      const initialItemData = (itemsRes as { data?: unknown[] } | null)?.data ?? []\n      const initialCategoryData = catsRes?.success ? (catsRes.data ?? []) : []\n      const initialBrandData = brandsRes?.success ? (brandsRes.data ?? []) : []\n      const initialUnitData = unitsRes?.success ? (unitsRes.data ?? []) : []\n      const initialTaxRateData = taxRatesRes?.success ? (taxRatesRes.data ?? []) : []\n\n      return (\n        <div className=\"container py-8\">\n          <Suspense fallback={<TableLoading title={t(\"items.loadingItems\")} />}>\n            <ItemManagement\n              title={t(\"nav.items\")}\n              editingId=\"\"\n              organizationId={userOrg}\n              initialItemData={initialItemData as never}\n              initialCategoryData={initialCategoryData as never}\n              initialBrandData={initialBrandData as never}\n              initialUnitData={initialUnitData as never}\n              initialTaxRateData={initialTaxRateData as never}\n              locale={locale}\n            />\n          </Suspense>\n        </div>\n      )\n    },\n  })\n}"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx",
+      "line": 14,
+      "symbol": "handleCreatePurchaseOrder",
+      "directive": "inline",
+      "body": "async function handleCreatePurchaseOrder(formData: FormData) {\n  \"use server\"\n\n  const user = await getAuthenticatedUser()\n  if (!user?.organizationId) {\n    throw new Error(\"Organization ID is required\")\n  }\n\n  const result = await createPurchaseOrder({\n    organizationId: user.organizationId,\n    requestId: String(formData.get(\"requestId\") || \"\") || undefined,\n    supplierId: String(formData.get(\"supplierId\") ?? \"\"),\n    locationId: String(formData.get(\"locationId\") ?? \"\"),\n    date: String(formData.get(\"date\") ?? \"\"),\n    expectedDeliveryDate: String(formData.get(\"expectedDeliveryDate\") ?? \"\"),\n    paymentTerms: String(formData.get(\"paymentTerms\") || \"Net 30 days\"),\n    notes: String(formData.get(\"notes\") || \"\"),\n    shippingCost: Number.parseFloat(String(formData.get(\"shippingCost\") || \"0\")) || 0,\n    orderLines: JSON.parse(String(formData.get(\"orderLines\") || \"[]\")),\n  })\n\n  if (!result.success) {\n    if (getModuleOperationErrorReason(result)) return { success: false as const, error: result.error || \"New work is stopped\", code: result.code, reason: result.reason }\n    throw new Error(result.error || \"Failed to create purchase order\")\n  }\n\n  await localizedRedirect(\"/dashboard/purchase-orders\")\n}"
+    }
+  ]
+}

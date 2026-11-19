@@ -1,0 +1,28 @@
+{
+  "status": "FAILED",
+  "steps": [
+    "native-http-login",
+    "wrong-password-cleared-no-write",
+    "cancel-preserves-draft-and-focus",
+    "verification-does-not-auto-submit",
+    "explicit-retry-saves-one-profile",
+    "expired-assurance-french-narrow-gate-and-focus",
+    "french-password-confirmation-refreshes-authorized-handoff"
+  ],
+  "failures": [
+    {
+      "name": "TimeoutError",
+      "message": "locator.waitFor: Timeout 40000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog') to be visible\u001b[22m\n"
+    }
+  ],
+  "browserErrors": [
+    "/en/dashboard/people/manage: net::ERR_ABORTED",
+    "/en/dashboard/people/manage: net::ERR_ABORTED",
+    "/en/dashboard/people/manage: net::ERR_ABORTED",
+    "/en/dashboard/people/manage: net::ERR_ABORTED",
+    "/fr/dashboard/people/handoff: net::ERR_ABORTED",
+    "/fr/dashboard/people/handoff: net::ERR_ABORTED"
+  ],
+  "cleanupComplete": true,
+  "completedAt": "2026-10-26T14:47:21.355Z"
+}

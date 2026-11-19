@@ -1,0 +1,93 @@
+{
+  "originalSha256": "0fb0256a7f4d8d7db42ee953efb5c7cb4a5ec7e65a7d2e7e9edd5490d07e7d63",
+  "retrySha256": "c020adc16a1348ffe94a3eb3ab49b3ba1babebb8d45b447cbb189d55371acdc3",
+  "changes": [
+    {
+      "from": "// Full current artifact runtime + HTTPS proxy. DB worker owns cluster lifecycle.",
+      "to": "// Retry01: same verified artifact, localhost-consistent internal origin, paced real sign-ins. Failed r3 receipts remain intact.",
+      "occurrences": 1
+    },
+    {
+      "from": "const runtimeStorage=path.resolve",
+      "to": "assert.equal(process.argv.length,2);const originalPlannedRuntime=c.runtime;c.runtime=path.join(c.storage,'runtime-retry01');\nconst runtimeStorage=path.resolve",
+      "occurrences": 1
+    },
+    {
+      "from": "assert.equal(c.runtime,path.join(runtimeStorage,'runtime'));",
+      "to": "assert.equal(c.runtime,path.join(runtimeStorage,'runtime-retry01'));",
+      "occurrences": 1
+    },
+    {
+      "from": "plannedRuntimePath:plannedRuntime,candidateId",
+      "to": "plannedRuntimePath:originalPlannedRuntime,attempt:'retry01',candidateId",
+      "occurrences": 1
+    },
+    {
+      "from": "'runtime.log'",
+      "to": "'runtime-retry01.log'",
+      "occurrences": 1
+    },
+    {
+      "from": "async function free(port){",
+      "to": "async function free(port,hostname='127.0.0.1'){",
+      "occurrences": 1
+    },
+    {
+      "from": "s.listen(port,'127.0.0.1',ok)",
+      "to": "s.listen(port,hostname,ok)",
+      "occurrences": 1
+    },
+    {
+      "from": "database/fixture-readiness.json",
+      "to": "database/fixture-readiness-retry01.json",
+      "occurrences": 1
+    },
+    {
+      "from": "browser/source-review-20261102-r3.json",
+      "to": "browser/source-review-20261102-r3-retry01.json",
+      "occurrences": 2
+    },
+    {
+      "from": "assert.equal(plannedRuntime,path.join(c.storage,'runtime'))",
+      "to": "assert.equal(plannedRuntime,path.join(c.storage,'runtime-retry01'))",
+      "occurrences": 1
+    },
+    {
+      "from": "await free(c.appPort);await free(c.proxyPort);",
+      "to": "await free(c.appPort);await free(c.appPort,'localhost');await free(c.proxyPort);",
+      "occurrences": 2
+    },
+    {
+      "from": "runtime-ownership.json",
+      "to": "runtime-ownership-retry01.json",
+      "occurrences": 1
+    },
+    {
+      "from": "HOSTNAME:'127.0.0.1'",
+      "to": "HOSTNAME:'localhost'",
+      "occurrences": 1
+    },
+    {
+      "from": "hostname:'127.0.0.1',port:c.appPort",
+      "to": "hostname:'localhost',port:c.appPort",
+      "occurrences": 1
+    },
+    {
+      "from": "'http://127.0.0.1:'+c.appPort",
+      "to": "'http://localhost:'+c.appPort",
+      "occurrences": 1
+    },
+    {
+      "from": "runId:'p04r02-full-20261102-r3'",
+      "to": "runId:'p04r02-full-20261102-r3-retry01'",
+      "occurrences": 1
+    },
+    {
+      "from": "'runtime-result.json'",
+      "to": "'runtime-result-retry01.json'",
+      "occurrences": 1
+    }
+  ],
+  "topologyCheck": "const localhostAddresses=await require('node:dns').promises.lookup('localhost',{all:true});assert(localhostAddresses.length>0&&localhostAddresses.every(a=>a.address==='127.0.0.1'||a.address==='::1'),'localhost must resolve only to loopback');report.transport={externalOrigin:c.httpsOrigin,internalProtocol:'http',internalHostname:'localhost',standaloneHostname:'localhost',localhostAddresses,reason:'Match NextURL loopback normalization with the initial request origin; preserve external HTTPS and Secure cookies'};\n",
+  "additionalBinding": "Runtime receipt records its executing harness SHA256; final retry integrity requires matching exact current harness and attempt"
+}

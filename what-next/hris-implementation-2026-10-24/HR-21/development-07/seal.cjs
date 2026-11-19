@@ -1,0 +1,21 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const base=__dirname,root=process.cwd(),rel=f=>path.relative(root,f).replaceAll('\\','/'),read=f=>JSON.parse(fs.readFileSync(path.join(base,f))),hash=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+const browser=read('browser-results.json'),preflight=read('preflight-checks.json'),shutdown=read('shutdown.json');
+assert.equal(browser.status,'PASS_SCOPED');assert.equal(browser.steps.length,15);assert.deepEqual(browser.failures,[]);assert.deepEqual(browser.pageErrors,[]);assert.equal(browser.cleanupComplete,true);
+for(const [file,digest]of Object.entries(browser.sourceHashes))assert.equal(hash(file),digest,'Source changed: '+file);
+for(const [file,digest]of Object.entries(browser.runtimeHashes))assert.equal(hash(path.join(base,'runtime-files',file)),digest,'Runtime changed: '+file);
+const testedConfiguration=read('runtime-provenance.json').configurationHashes,postrun=read('postrun-configuration-review.json');
+for(const [file,digest]of Object.entries(testedConfiguration)){if(hash(file)!==digest){assert.equal(file,'tsconfig.json');assert.equal(postrun.status,'REVIEWED_UNRELATED_EXCLUSION');assert.equal(postrun.files[file].testedRootHash,digest);assert.equal(hash(file),postrun.files[file].currentRootHash,'Unreviewed root configuration change: '+file)}}
+assert.equal(preflight.status,'PASS');assert.equal(preflight.checks.length,2);assert.ok(preflight.checks.every(x=>x.status==='PASS'&&x.databaseClientCreated===false));
+assert.equal(shutdown.status,'PASS');assert.equal(shutdown.nextStopped,true);assert.equal(shutdown.postgresStopped,true);assert.equal(shutdown.nextLauncherVerified,true);assert.deepEqual(shutdown.portsClosed,[35583,55464]);
+assert.match(fs.readFileSync(path.join(base,'unit-final.log'),'utf8'),/Tests:\s+41 passed, 41 total/);assert.match(fs.readFileSync(path.join(base,'unit-final.log'),'utf8'),/Test Suites:\s+5 passed, 5 total/);
+assert.match(fs.readFileSync(path.join(base,'typecheck.log'),'utf8'),/Diagnostics: 0/);assert.match(fs.readFileSync(path.join(base,'workflow-final.log'),'utf8'),/Workflow contract passed/);assert.match(fs.readFileSync(path.join(base,'diff-check.log'),'utf8'),/Owned diff check passed/);
+assert.match(fs.readFileSync(path.join(base,'INDEPENDENT-REVIEW.md'),'utf8'),/Final evidence consistency review: \*\*PASS_SCOPED\*\*/);
+const outcome=read('database-outcome.json');assert.equal(outcome.shift.minutes,450);assert.equal(outcome.shift.allocation,'LOCAL_START_DATE');assert.equal(outcome.original.status,'SUPERSEDED');assert.equal(outcome.original.workedMinutes,420);assert.equal(outcome.corrected.workedMinutes,450);assert.equal(outcome.corrected.linksOriginal,true);assert.equal(outcome.nextDay.worked,0);assert.equal(outcome.nextDay.certification,'BLOCKED_NO_SCHEDULED_WORK');assert.equal(outcome.snapshots,2);assert.equal(outcome.payrollRuns,0);
+const files=new Set([...Object.keys(browser.sourceHashes),'docs/ecc/cameroon-blueprint-execution-2026-10-07.md']);
+for(const entry of fs.readdirSync(base,{withFileTypes:true}))if(entry.isFile()&&!['evidence.json','integrity.log'].includes(entry.name))files.add(rel(path.join(base,entry.name)));
+const manifest={slice:'HR-21-development-07',status:'VERIFIED_SCOPED',overallHrisStatus:'IMPLEMENTED_PENDING_VERIFICATION',sealedAt:new Date().toISOString(),verification:{browserStages:15,pureAndMockedTests:41,pureAndMockedSuites:5,typeDiagnostics:0,negativePreflightChecks:2,independentReview:'PASS_SCOPED_SOURCE_AND_EVIDENCE_ONLY',cleanup:true,ownedServicesStopped:true},ownedProductionFiles:['components/hris/HrisRosterWorkspace.tsx','actions/hris/roster.actions.ts'],sourceHashes:browser.sourceHashes,runtimeHashes:browser.runtimeHashes,files:Object.fromEntries([...files].sort().map(f=>[f,hash(f)]))};
+fs.writeFileSync(path.join(base,'evidence.json'),JSON.stringify(manifest,null,2)+'\n');
+for(const [file,digest]of Object.entries(read('evidence.json').files))assert.equal(hash(file),digest,'Readback hash mismatch: '+file);
+fs.writeFileSync(path.join(base,'integrity.log'),`PASS: ${files.size} sealed file hashes verified after manifest readback. Browser15, pure/mocked41, types0, preflight2, cleanup and shutdown gates passed.\n`);
+console.log(`Verified ${files.size} evidence/source hashes`);

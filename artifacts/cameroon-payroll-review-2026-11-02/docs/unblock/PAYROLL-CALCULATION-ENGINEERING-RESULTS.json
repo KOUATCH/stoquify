@@ -1,0 +1,144 @@
+{
+  "schema": "stoquify-payroll-engineering-continuation.v1",
+  "generatedAt": "2026-10-29T13:23:51.355314+00:00",
+  "contractId": "STOQUIFY-CM-PAYROLL-CALCULATION-2026-10-29-DRAFT-3",
+  "authority": "User requested remaining engineering work without expert approval; Codex implementation, not independent expert or QA signature.",
+  "statutoryApprovalRecorded": false,
+  "productionUseAllowed": false,
+  "selectedSkill": "aqstoqflow-payroll-kernel-hardener",
+  "phase": "Phase 0: scoped calculation input, transaction and evidence hardening",
+  "selections": [
+    {
+      "id": "ED-01",
+      "decisions": [
+        "D-04",
+        "D-06",
+        "D-08"
+      ],
+      "tasks": [
+        "ENG-02",
+        "ENG-03",
+        "ENG-06"
+      ],
+      "status": "IMPLEMENTED_UNIT_VERIFIED",
+      "selection": "Unknown is not zero. Supported YTD evaluation requires both explicit prior base and prior withheld amounts; each named adjustment requires an own, explicit, finite value. Current base and monetary rule values reject NaN/Infinity. Explicit zero remains valid. The fixture adapter preserves absent history instead of defaulting to zero.",
+      "limit": "Does not certify the supplied history as complete, select the legal tax year/method, supply certified mappings, or change rounding/refund/rate policy."
+    },
+    {
+      "id": "ED-02",
+      "decisions": [
+        "D-12"
+      ],
+      "tasks": [
+        "ENG-04"
+      ],
+      "status": "ROOT_TRANSACTION_IMPLEMENTED_MOCK_VERIFIED",
+      "selection": "For an owning Prisma client, calculation uses the existing payroll transition helper: SERIALIZABLE transaction, at most three attempts for P2034/P2002, re-query idempotency on every attempt, return 409 after exhaustion, do not retry domain errors, redact unexpected internal errors. No external side effect is added to the retry callback. Current production caller audit: actions/payroll/payroll-control.actions.ts and prisma/disposable-business-workflows.ts both call calculatePayrollRun without an injected client, so both use the owning-client SERIALIZABLE/retry boundary. No additional production caller change is needed in this checkout. Future injected TransactionClient callers must establish isolation/retry explicitly; mocked callers are not database proof.",
+      "limit": "An injected TransactionClient inherits its caller transaction; caller owns isolation and retry. Same-day statutory membership, stale-history checks at approval/posting, real contention/rollback and uncertain-commit proof remain pending. This is not full ENG-04 completion."
+    },
+    {
+      "id": "ED-03",
+      "decisions": [
+        "D-11",
+        "D-13"
+      ],
+      "tasks": [
+        "ENG-03",
+        "ENG-07"
+      ],
+      "status": "PROOF_V2_IMPLEMENTED_UNIT_VERIFIED",
+      "selection": "New accumulator proofs use version 2 and bind each ordered prior run/line identity, employee, currency, pay date, run status, document hashes, calculation-snapshot hash and recorded line amounts. observedHistoryHash binds that observed list and is included in the accumulator hash. Missing snapshots remain explicitly null. Existing frozen records are not migrated or rewritten.",
+      "limit": "A fingerprint proves which source data was observed, not legal inclusion or completeness. Legacy proof reads remain supported. Approval-time comparison/invalidation and migration acceptance are not implemented by this slice."
+    },
+    {
+      "id": "ED-04",
+      "decisions": [
+        "D-14",
+        "D-16"
+      ],
+      "tasks": [
+        "ENG-07",
+        "ENG-08"
+      ],
+      "status": "VERIFICATION_AND_RELEASE_BOUNDARY_RECORDED",
+      "selection": "Keep mocked/unit, source-integrity, PDF, real-database, statutory-review and release evidence separate. Synthetic zero values and test-only review labels never populate canonical reviewer records. Keep the September-only runner and October pending scope until admitted rules and supported inputs exist.",
+      "limit": "Independent statutory F-01 through F-22 expected outputs, real integrated acceptance and production admission remain pending. No missing attendance is inferred."
+    }
+  ],
+  "changedFiles": [
+    {
+      "file": "services/payroll/payroll-tax-rule-evaluator.ts",
+      "beforeSha256": "00dd40f683e138c426220ac36461e0f190a565e9d79b55b7678b030bc7b664cb",
+      "afterSha256": "76e28a77468c23805bcc3579b9db22b171e460274ac8b15460127df6fb461483"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "beforeSha256": "e4684514143ff701ebbc1baef02fb6fddf12b5810a6ef11d81732df3e2f969b8",
+      "afterSha256": "7f3fadf24a0ffa8d15dcf1090dd8e4710dbb84135cc447fd9de8e3c6e75daa76"
+    },
+    {
+      "file": "services/payroll/payroll-country-pack-fixture-runner.ts",
+      "beforeSha256": "7a4141b3a67196f800dc3c206c919a6cbd043a85acc50b9273fae8121499997c",
+      "afterSha256": "8d4c3d978986fcc30cb3571807c0e254cb4b43d41d3c7403075286aa4b0ec71f"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-tax-rule-evaluator.test.ts",
+      "beforeSha256": "13a7653b7339cc33cf28cbc37884f4d36e8399e6b1e2044c39991f85e3159b93",
+      "afterSha256": "0eeab66cbd778611d88db2271d7b87e8dcda3268941b21b2ae84f6f69469abef"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-control.service.test.ts",
+      "beforeSha256": "1c80c914c397513d8269c824bef4cf3546d366934d2ce194140a5b5cff37e89e",
+      "afterSha256": "6b453aca8c9ded35fe8914b781e4a55a34c99ea9199058b74ccfd49062b5efa1"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-country-pack-fixture-runner.test.ts",
+      "beforeSha256": "88631383fc5f6a95b1682e9a956fa3d33d44539b72bbec4454f63502d2d02da4",
+      "afterSha256": "a71365aaf0bd5e3cdcb772ff86f39b5148adf3c018e4ba52d077eb5a02c8f5e4"
+    }
+  ],
+  "verification": {
+    "workflow": "PASS; 196 unclassified package scripts",
+    "baseline": "99 tests / 3 suites passed before changes",
+    "current": {
+      "passedTests": 152,
+      "passedSuites": 5,
+      "failedTests": 0,
+      "classOfEvidence": "SYNTHETIC_UNIT_AND_MOCKED_SERVICE",
+      "file": "docs/unblock/research/engineering-current-tests.json",
+      "sha256": "cf756d414c4460e59a7737be29c1d55931db64e0a9ef166651345991f37d6420"
+    },
+    "database": "NOT_RUN: no disposable PostgreSQL contention/rollback execution in this slice",
+    "browser": "NOT_RUN_NO_UI_CHANGE",
+    "statutoryIndependentFixtures": "NOT_SUPPLIED",
+    "fullTypecheck": "NOT_RUN",
+    "command": "node node_modules/jest/bin/jest.js --config scripts/jest.payroll-calculation-engineering.config.cjs --runInBand --no-cache --json --outputFile docs/unblock/research/engineering-current-tests.json",
+    "taskScopedDiffWhitespace": "PASS: git diff --check for six changed source/test files"
+  },
+  "commandSideEffectReview": "Installed Jest/Next transform without dir; inspected existing setup mocks Prisma and relevant services. No dotenv, app boot, migrations or database connection. Writes test-result JSON and transient test outputs only.",
+  "runReport": "what-next/payroll/PAYROLL-CALCULATION-ENGINEERING-CONTINUATION-2026-10-29.md",
+  "taskDiff": "docs/unblock/research/engineering-task.diff",
+  "limitations": [
+    "Seven parent engineering tasks remain pending; completed substeps are listed separately.",
+    "The skill-listed June close-invalidation report was absent; the retained August 22 immutability report and current source were used as historical/navigation context only. No historical DB result is claimed as fresh proof."
+  ],
+  "addedVerificationConfig": {
+    "file": "scripts/jest.payroll-calculation-engineering.config.cjs",
+    "sha256": "31b3e6dea8bf38fd41e4f483370e1319d5b4a7af86d2e5174ad87f33b39e5928"
+  },
+  "productionCallerAudit": {
+    "result": "Current production caller audit: actions/payroll/payroll-control.actions.ts and prisma/disposable-business-workflows.ts both call calculatePayrollRun without an injected client, so both use the owning-client SERIALIZABLE/retry boundary. No additional production caller change is needed in this checkout. Future injected TransactionClient callers must establish isolation/retry explicitly; mocked callers are not database proof.",
+    "scope": "Source search across actions, prisma, scripts and services excluding tests/generated runners; two production call sites found.",
+    "callers": [
+      {
+        "file": "actions/payroll/payroll-control.actions.ts",
+        "sha256": "a7d72904c319ec608c5b5303d263a94e9a4b99149b3f004ac4f36d36931e4b71"
+      },
+      {
+        "file": "prisma/disposable-business-workflows.ts",
+        "sha256": "856123487437d2f564bdc277af0fec1b9eee457d9ac3f00fe066ce8adc9c6e53"
+      }
+    ]
+  },
+  "taskDiffSha256": "9bf763b4a428d5ad663116165954354a19373c16ed661af66e027c54b323527d"
+}

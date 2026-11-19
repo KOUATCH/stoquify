@@ -1,0 +1,646 @@
+{
+  "slice": "HR-09",
+  "status": "VERIFIED",
+  "scope": "Bounded engineering setup for TIME_POLICY / WORK_SCHEDULE / TIME_REQUEST; pilot activation withheld",
+  "timestamp": "2026-10-24T16:20:46.351Z",
+  "baseline": {
+    "head": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+    "workingTree": "Dirty shared checkout; pre-existing edits preserved. baseline-status.txt records entry state; HEAD is not claimed as the entire candidate."
+  },
+  "acceptance": {
+    "HR-09-AC01": {
+      "status": "PASS",
+      "scope": "See RESULT.md bounded acceptance matrix"
+    },
+    "HR-09-AC02": {
+      "status": "PASS",
+      "scope": "See RESULT.md bounded acceptance matrix"
+    },
+    "HR-09-AC03": {
+      "status": "PASS",
+      "scope": "See RESULT.md bounded acceptance matrix"
+    },
+    "HR-09-AC04": {
+      "status": "PASS",
+      "scope": "See RESULT.md bounded acceptance matrix"
+    },
+    "HR-09-AC05": {
+      "status": "PASS",
+      "scope": "See RESULT.md bounded acceptance matrix"
+    }
+  },
+  "independentReview": {
+    "agent": "/root/hr09_independent_review",
+    "findings": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6"
+    ],
+    "openFindings": [],
+    "artifact": "what-next/hris-implementation-2026-10-24/HR-09/INDEPENDENT-REVIEW.md"
+  },
+  "commands": [
+    {
+      "lane": "workflow",
+      "command": "npm run agent:workflow:check",
+      "exitCode": 0,
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-09/workflow.log",
+      "artifactUpdatedAt": "2026-10-24T16:12:39.749Z"
+    },
+    {
+      "lane": "schema",
+      "command": "node node_modules/prisma/build/index.js validate --config what-next/hris-implementation-2026-10-24/HR-09/prisma-validation.config.ts",
+      "exitCode": 0,
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-09/schema-validation-r2.log",
+      "artifactUpdatedAt": "2026-10-24T16:10:29.417Z"
+    },
+    {
+      "lane": "isolated-migration",
+      "command": "psql -X -h 127.0.0.1 -p 55464 -U hris_test -d stoquify_local_hris_20261024 -v ON_ERROR_STOP=1 -1 -f prisma/migrations/20261024170000_hris_setup_reviewer_grants/migration.sql",
+      "exitCode": 0,
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-09/migration-retry.log",
+      "artifactUpdatedAt": "2026-10-24T16:01:00.911Z"
+    },
+    {
+      "lane": "mocked-unit-action",
+      "command": "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath actions/hris/__tests__/workspace-setup.actions.test.ts services/hris/__tests__/workspace-setup.test.ts services/hris/__tests__/operational-time-decision-concurrency.test.ts services/hris/__tests__/org-effective-scope.service.test.ts",
+      "exitCode": 0,
+      "tests": 27,
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-09/unit-final.log",
+      "artifactUpdatedAt": "2026-10-24T16:17:52.280Z"
+    },
+    {
+      "lane": "real-postgres-and-browser",
+      "command": "node node_modules/jest/bin/jest.js --config jest.hris-setup-postgres.config.cjs --runInBand --no-cache",
+      "environment": "Explicit HRIS_CORRECTNESS_DATABASE_URL to owned loopback database; no application .env",
+      "exitCode": 0,
+      "tests": 22,
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-09/postgres-final.log",
+      "artifactUpdatedAt": "2026-10-24T16:19:46.320Z"
+    },
+    {
+      "lane": "shared-real-postgres-regression",
+      "command": "node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand --no-cache",
+      "exitCode": 0,
+      "tests": 60,
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-09/prior-correctness-postgres.log",
+      "artifactUpdatedAt": "2026-10-24T16:11:45.005Z"
+    },
+    {
+      "lane": "focused-types",
+      "command": "node what-next/hris-implementation-2026-10-24/typecheck.cjs what-next/hris-implementation-2026-10-24/HR-09/typecheck-final.log services/hris/workspace-setup.service.ts actions/hris/workspace-setup.actions.ts components/hris/HrisWorkspaceSetup.tsx app/[locale]/(dashboard)/dashboard/people/setup/page.tsx",
+      "exitCode": 0,
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-09/typecheck-final.log",
+      "artifactUpdatedAt": "2026-10-24T16:18:21.311Z"
+    },
+    {
+      "lane": "browser-build",
+      "command": "node what-next/hris-implementation-2026-10-24/HR-09/browser/build.cjs",
+      "exitCode": 0,
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-09/browser-build-final.log",
+      "artifactUpdatedAt": "2026-10-24T16:12:33.032Z"
+    },
+    {
+      "lane": "browser-css",
+      "command": "node node_modules/tailwindcss/lib/cli.js -i app/globals.css -c tailwind.config.ts --content components/hris/HrisWorkspaceSetup.tsx,components/dashboard/DashboardRouteState.tsx -o what-next/hris-implementation-2026-10-24/HR-09/browser/styles.css",
+      "exitCode": 0,
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-09/browser-css-final.log",
+      "artifactUpdatedAt": "2026-10-24T16:16:20.200Z"
+    },
+    {
+      "lane": "whitespace",
+      "command": "git diff --check -- services/hris/operational-time.service.ts prisma/schema.prisma app/[locale]/(dashboard)/dashboard/people/page.tsx",
+      "exitCode": 0,
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-09/diff-check.log",
+      "artifactUpdatedAt": "2026-10-24T16:19:16.334Z"
+    }
+  ],
+  "browser": {
+    "count": 30,
+    "roles": [
+      "owner",
+      "hr",
+      "manager-read-only",
+      "approver-narrow",
+      "denied"
+    ],
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "widths": [
+      360,
+      768,
+      1440
+    ],
+    "boundary": "Actual React UI + real service/PostgreSQL, synthetic role cookie; not full Next/BetterAuth or screen-reader certification"
+  },
+  "limitations": [
+    "Full Next/BetterAuth and deployed module admission not run",
+    "Assistive technology and complete WCAG certification not run",
+    "No production migration/deployment/live pilot identities or statutory/provider certification"
+  ],
+  "failedAttemptsRetained": [
+    "migration.log: sandbox local-socket denial; approved explicit-target retry passed",
+    "schema-validation.log: missing optional @prisma/internals; explicit no-dotenv CLI config passed",
+    "typecheck.log/typecheck-r2.log and browser-build.log: initial JSX draft corrected",
+    "browser-css.log: minimal Tailwind config missing existing tokens; project config passed",
+    "postgres-r1.log: French test-harness charset corrected",
+    "postgres-r2.log: test fixture audit history and schedule uniqueness collision corrected; browser cases themselves passed"
+  ],
+  "hashes": [
+    {
+      "path": "services/hris/setup-reviewer.service.ts",
+      "sha256": "009768fec2241d3a66c4bd1cb24e6400dde1c2fdef863ac1b67f3b961d98b72f",
+      "bytes": 3944
+    },
+    {
+      "path": "services/hris/workspace-setup.service.ts",
+      "sha256": "00ea55513c17078f91dd9d9e614efa636bee1f628e7d76a1820f75f29318fd36",
+      "bytes": 15679
+    },
+    {
+      "path": "services/hris/operational-time.service.ts",
+      "sha256": "531a78b6e292c10606cf9fc0e845240a2c10dbf5b8d9fc59496aa710f94d6d1b",
+      "bytes": 51153
+    },
+    {
+      "path": "actions/hris/workspace-setup.actions.ts",
+      "sha256": "7dc3938f8684d638ed2384fe31b8037d04f4a68936946775b6a144ad699f2d88",
+      "bytes": 1549
+    },
+    {
+      "path": "components/hris/HrisWorkspaceSetup.tsx",
+      "sha256": "dd04477e3ea985a147b27c2acd6ce2cd451b55bf7ccd2b08dafdda0cd1cb4751",
+      "bytes": 18963
+    },
+    {
+      "path": "components/hris/HrisWorkspaceSetupClient.tsx",
+      "sha256": "d5d9defb2262a51bcb284f961cbffbbf1ba37af92a956786d3a582df23f87315",
+      "bytes": 631
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/setup/page.tsx",
+      "sha256": "063d030ae1459dd834b9e3884e2aac4a7feed1aa2cd76ac6d81c56c5f049269a",
+      "bytes": 1006
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/page.tsx",
+      "sha256": "e8fe7185d7235c5e4987104f3f230c98d576e92973b72d2ef3d3c0295eeaf6e1",
+      "bytes": 5192
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "44b57a600752ad3399ca987b8c2ef71698ffb827558eab64486c5640c4a0f3b2",
+      "bytes": 341943
+    },
+    {
+      "path": "prisma/migrations/20261024170000_hris_setup_reviewer_grants/migration.sql",
+      "sha256": "2b5ca60fa12d2aed9add8ec9895bfbabceb6f8d49423269fe26d12c5ac616a9b",
+      "bytes": 1575
+    },
+    {
+      "path": "services/hris/__tests__/workspace-setup.test.ts",
+      "sha256": "a688012bc9ab412656cc14f81bbd53b2abd1bdb56eadac47978b09b5da1fba3c",
+      "bytes": 1744
+    },
+    {
+      "path": "services/hris/__tests__/workspace-setup.postgres.test.ts",
+      "sha256": "c6c8e919676080844ec972b1231f3cbe6324d1af77db457602dcfbaed21e278b",
+      "bytes": 19666
+    },
+    {
+      "path": "actions/hris/__tests__/workspace-setup.actions.test.ts",
+      "sha256": "1d4c251cf6f1aad7e72ef630f8d67be566f845705b9cfd45aade8375c20dabb0",
+      "bytes": 1954
+    },
+    {
+      "path": "jest.hris-setup-postgres.config.cjs",
+      "sha256": "38a8c6a82f849d301bcdcf1bdd66eb3550ebbab1808a5a78515e1144b47c1994",
+      "bytes": 230
+    },
+    {
+      "path": "jest.hris-correctness-postgres.config.cjs",
+      "sha256": "e119003c2feb0ebe77e464ee34a2e0592b291bc2899416adf9434fe861b2d6fe",
+      "bytes": 521
+    },
+    {
+      "path": "jest.payroll-trust-spine.config.cjs",
+      "sha256": "da43ee692dcd1295ccac8255daa9a408090a9335628f4ab7a74d9d0dea8acb1b",
+      "bytes": 1434
+    },
+    {
+      "path": "jest.setup.ts",
+      "sha256": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+      "bytes": 3341
+    },
+    {
+      "path": "docs/ecc/cameroon-blueprint-execution-2026-10-07.md",
+      "sha256": "f8267ee2948d1742d241ad1bcd010f36395a858c822eb30281a68781372c7ffe",
+      "bytes": 18557
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/baseline-status.txt",
+      "sha256": "632684b824324bb0e1bd355f13a6943f423eafa851cceabc0d99909fac3daed7",
+      "bytes": 26179
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/build.cjs",
+      "sha256": "a3a2231d0e4c3500874508976a4fd626f6857ebd4a055c6d0597988b38b0e97a",
+      "bytes": 841
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/bundle.js",
+      "sha256": "4f791043609274ec0f52bf340c3aa73b92402148c4432005ff01928f3bbd092f",
+      "bytes": 1344806
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/check.cjs",
+      "sha256": "2498bf5a1fc10cc7feb2bda9ed8debb559530d1f2fddbef8f13705eacc7bf41a",
+      "bytes": 4366
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-1440-approver.png",
+      "sha256": "a93dbe1a7a30e4026acf05a3a2d6189907047e870c6139ff7db7ffbcea8cf91a",
+      "bytes": 788748
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-1440-denied.png",
+      "sha256": "6ab4f1fc390b1f5ae0b028c042690f24fa1c7ca2a633294b03a5c47522f97375",
+      "bytes": 60859
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-1440-hr.png",
+      "sha256": "cddb13698c36200b1897d69c66612bf40dd304a420555a6aa2c36d30144dae82",
+      "bytes": 1334825
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-1440-manager.png",
+      "sha256": "fba7dd2156be373169e1e35687468fe41f29c646bf77a99480e5fd4969827296",
+      "bytes": 391663
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-1440-owner.png",
+      "sha256": "199cad9325393edb6a4fe5e62e46acd16e556a5cbe372c3df3a7d2b7c5ed46ba",
+      "bytes": 1333575
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-360-approver.png",
+      "sha256": "3f7f0a7c617ff3de8282a3353bc5d4ad67d8f04953b95e04f825feff6889b952",
+      "bytes": 512989
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-360-denied.png",
+      "sha256": "8f58dfbc561835564e61c6fd0f40971e07c590acc897510347038aba436206f9",
+      "bytes": 26907
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-360-hr.png",
+      "sha256": "562f9394ab120f1d42eb65241801ee7c26ab8e35199581b2101ce1888365ee43",
+      "bytes": 826756
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-360-manager.png",
+      "sha256": "2778ffd73c885a60e459fdaf5fe75f845cafb498db0300ef8fb307a3c8e7e087",
+      "bytes": 293497
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-360-owner.png",
+      "sha256": "07633c592059d14e75224f8f4b12da4da52c2e027cec13d02b089f1e29ab5b05",
+      "bytes": 823642
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-768-approver.png",
+      "sha256": "205ff0a63849ce6f4538cf962f661436200cc2ca2b6bb8636b08d8c2126f30c8",
+      "bytes": 612812
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-768-denied.png",
+      "sha256": "9478883f885e78965074134995aba08c678a7e452424e67f577618be0cd2bf31",
+      "bytes": 38970
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-768-hr.png",
+      "sha256": "67f54951a44b9d29b7d026473b4120c6ce855d4027b652f7f5352328daa43c61",
+      "bytes": 1013011
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-768-manager.png",
+      "sha256": "aa9430f2ffa16199757461346100ec58f53909f01ec13081e97a9537bf3f6f62",
+      "bytes": 327522
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/en-768-owner.png",
+      "sha256": "db82dccfc28851a12f9f1bd78b1c544374617daadf06ba91f7a7197771765d52",
+      "bytes": 1008454
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/entry.tsx",
+      "sha256": "3b6f43a6de6dcad5457ee327983ca32cf4f9ca6c30eb4ee8b2ce78fef79cf28f",
+      "bytes": 898
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-1440-approver.png",
+      "sha256": "d783e1c2ba8a56c6497c449b65f044c3a12b421e6450a0bc28c95a437d03d7fd",
+      "bytes": 679224
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-1440-denied.png",
+      "sha256": "89d778a0fa75776a33cfaef3edc04f3168b4df611f90a2d7fab004c5b02cd8b3",
+      "bytes": 61645
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-1440-hr.png",
+      "sha256": "66f245f8e3d55714c8f185f49d0a4b96c83526994abad84db1e9e6f43eed1524",
+      "bytes": 1263177
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-1440-manager.png",
+      "sha256": "560c7903c3bdec2130e106c6dd47a6ddfc0e6e317123e803feda7878ea78866a",
+      "bytes": 346216
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-1440-owner.png",
+      "sha256": "127980ad2d78ae881e54f2859c778f79393f9cee16d7723a4843785a4799978d",
+      "bytes": 1263170
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-360-approver.png",
+      "sha256": "2e03394b0953d64cc97c175b1ce9c6b2b04c2beb3794b46a56e300c46f289548",
+      "bytes": 461937
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-360-denied.png",
+      "sha256": "83526f15316d150f84ee53dcd6419cc1a707b4cad08eb48f5e883b10f25147b3",
+      "bytes": 27296
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-360-hr.png",
+      "sha256": "b8dacf1ee09a239aae268802f960a17f53dc76f88f292482b53db3843a62c705",
+      "bytes": 806251
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-360-manager.png",
+      "sha256": "6d766991e938e8d062b1b442a3be68d4c1df8c9ce15b54e5b8d9009327f2c5e4",
+      "bytes": 260856
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-360-owner.png",
+      "sha256": "789cba8ea8509d373175ff5f6a9aa0d0465a4df3ab2d4f8e6697acd7f577ad72",
+      "bytes": 804032
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-768-approver.png",
+      "sha256": "188bc8876d75141ac49246711437d889ff37e2a3ee01dca1a657c2cbb8f420ba",
+      "bytes": 538192
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-768-denied.png",
+      "sha256": "16bc45e0900fd6f44b4ebe5ef9c466fa95dc2499fa8a08fc6f20d4d1b6af5d82",
+      "bytes": 39694
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-768-hr.png",
+      "sha256": "8fa091b939046b747d6f19c7ab322d12c6075af3b8ce859ea281cf6cfc204165",
+      "bytes": 973701
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-768-manager.png",
+      "sha256": "e4cb5e69bad2c819c04e9f4c4e5a62cf34e9d6793b2215553d432bd7d0376daf",
+      "bytes": 287569
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/fr-768-owner.png",
+      "sha256": "5d6451b0f83316aa76ef5a05e29c057a024a7bfbbdcebfa2886d165b09ec22f6",
+      "bytes": 969077
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/link.cjs",
+      "sha256": "69ae25611b9d75553d0bff2ce41e13b7ab69f8e703a009f088b0859e2afe45d6",
+      "bytes": 149
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/navigation.cjs",
+      "sha256": "01c850424f918c0c2018f9f35bf3a260d2276bb31c8818f8deb4fd2c846e0030",
+      "bytes": 71
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/results.json",
+      "sha256": "05a8c2d770e65edb5f04aeee0a8dd0ee7d383f867d444221d88155b083dedf65",
+      "bytes": 4658
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/styles.css",
+      "sha256": "df290e2db0ac73bd394461fca178334b4253f914779b3c5231360171a6cc3be7",
+      "bytes": 58915
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/swc-loader.cjs",
+      "sha256": "765b6ff126ad09deef3e703da7419349e45c470c0623fdffca61d6cc203d0d99",
+      "bytes": 338
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser/tailwind.config.cjs",
+      "sha256": "a24e0de1e6fcafd1ba81acb89f2644f2d21ea281b2adcc4ffe7e6c6923f521be",
+      "bytes": 150
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser-build-final.log",
+      "sha256": "76bcd79430d1d76d37a126e8d2195058ba8d217c681fb743643edc02eacc5251",
+      "bytes": 109
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser-build-r2.log",
+      "sha256": "76bcd79430d1d76d37a126e8d2195058ba8d217c681fb743643edc02eacc5251",
+      "bytes": 109
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser-build-r3.log",
+      "sha256": "76bcd79430d1d76d37a126e8d2195058ba8d217c681fb743643edc02eacc5251",
+      "bytes": 109
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser-build.log",
+      "sha256": "c5c3ced025b98c08638fed82cec89e46a388d393a64f8c7287539ff29508ed1d",
+      "bytes": 14325
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser-css-final.log",
+      "sha256": "8053ccc0d90349ad84dec9c6a74b066d3200b4bcb270fb9c8a346bced1d9aa36",
+      "bytes": 210
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser-css-r2.log",
+      "sha256": "18ebcf6566972439706323a2245d794131663b5baf480516ae287245edfe10c4",
+      "bytes": 210
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/browser-css.log",
+      "sha256": "abfe5d2d2d3f3912edf7305e79c6d190e9eae62676859a2b373f01b184370c04",
+      "bytes": 29531
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/cleanup.log",
+      "sha256": "7b1005e589a3a056e4894cb34f3d686e8f413be1cea562ea27c9f7c43ea3b902",
+      "bytes": 121
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/complete-review-details.cjs",
+      "sha256": "d2504ba0a055ea3c8a69d2b76308dba3bad34168a15c92908c567631894b1163",
+      "bytes": 5145
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/diff-check.log",
+      "sha256": "6f487aa74b264ce4895c3182ad58fd0b6e0b8173cacd8e0928b14838e03a3695",
+      "bytes": 538
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/finalize-counts.cjs",
+      "sha256": "9a7b9b61727fcee1c355b6ea3415dcc0135288935e3ef6495f16981da2aa6145",
+      "bytes": 1049
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/fix-member-link.cjs",
+      "sha256": "65e60e6a3ef39913adacd93c2281004c024dd30cd01bbd3aa3db1b8b8407d6ae",
+      "bytes": 237
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/INDEPENDENT-REVIEW.md",
+      "sha256": "27b287d20d8c143f0b01f01bd0c2cc59fd82242aaaebbb585c1d4f6dfd60c523",
+      "bytes": 4625
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/migration-retry.log",
+      "sha256": "5169f6678c5cd5adc7f0bde649bcf7f96de2afcae4469ff8a561a91ecf5c7a77",
+      "bytes": 28
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/MIGRATION-ROLLOUT.md",
+      "sha256": "d016e76674ab24af383e1a9cfb3a0be196ad9c7a157825a7c61a2958fe65ba05",
+      "bytes": 2126
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/migration.log",
+      "sha256": "f3787e8738f17568e666da7ab72dfd4b710eea45e402886aafdc57aab9730e93",
+      "bytes": 178
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/postgres-before-employee-guard.log",
+      "sha256": "3ad6a58f8c802a2cab66285fbb5559e460470e2bf65c91ba539cc63d34d5b7d1",
+      "bytes": 133
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/postgres-final.log",
+      "sha256": "60e6ee42c19f52d5365ca5823162f06c9bb0a39adedba72533588a07b95f0f80",
+      "bytes": 133
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/postgres-pre-css-refresh.log",
+      "sha256": "f613ff0340fe6687684ec2a1479b2f0a6b426edb9eef969735af4be815b9a1cd",
+      "bytes": 133
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/postgres-r1.log",
+      "sha256": "080ed98faecceae4616f72d29b1e70595f7ca3ae62d1ab16ad2bd1884090b28a",
+      "bytes": 1251
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/postgres-r2.log",
+      "sha256": "ef73661b960f82e8345e0be85fdd4da9716a6d80472dc1d4eb53a6a5d5950e40",
+      "bytes": 2781
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/postgres-stop.log",
+      "sha256": "3589d2bd01f8295cc7c9ec3f5e07625fcd347ccb6f33f2d80edafe5f5217c1fb",
+      "bytes": 58
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/prior-correctness-postgres.log",
+      "sha256": "d2e77da0d57da4478211168b338f6b9e0f9247059b6d48239e7825cfc932def0",
+      "bytes": 133
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/prisma-validation.config.ts",
+      "sha256": "49db9f0f1f04e9cb8c9b65ea3d5bf4efb1d13b0f01f0bb858a28c18423a33d3f",
+      "bytes": 197
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/repair-ui.cjs",
+      "sha256": "325902d6aa885ba3eee998bf02a65115085b6ffb0e1d5fdb486f3e6064ea2ac6",
+      "bytes": 479
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/RESULT.md",
+      "sha256": "5332fa218d0f8695eba992b11ace98bd18dd628bfbfe70c9ccf94f662f08782f",
+      "bytes": 9520
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/reviewer-availability-ui.cjs",
+      "sha256": "11b31bf06ea6fe2112766549ddd7aa97ad7f41e1fe50525f9ab7d6274f96f56f",
+      "bytes": 321
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/schema-validation-r2.log",
+      "sha256": "c1e4540894c8ff891b770a834cd356e203f0b3ba33ee6c9f90cccd7258e44037",
+      "bytes": 267
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/schema-validation.log",
+      "sha256": "a49a509c9e90e9cac317d114e8d33bea42874b613c6e42d65c88643422df9cd1",
+      "bytes": 918
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/typecheck-final.log",
+      "sha256": "698cb814ddc4a30089e50d58e9c057bd7bf05f3afdd77425672ec11b9110c6a5",
+      "bytes": 16
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/typecheck-r2.log",
+      "sha256": "4862d33156e9936180908a9ce6a9ee5fa75b2422b17c60bf9658f06b53974e4e",
+      "bytes": 27779
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/typecheck-r3.log",
+      "sha256": "698cb814ddc4a30089e50d58e9c057bd7bf05f3afdd77425672ec11b9110c6a5",
+      "bytes": 16
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/typecheck-r4.log",
+      "sha256": "698cb814ddc4a30089e50d58e9c057bd7bf05f3afdd77425672ec11b9110c6a5",
+      "bytes": 16
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/typecheck.log",
+      "sha256": "d34c099ccc86c163713ef90fe97118ee72a848f64bc1183aae38e94fec2b5295",
+      "bytes": 27671
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/unit-final.log",
+      "sha256": "03f628b6e8afa9f3f5820a718fc907ae08cebd74c582dfd06808be8e348faf4b",
+      "bytes": 391
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/unit-r2.log",
+      "sha256": "a871c8e5afa53762cccb4188a4a84e4698a0330d7428521b09fc0113ded98687",
+      "bytes": 392
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/unit.log",
+      "sha256": "0eafe15b7c7f47c28bf2f63ebbac2e812952f46b9126fe0cd6cab5f1fe460886",
+      "bytes": 334
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/workflow.log",
+      "sha256": "86136abc44dde2020666ec41f5257908e6e5d292251b9590da8755fd007cf5e0",
+      "bytes": 200
+    },
+    {
+      "path": "what-next/hris-implementation-2026-10-24/HR-09/write-evidence.cjs",
+      "sha256": "6e8e385425fe7809c20c14488cdf7e1ea5b1a603988e35975f5513c90e8222ed",
+      "bytes": 7040
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "at": "2026-11-10T14:36:39.658Z",
+  "packageId": "P04-R06",
+  "scope": "Local capacity and candidate-freshness blocked checkpoint only",
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "artifactSha256": null,
+  "advancement_allowed": false,
+  "production_ready": false,
+  "required_logical_groups": 58,
+  "planned_actual_cases": 107,
+  "actual_cases_executed": 0,
+  "gates": [
+    {
+      "id": "source",
+      "status": "passed",
+      "evidence": "independent-review/REPAIR-SOURCE-ADMISSION.json"
+    },
+    {
+      "id": "mocked_tests",
+      "status": "passed",
+      "evidence": "independent-review/UNIT-OUTCOME-REVIEW.json"
+    },
+    {
+      "id": "dependencies",
+      "status": "passed",
+      "evidence": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json"
+    },
+    {
+      "id": "candidate",
+      "status": "passed",
+      "evidence": "independent-review/CANDIDATE-OUTCOME-REVIEW.json"
+    },
+    {
+      "id": "current_candidate_freshness",
+      "status": "blocked",
+      "evidence": "independent-review/CAPACITY-CHECKPOINT-SOURCE-REVIEW.json"
+    },
+    {
+      "id": "database_setup",
+      "status": "passed",
+      "evidence": "independent-review/DATABASE-OUTCOME-REVIEW.json"
+    },
+    {
+      "id": "build_capacity",
+      "status": "blocked",
+      "evidence": "resource-retry-ready-attempt02-r2.json"
+    },
+    {
+      "id": "full_build",
+      "status": "not_run",
+      "evidence": "build-result.json"
+    },
+    {
+      "id": "real_session_qualification",
+      "status": "not_run",
+      "evidence": "runtime/qualification-contract.json"
+    },
+    {
+      "id": "browser_qualification",
+      "status": "not_run",
+      "evidence": "runtime/qualification-contract.json"
+    },
+    {
+      "id": "owned_suspension",
+      "status": "passed",
+      "evidence": "database/capacity-suspension.json"
+    },
+    {
+      "id": "independent_checkpoint_review",
+      "status": "passed",
+      "evidence": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW.json"
+    }
+  ],
+  "outcome_receipts": {
+    "qualification": null,
+    "integrity": "database/capacity-suspension.json",
+    "review": "independent-review/FINAL-CAPACITY-OUTCOME-REVIEW.json"
+  }
+}

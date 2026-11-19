@@ -1,0 +1,550 @@
+{
+  "checkedAt": "2026-11-10T07:25:33.445Z",
+  "passed": true,
+  "steps": [
+    {
+      "id": "real-better-auth-password-ui-sign-in-and-close-period-route",
+      "passed": true,
+      "checkedAt": "2026-11-10T07:25:08.721Z"
+    },
+    {
+      "id": "latest-receipt-original-byte-recovery",
+      "passed": true,
+      "checkedAt": "2026-11-10T07:25:16.795Z"
+    },
+    {
+      "id": "stale-password-assurance-requires-real-step-up-before-original-recovery",
+      "passed": true,
+      "checkedAt": "2026-11-10T07:25:23.731Z"
+    },
+    {
+      "id": "real-suspended-close-module-denial-hides-cached-private-workspace",
+      "passed": true,
+      "checkedAt": "2026-11-10T07:25:26.451Z"
+    },
+    {
+      "id": "new-successful-read-restores-access-with-cleared-drafts",
+      "passed": true,
+      "checkedAt": "2026-11-10T07:25:30.676Z"
+    },
+    {
+      "id": "real-current-runtime-session-revocation-denial-hides-private-cache",
+      "passed": true,
+      "checkedAt": "2026-11-10T07:25:32.538Z"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "5feebc18bf37cbaeea6a7b52179a0776",
+      "operation": "stale-proof",
+      "applied": true,
+      "checkedAt": "2026-11-10T07:25:19.512Z"
+    },
+    {
+      "id": "17698326f8fe22a77135efe84a537d12",
+      "operation": "suspend-close-module",
+      "applied": true,
+      "checkedAt": "2026-11-10T07:25:25.700Z"
+    },
+    {
+      "id": "497b88d5038e73dab79a704ba30b05c5",
+      "operation": "restore-close-module",
+      "applied": true,
+      "checkedAt": "2026-11-10T07:25:26.734Z"
+    },
+    {
+      "id": "bab969113487ff23e78559737d80936e",
+      "operation": "revoke-current-session",
+      "applied": true,
+      "checkedAt": "2026-11-10T07:25:31.656Z"
+    }
+  ],
+  "downloads": [
+    {
+      "label": "latest-receipt-original-byte-recovery",
+      "sha256": "sha256:6a20e8fd9babd4230d1103c207e5ed2c516d737bf909217b55413732c196bafc",
+      "byteLength": 96834,
+      "equalsPrivateOriginalBytes": true,
+      "validUtf8Json": true,
+      "passwordStepUpObserved": true
+    },
+    {
+      "label": "stale-password-assurance-requires-real-step-up-before-original-recovery",
+      "sha256": "sha256:6a20e8fd9babd4230d1103c207e5ed2c516d737bf909217b55413732c196bafc",
+      "byteLength": 96834,
+      "equalsPrivateOriginalBytes": true,
+      "validUtf8Json": true,
+      "passwordStepUpObserved": true
+    }
+  ],
+  "observations": [
+    {
+      "label": "baseline-before-retained-recovery",
+      "currentCertificationBadgeVisible": true,
+      "certifiedExportDisabled": true,
+      "interpretation": "Observed application presentation only; retained-byte recovery does not establish current financial approval."
+    },
+    {
+      "label": "after-password-assurance-expiry-and-step-up",
+      "currentCertificationBadgeVisible": true,
+      "certifiedExportDisabled": true,
+      "interpretation": "Observed application presentation only; retained-byte recovery does not establish current financial approval."
+    }
+  ],
+  "network": [
+    {
+      "category": "same-origin-page-or-resource",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "same-origin-page-or-resource",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "password-sign-in",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "same-origin-page-or-resource",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "same-origin-page-or-resource",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "same-origin-page-or-resource",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "same-origin-page-or-resource",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "same-origin-page-or-resource",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "session-auth",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "current-permissions",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "next-static",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "current-permissions",
+      "method": "GET",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    },
+    {
+      "category": "protected-server-action",
+      "method": "POST",
+      "allowed": true
+    }
+  ],
+  "websocket": [
+    {
+      "category": "owned-development-hmr",
+      "allowed": true
+    },
+    {
+      "category": "owned-development-hmr",
+      "allowed": true
+    }
+  ],
+  "responses": [
+    {
+      "category": "password-sign-in",
+      "status": 200
+    },
+    {
+      "category": "same-origin-api",
+      "status": 200
+    },
+    {
+      "category": "current-permissions",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "current-permissions",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    },
+    {
+      "category": "protected-server-action-or-auth",
+      "status": 200
+    }
+  ],
+  "pageErrorCount": 0,
+  "consoleErrorCount": 0,
+  "sourceBindingSha256": "dc648d7af48008efa53cf23a84705fa14b914494faf322c6d55e14d873b4a066",
+  "browserClosed": true,
+  "contextClosed": true,
+  "cleanupErrors": [],
+  "remainingOwnedProfileDirectories": 0,
+  "rootCleanupRequired": false,
+  "classification": "Actual authenticated current-source DEVELOPMENT; schema-only module override; read-only reused dependencies. Not a sealed artifact or hosted release.",
+  "privacy": "Credentials, cookie values, network bodies, private control file hash, original/downloaded document bytes and traces were not published. Root owns app/DB cleanup."
+}

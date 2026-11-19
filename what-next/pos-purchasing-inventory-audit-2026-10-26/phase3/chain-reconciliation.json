@@ -1,0 +1,2944 @@
+[
+  {
+    "scenario": "P3-RECEIVING",
+    "partial": {
+      "organizationId": "org-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+      "stock": {
+        "quantity": "2.000",
+        "available": "2.000",
+        "reserved": "0.000",
+        "value": "200.01"
+      },
+      "orders": [
+        {
+          "id": "cmvpf7vv4001tmatky59je45x",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf7xw8002fmatk8yx2zv5p",
+          "status": "PARTIALLY_RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf7yog0031matk274u9s9q",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf80610046matk0wk672dx",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf7z0r003omatk2hh9j70n",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf7yog0031matk274u9s9q",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf80f5004tmatkx0wtotug",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf80610046matk0wk672dx",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 10,
+      "outbox": 4
+    },
+    "full": {
+      "organizationId": "org-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+      "stock": {
+        "quantity": "3.000",
+        "available": "3.000",
+        "reserved": "0.000",
+        "value": "300.02"
+      },
+      "orders": [
+        {
+          "id": "cmvpf7vv4001tmatky59je45x",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf7xw8002fmatk8yx2zv5p",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf7yog0031matk274u9s9q",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf80610046matk0wk672dx",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf82mj005bmatkcf6kxabh",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf7z0r003omatk2hh9j70n",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf7yog0031matk274u9s9q",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf80f5004tmatkx0wtotug",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf80610046matk0wk672dx",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf82sb005ymatkr4y8at9k",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf82mj005bmatkcf6kxabh",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 13,
+      "outbox": 6
+    }
+  },
+  {
+    "scenario": "P3-CHAIN-refund",
+    "received": {
+      "organizationId": "org-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+      "stock": {
+        "quantity": "3.000",
+        "available": "3.000",
+        "reserved": "0.000",
+        "value": "300.02"
+      },
+      "orders": [
+        {
+          "id": "cmvpf7vv4001tmatky59je45x",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf7xw8002fmatk8yx2zv5p",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf7yog0031matk274u9s9q",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf80610046matk0wk672dx",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf82mj005bmatkcf6kxabh",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf7z0r003omatk2hh9j70n",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf7yog0031matk274u9s9q",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf80f5004tmatkx0wtotug",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf80610046matk0wk672dx",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf82sb005ymatkr4y8at9k",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf82mj005bmatkcf6kxabh",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 13,
+      "outbox": 6
+    },
+    "sold": {
+      "organizationId": "org-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+      "stock": {
+        "quantity": "0.000",
+        "available": "0.000",
+        "reserved": "0.000",
+        "value": "0.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf7vv4001tmatky59je45x",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf7xw8002fmatk8yx2zv5p",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf7yog0031matk274u9s9q",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf80610046matk0wk672dx",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf82mj005bmatkcf6kxabh",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf7z0r003omatk2hh9j70n",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf7yog0031matk274u9s9q",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf80f5004tmatkx0wtotug",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf80610046matk0wk672dx",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf82sb005ymatkr4y8at9k",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf82mj005bmatkcf6kxabh",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf83pa006mmatkuq3ow7a1",
+          "type": "SALE",
+          "quantity": "-3",
+          "value": "300.02",
+          "source": "sale-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+          "reverses": null
+        }
+      ],
+      "journals": [
+        {
+          "id": "cmvpf83x9006ymatkci4t45nc",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_AR",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_REVENUE",
+              "debit": "0.00",
+              "credit": "450.00"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "300.02",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "0.00",
+              "credit": "300.02"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf845e007dmatk1dbrvpg9",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_CASH",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_AR",
+              "debit": "0.00",
+              "credit": "450.00"
+            }
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "POS_SALE",
+          "purpose": "SALE_COMPLETION",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_PAYMENT",
+          "purpose": "PAYMENT_RECEIPT",
+          "status": "POSTED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+          "status": "COMPLETED",
+          "paymentStatus": "PAID"
+        }
+      ],
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "450.00",
+          "status": "PAID",
+          "refunded": "0.00"
+        }
+      ],
+      "refunds": 0,
+      "commits": 1,
+      "cash": "550.00",
+      "events": 15,
+      "outbox": 9
+    },
+    "corrected": {
+      "organizationId": "org-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+      "stock": {
+        "quantity": "3.000",
+        "available": "3.000",
+        "reserved": "0.000",
+        "value": "300.02"
+      },
+      "orders": [
+        {
+          "id": "cmvpf7vv4001tmatky59je45x",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf7xw8002fmatk8yx2zv5p",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf7yog0031matk274u9s9q",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf80610046matk0wk672dx",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf82mj005bmatkcf6kxabh",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf7z0r003omatk2hh9j70n",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf7yog0031matk274u9s9q",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf80f5004tmatkx0wtotug",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf80610046matk0wk672dx",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf82sb005ymatkr4y8at9k",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf82mj005bmatkcf6kxabh",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf83pa006mmatkuq3ow7a1",
+          "type": "SALE",
+          "quantity": "-3",
+          "value": "300.02",
+          "source": "sale-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf84x80085matkhxib09eu",
+          "type": "SALES_RETURN",
+          "quantity": "3",
+          "value": "300.02",
+          "source": "sale-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+          "reverses": "cmvpf83pa006mmatkuq3ow7a1"
+        }
+      ],
+      "journals": [
+        {
+          "id": "cmvpf83x9006ymatkci4t45nc",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_AR",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_REVENUE",
+              "debit": "0.00",
+              "credit": "450.00"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "300.02",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "0.00",
+              "credit": "300.02"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf845e007dmatk1dbrvpg9",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_CASH",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_AR",
+              "debit": "0.00",
+              "credit": "450.00"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf856m008hmatkuhb91qax",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_REVENUE",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_CASH",
+              "debit": "0.00",
+              "credit": "450.00"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "300.02",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "0.00",
+              "credit": "300.02"
+            }
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "POS_SALE",
+          "purpose": "SALE_COMPLETION",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_PAYMENT",
+          "purpose": "PAYMENT_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_REFUND",
+          "purpose": "REFUND",
+          "status": "POSTED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-5e42a32a-bcb4-4fad-bdcd-3126c306a056",
+          "status": "RETURNED",
+          "paymentStatus": "REFUNDED"
+        }
+      ],
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "450.00",
+          "status": "REFUNDED",
+          "refunded": "450.00"
+        }
+      ],
+      "refunds": 1,
+      "commits": 1,
+      "cash": "100.00",
+      "events": 17,
+      "outbox": 11
+    },
+    "accountingLimit": "Synthetic zero-tax rules; receiving accounting may be explicitly review-required, not assumed posted"
+  },
+  {
+    "scenario": "P3-RECEIVING",
+    "partial": {
+      "organizationId": "org-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+      "stock": {
+        "quantity": "2.000",
+        "available": "2.000",
+        "reserved": "0.000",
+        "value": "200.01"
+      },
+      "orders": [
+        {
+          "id": "cmvpf87sl00aumatkcgqlvmfk",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf8ace00bgmatkx2q9vbwr",
+          "status": "PARTIALLY_RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf8byz00c2matk9qpemb5g",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf8dpy00d7matk80w2mfvx",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf8cbk00cpmatkn84b6bta",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf8byz00c2matk9qpemb5g",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8dwu00dumatkezwnhqvj",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf8dpy00d7matk80w2mfvx",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 10,
+      "outbox": 4
+    },
+    "full": {
+      "organizationId": "org-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+      "stock": {
+        "quantity": "3.000",
+        "available": "3.000",
+        "reserved": "0.000",
+        "value": "300.02"
+      },
+      "orders": [
+        {
+          "id": "cmvpf87sl00aumatkcgqlvmfk",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf8ace00bgmatkx2q9vbwr",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf8byz00c2matk9qpemb5g",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf8dpy00d7matk80w2mfvx",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf8fq700ecmatkr0ed398l",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf8cbk00cpmatkn84b6bta",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf8byz00c2matk9qpemb5g",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8dwu00dumatkezwnhqvj",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf8dpy00d7matk80w2mfvx",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8fyd00ezmatkpcp1gbaz",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf8fq700ecmatkr0ed398l",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 13,
+      "outbox": 6
+    }
+  },
+  {
+    "scenario": "P3-CHAIN-void",
+    "received": {
+      "organizationId": "org-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+      "stock": {
+        "quantity": "3.000",
+        "available": "3.000",
+        "reserved": "0.000",
+        "value": "300.02"
+      },
+      "orders": [
+        {
+          "id": "cmvpf87sl00aumatkcgqlvmfk",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf8ace00bgmatkx2q9vbwr",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf8byz00c2matk9qpemb5g",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf8dpy00d7matk80w2mfvx",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf8fq700ecmatkr0ed398l",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf8cbk00cpmatkn84b6bta",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf8byz00c2matk9qpemb5g",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8dwu00dumatkezwnhqvj",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf8dpy00d7matk80w2mfvx",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8fyd00ezmatkpcp1gbaz",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf8fq700ecmatkr0ed398l",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 13,
+      "outbox": 6
+    },
+    "sold": {
+      "organizationId": "org-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+      "stock": {
+        "quantity": "0.000",
+        "available": "0.000",
+        "reserved": "0.000",
+        "value": "0.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf87sl00aumatkcgqlvmfk",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf8ace00bgmatkx2q9vbwr",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf8byz00c2matk9qpemb5g",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf8dpy00d7matk80w2mfvx",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf8fq700ecmatkr0ed398l",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf8cbk00cpmatkn84b6bta",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf8byz00c2matk9qpemb5g",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8dwu00dumatkezwnhqvj",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf8dpy00d7matk80w2mfvx",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8fyd00ezmatkpcp1gbaz",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf8fq700ecmatkr0ed398l",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8h2o00fnmatk7vcmbbvw",
+          "type": "SALE",
+          "quantity": "-3",
+          "value": "300.02",
+          "source": "sale-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+          "reverses": null
+        }
+      ],
+      "journals": [
+        {
+          "id": "cmvpf8hlr00fzmatkw73d35zg",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_AR",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_REVENUE",
+              "debit": "0.00",
+              "credit": "450.00"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "300.02",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "0.00",
+              "credit": "300.02"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf8hzs00gematkecy86hbd",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_CASH",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_AR",
+              "debit": "0.00",
+              "credit": "450.00"
+            }
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "POS_SALE",
+          "purpose": "SALE_COMPLETION",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_PAYMENT",
+          "purpose": "PAYMENT_RECEIPT",
+          "status": "POSTED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+          "status": "COMPLETED",
+          "paymentStatus": "PAID"
+        }
+      ],
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "450.00",
+          "status": "PAID",
+          "refunded": "0.00"
+        }
+      ],
+      "refunds": 0,
+      "commits": 1,
+      "cash": "550.00",
+      "events": 15,
+      "outbox": 9
+    },
+    "corrected": {
+      "organizationId": "org-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+      "stock": {
+        "quantity": "3.000",
+        "available": "3.000",
+        "reserved": "0.000",
+        "value": "300.02"
+      },
+      "orders": [
+        {
+          "id": "cmvpf87sl00aumatkcgqlvmfk",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf8ace00bgmatkx2q9vbwr",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf8byz00c2matk9qpemb5g",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf8dpy00d7matk80w2mfvx",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf8fq700ecmatkr0ed398l",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf8cbk00cpmatkn84b6bta",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf8byz00c2matk9qpemb5g",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8dwu00dumatkezwnhqvj",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf8dpy00d7matk80w2mfvx",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8fyd00ezmatkpcp1gbaz",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf8fq700ecmatkr0ed398l",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8h2o00fnmatk7vcmbbvw",
+          "type": "SALE",
+          "quantity": "-3",
+          "value": "300.02",
+          "source": "sale-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf8j1f00h6matkgds5bjxq",
+          "type": "SALES_RETURN",
+          "quantity": "3",
+          "value": "300.02",
+          "source": "sale-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+          "reverses": "cmvpf8h2o00fnmatk7vcmbbvw"
+        }
+      ],
+      "journals": [
+        {
+          "id": "cmvpf8hlr00fzmatkw73d35zg",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_AR",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_REVENUE",
+              "debit": "0.00",
+              "credit": "450.00"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "300.02",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "0.00",
+              "credit": "300.02"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf8hzs00gematkecy86hbd",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_CASH",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_AR",
+              "debit": "0.00",
+              "credit": "450.00"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf8jcr00hgmatkndtwv1sm",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_REVENUE",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_CASH",
+              "debit": "0.00",
+              "credit": "450.00"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "300.02",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "0.00",
+              "credit": "300.02"
+            }
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "POS_SALE",
+          "purpose": "SALE_COMPLETION",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_PAYMENT",
+          "purpose": "PAYMENT_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_VOID",
+          "purpose": "VOID",
+          "status": "POSTED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-4a906bd7-3430-4a90-ab0f-d1579409e427",
+          "status": "CANCELLED",
+          "paymentStatus": "CANCELLED"
+        }
+      ],
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "450.00",
+          "status": "CANCELLED",
+          "refunded": "0.00"
+        }
+      ],
+      "refunds": 0,
+      "commits": 1,
+      "cash": "100.00",
+      "events": 17,
+      "outbox": 11
+    },
+    "accountingLimit": "Synthetic zero-tax rules; receiving accounting may be explicitly review-required, not assumed posted"
+  },
+  {
+    "scenario": "P3-AUTH",
+    "before": {
+      "organizationId": "org-full-pos-f8846a46-43fc-434d-a594-bbd609c741f2",
+      "stock": {
+        "quantity": "0.000",
+        "available": "0.000",
+        "reserved": "0.000",
+        "value": "0.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf8kro00jtmatk6zzr66z3",
+          "status": "APPROVED",
+          "quantities": [
+            "0"
+          ]
+        }
+      ],
+      "receipts": [],
+      "movements": [],
+      "journals": [],
+      "batches": [],
+      "sales": [
+        {
+          "id": "sale-full-pos-f8846a46-43fc-434d-a594-bbd609c741f2",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 2,
+      "outbox": 0
+    },
+    "after": {
+      "organizationId": "org-full-pos-f8846a46-43fc-434d-a594-bbd609c741f2",
+      "stock": {
+        "quantity": "0.000",
+        "available": "0.000",
+        "reserved": "0.000",
+        "value": "0.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf8kro00jtmatk6zzr66z3",
+          "status": "APPROVED",
+          "quantities": [
+            "0"
+          ]
+        }
+      ],
+      "receipts": [],
+      "movements": [],
+      "journals": [],
+      "batches": [],
+      "sales": [
+        {
+          "id": "sale-full-pos-f8846a46-43fc-434d-a594-bbd609c741f2",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 2,
+      "outbox": 0
+    },
+    "limitation": "Current stored receiving authority; not browser session middleware or a same-tenant location-assignment policy"
+  },
+  {
+    "scenario": "P3-HELD",
+    "before": {
+      "organizationId": "org-full-pos-27acc367-a395-4505-95c1-a264ed7e6fa3",
+      "stock": {
+        "quantity": "0.000",
+        "available": "0.000",
+        "reserved": "0.000",
+        "value": "0.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf8qpm00nvmatkq4ptb2pa",
+          "status": "APPROVED",
+          "quantities": [
+            "0"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf8sut00ohmatk7zjkbkfo",
+          "status": "HELD",
+          "posted": false
+        }
+      ],
+      "movements": [],
+      "journals": [],
+      "batches": [],
+      "sales": [
+        {
+          "id": "sale-full-pos-27acc367-a395-4505-95c1-a264ed7e6fa3",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 3,
+      "outbox": 0
+    },
+    "after": {
+      "organizationId": "org-full-pos-27acc367-a395-4505-95c1-a264ed7e6fa3",
+      "stock": {
+        "quantity": "1.000",
+        "available": "1.000",
+        "reserved": "0.000",
+        "value": "100.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf8qpm00nvmatkq4ptb2pa",
+          "status": "PARTIALLY_RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf8sut00ohmatk7zjkbkfo",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf8utb00pematk5iuttm00",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf8sut00ohmatk7zjkbkfo",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-27acc367-a395-4505-95c1-a264ed7e6fa3",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 6,
+      "outbox": 2
+    }
+  },
+  {
+    "scenario": "P3-RECEIVING",
+    "partial": {
+      "organizationId": "org-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+      "stock": {
+        "quantity": "2.000",
+        "available": "2.000",
+        "reserved": "0.000",
+        "value": "200.01"
+      },
+      "orders": [
+        {
+          "id": "cmvpf8xqf00rvmatkd871sdpn",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf8yvo00shmatk2urvk3xa",
+          "status": "PARTIALLY_RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf90y000t3matko96u3sa6",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf92f700ufmatk5g6g0dca",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf918n00tqmatkk7vsygz2",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf90y000t3matko96u3sa6",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf92me00v2matkl1uafkbe",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf92f700ufmatk5g6g0dca",
+          "reverses": null
+        }
+      ],
+      "journals": [
+        {
+          "id": "cmvpf91mt00twmatkbwdn4lu5",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.00"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf92qt00v8matka4wlc6fz",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.01",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.01"
+            }
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 10,
+      "outbox": 4
+    },
+    "full": {
+      "organizationId": "org-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+      "stock": {
+        "quantity": "3.000",
+        "available": "3.000",
+        "reserved": "0.000",
+        "value": "300.02"
+      },
+      "orders": [
+        {
+          "id": "cmvpf8xqf00rvmatkd871sdpn",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf8yvo00shmatk2urvk3xa",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf90y000t3matko96u3sa6",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf92f700ufmatk5g6g0dca",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf941c00vrmatklttioo8v",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf918n00tqmatkk7vsygz2",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf90y000t3matko96u3sa6",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf92me00v2matkl1uafkbe",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf92f700ufmatk5g6g0dca",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf94cv00wematkvu91ctm8",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf941c00vrmatklttioo8v",
+          "reverses": null
+        }
+      ],
+      "journals": [
+        {
+          "id": "cmvpf91mt00twmatkbwdn4lu5",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.00"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf92qt00v8matka4wlc6fz",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.01",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.01"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf94hy00wkmatk6ej9o9yd",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.01",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.01"
+            }
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 13,
+      "outbox": 6
+    }
+  },
+  {
+    "scenario": "P3-ACCOUNTING",
+    "received": {
+      "organizationId": "org-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+      "stock": {
+        "quantity": "3.000",
+        "available": "3.000",
+        "reserved": "0.000",
+        "value": "300.02"
+      },
+      "orders": [
+        {
+          "id": "cmvpf8xqf00rvmatkd871sdpn",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf8yvo00shmatk2urvk3xa",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf90y000t3matko96u3sa6",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf92f700ufmatk5g6g0dca",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf941c00vrmatklttioo8v",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf918n00tqmatkk7vsygz2",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf90y000t3matko96u3sa6",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf92me00v2matkl1uafkbe",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf92f700ufmatk5g6g0dca",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf94cv00wematkvu91ctm8",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf941c00vrmatklttioo8v",
+          "reverses": null
+        }
+      ],
+      "journals": [
+        {
+          "id": "cmvpf91mt00twmatkbwdn4lu5",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.00"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf92qt00v8matka4wlc6fz",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.01",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.01"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf94hy00wkmatk6ej9o9yd",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.01",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.01"
+            }
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 13,
+      "outbox": 6
+    },
+    "sold": {
+      "organizationId": "org-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+      "stock": {
+        "quantity": "0.000",
+        "available": "0.000",
+        "reserved": "0.000",
+        "value": "0.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf8xqf00rvmatkd871sdpn",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf8yvo00shmatk2urvk3xa",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf90y000t3matko96u3sa6",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf92f700ufmatk5g6g0dca",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf941c00vrmatklttioo8v",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf918n00tqmatkk7vsygz2",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf90y000t3matko96u3sa6",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf92me00v2matkl1uafkbe",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf92f700ufmatk5g6g0dca",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf94cv00wematkvu91ctm8",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf941c00vrmatklttioo8v",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf95bi00x9matkqmm1rmzm",
+          "type": "SALE",
+          "quantity": "-3",
+          "value": "300.02",
+          "source": "sale-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+          "reverses": null
+        }
+      ],
+      "journals": [
+        {
+          "id": "cmvpf91mt00twmatkbwdn4lu5",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.00"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf92qt00v8matka4wlc6fz",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.01",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.01"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf94hy00wkmatk6ej9o9yd",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.01",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.01"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf95fa00xlmatkrgjtgiob",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_AR",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_REVENUE",
+              "debit": "0.00",
+              "credit": "450.00"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "300.02",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "0.00",
+              "credit": "300.02"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf95jb00y0matkzhh8h2u0",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_CASH",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_AR",
+              "debit": "0.00",
+              "credit": "450.00"
+            }
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_SALE",
+          "purpose": "SALE_COMPLETION",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_PAYMENT",
+          "purpose": "PAYMENT_RECEIPT",
+          "status": "POSTED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+          "status": "COMPLETED",
+          "paymentStatus": "PAID"
+        }
+      ],
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "450.00",
+          "status": "PAID",
+          "refunded": "0.00"
+        }
+      ],
+      "refunds": 0,
+      "commits": 1,
+      "cash": "550.00",
+      "events": 15,
+      "outbox": 9
+    },
+    "corrected": {
+      "organizationId": "org-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+      "stock": {
+        "quantity": "3.000",
+        "available": "3.000",
+        "reserved": "0.000",
+        "value": "300.02"
+      },
+      "orders": [
+        {
+          "id": "cmvpf8xqf00rvmatkd871sdpn",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf8yvo00shmatk2urvk3xa",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf90y000t3matko96u3sa6",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf92f700ufmatk5g6g0dca",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf941c00vrmatklttioo8v",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf918n00tqmatkk7vsygz2",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf90y000t3matko96u3sa6",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf92me00v2matkl1uafkbe",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf92f700ufmatk5g6g0dca",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf94cv00wematkvu91ctm8",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf941c00vrmatklttioo8v",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf95bi00x9matkqmm1rmzm",
+          "type": "SALE",
+          "quantity": "-3",
+          "value": "300.02",
+          "source": "sale-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf961e00ysmatkyvyiwinw",
+          "type": "SALES_RETURN",
+          "quantity": "3",
+          "value": "300.02",
+          "source": "sale-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+          "reverses": "cmvpf95bi00x9matkqmm1rmzm"
+        }
+      ],
+      "journals": [
+        {
+          "id": "cmvpf91mt00twmatkbwdn4lu5",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.00"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf92qt00v8matka4wlc6fz",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.01",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.01"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf94hy00wkmatk6ej9o9yd",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_STOCK",
+              "debit": "100.01",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_GRNI",
+              "debit": "0.00",
+              "credit": "100.01"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf95fa00xlmatkrgjtgiob",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_AR",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_REVENUE",
+              "debit": "0.00",
+              "credit": "450.00"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "300.02",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "0.00",
+              "credit": "300.02"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf95jb00y0matkzhh8h2u0",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_CASH",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_AR",
+              "debit": "0.00",
+              "credit": "450.00"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf965400z4matkxraymj84",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_REVENUE",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_CASH",
+              "debit": "0.00",
+              "credit": "450.00"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "300.02",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "0.00",
+              "credit": "300.02"
+            }
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_SALE",
+          "purpose": "SALE_COMPLETION",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_PAYMENT",
+          "purpose": "PAYMENT_RECEIPT",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_REFUND",
+          "purpose": "REFUND",
+          "status": "POSTED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-3937da04-774a-4a26-b6c7-18bf66649be1",
+          "status": "RETURNED",
+          "paymentStatus": "REFUNDED"
+        }
+      ],
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "450.00",
+          "status": "REFUNDED",
+          "refunded": "450.00"
+        }
+      ],
+      "refunds": 1,
+      "commits": 1,
+      "cash": "100.00",
+      "events": 17,
+      "outbox": 11
+    },
+    "limitation": "Synthetic inventory/accrual rules, zero tax; supplier invoice/payment and statutory country chart not exercised"
+  },
+  {
+    "scenario": "P3-RECEIVING",
+    "partial": {
+      "organizationId": "org-full-pos-0383bfb0-f681-4882-935d-e1dfa4ca67fb",
+      "stock": {
+        "quantity": "2.000",
+        "available": "2.000",
+        "reserved": "0.000",
+        "value": "200.01"
+      },
+      "orders": [
+        {
+          "id": "cmvpf98jx011hmatkk1hvym5e",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf99fp0123matk1boapgk3",
+          "status": "PARTIALLY_RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf9a5m012pmatkcq8whtzu",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf9aul013umatkhftpykeo",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf9abb013cmatk4w6rhs3j",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf9a5m012pmatkcq8whtzu",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf9ay9014hmatklcz7s586",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf9aul013umatkhftpykeo",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-0383bfb0-f681-4882-935d-e1dfa4ca67fb",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 10,
+      "outbox": 4
+    },
+    "full": {
+      "organizationId": "org-full-pos-0383bfb0-f681-4882-935d-e1dfa4ca67fb",
+      "stock": {
+        "quantity": "3.000",
+        "available": "3.000",
+        "reserved": "0.000",
+        "value": "300.02"
+      },
+      "orders": [
+        {
+          "id": "cmvpf98jx011hmatkk1hvym5e",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf99fp0123matk1boapgk3",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf9a5m012pmatkcq8whtzu",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf9aul013umatkhftpykeo",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf9bm9014zmatkvjbfhdn5",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf9abb013cmatk4w6rhs3j",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf9a5m012pmatkcq8whtzu",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf9ay9014hmatklcz7s586",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf9aul013umatkhftpykeo",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf9bpj015mmatkx7mgzij9",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf9bm9014zmatkvjbfhdn5",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-0383bfb0-f681-4882-935d-e1dfa4ca67fb",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 13,
+      "outbox": 6
+    }
+  },
+  {
+    "scenario": "P3-CONTENTION",
+    "blockedBackends": 2,
+    "waits": [
+      {
+        "pid": 8440,
+        "query": "INSERT INTO \"public\".\"business_events\" (\"id\",\"organizationId\",\"eventType\",\"eventSource\",\"schemaVersion\",\"status\",\"idempotencyKey\",\"payloadHash\",\"payload\",\"correlationId\",\"occurredAt\",\"recordedAt\",\"actorId\",\"locationId\",\"sourceType\",\"sourceId\",\"documentHash\",\"metadata\",\"createdAt\",\"updatedAt\") VALUES ($1,$2,$3,CAST($4::text AS \"public\".\"BusinessEventSource\"),$5,CAST($6::text AS \"public\".\"BusinessEventStatus\"),$7,$8,$9,$10,$11,$12,$13,$14,CAST($15::text AS \"public\".\"AccountingSourceType\"),$16,$17,$18,$19,$20) RETURNING \"public\".\"business_events\".\"id\""
+      },
+      {
+        "pid": 33056,
+        "query": "UPDATE \"public\".\"inventory_levels\" SET \"quantityOnHand\" = $1, \"quantityReserved\" = $2, \"quantityAvailable\" = $3, \"averageCost\" = $4, \"totalValue\" = $5, \"lastTransactionAt\" = $6, \"version\" = (\"public\".\"inventory_levels\".\"version\" + $7), \"updatedAt\" = $8 WHERE (\"public\".\"inventory_levels\".\"id\" = $9 AND \"public\".\"inventory_levels\".\"version\" = $10 AND \"public\".\"inventory_levels\".\"quantityOnHand\" >= $11 AND \"public\".\"inventory_levels\".\"quantityAvailable\" >= $12)"
+      }
+    ],
+    "results": [
+      "rejected",
+      "fulfilled"
+    ],
+    "secondCash": "550",
+    "after": {
+      "organizationId": "org-full-pos-0383bfb0-f681-4882-935d-e1dfa4ca67fb",
+      "stock": {
+        "quantity": "0.000",
+        "available": "0.000",
+        "reserved": "0.000",
+        "value": "0.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf98jx011hmatkk1hvym5e",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        },
+        {
+          "id": "cmvpf99fp0123matk1boapgk3",
+          "status": "RECEIVED",
+          "quantities": [
+            "2"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf9a5m012pmatkcq8whtzu",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf9aul013umatkhftpykeo",
+          "status": "RECEIVED",
+          "posted": true
+        },
+        {
+          "id": "cmvpf9bm9014zmatkvjbfhdn5",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf9abb013cmatk4w6rhs3j",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf9a5m012pmatkcq8whtzu",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf9ay9014hmatklcz7s586",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf9aul013umatkhftpykeo",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf9bpj015mmatkx7mgzij9",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.01",
+          "source": "cmvpf9bm9014zmatkvjbfhdn5",
+          "reverses": null
+        },
+        {
+          "id": "cmvpf9cr1016wmatkp7w4jj1s",
+          "type": "SALE",
+          "quantity": "-3",
+          "value": "300.02",
+          "source": "cmvpf9c2b016cmatk17rpw68a",
+          "reverses": null
+        }
+      ],
+      "journals": [
+        {
+          "id": "cmvpf9cxj0178matky9ea0d5b",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_AR",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_REVENUE",
+              "debit": "0.00",
+              "credit": "450.00"
+            },
+            {
+              "account": "TEST_COGS",
+              "debit": "300.02",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_STOCK",
+              "debit": "0.00",
+              "credit": "300.02"
+            }
+          ]
+        },
+        {
+          "id": "cmvpf9d39017nmatk4wqh53tp",
+          "status": "POSTED",
+          "lines": [
+            {
+              "account": "TEST_CASH",
+              "debit": "450.00",
+              "credit": "0.00"
+            },
+            {
+              "account": "TEST_AR",
+              "debit": "0.00",
+              "credit": "450.00"
+            }
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        },
+        {
+          "source": "POS_SALE",
+          "purpose": "SALE_COMPLETION",
+          "status": "POSTED"
+        },
+        {
+          "source": "POS_PAYMENT",
+          "purpose": "PAYMENT_RECEIPT",
+          "status": "POSTED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-0383bfb0-f681-4882-935d-e1dfa4ca67fb",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        },
+        {
+          "id": "cmvpf9c2b016cmatk17rpw68a",
+          "status": "COMPLETED",
+          "paymentStatus": "PAID"
+        }
+      ],
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "450.00",
+          "status": "PAID",
+          "refunded": "0.00"
+        }
+      ],
+      "refunds": 0,
+      "commits": 1,
+      "cash": "100.00",
+      "events": 15,
+      "outbox": 9
+    }
+  },
+  {
+    "scenario": "P3-RECEIPT-DUP",
+    "results": [
+      {
+        "kind": "receive",
+        "orderId": "cmvpf9f6w01a9matklj54s1nz",
+        "goodsReceiptId": "cmvpf9fxv01avmatkvy2q53y3",
+        "receiptNumber": "GR-000001",
+        "requestReference": "receive:d0b53aa5-e101-4ec2-8de2-3cfcc279df07",
+        "reviewedRevision": "b1271d54a0e3782e0f1940a1b339360fd490a0314834ac801efc92db282dbee7",
+        "actorId": "cmvpf9ew1019lmatknc3c9pws",
+        "recordedAt": "2026-10-26T15:39:12.123Z",
+        "disposition": "RECEIVED",
+        "quantity": "1",
+        "value": "100",
+        "currency": "XAF",
+        "stockStatus": "recorded",
+        "accountingStatus": "review_required",
+        "replayed": false
+      },
+      {
+        "kind": "receive",
+        "orderId": "cmvpf9f6w01a9matklj54s1nz",
+        "goodsReceiptId": "cmvpf9fxv01avmatkvy2q53y3",
+        "receiptNumber": "GR-000001",
+        "requestReference": "receive:d0b53aa5-e101-4ec2-8de2-3cfcc279df07",
+        "reviewedRevision": "b1271d54a0e3782e0f1940a1b339360fd490a0314834ac801efc92db282dbee7",
+        "actorId": "cmvpf9ew1019lmatknc3c9pws",
+        "recordedAt": "2026-10-26T15:39:12.123Z",
+        "disposition": "RECEIVED",
+        "quantity": "1",
+        "value": "100",
+        "currency": "XAF",
+        "stockStatus": "recorded",
+        "accountingStatus": "review_required",
+        "replayed": true
+      }
+    ],
+    "after": {
+      "organizationId": "org-full-pos-c6842a0a-32c7-4ee8-9158-ace76e95e4b9",
+      "stock": {
+        "quantity": "1.000",
+        "available": "1.000",
+        "reserved": "0.000",
+        "value": "100.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf9f6w01a9matklj54s1nz",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf9fxv01avmatkvy2q53y3",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf9g4d01bimatkkvm294ri",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf9fxv01avmatkvy2q53y3",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-c6842a0a-32c7-4ee8-9158-ace76e95e4b9",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 5,
+      "outbox": 2
+    }
+  },
+  {
+    "scenario": "P3-RECEIPT-ROLLBACK",
+    "before": {
+      "organizationId": "org-full-pos-0e2fa969-e866-46a4-828a-95858fa61f88",
+      "stock": {
+        "quantity": "0.000",
+        "available": "0.000",
+        "reserved": "0.000",
+        "value": "0.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf9hhs01dqmatkqe95apqf",
+          "status": "APPROVED",
+          "quantities": [
+            "0"
+          ]
+        }
+      ],
+      "receipts": [],
+      "movements": [],
+      "journals": [],
+      "batches": [],
+      "sales": [
+        {
+          "id": "sale-full-pos-0e2fa969-e866-46a4-828a-95858fa61f88",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 2,
+      "outbox": 0
+    },
+    "after": {
+      "organizationId": "org-full-pos-0e2fa969-e866-46a4-828a-95858fa61f88",
+      "stock": {
+        "quantity": "1.000",
+        "available": "1.000",
+        "reserved": "0.000",
+        "value": "100.00"
+      },
+      "orders": [
+        {
+          "id": "cmvpf9hhs01dqmatkqe95apqf",
+          "status": "RECEIVED",
+          "quantities": [
+            "1"
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "id": "cmvpf9iyl01ffmatkaw439gxh",
+          "status": "RECEIVED",
+          "posted": true
+        }
+      ],
+      "movements": [
+        {
+          "id": "cmvpf9j0w01g2matkh4dpquu0",
+          "type": "PURCHASE_RECEIPT",
+          "quantity": "1",
+          "value": "100.00",
+          "source": "cmvpf9iyl01ffmatkaw439gxh",
+          "reverses": null
+        }
+      ],
+      "journals": [],
+      "batches": [
+        {
+          "source": "GOODS_RECEIPT",
+          "purpose": "GOODS_RECEIPT",
+          "status": "FAILED"
+        }
+      ],
+      "sales": [
+        {
+          "id": "sale-full-pos-0e2fa969-e866-46a4-828a-95858fa61f88",
+          "status": "DRAFT",
+          "paymentStatus": "PENDING"
+        }
+      ],
+      "payments": [],
+      "refunds": 0,
+      "commits": 0,
+      "cash": "100.00",
+      "events": 5,
+      "outbox": 2
+    },
+    "finalFailureReached": true
+  }
+]

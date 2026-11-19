@@ -1,0 +1,79 @@
+{
+  "id": "P04-R07",
+  "title": "Clear private inventory state after a denied visible refresh",
+  "phase": 1,
+  "kind": "implementation",
+  "depends_on": [
+    "P01",
+    "P02",
+    "P04-R03",
+    "P04-R06",
+    "P04-R08"
+  ],
+  "milestone": "M1",
+  "owner_role": "Inventory frontend + authentication/backend + independent browser QA",
+  "domains": [
+    "item",
+    "inventory",
+    "security",
+    "auth"
+  ],
+  "audit_gaps": [
+    "G04"
+  ],
+  "status": "not_started",
+  "current_state": "P04-V02 independently confirmed six EN/FR actual Refresh completions after revocation, expiry or permission removal retaining the previously loaded private item and a success notification, with no new item bytes or unauthorized database writes. Three EN follow-ups confirm failed response envelopes after current authority loss; exact named denial-code mapping remains unestablished. Eight corrected authorized recovery checks passed. Repair remains unimplemented and unauthorized.",
+  "tasks": [
+    "Refresh ItemManagement.handleRefresh, useOrgItemsNew.refetch, the current getOrgItems public failure envelope and sensitive query-cache ownership; capture hashes and exact completion/recovery behavior.",
+    "Handle failed authoritative reads after current authority loss by clearing or suppressing private inventory state and unauthorized controls, showing safe recovery and avoiding a success notification; inspect the existing structured public failure contract, preserving safe errors and avoiding brittle message parsing.",
+    "Handle the required session, permission and module loss paths using the repaired backend contracts. Keep other private consumers under their own V01 qualification rather than asserting global cache clearance.",
+    "Run actual EN/FR visible Refresh, history/reload and authorized recovery with real signed sessions, native database comparisons and response/render evidence on the integrated candidate.",
+    "Obtain independent review; retain genuine native visibility/BFCache-hit requirements as explicit gaps until actually exercised, without forcing browser eligibility or claiming instantaneous push revocation."
+  ],
+  "acceptance_criteria": [
+    "A completed failed authoritative Refresh after current authority loss does not display prior private inventory rows/data or unauthorized controls and does not report success.",
+    "Revoked/expired, permission-removed and module-disabled cases return no new private bytes and cause no unauthorized writes; a restored/independent authorized actor still reads and refreshes normally.",
+    "The public failure contract remains safe and compatible; broader error or shared-cache changes are split before scope expansion.",
+    "Browser observations distinguish response privacy, existing painted/cache state, actual UI completion and native visibility/BFCache coverage; no pass is inferred from a direct API request alone."
+  ],
+  "evidence_refs": [
+    "E26"
+  ],
+  "rollback_recovery": "Revert only owned repair while retaining production admission block; never restore weaker authority as an accepted release. Revoke synthetic sessions, stop owned local runtime/DB, retain evidence. No commit/push, production flags/data changes or deployment.",
+  "effort": "M",
+  "confidence": "high",
+  "model_tier": "strongest_available",
+  "execution_boundary": "One private inventory list recovery contract after authoritative access denial. Dependent qualification waits for current auth and module enforcement repairs. No product implementation authorized by this qualification.",
+  "verification_recipes": [
+    "C01",
+    "C02",
+    "C05",
+    "C06",
+    "C07"
+  ],
+  "required_decisions": [],
+  "source_locations": [
+    "components/ui/groups/inventory/ItemManagement.tsx",
+    "hooks/useAllItemQueries.ts",
+    "actions/itemsShow/getOrgItems.ts",
+    "components/inventory/inventory-items-copy.ts",
+    "plans/stoquify-production-readiness-2026-10-28/execution/P04-V02/qualification-20261109-r1/inventory/supplement03-scope-and-case-map.json"
+  ],
+  "branch_pr_workflow": "Future codex/ branch or explicitly owned local diff from approved candidate; inspect/stage only owned hunks if commit requested. PR/CI admin waits for authenticated authorization; never auto-merge/deploy.",
+  "evidence_record": {
+    "candidate_id": null,
+    "source_hashes": "execution/P04-V02/qualification-20261109-r1/inventory/supplement03-scope-and-case-map.json",
+    "commands": null,
+    "source_review": "execution/P04-R07/proposal-20261109-r1/PROPOSAL.md",
+    "mocked_tests": null,
+    "native_database": null,
+    "authenticated_browser": null,
+    "provider_hosted": null,
+    "operator": null,
+    "cleanup": null,
+    "reviewer": null
+  },
+  "parent_id": "P04",
+  "implementation_authorized": false,
+  "derived_from": "P04-V02"
+}

@@ -7,7 +7,6 @@ import {
   approveTimeFoundation,
   approveWorkSchedule,
   assignWorkSchedule,
-  buildOperationalAttendanceCertification,
   createTimeFoundation,
   decideOperationalTimeRequest,
   getManagedOperationalTimeInbox,
@@ -16,7 +15,7 @@ import {
   requestOperationalTime,
   resolveOperationalTimeAnomaly,
 } from "@/services/hris/operational-time.service"
-import { certifyHrisTimeLeaveAttendance } from "@/services/hris/time-leave.service"
+import { certifyOperationalAttendance } from "@/services/hris/operational-attendance.service"
 
 function record(input: unknown) {
   return input && typeof input === "object" && !Array.isArray(input)
@@ -149,18 +148,12 @@ const certifyOperationalAttendanceMutation = mutation(
   "hris.people.read",
   "HrisOperationalAttendanceCertification",
   async (input, context) => {
-    const certification = await buildOperationalAttendanceCertification({
+    return certifyOperationalAttendance({
       ...input,
       organizationId: context.orgId,
       actorId: context.userId,
       actorPermissions: context.permissions,
     } as never)
-    return certifyHrisTimeLeaveAttendance({
-      ...certification,
-      organizationId: context.orgId,
-      actorId: context.userId,
-      actorPermissions: context.permissions,
-    })
   },
 )
 

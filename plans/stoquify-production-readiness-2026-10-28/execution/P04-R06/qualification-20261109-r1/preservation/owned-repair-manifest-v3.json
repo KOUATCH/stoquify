@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-09T20:17:57.152Z",
+  "supersedes": "owned-repair-manifest-v2.json",
+  "files": [
+    {
+      "path": "lib/auth.ts",
+      "sha256": "181e15aad556024353b1e988cce6ccb5eb9679dfc50620427b81aa059a8c7064"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b"
+    },
+    {
+      "path": "lib/security/__tests__/auth-current-authority.test.ts",
+      "sha256": "3b299762f485a4ab0f0ce9e281fcc2e7ac18ea20e61eebbb0c72dbba7744070c"
+    },
+    {
+      "path": "lib/security/__tests__/auth-session.test.ts",
+      "sha256": "ac5b6a129cc5fff4816147d201fa06a9a10b610a9f206686c7cdbfd9f2314873"
+    }
+  ],
+  "productFiles": [
+    "lib/auth.ts",
+    "lib/security/auth-session.ts"
+  ],
+  "tests": [
+    "lib/security/__tests__/auth-current-authority.test.ts",
+    "lib/security/__tests__/auth-session.test.ts"
+  ]
+}

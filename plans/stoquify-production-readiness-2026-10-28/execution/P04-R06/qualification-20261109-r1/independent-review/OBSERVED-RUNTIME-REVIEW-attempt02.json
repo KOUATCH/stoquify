@@ -1,0 +1,1311 @@
+{
+  "at": "2026-11-10T11:12:26.036Z",
+  "reviewer": "/root/r06_review",
+  "passed": false,
+  "reviewComplete": true,
+  "candidateId": "p04-r06-full-4661f767924e",
+  "artifactSha256": "4cc40546c6caebe2df6b35ff7b1c01f756387199b4530a9a4014bc5f7f70de73",
+  "scope": "Independent actual review of the unchanged58-group attempt02; later supplements must remain separate",
+  "summary": {
+    "planned": 58,
+    "passed": 53,
+    "failed": 5,
+    "notRun": 0,
+    "requests": 87,
+    "browserObservations": 6
+  },
+  "lanes": {
+    "realHttpDatabase": {
+      "passed": 49,
+      "failed": 2
+    },
+    "directApi": {
+      "passed": 1,
+      "failed": 0
+    },
+    "renderedBrowser": {
+      "passed": 3,
+      "failed": 3
+    }
+  },
+  "completedFailures": [
+    {
+      "id": "R06-C-login",
+      "error": "The expression evaluated to a falsy value:\n\n  assert(new Date(after.user.lastLogin).getTime()>=requestedAt&&new Date(after.user.lastLogin).getTime()<=finishedAt)\n",
+      "failureClass": "observed_assertion_failure"
+    },
+    {
+      "id": "R06-C-origin",
+      "error": "Unreviewed session insertion/update\n+ actual - expected\n\n+ undefined\n- 'bb734d94ddf3a2757e4bfda4b2807e4427b9f0ac05a876b58a21aa66d2b503c8'\n",
+      "failureClass": "observed_assertion_failure"
+    },
+    {
+      "id": "R06-UI-en-restored",
+      "error": "Browser response capture incomplete",
+      "failureClass": "observed_assertion_failure"
+    },
+    {
+      "id": "R06-UI-fr-authorized",
+      "error": "Browser response capture incomplete",
+      "failureClass": "observed_assertion_failure"
+    },
+    {
+      "id": "R06-UI-fr-restored",
+      "error": "Browser response capture incomplete",
+      "failureClass": "observed_assertion_failure"
+    }
+  ],
+  "independentChecks": {
+    "embeddedAuthMatchesBrowserResult": true,
+    "all58UniquePlannedIDs": true,
+    "durableEffectPairsReconciled": 59,
+    "signedCacheWireProofs": 42,
+    "signedCacheWireProofsAllPass": true,
+    "minimumCacheSecondsRemainingAfterResponse": 209.4800000190735,
+    "portsReleased": true,
+    "artifactsUnchanged": true,
+    "runnerCleanupErrors": []
+  },
+  "expiryProvenance": [
+    {
+      "id": "R06-N-expired-get-session",
+      "passed": true,
+      "status": 200,
+      "beforePresent": true,
+      "beforeExpiresAt": "1970-01-01T01:00:00",
+      "afterPresent": false,
+      "deletedCount": 1
+    },
+    {
+      "id": "R06-N-expired-list-sessions",
+      "passed": true,
+      "status": 401,
+      "beforePresent": false,
+      "afterPresent": false,
+      "deletedCount": 0
+    },
+    {
+      "id": "R06-N-expired-list-accounts",
+      "passed": true,
+      "status": 401,
+      "beforePresent": false,
+      "afterPresent": false,
+      "deletedCount": 0
+    },
+    {
+      "id": "R06-N-expired-unlink-account",
+      "passed": true,
+      "status": 401,
+      "beforePresent": false,
+      "afterPresent": false,
+      "deletedCount": 0
+    },
+    {
+      "id": "R06-N-expired-verify-password",
+      "passed": true,
+      "status": 401,
+      "beforePresent": false,
+      "afterPresent": false,
+      "deletedCount": 0
+    }
+  ],
+  "observations": [
+    "All completed invalid-authority negative groups passed their recorded denial and database assertions;59 effect records were independently reconstructed from durable snapshot digests.",
+    "The42 legacy-cache request proofs bind verified signed payloads and unchanged actual-wire cache cookies, with positive lifetime through response.",
+    "Expired get-session encountered and removed its still-present expired target. Later expired-labelled calls replayed after that removal; three new retained-row probes are being prepared.",
+    "Foreign-Origin unlink denied403. Cookie-free foreign-Origin sign-in returned200 with user/token and a session cookie, with user/session/audit writes. Compatibility versus defect classification remains pending actual protocol/source analysis; original gate failed.",
+    "Credential timestamp assertion failed before wrong-password/inactive/locked credential subscenarios completed. Timestamp representation is under investigation; do not infer those unexecuted subscenarios passed.",
+    "All six screenshots were visually inspected: authorized/restored EN/FR profiles show their fixture identity and invalidated reloads show login with no profile identity. Three positive browser groups remain failed because response capture was incomplete.",
+    "Direct API current active result and precise inactive/revoked denial results passed against the real isolated database."
+  ],
+  "effects": [
+    {
+      "id": "R06-P-get-session",
+      "checkPassed": true,
+      "before": "snapshot-R06-P-get-session-before-1794308573621-5b5e78b6-b125-41fc-b1d6-9de01aaeb7a2.json",
+      "after": "snapshot-R06-P-get-session-after-1794308575553-29d0e8a3-37c3-4d8b-8224-72d1b0226117.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-P-list-sessions",
+      "checkPassed": true,
+      "before": "snapshot-R06-P-list-sessions-before-1794308577384-0bbf4014-ad4d-4838-8cb1-bf159a1fa2a1.json",
+      "after": "snapshot-R06-P-list-sessions-after-1794308579405-4c31b4c4-6685-4fd1-b394-9f8dc2690eb7.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-P-list-accounts",
+      "checkPassed": true,
+      "before": "snapshot-R06-P-list-accounts-before-1794308581516-ccd602b0-cafa-40a5-bed8-464616588601.json",
+      "after": "snapshot-R06-P-list-accounts-after-1794308583708-1d11da1c-f862-4197-b3d0-d2c42e7cc6f1.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-P-verify-password",
+      "checkPassed": true,
+      "before": "snapshot-R06-P-verify-password-before-1794308585482-5bcbb97e-6199-4680-a8c8-e7f5cf637ae5.json",
+      "after": "snapshot-R06-P-verify-password-after-1794308587144-d98fc1e1-d638-45d2-89de-e51ff9703536.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-P-unlink",
+      "checkPassed": true,
+      "before": "snapshot-R06-P-unlink-before-1794308588981-ed5ea5d6-3140-4970-abb2-a949c26a3b53.json",
+      "after": "snapshot-R06-P-unlink-after-1794308591032-5dd6b1ad-3c99-471a-88d7-75e2c7adca5e.json",
+      "businessEqual": false,
+      "changedBusinessTables": [
+        "accounts"
+      ],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-P-profile",
+      "checkPassed": true,
+      "before": "snapshot-R06-P-profile-before-1794308593173-4785a72a-f1d4-43a0-963b-c7bc0927f9b1.json",
+      "after": "snapshot-R06-P-profile-after-1794308594811-60cad94f-9dba-4b76-9933-f2cdafb6f126.json",
+      "businessEqual": false,
+      "changedBusinessTables": [
+        "users"
+      ],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [
+        {
+          "userId": "p04r06-active",
+          "action": "SELF_PROFILE_UPDATED",
+          "entityType": "SelfProfile"
+        }
+      ],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-P-independent-session",
+      "checkPassed": true,
+      "before": "snapshot-R06-P-independent-session-before-1794308631760-5f2f8389-74c1-432c-ad67-98f3d682b6b7.json",
+      "after": "snapshot-R06-P-independent-session-after-1794308634388-b0f27c1b-c837-4321-9f5a-7ad245ae3608.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-revoked-get-session",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-revoked-get-session-before-1794308636344-32653d0e-9efb-4676-8538-0acc6dfb467d.json",
+      "after": "snapshot-R06-N-revoked-get-session-after-1794308638341-a90bf079-0236-4717-bc4b-dfd73c9d3aa6.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-revoked-list-sessions",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-revoked-list-sessions-before-1794308640306-24204e27-c2b5-4bcb-9ab6-624bb17eab0e.json",
+      "after": "snapshot-R06-N-revoked-list-sessions-after-1794308642502-76dc30ff-933d-4f9e-a8b5-1142a17a0fae.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-revoked-list-accounts",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-revoked-list-accounts-before-1794308644759-e25ad6fa-dc00-480e-92c4-0c8a63884f00.json",
+      "after": "snapshot-R06-N-revoked-list-accounts-after-1794308646747-0458e15d-c0f8-4467-b95c-8828245caebb.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-revoked-unlink-account",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-revoked-unlink-account-before-1794308648697-aaeeec03-1c66-438b-b6f4-4a349d6a1f1c.json",
+      "after": "snapshot-R06-N-revoked-unlink-account-after-1794308650771-9b3fd868-5fec-4000-b842-690e5af4aa50.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-revoked-verify-password",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-revoked-verify-password-before-1794308653058-877f6969-9a63-4c46-930e-8f4601a2d304.json",
+      "after": "snapshot-R06-N-revoked-verify-password-after-1794308655099-22e03f21-5c98-4aae-bc8f-6f9db5ddb9f4.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-Q-revoked-get-session",
+      "checkPassed": true,
+      "before": "snapshot-R06-Q-revoked-get-session-before-1794308656708-9bc701a5-8816-4ad0-8368-4eaa9642885f.json",
+      "after": "snapshot-R06-Q-revoked-get-session-after-1794308658363-89842a57-fa91-48aa-a49b-067b324d6205.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-Q-revoked-list-accounts",
+      "checkPassed": true,
+      "before": "snapshot-R06-Q-revoked-list-accounts-before-1794308660444-8b78fb60-030a-42f6-a4c7-9b035a326474.json",
+      "after": "snapshot-R06-Q-revoked-list-accounts-after-1794308662635-6575deb7-eb58-4d4b-868a-b41b27a33c55.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-Q-revoked-unlink-account",
+      "checkPassed": true,
+      "before": "snapshot-R06-Q-revoked-unlink-account-before-1794308664886-630e2910-cc6d-41b2-99a2-00186e7cadbf.json",
+      "after": "snapshot-R06-Q-revoked-unlink-account-after-1794308666906-e544581c-89bb-48ff-84d4-b8d05c2c4728.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-Q-revoked-change-password",
+      "checkPassed": true,
+      "before": "snapshot-R06-Q-revoked-change-password-before-1794308668895-cb4eec5e-0744-430e-b673-b423dda47325.json",
+      "after": "snapshot-R06-Q-revoked-change-password-after-1794308670682-0cd412af-6a09-44ec-8491-7994b1315705.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-expired-get-session",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-expired-get-session-before-1794308674081-ada95bdb-f278-4d3c-82c9-e892966e3e5c.json",
+      "after": "snapshot-R06-N-expired-get-session-after-1794308675772-6d684532-8fa9-4f8a-9dac-eb4ceb63e662.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [
+        {
+          "userId": "p04r06-expired",
+          "tokenSha256": "90ac02d752ee349a25d901bfc49549cd9f2537da899717b876ae0808a168efd4",
+          "expiresAt": "1970-01-01T01:00:00"
+        }
+      ],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-expired-list-sessions",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-expired-list-sessions-before-1794308677673-1365cd95-5e49-4dcc-9241-c53023df439a.json",
+      "after": "snapshot-R06-N-expired-list-sessions-after-1794308679442-dfc76d7e-5f1e-474c-be34-7d4fc9819a9b.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-expired-list-accounts",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-expired-list-accounts-before-1794308681138-e612337c-2d8e-47cf-aa19-b8ebcf9ee52f.json",
+      "after": "snapshot-R06-N-expired-list-accounts-after-1794308683176-359db698-5ecf-4f9c-bfa8-d78f1b9dc4e3.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-expired-unlink-account",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-expired-unlink-account-before-1794308685152-34730673-56a0-42c6-863c-702a6ebc65e7.json",
+      "after": "snapshot-R06-N-expired-unlink-account-after-1794308686769-b82b8856-5b48-4c1a-8b97-c5efae9665ca.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-expired-verify-password",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-expired-verify-password-before-1794308688397-63f3b4ad-3c45-442b-addf-044581a54f28.json",
+      "after": "snapshot-R06-N-expired-verify-password-after-1794308690233-5423d087-c606-4cd4-a03d-ab5548d2365d.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-Q-expired-get-session",
+      "checkPassed": true,
+      "before": "snapshot-R06-Q-expired-get-session-before-1794308691948-4cf4334c-a683-4a28-8feb-60f1fb07c35e.json",
+      "after": "snapshot-R06-Q-expired-get-session-after-1794308693787-b866f5e0-61e2-4664-add7-48fd12493284.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-Q-expired-list-accounts",
+      "checkPassed": true,
+      "before": "snapshot-R06-Q-expired-list-accounts-before-1794308695455-2b068d56-bd3c-4e8a-9e2e-8ac996e080e1.json",
+      "after": "snapshot-R06-Q-expired-list-accounts-after-1794308696965-6d881e4a-3ae6-402d-888f-e7ba79bc4298.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-Q-expired-unlink-account",
+      "checkPassed": true,
+      "before": "snapshot-R06-Q-expired-unlink-account-before-1794308698849-de1ad92a-5fa1-4811-b0cb-36057730913f.json",
+      "after": "snapshot-R06-Q-expired-unlink-account-after-1794308700887-afb0d9f9-bc42-4000-8d13-0d1aa504e618.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-Q-expired-change-password",
+      "checkPassed": true,
+      "before": "snapshot-R06-Q-expired-change-password-before-1794308702756-65f3923f-e2c2-4549-9271-babbf8ead714.json",
+      "after": "snapshot-R06-Q-expired-change-password-after-1794308704377-a44aca95-99af-4cb8-9af5-49ec9c540128.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-inactive-get-session",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-inactive-get-session-before-1794308725110-72d8ecbe-22a7-4129-89d6-c4b49cb231a4.json",
+      "after": "snapshot-R06-N-inactive-get-session-after-1794308741218-457a973a-0015-41cc-8827-2a6e71500462.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-inactive-list-sessions",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-inactive-list-sessions-before-1794308743285-3aaeabda-1033-4087-a066-9b5cdd9ee18e.json",
+      "after": "snapshot-R06-N-inactive-list-sessions-after-1794308745345-15e6277c-eae5-4321-9842-6d2a09d2621a.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-inactive-list-accounts",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-inactive-list-accounts-before-1794308747235-c1050278-b932-49d0-a0bb-50ec1c780bec.json",
+      "after": "snapshot-R06-N-inactive-list-accounts-after-1794308748992-2894a1e7-8ffc-4446-9c81-c194304b8aae.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-inactive-unlink-account",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-inactive-unlink-account-before-1794308750774-274947c6-5938-42a3-90c2-351fe1cfd8e6.json",
+      "after": "snapshot-R06-N-inactive-unlink-account-after-1794308752791-a8872380-f7a4-4e2b-b045-b44b5f6135d1.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-inactive-verify-password",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-inactive-verify-password-before-1794308755065-53421df3-5ea0-4e08-9a38-5b0d674497ef.json",
+      "after": "snapshot-R06-N-inactive-verify-password-after-1794308757316-4cd1f2b5-5a5e-45ec-83d1-c8226ff0ad33.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-locked_indefinite-get-session",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-locked_indefinite-get-session-before-1794308760852-46983fea-b4d2-4bde-a77a-e782466bf45d.json",
+      "after": "snapshot-R06-N-locked_indefinite-get-session-after-1794308762877-584cdd93-56b4-43af-9266-7672b17e52a5.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-locked_indefinite-list-sessions",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-locked_indefinite-list-sessions-before-1794308765076-9118fc14-cf08-4fcc-8a93-f8459ef1665a.json",
+      "after": "snapshot-R06-N-locked_indefinite-list-sessions-after-1794308766902-05992aec-f267-40e7-b297-02dd6907f160.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-locked_indefinite-list-accounts",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-locked_indefinite-list-accounts-before-1794308768747-4d831f93-0a3d-4b50-9d1f-cf391fccb7b1.json",
+      "after": "snapshot-R06-N-locked_indefinite-list-accounts-after-1794308770562-e86aedeb-54cb-49b9-a424-e171cd07ad77.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-locked_indefinite-unlink-account",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-locked_indefinite-unlink-account-before-1794308772406-e35f1968-17e4-45b6-a679-c937ce6dc5d3.json",
+      "after": "snapshot-R06-N-locked_indefinite-unlink-account-after-1794308774393-9e91d3f7-4b29-4cdc-b97a-6432dca201ea.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-locked_indefinite-verify-password",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-locked_indefinite-verify-password-before-1794308776369-c9ef5da4-6b54-4de1-a015-4dedf957ae70.json",
+      "after": "snapshot-R06-N-locked_indefinite-verify-password-after-1794308778021-b2185a7a-6bd7-4dc1-8b48-3159744fbda8.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-locked_future-get-session",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-locked_future-get-session-before-1794308802929-8b7f0dc3-a39c-4d46-8189-f6c4313f2147.json",
+      "after": "snapshot-R06-N-locked_future-get-session-after-1794308820339-3b176778-b51c-4d0e-a05f-4efb13e3ebf4.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-locked_future-list-sessions",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-locked_future-list-sessions-before-1794308821842-04befd7e-97fa-4c77-a16a-a9482a5c8f45.json",
+      "after": "snapshot-R06-N-locked_future-list-sessions-after-1794308823997-ff0c2fd7-7ec8-47e8-b4be-64f66440ddbe.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-locked_future-list-accounts",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-locked_future-list-accounts-before-1794308826028-78cceb64-d309-4de0-96c3-9dcacf67bae2.json",
+      "after": "snapshot-R06-N-locked_future-list-accounts-after-1794308828050-2339197d-0d3e-418a-8eac-6b0b2f9eb0c6.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-locked_future-unlink-account",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-locked_future-unlink-account-before-1794308829917-075e0ce7-5bea-4703-a9be-e7fbd4aa8527.json",
+      "after": "snapshot-R06-N-locked_future-unlink-account-after-1794308832020-ce6f420c-be04-4975-add0-4403fad3ad68.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-N-locked_future-verify-password",
+      "checkPassed": true,
+      "before": "snapshot-R06-N-locked_future-verify-password-before-1794308834067-dde61f8c-f699-458d-902d-a6a523141967.json",
+      "after": "snapshot-R06-N-locked_future-verify-password-after-1794308836401-df15c64c-6eac-4648-ac9a-64774ecb4b50.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-P-expired-lock",
+      "checkPassed": true,
+      "before": "snapshot-R06-P-expired-lock-before-1794308839819-34ec647b-c878-4353-963e-c7dc68746425.json",
+      "after": "snapshot-R06-P-expired-lock-after-1794308842008-03ed2be5-7a65-4744-a6f8-16a0610e8417.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-B-anonymous",
+      "checkPassed": true,
+      "before": "snapshot-R06-B-anonymous-before-1794308844069-64a0198e-b87b-43e9-9601-5d050ba1c5ed.json",
+      "after": "snapshot-R06-B-anonymous-after-1794308846104-563e2521-d6c9-4e5b-93da-ee8820cc897e.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-B-foreign-unlink",
+      "checkPassed": true,
+      "before": "snapshot-R06-B-foreign-unlink-before-1794308848161-1cdead7f-954d-4565-ac78-649ab0875166.json",
+      "after": "snapshot-R06-B-foreign-unlink-after-1794308849947-b819b1ee-5f23-4e8b-a09c-843725f70f4d.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-B-provider-userid",
+      "checkPassed": true,
+      "before": "snapshot-R06-B-provider-userid-before-1794308851605-2d814e15-ba25-4475-bb8c-7ffc1c74a1f9.json",
+      "after": "snapshot-R06-B-provider-userid-after-1794308853593-d2fe07b6-c1cf-43ad-ba4e-7b60f5bf846d.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-B-mixed-active-cookie",
+      "checkPassed": true,
+      "before": "snapshot-R06-B-mixed-active-cookie-before-1794308876424-0aca80c5-de9c-4010-998f-fcd765dd4be1.json",
+      "after": "snapshot-R06-B-mixed-active-cookie-after-1794308892394-010fd3cf-1de2-40e6-8f22-651220d47e33.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-B-mixed-revoked-cookie",
+      "checkPassed": true,
+      "before": "snapshot-R06-B-mixed-revoked-cookie-before-1794308894457-402c9d2e-e177-4da5-86ef-5929cfbabf0a.json",
+      "after": "snapshot-R06-B-mixed-revoked-cookie-after-1794308896597-8495abae-5713-4bd0-beb9-a1269cee4980.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-C-origin",
+      "checkPassed": false,
+      "before": "snapshot-R06-C-origin-before-1794308902323-e9b6d04a-2b19-4c3b-bcc0-a931c54543ea.json",
+      "after": "snapshot-R06-C-origin-after-1794308911095-49ab8b7b-54a6-4044-a5f7-95232571f8ca.json",
+      "businessEqual": false,
+      "changedBusinessTables": [
+        "users"
+      ],
+      "sessionAdditions": 1,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [
+        {
+          "userId": "p04r06-active",
+          "action": "LOGIN_SUCCESS",
+          "entityType": "SecurityEvent"
+        }
+      ],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-C-signout",
+      "checkPassed": true,
+      "before": "snapshot-signout-active-before-1794308921179-050ef618-b6cb-4c7e-82f0-c531cbfd2ad4.json",
+      "after": "snapshot-signout-active-after-1794308923154-12f7c8d2-d735-4035-8e3e-d0be3ee0980f.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [
+        {
+          "userId": "p04r06-active",
+          "tokenSha256": "72431a4014810f3b218e34aa75c0c58c649ef4e256e1e7715db783b6a6cea545",
+          "expiresAt": "2026-11-17T11:08:39.636"
+        }
+      ],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-C-signout",
+      "checkPassed": true,
+      "before": "snapshot-signout-inactive-before-1794308932050-eaf20b34-7236-4d8e-9547-2084af7671a3.json",
+      "after": "snapshot-signout-inactive-after-1794308933984-bfd3d169-451d-435f-85b3-bfbdc49fd29d.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [
+        {
+          "userId": "p04r06-inactive",
+          "tokenSha256": "ccbda648e40dc6e055104431f8dc343fff3d717a27e8d37fe4acd49490a8103b",
+          "expiresAt": "2026-11-17T11:08:49.935"
+        }
+      ],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-C-signout",
+      "checkPassed": true,
+      "before": "snapshot-signout-locked_indefinite-before-1794308942241-9d6bb947-07d6-4149-9109-34f84a3f2c42.json",
+      "after": "snapshot-signout-locked_indefinite-after-1794308944090-f2110788-71c3-49ef-8794-12667e108934.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [
+        {
+          "userId": "p04r06-locked_indefinite",
+          "tokenSha256": "278996c31d596ccd3849966399542a4e1146de3748c4240bde1fc53ed682da23",
+          "expiresAt": "2026-11-17T11:09:00.186"
+        }
+      ],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-C-public-recovery",
+      "checkPassed": true,
+      "before": "snapshot-R06-C-public-recovery-before-1794308946354-10536ac1-e029-4a8e-ad83-1228ab4fcd72.json",
+      "after": "snapshot-R06-C-public-recovery-after-1794308948519-1cd9fdc0-512e-404a-883d-e9d49164fcfb.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-C-methods",
+      "checkPassed": true,
+      "before": "snapshot-R06-C-methods-before-1794308950501-f2a89372-a907-4215-a6e1-d46b5ae0efef.json",
+      "after": "snapshot-R06-C-methods-after-1794308953627-80c7680d-ce9d-48be-9ad1-115bca000a5f.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-C-direct-api",
+      "checkPassed": true,
+      "before": "snapshot-R06-C-direct-api-before-1794308956147-a5e186f8-9aee-4f46-8135-219c01ef02f8.json",
+      "after": "snapshot-R06-C-direct-api-after-1794308964455-a06dd07d-961b-47c0-b351-9644bf5f57d6.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-en-authorized",
+      "checkPassed": true,
+      "before": "snapshot-R06-UI-en-authorized-before-1794308967478-982b9bf3-53ac-4462-a3d0-bb38339363fd.json",
+      "after": "snapshot-R06-UI-en-authorized-after-1794308972084-7606087b-8dfb-4c0a-8af9-d4440260517a.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-en-invalidated-reload",
+      "checkPassed": true,
+      "before": "snapshot-R06-UI-en-invalidated-reload-before-1794308973922-a49984a3-029f-4d8f-afd9-b27ed2c8a06b.json",
+      "after": "snapshot-R06-UI-en-invalidated-reload-after-1794308978029-db200f43-a71f-44f6-b71e-f6c2cf27fe4b.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-en-restored",
+      "checkPassed": false,
+      "before": "snapshot-R06-UI-en-restored-before-1794308980213-1bf75744-0e53-48c0-915c-6db4021ae9cc.json",
+      "after": "snapshot-R06-UI-en-restored-after-1794308984643-0e7a3e0c-367a-4601-94b0-4e91ede8fd2a.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-fr-authorized",
+      "checkPassed": false,
+      "before": "snapshot-R06-UI-fr-authorized-before-1794308990488-39a4a968-539a-40ff-b4d5-c95087a9ec2a.json",
+      "after": "snapshot-R06-UI-fr-authorized-after-1794308994037-75ce82e0-27ec-4811-a661-45c6f28a2306.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-fr-invalidated-reload",
+      "checkPassed": true,
+      "before": "snapshot-R06-UI-fr-invalidated-reload-before-1794308995870-cc1855da-e736-4797-ae63-036eb72c61c5.json",
+      "after": "snapshot-R06-UI-fr-invalidated-reload-after-1794308999909-b706b56a-a20e-4512-98b3-ac9fe84359d3.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    },
+    {
+      "id": "R06-UI-fr-restored",
+      "checkPassed": false,
+      "before": "snapshot-R06-UI-fr-restored-before-1794309001670-c13e510d-ba8b-4e5d-a112-a6212b41846a.json",
+      "after": "snapshot-R06-UI-fr-restored-after-1794309005283-24ee3efb-2d91-434b-a7b0-c5c3b0a41ccb.json",
+      "businessEqual": true,
+      "changedBusinessTables": [],
+      "sessionAdditions": 0,
+      "sessionDeletions": [],
+      "sessionUpdates": 0,
+      "auditAdditions": [],
+      "auditDeletions": 0,
+      "auditUpdates": 0
+    }
+  ],
+  "cacheProofReview": [
+    {
+      "id": "R06-N-revoked-get-session",
+      "passed": true,
+      "remainingAfterResponseSeconds": 260.67599987983704,
+      "issuerAlias": "revoked"
+    },
+    {
+      "id": "R06-N-revoked-list-sessions",
+      "passed": true,
+      "remainingAfterResponseSeconds": 256.7339999675751,
+      "issuerAlias": "revoked"
+    },
+    {
+      "id": "R06-N-revoked-list-accounts",
+      "passed": true,
+      "remainingAfterResponseSeconds": 252.3050000667572,
+      "issuerAlias": "revoked"
+    },
+    {
+      "id": "R06-N-revoked-unlink-account",
+      "passed": true,
+      "remainingAfterResponseSeconds": 248.33699989318848,
+      "issuerAlias": "revoked"
+    },
+    {
+      "id": "R06-N-revoked-verify-password",
+      "passed": true,
+      "remainingAfterResponseSeconds": 244.00699996948242,
+      "issuerAlias": "revoked"
+    },
+    {
+      "id": "R06-Q-revoked-get-session",
+      "passed": true,
+      "remainingAfterResponseSeconds": 240.3659999370575,
+      "issuerAlias": "revoked"
+    },
+    {
+      "id": "R06-Q-revoked-list-accounts",
+      "passed": true,
+      "remainingAfterResponseSeconds": 236.60899996757507,
+      "issuerAlias": "revoked"
+    },
+    {
+      "id": "R06-Q-revoked-unlink-account",
+      "passed": true,
+      "remainingAfterResponseSeconds": 232.20099997520447,
+      "issuerAlias": "revoked"
+    },
+    {
+      "id": "R06-Q-revoked-change-password",
+      "passed": true,
+      "remainingAfterResponseSeconds": 228.17899990081787,
+      "issuerAlias": "revoked"
+    },
+    {
+      "id": "R06-N-expired-get-session",
+      "passed": true,
+      "remainingAfterResponseSeconds": 238.10199999809265,
+      "issuerAlias": "expired"
+    },
+    {
+      "id": "R06-N-expired-list-sessions",
+      "passed": true,
+      "remainingAfterResponseSeconds": 234.55599999427795,
+      "issuerAlias": "expired"
+    },
+    {
+      "id": "R06-N-expired-list-accounts",
+      "passed": true,
+      "remainingAfterResponseSeconds": 231.0789999961853,
+      "issuerAlias": "expired"
+    },
+    {
+      "id": "R06-N-expired-unlink-account",
+      "passed": true,
+      "remainingAfterResponseSeconds": 227.08899998664856,
+      "issuerAlias": "expired"
+    },
+    {
+      "id": "R06-N-expired-verify-password",
+      "passed": true,
+      "remainingAfterResponseSeconds": 223.82100009918213,
+      "issuerAlias": "expired"
+    },
+    {
+      "id": "R06-Q-expired-get-session",
+      "passed": true,
+      "remainingAfterResponseSeconds": 220.25800013542175,
+      "issuerAlias": "expired"
+    },
+    {
+      "id": "R06-Q-expired-list-accounts",
+      "passed": true,
+      "remainingAfterResponseSeconds": 216.77500009536743,
+      "issuerAlias": "expired"
+    },
+    {
+      "id": "R06-Q-expired-unlink-account",
+      "passed": true,
+      "remainingAfterResponseSeconds": 213.35700011253357,
+      "issuerAlias": "expired"
+    },
+    {
+      "id": "R06-Q-expired-change-password",
+      "passed": true,
+      "remainingAfterResponseSeconds": 209.4800000190735,
+      "issuerAlias": "expired"
+    },
+    {
+      "id": "R06-N-inactive-get-session",
+      "passed": true,
+      "remainingAfterResponseSeconds": 268.3770000934601,
+      "issuerAlias": "inactive"
+    },
+    {
+      "id": "R06-N-inactive-get-session-/api/me/permissions",
+      "passed": true,
+      "remainingAfterResponseSeconds": 268.289999961853,
+      "issuerAlias": "inactive"
+    },
+    {
+      "id": "R06-N-inactive-get-session-/api/me/profile",
+      "passed": true,
+      "remainingAfterResponseSeconds": 268.22699999809265,
+      "issuerAlias": "inactive"
+    },
+    {
+      "id": "R06-N-inactive-list-sessions",
+      "passed": true,
+      "remainingAfterResponseSeconds": 264.4909999370575,
+      "issuerAlias": "inactive"
+    },
+    {
+      "id": "R06-N-inactive-list-accounts",
+      "passed": true,
+      "remainingAfterResponseSeconds": 260.52999997138977,
+      "issuerAlias": "inactive"
+    },
+    {
+      "id": "R06-N-inactive-unlink-account",
+      "passed": true,
+      "remainingAfterResponseSeconds": 257.0199999809265,
+      "issuerAlias": "inactive"
+    },
+    {
+      "id": "R06-N-inactive-verify-password",
+      "passed": true,
+      "remainingAfterResponseSeconds": 252.70700001716614,
+      "issuerAlias": "inactive"
+    },
+    {
+      "id": "R06-N-locked_indefinite-get-session",
+      "passed": true,
+      "remainingAfterResponseSeconds": 259.54900002479553,
+      "issuerAlias": "locked_indefinite"
+    },
+    {
+      "id": "R06-N-locked_indefinite-get-session-/api/me/permissions",
+      "passed": true,
+      "remainingAfterResponseSeconds": 259.50499987602234,
+      "issuerAlias": "locked_indefinite"
+    },
+    {
+      "id": "R06-N-locked_indefinite-get-session-/api/me/profile",
+      "passed": true,
+      "remainingAfterResponseSeconds": 259.47000002861023,
+      "issuerAlias": "locked_indefinite"
+    },
+    {
+      "id": "R06-N-locked_indefinite-list-sessions",
+      "passed": true,
+      "remainingAfterResponseSeconds": 255.30999994277954,
+      "issuerAlias": "locked_indefinite"
+    },
+    {
+      "id": "R06-N-locked_indefinite-list-accounts",
+      "passed": true,
+      "remainingAfterResponseSeconds": 251.6529998779297,
+      "issuerAlias": "locked_indefinite"
+    },
+    {
+      "id": "R06-N-locked_indefinite-unlink-account",
+      "passed": true,
+      "remainingAfterResponseSeconds": 247.97900009155273,
+      "issuerAlias": "locked_indefinite"
+    },
+    {
+      "id": "R06-N-locked_indefinite-verify-password",
+      "passed": true,
+      "remainingAfterResponseSeconds": 244.03600001335144,
+      "issuerAlias": "locked_indefinite"
+    },
+    {
+      "id": "R06-N-locked_future-get-session",
+      "passed": true,
+      "remainingAfterResponseSeconds": 263.25400018692017,
+      "issuerAlias": "locked_future"
+    },
+    {
+      "id": "R06-N-locked_future-get-session-/api/me/permissions",
+      "passed": true,
+      "remainingAfterResponseSeconds": 263.18800020217896,
+      "issuerAlias": "locked_future"
+    },
+    {
+      "id": "R06-N-locked_future-get-session-/api/me/profile",
+      "passed": true,
+      "remainingAfterResponseSeconds": 263.1390001773834,
+      "issuerAlias": "locked_future"
+    },
+    {
+      "id": "R06-N-locked_future-list-sessions",
+      "passed": true,
+      "remainingAfterResponseSeconds": 260.05599999427795,
+      "issuerAlias": "locked_future"
+    },
+    {
+      "id": "R06-N-locked_future-list-accounts",
+      "passed": true,
+      "remainingAfterResponseSeconds": 255.89400005340576,
+      "issuerAlias": "locked_future"
+    },
+    {
+      "id": "R06-N-locked_future-unlink-account",
+      "passed": true,
+      "remainingAfterResponseSeconds": 251.9980001449585,
+      "issuerAlias": "locked_future"
+    },
+    {
+      "id": "R06-N-locked_future-verify-password",
+      "passed": true,
+      "remainingAfterResponseSeconds": 247.8360002040863,
+      "issuerAlias": "locked_future"
+    },
+    {
+      "id": "R06-P-expired-lock",
+      "passed": true,
+      "remainingAfterResponseSeconds": 257.38700008392334,
+      "issuerAlias": "expired_lock"
+    },
+    {
+      "id": "R06-B-mixed-active-cookie",
+      "passed": true,
+      "remainingAfterResponseSeconds": 281.106999874115,
+      "issuerAlias": "foreign"
+    },
+    {
+      "id": "R06-B-mixed-revoked-cookie",
+      "passed": true,
+      "remainingAfterResponseSeconds": 277.39999985694885,
+      "issuerAlias": "foreign"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "browser/auth-r06-attempt02/en-authorized.png",
+      "sha256": "deac40cbd4e19dfe6f02aa96a1e957b4a1a733a22be286ceb6c3ec2908f6b923",
+      "visuallyInspected": true,
+      "label": "en-authorized",
+      "privateEmailVisible": true,
+      "loginVisible": false
+    },
+    {
+      "path": "browser/auth-r06-attempt02/en-invalidated-reload.png",
+      "sha256": "d15770a07d7cf250d0d858ab6a7a5a9ff771d1ee0628482e116a0b62240d905f",
+      "visuallyInspected": true,
+      "label": "en-invalidated-reload",
+      "privateEmailVisible": false,
+      "loginVisible": true
+    },
+    {
+      "path": "browser/auth-r06-attempt02/en-restored.png",
+      "sha256": "ece455a861f37853f139143c165ea59825ed27b5efb21fed2761a5a0988f0369",
+      "visuallyInspected": true,
+      "label": "en-restored",
+      "privateEmailVisible": true,
+      "loginVisible": false
+    },
+    {
+      "path": "browser/auth-r06-attempt02/fr-authorized.png",
+      "sha256": "aa86bcf3bc406a9d64dc162ea38900cd1b64db5914d1c8cfc0eb3d1625dd637d",
+      "visuallyInspected": true,
+      "label": "fr-authorized",
+      "privateEmailVisible": true,
+      "loginVisible": false
+    },
+    {
+      "path": "browser/auth-r06-attempt02/fr-invalidated-reload.png",
+      "sha256": "0eb7b75b95d19e98d530146c09b40005170cb2f3f3ec3be52a24514012d8ad97",
+      "visuallyInspected": true,
+      "label": "fr-invalidated-reload",
+      "privateEmailVisible": false,
+      "loginVisible": true
+    },
+    {
+      "path": "browser/auth-r06-attempt02/fr-restored.png",
+      "sha256": "c79fa2eca47835604e9d2ff2f29d1d418788c0059df6985319933dccaed41032",
+      "visuallyInspected": true,
+      "label": "fr-restored",
+      "privateEmailVisible": true,
+      "loginVisible": false
+    }
+  ],
+  "evidence": [
+    {
+      "path": "runtime-result-attempt02.json",
+      "sha256": "4459b141a394444372f88d3728b84f38d5adeb49eb840d382cc4725327fc92df"
+    },
+    {
+      "path": "browser/auth-r06-attempt02/result.json",
+      "sha256": "81a50e5a71168c93b4d2af6c9a21010cebeead3303f778cbafc70200f39e2878"
+    },
+    {
+      "path": "inventory/test-case-map.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    }
+  ],
+  "runtimeQualification": false,
+  "productionReady": false
+}

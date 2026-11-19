@@ -62,9 +62,10 @@ const suspenseTypes = [
 
 const runInputSchema = z.object({
   providerAccountId: z.string().min(1),
-  businessDate: z.coerce.date(),
+  businessDate: z.coerce.date().optional(),
+  accountingPeriodId: z.string().trim().min(1).optional(),
   correlationId: z.string().optional(),
-})
+}).refine(input => Boolean(input.businessDate || input.accountingPeriodId), "A business date or accounting period is required.")
 
 const runDetailSchema = z.object({
   runId: z.string().min(1),
@@ -129,7 +130,8 @@ const signRunSchema = z.object({
 
 
 const getDashboard = protect<unknown, PaymentReconciliationDashboardData>(
-  { permission: "payments.reconciliation.read", auditResource: "PaymentReconciliation", auditAllowed: false },
+  { permission: "payments.reconciliation.read", auditResource: "PaymentReconciliation", auditAllowed: false,
+    module: { moduleSlug: "payment_reconciliation", surface: "actions/payments/reconciliation.actions.ts#getPaymentReconciliationDashboardAction", surfaceType: "action", accessIntent: "read", mode: "enforce", audit: false } },
   async (_input, ctx) => ({ ...await getPaymentReconciliationDashboardData(ctx.orgId), scope: { organizationId: ctx.orgId, actorId: ctx.userId } }),
 )
 
@@ -194,17 +196,19 @@ const importStatement = protect<unknown, ImportProviderStatementResult>(
   },
 )
 
-const runReconciliation = protect<unknown, Awaited<ReturnType<typeof runPaymentReconciliation>>>(
+const runReconciliation = protect<unknown, Awaited<ReturnType<typeof runPaymentReconciliation>> & { scope: PaymentReconciliationDashboardData["scope"] }>(
   { permission: "payments.reconciliation.run", auditResource: "PaymentReconciliationRun", auditAllowed: true },
   async (input, ctx) => {
     const parsed = runInputSchema.parse(input)
-    return runPaymentReconciliation({
+    const result = await runPaymentReconciliation({
       organizationId: ctx.orgId,
       providerAccountId: parsed.providerAccountId,
       businessDate: parsed.businessDate,
+      ...(parsed.accountingPeriodId ? { accountingPeriodId: parsed.accountingPeriodId } : {}),
       runById: ctx.userId,
       correlationId: parsed.correlationId,
     })
+    return { ...result, scope: { organizationId: ctx.orgId, actorId: ctx.userId } }
   },
 )
 

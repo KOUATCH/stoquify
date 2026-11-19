@@ -4,6 +4,11 @@ import {
   CustomerSettlementStatus,
   LedgerPostingBatchStatus,
   PaymentMethod,
+  PaymentDirection,
+  PaymentRailType,
+  PaymentTransactionState,
+  ProviderAccountStatus,
+  ProviderEventStatus,
   PostingRuleAmountSource,
   PostingRuleLineSide,
   Prisma,
@@ -206,6 +211,17 @@ function buildHarness() {
     postedBusinessEventId: "event-1",
   })
   const tx = {
+    $queryRaw: jest.fn().mockResolvedValue([{ id: "provider-payment-1" }]),
+    paymentTransaction: {
+      findFirst: jest.fn(),
+      updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+    },
+    providerAccount: {
+      findFirst: jest.fn().mockResolvedValue({ settlementLedgerAccount: {
+        id: "bank-account", organizationId: "org-1", isActive: true, deletedAt: null, type: "ASSET", normalBalance: "DEBIT", currency: "XAF",
+      } }),
+    },
+    journalEntryLine: { findMany: jest.fn().mockResolvedValue([{ debit: new Prisma.Decimal(100), credit: new Prisma.Decimal(0), currency: "XAF" }]) },
     organization: {
       findFirst: jest.fn().mockResolvedValue({ id: "org-1", currency: "XAF" }),
     },
@@ -294,6 +310,8 @@ function buildHarness() {
     },
   }
   const client = {
+    paymentTransaction: tx.paymentTransaction,
+    journalEntryLine: tx.journalEntryLine,
     $transaction: jest.fn(async (work: (transaction: typeof tx) => unknown) =>
       work(tx),
     ),
@@ -748,10 +766,10 @@ describe("customer settlement source command", () => {
     expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
 
-  it("retries bounded serialization conflicts", async () => {
+  it.each([{ code: "P2034" }, { code: "P2010", meta: { code: "40001" } }, { code: "P2010", meta: { code: "40P01" } }])("retries bounded serialization and native-lock conflicts %#", async conflict => {
     const { tx, client } = buildHarness()
     client.$transaction
-      .mockRejectedValueOnce({ code: "P2034" })
+      .mockRejectedValueOnce(conflict)
       .mockImplementationOnce(async (work: (transaction: typeof tx) => unknown) =>
         work(tx),
       )
@@ -765,6 +783,25 @@ describe("customer settlement source command", () => {
     expect(result.replayed).toBe(false)
     expect(client.$transaction).toHaveBeenCalledTimes(2)
     expect(CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS).toBe(3)
+  })
+
+  it.each([{ code: "P2034" }, { code: "P2010", meta: { code: "40001" } }, { code: "P2010", meta: { code: "40P01" } }])("returns a conflict when the complete transaction exhausts its retries %#", async conflict => {
+    const { tx, client } = buildHarness()
+    client.$transaction.mockRejectedValue(conflict)
+    await expect(collectCustomerSettlementWithControls(INPUT, CONTROL, client as never))
+      .rejects.toMatchObject({ code: "CONFLICT", status: 409 })
+    expect(client.$transaction).toHaveBeenCalledTimes(CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS)
+    expect(tx.customerSettlement.create).not.toHaveBeenCalled()
+    expect(mockCreateLedgerPostingBatch).not.toHaveBeenCalled()
+  })
+
+  it.each([{ code: "P2010", meta: { code: "23505" } }, { code: "P2010" }])("does not retry an unrelated raw-query error %#", async failure => {
+    const { tx, client } = buildHarness()
+    client.$transaction.mockRejectedValue(failure)
+    await expect(collectCustomerSettlementWithControls(INPUT, CONTROL, client as never))
+      .rejects.toMatchObject({ code: "INTERNAL_ERROR", status: 500 })
+    expect(client.$transaction).toHaveBeenCalledTimes(1)
+    expect(tx.customerSettlement.create).not.toHaveBeenCalled()
   })
 
   it("returns a complete exact replay after an idempotency unique race", async () => {
@@ -838,5 +875,150 @@ describe("customer settlement source command", () => {
     ).rejects.toThrow()
 
     expect(client.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("retains the legacy manual hash shape when no provider receipt is selected", async () => {
+    const { tx, client } = buildHarness()
+    await collectCustomerSettlementWithControls(INPUT, CONTROL, client as never)
+    expect(mockHashBusinessPayload.mock.calls[0][0]).not.toHaveProperty("paymentTransactionId")
+    expect(tx.paymentTransaction.findFirst).not.toHaveBeenCalled()
+    expect(tx.paymentTransaction.updateMany).not.toHaveBeenCalled()
+  })
+
+  it.each(["CASH", "CHEQUE"] as const)("rejects a provider receipt for %s before database work", async method => {
+    const { client } = buildHarness()
+    await expect(collectCustomerSettlementWithControls({ ...INPUT, method, paymentTransactionId: "provider-payment-1" }, CONTROL, client as never)).rejects.toThrow("only for electronic collections")
+    expect(client.$transaction).not.toHaveBeenCalled()
+  })
+})
+
+function linkedProviderFixture(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "provider-payment-1", organizationId: "org-1", legacyPaymentId: null, ledgerPostingBatchId: null, sourceType: null,
+    providerAccountId: "provider-account-1", providerAuthorityEventId: "provider-event-1", direction: PaymentDirection.INBOUND,
+    state: PaymentTransactionState.CONFIRMED, amount: new Prisma.Decimal(100), currencyCode: "XAF",
+    providerTransactionId: "provider-tx-1", providerReference: "provider-ref-1", confirmedAt: NOW,
+    providerAccount: { id: "provider-account-1", organizationId: "org-1", providerCode: "BANK", displayName: "Approved bank", status: ProviderAccountStatus.ACTIVE, currencyCode: "XAF",
+      paymentRail: { organizationId: "org-1", type: PaymentRailType.BANK_TRANSFER, isActive: true, currencyCode: "XAF" } },
+    providerAuthorityEvent: { id: "provider-event-1", organizationId: "org-1", providerAccountId: "provider-account-1", providerTransactionId: "provider-tx-1", providerReference: "provider-ref-1",
+      status: ProviderEventStatus.PROCESSED, signatureValid: true, occurredAt: NOW, direction: PaymentDirection.INBOUND, amount: new Prisma.Decimal(100), currencyCode: "XAF" },
+    ...overrides,
+  }
+}
+
+const LINKED_INPUT = { ...INPUT, method: "BANK_TRANSFER" as const, paymentTransactionId: "provider-payment-1" }
+const AUTHORITY = { version: 1, paymentMethod: "BANK_TRANSFER", paymentTransactionId: "provider-payment-1", providerEventId: "provider-event-1", providerAccountId: "provider-account-1",
+  providerTransactionId: "provider-tx-1", providerReference: "provider-ref-1", providerName: "Approved bank", mobileMoneyProvider: null, state: "CONFIRMED", ledgerAccountId: "bank-account", amount: "100.00", currencyCode: "XAF" }
+
+function linkedHarness() {
+  const harness = buildHarness()
+  harness.tx.paymentTransaction.findFirst.mockResolvedValue(linkedProviderFixture())
+  const rule = postingRule()
+  rule.lines[0] = { ...rule.lines[0], mappingKey: "BANK", condition: { paymentMethod: "BANK_TRANSFER" } }
+  mockRequireActivePostingRule.mockResolvedValue(rule as never)
+  harness.tx.chartOfAccount.findMany.mockResolvedValue([
+    { id: "bank-account", code: "521", mappingKey: "BANK", isActive: true, deletedAt: null, _count: { children: 0 } },
+    { id: "ar-account", code: "411", mappingKey: "ACCOUNTS_RECEIVABLE", isActive: true, deletedAt: null, _count: { children: 0 } },
+  ])
+  return harness
+}
+
+describe("customer collection provider receipt linkage", () => {
+  it("claims the native receipt for the existing single posting and retains canonical authority in source evidence", async () => {
+    const { tx, client } = linkedHarness()
+    await collectCustomerSettlementWithControls(LINKED_INPUT, CONTROL, client as never)
+    expect(mockHashBusinessPayload.mock.calls[0][0]).toHaveProperty("paymentTransactionId", "provider-payment-1")
+    expect(tx.$queryRaw.mock.invocationCallOrder[0]).toBeLessThan(tx.customerSettlement.create.mock.invocationCallOrder[0])
+    expect(mockCreateLedgerPostingBatch).toHaveBeenCalledTimes(1)
+    expect(tx.journalEntry.create).toHaveBeenCalledTimes(1)
+    expect(tx.paymentTransaction.updateMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({ id: "provider-payment-1", organizationId: "org-1", providerAuthorityEventId: "provider-event-1", legacyPaymentId: null, ledgerPostingBatchId: null }),
+      data: { sourceType: "CUSTOMER_SETTLEMENT", sourceId: "settlement-1", ledgerPostingBatchId: "batch-1" },
+    })
+    expect(tx.customerSettlement.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ metadata: expect.objectContaining({ providerAuthority: AUTHORITY }) }) }))
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(tx, expect.objectContaining({ payload: expect.objectContaining({ providerAuthority: AUTHORITY }) }))
+    expect(mockCreateAccountingSourceLink).toHaveBeenCalledWith(expect.objectContaining({ metadata: expect.objectContaining({ providerAuthority: AUTHORITY }) }), tx, expect.any(Object))
+  })
+
+  it.each([
+    { organizationId: "foreign-org" },
+    { amount: new Prisma.Decimal("99.00") },
+    { currencyCode: "EUR" },
+    { legacyPaymentId: "pos-payment" },
+    { ledgerPostingBatchId: "already-posted-batch" },
+    { sourceType: "CUSTOMER_SETTLEMENT" },
+  ])("rejects unavailable or incompatible native authority before source mutation: %j", async override => {
+    const { tx, client } = linkedHarness()
+    tx.paymentTransaction.findFirst.mockResolvedValue(linkedProviderFixture(override))
+    await expect(collectCustomerSettlementWithControls(LINKED_INPUT, CONTROL, client as never)).rejects.toThrow()
+    expect(tx.customerSettlement.create).not.toHaveBeenCalled()
+    expect(mockCreateLedgerPostingBatch).not.toHaveBeenCalled()
+    expect(tx.paymentTransaction.updateMany).not.toHaveBeenCalled()
+  })
+
+  it("rejects a wrong provider rail before source mutation", async () => {
+    const { tx, client } = linkedHarness(), native = linkedProviderFixture()
+    native.providerAccount.paymentRail.type = PaymentRailType.CARD
+    tx.paymentTransaction.findFirst.mockResolvedValue(native)
+    await expect(collectCustomerSettlementWithControls(LINKED_INPUT, CONTROL, client as never)).rejects.toThrow("rail is not authorized")
+    expect(tx.customerSettlement.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects a different provider ledger mapping before posting or claiming", async () => {
+    const { tx, client } = linkedHarness()
+    tx.providerAccount.findFirst.mockResolvedValue({ settlementLedgerAccount: { id: "different-bank", organizationId: "org-1", isActive: true, deletedAt: null, type: "ASSET", normalBalance: "DEBIT", currency: "XAF" } })
+    await expect(collectCustomerSettlementWithControls(LINKED_INPUT, CONTROL, client as never)).rejects.toThrow("confirmed provider's ledger account")
+    expect(mockCreateLedgerPostingBatch).not.toHaveBeenCalled()
+    expect(tx.paymentTransaction.updateMany).not.toHaveBeenCalled()
+  })
+
+  it("propagates a lost provider claim so the owning transaction cannot acknowledge the financial write", async () => {
+    const { tx, client } = linkedHarness()
+    tx.paymentTransaction.updateMany.mockResolvedValue({ count: 0 })
+    await expect(collectCustomerSettlementWithControls(LINKED_INPUT, CONTROL, client as never)).rejects.toThrow("changed or was already used")
+    expect(tx.customerSettlement.update).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+    expect(client.$transaction).toHaveBeenCalledTimes(1)
+  })
+
+  it("returns an exact linked replay without resolving or claiming the provider again", async () => {
+    const { tx, client } = linkedHarness()
+    tx.customerSettlement.findFirst.mockResolvedValueOnce(settlementRecord({ method: PaymentMethod.BANK_TRANSFER, ledgerPostingBatchId: "batch-1", journalEntryId: "journal-entry-1", postedBusinessEventId: "event-1", metadata: { providerAuthority: AUTHORITY } }))
+    tx.paymentTransaction.findFirst.mockResolvedValue({ providerAuthorityEventId: "provider-event-1", providerAccountId: "provider-account-1", providerTransactionId: "provider-tx-1", amount: new Prisma.Decimal(100), currencyCode: "XAF" })
+    tx.customerLedgerEntry.findMany.mockResolvedValue(await client.customerLedgerEntry.findMany())
+    const result = await collectCustomerSettlementWithControls(LINKED_INPUT, CONTROL, client as never)
+    expect(result.replayed).toBe(true)
+    expect(tx.providerAccount.findFirst).not.toHaveBeenCalled()
+    expect(tx.paymentTransaction.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ sourceType: "CUSTOMER_SETTLEMENT", sourceId: "settlement-1", ledgerPostingBatchId: "batch-1" }) }))
+    expect(tx.paymentTransaction.updateMany).not.toHaveBeenCalled()
+    expect(mockCreateLedgerPostingBatch).not.toHaveBeenCalled()
+    expect(tx.customerSettlement.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects reuse with a changed provider receipt before native reads or financial writes", async () => {
+    const { tx, client } = linkedHarness()
+    tx.customerSettlement.findFirst.mockResolvedValueOnce(settlementRecord({ idempotencyPayloadHash: "0".repeat(64) }))
+    await expect(collectCustomerSettlementWithControls({ ...LINKED_INPUT, paymentTransactionId: "provider-payment-2" }, CONTROL, client as never)).rejects.toThrow("different payload")
+    expect(tx.paymentTransaction.findFirst).not.toHaveBeenCalled()
+    expect(tx.customerSettlement.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects a linked replay whose native claim is no longer available", async () => {
+    const { tx, client } = linkedHarness()
+    tx.customerSettlement.findFirst.mockResolvedValueOnce(settlementRecord({ method: PaymentMethod.BANK_TRANSFER, ledgerPostingBatchId: "batch-1", journalEntryId: "journal-entry-1", postedBusinessEventId: "event-1", metadata: { providerAuthority: AUTHORITY } }))
+    tx.paymentTransaction.findFirst.mockResolvedValue(null)
+    await expect(collectCustomerSettlementWithControls(LINKED_INPUT, CONTROL, client as never)).rejects.toThrow("changed or is unavailable")
+    expect(tx.paymentTransaction.updateMany).not.toHaveBeenCalled()
+  })
+
+  it("checks native lineage during a linked uniqueness-race replay without issuing another claim", async () => {
+    const { tx, client } = linkedHarness()
+    client.$transaction.mockRejectedValueOnce({ code: "P2002" })
+    client.customerSettlement.findFirst.mockResolvedValue(settlementRecord({ method: PaymentMethod.BANK_TRANSFER, ledgerPostingBatchId: "batch-1", journalEntryId: "journal-entry-1", postedBusinessEventId: "event-1", metadata: { providerAuthority: AUTHORITY } }))
+    tx.paymentTransaction.findFirst.mockResolvedValue({ providerAuthorityEventId: "provider-event-1", providerAccountId: "provider-account-1", providerTransactionId: "provider-tx-1", amount: new Prisma.Decimal(100), currencyCode: "XAF" })
+    const result = await collectCustomerSettlementWithControls(LINKED_INPUT, CONTROL, client as never)
+    expect(result.replayed).toBe(true)
+    expect(tx.paymentTransaction.updateMany).not.toHaveBeenCalled()
+    expect(tx.paymentTransaction.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ sourceType: "CUSTOMER_SETTLEMENT", sourceId: "settlement-1", ledgerPostingBatchId: "batch-1" }) }))
   })
 })

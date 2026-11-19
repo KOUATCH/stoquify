@@ -1,6 +1,7 @@
 import middleware from "../../middleware"
 import { NextRequest } from "next/server"
 import { CSP_NONCE_HEADER } from "../../lib/security/csp-pilot"
+import { LOCALE_COOKIE } from "../../i18n/routing"
 
 // Only the ESM configuration factory is replaced; routing helpers and
 // NextRequest/NextResponse are real. No persistence or application providers.
@@ -44,4 +45,26 @@ it("returns retry guidance and no-store on a real middleware denial", () => {
 it.each(["/en/login", "/api/auth/sign-in"])("does not substitute the general quota for specialized auth controls on %s", path => {
   const request = new NextRequest(`http://localhost${path}`, { headers: { "x-real-ip": "192.0.2.223" } })
   for (let n = 0; n < 250; n++) expect(middleware(request).status).toBe(200)
+})
+
+it.each([['en', 'GET'], ['en', 'POST'], ['fr', 'GET'], ['fr', 'POST']])(
+  "does not rewrite a matching language cookie for %s %s requests", (locale, method) => {
+    const response = middleware(new NextRequest(`http://localhost/${locale}/dashboard/manager-action-center`, {
+      method,
+      headers: { cookie: `better-auth.session_token=opaque; ${LOCALE_COOKIE}=${locale}`, "x-real-ip": "192.0.2.224" },
+    }))
+    expect(response.status).toBe(200)
+    expect(response.cookies.get(LOCALE_COOKIE)).toBeUndefined()
+    expect(response.headers.get("x-middleware-set-cookie")).toBeNull()
+    expect(response.headers.get("x-middleware-request-x-next-intl-locale")).toBe(locale)
+    expect(response.headers.get("X-Frame-Options")).toBe("DENY")
+  },
+)
+
+it.each([undefined, 'en'])("persists the requested language when its cookie is %s", previous => {
+  const response = middleware(new NextRequest("http://localhost/fr/dashboard/manager-action-center", {
+    headers: { cookie: `better-auth.session_token=opaque${previous ? `; ${LOCALE_COOKIE}=${previous}` : ''}`, "x-real-ip": "192.0.2.225" },
+  }))
+  expect(response.cookies.get(LOCALE_COOKIE)).toMatchObject({ value: "fr", path: "/", maxAge: 60 * 60 * 24 * 365 })
+  expect(response.headers.get("x-middleware-request-x-next-intl-locale")).toBe("fr")
 })

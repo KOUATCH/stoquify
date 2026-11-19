@@ -1,0 +1,84 @@
+{
+  "candidateId": "p04-r03-20261104-9c1182e0773a",
+  "reviewedAt": "2026-11-04T09:40:35.346Z",
+  "gates": [
+    {
+      "id": "R03-G01",
+      "requirement": "Current nine-path source and guard inventory with preserved baseline hashes",
+      "status": "passed",
+      "evidence": [
+        "inventory/call-chain-register.json",
+        "source-before.json",
+        "owned-source.json"
+      ]
+    },
+    {
+      "id": "R03-G02",
+      "requirement": "Bounded response-only repair; unchanged guard/service/transaction execution",
+      "status": "passed",
+      "evidence": [
+        "independent-review/SOURCE-REVIEW.json"
+      ]
+    },
+    {
+      "id": "R03-G03",
+      "requirement": "Private-sentinel negatives plus approved business/success/control-flow positives",
+      "status": "passed",
+      "evidence": [
+        "unit/attempt01/result.json",
+        "unit/attempt02/result.json",
+        "verification-matrix.json"
+      ]
+    },
+    {
+      "id": "R03-G04",
+      "requirement": "Real isolated denied-state/authorized-write/rollback evidence",
+      "status": "passed",
+      "evidence": [
+        "database/native-result-retry02.json",
+        "database/native-observations-retry02.json"
+      ]
+    },
+    {
+      "id": "R03-G05",
+      "requirement": "Scoped type/lint checks and immutable candidate",
+      "status": "passed",
+      "evidence": [
+        "unit/typecheck01/result.json",
+        "unit/lint01/result.json",
+        "candidate.json"
+      ]
+    },
+    {
+      "id": "R03-G06",
+      "requirement": "Owned cleanup and independent local acceptance",
+      "status": "passed",
+      "evidence": [
+        "independent-review/ASSESSMENT.json",
+        "independent-review/CLEANUP-REVIEW.json"
+      ]
+    },
+    {
+      "id": "R03-G07",
+      "requirement": "Actual HTTP/browser, sibling action and wider production admission",
+      "status": "not_qualified_remaining_work",
+      "requiredForLocalR03": false,
+      "evidence": [
+        "supplemental-findings.json",
+        "follow-up-package.json"
+      ]
+    }
+  ],
+  "advanceLocalR03": true,
+  "advanceParentP04": false,
+  "productionReady": false,
+  "nextEligiblePackage": "P04-R04",
+  "remainingRequirements": [
+    "P04-R04 sibling actions/item/listItemsAction.ts raw-error catch used by useListItems remains unimplemented and outside this nine-path repair",
+    "P04-V01 remaining authority/object/location/module qualification and P04-V02 actual signed-cookie/browser recovery remain blocked",
+    "P04-V03–V05 and P04-D01 retain existing obligations/decisions",
+    "R01 production reserved-role classification and actual transport; R02 original-owner/hosted/release obligations remain",
+    "Full build, hosted/provider/operator and all production readiness gates remain unqualified",
+    "A post-write cache failure can follow a successful mutation; safe response is not proof of rollback"
+  ]
+}

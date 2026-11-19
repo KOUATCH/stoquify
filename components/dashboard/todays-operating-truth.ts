@@ -45,6 +45,7 @@ type DashboardCopy = {
   location: string
   generated: string
   viewOwnerWarRoom: string
+  proofLabels: Record<ProofBadgeState, string>
   proofSource: string
   partialSource: string
   notAvailable: string
@@ -246,6 +247,7 @@ export function buildTodaysOperatingTruthModel({
       ],
       proof: {
         state: commandState.proofState,
+        label: copy.proofLabels[commandState.proofState],
         source: copy.proofSource,
         sourceCount: commandCards.length > 0 ? commandState.readyCount : countAvailableSources(dashboard),
       },
@@ -281,48 +283,49 @@ export function buildTodaysOperatingTruthModel({
 function getDashboardCopy(locale: string): DashboardCopy {
   if (locale.startsWith("fr")) {
     return {
-      title: "Brief de confiance business quotidien",
-      eyebrow: "Confiance et action",
-      stateReady: "Lecture autorisee",
+      title: "Votre activitÃ© aujourdâ€™hui",
+      eyebrow: "Vue dâ€™ensemble",
+      stateReady: "Lecture autorisÃ©e",
       statePartial: "Lecture partielle",
-      stateBlocked: "Bloque",
-      period: "Periode",
+      stateBlocked: "Bloqué",
+      period: "PÃ©riode",
       location: "Lieu",
-      generated: "Genere",
-      viewOwnerWarRoom: "Ouvrir war room",
-      proofSource: "modele lecture dashboard",
-      partialSource: "source module a connecter",
+      generated: "ActualisÃ©",
+      viewOwnerWarRoom: "Ouvrir le centre de pilotage",
+      proofLabels: { verified: "VÃ©rifiÃ©", posted: "ComptabilisÃ©", reconciled: "RapprochÃ©", certified: "CertifiÃ©", operational: "DonnÃ©es dâ€™activitÃ©", pending: "Justificatif attendu", stale: "Ã€ actualiser", blocked: "BloquÃ©", redacted: "DonnÃ©es masquÃ©es", unavailable: "Justificatif indisponible" },
+      proofSource: "Tableau de bord",
+      partialSource: "Source du module Ã  connecter",
       notAvailable: "Non disponible",
       summary: ({ organizationName, periodLabel, revenue, cash, stockRisk, actionCount }) =>
-        `${organizationName} sur ${periodLabel}: ${revenue} de revenu, ${cash} encaisse, ${stockRisk} risque(s) stock et ${actionCount} action(s) visibles.`,
-      statusTitle: "Etats de confiance",
-      statusDetail: "Etats paiement, AP, cloture, stock, conformite, paie et securite issus du contrat command-card.",
+        `${organizationName} sur ${periodLabel}: ${revenue} de revenu, ${cash} encaissÃ©s, ${stockRisk} risque(s) stock et ${actionCount} action(s) visibles.`,
+      statusTitle: "Ã‰tat de lâ€™activitÃ©",
+      statusDetail: "Les indicateurs disponibles et les informations restant Ã  connecter.",
       statuses: {
         pos: "PDV",
         stock: "Stock",
-        cash: "Tresorerie",
-        ap: "Fournisseurs/AP",
-        close: "Cloture",
+        cash: "TrÃ©sorerie",
+        ap: "Fournisseurs",
+        close: "ClÃ´ture",
         payroll: "Paie",
-        compliance: "Conformite",
+        compliance: "ConformitÃ©",
       },
       statusDetails: {
-        posActive: "Session(s) POS active(s) dans le perimetre.",
-        posIdle: "Aucune session POS active dans le perimetre.",
-        stockHealthy: "Aucun signal stock critique dans le modele lecture.",
-        stockRisk: "Articles en stock bas, rupture ou reapprovisionnement.",
-        cash: "Paiements clients payes sur la periode.",
-        ap: "Commandes fournisseurs en attente dans le modele lecture.",
-        partial: "Ce module existe, mais son modele lecture detaille n'alimente pas encore ce dashboard.",
+        posActive: "Sessions de caisse actives dans le pÃ©rimÃ¨tre.",
+        posIdle: "Aucune session de caisse active dans le pÃ©rimÃ¨tre.",
+        stockHealthy: "Aucun signal critique dans les donnÃ©es de stock disponibles.",
+        stockRisk: "Articles en stock bas, rupture ou rÃ©approvisionnement.",
+        cash: "Paiements clients reÃ§us sur la pÃ©riode.",
+        ap: "Commandes fournisseurs en attente.",
+        partial: "Ce module existe, mais ses donnÃ©es dÃ©taillÃ©es ne sont pas encore reliÃ©es Ã  ce tableau de bord.",
       },
       actionTitle: "Actions urgentes",
-      actionDetail: "Actions visibles classees par risque et impact operationnel.",
+      actionDetail: "Actions classÃ©es par risque et impact sur lâ€™activitÃ©.",
       actionEmptyTitle: "Aucune action visible",
-      actionEmptyMessage: "Le modele lecture dashboard ne signale aucune action ouverte pour ce perimetre.",
+      actionEmptyMessage: "Le tableau de bord ne signale aucune action ouverte dans ce pÃ©rimÃ¨tre.",
       evidenceTitle: "Chronologie des preuves",
-      evidenceDetail: "Derniers evenements et alertes issus des sources autorisees du dashboard.",
-      evidenceEmpty: "Aucun evenement de preuve disponible pour cette periode.",
-      kpiTitle: "Indicateurs de decision",
+      evidenceDetail: "Derniers Ã©vÃ©nements et alertes issus des sources autorisÃ©es.",
+      evidenceEmpty: "Aucun Ã©vÃ©nement disponible pour cette pÃ©riode.",
+      kpiTitle: "Indicateurs de dÃ©cision",
       kpis: {
         revenue: "Revenu",
         margin: "Marge",
@@ -331,28 +334,28 @@ function getDashboardCopy(locale: string): DashboardCopy {
         obligations: "Obligations ouvertes",
       },
       kpiDetails: {
-        revenue: "Ventes terminees dans la periode.",
-        margin: "La marge n'est pas exposee dans ce modele lecture.",
-        cash: "Paiements clients payes dans la periode.",
-        stockRisk: "Stock bas, ruptures et candidats au reapprovisionnement.",
+        revenue: "Ventes terminÃ©es dans la pÃ©riode.",
+        margin: "La marge nâ€™est pas disponible dans cette vue.",
+        cash: "Paiements clients reÃ§us dans la pÃ©riode.",
+        stockRisk: "Stock bas, ruptures et candidats au rÃ©approvisionnement.",
         obligations: "Commandes clients ouvertes et achats fournisseurs en attente.",
       },
       shortcutsTitle: "Raccourcis utiles",
-      shortcutsDetail: "Priorite aux actions visibles, puis aux surfaces centrales.",
+      shortcutsDetail: "AccÃ©dez aux actions prioritaires et aux espaces de travail.",
       shortcuts: {
-        owner: "War room owner",
-        pos: "Ouvrir POS",
+        owner: "Centre de pilotage",
+        pos: "Ouvrir la caisse",
         inventory: "Inventaire",
         finance: "Finance",
         payroll: "Paie",
-        compliance: "Conformite",
+        compliance: "ConformitÃ©",
       },
       open: "Ouvrir",
       review: "Revoir",
       dueNow: "Maintenant",
       dueToday: "Aujourd'hui",
-      dueScheduled: "Planifie",
-      ownerOps: "Operations",
+      dueScheduled: "PlanifiÃ©",
+      ownerOps: "OpÃ©rations",
       severity: {
         critical: "Critique",
         warning: "Attention",
@@ -364,30 +367,30 @@ function getDashboardCopy(locale: string): DashboardCopy {
         "90d": "90 derniers jours",
         mtd: "mois en cours",
       },
-      comparison: "vs periode precedente",
+      comparison: "par rapport Ã  la pÃ©riode prÃ©cÃ©dente",
       onboarding: {
-        title: "Mise en route espace",
-        detail: "Les premiers reglages qui rendent le tableau utile avant que tout l'historique soit charge.",
-        progressLabel: ({ completed, total, percent }) => `${completed}/${total} requis prets - ${percent}%`,
+        title: "PrÃ©paration de lâ€™espace",
+        detail: "PrÃ©parez les premiers rÃ©glages avant de charger tout lâ€™historique.",
+        progressLabel: ({ completed, total, percent }) => `${completed}/${total} requis prÃªts - ${percent}%`,
         actionLabel: "Ouvrir",
         status: {
-          complete: "Pret",
+          complete: "PrÃªt",
           in_progress: "En cours",
-          not_started: "A faire",
+          not_started: "Ã€ faire",
           optional: "Optionnel",
         },
         steps: {
           company_profile: {
-            title: "Profil societe OHADA",
-            detail: "Nom, devise, pays et identifiants fiscaux donnent le contexte legal.",
+            title: "Profil de la sociÃ©tÃ© OHADA",
+            detail: "Nom, devise, pays et identifiants fiscaux donnent le contexte lÃ©gal.",
           },
           locations: {
-            title: "Agences et entrepots",
-            detail: "Les ventes, stocks, caisses et preuves restent portes par lieu.",
+            title: "Agences et entrepÃ´ts",
+            detail: "Les ventes, stocks, caisses et preuves restent rattachÃ©s au site.",
           },
           roles_permissions: {
-            title: "Roles et permissions",
-            detail: "Les utilisateurs et roles evitent une mise en route hors controle.",
+            title: "RÃ´les et permissions",
+            detail: "Les rÃ´les dÃ©finissent les responsabilitÃ©s et les accÃ¨s.",
           },
           inventory_catalog: {
             title: "Catalogue stock",
@@ -395,19 +398,19 @@ function getDashboardCopy(locale: string): DashboardCopy {
           },
           pos_setup: {
             title: "PDV",
-            detail: "Les terminaux preparent les sessions caisse et le premier ticket.",
+            detail: "Les terminaux prÃ©parent les sessions caisse et le premier ticket.",
           },
           finance_accounts: {
             title: "Finance et comptes",
-            detail: "Le parametrage comptable prepare comptes, devise et pays OHADA.",
+            detail: "Le paramÃ©trage comptable prÃ©pare comptes, devise et pays OHADA.",
           },
           payroll_setup: {
             title: "Paie",
-            detail: "Activez-la quand l'espace doit suivre employes, periodes et preuves paie.",
+            detail: "Activez-la quand l'espace doit suivre salariÃ©s, pÃ©riodes et justificatifs de paie.",
           },
           proof_checkpoint: {
-            title: "Premier point preuve",
-            detail: "Une activite ou un evenement met le fil d'assurance en mouvement.",
+            title: "Premier justificatif",
+            detail: "Une activitÃ© ou un Ã©vÃ©nement met le fil d'assurance en mouvement.",
           },
         },
       },
@@ -415,22 +418,23 @@ function getDashboardCopy(locale: string): DashboardCopy {
   }
 
   return {
-    title: "Daily Business Confidence Brief",
-    eyebrow: "Trust and action front door",
+    title: "Your activity today",
+    eyebrow: "At a glance",
     stateReady: "Authorized read",
     statePartial: "Partial proof",
     stateBlocked: "Blocked proof",
     period: "Period",
     location: "Location",
     generated: "Generated",
-    viewOwnerWarRoom: "Open owner war room",
-    proofSource: "dashboard read model",
+    viewOwnerWarRoom: "Open the control centre",
+    proofLabels: { verified: "Verified", posted: "Posted", reconciled: "Reconciled", certified: "Certified", operational: "Activity records", pending: "Evidence pending", stale: "Needs updating", blocked: "Blocked", redacted: "Redacted", unavailable: "Evidence unavailable" },
+    proofSource: "Dashboard records",
     partialSource: "module source pending",
     notAvailable: "Not available",
     summary: ({ organizationName, periodLabel, revenue, cash, stockRisk, actionCount }) =>
       `${organizationName} for ${periodLabel}: ${revenue} revenue, ${cash} collected, ${stockRisk} stock risk signal(s), and ${actionCount} visible action(s).`,
-    statusTitle: "Trust states",
-    statusDetail: "Payment, AP, close, stock, compliance, payroll, and security states from the command-card contract.",
+    statusTitle: "Live operating status",
+    statusDetail: "Available indicators and the information still to connect.",
     statuses: {
       pos: "POS",
       stock: "Stock",
@@ -443,16 +447,16 @@ function getDashboardCopy(locale: string): DashboardCopy {
     statusDetails: {
       posActive: "Active POS session(s) inside this scope.",
       posIdle: "No active POS sessions inside this scope.",
-      stockHealthy: "No critical stock signal in the dashboard read model.",
+      stockHealthy: "No critical stock signal in the dashboard records.",
       stockRisk: "Low-stock, out-of-stock, and reorder candidates.",
       cash: "Paid customer payments in the selected period.",
-      ap: "Pending purchase orders in the dashboard read model.",
+      ap: "Pending purchase orders in the dashboard records.",
       partial: "This module exists, but its detailed read model is not connected to this dashboard yet.",
     },
-    actionTitle: "Urgent action queue",
+    actionTitle: "Priority actions",
     actionDetail: "Visible actions ranked by risk and operating impact.",
     actionEmptyTitle: "No visible action is due",
-    actionEmptyMessage: "The dashboard read model has no open action for this scope.",
+    actionEmptyMessage: "The dashboard records has no open action for this scope.",
     evidenceTitle: "Evidence timeline",
     evidenceDetail: "Recent events and alerts from authorized dashboard sources.",
     evidenceEmpty: "No evidence event is available for this period.",
@@ -466,7 +470,7 @@ function getDashboardCopy(locale: string): DashboardCopy {
     },
     kpiDetails: {
       revenue: "Completed sales in the selected period.",
-      margin: "Margin is not exposed by this dashboard read model yet.",
+      margin: "Margin is not exposed by this dashboard records yet.",
       cash: "Paid customer payments in the selected period.",
       stockRisk: "Low-stock, out-of-stock, and reorder candidates.",
       obligations: "Open sales orders and pending supplier purchases.",
@@ -486,7 +490,7 @@ function getDashboardCopy(locale: string): DashboardCopy {
     dueNow: "Now",
     dueToday: "Today",
     dueScheduled: "Scheduled",
-    ownerOps: "Operations",
+    ownerOps: "OpÃ©rations",
     severity: {
       critical: "Critical",
       warning: "Warning",
@@ -580,7 +584,7 @@ function buildStatusItems({
       tone: dashboard.counts.activeSessions > 0 ? "spruce" : "muted",
       icon: ShoppingCart,
       href: resolveDashboardHref("/dashboard/pos", dashboardBasePath),
-      proof: { state: "operational", source: copy.proofSource },
+      proof: { state: "operational", label: copy.proofLabels.operational, source: copy.proofSource },
     },
     {
       id: "stock",
@@ -590,7 +594,7 @@ function buildStatusItems({
       tone: stockRiskCount > 0 ? "warning" : "success",
       icon: Package,
       href: resolveDashboardHref("/dashboard/inventory", dashboardBasePath),
-      proof: { state: "operational", source: copy.proofSource },
+      proof: { state: "operational", label: copy.proofLabels.operational, source: copy.proofSource },
     },
     {
       id: "cash",
@@ -600,7 +604,7 @@ function buildStatusItems({
       tone: dashboard.kpis.cashCollected.current > 0 ? "success" : "info",
       icon: CreditCard,
       href: resolveDashboardHref("/dashboard/finance/payments", dashboardBasePath),
-      proof: { state: "operational", source: copy.proofSource },
+      proof: { state: "operational", label: copy.proofLabels.operational, source: copy.proofSource },
     },
     {
       id: "ap",
@@ -610,7 +614,7 @@ function buildStatusItems({
       tone: apCount > 0 ? "warning" : "success",
       icon: Building2,
       href: resolveDashboardHref("/dashboard/finance/payables", dashboardBasePath),
-      proof: { state: "operational", source: copy.proofSource },
+      proof: { state: "operational", label: copy.proofLabels.operational, source: copy.proofSource },
     },
     partialStatus("close", copy.statuses.close, "/dashboard/accounting/close", ClipboardCheck, copy, dashboardBasePath),
     partialStatus("payroll", copy.statuses.payroll, "/dashboard/payroll", Users, copy, dashboardBasePath),
@@ -726,7 +730,7 @@ function partialStatus(
     tone: "gold",
     icon,
     href: resolveDashboardHref(href, dashboardBasePath),
-    proof: { state: "unavailable", source: copy.partialSource },
+    proof: { state: "unavailable", label: copy.proofLabels.unavailable, source: copy.partialSource },
   }
 }
 
@@ -746,7 +750,7 @@ function buildActionItems({
     .map((action) => ({
       id: action.id,
       title: action.label,
-      summary: `${formatNumber(action.count, locale)} ${action.label.toLowerCase()}`,
+      summary: `${formatNumber(action.count, locale)} ${locale.startsWith("fr") ? "Ã©lÃ©ment(s) Ã  examiner" : "item(s) to review"}`,
       riskLabel: copy.severity[action.severity],
       tone: severityToTone(action.severity),
       owner: copy.ownerOps,
@@ -763,6 +767,7 @@ function buildActionItems({
       },
       proof: {
         state: severityToProofState(action.severity),
+        label: copy.proofLabels[severityToProofState(action.severity)],
         source: copy.proofSource,
       },
     }))
@@ -787,7 +792,7 @@ function buildEvidenceEvents({
     source: copy.proofSource,
     stateLabel: copy.severity[alertToSeverity(alert)],
     tone: alertToTone(alert),
-    proof: { state: alertToProofState(alert), source: copy.proofSource },
+    proof: { state: alertToProofState(alert), label: copy.proofLabels[alertToProofState(alert)], source: copy.proofSource },
     href: resolveDashboardHref(alert.href, dashboardBasePath),
   }))
 
@@ -796,10 +801,10 @@ function buildEvidenceEvents({
     title: activity.title,
     summary: activity.description,
     timestamp: formatDateTime(activity.timestamp, locale),
-    source: activity.type,
-    stateLabel: activity.status,
+    source: activityLabel(activity.type, locale),
+    stateLabel: activityLabel(activity.status, locale),
     tone: activityStatusToTone(activity),
-    proof: { state: "operational" as ProofBadgeState, source: copy.proofSource },
+    proof: { state: "operational" as ProofBadgeState, label: copy.proofLabels.operational, source: copy.proofSource },
     href: resolveDashboardHref(activity.href, dashboardBasePath),
   }))
 
@@ -842,7 +847,7 @@ function buildKpis({
       detail: copy.kpiDetails.margin,
       tone: "muted",
       icon: TrendingUp,
-      proof: { state: "unavailable", source: copy.partialSource },
+      proof: { state: "unavailable", label: copy.proofLabels.unavailable, source: copy.partialSource },
       action: {
         label: copy.open,
         href: resolveDashboardHref("/dashboard/finance/profitability", dashboardBasePath),
@@ -866,7 +871,7 @@ function buildKpis({
       detail: copy.kpiDetails.stockRisk,
       tone: stockRiskCount > 0 ? "warning" : "success",
       icon: Package,
-      proof: { state: "operational", source: copy.proofSource },
+      proof: { state: "operational", label: copy.proofLabels.operational, source: copy.proofSource },
       action: {
         label: copy.open,
         href: resolveDashboardHref("/dashboard/inventory", dashboardBasePath),
@@ -878,7 +883,7 @@ function buildKpis({
       detail: copy.kpiDetails.obligations,
       tone: obligations > 0 ? "gold" : "success",
       icon: Building2,
-      proof: { state: "operational", source: copy.proofSource },
+      proof: { state: "operational", label: copy.proofLabels.operational, source: copy.proofSource },
       action: {
         label: copy.open,
         href: resolveDashboardHref("/dashboard/purchases", dashboardBasePath),
@@ -920,7 +925,7 @@ function metricKpi({
       label: `${formatChange(metric.change, locale)} ${copy.comparison}`,
       tone: metric.change < 0 ? "danger" : metric.change > 0 ? "success" : "muted",
     },
-    proof: { state: "operational", source: copy.proofSource },
+    proof: { state: "operational", label: copy.proofLabels.operational, source: copy.proofSource },
     action: {
       label: copy.open,
       href: resolveDashboardHref(href, dashboardBasePath),
@@ -1102,4 +1107,14 @@ function resolveDashboardHref(href: string | undefined, dashboardBasePath: strin
     return `${dashboardBasePath}${href.slice("/dashboard".length)}`
   }
   return href
+}
+
+function activityLabel(value: string, locale: string): string {
+  const labels: Record<string, [string, string]> = {
+    sale: ["Sale", "Vente"], inventory: ["Stock", "Stock"], purchase: ["Purchase", "Achat"],
+    payment: ["Payment", "Paiement"], customer: ["Customer", "Client"],
+    success: ["Recorded", "EnregistrÃ©"], warning: ["Needs review", "Ã€ examiner"],
+    pending: ["Pending", "En attente"], error: ["Error", "Erreur"], info: ["Information", "Information"],
+  }
+  return labels[value]?.[locale.startsWith("fr") ? 1 : 0] ?? value
 }

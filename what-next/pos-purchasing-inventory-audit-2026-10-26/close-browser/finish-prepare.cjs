@@ -1,0 +1,6 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{spawnSync}=require('node:child_process');
+const root=process.cwd(),app=path.join(root,'.codex-tmp/close-browser-app'),files=[];
+function walk(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){if(entry.name==='node_modules'||entry.name.startsWith('.next-'))continue;const file=path.join(dir,entry.name);if(entry.isDirectory())walk(file);else{const relative=path.relative(app,file).replaceAll('\\','/'),sha256=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');files.push({file:relative,sha256});if(sha256!==crypto.createHash('sha256').update(fs.readFileSync(path.join(root,relative))).digest('hex'))throw Error('Source drift: '+relative)}}}
+walk(app);if(!fs.existsSync(path.join(app,'node_modules')))fs.symlinkSync(path.join(root,'node_modules'),path.join(app,'node_modules'),'junction');
+fs.writeFileSync(path.join(__dirname,'start-source.json'),JSON.stringify({at:new Date().toISOString(),head:spawnSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).stdout.trim(),files},null,2));
+fs.writeFileSync(path.join(__dirname,'start-working-tree.txt'),spawnSync('git',['status','--short'],{encoding:'utf8',maxBuffer:8*1024*1024}).stdout);console.log(JSON.stringify({files:files.length,sourceMatches:true}));

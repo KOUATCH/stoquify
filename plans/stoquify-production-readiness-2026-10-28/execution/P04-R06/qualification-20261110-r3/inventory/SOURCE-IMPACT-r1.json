@@ -1,0 +1,500 @@
+{
+  "at": "2026-11-10T14:57:50.314Z",
+  "sourceManifest": {
+    "path": "CURRENT-SOURCE-MANIFEST-r1.json",
+    "sha256": "69c0329bd4e8fa4eb6afd113762944699c7547657ac7be6216687f6a54199049",
+    "identitySha256": "ef671868747c6e6726ac88751169d4a26eace15ea54ccb3122348a32045f5ac8"
+  },
+  "sourceRefreshSha256": "1b04f4014caa4b68217e8c4b02188291201feb3ef844f09632e4419032bbe05f",
+  "currentCount": 9870,
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "deltaSummary": {
+    "versusFrozen": {
+      "modified": 11,
+      "added": 81,
+      "removed": 0
+    },
+    "versusCapacity": {
+      "modified": 6,
+      "added": 78,
+      "removed": 0
+    },
+    "productAndTestChanges": 13,
+    "documentationAdditions": 79
+  },
+  "sourceChanges": [
+    {
+      "path": "actions/finance/__tests__/customer-settlement.actions.test.ts",
+      "beforeSha256": "1d0dfa4e384a9e2fc32815c32072abd89235304ca4955a2c0f7759a0ed8cd47c",
+      "afterSha256": "0a716b4d8241ce3d2ef36dd44fc8cbd0bf5517d36eb8e307b4514ec65795876f",
+      "kind": "modified",
+      "currentSha256AtInspection": "0a716b4d8241ce3d2ef36dd44fc8cbd0bf5517d36eb8e307b4514ec65795876f",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance test input",
+      "importsBefore": [
+        "../customer-settlement.actions",
+        "@/lib/security/rbac",
+        "@/services/accounting/customer-settlement-reversal.service",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.service",
+        "@/services/modules/module-entitlement.service",
+        "next/cache"
+      ],
+      "importsAfter": [
+        "../customer-settlement.actions",
+        "@/lib/security/rbac",
+        "@/services/accounting/customer-settlement-reversal.service",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.service",
+        "@/services/modules/module-entitlement.service",
+        "next/cache"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "actions/finance/customer-settlement.actions.ts",
+      "beforeSha256": "e155ef594f1f8c409bc82e4b5ead9503d49ac6b0a0d93cc94e137ad6e975b59d",
+      "afterSha256": "fbaebb725ed973fe80a5b1d3765f9dd2c6252e405455b633534569840eee6d5b",
+      "kind": "modified",
+      "currentSha256AtInspection": "fbaebb725ed973fe80a5b1d3765f9dd2c6252e405455b633534569840eee6d5b",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance/payment product source",
+      "importsBefore": [
+        "@/lib/security/auth-session",
+        "@/lib/security/rbac",
+        "@/lib/security/rbac-permissions",
+        "@/services/_shared/action-errors",
+        "@/services/_shared/protect",
+        "@/services/accounting/customer-settlement-reversal.service",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.schemas",
+        "@/services/accounting/customer-settlement.service",
+        "@/services/modules/module-entitlement.service",
+        "next/cache"
+      ],
+      "importsAfter": [
+        "@/lib/security/auth-session",
+        "@/lib/security/rbac",
+        "@/lib/security/rbac-permissions",
+        "@/services/_shared/action-errors",
+        "@/services/_shared/protect",
+        "@/services/accounting/customer-settlement-reversal.service",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.schemas",
+        "@/services/accounting/customer-settlement.service",
+        "@/services/modules/module-entitlement.service",
+        "next/cache"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "components/finance/CustomerSettlementControls.tsx",
+      "beforeSha256": "09a401b8023615b9333444a43136696da2734fe10b9b54de071c8fae593a7ce4",
+      "afterSha256": "aef41c8e626222eebed779c1b1a95fd6d70b2b62571f9eb4283827a8191879a9",
+      "kind": "modified",
+      "currentSha256AtInspection": "c9b32fae6645a32bb72f8d2f3ce4929220d2e545bacb46fe3f943b680f0d585d",
+      "stillMatchesRefresh": false,
+      "classification": "Concurrent finance/payment product source",
+      "importsBefore": [
+        "@/actions/finance/customer-settlement.actions",
+        "@/actions/security/step-up-auth.actions",
+        "@/components/ui/button",
+        "@/components/ui/input",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.schemas",
+        "react"
+      ],
+      "importsAfter": [
+        "@/actions/finance/customer-settlement.actions",
+        "@/actions/security/step-up-auth.actions",
+        "@/components/ui/button",
+        "@/components/ui/input",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.schemas",
+        "react"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "components/finance/__tests__/CustomerSettlementControls.test.tsx",
+      "beforeSha256": "f1e36589ee2a98a1e0488eabaa71eb174fdd229064b0213c54b56c55d8cb0e7e",
+      "afterSha256": "2c6258d66a455e8f1ea2cff5cf57b1653f204f7ab29b9ecd64504a8683eb743f",
+      "kind": "modified",
+      "currentSha256AtInspection": "5c7cf44fa9c181db8b9cc7c2522f28ea542eb8931761a64f26ecf56ad7e616ed",
+      "stillMatchesRefresh": false,
+      "classification": "Concurrent finance test input",
+      "importsBefore": [
+        "../CustomerSettlementControls",
+        "@/actions/finance/customer-settlement.actions",
+        "@/actions/security/step-up-auth.actions",
+        "@testing-library/jest-dom",
+        "@testing-library/react"
+      ],
+      "importsAfter": [
+        "../CustomerSettlementControls",
+        "@/actions/finance/customer-settlement.actions",
+        "@/actions/security/step-up-auth.actions",
+        "@testing-library/jest-dom",
+        "@testing-library/react"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement-workbench.service.test.ts",
+      "beforeSha256": "f60cd1887999d7e81e9aac72b9ccfbc27e5f1cfc9a14cac2189f2d0fab69339f",
+      "afterSha256": "e84010ab07370e4a71a6252a7e2a4953d312deaa66ab8922c206c247c912831a",
+      "kind": "modified",
+      "currentSha256AtInspection": "e84010ab07370e4a71a6252a7e2a4953d312deaa66ab8922c206c247c912831a",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance test input",
+      "importsBefore": [
+        "../customer-settlement-workbench.service",
+        "@/prisma/db",
+        "@prisma/client"
+      ],
+      "importsAfter": [
+        "../customer-settlement-workbench.service",
+        "@/prisma/db",
+        "@prisma/client"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement.service.test.ts",
+      "beforeSha256": "f1dfc30ba58d3e229d7dec19a66785d5c959597896ab31b8903e1826fd071e46",
+      "afterSha256": "ccbcf7de7218411e6f39abe2285ec8eafd75616977e41cf5d09d8774502a5a97",
+      "kind": "modified",
+      "currentSha256AtInspection": "ccbcf7de7218411e6f39abe2285ec8eafd75616977e41cf5d09d8774502a5a97",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance test input",
+      "importsBefore": [
+        "../customer-ledger.service",
+        "../customer-receivable-document.service",
+        "../customer-receivable-lifecycle.service",
+        "../customer-settlement.service",
+        "../journal-close-invalidation.service",
+        "../periods.service",
+        "../posting-rules.service",
+        "../posting.service",
+        "../source-link.service",
+        "@/services/_shared/action-errors",
+        "@/services/events/business-event.service",
+        "@prisma/client"
+      ],
+      "importsAfter": [
+        "../customer-ledger.service",
+        "../customer-receivable-document.service",
+        "../customer-receivable-lifecycle.service",
+        "../customer-settlement.service",
+        "../journal-close-invalidation.service",
+        "../periods.service",
+        "../posting-rules.service",
+        "../posting.service",
+        "../source-link.service",
+        "@/services/_shared/action-errors",
+        "@/services/events/business-event.service",
+        "@prisma/client"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/accounting/customer-settlement-workbench.service.ts",
+      "beforeSha256": "42d3dee68338f985f95361663774199d57dccc8595afa3e7c00cbcdf0d106e97",
+      "afterSha256": "0864bde250c783471fd5ea4345f4772b76b0e2808b80876e2b161b53eb91eefc",
+      "kind": "modified",
+      "currentSha256AtInspection": "0864bde250c783471fd5ea4345f4772b76b0e2808b80876e2b161b53eb91eefc",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance/payment product source",
+      "importsBefore": [
+        "@/lib/security/rbac-permissions",
+        "@/prisma/db",
+        "@/services/_shared/action-errors",
+        "@prisma/client",
+        "zod"
+      ],
+      "importsAfter": [
+        "@/lib/security/rbac-permissions",
+        "@/prisma/db",
+        "@/services/_shared/action-errors",
+        "@prisma/client",
+        "zod"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/accounting/customer-settlement.schemas.ts",
+      "beforeSha256": "e734d2aae5761b19a2f02de495513ad8f9fcd180a678d4a26f4ae8b3440bbdf8",
+      "afterSha256": "e4938b2a6a708b1c919aed309cc7436ef2e0bbd3d2f2e66ce0b404ea89957daa",
+      "kind": "modified",
+      "currentSha256AtInspection": "e4938b2a6a708b1c919aed309cc7436ef2e0bbd3d2f2e66ce0b404ea89957daa",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance/payment product source",
+      "importsBefore": [
+        "zod"
+      ],
+      "importsAfter": [
+        "zod"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/accounting/customer-settlement.service.ts",
+      "beforeSha256": "2c6339a4b2feb6c5b6220013aa7960b109ee63746b48c591c44e3f40264aa637",
+      "afterSha256": "1ac164a091a4061fffd6ac467f475a8b2ecdec941c98543f04e26d0c711e8191",
+      "kind": "modified",
+      "currentSha256AtInspection": "1ac164a091a4061fffd6ac467f475a8b2ecdec941c98543f04e26d0c711e8191",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance/payment product source",
+      "importsBefore": [
+        "./customer-ledger.service",
+        "./customer-receivable-document.service",
+        "./customer-receivable-lifecycle.service",
+        "./customer-settlement.schemas",
+        "./journal-close-invalidation.service",
+        "./periods.service",
+        "./posting-rules.service",
+        "./posting.service",
+        "./source-link.service",
+        "@/prisma/db",
+        "@/services/_shared/action-errors",
+        "@/services/controls/sensitive-action.service",
+        "@/services/events/business-event.service",
+        "@prisma/client",
+        "crypto"
+      ],
+      "importsAfter": [
+        "./customer-ledger.service",
+        "./customer-receivable-document.service",
+        "./customer-receivable-lifecycle.service",
+        "./customer-settlement.schemas",
+        "./journal-close-invalidation.service",
+        "./periods.service",
+        "./posting-rules.service",
+        "./posting.service",
+        "./source-link.service",
+        "@/prisma/db",
+        "@/services/_shared/action-errors",
+        "@/services/controls/sensitive-action.service",
+        "@/services/events/business-event.service",
+        "@/services/payments/customer-settlement-payment-authority.service",
+        "@prisma/client",
+        "crypto"
+      ],
+      "importsAdded": [
+        "@/services/payments/customer-settlement-payment-authority.service"
+      ],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/payments/__tests__/customer-settlement-payment-authority.service.test.ts",
+      "beforeSha256": null,
+      "afterSha256": "38df32b19a32fda7a13667ba4a6a17d2d987bebbbd264aa0ccf261fa676a7fee",
+      "kind": "added",
+      "currentSha256AtInspection": "38df32b19a32fda7a13667ba4a6a17d2d987bebbbd264aa0ccf261fa676a7fee",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance test input",
+      "importsBefore": [],
+      "importsAfter": [
+        "../customer-settlement-payment-authority.service",
+        "@prisma/client"
+      ],
+      "importsAdded": [
+        "../customer-settlement-payment-authority.service",
+        "@prisma/client"
+      ],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts",
+      "beforeSha256": "2818a6eb5e0006bbc38ae3e9b03d893a081402d303b543c65989282916af9bbf",
+      "afterSha256": "d130fb7b8fe5ebce9af62823b51a32d0da49fd70076b8662fb3889604a45532b",
+      "kind": "modified",
+      "currentSha256AtInspection": "d130fb7b8fe5ebce9af62823b51a32d0da49fd70076b8662fb3889604a45532b",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance test input",
+      "importsBefore": [
+        "../pos-electronic-tender-authority.service",
+        "@prisma/client"
+      ],
+      "importsAfter": [
+        "../pos-electronic-tender-authority.service",
+        "@prisma/client"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/payments/customer-settlement-payment-authority.service.ts",
+      "beforeSha256": null,
+      "afterSha256": "02d58827d5063d500dba358b6544a7df0617d0dd1860fc395bf608b524799d69",
+      "kind": "added",
+      "currentSha256AtInspection": "02d58827d5063d500dba358b6544a7df0617d0dd1860fc395bf608b524799d69",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance/payment product source",
+      "importsBefore": [],
+      "importsAfter": [
+        "./pos-electronic-tender-authority.service",
+        "@/services/_shared/action-errors",
+        "@prisma/client"
+      ],
+      "importsAdded": [
+        "./pos-electronic-tender-authority.service",
+        "@/services/_shared/action-errors",
+        "@prisma/client"
+      ],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/payments/pos-electronic-tender-authority.service.ts",
+      "beforeSha256": "4254e1991691fa9eaff1e455694ac3d2b30b6b31287b3158d5b3fc2786da3ba6",
+      "afterSha256": "f0614f708e100170cc143da3d8d135814ed95ba201dcfa1e798f2296c0276d55",
+      "kind": "modified",
+      "currentSha256AtInspection": "f0614f708e100170cc143da3d8d135814ed95ba201dcfa1e798f2296c0276d55",
+      "stillMatchesRefresh": true,
+      "classification": "Concurrent finance/payment product source",
+      "importsBefore": [
+        "@/services/_shared/action-errors",
+        "@prisma/client"
+      ],
+      "importsAfter": [
+        "@/services/_shared/action-errors",
+        "@prisma/client"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    }
+  ],
+  "allNonDocChangesStillMatch": false,
+  "privateMetadata": [
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-PRIVATE_FIXTURE.json",
+      "sha256": "1fe896640c9d10be26bf93823d346c66b6ea4d707d9130fae9a3b31f8a20460c",
+      "stillMatchesRefresh": true,
+      "classification": "Metadata receipt naming external fixture/pack paths, byte lengths and SHA256 values; no fixture records or credentials embedded",
+      "keys": [
+        "bytes",
+        "packs",
+        "path",
+        "sha256"
+      ],
+      "packCount": 1,
+      "rawReferencedPathsPublished": false,
+      "referencedFilesRead": false,
+      "staticPublicPath": false,
+      "artifactRequirement": "Preserve in isolated source; verify this receipt and its external referenced fixture/pack files are absent from sealed runtime/public/static output. No external fixture file is needed for R06."
+    }
+  ],
+  "sourceImpact": [
+    "The previous nine modified/three added files evolved into eleven modified/eighty-one added files. Thirteen changed paths are finance/payment source or tests; seventy-nine additions are close-monthly evidence documents.",
+    "The new customer-settlement payment authority is imported by customer-settlement.service.ts and delegates to the existing POS electronic-tender authority. The workbench action imports settlement/read-model/schema services and existing shared RBAC/protect/module helpers.",
+    "CustomerSettlementControls imports the settlement actions and existing step-up-auth action; its product importer is AROpenItemsHistoryWorkbench. These consumers share existing guards, but those R06 selected guard inputs have not changed.",
+    "No direct settlement/payment imports were found in the inspected authentication/self-profile call chains. This bounded static search is not a complete transitive dependency or behavior proof.",
+    "No source/package/schema/migration/configuration bytes in the selected68 changed. Full build/type/lint must include all concurrent source and tests; R06 qualification does not certify those independent finance workflows.",
+    "No reference to the new close-monthly evidence directory or pg-PRIVATE_FIXTURE filename was found in actions/app/components/lib/services/config/next.config.mjs. The metadata file is under docs, not public. release-artifact.cjs packages traced standalone, static and public inputs; incidental tracing must still be checked on the actual sealed artifact."
+  ],
+  "unchangedCritical": [
+    {
+      "path": "actions/users/self-profile.actions.ts",
+      "sha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2",
+      "matches": true
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "8457239b4dfaf0e9c76576826f36d4a7e72a2ad7c97e479a45716d8af3466232",
+      "matches": true
+    },
+    {
+      "path": "components/settings/SelfProfile.tsx",
+      "sha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+      "matches": true
+    },
+    {
+      "path": "hooks/self-profile-draft.ts",
+      "sha256": "e131a85afc28617ff954dfd15e1800c262eb5a4f9dc7778ec346d5d9c2559ee9",
+      "matches": true
+    },
+    {
+      "path": "hooks/useSelfProfile.ts",
+      "sha256": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6",
+      "matches": true
+    },
+    {
+      "path": "lib/auth.ts",
+      "sha256": "a377af943776826d68385a01ebdfe3478aff5737c8de98395e2bebbd16d102ad",
+      "matches": true
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "c093f2c5a93498a75b013b525e9a22b452fca807266fb7203c08824a210bb19f",
+      "matches": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "matches": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "matches": true
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+      "matches": true
+    },
+    {
+      "path": "services/users/self-profile-http.service.ts",
+      "sha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3",
+      "matches": true
+    },
+    {
+      "path": "services/users/self-profile-input.ts",
+      "sha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf",
+      "matches": true
+    },
+    {
+      "path": "services/users/self-profile.service.ts",
+      "sha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17",
+      "matches": true
+    }
+  ],
+  "graphDiscovery": {
+    "path": "graphify-out/graph_actions.json",
+    "sha256": "01aa0155ee0b6889fda9be251d9bd73c82d6bd1d4e143114eee8b3bdb3a2c032",
+    "nodes": [
+      {
+        "id": "finance_customer_settlement_actions_ts",
+        "community": 110,
+        "source_location": "L1"
+      },
+      {
+        "id": "finance_customer_settlement_actions_reversecustomersettlementaction",
+        "community": 110,
+        "source_location": "L56"
+      },
+      {
+        "id": "finance_customer_settlement_actions_verifiedfreshauthevidence",
+        "community": 110,
+        "source_location": "L60"
+      }
+    ],
+    "use": "Historical discovery only; current source imports independently inspected; no graph freshness or coverage claim."
+  },
+  "executionNotes": [
+    "Workflow check passed; 196 commands remain unclassified. No application/DB/build command was executed.",
+    "First refresh invocation produced the four immutable receipts. Its exec session identifier was lost by output formatting. A second read-only invocation was launched, repeated the read pass, then failed EEXIST on the first exclusive output; no earlier receipt was overwritten. Only first-pass receipt identities are admitted here.",
+    "Private metadata inspection published field shapes/classification only; no referenced private fixture/pack content was opened.",
+    "Size supplement is a stat estimate; successor capture/free-space gates remain mandatory."
+  ],
+  "advancement": "Eligible for independent source-inventory/capture recipe review. No current-source behavioral qualification or retained-database resume is certified by this receipt.",
+  "qualificationPassed": false
+}

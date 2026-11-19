@@ -1,0 +1,4507 @@
+{
+  "evidenceClass": "real database/action composition; authentication transport stubbed",
+  "observations": [
+    {
+      "name": "create:Admin",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "cbe9ea9f49c50f0e7c892e0281c2ac8cf2395bd3f6c2b624bb7e45fcfd12968b"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "d2bd51ea81cbd40f2c0957fe0c9ea3ba7156511a3940b71e750a6ca53067388d"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "6f4359ddb9733ba07a07d3e16156ddd61e0b4eab765c8cf5974cea4627f88cf0"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "aefe174e16225b47b0262c8a957fe9b35f359927ba1b0cd957768ebb8957d3ce"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "12910db3dd4d00d1ac47a8085d018aea9053a1e39bcc89eb45c9795a2e40db4e"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "4316fb639a12d6c6e3cc988b82edfd6342be8ea54dea77937b66c3ed0f7b413b"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "cbe9ea9f49c50f0e7c892e0281c2ac8cf2395bd3f6c2b624bb7e45fcfd12968b"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "d2bd51ea81cbd40f2c0957fe0c9ea3ba7156511a3940b71e750a6ca53067388d"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "6f4359ddb9733ba07a07d3e16156ddd61e0b4eab765c8cf5974cea4627f88cf0"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "aefe174e16225b47b0262c8a957fe9b35f359927ba1b0cd957768ebb8957d3ce"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "12910db3dd4d00d1ac47a8085d018aea9053a1e39bcc89eb45c9795a2e40db4e"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "4316fb639a12d6c6e3cc988b82edfd6342be8ea54dea77937b66c3ed0f7b413b"
+        }
+      },
+      "securityAuditRowsAdded": 1
+    },
+    {
+      "name": "create:Administrator",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "1bf3cda52a8240682fc97c55bcb84b3f26003bc992d406d5666964a2b611e215"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "cb9985722b7de32a5b902dc1fa00200db7eb911acc50707dc1ac955cd9f44ee4"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "21d5272886ffad0f31eb5b7a961f3fcd974fc755463446e4696b76715accc954"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "448de33056f8ffde089be80c3c3e1439b75d00930eb8ef2ad97272425780d193"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "511bc6fcc530a11e824079ab62c9413b01b58eb990af1021df4c6768e397238b"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "13e5ffc179b1d185cedc7590a355beffbb7571c1ff4dfc99239d312fb8868904"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "1bf3cda52a8240682fc97c55bcb84b3f26003bc992d406d5666964a2b611e215"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "cb9985722b7de32a5b902dc1fa00200db7eb911acc50707dc1ac955cd9f44ee4"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "21d5272886ffad0f31eb5b7a961f3fcd974fc755463446e4696b76715accc954"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "448de33056f8ffde089be80c3c3e1439b75d00930eb8ef2ad97272425780d193"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "511bc6fcc530a11e824079ab62c9413b01b58eb990af1021df4c6768e397238b"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "13e5ffc179b1d185cedc7590a355beffbb7571c1ff4dfc99239d312fb8868904"
+        }
+      },
+      "securityAuditRowsAdded": 1
+    },
+    {
+      "name": "create:Super Admin",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "254f1313932b8334cfeb4a613d3113fabfc5d4d7a9f76f0c9b099ebbe99788f8"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "ba6cb55f9931460d3ac28d5c1521d21e6daa17869d8b0de5e5be66a6c6fad83a"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "8be32c3487b91f4b7bc20675bbc9ab8c0208a20546142be4024c6e0d1084c508"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "63b117bb00a4f0a34262920d4839733c7fa414da37f13b827b50508b12159268"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "9cbe434b1a46b9d1cc8f67dcf2ab3632cda0d10122918141624c44730ab5f0ff"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "31b0c91977b5a0e9de7d772428189e04c9351e415ed687d51775b406215fc6f9"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "254f1313932b8334cfeb4a613d3113fabfc5d4d7a9f76f0c9b099ebbe99788f8"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "ba6cb55f9931460d3ac28d5c1521d21e6daa17869d8b0de5e5be66a6c6fad83a"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "8be32c3487b91f4b7bc20675bbc9ab8c0208a20546142be4024c6e0d1084c508"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "63b117bb00a4f0a34262920d4839733c7fa414da37f13b827b50508b12159268"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "9cbe434b1a46b9d1cc8f67dcf2ab3632cda0d10122918141624c44730ab5f0ff"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "31b0c91977b5a0e9de7d772428189e04c9351e415ed687d51775b406215fc6f9"
+        }
+      },
+      "securityAuditRowsAdded": 1
+    },
+    {
+      "name": "create:  ADMIN  ",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "0f02b3b46ee222c3c05e0faeff195767d4778c6a8551c7b1f78d8c93b58043d1"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "f7b97aee73605dd7eaa1a953d1671869bbf6ff754749300d77ef6e0f715afd40"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "e301001f104ff650178721afe6271cdb0ede597f4d01ec6b292004955f3a0b90"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "67a59e0b9e5e828446913a5993291264afec3b9f6b33e14cebb2a121f524d371"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "f5333af9e5ea8c9f3dcdd25a96ba3541eae729241a60e8cd48ca7451832deecb"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "d1c5d3dd23a0e57529ddbb85b9590e5211a5da6a1b4fcc080abb82f08be1d896"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "0f02b3b46ee222c3c05e0faeff195767d4778c6a8551c7b1f78d8c93b58043d1"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "f7b97aee73605dd7eaa1a953d1671869bbf6ff754749300d77ef6e0f715afd40"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "e301001f104ff650178721afe6271cdb0ede597f4d01ec6b292004955f3a0b90"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "67a59e0b9e5e828446913a5993291264afec3b9f6b33e14cebb2a121f524d371"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "f5333af9e5ea8c9f3dcdd25a96ba3541eae729241a60e8cd48ca7451832deecb"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "d1c5d3dd23a0e57529ddbb85b9590e5211a5da6a1b4fcc080abb82f08be1d896"
+        }
+      },
+      "securityAuditRowsAdded": 1
+    },
+    {
+      "name": "assign:admin",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "ef7127244a64c23e2399af26e72fbc95ca1725ae2345cc8fd54a64946f6ff8c7"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "36d099ce1a18baf06f203502ab7ee2796b230513a53dcc756356c7efe74048b4"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "68d1d5edac929b27838b796b869b7758b6edf2a26a141c6d9708f116e3dc7fb4"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "4519153dc746db75016b8ba5a1c1430fef87cdeceec6e166244f3a0112752915"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "ace1d62e74eff40d0188d62ea274ef51c279fb7a3a98a9a281505b695347631b"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "f02d0d32a0bae4fab1fad07222178c3eb634b78da19a8cc4d37d16c1fed5f351"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "ef7127244a64c23e2399af26e72fbc95ca1725ae2345cc8fd54a64946f6ff8c7"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "36d099ce1a18baf06f203502ab7ee2796b230513a53dcc756356c7efe74048b4"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "68d1d5edac929b27838b796b869b7758b6edf2a26a141c6d9708f116e3dc7fb4"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "4519153dc746db75016b8ba5a1c1430fef87cdeceec6e166244f3a0112752915"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "ace1d62e74eff40d0188d62ea274ef51c279fb7a3a98a9a281505b695347631b"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "f02d0d32a0bae4fab1fad07222178c3eb634b78da19a8cc4d37d16c1fed5f351"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "assign:administrator",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "26889ced01a597045342adc375244084cf4b772cc8c3803be65beb99e4bad9a1"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "345332ce72a6e5bbed6c1ed9fcbd14b863859a6bfa5211abddc7bb0e137cf5c4"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "fb4b78624e57404e4d31ae45b620f0b3eff3480b85f2fd73cce81223395bcf06"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "7386aa0daadcda8d7110dbf11292819d79f0e7e20c54904a91fcb38f31ad7970"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "005bef277c0f620118c159274a892267f31ef6c1ff73405f148629d706839309"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "c5812853c75f87b7790f15c1cdc3d4dbb1ffcee62a6b8d2f5d677e603fe5896f"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "26889ced01a597045342adc375244084cf4b772cc8c3803be65beb99e4bad9a1"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "345332ce72a6e5bbed6c1ed9fcbd14b863859a6bfa5211abddc7bb0e137cf5c4"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "fb4b78624e57404e4d31ae45b620f0b3eff3480b85f2fd73cce81223395bcf06"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "7386aa0daadcda8d7110dbf11292819d79f0e7e20c54904a91fcb38f31ad7970"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "005bef277c0f620118c159274a892267f31ef6c1ff73405f148629d706839309"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "c5812853c75f87b7790f15c1cdc3d4dbb1ffcee62a6b8d2f5d677e603fe5896f"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "assign:super_admin",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "ee128e05d9995f7f040872411fba31913dc140128a71b67af61f46a7414f84d7"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "67c84231f0a44f6f28db5a82bb058cc73f5b88bb872ed874824228a49c29471d"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "fa79cd967ed9bb1484b3fef76576b4666f990b445fcfdc8a5ae1fe4d944d8d3a"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "d8caef41b7e8181c2508997321cbc236ee4f97fa3f7bb2fb9a437869015c5941"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "09736fa5234453b4a56938355ba47a8f9cdf3cd0d63198a29e8f02e06ebcc86f"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "6f4429ebe5a98494eb19fb43031bee3c6b287ce44a9d33887810b6b83a068f18"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "ee128e05d9995f7f040872411fba31913dc140128a71b67af61f46a7414f84d7"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "67c84231f0a44f6f28db5a82bb058cc73f5b88bb872ed874824228a49c29471d"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "fa79cd967ed9bb1484b3fef76576b4666f990b445fcfdc8a5ae1fe4d944d8d3a"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "d8caef41b7e8181c2508997321cbc236ee4f97fa3f7bb2fb9a437869015c5941"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "09736fa5234453b4a56938355ba47a8f9cdf3cd0d63198a29e8f02e06ebcc86f"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "6f4429ebe5a98494eb19fb43031bee3c6b287ce44a9d33887810b6b83a068f18"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "assign: ADMIN ",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "4a9f4d5e11b4eb9069af57b5e5ec65d3b969543fd082a4648188c866b3a8822a"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "dbdf6d9f2ff5bef94581a8bc239093602267ca963e6bae058798831545f31563"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "966fe1fd31e165be74192df516a76aaeef5eef75b8fb4b033bb66be3ca4d6602"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "e60a458ab21eb657dea2598b6ef86e97a341f21938f43b889e47d39ccb6217c0"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "82291905bc14490531b9be13e0b3c05248dd2a7ae3bb16be816abac5def628ca"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "cebec45abfd90fead8af3d93c60010d69dde31bada646df6f34199870f70441b"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "4a9f4d5e11b4eb9069af57b5e5ec65d3b969543fd082a4648188c866b3a8822a"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "dbdf6d9f2ff5bef94581a8bc239093602267ca963e6bae058798831545f31563"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "966fe1fd31e165be74192df516a76aaeef5eef75b8fb4b033bb66be3ca4d6602"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "e60a458ab21eb657dea2598b6ef86e97a341f21938f43b889e47d39ccb6217c0"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "82291905bc14490531b9be13e0b3c05248dd2a7ae3bb16be816abac5def628ca"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "cebec45abfd90fead8af3d93c60010d69dde31bada646df6f34199870f70441b"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "empty-reserved-assignment",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "2231dd67ba97f37933f4831b8aa412e82f5d7c31e130f8488962331c14348e4b"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "dee549052c133fbd1b212ad9a4a99d274aca31aa0063e83eed6aea61241fa44f"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "59e7a8d273b46ae0df830725f5a9c342603a0b9e50368b02724c70797e632e5a"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "5a3d33555106bf724facc61727583c30771f6a97cf4be873f8b665ed764d90a7"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "9a7d46b8e1ea483289d71b8beaee34761c690880acbcdcdf2790434d822c52be"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "0c6e8725cb62e660b8603514f200f4e16233a518bfa62202418871dd85c075b6"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "2231dd67ba97f37933f4831b8aa412e82f5d7c31e130f8488962331c14348e4b"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "dee549052c133fbd1b212ad9a4a99d274aca31aa0063e83eed6aea61241fa44f"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "59e7a8d273b46ae0df830725f5a9c342603a0b9e50368b02724c70797e632e5a"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "5a3d33555106bf724facc61727583c30771f6a97cf4be873f8b665ed764d90a7"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "9a7d46b8e1ea483289d71b8beaee34761c690880acbcdcdf2790434d822c52be"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "0c6e8725cb62e660b8603514f200f4e16233a518bfa62202418871dd85c075b6"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "latent-plus-ordinary-dashboard",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "3e0541db8918e7f501872a3483330db65430f5018304932dd62bddc3181c3f06"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "3346ef9ad50dfca56375564e51a42035db7035120eba0e4442966c680dff1774"
+        },
+        "roles": {
+          "count": 4,
+          "sha256": "26f3aec692af29d6e3b8d781f3135c45a3312e3bfd813b2bef438118171f60d0"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "e4f3544ad17c0d84365ef83e49a8346a6ddb90ca66c218e45ecfa0f74b8c656c"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "b49f6f364bc0293633db5e97d211a84bcce29eaa166925b32ef62a8261b7c309"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "5cee2f06ec7cf5a96dcd78983eee16aa25725d4f09fa3ad8c940062151678397"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "3e0541db8918e7f501872a3483330db65430f5018304932dd62bddc3181c3f06"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "3346ef9ad50dfca56375564e51a42035db7035120eba0e4442966c680dff1774"
+        },
+        "roles": {
+          "count": 4,
+          "sha256": "26f3aec692af29d6e3b8d781f3135c45a3312e3bfd813b2bef438118171f60d0"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "e4f3544ad17c0d84365ef83e49a8346a6ddb90ca66c218e45ecfa0f74b8c656c"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "b49f6f364bc0293633db5e97d211a84bcce29eaa166925b32ef62a8261b7c309"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "5cee2f06ec7cf5a96dcd78983eee16aa25725d4f09fa3ad8c940062151678397"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "role-edit-latent-activation",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "c392c4f550c224e9ab8033b8436676f498b6a6bb40cb0bc713dde0a7f657b36b"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "809f746a936a3e095a5b818a931f9b71c2d7bd16904c2962e98b2440089230bf"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "4c281fbe0f19047813976711998c7f133da05f7072dfff8f6c3042b73636edf5"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "48c7a512cc9c94ca6e786d6b5d7f55a4afa122db014cdb638417ac93261a7755"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "1d71d80eb9886e99fd3a4e1af643a66fd100d2a2313467f49a979366cc5d8512"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "fd28716ab26d281aaf82c86ff37a444d48a435536409ed4a8e8c5cb581117038"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "c392c4f550c224e9ab8033b8436676f498b6a6bb40cb0bc713dde0a7f657b36b"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "809f746a936a3e095a5b818a931f9b71c2d7bd16904c2962e98b2440089230bf"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "4c281fbe0f19047813976711998c7f133da05f7072dfff8f6c3042b73636edf5"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "48c7a512cc9c94ca6e786d6b5d7f55a4afa122db014cdb638417ac93261a7755"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "1d71d80eb9886e99fd3a4e1af643a66fd100d2a2313467f49a979366cc5d8512"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "fd28716ab26d281aaf82c86ff37a444d48a435536409ed4a8e8c5cb581117038"
+        }
+      },
+      "securityAuditRowsAdded": 1
+    },
+    {
+      "name": "reserved-update",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "3810ea70e0b7e95188be937173047fc9f3bb8172b241a72d0ff4066468c1b8bb"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "d411025a3a238ccd38da34560ae2b575b9eea40d779eddf83afeaf02940d8d68"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "a6a7aca3c7966eba572e96da3dcde451a49e64a240d4d76c2cabaa3d506e2fb1"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "de01b46aad306b954e95591e3c59f468c10babb9471813dadc3fde12667d0ea8"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "3104c4df812798944903b5ffe4a28e05beb20a80b5cc48b0260166b14b34a73c"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "8c264eeedd79e180a232d88ae93a3a89afa69453932fddf02de92b5a01b33f6b"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "3810ea70e0b7e95188be937173047fc9f3bb8172b241a72d0ff4066468c1b8bb"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "d411025a3a238ccd38da34560ae2b575b9eea40d779eddf83afeaf02940d8d68"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "a6a7aca3c7966eba572e96da3dcde451a49e64a240d4d76c2cabaa3d506e2fb1"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "de01b46aad306b954e95591e3c59f468c10babb9471813dadc3fde12667d0ea8"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "3104c4df812798944903b5ffe4a28e05beb20a80b5cc48b0260166b14b34a73c"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "8c264eeedd79e180a232d88ae93a3a89afa69453932fddf02de92b5a01b33f6b"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "trusted-admin-positive",
+      "tenantScope": true,
+      "recipientSessionsRevoked": true,
+      "ordinaryDelegatePositive": true
+    },
+    {
+      "name": "create-replay-code-loss",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "17c1c9980e463feede892442c0c9243628938834e4e3524cf309f7e156d07474"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "ebcb6be9bb1f8648d7a8d4a30ca2f0f5827198cee0fe8309628d74fdb7953551"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "5f8cafb33da3f89d2d1c12855d9e759223cb9f80c69b593f2d705d09d6cfb110"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "f94d9ab6dac94b13ba69bcc59780d2b82be343d309fd3a751dd538bbc321ca3a"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "550caa04dbfb36eb8c59ea57c856e5df5f60a568839ce77c65c9cb42e078ec1d"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "e0c20b9e7548028efa275831599a11eff4a5beefe34c22b41182a7480bef356b"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "17c1c9980e463feede892442c0c9243628938834e4e3524cf309f7e156d07474"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "ebcb6be9bb1f8648d7a8d4a30ca2f0f5827198cee0fe8309628d74fdb7953551"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "5f8cafb33da3f89d2d1c12855d9e759223cb9f80c69b593f2d705d09d6cfb110"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "f94d9ab6dac94b13ba69bcc59780d2b82be343d309fd3a751dd538bbc321ca3a"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "550caa04dbfb36eb8c59ea57c856e5df5f60a568839ce77c65c9cb42e078ec1d"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "e0c20b9e7548028efa275831599a11eff4a5beefe34c22b41182a7480bef356b"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "create-replay-membership-loss",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "fcca048f0dca6031d0cd4666923a1f816e54754c61890c77e196c148d6e0a7d2"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "641b4a70c0b1808690136e12736b5d29bb25dc78590232ba4fd3d60e48f25304"
+        },
+        "roles": {
+          "count": 4,
+          "sha256": "f53a9c43ab08827baf3bfcd7c33392781f02332f4a8ecfeb21ceacefecead29d"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "f03f9e2812083c636dc0f94d66ce58b6bdefd755c0d9f6a85b087a690dfd87c6"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "7273b08b7276305f82505adbf6f51ac8b4c25f313a5d42f0ee098dbb92b16e71"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "7f5699eb229c7aebe0c497268c7b17f447b5f270d2419a6e270660bb50f6e1e9"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "fcca048f0dca6031d0cd4666923a1f816e54754c61890c77e196c148d6e0a7d2"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "641b4a70c0b1808690136e12736b5d29bb25dc78590232ba4fd3d60e48f25304"
+        },
+        "roles": {
+          "count": 4,
+          "sha256": "f53a9c43ab08827baf3bfcd7c33392781f02332f4a8ecfeb21ceacefecead29d"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "f03f9e2812083c636dc0f94d66ce58b6bdefd755c0d9f6a85b087a690dfd87c6"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "7273b08b7276305f82505adbf6f51ac8b4c25f313a5d42f0ee098dbb92b16e71"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "7f5699eb229c7aebe0c497268c7b17f447b5f270d2419a6e270660bb50f6e1e9"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "member-replay-code-loss",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "c740d3c9d5b9f1094f7e94d3605998b60e4408004ffd436f35778fcd746e04e3"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "032ca3a113e9c02c61f329ef1e342a97e71455e2993d3b16168e80c392bfe9c8"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "477fd4c01f86bd46eada362659be226dac72735fc9ec56d01f873794ae751b03"
+        },
+        "sessions": {
+          "count": 1,
+          "sha256": "717761f46a469f0e5c2f33baab1a8b0b9c3932816335f3097aec0bdb512b7475"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "9a73e212bb641b578fe2ad908e6ba8fe4e6b5b94350e0c0e2a2dd38409bd268c"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "caa3bdef4d79261047ad54d91705ad5090d4ce7711c847563e5740dcb5e4427d"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "c740d3c9d5b9f1094f7e94d3605998b60e4408004ffd436f35778fcd746e04e3"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "032ca3a113e9c02c61f329ef1e342a97e71455e2993d3b16168e80c392bfe9c8"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "477fd4c01f86bd46eada362659be226dac72735fc9ec56d01f873794ae751b03"
+        },
+        "sessions": {
+          "count": 1,
+          "sha256": "717761f46a469f0e5c2f33baab1a8b0b9c3932816335f3097aec0bdb512b7475"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "9a73e212bb641b578fe2ad908e6ba8fe4e6b5b94350e0c0e2a2dd38409bd268c"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "caa3bdef4d79261047ad54d91705ad5090d4ce7711c847563e5740dcb5e4427d"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "replay-payload-conflict",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "4319afc2d6fe7252d14123fd54a52a2b571f552613c127d52d8ca6d24a1d605f"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "248f24b1b252e2ebefbfd623a30f7a25a2bea0bece66a5e392e0b5ef3d2a56e2"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "8ab0e061da95cd023eb4d09a1762e692e609999883941a3529cea8d3165268d4"
+        },
+        "sessions": {
+          "count": 1,
+          "sha256": "98d1ba65980b5071498a87f53c8ec2e0ce58c88da14be68d2d6ecd7c57b7b69f"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "33c41976fa64ec5b54defceb322dff40aa746b00f1caf190c74e3e42fbc05927"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "4b289ba57d7ae5e297a5bceb28694a93c198e5fb24c67503cca43864db543748"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "4319afc2d6fe7252d14123fd54a52a2b571f552613c127d52d8ca6d24a1d605f"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "248f24b1b252e2ebefbfd623a30f7a25a2bea0bece66a5e392e0b5ef3d2a56e2"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "8ab0e061da95cd023eb4d09a1762e692e609999883941a3529cea8d3165268d4"
+        },
+        "sessions": {
+          "count": 1,
+          "sha256": "98d1ba65980b5071498a87f53c8ec2e0ce58c88da14be68d2d6ecd7c57b7b69f"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "33c41976fa64ec5b54defceb322dff40aa746b00f1caf190c74e3e42fbc05927"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "4b289ba57d7ae5e297a5bceb28694a93c198e5fb24c67503cca43864db543748"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "target-code-changed-same-permissions",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "b841ce6d933d696be17c8cd4f26ee779e0aab7ca436efccdc78babb822a477bc"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "0a6a8056d360d118ccf1198903b0cd89c78ed841b0d80e1b32b00ab3e48c7298"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "ed5ba5290f3b48140f80237330f9c06de71f75366c641d0088eb9f6b5405b53a"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "8e95ffc80c58e158eeec82c2b80caa4e414fc13eecd44573969b8e61821b1865"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "c250f9d58edf52a7fb14ae148cc1b38026ef9af2a411522b9b1af07d1e86bbcc"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "e195b4dc728c918ce3485ceac98d3750b3e6095c3e8f0a6f082dd59d32178062"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "b841ce6d933d696be17c8cd4f26ee779e0aab7ca436efccdc78babb822a477bc"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "0a6a8056d360d118ccf1198903b0cd89c78ed841b0d80e1b32b00ab3e48c7298"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "ed5ba5290f3b48140f80237330f9c06de71f75366c641d0088eb9f6b5405b53a"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "8e95ffc80c58e158eeec82c2b80caa4e414fc13eecd44573969b8e61821b1865"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "c250f9d58edf52a7fb14ae148cc1b38026ef9af2a411522b9b1af07d1e86bbcc"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "e195b4dc728c918ce3485ceac98d3750b3e6095c3e8f0a6f082dd59d32178062"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "session:expired",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "cf6e05e03699c6a71846a32cfca4b0292c9198bbb0e7d23b120e1f4aa7a572a6"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "aec2f7682ac26b787c106275e0970dced77d97ceea6f4f0566818c9eb9d41112"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "5aa191f54bb9c8a532e6f06dc7be1a12848c3ea50c6a7f4b5255787b1216c28c"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "ab8c34a06534b2bf42f2607bb2a8506a2c15e61f68952e84433ba8a567f19141"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "f02a112d5812efbc3c0a6f66753da525efdfdd6a4ae191509f51c669fdd9d4a3"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "9a79f32ae3311fca85db99606fa9ddd9c3b211b0577aba4a9d36bd7d734ed40f"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "cf6e05e03699c6a71846a32cfca4b0292c9198bbb0e7d23b120e1f4aa7a572a6"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "aec2f7682ac26b787c106275e0970dced77d97ceea6f4f0566818c9eb9d41112"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "5aa191f54bb9c8a532e6f06dc7be1a12848c3ea50c6a7f4b5255787b1216c28c"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "ab8c34a06534b2bf42f2607bb2a8506a2c15e61f68952e84433ba8a567f19141"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "f02a112d5812efbc3c0a6f66753da525efdfdd6a4ae191509f51c669fdd9d4a3"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "9a79f32ae3311fca85db99606fa9ddd9c3b211b0577aba4a9d36bd7d734ed40f"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "session:revoked",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "7da31a2f6d0ec4e5ced63ba8551341adf21bb1195e5f490ca963147bb5d80c53"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "c2fa783497ea6fdcba2ca1421b51c29a9d1a38ca6a72236e9e18dd6f52de1c1e"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "8ec5df7e0e2c37d8c2c5497bbfc0f8b2286cfb62567aba82b7acdfdeb1222bc8"
+        },
+        "sessions": {
+          "count": 1,
+          "sha256": "c74d32e2ef0c4bda07ece9f2601184fb023c105c4f793fce6d480bcd579ea9be"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "0dc647a271f8613ce7d2740801d58adaf813127c4f9d8f40e065ac8219fab69a"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "a08b7b1243bad3e331a27ae7f16998d12c0872d4c007215ad7a45477564252ab"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "7da31a2f6d0ec4e5ced63ba8551341adf21bb1195e5f490ca963147bb5d80c53"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "c2fa783497ea6fdcba2ca1421b51c29a9d1a38ca6a72236e9e18dd6f52de1c1e"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "8ec5df7e0e2c37d8c2c5497bbfc0f8b2286cfb62567aba82b7acdfdeb1222bc8"
+        },
+        "sessions": {
+          "count": 1,
+          "sha256": "c74d32e2ef0c4bda07ece9f2601184fb023c105c4f793fce6d480bcd579ea9be"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "0dc647a271f8613ce7d2740801d58adaf813127c4f9d8f40e065ac8219fab69a"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "a08b7b1243bad3e331a27ae7f16998d12c0872d4c007215ad7a45477564252ab"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "session:permission-revoked",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "559f87403346fa2b7b77ae038190d65daddc34f87122638f046f05ecf73a57b8"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "b86f57f6b7872c7393deb0eae16ef7d26b36d8d573bc7af40e0fc035d0e46592"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "182f3d5c646358c1efc82cce4a36c6d68425a6a49623ee91906d6105b5c51b01"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "fda1f7a500fbe33a0727afbdbd9258de4a549ac8606af0d272548799a9b9c904"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "32dcfa1359dad1585bf0f4d016be1bf7626dd17e9377e5141b81eda12a101a1c"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "4dffec6d8b3e26a1fc11c3bc9fb910625ecca653106d138aa8ca5ab5540cfa7a"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "559f87403346fa2b7b77ae038190d65daddc34f87122638f046f05ecf73a57b8"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "b86f57f6b7872c7393deb0eae16ef7d26b36d8d573bc7af40e0fc035d0e46592"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "182f3d5c646358c1efc82cce4a36c6d68425a6a49623ee91906d6105b5c51b01"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "fda1f7a500fbe33a0727afbdbd9258de4a549ac8606af0d272548799a9b9c904"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "32dcfa1359dad1585bf0f4d016be1bf7626dd17e9377e5141b81eda12a101a1c"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "4dffec6d8b3e26a1fc11c3bc9fb910625ecca653106d138aa8ca5ab5540cfa7a"
+        }
+      },
+      "securityAuditRowsAdded": 1
+    },
+    {
+      "name": "foreign-role",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "77742417eedd7e66db64d0702ae02dedd471ca02ba941b1e7ca791afbec652d3"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "78a166f469f9893118f5988ef9a65dd6d0c606483766af9882c4807b44520a5c"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "ade1760d94c399b12af331b7ae65d382cb18b590c783e1e23cbd84f79fa38629"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "575504c84eadc80e8eda7f3fc36c9b09895ad853428b732532f31660e64b1b99"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "83f548889ef9f2b3d1293e1c76fc7f14053e826a6926f0bb610e41bf2001b555"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "a51f86eb3e5176d46f64d22f0bcaccf5b7a186df1d7dd45cbe43e32690a2400e"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "77742417eedd7e66db64d0702ae02dedd471ca02ba941b1e7ca791afbec652d3"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "78a166f469f9893118f5988ef9a65dd6d0c606483766af9882c4807b44520a5c"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "ade1760d94c399b12af331b7ae65d382cb18b590c783e1e23cbd84f79fa38629"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "575504c84eadc80e8eda7f3fc36c9b09895ad853428b732532f31660e64b1b99"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "83f548889ef9f2b3d1293e1c76fc7f14053e826a6926f0bb610e41bf2001b555"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "a51f86eb3e5176d46f64d22f0bcaccf5b7a186df1d7dd45cbe43e32690a2400e"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "forged-organization",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "77742417eedd7e66db64d0702ae02dedd471ca02ba941b1e7ca791afbec652d3"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "78a166f469f9893118f5988ef9a65dd6d0c606483766af9882c4807b44520a5c"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "ade1760d94c399b12af331b7ae65d382cb18b590c783e1e23cbd84f79fa38629"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "575504c84eadc80e8eda7f3fc36c9b09895ad853428b732532f31660e64b1b99"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "83f548889ef9f2b3d1293e1c76fc7f14053e826a6926f0bb610e41bf2001b555"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "a51f86eb3e5176d46f64d22f0bcaccf5b7a186df1d7dd45cbe43e32690a2400e"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "77742417eedd7e66db64d0702ae02dedd471ca02ba941b1e7ca791afbec652d3"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "78a166f469f9893118f5988ef9a65dd6d0c606483766af9882c4807b44520a5c"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "ade1760d94c399b12af331b7ae65d382cb18b590c783e1e23cbd84f79fa38629"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "575504c84eadc80e8eda7f3fc36c9b09895ad853428b732532f31660e64b1b99"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "83f548889ef9f2b3d1293e1c76fc7f14053e826a6926f0bb610e41bf2001b555"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "a51f86eb3e5176d46f64d22f0bcaccf5b7a186df1d7dd45cbe43e32690a2400e"
+        }
+      },
+      "securityAuditRowsAdded": 1
+    },
+    {
+      "name": "invite:admin",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "bbe79b25dea5604bf4cd2626fea5f6dae8f2c2e410f011fb8ec602ddc8bfa44b"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "10afcf3b9efe30708f0a000729900e90a96810d2cb58728ae194b1514da89361"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "36d54e44fb9a4fd51099290860895fdfa12006b9140f54afb8a9eeba137d23b9"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "156a363f252194d25402ef26851c8f4544f1178a44cc4763d6b6e27323d9a866"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "3e81f4c43bc768c33b2f6f8f51d52cfa2e21d195a3d9f261bcc601f20cf13995"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "1abf1bd56a39e72edc830d0b4567c78ceba03e44ec935c1992462322f3b4af6c"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "bbe79b25dea5604bf4cd2626fea5f6dae8f2c2e410f011fb8ec602ddc8bfa44b"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "10afcf3b9efe30708f0a000729900e90a96810d2cb58728ae194b1514da89361"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "36d54e44fb9a4fd51099290860895fdfa12006b9140f54afb8a9eeba137d23b9"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "156a363f252194d25402ef26851c8f4544f1178a44cc4763d6b6e27323d9a866"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "3e81f4c43bc768c33b2f6f8f51d52cfa2e21d195a3d9f261bcc601f20cf13995"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "1abf1bd56a39e72edc830d0b4567c78ceba03e44ec935c1992462322f3b4af6c"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "invite:administrator",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "0dec41ebca25dcd7c459631792ce8038385c536327f6618e64642af80465c9ce"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "c7fb5508bfcf243ef9e497f751cff1f48d2e11c7079d4aaf9c63b2ef23fc6f16"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "8497f493d89228d2eb555036c056e5f29b80089c2af58422fae91344e10bd350"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "1fcbd14466d9478c8eeb1700468f540e90537e4e443b764b710ee90c3d1e1d3f"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "a49fed0a1dc154734fc5e974f271e09f6c4d555d4e1c277b100b545226bf58a8"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "bc96770098fcc43339ae2a8999ba30936ceee545c267e2b33eac64246404e867"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "0dec41ebca25dcd7c459631792ce8038385c536327f6618e64642af80465c9ce"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "c7fb5508bfcf243ef9e497f751cff1f48d2e11c7079d4aaf9c63b2ef23fc6f16"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "8497f493d89228d2eb555036c056e5f29b80089c2af58422fae91344e10bd350"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "1fcbd14466d9478c8eeb1700468f540e90537e4e443b764b710ee90c3d1e1d3f"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "a49fed0a1dc154734fc5e974f271e09f6c4d555d4e1c277b100b545226bf58a8"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "bc96770098fcc43339ae2a8999ba30936ceee545c267e2b33eac64246404e867"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "invite:super_admin",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "a298a9f28a5c4177dc0d1d6687cfd5a29eb4ead32eb9c7249d25f836ba0572ab"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "6fbc568408b11be0cf511701cc915cf8b7156e4d12077095b8bfc20619e219ec"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "2ec54689e3baa41d22a8038a84f52c2623edf3cceac2fab95d202d34028decd7"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "a888b075da5c43ca0d506c26ce2e42d59394c801a5d44eb5a3b7e7740377c19b"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "2f7114ec3b5b779857907394f05ba2c150a2705bc3c129f5d01f93614a67c419"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "d14ecca7e43ec0d8cda56c4c124d58fd1cdc5c83d288b31e44500e38c7230aa7"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "a298a9f28a5c4177dc0d1d6687cfd5a29eb4ead32eb9c7249d25f836ba0572ab"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "6fbc568408b11be0cf511701cc915cf8b7156e4d12077095b8bfc20619e219ec"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "2ec54689e3baa41d22a8038a84f52c2623edf3cceac2fab95d202d34028decd7"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "a888b075da5c43ca0d506c26ce2e42d59394c801a5d44eb5a3b7e7740377c19b"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "2f7114ec3b5b779857907394f05ba2c150a2705bc3c129f5d01f93614a67c419"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "d14ecca7e43ec0d8cda56c4c124d58fd1cdc5c83d288b31e44500e38c7230aa7"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "invite-replay-current-code-loss",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "113d46f94a24fa3f4ae1dd419853f0f2c71427eb6c5b67cbaf2f66f6b3ecac86"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "c3c21c79703a94a0c920cc4134abd9b5f74edea6ca31d9a658c4e81881ccc9a2"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "e049f20f7d5f913e061a3ea48c68f1e5fe8777764773d3dbd0f4773b317cf379"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "08e8acec90b5a47e44e1283bd6da91561d607944b8cd62a156bc523f2efa5da0"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "7351bbb005ab4f2407010c40d8fdeb2aafabfb3e6ead7d75d350ce8b96ed7a30"
+        },
+        "invites": {
+          "count": 1,
+          "sha256": "c70bfe00df47da82f7435970c05a6c89ec98ac032d07ee53b0b7b1d6a4a642f9"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 1,
+          "sha256": "ef4fe9217e87a61fb4fd5d424c61401ab4d48205ed123a9350794571c450f09f"
+        },
+        "business_event_outbox": {
+          "count": 1,
+          "sha256": "4c205694ef3c87890a26ecdb099a5489d9d4960e8d21ed013787380f0b659206"
+        },
+        "business_event_audits": {
+          "count": 1,
+          "sha256": "bdca5d6e45c3b34518acb493d97d5238f132a82528d59e0d4b2aafe12c58cea1"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "56ba24afccf01739392cc475bbad4654bb82335362ff312d1d173452e01d017d"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "113d46f94a24fa3f4ae1dd419853f0f2c71427eb6c5b67cbaf2f66f6b3ecac86"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "c3c21c79703a94a0c920cc4134abd9b5f74edea6ca31d9a658c4e81881ccc9a2"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "e049f20f7d5f913e061a3ea48c68f1e5fe8777764773d3dbd0f4773b317cf379"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "08e8acec90b5a47e44e1283bd6da91561d607944b8cd62a156bc523f2efa5da0"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "7351bbb005ab4f2407010c40d8fdeb2aafabfb3e6ead7d75d350ce8b96ed7a30"
+        },
+        "invites": {
+          "count": 1,
+          "sha256": "c70bfe00df47da82f7435970c05a6c89ec98ac032d07ee53b0b7b1d6a4a642f9"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 1,
+          "sha256": "ef4fe9217e87a61fb4fd5d424c61401ab4d48205ed123a9350794571c450f09f"
+        },
+        "business_event_outbox": {
+          "count": 1,
+          "sha256": "4c205694ef3c87890a26ecdb099a5489d9d4960e8d21ed013787380f0b659206"
+        },
+        "business_event_audits": {
+          "count": 1,
+          "sha256": "bdca5d6e45c3b34518acb493d97d5238f132a82528d59e0d4b2aafe12c58cea1"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "56ba24afccf01739392cc475bbad4654bb82335362ff312d1d173452e01d017d"
+        }
+      },
+      "redemptionDenied": true
+    },
+    {
+      "name": "invite-replacement-code-loss",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "d5560985ffe30d46769a52c03ddaf0c3cba99c78ec5448013849db10816f6de0"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "360483d2b799ce6059e3731ea27fedb16d428643256d71787cb88be6da7ca629"
+        },
+        "roles": {
+          "count": 4,
+          "sha256": "d76644aa516ba9f5b49c3c62f4e08165bd07933cba7f4dc9958fe402f7d46b57"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "94833e591345cc67962401505295154c689a30fa8ed69860ac2394a9ba296fc0"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "59de7c2cfb35f3bcccef0eedfc831f78ed0c1d37ba2dbd8834120829e0812a95"
+        },
+        "invites": {
+          "count": 1,
+          "sha256": "85e4ce15cbc95fcf16dc5235877a1dbcaaf8962be64815c8be570863568fc591"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 1,
+          "sha256": "50f08ee8724ba80bcc85fec3947d04c03bfc88d0cc2626f2e494d464b68e92ff"
+        },
+        "business_event_outbox": {
+          "count": 1,
+          "sha256": "f05c5dda908174eec8e025aef9efabd1aaa9624c16c24dc5f67e304995d3e090"
+        },
+        "business_event_audits": {
+          "count": 1,
+          "sha256": "9ddf1e1f78c95c49e1e1bf7d3792d763c8648c7acd2339c6d4a0edcfcd7faf5c"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "e670f9d9ca8f44266e8b8209bc10087feea769149c894ad13c1f2af94555c4f5"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "d5560985ffe30d46769a52c03ddaf0c3cba99c78ec5448013849db10816f6de0"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "360483d2b799ce6059e3731ea27fedb16d428643256d71787cb88be6da7ca629"
+        },
+        "roles": {
+          "count": 4,
+          "sha256": "d76644aa516ba9f5b49c3c62f4e08165bd07933cba7f4dc9958fe402f7d46b57"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "94833e591345cc67962401505295154c689a30fa8ed69860ac2394a9ba296fc0"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "59de7c2cfb35f3bcccef0eedfc831f78ed0c1d37ba2dbd8834120829e0812a95"
+        },
+        "invites": {
+          "count": 1,
+          "sha256": "85e4ce15cbc95fcf16dc5235877a1dbcaaf8962be64815c8be570863568fc591"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 1,
+          "sha256": "50f08ee8724ba80bcc85fec3947d04c03bfc88d0cc2626f2e494d464b68e92ff"
+        },
+        "business_event_outbox": {
+          "count": 1,
+          "sha256": "f05c5dda908174eec8e025aef9efabd1aaa9624c16c24dc5f67e304995d3e090"
+        },
+        "business_event_audits": {
+          "count": 1,
+          "sha256": "9ddf1e1f78c95c49e1e1bf7d3792d763c8648c7acd2339c6d4a0edcfcd7faf5c"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "e670f9d9ca8f44266e8b8209bc10087feea769149c894ad13c1f2af94555c4f5"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "legacy-redemption:admin",
+      "status": 403,
+      "allowedAbuseBucketsAdded": 1,
+      "businessUnchanged": true
+    },
+    {
+      "name": "legacy-redemption:ordinary",
+      "status": 200,
+      "allowedAbuseBucketsAdded": 1,
+      "businessUnchanged": false
+    },
+    {
+      "name": "reserved-reactivation",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "b44e8e2af822d547c5c70d6c119fb8d403cf36c3134ba8dbbe507e5d6f53c14e"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "c52384304bebf9d42218d9e263a85109a09e2e158aae068faf881404043187bb"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "5d75cfa17216713aea8102e3cf3713b59e565f85b3302fa004fb16f4f9ffa138"
+        },
+        "sessions": {
+          "count": 1,
+          "sha256": "5dabf7631e291fe4cf1328810caa616e8b19db01e73a982bd4eb67edd676e7f9"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "ad8697a00df15aab83c2d957a47e198f277ecd2d46950755b1ff7534ac102849"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "1ae05367ed1c4812c6a36b3718a2ed1a8e951708d80cb567ae3b56946bf161c3"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "b44e8e2af822d547c5c70d6c119fb8d403cf36c3134ba8dbbe507e5d6f53c14e"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "c52384304bebf9d42218d9e263a85109a09e2e158aae068faf881404043187bb"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "5d75cfa17216713aea8102e3cf3713b59e565f85b3302fa004fb16f4f9ffa138"
+        },
+        "sessions": {
+          "count": 1,
+          "sha256": "5dabf7631e291fe4cf1328810caa616e8b19db01e73a982bd4eb67edd676e7f9"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "ad8697a00df15aab83c2d957a47e198f277ecd2d46950755b1ff7534ac102849"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "1ae05367ed1c4812c6a36b3718a2ed1a8e951708d80cb567ae3b56946bf161c3"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "access-decision-reserved",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "e9109c036ce334b9e2ad90fb3b231b17e4e91c0d042004513d81b2646c67f049"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "cfc3c5c0fa55490a62c58ec35722c753f3784b87c8f076e3a2973e95dc374c89"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "ea79d7c0eb0e5756eeddb1875afd35eb0590c77d7b29579f5d75a78cef6a6d93"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "3ddfc9f6b48ff3c8d743b4ba260801aa49b9157b0a6b5b40c44819cdd8e9532a"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "702c766c1e83256620d7d2b50eb0591c74b43947d512d8d7368baaa34c9602c4"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 1,
+          "sha256": "6e38dcc65b422fe5919821c77413546d419eb71463a49e3070187676a56f560e"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "2af2cdd13ce8706e4981226984ca2609aa2e4da8a89071c090eeb9c756747f27"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "e9109c036ce334b9e2ad90fb3b231b17e4e91c0d042004513d81b2646c67f049"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "cfc3c5c0fa55490a62c58ec35722c753f3784b87c8f076e3a2973e95dc374c89"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "ea79d7c0eb0e5756eeddb1875afd35eb0590c77d7b29579f5d75a78cef6a6d93"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "3ddfc9f6b48ff3c8d743b4ba260801aa49b9157b0a6b5b40c44819cdd8e9532a"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "702c766c1e83256620d7d2b50eb0591c74b43947d512d8d7368baaa34c9602c4"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 1,
+          "sha256": "6e38dcc65b422fe5919821c77413546d419eb71463a49e3070187676a56f560e"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "2af2cdd13ce8706e4981226984ca2609aa2e4da8a89071c090eeb9c756747f27"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "access-application-code-loss",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "4e0d420e8939c61755102536d714b5feecaae248f5955b0e3db8137f799ebb6f"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "2fcc26059d787a54038f268eb16774d6f0913d0599c886ab8b5908ff894dc38e"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "7ebb2f33b1dbe50dc68b2f6546f2f525d11e385efcc014bc4853b3fa1c0a6796"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "5506606d326e1153053ced05d33c1fe43c7d3a6f9be4e149e5a6a10bb323169e"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "d205c307f0e091aafdbd9491a26161191f5cbc3f6238ff4c79625e9b67ea4477"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "678bde29db8d7bc248d0183e47e7a0cb55ce51b349974f30071362f48c8bf7c6"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "4e0d420e8939c61755102536d714b5feecaae248f5955b0e3db8137f799ebb6f"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "2fcc26059d787a54038f268eb16774d6f0913d0599c886ab8b5908ff894dc38e"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "7ebb2f33b1dbe50dc68b2f6546f2f525d11e385efcc014bc4853b3fa1c0a6796"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "5506606d326e1153053ced05d33c1fe43c7d3a6f9be4e149e5a6a10bb323169e"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "d205c307f0e091aafdbd9491a26161191f5cbc3f6238ff4c79625e9b67ea4477"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "678bde29db8d7bc248d0183e47e7a0cb55ce51b349974f30071362f48c8bf7c6"
+        }
+      },
+      "allowedRequestTransition": {
+        "application": "FAILED",
+        "applicationError": "REVIEW_REQUIRED",
+        "revision": 3
+      }
+    },
+    {
+      "name": "applied-access-replay-code-loss",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "888369bf5bf352b68f94e74b62f4662e6f620827d1bd379fab0f57de67e00bdc"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "d0b7379ba360512ece50392eade6d70ebcf17b6422efffe461537a2d4aaf552e"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "dba83486280a1061848f81b5416a725790482093f796d5095630415d7b070a16"
+        },
+        "sessions": {
+          "count": 1,
+          "sha256": "92b9731a539ef5c209f22cf39ac99d731a233e506ab12cda9bb04d693c3bd747"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "5d9e6c3604c2240019fc843d8ed82254e29849f8a98058077f383713f63acc5a"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 1,
+          "sha256": "6416869f416d781186b751541136eda0b50d74001c2e5ec57c821ab712f14d5e"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "3739ba374e54236b34c4eba8b9af98508a3376c04eedec026853a412052e8f2c"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "888369bf5bf352b68f94e74b62f4662e6f620827d1bd379fab0f57de67e00bdc"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "d0b7379ba360512ece50392eade6d70ebcf17b6422efffe461537a2d4aaf552e"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "dba83486280a1061848f81b5416a725790482093f796d5095630415d7b070a16"
+        },
+        "sessions": {
+          "count": 1,
+          "sha256": "92b9731a539ef5c209f22cf39ac99d731a233e506ab12cda9bb04d693c3bd747"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "5d9e6c3604c2240019fc843d8ed82254e29849f8a98058077f383713f63acc5a"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 1,
+          "sha256": "6416869f416d781186b751541136eda0b50d74001c2e5ec57c821ab712f14d5e"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 3,
+          "sha256": "3739ba374e54236b34c4eba8b9af98508a3376c04eedec026853a412052e8f2c"
+        }
+      },
+      "securityAuditRowsAdded": 0
+    },
+    {
+      "name": "lock-race-code-revocation",
+      "actualWaitObserved": true,
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "cc19c37df04802baac99269232da8a1f2ec38f4c0631ce9a9bbc4e626bf093ef"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "62f65ef28a6e8abd26ea0c5ec6bc347c44e238c83101074b9717131cb4482adc"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "1c420066a26acec117dd1be2ec4e9f9fb86cd1157e92bf9cadb71296d45c7ec8"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "1bd9169c2f921941b5b3ed88c308352dccaf5176eae034bb0035a67d00152f92"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "b42e988974d13d0502bc11dfed72676eee86c6d277369468137f2e871b5b5ba5"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "a4d8b8ae0d042be820931596d59d81b5fdc711eb0b6050ebf7ebbdedd36cac34"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "cc19c37df04802baac99269232da8a1f2ec38f4c0631ce9a9bbc4e626bf093ef"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "62f65ef28a6e8abd26ea0c5ec6bc347c44e238c83101074b9717131cb4482adc"
+        },
+        "roles": {
+          "count": 2,
+          "sha256": "1c420066a26acec117dd1be2ec4e9f9fb86cd1157e92bf9cadb71296d45c7ec8"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "1bd9169c2f921941b5b3ed88c308352dccaf5176eae034bb0035a67d00152f92"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "b42e988974d13d0502bc11dfed72676eee86c6d277369468137f2e871b5b5ba5"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "a4d8b8ae0d042be820931596d59d81b5fdc711eb0b6050ebf7ebbdedd36cac34"
+        }
+      },
+      "allowedFixtureMutation": "actorRole.code only"
+    },
+    {
+      "name": "transaction-rollback-after-session-delete",
+      "before": {
+        "organizations": {
+          "count": 2,
+          "sha256": "217fb102b4c4f835cce1062079f47f7c3e6372ae98af39dd511a74c2f128b07d"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "6a644f8c59764b30ba05e472db4f9d79d378718782b3287815b5802a5d16654f"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "65f69a72b535bb2ee374d991d2b08099ea21fd2c3fa061ecb27e2094142175a3"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "8a44e07104c032372c824250e40faa9b3256fe9c59e1a0289dccadc808d9780c"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "a703a1211f99da65e42b8d38ba5c37d1525d619ad6d5f65f20e15c9ee1939786"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "445e0614ecc235ca6c3c33e65a7f066013605b5a3011a8f3053a80adc31575c6"
+        }
+      },
+      "after": {
+        "organizations": {
+          "count": 2,
+          "sha256": "217fb102b4c4f835cce1062079f47f7c3e6372ae98af39dd511a74c2f128b07d"
+        },
+        "users": {
+          "count": 2,
+          "sha256": "6a644f8c59764b30ba05e472db4f9d79d378718782b3287815b5802a5d16654f"
+        },
+        "roles": {
+          "count": 3,
+          "sha256": "65f69a72b535bb2ee374d991d2b08099ea21fd2c3fa061ecb27e2094142175a3"
+        },
+        "sessions": {
+          "count": 2,
+          "sha256": "8a44e07104c032372c824250e40faa9b3256fe9c59e1a0289dccadc808d9780c"
+        },
+        "accounts": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "password_history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "locations": {
+          "count": 3,
+          "sha256": "a703a1211f99da65e42b8d38ba5c37d1525d619ad6d5f65f20e15c9ee1939786"
+        },
+        "invites": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "access_requests": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_events": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_outbox": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "business_event_audits": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configurations": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_grants": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "tenant_module_configuration_commands": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "memberships": {
+          "count": 2,
+          "sha256": "445e0614ecc235ca6c3c33e65a7f066013605b5a3011a8f3053a80adc31575c6"
+        }
+      }
+    }
+  ]
+}

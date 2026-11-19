@@ -79,6 +79,7 @@ import {
   freezeAttendanceSnapshot,
   preparePayrollDeclarations,
 } from "../payroll-control.service";
+import { validatePayrollHistoryProof } from "../payroll-history-proof";
 
 const mockDb = db as unknown as { $transaction: jest.Mock };
 const mockedCreateLedgerPostingBatch = createLedgerPostingBatch as jest.Mock;
@@ -93,7 +94,8 @@ const mockedResolveRegulatoryParameter =
 
 function buildTx() {
   return {
-    $queryRaw: jest.fn().mockImplementation(async (query: Prisma.Sql) => query.sql.includes('FROM "organizations"') ? [{ id: "org-1" }] : []),
+    $queryRaw: jest.fn().mockImplementation(async (query: Prisma.Sql) => query.sql.includes('transaction_isolation') ? [{ isolationLevel: 'read committed' }] : query.sql.includes('FROM "organizations"') ? [{ id: "org-1" }] : []),
+    hrisTimeRequest: { findMany: jest.fn().mockResolvedValue([]) },
     organization: {
       findFirst: jest.fn(),
     },
@@ -617,6 +619,7 @@ type MockCountryPackOverrides = {
   employerRulesValue?: Record<string, unknown>;
   incomeTaxRulesValue?: Record<string, unknown>;
   incomeTaxCapabilityStatus?: string;
+  incomeTaxVerificationStatus?: string;
   leaveValue?: Record<string, unknown>;
   overtimeValue?: Record<string, unknown>;
   compensationBenefitValue?: Record<string, unknown>;
@@ -659,6 +662,7 @@ function mockCountryPack(overrides: MockCountryPackOverrides = {}) {
     capabilityStatus:
       overrides.incomeTaxCapabilityStatus ??
       incomeTaxRulesResolution.capabilityStatus,
+    verificationStatus: overrides.incomeTaxVerificationStatus ?? incomeTaxRulesResolution.verificationStatus,
   };
   const leave = {
     ...leaveResolution,
@@ -1213,6 +1217,47 @@ describe("payroll control service", () => {
     expect(tx.payrollRun.create).not.toHaveBeenCalled();
   });
 
+  it.each(["P2034", "P2002"])("retries calculation conflicts (%s) with serializable replay", async (code) => {
+    const tx = buildTx();
+    const existing = { id: "replayed-run", postedBusinessEventId: null, lines: [], metadata: {
+      idempotencyPayloadHash: `sha256:${hashBusinessPayload({ operation: "calculatePayrollRun", payrollPeriodId: "period-1", runType: PayrollRunType.ORDINARY, originalRunId: null, employeeIds: [] })}`,
+    } };
+    tx.payrollRun.findFirst.mockRejectedValueOnce({ code }).mockResolvedValue(existing);
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    const result = await calculatePayrollRun({ organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1", idempotencyKey: "retry-key" });
+    expect(result.created).toBe(false);
+    expect(result.payrollRun.id).toBe("replayed-run");
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(2);
+    for (const call of mockDb.$transaction.mock.calls) {
+      expect(call[1]).toEqual({ isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    }
+    expect(tx.payrollRun.findFirst).toHaveBeenCalledTimes(2);
+    expect(tx.payrollRun.findFirst).toHaveBeenLastCalledWith(expect.objectContaining({
+      where: { organizationId: "org-1", idempotencyKey: "retry-key", deletedAt: null },
+    }));
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("stops calculation after three serialization conflicts", async () => {
+    mockDb.$transaction.mockRejectedValue({ code: "P2034" });
+    await expect(calculatePayrollRun({ organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1", idempotencyKey: "conflict-key" }))
+      .rejects.toMatchObject({ code: "CONCURRENCY_CONFLICT", status: 409 });
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(3);
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("does not retry domain failures or expose unexpected database errors", async () => {
+    const request = { organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1", idempotencyKey: "denied-key" };
+    const denied = new ConflictError("reviewed input changed");
+    mockDb.$transaction.mockRejectedValueOnce(denied);
+    await expect(calculatePayrollRun(request)).rejects.toBe(denied);
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(1);
+    mockDb.$transaction.mockClear().mockRejectedValueOnce(new Error("private database details"));
+    await expect(calculatePayrollRun(request)).rejects.toMatchObject({ code: "INTERNAL_ERROR", expose: false, message: "Payroll transition could not be completed safely." });
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(1);
+  });
+
   it("freezes attendance with source-hash evidence and an audit trail", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
@@ -1578,6 +1623,9 @@ describe("payroll control service", () => {
                   yearToDateAccumulatorHash: expect.stringMatching(/^sha256:/),
                   yearToDateProof: expect.objectContaining({
                     kind: "AQSTOQFLOW_PAYROLL_YEAR_TO_DATE_ACCUMULATOR_PROOF",
+                    version: 2,
+                    observedHistoryHash: expect.stringMatching(/^sha256:/),
+                    priorLineEvidence: [expect.objectContaining({ runId: "prior-run-1", lineId: "prior-line-1", runStatus: "POSTED", calculationSnapshotHash: expect.stringMatching(/^sha256:/) })],
                     accumulatorBasis:
                       "POSTED_PAID_PRIOR_LINES_PLUS_CURRENT_EFFECTIVE_LINE",
                     employeeId: "employee-1",
@@ -1723,6 +1771,60 @@ describe("payroll control service", () => {
         ],
       }),
     );
+    const originalProof = (result.payrollRun.lines[0].calculationSnapshot as any).yearToDateProof;
+    const priorRuns = await tx.payrollRun.findMany.mock.results[0].value;
+    priorRuns[0].status = PayrollRunStatus.PAID;
+    const recalculate = async (key: string) => {
+      const calculated = await calculatePayrollRun({ organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1", idempotencyKey: key, runDate: "2026-06-30" });
+      return (calculated.payrollRun.lines[0].calculationSnapshot as any).yearToDateProof;
+    };
+    const paidProof = await recalculate("history-paid");
+    expect(paidProof.priorAmounts).toEqual(originalProof.priorAmounts);
+    expect(paidProof.observedHistoryHash).not.toBe(originalProof.observedHistoryHash);
+    expect(paidProof.ytdAccumulatorHash).not.toBe(originalProof.ytdAccumulatorHash);
+    priorRuns[0].lines[0].calculationSnapshot.sourceRevision = "changed-with-identical-totals";
+    const revisedProof = await recalculate("history-revised");
+    expect(revisedProof.priorAmounts).toEqual(paidProof.priorAmounts);
+    expect(revisedProof.observedHistoryHash).not.toBe(paidProof.observedHistoryHash);
+    expect((await recalculate("history-stable")).observedHistoryHash).toBe(revisedProof.observedHistoryHash);
+    tx.payrollRun.create.mockClear();
+    mockedRecordBusinessEventInTx.mockClear();
+    mockCountryPack({ incomeTaxCapabilityStatus: "SUPPORTED", incomeTaxVerificationStatus: "EXPERT_REVIEWED", incomeTaxRulesValue: {
+      productionCalculationSupported: true, calculationMode: "PROGRESSIVE_YTD",
+      brackets: [{ upToAmount: null, rateBps: 1000 }],
+    } });
+    await expect(recalculate("missing-ytd-service-inputs")).rejects.toThrow("Payroll YTD taxable base is required");
+    mockCountryPack({ incomeTaxCapabilityStatus: "SUPPORTED", incomeTaxVerificationStatus: "EXPERT_REVIEWED", incomeTaxRulesValue: {
+      productionCalculationSupported: true, calculationMode: "PROGRESSIVE_PERIOD",
+      brackets: [{ upToAmount: null, rateBps: 1000 }],
+      taxableBaseAdjustments: [{ code: "synthetic-input", operation: "SUBTRACT", inputKey: "certifiedDeduction" }],
+    } });
+    await expect(recalculate("missing-adjustment-service-inputs")).rejects.toThrow("Payroll tax adjustment input certifiedDeduction is required");
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+    // Calculator-produced proof under a synthetic supported rule; no statutory admission claim.
+    mockCountryPack({ incomeTaxCapabilityStatus: "SUPPORTED", incomeTaxVerificationStatus: "EXPERT_REVIEWED", incomeTaxRulesValue: {
+      productionCalculationSupported: true, calculationMode: "PROGRESSIVE_PERIOD",
+      brackets: [{ upToAmount: null, rateBps: 0 }],
+    } });
+    Object.assign(priorRuns[0], { organizationId: "org-1", currency: "XAF", runType: "ORDINARY", payrollPeriodId: "prior-period-1",
+      documentHash: `sha256:${hashBusinessPayload({ synthetic: "prior-run" })}` });
+    Object.assign(priorRuns[0].lines[0], { organizationId: "org-1", payrollRunId: priorRuns[0].id,
+      documentHash: `sha256:${hashBusinessPayload(priorRuns[0].lines[0].calculationSnapshot)}` });
+    const compatible = await calculatePayrollRun({ organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1",
+      idempotencyKey: "history-proof-calculator-shape", runDate: "2026-06-30" });
+    expect(validatePayrollHistoryProof({
+      ...compatible.payrollRun, payrollPeriod,
+      lines: compatible.payrollRun.lines.map((line: any) => ({ ...line, payrollRunId: compatible.payrollRun.id })),
+    }, priorRuns)).toEqual({ legacyOnly: false, proofCount: 1 });
+    mockCountryPack();
+    const reviewOnly = await calculatePayrollRun({ organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1",
+      idempotencyKey: "history-proof-review-only-shape", runDate: "2026-06-30" });
+    expect((reviewOnly.payrollRun.lines[0].calculationSnapshot as any).incomeTaxWithholdingAmount).toBeNull();
+    expect(validatePayrollHistoryProof({
+      ...reviewOnly.payrollRun, payrollPeriod,
+      lines: reviewOnly.payrollRun.lines.map((line: any) => ({ ...line, payrollRunId: reviewOnly.payrollRun.id })),
+    }, priorRuns)).toEqual({ legacyOnly: false, proofCount: 1 });
   });
 
   it("blocks payroll calculation when frozen attendance source evidence is missing", async () => {
@@ -2274,6 +2376,10 @@ describe("payroll control service", () => {
     expect(createData.employeeDeductionAmount.toFixed(2)).toBe("420.00");
     expect(createData.employerChargeAmount.toFixed(2)).toBe("1295.00");
     expect(createData.netPayableAmount.toFixed(2)).toBe("9580.00");
+    expect(validatePayrollHistoryProof({
+      ...result.payrollRun, payrollPeriod: correctionPeriod,
+      lines: result.payrollRun.lines.map((line: any) => ({ ...line, payrollRunId: result.payrollRun.id })),
+    }, [])).toEqual({ legacyOnly: false, proofCount: 1 });
     expect(createData.metadata).toEqual(
       expect.objectContaining({
         payrollInputReadinessHash: expect.stringMatching(/^sha256:/),

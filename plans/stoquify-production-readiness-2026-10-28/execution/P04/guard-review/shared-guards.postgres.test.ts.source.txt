@@ -1,0 +1,203 @@
+// Real PostgreSQL and current guards/services; Better Auth transport and Next headers are explicit stubs.
+// This does not qualify signed cookies, HTTP routing, or Better Auth's session-cache implementation.
+jest.mock("server-only", () => ({}))
+jest.mock("next/headers", () => ({ headers: jest.fn(async () => new Headers()) }))
+jest.mock("@/lib/auth", () => ({ auth: { api: { getSession: jest.fn() } } }))
+jest.mock("@/prisma/db", () => {
+  const path = require("node:path"), { PrismaClient } = require("@prisma/client")
+  const target = process.env.P04_POSTGRES_URL, cluster = process.env.P04_CLUSTER_DIR
+  if (process.env.NODE_ENV === "production" || !target || !cluster || !path.isAbsolute(cluster)) throw Error("Explicit isolated P04 database required")
+  const url = new URL(target)
+  if (url.hostname !== "127.0.0.1" || !url.port || !/^\/stoquify_local_p04_[a-z0-9_]+$/.test(url.pathname)) throw Error("Wrong P04 database target")
+  return { db: new PrismaClient({ datasources: { db: { url: target } }, transactionOptions: { maxWait: 30000, timeout: 60000 } }) }
+})
+
+import { createHash, randomUUID } from "node:crypto"
+import { auth } from "@/lib/auth"
+import { db } from "@/prisma/db"
+import { requireRbacContext, requirePermission, hasRbacPermission } from "@/lib/security/rbac"
+import { requireSession, requireFreshAuth } from "@/lib/security/auth-session"
+import { protect } from "@/services/_shared/protect"
+import { resolveOperatingAccessScope } from "@/services/operating-access/operating-access-scope.service"
+import { createOrganizationRole } from "@/services/roles/role.service"
+import { getMemberAccess } from "@/services/users/member-access-read.service"
+import { changeMemberAccess } from "@/services/users/member-access.service"
+import { canGrantMemberRole } from "@/services/users/member-access-policy"
+
+const getSession = auth.api.getSession as unknown as jest.Mock
+let sequence = 0
+beforeAll(async () => {
+  const fs = require("node:fs")
+  const actual = await db.$queryRawUnsafe<Array<{ data_directory: string }>>("SHOW data_directory")
+  if (fs.realpathSync(actual[0].data_directory).toLowerCase() !== fs.realpathSync(process.env.P04_CLUSTER_DIR!).toLowerCase()) throw Error("Wrong owned PostgreSQL cluster")
+})
+afterAll(async () => { await db.$disconnect() })
+beforeEach(() => { getSession.mockReset() })
+
+async function fixture(permissions = ["dashboard.read", "users.read"]) {
+  const prefix = "p04-guard-" + process.pid + "-" + ++sequence
+  const org = prefix + "-org", foreign = prefix + "-foreign", actor = prefix + "-actor", recipient = prefix + "-recipient"
+  await db.organization.createMany({ data: [org, foreign].map(id => ({ id, name: id, slug: id, requestedModules: ["dashboard"] })) })
+  const actorRole = await db.role.create({ data: { id: prefix + "-actor-role", code: "branch_manager", nameEn: "Branch manager", organizationId: org, permissions } })
+  const readerRole = await db.role.create({ data: { id: prefix + "-reader-role", code: "branch_reader", nameEn: "Branch reader", organizationId: org, permissions: ["dashboard.read"] } })
+  await db.user.create({ data: { id: actor, name: actor, email: actor + "@example.invalid", organizationId: org, emailVerified: true, roles: { connect: { id: actorRole.id } } } })
+  await db.user.create({ data: { id: recipient, name: recipient, email: recipient + "@example.invalid", organizationId: org, emailVerified: true, roles: { connect: { id: readerRole.id } } } })
+  const session = await db.session.create({ data: { id: prefix + "-session", token: randomUUID(), userId: actor, expiresAt: new Date(Date.now() + 3600000), assuranceVerifiedAt: new Date(), assuranceMethod: "password", assuranceOrganizationId: org, assuranceLevel: 1 } })
+  await db.location.createMany({ data: [
+    { id: prefix + "-location-a", name: "Actor location", code: "A", organizationId: org, managerId: actor },
+    { id: prefix + "-location-b", name: "Recipient location", code: "B", organizationId: org, managerId: recipient },
+    { id: prefix + "-location-c", name: "Unassigned private location", code: "C", organizationId: org },
+  ] })
+  const raw = { session: { id: session.id, token: session.token }, user: { id: actor, organizationId: org } }
+  getSession.mockResolvedValue(raw)
+  return { prefix, org, foreign, actor, recipient, actorRole, readerRole, session, raw }
+}
+
+async function protectedWrite(permission = "users.read", freshAuth = false) {
+  const handler = jest.fn(async (_input: unknown, ctx: { orgId: string }) => {
+    await db.organization.update({ where: { id: ctx.orgId }, data: { name: "UNEXPECTED_PRIVATE_WRITE" } })
+    return { privateValue: "PRIVATE_RESPONSE_CANARY" }
+  })
+  return { handler, action: protect({ permission, freshAuth }, handler) }
+}
+
+async function expectSafeDenial(result: unknown, handler: jest.Mock, org: string, originalName: string) {
+  expect(result).toMatchObject({ success: false, data: null })
+  expect(JSON.stringify(result)).not.toContain("PRIVATE_RESPONSE_CANARY")
+  expect(handler).not.toHaveBeenCalled()
+  expect((await db.organization.findUniqueOrThrow({ where: { id: org } })).name).toBe(originalName)
+}
+
+async function authorityState(orgIds: string[]) {
+  // Full rows remain in memory only. Failed assertions print digests, never
+  // tokens/private fields. Security audit records are permitted and excluded.
+  const state = {
+    organizations: await db.organization.findMany({ where: { id: { in: orgIds } }, orderBy: { id: "asc" } }),
+    users: await db.user.findMany({ where: { organizationId: { in: orgIds } }, orderBy: { id: "asc" }, include: { roles: { select: { id: true }, orderBy: { id: "asc" } } } }),
+    roles: await db.role.findMany({ where: { organizationId: { in: orgIds } }, orderBy: { id: "asc" } }),
+    sessions: await db.session.findMany({ where: { user: { organizationId: { in: orgIds } } }, orderBy: { id: "asc" } }),
+    locations: await db.location.findMany({ where: { organizationId: { in: orgIds } }, orderBy: { id: "asc" } }),
+    configurations: await db.tenantModuleConfiguration.findMany({ where: { organizationId: { in: orgIds } }, orderBy: { organizationId: "asc" } }),
+    moduleGrants: await db.tenantModuleGrant.findMany({ where: { organizationId: { in: orgIds } }, orderBy: { id: "asc" } }),
+    moduleCommands: await db.tenantModuleConfigurationCommand.findMany({ where: { organizationId: { in: orgIds } }, orderBy: { id: "asc" } }),
+  }
+  return { digest: createHash("sha256").update(JSON.stringify(state)).digest("hex"), counts: Object.fromEntries(Object.entries(state).map(([name, rows]) => [name, rows.length])) }
+}
+
+async function assertDeniedAction(f: Awaited<ReturnType<typeof fixture>>, action: (input: unknown) => Promise<unknown>, handler: jest.Mock, input: unknown) {
+  const before = await authorityState([f.org, f.foreign])
+  await expectSafeDenial(await action(input), handler, f.org, f.org)
+  expect(await authorityState([f.org, f.foreign])).toEqual(before)
+}
+
+it("reloads role grants from PostgreSQL and applies permission removal on the next call", async () => {
+  const f = await fixture()
+  expect((await requirePermission("users.read")).orgId).toBe(f.org)
+  await db.role.update({ where: { id: f.actorRole.id }, data: { permissions: ["dashboard.read"] } })
+  const { action, handler } = await protectedWrite()
+  await assertDeniedAction(f, action, handler, {})
+  expect(getSession.mock.calls.every(([options]) => options.query.disableCookieCache === true)).toBe(true)
+})
+
+it("ignores a real foreign-tenant wildcard role attached to the current user", async () => {
+  const f = await fixture(["dashboard.read"])
+  const foreignRole = await db.role.create({ data: { code: "admin", nameEn: "Foreign administrator", organizationId: f.foreign, permissions: ["*"] } })
+  await db.user.update({ where: { id: f.actor }, data: { roles: { connect: { id: foreignRole.id } } } })
+  const ctx = await requireRbacContext()
+  expect(ctx.roles.map(role => role.id)).toEqual([f.actorRole.id])
+  expect(ctx.isSuperUser).toBe(false)
+  expect(hasRbacPermission(ctx.permissions, "users.read")).toBe(false)
+})
+
+it.each(["organizationId", "orgId", "data.organizationId", "data.orgId"])("denies forged %s without business writes or private output", async field => {
+  const f = await fixture(), { action, handler } = await protectedWrite()
+  const input = field.startsWith("data.") ? { data: { [field.slice(5)]: f.foreign } } : { [field]: f.foreign }
+  await assertDeniedAction(f, action, handler, input)
+})
+
+it.each(["deleted", "expired", "wrong-token", "wrong-user"])("rejects %s live session mirror despite stale mocked auth transport", async mode => {
+  const f = await fixture()
+  if (mode === "deleted") await db.session.delete({ where: { id: f.session.id } })
+  if (mode === "expired") await db.session.update({ where: { id: f.session.id }, data: { expiresAt: new Date(0) } })
+  if (mode === "wrong-token") getSession.mockResolvedValue({ ...f.raw, session: { ...f.raw.session, token: randomUUID() } })
+  if (mode === "wrong-user") getSession.mockResolvedValue({ ...f.raw, user: { ...f.raw.user, id: f.recipient } })
+  await expect(requireSession()).rejects.toMatchObject({ code: "UNAUTHENTICATED" })
+  const { action, handler } = await protectedWrite("users.read", true)
+  await assertDeniedAction(f, action, handler, {})
+})
+
+it.each(["inactive-user", "locked-user", "unverified-user", "inactive-org", "deleted-org", "stale-org"])("denies current %s authority from database state", async mode => {
+  const f = await fixture()
+  if (mode === "inactive-user") await db.user.update({ where: { id: f.actor }, data: { isActive: false } })
+  if (mode === "locked-user") await db.user.update({ where: { id: f.actor }, data: { isLocked: true, lockedUntil: null } })
+  if (mode === "unverified-user") await db.user.update({ where: { id: f.actor }, data: { emailVerified: false, isVerified: false } })
+  if (mode === "inactive-org") await db.organization.update({ where: { id: f.org }, data: { isActive: false } })
+  if (mode === "deleted-org") await db.organization.update({ where: { id: f.org }, data: { deletedAt: new Date() } })
+  if (mode === "stale-org") getSession.mockResolvedValue({ ...f.raw, user: { ...f.raw.user, organizationId: f.foreign } })
+  const { action, handler } = await protectedWrite()
+  await assertDeniedAction(f, action, handler, {})
+})
+
+it.each(["stale", "future", "foreign-tenant", "locked", "missing"])("rejects %s persisted fresh-auth evidence", async mode => {
+  const f = await fixture()
+  const data = mode === "stale" ? { assuranceVerifiedAt: new Date(0) }
+    : mode === "future" ? { assuranceVerifiedAt: new Date(Date.now() + 600000) }
+    : mode === "foreign-tenant" ? { assuranceOrganizationId: f.foreign }
+    : mode === "locked" ? { assuranceLockedUntil: new Date(Date.now() + 600000) }
+    : { assuranceVerifiedAt: null, assuranceMethod: null, assuranceLevel: 0 }
+  await db.session.update({ where: { id: f.session.id }, data })
+  await expect(requireFreshAuth()).rejects.toMatchObject({ name: "FreshAuthRequiredError" })
+  const { action, handler } = await protectedWrite("users.read", true)
+  await assertDeniedAction(f, action, handler, {})
+})
+
+it("excludes inactive, deleted and foreign managed locations from real operating scope", async () => {
+  const f = await fixture(["dashboard.read"])
+  await db.location.createMany({ data: [
+    { name: "Inactive", code: "D", organizationId: f.org, managerId: f.actor, isActive: false },
+    { name: "Deleted", code: "E", organizationId: f.org, managerId: f.actor, deletedAt: new Date() },
+    { name: "Foreign", code: "F", organizationId: f.foreign, managerId: f.actor },
+  ] })
+  const result = await resolveOperatingAccessScope(await requireRbacContext())
+  expect(result).toMatchObject({ allowed: true, scope: { kind: "LOCATIONS", locationIds: [f.prefix + "-location-a"] } })
+})
+
+it("enforces a managed empty module grant set without calling a business handler", async () => {
+  const f = await fixture()
+  await db.tenantModuleConfiguration.create({ data: { organizationId: f.org, manifestHash: "p04-synthetic-empty-grants" } })
+  const handler = jest.fn(async () => ({ privateValue: "PRIVATE_RESPONSE_CANARY" }))
+  const action = protect({ permission: "users.read", module: { moduleSlug: "payroll", mode: "enforce", audit: true } }, handler)
+  await assertDeniedAction(f, action, handler, {})
+})
+
+// Negative security expectation. On the inspected source this is expected to fail
+// only at the final scope assertion, proving a composed reserved-code escalation.
+it("must not let location-scoped role delegators manufacture tenant-wide authority through an Admin name", async () => {
+  const f = await fixture(["dashboard.read", "roles.create", "roles.permissions.assign", "users.read", "users.roles.assign"])
+  const actorCtx = await requireRbacContext()
+  expect(await resolveOperatingAccessScope(actorCtx)).toMatchObject({ allowed: true, scope: { kind: "LOCATIONS" } })
+  getSession.mockResolvedValue({ user: { id: f.recipient, organizationId: f.org } })
+  expect(await resolveOperatingAccessScope(await requireRbacContext())).toMatchObject({ allowed: true, scope: { kind: "LOCATIONS", locationIds: [f.prefix + "-location-b"] } })
+  getSession.mockResolvedValue(f.raw)
+  const role = await createOrganizationRole({
+    ctx: { orgId: f.org, userId: f.actor, isSuperUser: false, session: { id: f.session.id, token: f.session.token } },
+    data: { name: "Admin", permissions: ["dashboard.read"], organizationId: f.org },
+    command: { requestId: randomUUID() },
+  })
+  expect(role.code).toBe("admin")
+  expect(canGrantMemberRole(actorCtx.permissions, role)).toBe(true)
+  const preview = await getMemberAccess({ organizationId: f.org, actorId: f.actor, targetUserId: f.recipient })
+  expect(preview.catalogue.find(entry => entry.id === role.id)?.canAssign).toBe(true)
+  await changeMemberAccess({ organizationId: f.org, actorId: f.actor, targetUserId: f.recipient,
+    session: { id: f.session.id, token: f.session.token },
+    command: { requestId: randomUUID(), expectedRevision: preview.revision, operation: "roles", roleIds: [...preview.roleIds, role.id], reason: "Synthetic authority regression" },
+  })
+  // Assignment revokes target sessions. This stub models a NEW login after the
+  // change; it must not be described as proving continued use of a revoked cookie.
+  getSession.mockResolvedValue({ user: { id: f.recipient, organizationId: f.org } })
+  const recipientCtx = await requireRbacContext()
+  expect(recipientCtx.permissions).toEqual(["dashboard.read"])
+  expect(recipientCtx.isSuperUser).toBe(false)
+  const recipientScope = await resolveOperatingAccessScope(recipientCtx)
+  expect(recipientScope).toMatchObject({ allowed: true, scope: { kind: "LOCATIONS", locationIds: [f.prefix + "-location-b"] } })
+})

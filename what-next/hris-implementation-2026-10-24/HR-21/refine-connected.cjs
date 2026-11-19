@@ -1,0 +1,6 @@
+const fs=require('node:fs'),p='services/hris/__tests__/integrated-core-pilot.postgres.test.ts';let s=fs.readFileSync(p,'utf8');
+s=s.replace("weeklyPattern:{sun:0,mon:i?0:480,tue:i?0:480,wed:i?0:480,thu:i?0:480,fri:i?0:480,sat:0},standardWeeklyMinutes:i?0:2400", "weeklyPattern:{sun:0,mon:480,tue:480,wed:480,thu:480,fri:480,sat:0},standardWeeklyMinutes:2400");
+s=s.replace(" const shift=await assignWorkSchedule",()=>` const off=await assignWorkSchedule({...actor(),employeeId:employees[1],calendarId,name:'Synthetic explicit off-day',timezone:'Africa/Douala',weeklyPattern:{sun:0,mon:0,tue:0,wed:0,thu:0,fri:0,sat:0},standardWeeklyMinutes:0,effectiveFrom:at('2026-10-30'),effectiveTo:at('2026-10-30'),sourceHash:proof,shiftPlan:{workDate:'2026-10-30',timezone:'Africa/Douala',shifts:[]}});await approveWorkSchedule({...actor(1),employeeId:employees[1],scheduleId:off.id,approvalEvidenceHash:proof})
+ const shift=await assignWorkSchedule`);
+s=s.replace("name:'Synthetic month-end overnight shift',timezone:'Africa/Douala',effectiveFrom:","name:'Synthetic month-end overnight shift',timezone:'Africa/Douala',weeklyPattern:{sun:0,mon:0,tue:0,wed:0,thu:0,fri:0,sat:450},standardWeeklyMinutes:450,effectiveFrom:");
+s=s.replace('t.sourceRequestId===life.workflow.requestId','t.requestId===life.workflow.requestId');fs.writeFileSync(p,s);

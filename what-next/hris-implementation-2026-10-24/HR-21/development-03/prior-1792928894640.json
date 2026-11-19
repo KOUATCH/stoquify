@@ -1,0 +1,23 @@
+{
+  "status": "PASS_SCOPED_NATIVE_AUTH",
+  "completedAt": "2026-10-25T11:47:21.153Z",
+  "steps": [
+    "anonymous-session-denied",
+    "wrong-password-denied",
+    "indefinite-administrator-lock-preserved",
+    "native-password-and-cookie-login",
+    "real-session-authorizes-native-hr-read",
+    "own-scope-and-cross-tenant-denial",
+    "existing-cookie-observes-role-revocation",
+    "existing-cookie-observes-account-disabled-and-locked",
+    "tenant-move-does-not-carry-prior-wildcard-authority",
+    "deleted-session-denied"
+  ],
+  "cleanupComplete": true,
+  "limits": [
+    "Native auth.handler and cookie APIs, not an actual Next server/browser",
+    "Injected request-header adapter and guarded Prisma connection only",
+    "Password step-up/fresh-auth action admission not qualified",
+    "No deployment, external provider or human operator acceptance"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "status": "REVIEWED_UNRELATED_EXCLUSION",
+  "files": {
+    "tsconfig.json": {
+      "testedRootHash": "b34f9a5cfa3a6785d10399b03e73f93fbcb39e0b480e5bdaf4703781468a252e",
+      "currentRootHash": "a4a7bbfb2cdd280f7ce304ac9e32a8281546a9eadc2f517123b0dfebde16698a",
+      "addedExclude": [
+        "docs/command-center/phase-13-source-integration-2026-10-26/browser-entry.tsx"
+      ],
+      "impact": "Unrelated documentation browser entry only. Compiler options and all other root fields unchanged. Bounded typecheck uses explicit roots; tested runtime is retained unchanged."
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "status": "FAILED",
+  "steps": [
+    "native-policy-schedule-approval-and-480-minute-entitlement",
+    "separate-native-employee-and-reviewer-sessions"
+  ],
+  "failures": [
+    {
+      "name": "TimeoutError",
+      "message": "page.waitForFunction: Timeout 150000ms exceeded."
+    }
+  ],
+  "pageErrors": [],
+  "sourceHashes": {
+    "components/hris/HrisOperationalTimeRequestPanel.tsx": "0860281fd7613893a677223317fba63701cd38a8701503ecf9741be195e8282f",
+    "components/hris/HrisOperationalTimeApprovalPanel.tsx": "c16475ce1a020eae8afe7d64bc82cf585430ccf48011269ab9173b107a2075ce",
+    "components/hris/HrisControlledReview.tsx": "2ca09f7b5c89138a2dae0f9285ffa4b99175d50d02185b3e8084bc62ea2a4981",
+    "components/hris/useHrisFreshAuth.tsx": "7ef5ea8b6a795520c2cd8b90d99aef20721147037d3e20d8ffd20262db9be44e",
+    "components/hris/HrisEmployeeSelfService.tsx": "b3a43bf46c99590eac6f04967bec3690788a355d43ae953d914ec8b1ee1cd217",
+    "components/hris/HrisManagerSelfService.tsx": "9754133e93820b06bf9c4e6604ffab9f582e897e006d6af8bc6d49b14476f1e7",
+    "actions/hris/own-time.actions.ts": "13c0cb148bd12a9844ea67eaae392e92e3b72995f8f0fec20b531992c5601e85",
+    "actions/hris/time-review.actions.ts": "3d72cefafb2dfca9a0d5f51f7183367fb429d013ee6b683eeb28353aa4900511",
+    "actions/security/step-up-auth.actions.ts": "515861a797fa76ee9ce571e9b503c27d8aec9c25af8d83ed50963681ee6601aa",
+    "services/hris/self-service-boundary.service.ts": "71f948ef85467341fc78c63b881e17a1d574812ef501ff08aa00a16a426b3c6f",
+    "services/hris/operational-time.service.ts": "7f483d3f8ac304256e8709ffbc5614eed30b362a6fadd751be06e71e63debf6e",
+    "services/hris/time-review.service.ts": "ae8292d5c6789e36039af4dd215d5aae324627d3a139d12742b896ee4620a97d",
+    "services/hris/leave-entitlement.service.ts": "be74982329e21888acfab3fbfff0babdf81ed741bb50ff4ef7d56b404adc3def",
+    "services/hris/leave-allocation.service.ts": "4f5c0e2eccf76a64c0f06f67eccb7131f51f08f326e42c69e73b5c1f1fc9b513",
+    "services/hris/self-service.service.ts": "70c6064b0f97d59e811b43643ff8689a32c244320e502f86f48d28dd00a4ef51",
+    "services/hris/manager-self-service.service.ts": "2bc70d90933e10bc518140b0e68f4a13faa09208e4dc45d3595dc906a7cab787",
+    "services/_shared/protect.ts": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+    "lib/security/auth-session.ts": "410d75e19fba37ad3ffc1ecd8296813c6fe5646875e8a03cb8fce6f98a975b0c",
+    "lib/auth.ts": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+    "app/[locale]/(dashboard)/dashboard/people/me/page.tsx": "edf50fae1328707190d62c6558bf1a5a8e8c10ebff1cde0853257b942dd46f9c",
+    "app/[locale]/(dashboard)/dashboard/people/team/page.tsx": "1626811f612143215215f7e85209d5a4571f5bbd253ffcbc121e5bafa446751e"
+  },
+  "runtimeHashes": {
+    "next.config.mjs": "1769a31215594f5c4b66ad6fc7407ab2771812ff90157385f5c9a5b47b3f9a4e",
+    "middleware.ts": "5ab2f985ba452717f361e0f4e29eaaedb646202a83dd58b83412b24e9c88f180",
+    "package.json": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+    "tsconfig.json": "c0f7e0d98c6161fc6615da86ebf537f047ed2cd0695348c7467414691faddf13",
+    "next-env.d.ts": "b174774e0c60dc97e3f1ab18c46f243592be8a93b1d744d77e7d4400fee4ba7a",
+    "postcss.config.mjs": "da1e5e8147fb42cbc582a60607fea0df35171ae60bd5617846c841568bbe2272",
+    "tailwind.config.ts": "5929ece1e683fcba92d08ac5646cd15b32aaabf3cdcf31f838a091c78bef0f8a"
+  },
+  "databaseClientCreated": true,
+  "cleanupComplete": true,
+  "completedAt": "2026-10-26T15:37:12.697Z"
+}

@@ -1,0 +1,22 @@
+// Pure/mocked offline admission regressions. No application, provider or DB.
+const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto'), assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
+const root = path.resolve(__dirname, '../../../..');
+const sha = file => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const phase = process.argv[2]; assert(['before', 'after'].includes(phase));
+const final = process.argv[3] === 'final'; assert(process.argv.length === (final ? 4 : 3)); if (final) assert.equal(phase, 'after');
+const owned = path.join(root, '.codex-tmp/close-production-readiness-20261111-8b12ea11');
+const directory = path.join(owned, final ? 'final-after' : phase); assert(!fs.existsSync(directory)); fs.mkdirSync(directory); const temporary = path.join(directory, 'temp'); fs.mkdirSync(temporary);
+const inputs = ['scripts/hardened-close-production-readiness.cjs', 'scripts/__tests__/hardened-close-production-readiness.node-test.cjs', 'config/release/hardened-close-production.template.json', 'scripts/release-secret-preflight.js', 'scripts/prisma-production-migration-gate.js', 'scripts/release-artifact.cjs', 'scripts/local-gates-network.cjs'];
+const before = inputs.map(name => ({ path: name, sha256: sha(path.join(root, name)) }));
+const environment = Object.fromEntries(Object.entries(process.env).filter(([key]) => /^(PATH|SYSTEMROOT|WINDIR|COMSPEC|PATHEXT|PROGRAMFILES|PROGRAMFILES\(X86\)|SYSTEMDRIVE|NUMBER_OF_PROCESSORS|USERPROFILE|LOCALAPPDATA|APPDATA)$/i.test(key)));
+Object.assign(environment, { TEMP: temporary, TMP: temporary, NODE_ENV: 'test', NODE_OPTIONS: '--require ' + JSON.stringify(path.join(root, 'scripts/local-gates-network.cjs')), DATABASE_URL: 'postgresql://disabled@127.0.0.1:1/disabled', DIRECT_URL: 'postgresql://disabled@127.0.0.1:1/disabled', STOQUIFY_STATEMENT_EMAIL_LIVE_SENDS: '0', STOQUIFY_STATEMENT_WHATSAPP_LIVE_SENDS: '0', STOQUIFY_ACCOUNTANT_INVITE_LIVE_SENDS: '0' });
+const log = path.join(directory, 'output.private.log'), fd = fs.openSync(log, 'wx');
+const args = ['--test', '--test-reporter=tap', path.join(root, inputs[1])];
+const began = new Date().toISOString(); const result = spawnSync(process.execPath, args, { cwd: root, env: environment, stdio: ['ignore', fd, fd], windowsHide: true, timeout: 120000 }); fs.closeSync(fd);
+const output = fs.readFileSync(log, 'utf8'); const counts = Object.fromEntries(['tests', 'pass', 'fail', 'skipped', 'todo'].map(key => [key, Number(output.match(new RegExp('^# ' + key + ' (\\d+)$', 'm'))?.[1] ?? -1)]));
+const unchanged = before.every(item => sha(path.join(root, item.path)) === item.sha256);
+const receipt = { began, ended: new Date().toISOString(), classification: 'Pure/mocked offline deployment-admission tests; no provider, database, hosted runtime or production qualification', phase, expectedFailure: phase === 'before', exitCode: result.status, error: result.error?.code || null, signal: result.signal, counts, unchangedInputs: unchanged, inputs: before, privateOutput: { path: log, sha256: sha(log) }, temporaryDirectory: temporary, runnerSha256: sha(__filename) };
+fs.writeFileSync(path.join(__dirname, 'READINESS_' + (final ? 'FINAL_' : '') + phase.toUpperCase() + '.json'), JSON.stringify(receipt, null, 2) + '\n', { flag: 'wx' });
+console.log(JSON.stringify({ phase, exitCode: result.status, counts, unchangedInputs: unchanged }));
+assert(unchanged && !result.error && !result.signal); if (phase === 'after') assert(result.status === 0 && counts.fail === 0 && counts.skipped === 0 && counts.todo === 0); else assert(result.status === 1 && counts.fail === 4);

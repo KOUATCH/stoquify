@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-26",
+  "checks": [
+    {
+      "file": "scripts/run-af16-release-candidate.cjs",
+      "exitCode": 0,
+      "sha256": "bfd26196f207fe7eded48403400825b44cf8c6e1a06a79adabaea7aa1407a114"
+    },
+    {
+      "file": "scripts/verify-af16-artifact-runtime.cjs",
+      "exitCode": 0,
+      "sha256": "75b3b48ac172b1b5cb5ea8ef57e17bb3d90bd0ac604fa90d83b7b6967260761d"
+    },
+    {
+      "file": "scripts/finalize-af16-build-retries.cjs",
+      "exitCode": 0,
+      "sha256": "2819d2df3726bd0ed73ccc8bb7a103410c1577bc933057413cfb40501fb9fe03"
+    }
+  ],
+  "evidenceClass": "Syntax only; runtime helper has not executed"
+}

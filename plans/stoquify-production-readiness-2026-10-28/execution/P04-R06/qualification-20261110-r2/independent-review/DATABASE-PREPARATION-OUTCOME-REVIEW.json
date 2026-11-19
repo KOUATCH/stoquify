@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T14:10:42.329Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "candidateId": "p04-r06-r2-f6b4ff106590",
+  "scope": "Actual fresh isolated native database preparation only; fixture seed and application build/runtime pending",
+  "files": [
+    {
+      "path": "database/preparation.json",
+      "sha256": "66f7e5cb6da2e3cabd4d1abb4f6ea952918115883c6e1cc15725bcdffcf78ff3"
+    },
+    {
+      "path": "database/database-clones.json",
+      "sha256": "b6a99b3cdc1a6ec318f60f9fed9c310e2fe71a6df66f3c6fc25342c16678c45b"
+    },
+    {
+      "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+      "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+    },
+    {
+      "path": "independent-review/CANDIDATE-OUTCOME-REVIEW.json",
+      "sha256": "c4642a03949f8b741ccd3371acd635e173317594d90632848ffce42755ef2e22"
+    }
+  ],
+  "target": {
+    "host": "127.0.0.1",
+    "port": 55517,
+    "user": "p04r06",
+    "cluster": "D:\\p04-r06-fullapp-20261110-r2\\postgres",
+    "bin": "C:/Program Files/PostgreSQL/17/bin",
+    "build": "stoquify_local_p04r06_20261110_build_r2",
+    "full": "stoquify_local_p04r06_20261110_full_r2",
+    "ownedPid": 21228
+  },
+  "migrations": {
+    "count": 122,
+    "migrationsSha256": "18f667a29e31892e8b231a2b41e22760140154e3cbd9c350a0c075e9a3bd3d59",
+    "schemaSourceSha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39"
+  },
+  "emptyClones": {
+    "buildTables": 246,
+    "fullTables": 246,
+    "allRowsZero": true
+  },
+  "launcher": {
+    "initdbExit": 0,
+    "pgCtlExit": 0,
+    "migrationExit": 0,
+    "observedTimeoutOrError": false
+  },
+  "independentChecks": [
+    "Exact admitted DB recipe inputs still match; current candidate source migration list independently rehashed122 and digest matches actual ledger reconciliation.",
+    "Actual native connection identity guards were required by admitted recipe for both fixed databases/cluster/loopback port.",
+    "Both clone emptiness maps contain246 zero-count tables; preparation and clone receipt agree.",
+    "No existing cluster or production database was targeted; exclusive new cluster remains owned and retained."
+  ],
+  "allowedNext": "Resume admitted fixture seed exactly once after confirming no completed/private partial seed state. Do not rerun database preparation. Submit fixture outcome before build.",
+  "qualificationPassed": false
+}

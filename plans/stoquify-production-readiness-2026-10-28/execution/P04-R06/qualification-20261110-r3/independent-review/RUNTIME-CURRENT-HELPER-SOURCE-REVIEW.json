@@ -1,0 +1,54 @@
+{
+  "at": "2026-11-10T19:18:21.604Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "sourceInspectionAccepted": true,
+  "executionAdmitted": false,
+  "files": [
+    {
+      "path": "runtime-current/qualification-contract.json",
+      "sha256": "22d4543fef2795f838aa54c203be96ad0448b466f0b80f6d7104f863bf8d08e1"
+    },
+    {
+      "path": "runtime-current/run-credential-probes.cjs",
+      "sha256": "a08d4cf1fedb2affc179a5cf26e4d15506a5d7f423dc0a8376b1104aa730084c"
+    },
+    {
+      "path": "runtime-current/run-expanded.cjs",
+      "sha256": "5bc1eae9d9b14be04a67785464454eb0f71f00e06e2e877756a81855cd1557d9"
+    },
+    {
+      "path": "runtime-current/run-origin-probes.cjs",
+      "sha256": "8b802095304ef10beb243620fbcfccfd2c656bfc49c5a5ae202a53cf67602265"
+    },
+    {
+      "path": "runtime-current/run-protected-core.cjs",
+      "sha256": "3bdc7a715fc4519c321c7391a205845c1ffed43a3f9d125014dd7c3fd9d38fa5"
+    },
+    {
+      "path": "runtime-current/run-retained-expiry.cjs",
+      "sha256": "b3655ccff30bf8f0bd5dd1d3dde74eeb127157586feb5be7054a34684bb6db20"
+    },
+    {
+      "path": "runtime-current/runtime-bridge.cjs",
+      "sha256": "e4f34f6e706996f6ee48e232a02ced9694f1cbcf7c3e44b1e303a059608680c5"
+    },
+    {
+      "path": "browser/run-consumer-qualification-v4.cjs",
+      "sha256": "d32b2e2afad066c1b0b734cfbac257af477c7321a04368c02c5e74c6895e3d8e"
+    }
+  ],
+  "facts": [
+    "Contract and protected50/credential10/origin24 helper bytes unchanged.",
+    "Expanded/retained-expiry only change DB helper imports to database-current.",
+    "Bridge only changes active fullDB target from_r2 to_r3; forwarding/capture/legacy issuance/signed-cache/denial assertions unchanged.",
+    "Browserv4 and all107 raw obligations unchanged; no tests skipped or thresholds relaxed.",
+    "Retained unused fault_r2 label is only a connection-failure URL on separately proved closed55518; it does not connect to oldbaseline55517."
+  ],
+  "remaining": [
+    "Review exact current main wrapper/sourcegate/direct driver and actual candidate/build/DB/preflight outcomes before runtime."
+  ],
+  "applicationExecution": false,
+  "databaseAccess": false,
+  "qualificationPassed": false
+}

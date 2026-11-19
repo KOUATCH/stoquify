@@ -1,0 +1,258 @@
+{
+  "startedAt": "2026-11-10T16:04:29.935Z",
+  "passed": true,
+  "candidateId": null,
+  "artifactSha256": null,
+  "qualificationPassed": false,
+  "ports": [
+    {
+      "port": 3296,
+      "host": "127.0.0.1",
+      "free": true
+    },
+    {
+      "port": 3296,
+      "host": "localhost",
+      "free": true
+    },
+    {
+      "port": 3297,
+      "host": "127.0.0.1",
+      "free": true
+    },
+    {
+      "port": 3297,
+      "host": "localhost",
+      "free": true
+    },
+    {
+      "port": 3298,
+      "host": "127.0.0.1",
+      "free": true
+    },
+    {
+      "port": 3298,
+      "host": "localhost",
+      "free": true
+    },
+    {
+      "port": 3299,
+      "host": "127.0.0.1",
+      "free": true
+    },
+    {
+      "port": 3299,
+      "host": "localhost",
+      "free": true
+    },
+    {
+      "port": 55516,
+      "host": "127.0.0.1",
+      "free": true
+    },
+    {
+      "port": 55516,
+      "host": "localhost",
+      "free": true
+    },
+    {
+      "port": 55517,
+      "host": "127.0.0.1",
+      "free": true
+    },
+    {
+      "port": 55517,
+      "host": "localhost",
+      "free": true
+    },
+    {
+      "port": 55518,
+      "host": "127.0.0.1",
+      "free": true
+    },
+    {
+      "port": 55518,
+      "host": "localhost",
+      "free": true
+    }
+  ],
+  "newStorage": {
+    "storage": "D:\\p04-r06-fullapp-20261110-r3",
+    "entries": [
+      "dependencies",
+      "ownership.json"
+    ],
+    "ownershipSha256": "d56bd810eaa5cc707181bcff1aae686116716f1e853ee89c67b2481fca8f67ec",
+    "dependencyTraversalRepeated": false
+  },
+  "absentSuccessorOutputs": [
+    "source-snapshot.json.gz",
+    "root-source-manifest.json",
+    "candidate-source-manifest.json",
+    "candidate-context.json",
+    "candidate-admission.json",
+    "preparation-attempt02.json",
+    "build-result.json",
+    "private-client.json",
+    "runtime-source-admission.json",
+    "runtime-result.json",
+    "database/retained-preparation.json",
+    "database/retained-resume.json",
+    "database/fixture-preflight.json",
+    "database/final-session-cleanup.json",
+    "database/cleanup.json"
+  ],
+  "staging": {
+    "passed": true,
+    "files": 152806,
+    "manifestSha256": "885d34096b3dae7765633fff1ffdaeecee5c7ab07c4ae86723b63145eb4462e2",
+    "receiptSha256": "0863e3fbe2b5c0426f4079aa8fc433478c32d6a54b2849e0369ff03f8366ecb8",
+    "freeBytesAtCompletion": 13455106048,
+    "freeSpaceObservationIsTimeBound": true
+  },
+  "capacity": {
+    "latestReceipt": "resource-capture-retry-ready-r1.json",
+    "latestReceiptSha256": "9d7608cb7d8d5dfb32d0b9a13df9388af947b4b132045ec0845163511837363f",
+    "capturedAt": "2026-11-10T15:59:29.8198612Z",
+    "freePhysicalBytes": 7609163776,
+    "freeCommitBytes": 11952467968,
+    "thresholds": {
+      "freePhysicalBytes": 6442450944,
+      "freeCommitBytes": 12884901888,
+      "freeBuildDriveBytes": 12884901888
+    },
+    "failures": [
+      "commit_headroom"
+    ],
+    "newMeasurementTaken": false
+  },
+  "preservedClusters": [
+    {
+      "storage": "D:\\p04-r06-fullapp-20261110-r2",
+      "ownerSha256": "61a7cb0e376ec8e8727cfde9f4063c00d66f0faa1e3871236b2d08e917e4df54",
+      "state": "stopped",
+      "postmasterFileAbsent": true
+    },
+    {
+      "storage": "D:\\p04-r06-fullapp-20261109-r1",
+      "ownerSha256": "118c5040d2b39bd47d8a0d4f37e2772e1ac544bbf29f1b9006334e4c887a6e86",
+      "state": "stopped",
+      "postmasterFileAbsent": true
+    },
+    {
+      "storage": "D:\\p04-v02-fullapp-20261109-r1",
+      "ownerSha256": "eb99fae9196e6c7271819460eb825c31bfd453fd56575baef0bb1e4907265aca",
+      "state": "stopped",
+      "postmasterFileAbsent": true
+    }
+  ],
+  "retainedFixture": {
+    "baselineCandidateId": "p04-r06-r2-f6b4ff106590",
+    "ownerSha256": "61a7cb0e376ec8e8727cfde9f4063c00d66f0faa1e3871236b2d08e917e4df54",
+    "privateFixtureSha256": "9923d14f86a2140b3358d39e39af4a2aa33ca0a6a11c2ce856990fd3a4bd3207",
+    "recordedPid": 21228,
+    "recordedPidAbsent": true,
+    "suspensionReceiptSha256": "7aed928e69514da4b8f905ecf7d0e67638871ccdc6e3c81330b11532e4827ff4",
+    "nativeDatabaseRequeried": false,
+    "sourceManifestReceiptSha256": "c3a3db592e71a26bbbc10033a2c8c3cb088fbd313b55f65bdb9d1c978d830737"
+  },
+  "acceptedSourceObservation": {
+    "files": 9942,
+    "identitySha256": "4ea56948b133706d3dc0531852f7dd37da41f40bb6968604e822dae3bb10ac74",
+    "manifestSha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699",
+    "expectedCandidateId": "p04-r06-r3-4ea56948b133",
+    "newCompleteRootScan": false,
+    "limit": "Observed snapshot only; the future candidate retry must establish exact current full source and HEAD equality again"
+  },
+  "evidence": [
+    {
+      "path": "verify-capacity-checkpoint.cjs",
+      "sha256": "29b92449fcd67432834180838a2faea2e04ad9339143a778f1de64abe23723dc"
+    },
+    {
+      "path": "RETRY-HANDOFF.md",
+      "sha256": "67599a2250fc01f2205ed6b7eb07ba408e9f963b39bece23a81d8c26e383053b"
+    },
+    {
+      "path": "dependency-staging-attempt03.json",
+      "sha256": "0863e3fbe2b5c0426f4079aa8fc433478c32d6a54b2849e0369ff03f8366ecb8"
+    },
+    {
+      "path": "dependency-input-manifest.json.gz",
+      "sha256": "306dafa0271600fb71cd921ee93542a695dc9eddc616ef21c72f0d995e788030"
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+      "sha256": "dbf7007e9e23e7c2b54b0ef726c2949b67a13eb7b72363279d4d4b7a93142617"
+    },
+    {
+      "path": "preparation.json",
+      "sha256": "f2e03f764cfebb01bfce8758904a40ffbc4fb43c26243b850a7832da33c63b90"
+    },
+    {
+      "path": "resource-capture-entry.json",
+      "sha256": "5f2dedd96e18c891e908a21d589f07372a8143fb294432eb5996bee72fe0daf3"
+    },
+    {
+      "path": "resource-capture-retry-ready-r1.json",
+      "sha256": "9d7608cb7d8d5dfb32d0b9a13df9388af947b4b132045ec0845163511837363f"
+    },
+    {
+      "path": "inventory/capture-input.json",
+      "sha256": "27b0a6716caa514b16c172d5341b4f998a388556063006241b5374f39651036d"
+    },
+    {
+      "path": "inventory/CURRENT-SOURCE-MANIFEST-r2.json",
+      "sha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699"
+    },
+    {
+      "path": "independent-review/CAPTURE-SOURCE-ADMISSION.json",
+      "sha256": "ebf471abe8a32ab883077a70231efe92b392dea77cbe42acb18987d341c9871e"
+    },
+    {
+      "path": "independent-review/CANDIDATE-PREPARATION-RECIPE-ADMISSION-attempt02.json",
+      "sha256": "8a10f6cac480502595b536d47d5c7963f89399fa5d8150bc377d6b44b0ba74fb"
+    },
+    {
+      "path": "independent-review/CANDIDATE-ENTRY-CAPACITY-OUTCOME.json",
+      "sha256": "a01b5cbfadd514c45bcabe7b2ab5fc0968f773fd95d9ccbb44468aaefa31871b"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\capacity-suspension.json",
+      "sha256": "7aed928e69514da4b8f905ecf7d0e67638871ccdc6e3c81330b11532e4827ff4"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\independent-review\\CAPACITY-SUSPENSION-OUTCOME-REVIEW.json",
+      "sha256": "aa54a9684c9b9cf75c01532dd31cd84882ba4faaaf6aa3db56d61c07d9dd8107"
+    },
+    {
+      "path": "D:/p04-r06-fullapp-20261110-r2/private/cluster-owner.json",
+      "sha256": "61a7cb0e376ec8e8727cfde9f4063c00d66f0faa1e3871236b2d08e917e4df54"
+    },
+    {
+      "path": "D:/p04-r06-fullapp-20261110-r2/private/browser-fixture.private.json",
+      "sha256": "9923d14f86a2140b3358d39e39af4a2aa33ca0a6a11c2ce856990fd3a4bd3207"
+    },
+    {
+      "path": "D:/p04-r06-fullapp-20261110-r3/ownership.json",
+      "sha256": "d56bd810eaa5cc707181bcff1aae686116716f1e853ee89c67b2481fca8f67ec"
+    }
+  ],
+  "nextAction": {
+    "condition": "After an actual capacity-changing event; unchanged gates must pass and source/HEAD equality must still hold",
+    "resourceCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/check-resources.cjs resource-capture-retry-ready-r2.json",
+    "candidateCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/prepare-candidate-attempt02.cjs",
+    "admissionCommand": "node plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261110-r3/admit-candidate-attempt02.cjs",
+    "handoff": "RETRY-HANDOFF.md"
+  },
+  "sourceCaptured": false,
+  "artifactBuilt": false,
+  "retainedDatabaseStarted": false,
+  "generatedClientCreated": false,
+  "nativeOrBrowserQualificationRun": false,
+  "allScopedPortsReleased": true,
+  "productionChanges": false,
+  "commitOrPush": false,
+  "deployment": false,
+  "finishedAt": "2026-11-10T16:04:31.086Z"
+}

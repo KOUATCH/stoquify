@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type MutableRefObject } from "react"
 import Link from "next/link"
+import { ObligationRegister } from "./ObligationRegister"
 import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
 import {
   acceptAccountantWorkItemAction, getAccountantWorkDeskAction, getAccountantWorkDetailAction,
@@ -9,10 +10,15 @@ import {
 import type { AccountantWorkDesk as WorkDeskData, AccountantWorkDetail, AccountantWorkClientPage } from "@/services/accounting/accountant-work-desk.contracts"
 import { accountantWorkDeskCopy } from "./accountant-work-desk-copy"
 import { AccountantNotificationHistory } from "./AccountantNotificationHistory"
+import { DelegatedEvidenceDesk, type DelegatedEvidenceRecovery } from "./DelegatedEvidenceDesk"
 
 const button = "dashboard-button-primary inline-flex min-h-11 items-center rounded-lg px-3 py-2 text-sm disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
 
-export function AccountantWorkDesk({ locale = "en" }: { locale?: string }) {
+export function AccountantWorkDesk({ locale = "en", evidenceRecoveryRef }: {
+  locale?: string; evidenceRecoveryRef?: MutableRefObject<DelegatedEvidenceRecovery | null>
+}) {
+  const localRecovery = useRef<DelegatedEvidenceRecovery | null>(null)
+  const recoveryRef = evidenceRecoveryRef ?? localRecovery
   const language = locale === "fr" ? "fr" : "en"
   const copy = accountantWorkDeskCopy[language]
   const [data, setData] = useState<WorkDeskData | null>(null)
@@ -25,6 +31,7 @@ export function AccountantWorkDesk({ locale = "en" }: { locale?: string }) {
   const [needsIdentity, setNeedsIdentity] = useState(false)
   const [password, setPassword] = useState("")
   const [pageIncomplete, setPageIncomplete] = useState(false)
+  const [requestClient, setRequestClient] = useState<string | null>(null)
   const revision = useRef(0)
   const detailHeading = useRef<HTMLHeadingElement>(null)
   const identityInput = useRef<HTMLInputElement>(null)
@@ -38,14 +45,20 @@ export function AccountantWorkDesk({ locale = "en" }: { locale?: string }) {
 
   async function load(afterGrantId?: string) {
     const current = ++revision.current
-    setPending(true); setDetail(null); setData(null); setMessage(""); setCommand(null); setNotes("")
+    setPending(true); setDetail(null); setData(null); setRequestClient(null); setMessage(""); setCommand(null); setNotes("")
     setNeedsIdentity(false); setPassword("")
     setPageIncomplete(false)
     try {
       const response = await getAccountantWorkDeskAction(afterGrantId ? { afterGrantId } : {})
       if (current !== revision.current) return
-      if (response.success) setData(response.data)
-      else setMessage(response.code === "FORBIDDEN" ? copy.denied : copy.error)
+      if (response.success) {
+        setData(response.data)
+        if (recoveryRef.current && response.data.clientContinuations.some(client => client.clientOrganizationId === recoveryRef.current!.clientId)) setRequestClient(recoveryRef.current.clientId)
+      }
+      else {
+        if (response.code === "FORBIDDEN" || response.code === "AUTH_REQUIRED") recoveryRef.current = null
+        setMessage(response.code === "FORBIDDEN" ? copy.denied : copy.error)
+      }
     } catch { if (current === revision.current) setMessage(copy.error) }
     finally { if (current === revision.current) setPending(false) }
   }
@@ -190,7 +203,14 @@ export function AccountantWorkDesk({ locale = "en" }: { locale?: string }) {
       {data.clientContinuations.some(client => client.requests || client.reviews) && <p className="text-sm">{copy.moreScope}</p>}
       {data.clientContinuations.map(client => <div key={client.clientOrganizationId} className="min-w-0 space-y-3 rounded-lg border p-3">
         <p className="break-words font-medium">{client.clientName}</p>
+        <button className={button} disabled={pending} onClick={() => setRequestClient(requestClient === client.clientOrganizationId ? null : client.clientOrganizationId)}>{language === "fr" ? "Demander et suivre les justificatifs" : "Request and track evidence"}: {client.clientName}</button>
+        {requestClient === client.clientOrganizationId && <DelegatedEvidenceDesk key={client.clientOrganizationId} clientId={client.clientOrganizationId} clientName={client.clientName} locale={language}
+          recovery={recoveryRef.current} onRecoveryChange={value => { recoveryRef.current = value }}
+          onDenied={() => { recoveryRef.current = null; void load().then(() => setMessage(copy.denied)) }} />}
         <div className="mt-2 flex flex-wrap gap-2">{(["requests", "reviews"] as const).map(kind => client[kind] && <button key={kind} type="button" className={`${button} max-w-full whitespace-normal text-left`} disabled={pending} onClick={() => void loadClient({ clientOrganizationId: client.clientOrganizationId, kind, cursor: client[kind]! })} aria-label={`${copy.more[kind]}: ${client.clientName}`}>{copy.more[kind]}</button>)}</div>
+        <details><summary className="min-h-11 cursor-pointer">{language === "fr" ? "Obligations et justificatifs" : "Obligations and evidence"}</summary>
+          <ObligationRegister clientOrganizationId={client.clientOrganizationId} locale={language} />
+        </details>
         <AccountantNotificationHistory clientOrganizationId={client.clientOrganizationId} clientName={client.clientName} locale={language} disabled={pending} onDenied={() => forgetClient(client.clientOrganizationId)} />
       </div>)}
     </div>}

@@ -1,9 +1,9 @@
 jest.mock("better-auth", () => ({ betterAuth: (options: unknown) => ({ options }) }))
 jest.mock("better-auth/adapters/prisma", () => ({ prismaAdapter: jest.fn() }))
-jest.mock("better-auth/api", () => ({ APIError: class extends Error { constructor(public status: string, body: { message: string }) { super(body.message) } } }))
+jest.mock("better-auth/api", () => ({ formCsrfMiddleware: jest.fn(), APIError: class extends Error { constructor(public status: string, body: { message: string }) { super(body.message) } } }))
 jest.mock("@/prisma/db", () => ({ db: { user: { findFirst: jest.fn(), update: jest.fn(), updateMany: jest.fn() } } }))
 jest.mock("@/lib/security/audit-log", () => ({ logSecurityEvent: jest.fn(), SecurityEventType: { ACCOUNT_LOCKED: "ACCOUNT_LOCKED", LOGIN_SUCCESS: "LOGIN_SUCCESS", LOGIN_FAILED: "LOGIN_FAILED" } }))
-jest.mock("@/lib/security/credential-sign-in-outcome", () => ({ credentialSignInSucceeded: jest.fn(() => true) }))
+jest.mock("@/lib/security/credential-sign-in-outcome", () => ({ credentialSignInSucceeded: jest.fn(() => true), credentialSignInFailed: jest.fn(() => false) }))
 
 import { auth } from "@/lib/auth"
 import { db } from "@/prisma/db"
@@ -19,10 +19,10 @@ it("does not treat a late successful outcome as permission to unlock a disabled 
   await options.hooks.after(ctx)
   expect(db.user.update).not.toHaveBeenCalled(); expect(db.user.updateMany).not.toHaveBeenCalled()
 })
-it("clears only the observed expired login throttle on an active account", async () => {
+it("leaves an expired login throttle unchanged before credential validation", async () => {
   ;(db.user.findFirst as jest.Mock).mockResolvedValue({ id: "synthetic", isActive: true, isLocked: true, lockedUntil: new Date(0) })
   await options.hooks.before(ctx)
-  expect(db.user.updateMany).toHaveBeenCalledWith({ where: { id: "synthetic", isActive: true, isLocked: true, lockedUntil: { lte: expect.any(Date) } }, data: { isLocked: false, lockedUntil: null, failedLoginAttempts: 0 } })
+  expect(db.user.updateMany).not.toHaveBeenCalled()
 })
 it("conditions successful login bookkeeping on the account still being active", async () => {
   await options.hooks.after(ctx)

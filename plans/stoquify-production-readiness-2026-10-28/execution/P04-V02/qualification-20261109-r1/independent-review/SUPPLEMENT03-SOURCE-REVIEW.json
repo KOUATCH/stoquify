@@ -1,0 +1,106 @@
+{
+  "at": "2026-11-09T18:19:24.215Z",
+  "reviewer": "/root/v02_review",
+  "verdict": "source_binding_admitted_for_bounded_read_only_supplement",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "wholeInventoryImportClosureByteIdentical": false,
+  "rows": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
+      "sha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+      "alreadyBound": true
+    },
+    {
+      "path": "components/ui/groups/inventory/ItemManagement.tsx",
+      "sha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+      "alreadyBound": false
+    },
+    {
+      "path": "components/inventory/inventory-items-copy.ts",
+      "sha256": "45b7e7c486615d623dec8131172b73fcd53bdfe2a74671d4d90ac28a849386f4",
+      "alreadyBound": false
+    },
+    {
+      "path": "hooks/useAllItemQueries.ts",
+      "sha256": "509d8f920fa6c236fa474bf9c3dbbf141fe9159dfe35780f145416e0b4c242f6",
+      "alreadyBound": false
+    },
+    {
+      "path": "actions/itemsShow/getOrgItems.ts",
+      "sha256": "b36d7c11758a52452dc6bdbbcf040f184f14d7e79467ec2b39926ad0c4397193",
+      "alreadyBound": false
+    },
+    {
+      "path": "services/item/item.service.ts",
+      "sha256": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62",
+      "alreadyBound": false
+    },
+    {
+      "path": "lib/item/includes.ts",
+      "sha256": "a509c68ef78f808e2f7a00bf202285614fa47c1ea937488cb13139e809ba355e",
+      "alreadyBound": false
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "alreadyBound": true
+    },
+    {
+      "path": "lib/error-handling/index.ts",
+      "sha256": "d954c8b5de3fc53fddfd05f68161174a096ffa33e48b856f1675aa970af2668d",
+      "alreadyBound": false
+    },
+    {
+      "path": "lib/error-handling/server-action-wrapper.ts",
+      "sha256": "0d3c4b992cbdbf944459c2af6c7f415f0379a154e70b86b127002583a6a4fe7d",
+      "alreadyBound": false
+    },
+    {
+      "path": "lib/notifications/notify.ts",
+      "sha256": "a36427372ac068fa07ede5d3817c79765e0615691548adcf149b62857cad8888",
+      "alreadyBound": false
+    },
+    {
+      "path": "lib/auth.ts",
+      "sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+      "alreadyBound": true
+    },
+    {
+      "path": "app/api/auth/[...all]/route.ts",
+      "sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "alreadyBound": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "alreadyBound": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "alreadyBound": true
+    },
+    {
+      "path": "node_modules/better-call/dist/router.mjs",
+      "sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+      "alreadyBound": true
+    }
+  ],
+  "totalDistinctCriticalInputs": 107,
+  "sourceInspection": [
+    "ItemManagement visible Refresh invokes handleRefresh, awaits useOrgItemsNew.refetch and emits the existing localized notification.",
+    "useOrgItemsNew queryFn calls getOrgItems; this current server action obtains inventory.items.read permission and derives ctx.orgId.",
+    "listActiveItemPayloads uses scoped item.findMany and payload mapping, with no item/stock/close mutation function invoked by this read probe.",
+    "Current displayed itemsArray is derived from initialItemData props; refetch return data is not assigned to that array. This source fact alone is not a runtime privacy finding.",
+    "Passive observation of existing completion notification plus actual Next action response and settled render can distinguish completed user action from mere focus/old DOM retention.",
+    "verifyPassword is an HTTP POST candidate despite metadata.scope=server, protected by sensitiveSessionMiddleware; router only excludes metadata.SERVER_ONLY."
+  ],
+  "conditions": [
+    "Gate/runtime must verify these exact16 current/frozen bindings in addition to existing98 binding set.",
+    "Supplementary recipe admission and actual execution remain separate.",
+    "Do not claim current checkout or whole import closure equal; four reviewed accounting changes stay preserved outside exercised read functions."
+  ]
+}

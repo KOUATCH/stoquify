@@ -1,7 +1,7 @@
 /** @jest-environment node */
 import { createHash, createCipheriv, randomBytes } from "node:crypto"
 import { db } from "@/prisma/db"
-import { claimItemPictures, deleteUnattachedPicture, readItemPicture, uploadItemPicture, validatePictureBytes } from "@/services/media/picture.service"
+import { claimItemPictures, deleteUnattachedPicture, readItemPicture, uploadItemPicture, validatePictureBytes, type PictureTestTransport } from "@/services/media/picture.service"
 
 const mockUpload = jest.fn()
 const mockDelete = jest.fn()
@@ -82,4 +82,62 @@ it("serializes deletion against attachment and keeps a retryable tombstone", asy
   expect(assets.updateMany).toHaveBeenCalledWith(expect.objectContaining({where:expect.objectContaining({organizationId:"org-1",createdById:"user-1",attachedAt:null})}))
   expect(mockDelete).toHaveBeenCalledWith(id,{keyType:"customId"})
   expect(assets.update).toHaveBeenCalledWith({where:{id},data:{status:"deleted"}})
+})
+
+function localTransport() {
+  const objects = new Map<string, Uint8Array>()
+  const transport: PictureTestTransport = {
+    kind: "local-test",
+    async put(key, bytes) { objects.set(key, new Uint8Array(bytes)); return { byteLength: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex") } },
+    async get(key) { return new Response(new Uint8Array(objects.get(key)!)) },
+    async remove(key) { objects.delete(key); return true },
+  }
+  return { transport, objects }
+}
+it("runs real encryption and decryption through explicit local storage without provider calls", async () => {
+  const { transport, objects } = localTransport()
+  const reference = await uploadItemPicture(new File([png], "synthetic.png", {type:"image/png"}), "org-1", "user-1", transport)
+  const created = assets.create.mock.calls[0][0].data
+  const stored = assets.update.mock.calls[0][0].data
+  expect(stored).toEqual({providerKey:`local-test:${created.id}`,providerUrl:`local-test-picture:${created.id}`,status:"ready"})
+  expect(Buffer.from(objects.get(created.id)!)).not.toEqual(png)
+  assets.findFirst.mockResolvedValue({...created,...stored})
+  expect((await readItemPicture(created.id,"org-1",transport)).bytes).toEqual(new Uint8Array(png))
+  expect(reference).toBe("/api/media/"+created.id)
+  expect(mockUpload).not.toHaveBeenCalled()
+})
+it("does not accept an incorrect local ciphertext storage acknowledgement", async () => {
+  const {transport}=localTransport()
+  transport.put=async(_id,bytes)=>({byteLength:bytes.length,sha256:"0".repeat(64)})
+  await expect(uploadItemPicture(new File([png],"synthetic.png",{type:"image/png"}),"org-1","user-1",transport)).rejects.toThrow("unavailable")
+  expect(assets.create).toHaveBeenCalledTimes(1)
+  expect(assets.update).not.toHaveBeenCalled()
+})
+it("rejects local locators through default read and delete transports before network calls", async () => {
+  global.fetch=jest.fn()
+  assets.findFirst.mockResolvedValue({id,providerKey:`local-test:${id}`,providerUrl:`local-test-picture:${id}`,status:"ready"})
+  await expect(readItemPicture(id,"org-1")).rejects.toThrow("unavailable")
+  await expect(deleteUnattachedPicture(reference,"org-1","user-1")).rejects.toThrow("unavailable")
+  expect(global.fetch).not.toHaveBeenCalled(); expect(mockDelete).not.toHaveBeenCalled()
+  expect(assets.updateMany).not.toHaveBeenCalled()
+})
+it("rejects test transport injection outside the test environment", async () => {
+  const previous=process.env.NODE_ENV
+  try {
+    ;(process.env as Record<string,string|undefined>).NODE_ENV="production"
+    await expect(readItemPicture(id,"org-1",localTransport().transport)).rejects.toThrow("unavailable")
+    expect(assets.findFirst).not.toHaveBeenCalled()
+  } finally { (process.env as Record<string,string|undefined>).NODE_ENV=previous }
+})
+it("retains a retryable local delete until the storage removal succeeds", async () => {
+  const {transport}=localTransport()
+  assets.findFirst.mockResolvedValue({id,providerKey:`local-test:${id}`,providerUrl:`local-test-picture:${id}`,status:"ready"})
+  transport.remove=jest.fn().mockResolvedValue(false)
+  await expect(deleteUnattachedPicture(reference,"org-1","user-1",transport)).rejects.toThrow("unavailable")
+  expect(assets.updateMany).toHaveBeenCalledWith(expect.objectContaining({data:{status:"deleting"}}))
+  expect(assets.update).not.toHaveBeenCalled()
+  transport.remove=jest.fn().mockResolvedValue(true)
+  await deleteUnattachedPicture(reference,"org-1","user-1",transport)
+  expect(assets.update).toHaveBeenCalledWith({where:{id},data:{status:"deleted"}})
+  expect(mockDelete).not.toHaveBeenCalled()
 })

@@ -1,0 +1,94 @@
+{
+  "at": "2026-10-18T16:28:31.022Z",
+  "fixture": "p07-org-79c7241cd7bb",
+  "steps": [
+    {
+      "name": "Authenticated empty guidance; five outstanding opening requirements"
+    },
+    {
+      "name": "Actual unconfigured upload fails visibly, offers retry and creates no fake ready image",
+      "uploadStatus": 503
+    },
+    {
+      "name": "Foreign tenant media reference rejected by actual validation with zero masters"
+    },
+    {
+      "name": "Rejected incomplete mapping retained; zero domain writes"
+    },
+    {
+      "name": "CUSTOMER proposed/reviewed/imported through actual actions; opening stays unverified",
+      "batchId": "cmve1jh2i001imajg4apnrod6"
+    },
+    {
+      "name": "High-risk SUPPLIER self-approval denied by UI and actual server action"
+    },
+    {
+      "name": "SUPPLIER proposed/reviewed/imported through actual actions; opening stays unverified",
+      "batchId": "cmve1kls10020majg2g3v84mp"
+    },
+    {
+      "name": "High-risk ITEM self-approval denied by UI and actual server action"
+    },
+    {
+      "name": "ITEM proposed/reviewed/imported through actual actions; opening stays unverified",
+      "batchId": "cmve1lwlx002kmajg2dqjre6h"
+    },
+    {
+      "name": "Same-file replay preserves batch and four masters without stock or ledger effects"
+    },
+    {
+      "name": "Foreign tenant cannot read evidence or mutate retained source batch"
+    },
+    {
+      "name": "Unauthorized role cannot load onboarding evidence"
+    },
+    {
+      "name": "French mobile reflow and keyboard evidence disclosure/navigation",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  ],
+  "origin": "http://127.0.0.1:3188",
+  "browser": "149.0.7827.55",
+  "before": {
+    "customers": 0,
+    "suppliers": 0,
+    "items": 0,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0
+  },
+  "after": {
+    "customers": 1,
+    "suppliers": 1,
+    "items": 2,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0
+  },
+  "retainedRows": [
+    {
+      "businessKey": "customer-a",
+      "sourceRowHash": "sha256:37e86f7f0c8ce9cb8db4b2ab11fcca97a34367ea7810bbbc31e8e00f6e0151bb",
+      "committedRecordId": "cmve1jr6p001smajgfa8ac7u8"
+    },
+    {
+      "businessKey": "supplier-a",
+      "sourceRowHash": "sha256:ab3106226bdc63ec8451e6a2e76352daf5f7213bedaa634537ff33396de64671",
+      "committedRecordId": "cmve1ldoy002emajg879oc7nf"
+    },
+    {
+      "businessKey": "item-each",
+      "sourceRowHash": "sha256:59e04d7b6f828ae98cf7ae95080ccdcbac1cf9eb94d455eab85f1b43dd7095f0",
+      "committedRecordId": "cmve1mq7f002xmajgf1z44nme"
+    },
+    {
+      "businessKey": "item-weight",
+      "sourceRowHash": "sha256:b9cc9c353d989b7793ed6a4cbbf46af4efe3fb44cd90b7041ddfbfbcc9e6432d",
+      "committedRecordId": "cmve1mqe0002zmajgumshv0je"
+    }
+  ],
+  "status": "PASS"
+}

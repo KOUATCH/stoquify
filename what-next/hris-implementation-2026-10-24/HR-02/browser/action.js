@@ -1,0 +1,1 @@
+exports.requestOperationalTimeAction=async input=>{window.submitted=input;await new Promise(r=>setTimeout(r,100));if(window.testMode==='thrown')throw new Error('Synthetic network failure');return window.testMode==='success'?{success:true,data:{created:true}}:{success:false,error:'Synthetic review conflict — values retained'};};

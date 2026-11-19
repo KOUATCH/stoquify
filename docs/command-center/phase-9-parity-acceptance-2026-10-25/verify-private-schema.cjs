@@ -1,0 +1,9 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto'),{spawnSync}=require('node:child_process');
+const {state,environment,root,redact}=require('./environment.cjs');const s=state();
+const folder=path.join(s.work,'schema-verification');fs.mkdirSync(folder);const schema=path.join(folder,'schema.prisma');fs.copyFileSync(path.join(s.candidate,'prisma/schema.prisma'),schema);
+const run=spawnSync(process.execPath,[path.join(root,'node_modules/prisma/build/index.js'),'format','--schema',schema,'--config',path.join(s.work,'prisma.config.ts')],{cwd:s.work,env:environment(s,'test'),encoding:'utf8',windowsHide:true,timeout:120000});
+fs.writeFileSync(path.join(__dirname,'private-schema-format.log'),redact(run.stdout)+redact(run.stderr));assert.equal(run.status,0);
+const normalized=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n').trim();
+const generated=path.join(s.work,'private-dependencies/node_modules/.prisma/client/schema.prisma');
+const matches=normalized(schema)===normalized(generated);const reportPath=path.join(__dirname,'private-client-result.json'),report=JSON.parse(fs.readFileSync(reportPath));fs.copyFileSync(reportPath,path.join(__dirname,'private-client-initial-verification.json'));
+report.initialSchemaTokenComparison=report.generatedSchemaMatches;report.generatedSchemaMatches=matches;report.schemaVerification='Exact comparison after installed Prisma formatter normalizes a separate temporary source copy; captured schema untouched';report.formattedSchemaSha256=crypto.createHash('sha256').update(normalized(schema)).digest('hex');report.generatedSchemaSha256=crypto.createHash('sha256').update(normalized(generated)).digest('hex');fs.writeFileSync(reportPath,JSON.stringify(report,null,2));console.log(JSON.stringify({generatedSchemaMatches:matches,sharedClientUnchanged:report.sharedClientUnchanged}));assert.equal(matches,true);

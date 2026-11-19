@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+import "@testing-library/jest-dom"
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { AccountantWorkDesk } from "../AccountantWorkDesk"
 import { getAccountantWorkDeskAction, getAccountantWorkDetailAction, acceptAccountantWorkItemAction } from "@/actions/accounting/accountant-work-desk.actions"
@@ -6,6 +8,7 @@ import { accountantWorkDeskCopy as copy } from "../accountant-work-desk-copy"
 
 jest.mock("@/actions/accounting/accountant-work-desk.actions", () => ({ getAccountantWorkDeskAction: jest.fn(), getAccountantWorkDetailAction: jest.fn(), acceptAccountantWorkItemAction: jest.fn() }))
 jest.mock("@/actions/security/step-up-auth.actions", () => ({ stepUpWithPasswordAction: jest.fn() }))
+jest.mock("../DelegatedEvidenceDesk", () => ({ DelegatedEvidenceDesk: () => <div>Delegated request composer</div> }))
 jest.mock("next/link", () => ({ __esModule: true, default: ({ children, href, ...props }: any) => <a href={href} {...props}>{children}</a> }))
 const list = getAccountantWorkDeskAction as jest.Mock
 const detail = getAccountantWorkDetailAction as jest.Mock
@@ -215,3 +218,5 @@ it("explains the source replacement and preserves notes in French", async () => 
   expect(screen.getByRole("checkbox", { name: /J’ai examiné/ })).not.toBeChecked()
   expect(screen.getByText(/justificatif initial manquant est conservé/)).toBeInTheDocument()
 })
+
+jest.mock("../ObligationRegister", () => ({ ObligationRegister: () => null }))

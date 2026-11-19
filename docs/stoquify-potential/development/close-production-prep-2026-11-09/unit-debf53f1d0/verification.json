@@ -1,0 +1,36 @@
+{
+  "started": "2026-11-09T20:08:59.765Z",
+  "finished": "2026-11-09T20:09:22.801Z",
+  "args": [
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\unit-debf53f1d0\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--runTestsByPath",
+    "actions/payments/__tests__/reconciliation-dashboard-read-access.test.ts",
+    "actions/payments/__tests__/reconciliation.actions.test.ts",
+    "services/reconciliation/__tests__/payment-reconciliation-dashboard.service.test.ts",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\unit-debf53f1d0\\results.json"
+  ],
+  "exitCode": 0,
+  "error": null,
+  "passed": true,
+  "passedTests": 33,
+  "failedTests": 0,
+  "skipped": 0,
+  "unchangedInputs": true,
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-production-prep-2026-11-09\\unit-debf53f1d0",
+  "suiteHashes": {
+    "actions/payments/__tests__/reconciliation-dashboard-read-access.test.ts": "f3458dfb199a8143208e6e20af99022148c2463d0689c8ac929535fb70757f11",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "80d5e395c364c217b1de27a6ecfcd457aa99bd6b6127dd38baabe835cd8a5819",
+    "services/reconciliation/__tests__/payment-reconciliation-dashboard.service.test.ts": "d77ce3e4196364893aab3e1041f23fdf644f6a2cf6c415a59bc06ad6c2ef6697",
+    "scripts/local-gates-network.cjs": "839c28ce230e56e70118b27c0a3114f0616153d7dd8d24fdd55bf3eec2ec5d8e",
+    "package-lock.json": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+  },
+  "runnerSha256": "fc812b6e8faa6f29d80373d09bc1e5eb0e532198916788d65d715ded7f6edbaf",
+  "configSha256": "4426962f659e66f84a6c3dc368282099f016730185ad06180b5ac327a339d0d6",
+  "evidenceClass": "Mocked unit / protect adapter boundaries; no PostgreSQL/browser"
+}

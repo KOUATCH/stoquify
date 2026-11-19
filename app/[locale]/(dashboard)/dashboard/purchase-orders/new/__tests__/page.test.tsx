@@ -58,6 +58,7 @@ jest.mock("@/services/modules/module-entitlement.service", () => ({
 
 jest.mock("@/services/purchase-order/purchase-order.service", () => ({
   getPurchaseOrderFormOptions: jest.fn(),
+  getPurchaseOrderCurrency: jest.fn().mockResolvedValue("XAF"),
 }))
 
 jest.mock("@/components/purchase-orders/ModernCreatePurchaseOrderForm", () => ({

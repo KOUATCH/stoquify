@@ -1,0 +1,122 @@
+{
+  "generatedAt": "2026-10-29T12:17:19.832Z",
+  "workItem": "ENG-10",
+  "status": "COMPLETED_ENGINEERING",
+  "evidenceClass": "PURE_NODE_UNIT_TESTS_WITH_SYNTHETIC_FILESYSTEM_FIXTURES",
+  "command": "node node_modules/jest/bin/jest.js --config scripts/jest.payroll-review-tools.config.cjs --runInBand --json --outputFile docs/database-seed/payroll-unblock-workpapers/review-tools-after.json",
+  "sideEffects": "Jest cache, synthetic OS temporary files and explicit JSON output only; isolated configuration has no Next/env/application setup.",
+  "before": {
+    "passed": false,
+    "suites": 3,
+    "tests": 34,
+    "passedTests": 26,
+    "failedTests": 8
+  },
+  "after": {
+    "passed": true,
+    "suites": 3,
+    "tests": 43,
+    "passedTests": 43,
+    "failedTests": 0
+  },
+  "sourceFiles": [
+    {
+      "file": "scripts/statutory-country-pack-review-preflight.js",
+      "sha256": "9838c7e7a3b9b43830019a8ad21c6af717502266ff3d5dcff74b233e73d2eeb1"
+    },
+    {
+      "file": "scripts/statutory-country-pack-review-package.js",
+      "sha256": "464c53b8bbdb42a049ae4f370072c31159bd361c1ffb7085dae3381c25d1e34d"
+    },
+    {
+      "file": "scripts/statutory-country-pack-production-gate.js",
+      "sha256": "a41ab1dc735828f95f72bc693d8451c07fcc2847ebab425f8329214274a9b104"
+    },
+    {
+      "file": "scripts/__tests__/statutory-country-pack-review-preflight.test.js",
+      "sha256": "05cc5aadf9731be0cfae50ed10da1bbb9b48f7753ea52db500f94412a772e29f"
+    },
+    {
+      "file": "scripts/__tests__/statutory-country-pack-review-package.test.js",
+      "sha256": "d1a2251b8742b3f837909ded42670da717198cd2350d2c4bf97a79366013942b"
+    },
+    {
+      "file": "scripts/__tests__/statutory-country-pack-production-gate.test.js",
+      "sha256": "4162b61787b52bc898d1b2963d6dddea93f25e775886af86279026091ea64c41"
+    },
+    {
+      "file": "scripts/jest.payroll-review-tools.config.cjs",
+      "sha256": "7470ea3dad0dfbf871fd1d1aa6caaa1ed9ca53b6942848a921433b4bb3355ef6"
+    }
+  ],
+  "testArtifacts": [
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/review-tools-before.json",
+      "sha256": "950d94ccadccfdf3380518dbf6224ddbdfafcbad8a07bc820593af138aeae1d8"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/review-tools-after.json",
+      "sha256": "62f591f937f794e9618fde0dfb34ce3f4248e137bc21bcee590d61a92659d21a"
+    }
+  ],
+  "completed": [
+    "MORE_EVIDENCE_REQUIRED is a recordable family response, never approval.",
+    "EXPERT_REVIEWED and REGULATOR_CONFIRMED are accepted transitioned states only with complete approval bindings; legacy APPROVED is rejected.",
+    "Preflight condition 11 requires the shared signature/checker validator; the total remains 12 conditions.",
+    "Pending source production flags and invalid or overbroad approval intervals are rejected.",
+    "Fixture hash readiness rejects empty/scalar independent reviews and duplicate/unnamed families.",
+    "Signature checks reject missing reviewer identity and same-person checker records."
+  ],
+  "remaining": [
+    {
+      "ids": [
+        "ENG-01"
+      ],
+      "input": "Reviewed calculation contract and independent expected-result fixtures for tax-year/YTD, adjustments, corrections/reversals, ordering and refunds.",
+      "owner": "Qualified reviewer and payroll owner"
+    },
+    {
+      "ids": [
+        "ENG-02",
+        "ENG-03",
+        "ENG-04",
+        "ENG-05",
+        "ENG-06"
+      ],
+      "dependency": "ENG-01",
+      "work": "Implement authoritative history and adjustment binding, completeness/year basis, concurrency/order, correction identities and stored base/refund behavior."
+    },
+    {
+      "ids": [
+        "ENG-07"
+      ],
+      "dependency": "ENG-01 through ENG-06 plus approved pack/admission fixtures",
+      "work": "Integrated service, real PostgreSQL concurrency/replay and downstream lifecycle evidence."
+    },
+    {
+      "ids": [
+        "ENG-08"
+      ],
+      "dependency": "ENG-01 through ENG-07, approved date-effective pack/admission, ENG-09 scope",
+      "work": "Replace September-only runner with controlled chronological lifecycle for the agreed months; verify replay without duplicates. No speculative lifecycle implementation was added."
+    },
+    {
+      "ids": [
+        "ENG-09"
+      ],
+      "input": "Explicit October pending scope or complete supported inputs beyond October 28 for the October 31 pay date.",
+      "owner": "Dataset owner"
+    }
+  ],
+  "notRun": {
+    "realPostgreSQL": "NOT_RUN",
+    "browser": "NOT_RUN",
+    "broadBuild": "NOT_RUN",
+    "actualSignatureAuthentication": "NOT_PERFORMED",
+    "productionReleaseGate": "NOT_RUN; its synthetic unit suite ran"
+  },
+  "nonClaims": [
+    "No canonical manifest, approval template, pack authority, application payroll behavior, database or runtime configuration changed.",
+    "These structural checks do not authenticate a real signature or establish statutory correctness."
+  ]
+}

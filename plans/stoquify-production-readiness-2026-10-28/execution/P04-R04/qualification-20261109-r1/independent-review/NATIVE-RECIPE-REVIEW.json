@@ -1,0 +1,56 @@
+{
+  "reviewedAt": "2026-11-09T13:46:55.592Z",
+  "reviewer": "r04_review",
+  "approvedForExecution": true,
+  "scope": "One fresh isolated R04 native list-action qualification",
+  "files": [
+    {
+      "path": "database/run-native.cjs",
+      "sha256": "93c4ab888c4ec2ed979d97ea05ade9d06484255b1ae85454b757260cc9542574"
+    },
+    {
+      "path": "database/jest.native.config.cjs",
+      "sha256": "847b60d74c87b2d680221be4ad0883dbd8d07c0875f0c5b111c5e2df5865da75"
+    },
+    {
+      "path": "database/isolation-guard.cjs",
+      "sha256": "4c5beee4742a1afb6fbe28d5bb0364161c38e258fc0ca6f6ab37e459e5fa54c8"
+    },
+    {
+      "path": "database/list-items.postgres.test.ts",
+      "sha256": "d0c6dbfdc67b22a2f472292390227c6c940483fbb873046f768bafd27cf8bc44"
+    },
+    {
+      "path": "database/RECIPE.md",
+      "sha256": "39eb413115a0045cc083ed5186ba7b67c64e58ab2f0632f32cbc07713d234151"
+    },
+    {
+      "path": "database/snapshot-predicate-review.json",
+      "sha256": "a6f5b0866b371f6af7902bca98d2b13454805c60431adb2af55d223190a693a6"
+    }
+  ],
+  "target": ".codex-tmp/p04r04-qualification-20261109-r1; stoquify_local_p04_r04_20261109_r1; ephemeral 127.0.0.1 only",
+  "expectedTests": 34,
+  "expectedObservations": 36,
+  "businessRelationGroupsIndependentlyChecked": 24,
+  "reviewedControls": [
+    "Exclusive owned target and receipt; source before/after hashes",
+    "OS env allowlist; no app config or dotenv",
+    "Pinned canonical schema transform and exact private-client checks before database creation",
+    "121 copied migrations checksum matched and fresh initial tables verified",
+    "Loopback data_directory/port/database identity checked before writes and stop",
+    "Actual list action/RBAC/service; object and positional calls; restored permission positives",
+    "Reviewed 24 tenant predicates including InventoryLevel item join and implicit membership join",
+    "Actual Prisma query fault uses fixed synthetic column rename in owned DB, restored in finally",
+    "No snapshots/business deltas concealed; intended security audit counts explicit",
+    "Runtime env/fetch/socket restrictions; Next and Better Auth transport mocks explicit",
+    "Only owned cluster cleanup, remaining clients checked and port release; fixtures retained"
+  ],
+  "limits": [
+    "No actual signed-cookie HTTP, session expiry/revocation or rendered browser proof",
+    "No complete domain/release/production claim",
+    "Process-local fixture flags do not modify production flags"
+  ],
+  "executionPrecondition": "Root stable source signal and exact six recipe hashes unchanged. Request reviewed loopback-capable escalation if needed; previous sandbox EACCES is recorded, not a business approval.",
+  "noProductOrTestEditsByReviewer": true
+}

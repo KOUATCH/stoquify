@@ -1,0 +1,431 @@
+{
+  "at": "2026-10-18T19:57:43.439Z",
+  "head": "6ee84a90c760d2864f6aef672d8b393ac2b65971",
+  "status": " M app/[locale]/(home)/workflows/page.tsx\n M components/Forms/WaitList.tsx\n M components/daily-habit/DailyHabitDigestDashboard.tsx\n M components/daily-habit/__tests__/modes.test.tsx\n M components/landing/__tests__/CinematicLanding.test.tsx\n M components/landing/__tests__/workflow-atlas.test.tsx\n M components/landing/cinematic-business-story.tsx\n M components/landing/cinematic-chapters.tsx\n M components/landing/cinematic-hero.tsx\n M components/landing/cinematic-offers.tsx\n M components/landing/cinematic-product.tsx\n M components/landing/cinematic-setup.tsx\n M components/landing/cinematic-shell.tsx\n M components/landing/cinematic.css\n M components/landing/public-product-copy.ts\n M components/landing/workflow-atlas.tsx\n M components/onboarding/MasterDataOnboardingWorkbench.tsx\n M docs/retention/execution/P07/ITEM_IMPORT_BLOCKER.md\n M docs/retention/execution/P07/RESULT.md\n M docs/retention/execution/P07/SETUP_JOURNEY.md\n M docs/retention/execution/STATUS.md\n M scripts/__tests__/landing-navigation-localization.test.js\n M scripts/__tests__/landing-refinement-content.test.js\n M services/onboarding/__tests__/master-data-csv.test.ts\n M services/onboarding/__tests__/master-data-import-guards.test.ts\n M services/onboarding/__tests__/opening-readiness.postgres.test.ts\n M services/onboarding/master-data-csv.ts\n M services/onboarding/master-data-import.service.ts\n",
+  "baselineEntries": 507,
+  "sourcePreserved": false,
+  "drift": [
+    {
+      "file": "components/landing/__tests__/CinematicLanding.test.tsx",
+      "before": "d41424876c42723e23ff33d49a8aef6399643f10e85122ca220d527192cfa1ef",
+      "after": "9cf7ce43ea2b94ae8c01c105b041b1d67972faad863af848dbe2ed42cb665cd7"
+    },
+    {
+      "file": "components/landing/__tests__/workflow-atlas.test.tsx",
+      "before": "457a4f498d5ba16ad51e1d0eb09d306eeae6f216289d9a80655655a83df21069",
+      "after": "098c0dbf52181de7e631987910931b80daaca80225eb465a9468c19c974fe6ed"
+    },
+    {
+      "file": "components/landing/cinematic-business-story.tsx",
+      "before": "a72a2dc7627a5e57e5bad120ae86d7d5f271ca6fc01ed0c35f427b5ae8eaf224",
+      "after": "0f9e6e314f98e5d602fdbd16329b1c7f5922ae717dd875b93622dbaf754e985b"
+    },
+    {
+      "file": "components/landing/cinematic.css",
+      "before": "8eadf63f96c65a4064c609461296eaea525511808a354a181b6ceb884518a814",
+      "after": "88e54f15baa610694c651c9b3fbc35412b407b272bf4bf069ae2b20b99a9f367"
+    }
+  ],
+  "reviewedSourceDrift": [],
+  "statusOnlyP12": true,
+  "acceptanceCount": 42,
+  "exactAcceptanceCoverage": true,
+  "links": [
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "DAY_30_CHECKPOINT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "evidence/EVIDENCE_REVIEW.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "evidence/PREREQUISITE_FINGERPRINTS.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P01/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P01/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P01/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P02/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P02/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P02/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P02/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P03/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P03/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P03/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P04/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P04/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P04/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P04/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P05-P06-closure-2026-10-17/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P05-P06-closure-2026-10-17/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P05-P06-closure-2026-10-17/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P05-P06-closure-2026-10-17/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P06-operator-2026-10-17/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P06-operator-2026-10-17/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P06-operator-2026-10-17/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P06-operator-2026-10-17/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P07-media-2026-10-18/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P07-media-2026-10-18/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P07-media-2026-10-18/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P07-media-2026-10-18/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P08/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P08/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P08/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P08/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P09/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P09/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P09/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P09/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P10/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P10/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P10/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P10/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P11/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P11/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P11/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/ACCEPTANCE_LEDGER.md",
+      "link": "../P11/RESULT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAYS_31_60_EXECUTION_ORDER.md",
+      "link": "DAY_30_CHECKPOINT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAYS_31_60_EXECUTION_ORDER.md",
+      "link": "ACCEPTANCE_LEDGER.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "../../STOQUIFY_OHADA_SME_VALUE_ROADMAP_2026-10-12.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "../P01/PILOT_SCOPE.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "../P01/DECISIONS.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "ACCEPTANCE_LEDGER.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "evidence/BASELINE.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "evidence/PREREQUISITE_FINGERPRINTS.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "evidence/VALIDATION.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "evidence/EVIDENCE_REVIEW.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "evidence/SOURCE_REVIEW.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "DAYS_31_60_EXECUTION_ORDER.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "../P11/EXPERT_REVIEW_PACKET.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/DAY_30_CHECKPOINT.md",
+      "link": "../P11/PROVIDER_PREREQUISITES.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "DAY_30_CHECKPOINT.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "ACCEPTANCE_LEDGER.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "DAYS_31_60_EXECUTION_ORDER.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/REVIEW_AND_COMMANDS.md",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/BASELINE.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/PREREQUISITE_FINGERPRINTS.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/EVIDENCE_REVIEW.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/SOURCE_REVIEW.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/VALIDATION.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/MANIFEST.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/WORKFLOW.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/WORKFLOW.log",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/STORAGE_RESULTS.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/STORAGE_EXECUTION.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/STORAGE.log",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/STORAGE_SANDBOX_RESULTS.json",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/STORAGE_SANDBOX.log",
+      "exists": true
+    },
+    {
+      "file": "docs/retention/execution/P12/RESULT.md",
+      "link": "evidence/REVIEW_AND_COMMANDS.md",
+      "exists": true
+    }
+  ],
+  "workflowExit": 0,
+  "storage": {
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0,
+    "exit": 0
+  },
+  "checksPassed": false,
+  "checkpoint": "PARTIAL",
+  "M0": "PARTIAL",
+  "laterPromptsExecuted": false
+}

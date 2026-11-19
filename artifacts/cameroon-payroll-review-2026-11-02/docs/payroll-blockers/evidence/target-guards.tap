@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: derives only a fresh-named local public target
+ok 1 - derives only a fresh-named local public target
+  ---
+  duration_ms: 12.5307
+  type: 'test'
+  ...
+# Subtest: refuses production mode
+ok 2 - refuses production mode
+  ---
+  duration_ms: 1.2941
+  type: 'test'
+  ...
+# Subtest: refuses remote host
+ok 3 - refuses remote host
+  ---
+  duration_ms: 1.8575
+  type: 'test'
+  ...
+# Subtest: refuses arbitrary or SQL-bearing names
+ok 4 - refuses arbitrary or SQL-bearing names
+  ---
+  duration_ms: 2.4148
+  type: 'test'
+  ...
+# Subtest: refuses reuse of the configured application database
+ok 5 - refuses reuse of the configured application database
+  ---
+  duration_ms: 2.321
+  type: 'test'
+  ...
+# Subtest: refuses non-PostgreSQL protocols
+ok 6 - refuses non-PostgreSQL protocols
+  ---
+  duration_ms: 0.6881
+  type: 'test'
+  ...
+# Subtest: requires explicit matching runtime identity and schema
+ok 7 - requires explicit matching runtime identity and schema
+  ---
+  duration_ms: 2.8773
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1325.3738

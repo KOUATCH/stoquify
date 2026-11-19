@@ -1,0 +1,70 @@
+{
+  "result": "CAPTURED_CANDIDATE_ACCEPTANCE_PASSED_WITH_OPEN_RELEASE_GATES",
+  "productionAccess": false,
+  "productionReleaseApproved": false,
+  "sourceScope": "7594-file captured candidate plus listed audited overlays and test-fixture supplements",
+  "schema": {
+    "migrations": 118,
+    "unexpectedStructuralDifferences": 0,
+    "intentionalResidualStatements": 240,
+    "generatedDiffApplied": false,
+    "foreignKeysChecked": 15,
+    "fullScalarModelReads": 6
+  },
+  "tests": {
+    "broadRunPassed": 594,
+    "broadRunFailed": 1,
+    "broadRunFailure": "Superseded clear-coverage fixture expectation",
+    "finalAffectedSuites": 7,
+    "finalAffectedTests": 123,
+    "finalAffectedFailures": 0
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "capturedOwnedSourceStable": true
+  },
+  "lint": {
+    "files": 13,
+    "errors": 0,
+    "warnings": 0
+  },
+  "browser": {
+    "authenticated": true,
+    "applicationActionMocks": false,
+    "mainChecks": 31,
+    "locationChecks": 11,
+    "accessibilityScans": 24,
+    "violations": 0,
+    "viewports": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "height": 1000,
+    "locales": [
+      "en",
+      "fr"
+    ]
+  },
+  "preservation": {
+    "candidateUnexpectedChanges": 0,
+    "migrationSqlChanges": 0,
+    "workspaceDifferencesPreserved": 19,
+    "sharedClientUnchangedAtPrivateGeneration": true,
+    "sharedClientChangedLater": true,
+    "privateClientStillMatchesCapturedSchema": true,
+    "wholeWorkspacePreservationGate": "Concurrent drift detected; not passed"
+  },
+  "environment": {
+    "applicationStopped": true,
+    "clusterStopped": true
+  },
+  "openGates": [
+    "Human screen-reader and native zoom acceptance",
+    "Representative productivity and realistic workload measurements",
+    "Then-current combined source and generated client verification",
+    "Production policy and trusted release artifact; no deployment approved"
+  ],
+  "review": "REVIEW.md"
+}

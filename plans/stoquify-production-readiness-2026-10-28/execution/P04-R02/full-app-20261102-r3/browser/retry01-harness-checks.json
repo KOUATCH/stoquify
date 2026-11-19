@@ -1,0 +1,53 @@
+{
+  "at": "2026-11-02T17:50:05.571Z",
+  "passed": true,
+  "evidenceClass": "pure_signin_cadence_and_syntax_only",
+  "changes": [
+    "Serialized all UI/API sign-ins with 10250ms quiet gap after completion",
+    "At most one 429 retry only with bounded numeric X-Retry-After; other statuses do not retry",
+    "Cache observations require authorized200 and revoked401 for legacy and synthetic alias",
+    "New retry01 source-review filename preserves original source receipt"
+  ],
+  "hashes": [
+    {
+      "path": "run-browser.cjs",
+      "sha256": "7f6b4089d62590ea1f995c6955a996bfaa2265b474473251d6f555e0c6b0baa6"
+    },
+    {
+      "path": "signin-cadence.cjs",
+      "sha256": "8f01962f3affd37a55347706b8f9642bc4e24669c9be988956f3450b84ede18b"
+    },
+    {
+      "path": "signin-cadence.test.cjs",
+      "sha256": "ff14712a8ffda36418ac2a655e0658f57b6170917711bdc0d455999cf4e60bba"
+    },
+    {
+      "path": "review-candidate-source.cjs",
+      "sha256": "e8047ad060c0f9fb113e76791807470c5c8890da8cb934232c4110892d1be712"
+    }
+  ],
+  "cadenceTests": {
+    "tests": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0
+  },
+  "syntaxChecks": [
+    {
+      "path": "run-browser.cjs",
+      "exitCode": 0
+    },
+    {
+      "path": "review-candidate-source.cjs",
+      "exitCode": 0
+    }
+  ],
+  "executed": {
+    "application": false,
+    "browser": false,
+    "database": false
+  },
+  "preservation": "pre-retry01/recipe-hashes.json and failed-evidence-hashes.json",
+  "limit": "No actual browser retry or source-review runner executed by this receipt"
+}

@@ -1,0 +1,57 @@
+{
+  "at": "2026-10-29T14:47:16.678Z",
+  "sources": [
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/full-app/database/database-common.cjs",
+      "sha256": "a025ec030395099d5c3286d1a34e1c30338ec172c8fc242cfa86e0cc730d1c9c"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/full-app/database/cluster-control.cjs",
+      "sha256": "48df2a3d24b810e627fbabfd8b1b9fd99a87ba15c07788f8b11c2f3f6047113f"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/full-app/database/fixture-definition.cjs",
+      "sha256": "ea4ccf1373d7ac7f22e9c698ffe936453282c1c0c265da109a7cac3dd0b7d476"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/full-app/database/seed-fixture.cjs",
+      "sha256": "79d8fa08619058139f3cf26a5c8d128752a2bbcf7e961906f9ac5ce925b2781d"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/full-app/database/fixture-control.cjs",
+      "sha256": "f7c340cfe08f0c10f5c88d9991adc67fd5da429e84e55c9760ba9b0947998ced"
+    },
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R02/full-app/database/PLAN.md",
+      "sha256": "b91bbe3b3e0ff3cff679d2845d911d11f32738916d25ce5a566cf665646e1de0"
+    }
+  ],
+  "reviewedAppSources": [
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+    },
+    {
+      "path": "lib/password.ts",
+      "sha256": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b"
+    },
+    {
+      "path": "lib/auth.ts",
+      "sha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec"
+    },
+    {
+      "path": "lib/security/server-authz.ts",
+      "sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+    }
+  ],
+  "candidate": "D:/Codex-Stoquify-P04-R02-20261029-01a1816a/source",
+  "evidenceClass": "database fixture/lifecycle/controller source binding; no auth or browser outcome implied"
+}

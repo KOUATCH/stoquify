@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-29T14:37:18.990Z",
+  "passed": true,
+  "migrations": {
+    "count": 120,
+    "migrationsSha256": "919e652f586d6f6b8b0fa71ed0d68b4d9da3be30ae0c24371524609e28cfc041",
+    "schemaSourceSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+    "templateSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+  },
+  "schema": {
+    "sha256": "358cbea3f824f57f876f6ea12b48ced6861f96a301f0bf5edeb095036ffda811",
+    "counts": {
+      "columns": 4296,
+      "constraints": 1130,
+      "indexes": 1216,
+      "enums": 1110,
+      "policies": 0
+    }
+  },
+  "clones": [
+    {
+      "database": "stoquify_local_p04r02_20261029_build_r1",
+      "empty": {
+        "organizations": 0,
+        "users": 0,
+        "accounts": 0,
+        "sessions": 0,
+        "roles": 0,
+        "items": 0,
+        "tenant_module_configurations": 0,
+        "tenant_module_grants": 0
+      }
+    },
+    {
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "empty": {
+        "organizations": 0,
+        "users": 0,
+        "accounts": 0,
+        "sessions": 0,
+        "roles": 0,
+        "items": 0,
+        "tenant_module_configurations": 0,
+        "tenant_module_grants": 0
+      }
+    }
+  ],
+  "limitations": [
+    "Catalog fingerprint binds template/clone equality; migration checksums bind the candidate history. No Prisma diff or fresh migration replay was executed in this package."
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "status": "FAILED",
+  "completedAt": "2026-10-26T13:48:22.047Z",
+  "steps": [
+    "anonymous-step-up-denied",
+    "login-alone-cannot-mutate-hr",
+    "invalid-and-oversized-password-denied",
+    "password-assurance-uses-server-session-and-tenant",
+    "five-failures-revoke-earlier-fresh-admission",
+    "expired-throttle-requires-new-password-proof",
+    "assurance-cannot-transfer-to-another-session",
+    "assurance-cannot-transfer-to-another-user",
+    "expired-future-and-wrong-tenant-assurance-denied",
+    "reusable-window-and-server-derived-hr-writes",
+    "fresh-auth-does-not-replace-permission",
+    "native-compensation-proposal-separation-and-contract-gate",
+    "module-denial-blocks-employee-mutation",
+    "module-denial-blocks-compensation-mutation",
+    "module-denial-blocks-payroll-handoff",
+    "module-denial-blocks-selected-hr-reads",
+    "read-only-payroll-allows-reads-and-denies-writes",
+    "tenant-change-between-assurance-and-permission-reads-denied",
+    "company-change-invalidates-earlier-assurance",
+    "disabled-and-locked-account-cannot-step-up",
+    "step-up-audit-without-password-or-cookie-secrets",
+    "revoked-session-cannot-reverify-or-mutate",
+    "expired-session-cannot-reverify"
+  ],
+  "failures": [
+    {
+      "name": "foreign-employee-read-and-write-denied",
+      "error": "AssertionError",
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'CONFLICT'\n- 'NOT_FOUND'\n"
+    }
+  ],
+  "cleanupComplete": true,
+  "limits": [
+    "Actual native auth and direct server-action invocation; no Next transport/browser claim",
+    "Guarded Prisma, request headers, server-only and cache revalidation adapters",
+    "Synthetic database fixtures only; no deployment or provider claims"
+  ]
+}

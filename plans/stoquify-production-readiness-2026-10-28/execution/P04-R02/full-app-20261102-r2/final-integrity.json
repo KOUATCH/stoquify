@@ -1,0 +1,550 @@
+{
+  "startedAt": "2026-11-02T16:12:50.610Z",
+  "evidenceClass": "source_artifact_preservation_and_receipt_reconciliation",
+  "selectedReceipts": {
+    "build": "build-retry03-result.json",
+    "runtime": "runtime-result.json",
+    "databaseStop": "database/resume-20261102-r2-retry01-guarded-stop-1793635954332.json"
+  },
+  "checks": [
+    {
+      "name": "frozen-candidate",
+      "passed": true,
+      "evidence": {
+        "files": 9068,
+        "sourceHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+        "allSourceHashesUnchanged": true,
+        "sourceManifestSha256": "eb25ee4e218ce0318baf30b883da52a7739b3caa9f0dd7b6ebac997b1f466909",
+        "assetAnnexCount": 6
+      }
+    },
+    {
+      "name": "current-root-drift",
+      "passed": true,
+      "evidence": {
+        "beforeHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+        "currentHead": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+        "headUnchanged": true,
+        "beforeFiles": 9067,
+        "currentFiles": 9104,
+        "drift": {
+          "added": [
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/artifact-build.json",
+              "sha256": "05450914dc157e479ee886d2a88944ddc14b97ef5fb01b5b1a916b5b9b310c4b"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/artifact-digest.json",
+              "sha256": "5e46106f2fa979d3f8bad0bd8f6c08ab01c3c88ea8e3d5e9db5a09f4c2449776"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/artifact-verify.json",
+              "sha256": "07a56c999baf234dc8b79012232c1d74ebd95ae2da6c22bedab48b5171ecad4e"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/build-scope.json",
+              "sha256": "82900d2fc65a6090968f18f793d6b0543008a503ce1fe8db4df76703590fcbca"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/candidate-preparation.json",
+              "sha256": "c6e3101611bcf9684264938b9d8a1ebffa2880ab9208ab91cea66b0b55100b00"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/client-generation.json",
+              "sha256": "153db4f8c719887c3c534f4b17e4557823887eb817e3815c9ea59f1b21f98556"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/grant-counterfactual-jest.json",
+              "sha256": "1121e18b0b8db702aa3ab6448cfc4e69ee6f0af8214a8315f9ea6806cb49d06c"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/grant-repair-jest.json",
+              "sha256": "7f54066ee26ebbb67fb399b96f49698c7a4a28efaf1d16cc9b2041abad0e6673"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/invalid-counterfactual-jest.json",
+              "sha256": "b876be946b008b0866520590f4ccfcefb8b1fce4a434680ca995fc2e21c60676"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/source-manifest.json",
+              "sha256": "8bd1e4814ec5ea5b3f5ff5c51210a8ad77e3fad6c02bda8e9e03ca5f35a808d1"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/workflow-check.json",
+              "sha256": "1007cd235efd6917d1eec0ea9a9836aa14d4fd86a52e9712ec9dfff3314f569b"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/working-overlay-check.json",
+              "sha256": "43b0b2eb86faa1723ed18cb85007d2c029af6c4b58f4fa4ca76998576ffcd12d"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-02/browser-results.json",
+              "sha256": "4d3b2d1f4798815aa8144aa55c6332fc218296886838c8ddf3d06d3e2536c522"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-02/documents-before.json",
+              "sha256": "bb72e4e36b85375ead22714a709f79e51815319adbd749b532569c81b8e409e7"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-02/sealed-engagement-summary.json",
+              "sha256": "68fd7c4e706f57f19fb90b341db76ac9cf1ce0597051c22f835e51a5b41236db"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/browser-recovery.json",
+              "sha256": "11b9aa94b0c49e66c877b47dc8f5bd5cadf5a42ce8f32b236950bcfe2f078525"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/browser-results.json",
+              "sha256": "4ce220f47aa4ee2419b4a45914a057cec573d17b9835a9faf79aca466dff5165"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/browser-visual-review.json",
+              "sha256": "f7ff8268b5a7d242748e9c7306c37b8bfbdd34ce93e43f58b6eac68805e87123"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/cleanup.json",
+              "sha256": "52c79f212e52205b5f5a69ab2fe585caab9b40b46216575227ed2bd5d40b2608"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/documents-before.json",
+              "sha256": "bb72e4e36b85375ead22714a709f79e51815319adbd749b532569c81b8e409e7"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/orchestration-sources.json",
+              "sha256": "c72bf9413aaaf07a6591ce1c10f36f5d79d0bf12dcb894be0d23acdedb18ed08"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/publication-verification.json",
+              "sha256": "468e13c2f0bc0d7a6f6dab9f18d7df974588485d9c19c688d66314320dac5571"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/sealed-engagement-summary.json",
+              "sha256": "795425387e8be0b525ff2edbdc1ed584ecde5c09bd3ccbe553b09192111f5e3f"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/verification-summary.json",
+              "sha256": "cf3ab87309c1f912ddcb4773653b2e3c70351277cc4c73441fb59e59f87ed95b"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/visual-review.json",
+              "sha256": "7e854e163324abcced403e9bea5df272f07bf3c7c60916376e05b362ac8c8dcf"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/ENGAGEMENT_REPAIR_2026-11-02.md",
+              "sha256": "62a18adc430b89ad42ebd2dd3aaeda5d243da87984aab926f59c9028c73660b4"
+            },
+            {
+              "path": "docs/accounting-firms/supporting-reports/2026-11-02-af16-engagement-repair.md",
+              "sha256": "dc91e13f9c9e7e39148913be43f8f0daed2b68f44da2b8885ce31caf1063ffe1"
+            },
+            {
+              "path": "scripts/af16-grant-repair.jest.config.cjs",
+              "sha256": "95ba1268c1412cfc52be1a2d84522d373739ade5f0c89ccb1b714ab592141bf9"
+            },
+            {
+              "path": "scripts/af16-sealed-engagement-20261102-browser.generated.cjs",
+              "sha256": "788b7856c0709b4f3e5384063f8ce1937a7c5140ce1011b93fb399075d7dee4e"
+            },
+            {
+              "path": "scripts/af16-sealed-engagement-20261102-r3-browser-recovery.generated.cjs",
+              "sha256": "e041ba292b9f77d6b0773269e6fdfa8eb574d95e3d2a4be8a1e9437ec75db7a4"
+            },
+            {
+              "path": "scripts/af16-sealed-engagement-20261102-r3-browser.generated.cjs",
+              "sha256": "663fa4c4781478e93304696b5695b3cbe6142fb39476c7cfb7e32426269f6fca"
+            },
+            {
+              "path": "scripts/finalize-af16-engagement-repair-20261102.cjs",
+              "sha256": "86de5e8d91cdae58f79de58002b56565c7d6b41e6a0fc3bab629fe3ea067c8f2"
+            },
+            {
+              "path": "scripts/finalize-af16-engagement-repair-cleanup-20261102.cjs",
+              "sha256": "55b40c76804cde713ddd2ce12d49cb85e14097e7ab21cd4f53e5924bcd21f698"
+            },
+            {
+              "path": "scripts/prepare-af16-engagement-repair-20261102.cjs",
+              "sha256": "84067e090eb9db513cb5346493964a2400f2c439c12c19dc2dff5243eec66139"
+            },
+            {
+              "path": "scripts/run-af16-engagement-repair-browser-20261102.cjs",
+              "sha256": "5bcdfd20bbbede4317f060deef1d5dbc50a8919f2461760340f963b024faaf23"
+            },
+            {
+              "path": "scripts/run-af16-engagement-repair-build-20261102.cjs",
+              "sha256": "570dd23efdf204563fa463ce4d47064bfacc9d21d2369aad0b9ab777a3c402b2"
+            },
+            {
+              "path": "scripts/verify-af16-engagement-repair-publication.py",
+              "sha256": "a14a65a7f2c467dc033d71c4814781b9264d1cc8872cfd534e769cc72095dfde"
+            }
+          ],
+          "changed": [
+            {
+              "path": "docs/accounting-firms/README.md",
+              "beforeSha256": "3e9f823f488d79c5104dc3afaf9ff7d70916757d58f9228cc190edf2bed1326e",
+              "sha256": "551e080bc305ac96663a9ef674e047e3ad04d68f149f4533aa1fcfb4bed7c05b"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/01_IMPLEMENTATION_ROADMAP.md",
+              "beforeSha256": "0a4858a2f2fc32c4155e131af098bb4ee0daeafde548d8602006c11ec4f7b949",
+              "sha256": "caf848415497f5b29f786373ed0a0c8a2581a18c1176fca2b4bc9dcd8274e225"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/STATUS.md",
+              "beforeSha256": "c92e74f0e6babefc874ecafb609fb5d99e4f712d62ca941e43d7c14362d16628",
+              "sha256": "7982f4ede63e522560d6110da30a882364f003f8b4926690077bf16e5d17a265"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/GO_NO_GO.md",
+              "beforeSha256": "f460a839c8c2dd8441d1b7b0a7f8e4f306fd28ca1f007e23de4ce07ade843eb5",
+              "sha256": "34585e3a5ee02cf5d5afb2ebeb10817f56e6b6779f61e33bbff69f4d88f7f0ac"
+            },
+            {
+              "path": "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/RESULT.md",
+              "beforeSha256": "3f476753c53aafc5c159d6e460f5924f95c139b2ab31c04a7c69410016bbde24",
+              "sha256": "0995020008c06757e6b41d660bc2591979fc224273fce8d23edf82f066b7118b"
+            }
+          ],
+          "removed": []
+        },
+        "capturedRootSourceUnchanged": false,
+        "selectedInputDrift": [],
+        "unrelatedDriftPreserved": [
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/artifact-build.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/artifact-digest.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/artifact-verify.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/build-scope.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/candidate-preparation.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/client-generation.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/grant-counterfactual-jest.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/grant-repair-jest.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/invalid-counterfactual-jest.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/source-manifest.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/workflow-check.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-01/working-overlay-check.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-02/browser-results.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-02/documents-before.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-02/sealed-engagement-summary.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/browser-recovery.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/browser-results.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/browser-visual-review.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/cleanup.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/documents-before.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/orchestration-sources.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/publication-verification.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/sealed-engagement-summary.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/verification-summary.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/2026-11-02-run-03/visual-review.json",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/ENGAGEMENT_REPAIR_2026-11-02.md",
+          "docs/accounting-firms/supporting-reports/2026-11-02-af16-engagement-repair.md",
+          "scripts/af16-grant-repair.jest.config.cjs",
+          "scripts/af16-sealed-engagement-20261102-browser.generated.cjs",
+          "scripts/af16-sealed-engagement-20261102-r3-browser-recovery.generated.cjs",
+          "scripts/af16-sealed-engagement-20261102-r3-browser.generated.cjs",
+          "scripts/finalize-af16-engagement-repair-20261102.cjs",
+          "scripts/finalize-af16-engagement-repair-cleanup-20261102.cjs",
+          "scripts/prepare-af16-engagement-repair-20261102.cjs",
+          "scripts/run-af16-engagement-repair-browser-20261102.cjs",
+          "scripts/run-af16-engagement-repair-build-20261102.cjs",
+          "scripts/verify-af16-engagement-repair-publication.py",
+          "docs/accounting-firms/README.md",
+          "docs/accounting-firms/roadmap-2026-10-19/01_IMPLEMENTATION_ROADMAP.md",
+          "docs/accounting-firms/roadmap-2026-10-19/STATUS.md",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/GO_NO_GO.md",
+          "docs/accounting-firms/roadmap-2026-10-19/execution/AF16/RESULT.md"
+        ],
+        "disposition": "Inspection only. No root application source was restored, removed or rewritten by this recipe."
+      }
+    },
+    {
+      "name": "repair-inputs",
+      "passed": true,
+      "evidence": {
+        "count": 11,
+        "rows": [
+          {
+            "path": "next.config.mjs",
+            "expectedSha256": "ddb79d450a8bfc1bcf29765b8ea1e7ad914ecb292e728b327e97def3a48798ac",
+            "currentRootSha256": "ddb79d450a8bfc1bcf29765b8ea1e7ad914ecb292e728b327e97def3a48798ac",
+            "candidateSha256": "ddb79d450a8bfc1bcf29765b8ea1e7ad914ecb292e728b327e97def3a48798ac"
+          },
+          {
+            "path": "middleware.ts",
+            "expectedSha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204",
+            "currentRootSha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204",
+            "candidateSha256": "44cf4f8a07840e228e341f499ddb866d01a2d6c3aab67aa7a6ca5d2bef399204"
+          },
+          {
+            "path": "app/api/uploads/[...path]/route.ts",
+            "expectedSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+            "currentRootSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+            "candidateSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245"
+          },
+          {
+            "path": "scripts/release-artifact.cjs",
+            "expectedSha256": "62c0b3a26a9db2899228a43ba7ecee3d814dca87df268a5f32725121dd5a9f7d",
+            "currentRootSha256": "62c0b3a26a9db2899228a43ba7ecee3d814dca87df268a5f32725121dd5a9f7d",
+            "candidateSha256": "62c0b3a26a9db2899228a43ba7ecee3d814dca87df268a5f32725121dd5a9f7d"
+          },
+          {
+            "path": "app/api/uploads/[...path]/__tests__/route.test.ts",
+            "expectedSha256": "04930dfbe511e0f0b38ba4b8d16fe8fe45d3a359db41aee049f99fe8230dcff0",
+            "currentRootSha256": "04930dfbe511e0f0b38ba4b8d16fe8fe45d3a359db41aee049f99fe8230dcff0",
+            "candidateSha256": "04930dfbe511e0f0b38ba4b8d16fe8fe45d3a359db41aee049f99fe8230dcff0"
+          },
+          {
+            "path": "docs/ecc/command-registry.json",
+            "expectedSha256": "94556b4b5d965409c3c54fbe8b15470b508a8ca2ce78e1cb60afcc96da26ab03",
+            "currentRootSha256": "94556b4b5d965409c3c54fbe8b15470b508a8ca2ce78e1cb60afcc96da26ab03",
+            "candidateSha256": "94556b4b5d965409c3c54fbe8b15470b508a8ca2ce78e1cb60afcc96da26ab03"
+          },
+          {
+            "path": "lib/media/legacy-upload-routing.ts",
+            "expectedSha256": "7a39993c296c00e0d9305343a3aa745ccb48648a6202b1a43580e169f7488a5a",
+            "currentRootSha256": "7a39993c296c00e0d9305343a3aa745ccb48648a6202b1a43580e169f7488a5a",
+            "candidateSha256": "7a39993c296c00e0d9305343a3aa745ccb48648a6202b1a43580e169f7488a5a"
+          },
+          {
+            "path": "lib/media/legacy-upload-storage.ts",
+            "expectedSha256": "4c8b2e0a8ea1261fe7eb76e4e902d7aa1550f1a969623cb843e0306f317a7a62",
+            "currentRootSha256": "4c8b2e0a8ea1261fe7eb76e4e902d7aa1550f1a969623cb843e0306f317a7a62",
+            "candidateSha256": "4c8b2e0a8ea1261fe7eb76e4e902d7aa1550f1a969623cb843e0306f317a7a62"
+          },
+          {
+            "path": "lib/media/__tests__/legacy-upload-storage.test.ts",
+            "expectedSha256": "5e83dc447684fc97d3e491c69e0e3e7e524a7d10cdbd302513f436f6ce434d3d",
+            "currentRootSha256": "5e83dc447684fc97d3e491c69e0e3e7e524a7d10cdbd302513f436f6ce434d3d",
+            "candidateSha256": "5e83dc447684fc97d3e491c69e0e3e7e524a7d10cdbd302513f436f6ce434d3d"
+          },
+          {
+            "path": "lib/media/__tests__/legacy-upload-routing.test.ts",
+            "expectedSha256": "23f715e476c19168e920f2456d15eda39839a1b3fbfcaf3461a9f99ba28b21f1",
+            "currentRootSha256": "23f715e476c19168e920f2456d15eda39839a1b3fbfcaf3461a9f99ba28b21f1",
+            "candidateSha256": "23f715e476c19168e920f2456d15eda39839a1b3fbfcaf3461a9f99ba28b21f1"
+          },
+          {
+            "path": "tests/s10-s11/release-artifact-private-uploads.test.js",
+            "expectedSha256": "f6e3830de436cd19d9abbd016ce81a91e13bc9db6a2629fd783f08c6cb2824db",
+            "currentRootSha256": "f6e3830de436cd19d9abbd016ce81a91e13bc9db6a2629fd783f08c6cb2824db",
+            "candidateSha256": "f6e3830de436cd19d9abbd016ce81a91e13bc9db6a2629fd783f08c6cb2824db"
+          }
+        ],
+        "allUnchanged": true
+      }
+    },
+    {
+      "name": "browser-consumer-inputs",
+      "passed": true,
+      "evidence": {
+        "count": 17,
+        "rows": [
+          {
+            "path": "app/[locale]/(auth)/login/page.tsx",
+            "expectedSha256": "9eb5c6d5289a4aa2ba23c182ffdd0099bf11a397b8e5c2942c95570021cafa83",
+            "currentRootSha256": "9eb5c6d5289a4aa2ba23c182ffdd0099bf11a397b8e5c2942c95570021cafa83",
+            "candidateSha256": "9eb5c6d5289a4aa2ba23c182ffdd0099bf11a397b8e5c2942c95570021cafa83",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "components/auth/EnhancedLoginForm.tsx",
+            "expectedSha256": "fc091271c4cb5daf21997743db32c31a86662c9f64c80aeb9d37f67d9bfab28d",
+            "currentRootSha256": "fc091271c4cb5daf21997743db32c31a86662c9f64c80aeb9d37f67d9bfab28d",
+            "candidateSha256": "fc091271c4cb5daf21997743db32c31a86662c9f64c80aeb9d37f67d9bfab28d",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
+            "expectedSha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+            "currentRootSha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+            "candidateSha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/page.tsx",
+            "expectedSha256": "e4881c2d87de049e6711200edd442298cdbb20644398025146a50054481cfa5f",
+            "currentRootSha256": "e4881c2d87de049e6711200edd442298cdbb20644398025146a50054481cfa5f",
+            "candidateSha256": "e4881c2d87de049e6711200edd442298cdbb20644398025146a50054481cfa5f",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx",
+            "expectedSha256": "7f277f865e3af7b9271c620183245c540b73ec78bd824aa7b17da52036bcd6db",
+            "currentRootSha256": "7f277f865e3af7b9271c620183245c540b73ec78bd824aa7b17da52036bcd6db",
+            "candidateSha256": "7f277f865e3af7b9271c620183245c540b73ec78bd824aa7b17da52036bcd6db",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+            "expectedSha256": "9d2016d412e6155349617b0f348f69213360003ea6093af62e5b0ddf6713df2e",
+            "currentRootSha256": "9d2016d412e6155349617b0f348f69213360003ea6093af62e5b0ddf6713df2e",
+            "candidateSha256": "9d2016d412e6155349617b0f348f69213360003ea6093af62e5b0ddf6713df2e",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "components/ui/groups/inventory/ItemManagement.tsx",
+            "expectedSha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+            "currentRootSha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+            "candidateSha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "components/dashboard/items/ModernItemFormForEditing.tsx",
+            "expectedSha256": "95020e5a63647c4d730075e41886bf7b72dab45e35f73b32c3fbb8212fe2a1be",
+            "currentRootSha256": "95020e5a63647c4d730075e41886bf7b72dab45e35f73b32c3fbb8212fe2a1be",
+            "candidateSha256": "95020e5a63647c4d730075e41886bf7b72dab45e35f73b32c3fbb8212fe2a1be",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "components/inventory/items/ItemOverview.tsx",
+            "expectedSha256": "03df33410da0cab66ced6dd321e634ca07a30386a0718932ceb1cf66b67e08e0",
+            "currentRootSha256": "03df33410da0cab66ced6dd321e634ca07a30386a0718932ceb1cf66b67e08e0",
+            "candidateSha256": "03df33410da0cab66ced6dd321e634ca07a30386a0718932ceb1cf66b67e08e0",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "lib/security/server-authz.ts",
+            "expectedSha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+            "currentRootSha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+            "candidateSha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "lib/security/rbac.ts",
+            "expectedSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+            "currentRootSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+            "candidateSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "lib/auth.ts",
+            "expectedSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+            "currentRootSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+            "candidateSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "app/api/uploads/[...path]/route.ts",
+            "expectedSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+            "currentRootSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+            "candidateSha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "design-system/stoquify/MASTER.md",
+            "expectedSha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+            "currentRootSha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+            "candidateSha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "design-system/stoquify/pages/public-auth.md",
+            "expectedSha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+            "currentRootSha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+            "candidateSha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "design-system/stoquify/pages/inventory.md",
+            "expectedSha256": "ddee72ccf246899a6ca2ab01f478257bcc5836ea05e5a4d451b546900013de6c",
+            "currentRootSha256": "ddee72ccf246899a6ca2ab01f478257bcc5836ea05e5a4d451b546900013de6c",
+            "candidateSha256": "ddee72ccf246899a6ca2ab01f478257bcc5836ea05e5a4d451b546900013de6c",
+            "candidateScope": "admitted-source"
+          },
+          {
+            "path": "plans/stoquify-production-readiness-2026-10-28/execution/P03/run-final-browser.cjs",
+            "expectedSha256": "a422d717ac10cec462f2a5ed64d130eb67830de36e1eef58979a5a14029932e5",
+            "currentRootSha256": "a422d717ac10cec462f2a5ed64d130eb67830de36e1eef58979a5a14029932e5",
+            "candidateSha256": null,
+            "candidateScope": "historical-evidence-outside-source-candidate"
+          }
+        ],
+        "allApplicableHashesUnchanged": true
+      }
+    },
+    {
+      "name": "originals-and-recovery-mirrors",
+      "passed": true,
+      "evidence": {
+        "count": 3,
+        "inventoryUnchanged": true,
+        "rows": [
+          {
+            "path": "public/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+            "expectedSha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2",
+            "originalSha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2",
+            "mirrorSha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2",
+            "contentsServedByThisScript": false
+          },
+          {
+            "path": "public/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+            "expectedSha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225",
+            "originalSha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225",
+            "mirrorSha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225",
+            "contentsServedByThisScript": false
+          },
+          {
+            "path": "public/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+            "expectedSha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519",
+            "originalSha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519",
+            "mirrorSha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519",
+            "contentsServedByThisScript": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "planned-in-checkout-runtime-unused",
+      "passed": true,
+      "evidence": {
+        "plannedRuntimePath": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p04-r02-fullapp-20261102-r2\\runtime",
+        "absent": true
+      }
+    },
+    {
+      "name": "selected-outcome-receipts",
+      "passed": true,
+      "evidence": {
+        "buildPassed": false,
+        "runtimePassed": false,
+        "runtimePortsReleased": false,
+        "runtimeCleanupErrors": null,
+        "databaseStopped": true,
+        "databasePortAvailable": true,
+        "evidenceLimit": "Reconciled receipt claims only; no new runtime or database execution"
+      }
+    }
+  ],
+  "integrityPassed": true,
+  "executionReceiptsReconciled": false,
+  "limitations": [
+    "This script does not query the database, inspect or stop processes, issue HTTP requests, or run a browser.",
+    "Database/browser outcomes and cleanup are reconciled from selected receipts, not re-executed.",
+    "Independent outcome review and the work-register decision remain separate; this receipt does not promote P04-R02.",
+    "Concurrent root drift is recorded separately; no whole-working-tree stability claim is made when drift exists."
+  ],
+  "candidateId": "p04-r02-full-eb25ee4e218c",
+  "receiptSummary": {
+    "build": {
+      "path": "build-retry03-result.json",
+      "present": true,
+      "sha256": "5beed87dfb8b555c7abf94f527659e890fd4d462f1ebf8b1f2300487a3b085c6",
+      "passed": false
+    },
+    "runtime": {
+      "path": "runtime-result.json",
+      "present": false,
+      "sha256": null,
+      "passed": null
+    },
+    "databaseStop": {
+      "path": "database/resume-20261102-r2-retry01-guarded-stop-1793635954332.json",
+      "present": true,
+      "sha256": "e586a11f922295208e8cf94cff51f45e6e3ae2e2465ee667c12f526e3f5cdd6b",
+      "passed": true
+    }
+  },
+  "externalRuntimeStatus": "No runtime copy with a selected receipt; external ownership proof not established",
+  "artifactStatus": "Not independently qualified: selected build receipt missing or unsuccessful",
+  "runtimeStatus": "Runtime absent, external ownership unproven or no verified artifact; no runtime preservation pass inferred",
+  "finishedAt": "2026-11-02T16:14:05.924Z"
+}

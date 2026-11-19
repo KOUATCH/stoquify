@@ -1,0 +1,3182 @@
+{
+  "at": "2026-11-09T18:21:28.538Z",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "qualificationPassed": false,
+  "evidenceIntegrityChecked": true,
+  "runtimeError": null,
+  "lanes": {
+    "auth": {
+      "planned": 116,
+      "executed": 116,
+      "passed": 93,
+      "failed": 23,
+      "notRun": [],
+      "fatal": null,
+      "cleanupError": null,
+      "evidencePersistenceError": false,
+      "failures": [
+        {
+          "id": "authRevoked-get-session",
+          "error": "Denied request returned private actor/session data",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authRevoked-get-session-before-1794247619542-2f914f71-c14b-4bf5-816b-889adf9cd779.json",
+            "after": "snapshot-auth-authRevoked-get-session-after-1794247621709-e43ff22d-9754-4a9e-838c-a42db3639ffd.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 2,
+            "sessionCountAfter": 2,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authRevoked-list-sessions",
+          "error": "Denied request returned private actor/session data",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authRevoked-list-sessions-before-1794247627825-4e526f27-cc2b-41f9-a279-247628431c02.json",
+            "after": "snapshot-auth-authRevoked-list-sessions-after-1794247629918-6773786f-f67c-4198-9105-867a38924d3c.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 2,
+            "sessionCountAfter": 2,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authRevoked-list-accounts",
+          "error": "Denied request returned private actor/session data",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authRevoked-list-accounts-before-1794247632003-02ea0310-c884-468f-ba0f-3571fa887f14.json",
+            "after": "snapshot-auth-authRevoked-list-accounts-after-1794247633983-20fbb9a9-d49c-45a7-bb22-87d9ebd0a7f7.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 2,
+            "sessionCountAfter": 2,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authRevoked-unlink",
+          "error": "Denied/read request altered business/account records",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authRevoked-unlink-before-1794247658818-c11ae34c-5c44-4229-9f79-c075811ee016.json",
+            "after": "snapshot-auth-authRevoked-unlink-after-1794247660742-d0800b08-9fd2-4e1c-93c1-2cfe4c56510b.json",
+            "businessEqual": false,
+            "changedBusinessTables": [
+              "accounts"
+            ],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 2,
+            "sessionCountAfter": 2,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authExpired-get-session",
+          "error": "Denied request returned private actor/session data",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authExpired-get-session-before-1794247681799-1007d274-bec1-41a9-8e2c-9946a6370762.json",
+            "after": "snapshot-auth-authExpired-get-session-after-1794247683708-087c8e2d-2ad0-478b-b5e6-0c7c06b363d0.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 4,
+            "sessionCountAfter": 4,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authExpired-list-sessions",
+          "error": "Denied request returned private actor/session data",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authExpired-list-sessions-before-1794247690630-9fa39123-c293-4318-8e7a-ef5db1fdf7aa.json",
+            "after": "snapshot-auth-authExpired-list-sessions-after-1794247692591-98ab5ebd-be5d-4b36-aa07-04484dc833ae.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 3,
+            "sessionCountAfter": 3,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authExpired-list-accounts",
+          "error": "Denied request returned private actor/session data",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authExpired-list-accounts-before-1794247694791-601564c7-3d86-4640-a0fc-676b53cf77f1.json",
+            "after": "snapshot-auth-authExpired-list-accounts-after-1794247696964-893ac68b-253b-454b-bd11-ef1c797184fc.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 3,
+            "sessionCountAfter": 3,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authExpired-unlink",
+          "error": "Denied/read request altered business/account records",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authExpired-unlink-before-1794247723622-8b63bfd0-dc98-4cef-a996-c8d4d4f3e4b4.json",
+            "after": "snapshot-auth-authExpired-unlink-after-1794247725975-1a13aa09-d851-4a44-8551-52d7d1e7c5be.json",
+            "businessEqual": false,
+            "changedBusinessTables": [
+              "accounts"
+            ],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 3,
+            "sessionCountAfter": 3,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "auth-method-boundary",
+          "error": "Expected values to be strictly equal:\n\n400 !== 404\n",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-auth-method-boundary-before-1794247746359-8c66435f-5ab2-45eb-8d34-e34254de2581.json",
+            "after": "snapshot-auth-auth-method-boundary-after-1794247748852-fc90bcb0-cd6d-42bc-aed3-59ab6e3f3258.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 3,
+            "sessionCountAfter": 3,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "inactive-cached-core-session",
+          "error": "Denied request returned private actor/session data",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-inactive-cached-core-session-before-1794247797177-e42135c0-35f7-41d6-ac70-be4fb6ae9c5f.json",
+            "after": "snapshot-auth-inactive-cached-core-session-after-1794247799130-1753a982-098b-4d43-a5b8-e05c1d457088.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 5,
+            "sessionCountAfter": 5,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "provider-authenticated-forgery",
+          "error": "Unconfigured/forged provider request must reject",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-provider-authenticated-forgery-before-1794247850363-484eb758-5f6f-4276-b0d5-a9724add5f4e.json",
+            "after": "snapshot-auth-provider-authenticated-forgery-after-1794247852755-14bb7cb3-fa2a-4349-8032-67de4fa49280.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 7,
+            "sessionCountAfter": 7,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserRevoked-en-stale-tab-focus",
+          "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+          "failureClass": "qualification_incomplete",
+          "effects": {
+            "before": "snapshot-auth-authBrowserRevoked-en-stale-tab-focus-before-1794247892145-97ab0b22-d226-4537-a959-9fc11f1a4050.json",
+            "after": "snapshot-auth-authBrowserRevoked-en-stale-tab-focus-after-1794247895077-dc1386aa-0683-4363-80dc-1fa43814eccc.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 8,
+            "sessionCountAfter": 8,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserRevoked-en-browser-forward",
+          "error": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authBrowserRevoked-en-browser-forward-before-1794247906798-23710b24-b63f-4fd4-93f2-bb37a6368039.json",
+            "after": "snapshot-auth-authBrowserRevoked-en-browser-forward-after-1794247910400-fede2b4e-d2c1-418d-9a92-a1da600651ff.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 8,
+            "sessionCountAfter": 8,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserExpiry-en-stale-tab-focus",
+          "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+          "failureClass": "qualification_incomplete",
+          "effects": {
+            "before": "snapshot-auth-authBrowserExpiry-en-stale-tab-focus-before-1794247943396-1b29461f-b5a2-4bb6-9264-dba846d75116.json",
+            "after": "snapshot-auth-authBrowserExpiry-en-stale-tab-focus-after-1794247947548-c0954313-b2da-4201-a9e9-1764b5151661.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 10,
+            "sessionCountAfter": 10,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserExpiry-en-browser-forward",
+          "error": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authBrowserExpiry-en-browser-forward-before-1794247961032-334b6f91-3de9-4a39-8114-5dd9a78d2ccc.json",
+            "after": "snapshot-auth-authBrowserExpiry-en-browser-forward-after-1794247965325-37ced208-98e2-4ee4-ac82-967c182cca4f.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 9,
+            "sessionCountAfter": 9,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserPermission-en-stale-tab-focus",
+          "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+          "failureClass": "qualification_incomplete",
+          "effects": {
+            "before": "snapshot-auth-authBrowserPermission-en-stale-tab-focus-before-1794247994645-6310c3e2-d962-455d-859c-f5ee109b9d1a.json",
+            "after": "snapshot-auth-authBrowserPermission-en-stale-tab-focus-after-1794247997159-da6ebfc7-c03d-4b4f-bf77-0e35a75ce7c4.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 11,
+            "sessionCountAfter": 11,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserModule-en-stale-tab-focus",
+          "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+          "failureClass": "qualification_incomplete",
+          "effects": {
+            "before": "snapshot-auth-authBrowserModule-en-stale-tab-focus-before-1794248040840-92a2a22f-ecd5-4a3b-9911-aa7fa40401fc.json",
+            "after": "snapshot-auth-authBrowserModule-en-stale-tab-focus-after-1794248043685-fd973f2f-9294-48e6-be52-cbf2d1d7c9cd.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 13,
+            "sessionCountAfter": 13,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserRevoked-fr-stale-tab-focus",
+          "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+          "failureClass": "qualification_incomplete",
+          "effects": {
+            "before": "snapshot-auth-authBrowserRevoked-fr-stale-tab-focus-before-1794248085767-17873305-2ad3-471f-a0d4-11d9aec8a612.json",
+            "after": "snapshot-auth-authBrowserRevoked-fr-stale-tab-focus-after-1794248089225-167a8954-b0a1-415e-9c82-1ed3e68125c3.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 13,
+            "sessionCountAfter": 13,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserRevoked-fr-browser-forward",
+          "error": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authBrowserRevoked-fr-browser-forward-before-1794248101304-d0aacf1f-9c86-42d1-b9a2-f1b86439494a.json",
+            "after": "snapshot-auth-authBrowserRevoked-fr-browser-forward-after-1794248105856-f4b2b960-078f-412f-ae0b-fa721ef6c280.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 13,
+            "sessionCountAfter": 13,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserExpiry-fr-stale-tab-focus",
+          "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+          "failureClass": "qualification_incomplete",
+          "effects": {
+            "before": "snapshot-auth-authBrowserExpiry-fr-stale-tab-focus-before-1794248134654-bb399a2c-1969-4829-86b6-9849b41e9cbc.json",
+            "after": "snapshot-auth-authBrowserExpiry-fr-stale-tab-focus-after-1794248137532-79f30e85-2cd5-42d3-8313-c2a0d2e28bae.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 15,
+            "sessionCountAfter": 15,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserExpiry-fr-browser-forward",
+          "error": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+          "failureClass": "observed_assertion_failure",
+          "effects": {
+            "before": "snapshot-auth-authBrowserExpiry-fr-browser-forward-before-1794248151084-a05cf213-1678-4145-bad6-ef2935d492e2.json",
+            "after": "snapshot-auth-authBrowserExpiry-fr-browser-forward-after-1794248155350-6599696c-1e07-43f9-820a-6b63a5f0ce3c.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 14,
+            "sessionCountAfter": 14,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserPermission-fr-stale-tab-focus",
+          "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+          "failureClass": "qualification_incomplete",
+          "effects": {
+            "before": "snapshot-auth-authBrowserPermission-fr-stale-tab-focus-before-1794248185307-5fa86480-611d-4508-b29b-f1c9cebf1368.json",
+            "after": "snapshot-auth-authBrowserPermission-fr-stale-tab-focus-after-1794248188387-4052891b-1780-410a-a0d6-7b85a3195512.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 16,
+            "sessionCountAfter": 16,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        },
+        {
+          "id": "authBrowserModule-fr-stale-tab-focus",
+          "error": "Browser did not report a hidden tab; focus-return qualification incomplete\n+ actual - expected\n\n+ 'visible'\n- 'hidden'\n",
+          "failureClass": "qualification_incomplete",
+          "effects": {
+            "before": "snapshot-auth-authBrowserModule-fr-stale-tab-focus-before-1794248232965-fa5ebb3d-d8f7-4d6e-8f4c-0c789b707b98.json",
+            "after": "snapshot-auth-authBrowserModule-fr-stale-tab-focus-after-1794248235952-7310a23f-8ff6-4bcb-9e43-2a8af21d1d3f.json",
+            "businessEqual": true,
+            "changedBusinessTables": [],
+            "sessionsChanged": false,
+            "auditsChanged": false,
+            "sessionCountBefore": 18,
+            "sessionCountAfter": 18,
+            "newAuditKinds": [],
+            "classifiedBookkeeping": {
+              "existingSessionsPreserved": true,
+              "newSessions": 0,
+              "allowedCurrentActorDeletions": 0,
+              "existingAuditsPreserved": true,
+              "allowedNewAudits": 0
+            }
+          }
+        }
+      ],
+      "cacheRequests": 26,
+      "browserObservations": 67,
+      "secretHandling": {
+        "policy": "Only verified STOCKFLOW_LOCALE en/fr is excluded. All other cookie values, fixture passwords and returned session tokens remain sensitive. Recursive redaction precedes an unchanged final raw-value leak scan.",
+        "registeredSensitiveValues": 95,
+        "redactions": [],
+        "scanPassed": true
+      }
+    },
+    "baseline": {
+      "planned": 22,
+      "executed": 22,
+      "rawPassed": 21,
+      "rawFailed": 1,
+      "correctedScopedPassed": 22,
+      "rerun": false,
+      "requests": 352,
+      "failures": [
+        {
+          "label": "moduleDenied-both-delivery-urls",
+          "error": "Six direct delivery denial audits expected\n\n4 !== 6\n"
+        }
+      ],
+      "cleanupErrors": [],
+      "aliasCoverage": {
+        "expectedCount": 270,
+        "completedCount": 270,
+        "byActor": {
+          "anonymous": 93,
+          "ui": 93,
+          "foreign": 12,
+          "revocation": 12,
+          "expiry": 12,
+          "permissionChange": 12,
+          "moduleChange": 12,
+          "permissionDenied": 12,
+          "moduleDenied": 12
+        },
+        "proxyValidatedEveryResponse": true,
+        "originalPositiveReads": 0
+      }
+    },
+    "provider": {
+      "planned": 23,
+      "executed": 23,
+      "passed": 23,
+      "failed": 0,
+      "failure": null,
+      "failures": [],
+      "callbacks": 2,
+      "receiverStopped": true,
+      "hostedProviderAccepted": false
+    }
+  },
+  "databasePairs": [
+    {
+      "label": "auth:active-core-reads",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-active-core-reads-before-1794247577789-3061895a-fd56-489a-985f-6a2bd223dc71.json",
+      "after": "snapshot-auth-active-core-reads-after-1794247580138-e40559f3-565d-41b2-b7f3-97d80be65549.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:active-head-list-sessions",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-active-head-list-sessions-before-1794247582525-b52464fb-631a-45b0-87a8-c1524d381d20.json",
+      "after": "snapshot-auth-active-head-list-sessions-after-1794247584747-d6761890-504e-464c-ab93-fa87844ed9ed.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:active-head-list-accounts",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-active-head-list-accounts-before-1794247586526-ce23bb8d-3a29-4a02-bafa-6e33359ff629.json",
+      "after": "snapshot-auth-active-head-list-accounts-after-1794247588582-36d24c7c-1579-408b-9aad-7f43e15d57f8.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:active-reviewed-profile-write",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-positive-profile-before-1794247590527-b579249c-d708-4115-8d54-8f761a5ecdd2.json",
+      "after": "snapshot-auth-positive-profile-after-1794247592454-ade641ed-47d8-4935-910b-aa3df141d679.json",
+      "businessUnchanged": false,
+      "changedTables": [
+        {
+          "table": "users",
+          "beforeCount": 18,
+          "afterCount": 18
+        }
+      ],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "397420ed7dd6f7992c1e8818c56d2b32d54ef03add59d3bf7987a84f18ce03ae",
+          "userId": "p04v02-auth-authactive",
+          "organizationId": "p04-upload-a",
+          "entityType": "SelfProfile",
+          "action": "SELF_PROFILE_UPDATED",
+          "createdAt": "2026-11-09T18:06:30.619",
+          "changes": {},
+          "rowSha256": "e5584bfb2d2cd72239a8e4dc0b8a3b43b6246f4f73579b6d8163da74dee927eb"
+        }
+      ]
+    },
+    {
+      "label": "auth:profile-forged-ownership",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-profile-forged-ownership-before-1794247594522-68711455-bf20-40d9-b79a-967146ea3042.json",
+      "after": "snapshot-auth-profile-forged-ownership-after-1794247596699-b5ec9dfa-4fb9-4c62-a375-8acdad98309a.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:profile-unsupported-authority-fields",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-profile-unsupported-authority-fields-before-1794247598963-8396a06e-bff3-409d-abf6-58ea14b58737.json",
+      "after": "snapshot-auth-profile-unsupported-authority-fields-after-1794247601467-7a0d6f74-71ca-41cc-a2a0-a45ed760d6a2.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:active-unlink-positive",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-positive-unlink-before-1794247603761-e3bf36d9-af4e-410b-8a10-1f6a8bd1de2d.json",
+      "after": "snapshot-auth-positive-unlink-after-1794247606056-fce36f05-6ea3-4258-b703-a1ce39080d24.json",
+      "businessUnchanged": false,
+      "changedTables": [
+        {
+          "table": "accounts",
+          "beforeCount": 28,
+          "afterCount": 27
+        }
+      ],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-get-session",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-get-session-before-1794247619542-2f914f71-c14b-4bf5-816b-889adf9cd779.json",
+      "after": "snapshot-auth-authRevoked-get-session-after-1794247621709-e43ff22d-9754-4a9e-838c-a42db3639ffd.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-get-session-fresh",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-get-session-fresh-before-1794247623994-32291457-35b1-40f4-9025-677c39c3fded.json",
+      "after": "snapshot-auth-authRevoked-get-session-fresh-after-1794247625953-9a086784-808a-4bef-836c-05e78bd94840.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-list-sessions",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-list-sessions-before-1794247627825-4e526f27-cc2b-41f9-a279-247628431c02.json",
+      "after": "snapshot-auth-authRevoked-list-sessions-after-1794247629918-6773786f-f67c-4198-9105-867a38924d3c.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-list-accounts",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-list-accounts-before-1794247632003-02ea0310-c884-468f-ba0f-3571fa887f14.json",
+      "after": "snapshot-auth-authRevoked-list-accounts-after-1794247633983-20fbb9a9-d49c-45a7-bb22-87d9ebd0a7f7.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-permissions",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-permissions-before-1794247635675-eedfa517-90e7-4bcf-9872-34990ebded00.json",
+      "after": "snapshot-auth-authRevoked-permissions-after-1794247637342-5f26258d-41bc-40a1-a7ab-58ace01d6099.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-profile",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-profile-before-1794247638918-49674704-aa04-4842-ade9-1ade6b7be9ec.json",
+      "after": "snapshot-auth-authRevoked-profile-after-1794247640699-60577738-d327-4acd-97ab-2725913961a2.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-head-list-sessions",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-head-list-sessions-before-1794247642788-6e8ccb58-4a11-4db6-a486-7a58b7249cea.json",
+      "after": "snapshot-auth-authRevoked-head-list-sessions-after-1794247644721-8edcfdea-df66-427c-abe9-b87ed8083842.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-head-list-accounts",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-head-list-accounts-before-1794247646868-383f74d1-4854-4dc5-980e-833ef0200186.json",
+      "after": "snapshot-auth-authRevoked-head-list-accounts-after-1794247649366-ad58ce3d-95c5-40d9-bccd-f97934f8b3bc.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-profile-write",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-profile-write-before-1794247651332-289f8f42-f819-4a50-9518-355cd92309d0.json",
+      "after": "snapshot-auth-authRevoked-profile-write-after-1794247653421-77863709-48f1-40ba-8734-3ecf192bbedd.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-profile-cache-override",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-profile-cache-override-before-1794247655188-1cb3130c-fdf6-4d43-857a-ebb7ae2d5a80.json",
+      "after": "snapshot-auth-authRevoked-profile-cache-override-after-1794247656896-36c772c4-e36e-4e3f-a6fa-073bd1da7ddc.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-unlink",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-unlink-before-1794247658818-c11ae34c-5c44-4229-9f79-c075811ee016.json",
+      "after": "snapshot-auth-authRevoked-unlink-after-1794247660742-d0800b08-9fd2-4e1c-93c1-2cfe4c56510b.json",
+      "businessUnchanged": false,
+      "changedTables": [
+        {
+          "table": "accounts",
+          "beforeCount": 27,
+          "afterCount": 26
+        }
+      ],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-unlink-cache-override",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-unlink-cache-override-before-1794247662628-d8ef40d5-8158-453d-b47b-f7f191f3fc41.json",
+      "after": "snapshot-auth-authRevoked-unlink-cache-override-after-1794247664940-e1015075-fde4-4f15-8dd7-bd260b0c6303.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authRevoked-change-password-cache-override",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authRevoked-change-password-cache-override-before-1794247667189-e1806d07-16ec-49fe-9519-d144ad499a3e.json",
+      "after": "snapshot-auth-authRevoked-change-password-cache-override-after-1794247669354-581d07ab-0bf8-489a-9090-09a78d13f6d3.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-get-session",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-get-session-before-1794247681799-1007d274-bec1-41a9-8e2c-9946a6370762.json",
+      "after": "snapshot-auth-authExpired-get-session-after-1794247683708-087c8e2d-2ad0-478b-b5e6-0c7c06b363d0.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-get-session-fresh",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-get-session-fresh-before-1794247685956-dab60219-dfc4-4d0e-9705-333089afd71a.json",
+      "after": "snapshot-auth-authExpired-get-session-fresh-after-1794247688411-bba4f17e-a883-4833-aa5a-24d3665ecb60.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [
+        {
+          "idHash": "d1627fb8a9b8e070e6afee75d59a1a5d179516be067319e7ef7a4d70f02983ae",
+          "userId": "p04v02-auth-authexpired",
+          "expiresAt": "1970-01-01T01:00:00"
+        }
+      ],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-list-sessions",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-list-sessions-before-1794247690630-9fa39123-c293-4318-8e7a-ef5db1fdf7aa.json",
+      "after": "snapshot-auth-authExpired-list-sessions-after-1794247692591-98ab5ebd-be5d-4b36-aa07-04484dc833ae.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-list-accounts",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-list-accounts-before-1794247694791-601564c7-3d86-4640-a0fc-676b53cf77f1.json",
+      "after": "snapshot-auth-authExpired-list-accounts-after-1794247696964-893ac68b-253b-454b-bd11-ef1c797184fc.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-permissions",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-permissions-before-1794247699210-a02f3a32-8ff6-4251-8603-480da730c7fb.json",
+      "after": "snapshot-auth-authExpired-permissions-after-1794247701235-6ad24cb8-ddef-4da9-aa1f-0b33209691ab.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-profile",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-profile-before-1794247702985-65403490-9f65-4d45-aeb2-1ce4f6485c7c.json",
+      "after": "snapshot-auth-authExpired-profile-after-1794247704933-0b2642ec-db85-48b9-91f6-0fed3f1152bc.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-head-list-sessions",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-head-list-sessions-before-1794247706760-1d354dc4-a917-47d6-b3ed-45b5477dd325.json",
+      "after": "snapshot-auth-authExpired-head-list-sessions-after-1794247708880-bfacd854-821e-478f-9a25-f87278a24bb1.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-head-list-accounts",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-head-list-accounts-before-1794247710729-7609624c-d382-437b-b1c3-b34ea644c726.json",
+      "after": "snapshot-auth-authExpired-head-list-accounts-after-1794247713019-63ab6fe2-7bfd-4b27-854d-ee8701a30c1b.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-profile-write",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-profile-write-before-1794247715027-55d0a803-e267-437b-9472-d828982baa6b.json",
+      "after": "snapshot-auth-authExpired-profile-write-after-1794247717275-e3435e57-c4bf-429c-8589-8cc96764373c.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-profile-cache-override",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-profile-cache-override-before-1794247719308-82dc885d-8340-45db-a315-40b8ef97ce9b.json",
+      "after": "snapshot-auth-authExpired-profile-cache-override-after-1794247721238-8e118adf-eb22-41ef-81e3-4cdc4f5e297c.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-unlink",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-unlink-before-1794247723622-8b63bfd0-dc98-4cef-a996-c8d4d4f3e4b4.json",
+      "after": "snapshot-auth-authExpired-unlink-after-1794247725975-1a13aa09-d851-4a44-8551-52d7d1e7c5be.json",
+      "businessUnchanged": false,
+      "changedTables": [
+        {
+          "table": "accounts",
+          "beforeCount": 27,
+          "afterCount": 26
+        }
+      ],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-unlink-cache-override",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-unlink-cache-override-before-1794247728404-1ff50742-85fc-444c-a711-4dd48187c327.json",
+      "after": "snapshot-auth-authExpired-unlink-cache-override-after-1794247730695-6461499b-84e2-407a-a90e-a0e48dabd0b6.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authExpired-change-password-cache-override",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authExpired-change-password-cache-override-before-1794247733062-24ea71da-e593-482e-bd52-af0c747bc9d7.json",
+      "after": "snapshot-auth-authExpired-change-password-cache-override-after-1794247735392-499f638c-59a2-46e3-8f4e-2970c839b83f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:forged-session-authority-fields",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-forged-session-authority-fields-before-1794247737663-c5327239-470a-490f-a768-a265380e2a71.json",
+      "after": "snapshot-auth-forged-session-authority-fields-after-1794247739886-9e2888b4-56c5-44db-94f5-19b700251500.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:untrusted-profile-origin",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-untrusted-profile-origin-before-1794247742052-5fb1325a-c870-4865-bf73-17d7aa36a2f5.json",
+      "after": "snapshot-auth-untrusted-profile-origin-after-1794247744248-b020810f-3903-4ba9-be3e-374aba46eb0b.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:auth-method-boundary",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-auth-method-boundary-before-1794247746359-8c66435f-5ab2-45eb-8d34-e34254de2581.json",
+      "after": "snapshot-auth-auth-method-boundary-after-1794247748852-fc90bcb0-cd6d-42bc-aed3-59ab6e3f3258.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:wrong-password-boundary",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-wrong-password-before-1794247763521-45902b7c-a87f-4ed4-81f0-d53132330798.json",
+      "after": "snapshot-auth-wrong-password-after-1794247773681-633ad6ca-e355-45b5-90b6-0f5fe25a94ae.json",
+      "businessUnchanged": false,
+      "changedTables": [
+        {
+          "table": "users",
+          "beforeCount": 18,
+          "afterCount": 18
+        }
+      ],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "19c68d5d112ae765a7b57214acab1beabe4d260c2b3df8c13d321e7836453d2e",
+          "userId": "p04v02-auth-authlifecycle",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "LOGIN_FAILED",
+          "createdAt": "2026-11-09T18:09:31.934",
+          "changes": {},
+          "rowSha256": "dfd716de9fef7f53c3657e27dcbc82505b408512638d7ac0ba8cd160f711c2cb"
+        }
+      ]
+    },
+    {
+      "label": "auth:locked-credential-boundary",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-locked-login-before-1794247775436-d2dcb8ab-a3a7-43fa-aa36-29713768037e.json",
+      "after": "snapshot-auth-locked-login-after-1794247784699-6a5ed4e3-b2d5-46ad-bdb8-29350f80b352.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:inactive-credential-boundary",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-inactive-login-before-1794247786908-b3b65759-6639-47e5-9c2d-001adf381b75.json",
+      "after": "snapshot-auth-inactive-login-after-1794247795090-6e8553dc-fad0-4949-bd91-a385987911f6.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:inactive-cached-core-session",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-inactive-cached-core-session-before-1794247797177-e42135c0-35f7-41d6-ac70-be4fb6ae9c5f.json",
+      "after": "snapshot-auth-inactive-cached-core-session-after-1794247799130-1753a982-098b-4d43-a5b8-e05c1d457088.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:inactive-current-app-session",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-inactive-current-app-session-before-1794247801037-edcdf3ab-6783-49fb-9bf0-4c5e901ec4f3.json",
+      "after": "snapshot-auth-inactive-current-app-session-after-1794247802807-4f82e0ea-7c82-4241-b7fc-709bbd462cdc.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:credential-forbidden-origin",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-origin-login-before-1794247804828-69fc13af-fdf8-4e5c-845e-349d14f921c8.json",
+      "after": "snapshot-auth-origin-login-after-1794247806736-8b138669-8cf3-4583-9f6c-5f3ddc20fe9d.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:revoke-foreign-token",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-foreign-revoke-before-1794247838403-f0fb5b6a-8862-401a-b7f8-16444f936c05.json",
+      "after": "snapshot-auth-foreign-revoke-after-1794247839947-4c23704e-137b-44f7-99cb-be45a29bd5aa.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:revoke-other-sessions",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-revoke-others-before-1794247841968-366918ca-8c0a-467c-a1b2-9176efd9b013.json",
+      "after": "snapshot-auth-revoke-others-after-1794247844132-58da69f0-70c8-4b06-b0d0-469417c9c82b.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [
+        {
+          "idHash": "403202f00c0a820750dd5efd859934992caf3860d0c224715d8f02a6fd37ae44",
+          "userId": "p04v02-auth-authsessionmanagement",
+          "expiresAt": "2026-11-16T18:10:26.255"
+        }
+      ],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:provider-anonymous-forgery",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-provider-anonymous-forgery-before-1794247846056-db6e5e07-72a0-44aa-83eb-bc628752602f.json",
+      "after": "snapshot-auth-provider-anonymous-forgery-after-1794247847931-66bfde97-318a-4b84-a888-270e989b616a.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:provider-authenticated-forgery",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-provider-authenticated-forgery-before-1794247850363-484eb758-5f6f-4276-b0d5-a9724add5f4e.json",
+      "after": "snapshot-auth-provider-authenticated-forgery-after-1794247852755-14bb7cb3-fa2a-4349-8032-67de4fa49280.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:provider-forbidden-origin",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-provider-forbidden-origin-before-1794247855160-a2b73c45-f506-4a26-9aa8-5cb5bddf260f.json",
+      "after": "snapshot-auth-provider-forbidden-origin-after-1794247857212-09028ab7-86e9-431e-85c9-2f2d95a9e6aa.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:invalid-oauth-and-verification",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-invalid-oauth-and-verification-before-1794247858678-c7bdce25-724c-4890-ab1c-830a74862569.json",
+      "after": "snapshot-auth-invalid-oauth-and-verification-after-1794247860295-8f3d7a94-e82d-447d-83fa-bb1effe211f6.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:browser-tenant-switch",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-tenant-switch-before-1794247872554-a40ba7d0-bffd-4c54-886e-92103d53f968.json",
+      "after": "snapshot-auth-tenant-switch-after-1794247878349-fae07413-4768-47db-b842-919c273c513c.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "078c4690a1a1badd1bab225e489d6562a5935f95a87446cb18d24760d40d1bc1",
+          "userId": "p04v02-auth-authforeign",
+          "organizationId": "p04-upload-b",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:11:12.732",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "7b38f833d769d3c7696583fb8c518e11e15a7f6561d3e59cfa1cb07174babd9f"
+        },
+        {
+          "idHash": "bda639b1ecba8d018ff81d5e49a431a8f0564e1ad0cb37d08f4cfedacceceb78",
+          "userId": "p04v02-auth-authforeign",
+          "organizationId": "p04-upload-b",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:11:14.826",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "978b06cfb5b5c0f69230683a38e6100f1d9fbb31c488805ca2131a96e8a5917b"
+        },
+        {
+          "idHash": "698cba4562724f4c3d3c988fa65950538a258d9958e11924439bf4789c7cb20d",
+          "userId": "p04v02-auth-authforeign",
+          "organizationId": "p04-upload-b",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:11:15.678",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "1042e1eddabdaecf0f33138049268c0c2c34876421b13b92d7e47495952e51d1"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserRevoked-en-forward-history-prepared",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-en-forward-history-prepared-before-1794247885142-d30b4567-32d4-4d36-b4c6-068bb6197f38.json",
+      "after": "snapshot-auth-authBrowserRevoked-en-forward-history-prepared-after-1794247890214-2f98c919-6bdc-47a5-8e08-862ffec2fd89.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "1b5cfbeaedfe263f6a94d10b2136737365e227d0022fd15952434eaee01390a8",
+          "userId": "p04v02-auth-authbrowserrevoked",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:11:25.827",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "d6411f67ddc5514d15f79a055decefacb629da92cef2e0312d30c7856e90ce9d"
+        },
+        {
+          "idHash": "1aedfb05087aeb34ec9901e2d858a7e88db551c6ca9c93f24cb8f36d4ea48175",
+          "userId": "p04v02-auth-authbrowserrevoked",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:11:27.031",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "3c2a5d0262033cf9a287429821c3473c057a23b03600e3f409b619bd8a4f5fd1"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserRevoked-en-stale-tab-focus",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-en-stale-tab-focus-before-1794247892145-97ab0b22-d226-4537-a959-9fc11f1a4050.json",
+      "after": "snapshot-auth-authBrowserRevoked-en-stale-tab-focus-after-1794247895077-dc1386aa-0683-4363-80dc-1fa43814eccc.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserRevoked-en-next-read",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-en-next-read-before-1794247896796-ec240d71-2ca8-4cc2-a98d-74ff7964530e.json",
+      "after": "snapshot-auth-authBrowserRevoked-en-next-read-after-1794247898753-a09a3d18-09ca-43ee-8a7f-67f372f6d961.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserRevoked-en-browser-back",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-en-browser-back-before-1794247900445-8dcadd51-7175-48b0-bb09-2066d281ed1b.json",
+      "after": "snapshot-auth-authBrowserRevoked-en-browser-back-after-1794247905036-74e599c6-8bf2-4e64-9964-0ba6b0c74e7f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserRevoked-en-browser-forward",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-en-browser-forward-before-1794247906798-23710b24-b63f-4fd4-93f2-bb37a6368039.json",
+      "after": "snapshot-auth-authBrowserRevoked-en-browser-forward-after-1794247910400-fede2b4e-d2c1-418d-9a92-a1da600651ff.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserRevoked-en-browser-reload",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-en-browser-reload-before-1794247912268-1d1477be-b084-458f-847b-1de0a05df542.json",
+      "after": "snapshot-auth-authBrowserRevoked-en-browser-reload-after-1794247915371-13919f90-7ed3-403a-b4bb-578b1bfb4f2f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserExpiry-en-forward-history-prepared",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-en-forward-history-prepared-before-1794247933143-bf0cc484-e20e-4edb-939b-6a7d051f269d.json",
+      "after": "snapshot-auth-authBrowserExpiry-en-forward-history-prepared-after-1794247940995-5853fa4d-e3ae-4c9e-9f66-e7ee5c153d90.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "913da8e7fd737f7427004b807e3f7ccd2b82b04688b895b4632e33d17f0a20b8",
+          "userId": "p04v02-auth-authbrowserexpiry",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:12:14.062",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "89019dd6d49155eef48bf63aafca0fddb29d59bcafbb5ed5732e19fe2a2246a4"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserExpiry-en-stale-tab-focus",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-en-stale-tab-focus-before-1794247943396-1b29461f-b5a2-4bb6-9264-dba846d75116.json",
+      "after": "snapshot-auth-authBrowserExpiry-en-stale-tab-focus-after-1794247947548-c0954313-b2da-4201-a9e9-1764b5151661.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserExpiry-en-next-read",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-en-next-read-before-1794247949814-4ef6b6bc-9af9-4319-9ab8-8f84a789b7a6.json",
+      "after": "snapshot-auth-authBrowserExpiry-en-next-read-after-1794247953170-faa29958-0b58-4c88-a07a-a60d32715a5a.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [
+        {
+          "idHash": "62996c22a9199035ce8bea55986fa5ea8bb7a6a441556782dc987dc4bd37da3d",
+          "userId": "p04v02-auth-authbrowserexpiry",
+          "expiresAt": "1970-01-01T01:00:00"
+        }
+      ],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserExpiry-en-browser-back",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-en-browser-back-before-1794247955176-03f7fe46-20be-4033-b2e5-76158aaf5df2.json",
+      "after": "snapshot-auth-authBrowserExpiry-en-browser-back-after-1794247959319-e14ad17b-6c86-41a6-97d6-fd808f2f002d.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserExpiry-en-browser-forward",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-en-browser-forward-before-1794247961032-334b6f91-3de9-4a39-8114-5dd9a78d2ccc.json",
+      "after": "snapshot-auth-authBrowserExpiry-en-browser-forward-after-1794247965325-37ced208-98e2-4ee4-ac82-967c182cca4f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserExpiry-en-browser-reload",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-en-browser-reload-before-1794247967758-7ade52df-3b69-4c14-aea9-aba678c1b98c.json",
+      "after": "snapshot-auth-authBrowserExpiry-en-browser-reload-after-1794247971949-6ececdda-4c4f-4155-9111-9e8663910ec6.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserPermission-en-forward-history-prepared",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-en-forward-history-prepared-before-1794247987348-20c4ae83-0f21-4f6b-8856-fd252322a66a.json",
+      "after": "snapshot-auth-authBrowserPermission-en-forward-history-prepared-after-1794247993121-ef813813-01fc-4ad9-b448-2d98f9709cc0.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "374c07986f278281ad358fc7fd403f1b90978f023eb593710ae85ccca8182d92",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:13:08.437",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "d8b9383f8ad6a7299340fc6faca559d83a803def20e647e9f12503d49a7f8bde"
+        },
+        {
+          "idHash": "b21bd96902ad53490d9b3106035fe75a87d7f0feeee2ac691e2794a82eca93ab",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:13:09.867",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "a1f927a75b8d4cbb053c9b84d33ac35a092dba359ab0fcb638c2bc935ecacfe5"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserPermission-en-stale-tab-focus",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-en-stale-tab-focus-before-1794247994645-6310c3e2-d962-455d-859c-f5ee109b9d1a.json",
+      "after": "snapshot-auth-authBrowserPermission-en-stale-tab-focus-after-1794247997159-da6ebfc7-c03d-4b4f-bf77-0e35a75ce7c4.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserPermission-en-next-read",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-en-next-read-before-1794247998801-c6c09cd9-46d3-4989-b8aa-4dbec9a91c8f.json",
+      "after": "snapshot-auth-authBrowserPermission-en-next-read-after-1794248000614-2690d486-8476-43b1-b6af-a157a53ef904.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "76fb7ebf9fdddb95a792611d40758a424765e4c5c03530b87a028f3f56cbb1c2",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_DENIED",
+          "createdAt": "2026-11-09T18:13:19.219",
+          "changes": {
+            "result": "denied"
+          },
+          "rowSha256": "4c82ce0415737969a0b31242cfc6464a4e0578a372b621a82b940031e379bc0b"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserPermission-en-browser-back",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-en-browser-back-before-1794248002132-3d1a9480-94a4-4816-9bfa-83c1f01abf5c.json",
+      "after": "snapshot-auth-authBrowserPermission-en-browser-back-after-1794248005423-3fdeadab-1d43-48f0-93f9-caab29ed015d.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "781d538e1a06dcb86c80855274240b0bda084c13ae4269797605d34a80853138",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_DENIED",
+          "createdAt": "2026-11-09T18:13:22.696",
+          "changes": {
+            "result": "denied"
+          },
+          "rowSha256": "383ab2ec27e4473c3a7fa7305a008d0f9880d6c7ded6d1b55fd7e68e6e45d928"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserPermission-en-browser-forward",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-en-browser-forward-before-1794248006829-860fbd80-54ce-4e10-9d0c-e4d674d6bdcd.json",
+      "after": "snapshot-auth-authBrowserPermission-en-browser-forward-after-1794248009737-14c4bed4-1878-463e-87ce-5aac0a65543f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "916bd6c13e34b994df8c2771764e9a2ac8fa12827ac1eba023985d79848ad114",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_DENIED",
+          "createdAt": "2026-11-09T18:13:26.963",
+          "changes": {
+            "result": "denied"
+          },
+          "rowSha256": "d3b60dcc132cd074130794b48fe764c70c12193710922813cbd6e40bc1c4665f"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserPermission-en-browser-reload",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-en-browser-reload-before-1794248011463-f0ae653d-1f23-4bdb-aa11-acea8c666e15.json",
+      "after": "snapshot-auth-authBrowserPermission-en-browser-reload-after-1794248014280-bb89573c-7f83-4616-a3ee-e0bbccd1619a.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "02abe41a93489b82b9a09fed0e09d38bd4a56950dfb9b4282e2f888155f8f9b3",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_DENIED",
+          "createdAt": "2026-11-09T18:13:31.588",
+          "changes": {
+            "result": "denied"
+          },
+          "rowSha256": "7d8fb443ff52a7f8ff811e125fa8984357d0428656771f62d2ebcf8493e35c29"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserModule-en-forward-history-prepared",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-en-forward-history-prepared-before-1794248030735-e64045b8-a973-4324-90cb-3fffac431c09.json",
+      "after": "snapshot-auth-authBrowserModule-en-forward-history-prepared-after-1794248039168-9745ae00-76a2-44f8-b91a-d47dabf5c72b.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "efd1f458ba51110b69ddc6aa4a159bbd41d705d1b3a3483af63983a75a9bbaed",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:13:52.407",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "97c073ddd67b22bd86871259b174814d8a0faba690455c750b2edfcec8d90c2e"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserModule-en-stale-tab-focus",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-en-stale-tab-focus-before-1794248040840-92a2a22f-ecd5-4a3b-9911-aa7fa40401fc.json",
+      "after": "snapshot-auth-authBrowserModule-en-stale-tab-focus-after-1794248043685-fd973f2f-9294-48e6-be52-cbf2d1d7c9cd.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserModule-en-next-read",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-en-next-read-before-1794248045565-50a7ec67-b6b9-412a-a8ac-434b302549d7.json",
+      "after": "snapshot-auth-authBrowserModule-en-next-read-after-1794248047642-cbfb7c80-cdb9-4e56-9079-26780e4163c7.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "ec1663314fb8ad8726f2a1eab8d20a9d74672da3923c30e342acc90582c9dc0f",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:14:06.029",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "598fea0a189d3f08f9ec035c4ee19e87425128d77ffb690aadd061758202dad0"
+        },
+        {
+          "idHash": "db997bfbcf1d568231b9aeb7d3595dd9206ce5f1124f51fecc140bc1548d6f55",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T18:14:06.056",
+          "changes": {
+            "moduleSlug": "inventory",
+            "surface": "/dashboard/inventory/items",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "a9c58744692104a3b76c7e4a6db5b9b26205825327d146394290a58411bb51b2"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserModule-en-browser-back",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-en-browser-back-before-1794248049221-2090e90e-89c6-483c-8fc0-8305c4a725d5.json",
+      "after": "snapshot-auth-authBrowserModule-en-browser-back-after-1794248053030-468ab056-673a-4782-b93f-9fca9490a425.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "6fc340e7900477b45334b9ebc810e518fe3a103bd325707bdffa443fb18a6641",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:14:09.852",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "03ba27c88f16169dadafd42b761dcd82fe60d7ba67e14e70c5b329eeaf3d7f16"
+        },
+        {
+          "idHash": "8d7a2a8cbbbb5710b10f45e6b353217ee65c02de5085051ab9efa4f9f22d1526",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T18:14:09.889",
+          "changes": {
+            "moduleSlug": "inventory",
+            "surface": "/dashboard/inventory/items",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "b44b0674f5bb939e56ea1782f5b8739ade787550d3cbe53d99d91686ddc6c530"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserModule-en-browser-forward",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-en-browser-forward-before-1794248054441-1ae5ed2e-20ba-4a26-97b3-bb11715af41c.json",
+      "after": "snapshot-auth-authBrowserModule-en-browser-forward-after-1794248057531-80964c52-3f1f-43ac-a055-9c1bcec79c6b.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "6f3e0c00135011a2d045bf0a3e05cf438486035b105d34a0a7ac0358e065b204",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:14:14.564",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "ed825ca47fb447e5c8aafeee603e72bc2f2e2001f4e2d427e3c716e091e48c07"
+        },
+        {
+          "idHash": "e6c2df7d7dd65487180c1b3bc101085d4b291627cb15bb4b96ac2e5fe42a68a2",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T18:14:14.629",
+          "changes": {
+            "moduleSlug": "inventory",
+            "surface": "/dashboard/inventory/items",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "474b415d6b93d8c8842aeb28d365bce1ed76a113ed28a0825a64008e5bd44da5"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserModule-en-browser-reload",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-en-browser-reload-before-1794248058931-555f3806-b6d2-4fed-accc-964f892b85d2.json",
+      "after": "snapshot-auth-authBrowserModule-en-browser-reload-after-1794248062239-e8643b47-3592-471e-8441-bfddaa05dc4f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "3ede8371b99ae8893d5c9472b9cad561cdfbd8f8a8c026a9e5be07f1bb6de70f",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:14:19.064",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "007cd814f06559eacc9dbfb087051c357179937fdd86cb413d48eea569253277"
+        },
+        {
+          "idHash": "79b992f8f09911ceef6b7376bb7cba817eb99b7a2841c868c45b6b6a24637069",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T18:14:19.101",
+          "changes": {
+            "moduleSlug": "inventory",
+            "surface": "/dashboard/inventory/items",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "ae5255b32b253117c7a7356dd6f8f67c076c4acddedfb49eb7b58afaca245e32"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserRevoked-fr-forward-history-prepared",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-fr-forward-history-prepared-before-1794248077458-f9e24e3f-810c-414e-b12f-50c827a30db5.json",
+      "after": "snapshot-auth-authBrowserRevoked-fr-forward-history-prepared-after-1794248083670-c52adca1-5d9e-441a-9290-a57f23f38f6c.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "2010465916082aee808d00757b5bdc054e189c1e9b962ebdb15d5c4c1d3c5ef5",
+          "userId": "p04v02-auth-authbrowserrevoked",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:14:38.312",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "2269ab0aff677d5e0f71f50b8b0dc9db3be0783876811e633b5761f7441463f3"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserRevoked-fr-stale-tab-focus",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-fr-stale-tab-focus-before-1794248085767-17873305-2ad3-471f-a0d4-11d9aec8a612.json",
+      "after": "snapshot-auth-authBrowserRevoked-fr-stale-tab-focus-after-1794248089225-167a8954-b0a1-415e-9c82-1ed3e68125c3.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserRevoked-fr-next-read",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-fr-next-read-before-1794248091242-cdb6e11b-4343-413c-b78e-c10e2e145419.json",
+      "after": "snapshot-auth-authBrowserRevoked-fr-next-read-after-1794248093599-3c390223-8194-4613-944c-c315aee8e189.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserRevoked-fr-browser-back",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-fr-browser-back-before-1794248095521-3d1cb9a2-6e15-406c-a2cf-afd4a814d6d5.json",
+      "after": "snapshot-auth-authBrowserRevoked-fr-browser-back-after-1794248099676-e6f4d1c4-0cde-4da6-ade4-dce4f7cc24ea.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserRevoked-fr-browser-forward",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-fr-browser-forward-before-1794248101304-d0aacf1f-9c86-42d1-b9a2-f1b86439494a.json",
+      "after": "snapshot-auth-authBrowserRevoked-fr-browser-forward-after-1794248105856-f4b2b960-078f-412f-ae0b-fa721ef6c280.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserRevoked-fr-browser-reload",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserRevoked-fr-browser-reload-before-1794248107503-efcb2b8d-ef9f-4808-9c40-41ae53ce0f90.json",
+      "after": "snapshot-auth-authBrowserRevoked-fr-browser-reload-after-1794248110371-eecd4d91-545c-4436-b508-f7be9a26de04.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserExpiry-fr-forward-history-prepared",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-fr-forward-history-prepared-before-1794248125888-8fe3b0de-af93-496e-a1da-de3baf2c8e4b.json",
+      "after": "snapshot-auth-authBrowserExpiry-fr-forward-history-prepared-after-1794248132651-02c823be-c521-4c19-8c9a-f6d95a1b99ed.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "db44d1e20fa9cdcba89ed73ec69e330f08d1937d9df8e136f78e2b36307dfe65",
+          "userId": "p04v02-auth-authbrowserexpiry",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:15:26.816",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "8b1a628ba09b5d2e124c2e9561aeb04ae70c6839d076c3c6ca65297fefc4cade"
+        },
+        {
+          "idHash": "093b65b5e427d2c5d13871de76e20c156977c851e3ce771af53fc7ee9f966873",
+          "userId": "p04v02-auth-authbrowserexpiry",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:15:28.794",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "cfea3b941b22e0b5f4ef8cce6d5d8a3d96bb38afed998588bd8cadd195527395"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserExpiry-fr-stale-tab-focus",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-fr-stale-tab-focus-before-1794248134654-bb399a2c-1969-4829-86b6-9849b41e9cbc.json",
+      "after": "snapshot-auth-authBrowserExpiry-fr-stale-tab-focus-after-1794248137532-79f30e85-2cd5-42d3-8313-c2a0d2e28bae.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserExpiry-fr-next-read",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-fr-next-read-before-1794248139161-c334da1d-568f-46aa-bfc7-293c526b28c3.json",
+      "after": "snapshot-auth-authBrowserExpiry-fr-next-read-after-1794248141047-865749d9-db85-4111-a3b0-07c539defda2.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [
+        {
+          "idHash": "b53995f7b70327c567b90ddd6a2ca4470cf0eec2108322af5e0b323c92356198",
+          "userId": "p04v02-auth-authbrowserexpiry",
+          "expiresAt": "1970-01-01T01:00:00"
+        }
+      ],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserExpiry-fr-browser-back",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-fr-browser-back-before-1794248143068-60ebe587-778f-4dfe-a9dc-3bea48ac00e5.json",
+      "after": "snapshot-auth-authBrowserExpiry-fr-browser-back-after-1794248148783-db32ec7e-3075-4585-8795-a20dec6768b0.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserExpiry-fr-browser-forward",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-fr-browser-forward-before-1794248151084-a05cf213-1678-4145-bad6-ef2935d492e2.json",
+      "after": "snapshot-auth-authBrowserExpiry-fr-browser-forward-after-1794248155350-6599696c-1e07-43f9-820a-6b63a5f0ce3c.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserExpiry-fr-browser-reload",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserExpiry-fr-browser-reload-before-1794248157183-a7ff8b36-1298-4b54-8f93-99b68d925b6f.json",
+      "after": "snapshot-auth-authBrowserExpiry-fr-browser-reload-after-1794248160029-6162a835-739c-44f9-8d58-20e7cc52055f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserPermission-fr-forward-history-prepared",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-fr-forward-history-prepared-before-1794248177113-77968d77-77ec-436b-b8d7-e8e79650bc56.json",
+      "after": "snapshot-auth-authBrowserPermission-fr-forward-history-prepared-after-1794248183553-3ae4a15e-a658-4144-8565-fac53dcd635b.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "63f541a9edddbac41c8a2ae0531bacba67940173e743081f23985f50a1a030b4",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:16:18.043",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "c2ac365570d8a23513bdbef251d1916c8ad81ff5389a2d131b452c295008b628"
+        },
+        {
+          "idHash": "9dc95e9c0539e5c3ca562bb61eafe5786df52122bc203a8156cc16b830591984",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:16:19.981",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "5ff9d8b1868bc1e01cfd19a1ef53e771e47b65ab5bbd9d3d8ead45b85d3c9835"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserPermission-fr-stale-tab-focus",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-fr-stale-tab-focus-before-1794248185307-5fa86480-611d-4508-b29b-f1c9cebf1368.json",
+      "after": "snapshot-auth-authBrowserPermission-fr-stale-tab-focus-after-1794248188387-4052891b-1780-410a-a0d6-7b85a3195512.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserPermission-fr-next-read",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-fr-next-read-before-1794248190137-50412b81-5243-4795-8bbb-d6da207d4afb.json",
+      "after": "snapshot-auth-authBrowserPermission-fr-next-read-after-1794248192234-c96a73c7-5016-4343-9ce0-d74ddf7300fb.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "9d2e330d6be5382deb0750147e48f73e561147314a03adf53f1579a8c5c8692e",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_DENIED",
+          "createdAt": "2026-11-09T18:16:30.586",
+          "changes": {
+            "result": "denied"
+          },
+          "rowSha256": "87258691d4b9bb638276e0f6c2fb6fbb3514b0fec5ab8849569544dc36266f36"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserPermission-fr-browser-back",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-fr-browser-back-before-1794248194172-206e08be-4898-48dc-bbdb-2faf9392aadf.json",
+      "after": "snapshot-auth-authBrowserPermission-fr-browser-back-after-1794248197851-0ff96340-622d-45f3-8922-9a02a10f9dfc.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "0a6766cb0564ba107a47f7ff0b183c7a081ad2178436e8201182ce3f45a12646",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_DENIED",
+          "createdAt": "2026-11-09T18:16:34.694",
+          "changes": {
+            "result": "denied"
+          },
+          "rowSha256": "1799c7c8a7bac2dd51eb75b73863315ebec5558286e9f10b191541c1e92426e0"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserPermission-fr-browser-forward",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-fr-browser-forward-before-1794248199681-ece7961b-83a5-4cca-885e-2478949eb2d9.json",
+      "after": "snapshot-auth-authBrowserPermission-fr-browser-forward-after-1794248203299-db5ec1d7-013c-4b91-8b01-b15f972cffb0.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "62dc209cf64868011b1c1279edfa14b8b5a88872eaf7b053d99da4202cefd620",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_DENIED",
+          "createdAt": "2026-11-09T18:16:39.807",
+          "changes": {
+            "result": "denied"
+          },
+          "rowSha256": "42942e4fab8b0560f00767c9cea1d357cd126313fa030f637679ce7ba4626c75"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserPermission-fr-browser-reload",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserPermission-fr-browser-reload-before-1794248205730-80587d34-f50d-4ae2-94a3-ead4534aed0d.json",
+      "after": "snapshot-auth-authBrowserPermission-fr-browser-reload-after-1794248209277-42bf88f9-f4e4-4b09-b420-b189e604f6fb.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "a2220b7b2cd0a6e020b09339725d5570ba3745aceca24a981114acdad04a8a20",
+          "userId": "p04v02-auth-authbrowserpermission",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_DENIED",
+          "createdAt": "2026-11-09T18:16:45.945",
+          "changes": {
+            "result": "denied"
+          },
+          "rowSha256": "d916718666ee80ff5578d4c7609c9c4fe1c1a9aa9f4360bc4b8bdec5a783a31b"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserModule-fr-forward-history-prepared",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-fr-forward-history-prepared-before-1794248225079-3e370e84-d99d-4823-98ed-7e0902dc934b.json",
+      "after": "snapshot-auth-authBrowserModule-fr-forward-history-prepared-after-1794248231091-2061f427-8e32-4cde-8cd0-d2334cfdfc39.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "19d2ff05a5f14829a3465f48b1174aec7ef9f580d70042f62f9f1417fd2c15df",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:17:05.919",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "c2d4ad0b6c995e1949d9fc955327b1c60deb52d02def0de855b9c425752078ec"
+        },
+        {
+          "idHash": "08ad032668cbdf37b1af3e2e8eebe4196579c231efa96ed32e24e85c3191ff07",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:17:07.814",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "27dccd746b530f3828961374e41986aea715f2ae05843d94c2bf742e7edf879d"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserModule-fr-stale-tab-focus",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-fr-stale-tab-focus-before-1794248232965-fa5ebb3d-d8f7-4d6e-8f4c-0c789b707b98.json",
+      "after": "snapshot-auth-authBrowserModule-fr-stale-tab-focus-after-1794248235952-7310a23f-8ff6-4bcb-9e43-2a8af21d1d3f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "auth:authBrowserModule-fr-next-read",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-fr-next-read-before-1794248237800-a486b060-a776-4d36-ba42-6100c6f8d0d0.json",
+      "after": "snapshot-auth-authBrowserModule-fr-next-read-after-1794248239784-8f3c30bc-6e7d-410e-bdef-a5934cb16e58.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "95e5ee56810f36d4bc27f987f256194c8380a9c40ec0c52392f0d0df1f79ac44",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:17:18.26",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "ae15ee7b05f0454abcd8dfc34c55a8f9739f520e5254b237e841ba599a7426b1"
+        },
+        {
+          "idHash": "4fecbea58b29f11b12f96c2350eba9100e5875605c7d446b5ec4480f7ab046c8",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T18:17:18.293",
+          "changes": {
+            "moduleSlug": "inventory",
+            "surface": "/dashboard/inventory/items",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "11955396f58a1b279ac3a6ba715491c22268a84c457128904526f3839651339e"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserModule-fr-browser-back",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-fr-browser-back-before-1794248241494-c0dcf18a-f8f4-4f5f-b31e-c65555fee267.json",
+      "after": "snapshot-auth-authBrowserModule-fr-browser-back-after-1794248244907-105dd27b-4ad7-453d-be55-cebdfcac3a1e.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "fe83c1541d71f2a8614fbd5f5f2b8505df08d388660bc1574fa390f266c3b91d",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:17:22.13",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "2c0be4e7274c118ddacfa49c6eecd50e21360679d1fdfcc40f60f54c8fba6f0d"
+        },
+        {
+          "idHash": "a78cd2d115ae4f9c76f5086d0aa22f562b5dcae1ec934806782a602cba5a28ea",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T18:17:22.171",
+          "changes": {
+            "moduleSlug": "inventory",
+            "surface": "/dashboard/inventory/items",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "832ec2e76aa511d037a5b748b675b0069ac6939f76926dd4bb12ada8c6a58072"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserModule-fr-browser-forward",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-fr-browser-forward-before-1794248246307-c4e60dd8-b447-4785-97f6-9e88e32c7896.json",
+      "after": "snapshot-auth-authBrowserModule-fr-browser-forward-after-1794248249233-ce8b08b6-9ab0-40bf-94d4-e2c5cc0ea7de.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "9b27becea75a5527deec7c20a0ab6d0316ede5b61e7133e0399ccead923f66fb",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:17:26.411",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "e4195e5d042186bc61055542127b87641c5b14b5869c7f72463f231777cc6b39"
+        },
+        {
+          "idHash": "fc2d550a5d474163980363c72c90ec98d6f4bb4bc8783391cbf57bbc6a9759ef",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T18:17:26.436",
+          "changes": {
+            "moduleSlug": "inventory",
+            "surface": "/dashboard/inventory/items",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "3ab929eb40a4973c2ec055ce2b9ac73c2f23e02349e5bfb5ee299b57586368a8"
+        }
+      ]
+    },
+    {
+      "label": "auth:authBrowserModule-fr-browser-reload",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-auth-authBrowserModule-fr-browser-reload-before-1794248250959-0fe16806-7227-48fd-8807-3fb6c522c315.json",
+      "after": "snapshot-auth-authBrowserModule-fr-browser-reload-after-1794248253709-b9705cce-f8a4-4fe3-be39-bd489e98802f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "1317271685355e185fdfd5ef7c5fc716793826571511b8b42ed5f68790a69505",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "SecurityEvent",
+          "action": "PERMISSION_GRANTED",
+          "createdAt": "2026-11-09T18:17:31.111",
+          "changes": {
+            "result": "allowed"
+          },
+          "rowSha256": "d86a42a20fb02213f30990673ebe348bfc0e6df24dc1ec240dd7ca2b88c95ea1"
+        },
+        {
+          "idHash": "f57eadd4d146842adec2d69c3d324b0205f4faa6a7c4f17c4005a611ee561c49",
+          "userId": "p04v02-auth-authbrowsermodule",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T18:17:31.173",
+          "changes": {
+            "moduleSlug": "inventory",
+            "surface": "/dashboard/inventory/items",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "0e9e1d63eae1af981828ab162b48187716173fa90342641f64f3fc357cae022d"
+        }
+      ]
+    },
+    {
+      "label": "baseline:checks.2.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-original-alias-anonymous-before-1794245852356-e4bd5fb2-fb5b-4a6a-bbf3-6e9def147cbc.json",
+      "after": "snapshot-original-alias-anonymous-after-1794245857405-86be4653-fecf-4ee8-a852-b3c535905a9d.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.3.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-original-alias-ui-before-1794245859761-1644052a-c761-49b1-bc87-2d9888008d57.json",
+      "after": "snapshot-original-alias-ui-after-1794245865593-e776b07e-f513-467d-bdd7-84d3e2c1fe3d.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.4.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-original-alias-foreign-before-1794245870325-1961b900-a343-443d-9f5e-dc100f91ece7.json",
+      "after": "snapshot-original-alias-foreign-after-1794245872925-a00ccc4f-7718-405c-9983-45e0c3723fdd.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.5.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-original-alias-revocation-before-1794245880853-47947245-5f2f-4915-80f1-a64e75600462.json",
+      "after": "snapshot-original-alias-revocation-after-1794245883331-ff096a0a-1eee-4018-92ed-b517cf7503b8.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.6.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-original-alias-expiry-before-1794245891453-4e58a77e-a12f-40c5-b1e6-112ca090b4bb.json",
+      "after": "snapshot-original-alias-expiry-after-1794245893695-43126649-1ce3-481b-b2dc-d3937efac0b4.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.7.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-original-alias-permissionChange-before-1794245902608-e2ca72c9-2787-49a8-a77f-b11437ae472f.json",
+      "after": "snapshot-original-alias-permissionChange-after-1794245905326-e3a27877-d8d2-4a63-811c-a6513537e586.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.8.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-original-alias-moduleChange-before-1794245912837-0b92ff22-c6be-4a27-8aff-25d66395d1e6.json",
+      "after": "snapshot-original-alias-moduleChange-after-1794245915090-f22eaf4f-083f-4660-b7b1-bcfaada39d7c.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.9.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-original-alias-permissionDenied-before-1794245923947-eb445ef6-48b3-4424-83af-f85b27d2934a.json",
+      "after": "snapshot-original-alias-permissionDenied-after-1794245926622-d7761088-6634-4efc-adc9-dde2e5cb93e2.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.10.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-original-alias-moduleDenied-before-1794245934513-47f7dce9-fb2a-4964-b72d-f5a86ae75f3a.json",
+      "after": "snapshot-original-alias-moduleDenied-after-1794245937026-b7bb2ffa-e08a-4632-aefc-d9fbb5b63287.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.11.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-anonymous-before-1794245939305-f1019f81-315f-4805-ac51-2e1a8597c5b6.json",
+      "after": "snapshot-anonymous-after-1794245942221-32fad4a9-422d-449b-9052-79ce50d9fde1.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.11.evidence.encodedAliasNoWrites",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-anonymous-encoded-aliases-before-1794245944391-ea424a29-31c0-4031-9d48-42ebf723ebde.json",
+      "after": "snapshot-anonymous-encoded-aliases-after-1794245947059-1f732e03-92ee-46b8-8c83-9f209e6cfc9b.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.12.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-foreign-before-1794245949338-780f4db1-34cd-4fe3-9725-f41d2eb0a316.json",
+      "after": "snapshot-foreign-after-1794245951950-ccc3b41a-5d1e-4adc-80d7-d6634f7daa37.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.13.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-permissionDenied-before-1794245960081-cc2f6f60-edfd-4801-b27a-88c26869e9d8.json",
+      "after": "snapshot-permissionDenied-after-1794245962941-8e607e85-93ed-4f64-8cd5-685cdae9cf78.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.15.evidence.denial",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-revocation-after-before-1794245984658-c5eb2984-5a79-47d7-a3a9-c4e0be46d3d7.json",
+      "after": "snapshot-revocation-after-after-1794245987255-3549f763-7c1b-454b-872a-8ad2569d7752.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.15.evidence.backRestore",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-revoked-browser-restoration-before-1794245989014-7f49d9f3-a434-4f48-a602-b660bc7c4713.json",
+      "after": "snapshot-revoked-browser-restoration-after-1794245992602-bf434a11-14ea-4850-9636-f767c9f8835c.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.16.evidence.denial",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-expiry-after-before-1794245995111-76d22b28-dc11-4bc4-ae14-32a295b6e19d.json",
+      "after": "snapshot-expiry-after-after-1794245997411-f2002aec-2159-4071-82f8-90bb942c7247.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [
+        {
+          "idHash": "1b6502abd81e98fdc0b956624c39530455acc7ed601a7b3edf5d405d3b136b35",
+          "userId": "p04r02-user-expiry",
+          "expiresAt": "1970-01-01T01:00:00"
+        }
+      ],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.17.evidence.denial",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-permissionChange-after-before-1794246005871-fda120c6-fcd4-4ebf-baa9-ca2f38a0912e.json",
+      "after": "snapshot-permissionChange-after-after-1794246009094-c20dd378-4d62-4e9a-9a7e-d3d89369938f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "baseline:checks.18.evidence.denial",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-moduleChange-after-before-1794246016642-e47e367d-8859-42f2-9d5d-17fc6f8f3001.json",
+      "after": "snapshot-moduleChange-after-after-1794246019563-4d3e9861-57d7-4959-a6bc-69af28484361.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "96b51c4ec52866d6931b43b2aba6255fd760f26f46a3cf5627d47361e8de8625",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:16.715",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "a4ec3ac2250a1a3b753451787a84e38da60e0cdf29644497229e9024d9494cf7"
+        },
+        {
+          "idHash": "a0ef375ebd60c2c69312de6101f8de3a11530554864e8176e289e019e3180ae5",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:16.76",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "05e7d453f27865080587596a4cc6b83b829b269252625fbb978938786c44099d"
+        },
+        {
+          "idHash": "546daecb22073d15fb80e9e117e0e0f63c2ae8d2a9221a3352503416c643db0c",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:17.109",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "b6b844fcbaa441942115f0d7dd05ec577a96e9438ffb8215f9261c12b286f81e"
+        },
+        {
+          "idHash": "f4e43bb0f01dbb0fcd5bfecfc66f83a4a75ae44b4f911abef76519addefc910f",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:17.15",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "54695bccb65672d4e4f21d4e86e85103f4fd92cc264873821cba2e41568f18dd"
+        },
+        {
+          "idHash": "9da8e77abadcb54532c0d53d456b2376e5301640834221326f5b97853c43d8cb",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:17.517",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "c5c92998b1f28af5fccd45d7e97cb6e18eaadb9cfd997aee7958d1a10f3989dc"
+        },
+        {
+          "idHash": "39e28b7468308cfcc13ab43dca4ca8e40cdee40c4c4aa0201edbc406731e181e",
+          "userId": "p04r02-user-modulechange",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T17:40:17.561",
+          "changes": {
+            "moduleSlug": "dashboard",
+            "surface": "GET /api/uploads/[...path]",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "bc85970aa17b274df68f4d67b195f86474908554a255fec5c894373033d38e81"
+        }
+      ]
+    },
+    {
+      "label": "baseline:checks.19.evidence",
+      "database": "stoquify_local_p04v02_20261109_full_r1",
+      "before": "snapshot-authorized-and-optimizer-denials-before-1794246026925-caf141b3-bbb9-4d27-8775-59fe9fb37d78.json",
+      "after": "snapshot-authorized-and-optimizer-denials-after-1794246029492-d011c22c-a8bf-462b-bd8b-d099649178ba.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:public-config-get",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248288631-1794248289781-3e492dfd-9f6d-4719-b2b2-b7d528d96d53.json",
+      "after": "snapshot-provider-1794248289943-1794248291647-4ca604ec-b569-4300-9143-4e52a8a1cd31.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:public-config-head",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248291673-1794248293296-65297f06-38c9-4994-9a34-e6a3a7385c89.json",
+      "after": "snapshot-provider-1794248293333-1794248294969-fe814de7-4f99-42a4-8555-2ade4333dcd7.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:implicit-options",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248294981-1794248296588-885e4791-ff35-4974-826b-9b77b17dcf75.json",
+      "after": "snapshot-provider-1794248296614-1794248298210-8d96ce44-35d0-4f6d-a280-9fb43c1cce3e.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:unsupported-put",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248298250-1794248299821-bbda67ef-dc85-4469-be4f-69676c4f7db0.json",
+      "after": "snapshot-provider-1794248299845-1794248301469-e712690c-f83e-440d-8eff-821d167d9692.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:unsupported-delete",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248301502-1794248303054-b7a0d4ff-db51-40cd-ad16-55410e22ef28.json",
+      "after": "snapshot-provider-1794248303077-1794248305009-5ff550d7-2ee9-4053-b3a0-c91df2ff898d.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:unknown-slug",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248305048-1794248306442-90930c72-0ad5-4293-b094-25ef202c6051.json",
+      "after": "snapshot-provider-1794248306485-1794248307824-da73e117-f3bf-4559-979a-f325ba63b5c7.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:invalid-action",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248307861-1794248309181-a8e04a52-6fbc-44ac-8dab-5b61ff0e8997.json",
+      "after": "snapshot-provider-1794248309224-1794248310697-83a95cf0-0bec-40de-a1dc-ee5c54b41090.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:missing-discriminator-no-op",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248310740-1794248312471-64076e38-5f7e-41cf-8a03-8fa7866ba6f3.json",
+      "after": "snapshot-provider-1794248312505-1794248314279-13abcb47-6b59-4ca1-837b-8427bc1c5782.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:callback-missing-signature",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248314317-1794248315876-15235ca7-4a0d-48e7-8775-2b65492f09f0.json",
+      "after": "snapshot-provider-1794248315946-1794248317338-c0f0b485-f58b-495b-98f2-54ad399d23c7.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:callback-invalid-signature",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248317366-1794248319001-e0621e56-a15d-42e0-a850-cebdce1928d1.json",
+      "after": "snapshot-provider-1794248319053-1794248320482-939bfbe1-6b1a-480f-97f4-8b0a0e32e1af.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:callback-tampered-signed-origin",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248320505-1794248321830-23de0e11-4c76-4f69-a959-1bbffb06bd74.json",
+      "after": "snapshot-provider-1794248321859-1794248323601-d1156979-3eb8-4632-a84e-84077e59d16f.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:callback-origin-header-without-signature",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248323647-1794248325414-9014ae76-004a-45ec-aada-78eff1ed1bd1.json",
+      "after": "snapshot-provider-1794248325475-1794248327434-c8c9ceb0-03e5-47b1-8061-c959b75b12eb.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:callback-valid-signature-invalid-body",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248327475-1794248329215-4634c3a7-2eb7-4822-9727-ffb6e2838f26.json",
+      "after": "snapshot-provider-1794248329263-1794248330839-26952059-5ac2-4086-a577-d85477e896a1.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:error-hook-missing-signature",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248330889-1794248332585-9126663d-7bf1-4957-ba41-9f3ab285f2d5.json",
+      "after": "snapshot-provider-1794248332609-1794248333961-6a959acc-9097-4e31-9bc8-74181a503f67.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:error-hook-invalid-signature",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248334001-1794248335330-fe2b9bd4-20aa-4262-bcf3-e0706ba5ffb2.json",
+      "after": "snapshot-provider-1794248335395-1794248336688-448ece8a-fb36-4420-ac59-25b0c888f184.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:anonymous-upload-denied",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248336721-1794248338160-d0dae8c7-c71f-40b1-bbbd-702be9c22c82.json",
+      "after": "snapshot-provider-1794248338196-1794248339745-031ca2aa-3f02-4cae-bc71-2f3ebd992ace.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:authorized-legacy-upload-managed-control-only",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248339782-1794248340997-03711766-0e99-435a-abca-120175c9ee36.json",
+      "after": "snapshot-provider-1794248341059-1794248342271-a0a8454b-1989-49a2-8c47-dab2e1449f53.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:read-only-actor-upload-denied",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248342302-1794248343866-90d1613d-ba4d-4db7-8c8c-b6a3892f1a43.json",
+      "after": "snapshot-provider-1794248343943-1794248345203-d4cfbfde-173f-4427-9629-69007bdbdb55.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:module-disabled-upload-denied",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248345436-1794248346578-f4844a49-09d4-483c-a6c4-ffcc403f4cb9.json",
+      "after": "snapshot-provider-1794248346640-1794248347966-7f095e09-efef-4002-8d63-a25aefaa8aac.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": [
+        {
+          "idHash": "625b5b2652e59a43acf2cde9045b78fb96f8b6fdee290f5ec9bff80a7e5c681d",
+          "userId": "p04r02-user-ui",
+          "organizationId": "p04-upload-a",
+          "entityType": "ModuleEntitlementDecision",
+          "action": "MODULE_ENTITLEMENT_ENFORCED",
+          "createdAt": "2026-11-09T18:19:06.636",
+          "changes": {
+            "moduleSlug": "inventory",
+            "surface": "POST /api/uploadthing",
+            "allowed": false,
+            "mode": "enforce",
+            "result": "deny",
+            "wouldBlock": true
+          },
+          "rowSha256": "3f5a9e0c4882ebd93e6db9490b88ed4b1de6ca5a5da3aa07f5ffab853491cd1e"
+        }
+      ]
+    },
+    {
+      "label": "provider:foreign-origin-upload-denied",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248348096-1794248349663-ffe6d6b7-ebc9-4051-9cb7-6e051df44547.json",
+      "after": "snapshot-provider-1794248349725-1794248351114-5a8a2161-264b-4b8d-b425-684a2907eac9.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:signed-error-hook-positive",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248351164-1794248352398-82ffe352-9cb5-4c16-9c88-6ff562689548.json",
+      "after": "snapshot-provider-1794248352429-1794248353837-b2953762-1ae7-43d6-8abd-413c0dda6f9d.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:signed-callback-positive",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248353887-1794248355183-bff1243b-2bc3-410a-92cc-5c98e3a9abb6.json",
+      "after": "snapshot-provider-1794248355272-1794248356534-568f089c-54bd-4c65-964e-aeb3c8a1b772.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    },
+    {
+      "label": "provider:signed-callback-replay-no-business-effect",
+      "database": "stoquify_local_p04v02_20261109_full_r2",
+      "before": "snapshot-provider-1794248356592-1794248357904-c98320fc-38fc-4c85-9025-923bc75ca90a.json",
+      "after": "snapshot-provider-1794248358014-1794248359269-c9d6dac5-4415-4cb7-93bc-f7e80c42bed3.json",
+      "businessUnchanged": true,
+      "changedTables": [],
+      "deletedSessions": [],
+      "addedSessions": 0,
+      "updatedSessions": 0,
+      "oldAuditsPreserved": true,
+      "addedAudits": []
+    }
+  ],
+  "limitations": [
+    "The actual116 auth and23 provider successor groups combine with22 retained baseline groups; attempt02 did not rerun161 groups.",
+    "A raw baseline audit-cardinality expectation failure is retained and corrected independently from existing requests/native snapshots.",
+    "This index reconciles records; semantic findings and final cleanup/preservation review remain separate.",
+    "Concurrent accounting changes are preserved. Whole current checkout and entire inventory import closure are not claimed identical."
+  ],
+  "snapshotFiles": 278,
+  "runtimeCleanup": {
+    "portsReleased": true,
+    "proxyClosed": true,
+    "runtimeTermination": {
+      "pid": 21652,
+      "exitCode": 0
+    },
+    "cleanup": []
+  }
+}

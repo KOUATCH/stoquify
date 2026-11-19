@@ -1,0 +1,104 @@
+{
+  "head": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "sourceFiles": 3354,
+  "fingerprint": "0914cda54581842227be63e150dd90c43d538f068fa2c3c04a8a9bf793848e1b",
+  "ownedApplicationFiles": [
+    {
+      "file": "services/purchase-order/purchase-order-authoring.service.ts",
+      "sha256": "1c4d84aa1f8755a257affc28b7d69e7bd0599493eca0133e861b8ee50c52d112",
+      "beforeSha256": "8fd28738f93cbaf2bd78b11088546228b9e0ccad18fded6a41d01a869006f842"
+    },
+    {
+      "file": "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+      "sha256": "c9b6e3780fd7e4438f5910c706a66932786098a47baeffe77174c62cb18a89a4",
+      "beforeSha256": "68bdb6b7118b8461f7c8df7129798d65f6c285609d7e7651e917daabbdb9eb1e"
+    },
+    {
+      "file": "types/purchase-orders-system-types.ts",
+      "sha256": "3058933ab47e72ed8a0c7c6e3d23ebb03f69cb7be5e76e004895625b511056a2",
+      "beforeSha256": "b19ef47ff30b1e263f8fea518077ada09183d6b0f35f58b84176d2ac9d2a9dd8"
+    },
+    {
+      "file": "hooks/usePurchaseOrderClone.ts",
+      "sha256": "c7eaa7d897ef91c2474f9ba6285510b77f4699d9b963cb36cb5c1c58f9c9dab7",
+      "beforeSha256": "a69808e9eb6292209d5e542e4f264f2e04f7431e0843b0976705023d1c4efda1"
+    },
+    {
+      "file": "hooks/useRecentPurchaseOrderQueries.ts",
+      "sha256": "6cd183e812be8f9e033a0d87d1b044be0416349210580e9258057ad9ffa3c243",
+      "beforeSha256": "a334e694c62e85244238e6bd14fedb4def9261c6fc233f4cdb4a116bfe384038"
+    },
+    {
+      "file": "components/purchase-orders/ModernCreatePurchaseOrderForm.tsx",
+      "sha256": "4c06d8eef75aeb2d67256d191519272d2718db061c83cf5fae2dc508226e0e75",
+      "beforeSha256": "e59a63fbdfbc8cb2381842390de87b8475df7e7cc0de76cab54d6a5e9a76c50c"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx",
+      "sha256": "7f2bb54e4676ff986298223db814ced82bac42a18fe86ffc210e1f8efaea5612",
+      "beforeSha256": "ebf231beee3dea7cd91e811c39725dba516719b324f1578c4a032c057fad4ecb"
+    },
+    {
+      "file": "messages/en.json",
+      "sha256": "779a53d0a602bf16301c12c5376811ac835a3573cfc9300331c8a6d6a8fb8825",
+      "beforeSha256": "5a75ff48e318d1cc4cca824efd134ef0a7305d1871e6e06d69e655fc906024b4"
+    },
+    {
+      "file": "messages/fr.json",
+      "sha256": "4504e1dcdbc3e5c8c56e9c80e4895447c6426e3062f2960e34b5f6bf65eb6990",
+      "beforeSha256": "f139517430b720f5c4de6bd277c2de24a97df6068989f92fd8cf99d59cc50cd6"
+    },
+    {
+      "file": "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx",
+      "sha256": "064e888fc319de0d1c142b623323c9eecf0cd34980458ebbf2484e084bca3a6a",
+      "beforeSha256": "b118b511ac36ded0821921475984cbce18ad42745e79b800e28a0c2153eaad78"
+    }
+  ],
+  "checks": {
+    "authoring": {
+      "success": true,
+      "passed": 5,
+      "failed": 0
+    },
+    "worker": {
+      "success": true,
+      "passed": 2,
+      "failed": 0
+    },
+    "ap": {
+      "success": true,
+      "passed": 2,
+      "failed": 0
+    },
+    "mocked": {
+      "success": true,
+      "passed": 48,
+      "failed": 0
+    },
+    "upgrade": {
+      "status": "PASS",
+      "database": "stoquify_local_closure_upgrade_46bce601"
+    },
+    "restore": {
+      "status": "PASS",
+      "database": "stoquify_local_closure_restore_ff8f44ba",
+      "tables": 246
+    },
+    "clone-browser": {
+      "status": "PASS"
+    },
+    "authenticatedBrowser": [
+      {
+        "locale": "en",
+        "status": "PASS",
+        "requestId": "b9c051cb-d0b2-4eff-b0e8-ced5caa3aaa4"
+      },
+      {
+        "locale": "fr",
+        "status": "PASS",
+        "requestId": "d6614149-6541-40c1-b8e3-20e7ce316768"
+      }
+    ]
+  },
+  "typecheckLogBytes": 0
+}

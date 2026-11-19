@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+import "@testing-library/jest-dom"
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import * as actions from "@/actions/accounting/close-evidence-workflow.actions"
 import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"

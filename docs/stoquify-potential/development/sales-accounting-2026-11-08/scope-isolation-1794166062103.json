@@ -1,0 +1,65 @@
+{
+  "cases": [
+    {
+      "field": "organizationId",
+      "auditDelta": 0
+    },
+    {
+      "field": "userId",
+      "auditDelta": 1
+    },
+    {
+      "field": "locationId",
+      "auditDelta": 1
+    },
+    {
+      "field": "terminalId",
+      "auditDelta": 0
+    },
+    {
+      "field": "sessionId",
+      "auditDelta": 1
+    }
+  ],
+  "financialEffects": {
+    "status": "COMPLETED",
+    "paymentStatus": "PARTIAL",
+    "customerBalance": "4",
+    "stockQuantity": "4",
+    "stockAvailable": "4",
+    "stockValue": "16",
+    "stockVersion": 1,
+    "sessionExpected": "106",
+    "cashTotal": "6",
+    "creditTotal": "4",
+    "transactionCount": 1,
+    "drawerCurrent": "106",
+    "drawerExpected": "106",
+    "payments": [
+      {
+        "method": "CASH",
+        "amount": "6",
+        "status": "PAID"
+      },
+      {
+        "method": "CREDIT",
+        "amount": "4",
+        "status": "PENDING"
+      }
+    ],
+    "drawerTransactionCount": 2,
+    "registryCount": 1,
+    "movementCount": 1,
+    "journalCount": 2,
+    "batchCount": 2,
+    "ledgerCount": 1,
+    "receivableCount": 1,
+    "stateCount": 1,
+    "eventCount": 3,
+    "outboxCount": 3,
+    "ledgerAuditCount": 4,
+    "sourceLinkCount": 2
+  },
+  "status": "PASS",
+  "limitation": "Trusted service boundary; not a deployed role/entitlement matrix"
+}

@@ -1,0 +1,15 @@
+# Auth and provider successor qualification
+
+The first attempt completed the 22-group private-media/browser baseline. Its raw result remains 21 passed and one failed harness audit-count assertion. Independent review established that the expected six module audits should be four for the disabled-tenant actor: two synthetic-alias requests fail the tenant boundary first. All six requests were denied safely. The raw result and the separate corrected review are retained and bound by SHA-256 in the successor runtime.
+
+The first auth run reached all browser journeys, then the evidence writer refused to publish because its secret scan matched report content. That failure, screenshots and database snapshots remain intact. They are not treated as a complete auth result. The versioned v4 auth harness corrects evidence handling and records sanitized progress incrementally; its exact changes require independent admission.
+
+The successor uses the same sealed artifact `9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0` and a fresh physical runtime directory, `D:/p04-v02-fullapp-20261109-r1/runtime-attempt02`. Its intended scope is 116 auth groups and 23 provider groups. The 22 baseline groups are reused, not rerun.
+
+The new database is `stoquify_local_p04v02_20261109_full_r2`, cloned only from the task-owned empty build database after all public business tables and all 121 migration checksums are verified. The recorded cluster path, PID and port 55509 must match. The entire first database remains in place; exact before/after snapshots must prove the clone operation did not change it. Credentials are generated in the fresh private `attempt02` directory. No existing fixture is reset or deleted.
+
+Execution order: independently admit preparation; create the fresh clone; seed synthetic fixtures; independently admit v4 and successor runtime; run the versioned frozen-source gate; start the isolated runtime and execute auth and provider suites. Auth assertion failures do not suppress provider tests. An auth evidence-publication exception is retained as a harness failure and the independent provider suite can continue when its own authority prerequisites hold.
+
+Qualification remains limited to frozen candidate `p04-v02-full-6577e9e63dc7`. The original whole-checkout equality failure is preserved. Four concurrent accounting edits were independently reconciled, but the current whole checkout and the entire inventory import closure are not claimed byte-identical or qualified.
+
+Cleanup is mandatory for both databases: run the original session finalizer for `full_r1` and the versioned finalizer for `full_r2`, proving business/audit state is unchanged and synthetic sessions are zero in each. Then stop the exact owned PostgreSQL cluster, retain all database/artifact evidence, verify owned runtime/proxy/DB ports are released, and run the frozen final integrity proof. No product fixes, production changes, commits, pushes or deployment are authorized by this successor.

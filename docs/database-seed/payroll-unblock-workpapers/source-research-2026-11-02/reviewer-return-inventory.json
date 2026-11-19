@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-02T16:50:52.822Z",
+  "classification": "AVAILABILITY_AND_PREPARATION_NOT_REVIEW_DECISION",
+  "userConfirmedAvailability": {
+    "reportedBy": "User, relayed by parent task on 2026-11-02",
+    "signedReviewerDecisionsAvailable": false,
+    "independentFixturesAvailable": false,
+    "approvedCalculationContractAvailable": false,
+    "requestFurtherConfirmation": false
+  },
+  "search": {
+    "roots": [
+      "docs/HR-Payroll",
+      "docs/HRIS-Payroll",
+      "docs/payroll-HRIS",
+      "docs/database-seed",
+      "docs/payroll-blockers",
+      "plans"
+    ],
+    "fileKinds": [
+      "JSON content",
+      "review/approval/signed/source filenames"
+    ],
+    "terms": [
+      "signedApprovalArtifact",
+      "APPROVED_FOR_USE",
+      "VERIFIED_SIGNATURE"
+    ],
+    "conclusion": "No genuine signed payroll review return or approved historical envelope found in the inspected source/evidence paths. Existing working/template files are unsigned. This is a bounded repository search, corroborated by user attestation; it is not a claim about external inboxes or unconnected storage."
+  },
+  "returns": [
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/review-decision.return.working.json",
+      "sha256": "6fe371bb9bac4b78f3676eb5aa0215977e6f80eb2f0a5515e233ae4d5ca5fd09",
+      "decisionStatus": "PENDING_EXPERT_REVIEW",
+      "productionUseAllowed": false,
+      "signedArtifactFile": null,
+      "signedArtifactSha256": null,
+      "signedAt": null,
+      "signatureVerificationStatus": "PENDING_CHECKER_VERIFICATION",
+      "classification": "UNSIGNED_TEMPLATE_OR_WORKING_COPY_NOT_APPROVAL"
+    },
+    {
+      "file": "docs/database-seed/payroll-unblock-workpapers/maker-checker-approval.working.json",
+      "sha256": "ca609783980e2941efe0ae25ed87251066537de6cd38d79cba6b1b8c46482889",
+      "decisionStatus": null,
+      "productionUseAllowed": null,
+      "signedArtifactFile": null,
+      "signedArtifactSha256": null,
+      "signedAt": null,
+      "signatureVerificationStatus": "PENDING_CHECKER_VERIFICATION",
+      "classification": "UNSIGNED_TEMPLATE_OR_WORKING_COPY_NOT_APPROVAL"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-decision.template.json",
+      "sha256": "5bbccf6c764b8cd20acd9c42aa40f4fd384f4a044f682cdc620c7736be54b9e9",
+      "decisionStatus": "PENDING_EXPERT_REVIEW",
+      "productionUseAllowed": false,
+      "signedArtifactFile": null,
+      "signedArtifactSha256": null,
+      "signedAt": null,
+      "signatureVerificationStatus": null,
+      "classification": "UNSIGNED_TEMPLATE_OR_WORKING_COPY_NOT_APPROVAL"
+    },
+    {
+      "file": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/review-decision.return.template.json",
+      "sha256": "d3c927cf27907e7c173e1fdc81a67d167b9ddafa02aa1d86c7e087f9c6f59b3d",
+      "decisionStatus": "PENDING_EXPERT_REVIEW",
+      "productionUseAllowed": false,
+      "signedArtifactFile": null,
+      "signedArtifactSha256": null,
+      "signedAt": null,
+      "signatureVerificationStatus": "PENDING_CHECKER_VERIFICATION",
+      "classification": "UNSIGNED_TEMPLATE_OR_WORKING_COPY_NOT_APPROVAL"
+    }
+  ],
+  "statutoryApproval": false,
+  "productionUseAllowed": false,
+  "operatorUpdatesAllowed": false
+}

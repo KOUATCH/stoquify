@@ -1,0 +1,107 @@
+{
+  "observedAt": "2026-11-02T16:30:40.443Z",
+  "original": {
+    "selectedClient": "af11-1792936726123-browser-client",
+    "revisions": [],
+    "journalCount": 0,
+    "packCertified": false,
+    "closeRunStatus": "BLOCKED",
+    "preparerSessions": 1
+  },
+  "clone": {
+    "selectedClient": "af11-1792936726123-browser-client",
+    "revisions": [
+      {
+        "code": "CLOSE_EVIDENCE_COLLECTION",
+        "instanceId": "ef727d72-2e55-4103-abda-2375b8c3bff7",
+        "version": 1,
+        "actorId": "af11-1792936726123-browser-preparer",
+        "decision": "PREPARED",
+        "sourceSnapshot": {
+          "code": "CLOSE_EVIDENCE_COLLECTION",
+          "coverage": "OPERATIONAL",
+          "packHash": null,
+          "refreshBy": null,
+          "sourceHash": "sha256:4ae762f8d8ae2fe20fc24a67066a68f4d205260e2ac79eae1d522a80441c0e72",
+          "countryCode": "CM",
+          "effectiveTo": null,
+          "effectiveFrom": null,
+          "sourceVersion": "close-evidence-collection-v1",
+          "catalogVersion": "af11-operational-v1",
+          "classification": "OPERATIONAL",
+          "officialSources": [],
+          "qualifiedReview": null,
+          "sourceCheckedOn": null,
+          "statutoryVerified": false
+        }
+      },
+      {
+        "code": "CLOSE_EVIDENCE_COLLECTION",
+        "instanceId": "ef727d72-2e55-4103-abda-2375b8c3bff7",
+        "version": 2,
+        "actorId": "af11-1792936726123-browser-reviewer",
+        "decision": "REVIEWED",
+        "sourceSnapshot": {
+          "code": "CLOSE_EVIDENCE_COLLECTION",
+          "coverage": "OPERATIONAL",
+          "packHash": null,
+          "refreshBy": null,
+          "sourceHash": "sha256:4ae762f8d8ae2fe20fc24a67066a68f4d205260e2ac79eae1d522a80441c0e72",
+          "countryCode": "CM",
+          "effectiveTo": null,
+          "effectiveFrom": null,
+          "sourceVersion": "close-evidence-collection-v1",
+          "catalogVersion": "af11-operational-v1",
+          "classification": "OPERATIONAL",
+          "officialSources": [],
+          "qualifiedReview": null,
+          "sourceCheckedOn": null,
+          "statutoryVerified": false
+        }
+      },
+      {
+        "code": "CM_VAT_MONTHLY",
+        "instanceId": "83a10dc5-75f5-4cba-8849-87b7010eb437",
+        "version": 1,
+        "actorId": "af11-1792936726123-browser-reviewer",
+        "decision": "PREPARED",
+        "sourceSnapshot": {
+          "code": "CM_VAT_MONTHLY",
+          "coverage": "EXPIRED",
+          "packHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+          "refreshBy": "2026-09-09T00:00:00.000Z",
+          "sourceHash": "sha256:ae45752e571b16481a56267c7f2e798506acdac2a76926bdb6e9b05d29d14d89",
+          "countryCode": "CM",
+          "effectiveTo": null,
+          "effectiveFrom": "2026-01-01",
+          "sourceVersion": "CM-2026.1",
+          "catalogVersion": "af11-operational-v1",
+          "classification": "REGULATORY_REVIEW_REQUIRED",
+          "officialSources": [
+            {
+              "url": "https://www.impots.cm/fr/code-general-des-impots-mis-jour-au-1er-janvier-2025",
+              "retrievedOn": "2026-06-11"
+            },
+            {
+              "url": "https://www.impots.cm/fr/calendrier-fiscal",
+              "retrievedOn": "2026-06-11"
+            }
+          ],
+          "qualifiedReview": null,
+          "sourceCheckedOn": "2026-06-11",
+          "statutoryVerified": false
+        }
+      }
+    ],
+    "journalCount": 0,
+    "packCertified": false,
+    "closeRunStatus": "BLOCKED",
+    "preparerSessions": 0
+  },
+  "ownedDatabaseStopped": true,
+  "otherDatabaseClients": 0,
+  "serverStopped": true,
+  "proxyStopped": true,
+  "proxyPortFree": true,
+  "cloneRetained": "stoquify_local_af16_20261102_obligation_r4"
+}

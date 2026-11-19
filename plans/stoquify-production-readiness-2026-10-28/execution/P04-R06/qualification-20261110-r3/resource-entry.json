@@ -1,0 +1,143 @@
+{
+  "capturedAt": "2026-11-10T14:51:02.0357800Z",
+  "readOnly": true,
+  "storage": "D:\\p04-r06-fullapp-20261110-r2",
+  "totalPhysicalBytes": 25621872640,
+  "freePhysicalBytes": 9583325184,
+  "totalCommitBytes": 37109133312,
+  "freeCommitBytes": 14752428032,
+  "pagefiles": [
+    {
+      "Name": "C:\\pagefile.sys",
+      "AllocatedBaseSize": 10955,
+      "CurrentUsage": 618,
+      "PeakUsage": 5529
+    }
+  ],
+  "drives": [
+    {
+      "drive": "C",
+      "freeBytes": 9026158592,
+      "usedBytes": 229689503744
+    },
+    {
+      "drive": "D",
+      "freeBytes": 16845660160,
+      "usedBytes": 45649465344
+    },
+    {
+      "drive": "E",
+      "freeBytes": 1539010560,
+      "usedBytes": 270402879488
+    }
+  ],
+  "ownedProcesses": [],
+  "listeningPorts": [],
+  "portInspectionError": null,
+  "largestApplications": [
+    {
+      "application": "node",
+      "processCount": 48,
+      "workingSetBytes": 2749079552,
+      "privateBytes": 3391414272
+    },
+    {
+      "application": "ChatGPT",
+      "processCount": 16,
+      "workingSetBytes": 2310619136,
+      "privateBytes": 2273714176
+    },
+    {
+      "application": "snyk",
+      "processCount": 9,
+      "workingSetBytes": 1230123008,
+      "privateBytes": 2025463808
+    },
+    {
+      "application": "msedgewebview2",
+      "processCount": 25,
+      "workingSetBytes": 1291825152,
+      "privateBytes": 1280475136
+    },
+    {
+      "application": "codex",
+      "processCount": 2,
+      "workingSetBytes": 766173184,
+      "privateBytes": 754339840
+    },
+    {
+      "application": "claude",
+      "processCount": 9,
+      "workingSetBytes": 348479488,
+      "privateBytes": 723222528
+    },
+    {
+      "application": "svchost",
+      "processCount": 91,
+      "workingSetBytes": 1019437056,
+      "privateBytes": 709206016
+    },
+    {
+      "application": "GenOffice",
+      "processCount": 6,
+      "workingSetBytes": 1019650048,
+      "privateBytes": 665690112
+    },
+    {
+      "application": "MsMpEng",
+      "processCount": 1,
+      "workingSetBytes": 362307584,
+      "privateBytes": 405053440
+    },
+    {
+      "application": "explorer",
+      "processCount": 1,
+      "workingSetBytes": 351436800,
+      "privateBytes": 389234688
+    },
+    {
+      "application": "4kvideodownloaderplus",
+      "processCount": 1,
+      "workingSetBytes": 193667072,
+      "privateBytes": 328372224
+    },
+    {
+      "application": "git",
+      "processCount": 2,
+      "workingSetBytes": 1232097280,
+      "privateBytes": 294227968
+    },
+    {
+      "application": "copilotapp",
+      "processCount": 9,
+      "workingSetBytes": 127676416,
+      "privateBytes": 255094784
+    },
+    {
+      "application": "SystemSettings",
+      "processCount": 1,
+      "workingSetBytes": 1925120,
+      "privateBytes": 196849664
+    },
+    {
+      "application": "logioptionsplus_agent",
+      "processCount": 1,
+      "workingSetBytes": 82399232,
+      "privateBytes": 194113536
+    }
+  ],
+  "interpretation": "Private-byte application totals are attribution only; free commit is the admission measure. No command lines, environment values or process termination.",
+  "thresholds": {
+    "freePhysicalBytes": 6442450944,
+    "freeCommitBytes": 12884901888,
+    "freeBuildDriveBytes": 12884901888
+  },
+  "passed": true,
+  "failures": [],
+  "rationale": "Conservative local retry gate: unchanged approximately 4 GiB default Node heap; retained compiler plus separate type/lint workers need native/process headroom. Thresholds admit an attempt, not a guarantee of build success.",
+  "successorContext": {
+    "storage": "D:/p04-r06-fullapp-20261110-r3",
+    "scope": "Host memory/disk entry check only; retained r2 process/port filter. Successor ownership and ports require their own later admission.",
+    "collectorAdmissionSha256": "1d351c6d9ce5b2433364e20ee72ab915f1c3bb9196960fe7b5c763fd0203a9b9"
+  }
+}

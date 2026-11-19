@@ -1,0 +1,11 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const packet=path.dirname(__dirname),root=path.resolve(__dirname,'../../../../../..'),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'),read=p=>JSON.parse(fs.readFileSync(p));
+const prior=read(path.join(__dirname,'RUNTIME-RECIPE-ADMISSION.json')),name='runtime-recipe-manifest-v5.json',manifest=read(path.join(packet,name));
+assert.equal(manifest.files.length,12);
+for(const row of manifest.files){assert.equal(sha(path.join(packet,row.path)),row.sha256);const old=prior.files.find(r=>r.path===row.path);if(old)assert.equal(row.sha256,old.sha256);else assert(['admit-runtime-source-v3.cjs','inventory/source-after-manifest-v3.json'].includes(row.path));}
+assert.equal(fs.readFileSync(path.join(packet,'admit-runtime-source-v3.cjs'),'utf8'),fs.readFileSync(path.join(packet,'admit-runtime-source.cjs'),'utf8').replaceAll('source-after-manifest.json','source-after-manifest-v3.json'));
+assert.equal(cp.spawnSync(process.execPath,['--check',path.join(packet,'admit-runtime-source-v3.cjs')],{encoding:'utf8',windowsHide:true}).status,0);
+const inputs=read(path.join(packet,'inventory/source-after-manifest-v3.json'));assert.equal(inputs.files.length,63);for(const row of inputs.files)assert.equal(sha(path.join(root,row.path)),row.sha256);
+const result={...prior,createdAt:new Date().toISOString(),manifest:name,manifestSha256:sha(path.join(packet,name)),files:manifest.files,currentSelectedSourceInputsVerified:inputs.files,previousAdmissionSha256:sha(path.join(__dirname,'RUNTIME-RECIPE-ADMISSION.json')),change:'Only the immutable current source inventory and read-only gate filenames changed; all58-case runner, native fixtures, bridge, direct API, finalizer and final integrity definitions are byte-identical to prior admission.',sourceAdmissionSha256:sha(path.join(__dirname,'REPAIR-SOURCE-ADMISSION-v2.json')),actualRuntimeOutcomeClaimed:false};
+fs.writeFileSync(path.join(__dirname,'RUNTIME-RECIPE-ADMISSION-v2.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({passed:true,recipes:12,sourceInputs:63,planned:58}));

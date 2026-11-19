@@ -73,6 +73,16 @@ function moduleDecision(overrides: Record<string, unknown> = {}) {
 }
 
 describe("protect", () => {
+  it.each(["user", "tenant"])("rejects a changed %s between assurance and permission reads", async kind => {
+    mockRequireFreshAuth.mockResolvedValue({ claims: { userId: "user-1", tenantId: "org-1", lastAuthAt: Date.now() } })
+    mockRequirePermission.mockResolvedValue({ userId: kind === "user" ? "user-2" : "user-1", orgId: kind === "tenant" ? "org-2" : "org-1", permissions: ["hris.people.manage"] })
+    const handler = jest.fn().mockResolvedValue({ changed: true })
+    const action = protect({ permission: "hris.people.manage", freshAuth: true }, handler)
+    const result = await action({})
+    expect(result).toMatchObject({ success: false, status: 403, data: null, code: "FRESH_AUTH_REQUIRED" })
+    expect(handler).not.toHaveBeenCalled()
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+  })
   it.each(["handler", "rbac", "fresh"])("emits the same correlation as the safe %s failure without request secrets", async kind => {
     const sink = jest.fn(); setLoggerSink(sink)
     mockRequirePermission.mockResolvedValue({ userId: "user-1", orgId: "org-1", permissions: ["users.read"] })
@@ -87,7 +97,7 @@ describe("protect", () => {
   })
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: new Date("2026-06-30T11:59:00.000Z").getTime() } })
+    mockRequireFreshAuth.mockResolvedValue({ claims: { userId: "user-1", tenantId: "org-1", lastAuthAt: new Date("2026-06-30T11:59:00.000Z").getTime() } })
     mockAssertCanUseOrganization.mockResolvedValue(true)
     mockObserveModuleAccess.mockResolvedValue(moduleDecision())
   })

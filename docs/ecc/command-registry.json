@@ -43,7 +43,8 @@
       "files": {
         "scripts/dev-app-safe.js": "b0a1fe5fc5ff3923c7430ae2813e1df816b13725176754d78b208b723535f52f",
         "scripts/__tests__/dev-app-safe.node-test.cjs": "4e72638209dfe7e885e7ebfcab53105d953a4fc02850244e79834a03ce44d0de",
-        "next.config.mjs": "fac541a56d635599b44b86fe33fcfa8bff45289b48d21135ee03b49f2bc82641"
+        "next.config.mjs": "4fb1ad90cf7c91af7a04cd2abcfd00effc7c2677bd974a45096103b211a39d49",
+        "config/private-upload-aliases.json": "9cc5f6ee3f72c4a6d5eed6759b9e8ad8ab7fab90f11a7010374419fb7a4778fc"
       }
     },
     "agent:workflow:check": {
@@ -153,7 +154,7 @@
       "files": {
         "jest.ecc-pilots.config.cjs": "c649e25dd823e3e1b76f2747935cf71efaa3c721d4a93aed6a794597bd7394bb",
         "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
-        "lib/security/__tests__/rbac.test.ts": "2f2d43d7556e2846d5df238c952179c313cf694705625b2c9a0088da1d5c2931",
+        "lib/security/__tests__/rbac.test.ts": "425064af9fe0e7cb814d8a5f3c982907900eec89d4316a1abe9e0058b42a85e8",
         "services/pos/__tests__/checkout-lifecycle.service.test.ts": "f944d7ded1d168186eb802ceb094ff76ef48489667ff0e69ba875fb570b16fa0",
         "services/purchasing/__tests__/payment-release-evidence.test.ts": "32a74254e418a785ffa3258be5ceef686783c7b722f758094c5f90dfba849d2d",
         "services/inventory/__tests__/inventory-stock-event.service.test.ts": "52b5eaa255ba2a647678b9120012618b26a8d178c3e322dc37130a5e0e73ebf9",
@@ -162,7 +163,7 @@
         "scripts/__tests__/public-color-contract.test.js": "a272a503537c5e61cb35f53c4c52915800c1ea2c6256cdde9da89c2c1225521f",
         "components/dashboard/__tests__/DashboardRouteState.test.tsx": "f5dcb0a281d9797ecbecfd373f5a562583927c7ade8bc5f431261025153b3319",
         "components/auth/__tests__/LoginSubmissionSafety.test.tsx": "4a112b34581fe7509fb95b16763fe629783b1cd3da401f2c94365dda3b6b7c24",
-        "components/auth/v2/__tests__/PasswordRecoveryForms.test.tsx": "08a14eb19705ffa044d6e2d96818eb01c21e35a0b044d33df421330dffe014e2"
+        "components/auth/v2/__tests__/PasswordRecoveryForms.test.tsx": "da7639d276306613f83dd47e41d13a0b8d60130a8e32dd8912cc143e448d4c1a"
       }
     },
     "release:artifact": {
@@ -194,6 +195,29 @@
         "post": null
       },
       "files": {}
+    },
+    "prisma:restart": {
+      "script": "pwsh -NoProfile -File scripts/prisma-dev-restart.ps1",
+      "auditAllowed": false,
+      "reason": "Windows development recovery: validates and stops all verified dev launcher/server pairs in this checkout, generates Prisma Client once, and restarts all servers on their saved bindings in hidden background processes. Reclaims conflicting ports only from verified dev servers in this checkout, with bounded EADDRINUSE retries, separate attempt logs and readiness checks. Loads app configuration; not a read-only audit. Does not run migrations.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
+    "test:prisma:restart": {
+      "script": "pwsh -NoProfile -File scripts/__tests__/prisma-dev-restart.test.ps1",
+      "auditAllowed": true,
+      "reason": "Isolated PowerShell function tests with in-memory multi-server/listener fixtures and mocked OS, filesystem and application operations. No actual process termination, file writes, Prisma generation, environment loading, server startup or database access.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {
+        "scripts/prisma-dev-restart.ps1": "598e5331edfbed343a8d5f649f651fd8d5ac715ea0f321e1ddbb6263002d9ecd",
+        "scripts/__tests__/prisma-dev-restart.test.ps1": "77444f6a9f14796804049912711d25901d27ee7cd944fc882cf8677f2f6bcbee"
+      }
     }
   }
 }

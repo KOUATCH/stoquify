@@ -1,0 +1,414 @@
+{
+  "at": "2026-10-26T18:31:25.867Z",
+  "environment": [
+    {
+      "database": "stoquify_pos_audit_20261026_d30f",
+      "version": "PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.44.35209, 64-bit"
+    }
+  ],
+  "migrations": [
+    {
+      "count": 120
+    }
+  ],
+  "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+  "period": {
+    "id": "cmvpl739c0005maeomy35mmm6",
+    "status": "CLOSED",
+    "controlVersion": 3
+  },
+  "faults": [],
+  "seals": [
+    {
+      "id": "cmvpl8e4g00iumaeo41knpjht",
+      "operation": "CLOSE",
+      "version": 1,
+      "approval": {
+        "closeRunId": "cmvpl81m100f6maeoqbuuzuac",
+        "contentHash": "sha256:c9f4f39bdab47c9e4560b3d2a64565c9d5abeade62c42371703977a8249370e2",
+        "approvedById": "cmvpl7nlx00a6maeogm9bkud0",
+        "preparedById": "cmvpl745t0011maeoqzq9byjv",
+        "sourceRevision": "142",
+        "certifiedExportId": "cmvpl8cpp00iimaeowdh81b4w"
+      }
+    },
+    {
+      "id": "cmvpl8f0100j0maeoh5huymhc",
+      "operation": "REOPEN",
+      "version": 2,
+      "approval": {
+        "closedAt": "2026-10-26T18:26:20.373Z",
+        "lockedAt": "2026-10-26T18:26:20.373Z",
+        "closedById": "cmvpl7nlx00a6maeogm9bkud0",
+        "priorControlEventId": "cmvpl8e4g00iumaeo41knpjht"
+      }
+    },
+    {
+      "id": "cmvpl8uov00s3maeogteev9fv",
+      "operation": "CLOSE",
+      "version": 3,
+      "approval": {
+        "closeRunId": "cmvpl8nbo00p5maeof1f6lk94",
+        "contentHash": "sha256:d678ea38d8270276958878af765bc1d6f7c0128270038795a0fd5046ec778312",
+        "approvedById": "cmvpl7nlx00a6maeogm9bkud0",
+        "preparedById": "cmvpl745t0011maeoqzq9byjv",
+        "sourceRevision": "182",
+        "certifiedExportId": "cmvpl8u5a00rxmaeo2p0u5pj4"
+      }
+    }
+  ],
+  "exports": [
+    {
+      "id": "cmvpl8cpp00iimaeowdh81b4w",
+      "closeRunId": "cmvpl81m100f6maeoqbuuzuac",
+      "contentHash": "sha256:c9f4f39bdab47c9e4560b3d2a64565c9d5abeade62c42371703977a8249370e2",
+      "isCertified": true,
+      "metadata": {
+        "mode": "CERTIFIED",
+        "staleState": {
+          "status": "EVIDENCE_STALE",
+          "actorId": "cmvpl746o0015maeodef9a77g",
+          "sourceId": "4b041148-686c-4748-853f-a2c87efd19d1",
+          "detectedAt": "2026-10-26T18:26:24.301Z",
+          "sourceCode": "INVENTORY_VALUATION_WRITE",
+          "sourceRing": "DOMAIN_RECHECK",
+          "sourceModel": "InventoryTransaction",
+          "sourceTable": "inventory_transactions",
+          "staleReason": "Inventory valuation write changed certified close evidence.",
+          "sourceDomain": "inventory",
+          "correlationId": null,
+          "businessEventId": "cmvpl8h3h00k9maeoyznlkn59",
+          "newEvidenceHash": "sha256:120560462990413841482ddf127f89ebc200662ca5259917d1d1e80a6943dc7d",
+          "sourceEventName": "inventory.valuation.write",
+          "invalidationSource": {
+            "ring": "DOMAIN_RECHECK",
+            "domain": "inventory",
+            "sourceCode": "INVENTORY_VALUATION_WRITE",
+            "closeImpact": "CERTIFIED_CLOSE_EVIDENCE_STALE",
+            "sourceModel": "InventoryTransaction",
+            "sourceTable": "inventory_transactions",
+            "sourceEventName": "inventory.valuation.write"
+          },
+          "previousEvidenceHash": null
+        },
+        "trustLevel": "T4",
+        "redactionNote": "Secrets, raw provider payloads, credentials, and tenant internals are excluded from this close pack.",
+        "certificationBlockers": [],
+        "statutoryCertification": {
+          "blockers": [
+            "AUTHORITY_NOT_CONFIGURED",
+            "REQUIRES_EXPERT_REVIEW",
+            "COUNTRY_PACK_UNVERIFIED",
+            "ADAPTER_SANDBOX_ONLY"
+          ],
+          "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+          "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+          "statutoryReadinessStatus": "STATUTORY_BLOCKED"
+        },
+        "inventoryAnnexFreshness": {
+          "status": "FRESH",
+          "detectedAt": "2026-10-26T18:26:17.573Z",
+          "staleReason": null,
+          "newEvidenceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5",
+          "previousEvidenceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5"
+        },
+        "inventoryValuationAnnex": {
+          "asOf": "2026-10-26T18:26:04.134Z",
+          "failures": [],
+          "sourceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5",
+          "sourceCounts": {
+            "posMovementCount": 0,
+            "openingStockCount": 0,
+            "stockWriteOffCount": 0,
+            "inventoryLevelCount": 1,
+            "purchaseReceiptCount": 1,
+            "stockAdjustmentCount": 0,
+            "class3JournalLineCount": 1,
+            "stockBusinessEventCount": 2,
+            "stockCountVarianceCount": 0,
+            "inventoryTransactionCount": 1
+          },
+          "blockerStatus": "PASSED",
+          "mismatchAmount": "0.00",
+          "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+          "observationHash": "sha256:3ce548e48c7e6ce40f438eb13dbbc2b038357d850605306d63847a9543815aa4",
+          "recordedThrough": "2026-10-26T18:26:04.134Z",
+          "valuationMethod": "WEIGHTED_AVERAGE",
+          "accountingPeriodId": "cmvpl739c0005maeomy35mmm6",
+          "evidenceHashVersion": 1,
+          "class3LedgerBalanceTotal": "200.00",
+          "inventorySubledgerValueTotal": "200.00"
+        },
+        "pilotCycleCertification": {
+          "status": "NOT_APPLICABLE",
+          "auditLogRef": null,
+          "generatedAt": null,
+          "blockerCodes": [],
+          "blockerCount": 0,
+          "applicability": "NO_RECORDED_PAYROLL_PERIOD",
+          "payrollRunRef": null,
+          "certificateHash": null,
+          "runCertificates": [],
+          "missingSignoffRoles": [],
+          "closePeriodPayrollRunCount": 0,
+          "closePeriodPayrollPeriodCount": 0,
+          "expectedAdapterChaosReleaseGateHash": null,
+          "proofBackfillAdapterChaosMatchesExpected": null
+        }
+      }
+    },
+    {
+      "id": "cmvpl8u5a00rxmaeo2p0u5pj4",
+      "closeRunId": "cmvpl8nbo00p5maeof1f6lk94",
+      "contentHash": "sha256:d678ea38d8270276958878af765bc1d6f7c0128270038795a0fd5046ec778312",
+      "isCertified": true,
+      "metadata": {
+        "mode": "CERTIFIED",
+        "trustLevel": "T4",
+        "redactionNote": "Secrets, raw provider payloads, credentials, and tenant internals are excluded from this close pack.",
+        "certificationBlockers": [],
+        "statutoryCertification": {
+          "blockers": [
+            "AUTHORITY_NOT_CONFIGURED",
+            "REQUIRES_EXPERT_REVIEW",
+            "COUNTRY_PACK_UNVERIFIED",
+            "ADAPTER_SANDBOX_ONLY"
+          ],
+          "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+          "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+          "statutoryReadinessStatus": "STATUTORY_BLOCKED"
+        },
+        "inventoryAnnexFreshness": {
+          "status": "FRESH",
+          "detectedAt": "2026-10-26T18:26:39.512Z",
+          "staleReason": null,
+          "newEvidenceHash": "sha256:791d85f10842fce4c179c7c688bb41ee9ccbd30b40ac39c28b17b2ea9cdd06a6",
+          "previousEvidenceHash": "sha256:791d85f10842fce4c179c7c688bb41ee9ccbd30b40ac39c28b17b2ea9cdd06a6"
+        },
+        "inventoryValuationAnnex": {
+          "asOf": "2026-10-26T18:26:32.240Z",
+          "failures": [],
+          "sourceHash": "sha256:791d85f10842fce4c179c7c688bb41ee9ccbd30b40ac39c28b17b2ea9cdd06a6",
+          "sourceCounts": {
+            "posMovementCount": 0,
+            "openingStockCount": 0,
+            "stockWriteOffCount": 0,
+            "inventoryLevelCount": 1,
+            "purchaseReceiptCount": 1,
+            "stockAdjustmentCount": 0,
+            "class3JournalLineCount": 2,
+            "stockBusinessEventCount": 4,
+            "stockCountVarianceCount": 0,
+            "inventoryTransactionCount": 2
+          },
+          "blockerStatus": "PASSED",
+          "mismatchAmount": "0.00",
+          "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+          "observationHash": "sha256:8c43a1861aba23d22375d89f103db2b206e1b49c3569546a59f09d83409c9f7d",
+          "recordedThrough": "2026-10-26T18:26:32.240Z",
+          "valuationMethod": "WEIGHTED_AVERAGE",
+          "accountingPeriodId": "cmvpl739c0005maeomy35mmm6",
+          "evidenceHashVersion": 1,
+          "class3LedgerBalanceTotal": "100.00",
+          "inventorySubledgerValueTotal": "100.00"
+        },
+        "pilotCycleCertification": {
+          "status": "NOT_APPLICABLE",
+          "auditLogRef": null,
+          "generatedAt": null,
+          "blockerCodes": [],
+          "blockerCount": 0,
+          "applicability": "NO_RECORDED_PAYROLL_PERIOD",
+          "payrollRunRef": null,
+          "certificateHash": null,
+          "runCertificates": [],
+          "missingSignoffRoles": [],
+          "closePeriodPayrollRunCount": 0,
+          "closePeriodPayrollPeriodCount": 0,
+          "expectedAdapterChaosReleaseGateHash": null,
+          "proofBackfillAdapterChaosMatchesExpected": null
+        }
+      }
+    },
+    {
+      "id": "cmvpl7wg400ecmaeo60y6dkjn",
+      "closeRunId": "cmvpl7s5m00aqmaeo3tu2p0ex",
+      "contentHash": "sha256:897be210e8754f8e2a706eca7b8cd8ae7cdc4e48296f5bf63794a5012c1faebf",
+      "isCertified": false,
+      "metadata": {
+        "mode": "DRAFT_NOT_CERTIFIED",
+        "trustLevel": "T2",
+        "redactionNote": "Secrets, raw provider payloads, credentials, and tenant internals are excluded from this close pack.",
+        "certificationBlockers": [
+          "Close run status is BLOCKED, not READY.",
+          "Draft close pack requires at least T3 data trust; current close run trust level is T2.",
+          "13 high-severity blocker(s) remain open.",
+          "13 open high-risk finding(s) block certification.",
+          "1 high-risk checklist gate(s) failed or unavailable."
+        ],
+        "statutoryCertification": {
+          "blockers": [
+            "AUTHORITY_NOT_CONFIGURED",
+            "REQUIRES_EXPERT_REVIEW",
+            "COUNTRY_PACK_UNVERIFIED",
+            "ADAPTER_SANDBOX_ONLY"
+          ],
+          "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+          "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+          "statutoryReadinessStatus": "STATUTORY_BLOCKED"
+        },
+        "inventoryAnnexFreshness": {
+          "status": "FRESH",
+          "detectedAt": "2026-10-26T18:25:56.882Z",
+          "staleReason": null,
+          "newEvidenceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5",
+          "previousEvidenceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5"
+        },
+        "inventoryValuationAnnex": {
+          "asOf": "2026-10-26T18:25:51.830Z",
+          "failures": [],
+          "sourceHash": "sha256:7bb08ae4d00e545cd0785860fe08f7e45077298f15e7fff2b7acb26616140ef5",
+          "sourceCounts": {
+            "posMovementCount": 0,
+            "openingStockCount": 0,
+            "stockWriteOffCount": 0,
+            "inventoryLevelCount": 1,
+            "purchaseReceiptCount": 1,
+            "stockAdjustmentCount": 0,
+            "class3JournalLineCount": 1,
+            "stockBusinessEventCount": 2,
+            "stockCountVarianceCount": 0,
+            "inventoryTransactionCount": 1
+          },
+          "blockerStatus": "PASSED",
+          "mismatchAmount": "0.00",
+          "organizationId": "org-full-pos-0595c18d-37b0-44aa-bcda-32312676b78a",
+          "observationHash": "sha256:b4599676ae06faf498b622eddd2f0bb9997afa38407e64e09fdde7d45916314c",
+          "recordedThrough": "2026-10-26T18:25:51.830Z",
+          "valuationMethod": "WEIGHTED_AVERAGE",
+          "accountingPeriodId": "cmvpl739c0005maeomy35mmm6",
+          "evidenceHashVersion": 1,
+          "class3LedgerBalanceTotal": "200.00",
+          "inventorySubledgerValueTotal": "200.00"
+        },
+        "pilotCycleCertification": {
+          "status": "NOT_APPLICABLE",
+          "auditLogRef": null,
+          "generatedAt": null,
+          "blockerCodes": [],
+          "blockerCount": 0,
+          "applicability": "NO_RECORDED_PAYROLL_PERIOD",
+          "payrollRunRef": null,
+          "certificateHash": null,
+          "runCertificates": [],
+          "missingSignoffRoles": [],
+          "closePeriodPayrollRunCount": 0,
+          "closePeriodPayrollPeriodCount": 0,
+          "expectedAdapterChaosReleaseGateHash": null,
+          "proofBackfillAdapterChaosMatchesExpected": null
+        }
+      }
+    }
+  ],
+  "journals": [
+    {
+      "id": "cmvpl7a97003ymaeocp3f6wlz",
+      "status": "POSTED",
+      "lines": [
+        {
+          "account": {
+            "code": "39011",
+            "mappingKey": "INVENTORY"
+          },
+          "debit": "200",
+          "credit": "0"
+        },
+        {
+          "account": {
+            "code": "49008",
+            "mappingKey": "GRNI"
+          },
+          "debit": "0",
+          "credit": "200"
+        }
+      ]
+    },
+    {
+      "id": "cmvpl7fc4004xmaeoyu8aq8nr",
+      "status": "POSTED",
+      "lines": [
+        {
+          "account": {
+            "code": "49008",
+            "mappingKey": "GRNI"
+          },
+          "debit": "200",
+          "credit": "0"
+        },
+        {
+          "account": {
+            "code": "49007",
+            "mappingKey": "ACCOUNTS_PAYABLE"
+          },
+          "debit": "0",
+          "credit": "200"
+        }
+      ]
+    },
+    {
+      "id": "cmvpl7kel006qmaeoe5k655lz",
+      "status": "POSTED",
+      "lines": [
+        {
+          "account": {
+            "code": "49007",
+            "mappingKey": "ACCOUNTS_PAYABLE"
+          },
+          "debit": "200",
+          "credit": "0"
+        },
+        {
+          "account": {
+            "code": "59001",
+            "mappingKey": "CASH_ON_HAND"
+          },
+          "debit": "0",
+          "credit": "200"
+        }
+      ]
+    },
+    {
+      "id": "cmvpl8g8b00jgmaeo200p351k",
+      "status": "POSTED",
+      "lines": [
+        {
+          "account": {
+            "code": "49009",
+            "mappingKey": "SUPPLIER_RETURN_CLAIM"
+          },
+          "debit": "100",
+          "credit": "0"
+        },
+        {
+          "account": {
+            "code": "39011",
+            "mappingKey": "INVENTORY"
+          },
+          "debit": "0",
+          "credit": "100"
+        }
+      ]
+    }
+  ],
+  "stock": [
+    {
+      "quantityOnHand": "1",
+      "totalValue": "100"
+    }
+  ],
+  "counts": {
+    "returns": 1,
+    "supplierPayments": 1,
+    "paymentTransactions": 1
+  }
+}

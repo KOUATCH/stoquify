@@ -1,0 +1,1609 @@
+{
+  "capturedAt": "2026-10-29T11:02:36.562Z",
+  "sourceGeneratedAt": "2026-10-29T09:21:08.586Z",
+  "database": "stoquify_replay_dataset_20261028_01",
+  "tables": [
+    {
+      "table": "access_requests",
+      "model": "AccessRequest",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "accountant_access_grants",
+      "model": "AccountantAccessGrant",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "accountant_client_invite_states",
+      "model": "AccountantClientInviteState",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accountant_client_invites",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "accountant_client_invites",
+      "model": "AccountantClientInvite",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "business_event_outbox",
+        "business_events",
+        "organizations",
+        "referral_attributions"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "accountant_comments",
+      "model": "AccountantComment",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accountant_reviews",
+        "accounting_periods",
+        "close_assurance_findings",
+        "close_evidence_items",
+        "close_runs",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "accountant_reviews",
+      "model": "AccountantReview",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "close_runs",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_activation_approvals",
+      "model": "AgentActivationApproval",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "agent_activation_packages"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_activation_owners",
+      "model": "AgentActivationOwner",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "agent_activation_packages"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_activation_packages",
+      "model": "AgentActivationPackage",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_cost_ledger",
+      "model": "AgentCostLedger",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "agent_runs",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_definitions",
+      "model": "AgentDefinition",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_evidence_links",
+      "model": "AgentEvidenceLink",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "agent_runs",
+        "agent_steps"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_feedback",
+      "model": "AgentFeedback",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "agent_runs",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_pilot_certifications",
+      "model": "AgentPilotCertification",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "agent_activation_packages"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_policy_incidents",
+      "model": "AgentPolicyIncident",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "agent_runs",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_reconciler_invocations",
+      "model": "AgentReconcilerInvocation",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_runs",
+      "model": "AgentRun",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "agent_definitions",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_skill_definitions",
+      "model": "AgentSkillDefinition",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_steps",
+      "model": "AgentStep",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "agent_runs"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "agent_tool_definitions",
+      "model": "AgentToolDefinition",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "ai_action_proposals",
+      "model": "AiActionProposal",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "agent_runs",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "balance_sheet_evidence",
+      "model": "BalanceSheetEvidence",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "chart_of_accounts"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "bank_balance_evidence",
+      "model": "BankBalanceEvidence",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "provider_accounts",
+        "statement_files"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "branch_daily_close_runs",
+      "model": "BranchDailyCloseRun",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "locations",
+        "organizations",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "branch_daily_close_sign_offs",
+      "model": "BranchDailyCloseSignOff",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "branch_daily_close_runs",
+        "branch_daily_close_sign_offs",
+        "organizations",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "business_event_anomalies",
+      "model": "BusinessEventAnomaly",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "business_events",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "cash_shortage_policies",
+      "model": "CashShortagePolicy",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "close_assurance_findings",
+      "model": "CloseAssuranceFinding",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "close_checklist_items",
+        "close_runs",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "close_checklist_items",
+      "model": "CloseChecklistItem",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "close_runs",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "close_evidence_items",
+      "model": "CloseEvidenceItem",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "close_assurance_findings",
+        "close_checklist_items",
+        "close_runs",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "close_evidence_notifications",
+      "model": "CloseEvidenceNotification",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "business_event_outbox"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "close_pack_exports",
+      "model": "ClosePackExport",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "close_runs",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "close_runs",
+      "model": "CloseRun",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "command_center_events",
+      "model": "CommandCenterEvent",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "command_center_occurrences",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "command_center_notices",
+      "model": "CommandCenterNotice",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "command_center_occurrences",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "command_center_occurrences",
+      "model": "CommandCenterOccurrence",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "command_center_preferences",
+      "model": "CommandCenterPreference",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "command_center_review_receipts",
+      "model": "CommandCenterReviewReceipt",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "command_center_review_states",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "command_center_review_states",
+      "model": "CommandCenterReviewState",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "compliance_adapter_configs",
+      "model": "ComplianceAdapterConfig",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "customer_statement_access_logs",
+      "model": "CustomerStatementAccessLog",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "customer_statement_access_tokens",
+        "customer_statement_snapshots",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "customer_statement_access_tokens",
+      "model": "CustomerStatementAccessToken",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "customer_statement_snapshots",
+        "organizations",
+        "referral_attributions"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "customer_statement_deliveries",
+      "model": "CustomerStatementDelivery",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "business_event_outbox",
+        "business_events",
+        "customer_statement_access_tokens",
+        "customer_statement_snapshots",
+        "organizations",
+        "referral_attributions"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "customer_statement_delivery_states",
+      "model": "CustomerStatementDeliveryState",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "customer_statement_deliveries",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "customer_statement_recipient_action_states",
+      "model": "CustomerStatementRecipientActionState",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "customer_statement_recipient_actions",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "customer_statement_recipient_actions",
+      "model": "CustomerStatementRecipientAction",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "customer_receivable_documents",
+        "customer_statement_access_tokens",
+        "customer_statement_snapshots",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "customer_statement_snapshots",
+      "model": "CustomerStatementSnapshot",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "customer_statement_snapshots",
+        "customers",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "daily_sales_report_cash_events",
+      "model": "DailySalesReportCashEvent",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "daily_sales_reports"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "daily_sales_report_items",
+      "model": "DailySalesReportItem",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "daily_sales_reports",
+        "items"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "daily_sales_reports",
+      "model": "DailySalesReport",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "locations",
+        "organizations",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "expense_categories",
+      "model": "ExpenseCategory",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "expenses",
+      "model": "Expense",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "expense_categories",
+        "locations",
+        "organizations",
+        "suppliers",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "financial_opening_executions",
+      "model": "FinancialOpeningExecution",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "financial_opening_revisions",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "financial_opening_operations",
+      "model": "FinancialOpeningOperation",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "financial_opening_executions"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "financial_opening_revisions",
+      "model": "FinancialOpeningRevision",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "firm_advisory_revisions",
+      "model": "FirmAdvisoryRevision",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "firm_engagements",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "firm_engagement_assignments",
+      "model": "FirmEngagementAssignment",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "firm_engagements",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "firm_engagement_grant_links",
+      "model": "FirmEngagementGrantLink",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "accountant_access_grants",
+        "firm_engagements",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "firm_engagement_transitions",
+      "model": "FirmEngagementTransition",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "firm_engagements",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "firm_engagements",
+      "model": "FirmEngagement",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "firm_obligation_revisions",
+      "model": "FirmObligationRevision",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "firm_practice_revisions",
+      "model": "FirmPracticeRevision",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "firm_engagements",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "fiscal_sequences",
+      "model": "FiscalSequence",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "goods_receipt_inspection_resolutions",
+      "model": "GoodsReceiptInspectionResolution",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "goods_receipt_inspections",
+        "goods_receipts",
+        "organizations",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "hris_attendance_anomalies",
+      "model": "HrisAttendanceAnomaly",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "hris_time_entries",
+        "hris_time_import_batches",
+        "organizations",
+        "payroll_employees"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "hris_employee_documents",
+      "model": "HrisEmployeeDocument",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "hris_employee_documents",
+        "payroll_employees"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "hris_lifecycle_tasks",
+      "model": "HrisLifecycleTask",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "payroll_employees"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "hris_payroll_handoff_packages",
+      "model": "HrisPayrollHandoffPackage",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "hris_payroll_handoff_packages",
+        "organizations",
+        "payroll_periods"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "hris_payroll_handoff_receipts",
+      "model": "HrisPayrollHandoffReceipt",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "hris_payroll_handoff_packages",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "hris_personal_correction_cases",
+      "model": "HrisPersonalCorrectionCase",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "payroll_employees"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "hris_public_holidays",
+      "model": "HrisPublicHoliday",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "hris_work_calendars",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "hris_setup_reviewer_grants",
+      "model": "HrisSetupReviewerGrant",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_employees",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "invites",
+      "model": "Invite",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "roles"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "onboarding_import_batches",
+      "model": "OnboardingImportBatch",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "onboarding_import_mappings",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "onboarding_import_issues",
+      "model": "OnboardingImportIssue",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "onboarding_import_batches",
+        "onboarding_import_rows",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "onboarding_import_mappings",
+      "model": "OnboardingImportMapping",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "onboarding_import_rows",
+      "model": "OnboardingImportRow",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "onboarding_import_batches",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "onboarding_readiness_milestones",
+      "model": "OnboardingReadinessMilestone",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payment_refunds",
+      "model": "PaymentRefund",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "payments",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_attendance_snapshots",
+      "model": "PayrollAttendanceSnapshot",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_attendance_snapshots",
+        "payroll_employees",
+        "payroll_periods"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_declaration_evidence",
+      "model": "PayrollDeclarationEvidence",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_declarations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_declarations",
+      "model": "PayrollDeclaration",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_runs"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_employee_balance_cases",
+      "model": "PayrollEmployeeBalanceCase",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_employees",
+        "payroll_payslips",
+        "payroll_runs"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_employee_balance_events",
+      "model": "PayrollEmployeeBalanceEvent",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_employee_balance_cases"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_employee_rubrique_assignments",
+      "model": "PayrollEmployeeRubriqueAssignment",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_employees",
+        "payroll_rubriques"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_payment_allocations",
+      "model": "PayrollPaymentAllocation",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_employees",
+        "payroll_payment_batches",
+        "payroll_payslips"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_payment_batches",
+      "model": "PayrollPaymentBatch",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_runs"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_payslip_lines",
+      "model": "PayrollPayslipLine",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_payslips"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_payslips",
+      "model": "PayrollPayslip",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "business_events",
+        "organizations",
+        "payroll_employees",
+        "payroll_run_lines",
+        "payroll_runs"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_periods",
+      "model": "PayrollPeriod",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_rubriques",
+      "model": "PayrollRubrique",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_run_lines",
+      "model": "PayrollRunLine",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "payroll_attendance_snapshots",
+        "payroll_contracts",
+        "payroll_employees",
+        "payroll_runs"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_run_transitions",
+      "model": "PayrollRunTransition",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "business_events",
+        "organizations",
+        "payroll_runs"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "payroll_runs",
+      "model": "PayrollRun",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "business_events",
+        "organizations",
+        "payroll_periods",
+        "payroll_runs"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "period_control_events",
+      "model": "PeriodControlEvent",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "picture_assets",
+      "model": "PictureAsset",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "pos_cash_shortage_worker_checkpoints",
+      "model": "PosCashShortageWorkerCheckpoint",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "pos_offline_devices",
+      "model": "POSOfflineDevice",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "locations",
+        "organizations",
+        "pos_terminals"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "pos_offline_events",
+      "model": "POSOfflineEvent",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "business_events",
+        "locations",
+        "organizations",
+        "pos_offline_devices",
+        "pos_offline_sync_batches",
+        "pos_sessions",
+        "pos_terminals"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "pos_offline_sync_batches",
+      "model": "POSOfflineSyncBatch",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "pos_offline_devices"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "pos_offline_sync_certificates",
+      "model": "POSOfflineSyncCertificate",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "locations",
+        "organizations",
+        "pos_offline_devices",
+        "pos_terminals"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "pos_offline_sync_conflicts",
+      "model": "POSOfflineSyncConflict",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "pos_offline_devices",
+        "pos_offline_events",
+        "pos_offline_sync_batches"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "provider_events",
+      "model": "ProviderEvent",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "provider_accounts"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "public_identity_abuse_buckets",
+      "model": "PublicIdentityAbuseBucket",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "public_receipt_access_tokens",
+      "model": "PublicReceiptAccessToken",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "sales_orders"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "purchase_order_authoring_drafts",
+      "model": "PurchaseOrderAuthoringDraft",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "purchase_orders",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "reconciliation_no_activity_evidence",
+      "model": "ReconciliationNoActivityEvidence",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "accounting_periods",
+        "provider_accounts"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "referral_attribution_events",
+      "model": "ReferralAttributionEvent",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "referral_attributions"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "referral_attributions",
+      "model": "ReferralAttribution",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "customer_statement_snapshots",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "serial_numbers",
+      "model": "SerialNumber",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "items",
+        "locations",
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "supplier_invoice_match_exceptions",
+      "model": "SupplierInvoiceMatchException",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "supplier_invoices",
+        "three_way_matches"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "supplier_po_access_logs",
+      "model": "SupplierPoAccessLog",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "supplier_po_access_tokens",
+        "supplier_po_envelopes"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "supplier_po_access_tokens",
+      "model": "SupplierPoAccessToken",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "supplier_po_envelopes"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "supplier_po_envelopes",
+      "model": "SupplierPoEnvelope",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "purchase_orders",
+        "suppliers"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "supplier_po_proposal_lines",
+      "model": "SupplierPoProposalLine",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "supplier_po_proposals"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "supplier_po_proposal_states",
+      "model": "SupplierPoProposalState",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "supplier_po_proposals"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "supplier_po_proposals",
+      "model": "SupplierPoProposal",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "supplier_po_access_tokens",
+        "supplier_po_envelopes"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "suspense_items",
+      "model": "SuspenseItem",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "chart_of_accounts",
+        "ledger_posting_batches",
+        "organizations",
+        "payment_transactions",
+        "provider_accounts",
+        "reconciliation_runs",
+        "users"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "tenant_module_configuration_commands",
+      "model": "TenantModuleConfigurationCommand",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "tenant_module_configurations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "tenant_module_configurations",
+      "model": "TenantModuleConfiguration",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "tenant_module_grants",
+      "model": "TenantModuleGrant",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "tenant_module_configurations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "tenant_module_lifecycle_events",
+      "model": "TenantModuleLifecycleEvent",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "tenant_module_lifecycle_operations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "tenant_module_lifecycle_operations",
+      "model": "TenantModuleLifecycleOperation",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "tenant_module_configuration_commands",
+        "tenant_module_configurations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "tenant_module_lifecycle_steps",
+      "model": "TenantModuleLifecycleStep",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "tenant_module_lifecycle_operations"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "workflow_assurance_alert_deliveries",
+      "model": "WorkflowAssuranceAlertDelivery",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "workflow_assurance_incidents"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "workflow_assurance_check_definitions",
+      "model": "WorkflowAssuranceCheckDefinition",
+      "scope": "global_or_relation_scoped",
+      "count": 0,
+      "dependencies": [],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "workflow_assurance_check_findings",
+      "model": "WorkflowAssuranceCheckFinding",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "workflow_assurance_check_runs",
+        "workflow_assurance_incidents"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "workflow_assurance_check_runs",
+      "model": "WorkflowAssuranceCheckRun",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "workflow_assurance_check_definitions"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "workflow_assurance_incident_events",
+      "model": "WorkflowAssuranceIncidentEvent",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "workflow_assurance_incidents"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "workflow_assurance_incidents",
+      "model": "WorkflowAssuranceIncident",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "workflow_assurance_check_definitions",
+        "workflow_assurance_check_runs"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    },
+    {
+      "table": "workflow_assurance_waivers",
+      "model": "WorkflowAssuranceWaiver",
+      "scope": "tenant",
+      "count": 0,
+      "dependencies": [
+        "organizations",
+        "workflow_assurance_incidents"
+      ],
+      "disposition": "PENDING_BUSINESS_SCENARIO",
+      "reason": "Requires explicit scenario implementation and independent domain checks."
+    }
+  ]
+}

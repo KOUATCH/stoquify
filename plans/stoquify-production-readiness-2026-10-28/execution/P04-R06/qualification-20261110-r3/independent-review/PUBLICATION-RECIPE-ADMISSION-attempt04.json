@@ -1,0 +1,129 @@
+{
+  "at": "2026-11-17T11:31:21.262Z",
+  "reviewer": "/root/r06_capacity_review",
+  "passed": true,
+  "publicationAdmitted": true,
+  "qualificationPassed": false,
+  "expectedStatus": "blocked",
+  "expectedNewEvidenceId": "E34",
+  "candidateId": null,
+  "artifactSha256": null,
+  "files": [
+    {
+      "path": "publish-attempt04.cjs",
+      "sha256": "06457e28805441785c5d9895592da35061191a580d8fac19248a96ec34c98ef5"
+    },
+    {
+      "path": "validate-publication-attempt04.cjs",
+      "sha256": "ba64514606efc0b255703850090d9755427e090178a253f7b0e68ec6021a108d"
+    },
+    {
+      "path": "publication-input-attempt04.json",
+      "sha256": "42b1a560843a171f90b9ff36520ca3a79cb0864da03fa1bfb8fded30d7a2db70"
+    },
+    {
+      "path": "RESULT-attempt04.md",
+      "sha256": "81ddf7f9d601d63424fcb2f385e188e6de5378f7d78e3e29ca61297763e92c4c"
+    },
+    {
+      "path": "CURRENT-attempt04.md",
+      "sha256": "5057c326dc9595203c9f5dd219fa8a55b76ca836bc12bc5f67ead1549da2cdbe"
+    },
+    {
+      "path": "NEXT-attempt04.md",
+      "sha256": "1932e0216b5425317bdb6977eb05a1903a22f98cb64ee19e48dce852a1328767"
+    },
+    {
+      "path": "advancement-gates-attempt04.json",
+      "sha256": "ba506297c84ab07add713d0c8132cd3e339fc3dbc0855d0a84e5d3883756389e"
+    },
+    {
+      "path": "resource-current-schema-retry-ready-r2.json",
+      "sha256": "352f828ce91c36daf4aaabf328a82263fcaad677cd15ca7492d2e8fc1b3fe7d4"
+    },
+    {
+      "path": "publication-baseline-attempt04.json",
+      "sha256": "45b1202e76c7ba401feea020826cef9d97c1409458383938892f546d9d2fec91"
+    },
+    {
+      "path": "independent-review/CAPACITY-RETRY-OUTCOME-REVIEW-r2.json",
+      "sha256": "122410ea51fcbf7f920289b44f3a18883304298db5a8cb41a613b76d74b190f4"
+    },
+    {
+      "path": "EXECUTION-HANDOFF-current-schema-r1.md",
+      "sha256": "82e0f06bc3357cd0fcf85c85501999db2c2002493762e8162ca02ee6c3bcff8a"
+    },
+    {
+      "path": "execution-handoff-current-schema-r1.json",
+      "sha256": "ab79142f574653a3c5ea420c980f9d073026f1228beebbe59b2197936b87a744"
+    },
+    {
+      "path": "reused-evidence/independent-review/REPAIR-SOURCE-ADMISSION.json",
+      "sha256": "4993e10c3c40dd9e29e947db2533de7427d1e9cbe1290e61563aa4644936cca9"
+    },
+    {
+      "path": "publication-before-attempt04/work-register.json",
+      "sha256": "822fc01daab1ef1b4b970fdfe18286c360156c8c5ca17bb3452aab2a759c0d30"
+    },
+    {
+      "path": "publication-before-attempt04/work-register.csv",
+      "sha256": "ec4870d4432f68cf734f22d618158e748d13c1f146ef5188118ea040d9832d9f"
+    },
+    {
+      "path": "publication-before-attempt04/ROADMAP.md",
+      "sha256": "0795eacf6bbcae9571e2541959a2add7b9d222c46b83f7b6f6b4822320ca135f"
+    },
+    {
+      "path": "publication-before-attempt04/mutation-log.md",
+      "sha256": "b9b63020f2de7923b0eeb58338ec8df5a7e5db1355c5f9f10018756d8a83808d"
+    },
+    {
+      "path": "publication-before-attempt04/execution/CURRENT.md",
+      "sha256": "98ab013578733c78bcf746198fafea8281d9e9f1d0e58303f0247cf3e77223b1"
+    },
+    {
+      "path": "publication-before-attempt04/execution/NEXT.md",
+      "sha256": "d04975b7dd6b947a21a679bc37236edc9a9e3aac198b069bf1e9c73da184cc0a"
+    }
+  ],
+  "sharedBaselineFiles": [
+    {
+      "path": "work-register.json",
+      "sha256": "822fc01daab1ef1b4b970fdfe18286c360156c8c5ca17bb3452aab2a759c0d30"
+    },
+    {
+      "path": "work-register.csv",
+      "sha256": "ec4870d4432f68cf734f22d618158e748d13c1f146ef5188118ea040d9832d9f"
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "0795eacf6bbcae9571e2541959a2add7b9d222c46b83f7b6f6b4822320ca135f"
+    },
+    {
+      "path": "mutation-log.md",
+      "sha256": "b9b63020f2de7923b0eeb58338ec8df5a7e5db1355c5f9f10018756d8a83808d"
+    },
+    {
+      "path": "execution/CURRENT.md",
+      "sha256": "98ab013578733c78bcf746198fafea8281d9e9f1d0e58303f0247cf3e77223b1"
+    },
+    {
+      "path": "execution/NEXT.md",
+      "sha256": "d04975b7dd6b947a21a679bc37236edc9a9e3aac198b069bf1e9c73da184cc0a"
+    }
+  ],
+  "scope": "Minimal successor E34 blocked checkpoint publication to six shared files, followed by the exact local validator.",
+  "review": [
+    "Exact publisher and validator deltas are successor filenames (attempt03 to attempt04) and E33 to E34 only; all writes are bounded local evidence publication.",
+    "Resource receipt reports 4.041489 GiB physical and 9.081867 GiB commit below unchanged 6/12 GiB floors; D storage at 14.447754 GiB passes its 12 GiB floor. No capture/build/native/browser action is admitted.",
+    "The current bounded rehash found 2 changes among 68 selected inputs (package.json and components/dashboard/Navbar.tsx); six owned repair files remain unchanged. Drafts explicitly preserve these edits and require fresh full source/HEAD reconciliation and a newly named independently admitted recipe before capture.",
+    "E32 source/schema preparation and prior 116 authentication mocked, 28 packaging pure and 11 lifecycle mocked passes are explicitly historical. No new tests or qualification are claimed.",
+    "All six E33 shared baselines and backup hashes match. The exact writer/validator preserves the existing 59 packages, 57 domains, 14 decisions, 18 global gates, tasks, dependencies, authorizations, deferred scope and E01-E33; it adds only E34 and bounded R06/P04/V02 state.",
+    "The executed preparer remains historical; this admission binds the exact amended drafts, scripts, outcome review and backup files after review."
+  ],
+  "limits": [
+    "Publication acceptance certifies accurate blocked evidence only; R06, parent P04/P04-V02 and production remain blocked.",
+    "Rehash exact frozen inputs and shared baselines immediately before execution. Any difference must stop publication.",
+    "Source inspection, historical mocked tests, native database tests and rendered/browser qualification remain separate evidence classes. No current database or browser qualification was run by this review."
+  ]
+}

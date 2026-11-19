@@ -6,13 +6,39 @@ jest.mock("@/components/pos/offline/LocalOfflineRecovery", () => ({
   LocalOfflineRecovery: () => <div data-testid="local-offline-recovery" />,
   localOfflineCopy: { en: { closeBlocked: "Local offline evidence blocks shift close" }, fr: { closeBlocked: "Preuves hors ligne" } },
 }))
-jest.mock("@/hooks/usePermissions", () => ({ usePermissions: () => ({ user: { id: "cashier-1" }, organizationId: "org-1", hasPermission: () => false }) }))
+const mockHasPermission = jest.fn((_permission: string) => false)
+const mockWhatsAppCapability = jest.fn()
+const mockWhatsAppQueue = jest.fn()
+const mockWhatsAppStatus = jest.fn()
+jest.mock("@/hooks/usePermissions", () => ({ usePermissions: () => ({ user: { id: "cashier-1" }, organizationId: "org-1", hasPermission: mockHasPermission }) }))
+jest.mock("@/actions/pos/whatsapp-receipt.actions", () => ({
+  getPOSWhatsAppReceiptCapabilityAction: () => mockWhatsAppCapability(),
+  getPOSWhatsAppReceiptStatusAction: (input: unknown) => mockWhatsAppStatus(input),
+  queuePOSWhatsAppReceiptAction: (input: unknown) => mockWhatsAppQueue(input),
+}))
+beforeEach(() => {
+  mockHasPermission.mockReset().mockReturnValue(false)
+  mockWhatsAppCapability.mockReset().mockResolvedValue({ success: true, data: { available: false } })
+  mockWhatsAppQueue.mockReset()
+  mockWhatsAppStatus.mockReset()
+})
 jest.mock("@/hooks/posHooks/usePOSCheckoutLifecycle", () => ({ usePOSCheckoutLifecycle: jest.fn(() => ({
   ready: true, busy: false, leaseId: "00000000-0000-4000-8000-000000000001", error: null, snapshot: null,
   acceptedCartId: jest.requireMock("@/hooks/posHooks/usePosOperations").useActivePOSCart()?.data?.data?.id ?? null,
   acceptCart: jest.fn(), refresh: jest.fn(), command: jest.fn().mockResolvedValue({ activeCartId: "sale-1" }),
 })) }))
 jest.mock("@/actions/pos/checkout.actions", () => ({ retainLegacyPOSCheckoutAction: jest.fn().mockResolvedValue({ success: true, data: null }) }))
+jest.mock("@/components/pos/POSReturns", () => ({ POSReturns: () => null }))
+// Business-state regressions are independent of viewport presentation. The real
+// shell's focus trap, breakpoint behavior and summary are covered separately.
+jest.mock("@/components/pos/POSCheckoutShell", () => ({
+  POSCheckoutShell: ({ children, open, onOpenChange }: {
+    children: React.ReactNode; open: boolean; onOpenChange: (open: boolean) => void
+  }) => <section data-testid="checkout-presentation" data-open={String(open)}>
+    <button type="button" onClick={() => onOpenChange(!open)}>Toggle checkout presentation</button>
+    {children}
+  </section>,
+}))
 
 const mockNotifications = {
   warning: jest.fn(),
@@ -159,8 +185,280 @@ function openCloseDialog() {
   return screen.getByRole("dialog")
 }
 
+function expandShiftDetails() {
+  const setup = screen.getByTestId("pos-register-setup") as HTMLDetailsElement
+  setup.open = true
+  const details = screen.getByTestId("pos-shift-details")
+  const summary = details.querySelector("summary")
+  if (!summary) throw new Error("Shift details must expose a native disclosure")
+  fireEvent.click(summary)
+  expect(details).toHaveAttribute("open")
+}
+
+function expandPaymentOptions() {
+  const details = screen.getByTestId("pos-more-payment-options")
+  const summary = details.querySelector("summary")
+  if (!summary) throw new Error("Payment options must expose a native disclosure")
+  fireEvent.click(summary)
+  expect(details).toHaveAttribute("open")
+}
+
+describe("ProfessionalPOSSystem local customer credit", () => {
+  beforeEach(() => { jest.clearAllMocks(); sessionStorage.clear() })
+  afterEach(() => sessionStorage.clear())
+
+  function setupCreditCart() {
+    setupHooks(100, actionSuccess(null))
+    mockHooks.usePOSLocations.mockReturnValue({ data: actionSuccess([{
+      id: "location-1", name: "Main shop", code: "MAIN", isDefault: true,
+      organization: { name: "Stoquify", currency: "XAF", defaultLocale: "EN" },
+    }]) } as never)
+    mockHooks.usePOSTerminals.mockReturnValue({ data: actionSuccess([{
+      id: "terminal-1", locationId: "location-1", terminalNumber: "T01", name: "Till 1", currentSessionId: "session-1",
+    }]) } as never)
+    const customer = { id: "credit-customer", name: "Credit customer", code: "CREDIT", isActive: true, totalOrders: 0, totalRevenue: 0, creditLimit: 100 }
+    mockHooks.usePOSCustomers.mockReturnValue({ data: actionSuccess({ customers: [customer], total: 1 }) } as never)
+    mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess({
+      id: "credit-sale", revision: "c".repeat(64), status: "DRAFT", locationId: "location-1", terminalId: "terminal-1", sessionId: "session-1",
+      customer: null, subtotal: 10, discount: 0, taxAmount: 0, total: 10,
+      lines: [{ id: "credit-line", itemId: "item-1", nameEn: "Credit item", quantity: 1, unitPrice: 10, lineTotal: 10,
+        stock: { trackInventory: true, quantityOnHand: 5, quantityAvailable: 5 } }],
+    }) } as never)
+    const commit = jest.fn().mockRejectedValue(new TypeError("Synthetic response lost"))
+    mockHooks.useCommitPOSSale.mockReturnValue(mutationState(commit) as never)
+    mockHooks.usePOSSaleCommitStatus.mockReturnValue(mutationState(jest.fn().mockResolvedValue(actionSuccess({ kind: "PENDING" }))) as never)
+    return commit
+  }
+
+  it("offers only cash and local credit while provider, store-credit and receipt delivery stay unavailable", () => {
+    setupCreditCart()
+    render(<ProfessionalPOSSystem />)
+    const method = within(screen.getByTestId("pos-tender-controls")).getByRole("combobox", { name: "tender.method" })
+    expect(within(method).getAllByRole("option").map(option => option.getAttribute("value"))).toEqual(["CASH", "ON_ACCOUNT"])
+    expandPaymentOptions()
+    expect(screen.getByTestId("pos-receipt-availability")).toHaveTextContent("receipt.deliveryRestricted")
+    for (const channel of ["NONE", "PRINT", "EMAIL", "SMS", "WHATSAPP"]) {
+      expect(screen.queryByRole("button", { name: `receipt.channels.${channel}` })).not.toBeInTheDocument()
+    }
+    expect(screen.queryByLabelText("tender.providerEvidence")).not.toBeInTheDocument()
+  })
+
+  it("blocks an on-account charge until the cashier selects a customer", async () => {
+    const commit = setupCreditCart()
+    render(<ProfessionalPOSSystem />)
+    const tender = within(screen.getByTestId("pos-tender-controls"))
+    fireEvent.change(tender.getByRole("combobox", { name: "tender.method" }), { target: { value: "ON_ACCOUNT" } })
+    fireEvent.change(tender.getByRole("spinbutton", { name: "tender.amount" }), { target: { value: "10" } })
+    const charge = screen.getByRole("button", { name: "charge.cta" })
+    expect(charge).toBeDisabled()
+    expect(screen.getAllByText("tender.customerRequired").length).toBeGreaterThan(0)
+    fireEvent.click(charge)
+    expect(commit).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole("button", { name: "customers.choose" }))
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: /Credit customer/ }))
+    await waitFor(() => expect(charge).toBeEnabled())
+    expect(commit).not.toHaveBeenCalled()
+  })
+
+  it("queues an opted-in receipt only after confirmation and retries a lost queue response without charging again", async () => {
+    const commit = setupCreditCart()
+    mockHasPermission.mockImplementation(permission => permission === "pos.use")
+    mockWhatsAppCapability.mockResolvedValue(actionSuccess({ available: true }))
+    mockWhatsAppQueue.mockRejectedValueOnce(new TypeError("Synthetic queue response lost"))
+      .mockResolvedValueOnce(actionSuccess({ status: "QUEUED", reference: "receipt-queue-1" }))
+    mockWhatsAppStatus.mockResolvedValue(actionSuccess({ status: "ACCEPTED", reference: "receipt-queue-1" }))
+    let confirmPayment: (() => void) | undefined
+    commit.mockImplementation(request => new Promise(resolve => {
+      confirmPayment = () => resolve(actionSuccess({
+        clientCommitId: request.clientCommitId, saleId: request.salesOrderId, orderNumber: "SYNTHETIC-SALE",
+        status: "COMPLETED", paymentStatus: "PAID", total: 10, changeDue: 0, delivery: null,
+      }))
+    }))
+    render(<ProfessionalPOSSystem />)
+    expandPaymentOptions()
+    fireEvent.click(await screen.findByRole("checkbox", { name: "receipt.whatsApp.select" }))
+    const charge = screen.getByRole("button", { name: "charge.cta" })
+    expect(charge).toBeDisabled()
+    const number = "+12025550104"
+    fireEvent.change(screen.getByLabelText("receipt.whatsApp.number"), { target: { value: number } })
+    expect(charge).toBeDisabled()
+    fireEvent.click(screen.getByRole("checkbox", { name: "receipt.whatsAppConsent" }))
+    await waitFor(() => expect(charge).toBeEnabled())
+    fireEvent.click(charge)
+    await waitFor(() => expect(commit).toHaveBeenCalledTimes(1))
+    expect(mockWhatsAppQueue).not.toHaveBeenCalled()
+    expect(JSON.stringify(readPendingSale(sessionStorage, "org-1", "cashier-1"))).not.toContain(number)
+    expect(commit.mock.calls[0][0].receipt).toEqual({ channel: "NONE", locale: "EN" })
+
+    confirmPayment?.()
+    await screen.findByText("receipt.whatsApp.status.REQUEST_UNCONFIRMED")
+    fireEvent.click(screen.getByRole("button", { name: "receipt.whatsApp.retryRequest" }))
+    await screen.findByText("receipt.whatsApp.status.QUEUED")
+    expect(mockWhatsAppQueue).toHaveBeenCalledTimes(2)
+    expect(mockWhatsAppQueue.mock.calls[0][0]).toEqual({
+      salesOrderId: "credit-sale", locationId: "location-1", destination: number, locale: "EN", whatsAppCustomerOptInConfirmed: true,
+    })
+    expect(mockWhatsAppQueue.mock.calls[1]).toEqual(mockWhatsAppQueue.mock.calls[0])
+    expect(commit).toHaveBeenCalledTimes(1)
+    fireEvent.click(screen.getByRole("button", { name: "receipt.whatsApp.checkStatus" }))
+    await screen.findByText("receipt.whatsApp.status.ACCEPTED")
+    expect(mockWhatsAppStatus).toHaveBeenCalledWith({ salesOrderId: "credit-sale", locationId: "location-1" })
+  })
+
+  it("submits and retains the exact cash/credit split and existing cart identity when the response is uncertain", async () => {
+    const commit = setupCreditCart()
+    render(<ProfessionalPOSSystem />)
+    fireEvent.click(screen.getByRole("button", { name: "customers.choose" }))
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: /Credit customer/ }))
+    const tender = within(screen.getByTestId("pos-tender-controls"))
+    fireEvent.change(tender.getByRole("spinbutton", { name: "tender.amount" }), { target: { value: "6" } })
+    fireEvent.click(tender.getByRole("button", { name: "tender.addTender" }))
+    fireEvent.change(tender.getAllByRole("combobox", { name: "tender.method" })[1], { target: { value: "ON_ACCOUNT" } })
+    fireEvent.change(tender.getAllByRole("spinbutton", { name: "tender.amount" })[1], { target: { value: "4" } })
+    const summary = within(screen.getByTestId("pos-charge-summary"))
+    expect(summary.getByText("Payment preview").parentElement).toHaveTextContent(/FCFA\s*6/)
+    expect(summary.queryByText("tender.paid")).not.toBeInTheDocument()
+    expect(summary.getByText("tender.methods.ON_ACCOUNT").parentElement).toHaveTextContent(/FCFA\s*4/)
+    expect(summary.getByText("Uncovered").parentElement).toHaveTextContent(/FCFA\s*0/)
+    expect(summary.queryByText("tender.due")).not.toBeInTheDocument()
+    const charge = screen.getByRole("button", { name: "charge.cta" })
+    await waitFor(() => expect(charge).toBeEnabled())
+    fireEvent.click(charge)
+    await waitFor(() => expect(commit).toHaveBeenCalledTimes(1))
+    const expected = {
+      salesOrderId: "credit-sale", expectedCartRevision: "c".repeat(64), customerId: "credit-customer",
+      locationId: "location-1", terminalId: "terminal-1", sessionId: "session-1",
+      tenders: [{ method: "CASH", amount: 6 }, { method: "ON_ACCOUNT", amount: 4 }],
+      receipt: { channel: "NONE", locale: "EN" },
+    }
+    expect(commit).toHaveBeenCalledWith(expect.objectContaining({ ...expected, checkoutLeaseId: "00000000-0000-4000-8000-000000000001" }))
+    await waitFor(() => expect(charge).toBeDisabled())
+    const retained = readPendingSale(sessionStorage, "org-1", "cashier-1")
+    expect(retained?.request).toMatchObject(expected)
+    expect(retained?.request.clientCommitId).toBe(commit.mock.calls[0][0].clientCommitId)
+    expect(mockNotifications.success).not.toHaveBeenCalled()
+  })
+
+  it("keeps a denied checkout visible beside Charge and preserves the retained attempt", async () => {
+    const commit = setupCreditCart()
+    commit.mockResolvedValue({ success: false, data: null, error: "Forbidden", status: 403, code: "FORBIDDEN" })
+    render(<ProfessionalPOSSystem />)
+    const footer = screen.getByTestId("pos-charge-footer")
+    const charge = within(footer).getByRole("button", { name: "charge.cta" })
+    await waitFor(() => expect(charge).toBeEnabled())
+    fireEvent.click(charge)
+
+    const denial = await screen.findByTestId("pos-sale-access-error")
+    expect(denial).toHaveAttribute("role", "alert")
+    expect(denial).toHaveTextContent("notifications.saleAccessUnavailable")
+    expect(denial).toBeVisible()
+    expect(footer).toContainElement(denial)
+    expect(denial.closest("details")).toBeNull()
+    expect(commit).toHaveBeenCalledTimes(1)
+    expect(readPendingSale(sessionStorage, "org-1", "cashier-1")?.request.clientCommitId)
+      .toBe(commit.mock.calls[0][0].clientCommitId)
+    expect(mockNotifications.success).not.toHaveBeenCalled()
+  })
+})
+
 describe("POS search keyboard scope", () => {
   beforeEach(() => { jest.clearAllMocks(); sessionStorage.clear(); setupHooks(100, actionSuccess(null)) })
+
+  it("opens today’s activity directly with the current cashier's register and shift", () => {
+    mockHooks.usePOSTerminals.mockReturnValue({ data: actionSuccess([{
+      id: "terminal-1", locationId: "location-1", terminalNumber: "T01", name: "Till 1", currentSessionId: "session-1",
+    }]) } as never)
+    render(<ProfessionalPOSSystem />)
+    const href = screen.getByRole("link", { name: "shell.todayActivity" }).getAttribute("href")
+    const url = new URL(href ?? "", "http://localhost")
+    expect(url.pathname).toBe("/en/dashboard/pos/activity")
+    expect(Object.fromEntries(url.searchParams)).toEqual({ locationId: "location-1", terminalId: "terminal-1", sessionId: "session-1" })
+  })
+
+  it("collapses routine setup and hardware details while keeping register context and search available", () => {
+    render(<ProfessionalPOSSystem />)
+    const setup = screen.getByTestId("pos-register-setup")
+    expect(setup).not.toHaveAttribute("open")
+    expect(screen.getByTestId("pos-device-status")).not.toHaveAttribute("open")
+    expect(screen.getByRole("textbox", { name: "search.placeholder" })).toBeVisible()
+    expect(within(setup).getByText("setup.title", { selector: "summary span" })).toBeVisible()
+    expect(screen.queryByRole("button", { name: "smart.exactCash" })).not.toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "smart.managerOverride" })).not.toBeInTheDocument()
+  })
+
+  it("offers an empty-cart search action without changing or submitting a sale", () => {
+    render(<ProfessionalPOSSystem />)
+    const footer = within(screen.getByTestId("pos-charge-footer"))
+    fireEvent.click(footer.getByRole("button", { name: "Find an item" }))
+    expect(screen.getByRole("textbox", { name: "search.placeholder" })).toHaveFocus()
+    expect(footer.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+    expect(mockHooks.useCommitPOSSale.mock.results.at(-1)?.value.mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it("keeps Charge present but disabled for an empty cart", () => {
+    render(<ProfessionalPOSSystem />)
+    const charge = within(screen.getByTestId("pos-charge-footer")).getByRole("button", { name: "charge.cta" })
+    expect(charge).toBeDisabled()
+    fireEvent.click(charge)
+    expect(mockHooks.useCommitPOSSale.mock.results.at(-1)?.value.mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it("keeps the primary amount, exact cash and transaction total outside cart scrolling without implying confirmed payment", () => {
+    mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess({
+      id: "payment-access-cart", revision: "e".repeat(64), status: "DRAFT",
+      locationId: "location-1", terminalId: "terminal-1", sessionId: "session-1",
+      customer: null, subtotal: 100, discount: 0, taxAmount: 0, total: 100,
+      lines: [{ id: "payment-access-line", itemId: "item-1", sku: "ACCESS", nameEn: "Payment access item",
+        quantity: 1, unitPrice: 100, lineTotal: 100, stock: { trackInventory: true, quantityOnHand: 10, quantityAvailable: 10 } }],
+    }) } as never)
+    render(<ProfessionalPOSSystem />)
+    const footer = screen.getByTestId("pos-charge-footer")
+    const scrollRegion = screen.getByTestId("pos-checkout-scroll-region")
+    const amount = within(footer).getByRole("spinbutton", { name: "tender.amount" })
+    expect(scrollRegion).not.toContainElement(amount)
+    expect(footer).toContainElement(screen.getByTestId("pos-tender-controls"))
+    expect(screen.getAllByRole("spinbutton", { name: "tender.amount" })).toHaveLength(1)
+    expect(within(footer).getByRole("button", { name: "tender.exact" })).toBeVisible()
+    expect(within(footer).getByText("totals.total")).toBeVisible()
+    expect(within(footer).queryByText("Payment preview")).not.toBeInTheDocument()
+    expect(within(footer).queryByText("tender.paid")).not.toBeInTheDocument()
+    expect(mockHooks.useCommitPOSSale.mock.results.at(-1)?.value.mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it("opens checkout and focuses tender from F8 without submitting", async () => {
+    render(<ProfessionalPOSSystem />)
+    const search = screen.getByRole("textbox", { name: "search.placeholder" })
+    search.focus()
+    fireEvent.keyDown(search, { key: "F8" })
+    await waitFor(() => expect(screen.getByTestId("checkout-presentation")).toHaveAttribute("data-open", "true"))
+    await waitFor(() => expect(screen.getByRole("spinbutton", { name: "tender.amount" })).toHaveFocus())
+    expect(mockHooks.useCommitPOSSale.mock.results.at(-1)?.value.mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it("preserves cart quantity and tender drafts while checkout presentation opens and closes", () => {
+    mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess({
+      id: "presentation-cart", revision: "d".repeat(64), status: "DRAFT",
+      locationId: "location-1", terminalId: "terminal-1", sessionId: "session-1",
+      customer: null, subtotal: 100, discount: 0, taxAmount: 0, total: 100,
+      lines: [{ id: "presentation-line", itemId: "item-1", sku: "OWNED", nameEn: "Owned item",
+        quantity: 1, unitPrice: 100, lineTotal: 100, stock: { trackInventory: true, quantityOnHand: 10, quantityAvailable: 10 } }],
+    }) } as never)
+    render(<ProfessionalPOSSystem />)
+    const quantity = screen.getByRole("spinbutton", { name: "cart.quantityFor" })
+    const tender = screen.getByRole("spinbutton", { name: "tender.amount" })
+    fireEvent.change(quantity, { target: { value: "3" } })
+    fireEvent.change(tender, { target: { value: "150" } })
+    const toggle = screen.getByRole("button", { name: "Toggle checkout presentation" })
+    fireEvent.click(toggle)
+    expect(screen.getByTestId("checkout-presentation")).toHaveAttribute("data-open", "true")
+    fireEvent.click(toggle)
+    expect(screen.getByTestId("checkout-presentation")).toHaveAttribute("data-open", "false")
+    expect(quantity).toHaveValue(3)
+    expect(tender).toHaveValue(150)
+    expect(screen.getAllByTestId("pos-cart-line")).toHaveLength(1)
+    expect(screen.getAllByTestId("pos-charge-footer")).toHaveLength(1)
+    expect(mockHooks.useCommitPOSSale.mock.results.at(-1)?.value.mutateAsync).not.toHaveBeenCalled()
+  })
 
   it("keeps the search input and its focus while catalogue results load", () => {
     const { rerender } = render(<ProfessionalPOSSystem />)
@@ -185,6 +483,51 @@ describe("POS search keyboard scope", () => {
     const browserShortcut = new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true, cancelable: true })
     window.dispatchEvent(browserShortcut)
     expect(browserShortcut.defaultPrevented).toBe(false)
+  })
+
+  it("returns focus to the scanner after a customer dialog opened with F4 closes with Escape", async () => {
+    render(<ProfessionalPOSSystem />)
+    const search = screen.getByRole("textbox", { name: "search.placeholder" })
+    search.focus()
+    fireEvent.keyDown(search, { key: "F4" })
+    const dialog = await screen.findByRole("dialog")
+    const customerSearch = within(dialog).getByPlaceholderText("customers.searchPlaceholder")
+    await waitFor(() => expect(customerSearch).toHaveFocus())
+
+    fireEvent.keyDown(customerSearch, { key: "Escape", code: "Escape", keyCode: 27 })
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
+    await waitFor(() => expect(search).toHaveFocus())
+    expect(mockHooks.useCommitPOSSale.mock.results.at(-1)?.value.mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it("returns focus to the invoking product Details button after closing its dialog", async () => {
+    mockHooks.usePOSCatalog.mockReturnValue({
+      data: actionSuccess({
+        categories: [],
+        items: [{
+          id: "focus-product", sku: "FOCUS-COFFEE", barcode: "123456789",
+          nameEn: "Coffee", nameFr: "Cafe", thumbnail: null, sellingPrice: 100,
+          trackInventory: true, category: null, brand: null,
+          stock: { quantityOnHand: 10, quantityAvailable: 10, reorderPoint: 2, status: "available" },
+        }],
+      }),
+      isLoading: false,
+    } as never)
+    render(<ProfessionalPOSSystem />)
+    const details = await screen.findByRole("button", { name: "catalog.details — Coffee" })
+    details.focus()
+    expect(details).toHaveFocus()
+
+    fireEvent.click(details)
+    const dialog = await screen.findByRole("dialog", { name: "Coffee" })
+    expect(within(dialog).getByText("catalog.detailDescription")).toBeVisible()
+    fireEvent.click(within(dialog).getByRole("button", { name: "Close", exact: true }))
+
+    await waitFor(() => expect(screen.queryByRole("dialog", { name: "Coffee" })).not.toBeInTheDocument())
+    await waitFor(() => expect(details).toHaveFocus())
+    expect(mockHooks.useAddPOSCartLine.mock.results.at(-1)?.value.mutateAsync).not.toHaveBeenCalled()
+    expect(mockHooks.useCommitPOSSale.mock.results.at(-1)?.value.mutateAsync).not.toHaveBeenCalled()
   })
 
   it("does not clear catalog search or move focus to tender from an open dialog", () => {
@@ -228,17 +571,20 @@ describe("ProfessionalPOSSystem resume at checkout", () => {
     return { lifecycle, commit }
   }
 
-  it("offers Resume beside disabled Charge and waits for cart validation without submitting a sale", async () => {
+  it("offers Resume in register status and waits for cart validation before enabling Charge", async () => {
     const { lifecycle, commit } = setupUnfinishedCart()
     let finishResume!: (value: { activeCartId: string }) => void
     lifecycle.command.mockImplementation(() => new Promise<{ activeCartId: string }>(resolve => { finishResume = resolve }))
     const view = render(<ProfessionalPOSSystem />)
     const footer = within(screen.getByTestId("pos-charge-footer"))
     const charge = footer.getByRole("button", { name: "charge.cta" })
-    const resume = footer.getByRole("button", { name: "lifecycle.resume" })
+    const registerStatus = within(screen.getByRole("group", { name: "lifecycle.title" }))
+    const resume = registerStatus.getByRole("button", { name: "lifecycle.resume" })
     expect(charge).toBeDisabled()
-    expect(charge).toHaveAccessibleDescription("lifecycle.resumeRequired")
-    expect(resume).toHaveAccessibleDescription("lifecycle.resumeRequired")
+    expect(charge).toHaveAccessibleDescription(/lifecycle\.resumeRequired.*Resume the existing cart.*View status/)
+    expect(footer.getByText("lifecycle.resumeRequired", { exact: true })).toBeVisible()
+    expect(registerStatus.getByText("lifecycle.resumeRequired")).toBeVisible()
+    expect(footer.getByRole("button", { name: "View status" })).toBeEnabled()
     fireEvent.click(resume)
     expect(lifecycle.command).toHaveBeenCalledWith("RESUME", "saved-cart")
     expect(charge).toBeDisabled()
@@ -249,7 +595,7 @@ describe("ProfessionalPOSSystem resume at checkout", () => {
     lifecycle.busy = false
     finishResume({ activeCartId: "saved-cart" })
     await waitFor(() => expect(charge).toBeEnabled())
-    expect(footer.queryByRole("button", { name: "lifecycle.resume" })).not.toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "lifecycle.resume" })).not.toBeInTheDocument()
     expect(commit).not.toHaveBeenCalled()
     expect(screen.getByTestId("pos-cart-line")).toHaveTextContent("Coffee")
   })
@@ -259,7 +605,7 @@ describe("ProfessionalPOSSystem resume at checkout", () => {
     lifecycle.command.mockResolvedValue(null)
     render(<ProfessionalPOSSystem />)
     const footer = within(screen.getByTestId("pos-charge-footer"))
-    fireEvent.click(footer.getByRole("button", { name: "lifecycle.resume" }))
+    fireEvent.click(within(screen.getByRole("group", { name: "lifecycle.title" })).getByRole("button", { name: "lifecycle.resume" }))
     await waitFor(() => expect(lifecycle.command).toHaveBeenCalledWith("RESUME", "saved-cart"))
     expect(footer.getByRole("button", { name: "charge.cta" })).toBeDisabled()
     expect(screen.getByTestId("pos-cart-line")).toHaveTextContent("Coffee")
@@ -271,10 +617,35 @@ describe("ProfessionalPOSSystem resume at checkout", () => {
     lifecycle.ready = false
     render(<ProfessionalPOSSystem />)
     const footer = within(screen.getByTestId("pos-charge-footer"))
-    expect(footer.getByRole("button", { name: "lifecycle.resume" })).toBeDisabled()
+    expect(within(screen.getByRole("group", { name: "lifecycle.title" })).getByRole("button", { name: "lifecycle.resume" })).toBeDisabled()
     expect(footer.getByRole("button", { name: "charge.cta" })).toBeDisabled()
     expect(lifecycle.command).not.toHaveBeenCalled()
   })
+
+  it.each(["POS_CHECKOUT_OWNED_ELSEWHERE", "POS_CHECKOUT_OFFLINE_PENDING"] as const)(
+    "shows the actionable %s blocker beside disabled Charge without starting a lifecycle command or sale",
+    async error => {
+      const { lifecycle, commit } = setupUnfinishedCart()
+      lifecycle.ready = false
+      lifecycle.error = error
+      render(<ProfessionalPOSSystem />)
+
+      const footer = within(screen.getByTestId("pos-charge-footer"))
+      const charge = footer.getByRole("button", { name: "charge.cta" })
+      const message = `lifecycle.errors.${error}`
+      await waitFor(() => expect(footer.getByText(message, { exact: true })).toBeVisible())
+      expect(charge).toBeDisabled()
+      expect(charge).toHaveAccessibleDescription(new RegExp(`${message}.*View status`))
+      expect(footer.getByRole("button", { name: "View status" })).toBeEnabled()
+      expect(screen.getByTestId("pos-cart-line")).toHaveTextContent("Coffee")
+      expect(lifecycle.command).not.toHaveBeenCalled()
+      expect(commit).not.toHaveBeenCalled()
+
+      fireEvent.click(charge)
+      expect(lifecycle.command).not.toHaveBeenCalled()
+      expect(commit).not.toHaveBeenCalled()
+    },
+  )
 })
 
 describe("ProfessionalPOSSystem checkout recovery", () => {
@@ -531,6 +902,7 @@ describe("ProfessionalPOSSystem shift close", () => {
     }]) } as never)
 
     render(<ProfessionalPOSSystem />)
+    expandShiftDetails()
     fireEvent.click(screen.getByRole("button", { name: "shift.useExpectedCash" }))
     expect(screen.getByLabelText("shift.countedCash")).toHaveValue(Number(closingAmount))
     expect(closeMutateAsync).not.toHaveBeenCalled()
@@ -886,11 +1258,16 @@ describe("ProfessionalPOSSystem sale commit", () => {
       "title",
       "Representative long inventory item name 1",
     )
-    expect(screen.getByTestId("pos-tender-scroll-region")).toHaveClass("shrink-0")
-    expect(screen.getByTestId("pos-tender-scroll-region")).not.toHaveClass("xl:overflow-y-auto")
-    expect(screen.getByTestId("pos-tender-controls").compareDocumentPosition(screen.getByTestId("receipt-token-history-panel")))
-      .toBe(Node.DOCUMENT_POSITION_FOLLOWING)
-    expect(screen.getByTestId("pos-charge-footer")).toHaveClass("shrink-0")
+    const scrollRegion = screen.getByTestId("pos-checkout-scroll-region")
+    expect(scrollRegion).toContainElement(screen.getByTestId("pos-cart-lines"))
+    expect(scrollRegion).not.toContainElement(screen.getByTestId("pos-tender-controls"))
+    expect(scrollRegion).not.toContainElement(screen.getByTestId("pos-charge-footer"))
+    expect(scrollRegion).toContainElement(screen.getByTestId("receipt-token-history-panel"))
+    expect(screen.getByTestId("pos-charge-footer")).toContainElement(screen.getByTestId("pos-tender-controls"))
+    expect(within(screen.getByTestId("pos-charge-footer")).getByRole("spinbutton", { name: "tender.amount" }))
+      .toHaveAttribute("placeholder", expect.stringMatching(/700/))
+    expect(screen.getAllByTestId("pos-charge-footer")).toHaveLength(1)
+    expect(within(screen.getByTestId("pos-charge-footer")).getByRole("button", { name: "charge.cta" })).toBeEnabled()
   })
 
   it("submits an active cash sale with a replay-safe non-statutory receipt", async () => {
@@ -974,35 +1351,30 @@ describe("ProfessionalPOSSystem sale commit", () => {
 
     render(<ProfessionalPOSSystem />)
 
-    expect(screen.getByTestId("pos-cart-lines")).toHaveClass("shrink-0")
-    expect(screen.getByTestId("pos-payment-panel")).toHaveClass("shrink-0")
-    expect(screen.getByTestId("pos-totals-summary")).toHaveClass("grid-cols-2")
-    expect(screen.getByTestId("pos-totals-summary")).not.toHaveClass("sm:grid-cols-4")
-    expect(screen.getByTestId("pos-charge-summary")).toHaveClass("grid", "grid-cols-2")
-    expect(screen.getByText("tender.paid").parentElement).toHaveClass("rounded-md", "border")
-    expect(screen.getByText("tender.due").parentElement).toHaveClass("rounded-md", "border")
-    expect(screen.getByText("tender.change").parentElement).toHaveClass("rounded-md", "border")
+    expect(screen.getByTestId("pos-checkout-scroll-region")).toContainElement(screen.getByTestId("pos-payment-panel"))
+    expect(screen.getByTestId("pos-checkout-scroll-region")).not.toContainElement(screen.getByTestId("pos-charge-footer"))
+    const summary = within(screen.getByTestId("pos-charge-summary"))
+    expect(summary.queryByText("Payment preview")).not.toBeInTheDocument()
+    expect(summary.queryByText("tender.paid")).not.toBeInTheDocument()
+    expect(summary.queryByText("tender.due")).not.toBeInTheDocument()
+    expect(summary.queryByText("tender.change")).not.toBeInTheDocument()
     expect(
       within(screen.getByLabelText("tender.method"))
         .getAllByRole("option")
         .map((option) => option.getAttribute("value")),
-    ).toEqual(["CASH"])
-    expect(screen.getByTestId("pos-cart-line")).toHaveClass("py-0.5")
-    expect(screen.getByRole("button", { name: "cart.removeLine" })).toHaveClass("h-7", "w-7")
-    expect(screen.getByRole("button", { name: "charge.cta" })).toHaveClass("h-11", "rounded-md", "border")
-
+    ).toEqual(["CASH", "ON_ACCOUNT"])
+    const quantityInput = screen.getByRole("spinbutton", { name: "cart.quantityFor" })
     fireEvent.click(screen.getByRole("button", { name: "shell.touchMode" }))
-    expect(screen.getByTestId("pos-cart-line")).toHaveClass("py-2")
-    expect(screen.getByRole("spinbutton", { name: "cart.quantityFor" })).toHaveClass("h-10", "w-24")
-    expect(screen.getByRole("button", { name: "cart.removeLine" })).toHaveClass("h-10", "w-10")
-    expect(screen.getByRole("button", { name: "charge.cta" })).toHaveClass("h-14")
+    expect(screen.getByRole("spinbutton", { name: "cart.quantityFor" })).toBe(quantityInput)
+    expect(quantityInput).toHaveValue(1)
+    expect(screen.getByRole("button", { name: "cart.removeLine" })).toBeEnabled()
 
     expect(screen.queryByRole("button", { name: "receipt.channels.PRINT" })).not.toBeInTheDocument()
     expect(screen.queryByRole("button", { name: "receipt.channels.WHATSAPP" })).not.toBeInTheDocument()
     expect(screen.queryByPlaceholderText("receipt.destinationPlaceholders.email")).not.toBeInTheDocument()
     expect(screen.queryByPlaceholderText("receipt.destinationPlaceholders.phone")).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole("button", { name: "tender.exact" }))
+    fireEvent.click(within(screen.getByTestId("pos-charge-footer")).getByRole("button", { name: "tender.exact" }))
     const chargeButton = screen.getByRole("button", { name: "charge.cta" })
     expect(chargeButton).toBeEnabled()
     fireEvent.click(chargeButton)
@@ -1105,12 +1477,12 @@ describe("ProfessionalPOSSystem sale commit", () => {
 
     const locationSelect = await screen.findByLabelText("setup.location")
     await waitFor(() => expect(locationSelect).toHaveValue("location-1"))
-    fireEvent.click(screen.getByRole("button", { name: "smart.addCustomer" }))
+    fireEvent.click(screen.getByRole("button", { name: "customers.choose" }))
     const firstDialog = screen.getByRole("dialog")
     fireEvent.click(within(firstDialog).getByRole("button", { name: /Alice Branch A/ }))
     expect(screen.getAllByText("Alice Branch A").length).toBeGreaterThan(0)
 
-    fireEvent.click(screen.getByRole("button", { name: "smart.changeCustomer" }))
+    fireEvent.click(screen.getByRole("button", { name: "customers.change" }))
     const secondDialog = screen.getByRole("dialog")
     fireEvent.change(within(secondDialog).getByPlaceholderText("customers.searchPlaceholder"), {
       target: { value: "stale-a-search" },

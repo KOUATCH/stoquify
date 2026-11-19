@@ -1,0 +1,45 @@
+{
+  "at": "2026-11-10T11:38:54.487Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Evidence-only same-artifact requirement reconciliation; no runtime or qualification advance authorization",
+  "files": [
+    {
+      "path": "reconcile-recovery-attempt04.cjs",
+      "sha256": "a0a01b871a7cdb7189f43466c5a5527362249e3fb7593bd52ee26844e679d986"
+    },
+    {
+      "path": "runtime-result-attempt02.json",
+      "sha256": "4459b141a394444372f88d3728b84f38d5adeb49eb840d382cc4725327fc92df"
+    },
+    {
+      "path": "recovery-result-attempt03.json",
+      "sha256": "d08ed69741d7b10165708cbc72ff4f354f43eb17fa3916a1af1e8f44cf7b508c"
+    },
+    {
+      "path": "expiry-supplement-result-attempt02.json",
+      "sha256": "79625e82bb0bb9c7146aa3a2888d359a4a2fb6ac10aa094c03e3e308bd10d6f7"
+    },
+    {
+      "path": "inventory/test-case-map.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    },
+    {
+      "path": "build-result-attempt02.json",
+      "sha256": "0124329359273775db300041794d1176abf9b308d1abc82b03b98f1c91f296f8"
+    }
+  ],
+  "reviewFindings": [
+    "Reads actual main/recovery/expiry/latest-browser receipts and exact58-case inventory; enforces candidate/artifact equality to accepted build.",
+    "Keeps all raw original results immutable. Uses50 unchanged main groups, all four credential successors for one requirement, all three origin successors for one requirement and all six latest browser groups.",
+    "No cherry-picking older browser passes and no relabeling original native-client success as denial.",
+    "Supplementary expiry cases remain additional to58logical groups; actual three exact IDs independently accepted in separate review.",
+    "Writes only exclusive recovery-reconciliation-attempt04.json. Exit0 denotes reconciliation completion; passed remainsfalse while any logical requirement is unresolved.",
+    "Independent actual review, preservation/cleanup and production admission remain separate gates."
+  ],
+  "executionConditions": [
+    "Wait for complete browser-only-result-attempt04.json from independently admitted runtime recipe.",
+    "Inspect actual resulting counts/IDs and preserve all failures; no advancement implied by exit0."
+  ],
+  "productionChanges": false
+}

@@ -12,6 +12,7 @@ jest.mock("@/prisma/db", () => ({
     $transaction: jest.fn(),
     pOSSession: { findFirst: jest.fn() },
     pOSStation: { findFirst: jest.fn() },
+    salesOrder: { findFirst: jest.fn() },
     pOSCommitResult: {
       findUnique: jest.fn(),
       findFirst: jest.fn(),
@@ -76,12 +77,13 @@ import { postVoid } from "@/services/accounting/postings/post-void"
 import { createFiscalDocumentFromPostedSource } from "@/services/compliance/fiscal-document.service"
 import { getPOSSaleCommitReceipt, sendReceipt } from "@/services/pos/receipt.service"
 import { POS_CUSTOMER_LOCATION_MISMATCH } from "../pos-customer.service"
-import { commitPOSSale, openPOSShift, refundPOSSale, voidPOSSale } from "../pos.service"
+import { commitPOSSale, getPOSSaleReturnPreview, openPOSShift, refundPOSSale, voidPOSSale } from "../pos.service"
 
 const mockDb = db as unknown as {
   $transaction: jest.Mock
   pOSSession: { findFirst: jest.Mock }
   pOSStation: { findFirst: jest.Mock }
+  salesOrder: { findFirst: jest.Mock }
   pOSCommitResult: {
     findUnique: jest.Mock
     findFirst: jest.Mock
@@ -117,6 +119,7 @@ function expectNoBusinessEvent(eventType: string) {
 }
 
 const mockTx = {
+  $queryRaw: jest.fn(),
   pOSCheckoutWorkspace: { findFirst: jest.fn(), updateMany: jest.fn() },
   salesOrder: {
     findFirst: jest.fn(),
@@ -386,6 +389,7 @@ function correctionInput(reason = "Customer requested return") {
 describe("commitPOSSale accounting wiring", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockTx.$queryRaw.mockReset().mockResolvedValue([{ id: "payment-transaction-1" }])
     ;(assertModuleNewWorkInTx as jest.Mock).mockReset().mockResolvedValue(undefined)
     mockEnsurePostedReceivable.mockResolvedValue({
       document: { id: "receivable-document-1" },
@@ -1206,6 +1210,13 @@ describe("commitPOSSale accounting wiring", () => {
     expect(mockGetSalesReceipt).not.toHaveBeenCalled()
   })
 
+  it.each([{ code: "P2034" }, { code: "P2010", meta: { code: "40001" } }, { code: "P2010", meta: { code: "40P01" } }])("reports exhausted transaction conflicts as recoverable conflicts %#", async conflict => {
+    mockDb.$transaction.mockRejectedValueOnce(conflict).mockRejectedValueOnce(conflict)
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({ code: "DATABASE_CONFLICT", status: 409 })
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(2)
+    expect(mockPostPayment).not.toHaveBeenCalled()
+  })
+
   it.each(["completion write", "completion read", "missing completion"])(
     "preserves the recorded sale when post-commit %s fails",
     async (failure) => {
@@ -1233,7 +1244,7 @@ describe("commitPOSSale accounting wiring", () => {
     },
   )
 
-  it("marks an electronic tender paid only after claiming provider-authoritative evidence", async () => {
+  it("locks native proof after cart claims and before stock publication, then claims it for the paid tender", async () => {
     mockTx.paymentTransaction.findFirst.mockResolvedValueOnce({
       id: "payment-transaction-1",
       organizationId: "org-1",
@@ -1303,7 +1314,34 @@ describe("commitPOSSale accounting wiring", () => {
       }),
       data: { legacyPaymentId: "payment-1" },
     })
+    const nativeLock = mockTx.$queryRaw.mock.invocationCallOrder[0]
+    expect(mockTx.$queryRaw).toHaveBeenCalledTimes(1)
+    expect(mockTx.$queryRaw.mock.calls[0][0].values).toEqual(["org-1", "payment-transaction-1"])
+    expect(mockTx.pOSSession.updateMany.mock.invocationCallOrder[0]).toBeLessThan(nativeLock)
+    expect(mockTx.salesOrder.updateMany.mock.invocationCallOrder[0]).toBeLessThan(nativeLock)
+    expect(nativeLock).toBeLessThan(mockTx.paymentTransaction.findFirst.mock.invocationCallOrder[0])
+    expect(nativeLock).toBeLessThan(mockTx.businessEvent.create.mock.invocationCallOrder[0])
+    expect(nativeLock).toBeLessThan(mockTx.inventoryLevel.updateMany.mock.invocationCallOrder[0])
+    expect(nativeLock).toBeLessThan(mockTx.paymentTransaction.updateMany.mock.invocationCallOrder[0])
     expect(mockPostPayment).toHaveBeenCalled()
+  })
+
+  it("keeps a cash commit free of native receipt locks", async () => {
+    await expect(commitPOSSale(commitInput())).resolves.toMatchObject({ paymentStatus: "PAID" })
+    expect(mockTx.$queryRaw).not.toHaveBeenCalled()
+    expect(mockPostSale).toHaveBeenCalledTimes(1)
+    expect(mockPostPayment).toHaveBeenCalledTimes(1)
+  })
+
+  it("rolls back admission when a native receipt is absent before stock publication", async () => {
+    mockTx.$queryRaw.mockResolvedValueOnce([])
+    await expect(commitPOSSale({ ...commitInput(), tenders: [{ method: "CARD" as const, amount: 118, paymentTransactionId: "foreign-receipt" }] }))
+      .rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+    expect(mockTx.salesOrder.updateMany).toHaveBeenCalledTimes(1)
+    expect(mockTx.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockTx.inventoryLevel.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
   })
 
   it("stops before stock and payment writes when the cashier-owned active shift claim is lost", async () => {
@@ -1348,6 +1386,52 @@ describe("commitPOSSale accounting wiring", () => {
       expect(mockPostVoid).not.toHaveBeenCalled()
     },
   )
+
+  it("requires an active cashier-owned session for an exact return lookup", async () => {
+    const { organizationId, userId, locationId, terminalId, sessionId } = correctionInput()
+    const scope = { organizationId, userId, locationId, terminalId, sessionId }
+    mockDb.pOSSession.findFirst.mockResolvedValueOnce(null)
+    await expect(getPOSSaleReturnPreview({ ...scope, orderNumber: "POS-1001" })).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+    expect(mockDb.salesOrder.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.pOSSession.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: { organizationId, userId, locationId, terminalId, id: sessionId, status: "ACTIVE" },
+    }))
+  })
+
+  it("binds the exact reference to the active scope and recognizes a recorded full cash return", async () => {
+    const { organizationId, userId, locationId, terminalId, sessionId } = correctionInput()
+    const scope = { organizationId, userId, locationId, terminalId, sessionId }
+    mockDb.pOSSession.findFirst.mockResolvedValueOnce(activeSessionFixture())
+    mockDb.salesOrder.findFirst.mockResolvedValueOnce({
+      ...completedSaleFixture(),
+      orderNumber: "POS-1001",
+      status: "RETURNED",
+      paymentStatus: "REFUNDED",
+      organization: { currency: "XAF" },
+      payments: [{
+        ...completedSaleFixture().payments[0],
+        status: "REFUNDED",
+        refundedAmount: decimal(118),
+        refunds: [{ status: "PROCESSED", amount: decimal(118) }],
+      }],
+    })
+    await expect(getPOSSaleReturnPreview({ ...scope, orderNumber: "POS-1001" })).resolves.toMatchObject({
+      status: "RECORDED", total: { amount: "118.00", currency: "XAF" },
+    })
+    expect(mockDb.salesOrder.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ organizationId, locationId, terminalId, sessionId, channel: "POS", orderNumber: "POS-1001" }),
+    }))
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("rejects a stale reviewed refund total before changing financial state", async () => {
+    mockTx.salesOrder.findFirst.mockResolvedValue({ ...completedSaleFixture(), organization: { currency: "XAF" } })
+    await expect(refundPOSSale({ ...correctionInput(), reviewedTotal: { amount: "119.00", currency: "XAF" } }))
+      .rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockTx.pOSSession.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.salesOrder.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.paymentRefund.create).not.toHaveBeenCalled()
+  })
 
   it("refunds a fully paid cash POS sale and posts each refund inside the transaction", async () => {
     ;(assertModuleNewWorkInTx as jest.Mock).mockRejectedValue(new Error("New work stopped"))

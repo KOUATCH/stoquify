@@ -1,0 +1,395 @@
+"use client"
+
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react"
+import { useLocale } from "next-intl"
+import { Link, usePathname } from "@/i18n/navigation"
+import { cinematicModules } from "./cinematic-modules"
+import StoquifyLogo from "@/components/global/kit-logo"
+import { Moon, Sun } from "lucide-react"
+import { usesCinematicShell } from "./public-page-routes"
+import type { PublicContact } from "@/lib/public-site"
+import "./landing-production.css"
+
+const CinematicContext = createContext({ motionOff: true, light: false, signedIn: false })
+export const useCinematicMotionOff = () =>
+  useContext(CinematicContext).motionOff
+export const useCinematicLight = () => useContext(CinematicContext).light
+export const useCinematicSignedIn = () => useContext(CinematicContext).signedIn
+
+/** Landing discovery pages share chrome; other public routes keep their shell. */
+export function LandingRouteShell({
+  children,
+  header,
+  footer,
+  signedIn,
+  contact,
+}: {
+  children: ReactNode
+  header: ReactNode
+  footer: ReactNode
+  signedIn: boolean
+  contact?: PublicContact
+}) {
+  const pathname = usePathname()
+  return usesCinematicShell(pathname) ? (
+    <CinematicShell signedIn={signedIn} contact={contact}>{children}</CinematicShell>
+  ) : (
+    <>
+      {header}
+      {children}
+      {footer}
+    </>
+  )
+}
+
+function CinematicShell({
+  children,
+  signedIn,
+  contact,
+}: {
+  children: ReactNode
+  signedIn: boolean
+  contact?: PublicContact
+}) {
+  const locale = useLocale()
+  const pathname = usePathname()
+  const t = (en: string, fr: string) => (locale === "fr" ? fr : en)
+  // Start static on the server. Media is attached only after client preference checks.
+  const [reduced, setReduced] = useState(true)
+  const [ready, setReady] = useState(false)
+  const [paused, setPaused] = useState(false)
+  const [menu, setMenu] = useState<"products" | "mobile" | null>(null)
+  const [light, setLight] = useState(false)
+  const [query, setQuery] = useState("")
+  const [scrolled, setScrolled] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
+  const productsRef = useRef<HTMLButtonElement>(null)
+  const mobileRef = useRef<HTMLButtonElement>(null)
+  const motionOff = reduced || paused
+
+  useEffect(() => {
+    setQuery(window.location.search)
+    try { setLight(sessionStorage.getItem("stoquify-public-theme") === "light") } catch { /* Storage can be unavailable. */ }
+  }, [pathname])
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const update = () => setReduced(preference.matches)
+    update()
+    setReady(true)
+    preference.addEventListener("change", update)
+    return () => preference.removeEventListener("change", update)
+  }, [])
+
+  useEffect(() => {
+    let frame = 0
+    const update = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 24)
+      })
+    }
+    const resize = () => {
+      setMenu(null)
+      update()
+    }
+    update()
+    window.addEventListener("scroll", update, { passive: true })
+    window.addEventListener("resize", resize)
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener("scroll", update)
+      window.removeEventListener("resize", resize)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!menu) return
+    const escape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return
+      setMenu(null)
+      ;(menu === "mobile" ? mobileRef : productsRef).current?.focus()
+    }
+    const outside = (event: MouseEvent) => {
+      if (
+        event.target instanceof Node &&
+        !headerRef.current?.contains(event.target)
+      )
+        setMenu(null)
+    }
+    document.addEventListener("keydown", escape)
+    document.addEventListener("click", outside)
+    return () => {
+      document.removeEventListener("keydown", escape)
+      document.removeEventListener("click", outside)
+    }
+  }, [menu])
+
+  const products = cinematicModules
+
+  return (
+    <CinematicContext.Provider value={{ motionOff, light, signedIn }}>
+      <div
+        className={`cinematic-home${ready ? " motion-ready" : ""}${motionOff ? " motion-off" : ""}`}
+        data-theme={light ? "light" : "dark"}
+      >
+        <a className="skip" href="#main" tabIndex={0}>
+          {t("Skip to content", "Aller au contenu")}
+        </a>
+        <header
+          id="header"
+          ref={headerRef}
+          data-landing-header
+          className={`${scrolled ? "scrolled" : ""} ${light ? "light" : ""} ${menu ? "menu-open" : ""}`}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget))
+              setMenu(null)
+          }}
+          onClick={(event) => {
+            if ((event.target as HTMLElement).closest("a")) setMenu(null)
+          }}
+        >
+          <nav
+            className="nav"
+            aria-label={t("Main navigation", "Navigation principale")}
+          >
+            <Link
+              className="logo"
+              href="/"
+              aria-label={t("Stoquify — OHADA operating OS — Home", "Stoquify — Système opérationnel OHADA — Accueil")}
+            >
+              <StoquifyLogo
+                theme={light ? "light" : "dark"}
+                width={212}
+                height={48}
+                tagline={t("OHADA operating OS", "Système opérationnel OHADA")}
+              />
+            </Link>
+            <div className="desktop-links">
+              <button
+                ref={productsRef}
+                id="products-toggle"
+                aria-expanded={menu === "products"}
+                aria-controls="mega"
+                onClick={() => setMenu(menu === "products" ? null : "products")}
+              >
+                {t("Products", "Produits")}
+                <span aria-hidden="true">⌄</span>
+              </button>
+              <Link href="/workflows">{t("Workflows", "Parcours")}</Link>
+              <Link href="/pricing">
+                {t("Offers & pricing", "Offres et tarifs")}
+              </Link>
+            </div>
+            <div className="nav-actions">
+              <button
+                className="theme-toggle"
+                type="button"
+                aria-label={t(
+                  "Light mode for the entire page",
+                  "Mode clair pour toute la page",
+                )}
+                aria-pressed={light}
+                title={
+                  light
+                    ? t("Switch to dark mode", "Passer au mode sombre")
+                    : t("Switch to light mode", "Passer au mode clair")
+                }
+                onClick={() => {
+                  setLight(!light)
+                  try { sessionStorage.setItem("stoquify-public-theme", light ? "dark" : "light") } catch { /* The theme still works without storage. */ }
+                }}
+              >
+                {light ? (
+                  <Moon size={19} aria-hidden="true" />
+                ) : (
+                  <Sun size={19} aria-hidden="true" />
+                )}
+              </button>
+              <Link
+                id="language"
+                href={`${pathname}${query}`}
+                locale={locale === "fr" ? "en" : "fr"}
+                aria-label={
+                  locale === "fr" ? "Switch to English" : "Passer en français"
+                }
+              >
+                {locale === "fr" ? "EN" : "FR"}
+              </Link>
+              <Link className="login" href={signedIn ? "/dashboard" : "/login"} prefetch={false}>
+                {signedIn
+                  ? t("Dashboard", "Tableau de bord")
+                  : t("Log in", "Connexion")}
+              </Link>
+              <Link
+                className="button primary"
+                href={signedIn ? "/dashboard" : "/contact"}
+              >
+                {signedIn
+                  ? t("Open workspace", "Ouvrir l’espace")
+                  : t("Plan your workspace", "Préparer votre projet")}
+                <span aria-hidden="true">↗︎</span>
+              </Link>
+              <button
+                ref={mobileRef}
+                id="mobile-toggle"
+                aria-expanded={menu === "mobile"}
+                aria-controls="mobile-menu"
+                aria-label={
+                  menu === "mobile"
+                    ? t("Close menu", "Fermer le menu")
+                    : t("Open menu", "Ouvrir le menu")
+                }
+                onClick={() => setMenu(menu === "mobile" ? null : "mobile")}
+              >
+                <span />
+                <span />
+              </button>
+            </div>
+          </nav>
+          <div id="mega" className="mega" hidden={menu !== "products"}>
+            <div>
+              <p className="eyebrow">STOQUIFY</p>
+              <h2>
+                {t(
+                  "Your daily operations, together.",
+                  "Vos opérations quotidiennes, réunies.",
+                )}
+              </h2>
+              <p>
+                {t(
+                  "Explore sales, stock, people, payroll and financial review.",
+                  "Explorez les ventes, les stocks, le personnel, la paie et la révision financière.",
+                )}
+              </p>
+              <Link className="text-link" href="/products">
+                {t("Explore all capabilities", "Explorer les fonctionnalités")}{" "}
+                ↗︎
+              </Link>
+            </div>
+            {products.map((module) => (
+              <Link className="mega-link" key={module.id} href={`/products/${module.id}`}>
+                <h3>{t(module.label[0], module.label[1])}</h3>
+                <p>
+                  {t(
+                    "Explore the connected workspace",
+                    "Découvrir l’espace connecté",
+                  )}{" "}
+                  ↗︎
+                </p>
+              </Link>
+            ))}
+          </div>
+          <div
+            id="mobile-menu"
+            data-landing-mobile-menu
+            hidden={menu !== "mobile"}
+          >
+            <Link href="/products">{t("Products", "Produits")}</Link>
+            <Link href="/#modules">{t("Capabilities", "Fonctionnalités")}</Link>
+            <Link href="/workflows">{t("Workflows", "Parcours")}</Link>
+            <Link href="/pricing">
+              {t("Offers & pricing", "Offres et tarifs")}
+            </Link>
+            <Link href="/get-started">
+              {t("Prepare your workspace", "Préparer votre espace")}
+            </Link>
+            <button type="button" className="mobile-motion-toggle" aria-pressed={motionOff} disabled={reduced}
+              onClick={() => { setPaused(!paused); setMenu(null); mobileRef.current?.focus() }}>
+              {reduced ? t("Reduced motion enabled", "Animations réduites activées") : motionOff ? t("Enable motion", "Activer les animations") : t("Pause motion", "Suspendre les animations")}
+            </button>
+            <Link href={signedIn ? "/dashboard" : "/login"} prefetch={false}>
+              {signedIn
+                ? t("Dashboard", "Tableau de bord")
+                : t("Log in", "Connexion")}
+            </Link>
+            {!signedIn && (
+              <Link className="button primary" href="/contact">
+                {t("Plan your workspace", "Préparer votre projet")} ↗︎
+              </Link>
+            )}
+          </div>
+        </header>
+        {children}
+        <footer>
+          <div className="footer-top">
+            <Link
+              className="logo"
+              href="/"
+              aria-label={t("Stoquify — OHADA operating OS — Home", "Stoquify — Système opérationnel OHADA — Accueil")}
+            >
+              <StoquifyLogo
+                theme={light ? "light" : "dark"}
+                width={212}
+                height={48}
+                tagline={t("OHADA operating OS", "Système opérationnel OHADA")}
+              />
+            </Link>
+            <div>
+              <h3>{t("Product", "Produit")}</h3>
+              <Link href="/products">{t("Overview", "Vue d’ensemble")}</Link>
+              <Link href="/#modules">
+                {t("Capabilities", "Fonctionnalités")}
+              </Link>
+              <Link href="/workflows">{t("Workflow", "Parcours")}</Link>
+            </div>
+            <div>
+              <h3>{t("Get started", "Démarrer")}</h3>
+              <Link href={signedIn ? "/dashboard" : "/register"} prefetch={false}>
+                {signedIn ? t("Open workspace", "Ouvrir l’espace") : t("Create account", "Créer un compte")}
+              </Link>
+              {!signedIn && <Link href="/login" prefetch={false}>{t("Log in", "Connexion")}</Link>}
+              <Link href="/pricing">
+                {t("Offers & pricing", "Offres et tarifs")}
+              </Link>
+              <Link href="/get-started">{t("Setup guide", "Guide de démarrage")}</Link>
+              <Link href="/contact">{t("Enquiries & workspace planning", "Demandes et préparation du projet")}</Link>
+            </div>
+            <div>
+              <h3>{t("Explore", "Explorer")}</h3>
+              <Link href="/workflows">
+                {t("Workflow atlas", "Catalogue des parcours")}
+              </Link>
+              <Link href="/#problem">
+                {t("For your business", "Pour votre entreprise")}
+              </Link>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <span>© {new Date().getFullYear()} {contact?.company || "Stoquify"}</span>
+            <div className="footer-contact">
+              {contact?.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
+              {contact?.privacyUrl && <a href={contact.privacyUrl}>{t("Privacy", "Confidentialité")}</a>}
+              {contact?.termsUrl && <a href={contact.termsUrl}>{t("Terms", "Conditions d’utilisation")}</a>}
+            </div>
+            <span>
+              {t(
+                "Illustrative records. No live business data.",
+                "Données d’exemple. Aucune donnée réelle.",
+              )}
+            </span>
+          </div>
+        </footer>
+        <button
+          className="motion-toggle"
+          aria-pressed={motionOff}
+          disabled={reduced}
+          onClick={() => setPaused(!paused)}
+        >
+          {reduced
+            ? t("Reduced motion enabled", "Animations réduites activées")
+            : motionOff
+              ? t("Enable motion", "Activer les animations")
+              : t("Pause motion", "Suspendre les animations")}
+        </button>
+      </div>
+    </CinematicContext.Provider>
+  )
+}

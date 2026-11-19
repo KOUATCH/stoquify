@@ -34,7 +34,7 @@ export async function readInvitationRoleOptions(input: {
       select: { id: true },
     })
     if (!organization) return unavailable("organization_unavailable")
-    const issuer = await readCurrentInvitationIssuer(tx, { organizationId: input.organizationId, actorId: input.actorId, role: { organizationId: input.organizationId, permissions: [] } })
+    const issuer = await readCurrentInvitationIssuer(tx, { organizationId: input.organizationId, actorId: input.actorId, role: { code: "invitation_options_probe", organizationId: input.organizationId, permissions: [] } })
     if (!issuer) return unavailable("forbidden")
     if (!hasRbacPermission(issuer.permissions, "roles.read")) return unavailable("roles_read_required")
     const roles = await tx.role.findMany({
@@ -45,6 +45,7 @@ export async function readInvitationRoleOptions(input: {
     const grantable = roles.filter(role => evaluateRoleGrantPolicy({
       actorOrganizationId: input.organizationId,
       actorPermissions: issuer.permissions,
+      actorRoleCodes: issuer.roleCodes,
       targetRole: role,
     }).allowed).map(role => ({
       value: role.id,

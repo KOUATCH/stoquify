@@ -1,0 +1,68 @@
+{
+  "reviewedAt": "2026-11-11T11:46:48.3893404Z",
+  "status": "OWNED_WORKSPACE_ARTIFACT_STORAGE_REVIEWED",
+  "candidate": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\candidate",
+  "candidateDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e",
+  "sourceManifestSha256": "cfcac6d0dfa217f3ad18ff27d16e46a55aa002bcbf77c91afc7e0b7082bfd544",
+  "failedPreparation": {
+    "evidenceOrigin": "Root-reported exec session 1999 failure before private settings and build-target creation",
+    "reason": "C volume free space below the original four GiB artifact reserve",
+    "reportedCFreeBytes": 3635478528,
+    "originalCMinimumBytes": 4294967296.0,
+    "reportedEFreeBytes": 10599698432,
+    "privateBuildDirectoryObservedAbsentBeforePatch": true,
+    "artifactBuildTargetObservedAbsentBeforePatch": true,
+    "applicationOrDatabaseStarted": false,
+    "artifactEmitted": false,
+    "failedGuardWasBypassed": false
+  },
+  "newStorage": {
+    "artifact": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\artifact",
+    "temporaryDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\build-private\\temp",
+    "workspaceVolume": "E:",
+    "compilerReserveBytes": 5368709120.0,
+    "artifactReserveBytes": 4294967296.0,
+    "combinedReserveBytes": 9663676416.0,
+    "combinedReserveRequiredBeforeCreation": true,
+    "separateCArtifactReserveApplicable": false,
+    "artifactMustBeExactOwnedSiblingOfCandidate": true,
+    "temporaryDirectoryMustBeExactOwnedPath": true,
+    "noLinksAndNewDestinationGuardsRetained": true,
+    "privateEnvironmentVariableCount": 20,
+    "temporaryOverridesOutsidePrivateEnvironmentDictionary": [
+      "TMP",
+      "TEMP"
+    ]
+  },
+  "scope": {
+    "onlyQualificationHelpersModified": true,
+    "applicationSourceModified": false,
+    "schemaOrMigrationModified": false,
+    "frozenSourceManifestModified": false,
+    "dependenciesOrSdkModifiedByAuthor": false,
+    "firstArtifactOrCCacheMutationPerformedByAuthor": false,
+    "sourceAndByteVerificationGuardsWeakened": false,
+    "oldPassingReceiptsCopied": false,
+    "actualCredentialReadClaimed": false
+  },
+  "files": [
+    {
+      "name": "build-artifact.cjs",
+      "preimage": "build-artifact.before-owned-workspace-storage.cjs",
+      "beforeSha256": "a545373e90da83a75b89e9214c57a46a2cda23959eb9c633182290642627c882",
+      "currentSha256": "ab21544e0b5b2a76a3606fe97d404c257e4fb1d8b505f441adf58eadfdf651d5"
+    },
+    {
+      "name": "localhost-promotion-refusal.cjs",
+      "preimage": "localhost-promotion-refusal.before-owned-workspace-storage.cjs",
+      "beforeSha256": "d02a9df33b22155634860b0fa6d8b614c8502ca8cb5eb490b404391e769768de",
+      "currentSha256": "5b0c0b59cf48f70c6b1a8f3fc8c4c47f4462ca8bc89de8ad405839ed49f81968"
+    }
+  ],
+  "execution": {
+    "helpersExecutedByAuthor": false,
+    "buildOrNativeGenerationExecutedByAuthor": false,
+    "applicationOrDatabaseExecutedByAuthor": false,
+    "rootReviewAndPreparationRetryRequired": true
+  }
+}

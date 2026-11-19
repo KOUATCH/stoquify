@@ -1,0 +1,41 @@
+{
+  "organizationId": "synth12_yaounde",
+  "scenarios": [
+    {
+      "scenario": "held-serialized-receipt-independent-acceptance-and-invoice-exception",
+      "result": {
+        "itemId": "synth12_yaounde_remaining_serial_item",
+        "masterReferenceEvidenceSha256": "352fe570771ef14d40afbbebf40ab64e0ff4ae070994d9cdbe42f27784ad24aa",
+        "orderId": "cmvth5qkw009jmahswezq89qu",
+        "receiptId": "cmvth5rix00a5mahsh3m2gpfx",
+        "resolutionId": "cmvth5rxu00ajmahs49gxap8g",
+        "serialIds": [
+          "cmvth5s4y00b9mahslon4xyjq",
+          "cmvth5s4y00bamahs7k2xb3zn"
+        ],
+        "stockQuantity": "2",
+        "stockValue": "2000.00",
+        "invoiceId": "cmvth5st600btmahssqajtipe",
+        "exceptionId": "cmvth5ted00c7mahstaxwu5hn",
+        "exceptionStatus": "REJECTED",
+        "invoicePosted": false
+      }
+    },
+    {
+      "scenario": "cash-pos-sale-refund-stock-cash-ledger-round-trip",
+      "result": {
+        "saleId": "cmvth5u9v00ddmahs2a2v2yly",
+        "refundId": "cmvth5v6e00fgmahsb95pv2k9",
+        "total": "17500",
+        "status": "RETURNED",
+        "postingBatchId": "cmvth5v8t00fimahs95q3apuk",
+        "sessionId": "cmvth5u3k00d5mahsdlw4ky8t",
+        "netInventoryQuantity": 0,
+        "netCash": 0,
+        "evidenceSha256": "4b639efbbf9cd0c55b8c1921900e2e420d816e230c293cbd4dddb458c0a666fa"
+      }
+    }
+  ],
+  "issues": [],
+  "blockedTables": []
+}

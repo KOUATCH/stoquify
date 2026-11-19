@@ -1,0 +1,163 @@
+{
+  "generatedAt": "2026-10-25T10:37:35.336Z",
+  "scope": "Captured disposable candidate; no production certification",
+  "tests": {
+    "passed": 76,
+    "failed": 0,
+    "suites": 4
+  },
+  "compiler": {
+    "exitCode": 0,
+    "productionAccess": false,
+    "releaseGateOverridden": false,
+    "timeoutMs": 1800000,
+    "privateGeneratedClient": true,
+    "scope": "Full captured build diagnostic, normal checks enabled; not a trusted release artifact or production approval"
+  },
+  "lint": {
+    "name": "candidate-lint",
+    "exitCode": 0,
+    "timeoutMs": 600000,
+    "files": 3117,
+    "errors": 0,
+    "warnings": 22
+  },
+  "catalog": {
+    "status": "ready",
+    "count": 118,
+    "errors": []
+  },
+  "history": {
+    "generatedAt": "2026-10-25T09:52:55.422Z",
+    "mode": "fail",
+    "status": "ready",
+    "checkCount": 9,
+    "readyCount": 9,
+    "blockerCount": 0,
+    "repositoryMigrationCount": 118,
+    "completedRowCount": 118,
+    "unfinishedRowCount": 0,
+    "rolledBackRowCount": 0,
+    "secretValuePrinted": false,
+    "migrationLogPrinted": false
+  },
+  "localMigrationReadiness": {
+    "generatedAt": "2026-10-25T09:52:58.875Z",
+    "status": "ready",
+    "checkCount": 10,
+    "readyCount": 10,
+    "blockerCount": 0,
+    "migrationCount": 118,
+    "riskFindingCount": 0,
+    "catalogRiskFindingCount": 13,
+    "approvedRiskCount": 0,
+    "staleApprovalCount": 0,
+    "revokedApprovalCount": 0,
+    "secretValuePrinted": false
+  },
+  "productionPolicy": {
+    "generatedAt": "2026-10-25T09:53:03.064Z",
+    "releaseEnforced": true,
+    "status": "blocked",
+    "checkCount": 21,
+    "readyCount": 18,
+    "blockerCount": 3,
+    "warningCount": 0,
+    "secretValuePrinted": false
+  },
+  "schema": {
+    "exitCode": 2,
+    "applied": false,
+    "scope": "Read-only comparison of replayed disposable database against captured Prisma schema",
+    "statementCount": 264,
+    "commandCenterReferences": 0
+  },
+  "upgrade": {
+    "database": "stoquify_local_command_center_e2e_f7253138fe_upgrade",
+    "productionAccess": false,
+    "checks": [
+      "115-to-118 populated upgrade preserves user, occurrence and immutable event bytes",
+      "Promotion advisory lock excludes contenders and releases after failure",
+      "Existing client writes coexist with retained coordination history; deletion still rejected",
+      "All 118 upgrade ledger names and hashes match the captured catalog"
+    ],
+    "scope": "115-to-118 upgrade with synthetic user and Command Center history; not all older populated domain transitions",
+    "passed": true
+  },
+  "preservation": {
+    "checkedFiles": 7497,
+    "candidateChanged": [],
+    "fixtureChange": {
+      "replacements": 17,
+      "exactReplacementOnly": true
+    },
+    "workspaceChanges": [
+      "app/[locale]/(dashboard)/dashboard/people/work/page.tsx",
+      "components/accounting/AdvisoryOutcomesDesk.tsx",
+      "docs/accounting-firms/README.md",
+      "docs/accounting-firms/roadmap-2026-10-19/01_IMPLEMENTATION_ROADMAP.md",
+      "docs/accounting-firms/roadmap-2026-10-19/STATUS.md",
+      "docs/command-center/phase-8-blocker-fixes-2026-10-25/CATALOG_REVIEW.md",
+      "docs/ecc/cameroon-blueprint-execution-2026-10-07.md",
+      "services/accounting/advisory-outcomes-export.ts",
+      "services/accounting/advisory-outcomes.service.ts",
+      "services/hris/__tests__/payroll-handoff.postgres.test.ts",
+      "services/hris/payroll-handoff.service.ts",
+      "services/payroll/__tests__/payroll-employee.service.test.ts",
+      "services/payroll/employee.service.ts"
+    ]
+  },
+  "target": {
+    "productionAccess": false,
+    "clusterIdentityVerified": true,
+    "stopped": true
+  },
+  "browser": "Retained Phase 7 evidence; no new browser execution this turn",
+  "typecheck": {
+    "exitCode": 0,
+    "productionAccess": false,
+    "capturedSourceUnchanged": true,
+    "scope": "Full captured tsconfig, all diagnostics, isolated generated Prisma Client"
+  },
+  "privateClient": {
+    "exitCode": 0,
+    "privateModules": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\phase8-f7253138fe\\private-dependencies\\node_modules",
+    "sharedGeneratedClientBefore": {
+      "index.d.ts": "f951f807756e88e13252b4364a45f05f05a9c5a921bffe3c09146391fea3edd6",
+      "index.js": "a10f378ee7083cb45f8bcf038c92b366c9300c66049c3d975d4485b85c18659a",
+      "schema.prisma": "b808d3d1030920381b12ceaa61517173128cdee01d7eedb501c941b94dc41db0",
+      "package.json": "2e991b707029f9523edca3b9d1911088fe62f543bc62212677c9a717159298cc"
+    },
+    "sharedGeneratedClientAfter": {
+      "index.d.ts": "f951f807756e88e13252b4364a45f05f05a9c5a921bffe3c09146391fea3edd6",
+      "index.js": "a10f378ee7083cb45f8bcf038c92b366c9300c66049c3d975d4485b85c18659a",
+      "schema.prisma": "b808d3d1030920381b12ceaa61517173128cdee01d7eedb501c941b94dc41db0",
+      "package.json": "2e991b707029f9523edca3b9d1911088fe62f543bc62212677c9a717159298cc"
+    },
+    "sharedClientUnchanged": true,
+    "productionAccess": false,
+    "applicationSourceChanged": false,
+    "dependencyInstall": false,
+    "generatedSchemaMatches": true,
+    "advisoryModelPresent": true,
+    "initialSchemaTokenComparison": false,
+    "schemaVerification": "Exact comparison after installed Prisma formatter normalizes a separate temporary source copy; captured schema untouched",
+    "formattedSchemaSha256": "97e0f8077ad759bc527be4331fb8d9ebdf3b0e1cdc0ae2bbd1f652a98bfd03de",
+    "generatedSchemaSha256": "97e0f8077ad759bc527be4331fb8d9ebdf3b0e1cdc0ae2bbd1f652a98bfd03de"
+  },
+  "privateClientDatabaseReads": {
+    "productionAccess": false,
+    "writes": false,
+    "checks": [
+      "firmAdvisoryRevision all-field SELECT succeeds against replayed disposable schema",
+      "hrisPayrollHandoffPackage all-field SELECT succeeds against replayed disposable schema",
+      "hrisPayrollHandoffReceipt all-field SELECT succeeds against replayed disposable schema",
+      "commandCenterOccurrence all-field SELECT succeeds against replayed disposable schema",
+      "user all-field SELECT succeeds against replayed disposable schema",
+      "organization all-field SELECT succeeds against replayed disposable schema"
+    ],
+    "passed": true
+  },
+  "requestedBlockerVerificationPassed": true,
+  "productionReleaseApproved": false
+}

@@ -1,0 +1,190 @@
+{
+  "utc": "2026-11-09T10:24:45.302Z",
+  "operations": [
+    {
+      "kind": "login",
+      "user": "collector",
+      "returnUrl": "/dashboard/finance/receivables/history?selected=cmw939xau000vmatojel0y1bs"
+    },
+    {
+      "kind": "click",
+      "role": "button",
+      "text": "Record customer payment"
+    },
+    {
+      "kind": "fill",
+      "label": "Amount (XAF)"
+    },
+    {
+      "kind": "validity",
+      "label": "Amount (XAF)",
+      "expected": true
+    },
+    {
+      "kind": "audit",
+      "role": "region",
+      "text": "Customer payments"
+    },
+    {
+      "kind": "layout",
+      "role": "region",
+      "text": "Customer payments"
+    },
+    {
+      "kind": "screenshot",
+      "suffix": "desktop"
+    },
+    {
+      "kind": "viewport",
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "kind": "layout",
+      "role": "region",
+      "text": "Customer payments"
+    },
+    {
+      "kind": "screenshot",
+      "suffix": "tablet"
+    },
+    {
+      "kind": "viewport",
+      "width": 375,
+      "height": 812
+    },
+    {
+      "kind": "layout",
+      "role": "region",
+      "text": "Customer payments"
+    },
+    {
+      "kind": "audit",
+      "role": "region",
+      "text": "Customer payments"
+    },
+    {
+      "kind": "screenshot",
+      "suffix": "mobile"
+    },
+    {
+      "kind": "click",
+      "role": "button",
+      "text": "Cancel"
+    }
+  ],
+  "results": [
+    {
+      "signedInRole": "collector"
+    },
+    {
+      "operation": "login"
+    },
+    {
+      "operation": "click",
+      "role": "button",
+      "text": "Record customer payment"
+    },
+    {
+      "operation": "fill",
+      "label": "Amount (XAF)"
+    },
+    {
+      "fieldValidity": "Amount (XAF)",
+      "valid": true
+    },
+    {
+      "operation": "validity",
+      "label": "Amount (XAF)"
+    },
+    {
+      "accessibilityAudit": {
+        "violations": [],
+        "incompleteCount": 1,
+        "passes": 14
+      }
+    },
+    {
+      "operation": "audit",
+      "role": "region",
+      "text": "Customer payments"
+    },
+    {
+      "layout": {
+        "viewportWidth": 1440,
+        "viewportHeight": 1000,
+        "left": 885,
+        "right": 1404,
+        "scrollWidth": 517,
+        "clientWidth": 517
+      }
+    },
+    {
+      "operation": "layout",
+      "role": "region",
+      "text": "Customer payments"
+    },
+    {
+      "operation": "screenshot"
+    },
+    {
+      "operation": "viewport"
+    },
+    {
+      "layout": {
+        "viewportWidth": 768,
+        "viewportHeight": 1024,
+        "left": 213,
+        "right": 732,
+        "scrollWidth": 517,
+        "clientWidth": 517
+      }
+    },
+    {
+      "operation": "layout",
+      "role": "region",
+      "text": "Customer payments"
+    },
+    {
+      "operation": "screenshot"
+    },
+    {
+      "operation": "viewport"
+    },
+    {
+      "layout": {
+        "viewportWidth": 375,
+        "viewportHeight": 812,
+        "left": 51,
+        "right": 339,
+        "scrollWidth": 286,
+        "clientWidth": 286
+      }
+    },
+    {
+      "operation": "layout",
+      "role": "region",
+      "text": "Customer payments"
+    },
+    {
+      "accessibilityAudit": {
+        "violations": [],
+        "incompleteCount": 0,
+        "passes": 14
+      }
+    },
+    {
+      "operation": "audit",
+      "role": "region",
+      "text": "Customer payments"
+    },
+    {
+      "operation": "screenshot"
+    },
+    {
+      "operation": "click",
+      "role": "button",
+      "text": "Cancel"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "label": "remaining-stock-pos",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "prisma/disposable-remaining.ts",
+    "stock-pos"
+  ],
+  "startedAt": "2026-10-29T11:42:39.165Z",
+  "finishedAt": "2026-10-29T11:43:38.515Z",
+  "exitCode": 0,
+  "errorCode": null
+}

@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
 import { loadInvoiceCorrection, loadInvoiceCorrectionDetail, loadInvoiceCorrectionHistory, reviewInvoiceCorrection, submitInvoiceCorrection } from "@/actions/purchasing/invoice-correction.actions"
 import { invoiceCorrectionCommandSchema, invoiceCorrectionDraftSchema, type InvoiceCorrectionCommand } from "@/services/purchasing/invoice-correction-contracts"
+import { invoiceChargeFields, suggestedInvoiceCharge } from "./invoice-commercial-inputs"
 
 type Success<T> = Extract<T, { success: true }> extends { data: infer D } ? D : never
 type Sources = Success<Awaited<ReturnType<typeof loadInvoiceCorrection>>>
@@ -19,7 +20,7 @@ type History = Success<Awaited<ReturnType<typeof loadInvoiceCorrectionHistory>>>
 type Preview = Success<Awaited<ReturnType<typeof reviewInvoiceCorrection>>>
 type Decision = Success<Awaited<ReturnType<typeof submitInvoiceCorrection>>>
 const text = z.string().max(1200)
-export const invoiceCorrectionFormSchema = z.object({ invoiceId: text, reason: text, preparation: z.object({ supplierId: text, invoiceNumber: text, currency: text, invoiceDate: text, dueDate: text, documentReference: text, documentSha256: text, notes: text, lines: z.array(z.object({ goodsReceiptLineId: text, description: text, quantity: text, unitCost: text, taxRate: text }).strict()).max(100) }).strict() }).strict()
+export const invoiceCorrectionFormSchema = z.object({ invoiceId: text, reason: text, preparation: z.object({ supplierId: text, invoiceNumber: text, currency: text, invoiceDate: text, dueDate: text, documentReference: text, documentSha256: text, notes: text, lines: z.array(z.object({ goodsReceiptLineId: text, description: text, quantity: text, unitCost: text, taxRate: text, discount: text.optional(), freight: text.optional(), taxAmount: text.optional() }).strict()).max(100) }).strict() }).strict()
 type Form = z.infer<typeof invoiceCorrectionFormSchema>
 export const invoiceCorrectionStorageKey = (org: string, actor: string) => `stoquify:invoice-correction:${JSON.stringify([org, actor])}`
 const denied = (code?: string) => ["FORBIDDEN", "AUTH_REQUIRED", "NOT_FOUND", "TENANT_SCOPE_VIOLATION"].includes(code ?? "")
@@ -108,7 +109,16 @@ export function InvoiceCorrectionWorkbench({ organizationId, actorId }: { organi
   }
   async function review() {
     if (inFlight.current || !form || pending) return
-    const parsed = invoiceCorrectionDraftSchema.safeParse({ ...form, preparation: { ...form.preparation, dueDate: form.preparation.dueDate || undefined, notes: form.preparation.notes || undefined } })
+    const lines = form.preparation.lines.map(line => {
+      const row = detail?.receipts.find(receipt => receipt.id === line.goodsReceiptLineId)
+      return {
+        ...line,
+        discount: (line.discount ?? suggestedInvoiceCharge(row, line.quantity, "discount")) || undefined,
+        freight: (line.freight ?? suggestedInvoiceCharge(row, line.quantity, "freight")) || undefined,
+        taxAmount: line.taxAmount || undefined,
+      }
+    })
+    const parsed = invoiceCorrectionDraftSchema.safeParse({ ...form, preparation: { ...form.preparation, dueDate: form.preparation.dueDate || undefined, notes: form.preparation.notes || undefined, lines } })
     if (!parsed.success) { setError(t("invalid")); return }
     const current = generation.current; inFlight.current = true; setBusy(true); setError(""); setDecision(null)
     try {
@@ -160,8 +170,24 @@ export function InvoiceCorrectionWorkbench({ organizationId, actorId }: { organi
     {form && values && !decision && <section className={panel}><h2 className="text-lg font-semibold">{t("details")}</h2><p className="mt-2">{detail?.supplierName} · {values.invoiceNumber} · {values.currency}</p><p className="my-2 text-sm">{t("fixed")}</p>{detail && !detail.previousEvidenceVerified && <p className="text-[var(--dash-warning)]">{t("unverified")}</p>}{detail?.activeException && <p role="alert" className="text-[var(--dash-warning)]">{t("activeException")}</p>}
       <fieldset disabled={locked || detailLoading} className="mt-4 space-y-4"><div><Label htmlFor="correction-reason">{t("reason")}</Label><Textarea id="correction-reason" maxLength={1000} value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })} /></div><div className="grid gap-4 sm:grid-cols-2">{([['invoiceDate','date','date'],['dueDate','due','date'],['documentReference','reference','url']] as const).map(([field,label,type]) => <div key={field} className={field === 'documentReference' ? 'sm:col-span-2' : ''}><Label htmlFor={`correction-${field}`}>{p(label)}</Label><Input id={`correction-${field}`} type={type} value={values[field]} onChange={e => change(field,e.target.value)} maxLength={1000} /></div>)}</div>
       <div><Label htmlFor="correction-file">{p("file")}</Label><Input id="correction-file" type="file" onChange={e => void chooseFile(e.target.files?.[0])} aria-describedby="correction-file-help" /><p id="correction-file-help" className="mt-2 text-sm">{p("fileHelp")}</p><p className="break-all text-xs">{p("hash")}: {values.documentSha256 || t("missing")}</p></div>
-      <div><h3 className="font-semibold">{p("receipts")}</h3><p className="text-sm">{t("receiptHelp")}</p>{detail?.receipts.map(row => <label key={row.id} className="mt-2 flex items-start gap-3 rounded-lg border border-[var(--dash-border)] p-3"><input className="mt-1 h-4 w-4 shrink-0 accent-[var(--dash-brand)]" type="checkbox" checked={values.lines.some(line => line.goodsReceiptLineId === row.id)} disabled={Number(row.available) <= 0 && !values.lines.some(line => line.goodsReceiptLineId === row.id)} onChange={e => change("lines",e.target.checked ? [...values.lines,{goodsReceiptLineId:row.id,description:locale === 'fr' ? row.descriptionFr : row.description,quantity:"",unitCost:row.unitCost,taxRate:"0"}] : values.lines.filter(line => line.goodsReceiptLineId !== row.id))} /><span className="min-w-0 break-words">{row.receiptNumber} · {row.orderNumber}<br />{locale === 'fr' ? row.descriptionFr : row.description}<br />{p("available")}: {row.available}</span></label>)}{detail?.receiptNext && <Button variant="outline" className={`mt-3 ${button}`} onClick={() => void loadDetail(form.invoiceId,true,detail.receiptNext!)}>{p("moreReceipts")}</Button>}</div>
-      {values.lines.map((line,index) => <div key={`${line.goodsReceiptLineId}-${index}`} className="rounded-lg border border-[var(--dash-border)] p-3"><h3 className="mb-2 font-semibold">{p("line")} {index+1}</h3><div className="grid gap-3 sm:grid-cols-2">{(['description','quantity','unitCost','taxRate'] as const).map(field => <div key={field}><Label htmlFor={`correction-line-${index}-${field}`}>{p(field === 'unitCost' ? 'cost' : field)}</Label><Input id={`correction-line-${index}-${field}`} value={line[field]} maxLength={field === 'description' ? 240 : 20} inputMode={field === 'description' ? 'text' : 'decimal'} onChange={e => change('lines',values.lines.map((old,i) => i === index ? {...old,[field]:field === 'description' ? e.target.value : e.target.value.replace(',','.')} : old))} /></div>)}</div><Button variant="ghost" className={`mt-2 ${button}`} onClick={() => change('lines',values.lines.filter((_,i) => i !== index))}>{p("remove")}</Button></div>)}
+      <div><h3 className="font-semibold">{p("receipts")}</h3><p className="text-sm">{t("receiptHelp")}</p>{detail?.receipts.map(row => <label key={row.id} className="mt-2 flex items-start gap-3 rounded-lg border border-[var(--dash-border)] p-3"><input className="mt-1 h-4 w-4 shrink-0 accent-[var(--dash-brand)]" type="checkbox" checked={values.lines.some(line => line.goodsReceiptLineId === row.id)} disabled={Number(row.available) <= 0 && !values.lines.some(line => line.goodsReceiptLineId === row.id)} onChange={e => change("lines",e.target.checked ? [...values.lines,{goodsReceiptLineId:row.id,description:locale === 'fr' ? row.descriptionFr : row.description,quantity:"",unitCost:row.unitCost,taxRate:row.commercialBasis?.taxRate ?? row.taxRate ?? ""}] : values.lines.filter(line => line.goodsReceiptLineId !== row.id))} /><span className="min-w-0 break-words">{row.receiptNumber} · {row.orderNumber}<br />{locale === 'fr' ? row.descriptionFr : row.description}<br />{p("available")}: {row.available}</span></label>)}{detail?.receiptNext && <Button variant="outline" className={`mt-3 ${button}`} onClick={() => void loadDetail(form.invoiceId,true,detail.receiptNext!)}>{p("moreReceipts")}</Button>}</div>
+      {values.lines.map((line, index) => {
+        const row = detail?.receipts.find(receipt => receipt.id === line.goodsReceiptLineId)
+        return <div key={line.goodsReceiptLineId} className="rounded-lg border border-[var(--dash-border)] p-3">
+          <h3 className="mb-2 font-semibold">{p("line")} {index + 1}</h3>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(["description", "quantity", "unitCost", "taxRate", "taxAmount", ...invoiceChargeFields] as const).map(field => {
+              const isCharge = field === "discount" || field === "freight"
+              const suggestion = isCharge ? suggestedInvoiceCharge(row, line.quantity, field) : undefined
+              return <div key={field}>
+                <Label htmlFor={`correction-line-${index}-${field}`}>{p(field === "unitCost" ? "cost" : field)}{(isCharge || field === "taxAmount") && values.currency ? ` (${values.currency})` : ""}</Label>
+                <Input id={`correction-line-${index}-${field}`} value={line[field] ?? suggestion ?? ""} maxLength={field === "description" ? 240 : 20} inputMode={field === "description" ? "text" : "decimal"} onChange={e => change("lines", values.lines.map((old, i) => i === index ? { ...old, [field]: field === "description" ? e.target.value : e.target.value.replace(",", ".") } : old))} />
+              </div>
+            })}
+          </div>
+          <Button variant="ghost" className={`mt-2 ${button}`} onClick={() => change("lines", values.lines.filter((_, i) => i !== index))}>{p("remove")}</Button>
+        </div>
+      })}
       <div><Label htmlFor="correction-notes">{p("notes")}</Label><Textarea id="correction-notes" value={values.notes} maxLength={1000} onChange={e => change('notes',e.target.value)} /></div></fieldset>
       <div className="mt-4 flex flex-wrap gap-3"><Button ref={reviewButton} className={`dashboard-button-primary ${button}`} onClick={() => void review()} disabled={locked || detailLoading || !detail || detail.activeException}>{t("review")}</Button><Button variant="outline" className={button} disabled={locked || detailLoading} onClick={() => void loadDetail(form.invoiceId,true)}>{t("refreshSources")}</Button></div>{detail && <p className="mt-2 text-xs">{p("sourceTime")}: {time(detail.checkedAt)}</p>}
     </section>}

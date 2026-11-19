@@ -1,0 +1,2 @@
+const path=require('node:path'),root=path.resolve(__dirname,'../../../../../..');
+module.exports=require(path.join(root,'node_modules/next/jest'))()({rootDir:root,roots:['<rootDir>/services','<rootDir>/actions'],testEnvironment:'node',setupFilesAfterEnv:[path.join(__dirname,'guard.cjs')],moduleNameMapper:{'^@/(.*)$':'<rootDir>/$1'},testMatch:['**/__tests__/**/*.test.ts'],testTimeout:15000,collectCoverage:false,cacheDirectory:path.join(__dirname,'cache')});

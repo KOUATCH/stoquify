@@ -28,11 +28,13 @@ import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx,
 import { assertProviderAccountReconciliationReady } from "./payment-reconciliation-evidence.service"
 import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
 import { lockReconciliationProviderInTx, lockReconciliationPaymentSourcesInTx } from "./reconciliation-source-locks"
+import { accountingPeriodReconciliationScope, isUtcDayAlignedAccountingPeriod } from "./reconciliation-period-scope"
 
 export type RunPaymentReconciliationInput = {
   organizationId: string
   providerAccountId: string
-  businessDate: Date
+  businessDate?: Date
+  accountingPeriodId?: string
   runById?: string
   correlationId?: string
   providerOperationId?: string
@@ -110,7 +112,11 @@ function reconciliationRunDedupeKey(input: {
   organizationId: string
   providerAccountId: string
   periodStart: Date
+  periodEnd?: Date
+  accountingPeriodId?: string
 }) {
+  if (input.accountingPeriodId) return JSON.stringify(["accounting-period", input.organizationId, input.providerAccountId,
+    input.accountingPeriodId, input.periodStart.toISOString(), input.periodEnd!.toISOString()])
   return [
     input.organizationId,
     input.providerAccountId,
@@ -515,19 +521,17 @@ export async function runPaymentReconciliation(
   input: RunPaymentReconciliationInput,
 ): Promise<RunPaymentReconciliationResult> {
   const correlationId = input.correlationId ?? randomUUID()
-  const periodStart = startOfDay(input.businessDate)
-  const periodEnd = endOfDay(input.businessDate)
-  const runDedupeKey = reconciliationRunDedupeKey({
-    organizationId: input.organizationId,
-    providerAccountId: input.providerAccountId,
-    periodStart,
-  })
+  if (!input.businessDate && !input.accountingPeriodId) throw new ConflictError("A business date or accounting period is required.")
+  if (input.businessDate && (!(input.businessDate instanceof Date) || !Number.isFinite(+input.businessDate))) throw new ConflictError("A valid business date is required.")
+  if (input.accountingPeriodId && input.providerOperationId) throw new ConflictError("Provider-operation evidence supports daily reconciliation only.")
+  const suppliedBusinessDate = input.businessDate ? startOfDay(input.businessDate) : null
   const now = new Date()
 
   logger.info("payment-reconciliation.run.start", {
     organizationId: input.organizationId,
     providerAccountId: input.providerAccountId,
-    businessDate: periodStart.toISOString(),
+    businessDate: suppliedBusinessDate?.toISOString() ?? null,
+    accountingPeriodId: input.accountingPeriodId ?? null,
     correlationId,
   })
 
@@ -539,7 +543,26 @@ export async function runPaymentReconciliation(
         operation: "payment.reconciliation.run.create",
       })
       await lockReconciliationCloseCatalogInTx(tx, input.organizationId)
+      let periodStart = suppliedBusinessDate!, periodEnd = input.businessDate ? endOfDay(input.businessDate) : null!
+      let businessDate = suppliedBusinessDate!
+      if (input.accountingPeriodId) {
+        // The catalog lock prevents range membership changes; this period-row
+        // lock precedes assessment/provider locks and freezes OPEN eligibility.
+        const periods = await tx.$queryRaw<Array<{ id: string; status: string; startDate: Date; endDate: Date }>>(Prisma.sql`
+          SELECT "id", "status", "startDate", "endDate" FROM "accounting_periods"
+          WHERE "id" = ${input.accountingPeriodId} AND "organizationId" = ${input.organizationId} FOR SHARE`)
+        const period = periods[0]
+        if (periods.length !== 1 || !period) throw new NotFoundError("Accounting period not found")
+        if (period.status !== "OPEN" || !isUtcDayAlignedAccountingPeriod(period.startDate, period.endDate))
+          throw new ConflictError("Accounting-period reconciliation requires an open period with complete UTC-day stored boundaries.")
+        periodStart = period.startDate; periodEnd = new Date(+period.endDate + 1); businessDate = startOfDay(period.startDate)
+        if (!Number.isFinite(+periodEnd) || (suppliedBusinessDate && +suppliedBusinessDate !== +businessDate))
+          throw new ConflictError("A supplied business date must match the accounting period's first UTC day.")
+      }
       const affectedPeriodIds = await lockReconciliationClosePeriodsInTx(tx, input.organizationId)
+      if (input.accountingPeriodId && !affectedPeriodIds.includes(input.accountingPeriodId)) throw new ConflictError("Accounting period membership changed; refresh and retry reconciliation.")
+      const runDedupeKey = reconciliationRunDedupeKey({ organizationId: input.organizationId, providerAccountId: input.providerAccountId,
+        periodStart, periodEnd, accountingPeriodId: input.accountingPeriodId })
       await lockReconciliationProviderInTx(tx, input.organizationId, input.providerAccountId)
       const providerAccount = await tx.providerAccount.findFirst({
         where: { id: input.providerAccountId, organizationId: input.organizationId },
@@ -576,7 +599,7 @@ export async function runPaymentReconciliation(
         where: {
           organizationId: input.organizationId,
           providerAccountId: providerAccount.id,
-          businessDate: periodStart,
+          businessDate,
           voidedAt: null,
         },
         select: {
@@ -587,6 +610,7 @@ export async function runPaymentReconciliation(
       })
 
       if (existingRun) {
+        if (input.accountingPeriodId) throw new ConflictError("A reconciliation already occupies the accounting period's first business date. Daily and period runs cannot coexist on that date; retain the existing run and review coverage.")
         throw new ConflictError(duplicateRunMessage(existingRun.status))
       }
 
@@ -597,9 +621,10 @@ export async function runPaymentReconciliation(
           organizationId: input.organizationId,
           providerAccountId: providerAccount.id,
           paymentRailId: providerAccount.paymentRailId,
-          businessDate: periodStart,
+          businessDate,
           periodStart,
           periodEnd,
+          ...(input.accountingPeriodId ? { accountingPeriodId: input.accountingPeriodId } : {}),
           status: ReconciliationRunStatus.RUNNING,
           runById: input.runById,
           correlationId,
@@ -607,6 +632,10 @@ export async function runPaymentReconciliation(
             ...(input.providerOperationId ? { providerOperationId: input.providerOperationId } : {}),
             runDedupeKey,
             concurrencyGuard: "same_provider_business_date",
+            scope: input.accountingPeriodId
+              ? { ...accountingPeriodReconciliationScope(input.organizationId, providerAccount.id, input.accountingPeriodId, periodStart, periodEnd),
+                coexistence: "Daily uniqueness retained; a run on the first business date blocks period creation." }
+              : { version: 1, kind: "DAILY", accountingPeriodId: null, periodStart: periodStart.toISOString(), periodEnd: periodEnd.toISOString() },
           },
         },
           select: { id: true },

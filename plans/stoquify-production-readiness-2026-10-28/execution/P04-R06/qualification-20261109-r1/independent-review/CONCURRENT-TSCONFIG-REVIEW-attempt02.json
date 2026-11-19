@@ -1,0 +1,27 @@
+{
+  "at": "2026-11-10T08:55:33.993Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Current TypeScript exclusion delta classification only",
+  "proof": {
+    "path": "inventory/resume-20261110-r1/TSCONFIG-PRESERVATION-SELECTION.json",
+    "sha256": "6c157b3223bb932c43136fcac7009840bcd9d5c3f1a55727254fc19b251a38f0"
+  },
+  "exactDifference": "plans/**/preservation/before/source/** -> plans/**/preservation/**",
+  "workspaceNewlyExcluded": [
+    {
+      "path": "plans/stoquify-production-readiness-2026-10-28/execution/P04-R06/qualification-20261109-r1/preservation/repair-r1/lib/auth.ts",
+      "sha256": "6e40844d3bd3a4d93d95c1916418eada52d37c38aea313e760a9bd2f6f9bbe72",
+      "bytes": 9842,
+      "old_selected": true,
+      "new_selected": false
+    }
+  ],
+  "candidatePlansAbsent": true,
+  "assessment": "Current change excludes one preserved older auth source copy in the workspace. The isolated candidate has no plans tree, so no existing candidate-selected source is omitted by this particular pattern delta. Full type/lint gates remain required.",
+  "conditions": [
+    "Successor refresh must still compare actual parsed isolated old/new config file lists before mutation",
+    "No existing source/check exclusions are broadened beyond this preserved current change"
+  ],
+  "fullTypecheckPerformed": false
+}

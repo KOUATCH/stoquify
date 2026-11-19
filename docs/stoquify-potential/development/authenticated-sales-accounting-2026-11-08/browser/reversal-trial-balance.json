@@ -1,0 +1,382 @@
+{
+  "utc": "2026-11-09T10:23:18.205Z",
+  "operations": [
+    {
+      "kind": "login",
+      "user": "accountant",
+      "returnUrl": "/dashboard/accounting/reports/trial-balance"
+    },
+    {
+      "kind": "wait",
+      "text": "Balanced",
+      "timeout": 60000
+    },
+    {
+      "kind": "inspect"
+    },
+    {
+      "kind": "screenshot"
+    }
+  ],
+  "results": [
+    {
+      "signedInRole": "accountant"
+    },
+    {
+      "operation": "login"
+    },
+    {
+      "operation": "wait"
+    },
+    {
+      "url": "http://127.0.0.1:3196/en/dashboard/accounting/reports/trial-balance",
+      "title": "Stoquify - OHADA Operating System",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "text": "Skip to main content\nOHADA OPERATING OS\nNotifications\n0\n\nSynthetic Cameroon sales accounting pilot\n\nSYNTHETIC ACCOUNTANT\nSession\nMODULES\n5\nCOMMAND\n2\nDashboard\nOperating overview\nCommand Center\nOwner and manager daily command views\n3\nOPERATIONS\n1\nSales\nCustomers, sales, and POS entry points\n2\nFINANCE & TRUST\n2\nAccounting\nLedger, close, reports, and controls\n7\nOverview\nAccountant Portal\nAccountant Portfolio\nAccounts\nClose Center\nJournals\nTrial Balance\nFinance\nCash, profitability, payments, and reconciliation\n2\nSA\n\nSynthetic accountant\n\naccountant-ac360f134c@sales-accounting.invalid\n\nTrial Balance\n\nFinance & Trust / Accounting / Trial Balance\n\nFR\nSA\nACCOUNTING REPORTS\nTrial Balance\n\nA ledger-first report generated from posted and reversed journal entry lines.\n\nACTIVITY DEBIT\n28 FCFA\n\nPosted and reversed debit movement\n\nACTIVITY CREDIT\n28 FCFA\n\nPosted and reversed credit movement\n\nBALANCE CHECK\nBalanced\n\nDebit 14 FCFA · Credit 14 FCFA\n\nAccount balances\n\nSearch, filter, and review the canonical report without losing full-report totals.\n\nTable ready\n\nAll types\nAsset\nExpense\nRevenue\nAll accounts\nWith activity only\nComfortable\nCompact\n\nShowing 1-6 of 6 accounts\n\nTrial balance accounts with posted debit and credit activity and resulting balances.\nAccount code ↑\tAccount\tType\tNormal\tActivity debit\tActivity credit\tDebit balance\tCredit balance\tEVIDENCE\nTEST_AR\t\nTEST_AR\n\tAsset\tDebit\t\nFCFA 14\n\t\nFCFA 10\n\t\nFCFA 4\n\t\nFCFA 0\n\tPosted ledger\nTEST_BANK\t\nTEST_BANK\n\tAsset\tDebit\t\nFCFA 4\n\t\nFCFA 4\n\t\nFCFA 0\n\t\nFCFA 0\n\tPosted ledger\nTEST_CASH\t\nTEST_CASH\n\tAsset\tDebit\t\nFCFA 6\n\t\nFCFA 0\n\t\nFCFA 6\n\t\nFCFA 0\n\tPosted ledger\nTEST_COGS\t\nTEST_COGS\n\tExpense\tDebit\t\nFCFA 4\n\t\nFCFA 0\n\t\nFCFA 4\n\t\nFCFA 0\n\tPosted ledger\nTEST_REVENUE\t\nTEST_REVENUE\n\tRevenue\tCredit\t\nFCFA 0\n\t\nFCFA 10\n\t\nFCFA 0\n\t\nFCFA 10\n\tPosted ledger\nTEST_STOCK\t\nTEST_STOCK\n\tAsset\tDebit\t\nFCFA 0\n\t\nFCFA 4\n\t\nFCFA 0\n\t\nFCFA 4\n\tPosted ledger\nREPORT TOTALSALL 6 ACCOUNTS\tFCFA 28\tFCFA 28\tFCFA 14\tFCFA 14\t\n\nRows per page\n\nPage 1 of 1\nGo to first page\nGo to previous page\nGo to next page\nGo to last page",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Notifications\n0",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Search navigation modules",
+          "placeholder": "Search modules",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Command Center menu",
+          "placeholder": null,
+          "text": "Command Center\nOwner and manager daily command views\n3",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sales menu",
+          "placeholder": null,
+          "text": "Sales\nCustomers, sales, and POS entry points\n2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Accounting menu",
+          "placeholder": null,
+          "text": "Accounting\nLedger, close, reports, and controls\n7",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Finance menu",
+          "placeholder": null,
+          "text": "Finance\nCash, profitability, payments, and reconciliation\n2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sign out",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Toggle navigation menu",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": "combobox",
+          "type": "search",
+          "id": "",
+          "name": null,
+          "label": "Search pages or records",
+          "placeholder": "Search pages or records",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Disable notification sound",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "radix-_R_2auitqbnabn9lb_",
+          "name": null,
+          "label": "Open account menu",
+          "placeholder": null,
+          "text": "SA",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": "search",
+          "id": "",
+          "name": null,
+          "label": "Search accounts",
+          "placeholder": "Search by account code or name",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "SELECT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Account type",
+          "placeholder": null,
+          "text": "All types\nAsset\nExpense\nRevenue",
+          "disabled": false
+        },
+        {
+          "tag": "SELECT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Posted activity",
+          "placeholder": null,
+          "text": "All accounts\nWith activity only",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Comfortable",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Compact",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sort by Account code",
+          "placeholder": null,
+          "text": "Account code ↑",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sort by Account",
+          "placeholder": null,
+          "text": "Account",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sort by Type",
+          "placeholder": null,
+          "text": "Type",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sort by Normal",
+          "placeholder": null,
+          "text": "Normal",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sort by Activity debit",
+          "placeholder": null,
+          "text": "Activity debit",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sort by Activity credit",
+          "placeholder": null,
+          "text": "Activity credit",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sort by Debit balance",
+          "placeholder": null,
+          "text": "Debit balance",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Sort by Credit balance",
+          "placeholder": null,
+          "text": "Credit balance",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": "combobox",
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Rows per page",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "SELECT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to first page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to previous page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to next page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Go to last page",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "operation": "inspect"
+    },
+    {
+      "operation": "screenshot"
+    }
+  ]
+}

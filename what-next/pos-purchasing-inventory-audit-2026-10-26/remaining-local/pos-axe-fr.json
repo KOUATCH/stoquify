@@ -1,0 +1,29 @@
+{
+  "violations": [
+    {
+      "id": "aria-progressbar-name",
+      "impact": "serious",
+      "nodes": [
+        {
+          "target": [
+            ".bg-\\[rgba\\(84\\,112\\,122\\,0\\.36\\)\\]"
+          ],
+          "summary": "Fix any of the following:\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute"
+        }
+      ]
+    },
+    {
+      "id": "scrollable-region-focusable",
+      "impact": "serious",
+      "nodes": [
+        {
+          "target": [
+            ".overflow-x-auto"
+          ],
+          "summary": "Fix any of the following:\n  Element should have focusable content\n  Element should be focusable"
+        }
+      ]
+    }
+  ],
+  "passes": 16
+}

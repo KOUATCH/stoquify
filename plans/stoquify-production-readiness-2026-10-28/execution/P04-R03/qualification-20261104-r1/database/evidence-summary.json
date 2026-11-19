@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "tests": {
+    "total": 43,
+    "passed": 43,
+    "failed": 0,
+    "pending": 0
+  },
+  "sourceInputs": 5208,
+  "migrations": 121,
+  "observations": 43,
+  "denialStatePairs": 32,
+  "statePairs": 34,
+  "securityAuditRowsAddedAcrossDenials": 25,
+  "sourceUnchanged": true,
+  "migrationsUnchanged": true,
+  "target": {
+    "host": "127.0.0.1",
+    "port": 57553,
+    "database": "stoquify_local_p04_r03_20261104_r3",
+    "cluster": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\p04r03-qualification-20261104-r3\\postgres",
+    "ownedPid": 1740
+  },
+  "cleanup": {
+    "clusterStopped": true,
+    "portReleased": true,
+    "databasesRetained": [
+      "stoquify_local_p04_r03_20261104_r3"
+    ]
+  },
+  "remainingClients": [],
+  "receipts": {
+    "native-result-retry02.json": "3e0b792b58a4fb09ecc6ee499043d38acfbeb77c513deee09a389fc2fb79b0c4",
+    "native-jest-retry02.json": "cccebd4fe16c8702a3afbc5963d4d14d2fe78d348c05dab1040967a6bfdf123d",
+    "native-observations-retry02.json": "8c25281e880c48ef1a93dae56edb52041152bb760ac11476cab97d1e94cdfe19",
+    "item-errors-retry02.postgres.test.ts.source.txt": "37d393a208d360bf5b03ce6f2d42ed661f1406d86ee0846c223f358115f525e8"
+  },
+  "actualActionCalls": 43,
+  "denialBusinessStateClaim": "32denial/rollback calls:24named relation groups unchanged;25explicit audit rows added",
+  "transport": "Better Auth and Next request/cache stubs; not HTTP/browser",
+  "priorAttempts": [
+    "native-result.json",
+    "native-result-retry01.json"
+  ],
+  "testArchive": "test-source-relocation-retry02.json"
+}

@@ -1,0 +1,713 @@
+{
+  "admittedAt": "2026-11-10T19:24:35.074Z",
+  "status": "LOCAL_CLOSE_DATABASE_INTEGRITY_AND_MIGRATION_QUALIFIED_PRODUCTION_BLOCKED",
+  "scope": "Fourteen scoped foreign keys, six unique cohorts and seven identity guards; fresh123, populated122→123 replay, old122-writer compatibility and dirty-preflight rollback, with earned internal monthly close regression.",
+  "source": {
+    "schemaSha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+    "catalogSha256": "968c1f6c7c45f26a8eb8068b551e67450142fccc119b84528e4f4424c64a2e66",
+    "catalogFileSha256": "2f75aa91184a92eb558d5c55b6f8f1c2e824c8b1fd7e6ce451b330814656cbdd",
+    "migration": "20261110190000_close_scope_integrity",
+    "migrationRawSha256": "334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7",
+    "first122CatalogAndSqlUnchanged": true,
+    "existingFreshReplayGateUnchanged": true
+  },
+  "verification": {
+    "mockedTests": 472,
+    "mockedSuites": 5,
+    "realPostgresTests": 20,
+    "integrityCases": 12,
+    "earnedMonthlyCases": 8,
+    "skipped": 0,
+    "wholeProjectTypeScriptPassed": true,
+    "focusedLintErrors": 0,
+    "focusedLintWarnings": 0,
+    "cleanPopulatedUpgradePassed": true,
+    "cleanDeployments": 2,
+    "old122WriterCompatibleWithScopeEnforcement": true,
+    "dirtyLegacyPreflightRejectedAll14With23514": true,
+    "dirtyPreflightDiagnosticSource": "direct-postgresql-exact-migration",
+    "prismaDirtyDeployRejected": true,
+    "prismaOriginalFailureCauseRetained": false,
+    "dirtyNoPartialDDLOrDataRewrite": true,
+    "intentionallyUnfinishedDirtyHistoryPreserved": true
+  },
+  "environmentIsolation": {
+    "originalAndExecutionClientBytesMatch": true,
+    "sharedRootClientUnchanged": true,
+    "generatedOriginalsEdited": false,
+    "ownedCanaryProofsPassed": 4,
+    "ownedCanaryRemoved": true,
+    "moduleEnvironmentPathsContainedAndAbsent": true,
+    "actualDatabaseConstructorsDisableEnvironmentPaths": true,
+    "onlyExecutionCopiesAdmittedForRuntime": true,
+    "supersededOriginalMetadataUnitRunNotCounted": "unit-795ff9d7d1"
+  },
+  "evidence": [
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-RESULT.json",
+      "sha256": "652c72d097cdf673dc9b19f600940064bbedefb05aa0c58895fc6faaddb69571",
+      "bytes": 2346
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-integrity-qualification.cjs",
+      "sha256": "da3d109cd7f73ce953137e46e9fb383b030802d33277e33905355a42480c918c",
+      "bytes": 39783
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-SOURCE_MANIFEST.json",
+      "sha256": "c95f1a7767086ec9e1f0be3205264b6253a39a73c0325d8806886009891e2c44",
+      "bytes": 72732
+    },
+    {
+      "path": "prisma/migration-catalog-manifest.json",
+      "sha256": "2f75aa91184a92eb558d5c55b6f8f1c2e824c8b1fd7e6ce451b330814656cbdd",
+      "bytes": 63838
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+      "bytes": 362667
+    },
+    {
+      "path": "prisma/migrations/20261110190000_close_scope_integrity/migration.sql",
+      "sha256": "334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7",
+      "bytes": 12710
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-PRIVATE_CLIENT.json",
+      "sha256": "1d6d226922ea6babab71bd7fc4130e1d836ad5a5885c0eb781ea84dea1ba1d84",
+      "bytes": 12733
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/BASELINE_122_CATALOG.json",
+      "sha256": "ebfa7d6d08c3757bf6beca180823b4b1cda57355f066be3751417fc0c09770e3",
+      "bytes": 63343
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/CATALOG_ADMISSION.json",
+      "sha256": "5e04c29354a68dfcce782eeca935815aff5af1c3d99de243c5a1bbe80f46f1b8",
+      "bytes": 2010
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/append-reviewed-catalog.cjs",
+      "sha256": "03dfe50f9ac19e772ed3ef1ab02da3411c04390782af690ce864382e0c56e578",
+      "bytes": 4300
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/pg-RETENTION_LATEST.json",
+      "sha256": "82687c8e0ced73875fbab0602fcefcb92b37c13e3dc058a357545ea9434d77ea",
+      "bytes": 1755
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/pg-retention-1b805fc00a/pg-SOURCE_MANIFEST.json",
+      "sha256": "5e0bd1bda9f5d05bfea9fbd0327c72b37fd5fe1aa8c770baf5cc0cc73baace7d",
+      "bytes": 54159
+    },
+    {
+      "path": "node_modules/.prisma/client/client.d.ts",
+      "sha256": "d5eb5865d4cbaa9985cc3cfb920b230cdcf3363f1e70903a08dc4baab80b0ce1",
+      "bytes": 23
+    },
+    {
+      "path": "node_modules/.prisma/client/client.js",
+      "sha256": "7fb2958626ff9bd585ec82af0935a4f71e852a183a0345145b828e2a9c1fd44a",
+      "bytes": 166
+    },
+    {
+      "path": "node_modules/.prisma/client/default.d.ts",
+      "sha256": "d5eb5865d4cbaa9985cc3cfb920b230cdcf3363f1e70903a08dc4baab80b0ce1",
+      "bytes": 23
+    },
+    {
+      "path": "node_modules/.prisma/client/default.js",
+      "sha256": "773f2836a698a5fe850cf320d1f849ca04e620e9b47f05816683260cba2b8b1c",
+      "bytes": 182
+    },
+    {
+      "path": "node_modules/.prisma/client/edge.d.ts",
+      "sha256": "7378dd41401ba1acff435b9c317a5b919a3d38479ed3dbd4a25c8b4fd623a224",
+      "bytes": 25
+    },
+    {
+      "path": "node_modules/.prisma/client/edge.js",
+      "sha256": "0581a4185ee3c52862849fecd4fd967b4ea524c2815375d20181e8031d36e40d",
+      "bytes": 2304523
+    },
+    {
+      "path": "node_modules/.prisma/client/index-browser.js",
+      "sha256": "0ac0b111461cfe1417dac87f47fdc3f2880fe0165cbc04b9dfa59674a2a705c4",
+      "bytes": 203955
+    },
+    {
+      "path": "node_modules/.prisma/client/index.d.ts",
+      "sha256": "8e091393b9141a5e06d4a1f31370f93680376c29118f226af63366e771d8af59",
+      "bytes": 46090566
+    },
+    {
+      "path": "node_modules/.prisma/client/index.js",
+      "sha256": "25aa775ed5eed0973d5aa0b759f44104ee82bdd75923d5da548f9ffb3e9e67bc",
+      "bytes": 2305192
+    },
+    {
+      "path": "node_modules/.prisma/client/package.json",
+      "sha256": "0abcd61da743cf9e263063847177aabc8569d8799319aa8bcd73d09757ec2224",
+      "bytes": 5309
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine-windows.dll.node",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine-windows.dll.node.tmp13952",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine-windows.dll.node.tmp14420",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine-windows.dll.node.tmp20180",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine-windows.dll.node.tmp25184",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine-windows.dll.node.tmp25200",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine-windows.dll.node.tmp25996",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine-windows.dll.node.tmp35560",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine-windows.dll.node.tmp36880",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine_bg.js",
+      "sha256": "2b50b4328595b0fb99a73cfed34cf11fa8e56511dcc4fb808af4516952448514",
+      "bytes": 16927
+    },
+    {
+      "path": "node_modules/.prisma/client/query_engine_bg.wasm",
+      "sha256": "b199ed8bf8f3610c20a3f7398b3cbb875f99b7d6565f4887fc0af2b47dceb30f",
+      "bytes": 2297601
+    },
+    {
+      "path": "node_modules/.prisma/client/schema.prisma",
+      "sha256": "2fdb8c5dc9c1db6f10ab35b1a8c8e7910ad8eca0d9d97661c003b31b5dbe0226",
+      "bytes": 354998
+    },
+    {
+      "path": "node_modules/.prisma/client/wasm-edge-light-loader.mjs",
+      "sha256": "48311a316daab3b1c21dd227b7277d03436a7d10d78b19b3b625cd25ffa1674b",
+      "bytes": 184
+    },
+    {
+      "path": "node_modules/.prisma/client/wasm-worker-loader.mjs",
+      "sha256": "48b4f73d61fe341ea5b59f09059f730dfb600249985a64f0456508dd4c81b01b",
+      "bytes": 177
+    },
+    {
+      "path": "node_modules/.prisma/client/wasm.d.ts",
+      "sha256": "7378dd41401ba1acff435b9c317a5b919a3d38479ed3dbd4a25c8b4fd623a224",
+      "bytes": 25
+    },
+    {
+      "path": "node_modules/.prisma/client/wasm.js",
+      "sha256": "36f8f7928716e8fbd89a4a9af2ec515808337dfc029e71f3238ae26b9bc51859",
+      "bytes": 1043876
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-client-e29eaa8acf/pg-CLIENT_RESULT.json",
+      "sha256": "1d6d226922ea6babab71bd7fc4130e1d836ad5a5885c0eb781ea84dea1ba1d84",
+      "bytes": 12733
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/prepare-integrity-client.cjs",
+      "sha256": "a2330ade2269e0e3586fe966c8e940a499e032cd6bcbb889fc00aff9a061a410",
+      "bytes": 9335
+    },
+    {
+      "path": "node_modules/@prisma/engines/query_engine-windows.dll.node",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    },
+    {
+      "path": "node_modules/@prisma/engines/schema-engine-windows.exe",
+      "sha256": "f2b48e3ce8de8712c9dce6c71f952bec383fa472830b91bca8e64b4b51bf0dd7",
+      "bytes": 18974720
+    },
+    {
+      "path": "docs/stoquify-potential/development/migration-release-2026-11-09/CANDIDATE_NATIVE_READINESS.json",
+      "sha256": "1fcce2de7f25c97906bdbfc053d127871572ee8a1bebb4f3b788355030edf1d2",
+      "bytes": 1888
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-client-e29eaa8acf/pg-CLIENT_CONTEXT.json",
+      "sha256": "3db34836e9b6c1121b532843e4cf3e2caa5ba0fc0cf9d0ffd7b48a048543d7f0",
+      "bytes": 9755
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-client-e29eaa8acf/pg-validate.execution.json",
+      "sha256": "08e96cc8ccfff6f48fab3758df1040ee90391a7fe1d9fc5329c6c17e02815bc6",
+      "bytes": 140
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-client-e29eaa8acf/pg-generate.execution.json",
+      "sha256": "74f9973b9c87700aa7fe271530e0e0b5b5c8c33590e4f34e0037af98e2469733",
+      "bytes": 140
+    },
+    {
+      "path": ".codex-tmp/close-integrity-client-20261110-e29eaa8acf/orm/client/runtime/library.js",
+      "sha256": "5a72b6f69474641f48a0f5ffee45802dc939c6333467371ebbd9102353eb7aae",
+      "bytes": 202629
+    },
+    {
+      "path": ".codex-tmp/close-integrity-execution-clients-20261110-b96b309c4c/canary-probe.cjs",
+      "sha256": "3fc14ae7871e974cbb92f55d0bc10629bc461a70f609241d0bd82391004b9f6e",
+      "bytes": 1466
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/pg-PRIVATE_CLIENT.json",
+      "sha256": "ec7ff7ca1628bced6a6e8af1bf510118dfdbb6b1c17078c716a087ac05830304",
+      "bytes": 2634
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/pg-retention-1b805fc00a/pg-ORM_PROVENANCE.json",
+      "sha256": "a6d3d68d9e2af59204c3b590f4780ecf1968659fdb277ee04c7d02538a8435c0",
+      "bytes": 4667
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-execution-clients-b96b309c4c/current-module-positive.log",
+      "sha256": "5bf17abe993a023361838a29b53cde5c4b8982d78e53102fb2fb7ddebf668366",
+      "bytes": 128
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-execution-clients-b96b309c4c/current-constructor-negative.log",
+      "sha256": "0ed332bdea51ce7987c8dcd3c6dfb4ed40b00ed729b773b26d6c8c5f2528010a",
+      "bytes": 133
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-execution-clients-b96b309c4c/old-module-positive.log",
+      "sha256": "5bf17abe993a023361838a29b53cde5c4b8982d78e53102fb2fb7ddebf668366",
+      "bytes": 128
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-execution-clients-b96b309c4c/old-constructor-negative.log",
+      "sha256": "0ed332bdea51ce7987c8dcd3c6dfb4ed40b00ed729b773b26d6c8c5f2528010a",
+      "bytes": 133
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-EXECUTION_CLIENTS.json",
+      "sha256": "f12b550df338bda9e32051a3b0635dd18f3a55909d3a2455be3f6fe4bc9bab55",
+      "bytes": 14148
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-execution-clients-b96b309c4c/RESULT.json",
+      "sha256": "f12b550df338bda9e32051a3b0635dd18f3a55909d3a2455be3f6fe4bc9bab55",
+      "bytes": 14148
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/prepare-execution-clients.cjs",
+      "sha256": "b240d47bd792d36f74a1bf9204616a7899628b3d78969db5b9122a23cd80b6a5",
+      "bytes": 10719
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/unit-eb48f1b56b/verification.json",
+      "sha256": "e6eb4df0560396dbb4c087a49749b54d9b25c996b0b7c10b31f66be2174216b1",
+      "bytes": 8421
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/unit-eb48f1b56b/jest.config.cjs",
+      "sha256": "7c0dc55472da75641865612c570a77452b99d3af64e23f2773b77665d193f1f5",
+      "bytes": 923
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/unit-eb48f1b56b/results.json",
+      "sha256": "ba5b5d07f936fd7078093cf0b1cc1f8676e8001c8bad2eb22ff6f3870e670182",
+      "bytes": 191743
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/unit-eb48f1b56b/checks.log",
+      "sha256": "471667bd89c89693f805e145512b027a4df51a35a499a538cfe910c4b71ad816",
+      "bytes": 1012
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/unit-qualification.cjs",
+      "sha256": "4cfd31eb85dc9c7c5eac6ebb119616cf623fba431a3027e60992f6af71a02e78",
+      "bytes": 6694
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/static-0694cd6a62/eslint.json",
+      "sha256": "09fdaeed8d9a8ecad24ef97a2396dd647f315140aea922b9db31039ec512e116",
+      "bytes": 1073
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/static-0694cd6a62/verification.json",
+      "sha256": "8fbcfa2a935fa0080696d6fba0643ac2a6a84d80365d9d82db6ec9cd3f6d82ad",
+      "bytes": 3037
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/static-0694cd6a62/tsconfig.json",
+      "sha256": "ed445b933265a05a3efb0a90eb6202b2eeceb8ab0cf899ab247094373638abb7",
+      "bytes": 388
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/source-qualification.cjs",
+      "sha256": "81538df647cc14a37301b17d8c448db3b86d1cdaddeccd3ad15fab9418a392d7",
+      "bytes": 3713
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-RUNTIME_BINDING.json",
+      "sha256": "d0d2f508958b5b50bcd9c930b7ea2906a5b6de8f89dca04c1184b0fff89fc3b9",
+      "bytes": 432
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-jest.config.cjs",
+      "sha256": "6a6d119d4c79da3b1d49fe41bff3806e1838e42ab38d9cf838ed2b6809e7ef63",
+      "bytes": 1555
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-db.cjs",
+      "sha256": "f737a912c580c6c1e64d8414dce00f2671af7f1c2d4477a6feba6b9a30cc0ac7",
+      "bytes": 679
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/fresh-integrity-and-monthly-tests.private.json",
+      "sha256": "f309bcc5a4918269161dc213fcde0430905dc402569ad6596f7a2a71ff21c476",
+      "bytes": 9329
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-tests.summary.json",
+      "sha256": "8ce258e2f3caea37ca259397f4379fa64e127d83103a43cf677a54cb62b3a603",
+      "bytes": 3234
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/scope-integrity-service-evidence.private.json",
+      "sha256": "17e675f45109ee4d7400ed9b5046555d8a832ac1440277f7a35dc8ba054997be",
+      "bytes": 3390
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/monthly-close-service-evidence.private.json",
+      "sha256": "8013645e1f1f3a59d12b239a36b5a6c759d9476241ceacb66ee5b592c8aad805",
+      "bytes": 38678
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-integrity.summary.json",
+      "sha256": "34d30f90f0723e7dcac7576c67415da0ed6b5d138848578cb27d0463978ca10b",
+      "bytes": 1470
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-monthly.summary.json",
+      "sha256": "275ecbd2c72eb326cef24b42e269dbc3e8b9bf88735d576fb435d04fe4e3438b",
+      "bytes": 1629
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-HISTORY_FRESH.json",
+      "sha256": "a41ef8fbd0679a0a3c7774201ee2cba459a7c5a58294cd0aadb513b168ae054e",
+      "bytes": 49705
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-SQL_INVENTORY_FRESH.json",
+      "sha256": "fb2f52c0e87f96199142e1636164c23f4fd4aa4fba673185a36ac5e40cf93684",
+      "bytes": 194
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-fresh123.json",
+      "sha256": "32838993da5fefba62e2c10048c73868cbb73c4ed2a85b170545bbd5d3de326d",
+      "bytes": 802
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-clean123.json",
+      "sha256": "97adacd544cb1e4dbf22028686cf11f34efd0e045506b0fc407c870449636384",
+      "bytes": 812
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-clean122.json",
+      "sha256": "37c8fb2cead3ecb7fcb0c3b3970d2755c0b66ac1c7b2541d820fdbc5dc45d071",
+      "bytes": 812
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-dirty122.json",
+      "sha256": "7890962eaa90efa4ab85ff3052af27ff0a0b09bfee1c99448572108f8ff0a6de",
+      "bytes": 812
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/private-documents/FIXTURE.json",
+      "sha256": "0d09f417eb2cc8171f827b7f70c139d0ac0dc6b9247d8de2ccb91c8d70d696aa",
+      "bytes": 1035
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/private-documents/pack-f1f1126f-5ef6-4fc9-aa4f-7096b78b59b5.json",
+      "sha256": "88303409198b368e746febe37090f720b6b94367807ad2d128d9d71f3f16d13e",
+      "bytes": 97633
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-PRIVATE_MONTHLY_FIXTURE.json",
+      "sha256": "e1116736ce98c71d5b62c3d3c3ef46057cd1c6c1f27f051fa1627d9ad33b6a1b",
+      "bytes": 555
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/clean-upgrade-before.private.json",
+      "sha256": "e10ca17bee8be87ae2f43320b1cd6f034353f90f0093b477cfdf6ed545f21a1c",
+      "bytes": 95487
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/clean-upgrade-after.private.json",
+      "sha256": "caeb64ec4ec4f26fd957e37d145e4a8b526aacaf71c112ffa221187c8d24f680",
+      "bytes": 95880
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-CLEAN_UPGRADE.json",
+      "sha256": "5ebaba69161c47479a5c44588fadc7c90a185cdf3c7d4ac2b58f3e004342bdfb",
+      "bytes": 957
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-OLD_WRITER_COMPATIBILITY.json",
+      "sha256": "17bc5e6caeb44e5db603d66e7cac38d752c9e930e2418ee16a9eba754e4ed066",
+      "bytes": 426
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/old122-writer-probe.private.json",
+      "sha256": "472d22b6e4ab2f8dca33678371bfcbf0a68e264e47d7e76e209916685a1a32dc",
+      "bytes": 1420
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-OLD_WRITER_BINDING.json",
+      "sha256": "da9769c5f4911bc94aa98118c077dec6fc5d3edb4fe6e847b3a2cc5f2030e8a3",
+      "bytes": 4611
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/dirty-upgrade-before.private.json",
+      "sha256": "a1642ad285d48e5f442d05ced5ebc7989a489b7a13e7af04efd3b6da353797e5",
+      "bytes": 2089699
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/dirty-upgrade-after.private.json",
+      "sha256": "603f79d25d2da4c312632296f2ec5392fc4cbddfc33eba0b82651c53b94cf705",
+      "bytes": 2088841
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-DIRTY_UPGRADE_REJECTION.json",
+      "sha256": "c36ea80be85c75f29f9b5e2328af93968cc2a4012f6f40170ce83ada05106285",
+      "bytes": 3375
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-start.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-start.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-start.execution.json",
+      "sha256": "b64653debde767cdbd6d361c7238f3946b4ee9f51ae744704939e64d0afb46de",
+      "bytes": 1260
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-fresh123.stdout.private.log",
+      "sha256": "f71b8fe0f07948e4fa57c1ee59e6e8e1fe705325bc2b4f644ee5f66303274616",
+      "bytes": 19962
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-fresh123.stderr.private.log",
+      "sha256": "c8458089baa43f71feda389a45ffb3965048414e5804ad62325a4a00e65f0c03",
+      "bytes": 216
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-fresh123.execution.json",
+      "sha256": "6a9541500d66e58a104f2c5f6e4a2e66f6d5063b4cacf2a048b469468dfc1ee0",
+      "bytes": 1686
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-fresh-service-cases.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-fresh-service-cases.stderr.private.log",
+      "sha256": "359c27e80584d6c7f3f1dd1e4b6ca75b1ef70e2f5191d20f887cfa94f0ee9bce",
+      "bytes": 4317
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-fresh-service-cases.execution.json",
+      "sha256": "396972804b4718ccb4b54ea879502a74028aaec9dff5ad2d7ebae9aca994c832",
+      "bytes": 1866
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-clean122.stdout.private.log",
+      "sha256": "811ef23afc38abe0698923fb343a598a8269217b1d4e151708c0b5b764d98bba",
+      "bytes": 19872
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-clean122.stderr.private.log",
+      "sha256": "c8458089baa43f71feda389a45ffb3965048414e5804ad62325a4a00e65f0c03",
+      "bytes": 216
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-clean122.execution.json",
+      "sha256": "d3878118d6be7213192e504273e36cc46abd673ac193bd361fd00a5763f137d2",
+      "bytes": 1687
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-clean-deploy123-1.stdout.private.log",
+      "sha256": "b887a019bd7ca9dbee2ac3198052323daa1967d131280637559a01c4be7f2a8d",
+      "bytes": 472
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-clean-deploy123-1.stderr.private.log",
+      "sha256": "f0be17b355c9f69434b43ac5396c606d168d90e4558889eb88482c48103fe845",
+      "bytes": 108
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-clean-deploy123-1.execution.json",
+      "sha256": "17f76a0a8ec49cd7bc690d506b478733438774fd9038a7966c1044cba237a273",
+      "bytes": 1167
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-clean-deploy123-2.stdout.private.log",
+      "sha256": "94df4cf5f42e39861bcb8dc36979a265bf74725798ea766edc1b4f7d8d422925",
+      "bytes": 261
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-clean-deploy123-2.stderr.private.log",
+      "sha256": "f0be17b355c9f69434b43ac5396c606d168d90e4558889eb88482c48103fe845",
+      "bytes": 108
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-clean-deploy123-2.execution.json",
+      "sha256": "8fd037f5cd624d0c4d95e1f34e07a62ee86fcdcd738e9ffd94019108ba2bb2bb",
+      "bytes": 1167
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-clean-certify123.stdout.private.log",
+      "sha256": "918c8c08caa868a0eebff926f42950e01c5ed8fe95873dce575143f46ad81cdc",
+      "bytes": 859
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-clean-certify123.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-clean-certify123.execution.json",
+      "sha256": "515553bc33c74023bb62c4af1c82e1daa9d1733081eaf4719f98ed3b8212d10f",
+      "bytes": 1746
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-dirty122.stdout.private.log",
+      "sha256": "d1c0341a0ec6e38291ffd1868181dbfa2b56398396d8bf6ccbb43929f23c8243",
+      "bytes": 19872
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-dirty122.stderr.private.log",
+      "sha256": "c8458089baa43f71feda389a45ffb3965048414e5804ad62325a4a00e65f0c03",
+      "bytes": 216
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-dirty122.execution.json",
+      "sha256": "d8cef92f1f3573271f426464b8a526d329ffd2e2478e7b186af326a9a5fe99a6",
+      "bytes": 1687
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-dirty-deploy123-rejected.stdout.private.log",
+      "sha256": "bce1f503c761157b0805828db3865eca9eda2bc07775bbc98f7536509910547f",
+      "bytes": 286
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-dirty-deploy123-rejected.stderr.private.log",
+      "sha256": "701b6d65de067531a9cb57634dc478c0b7723b0d901d6698b787a2cea294dae4",
+      "bytes": 512
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-dirty-deploy123-rejected.execution.json",
+      "sha256": "51cb59be5580d77dfed6fc13d2c4ca9654a609b39248caa9665eb2584d767b66",
+      "bytes": 1180
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-stop.stdout.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".codex-tmp/close-db-integrity-20261110-99a87606d0/pg-stop.stderr.private.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-stop.execution.json",
+      "sha256": "d108f735fa2aed9f1727d714581ce7553b03b3b2edb634421dd3894b95d5b399",
+      "bytes": 1129
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-TARGETS.json",
+      "sha256": "421208fe8f37d64e101915dafb5af4401246456fe6a0b5b04b5c576b423379f9",
+      "bytes": 1427
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-IDENTITY.json",
+      "sha256": "b01ad520b5e333a88eb05e5f48b3d8c46fa8fc5b450a8d4081bd76f290eab566",
+      "bytes": 243
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-clean122.md",
+      "sha256": "aae54aa35b76783d7be33dbd587094865278bdda3a574e0aadab019701c9d9f8",
+      "bytes": 1005
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-clean123.md",
+      "sha256": "b932b2732c2abcd36c7ae73fd889708ac4b7f14069b70fbede4091a50e04740f",
+      "bytes": 1005
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-dirty122.md",
+      "sha256": "c120485b3334087d6404facafe39972d38ecc75bc90232b0dc23ec26148c3abe",
+      "bytes": 1005
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-attempt-99a87606d0/pg-fresh123.md",
+      "sha256": "2f9507f39373bab82bb7a77c0e14dc06ce67d09544b1f8d49e473090c4e43aae",
+      "bytes": 995
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-LATEST.json",
+      "sha256": "652c72d097cdf673dc9b19f600940064bbedefb05aa0c58895fc6faaddb69571",
+      "bytes": 2346
+    }
+  ],
+  "databases": {
+    "fresh": "stoquify_replay_close_monthly_20261110_99a87606d0",
+    "clean": "stoquify_replay_close_integrity_upgrade_20261110_99a87606d0",
+    "dirty": "stoquify_replay_close_integrity_corrupt_20261110_99a87606d0"
+  },
+  "ownedClusterStopped": true,
+  "limits": [
+    "Synthetic OPEN/DRAFT scope and retained-DRAFT custody inputs; the separate monthly case earns internal close states from synthetic provider observations.",
+    "Existing role/owner strings and dynamic delegated authority remain service controlled; no foreign-key-to-local-user restriction was added.",
+    "Observed concurrent deletion/reference behavior is not proof of every interleaving.",
+    "The nine-table ACCESS EXCLUSIVE migration needs a planned writer-quiescence window and target-scale index/validation timing.",
+    "No production database, authenticated browser/application, sealed deployment artifact, live provider, delivery, hosted recovery, statutory approval or production-size benchmark is qualified."
+  ],
+  "productionDeployed": false,
+  "realMessagesSent": false,
+  "runnerSha256": "9992084455d1539d5c8d2ee39ff11e6dae9789c64906402c5eee1d169e3d7002"
+}

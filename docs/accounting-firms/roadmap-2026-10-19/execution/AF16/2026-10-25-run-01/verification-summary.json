@@ -1,0 +1,93 @@
+{
+  "scope": "AF01–AF13 synthetic development",
+  "classes": {
+    "component": {
+      "suites": 15,
+      "tests": 152
+    },
+    "unit": {
+      "suites": 47,
+      "tests": 1165
+    }
+  },
+  "regressionTests": 1317,
+  "database": [
+    {
+      "phase": "AF01",
+      "tests": 6,
+      "file": "AF01/jest.json"
+    },
+    {
+      "phase": "AF03",
+      "tests": 31,
+      "file": "AF03/attempt-2/jest.json"
+    },
+    {
+      "phase": "AF04",
+      "tests": 27,
+      "file": "AF04/attempt-2/jest.json"
+    },
+    {
+      "phase": "AF05",
+      "tests": 8,
+      "file": "AF05/jest.json"
+    },
+    {
+      "phase": "AF06",
+      "tests": 7,
+      "file": "AF06/jest.json"
+    },
+    {
+      "phase": "AF07",
+      "tests": 10,
+      "file": "AF07/jest.json"
+    },
+    {
+      "phase": "AF08",
+      "tests": 10,
+      "file": "AF08/jest.json"
+    },
+    {
+      "phase": "AF09",
+      "tests": 8,
+      "file": "AF09/jest.json"
+    },
+    {
+      "phase": "AF10",
+      "tests": 19,
+      "file": "AF10/jest.json"
+    },
+    {
+      "phase": "AF11",
+      "tests": 14,
+      "file": "AF11/jest.json"
+    },
+    {
+      "phase": "AF12",
+      "tests": 10,
+      "file": "AF12/jest.json"
+    },
+    {
+      "phase": "AF13",
+      "tests": 10,
+      "file": "AF13/jest.json"
+    },
+    {
+      "phase": "AF16WORKER",
+      "tests": 1,
+      "file": "AF16WORKER/jest.json"
+    }
+  ],
+  "phaseLaneCases": 161,
+  "sharedJourneyCases": 1,
+  "upgradeCases": 10,
+  "releaseFixtureTests": 17,
+  "typesPassed": true,
+  "browserJourneysPassed": 3,
+  "workflow": {
+    "initial": "PASS",
+    "final": "FAIL: concurrent reviewed authentication-test drift"
+  },
+  "productionDecision": "NO_GO",
+  "pilot": "PILOT_PREPARED"
+}

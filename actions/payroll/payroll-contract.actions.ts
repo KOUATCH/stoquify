@@ -112,7 +112,8 @@ const createContract = protect<unknown, PayrollContractMutationResult>(
       actorPermissions: ctx.permissions,
     })
     const result = await createPayrollContract(parsed)
-    revalidatePayrollContractPaths()
+    // A refresh failure cannot undo the committed contract or invite a duplicate create.
+    try { revalidatePayrollContractPaths() } catch { /* The caller retains the committed receipt. */ }
     return result
   },
 )

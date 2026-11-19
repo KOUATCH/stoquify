@@ -1,0 +1,17 @@
+{
+  "label": "scenarios-foundation",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "prisma/disposable-scenarios.ts",
+    "--foundation"
+  ],
+  "startedAt": "2026-10-28T19:31:44.784Z",
+  "finishedAt": "2026-10-28T19:33:22.599Z",
+  "exitCode": 0,
+  "errorCode": null
+}

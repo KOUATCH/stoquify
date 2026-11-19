@@ -83,6 +83,12 @@ export function protect<I, O>(
         resource: options.auditResource,
         ...(options.auditAllowed !== undefined ? { auditAllowed: options.auditAllowed } : {}),
       })
+      if (freshAuth && (
+        freshAuth.claims.userId !== ctx.userId ||
+        freshAuth.claims.tenantId !== ctx.orgId
+      )) {
+        throw new FreshAuthRequiredError()
+      }
       if (options.module) {
         const decision = await observeModuleAccess({
           organizationId: ctx.orgId,

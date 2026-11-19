@@ -40,7 +40,7 @@ const french = {
   "No close run is visible in this period.": "Aucune clôture n’est visible pour cette période.",
   "Owner morning brief": "Point du jour du dirigeant",
   "Acknowledgement is held in the current browser session; no accounting, close, cash, inventory, payroll, or evidence record is mutated.": "La prise de connaissance est conservée pour cette session du navigateur ; aucun enregistrement de comptabilité, clôture, trésorerie, stock, paie ou preuve n’est modifié.",
-  "Cash at risk is visible since yesterday": "Trésorerie à risque visible depuis hier",
+  "Current cash at risk": "Trésorerie actuellement à risque",
   "Open suspense value is still present in the payment truth snapshot.": "Un montant en suspens figure toujours dans l’état des paiements.",
   "Daily cash remains ambiguous until suspense is explained with reconciliation evidence.": "La trésorerie du jour reste incertaine tant que les suspens ne sont pas expliqués par des preuves de rapprochement.",
   "Open reconciliation": "Ouvrir le rapprochement",
@@ -106,6 +106,7 @@ const french = {
   "Close evidence is the first blocker: clear missing or critical close items before signoff.": "Les preuves de clôture sont le premier blocage : résolvez les éléments manquants ou critiques avant validation.",
   "Payroll and statutory obligations are visible: confirm evidence before relying on the owner cash plan.": "Les obligations de paie et obligations légales sont visibles : confirmez les preuves avant de vous fier au plan de trésorerie.",
   "Refresh stale evidence before using this view as today's owner truth.": "Actualisez les preuves avant d’utiliser cette vue comme situation du jour.",
+  "Some indicators are blocked or incomplete. Review the source limitations before relying on this brief.": "Certains indicateurs sont bloqués ou incomplets. Examinez les limites des sources avant de vous fier à cette synthèse.",
   "No cash, close, or freshness blocker is visible in the current owner brief.": "Aucun blocage de trésorerie, de clôture ou d’actualité des preuves n’apparaît dans le point du jour.",
   "Signal is expired.": "Le signal a expiré.",
 } as const

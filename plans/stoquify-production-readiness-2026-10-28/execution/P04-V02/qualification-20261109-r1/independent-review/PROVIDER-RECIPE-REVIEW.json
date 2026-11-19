@@ -1,0 +1,27 @@
+{
+  "reviewedAt": "2026-11-09",
+  "reviewer": "independent v02_review agent",
+  "verdict": "accepted_for_local_protocol_execution_with_bound_runtime_and_snapshot",
+  "recipe": {"path": "provider/run-protocol.cjs", "sha256": "624eb1d22e4df9d58c4be0c62785f72c7d8cd972248605d1281c279768aeae47"},
+  "providerInstalledVersion": "7.7.4",
+  "cases": 21,
+  "reviewedEffects": [
+    "Actual HTTPS requests confined to https://127.0.0.1:3196; no product import, credential-file read or direct database write.",
+    "Synthetic signing key and owned callback receiver confined to 127.0.0.1:3198; receiver closes in finally.",
+    "Public metadata/HEAD/OPTIONS, unsupported methods/discriminators, unsigned and invalid signature/error hooks, signature-tampered origin and valid local callbacks are distinct cases.",
+    "Anonymous, authorized and foreign-Origin legacy upload initiation must return the exact generic middleware refusal; no private canary or synthetic provider key in response.",
+    "Every case compares all non-session/audit public table digests plus exact classified session and audit digests; no writes are waived for this lane.",
+    "Positive callback and replay require exact loopback callback-result shape and empty application completion data."
+  ],
+  "executionPreconditions": [
+    "Parent verifies current candidate/artifact and passes the actual local runtime origin and signed authorized actor cookie in memory.",
+    "Snapshot returns valid businessSha256, sessionSha256 and auditSha256 from the confirmed isolated database.",
+    "Provider lane runs sequentially without concurrent login, fixture transition or other intentional database writes."
+  ],
+  "claimLimits": [
+    "A 500 middleware refusal does not independently prove Origin enforcement or discriminate auth/module denial from the unconditional managed-upload-only refusal.",
+    "Signed callback origin is signed input; no independent origin allowlist or hosted-provider delivery is established.",
+    "The source-only startedFromCurrentArtifact flag is supported only by the parent runtime/artifact provenance, never by this module alone.",
+    "No hosted-provider, CDN, lifecycle, operator or production readiness accepted."
+  ]
+}

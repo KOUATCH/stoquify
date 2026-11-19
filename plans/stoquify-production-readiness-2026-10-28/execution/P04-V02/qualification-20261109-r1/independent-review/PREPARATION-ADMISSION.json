@@ -1,0 +1,32 @@
+{
+  "reviewedAt": "2026-11-09",
+  "reviewer": "independent v02_review agent",
+  "verdict": "accepted_for_isolated_preparation_only",
+  "productReadinessAccepted": false,
+  "recipe": {
+    "path": "prepare-candidate.cjs",
+    "sha256": "64b973b1f0fcf07bbc4bf6122bda795da510f547c589cadcf227b4d50fdce087"
+  },
+  "reviewedInputs": [
+    {"path": "environment-guard.cjs", "sha256": "60cf9950dfd2d67e50b2527f89074a0bbcf475aa49b041b823465597e1b36c42"},
+    {"path": "verify-generated-schema.cjs", "sha256": "f0c73d0ed95fa45c328006c04607b8b129b7347400a3d96292914aa4170d1d93"},
+    {"path": "scripts/candidate-snapshot.cjs", "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46"}
+  ],
+  "target": "D:/p04-v02-fullapp-20261109-r1",
+  "observedBeforeExecution": {"targetAbsent": true, "driveIsDirectoryNotLink": true},
+  "reviewedEffects": [
+    "Fresh exclusive target and ownership marker; requires more than 12 GiB available and free loopback ports 3196/3197.",
+    "Captures current eligible source bytes and HEAD, including dirty and untracked source, excluding environment/private key/generated output patterns.",
+    "Local no-checkout shared clone and index preparation; no remote fetch or commit.",
+    "Physically copies installed dependencies without lifecycle execution; no clean-install qualification claim.",
+    "Hash-verifies all existing upload inventory and copies preserved bytes; no rendering or delivery at this preparation stage.",
+    "Adds synthetic tenant image canaries, one public control and one explicit synthetic private-alias policy row only in the candidate.",
+    "Original three user-classified private mappings must exactly equal approved decision; original checkout is not changed.",
+    "No application startup, database mutation or deployment occurs in this recipe."
+  ],
+  "limitations": [
+    "Build/database/runtime/browser/protocol recipes require separate review before execution.",
+    "Installed dependencies are copied; current source and generated Prisma binding must still be verified after preparation.",
+    "Candidate-only synthetic policy override means resulting artifact is qualification-only, not a production artifact."
+  ]
+}

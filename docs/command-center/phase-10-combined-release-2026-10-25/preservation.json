@@ -1,0 +1,66 @@
+{
+  "capturedFiles": 7719,
+  "ownedChanges": [
+    {
+      "file": "prisma/migration-catalog-manifest.json",
+      "before": "a9961fad40bf62b48467e632218a0d081a3b34fd3c4ff9bc4713e07939cceb0b",
+      "after": "8c0e9ec27147fe1326525387e212c646e77b5ed53b44faca88a48d40fc2521f2",
+      "reason": "Admit two inspected, successfully replayed Firm Practice migrations; all previous entries and SQL unchanged"
+    },
+    {
+      "file": "services/command-center/__tests__/command-center.postgres.test.ts",
+      "before": "c39c3ef63ef39df0f4883056e777e3c48e02baaf8a53d411653b6fb6c086d524",
+      "after": "99323320c1b4972c6af4bb3e494e4af1326dda9a309142aed4417c4a73b96d32",
+      "reason": "Full migration history prohibits deleting immutable payroll evidence; assert denial and retained active forecast"
+    },
+    {
+      "file": "components/dashboard/CommandCenterRecovery.tsx",
+      "before": "0433f05e902dffbcbcc58659401d560eff35c945c839ed517e12bec5727fddb7",
+      "after": "96f1162c715c20f2946113eaedfee9a44415f74e0506df4daf5009f66545b3d9",
+      "reason": "Preserve keyboard mode focus across protected snapshot replacement without retaining private UI state; regression coverage"
+    },
+    {
+      "file": "components/bi/BICommandModeTabs.tsx",
+      "before": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+      "after": "c063c9faf48fbdd5b4de581307e127e5553dd2617a5578a634672a2265ae77f8",
+      "reason": "Preserve keyboard mode focus across protected snapshot replacement without retaining private UI state; regression coverage"
+    },
+    {
+      "file": "components/daily-habit/__tests__/phase4-release.test.tsx",
+      "before": "b29538ffe028974c8cb99f5b7b3657d02bd442fd8f6e2e535e3e2f2fcb1ae1ab",
+      "after": "85c68bf81528f5a0919558aca678abe4814760cf551205587853b232f32a0cbd",
+      "reason": "Preserve keyboard mode focus across protected snapshot replacement without retaining private UI state; regression coverage"
+    },
+    {
+      "file": "middleware.ts",
+      "before": "636a809512e2544e02ed9cb0772d762b006536d7f858ba23059c6eb3f1c17b15",
+      "after": "5ab2f985ba452717f361e0f4e29eaaedb646202a83dd58b83412b24e9c88f180",
+      "reason": "Avoid redundant locale cookie writes that revalidate read-only Server Actions and replace protected form state; retain locale initialization/switching and security headers"
+    },
+    {
+      "file": "tests/s06-s07/middleware-pilot.test.ts",
+      "before": "487078ab9a2736254d2fac46ec1ae51550cfe3b8f95c2166c7610b4d747da9e2",
+      "after": "867e0fdd8c43da2bc7e124533a49de765765b333d79a36187c97b2a32398e268",
+      "reason": "Avoid redundant locale cookie writes that revalidate read-only Server Actions and replace protected form state; retain locale initialization/switching and security headers"
+    },
+    {
+      "file": "docs/ecc/command-registry.json",
+      "before": "28aa03fbeea845778ae46ee82233794f17bd339dd2d7413b72d3ed24d30ba3fa",
+      "after": "3a6238bfb58176c8b04b5d1ca50375dc919f85fe8b8b3e83f5eb162262e2f27d",
+      "reason": "Reviewed updated recovery component tests: both server actions and notifications mocked, static locale JSON, local input validation, unchanged bounded Jest configuration/setup; update only this inspected input fingerprint"
+    }
+  ],
+  "candidateChanged": [],
+  "workspaceChanged": [],
+  "newWorkspaceSources": [],
+  "sqlChanged": [],
+  "privateClientStillMatches": true,
+  "sharedClientUnchanged": true,
+  "sharedClientNow": {
+    "index.d.ts": "8e091393b9141a5e06d4a1f31370f93680376c29118f226af63366e771d8af59",
+    "index.js": "25aa775ed5eed0973d5aa0b759f44104ee82bdd75923d5da548f9ffb3e9e67bc",
+    "schema.prisma": "2fdb8c5dc9c1db6f10ab35b1a8c8e7910ad8eca0d9d97661c003b31b5dbe0226",
+    "package.json": "0abcd61da743cf9e263063847177aabc8569d8799319aa8bcd73d09757ec2224"
+  },
+  "scope": "All captured non-documentation source/assets plus newly discovered source paths; report documents excluded from final equality. No source restored."
+}

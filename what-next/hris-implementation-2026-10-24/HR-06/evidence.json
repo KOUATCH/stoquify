@@ -1,0 +1,78 @@
+{
+  "slice": "HR-06",
+  "status": "VERIFIED",
+  "timestamp": "2026-10-24T15:11:03.639Z",
+  "baselineCommit": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "scope": "Engineering verification only; inherited dirty tree preserved; no legal or production certification",
+  "hashes": [
+    {
+      "path": "services/payroll/employee.service.ts",
+      "sha256": "83d6f65b70bd3d6fcae1cbf0720085a2f2a7ae42c881fb475a14a6d6d06b6bc2"
+    },
+    {
+      "path": "services/hris/people-directory-query.ts",
+      "sha256": "003488fdf9a5ec48a697f253daff8dd6bfc0faf417c1f826a2dafaedd2d3ece3"
+    },
+    {
+      "path": "actions/hris/employee.actions.ts",
+      "sha256": "23b0124ee0a5ebc4b467f2567129ab9a62fa0960da09117fd117bb6f05e8bffa"
+    },
+    {
+      "path": "components/hris/HrisEmployeeDirectoryTable.tsx",
+      "sha256": "348c7ce157077dbcc37d0c5ed6bafe119b1eed940ba521d12e0238105aaffaec"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/page.tsx",
+      "sha256": "f26624e2275c3af289fe3223e802fddbcba1750543a5f6a89c08d4b98c1a7141"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/error.tsx",
+      "sha256": "7fcbadf1885610399579c4a783701493ad52c488e56dbe8189612d5dc8ffc4f2"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/people/loading.tsx",
+      "sha256": "8bf5bcf6db643a7e98c2b76df4f4c179c4d14ee89b42dda1cdcc46838453b763"
+    },
+    {
+      "path": "actions/hris/__tests__/employee.actions.test.ts",
+      "sha256": "c6f5e07a40f6a4711953806daee0ab6b618ee2fbeb74592a2ccd5202acb8786c"
+    },
+    {
+      "path": "services/hris/__tests__/people-directory-query.test.ts",
+      "sha256": "6744e4608ad4cf79a18317a7fbf78ba0571df97b9008c8c753a05f31694e25b0"
+    }
+  ],
+  "results": [
+    {
+      "lane": "mocked/pure/source assertions",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-06/unit.json",
+      "success": true,
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "lane": "real PostgreSQL",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-06/postgres.json",
+      "success": true,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 39,
+      "exitCode": 0
+    },
+    {
+      "lane": "focused TypeScript",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-06/typecheck.txt",
+      "success": true,
+      "exitCode": 0
+    }
+  ],
+  "commands": [
+    "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath services/hris/__tests__/org-effective-scope.service.test.ts services/hris/__tests__/org.service.test.ts services/hris/__tests__/employee.service.test.ts services/hris/__tests__/manager-self-service.service.test.ts services/hris/__tests__/approval-inbox.service.test.ts actions/hris/__tests__/employee.actions.test.ts services/hris/__tests__/people-directory-query.test.ts services/payroll/__tests__/payroll-employee.service.test.ts --json --outputFile=what-next/hris-implementation-2026-10-24/HR-06/unit.json",
+    "node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand --no-cache --testNamePattern=\"HR-05|HR-06\" --json --outputFile=what-next/hris-implementation-2026-10-24/HR-06/postgres.json"
+  ],
+  "databaseTarget": "Task-owned loopback 127.0.0.1:55464 / stoquify_local_hris_20261024 / public; synthetic namespace and bounded cleanup; cluster stopped after verification",
+  "browser": "what-next/hris-implementation-2026-10-24/HR-06/browser/results.json",
+  "open": []
+}

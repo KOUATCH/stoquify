@@ -8,6 +8,14 @@
         "20260818120000_pos_electronic_tender_authority"
       ],
       "reason": "Both full migration names were already applied before the timestamp-uniqueness ratchet. Preserve their immutable names and reject every new collision."
+    },
+    {
+      "timestamp": "20261024170000",
+      "migrations": [
+        "20261024170000_hris_lifecycle_tasks",
+        "20261024170000_hris_setup_reviewer_grants"
+      ],
+      "reason": "Exact existing pair reconciled on 2026-10-25 under the requested catalog-blocker repair. Both full names and unchanged SQL hashes were already applied in disposable rehearsals before this reconciliation (docs/command-center/phase-7-release-2026-10-24/migration-catalog.json and history-gate.json). Preserve those identities; production application status was not inspected. See docs/command-center/phase-8-blocker-fixes-2026-10-25/CATALOG_REVIEW.md. This exception admits no additional migration at this timestamp."
     }
   ]
 }

@@ -1,0 +1,72 @@
+{
+  "at": "2026-11-09T17:14:56.521Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "evidenceClass": "independent_completed_build_receipts_and_direct_artifact_inspection",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "buildId": "LQivwlD0OejMX90O1VVa1",
+  "sourceFiles": 9482,
+  "runtimeFiles": 5311,
+  "migrations": 121,
+  "commands": [
+    {
+      "label": "client-generation",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAt": "2026-11-09T16:37:30.798Z",
+      "finishedAt": "2026-11-09T16:38:59.243Z"
+    },
+    {
+      "label": "artifact-build",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAt": "2026-11-09T16:39:00.354Z",
+      "finishedAt": "2026-11-09T17:13:19.663Z"
+    }
+  ],
+  "privateAssets": [
+    {
+      "destination": "runtime/.private/uploads/cmp_org_005/56492210-f588-4db0-a970-f245e574ab06.jpg",
+      "sha256": "79b124faf6ee6312dd34ba999455e9d09ecb5c4d93ed63e494a414fd74f8a6d2",
+      "synthetic": false
+    },
+    {
+      "destination": "runtime/.private/uploads/cmp_org_005/a032d164-c607-4d66-9050-367cf45f0008.jpg",
+      "sha256": "d1e189c5e05a7f1b135f6c84bf085d2e474fe2bd5ed975b2112fa826466d1225",
+      "synthetic": false
+    },
+    {
+      "destination": "runtime/.private/uploads/cmp_org_005/f2f43248-c73b-4104-a865-e0f02c2b0ace.jpg",
+      "sha256": "447974bd44d3bf2a74cec021b1e27a3f26cb5f2e7bedafa0502790eee69b7519",
+      "synthetic": false
+    },
+    {
+      "destination": "runtime/.private/uploads/p04-upload-a/sentinel.png",
+      "sha256": "5502427f9ce2e61b2a69910fb9092462f0d0f49136d3097eefa946a6f6638b5d",
+      "synthetic": true
+    },
+    {
+      "destination": "runtime/.private/uploads/p04-upload-b/sentinel.png",
+      "sha256": "13a70c1156151a2323af88801aeb7068712733dfb42ddccd2975486e2e2d09f8",
+      "synthetic": true
+    },
+    {
+      "destination": "runtime/.private/uploads/p04-upload-disabled/sentinel.png",
+      "sha256": "d053a56cd4331f75c220f68ae11ac6d53dd2ee99591362a115e12b7d05cdb525",
+      "synthetic": true
+    }
+  ],
+  "aliasPublicExclusions": [
+    "public/images/cabin-1.jpg",
+    "public/images/cabin-2.jpg",
+    "public/images/profile.jpg",
+    "public/images/p04-private-alias.png"
+  ],
+  "generatedSchemaCanonicalMatch": true,
+  "limitations": [
+    "Installed dependencies were physically copied; no clean-install qualification is claimed.",
+    "This independently inspects completed build receipts, artifact manifest and private asset bytes; application behavior and runtime cleanup remain separate evidence.",
+    "The final artifact was verified by the admitted build runner; this review does not duplicate hashing every runtime dependency file."
+  ]
+}

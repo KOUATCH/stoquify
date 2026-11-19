@@ -1,0 +1,400 @@
+{
+  "utc": "2026-11-09T10:22:44.359Z",
+  "operations": [
+    {
+      "kind": "password",
+      "label": "Mot de passe actuel",
+      "user": "reverser"
+    },
+    {
+      "kind": "click",
+      "role": "button",
+      "text": "Vérifier l’identité"
+    },
+    {
+      "kind": "wait",
+      "text": "Identité vérifiée. Réessayez l’action de paiement pour continuer.",
+      "timeout": 30000
+    },
+    {
+      "kind": "audit",
+      "role": "region",
+      "text": "Paiements clients"
+    },
+    {
+      "kind": "screenshot"
+    },
+    {
+      "kind": "click",
+      "role": "button",
+      "text": "Réessayer la même annulation"
+    },
+    {
+      "kind": "wait",
+      "text": "Paiement client annulé. La créance affectée est rétablie.",
+      "timeout": 60000
+    },
+    {
+      "kind": "wait",
+      "text": "Montant dû actuel: 4 FCFA",
+      "timeout": 60000
+    },
+    {
+      "kind": "assertCount",
+      "role": "button",
+      "text": "Examiner l’annulation",
+      "count": 0
+    },
+    {
+      "kind": "inspect"
+    },
+    {
+      "kind": "screenshot"
+    }
+  ],
+  "results": [
+    {
+      "operation": "password",
+      "label": "Mot de passe actuel"
+    },
+    {
+      "operation": "click",
+      "role": "button",
+      "text": "Vérifier l’identité"
+    },
+    {
+      "operation": "wait"
+    },
+    {
+      "accessibilityAudit": {
+        "violations": [],
+        "incompleteCount": 1,
+        "passes": 16
+      }
+    },
+    {
+      "operation": "audit",
+      "role": "region",
+      "text": "Paiements clients"
+    },
+    {
+      "operation": "screenshot"
+    },
+    {
+      "operation": "click",
+      "role": "button",
+      "text": "Réessayer la même annulation"
+    },
+    {
+      "operation": "wait"
+    },
+    {
+      "operation": "wait"
+    },
+    {
+      "assertion": "Examiner l’annulation",
+      "count": 0,
+      "passed": true
+    },
+    {
+      "operation": "assertCount",
+      "role": "button",
+      "text": "Examiner l’annulation"
+    },
+    {
+      "url": "http://127.0.0.1:3196/fr/dashboard/finance/receivables/history?selected=cmw939xau000vmatojel0y1bs",
+      "title": "Historique des créances clients | Stoquify",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "text": "Aller au contenu principal\nSYSTÈME OPÉRATIONNEL OHADA\nNotifications\n0\n\nSynthetic Cameroon sales accounting pilot\n\nTEST REVERSER\nSession\nMODULES\n4\nPILOTAGE\n2\nTableau de bord\nVue d’ensemble des opérations\nCentre de pilotage\nPilotage quotidien pour la direction et les responsables\n3\nOPÉRATIONS\n1\nVentes\nClients, ventes et point de vente\n2\nFINANCE ET CONTRÔLES\n1\nFinance\nTrésorerie, rentabilité, paiements et rapprochement\n2\nHistorique des créances clients\nCréances clients\nSR\n\nSynthetic reverser\n\nreverser-ac360f134c@sales-accounting.invalid\n\nHistorique des créances clients\n\nFinance et contrôles / Finance / Historique des créances clients\n\nEN\nSR\n\nTableau pret\n\nHistorique des créances\nHistorique de l’organisation\nHistorique des créances clients\n\nConsultez les créances clients, leurs affectations, leur ancienneté et leur état de règlement dans le périmètre de votre organisation.\n\nNon certifié\n/ Le statut de comptabilisation est indiqué par poste. La certification de clôture n’est pas incluse.\nÀ la date du\n9 nov. 2026, 11:19\nConnu jusqu’au\n9 nov. 2026, 11:19\n\nCRÉANCES\n\n1\n\nSOLDE DES CRÉANCES (XAF)\n\n0 FCFA\n\nEN RETARD (XAF)\n\n0 FCFA\n\nCRÉANCES RÉGLÉES\n\n1\nHistorique opérationnel\n\nHistorique de l’organisation\n\n0 actions\nHistorique de l’organisation\n\nLe statut de comptabilisation est indiqué par poste. La certification de clôture n’est pas incluse.\n\nCréances clients\n\n1 créance\n\nHistorique de l’organisation\nRéessayer\nDu - À la date du\nRéinitialiser\nRÉFÉRENCE\tCLIENT\tÉCHÉANCE\tSTATUT\tDEVISE\tMONTANT INITIAL\tSOLDE RESTANT\tNIVEAU DE PREUVE\tDÉTAILS\nAR-POS-SYNTHETIC_TILL-20261108-EUVIV\tSynthetic credit customer\t9 déc. 2026, 10:59\tRéglée\tXAF\t10 FCFA\t0 FCFA\tCréance comptabilisée\t\nDétails\n\nLignes\n\n50\nPage 1\nAller à la première page\nAller à la page précédente\nAucune autre ligne\nFermer\nPOS-SYNTHETIC_TILL-20261108-EUVIV\n\nSynthetic credit customer / Document de créance client\n\nClient\nSynthetic credit customer\nÉchéance\n9 déc. 2026, 10:59\nConnu jusqu’au\n9 nov. 2026, 11:19\nCréance client\nClient\nSynthetic credit customer\nIdentifiant de référence\ncmw939xau000vmatojel0y1bs\nDevise\nXAF\nMontant initial\n10 FCFA\nMontant affecté\n10 FCFA\nSolde restant\n0 FCFA\nStatut\nRéglée\nAncienneté\nDate de facture\n9 nov. 2026, 10:59\nÉchéance\n9 déc. 2026, 10:59\nJours de retard\n-\nTranche d’ancienneté\nSans retard\nNiveau de preuve\nCréance comptabilisée\nAffectations\nPaiement\n4 FCFA / 9 nov. 2026, 01:00\nPaiements clients\n\nPaiement client annulé. La créance affectée est rétablie.\n\nActualiser les paiements\n\nMontant dû actuel: 4 FCFA\n\nCette facture est en lecture seule selon vos droits ou son état actuel.\n\nL’annulation exige une autre personne autorisée et porte sur tout le paiement, y compris ses affectations à d’autres factures. Le paiement d’origine reste dans l’historique.\n\nCSET-20261109-B793B9EB61 · Annulé\n\n4 FCFA · 09/11/2026\n\nAffecté à cette facture: 4 FCFA\n\nSYNTHETIC-BANK-20261109-UI-001",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Notifications\n0",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Rechercher dans la navigation",
+          "placeholder": "Rechercher des modules",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Centre de pilotage menu",
+          "placeholder": null,
+          "text": "Centre de pilotage\nPilotage quotidien pour la direction et les responsables\n3",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Ventes menu",
+          "placeholder": null,
+          "text": "Ventes\nClients, ventes et point de vente\n2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Finance menu",
+          "placeholder": null,
+          "text": "Finance\nTrésorerie, rentabilité, paiements et rapprochement\n2",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Se déconnecter",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Ouvrir le menu de navigation",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": "combobox",
+          "type": "search",
+          "id": "",
+          "name": null,
+          "label": "Rechercher une page ou un document",
+          "placeholder": "Rechercher une page ou un document",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Désactiver le son des notifications",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "radix-_r_a_",
+          "name": null,
+          "label": "Ouvrir le menu du compte",
+          "placeholder": null,
+          "text": "SR",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Réessayer",
+          "placeholder": null,
+          "text": "Réessayer",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "role": null,
+          "type": "text",
+          "id": "",
+          "name": null,
+          "label": "Recherche",
+          "placeholder": "Rechercher une créance",
+          "text": "",
+          "disabled": false,
+          "value": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Du - À la date du",
+          "placeholder": null,
+          "text": "Du - À la date du",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Réinitialiser",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Détails: POS-SYNTHETIC_TILL-20261108-EUVIV",
+          "placeholder": null,
+          "text": "Détails",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Ouvrir les détails: POS-SYNTHETIC_TILL-20261108-EUVIV",
+          "placeholder": null,
+          "text": "Ouvrir les détails",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": "combobox",
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": "Lignes",
+          "placeholder": null,
+          "text": "50",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Aller à la première page",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Aller à la page précédente",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Aucune autre ligne",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Open issues overlay",
+          "placeholder": null,
+          "text": "-10 Issue",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": null,
+          "id": "",
+          "name": null,
+          "label": "Collapse issues badge",
+          "placeholder": null,
+          "text": "",
+          "disabled": false
+        },
+        {
+          "tag": "DIV",
+          "role": "dialog",
+          "type": null,
+          "id": "radix-_r_e_",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Fermer\nPOS-SYNTHETIC_TILL-20261108-EUVIV\n\nSynthetic credit customer / Document de créance client\n\nClient\nSynthetic credit customer\nÉchéance\n9 déc. 2026, 10:59\nConnu jusqu’au\n9 nov.",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Fermer",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "type": "button",
+          "id": "",
+          "name": null,
+          "label": null,
+          "placeholder": null,
+          "text": "Actualiser les paiements",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "operation": "inspect"
+    },
+    {
+      "operation": "screenshot"
+    }
+  ]
+}

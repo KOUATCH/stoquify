@@ -1,0 +1,51 @@
+{
+  "recordedAt": "2026-11-10T17:22:18.6225641Z",
+  "status": "IMPLEMENTED_MOCKED_UNIT_PASS_DATABASE_AND_STATIC_PENDING",
+  "scope": "CA-06 generic finding owner eligibility and service-level close mutation scope",
+  "sourceFiles": [
+    {
+      "path": "services/accounting/close-assurance.service.ts",
+      "sha256": "2d0da62313e44e5239f4edd08307c21fd32362a399fe71a4aeb6ff1e7b137d29"
+    },
+    {
+      "path": "services/accounting/close-finding-assignee-authority.service.ts",
+      "sha256": "8bd2d4face949d4eaa1e2a7a4e3b93a0c2fc715a7f50aa6f0e6434aee3b010cb"
+    },
+    {
+      "path": "services/accounting/__tests__/close-assurance.service.test.ts",
+      "sha256": "c27a763925fa23a1e1d3ca7b9822638e18141a354336b5d90d8cd3c47faee90f"
+    },
+    {
+      "path": "services/accounting/__tests__/close-finding-assignee-authority.service.test.ts",
+      "sha256": "13381a638b37d2d591d2067d144d37935a69dcd31f0415805db932a71731f1e3"
+    }
+  ],
+  "privatePreimages": ".codex-tmp/close-ca06-implementation-7223b44ce5/PREIMAGES.json",
+  "preimageReceiptSha256": "cbe511e8d4fbc4663acfcdefc16d3ad5fd318dd9e1e6a7bf1f41731e47e20f2e",
+  "mockedUnit": {
+    "path": "unit-666e261b93/verification.json",
+    "sha256": "7229bce38e5129445809ef6882a2e37635d088270db62c46cf053cad1655b3df",
+    "passed": 472,
+    "failed": 0,
+    "skipped": 0,
+    "productBindingBeforeAndAfterUnchanged": true
+  },
+  "invariants": [
+    "Assigner retains existing client-local session/module/role authority. Missing caller session denies before recipient lookup.",
+    "Client and hinted assignee organizations lock in sorted order before actor authority; the exact candidate account is checked under those locks.",
+    "Assignee is usable and currently has Close read/comment via home-role memberships; no recipient session, fresh password, assignment or approval permission is required.",
+    "External owner requires active organizations, accounting read at home and Close write at client, one current ACTIVE PREPARER/REVIEWER mandate and existing managed engagement checks. No invented period grants.",
+    "Recipient eligibility revalidates after business waits, before mutation and before return. Request-owned findings retain ordinary-reassignment conflict.",
+    "Every supplied comment target must resolve to one organization/run/owned period; legitimate same-run multiple links remain supported.",
+    "Finding parent run/period and optional checklist, evidence optional finding/checklist and accountant-review parent period are checked before effects."
+  ],
+  "limits": [
+    "No new schema constraint, migration or transaction-isolation change.",
+    "Service checks reject corrupt state through these mutation owners; raw SQL integrity and all seven core close-table composite constraints are not claimed.",
+    "Mocked unit results do not establish real PostgreSQL locking/rollback, rendered or authenticated interface behavior."
+  ],
+  "remaining": [
+    "Root-owned full compiler and scoped lint currently running",
+    "Root-owned new isolated PostgreSQL cases and source-bound admission pending"
+  ]
+}

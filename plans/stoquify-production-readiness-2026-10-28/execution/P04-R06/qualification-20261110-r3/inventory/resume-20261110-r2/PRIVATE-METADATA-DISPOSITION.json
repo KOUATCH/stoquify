@@ -1,0 +1,80 @@
+{
+  "packageId": "P04-R06",
+  "qualification": "20261110-r3",
+  "sourceIdentitySha256": "0b8354d4f340ad5b82931e2e18e3e01a7ba18cfd089351a2536b41e23891332c",
+  "metadataOnly": true,
+  "externalReferencedFilesRead": false,
+  "classificationScope": "Metadata JSON documents in the selected source only; no referenced private file, generated client, external directory or other task database was opened.",
+  "files": [
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-PRIVATE_FIXTURE.json",
+      "sha256": "1fe896640c9d10be26bf93823d346c66b6ea4d707d9130fae9a3b31f8a20460c",
+      "kind": "fixture-data",
+      "referencePolicy": "private-fixture-and-pack-content",
+      "shape": "path/sha256/bytes/packs; one pack with path/sha256/bytes",
+      "previousDispositionUnchanged": true
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-PRIVATE_FIXTURE.json",
+      "sha256": "b41b42cf84bc965a263e094baa1cc3e94753a198c97bb2ff00ac172baf56c385",
+      "kind": "fixture-data",
+      "referencePolicy": "private-fixture-and-pack-content",
+      "shape": "path/sha256/bytes/packs; one pack with path/sha256/bytes",
+      "previousDispositionUnchanged": true
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-ownership-qualification-2026-11-10/pg-attempt-0e69f2030b/pg-PRIVATE_FIXTURE.json",
+      "sha256": "ef5f463343e2c00c6666a30f5ef2ce4d2433d9305f69299e598b4070ec96deea",
+      "kind": "fixture-data",
+      "referencePolicy": "private-fixture-and-pack-content",
+      "shape": "path/sha256/bytes/packs; one pack with path/sha256/bytes",
+      "previousDispositionUnchanged": true
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/pg-attempt-ece011f832/pg-PRIVATE_FIXTURE.json",
+      "sha256": "3abd13acd1adba63dc6e0e831c1e8e628883347f6180dd225074899adadc2086",
+      "kind": "fixture-data",
+      "referencePolicy": "private-fixture-and-pack-content",
+      "shape": "path/sha256/bytes/packs; two packs with kind first/final plus path/sha256/bytes",
+      "previousDispositionUnchanged": true
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-PRIVATE_CLIENT.json",
+      "sha256": "1d6d226922ea6babab71bd7fc4130e1d836ad5a5885c0eb781ea84dea1ba1d84",
+      "kind": "client-build-metadata",
+      "referencePolicy": "metadata-document-only",
+      "shape": "Generation result: timestamps/booleans, directory/evidenceDirectory/client, schema/client/helper digests, sharedClientBefore[26], clientFiles[27], inputs[5], validations[2], normalization text",
+      "privateClientRootKeys": ["directory", "client"],
+      "referenceSemantics": "Code/tool provenance only; no fixture or business payload. Listed digests describe shared packages, source schema, generated executable/type/schema files and tooling. They are not secrecy labels."
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-client-e29eaa8acf/pg-CLIENT_CONTEXT.json",
+      "sha256": "3db34836e9b6c1121b532843e4cf3e2caa5ba0fc0cf9d0ffd7b48a048543d7f0",
+      "kind": "client-build-metadata",
+      "referencePolicy": "metadata-document-only",
+      "shape": "Generation context: directory/context/orm, inputs[5], runner/schema digests, sharedClientBefore[26], nativeBinding, engines[2], environmentVariableNames[25], target description, commands[2]",
+      "privateClientRootKeys": ["directory", "context", "orm"],
+      "referenceSemantics": "Code/tool provenance only; no fixture or business payload. Environment entries are names, not values; command arguments are paths or --schema/validate/generate. Native engine, installed client and source digests are not secrecy labels."
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-db-integrity-2026-11-10/pg-client-e29eaa8acf/pg-CLIENT_RESULT.json",
+      "sha256": "1d6d226922ea6babab71bd7fc4130e1d836ad5a5885c0eb781ea84dea1ba1d84",
+      "kind": "client-build-metadata",
+      "referencePolicy": "metadata-document-only",
+      "shape": "Byte-identical copy of pg-PRIVATE_CLIENT.json generation result",
+      "privateClientRootKeys": ["directory", "client"],
+      "referenceSemantics": "Code/tool provenance only; no fixture or business payload. Listed digests are not secrecy labels."
+    }
+  ],
+  "disposition": [
+    "Preserve all seven documents in the captured source archive; exclude their exact paths and whole-document digests from sealed runtime/public/static outputs and actual build traces.",
+    "For the four fixture-data documents, retain the prior strict exclusion of referenced fixture/pack whole-file hashes and paths; do not open the referenced files.",
+    "For the three client-build-metadata documents, exclude the documents and external private client-root references in actual traces. Do not prohibit shared source/package/generated-code hashes or generic code basenames merely because the other lane listed them.",
+    "The current untyped exclusion helper recursively treats every 64-hex string as forbidden and only collects key=path references. It must not be applied unchanged to client metadata: that would confuse required code provenance with private data and miss directory/context/orm/client references.",
+    "Runtime owner must provide a named, independently reviewed typed-policy helper and negative tests, then actual artifact/trace exclusion evidence. This source disposition does not assert those packaging gates passed.",
+    "No application import of these three new client metadata paths or close-db-integrity evidence directory was found in the inspected app/lib/services/components source search. None is under public/. This is source inspection only."
+  ],
+  "privateValuesPublished": false,
+  "otherLaneClientQualified": false,
+  "artifactExclusionVerified": false
+}

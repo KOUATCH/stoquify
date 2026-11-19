@@ -1,0 +1,49 @@
+{
+  "checkedAt": "2026-11-09T14:18:10.780Z",
+  "passed": true,
+  "candidateSourceManifestSha256": "a6e0b40433ec6faaadae9e2db14ddd972f0e30ecd0185646b8d7190ed91d2a06",
+  "earlierEvidenceSha256": "38689ba73d17703e56faeb13dbdcd4756b4fd5b10088961da9faf1e1bdaa368f",
+  "files": [
+    {
+      "path": "components/finance/CustomerSettlementControls.tsx",
+      "candidateSha256": "09a401b8023615b9333444a43136696da2734fe10b9b54de071c8fae593a7ce4",
+      "workspaceSha256": "09a401b8023615b9333444a43136696da2734fe10b9b54de071c8fae593a7ce4",
+      "earlierDevelopmentSha256": "09a401b8023615b9333444a43136696da2734fe10b9b54de071c8fae593a7ce4"
+    },
+    {
+      "path": "components/finance/AROpenItemsHistoryWorkbench.tsx",
+      "candidateSha256": "77f2701d1b226a3d7cb4e7c372b66633f4a550a6c0f5c90bb89397bbe8014e51",
+      "workspaceSha256": "77f2701d1b226a3d7cb4e7c372b66633f4a550a6c0f5c90bb89397bbe8014e51",
+      "earlierDevelopmentSha256": "77f2701d1b226a3d7cb4e7c372b66633f4a550a6c0f5c90bb89397bbe8014e51"
+    },
+    {
+      "path": "actions/finance/customer-settlement.actions.ts",
+      "candidateSha256": "e155ef594f1f8c409bc82e4b5ead9503d49ac6b0a0d93cc94e137ad6e975b59d",
+      "workspaceSha256": "e155ef594f1f8c409bc82e4b5ead9503d49ac6b0a0d93cc94e137ad6e975b59d",
+      "earlierDevelopmentSha256": "e155ef594f1f8c409bc82e4b5ead9503d49ac6b0a0d93cc94e137ad6e975b59d"
+    },
+    {
+      "path": "services/accounting/customer-settlement-workbench.service.ts",
+      "candidateSha256": "42d3dee68338f985f95361663774199d57dccc8595afa3e7c00cbcdf0d106e97",
+      "workspaceSha256": "42d3dee68338f985f95361663774199d57dccc8595afa3e7c00cbcdf0d106e97",
+      "earlierDevelopmentSha256": "42d3dee68338f985f95361663774199d57dccc8595afa3e7c00cbcdf0d106e97"
+    },
+    {
+      "path": "hooks/useAROpenItemsHistoryWorkbench.ts",
+      "candidateSha256": "b5c19ef3b59e968522aee4f73e86a6fe2140ea87006e065b5437ce632b6d6fcc",
+      "workspaceSha256": "b5c19ef3b59e968522aee4f73e86a6fe2140ea87006e065b5437ce632b6d6fcc",
+      "earlierDevelopmentSha256": "b5c19ef3b59e968522aee4f73e86a6fe2140ea87006e065b5437ce632b6d6fcc"
+    },
+    {
+      "path": "components/pos/ProfessionalPOSSystem.tsx",
+      "candidateSha256": "112cdd7331fd99bbac3b0a233fed953dec0a6560cca2dd7a8811898ef682e3ff",
+      "workspaceSha256": "112cdd7331fd99bbac3b0a233fed953dec0a6560cca2dd7a8811898ef682e3ff",
+      "earlierDevelopmentSha256": "112cdd7331fd99bbac3b0a233fed953dec0a6560cca2dd7a8811898ef682e3ff"
+    }
+  ],
+  "evidenceClasses": {
+    "earlierAuthenticatedInterface": "Actual sign-in and financial writers in the development application; current datamodel bootstrap, not migrated schema or sealed runtime.",
+    "migratedFinancialKernels": "Current frozen financial services with real PostgreSQL and all 121 migrations, supplied trusted controls and synthetic zero-tax mappings.",
+    "artifact": "Separate build/runtime receipts are required. Source equality alone is not a rendered standalone runtime check."
+  }
+}

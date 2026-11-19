@@ -1,0 +1,124 @@
+{
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "externalCommunicationPerformed": false,
+  "value": {
+    "classification": "EXPLICIT_SYNTHETIC_REFERENCE_CONFIGURATION",
+    "mappings": [
+      {
+        "id": "cmvtiqylj002nma54b5lpi2aa",
+        "code": "101100",
+        "mappingKey": "OWNER_CAPITAL"
+      },
+      {
+        "id": "cmvtiew670045mal84i3eefmf",
+        "code": "311100",
+        "mappingKey": "INVENTORY"
+      },
+      {
+        "id": "cmvtiew0s003pmal89887cvoq",
+        "code": "401100",
+        "mappingKey": "ACCOUNTS_PAYABLE"
+      },
+      {
+        "id": "cmvtiew1n003tmal8mwb527sr",
+        "code": "408100",
+        "mappingKey": "GRNI"
+      },
+      {
+        "id": "cmvtiew38003xmal8g9oaayhx",
+        "code": "409100",
+        "mappingKey": "SUPPLIER_RETURN_CLAIM"
+      },
+      {
+        "id": "cmvtievyy003lmal8yitn7qrz",
+        "code": "411100",
+        "mappingKey": "ACCOUNTS_RECEIVABLE"
+      },
+      {
+        "id": "cmvtiew4m0041mal8wlsd69is",
+        "code": "419100",
+        "mappingKey": "STORE_CREDIT_LIABILITY"
+      },
+      {
+        "id": "cmvtiew7o004dmal8ri4sysc5",
+        "code": "443100",
+        "mappingKey": "OUTPUT_VAT"
+      },
+      {
+        "id": "cmvtiew8i004hmal8p85c76oc",
+        "code": "445100",
+        "mappingKey": "INPUT_VAT"
+      },
+      {
+        "id": "cmvtievwf0039mal84llohrn8",
+        "code": "511100",
+        "mappingKey": "CARD_CLEARING"
+      },
+      {
+        "id": "cmvtievy5003hmal8qzp7a1tg",
+        "code": "513100",
+        "mappingKey": "CHEQUE_CLEARING"
+      },
+      {
+        "id": "cmvtievvr0035mal8yys1i9kn",
+        "code": "521100",
+        "mappingKey": "BANK"
+      },
+      {
+        "id": "cmvtievxb003dmal8rwmcvipk",
+        "code": "552100",
+        "mappingKey": "MOBILE_MONEY_CLEARING"
+      },
+      {
+        "id": "cmvtievt30031mal863e4ntni",
+        "code": "571100",
+        "mappingKey": "CASH_ON_HAND"
+      },
+      {
+        "id": "cmvtiew97004lmal8t6hsrqwn",
+        "code": "601100",
+        "mappingKey": "COGS"
+      },
+      {
+        "id": "cmvtiew9x004pmal8v44birjg",
+        "code": "603100",
+        "mappingKey": "INVENTORY_VARIANCE"
+      },
+      {
+        "id": "cmvtiewc9004xmal8qyryfzvn",
+        "code": "622100",
+        "mappingKey": "OPERATING_EXPENSE"
+      },
+      {
+        "id": "cmvtiewaw004tmal8xuu5hlwy",
+        "code": "658100",
+        "mappingKey": "CASH_VARIANCE"
+      },
+      {
+        "id": "cmvtiew6t0049mal8oe5he735",
+        "code": "701100",
+        "mappingKey": "SALES_REVENUE"
+      }
+    ],
+    "postingRules": [
+      "POS-SALE-COMPLETION",
+      "POS-PAYMENT-RECEIPT",
+      "POS-REFUND",
+      "POS-VOID",
+      "DELIVERY-GOODS-ISSUE",
+      "DELIVERY-SALES-INVOICE",
+      "AP-SUPPLIER-INVOICE",
+      "AP-SUPPLIER-PAYMENT",
+      "AP-PURCHASE-RETURN",
+      "AP-SUPPLIER-CREDIT-NOTE",
+      "AR-CUSTOMER-SETTLEMENT",
+      "INVENTORY-ADJUSTMENT",
+      "SYNTHETIC-CLOSE-GOODS_RECEIPT",
+      "SYNTHETIC-CLOSE-CASH_DRAWER_CLOSE",
+      "SYNTHETIC-CLOSE-EXPENSE_APPROVAL"
+    ],
+    "financialTransactionsTested": false,
+    "productionAccountingAdmissionClaimed": false,
+    "boundary": "Minimal synthetic capital-funded tenant for actual close approval and period seal. Required reference scaffolds are not evidence of transaction or regulatory correctness; its separate manual contribution is posted through normal controls."
+  }
+}

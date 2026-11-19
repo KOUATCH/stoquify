@@ -1,0 +1,322 @@
+{
+  "at": "2026-11-10T19:30:01.878Z",
+  "packageId": "P04-R06",
+  "qualificationPassed": false,
+  "candidateId": null,
+  "artifactSha256": null,
+  "sourceSnapshot": {
+    "files": 9988,
+    "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+    "identitySha256": "0b8354d4f340ad5b82931e2e18e3e01a7ba18cfd089351a2536b41e23891332c",
+    "expectedCandidateId": "p04-r06-r3-0b8354d4f340",
+    "timeBound": true,
+    "currentFullSourceRehashedByThisHandoff": false
+  },
+  "selectedInputs": 68,
+  "unchangedAuthenticationAndDependencyInputs": 67,
+  "schemaChanged": true,
+  "migrationPlan": {
+    "baselineInherited": 122,
+    "currentTotal": 123,
+    "executedNow": 0,
+    "proposedExecuted": [
+      "20261110190000_close_scope_integrity"
+    ],
+    "historicalReplayClaim": false
+  },
+  "state": {
+    "dependencyCopyAccepted": true,
+    "dependencyDirectoryPresent": true,
+    "candidateCaptured": false,
+    "currentDatabasePreparationStarted": false,
+    "buildStarted": false,
+    "runtimeStarted": false,
+    "oldOwnerState": "stopped",
+    "oldOwnerSha256": "61a7cb0e376ec8e8727cfde9f4063c00d66f0faa1e3871236b2d08e917e4df54",
+    "postmasterFileAbsent": true,
+    "absentPacket": [
+      "preparation-attempt05.json",
+      "resource-capture-entry-attempt05.json",
+      "candidate-context.json",
+      "candidate-admission.json",
+      "source-snapshot.json.gz",
+      "candidate-source-manifest.json",
+      "root-source-manifest.json",
+      "build-result.json",
+      "private-client.json",
+      "runtime-result.json",
+      "runtime-current/execution-started.json",
+      "database-current/preparation.json",
+      "database-current/fixture-seeded.json"
+    ],
+    "absentStorage": [
+      "source",
+      "private",
+      "artifact",
+      "migration-scaffold-current",
+      "runtime-repaired",
+      "runtime-legacy"
+    ],
+    "limitations": "Bounded filesystem observations only; no new capacity, source traversal, PID/port inspection or native database query."
+  },
+  "capacity": {
+    "lastReceipt": "resource-capture-entry-attempt04.json",
+    "passed": false,
+    "failures": [
+      "commit_headroom"
+    ],
+    "freePhysicalBytes": 8447246336,
+    "freeCommitBytes": 12134465536,
+    "thresholds": {
+      "freePhysicalBytes": 6442450944,
+      "freeCommitBytes": 12884901888,
+      "freeBuildDriveBytes": 12884901888
+    },
+    "newObservationRequiresResourceChange": true
+  },
+  "nextAction": {
+    "executable": "C:\\Program Files\\nodejs\\node.exe",
+    "args": [
+      "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r3\\check-resources.cjs",
+      "resource-current-schema-retry-ready-r1.json"
+    ],
+    "prerequisite": "Observed memory/resource change; then unchanged floors and exact current-source reconciliation before capture05"
+  },
+  "capture": {
+    "entry": "prepare-candidate-attempt05.cjs",
+    "postCapture": "admit-candidate-attempt05.cjs",
+    "independentAdmission": "independent-review/CANDIDATE-PREPARATION-RECIPE-ADMISSION-attempt05.json",
+    "executed": false
+  },
+  "qualificationContract": {
+    "logicalRequirements": 58,
+    "rawCases": 107,
+    "mandatoryAuxiliaries": 57,
+    "actualCurrentCasesRun": 0,
+    "receipt": "runtime-result.json"
+  },
+  "pending": [
+    "Exact current database execution-recipe admission after candidate acceptance",
+    "Actual candidate, new database preparation and fixture outcome reviews",
+    "Exact build admission, actual normal build and artifact/client review",
+    "Exact runtime/preflight admissions and actual native/browser qualification",
+    "Owned cleanup, baseline preservation, final integrity and independent final outcome"
+  ],
+  "files": [
+    {
+      "path": "EXECUTION-HANDOFF-current-schema-r1.md",
+      "sha256": "82e0f06bc3357cd0fcf85c85501999db2c2002493762e8162ca02ee6c3bcff8a",
+      "bytes": 12088
+    },
+    {
+      "path": "preparation-attempt04.json",
+      "sha256": "aa9016065419c9b8a5e60850b3ef56aee2d2da6a4286e0fdd6ed6bbe01b14e27",
+      "bytes": 487
+    },
+    {
+      "path": "resource-capture-entry-attempt04.json",
+      "sha256": "fa2d24f07e0ff0552b0aa5a7350fc66f459327881ddfa42fd29e4db43142ca37",
+      "bytes": 3706
+    },
+    {
+      "path": "dependency-staging-attempt03.json",
+      "sha256": "0863e3fbe2b5c0426f4079aa8fc433478c32d6a54b2849e0369ff03f8366ecb8",
+      "bytes": 3201
+    },
+    {
+      "path": "inventory/capture-input-v2.json",
+      "sha256": "e659c57159ae6fa162df9799a3f57e3661a3855d52cfe11660661e96a9730fc0",
+      "bytes": 555
+    },
+    {
+      "path": "inventory/source-after-manifest-runtime-v2.json",
+      "sha256": "e319b9c3ad8394030de8f1cd26db8f0139e8d6763dba9fc5ea41d9e2efbcbabc",
+      "bytes": 10990
+    },
+    {
+      "path": "inventory/private-metadata-policy-v2.json",
+      "sha256": "f6b24a709fbc2df9033c648afb8687bfcf46068dc299b299c050237d6cb551a3",
+      "bytes": 2145
+    },
+    {
+      "path": "inventory/resume-20261110-r2/CURRENT-SOURCE-MANIFEST.json",
+      "sha256": "c346a34aaf073e4ee3ac1246863adbf751869400331755c69c698235e4623064",
+      "bytes": 2098222
+    },
+    {
+      "path": "inventory/resume-20261110-r2/MIGRATION-SOURCE-REFRESH.json",
+      "sha256": "bf9fad5af1fe9a8440e3ec8939c81a2b3be622e1ada7589a36645cf20ad73228",
+      "bytes": 20713
+    },
+    {
+      "path": "independent-review/CANDIDATE-PREPARATION-RECIPE-ADMISSION-attempt05.json",
+      "sha256": "494bf0a3be45734cf19680b5955707aeb2d905f7d7073dcd1316f430acad343a",
+      "bytes": 6644
+    },
+    {
+      "path": "independent-review/CAPTURE-SOURCE-ADMISSION-resume-r2.json",
+      "sha256": "e97d177d0f9fbafd5faf4cfae1a2c1e2b3b909dd2e1b84771dbe3d9ae5910c2f",
+      "bytes": 2546
+    },
+    {
+      "path": "independent-review/SOURCE-RESUME-OUTCOME-REVIEW-r2.json",
+      "sha256": "79151ccad74deaa2769d5281bbc1c30372dfabaee1866196de56badf4dbd76d9",
+      "bytes": 3224
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+      "sha256": "dbf7007e9e23e7c2b54b0ef726c2949b67a13eb7b72363279d4d4b7a93142617",
+      "bytes": 2242
+    },
+    {
+      "path": "independent-review/PRIVATE-METADATA-TEST-OUTCOME-REVIEW-v3.json",
+      "sha256": "20c284341de85fa33ef409941f741421b07b075f9f1ecb21e9f21557f6507656",
+      "bytes": 4477
+    },
+    {
+      "path": "independent-review/CURRENT-ORCHESTRATOR-SOURCE-REVIEW.json",
+      "sha256": "6f39264b1b8031c75e625b820abaf95c51104da7c8c0f50763b2dd59329f1ccc",
+      "bytes": 3073
+    },
+    {
+      "path": "independent-review/DATABASE-CURRENT-PREPARATION-SOURCE-REVIEW.json",
+      "sha256": "fb823289137502324c03e6890c5bfa07b5f5cbb782df1ec4d1dfa78d3a536ab6",
+      "bytes": 3717
+    },
+    {
+      "path": "independent-review/DATABASE-CURRENT-LIFECYCLE-SOURCE-REVIEW.json",
+      "sha256": "dd98a05280df111904b13ec190608d0528ce6e92983e9ece9d4211236484c8e3",
+      "bytes": 2768
+    },
+    {
+      "path": "independent-review/RUNTIME-CURRENT-HELPER-SOURCE-REVIEW.json",
+      "sha256": "8a8a54afe2cf4c3315a403824df1c5343528d35d992fa0554c6db14fa021b3de",
+      "bytes": 2194
+    },
+    {
+      "path": "check-resources.cjs",
+      "sha256": "76ed28fd79069d9aed58c6d4ed9d2690008236cdaf0ad73516476f1429d150d4",
+      "bytes": 2316
+    },
+    {
+      "path": "resource-snapshot.ps1",
+      "sha256": "53ed40de3b8ae063f3fc5d08ce948cf108ea633efc005e4563b2093a02c123d0",
+      "bytes": 2410
+    },
+    {
+      "path": "prepare-candidate-attempt05.cjs",
+      "sha256": "3b40d4ae665ec8e9db89dae10732db9dc659f0113bf355ad43fe400de6db5ec5",
+      "bytes": 10783
+    },
+    {
+      "path": "admit-candidate-attempt05.cjs",
+      "sha256": "f6d4b064073fbff7711b4cc27ea4a207b2131d102dc3af05b82849055e060304",
+      "bytes": 3834
+    },
+    {
+      "path": "run-build-v4.cjs",
+      "sha256": "f00edd0d480d0f75225f1d41250e61e4f4d5a1ad133bd16fb511c39a49e6f94e",
+      "bytes": 13943
+    },
+    {
+      "path": "admit-runtime-source-v2.cjs",
+      "sha256": "4845ddfe7c5d4de6553df2c752dd6400985060de6aa76f1f578834410a2fc46f",
+      "bytes": 3118
+    },
+    {
+      "path": "run-runtime-v2.cjs",
+      "sha256": "7af2b4962f5d9191da112b1b46dc7ea1b9f7e97fe0ca9646ec999f27efaf5711",
+      "bytes": 11236
+    },
+    {
+      "path": "direct-api-driver-v2.cjs",
+      "sha256": "99a37252a40c7541432079974449eee1b9b6f26de42f1a51a031e31317dfdd98",
+      "bytes": 1985
+    },
+    {
+      "path": "final-integrity-v3.cjs",
+      "sha256": "28f0505f0daa99637c6431a93d7772b9de00d3bdadfeeca4440f444632df8add",
+      "bytes": 8541
+    },
+    {
+      "path": "verify-private-metadata-exclusion-v3.cjs",
+      "sha256": "209d95b017d03fb4f4274e5cb242f0ef6af33b561598359eae73cb61d889b70f",
+      "bytes": 13762
+    },
+    {
+      "path": "database-current/database-common.cjs",
+      "sha256": "bfa2e8b562d4b5dba3ecdedb14f2fd9d0e1d60adf24d6adb2c5a5fcdb54a1251",
+      "bytes": 4786
+    },
+    {
+      "path": "database-current/prepare.cjs",
+      "sha256": "284e3387d7898a1826c144cb536863927feae8c17c2d7da3a58ebfaff61cf46d",
+      "bytes": 15650
+    },
+    {
+      "path": "database-current/seed-fixture.cjs",
+      "sha256": "96a8afdf12216574aa162bd7319c721be953c453148a7c5c363e29ed266b368b",
+      "bytes": 5204
+    },
+    {
+      "path": "database-current/baseline-snapshot.cjs",
+      "sha256": "724f3bd7b50c03c57fdbcc42dfeee80210967245619e132677aa68b36442e8fa",
+      "bytes": 8122
+    },
+    {
+      "path": "database-current/lifecycle-guards.cjs",
+      "sha256": "b2be54a4b0f57f565f9936973966aa8f727e345a56033c9204612eb61f55e27e",
+      "bytes": 6775
+    },
+    {
+      "path": "database-current/fixture-preflight.cjs",
+      "sha256": "4d556320ffd52ecfb615aa698c3c16717197183be63042198a4ea03584be5e79",
+      "bytes": 4054
+    },
+    {
+      "path": "database-current/fixture-control.cjs",
+      "sha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d",
+      "bytes": 10728
+    },
+    {
+      "path": "database-current/fixture-definition.cjs",
+      "sha256": "83180a47cfcfade62e247350718f9a7afbee9ff6ada6a59d4cdf53f8fdcfce89",
+      "bytes": 853
+    },
+    {
+      "path": "database-current/login-fixture-control.cjs",
+      "sha256": "1ca0e416469fdb9f581857ca895c66301a9de0e565aa4c30eb8bda40fa6d6388",
+      "bytes": 5070
+    },
+    {
+      "path": "database-current/read-authority-utc.cjs",
+      "sha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8",
+      "bytes": 1418
+    },
+    {
+      "path": "database-current/direct-api-child.cjs",
+      "sha256": "9f4d1dd77e2f4267eb430b4c291d8d5fc0e5451f468846326c82724598191144",
+      "bytes": 3063
+    },
+    {
+      "path": "database-current/finalize.cjs",
+      "sha256": "47b3a8caaf91e735bcdc377691e534f174159f1c3d062e854a9dd32d502c01e8",
+      "bytes": 2846
+    },
+    {
+      "path": "database-current/stop.cjs",
+      "sha256": "5e0f7be2b95713aafff2021ab0c1b218f60a1e9d64a2b1a8c006d8d9ff9d3892",
+      "bytes": 2493
+    },
+    {
+      "path": "database-current/stop-before-qualification.cjs",
+      "sha256": "79c29453428e8b8ac670c3cb14873aa451fa5b554c0c9fb5cb754047a8e518d1",
+      "bytes": 3235
+    },
+    {
+      "path": "runtime-current/qualification-contract.json",
+      "sha256": "22d4543fef2795f838aa54c203be96ad0448b466f0b80f6d7104f863bf8d08e1",
+      "bytes": 22082
+    }
+  ]
+}

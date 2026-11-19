@@ -1,23 +1,14 @@
-"use client";
+"use client"
+import { FollowUpPanel } from "@/components/command-center/FollowUpPanel";
+
+import { commandDateLabel, priorityExplanation } from "@/lib/dashboard/command-center-context"
+import { CommandCenterRecovery } from "@/components/dashboard/CommandCenterRecovery"
 
 import Link from "next/link";
-import { useState } from "react";
-import {
-  ArrowUpRight,
-  CalendarClock,
-  EyeOff,
-  ListChecks,
-  LockKeyhole,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { ArrowUpRight, CalendarClock, EyeOff, LockKeyhole, Sparkles } from "lucide-react";
 
-import {
-  BIActionPriorityBoard,
-  BICommandBriefHeader,
-  BIStateSurface,
-  BITrustLegend,
-} from "@/components/bi";
+import { BIActionPriorityBoard } from "@/components/bi/BIActionPriorityBoard";
+import { BICommandBriefHeader } from "@/components/bi/BICommandBriefHeader";
 import type { BIActionPriorityItem } from "@/components/bi/BIActionPriorityBoard";
 import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow";
 import { BIEmptyState } from "@/components/bi/BIEmptyState";
@@ -34,19 +25,20 @@ import {
   dashboardToneClass,
 } from "@/components/finance/finance-dashboard-theme";
 import { cn } from "@/lib/utils";
-import type { BICommandMode } from "@/services/bi/bi-contracts";
-import type {
-  ManagerActionCenterData,
-  ManagerActionRunSheetGroup,
-} from "@/services/manager-action-center/manager-action-center-contracts";
+import type { ManagerActionCenterData } from "@/services/manager-action-center/manager-action-center-contracts";
 
 type ManagerActionCenterDashboardProps = {
+  followUpEnabled?: boolean
   data: ManagerActionCenterData;
   locale: "en" | "fr";
   title: string;
   subtitle: string;
 };
 
+import { BIActionButton } from "@/components/bi/BIActionButton";
+import { localizePath } from "@/i18n/routing";
+import { ManagerActionQueue, ManagerUrgencyFilters, managerQueueCopy } from "./ManagerActionQueue";
+import { useManagerView } from "./useManagerView";
 const copy = {
   en: {
     sourceOwned: "Source-owned",
@@ -65,12 +57,9 @@ const copy = {
     doFirstDetail:
       "Permission-filtered actions ranked by urgency, evidence, blockers, and business pressure.",
     runSheet: "Daily run sheet",
-    runSheetDetail:
-      "Urgency lanes for the work managers can actually move today.",
-    noActions:
-      "No manager action is visible for this tenant and permission set.",
-    noSignals:
-      "No business signal is visible for this tenant and permission set.",
+    runSheetDetail: "Urgency lanes for the work managers can actually move today.",
+    noActions: "No manager action is visible for this tenant and permission set.",
+    noSignals: "No business signal is visible for this tenant and permission set.",
     nextStep: "Next step",
     due: "Due",
     role: "Role",
@@ -81,8 +70,7 @@ const copy = {
       "Verify provider totals and apply independent sign-off with fresh authentication.",
     reconciliationReadOnly:
       "Review the ready reconciliation evidence. Signing is unavailable for this actor.",
-    hiddenNotice:
-      "Some actions are withheld by server-side permission filtering.",
+    hiddenNotice: "Some actions are withheld by server-side permission filtering.",
   },
   fr: {
     sourceOwned: "Pilote par les sources",
@@ -103,10 +91,8 @@ const copy = {
     runSheet: "Plan de journee",
     runSheetDetail:
       "Couloirs d'urgence pour le travail qu'un manager peut vraiment faire avancer aujourd'hui.",
-    noActions:
-      "Aucune action manager n'est visible pour ce tenant et ces permissions.",
-    noSignals:
-      "Aucun signal metier n'est visible pour ce tenant et ces permissions.",
+    noActions: "Aucune action manager n'est visible pour ce tenant et ces permissions.",
+    noSignals: "Aucun signal metier n'est visible pour ce tenant et ces permissions.",
     nextStep: "Prochaine etape",
     due: "Echeance",
     role: "Role",
@@ -117,370 +103,346 @@ const copy = {
       "Verifier les totaux fournisseur et appliquer une validation independante avec une authentification recente.",
     reconciliationReadOnly:
       "Revoir les preuves du rapprochement pret. La validation n'est pas disponible pour cet acteur.",
-    hiddenNotice:
-      "Certaines actions sont retenues par le filtrage serveur des permissions.",
+    hiddenNotice: "Certaines actions sont retenues par le filtrage serveur des permissions.",
   },
 } as const;
 
-export function ManagerActionCenterDashboard({
+function ManagerActionCenterDashboardContent({
   data,
   locale,
   title,
   subtitle,
 }: ManagerActionCenterDashboardProps) {
   const t = copy[locale];
+  const q = managerQueueCopy[locale];
   const formatterLocale = locale === "fr" ? "fr-FR" : "en-US";
-  const periodLabel = `${formatDate(data.periodStart, formatterLocale)} - ${formatDate(data.periodEnd, formatterLocale)}`;
-  const [commandMode, setCommandMode] = useState<BICommandMode>(
-    data.commandBrief.mode,
-  );
-
+  const entries = data.actionItems.map((item) => ({
+    id: item.id,
+    title: managerActionCopy(item, locale).title,
+    source: item.origin,
+    role: item.assignedRole,
+    lane:
+      data.runSheetGroups.find((group) => group.actions.some((action) => action.id === item.id))
+        ?.id ?? ("routine" as const),
+    action: item,
+    blockerCount: item.blockers.length,
+  }));
+  const { view, update } = useManagerView({
+    sources: entries.map((item) => item.source),
+    roles: entries.map((item) => item.role),
+    defaultMode: data.commandBrief.mode,
+  });
+  const openQueue = () => update({ mode: "command", source: "all", role: "all", urgency: "all" });
   return (
-    <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
+    <div className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8">
         <BICommandBriefHeader
-          brief={data.commandBrief}
-          mode={commandMode}
-          onModeChange={setCommandMode}
+          brief={{ ...data.commandBrief, title }}
+          mode={view.mode}
+          onModeChange={(mode) => update({ mode })}
+          locale={locale}
+          timezone="UTC"
+          periodTimezone="UTC"
+          compact
         />
-
-        <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)]">
-          <BIActionPriorityBoard
-            items={data.actionItems.map((item) =>
-              toPriorityAction(item, formatterLocale, locale),
-            )}
-            title={t.doFirst}
-            detail={t.doFirstDetail}
-            maxItems={8}
-          />
-          <section className={cn(dashboardPanelClass, "p-4")}>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <h2 className="text-base font-semibold text-[var(--dash-text)]">
-                  {t.runSheet}
-                </h2>
-                <p className={cn("text-sm", dashboardMutedTextClass)}>
-                  {t.runSheetDetail}
-                </p>
-              </div>
-              <BITrustLegend compact />
-            </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-              {data.runSheetGroups.map((group) => (
-                <RunSheetLane
-                  key={group.id}
-                  group={group}
-                  formatterLocale={formatterLocale}
-                  locale={locale}
-                />
-              ))}
-            </div>
-          </section>
-        </section>
-
-        <section className={cn(dashboardPanelClass, "p-4 md:p-5")}>
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-5xl space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge className={cn("border", dashboardToneClass("success"))}>
-                  {t.sourceOwned}
-                </Badge>
-                <Badge className={cn("border", dashboardToneClass("brand"))}>
-                  {t.evidenceBacked}
-                </Badge>
-                <Badge className={cn("border", dashboardToneClass("gold"))}>
-                  {t.permissionFiltered}
-                </Badge>
-              </div>
-              <div>
-                <h1 className="text-2xl font-semibold tracking-normal text-[var(--dash-text)] md:text-3xl">
-                  {title}
-                </h1>
-                <p
-                  className={cn(
-                    "mt-2 max-w-4xl text-sm leading-6",
-                    dashboardMutedTextClass,
-                  )}
-                >
-                  {subtitle}
-                </p>
-              </div>
-            </div>
-            <div
-              className={cn(
-                dashboardRowClass,
-                "min-w-0 p-3 text-sm lg:min-w-[340px]",
-              )}
-            >
-              <div className="flex items-center gap-2">
-                <ShieldCheck
-                  className="h-4 w-4 text-[var(--dash-success)]"
-                  aria-hidden="true"
-                />
-                <span className="font-medium text-[var(--dash-text)]">
-                  {data.organizationId}
-                </span>
-              </div>
-              <dl className="mt-3 grid grid-cols-1 gap-2 text-xs text-[var(--dash-text-soft)] sm:grid-cols-2 lg:grid-cols-1">
-                <div className="flex items-center justify-between gap-3">
-                  <dt>{t.generated}</dt>
-                  <dd className="font-medium text-[var(--dash-text)]">
-                    {formatDateTime(data.generatedAt, formatterLocale)}
-                  </dd>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <dt>{t.period}</dt>
-                  <dd className="font-medium text-[var(--dash-text)]">
-                    {periodLabel}
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          </div>
-        </section>
-
-        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-          <SummaryTile label={t.open} value={data.summary.open} tone="brand" />
-          <SummaryTile
-            label={t.dueToday}
-            value={data.summary.dueToday}
-            tone="spruce"
-          />
-          <SummaryTile
-            label={t.critical}
-            value={data.summary.critical}
-            tone="danger"
-          />
-          <SummaryTile
-            label={t.overdue}
-            value={data.summary.overdue}
-            tone="gold"
-          />
-          <SummaryTile
-            label={t.hidden}
-            value={data.summary.hiddenByPermission}
-            tone="spruce"
-          />
-        </section>
-
-        {data.summary.hiddenByPermission > 0 ? (
-          <div className="rounded-lg border border-[var(--dash-gold)] bg-[var(--dash-gold-soft)] p-3 text-sm text-[var(--dash-text)]">
-            <div className="flex gap-2">
-              <LockKeyhole
-                className="mt-0.5 h-4 w-4 text-[var(--dash-gold)]"
-                aria-hidden="true"
+        <p className="text-sm text-[var(--dash-text-soft)]">{subtitle}</p>
+        <ManagerCoverage data={data} locale={locale} />
+        <section aria-label={`${title}: ${q[view.mode]}`} className="space-y-4">
+          {view.mode === "brief" ? (
+            <>
+              <BIActionPriorityBoard
+                items={data.actionItems.map((item) =>
+                  toPriorityAction(item, formatterLocale, locale, data.commandBrief.freshness),
+                )}
+                locale={locale}
+                title={t.doFirst}
+                detail={priorityExplanation(data.actionItems[0], "severity_deadline_score", locale)}
+                maxItems={3}
               />
-              <p>{t.hiddenNotice}</p>
-            </div>
-          </div>
-        ) : null}
-
-        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {data.kpis.map((card) => (
-            <BIKpiCard key={card.id} card={card} locale={formatterLocale} />
-          ))}
-        </section>
-
-        <section className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(360px,0.9fr)]">
-          <div className={cn(dashboardPanelClass, "p-4")}>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-[var(--dash-text)]">
-                  {t.actions}
-                </h2>
-                <p className={cn("text-sm", dashboardMutedTextClass)}>
-                  {data.summary.total} total / {data.summary.assigned} assigned
-                  / {data.summary.redacted} redacted
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="text-sm text-[var(--dash-text-soft)]">
+                  {Math.min(3, entries.length)} {q.preview} / {entries.length} {q.loaded}
                 </p>
+                <Button type="button" variant="outline" onClick={openQueue}>
+                  {q.viewAll}
+                </Button>
               </div>
-              <Badge
-                variant="outline"
-                className="border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]"
+              <ManagerUrgencyFilters
+                entries={entries}
+                locale={locale}
+                view={view}
+                update={update}
+              />
+            </>
+          ) : null}
+          {view.mode === "command" ? (
+            <ManagerActionQueue
+              key={`${data.organizationId}:${data.generatedAt}`}
+              entries={entries}
+              locale={locale}
+              view={view}
+              update={update}
+              renderAction={(entry) => <ManagerActionCard item={entry.action} locale={locale} />}
+            />
+          ) : null}
+          {view.mode === "investigate" ? (
+            <>
+              <section
+                className="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
+                aria-label={locale === "fr" ? "Indicateurs et preuves" : "Metrics and evidence"}
               >
-                <ListChecks className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
-                {data.actionQueue.generatedAt
-                  ? formatDateTime(
-                      data.actionQueue.generatedAt,
-                      formatterLocale,
-                    )
-                  : t.generated}
-              </Badge>
-            </div>
-            <div className="mt-4 space-y-3">
-              {data.actionItems.length ? (
-                data.actionItems.slice(0, 10).map((item) => (
-                  <article
-                    key={item.id}
-                    className={cn(dashboardRowClass, "p-3")}
-                  >
-                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                      <div className="min-w-0">
+                <h2 className="sr-only">{locale === "fr" ? "Indicateurs et preuves" : "Metrics and evidence"}</h2>
+                {data.kpis.map((card) => (
+                  <BIKpiCard key={card.id} card={card} locale={formatterLocale} />
+                ))}
+              </section>
+              <div className={cn(dashboardPanelClass, "p-4")}>
+                <div>
+                  <h2 className="text-lg font-semibold text-[var(--dash-text)]">{t.insights}</h2>
+                  <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>
+                    {data.insights.length}{" "}
+                    {locale === "fr" ? "signaux visibles" : "visible signals"}
+                  </p>
+                </div>
+                <div className="mt-4 space-y-3">
+                  {data.insights.length ? (
+                    data.insights.map((insight) => (
+                      <article key={insight.id} className={cn(dashboardRowClass, "p-3")}>
                         <div className="flex flex-wrap items-center gap-2">
-                          <BISeverityBadge severity={item.severity} />
-                          <BIStateBadge state={item.state} />
-                          <EvidenceGradeBadge grade={item.evidenceGrade} />
+                          <BISeverityBadge severity={insight.severity} />
+                          <BIStateBadge state={insight.state} />
                         </div>
                         <h3 className="mt-3 text-sm font-semibold text-[var(--dash-text)]">
-                          {managerActionCopy(item, locale).title}
+                          {insight.title}
                         </h3>
-                        <p
-                          className={cn(
-                            "mt-1 text-sm leading-6",
-                            dashboardMutedTextClass,
-                          )}
-                        >
-                          {managerActionCopy(item, locale).nextStep}
+                        <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>
+                          {insight.businessImpact}
                         </p>
-                      </div>
-                      {item.kind === "PAYMENT_RECONCILIATION_SIGN_OFF" ? (
-                        <PaymentReconciliationSignOffCommand
+                        <BIEvidenceBadgeRow
+                          className="mt-3"
                           locale={locale}
-                          command={item.sourceCommand}
+                          evidenceGrade={insight.evidenceGrade}
+                          trustState={insight.trustState}
+                          freshness={insight.freshness}
                         />
-                      ) : (
-                        <Button
-                          asChild
-                          size="sm"
-                          variant="outline"
-                          className="shrink-0 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
-                        >
-                          <Link href={item.actionLink.href}>
-                            <ArrowUpRight
-                              className="h-4 w-4"
-                              aria-hidden="true"
-                            />
-                            {t.openSurface}
-                          </Link>
-                        </Button>
-                      )}
-                    </div>
-                    <div className="mt-3 grid gap-2 text-xs text-[var(--dash-text-soft)] md:grid-cols-3">
-                      <InfoLine
-                        icon={<CalendarClock className="h-3.5 w-3.5" />}
-                        label={t.due}
-                      >
-                        {formatDateTime(item.dueAt, formatterLocale)} /{" "}
-                        {item.dueState}
-                      </InfoLine>
-                      <InfoLine
-                        icon={<Sparkles className="h-3.5 w-3.5" />}
-                        label={t.role}
-                      >
-                        {item.assignedRole}
-                      </InfoLine>
-                      <InfoLine
-                        icon={<LockKeyhole className="h-3.5 w-3.5" />}
-                        label={t.requiredPermission}
-                      >
-                        {item.requiredPermission}
-                      </InfoLine>
-                    </div>
-                    {item.redactions.length || item.blockers.length ? (
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {item.blockers.map((blocker) => (
-                          <Badge
-                            key={blocker.id}
+                        {insight.actionLink && !insight.actionLink.disabled ? (
+                          <Button
+                            asChild
+                            size="sm"
                             variant="outline"
-                            className={cn(
-                              "border",
-                              dashboardToneClass("danger"),
-                            )}
+                            className="mt-3 h-auto max-w-full whitespace-normal break-words rounded-lg border-[var(--dash-border-subtle)] text-left text-[var(--dash-text)]"
                           >
-                            {blocker.title}
-                          </Badge>
-                        ))}
-                        {item.redactions.map((redaction) => (
-                          <Badge
-                            key={redaction.id}
-                            variant="outline"
-                            className={cn("border", dashboardToneClass("gold"))}
-                          >
-                            <EyeOff
-                              className="mr-1 h-3 w-3"
-                              aria-hidden="true"
-                            />
-                            {redaction.field}
-                          </Badge>
-                        ))}
-                      </div>
-                    ) : null}
-                  </article>
-                ))
-              ) : (
-                <BIEmptyState title={t.noActions} />
-              )}
-            </div>
-          </div>
-
-          <div className={cn(dashboardPanelClass, "p-4")}>
-            <div>
-              <h2 className="text-lg font-semibold text-[var(--dash-text)]">
-                {t.insights}
-              </h2>
-              <p
-                className={cn(
-                  "mt-1 text-sm leading-6",
-                  dashboardMutedTextClass,
-                )}
-              >
-                {data.insights.length} visible signal
-                {data.insights.length === 1 ? "" : "s"}
-              </p>
-            </div>
-            <div className="mt-4 space-y-3">
-              {data.insights.length ? (
-                data.insights.map((insight) => (
-                  <article
-                    key={insight.id}
-                    className={cn(dashboardRowClass, "p-3")}
-                  >
-                    <div className="flex flex-wrap items-center gap-2">
-                      <BISeverityBadge severity={insight.severity} />
-                      <BIStateBadge state={insight.state} />
-                    </div>
-                    <h3 className="mt-3 text-sm font-semibold text-[var(--dash-text)]">
-                      {insight.title}
-                    </h3>
-                    <p
-                      className={cn(
-                        "mt-1 text-sm leading-6",
-                        dashboardMutedTextClass,
-                      )}
-                    >
-                      {insight.businessImpact}
-                    </p>
-                    <BIEvidenceBadgeRow
-                      className="mt-3"
-                      evidenceGrade={insight.evidenceGrade}
-                      trustState={insight.trustState}
-                      freshness={insight.freshness}
-                    />
-                    {insight.actionLink && !insight.actionLink.disabled ? (
-                      <Button
-                        asChild
-                        size="sm"
-                        variant="outline"
-                        className="mt-3 h-auto max-w-full whitespace-normal break-words rounded-lg border-[var(--dash-border-subtle)] text-left text-[var(--dash-text)]"
-                      >
-                        <Link href={insight.actionLink.href}>
-                          <ArrowUpRight
-                            className="h-4 w-4"
-                            aria-hidden="true"
-                          />
-                          {insight.actionLink.label}
-                        </Link>
-                      </Button>
-                    ) : null}
-                  </article>
-                ))
-              ) : (
-                <BIEmptyState title={t.noSignals} />
-              )}
-            </div>
-          </div>
+                            <Link href={localizePath(insight.actionLink.href, locale)}>
+                              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                              {insight.actionLink.label}
+                            </Link>
+                          </Button>
+                        ) : null}
+                      </article>
+                    ))
+                  ) : (
+                    <BIEmptyState title={t.noSignals} />
+                  )}
+                </div>
+              </div>
+              <section className={cn(dashboardPanelClass, "space-y-3 p-4")}>
+                <h2 className="text-lg font-semibold">
+                  {locale === "fr" ? "Blocages des actions" : "Action blockers"}
+                </h2>
+                {data.actionItems
+                  .filter((item) => item.blockers.length)
+                  .map((item) => (
+                    <article key={item.id} className={cn(dashboardRowClass, "p-3")}>
+                      <h3 className="font-medium">{managerActionCopy(item, locale).title}</h3>
+                      {item.blockers.map((blocker) => (
+                        <p key={blocker.id} className="mt-2 text-sm">
+                          {blocker.title}: {blocker.detail} {blocker.nextAction}
+                        </p>
+                      ))}
+                      <BIActionButton
+                        action={item.actionLink}
+                        locale={locale}
+                        context={managerActionCopy(item, locale).title}
+                      />
+                    </article>
+                  ))}
+                {!data.actionItems.some((item) => item.blockers.length) ? (
+                  <p className="text-sm">
+                    {locale === "fr"
+                      ? "Aucun blocage signalé dans les actions chargées."
+                      : "No blockers reported in the loaded actions."}
+                  </p>
+                ) : null}
+              </section>
+            </>
+          ) : null}
         </section>
       </div>
-    </main>
+    </div>
+  );
+}
+
+function ManagerCoverage({
+  data,
+  locale,
+}: Pick<ManagerActionCenterDashboardProps, "data" | "locale">) {
+  const fr = locale === "fr";
+  const source = data.clientMissingProofSource;
+  return (
+    <aside
+      aria-label={fr ? "Couverture des sources" : "Source coverage"}
+      className={cn(dashboardRowClass, "space-y-2 p-3 text-sm text-[var(--dash-text-soft)]")}
+    >
+      <p>
+        {fr
+          ? "La file couvre les actions autorisées chargées, pas tous les travaux de l’organisation."
+          : "The queue covers loaded authorized actions, not all work in the organization."}
+      </p>
+      {data.summary.hiddenByPermission > 0 ? (
+        <p>
+          {copy[locale].hiddenNotice} ({data.summary.hiddenByPermission})
+        </p>
+      ) : null}
+      {data.assuranceCoverage?.state === "AVAILABLE" ? (
+        <div>
+          <p>{fr ? "Incidents d’assurance autorisés chargés" : "Authorized assurance incidents loaded"}: {data.assuranceCoverage.loaded}. {fr ? "Limite de la source avant filtrage des autorisations" : "Source limit before permission filtering"}: {data.assuranceCoverage.limit}.</p>
+          {data.assuranceCoverage.possiblyTruncated ? <p>{fr
+            ? "Couverture partielle possible : la limite de la source a été atteinte ; d’autres incidents peuvent exister."
+            : "Coverage may be partial: the source limit was reached; more incidents may exist."}</p> : null}
+        </div>
+      ) : <p>{data.assuranceCoverage?.state === "UNAVAILABLE"
+        ? fr ? "Les incidents d’assurance n’ont pas pu être chargés. Actualisez la vue pour réessayer ; leur absence ne confirme pas la fin du travail." : "Assurance incidents could not be loaded. Refresh the view to retry; their absence does not confirm completion."
+        : fr ? "La couverture des incidents d’assurance n’est pas confirmée." : "Assurance incident coverage is not confirmed."}</p>}
+      {source?.state === "AVAILABLE" ? (
+        <>
+          <p>
+            {fr ? "Demandes du comptable chargées" : "Accountant requests loaded"}:{" "}
+            {source.queue.requests.length}. {fr ? "Limite de la source" : "Source limit"}:{" "}
+            {source.queue.controls.maxItems}.
+          </p>
+          {source.queue.summary.truncated || source.queue.nextCursor ? (
+            <p>
+              {fr
+                ? "Couverture partielle : d’autres demandes peuvent être disponibles dans la clôture comptable."
+                : "Partial coverage: more requests may be available in Accounting Close."}
+            </p>
+          ) : null}
+          {source.queue.blockers.length ? (
+            <p>
+              {fr
+                ? "Certaines demandes ont des preuves incomplètes. Consultez la source."
+                : "Some requests have incomplete evidence. Review the source."}
+            </p>
+          ) : null}
+          <Link
+            className="inline-flex min-h-11 items-center underline"
+            href={localizePath("/dashboard/accounting/close", locale)}
+          >
+            {fr ? "Ouvrir la clôture comptable" : "Open Accounting Close"}
+          </Link>
+        </>
+      ) : source?.state === "HIDDEN" ? (
+        <p>
+          {source.reason === "MODULE_UNAVAILABLE"
+            ? fr
+              ? "Le module de demandes du comptable est indisponible. Contactez votre administrateur."
+              : "The accountant request module is unavailable. Contact your administrator."
+            : fr
+              ? "Les demandes du comptable sont restreintes. Demandez l’accès à votre administrateur."
+              : "Accountant requests are restricted. Ask your administrator for access."}
+        </p>
+      ) : source?.state === "UNAVAILABLE" ? (
+        <div>
+          <p>
+            {fr
+              ? "Les demandes du comptable n’ont pas pu être chargées. Leur absence ne signifie pas que le travail est terminé."
+              : "Accountant requests could not be loaded. Their absence does not mean work is complete."}
+          </p>
+          <Button type="button" variant="outline" onClick={() => window.location.reload()}>
+            {fr ? "Réessayer le chargement" : "Retry loading"}
+          </Button>
+        </div>
+      ) : (
+        <p>
+          {fr
+            ? "La couverture des demandes du comptable n’est pas confirmée."
+            : "Accountant request coverage is not confirmed."}
+        </p>
+      )}
+    </aside>
+  );
+}
+
+function ManagerActionCard({
+  item,
+  locale,
+}: {
+  item: ManagerActionCenterData["actionItems"][number];
+  locale: "en" | "fr";
+}) {
+  const t = copy[locale];
+  const formatterLocale = locale === "fr" ? "fr-FR" : "en-US";
+  return (
+    <article key={item.id} className={cn(dashboardRowClass, "p-3")}>
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <BISeverityBadge severity={item.severity} locale={locale} />
+            <BIStateBadge state={item.state} locale={locale} />
+            <EvidenceGradeBadge grade={item.evidenceGrade} locale={locale} />
+          </div>
+          <h3 className="mt-3 text-sm font-semibold text-[var(--dash-text)]">
+            {managerActionCopy(item, locale).title}
+          </h3>
+          <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>
+            {managerActionCopy(item, locale).nextStep}
+          </p>
+        </div>
+        {item.kind === "PAYMENT_RECONCILIATION_SIGN_OFF" && !item.actionLink.disabled ? (
+          <PaymentReconciliationSignOffCommand locale={locale} command={item.sourceCommand} />
+        ) : (
+          <BIActionButton
+            action={item.actionLink}
+            locale={locale}
+            context={managerActionCopy(item, locale).title}
+          />
+        )}
+      </div>
+      <div className="mt-3 grid gap-2 text-xs text-[var(--dash-text-soft)] md:grid-cols-3">
+        <InfoLine icon={<CalendarClock className="h-3.5 w-3.5" />} label="">
+          {commandDateLabel(item.dueAt, item.dateKind, locale)}
+        </InfoLine>
+        <InfoLine icon={<Sparkles className="h-3.5 w-3.5" />} label={t.role}>
+          {managerQueueCopy[locale].roles[item.assignedRole]}
+        </InfoLine>
+        <InfoLine icon={<LockKeyhole className="h-3.5 w-3.5" />} label={t.requiredPermission}>
+          {item.requiredPermission}
+        </InfoLine>
+      </div>
+      {item.redactions.length || item.blockers.length ? (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {item.blockers.map((blocker) => (
+            <Badge
+              key={blocker.id}
+              variant="outline"
+              className={cn("border", dashboardToneClass("danger"))}
+            >
+              {blocker.title}
+            </Badge>
+          ))}
+          {item.redactions.map((redaction) => (
+            <Badge
+              key={redaction.id}
+              variant="outline"
+              className={cn("border", dashboardToneClass("gold"))}
+            >
+              <EyeOff className="mr-1 h-3 w-3" aria-hidden="true" />
+              {redaction.field}
+            </Badge>
+          ))}
+        </div>
+      ) : null}
+    </article>
   );
 }
 
@@ -506,6 +468,7 @@ function toPriorityAction(
   item: ManagerActionCenterData["actionItems"][number],
   formatterLocale: string,
   locale: "en" | "fr",
+  freshness: ManagerActionCenterData["commandBrief"]["freshness"],
 ): BIActionPriorityItem {
   const display = managerActionCopy(item, locale);
   return {
@@ -517,118 +480,12 @@ function toPriorityAction(
     actionLink: item.actionLink,
     evidenceGrade: item.evidenceGrade,
     trustState: item.trustState,
-    freshness: {
-      state:
-        item.state === "stale"
-          ? "stale"
-          : item.state === "blocked"
-            ? "blocked"
-            : "fresh",
-      generatedAt: item.dueAt,
-      sourceMaxUpdatedAt: item.dueAt,
-      maxAgeMinutes: null,
-      stale: item.state === "stale",
-      staleReason: item.state === "stale" ? "Action evidence is stale." : null,
-    },
-    dueLabel: `${formatDateTime(item.dueAt, formatterLocale)} / ${item.dueState}`,
-    ownerLabel: item.assignedRole,
+    freshness,
+    dueLabel: commandDateLabel(item.dueAt, item.dateKind, locale),
+    ownerLabel: managerQueueCopy[locale].roles[item.assignedRole],
     blockers: item.blockers,
     redactions: item.redactions,
   };
-}
-
-function RunSheetLane({
-  group,
-  formatterLocale,
-  locale,
-}: {
-  group: ManagerActionRunSheetGroup;
-  formatterLocale: string;
-  locale: "en" | "fr";
-}) {
-  return (
-    <article className={cn(dashboardRowClass, "p-3")}>
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <BIStateBadge state={group.state} />
-            <Badge
-              variant="outline"
-              className="rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]"
-            >
-              {group.count} action{group.count === 1 ? "" : "s"}
-            </Badge>
-          </div>
-          <h3 className="mt-2 text-sm font-semibold text-[var(--dash-text)]">
-            {group.title}
-          </h3>
-          <p className={cn("mt-1 text-xs leading-5", dashboardMutedTextClass)}>
-            {group.detail}
-          </p>
-        </div>
-      </div>
-      {group.actions.length ? (
-        <div className="mt-3 space-y-2">
-          {group.actions.slice(0, 3).map((item) => (
-            <div
-              key={item.id}
-              className="rounded-md border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.22)] p-2"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <BISeverityBadge severity={item.severity} />
-                <span className="text-xs text-[var(--dash-text-soft)]">
-                  {formatDateTime(item.dueAt, formatterLocale)} /{" "}
-                  {item.assignedRole}
-                </span>
-              </div>
-              <p className="mt-2 text-xs font-medium text-[var(--dash-text)]">
-                {managerActionCopy(item, locale).title}
-              </p>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <BIStateSurface
-          state="empty"
-          title="No action in this lane"
-          detail="The server did not surface a visible action for this urgency lane."
-          className="mt-3"
-        />
-      )}
-    </article>
-  );
-}
-
-function SummaryTile({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: number;
-  tone: "brand" | "danger" | "gold" | "spruce";
-}) {
-  return (
-    <div className={cn(dashboardPanelClass, "p-4")}>
-      <p
-        className={cn(
-          "text-xs font-medium uppercase tracking-normal",
-          dashboardMutedTextClass,
-        )}
-      >
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold tracking-normal text-[var(--dash-text)]">
-        {value}
-      </p>
-      <div className="mt-3 h-1 rounded-full bg-[var(--dash-border-subtle)]">
-        <div
-          className={cn("h-1 rounded-full", summaryBarClass(tone))}
-          style={{ width: value > 0 ? "72%" : "18%" }}
-        />
-      </div>
-    </div>
-  );
 }
 
 function InfoLine({
@@ -642,36 +499,24 @@ function InfoLine({
 }) {
   return (
     <div className="flex min-w-0 items-start gap-2">
-      <span className="mt-0.5 shrink-0 text-[var(--dash-text-faint)]">
-        {icon}
-      </span>
+      <span className="mt-0.5 shrink-0 text-[var(--dash-text-faint)]">{icon}</span>
       <p className="min-w-0">
-        <span className="font-medium text-[var(--dash-text)]">{label}: </span>
+        {label ? <span className="font-medium text-[var(--dash-text)]">{label}: </span> : null}
         <span className="break-words">{children}</span>
       </p>
     </div>
   );
 }
 
-function summaryBarClass(tone: "brand" | "danger" | "gold" | "spruce") {
-  if (tone === "danger") return "bg-[var(--dash-danger)]";
-  if (tone === "gold") return "bg-[var(--dash-gold)]";
-  if (tone === "spruce") return "bg-[var(--dash-spruce)]";
-  return "bg-[var(--dash-brand)]";
-}
-
-function formatDate(value: string, locale: string) {
-  return new Intl.DateTimeFormat(locale, {
-    month: "short",
-    day: "numeric",
-  }).format(new Date(value));
-}
-
 function formatDateTime(value: string, locale: string) {
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(locale, { timeZone: "UTC",
     month: "short",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(value));
+}
+
+export function ManagerActionCenterDashboard(props: ManagerActionCenterDashboardProps) {
+  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><ManagerActionCenterDashboardContent {...props} />{props.followUpEnabled ? <div className="dashboard-landing-theme dark px-4 py-4"><div className="dashboard-landing-content mx-auto max-w-[1920px]"><FollowUpPanel key={`${props.data.organizationId}:${props.data.generatedAt}`} center="manager" periodStart={props.data.periodStart} periodEnd={props.data.periodEnd} locale={props.locale} /></div></div> : null}</CommandCenterRecovery>
 }

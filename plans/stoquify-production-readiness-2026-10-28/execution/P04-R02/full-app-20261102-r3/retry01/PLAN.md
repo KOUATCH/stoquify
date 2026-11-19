@@ -1,0 +1,11 @@
+# Bounded runtime retry 01
+
+The actual r3 artifact passed compilation, types, lint, static generation, tracing, sealing and verification. Its SHA-256 is e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8. This retry uses those exact 5,310 sealed files and the same frozen candidate p04-r02-full-ea52ca48cadd. No product source or artifact edit is included.
+
+The first runtime failed. NextURL normalized the configured 127.0.0.1 hostname to localhost, but Next's initial request origin retained the IP. Its exact-origin comparison treated the guarded rewrite as external, then attempted HTTPS against the HTTP listener on port 3193. Original-alias probes returned upstream 500; the safety proxy forwarded no original bytes and failed the gate. EN/FR synthetic image consumers failed to decode the 500 response. Later rapid sign-ins hit real authentication rate limits. These are recorded failures, not successful authorization denials.
+
+The new run-runtime-retry01.cjs uses localhost consistently for the application hostname, proxy upstream and readiness checks, with a loopback-only DNS assertion. Outward HTTPS and Secure cookies remain required. The installed-Next regression reproduces the old behavior and verifies that the new origin keeps the rewrite internal (2/2 tests). The separate browser revision paces real sign-ins without disabling authentication controls. Its exact hashes must pass a new candidate-bound source review before startup.
+
+Runtime data, ownership, logs, browser results and final reconciliation use retry01 names. The original run-runtime.cjs, runtime-result.json, failed browser directory and reviewed build receipts remain intact. The database retry requires fresh read-only admission and explicit reconciliation of the first run's synthetic login/session metadata. Existing sessions and audit rows are retained. No reset, reseed or migration is included.
+
+Advancement still requires authorized API/legacy/synthetic-alias reads; all 270 original-alias safe denials; expired/revoked/changed-authority negatives; actual EN/FR media consumers; optimizer/default-cache recovery; before/after business invariance; final source/artifact/runtime preservation; owned-process cleanup; and independent review. Any failure remains visible. Hosted ingress/CDN/operator acceptance stays separate release work.

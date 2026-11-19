@@ -1,0 +1,74 @@
+{
+  "pending": [
+    "New root-owned tracked-stock PostgreSQL race under final source freeze",
+    "Whole-project compiler with reviewed exclusions",
+    "Authenticated local application/browser qualification"
+  ],
+  "lint": {
+    "files": 7,
+    "receipt": "lock-order-lint-27e252d316/RESULT.json",
+    "sha256": "b987c2f9ed870c7f68a1ad7f8dc961b5183768bea7bdeeadfffb308918b88eb4",
+    "errors": 0,
+    "warnings": 0
+  },
+  "product": {
+    "pos": "Locks sorted unique supplied electronic native IDs after registry/session/cart claims and before provider resolution/stock event or inventory writes; final native claim CAS unchanged",
+    "ar": "Uses same exact-org native lock helper; only P2010 SQLSTATE40001/40P01 normalize to P2034 for complete Serializable retry, exhaustion remains Conflict, other raw errors remain INTERNAL",
+    "preserved": "Cash path makes no native SQL query; original manual collection hashes, controls, isolation and source-publication/certification helper unchanged",
+    "schemaChanges": false
+  },
+  "scope": "Native receipt lock order before POS stock publication and bounded AR raw-query concurrency retries",
+  "status": "MOCKED_UNIT_AND_LINT_PASS_NATIVE_TRACKED_STOCK_PENDING",
+  "runtimeExecuted": false,
+  "privatePreimageDirectory": ".codex-tmp/provider-lock-order-20261110-f016fbf2b1",
+  "preimages": [
+    {
+      "sha256": "1591a235588c5485f3cdb840a33ae917c1e91449d9b4633c34e587d5bfd120e5",
+      "path": "services/pos/pos.service.ts"
+    },
+    {
+      "sha256": "1ac164a091a4061fffd6ac467f475a8b2ecdec941c98543f04e26d0c711e8191",
+      "path": "services/accounting/customer-settlement.service.ts"
+    },
+    {
+      "sha256": "f0614f708e100170cc143da3d8d135814ed95ba201dcfa1e798f2296c0276d55",
+      "path": "services/payments/pos-electronic-tender-authority.service.ts"
+    },
+    {
+      "sha256": "02d58827d5063d500dba358b6544a7df0617d0dd1860fc395bf608b524799d69",
+      "path": "services/payments/customer-settlement-payment-authority.service.ts"
+    },
+    {
+      "sha256": "07a86b87606ac41a04b566e4ae908120e97ad7b8825abf5ee7e4c78fd1886ae0",
+      "path": "services/pos/__tests__/pos.service.test.ts"
+    },
+    {
+      "sha256": "ccbcf7de7218411e6f39abe2285ec8eafd75616977e41cf5d09d8774502a5a97",
+      "path": "services/accounting/__tests__/customer-settlement.service.test.ts"
+    },
+    {
+      "sha256": "d130fb7b8fe5ebce9af62823b51a32d0da49fd70076b8662fb3889604a45532b",
+      "path": "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts"
+    }
+  ],
+  "unit": {
+    "receipt": "unit-a4c675dcdd/verification.json",
+    "skipped": 0,
+    "failed": 0,
+    "classification": "Mocked unit, no real database rollback/concurrency or browser proof",
+    "sha256": "0fbddf40bf5b87bd6114765ced550413131596d840b4d73fa82b46d6844e5c3e",
+    "passed": 155
+  },
+  "sourceHashes": {
+    "services/pos/pos.service.ts": "f272dafb5097b28c247db43138fccd79c7811acfccdc8cb7457c3497834a89a0",
+    "services/accounting/customer-settlement.service.ts": "9d5a47154d5b46aeb370f9f5b0f76ed33f84680293038631e06d5e975023b294",
+    "services/payments/pos-electronic-tender-authority.service.ts": "fd03c611503c79638c99ad98380b0db90fc450cf6c3aa138d7b85d7d3435bd62",
+    "services/payments/customer-settlement-payment-authority.service.ts": "8f45dda68550868c4eab65ab38a6e2c54dd6266f7c46495a767be6375eef24ed",
+    "services/pos/__tests__/pos.service.test.ts": "f550afa3ab7ea91912f74ffb401f1758bd73656e1a3cbf1d19e83ef8935aa589",
+    "services/accounting/__tests__/customer-settlement.service.test.ts": "8399d46123ce9082e53f7945be5c922465eb1639686fc24d9a5ca84ad8480362",
+    "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts": "05a89ae10abba804974f45337b9f6c8f4ab8b5e7e6de7ec9be0fdd8ba7ea54ef",
+    ".eslintrc.json": "82d9c40e94e4eba05c53f4c6c9aebf62a3463583e1ccc5e2ad24c77882ab987a",
+    "package-lock.json": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+  },
+  "checkedAt": "2026-11-10T15:13:36.8359616Z"
+}

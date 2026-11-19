@@ -1,0 +1,17 @@
+const fs = require('node:fs'), path = require('node:path'), cp = require('node:child_process');
+const root = path.resolve(__dirname, '../../../../../..');
+const attempt = path.join(__dirname, 'attempt01');
+fs.mkdirSync(attempt, { recursive: false });
+const env = {};
+for (const key of ['SystemRoot', 'WINDIR', 'COMSPEC', 'PATH', 'PATHEXT', 'TEMP', 'TMP', 'USERPROFILE', 'LOCALAPPDATA', 'APPDATA']) if (process.env[key]) env[key] = process.env[key];
+env.NEXT_IGNORE_INCORRECT_LOCKFILE = '1'; env.NODE_ENV = 'test'; env.CI = 'true'; env.NEXT_TELEMETRY_DISABLED = '1';
+env.AUTH_SECRET = 'r06-r2-isolated-unit-only-synthetic-secret-20261110';
+const tests = ['auth-current-authority', 'auth-session', 'auth-deactivation', 'credential-sign-in-outcome', 'auth-request-bookkeeping'];
+const args = ['--require', path.join(__dirname, 'preload.cjs'), path.join(root, 'node_modules/jest/bin/jest.js'), '--config', path.join(__dirname, 'jest.config.cjs'), '--runInBand', '--no-cache', '--json', '--outputFile', path.join(attempt, 'jest.json'), '--runTestsByPath', ...tests.map(t => 'lib/security/__tests__/' + t + '.test.ts')];
+const result = cp.spawnSync(process.execPath, args, { cwd: root, env, encoding: 'utf8', timeout: 180000, maxBuffer: 4 * 1024 * 1024, windowsHide: true });
+fs.writeFileSync(path.join(attempt, 'stdout.log'), result.stdout || '');
+fs.writeFileSync(path.join(attempt, 'stderr.log'), result.stderr || '');
+const receipt = { at: new Date().toISOString(), command: 'node unit/run.cjs', args, status: result.status, signal: result.signal, error: result.error ? String(result.error) : null, environment: 'allowlisted OS variables plus synthetic test-only settings; no DB/provider URLs; no Next config/env load', files: tests };
+fs.writeFileSync(path.join(attempt, 'receipt.json'), JSON.stringify(receipt, null, 2) + '\n');
+console.log(JSON.stringify({ status: result.status, signal: result.signal, error: receipt.error, attempt }));
+process.exitCode = result.status ?? 1;

@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 import "@testing-library/jest-dom"
 jest.mock("@/components/finance/OpenItemsReturnLink", () => ({ OpenItemsReturnLink: () => null }))
+jest.mock("@/components/finance/CustomerSettlementControls", () => ({ CustomerSettlementControls: jest.fn(() => <div>Controlled current payments</div>) }))
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import { AROpenItemsHistoryWorkbench } from "../AROpenItemsHistoryWorkbench"
 import type { AROpenItem } from "@/services/accounting/ar-open-item.service"
@@ -29,10 +30,11 @@ const items: AROpenItem[] = Array.from({ length: 51 }, (_, index) => ({
   status: "open", daysPastDue: 0, agingBucket: "current", evidenceGrade: "operational", allocations: [],
 }))
 const mockWorkbench = {
-  filters: { pageSize: 25 },
+  filters: { pageSize: 25, dateTo: undefined as string | undefined },
   rows: items.slice(0, 25),
   result: { items, summary: { itemCount: 51, settledItemCount: 0 }, summariesByCurrency: [], asOf: "2026-09-21", recordedThrough: "2026-09-21" },
   selectedRowId: null as string | null, isLoading: false, isError: false, error: null,
+  settlementScope: { userId: "reader-one", organizationId: "org-one", permissions: ["finance.receivables.read"] },
   refetch: jest.fn(), updateFilters: jest.fn(), resetFilters: jest.fn(), selectRow: jest.fn(),
   canExport: true, exportHistory: jest.fn(), exportStatus: null, isExporting: false,
 }
@@ -41,6 +43,7 @@ afterEach(() => {
   items[0].evidenceGrade = "operational"
   mockWorkbench.selectedRowId = null
   mockWorkbench.isError = false
+  mockWorkbench.filters.dateTo = undefined
 })
 
 it.each([
@@ -65,6 +68,11 @@ it("uses the readable grade in details and preserves the recorded amounts", () =
   const drawer = within(screen.getByRole("dialog"))
   expect(drawer.getByText("Posted receivable")).toBeInTheDocument()
   expect(drawer.getAllByText(/1,000/).length).toBeGreaterThan(0)
+  expect(jest.requireMock("@/components/finance/CustomerSettlementControls").CustomerSettlementControls.mock.lastCall[0]).toEqual(expect.objectContaining({
+    customerId: items[0].customerId,
+    referenceId: items[0].referenceId,
+    scope: mockWorkbench.settlementScope,
+  }))
 })
 
 it("does not show stale rows when the history read fails", () => {
@@ -72,6 +80,15 @@ it("does not show stale rows when the history read fails", () => {
   render(<AROpenItemsHistoryWorkbench />)
   expect(screen.getByText("states.errorTitle")).toBeInTheDocument()
   expect(screen.queryByRole("table")).not.toBeInTheDocument()
+})
+
+it("offers current payment controls in invoice details but keeps as-of history read-only", () => {
+  mockWorkbench.selectedRowId = items[0].referenceId
+  const view = render(<AROpenItemsHistoryWorkbench />)
+  expect(screen.getByText("Controlled current payments")).toBeInTheDocument()
+  mockWorkbench.filters.dateTo = "2026-09-01"
+  view.rerender(<AROpenItemsHistoryWorkbench />)
+  expect(screen.queryByText("Controlled current payments")).not.toBeInTheDocument()
 })
 
 it("paginates every loaded receivable and searches beyond the first page without changing the export scope", () => {

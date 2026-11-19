@@ -1,0 +1,151 @@
+{
+  "reviewedAt": "2026-11-09T13:42:51.166Z",
+  "schemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+  "scope": "Current schema rechecked for all 23 explicit model mappings and predicate fields. Implicit User.roles/Role.users join definition preserved; actual runtime verification still required.",
+  "groups": [
+    {
+      "table": "organizations",
+      "model": "Organization",
+      "scope": "id",
+      "fieldPresent": true
+    },
+    {
+      "table": "users",
+      "model": "User",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "roles",
+      "model": "Role",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "sessions",
+      "model": "Session",
+      "scope": "userId via users",
+      "fieldPresent": true
+    },
+    {
+      "table": "items",
+      "model": "Item",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "categories",
+      "model": "Category",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "brands",
+      "model": "Brand",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "units",
+      "model": "Unit",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "tax_rates",
+      "model": "TaxRate",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "locations",
+      "model": "Location",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "inventory_levels",
+      "model": "InventoryLevel",
+      "scope": "itemId via items",
+      "fieldPresent": true
+    },
+    {
+      "table": "inventory_transactions",
+      "model": "InventoryTransaction",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "serial_numbers",
+      "model": "SerialNumber",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "stock_adjustments",
+      "model": "StockAdjustment",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "picture_assets",
+      "model": "PictureAsset",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "ledger_posting_batches",
+      "model": "LedgerPostingBatch",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "business_events",
+      "model": "BusinessEvent",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "business_event_outbox",
+      "model": "BusinessEventOutbox",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "business_event_audits",
+      "model": "BusinessEventAudit",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "tenant_module_configurations",
+      "model": "TenantModuleConfiguration",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "tenant_module_grants",
+      "model": "TenantModuleGrant",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "tenant_module_configuration_commands",
+      "model": "TenantModuleConfigurationCommand",
+      "scope": "organizationId",
+      "fieldPresent": true
+    },
+    {
+      "table": "_UserRoles",
+      "model": "implicit User.roles/Role.users",
+      "scope": "B(userId) via users",
+      "fieldPresent": true
+    },
+    {
+      "table": "stock_adjustment_lines",
+      "model": "StockAdjustmentLine",
+      "scope": "adjustmentId via stock_adjustments",
+      "fieldPresent": true
+    }
+  ]
+}

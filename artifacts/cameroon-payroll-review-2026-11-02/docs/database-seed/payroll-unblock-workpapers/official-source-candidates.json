@@ -1,0 +1,51 @@
+{
+  "checkedOn": "2026-10-29",
+  "classification": "OFFICIAL_SOURCE_DISCOVERY_NOT_LEGAL_REVIEW",
+  "productionUseAllowed": false,
+  "sources": [
+    {
+      "id": "DGI_CGI_2026_CANDIDATE",
+      "title": "Code general des impots mis a jour au 1er janvier 2026",
+      "authority": "Direction Generale des Impots du Cameroun",
+      "landingPage": "https://www.impots.cm/index.php/en/node/1333",
+      "artifactUrl": "https://www.impots.cm/sites/default/files/publications/CODE%20GENERAL%20DES%20IMPOTS%202026%20%20VERSION%20FRANCAISE.pdf",
+      "accessResult": "Official landing page and linked 1034-page PDF opened through web tool",
+      "retrievalScope": "Discovery and document identity only; statutory provisions not adjudicated",
+      "localArtifact": "docs/database-seed/payroll-unblock-workpapers/DGI-CGI-2026.pdf",
+      "sha256": "245aa9dd0aa7a19100a90d905c025c2d52ed59e744606597a7ca7a057d2dd11d",
+      "effectiveFromApproved": null,
+      "requiredNextAction": "Reviewer identifies applicable payroll/VAT provisions and amendments, exact 2026 effective dates, executable rules and independent fixtures.",
+      "byteLength": 9916419,
+      "retainedAt": "2026-10-29T11:53:54.999Z",
+      "retentionMethod": "HTTPS download from official DGI artifact URL; PDF header checked; automated digest, not independent reviewer attestation"
+    },
+    {
+      "id": "DGI_CGI_2025_UNRESOLVED",
+      "authority": "Direction Generale des Impots du Cameroun",
+      "originalUrl": "https://www.impots.cm/fr/code-general-des-impots-mis-jour-au-1er-janvier-2025",
+      "accessResult": "404 from original source URL; official sitemap alternatives also returned 404",
+      "officialDiscoveryPage": "https://www.impots.cm/en/sitemap",
+      "failedAlternatives": [
+        "https://www.impots.cm/node/e7bedcf3-f8a7-4c9d-954a-96d1a8368f8a",
+        "https://www.impots.cm/en/node/1211"
+      ],
+      "localArtifact": null,
+      "sha256": null,
+      "requiredNextAction": "Recover official 2025 tax code and amendments. Do not substitute 2026 rules or infer historical effect."
+    },
+    {
+      "id": "DGI_FINANCE_LAW_2025_CANDIDATE",
+      "authority": "Direction Generale des Impots du Cameroun",
+      "title": "Loi no 2024/013 du 23 decembre 2024 portant loi de finances pour 2025",
+      "landingPage": "https://www.impots.cm/index.php/fr/documents/39?page=1",
+      "artifactUrl": "https://www.impots.cm/sites/default/files/documents/loi_n_2024_013_du_23_12_2024-web.pdf",
+      "accessResult": "Official listing opened; web tool PDF fetch timed out, direct HTTPS download subsequently succeeded",
+      "localArtifact": "docs/database-seed/payroll-unblock-workpapers/DGI-finance-law-2025.pdf",
+      "sha256": "e3d1c4ce54bbd8ee1536b1b7ec3d95eb840a4c25931297c3871782f2e614c546",
+      "requiredNextAction": "Reviewer assesses interaction with the 2025 tax code, amendments and exact effective periods. Retained finance law does not replace the missing consolidated 2025 code.",
+      "byteLength": 19399033,
+      "retainedAt": "2026-10-29T11:54:58.198Z",
+      "retentionMethod": "Official DGI HTTPS download; PDF header checked; automated digest, not independent reviewer attestation"
+    }
+  ]
+}

@@ -2,6 +2,11 @@ jest.mock("server-only", () => ({}));
 // Separate lifecycle evidence semantics from the real admission contract suite.
 jest.mock("../payroll-production-admission", () => ({ assertPayrollProductionAdmissionInTx: jest.fn() }));
 import { assertPayrollProductionAdmissionInTx } from "../payroll-production-admission";
+jest.mock("../payroll-adapter-registry.service", () => {
+  const actual = jest.requireActual("../payroll-adapter-registry.service");
+  return {...actual, resolvePayrollAuthorityAdapterContract: jest.fn(actual.resolvePayrollAuthorityAdapterContract)};
+});
+import { resolvePayrollAuthorityAdapterContract } from "../payroll-adapter-registry.service";
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -365,6 +370,7 @@ function mockWorkbenchCounts(
 describe("payroll declaration lifecycle service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (resolvePayrollAuthorityAdapterContract as jest.Mock).mockImplementation(jest.requireActual("../payroll-adapter-registry.service").resolvePayrollAuthorityAdapterContract);
     (assertPayrollProductionAdmissionInTx as jest.Mock).mockReset().mockResolvedValue(undefined);
     mockDb.$transaction.mockImplementation((callback) => callback(buildTx()));
     mockEvaluateSensitiveAction.mockReturnValue({
@@ -392,7 +398,8 @@ describe("payroll declaration lifecycle service", () => {
   it.each(["submit", "amend"] as const)("blocks new %s evidence before writes when admission fails", async (transition) => {
     const tx = buildTx(transition === "submit" ? PayrollDeclarationStatus.PREPARED : PayrollDeclarationStatus.SUBMITTED);
     mockDb.$transaction.mockImplementation((callback) => callback(tx));
-    (assertPayrollProductionAdmissionInTx as jest.Mock).mockRejectedValue(new Error("PAYROLL_PRODUCTION_ADMISSION_BLOCKED"));
+    Object.assign(tx, { payrollRun: { findFirst: jest.fn().mockResolvedValue({ countryCode: "GA", payrollPeriod: { frequency: "MONTHLY" } }) } });
+    (assertPayrollProductionAdmissionInTx as jest.Mock).mockImplementation(jest.requireActual("../payroll-production-admission").assertPayrollProductionAdmissionInTx);
     await expect(recordPayrollDeclarationEvidence({ organizationId: "org-1", declarationId: "declaration-1", transition, actorId: "operator", actorPermissions: ["payroll.declarations.manage"], approvedById: "approver", authorityStatus: "SUBMITTED", submittedPayloadHash: "sha256:payload", portalReceiptHash: "sha256:receipt", sourceRegisterHash: "sha256:register", idempotencyKey: `blocked-${transition}` })).rejects.toThrow("PAYROLL_PRODUCTION_ADMISSION_BLOCKED");
     expect(assertPayrollProductionAdmissionInTx).toHaveBeenCalledWith(tx, "org-1", "run-1");
     expect(tx.payrollDeclarationEvidence.create).not.toHaveBeenCalled();
@@ -1156,52 +1163,38 @@ describe("payroll declaration lifecycle service", () => {
     ).rejects.toThrow("cannot transition from ACCEPTED");
   });
 
-  it("returns an idempotent replay for the same evidence hash", async () => {
+  it.each([["current", "manual"], ["legacy", "manual"], ["current", "automated"], ["legacy", "automated"]])("recovers %s %s declaration evidence after status/time/adapter changes with current authority", async (format, mode) => {
+    const realAuthority = jest.requireActual("@/services/controls/sensitive-action.service");
+    mockEvaluateSensitiveAction.mockImplementation(realAuthority.evaluateSensitiveAction);
+    mockAssertSensitiveActionAllowed.mockImplementation(realAuthority.assertSensitiveActionAllowed);
     const tx = buildTx();
-    mockDb.$transaction.mockImplementation((callback) => callback(tx));
-
-    const first = await recordPayrollDeclarationEvidence({
-      organizationId: "org-1",
-      declarationId: "declaration-1",
-      transition: "submit",
-      actorId: "payroll-controller-1",
-      actorPermissions: ["payroll.declarations.manage"],
-      lastAuthAt: "2026-06-30T10:00:00.000Z",
-      now: "2026-06-30T10:01:00.000Z",
-      authorityChannel: "CNPS_MANUAL_PORTAL",
-      authorityEnvironment: "MANUAL_PORTAL",
-      authorityStatus: "SUBMITTED",
-      submittedPayloadHash: "sha256:submitted-payload",
-      portalReceiptHash: "sha256:portal-receipt",
-      sourceRegisterHash: "sha256:register",
-      approvedById: "approver-1",
-      idempotencyKey: "submit-key-1",
-    });
-
-    tx.payrollDeclarationEvidence.findFirst.mockResolvedValue({
-      id: "evidence-1",
-      evidenceHash: first.evidence.evidenceHash,
-    });
-
-    const second = await recordPayrollDeclarationEvidence({
-      organizationId: "org-1",
-      declarationId: "declaration-1",
-      transition: "submit",
-      actorId: "payroll-controller-1",
-      actorPermissions: ["payroll.declarations.manage"],
-      lastAuthAt: "2026-06-30T10:00:00.000Z",
-      now: "2026-06-30T10:01:00.000Z",
-      authorityChannel: "CNPS_MANUAL_PORTAL",
-      authorityEnvironment: "MANUAL_PORTAL",
-      authorityStatus: "SUBMITTED",
-      submittedPayloadHash: "sha256:submitted-payload",
-      portalReceiptHash: "sha256:portal-receipt",
-      sourceRegisterHash: "sha256:register",
-      approvedById: "approver-1",
-      idempotencyKey: "submit-key-1",
-    });
-
-    expect(second.idempotent).toBe(true);
+    mockDb.$transaction.mockImplementation(callback => callback(tx));
+    const input = {organizationId:"org-1",declarationId:"declaration-1",transition:"submit" as const,
+      actorId:"payroll-controller-1",actorPermissions:["payroll.declarations.manage"],
+      lastAuthAt:"2026-06-30T10:00:00.000Z",now:"2026-06-30T10:01:00.000Z",
+      authorityChannel:"CNPS_MANUAL_PORTAL" as const,authorityEnvironment:"MANUAL_PORTAL" as const,authorityStatus:"SUBMITTED",
+      submittedPayloadHash:"sha256:submitted-payload",portalReceiptHash:"sha256:portal-receipt",sourceRegisterHash:"sha256:register",
+      approvedById:"approver-1",idempotencyKey:"submit-key-1",
+      ...(mode === "automated" ? {authorityChannel:"CNPS_API",authorityEnvironment:"PRODUCTION_API",authorityAdapterKey:"CM_CNPS_PRODUCTION_API",
+        authorityAdapterReadiness:"SUPPORTED_CERTIFIED" as const,authorityReference:"CNPS-API-REF-1",authorityResponseHash:"sha256:authority-response",
+        payloadMappingHash:"sha256:payload-mapping",responseMappingHash:"sha256:response-mapping",...authorityCertificationProofEnvelope,
+        credentialProofHash:"sha256:credential-proof",adapterRequestHash:"sha256:adapter-request",adapterResponseReceiptHash:"sha256:adapter-response-receipt",
+        adapterIdempotencyKey:"cnps-submit-run-1",adapterAttempt:2,authorityCertificationHarnessHash:"sha256:authority-harness",
+        adapterChaosReleaseGateHash:"sha256:synthetic-chaos-release"} : {})};
+    const first = await recordPayrollDeclarationEvidence(input);
+    const retained = {...first.evidence,metadata:{...first.evidence.metadata as Record<string,unknown>}};
+    if(format === "legacy") delete retained.metadata.commandPayloadHash;
+    tx.payrollDeclarationEvidence.findFirst.mockResolvedValue(retained);
+    tx.payrollDeclaration.findFirst.mockResolvedValue(first.declaration);
+    (resolvePayrollAuthorityAdapterContract as jest.Mock).mockImplementation(() => {throw new Error("synthetic adapter retired")});
+    const retry = {...input,now:"2026-07-01T10:01:00.000Z",lastAuthAt:"2026-07-01T10:00:00.000Z"};
+    expect((await recordPayrollDeclarationEvidence(retry)).idempotent).toBe(true);
+    await expect(recordPayrollDeclarationEvidence({...retry,actorPermissions:[]})).rejects.toThrow("not allowed");
+    await expect(recordPayrollDeclarationEvidence({...retry,lastAuthAt:input.lastAuthAt})).rejects.toMatchObject({code:"FRESH_AUTH_REQUIRED"});
+    await expect(recordPayrollDeclarationEvidence({...retry,portalReceiptHash:"sha256:changed-receipt"})).rejects.toThrow("different payload");
     expect(tx.payrollDeclarationEvidence.create).toHaveBeenCalledTimes(1);
+    expect(tx.payrollDeclaration.update).toHaveBeenCalledTimes(1);
+    tx.payrollDeclarationEvidence.findFirst.mockResolvedValue(null);
+    await expect(recordPayrollDeclarationEvidence({...retry,idempotencyKey:"new-effect-key"})).rejects.toThrow("synthetic adapter retired");
   });
 });

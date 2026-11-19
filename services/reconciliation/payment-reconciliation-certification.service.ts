@@ -13,6 +13,7 @@ import { createHash, randomUUID } from "node:crypto"
 
 import { db } from "@/prisma/db"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
+import { accountingPeriodReconciliationScope, isUtcDayAlignedAccountingPeriod } from "./reconciliation-period-scope"
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
 import { JournalReversalSnapshotChangedError, lockJournalReversalCatalogInTx, lockJournalReversalClosePeriodsInTx } from "@/services/accounting/journal-reversal-order.service"
 import {
@@ -669,6 +670,15 @@ export async function validateReconciliationRunEvidenceInTx(
       throw new BusinessRuleError(
         "Reconciliation accounting period changed. Review the run before signing.",
       )
+    }
+    const retainedScope = metadataRecord(metadataRecord(run.metadata).scope)
+    if (retainedScope.kind === "ACCOUNTING_PERIOD") {
+      const expected = accountingPeriodReconciliationScope(organizationId, run.providerAccountId, period.id, period.startDate, new Date(+period.endDate + 1))
+      if (!isUtcDayAlignedAccountingPeriod(period.startDate, period.endDate) || run.accountingPeriodId !== period.id ||
+          +run.businessDate !== +period.startDate || +run.periodStart !== +period.startDate || +run.periodEnd !== +period.endDate + 1 ||
+          Object.entries(expected).some(([key, value]) => retainedScope[key] !== value)) {
+        throw new BusinessRuleError("Reconciliation accounting-period scope changed. Review the stored period and create a new run before signing.")
+      }
     }
     
     const [

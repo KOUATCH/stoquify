@@ -1,0 +1,121 @@
+{
+  "slice": "HR-21-development-02",
+  "status": "VERIFIED_SCOPED",
+  "overallHrisStatus": "IMPLEMENTED_PENDING_VERIFICATION",
+  "baseline": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "sealedAt": "2026-10-25T11:39:02.088Z",
+  "ownedFiles": [
+    "services/hris/__tests__/integrated-core-development.postgres.test.ts",
+    "services/hris/__tests__/development-recovery.postgres.test.ts",
+    "jest.hris-development-postgres.config.cjs",
+    "jest.hris-recovery-postgres.config.cjs"
+  ],
+  "commands": [
+    {
+      "lane": "real-postgresql-connected",
+      "command": "node what-next/hris-implementation-2026-10-24/HR-21/development-02/run-connected.cjs connected-reviewed.log",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/development-02/connected-reviewed.log",
+      "exitCode": 0,
+      "passed": 6,
+      "completedAt": "2026-10-25T11:36:08.293Z"
+    },
+    {
+      "lane": "real-postgresql-recovery",
+      "command": "node what-next/hris-implementation-2026-10-24/HR-21/development-02/run-recovery.cjs",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/development-02/recovery-tests.log",
+      "exitCode": 0,
+      "passed": 3,
+      "completedAt": "2026-10-25T11:37:57.938Z"
+    },
+    {
+      "lane": "isolated-runner-negative",
+      "command": "node --test what-next/hris-implementation-2026-10-24/HR-21/development-02/runner-evidence.node-test.cjs",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/development-02/runner-evidence.log",
+      "exitCode": 0,
+      "passed": 3,
+      "completedAt": "2026-10-25T11:34:54.657Z"
+    },
+    {
+      "lane": "bounded-typecheck",
+      "command": "node what-next/hris-implementation-2026-10-24/typecheck.cjs what-next/hris-implementation-2026-10-24/HR-21/development-02/typecheck-final.log services/hris/__tests__/integrated-core-development.postgres.test.ts services/hris/__tests__/development-recovery.postgres.test.ts",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/development-02/typecheck-final.log",
+      "exitCode": 0,
+      "passed": 0,
+      "completedAt": "2026-10-25T11:37:15.003Z"
+    },
+    {
+      "lane": "workflow",
+      "command": "npm run agent:workflow:check",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/development-02/workflow.log",
+      "exitCode": 0,
+      "passed": 0,
+      "completedAt": "2026-10-25T11:39:00.117Z"
+    },
+    {
+      "lane": "owned-diff",
+      "command": "git diff --check -- services/hris/__tests__/integrated-core-development.postgres.test.ts services/hris/__tests__/development-recovery.postgres.test.ts jest.hris-development-postgres.config.cjs jest.hris-recovery-postgres.config.cjs",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/development-02/diffcheck.log",
+      "exitCode": 0,
+      "passed": 0,
+      "completedAt": "2026-10-25T11:39:00.400Z"
+    }
+  ],
+  "independentReview": "PASS_SCOPED_SOURCE_ONLY",
+  "recovery": {
+    "status": "PASS_SCOPED_SYNTHETIC_RESTORE",
+    "runId": "hr21dev-919f2e1b-faac-41e8-bdaf-938d9a5d452a",
+    "createdTarget": true,
+    "target": "postgresql://hris_test@127.0.0.1:55464/stoquify_local_hris_recovery_20261025?schema=public",
+    "cleanupComplete": true,
+    "elapsedMs": 50453,
+    "error": null,
+    "limits": [
+      "Owned synthetic database/object recovery only",
+      "Not customer cumulative upgrade or actual provider disaster recovery",
+      "Synthetic account state, not external revocation"
+    ]
+  },
+  "limits": [
+    "Synthetic authentication actors and document store",
+    "No actual Next/browser/human/provider acceptance",
+    "Not a customer cumulative migration or production disaster recovery",
+    "Application clock simulated; database clock real"
+  ],
+  "hashes": {
+    "services/hris/__tests__/integrated-core-development.postgres.test.ts": "bd30633fa37a05cba4741a8b75f892392852cec2e9281a8d3d19d0f25458c773",
+    "services/hris/__tests__/development-recovery.postgres.test.ts": "fd364a6200c9118c41fb1f6358e3f722cad6b282ec494e7087ef04776459de33",
+    "jest.hris-development-postgres.config.cjs": "cfc9a891eaf48e6b2d4c50a307b15ae6b7498c2864fae04c6630cb6343ca6f6b",
+    "jest.hris-recovery-postgres.config.cjs": "02ea6c759c3b9acb63a1335b5ba3946443c9a6ea631bad0949872fecb44fdd02",
+    "docs/ecc/cameroon-blueprint-execution-2026-10-07.md": "46b08fda4246b68fcc15db1d9883401ed53690c2a3607c663f3d4c6d5207520b",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/backup-manifest.json": "d7475b413b99462287786088050888843e2dfe64cca174ef7c08bdb5262bc9c7",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/connected-final.log": "8667472b6adf9b3e3672342c926df1cf4b0d53a31c6578e19144ce22bafd0383",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/connected-first.log": "53f9ce1e7d9216f61baccfdec7ad87a4949368a8ec3ab6f932326d5ad8ce9ad4",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/connected-prior-1792927977182.json": "64242d2fb91380db4f04fa2fa19a6c4381a90eef6bddd7cbd822f94b21e2aaf5",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/connected-prior-1792928122934.json": "cbf1995f39ad7ce9f121853e00e69cfe8f7719571fda601e9ae5b53735073866",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/connected-progress.json": "a389a45c7495142b90e402eaee20c1539380c8286c4f31e5e97d528605147556",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/connected-results.json": "90ba24633d29fa8bef5808ff63dedcb157c5bd187db72c7242cbfeb566851543",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/connected-reviewed.log": "95a13863727ae7e08d4200b59211868c76c4304b59cd9aaaf6d4dc82be613528",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/diffcheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/INDEPENDENT-REVIEW.md": "24b17cbbc8f3ad940f42c973c46ecbc9b98ed3919644c2a677c128608710a588",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/PLAN.md": "6278d5fd8a222623bae84fd9c81455b1f525d9154c260fec6e7bd24b0d63528b",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/postgresql-start.log": "8ea72a3ff9a8584068019142d9a4636adf46de020b0a29b766af11dd576ab0f2",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/prepare-lane.cjs": "be5683e22d682b424dd714a93232ede0e8f4e46dcf6fa551895d658dde9c3449",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/recovery-results.json": "5a47926ed1cb6eca382ea3a7bad8a09adc01fd5e87ceb25c59ac3843487e16bd",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/recovery-test-results.json": "79759b25d239732e71180fb9109e07ce183e8f8053274221f46c784635211d2a",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/recovery-tests.log": "2e4a93dfd6b846907dca514e6a60637cbe98abcf79d976eaa959ee5a594141dc",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/restore.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/RESULT.md": "3ef50696e19fb76a158e585ff43412405d44abdec7c8f79c52e3eb3b1657eefa",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/run-connected-reviewed.cjs": "6e2652a6b1a09c41bbd88389ae596d192cb39ef4e8f8699c8b835f383cce3349",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/run-connected.cjs": "6e2652a6b1a09c41bbd88389ae596d192cb39ef4e8f8699c8b835f383cce3349",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/run-recovery-reviewed.cjs": "e242e0c2c7b1dd78a22e805dffe55de1881a4bf322d10125dff088020f4688db",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/run-recovery.before-review.cjs": "ef79c9299b813620d3da2c1539c6c32713b8bf0ef4983888af45c36bf90d9f3c",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/run-recovery.cjs": "e242e0c2c7b1dd78a22e805dffe55de1881a4bf322d10125dff088020f4688db",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/runner-evidence.log": "61a1df20acd80ac891da54f03cb3037f8a34bfd26c05a57ffef173a4484f4fea",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/runner-evidence.node-test.cjs": "8599179916dfedaa156ba6b0383c6c61e51895658052b41d5b040ccb32167ff1",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/seal.cjs": "12c91d64b4e531aa1b79d0b9b8f810c12421097c7a5f628081f0f95d44fa654a",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/snapshot.cjs": "80b7c98a20bbce38b0e4b59fa824fe1605c4606cfb2434cae2d63aa52865d6cc",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/typecheck-final.log": "698cb814ddc4a30089e50d58e9c057bd7bf05f3afdd77425672ec11b9110c6a5",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/typecheck-first.log": "698cb814ddc4a30089e50d58e9c057bd7bf05f3afdd77425672ec11b9110c6a5",
+    "what-next/hris-implementation-2026-10-24/HR-21/development-02/workflow.log": "86136abc44dde2020666ec41f5257908e6e5d292251b9590da8755fd007cf5e0"
+  }
+}

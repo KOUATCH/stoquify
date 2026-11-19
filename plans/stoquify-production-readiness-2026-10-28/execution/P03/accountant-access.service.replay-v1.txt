@@ -1,0 +1,519 @@
+import {
+  AccountantAccessRole,
+  AccountantAccessStatus,
+  Prisma,
+} from "@prisma/client"
+
+import { db } from "@/prisma/db"
+import {
+  ApplicationError,
+  BusinessRuleError,
+  ConflictError,
+  ForbiddenError,
+  getPrismaKnownRequest,
+  IdempotencyConflictError,
+  NotFoundError,
+} from "@/services/_shared/action-errors"
+import { hashBusinessPayload, markBusinessEventAppliedInTx, recordBusinessEventInTx } from "@/services/events/business-event.service"
+import { accountantScopeKeys, assertManagedAccountantAccess } from "./managed-accountant-access.service"
+
+import type {
+  GrantAccountantAccessInput,
+  RevokeAccountantAccessInput,
+} from "./accountant-access.schemas"
+
+type DbClient = typeof db | Prisma.TransactionClient
+type AccessCapability = "READ" | "EXPORT" | "REVIEW"
+const ACTIVE_GRANT_CONFLICT_MESSAGE =
+  "This accountant already has an active or scheduled client access grant."
+
+export type AccountantAccessGrantDto = {
+  id: string
+  organizationId: string
+  accountantUserId: string
+  accountantName?: string | null
+  accountantEmail?: string
+  accountantFirmName: string
+  accountantFirmRegistrationNumber: string | null
+  role: AccountantAccessRole
+  status: "ACTIVE" | "SCHEDULED" | "EXPIRED" | "REVOKED"
+  consentGrantedById: string
+  consentGrantedAt: string
+  consentEvidenceHash: string
+  effectiveFrom: string
+  expiresAt: string
+  revokedById: string | null
+  revokedAt: string | null
+  revocationReason: string | null
+}
+
+export type { AccountantPortfolio } from "./accountant-portfolio.service"
+
+function effectiveStatus(
+  grant: {
+    status: AccountantAccessStatus
+    effectiveFrom: Date
+    expiresAt: Date
+    revokedAt: Date | null
+  },
+  now: Date,
+): AccountantAccessGrantDto["status"] {
+  if (
+    grant.status === AccountantAccessStatus.REVOKED &&
+    (grant.revokedAt === null || grant.revokedAt < grant.expiresAt)
+  ) {
+    return "REVOKED"
+  }
+  if (grant.expiresAt <= now) return "EXPIRED"
+  if (grant.status === AccountantAccessStatus.REVOKED) return "REVOKED"
+  if (grant.effectiveFrom > now) return "SCHEDULED"
+  return "ACTIVE"
+}
+
+function toDto(
+  grant: {
+    id: string
+    organizationId: string
+    accountantUserId: string
+    accountantFirmName: string
+    accountantFirmRegistrationNumber: string | null
+    role: AccountantAccessRole
+    status: AccountantAccessStatus
+    consentGrantedById: string
+    consentGrantedAt: Date
+    consentEvidenceHash: string
+    effectiveFrom: Date
+    expiresAt: Date
+    revokedById: string | null
+    revokedAt: Date | null
+    revocationReason: string | null
+  },
+  now: Date,
+): AccountantAccessGrantDto {
+  return {
+    id: grant.id,
+    organizationId: grant.organizationId,
+    accountantUserId: grant.accountantUserId,
+    accountantFirmName: grant.accountantFirmName,
+    accountantFirmRegistrationNumber: grant.accountantFirmRegistrationNumber,
+    role: grant.role,
+    status: effectiveStatus(grant, now),
+    consentGrantedById: grant.consentGrantedById,
+    consentGrantedAt: grant.consentGrantedAt.toISOString(),
+    consentEvidenceHash: grant.consentEvidenceHash,
+    effectiveFrom: grant.effectiveFrom.toISOString(),
+    expiresAt: grant.expiresAt.toISOString(),
+    revokedById: grant.revokedById,
+    revokedAt: grant.revokedAt?.toISOString() ?? null,
+    revocationReason: grant.revocationReason,
+  }
+}
+
+function isActiveScopeUniqueConflict(error: unknown): boolean {
+  const prismaError = getPrismaKnownRequest(error)
+  if (prismaError?.code !== "P2002") return false
+
+  const target = prismaError.meta?.target ?? prismaError.meta?.constraint
+  if (Array.isArray(target)) {
+    return target.some((field) => String(field).includes("activeScopeKey")) ||
+      (target.includes("organizationId") && target.includes("accountantUserId"))
+  }
+  return String(target ?? "").includes("activeScopeKey") || String(target ?? "").includes("accountant_active_named_scope_key")
+}
+
+
+async function retireExpiredAccountantAccessGrantInTx(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  grant: {
+    id: string
+    accountantUserId: string
+    activeScopeKey: string | null
+    expiresAt: Date
+  },
+): Promise<void> {
+  if (grant.activeScopeKey !== null) {
+    await tx.accountantAccessGrant.update({
+      where: { id: grant.id },
+      data: { activeScopeKey: null },
+    })
+  }
+
+  await recordBusinessEventInTx(tx, {
+    organizationId,
+    eventType: "ACCOUNTANT_ACCESS_EXPIRED",
+    eventSource: "INTERNAL",
+    idempotencyKey: `accountant-access-expired:${grant.id}`,
+    occurredAt: grant.expiresAt,
+    // Access grants are not accounting sources; retain their domain type in event metadata.
+    metadata: { sourceEntityType: "AccountantAccessGrant" },
+    sourceId: grant.id,
+    payload: {
+      grantId: grant.id,
+      accountantUserId: grant.accountantUserId,
+      expiresAt: grant.expiresAt.toISOString(),
+      reason: "CONSENT_WINDOW_ELAPSED",
+    },
+  })
+}
+export async function grantAccountantAccess(
+  organizationId: string,
+  actorId: string,
+  input: GrantAccountantAccessInput,
+  now = new Date(),
+): Promise<AccountantAccessGrantDto> {
+  const effectiveFrom = input.effectiveFrom ?? now
+  if (input.expiresAt <= now) {
+    throw new BusinessRuleError("Accountant access expiry must be in the future.")
+  }
+  if (input.expiresAt <= effectiveFrom) {
+    throw new BusinessRuleError("Accountant access expiry must be after its effective date.")
+  }
+
+  const accountant = await db.user.findUnique({
+    where: { email: input.accountantEmail },
+    select: { id: true, isActive: true },
+  })
+  if (!accountant?.isActive) {
+    throw new NotFoundError("An active accountant user with that email was not found.")
+  }
+
+  const activeScopeKey = `${organizationId}:${accountant.id}`
+  const commandKey = input.idempotencyKey?.trim()
+  if (input.idempotencyKey != null && (!commandKey || commandKey.length < 8 || commandKey.length > 191)) {
+    throw new BusinessRuleError("Accountant grant idempotency key is invalid.")
+  }
+  const receiptKey = commandKey ? `accountant-access-grant-command:${commandKey}` : null
+  const commandHash = receiptKey ? hashBusinessPayload({
+    organizationId, actorId, accountantUserId: accountant.id,
+    accountantEmail: input.accountantEmail.trim().toLowerCase(),
+    accountantFirmName: input.accountantFirmName,
+    accountantFirmRegistrationNumber: input.accountantFirmRegistrationNumber || null,
+    role: input.role, consentEvidenceHash: input.consentEvidenceHash,
+    // Omission must stay stable when a retry receives a later server clock.
+    effectiveFrom: input.effectiveFrom?.toISOString() ?? null,
+    expiresAt: input.expiresAt.toISOString(),
+  }) : null
+
+  return db.$transaction(async (tx) => {
+    if (receiptKey) {
+      const lockKey = JSON.stringify(["accountant-access-grant-command", organizationId, commandKey])
+      await tx.$queryRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))::text`)
+      const receipt = await tx.businessEvent.findUnique({ where: { organizationId_eventSource_idempotencyKey: {
+        organizationId, eventSource: "INTERNAL", idempotencyKey: receiptKey,
+      } } })
+      if (receipt) {
+        const payload = receipt.payload as { commandHash?: string; grantId?: string } | null
+        if (receipt.organizationId !== organizationId || receipt.actorId !== actorId ||
+          receipt.eventType !== "ACCOUNTANT_ACCESS_GRANT_COMMAND_APPLIED" || receipt.status !== "APPLIED" ||
+          !payload || payload.commandHash !== commandHash || !payload.grantId || receipt.sourceId !== payload.grantId ||
+          receipt.payloadHash !== hashBusinessPayload(payload)) throw new IdempotencyConflictError()
+        const grant = await tx.accountantAccessGrant.findFirst({ where: { id: payload.grantId, organizationId } })
+        if (!grant || grant.accountantUserId !== accountant.id || grant.consentGrantedById !== actorId ||
+          grant.status !== AccountantAccessStatus.ACTIVE || grant.revokedAt || grant.revokedById ||
+          !accountantScopeKeys(organizationId, accountant.id).includes(grant.activeScopeKey ?? "") || grant.expiresAt <= now) {
+          throw new ConflictError("The original accountant grant is no longer available for recovery. Refresh current access.")
+        }
+        return toDto(grant, now)
+      }
+    }
+    const existing = await tx.accountantAccessGrant.findFirst({
+      where: {
+        organizationId,
+        accountantUserId: accountant.id,
+        status: AccountantAccessStatus.ACTIVE,
+        activeScopeKey: { in: accountantScopeKeys(organizationId, accountant.id) },
+      },
+      select: {
+        id: true,
+        accountantUserId: true,
+        activeScopeKey: true,
+        expiresAt: true,
+      },
+    })
+    if (existing && existing.expiresAt > now) {
+      throw new ConflictError(ACTIVE_GRANT_CONFLICT_MESSAGE)
+    }
+
+    if (existing) {
+      await retireExpiredAccountantAccessGrantInTx(
+        tx,
+        organizationId,
+        existing,
+      )
+    }
+
+    const grant = await tx.accountantAccessGrant.create({
+      data: {
+        organizationId,
+        accountantUserId: accountant.id,
+        accountantFirmName: input.accountantFirmName,
+        accountantFirmRegistrationNumber:
+          input.accountantFirmRegistrationNumber || null,
+        role: input.role,
+        status: AccountantAccessStatus.ACTIVE,
+        activeScopeKey,
+        consentGrantedById: actorId,
+        consentGrantedAt: now,
+        consentEvidenceHash: input.consentEvidenceHash,
+        effectiveFrom,
+        expiresAt: input.expiresAt,
+        correlationId: input.correlationId || null,
+        metadata: {
+          consentContract: "explicit-client-consent.v1",
+          accessBoundary: "ledger-backed-accountant-portal",
+        },
+      },
+    })
+
+    await recordBusinessEventInTx(tx, {
+      organizationId,
+      eventType: "ACCOUNTANT_ACCESS_GRANTED",
+      eventSource: "INTERNAL",
+      idempotencyKey: `accountant-access-granted:${grant.id}`,
+      actorId,
+      // Access grants are not accounting sources; retain their domain type in event metadata.
+    metadata: { sourceEntityType: "AccountantAccessGrant" },
+      sourceId: grant.id,
+      documentHash: input.consentEvidenceHash,
+      payload: {
+        grantId: grant.id,
+        accountantUserId: accountant.id,
+        role: grant.role,
+        effectiveFrom: grant.effectiveFrom.toISOString(),
+        expiresAt: grant.expiresAt.toISOString(),
+      },
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: "ACCOUNTANT_ACCESS_GRANTED",
+          destination: accountant.id,
+          payload: {
+            grantId: grant.id,
+            organizationId,
+            role: grant.role,
+            expiresAt: grant.expiresAt.toISOString(),
+          },
+        },
+      ],
+    })
+
+    if (receiptKey) {
+      const receipt = await recordBusinessEventInTx(tx, {
+        organizationId, actorId, eventSource: "INTERNAL",
+        eventType: "ACCOUNTANT_ACCESS_GRANT_COMMAND_APPLIED", idempotencyKey: receiptKey,
+        sourceEntityType: "AccountantAccessGrant", sourceId: grant.id,
+        payload: { commandHash, grantId: grant.id },
+      })
+      await markBusinessEventAppliedInTx(tx, organizationId, receipt.event.id)
+    }
+    return toDto(grant, now)
+  }).catch((error) => {
+    if (isActiveScopeUniqueConflict(error)) {
+      throw new ConflictError(ACTIVE_GRANT_CONFLICT_MESSAGE)
+    }
+    if (error instanceof ApplicationError) throw error
+    throw new ApplicationError(
+      "INTERNAL_ERROR",
+      "Accountant access could not be granted safely.",
+      500,
+      false,
+    )
+  })
+}
+
+export async function revokeAccountantAccess(
+  organizationId: string,
+  actorId: string,
+  input: RevokeAccountantAccessInput,
+  now = new Date(),
+): Promise<AccountantAccessGrantDto> {
+  return db.$transaction(async (tx) => {
+    const existing = await tx.accountantAccessGrant.findFirst({
+      where: { id: input.grantId, organizationId },
+    })
+    if (!existing) throw new NotFoundError("Accountant access grant was not found.")
+    if (existing.status === AccountantAccessStatus.REVOKED) {
+      return toDto(existing, now)
+    }
+    if (existing.expiresAt <= now) {
+      await retireExpiredAccountantAccessGrantInTx(
+        tx,
+        organizationId,
+        existing,
+      )
+      return toDto(existing, now)
+    }
+
+    const transition = await tx.accountantAccessGrant.updateMany({
+      where: {
+        id: existing.id,
+        organizationId,
+        status: AccountantAccessStatus.ACTIVE,
+        activeScopeKey: existing.activeScopeKey,
+        expiresAt: { gt: now },
+      },
+      data: {
+        status: AccountantAccessStatus.REVOKED,
+        activeScopeKey: null,
+        revokedById: actorId,
+        revokedAt: now,
+        revocationReason: input.reason,
+        correlationId: input.correlationId || existing.correlationId,
+      },
+    })
+    if (transition.count === 0) {
+      const latest = await tx.accountantAccessGrant.findFirst({
+        where: { id: input.grantId, organizationId },
+      })
+      if (!latest) {
+        throw new NotFoundError("Accountant access grant was not found.")
+      }
+      if (latest.status === AccountantAccessStatus.REVOKED) {
+        return toDto(latest, now)
+      }
+      if (latest.expiresAt <= now) {
+        await retireExpiredAccountantAccessGrantInTx(
+          tx,
+          organizationId,
+          latest,
+        )
+        return toDto(latest, now)
+      }
+      throw new ConflictError(
+        "Accountant access changed before revocation completed.",
+      )
+    }
+
+    const grant = {
+      ...existing,
+      status: AccountantAccessStatus.REVOKED,
+      activeScopeKey: null,
+      revokedById: actorId,
+      revokedAt: now,
+      revocationReason: input.reason,
+      correlationId: input.correlationId || existing.correlationId,
+    }
+
+    await recordBusinessEventInTx(tx, {
+      organizationId,
+      eventType: "ACCOUNTANT_ACCESS_REVOKED",
+      eventSource: "INTERNAL",
+      idempotencyKey: `accountant-access-revoked:${grant.id}`,
+      actorId,
+      // Access grants are not accounting sources; retain their domain type in event metadata.
+    metadata: { sourceEntityType: "AccountantAccessGrant" },
+      sourceId: grant.id,
+      payload: {
+        grantId: grant.id,
+        accountantUserId: grant.accountantUserId,
+        revokedAt: now.toISOString(),
+        reason: input.reason,
+      },
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: "ACCOUNTANT_ACCESS_REVOKED",
+          destination: grant.accountantUserId,
+          payload: { grantId: grant.id, organizationId },
+        },
+      ],
+    })
+
+    return toDto(grant, now)
+  })
+}
+
+export async function getAccountantAccessRegister(
+  organizationId: string,
+  now = new Date(),
+  client: DbClient = db,
+): Promise<AccountantAccessGrantDto[]> {
+  const grants = await client.accountantAccessGrant.findMany({
+    where: { organizationId },
+    orderBy: [{ status: "asc" }, { expiresAt: "asc" }, { createdAt: "desc" }],
+    take: 100,
+  })
+  const people = grants.length ? await client.user.findMany({
+    where: { id: { in: grants.map(g => g.accountantUserId) } },
+    select: { id: true, name: true, email: true },
+  }) : []
+  return grants.map((grant) => {
+    const person = people.find(p => p.id === grant.accountantUserId)
+    return { ...toDto(grant, now), ...(person ? { accountantName: person.name, accountantEmail: person.email } : {}) }
+  })
+}
+
+export async function resolveAccountantClientAccess(input: {
+  homeOrganizationId: string
+  clientOrganizationId?: string | null
+  accountantUserId: string
+  capability: AccessCapability
+  permission?: string
+  now?: Date
+  client?: DbClient
+}) {
+  const targetOrganizationId =
+    input.clientOrganizationId || input.homeOrganizationId
+  if (targetOrganizationId === input.homeOrganizationId) {
+    return {
+      organizationId: targetOrganizationId,
+      mode: "TENANT_MEMBER" as const,
+      grant: null,
+    }
+  }
+
+  const now = input.now ?? new Date()
+  const client = input.client ?? db
+  const grant = await client.accountantAccessGrant.findFirst({
+    where: {
+      organizationId: targetOrganizationId,
+      accountantUserId: input.accountantUserId,
+      status: AccountantAccessStatus.ACTIVE,
+      revokedAt: null,
+      revokedById: null,
+      effectiveFrom: { lte: now },
+      expiresAt: { gt: now },
+      activeScopeKey: { in: accountantScopeKeys(targetOrganizationId, input.accountantUserId) },
+      organization: {
+        is: { isActive: true, deletedAt: null },
+      },
+    },
+  })
+
+  if (!grant) {
+    throw new ForbiddenError("No active client consent grants access to this organization.")
+  }
+  await assertManagedAccountantAccess({ homeOrganizationId: input.homeOrganizationId,
+    clientOrganizationId: targetOrganizationId, accountantUserId: input.accountantUserId,
+    grantId: grant.id, activeScopeKey: grant.activeScopeKey, capability: input.capability,
+    permission: input.permission, now }, client)
+  if (
+    input.capability === "EXPORT" &&
+    grant.role === AccountantAccessRole.READ_ONLY
+  ) {
+    throw new ForbiddenError("This accountant grant is read-only and cannot export client data.")
+  }
+  if (
+    input.capability === "REVIEW" &&
+    grant.role === AccountantAccessRole.READ_ONLY
+  ) {
+    throw new ForbiddenError("This accountant grant is read-only and cannot request client work.")
+  }
+
+  return {
+    organizationId: targetOrganizationId,
+    mode: "DELEGATED_ACCOUNTANT" as const,
+    grant: toDto(grant, now),
+  }
+}
+
+export { toDto as toAccountantAccessGrantDto }
+
+// Keep the public access-service entry point; the actor now comes from protect.
+export async function getAccountantPortfolio(
+  actor: import("./accountant-portfolio.service").AccountantPortfolioActor,
+  input: import("./accountant-access.schemas").AccountantPortfolioInput = {},
+): Promise<import("./accountant-portfolio.service").AccountantPortfolio> {
+  return (await import("./accountant-portfolio.service")).getAccountantPortfolio(actor, input)
+}

@@ -1,0 +1,12 @@
+import { STOQUIFY_MARK_FACES, STOQUIFY_MARK_PATH, STOQUIFY_WORDMARK_PATH } from "@/components/global/stoquify-logo-artwork"
+
+// The same artwork as the application logo, sized for illustrative screens.
+export function PreviewLogo() {
+  return <svg className="preview-logo" viewBox="0 0 350 80" role="img" aria-label="Stoquify">
+    <g transform="translate(0 5)">
+      <path d={STOQUIFY_MARK_PATH} fill="var(--product-brand, #2f7df6)" />
+      {STOQUIFY_MARK_FACES.map(face => <path key={face.token} d={face.path} fill={`var(${face.token}, ${face.fallback})`} />)}
+    </g>
+    <g transform="translate(88 7.75) scale(0.9923076923)"><path d={STOQUIFY_WORDMARK_PATH} fill="currentColor" /></g>
+  </svg>
+}

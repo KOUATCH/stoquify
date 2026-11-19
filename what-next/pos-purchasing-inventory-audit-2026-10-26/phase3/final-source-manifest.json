@@ -1,0 +1,4137 @@
+{
+  "at": "2026-10-26T15:41:22.764Z",
+  "head": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "phase2OwnedDrift": [],
+  "files": [
+    {
+      "path": "actions/accounting/__tests__/journals-posting.actions.test.ts",
+      "sha256": "295096b0c83b9cb668f47dc10636c785ccee78d995dfaabab276951ed3333644"
+    },
+    {
+      "path": "actions/ai/__tests__/copilot-proposal.actions.test.ts",
+      "sha256": "e6fdfae9bd9fe096549eee18c82dcaea7c2317e9edf6172a3fac8b3f22d58df1"
+    },
+    {
+      "path": "actions/ai/copilot-proposal.actions.ts",
+      "sha256": "66baa4a61a599a917992485bc371af1f2540749ec430b17fc28f769ba8b21c9d"
+    },
+    {
+      "path": "actions/assurance/__tests__/pos-cash-shortage-resolution.actions.test.ts",
+      "sha256": "ed6059dabc5935aa4c207a19ff4b27ba00856ed40406588562a8c67107131178"
+    },
+    {
+      "path": "actions/assurance/pos-cash-shortage-resolution.actions.ts",
+      "sha256": "862b113d70191082d899bcd53a734534f9752d347e8889f56bee7718569d2774"
+    },
+    {
+      "path": "actions/inventory/__tests__/inventoryLossControlActions.test.ts",
+      "sha256": "1cb9003641909119c0effaba0ba0d0675db99536b22fbcf99dd6881472199f12"
+    },
+    {
+      "path": "actions/inventory/__tests__/inventoryLossReadActions.test.ts",
+      "sha256": "8fcfa857424f1dd059fb86ab5e96e0dfcd7dbbabfcf2e21e52507ddd3ec5a67d"
+    },
+    {
+      "path": "actions/inventory/__tests__/inventoryMovementActions.test.ts",
+      "sha256": "32ad752d0ef9e27df0fb61f83871ff4c3441de40b690701f120cfc318cf8903e"
+    },
+    {
+      "path": "actions/inventory/__tests__/inventoryMovementHistoryActions.test.ts",
+      "sha256": "53a0a7e603fd71b630514ec4e80dde322c4393b4663405b6b9a7be78215de0ce"
+    },
+    {
+      "path": "actions/inventory/__tests__/inventoryMovementHistoryBackgroundExportActions.test.ts",
+      "sha256": "13c3a503e0ad44e5b5ab4e5c91f974ba12b39a69a04d31bcd0f2da60e7dfb120"
+    },
+    {
+      "path": "actions/inventory/__tests__/inventoryReservationActions.test.ts",
+      "sha256": "6d5521338c5702750354c26bbc4e307775b1301005c5375401747d90dfb3adb1"
+    },
+    {
+      "path": "actions/inventory/__tests__/transferLifecycleActions.test.ts",
+      "sha256": "688a23a1230b13713a43425f339f68383c98ac37f2410e187f340e5c1ba2b213"
+    },
+    {
+      "path": "actions/inventory/inventoryActions.ts",
+      "sha256": "2461fc1c3c29ed9d8427dc88b926b463b89956c827dc2d1d51274dbe54ecb457"
+    },
+    {
+      "path": "actions/inventory/inventoryLossControlActions.ts",
+      "sha256": "537c584eb64b07faa49fc6df4172df25c2ef11e30fff29bb4f2d82e6d9eb8af1"
+    },
+    {
+      "path": "actions/inventory/inventoryLossReadActions.ts",
+      "sha256": "8e13f4d02b4626c79b62e16f4d0ddcd7c51dc531a2651bba711e7c7af7b3dc16"
+    },
+    {
+      "path": "actions/inventory/inventoryMovementActions.ts",
+      "sha256": "573d57e02faa6e3f82e69a6c1dc29ef740567e856b4980222081a78f1c931b03"
+    },
+    {
+      "path": "actions/inventory/inventoryMovementHistoryActions.ts",
+      "sha256": "0a45f047c83eb9bdc84819022688d78d09049ce9e484aeb81606faf353ebb71f"
+    },
+    {
+      "path": "actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts",
+      "sha256": "be7fcaddac60a6fb85c4dbf1f02a76fdf41f67c8ce236d454d6212ca25aeb890"
+    },
+    {
+      "path": "actions/inventory/transferLifecycleActions.ts",
+      "sha256": "425bc7ccd5e5ddbb9af846365f3ecb99e6da38a60c22c3bc8ff94d213a8c91f3"
+    },
+    {
+      "path": "actions/itemsShow/__tests__/updateItemStockById.test.ts",
+      "sha256": "69fd46323eaceb173863be2d5a1baf78be980f29e2c7ed0abca7f61c913d2dc5"
+    },
+    {
+      "path": "actions/itemsShow/getOrgItemsWithInventoryLevels.ts",
+      "sha256": "fdd735f2421e2a076f7d3b828494bb95fb11aa2029bddf9a63b5aa03dab49713"
+    },
+    {
+      "path": "actions/itemsShow/getOrgItemsWithInventoryLevelsLocation.ts",
+      "sha256": "111a733d545ae781fd7f907089c6a759adf6791615424874901a9b3b2717a06f"
+    },
+    {
+      "path": "actions/itemsShow/updateItemStockById.ts",
+      "sha256": "7aacebc8f21e722d1880174aa3ea37ed5cfe56ef365ad6b66817a2787dc192d3"
+    },
+    {
+      "path": "actions/modules/__tests__/module-composition.actions.test.ts",
+      "sha256": "90561f3fa5e211f01e5e8583b28183f2d5bf67e600174f8828643bc2812b9846"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "c3a990366ed83e52259f25ff373b96dd35d2b7b1c3930436120e38499525fbd8"
+    },
+    {
+      "path": "actions/onboarding/opening-cutover.actions.ts",
+      "sha256": "6d8a5f0670aa3f71ea7bf1c95fb99548e301389689c5e44cbc0b50de6170c96f"
+    },
+    {
+      "path": "actions/onboarding/opening-position.actions.ts",
+      "sha256": "832a7abc12dace40c9f347d65ebefa051714bf4ef11e1f9b77f902f84add8ab7"
+    },
+    {
+      "path": "actions/pos/__tests__/cart-write-access.actions.test.ts",
+      "sha256": "9ca6376dcc14d177df5a81bc163ef054146d3c84721d6cd5162a0d38fd7c6431"
+    },
+    {
+      "path": "actions/pos/__tests__/cash-payment-history.actions.test.ts",
+      "sha256": "1e8c57930046584db565d0f033ced774374733200b5c7302dbd12ef941fde206"
+    },
+    {
+      "path": "actions/pos/__tests__/catalog.actions.test.ts",
+      "sha256": "be682aabe75c84fb26e922f5c5b88fd7c817e7ff1359059a06420e7fc98840ff"
+    },
+    {
+      "path": "actions/pos/__tests__/commit-recovery.actions.test.ts",
+      "sha256": "bb714d633bb0bce6131a2bb1a9ecadab7942033e43d0b98355513cf033afccbc"
+    },
+    {
+      "path": "actions/pos/__tests__/drawer-dashboard.actions.test.ts",
+      "sha256": "46a4612fa85c2d306b8166f1c7a8b84aa04bfc76c52001bd7557eac72f611f76"
+    },
+    {
+      "path": "actions/pos/__tests__/offline-review.actions.test.ts",
+      "sha256": "4e9b6304ddb76e5a2a14eeae54e6a75424792e83af83dfed62d1d5fabb725549"
+    },
+    {
+      "path": "actions/pos/__tests__/receipt-token.actions.test.ts",
+      "sha256": "03b09a3209a865e2f21a18d62f615f6f9c926834030a0fb1cce3bdde043db6c6"
+    },
+    {
+      "path": "actions/pos/__tests__/session.actions.test.ts",
+      "sha256": "2ae9b2904fb38b751e50ddbe8c3be5ff8a94c713042021bf139141ea59132d7c"
+    },
+    {
+      "path": "actions/pos/__tests__/shift-open-policy.actions.test.ts",
+      "sha256": "b232702a3c8dea9ff6a378617faea79ee30037863912e0000511f0736168146f"
+    },
+    {
+      "path": "actions/pos/__tests__/sync.actions.test.ts",
+      "sha256": "f6d473c791cacd127c8d11f43c40e35e44577eba1e2ee8a1a4cd0f94234e6df3"
+    },
+    {
+      "path": "actions/pos/__tests__/tender-electronic-authority.actions.test.ts",
+      "sha256": "9be1365570bed99db51d3e12198858755898c99369e844c1b6f168992576a6ae"
+    },
+    {
+      "path": "actions/pos/__tests__/tender.actions.test.ts",
+      "sha256": "ad6077ad2e51cd8c6d00355023708d2bd3aa9758822b9948134a5259ef6bc137"
+    },
+    {
+      "path": "actions/pos/__tests__/terminal-management.actions.test.ts",
+      "sha256": "a8ded632f9eb1261fc544bc5d37675b1826c8465c639e5bf03810d9a0d434c3d"
+    },
+    {
+      "path": "actions/pos/cache-revalidation.ts",
+      "sha256": "b689a0900302afa27bb4ffef59ef7e64ad6b3de73ff3acb1547799e7b99229c4"
+    },
+    {
+      "path": "actions/pos/cart.actions.ts",
+      "sha256": "9eea8030271896230e0e02d28fa5993c24b6ba240809616df47f1a50ddc73c26"
+    },
+    {
+      "path": "actions/pos/cash-payment-history.actions.ts",
+      "sha256": "7d80c0b765a2d1a11d46e159f7ce5acef7193871a1c69dc7062164f72152b74e"
+    },
+    {
+      "path": "actions/pos/catalog.actions.ts",
+      "sha256": "38d343f7070c5b448bb81abe467384fde980fac4f7fbf6da104662cb0d1de245"
+    },
+    {
+      "path": "actions/pos/checkout.actions.ts",
+      "sha256": "aa8eb935fe1e3d6846e246eb4da0f42e3a824393d585ba94db2cac4a1e799f27"
+    },
+    {
+      "path": "actions/pos/commit-recovery.actions.ts",
+      "sha256": "8b1b6f844a55e0244993a60f83167b4183eb8b7afef80a2c313d501f246353b5"
+    },
+    {
+      "path": "actions/pos/drawer-dashboard.actions.ts",
+      "sha256": "d92847a55e816a276764a38b12c0713c4878edf17d98fb7b1246e4208bc031e8"
+    },
+    {
+      "path": "actions/pos/offline-review.actions.ts",
+      "sha256": "8a3956987a17856ae6215784e24f1be77d0de184781427d1fa8026837ece2283"
+    },
+    {
+      "path": "actions/pos/receipt-token.actions.ts",
+      "sha256": "927fbae2768c868dbdd195a2c0502aeae54cf630928ca0b711507293d0eb942e"
+    },
+    {
+      "path": "actions/pos/session.actions.ts",
+      "sha256": "db6ab09ed4bff4287159357557747f47ffa45857c963a71b51cc2e202b3f8556"
+    },
+    {
+      "path": "actions/pos/sync.actions.ts",
+      "sha256": "495d576666ce7b230b38ce4642cb2b1497c777dfa9cced9d401ceb64482007ae"
+    },
+    {
+      "path": "actions/pos/tender.actions.ts",
+      "sha256": "af8ab17e288dbd678fc8ab053f25913a49f34ccae3cd730a1bf499b1aba3f0fd"
+    },
+    {
+      "path": "actions/pos/terminal-management.actions.ts",
+      "sha256": "2410740489c106969f2db5ebea42845dc1e294bd75d18af3c22f8468b592bccd"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts",
+      "sha256": "5b2c4b568eccbefbe0835e989a100912b15541c0a592e32aa968e98d034be834"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/goods-receipt-read.repairs.test.ts",
+      "sha256": "42aefe08c306214ceda4458b2d647d3446a279134098d63c94152541e1b53130"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/purchase-order-amendment.actions.test.ts",
+      "sha256": "ff00da6db216f2ecee270f26a96aecc0dc0c0f8aed0e4cf9b4653500fad49650"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/purchase-order-authoring.actions.test.ts",
+      "sha256": "f3154edb1ce32564cd35a1935904871cfd1957c6a9e5df97657739dd03d4759d"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/purchase-receiving.actions.test.ts",
+      "sha256": "fcf84a58ada88ac2aa756eb27a15b6f588a0fb2717e4b2904eca29e5f1753c7b"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+      "sha256": "af16dfa0b0f0f3b861e90e6b954836947bfc00a370a1d293ecf370a36dece1ae"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/receipt-ledger-recovery.actions.test.ts",
+      "sha256": "4f536b6264e7bc0c45322b086f2163090c1a9d496325794fc41a49b891f7e8ec"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/supplier-po-buyer.actions.test.ts",
+      "sha256": "db82599a577523d1165a8c74db4f0d10405f0f28c4d0f91c959b40ed0f1c3061"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/newPOActions.ts",
+      "sha256": "29f2b636b22ed068cf66b28c7f0dfc4336307414954626ed1f07d9eab9ac0f77"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchase-order-amendment.actions.ts",
+      "sha256": "3832ddb87d662c2d178c33f465da781e8d2c1a85faea438c3c8ae8a3b6fce511"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchase-order-authoring.actions.ts",
+      "sha256": "5bb81037588b10461146fefe89cb54fe93660e6cb19a76ed52e8a16d1bf5ebb2"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts",
+      "sha256": "bd48c6d636ce68c52568103d91bcfe55cd37b7dd0a9fd45d52a2c461f73ea4cd"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+      "sha256": "68bdb6b7118b8461f7c8df7129798d65f6c285609d7e7651e917daabbdb9eb1e"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts",
+      "sha256": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376"
+    },
+    {
+      "path": "actions/purchasing/__tests__/ap-control.actions.test.ts",
+      "sha256": "8a58474d0ca6925feaba5d3e04a4e29c07a70bd236c03690e923aadd9b72dfbb"
+    },
+    {
+      "path": "actions/purchasing/__tests__/ap-history-export.actions.test.ts",
+      "sha256": "fc36196404532c38cd92d32384c0b3eff44035e89d72984a8a0d3e0d3e212e99"
+    },
+    {
+      "path": "actions/purchasing/__tests__/invoice-approval.actions.test.ts",
+      "sha256": "b0b1d4ef62372b6c152ff8299963166ed54678c1eb470d78db7010407480e631"
+    },
+    {
+      "path": "actions/purchasing/__tests__/invoice-correction.actions.test.ts",
+      "sha256": "96bee851ce25d1b04221ec4bcd06bddb605e3dd34cd575709af28b23cd5717f7"
+    },
+    {
+      "path": "actions/purchasing/__tests__/invoice-ledger-recovery.actions.test.ts",
+      "sha256": "d22274c8e930544ba40c6c48944a904403824eb2f9250941c29425cc0688c159"
+    },
+    {
+      "path": "actions/purchasing/__tests__/invoice-match-exception.actions.test.ts",
+      "sha256": "90a4629b01f49f79210b00038bdd0511b644d120246694dbd3e03abf4460b308"
+    },
+    {
+      "path": "actions/purchasing/__tests__/invoice-preparation.actions.test.ts",
+      "sha256": "f35191435e85b4cbbc923bf64096b0083ea085ebcf541d6380cad19700a28844"
+    },
+    {
+      "path": "actions/purchasing/__tests__/payment-reconciliation.actions.test.ts",
+      "sha256": "6d0ced502eeba8a50cd502b5000e26c6cb826f4b1a3c4adb852e6c8b63da7013"
+    },
+    {
+      "path": "actions/purchasing/__tests__/payment-request.actions.test.ts",
+      "sha256": "0d1c459518598c6aa4fe73d8da22e20f86ef1a20b85bb7ea1b4ca09e15a8e451"
+    },
+    {
+      "path": "actions/purchasing/__tests__/purchase-return-credit.actions.test.ts",
+      "sha256": "6105dce095852831f90afef890619cec377c16ae32edb3fd5a429280bf23d430"
+    },
+    {
+      "path": "actions/purchasing/ap-control.actions.ts",
+      "sha256": "111412de7217d9417797aac0ff85309bb9c670f67fb3eb69ae9fbd9fdac7a4de"
+    },
+    {
+      "path": "actions/purchasing/ap-history.actions.ts",
+      "sha256": "0e271374f96051f6ac9329361f6b75acd035ba385109bf30aa9ef1e4360a6fa7"
+    },
+    {
+      "path": "actions/purchasing/invoice-approval.actions.ts",
+      "sha256": "fd2d31f8260450fa7a815ac61006ab92f1359c2519f397cf0c1fbd2f8e30d95e"
+    },
+    {
+      "path": "actions/purchasing/invoice-correction.actions.ts",
+      "sha256": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e"
+    },
+    {
+      "path": "actions/purchasing/invoice-ledger-recovery.actions.ts",
+      "sha256": "148b144288aac64ae8859b0a6d3396b5790a99cc6c0f3f4bba0bf701c3d95e7b"
+    },
+    {
+      "path": "actions/purchasing/invoice-match-exception.actions.ts",
+      "sha256": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e"
+    },
+    {
+      "path": "actions/purchasing/invoice-preparation.actions.ts",
+      "sha256": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842"
+    },
+    {
+      "path": "actions/purchasing/payment-reconciliation.actions.ts",
+      "sha256": "e00fc91190872c0a5011ae9fcc125ba4d6d7f1cfa238cd2321c5721437510471"
+    },
+    {
+      "path": "actions/purchasing/payment-release.actions.ts",
+      "sha256": "201352770e7d1e8e99543337fb005c440fd9675843b0fb6ce84b91608eb9dec3"
+    },
+    {
+      "path": "actions/purchasing/payment-request.actions.ts",
+      "sha256": "5781766a150686ddda353f9efac90f1274c04cf28d7ca48a7e3c51856bd3ba8b"
+    },
+    {
+      "path": "actions/purchasing/purchase-return-credit.actions.ts",
+      "sha256": "3c04387ca92083a200f4950425a9e3442daa69f25a21b7fb676841ee5dbdcf89"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/opening-position/page.tsx",
+      "sha256": "1bffe3cc4c2b9f5454019845feb3332ed91f8c86865f6bbaf4cf18720f5b0fcb"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/proposal-availability.test.tsx",
+      "sha256": "7c7c30266af1647bc1910bf2a76be311fe7410dab86b6365a63a020a13a7ff8c"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx",
+      "sha256": "7f69a100ccb0c0968cb33b7643b9740c4f6a47a2317876fa13fabe714a91f1d6"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/__tests__/route-audit.test.ts",
+      "sha256": "9df3c8a5c97c83cf9b0bf0a47bad838459ff364f320819d1db53183dc2a01d9f"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx",
+      "sha256": "74ea2bde396784f70f1cb6d9bc191d95565867b3aaa7f6f99479f9e81d352818"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx",
+      "sha256": "f276afa1d508c81c5f7934856a2906670e8c8d69281ec8486f3a96d3b5258b00"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/brands/layout.tsx",
+      "sha256": "7e963e96c4ec74d7cf739ce502f461ebb4914fb35370af9ee04e00625cd86925"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx",
+      "sha256": "8f4f094537896105a3ed62da2dd8b09fbad131e498b507466f70718b8678f5be"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx",
+      "sha256": "b02d6d16abb0f558a784ff44e4eafe0666f4f36b3131f7b58284495975c0fed1"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx",
+      "sha256": "9b45adf511e54832f0899350934f92a85265e8d6f612941f2547d1fa99eb9c9d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx",
+      "sha256": "b9e827ca582e229c8dc7757e35c92b7848f0553b13705afcd9b10a1d2e361da0"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/categories/layout.tsx",
+      "sha256": "22a5ff6c85f619cf410b2d258a14f175df67b3b0a9c358a8b28daf7836aaffce"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx",
+      "sha256": "1847fec5554cdf731c66728df3a945300394e06537c73da1899d29f12f8ab50b"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/error.tsx",
+      "sha256": "99cbfa5afef8a3a7c8587e7a7141cbc53569cdaace96c27a338ebae345bd5795"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx",
+      "sha256": "9ef75679fa8d46327aa1235e216782525bf4aad0753571029657621468539c21"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+      "sha256": "9d2016d412e6155349617b0f348f69213360003ea6093af62e5b0ddf6713df2e"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/__tests__/page.test.tsx",
+      "sha256": "dab9ca8189329734c4422e963137c047b2a46b5549e226a9e92192dd36e702db"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/EditItemClient.tsx",
+      "sha256": "5c2fbc2497129126722e1739e671a6d3b3b2736e946c90bc84ced93c5dc8ccd8"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/__tests__/page.test.tsx",
+      "sha256": "407cf8cd576464afe01eb97d557920976a58ada67639dc0573eeba3bc2595952"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx",
+      "sha256": "7f277f865e3af7b9271c620183245c540b73ec78bd824aa7b17da52036bcd6db"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/others/page.tsx",
+      "sha256": "199d8c6a77afc2460d0d9776180a54609b72429ddee9c3c57ce9d3aa8f5ac7d1"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/page.tsx",
+      "sha256": "e4881c2d87de049e6711200edd442298cdbb20644398025146a50054481cfa5f"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx",
+      "sha256": "48e18dadf1655aa40d0ee8e9cce1bd66ef92d2ba3d3bf810b4b9fa97a1a6cbd1"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/LayoutItemSuppliers.tsx",
+      "sha256": "7041df82c94c1fa309ea0055e0c46a9389f15de3b698ce38b1e8222d92caec59"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx",
+      "sha256": "cb68adb6456fe3b654df2ef087a522bb2321d33d21d46c271bbfb91166c0d46e"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SuppliersList.tsx",
+      "sha256": "fcd63f5c850969ec7382880c5186c1b7e3066b771d24308206ca29aed1e38804"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/__tests__/SuppliersList.test.tsx",
+      "sha256": "daa701434ff5adf01717a5c4d8ff8819cdfeedaecf2829f5ba1415f14ec174eb"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/__tests__/page.test.tsx",
+      "sha256": "b741a64997e854f597bd8c37ccebf0faa8f62ba91ec0cf03605a728984b022e9"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/page.tsx",
+      "sha256": "e8b889bfda0842cb2e78df6fdffb214191203b6cf311adac8049ed8c3379c5cc"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/create/__tests__/page.test.tsx",
+      "sha256": "968d27c7c0544db05622d373b0217c843cf1684be9133d03613a9d449f58543d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx",
+      "sha256": "69f50ac1c2c5c6b304af1f92853eda02819fa5e9d6a306f08a5606ad2fd8dd7e"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/new/__tests__/page.test.ts",
+      "sha256": "0a9e9440a4b79045433f7fde867780f7cfd8dc9e1dcdef5d20c7fc6a94c125e2"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/new/page.tsx",
+      "sha256": "895dd0050a9dbfeb3a76240f94d807913ad9bbe41fb4c6621162e2ad9321690b"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
+      "sha256": "136cb460c1f829032de4bceded018327aed7e06bd1a270b52f87e4d695aff0f3"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/loading.tsx",
+      "sha256": "70b981b0958bd56d866812deb70ca8f588dceeb6c4745335688cf458c8138fa1"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/loss-control/__tests__/page.test.tsx",
+      "sha256": "01ea5941f2164ba14ec84f1e305f5053dfb7b614248342af3d9b7868782cd295"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx",
+      "sha256": "5e8c5a91d0706a0c0e97997a2b996a5a27d6528a05698c30ae80c2b6d945ab30"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+      "sha256": "8b1f0267621b83aeadfe50bb2a6a5a474216f9ac51a51e9b4894d6e66d285e9d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/page.tsx",
+      "sha256": "e8a071766d8852da439a8a8ac4e518978db664a0a1bd388c2f6ca4ff4ed5ac80"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/transfers/[id]/page.tsx",
+      "sha256": "df4a09987c354dd9ebcf4aa1e12cc3650b50c042764897cde0872b6e028c3625"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/transfers/create/page.tsx",
+      "sha256": "b266ac70033da806b401c293486a5abee94d6e32d20ce364f9553eb5f21657d5"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/transfers/page.tsx",
+      "sha256": "cb0e725262255e56706938778fd584ffe88945820122ffef136fc92307f0b307"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx",
+      "sha256": "9c1a2826c8d9f46f3d765835ced582a4cfb5f22d922f03ad61759a2326686073"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx",
+      "sha256": "d7bc3eb6e5666d9ea219c59933e6717f0ac9455ff177dde03cf96853cfc1923b"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/units/layout.tsx",
+      "sha256": "1d34a8bf9205b8a664dcd970591cf6bc1a2b90b3c6bceb07970bc943dcd756f6"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx",
+      "sha256": "deaeda3f0b7ad9f70d6298df4f4f529d5c8bad3647b15dba6a340a5981a466a2"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/pos/__tests__/page.test.tsx",
+      "sha256": "de9c6d7213cc5e513fd3c10d6536d245d906f1aa350ed9a4d9daceeb787466f6"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/pos/__tests__/route-audit.test.ts",
+      "sha256": "b9d6d4f9d38cb75ede342eac4715fab46dee93580f96ef3cbb2f6fd8ceaea0f5"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/pos/error.tsx",
+      "sha256": "8f99f646c6b37e1aa996e6c534c5bbbd334827a431cb0fb5da29bbf0e5d43b31"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/pos/page.tsx",
+      "sha256": "f441cdcdcb6ff88008d971a6fa689f23926a193f9a5c8afd5aa0426e07a68657"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/pos/pos-route-access.tsx",
+      "sha256": "0cb31eb9be8ad62e810e1cb8d2c19e88d58ba7a365acbcc86aeb429a98515bff"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/pos/pos-route-data-access.ts",
+      "sha256": "e0eb8aca266b3e02d7c4a75ed4844f3e5d85a1a68258ea60d48a2b7c918285f9"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/__tests__/page.test.tsx",
+      "sha256": "8ffe240bc3f4d7b3f548a412841f21f23cc5c59ce178dcdfb62cc1e33e2962c5"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/__tests__/page.test.tsx",
+      "sha256": "c988ed076f891141c6150425bfeae6abf8a9bb7b8bb748854bc2d99092862cd2"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx",
+      "sha256": "d7c4a98b98e9d4383abeabc5967551ba5c8c9d9e8a8f4f27c26a9bdb46037306"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/page.tsx",
+      "sha256": "4552f782eb96deae1d69331ebb436092e4050c4f38d6843e1ad24f1431ed4805"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/__tests__/page.test.tsx",
+      "sha256": "79f9f3e6054afd2fd744767705985d42fa6689d62828d7c3771585e2547b20e1"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx",
+      "sha256": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/__tests__/analytics-route-access.test.ts",
+      "sha256": "bb341c318a1ca551083c4c24629fd8d49fa23aea571692a7bb67dcfd9154ab22"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/__tests__/page.test.tsx",
+      "sha256": "6fe5d570e53f2e8fe5a879afed2a9f12b136ad7e6a577ff200d1069c9a886efd"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/__tests__/route-audit.test.ts",
+      "sha256": "8a06488904f8e97898ca9a83713ac56f2730453d67d90a12e7637f16f4ff9ba0"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/analytics/analytics-range.test.ts",
+      "sha256": "6564b2e49b1013303ca1c2a3bb967ce2b227748ad0614aea962c5a47843f4f8d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/analytics/analytics-range.ts",
+      "sha256": "580aa4e2350a4fbe0620ee571d7b3ce83b113465e71c178503cb68e058adf590"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/analytics/page.tsx",
+      "sha256": "c5ce5c095765676af7c56638445c7398692583524b5a560dc74d1171842398b7"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/error.tsx",
+      "sha256": "f8606ec10c222c6e0e1f6c4eb9cefa29b3785191ee6fd9146d7fafbf62232a75"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/loading.tsx",
+      "sha256": "33577e1a7115b8888564062c79e4c725a10a190b3ab0de15e3be45eb23770187"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/__tests__/page.test.tsx",
+      "sha256": "d391cf26ce416c5bf462f8465a399ecb5f84ebade11967b5a4afd099c4489c0d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx",
+      "sha256": "ebf231beee3dea7cd91e811c39725dba516719b324f1578c4a032c057fad4ecb"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx",
+      "sha256": "536f5075893d9ba9ce2288c52d3e65d7bc8bc0ad26aabfdfe36e6f198e4d8b8f"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx",
+      "sha256": "435a2cba578216ee1d78564e391d7cf0ff3f00a52ba224d059f587a25c90e66a"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts",
+      "sha256": "7e669e5976a4ff40ed4528e58bb5dadad6abe47b72058331ceafdb05c952caf7"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/[id]/__tests__/page.test.tsx",
+      "sha256": "7ec7bb332246b6a290ce1bc375de43f1a49b444f1ef4b8e89aaf7e1ffc7402bb"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/[id]/page.tsx",
+      "sha256": "e5c67ef398005c10fbebee3be3642298075731a2f7e79d50387721c550f735e5"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/__tests__/page.test.tsx",
+      "sha256": "201df360f29e8f85ba9b681080ba8ba6bbbb54c859d202bd75a5b4084ecde690"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/__tests__/route-audit.test.ts",
+      "sha256": "f1226ffbe6c553b594f16c9d776f86b8986ff912496b1da2ff171892b5b293bf"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/error.tsx",
+      "sha256": "ce3492b28005949ab6aaa86c5b6c6dc72253e1f729a1b641c5ebd6163bf979c2"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/page.tsx",
+      "sha256": "d0a98ec39c6380eeb4b865111606c5b6f6ba27dad5386914924c2deb2e115075"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/__tests__/page.test.tsx",
+      "sha256": "386f522971e99220e65622a6d744c134279ca0cd0ca73c71e4f3da71a280b8a6"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/approve/page.tsx",
+      "sha256": "495dc8ef8acc110694b033dee2bdfd3bc628fb0c1251eafc34e03049a3085950"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx",
+      "sha256": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/request/page.tsx",
+      "sha256": "9d96560f2a9e72443f868f773ac77cb08907ba3f3aff29398cd281447777e654"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/review/page.tsx",
+      "sha256": "5f6285c36d1a078de176c022c93aa1bdbbcba57e956f84aa346280d08d1ce2af"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/history/__tests__/page.test.tsx",
+      "sha256": "574124121bfa59d51daf09cf0d0cbc735613362dd8c2bccb3717beb46f2b6a8d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx",
+      "sha256": "0023aa17c5377867874fd8bebb30ca2ca53e951d63012cdd10af111cc706ae97"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/loading.tsx",
+      "sha256": "207e5b04cd3aea516a0e6bf395b4401886bdd48d4dd3d03e4e3bd1a3132a7569"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx",
+      "sha256": "d66268fce6c2c4d0660d9ea628c0da6874630eb8cbac75908f3a2b8909ca3815"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/approve/page.tsx",
+      "sha256": "b34e8c8e5a16c575b2e1ac2587573187cf1ffaa9c2b1f18c9f2b81f2d4691791"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/reconcile/page.tsx",
+      "sha256": "25026a274d725152f874272621e025329a2b5fc330efdd22aaf19331d86c6776"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/record/page.tsx",
+      "sha256": "bec844b1464db9fe8b6bfa83fbbbe7708d847b59511695af27da5c1ade5a6f12"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/recovery/page.tsx",
+      "sha256": "e4d0ac7645f12a197b5e10bfc5dc4243459b3a6a7bd67cab3519d9a20979beca"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/request/page.tsx",
+      "sha256": "df54ade3181083871b534865c092651f4ed8f9588dc5040c756e9bbb8f0a0e7e"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx",
+      "sha256": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/payables/recovery/page.tsx",
+      "sha256": "ba5460787fcf83e49a79b6fa3c2a0eecf7c401ec72b67f58ac2ab4240d85f59d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchase-route-redirect.ts",
+      "sha256": "09f53df2ce41fe9e4d4566313cf7925fc407dddf73cc4a875e3a61477829114b"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx",
+      "sha256": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "sha256": "2b166bfa94aeae5086cfb7c752fa1036c4f403f47b8ec29484978a80f27b1d2c"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/edit/page.tsx",
+      "sha256": "20ed5cc24c258c1cf1ca26370b56d8fffddd38e302644cfb37ce6dd4102084e1"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/page.tsx",
+      "sha256": "f438eddc72f9b9ba975aa7d92f1dec1d6ebb67016c120338a1d1ab17625dc752"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/__tests__/layout-boundary.test.tsx",
+      "sha256": "627a51d4fc4e614de00314c480d5d50c67858ec7ce90cab5baaab20474181c44"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/__tests__/page-boundary.test.tsx",
+      "sha256": "2e58b48179711bc368ef3cee20ee9aee210fcf4f6850f1721b2fdc67e9aa2771"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/create/page.tsx",
+      "sha256": "45d09b16d65d23c7a35bc2fd787678656f2cb9bff62567d42ea0ef6edeb49368"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/layout.tsx",
+      "sha256": "143a972635bf098947acb2ae639dc0deaee4df5494e2b07f33b60c95460104a3"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/loading.tsx",
+      "sha256": "c619905149964a4d1daec4d8dee876b699ff7a45d5ef822a775eafb2f0c58055"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/page.tsx",
+      "sha256": "ed1d32be4007ea90372980260e87caa546ccc05bc0c068a754d52bd79840f6a2"
+    },
+    {
+      "path": "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx",
+      "sha256": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee"
+    },
+    {
+      "path": "app/[locale]/supplier-purchase-order/[envelopeId]/__tests__/SupplierPoAcknowledgementPortal.test.tsx",
+      "sha256": "7c711499d54d0580675d7a4e5762376b3162c123d1fd2d311fb96e91affc1702"
+    },
+    {
+      "path": "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx",
+      "sha256": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b"
+    },
+    {
+      "path": "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts",
+      "sha256": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef"
+    },
+    {
+      "path": "app/globals.css",
+      "sha256": "07118192d482007650eeac42ccd1a37c0c9fbbd6f7cbaa199774a0f4728fdd9f"
+    },
+    {
+      "path": "components/DataTableComponents/inventory-movements-table-contract.ts",
+      "sha256": "7557af9cef589c0c7a979d863c8dd38b9f8bba219ab15f32f381701bd96f3336"
+    },
+    {
+      "path": "components/copilot/CopilotProposalControls.tsx",
+      "sha256": "1eefe402e2f8a187bfc1fbe555607a74b7dacb5fc1273e02e15d90d20153a381"
+    },
+    {
+      "path": "components/copilot/__tests__/CopilotProposalControls.test.tsx",
+      "sha256": "88ef3008fc8e81fc548d09a2027979b554c942e21f9ff06924efc82c1fac63f4"
+    },
+    {
+      "path": "components/inventory/CreateItemWizard.tsx",
+      "sha256": "dbe1121d6dbb17f834959bdd8802c86ecb31ecc5d65b464a4b806140104435d9"
+    },
+    {
+      "path": "components/inventory/EnhancedBrandsManagement.tsx",
+      "sha256": "8c4fc4e06a82e1737bb861a6e37456781b36b2a6e4110f446b3753ec735d3b45"
+    },
+    {
+      "path": "components/inventory/EnhancedCategoriesManagement.tsx",
+      "sha256": "efa8d029490413f4fe5e144f964213a42b9d3335a6a042f405566f89ebe2b3e8"
+    },
+    {
+      "path": "components/inventory/__tests__/CreateItemWizard.media.test.tsx",
+      "sha256": "9c205d51c119763c7a1f50907b2c360e1fac282a7249193e3bdafb2e85391f4a"
+    },
+    {
+      "path": "components/inventory/__tests__/CreateItemWizard.test.tsx",
+      "sha256": "5d243aed68c23d72306ebec1cfe0879477fb3ce89dc0f4192af526fb412d2ada"
+    },
+    {
+      "path": "components/inventory/exportInventoryItemsXlsx.ts",
+      "sha256": "8818643099a48c7dd62235dfdcd780a69c56f73c148aa204aaf48da6063906f0"
+    },
+    {
+      "path": "components/inventory/inventory-items-copy.ts",
+      "sha256": "45b7e7c486615d623dec8131172b73fcd53bdfe2a74671d4d90ac28a849386f4"
+    },
+    {
+      "path": "components/inventory/item-form/ItemReferenceSelect.tsx",
+      "sha256": "905e11d5586ecd11449b6614955e58203a7c69915979599a70df01e4139e5f34"
+    },
+    {
+      "path": "components/inventory/items/ItemOverview.tsx",
+      "sha256": "03df33410da0cab66ced6dd321e634ca07a30386a0718932ceb1cf66b67e08e0"
+    },
+    {
+      "path": "components/inventory/items/__tests__/ItemOverview.test.tsx",
+      "sha256": "7aba5236c897e216814199d0dad98caeecb3df6af5d8ed9054bf8f3506b86b53"
+    },
+    {
+      "path": "components/inventory/loss/InventoryLossWorkbench.tsx",
+      "sha256": "75c4cdedacb49225883f7cb71ba9edf0a3ebb14b32f3702a4f7478bcedd84417"
+    },
+    {
+      "path": "components/inventory/loss/__tests__/InventoryLossWorkbench.test.tsx",
+      "sha256": "6f1462c7df7855fa99e4e54c0edf63cf940b8124824a9f5965cbbf07a1c9e1bd"
+    },
+    {
+      "path": "components/inventory/loss/inventoryLossWorkbenchAdapter.ts",
+      "sha256": "547dcbe8e7f9522b2e2136234279fc7f400ecf6b3a58a9335785934a1c6a8c51"
+    },
+    {
+      "path": "components/inventory/loss/inventoryLossWorkbenchCopy.ts",
+      "sha256": "e1c550a18c7005f85d6accaf1c8f4d7e2a6971b0754de7ea1cab3db623d406fa"
+    },
+    {
+      "path": "components/inventory/movements/InventoryMovementHistoryTable.tsx",
+      "sha256": "7b5643de932670c9a80a985b0144cdcc03578886ade0bf388509b3d6e3f5a9f1"
+    },
+    {
+      "path": "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+      "sha256": "3f04d5895e67467a44092c09f2339507697a66d6f69a2de7349b5947208080e2"
+    },
+    {
+      "path": "components/inventory/movements/StockMovementDashboard.tsx",
+      "sha256": "22a40bd3cc180fbe6b64a5204527c0bbb3940fe1c895e915603a36136fd31da1"
+    },
+    {
+      "path": "components/inventory/movements/__tests__/InventoryMovementHistoryTable.test.tsx",
+      "sha256": "e363fe3e45706f6d6bd849060502d28766c1a9eccbaee95ab13517661ccc430b"
+    },
+    {
+      "path": "components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx",
+      "sha256": "5ba68ba1bcf6e023b735d3aee5db11bccd7e7d0bed06704cb0454db007505cd4"
+    },
+    {
+      "path": "components/inventory/movements/inventoryMovementHistoryAdapter.ts",
+      "sha256": "975f0935b37d3d12197311012db5bc4fe99d5870a839b303d3fb3f7a9d3390ac"
+    },
+    {
+      "path": "components/inventory/transfers/CreateTransferModal.tsx",
+      "sha256": "f7b58e386403eb55c4ab09af0715eb6a085cfb3a2db957df25bb2af699fe0e50"
+    },
+    {
+      "path": "components/inventory/transfers/CreateTransferPage.tsx",
+      "sha256": "4e49f8153cb9c8eb7c3d97a9f11551c79081af9b68a07267b186760202d69f21"
+    },
+    {
+      "path": "components/inventory/transfers/TransferDashboard.tsx",
+      "sha256": "aefba9b2773858bd83429d8e4dd6518e1c6fdb3dc219cfc466781f4f48c907ae"
+    },
+    {
+      "path": "components/inventory/transfers/TransferDetailsModal.tsx",
+      "sha256": "204ff7ae575e9fa6ba638aa6e4de6707e2c12fdf6a8de539dd97fdd545ea15b8"
+    },
+    {
+      "path": "components/inventory/transfers/TransferWorkflowPage.tsx",
+      "sha256": "5c4d8a397e1a5711d05cf2d5368f92b8478b41ae583a893cb9ef46c6948c37da"
+    },
+    {
+      "path": "components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx",
+      "sha256": "33d5fbe796e1d791762839a3eea3dd1603edd63961c923f96165950287f5a6e1"
+    },
+    {
+      "path": "components/inventory/transfers/__tests__/TransferDashboard.pagination.test.tsx",
+      "sha256": "cbd994b7989827a62477330fe70001f5cbe18c798de2f5e62ec84d95da3133fd"
+    },
+    {
+      "path": "components/inventory/transfers/__tests__/TransferWorkflowPage.test.tsx",
+      "sha256": "e366f19a7a8579a3b6804e689bb5da3d4acbc00ef247f46869ad93285b42d58d"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "ba1915c90fa59e0945bf82b4b74c259f1df0a7fc9fbb8d4e02792e802b9e265c"
+    },
+    {
+      "path": "components/modules/__tests__/ModuleCompositionWorkbench.test.tsx",
+      "sha256": "06647e97830166ac73ef73fbf669614f96c62562511731627dafd2efb548f306"
+    },
+    {
+      "path": "components/onboarding/OpeningPositionWorkbench.tsx",
+      "sha256": "f82dfc8c40e5c33b050518c7c6d85d48082e10f039cee7826879c65c98ffbdf8"
+    },
+    {
+      "path": "components/onboarding/__tests__/OpeningPositionWorkbench.test.tsx",
+      "sha256": "ac1ccf2b5559d625f08b7d4a8fb64cd92c341224ea2f706c291fd22747e55463"
+    },
+    {
+      "path": "components/pos/CashDrawerManagementDashboard.tsx",
+      "sha256": "e81550d6fc74a7687ee815b82d9609f531e3a839eddcbd48765230a398015871"
+    },
+    {
+      "path": "components/pos/DrawerCommandCenter.tsx",
+      "sha256": "628913366d4b6e19a8090198707edc29ef463da76d10a3b157dcd6e4237ef30c"
+    },
+    {
+      "path": "components/pos/ProfessionalPOSSystem.tsx",
+      "sha256": "23522cd9b4a4b4738ef7ed78610396f1e778e72ccd530e0b035f844207e9034a"
+    },
+    {
+      "path": "components/pos/ReceiptTokenControlStrip.tsx",
+      "sha256": "1959aa55fa5d743301887f09adb222234727d50e469e54de78ce75fa9e15cb3b"
+    },
+    {
+      "path": "components/pos/ReceiptTokenHistoryPanel.tsx",
+      "sha256": "f4251f68e35716ea68faafa87e305bf711a064573ee7ffe2992dbf2737818f72"
+    },
+    {
+      "path": "components/pos/TerminalManagementDashboard.tsx",
+      "sha256": "45e62398275ca54e75623006140803ae3aa64fa5aac8eac112cb210f868b53ec"
+    },
+    {
+      "path": "components/pos/__tests__/DrawerCommandCenter.test.tsx",
+      "sha256": "80863be8fb3229a824bb0165cb80188168ae0491e03aaa11137ce749dba70ffc"
+    },
+    {
+      "path": "components/pos/__tests__/LocalOfflineRecovery.test.tsx",
+      "sha256": "6a9201c164a3727fa4ef769b5875455d7d2abd55aefe91b48438da29f7004f06"
+    },
+    {
+      "path": "components/pos/__tests__/OfflineConflictHistory.test.tsx",
+      "sha256": "df397a93b80a206b3428fa0017a56efcd62bb249e7798eeafc6e6382119387b7"
+    },
+    {
+      "path": "components/pos/__tests__/OfflineConflictReview.test.tsx",
+      "sha256": "ccdfda728e06122ffe3d8df37002b94cacf0ae7c8e6456d987514d6daa1dcd44"
+    },
+    {
+      "path": "components/pos/__tests__/ProfessionalPOSSystem.receipt-token-visibility.test.tsx",
+      "sha256": "ec8ccc45d77c0a41ab9d5f5a2998c70f0f3194fc804a33eff73ef6e0a6df8c72"
+    },
+    {
+      "path": "components/pos/__tests__/ProfessionalPOSSystem.shift-close.test.tsx",
+      "sha256": "2e2d1e01eebcb523119e86e87cf5631893dd8288e93d7426e5d7d243ab983c90"
+    },
+    {
+      "path": "components/pos/__tests__/ReceiptTokenControlStrip.test.tsx",
+      "sha256": "7acd678460886674f0d621c67822e30d3fe303f3b32f2db50c7e3a748e4c96ef"
+    },
+    {
+      "path": "components/pos/__tests__/ReceiptTokenHistoryPanel.test.tsx",
+      "sha256": "298eea84f75a576a299f155da603733305d5b5a0b6b13fb95f269515c9568fed"
+    },
+    {
+      "path": "components/pos/__tests__/review-note-draft.test.ts",
+      "sha256": "858f567b782e004ae841bda679d3026366a5686edc1591be728ec841f6d26d1c"
+    },
+    {
+      "path": "components/pos/__tests__/terminal-draft.test.ts",
+      "sha256": "c77981dfb60d16e939efbaefbcb9c7089e715d896a37827dacfc948931d90170"
+    },
+    {
+      "path": "components/pos/offline/LocalOfflineRecovery.tsx",
+      "sha256": "d48e4a044bed31e252442724297575eea0e4d2cb66e59d2df2a7e1273013ce7d"
+    },
+    {
+      "path": "components/pos/offline/OfflineConflictHistory.tsx",
+      "sha256": "643eb94585a3401b5483ee7f86310419d46f643b33fc025afbfddec29cc85f67"
+    },
+    {
+      "path": "components/pos/offline/OfflineConflictReview.tsx",
+      "sha256": "d15eed18bb35709daf911078522951de1eeba0b64cc12ac66858f9254d26ec5b"
+    },
+    {
+      "path": "components/pos/offline/OfflineSyncStatusStrip.tsx",
+      "sha256": "52c9b6d0953b72df716f3ec88b6b52bd383ae661cb6c0b0403dfb5f48deb5429"
+    },
+    {
+      "path": "components/pos/offline/review-note-draft.ts",
+      "sha256": "fabc406778cb57c030a5c0d9813c2822df55563e7b7efe4fe603e797b6736d60"
+    },
+    {
+      "path": "components/pos/terminal-draft.ts",
+      "sha256": "3b7d65348f5dcd7e16ac5c594367229799168050e4ee837b1cac3fa79ca10938"
+    },
+    {
+      "path": "components/purchase-orders/DurableCreatePurchaseOrderForm.tsx",
+      "sha256": "f02d022d4d8939bca157fe89e998091504f3b2e66a5528789e4bbfe43a5569cc"
+    },
+    {
+      "path": "components/purchase-orders/ModernCreatePurchaseOrderForm.tsx",
+      "sha256": "e59a63fbdfbc8cb2381842390de87b8475df7e7cc0de76cab54d6a5e9a76c50c"
+    },
+    {
+      "path": "components/purchase-orders/ModernEditPurchaseOrderForm.tsx",
+      "sha256": "f57df19f9cb3f024574967a9bbf49ad29b2e6afe5c854bf4caeb646ca7d84fc6"
+    },
+    {
+      "path": "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx",
+      "sha256": "b118b511ac36ded0821921475984cbce18ad42745e79b800e28a0c2153eaad78"
+    },
+    {
+      "path": "components/purchase-orders/ModernStatusBadge.tsx",
+      "sha256": "16d79c54f016daa423594470049a00d4e02b4dab133ff55e1580e085d01066a0"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseAuthoringPanel.tsx",
+      "sha256": "1219e4d488a7fdcf36f20bfaf9225d633caa23059f23ef0b81860fd20898beef"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseOrderAmendmentDialog.tsx",
+      "sha256": "7a49b380ee1156483f531c64df8674863b0287fd60c1b2819b7476c60ac74c58"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx",
+      "sha256": "968616039600a4011c2264fb5f85d0310da4f7a1dfdb2e3ef4a6c3044d1e24cb"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseOrderAnalyticsTable.tsx",
+      "sha256": "5764cb848491a7b73d65aac89f21c1ec326fecaaed5ba2e6f8423fa70354cf95"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseOrderApprovalDialog.tsx",
+      "sha256": "2236054355266b9001f473621470bdc433fdf92d1a0d24d7d9c2737af68b2f7e"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseOrderCloneNotice.tsx",
+      "sha256": "5fd5c5f4064bcdbf4cee34be601d236e5d8cc8fcf558d45c7d82430dbff43d70"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseOrderDecisionHistory.tsx",
+      "sha256": "0816da78b24707fca88ef360d1e23279e15c37c7b94bba54ddcf277e2f59d295"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseOrderLifecycleDialog.tsx",
+      "sha256": "5759aee7ece99d02783f8c253bac0cf871b25acfa67b63cd559b52ba912ac533"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseReceivingWorkbench.tsx",
+      "sha256": "e982f6b46038abc9f6e80eb1690f9d3524ed55e05135ec15d582929428e56eb1"
+    },
+    {
+      "path": "components/purchase-orders/ReceiptLedgerRecoveryDialog.tsx",
+      "sha256": "9916a8a9a20d3c4373f464168ffdb189ef2f2a2f461e234cdfd2ab1941f2e17a"
+    },
+    {
+      "path": "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx",
+      "sha256": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a"
+    },
+    {
+      "path": "components/purchase-orders/SupplierPoBuyerWorkflow.tsx",
+      "sha256": "9f592eb6c2cc8960a3ba4ac0e347bf31504aa7d936980405ec15b38f7b0d792b"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx",
+      "sha256": "9ed28ac395990fbe1486dd1064b2470144ec3e8da2bc439434c5082d6021a057"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/PurchaseOrderAmendmentDialog.test.tsx",
+      "sha256": "615ce4d9bfd17a807af33f00c1610256ee46410fb193efa4bf259e1d16278013"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/PurchaseOrderAnalyticsDashboard.test.tsx",
+      "sha256": "d61896a890351d62c5f98d41827807aaa4683f454bcbb09a11a8916964864ee8"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/PurchaseOrderAnalyticsTable.test.tsx",
+      "sha256": "0768581e7247334941fbbfd54e51945154d936820b6115dfbff1d66d62e497d5"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx",
+      "sha256": "f6e2f79dcfc97e7c623ceb64194b995e3bc0669be6dbf4c38c963dbea14935ec"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/PurchaseOrderCloneNotice.test.tsx",
+      "sha256": "75475ce9f42fb843abcea253d8373c59d1468fcc7fec97828672dfba954fea43"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/PurchaseOrderDecisionHistory.test.tsx",
+      "sha256": "0c1be9e5c739440f972a4963ce875aeecde51f28fdeefe45d11c429a924f49f5"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/PurchaseOrderLifecycleDialog.test.tsx",
+      "sha256": "adf589c92c1f3f91483b525fa8ffe13cd4f3fb74126fec31cffc97e528615e64"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/PurchaseReceivingHistoryCurrency.test.tsx",
+      "sha256": "bed0e6976580065fd9014ad87bd6b95dc96add04bbe4c4b58877eb2a24a558e5"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/ReceiptLedgerRecoveryDialog.test.tsx",
+      "sha256": "fa0e524018506a77656cefc5f85a695c7c6e94c57a448daadd8e1e371434650b"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/SupplierPoBuyerWorkflow.test.tsx",
+      "sha256": "44df86d4aa59c9b8dee2beb5bb2d93e535cdc7a7918b2dbae9b4e1a0fe5c9faa"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/durable-purchase-form.test.tsx",
+      "sha256": "0ab9056f2a7af0ef92097d5dce0c3ed16b4515c125e92df2a2ef3c3740cd106a"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/purchase-authoring.test.tsx",
+      "sha256": "e19e18c027f7b4a28a6020e656040f6e795363af226f1537133b3d96ac00c706"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/purchase-order-deep-links.test.ts",
+      "sha256": "45927651464b2ae41c05bfb9cfbe1a4357c82ff20e9ac2caea1d5dab87463950"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts",
+      "sha256": "a11ab9a15199ff319781eb3b77102d492e699e37d6c940ef54ceedd39d037326"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts",
+      "sha256": "5a3151a3c8c3ea59b0232e3da077cf1d4b43bfcbc4b76e97c6f69043ef653878"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/purchase-order-money.test.ts",
+      "sha256": "2eb3be81640d3bed18ef4bca261156d33193d211f25f8b66b4ff9f5a5c6b380b"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/purchase-order-print-boundary.test.ts",
+      "sha256": "a8d3d5bd18750c6449bfd47670243a3459f3f9426ace431c6d3405df50028a2f"
+    },
+    {
+      "path": "components/purchase-orders/purchase-authoring-form-copy.ts",
+      "sha256": "c53101465635b6ded578caa889d13936b4e298560dd5b812effa641350c1bad4"
+    },
+    {
+      "path": "components/purchase-orders/purchase-order-deep-links.ts",
+      "sha256": "5f21488e9c1d7222f7b6178f931384b5255fe70d08ff00ddec4382a5cb92dc21"
+    },
+    {
+      "path": "components/purchase-orders/purchase-order-edit-draft.ts",
+      "sha256": "31b7504818f11424200ec015c9a122b620b178a43a8526f355682dc1ba4c04d2"
+    },
+    {
+      "path": "components/purchase-orders/purchase-order-edit-model.ts",
+      "sha256": "9a24a0a36c6146db2a65334ba5c31729f15c9cd63eff3bf423f65e2000adc024"
+    },
+    {
+      "path": "components/purchase-orders/purchase-order-money.ts",
+      "sha256": "de4278efa9c52dddce0c8d51c36b518a5b5b6078e9d0873990d7551299d2b6df"
+    },
+    {
+      "path": "components/purchase-orders/use-purchase-authoring.ts",
+      "sha256": "8af02b3f0391778339236957e2b0cb26026340a75cbcf12a86aad801fc99cd8c"
+    },
+    {
+      "path": "components/purchasing/APControlWorkbench.tsx",
+      "sha256": "5d9b7c908e600545a98641436e5972b825e09ca25e820dea0ad0121894d93321"
+    },
+    {
+      "path": "components/purchasing/APHistoryExportDialog.tsx",
+      "sha256": "7f2d2f83ba995f8ffb12a4a93e109add25c23f52bac00dc1d24133aee0257c81"
+    },
+    {
+      "path": "components/purchasing/APHistoryWorkbench.tsx",
+      "sha256": "5dc1a97cdf5a99137019ed1b96c004deaa6ce5cff3f81423f5bb785a53e969d3"
+    },
+    {
+      "path": "components/purchasing/InvoiceApprovalWorkbench.tsx",
+      "sha256": "8ec96335fbe8dd97fcfaf40f603694b2bcb275bb15cd126cb4623673b4735a52"
+    },
+    {
+      "path": "components/purchasing/InvoiceCorrectionWorkbench.tsx",
+      "sha256": "a2bc944f7dbaf473ef80acfca6269a18884bc96f29144c71a0a867df85cfc635"
+    },
+    {
+      "path": "components/purchasing/InvoiceLedgerRecoveryWorkbench.tsx",
+      "sha256": "0658a961c80e561247202e086171cc2c9185b7522b9c6e0af7a2846231478047"
+    },
+    {
+      "path": "components/purchasing/InvoiceMatchExceptionWorkbench.tsx",
+      "sha256": "8051e0327957fec868827ea2726e1ea3479be82e8c64d8200818ceb4ec25896f"
+    },
+    {
+      "path": "components/purchasing/InvoicePreparationWorkbench.tsx",
+      "sha256": "cf94cedc5aaf4bd2be94f07a9efb32f4ef5cc5cbb3709819d906e5e825dcedd4"
+    },
+    {
+      "path": "components/purchasing/PaymentExecutionWorkbench.tsx",
+      "sha256": "739b8b40c47e73add045356ade35e62e8229d7b8130115d76db93f9f8c27c3f7"
+    },
+    {
+      "path": "components/purchasing/PaymentPostingRecoveryWorkbench.tsx",
+      "sha256": "a2d072489109d6ccc085667baf8c433e928abf3f56c23e66912f5206b699944a"
+    },
+    {
+      "path": "components/purchasing/PaymentReconciliationHandoffWorkbench.tsx",
+      "sha256": "2f382d6276c3e37dc820f4818cd6d0aa3f38b2e4f3dca30c88e13249e6173b77"
+    },
+    {
+      "path": "components/purchasing/PaymentRequestWorkbench.tsx",
+      "sha256": "323fa761de0606c9554779e3ec9ed6e4485c43d6ca813acbdaa9ee38537bda0f"
+    },
+    {
+      "path": "components/purchasing/__tests__/APControlWorkbench.presentation.test.tsx",
+      "sha256": "9d2660f53fe649c4b4ca433b045f93ad854e4653d0397eea3654441f88d3f2a7"
+    },
+    {
+      "path": "components/purchasing/__tests__/APHistoryExportDialog.test.tsx",
+      "sha256": "5ef7a13c9369d27064ed6ba44b842383e597425a2202fe71e48289865a39aa9b"
+    },
+    {
+      "path": "components/purchasing/__tests__/APHistoryWorkbench.test.tsx",
+      "sha256": "fc4f5ffff7cc7a1e77363d0d9ba9b015bb5ef5df8afcbcb011e254a7bc1559d4"
+    },
+    {
+      "path": "components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx",
+      "sha256": "8798609af1ae26fba1d753da1687bf79ef91d439d8aa2941490a67fcfbaf79de"
+    },
+    {
+      "path": "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx",
+      "sha256": "890dc8828a8f1e1be0248379b86a023ad68348b5bd9723512a6507f9df0b9adf"
+    },
+    {
+      "path": "components/purchasing/__tests__/InvoiceLedgerRecoveryWorkbench.test.tsx",
+      "sha256": "e403144ec14a2ce3cb0477634ca6755b7c869c0f721bd63b3aae298cbb24b443"
+    },
+    {
+      "path": "components/purchasing/__tests__/InvoiceMatchExceptionWorkbench.test.tsx",
+      "sha256": "50f6180e5fb0719ffe045c16008246b72dfe02a82bd1206243b5226b2a74b53d"
+    },
+    {
+      "path": "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx",
+      "sha256": "f1a6cd3fb353b46978a57e4bc0a2220b46c9239c4ca1a4c9214d7c8a7e6d4e1c"
+    },
+    {
+      "path": "components/purchasing/__tests__/PaymentExecutionWorkbench.test.tsx",
+      "sha256": "88772a1ff76d1fc8f8c0b7c6f4589bbba4a2330d8177679d7a95c833d6285501"
+    },
+    {
+      "path": "components/purchasing/__tests__/PaymentPostingRecoveryWorkbench.test.tsx",
+      "sha256": "66fba485f9956fa8a07727bc62a55bbce269f99f955e683e3a81f0d97f666f4d"
+    },
+    {
+      "path": "components/purchasing/__tests__/PaymentReconciliationHandoffWorkbench.test.tsx",
+      "sha256": "2168768b44226e75e2b01a7f24dc62edc6af7a2ea32810f8b35de32ae315857c"
+    },
+    {
+      "path": "components/purchasing/__tests__/PaymentRequestWorkbench.test.tsx",
+      "sha256": "9f29bec0d3c6b51688aa855a5b2908ca258073d8f09031c8b2c26357760c4949"
+    },
+    {
+      "path": "components/purchasing/__tests__/ap-history-export-download.test.tsx",
+      "sha256": "c71b43b97a379d6bb8fd2e8709eb9d1e4eea4c1b58f6bf69446272b6e94d807e"
+    },
+    {
+      "path": "components/purchasing/payment-reconciliation-copy.ts",
+      "sha256": "6202447aac5b32761d75fd69dd5d00ee9445c0746af7861578a2c7d5b9495ba0"
+    },
+    {
+      "path": "components/stock-to-cash/StockToCashFlowDashboard.tsx",
+      "sha256": "9cadaec96a76b358197cc8af612ead249e0fc6db6041775b1bb52946ca3f6d77"
+    },
+    {
+      "path": "components/ui/groups/inventory/ItemForm2.tsx",
+      "sha256": "66c6adf4c4ba7452660e8cf1340cbfc5e855096c5c810d440934486390048bc9"
+    },
+    {
+      "path": "components/ui/groups/inventory/ItemManagement.tsx",
+      "sha256": "d5ac1729bb1507cb71fbf09a35cbff8b442a9d1c1a7383daee3a2c7edee3e176"
+    },
+    {
+      "path": "components/ui/groups/inventory/__tests__/ItemManagement.localization.test.tsx",
+      "sha256": "50d0b23b7e4d0f352ccb8155df95e4ba9ae3b1007a5210ad5914372bf1f0f636"
+    },
+    {
+      "path": "components/ui/groups/inventory/__tests__/item-inventory-summary.test.ts",
+      "sha256": "57f1d623ce7f2b17684dfffea1b38aba479e22f80473a26368dd072a512e73bd"
+    },
+    {
+      "path": "components/ui/groups/inventory/hooks/useItemManagement.ts",
+      "sha256": "d5ab12fea4c7086d282ae5d2c287be33ff495291b8a92fdcd66fe545c000809d"
+    },
+    {
+      "path": "components/ui/groups/inventory/item-inventory-summary.ts",
+      "sha256": "9f7cd761fad562c4a6640a889224868d60f5f0a65dca60c5828cc9147ad4bd8f"
+    },
+    {
+      "path": "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx",
+      "sha256": "2755141f2e51c3e35522b7d48772900eba4bdade0a800b16536b14d8e1f6389b"
+    },
+    {
+      "path": "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx",
+      "sha256": "caa8200588f185e516cf5d22818491898dadc2d47116326781e8dc92f287223e"
+    },
+    {
+      "path": "hooks/__tests__/useInventoryLossWorkbench.test.tsx",
+      "sha256": "fe72a42025afb902f8b0e2b000a19d767f66c63f63d7cab7a0be190c218cf705"
+    },
+    {
+      "path": "hooks/__tests__/useInventoryMovementHistoryWorkbench.test.ts",
+      "sha256": "ee9e51faf569dfd64ac59cd2d4c976373a87d66aba760d0c42de23e2924f6e31"
+    },
+    {
+      "path": "hooks/__tests__/useInventoryMovementQueries.reservation.test.tsx",
+      "sha256": "927b11205864b57c2940b0f5dcddb41f1c881d77a442b32f566b81d82c317d83"
+    },
+    {
+      "path": "hooks/__tests__/usePurchaseOrderClone.test.tsx",
+      "sha256": "8af32bcc65c3befbec7d558dcf446212f1f8307188fc50bcb8815f8463c7cdd4"
+    },
+    {
+      "path": "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx",
+      "sha256": "48cb4fec65a02d06e979c749987982fe4de137d024eefcf89cc47e6d968d1f99"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/checkout-lifecycle-races.test.tsx",
+      "sha256": "8323765ce224cc5365ae82dd738106cbff54fda13f10c73a7ba4c224019681dc"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/drawer-read-scope.test.tsx",
+      "sha256": "056c9d8c9599f6f581d320e69325c649764b6de1f986318e6e081ef3b8123efd"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/offline-dashboard-scope.test.ts",
+      "sha256": "dc96e66b70c6706a0cb12153c14bfbf7c08ab2fb413fa30cefc29a24e2e05f1d"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/offline-flush-recovery.test.ts",
+      "sha256": "8c78ad4024413ef18093e7affac1bf1441af1a3af7656d924740f736cff1430a"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/pos-read-scope.test.tsx",
+      "sha256": "365175b79d35ccb1af51702f8b2937a42ff76fd3ea8ed4e432cd1416ab1d54b0"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/terminal-errors.test.ts",
+      "sha256": "c231a686224fabecea95596372e448d2d0c6b7c0e6b3948ccb85dcfa82248b6f"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/terminal-read-scope.test.tsx",
+      "sha256": "b7d1f36c945b733f33b0c495334860afb44e7b98541b162409ca84ac164fe3e0"
+    },
+    {
+      "path": "hooks/posHooks/__tests__/usePosOperations-receipts.test.tsx",
+      "sha256": "fbcf82358b0f858105c22b4a1a801b4fa7ba19f8a80991df997de48ee3f6e2a3"
+    },
+    {
+      "path": "hooks/posHooks/useDrawerDashboard.ts",
+      "sha256": "67d7c33b20b084eeca250615070512045a325779ebedc507f16d22af191369f8"
+    },
+    {
+      "path": "hooks/posHooks/useOfflineSync.ts",
+      "sha256": "e7a2f808fecd109a96ac83ebf92cd079f3e75c3cb4363f110f59a31a145e7ae7"
+    },
+    {
+      "path": "hooks/posHooks/usePOSCheckoutLifecycle.ts",
+      "sha256": "ce98b5498227223a943362427305de79060ff0a2fce0f8703c611b340e4ece6d"
+    },
+    {
+      "path": "hooks/posHooks/usePOSReadQuery.ts",
+      "sha256": "888ba49887756a4c2a4d2bb4837bdda46b63a08e1972e41fc3553ca2b31e84d2"
+    },
+    {
+      "path": "hooks/posHooks/usePosOperations.ts",
+      "sha256": "17a42f3d7056e6bbfae569e907ef96dceb54e1a36694d759901b3db7341fea67"
+    },
+    {
+      "path": "hooks/posHooks/useTerminalManagement.ts",
+      "sha256": "539a4b7a9a34fc7f32d12bbc9bc357e1d299dd1d73afd2e16b7f6763ba4b7a76"
+    },
+    {
+      "path": "hooks/useInventoryLossWorkbench.ts",
+      "sha256": "29cb6b1b2812ce61e8516aecb2178d987846715994ad190073b6b187a7bd1512"
+    },
+    {
+      "path": "hooks/useInventoryMovementHistoryWorkbench.ts",
+      "sha256": "7e92ea93b6dcf6c63c15a4474d1ca1ec719e0902cdf77c3eae4382c858c164a9"
+    },
+    {
+      "path": "hooks/useInventoryMovementQueries.ts",
+      "sha256": "0f8ea3fc6d67a4b4c8e494f681b87cfc5f336f42dc2be85a922b5563a86925d4"
+    },
+    {
+      "path": "hooks/usePurchaseOrderClone.ts",
+      "sha256": "a69808e9eb6292209d5e542e4f264f2e04f7431e0843b0976705023d1c4efda1"
+    },
+    {
+      "path": "hooks/useRecentPurchaseOrderQueries.ts",
+      "sha256": "a334e694c62e85244238e6bd14fedb4def9261c6fc233f4cdb4a116bfe384038"
+    },
+    {
+      "path": "hooks/useTransferSourceInventory.ts",
+      "sha256": "c2f4561f8638c17cde86cbfa5f8eaf42891ae982ff4e60d78326f36eeea2e304"
+    },
+    {
+      "path": "jest.cross-workflow-phase3-ui.config.cjs",
+      "sha256": "3eddbdb7627dfe1d0436d151cd8f1eb921cc3c5c9ba4403bb90560aa9a1f654d"
+    },
+    {
+      "path": "jest.cross-workflow-phase3.config.cjs",
+      "sha256": "435ff3de2fa5886235b56202b63c0009c2bb629a9ff382ffb300b2dbf6721e54"
+    },
+    {
+      "path": "jest.pos-purchasing-inventory-repairs.config.cjs",
+      "sha256": "95941bea122273e219164c15d2dc94a6b13db990150e308676111ab59aa68b3f"
+    },
+    {
+      "path": "jest.setup.ts",
+      "sha256": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494"
+    },
+    {
+      "path": "jest.workflow-repairs-baseline.config.cjs",
+      "sha256": "f87b9f4df1187d9e1c0efa3fb4aa98a7e613df34a663ce8cacad82d743b61a66"
+    },
+    {
+      "path": "jest.workflow-repairs-hooks.config.cjs",
+      "sha256": "6e302271d5c949991206af579b311451b5b8615f4fdcb2b2a4817275cc9c5ee2"
+    },
+    {
+      "path": "jest.workflow-repairs-postgres.config.cjs",
+      "sha256": "cc27d3150b5c27325519a2bab65ef69b6db133b10f5b14e6ce7887a20a78c4ba"
+    },
+    {
+      "path": "lib/inventory/update-inventory-levels.ts",
+      "sha256": "72719f6253ee9cd34dda7ff720c661b4c0816822347a409fb7c8ce7b32323fc8"
+    },
+    {
+      "path": "lib/pos/__tests__/offline-local-queue.test.ts",
+      "sha256": "8e5ee8f5d4c71f5455b5eedd6bcb3cd03492329ea0ee1e43c204c63d602fc897"
+    },
+    {
+      "path": "lib/pos/__tests__/pending-sale.test.ts",
+      "sha256": "81ef37325eacd1b37086291da81ce598b612093f90eabe69958529bfb03429b7"
+    },
+    {
+      "path": "lib/pos/offline-local-queue.ts",
+      "sha256": "3c162bc149b144c31000fc382bd9bbd657a236ccdd63f4001fc34b3d90b965db"
+    },
+    {
+      "path": "lib/pos/pending-sale.ts",
+      "sha256": "ebc667ca7fef0297c633734076d8d44666d7420d0a64f22709500ea5e4cc2dfd"
+    },
+    {
+      "path": "lib/purchasing/__tests__/ap-history-presentation.test.ts",
+      "sha256": "3654795f72c2fe89827a0beab017beca31a3cda4c9ee47c3e732cc0e235e12b8"
+    },
+    {
+      "path": "lib/purchasing/ap-history-presentation.ts",
+      "sha256": "04989744fe24f7d656e229d56e8f17689e224df35f4054e798b72c648f9a9cad"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "5a75ff48e318d1cc4cca824efd134ef0a7305d1871e6e06d69e655fc906024b4"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "f139517430b720f5c4de6bd277c2de24a97df6068989f92fd8cf99d59cc50cd6"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "prisma/__tests__/systematic-reseed-inventory.test.ts",
+      "sha256": "8a7da027651d817b2bc09bcf89c2fa4dab880c201c1a00dc662e472a358c0a2e"
+    },
+    {
+      "path": "prisma/systematic-reseed-inventory.ts",
+      "sha256": "7d2f458a7957398107cb58ade91a2b5c1421b4a5fa5efe7f92c5641a46c36eb1"
+    },
+    {
+      "path": "scripts/__tests__/api-route-guard-inventory.test.js",
+      "sha256": "03228ea1868a64f1e587fa13e822b6307385a2e5c87abb807e46d2ea6978f896"
+    },
+    {
+      "path": "scripts/__tests__/disposable-fixture-guard.test.js",
+      "sha256": "4a6413bbe22649bfae6977e7a6c4794bf58fe63fcb09a0876930236c970135fa"
+    },
+    {
+      "path": "scripts/__tests__/inventory-boundary-gate.test.js",
+      "sha256": "f477ddd511d2612c34f5c8f2baf95a5c1fcf6ceed1b36e85bf22d19e70032bc6"
+    },
+    {
+      "path": "scripts/__tests__/inventory-fixture-invocation.test.js",
+      "sha256": "ca887e9382cb1ec448ad6af95482ce5b90d6de861985de7f7db626c5f20be69c"
+    },
+    {
+      "path": "scripts/__tests__/inventory-history-export-provider-preflight.test.js",
+      "sha256": "2155ed5c6aa89b87a03efa87fae6d963fb941bf9f9a90d256b528aecc898f48a"
+    },
+    {
+      "path": "scripts/__tests__/inventory-history-export-worker.test.ts",
+      "sha256": "843376ba974473b46a26fe240c0675fd20a9a4e5a088a2cbfe2d3ffa1726b83c"
+    },
+    {
+      "path": "scripts/__tests__/inventory-items-e2e-fixture.test.js",
+      "sha256": "3358ccfbe43f965a592aba08d7732b6298020fad6153041176026aa5df483c56"
+    },
+    {
+      "path": "scripts/__tests__/inventory-valuation-truth-gate.test.js",
+      "sha256": "5ce9259b544225f9bc3d783edd4f9061ca94df37d7140b340d811db1519a6e1e"
+    },
+    {
+      "path": "scripts/__tests__/module-purchases-route-evidence.test.js",
+      "sha256": "a379d5f41e99e4a9d749cd74f0a055f3e4b678c720cccfe828863cb309615568"
+    },
+    {
+      "path": "scripts/__tests__/module-surface-inventory-cross-cutting-boundaries.test.js",
+      "sha256": "a5dedde2efe00dd6589f31f202aea96202ebe8534ab64bf095c27c49272ed7b6"
+    },
+    {
+      "path": "scripts/__tests__/module-surface-inventory-dashboard-read-model-ownership.test.js",
+      "sha256": "2109688719043d079d43dd559697c1b7f958fb78726f77e9ad928c805354f59d"
+    },
+    {
+      "path": "scripts/__tests__/module-surface-inventory-enforcement.test.js",
+      "sha256": "ad90a53c104dfff4a3bc0fb027c91f060fc46e908ead7b376b383a3eadeb659a"
+    },
+    {
+      "path": "scripts/__tests__/module-surface-inventory-item-ownership.test.js",
+      "sha256": "757d5edfa26d76c4f6198b604018487f9554095d8d7b7f96fe46725aadee5d00"
+    },
+    {
+      "path": "scripts/__tests__/module-surface-inventory-purchase-order-read-model-ownership.test.js",
+      "sha256": "00347d46fa43b21a0cc98a410fdf89fca08006ce5b90f7b19ec28b9f69846225"
+    },
+    {
+      "path": "scripts/__tests__/module-surface-inventory-reference-data-ownership.test.js",
+      "sha256": "3616cbb76c511879f22f56646b82241ee2f992566edea42048c93e9fbe8ad25a"
+    },
+    {
+      "path": "scripts/__tests__/module-surface-inventory-supplier-ownership-permissions.test.js",
+      "sha256": "04db7f6f052260d1592ccbe39e3b638ce48d02ed4948d2829991fa528c35ff0b"
+    },
+    {
+      "path": "scripts/__tests__/module-surface-inventory.test.js",
+      "sha256": "55e96fdaaa6bf423a8209130b034ca9084cf40433472c1a08cf6fde26472031b"
+    },
+    {
+      "path": "scripts/__tests__/offline-pos-fiscal-replay-gate.test.js",
+      "sha256": "4fab6ee42ce685c8276a6625440324073c576414e4ef483307fc28437b352297"
+    },
+    {
+      "path": "scripts/__tests__/payroll-trust-spine-postgres-certification.test.js",
+      "sha256": "a96c05371b968cba580f053ed0018193024517b25c9cab2b23133b8c7f69a309"
+    },
+    {
+      "path": "scripts/__tests__/pos-cash-shortage-checkpoint-persistence-migration.test.js",
+      "sha256": "d6dc46e2f12004f50300ee890600423c77307fcfde9548858dd735602c553a0e"
+    },
+    {
+      "path": "scripts/__tests__/pos-commit-result-registry-migration.test.js",
+      "sha256": "0d50de75c58e158b6fc2723f685b58be101101cb99541786f91ccbd60affaa2e"
+    },
+    {
+      "path": "scripts/__tests__/pos-electronic-tender-authority-migration.test.js",
+      "sha256": "7bd26ac0520874971957485b178211c979c4e7893329eba09e93514b5851ff78"
+    },
+    {
+      "path": "scripts/__tests__/pos-enterprise-program-gate.test.js",
+      "sha256": "37181b02c91d6ac1baa84e95d68f968a068486a659d4fdf7b4f4eb63a42b1e07"
+    },
+    {
+      "path": "scripts/__tests__/pos-g1-contract-gate.test.js",
+      "sha256": "62fc46c392f1d0a96bde52fb6426153a81cf9822de12b3cd86c4a08aec38b563"
+    },
+    {
+      "path": "scripts/__tests__/pos-governance-evidence.test.js",
+      "sha256": "4dd1b1dadd110bc798e3251f56c3d226214b35a83b7e1e4d205e0e528f54c5a3"
+    },
+    {
+      "path": "scripts/__tests__/pos-receipt-token-browser-smoke.test.js",
+      "sha256": "2a2bf160260043c69573f5c5e5519056f6f62b54d4062d74ba994979579acbc6"
+    },
+    {
+      "path": "scripts/__tests__/purchase-return-credit-evidence-boundary.test.js",
+      "sha256": "608643ccec9833a899fb38626b203e203f0856bb61502e2fe1d6bfa914de2c2f"
+    },
+    {
+      "path": "scripts/__tests__/purchasing-ap-consolidation-gate.test.js",
+      "sha256": "4db9adcf6722b168974d64e1ebe8f37c59fc012047278de80ff9736d731d61bd"
+    },
+    {
+      "path": "scripts/__tests__/realistic-pos-seed-contract.test.js",
+      "sha256": "00038e37ab6858f8d521f3084d7185af251e94857ba756a4d01392fada5b6499"
+    },
+    {
+      "path": "scripts/__tests__/seed-inventory-loss-e2e-user.test.js",
+      "sha256": "fb8f07d7d953acc641978746ef60caa10770356db7a6055496f6cf39e0719c65"
+    },
+    {
+      "path": "scripts/agent-phase2a-postgres-smoke.js",
+      "sha256": "5d68671b41b2acaba591e0cc6abec38d1cba79b53b40cecdd318feb337f28e5d"
+    },
+    {
+      "path": "scripts/agent-reconciler-postgres-smoke.ts",
+      "sha256": "27cb7832ed4a5612b4a0e981d836e94e7c1b341ccbf1fbfd10d2bcdf506c2b06"
+    },
+    {
+      "path": "scripts/agent-release-control-postgres-smoke.ts",
+      "sha256": "0feaf2737507ff9f3812b02e31d0b5eb24d6e884c75a4e847deaacf005d7e580"
+    },
+    {
+      "path": "scripts/agent-runtime-postgres-smoke.js",
+      "sha256": "4d787a9d1961aaab93bceac6d14aabad262caecee07817d8b95a7b23424fd6de"
+    },
+    {
+      "path": "scripts/api-route-guard-inventory.js",
+      "sha256": "f39b0ae02ec4e26085d670a39e45f31611086aa6b08688e8b1c4097de1e47c75"
+    },
+    {
+      "path": "scripts/apply-pos-terminal-011-repair.cjs",
+      "sha256": "b659b93e39ff9f74549187cd903cf247879a3a0a0d0f6aca0cf067fdc9ce72d6"
+    },
+    {
+      "path": "scripts/boost-pos-demo-stock.ts",
+      "sha256": "2e118e217a32d9d300c434582fc00e6cbfd5660f215d9969e5cbb2a53c32d83b"
+    },
+    {
+      "path": "scripts/close-scope-postgres-target.cjs",
+      "sha256": "bbe4c2a29f63536d1cb4da6ac8cd38d836be8378b497f83c4c696d3a8baed2ef"
+    },
+    {
+      "path": "scripts/customer-referral-postgres-smoke.ts",
+      "sha256": "63dec9b424e0c221612cbd678a0ee302984afc297a9d45bc77ee1fedd9ae9dd2"
+    },
+    {
+      "path": "scripts/disposable-fixture-guard.js",
+      "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+    },
+    {
+      "path": "scripts/fixtures/opening-cutover-browser.cjs",
+      "sha256": "c6ee60dbe0bdba76e4845dba29c1d8e1e469007e7b5eaed6bc7879aa4075dc2c"
+    },
+    {
+      "path": "scripts/fixtures/opening-cutover-database.cjs",
+      "sha256": "77f8d77b731a145c86a14dc571cf790f216168029a080402836662c878d09d73"
+    },
+    {
+      "path": "scripts/fixtures/opening-cutover-upgrade.cjs",
+      "sha256": "7b46eeba27fbf39908610694b08367d151ef1063416dc71db65cce97fc4b3cd2"
+    },
+    {
+      "path": "scripts/fixtures/opening-position-browser.cjs",
+      "sha256": "dc4a8304684ad898f36d95e2e330865b1c4b7d29896a66ee96cbaf32e3b670fd"
+    },
+    {
+      "path": "scripts/fixtures/opening-position-database.cjs",
+      "sha256": "312265006b2c54d4b1fd52769a4aad408369c21fe0da1d4a22741bf7609b3818"
+    },
+    {
+      "path": "scripts/fixtures/opening-position-upgrade.cjs",
+      "sha256": "1ea3bff512da4b48b8026f65e71270443d5358da8afb376125532797144de709"
+    },
+    {
+      "path": "scripts/generate-pos-terminal-011-repair.cjs",
+      "sha256": "a25a2adfe49dfb05234d84ca12cc806c036865590551fefd338512ace9741b0c"
+    },
+    {
+      "path": "scripts/inspect-pos-terminal-011-snapshot.cjs",
+      "sha256": "c18d8c4b6ef15f760cbcb2df8c813744eb0ef8cec583e04ff4f4ac5cdc06ca4f"
+    },
+    {
+      "path": "scripts/inspect-rds-purchasing-access.cjs",
+      "sha256": "23d1536db94288928d6075ec7d4a64b9a93721666c4dc2245795344d8fb53bbd"
+    },
+    {
+      "path": "scripts/inventory-boundary-gate.js",
+      "sha256": "f9bcde2beff8d70745963872bb212b338020104564cc27bf373e532cfa972b13"
+    },
+    {
+      "path": "scripts/inventory-history-export-provider-preflight.js",
+      "sha256": "b1a06036b56bcf7c837717a451e9afb47584e1fbe3ae3b219d1ca8715b7ef593"
+    },
+    {
+      "path": "scripts/inventory-history-export-worker.ts",
+      "sha256": "2c70e00ede6aea86a1152c7c691afe2f09c74b51e4c8b529dc30157bd4187af2"
+    },
+    {
+      "path": "scripts/inventory-items-e2e-fixture.js",
+      "sha256": "f577fd1836cf3be4d57f827fafdc8fe645cfa351216f12e29488e86579ef562f"
+    },
+    {
+      "path": "scripts/inventory-valuation-truth-gate.js",
+      "sha256": "bea56bc5bdd7f8b1224812a280e8a4ba33bf4b4080fa611402232bdd289afcf2"
+    },
+    {
+      "path": "scripts/modern-modules-postgres-smoke.ts",
+      "sha256": "1261cf312e5200a71a0131cf67e7e1409315cf33d8d470f0cc1e308e56d06bfb"
+    },
+    {
+      "path": "scripts/module-purchases-route-evidence.js",
+      "sha256": "fd1927151c28f451d0bcfac18a0ed17de5210fa9cebc14166da119a62396eff5"
+    },
+    {
+      "path": "scripts/module-surface-inventory.js",
+      "sha256": "4d39e52e5dcf9d8b136ec13e42873584fe3ed3b6a7ac04abe253ba15de36ca99"
+    },
+    {
+      "path": "scripts/offline-pos-fiscal-replay-gate.js",
+      "sha256": "77a986103b8689dfa42231e3be170a17860fad2a46bb20c5632712f5691be300"
+    },
+    {
+      "path": "scripts/payroll-trust-spine-postgres-certification.js",
+      "sha256": "f0171e050a716767c69fafa2a189d387d2a7130261edf86e206aa47dab216e4e"
+    },
+    {
+      "path": "scripts/pos-enterprise-program-gate.js",
+      "sha256": "199a8a2ca89d86be45f8cd2c2e1295cda24969e978c6e2985745ad625608dcb2"
+    },
+    {
+      "path": "scripts/pos-g1-contract-gate.js",
+      "sha256": "7ef5567e691edb2f22beaf352cea0d97a50390ae2bd0432ed6d13c74e5f1457c"
+    },
+    {
+      "path": "scripts/pos-governance-evidence.js",
+      "sha256": "0b326b68966b763a736fb13df1aada1eb8973e3999b1e3854ff517015dc8f3ee"
+    },
+    {
+      "path": "scripts/pos-governance-test-fixture.js",
+      "sha256": "9a295f3bda177add329b5bdd0523af0d3a6a5d612390df4e22b5b92e33c32cad"
+    },
+    {
+      "path": "scripts/pos-receipt-token-browser-smoke.js",
+      "sha256": "567b30141bdb23e86e687e443b6cafe89e28886d2030435295bf82c5d334a5a3"
+    },
+    {
+      "path": "scripts/prepare-opening-cutover-browser.cjs",
+      "sha256": "5ed057bb6af8ba545181f569a72d832e4dfa8374d3c1c9ff8966a199b3780adb"
+    },
+    {
+      "path": "scripts/prepare-opening-position-browser.cjs",
+      "sha256": "d7411e2cf71b843437c6d6d08789bc7bc79de3639c606782d2cba6175c54e3c5"
+    },
+    {
+      "path": "scripts/prepare-pos-terminal-011-repair.cjs",
+      "sha256": "ce2c9d2e451f149ebca7a78ac2c2816865c6099bb7d1c4a2b489eb54da6dec9e"
+    },
+    {
+      "path": "scripts/provision-rds-purchasing-local.cjs",
+      "sha256": "543fbef3c8b80b8821fb3cc2107b70d4a26243724a064138d2cada777693c17e"
+    },
+    {
+      "path": "scripts/purchasing-ap-consolidation-gate.js",
+      "sha256": "88013dc979b48f73641bd97256a759bf66abd5ae69479d5c71cb6aee02d0ee26"
+    },
+    {
+      "path": "scripts/record-ui-workflow-postgres.cjs",
+      "sha256": "a134f19ac0d6781556e60a40d1d538ec416107b45ebbcd163a3a72cc8dd2b421"
+    },
+    {
+      "path": "scripts/run-accountant-portfolio-postgres.cjs",
+      "sha256": "2196d2e2bfb006ae8abb0ad298ef0f3245b2f7a110392b6c94d80163e00ce99c"
+    },
+    {
+      "path": "scripts/run-agent-reconciler-postgres-smoke.js",
+      "sha256": "8b94097e02c3985801c7654291f3123b7a5b3072007f6c21ea6b7907666e2b88"
+    },
+    {
+      "path": "scripts/run-agent-release-control-postgres-smoke.js",
+      "sha256": "1d6d5ab93b021c738baa283457566a62cd3768049f0ec560d70a28296f8d38c5"
+    },
+    {
+      "path": "scripts/run-close-scope-postgres.cjs",
+      "sha256": "6c247ca0f6626423e6174573e23a5b92ebbdf3da71836379bbcf7f08f29af87e"
+    },
+    {
+      "path": "scripts/run-firm-engagement-authority-postgres.cjs",
+      "sha256": "11c72d287d8804f5b144ae345152b1504cd040c37af1450ebe3a5c3269ce5db3"
+    },
+    {
+      "path": "scripts/run-firm-engagement-postgres.cjs",
+      "sha256": "55eb07b9d1c59c25c92f8aa33e6424061e4d763ccdf12cfd942c2fcae8bf47da"
+    },
+    {
+      "path": "scripts/run-inventory-items-e2e.js",
+      "sha256": "0a94750e58cfa44b56d105de74ae9dcfb1ccdfea564ed5dc834bbee5d85b7b63"
+    },
+    {
+      "path": "scripts/run-modern-modules-postgres-smoke.js",
+      "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+    },
+    {
+      "path": "scripts/run-purchase-receiving-postgres-tests.js",
+      "sha256": "76d512c06797a5ef58db33b19d47635c3e6f6ac75c05149c0c8243bca64c3b77"
+    },
+    {
+      "path": "scripts/run-s01-s03-postgres.cjs",
+      "sha256": "719201f3dbae95052905947f60b01a6f5d9e4e3b85985a29bafbe7e6a0bc973b"
+    },
+    {
+      "path": "scripts/seed-inventory-loss-e2e-user.js",
+      "sha256": "8cefe0d5dc7974846ead29a4d98d453d9490a9cdfb3e89ad7540d9632d26cf12"
+    },
+    {
+      "path": "scripts/start-opening-cutover-browser.cjs",
+      "sha256": "a1f2014386e0101c354e269473a8120d6d4952c7b86e375c4adccdd1891dc9db"
+    },
+    {
+      "path": "scripts/start-opening-position-browser.cjs",
+      "sha256": "1a58c87f30526bb5cd7e42ddb92c79eb834a97d2fd5cc57cc9b72af90647b45c"
+    },
+    {
+      "path": "scripts/ui-workflow-postgres-bootstrap.cjs",
+      "sha256": "fdf115d197c5c154c9ef301421b696d6e276a18bad1f7193d79abdf489acdb03"
+    },
+    {
+      "path": "scripts/ui-workflow-postgres-target.cjs",
+      "sha256": "497202f461616c24e1ad4927b471654581d3d29ecbbf14a18d303567bb9810b5"
+    },
+    {
+      "path": "scripts/verify-opening-cutover-browser.cjs",
+      "sha256": "96a62faf5b410d7cb298c168ab1d7b9f61900c5704cc9393b63864f840a299f2"
+    },
+    {
+      "path": "scripts/verify-opening-position-browser.cjs",
+      "sha256": "e0c8bec9845831228503cda4da28f92f0cb8c5764ef4c1f3dcf3e7c3c33b30f7"
+    },
+    {
+      "path": "scripts/verify-pos-terminal-011-repair.cjs",
+      "sha256": "508c4865950ecf84c52f7272d7352616e5ee15871cb9745ea18194c88069ba4b"
+    },
+    {
+      "path": "services/_shared/__tests__/cache-revalidation.repairs.test.ts",
+      "sha256": "23841f872719d7d17cbc5e060e1bf88f696675eaa2fed938c31852575cf704ff"
+    },
+    {
+      "path": "services/_shared/cache-revalidation.ts",
+      "sha256": "9f6330e2501db5b48649ab692030ec7fd9710abc45d8a2f159299e2806d77c08"
+    },
+    {
+      "path": "services/accounting/__tests__/accountant-portfolio.postgres.test.ts",
+      "sha256": "2bb18528118ae97e13bcbe35d4973d0e0fd93bc3f6d61bb8c69c058d7c38970f"
+    },
+    {
+      "path": "services/accounting/__tests__/advisory-outcomes.postgres.test.ts",
+      "sha256": "f8bf6acff8ec50124e9809434b0502e0818edf6db8e5878c68ac662b74e0bf3f"
+    },
+    {
+      "path": "services/accounting/__tests__/af16-shared-journey.postgres.test.ts",
+      "sha256": "8e9dd6a7b5609747dfa40298affd46662af53fd83a8acf32c51d22b567c047ef"
+    },
+    {
+      "path": "services/accounting/__tests__/default-posting-rules.service.test.ts",
+      "sha256": "ff855bb8efa0dcf1e0940c6638de9ad91a2dc2cf4b0ab028c5de69ca45abfb59"
+    },
+    {
+      "path": "services/accounting/__tests__/delegated-evidence-desk.postgres.test.ts",
+      "sha256": "292f18f4f140e0e407339960c8425b6f979171206ecebf9226e7180208530bd8"
+    },
+    {
+      "path": "services/accounting/__tests__/firm-engagement-authority.postgres.test.ts",
+      "sha256": "0a5fbecd686023bfc9f7f9e8ce608af7f8a661b60e34ac9415e6faf2ba7b5b9a"
+    },
+    {
+      "path": "services/accounting/__tests__/firm-engagement-workflows.postgres.test.ts",
+      "sha256": "dfc32d29acada02d56e353eaab7555a571181dc3f7e0f8aac2fc47459416338e"
+    },
+    {
+      "path": "services/accounting/__tests__/firm-engagement.postgres.test.ts",
+      "sha256": "d67107a4e27ad51a934fcb71183bf58f3a8a3d86dba88aa8e64dcbd49496f3fd"
+    },
+    {
+      "path": "services/accounting/__tests__/firm-practice-upgrade.postgres.test.ts",
+      "sha256": "c40354804363223e4250c1faac396ed4178532b0a56542e915ff9b91a5c71167"
+    },
+    {
+      "path": "services/accounting/__tests__/firm-practice.postgres.test.ts",
+      "sha256": "98b5cc9c5017ed8a285f50dafd89b0c83fd3901ea09c79a3c3c82f88e85a9406"
+    },
+    {
+      "path": "services/accounting/__tests__/journal-posting-order.service.test.ts",
+      "sha256": "d3418f7ad2206a8c83b0ae2926d9c50da203e12b0422b749d5fb17c1ed7705f0"
+    },
+    {
+      "path": "services/accounting/__tests__/posting-batch-identity.test.ts",
+      "sha256": "6472c843d0ef071cfb3497de1b26fa2e57641d238edba9546fed7eda3b4e7d60"
+    },
+    {
+      "path": "services/accounting/__tests__/posting-rules.service.test.ts",
+      "sha256": "281eeaedd6c96e84773d5e16f6a4f537537073af6c255e96b5a46b7c56b2a03c"
+    },
+    {
+      "path": "services/accounting/__tests__/posting.service.test.ts",
+      "sha256": "22234b7e1919571d74f24b234fd9eec6cd499dd849f67488e1fd73309ecfb68c"
+    },
+    {
+      "path": "services/accounting/__tests__/review-workpaper.postgres.test.ts",
+      "sha256": "d0430572023350020065442e3079b017e21cd81a353a5294e1e13002e29ed6b4"
+    },
+    {
+      "path": "services/accounting/default-posting-rules.service.ts",
+      "sha256": "3ae91c72792be0ebcfe93706ac1cdbbd1371a623e64a94fe106c8f88bd3def5b"
+    },
+    {
+      "path": "services/accounting/default-posting-rules.ts",
+      "sha256": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2"
+    },
+    {
+      "path": "services/accounting/journal-posting-order.service.ts",
+      "sha256": "f74cd6d9e9e62fa74ec8fec7c0dfc5fe4f69f17f3132eb576fd0384461f78ddc"
+    },
+    {
+      "path": "services/accounting/posting-rules.service.ts",
+      "sha256": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031"
+    },
+    {
+      "path": "services/accounting/posting.service.ts",
+      "sha256": "d5e30c3138e178e98c4b4f1c0bbbbcd32919c16d1c9817c94fb6629b0558e06d"
+    },
+    {
+      "path": "services/accounting/postings/pos-reversal-helpers.ts",
+      "sha256": "765ebc80a9076d0d64e4304d0e52a2437f41fd3a9440839d5ea96eece683ffdc"
+    },
+    {
+      "path": "services/accounting/postings/post-delivery-order.ts",
+      "sha256": "8705f3ca1143fa83dad060846e90279a8246258caa3c999781651a88d85833e9"
+    },
+    {
+      "path": "services/accounting/postings/post-payment.test.ts",
+      "sha256": "154b2793020c54b0badc9d0966f65b45fc1f628f10c83b43ba9eb4fec27b8ee2"
+    },
+    {
+      "path": "services/accounting/postings/post-payment.ts",
+      "sha256": "1e3165412259eb5bc809c7e23b815e879e895004f1a6dff277611e9eb43759e9"
+    },
+    {
+      "path": "services/accounting/postings/post-refund.ts",
+      "sha256": "09e91f556ef88ac2fd4d63e2d604301875fac370e73becbbcabd672555aad38e"
+    },
+    {
+      "path": "services/accounting/postings/post-reversal.test.ts",
+      "sha256": "69aa138346bec88dc88323fb6e470a4a7fd0bb7c6809edfe1fea774c870f963e"
+    },
+    {
+      "path": "services/accounting/postings/post-sale.test.ts",
+      "sha256": "de58c3c9a9f2b39a13f9d20904894390038680004d2db2470fd2c48ec8403ab6"
+    },
+    {
+      "path": "services/accounting/postings/post-sale.ts",
+      "sha256": "b5d78b39dbbf215acbde2e28d5fd794e1765267b9cad1b69365e1ff477be6d5c"
+    },
+    {
+      "path": "services/accounting/postings/post-void.ts",
+      "sha256": "a8384e512c253cef3683e3f03b335ad605748c2ed4353e9dada62c797588e74b"
+    },
+    {
+      "path": "services/agents/portfolio/__tests__/connector-inventory-read-model.service.test.ts",
+      "sha256": "727d4564f59176aa03740346435a531b7db892a17b3b36356267d8be6ecd6980"
+    },
+    {
+      "path": "services/agents/portfolio/connector-inventory-read-model.service.ts",
+      "sha256": "eaae69defd980cc40974c5fbd20ff331a1538d5b84c65d5b194ca3d15892fd36"
+    },
+    {
+      "path": "services/ai/__tests__/copilot-proposal-release.service.test.ts",
+      "sha256": "269e7bad4264623ecbdecbf86ee64b08fcf686bae3f12333cc11454f47e9b74f"
+    },
+    {
+      "path": "services/ai/__tests__/copilot-proposal.service.test.ts",
+      "sha256": "88252d3d32224f95a2921c787b66c5d622f3b22bf33ecb4d990c921fcea97fcb"
+    },
+    {
+      "path": "services/ai/copilot-proposal-release.service.ts",
+      "sha256": "7664e53690f374b7863b9b9feee90da8fb042da1ad485c489832217de4193d60"
+    },
+    {
+      "path": "services/ai/copilot-proposal.schemas.ts",
+      "sha256": "ea12abbb09e7a605f811876b82e9a31ad34aa51ab92137db9ae4212b620b2a9e"
+    },
+    {
+      "path": "services/ai/copilot-proposal.service.ts",
+      "sha256": "db04968c2ff404c48ea770f4ee16ff5d92a69577de3de5197b0b350d794c8c6b"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-outcomes.postgres.test.ts",
+      "sha256": "0b997aa7c6a36d7bef55e9d23bfdf50cbe5df5ecdb51d1963e4f5d57e7900727"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-assignment.postgres.test.ts",
+      "sha256": "13af77723d696d4419fd308e59ea72f7de39ce7864da89075a42b335890db914"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-incident-identity.postgres.test.ts",
+      "sha256": "1884d8366a19314732cc2589e9aaad68be478bdb2ee31a7fa31e13edbbe3b76d"
+    },
+    {
+      "path": "services/assurance/__tests__/assurance-registry-persistence.postgres.test.ts",
+      "sha256": "b4cd2e855021f3c18a505c9c634d00caa82bb1ec0b31ee003a5faf3ccbaddedf"
+    },
+    {
+      "path": "services/command-center/__tests__/command-center.postgres.test.ts",
+      "sha256": "99323320c1b4972c6af4bb3e494e4af1326dda9a309142aed4417c4a73b96d32"
+    },
+    {
+      "path": "services/compliance/__tests__/obligation-register.postgres.test.ts",
+      "sha256": "93e7b8e7835fd95bd8b9a0280afa799bc217f25be8c69fd84d92dc28757171d5"
+    },
+    {
+      "path": "services/daily-habit/__tests__/inventory-route-access.test.tsx",
+      "sha256": "a4ee9a35a8b00998aee5226074bdd11fd3ed536077263e8207ec8aa7f45da6fd"
+    },
+    {
+      "path": "services/daily-habit/__tests__/purchasing-route-access.test.tsx",
+      "sha256": "4f2a721941c98c23e3b65cb671fc1e7517844d46eed8394ff823aa09f162d138"
+    },
+    {
+      "path": "services/events/__tests__/af16-outbox-recovery.postgres.test.ts",
+      "sha256": "076468f4f990a83364eb3facaba2a84ad420bc4b5885ba87d884264ee74c31a4"
+    },
+    {
+      "path": "services/hris/__tests__/approval-review.postgres.test.ts",
+      "sha256": "0fe018c73f88a2d01c083d0a53e62d736bf05521c78bf0aee75de5e1373701c7"
+    },
+    {
+      "path": "services/hris/__tests__/daily-queue.postgres.test.ts",
+      "sha256": "69c39f85cd983797139c8f5b41598cf14c4c09f09b5170be7e5a49c9567612a3"
+    },
+    {
+      "path": "services/hris/__tests__/development-recovery.postgres.test.ts",
+      "sha256": "fd364a6200c9118c41fb1f6358e3f722cad6b282ec494e7087ef04776459de33"
+    },
+    {
+      "path": "services/hris/__tests__/employee-document.postgres.test.ts",
+      "sha256": "0295d48670929bcae4db5838cda7ef479214817371fc5d3f2d57aa649f4143e0"
+    },
+    {
+      "path": "services/hris/__tests__/employee-import.postgres.test.ts",
+      "sha256": "53b1ea436fdfe2622ad4dccb8e5a6515cd5ff611144cd772a153820cae3476e1"
+    },
+    {
+      "path": "services/hris/__tests__/hris-correctness.postgres.test.ts",
+      "sha256": "54ae41cacd48852ee04a1174638ee770259c8fb114025fdcd3883053b86f1ee4"
+    },
+    {
+      "path": "services/hris/__tests__/integrated-core-development.postgres.test.ts",
+      "sha256": "bd30633fa37a05cba4741a8b75f892392852cec2e9281a8d3d19d0f25458c773"
+    },
+    {
+      "path": "services/hris/__tests__/integrated-core-pilot.postgres.test.ts",
+      "sha256": "909c3acdf01857a5c2dc2d702d0314179543a10fd0b9b952a4b9c49da14d8000"
+    },
+    {
+      "path": "services/hris/__tests__/leave-entitlement.postgres.test.ts",
+      "sha256": "3c690de6dfb25e055c0ce43a5f07e215bbfdc29e151b7b8766edc647e2cfa310"
+    },
+    {
+      "path": "services/hris/__tests__/lifecycle-task.postgres.test.ts",
+      "sha256": "f0bbf0c12948a30e71da1f788b62de843a002bd4990100b10cfb29895e5b9c5b"
+    },
+    {
+      "path": "services/hris/__tests__/payroll-handoff.postgres.test.ts",
+      "sha256": "87dcd659c1cf6538a6233a9680ec7f05425dba676176c5460d3023a4d112d04b"
+    },
+    {
+      "path": "services/hris/__tests__/people-authoring.postgres.test.ts",
+      "sha256": "7b030e97cb9982a265e52770963839987b7cb48c01fbf2f475a6600d116673e3"
+    },
+    {
+      "path": "services/hris/__tests__/personal-correction.postgres.test.ts",
+      "sha256": "bf70dd96db494a54cb4d9d7744a88d95d87a0ded53ffc9f7bb09cad5fd54c3ba"
+    },
+    {
+      "path": "services/hris/__tests__/roster.postgres.test.ts",
+      "sha256": "855fc37c25ce43ad727da5c4079de935b5b10cd430d1ad2722b7e66291a8df2c"
+    },
+    {
+      "path": "services/hris/__tests__/workspace-setup.postgres.test.ts",
+      "sha256": "c6c8e919676080844ec972b1231f3cbe6324d1af77db457602dcfbaed21e278b"
+    },
+    {
+      "path": "services/inventory/__tests__/cross-workflow.phase3.fixture.ts",
+      "sha256": "dbe7fb35e1193388b61fbe10e84d609d18def52c12cc42a1adbcacee1399bb64"
+    },
+    {
+      "path": "services/inventory/__tests__/cross-workflow.phase3.postgres.test.ts",
+      "sha256": "c555d82e7e0faba447b548ce107faa286b76981c4aa84c136ac68aa427ccfc87"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts",
+      "sha256": "eaa3c15ed385a0e8f4efbd15993fec06e690f36297f5d099b44df1208dfc596b"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-adjustment-traceability.test.ts",
+      "sha256": "4fc9ff8d67eda9aaede849fe6212cb4ec8fd2a6b4fa53fe81806f1567407b85a"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-adjustment.service.test.ts",
+      "sha256": "c975b0175a9151e39a874575a3f448c1d8bd6e7568d8959afeadfbdff1a25c2a"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-close-invalidation.service.test.ts",
+      "sha256": "1b01f69f963f6f67f06102b8be696ae4c583f56c82fc6653c7a0b9791a94bc3c"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-count.service.test.ts",
+      "sha256": "ab587395eecce23bd8168190a11588b00b4f1eb287b58a26396007bf2ffa56bd"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-history-background-export.service.test.ts",
+      "sha256": "0d04ee8ff06160b47cce7ba0fcd84e4cb1bad5859f0abfc2c93121a860190bc1"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-history-export-artifact-store.test.ts",
+      "sha256": "6cbc0f2b743a7bdf501c0a842f390f94ae7147af5d5a4da5b05e4ff8fdddf8bf"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-history-export.service.test.ts",
+      "sha256": "a0a58a063d0627a3de8465911056ba3c69540719da41be0973990efe9695fd9a"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-loss-read.service.test.ts",
+      "sha256": "8a36c1458534e080094c73ab0499182e0101f91b8b94ceaa064cade7ed7dded0"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-projection-rebuild.service.test.ts",
+      "sha256": "38c8f1e02df9454ab718f81d83401ab7931c5c36aeab2ca2fc67ade901a4807c"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-read.service.test.ts",
+      "sha256": "b80403871c7b2f7b43aa88a2a1236dd1ebdb1698acb6f049a1e85b9d5d9b4fb7"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-reconciliation.service.test.ts",
+      "sha256": "b24c3c7768eb0116de98a7e223fee74f4ec328a0a6fa87474e0566c3a83e3a69"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+      "sha256": "52b5eaa255ba2a647678b9120012618b26a8d178c3e322dc37130a5e0e73ebf9"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-transfer-lifecycle.service.test.ts",
+      "sha256": "f7aade76e405ae6f40e00596c65b13f62d9f555e9c88bd0712954f0c0b65edea"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-transfer.service.test.ts",
+      "sha256": "8d9bc16786160c7ab00039564f792dc1268bd88056dfd9667ac51ec200f221bf"
+    },
+    {
+      "path": "services/inventory/__tests__/pos-valuation.repairs.test.ts",
+      "sha256": "449b57fbb1a60a2d46862e73491adbd3c1177d906be1f71cae5fa236ed150f32"
+    },
+    {
+      "path": "services/inventory/__tests__/receipt-cost-allocation.test.ts",
+      "sha256": "277e909b6b7ec911f0efaa40f85fce580d13d574c4e276e0b6a65ea2184a2277"
+    },
+    {
+      "path": "services/inventory/__tests__/stock-integrity.repairs.postgres.test.ts",
+      "sha256": "050f1190c4a0e7067ae611e3f1a035e2c0cc1b009a0b143510f6c5d84b693f68"
+    },
+    {
+      "path": "services/inventory/__tests__/transfer-source-inventory.test.ts",
+      "sha256": "c7051d00ec60b442249dc8d39b724ffeb1976e661c50f1af513086228ff417db"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment-reversal.schemas.ts",
+      "sha256": "b644c829b9eda1b5f73dd39ce841f095093add0c66403c35057ce3d5cc9ae047"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment-reversal.service.ts",
+      "sha256": "ec54b67b9d7be0cc24747e6b131e96f3ef6dc69afdcea88743b6275b83643e9a"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment.service.ts",
+      "sha256": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7"
+    },
+    {
+      "path": "services/inventory/inventory-close-invalidation.service.ts",
+      "sha256": "7c570820469718daf607d0213288f3b1bc37eecfec3dbd88c2fe188bf6b107bf"
+    },
+    {
+      "path": "services/inventory/inventory-count.service.ts",
+      "sha256": "c717783bb32f5f85955321a400ed2a36573682fc27b97c14d5d936c37ad75579"
+    },
+    {
+      "path": "services/inventory/inventory-errors.ts",
+      "sha256": "1c4c4ef868171381e04528b33fcccdff787c0bb5a15478f2ff1880ab3ffd3727"
+    },
+    {
+      "path": "services/inventory/inventory-event.schemas.ts",
+      "sha256": "fd4bd85949486fe9308b9b2e45fe59c8e711ab04a05b23b7e56872a65b01391b"
+    },
+    {
+      "path": "services/inventory/inventory-history-background-export.service.ts",
+      "sha256": "6ea0ee89d286d7f6952c0e09852280260ffc54f27e210c2083c478fadab96a6a"
+    },
+    {
+      "path": "services/inventory/inventory-history-export-artifact-store.ts",
+      "sha256": "6ad35bb24f1ebf81f1e03919399fb83f0ea2930da69461d76e775925dee5b35b"
+    },
+    {
+      "path": "services/inventory/inventory-history-export.service.ts",
+      "sha256": "ca73e30fd354e6dc80bce6ce17e5d4161638e57bce37c0b9ddd2c7781a48c531"
+    },
+    {
+      "path": "services/inventory/inventory-loss-read.service.ts",
+      "sha256": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438"
+    },
+    {
+      "path": "services/inventory/inventory-projection-rebuild.service.ts",
+      "sha256": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42"
+    },
+    {
+      "path": "services/inventory/inventory-read.service.ts",
+      "sha256": "0952b17d84ce15a1180046732a4bda425b1c33b8a6928cec3d208e9e76a4dc8a"
+    },
+    {
+      "path": "services/inventory/inventory-reconciliation.service.ts",
+      "sha256": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef"
+    },
+    {
+      "path": "services/inventory/inventory-stock-event.service.ts",
+      "sha256": "d11c80f6cd502146b5abb7c2a5536c7fecfac11c24d868c8f9e6af67436cdca5"
+    },
+    {
+      "path": "services/inventory/inventory-transfer-activity.service.ts",
+      "sha256": "cb93cd1585aa3493ff80d4e2c102711374e9a694e3de1b2434b40cd3e190b8e6"
+    },
+    {
+      "path": "services/inventory/inventory-transfer-lifecycle.service.ts",
+      "sha256": "dd1e68110290bb41c1f2f3b429333deae03d5e3c6f71fe182db5550a7f195df8"
+    },
+    {
+      "path": "services/inventory/inventory-transfer.service.ts",
+      "sha256": "ded6044f78c74886628e090932f0eceb6b708e90842d59116feaadfc0b93b5a4"
+    },
+    {
+      "path": "services/inventory/inventory-valuation.service.ts",
+      "sha256": "b8b1d781603f84e0c114d64b3b1657360928e118cd0dd353ccddc9f21244b9c2"
+    },
+    {
+      "path": "services/inventory/receipt-cost-allocation.ts",
+      "sha256": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-activation-marker-preflight.test.ts",
+      "sha256": "58c5479c38aa129de3d54b3b52de85adbcb06023c748e560eeb42489f1ed567b"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-alert-delivery-integration-preflight.test.ts",
+      "sha256": "f659eba1c885959174d4797f8226bc1a881bca537e5658405fc1e102dd5a793b"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-browser-auth-fixture-readiness-preflight.test.ts",
+      "sha256": "316ca4cab93431e17ec0585f68f65b9f8dd4ae1ba889e63adc76cebda7a9b1d7"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-browser-certification-gate-preflight.test.ts",
+      "sha256": "61e268ecd9190944e5f3c16b7c847ba542f60ce85bd4765d31c516a3a7b53b81"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-browser-certification-readiness-preflight.test.ts",
+      "sha256": "cf2f0bca644d1f8bb069f64ca6988251c3ef71e1af9ce4660ea0c26d859e1a15"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-browser-evidence-manifest-preflight.test.ts",
+      "sha256": "b370644413ce8e4caa86fb131c37f6d7a6c1c76b87ea78a2679f2351e450f434"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-idempotent-resolution-command-preflight.test.ts",
+      "sha256": "356c6bed4182bb7c5bcbbe5fdac7ffb9ff0dca84ee8d989ef388807d6cc613f5"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-incident-command-integration-preflight.test.ts",
+      "sha256": "12539af1a5f0e3bfcbb12dd2107cc8a5d47515db9c0697bd73451f4df387dfc6"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-incident-lifecycle-policy.test.ts",
+      "sha256": "c3f83ad1129cc1c994ebcae0e00b99f9ce83658b356ca9dbbe60b7943b14235a"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-observability-runbook-preflight.test.ts",
+      "sha256": "dc4a2b47d15fc3d1000f027d973f296e1b89d8faa0f03fc1b26d2ed00c7c7ccc"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-owner-security-approval-preflight.test.ts",
+      "sha256": "89eea468287a872eb416f423a732efd40f5c2368f3b1542775ee8fd79e4e4e92"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-product-caller-audit-event-preflight.test.ts",
+      "sha256": "b00d52984ccb758fc32b2731ed3aaf8c901eb7512f9c541ff2cc8ed5565c96da"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-production-activation-preflight.test.ts",
+      "sha256": "88217737cf5749e03448772f9282f7c486e3ff9d8d1d4e14b288a597bbe14ab3"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-production-policy-readiness-preflight.test.ts",
+      "sha256": "8f1e6479179a2d4c805c5b99f0bb6ec960c95dcef2d9556b20d1a8402ecea8d8"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-protected-resolution-execution-preflight.test.ts",
+      "sha256": "bbe4d2225ef3aecaf745f48c6d19778a11536f1aadc5ebbdabbadeddd8277459"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-resolution-command-readiness.test.ts",
+      "sha256": "4c187dcfdc44945405ef9f6917963cfdadfa5d3763bbf11ab311eba4fc07b057"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-resolution-command.test.ts",
+      "sha256": "735b5510be124b5e139ad4d798fe69161c7db1f34e8bc57ccb7c69cb85be2fb3"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-resolution-readiness-preflight.test.ts",
+      "sha256": "c6bb0bf08d419ed97c57bc42ad4d5109d1976eaa7ee5e8840030677eef4a801e"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-resolution-source-loader.test.ts",
+      "sha256": "288c5f983dcc337f9d74d6553e84cf46e42f20db2f5301e92b57334ab46cf8dc"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-resolution-source-recheck.test.ts",
+      "sha256": "7046c124414f3bfed1c58a9416acc285933fd3d3dc538155530b0a9e6ab9d6ff"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-rollback-plan-preflight.test.ts",
+      "sha256": "247dddd27bc8ad8d59be788950df5cf62e0c909aad1653f6d1d8985b74160d7e"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-scheduler-policy-preflight.test.ts",
+      "sha256": "3dad9cdb85829469a0691d98d41edc0f610ea1f6f4be636ee339657c7c367bc9"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-worker-checkpoint-contract.test.ts",
+      "sha256": "1b0158dddb27da848ba1be808950817ddf8adb79af1a4fa0ad2b3e85bfc5ec7a"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-worker-checkpoint-persistence-command-preflight.test.ts",
+      "sha256": "174309a9d7468af774d65b39a4be210d039f3e427a2e54913a220af0c21ff4d4"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-worker-checkpoint-persistence-preflight.test.ts",
+      "sha256": "3b43c10e9eaa87ba691b7c57c4c20ba448be9788822298dbdc8d27bd84c8bd31"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-cash-shortage-worker-checkpoint-persistence.service.test.ts",
+      "sha256": "caf21f92947bf0eced16da368bcd5ae5e01b641a7ca4c0eb6dcb1168dbe50133"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-shift-cash-shortage-assurance-adapter.test.ts",
+      "sha256": "9c2d8777e78fd742deb62aedf6b98472c103c74b170d0b511e780116a5110fd5"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-shift-cash-shortage-batch.service.test.ts",
+      "sha256": "c7398a3de46871f68bd212d237962bba8685fe679f26e3b9b3bf89b570e9696a"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-shift-cash-shortage-dormant-runner.test.ts",
+      "sha256": "2c6e37ae32151c8792e403290d6f2b013b7ae20bb5a42e0a5ee0aaf673dd9bc2"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-shift-cash-shortage-evaluator.test.ts",
+      "sha256": "4514de57eac61a36a4371187ab579d3dfd3914aa5ae599b3d2e86d1d2d7a4226"
+    },
+    {
+      "path": "services/leakage/__tests__/pos-shift-cash-shortage-runner-input.test.ts",
+      "sha256": "61a0ab8f5bda69e8fe23ae68fa7ec5aac19eb13791670f26fbd08079741bdcde"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-activation-marker-preflight.ts",
+      "sha256": "523ed1792c0a5cbe5c0782b94edd74a501f0c1493bc3d86b7975e6cda76265a0"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-alert-delivery-integration-preflight.ts",
+      "sha256": "708516e417e76cbfcbf8e27f6f21efc01dc948922592e86f1932c8988e2a77da"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-browser-auth-fixture-readiness-preflight.ts",
+      "sha256": "1c70a40de915348501b576202a72b152e17419760f77d67f271180e3706cf7aa"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-browser-certification-gate-preflight.ts",
+      "sha256": "fc26f992fa54ec8b70fc0d8e9d1c152c3f33adb348af19e687cbac0b65d14ef6"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-browser-certification-readiness-preflight.ts",
+      "sha256": "cfa387a87ed8cfcbcaccba279185e6aacc397700015affc306b3cb68885523e7"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-browser-evidence-manifest-preflight.ts",
+      "sha256": "9cf192d81bf84c32f874291a3035295b190195344c8fcc79d4f8276baec3ac50"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-idempotent-resolution-command-preflight.ts",
+      "sha256": "db65bcc7bd38d3e717cc9e480a1443f5c1b80bcc22f8892943a5d78b509fedb0"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-incident-command-integration-preflight.ts",
+      "sha256": "680dcbf3e82bc2dd082661a0cfcdebc94ea2be6f00a980b19745e889893882c6"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-incident-lifecycle-policy.ts",
+      "sha256": "041dcfe3916b9e6e2ff7347fe5cd5194ef7bd01aa24acfdcac7075248a40d4e2"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-observability-runbook-preflight.ts",
+      "sha256": "4f0074d5625d70b36d6082f714f59dc8af7c6ae7f2f1315c1bf29a9f88dcdea9"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-owner-security-approval-preflight.ts",
+      "sha256": "84e53d908a22eafa73e51d14f43295f2618c373e1d3298cf769c93edc19c602e"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-product-caller-audit-event-preflight.ts",
+      "sha256": "538505b6b36e5f206d2688ff821af3d68bfacaa003789be72135eb0bed771d85"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-production-activation-preflight.ts",
+      "sha256": "e0836a69aff6b64767601425a3b83f706ad5260fc992a231975e641738b5b41b"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-production-policy-readiness-preflight.ts",
+      "sha256": "5688b8ac20797ae8e2b9bcf75196d51093849007d896e2961d7fa2ad00cc405b"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-protected-resolution-execution-preflight.ts",
+      "sha256": "8b64828b95489f0c6a76f8f32679cc87ee58d4c7729db563f293b8eb037ccb52"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-resolution-command-readiness.ts",
+      "sha256": "ef92bb889ac7c0b71b239b28b4d6da5444212c3836e8689dbfe5149749d1d349"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-resolution-command.ts",
+      "sha256": "d9420380035b5fa375bb54afccbabc1c193dcb062187d3cbb99099cbf2c89c9c"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-resolution-readiness-preflight.ts",
+      "sha256": "e134392e7c4cbb92b93b1cd5f67f404eb11b53447d777a8ddc831ae55d733c5d"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-resolution-source-loader.ts",
+      "sha256": "2606138d5f71698cac38b061d350e5e5d97672a03116b3245880ed869641cf4c"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-resolution-source-recheck.ts",
+      "sha256": "c6b310a94e0505349a4230ea962e197c94f93f5687a761a32e4544965883bac4"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-rollback-plan-preflight.ts",
+      "sha256": "3f043f6103e95018a9e0f9603afc5e1861a6c1c763fb438c4764a210282526f7"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-scheduler-policy-preflight.ts",
+      "sha256": "362949ad44d56792bfd040ed5a170826a39a3513b08659ec03c47f02acfb7c32"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-worker-checkpoint-contract.ts",
+      "sha256": "c13fba2eba986505d5477c998b6ac1ef055269f859749cbc82a17cda8e5f712b"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-worker-checkpoint-persistence-command-preflight.ts",
+      "sha256": "ea401199b455cfc7756d3b2ffebdc9b7388d54bbc20e839ce9a9724001057116"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-worker-checkpoint-persistence-preflight.ts",
+      "sha256": "515536fe1d0622bcf9b4040d82b0551ae173938e8ac06dd59e45da86d2bcdbed"
+    },
+    {
+      "path": "services/leakage/pos-cash-shortage-worker-checkpoint-persistence.service.ts",
+      "sha256": "390bfcd7f99c965fd2330d7588eac01cc7d708b9648d72875157581f2947ba41"
+    },
+    {
+      "path": "services/leakage/pos-shift-cash-shortage-assurance-adapter.ts",
+      "sha256": "f12f4241f31a22cc61f3ddb27bee812c4338b01d112f7bd0e90640c998558e2c"
+    },
+    {
+      "path": "services/leakage/pos-shift-cash-shortage-batch.schemas.ts",
+      "sha256": "9ed675ce83009622d3ba3260533c2bb002c3af8abced63ff6af62071a546bf32"
+    },
+    {
+      "path": "services/leakage/pos-shift-cash-shortage-batch.service.ts",
+      "sha256": "e88373b31304548804fab53c2016da627850aace63a871022343803b3bea54f7"
+    },
+    {
+      "path": "services/leakage/pos-shift-cash-shortage-contracts.ts",
+      "sha256": "9e9950fe00fe62200017d6f71542a4cc1b167a684a25b01806b0704a74653a8b"
+    },
+    {
+      "path": "services/leakage/pos-shift-cash-shortage-dormant-runner.ts",
+      "sha256": "097427b9e35df221d75f98538de9e7b441c1bd702cac5377bb62b24030881cf2"
+    },
+    {
+      "path": "services/leakage/pos-shift-cash-shortage-evaluator.ts",
+      "sha256": "d501844ab9c3c1355c2b8ea96f3f0b1dce105e0aced7acd1ea4aaebf149ec3d5"
+    },
+    {
+      "path": "services/leakage/pos-shift-cash-shortage-runner-input.ts",
+      "sha256": "6b7e2ce07c2542a463416c518f88d3e6977a2b9a6f1b0941469662e07974fa79"
+    },
+    {
+      "path": "services/modules/__tests__/module-composition.service.test.ts",
+      "sha256": "015aee6c71be00dc13caa8b2193c9ed4d753a802ddfc5b679ab87db43ee31850"
+    },
+    {
+      "path": "services/modules/__tests__/module-inventory-continuation.service.test.ts",
+      "sha256": "8d674e95b459d9422bccb9e0183825f56569a5e1b7dcd7cbbef2ff3a9fb467bd"
+    },
+    {
+      "path": "services/modules/__tests__/module-reconciliation-obligations.postgres.test.ts",
+      "sha256": "bb803f14e56cf30686bc8e7f3b3ed00a2413120a5bc1ca775c8b68abb129060d"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "291bd003d161570251a54772fe38ca2e6cca9801fa1126461771caf56aaadd18"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "123c912ff168d2e6f9e47ae7010b192fdb6397b30d1e747bdd35448f8eecffdf"
+    },
+    {
+      "path": "services/modules/module-inventory-continuation.service.ts",
+      "sha256": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820"
+    },
+    {
+      "path": "services/onboarding/__tests__/fixtures/opening-position-contract.ts",
+      "sha256": "15cea33bbcde9ec470d7ce59486c2c36b59b2a99464260643996035bf5bd202d"
+    },
+    {
+      "path": "services/onboarding/__tests__/item-import-media.postgres.test.ts",
+      "sha256": "2172d9d0dc8356a915a9e001122e7c6d6a11558200f23a1aee20eeeaaf0c452a"
+    },
+    {
+      "path": "services/onboarding/__tests__/opening-cutover.postgres.test.ts",
+      "sha256": "822a7ef226befe827095eedf35d22c45d643d8c46ccf0452bf345db2ad7ba266"
+    },
+    {
+      "path": "services/onboarding/__tests__/opening-position-contract.test.ts",
+      "sha256": "1fafffbda1d63ac206142c5d70ee345437afac83892b5d938c3e34c2cb981931"
+    },
+    {
+      "path": "services/onboarding/__tests__/opening-position-preview.test.ts",
+      "sha256": "c7b1b0f3561361d6c9b41ac18fbd7d41d4ccddaaea75c3c94c442db0cb730996"
+    },
+    {
+      "path": "services/onboarding/__tests__/opening-position.postgres.test.ts",
+      "sha256": "5d2c53a3e5ee2d482d196131a6a461557af89d6025cd6f31dc8713620a66bcde"
+    },
+    {
+      "path": "services/onboarding/__tests__/opening-readiness.postgres.test.ts",
+      "sha256": "520e91e1afc0c827fba1e750b3aade9b131720975d42902c87685cd6fea19b8a"
+    },
+    {
+      "path": "services/onboarding/opening-cutover.contract.ts",
+      "sha256": "db4cc3a76500f19b04678556b267d7d271090b2a2dccbb5029e65dfa21548233"
+    },
+    {
+      "path": "services/onboarding/opening-cutover.service.ts",
+      "sha256": "373ad201dc247868e0c95de3d99f1d8f2cb69481356879ea8aa124c569725b6f"
+    },
+    {
+      "path": "services/onboarding/opening-position-preview.ts",
+      "sha256": "f5164fc732d2b61f87657a7aa8a2739880f4e4615ba537e4323fb6c158107b2f"
+    },
+    {
+      "path": "services/onboarding/opening-position.contract.ts",
+      "sha256": "52933a9002280256aad7c85aba74ffdf2b5ec3a385e92796db3df20a9773eefe"
+    },
+    {
+      "path": "services/onboarding/opening-position.service.ts",
+      "sha256": "f767771b2b8c71f8abe49c206cf3c782cdeff8ad38cdceeacac9154a894233d9"
+    },
+    {
+      "path": "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts",
+      "sha256": "2818a6eb5e0006bbc38ae3e9b03d893a081402d303b543c65989282916af9bbf"
+    },
+    {
+      "path": "services/payments/__tests__/provider-formats.postgres.test.ts",
+      "sha256": "2a29ea83055417978881f622e743988027eb554fa48dcd9b863fba82dcad5d11"
+    },
+    {
+      "path": "services/payments/pos-electronic-tender-authority.service.ts",
+      "sha256": "4254e1991691fa9eaff1e455694ac3d2b30b6b31287b3158d5b3fc2786da3ba6"
+    },
+    {
+      "path": "services/pos/__tests__/cart-revision.test.ts",
+      "sha256": "7719c0853ebd9d91ff66d184f19cf25578e958705ee948c94fbd7b8c686d6507"
+    },
+    {
+      "path": "services/pos/__tests__/cart-write-access.test.ts",
+      "sha256": "15be4400cfac811c644094a2af2d97a78ecd942cff24da1782cd4bf8cfe69906"
+    },
+    {
+      "path": "services/pos/__tests__/cash-payment-history.service.test.ts",
+      "sha256": "41f62d4fa024e5281eaf3d64b98ee9b514430be11e10a4552c4a9582956115d3"
+    },
+    {
+      "path": "services/pos/__tests__/checkout-lifecycle.postgres.test.ts",
+      "sha256": "53d21e652a054c6756641d8f417ed4e2fab1b59a0619867f1eb023837afc477d"
+    },
+    {
+      "path": "services/pos/__tests__/checkout-lifecycle.service.test.ts",
+      "sha256": "f944d7ded1d168186eb802ceb094ff76ef48489667ff0e69ba875fb570b16fa0"
+    },
+    {
+      "path": "services/pos/__tests__/commit-recovery.service.test.ts",
+      "sha256": "d2768995ff044857da40603fd6e4116700120face37c299ec3a50a6a3b62b3b3"
+    },
+    {
+      "path": "services/pos/__tests__/offline-sync.service.test.ts",
+      "sha256": "58a7ee84b6b6549d5e304f5db179447e9ffd9e8613ccf0bf6234fb56269c0b04"
+    },
+    {
+      "path": "services/pos/__tests__/pos-cart-transaction.test.ts",
+      "sha256": "bef3653d27277a3effbda1f18efcc67c9da75b701e31f1d9e7ce7688e4ca9b4b"
+    },
+    {
+      "path": "services/pos/__tests__/pos-commit-result.postgres.test.ts",
+      "sha256": "d681cd7191934446de0dc8f429b58bf73a930763e1ccdca7c784326af0e6fcb3"
+    },
+    {
+      "path": "services/pos/__tests__/pos-corrections.postgres.test.ts",
+      "sha256": "37080458898b77fbe30f26387ed2cc06dea7c2ecef1a0f0bdfad97c8a0290655"
+    },
+    {
+      "path": "services/pos/__tests__/pos-customer.service.test.ts",
+      "sha256": "425c241d2f9ac085cddc863d466eaf2cf6e9551b5d3b202dba453e8139d4b7f8"
+    },
+    {
+      "path": "services/pos/__tests__/pos-full-commit.postgres.test.ts",
+      "sha256": "67dc7e63c60098c965a1156b7b8339a4d33fc886169a00bdd40e3d42f875c4dc"
+    },
+    {
+      "path": "services/pos/__tests__/pos-shift-close.postgres.test.ts",
+      "sha256": "35a565916316d6af1645b95337dcc4ef4e1b0999a9a08302b0e996e674edcf6c"
+    },
+    {
+      "path": "services/pos/__tests__/pos-shift-close.service.test.ts",
+      "sha256": "a2f21eaf755aa6b2bfc1799bdb28a95b78cd984532b7202493d9b25f35cc38ee"
+    },
+    {
+      "path": "services/pos/__tests__/pos.service.test.ts",
+      "sha256": "cc239a47b124ffdccc37ae07ddf498576c69b62a22b6a97045625a8b9bb8c8a4"
+    },
+    {
+      "path": "services/pos/__tests__/public-receipt-token-registry.service.test.ts",
+      "sha256": "77a08cbf16e4589c4593f045667f7dfdd1f6b20ef71b3e2f8d32c0a08bbce344"
+    },
+    {
+      "path": "services/pos/__tests__/public-receipt-token.test.ts",
+      "sha256": "449a4307d475a076aa5080ae45ca02f1d93bd1f69644f5d0e1a4223a73c5e908"
+    },
+    {
+      "path": "services/pos/__tests__/receipt-channel-contract.test.ts",
+      "sha256": "f527b3f7090cd2eef5b764d67d85e6ba83cad913ab3e790823d413d47ee87f14"
+    },
+    {
+      "path": "services/pos/__tests__/receipt-public.test.ts",
+      "sha256": "29d00e14cfaa0d81d200b9c2138b6e882f504cad4490447a82c9b044848e379b"
+    },
+    {
+      "path": "services/pos/__tests__/receipt-token-action-schema.test.ts",
+      "sha256": "ef87695da607b862b8e493c9c4dbcc67b106b5a65de21d7dbba2f0523f2e6216"
+    },
+    {
+      "path": "services/pos/__tests__/retention-offline-operator.browser-fixture.test.ts",
+      "sha256": "dd4ed45c246753ccf92cf656916e1924c27de1582e29f19a8899ea340f4144f3"
+    },
+    {
+      "path": "services/pos/__tests__/retention-recovery.browser-fixture.test.ts",
+      "sha256": "8f752ba8c125995611cd859fcb7201f2ebfc7de62d667d43e9e7e291f7eb914c"
+    },
+    {
+      "path": "services/pos/__tests__/shift-opening-access.test.ts",
+      "sha256": "c4b5bca8c5988df7000595498f035d6d329fe8d8d40bc8f54f2dd257e7780993"
+    },
+    {
+      "path": "services/pos/__tests__/tender-write-access.test.ts",
+      "sha256": "0a6b4a4a4349b25fe273e51e5f32fdd8d5d3dfe3f34fecd6883f1f6ac671dc79"
+    },
+    {
+      "path": "services/pos/__tests__/terminal-archive.service.test.ts",
+      "sha256": "9cd0a0b528239a23b92dbb8d911f3eb494833d8e1b38086e7f57ac1bf9035dc6"
+    },
+    {
+      "path": "services/pos/__tests__/terminal-result-transaction.service.test.ts",
+      "sha256": "e426f50d86de49db8880f776b15c35aed49e4f85336482de488da7ef772bfa31"
+    },
+    {
+      "path": "services/pos/cart-revision.ts",
+      "sha256": "4c5f908834e7a6ea7bcbfd5492dd8c60cf58980f047673c8613943de47c16169"
+    },
+    {
+      "path": "services/pos/cart-write-access.ts",
+      "sha256": "2f6b1811df12075a8dbb298987af100b3d8335db2d66ed7fa7cef65edd7899e8"
+    },
+    {
+      "path": "services/pos/cash-payment-history.schemas.ts",
+      "sha256": "ec94e63edc785abab67e9958647f5ac9ff16a2b2ef6e52a24ea0ede075b6ab78"
+    },
+    {
+      "path": "services/pos/cash-payment-history.service.ts",
+      "sha256": "78c0e579a2317a5ac850d21e633ad17f006b0f7f86278e97b841301c61b5eeb1"
+    },
+    {
+      "path": "services/pos/checkout-state.ts",
+      "sha256": "58591a2d57cf720ed1f99184b5cde637893556b47a239e60ec4cf86d4b1fd7bf"
+    },
+    {
+      "path": "services/pos/checkout.service.ts",
+      "sha256": "ff5616e1efc1ee9951c172e0d66d31eb8673f344c26068509ad6adf1871754c7"
+    },
+    {
+      "path": "services/pos/commit-result.ts",
+      "sha256": "4cd518ec5ebb5b7df9618da4eb58e779566804a021d4f6ce1461f56240aebb00"
+    },
+    {
+      "path": "services/pos/drawer-dashboard.schemas.ts",
+      "sha256": "2668e731481650e0b282a210a0353659419edcc952947cf5067903839d3be5d2"
+    },
+    {
+      "path": "services/pos/drawer-dashboard.service.ts",
+      "sha256": "2b5fd44cc75d0c42376649520f6b281fa321442e4e73d63903511789d90d7132"
+    },
+    {
+      "path": "services/pos/money.ts",
+      "sha256": "8869b6e1fe84e1e832cdcbb43656bbcf7ad79da80494592c051468d4601dffc1"
+    },
+    {
+      "path": "services/pos/offline-resolution.service.ts",
+      "sha256": "a6f3fb44f143a60cda7e1dbdd586bf9b0b2bbdda7a1137dacaaecb1e06c2ac86"
+    },
+    {
+      "path": "services/pos/offline-review.service.ts",
+      "sha256": "a810aec09020e68609e2650b26b53be145f50fafcc911f89326ade1e75e29ec1"
+    },
+    {
+      "path": "services/pos/offline-sync.schemas.ts",
+      "sha256": "dd23069bea183a7a20fe6efb0e6a7248b2014dcfe24addae24dcc2d4f068c1fc"
+    },
+    {
+      "path": "services/pos/offline-sync.service.ts",
+      "sha256": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6"
+    },
+    {
+      "path": "services/pos/pos-customer.service.ts",
+      "sha256": "72b25537644a8c669517794eb1bba589b10efd47de59ac49c2e1eb2016b4bd15"
+    },
+    {
+      "path": "services/pos/pos-read-result.ts",
+      "sha256": "3180c6ed2f07c58c2a39138ec163d026e4d46da7b77571427bf121585c631bfc"
+    },
+    {
+      "path": "services/pos/pos.schemas.ts",
+      "sha256": "8c2a9e86faa88042beab7572fac5169c3983f81f3d078122f5b3507b78028650"
+    },
+    {
+      "path": "services/pos/pos.service.ts",
+      "sha256": "d6c63a80e00326ac805e69bdc84678aeb1f3308b5b8a79f172fcab10b2a139df"
+    },
+    {
+      "path": "services/pos/public-receipt-token-registry.service.ts",
+      "sha256": "01e9d3297cdbe39476d4a3bf151f26d3e2b58ac3c8532122ad91ad4147919780"
+    },
+    {
+      "path": "services/pos/public-receipt-token.ts",
+      "sha256": "db18214de6cd8050d12b7d3243914fc437aac6bed63adbd304d2ef13de2ec820"
+    },
+    {
+      "path": "services/pos/receipt-channels.ts",
+      "sha256": "8061e2d507bf4f6e43ada228af5cca7ceecfd74c88a37f17a14288686df94d38"
+    },
+    {
+      "path": "services/pos/receipt.service.ts",
+      "sha256": "3acb6c4a2cf3d83a8b58781395ec0ed983e5ede8303d8443c19e5a06bab59faf"
+    },
+    {
+      "path": "services/pos/shift-opening-access.ts",
+      "sha256": "4c89c7f9015632b0bfb96477a44ffeab5b7149ba77705b875c3f17bf3a8751b4"
+    },
+    {
+      "path": "services/pos/tender-write-access.ts",
+      "sha256": "a06a5d1810d0785881856e41af66c6c30c2d07f7700d2e81b88c34624a82f4f4"
+    },
+    {
+      "path": "services/pos/terminal-configuration-revision.ts",
+      "sha256": "d2c38ba8ec1e80e0ce58c8639bcf383244a5b089c11b8c1dc74488a1a94b532e"
+    },
+    {
+      "path": "services/pos/terminal-management.schemas.ts",
+      "sha256": "3a437658b561080afe47692276ddd495f2e0006722e80290138c3c530e7da1ce"
+    },
+    {
+      "path": "services/pos/terminal-management.service.ts",
+      "sha256": "e139a6a2785888ef9a5b075c717fcc7e6ec18f88054d7c7f492f05036029f7a6"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-document-number.service.test.ts",
+      "sha256": "5896bae880ff71ea929e13920c2e9e9275b024bd17d5ce7db0c1e7b7a2d23130"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order-amendment-record.test.ts",
+      "sha256": "07fc191b82e4c712fcbd29588d17cfbcccb00db52afadf0a583da05dcee69c17"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order-analytics.service.test.ts",
+      "sha256": "389c9c3b96250bab5edda1c7b834c5f6c3bf552b13dcd2a37e27259151da60a6"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order-authoring.test.ts",
+      "sha256": "82bdc8ae4201d6d0142296a8b65c0a01bf1e108cce0154ba13a4c02a1e161aab"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order-capabilities.test.ts",
+      "sha256": "4e76a9f3a493e949de5721050de1acfde9b2f9eff0696f204bf9c0d94a1503ec"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order-clone-scope.service.test.ts",
+      "sha256": "346fcaca388921951499e606006c93d6a07b45f2ca9b4fd130f621671a2e30a1"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+      "sha256": "b41b51b8d8720c61469caf651be56d91fb19723a8c3ce2d8fb3de02b8f09dce2"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order.service.test.ts",
+      "sha256": "d15e7a2f5981ae059f0bb3af68481aaf1ef904cbb57062a3b896b44e07394d89"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-quantity.test.ts",
+      "sha256": "678b5bce9fbe0ebaac1cf081dc0485b9c3cbaae2806a1b5a5345112854b8fedb"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts",
+      "sha256": "0c33c9cce40c1c688c50a856799ae440cb895c2fa02e43b1df2fa5c44684d4a9"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-receiving-contracts.test.ts",
+      "sha256": "ae95cd99205f759440bd3754f08bacb4d5404dbdf381066790f183cb1103dcc1"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-receiving-revision.test.ts",
+      "sha256": "8f34404312d3c3045b941dbe3190c4d3d2d95d7cf31dffba2e8953ecd046216c"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-receiving.postgres.test.ts",
+      "sha256": "b8e47d37a61fdc9a40c5efaa823c8a78caa44dbf176cd3c35e74778d40360cf7"
+    },
+    {
+      "path": "services/purchase-order/__tests__/receipt-ledger-recovery-authority.test.ts",
+      "sha256": "6060aedaa8c0065f4adab75992ea6a6d1cd0933edb1295424efa393f054f56c8"
+    },
+    {
+      "path": "services/purchase-order/__tests__/receipt-ledger-recovery.service.test.ts",
+      "sha256": "2a51e5f0407d245a57a4852af8f80452a1e0e87bf64b8258d7fd1ccf985c972d"
+    },
+    {
+      "path": "services/purchase-order/__tests__/receipt-recognition-source.test.ts",
+      "sha256": "ff954b9cbe5c00108f88bd24f8c157ec1781528338e23e55c01a5e5e5d225ec8"
+    },
+    {
+      "path": "services/purchase-order/__tests__/receipt-recognition.service.test.ts",
+      "sha256": "d8d885b86119fabc4e1afe2b7acf69d5b715647669af5be525e26466fcd53a8b"
+    },
+    {
+      "path": "services/purchase-order/__tests__/supplier-po-access-token.test.ts",
+      "sha256": "510aa13aa4da3ee0f3a393886dfeb509fd358ad696e19b7dd197525461e54193"
+    },
+    {
+      "path": "services/purchase-order/__tests__/supplier-po-authority-boundary.test.ts",
+      "sha256": "230b4212870006a7598f13ed06f5675e4c3f2801998c279be335ca315e888b63"
+    },
+    {
+      "path": "services/purchase-order/__tests__/supplier-po-proposal-evidence.test.ts",
+      "sha256": "19c0034ea0926dc1f94ca72f8964a4e8eb5cdeed975b6da2bb76a7a6eb8245c4"
+    },
+    {
+      "path": "services/purchase-order/__tests__/supplier-po-proposal-retry.test.ts",
+      "sha256": "c9db5613f8145b87bf6288f7bad14d80f3cf573e528174d8da8e5e9bbdb1f49c"
+    },
+    {
+      "path": "services/purchase-order/purchase-document-number.service.ts",
+      "sha256": "9be48c7b4339a5d28c63d3fbc4adbdefb7e0f10aad15f8e884cf103d72a94d36"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-amendment-contracts.ts",
+      "sha256": "9665020e97a652586b2c38310a6970fece7c2b0e4545061a4d68dd825a4ef839"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-amendment-record.ts",
+      "sha256": "e13044cd5078141b924dc14a7252cb19b8ed61def4b5667db205900ac3f80551"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-amendment.service.ts",
+      "sha256": "5ac5d729bc8ffaa227298085c0e2ad9c985aa7bfa7698ebcb84418e89d36831d"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-approval-contracts.ts",
+      "sha256": "790e9fc8dc332a9c7ff79a0f10034b55036dfd61d829174a94b1cf325e85bb30"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-approval.ts",
+      "sha256": "90655b9c1b0079f3daa750422cd49f8a8b65607d63f73df946a979066d2fabb0"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-authoring-contracts.ts",
+      "sha256": "d04ac0ed5b6e2a64df18b40caf6aaf2e1b4473848047d1d87a4ba30c2c027d79"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-authoring.service.ts",
+      "sha256": "8fd28738f93cbaf2bd78b11088546228b9e0ccad18fded6a41d01a869006f842"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-capabilities.ts",
+      "sha256": "04a72597d0b6514a2ea3665057cf709b4e1c9ab8c63db65c1f11f9b6dabf3679"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-decision-history.ts",
+      "sha256": "be8361a935df47d81a1ccfbb70d9f7b512c905ccf6a3d67bae3d00637380c954"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-edit-record.ts",
+      "sha256": "320e8a461d4b0385a1b5cd527b21e95b7dd91f17940ff5279585bdf8c47a3938"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-lifecycle-contracts.ts",
+      "sha256": "828e92b74326624d42edf42c0565f2a642c046d19585643ee9b9712b06b843f5"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-lifecycle.ts",
+      "sha256": "ba1cdcffcc0578dc47d6376bd0a1098e0378f27e78f3da3bdb16c40d484b9bff"
+    },
+    {
+      "path": "services/purchase-order/purchase-order.schemas.ts",
+      "sha256": "fa96b20d8eef82597cec1b86d0e1e149eb833df83982112753c5d3114f8b80d9"
+    },
+    {
+      "path": "services/purchase-order/purchase-order.service.ts",
+      "sha256": "b37fc3e05357381c890145091f3c54a91a5edb2b2a9b49a02abb860abd42adbc"
+    },
+    {
+      "path": "services/purchase-order/purchase-quantity.ts",
+      "sha256": "905dfcedb0d9b1d914a6d4a4a4f32e6d980336c929fc3e4caa6cc846b5f2c7d0"
+    },
+    {
+      "path": "services/purchase-order/purchase-receipt-accounting-evidence.ts",
+      "sha256": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b"
+    },
+    {
+      "path": "services/purchase-order/purchase-receiving-authority.ts",
+      "sha256": "82df2062cd76b964bb579fdc3e31f27a9b5432cff732ecd1103c653e9bfd4686"
+    },
+    {
+      "path": "services/purchase-order/purchase-receiving-contracts.ts",
+      "sha256": "90aa0c3ce725cf0456f557574b60651f2d1ce661054a85ead7ad86466dd0a185"
+    },
+    {
+      "path": "services/purchase-order/purchase-receiving-workbench.service.ts",
+      "sha256": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35"
+    },
+    {
+      "path": "services/purchase-order/receipt-ledger-recovery-authority.ts",
+      "sha256": "6ba14fb18edf9a3cd637a2e58864c236e6d45be07e3fef41a45ca0da9aeac75d"
+    },
+    {
+      "path": "services/purchase-order/receipt-ledger-recovery-contracts.ts",
+      "sha256": "11871c18fe4e848bf80f59663d4105027389b507d1bcfe5a96c4d5976909dc17"
+    },
+    {
+      "path": "services/purchase-order/receipt-ledger-recovery.service.ts",
+      "sha256": "1ae6740e14c7a3a9f3f4e8c83be513f82416ae68739f207287fdc84772c5a5b7"
+    },
+    {
+      "path": "services/purchase-order/receipt-recognition-source.ts",
+      "sha256": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a"
+    },
+    {
+      "path": "services/purchase-order/receipt-recognition.service.ts",
+      "sha256": "9529c7e9c277680a6df89ab7bfa79614be5735635a2c0397c5b1e50c029cfd72"
+    },
+    {
+      "path": "services/purchase-order/supplier-po-access-token.ts",
+      "sha256": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588"
+    },
+    {
+      "path": "services/purchase-order/supplier-po-acknowledgement.schemas.ts",
+      "sha256": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a"
+    },
+    {
+      "path": "services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "sha256": "65d6320b649263e053f2a2cf06b0a49e8d0bd44d68862f9bab5eea70f6da3be6"
+    },
+    {
+      "path": "services/purchase-order/supplier-po-buyer-authority.ts",
+      "sha256": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0"
+    },
+    {
+      "path": "services/purchase-order/supplier-po-buyer-contracts.ts",
+      "sha256": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6"
+    },
+    {
+      "path": "services/purchase-order/supplier-po-http.ts",
+      "sha256": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a"
+    },
+    {
+      "path": "services/purchase-order/supplier-po-proposal-evidence.ts",
+      "sha256": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50"
+    },
+    {
+      "path": "services/purchase-order/supplier-po-response-contracts.ts",
+      "sha256": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09"
+    },
+    {
+      "path": "services/purchasing/__tests__/ap-control.service.test.ts",
+      "sha256": "64c71c8d042584d2942c9a818a7623426817d697fbaf44260975c896f962f23c"
+    },
+    {
+      "path": "services/purchasing/__tests__/ap-history-allocation-integrity.test.ts",
+      "sha256": "b8e1041baa7ca12ddc0b46482ad3d9d70ba54b98aaaaac4649a68c8f385d9d5b"
+    },
+    {
+      "path": "services/purchasing/__tests__/ap-history-export.service.test.ts",
+      "sha256": "7d3bc1c4e0c8c5a89cd7e4a639c52a50d1da3032987e93691ccfc4afd6f3263f"
+    },
+    {
+      "path": "services/purchasing/__tests__/ap-history-financial.test.ts",
+      "sha256": "5ae903bb998f5168067d7d3f166e10d36649d211364745031e82bb3e1ae50bea"
+    },
+    {
+      "path": "services/purchasing/__tests__/ap-history-revision.test.ts",
+      "sha256": "7e2ffe863a806c9857519481802b8aa3720a3d0408004404214912638823a9fc"
+    },
+    {
+      "path": "services/purchasing/__tests__/ap-history.service.test.ts",
+      "sha256": "495141d2060dac5c4eb0e1e9b45f0b954df7db195c7811caa598b114b01d0a6e"
+    },
+    {
+      "path": "services/purchasing/__tests__/ap-ledger-retry.test.ts",
+      "sha256": "7d39c8ae8a9301885fbda09f01d91b6e1b727e35a172247fd9e3f1fa208489ae"
+    },
+    {
+      "path": "services/purchasing/__tests__/invoice-approval-contracts.test.ts",
+      "sha256": "701a7c12d7fbacfa6b7cc5747b473f900ef56beec4944ddbf19db3e8fa11b27a"
+    },
+    {
+      "path": "services/purchasing/__tests__/invoice-correction-contracts.test.ts",
+      "sha256": "dea366fed4a3838ea913bf41a79c5b3a1a1fe41119eb2f61c7e982ca2bb35229"
+    },
+    {
+      "path": "services/purchasing/__tests__/invoice-ledger-recovery-contracts.test.ts",
+      "sha256": "f4112c92dd317924589b4e70f6912d525dee8a5735815e5561a0d2531a2e0db6"
+    },
+    {
+      "path": "services/purchasing/__tests__/invoice-match-exception-contracts.test.ts",
+      "sha256": "08b834d416e1442035602dc5bc5e6b961802434620be8be3064f4d5dcc0d7411"
+    },
+    {
+      "path": "services/purchasing/__tests__/invoice-preparation-contracts.test.ts",
+      "sha256": "30f46200d1036e8076beeaa9678d25386029ddacb592484d63b7cedb9dc843f8"
+    },
+    {
+      "path": "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+      "sha256": "eadeeb31b31e437c8cc1715cfff65e54404255abebf8186c848d81a24821b467"
+    },
+    {
+      "path": "services/purchasing/__tests__/payment-posting-recovery.service.test.ts",
+      "sha256": "b88f2a5af206c3b1b57c6daa9090a391bb0db62a4641651362e29594623d765b"
+    },
+    {
+      "path": "services/purchasing/__tests__/payment-reconciliation-authority.test.ts",
+      "sha256": "fa6b4143617230531247d1bd9b89a3fc6f933b1a75c0e8683762fcd56b0ef95f"
+    },
+    {
+      "path": "services/purchasing/__tests__/payment-reconciliation-close.test.ts",
+      "sha256": "d5f37bdb217ad87b937cd79da621df44562454ccebf7328bb7882eb783db1f5d"
+    },
+    {
+      "path": "services/purchasing/__tests__/payment-reconciliation-evidence.test.ts",
+      "sha256": "938d1025db4d2499a1196b2906e5480962be5bda100686b66f8591b6de2036b1"
+    },
+    {
+      "path": "services/purchasing/__tests__/payment-reconciliation-proof-summary.test.ts",
+      "sha256": "ad313ab1365fa14aa4a50a60380a5636cffa2a019a83cecd124dc52e3bd958f6"
+    },
+    {
+      "path": "services/purchasing/__tests__/payment-reconciliation-service.test.ts",
+      "sha256": "8a6106f1f0fbd9228ca050e81762eed68356723a3244ff2d95facd87d8193617"
+    },
+    {
+      "path": "services/purchasing/__tests__/payment-release-evidence.test.ts",
+      "sha256": "32a74254e418a785ffa3258be5ceef686783c7b722f758094c5f90dfba849d2d"
+    },
+    {
+      "path": "services/purchasing/__tests__/payment-request-contracts.test.ts",
+      "sha256": "227d6d35d702ae250d87549315abf689a8d0cf85dab3f53f4f08316324feca65"
+    },
+    {
+      "path": "services/purchasing/__tests__/payment-request-evidence.test.ts",
+      "sha256": "f68442ff80469bcd5d85dc6570e057f0a7a881373d43191d944671f0678db16a"
+    },
+    {
+      "path": "services/purchasing/__tests__/payment-request-read.service.test.ts",
+      "sha256": "bacb9b6b532301b1c3197f97796ef9441d2a1040cb4fce1db6ba38000ea2a0db"
+    },
+    {
+      "path": "services/purchasing/__tests__/purchase-correction-ledger.service.test.ts",
+      "sha256": "84618d4c7c543e5e9240fa22fa5568f0e7b3dd68875a51fb2281fda3ae0d03f8"
+    },
+    {
+      "path": "services/purchasing/__tests__/purchase-return-credit.service.test.ts",
+      "sha256": "717507721280a7a8f2b2c38af972d5a4941407f02f85c02cf0eae2bb9450c316"
+    },
+    {
+      "path": "services/purchasing/__tests__/receipt-invoice-capacity.test.ts",
+      "sha256": "0b531dfa220004892f57b2fc3d0949a031ce941dedd56447ec8811a960278bde"
+    },
+    {
+      "path": "services/purchasing/__tests__/receipt-return-recognition.test.ts",
+      "sha256": "7921f217fa0f242f3dcb413ba004a347928fd79e12a612a14421196120f66c87"
+    },
+    {
+      "path": "services/purchasing/__tests__/supplier-payment-balance.test.ts",
+      "sha256": "1c64cf8a071bce6488414411cfd95798ecda3c76523affd7089c8537d1b3a9d0"
+    },
+    {
+      "path": "services/purchasing/ap-control.schemas.ts",
+      "sha256": "af018c2357c5d0cd0d9287a33bb255bc8ef19a171fb5cb6dfc1905ce7f97172b"
+    },
+    {
+      "path": "services/purchasing/ap-control.service.ts",
+      "sha256": "6704f26093f6d57452393c797773ed6c271dccc3cc5ed46261dcca587160ba5c"
+    },
+    {
+      "path": "services/purchasing/ap-history-export.service.ts",
+      "sha256": "9cdcd7f822f804219cd26d6e44392589ded8a4ca48436d621d229589e7a31241"
+    },
+    {
+      "path": "services/purchasing/ap-history-financial.ts",
+      "sha256": "aa72fb4928e97a08bb258db5b5e6f5f65ead3ea527df0524eaad169ae4f3a7fd"
+    },
+    {
+      "path": "services/purchasing/ap-history-revision.ts",
+      "sha256": "aff3bf394401a6ed8ce072f0783028528353ceb3eb7c35299f77ef64746ea2f3"
+    },
+    {
+      "path": "services/purchasing/ap-history.schemas.ts",
+      "sha256": "b8604dad25a79c40f6ebc0e68f501f2ee390496a8e02a36e76c21c2926328b67"
+    },
+    {
+      "path": "services/purchasing/ap-history.service.ts",
+      "sha256": "dc5751363b5168b8c1b6ff9f1399221961d8a65793f18869477014c3df1bdc71"
+    },
+    {
+      "path": "services/purchasing/invoice-approval-contracts.ts",
+      "sha256": "30b0391aae9be56486b66f48ed9593195d49b7f97aded3e5a180d8740e8fe963"
+    },
+    {
+      "path": "services/purchasing/invoice-approval.service.ts",
+      "sha256": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73"
+    },
+    {
+      "path": "services/purchasing/invoice-correction-authority.ts",
+      "sha256": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee"
+    },
+    {
+      "path": "services/purchasing/invoice-correction-contracts.ts",
+      "sha256": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da"
+    },
+    {
+      "path": "services/purchasing/invoice-correction.service.ts",
+      "sha256": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5"
+    },
+    {
+      "path": "services/purchasing/invoice-ledger-recovery-authority.ts",
+      "sha256": "12850047d7e3bdf198967716a7718d095ce562c703977b716f43d649a8fceb9c"
+    },
+    {
+      "path": "services/purchasing/invoice-ledger-recovery-contracts.ts",
+      "sha256": "49ee0611aa286f363112fcd5ec64fc5af41335ac7eb1a7e46837c7e301e69c29"
+    },
+    {
+      "path": "services/purchasing/invoice-ledger-recovery.service.ts",
+      "sha256": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022"
+    },
+    {
+      "path": "services/purchasing/invoice-match-exception-authority.ts",
+      "sha256": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8"
+    },
+    {
+      "path": "services/purchasing/invoice-match-exception-contracts.ts",
+      "sha256": "5f76b37d195f1ee9468b6fd889baeb31403708ed89f50725f0e3fa8578e23f83"
+    },
+    {
+      "path": "services/purchasing/invoice-match-exception.service.ts",
+      "sha256": "e0808721f2c4b864b84b561cf50f119ecc5a825fcab486dd8d33c4d5b9e43c82"
+    },
+    {
+      "path": "services/purchasing/invoice-preparation-authority.ts",
+      "sha256": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4"
+    },
+    {
+      "path": "services/purchasing/invoice-preparation-contracts.ts",
+      "sha256": "a0a8a6d6ab615141964aa60eeadd01ac982d90bf241a99997cf06bc0f79795d6"
+    },
+    {
+      "path": "services/purchasing/invoice-preparation-evidence.ts",
+      "sha256": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495"
+    },
+    {
+      "path": "services/purchasing/invoice-preparation.service.ts",
+      "sha256": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1"
+    },
+    {
+      "path": "services/purchasing/invoice-receipt-recognition.ts",
+      "sha256": "41edad85c30e30f66f709d5bc94f7dcff49a20c6be03c79ce06ba600569f9986"
+    },
+    {
+      "path": "services/purchasing/invoice-source-evidence.ts",
+      "sha256": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df"
+    },
+    {
+      "path": "services/purchasing/opening-payable.service.ts",
+      "sha256": "93012b9dd48b098fa578264984aa4e2d65a9e7c708aae9afe694efcbe21e9db6"
+    },
+    {
+      "path": "services/purchasing/payment-posting-recovery-contracts.ts",
+      "sha256": "52204aa8e71e3fded6a0d521b308da5e802c24ccf54dee032b14eb3282aa5efb"
+    },
+    {
+      "path": "services/purchasing/payment-posting-recovery.service.ts",
+      "sha256": "65991f8dac589001bfde2729c347dee8922caf653c323e49e5a972134cb44c0c"
+    },
+    {
+      "path": "services/purchasing/payment-reconciliation-authority.ts",
+      "sha256": "32f1019f0df7e1fb232c00db5034a38d532802954827445785ca3f7aef25b681"
+    },
+    {
+      "path": "services/purchasing/payment-reconciliation-close.ts",
+      "sha256": "b4e9c122bb66876f7bbe8d683b16542c5724caa50e7384ecc4a429d37b058ec8"
+    },
+    {
+      "path": "services/purchasing/payment-reconciliation-contracts.ts",
+      "sha256": "a68c2bb8a65c695f17508030b66d908b148ed5007a26595fb39b1f10af9080d6"
+    },
+    {
+      "path": "services/purchasing/payment-reconciliation-evidence.ts",
+      "sha256": "8fa7d0c1956c3f2cf6e045b366ee74233adaa661b04206e83e2a4c3e73009994"
+    },
+    {
+      "path": "services/purchasing/payment-reconciliation-proof-summary.ts",
+      "sha256": "44e1501dc7e75d949a5ac8cade89e0c4b087e6c799c60d1d94625c48e8e48a5c"
+    },
+    {
+      "path": "services/purchasing/payment-reconciliation-service.ts",
+      "sha256": "7313a8c4cb094bfd8eef68ab7f40a2530b954be03236e0bb2524e758040dac02"
+    },
+    {
+      "path": "services/purchasing/payment-release-contracts.ts",
+      "sha256": "c9690026216baa90cedb9b64ccb29d210594861d96061a0c5a59e660adbc1412"
+    },
+    {
+      "path": "services/purchasing/payment-release-evidence.ts",
+      "sha256": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb"
+    },
+    {
+      "path": "services/purchasing/payment-release.service.ts",
+      "sha256": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b"
+    },
+    {
+      "path": "services/purchasing/payment-request-authority.ts",
+      "sha256": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e"
+    },
+    {
+      "path": "services/purchasing/payment-request-contracts.ts",
+      "sha256": "96522fb3896d985a7627749bd18ed75c44afb3e6b2e127776d136b3f0ddff1ca"
+    },
+    {
+      "path": "services/purchasing/payment-request-evidence.ts",
+      "sha256": "c8d17217471e860a17175cc7fbbbb45f2009c8664a3c441cb80492c17f3f767b"
+    },
+    {
+      "path": "services/purchasing/payment-request-read.service.ts",
+      "sha256": "04c581eb4e62372b63bad1b2a359f272765eb664eaa3df8b54caafffa11cbfc2"
+    },
+    {
+      "path": "services/purchasing/payment-request.service.ts",
+      "sha256": "849a9cb77abae98d91e72fca95f7cca8f54f493fe9cd524a882b8be630d84bb6"
+    },
+    {
+      "path": "services/purchasing/purchase-correction-ledger.service.ts",
+      "sha256": "2f03c47cbfc198419c00eb3800a98a0d9fd66e4907fcb1da6bc0d1960eaff516"
+    },
+    {
+      "path": "services/purchasing/purchase-return-credit.schemas.ts",
+      "sha256": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912"
+    },
+    {
+      "path": "services/purchasing/purchase-return-credit.service.ts",
+      "sha256": "599e8110c2c506c82f8ec006d7d59da93983e66f251f674b48c6f80e629d629c"
+    },
+    {
+      "path": "services/purchasing/receipt-invoice-capacity.ts",
+      "sha256": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80"
+    },
+    {
+      "path": "services/purchasing/receipt-return-recognition.ts",
+      "sha256": "94ff4ec4c9ef7636aba3892b1879a514ca790a39dfbefd52c7421ce055238d2c"
+    },
+    {
+      "path": "services/purchasing/supplier-credit-allocation.ts",
+      "sha256": "110cdef4580011ccee884e3ee8f249259fb9b03c4aeec8aa1ff5e883b078fab6"
+    },
+    {
+      "path": "services/purchasing/supplier-payment-balance.ts",
+      "sha256": "534b989cf0698bc096435012f1d9cd6791f1fd9c632b72880ccc6714830619e5"
+    },
+    {
+      "path": "services/reconciliation/payment-suspense-posting.gateway.ts",
+      "sha256": "971102870d5fe2aec9567a3e108c121dc345a7b44cc4ec6cccf34ebdb40504df"
+    },
+    {
+      "path": "services/snapshots/__tests__/inventory-loss-snapshot.service.test.ts",
+      "sha256": "219d20b92ce2f1f2e8c7868008c8129b716f7894f134d262ec2b15fdd2982443"
+    },
+    {
+      "path": "services/snapshots/inventory-cash-snapshot.service.ts",
+      "sha256": "2bc3dda2149035e5b94487e13cf409ab40291ab2b47a4eb26e4d5726efe5d2b6"
+    },
+    {
+      "path": "services/snapshots/inventory-loss-snapshot.service.ts",
+      "sha256": "7d6bb7bc715260a76cecf60b82e7db36976472e8414e9eb0d0616b0f81cea97a"
+    },
+    {
+      "path": "services/stock-to-cash/stock-to-cash-contracts.ts",
+      "sha256": "10cc18439020f42ed446efa926a57ec469c322079fa84b322723c5919e2f5f3b"
+    },
+    {
+      "path": "services/stock-to-cash/stock-to-cash-flow.service.ts",
+      "sha256": "d565afbf3e7642732980806cb7dd458f4619aa61c331331eda3978f1fb48b6ea"
+    },
+    {
+      "path": "tailwind.config.ts",
+      "sha256": "5929ece1e683fcba92d08ac5646cd15b32aaabf3cdcf31f838a091c78bef0f8a"
+    },
+    {
+      "path": "tsconfig.cross-workflow-phase3.json",
+      "sha256": "3ccbc8472dfd14f8507a3705d943731485209227008774a63eacebdb82896dac"
+    },
+    {
+      "path": "tsconfig.workflow-repairs.json",
+      "sha256": "3d39feb5ab435caaf9c1c576c65bf42e46f54ff22968d752a9b782f316bde3a2"
+    },
+    {
+      "path": "types/inventoryTypes.ts",
+      "sha256": "8fb1d153c9684cb8b3a64cc882e8ee406e1e899e7bda493b76ed6f2893cf4651"
+    },
+    {
+      "path": "what-next/pos-purchasing-inventory-audit-2026-10-26/phase2/run-postgres.cjs",
+      "sha256": "03407c19157b92e1e076ffb0e808bab2c55554acbefa6c06536a766fa90502f9"
+    },
+    {
+      "path": "what-next/pos-purchasing-inventory-audit-2026-10-26/phase3/build-ui.cjs",
+      "sha256": "47e8a1923beaa8be1354baae1902b4fd1237467895e02dd4df209ecf25bc8493"
+    },
+    {
+      "path": "what-next/pos-purchasing-inventory-audit-2026-10-26/phase3/check-ui.cjs",
+      "sha256": "4d1325274a1a1db102c9357e615479a51a96f7570b344ec1cb9de986fee42ab7"
+    },
+    {
+      "path": "what-next/pos-purchasing-inventory-audit-2026-10-26/phase3/finalize-evidence.cjs",
+      "sha256": "8f7873692d8189cf15090ef74210199ea7511215d916dd235f5a512f7bb95dcb"
+    },
+    {
+      "path": "what-next/pos-purchasing-inventory-audit-2026-10-26/phase3/run.cjs",
+      "sha256": "c1bd7b64152d3aed794037a7630f0837d358898ccee93f6d22782cfbb220e972"
+    },
+    {
+      "path": "what-next/pos-purchasing-inventory-audit-2026-10-26/phase3/ui-adapters.ts",
+      "sha256": "4cf087111b1e748933f199fd3d49412a83612b063e36cac96a5b280d88e7a9a2"
+    },
+    {
+      "path": "what-next/pos-purchasing-inventory-audit-2026-10-26/phase3/ui-entry.tsx",
+      "sha256": "89ac68763189e66abc1cfee3ddaf0d25b30a051e24f5ebb3618298296d21bb68"
+    },
+    {
+      "path": "what-next/pos-purchasing-inventory-audit-2026-10-26/phase3/ui-loader.cjs",
+      "sha256": "af494470a3d94e880a7b60900df9cded68a05d23b0a03690354ce6a05b37efe5"
+    }
+  ],
+  "migrations": [
+    {
+      "name": "20260528124341_refine_item_barcode",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260611120000_payment_provider_reference_uniqueness",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260611130000_accounting_auth_baseline_bridge",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260618154500_repair_accounting_source_links",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260618160000_payroll_foundation_bridge",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260618161000_ap_stock_count_foundation_bridge",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260619120000_backfill_purchase_receive_permission",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260621102500_workflow_assurance_enum_bridge",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260621103000_workflow_assurance_registry_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260621112500_workflow_assurance_incident_enum_bridge",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260621113000_workflow_assurance_incident_spine",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260625110000_payroll_kernel_immutability",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260626093000_payroll_compensation_approval",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260626103000_payroll_payment_evidence_readiness",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260626123000_payroll_cnps_country_pack_expansion",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260626133000_payroll_declaration_lifecycle_evidence",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260626143000_payroll_payment_reconciliation_lifecycle",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260628123000_payroll_employee_balance_lifecycle",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260630090000_payment_reconciliation_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260630100000_payment_reconciliation_inbox_worker_leases",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260703110000_public_receipt_access_tokens",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260711133000_public_identity_abuse_limits",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260714194500_inventory_history_accounting_time_controls",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260714203000_session_assurance",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260715090000_inventory_correction_reversal_lineage",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260718100000_branch_daily_close_review_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260718130000_branch_daily_close_sign_off_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260719190000_hris_org_manager_scope_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260719203000_workflow_assurance_stable_case_identity",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260720090000_close_assurance_schema_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260720130000_cash_shortage_policy_governance",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260720210000_workflow_assurance_multi_finding_persistence",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260722143000_agent_runtime_phase_1_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260722150000_agent_runtime_tenant_consistency",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260722153000_agent_runtime_incident_cascade_consistency",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260722160000_agent_runtime_phase_2a_provenance",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260722161000_agent_runtime_phase_2a_operational_controls",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260722162000_agent_runtime_tenant_scoped_correlation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260723100000_agent_runtime_release_control",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260724100000_agent_runtime_release_hardening",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260724113000_agent_runtime_retirement_alert_dead_letter",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260724193000_agent_reconciler_invocation_ledger",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260726140000_business_event_foundation_bridge",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260726143000_regulatory_isolation_outbox",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260726190000_retire_production_bom_capability",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260726213000_hris_operational_time_management",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260727090000_accountant_access_portfolio",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260727110000_offline_pos_sync_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260727110100_offline_pos_sync_foundation_reconciliation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260727143000_country_adapter_pilot_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260727170000_ai_copilot_proposal_guardrails",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260728100000_pos_cash_shortage_checkpoint_persistence",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260730150000_organization_onboarding_entitlement_bridge",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260730160000_pos_sales_dependency_entitlement",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260801153000_certified_fiscal_evidence_immutability",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260808120000_customer_settlement_allocation_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260808133000_customer_settlement_compensating_reversal_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260809100000_customer_receivable_document_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260809113000_customer_statement_snapshot_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260809130000_customer_statement_external_access",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260809143000_customer_statement_delivery_referral",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260809160000_accountant_client_invite_onboarding",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260809170000_referral_accounting_source_types",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260809180000_accounting_enum_completion",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260815120000_supplier_po_acknowledgement_pilot",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260815130000_governed_master_data_onboarding",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260815143000_pos_customer_location_scope",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260815190000_payment_reconciliation_evidence_immutability",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260816100000_master_data_onboarding_risk_tier",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260817120000_pos_commit_result_registry",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260818100000_purchase_receiving_integrity",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260818120000_governed_delivery_order_to_cash",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260818120000_pos_electronic_tender_authority",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260818130000_sales_order_reporting_schema_repair",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260819100000_purchase_receiving_inspection_control",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260819120000_purchase_return_credit_evidence_boundary",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260820100000_supplier_invoice_match_exception_boundary",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260821210000_payroll_trust_spine_transition_ledger",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260823100000_business_event_gateway_completion",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260828190000_align_onboarding_risk_reasons_default",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260905170000_add_tenant_module_composition",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260905173000_protect_module_configuration_authority",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260905200000_add_module_lifecycle_command_state",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260905200100_add_module_lifecycle",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260909093000_add_suspense_posting_cycles",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260919110000_managed_picture_assets",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260920060000_pos_checkout_lifecycle",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260930211500_journal_posted_line_tenant_guards",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260930213000_journal_posted_status_transitions",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20260930231500_supplier_credit_zero_value_evidence",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261004000000_close_evidence_notifications",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261004120000_access_requests",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261004130000_purchase_order_authoring",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261016150000_reconciliation_no_activity_evidence",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261016180000_close_source_publication_guard",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261016200000_close_payable_sources",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261016220000_bank_balance_evidence",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261016230000_balance_sheet_evidence",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261017090000_period_close_control",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261019120000_firm_engagement_foundation",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261019140000_firm_engagement_authority",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261020100000_accountant_active_named_scope",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261020130000_opening_position_preview",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261020160000_controlled_opening_cutover",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261020180000_firm_obligation_register",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261024143000_hris_schedule_revisions",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261024150000_hris_employee_documents",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261024150100_hris_document_evidence_guard",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261024150200_hris_document_duplicate_evidence",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261024150300_hris_document_storage_identity",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261024150400_hris_document_legacy_evidence",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261024160000_hris_personal_correction_cases",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261024170000_hris_lifecycle_tasks",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261024170000_hris_setup_reviewer_grants",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261024180000_command_center_coordination",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261025090000_firm_advisory_outcomes",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261025180000_firm_practice_records",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261025180100_firm_practice_integrity",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261025190000_hris_payroll_handoff",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    },
+    {
+      "name": "20261025190100_hris_handoff_actor_guard",
+      "finished": true,
+      "rolledBack": false,
+      "checksumMatches": true
+    }
+  ]
+}

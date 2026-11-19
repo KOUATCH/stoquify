@@ -1,0 +1,84 @@
+{
+  "startedAt": "2026-11-09T16:34:26.254Z",
+  "passed": true,
+  "commands": [
+    {
+      "label": "initdb",
+      "file": "C:\\Program Files\\PostgreSQL\\17\\bin\\initdb.exe",
+      "args": [
+        "-D",
+        "D:\\p04-v02-fullapp-20261109-r1\\postgres",
+        "-U",
+        "p04v02",
+        "-A",
+        "trust",
+        "--no-locale",
+        "--encoding=UTF8"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "pg-start",
+      "file": "C:\\Program Files\\PostgreSQL\\17\\bin\\pg_ctl.exe",
+      "args": [
+        "-D",
+        "D:\\p04-v02-fullapp-20261109-r1\\postgres",
+        "-l",
+        "D:\\p04-v02-fullapp-20261109-r1\\private\\postgres.log",
+        "-o",
+        "-h 127.0.0.1 -p 55509",
+        "-w",
+        "start"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "migrate-current",
+      "file": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "D:\\p04-v02-fullapp-20261109-r1\\source\\node_modules\\prisma\\build\\index.js",
+        "migrate",
+        "deploy",
+        "--config",
+        "D:\\p04-v02-fullapp-20261109-r1\\migration-scaffold\\prisma.config.ts"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "migrations": {
+    "count": 121,
+    "migrationsSha256": "f978d30829024b89c289a49e81d902550ed9f5c380b20d45b9c88a4b7345dd89",
+    "schemaSourceSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+  },
+  "buildEmpty": {
+    "organizations": 0,
+    "users": 0,
+    "accounts": 0,
+    "sessions": 0,
+    "roles": 0,
+    "items": 0,
+    "tenant_module_configurations": 0,
+    "tenant_module_grants": 0
+  },
+  "fullEmpty": {
+    "organizations": 0,
+    "users": 0,
+    "accounts": 0,
+    "sessions": 0,
+    "roles": 0,
+    "items": 0,
+    "tenant_module_configurations": 0,
+    "tenant_module_grants": 0
+  },
+  "target": {
+    "host": "127.0.0.1",
+    "port": 55509,
+    "user": "p04v02",
+    "cluster": "D:\\p04-v02-fullapp-20261109-r1\\postgres",
+    "bin": "C:/Program Files/PostgreSQL/17/bin",
+    "build": "stoquify_local_p04v02_20261109_build_r1",
+    "full": "stoquify_local_p04v02_20261109_full_r1",
+    "ownedPid": 34440
+  },
+  "finishedAt": "2026-11-09T16:36:41.480Z"
+}

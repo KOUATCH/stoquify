@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-11-09T16:44:02.070Z",
+  "status": "source_and_recipe_review_accepted_awaiting_runtime_wiring_admission",
+  "preserved_admitted_version": {
+    "path": "browser/run-auth-transport.cjs",
+    "sha256": "e28aa8ecbc0d5a835f49c29bccde6e1f6d53e33efa19822636ef0a3d1dd36088",
+    "planned": 91,
+    "unchanged": true
+  },
+  "successor": {
+    "path": "browser/run-auth-transport-v2.cjs",
+    "sha256": "a70e1d5df2fcb24593c250e80a2c0d26a9e77b9840253d7500dfc1f90dfcc255",
+    "planned": 116,
+    "output": "browser/auth-transport-v2/result.json"
+  },
+  "unchanged_controls": {
+    "path": "database/auth-controls.cjs",
+    "sha256": "117989dac6e45a9f0ee2a3a0f17078829a791d27185395a76b9200599a0c8d3d"
+  },
+  "added_checks": [
+    "active-head-list-sessions",
+    "active-head-list-accounts",
+    "profile-forged-ownership",
+    "profile-unsupported-authority-fields",
+    "provider-forbidden-origin",
+    "authRevoked-head-list-sessions",
+    "authRevoked-head-list-accounts",
+    "authExpired-head-list-sessions",
+    "authExpired-head-list-accounts",
+    "authBrowserRevoked-en-forward-history-prepared",
+    "authBrowserRevoked-en-browser-forward",
+    "authBrowserExpiry-en-forward-history-prepared",
+    "authBrowserExpiry-en-browser-forward",
+    "authBrowserPermission-en-forward-history-prepared",
+    "authBrowserPermission-en-browser-forward",
+    "authBrowserModule-en-forward-history-prepared",
+    "authBrowserModule-en-browser-forward",
+    "authBrowserRevoked-fr-forward-history-prepared",
+    "authBrowserRevoked-fr-browser-forward",
+    "authBrowserExpiry-fr-forward-history-prepared",
+    "authBrowserExpiry-fr-browser-forward",
+    "authBrowserPermission-fr-forward-history-prepared",
+    "authBrowserPermission-fr-browser-forward",
+    "authBrowserModule-fr-forward-history-prepared",
+    "authBrowserModule-fr-browser-forward"
+  ],
+  "source_contracts": [
+    {
+      "path": "services/users/self-profile-input.ts",
+      "sha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf"
+    },
+    {
+      "path": "services/users/self-profile-http.service.ts",
+      "sha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3"
+    },
+    {
+      "path": "app/[locale]/(home)/privacy/page.tsx",
+      "sha256": "f9f4685abe59afd5e54a42f5fe00640df0bde9dcb18cbf735263d6be616d14e5"
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+      "sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2"
+    },
+    {
+      "path": "app/api/auth/[...all]/route.ts",
+      "sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b"
+    },
+    {
+      "path": "node_modules/better-auth/dist/integrations/next-js.mjs",
+      "sha256": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489"
+    },
+    {
+      "path": "node_modules/better-call/dist/router.mjs",
+      "sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480"
+    },
+    {
+      "path": "node_modules/rou3/dist/index.mjs",
+      "sha256": "0f77b955be24584dad93ca5c232e1150fa9ee54a96b5e6483c05bfa4b338f1b0"
+    }
+  ],
+  "execution": false,
+  "product_modified": false,
+  "review_revisions": [
+    {
+      "previous_sha256": "ad9e11dfc01e573ea6f75d667abed527ff6bf387c0bd2e3abad4effb69db4961",
+      "reason": "Independent reviewer confirmed HEAD exact-method dispatch is unsupported404, not authentication401/403; added authorized controls and corrected negative expectations."
+    }
+  ],
+  "review": {
+    "reviewer": "/root/v02_review",
+    "evidence": "../independent-review/SUCCESSOR-SOURCE-REVIEW.json",
+    "at": "2026-11-09T16:49:14.049Z",
+    "frozen_sha256": "a70e1d5df2fcb24593c250e80a2c0d26a9e77b9840253d7500dfc1f90dfcc255"
+  },
+  "syntax_check": {
+    "command": "node --check browser/run-auth-transport-v2.cjs",
+    "exit_code": 0,
+    "executed_application": false,
+    "executed_database": false
+  }
+}

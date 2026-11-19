@@ -1,0 +1,44 @@
+{
+  "passed": false,
+  "passedTests": 6,
+  "failedTests": 6,
+  "skipped": 0,
+  "privateRawResults": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-producer-20261109-28f22e81a1\\producer-tests.private.json",
+    "sha256": "32d93d5c46901dac891512ad8d5289132626576cf6474b988f8f1a7702982b7f"
+  },
+  "failures": [
+    {
+      "test": "rejects declared account mismatch before importing financial evidence",
+      "classification": "Expected typederrorcode differs from currentBusinessRuleError",
+      "summary": "Expected INVALID_PAYLOAD; actual BUSINESS_RULE_VIOLATION"
+    },
+    {
+      "test": "rejects declared provider mismatch before importing financial evidence",
+      "classification": "Expected typederrorcode differs from currentBusinessRuleError",
+      "summary": "Expected INVALID_PAYLOAD; actual BUSINESS_RULE_VIOLATION"
+    },
+    {
+      "test": "rejects declared currency mismatch before importing financial evidence",
+      "classification": "Expected typederrorcode differs from currentBusinessRuleError",
+      "summary": "Expected INVALID_PAYLOAD; actual BUSINESS_RULE_VIOLATION"
+    },
+    {
+      "test": "rejects declared bounds mismatch before importing financial evidence",
+      "classification": "Expected typederrorcode differs from currentBusinessRuleError",
+      "summary": "Expected INVALID_PAYLOAD; actual BUSINESS_RULE_VIOLATION"
+    },
+    {
+      "test": "rejects declared version mismatch before importing financial evidence",
+      "classification": "Expected typederrorcode differs from currentBusinessRuleError",
+      "summary": "Expected INVALID_PAYLOAD; actual BUSINESS_RULE_VIOLATION"
+    },
+    {
+      "test": "rejects closed period scope without creating a run",
+      "classification": "Fixture inserted terminal period state; existingguardcorrectlyrefused",
+      "summary": "P0001: New accounting periods must start open without control history"
+    }
+  ],
+  "ownedClusterStopped": true,
+  "limitation": "Testfixture/expectation failures retained; no productionsemanticschanged or DBreset."
+}

@@ -1,0 +1,82 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07-media-2026-10-18\\evidence\\master-data-csv.ts.before" "b/E:\\ohada saas\\Focused projects\\stoquify\\services\\onboarding\\master-data-csv.ts"
+index 5d79e5f7..af2a5890 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07-media-2026-10-18\\evidence\\master-data-csv.ts.before"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\services\\onboarding\\master-data-csv.ts"	
+@@ -1,4 +1,6 @@
+ import { createHash } from "node:crypto"
++import { z } from "zod"
++import { mediaIdFromUrl } from "@/lib/media/policy"
+ 
+ import { CustomerCreateSchema } from "@/services/customer/customer.schemas"
+ import { ItemCreateSchema } from "@/services/item/item.schemas"
+@@ -6,6 +8,10 @@ import { SupplierCreateSchema } from "@/services/supplier/supplier.schemas"
+ import { BusinessRuleError } from "@/services/_shared/action-errors"
+ 
+ export const MASTER_DATA_IMPORT_SCHEMA_VERSION = "1"
++export const masterDataSchemaVersion = (target: MasterDataImportTarget) => target === "ITEM" ? "2" : MASTER_DATA_IMPORT_SCHEMA_VERSION
++const ItemImportSchema = ItemCreateSchema.extend({
++  imageUrls: z.string().trim().refine((value) => mediaIdFromUrl(value) !== null, "Use an uploaded item image reference"),
++})
+ export const MASTER_DATA_IMPORT_MAX_BYTES = 5 * 1024 * 1024
+ export const MASTER_DATA_IMPORT_MAX_ROWS = 1_000
+ 
+@@ -73,8 +79,9 @@ export const MASTER_DATA_TARGET_CONFIG: Record<MasterDataImportTarget, TargetCon
+       "descriptionFr",
+       "costPrice",
+       "sellingPrice",
++      "imageUrls",
+     ],
+-    requiredFields: ["sku", "nameEn"],
++    requiredFields: ["sku", "nameEn", "imageUrls"],
+     businessKey: "sku",
+   },
+ }
+@@ -171,8 +178,8 @@ export function buildTenantCsvTemplate(organizationId: string, target: MasterDat
+   return {
+     organizationId,
+     target,
+-    schemaVersion: MASTER_DATA_IMPORT_SCHEMA_VERSION,
+-    filename: `${organizationId}-${config.filename}-v${MASTER_DATA_IMPORT_SCHEMA_VERSION}.csv`,
++    schemaVersion: masterDataSchemaVersion(target),
++    filename: `${organizationId}-${config.filename}-v${masterDataSchemaVersion(target)}.csv`,
+     mimeType: "text/csv",
+     content,
+     contentHash: hashCsvContent(content),
+@@ -304,7 +311,7 @@ function prepareDomainData(target: MasterDataImportTarget, mapped: Record<string
+       ? CustomerCreateSchema
+       : target === "SUPPLIER"
+         ? SupplierCreateSchema
+-        : ItemCreateSchema
++        : ItemImportSchema
+   return schema.safeParse(data)
+ }
+ 
+@@ -317,7 +324,7 @@ export function parseMasterDataDomainRow(
+       ? CustomerCreateSchema
+       : target === "SUPPLIER"
+         ? SupplierCreateSchema
+-        : ItemCreateSchema
++        : ItemImportSchema
+   return schema.safeParse(data)
+ }
+ 
+@@ -331,6 +338,7 @@ export function analyzeMasterDataCsv(input: {
+   content: string
+   fieldMap: MasterDataFieldMap
+   existingBusinessKeys?: ReadonlySet<string>
++  availableItemMedia?: ReadonlySet<string>
+ }): MasterDataCsvAnalysis {
+   validateFieldMap(input.target, input.fieldMap)
+   const config = MASTER_DATA_TARGET_CONFIG[input.target]
+@@ -424,6 +432,11 @@ export function analyzeMasterDataCsv(input: {
+ 
+     const validation = prepareDomainData(input.target, mapped)
+     const normalizedData = validation.success ? validation.data : mapped
++    if (input.target === "ITEM" && validation.success && input.availableItemMedia &&
++        !input.availableItemMedia.has(String((validation.data as Record<string, unknown>).imageUrls))) {
++      rowIssues.push({ rowNumber: csvRow.rowNumber, field: "imageUrls", severity: "ERROR", code: "ITEM_MEDIA_UNAVAILABLE",
++        safeMessage: "Use an available image uploaded to this organization, then validate a corrected file." })
++    }
+     if (!validation.success) {
+       for (const schemaIssue of validation.error.issues) {
+         const field = typeof schemaIssue.path[0] === "string" ? schemaIssue.path[0] : null

@@ -1,0 +1,119 @@
+{
+  "checkedAt": "2026-11-09T15:23:18.571Z",
+  "status": "LOCAL_QUALIFICATION_PASSED_PRODUCTION_NOT_APPROVED",
+  "localQualificationPassed": true,
+  "productionReady": false,
+  "sourceManifestSha256": "a6e0b40433ec6faaadae9e2db14ddd972f0e30ecd0185646b8d7190ed91d2a06",
+  "artifactSha256": "a7e81563d896cc834a60c6b0a239fd20cd3fafc46fc466c3f3f212259d3a0c30",
+  "artifact": "C:\\Users\\J COMPUTER\\.codex\\visualizations\\2026\\11\\02\\01a19e00-6435-7443-92d6-f2cf160728a8\\sales-accounting-release-20261109-ffb02aacd5-artifact",
+  "sourceFiles": 9300,
+  "independentEvidence": {
+    "realMigratedKernelTests": 16,
+    "optionalBrowserIntegrationSkipped": 1,
+    "rollbackOnlySqlProbes": 13,
+    "mockedArtifactTests": 84,
+    "migrations": 121,
+    "upgradeApplicationTables": 246,
+    "previousDevelopmentUiRootsBound": 6,
+    "artifactAuthentication": "Actual HTTPS credential/session/revocation and protected-route SSR; no browser or financial UI journey in sealed runtime"
+  },
+  "productionBlockers": [
+    "statement_live_delivery_channel_enabled",
+    "accountant_invite_live_delivery_enabled"
+  ],
+  "ownedClusterStopped": true,
+  "listeners": [
+    {
+      "port": 58033,
+      "loopbackListenerAbsent": true
+    },
+    {
+      "port": 3296,
+      "loopbackListenerAbsent": true
+    },
+    {
+      "port": 3443,
+      "loopbackListenerAbsent": true
+    }
+  ],
+  "receipts": [
+    {
+      "path": "MIGRATION_REHEARSAL_RESULT.json",
+      "sha256": "22f604a9badafa62f362c5feb712021eef8434f93e5f52204561348a2736af12"
+    },
+    {
+      "path": "migrated-financial-kernels.results.json",
+      "sha256": "0caa6ade98fec080300e9240d6d10fcdf1de583c4019bc2a164cfc1a7d88ca32"
+    },
+    {
+      "path": "trigger-probes.results.json",
+      "sha256": "8b7eb340f3b2c1ab38f6a5824d24daa1a9e3ee48933a1db47b699d1b6ac36d06"
+    },
+    {
+      "path": "UPGRADE_PROOF_RESULT.json",
+      "sha256": "8bd7fe7ff59a8a8d07cbd81644608b3f5c7dfe31fa53cfb2b80c4797354b6631"
+    },
+    {
+      "path": "LOCK_RESTORE_SELECTED.json",
+      "sha256": "9025fd1cfc1954683d7bd470ad3ec71047aa5ba4f7bb66147c3c105b6ef20ee2"
+    },
+    {
+      "path": "CLEAN_INSTALL_SELECTED.json",
+      "sha256": "ce880a8f22f27f6b94fdc83fa83b1715f1cbf9a0f111b53c60d20c324c5219ba"
+    },
+    {
+      "path": "CLEAN_INSTALL_RESULT_ATTEMPT_2.json",
+      "sha256": "81b5b52f1f7e6d6537905eec3907b15cf3d078a165660ef566f15968050ef6ed"
+    },
+    {
+      "path": "CANDIDATE_NATIVE_READINESS.json",
+      "sha256": "1fcce2de7f25c97906bdbfc053d127871572ee8a1bebb4f3b788355030edf1d2"
+    },
+    {
+      "path": "WORKFLOW_SOURCE_BINDING.json",
+      "sha256": "d08e3f1bd635aee052fe01e49effed32b39b0d648c2917f857263fe1e32d71b4"
+    },
+    {
+      "path": "artifact-control-unit.results.json",
+      "sha256": "71900d6065fe8fa50ef8c19900dfbd4aa7a14cada4b7add274809686612eae0b"
+    },
+    {
+      "path": "artifact-private-assets-unit-qualified.results.json",
+      "sha256": "e2e32f9dbd58a166d373f3cef95be176983a9b11b11b849c0da0d047280544bc"
+    },
+    {
+      "path": "PRIVATE_ASSET_INPUT_SUPPLEMENT.json",
+      "sha256": "dc1ef40b73e132ef4a62a464a7fc32a9f06617693acded770bbd3c0d55a412ae"
+    },
+    {
+      "path": "ARTIFACT_QUALIFICATION.json",
+      "sha256": "93ef3a7d63f05a3faed184c7aef74eac74f4745c77e3c80acbf92dab51bf0ed2"
+    },
+    {
+      "path": "ARTIFACT_EMITTED_DIGEST.json",
+      "sha256": "0b981ad82d9ad01e1936758e6436b7f3e50ec8460333458942f0ae14cdc5da05"
+    },
+    {
+      "path": "LOCALHOST_PROMOTION_REFUSAL.json",
+      "sha256": "f3575f66dcf6e03ee7aa15d1dab54a53fa1273ceea094e1c414fa0140ada1640"
+    },
+    {
+      "path": "ARTIFACT_HTTP_SMOKE_RESULT.json",
+      "sha256": "e52767cb7f383e42067b9e79d02c4b937aa7c53c02326383a47faa8457ea3465"
+    },
+    {
+      "path": "PRODUCTION_SECRET_PREFLIGHT.json",
+      "sha256": "22edbd15666eef4edfa5b8a075e32fee3764b10fe43fe8ab6eae75742f0e6a3d"
+    },
+    {
+      "path": "DATABASE_TARGET.json",
+      "sha256": "0caca790ff0cf43d6ac8a04e9320088e940070700b4cd02bd3d126459a3ad713"
+    }
+  ],
+  "limitations": [
+    "Synthetic financial mappings; no Cameroon statutory or earned close certificate qualification.",
+    "Production delivery, hosted artifact promotion, real providers and operational recovery objectives are not qualified.",
+    "Three policy-pinned private repository upload assets remain privately mapped in the local artifact.",
+    "Populated upgrade used the same frozen writer across the final additive migration, not an older deployed artifact."
+  ]
+}

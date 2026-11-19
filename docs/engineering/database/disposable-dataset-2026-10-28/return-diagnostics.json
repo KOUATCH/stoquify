@@ -1,0 +1,16 @@
+{
+  "label": "return-diagnostics",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "scripts/disposable-return-diagnostics.cjs"
+  ],
+  "startedAt": "2026-10-28T19:40:23.266Z",
+  "finishedAt": "2026-10-28T19:40:32.925Z",
+  "exitCode": 0,
+  "errorCode": null
+}

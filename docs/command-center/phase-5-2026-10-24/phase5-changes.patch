@@ -1,0 +1,855 @@
+--- a/actions/assurance/__tests__/workflow-assurance-incident.actions.test.ts
++++ b/actions/assurance/__tests__/workflow-assurance-incident.actions.test.ts
+@@ -1,3 +1,4 @@
++jest.mock("@/lib/security/auth-session", () => ({requireSession: jest.fn(async () => ({ctx: {orgId: "org-session", userId: "user-session"}, claims: {sessionId: "session-1", sessionToken: "synthetic-token"}}))}))
+ jest.mock("@/services/_shared/protect", () => ({
+   protect: jest.fn((options, handler) => {
+     const store = globalThis as typeof globalThis & {
+@@ -29,6 +30,7 @@
+   suppressWorkflowAssuranceIncident: jest.fn(),
+ }))
+ 
++import { requireSession } from "@/lib/security/auth-session"
+ import {
+   acknowledgeWorkflowAssuranceIncident,
+   approveWorkflowAssuranceWaiver,
+@@ -74,7 +76,8 @@
+       organizationId: "attacker-org",
+       incidentId: "incident-1",
+       ownerId: "owner-1",
+-      assignedRole: "accountant",
++      expectedRevision: "a".repeat(64),
++      requestId: "11111111-1111-4111-8111-111111111111",
+       dueAt: "2026-07-01T00:00:00.000Z",
+     } as never)
+ 
+@@ -85,11 +88,14 @@
+         actorId: "user-session",
+         incidentId: "incident-1",
+         ownerId: "owner-1",
+-        assignedRole: "accountant",
++        expectedRevision: "a".repeat(64),
++        requestId: "11111111-1111-4111-8111-111111111111",
+         dueAt: new Date("2026-07-01T00:00:00.000Z"),
+       }),
+     )
+     expect(mockAssign.mock.calls[0][0]).not.toHaveProperty("organizationId", "attacker-org")
++    expect(mockAssign.mock.calls[0][0].session).toEqual({id: "session-1", token: "synthetic-token"})
++    expect(mockAssign.mock.calls[0][0]).not.toHaveProperty("assignedRole")
+   })
+ 
+   it("registers write and fresh-auth controls for risky incident actions", async () => {
+@@ -138,3 +144,17 @@
+     )
+   })
+ })
++
++
++it("refuses a missing assignment revision/request before reaching the writer", async () => {
++  jest.mocked(assignWorkflowAssuranceIncident).mockClear()
++  await expect(assignWorkflowAssuranceIncidentAction({incidentId:"incident-1",ownerId:"owner-1"} as never)).rejects.toThrow()
++  expect(assignWorkflowAssuranceIncident).not.toHaveBeenCalled()
++})
++
++it("rejects a changed authenticated context instead of mixing two sessions", async () => {
++  jest.mocked(assignWorkflowAssuranceIncident).mockClear()
++  jest.mocked(requireSession).mockResolvedValueOnce({ctx:{orgId:"other",userId:"user-session"},claims:{sessionId:"other-session",sessionToken:"synthetic"}} as never)
++  await expect(assignWorkflowAssuranceIncidentAction({incidentId:"incident-1",ownerId:"owner-1",expectedRevision:"a".repeat(64),requestId:"11111111-1111-4111-8111-111111111111"})).rejects.toThrow(/context changed/)
++  expect(assignWorkflowAssuranceIncident).not.toHaveBeenCalled()
++})
+--- a/actions/assurance/workflow-assurance-incident.actions.ts
++++ b/actions/assurance/workflow-assurance-incident.actions.ts
+@@ -1,6 +1,8 @@
+ "use server"
+ 
+ import { z } from "zod"
++import { requireSession } from "@/lib/security/auth-session"
++import { ForbiddenError } from "@/services/_shared/action-errors"
+ 
+ import { protect } from "@/services/_shared/protect"
+ import {
+@@ -33,7 +35,8 @@
+ const assignIncidentSchema = z.object({
+   incidentId: idSchema,
+   ownerId: idSchema,
+-  assignedRole: z.string().min(2).max(80).optional(),
++  expectedRevision: z.string().regex(/^[a-f0-9]{64}$/),
++  requestId: z.string().uuid(),
+   dueAt: optionalDateSchema,
+ })
+ 
+@@ -88,10 +91,13 @@
+   },
+   async (input, ctx) => {
+     const parsed = assignIncidentSchema.parse(input)
++    const verified = await requireSession()
++    if (verified.ctx.orgId !== ctx.orgId || verified.ctx.userId !== ctx.userId) throw new ForbiddenError("Assignment context changed. Refresh the source view.")
+     return assignWorkflowAssuranceIncident({
+       ...parsed,
+       organizationId: ctx.orgId,
+       actorId: ctx.userId,
++      session: { id: verified.claims.sessionId, token: verified.claims.sessionToken },
+     })
+   },
+ )
+--- a/components/assurance/AssuranceIncidentActions.tsx
++++ b/components/assurance/AssuranceIncidentActions.tsx
+@@ -2,8 +2,8 @@
+ 
+ import { useRouter } from "next/navigation"
+ import { CheckCircle2, Clock3, FileCheck2, RotateCcw, ShieldAlert, UserRoundCheck } from "lucide-react"
+-import type { FormEvent, ReactNode } from "react"
+-import { useMemo, useState } from "react"
++import type { CSSProperties, FormEvent, ReactNode } from "react"
++import { useEffect, useMemo, useRef, useState } from "react"
+ 
+ import {
+   acknowledgeWorkflowAssuranceIncidentAction,
+@@ -85,6 +85,13 @@
+     quickAckSuccess: "Incident acknowledged",
+     quickAckMessage: "The incident is marked for follow-up.",
+     noRequestedWaiver: "No requested waiver is awaiting approval.",
++    assignmentHelp: "Assignment routes follow-up only. The server checks the assignee’s current account and source access. A blank due date preserves the current deadline.",
++    assignmentFailed: "Assignment could not be confirmed. Retry the same request, or refresh to review the current source before changing it.",
++    assignmentConflict: "The source or assignment changed. Refresh and review the current state before assigning again.",
++    assignmentDenied: "Assignment access is unavailable. Refresh to recheck your access and the assignee’s eligibility.",
++    assignmentRevisionMissing: "Refresh this source view before assigning an owner.",
++    refreshSource: "Refresh source",
++    assignmentSuccess: "Assignment recorded; business work remains subject to source controls.",
+   },
+   fr: {
+     panelTitle: "Actions incident",
+@@ -114,8 +121,20 @@
+     quickAckSuccess: "Incident accuse",
+     quickAckMessage: "L'incident est marque pour suivi.",
+     noRequestedWaiver: "Aucune derogation demandee n'attend une approbation.",
++    assignmentHelp: "L’affectation organise le suivi uniquement. Le serveur vérifie le compte et l’accès actuel aux sources du responsable. Une échéance vide conserve la date actuelle.",
++    assignmentFailed: "L’affectation n’a pas pu être confirmée. Réessayez la même demande ou actualisez la source avant de la modifier.",
++    assignmentConflict: "La source ou l’affectation a changé. Actualisez et examinez l’état actuel avant une nouvelle affectation.",
++    assignmentDenied: "L’accès à l’affectation est indisponible. Actualisez pour vérifier vos droits et l’éligibilité du responsable.",
++    assignmentRevisionMissing: "Actualisez cette source avant d’affecter un responsable.",
++    refreshSource: "Actualiser la source",
++    assignmentSuccess: "Affectation enregistrée ; le travail métier reste soumis aux contrôles de la source.",
+   },
+ } as const
++
++// The dialog portal sits outside the dashboard shell; retain its product-token aliases.
++const assignmentPortalTokens = Object.fromEntries([
++  "canvas", "border-subtle", "text", "text-soft", "text-faint", "brand", "brand-soft",
++].map(token => ["--dash-" + token, "var(--product-" + token + ")"])) as CSSProperties
+ 
+ const finalStatuses = new Set<AssuranceControlTowerIncident["status"]>(["resolved", "waived", "suppressed", "closed"])
+ const POS_CASH_SHORTAGE_CHECK_KEY = "pos.closed_shift_cash_shortage.review"
+@@ -167,7 +186,11 @@
+   )
+ }
+ 
+-export function AssuranceIncidentActions({ incident, waivers, locale }: AssuranceIncidentActionsProps) {
++export function AssuranceIncidentActions(props: AssuranceIncidentActionsProps) {
++  return <AssuranceIncidentActionsForm key={`${props.incident.id}:${props.incident.assignmentRevision ?? props.incident.sourceHash}:${props.incident.canManage}`} {...props} />
++}
++
++function AssuranceIncidentActionsForm({ incident, waivers, locale }: AssuranceIncidentActionsProps) {
+   const router = useRouter()
+   const notifications = useNotifications()
+   const t = copy[locale]
+@@ -176,7 +199,14 @@
+   const [isPending, setIsPending] = useState(false)
+   const [note, setNote] = useState("")
+   const [ownerId, setOwnerId] = useState(incident.ownerId ?? "")
+-  const [assignedRole, setAssignedRole] = useState(incident.assignedRole ?? incident.ownerRole)
++  const assignmentRequest = useRef<{ fingerprint: string; id: string } | null>(null)
++  const submitting = useRef(false)
++  const dialogTrigger = useRef<HTMLElement | null>(null)
++  const mounted = useRef(true)
++  const [assignmentError, setAssignmentError] = useState<string | null>(null)
++  const [assignmentNeedsRefresh, setAssignmentNeedsRefresh] = useState(false)
++  const [assignmentUncertain, setAssignmentUncertain] = useState(false)
++  useEffect(() => { mounted.current = true; return () => { mounted.current = false } }, [])
+   const [dueAt, setDueAt] = useState("")
+   const [reason, setReason] = useState("")
+   const [suppressedUntil, setSuppressedUntil] = useState("")
+@@ -207,21 +237,27 @@
+ 
+   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+     event.preventDefault()
+-    if (!dialogAction) return
+-
++    if (!dialogAction || submitting.current) return
++    submitting.current = true
++    setAssignmentError(null)
+     setIsPending(true)
+     try {
+       const trimmedNote = note.trim()
+       const trimmedReason = reason.trim()
+ 
+       if (dialogAction === "assign") {
+-        const result = await assignWorkflowAssuranceIncidentAction({
+-          incidentId: incident.id,
+-          ownerId: ownerId.trim(),
+-          assignedRole: assignedRole.trim() || incident.ownerRole,
+-          dueAt: toIsoDateTime(dueAt),
+-        })
+-        if (!result.success) throw new Error(resultError(result))
++        if (!incident.assignmentRevision || assignmentNeedsRefresh) throw new Error(t.assignmentRevisionMissing)
++        const payload = { incidentId: incident.id, ownerId: ownerId.trim(), expectedRevision: incident.assignmentRevision, dueAt: toIsoDateTime(dueAt) }
++        const fingerprint = JSON.stringify(payload)
++        if (!assignmentRequest.current || assignmentRequest.current.fingerprint !== fingerprint) {
++          assignmentRequest.current = { fingerprint, id: crypto.randomUUID() }
++        }
++        const result = await assignWorkflowAssuranceIncidentAction({...payload, requestId: assignmentRequest.current.id})
++        if (!mounted.current) return
++        if (!result.success) {
++          if (result.status === 409 || result.status === 403 || result.status === 401) setAssignmentNeedsRefresh(true)
++          throw new Error(result.status === 409 ? t.assignmentConflict : result.status === 403 || result.status === 401 ? t.assignmentDenied : t.assignmentFailed)
++        }
+       }
+ 
+       if (dialogAction === "resolve") {
+@@ -276,12 +312,23 @@
+         if (!result.success) throw new Error(resultError(result))
+       }
+ 
++      if (!mounted.current) return
+       setDialogAction(null)
+-      notifySuccess()
++      if (dialogAction === "assign") {
++        setAssignmentNeedsRefresh(true)
++        notifications.success(t.successTitle, t.assignmentSuccess, { category: "system" })
++        router.refresh()
++      } else notifySuccess()
+     } catch (error) {
+-      notifyFailure(error)
++      if (!mounted.current) return
++      if (dialogAction === "assign") {
++        setAssignmentUncertain(true)
++        setAssignmentError(error instanceof Error && ([t.assignmentConflict, t.assignmentDenied, t.assignmentRevisionMissing] as readonly string[]).includes(error.message) ? error.message : t.assignmentFailed)
++      }
++      else notifyFailure(error)
+     } finally {
+-      setIsPending(false)
++      submitting.current = false
++      if (mounted.current) setIsPending(false)
+     }
+   }
+ 
+@@ -320,7 +367,7 @@
+           </Button>
+         ) : null}
+ 
+-        <ActionButton label={t.assign} icon={<UserRoundCheck className="h-4 w-4" />} disabled={!canManageActive || isPending} onClick={() => setDialogAction("assign")} />
++        <ActionButton label={t.assign} icon={<UserRoundCheck className="h-4 w-4" />} disabled={!canManageActive || !incident.assignmentRevision || assignmentNeedsRefresh || isPending} onClick={() => setDialogAction("assign")} />
+         <ActionButton label={t.resolve} icon={<FileCheck2 className="h-4 w-4" />} disabled={!canManageActive || isPending} onClick={() => setDialogAction("resolve")} tone="success" />
+         <ActionButton label={t.suppress} icon={<Clock3 className="h-4 w-4" />} disabled={!canManageActive || isPending} onClick={() => setDialogAction("suppress")} tone="gold" />
+         <ActionButton label={t.requestWaiver} icon={<ShieldAlert className="h-4 w-4" />} disabled={!canManageActive || isPending} onClick={() => setDialogAction("requestWaiver")} tone="danger" />
+@@ -340,25 +387,37 @@
+         </div>
+       ) : null}
+ 
++      {incident.canManage && (!incident.assignmentRevision || assignmentNeedsRefresh) ? <p role="status" className="mt-3 text-sm text-[var(--dash-text-soft)]">{t.assignmentRevisionMissing}</p> : null}
++
+       <Dialog open={dialogAction !== null} onOpenChange={(open) => !open && setDialogAction(null)}>
+-        <DialogContent className="dashboard-glass-panel max-h-[92vh] overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
++        <DialogContent
++          style={assignmentPortalTokens}
++          lang={locale}
++          closeLabel={locale === "fr" ? "Fermer" : "Close"}
++          onOpenAutoFocus={() => { dialogTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null }}
++          onCloseAutoFocus={(event) => {
++            if (dialogTrigger.current?.isConnected && !dialogTrigger.current.matches(":disabled")) {
++              event.preventDefault()
++              dialogTrigger.current.focus()
++            }
++          }}
++          className="max-h-[92vh] overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] bg-[var(--product-canvas)] text-[var(--dash-text)] motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none"
++        >
+           <form onSubmit={handleSubmit}>
+             <DialogHeader>
+               <DialogTitle className="text-[var(--dash-text)]">{dialogTitle(dialogAction, t)}</DialogTitle>
+-              <DialogDescription className="text-[var(--dash-text-soft)]">{t.manageRequired}</DialogDescription>
++              <DialogDescription className="text-[var(--dash-text-soft)]">{dialogAction === "assign" ? t.assignmentHelp : t.manageRequired}</DialogDescription>
+             </DialogHeader>
+ 
+             <div className="mt-4 grid gap-4">
+               {dialogAction === "assign" ? (
+                 <>
+                   <Field label={t.ownerId}>
+-                    <Input className={fieldClassName} value={ownerId} onChange={(event) => setOwnerId(event.target.value)} required />
++                    <Input className={fieldClassName} aria-label={t.ownerId} disabled={isPending || assignmentNeedsRefresh || assignmentUncertain} value={ownerId} onChange={(event) => setOwnerId(event.target.value)} required />
+                   </Field>
+-                  <Field label={t.assignedRole}>
+-                    <Input className={fieldClassName} value={assignedRole} onChange={(event) => setAssignedRole(event.target.value)} />
+-                  </Field>
++                  {assignmentError ? <div role="alert" className="space-y-2 text-sm text-[var(--dash-text)]"><p>{assignmentError}</p><Button type="button" variant="outline" className="bg-[var(--product-surface)] text-[var(--dash-text)] hover:bg-[var(--product-surface-raised)] hover:text-[var(--dash-text)]" onClick={() => window.location.reload()}>{t.refreshSource}</Button></div> : null}
+                   <Field label={t.dueAt}>
+-                    <Input className={fieldClassName} type="datetime-local" value={dueAt} onChange={(event) => setDueAt(event.target.value)} />
++                    <Input className={fieldClassName} type="datetime-local" aria-label={t.dueAt} disabled={isPending || assignmentNeedsRefresh || assignmentUncertain} value={dueAt} onChange={(event) => setDueAt(event.target.value)} />
+                   </Field>
+                 </>
+               ) : null}
+@@ -416,10 +475,10 @@
+             </div>
+ 
+             <DialogFooter className="mt-5 gap-2">
+-              <Button type="button" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]" onClick={() => setDialogAction(null)}>
++              <Button type="button" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] bg-[var(--product-surface)] text-[var(--dash-text)] hover:bg-[var(--product-surface-raised)] hover:text-[var(--dash-text)]" onClick={() => setDialogAction(null)}>
+                 {t.cancel}
+               </Button>
+-              <Button type="submit" className="rounded-lg bg-[var(--dash-brand)] text-white hover:bg-[var(--dash-brand-strong)]" disabled={isPending}>
++              <Button type="submit" className="rounded-lg bg-[var(--product-brand-action)] text-white hover:bg-[var(--product-brand-action-hover)]" disabled={isPending || (dialogAction === "assign" && assignmentNeedsRefresh)}>
+                 {t.submit}
+               </Button>
+             </DialogFooter>
+--- a/components/assurance/__tests__/AssuranceIncidentActions.test.tsx
++++ b/components/assurance/__tests__/AssuranceIncidentActions.test.tsx
+@@ -1,4 +1,4 @@
+-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
++import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
+ 
+ jest.mock("next/navigation", () => ({
+   useRouter: () => ({ refresh: jest.fn() }),
+@@ -46,7 +46,7 @@
+ }))
+ 
+ import { resolvePosCashShortageIncidentAction } from "@/actions/assurance/pos-cash-shortage-resolution.actions"
+-import { resolveWorkflowAssuranceIncidentAction } from "@/actions/assurance/workflow-assurance-incident.actions"
++import { assignWorkflowAssuranceIncidentAction, resolveWorkflowAssuranceIncidentAction } from "@/actions/assurance/workflow-assurance-incident.actions"
+ 
+ import { AssuranceIncidentActions } from "../AssuranceIncidentActions"
+ 
+@@ -103,6 +103,7 @@
+ function incident(overrides: Record<string, unknown> = {}) {
+   return {
+     id: "incident-1",
++    assignmentRevision: "a".repeat(64),
+     checkKey: "pos.closed_shift_cash_shortage.review",
+     workflow: "pos",
+     moduleSlug: "pos",
+@@ -131,3 +132,59 @@
+     ...overrides,
+   } as never
+ }
++
++
++describe("Phase 5 assignment recovery", () => {
++  const assign = jest.mocked(assignWorkflowAssuranceIncidentAction)
++  beforeEach(() => {
++    jest.clearAllMocks()
++    Object.defineProperty(crypto, "randomUUID", {configurable: true, value: jest.fn(() => "11111111-1111-4111-8111-111111111111")})
++  })
++  it.each(["en", "fr"] as const)("retains the same request after an uncertain failure and does not claim completion (%s)", async locale => {
++    assign.mockRejectedValueOnce(new Error("private transport details")).mockResolvedValueOnce({success: true, data: {id: "incident-1"}, error: null, status: 200} as never)
++    render(<AssuranceIncidentActions incident={incident()} waivers={[]} locale={locale} />)
++    fireEvent.click(screen.getByRole("button", {name: locale === "en" ? "Assign" : "Assigner", exact: true}))
++    fireEvent.change(screen.getByLabelText(locale === "en" ? "Owner user ID" : "ID utilisateur responsable"), {target: {value: "owner-1"}})
++    const submit = screen.getByRole("button", {name: locale === "en" ? "Apply action" : "Appliquer"})
++    fireEvent.click(submit)
++    expect(await screen.findByRole("alert")).not.toHaveTextContent("private transport details")
++    expect(screen.getByRole("button", {name: locale === "en" ? "Refresh source" : "Actualiser la source"})).toBeVisible()
++    expect(screen.getByLabelText(locale === "en" ? "Owner user ID" : "ID utilisateur responsable")).toBeDisabled()
++    fireEvent.click(submit)
++    await waitFor(() => expect(assign).toHaveBeenCalledTimes(2))
++    expect(assign.mock.calls[0][0]).toEqual(assign.mock.calls[1][0])
++    expect(assign.mock.calls[0][0]).toMatchObject({expectedRevision: "a".repeat(64), requestId: expect.any(String), ownerId: "owner-1"})
++    expect(assign.mock.calls[0][0]).not.toHaveProperty("assignedRole")
++    await waitFor(() => expect(mockNotifications.success).toHaveBeenCalledWith(expect.any(String), expect.stringMatching(locale === "en" ? /business work remains/ : /travail métier reste/), expect.anything()))
++  })
++  it.each([401,403,409])("requires source refresh after refusal %i and retains source context", async status => {
++    assign.mockResolvedValueOnce({success:false,status,error:"private details"} as never)
++    render(<AssuranceIncidentActions incident={incident()} waivers={[]} locale="en" />)
++    fireEvent.click(screen.getByRole("button", {name: "Assign", exact:true}))
++    fireEvent.change(screen.getByLabelText("Owner user ID"), {target: {value: "owner-1"}})
++    fireEvent.click(screen.getByRole("button", {name:"Apply action"}))
++    await screen.findByRole("alert")
++    expect(screen.getByRole("button", {name:"Apply action"})).toBeDisabled()
++    expect(screen.getByLabelText("Owner user ID")).toHaveValue("owner-1")
++    expect(mockNotifications.success).not.toHaveBeenCalled()
++  })
++  it("disables stale payloads without an assignment revision", () => {
++    render(<AssuranceIncidentActions incident={incident({assignmentRevision: undefined})} waivers={[]} locale="en" />)
++    expect(screen.getByRole("button", {name:"Assign",exact:true})).toBeDisabled()
++    expect(screen.getByRole("status")).toHaveTextContent("Refresh this source view")
++  })
++  it("clears pending form state on revoked/replaced authority and ignores its late response", async () => {
++    let finish!: (value: any) => void
++    assign.mockImplementationOnce(() => new Promise(resolve => {finish=resolve}))
++    const view=render(<AssuranceIncidentActions incident={incident()} waivers={[]} locale="en" />)
++    fireEvent.click(screen.getByRole("button", {name:"Assign",exact:true}))
++    fireEvent.change(screen.getByLabelText("Owner user ID"),{target:{value:"owner-1"}})
++    fireEvent.click(screen.getByRole("button",{name:"Apply action"}))
++    fireEvent.click(screen.getByRole("button",{name:"Apply action"}))
++    expect(assign).toHaveBeenCalledTimes(1)
++    view.rerender(<AssuranceIncidentActions incident={incident({canManage:false,assignmentRevision:"b".repeat(64)})} waivers={[]} locale="en" />)
++    expect(screen.queryByLabelText("Owner user ID")).not.toBeInTheDocument()
++    await act(async()=>finish({success:true,data:{id:"incident-1"},error:null,status:200}))
++    expect(mockNotifications.success).not.toHaveBeenCalled()
++  })
++})
+--- a/design-system/stoquify/pages/command-center-shared.md
++++ b/design-system/stoquify/pages/command-center-shared.md
+@@ -76,3 +76,10 @@
+ Canonical source-copy translation preserves authored evidence and technical identifiers. Optional proof focus hooks support the actual initiating control without changing source permissions. The location Manager definition lists use valid direct term/description groups. Source caps and unavailable reads must remain explicit.
+ 
+ [Phase 4 evidence](../../../docs/command-center/phase-4-2026-10-24/README.md) and [localization inventory](../../../docs/command-center/phase-4-2026-10-24/LOCALIZATION_REVIEW.md) distinguish source, mocked, static, synthetic-browser and live/manual evidence. Release A remains pending human productivity, manual accessibility, live role/revocation and isolated release-build checks. Database changes and durable Work & Follow-up remain outside this phase.
++
++
++## Phase 5 bounded foundation — 24 October 2026
++
++[Phase 5 evidence](../../../docs/command-center/phase-5-2026-10-24/README.md) records the first source-owned assignment hardening. Work & Follow-up remains a shared capability across the three planned projections. Current integration uses the existing Manager-to-assurance source handoff; it does not yet provide durable generic signal follow-up or three-view synchronization.
++
++Assignment must send a source revision and stable request ID, recheck current authority on replay and distinguish assignment from business completion. Uncertain transport results retain the identical request and freeze edits until source reload. Conflict/denial requires source reload. Replaced/revoked incident props clear the open form and ignore late responses. No private request payload is retained in browser storage. The full Phase 5 checklist remains open pending all-origin scope and database proof.
+--- a/design-system/stoquify/pages/manager-action-center.md
++++ b/design-system/stoquify/pages/manager-action-center.md
+@@ -54,3 +54,10 @@
+ The tenant coverage panel distinguishes available, possibly capped (25 pre-permission source rows), unavailable and unconfirmed assurance coverage. Failed source loading is not completion. The location variant localizes authority/severity and canonical branch blockers, with valid metadata/action definition lists. No source query or persistence changed.
+ 
+ [Phase 4 evidence](../../../docs/command-center/phase-4-2026-10-24/README.md) and [localization inventory](../../../docs/command-center/phase-4-2026-10-24/LOCALIZATION_REVIEW.md) distinguish source, mocked, static, synthetic-browser and live/manual evidence. Release A remains pending human productivity, manual accessibility, live role/revocation and isolated release-build checks. Database changes and durable Work & Follow-up remain outside this phase.
++
++
++## Phase 5 source assignment foundation — 24 October 2026
++
++Manager keeps its existing assurance source link. The destination assignment form now requires a current revision, preserves the request ID for uncertain retries, and requires source reload after conflict/denial. The server derives role and validates current actor/assignee tenant and source-definition permissions. Recording an assignment does not resolve the business source. Existing due dates survive blank input.
++
++[Phase 5 evidence](../../../docs/command-center/phase-5-2026-10-24/README.md) separates mocked/static/rendered checks from unrun database proof. Location/module eligibility, generic signal persistence and durable cross-page follow-through remain pending; no universal assignment control is added to the queue.
+--- a/docs/command-center/phase-0-2026-10-24/ACCEPTANCE_CHECKLIST.md
++++ b/docs/command-center/phase-0-2026-10-24/ACCEPTANCE_CHECKLIST.md
+@@ -149,3 +149,10 @@
+ Record criterion IDs; changed files/owned hunks; source revision and relevant dirty files; exact commands/exit codes; suites passed/failed/skipped; mocked versus real persistence; fixture target identity without credentials; browser route/role/locale/viewport/state; screenshots or traces where available; limitations; and rollback. Do not mark a checkbox based only on code presence or a prior release's test result.
+ 
+ Outcome measures: time to identify a useful priority, success locating an item beyond preview, source-return completion, assignment coverage and unresolved-follow-up age. Establish a measured baseline before claiming improvements. New telemetry or external analytics is not part of Phase 0.
++
++
++## Phase 5 progress — 24 October 2026
++
++The existing assurance assignment source now has revision-bound requests, current session/actor/assignee checks, replay handling, transaction-scoped history and localized recovery. See [Phase 5 evidence](../phase-5-2026-10-24/README.md) and [per-origin reuse decisions](../phase-5-2026-10-24/SOURCE_REUSE_DECISIONS.md).
++
++CC-05.1–05.6 and 05.9 have a bounded assurance implementation with mocked evidence; they remain unchecked at program scope. Location/module eligibility, all-origin persistent follow-up, actual concurrent/rollback behavior and cross-session persistence have not been certified. CC-05.7–05.8 remain occurrence-design/projection gates. CC-05.10 is not run under the no-database-change constraint. No Phase 5 completion or Phase 6 integration is claimed.
+--- a/docs/command-center/phase-0-2026-10-24/ACTION_SOURCE_MAP.md
++++ b/docs/command-center/phase-0-2026-10-24/ACTION_SOURCE_MAP.md
+@@ -94,3 +94,8 @@
+ Manager's existing assurance source requests at most 25 rows before permission filtering. The adapter now reports available loaded count, that source limit and possible truncation when visible plus permission-filtered rows reach the cap. Read failure reports unavailable; it does not establish zero work. Missing coverage metadata remains unconfirmed. No query, permission predicate, incident identity, assignment/resolution authority or database changed.
+ 
+ Owner Command now renders every supplied authorized queue item; its former seven-item display cap is removed. Brief remains a preview. These disclosures describe loaded source coverage, not a guarantee that every organizational work item has been loaded. See the [Phase 4 report](../phase-4-2026-10-24/README.md).
++
++
++## Phase 5 reuse decision — 24 October 2026
++
++[Per-origin decisions](../phase-5-2026-10-24/SOURCE_REUSE_DECISIONS.md) retain each financial source's authority. Existing assurance assignment is hardened in place with current session and tenant/source-permission validation, expected revision, exact request replay, history and recoverable UI errors. Manager continues its source handoff; this does not create a fourth center or a generic completion path. Full location/module eligibility and real persistence verification remain open. Signal coordination and Owner durable receipts await their occurrence/storage contracts; no schema or database changes were executed.
+--- a/services/assurance/__tests__/assurance-incident.service.test.ts
++++ b/services/assurance/__tests__/assurance-incident.service.test.ts
+@@ -641,28 +641,8 @@
+     expect(mockDb.workflowAssuranceIncident.update).not.toHaveBeenCalled()
+   })
+ 
+-  it("validates assignment owner is active and belongs to the incident tenant", async () => {
+-    const open = incidentRecord({ id: "incident-1", status: "OPEN" })
+-    mockDb.workflowAssuranceIncident.findFirst.mockResolvedValue(open)
+-    mockDb.user.findFirst.mockResolvedValue(null)
+-
+-    await expect(
+-      assignWorkflowAssuranceIncident({
+-        organizationId: "org-1",
+-        incidentId: "incident-1",
+-        actorId: "user-1",
+-        ownerId: "foreign-or-inactive-user",
+-      }),
+-    ).rejects.toThrow(/active user in the same organization/i)
+-
+-    expect(mockDb.user.findFirst).toHaveBeenCalledWith({
+-      where: {
+-        id: "foreign-or-inactive-user",
+-        organizationId: "org-1",
+-        isActive: true,
+-      },
+-      select: { id: true },
+-    })
++  it("refuses legacy assignments without a trusted session, revision and request identity", async () => {
++    await expect(assignWorkflowAssuranceIncident({organizationId: "org-1", incidentId: "incident-1", actorId: "user-1", ownerId: "owner-1"} as never)).rejects.toThrow(/session, source revision and assignment request/i)
+     expect(mockDb.workflowAssuranceIncident.update).not.toHaveBeenCalled()
+   })
+   it("enforces maker-checker on waiver approval", async () => {
+@@ -804,3 +784,12 @@
+     ...overrides,
+   }
+ }
++
++// Mocked transaction-boundary evidence; not a concurrent PostgreSQL test.
++it("returns a recoverable assignment conflict for serialization failure without blind retries", async () => {
++  mockDb.$transaction.mockClear()
++  mockDb.$transaction.mockRejectedValueOnce({code: "P2034"})
++  await expect(assignWorkflowAssuranceIncident({organizationId: "org-1", incidentId: "incident-1", actorId: "user-1", ownerId: "owner-1", expectedRevision: "a".repeat(64), requestId: "11111111-1111-4111-8111-111111111111", session: {id: "session", token: "synthetic"}})).rejects.toThrow(/refresh/i)
++  expect(mockDb.$transaction).toHaveBeenCalledTimes(1)
++  expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {isolationLevel: "Serializable"})
++})
+--- a/services/assurance/assurance-incident-contracts.ts
++++ b/services/assurance/assurance-incident-contracts.ts
+@@ -104,6 +104,8 @@
+ };
+ 
+ export type WorkflowAssuranceIncidentDto = {
++  /** Current source-owned assignment token. Older cached payloads must refresh before assigning. */
++  assignmentRevision?: string;
+   id: string;
+   organizationId: string;
+   checkKey: string;
+@@ -152,7 +154,10 @@
+ export type AssignWorkflowAssuranceIncidentInput =
+   WorkflowAssuranceIncidentTransitionInput & {
+     ownerId: string;
+-    assignedRole?: string;
++    expectedRevision: string;
++    requestId: string;
++    /** Server-derived session only; never accepted from a form. */
++    session: { id: string; token: string };
+     dueAt?: Date | null;
+   };
+ 
+--- a/services/assurance/assurance-incident.service.ts
++++ b/services/assurance/assurance-incident.service.ts
+@@ -1,4 +1,7 @@
+ import "server-only"
++
++import { assignAssuranceIncidentInTx } from "./assurance-assignment.service"
++import { assuranceAssignmentRevision } from "./assurance-assignment-revision"
+ 
+ import { Prisma } from "@prisma/client"
+ import type {
+@@ -224,19 +227,16 @@
+ }
+ 
+ export async function assignWorkflowAssuranceIncident(input: AssignWorkflowAssuranceIncidentInput) {
+-  return transitionWorkflowAssuranceIncident(input, {
+-    eventType: "assigned",
+-    status: "assigned",
+-    message: "Workflow assurance incident assigned",
+-    data: {
+-      ownerId: input.ownerId,
+-      assignedRole: input.assignedRole ?? null,
+-      dueAt: input.dueAt ?? null,
+-    },
+-    validate: async (client) => {
+-      await assertAssignableIncidentOwner(client, input.organizationId, input.ownerId)
+-    },
+-  })
++  try {
++    return await db.$transaction(async tx => toIncidentDto(await assignAssuranceIncidentInTx(tx, input)), {
++      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
++    })
++  } catch (error) {
++    if (error && typeof error === "object" && "code" in error && error.code === "P2034") {
++      throw new ConflictError("The assignment changed concurrently. Refresh the source before retrying.")
++    }
++    throw error
++  }
+ }
+ 
+ export async function resolveWorkflowAssuranceIncident(input: ResolveWorkflowAssuranceIncidentInput) {
+@@ -696,26 +696,6 @@
+   }
+ }
+ 
+-async function assertAssignableIncidentOwner(
+-  client: IncidentDbClient,
+-  organizationId: string,
+-  ownerId: string,
+-) {
+-  const owner = await client.user.findFirst({
+-    where: {
+-      id: ownerId,
+-      organizationId,
+-      isActive: true,
+-    },
+-    select: { id: true },
+-  })
+-  if (!owner) {
+-    throw new BusinessRuleError(
+-      "Workflow assurance incident owner must be an active user in the same organization.",
+-    )
+-  }
+-}
+-
+ async function findIncidentForTenant(client: IncidentDbClient, organizationId: string, incidentId: string) {
+   const incident = await client.workflowAssuranceIncident.findFirst({
+     where: {
+@@ -876,6 +856,7 @@
+ 
+   return {
+     id: incident.id,
++    assignmentRevision: assuranceAssignmentRevision(incident),
+     organizationId: incident.organizationId,
+     checkKey: incident.checkKey,
+     workflow,
+--- /dev/null
++++ b/services/assurance/assurance-assignment-revision.ts
+@@ -0,0 +1,12 @@
++import { createHash } from "node:crypto"
++import type { WorkflowAssuranceIncident } from "@prisma/client"
++
++/** A compare-and-set token, never an authorization credential or occurrence ID. */
++export function assuranceAssignmentRevision(incident: Pick<WorkflowAssuranceIncident,
++  "id" | "organizationId" | "sourceHash" | "status" | "ownerId" | "assignedRole" | "dueAt" | "updatedAt" | "occurrenceCount">) {
++  return createHash("sha256").update(JSON.stringify([
++    "assurance-assignment-v1", incident.organizationId, incident.id, incident.sourceHash,
++    incident.status, incident.ownerId, incident.assignedRole, incident.dueAt?.toISOString() ?? null,
++    incident.updatedAt.toISOString(), incident.occurrenceCount,
++  ])).digest("hex")
++}
+--- /dev/null
++++ b/services/assurance/assurance-assignment.service.ts
+@@ -0,0 +1,114 @@
++import "server-only"
++
++import { createHash } from "node:crypto"
++import { Prisma, type User, type Role, type Session } from "@prisma/client"
++import { hasRbacPermission } from "@/lib/security/rbac-permissions"
++import { BusinessRuleError, ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
++import { isUsableAccount } from "@/services/roles/role-custodian-policy"
++import { assuranceAssignmentRevision } from "./assurance-assignment-revision"
++import type { AssignWorkflowAssuranceIncidentInput } from "./assurance-incident-contracts"
++
++type Account = Pick<User, "id" | "organizationId" | "isActive" | "isVerified" | "emailVerified" | "isLocked" | "lockedUntil">
++type TenantRole = Pick<Role, "id" | "organizationId" | "permissions">
++const activeStatuses = new Set(["OPEN", "ACKNOWLEDGED", "ASSIGNED", "IN_PROGRESS", "REOPENED"])
++
++/** Existing incident/event/audit storage only. Caller owns the Serializable transaction.
++ * Lock order follows the existing organization/member authority writers, then the incident.
++ * No generic signal completion or financial command is performed here. */
++export async function assignAssuranceIncidentInTx(tx: Prisma.TransactionClient, input: AssignWorkflowAssuranceIncidentInput) {
++  if (!input.actorId || !input.session?.id || !input.session.token ||
++    !/^[a-f0-9]{64}$/.test(input.expectedRevision) || !/^[a-zA-Z0-9-]{16,80}$/.test(input.requestId) ||
++    !input.ownerId?.trim() || (input.dueAt && !Number.isFinite(input.dueAt.getTime()))) {
++    throw new BusinessRuleError("A current session, source revision and assignment request are required.")
++  }
++  const organizations = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
++    SELECT "id" FROM "organizations" WHERE "id" = ${input.organizationId}
++    AND "isActive" = true AND "deletedAt" IS NULL FOR SHARE`)
++  if (organizations.length !== 1) throw new ForbiddenError("Assignment access is unavailable.")
++
++  const users = await tx.$queryRaw<Account[]>(Prisma.sql`
++    SELECT "id", "organizationId", "isActive", "isVerified", "emailVerified", "isLocked", "lockedUntil"
++    FROM "users" WHERE "organizationId" = ${input.organizationId}
++    AND "id" IN (${Prisma.join([...new Set([input.actorId, input.ownerId])].sort())}) ORDER BY "id" FOR SHARE`)
++  const roles = await tx.$queryRaw<TenantRole[]>(Prisma.sql`
++    SELECT "id", "organizationId", "permissions" FROM "roles"
++    WHERE "organizationId" = ${input.organizationId} ORDER BY "id" FOR SHARE`)
++  const memberships = await tx.$queryRaw<Array<{ roleId: string; userId: string }>>(Prisma.sql`
++    SELECT membership."A" AS "roleId", membership."B" AS "userId" FROM "_UserRoles" membership
++    INNER JOIN "roles" role ON role."id" = membership."A"
++    WHERE role."organizationId" = ${input.organizationId}
++    AND membership."B" IN (${Prisma.join([...new Set([input.actorId, input.ownerId])].sort())})
++    ORDER BY membership."B", membership."A" FOR SHARE OF membership`)
++  const sessions = await tx.$queryRaw<Array<Pick<Session, "id" | "userId" | "expiresAt">>>(Prisma.sql`
++    SELECT "id", "userId", "expiresAt" FROM "sessions" WHERE "id" = ${input.session.id}
++    AND "token" = ${input.session.token} AND "userId" = ${input.actorId} FOR SHARE`)
++  const permissions = (userId: string) => {
++    const assigned = new Set(memberships.filter(m => m.userId === userId).map(m => m.roleId))
++    return roles.filter(r => r.organizationId === input.organizationId && assigned.has(r.id)).flatMap(r => r.permissions)
++  }
++  const actorPermissions = permissions(input.actorId)
++  function revalidate(requiredPermission?: string) {
++    const now = new Date()
++    const actor = users.find(u => u.id === input.actorId && u.organizationId === input.organizationId)
++    const owner = users.find(u => u.id === input.ownerId && u.organizationId === input.organizationId)
++    const session = sessions[0]
++    if (!actor || !isUsableAccount(actor, now) || !session || session.userId !== input.actorId || session.expiresAt <= now ||
++      !hasRbacPermission(actorPermissions, "controls.manage") || !hasRbacPermission(actorPermissions, "controls.audit.read")) {
++      throw new ForbiddenError("Current assignment authority is required. Refresh the source view.")
++    }
++    if (!owner || !isUsableAccount(owner, now) || !hasRbacPermission(permissions(owner.id), "controls.audit.read") ||
++      (requiredPermission && (!hasRbacPermission(permissions(owner.id), requiredPermission) || !hasRbacPermission(actorPermissions, requiredPermission)))) {
++      throw new ForbiddenError("The assignee must have an active account in this organization and current access to the incident source.")
++    }
++  }
++  revalidate()
++  const rows = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
++    SELECT "id" FROM "workflow_assurance_incidents" WHERE "id" = ${input.incidentId}
++    AND "organizationId" = ${input.organizationId} FOR UPDATE`)
++  if (rows.length !== 1) throw new NotFoundError("Workflow assurance incident not found.")
++  await tx.$queryRaw(Prisma.sql`SELECT definition."id" FROM "workflow_assurance_check_definitions" definition
++    INNER JOIN "workflow_assurance_incidents" incident ON incident."definitionId" = definition."id"
++    WHERE incident."id" = ${input.incidentId} AND incident."organizationId" = ${input.organizationId} FOR SHARE OF definition`)
++  const incident = await tx.workflowAssuranceIncident.findFirst({where: {id: input.incidentId, organizationId: input.organizationId}, include: {definition: true}})
++  if (!incident) throw new NotFoundError("Workflow assurance incident not found.")
++  revalidate(incident.definition.requiredPermission)
++
++  const dueAt = input.dueAt === undefined ? incident.dueAt : input.dueAt
++  // Omitted dueAt means preserve, not silently clear. The request hash binds the original intent.
++  const requestHash = createHash("sha256").update(JSON.stringify([
++    input.organizationId, input.incidentId, input.actorId, input.expectedRevision, input.ownerId,
++    input.dueAt === undefined ? "preserve" : input.dueAt?.toISOString() ?? null,
++  ])).digest("hex")
++  const replay = await tx.workflowAssuranceIncidentEvent.findFirst({where: {
++    organizationId: input.organizationId, incidentId: incident.id, eventType: "ASSIGNED",
++    metadata: {path: ["assignmentRequestId"], equals: input.requestId},
++  }})
++  if (replay) {
++    const metadata = replay.metadata as Record<string, unknown> | null
++    if (replay.actorId !== input.actorId || metadata?.requestHash !== requestHash ||
++      metadata?.resultRevision !== assuranceAssignmentRevision(incident)) {
++      throw new ConflictError("The assignment request or source changed. Refresh before starting a new assignment.")
++    }
++    return incident
++  }
++  if (assuranceAssignmentRevision(incident) !== input.expectedRevision) {
++    throw new ConflictError("The incident changed. Refresh and review its current assignment before retrying.")
++  }
++  if (!activeStatuses.has(incident.status)) throw new BusinessRuleError("Finalized incidents must be reopened before assignment.")
++  // Preserve in-progress work. Routing an owner never resolves or certifies its source.
++  const status = incident.status === "IN_PROGRESS" ? "IN_PROGRESS" : "ASSIGNED"
++  const before = {status: incident.status, ownerId: incident.ownerId, assignedRole: incident.assignedRole, dueAt: incident.dueAt?.toISOString() ?? null}
++  revalidate(incident.definition.requiredPermission)
++  const updated = await tx.workflowAssuranceIncident.update({where: {id: incident.id}, data: {ownerId: input.ownerId, assignedRole: incident.definition.ownerRole, dueAt, status}})
++  const after = {status: updated.status, ownerId: updated.ownerId, assignedRole: updated.assignedRole, dueAt: updated.dueAt?.toISOString() ?? null}
++  const metadata = {assignmentRequestId: input.requestId, requestHash, expectedRevision: input.expectedRevision,
++    resultRevision: assuranceAssignmentRevision(updated), sourceHash: incident.sourceHash,
++    sourceType: incident.sourceType, sourceFingerprint: incident.fingerprint, occurrenceCount: incident.occurrenceCount, before, after}
++  await tx.workflowAssuranceIncidentEvent.create({data: {organizationId: input.organizationId, incidentId: incident.id,
++    eventType: "ASSIGNED", fromStatus: incident.status, toStatus: updated.status, actorId: input.actorId,
++    message: "Workflow assurance incident assigned", metadata}})
++  await tx.auditLog.create({data: {organizationId: input.organizationId, userId: input.actorId,
++    entityType: "WorkflowAssuranceIncident", entityId: incident.id, action: "WORKFLOW_ASSURANCE_INCIDENT_ASSIGNED",
++    changes: {before, after, sourceHash: incident.sourceHash, assignmentRequestId: input.requestId}}})
++  return updated
++}
+--- /dev/null
++++ b/services/assurance/__tests__/assurance-assignment.service.test.ts
+@@ -0,0 +1,139 @@
++jest.mock("server-only", () => ({}))
++jest.mock("@/prisma/db", () => ({db: {}}))
++import type { Prisma } from "@prisma/client"
++import { assignAssuranceIncidentInTx } from "../assurance-assignment.service"
++import { assuranceAssignmentRevision } from "../assurance-assignment-revision"
++
++const expiry = new Date("2099-01-01T00:00:00Z")
++function record() {
++  return {id: "incident-1", organizationId: "org-1", status: "OPEN", ownerId: null, assignedRole: "finance",
++    dueAt: new Date("2026-10-30T00:00:00Z"), updatedAt: new Date("2026-10-24T12:00:00Z"), sourceHash: "source-1",
++    occurrenceCount: 1, fingerprint: "fingerprint-1", sourceType: "reconciliation.run", sourceId: "run-1",
++    definition: {requiredPermission: "payments.reconciliation.read", ownerRole: "finance"}}
++}
++function fixture() {
++  let current = record()
++  const events: any[] = []
++  const users = ["actor", "owner"].map(id => ({id, organizationId: "org-1", isActive: true, isVerified: true, emailVerified: false, isLocked: false, lockedUntil: null}))
++  const roles = [{id: "role", organizationId: "org-1", permissions: ["controls.manage", "controls.audit.read", "payments.reconciliation.read"]}]
++  const memberships = users.map(u => ({userId: u.id, roleId: "role"}))
++  const sessions = [{id: "session", userId: "actor", expiresAt: expiry}]
++  let organizations = [{id: "org-1"}]
++  const tx = {
++    $queryRaw: jest.fn(async (sql: Prisma.Sql) => {
++      const text = sql.strings.join("?")
++      if (text.includes('FROM "organizations"')) return organizations
++      if (text.includes('FROM "users"')) return users
++      if (text.includes('FROM "roles"')) return roles
++      if (text.includes('FROM "_UserRoles"')) return memberships
++      if (text.includes('FROM "sessions"')) return sessions
++      if (text.includes('FROM "workflow_assurance_incidents"')) return [{id: current.id}]
++      return [{id: "definition"}]
++    }),
++    workflowAssuranceIncident: {
++      findFirst: jest.fn(async () => current),
++      update: jest.fn(async ({data}: any) => current = {...current, ...data, updatedAt: new Date(current.updatedAt.getTime() + 1)}),
++    },
++    workflowAssuranceIncidentEvent: {
++      findFirst: jest.fn(async ({where}: any) => events.find(e => e.metadata.assignmentRequestId === where.metadata.equals) ?? null),
++      create: jest.fn(async ({data}: any) => {events.push(data); return data}),
++    },
++    auditLog: {create: jest.fn(async () => ({}))},
++  }
++  const input = {organizationId: "org-1", incidentId: "incident-1", actorId: "actor", ownerId: "owner",
++    session: {id: "session", token: "synthetic-token"}, expectedRevision: assuranceAssignmentRevision(current as never), requestId: "11111111-1111-4111-8111-111111111111"}
++  return {tx, input, users, roles, memberships, sessions, events, get current(){return current}, disableOrganization(){organizations=[]},
++    assign: (overrides = {}) => assignAssuranceIncidentInTx(tx as unknown as Prisma.TransactionClient, {...input, ...overrides})}
++}
++
++it("records source-bound assignment, prior/resulting state and audit together without completing business work", async () => {
++  const f = fixture(); const result = await f.assign()
++  expect(result).toMatchObject({ownerId: "owner", status: "ASSIGNED", assignedRole: "finance", dueAt: record().dueAt, sourceHash: "source-1"})
++  expect(f.events[0]).toMatchObject({actorId: "actor", fromStatus: "OPEN", toStatus: "ASSIGNED", metadata: {
++    sourceHash: "source-1", sourceFingerprint: "fingerprint-1", occurrenceCount: 1, expectedRevision: f.input.expectedRevision,
++    before: {ownerId: null, status: "OPEN"}, after: {ownerId: "owner", status: "ASSIGNED"},
++  }})
++  expect(f.tx.auditLog.create).toHaveBeenCalledTimes(1)
++  expect(f.tx.workflowAssuranceIncident.update.mock.calls[0][0].data).not.toHaveProperty("resolvedAt")
++})
++
++it("replays the identical committed request without another transition, event or audit", async () => {
++  const f = fixture(); await f.assign(); await f.assign()
++  expect(f.tx.workflowAssuranceIncident.update).toHaveBeenCalledTimes(1)
++  expect(f.events).toHaveLength(1); expect(f.tx.auditLog.create).toHaveBeenCalledTimes(1)
++})
++
++it("rejects a changed payload with the same request key", async () => {
++  const f = fixture(); await f.assign()
++  await expect(f.assign({dueAt: null})).rejects.toThrow(/request or source changed/)
++  expect(f.events).toHaveLength(1)
++})
++
++it("rejects the stale second writer and a replay after source revision changes", async () => {
++  const f = fixture(); await f.assign()
++  await expect(f.assign({requestId: "22222222-2222-4222-8222-222222222222"})).rejects.toThrow(/incident changed/)
++  f.current.sourceHash = "new-source"
++  await expect(f.assign()).rejects.toThrow(/request or source changed/)
++  expect(f.events).toHaveLength(1)
++})
++
++it.each(["inactive", "locked", "unverified", "foreign", "permission", "membership", "session", "organization", "actor"])("refuses %s authority without writes", async kind => {
++  const f = fixture()
++  if (kind === "inactive") f.users[1].isActive = false
++  if (kind === "locked") f.users[1].isLocked = true
++  if (kind === "unverified") f.users[1].isVerified = false
++  if (kind === "foreign") f.users[1].organizationId = "foreign"
++  if (kind === "permission") f.roles[0].permissions = ["controls.audit.read", "controls.manage"]
++  if (kind === "membership") f.memberships.splice(1)
++  if (kind === "session") f.sessions.splice(0)
++  if (kind === "organization") f.disableOrganization()
++  if (kind === "actor") f.roles[0].permissions = ["controls.audit.read", "payments.reconciliation.read"]
++  await expect(f.assign()).rejects.toThrow()
++  expect(f.tx.workflowAssuranceIncident.update).not.toHaveBeenCalled()
++  expect(f.events).toHaveLength(0)
++})
++
++it("revalidates authority on replay", async () => {
++  const f = fixture(); await f.assign(); f.users[0].isActive = false
++  await expect(f.assign()).rejects.toThrow(/authority/)
++  expect(f.events).toHaveLength(1)
++})
++
++it("preserves in-progress status and supports an explicit null deadline separately from omission", async () => {
++  const f = fixture(); f.current.status = "IN_PROGRESS"
++  const result = await f.assign({expectedRevision: assuranceAssignmentRevision(f.current as never), dueAt: null})
++  expect(result).toMatchObject({status: "IN_PROGRESS", dueAt: null})
++})
++
++it.each(["RESOLVED", "CLOSED", "WAIVED", "SUPPRESSED"])("does not reopen a %s incident through assignment", async status => {
++  const f = fixture(); f.current.status = status
++  await expect(f.assign({expectedRevision: assuranceAssignmentRevision(f.current as never)})).rejects.toThrow(/reopened/)
++  expect(f.events).toHaveLength(0)
++})
++
++it("binds revision to tenant, source, occurrence, assignee and update evidence", () => {
++  const source = record(); const before = assuranceAssignmentRevision(source as never)
++  for (const change of [{organizationId: "other"}, {sourceHash: "other"}, {occurrenceCount: 2}, {ownerId: "other"}, {updatedAt: new Date("2026-10-25T12:00:00Z")}]) {
++    expect(assuranceAssignmentRevision({...source, ...change} as never)).not.toBe(before)
++  }
++})
++
++it("propagates a failed event write to the transaction caller rather than reporting success", async () => {
++  const f = fixture(); f.tx.workflowAssuranceIncidentEvent.create.mockRejectedValueOnce(new Error("synthetic failure"))
++  await expect(f.assign()).rejects.toThrow("synthetic failure")
++  expect(f.tx.auditLog.create).not.toHaveBeenCalled()
++  // This mock verifies error propagation only; PostgreSQL rollback remains a separate gate.
++})
++
++it("rejects an expired session before mutation", async () => {
++  const f = fixture(); f.sessions[0].expiresAt = new Date(0)
++  await expect(f.assign()).rejects.toThrow(/authority/)
++  expect(f.tx.workflowAssuranceIncident.update).not.toHaveBeenCalled()
++})
++
++it("fails closed when the tenant-scoped incident read is unavailable", async () => {
++  const f = fixture(); f.tx.workflowAssuranceIncident.findFirst.mockResolvedValueOnce(null as never)
++  await expect(f.assign()).rejects.toThrow(/not found/)
++  expect(f.tx.workflowAssuranceIncident.findFirst).toHaveBeenCalledWith({where: {id: "incident-1", organizationId: "org-1"}, include: {definition: true}})
++  expect(f.tx.workflowAssuranceIncident.update).not.toHaveBeenCalled()
++})

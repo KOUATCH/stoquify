@@ -1,0 +1,32 @@
+{
+  "status": "FAILED",
+  "baseline": true,
+  "checks": [
+    {
+      "name": "partial-day termination rejected before event creation",
+      "status": "FAIL",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "native termination closes approved contract at exclusive cutoff",
+      "status": "PASS"
+    },
+    {
+      "name": "termination never extends earlier compensation end",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '2026-10-14T00:00:00.000Z'\n- '2026-10-05T00:00:00.000Z'\n           ^\n"
+    },
+    {
+      "name": "draft and never-effective assignments explicitly cancelled",
+      "status": "FAIL",
+      "message": "Cannot read properties of undefined (reading 'status')"
+    },
+    {
+      "name": "fixture/execution",
+      "status": "FAIL",
+      "message": "BusinessRuleError: Attendance can only be frozen for an active payroll employee.\n    at E:\\ohada saas\\Focused projects\\stoquify\\services\\payroll\\payroll-control.service.ts:3179:19\n    at async Proxy._transactionWithCallback (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\@prisma\\client\\runtime\\library.js:130:8120)\n    at async Object.certifyHrisTimeLeaveAttendance (E:\\ohada saas\\Focused projects\\stoquify\\services\\hris\\time-leave.service.ts:225:20)\n    at async E:\\ohada saas\\Focused projects\\stoquify\\what-next\\hris-implementation-2026-10-24\\HR-21\\development-09\\regression.cjs:22:2"
+    }
+  ],
+  "cleanup": true,
+  "completedAt": "2026-10-26T18:25:18.631Z"
+}

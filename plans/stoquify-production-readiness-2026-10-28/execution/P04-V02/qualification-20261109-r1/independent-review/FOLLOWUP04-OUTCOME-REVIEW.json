@@ -1,0 +1,546 @@
+{
+  "at": "2026-11-09T18:41:15.535Z",
+  "reviewer": "/root/v02_review",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "raw": {
+    "planned": 11,
+    "passed": 8,
+    "failed": 3,
+    "notRun": 0,
+    "requests": 11,
+    "browserObservations": 22
+  },
+  "verdict": "eight_recovery_positives_verified_client_failed_refresh_retention_corroborated_with_code_capture_limit",
+  "nativeSnapshotFilesIndependentlyReconciled": 22,
+  "restoredFixtureReadOnlyProof": "database/followup04-readiness.json",
+  "outcomes": [
+    {
+      "id": "authBrowserRevoked-en-authorized-recovery",
+      "rawPassed": true,
+      "actualRefresh": {
+        "clickedAt": 1794249438316,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249438529
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserRevoked-en-authorized-recovery",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249438526,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "75db4a32ab3b37a874bf8dc086cb0dc56d4530d2e08d3821ede7fdf3e5ada2d4",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserRevoked-en-authorized-recovery.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserRevoked-en-authorized-recovery-before-1794249438262-a0e77a27-f813-4061-84f7-23679cc4a5c5.json",
+        "after": "snapshot-auth-authBrowserRevoked-en-authorized-recovery-after-1794249441121-bc322806-d13f-4f2f-a9e8-4e434cb2f1cb.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 0,
+        "expiredSessionCleanup": 0
+      },
+      "disposition": "authorized_recovery_refresh_passed"
+    },
+    {
+      "id": "authBrowserExpiry-en-authorized-recovery",
+      "rawPassed": true,
+      "actualRefresh": {
+        "clickedAt": 1794249449226,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249449362
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserExpiry-en-authorized-recovery",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249449363,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "bd042e1dcffc560446130635307b7807238a6c3c6272ea83a8c21e0edeb285dd",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserExpiry-en-authorized-recovery.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserExpiry-en-authorized-recovery-before-1794249449215-3c21c379-31b2-4011-995f-218001ee7ddd.json",
+        "after": "snapshot-auth-authBrowserExpiry-en-authorized-recovery-after-1794249451529-e2efcaef-a004-4079-b73a-a123c0616f03.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 0,
+        "expiredSessionCleanup": 0
+      },
+      "disposition": "authorized_recovery_refresh_passed"
+    },
+    {
+      "id": "authBrowserPermission-en-authorized-recovery",
+      "rawPassed": true,
+      "actualRefresh": {
+        "clickedAt": 1794249459045,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249459273
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserPermission-en-authorized-recovery",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249459274,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "272796ef63379315a9947e0173fe720253f179785386a31aa2701c681a6d1386",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserPermission-en-authorized-recovery.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserPermission-en-authorized-recovery-before-1794249459012-95b7ae38-c99c-4105-8e17-c9421658a4c9.json",
+        "after": "snapshot-auth-authBrowserPermission-en-authorized-recovery-after-1794249462037-e7ce2059-5b24-41af-aa29-2031abbeaa5e.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 0,
+        "expiredSessionCleanup": 0
+      },
+      "disposition": "authorized_recovery_refresh_passed"
+    },
+    {
+      "id": "authBrowserModule-en-authorized-recovery",
+      "rawPassed": true,
+      "actualRefresh": {
+        "clickedAt": 1794249470848,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249470958
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserModule-en-authorized-recovery",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249470957,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "b8e3a89459ede0b610e4361b7e430971ed873b6ab6dfdf0c0d238fb95bce5da2",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserModule-en-authorized-recovery.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserModule-en-authorized-recovery-before-1794249470837-740f67d8-784f-4836-96b6-d81383da54ac.json",
+        "after": "snapshot-auth-authBrowserModule-en-authorized-recovery-after-1794249473832-bf89e5fb-4f03-42e5-83bc-bf45e8c9af5a.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 0,
+        "expiredSessionCleanup": 0
+      },
+      "disposition": "authorized_recovery_refresh_passed"
+    },
+    {
+      "id": "authBrowserRevoked-fr-authorized-recovery",
+      "rawPassed": true,
+      "actualRefresh": {
+        "clickedAt": 1794249480581,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249480677
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserRevoked-fr-authorized-recovery",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249480676,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "73a1dd5e5df01df9599245b441b1e822f1588a3fc8451da8d5eaf25d1d495613",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserRevoked-fr-authorized-recovery.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserRevoked-fr-authorized-recovery-before-1794249480560-dc269684-0280-4e1a-a8ad-60365b1f79a5.json",
+        "after": "snapshot-auth-authBrowserRevoked-fr-authorized-recovery-after-1794249482652-119af4e1-2335-4c52-b917-b795d2923123.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 0,
+        "expiredSessionCleanup": 0
+      },
+      "disposition": "authorized_recovery_refresh_passed"
+    },
+    {
+      "id": "authBrowserExpiry-fr-authorized-recovery",
+      "rawPassed": true,
+      "actualRefresh": {
+        "clickedAt": 1794249491306,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249491423
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserExpiry-fr-authorized-recovery",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249491423,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "113fb9f8f7ddcb78f362e64e8553a4596192566d736423167cc960b34c87c796",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserExpiry-fr-authorized-recovery.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserExpiry-fr-authorized-recovery-before-1794249491284-64960854-4b26-449d-acb1-dc36ab1c1b47.json",
+        "after": "snapshot-auth-authBrowserExpiry-fr-authorized-recovery-after-1794249493484-f0105828-5075-4bc7-a0a1-34cea1202896.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 0,
+        "expiredSessionCleanup": 0
+      },
+      "disposition": "authorized_recovery_refresh_passed"
+    },
+    {
+      "id": "authBrowserPermission-fr-authorized-recovery",
+      "rawPassed": true,
+      "actualRefresh": {
+        "clickedAt": 1794249501731,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249501809
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserPermission-fr-authorized-recovery",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249501809,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "299cc5e3eb264247c87d4dccba253cae23d6e55bf383841c0546d8d354e86a70",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserPermission-fr-authorized-recovery.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserPermission-fr-authorized-recovery-before-1794249501712-2d3bfd1b-e7e9-466b-9c65-a63f476c22a8.json",
+        "after": "snapshot-auth-authBrowserPermission-fr-authorized-recovery-after-1794249503715-0f321683-99a4-4ede-a5f6-d38687633c5d.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 0,
+        "expiredSessionCleanup": 0
+      },
+      "disposition": "authorized_recovery_refresh_passed"
+    },
+    {
+      "id": "authBrowserModule-fr-authorized-recovery",
+      "rawPassed": true,
+      "actualRefresh": {
+        "clickedAt": 1794249511938,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249512026
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserModule-fr-authorized-recovery",
+            "path": "/fr/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249512025,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 506,
+            "sha256": "66b96a1924d152ee65d2591df88ac35cacb779ffdb33fc4b8e0b00195edfb075",
+            "failedEnvelope": false,
+            "successEnvelope": true,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": true,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserModule-fr-authorized-recovery.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserModule-fr-authorized-recovery-before-1794249511913-f5d5510c-348c-4a49-9467-ded2065fa20f.json",
+        "after": "snapshot-auth-authBrowserModule-fr-authorized-recovery-after-1794249514022-46185168-571c-425a-bdb8-d47b122b64d0.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 0,
+        "expiredSessionCleanup": 0
+      },
+      "disposition": "authorized_recovery_refresh_passed"
+    },
+    {
+      "id": "authBrowserRevoked-en-denial-envelope-refresh",
+      "rawPassed": false,
+      "actualRefresh": {
+        "clickedAt": 1794249524211,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249524327
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserRevoked-en-denial-envelope-refresh",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249524326,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 695,
+            "sha256": "6ffdfbd1cc933a2d2e5c79ca44e15dabdd84cfa352e678738e92f4a1c294cddd",
+            "failedEnvelope": true,
+            "successEnvelope": false,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserRevoked-en-denial-envelope-refresh.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserRevoked-en-denial-envelope-refresh-before-1794249524179-e6498bfb-64d2-4a36-81a3-6b76bf841d62.json",
+        "after": "snapshot-auth-authBrowserRevoked-en-denial-envelope-refresh-after-1794249527048-39e476e4-5479-4698-8329-d0a0cef6cb13.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 0,
+        "expiredSessionCleanup": 0
+      },
+      "disposition": "failed_authoritative_refresh_reports_success_and_retains_old_private_dom",
+      "rawFailureReason": "Harness required a canonical denial code that this legacy wrapper does not preserve; exact named code was not captured."
+    },
+    {
+      "id": "authBrowserExpiry-en-denial-envelope-refresh",
+      "rawPassed": false,
+      "actualRefresh": {
+        "clickedAt": 1794249534425,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249534526
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserExpiry-en-denial-envelope-refresh",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249534525,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 696,
+            "sha256": "a0b2e6abe5fc6e03e3018c474a02ec473ea0082b45f338edaba803f1d49ab4af",
+            "failedEnvelope": true,
+            "successEnvelope": false,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserExpiry-en-denial-envelope-refresh.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserExpiry-en-denial-envelope-refresh-before-1794249534391-fbd5c841-3eae-4403-a4c7-7e2831f49be9.json",
+        "after": "snapshot-auth-authBrowserExpiry-en-denial-envelope-refresh-after-1794249536760-067b9686-40ac-4ebb-94ec-1afc7af173b5.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 0,
+        "expiredSessionCleanup": 1
+      },
+      "disposition": "failed_authoritative_refresh_reports_success_and_retains_old_private_dom",
+      "rawFailureReason": "Harness required a canonical denial code that this legacy wrapper does not preserve; exact named code was not captured."
+    },
+    {
+      "id": "authBrowserPermission-en-denial-envelope-refresh",
+      "rawPassed": false,
+      "actualRefresh": {
+        "clickedAt": 1794249544880,
+        "completion": {
+          "events": [
+            {
+              "kind": "refresh-completed-success",
+              "type": "success",
+              "at": 1794249544989
+            }
+          ],
+          "loginVisible": false
+        },
+        "actionResponses": [
+          {
+            "caseId": "authBrowserPermission-en-denial-envelope-refresh",
+            "path": "/en/dashboard/inventory/items",
+            "status": 200,
+            "at": 1794249544986,
+            "actionIdSha256": "a1780f18ffc941d6542bfeb58b1ed296fbe0527f33d18cb391594ef37aa6e0e4",
+            "bytes": 725,
+            "sha256": "2746a1ea303a5748ddddfb412e71032d5fdb01cdca178cd14b6fe522603a619d",
+            "failedEnvelope": true,
+            "successEnvelope": false,
+            "recognizedDenialCodes": [],
+            "cacheControl": "no-cache, no-store, max-age=0, must-revalidate",
+            "privateItemBytes": false,
+            "captureComplete": true
+          }
+        ]
+      },
+      "privateItemVisible": true,
+      "screenshot": "authBrowserPermission-en-denial-envelope-refresh.png",
+      "native": {
+        "before": "snapshot-auth-authBrowserPermission-en-denial-envelope-refresh-before-1794249544871-2929f696-266e-48e2-90ac-d49a4d1008e1.json",
+        "after": "snapshot-auth-authBrowserPermission-en-denial-envelope-refresh-after-1794249546974-d253e876-d9a7-4cd6-a367-f21dc6cdb585.json",
+        "businessAccountsUnchanged": true,
+        "oldAuditAndSessionRowsUnchanged": true,
+        "newAudits": 1,
+        "expiredSessionCleanup": 0
+      },
+      "disposition": "failed_authoritative_refresh_reports_success_and_retains_old_private_dom",
+      "rawFailureReason": "Harness required a canonical denial code that this legacy wrapper does not preserve; exact named code was not captured."
+    }
+  ],
+  "sourceExplanation": [
+    {
+      "path": "lib/error-handling/error-handler.ts",
+      "sha256": "246b2f97c703bde1f73659da5ce837b4a44f51e8bb7f17e748469af18d1e31ef",
+      "currentEqualsFrozen": true,
+      "purpose": "Post-run source-only explanation of code extraction mismatch; does not change original 107-input runtime admission."
+    },
+    {
+      "path": "lib/error-handling/categories.ts",
+      "sha256": "61d656a1ac4fd1c0d9df75c70f45aa9bddd8cc9d99dd675fa95f0f9a378fd64f",
+      "currentEqualsFrozen": true,
+      "purpose": "Post-run source-only explanation of code extraction mismatch; does not change original 107-input runtime admission."
+    }
+  ],
+  "interpretation": [
+    "All eight EN/FR authorized recovery Refresh checks now complete with actual private response bytes and retained authorized display; these resolve the original eight recovery harness races without altering their raw failed records.",
+    "Three EN real Refresh responses contain success:false and no private item bytes, after actual committed revocation, expiry or permission removal. The settled UI still reports success and displays prior private data. This corroborates the bounded failed-refresh client recovery defect.",
+    "The harness canonical-code assertion remains failed. Legacy inventoryAction catch creates errors through getErrorCode, which generates a prefix plus numeric suffix; the probe uses only [A-Z_]+ and a canonical-name allowlist. No actual named code is claimed from uncaptured raw bodies.",
+    "Current-authority provenance is supported by controlled native transitions, unchanged guarded source, and the exact permission-denial audit; failedEnvelope is an observed response fact.",
+    "No new product defect count is added for the three corroboration cases. Six original EN/FR client cases remain the logical finding.",
+    "Native hidden-tab/BFCache-hit coverage remains unqualified."
+  ],
+  "cleanup": {
+    "syntheticSessionsRemoved": 7,
+    "remaining": 0,
+    "browserAndProxyClosed": true
+  }
+}

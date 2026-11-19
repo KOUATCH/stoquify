@@ -1,0 +1,128 @@
+{
+  "at": "2026-11-09T17:42:37.955Z",
+  "reviewer": "/root/v02_review",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "artifactSha256": "9f6fa8cf7b5a6d87476d2c1bac3833b479ab2745f4ae5d12f50322b0f59d06d0",
+  "evidenceClass": "independent_re_evaluation_of_existing_actual_http_and_native_database_evidence",
+  "originalResult": {
+    "file": "browser/p04v02-full-20261109-r1-attempt01/result.json",
+    "sha256": "02d1d10e3132f403207b8d02923ca1d1b3fdd21417ec751466733e549f2e1bf5",
+    "label": "moduleDenied-both-delivery-urls",
+    "passed": false,
+    "error": "Six direct delivery denial audits expected\n\n4 !== 6\n"
+  },
+  "classification": "harness_audit_cardinality_expectation_error",
+  "correctedScopedGatePassed": true,
+  "productDefectConfirmed": false,
+  "before": "snapshot-moduleDenied-before-1794245970075-12967fe8-32da-4bd1-b619-bc8b2e401cae.json",
+  "after": "snapshot-moduleDenied-after-1794245972849-54f777b1-ea69-4172-b1a4-b322c853d47e.json",
+  "requests": [
+    {
+      "label": "moduleDenied",
+      "method": "GET",
+      "path": "/uploads/p04-upload-disabled/sentinel.png",
+      "status": 403,
+      "byteLength": 164,
+      "bodySha256": "af8ff2607ca20c36d793eb107b9e65bb4eabc4abf7447ed7b35d69f6f38520c1",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "expected": "denied",
+      "denialContract": {
+        "contract": "canonical-auth-denial",
+        "status": 403,
+        "code": "FORBIDDEN",
+        "exactSafeEnvelope": true
+      }
+    },
+    {
+      "label": "moduleDenied-head",
+      "method": "HEAD",
+      "path": "/uploads/p04-upload-disabled/sentinel.png",
+      "status": 403,
+      "byteLength": 0,
+      "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "expected": "denied",
+      "denialContract": {
+        "contract": "empty-denied-head",
+        "status": 403
+      }
+    },
+    {
+      "label": "moduleDenied",
+      "method": "GET",
+      "path": "/api/uploads/p04-upload-disabled/sentinel.png",
+      "status": 403,
+      "byteLength": 164,
+      "bodySha256": "32f20043c1defdbed7d47e2e429eb4fe6fa8193d30e9cda3c50d3ce93727330e",
+      "contentType": "application/json",
+      "cacheControl": null,
+      "expected": "denied",
+      "denialContract": {
+        "contract": "canonical-auth-denial",
+        "status": 403,
+        "code": "FORBIDDEN",
+        "exactSafeEnvelope": true
+      }
+    },
+    {
+      "label": "moduleDenied-head",
+      "method": "HEAD",
+      "path": "/api/uploads/p04-upload-disabled/sentinel.png",
+      "status": 403,
+      "byteLength": 0,
+      "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contentType": "application/json",
+      "cacheControl": null,
+      "expected": "denied",
+      "denialContract": {
+        "contract": "empty-denied-head",
+        "status": 403
+      }
+    },
+    {
+      "label": "moduleDenied",
+      "method": "GET",
+      "path": "/images/p04-private-alias.png",
+      "status": 403,
+      "byteLength": 164,
+      "bodySha256": "bda2f55f70b9d557bf7ac874a9d2bd587076c03c1852a94ec2d898c616e7db6f",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "expected": "denied",
+      "denialContract": {
+        "contract": "canonical-auth-denial",
+        "status": 403,
+        "code": "FORBIDDEN",
+        "exactSafeEnvelope": true
+      }
+    },
+    {
+      "label": "moduleDenied-head",
+      "method": "HEAD",
+      "path": "/images/p04-private-alias.png",
+      "status": 403,
+      "byteLength": 0,
+      "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contentType": "application/json",
+      "cacheControl": "private, no-store",
+      "expected": "denied",
+      "denialContract": {
+        "contract": "empty-denied-head",
+        "status": 403
+      }
+    }
+  ],
+  "expectedModuleAudits": 4,
+  "observedModuleAudits": 4,
+  "oldAuditsPreserved": true,
+  "businessAndAccountTablesUnchanged": true,
+  "sessionRowsUnchanged": true,
+  "explanation": "The two own-tenant delivery URLs each receive GET and HEAD, producing four module-denial audits. The synthetic alias targets tenantA; this actor belongs to the disabled tenant, so its two requests are rejected by organization mismatch before module authorization. Both categories return safe403 denials. The separate moduleChange-after actor and alias are same-tenant and still require six module audits.",
+  "sourceBoundary": "app/api/uploads/[...path]/route.ts checks organizationId !== sessionOrganizationId before requireApiModuleAccess.",
+  "rawFailurePreserved": true,
+  "runtimeRequestsRerun": false,
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false
+}

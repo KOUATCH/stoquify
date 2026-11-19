@@ -1,0 +1,183 @@
+{
+  "slice": "HR-21",
+  "status": "BLOCKED",
+  "boundedFixStatus": "VERIFIED_SCOPED",
+  "mode": "HR_CORE_WITH_HANDOFF",
+  "baseline": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "sealedAt": "2026-10-25T10:39:29.594Z",
+  "ownedFiles": [
+    "services/payroll/employee.service.ts",
+    "services/payroll/__tests__/payroll-employee.service.test.ts",
+    "services/hris/__tests__/integrated-core-pilot.postgres.test.ts",
+    "jest.hris-integrated-pilot-postgres.config.cjs"
+  ],
+  "acceptance": {
+    "HR-21-AC01": "FAIL_INCOMPLETE_COVERAGE",
+    "HR-21-AC02": "PASS",
+    "HR-21-AC03": "NOT_RUN",
+    "HR-21-AC04": "NOT_RUN",
+    "HR-21-AC05": "NOT_RUN"
+  },
+  "commands": [
+    {
+      "lane": "mocked-profile-readiness",
+      "command": "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath services/payroll/__tests__/payroll-employee.service.test.ts services/hris/__tests__/payroll-readiness-contract.test.ts",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/provenance-unit-sealed.log",
+      "exitCode": 0,
+      "passed": 23,
+      "completedAt": "2026-10-25T10:38:23.603Z"
+    },
+    {
+      "lane": "mocked-document-boundary",
+      "command": "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --runTestsByPath services/hris/__tests__/employee-document.contract.test.ts services/hris/__tests__/employee-document.authorization.test.ts",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/document-boundary-current.log",
+      "exitCode": 0,
+      "passed": 10,
+      "completedAt": "2026-10-25T10:16:28.801Z"
+    },
+    {
+      "lane": "real-postgresql-connected",
+      "command": "node what-next/hris-implementation-2026-10-24/HR-21/run-connected.cjs connected-replay-final.log",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/connected-replay-final.log",
+      "exitCode": 0,
+      "passed": 4,
+      "completedAt": "2026-10-25T10:33:37.709Z"
+    },
+    {
+      "lane": "real-postgresql-shared",
+      "command": "node node_modules/jest/bin/jest.js --config jest.hris-correctness-postgres.config.cjs --runInBand --no-cache",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/shared-correctness-final.log",
+      "exitCode": 0,
+      "passed": 60,
+      "completedAt": "2026-10-25T10:35:57.905Z"
+    },
+    {
+      "lane": "real-postgresql-handoff",
+      "command": "node node_modules/jest/bin/jest.js --config jest.hris-handoff-postgres.config.cjs --runInBand --no-cache",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/handoff-regression-final.log",
+      "exitCode": 0,
+      "passed": 11,
+      "skipped": 1,
+      "completedAt": "2026-10-25T10:37:45.356Z"
+    },
+    {
+      "lane": "typecheck-scoped",
+      "command": "node what-next/hris-implementation-2026-10-24/typecheck.cjs what-next/hris-implementation-2026-10-24/HR-21/typecheck-scoped-final.log services/payroll/employee.service.ts services/hris/__tests__/integrated-core-pilot.postgres.test.ts",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/typecheck-scoped-final.log",
+      "exitCode": 0,
+      "passed": 0,
+      "completedAt": "2026-10-25T10:34:01.707Z"
+    },
+    {
+      "lane": "workflow",
+      "command": "npm run agent:workflow:check",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/workflow-final.log",
+      "exitCode": 0,
+      "passed": 0,
+      "completedAt": "2026-10-25T10:38:06.573Z"
+    },
+    {
+      "lane": "owned-diff",
+      "command": "git diff --check -- services/payroll/employee.service.ts services/payroll/__tests__/payroll-employee.service.test.ts services/hris/__tests__/integrated-core-pilot.postgres.test.ts jest.hris-integrated-pilot-postgres.config.cjs",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/diffcheck.log",
+      "exitCode": 0,
+      "passed": 0,
+      "completedAt": "2026-10-25T10:38:49.767Z"
+    },
+    {
+      "lane": "owned-database-stop",
+      "command": "pg_ctl -D <explicit owned HRIS local data directory> stop -m fast",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/postgresql-final-stop.log",
+      "exitCode": 0,
+      "passed": 0,
+      "completedAt": "2026-10-25T10:38:46.028Z"
+    }
+  ],
+  "nonpassingChecks": [
+    {
+      "lane": "wider-mocked-fixture-typecheck",
+      "artifact": "what-next/hris-implementation-2026-10-24/HR-21/unit-fixture-typecheck.log",
+      "exitCode": 1,
+      "diagnostics": 6,
+      "scope": "Existing string-to-Date fixture typing outside added cases; runtime suite passes. No global typecheck success claimed."
+    }
+  ],
+  "databaseTarget": "postgresql://hris_test@127.0.0.1:55464/stoquify_local_hris_20261024?schema=public",
+  "databaseStopped": true,
+  "independentReview": "PASS_SCOPED_SOURCE_ONLY",
+  "connectedRunId": "hr21-c5992036-456a-40b2-b866-bc0abc463399",
+  "dependencyInventory": "what-next/hris-implementation-2026-10-24/HR-21/candidate-integrity.json",
+  "sourceReconciliation": "what-next/hris-implementation-2026-10-24/HR-21/source-reconciliation.json",
+  "limits": [
+    "No actual authenticated application/operator session",
+    "No real document provider/key recovery qualification",
+    "No customer cumulative upgrade or restore rehearsal",
+    "Named separate test environment chosen; concrete hosting target still absent",
+    "No deployment, account grants, live payroll or external effects"
+  ],
+  "hashes": {
+    "services/payroll/employee.service.ts": "bf3c588b3c839dde3477c05a42daaa614038e3bc69f48f1e94e39ea10ae75d17",
+    "services/payroll/__tests__/payroll-employee.service.test.ts": "562712b5d4808b5238780780723b23fef0daab9a7f0814e943a27f92c27e0020",
+    "services/hris/__tests__/integrated-core-pilot.postgres.test.ts": "909c3acdf01857a5c2dc2d702d0314179543a10fd0b9b952a4b9c49da14d8000",
+    "jest.hris-integrated-pilot-postgres.config.cjs": "925620ec9439550cf5f257e4de75644136ebe16322d9f6c0998663fa6d948b1a",
+    "docs/ecc/cameroon-blueprint-execution-2026-10-07.md": "3e188d388f85be843248456f3b06d4a1913b4b45a5f9cff05a16d73b6a5dbf4b",
+    "what-next/hris-implementation-2026-10-24/HR-21/add-provenance-tests.cjs": "898a8b810986308c3fdc2246e7e54524244b07fcd396d75229fa20d627820e26",
+    "what-next/hris-implementation-2026-10-24/HR-21/assert-implicit-replay.cjs": "d9a8061ad4caadbe927cb07166a3a6a4b37c38344dd60bcde992fabbd4295dd7",
+    "what-next/hris-implementation-2026-10-24/HR-21/assert-native-provenance.cjs": "1fabe298e780c03d9fe563acce55049f49af178dad6f4924839db934f2ea2a15",
+    "what-next/hris-implementation-2026-10-24/HR-21/candidate-integrity-final.log": "4ee75aed08f7d49e8106e7014a8faef91f097571dde5b51469b641db855a4fbf",
+    "what-next/hris-implementation-2026-10-24/HR-21/candidate-integrity.cjs": "8fc934336b3b607974f86b0f489b410d61e174fe69dc0a39f575c29ae4381ef5",
+    "what-next/hris-implementation-2026-10-24/HR-21/candidate-integrity.json": "92b4dac2b3deb1cd0082b85fac177d6ac350ef584419491363dca60ab1d5060a",
+    "what-next/hris-implementation-2026-10-24/HR-21/candidate-integrity.log": "f1268800b187ba33624eec0273450fe33e210ea56d62690d85d4a3117d7285aa",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-final.log": "f1e72cb9516c6c92958c77aeb67e71e50bdffcf936122ee49cc0c5e1b213f4bb",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-first.log": "f9f6e9266706616d093b8441c7c7cff7440d5b5af96c30a14489d8d9f3d71b5d",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-native-final.log": "601f2b2065a1e940c4e580de3aafd0d4cab7c196e403fed424f2d5044092b0c0",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-owner-fix.log": "e1b40cd428543f53d86669d736501066ad4e00eb506ecfbb6439760b7b4d29e7",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-prior-1792924018207.json": "f0e329b58185a060ede00ff1839904ac2518e6d6c90a2711c07f995010053978",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-prior-1792924145788.json": "b76d08bec23e9df06824425868a621a4bc067594a13faea6399ee24aed40f203",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-prior-1792924281747.json": "e2e02b37efae2e26c65b2964c462594d0985c99d36d27ee1548f80e6cb5bfcf4",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-prior-1792924364730.json": "7f31fdacf98f6b4f3dfd6208b67d9a0e96e05d2a54336ab2e94a4837b3e84427",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-progress.json": "db5c73536eca9c598fbf07619aca2a8566b8a7b19300a83f815cbfbc54c8713f",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-replay-final.log": "1bc3cfd096f055a92e9765006f46f1035a1d63a88579fbe95f1c66564c975291",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-results-first-incomplete.json": "7c1615e4283624e245e856a56def458f9267f63cec60ac337a9a1c01666453c3",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-results.json": "19f75a838208c11a8121c471f5ffe247b363a3cc1001f0028d0408dd95d80183",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-reviewed.log": "0dcc71b51fcdd7b2a39ce99098c972f4ac3852c6cb511f3744a5d68330eab100",
+    "what-next/hris-implementation-2026-10-24/HR-21/connected-second.log": "e8eab9215817e35bf052e4e5c95668a5895293077d1db73282a6f23d7185aeac",
+    "what-next/hris-implementation-2026-10-24/HR-21/DBAKES-PILOT.md": "24dd8e9943661eebf78d5b6628fc5f7cae75eeb1bcf0290cbaf44ef14ff45126",
+    "what-next/hris-implementation-2026-10-24/HR-21/diffcheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "what-next/hris-implementation-2026-10-24/HR-21/document-boundary-current.log": "8dc8f4dfcdc3e5a4c3c9a3ee708e341fed86b48d8abbff8b78f5c3de4a55db2d",
+    "what-next/hris-implementation-2026-10-24/HR-21/employee.service.ts.baseline": "4048fd7f46ebb5bfc7a35f7bb542657bec8b344d3b6a55f780804dae2cb34393",
+    "what-next/hris-implementation-2026-10-24/HR-21/handoff-artifact-reconciliation.json": "40653cd7cffe0e24b65a3b25dd88e61c063ca64cb7a01f6441ae5d50c3031a9a",
+    "what-next/hris-implementation-2026-10-24/HR-21/handoff-performance.json": "40f928d701c70f4e03bb4595fec435a9914b4a0db8951037b191880e55619bfd",
+    "what-next/hris-implementation-2026-10-24/HR-21/handoff-regression-final.log": "01cc4f686690a11d625fe9a618ac6f0e9b1df0f4df4df998b5b125a1caad7ac6",
+    "what-next/hris-implementation-2026-10-24/HR-21/INDEPENDENT-REVIEW.md": "ac5a04204653c7dd84488a0871a267a9fdbfdc049f39a5adce2c9734c0d20057",
+    "what-next/hris-implementation-2026-10-24/HR-21/owned-files.json": "2edbb3d72814a4efecdd2d83b907398497f450c85ce2db1339abac316a33da8d",
+    "what-next/hris-implementation-2026-10-24/HR-21/PILOT-PROTOCOL.md": "3f9e4db1600a2f8d1259d2da4e3d5c97b3bf2b840f36de5e2ef18094eb8d0c36",
+    "what-next/hris-implementation-2026-10-24/HR-21/PLAN.md": "0be4438e82f33b7f5ca2d0989b6e0d3a5fab9821282291d0b2dddba9cc5e18f3",
+    "what-next/hris-implementation-2026-10-24/HR-21/postgresql-final-stop.log": "3a6747065de8c2dbc66a6baa73d5ab09c2c03eb8851704f973ac4b886e6805f2",
+    "what-next/hris-implementation-2026-10-24/HR-21/postgresql-restart.log": "46038efb813fbca18a92272496901190638dea3f97b51f7af0daa1ca2eb13818",
+    "what-next/hris-implementation-2026-10-24/HR-21/postgresql-stop.log": "c9e295e5be414a942acc803b49f30da73a4f31471fae8834cf3c85bd95fc924c",
+    "what-next/hris-implementation-2026-10-24/HR-21/provenance-unit-final.log": "d70150401ffe5b8b10d599756f59603352f22b4d565999dee5df6a9276c6aada",
+    "what-next/hris-implementation-2026-10-24/HR-21/provenance-unit-reviewed.log": "03db2f6e537691e4271f38758bde2ef840145ac5439f3560e9eb78c3917ef249",
+    "what-next/hris-implementation-2026-10-24/HR-21/provenance-unit-sealed.log": "c7a1031ef175f8d96e59e1f6f723e3787efa2819af7bfa2173ad1863b300df4d",
+    "what-next/hris-implementation-2026-10-24/HR-21/provenance-unit.log": "1491a4b54dbb5df1c0175823358afbe133d4d4422f7017c667304c573a411ea6",
+    "what-next/hris-implementation-2026-10-24/HR-21/reconcile-source.cjs": "e9a291d3396fa52d741400752c6d034ae1785091c8f4b2af38022f58f7e278db",
+    "what-next/hris-implementation-2026-10-24/HR-21/RECOVERY-AND-RELEASE.md": "dbe53bef9515c497f824e8f75d1ef62ff02f45619ee460252d4d1c5841f4a72b",
+    "what-next/hris-implementation-2026-10-24/HR-21/refine-connected.cjs": "1b4ffa4f0e57fb3cd58b181a84e2f247343aa69f21ec1a2acd019fb9133d84b7",
+    "what-next/hris-implementation-2026-10-24/HR-21/RESULT.md": "8fdb39228ffad4aaddb73ab8bfbd437e99e14b7c4c55a94b60d354450054a7ab",
+    "what-next/hris-implementation-2026-10-24/HR-21/retain-regression-timing.cjs": "a34760fcafe331a95c7fb42f3d2714f9d992200a33cd182e9ebc0c8317b2ba64",
+    "what-next/hris-implementation-2026-10-24/HR-21/review-connected.cjs": "7e98b8efc5ded39d2134bef5544886ad2de359f1a8024d4697cb4f8f5047b706",
+    "what-next/hris-implementation-2026-10-24/HR-21/run-connected.cjs": "69897fe96f78820192301e1fb8f5824c3b6f94558d8c4a9b710e29720ff0ffc3",
+    "what-next/hris-implementation-2026-10-24/HR-21/seal-evidence.cjs": "1d867a521cbfaabf9ca6bd4c499c2f79a68f6623a6a742974a02594ea045a6f2",
+    "what-next/hris-implementation-2026-10-24/HR-21/shared-correctness-final.log": "0b9a131f964f7c47158742078e5f8cfb604678320c90e091bd4be4c728f0359f",
+    "what-next/hris-implementation-2026-10-24/HR-21/source-reconciliation.json": "4e4f7b276807e9a8dc049896271696683de9bb7bd066bceb4050e5f08954abd3",
+    "what-next/hris-implementation-2026-10-24/HR-21/source-reconciliation.log": "2f48a08f0a9f1f5d37a702a32e7cfa40437b5df3abe371fd3f68b17c94755e57",
+    "what-next/hris-implementation-2026-10-24/HR-21/typecheck-connected.log": "4b3374c37af644ec612c43c197ac5d1842939535ed0c63f7c3c9ce8ec581549f",
+    "what-next/hris-implementation-2026-10-24/HR-21/typecheck-final.log": "acefced00d56252cb1bb31c0d538e1ea5935cb9f429368bace93691ea7e21781",
+    "what-next/hris-implementation-2026-10-24/HR-21/typecheck-initial.log": "698cb814ddc4a30089e50d58e9c057bd7bf05f3afdd77425672ec11b9110c6a5",
+    "what-next/hris-implementation-2026-10-24/HR-21/typecheck-scoped-final.log": "698cb814ddc4a30089e50d58e9c057bd7bf05f3afdd77425672ec11b9110c6a5",
+    "what-next/hris-implementation-2026-10-24/HR-21/unit-fixture-typecheck.log": "12608e0a016791cfb0ee7c31c67986577b74f4be33fcbe8bfe060e5dcad1fec4",
+    "what-next/hris-implementation-2026-10-24/HR-21/update-pilot-docs.cjs": "d958bb026c1de26ecd42f95058142a2cf8dc2a34571b0b843bcfb1f80827e4ef",
+    "what-next/hris-implementation-2026-10-24/HR-21/workflow-final.log": "86136abc44dde2020666ec41f5257908e6e5d292251b9590da8755fd007cf5e0",
+    "what-next/hris-implementation-2026-10-24/HR-21/write-result.cjs": "696ebda75ce75baac027b6c955997a4a588716ef2c635deb4c5310d16960ed67"
+  }
+}

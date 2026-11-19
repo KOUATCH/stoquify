@@ -1,0 +1,200 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "actual-approved-opening-and-replay",
+      "passed": true
+    },
+    {
+      "name": "actual-collections-and-provider-links",
+      "passed": true
+    },
+    {
+      "name": "electronic-claim-denials-no-effects",
+      "passed": true
+    },
+    {
+      "name": "actual-concurrent-claim-exclusion",
+      "passed": true
+    },
+    {
+      "name": "assessment-before-provider-and-schedule-evidence",
+      "passed": true
+    },
+    {
+      "name": "actual-monthly-import-independent-signatures",
+      "passed": true
+    },
+    {
+      "name": "actual-bank-bs-approval-certification-and-seal",
+      "passed": true
+    },
+    {
+      "name": "actual-closed-period-denial-and-retained-recovery",
+      "passed": true
+    }
+  ],
+  "counts": {
+    "journals": 4,
+    "customerSettlements": 3,
+    "claimedProviderTransactions": 2,
+    "signedReconciliationRuns": 2,
+    "approvedBankBalanceEvidence": 1,
+    "certifiedExports": 1,
+    "periodCloseEvents": 1,
+    "periodReopenEvents": 0,
+    "providerAccounts": 2,
+    "activeOpeningExecutions": 1,
+    "openingReceivables": 1,
+    "sales": 0,
+    "payrollRuns": 0,
+    "statutoryCertifiedDocuments": 0
+  },
+  "auxiliary": {
+    "denials": {
+      "organizationId": "monthly-denials-4ac93354035f",
+      "negativeKinds": [
+        "foreign",
+        "rail",
+        "amount",
+        "currency",
+        "mapping",
+        "reused-native",
+        "changed-primary-replay"
+      ],
+      "allNegativeFinancialSnapshotsUnchanged": true,
+      "financialState": {
+        "journals": 2,
+        "lines": 4,
+        "batches": 2,
+        "settlements": 1,
+        "legacyPayments": 0,
+        "completedSales": 0,
+        "claimed": 1,
+        "nativeTransactions": [
+          {
+            "id": "cmwat78jd00lamaws286tw04p",
+            "sourceType": "CUSTOMER_SETTLEMENT",
+            "sourceId": "cmwat79br00m8mawsgn3n2d34",
+            "ledgerPostingBatchId": "cmwat79f700momaws1i9msrb4",
+            "legacyPaymentId": null,
+            "providerAuthorityEventId": "cmwat78j600l8mawsvq6mcc9g",
+            "providerAccountId": "cmwat77hd00jdmawszfebb4xe",
+            "providerTransactionId": "monthly-denials-4ac93354035f-valid-unclaimed-5677033c",
+            "providerReference": "monthly-denials-4ac93354035f-valid-unclaimed-5677033c",
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100",
+            "currencyCode": "XAF",
+            "metadata": null,
+            "updatedAt": "2026-11-10T14:52:34.349Z"
+          },
+          {
+            "id": "cmwat78jq00lemaws72d0jq3n",
+            "sourceType": "SYNTHETIC_EXTERNAL_CONFIRMATION_INPUT",
+            "sourceId": null,
+            "ledgerPostingBatchId": null,
+            "legacyPaymentId": null,
+            "providerAuthorityEventId": "cmwat78jl00lcmawssb568rer",
+            "providerAccountId": "cmwat77hd00jdmawszfebb4xe",
+            "providerTransactionId": "monthly-denials-4ac93354035f-wrong-currency-82b0ca92",
+            "providerReference": "monthly-denials-4ac93354035f-wrong-currency-82b0ca92",
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100",
+            "currencyCode": "USD",
+            "metadata": null,
+            "updatedAt": "2026-11-10T14:52:33.158Z"
+          }
+        ],
+        "customerBalance": "200.00"
+      }
+    },
+    "race": {
+      "organizationId": "monthly-race-a8ef54ea5a5b",
+      "injectedClaimFailureRolledBack": true,
+      "claimFaultMarker": {
+        "reached": true,
+        "invocations": 1
+      },
+      "crossWorkflowContenders": 2,
+      "crossWorkflowFinancialWinners": 1,
+      "crossWorkflowWinner": "POS",
+      "twoCollectionContenders": 2,
+      "twoCollectionFinancialWinners": 1,
+      "financialState": {
+        "journals": 4,
+        "lines": 8,
+        "batches": 4,
+        "settlements": 1,
+        "legacyPayments": 1,
+        "completedSales": 1,
+        "claimed": 2,
+        "nativeTransactions": [
+          {
+            "id": "cmwat7bpm00w7mawskkthvau1",
+            "sourceType": "SYNTHETIC_EXTERNAL_CONFIRMATION_INPUT",
+            "sourceId": null,
+            "ledgerPostingBatchId": null,
+            "legacyPaymentId": null,
+            "providerAuthorityEventId": "cmwat7bpg00w5mawspwrmilcb",
+            "providerAccountId": "cmwat7at500u4mawsl6aozlly",
+            "providerTransactionId": "monthly-race-a8ef54ea5a5b-rollback-claim-cc158c6b",
+            "providerReference": "monthly-race-a8ef54ea5a5b-rollback-claim-cc158c6b",
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100",
+            "currencyCode": "XAF",
+            "metadata": null,
+            "updatedAt": "2026-11-10T14:52:37.258Z"
+          },
+          {
+            "id": "cmwat7ckx00x4mawsyytjup00",
+            "sourceType": "SYNTHETIC_EXTERNAL_CONFIRMATION_INPUT",
+            "sourceId": null,
+            "ledgerPostingBatchId": null,
+            "legacyPaymentId": "cmwat7czv00xkmawsz4ic48j1",
+            "providerAuthorityEventId": "cmwat7ckr00x2mawswhnt9hqk",
+            "providerAccountId": "cmwat7at500u4mawsl6aozlly",
+            "providerTransactionId": "monthly-race-a8ef54ea5a5b-pos-versus-ar-c0261ae7",
+            "providerReference": "monthly-race-a8ef54ea5a5b-pos-versus-ar-c0261ae7",
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100",
+            "currencyCode": "XAF",
+            "metadata": null,
+            "updatedAt": "2026-11-10T14:52:38.932Z"
+          },
+          {
+            "id": "cmwat7es500yrmawsbszt0rwi",
+            "sourceType": "CUSTOMER_SETTLEMENT",
+            "sourceId": "cmwat7ewp00yxmawsnuxrp7of",
+            "ledgerPostingBatchId": "cmwat7f3o00zdmawsoirxqd05",
+            "legacyPaymentId": null,
+            "providerAuthorityEventId": "cmwat7er300ypmaws8gzuw4x4",
+            "providerAccountId": "cmwat7at500u4mawsl6aozlly",
+            "providerTransactionId": "monthly-race-a8ef54ea5a5b-two-ar-contenders-6b165dc4",
+            "providerReference": "monthly-race-a8ef54ea5a5b-two-ar-contenders-6b165dc4",
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100",
+            "currencyCode": "XAF",
+            "metadata": null,
+            "updatedAt": "2026-11-10T14:52:41.788Z"
+          }
+        ],
+        "customerBalance": "500.00"
+      },
+      "unclaimedUiObservationId": "cmwat7fa90100mawshrql5wza",
+      "remainingOpeningAR": "500.00"
+    }
+  },
+  "earnedInternalTerminalStates": true,
+  "seededInternalFinancialTerminalStates": false,
+  "syntheticProviderConfirmationFacts": true,
+  "privateEvidence": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-monthly-20261110-149fa2421b\\monthly-close-service-evidence.private.json",
+    "sha256": "decfdffb2ffbdc84dbcf9e726fc6473c370b5a5e186c29a41094584e924466d2",
+    "bytes": 28679
+  }
+}

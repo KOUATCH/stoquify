@@ -43,6 +43,7 @@ type AgentCommandPanelProps = {
   periodEnd: string;
   locale: "en" | "fr";
   proposalDraftsEnabled?: boolean;
+  compactUnavailable?: boolean;
 };
 
 const copy = {
@@ -107,6 +108,7 @@ export function AgentCommandPanel({
   periodEnd,
   locale,
   proposalDraftsEnabled = false,
+  compactUnavailable = false,
 }: AgentCommandPanelProps) {
   const t = copy[locale];
   const [result, setResult] = useState<CommandAgentRunResult | null>(null);
@@ -117,6 +119,15 @@ export function AgentCommandPanel({
   );
   const [feedbackPending, setFeedbackPending] = useState(false);
   const brief = result?.brief ?? null;
+
+  if (compactUnavailable && (!access.canRender || !access.canRun)) {
+    const message = access.reason === "shadow" ? t.shadow
+      : access.reason === "disabled" || access.reason === "kill_switch" ? t.disabled : t.unavailable;
+    return <aside aria-label={t.title} data-testid="command-agent-unavailable" className={cn(dashboardRowClass, "flex items-start gap-2 p-3 text-sm text-[var(--dash-text-soft)]")}>
+      <Bot className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+      <p><span className="font-medium">{t.title}: </span>{message}</p>
+    </aside>;
+  }
 
   async function generate() {
     setLoading(true);

@@ -1,0 +1,78 @@
+{
+  "id": "P04-R08",
+  "title": "Enforce inventory module access on the item-list server action",
+  "phase": 1,
+  "kind": "implementation",
+  "depends_on": [
+    "P01",
+    "P02",
+    "P04-R01",
+    "P04-R03"
+  ],
+  "milestone": "M1",
+  "owner_role": "Inventory/backend + module-control owner + independent security/database QA",
+  "domains": [
+    "item",
+    "inventory",
+    "security",
+    "modules"
+  ],
+  "audit_gaps": [
+    "G04"
+  ],
+  "status": "not_started",
+  "current_state": "P04-V02 independently confirmed that both EN/FR visible Refresh server-action responses returned new private item bytes after the inventory grant was suspended. RBAC stayed valid; no business/session/audit changes occurred. The page module guard does not guard the directly callable item-list action. Unimplemented; not authorized by qualification.",
+  "tasks": [
+    "Refresh getOrgItems, inventoryAction, requirePermission, listActiveItemPayloads and module-access guard call chains/hashes; map caller aliases before editing.",
+    "Apply current server-owned inventory read-module enforcement at the authoritative action/service boundary before private item queries, using the existing entitlement contract and preserving tenant/object/permission checks.",
+    "Preserve R03 safe failure envelopes and authorized item-list behavior; do not substitute page/button hiding for server enforcement or alter unrelated inventory mutations.",
+    "Run real-session module suspend/restore, permission loss, forged tenant/object and authorized independent controls in a fresh isolated build, with response-canary and native no-unauthorized-write proof.",
+    "Review independently and refresh P04-V02 evidence before dependent client recovery qualification."
+  ],
+  "acceptance_criteria": [
+    "A suspended or unavailable inventory grant denies the admitted directly callable item-list operation before private item payloads are read/returned.",
+    "Both EN/FR actual Refresh and direct admitted action requests return no private item payload under denied current authority; business/session state is unchanged and intended audit effects are exact.",
+    "Restored active grants and legitimate independent actors retain functional reads without weakening tenant, role or object boundaries.",
+    "All changed aliases/consumers and compatibility/error-contract checks are independently reviewed; other inventory actions remain under V01 until individually qualified."
+  ],
+  "evidence_refs": [
+    "E26"
+  ],
+  "rollback_recovery": "Revert only owned repair while retaining production admission block; never restore weaker authority as an accepted release. Revoke synthetic sessions, stop owned local runtime/DB, retain evidence. No commit/push, production flags/data changes or deployment.",
+  "effort": "M",
+  "confidence": "high",
+  "model_tier": "strongest_available",
+  "execution_boundary": "One admitted inventory item-list read authority contract. Refresh aliases first; split any unrelated operation/module expansion. No product implementation or production flag changes authorized by this qualification.",
+  "verification_recipes": [
+    "C01",
+    "C02",
+    "C05",
+    "C06",
+    "C07"
+  ],
+  "required_decisions": [],
+  "source_locations": [
+    "actions/itemsShow/getOrgItems.ts",
+    "services/item/item.service.ts",
+    "lib/security/rbac.ts",
+    "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
+    "plans/stoquify-production-readiness-2026-10-28/execution/P04-V02/qualification-20261109-r1/inventory/supplement03-scope-and-case-map.json"
+  ],
+  "branch_pr_workflow": "Future codex/ branch or explicitly owned local diff from approved candidate; inspect/stage only owned hunks if commit requested. PR/CI admin waits for authenticated authorization; never auto-merge/deploy.",
+  "evidence_record": {
+    "candidate_id": null,
+    "source_hashes": "execution/P04-V02/qualification-20261109-r1/inventory/supplement03-scope-and-case-map.json",
+    "commands": null,
+    "source_review": "execution/P04-R08/proposal-20261109-r1/PROPOSAL.md",
+    "mocked_tests": null,
+    "native_database": null,
+    "authenticated_browser": null,
+    "provider_hosted": null,
+    "operator": null,
+    "cleanup": null,
+    "reviewer": null
+  },
+  "parent_id": "P04",
+  "implementation_authorized": false,
+  "derived_from": "P04-V02"
+}

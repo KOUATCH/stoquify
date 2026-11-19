@@ -1,0 +1,19 @@
+// Explicit fixture-only runner. The tested packer receives an injected build;
+// existing promotion tests receive mock clients/runners and synthetic settings.
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const { spawnSync } = require('node:child_process');
+const root = path.resolve(__dirname, '../../../../../..');
+const allowed = new Set(['PATH', 'SYSTEMROOT', 'WINDIR', 'TEMP', 'TMP', 'USERPROFILE', 'COMSPEC', 'PATHEXT', 'PROCESSOR_ARCHITECTURE', 'NUMBER_OF_PROCESSORS']);
+const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => allowed.has(key.toUpperCase())));
+env.CI = 'true';
+const args = [path.join(root, 'node_modules/jest/bin/jest.js'), '--config', path.join(__dirname, 'jest.config.cjs'), '--runInBand', '--no-cache', '--json', '--outputFile', path.join(__dirname, 'jest-result.json')];
+const startedAt = new Date().toISOString();
+const result = spawnSync(process.execPath, args, { cwd: root, env, encoding: 'utf8', windowsHide: true, timeout: 120000, maxBuffer: 4 * 1024 * 1024 });
+fs.writeFileSync(path.join(__dirname, 'fixture-output.log'), (result.stdout || '') + (result.stderr || ''));
+const inputs = ['scripts/release-artifact.cjs', 'scripts/candidate-snapshot.cjs', 'tests/s10-s11/release-artifact.test.js', 'tests/s10-s11/release-artifact-private-uploads.test.js', path.relative(root, path.join(__dirname, 'jest.config.cjs')), path.relative(root, __filename)].map(file => ({ path: file.replaceAll('\\', '/'), sha256: crypto.createHash('sha256').update(fs.readFileSync(path.join(root, file))).digest('hex') }));
+const receipt = { startedAt, finishedAt: new Date().toISOString(), evidenceClass: 'isolated-filesystem-and-mocked-promotion', command: [process.execPath, ...args], cwd: root, inheritedEnvironmentKeys: Object.keys(env).sort(), exitCode: result.status, signal: result.signal, error: result.error?.message ?? null, inputs, exclusions: ['No real build', 'No application config or dotenv load', 'No real database/provider', 'No source image contents read by tests', 'No migration or deployment'] };
+fs.writeFileSync(path.join(__dirname, 'fixture-receipt.json'), JSON.stringify(receipt, null, 2) + '\n');
+console.log(JSON.stringify({ exitCode: result.status, signal: result.signal, error: result.error?.message ?? null, receipt: path.relative(root, path.join(__dirname, 'fixture-receipt.json')).replaceAll('\\', '/') }));
+process.exitCode = result.status === 0 ? 0 : 1;

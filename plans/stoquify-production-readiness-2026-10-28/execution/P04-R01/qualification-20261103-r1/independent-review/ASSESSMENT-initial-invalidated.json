@@ -1,0 +1,150 @@
+{
+  "reviewedAt": "2026-11-03T17:40:15.2713603Z",
+  "reviewer": "r01_independent_review",
+  "verdict": "accepted_local_P04_R01_completion",
+  "passed": true,
+  "localR01Accepted": true,
+  "implementationStatus": "verified_local_native_actions",
+  "parentP04Accepted": false,
+  "productionAccepted": false,
+  "candidateId": "p04-r01-20261103-b82be2ba13f7",
+  "sourceIdentity": "b82be2ba13f73f78db1f539ad5f867962b9b6c1a3f44cd2264ae9f138d0a5e8a",
+  "sourceIdentityIndependentlyRecomputed": true,
+  "localBlockers": [],
+  "evidence": {
+    "sourceProductFiles": 17,
+    "ownedFiles": 30,
+    "preRepairSnapshots": 106,
+    "unitTestsPassed": 432,
+    "unitSuites": 16,
+    "unitFailed": 0,
+    "unitSkipped": 0,
+    "unitBoundInputs": 108,
+    "typecheck": "17 product entry files; noEmit; passed",
+    "lint": {
+      "files": 30,
+      "errors": 0,
+      "warnings": 0
+    },
+    "nativeTestsPassed": 37,
+    "nativeFailed": 0,
+    "nativeSkipped": 0,
+    "nativeMigrations": 121,
+    "nativeStableSourceEntries": 5204,
+    "matchedBusinessSnapshotPairs": 33,
+    "realLockWaitObserved": true,
+    "transactionRollbackVerified": true,
+    "actualActionExports": true,
+    "betterAuthTransport": "stubbed",
+    "signedCookieHttp": "not run",
+    "browser": "not run"
+  },
+  "cleanup": {
+    "ownedClusterStopped": true,
+    "portReleased": true,
+    "port": 64932,
+    "ownedPid": 18504,
+    "remainingClients": 0,
+    "fixtureDatabaseRetained": "stoquify_local_p04_r01_20261103_r1",
+    "postmasterPidAbsentAtReview": true
+  },
+  "allowedEffects": [
+    "Security audit rows counted separately from business-state digests",
+    "Public redemption may add one synthetic abuse bucket; legacy reserved denial business state remained unchanged",
+    "Denied access-request application records FAILED/REVIEW_REQUIRED and revision change",
+    "Race fixture intentionally changes actorRole.code; remaining compared state unchanged",
+    "Positive controls deliberately mutate synthetic fixture records"
+  ],
+  "remainingRequirements": [
+    "P04-V01 admitted-surface/compiled-reachability qualification remains open",
+    "P04-V02 actual signed-cookie HTTP and browser restoration qualification remains open",
+    "Dedicated last-tenant-custodian PostgreSQL case not run; custody-specific cases are unit-tested",
+    "Production reserved-role and pending-invitation census/classification required before separately authorized remediation/release cutover",
+    "Legacy reserved invitations remain preserved and require reviewed replacement; no automatic reissue",
+    "Fresh full-app/release candidate, clean-install/build/deployment and hosted/provider/operator acceptance remain separate",
+    "All other P04 repairs/verification/decisions and deferred work remain unchanged"
+  ],
+  "nextEligiblePackage": "P04-R03",
+  "files": [
+    {
+      "path": "candidate.json",
+      "sha256": "643eb648c894baabcea09e973414ae6892ad5af7c797692d581754bdf07261e6"
+    },
+    {
+      "path": "owned-source.json",
+      "sha256": "0f6cb3b06d350691d814884e3248e136348b8efbb256eaa1942704357cc7378a"
+    },
+    {
+      "path": "source-before.json",
+      "sha256": "068bb8e10d8e5397c60d50aefde03336fc6f53cfc6da302fb851e16b170af015"
+    },
+    {
+      "path": "AUTHORITY-CONTRACT.md",
+      "sha256": "2022f8974111c38d50592838af45c6ebe9c9ac524a6953ccef5c82fa31622bd2"
+    },
+    {
+      "path": "call-chain-inventory.json",
+      "sha256": "ca4ec709bdf1c1041afcdaf9775a626709e5f1048fa2e782a68bbc51af845a76"
+    },
+    {
+      "path": "verification-matrix.json",
+      "sha256": "f9ca52fbf4c327f29bba047a9e3e2e7a0a3c14d776125d6c9c7f11b619ed659c"
+    },
+    {
+      "path": "unit/attempt06/result.json",
+      "sha256": "f02a6e819e9355a8e5556e3cc49b8b46df0600d51aa638cac7a2274097019ac7"
+    },
+    {
+      "path": "unit/attempt06/jest.json",
+      "sha256": "baf1fbdb5c0aa68f98e8e41e3b5c52773895fcd0d8a922e4d087598149676a13"
+    },
+    {
+      "path": "unit/typecheck02/result.json",
+      "sha256": "85e37875279503150209781082e35dfa2567489b2d1580cb87e76e1812143d92"
+    },
+    {
+      "path": "unit/lint01/result.json",
+      "sha256": "198643861c7e786eb5724167186e197940ca3e70017e2034537830737a110d4c"
+    },
+    {
+      "path": "database/native-result.json",
+      "sha256": "e71eda0fd788d7beb6f4aee2fbf45e392cde94774ddf5ae403a24f839d12c244"
+    },
+    {
+      "path": "database/native-result-retry01.json",
+      "sha256": "55636916200b65001ef83382cd08455bff8325688fafa2761b1f8ebc6d2b6b5d"
+    },
+    {
+      "path": "database/native-jest.json",
+      "sha256": "18428d3172fdcb6767771e97bce336138eedd08cfc2900058d802d68a680cb8e"
+    },
+    {
+      "path": "database/native-observations.json",
+      "sha256": "ae476b10bae6c320a8c6a8ecef3d1b06c879708b6f6e92495a1ce43c85212582"
+    },
+    {
+      "path": "database/test-source-relocation.json",
+      "sha256": "8a7e00eee0b6f65ec329276479fd81a8c4b16d10797afda7529a5c7689902e14"
+    },
+    {
+      "path": "database/authority.postgres.test.ts.source.txt",
+      "sha256": "682c449e780c5af664911b1ffcf5fd767eff9cf465bb0a346ba3bb80c0c18a1a"
+    },
+    {
+      "path": "independent-review/SOURCE-REVIEW.json",
+      "sha256": "5bc9bb6f1a6fb61f6b3f92940ebebcfeb800102ed1aa19d17591bc9b4a525f1b"
+    },
+    {
+      "path": "independent-review/UNIT-RECONCILIATION.json",
+      "sha256": "c98964acd728ed1f9647fce02bc0081271e0488c41e2865b3dfec1f771007dbe"
+    },
+    {
+      "path": "independent-review/NATIVE-RECIPE-REVIEW.json",
+      "sha256": "3ee6dc1732f4db677a8ba2ff64000926e6febb3feb64f68f73b45226c5f69f7d"
+    },
+    {
+      "path": "independent-review/NATIVE-RETRY01-REVIEW.json",
+      "sha256": "d0ccd8c78019917ce5a143e9a9ace037b283c8c87aa4f739ad18132bb91cf900"
+    }
+  ]
+}

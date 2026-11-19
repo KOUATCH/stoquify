@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "organizationId": "synth12_bafoussam",
+  "storageMode": "LOCAL_TEST_TRANSPORT_ONLY",
+  "externalCommunicationPerformed": false,
+  "catalogItemLinked": false,
+  "attachmentMeaning": "claimItemPictures reservation only; no item or ordinary application media route is linked",
+  "attached": {
+    "id": "727781ef-5f13-46c7-94e5-3733e925e04e",
+    "reference": "/api/media/727781ef-5f13-46c7-94e5-3733e925e04e",
+    "providerKey": "local-test:727781ef-5f13-46c7-94e5-3733e925e04e",
+    "providerLocator": "local-test-picture:727781ef-5f13-46c7-94e5-3733e925e04e",
+    "plaintextFile": "synthetic-documents/synth12_bafoussam-remaining-picture-attached.png",
+    "plaintextSha256": "156f9cd3de28879ddf1a89f9de1dbc316ba55a0099e7c9ddd806f88d2852fb13",
+    "byteLength": 160,
+    "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_bafoussam/727781ef-5f13-46c7-94e5-3733e925e04e.bin",
+    "ciphertextSha256": "83e86a564dc3be26dcec13eeb4d9a81b4cab27f64ef726c5b03703d720c6b665",
+    "status": "ready",
+    "attachedAt": "2026-10-28T20:00:00.000Z",
+    "tombstoneFile": null
+  },
+  "orphan": {
+    "id": "deedb3a9-1a15-4194-8795-b7a7c94d08c8",
+    "reference": "/api/media/deedb3a9-1a15-4194-8795-b7a7c94d08c8",
+    "providerKey": "local-test:deedb3a9-1a15-4194-8795-b7a7c94d08c8",
+    "providerLocator": "local-test-picture:deedb3a9-1a15-4194-8795-b7a7c94d08c8",
+    "plaintextFile": "synthetic-documents/synth12_bafoussam-remaining-picture-orphan.png",
+    "plaintextSha256": "048a6b459f5c949adee1fbc9cf69d4a5ec770fc32b8699e357aa46e2612e937d",
+    "byteLength": 158,
+    "ciphertextFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_bafoussam/deedb3a9-1a15-4194-8795-b7a7c94d08c8.bin",
+    "ciphertextSha256": "4d246faf21e833b1c6c7debf60370d279794e3e3a5edb9b92b8a292ff77ca413",
+    "status": "deleted",
+    "attachedAt": null,
+    "tombstoneFile": ".seed-artifacts/disposable-dataset-2026-10-28/picture-objects/synth12_bafoussam/deedb3a9-1a15-4194-8795-b7a7c94d08c8.deleted.json"
+  },
+  "checks": {
+    "roundTrip": true,
+    "wrongTenantReadDenied": true,
+    "wrongTenantClaimDenied": true,
+    "tamperDenied": true,
+    "attachedDeleteDenied": true,
+    "orphanDeleted": true,
+    "deletedReadDenied": true,
+    "invalidMimeDenied": true,
+    "defaultTransportDenied": true
+  }
+}

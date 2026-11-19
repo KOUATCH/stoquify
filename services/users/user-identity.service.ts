@@ -651,7 +651,7 @@ export async function acceptInvitationWorkflow(
     const invite = await tx.invite.findUnique({
       where: { token: data.token },
       include: {
-        role: { select: { id: true, organizationId: true, permissions: true } },
+        role: { select: { id: true, code: true, organizationId: true, permissions: true } },
         organization: { select: { isActive: true, deletedAt: true } },
       },
     })

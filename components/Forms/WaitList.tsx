@@ -39,6 +39,7 @@ export default function WaitList() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-950 to-blue-900 flex flex-col items-center justify-center px-4 py-20 relative overflow-hidden">
+      <style>{waitlistAnimationStyles}</style>
       {/* Grid Background */}
       <div
         className="absolute inset-0"
@@ -183,8 +184,7 @@ export default function WaitList() {
 }
 
 // Add keyframe animations
-const style = document.createElement("style");
-style.textContent = `
+const waitlistAnimationStyles = `
   @keyframes gradient {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -202,4 +202,3 @@ style.textContent = `
     animation: fade-in 0.5s ease-out forwards;
   }
 `;
-document.head.appendChild(style);

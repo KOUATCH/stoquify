@@ -1,0 +1,87 @@
+{
+  "passed": true,
+  "realPostgresTests": 17,
+  "providerDependencySimulated": true,
+  "skipped": 0,
+  "todo": 0,
+  "outcomes": [
+    {
+      "name": "requires a nonblank tenant and rejects a foreign actual tenant without changing the lease",
+      "status": "passed"
+    },
+    {
+      "name": "parallel claims produce exactly one native lease and attempt increment",
+      "status": "passed"
+    },
+    {
+      "name": "settles a simulated accepted delivery with actual event and audit transactions",
+      "status": "passed"
+    },
+    {
+      "name": "first-attempt JSON null metadata is fenced and reserved like SQL null metadata",
+      "status": "passed"
+    },
+    {
+      "name": "a duplicate processor observes the durable reservation while the first provider result is pending",
+      "status": "passed"
+    },
+    {
+      "name": "a stale success cannot settle a newer attempt reclaimed by the same stable worker",
+      "status": "passed"
+    },
+    {
+      "name": "a stale failure cannot settle a newer attempt reclaimed by the same stable worker",
+      "status": "passed"
+    },
+    {
+      "name": "a stale throw cannot settle a newer attempt reclaimed by the same stable worker",
+      "status": "passed"
+    },
+    {
+      "name": "holds a reclaimed persisted reservation after a simulated process crash",
+      "status": "passed"
+    },
+    {
+      "name": "holds an ambiguous provider throw without automatic resend",
+      "status": "passed"
+    },
+    {
+      "name": "holds an ambiguous provider timeout without automatic resend",
+      "status": "passed"
+    },
+    {
+      "name": "retries a proven non-send and settles the next generation once",
+      "status": "passed"
+    },
+    {
+      "name": "rolls back failed sent-event settlement and retains an unknown outcome for operator review",
+      "status": "passed"
+    },
+    {
+      "name": "holds malformed dispatch metadata without rewriting it or sending",
+      "status": "passed"
+    },
+    {
+      "name": "holds an ambiguous reclaimed legacy lease with SQL null metadata",
+      "status": "passed"
+    },
+    {
+      "name": "holds an ambiguous reclaimed legacy lease with JSON null metadata",
+      "status": "passed"
+    },
+    {
+      "name": "dead letters an exhausted definite rejection without a subsequent claim",
+      "status": "passed"
+    }
+  ],
+  "privateResults": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-invite-pg-20261111-2e46d5a3da\\jest-results.private.json",
+    "sha256": "e4b0f23a9b2a6fea167eca7e7ee37ddfe32299fe508102c2344dde356b754173",
+    "bytes": 7377
+  },
+  "privateProbe": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-invite-pg-20261111-2e46d5a3da\\probe-evidence.private.json",
+    "sha256": "ff391c05fa746b033fd0424a0468ca0a3293d8c1e200e88a2758ab11058a0ce6",
+    "bytes": 2820
+  }
+}

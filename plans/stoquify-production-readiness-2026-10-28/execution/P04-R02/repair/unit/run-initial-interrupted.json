@@ -1,0 +1,81 @@
+{
+  "at": "2026-10-29T13:24:20.977Z",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest\\bin\\jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\repair\\unit\\jest.config.cjs",
+    "--runInBand",
+    "--no-cache",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\repair\\unit\\jest-result.json"
+  ],
+  "exitCode": 4294967295,
+  "signal": null,
+  "launchError": null,
+  "sourceBefore": [
+    {
+      "path": "lib/media/legacy-upload-storage.ts",
+      "sha256": "4c8b2e0a8ea1261fe7eb76e4e902d7aa1550f1a969623cb843e0306f317a7a62"
+    },
+    {
+      "path": "lib/media/legacy-upload-routing.ts",
+      "sha256": "d21b6cec11d8b2d086dc526cb3028d0f0d5c1b89aeeea7c7591e77b3b9b8c2be"
+    },
+    {
+      "path": "lib/media/__tests__/legacy-upload-storage.test.ts",
+      "sha256": "5e83dc447684fc97d3e491c69e0e3e7e524a7d10cdbd302513f436f6ce434d3d"
+    },
+    {
+      "path": "lib/media/__tests__/legacy-upload-routing.test.ts",
+      "sha256": "8e0df0a2532c26badc68e1b496a3da15b8a8540943dbb8c3cb83b33bb050abfa"
+    },
+    {
+      "path": "app/api/uploads/[...path]/route.ts",
+      "sha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245"
+    },
+    {
+      "path": "app/api/uploads/[...path]/__tests__/route.test.ts",
+      "sha256": "04930dfbe511e0f0b38ba4b8d16fe8fe45d3a359db41aee049f99fe8230dcff0"
+    }
+  ],
+  "sourceAfter": [
+    {
+      "path": "lib/media/legacy-upload-storage.ts",
+      "sha256": "4c8b2e0a8ea1261fe7eb76e4e902d7aa1550f1a969623cb843e0306f317a7a62"
+    },
+    {
+      "path": "lib/media/legacy-upload-routing.ts",
+      "sha256": "7a39993c296c00e0d9305343a3aa745ccb48648a6202b1a43580e169f7488a5a"
+    },
+    {
+      "path": "lib/media/__tests__/legacy-upload-storage.test.ts",
+      "sha256": "5e83dc447684fc97d3e491c69e0e3e7e524a7d10cdbd302513f436f6ce434d3d"
+    },
+    {
+      "path": "lib/media/__tests__/legacy-upload-routing.test.ts",
+      "sha256": "23f715e476c19168e920f2456d15eda39839a1b3fbfcaf3461a9f99ba28b21f1"
+    },
+    {
+      "path": "app/api/uploads/[...path]/route.ts",
+      "sha256": "1cdbba5786b54b3c860c3e4d195810b5fc82c308d77f537c59858fca458a7245"
+    },
+    {
+      "path": "app/api/uploads/[...path]/__tests__/route.test.ts",
+      "sha256": "04930dfbe511e0f0b38ba4b8d16fe8fe45d3a359db41aee049f99fe8230dcff0"
+    }
+  ],
+  "sourceStable": false,
+  "evidenceClass": "mocked_route_and_pure_routing_with_real_disposable_filesystem_tests",
+  "rootSetupLoaded": false,
+  "applicationEnvironmentLoaded": false,
+  "databaseAccess": false,
+  "externalNetwork": false,
+  "fixtureScope": ".codex-tmp/p04-r02-unit-*",
+  "limitations": [
+    "Server auth and canonical error adapter are mocked",
+    "Known file symlink uses lstat adapter fixture; directory junction tests use real filesystem links",
+    "Not full application, browser, persisted session or production deployment qualification"
+  ]
+}

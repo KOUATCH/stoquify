@@ -1,0 +1,43 @@
+{
+  "productionAccess": false,
+  "applicationEnvironmentRead": false,
+  "clusterIdentityVerified": true,
+  "clusterStarted": true,
+  "clusterStopped": true,
+  "results": [
+    {
+      "name": "command-center-postgres",
+      "exitCode": 0,
+      "elapsedMs": 54127,
+      "database": "stoquify_local_command_center_5293876d8c",
+      "migrations": 120,
+      "checksumsVerified": true,
+      "passed": 64,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "stock-postgres",
+      "exitCode": 1,
+      "elapsedMs": 14786,
+      "database": "stoquify_local_pos_repairs_20261026_a19f",
+      "migrations": 120,
+      "checksumsVerified": true,
+      "passed": 11,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "name": "cross-workflow-postgres",
+      "exitCode": 1,
+      "elapsedMs": 57777,
+      "database": "stoquify_pos_audit_20261026_d30f",
+      "migrations": 120,
+      "checksumsVerified": true,
+      "passed": 6,
+      "failed": 1,
+      "skipped": 0
+    }
+  ],
+  "passed": false
+}

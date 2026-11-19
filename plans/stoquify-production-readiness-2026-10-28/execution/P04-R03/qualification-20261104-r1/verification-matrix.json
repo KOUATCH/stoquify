@@ -1,0 +1,1487 @@
+{
+  "candidateId": "p04-r03-20261104-9c1182e0773a",
+  "scope": "Nine historical response paths; supplemental sibling list action excluded and remains blocked",
+  "unit": {
+    "receipt": "unit/attempt02/result.json",
+    "jest": "unit/attempt02/jest.json",
+    "total": 224,
+    "newAssertions": 212,
+    "continuityAssertions": 12,
+    "passed": 224,
+    "failed": 0,
+    "skipped": 0
+  },
+  "baseline": {
+    "receipt": "unit/attempt01/result.json",
+    "selectedExpectedFailures": 9,
+    "explicitNameFilterExclusions": 203,
+    "source": "unit/baseline-items.ts.source.txt"
+  },
+  "handlers": [
+    {
+      "inventory": {
+        "handler": "getItemAction",
+        "line": 97,
+        "source": "actions/item/items.ts",
+        "schema": "getItemSchema",
+        "permission": "inventory.items.read",
+        "service": "getItemWithRelations",
+        "originalUnknownFallback": "Failed to fetch item",
+        "hook": "useGetItem",
+        "serviceChecks": "tenant-filtered item.findFirst; missing returns Item not found",
+        "businessWrites": "none",
+        "catch": "error instanceof Error ? error.message : fallback",
+        "parseBeforeGuard": true,
+        "auditAllowed": false,
+        "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+        "moduleScope": "No module enforcement added or certified by this response repair",
+        "revalidation": "none"
+      },
+      "unitAssertions": [
+        {
+          "name": "getItemAction response boundary redacts plain service Error",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary redacts thrown string",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary redacts unknown provider code",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary redacts Prisma unique conflict",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary redacts Prisma missing record",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary redacts unapproved typed business error",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary redacts unapproved typed not found",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary redacts unapproved typed conflict",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary redacts non-exposing typed error",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary redacts message-shaped object",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary denies arbitrary guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary denies forbidden guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary denies unauthenticated detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary denies missing active org detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary rejects invalid input before guards or service calls",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary redacts Zod issue metadata",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary preserves fresh authentication recovery without its private detail",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary preserves framework control flow NEXT_NOT_FOUND",
+          "status": "passed"
+        },
+        {
+          "name": "getItemAction response boundary keeps authorized success and server-owned tenant arguments",
+          "status": "passed"
+        }
+      ],
+      "nativeAssertions": [
+        {
+          "name": "getItemAction denies freshly revoked database permission without business writes",
+          "status": "passed",
+          "observationIndex": 0,
+          "observationName": "getItemAction:permission-revoked"
+        },
+        {
+          "name": "getItemAction denies unauthenticated transport without business writes",
+          "status": "passed",
+          "observationIndex": 9,
+          "observationName": "getItemAction:unauthenticated"
+        },
+        {
+          "name": "getItemAction permits authorized reads or persists the intended update",
+          "status": "passed",
+          "observationIndex": 18,
+          "observationName": "getItemAction:authorized-positive"
+        },
+        {
+          "name": "getItemAction rejects foreign item identifiers without business writes",
+          "status": "passed",
+          "observationIndex": 27,
+          "observationName": "getItemAction:foreign-item"
+        }
+      ],
+      "status": "passed_local_response_scope",
+      "inventoryProvenance": "Captured pre-repair source/catch at baseline SHA 91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb; not final catch behavior",
+      "currentSource": {
+        "path": "actions/item/items.ts",
+        "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac",
+        "line": 142,
+        "responseBoundary": "itemActionError -> safeLoggedActionErrorMessage; reviewed literals or explicit fallback"
+      }
+    },
+    {
+      "inventory": {
+        "handler": "listItemsAction",
+        "line": 118,
+        "source": "actions/item/items.ts",
+        "schema": "listItemsSchema",
+        "permission": "inventory.items.read",
+        "service": "listItemsWithRelations",
+        "originalUnknownFallback": "Failed to list items",
+        "hook": null,
+        "serviceChecks": "server ctx.orgId overwrites caller organizationId; tenant-filtered count/findMany",
+        "businessWrites": "none",
+        "catch": "error instanceof Error ? error.message : fallback",
+        "parseBeforeGuard": true,
+        "auditAllowed": false,
+        "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+        "moduleScope": "No module enforcement added or certified by this response repair",
+        "revalidation": "none"
+      },
+      "unitAssertions": [
+        {
+          "name": "listItemsAction response boundary redacts plain service Error",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary redacts thrown string",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary redacts unknown provider code",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary redacts Prisma unique conflict",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary redacts Prisma missing record",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary redacts unapproved typed business error",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary redacts unapproved typed not found",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary redacts unapproved typed conflict",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary redacts non-exposing typed error",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary redacts message-shaped object",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary denies arbitrary guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary denies forbidden guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary denies unauthenticated detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary denies missing active org detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary rejects invalid input before guards or service calls",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary redacts Zod issue metadata",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary preserves fresh authentication recovery without its private detail",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary preserves framework control flow NEXT_NOT_FOUND",
+          "status": "passed"
+        },
+        {
+          "name": "listItemsAction response boundary keeps authorized success and server-owned tenant arguments",
+          "status": "passed"
+        }
+      ],
+      "nativeAssertions": [
+        {
+          "name": "listItemsAction denies freshly revoked database permission without business writes",
+          "status": "passed",
+          "observationIndex": 1,
+          "observationName": "listItemsAction:permission-revoked"
+        },
+        {
+          "name": "listItemsAction denies unauthenticated transport without business writes",
+          "status": "passed",
+          "observationIndex": 10,
+          "observationName": "listItemsAction:unauthenticated"
+        },
+        {
+          "name": "listItemsAction permits authorized reads or persists the intended update",
+          "status": "passed",
+          "observationIndex": 19,
+          "observationName": "listItemsAction:authorized-positive"
+        },
+        {
+          "name": "listItemsAction derives tenant from the current actor despite a forged organization",
+          "status": "passed",
+          "observationIndex": 35,
+          "observationName": "list:forged-organization"
+        }
+      ],
+      "status": "passed_local_response_scope",
+      "inventoryProvenance": "Captured pre-repair source/catch at baseline SHA 91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb; not final catch behavior",
+      "currentSource": {
+        "path": "actions/item/items.ts",
+        "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac",
+        "line": 163,
+        "responseBoundary": "itemActionError -> safeLoggedActionErrorMessage; reviewed literals or explicit fallback"
+      }
+    },
+    {
+      "inventory": {
+        "handler": "updateItemBasicInfoAction",
+        "line": 180,
+        "source": "actions/item/items.ts",
+        "schema": "updateBasicInfoSchema",
+        "permission": "inventory.items.update",
+        "service": "updateItemBasicInfoWithRelations",
+        "originalUnknownFallback": "Failed to update item",
+        "hook": "useUpdateItemBasicInfo",
+        "serviceChecks": "transaction: existing image row tenant lookup, claimItemPictures tenant-bound claim, assertItemInTenant then update",
+        "businessWrites": "item plus optional picture attachment; transaction",
+        "catch": "error instanceof Error ? error.message : fallback",
+        "parseBeforeGuard": true,
+        "auditAllowed": true,
+        "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+        "moduleScope": "No module enforcement added or certified by this response repair",
+        "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+      },
+      "unitAssertions": [
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts plain service Error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts thrown string",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts unknown provider code",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts Prisma unique conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts Prisma missing record",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts unapproved typed business error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts unapproved typed not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts unapproved typed conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts non-exposing typed error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts message-shaped object",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary denies arbitrary guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary denies forbidden guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary denies unauthenticated detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary denies missing active org detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary rejects invalid input before guards or service calls",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary redacts Zod issue metadata",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary preserves fresh authentication recovery without its private detail",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary preserves framework control flow NEXT_NOT_FOUND",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction response boundary keeps authorized success and server-owned tenant arguments",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction preserves typed Item not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction preserves approved BusinessRuleError: Upload an image before saving this item.\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:139:33)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'BUSINESS_RULE_VIOLATION',\n  status: 422,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction preserves approved BusinessRuleError: This image is unavailable. Upload it again before saving.\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:140:33)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'BUSINESS_RULE_VIOLATION',\n  status: 422,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemBasicInfoAction redacts post-write cache failures without implying rollback",
+          "status": "passed"
+        }
+      ],
+      "nativeAssertions": [
+        {
+          "name": "updateItemBasicInfoAction denies freshly revoked database permission without business writes",
+          "status": "passed",
+          "observationIndex": 2,
+          "observationName": "updateItemBasicInfoAction:permission-revoked"
+        },
+        {
+          "name": "updateItemBasicInfoAction denies unauthenticated transport without business writes",
+          "status": "passed",
+          "observationIndex": 11,
+          "observationName": "updateItemBasicInfoAction:unauthenticated"
+        },
+        {
+          "name": "updateItemBasicInfoAction permits authorized reads or persists the intended update",
+          "status": "passed",
+          "observationIndex": 20,
+          "observationName": "updateItemBasicInfoAction:authorized-positive"
+        },
+        {
+          "name": "updateItemBasicInfoAction rejects foreign item identifiers without business writes",
+          "status": "passed",
+          "observationIndex": 28,
+          "observationName": "updateItemBasicInfoAction:foreign-item"
+        },
+        {
+          "name": "real database trigger fault is normalized and atomic mutation is rolled back",
+          "status": "passed",
+          "observationIndex": 42,
+          "observationName": "basic:database-trigger-fault"
+        }
+      ],
+      "status": "passed_local_response_scope",
+      "inventoryProvenance": "Captured pre-repair source/catch at baseline SHA 91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb; not final catch behavior",
+      "currentSource": {
+        "path": "actions/item/items.ts",
+        "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac",
+        "line": 225,
+        "responseBoundary": "itemActionError -> safeLoggedActionErrorMessage; reviewed literals or explicit fallback"
+      }
+    },
+    {
+      "inventory": {
+        "handler": "updateItemDetailsAction",
+        "line": 199,
+        "source": "actions/item/items.ts",
+        "schema": "updateDetailsSchema",
+        "permission": "inventory.items.update",
+        "service": "updateItemDetailsWithRelations",
+        "originalUnknownFallback": "Failed to update item details",
+        "hook": "useUpdateItemDetails",
+        "serviceChecks": "assertItemInTenant; same-tenant SKU duplicate check then update",
+        "businessWrites": "item; existing separate prechecks/update",
+        "catch": "error instanceof Error ? error.message : fallback",
+        "parseBeforeGuard": true,
+        "auditAllowed": true,
+        "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+        "moduleScope": "No module enforcement added or certified by this response repair",
+        "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+      },
+      "unitAssertions": [
+        {
+          "name": "updateItemDetailsAction response boundary redacts plain service Error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary redacts thrown string",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary redacts unknown provider code",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary redacts Prisma unique conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary redacts Prisma missing record",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary redacts unapproved typed business error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary redacts unapproved typed not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary redacts unapproved typed conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary redacts non-exposing typed error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary redacts message-shaped object",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary denies arbitrary guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary denies forbidden guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary denies unauthenticated detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary denies missing active org detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary rejects invalid input before guards or service calls",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary redacts Zod issue metadata",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary preserves fresh authentication recovery without its private detail",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary preserves framework control flow NEXT_NOT_FOUND",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction response boundary keeps authorized success and server-owned tenant arguments",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction preserves typed Item not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction preserves approved ConflictError: Another item with this SKU already exists\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:141:31)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'CONFLICT',\n  status: 409,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemDetailsAction redacts post-write cache failures without implying rollback",
+          "status": "passed"
+        }
+      ],
+      "nativeAssertions": [
+        {
+          "name": "updateItemDetailsAction denies freshly revoked database permission without business writes",
+          "status": "passed",
+          "observationIndex": 3,
+          "observationName": "updateItemDetailsAction:permission-revoked"
+        },
+        {
+          "name": "updateItemDetailsAction denies unauthenticated transport without business writes",
+          "status": "passed",
+          "observationIndex": 12,
+          "observationName": "updateItemDetailsAction:unauthenticated"
+        },
+        {
+          "name": "updateItemDetailsAction permits authorized reads or persists the intended update",
+          "status": "passed",
+          "observationIndex": 21,
+          "observationName": "updateItemDetailsAction:authorized-positive"
+        },
+        {
+          "name": "updateItemDetailsAction rejects foreign item identifiers without business writes",
+          "status": "passed",
+          "observationIndex": 29,
+          "observationName": "updateItemDetailsAction:foreign-item"
+        },
+        {
+          "name": "details preserves the approved duplicate-SKU conflict without a write",
+          "status": "passed",
+          "observationIndex": 40,
+          "observationName": "details:duplicate-sku"
+        }
+      ],
+      "status": "passed_local_response_scope",
+      "inventoryProvenance": "Captured pre-repair source/catch at baseline SHA 91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb; not final catch behavior",
+      "currentSource": {
+        "path": "actions/item/items.ts",
+        "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac",
+        "line": 244,
+        "responseBoundary": "itemActionError -> safeLoggedActionErrorMessage; reviewed literals or explicit fallback"
+      }
+    },
+    {
+      "inventory": {
+        "handler": "updateItemPricingAction",
+        "line": 218,
+        "source": "actions/item/items.ts",
+        "schema": "updatePricingSchema",
+        "permission": "inventory.items.update",
+        "service": "updateItemPricingWithRelations",
+        "originalUnknownFallback": "Failed to update pricing",
+        "hook": "useUpdateItemPricing",
+        "serviceChecks": "assertItemInTenant then update",
+        "businessWrites": "item; existing separate precheck/update",
+        "catch": "error instanceof Error ? error.message : fallback",
+        "parseBeforeGuard": true,
+        "auditAllowed": true,
+        "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+        "moduleScope": "No module enforcement added or certified by this response repair",
+        "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+      },
+      "unitAssertions": [
+        {
+          "name": "updateItemPricingAction response boundary redacts plain service Error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary redacts thrown string",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary redacts unknown provider code",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary redacts Prisma unique conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary redacts Prisma missing record",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary redacts unapproved typed business error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary redacts unapproved typed not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary redacts unapproved typed conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary redacts non-exposing typed error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary redacts message-shaped object",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary denies arbitrary guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary denies forbidden guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary denies unauthenticated detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary denies missing active org detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary rejects invalid input before guards or service calls",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary redacts Zod issue metadata",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary preserves fresh authentication recovery without its private detail",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary preserves framework control flow NEXT_NOT_FOUND",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction response boundary keeps authorized success and server-owned tenant arguments",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction preserves typed Item not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemPricingAction redacts post-write cache failures without implying rollback",
+          "status": "passed"
+        }
+      ],
+      "nativeAssertions": [
+        {
+          "name": "updateItemPricingAction denies freshly revoked database permission without business writes",
+          "status": "passed",
+          "observationIndex": 4,
+          "observationName": "updateItemPricingAction:permission-revoked"
+        },
+        {
+          "name": "updateItemPricingAction denies unauthenticated transport without business writes",
+          "status": "passed",
+          "observationIndex": 13,
+          "observationName": "updateItemPricingAction:unauthenticated"
+        },
+        {
+          "name": "updateItemPricingAction permits authorized reads or persists the intended update",
+          "status": "passed",
+          "observationIndex": 22,
+          "observationName": "updateItemPricingAction:authorized-positive"
+        },
+        {
+          "name": "updateItemPricingAction rejects foreign item identifiers without business writes",
+          "status": "passed",
+          "observationIndex": 30,
+          "observationName": "updateItemPricingAction:foreign-item"
+        }
+      ],
+      "status": "passed_local_response_scope",
+      "inventoryProvenance": "Captured pre-repair source/catch at baseline SHA 91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb; not final catch behavior",
+      "currentSource": {
+        "path": "actions/item/items.ts",
+        "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac",
+        "line": 263,
+        "responseBoundary": "itemActionError -> safeLoggedActionErrorMessage; reviewed literals or explicit fallback"
+      }
+    },
+    {
+      "inventory": {
+        "handler": "updateItemRelationsAction",
+        "line": 237,
+        "source": "actions/item/items.ts",
+        "schema": "updateRelationsSchema",
+        "permission": "inventory.items.update",
+        "service": "updateItemRelationsWithRelations",
+        "originalUnknownFallback": "Failed to update relations",
+        "hook": "useUpdateItemRelations",
+        "serviceChecks": "assertItemInTenant; same-tenant category/brand/unit/taxRate checks via assertItemRelations then update",
+        "businessWrites": "item; existing separate prechecks/update",
+        "catch": "error instanceof Error ? error.message : fallback",
+        "parseBeforeGuard": true,
+        "auditAllowed": true,
+        "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+        "moduleScope": "No module enforcement added or certified by this response repair",
+        "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+      },
+      "unitAssertions": [
+        {
+          "name": "updateItemRelationsAction response boundary redacts plain service Error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary redacts thrown string",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary redacts unknown provider code",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary redacts Prisma unique conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary redacts Prisma missing record",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary redacts unapproved typed business error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary redacts unapproved typed not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary redacts unapproved typed conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary redacts non-exposing typed error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary redacts message-shaped object",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary denies arbitrary guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary denies forbidden guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary denies unauthenticated detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary denies missing active org detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary rejects invalid input before guards or service calls",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary redacts Zod issue metadata",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary preserves fresh authentication recovery without its private detail",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary preserves framework control flow NEXT_NOT_FOUND",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction response boundary keeps authorized success and server-owned tenant arguments",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction preserves typed Item not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemRelationsAction redacts post-write cache failures without implying rollback",
+          "status": "passed"
+        }
+      ],
+      "nativeAssertions": [
+        {
+          "name": "updateItemRelationsAction denies freshly revoked database permission without business writes",
+          "status": "passed",
+          "observationIndex": 5,
+          "observationName": "updateItemRelationsAction:permission-revoked"
+        },
+        {
+          "name": "updateItemRelationsAction denies unauthenticated transport without business writes",
+          "status": "passed",
+          "observationIndex": 14,
+          "observationName": "updateItemRelationsAction:unauthenticated"
+        },
+        {
+          "name": "updateItemRelationsAction permits authorized reads or persists the intended update",
+          "status": "passed",
+          "observationIndex": 23,
+          "observationName": "updateItemRelationsAction:authorized-positive"
+        },
+        {
+          "name": "updateItemRelationsAction rejects foreign item identifiers without business writes",
+          "status": "passed",
+          "observationIndex": 31,
+          "observationName": "updateItemRelationsAction:foreign-item"
+        },
+        {
+          "name": "relations hides real Prisma foreign-reference exception details without writes",
+          "status": "passed",
+          "observationIndex": 41,
+          "observationName": "relations:foreign-reference-prisma"
+        }
+      ],
+      "status": "passed_local_response_scope",
+      "inventoryProvenance": "Captured pre-repair source/catch at baseline SHA 91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb; not final catch behavior",
+      "currentSource": {
+        "path": "actions/item/items.ts",
+        "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac",
+        "line": 282,
+        "responseBoundary": "itemActionError -> safeLoggedActionErrorMessage; reviewed literals or explicit fallback"
+      }
+    },
+    {
+      "inventory": {
+        "handler": "updateItemStockAction",
+        "line": 256,
+        "source": "actions/item/items.ts",
+        "schema": "updateStockSchema",
+        "permission": "inventory.items.update",
+        "service": "updateItemStockFromForm",
+        "originalUnknownFallback": "Failed to update stock",
+        "hook": "useUpdateItemStock",
+        "serviceChecks": "nonzero adjustment also requires inventory.stock.adjust; transaction existingItem tenant lookup; stock policy update; requestManualItemStockAdjustment verifies item active/tracked/location; createStockAdjustment module admission and tenant references",
+        "businessWrites": "item stock policy, draft adjustment/lines; no posted stock movement; transaction rollback on denial",
+        "catch": "error instanceof Error ? error.message : fallback",
+        "parseBeforeGuard": true,
+        "auditAllowed": true,
+        "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+        "moduleScope": "New nonzero adjustment reaches module admission within transaction",
+        "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+      },
+      "unitAssertions": [
+        {
+          "name": "updateItemStockAction response boundary redacts plain service Error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary redacts thrown string",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary redacts unknown provider code",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary redacts Prisma unique conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary redacts Prisma missing record",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary redacts unapproved typed business error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary redacts unapproved typed not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary redacts unapproved typed conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary redacts non-exposing typed error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary redacts message-shaped object",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary denies arbitrary guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary denies forbidden guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary denies unauthenticated detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary denies missing active org detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary rejects invalid input before guards or service calls",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary redacts Zod issue metadata",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary preserves fresh authentication recovery without its private detail",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary preserves framework control flow NEXT_NOT_FOUND",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction response boundary keeps authorized success and server-owned tenant arguments",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves typed Item not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved BusinessRuleError: Item is not inventory-tracked.\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:142:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'BUSINESS_RULE_VIOLATION',\n  status: 422,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved BusinessRuleError: A default active location is required before requesting a stock adjustment.\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:143:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'BUSINESS_RULE_VIOLATION',\n  status: 422,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved BusinessRuleError: One or more adjustment items were not found for this organization.\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:144:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'BUSINESS_RULE_VIOLATION',\n  status: 422,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved NotFoundError: Item not found or inactive for this organization.\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:145:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'NOT_FOUND',\n  status: 404,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved NotFoundError: Inventory location not found or inactive for this organization.\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:146:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'NOT_FOUND',\n  status: 404,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved NotFoundError: Adjustment location not found.\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:147:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'NOT_FOUND',\n  status: 404,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved NotFoundError: Active organization not found\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:148:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'NOT_FOUND',\n  status: 404,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved ConflictError: Operation policy is ambiguous\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:149:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'CONFLICT',\n  status: 409,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved ConflictError: The stored operation policy requires reconciliation\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:150:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'CONFLICT',\n  status: 409,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved ConflictError: Capability dependencies require reconciliation\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:151:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'CONFLICT',\n  status: 409,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction preserves approved ApplicationError: This capability is not accepting new work. Existing records and permitted completion workflows remain available.\n    at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\actions\\item\\__tests__\\item-error-responses.action.test.ts:152:29)\n    at ModuleExecutor.exec (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:2078:26)\n    at CjsLoader.loadModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:323:36)\n    at CjsLoader.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:289:12)\n    at Runtime.requireModule (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runtime\\build\\index.js:3657:27)\n    at jestAdapter (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-circus\\build\\runner.js:96:13)\n    at runTestInternal (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:276:16)\n    at runTest (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\jest-runner\\build\\index.js:344:7) {\n  code: 'FORBIDDEN',\n  status: 403,\n  expose: true,\n  metadata: undefined\n}",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemStockAction redacts post-write cache failures without implying rollback",
+          "status": "passed"
+        }
+      ],
+      "nativeAssertions": [
+        {
+          "name": "updateItemStockAction denies freshly revoked database permission without business writes",
+          "status": "passed",
+          "observationIndex": 6,
+          "observationName": "updateItemStockAction:permission-revoked"
+        },
+        {
+          "name": "updateItemStockAction denies unauthenticated transport without business writes",
+          "status": "passed",
+          "observationIndex": 15,
+          "observationName": "updateItemStockAction:unauthenticated"
+        },
+        {
+          "name": "updateItemStockAction permits authorized reads or persists the intended update",
+          "status": "passed",
+          "observationIndex": 24,
+          "observationName": "updateItemStockAction:authorized-positive"
+        },
+        {
+          "name": "updateItemStockAction rejects foreign item identifiers without business writes",
+          "status": "passed",
+          "observationIndex": 32,
+          "observationName": "updateItemStockAction:foreign-item"
+        },
+        {
+          "name": "stock secondary permission denial occurs before policy/adjustment writes",
+          "status": "passed",
+          "observationIndex": 36,
+          "observationName": "stock:secondary-permission"
+        },
+        {
+          "name": "authorized nonzero stock change submits an adjustment without posting stock or ledger",
+          "status": "passed",
+          "observationIndex": 37,
+          "observationName": "stock:authorized-nonzero"
+        },
+        {
+          "name": "stock service rejection rolls back the earlier policy update",
+          "status": "passed",
+          "observationIndex": 38,
+          "observationName": "stock:foreign-location-rollback"
+        },
+        {
+          "name": "stock approved business rule remains safe and rolls back policy changes",
+          "status": "passed",
+          "observationIndex": 39,
+          "observationName": "stock:not-tracked-rollback"
+        }
+      ],
+      "status": "passed_local_response_scope",
+      "inventoryProvenance": "Captured pre-repair source/catch at baseline SHA 91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb; not final catch behavior",
+      "currentSource": {
+        "path": "actions/item/items.ts",
+        "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac",
+        "line": 301,
+        "responseBoundary": "itemActionError -> safeLoggedActionErrorMessage; reviewed literals or explicit fallback"
+      }
+    },
+    {
+      "inventory": {
+        "handler": "updateItemTrackingAction",
+        "line": 283,
+        "source": "actions/item/items.ts",
+        "schema": "updateTrackingSchema",
+        "permission": "inventory.items.update",
+        "service": "updateItemTrackingWithRelations",
+        "originalUnknownFallback": "Failed to update tracking",
+        "hook": "useUpdateItemTracking",
+        "serviceChecks": "assertItemInTenant then update",
+        "businessWrites": "item; existing separate precheck/update",
+        "catch": "error instanceof Error ? error.message : fallback",
+        "parseBeforeGuard": true,
+        "auditAllowed": true,
+        "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+        "moduleScope": "No module enforcement added or certified by this response repair",
+        "revalidation": "revalidateItem(updated.id,ctx.orgId)"
+      },
+      "unitAssertions": [
+        {
+          "name": "updateItemTrackingAction response boundary redacts plain service Error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary redacts thrown string",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary redacts unknown provider code",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary redacts Prisma unique conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary redacts Prisma missing record",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary redacts unapproved typed business error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary redacts unapproved typed not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary redacts unapproved typed conflict",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary redacts non-exposing typed error",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary redacts message-shaped object",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary denies arbitrary guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary denies forbidden guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary denies unauthenticated detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary denies missing active org detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary rejects invalid input before guards or service calls",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary redacts Zod issue metadata",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary preserves fresh authentication recovery without its private detail",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary preserves framework control flow NEXT_NOT_FOUND",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction response boundary keeps authorized success and server-owned tenant arguments",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction preserves typed Item not found",
+          "status": "passed"
+        },
+        {
+          "name": "updateItemTrackingAction redacts post-write cache failures without implying rollback",
+          "status": "passed"
+        }
+      ],
+      "nativeAssertions": [
+        {
+          "name": "updateItemTrackingAction denies freshly revoked database permission without business writes",
+          "status": "passed",
+          "observationIndex": 7,
+          "observationName": "updateItemTrackingAction:permission-revoked"
+        },
+        {
+          "name": "updateItemTrackingAction denies unauthenticated transport without business writes",
+          "status": "passed",
+          "observationIndex": 16,
+          "observationName": "updateItemTrackingAction:unauthenticated"
+        },
+        {
+          "name": "updateItemTrackingAction permits authorized reads or persists the intended update",
+          "status": "passed",
+          "observationIndex": 25,
+          "observationName": "updateItemTrackingAction:authorized-positive"
+        },
+        {
+          "name": "updateItemTrackingAction rejects foreign item identifiers without business writes",
+          "status": "passed",
+          "observationIndex": 33,
+          "observationName": "updateItemTrackingAction:foreign-item"
+        }
+      ],
+      "status": "passed_local_response_scope",
+      "inventoryProvenance": "Captured pre-repair source/catch at baseline SHA 91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb; not final catch behavior",
+      "currentSource": {
+        "path": "actions/item/items.ts",
+        "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac",
+        "line": 328,
+        "responseBoundary": "itemActionError -> safeLoggedActionErrorMessage; reviewed literals or explicit fallback"
+      }
+    },
+    {
+      "inventory": {
+        "handler": "deleteItemAction",
+        "line": 302,
+        "source": "actions/item/items.ts",
+        "schema": "deleteItemSchema",
+        "permission": "inventory.items.delete",
+        "service": "archiveItem",
+        "originalUnknownFallback": "Failed to delete item",
+        "hook": "useDeleteItem",
+        "serviceChecks": "tenant lookup with evidence relation counts then archive flags/date",
+        "businessWrites": "item archival; no hard deletion",
+        "catch": "error instanceof Error ? error.message : fallback",
+        "parseBeforeGuard": true,
+        "auditAllowed": true,
+        "context": "Fresh server-owned requirePermission context; caller organizationId is ignored or overwritten",
+        "moduleScope": "No module enforcement added or certified by this response repair",
+        "revalidation": "items, item-ID and org-ID item tags plus inventory list path"
+      },
+      "unitAssertions": [
+        {
+          "name": "deleteItemAction response boundary redacts plain service Error",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary redacts thrown string",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary redacts unknown provider code",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary redacts Prisma unique conflict",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary redacts Prisma missing record",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary redacts unapproved typed business error",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary redacts unapproved typed not found",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary redacts unapproved typed conflict",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary redacts non-exposing typed error",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary redacts message-shaped object",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary denies arbitrary guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary denies forbidden guard detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary denies unauthenticated detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary denies missing active org detail before any service/write",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary rejects invalid input before guards or service calls",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary redacts Zod issue metadata",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary preserves fresh authentication recovery without its private detail",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary preserves framework control flow NEXT_REDIRECT;replace;/login;307;",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary preserves framework control flow NEXT_NOT_FOUND",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction response boundary keeps authorized success and server-owned tenant arguments",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction preserves typed Item not found",
+          "status": "passed"
+        },
+        {
+          "name": "deleteItemAction redacts post-write cache failures without implying rollback",
+          "status": "passed"
+        }
+      ],
+      "nativeAssertions": [
+        {
+          "name": "deleteItemAction denies freshly revoked database permission without business writes",
+          "status": "passed",
+          "observationIndex": 8,
+          "observationName": "deleteItemAction:permission-revoked"
+        },
+        {
+          "name": "deleteItemAction denies unauthenticated transport without business writes",
+          "status": "passed",
+          "observationIndex": 17,
+          "observationName": "deleteItemAction:unauthenticated"
+        },
+        {
+          "name": "deleteItemAction permits authorized reads or persists the intended update",
+          "status": "passed",
+          "observationIndex": 26,
+          "observationName": "deleteItemAction:authorized-positive"
+        },
+        {
+          "name": "deleteItemAction rejects foreign item identifiers without business writes",
+          "status": "passed",
+          "observationIndex": 34,
+          "observationName": "deleteItemAction:foreign-item"
+        }
+      ],
+      "status": "passed_local_response_scope",
+      "inventoryProvenance": "Captured pre-repair source/catch at baseline SHA 91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb; not final catch behavior",
+      "currentSource": {
+        "path": "actions/item/items.ts",
+        "sha256": "e904be7f23c255cde0c2ede18feac0e5f8ce06b7ff93ea37e7cc238cbe36deac",
+        "line": 347,
+        "responseBoundary": "itemActionError -> safeLoggedActionErrorMessage; reviewed literals or explicit fallback"
+      }
+    }
+  ],
+  "sharedUnitAssertions": [
+    {
+      "name": "keeps explicit absent item response",
+      "status": "passed"
+    },
+    {
+      "name": "does not trust a provider error borrowing an approved business message",
+      "status": "passed"
+    },
+    {
+      "name": "secondary stock permission denial cannot change stock policy",
+      "status": "passed"
+    },
+    {
+      "name": "authorized stock adjustment retains actor, policy and second permission",
+      "status": "passed"
+    }
+  ],
+  "native": {
+    "receipt": "database/native-result-retry02.json",
+    "jest": "database/native-jest-retry02.json",
+    "observations": "database/native-observations-retry02.json",
+    "passed": 43,
+    "failed": 0,
+    "skipped": 0,
+    "sourceInputs": 5208,
+    "migrations": 121,
+    "sourceUnchanged": true,
+    "migrationsUnchanged": true,
+    "businessRelationGroups": 24,
+    "snapshotPairs": 34,
+    "unchangedDeniedOrRolledBackPairs": 32,
+    "unchangedForgedListReadPairs": 1,
+    "authorizedStockSubmissionPairs": 1,
+    "auditRowsAddedAcrossDenialObservations": 25,
+    "clusterStopped": true,
+    "portReleased": true,
+    "remainingClients": []
+  },
+  "limitations": [
+    "Unit authority/services mocked; real normalizer/schema",
+    "Native Better Auth/Next transport stubbed; no signed-cookie HTTP or expiry/revocation proof",
+    "Post-write cache failure does not imply transaction rollback",
+    "Current sibling list consumer remains outside nine-path repair"
+  ],
+  "evidenceHashes": [
+    {
+      "path": "candidate.json",
+      "sha256": "9c36e8fcb29944fa6bd85d0b798470495a21d900378a1c76caa593f607723562"
+    },
+    {
+      "path": "owned-source.json",
+      "sha256": "c4974a3eae26e3e765855803b37356e65a056868247edc66f4492094fd4e6b5e"
+    },
+    {
+      "path": "unit/attempt01/result.json",
+      "sha256": "140ecc1046c17c9bd40a856cec8be76a7908fc0a24582b52ff6a991b19ceff01"
+    },
+    {
+      "path": "unit/attempt02/result.json",
+      "sha256": "cf188012f499508e451f50553fff62317e8ea589599f1bb76bc981d69ca6d792"
+    },
+    {
+      "path": "unit/attempt02/jest.json",
+      "sha256": "69bccb7031cad93d3158a446f2265504c08f1867220f963d01aadaf4d1c8dcd5"
+    },
+    {
+      "path": "unit/typecheck01/result.json",
+      "sha256": "7fd7725b211bb88d7e0f5c1755646daf312038e5793341905a3c9ba5274c7f39"
+    },
+    {
+      "path": "unit/lint01/result.json",
+      "sha256": "abc09a306d144ad2f99d2811a71d0e8c357adb0b01bca5dce5ea4fb4a797499a"
+    },
+    {
+      "path": "database/native-result-retry02.json",
+      "sha256": "3e0b792b58a4fb09ecc6ee499043d38acfbeb77c513deee09a389fc2fb79b0c4"
+    },
+    {
+      "path": "database/native-jest-retry02.json",
+      "sha256": "cccebd4fe16c8702a3afbc5963d4d14d2fe78d348c05dab1040967a6bfdf123d"
+    },
+    {
+      "path": "database/native-observations-retry02.json",
+      "sha256": "8c25281e880c48ef1a93dae56edb52041152bb760ac11476cab97d1e94cdfe19"
+    }
+  ]
+}

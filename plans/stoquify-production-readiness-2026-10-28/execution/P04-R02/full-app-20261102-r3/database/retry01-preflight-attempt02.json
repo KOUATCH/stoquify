@@ -1,0 +1,269 @@
+{
+  "at": "2026-11-02T17:53:10.952Z",
+  "passed": true,
+  "evidenceClass": "real_isolated_database_read_only_retry_admission",
+  "priorAttempt": "retry01-preflight.json",
+  "mutations": "None. Existing auth sessions, audit rows and login metadata retained.",
+  "postmasterPid": 32788,
+  "timestampWriterProof": {
+    "authSourceSha256": "ec8187a642088a0dac51143ce39f271ac6f5b46fbd7ebe9e6268257d5e9b06f9",
+    "authWriter": "lastLogin: new Date()",
+    "generatedClientRuntime": "@prisma/client/runtime/library.js",
+    "prismaRuntimeSha256": "abdeb84cf9f11bbfba2ac6a009c94fea8657aa3c35a7975a1c63e71a41b96b05",
+    "serialization": "DateTime value:e.toISOString()"
+  },
+  "candidateId": "p04-r02-full-ea52ca48cadd",
+  "artifactSha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+  "database": "stoquify_local_p04r02_20261029_full_r1",
+  "runtimePortsAvailable": [
+    3192,
+    3193,
+    3194
+  ],
+  "clientsBefore": [],
+  "databases": [
+    {
+      "database": "stoquify_local_p03_20261028_template_r1",
+      "migrations": {
+        "count": 120,
+        "migrationsSha256": "919e652f586d6f6b8b0fa71ed0d68b4d9da3be30ae0c24371524609e28cfc041",
+        "schemaSourceSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+        "templateSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+      },
+      "schema": {
+        "sha256": "358cbea3f824f57f876f6ea12b48ced6861f96a301f0bf5edeb095036ffda811",
+        "counts": {
+          "columns": 4296,
+          "constraints": 1130,
+          "indexes": 1216,
+          "enums": 1110,
+          "policies": 0
+        }
+      },
+      "empty": {
+        "organizations": 0,
+        "users": 0,
+        "accounts": 0,
+        "sessions": 0,
+        "roles": 0,
+        "items": 0,
+        "tenant_module_configurations": 0,
+        "tenant_module_grants": 0
+      }
+    },
+    {
+      "database": "stoquify_local_p04r02_20261029_build_r1",
+      "migrations": {
+        "count": 120,
+        "migrationsSha256": "919e652f586d6f6b8b0fa71ed0d68b4d9da3be30ae0c24371524609e28cfc041",
+        "schemaSourceSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+        "templateSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+      },
+      "schema": {
+        "sha256": "358cbea3f824f57f876f6ea12b48ced6861f96a301f0bf5edeb095036ffda811",
+        "counts": {
+          "columns": 4296,
+          "constraints": 1130,
+          "indexes": 1216,
+          "enums": 1110,
+          "policies": 0
+        }
+      },
+      "empty": {
+        "organizations": 0,
+        "users": 0,
+        "accounts": 0,
+        "sessions": 0,
+        "roles": 0,
+        "items": 0,
+        "tenant_module_configurations": 0,
+        "tenant_module_grants": 0
+      }
+    },
+    {
+      "database": "stoquify_local_p04r02_20261029_full_r1",
+      "migrations": {
+        "count": 120,
+        "migrationsSha256": "919e652f586d6f6b8b0fa71ed0d68b4d9da3be30ae0c24371524609e28cfc041",
+        "schemaSourceSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607",
+        "templateSchemaSha256": "1813b8954e67033633071f68db3845e778aacbf06f7cc545452178b6dc2ff607"
+      },
+      "schema": {
+        "sha256": "358cbea3f824f57f876f6ea12b48ced6861f96a301f0bf5edeb095036ffda811",
+        "counts": {
+          "columns": 4296,
+          "constraints": 1130,
+          "indexes": 1216,
+          "enums": 1110,
+          "policies": 0
+        }
+      }
+    }
+  ],
+  "snapshotEvidence": "snapshot-retry01-preflight-attempt02-1793641993819-4cdbeef3-4ece-4b26-a3e5-374fc705df26.json",
+  "businessSha256": "1876807958312e0f7c562599777a70a982b975f260afde83197ecfdad7059eaf",
+  "businessTables": 245,
+  "changedBusinessTables": [
+    "users"
+  ],
+  "userMetadataProof": {
+    "baselineSha256": "2146d1baef4a884b110f7be453fd5486c07458f8e336bdaefa8adcb15561c046",
+    "rows": 8,
+    "allowedActor": "p04r02-user-ui",
+    "allowedChangedFields": [
+      "lastLogin",
+      "updatedAt"
+    ],
+    "reconstruction": "Only ui: lastLogin=NULL; updatedAt=createdAt. All other user JSON is unchanged. The inspected seed inserts users in one transaction with both timestamps now(). No reconstructed rows are written or logged."
+  },
+  "timestampColumnTypes": [
+    {
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone"
+    },
+    {
+      "column_name": "lastLogin",
+      "data_type": "timestamp without time zone"
+    },
+    {
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone"
+    }
+  ],
+  "inspectionSessionTimeZone": "Europe/Paris",
+  "timestampInterpretation": "Prisma DateTime values stored as timestamp without time zone are interpreted explicitly as UTC in SQL; driver local-time inference is not used. Runtime interval bounds unchanged.",
+  "loginMetadata": [
+    {
+      "id": "p04r02-user-expiry",
+      "rawLastLogin": null,
+      "rawUpdatedAt": "2026-10-29 15:41:11.15",
+      "lastLogin": null,
+      "updatedAt": "2026-10-29T15:41:11.150Z",
+      "createdAt": "2026-10-29T15:41:11.150Z",
+      "seedTimestampsUnchanged": true,
+      "failedLoginAttempts": 0,
+      "lastFailedLogin": null,
+      "isLocked": false,
+      "lockedUntil": null
+    },
+    {
+      "id": "p04r02-user-foreign",
+      "rawLastLogin": null,
+      "rawUpdatedAt": "2026-10-29 15:41:11.15",
+      "lastLogin": null,
+      "updatedAt": "2026-10-29T15:41:11.150Z",
+      "createdAt": "2026-10-29T15:41:11.150Z",
+      "seedTimestampsUnchanged": true,
+      "failedLoginAttempts": 0,
+      "lastFailedLogin": null,
+      "isLocked": false,
+      "lockedUntil": null
+    },
+    {
+      "id": "p04r02-user-modulechange",
+      "rawLastLogin": null,
+      "rawUpdatedAt": "2026-10-29 15:41:11.15",
+      "lastLogin": null,
+      "updatedAt": "2026-10-29T15:41:11.150Z",
+      "createdAt": "2026-10-29T15:41:11.150Z",
+      "seedTimestampsUnchanged": true,
+      "failedLoginAttempts": 0,
+      "lastFailedLogin": null,
+      "isLocked": false,
+      "lockedUntil": null
+    },
+    {
+      "id": "p04r02-user-moduledenied",
+      "rawLastLogin": null,
+      "rawUpdatedAt": "2026-10-29 15:41:11.15",
+      "lastLogin": null,
+      "updatedAt": "2026-10-29T15:41:11.150Z",
+      "createdAt": "2026-10-29T15:41:11.150Z",
+      "seedTimestampsUnchanged": true,
+      "failedLoginAttempts": 0,
+      "lastFailedLogin": null,
+      "isLocked": false,
+      "lockedUntil": null
+    },
+    {
+      "id": "p04r02-user-permissionchange",
+      "rawLastLogin": null,
+      "rawUpdatedAt": "2026-10-29 15:41:11.15",
+      "lastLogin": null,
+      "updatedAt": "2026-10-29T15:41:11.150Z",
+      "createdAt": "2026-10-29T15:41:11.150Z",
+      "seedTimestampsUnchanged": true,
+      "failedLoginAttempts": 0,
+      "lastFailedLogin": null,
+      "isLocked": false,
+      "lockedUntil": null
+    },
+    {
+      "id": "p04r02-user-permissiondenied",
+      "rawLastLogin": null,
+      "rawUpdatedAt": "2026-10-29 15:41:11.15",
+      "lastLogin": null,
+      "updatedAt": "2026-10-29T15:41:11.150Z",
+      "createdAt": "2026-10-29T15:41:11.150Z",
+      "seedTimestampsUnchanged": true,
+      "failedLoginAttempts": 0,
+      "lastFailedLogin": null,
+      "isLocked": false,
+      "lockedUntil": null
+    },
+    {
+      "id": "p04r02-user-revocation",
+      "rawLastLogin": null,
+      "rawUpdatedAt": "2026-10-29 15:41:11.15",
+      "lastLogin": null,
+      "updatedAt": "2026-10-29T15:41:11.150Z",
+      "createdAt": "2026-10-29T15:41:11.150Z",
+      "seedTimestampsUnchanged": true,
+      "failedLoginAttempts": 0,
+      "lastFailedLogin": null,
+      "isLocked": false,
+      "lockedUntil": null
+    },
+    {
+      "id": "p04r02-user-ui",
+      "rawLastLogin": "2026-11-02 17:44:59.58",
+      "rawUpdatedAt": "2026-11-02 17:44:59.582",
+      "lastLogin": "2026-11-02T17:44:59.580Z",
+      "updatedAt": "2026-11-02T17:44:59.582Z",
+      "createdAt": "2026-10-29T15:41:11.150Z",
+      "seedTimestampsUnchanged": false,
+      "failedLoginAttempts": 0,
+      "lastFailedLogin": null,
+      "isLocked": false,
+      "lockedUntil": null
+    }
+  ],
+  "runtimeTimestampBounds": {
+    "startedAt": "2026-11-02T17:42:02.954Z",
+    "finishedAt": "2026-11-02T17:45:40.002Z",
+    "toleranceMs": 0
+  },
+  "retainedExpiredSessions": 0,
+  "sessionCounts": [
+    {
+      "userId": "p04r02-user-ui",
+      "count": 3
+    }
+  ],
+  "auditCounts": [
+    {
+      "entityType": "SecurityEvent",
+      "action": "LOGIN_SUCCESS",
+      "count": 3
+    },
+    {
+      "entityType": "SecurityEvent",
+      "action": "PERMISSION_GRANTED",
+      "count": 3
+    }
+  ],
+  "initialZeroSessionReadinessStillApplies": false,
+  "clientsAfter": [],
+  "limitations": "Carry-forward fixture admission only; failed first runtime is retained. No denial or browser success inferred. Empty client inventories are observations, not a reservation.",
+  "finishedAt": "2026-11-02T17:53:14.036Z"
+}

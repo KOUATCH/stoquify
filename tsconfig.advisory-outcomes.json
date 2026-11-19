@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@prisma/client": [
+        "./.codex-tmp/af12-prisma/client"
+      ]
+    }
+  },
+  "include": [
+    "services/accounting/advisory-outcomes*.ts",
+    "actions/accounting/advisory-outcomes.actions.ts",
+    "components/accounting/AdvisoryOutcomesDesk.tsx",
+    "components/accounting/AccountantPortal.tsx",
+    "next-env.d.ts"
+  ]
+}

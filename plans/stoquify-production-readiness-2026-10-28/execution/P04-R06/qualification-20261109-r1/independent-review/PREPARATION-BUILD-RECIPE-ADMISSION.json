@@ -1,0 +1,140 @@
+{
+  "createdAt": "2026-11-09T19:39:41.043Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "scope": "Exact isolated preparation and build recipe admission, not observed outcome",
+  "manifestSha256": "dcbfa115e9294777d5bf1e176ae6020cb0d5d9ceb684156ed7b9841cdb541318",
+  "files": [
+    {
+      "path": "stage-dependencies.cjs",
+      "sha256": "510d6bb67276c28ce0bde94488077d22aa6c5986452257e41046992ac3b4b11c",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "reconcile-dependencies.cjs",
+      "sha256": "eca5f3d77bbd3bd9d585a436950e01324beda5baa463b3fc3b734c9963b05eb5",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "prepare-candidate.cjs",
+      "sha256": "c91c5f6f51b3e659aad44ac232f8ead1ef2e95e93c710539b33494bb6c06589d",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "admit-preparation.cjs",
+      "sha256": "119f07638dea8b1ad21848b8a2a4dcfb0f718b43e17760538bddef4f7cd8b34e",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "7a370fe26b060921635dd2d32c73fc777bdd9584f2f38582e422af78b26bb598",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/prepare.cjs",
+      "sha256": "f4ef2b6e1256fdfcc734ad2a105dc08671312541b0f8d338f27f82250909744b",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "sha256": "254a9e6f3ec0eef369f13f4385553c0db6aa8e48428a951c6b7014d3688c47f7",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/seed-fixture.cjs",
+      "sha256": "186557604c21f021c2f09538e665c89aeeb89faf9597dfc2d7a888444564ca1e",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "276e495ce09869bf75d701607e3e6d209866d5d52062efdc8090add85a0b444f",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "environment-guard.cjs",
+      "sha256": "1e7ca667274a069547ec989391e9789716d6621d72c952806b24ead147f1d28e",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "verify-generated-schema.cjs",
+      "sha256": "f0c73d0ed95fa45c328006c04607b8b129b7347400a3d96292914aa4170d1d93",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "run-build.cjs",
+      "sha256": "955eb4eb417c3455d90e5b79aaebbf0a2c269281641d20a87b4dbe63babc0096",
+      "syntaxExitCode": 0
+    }
+  ],
+  "delegatedInputs": [
+    {
+      "path": "scripts/candidate-snapshot.cjs",
+      "sha256": "e60e513a6aadc490a72821bdcd371fdb2f2c1c0589ed2e392cf10c6a33ca6d46",
+      "unchangedFromPreviouslyReviewedV02": true
+    },
+    {
+      "path": "scripts/release-artifact.cjs",
+      "sha256": "f2c4e8ec0b3ec1197266eecb60efce9a63a9806abe2b1fba9c43c0f62919e42c",
+      "unchangedFromPreviouslyReviewedV02": true
+    },
+    {
+      "path": "scripts/build-app-safe.js",
+      "sha256": "c45e5d883a8f93a996227977ad85df4725f7d9e4ef54d37067927e2286f8f68d",
+      "unchangedFromPreviouslyReviewedV02": true
+    },
+    {
+      "path": "prisma.config.ts",
+      "sha256": "9ca041eb60d478f2284a37417ff230927c92cff0d675342d8262dea57e516737",
+      "unchangedFromPreviouslyReviewedV02": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "unchangedFromPreviouslyReviewedV02": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "unchangedFromPreviouslyReviewedV02": true
+    }
+  ],
+  "conditions": [
+    "Do not rerun already executing stage-dependencies; preserve its exact initial result.",
+    "Read-only reconcile-dependencies is admitted only after the original failed staging result establishes the expected final schema drift and copy exit succeeds.",
+    "Candidate capture requires successful actual full dependency reconciliation plus independent DEPENDENCY-RECONCILIATION-ADMISSION bound to that receipt.",
+    "Candidate source capture preserves all current source, three approved private aliases and ignored upload annex; no source overrides/additions.",
+    "Before database/build execution candidate-admission must pass exact current/candidate selected inputs and immutable full source identity.",
+    "Fresh cluster and both database names must be absent and loopback55516 free; migration deployment applies only to fresh owned build database.",
+    "All current migration checksums must match and all public business tables be empty before cloning/seeding.",
+    "Only new physical copied dependency client may regenerate; exact installed Prisma canonical schema transformation must match current schema.",
+    "Build uses empty owned build database and task-only allowlisted environment; release artifact remains local.",
+    "Runtime/legacy-cookie bridge/browser/direct API execution requires a separate frozen recipe admission."
+  ],
+  "sideEffects": {
+    "ownedStorage": "D:/p04-r06-fullapp-20261109-r1",
+    "database": "New local PostgreSQL17 cluster, build database current migrations, full clone and synthetic seed",
+    "build": "Private Prisma generation, private Next build, new standalone artifact",
+    "archive": "Read-only prior dependency and baseline references; complete rehash preservation",
+    "root": "Read-only source/config inspection; task evidence only written under R06 packet",
+    "ports": [
+      55516,
+      3296,
+      3297,
+      3299
+    ]
+  },
+  "reviewFindings": [
+    "Reconciliation recomputes full destination and archive manifests from preserved compressed input; absent booleans from failed first receipt are not inferred.",
+    "Schema change contains three nullable accounting retention columns plus constraint/function/trigger, no auth model change; preserved and separately reviewed.",
+    "Database connection asserts exact current database, host/port and real data directory before SQL effects.",
+    "Empty-table helper and build preflight enumerate every public business table except migration ledger.",
+    "New private candidate has no .env files, physical node_modules, and hash-bound selected SDK inputs.",
+    "Build wrapper checks current source/artifact identity and exact private alias exclusion; no migration or deploy command in build path.",
+    "Installed package scripts have no pre/post lifecycle additions; delegated build/snapshot/artifact/config/package inputs unchanged from reviewed V02."
+  ],
+  "limitations": [
+    "Installed dependency reuse is not reproducible clean-install evidence.",
+    "No production deployment, production data changes or release approval.",
+    "No actual new migration/build/database/browser success claimed by this admission."
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T15:00:54.519Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Separate physical dependency staging only, before fresh application-source capture",
+  "files": [
+    {
+      "path": "stage-dependencies.cjs",
+      "sha256": "e1fd0b91155417faa8accd45e5b06abe15e98a5f93f916e1a60bb72572d637b3"
+    },
+    {
+      "path": "dependency-manifest.cjs",
+      "sha256": "9348c922ef7534c894f85a9192d80c86649130c9ace6215f78ee6520b1017030"
+    },
+    {
+      "path": "check-resources.cjs",
+      "sha256": "76ed28fd79069d9aed58c6d4ed9d2690008236cdaf0ad73516476f1429d150d4"
+    },
+    {
+      "path": "resource-snapshot.ps1",
+      "sha256": "53ed40de3b8ae063f3fc5d08ce948cf108ea633efc005e4563b2093a02c123d0"
+    },
+    {
+      "path": "independent-review/SOURCE-REFRESH-OUTCOME-REVIEW.json",
+      "sha256": "1e447bfb894c0183a06b25afeff6a1758b88977f3d36dedafa6ca195b3cb9b79"
+    },
+    {
+      "path": "independent-review/RESOURCE-ENTRY-OUTCOME-REVIEW.json",
+      "sha256": "04b6227fb5638684b5fbb49ea7fb5db987ed053ab3c24d16ef42c937ccf4d9c0"
+    },
+    {
+      "path": "inventory/SELECTED-INPUTS-REFRESH-r1.json",
+      "sha256": "359fb8aeca81ee3de3ac3e354f634e7cbcb52a19830b8121ab0cdc1d8d6f20a5"
+    },
+    {
+      "path": "inventory/CURRENT-SOURCE-MANIFEST-r1.json",
+      "sha256": "69c0329bd4e8fa4eb6afd113762944699c7547657ac7be6216687f6a54199049"
+    },
+    {
+      "path": "inventory/SOURCE-SIZES-r1.json",
+      "sha256": "3e47ca2c56466f92041797c8062fac8caa0d3f348805825fdc277567cc34d22b"
+    },
+    {
+      "path": "inventory/RETAINED-FIXTURE-SOURCE-COMPATIBILITY-r1.json",
+      "sha256": "c640249764bce70ed4da6afe22b3ebe529b3210c48000923e6470a7ae9f8712e"
+    },
+    {
+      "path": "inventory/SOURCE-IMPACT-r1.json",
+      "sha256": "89bedace0cba6b137e6d1494f4e98222f914096a7b1b6a93b0d6ef90ec889ad2"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\dependency-staging.json",
+      "sha256": "c3a99b483c0d224e3737a4c4878905c0f112ed41f83f07b6e2d064f30056c2a5"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\independent-review\\DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+      "sha256": "413fbeb7c6ab028ab82e9e8b566f84ef44dc13dfb21ff4936f4d3f01237c9f2c"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\independent-review\\CAPACITY-SUSPENSION-OUTCOME-REVIEW.json",
+      "sha256": "aa54a9684c9b9cf75c01532dd31cd84882ba4faaaf6aa3db56d61c07d9dd8107"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\database\\capacity-suspension.json",
+      "sha256": "7aed928e69514da4b8f905ecf7d0e67638871ccdc6e3c81330b11532e4827ff4"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\candidate-context.json",
+      "sha256": "d953368da04a8a13742ca3647f559d5b43183f34dc5d608a68f623e4a46da754"
+    },
+    {
+      "path": "D:/p04-r06-fullapp-20261110-r2/dependency-input-manifest.json.gz",
+      "sha256": "306dafa0271600fb71cd921ee93542a695dc9eddc616ef21c72f0d995e788030"
+    },
+    {
+      "path": "D:/p04-r06-fullapp-20261110-r2/private/cluster-owner.json",
+      "sha256": "61a7cb0e376ec8e8727cfde9f4063c00d66f0faa1e3871236b2d08e917e4df54"
+    }
+  ],
+  "observed": {
+    "syntaxExitCodes": {
+      "stage-dependencies.cjs": 0,
+      "dependency-manifest.cjs": 0,
+      "check-resources.cjs": 0
+    },
+    "sourceInventoryObservedFiles": 9870,
+    "currentCandidateCaptureAccepted": false
+  },
+  "review": [
+    "Exact source/compatibility observation admits dependency staging only; two newer finance changes explicitly require later source refresh.",
+    "Fresh unchanged6/12/12 resource gate, empty new D root, realpath bounds, stopped baseline ownership/absence of postmaster, seven ports on bothloopback hosts and D NTFS4096 proof precede any D write.",
+    "Allocation accounts for every expected dependency and observed source file rounded4096 plus192MiB metadata reserve while retaining12GiB D; evidence drive must have512MiB free. Actual postcopy reserve must also retain source allocation+32MiB above12GiB.",
+    "New ownership record and physical robocopy destination only; no source capture, database startup/migration, app, oldtree write, hardlink or shared mutable junction.",
+    "Exact152806 manifest verified for new copy and preserved r2 dependency source with8 bounded readers; .cache exclusion matches previously admitted manifest selector.",
+    "Copy timeout can stop only the directly spawned owned copy process tree; failures preserve partial new output and exclusive receipts instead of deleting or rewriting history.",
+    "Private canonical client must be regenerated later; no clean-install or runtime qualification claim.",
+    "Actual copy outcome and subsequent freshly admitted full source capture remain required before retained DB resume/build."
+  ],
+  "requiredAfterExecution": "Independently review actual destination/original hashes, space and selected dependency bindings. Then refresh source and admit separately named candidate capture/context.",
+  "qualificationPassed": false
+}

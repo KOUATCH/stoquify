@@ -24,6 +24,7 @@ const OPEN_FINDING_STATUSES = [
 
 export async function getCloseReadinessSnapshot(
   input: SnapshotScopeInput,
+  client?: Prisma.TransactionClient,
 ): Promise<SnapshotResult<CloseReadinessMetrics>> {
   const scope = normalizeSnapshotScope(input)
   if (scope.locationId) {
@@ -70,7 +71,7 @@ export async function getCloseReadinessSnapshot(
 
   // Counts, run status and retained proof must describe one database revision.
   // Invalidation can otherwise commit between the status and evidence reads.
-  const source = await db.$transaction(async (tx) => {
+  const load = async (tx: Prisma.TransactionClient) => {
     const closeRuns = await tx.closeRun.findMany({
       where: closePeriodWhere,
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -184,7 +185,8 @@ export async function getCloseReadinessSnapshot(
       replacements, latestPeriod, latestCloseRun, latestFinding, latestEvidence, latestChecklist,
       findingGroups, checklistGroups, unavailableEvidenceGroups, certifiedExports,
     }
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
+  }
+  const source = client ? await load(client) : await db.$transaction(load, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
 
   const {
     accountingPeriodCount, openPeriodCount, closeRuns, openFindingCount, criticalOpenFindingCount,

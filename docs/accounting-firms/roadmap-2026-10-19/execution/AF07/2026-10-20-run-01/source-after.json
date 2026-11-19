@@ -1,0 +1,199 @@
+[
+  {
+    "path": "services/payments/adapters/statement-pilot-format.ts",
+    "sha256": "61a5aeaf9a5352498bd7ec3241a151b628ec35a28cf4b34463cd86542857ed65",
+    "definitions": [
+      {
+        "line": 7,
+        "text": "function invalid(message: string): never {"
+      },
+      {
+        "line": 13,
+        "text": "function csvRecords(raw: string): Record<string, unknown>[] {"
+      },
+      {
+        "line": 52,
+        "text": "export function statementRows(raw: string): Record<string, unknown>[] {"
+      },
+      {
+        "line": 85,
+        "text": "export function statementField(row: Record<string, unknown>, ...keys: string[]): unknown {"
+      },
+      {
+        "line": 91,
+        "text": "export function statementMoney(value: unknown, optional = false): string | null {"
+      },
+      {
+        "line": 99,
+        "text": "export function statementDate(value: unknown, optional = false): Date | null {"
+      }
+    ]
+  },
+  {
+    "path": "services/payments/adapters/mobile-money-hmac.adapter.ts",
+    "sha256": "4bc55ae7f14d242d08206826c054e370bddec4b4c6b879e14edbfd202ce1b304",
+    "definitions": [
+      {
+        "line": 17,
+        "text": "function header(headers: ProviderWebhookHeaders, name: string) {"
+      },
+      {
+        "line": 22,
+        "text": "function normalizeSignature(value?: string) {"
+      },
+      {
+        "line": 27,
+        "text": "export function sha256(input: string) {"
+      },
+      {
+        "line": 31,
+        "text": "function stableStringify(value: unknown): string {"
+      },
+      {
+        "line": 41,
+        "text": "function safeEqualHex(left: string, right: string) {"
+      },
+      {
+        "line": 47,
+        "text": "function parseJsonObject(rawBody: string) {"
+      },
+      {
+        "line": 63,
+        "text": "function stringValue(value: unknown) {"
+      },
+      {
+        "line": 67,
+        "text": "function numberValue(value: unknown) {"
+      },
+      {
+        "line": 73,
+        "text": "function dateValue(value: unknown) {"
+      },
+      {
+        "line": 80,
+        "text": "function parseDirection(value: unknown): ParsedProviderEvent[\"direction\"] {"
+      },
+      {
+        "line": 88,
+        "text": "function parseLineDirection(value: unknown): ParsedStatementLine[\"direction\"] {"
+      },
+      {
+        "line": 97,
+        "text": "function maskReference(value: string | null) {"
+      },
+      {
+        "line": 163,
+        "text": "  parseStatement(input: StatementParseInput): ParsedStatement {"
+      },
+      {
+        "line": 203,
+        "text": "  fingerprintStatementLine(line: ParsedStatementLine) {"
+      }
+    ]
+  },
+  {
+    "path": "services/payments/statement-import.service.ts",
+    "sha256": "f80d9ac639603a91fe402b92ae9a160ac583cd3cdf73aa63bcc39691110b6334",
+    "definitions": [
+      {
+        "line": 48,
+        "text": "function payloadSize(rawContent: string) {"
+      },
+      {
+        "line": 52,
+        "text": "function toDecimal(value: Prisma.Decimal.Value | null | undefined) {"
+      },
+      {
+        "line": 56,
+        "text": "function lineHash(line: ParsedStatementLine, fingerprint: string) {"
+      },
+      {
+        "line": 69,
+        "text": "function duplicateFingerprints(lines: Array<{ fingerprint: string; line: ParsedStatementLine }>) {"
+      },
+      {
+        "line": 84,
+        "text": "export async function importProviderStatement("
+      }
+    ]
+  },
+  {
+    "path": "services/reconciliation/account-close-coverage.service.ts",
+    "sha256": "913982cc5cf57250050d551a9b25476645e1517fbc881135948953342aee697c",
+    "definitions": [
+      {
+        "line": 10,
+        "text": "export async function readAccountCloseCoverage(tx: Prisma.TransactionClient, scope: CloseControlScope) {"
+      }
+    ]
+  },
+  {
+    "path": "services/payments/__fixtures__/af07-pilot.csv",
+    "sha256": "3fa51a2acc3a40f3aef182c46b52c0f22ca6794aef6b8485c7c380b72adf8d55",
+    "definitions": []
+  },
+  {
+    "path": "services/payments/__tests__/statement-pilot-format.test.ts",
+    "sha256": "0a3bc29caeecaf7877ad66a11600b3cc3e744199529625a1c913ca4fa4e3f76b",
+    "definitions": []
+  },
+  {
+    "path": "services/payments/__tests__/statement-import.service.test.ts",
+    "sha256": "67f834a44e082b8be73e44832f0733060f33c2a1f9fd46e538a6a5044a620224",
+    "definitions": [
+      {
+        "line": 55,
+        "text": "function statementContent(overrides: Array<Record<string, unknown>> = []) {"
+      }
+    ]
+  },
+  {
+    "path": "services/payments/__tests__/provider-formats.postgres.test.ts",
+    "sha256": "7b4f0ac542048e81b89a85ffa81bd6951c1a14a4a0af432e1fa4871fb99bce2e",
+    "definitions": [
+      {
+        "line": 30,
+        "text": "async function fixture(name: string) {"
+      },
+      {
+        "line": 41,
+        "text": "async function coverage(f: Awaited<ReturnType<typeof fixture>>) {"
+      }
+    ]
+  },
+  {
+    "path": "services/reconciliation/__tests__/account-close-coverage.test.ts",
+    "sha256": "eefbec297baf3de49a93c3e4be6e6968e2bdaa8442f23443b9208d829826155c",
+    "definitions": [
+      {
+        "line": 34,
+        "text": "function fixture() {"
+      }
+    ]
+  },
+  {
+    "path": "scripts/fixtures/provider-formats-database.cjs",
+    "sha256": "90cc487d7cbf089488a52d6c8bd72c3a712e4b29a470fd92db4a42fe5845c1ab",
+    "definitions": [
+      {
+        "line": 8,
+        "text": "async function main() {"
+      }
+    ]
+  },
+  {
+    "path": "jest.provider-formats.config.cjs",
+    "sha256": "88f8c57355073992007833c628a5bf2d504fdccebc72164807995ad31830658a",
+    "definitions": []
+  },
+  {
+    "path": "jest.provider-formats-postgres.config.cjs",
+    "sha256": "3992b08823562dc6ca2f6bb58e1341fec254e8b809ddf9d711518547bc564d5b",
+    "definitions": []
+  },
+  {
+    "path": "tsconfig.provider-formats.json",
+    "sha256": "5f294b2e7391b1344016feabe6eb77287892af454b55e8db2a45c51c6e4122a9",
+    "definitions": []
+  }
+]

@@ -1,0 +1,70 @@
+{
+  "generatedAt": "2026-10-24T19:39:08.278Z",
+  "status": "blocked",
+  "hashContract": {
+    "version": "stoquify-migration-sql-sha256-v1",
+    "approvalIdentity": "canonicalLfSha256",
+    "transportIdentity": "rawSha256",
+    "encoding": "UTF-8",
+    "canonicalization": "Decode as UTF-8, normalize CRLF and lone CR line endings to LF, preserve every other byte represented by the decoded text, then SHA-256 hash the UTF-8 result."
+  },
+  "migrationCount": 115,
+  "manifestPresent": true,
+  "manifestSha256": "81e4d9aa05ab7593202a3d0831b3d35fae0a8f7c14b584731fbefd43fbc1e919",
+  "catalogSha256": "e5f4375a73fe694668de9cb0a373cd94a793dfc78d4b420b7c94dc00f93a63f2",
+  "unmanifested": [
+    "20261004120000_access_requests",
+    "20261004130000_purchase_order_authoring",
+    "20261016150000_reconciliation_no_activity_evidence",
+    "20261016180000_close_source_publication_guard",
+    "20261016200000_close_payable_sources",
+    "20261016220000_bank_balance_evidence",
+    "20261016230000_balance_sheet_evidence",
+    "20261017090000_period_close_control",
+    "20261019120000_firm_engagement_foundation",
+    "20261019140000_firm_engagement_authority",
+    "20261020100000_accountant_active_named_scope",
+    "20261020130000_opening_position_preview",
+    "20261020160000_controlled_opening_cutover",
+    "20261020180000_firm_obligation_register",
+    "20261024143000_hris_schedule_revisions",
+    "20261024150000_hris_employee_documents",
+    "20261024150100_hris_document_evidence_guard",
+    "20261024150200_hris_document_duplicate_evidence",
+    "20261024150300_hris_document_storage_identity",
+    "20261024150400_hris_document_legacy_evidence",
+    "20261024160000_hris_personal_correction_cases",
+    "20261024170000_hris_lifecycle_tasks",
+    "20261024170000_hris_setup_reviewer_grants",
+    "20261024180000_command_center_coordination"
+  ],
+  "missingFromCatalog": [],
+  "changed": [],
+  "duplicateTimestamps": [
+    {
+      "timestamp": "20260818120000",
+      "migrations": [
+        "20260818120000_governed_delivery_order_to_cash",
+        "20260818120000_pos_electronic_tender_authority"
+      ],
+      "grandfathered": true,
+      "reason": "Both full migration names were already applied before the timestamp-uniqueness ratchet. Preserve their immutable names and reject every new collision."
+    },
+    {
+      "timestamp": "20261024170000",
+      "migrations": [
+        "20261024170000_hris_lifecycle_tasks",
+        "20261024170000_hris_setup_reviewer_grants"
+      ],
+      "grandfathered": false,
+      "reason": null
+    }
+  ],
+  "errors": [
+    "duplicate_migration_timestamp_not_grandfathered",
+    "manifest_catalog_hash_mismatch",
+    "manifest_migration_count_mismatch",
+    "unmanifested_migration"
+  ],
+  "secretValuePrinted": false
+}

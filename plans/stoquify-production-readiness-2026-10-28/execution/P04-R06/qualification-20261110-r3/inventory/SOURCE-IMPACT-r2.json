@@ -1,0 +1,1449 @@
+{
+  "at": "2026-11-10T15:49:13.318Z",
+  "sourceManifest": {
+    "path": "CURRENT-SOURCE-MANIFEST-r2.json",
+    "sha256": "4170c529d7dab4e61e3c7503d7adbff56a23e1d1dbb95f0203eac189693f9699",
+    "identitySha256": "4ea56948b133706d3dc0531852f7dd37da41f40bb6968604e822dae3bb10ac74"
+  },
+  "sourceRefreshSha256": "d01bedbc61c603e73376d529aa84a6b85a37430d04ab79ed06d95875cf168a2b",
+  "previousImpactSha256": "89bedace0cba6b137e6d1494f4e98222f914096a7b1b6a93b0d6ef90ec889ad2",
+  "sourceChanges": [
+    {
+      "path": "actions/finance/__tests__/customer-settlement.actions.test.ts",
+      "beforeSha256": "1d0dfa4e384a9e2fc32815c32072abd89235304ca4955a2c0f7759a0ed8cd47c",
+      "afterSha256": "0a716b4d8241ce3d2ef36dd44fc8cbd0bf5517d36eb8e307b4514ec65795876f",
+      "kind": "modified",
+      "currentSha256AtInspection": "0a716b4d8241ce3d2ef36dd44fc8cbd0bf5517d36eb8e307b4514ec65795876f",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": true,
+      "importsBefore": [
+        "../customer-settlement.actions",
+        "@/lib/security/rbac",
+        "@/services/accounting/customer-settlement-reversal.service",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.service",
+        "@/services/modules/module-entitlement.service",
+        "next/cache"
+      ],
+      "importsAfter": [
+        "../customer-settlement.actions",
+        "@/lib/security/rbac",
+        "@/services/accounting/customer-settlement-reversal.service",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.service",
+        "@/services/modules/module-entitlement.service",
+        "next/cache"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "actions/finance/customer-settlement.actions.ts",
+      "beforeSha256": "e155ef594f1f8c409bc82e4b5ead9503d49ac6b0a0d93cc94e137ad6e975b59d",
+      "afterSha256": "fbaebb725ed973fe80a5b1d3765f9dd2c6252e405455b633534569840eee6d5b",
+      "kind": "modified",
+      "currentSha256AtInspection": "fbaebb725ed973fe80a5b1d3765f9dd2c6252e405455b633534569840eee6d5b",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": false,
+      "importsBefore": [
+        "@/lib/security/auth-session",
+        "@/lib/security/rbac",
+        "@/lib/security/rbac-permissions",
+        "@/services/_shared/action-errors",
+        "@/services/_shared/protect",
+        "@/services/accounting/customer-settlement-reversal.service",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.schemas",
+        "@/services/accounting/customer-settlement.service",
+        "@/services/modules/module-entitlement.service",
+        "next/cache"
+      ],
+      "importsAfter": [
+        "@/lib/security/auth-session",
+        "@/lib/security/rbac",
+        "@/lib/security/rbac-permissions",
+        "@/services/_shared/action-errors",
+        "@/services/_shared/protect",
+        "@/services/accounting/customer-settlement-reversal.service",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.schemas",
+        "@/services/accounting/customer-settlement.service",
+        "@/services/modules/module-entitlement.service",
+        "next/cache"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "components/finance/CustomerSettlementControls.tsx",
+      "beforeSha256": "09a401b8023615b9333444a43136696da2734fe10b9b54de071c8fae593a7ce4",
+      "afterSha256": "1a08937f09bcbb906c365ce27f00898f96f54932cd33c93254e57c860e9d2f22",
+      "kind": "modified",
+      "currentSha256AtInspection": "1a08937f09bcbb906c365ce27f00898f96f54932cd33c93254e57c860e9d2f22",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": false,
+      "importsBefore": [
+        "@/actions/finance/customer-settlement.actions",
+        "@/actions/security/step-up-auth.actions",
+        "@/components/ui/button",
+        "@/components/ui/input",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.schemas",
+        "react"
+      ],
+      "importsAfter": [
+        "@/actions/finance/customer-settlement.actions",
+        "@/actions/security/step-up-auth.actions",
+        "@/components/ui/button",
+        "@/components/ui/input",
+        "@/services/accounting/customer-settlement-workbench.service",
+        "@/services/accounting/customer-settlement.schemas",
+        "react"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "components/finance/__tests__/CustomerSettlementControls.test.tsx",
+      "beforeSha256": "f1e36589ee2a98a1e0488eabaa71eb174fdd229064b0213c54b56c55d8cb0e7e",
+      "afterSha256": "5c7cf44fa9c181db8b9cc7c2522f28ea542eb8931761a64f26ecf56ad7e616ed",
+      "kind": "modified",
+      "currentSha256AtInspection": "5c7cf44fa9c181db8b9cc7c2522f28ea542eb8931761a64f26ecf56ad7e616ed",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": true,
+      "importsBefore": [
+        "../CustomerSettlementControls",
+        "@/actions/finance/customer-settlement.actions",
+        "@/actions/security/step-up-auth.actions",
+        "@testing-library/jest-dom",
+        "@testing-library/react"
+      ],
+      "importsAfter": [
+        "../CustomerSettlementControls",
+        "@/actions/finance/customer-settlement.actions",
+        "@/actions/security/step-up-auth.actions",
+        "@testing-library/jest-dom",
+        "@testing-library/react"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement-workbench.service.test.ts",
+      "beforeSha256": "f60cd1887999d7e81e9aac72b9ccfbc27e5f1cfc9a14cac2189f2d0fab69339f",
+      "afterSha256": "e84010ab07370e4a71a6252a7e2a4953d312deaa66ab8922c206c247c912831a",
+      "kind": "modified",
+      "currentSha256AtInspection": "e84010ab07370e4a71a6252a7e2a4953d312deaa66ab8922c206c247c912831a",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": true,
+      "importsBefore": [
+        "../customer-settlement-workbench.service",
+        "@/prisma/db",
+        "@prisma/client"
+      ],
+      "importsAfter": [
+        "../customer-settlement-workbench.service",
+        "@/prisma/db",
+        "@prisma/client"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement.service.test.ts",
+      "beforeSha256": "f1dfc30ba58d3e229d7dec19a66785d5c959597896ab31b8903e1826fd071e46",
+      "afterSha256": "8399d46123ce9082e53f7945be5c922465eb1639686fc24d9a5ca84ad8480362",
+      "kind": "modified",
+      "currentSha256AtInspection": "8399d46123ce9082e53f7945be5c922465eb1639686fc24d9a5ca84ad8480362",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": true,
+      "importsBefore": [
+        "../customer-ledger.service",
+        "../customer-receivable-document.service",
+        "../customer-receivable-lifecycle.service",
+        "../customer-settlement.service",
+        "../journal-close-invalidation.service",
+        "../periods.service",
+        "../posting-rules.service",
+        "../posting.service",
+        "../source-link.service",
+        "@/services/_shared/action-errors",
+        "@/services/events/business-event.service",
+        "@prisma/client"
+      ],
+      "importsAfter": [
+        "../customer-ledger.service",
+        "../customer-receivable-document.service",
+        "../customer-receivable-lifecycle.service",
+        "../customer-settlement.service",
+        "../journal-close-invalidation.service",
+        "../periods.service",
+        "../posting-rules.service",
+        "../posting.service",
+        "../source-link.service",
+        "@/services/_shared/action-errors",
+        "@/services/events/business-event.service",
+        "@prisma/client"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/accounting/customer-settlement-workbench.service.ts",
+      "beforeSha256": "42d3dee68338f985f95361663774199d57dccc8595afa3e7c00cbcdf0d106e97",
+      "afterSha256": "0864bde250c783471fd5ea4345f4772b76b0e2808b80876e2b161b53eb91eefc",
+      "kind": "modified",
+      "currentSha256AtInspection": "0864bde250c783471fd5ea4345f4772b76b0e2808b80876e2b161b53eb91eefc",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": false,
+      "importsBefore": [
+        "@/lib/security/rbac-permissions",
+        "@/prisma/db",
+        "@/services/_shared/action-errors",
+        "@prisma/client",
+        "zod"
+      ],
+      "importsAfter": [
+        "@/lib/security/rbac-permissions",
+        "@/prisma/db",
+        "@/services/_shared/action-errors",
+        "@prisma/client",
+        "zod"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/accounting/customer-settlement.schemas.ts",
+      "beforeSha256": "e734d2aae5761b19a2f02de495513ad8f9fcd180a678d4a26f4ae8b3440bbdf8",
+      "afterSha256": "e4938b2a6a708b1c919aed309cc7436ef2e0bbd3d2f2e66ce0b404ea89957daa",
+      "kind": "modified",
+      "currentSha256AtInspection": "e4938b2a6a708b1c919aed309cc7436ef2e0bbd3d2f2e66ce0b404ea89957daa",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": false,
+      "importsBefore": [
+        "zod"
+      ],
+      "importsAfter": [
+        "zod"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/accounting/customer-settlement.service.ts",
+      "beforeSha256": "2c6339a4b2feb6c5b6220013aa7960b109ee63746b48c591c44e3f40264aa637",
+      "afterSha256": "9d5a47154d5b46aeb370f9f5b0f76ed33f84680293038631e06d5e975023b294",
+      "kind": "modified",
+      "currentSha256AtInspection": "9d5a47154d5b46aeb370f9f5b0f76ed33f84680293038631e06d5e975023b294",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": false,
+      "importsBefore": [
+        "./customer-ledger.service",
+        "./customer-receivable-document.service",
+        "./customer-receivable-lifecycle.service",
+        "./customer-settlement.schemas",
+        "./journal-close-invalidation.service",
+        "./periods.service",
+        "./posting-rules.service",
+        "./posting.service",
+        "./source-link.service",
+        "@/prisma/db",
+        "@/services/_shared/action-errors",
+        "@/services/controls/sensitive-action.service",
+        "@/services/events/business-event.service",
+        "@prisma/client",
+        "crypto"
+      ],
+      "importsAfter": [
+        "./customer-ledger.service",
+        "./customer-receivable-document.service",
+        "./customer-receivable-lifecycle.service",
+        "./customer-settlement.schemas",
+        "./journal-close-invalidation.service",
+        "./periods.service",
+        "./posting-rules.service",
+        "./posting.service",
+        "./source-link.service",
+        "@/prisma/db",
+        "@/services/_shared/action-errors",
+        "@/services/controls/sensitive-action.service",
+        "@/services/events/business-event.service",
+        "@/services/payments/customer-settlement-payment-authority.service",
+        "@prisma/client",
+        "crypto"
+      ],
+      "importsAdded": [
+        "@/services/payments/customer-settlement-payment-authority.service"
+      ],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/payments/__tests__/customer-settlement-payment-authority.service.test.ts",
+      "beforeSha256": null,
+      "afterSha256": "38df32b19a32fda7a13667ba4a6a17d2d987bebbbd264aa0ccf261fa676a7fee",
+      "kind": "added",
+      "currentSha256AtInspection": "38df32b19a32fda7a13667ba4a6a17d2d987bebbbd264aa0ccf261fa676a7fee",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": true,
+      "importsBefore": [],
+      "importsAfter": [
+        "../customer-settlement-payment-authority.service",
+        "@prisma/client"
+      ],
+      "importsAdded": [
+        "../customer-settlement-payment-authority.service",
+        "@prisma/client"
+      ],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts",
+      "beforeSha256": "2818a6eb5e0006bbc38ae3e9b03d893a081402d303b543c65989282916af9bbf",
+      "afterSha256": "05a89ae10abba804974f45337b9f6c8f4ab8b5e7e6de7ec9be0fdd8ba7ea54ef",
+      "kind": "modified",
+      "currentSha256AtInspection": "05a89ae10abba804974f45337b9f6c8f4ab8b5e7e6de7ec9be0fdd8ba7ea54ef",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": true,
+      "importsBefore": [
+        "../pos-electronic-tender-authority.service",
+        "@prisma/client"
+      ],
+      "importsAfter": [
+        "../pos-electronic-tender-authority.service",
+        "@prisma/client"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/payments/customer-settlement-payment-authority.service.ts",
+      "beforeSha256": null,
+      "afterSha256": "8f45dda68550868c4eab65ab38a6e2c54dd6266f7c46495a767be6375eef24ed",
+      "kind": "added",
+      "currentSha256AtInspection": "8f45dda68550868c4eab65ab38a6e2c54dd6266f7c46495a767be6375eef24ed",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": false,
+      "importsBefore": [],
+      "importsAfter": [
+        "./pos-electronic-tender-authority.service",
+        "@/services/_shared/action-errors",
+        "@prisma/client"
+      ],
+      "importsAdded": [
+        "./pos-electronic-tender-authority.service",
+        "@/services/_shared/action-errors",
+        "@prisma/client"
+      ],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/payments/pos-electronic-tender-authority.service.ts",
+      "beforeSha256": "4254e1991691fa9eaff1e455694ac3d2b30b6b31287b3158d5b3fc2786da3ba6",
+      "afterSha256": "fd03c611503c79638c99ad98380b0db90fc450cf6c3aa138d7b85d7d3435bd62",
+      "kind": "modified",
+      "currentSha256AtInspection": "fd03c611503c79638c99ad98380b0db90fc450cf6c3aa138d7b85d7d3435bd62",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": true,
+      "testInput": false,
+      "importsBefore": [
+        "@/services/_shared/action-errors",
+        "@prisma/client"
+      ],
+      "importsAfter": [
+        "@/services/_shared/action-errors",
+        "@prisma/client"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/pos/__tests__/pos.service.test.ts",
+      "beforeSha256": "07a86b87606ac41a04b566e4ae908120e97ad7b8825abf5ee7e4c78fd1886ae0",
+      "afterSha256": "f550afa3ab7ea91912f74ffb401f1758bd73656e1a3cbf1d19e83ef8935aa589",
+      "kind": "modified",
+      "currentSha256AtInspection": "f550afa3ab7ea91912f74ffb401f1758bd73656e1a3cbf1d19e83ef8935aa589",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": false,
+      "testInput": true,
+      "importsBefore": [
+        "../cart-revision",
+        "../pos-customer.service",
+        "../pos.service",
+        "@/prisma/db",
+        "@/services/accounting/customer-receivable-document.service",
+        "@/services/accounting/customer-receivable-lifecycle.service",
+        "@/services/accounting/periods.service",
+        "@/services/accounting/postings/post-payment",
+        "@/services/accounting/postings/post-refund",
+        "@/services/accounting/postings/post-sale",
+        "@/services/accounting/postings/post-void",
+        "@/services/compliance/fiscal-document.service",
+        "@/services/modules/module-admission.service",
+        "@/services/pos/receipt.service",
+        "@prisma/client"
+      ],
+      "importsAfter": [
+        "../cart-revision",
+        "../pos-customer.service",
+        "../pos.service",
+        "@/prisma/db",
+        "@/services/accounting/customer-receivable-document.service",
+        "@/services/accounting/customer-receivable-lifecycle.service",
+        "@/services/accounting/periods.service",
+        "@/services/accounting/postings/post-payment",
+        "@/services/accounting/postings/post-refund",
+        "@/services/accounting/postings/post-sale",
+        "@/services/accounting/postings/post-void",
+        "@/services/compliance/fiscal-document.service",
+        "@/services/modules/module-admission.service",
+        "@/services/pos/receipt.service",
+        "@prisma/client"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "services/pos/pos.service.ts",
+      "beforeSha256": "1591a235588c5485f3cdb840a33ae917c1e91449d9b4633c34e587d5bfd120e5",
+      "afterSha256": "f272dafb5097b28c247db43138fccd79c7811acfccdc8cb7457c3497834a89a0",
+      "kind": "modified",
+      "currentSha256AtInspection": "f272dafb5097b28c247db43138fccd79c7811acfccdc8cb7457c3497834a89a0",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": false,
+      "testInput": false,
+      "importsBefore": [
+        "./cart-revision",
+        "./cart-write-access",
+        "./checkout-state",
+        "./commit-result",
+        "./money",
+        "./pos-customer.service",
+        "./pos.schemas",
+        "./receipt.service",
+        "./shift-opening-access",
+        "./tender-write-access",
+        "@/lib/i18n/organization-money",
+        "@/prisma/db",
+        "@/services/_shared/action-errors",
+        "@/services/accounting/customer-ledger.service",
+        "@/services/accounting/customer-receivable-document.service",
+        "@/services/accounting/customer-receivable-lifecycle.service",
+        "@/services/accounting/postings/post-payment",
+        "@/services/accounting/postings/post-refund",
+        "@/services/accounting/postings/post-sale",
+        "@/services/accounting/postings/post-void",
+        "@/services/compliance/country-pack-hooks",
+        "@/services/compliance/fiscal-document.service",
+        "@/services/events/business-event.service",
+        "@/services/inventory/inventory-stock-event.service",
+        "@/services/modules/module-admission.service",
+        "@/services/payments/pos-electronic-tender-authority.service",
+        "@prisma/client"
+      ],
+      "importsAfter": [
+        "./cart-revision",
+        "./cart-write-access",
+        "./checkout-state",
+        "./commit-result",
+        "./money",
+        "./pos-customer.service",
+        "./pos.schemas",
+        "./receipt.service",
+        "./shift-opening-access",
+        "./tender-write-access",
+        "@/lib/i18n/organization-money",
+        "@/prisma/db",
+        "@/services/_shared/action-errors",
+        "@/services/accounting/customer-ledger.service",
+        "@/services/accounting/customer-receivable-document.service",
+        "@/services/accounting/customer-receivable-lifecycle.service",
+        "@/services/accounting/postings/post-payment",
+        "@/services/accounting/postings/post-refund",
+        "@/services/accounting/postings/post-sale",
+        "@/services/accounting/postings/post-void",
+        "@/services/compliance/country-pack-hooks",
+        "@/services/compliance/fiscal-document.service",
+        "@/services/events/business-event.service",
+        "@/services/inventory/inventory-stock-event.service",
+        "@/services/modules/module-admission.service",
+        "@/services/payments/pos-electronic-tender-authority.service",
+        "@prisma/client"
+      ],
+      "importsAdded": [],
+      "importsRemoved": []
+    },
+    {
+      "path": "tsconfig.json",
+      "beforeSha256": "d8520694b9940364a676d62d757600ffb29718574e72c5752f8f4875021f4ccb",
+      "afterSha256": "d3579c5303333929f58ef96286529142b8e64137c59fb8a32b7c43598ac518c9",
+      "kind": "modified",
+      "currentSha256AtInspection": "d3579c5303333929f58ef96286529142b8e64137c59fb8a32b7c43598ac518c9",
+      "stillMatchesRefresh": true,
+      "inPreviouslyReviewedFinanceFamily": false,
+      "testInput": false,
+      "importsBefore": [],
+      "importsAfter": [],
+      "importsAdded": [],
+      "importsRemoved": []
+    }
+  ],
+  "allNonDocChangesStillMatch": true,
+  "criticalBindings": [
+    {
+      "path": "actions/security/account-session.actions.ts",
+      "sha256": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+      "expectedSha256": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+      "matches": true
+    },
+    {
+      "path": "actions/users/self-profile.actions.ts",
+      "sha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2",
+      "expectedSha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2",
+      "matches": true
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/layout.tsx",
+      "sha256": "c54995a81b0aceefed11ba83549198f7d59650add8ff9c011c9f40da6e1dbf36",
+      "expectedSha256": "c54995a81b0aceefed11ba83549198f7d59650add8ff9c011c9f40da6e1dbf36",
+      "matches": true
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/profile/page.tsx",
+      "sha256": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc",
+      "expectedSha256": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc",
+      "matches": true
+    },
+    {
+      "path": "app/[locale]/(dashboard)/layout.tsx",
+      "sha256": "3961d8117888eddac195fc857c77729281ab3e6512b8738271dcc3b2ad00d5e3",
+      "expectedSha256": "3961d8117888eddac195fc857c77729281ab3e6512b8738271dcc3b2ad00d5e3",
+      "matches": true
+    },
+    {
+      "path": "app/api/auth/[...all]/route.ts",
+      "sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "expectedSha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "matches": true
+    },
+    {
+      "path": "app/api/me/permissions/route.ts",
+      "sha256": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+      "expectedSha256": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+      "matches": true
+    },
+    {
+      "path": "app/api/me/profile/route.ts",
+      "sha256": "7b72f47e15810d348e52edbf9b15905477ee9d60e9bd90802ebe526889ef966e",
+      "expectedSha256": "7b72f47e15810d348e52edbf9b15905477ee9d60e9bd90802ebe526889ef966e",
+      "matches": true
+    },
+    {
+      "path": "components/dashboard/DashboardRouteState.tsx",
+      "sha256": "b2c69d73283f42828b20469596572d0b48666f676f8989c92ed0a7597497c9b3",
+      "expectedSha256": "b2c69d73283f42828b20469596572d0b48666f676f8989c92ed0a7597497c9b3",
+      "matches": true
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "8457239b4dfaf0e9c76576826f36d4a7e72a2ad7c97e479a45716d8af3466232",
+      "expectedSha256": "8457239b4dfaf0e9c76576826f36d4a7e72a2ad7c97e479a45716d8af3466232",
+      "matches": true
+    },
+    {
+      "path": "components/dashboard/Sidebar.tsx",
+      "sha256": "6303191e68eedc1b3c86bc0112cb36c47a6295b79eb398bea5b11e874c4969bf",
+      "expectedSha256": "6303191e68eedc1b3c86bc0112cb36c47a6295b79eb398bea5b11e874c4969bf",
+      "matches": true
+    },
+    {
+      "path": "components/i18n/ApplicationMessages.tsx",
+      "sha256": "6c30db36ac3f2e9eef6ab2561316575fe47d98d5c14621304190ade600cf36cd",
+      "expectedSha256": "6c30db36ac3f2e9eef6ab2561316575fe47d98d5c14621304190ade600cf36cd",
+      "matches": true
+    },
+    {
+      "path": "components/settings/SelfProfile.tsx",
+      "sha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+      "expectedSha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+      "matches": true
+    },
+    {
+      "path": "design-system/stoquify/MASTER.md",
+      "sha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+      "expectedSha256": "28d9429f39c8ed24aaa6fabdfef6799687f42b222ee795a7f2b5ead93e1a9ce6",
+      "matches": true
+    },
+    {
+      "path": "design-system/stoquify/pages/public-auth.md",
+      "sha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+      "expectedSha256": "8e6925503a72d22aec2b3d520f7e5dbae55854cea5606753402c5ecfba377897",
+      "matches": true
+    },
+    {
+      "path": "docs/ecc/WORKFLOW.md",
+      "sha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c",
+      "expectedSha256": "2cdde9abd3f94364ca6955bdf59646c0a2e804a9d6b94ce8562c2dff2e44398c",
+      "matches": true
+    },
+    {
+      "path": "docs/ecc/command-registry.json",
+      "sha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+      "expectedSha256": "e01ded2be9c2d9a26d62ce8bb290f8b1c1d5577405a60ceefede1323d576e381",
+      "matches": true
+    },
+    {
+      "path": "hooks/self-profile-draft.ts",
+      "sha256": "e131a85afc28617ff954dfd15e1800c262eb5a4f9dc7778ec346d5d9c2559ee9",
+      "expectedSha256": "e131a85afc28617ff954dfd15e1800c262eb5a4f9dc7778ec346d5d9c2559ee9",
+      "matches": true
+    },
+    {
+      "path": "hooks/useSelfProfile.ts",
+      "sha256": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6",
+      "expectedSha256": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6",
+      "matches": true
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "sha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+      "expectedSha256": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+      "matches": true
+    },
+    {
+      "path": "lib/auth-server.ts",
+      "sha256": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+      "expectedSha256": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+      "matches": true
+    },
+    {
+      "path": "lib/auth.ts",
+      "sha256": "a377af943776826d68385a01ebdfe3478aff5737c8de98395e2bebbd16d102ad",
+      "expectedSha256": "a377af943776826d68385a01ebdfe3478aff5737c8de98395e2bebbd16d102ad",
+      "matches": true
+    },
+    {
+      "path": "lib/security/__tests__/auth-current-authority.test.ts",
+      "sha256": "9fc822b5297824bd7819454548e424f9cdd4e027ec0aae7d5d4fee37694e07d0",
+      "expectedSha256": "9fc822b5297824bd7819454548e424f9cdd4e027ec0aae7d5d4fee37694e07d0",
+      "matches": true
+    },
+    {
+      "path": "lib/security/__tests__/auth-deactivation.test.ts",
+      "sha256": "ecd46caee366aa3d422426e63eb8081187fb79e9fd4226fee3e3d948e18d498e",
+      "expectedSha256": "ecd46caee366aa3d422426e63eb8081187fb79e9fd4226fee3e3d948e18d498e",
+      "matches": true
+    },
+    {
+      "path": "lib/security/__tests__/auth-request-bookkeeping.test.ts",
+      "sha256": "4f746cb0251104c080d8d41352500b67bdf3551aa5756b956ab388ee662d6b4d",
+      "expectedSha256": "4f746cb0251104c080d8d41352500b67bdf3551aa5756b956ab388ee662d6b4d",
+      "matches": true
+    },
+    {
+      "path": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "sha256": "27133096cb51f66699988b4ecab3c013cb899c96aaf0001b84d6e09ff4ff7a08",
+      "expectedSha256": "27133096cb51f66699988b4ecab3c013cb899c96aaf0001b84d6e09ff4ff7a08",
+      "matches": true
+    },
+    {
+      "path": "lib/security/audit-log.ts",
+      "sha256": "b3cb587d4687f4a5114c07d8c238bc8ec916a2dab8f76c0f6b2b0995db16711d",
+      "expectedSha256": "b3cb587d4687f4a5114c07d8c238bc8ec916a2dab8f76c0f6b2b0995db16711d",
+      "matches": true
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b",
+      "expectedSha256": "f2e4411761301469ee8347f2f315d270822a2b9ceb1203434a28fb6d7d126d4b",
+      "matches": true
+    },
+    {
+      "path": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "c093f2c5a93498a75b013b525e9a22b452fca807266fb7203c08824a210bb19f",
+      "expectedSha256": "c093f2c5a93498a75b013b525e9a22b452fca807266fb7203c08824a210bb19f",
+      "matches": true
+    },
+    {
+      "path": "lib/security/dashboard-session-recovery.ts",
+      "sha256": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a",
+      "expectedSha256": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a",
+      "matches": true
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "sha256": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb",
+      "expectedSha256": "d4b57e3a2675e683db385e29467b602fbe90d86d1bdd954f5d2dc66434e9cbbb",
+      "matches": true
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "sha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "expectedSha256": "6910afc7d1434babb44806c69252f642c887fdb990d1c8d2b350a297673b56ec",
+      "matches": true
+    },
+    {
+      "path": "lib/security/server-authz.ts",
+      "sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+      "expectedSha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+      "matches": true
+    },
+    {
+      "path": "lib/security/trusted-origins.ts",
+      "sha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+      "expectedSha256": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+      "matches": true
+    },
+    {
+      "path": "node_modules/@better-auth/core/dist/api/index.mjs",
+      "sha256": "f8ea006e1cce3aa853f0d9e5242fb2a7327ae69c84b6a55d08b0f04ed5158ecf",
+      "expectedSha256": "f8ea006e1cce3aa853f0d9e5242fb2a7327ae69c84b6a55d08b0f04ed5158ecf",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/index.mjs",
+      "sha256": "9ccb59e0b6b519f681d0c9eab3f0a52c8847d6af843a48d014854a3801479c5f",
+      "expectedSha256": "9ccb59e0b6b519f681d0c9eab3f0a52c8847d6af843a48d014854a3801479c5f",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/middlewares/origin-check.mjs",
+      "sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2",
+      "expectedSha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/account.mjs",
+      "sha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "expectedSha256": "679269cf7424388d46114037b70e9e9ee3d0cead0a283f65339939c02e0f251f",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/callback.mjs",
+      "sha256": "bc4980902c0bca2863b4bb4c1d51a5c28ae3882565a320679a2eb1f84c38919e",
+      "expectedSha256": "bc4980902c0bca2863b4bb4c1d51a5c28ae3882565a320679a2eb1f84c38919e",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/email-verification.mjs",
+      "sha256": "9e33bab463d366c0e8fc947500fb98fe143228b14f69b9e247eec4215a224249",
+      "expectedSha256": "9e33bab463d366c0e8fc947500fb98fe143228b14f69b9e247eec4215a224249",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/error.mjs",
+      "sha256": "4edcaa5f7a88fae70c364c04fd2f3e05d91ecdeaed9c50ef0c172ab14f457803",
+      "expectedSha256": "4edcaa5f7a88fae70c364c04fd2f3e05d91ecdeaed9c50ef0c172ab14f457803",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/ok.mjs",
+      "sha256": "1ee6e836bb9986404eeaaa9052f7eca6d88134aa359774b46460714a9fa64daa",
+      "expectedSha256": "1ee6e836bb9986404eeaaa9052f7eca6d88134aa359774b46460714a9fa64daa",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/password.mjs",
+      "sha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "expectedSha256": "8a43510aa09292f84c8f27792c7eca594fe6dc760c63aa90ac4515cb5b1c2123",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/session.mjs",
+      "sha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "expectedSha256": "8370a042d8bd8b71d878878e673da2877606a401063a9a47afc87d232b041237",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-in.mjs",
+      "sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+      "expectedSha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-out.mjs",
+      "sha256": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3",
+      "expectedSha256": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/sign-up.mjs",
+      "sha256": "452803772ba80e56b077ea8e1c65ccadd1ad0a2afa86d6f23e3f76b39b1b3d9e",
+      "expectedSha256": "452803772ba80e56b077ea8e1c65ccadd1ad0a2afa86d6f23e3f76b39b1b3d9e",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/update-session.mjs",
+      "sha256": "70860209765aab66ba8c2d973e30c648dbcc0ecc0221a1778af57233093761e2",
+      "expectedSha256": "70860209765aab66ba8c2d973e30c648dbcc0ecc0221a1778af57233093761e2",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/routes/update-user.mjs",
+      "sha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "expectedSha256": "78eb4ce14e25f3ab06db820c2eee9f09f891456336116273d17428fafcde7d70",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/api/to-auth-endpoints.mjs",
+      "sha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3",
+      "expectedSha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/context/create-context.mjs",
+      "sha256": "519af35dd5e9454a41c4a8729c9bbeed69f7bbf8c80eefebdd747050b99ec153",
+      "expectedSha256": "519af35dd5e9454a41c4a8729c9bbeed69f7bbf8c80eefebdd747050b99ec153",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/db/internal-adapter.mjs",
+      "sha256": "dcfd03b6150fa74cc15d4c18bdb222e877be47c270d37ebaa44f2b3c16431777",
+      "expectedSha256": "dcfd03b6150fa74cc15d4c18bdb222e877be47c270d37ebaa44f2b3c16431777",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/db/schema.mjs",
+      "sha256": "a0ddffa656c4a42e9f2929eab5942108f7d0c3a221753768fdaf46b302eacd83",
+      "expectedSha256": "a0ddffa656c4a42e9f2929eab5942108f7d0c3a221753768fdaf46b302eacd83",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/integrations/next-js.mjs",
+      "sha256": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489",
+      "expectedSha256": "9771fc27835847c4f3152e33e836fd8e466c45c07eeb79d83da3260ad3fd4489",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/dist/oauth2/state.mjs",
+      "sha256": "f2e9046f4df819c7923407cd56eca9a4a0765298a4b561436d36c57305530509",
+      "expectedSha256": "f2e9046f4df819c7923407cd56eca9a4a0765298a4b561436d36c57305530509",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-auth/package.json",
+      "sha256": "86e8f39e15e32e563f3a4b1307845155dbdbae63a6f1361060275a88bb29970a",
+      "expectedSha256": "86e8f39e15e32e563f3a4b1307845155dbdbae63a6f1361060275a88bb29970a",
+      "matches": true
+    },
+    {
+      "path": "node_modules/better-call/dist/router.mjs",
+      "sha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+      "expectedSha256": "1b69e77273e7bd08bea655e7fb1275f59ea97565b071598148bfb4c2a7b74480",
+      "matches": true
+    },
+    {
+      "path": "node_modules/rou3/dist/index.mjs",
+      "sha256": "0f77b955be24584dad93ca5c232e1150fa9ee54a96b5e6483c05bfa4b338f1b0",
+      "expectedSha256": "0f77b955be24584dad93ca5c232e1150fa9ee54a96b5e6483c05bfa4b338f1b0",
+      "matches": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "expectedSha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "matches": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "expectedSha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "matches": true
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+      "expectedSha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+      "matches": true
+    },
+    {
+      "path": "scripts/verify-agent-workflow-contract.js",
+      "sha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29",
+      "expectedSha256": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29",
+      "matches": true
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+      "expectedSha256": "59114ca06eabc23d60ae539aa4c62d359d46ecf3e7e6cb41a7ad9248ebe8f18c",
+      "matches": true
+    },
+    {
+      "path": "services/modules/module-navigation.service.ts",
+      "sha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf",
+      "expectedSha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf",
+      "matches": true
+    },
+    {
+      "path": "services/security/account-session.service.ts",
+      "sha256": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+      "expectedSha256": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+      "matches": true
+    },
+    {
+      "path": "services/users/self-profile-http.service.ts",
+      "sha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3",
+      "expectedSha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3",
+      "matches": true
+    },
+    {
+      "path": "services/users/self-profile-input.ts",
+      "sha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf",
+      "expectedSha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf",
+      "matches": true
+    },
+    {
+      "path": "services/users/self-profile.service.ts",
+      "sha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17",
+      "expectedSha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17",
+      "matches": true
+    }
+  ],
+  "selected68StillMatch": true,
+  "unexpectedChangedFamilies": [
+    "services/pos/__tests__/pos.service.test.ts",
+    "services/pos/pos.service.ts",
+    "tsconfig.json"
+  ],
+  "changedVsPriorRefresh": [
+    {
+      "path": "components/finance/CustomerSettlementControls.tsx",
+      "beforeSha256": "aef41c8e626222eebed779c1b1a95fd6d70b2b62571f9eb4283827a8191879a9",
+      "afterSha256": "1a08937f09bcbb906c365ce27f00898f96f54932cd33c93254e57c860e9d2f22",
+      "kind": "modified"
+    },
+    {
+      "path": "components/finance/__tests__/CustomerSettlementControls.test.tsx",
+      "beforeSha256": "2c6258d66a455e8f1ea2cff5cf57b1653f204f7ab29b9ecd64504a8683eb743f",
+      "afterSha256": "5c7cf44fa9c181db8b9cc7c2522f28ea542eb8931761a64f26ecf56ad7e616ed",
+      "kind": "modified"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/CASE_PLAN.md",
+      "beforeSha256": "93129d3e3565134227759d8627b4e93bbbe713b63945146c8a7c8c5013dec9f3",
+      "afterSha256": "ff21efab551a4fc147420c40335496556533ed2c5e21b6e0a2092e2d4a019519",
+      "kind": "modified"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/COLLECTION_RUNTIME_REVIEW.md",
+      "beforeSha256": null,
+      "afterSha256": "6f200feab819a659ce0fd78e8f7a05daa399d6b0b94fd0bbdb172c0d8c8412e5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/COLLECTION_RUNTIME_TARGET.json",
+      "beforeSha256": null,
+      "afterSha256": "1051e68b14818a84a2be51e25cf0466b6a6ba3242f4df5c6248d3d7c73bc207d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/FINAL_QUALIFICATION.json",
+      "beforeSha256": null,
+      "afterSha256": "f638845a7fca3dc463e639317186307427419d7b0790e90f558714e9ee32ef99",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/LOCK_ORDER_IMPLEMENTATION.json",
+      "beforeSha256": null,
+      "afterSha256": "02719bdd126a478417c57baa5023cb5e7fa1c5ba30f36c753cce9eb7d8399409",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/POS_PROVIDER_LOCK_ORDER_REVIEW.md",
+      "beforeSha256": null,
+      "afterSha256": "43fd8ae8f0b1cd1d29cb8c062a1649cb5efd2dc3d2071a28c13bc7d94a1adcf8",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/RESULT.md",
+      "beforeSha256": null,
+      "afterSha256": "f9b3f031c7e2d8e3f66e3c553fe7e8c10db924edb6d47f536274089fb37bd294",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/SANITIZED_PUBLICATION_ADMISSION.json",
+      "beforeSha256": null,
+      "afterSha256": "461958229f98501edd102fff45aa3eb4d3bd671120a5df40d75dbc29118a16ec",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/TRACKED_STOCK_REVIEW.md",
+      "beforeSha256": null,
+      "afterSha256": "08d8dca2bdfeb45193faadb03e64539b70e9a860df4d63785d418523ccadeed5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/UI_PROJECTION_RESULT.json",
+      "beforeSha256": "03bcd7497a11045ca542ea0b83f1106b4aa6fa995ff8b06f1d809a1ce7fb545f",
+      "afterSha256": "e0daa9b422ff1f93c77fb274494e349244032e30293e525da812ac21d47f8db2",
+      "kind": "modified"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/UI_PROJECTION_RESULT_BEFORE_SUMMARY.json",
+      "beforeSha256": null,
+      "afterSha256": "03bcd7497a11045ca542ea0b83f1106b4aa6fa995ff8b06f1d809a1ce7fb545f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/UI_PROJECTION_RESULT_BEFORE_TYPEFIX.json",
+      "beforeSha256": null,
+      "afterSha256": "a33329eef440e2369296cbc5e5bd7ba9a4808091b815f4bfd576db54231f7c4f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/authenticated-app/APP_READY.json",
+      "beforeSha256": null,
+      "afterSha256": "d8d67990db8b606ae49c2c5319808b833b0ae2e8ffd2cd2bb68b0d626f1f3ff9",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/authenticated-app/AUTHENTICATED_COLLECTION_REPORT.md",
+      "beforeSha256": null,
+      "afterSha256": "38b25a5fa008900a3b092f6026e295919cd545406d8b4d7d61dcb81f01f17cc8",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/authenticated-app/LATEST.json",
+      "beforeSha256": null,
+      "afterSha256": "e7532ad6f84236977b8c8bdeb567e90631cacca823748b2d6245871de580a624",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/authenticated-app/RUNTIME_RETRY_ADMISSION_1.json",
+      "beforeSha256": null,
+      "afterSha256": "61e58d315dde2f8d93bfbdcf6cb1822669fd4ccf085aece51c534feac96fa097",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/authenticated-app/attempt-078f797d05/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "33f4841310649c932f301ca533b63e83e1cae0285cfe0c2c9eaaee0edfe961ae",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/authenticated-app/attempt-078f797d05/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "742346b209e1dcec10cb9cd3698d4d363e23bfb0cf38cba661dab62851a0f9ed",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/authenticated-app/attempt-078f797d05/SOURCE_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "84dde9f5219623f7da9c92588a40182bf7c6f110c4aebcdb94bad4a0ffa99963",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/authenticated-app/runtime-537396d1ec/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "017af14be42ca1e4f28acfbc263b23a417d55290de0772ddc765047cf4b8a3a2",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/authenticated-app/runtime-a912af197f/DATABASE_IDENTITY.json",
+      "beforeSha256": null,
+      "afterSha256": "22b7a751c29af7e949b5522c968660541254f435ce3430efe038c1742e07fa93",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/authenticated-app/runtime-a912af197f/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "e7532ad6f84236977b8c8bdeb567e90631cacca823748b2d6245871de580a624",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/lock-order-lint-27e252d316/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "b987c2f9ed870c7f68a1ad7f8dc961b5183768bea7bdeeadfffb308918b88eb4",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/lock-order-lint-27e252d316/eslint.json",
+      "beforeSha256": null,
+      "afterSha256": "e362f15cc029c2bf6b68be8226eff133ddf10a7b8aa256024f7ecb898fee91d5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/mixed-month.before-tracked-stock.txt",
+      "beforeSha256": null,
+      "afterSha256": "f120941ec7ce0b95921e684b15d74bb97354793bd75d0a8b8f240201eb0930a1",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-LATEST.json",
+      "beforeSha256": "f3c2793c671bdf8e5d2ce472be16a2c6b7502c76308951170c7fbed18ebf5c07",
+      "afterSha256": "6c26fe6b7970bd3feead668845c6099b08105469b40d97039528d96e36cce36f",
+      "kind": "modified"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-149fa2421b/pg-monthly-close-service.sanitized.summary.json",
+      "beforeSha256": null,
+      "afterSha256": "fc87fc5bcd0b00afdee035dd1a53ab75ca27fc5cc0ebe6e24425c9dc22e12e01",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-HISTORY.json",
+      "beforeSha256": null,
+      "afterSha256": "3cc650253f32aafb8329fce935385215dd8c2d434d0f85c96797ce86ba2515aa",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-IDENTITY.json",
+      "beforeSha256": null,
+      "afterSha256": "b01ad520b5e333a88eb05e5f48b3d8c46fa8fc5b450a8d4081bd76f290eab566",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-PRIVATE_FIXTURE.json",
+      "beforeSha256": null,
+      "afterSha256": "b41b42cf84bc965a263e094baa1cc3e94753a198c97bb2ff00ac172baf56c385",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "6c26fe6b7970bd3feead668845c6099b08105469b40d97039528d96e36cce36f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-RUNTIME_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "c876bf1249474a1106f5652051eb4320ad48bd6fa6622d897b6536a25a5c1706",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-SOURCE_MANIFEST.json",
+      "beforeSha256": null,
+      "afterSha256": "1b1631cea7e099c0e780445e552e6413cfa013eb49f5f51b68a36d097be5dd96",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-SQL_INVENTORY.json",
+      "beforeSha256": null,
+      "afterSha256": "69f32c3cbcd47a6daf233bbb7e22b206a8f38b7b88495976a2720734d52d45ea",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-TARGET.json",
+      "beforeSha256": null,
+      "afterSha256": "54599795d1a9f250461a91d1451cba4639d06e602f473fcccbcbcc70073dd1ec",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-fresh122.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "f4c60087f0fbc221f2a173762c12b58f4bd82811481a15c75aa89ad37602c8a2",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-fresh122.json",
+      "beforeSha256": null,
+      "afterSha256": "ccbd92a23e502bf4a5deddc581fcb415908fcb5dac59369f1f40330ca683237b",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-fresh122.md",
+      "beforeSha256": null,
+      "afterSha256": "8d8f77e36aeacd37e2b0f858041150aac86e0236627828c328c6bf9d28773acf",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-monthly-close-lifecycle.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "d786ae14d738095d102799d63ac5674fce66a61a4df49a924a674f2769a56a9d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-monthly-close-service.sanitized.summary.json",
+      "beforeSha256": null,
+      "afterSha256": "5f970cb86ae197010e4ffbeac25a5ad19f4d541a8f63b07938b5f4229265234f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-monthly-close-service.summary.json",
+      "beforeSha256": null,
+      "afterSha256": "1c3bfeb4405f1b84b2bb9d2d826d7b55146f0fbb9eeb9f7ffbc051a0540c8b79",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-monthly-close-tests.summary.json",
+      "beforeSha256": null,
+      "afterSha256": "580e959af7ed99ecbc6b0dd38cf48a183246ebdb4f6e0d947a99e2346b6c75e2",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-start.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "b1e67b236c6db7c440e56143e1f35b18bf53cbce9bd814b1bc592e4399571526",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/pg-attempt-54a799a9fc/pg-stop.execution.json",
+      "beforeSha256": null,
+      "afterSha256": "1bb5423e8b96d0d44375e489ab23f8ddb454598d541cff883937a12a0aabb087",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/RENDERED_COLLECTION_REPORT.md",
+      "beforeSha256": "b7c7948394cb1e8e864a8deb67c28a0d5bc56e3e9f0af3b2c30d69a0dd7919e7",
+      "afterSha256": "579df3ae49e3ebebb8bf48a7b37d5238ce0b49a834458e15dcc6ce4d5ab66417",
+      "kind": "modified"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-254a51fb41/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "df1a91f095f4eb8950a70a01d1d4336e2fcc7ed42fdadf2e2b309f0cc0b3d19d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-254a51fb41/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "c4ae757785396160f495b1583c764423f7c2b9be13b7e3bd9e05070e41e02a1c",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-254a51fb41/SOURCE_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "b55a5f93cd51c927ab0e4ffc6df6c465beadca110a55ffbf3f107b1120efadd5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-92c96dfee4/RENDERED_COLLECTION_REPORT.before-typefix.md",
+      "beforeSha256": null,
+      "afterSha256": "90e581835030a69ea8ab8544df2edb3cbd1d4841927e85c08f83c910fb1fe59f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-92c96dfee4/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "e755c5fc8bd50d02a3676e74cd59956abdf15b098dbc7481d02c206c631c3655",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-92c96dfee4/RUNNER_REVIEW.json",
+      "beforeSha256": null,
+      "afterSha256": "3102757674d84b9e3e1ac07de2a4ab987ebb2e1f621b358cfb65241e0d700d33",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-92c96dfee4/SOURCE_BINDING.json",
+      "beforeSha256": null,
+      "afterSha256": "5c81340f4569a2fe70fe4d4e54d05961de9bad23aee3621ed589ec695fc4e8d4",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-cb414ee6ae/RENDERED_COLLECTION_REPORT.before-summary.md",
+      "beforeSha256": null,
+      "afterSha256": "b7c7948394cb1e8e864a8deb67c28a0d5bc56e3e9f0af3b2c30d69a0dd7919e7",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-cb414ee6ae/browser-entry.before-rename.txt",
+      "beforeSha256": null,
+      "afterSha256": "0dd362ae1e117e5bc1700871407756b52afeaf4e64563a0578ce065a74f526ad",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-cb414ee6ae/mocks.before-rename.txt",
+      "beforeSha256": null,
+      "afterSha256": "5013c519c406dd3ba3f199ec7c78f3f8f9b4cbc339edc59fc38e6962bfb71213",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/rendered-ui/attempt-cb414ee6ae/run-rendered.before-visible-summary.txt",
+      "beforeSha256": null,
+      "afterSha256": "1bbc06694d65c2e15d0ef69392ff08e82d0e169cdce752531ad564d2c82b53a5",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/static-6e66bef416/eslint.json",
+      "beforeSha256": null,
+      "afterSha256": "d776e16c58797e780c2a51ce91f464281bb84df32126695c6e3274a5c96b8a3f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/static-6e66bef416/tsconfig.json",
+      "beforeSha256": null,
+      "afterSha256": "09f5adfb0a07cb045372b39e857acee8d94df94e809dd208acc4b7ebdfc67136",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/static-6e66bef416/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "6eceb2a2f24bf95f0693ebddb51b001235a25cfd21d3dcd41a2826c1d50ff0e1",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/static-c519a9b3bf/eslint.json",
+      "beforeSha256": null,
+      "afterSha256": "dc5052bd2a83a37060249be9e7be5d42f393c64e382de7324b16f76efd011456",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/static-c519a9b3bf/tsconfig.json",
+      "beforeSha256": null,
+      "afterSha256": "09f5adfb0a07cb045372b39e857acee8d94df94e809dd208acc4b7ebdfc67136",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/static-c519a9b3bf/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "62f0279af5269e7dc5fb557802313a7eef7dc526e34079a3672d2096b42734e6",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-type-fix/CustomerSettlementControls.before.tsx.txt",
+      "beforeSha256": null,
+      "afterSha256": "c9b32fae6645a32bb72f8d2f3ce4929220d2e545bacb46fe3f943b680f0d585d",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-type-fix/RESULT.json",
+      "beforeSha256": null,
+      "afterSha256": "167e9cc2d33cc97f6c086ee0d949ba93dba51718dadef555bef5dc9551a5748f",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-2d2e071850/results.json",
+      "beforeSha256": null,
+      "afterSha256": "4f57106e4088db5e70f6534dc5b52153dda42c501946407d4583a72a3f4982b0",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-2d2e071850/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "2d70904f3e340ac05757a4df699d9cf51479cb8e77a7e6169991ea633b6769b7",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-7beb0ed572/results.json",
+      "beforeSha256": null,
+      "afterSha256": "f400468199c7be5eafaf9b35856112b5c02fbf3614bc356d19341c7d3bec51ba",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-7beb0ed572/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "660828c0441121c5d0f2f215266df81f4bfbfcda99c7e8627a04dc4b118889f7",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-dae936c0ab/results.json",
+      "beforeSha256": null,
+      "afterSha256": "2edec224a80221e9001a676ad5d6c859c1b23233474964c8294d08ce84367f58",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-dae936c0ab/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "aee47ee06b31f6b509a451f3c6ec481eeb0227c6a708967ab4a1bd58ab9fa4b8",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-e7896fb60f/results.json",
+      "beforeSha256": null,
+      "afterSha256": "1703832b0cbca56431a84b3e19aaa5e04e8bdb6b7e0e3c689fe938f833d96423",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/ui-unit-e7896fb60f/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "a2d802fae7f4d0554c113efa45d1f99e98564281aed3c30a0372db0cfc7f247c",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-320cb51326/results.json",
+      "beforeSha256": null,
+      "afterSha256": "52d682dd7a59de09364d9db25efb580e974de77bdecd456f84550b6337caf861",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-320cb51326/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "6675464747d15c173f46654d01a37733b31242f9a6dbb8edc0c6f0c6bb8e18dc",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-a4c675dcdd/results.json",
+      "beforeSha256": null,
+      "afterSha256": "bcdd624722a5755f21d803e6fd081d24b1175837ce36ba8780ba070b9f27bb1b",
+      "kind": "added"
+    },
+    {
+      "path": "docs/stoquify-potential/development/close-monthly-qualification-2026-11-10/unit-a4c675dcdd/verification.json",
+      "beforeSha256": null,
+      "afterSha256": "0fbddf40bf5b87bd6114765ced550413131596d840b4d73fa82b46d6844e5c3e",
+      "kind": "added"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-settlement.service.test.ts",
+      "beforeSha256": "ccbcf7de7218411e6f39abe2285ec8eafd75616977e41cf5d09d8774502a5a97",
+      "afterSha256": "8399d46123ce9082e53f7945be5c922465eb1639686fc24d9a5ca84ad8480362",
+      "kind": "modified"
+    },
+    {
+      "path": "services/accounting/customer-settlement.service.ts",
+      "beforeSha256": "1ac164a091a4061fffd6ac467f475a8b2ecdec941c98543f04e26d0c711e8191",
+      "afterSha256": "9d5a47154d5b46aeb370f9f5b0f76ed33f84680293038631e06d5e975023b294",
+      "kind": "modified"
+    },
+    {
+      "path": "services/payments/__tests__/pos-electronic-tender-authority.service.test.ts",
+      "beforeSha256": "d130fb7b8fe5ebce9af62823b51a32d0da49fd70076b8662fb3889604a45532b",
+      "afterSha256": "05a89ae10abba804974f45337b9f6c8f4ab8b5e7e6de7ec9be0fdd8ba7ea54ef",
+      "kind": "modified"
+    },
+    {
+      "path": "services/payments/customer-settlement-payment-authority.service.ts",
+      "beforeSha256": "02d58827d5063d500dba358b6544a7df0617d0dd1860fc395bf608b524799d69",
+      "afterSha256": "8f45dda68550868c4eab65ab38a6e2c54dd6266f7c46495a767be6375eef24ed",
+      "kind": "modified"
+    },
+    {
+      "path": "services/payments/pos-electronic-tender-authority.service.ts",
+      "beforeSha256": "f0614f708e100170cc143da3d8d135814ed95ba201dcfa1e798f2296c0276d55",
+      "afterSha256": "fd03c611503c79638c99ad98380b0db90fc450cf6c3aa138d7b85d7d3435bd62",
+      "kind": "modified"
+    },
+    {
+      "path": "services/pos/__tests__/pos.service.test.ts",
+      "beforeSha256": "07a86b87606ac41a04b566e4ae908120e97ad7b8825abf5ee7e4c78fd1886ae0",
+      "afterSha256": "f550afa3ab7ea91912f74ffb401f1758bd73656e1a3cbf1d19e83ef8935aa589",
+      "kind": "modified"
+    },
+    {
+      "path": "services/pos/pos.service.ts",
+      "beforeSha256": "1591a235588c5485f3cdb840a33ae917c1e91449d9b4633c34e587d5bfd120e5",
+      "afterSha256": "f272dafb5097b28c247db43138fccd79c7811acfccdc8cb7457c3497834a89a0",
+      "kind": "modified"
+    },
+    {
+      "path": "tsconfig.json",
+      "beforeSha256": "d8520694b9940364a676d62d757600ffb29718574e72c5752f8f4875021f4ccb",
+      "afterSha256": "d3579c5303333929f58ef96286529142b8e64137c59fb8a32b7c43598ac518c9",
+      "kind": "modified"
+    }
+  ],
+  "metadataDisposition": {
+    "path": "PRIVATE-METADATA-DISPOSITION-r2.json",
+    "sha256": "a45cde4732995e182e286c2af5420a678ff84745a1703faf2ac6e1a2cb1981e9"
+  },
+  "scope": "Bounded import/configuration and metadata change evidence only; no behavior approval. Existing finance/profile classification is inherited only when source families/imports permit independent reviewer confirmation.",
+  "limits": [
+    "This is a targeted check after the late full-source scan, not another whole-root scan.",
+    "Any new drift or unexpected family requires review before candidate capture.",
+    "Application/browser/database/build execution is absent; actual runtime owner still performs source equality checks and qualification."
+  ],
+  "qualificationPassed": false
+}

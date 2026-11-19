@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "passed": true,
+  "database": "stoquify_replay_dataset_20261028_01",
+  "destination": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\payroll-continuation-2026-11-02",
+  "evidenceScope": "Markdown fidelity, summary metrics, full register rows, local links and PDF page bounds; no statutory or database certification.",
+  "summarySha256": "93306c923884de6d8f87fd906e6212ea1e52c41f1e73a0e67163fc8a1168da6a",
+  "registerSha256": "ce94e5471c93c92e4abe73f5eadab30a889c7cc859ebb335049d30747cb2eb63",
+  "qaSourceSha256": {
+    ".seed-artifacts\\payroll-continuation-pdf-review\\review.py": "e57659fc23a7b08dc08790b148c4eb4af4ffedd4dcd5974161fe2beb2bf14e30",
+    ".seed-artifacts\\pdf-report-review\\review.py": "67b33d2ac1f7297b1327e2143fcf0eff921476df59e63de8d5104cb0b171d92d"
+  },
+  "metrics": {
+    "periodGates": {
+      "plannedOrganizationMonths": 36,
+      "recordedOrganizationMonths": 36,
+      "periodGateAttempts": 33,
+      "periodsCreated": 0,
+      "existingPeriodsReused": 0,
+      "blockedPeriodGates": 33,
+      "unexpectedFailures": 0,
+      "octoberPending": 3,
+      "completedPayrollLifecycles": 0
+    },
+    "verification": {
+      "scopedUnit": {
+        "tests": 207,
+        "passed": 207,
+        "failed": 0,
+        "suites": 7
+      },
+      "postgresService": {
+        "tests": 23,
+        "passed": 23,
+        "failed": 0,
+        "suites": 2
+      },
+      "postgresDatabase": "stoquify_local_payroll_blockers_20261102_ba4a1aaf",
+      "postgresMigrations": 121,
+      "sql": {
+        "ready": true,
+        "checks": 3,
+        "passed": 3
+      },
+      "sourceTypecheck": {
+        "owned": 0,
+        "imported": 0
+      },
+      "sourcePreparation": {
+        "checks": 19,
+        "passed": true
+      },
+      "wholeDataset": {
+        "checks": 1124,
+        "passed": true,
+        "businessFingerprintUnchanged": true,
+        "lastOrderedReplay": "2026-10-29"
+      }
+    },
+    "remaining": {
+      "payrollTables": 15,
+      "historicalInvoices": 18,
+      "requirements": [
+        "Authentic reviewed effective-dated 2025/2026 rules and independent expected-result fixtures",
+        "Qualified reviewer/checker evidence and legal-owner publication/admission",
+        "Reviewed tax-year, history-membership, adjustment, correction/reversal and refund contract",
+        "Certified complete-period inputs, followed by full chronological payroll and downstream acceptance"
+      ]
+    }
+  },
+  "reports": [
+    {
+      "report": "CONTINUATION-REPORT",
+      "source": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\payroll-continuation-2026-11-02\\CONTINUATION-REPORT.md",
+      "sourceAndDestinationIdenticalPath": true,
+      "pdf": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\payroll-continuation-2026-11-02\\CONTINUATION-REPORT.pdf",
+      "pages": 3,
+      "bytes": 73806,
+      "sourceSha256": "bbb827a750c9df75addac8642225f00f741ce52e7c8d977d7f23462c90dee549",
+      "pdfSha256": "4aa8ef73a017c8a4426e17931c652630587acd88d56ca2b3a5b4907f3995f749",
+      "visibleMarkdownBlocksChecked": 75,
+      "registerFidelity": null,
+      "summaryMetrics": {
+        "tableMetrics": 16,
+        "narrativeFacts": 5
+      },
+      "relocatedAnnotations": 4,
+      "validLocalLinks": 18,
+      "boundedWordsChecked": 832,
+      "reviewImages": [
+        "CONTINUATION-REPORT-page-1.png",
+        "CONTINUATION-REPORT-page-3.png",
+        "CONTINUATION-REPORT-contact-sheet-01.png"
+      ]
+    },
+    {
+      "report": "PAYROLL-UNBLOCK-REGISTER",
+      "source": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\PAYROLL-UNBLOCK-REGISTER.md",
+      "sourceAndDestinationIdenticalPath": false,
+      "pdf": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\payroll-continuation-2026-11-02\\PAYROLL-UNBLOCK-REGISTER.pdf",
+      "pages": 96,
+      "bytes": 523690,
+      "sourceSha256": "cbbf41fa52368c308ed2b4772ac492af737dd3c7683b6f1eea7b233b6fc3a268",
+      "pdfSha256": "c6b6352ea2d708654405ededcf397b5b20d421a9280e6fa6dad3d8dfe9494d93",
+      "visibleMarkdownBlocksChecked": 3117,
+      "registerFidelity": {
+        "canonicalEntries": 601,
+        "completeRowsChecked": 601
+      },
+      "summaryMetrics": null,
+      "relocatedAnnotations": 14,
+      "validLocalLinks": 14,
+      "boundedWordsChecked": 33405,
+      "reviewImages": [
+        "PAYROLL-UNBLOCK-REGISTER-page-1.png",
+        "PAYROLL-UNBLOCK-REGISTER-contact-sheet-01.png",
+        "PAYROLL-UNBLOCK-REGISTER-contact-sheet-02.png",
+        "PAYROLL-UNBLOCK-REGISTER-contact-sheet-03.png",
+        "PAYROLL-UNBLOCK-REGISTER-contact-sheet-04.png",
+        "PAYROLL-UNBLOCK-REGISTER-contact-sheet-05.png",
+        "PAYROLL-UNBLOCK-REGISTER-contact-sheet-06.png",
+        "PAYROLL-UNBLOCK-REGISTER-contact-sheet-07.png",
+        "PAYROLL-UNBLOCK-REGISTER-page-96.png",
+        "PAYROLL-UNBLOCK-REGISTER-contact-sheet-08.png"
+      ]
+    },
+    {
+      "report": "REVIEWER-HANDOFF",
+      "source": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\payroll-unblock-workpapers\\source-research-2026-11-02\\REVIEWER-HANDOFF.md",
+      "sourceAndDestinationIdenticalPath": false,
+      "pdf": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\payroll-continuation-2026-11-02\\REVIEWER-HANDOFF.pdf",
+      "pages": 3,
+      "bytes": 75479,
+      "sourceSha256": "2b7ac8582745355a96a819c2cd6da89e596570c666b6b684f13bfad74cc652c6",
+      "pdfSha256": "5f54961ec58189c97676e4478d77e90d1476aa0766e17764d18fc7dabee7a98e",
+      "visibleMarkdownBlocksChecked": 49,
+      "registerFidelity": null,
+      "summaryMetrics": null,
+      "relocatedAnnotations": 30,
+      "validLocalLinks": 30,
+      "boundedWordsChecked": 1013,
+      "reviewImages": [
+        "REVIEWER-HANDOFF-page-1.png",
+        "REVIEWER-HANDOFF-page-3.png",
+        "REVIEWER-HANDOFF-contact-sheet-01.png"
+      ]
+    },
+    {
+      "report": "AP-2025-ADMISSION-FINDING",
+      "source": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\payroll-unblock-workpapers\\source-research-2026-11-02\\AP-2025-ADMISSION-FINDING.md",
+      "sourceAndDestinationIdenticalPath": false,
+      "pdf": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\payroll-continuation-2026-11-02\\AP-2025-ADMISSION-FINDING.pdf",
+      "pages": 2,
+      "bytes": 69997,
+      "sourceSha256": "97e3298b3c8f8968f0dcc4afab9f61387b55964408e65ed71be0ce716ad0a795",
+      "pdfSha256": "e3cd1c6a47d1aedea111238f51e00654923ab7df956fd485619967600b7b1149",
+      "visibleMarkdownBlocksChecked": 29,
+      "registerFidelity": null,
+      "summaryMetrics": null,
+      "relocatedAnnotations": 2,
+      "validLocalLinks": 2,
+      "boundedWordsChecked": 655,
+      "reviewImages": [
+        "AP-2025-ADMISSION-FINDING-page-1.png",
+        "AP-2025-ADMISSION-FINDING-page-2.png",
+        "AP-2025-ADMISSION-FINDING-contact-sheet-01.png"
+      ]
+    },
+    {
+      "report": "history-proof-legacy-delete-finding",
+      "source": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\payroll-continuation-2026-11-02\\history-proof-legacy-delete-finding.md",
+      "sourceAndDestinationIdenticalPath": true,
+      "pdf": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\database-seed\\payroll-continuation-2026-11-02\\history-proof-legacy-delete-finding.pdf",
+      "pages": 1,
+      "bytes": 52498,
+      "sourceSha256": "fa6507202c113e87514b81a810eff0c71fa10b64b8967733435bf0c5ff8f56e9",
+      "pdfSha256": "308947143b93dcfd4ebf490c443c5f71eb12e463823a31383bf3c76187c3f59c",
+      "visibleMarkdownBlocksChecked": 6,
+      "registerFidelity": null,
+      "summaryMetrics": null,
+      "relocatedAnnotations": 0,
+      "validLocalLinks": 0,
+      "boundedWordsChecked": 225,
+      "reviewImages": [
+        "history-proof-legacy-delete-finding-page-1.png",
+        "history-proof-legacy-delete-finding-contact-sheet-01.png"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "reviewedAt": "2026-11-03T17:42:58.8834105Z",
+  "reviewer": "r01_independent_review",
+  "verdict": "accepted_for_isolated_execution",
+  "executionPerformedByReviewer": false,
+  "files": [
+    {
+      "path": "database/run-native-retry02.cjs",
+      "sha256": "2dd73f45f5959f97c750ddff003b5bb00c98a92c8abb69e81a2f822f4411c37c"
+    },
+    {
+      "path": "database/jest.native-retry02.config.cjs",
+      "sha256": "c24af9049dc7b445201b0f1f7303104b57d19c5e9fcf32c61e5b35bce219c888"
+    },
+    {
+      "path": "database/authority-retry02.postgres.test.ts",
+      "sha256": "bf743ad8151d37e1c91b6f358c36914ccf54a2985d5bdc5c238085027f141f91"
+    },
+    {
+      "path": "database/isolation-guard.cjs",
+      "sha256": "be37ae563e6def0d5b4ec67d45d5231e2ee7d0782df5aca1ad6a10ae6adc0e56"
+    }
+  ],
+  "target": ".codex-tmp/p04r01-qualification-20261103-r2/postgres",
+  "database": "stoquify_local_p04_r01_20261103_r2",
+  "review": [
+    "Compared retry02 to accepted retry01: fresh exclusive owned directory/database, new receipt/config/output paths; original cluster not reused",
+    "New tests are the original 37-case suite plus two delivery-issues cases; direct current service with real Prisma, fresh persisted role codes and permission revocation; no permission mocks added",
+    "Delivery positive reads and denied reserved row/cursor plus ordinary legacy evidence/revocation compare scoped business/authority snapshots before and after",
+    "Unchanged canonical pinned Prisma schema proof, exact copied migrations, loopback-only DB/socket guard, env-file block, synthetic identities, no provider send, owner-checked stop and retained DB"
+  ],
+  "limitations": [
+    "Recipe review is not executed evidence",
+    "BetterAuth transport and Next headers/cache remain explicitly stubbed; no HTTP/browser proof",
+    "Dedicated native last-custodian case remains absent; unit evidence only"
+  ]
+}

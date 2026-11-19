@@ -1,6 +1,8 @@
+import { randomUUID } from "node:crypto"
 import {
   AccountantClientInviteStatus,
   BusinessOutboxStatus,
+  Prisma,
 } from "@prisma/client"
 import { z } from "zod"
 
@@ -63,10 +65,53 @@ function providerReferenceHash(result?: AccountantClientInviteProviderResult) {
     : null
 }
 
-async function settleInviteDelivery(input: {
+const workerIdentity = z.object({
+  organizationId: z.string().trim().min(1).max(191),
+  workerId: z.string().trim().min(1).max(191),
+})
+
+const dispatchSchema = z.object({
+  version: z.literal(1),
+  attempt: z.number().int().positive(),
+  executionId: z.string().uuid(),
+  reservedAt: z.string().datetime(),
+  outcome: z.enum(["RESERVED", "ACCEPTED", "NOT_SENT", "UNKNOWN"]),
+}).strict()
+
+function dispatchMetadata(value: Prisma.JsonValue | null) {
+  const container = value && typeof value === "object" && !Array.isArray(value) ? value : {}
+  const raw = container.accountantInviteDispatch
+  return { container, raw, parsed: dispatchSchema.safeParse(raw) }
+}
+
+type InviteLease = {
   requestId: string
+  organizationId: string
   workerId: string
   attempt: number
+  executionId?: string
+  expectedUpdatedAt?: Date
+  expectedMetadata?: Prisma.JsonValue | null
+}
+
+function leaseWhere(lease: InviteLease): Prisma.BusinessEventOutboxWhereInput {
+  return {
+    id: lease.requestId,
+    organizationId: lease.organizationId,
+    eventName: ACCOUNTANT_CLIENT_INVITE_EVENT_NAME,
+    status: BusinessOutboxStatus.LOCKED,
+    lockedBy: lease.workerId,
+    attempts: lease.attempt,
+    ...(lease.expectedUpdatedAt ? { updatedAt: lease.expectedUpdatedAt } : {}),
+    ...(lease.executionId
+      ? { metadata: { path: ["accountantInviteDispatch", "executionId"], equals: lease.executionId } }
+      : lease.expectedMetadata !== undefined
+        ? { metadata: { equals: lease.expectedMetadata === null ? Prisma.AnyNull : lease.expectedMetadata } }
+        : {}),
+  }
+}
+
+async function settleInviteDelivery(input: InviteLease & {
   outboxStatus: BusinessOutboxStatus
   deliveryStatus: "SENT" | "DEFERRED" | "FAILED" | "DEAD_LETTER"
   now: Date
@@ -75,18 +120,16 @@ async function settleInviteDelivery(input: {
 }) {
   return db.$transaction(async (tx) => {
     const request = await tx.businessEventOutbox.findFirst({
-      where: {
-        id: input.requestId,
-        eventName: ACCOUNTANT_CLIENT_INVITE_EVENT_NAME,
-        status: BusinessOutboxStatus.LOCKED,
-        lockedBy: input.workerId,
-      },
-      select: { id: true, payloadHash: true },
+      where: leaseWhere(input),
     })
-    if (!request) throw new ConflictError("Accountant invitation lease was lost")
+    if (!request) return false
+
+    const dispatch = dispatchMetadata(request.metadata)
+    const outcome = input.deliveryStatus === "SENT" ? "ACCEPTED"
+      : input.errorCode === "PROVIDER_OUTCOME_UNKNOWN" ? "UNKNOWN" : "NOT_SENT"
 
     const invite = await tx.accountantClientInvite.findFirst({
-      where: { outboxId: input.requestId },
+      where: { organizationId: input.organizationId, outboxId: input.requestId },
       select: {
         id: true,
         organizationId: true,
@@ -99,13 +142,12 @@ async function settleInviteDelivery(input: {
     }
 
     const transitioned = await tx.businessEventOutbox.updateMany({
-      where: {
-        id: input.requestId,
-        status: BusinessOutboxStatus.LOCKED,
-        lockedBy: input.workerId,
-      },
+      where: { ...leaseWhere(input), updatedAt: request.updatedAt },
       data: {
         status: input.outboxStatus,
+        ...(dispatch.parsed.success ? {
+          metadata: { ...dispatch.container, accountantInviteDispatch: { ...dispatch.parsed.data, outcome } },
+        } : {}),
         availableAt:
           input.outboxStatus === BusinessOutboxStatus.FAILED
             ? retryAt(input.attempt, input.now)
@@ -123,14 +165,11 @@ async function settleInviteDelivery(input: {
         lockedAt: null,
         lockedBy: null,
         lastErrorCode: input.errorCode ?? null,
-        lastErrorMessage:
-          input.deliveryStatus === "SENT"
-            ? null
-            : "Accountant invitation delivery did not complete.",
+        lastErrorMessage: null,
       },
     })
     if (transitioned.count !== 1) {
-      throw new ConflictError("Accountant invitation lease was lost")
+      return false
     }
 
     const referenceHash = providerReferenceHash(input.providerResult)
@@ -188,25 +227,27 @@ async function settleInviteDelivery(input: {
         },
       },
     })
-    return invite
+    return true
   })
 }
 
 export async function claimAccountantClientInvites(input: {
-  organizationId?: string
+  organizationId: string
   workerId: string
   limit?: number
   now?: Date
   staleAfterMs?: number
 }) {
+  const identity = workerIdentity.parse(input)
   const now = input.now ?? new Date()
-  const limit = Math.min(100, Math.max(1, input.limit ?? 25))
+  const limit = z.number().int().min(1).max(100).parse(input.limit ?? 25)
+  const staleAfterMs = z.number().int().min(1).max(3600000).parse(input.staleAfterMs ?? 5 * 60_000)
   const staleBefore = new Date(
-    now.getTime() - (input.staleAfterMs ?? 5 * 60_000),
+    now.getTime() - staleAfterMs,
   )
   const candidates = await db.businessEventOutbox.findMany({
     where: {
-      organizationId: input.organizationId,
+      organizationId: identity.organizationId,
       eventName: ACCOUNTANT_CLIENT_INVITE_EVENT_NAME,
       OR: [
         {
@@ -221,9 +262,9 @@ export async function claimAccountantClientInvites(input: {
         },
       ],
     },
-    orderBy: [{ availableAt: "asc" }, { createdAt: "asc" }],
+    orderBy: [{ availableAt: "asc" }, { createdAt: "asc" }, { id: "asc" }],
     take: limit,
-    select: { id: true },
+    select: { id: true, attempts: true, updatedAt: true },
   })
 
   const claimed: string[] = []
@@ -231,7 +272,10 @@ export async function claimAccountantClientInvites(input: {
     const result = await db.businessEventOutbox.updateMany({
       where: {
         id: candidate.id,
+        organizationId: identity.organizationId,
         eventName: ACCOUNTANT_CLIENT_INVITE_EVENT_NAME,
+        attempts: candidate.attempts,
+        updatedAt: candidate.updatedAt,
         OR: [
           {
             status: {
@@ -248,7 +292,7 @@ export async function claimAccountantClientInvites(input: {
       data: {
         status: BusinessOutboxStatus.LOCKED,
         lockedAt: now,
-        lockedBy: input.workerId,
+        lockedBy: identity.workerId,
         attempts: { increment: 1 },
       },
     })
@@ -258,30 +302,57 @@ export async function claimAccountantClientInvites(input: {
 }
 
 export async function processAccountantClientInvite(input: {
+  organizationId: string
   requestId: string
   workerId: string
   now?: Date
   environment?: WorkerEnvironment
   dependencies?: Partial<WorkerDependencies>
+  providerTimeoutMs?: number
 }) {
-  const now = input.now ?? new Date()
+  const identity = workerIdentity.parse(input)
+  const requestId = z.string().trim().min(1).max(191).parse(input.requestId)
+  const clock = () => input.now ?? new Date()
+  const now = clock()
+  const timeoutMs = z.number().int().min(1).max(120000).parse(input.providerTimeoutMs ?? 30000)
   const environment = input.environment ?? process.env
   const dependencies = { ...defaultDependencies, ...input.dependencies }
   const request = await db.businessEventOutbox.findFirst({
     where: {
-      id: input.requestId,
+      id: requestId,
+      organizationId: identity.organizationId,
       eventName: ACCOUNTANT_CLIENT_INVITE_EVENT_NAME,
       status: BusinessOutboxStatus.LOCKED,
-      lockedBy: input.workerId,
+      lockedBy: identity.workerId,
     },
   })
   if (!request) {
     throw new NotFoundError("Claimed accountant invitation was not found")
   }
 
+  const lease: InviteLease = { requestId, ...identity, attempt: request.attempts, expectedUpdatedAt: request.updatedAt, expectedMetadata: request.metadata }
+  const settle = async (status: "SENT" | "DEFERRED" | "FAILED" | "DEAD_LETTER", code?: string, providerResult?: AccountantClientInviteProviderResult) => {
+    const settled = await settleInviteDelivery({ ...lease, outboxStatus: status, deliveryStatus: status, now: clock(), errorCode: code, providerResult })
+    return { requestId, status: settled ? status : "LEASE_LOST" as const, ...(code ? { code } : {}) }
+  }
+  const dispatch = dispatchMetadata(request.metadata)
+  if (dispatch.parsed.success && dispatch.parsed.data.outcome === "RESERVED" && dispatch.parsed.data.attempt === request.attempts) {
+    return { requestId, status: "PROCESSING" as const }
+  }
+  // A reclaimed legacy or reserved send may already have reached the provider.
+  // Hold it for review rather than assuming an absent acknowledgement means no send.
+  if ((request.metadata !== null && (typeof request.metadata !== "object" || Array.isArray(request.metadata))) ||
+      (dispatch.raw !== undefined && !dispatch.parsed.success) ||
+      (dispatch.parsed.success && dispatch.parsed.data.outcome !== "NOT_SENT") ||
+      (dispatch.parsed.success && dispatch.parsed.data.attempt !== request.attempts - 1) ||
+      (!dispatch.parsed.success && request.attempts > 1)) {
+    return settle("DEFERRED", "PROVIDER_OUTCOME_UNKNOWN")
+  }
+  let reserved = false
+
   try {
     const payload = outboxPayloadSchema.parse(request.payload)
-    if (payload.organizationId !== request.organizationId) {
+    if (hashBusinessPayload(request.payload) !== request.payloadHash || payload.organizationId !== request.organizationId) {
       throw new BusinessRuleError(
         "Accountant invitation tenant evidence does not match",
       )
@@ -356,119 +427,97 @@ export async function processAccountantClientInvite(input: {
       throw new ConflictError("Accountant invitation referral URL is invalid")
     }
 
-    const providerResult = await dependencies.sendAccountantClientInvite({
-      destination: envelope.destination,
-      inviteUrl: envelope.inviteUrl,
-      organizationName: invite.organization.name,
-      accountantFirmName: invite.accountantFirmName,
-      role: invite.role,
-      locale: payload.locale,
-      expiresAt: invite.expiresAt.toISOString(),
-      referralCode: payload.referralCode,
-      idempotencyKey: request.idempotencyKey,
-    }, environment)
-
-    if (providerResult.status === "SENT") {
-      await settleInviteDelivery({
-        requestId: request.id,
-        workerId: input.workerId,
-        attempt: request.attempts,
-        outboxStatus: BusinessOutboxStatus.SENT,
-        deliveryStatus: "SENT",
-        now,
-        providerResult,
+    if (request.attempts > request.maxAttempts) {
+      return settle("DEAD_LETTER", "ACCOUNTANT_INVITE_ATTEMPTS_EXHAUSTED")
+    }
+    const executionId = randomUUID()
+    const reservation = await db.$transaction(async tx => {
+      const claimed = await tx.businessEventOutbox.updateMany({
+        where: leaseWhere(lease),
+        data: {
+          metadata: { ...dispatch.container, accountantInviteDispatch: { version: 1, attempt: request.attempts, executionId, reservedAt: clock().toISOString(), outcome: "RESERVED" } },
+        },
       })
-      return { requestId: request.id, status: "SENT" as const }
+      if (claimed.count !== 1) return false
+      await tx.auditLog.create({ data: {
+        organizationId: identity.organizationId,
+        userId: null,
+        entityType: "AccountantClientInvite",
+        entityId: invite.id,
+        action: "ACCOUNTANT_INVITE_DISPATCH_RESERVED",
+        changes: { attempt: request.attempts, executionId, outboxId: request.id },
+      } })
+      return true
+    })
+    if (!reservation) return { requestId, status: "LEASE_LOST" as const }
+    lease.executionId = executionId
+    delete lease.expectedUpdatedAt
+    delete lease.expectedMetadata
+    reserved = true
+
+    let timer: ReturnType<typeof setTimeout> | undefined
+    let providerResult: AccountantClientInviteProviderResult
+    try {
+      providerResult = await Promise.race([
+        dependencies.sendAccountantClientInvite({
+          destination: envelope.destination,
+          inviteUrl: envelope.inviteUrl,
+          organizationName: invite.organization.name,
+          accountantFirmName: invite.accountantFirmName,
+          role: invite.role,
+          locale: payload.locale,
+          expiresAt: invite.expiresAt.toISOString(),
+          referralCode: payload.referralCode,
+          idempotencyKey: request.idempotencyKey,
+        }, environment),
+        new Promise<AccountantClientInviteProviderResult>(resolve => {
+          timer = setTimeout(() => resolve({ status: "UNKNOWN", provider: "RESEND", errorCode: "ACCOUNTANT_INVITE_PROVIDER_OUTCOME_UNKNOWN", retryable: false }), timeoutMs)
+        }),
+      ])
+    } finally { if (timer) clearTimeout(timer) }
+    if (providerResult.status === "SENT" && providerResult.providerReference?.trim()) {
+      return await settle("SENT", undefined, providerResult)
     }
     if (providerResult.status === "DEFERRED") {
-      await settleInviteDelivery({
-        requestId: request.id,
-        workerId: input.workerId,
-        attempt: request.attempts,
-        outboxStatus: BusinessOutboxStatus.DEFERRED,
-        deliveryStatus: "DEFERRED",
-        now,
-        providerResult,
-        errorCode: providerResult.errorCode,
-      })
-      return { requestId: request.id, status: "DEFERRED" as const }
+      return await settle("DEFERRED", "PROVIDER_NOT_CONFIGURED", providerResult)
     }
-
-    const exhausted =
-      request.attempts >= request.maxAttempts || !providerResult.retryable
-    await settleInviteDelivery({
-      requestId: request.id,
-      workerId: input.workerId,
-      attempt: request.attempts,
-      outboxStatus: exhausted
-        ? BusinessOutboxStatus.DEAD_LETTER
-        : BusinessOutboxStatus.FAILED,
-      deliveryStatus: exhausted ? "DEAD_LETTER" : "FAILED",
-      now,
-      providerResult,
-      errorCode: providerResult.errorCode,
-    })
-    return {
-      requestId: request.id,
-      status: exhausted ? "DEAD_LETTER" as const : "FAILED" as const,
+    if (providerResult.status === "FAILED") {
+      return await settle(request.attempts >= request.maxAttempts || !providerResult.retryable ? "DEAD_LETTER" : "FAILED", providerResult.errorCode, providerResult)
     }
+    return await settle("DEFERRED", "PROVIDER_OUTCOME_UNKNOWN")
   } catch (error) {
-    await db.businessEventOutbox.updateMany({
-      where: {
-        id: request.id,
-        status: BusinessOutboxStatus.LOCKED,
-        lockedBy: input.workerId,
-      },
-      data: {
-        status:
-          request.attempts >= request.maxAttempts
-            ? BusinessOutboxStatus.DEAD_LETTER
-            : BusinessOutboxStatus.FAILED,
-        availableAt: retryAt(request.attempts, now),
-        lockedAt: null,
-        lockedBy: null,
-        failedAt: now,
-        lastErrorCode:
-          error instanceof z.ZodError
-            ? "INVALID_PAYLOAD"
-            : "ACCOUNTANT_INVITE_INTEGRITY_FAILED",
-        lastErrorMessage: "Accountant invitation validation failed.",
-      },
-    })
-    if (error instanceof ApplicationError) throw error
-    throw new ApplicationError(
-      "INTERNAL_ERROR",
-      "Accountant invitation processing failed.",
-      500,
-      false,
-    )
+    // If acceptance or its settlement is uncertain, the durable reservation is
+    // retained. A later claim may hold it, but cannot blindly send it again.
+    try {
+      return await settle(reserved ? "DEFERRED" : "DEAD_LETTER", reserved ? "PROVIDER_OUTCOME_UNKNOWN" : error instanceof z.ZodError ? "INVALID_PAYLOAD" : "ACCOUNTANT_INVITE_INTEGRITY_FAILED")
+    } catch {
+      throw new ApplicationError("INTERNAL_ERROR", "Accountant invitation outcome could not be recorded. Review the retained request before retrying.", 500, false)
+    }
   }
 }
 
 export async function runAccountantClientInviteWorker(input: {
-  organizationId?: string
+  organizationId: string
   workerId: string
   limit?: number
   now?: Date
   environment?: WorkerEnvironment
   dependencies?: Partial<WorkerDependencies>
+  providerTimeoutMs?: number
 }) {
   const requestIds = await claimAccountantClientInvites(input)
   const results = []
   for (const requestId of requestIds) {
     try {
       results.push(await processAccountantClientInvite({
+        ...input,
         requestId,
-        workerId: input.workerId,
-        now: input.now,
-        environment: input.environment,
-        dependencies: input.dependencies,
       }))
-    } catch (error) {
+    } catch {
       results.push({
         requestId,
-        status: "FAILED" as const,
-        error: error instanceof Error ? error.message : String(error),
+        status: "UNCONFIRMED" as const,
+        error: "Accountant invitation outcome is unconfirmed. Review the retained request.",
       })
     }
   }

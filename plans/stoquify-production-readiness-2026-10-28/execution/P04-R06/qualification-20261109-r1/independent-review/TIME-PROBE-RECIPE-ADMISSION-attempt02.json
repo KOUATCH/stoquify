@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-10T11:13:46.942Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Read-only timestamp parsing diagnostic against only the task-owned synthetic database; not a credential rerun or historical reconstruction",
+  "files": [
+    {
+      "path": "database/probe-time-interpretation-attempt02.cjs",
+      "sha256": "68bde67734065f3e2b8ef8b6aad28267f0c74cad190d8c929e5cc8563b15adf8"
+    },
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "7a370fe26b060921635dd2d32c73fc777bdd9584f2f38582e422af78b26bb598"
+    },
+    {
+      "path": "browser/auth-r06-attempt02/result.json",
+      "sha256": "81a50e5a71168c93b4d2af6c9a21010cebeead3303f778cbafc70200f39e2878"
+    },
+    {
+      "path": "database/snapshot-credential-positive-after-1794308900612-da73b8b2-986d-4053-803d-7f76c3c7a14c.json",
+      "sha256": "246d2341c0dfdbdcd04e6d93708f281e7fca4131aeb62c435deaa7335f2576eb"
+    },
+    {
+      "path": "database/snapshot-credential-positive-before-1794308898569-3d9d6e4a-36bf-4fc0-a8b4-4deff30e56a5.json",
+      "sha256": "e58553453d42d49d7f280c3426d1af9b6c9540c1bdef33108ad49216088a0bb4"
+    }
+  ],
+  "sideEffects": [
+    "SELECT-only READ ONLY transaction and existing owned target identity checks",
+    "New exclusive database/time-interpretation-attempt02.json evidence only"
+  ],
+  "acceptance": [
+    "Preserve original failure and snapshot hashes.",
+    "Report raw timestamp type/text, pg default Date, explicit UTC epoch, Node timezone and literal control separately.",
+    "Current values may reflect later logins; passing this diagnostic does not close the failed credential group."
+  ],
+  "productionChanges": false
+}

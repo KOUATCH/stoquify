@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T12:59:40.865Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Evidence-only reconciliation recipe; no native/app/browser execution and no advancement by source review",
+  "files": [
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\reconcile-qualification.cjs",
+      "sha256": "5860560def30e23dba9966f1461bf2871ee0f22a849afeab216d765df2127568"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\runtime\\qualification-contract.json",
+      "sha256": "22d4543fef2795f838aa54c203be96ad0448b466f0b80f6d7104f863bf8d08e1"
+    },
+    {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R06\\qualification-20261110-r2\\inventory\\test-case-map-original.json",
+      "sha256": "7e6ea9e450abc5ed81ea91d453e7b20df57a990d5980549941155fef0c65bb61"
+    }
+  ],
+  "counts": {
+    "logical": 58,
+    "protectedCore": 50,
+    "credential": 10,
+    "origin": 24,
+    "infrastructure": 2,
+    "retainedExpiry": 3,
+    "browser": 18,
+    "raw": 107,
+    "auxiliary": 57
+  },
+  "reviewed": [
+    "Exact original58 map retained; protected50 exactly exclude credential/origin/six UI logical groups.",
+    "Every mandatory proof has exact receipt/arrayPath/caseId and final runtime SHA256;57 auxiliaries cannot be empty or silently omitted.",
+    "All107 actual IDs are unique and actual arrays must exactly equal the admitted sets, no duplicates/extra/missing rows.",
+    "All nested reports require same candidate/artifact identity; only actual passed:true observations can satisfy requirements.",
+    "Overall passed requires main runtime true, all58 logical groups and all57 auxiliary proofs true; failures remain false.",
+    "One exclusive new reconciliation receipt only; raw runs and all historical evidence untouched."
+  ],
+  "conditions": [
+    "Run only after actual runtime-result.json is complete and frozen; missing raw reports/cases fail closed.",
+    "Independent actual outcome review must validate raw/native/browser evidence, source/artifact identity and final cleanup; the reconciler cannot substitute for that review."
+  ],
+  "qualificationPassed": false
+}

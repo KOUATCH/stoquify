@@ -34,7 +34,9 @@ export async function getPaymentCloseEvidence(scope: CloseControlScope) {
       tx.paymentException.count({ where: { ...exceptionWhere, reconciliationRunId: null, paymentTransactionId: null, statementLineId: null, providerEventId: null, suspenseItemId: null } }),
       readAccountCloseCoverage(tx, scope),
     ])
-    const signed = (run: typeof runs[number]) => run.status === "SIGNED" && run.signedAt !== null && run.signedAt <= new Date(scope.recordedThrough)
+    const verifiedSignatures = new Map(accountCoverage.accounts.flatMap(account => account.signedRuns.map(run => [run.id, run.hash] as const)))
+    const signed = (run: typeof runs[number]) => run.status === "SIGNED" && !!run.certificateHash && verifiedSignatures.get(run.id) === run.certificateHash
+      && run.signedAt !== null && run.signedAt <= new Date(scope.recordedThrough)
       && run.businessDate >= new Date(scope.startDate) && run.businessDate <= new Date(scope.endDate)
     return {
       scope,

@@ -1,0 +1,17 @@
+{
+  "label": "history-pilot",
+  "args": [
+    "-r",
+    "ts-node/register/transpile-only",
+    "-r",
+    "./scripts/register-server-only-shim.js",
+    "-r",
+    "tsconfig-paths/register",
+    "prisma/disposable-history.ts",
+    "--pilot"
+  ],
+  "startedAt": "2026-10-28T19:18:29.742Z",
+  "finishedAt": "2026-10-28T19:20:25.386Z",
+  "exitCode": 0,
+  "errorCode": null
+}

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-10T12:55:00.365Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r2",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "receipt": "dependency-staging.json",
+  "receiptSha256": "c3a99b483c0d224e3737a4c4878905c0f112ed41f83f07b6e2d064f30056c2a5",
+  "recipeSha256": "9b36ea5d9cb4dd8d39c98d5b8c4e43c996efd2c4a80439ff3427774b35c35358",
+  "files": 152806,
+  "bytes": 2998378443,
+  "manifest": {
+    "files": 152806,
+    "bytes": 2998378443,
+    "sha256": "885d34096b3dae7765633fff1ffdaeecee5c7ab07c4ae86723b63145eb4462e2",
+    "compressedSha256": "306dafa0271600fb71cd921ee93542a695dc9eddc616ef21c72f0d995e788030",
+    "path": "D:\\p04-r06-fullapp-20261110-r2\\dependency-input-manifest.json.gz"
+  },
+  "copyLogSha256": "5ca6e278f2800bcdd7f882bdc701ea5e7f62438f261ef0d9815148415265fa61",
+  "actualOutcome": {
+    "physicalCopyExact": true,
+    "archivedInputUnchanged": true,
+    "copyExitCode": 1,
+    "copyExitMeaning": "Successful robocopy file copy; runner completed normally with passed:true, no timeout or error",
+    "expectedManifestShaVerified": true,
+    "uniquePathsVerified": true,
+    "currentPackageLockSchemaUnchanged": true,
+    "oldFailureAndFinalEvidenceHashesStillMatch": true,
+    "newOwnershipExact": true
+  },
+  "independentCriticalByteSpots": [
+    {
+      "path": "better-auth/dist/api/middlewares/origin-check.mjs",
+      "bytes": 7973,
+      "sha256": "e2fb0e2221b7aa229b40b3138f65531732f7a9ae8be41f92db1a3204781a10a2",
+      "bothMatch": true
+    },
+    {
+      "path": "better-auth/dist/api/routes/sign-in.mjs",
+      "bytes": 11008,
+      "sha256": "3b1fa29f64e442851ff53a3290e9bc89b4f3b2524bfed56d1a023c4bf7e31490",
+      "bothMatch": true
+    },
+    {
+      "path": "better-auth/dist/api/to-auth-endpoints.mjs",
+      "bytes": 12519,
+      "sha256": "e1c58481f1bee2bfb7dc3c4ec86c1b42c8f16dcf8e6b4e1d2ecd57271f3078e3",
+      "bothMatch": true
+    },
+    {
+      "path": "typescript/lib/typescript.js",
+      "bytes": 9066411,
+      "sha256": "dd17428736a07e1db1a138d8a14295ddb2699ba780ee15038acdd2c6da5373a0",
+      "bothMatch": true
+    },
+    {
+      "path": "next/package.json",
+      "bytes": 3186,
+      "sha256": "547305a02acf9b1700e8210e511deefe616d415f3fc06c9f7551187430b7ee54",
+      "bothMatch": true
+    },
+    {
+      "path": "playwright/package.json",
+      "bytes": 1559,
+      "sha256": "6b840268612656f0639fb7d68782e8353bdf11518589d30ddf66f283c2670ed5",
+      "bothMatch": true
+    },
+    {
+      "path": "prisma/build/index.js",
+      "bytes": 2809306,
+      "sha256": "c2a77456b70e8ba1e640e122824ed694433828a7c0d76ff3db7fc376b4b0e1a0",
+      "bothMatch": true
+    },
+    {
+      "path": "@prisma/prisma-schema-wasm/src/prisma_schema_build_bg.wasm",
+      "notPresentAsTopLevelManifestPath": true
+    }
+  ],
+  "method": "Inspected admitted exact full-hash recipe and reconciled its actual success receipt/log, exclusive ownership, compressed/uncompressed manifest digests/count/bytes, all immutable admission references and current package/schema bindings. Independently hashed seven exact task-critical paths in both source and destination. Did not repeat the complete 305,612-file traversal.",
+  "allowedNext": "Execute already-admitted candidate preparation/admission; submit actual candidate outcome before DB/build.",
+  "limits": [
+    "This establishes reuse/copy equivalence, not a clean installation.",
+    "V02 generated client remains unqualified for current schema; reviewed private regeneration/canonical-schema check required.",
+    "Initial capacity is historical; fresh admission floors apply before build.",
+    "No app/DB/browser outcome or production readiness is certified."
+  ]
+}

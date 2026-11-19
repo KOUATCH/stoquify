@@ -1,0 +1,532 @@
+- link "Aller au contenu":
+  - /url: "#main"
+- banner:
+  - navigation "Navigation principale":
+    - link "Stoquify — Système opérationnel OHADA — Accueil":
+      - /url: /fr
+      - img "Stoquify"
+    - button "Mode clair pour toute la page"
+    - link "Switch to English":
+      - /url: /en
+      - text: EN
+    - button "Ouvrir le menu"
+- main:
+  - region "Présentation":
+    - paragraph: L’ESPACE DE GESTION DES PME EN ZONE OHADA
+    - heading "De la première vente à la clôture du mois." [level=1]
+    - paragraph: Reliez ventes, stocks, paiements et dossiers du personnel à votre équipe financière et à votre cabinet comptable. Un espace, de l’activité quotidienne à la clôture.
+    - link "Préparer votre projet":
+      - /url: /fr/contact
+    - link "Découvrir l’espace de travail":
+      - /url: /fr#showcase
+    - text: Pour les dirigeants, les équipes terrain, la finance et les RH. Espace de travail illustratif.
+  - region "Opérations, équipes et comptes. Reliés.":
+    - paragraph: BIBLIOTHÈQUE DES PARCOURS CONNECTÉS
+    - heading "Opérations, équipes et comptes. Reliés." [level=2]
+    - paragraph: Explorez le travail de votre entreprise et de votre cabinet. Choisissez un parcours pour découvrir ses étapes, contrôles et justificatifs.
+    - text: Choisir un parcours
+    - combobox "Choisir un parcours":
+      - option "Caisse et ventes" [selected]
+      - option "Stocks et sites"
+      - option "Finance et rapprochement"
+      - option "Comptabilité OHADA et clôture"
+      - option "SIRH et personnel"
+      - option "Paie et contrôles"
+      - option "Fournisseurs et comptes à payer"
+      - option "Clients, facturation et créances"
+      - option "Vendre et encaisser"
+      - option "Déclarations de paie"
+      - option "Règles et justificatifs"
+      - option "Pilotage quotidien"
+      - option "Accès des équipes"
+      - option "Suivi des contrôles"
+      - option "Inviter votre cabinet"
+      - option "Cabinet · portefeuille clients"
+      - option "Cabinet · revue des justificatifs"
+      - option "Approbations des règlements fournisseurs"
+      - option "Inventaires et revue des pertes"
+      - option "Demandes et espace salarié"
+      - option "Rapports financiers"
+      - option "Position de trésorerie et suivi"
+      - option "Données initiales et configuration"
+    - region "Caisse et ventes −":
+      - paragraph: Servez vos clients et retrouvez le reçu, le paiement et le mouvement de stock liés à chaque vente.
+    - link "Explorer ce parcours":
+      - /url: /fr/products/pos
+    - region "Caisse et ventes −":
+      - img "Stoquify"
+      - text: DÉMONSTRATION PRODUIT
+      - heading "Gardez le fil de chaque vente." [level=3]
+      - text: Boutique · Caisse 01 SALE-104
+      - strong: Café
+      - text: 2 500 XAF
+      - strong: Thé
+      - text: 1 500 XAF
+      - img "Stoquify"
+      - text: Boutique principale Café × 1
+      - strong: 2 500 XAF
+      - text: Thé × 1
+      - strong: 1 500 XAF
+      - text: Total
+      - strong: 4 000 XAF
+      - text: Panier prêt Règlement
+      - strong: Espèces
+      - text: Montant reçu
+      - strong: —
+      - text: Confirmer la vente Le stock évolue après l’enregistrement de la vente
+      - group "Étapes de la démonstration":
+        - button "Composer le panier" [pressed]
+        - button "Enregistrer le paiement"
+        - button "Conserver la trace"
+      - strong: Composer le panier
+      - paragraph: Sélectionnez les articles en caisse. Quantités et prix restent visibles avant l’encaissement.
+      - text: Mode sans animation
+      - button "Recommencer"
+      - paragraph: Exemple illustratif · Données fictives · Aucune donnée réelle
+    - group "Le rôle du cabinet comptable":
+      - text: CABINET COMPTABLE · LE FIL DES OPÉRATIONS
+      - term: Déjà dans Stoquify
+      - definition: Vente, reçu, paiement enregistré et mouvement de stock.
+      - term: Pour la revue du cabinet
+      - definition: Votre cabinet suit les liens sources comptables de la vente, sans reconstituer l’opération à partir de fichiers séparés.
+    - paragraph: Ces parcours dépendent des modules activés, de vos autorisations, des sites configurés et de données d’activité à jour.
+  - heading "Une vente ouvre un parcours comptable." [level=2]
+  - paragraph: Vos équipes enregistrent l’activité. Stoquify en conserve la trace. Votre cabinet examine les données comptables liées, avec un accès autorisé par chaque client.
+  - text: Ventes Stocks Factures clients Factures fournisseurs Rapprochement Comptes OHADA Cabinet comptable Clôture
+  - paragraph: UN PARCOURS CONNECTÉ
+  - heading "Enregistrez la vente. Conservez le détail." [level=2]
+  - paragraph: Conservez articles, reçu et paiement enregistré pour que les équipes terrain et financières suivent la même opération.
+  - tablist "Étapes du parcours":
+    - tab "01. Vente enregistrée" [selected]: "01"
+    - tab "02. Mouvements de stock": "02"
+    - tab "03. Clients et facturation": "03"
+    - tab "04. Fournisseurs et dettes": "04"
+    - tab "05. Rapprochement des paiements": "05"
+    - tab "06. Cabinet comptable et clôture": "06"
+  - tabpanel "01. Vente enregistrée":
+    - paragraph: PARCOURS ILLUSTRATIF · DONNÉES FICTIVES
+    - text: Boutique · Caisse 01 SALE-104 Café 2 500 XAF Thé 1 500 XAF Cacao 3 000 XAF Panier 4 500 XAF
+    - strong: Reçu de vente
+    - text: Café × 1 2 500 Thé × 1 1 500 Total 4 000 XAF Vente enregistrée 2 articles · mouvement de stock relié
+  - group "Le rôle du cabinet comptable":
+    - text: CABINET COMPTABLE · LE FIL DES OPÉRATIONS
+    - term: Déjà dans Stoquify
+    - definition: Vente, reçu, paiement enregistré et mouvement de stock.
+    - term: Pour la revue du cabinet
+    - definition: Votre cabinet suit les liens sources comptables de la vente, sans reconstituer l’opération à partir de fichiers séparés.
+  - region "Comprenez l’ensemble. Suivez chaque passage de relais.":
+    - paragraph: Un espace commun. Des responsabilités reliées.
+    - heading "Comprenez l’ensemble. Suivez chaque passage de relais." [level=2]
+    - paragraph: Partez du travail quotidien de votre équipe. Découvrez comment les opérations se relient, de la caisse et du stock jusqu’à la comptabilité.
+    - strong: Terrain
+    - text: Ventes, stocks et réceptions
+    - strong: Finance
+    - text: Créances, dettes et paiements
+    - strong: RH et paie
+    - text: Dossiers, temps et rémunérations
+    - strong: Votre cabinet
+    - text: Sources, revue et clôture
+    - paragraph: Le même fil d’opérations. Chaque équipe conserve son rôle, son périmètre et ses décisions.
+    - group:
+      - strong: Ventes et clients
+      - text: Suivez la vente au-delà du reçu. Voir le passage de relais
+    - group:
+      - strong: Stocks et sites
+      - text: Comprenez quoi, où et pourquoi. Voir le passage de relais
+    - group:
+      - strong: Achats et fournisseurs
+      - text: Reliez vos engagements aux biens reçus. Voir le passage de relais
+    - group:
+      - strong: Paiements et rapprochement
+      - text: Expliquez les écarts entre enregistré et reçu. Voir le passage de relais
+    - group:
+      - strong: Personnel et paie
+      - text: Préparez la paie à partir de données revues. Voir le passage de relais
+    - group:
+      - strong: Comptabilité et clôture
+      - text: Retrouvez l’origine des chiffres. Voir le passage de relais
+    - group:
+      - strong: Décisions et reporting
+      - text: Passez du signal au dossier concerné. Voir le passage de relais
+    - group:
+      - strong: Accès et obligations du pays
+      - text: Clarifiez responsabilités et obligations. Voir le passage de relais
+    - paragraph: Choisissez les parcours utiles à votre activité. Leur disponibilité dépend des modules activés, des droits de l’équipe et de la configuration.
+    - link "Collaborer avec votre cabinet":
+      - /url: /fr#accounting-firm
+  - region "Votre activité avance. Vos données doivent suivre.":
+    - paragraph: PENSÉ POUR LE QUOTIDIEN DES PME
+    - heading "Votre activité avance. Vos données doivent suivre." [level=2]
+    - paragraph: Du premier client à la revue mensuelle, reliez vos boutiques, entrepôts, équipes financières et RH à votre cabinet comptable.
+    - text: Scènes de PME originales et illustratives. Les entreprises représentées ne sont pas des témoignages clients.
+    - navigation "Suivre le fil des opérations":
+      - link "Ventes et stocks Enregistrer l’activité":
+        - /url: "#business-operations"
+        - strong: Ventes et stocks
+        - text: Enregistrer l’activité
+      - link "Paiements et preuves Expliquer le solde":
+        - /url: "#business-payments"
+        - strong: Paiements et preuves
+        - text: Expliquer le solde
+      - link "Votre cabinet Examiner les sources":
+        - /url: "#accounting-firm"
+        - strong: Votre cabinet
+        - text: Examiner les sources
+      - link "SIRH et paie Relier les dossiers salariés":
+        - /url: "#people-payroll"
+        - strong: SIRH et paie
+        - text: Relier les dossiers salariés
+    - article:
+      - figure "LA CAISSE. LA RÉSERVE. LE MÊME FIL CONDUCTEUR.":
+        - 'img "Scène illustrative : une équipe de pharmacie accueille une cliente, avec les ventes et stocks Stoquify sur un ordinateur tout-en-un"'
+        - text: LA CAISSE. LA RÉSERVE. LE MÊME FIL CONDUCTEUR.
+        - button "Voir l’écran Stoquify · Stocks et ventes"
+      - paragraph: 01 / PILOTEZ L’ACTIVITÉ
+      - heading "Gardez la vente reliée au stock." [level=2]
+      - paragraph: Au comptoir, chaque reçu et chaque quantité comptent. Enregistrez les ventes en caisse, suivez les mouvements de stock par site et retrouvez l’origine de chaque changement.
+      - list "Parcours de vente et de stock":
+        - listitem: Vente et reçu
+        - listitem: Mouvement de stock
+        - listitem: Pièce d’origine
+      - link "Explorer les ventes et les stocks":
+        - /url: /fr/workflows#workflow-stockToSale
+    - article:
+      - figure "DES OPÉRATIONS AUX JUSTIFICATIFS DE PAIEMENT.":
+        - 'img "Scène illustrative : une négociante en matériaux examine une livraison avec un client, à côté d’un ordinateur tout-en-un affichant le rapprochement Stoquify"'
+        - text: DES OPÉRATIONS AUX JUSTIFICATIFS DE PAIEMENT.
+        - button "Voir l’écran Stoquify · Revue des paiements"
+      - paragraph: 02 / RAPPROCHEZ LES PAIEMENTS
+      - heading "Sachez ce qui a été payé. Expliquez les écarts." [level=2]
+      - paragraph: Un paiement enregistré ne suffit pas à lui seul. Comparez-le aux relevés importés ou aux justificatifs des prestataires pris en charge, examinez les éléments non rapprochés et conservez chaque décision.
+      - text: Paiement enregistré Justificatif Les écarts restent visibles jusqu’à leur examen.
+      - link "Explorer le rapprochement":
+        - /url: /fr/workflows#workflow-paymentReconciliation
+    - article "Votre cabinet part des données déjà présentes.":
+      - figure "VOTRE ENTREPRISE. VOTRE CABINET. UNE REVUE PARTAGÉE.":
+        - img "Cabinet comptable illustratif examinant les données clients sur un grand écran Stoquify tourné vers le visiteur"
+        - text: VOTRE ENTREPRISE. VOTRE CABINET. UNE REVUE PARTAGÉE.
+        - button "Voir l’écran Stoquify · Revue comptable client"
+      - paragraph: COLLABOREZ AVEC VOTRE CABINET COMPTABLE
+      - heading "Votre cabinet part des données déjà présentes." [level=2]
+      - paragraph: Ventes, factures clients, mouvements de stock et calculs de paie constituent une trace de votre activité dans Stoquify. Grâce aux comptabilisations configurées et aux liens sources, votre cabinet autorisé peut examiner le grand livre et les justificatifs derrière ses chiffres.
+      - group: Une revue utile à l’entreprise et au cabinet
+      - link "Explorer le parcours de revue comptable":
+        - /url: /fr/workflows#workflow-accountingCloseAssurance
+      - paragraph: Pour collaborer, un utilisateur autorisé de l’espace client peut inviter un comptable. L’invitation des nouveaux comptables comprend un lien d’inscription ; les utilisateurs existants peuvent recevoir un accès délimité. Chaque client contrôle l’accès à ses données.
+      - article:
+        - text: 01 / Mandat client
+        - heading "Inviter, accepter et délimiter l’accès" [level=3]
+        - paragraph: Chaque client définit son périmètre, avec expiration et révocation.
+      - article:
+        - text: 02 / Portefeuille clients
+        - heading "Choisir le client et la période" [level=3]
+        - paragraph: Retrouvez les clients autorisés et le contexte de revue pertinent.
+      - article:
+        - text: 03 / Dossier de revue
+        - heading "Examiner, suivre et conserver les conclusions" [level=3]
+        - paragraph: Reliez écritures et pièces, traitez les anomalies et vérifiez les exports autorisés.
+    - paragraph: 03 / TENEZ LES COMPTES. 04 / PRÉPAREZ LA CLÔTURE.
+    - heading "Comptabilité OHADA. Une clôture mieux préparée." [level=2]
+    - paragraph: Votre cabinet examine la période à partir des écritures comptabilisées, liens sources et contrôles déjà disponibles dans Stoquify.
+    - list "Des opérations à la décision de clôture":
+      - listitem:
+        - text: "01"
+        - strong: Pièces d’origine
+        - text: Équipes terrain
+      - listitem:
+        - text: "02"
+        - strong: Écritures et soldes
+        - text: Comptabilité configurée
+      - listitem:
+        - text: "03"
+        - strong: Pièces et anomalies
+        - text: Finance et cabinet
+      - listitem:
+        - text: "04"
+        - strong: Revue de clôture
+        - text: Responsables autorisés
+    - article:
+      - heading "Tenez des comptes structurés." [level=3]
+      - paragraph: Utilisez les références SYSCOHADA, les règles de comptabilisation configurées, les journaux et le grand livre. Remontez d’une écriture à l’opération et aux justificatifs qui l’expliquent.
+      - group: Découvrir les données comptables
+    - article:
+      - heading "Identifiez ce qui reste à traiter avant la clôture." [level=3]
+      - paragraph: Examinez les écarts de rapprochement, les justificatifs manquants et les points de clôture. Gardez les responsabilités et la revue du comptable visibles avant de déclarer la période prête.
+      - group: Découvrir les contrôles de clôture
+    - link "Explorer la comptabilité et la clôture":
+      - /url: /fr/workflows#workflow-accountingCloseAssurance
+    - paragraph: La comptabilité dépend des paramètres et données d’origine vérifiés. Les rapports internes ne constituent pas des états réglementaires certifiés.
+    - region "Prenez soin du dossier salarié. Préparez la paie avec clarté.":
+      - paragraph: SIRH ET PAIE · DU DOSSIER À LA PREUVE
+      - heading "Prenez soin du dossier salarié. Préparez la paie avec clarté." [level=2]
+      - paragraph: Un parcours détaillé pour les salariés, managers, RH, gestionnaires de paie et comptables. Chaque étape transmet des données vérifiées à la suivante.
+      - tablist "Fonctionnalités SIRH et paie":
+        - tab "Dossiers salariés" [selected]
+        - tab "Contrats et rémunération"
+        - tab "Temps et approbations"
+        - tab "Paie et bulletins"
+        - tab "Paiements et déclarations"
+      - tabpanel "Dossiers salariés":
+        - heading "Un point de départ fiable pour chaque salarié." [level=3]
+        - paragraph: Réunissez identité, contexte d’emploi et justificatifs avant leur utilisation dans la paie.
+        - group: Annuaire du personnel +
+        - group: Organisation et équipes +
+        - group: Documents et identité +
+        - group: Espace salarié +
+        - img "Stoquify"
+        - text: DOSSIER ILLUSTRATIF
+        - strong: Dossiers salariés
+        - term: Salarié
+        - definition: EMP-024 · Dossier fictif
+        - term: Contexte d’emploi
+        - definition: Boutique · Équipe de vente
+        - term: Lien d’identité
+        - definition: Lié à son propre profil
+        - term: Documents
+        - definition: Vérification requise
+        - paragraph: Données fictives · Aucune opération réelle
+        - paragraph: Les RH contrôlent les dossiers salariés. L’accès à la paie ou à la comptabilité n’ouvre pas automatiquement ces dossiers.
+      - strong: Le salarié
+      - text: Son dossier, ses demandes, ses bulletins autorisés.
+      - strong: Managers, RH et paie
+      - text: Les dossiers et décisions de leur périmètre.
+      - strong: Le cabinet comptable
+      - text: Les pièces comptables selon le mandat client.
+      - link "Découvrir le SIRH":
+        - /url: /fr/products/hris
+      - link "Découvrir la paie":
+        - /url: /fr/products/payroll
+      - link "Suivre le parcours complet":
+        - /url: /fr/workflows#workflow-peopleToPay
+  - region "Chaque équipe sait où travailler.":
+    - paragraph: VOS MODULES. LEURS RÔLES. LEURS LIENS.
+    - heading "Chaque équipe sait où travailler." [level=2]
+    - paragraph: Découvrez les fonctions, les utilisateurs et les données partagées. Un module organise une partie du travail ; un parcours relie plusieurs équipes.
+    - strong: Explorer les fonctions
+    - text: 18 Choisir un module ou espace
+    - combobox "Choisir un module ou espace"
+    - tabpanel "Stocks":
+      - img "Stoquify"
+      - text: Commerce et stock
+      - heading "Stocks" [level=3]
+      - paragraph: Équipes stock · Responsables de site
+      - paragraph: Sachez ce que vous avez, où et pourquoi les quantités évoluent.
+      - list:
+        - listitem: Articles, catégories et sites
+        - listitem: Réceptions, transferts et inventaires
+        - listitem: Historique des mouvements et justificatifs de valorisation
+      - text: À PARTIR DE
+      - paragraph: Réceptions acceptées et inventaires
+      - text: TRANSMET
+      - paragraph: Stock disponible pour ventes et achats
+      - link "Découvrir les fonctions":
+        - /url: /fr/products/inventory
+      - link "Voir le parcours d’adoption":
+        - /url: "#pricing"
+    - strong: Avec votre cabinet comptable
+    - paragraph: Mandat et accès autorisés → portefeuille clients → revue des pièces et de la clôture. Le cabinet collabore sur vos dossiers, dans le périmètre accordé.
+    - link "Explorer la collaboration":
+      - /url: /fr#flow-tab-15
+    - paragraph: La disponibilité dépend des modules activés, des droits, des dépendances et du paramétrage validé. Les règles pays et les connexions prestataires sont à confirmer pour votre déploiement.
+  - region "Un point de départ adapté. Évoluez à votre rythme.":
+    - paragraph: OFFRES ET TARIFS
+    - heading "Un point de départ adapté. Évoluez à votre rythme." [level=2]
+    - paragraph: Trois parcours à combiner. Un socle commun à chaque déploiement. Un devis adapté au périmètre convenu.
+    - group "Que souhaitez-vous organiser en premier ?":
+      - text: Que souhaitez-vous organiser en premier ?
+      - radio "Stocks, achats et ventes" [checked]
+      - text: Stocks, achats et ventes
+      - radio "Trésorerie, comptes et clôture"
+      - text: Trésorerie, comptes et clôture
+      - radio "Personnel, temps et paie"
+      - text: Personnel, temps et paie
+    - article "Opérations essentielles":
+      - text: VOTRE POINT DE DÉPART
+      - heading "Opérations essentielles" [level=3]
+      - paragraph: Pilotez la journée.
+      - paragraph: Pour les commerces, pharmacies, boulangeries et distributeurs.
+      - strong: Sur devis
+      - text: Périmètre et conditions convenus avant déploiement
+      - paragraph: PÉRIMÈTRE À DÉFINIR ENSEMBLE
+      - list:
+        - listitem: Stocks, mouvements et sites
+        - listitem: Ventes et dossiers clients
+        - listitem: Achats et dossiers fournisseurs
+        - listitem: Tableaux de bord et rapports opérationnels
+      - paragraph: La caisse est une extension à définir séparément. La finance relie les soldes clients et fournisseurs au rapprochement et à la clôture.
+      - button "Choisir ce point de départ" [pressed]
+    - article "Finance et assurance":
+      - text: "02"
+      - heading "Finance et assurance" [level=3]
+      - strong: Sur devis
+      - text: Périmètre et conditions convenus avant déploiement
+      - button "Choisir ce point de départ"
+    - article "Personnel et paie":
+      - text: "03"
+      - heading "Personnel et paie" [level=3]
+      - strong: Sur devis
+      - text: Périmètre et conditions convenus avant déploiement
+      - button "Choisir ce point de départ"
+    - strong: Le socle accompagne chaque parcours.
+    - list:
+      - listitem: Tableau de bord et paramètres
+      - listitem: Rôles et périmètre organisationnel
+      - listitem: Sécurité et contrôles d’audit de base
+    - paragraph: VOTRE PROCHAINE ÉTAPE
+    - heading "Opérations essentielles" [level=3]
+    - paragraph: Un point de départ adapté pour suivre ce que vous avez, ce que vous achetez et ce que vous vendez.
+    - paragraph:
+      - strong: "À préciser :"
+      - text: Sites, flux de stock et équipements de caisse
+    - link "Préparer ce déploiement":
+      - /url: /fr/contact?interest=operations
+    - link "Voir le détail de cette offre":
+      - /url: /fr/offers/operations
+    - paragraph: Retrouvez ce point de départ dans votre projet. Confirmez le périmètre et le coût avant tout engagement.
+    - group: Comparez les périmètres côte à côte
+    - region "Quatre éléments. Un déploiement bien défini.":
+      - paragraph: CLARIFIEZ LE COÛT GLOBAL
+      - heading "Quatre éléments. Un déploiement bien défini." [level=3]
+      - paragraph: Un devis adapté commence par un périmètre clair. Découvrez ce que couvre chaque élément et les questions à poser.
+      - article:
+        - button "01 Votre périmètre logiciel Les modules et le périmètre d’activité nécessaires à votre équipe. Ce qu’il faut préciser":
+          - text: "01"
+          - strong: Votre périmètre logiciel
+          - text: Les modules et le périmètre d’activité nécessaires à votre équipe. Ce qu’il faut préciser
+      - article:
+        - button "02 Un démarrage préparé Préparez vos données, votre configuration et votre équipe. Ce qu’il faut préciser":
+          - text: "02"
+          - strong: Un démarrage préparé
+          - text: Préparez vos données, votre configuration et votre équipe. Ce qu’il faut préciser
+      - article:
+        - button "03 Pays et connexions Adaptez règles pays, prestataires et équipements au déploiement. Ce qu’il faut préciser":
+          - text: "03"
+          - strong: Pays et connexions
+          - text: Adaptez règles pays, prestataires et équipements au déploiement. Ce qu’il faut préciser
+      - article:
+        - button "04 Accompagnement continu Définissez l’assistance et les routines de contrôle de votre équipe. Ce qu’il faut préciser":
+          - text: "04"
+          - strong: Accompagnement continu
+          - text: Définissez l’assistance et les routines de contrôle de votre équipe. Ce qu’il faut préciser
+      - strong: Votre devis doit préciser
+      - list:
+        - listitem: Périmètre et responsabilités
+        - listitem: Montant, devise et taxes
+        - listitem: Facturation et services
+    - region "Les bonnes questions. Une prochaine étape claire.":
+      - paragraph: AVANT DE CHOISIR
+      - heading "Les bonnes questions. Une prochaine étape claire." [level=3]
+      - paragraph: Du choix des modules à la préparation de vos données, trouvez une réponse et le guide pour avancer.
+      - group: Par quel module commencer ?
+      - group: Quel est le prix de Stoquify ?
+      - group: La caisse est-elle incluse dans les opérations essentielles ?
+      - group: La paie et les connexions prestataires sont-elles disponibles partout ?
+      - group: Comment mon équipe et mon cabinet collaborent-ils ?
+      - group: 7 autres questions sur la préparation et les conditions
+  - region "Préparez l’espace dont votre équipe a besoin.":
+    - paragraph: UN DÉMARRAGE CONCRET
+    - heading "Préparez l’espace dont votre équipe a besoin." [level=2]
+    - paragraph: Du compte à la première opération, avancez avec une vision claire de chaque étape.
+    - heading "Créez et vérifiez votre compte" [level=3]:
+      - button "Créez et vérifiez votre compte" [expanded]
+    - heading "Préparez votre activité" [level=3]:
+      - button "Préparez votre activité"
+    - heading "Commencez par un parcours vérifié" [level=3]:
+      - button "Commencez par un parcours vérifié"
+    - paragraph: Renseignez votre organisation et votre compte administrateur, vérifiez votre e-mail, puis connectez-vous.
+    - term: À préparer
+    - definition: Nom de l’entreprise, pays, devise et e-mail à vérifier.
+    - term: Résultat
+    - definition: Un compte administrateur vérifié pour votre organisation.
+    - term: Ensuite
+    - definition: Définir les sites, responsabilités et modules de départ.
+    - region "Créez et vérifiez votre compte":
+      - img "Stoquify"
+      - text: CONFIGURATION 01 / 03
+      - heading "Votre organisation prend place." [level=3]
+      - text: ORGANISATION
+      - strong: Votre entreprise
+      - text: Coordonnées · Pays · Devise
+      - strong: Compte administrateur
+      - text: Le premier accès à votre espace
+      - strong: Vérifiez votre e-mail
+      - paragraph: Suivez le message de vérification avant de vous connecter.
+      - text: Vérification requise
+      - paragraph: Configuration illustrative · Aucun compte créé dans cet aperçu
+    - link "Créer votre compte":
+      - /url: /fr/register
+    - link "Suivre le guide de démarrage":
+      - /url: /fr/get-started
+    - paragraph: Les modules disponibles, les droits d’accès et les paramètres du pays déterminent les fonctions utilisables.
+  - region "Choisissez votre point de départ.":
+    - paragraph: EXPLORER ET PRÉPARER
+    - heading "Choisissez votre point de départ." [level=2]
+    - paragraph: Comprenez les échanges, découvrez l’espace, puis préparez votre démarrage.
+    - link "01 Explorer les parcours métier Suivez chaque processus, ses responsables et les pièces transmises à l’équipe suivante. Consulter les parcours":
+      - /url: /fr/workflows
+      - text: "01"
+      - heading "Explorer les parcours métier" [level=3]
+      - paragraph: Suivez chaque processus, ses responsables et les pièces transmises à l’équipe suivante.
+      - text: Consulter les parcours
+    - link "02 Explorer la bibliothèque des parcours Parcourez les aperçus des opérations, de la finance, du SIRH, de la paie et des cabinets. Voir les aperçus":
+      - /url: /fr#showcase
+      - text: "02"
+      - heading "Explorer la bibliothèque des parcours" [level=3]
+      - paragraph: Parcourez les aperçus des opérations, de la finance, du SIRH, de la paie et des cabinets.
+      - text: Voir les aperçus
+    - link "03 Préparer votre espace Préparez votre organisation, vos sites, vos données initiales et les modules nécessaires. Préparer le démarrage":
+      - /url: /fr/get-started
+      - text: "03"
+      - heading "Préparer votre espace" [level=3]
+      - paragraph: Préparez votre organisation, vos sites, vos données initiales et les modules nécessaires.
+      - text: Préparer le démarrage
+  - region "Pilotez la journée. Préparez la clôture.":
+    - img "Stoquify"
+    - heading "Pilotez la journée. Préparez la clôture." [level=2]
+    - paragraph: Donnez à chaque équipe un espace de travail clair et des dossiers reliés à transmettre.
+    - link "Préparer votre projet":
+      - /url: /fr/contact
+    - link "Explorer les parcours":
+      - /url: /fr/workflows
+    - text: Commencez par votre organisation. Définissez ensemble le périmètre du déploiement.
+    - article:
+      - heading "Pour les dirigeants et les équipes terrain" [level=3]
+      - paragraph: Suivez ventes, stocks et paiements enregistrés sur vos sites configurés.
+    - article:
+      - heading "Pour les équipes RH et financières" [level=3]
+      - paragraph: Reliez le SIRH et la préparation de la paie au rapprochement, aux comptes OHADA et à la clôture de période.
+    - article:
+      - heading "Pour les cabinets comptables" [level=3]
+      - paragraph: Examinez les dossiers clients autorisés, coordonnez les demandes de pièces et préparez la clôture avec vos clients.
+- contentinfo:
+  - link "Stoquify — Système opérationnel OHADA — Accueil":
+    - /url: /fr
+    - img "Stoquify"
+  - heading "Produit" [level=3]
+  - link "Vue d’ensemble":
+    - /url: /fr/products
+  - link "Fonctionnalités":
+    - /url: /fr#modules
+  - link "Parcours":
+    - /url: /fr/workflows
+  - heading "Démarrer" [level=3]
+  - link "Créer un compte":
+    - /url: /fr/register
+  - link "Connexion":
+    - /url: /fr/login
+  - link "Offres et tarifs":
+    - /url: /fr/pricing
+  - link "Guide de démarrage":
+    - /url: /fr/get-started
+  - link "Demandes et préparation du projet":
+    - /url: /fr/contact
+  - heading "Explorer" [level=3]
+  - link "Catalogue des parcours":
+    - /url: /fr/workflows
+  - link "Pour votre entreprise":
+    - /url: /fr#problem
+  - text: © 2026 Stoquify Données d’exemple. Aucune donnée réelle.
+- status
+- alert
+- region "Notifications temporaires"
+- alert

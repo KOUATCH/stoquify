@@ -1,0 +1,38 @@
+{
+  "began": "2026-11-09T13:53:04.641Z",
+  "passed": true,
+  "target": {
+    "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5",
+    "clusterDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5",
+    "migrationSource": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\sales-release-migrations-20261109-44a94875d5\\migration-source",
+    "host": "localhost",
+    "port": 58033,
+    "user": "sales_release_fixture",
+    "freshDatabase": "stoquify_replay_20261109_44a94875d5",
+    "posDatabase": "stoquify_pos_audit_20261109_44a94875d5",
+    "createdAt": "2026-11-09T13:45:26.860Z",
+    "method": "New private PG17 cluster, full frozen migration catalog; no existing database reset, copy or drop"
+  },
+  "catalogSha256": "3f4c0d0880c659bd22e5f6551aae459924e57ed3baddcac89f4b2f5bc9cf1737",
+  "runnerSha256": "3cff0586b9582407d002ce5d37718bba791fc8c4e37e487e6dbc278d1711ded6",
+  "initializedThisAttempt": false,
+  "freshAlreadyCertified": true,
+  "checks": [
+    {
+      "stage": "freshReplay",
+      "migrationCount": 121,
+      "userTriggerCount": 141,
+      "checkConstraintCount": 230,
+      "publicFunctionCount": 75
+    },
+    {
+      "stage": "posRuntimeReplay",
+      "migrationCount": 121,
+      "userTriggerCount": 141,
+      "checkConstraintCount": 230,
+      "publicFunctionCount": 75
+    }
+  ],
+  "ownedClusterStopped": true,
+  "ended": "2026-11-09T13:54:15.281Z"
+}

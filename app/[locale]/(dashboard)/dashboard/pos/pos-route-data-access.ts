@@ -29,6 +29,17 @@ export const posRouteCatalog: PosRouteSurface[] = [
     permissionDeniedTitle: { en: "Point of sale access is required", fr: "Un accès au point de vente est nécessaire" },
     permissionDeniedMessage: { en: "Your current role cannot operate the point of sale. Ask your administrator for access or switch to an authorized account.", fr: "Votre rôle actuel ne permet pas d’utiliser le point de vente. Demandez un accès à votre administrateur ou utilisez un compte autorisé." },
   },
+  {
+    key: "pos-activity",
+    route: "/dashboard/pos/activity",
+    title: "POS activity",
+    resource: "POSActivityPage",
+    permissions: ["OPERATE_POS", "pos.use", "pos.read"],
+    permissionMode: "any",
+    noActiveOrgTitle: { en: "Choose an organization to view POS activity", fr: "Choisissez une organisation pour consulter l’activité de caisse" },
+    permissionDeniedTitle: { en: "Point of sale access is required", fr: "Un accès au point de vente est nécessaire" },
+    permissionDeniedMessage: { en: "Your current role cannot view POS activity. Ask your administrator for access.", fr: "Votre rôle actuel ne permet pas de consulter l’activité de caisse. Demandez un accès à votre administrateur." },
+  },
 ]
 
 export const posRouteMap: Record<string, PosRouteSurface> = Object.fromEntries(

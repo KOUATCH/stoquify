@@ -1,0 +1,118 @@
+{
+  "synthetic": true,
+  "organizationId": "auth-sales-ac360f134c",
+  "locationId": "auth-sales-ac360f134c-store",
+  "terminalId": "auth-sales-ac360f134c-till",
+  "drawerId": "auth-sales-ac360f134c-drawer",
+  "customerId": "auth-sales-ac360f134c-customer",
+  "itemId": "auth-sales-ac360f134c-item",
+  "fiscalYearId": "cmw8bfnvu000wmalgxv5x9ho2",
+  "periodId": "cmw8bfnw6000ymalgmsnz84ha",
+  "modules": [
+    "dashboard",
+    "inventory",
+    "sales",
+    "pos",
+    "cash_drawer",
+    "finance",
+    "accounting",
+    "close_assurance",
+    "reports"
+  ],
+  "users": {
+    "cashier": {
+      "userId": "auth-sales-ac360f134c-cashier",
+      "email": "cashier-ac360f134c@sales-accounting.invalid",
+      "permissions": [
+        "dashboard.read",
+        "pos.read",
+        "pos.use",
+        "pos.transactions.read",
+        "pos.session.start",
+        "pos.session.end",
+        "inventory.read",
+        "inventory.items.read",
+        "customers.read",
+        "locations.read",
+        "sales.read",
+        "finance.receivables.read",
+        "accounting.reports.read"
+      ]
+    },
+    "collector": {
+      "userId": "auth-sales-ac360f134c-collector",
+      "email": "collector-ac360f134c@sales-accounting.invalid",
+      "permissions": [
+        "dashboard.read",
+        "customers.read",
+        "sales.read",
+        "finance.receivables.read",
+        "finance.receivables.collect",
+        "finance.receivables.reverse",
+        "accounting.reports.read"
+      ]
+    },
+    "reverser": {
+      "userId": "auth-sales-ac360f134c-reverser",
+      "email": "reverser-ac360f134c@sales-accounting.invalid",
+      "permissions": [
+        "dashboard.read",
+        "customers.read",
+        "sales.read",
+        "finance.receivables.read",
+        "finance.receivables.reverse"
+      ]
+    },
+    "accountant": {
+      "userId": "auth-sales-ac360f134c-accountant",
+      "email": "accountant-ac360f134c@sales-accounting.invalid",
+      "permissions": [
+        "dashboard.read",
+        "customers.read",
+        "sales.read",
+        "finance.receivables.read",
+        "accounting.accounts.read",
+        "accounting.journal.read",
+        "accounting.period.read",
+        "accounting.reports.read",
+        "accounting.audit.read",
+        "accounting.close.read",
+        "accounting.close.run"
+      ]
+    },
+    "readonly": {
+      "userId": "auth-sales-ac360f134c-readonly",
+      "email": "readonly-ac360f134c@sales-accounting.invalid",
+      "permissions": [
+        "dashboard.read",
+        "customers.read",
+        "sales.read",
+        "finance.receivables.read",
+        "accounting.journal.read",
+        "accounting.period.read",
+        "accounting.reports.read"
+      ]
+    }
+  },
+  "initialCounts": {
+    "sales": 0,
+    "settlements": 0,
+    "sessions": 0,
+    "posSessions": 0,
+    "journals": 0
+  },
+  "initialStock": {
+    "quantity": "5",
+    "unitCost": "4",
+    "value": "20",
+    "sellingPrice": "10"
+  },
+  "limitation": "Synthetic zero-tax mappings; no Cameroon statutory chart or country-pack certification. All sale, collection, reversal, shift and authentication operations must be performed through the real interface.",
+  "setupAmendments": [
+    {
+      "utc": "2026-11-08T21:02:18.787Z",
+      "permission": "accounting.close.run",
+      "reason": "Requested actual close assessment and stale-evidence observation; no sign/review/certify authority"
+    }
+  ]
+}

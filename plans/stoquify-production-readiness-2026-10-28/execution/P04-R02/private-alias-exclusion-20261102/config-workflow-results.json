@@ -1,0 +1,44 @@
+{
+  "at": "2026-11-02T16:31:36.652Z",
+  "commands": [
+    "node unit-final/run.cjs",
+    "node --test scripts/__tests__/dev-app-safe.node-test.cjs",
+    "npm run agent:workflow:check"
+  ],
+  "results": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "fe48cf",
+        "wall_time_seconds": 0.000023,
+        "exit_code": 0,
+        "original_token_count": 123,
+        "output": "PASS app/api/uploads/[...path]/__tests__/route.test.ts\nPASS lib/media/__tests__/legacy-upload-storage.test.ts (6.177 s)\nPASS lib/media/__tests__/legacy-upload-routing.test.ts\n\nTest Suites: 3 passed, 3 total\nTests:       91 passed, 91 total\nSnapshots:   0 total\nTime:        13.969 s\nRan all test suites.\nTest results written to: plans\\stoquify-production-readiness-2026-10-28\\execution\\P04-R02\\private-alias-exclusion-20261102\\unit-final\\jest-result.json\n\n{\"exitCode\":0,\"sourceStable\":true}\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "f7219a",
+        "wall_time_seconds": 0.0000208,
+        "exit_code": 0,
+        "original_token_count": 352,
+        "output": "# Subtest: restarts never reuse damaged output or modify production/another session\nok 1 - restarts never reuse damaged output or modify production/another session\n  ---\n  duration_ms: 242.4483\n  type: 'test'\n  ...\n# Subtest: ports and bundlers get separate outputs even with an identical override\nok 2 - ports and bundlers get separate outputs even with an identical override\n  ---\n  duration_ms: 57.6109\n  type: 'test'\n  ...\n# Subtest: default port and forwarded Next arguments are preserved\nok 3 - default port and forwarded Next arguments are preserved\n  ---\n  duration_ms: 27.0989\n  type: 'test'\n  ...\n# Subtest: rejects production output and paths outside the development namespace before writing\nok 4 - rejects production output and paths outside the development namespace before writing\n  ---\n  duration_ms: 89.381\n  type: 'test'\n  ...\n# Subtest: real Next config keeps development cache in memory and preserves production caching\nok 5 - real Next config keeps development cache in memory and preserves production caching\n  ---\n  duration_ms: 833.4718\n  type: 'test'\n  ...\n# Subtest: both npm development entry points use isolation and retain Prisma preparation\nok 6 - both npm development entry points use isolation and retain Prisma preparation\n  ---\n  duration_ms: 6.3383\n  type: 'test'\n  ...\n1..6\n# tests 6\n# suites 0\n# pass 6\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 2036.3464\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "323b1f",
+        "wall_time_seconds": 0.0000193,
+        "exit_code": 0,
+        "original_token_count": 49,
+        "output": "\n> STOQUIFY@0.1.0 agent:workflow:check\n> node scripts/verify-agent-workflow-contract.js\n\nWorkflow contract passed; 196 package scripts remain outside the reviewed manifest. No commands executed.\n"
+      }
+    }
+  ],
+  "evidenceClass": "mocked_route_pure_routing_native_fixture_and_configuration_checks",
+  "applicationBuild": false,
+  "realSessions": false,
+  "browser": false
+}

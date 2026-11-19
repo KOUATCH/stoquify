@@ -1,0 +1,248 @@
+/* P04-R02 isolated HTTP qualification runner. ARCHIVE ONLY.
+ * Copy this file to a fresh ignored .codex-tmp child before execution.
+ * Usage: node runner.cjs <absolute repository root> <absolute snapshot directory> <before|after>
+ * Root executor must launch with a scrubbed environment. Never use npm dev/build.
+ * Runtime writes remain under a new .codex-tmp/p04-r02-next-* fixture.
+ * Real Next dev router; actual archived middleware/upload GET; synthetic authz adapter.
+ */
+'use strict';
+const fs = require('node:fs/promises');
+const syncFs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const http = require('node:http');
+const https = require('node:https');
+const zlib = require('node:zlib');
+const assert = require('node:assert/strict');
+const { createRequire } = require('node:module');
+const [rootArg, snapshotArg, phase, runtimeMode = 'development'] = process.argv.slice(2);
+const root = path.resolve(rootArg || '');
+const snapshot = path.resolve(snapshotArg || '');
+assert(['before', 'after'].includes(phase), 'phase must be before or after');
+const temporaryRoot = path.join(root, '.codex-tmp');
+assert(path.resolve(__filename).startsWith(temporaryRoot + path.sep), 'materialize runner under ignored .codex-tmp');
+assert(snapshot.startsWith(path.join(root, 'plans', 'stoquify-production-readiness-2026-10-28', 'execution', 'P04-R02', 'repair', 'http') + path.sep), 'snapshot outside owned scope');
+for (const key of Object.keys(process.env)) {
+  if (/(DATABASE_URL|DIRECT_URL|AUTH_SECRET|NEON|SMTP|UPLOADTHING_TOKEN|STRIPE|SENTRY_DSN)/i.test(key) && process.env[key]) throw new Error('Sensitive application environment present: ' + key);
+}
+process.env.NEXT_TELEMETRY_DISABLED = '1';
+assert(['development','production'].includes(runtimeMode));
+process.env.NODE_ENV = runtimeMode;
+const localRequire = createRequire(path.join(root, 'package.json'));
+const ts = localRequire('typescript');
+
+function staticValue(node) {
+  if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
+  if (ts.isNumericLiteral(node)) return Number(node.text);
+  if (node.kind === ts.SyntaxKind.TrueKeyword) return true;
+  if (node.kind === ts.SyntaxKind.FalseKeyword) return false;
+  if (node.kind === ts.SyntaxKind.NullKeyword) return null;
+  if (ts.isArrayLiteralExpression(node)) return node.elements.map(staticValue);
+  if (ts.isObjectLiteralExpression(node)) return Object.fromEntries(node.properties.map(p => {
+    assert(ts.isPropertyAssignment(p), 'nonliteral images policy requires review');
+    return [p.name.text, staticValue(p.initializer)];
+  }));
+  throw new Error('Nonliteral image policy requires review: ' + node.kind);
+}
+function imagePolicy(source) {
+  const sf = ts.createSourceFile('next.config.mjs', source, ts.ScriptTarget.Latest, true);
+  for (const statement of sf.statements) if (ts.isVariableStatement(statement)) {
+    for (const decl of statement.declarationList.declarations) if (decl.name.getText(sf) === 'nextConfig') {
+      assert(ts.isObjectLiteralExpression(decl.initializer), 'nextConfig must be inspected literal');
+      const images = decl.initializer.properties.find(p => ts.isPropertyAssignment(p) && p.name.getText(sf) === 'images');
+      const rewrites = decl.initializer.properties.find(p => ts.isMethodDeclaration(p) && p.name.getText(sf) === 'rewrites');
+      const returned = rewrites.body.statements.find(p => ts.isReturnStatement(p));
+      return { images: images ? staticValue(images.initializer) : {}, rewrites: staticValue(returned.expression) };
+    }
+  }
+  throw new Error('nextConfig images policy not found');
+}
+const materializedAllowlist = new Set([
+  'middleware.ts', 'app/api/uploads/[...path]/route.ts', 'i18n/routing.ts',
+  'types/bilingual.ts', 'lib/security/dashboard-session-recovery.ts',
+  'lib/security/traffic-limiter.ts', 'lib/security/csp-pilot.ts',
+  'lib/media/legacy-upload-routing.ts', 'lib/media/legacy-upload-storage.ts',
+]);
+const authStub = `import { headers } from 'next/headers';
+export async function requireApiSessionForCurrentOrg() {
+ const actor=(await headers()).get('x-p04-actor') || 'absent';
+ if (['absent','expired','revoked'].includes(actor)) return {error:'Unauthorized',status:401,session:null,organizationId:null};
+ const organizationId=actor==='cross-tenant'?'other-tenant':'synthetic-tenant';
+ return {error:null,status:200,organizationId,session:{user:{id:'synthetic-user',organizationId,actor,permissions:actor==='missing-permission'?[]:['dashboard.read']}}};
+}
+export async function requireApiModuleAccess(input:any) { return input.user.actor==='module-disabled'?{allowed:false,error:'Forbidden',status:403}:{allowed:true,error:null,status:200}; }
+export function requireAppPermission(user:any,permission:string) { if(!user.permissions.includes(permission)) throw new Error('Forbidden'); }
+`;
+const errorsStub = `import {NextResponse} from 'next/server';
+export function jsonAuthzError(error:string,status:number) { return NextResponse.json({error:status===401?'Unauthenticated':'Forbidden'},{status:status===401?401:403,headers:{'Cache-Control':'private, no-store'}}); }
+export function jsonErrorResponse(error:unknown,options:any={}) { return NextResponse.json({error:options.userMessage || 'Unavailable'},{status:options.status || 500,headers:{'Cache-Control':'private, no-store'}}); }
+`;
+function loopbackOnly(value) {
+  const address = typeof value === 'string' || value instanceof URL ? new URL(value) : value;
+  const hostname = address.hostname || address.host || 'localhost';
+  if (!['localhost','127.0.0.1','::1','[::1]'].includes(hostname)) throw new Error('External network blocked: ' + hostname);
+}
+// No external HTTP or fetch is allowed. This is a supplementary guard, not an OS sandbox.
+for (const transport of [http, https]) {
+  const original = transport.request;
+  transport.request = function(value, ...rest) { loopbackOnly(value); return original.call(this, value, ...rest); };
+  const get = transport.get;
+  transport.get = function(value, ...rest) { loopbackOnly(value); return get.call(this, value, ...rest); };
+}
+const originalFetch = global.fetch;
+global.fetch = function(input, init) { loopbackOnly(typeof input === 'string' || input instanceof URL ? input : input.url); return originalFetch(input, init); };
+
+(async () => {
+  await fs.mkdir(temporaryRoot, {recursive:true});
+  const fixture = await fs.mkdtemp(path.join(temporaryRoot, 'p04-r02-next-'));
+  console.log(JSON.stringify({event:'fixture-created',fixture,result:path.join(fixture,'result.json')}));
+  const sourceManifest = JSON.parse(await fs.readFile(path.join(snapshot, 'source-manifest.json'),'utf8'));
+  for (const item of sourceManifest.files) {
+    const content = await fs.readFile(path.join(snapshot, item.path + '.source.txt'));
+    assert.equal(crypto.createHash('sha256').update(content).digest('hex'), item.sha256, 'archived source hash mismatch');
+    if (item.materialize) {
+      assert(materializedAllowlist.has(item.path), 'unreviewed materialized dependency: ' + item.path);
+      const target=path.resolve(fixture,item.path);
+      assert(target.startsWith(fixture+path.sep),'source escapes fixture');
+      await fs.mkdir(path.dirname(target),{recursive:true}); await fs.writeFile(target,content);
+    }
+  }
+  const write = async (name,text) => { const dest=path.join(fixture,name); await fs.mkdir(path.dirname(dest),{recursive:true}); await fs.writeFile(dest,text); };
+  await write('package.json',JSON.stringify({name:'p04-r02-sealed-http',private:true}));
+  await write('tsconfig.json',JSON.stringify({compilerOptions:{target:'ES2022',lib:['dom','dom.iterable','esnext'],allowJs:true,skipLibCheck:true,strict:false,noEmit:true,esModuleInterop:true,module:'esnext',moduleResolution:'bundler',resolveJsonModule:true,isolatedModules:true,jsx:'preserve',incremental:false,baseUrl:'.',paths:{'@/*':['./*']}},include:['next-env.d.ts','**/*.ts','**/*.tsx'],exclude:['node_modules']}));
+  const policy=imagePolicy(await fs.readFile(path.join(snapshot,'next.config.mjs.source.txt'),'utf8'));
+  const images=policy.images;
+  await write('next.config.mjs','export default {'+JSON.stringify({distDir:'.next',poweredByHeader:false,images,experimental:{cpus:1,webpackBuildWorker:false,workerThreads:false}}).slice(1,-1)+',async rewrites(){return '+JSON.stringify(policy.rewrites)+'}};\n');
+  await write('app/layout.tsx',"export default function Layout({children}:{children:any}) { return <html lang='en'><body>{children}</body></html> }\n");
+  await write('app/page.tsx',"export default function Page(){return <p>P04 synthetic qualification fixture</p>}\n");
+  await write('lib/security/server-authz.ts',authStub);
+  await write('lib/error-handling/route-response.ts',errorsStub);
+  // Distinct valid 1x1 RGBA PNGs, generated entirely from synthetic bytes.
+  function png(pixel) {
+    const crc=buffer=>{let c=0xffffffff;for(const byte of buffer){c^=byte;for(let k=0;k<8;k++)c=(c>>>1)^((c&1)?0xedb88320:0)}return (c^0xffffffff)>>>0};
+    const chunk=(name,data)=>{const type=Buffer.from(name),size=Buffer.alloc(4),sum=Buffer.alloc(4);size.writeUInt32BE(data.length);sum.writeUInt32BE(crc(Buffer.concat([type,data])));return Buffer.concat([size,type,data,sum])};
+    const ihdr=Buffer.alloc(13);ihdr.writeUInt32BE(1,0);ihdr.writeUInt32BE(1,4);ihdr[8]=8;ihdr[9]=6;
+    return Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),chunk('IHDR',ihdr),chunk('IDAT',zlib.deflateSync(Buffer.from([0,...pixel]))),chunk('IEND',Buffer.alloc(0))]);
+  }
+  const privateBytes=png([149,38,207,255]);
+  const publicBytes=png([21,188,74,255]);
+  const storagePrefix=runtimeMode==='production'?'.private':'public';
+  await write(storagePrefix+'/uploads/synthetic-tenant/sentinel.png',privateBytes);
+  await write('public/public-control.png',publicBytes);
+  const privatePath=path.join(fixture,storagePrefix+'/uploads/synthetic-tenant/sentinel.png');
+  const io=[];
+  const deniedFileReads=[];
+  const protectRead=p=>{
+    const value=path.resolve(String(p));
+    if (/^\.env(?:\.|$)/i.test(path.basename(value)) || value.startsWith(path.join(root,'public','uploads')+path.sep)) {
+      deniedFileReads.push({path:value,kind:/^\.env(?:\.|$)/i.test(path.basename(value))?'environment-file':'real-upload'});
+      throw new Error('Unapproved environment or real-upload read');
+    }
+  };
+  const inspectPath=p=>{try{return path.resolve(String(p))===privatePath}catch{return false}};
+  for(const method of ['access','readFile','open']){
+    const original=syncFs.promises[method];
+    syncFs.promises[method]=async function(p,...args){if(method==='readFile'||method==='open')protectRead(p);if(inspectPath(p))io.push({operation:method,path:'synthetic-private-sentinel'});return original.call(this,p,...args)};
+  }
+  const originalReadFileSync=syncFs.readFileSync;
+  syncFs.readFileSync=function(p,...args){protectRead(p);return originalReadFileSync.call(this,p,...args)};
+  const originalReadFile=syncFs.readFile;
+  syncFs.readFile=function(p,...args){protectRead(p);return originalReadFile.call(this,p,...args)};
+  const originalReadStream=syncFs.createReadStream;
+  syncFs.createReadStream=function(p,...args){protectRead(p);if(inspectPath(p))io.push({operation:'createReadStream',path:'synthetic-private-sentinel'});return originalReadStream.call(this,p,...args)};
+  process.chdir(fixture);
+  let app,server,origin,failure,harnessCompleted=false;
+  const records=[];
+  const acceptanceFailures=[];
+  async function request(label,url,actor='absent',method='GET',extra={}) {
+    io.length=0;
+    const headers={...extra};
+    if(actor!=='absent') { headers['x-p04-actor']=actor; headers.cookie='better-auth.session_token=synthetic-'+actor; }
+    const response=await fetch(origin+url,{method,headers,redirect:'manual',signal:AbortSignal.timeout(90000)});
+    const bytes=Buffer.from(await response.arrayBuffer());
+    const record={label,url,actor,method,status:response.status,bytes:bytes.length,
+      privateSentinelEquals:bytes.equals(privateBytes),bodyHash:crypto.createHash('sha256').update(bytes).digest('hex'),
+      contentType:response.headers.get('content-type'),cacheControl:response.headers.get('cache-control'),etag:response.headers.get('etag'),
+      location:response.headers.get('location'),privateFileIo:[...io]};
+    records.push(record); return record;
+  }
+  try {
+    if(runtimeMode==='production') {
+      await localRequire('next/dist/build').default(fixture,false,false,false,false,false,false,false,'default',undefined);
+    }
+    const {ImageOptimizerCache}=localRequire('next/dist/server/image-optimizer');
+    const {defaultConfig}=localRequire('next/dist/server/config-shared');
+    const seededCache=new ImageOptimizerCache({distDir:path.join(fixture,'.next'),nextConfig:{...defaultConfig,images:{...defaultConfig.images,...images}}});
+    const seedKey=ImageOptimizerCache.getCacheKey({href:'/uploads/synthetic-tenant/sentinel.png',width:64,quality:75,mimeType:''});
+    await seededCache.set(seedKey,{kind:'IMAGE',buffer:privateBytes,extension:'png',etag:'p04-synthetic',upstreamEtag:'p04-synthetic'},{cacheControl:{revalidate:3600}});
+    assert((await seededCache.get(seedKey)).value.buffer.equals(privateBytes),'private cache seed unavailable');
+    const next = localRequire('next');
+    app = next({dev:runtimeMode==='development',dir:fixture,hostname:'127.0.0.1',port:0});
+    await app.prepare();
+    const handler=app.getRequestHandler();
+    server=http.createServer((req,res)=>handler(req,res));
+    await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve)});
+    const address=server.address(); origin='http://127.0.0.1:'+address.port;
+    console.log(JSON.stringify({event:'fixture-listening',fixture,origin}));
+    const actors=['absent','cross-tenant','revoked','expired','missing-permission','module-disabled','valid'];
+    for(const actor of actors) {
+      await request('api-'+actor,'/api/uploads/synthetic-tenant/sentinel.png',actor);
+      await request('static-'+actor,'/uploads/synthetic-tenant/sentinel.png',actor);
+    }
+    for(const p of ['/uploads/synthetic-tenant/%73entinel.png','/%75ploads/synthetic-tenant/sentinel.png','/uploads%2Fsynthetic-tenant%2Fsentinel.png','/%75ploads%2Fsynthetic-tenant%2Fsentinel.png','/%2575ploads/synthetic-tenant/sentinel.png','/uploads/synthetic-tenant/sentinel.png?x=1','/Uploads/synthetic-tenant/sentinel.png']) await request('static-encoded',p);
+    await request('api-valid-encoded','/api/uploads/synthetic-tenant/%73entinel.png','valid');
+    await request('api-traversal','/api/uploads/synthetic-tenant/%2e%2e%2fsentinel.png','valid');
+    for(const actor of ['absent','valid']) {
+      await request('api-head-'+actor,'/api/uploads/synthetic-tenant/sentinel.png',actor,'HEAD');
+      await request('static-head-'+actor,'/uploads/synthetic-tenant/sentinel.png',actor,'HEAD');
+    }
+    const etag=records.find(r=>r.label==='static-valid')?.etag;
+    await request('static-conditional','/uploads/synthetic-tenant/sentinel.png','absent','GET',etag?{'if-none-match':etag}:{});
+    await request('api-after-valid','/api/uploads/synthetic-tenant/sentinel.png','absent');
+    const imageUrl=url=>'/_next/image?url='+encodeURIComponent(url)+'&w=64&q=75';
+    await request('optimizer-static-preseeded',imageUrl('/uploads/synthetic-tenant/sentinel.png'));
+    await request('optimizer-static-warm',imageUrl('/uploads/synthetic-tenant/sentinel.png'),'cross-tenant');
+    await request('optimizer-static-encoded',imageUrl('/%75ploads/synthetic-tenant/sentinel.png'));
+    await request('optimizer-api-valid',imageUrl('/api/uploads/synthetic-tenant/sentinel.png'),'valid');
+    await request('optimizer-api-after-valid',imageUrl('/api/uploads/synthetic-tenant/sentinel.png'));
+    for(const target of ['/uploads/synthetic-tenant/sentinel.png?cold=1','/Uploads/synthetic-tenant/sentinel.png','/uploads%2Fsynthetic-tenant%2Fsentinel.png','/%2575ploads/synthetic-tenant/sentinel.png','/api%2Fuploads%2Fsynthetic-tenant%2Fsentinel.png']) await request('optimizer-alias',imageUrl(target));
+    await request('optimizer-endpoint-encoded',imageUrl('/uploads/synthetic-tenant/sentinel.png').replace('/_next/image','/_next/%69mage'));
+    for(const p of ['/uploads/synthetic-tenant/%73entinel.png','/%75ploads/synthetic-tenant/sentinel.png','/uploads%2Fsynthetic-tenant%2Fsentinel.png','/Uploads/synthetic-tenant/sentinel.png']) await request('static-valid-alias',p,'valid');
+    await request('public-control','/public-control.png');
+    await request('optimizer-public-control',imageUrl('/public-control.png'));
+    harnessCompleted=true;
+    const byLabel=label=>records.filter(r=>r.label===label);
+    const denied=r=>r.status>=400&&r.status<500&&!r.privateSentinelEquals&&r.privateFileIo.length===0;
+    const privateRead=r=>r.status===200&&r.privateSentinelEquals&&/private.*no-store/.test(r.cacheControl||'');
+    const privateHead=r=>r.status===200&&r.bytes===0&&/private.*no-store/.test(r.cacheControl||'');
+    for(const row of records){
+      let expected='denied_no_private_file_read',ok;
+      if(['api-valid','static-valid','api-valid-encoded','static-valid-alias'].includes(row.label)){expected='authorized_private_read_no_store';ok=privateRead(row)}
+      else if(['api-head-valid','static-head-valid'].includes(row.label)){expected='authorized_private_head_no_store';ok=privateHead(row)}
+      else if(['public-control','optimizer-public-control'].includes(row.label)){expected='public_control_available';ok=row.status===200}
+      else ok=denied(row);
+      if(!ok)acceptanceFailures.push({label:row.label,url:row.url,actor:row.actor,method:row.method,status:row.status,expected,privateFileIo:row.privateFileIo,privateSentinelEquals:row.privateSentinelEquals,cacheControl:row.cacheControl});
+    }
+    assert.equal(deniedFileReads.length,0,'environment/real-upload guard tripped');
+    if(phase==='before') assert(byLabel('static-absent')[0].privateSentinelEquals,'baseline did not reproduce direct static bypass');
+    else assert.equal(acceptanceFailures.length,0,'production acceptance matrix still has failed rows');
+  } catch(error) { failure=String(error.stack||error); }
+  finally {
+    const evidence={phase,evidenceClass:'actual_installed_next_'+runtimeMode+'_http_router_sealed_fixture',runtimeMode,rewritesPolicy:policy.rewrites,seededPrivateOptimizerCache:true,
+      fullApplication:false,productionBuild:runtimeMode==='production',authBoundary:'explicit synthetic server-authz adapter; actual Better Auth/session/database behavior not tested',
+      sourceManifest,imagesPolicy:images,nextVersion:localRequire('next/package.json').version,
+      writesScope:'fresh ignored fixture compilation output/evidence and synthetic files only',fixture,
+      databaseAccess:false,realUploadBytesRead:false,externalNetwork:'HTTP/fetch guarded; executor sandbox remains authoritative',
+      syntheticHashes:{private:crypto.createHash('sha256').update(privateBytes).digest('hex'),public:crypto.createHash('sha256').update(publicBytes).digest('hex')},
+      tests:records,harnessCompleted,acceptancePassed:harnessCompleted&&acceptanceFailures.length===0&&!failure,acceptanceFailures,runnerFailure:failure||null,deniedFileReads,completedAt:new Date().toISOString(),
+      remainingGaps:['full current application artifact','actual session revocation/expiry semantics','production image/CDN cache invalidation','deployment ingress/static-file configuration']};
+    await fs.writeFile(path.join(fixture,'result.json'),JSON.stringify(evidence,null,2)+'\n');
+    console.log(JSON.stringify({phase,harnessCompleted,acceptancePassed:evidence.acceptancePassed,acceptanceFailureCount:acceptanceFailures.length,requestCount:records.length,result:path.join(fixture,'result.json'),failure},null,2));
+    if(server?.listening){server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
+    let graceful=false;
+    if(app) await Promise.race([app.close().then(()=>{graceful=true}),new Promise(resolve=>setTimeout(resolve,10000))]);
+    evidence.cleanup={listenerClosed:!server?.listening,nextCloseCompleted:graceful,ownedProcessExits:true};
+    await fs.writeFile(path.join(fixture,'result.json'),JSON.stringify(evidence,null,2)+'\n');
+  }
+  process.exit(failure?1:0);
+})().catch(error=>{console.error(error);process.exitCode=1});

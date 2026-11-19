@@ -1,0 +1,1420 @@
+{
+  "checkedAt": "2026-11-10T07:18:36.653Z",
+  "status": "IN_PROGRESS_LOCAL_EVIDENCE_INVENTORY",
+  "releaseApproved": false,
+  "deploymentApproved": false,
+  "scope": "Retained receipt/source/hash inventory only; this runner executes no test, build, application, database, provider or deployment.",
+  "runner": {
+    "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/evidence-inventory.cjs",
+    "sha256": "2d96cd18ce0ae101b9959f70f0c9a9830f4c169ce74f35095b3ee3cae813db6d",
+    "bytes": 14236
+  },
+  "counts": {
+    "distinctMockedServiceActionSuites": 14,
+    "mockedServiceActionTests": 796,
+    "distinctJsdomSuites": 4,
+    "jsdomComponentHookTests": 161,
+    "distinctMockedAuthSuites": 4,
+    "mockedAuthRegressionTests": 87,
+    "pureReleaseControlTests": 15,
+    "realDatabaseTests": 41,
+    "earnedCloseNamedPhases": 10,
+    "mockedAuthActionRenderedCases": 72
+  },
+  "countingRule": "Select the latest passing receipt per test suite only when its test-file hash still matches. Count each suite once. Reconciliation actions has26 tests in both789 and33 batches, so selected service/action count is789+33-26=796. Evidence classes are separate; rendered variants and lifecycle phase checks are not extra unit tests.",
+  "selectedUnitSuites": [
+    {
+      "file": "actions/accounting/__tests__/close-assurance-write-access.test.ts",
+      "passed": 62,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "bffdc142de80b2e6d9e57c37e1bb2b4aefeaeedabe85348b06c0a1210ab2a403",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    },
+    {
+      "file": "actions/accounting/__tests__/close-assurance.actions.test.ts",
+      "passed": 33,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "da7be27dfa9b82307c764433ba66dc8da2beaded3b4712d41cbe6f74eea8b54f",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    },
+    {
+      "file": "actions/payments/__tests__/reconciliation-dashboard-read-access.test.ts",
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "f3458dfb199a8143208e6e20af99022148c2463d0689c8ac929535fb70757f11",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-debf53f1d0",
+      "finished": "2026-11-09T20:09:22.801Z"
+    },
+    {
+      "file": "actions/payments/__tests__/reconciliation.actions.test.ts",
+      "passed": 26,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "80d5e395c364c217b1de27a6ecfcd457aa99bd6b6127dd38baabe835cd8a5819",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-debf53f1d0",
+      "finished": "2026-11-09T20:09:22.801Z"
+    },
+    {
+      "file": "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+      "passed": 54,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "04e81a18be4d3d9b68702a1419e91cdb60d4eda157b6c0a1c2859f0be0c83d9b",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-cf07922c74",
+      "finished": "2026-11-09T20:45:36.539Z"
+    },
+    {
+      "file": "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx",
+      "passed": 63,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "ea28d049cf512c9a5c0009a0c41a9635433e6150812a80f995b808d29ca7c351",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-0bdada02cf",
+      "finished": "2026-11-09T20:12:42.390Z"
+    },
+    {
+      "file": "hooks/__tests__/useCloseAssurance.export.test.tsx",
+      "passed": 35,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "66418e6ad33b4eac50bc8056a866a84e73d6bf2d47630c88d1158ea450bb2d8c",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-cf07922c74",
+      "finished": "2026-11-09T20:45:36.539Z"
+    },
+    {
+      "file": "hooks/payments/__tests__/reconciliation-run-scope.test.tsx",
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "8ea8157e925a0997b9947bba0d2d1ae9e31e969ef176b9ba7c326b83bad293eb",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-0bdada02cf",
+      "finished": "2026-11-09T20:12:42.390Z"
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+      "passed": 93,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "c4d8407f0dde0b8cb97edb7d4b3f5da7ace2ac2a76ca0b20b8efd7bc12b837e0",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance.service.test.ts",
+      "passed": 166,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "cc925bf2eed853c15908d7d4189acda0115e720e6b19b115495658e528908335",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    },
+    {
+      "file": "services/accounting/__tests__/close-evidence-acceptance-authority.service.test.ts",
+      "passed": 203,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "3c545495275f1bbf264952bf9bc8dd38d925524ce64bd81e5185612cc8770efa",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    },
+    {
+      "file": "services/payments/__tests__/statement-import.service.test.ts",
+      "passed": 19,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "cc7df157e73576bdf47940cd61caf461c9843d4b490e1a63f30e66e7e2208172",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    },
+    {
+      "file": "services/payments/__tests__/statement-pilot-format.test.ts",
+      "passed": 64,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "d86913cef38fed90e0a57c71cd336510bfb36622828518c82c9b35dc596d8957",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    },
+    {
+      "file": "services/reconciliation/__tests__/account-close-coverage.test.ts",
+      "passed": 40,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "06ed65aa425e0da5105465fbb02ff3c386cfab254395635277e806f9e29e7951",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    },
+    {
+      "file": "services/reconciliation/__tests__/bank-balance-sources.test.ts",
+      "passed": 7,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "953d46a70ce1d56661270494cd18e0f6988b6714fa9d9b228c750a7a26c6cf20",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    },
+    {
+      "file": "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+      "passed": 53,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "87af6eac19ef6a484ccecbb9beac99d5a96e7e88079eba34af8dadc60298bf9f",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    },
+    {
+      "file": "services/reconciliation/__tests__/payment-reconciliation-dashboard.service.test.ts",
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "d77ce3e4196364893aab3e1041f23fdf644f6a2cf6c415a59bc06ad6c2ef6697",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-debf53f1d0",
+      "finished": "2026-11-09T20:09:22.801Z"
+    },
+    {
+      "file": "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+      "passed": 23,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testSha256": "1eeed8d933145517afd42e3bfcafec6b48dfee504414e4f7669e0f6ed66bc42b",
+      "currentTestMatches": true,
+      "resultStatus": "passed",
+      "selectedFrom": "unit-f3a0a95023",
+      "finished": "2026-11-09T20:02:07.090Z"
+    }
+  ],
+  "unitAttempts": [
+    {
+      "directory": "unit-031a008c1a",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-031a008c1a/verification.json",
+        "sha256": "d909670ad2d2a714024a5523ca392bef8471c7332c54bcac0423bc1310a10f46",
+        "bytes": 1805
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-031a008c1a/results.json",
+        "sha256": "9c6946fc2f0b34506d40775338cbdfc03643e0275459e5f9128c93f4c487146b",
+        "bytes": 54968
+      },
+      "finished": "2026-11-09T19:26:54.568Z",
+      "passed": true,
+      "reportedPassed": 126,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 93
+          }
+        },
+        {
+          "file": "actions/accounting/__tests__/close-assurance.actions.test.ts",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 33
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-0bdada02cf",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-0bdada02cf/verification.json",
+        "sha256": "764ecc92a1cf873eec585da407b2923575e236bea96dee333b466840a732e82a",
+        "bytes": 1790
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-0bdada02cf/results.json",
+        "sha256": "707809eb2f5c8dc4a87e6dea121b738dccd792fbb0219583c0bb3ffd8395ddb2",
+        "bytes": 33275
+      },
+      "finished": "2026-11-09T20:12:42.390Z",
+      "passed": true,
+      "reportedPassed": 72,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 63
+          }
+        },
+        {
+          "file": "hooks/payments/__tests__/reconciliation-run-scope.test.tsx",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 9
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-409ae9b586",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-409ae9b586/verification.json",
+        "sha256": "3df2e6aaf346828eec67271d18a2cdbc72fd510626cef21382f4aaef36af1d17",
+        "bytes": 1758
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-409ae9b586/results.json",
+        "sha256": "f25503d3518feed270cd688941a0b52da535d471a8df799cd69261c4c9af6071",
+        "bytes": 35918
+      },
+      "finished": "2026-11-09T19:48:47.569Z",
+      "passed": true,
+      "reportedPassed": 82,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 48
+          }
+        },
+        {
+          "file": "hooks/__tests__/useCloseAssurance.export.test.tsx",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 34
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-51eff69a2b",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-51eff69a2b/verification.json",
+        "sha256": "e35c30fecb3f6e3363c843ed6bc527d4c3f72d3f406d3503c5b2d774c1168a31",
+        "bytes": 2263
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-51eff69a2b/results.json",
+        "sha256": "d977bcbbe910e086e30177deec834eeee5faba9c4cadda6319f6fad265d7e795",
+        "bytes": 190757
+      },
+      "finished": "2026-11-09T19:25:27.665Z",
+      "passed": true,
+      "reportedPassed": 463,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "services/accounting/__tests__/close-assurance.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 166
+          }
+        },
+        {
+          "file": "services/accounting/__tests__/close-evidence-acceptance-authority.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 203
+          }
+        },
+        {
+          "file": "services/reconciliation/__tests__/account-close-coverage.test.ts",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 32
+          }
+        },
+        {
+          "file": "actions/accounting/__tests__/close-assurance-write-access.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 62
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-5763112295",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-5763112295/verification.json",
+        "sha256": "765c90bf206b88aaa05a953adbe810593cc3242c1670f60217a12103c8bd1ecc",
+        "bytes": 1760
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-5763112295/results.json",
+        "sha256": "a141702ff13384077192b0d05e8264f4d3a0bafa8aa91a4c78a109bb4510f08d",
+        "bytes": 250494
+      },
+      "finished": "2026-11-09T19:39:37.995Z",
+      "passed": false,
+      "reportedPassed": 34,
+      "reportedFailed": 46,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+          "currentTestMatches": false,
+          "counts": {
+            "failed": 46,
+            "passed": 1
+          }
+        },
+        {
+          "file": "hooks/__tests__/useCloseAssurance.export.test.tsx",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 33
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-6e2f646b57",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-6e2f646b57/verification.json",
+        "sha256": "230eed1dd2f80b06853a41c3f4f7d20426c1432f43556bf92691b7b179f63438",
+        "bytes": 1844
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-6e2f646b57/results.json",
+        "sha256": "369577b322ecb2526b4b8a1119bacb0b42caacf8560440dfd8eeaa5a1fd45298",
+        "bytes": 39530
+      },
+      "finished": "2026-11-09T19:50:25.353Z",
+      "passed": true,
+      "reportedPassed": 86,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 53
+          }
+        },
+        {
+          "file": "actions/accounting/__tests__/close-assurance.actions.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 33
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-8e7cf922e3",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-8e7cf922e3/verification.json",
+        "sha256": "76f57c79636efc8e1dec32679e1d1dbec0229d3ffeac582f39872cafe1571b65",
+        "bytes": 1758
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-8e7cf922e3/results.json",
+        "sha256": "e705e3b2edeae791aa04b4b16433e6e2ff4024a53dafd8f415258061801c11c5",
+        "bytes": 36375
+      },
+      "finished": "2026-11-09T19:52:40.304Z",
+      "passed": true,
+      "reportedPassed": 83,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 48
+          }
+        },
+        {
+          "file": "hooks/__tests__/useCloseAssurance.export.test.tsx",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 35
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-93c45352a3",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-93c45352a3/verification.json",
+        "sha256": "8bceb4b01f60907dc16bdb015d6521a744e280bfe5c96e58bc7de2e1dd9937ea",
+        "bytes": 1758
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-93c45352a3/results.json",
+        "sha256": "ad0303ae89b65bc822c4759b1f4b92a0b6103dc0fa4c642b2fa62090b0f88d78",
+        "bytes": 35462
+      },
+      "finished": "2026-11-09T19:41:43.736Z",
+      "passed": true,
+      "reportedPassed": 81,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 48
+          }
+        },
+        {
+          "file": "hooks/__tests__/useCloseAssurance.export.test.tsx",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 33
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-bdadf867fd",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-bdadf867fd/verification.json",
+        "sha256": "852117c4396c36b2348d83c29e9bfd22c03a7d97db536db85f5410143cb325dd",
+        "bytes": 2900
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-bdadf867fd/results.json",
+        "sha256": "5342e49665badd50bce0f3809218c4415cc82c7f08e97068aa330ce360c3935b",
+        "bytes": 101815
+      },
+      "finished": "2026-11-09T19:47:43.837Z",
+      "passed": false,
+      "reportedPassed": 231,
+      "reportedFailed": 1,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 52,
+            "failed": 1
+          }
+        },
+        {
+          "file": "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 23
+          }
+        },
+        {
+          "file": "actions/payments/__tests__/reconciliation.actions.test.ts",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 26
+          }
+        },
+        {
+          "file": "services/payments/__tests__/statement-import.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 19
+          }
+        },
+        {
+          "file": "services/reconciliation/__tests__/account-close-coverage.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 40
+          }
+        },
+        {
+          "file": "services/payments/__tests__/statement-pilot-format.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 64
+          }
+        },
+        {
+          "file": "services/reconciliation/__tests__/bank-balance-sources.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 7
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-c79cd0ddf4",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-c79cd0ddf4/verification.json",
+        "sha256": "699eda42072af720d65e965d541d9a31cc7985aea6f05b8980f2dd08d8d0665e",
+        "bytes": 1758
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-c79cd0ddf4/results.json",
+        "sha256": "1a3d95c9bb511858c46e50b32726be0e7d789ee3d2a33db51825fd41678ec39f",
+        "bytes": 37280
+      },
+      "finished": "2026-11-09T20:02:52.421Z",
+      "passed": true,
+      "reportedPassed": 85,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 50
+          }
+        },
+        {
+          "file": "hooks/__tests__/useCloseAssurance.export.test.tsx",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 35
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-cacd81a6ed",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-cacd81a6ed/verification.json",
+        "sha256": "7ce4e2b66f88b00f5b0afa96b8e74e1ec18c223a7bb72aaad8b14a541323361a",
+        "bytes": 1790
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-cacd81a6ed/results.json",
+        "sha256": "3cfdb99b2c72844d93c44ca0b65f3721927aac3716bfe655786cc8bac356d122",
+        "bytes": 7251
+      },
+      "finished": "2026-11-09T20:09:49.945Z",
+      "passed": false,
+      "reportedPassed": 9,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx",
+          "currentTestMatches": true,
+          "counts": {}
+        },
+        {
+          "file": "hooks/payments/__tests__/reconciliation-run-scope.test.tsx",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 9
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-cf07922c74",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-cf07922c74/verification.json",
+        "sha256": "3afefa9813a77340e6438a0d778c3976e4d1b38f1f2c2cc097d273934aafd888",
+        "bytes": 1758
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-cf07922c74/results.json",
+        "sha256": "cb0eeea92c133bc970e98a532ebb4e5d61f7cfa8f49815dbd72026eb30609cdb",
+        "bytes": 39162
+      },
+      "finished": "2026-11-09T20:45:36.539Z",
+      "passed": true,
+      "reportedPassed": 89,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 54
+          }
+        },
+        {
+          "file": "hooks/__tests__/useCloseAssurance.export.test.tsx",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 35
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-debf53f1d0",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-debf53f1d0/verification.json",
+        "sha256": "8b6b6c3f63e0e272639a945b460fa58a6e833e99b43cbee5e4d48806853e18cb",
+        "bytes": 2056
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-debf53f1d0/results.json",
+        "sha256": "e80401b01a45fe629b754966db4062211544ca4acbc9e57c6e821939897aa90c",
+        "bytes": 15599
+      },
+      "finished": "2026-11-09T20:09:22.801Z",
+      "passed": true,
+      "reportedPassed": 33,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "actions/payments/__tests__/reconciliation.actions.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 26
+          }
+        },
+        {
+          "file": "services/reconciliation/__tests__/payment-reconciliation-dashboard.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 3
+          }
+        },
+        {
+          "file": "actions/payments/__tests__/reconciliation-dashboard-read-access.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 4
+          }
+        }
+      ]
+    },
+    {
+      "directory": "unit-f3a0a95023",
+      "verification": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-f3a0a95023/verification.json",
+        "sha256": "a97f98e205de16a865052b7f68dc3abe2060801b69028049d0568a5bdb9785cb",
+        "bytes": 3985
+      },
+      "results": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-f3a0a95023/results.json",
+        "sha256": "2dcb2d8ec13f07b1831f58cce08bdd29851e71d60afbb9b02aacb2d343e06a4e",
+        "bytes": 329728
+      },
+      "finished": "2026-11-09T20:02:07.090Z",
+      "passed": true,
+      "reportedPassed": 789,
+      "reportedFailed": 0,
+      "reportedPending": 0,
+      "reportedTodo": 0,
+      "suites": [
+        {
+          "file": "services/accounting/__tests__/close-assurance.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 166
+          }
+        },
+        {
+          "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 93
+          }
+        },
+        {
+          "file": "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 53
+          }
+        },
+        {
+          "file": "services/accounting/__tests__/close-evidence-acceptance-authority.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 203
+          }
+        },
+        {
+          "file": "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 23
+          }
+        },
+        {
+          "file": "actions/payments/__tests__/reconciliation.actions.test.ts",
+          "currentTestMatches": false,
+          "counts": {
+            "passed": 26
+          }
+        },
+        {
+          "file": "services/payments/__tests__/statement-import.service.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 19
+          }
+        },
+        {
+          "file": "actions/accounting/__tests__/close-assurance.actions.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 33
+          }
+        },
+        {
+          "file": "services/reconciliation/__tests__/account-close-coverage.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 40
+          }
+        },
+        {
+          "file": "actions/accounting/__tests__/close-assurance-write-access.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 62
+          }
+        },
+        {
+          "file": "services/payments/__tests__/statement-pilot-format.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 64
+          }
+        },
+        {
+          "file": "services/reconciliation/__tests__/bank-balance-sources.test.ts",
+          "currentTestMatches": true,
+          "counts": {
+            "passed": 7
+          }
+        }
+      ]
+    }
+  ],
+  "incompleteUnitAttemptArtifacts": [],
+  "retainedFailedAttemptReceipts": [
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/authenticated-app/runtime-262ac949ca/RESULT.json",
+        "sha256": "70fae80bacefb368d91af6ac824e4777bfe9922e1e88e0a285853657dc4cbf1d",
+        "bytes": 1309
+      },
+      "kind": "RESULT.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/ca03-producer/pg-attempt-28f22e81a1/pg-RESULT.json",
+        "sha256": "7c19fbe607e4bd7dfb2c3fc0983feac22ea3b4667827a2704c4daa882ded4be6",
+        "bytes": 1154
+      },
+      "kind": "pg-RESULT.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/pg-attempt-c0a0963bec/pg-RESULT.json",
+        "sha256": "dd2bbd22f7513855d24e82e5880ee8e110c2f030e122525352ada120de27a3c0",
+        "bytes": 1132
+      },
+      "kind": "pg-RESULT.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/pg-attempt-ece011f832/pg-RESULT.json",
+        "sha256": "6a08e744aeba95f92438801ca0fbea13f05644865a6dcc3e53c665634a8026c6",
+        "bytes": 2302
+      },
+      "kind": "pg-RESULT.json",
+      "cleanupFailureRecorded": true,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/rendered-monthly-ui/attempt-2ad5bfed91/RESULT.json",
+        "sha256": "6d13b82f665023c08a3f3217e6fc5082f0ae462fcf3b8395b597b7eb54d1883b",
+        "bytes": 1487
+      },
+      "kind": "RESULT.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/rendered-ui/attempt-084db32977/RESULT.json",
+        "sha256": "1a0d4b42aeeafc9003ee5adec33f5eadd6278782690a4716552a0a4c319ee35a",
+        "bytes": 1917
+      },
+      "kind": "RESULT.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/rendered-ui/attempt-0888b67836/RESULT.json",
+        "sha256": "f6693ddd74f5ec3617bfcdb6e5897024dc0951703617b168e2faa2cffb7aac63",
+        "bytes": 3631
+      },
+      "kind": "RESULT.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/rendered-ui/attempt-2014b19083/RESULT.json",
+        "sha256": "5da8a48bc84f1e5b9bbf868aba5cf9695390653a7ade75430bcf2408a1d82988",
+        "bytes": 130825
+      },
+      "kind": "RESULT.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/rendered-ui/attempt-9ea9f920cd/RESULT.json",
+        "sha256": "0e73839e39253ad8e5f945b2de1594874e36549f9427c4bd15946327fa975371",
+        "bytes": 11957
+      },
+      "kind": "RESULT.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/rendered-ui/attempt-fb2fcfb7fe/RESULT.json",
+        "sha256": "59227ce5eb4a7db36365ae33d8f7f1190fd7e1d167f7019afc7930337d91edae",
+        "bytes": 13065
+      },
+      "kind": "RESULT.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/static-51efae4347/verification.json",
+        "sha256": "89aa97c84cbce1b6692456d7e0aaabd6e106a8f1cff4dd48fd88825ec4afdfeb",
+        "bytes": 3586
+      },
+      "kind": "verification.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/static-68242d33b5/verification.json",
+        "sha256": "ada888b321386fcdccf0718d109df649dd7fab2211b49153f6cbfa2dbf8c8974",
+        "bytes": 6327
+      },
+      "kind": "verification.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/static-a3bb2883a9/verification.json",
+        "sha256": "8c9da1feb5786ba5c3be2e16609c4bb8c1864f02398dff4e23129daf2885da08",
+        "bytes": 5721
+      },
+      "kind": "verification.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": null,
+      "reportedPassedTests": null,
+      "exitCode": null
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-5763112295/verification.json",
+        "sha256": "765c90bf206b88aaa05a953adbe810593cc3242c1670f60217a12103c8bd1ecc",
+        "bytes": 1760
+      },
+      "kind": "verification.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": 46,
+      "reportedPassedTests": 34,
+      "exitCode": 1
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-bdadf867fd/verification.json",
+        "sha256": "852117c4396c36b2348d83c29e9bfd22c03a7d97db536db85f5410143cb325dd",
+        "bytes": 2900
+      },
+      "kind": "verification.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": 1,
+      "reportedPassedTests": 231,
+      "exitCode": 1
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/unit-cacd81a6ed/verification.json",
+        "sha256": "7ce4e2b66f88b00f5b0afa96b8e74e1ec18c223a7bb72aaad8b14a541323361a",
+        "bytes": 1790
+      },
+      "kind": "verification.json",
+      "cleanupFailureRecorded": false,
+      "reportedFailedTests": 0,
+      "reportedPassedTests": 9,
+      "exitCode": 1
+    }
+  ],
+  "mockedSharedAuth": {
+    "receipt": {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/auth-typing/unit-317902eb0e/RESULT.json",
+      "sha256": "3ff4b8b14726bf22b8740cfb533a71763aad8e44ac3f9c927ba26293c6ae5996",
+      "bytes": 3128
+    },
+    "results": {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/auth-typing/unit-317902eb0e/results.json",
+      "sha256": "9e7fb7a2623b38f3241841a726b757c5fcde34810939a003ccaf64510ce7f449",
+      "bytes": 33703
+    },
+    "tests": 87,
+    "skipped": 0,
+    "suites": [
+      {
+        "file": "lib/security/__tests__/auth-session.test.ts",
+        "tests": 15,
+        "status": "passed"
+      },
+      {
+        "file": "lib/security/__tests__/auth-current-authority.test.ts",
+        "tests": 64,
+        "status": "passed"
+      },
+      {
+        "file": "lib/security/__tests__/auth-deactivation.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+        "tests": 3,
+        "status": "passed"
+      }
+    ],
+    "sourceBinding": {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/auth-typing/unit-317902eb0e/RESULT.json",
+        "sha256": "3ff4b8b14726bf22b8740cfb533a71763aad8e44ac3f9c927ba26293c6ae5996",
+        "bytes": 3128
+      },
+      "checkedFiles": 11,
+      "currentMatches": 11,
+      "changedOrAbsent": []
+    },
+    "classification": "Mocked identity/session/database auth regression only; no actual authentication, database, browser, app, Next config, environment-file loading or provider evidence",
+    "typeOnlyFixProof": {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/auth-typing/proof-c8b1c6a182/RESULT.json",
+        "sha256": "9da47248be6b8319d980120ae03687ac24c7ea4f9093decb55e717150fa9ce2d",
+        "bytes": 1562
+      },
+      "beforeSourceSha256": "181e15aad556024353b1e988cce6ccb5eb9679dfc50620427b81aa059a8c7064",
+      "proposedSourceSha256": "c7a1acf7ee8c25682a47a7476feafdaeeb4d55f68fb030f33b76bd95e605bff5",
+      "emittedJavaScriptIdentical": true,
+      "newDiagnosticCount": 0,
+      "installedDeclarations": [
+        {
+          "path": "node_modules/better-auth/dist/api/routes/session.d.mts",
+          "sha256": "e8abe51e6d94ae067fcadefcc695c0037ad7790cbf18f471d08a94ae2775a980"
+        },
+        {
+          "path": "node_modules/better-call/dist/endpoint.d.mts",
+          "sha256": "357898d7971aeca3f13218631498ca339411710df70d041422635afb81c60e98"
+        }
+      ],
+      "classification": "Installed SDK declaration types only; no application/auth runtime imported, no environment/database/browser/build qualification"
+    }
+  },
+  "pureControls": {
+    "receipt": {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/controls-468cc2a459/verification.json",
+      "sha256": "796e6a81e79f23d1815cb949f7bd9eaa5ea56f39889e5023e9354e3e55c2d77d",
+      "bytes": 2204
+    },
+    "tests": 15,
+    "expectedIncompleteTemplateBlocked": true,
+    "sourceBinding": {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/controls-468cc2a459/verification.json",
+        "sha256": "796e6a81e79f23d1815cb949f7bd9eaa5ea56f39889e5023e9354e3e55c2d77d",
+        "bytes": 2204
+      },
+      "checkedFiles": 8,
+      "currentMatches": 8,
+      "changedOrAbsent": []
+    }
+  },
+  "realDatabase": [
+    {
+      "kind": "retention-migration-services-and-SQL",
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/pg-RETENTION_LATEST.json",
+        "sha256": "82687c8e0ced73875fbab0602fcefcb92b37c13e3dc058a357545ea9434d77ea",
+        "bytes": 1755
+      },
+      "tests": 23,
+      "ownedClusterStopped": true,
+      "limitation": "Real isolated retention migration/service proof; synthetic DRAFT/BLOCKED receipts only, no earned certificate, live provider, browser, production or clean-install claim.",
+      "sourceBinding": {
+        "receipt": {
+          "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/pg-retention-1b805fc00a/pg-SOURCE_MANIFEST.json",
+          "sha256": "5e0bd1bda9f5d05bfea9fbd0327c72b37fd5fe1aa8c770baf5cc0cc73baace7d",
+          "bytes": 54159
+        },
+        "checkedFiles": 142,
+        "currentMatches": 142,
+        "changedOrAbsent": []
+      }
+    },
+    {
+      "kind": "monthly-import-run-sign-coverage-producers",
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/ca03-producer/pg-LATEST.json",
+        "sha256": "9c299c76d6fd131823dee424b14cc6427882d64a36dc5c48f42d0c65d94b2741",
+        "bytes": 1407
+      },
+      "tests": 12,
+      "ownedClusterStopped": true,
+      "limitation": "Real isolated current producer service calls on synthetic inputs; no hosted/provider/sending/browser or whole-close certification claim.",
+      "sourceBinding": {
+        "receipt": {
+          "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/ca03-producer/pg-attempt-c5da73b635/pg-SOURCE_MANIFEST.json",
+          "sha256": "3ea147021bce7c6f7446536160a21e1be053baec202e3d6b2cdcb5c78e649cc5",
+          "bytes": 24720
+        },
+        "checkedFiles": 118,
+        "currentMatches": 118,
+        "changedOrAbsent": []
+      }
+    },
+    {
+      "kind": "earned-internal-system-close-lifecycle",
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/QUALIFICATION_ADMISSION.json",
+        "sha256": "2d100d72980336bb62141af2411586208544f17b42f74b9fd15fa20cf83524ae",
+        "bytes": 4911
+      },
+      "tests": 6,
+      "namedPhases": 10,
+      "status": "PASS_SERVICE_QUALIFICATION_WITH_CLEANUP_SUPPLEMENT",
+      "ownedClusterStopped": true,
+      "observedCounts": {
+        "certifiedExports": 2,
+        "periodCloseEvents": 2,
+        "periodReopenEvents": 1,
+        "journals": 3,
+        "providerAccounts": 0,
+        "payrollRuns": 0,
+        "statutoryCertifiedDocuments": 0
+      },
+      "originalFailedReceipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/pg-attempt-ece011f832/pg-RESULT.json",
+        "sha256": "6a08e744aeba95f92438801ca0fbea13f05644865a6dcc3e53c665634a8026c6",
+        "bytes": 2302
+      },
+      "cleanupSupplement": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/pg-attempt-ece011f832/pg-DELAYED_CLEANUP.json",
+        "sha256": "8430fb8aac46175521301df049976c370306bfcf926fc6c4a4381595bfc83150",
+        "bytes": 1595
+      },
+      "limitation": "Real isolated earned internal system-close lifecycle on synthetic cash-sale facts; statutory approval, real providers, hosted delivery and browser qualification remain excluded.",
+      "sourceBinding": {
+        "receipt": {
+          "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/earned-close/pg-attempt-ece011f832/pg-SOURCE_MANIFEST.json",
+          "sha256": "56cb0676253775d8d7fe7efd656647634abc26f63d99d3e6d6ea6b2cd2303823",
+          "bytes": 36501
+        },
+        "checkedFiles": 193,
+        "currentMatches": 193,
+        "changedOrAbsent": []
+      }
+    }
+  ],
+  "rendered": [
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/rendered-ui/attempt-a8675761fb/RESULT.json",
+        "sha256": "b63e0e4a05239d0f5a0f3421e447d36f3c4e520f8f9c33eca65386f5c6d1b9f6",
+        "bytes": 6314
+      },
+      "sourceBinding": {
+        "receipt": {
+          "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/rendered-ui/attempt-a8675761fb/SOURCE_BINDING.json",
+          "sha256": "7c683f8bd6e6e02ca002d931ea664e54d7dae3973122c70f20499ea7049057bb",
+          "bytes": 7566
+        },
+        "checkedFiles": 43,
+        "currentMatches": 43,
+        "changedOrAbsent": []
+      },
+      "recordedCases": 40,
+      "variants": [
+        {
+          "locale": "en",
+          "viewportWidth": 390,
+          "cases": 10,
+          "overflow": false,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ]
+        },
+        {
+          "locale": "en",
+          "viewportWidth": 1440,
+          "cases": 10,
+          "overflow": false,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ]
+        },
+        {
+          "locale": "fr",
+          "viewportWidth": 390,
+          "cases": 10,
+          "overflow": false,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ]
+        },
+        {
+          "locale": "fr",
+          "viewportWidth": 1440,
+          "cases": 10,
+          "overflow": false,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ]
+        }
+      ],
+      "browserClosed": true,
+      "serverClosed": true,
+      "classification": "Mocked auth/actions with real browser rendering only; no authenticated application/E2E/DB/hosted build.",
+      "limitations": [
+        "No visual regression baseline; screenshots are new observations.",
+        "Automated axe findings are recorded, not full accessibility or screen-reader certification.",
+        "No production origin, real sessions, statutory certificate or provider was exercised."
+      ]
+    },
+    {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/rendered-monthly-ui/attempt-84f64b33a3/RESULT.json",
+        "sha256": "622a9d257d2e37187ee87286705feed8593a8bf1a0bb133396bc367bb06d162f",
+        "bytes": 8209
+      },
+      "sourceBinding": {
+        "receipt": {
+          "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/rendered-monthly-ui/attempt-84f64b33a3/SOURCE_BINDING.json",
+          "sha256": "261e9cc0692a99c6a4ae8ee792f815541ab285e26aeb685fe6e29391d70b1521",
+          "bytes": 13771
+        },
+        "checkedFiles": 82,
+        "currentMatches": 82,
+        "changedOrAbsent": []
+      },
+      "recordedCases": 32,
+      "variants": [
+        {
+          "locale": "en",
+          "viewportWidth": 390,
+          "cases": 8,
+          "overflow": false,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ]
+        },
+        {
+          "locale": "en",
+          "viewportWidth": 1440,
+          "cases": 8,
+          "overflow": false,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ]
+        },
+        {
+          "locale": "fr",
+          "viewportWidth": 390,
+          "cases": 8,
+          "overflow": false,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ]
+        },
+        {
+          "locale": "fr",
+          "viewportWidth": 1440,
+          "cases": 8,
+          "overflow": false,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ]
+        }
+      ],
+      "browserClosed": true,
+      "serverClosed": true,
+      "classification": "Mocked auth/actions with real browser rendering only; no authenticated application/E2E/DB/hosted build.",
+      "limitations": [
+        "No visual baseline or full accessibility/screen-reader certification.",
+        "Notifications are captured mock provider calls; real toast transport is not exercised.",
+        "Synthetic periods/accounts/statements; no financial coverage or monthly certificate is established."
+      ]
+    }
+  ],
+  "failedWholeTreeStaticCheck": {
+    "receipt": {
+      "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/static-68242d33b5/verification.json",
+      "sha256": "ada888b321386fcdccf0718d109df649dd7fab2211b49153f6cbfa2dbf8c8974",
+      "bytes": 6327
+    },
+    "checks": [
+      {
+        "name": "typecheck",
+        "exitCode": 2,
+        "error": null
+      },
+      {
+        "name": "scoped-lint",
+        "exitCode": 0,
+        "error": null
+      }
+    ],
+    "lintErrors": 0,
+    "lintWarnings": 1,
+    "recordedDiagnosticCount": 3,
+    "diagnosis": [
+      "Shared lib/auth.ts SDK Response overload inference",
+      "Two preserved repair-r1 source-copy imports included in compilation"
+    ],
+    "currentBoundInputCheck": {
+      "receipt": {
+        "path": "docs/stoquify-potential/development/close-production-prep-2026-11-09/static-68242d33b5/verification.json",
+        "sha256": "ada888b321386fcdccf0718d109df649dd7fab2211b49153f6cbfa2dbf8c8974",
+        "bytes": 6327
+      },
+      "checkedFiles": 25,
+      "currentMatches": 24,
+      "changedOrAbsent": [
+        "tsconfig.json"
+      ]
+    }
+  },
+  "pending": [
+    "New whole-tree compiler qualification after the typing and archive-exclusion changes",
+    "Actual authenticated current-source application/browser qualification",
+    "Selected production host/public domain and compatible target artifact",
+    "Real live delivery/invitation, scheduler and hosted recovery evidence",
+    "Independent domain and production-promotion acceptance"
+  ],
+  "limits": [
+    "Unit dependencies are mocked; jsdom is not a real authenticated browser.",
+    "Rendered72 cases use mocked authentication/actions.",
+    "Database41 tests use isolated synthetic facts; earned close is internal system evidence, not statutory approval.",
+    "Old failed and superseded receipts remain preserved; admission supplement does not rewrite the original PG cleanup failure.",
+    "No full current sealed artifact or live-delivery readiness follows from this inventory."
+  ]
+}

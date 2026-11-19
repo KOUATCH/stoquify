@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-10T10:19:23.052Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Fresh capacity and frozen recipe revalidation for continued isolated P04-R06 attempt02; not build or native qualification outcome",
+  "receipt": {
+    "path": "resource-retry-ready-20261110-r3.json",
+    "sha256": "df3d83ac8fc6e18ba3cff0e0ddb7592f573cdf8c5b4641017820544ccdea4a4d"
+  },
+  "capturedAt": "2026-11-10T10:18:56.0748383Z",
+  "freeGiB": {
+    "physical": 10.674598693847656,
+    "commit": 16.532081604003906,
+    "buildDrive": 22.039031982421875
+  },
+  "requiredGiB": {
+    "physical": 6,
+    "commit": 12,
+    "buildDrive": 12
+  },
+  "failures": [],
+  "revalidated": {
+    "retryRecipeFilesUnchanged": true,
+    "databaseRecipeFilesUnchanged": true,
+    "currentAndCandidate63InputsMatch": true,
+    "ownedClusterStopped": true,
+    "unusedResumeAndBuildReceipts": true
+  },
+  "conditions": [
+    "Use existing exact admitted database resume recipe; require actual retained-state proof before costly build.",
+    "Run existing build attempt02 v2 only after its full current/candidate source checks and repeated resource gates pass.",
+    "Capacity is time-specific; no guarantee of build success.",
+    "Do not alter heap, workers, type/lint gates, source or dependency implementation.",
+    "Historical blocked publication/outcome remains immutable; create successor outcomes and publication receipts."
+  ],
+  "qualificationPassed": false
+}

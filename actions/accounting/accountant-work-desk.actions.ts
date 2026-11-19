@@ -8,7 +8,7 @@ import {
   assertAccountantWorkClient, getAccountantWorkDesk, getAccountantWorkDetail, getAccountantWorkClientPage,
 } from "@/services/accounting/accountant-work-desk.service"
 import { acceptMissingCloseEvidenceResponse } from "@/services/accounting/close-assurance.service"
-import { closeEvidenceAcceptanceControl } from "@/services/accounting/close-evidence-acceptance-context"
+import { closeEvidenceAcceptanceControl, closeEvidenceWorkControl } from "@/services/accounting/close-evidence-acceptance-context"
 import { accountantNotificationHistoryInput, getAccountantNotificationHistory } from "@/services/accounting/accountant-notification-history.service"
 
 const identifier = z.string().trim().min(1).max(200)
@@ -23,12 +23,14 @@ const options = {
 }
 const list = protect(options, async (input: unknown, ctx) => {
   const parsed = listInput.parse(input)
-  if (parsed.clientPage) return getAccountantWorkClientPage({ homeOrganizationId: ctx.orgId, actorId: ctx.userId, actorPermissions: ctx.permissions }, parsed.clientPage)
-  return getAccountantWorkDesk({ homeOrganizationId: ctx.orgId, actorId: ctx.userId, actorPermissions: ctx.permissions }, parsed.afterGrantId)
+  const { session } = await closeEvidenceWorkControl(ctx)
+  if (parsed.clientPage) return getAccountantWorkClientPage({ homeOrganizationId: ctx.orgId, actorId: ctx.userId, actorPermissions: ctx.permissions, session }, parsed.clientPage)
+  return getAccountantWorkDesk({ homeOrganizationId: ctx.orgId, actorId: ctx.userId, actorPermissions: ctx.permissions, session }, parsed.afterGrantId)
 })
 const detail = protect(options, async (input: unknown, ctx) => {
   const parsed = detailInput.parse(input)
-  return getAccountantWorkDetail({ homeOrganizationId: ctx.orgId, actorId: ctx.userId, actorPermissions: ctx.permissions }, parsed.clientOrganizationId, parsed.requestId)
+  const { session } = await closeEvidenceWorkControl(ctx)
+  return getAccountantWorkDetail({ homeOrganizationId: ctx.orgId, actorId: ctx.userId, actorPermissions: ctx.permissions, session }, parsed.clientOrganizationId, parsed.requestId)
 })
 const accept = protect({ ...options, freshAuth: { maxAgeSeconds: 300 } }, async (input: unknown, ctx) => {
   const control = closeEvidenceAcceptanceControl(ctx, true)

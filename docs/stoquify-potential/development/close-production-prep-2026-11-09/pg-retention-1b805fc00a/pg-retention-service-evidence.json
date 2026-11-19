@@ -1,0 +1,133 @@
+{
+  "checks": [
+    {
+      "name": "real-retained-draft-replay-get-list",
+      "exportId": "44de50bd-e4e1-456c-a0c6-16a334e1fa44",
+      "organizationId": "rt-b7af82163f-org",
+      "documentDigest": "sha256:c4938c5fe4f7d3d19ebb32e284aae41b034ba5a3a28c083d7e54dc347bc8b778",
+      "exactOriginalBytes": true,
+      "sourceChangedAfterOriginal": true,
+      "duplicateExports": 0,
+      "isCertified": false
+    },
+    {
+      "name": "legacy-original-not-fabricated",
+      "exportId": "cmw9od16m0007ma2oxboeekhi",
+      "nullableFields": true,
+      "backfillDenied": true
+    },
+    {
+      "name": "sql-retention-shape-denial",
+      "kind": "partial",
+      "sqlstate": "23514"
+    },
+    {
+      "name": "sql-retention-shape-denial",
+      "kind": "wrong-byte-hash",
+      "sqlstate": "23514"
+    },
+    {
+      "name": "sql-retention-shape-denial",
+      "kind": "bad-request-hash",
+      "sqlstate": "23514"
+    },
+    {
+      "name": "sql-retention-shape-denial",
+      "kind": "empty-content",
+      "sqlstate": "23514"
+    },
+    {
+      "name": "sql-retained-field-immutable",
+      "column": "canonicalContent",
+      "sqlstate": "23514"
+    },
+    {
+      "name": "sql-retained-field-immutable",
+      "column": "canonicalContentSha256",
+      "sqlstate": "23514"
+    },
+    {
+      "name": "sql-retained-field-immutable",
+      "column": "exportRequestHash",
+      "sqlstate": "23514"
+    },
+    {
+      "name": "sql-retained-field-immutable",
+      "column": "contentHash",
+      "sqlstate": "23514"
+    },
+    {
+      "name": "sql-retained-field-immutable",
+      "column": "watermarkId",
+      "sqlstate": "23514"
+    },
+    {
+      "name": "sql-retained-field-immutable",
+      "column": "correlationId",
+      "sqlstate": "23514"
+    },
+    {
+      "name": "sql-retained-delete-denied",
+      "kind": "direct",
+      "exactRetentionGuardMessage": true
+    },
+    {
+      "name": "sql-retained-delete-denied",
+      "kind": "parent-cascade",
+      "exactRetentionGuardMessage": true
+    },
+    {
+      "name": "changed-request-identity-replay-denied",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "real-concurrent-request-replay",
+      "committedOriginals": 1,
+      "oneReplayed": true,
+      "exactBytesEqual": true
+    },
+    {
+      "name": "certified-mode-read-freshness-denied",
+      "originalWasDraft": true,
+      "noCertifiedFixture": true,
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "staleness-metadata-remains-writable",
+      "originalBytesUnchanged": true
+    },
+    {
+      "name": "committed-retention-authority-denial",
+      "kind": "module",
+      "operations": 3,
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "committed-retention-authority-denial",
+      "kind": "role",
+      "operations": 3,
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "committed-retention-authority-denial",
+      "kind": "session",
+      "operations": 3,
+      "allScopedBusinessCountsUnchanged": true
+    },
+    {
+      "name": "foreign-tenant-retained-read-denied",
+      "noAuditOrExportWrite": true
+    },
+    {
+      "name": "real-export-and-retrieval-audit-rollback",
+      "allScopedCountsUnchanged": true
+    }
+  ],
+  "finance": {
+    "journals": 0,
+    "sales": 0,
+    "settlements": 0,
+    "certifiedExports": 0
+  },
+  "limitation": "Real retained draft and DB invariants only; no earned close certificate, provider or authenticated browser claim"
+}

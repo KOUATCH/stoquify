@@ -1,0 +1,59 @@
+"use client"
+
+import { useLocale } from "next-intl"
+import { useState } from "react"
+import { ArrowRight, Check, ChevronDown, Globe2, Layers3, LifeBuoy, Route, Settings2, Sparkles } from "lucide-react"
+import { Link } from "@/i18n/navigation"
+import { offerFaqs } from "./cinematic-offers-data"
+
+const costCategories = [
+  { icon: Layers3, title: ["Your software scope", "Votre périmètre logiciel"], summary: ["The modules and operating footprint your team needs.", "Les modules et le périmètre d’activité nécessaires à votre équipe."], covers: ["Selected modules, their dependencies and the agreed user/location allowances.", "Modules choisis, dépendances et limites convenues d’utilisateurs et de sites."], drivers: ["Teams, locations, required workflows and rollout phases.", "Équipes, sites, parcours nécessaires et phases de déploiement."], confirm: ["Which modules, allowances and billing terms are written into the quote?", "Quels modules, limites et conditions de facturation figurent au devis ?"], href: "/#offers" },
+  { icon: Route, title: ["A prepared start", "Un démarrage préparé"], summary: ["Bring your records, configuration and team into the workspace.", "Préparez vos données, votre configuration et votre équipe."], covers: ["Data mapping, opening records, migration, configuration and training as agreed.", "Correspondance des données, reprise, migration, paramétrage et formation convenus."], drivers: ["Data quality, source systems, volume and training needs.", "Qualité des données, systèmes sources, volume et besoins de formation."], confirm: ["Who prepares the data, reviews the opening records and accepts the handover?", "Qui prépare les données, vérifie la reprise et valide la transmission ?"], href: "/get-started" },
+  { icon: Globe2, title: ["Country & connections", "Pays et connexions"], summary: ["Match country rules, providers and devices to your rollout.", "Adaptez règles pays, prestataires et équipements au déploiement."], covers: ["Reviewed country setup, supported provider adapters and required devices. External fees have their own terms.", "Paramétrage pays vérifié, adaptateurs pris en charge et équipements requis. Les frais externes ont leurs conditions."], drivers: ["Countries, payroll scope, provider support and retail hardware.", "Pays, périmètre de paie, prestataires pris en charge et matériel de caisse."], confirm: ["Which connections are validated, and which provider or hardware costs are separate?", "Quelles connexions sont validées et quels frais prestataires ou matériels sont distincts ?"], href: "/workflows#workflow-complianceCountryEvidence" },
+  { icon: LifeBuoy, title: ["Ongoing support", "Accompagnement continu"], summary: ["Agree how your team gets help and keeps review routines working.", "Définissez l’assistance et les routines de contrôle de votre équipe."], covers: ["Assistance, training follow-up and review routines within the agreed service scope.", "Assistance, suivi de formation et routines de contrôle dans le périmètre convenu."], drivers: ["Service hours, contact channels, responsibilities and response commitments.", "Horaires, canaux de contact, responsabilités et engagements de réponse."], confirm: ["Who handles requests, how are they escalated and what response is agreed?", "Qui traite les demandes, comment sont-elles transmises et quels délais sont convenus ?"], href: "/get-started" },
+] as const
+
+const extraQuestions = [
+  { question: ["Which module should I start with?", "Par quel module commencer ?"], answer: ["Choose the work you need to organize first: trade and stock, financial control, or people and payroll. Use the module catalog to compare users, capabilities and records carried forward. Check dependencies before defining your initial scope.", "Choisissez le travail à organiser en premier : commerce et stocks, contrôle financier ou personnel et paie. Le catalogue précise utilisateurs, fonctions et données transmises. Vérifiez les dépendances avant de définir le périmètre initial."] },
+  { question: ["How do I prepare my existing data?", "Comment préparer mes données existantes ?"], answer: ["Identify the source for items, customers, suppliers, employee records and opening quantities or balances relevant to your scope. Review duplicates, required fields and supporting evidence with the responsible team. Confirm mapping and review responsibilities before migration or opening entries are accepted.", "Identifiez les sources des articles, clients, fournisseurs, salariés et quantités ou soldes initiaux utiles à votre périmètre. Vérifiez doublons, champs requis et pièces avec l’équipe responsable. Confirmez les correspondances et les responsables de revue avant d’accepter la migration ou les écritures d’ouverture."] },
+  { question: ["How can my team and accounting firm collaborate?", "Comment mon équipe et mon cabinet collaborent-ils ?"], answer: ["Assign team roles and location access to match responsibilities. An authorized user can invite an accountant, and the client controls the granted scope. Firms can work across authorized client portfolios and review records or request evidence within their access. Employee and payroll information remains subject to its own permissions.", "Attribuez les rôles et accès aux sites selon les responsabilités. Un utilisateur autorisé peut inviter un comptable ; le client contrôle le périmètre accordé. Le cabinet suit ses clients autorisés, examine les dossiers et demande des pièces selon ses droits. Les données du personnel et de paie restent soumises à leurs autorisations propres."] },
+  { question: ["What happens after registration, and who helps with setup?", "Que se passe-t-il après l’inscription et qui accompagne le démarrage ?"], answer: ["Verify your email, sign in and prepare your organization, locations and access. Confirm enabled modules, country settings and starting records before real activity. Agree onboarding, training and support responsibilities separately; registration alone does not confirm a service package or activate every module.", "Vérifiez votre e-mail, connectez-vous et préparez organisation, sites et accès. Confirmez modules activés, paramètres pays et données initiales avant toute opération réelle. Définissez séparément accompagnement, formation et assistance ; l’inscription ne confirme pas un forfait de services et n’active pas tous les modules."] },
+] as const
+
+export function LandingDecisionGuide() {
+  const fr = useLocale() === "fr"
+  const [activeCost, setActiveCost] = useState<number | null>(null)
+  const text = (value: readonly string[]) => fr ? value[1].replace(/ (?=[?!;:])/g, "\u00a0") : value[0]
+  const questions = [...offerFaqs, ...extraQuestions]
+  const questionLinks = ["/#rollout-cost", "/#showcase", "/#offers", "/products/pos", "/products/payables", "/workflows#workflow-complianceCountryEvidence", "/#rollout-cost", "/get-started", "/#offers", "/get-started", "/#flow-tab-15", "/get-started"]
+  const groups = [
+    { icon: Sparkles, title: ["Find your fit", "Trouver votre point de départ"], body: ["Choose the work and modules to start with.", "Choisissez le travail et les modules de départ."], items: [8, 1, 2, 3, 4] },
+    { icon: Settings2, title: ["Prepare with confidence", "Préparer sereinement"], body: ["Know the data, access and setup involved.", "Précisez données, accès et configuration."], items: [9, 10, 11, 5] },
+    { icon: Check, title: ["Agree the scope", "Convenir du périmètre"], body: ["Understand the quote before committing.", "Comprenez le devis avant de vous engager."], items: [0, 6, 7] },
+  ]
+  const priorityQuestions = [8, 0, 3, 5, 10]
+  const question = (index: number) => <details key={index}><summary>{text(questions[index].question)}<ChevronDown size={17} aria-hidden="true" /></summary><div className="decision-answer"><p>{text(questions[index].answer)}</p><Link href={questionLinks[index]}>{fr ? "Consulter le guide associé" : "Open the related guide"}<ArrowRight size={15} aria-hidden="true" /></Link></div></details>
+  return <>
+    <section id="rollout-cost" className="rollout-guide reveal" aria-labelledby="rollout-title">
+      <div className="decision-heading"><div><p className="eyebrow">{fr ? "CLARIFIEZ LE COÛT GLOBAL" : "MAKE THE WHOLE COST CLEAR"}</p><h3 id="rollout-title">{fr ? "Quatre éléments. Un déploiement bien défini." : "Four parts. One considered rollout."}</h3></div><p>{fr ? "Un devis adapté commence par un périmètre clair. Découvrez ce que couvre chaque élément et les questions à poser." : "A tailored quote starts with a clear scope. Explore what each part covers and the questions to settle together."}</p></div>
+      <div className="cost-grid">{costCategories.map((category, index) => <article className="cost-card" key={category.title[0]}>
+        <button className="cost-trigger" type="button" id={`cost-trigger-${index}`} aria-expanded={activeCost === index} aria-controls={`cost-panel-${index}`} onClick={() => setActiveCost(activeCost === index ? null : index)}><span className="cost-card-top"><category.icon size={24} aria-hidden="true" /><small>0{index + 1}</small></span><strong>{text(category.title)}</strong><span className="cost-summary">{text(category.summary)}</span><span className="cost-expand">{activeCost === index ? (fr ? "Fermer les détails" : "Close the details") : (fr ? "Ce qu’il faut préciser" : "What to clarify")}<ChevronDown size={17} aria-hidden="true" /></span></button>
+      </article>)}</div>
+      <div className="cost-expansion" hidden={activeCost === null}>
+        {costCategories.map((category, index) => <div className="cost-details" id={`cost-panel-${index}`} key={index} role="region" aria-labelledby={`cost-trigger-${index}`} aria-hidden={activeCost !== index} inert={activeCost !== index}>
+          <dl><div><dt>{fr ? "Comprend selon accord" : "Scope to agree"}</dt><dd>{text(category.covers)}</dd></div><div><dt>{fr ? "Ce qui fait varier le périmètre" : "What shapes the scope"}</dt><dd>{text(category.drivers)}</dd></div><div><dt>{fr ? "La question à poser" : "Ask before rollout"}</dt><dd>{text(category.confirm)}</dd></div></dl><Link href={category.href}>{fr ? "Explorer ce sujet" : "Explore this area"}<ArrowRight size={15} aria-hidden="true" /></Link>
+        </div>)}
+      </div>
+      <div className="quote-checklist"><strong>{fr ? "Votre devis doit préciser" : "Your quote should specify"}</strong><ul>{[["Scope & responsibilities", "Périmètre et responsabilités"], ["Amount, currency & taxes", "Montant, devise et taxes"], ["Billing & service terms", "Facturation et services"]].map(item => <li key={item[0]}><Check size={15} aria-hidden="true" />{text(item)}</li>)}</ul></div>
+    </section>
+    <section className="offer-faq decision-guide reveal" aria-labelledby="decision-title">
+      <div className="decision-heading"><div><p className="eyebrow">{fr ? "AVANT DE CHOISIR" : "BEFORE YOU CHOOSE"}</p><h3 id="decision-title">{fr ? "Les bonnes questions. Une prochaine étape claire." : "Good questions. A clearer next step."}</h3></div><p>{fr ? "Du choix des modules à la préparation de vos données, trouvez une réponse et le guide pour avancer." : "From choosing modules to preparing your records, find an answer and a useful guide to move forward."}</p></div>
+      <div className="decision-priority">{priorityQuestions.map(question)}</div>
+      <details className="decision-more"><summary>{fr ? "7 autres questions sur la préparation et les conditions" : "7 more questions about preparation and terms"}</summary>
+        <div className="decision-groups">{groups.map(group => <div className="decision-group" key={group.title[0]}><div className="decision-group-heading"><group.icon size={22} aria-hidden="true" /><h4>{text(group.title)}</h4><p>{text(group.body)}</p></div>
+          {group.items.filter(index => !priorityQuestions.includes(index)).map(question)}
+        </div>)}</div>
+      </details>
+    </section>
+  </>
+}

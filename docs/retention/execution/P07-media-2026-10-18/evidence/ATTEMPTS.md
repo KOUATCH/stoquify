@@ -1,0 +1,5 @@
+# Retained attempts
+
+- Initial authenticated browser attempt `browser-1792340575594.json` stopped on an overly strict exact-text selector for the foreign-media error. The actual row message includes its row, field and code, so an exact standalone match was wrong. The saved screenshot `FAIL-1792340828614.png` visibly shows the expected safe error; the disposable DB showed BLOCKED with zero committed rows. Corrected the assertion to check the labelled issues section. No product or security rule changed for this failure. The next run uses new synthetic identities; prior records and evidence remain retained.
+- Unit runs overlap: 105 checks initially, then 107 after two additional real-uploader component regression checks. Do not sum the runs.
+- The real database test deliberately raises `synthetic checkpoint loss` through a disposable-only trigger. This expected error is proof of the injected boundary, not an unhandled test failure; the trigger/function are removed in `finally` before original-batch retry.

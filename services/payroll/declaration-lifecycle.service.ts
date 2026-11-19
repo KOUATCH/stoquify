@@ -1421,8 +1421,6 @@ export async function recordPayrollDeclarationEvidence(
 ) {
   const parsed = recordPayrollDeclarationEvidenceInputSchema.parse(input);
   const config = TRANSITION_CONFIG[parsed.transition];
-  const authorityAdapterProof = authorityAdapterProofForEvidence(parsed);
-  assertEvidenceRequirements(parsed, config);
   const now = parseDate(parsed.now, new Date());
 
   return inTransaction(client, async (tx) => {
@@ -1435,6 +1433,56 @@ export async function recordPayrollDeclarationEvidence(
     });
     if (!declaration) throw new NotFoundError("Payroll declaration not found");
 
+    const { now: _now, lastAuthAt: _lastAuthAt, actorPermissions: _permissions, ...command } = parsed;
+    const commandPayloadHash = prefixedHash({ ...command,
+      submittedAt: parsed.submittedAt ? parseDate(parsed.submittedAt, now).toISOString() : null,
+    });
+    const existingEvidence = await tx.payrollDeclarationEvidence.findFirst({where: {
+      organizationId: parsed.organizationId, declarationId: declaration.id,
+      transition: config.transition, idempotencyKey: parsed.idempotencyKey,
+    }});
+    if (existingEvidence) {
+      const retained = asRecord(existingEvidence.metadata);
+      let matches = retained.commandPayloadHash === commandPayloadHash;
+      // Older evidence retained the capture context, but not a separate command hash.
+      if (!retained.commandPayloadHash) {
+        const original = asRecord(retained.evidence);
+        const capturedAt = new Date(String(original.capturedAt ?? ""));
+        if (!Number.isNaN(capturedAt.getTime()) && prefixedHash(original) === existingEvidence.evidenceHash) {
+          // Compare caller semantics to retained evidence, never to today's adapter
+          // registry, status or capture clock. Derived historical proof stays retained.
+          const contextual = new Set(["organizationId", "declarationId", "idempotencyKey", "actorPermissions", "lastAuthAt", "now", "metadata", "notes"]);
+          const candidate = parsed as Record<string, unknown>;
+          matches = Object.keys(recordPayrollDeclarationEvidenceInputSchema.shape).filter(key => !contextual.has(key)).every(key => {
+            if (key === "actorId") return original.evidenceCapturedById === parsed.actorId;
+            if (key === "transition") return original.transition === config.transition;
+            if (key === "submittedAt") return original.submittedAt === (parsed.submittedAt ? parseDate(parsed.submittedAt, capturedAt).toISOString() : null);
+            if (key === "adapterAttempt") return original[key] === (parsed.adapterAttempt ?? 1);
+            if (key === "authorityAdapterKey" || key === "authorityAdapterReadiness") return parsed[key] === undefined || original[key] === parsed[key];
+            if (key === "adapterChaosReleaseGateHash") return original[key] === (parsed.adapterChaosReleaseGateHash ?? metadataString(asRecord(parsed.metadata), key) ?? null);
+            return original[key] === (candidate[key] ?? null);
+          }) && original.declarationId === declaration.id
+            && (existingEvidence.notes ?? null) === (parsed.notes ?? null)
+            && Object.entries(asRecord(parsed.metadata)).every(([key,value]) => prefixedHash(value) === prefixedHash(retained[key]));
+        }
+      }
+      if (!matches) throw new ConflictError("Payroll declaration evidence idempotency key was reused with a different payload.");
+      const decision = evaluateSensitiveAction({
+        action: "payroll.declaration.lifecycle", actorId: parsed.actorId,
+        organizationId: parsed.organizationId, actorPermissions: parsed.actorPermissions,
+        subjectActorId: config.requireMakerChecker ? (parsed.approvedById ?? null) : null,
+        lastAuthAt: parsed.lastAuthAt, now, resourceType: "PayrollDeclaration", resourceId: declaration.id,
+        amount: declaration.amount, currency: declaration.currency,
+      });
+      await auditSensitiveActionDecision(tx, decision);
+      assertSensitiveActionAllowed(decision);
+      return {declaration, evidence: existingEvidence, businessEventId: null, idempotent: true,
+        automationCapabilityStatus: existingEvidence.automationCapabilityStatus,
+        productionSubmissionSupported: existingEvidence.productionSubmissionSupported};
+    }
+
+    const authorityAdapterProof = authorityAdapterProofForEvidence(parsed);
+    assertEvidenceRequirements(parsed, config);
     const nextStatus = config.nextStatus ?? declaration.status;
     assertAllowedTransition(declaration.status, config);
     const countryPackRegisterProofMetadata =
@@ -1456,32 +1504,6 @@ export async function recordPayrollDeclarationEvidence(
       authorityLifecycle,
     });
     const evidenceHash = prefixedHash(evidence);
-
-    const existingEvidence = await tx.payrollDeclarationEvidence.findFirst({
-      where: {
-        organizationId: parsed.organizationId,
-        declarationId: declaration.id,
-        transition: config.transition,
-        idempotencyKey: parsed.idempotencyKey,
-      },
-    });
-    if (existingEvidence) {
-      if (existingEvidence.evidenceHash !== evidenceHash) {
-        throw new ConflictError(
-          "Payroll declaration evidence idempotency key was reused with a different payload.",
-        );
-      }
-      return {
-        declaration,
-        evidence: existingEvidence,
-        businessEventId: null,
-        idempotent: true,
-        automationCapabilityStatus:
-          authorityAdapterProof.automationCapabilityStatus,
-        productionSubmissionSupported:
-          authorityAdapterProof.productionSubmissionSupported,
-      };
-    }
 
     const controlDecision = evaluateSensitiveAction({
       action: "payroll.declaration.lifecycle",
@@ -1555,6 +1577,7 @@ export async function recordPayrollDeclarationEvidence(
         idempotencyKey: parsed.idempotencyKey,
         metadata: safeJson({
           ...asRecord(parsed.metadata),
+          commandPayloadHash,
           evidence,
           ...countryPackRegisterProofMetadata,
           authorityAdapterProof: authorityAdapterProof.proof,

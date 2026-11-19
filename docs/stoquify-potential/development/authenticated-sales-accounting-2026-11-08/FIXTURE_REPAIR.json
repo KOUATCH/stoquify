@@ -1,0 +1,16 @@
+{
+  "utc": "2026-11-09T10:15:53.144Z",
+  "ruleId": "cmw8bfnyx001rmalggimv6e8b",
+  "lines": 2,
+  "settlementsBefore": 0,
+  "postedJournalsBefore": 2,
+  "previousRepair": {
+    "utc": "2026-11-09T10:13:23.678Z",
+    "ruleId": "cmw8bfnyx001rmalggimv6e8b",
+    "lines": 2,
+    "settlementsBefore": 0,
+    "postedJournalsBefore": 2,
+    "reason": "Initial synthetic rule omitted explicit rail/receivable line mappings. Domain control correctly rejected and rolled back the UI collection. Only owned fixture configuration repaired; application controls unchanged."
+  },
+  "reason": "Synthetic settlement rule must use mapping-only rail/receivable lines (accountId and mappingKey are mutually exclusive). Domain controls correctly rejected and rolled back both invalid fixture configurations. Only owned fixture configuration repaired; application controls unchanged."
+}

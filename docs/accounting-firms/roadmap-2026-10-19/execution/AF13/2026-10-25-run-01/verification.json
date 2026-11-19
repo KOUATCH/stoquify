@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-25",
+  "demand": "USER_CONFIRMED_AVAILABILITY_CONTENT_PENDING",
+  "unitTests": "NOT_RUN",
+  "status": "NOT_STARTED",
+  "workflow": {
+    "exitCode": 0,
+    "message": "Workflow contract passed; 196 package scripts remain outside the reviewed manifest. No commands executed.",
+    "command": "npm run agent:workflow:check"
+  },
+  "discovery": "COMPLETE",
+  "publicationReceipt": "publication-verification.json",
+  "componentTests": "NOT_RUN",
+  "sources": [
+    {
+      "sha256": "3B09B4E7DEE2F19E7C12E603075E5CB230BD01F52EFEA784A95671635977BEDD",
+      "path": "prisma/schema.prisma"
+    },
+    {
+      "sha256": "DA7E742457608FE5B51EA3D175654BB1B53DE167392085E651FAF4009369583C",
+      "path": "services/accounting/firm-engagement-workspace.service.ts"
+    },
+    {
+      "sha256": "59CB2FFFB72C88B29B0819A1287210D025590343A03CC73D6E114C6E056CD0C7",
+      "path": "services/accounting/accountant-work-desk.contracts.ts"
+    },
+    {
+      "sha256": "00E32417DAA723423B101247F8B94D13391C4EF2FE6409DF6032E493DB825EE3",
+      "path": "services/accounting/advisory-outcomes.service.ts"
+    },
+    {
+      "sha256": "7F582EC4A54F5B9158E206FBC912A7F1BAD48B2093E40772411F5729328645D4",
+      "path": "services/accounting/close-evidence-acceptance-authority.service.ts"
+    },
+    {
+      "sha256": "C0CFCAF8A9093A24225129DD043FD1FCA049C33B269AC870C53183E7C12720B1",
+      "path": "config/permissions.ts"
+    },
+    {
+      "sha256": "DCCBE503B0C031385234B0A42E68EA3C5034FE6F4DAA7688AA737336D1708142",
+      "path": "services/roles/role-custodian-policy.ts"
+    },
+    {
+      "sha256": "1BE4474706826281F519CDE87E6E79D50D96FE1F0F918B93ED0C137D62C20479",
+      "path": "services/analytics/retention-outcomes.ts"
+    }
+  ],
+  "productBrowserTests": "NOT_RUN",
+  "applicationChanges": [],
+  "sourceHead": "9ab93a2a1d81e37ef7e0b10357885b48a3bc5886",
+  "postgresTests": "NOT_RUN"
+}

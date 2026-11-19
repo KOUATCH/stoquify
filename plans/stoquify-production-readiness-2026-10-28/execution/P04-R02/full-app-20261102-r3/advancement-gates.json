@@ -1,0 +1,102 @@
+{
+  "schema_version": 2,
+  "package": "P04-R02",
+  "candidate_id": "p04-r02-full-ea52ca48cadd",
+  "artifact_sha256": "e64a4d3e8b3973f3439b7f387527e87b5dc7cd83b1873e289fc8dfdae80e4da8",
+  "status": "verified_local_full_app",
+  "implementation_performed": true,
+  "advance_local_r02": true,
+  "advance_parent": false,
+  "production_ready": false,
+  "prior_gates": [
+    "../advancement-gates.json",
+    "../repair/advancement-gates.json"
+  ],
+  "gates": [
+    {
+      "id": "R02-G01",
+      "name": "Original and recovery copy preservation",
+      "status": "pass_local",
+      "evidence": [
+        "final-integrity-retry02.json"
+      ],
+      "limit": "Three known originals; original-tenant stored/computed census remains release work."
+    },
+    {
+      "id": "R02-G02",
+      "name": "Denied API requests expose no private bytes or business writes",
+      "status": "pass_local_real_sessions",
+      "evidence": [
+        "browser/p04r02-full-20261102-r3-retry02/result.json",
+        "independent-review/ASSESSMENT.json"
+      ],
+      "limit": "No full-app filesystem syscall tracing claimed; deliberate audit/session effects are recorded separately."
+    },
+    {
+      "id": "R02-G03",
+      "name": "Legacy/private aliases and optimizer deny private bytes",
+      "status": "pass_local_real_sessions",
+      "evidence": [
+        "runtime-result-retry02.json"
+      ],
+      "limit": "270 original-alias denials, synthetic lifecycle negatives and surviving optimizer cache; no original positive reads."
+    },
+    {
+      "id": "R02-G04",
+      "name": "Authorized exact-byte GET/HEAD and private no-store",
+      "status": "pass_local_real_sessions",
+      "evidence": [
+        "browser/p04r02-full-20261102-r3-retry02/result.json"
+      ]
+    },
+    {
+      "id": "R02-G05",
+      "name": "Actual private runtime packaging and independent verification",
+      "status": "pass_local_full_artifact",
+      "evidence": [
+        "build-result.json",
+        "verified-artifact-manifest.json",
+        "final-integrity-retry02.json"
+      ],
+      "limit": "Explicit candidate-only fourth synthetic alias; not the production-policy artifact."
+    },
+    {
+      "id": "R02-G06",
+      "name": "Candidate preservation and owned-process cleanup",
+      "status": "pass_local",
+      "evidence": [
+        "final-integrity-retry02.json",
+        "database/final-fixture-reconciliation.json",
+        "database/resume-20261102-r3-guarded-stop-1793643230069.json"
+      ],
+      "limit": "Concurrent unrelated root changes retained; frozen candidate and selected inputs are stable."
+    },
+    {
+      "id": "R02-G07",
+      "name": "Independent outcome review",
+      "status": "accepted_local",
+      "evidence": [
+        "independent-review/ASSESSMENT.json",
+        "independent-review/ASSESSMENT.md"
+      ]
+    },
+    {
+      "id": "R02-G08",
+      "name": "Full application, persisted authentication and private browser consumers",
+      "status": "pass_local",
+      "evidence": [
+        "runtime-result-retry02.json",
+        "browser/p04r02-full-20261102-r3-retry02/result.json"
+      ],
+      "limit": "22 checks and 352 recorded requests; media consumers only, not comprehensive UI/business acceptance."
+    },
+    {
+      "id": "R02-G09",
+      "name": "Hosted ingress/CDN/operator cutover",
+      "status": "deferred_release_requirement",
+      "required_for_local_r02_completion": false,
+      "evidence": [],
+      "limit": "Original-owner reference/read census, hosted copies/cache exclusions and operator storage/cutover remain explicit release gates."
+    }
+  ]
+}

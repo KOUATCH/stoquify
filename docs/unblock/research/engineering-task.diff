@@ -1,0 +1,388 @@
+--- before/services/payroll/payroll-tax-rule-evaluator.ts
++++ after/services/payroll/payroll-tax-rule-evaluator.ts
+@@ -79,10 +79,22 @@
+   label: string,
+ ) {
+   try {
+-    return new Prisma.Decimal(value ?? 0);
++    const amount = new Prisma.Decimal(value ?? 0);
++    if (!amount.isFinite()) throw new Error("Non-finite decimal");
++    return amount;
+   } catch {
+     throw new BusinessRuleError(`${label} must be a valid decimal amount.`);
+   }
++}
++
++function requireDecimalInput(
++  value: Prisma.Decimal.Value | null | undefined,
++  label: string,
++) {
++  if (value == null || (typeof value === "string" && !value.trim())) {
++    throw new BusinessRuleError(`${label} is required; supply an explicit amount, including zero.`);
++  }
++  return decimal(value, label);
+ }
+ 
+ function optionalDecimal(
+@@ -105,6 +117,8 @@
+ }
+ 
+ function sortedBrackets(brackets: PayrollTaxBracket[]) {
++  // Validate before sorting: NaN/Infinity must not participate in comparisons.
++  brackets.forEach(validateBracket);
+   return [...brackets].sort((left, right) => {
+     if (left.upToAmount == null && right.upToAmount == null) return 0;
+     if (left.upToAmount == null) return 1;
+@@ -161,8 +175,11 @@
+ ) {
+   const inputKey = adjustment.inputKey?.trim();
+   if (!inputKey) return new Prisma.Decimal(0);
+-  return decimal(
+-    input.adjustmentValues?.[inputKey] ?? 0,
++  const values = input.adjustmentValues;
++  return requireDecimalInput(
++    values && Object.prototype.hasOwnProperty.call(values, inputKey)
++      ? values[inputKey]
++      : undefined,
+     `Payroll tax adjustment input ${inputKey}`,
+   );
+ }
+@@ -338,7 +355,7 @@
+   input: PayrollTaxRuleEvaluationInput,
+ ): PayrollTaxRuleEvaluationResult {
+   const capabilityStatus = String(input.capabilityStatus);
+-  const taxableBaseAmount = decimal(
++  const taxableBaseAmount = requireDecimalInput(
+     input.taxableBaseAmount,
+     "Payroll taxable base",
+   );
+@@ -388,6 +405,11 @@
+     throw new BusinessRuleError(
+       "Payroll tax rule calculation mode is unsupported or missing.",
+     );
++  }
++
++  if (calculationMode === "PROGRESSIVE_YTD") {
++    requireDecimalInput(input.ytdTaxableBaseAmount, "Payroll YTD taxable base");
++    requireDecimalInput(input.ytdTaxWithheldAmount, "Payroll YTD tax withheld");
+   }
+ 
+   const taxableBaseAdjustment = applyAdjustments(
+--- before/services/payroll/payroll-control.service.ts
++++ after/services/payroll/payroll-control.service.ts
+@@ -2506,9 +2506,31 @@
+       .toDecimalPlaces(2);
+   }
+ 
++  // Bind source identity and bytes, not only totals and separately sorted hashes.
++  // This is evidence of the observed history, not certification of its completeness.
++  const priorLineEvidence = input.priorLines.map((line) => ({
++    runId: line.sourceRunId,
++    lineId: line.id,
++    employeeId: line.employeeId,
++    currency: line.currency,
++    payDate: line.sourcePayDate,
++    runStatus: line.sourceRunStatus,
++    runDocumentHash: line.sourceRunDocumentHash,
++    lineDocumentHash: line.documentHash ?? null,
++    calculationSnapshotHash: line.calculationSnapshot == null
++      ? null
++      : prefixedHash(line.calculationSnapshot),
++    recordedLineAmounts: Object.fromEntries(
++      PAYROLL_COMPONENT_PROOF_AMOUNT_KEYS.map((key) => [
++        key,
++        lineComponentDecimal(line, key)?.toString() ?? null,
++      ]),
++    ),
++  }));
++
+   const payload = {
+     kind: "AQSTOQFLOW_PAYROLL_YEAR_TO_DATE_ACCUMULATOR_PROOF" as const,
+-    version: 1 as const,
++    version: 2 as const,
+     accumulatorBasis:
+       "POSTED_PAID_PRIOR_LINES_PLUS_CURRENT_EFFECTIVE_LINE" as const,
+     employeeId: input.employeeId,
+@@ -2524,6 +2546,8 @@
+     priorRunLineDocumentHashes: priorRunLineDocumentHashes.sort(),
+     missingPriorCalculationSnapshotCount,
+     missingPriorLineDocumentHashCount,
++    priorLineEvidence,
++    observedHistoryHash: prefixedHash(priorLineEvidence),
+     priorAmounts: payrollYearToDateAmountStrings(priorAmounts),
+     currentAmounts: payrollYearToDateAmountStrings(input.currentAmounts),
+     yearToDateAmounts: payrollYearToDateAmountStrings(yearToDateAmounts),
+@@ -5999,7 +6023,9 @@
+     employeeIds: [...(parsed.employeeIds ?? [])].sort(),
+   });
+ 
+-  return inTransaction(client, async (tx) => {
++  // Reuse the transition transaction/retry boundary. A supplied TransactionClient
++  // inherits its caller's transaction; that caller owns isolation and retry.
++  return inPayrollTransitionTransaction(client, async (tx) => {
+     const existing = await tx.payrollRun.findFirst({
+       where: {
+         organizationId: parsed.organizationId,
+--- before/services/payroll/payroll-country-pack-fixture-runner.ts
++++ after/services/payroll/payroll-country-pack-fixture-runner.ts
+@@ -790,8 +790,8 @@
+ 
+   return {
+     taxableBaseAmount,
+-    ytdTaxableBaseAmount: decimalInput(input.ytdTaxableBaseAmount, 0),
+-    ytdTaxWithheldAmount: decimalInput(input.ytdTaxWithheldAmount, 0),
++    ytdTaxableBaseAmount: decimalInput(input.ytdTaxableBaseAmount),
++    ytdTaxWithheldAmount: decimalInput(input.ytdTaxWithheldAmount),
+     adjustmentValues: isRecord(input.adjustmentValues)
+       ? (input.adjustmentValues as Record<string, Prisma.Decimal.Value>)
+       : undefined,
+--- before/services/payroll/__tests__/payroll-tax-rule-evaluator.test.ts
++++ after/services/payroll/__tests__/payroll-tax-rule-evaluator.test.ts
+@@ -3,6 +3,68 @@
+ import { evaluatePayrollTaxRule } from "../payroll-tax-rule-evaluator";
+ 
+ describe("payroll tax rule evaluator", () => {
++  const syntheticRule = {
++    productionCalculationSupported: true,
++    calculationMode: "PROGRESSIVE_PERIOD",
++    brackets: [{ upToAmount: null, rateBps: 1000 }],
++  };
++  const syntheticInput = { taxableBaseAmount: "100", capabilityStatus: "SUPPORTED" };
++
++  it.each([undefined, null, "", " ", "NaN", "Infinity", "-Infinity"])(
++    "rejects missing/non-finite current base %s",
++    (amount) => {
++      expect(() => evaluatePayrollTaxRule(syntheticRule, {
++        ...syntheticInput, taxableBaseAmount: amount as never,
++      })).toThrow("Payroll taxable base");
++    },
++  );
++
++  it.each(["ytdTaxableBaseAmount", "ytdTaxWithheldAmount"] as const)(
++    "requires explicit %s for a supported YTD rule",
++    (key) => {
++      for (const missing of [undefined, null, "", " "]) {
++        expect(() => evaluatePayrollTaxRule(
++          { ...syntheticRule, calculationMode: "PROGRESSIVE_YTD" },
++          { ...syntheticInput, ytdTaxableBaseAmount: "0", ytdTaxWithheldAmount: "0", [key]: missing },
++        )).toThrow("Payroll YTD");
++      }
++    },
++  );
++
++  it("accepts explicit zero history and keeps unreviewed YTD rules blocked", () => {
++    const rule = { ...syntheticRule, calculationMode: "PROGRESSIVE_YTD" };
++    expect(evaluatePayrollTaxRule(rule, {
++      ...syntheticInput, ytdTaxableBaseAmount: "0", ytdTaxWithheldAmount: 0,
++    }).taxAmount.toString()).toBe("10");
++    expect(evaluatePayrollTaxRule(rule, {
++      ...syntheticInput, capabilityStatus: "REQUIRES_EXPERT_REVIEW",
++    }).status).toBe("BLOCKED_REQUIRES_EXPERT_REVIEW");
++  });
++
++  it.each(["taxableBaseAdjustments", "taxAmountAdjustments"] as const)(
++    "requires own, explicit finite named inputs in %s",
++    (scope) => {
++      const rule = { ...syntheticRule, [scope]: [{ code: "synthetic", operation: "SUBTRACT", inputKey: "deduction" }] };
++      for (const values of [undefined, {}, { deduction: undefined }, { deduction: null },
++        { deduction: "" }, { deduction: "NaN" }, { deduction: "Infinity" }, Object.create({ deduction: 10 })]) {
++        expect(() => evaluatePayrollTaxRule(rule, { ...syntheticInput, adjustmentValues: values }))
++          .toThrow("Payroll tax adjustment input deduction");
++      }
++      expect(evaluatePayrollTaxRule(rule, { ...syntheticInput, adjustmentValues: { deduction: 0 } }).taxAmount.toString()).toBe("10");
++    },
++  );
++
++  it.each(["NaN", "Infinity", "-Infinity"])("rejects non-finite rule money %s", (amount) => {
++    const badRules = [
++      { ...syntheticRule, brackets: [{ upToAmount: amount, rateBps: 1000 }] },
++      { ...syntheticRule, minimumTaxAmount: amount },
++      { ...syntheticRule, maximumTaxAmount: amount },
++      { ...syntheticRule, taxableBaseAdjustments: [{ code: "fixed", operation: "ADD" as const, amount }] },
++      { ...syntheticRule, taxAmountAdjustments: [{ code: "capped", operation: "ADD" as const, amount: "1", capAmount: amount }] },
++    ];
++    for (const rule of badRules) expect(() => evaluatePayrollTaxRule(rule, syntheticInput)).toThrow("valid decimal");
++  });
++
+   it("returns a blocked result when the country-pack rule still requires expert review", () => {
+     const result = evaluatePayrollTaxRule(
+       {
+--- before/services/payroll/__tests__/payroll-control.service.test.ts
++++ after/services/payroll/__tests__/payroll-control.service.test.ts
+@@ -618,6 +618,7 @@
+   employerRulesValue?: Record<string, unknown>;
+   incomeTaxRulesValue?: Record<string, unknown>;
+   incomeTaxCapabilityStatus?: string;
++  incomeTaxVerificationStatus?: string;
+   leaveValue?: Record<string, unknown>;
+   overtimeValue?: Record<string, unknown>;
+   compensationBenefitValue?: Record<string, unknown>;
+@@ -660,6 +661,7 @@
+     capabilityStatus:
+       overrides.incomeTaxCapabilityStatus ??
+       incomeTaxRulesResolution.capabilityStatus,
++    verificationStatus: overrides.incomeTaxVerificationStatus ?? incomeTaxRulesResolution.verificationStatus,
+   };
+   const leave = {
+     ...leaveResolution,
+@@ -1212,6 +1214,47 @@
+     await expect(calculatePayrollRun({ ...request, idempotencyKey: "correction-stopped-run", runType: PayrollRunType.CORRECTION, employeeIds: ["employee-1"] }, tx as never)).rejects.toThrow("Payroll correction runs require an original payroll run.");
+     expect(tx.$queryRaw).not.toHaveBeenCalled();
+     expect(tx.payrollRun.create).not.toHaveBeenCalled();
++  });
++
++  it.each(["P2034", "P2002"])("retries calculation conflicts (%s) with serializable replay", async (code) => {
++    const tx = buildTx();
++    const existing = { id: "replayed-run", postedBusinessEventId: null, lines: [], metadata: {
++      idempotencyPayloadHash: `sha256:${hashBusinessPayload({ operation: "calculatePayrollRun", payrollPeriodId: "period-1", runType: PayrollRunType.ORDINARY, originalRunId: null, employeeIds: [] })}`,
++    } };
++    tx.payrollRun.findFirst.mockRejectedValueOnce({ code }).mockResolvedValue(existing);
++    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
++    const result = await calculatePayrollRun({ organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1", idempotencyKey: "retry-key" });
++    expect(result.created).toBe(false);
++    expect(result.payrollRun.id).toBe("replayed-run");
++    expect(mockDb.$transaction).toHaveBeenCalledTimes(2);
++    for (const call of mockDb.$transaction.mock.calls) {
++      expect(call[1]).toEqual({ isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
++    }
++    expect(tx.payrollRun.findFirst).toHaveBeenCalledTimes(2);
++    expect(tx.payrollRun.findFirst).toHaveBeenLastCalledWith(expect.objectContaining({
++      where: { organizationId: "org-1", idempotencyKey: "retry-key", deletedAt: null },
++    }));
++    expect(tx.payrollRun.create).not.toHaveBeenCalled();
++    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
++  });
++
++  it("stops calculation after three serialization conflicts", async () => {
++    mockDb.$transaction.mockRejectedValue({ code: "P2034" });
++    await expect(calculatePayrollRun({ organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1", idempotencyKey: "conflict-key" }))
++      .rejects.toMatchObject({ code: "CONCURRENCY_CONFLICT", status: 409 });
++    expect(mockDb.$transaction).toHaveBeenCalledTimes(3);
++    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
++  });
++
++  it("does not retry domain failures or expose unexpected database errors", async () => {
++    const request = { organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1", idempotencyKey: "denied-key" };
++    const denied = new ConflictError("reviewed input changed");
++    mockDb.$transaction.mockRejectedValueOnce(denied);
++    await expect(calculatePayrollRun(request)).rejects.toBe(denied);
++    expect(mockDb.$transaction).toHaveBeenCalledTimes(1);
++    mockDb.$transaction.mockClear().mockRejectedValueOnce(new Error("private database details"));
++    await expect(calculatePayrollRun(request)).rejects.toMatchObject({ code: "INTERNAL_ERROR", expose: false, message: "Payroll transition could not be completed safely." });
++    expect(mockDb.$transaction).toHaveBeenCalledTimes(1);
+   });
+ 
+   it("freezes attendance with source-hash evidence and an audit trail", async () => {
+@@ -1579,6 +1622,9 @@
+                   yearToDateAccumulatorHash: expect.stringMatching(/^sha256:/),
+                   yearToDateProof: expect.objectContaining({
+                     kind: "AQSTOQFLOW_PAYROLL_YEAR_TO_DATE_ACCUMULATOR_PROOF",
++                    version: 2,
++                    observedHistoryHash: expect.stringMatching(/^sha256:/),
++                    priorLineEvidence: [expect.objectContaining({ runId: "prior-run-1", lineId: "prior-line-1", runStatus: "POSTED", calculationSnapshotHash: expect.stringMatching(/^sha256:/) })],
+                     accumulatorBasis:
+                       "POSTED_PAID_PRIOR_LINES_PLUS_CURRENT_EFFECTIVE_LINE",
+                     employeeId: "employee-1",
+@@ -1724,6 +1770,37 @@
+         ],
+       }),
+     );
++    const originalProof = (result.payrollRun.lines[0].calculationSnapshot as any).yearToDateProof;
++    const priorRuns = await tx.payrollRun.findMany.mock.results[0].value;
++    priorRuns[0].status = PayrollRunStatus.PAID;
++    const recalculate = async (key: string) => {
++      const calculated = await calculatePayrollRun({ organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1", idempotencyKey: key, runDate: "2026-06-30" });
++      return (calculated.payrollRun.lines[0].calculationSnapshot as any).yearToDateProof;
++    };
++    const paidProof = await recalculate("history-paid");
++    expect(paidProof.priorAmounts).toEqual(originalProof.priorAmounts);
++    expect(paidProof.observedHistoryHash).not.toBe(originalProof.observedHistoryHash);
++    expect(paidProof.ytdAccumulatorHash).not.toBe(originalProof.ytdAccumulatorHash);
++    priorRuns[0].lines[0].calculationSnapshot.sourceRevision = "changed-with-identical-totals";
++    const revisedProof = await recalculate("history-revised");
++    expect(revisedProof.priorAmounts).toEqual(paidProof.priorAmounts);
++    expect(revisedProof.observedHistoryHash).not.toBe(paidProof.observedHistoryHash);
++    expect((await recalculate("history-stable")).observedHistoryHash).toBe(revisedProof.observedHistoryHash);
++    tx.payrollRun.create.mockClear();
++    mockedRecordBusinessEventInTx.mockClear();
++    mockCountryPack({ incomeTaxCapabilityStatus: "SUPPORTED", incomeTaxVerificationStatus: "EXPERT_REVIEWED", incomeTaxRulesValue: {
++      productionCalculationSupported: true, calculationMode: "PROGRESSIVE_YTD",
++      brackets: [{ upToAmount: null, rateBps: 1000 }],
++    } });
++    await expect(recalculate("missing-ytd-service-inputs")).rejects.toThrow("Payroll YTD taxable base is required");
++    mockCountryPack({ incomeTaxCapabilityStatus: "SUPPORTED", incomeTaxVerificationStatus: "EXPERT_REVIEWED", incomeTaxRulesValue: {
++      productionCalculationSupported: true, calculationMode: "PROGRESSIVE_PERIOD",
++      brackets: [{ upToAmount: null, rateBps: 1000 }],
++      taxableBaseAdjustments: [{ code: "synthetic-input", operation: "SUBTRACT", inputKey: "certifiedDeduction" }],
++    } });
++    await expect(recalculate("missing-adjustment-service-inputs")).rejects.toThrow("Payroll tax adjustment input certifiedDeduction is required");
++    expect(tx.payrollRun.create).not.toHaveBeenCalled();
++    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+   });
+ 
+   it("blocks payroll calculation when frozen attendance source evidence is missing", async () => {
+--- before/services/payroll/__tests__/payroll-country-pack-fixture-runner.test.ts
++++ after/services/payroll/__tests__/payroll-country-pack-fixture-runner.test.ts
+@@ -121,6 +121,10 @@
+     calculationScenario: {
+       input: {
+         taxableBaseAmount: "150000.00",
++        // Synthetic scenarios explicitly assert zero; production omissions are errors.
++        ytdTaxableBaseAmount: "0.00",
++        ytdTaxWithheldAmount: "0.00",
++        adjustmentValues: { socialDeduction: "0.00", familyRelief: "0.00", currentPeriodCorrection: "0.00" },
+         currency: "XAF",
+       },
+       expectedOutput: {
+@@ -182,6 +186,7 @@
+           taxableBaseAmount: "50000.00",
+           ytdTaxableBaseAmount: "100000.00",
+           ytdTaxWithheldAmount: "1000.00",
++          adjustmentValues: { socialDeduction: "0.00", familyRelief: "0.00", currentPeriodCorrection: "0.00" },
+           yearToDatePolicyHash: "sha256:irpp-ytd-policy-fixture",
+           yearToDateAccumulatorHash: "sha256:irpp-ytd-accumulator-fixture",
+           registerProofHash: "sha256:irpp-ytd-register-proof",
+@@ -213,9 +218,12 @@
+         ...baseFixture.calculationScenario,
+         input: {
+           taxableBaseAmount: "200000.00",
++          ytdTaxableBaseAmount: "0.00",
++          ytdTaxWithheldAmount: "0.00",
+           adjustmentValues: {
+             socialDeduction: "40000.00",
+             familyRelief: "2000.00",
++            currentPeriodCorrection: "0.00",
+           },
+           currency: "XAF",
+         },
+@@ -245,6 +253,8 @@
+           ytdTaxableBaseAmount: "100000.00",
+           ytdTaxWithheldAmount: "1000.00",
+           adjustmentValues: {
++            socialDeduction: "0.00",
++            familyRelief: "0.00",
+             currentPeriodCorrection: "250.00",
+           },
+           yearToDatePolicyHash: "sha256:irpp-correction-ytd-policy-fixture",
+@@ -1446,6 +1456,21 @@
+     );
+   });
+ 
++  it.each(["ytdTaxableBaseAmount", "ytdTaxWithheldAmount", "adjustmentValues"])(
++    "does not certify a synthetic YTD scenario with missing %s",
++    (key) => {
++      const supported = supportedIrppPack();
++      const fixture = supported.goldenFixtures.find((row) => row.id === "cm-irpp-period-calculation-reviewed-2026")!;
++      delete fixture.calculationScenario!.input[key];
++      supported.header.hash = computeCountryPackHash(supported);
++      const result = validatePayrollCountryPackCalculationFixtures(supported);
++      expect(result.valid).toBe(false);
++      expect(result.issues).toEqual(expect.arrayContaining([expect.objectContaining({
++        fixtureId: fixture.id, code: "SCENARIO_EXECUTION_FAILED", message: expect.stringContaining("is required"),
++      })]));
++    },
++  );
++
+   it("fails validation when reviewed expected outputs drift from evaluator output", () => {
+     const supported = supportedIrppPack();
+     const periodFixture = supported.goldenFixtures.find(

@@ -119,7 +119,21 @@ import { getPaymentReconciliationDashboardData } from "@/services/reconciliation
 import { getPaymentReconciliationDashboardAction } from "../reconciliation.actions"
 import { getPaymentSuspenseRecordsAction } from "../reconciliation.actions"
 import { readPaymentSuspenseRecords } from "@/services/reconciliation/payment-suspense-read.service"
-import { proposeManualMatch, approveManualMatch } from "@/services/reconciliation/payment-reconciliation-run.service"
+import { proposeManualMatch, approveManualMatch, runPaymentReconciliation } from "@/services/reconciliation/payment-reconciliation-run.service"
+import { runPaymentReconciliationAction } from "../reconciliation.actions"
+
+it("passes only an accounting-period identity with the current server actor and never form-supplied ranges", async () => {
+  setPaymentReconProtectContext()
+  ;(runPaymentReconciliation as jest.Mock).mockResolvedValue({ runId: "period-run" })
+  const result = await runPaymentReconciliationAction({ providerAccountId: "provider", accountingPeriodId: "period", organizationId: "forged-org", runById: "forged-actor", periodStart: "1900-01-01", periodEnd: "2100-01-01" })
+  expect(result).toMatchObject({ success: true, data: { scope: { organizationId: "org-session", actorId: "user-session" } } })
+  expect(runPaymentReconciliation).toHaveBeenCalledWith({ organizationId: "org-session", providerAccountId: "provider", accountingPeriodId: "period", businessDate: undefined, runById: "user-session", correlationId: undefined })
+})
+it("rejects reconciliation input with neither a day nor an accounting period", async () => {
+  ;(runPaymentReconciliation as jest.Mock).mockClear()
+  await expect(runPaymentReconciliationAction({ providerAccountId: "provider" })).rejects.toThrow(/business date or accounting period/)
+  expect(runPaymentReconciliation).not.toHaveBeenCalled()
+})
 
 const mockGetPaymentReconciliationWorkbench = getPaymentReconciliationWorkbench as jest.Mock
 const mockGetPaymentReconciliationDashboardData = getPaymentReconciliationDashboardData as jest.Mock
@@ -247,9 +261,14 @@ describe("payment reconciliation action RBAC", () => {
   })
 
   it("lets the reconciliation workbench read model use read-only permission and tenant context", async () => {
-    const result = await getPaymentReconciliationWorkbenchAction({ organizationId: "attacker-org" })
+    const result = await getPaymentReconciliationWorkbenchAction({ organizationId: "attacker-org", actorId: "attacker-user" })
 
-    expect(result).toEqual({ success: true, data: { kind: "workbench", scope: { actorId: "user-session", organizationId: "org-session" } }, error: null, status: 200 })
+    expect(result).toEqual({
+      success: true,
+      data: { kind: "workbench", scope: { organizationId: "org-session", actorId: "user-session" } },
+      error: null,
+      status: 200,
+    })
     expect(mockGetPaymentReconciliationWorkbench).toHaveBeenCalledWith({
       organizationId: "org-session",
       period: "mtd",

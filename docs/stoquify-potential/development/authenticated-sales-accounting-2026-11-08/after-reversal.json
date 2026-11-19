@@ -1,0 +1,93 @@
+{
+  "stage": "after-reversal",
+  "utc": "2026-11-09T10:23:03.600Z",
+  "status": "PASS",
+  "evidenceClass": "Read-only database corroboration of actual authenticated UI mutations",
+  "sales": [
+    {
+      "id": "cmw8bvlv6000hmazcljtis2cw",
+      "orderNumber": "POS-SYNTHETIC_TILL-20261108-EUVIV",
+      "status": "COMPLETED",
+      "paymentStatus": "PARTIAL",
+      "total": "10",
+      "payments": [
+        {
+          "method": "CASH",
+          "amount": "6",
+          "status": "PAID"
+        },
+        {
+          "method": "CREDIT",
+          "amount": "4",
+          "status": "PENDING"
+        }
+      ]
+    }
+  ],
+  "customer": {
+    "currentBalance": "4"
+  },
+  "stock": {
+    "quantityOnHand": "4",
+    "quantityAvailable": "4",
+    "totalValue": "16"
+  },
+  "shifts": [
+    {
+      "expectedBalance": "106",
+      "cashTotal": "6",
+      "creditTotal": "4",
+      "transactionCount": 1
+    }
+  ],
+  "drawers": [
+    {
+      "currentBalance": "106",
+      "expectedBalance": "106"
+    }
+  ],
+  "accountBalancesDebitMinusCredit": {
+    "TEST_BANK": "0.00",
+    "TEST_AR": "4.00",
+    "TEST_CASH": "6.00",
+    "TEST_REVENUE": "-10.00",
+    "TEST_COGS": "4.00",
+    "TEST_STOCK": "-4.00"
+  },
+  "journalCount": 4,
+  "settlements": [
+    {
+      "id": "cmw93wh62008imatodspfq8el",
+      "settlementNumber": "CSET-20261109-B793B9EB61",
+      "amount": "4",
+      "method": "BANK_TRANSFER",
+      "status": "REVERSED",
+      "receivedById": "auth-sales-ac360f134c-collector",
+      "reversedById": "auth-sales-ac360f134c-reverser",
+      "journalEntryId": "cmw93whac0090matocxvp5fos",
+      "reversalJournalEntryId": "cmw944ddu00atmatoskqwimdz"
+    }
+  ],
+  "documents": [
+    {
+      "id": "cmw939xau000vmatojel0y1bs",
+      "documentNumber": "AR-POS-SYNTHETIC_TILL-20261108-EUVIV",
+      "lifecycleStates": [
+        {
+          "status": "PARTIALLY_PAID",
+          "unpaidAmount": "4",
+          "paidAmount": "6",
+          "version": 3
+        }
+      ]
+    }
+  ],
+  "closeRuns": [
+    {
+      "id": "cmw93eqtn003imatotj9gs09y",
+      "status": "BLOCKED",
+      "createdAt": "2026-11-09T10:02:47.237Z"
+    }
+  ],
+  "limitation": "Synthetic current-datamodel fixture; no migration history, custom-trigger or statutory certification"
+}

@@ -1,0 +1,1074 @@
+{
+  "at": "2026-11-10T15:49:04.518Z",
+  "schema": {
+    "path": "prisma/schema.prisma",
+    "sha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39"
+  },
+  "migrationLock": {
+    "path": "prisma/migrations/migration_lock.toml",
+    "sha256": "c1b9baaaaf4862b8f72b8fe252588c3a167d89f4cc3a21ee1fafc22b01225a41"
+  },
+  "migrations": [
+    {
+      "name": "20260528124341_refine_item_barcode",
+      "sha256": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2"
+    },
+    {
+      "name": "20260611120000_payment_provider_reference_uniqueness",
+      "sha256": "e61d8f02ef48e9034cda93f6a5b7259be0a099d4861dadd25faab530dbe84eb2"
+    },
+    {
+      "name": "20260611130000_accounting_auth_baseline_bridge",
+      "sha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4"
+    },
+    {
+      "name": "20260618154500_repair_accounting_source_links",
+      "sha256": "aa11c0dd1e5f24a7cb9c49d900572f4f07244d4a19d3b4b6b6089effe1fe1643"
+    },
+    {
+      "name": "20260618160000_payroll_foundation_bridge",
+      "sha256": "77c4c1bbd5618e5d01d7416e2f304014890a843785280ccca8aeb0c8c1f4ada8"
+    },
+    {
+      "name": "20260618161000_ap_stock_count_foundation_bridge",
+      "sha256": "b6c29029961c7080ff75cf1dbd7f918f2b4c4335befe487dcc89ce2d325ccacc"
+    },
+    {
+      "name": "20260619120000_backfill_purchase_receive_permission",
+      "sha256": "f64f6e4ade970f347c4db26e8dd14252e081862500a5070b45e72e8a4387dd40"
+    },
+    {
+      "name": "20260621102500_workflow_assurance_enum_bridge",
+      "sha256": "da34bc1196e951830980419a3e5f6f98600054a2a1f136e633a7301406c9cb35"
+    },
+    {
+      "name": "20260621103000_workflow_assurance_registry_foundation",
+      "sha256": "ba6bc0fca858e4a9b599c30ccd32f288235857a736d6c6afc186e8e54f79f473"
+    },
+    {
+      "name": "20260621112500_workflow_assurance_incident_enum_bridge",
+      "sha256": "8fa08137b6d785ddc812391ce212aa411c4e777bf453bfbf4c450b31cedac0e4"
+    },
+    {
+      "name": "20260621113000_workflow_assurance_incident_spine",
+      "sha256": "cfa1cb1cb7242c9717e8aeedc95c7424591aa78b799ea381d2bd40c199bf1664"
+    },
+    {
+      "name": "20260625110000_payroll_kernel_immutability",
+      "sha256": "d3bb80305c4d130c7533bdee5a75dd88da3da103ca885f7d14dc73b7167ee8d4"
+    },
+    {
+      "name": "20260626093000_payroll_compensation_approval",
+      "sha256": "69e379301a592e4fc126f72688b550d2c842bb74de785de01a732b60cc9a65e2"
+    },
+    {
+      "name": "20260626103000_payroll_payment_evidence_readiness",
+      "sha256": "3a75598e7fe3bdddce1ba6c4248cb08b1cd89966dbff0381d915903fa7aa0c61"
+    },
+    {
+      "name": "20260626123000_payroll_cnps_country_pack_expansion",
+      "sha256": "da6c26b20c8572648ea6d82da2e8c4b6b71ee0b82c6ed1181d1b27a351a092a6"
+    },
+    {
+      "name": "20260626133000_payroll_declaration_lifecycle_evidence",
+      "sha256": "326c7a82dab1b64179bb72b422eb380affcbe1a648612eeb042384b2e7dc3a7f"
+    },
+    {
+      "name": "20260626143000_payroll_payment_reconciliation_lifecycle",
+      "sha256": "b3fbfc15e09fd15c0692397004f22746f1dee8d865fa5d0ed411c133ec3bc900"
+    },
+    {
+      "name": "20260628123000_payroll_employee_balance_lifecycle",
+      "sha256": "afc488a800240f9869faedca30229fda44ff834225839051dfbf12e8b11c8d8a"
+    },
+    {
+      "name": "20260630090000_payment_reconciliation_foundation",
+      "sha256": "51c342aaa93f3bc909376ecfa6359840e6fca9ad29e15cd4b18c964dc99006e5"
+    },
+    {
+      "name": "20260630100000_payment_reconciliation_inbox_worker_leases",
+      "sha256": "176825a859d1bbc7b59a2bfa03028412f2a2de8c34a581b3b8ad5e0a122781ba"
+    },
+    {
+      "name": "20260703110000_public_receipt_access_tokens",
+      "sha256": "2097ae01e00361195610fcbf2cf06748bef7e190054d030a5983acb68b1f66f8"
+    },
+    {
+      "name": "20260711133000_public_identity_abuse_limits",
+      "sha256": "53e55fb881f552ab9f54b8d69ca92cf3554f690b149d890d60d7ce9e5d5bb258"
+    },
+    {
+      "name": "20260714194500_inventory_history_accounting_time_controls",
+      "sha256": "bdff0414f9046d566dcb03bb3b59fbefa28f3570af51bd6b527cdcb1c881ab72"
+    },
+    {
+      "name": "20260714203000_session_assurance",
+      "sha256": "b30c2a40ecdc2b82e631dea157ac2a2b6fa3078a7837f311a4b7052a259f1fa2"
+    },
+    {
+      "name": "20260715090000_inventory_correction_reversal_lineage",
+      "sha256": "c3e8c220f522f6b26b86f9e794f4e9fe6f44ca80f9b1d808f9d9fa5e199eb69f"
+    },
+    {
+      "name": "20260718100000_branch_daily_close_review_foundation",
+      "sha256": "2d2fb6276b5bc5a8a1cbcab774c39c1ee2fb67b6c7f2f82afc3f06c7cb6804ec"
+    },
+    {
+      "name": "20260718130000_branch_daily_close_sign_off_foundation",
+      "sha256": "ba8c880bdde4c432cf8171f4da91716ce8738a0e2639cf6dcf6758f613fd1984"
+    },
+    {
+      "name": "20260719190000_hris_org_manager_scope_foundation",
+      "sha256": "cef33045a530b51f10bd86cc42c08c1951ce2ad1eeaa096562c6b9d83ee36f0f"
+    },
+    {
+      "name": "20260719203000_workflow_assurance_stable_case_identity",
+      "sha256": "cb88d079e9ee8ea2b360cbacfa711df8aef6892e672b8b7e72abd76e3065c2ec"
+    },
+    {
+      "name": "20260720090000_close_assurance_schema_foundation",
+      "sha256": "d2ac0be6867203ce77f3293c778b69b7dd162213613f71be013c3e845d557100"
+    },
+    {
+      "name": "20260720130000_cash_shortage_policy_governance",
+      "sha256": "3cef5f9080d5bf58359a3e7ec569b86dfddfa16e0a7355de52d1dd6cf52f7805"
+    },
+    {
+      "name": "20260720210000_workflow_assurance_multi_finding_persistence",
+      "sha256": "e46a97770a96a83c0c97db74aebb6644fa2eaffd9a588dd4f4b3b3cbe0739a1b"
+    },
+    {
+      "name": "20260722143000_agent_runtime_phase_1_foundation",
+      "sha256": "94a21b2478abed9013ad91b86a3c0ca8d1be299c4c647e9d72db7060d7891422"
+    },
+    {
+      "name": "20260722150000_agent_runtime_tenant_consistency",
+      "sha256": "60120afc396082326a0028d6b4f5be8c0056d92b2df53d9bc43c5d924e2cec5d"
+    },
+    {
+      "name": "20260722153000_agent_runtime_incident_cascade_consistency",
+      "sha256": "0b4b522a97016d0f3c314f2e6756be76cc6b9ea3937d17104a7bc38df256c146"
+    },
+    {
+      "name": "20260722160000_agent_runtime_phase_2a_provenance",
+      "sha256": "b17cfa95100676b20853918337b295859e3790fba99e07ba988936ca511c9831"
+    },
+    {
+      "name": "20260722161000_agent_runtime_phase_2a_operational_controls",
+      "sha256": "e6da3e097a6ec88d4015202be95fa06183a3f1051dd9d63d4a1b3ea0bd794d7c"
+    },
+    {
+      "name": "20260722162000_agent_runtime_tenant_scoped_correlation",
+      "sha256": "cd9373debc557762912be2b0185eb3c1e5a63be563ca7414ce928acc66d6fd0d"
+    },
+    {
+      "name": "20260723100000_agent_runtime_release_control",
+      "sha256": "36cfeaca10404bdecb900e04b6c6059b3f0b1525742601c376d78f4edf158410"
+    },
+    {
+      "name": "20260724100000_agent_runtime_release_hardening",
+      "sha256": "1b49cff8f3465d4d82d8684f0f990843c9800a9371c178d0ac5066f317adfc60"
+    },
+    {
+      "name": "20260724113000_agent_runtime_retirement_alert_dead_letter",
+      "sha256": "e6e436d7b9b70a3dc4d1acdabff9309c68b3e55d0e74a74c3575a5f8e2f1f7e2"
+    },
+    {
+      "name": "20260724193000_agent_reconciler_invocation_ledger",
+      "sha256": "d152473fcdf0b5379ad2d18a18681d6597b7a21f654a395a4022ee9fb8c67b8a"
+    },
+    {
+      "name": "20260726140000_business_event_foundation_bridge",
+      "sha256": "62c534a5d0abda2d256ff28cfa82017593375fea4fa776f9d5e907653fe3299e"
+    },
+    {
+      "name": "20260726143000_regulatory_isolation_outbox",
+      "sha256": "cb4891823eb8473d01ff1323890383bef0a49d87a8a82a638ccf175a5a2e6fbb"
+    },
+    {
+      "name": "20260726190000_retire_production_bom_capability",
+      "sha256": "f8e1ed80e1e0ef53cb6c7cfed2902baa3a65065e99a044ea72a62ed432d11ae5"
+    },
+    {
+      "name": "20260726213000_hris_operational_time_management",
+      "sha256": "b48051b1fb971666933f6f915966cdf184b936add25402075243b3731800ab9d"
+    },
+    {
+      "name": "20260727090000_accountant_access_portfolio",
+      "sha256": "92eb7d70aec20347911f3b6ae3b6197bedf1a85e0cac0117974627fd682ffd41"
+    },
+    {
+      "name": "20260727110000_offline_pos_sync_foundation",
+      "sha256": "4a8896360a554d94707dbf86495b2e4e0bbb80e1cae4e8ec9343463c2e30d725"
+    },
+    {
+      "name": "20260727110100_offline_pos_sync_foundation_reconciliation",
+      "sha256": "035a01b974be882877669107d4e7c68b939097c6e49cb6273c9daf5b458d584d"
+    },
+    {
+      "name": "20260727143000_country_adapter_pilot_foundation",
+      "sha256": "da49e87bd903ba3130b4ad2782338f72ddd002ecf988c8789a66bd09400fad61"
+    },
+    {
+      "name": "20260727170000_ai_copilot_proposal_guardrails",
+      "sha256": "755aef868ddba0f420b6b728a23b50f2097a8054b1fbd090716207f76461e439"
+    },
+    {
+      "name": "20260728100000_pos_cash_shortage_checkpoint_persistence",
+      "sha256": "dbf12970ca133f5241f8814a56102374baefa6dd155a1682b2b76543ae3be270"
+    },
+    {
+      "name": "20260730150000_organization_onboarding_entitlement_bridge",
+      "sha256": "939c1a58986dbe63fa005df7fac668689038287238e877ecdded43b4dc87d1fa"
+    },
+    {
+      "name": "20260730160000_pos_sales_dependency_entitlement",
+      "sha256": "60b09a3d7b59e3886483990819cb489b2cee55b2b0b5b9894d833008d91dbbf5"
+    },
+    {
+      "name": "20260801153000_certified_fiscal_evidence_immutability",
+      "sha256": "fb2349ba0a80398ca18d53fc756d84f55948d114b1ba4791f81cad3727939073"
+    },
+    {
+      "name": "20260808120000_customer_settlement_allocation_foundation",
+      "sha256": "33e11ec31c4c9e3ddca8ab7004fcefc4950e37caf559037abf32bb7c606ea81c"
+    },
+    {
+      "name": "20260808133000_customer_settlement_compensating_reversal_foundation",
+      "sha256": "3eed50d1c697abbe30492208f46361fa312b6f67c2195e40faa65bbcaaeebea5"
+    },
+    {
+      "name": "20260809100000_customer_receivable_document_foundation",
+      "sha256": "f5e4f34f6b0a7fc9389ec07131330def4aa645fc4d30dc19b9c944fda130e84c"
+    },
+    {
+      "name": "20260809113000_customer_statement_snapshot_foundation",
+      "sha256": "ef4f1a295873dc53a40e3376a1a83aec723fa5ab92e517d54bc4f67dd5ff467f"
+    },
+    {
+      "name": "20260809130000_customer_statement_external_access",
+      "sha256": "ba745969c795572cd9f7692f519e56781bce463356a8720e91d0d3b57d826b97"
+    },
+    {
+      "name": "20260809143000_customer_statement_delivery_referral",
+      "sha256": "7fb1b45b6f599c661e7831ed282185331b263f82ad430c2f465f1d547bd3fb06"
+    },
+    {
+      "name": "20260809160000_accountant_client_invite_onboarding",
+      "sha256": "f1067b08aefdec02a1038767ca525bcd3ffc178008a31a18fbbf2d6667f303f6"
+    },
+    {
+      "name": "20260809170000_referral_accounting_source_types",
+      "sha256": "0790760cb0ed07251063090db06bfd315f525039d9398cc0efbd03da8b11d41e"
+    },
+    {
+      "name": "20260809180000_accounting_enum_completion",
+      "sha256": "e89b4380a5ee50ddf6f587c40d9da9d987e0b79bdf41cc4f3a42b4339f464043"
+    },
+    {
+      "name": "20260815120000_supplier_po_acknowledgement_pilot",
+      "sha256": "6ba2d60a539d4daa6396a5398648dc15310bb146513ad5b8db7a4c40012d6e99"
+    },
+    {
+      "name": "20260815130000_governed_master_data_onboarding",
+      "sha256": "89128f621cbde5711f6a8dde4679fc077bc34d0b3849ea0739926e07a1d475b4"
+    },
+    {
+      "name": "20260815143000_pos_customer_location_scope",
+      "sha256": "a4a5fc37cc0d405ad567a3ea87d846ed8f9dfc528aa2139d38f7a8d739022c0a"
+    },
+    {
+      "name": "20260815190000_payment_reconciliation_evidence_immutability",
+      "sha256": "317a58d31e5247b999c95cc27832891a8f10784f9ac79a2906ce13ce386d085e"
+    },
+    {
+      "name": "20260816100000_master_data_onboarding_risk_tier",
+      "sha256": "c67d33b36703ba1815bf8d9d2d19c5ddc6c9757985741d3e5941de12d3a8af27"
+    },
+    {
+      "name": "20260817120000_pos_commit_result_registry",
+      "sha256": "991a1508f73aa75c2331316d019dbf4abc505097dd2d60d7d108a85e24d7f056"
+    },
+    {
+      "name": "20260818100000_purchase_receiving_integrity",
+      "sha256": "df4aa75d35f09d856b8f4eb75fd2c283ec333b519e99a3ed4579ffc513d9ba8f"
+    },
+    {
+      "name": "20260818120000_governed_delivery_order_to_cash",
+      "sha256": "74d1b1f491b1fc8e8a8319a21d29e957f21a362f227eacc4403ddd87df38bd78"
+    },
+    {
+      "name": "20260818120000_pos_electronic_tender_authority",
+      "sha256": "3451178f2323b8c8d96fb0f38e01fc2cc3c82e3a89c917c68b980253ef503d3f"
+    },
+    {
+      "name": "20260818130000_sales_order_reporting_schema_repair",
+      "sha256": "eed41a06bff7999be0bc41dc88ca46c13bed08ed5ed8791c8e6406179a0d32ca"
+    },
+    {
+      "name": "20260819100000_purchase_receiving_inspection_control",
+      "sha256": "a407a1fe586934c9066dad7e2e0f1cf4ad4a692e50dce9964e92076d7fb48451"
+    },
+    {
+      "name": "20260819120000_purchase_return_credit_evidence_boundary",
+      "sha256": "100ca778dad886f4c80e2889c67142ce37e41d194994c84a440073d3d044892c"
+    },
+    {
+      "name": "20260820100000_supplier_invoice_match_exception_boundary",
+      "sha256": "126bc799c1885856f23a8d768c1f7fe8808841ec8382f9e2c20e52b870e9ed76"
+    },
+    {
+      "name": "20260821210000_payroll_trust_spine_transition_ledger",
+      "sha256": "98a4907bb72cbb99c2919df3ef975c3c5924e70b19c9b34a536c9b3a77915a52"
+    },
+    {
+      "name": "20260823100000_business_event_gateway_completion",
+      "sha256": "a9031a12fda4b925e90f52b6f510c2f65dbe4904cf6abd7c35c3a2ed4585fb3b"
+    },
+    {
+      "name": "20260828190000_align_onboarding_risk_reasons_default",
+      "sha256": "ee40069dd6ca75c79161d721d297f1140b9508ed22f90be836cbe3640225459e"
+    },
+    {
+      "name": "20260905170000_add_tenant_module_composition",
+      "sha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb"
+    },
+    {
+      "name": "20260905173000_protect_module_configuration_authority",
+      "sha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66"
+    },
+    {
+      "name": "20260905200000_add_module_lifecycle_command_state",
+      "sha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73"
+    },
+    {
+      "name": "20260905200100_add_module_lifecycle",
+      "sha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c"
+    },
+    {
+      "name": "20260909093000_add_suspense_posting_cycles",
+      "sha256": "cd5d20a342504c2f1d27c8644c3d41a8f80019d56a0a459678166df6ff8f119f"
+    },
+    {
+      "name": "20260919110000_managed_picture_assets",
+      "sha256": "ed1cc1ee182cbd119abfd2cbb5953ca96cad6fc9ca08f380153e917692fab5ae"
+    },
+    {
+      "name": "20260920060000_pos_checkout_lifecycle",
+      "sha256": "f09015253f4479d62404f1ddd840687173854508aca058fc2d0a7589396f020c"
+    },
+    {
+      "name": "20260930211500_journal_posted_line_tenant_guards",
+      "sha256": "b967518e17b8d8dfe82a27be32ed387171eccf361ade577d63ea4fedaf665cde"
+    },
+    {
+      "name": "20260930213000_journal_posted_status_transitions",
+      "sha256": "50742465c97d3519981a2918d50a2988a4f06058159a7662a9341048815f8e97"
+    },
+    {
+      "name": "20260930231500_supplier_credit_zero_value_evidence",
+      "sha256": "4e56dc79850e0937c8671500da573373f8d0aff8a4f45cf1527255684d464eec"
+    },
+    {
+      "name": "20261004000000_close_evidence_notifications",
+      "sha256": "d7ff57b0070851dd095ae6d4da6797bae46420a2108cb686b2d5d3912f3b4d3b"
+    },
+    {
+      "name": "20261004120000_access_requests",
+      "sha256": "5b8b73f6370bb6e2d0175ad1b7511a04c030566cfec8fde8d7be6c74db23d776"
+    },
+    {
+      "name": "20261004130000_purchase_order_authoring",
+      "sha256": "bf5bf939856394cbb6e45cb9bd1b6ab84619193f86f05d6a1efbcf52b969deb7"
+    },
+    {
+      "name": "20261016150000_reconciliation_no_activity_evidence",
+      "sha256": "e009473b277dab79c1fec8b2fc62d25197a28ffc3219978ceae102e64f81bf5b"
+    },
+    {
+      "name": "20261016180000_close_source_publication_guard",
+      "sha256": "c284f59107a6062ab41d8d4696cc1e49d996ecdf30c50eb0d963300ad7ac7668"
+    },
+    {
+      "name": "20261016200000_close_payable_sources",
+      "sha256": "726bc8eefd7efca0cae2a020583c027cf1e42c5008a6b08403bdd32627925730"
+    },
+    {
+      "name": "20261016220000_bank_balance_evidence",
+      "sha256": "ce4699dad31c271f9bac9ea83574efd235f1c4372d164801098973536bff1969"
+    },
+    {
+      "name": "20261016230000_balance_sheet_evidence",
+      "sha256": "8f2de043df62bdd0e25492ed8f6b4b071cf25ae9c1460931292e732f7b45b0c5"
+    },
+    {
+      "name": "20261017090000_period_close_control",
+      "sha256": "07b87dba77eed8f7deef288276f16590de0d3860e6ff2456ee3ffcacdd7f39fe"
+    },
+    {
+      "name": "20261019120000_firm_engagement_foundation",
+      "sha256": "aa164a6bdabebe210530a802dad62a685df48f8ad1773d4c2e3eee68aa23b5db"
+    },
+    {
+      "name": "20261019140000_firm_engagement_authority",
+      "sha256": "84c008d40b14282b5ea78fe4cd6b9da086240d6b3e7df3fe1121e51642f9ced5"
+    },
+    {
+      "name": "20261020100000_accountant_active_named_scope",
+      "sha256": "a11b45efeb4b859cb22965b5367f8198d6c346b46c63224171094b538c67bde1"
+    },
+    {
+      "name": "20261020130000_opening_position_preview",
+      "sha256": "ce8f1230a47de4fc4b205c46dec3dcd69067fd0d4b52418811d1441a3a3dc918"
+    },
+    {
+      "name": "20261020160000_controlled_opening_cutover",
+      "sha256": "7867dd521a64f5ceea7d5413d6946b325d2c375c2295bc9e6da08c5252463faa"
+    },
+    {
+      "name": "20261020180000_firm_obligation_register",
+      "sha256": "af967f0d5859f7051a6b42f9007c4f2fb5356da11c51fc53bc07e93adb7ff72d"
+    },
+    {
+      "name": "20261024143000_hris_schedule_revisions",
+      "sha256": "dc3624299c02bb358cada3293d86ec73f6431c087c8c421d43f6beb9383d8714"
+    },
+    {
+      "name": "20261024150000_hris_employee_documents",
+      "sha256": "54617a571a7a32e340cf5436b988a39dcc9260c2da8e4af65aec8506682854c9"
+    },
+    {
+      "name": "20261024150100_hris_document_evidence_guard",
+      "sha256": "42e4c17c0e04eaffcfeff9c7a649c11e3ce6c7ac7e6c130e56e0c47a8c0c3517"
+    },
+    {
+      "name": "20261024150200_hris_document_duplicate_evidence",
+      "sha256": "0ab06ce36165e1ccf63cc9e0130e6628b4be9b512853f1c3c296eb6b62714dc9"
+    },
+    {
+      "name": "20261024150300_hris_document_storage_identity",
+      "sha256": "fc3202a8a00bf7212a0a9c068eae1417cbec9c3826bbb1f3550cfebb52fc9865"
+    },
+    {
+      "name": "20261024150400_hris_document_legacy_evidence",
+      "sha256": "7670458f81dac1c5946f4818ee4fd262997d4edbf4e7c6cbf3bf51b465803aec"
+    },
+    {
+      "name": "20261024160000_hris_personal_correction_cases",
+      "sha256": "8c6885dcdc012d8855ff796f376a635a755a618e9ef4479dca0944904e1cfa69"
+    },
+    {
+      "name": "20261024170000_hris_lifecycle_tasks",
+      "sha256": "f4cbe0129005fe9c0634ddfd6f78d349c34f66ed5a680196706f965a7aa69654"
+    },
+    {
+      "name": "20261024170000_hris_setup_reviewer_grants",
+      "sha256": "2b5ca60fa12d2aed9add8ec9895bfbabceb6f8d49423269fe26d12c5ac616a9b"
+    },
+    {
+      "name": "20261024180000_command_center_coordination",
+      "sha256": "f391b11a08b581d89922527eef6a0937a27128b3091c30c93a97a175cff8b941"
+    },
+    {
+      "name": "20261025090000_firm_advisory_outcomes",
+      "sha256": "89dcd1ba406e637efdd96234fc685f7f0b6cf666f5350ad42324bb60c9eef574"
+    },
+    {
+      "name": "20261025180000_firm_practice_records",
+      "sha256": "a1a0d1996d86aa6b1b4415450a5f86caaef6851fb3360348b89da4e8add73d09"
+    },
+    {
+      "name": "20261025180100_firm_practice_integrity",
+      "sha256": "f7406f2292f10909d0b0dd8614b6655e2069615a0c3fa26c0a3c6d75cd1100e2"
+    },
+    {
+      "name": "20261025190000_hris_payroll_handoff",
+      "sha256": "8c8505a509ebfb59cc8bd30f326e8d3ba9663070255cf0919b0cdda2968c0776"
+    },
+    {
+      "name": "20261025190100_hris_handoff_actor_guard",
+      "sha256": "37f0de12f2b315e05ef4a6489a81b5898b8cb7a50896361c97e29af60d679471"
+    },
+    {
+      "name": "20261102190000_payroll_history_proof_version_binding",
+      "sha256": "6134a60bec2f4aead9d134ac16a28c50e8b724b0c2b3ea5dcde97c79485017ce"
+    },
+    {
+      "name": "20261109190000_close_pack_canonical_retention",
+      "sha256": "61e5ff2bfd3209906d92ca36b923d5125242db76c8cae5d4bc1269897f76e6d8"
+    }
+  ],
+  "migrationCount": 122,
+  "migrationsSha256": "18f667a29e31892e8b231a2b41e22760140154e3cbd9c350a0c075e9a3bd3d59",
+  "baselineSchema": {
+    "path": "prisma/schema.prisma",
+    "sha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39"
+  },
+  "schemaMatchesFrozen": true,
+  "migrationDelta": [],
+  "suspension": {
+    "path": "database/capacity-suspension.json",
+    "sha256": "7aed928e69514da4b8f905ecf7d0e67638871ccdc6e3c81330b11532e4827ff4"
+  },
+  "suspensionSchemaHashes": [
+    "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39"
+  ],
+  "suspensionMigrationHashes": [
+    "18f667a29e31892e8b231a2b41e22760140154e3cbd9c350a0c075e9a3bd3d59"
+  ],
+  "privateFixture": {
+    "path": "D:\\p04-r06-fullapp-20261110-r2\\private\\browser-fixture.private.json",
+    "sha256": "9923d14f86a2140b3358d39e39af4a2aa33ca0a6a11c2ce856990fd3a4bd3207",
+    "suspensionHashes": [
+      "9923d14f86a2140b3358d39e39af4a2aa33ca0a6a11c2ce856990fd3a4bd3207"
+    ],
+    "contentsPublished": false
+  },
+  "packageInputs": [
+    {
+      "path": "package.json",
+      "sha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70",
+      "baselineSha256": "9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235",
+      "baselineSha256": "c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"
+    },
+    {
+      "path": "next.config.mjs",
+      "sha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf",
+      "baselineSha256": "26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "d3579c5303333929f58ef96286529142b8e64137c59fb8a32b7c43598ac518c9",
+      "baselineSha256": "d8520694b9940364a676d62d757600ffb29718574e72c5752f8f4875021f4ccb"
+    }
+  ],
+  "helperBindings": [
+    {
+      "path": "database/capacity-continuity.cjs",
+      "sha256": "ff6e39318d7f6dcec1eebfbe8fd2b38e3d219f7ae144cdf82affcd7d33f90ad8",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/CAPACITY-CONTINUITY-RECIPE-ADMISSION.json",
+          "sha256": "326671ce70a3e9e0a00069a25b1dceb996626fa13de8c97900fa6ab7412404a2"
+        }
+      ]
+    },
+    {
+      "path": "database/database-common.cjs",
+      "sha256": "22d6005ff8ac2355837e339c621819ce2411ba6322bc1febe2d0edfe52661be8",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/CAPACITY-CONTINUITY-RECIPE-ADMISSION.json",
+          "sha256": "326671ce70a3e9e0a00069a25b1dceb996626fa13de8c97900fa6ab7412404a2"
+        },
+        {
+          "path": "independent-review/CREDENTIAL-EXPIRY-SOURCE-ADMISSION.json",
+          "sha256": "a87a57ed6a4384ec5a5298d52ba3052f1eae5099f42a859a9a8aa8fd0b18463e"
+        },
+        {
+          "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+          "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+        },
+        {
+          "path": "independent-review/DATABASE-SUPPLEMENTAL-SOURCE-REVIEW.json",
+          "sha256": "72256d199c2d95ceea54e9ec6a0ca7d352edc9c8036fe2bafc277356148f175f"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION-v2.json",
+          "sha256": "cb8ac1dccb64dd5d077d00478be1a36349ff501c2128d6792eb2c58891ce43ed"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION-v3.json",
+          "sha256": "699b085f37331d3d061f7188dfb6d43b083c0cac5d2d92b4f55719aa2fb70ce3"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION.json",
+          "sha256": "27690c3c1c4ef82a355a271f8ca543bee84a3663b1944fc858c737a81568eea5"
+        },
+        {
+          "path": "independent-review/RUNTIME-PREFLIGHT-RECIPE-ADMISSION-v2.json",
+          "sha256": "d0ac0a100f9fe1a1dd922ce49a67cc51b9750e2b02227c7b1efd0867a17af0db"
+        },
+        {
+          "path": "independent-review/RUNTIME-PREFLIGHT-RECIPE-ADMISSION.json",
+          "sha256": "9e73c989bbd494f2ab7d884a026103779f90512ce5e9cdcc05e34852b9aaad4d"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "database/direct-api-child.cjs",
+      "sha256": "d3194e9b397bbabf393a490f335b31197432317e70ecca9e496a3e7d2f79cd3b",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+          "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+        },
+        {
+          "path": "independent-review/DATABASE-SUPPLEMENTAL-SOURCE-REVIEW.json",
+          "sha256": "72256d199c2d95ceea54e9ec6a0ca7d352edc9c8036fe2bafc277356148f175f"
+        },
+        {
+          "path": "independent-review/EXPANDED-RUNTIME-SOURCE-ADMISSION.json",
+          "sha256": "375dd3cf180848034b28dc9bec6814863f761cea1175cd08a0751719c0b6fea0"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "database/finalize.cjs",
+      "sha256": "853e7be2c20ddad2ba5175a95044f76feb874265bce8b52f452d940e48c323dd",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+          "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+        },
+        {
+          "path": "independent-review/DATABASE-SUPPLEMENTAL-SOURCE-REVIEW.json",
+          "sha256": "72256d199c2d95ceea54e9ec6a0ca7d352edc9c8036fe2bafc277356148f175f"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION-v2.json",
+          "sha256": "cb8ac1dccb64dd5d077d00478be1a36349ff501c2128d6792eb2c58891ce43ed"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION-v3.json",
+          "sha256": "699b085f37331d3d061f7188dfb6d43b083c0cac5d2d92b4f55719aa2fb70ce3"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION.json",
+          "sha256": "27690c3c1c4ef82a355a271f8ca543bee84a3663b1944fc858c737a81568eea5"
+        }
+      ]
+    },
+    {
+      "path": "database/fixture-control.cjs",
+      "sha256": "61be60737ab0b4dd85ba98be217c039dd54a86adf403aa69eebc5d793326445d",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/CAPACITY-CONTINUITY-RECIPE-ADMISSION.json",
+          "sha256": "326671ce70a3e9e0a00069a25b1dceb996626fa13de8c97900fa6ab7412404a2"
+        },
+        {
+          "path": "independent-review/CREDENTIAL-EXPIRY-SOURCE-ADMISSION.json",
+          "sha256": "a87a57ed6a4384ec5a5298d52ba3052f1eae5099f42a859a9a8aa8fd0b18463e"
+        },
+        {
+          "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+          "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+        },
+        {
+          "path": "independent-review/DATABASE-SUPPLEMENTAL-SOURCE-REVIEW.json",
+          "sha256": "72256d199c2d95ceea54e9ec6a0ca7d352edc9c8036fe2bafc277356148f175f"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION-v2.json",
+          "sha256": "cb8ac1dccb64dd5d077d00478be1a36349ff501c2128d6792eb2c58891ce43ed"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION-v3.json",
+          "sha256": "699b085f37331d3d061f7188dfb6d43b083c0cac5d2d92b4f55719aa2fb70ce3"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION.json",
+          "sha256": "27690c3c1c4ef82a355a271f8ca543bee84a3663b1944fc858c737a81568eea5"
+        },
+        {
+          "path": "independent-review/RUNTIME-PREFLIGHT-RECIPE-ADMISSION-v2.json",
+          "sha256": "d0ac0a100f9fe1a1dd922ce49a67cc51b9750e2b02227c7b1efd0867a17af0db"
+        },
+        {
+          "path": "independent-review/RUNTIME-PREFLIGHT-RECIPE-ADMISSION.json",
+          "sha256": "9e73c989bbd494f2ab7d884a026103779f90512ce5e9cdcc05e34852b9aaad4d"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "database/fixture-definition.cjs",
+      "sha256": "1e37557aef27d8797850f8704288d61c3d33943928e86124e1145244171a4bfe",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/CAPACITY-CONTINUITY-RECIPE-ADMISSION.json",
+          "sha256": "326671ce70a3e9e0a00069a25b1dceb996626fa13de8c97900fa6ab7412404a2"
+        },
+        {
+          "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+          "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+        },
+        {
+          "path": "independent-review/DATABASE-SUPPLEMENTAL-SOURCE-REVIEW.json",
+          "sha256": "72256d199c2d95ceea54e9ec6a0ca7d352edc9c8036fe2bafc277356148f175f"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION-v2.json",
+          "sha256": "cb8ac1dccb64dd5d077d00478be1a36349ff501c2128d6792eb2c58891ce43ed"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION-v3.json",
+          "sha256": "699b085f37331d3d061f7188dfb6d43b083c0cac5d2d92b4f55719aa2fb70ce3"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION.json",
+          "sha256": "27690c3c1c4ef82a355a271f8ca543bee84a3663b1944fc858c737a81568eea5"
+        },
+        {
+          "path": "independent-review/RUNTIME-PREFLIGHT-RECIPE-ADMISSION-v2.json",
+          "sha256": "d0ac0a100f9fe1a1dd922ce49a67cc51b9750e2b02227c7b1efd0867a17af0db"
+        },
+        {
+          "path": "independent-review/RUNTIME-PREFLIGHT-RECIPE-ADMISSION.json",
+          "sha256": "9e73c989bbd494f2ab7d884a026103779f90512ce5e9cdcc05e34852b9aaad4d"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "database/fixture-preflight-v2.cjs",
+      "sha256": "4c2f2190154c217fb4b3f0968dd15ce661732141bd3262013171f45830ba379c",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/RUNTIME-PREFLIGHT-RECIPE-ADMISSION-v2.json",
+          "sha256": "d0ac0a100f9fe1a1dd922ce49a67cc51b9750e2b02227c7b1efd0867a17af0db"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "database/fixture-preflight.cjs",
+      "sha256": "0e405a07dd33a90347e6e9b92905bb43c8551366a8992e8f6f19e71d99d17895",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/RUNTIME-PREFLIGHT-RECIPE-ADMISSION.json",
+          "sha256": "9e73c989bbd494f2ab7d884a026103779f90512ce5e9cdcc05e34852b9aaad4d"
+        }
+      ]
+    },
+    {
+      "path": "database/login-fixture-control.cjs",
+      "sha256": "1ca0e416469fdb9f581857ca895c66301a9de0e565aa4c30eb8bda40fa6d6388",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/CREDENTIAL-EXPIRY-SOURCE-ADMISSION.json",
+          "sha256": "a87a57ed6a4384ec5a5298d52ba3052f1eae5099f42a859a9a8aa8fd0b18463e"
+        },
+        {
+          "path": "independent-review/CREDENTIAL-SUPPLEMENTAL-SOURCE-REVIEW-r2.json",
+          "sha256": "7ca156e30a52b80b765e4fd27ef87a37ca3d0bd0920faa3f2f1db55cead5eb1e"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "database/prepare.cjs",
+      "sha256": "8adb93c8b5d25c69e66d72571a6fef7e3f7f28ce809b0239c72589df4325b975",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+          "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+        },
+        {
+          "path": "independent-review/DATABASE-SUPPLEMENTAL-SOURCE-REVIEW.json",
+          "sha256": "72256d199c2d95ceea54e9ec6a0ca7d352edc9c8036fe2bafc277356148f175f"
+        }
+      ]
+    },
+    {
+      "path": "database/read-authority-utc.cjs",
+      "sha256": "15b6629b6f20b106282d6a52af6506cc4f530fc1b7205335e313ed2fdcf05fc8",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/CREDENTIAL-EXPIRY-SOURCE-ADMISSION.json",
+          "sha256": "a87a57ed6a4384ec5a5298d52ba3052f1eae5099f42a859a9a8aa8fd0b18463e"
+        },
+        {
+          "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+          "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+        },
+        {
+          "path": "independent-review/DATABASE-SUPPLEMENTAL-SOURCE-REVIEW.json",
+          "sha256": "72256d199c2d95ceea54e9ec6a0ca7d352edc9c8036fe2bafc277356148f175f"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "database/resume-after-capacity.cjs",
+      "sha256": "7db22b97ef15d33e0d481360329813b652bedfa44451624a21f8582d213444dc",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/CAPACITY-CONTINUITY-RECIPE-ADMISSION.json",
+          "sha256": "326671ce70a3e9e0a00069a25b1dceb996626fa13de8c97900fa6ab7412404a2"
+        }
+      ]
+    },
+    {
+      "path": "database/seed-fixture.cjs",
+      "sha256": "c75e913102e5743b63b094e411a554342921844d1ac2503908a468c4d7bf9924",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+          "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+        },
+        {
+          "path": "independent-review/DATABASE-SUPPLEMENTAL-SOURCE-REVIEW.json",
+          "sha256": "72256d199c2d95ceea54e9ec6a0ca7d352edc9c8036fe2bafc277356148f175f"
+        }
+      ]
+    },
+    {
+      "path": "database/stop.cjs",
+      "sha256": "0e88776d266504f5aa19578c5c2d4ffa11564e2a34b41a15b21bb0b915ed54de",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/DATABASE-RECIPE-ADMISSION.json",
+          "sha256": "3ad45549e460f3756409adf2405f122ac7a3fdd939a82b4199c7f71dc646abe7"
+        },
+        {
+          "path": "independent-review/DATABASE-SUPPLEMENTAL-SOURCE-REVIEW.json",
+          "sha256": "72256d199c2d95ceea54e9ec6a0ca7d352edc9c8036fe2bafc277356148f175f"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION-v2.json",
+          "sha256": "cb8ac1dccb64dd5d077d00478be1a36349ff501c2128d6792eb2c58891ce43ed"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION-v3.json",
+          "sha256": "699b085f37331d3d061f7188dfb6d43b083c0cac5d2d92b4f55719aa2fb70ce3"
+        },
+        {
+          "path": "independent-review/FINAL-INTEGRITY-RECIPE-ADMISSION.json",
+          "sha256": "27690c3c1c4ef82a355a271f8ca543bee84a3663b1944fc858c737a81568eea5"
+        }
+      ]
+    },
+    {
+      "path": "database/suspend-for-capacity.cjs",
+      "sha256": "6d761124d24972f9f97d8a08278e2b070c3db6e8dc29591a5d8dcac28766db08",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/CAPACITY-CONTINUITY-RECIPE-ADMISSION.json",
+          "sha256": "326671ce70a3e9e0a00069a25b1dceb996626fa13de8c97900fa6ab7412404a2"
+        }
+      ]
+    },
+    {
+      "path": "runtime/run-origin-probes.cjs",
+      "sha256": "8b802095304ef10beb243620fbcfccfd2c656bfc49c5a5ae202a53cf67602265",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/ORIGIN-PROBES-SOURCE-ADMISSION.json",
+          "sha256": "83dfad7318ad171c0a232231dc66dbc0226f3fc6116fe7824247d352cd0f7959"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "runtime/run-credential-probes.cjs",
+      "sha256": "a08d4cf1fedb2affc179a5cf26e4d15506a5d7f423dc0a8376b1104aa730084c",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/CREDENTIAL-EXPIRY-SOURCE-ADMISSION.json",
+          "sha256": "a87a57ed6a4384ec5a5298d52ba3052f1eae5099f42a859a9a8aa8fd0b18463e"
+        },
+        {
+          "path": "independent-review/CREDENTIAL-SUPPLEMENTAL-SOURCE-REVIEW-r2.json",
+          "sha256": "7ca156e30a52b80b765e4fd27ef87a37ca3d0bd0920faa3f2f1db55cead5eb1e"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "runtime/run-protected-core.cjs",
+      "sha256": "3bdc7a715fc4519c321c7391a205845c1ffed43a3f9d125014dd7c3fd9d38fa5",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/PROTECTED-CORE-SOURCE-ADMISSION.json",
+          "sha256": "5d96a1d110eb694ccdc1c4a3fa228878c8e3de0fca5fd996548aef48d37b0fa7"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "runtime/run-retained-expiry.cjs",
+      "sha256": "9b1430784b51d3b65add983794b357e34bac0548cb2f716cb3492ea7cf5522f0",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/CREDENTIAL-EXPIRY-SOURCE-ADMISSION.json",
+          "sha256": "a87a57ed6a4384ec5a5298d52ba3052f1eae5099f42a859a9a8aa8fd0b18463e"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "runtime/runtime-bridge-v2.cjs",
+      "sha256": "ec542a56bdaf1b4b3e4c78ceedb46828cfd4dffec922d18d2f9e32ba8bf6aa01",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/RUNTIME-BRIDGE-SOURCE-ADMISSION-v2.json",
+          "sha256": "cf75f34abfebd9fd723bc3a9f57bc0c3c7cab3b1b381d64af15995a5914bc366"
+        },
+        {
+          "path": "independent-review/RUNTIME-ORCHESTRATION-SOURCE-REVIEW-v3.json",
+          "sha256": "ddb41a30473d6f379187a6f91b166bc9642a6d527b83cbf1c6316b2774367128"
+        },
+        {
+          "path": "independent-review/RUNTIME-ORCHESTRATION-SOURCE-REVIEW.json",
+          "sha256": "c9dfd072929104f17c4fc27996dd99642feb5384c531ae5f252bd5bc10053404"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "runtime/qualification-contract.json",
+      "sha256": "22d4543fef2795f838aa54c203be96ad0448b466f0b80f6d7104f863bf8d08e1",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/EXPANDED-RUNTIME-SOURCE-ADMISSION.json",
+          "sha256": "375dd3cf180848034b28dc9bec6814863f761cea1175cd08a0751719c0b6fea0"
+        },
+        {
+          "path": "independent-review/PUBLICATION-RECIPE-ADMISSION.json",
+          "sha256": "e07ca4176e50641412fc3b3faa22bbb249e991c01d798e941465cd49503c8ff5"
+        },
+        {
+          "path": "independent-review/QUALIFICATION-RECONCILIATION-RECIPE-ADMISSION.json",
+          "sha256": "7dcce61b180c60db81276bed7997006970c7ddd6ce0d04ae6a8eac4b0497cd95"
+        },
+        {
+          "path": "independent-review/RUNTIME-ORCHESTRATION-SOURCE-REVIEW-v3.json",
+          "sha256": "ddb41a30473d6f379187a6f91b166bc9642a6d527b83cbf1c6316b2774367128"
+        },
+        {
+          "path": "independent-review/RUNTIME-ORCHESTRATION-SOURCE-REVIEW.json",
+          "sha256": "c9dfd072929104f17c4fc27996dd99642feb5384c531ae5f252bd5bc10053404"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    },
+    {
+      "path": "browser/OBSERVER-SOURCE-MANIFEST-r3.json",
+      "sha256": "1c3e267a344c17795fc9819ea7bdce55a8aae0e3431b343ce407dc29d235ecd2",
+      "matchingIndependentAdmissions": []
+    },
+    {
+      "path": "browser/CONSUMER-MAP.json",
+      "sha256": "8bb5362ec50106b8d0f236ab08210c21377848fafd8a5a1acef1dfc6548dbf19",
+      "matchingIndependentAdmissions": [
+        {
+          "path": "independent-review/BROWSER-OBSERVER-RECIPE-ADMISSION-r3.json",
+          "sha256": "6aa4bc8b21cc30adb5771667ddbaeed984e5318f4f2e3f01234bcdb06790e648"
+        },
+        {
+          "path": "independent-review/RUNTIME-RECIPE-ADMISSION.json",
+          "sha256": "e2472ff1b5c4773dcdebd986976fd828697c705a2b9f06a1f9e68acf2748ebcf"
+        }
+      ]
+    }
+  ],
+  "browserObserverBindings": [
+    {
+      "path": "browser/run-consumer-qualification-v3.cjs",
+      "sha256": "f4d6460b79cfff193de4b3f6cb48f21bb112dda367c0225a3fc5d13be4319c0a",
+      "admittedSha256": "f4d6460b79cfff193de4b3f6cb48f21bb112dda367c0225a3fc5d13be4319c0a",
+      "matches": true
+    },
+    {
+      "path": "browser/browser-protocol-v3.cjs",
+      "sha256": "ab98d36dac6326b3c45c5ab65b31c034ba3567e97d91118ea319f3679d19d256",
+      "admittedSha256": "ab98d36dac6326b3c45c5ab65b31c034ba3567e97d91118ea319f3679d19d256",
+      "matches": true
+    },
+    {
+      "path": "browser/consumer-evidence-v2.cjs",
+      "sha256": "dcc42c28244da7282b1989049c78f69c96c2ed45e0529d310c7a3f40d9958cb4",
+      "admittedSha256": "dcc42c28244da7282b1989049c78f69c96c2ed45e0529d310c7a3f40d9958cb4",
+      "matches": true
+    },
+    {
+      "path": "browser/flight-profile-evidence.cjs",
+      "sha256": "9c8aece7411279a75969059e69a7536e1f5fc6c2bdc2ff4921e366708851e0cd",
+      "admittedSha256": "9c8aece7411279a75969059e69a7536e1f5fc6c2bdc2ff4921e366708851e0cd",
+      "matches": true
+    },
+    {
+      "path": "browser/private-canaries.cjs",
+      "sha256": "ccf6d3f65436fe95db508fce6d89db93c7d53bdf5fe7e449265178e7312a51ae",
+      "admittedSha256": "ccf6d3f65436fe95db508fce6d89db93c7d53bdf5fe7e449265178e7312a51ae",
+      "matches": true
+    },
+    {
+      "path": "browser/consumer-evidence-v3.test.cjs",
+      "sha256": "264ee2ed461bb49c8481f19c747119defd537cebb43b4ab2febce90432c64426",
+      "admittedSha256": "264ee2ed461bb49c8481f19c747119defd537cebb43b4ab2febce90432c64426",
+      "matches": true
+    },
+    {
+      "path": "browser/flight-profile-evidence.test.cjs",
+      "sha256": "aae5916171a0f67ba6cfd9583b649ff731a86a1ecd9f592337ba1010549c3088",
+      "admittedSha256": "aae5916171a0f67ba6cfd9583b649ff731a86a1ecd9f592337ba1010549c3088",
+      "matches": true
+    },
+    {
+      "path": "browser/CONSUMER-MAP.json",
+      "sha256": "8bb5362ec50106b8d0f236ab08210c21377848fafd8a5a1acef1dfc6548dbf19",
+      "admittedSha256": "8bb5362ec50106b8d0f236ab08210c21377848fafd8a5a1acef1dfc6548dbf19",
+      "matches": true
+    },
+    {
+      "path": "browser/OBSERVER-RECIPE-v3.md",
+      "sha256": "7f95ef6118944c44510658ce497944a234ac19bd6f5c9306291beb44bc299d98",
+      "admittedSha256": "7f95ef6118944c44510658ce497944a234ac19bd6f5c9306291beb44bc299d98",
+      "matches": true
+    }
+  ],
+  "limits": [
+    "Source compatibility only; no database was started, queried, resumed or changed.",
+    "Actual retained-cluster ownership/logical-state continuity and successor fixture binding require separately admitted runtime-owner receipts.",
+    "Installed dependencies were not recursively traversed or rehashed; only exact selected installed inputs were read."
+  ],
+  "schemaMigrationFixtureCompatible": true
+}

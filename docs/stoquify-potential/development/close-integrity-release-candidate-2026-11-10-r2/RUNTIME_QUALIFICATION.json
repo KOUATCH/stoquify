@@ -1,0 +1,108 @@
+{
+  "began": "2026-11-11T12:25:52.967Z",
+  "passed": true,
+  "directory": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d",
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\sealed-runtime-be3da1890d",
+  "database": "stoquify_replay_close_monthly_20261110_e5474a4749",
+  "artifact": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\artifact",
+  "sourceManifestSha256": "cfcac6d0dfa217f3ad18ff27d16e46a55aa002bcbf77c91afc7e0b7082bfd544",
+  "runnerSha256": "3eb50aaebb019bd8d0ddac71c937a9875c50ccbb6c38cd3184cad55feb1f6af9",
+  "classification": "Actual content-verified standalone artifact, HTTPS auth/session checks and real browser close recovery with controlled synthetic authority changes; no development application or deployment",
+  "checks": [
+    {
+      "name": "anonymous-protected-close",
+      "status": 307,
+      "loginPath": "/en/login",
+      "callbackPath": "/en/dashboard/accounting/close/cmwc28ztd0013mafcxjt509ai",
+      "protectedMainAbsent": true,
+      "passed": true
+    },
+    {
+      "name": "wrong-password-rejected",
+      "passed": true,
+      "status": 401,
+      "elapsedMs": 25636
+    },
+    {
+      "name": "real-signin-secure-cookie-and-close-ssr",
+      "passed": true,
+      "protectedPageBytes": 502740,
+      "bodySha256": "e85cfafd077db7d95cc64d4f0d6b5b08a76a818c191d0eec4c00cb0260dbb83a"
+    },
+    {
+      "name": "real-logout-and-old-cookie-denial",
+      "passed": true,
+      "status": 200,
+      "loginPath": "/en/login",
+      "callbackPath": "/en/dashboard/accounting/close/cmwc28ztd0013mafcxjt509ai",
+      "protectedMainAbsent": true
+    },
+    {
+      "id": "9bb128c71c354ce8d3f8bf9ae501c398",
+      "operation": "stale-proof",
+      "applied": true,
+      "checkedAt": "2026-11-11T12:32:24.525Z"
+    },
+    {
+      "id": "68035ff34b2e0a563a392490595dfe9d",
+      "operation": "suspend-close-module",
+      "applied": true,
+      "checkedAt": "2026-11-11T12:32:31.063Z"
+    },
+    {
+      "id": "1aecd7c850626c879b640a34d7b673d3",
+      "operation": "restore-close-module",
+      "applied": true,
+      "checkedAt": "2026-11-11T12:32:32.318Z"
+    },
+    {
+      "id": "28f0ff1e6f821a4d226af57fadac7ab5",
+      "operation": "revoke-current-session",
+      "applied": true,
+      "checkedAt": "2026-11-11T12:32:35.682Z"
+    }
+  ],
+  "artifactBefore": {
+    "sha256": "6d0147749362b359969b6113bf3e6a94918dc6df8d19ee1fcc5c208db4724d2f",
+    "buildId": "4CtAnxpXoochpr8CsDOPH",
+    "files": 6707
+  },
+  "certificate": {
+    "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\sealed-runtime-be3da1890d\\localhost.crt",
+    "sha256": "f34607d2f08199d6923ac0609a9a86acebb17394aab876a0e6bebfb90cd05692",
+    "bytes": 1134
+  },
+  "tlsGenerator": {
+    "path": "C:/Program Files/Git/mingw64/bin/openssl.exe",
+    "sha256": "9c677536ea80e3111fba62784024360e9ea2f1f20391452a6195454ea1fa3faa",
+    "bytes": 1001116
+  },
+  "runtimeSdk": {
+    "entry": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\artifact\\runtime\\node_modules\\@prisma\\client\\default.js",
+    "schema": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\artifact\\runtime\\node_modules\\.prisma\\client\\schema.prisma",
+      "sha256": "f5c698cdcfb6514fcc52f3d8a6709b3eca095017c13b0dc669c5aa6cd9655486",
+      "bytes": 360507
+    },
+    "engine": {
+      "path": "E:\\ohada saas\\Focused projects\\stoquify\\.codex-tmp\\close-integrity-release-20261110-cdebf2df2e\\artifact\\runtime\\node_modules\\.prisma\\client\\query_engine-windows.dll.node",
+      "sha256": "263946105f428384d2318dc3241b85b1c3dd98fbb1bfac62d3e81f513ab35897",
+      "bytes": 21182976
+    }
+  },
+  "applicationPid": 12748,
+  "browserCompleted": true,
+  "browserEvidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\stoquify-potential\\development\\close-integrity-release-candidate-2026-11-10-r2\\browser-895f24c2aa",
+  "financialFactsUnchanged": true,
+  "applicationTreeStopExitCode": 0,
+  "applicationStopped": true,
+  "ownedClusterStopped": true,
+  "portsReleased": true,
+  "artifactAfter": {
+    "sha256": "6d0147749362b359969b6113bf3e6a94918dc6df8d19ee1fcc5c208db4724d2f",
+    "buildId": "4CtAnxpXoochpr8CsDOPH",
+    "files": 6707
+  },
+  "artifactUnchanged": true,
+  "ended": "2026-11-11T12:35:09.120Z"
+}

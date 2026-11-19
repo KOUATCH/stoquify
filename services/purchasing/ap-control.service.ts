@@ -71,6 +71,8 @@ import {
   type ReviewSupplierInvoiceMatchExceptionInput,
 } from "./ap-control.schemas"
 
+import { allocateInvoiceBasis, commercialMoney, readAvailableInvoiceCommercialBasis, readInvoiceCommercialMatch, readReceiptCommercialBasis, subtractInvoiceBasis, type InvoiceCommercialMatch } from "./invoice-commercial-basis"
+
 type DbClient = typeof db | Prisma.TransactionClient
 
 export const EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION = "EXACT_THREE_WAY_MATCH_EXCEPTION_V1"
@@ -89,6 +91,11 @@ type InvoiceLinePlan = {
   lineSubtotal: Prisma.Decimal
   lineTotal: Prisma.Decimal
   priceVariance: Prisma.Decimal
+  discountVariance: Prisma.Decimal
+  freightVariance: Prisma.Decimal
+  taxVariance: Prisma.Decimal
+  matchVariance: Prisma.Decimal
+  commercial: InvoiceCommercialMatch | undefined
 }
 
 type LedgerBlockerInput = {
@@ -1455,6 +1462,7 @@ export async function buildInvoiceLinePlans(
     purchaseOrderId?: string
     // Revalidation counts other invoices, then reserves this invoice's lines once.
     excludeSupplierInvoiceId?: string
+    retainedMatches?: Array<InvoiceCommercialMatch | undefined>
     lines: Array<{
       purchaseOrderLineId?: string
       goodsReceiptLineId: string
@@ -1463,6 +1471,9 @@ export async function buildInvoiceLinePlans(
       quantity: string | number
       unitCost: string | number
       taxRate?: string | number
+      discount?: string | number
+      freight?: string | number
+      taxAmount?: string | number
       notes?: string
     }>
   },
@@ -1472,13 +1483,13 @@ export async function buildInvoiceLinePlans(
   const receiptLineIds = [...new Set(input.lines.map(line => line.goodsReceiptLineId))]
   if (receiptLineIds.length) await tx.$queryRaw(Prisma.sql`SELECT r.id FROM goods_receipts r JOIN goods_receipt_lines l ON l."goodsReceiptId" = r.id WHERE r."organizationId" = ${input.organizationId} AND l.id IN (${Prisma.join(receiptLineIds)}) ORDER BY r.id FOR SHARE OF r`)
 
-  for (const line of input.lines) {
+  for (const [index, line] of input.lines.entries()) {
     const quantity = decimal3(line.quantity)
     const unitCost = decimal2(line.unitCost)
     const taxRate = decimal3(line.taxRate ?? 0)
     if (quantity.lte(0)) throw new BusinessRuleError("Supplier invoice line quantity must be greater than zero.")
     if (unitCost.lt(0)) throw new BusinessRuleError("Supplier invoice line unit cost cannot be negative.")
-    if (taxRate.lt(0)) throw new BusinessRuleError("Supplier invoice line tax rate cannot be negative.")
+    if (taxRate.lt(0) || taxRate.gt(100)) throw new BusinessRuleError("Supplier invoice line tax rate must be between zero and 100.")
 
     const receiptLine = await tx.goodsReceiptLine.findFirst({
       where: {
@@ -1525,6 +1536,7 @@ export async function buildInvoiceLinePlans(
             itemId: true,
             receivedQuantity: true,
             unitCost: true,
+            taxRate: true,
           },
         },
       },
@@ -1548,9 +1560,7 @@ export async function buildInvoiceLinePlans(
     }
 
     const returned = await netUninvoicedReceiptReturns(tx, { organizationId: input.organizationId, supplierId: input.supplierId, lines: [receiptLine] })
-    const alreadyInvoiced = await tx.supplierInvoiceLine.aggregate({
-      _sum: { quantity: true },
-      where: {
+    const reservationWhere = {
         goodsReceiptLineId: receiptLine.id,
         ...(input.excludeSupplierInvoiceId ? { supplierInvoiceId: { not: input.excludeSupplierInvoiceId } } : {}),
         supplierInvoice: {
@@ -1558,22 +1568,63 @@ export async function buildInvoiceLinePlans(
           deletedAt: null,
           status: { notIn: [SupplierInvoiceStatus.CANCELLED] },
         },
-      },
-    })
+    } satisfies Prisma.SupplierInvoiceLineWhereInput
+    const alreadyInvoiced = await tx.supplierInvoiceLine.aggregate({ _sum: { quantity: true }, where: reservationWhere })
 
     const previouslyInvoiced = decimal3(alreadyInvoiced._sum.quantity)
-    const remainingReceived = decimal3(receiptLine.receivedQuantity).minus(previouslyInvoiced).minus(returned.get(receiptLine.id) ?? 0).toDecimalPlaces(3)
-    const reservedQuantity = (reservedByReceipt.get(receiptLine.id) ?? new Prisma.Decimal(0)).plus(quantity)
+    const returnedQuantity = returned.get(receiptLine.id) ?? new Prisma.Decimal(0)
+    const remainingReceived = decimal3(receiptLine.receivedQuantity).minus(previouslyInvoiced).minus(returnedQuantity).toDecimalPlaces(3)
+    const reservedBefore = reservedByReceipt.get(receiptLine.id) ?? new Prisma.Decimal(0)
+    const reservedQuantity = reservedBefore.plus(quantity)
     if (reservedQuantity.gt(remainingReceived)) {
       throw new BusinessRuleError("Supplier invoice quantity exceeds received and uninvoiced goods.")
     }
     reservedByReceipt.set(receiptLine.id, reservedQuantity)
 
-    const priceVariance = unitCost.minus(decimal2(receiptLine.unitCost)).times(quantity).toDecimalPlaces(2)
-
-    const lineSubtotal = quantity.times(unitCost).toDecimalPlaces(2)
-    const taxAmount = lineSubtotal.times(taxRate).div(100).toDecimalPlaces(2)
-    const lineTotal = lineSubtotal.plus(taxAmount).toDecimalPlaces(2)
+    const basis = readReceiptCommercialBasis(receiptLine.commercialBasis)
+    const receiptBasisHash = basis ? hashBusinessPayload(basis) : null
+    const retained = input.retainedMatches?.[index]
+    const expectedUnitCost = decimal2(receiptLine.unitCost)
+    const gross = commercialMoney(quantity.times(unitCost))
+    const discount = commercialMoney(line.discount ?? 0), freight = commercialMoney(line.freight ?? 0)
+    const taxAmount = commercialMoney(line.taxAmount ?? gross.times(taxRate).div(100))
+    if (discount.lt(0) || discount.gt(gross) || freight.lt(0) || taxAmount.lt(0)) {
+      throw new BusinessRuleError("Supplier invoice discount, freight or tax is outside the supported amount.")
+    }
+    let commercial: InvoiceCommercialMatch | undefined
+    if (input.retainedMatches) {
+      if (retained ? retained.receiptBasisHash !== receiptBasisHash : !!basis) {
+        throw new BusinessRuleError("The retained invoice and receipt commercial terms no longer agree.", "INVOICE_EVIDENCE_REQUIRED")
+      }
+      if (!retained && receiptLine.purchaseOrderLine.taxRate != null && !taxRate.eq(receiptLine.purchaseOrderLine.taxRate)) {
+        throw new BusinessRuleError("The older invoice needs a new commercial review before approval.", "INVOICE_EVIDENCE_REQUIRED")
+      }
+      commercial = retained
+    } else if (basis) {
+      const pool = await readAvailableInvoiceCommercialBasis(tx, receiptLine, input.organizationId, previouslyInvoiced, returnedQuantity, input.excludeSupplierInvoiceId)
+      const draftClaims = plans.flatMap(plan => plan.goodsReceiptLineId === receiptLine.id && plan.commercial ? [plan.commercial] : [])
+      const available = subtractInvoiceBasis(pool!, draftClaims, receiptBasisHash!)
+      const expected = allocateInvoiceBasis(available, remainingReceived.minus(reservedBefore), quantity)
+      commercial = { version: 1, receiptBasisHash, expected, discount: discount.toFixed(2), freight: freight.toFixed(2) }
+    } else if (receiptLine.purchaseOrderLine.taxRate != null || line.discount != null || line.freight != null || line.taxAmount != null) {
+      const sourceTaxRate = decimal3(receiptLine.purchaseOrderLine.taxRate ?? 0)
+      const expectedGross = commercialMoney(quantity.times(expectedUnitCost))
+      const expectedTax = commercialMoney(expectedGross.times(sourceTaxRate).div(100))
+      commercial = { version: 1, receiptBasisHash: null, discount: discount.toFixed(2), freight: freight.toFixed(2),
+        expected: { version: 1, gross: expectedGross.toFixed(2), discount: "0.00", freight: "0.00", tax: expectedTax.toFixed(2), taxRate: sourceTaxRate.toFixed(3), net: expectedGross.toFixed(2) } }
+    }
+    const priceVariance = commercial ? gross.minus(commercial.expected.gross) : commercialMoney(unitCost.minus(expectedUnitCost).times(quantity))
+    if (commercial && priceVariance.isZero() && !unitCost.eq(expectedUnitCost)) {
+      throw new BusinessRuleError("The invoice unit price differs from the approved price despite the same extended amount. Review the entered price.")
+    }
+    const discountVariance = commercial ? discount.minus(commercial.expected.discount) : new Prisma.Decimal(0)
+    const freightVariance = commercial ? freight.minus(commercial.expected.freight) : new Prisma.Decimal(0)
+    const taxVariance = commercial ? taxAmount.minus(commercial.expected.tax) : new Prisma.Decimal(0)
+    if (commercial && taxVariance.isZero() && !taxRate.eq(commercial.expected.taxRate)) {
+      throw new BusinessRuleError("The invoice tax rate differs from the approved rate despite the same tax amount. Review the entered tax rate and amount.")
+    }
+    const lineSubtotal = gross.minus(discount).plus(freight)
+    const lineTotal = lineSubtotal.plus(taxAmount)
 
     plans.push({
       availableQuantity: remainingReceived,
@@ -1589,6 +1640,11 @@ export async function buildInvoiceLinePlans(
       lineSubtotal,
       lineTotal,
       priceVariance,
+      discountVariance,
+      freightVariance,
+      taxVariance,
+      matchVariance: priceVariance.abs().plus(discountVariance.abs()).plus(freightVariance.abs()).plus(taxVariance.abs()),
+      commercial,
     })
   }
 
@@ -1927,6 +1983,9 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
           quantity: String(line.quantity),
           unitCost: String(line.unitCost),
           taxRate: String(line.taxRate ?? 0),
+          ...(line.discount !== undefined ? { discount: String(line.discount) } : {}),
+          ...(line.freight !== undefined ? { freight: String(line.freight) } : {}),
+          ...(line.taxAmount !== undefined ? { taxAmount: String(line.taxAmount) } : {}),
         })),
       })
     : null
@@ -2002,7 +2061,7 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
       .reduce((variance, line) => variance.plus(line.priceVariance), new Prisma.Decimal(0))
       .toDecimalPlaces(2)
     const varianceAmount = linePlans
-      .reduce((variance, line) => variance.plus(line.priceVariance.abs()), new Prisma.Decimal(0))
+      .reduce((variance, line) => variance.plus(line.matchVariance), new Prisma.Decimal(0))
       .toDecimalPlaces(2)
     const requiresMatchException = varianceAmount.gt(0)
     if (requiresMatchException && parsed.approvedById) {
@@ -2110,7 +2169,8 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
             taxRate: line.taxRate,
             taxAmount: line.taxAmount,
             lineTotal: line.lineTotal,
-            matchStatus: line.priceVariance.eq(0)
+            ...(line.commercial ? { metadata: { purchaseCommercial: line.commercial } } : {}),
+            matchStatus: line.matchVariance.eq(0)
               ? ThreeWayMatchStatus.MATCHED
               : ThreeWayMatchStatus.EXCEPTION,
           })),
@@ -2753,14 +2813,21 @@ export async function validateInvoiceApprovalSource(tx: Prisma.TransactionClient
   if (existingLiability) throw new BusinessRuleError("Supplier invoice already has liability evidence; reconcile it before approval.", "INVOICE_EVIDENCE_REQUIRED")
   const existingBatches = await tx.ledgerPostingBatch.findMany({ where: { organizationId: organizationId, sourceType: AccountingSourceType.SUPPLIER_INVOICE, sourceId: invoice.id }, select: { id: true }, take: 1 })
   if (existingBatches.length > 0) throw new BusinessRuleError("Supplier invoice already has posting evidence; reconcile it before approval.", "INVOICE_EVIDENCE_REQUIRED")
+  const retainedMatches = invoice.lines.map(line => readInvoiceCommercialMatch(line.metadata))
   const linePlans = await buildInvoiceLinePlans(tx, {
     organizationId: organizationId, supplierId: invoice.supplierId,
     purchaseOrderId: invoice.purchaseOrderId ?? undefined, excludeSupplierInvoiceId: invoice.id,
-    lines: invoice.lines.map(line => ({ goodsReceiptLineId: line.goodsReceiptLineId!, purchaseOrderLineId: line.purchaseOrderLineId ?? undefined, itemId: line.itemId ?? undefined, description: line.description, quantity: line.quantity.toString(), unitCost: line.unitCost.toString(), taxRate: line.taxRate.toString() })),
+    retainedMatches,
+    lines: invoice.lines.map((line, index) => {
+      const terms = retainedMatches[index]
+      return { goodsReceiptLineId: line.goodsReceiptLineId!, purchaseOrderLineId: line.purchaseOrderLineId ?? undefined, itemId: line.itemId ?? undefined, description: line.description, quantity: line.quantity.toString(), unitCost: line.unitCost.toString(), taxRate: line.taxRate.toString(),
+        ...(terms ? { discount: terms.discount, freight: terms.freight, taxAmount: line.taxAmount.toString() } : {}),
+      }
+    }),
   })
   const sum = (value: (line: InvoiceLinePlan) => Prisma.Decimal) => linePlans.reduce((total, line) => total.plus(value(line)), new Prisma.Decimal(0)).toDecimalPlaces(2)
-  const subtotal = sum(line => line.lineSubtotal), tax = sum(line => line.taxAmount), variance = sum(line => line.priceVariance.abs()), priceVariance = sum(line => line.priceVariance)
-  if (!invoice.subtotal.eq(subtotal) || !invoice.taxAmount.eq(tax) || !invoice.total.eq(subtotal.plus(tax)) || invoice.total.lte(0) || linePlans.some((plan, index) => !invoice.lines[index].taxAmount.eq(plan.taxAmount) || !invoice.lines[index].lineTotal.eq(plan.lineTotal) || invoice.lines[index].matchStatus !== (plan.priceVariance.eq(0) ? ThreeWayMatchStatus.MATCHED : ThreeWayMatchStatus.EXCEPTION)) || !match.varianceAmount.eq(variance) || !match.priceVariance.eq(priceVariance) || !match.quantityVariance.eq(0) || !match.toleranceAmount.eq(0) || requiresMatchException !== variance.gt(0)) {
+  const subtotal = sum(line => line.lineSubtotal), tax = sum(line => line.taxAmount), variance = sum(line => line.matchVariance), priceVariance = sum(line => line.priceVariance)
+  if (!invoice.subtotal.eq(subtotal) || !invoice.taxAmount.eq(tax) || !invoice.total.eq(subtotal.plus(tax)) || invoice.total.lte(0) || linePlans.some((plan, index) => !invoice.lines[index].taxAmount.eq(plan.taxAmount) || !invoice.lines[index].lineTotal.eq(plan.lineTotal) || invoice.lines[index].matchStatus !== (plan.matchVariance.eq(0) ? ThreeWayMatchStatus.MATCHED : ThreeWayMatchStatus.EXCEPTION)) || !match.varianceAmount.eq(variance) || !match.priceVariance.eq(priceVariance) || !match.quantityVariance.eq(0) || !match.toleranceAmount.eq(0) || requiresMatchException !== variance.gt(0)) {
     throw new BusinessRuleError("Supplier invoice totals or match variance changed; reconcile the source before approval.", "INVOICE_EVIDENCE_REQUIRED")
   }
 

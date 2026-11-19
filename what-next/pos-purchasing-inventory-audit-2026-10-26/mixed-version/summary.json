@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-28T07:20:00.881Z",
+  "status": "SCOPED_VERIFICATION_COMPLETE_WITH_UNSUPPORTED_COMBINATIONS",
+  "compatibleScenarios": 9,
+  "failClosedReservationBoundary": 1,
+  "unsupportedScenarios": 3,
+  "retainedCloseReadComparisons": 2,
+  "applicationChanges": 0,
+  "productionRolloutCertified": false,
+  "unrelatedSourceDrift": 7,
+  "database": "localhost/stoquify_pos_audit_20261026_d30f/public",
+  "resultSources": [
+    "initial-matrix-results.json",
+    "results.json",
+    "close-read-results.json"
+  ],
+  "excluded": [
+    "MTN",
+    "open policy decisions",
+    "negative-stock certification"
+  ],
+  "notRun": [
+    "mixed production Next artifacts/browser transport",
+    "mixed delivery-worker recovery",
+    "mixed-version close writes"
+  ]
+}

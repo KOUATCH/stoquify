@@ -3,6 +3,68 @@ import { Prisma } from "@prisma/client";
 import { evaluatePayrollTaxRule } from "../payroll-tax-rule-evaluator";
 
 describe("payroll tax rule evaluator", () => {
+  const syntheticRule = {
+    productionCalculationSupported: true,
+    calculationMode: "PROGRESSIVE_PERIOD",
+    brackets: [{ upToAmount: null, rateBps: 1000 }],
+  };
+  const syntheticInput = { taxableBaseAmount: "100", capabilityStatus: "SUPPORTED" };
+
+  it.each([undefined, null, "", " ", "NaN", "Infinity", "-Infinity"])(
+    "rejects missing/non-finite current base %s",
+    (amount) => {
+      expect(() => evaluatePayrollTaxRule(syntheticRule, {
+        ...syntheticInput, taxableBaseAmount: amount as never,
+      })).toThrow("Payroll taxable base");
+    },
+  );
+
+  it.each(["ytdTaxableBaseAmount", "ytdTaxWithheldAmount"] as const)(
+    "requires explicit %s for a supported YTD rule",
+    (key) => {
+      for (const missing of [undefined, null, "", " "]) {
+        expect(() => evaluatePayrollTaxRule(
+          { ...syntheticRule, calculationMode: "PROGRESSIVE_YTD" },
+          { ...syntheticInput, ytdTaxableBaseAmount: "0", ytdTaxWithheldAmount: "0", [key]: missing },
+        )).toThrow("Payroll YTD");
+      }
+    },
+  );
+
+  it("accepts explicit zero history and keeps unreviewed YTD rules blocked", () => {
+    const rule = { ...syntheticRule, calculationMode: "PROGRESSIVE_YTD" };
+    expect(evaluatePayrollTaxRule(rule, {
+      ...syntheticInput, ytdTaxableBaseAmount: "0", ytdTaxWithheldAmount: 0,
+    }).taxAmount.toString()).toBe("10");
+    expect(evaluatePayrollTaxRule(rule, {
+      ...syntheticInput, capabilityStatus: "REQUIRES_EXPERT_REVIEW",
+    }).status).toBe("BLOCKED_REQUIRES_EXPERT_REVIEW");
+  });
+
+  it.each(["taxableBaseAdjustments", "taxAmountAdjustments"] as const)(
+    "requires own, explicit finite named inputs in %s",
+    (scope) => {
+      const rule = { ...syntheticRule, [scope]: [{ code: "synthetic", operation: "SUBTRACT", inputKey: "deduction" }] };
+      for (const values of [undefined, {}, { deduction: undefined }, { deduction: null },
+        { deduction: "" }, { deduction: "NaN" }, { deduction: "Infinity" }, Object.create({ deduction: 10 })]) {
+        expect(() => evaluatePayrollTaxRule(rule, { ...syntheticInput, adjustmentValues: values }))
+          .toThrow("Payroll tax adjustment input deduction");
+      }
+      expect(evaluatePayrollTaxRule(rule, { ...syntheticInput, adjustmentValues: { deduction: 0 } }).taxAmount.toString()).toBe("10");
+    },
+  );
+
+  it.each(["NaN", "Infinity", "-Infinity"])("rejects non-finite rule money %s", (amount) => {
+    const badRules = [
+      { ...syntheticRule, brackets: [{ upToAmount: amount, rateBps: 1000 }] },
+      { ...syntheticRule, minimumTaxAmount: amount },
+      { ...syntheticRule, maximumTaxAmount: amount },
+      { ...syntheticRule, taxableBaseAdjustments: [{ code: "fixed", operation: "ADD" as const, amount }] },
+      { ...syntheticRule, taxAmountAdjustments: [{ code: "capped", operation: "ADD" as const, amount: "1", capAmount: amount }] },
+    ];
+    for (const rule of badRules) expect(() => evaluatePayrollTaxRule(rule, syntheticInput)).toThrow("valid decimal");
+  });
+
   it("returns a blocked result when the country-pack rule still requires expert review", () => {
     const result = evaluatePayrollTaxRule(
       {

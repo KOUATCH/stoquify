@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-09T18:01:07.346Z",
+  "reviewer": "/root/v02_review",
+  "verdict": "admit_attempt02_auth_and_local_provider_qualification_only",
+  "candidateId": "p04-v02-full-6577e9e63dc7",
+  "files": [
+    {
+      "path": "run-runtime-attempt02.cjs",
+      "sha256": "764ebc528b18f26bde1090ff854476bf16ac5bf2651f5a4894da3e952428be89",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "browser/admit-source-frozen-attempt02.cjs",
+      "sha256": "6125000420cc246527773f1e96267da38691b555b74fdf7a9f9ef311fa08c8ad",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "browser/run-auth-transport-v4.cjs",
+      "sha256": "fa86a3570c11174f1ec732cca747c6a47e98d7f6eda8e842de5b81a576ba5e4f",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "database/auth-controls-r2.cjs",
+      "sha256": "f1b7c86d0339fe666f7d513fe5bbb5b2a1a9bea66a49c10be5fb9ef185fd2ed2",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "provider/run-protocol.cjs",
+      "sha256": "d3aaf8ccb1cf2457f1302a26f8219ad5f9e40fa5d60b9949a6d0d0c8958de9c6",
+      "syntaxExitCode": 0
+    },
+    {
+      "path": "frozen-scope-integrity.cjs",
+      "sha256": "2030587dca3828894d34ab69a2f4d32e1666c4468239d2cb6a7e4488a8f4e505",
+      "syntaxExitCode": 0
+    }
+  ],
+  "qualificationScope": "frozen_artifact_only",
+  "currentCheckoutQualified": false,
+  "sourceGateMustPass": "browser/source-admission-frozen-attempt02.json",
+  "database": "stoquify_local_p04v02_20261109_full_r2",
+  "runtime": "D:/p04-v02-fullapp-20261109-r1/runtime-attempt02",
+  "retainedBaseline": {
+    "groups": 22,
+    "rawPassed": 21,
+    "rawFailed": 1,
+    "correctedScopedPassed": 22,
+    "rerun": false,
+    "review": "independent-review/MODULE-DENIAL-CARDINALITY-REVIEW.json"
+  },
+  "newGroups": {
+    "auth": 116,
+    "provider": 23
+  },
+  "review": [
+    "V4 leaves all116 actual qualification cases and assertions unchanged from V3.",
+    "Only STOCKFLOW_LOCALE with exact supported en/fr values is exempt from credential-value classification; passwords, returned tokens and every other cookie remain tracked.",
+    "Recursive redaction precedes raw-sensitive-value scan. Parent receives the same sanitized object as final result file. Incremental atomic progress and bounded cleanup preserve failures.",
+    "Auth control successor differs only in common-module import to admitted fresh r2 target.",
+    "Runtime successor uses fresh runtime copy/current r2 receipt and exact retained-baseline hashes; generic auth publication failure cannot expose raw error or prevent independent provider lane.",
+    "Original private-byte proxy protections and external browser denial remain intact.",
+    "Actual BFCache use and settled response/render outcomes remain distinct; no eligibility or cache-hit claim is manufactured."
+  ],
+  "conditions": [
+    "Pass frozen source/artifact/critical-input gate immediately before runtime.",
+    "Preserve attempt01 evidence, full_r1 and original whole-checkout source failure.",
+    "No readiness claim from pure sanitizer tests or recipe admission. Review completed actual results and both database cleanup receipts.",
+    "No product repair, production change, commit or deployment."
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "name": "actual-declared-import-period-run-independent-sign-coverage",
+      "organizationId": "ca03-f0c75aebd6-org",
+      "statementFileId": "cmw9ot4yx000xma0wvxbiwcsg",
+      "sourceFileHash": "e3402f240874361482397e5df1224f23b3fa7d072186696215c8ecc2467c8ae2",
+      "runId": "cmw9ot5gk0018ma0w3n19jlcn",
+      "certificateHash": "d6590bdfa86ec62961c543c2306d80d53f8a7e7626211bf91839f06da68116d4",
+      "earnedReconciliationSignature": true,
+      "seededTerminalStatus": false,
+      "earnedCloseCertificate": false
+    },
+    {
+      "name": "legacy-observed-no-period-credit",
+      "actualSignedReconciliation": true,
+      "coverageBlocked": true,
+      "sourceMetadataPromoted": false
+    },
+    {
+      "name": "limited-daily-period-coexistence",
+      "dailyRunId": "cmw9ot73g004gma0w82kisb5e",
+      "collisionDenied": true,
+      "noExpansionOrRewrite": true
+    },
+    {
+      "name": "declared-input-denial",
+      "kind": "account",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "declared-input-denial",
+      "kind": "provider",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "declared-input-denial",
+      "kind": "currency",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "declared-input-denial",
+      "kind": "bounds",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "declared-input-denial",
+      "kind": "version",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "period-scope-denial",
+      "kind": "foreign",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "period-scope-denial",
+      "kind": "mid-day",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "period-scope-denial",
+      "kind": "daily operation",
+      "allScopedCountsUnchanged": true
+    },
+    {
+      "name": "real-period-control-guard",
+      "unauthorizedDirectCloseDenied": true,
+      "periodAndHistoryUnchanged": true,
+      "allScopedCountsUnchanged": true,
+      "closedPeriodProducerDenial": "mocked-unit-only"
+    }
+  ],
+  "counts": {
+    "signedReconciliationRuns": 2,
+    "journals": 0,
+    "closeRuns": 0,
+    "certifiedCloseExports": 0
+  },
+  "limitation": "Actual import/matching/independent sign-off/coverage service lifecycle over synthetic raw confirmed-payment facts; no seeded READY/SIGNED/T4, posted ledger, earned close certificate, real provider, HTTP authentication or deployment claim."
+}

@@ -23,6 +23,7 @@ type ProofTrailDrawerProps = {
   isLoading?: boolean
   error?: string | null
   locale?: "en" | "fr"
+  onCloseAutoFocus?: (event: Event) => void
 }
 
 // Portals do not inherit the dashboard ancestor. Use the same product-token
@@ -92,13 +93,13 @@ function Section({
   )
 }
 
-export function ProofTrailDrawer({ open, onOpenChange, proofTrail: sourceProof, isLoading = false, error = null, locale = "en" }: ProofTrailDrawerProps) {
+export function ProofTrailDrawer({ open, onOpenChange, proofTrail: sourceProof, isLoading = false, error = null, locale = "en", onCloseAutoFocus }: ProofTrailDrawerProps) {
   const t = drawerCopy[locale]
   const proofTrail = sourceProof ? presentProofTrail(sourceProof, locale) : null
   const nodeLabels = new Map(proofTrail?.nodes.map(node => [node.id, node.label]))
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent style={portalTokens} lang={locale} closeLabel={t.close} overlayClassName="motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none" className="w-full overflow-y-auto bg-[var(--product-canvas)] text-[var(--dash-text)] [overflow-wrap:anywhere] motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none motion-reduce:transition-none sm:max-w-2xl">
+      <SheetContent onCloseAutoFocus={onCloseAutoFocus} style={portalTokens} lang={locale} closeLabel={t.close} overlayClassName="motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none" className="w-full overflow-y-auto bg-[var(--product-canvas)] text-[var(--dash-text)] [overflow-wrap:anywhere] motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none motion-reduce:transition-none sm:max-w-2xl">
         <SheetHeader className="pr-8">
           <SheetTitle className="text-[var(--dash-text)]">{t.title}</SheetTitle>
           <SheetDescription className="text-[var(--dash-text-soft)]">

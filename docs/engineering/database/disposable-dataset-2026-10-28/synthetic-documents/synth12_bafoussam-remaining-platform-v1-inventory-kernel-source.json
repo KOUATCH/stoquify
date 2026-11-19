@@ -1,0 +1,47 @@
+{
+  "classification": "SYNTHETIC_TEST_ONLY",
+  "externalCallsPerformed": false,
+  "productionReadinessClaimed": false,
+  "value": {
+    "kind": "inventory.cash",
+    "organizationId": "synth12_bafoussam",
+    "locationId": null,
+    "periodStart": "2026-10-01T00:00:00.000Z",
+    "periodEnd": "2026-10-28T23:59:59.999Z",
+    "status": "fresh",
+    "uiState": "fresh",
+    "evidenceGrade": "operational",
+    "freshness": {
+      "generatedAt": "2026-10-28T20:00:00.000Z",
+      "sourceMaxUpdatedAt": "2026-10-29T11:43:38.031Z",
+      "maxAgeMinutes": 1440,
+      "stale": false,
+      "staleReason": null
+    },
+    "sourceHash": "sha256:fbdd2d9a058837f06371bfe6bb0005e57c5592f71725aad15e45f8568114dad8",
+    "generatedAt": "2026-10-28T20:00:00.000Z",
+    "sourceModules": [
+      "inventory",
+      "purchasing",
+      "pos",
+      "accounting"
+    ],
+    "metrics": {
+      "trackedItemCount": 13,
+      "inventoryLevelCount": 37,
+      "quantityOnHand": 8381,
+      "quantityAvailable": 8381,
+      "quantityReserved": 0,
+      "quantityInTransit": 0,
+      "quantityOnOrder": 0,
+      "inventoryValue": 23846940,
+      "zeroStockLevelCount": 0,
+      "negativeStockLevelCount": 0,
+      "periodTransactionCount": 439,
+      "periodAdjustmentCount": 1,
+      "periodTransferCount": 1
+    },
+    "blockers": [],
+    "redactions": []
+  }
+}

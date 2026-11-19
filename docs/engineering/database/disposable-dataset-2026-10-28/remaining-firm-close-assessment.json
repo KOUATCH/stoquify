@@ -1,0 +1,381 @@
+{
+  "schemaVersion": 1,
+  "scope": "Owned disposable database firm, close and controlled opening continuation",
+  "database": "stoquify_replay_dataset_20261028_01",
+  "implementation": "prisma/disposable-remaining-firm-close.ts",
+  "referenceClock": "2026-10-28T20:00:00.000Z",
+  "classification": "REAL_SERVICE_COMMANDS_WITH_SYNTHETIC_SOURCE_EVIDENCE",
+  "validation": {
+    "sourceInspection": "Current schema, services and contracts inspected; repository workflow check passed.",
+    "syntaxTranspile": "PASS: zero TypeScript transpile diagnostics",
+    "semanticTypecheck": "Root combined source check passed zero owned/imported diagnostics before the final controlled capital-journal addition; final helper syntax transpile passed with zero diagnostics. Root runs the final combined semantic check with the complete replay.",
+    "databaseExecution": "PASS: root guarded sequential firm run generated 2026-10-29T12:27:23.785Z returned all three core organization executions with zero issues. Includes local inbox records (two per core organization, duplicate publication replay unchanged), auxiliary advisory version 4, and synth12_close_aux August CLOSED through a retained actual CLOSE event and independent certified system-evidence export. Final full five-lane replay and verifier evidence are authoritative separately.",
+    "renderedOrBrowserChecks": "Not performed by this worker.",
+    "graphEvidence": "graphify-out/GRAPH_REPORT_actions.md and existing action graph are dated 2026-08-09; used for discovery only. Current service source determines behavior."
+  },
+  "configuration": {
+    "nodeEnv": "test",
+    "guards": [
+      "Owned schema-verified manifest",
+      "Exact schema SHA256",
+      "Manifest host/port/database/schema",
+      "Live current_database identity",
+      "localhost only",
+      "Three core organization allowlist",
+      "Exact output path",
+      "Parent Date-only fake clock and restoration"
+    ],
+    "authentication": "Real retained synthetic passwords, BetterAuth sign-in and password step-up. Fresh separate sessions use database wall-clock time for publication-time authority; parent historical clock and supplied actors are preserved.",
+    "coreOwnerAdditionalPermission": [
+      "accounting.close.evidence.request"
+    ],
+    "corePersonas": "Owner prepares firm records, approves capital evidence and exports draft close; accountant proposes capital support; manager independently reviews delegated workpapers/advisory. Distinct synthetic employees request inventory access. Previously null synthetic location manager references are assigned to the existing manager persona with retained labelled reference evidence; existing non-null appointments are preserved.",
+    "auxiliaryTenant": {
+      "id": "synth12_opening_aux",
+      "label": "Synthetic opening and close capability laboratory",
+      "locations": 1,
+      "personas": 3,
+      "roleCodes": [
+        "admin",
+        "accountant",
+        "administrator"
+      ],
+      "chartAccounts": 7,
+      "mappingKeys": [
+        "CASH_ON_HAND",
+        "OWNER_CAPITAL",
+        "ACCOUNTS_RECEIVABLE",
+        "ACCOUNTS_PAYABLE",
+        "INVENTORY",
+        "BANK",
+        "SYNTHETIC_BANK_SUSPENSE"
+      ],
+      "fiscalYears": 1,
+      "periods": 12,
+      "calendar": "Africa/Douala local month boundaries, UTC+1. Opening 2026-10-01 local midnight equals 2026-09-30T23:00:00Z and belongs to the auxiliary October period.",
+      "opening": "2,500,000 XAF cash debit / owner capital credit, staged source, independent preview reviewer, separate approving client operator, real controlled apply and exact apply replay.",
+      "credentials": ".seed-artifacts/disposable-dataset-2026-10-28/auxiliary-credentials.json (ignored, never logged)",
+      "bankReference": "One auxiliary payment rail, provider and explicitly labelled synthetic approved settlement reference; this direct reference setup does not claim the bank setup approval workflow ran.",
+      "bankEvents": "One actual imported September statement credit of 1,000 XAF and a distinct locally HMAC-signed orphan provider event of 250 XAF; no external provider contacted.",
+      "bankOutcome": "Two genuine OPEN suspense items from normal reconciliation. Bank balance evidence remains PROPOSED with 1,000 XAF difference; no balancing journal or approval is fabricated.",
+      "preservation": "Existing three organizations, October OPEN periods, and three certified bank source scenarios remain intact. Auxiliary records must be distinguished from core fixture count assertions."
+    },
+    "externalCommunication": "No email, external provider or outbound delivery worker is invoked. The dedicated tenant-scoped close notification publisher has a hard-coded NOTIFICATION channel and writes only the authenticated local synthetic inbox; its outbox SENT state means local publication, not email delivery. Pending accountant invites remain queued. Advisory DELIVER is authenticated workspace publication only.",
+    "proofRecovery": "Original grant command and snapshot hashes are checked after normalizing only the documented managed-scope enrollment transition. Current supporting-source revision keys new evidence; earlier approved rows remain immutable. Close runs use source-revision correlation keys, not retry timestamps. Branch and auxiliary consent commands precede supporting evidence to avoid self-created source drift.",
+    "cleanCloseAuxiliaryTenant": {
+      "id": "synth12_close_aux",
+      "purpose": "Minimal funded-period independent system-evidence close certification and period-control CLOSE event",
+      "users": 2,
+      "roles": 2,
+      "locations": 0,
+      "employees": 0,
+      "providerAccounts": 0,
+      "chartAccounts": 19,
+      "balanceSheetSchedules": 14,
+      "journals": 8,
+      "fiscalYears": 1,
+      "periods": [
+        "2026-08",
+        "2026-10"
+      ],
+      "credentials": ".seed-artifacts/disposable-dataset-2026-10-28/close-auxiliary-credentials.json (ignored; never logged)",
+      "references": "Sixteen required account mappings plus owner capital, cash variance and operating expense. Shipped posting rules plus three labelled synthetic readiness scaffolds; the scaffolds themselves are not transaction certification.",
+      "lifecycle": "Actual markAccountingSetupReady, documented owner contribution created by owner and independently posted by checker, cash/equity supporting roll-forwards plus twelve zero-activity account schedules independently approved, owner assessment, checker certified system-evidence export, checker closeAccountingPeriod; existing CLOSED/event/approval and posted capital journal reused exactly on replay.",
+      "statutoryAuthority": "Unconfigured; application system-evidence certification is not regulatory approval.",
+      "postedJournals": 1,
+      "journalLines": 2,
+      "capitalContribution": "1,000,000 XAF cash debit / owner capital credit on 2026-08-15, normal manual journal with retained synthetic source and independent posting"
+    }
+  },
+  "tables": [
+    {
+      "table": "access_requests",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Missing inventory read permission requested by each synthetic employee self-service persona; actual submission service and stable UUID command key; remains pending independent review.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/access-requests/access-request.service.ts:submitAccessRequest",
+        "services/access-requests/access-request-contracts.ts:submitAccessRequestInput"
+      ]
+    },
+    {
+      "table": "accountant_access_grants",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Client-owner synthetic consent document hashes authorize two named independent firm staff through grantAccountantAccess; reciprocal multi-organization test engagements and one auxiliary client.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/accountant-access.service.ts:grantAccountantAccess",
+        "services/accounting/accountant-access.schemas.ts"
+      ]
+    },
+    {
+      "table": "accountant_client_invite_states",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Normal encrypted pending invitation state for a nonexistent reserved-domain synthetic accountant; local outbox only.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/accountant-client-invite.service.ts:queueAccountantClientInviteInTx",
+        "services/accounting/accountant-client-invite-envelope.ts"
+      ]
+    },
+    {
+      "table": "accountant_client_invites",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "One replayable pending accountant invitation per core organization with actual synthetic consent bytes; private encryption key retained in ignored artifacts.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/accountant-client-invite.service.ts:inviteOrGrantAccountantAccess"
+      ]
+    },
+    {
+      "table": "accountant_comments",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Accountant close commentary and missing-evidence request against a real finding. Correlation lookup prevents append-only replay duplication.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/close-assurance.service.ts:commentOnCloseFinding",
+        "services/accounting/close-assurance.service.ts:requestMissingCloseEvidence"
+      ]
+    },
+    {
+      "table": "accountant_reviews",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "OPEN independent accountant review for blocked close runs; separately PREPARED and independently REVIEWED auxiliary pre-cutover workpapers when all four schedules reconcile.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/close-assurance.service.ts:updateAccountantReview",
+        "services/accounting/review-workpaper.service.ts:recordWorkpaperDecision"
+      ]
+    },
+    {
+      "table": "balance_sheet_evidence",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Core September owner-capital schedule from retained controlled postings, independently reviewed by the owner. Auxiliary September zero-activity ledger schedules are service-verified and approved by a distinct synthetic checker. New source revisions create new independently reviewed evidence; stale earlier proof is retained and never overwritten.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/balance-sheet-evidence.service.ts:proposeBalanceSheetEvidence",
+        "services/accounting/balance-sheet-evidence.service.ts:decideBalanceSheetEvidence",
+        "services/accounting/balance-sheet-sources.service.ts:readBalanceSheetSnapshot"
+      ]
+    },
+    {
+      "table": "bank_balance_evidence",
+      "status": "VERIFIED_TRUTHFUL_NEGATIVE_LIFECYCLE",
+      "scenario": "Auxiliary September imported exact-period statement has 1,000 XAF unrecorded credit; actual evidence proposal retains a 1,000 XAF closing difference and remains PROPOSED.",
+      "blocker": "Positive approval requires a real resolution of the statement-to-ledger difference and an independent fresh reviewer; no unsupported internal receipt or adjusting posting is invented.",
+      "sourceEvidence": [
+        "services/reconciliation/bank-balance-evidence.service.ts:proposeBankBalanceEvidence",
+        "services/reconciliation/bank-balance-sources.service.ts:readBankBalanceSnapshot"
+      ]
+    },
+    {
+      "table": "branch_daily_close_runs",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "September 28 branch review through current persisted operating scope; auxiliary real admin role guarantees legitimate scope. Previously null core location manager references are safely assigned to the actual seeded manager, with explicit synthetic configuration provenance and no claim that an appointment approval workflow ran.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/end-of-day-close/end-of-day-close-review.service.ts:startBranchDailyCloseReview",
+        "services/operating-access/operating-access-scope.service.ts:resolveOperatingAccessScope"
+      ]
+    },
+    {
+      "table": "branch_daily_close_sign_offs",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Actual separate auxiliary checker signed the September 28 branch review to ACTIVE after IN_REVIEW readiness. Core branch reviews remain honestly blocked by their source findings; existing location-manager fixtures establish legitimate scope.",
+      "blocker": "If the actual review is BLOCKED, its readiness blockers must be resolved before signing. Signature also requires current unchanged evidence, explicit branch.daily-close.sign, fresh password assurance and an actor distinct from the reviewer.",
+      "sourceEvidence": [
+        "services/end-of-day-close/branch-daily-close-sign-off.service.ts:signBranchDailyClose",
+        "services/controls/sensitive-action.service.ts:branch.daily-close.sign"
+      ]
+    },
+    {
+      "table": "close_assurance_findings",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Actual September close assessments retain findings from the real ledger, country setup, reconciliation, payroll and source coverage collectors.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/close-assurance.service.ts:runCloseAssurance"
+      ]
+    },
+    {
+      "table": "close_checklist_items",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Checklist generated by actual close assurance; failed and unavailable checks remain visible.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/close-assurance.service.ts:runCloseAssurance"
+      ]
+    },
+    {
+      "table": "close_evidence_items",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Source-bound close evidence collected by the current service, preserving unavailable evidence rather than inserting fake documents.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/close-assurance.service.ts:runCloseAssurance"
+      ]
+    },
+    {
+      "table": "close_evidence_notifications",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Verified missing-evidence request followed by dedicated tenant-scoped NOTIFICATION-only local inbox publication. Actual retained event, request, audit and payload hashes validated by the publisher; duplicate replay must create no extra rows. No email/network transport exists on this path.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/close-assurance.service.ts:requestMissingCloseEvidence",
+        "services/accounting/close-evidence-acceptance-authority.service.ts:lockCloseEvidenceWorkAuthorityInTx",
+        "services/accounting/close-evidence-notification.worker.ts:runCloseEvidenceNotificationWorker"
+      ]
+    },
+    {
+      "table": "close_pack_exports",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "DRAFT_NOT_CERTIFIED exports of actual retained close runs with service-generated hashes and retained JSON bytes.",
+      "blocker": "Certified export is not asserted while high/critical findings or unavailable support remain.",
+      "sourceEvidence": [
+        "services/accounting/close-assurance-pack.service.ts:exportClosePack"
+      ]
+    },
+    {
+      "table": "close_runs",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Current-source September assessments per core organization plus auxiliary September; deterministic source-revision correlation keys retain prior assessments and reuse unchanged current proof.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/close-assurance.service.ts:runCloseAssurance",
+        "services/accounting/close-assessment-order.service.ts"
+      ]
+    },
+    {
+      "table": "financial_opening_executions",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Auxiliary financially empty client: independent source review, separate client operator approval, controlled financial apply to ACTIVE, and exact apply replay.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/onboarding/opening-cutover.service.ts:approveOpeningCutover",
+        "services/onboarding/opening-cutover.service.ts:applyOpeningCutover"
+      ]
+    },
+    {
+      "table": "financial_opening_operations",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Exactly one controlled ledger-domain opening receipt for the balanced 2,500,000 XAF cash/capital opening, verified against persisted execution reconciliation.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/opening-ledger.service.ts",
+        "services/onboarding/opening-domain-source.ts:retainOpeningOperationInTx",
+        "services/onboarding/opening-cutover.service.ts:reconcile"
+      ]
+    },
+    {
+      "table": "financial_opening_revisions",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Retained actual synthetic source and independent control JSON, exact account mappings, staged digest and independent preview review.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/onboarding/opening-position.service.ts:stageOpeningPosition",
+        "services/onboarding/opening-position.service.ts:reviewOpeningPosition"
+      ]
+    },
+    {
+      "table": "firm_advisory_revisions",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Auxiliary pre-cutover September schedules support actual DRAFT, independent REVIEW, client AGREE and authenticated workspace DELIVER revisions; narrative expressly preserves the unresolved bank discrepancy and excludes audit opinion.",
+      "blocker": "All four schedule groups must have current independently approved support and a current independent workpaper review. Any source drift must be resolved through a new review; no hash or authority bypass.",
+      "sourceEvidence": [
+        "services/accounting/advisory-outcomes.service.ts:executeAdvisoryCommand",
+        "services/accounting/review-workpaper.service.ts:recordWorkpaperDecision"
+      ]
+    },
+    {
+      "table": "firm_engagement_assignments",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Explicit current named owner and manager assignments inside each synthetic client consent and engagement window.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/firm-engagement.service.ts:executeFirmEngagementCommand ASSIGN"
+      ]
+    },
+    {
+      "table": "firm_engagement_grant_links",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Explicit service enrollment of each exact consent grant after its named staff assignment.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/firm-engagement.service.ts:executeFirmEngagementCommand ENROLL"
+      ]
+    },
+    {
+      "table": "firm_engagement_transitions",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "DRAFT to ACTIVE only after actual assignment/enrollment, current staff, consent, role and time-window checks.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/firm-engagement.service.ts:executeFirmEngagementCommand TRANSITION"
+      ]
+    },
+    {
+      "table": "firm_engagements",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Three cyclic synthetic firm/client capability scenarios and one auxiliary client engagement; existing core identity and trading data are preserved.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/firm-engagement.service.ts:executeFirmEngagementCommand CREATE"
+      ]
+    },
+    {
+      "table": "firm_obligation_revisions",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Actual operational CLOSE_EVIDENCE_COLLECTION obligation per cyclic client period, retained source hash, assigned owner and overdue open evidence collection.",
+      "blocker": "No tax, social-security statutory qualification or external filing acceptance is fabricated.",
+      "sourceEvidence": [
+        "services/compliance/obligation-register.service.ts:getObligationRegister",
+        "services/compliance/obligation-register.service.ts:recordObligationRevision"
+      ]
+    },
+    {
+      "table": "firm_practice_revisions",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Actual plan (240 minutes), partial effort declaration (90 minutes) and XAF 75,000 fee budget per synthetic engagement/September. Each remains a manual declaration, not realized revenue or profitability.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/accounting/firm-practice.service.ts:executeFirmPracticeCommand",
+        "services/accounting/firm-practice.contract.ts"
+      ]
+    },
+    {
+      "table": "period_control_events",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Separate synth12_close_aux minimally funded August period receives normal accounting setup readiness, documented 1,000,000 XAF owner contribution via maker/checker journal posting, fourteen independently approved account schedules, actual owner close assessment, independent checker certified system-evidence export and controlled CLOSE event. Replay validates the retained CLOSED period, posted funding journal and exact approval/event rather than resealing. Core October periods remain OPEN; opening auxiliary September bank exceptions remain negative cases. Verified actual state: August CLOSED, controlVersion 1, retained CLOSE event linked to independently exported certified system-evidence pack.",
+      "blocker": "Application system-evidence certification does not establish statutory authority approval. The separate September negative bank scenario remains unclosed; its exact preflight failures are retained.",
+      "sourceEvidence": [
+        "services/accounting/periods.service.ts:closeAccountingPeriod",
+        "services/accounting/period-control.service.ts:requirePeriodCloseApprovalInTx",
+        "services/accounting/period-control.service.ts:reopenAccountingPeriod",
+        "services/accounting/accounting-settings.service.ts:markAccountingSetupReady",
+        "services/accounting/close-assurance-pack.service.ts:exportClosePack CERTIFIED",
+        "services/accounting/journals.service.ts:createManualJournalEntry",
+        "services/accounting/posting.service.ts:postJournalEntry"
+      ]
+    },
+    {
+      "table": "provider_events",
+      "status": "VERIFIED_BOUNDED_SYNTHETIC_SCENARIO",
+      "scenario": "Normal captureProviderEvent validates a locally generated HMAC over the exact retained synthetic orphan credit payload, then proves DUPLICATE replay. This is no claim of receipt from an external bank.",
+      "blocker": null,
+      "sourceEvidence": [
+        "services/payments/provider-event.service.ts:captureProviderEvent",
+        "services/payments/adapters/mobile-money-hmac.adapter.ts:verifySignature"
+      ]
+    },
+    {
+      "table": "suspense_items",
+      "status": "VERIFIED_TRUTHFUL_NEGATIVE_LIFECYCLE",
+      "scenario": "Normal reconciliation creates two distinct OPEN orphan cases: a 250 XAF provider event and 1,000 XAF statement line with no internal payment. Their actual IDs and states are returned for root verification.",
+      "blocker": "No unsupported internal payment, source match, suspense posting or resolution is fabricated. These open exceptions are deliberate negative testing scenarios.",
+      "sourceEvidence": [
+        "services/reconciliation/payment-reconciliation-run.service.ts:runPaymentReconciliation",
+        "services/reconciliation/payment-reconciliation-run.service.ts:reconcileUnallocatedSourcesInTx"
+      ]
+    }
+  ]
+}

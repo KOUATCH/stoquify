@@ -25,6 +25,12 @@ Render server-confirmed stock, discounts, taxes, totals and payment state. Pendi
 
 Preserve existing sale identity, idempotency/replay keys, revision checks, leases and service-owned transaction boundaries. A retry must use the existing recovery contract; UI redesign must not create a fresh sale merely because the previous request timed out.
 
+### Customer-credit interface completion — 9 November 2026
+
+The tender selector exposes cash and on-account credit through the existing checkout service. On-account tender requires an explicitly selected customer; server-owned customer, credit, tenant and accounting controls remain authoritative. Split cash/credit requests retain the same persisted cart, revision, checkout lease and commit identifier through uncertain-response recovery. Provider tenders, store credit and receipt delivery remain unavailable in this interface until their respective evidence requirements are integrated.
+
+The checkout summary separates money received from the amount placed on account. With credit selected, the uncovered amount describes the part still needing a tender; it must not imply that customer debt has been paid.
+
 ## Keyboard and review evidence
 
 Keep cart and tender actions reachable without a pointer. Do not override browser/assistive-technology shortcuts. Dialog focus returns to the invoking control; status updates are contextual and do not steal focus. Verify touch reachability and readable totals at supported POS widths and in EN/FR. Test pending, interrupted, stale-cart and confirmed paths using isolated fixtures; record what was browser-tested versus mocked. Preserve queued/offline behavior only where the existing implementation supports it; do not promise completion without connectivity proof.

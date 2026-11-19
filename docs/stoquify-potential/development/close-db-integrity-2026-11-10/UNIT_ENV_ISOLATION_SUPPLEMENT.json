@@ -1,0 +1,16 @@
+{
+  "status": "REPEATED_WITH_ENVIRONMENT_CONTAINED_EXECUTION_CLIENT",
+  "initialBehavioralPass": "unit-795ff9d7d1/verification.json",
+  "initialBehavioralTestsPassed": 472,
+  "initialEnvironmentIsolationAdmitted": false,
+  "reason": "Generated Prisma clients can load environment paths at module import before constructor configuration. The first behavioral pass is retained but does not establish that environment-file boundary.",
+  "currentBehavioralPass": "unit-eb48f1b56b/verification.json",
+  "currentTestsPassed": 472,
+  "currentSkipped": 0,
+  "currentExecutionClientReceipt": "pg-EXECUTION_CLIENTS.json",
+  "currentClientFiles": "Byte-identical qualified client copies; generated environment paths resolve only inside the owned execution context and are absent at import.",
+  "constructorControl": "Verification constructors disable environment paths before constructor loading. Owned positive/negative canary probes cover both old and new clients without database connections.",
+  "preliminaryRunnerSyntaxFailure": "A duplicated local variable name stopped one invocation before execution; its source preimage is retained under unit-795ff9d7d1/unit-qualification.before-name-fix.cjs.",
+  "productionOperation": false,
+  "sharedClientChanged": false
+}

@@ -1,0 +1,364 @@
+Skip to main content
+OHADA OPERATING OS
+Notifications
+0
+
+Synthetic client
+
+OWNER
+Session
+MODULES
+1
+FINANCE & TRUST
+1
+Accounting
+Ledger, close, reports, and controls
+4
+Accountant Access
+Accountant Portal
+Accountant Portfolio
+Close Center
+OS
+
+owner Synthetic
+
+af06-owner@example.invalid
+
+Close Center
+
+Finance & Trust / Accounting / Close Center
+
+FR
+OS
+CLOSE ASSURANCE
+Close & Assurance Center
+
+Close readiness from the ledger, reconciliation, suspense, and data-trust evidence already in the accounting backbone.
+
+Control center
+Evidence
+Review required
+Recorded status: BLOCKED
+T0
+Close readiness journey
+
+A read-only path from operating sources to reconciliation, posted ledger, findings, certification, and export readiness.
+
+Recorded readiness
+
+0%
+
+No coverage
+
+OPEN
+Operational sources
+
+AF06 browser October: 1 checklist gate(s), 0 evidence item(s).
+
+ACCOUNTING_PERIODS
+
+FAILED
+Reconciliation proof
+
+{"signedRunCount":0,"readyForSignoffCount":0,"pendingRunCount":0,"openSuspenseCount":0,"criticalExceptionCount":0,"openExceptionCount":0}
+
+RECONCILIATION_RUNS
+
+UNAVAILABLE
+Posted ledger
+
+Ledger posting evidence is not available in this close snapshot.
+
+JOURNAL_ENTRIES
+
+0
+Close findings
+
+0 open finding(s), 0 critical blocker(s).
+
+CLOSE_ASSURANCE_FINDINGS
+
+BLOCKED
+Certification
+
+Review the current evidence conditions below.
+
+CLOSE_RUNS
+
+DRAFT
+Draft export
+
+Draft close pack export is available; certified export still enforces readiness gates.
+
+CLOSE_PACK_EXPORTS
+
+Journey blockers
+
+Close runs are blocked
+
+1 close run(s) are blocked in the selected period.
+
+Use Close Assurance to clear blockers before certification.
+
+Close controls failed or are unavailable
+
+1 checklist control(s) failed or are unavailable in the selected close runs.
+
+Review failed controls and restore their evidence before certification.
+
+System evidence only. Statutory filings still require qualified expert validation.
+
+01
+Close readiness checklist
+02
+Blockers and findings
+03
+Certification controls
+04
+Evidence coverage
+Current close evidence
+
+Review required
+
+The recorded status and score describe the saved assessment; current proof is checked separately.
+
+As of: Oct 25, 2026, 1:56 PM UTC
+
+Close runs are blocked
+
+1 close run(s) are blocked in the selected period.
+
+Use Close Assurance to clear blockers before certification.
+
+Close controls failed or are unavailable
+
+1 checklist control(s) failed or are unavailable in the selected close runs.
+
+Review failed controls and restore their evidence before certification.
+
+STATUS
+
+Review required
+
+Recorded status: BLOCKED
+
+RECORDED READINESS
+
+0%
+
+0/1 gates passed
+
+EVIDENCE COVERAGE
+
+n/a
+
+0 evidence items
+
+RECORDED CRITICAL BLOCKERS
+
+0
+
+0 high severity
+
+OPEN FINDINGS
+
+0
+
+0 total findings
+
+RECORDED TRUST LEVEL
+
+T0
+
+As of: Oct 25, 2026, 1:46 PM UTC
+
+Review required
+
+AF06 browser October - Oct 1, 2026 to Oct 31, 2026
+
+AF06 browser October - OPEN
+Run assessment
+Refresh
+
+Some actions are unavailable with your current permissions. An administrator can review your access.
+
+Partial data
+
+UNAVAILABLE
+
+Some close evidence domains are unavailable. Certification remains gated until required evidence is posted, resolved, or waived through controls.
+
+0 unavailable checklist gates
+Close readiness checklist
+
+Service-backed gates from period close, ledger, payment reconciliation, suspense, inventory, AP, payroll, tax, and data-trust sources.
+
+Settlement proof
+
+PAYMENT_RECONCILIATION
+
+FAILED
+HIGH
+
+{"signedRunCount":0,"readyForSignoffCount":0,"pendingRunCount":0,"openSuspenseCount":0,"criticalExceptionCount":0,"openExceptionCount":0}
+
+0 evidence items - services/reconciliation/payment-close-evidence.service.ts
+
+Reconciliation remains unsigned
+
+Blockers and findings
+
+Open issues must be resolved, assigned, or waived through segregation-of-duties controls before certification.
+
+No records yet
+
+Blockers and findings
+STATUS	DETAIL	SOURCE	OWNER	ACTION
+No finding records are listed. Review current evidence conditions above.
+
+0 of 0 loaded records
+
+Rows per page
+
+25
+Page 1 of 1
+Go to first page
+Go to previous page
+Go to next page
+Go to last page
+
+Accountant comments
+
+No finding records are listed. Review current evidence conditions above.
+
+Persisted run
+Add comment
+
+Request waiver
+
+No finding records are listed. Review current evidence conditions above.
+
+SoD
+Request waiver
+
+No comments yet.
+
+Recover missing evidence
+Refresh evidence
+Evidence updates
+Refresh updates
+
+Published in-app updates you can currently access. Publication does not mean someone has read the update. Use the evidence workbench below to act on the current request.
+
+No published updates on this page for your current access.
+
+Open work for this period, including earlier assessments. A response is not approval; original evidence remains retained.
+
+Dates are displayed in your browser's timezone.
+
+Loading current evidence work…
+
+Historical missing evidence is retained after acceptance. This does not authenticate an external signature or authorize a payment.
+
+Certification controls
+ASSIGN TO ME
+on
+
+accounting.close.finding.assign
+
+WAIVER APPROVAL REQUIRES FRESH AUTHENTICATION.
+on
+
+accounting.close.waiver.approve
+
+CERTIFIED EXPORT GATE
+off
+
+disabled
+
+DRAFT EXPORT GATE
+on
+
+Draft close pack export is available; certified export still enforces readiness gates.
+
+SOURCE TABLES
+
+accounting_periods, journal_entries, journal_entry_lines, ledger_posting_batches, accounting_source_links, bank_balance_evidence, balance_sheet_evidence, close_source_changes, provider_accounts, payment_rails, chart_of_accounts, settlement_accounts, match_records, payment_transactions, provider_events, statement_files, statement_lines, reconciliation_runs, suspense_items, payment_exceptions, inventory_levels, inventory_transactions, stock_adjustments, stock_count_sessions, payroll_periods, payroll_runs, payroll_run_transitions, payroll_payment_batches, payroll_declarations, payroll_declaration_evidence, business_events, ledger_audit_events, audit_logs
+
+Accountant review
+
+Record an accountant decision against this close run without changing source evidence or posted ledger entries.
+
+LATEST REVIEW
+
+OPEN
+
+No comments yet.
+
+Run close readiness before recording an accountant review.
+
+REVIEW STATUS
+Ready to close
+DECISION NOTES
+Save review
+Close pack export
+
+Generate deterministic JSON snapshots with a watermark, SHA-256 content hash, and close-run audit trail.
+
+System evidence pack only. Statutory filings still require qualified expert validation.
+
+Current close evidence requires review.
+
+Available
+Certified export blocked
+Export draft JSON
+Export certified JSON
+Evidence coverage
+
+Source-linked proof gathered by the close engine. Missing domains stay visible as unavailable evidence.
+
+No records yet
+
+Evidence coverage
+EVIDENCE ID	EVIDENCE TYPE	SOURCE	PERIOD	STATUS	EVIDENCE ITEMS	HASH
+No evidence items available.
+
+0 of 0 loaded records
+
+Rows per page
+
+25
+Page 1 of 1
+Go to first page
+Go to previous page
+Go to next page
+Go to last page
+Provenance
+
+Which service produced each part of the close picture, and whether it is posted, operational, or unavailable.
+
+Close run snapshot
+
+OPEN
+
+POSTED
+
+Oct 25, 2026, 1:46 PM UTC
+
+accounting_periods, journal_entries, journal_entry_lines, ledger_posting_batches, accounting_source_links, bank_balance_evidence, balance_sheet_evidence, close_source_changes, provider_accounts, payment_rails, chart_of_accounts, settlement_accounts, match_records, payment_transactions, provider_events, statement_files, statement_lines, reconciliation_runs, suspense_items, payment_exceptions, inventory_levels, inventory_transactions, stock_adjustments, stock_count_sessions, payroll_periods, payroll_runs, payroll_run_transitions, payroll_payment_batches, payroll_declarations, payroll_declaration_evidence, business_events, ledger_audit_events, audit_logs
+
+Evidence graph
+
+Nodes and edges generated from the current close run evidence.
+
+NODES
+
+2
+
+cmvnvt5pe007vma1oag2c718b
+
+EDGES
+
+1
+
+Oct 25, 2026, 1:57 PM UTC

@@ -1,0 +1,44 @@
+{
+  "candidateDrift": [
+    "services/inventory/__tests__/cross-workflow.phase3.postgres.test.ts",
+    "services/inventory/__tests__/stock-integrity.repairs.postgres.test.ts"
+  ],
+  "reviewedFixtureChanges": [
+    {
+      "scope": "captured-candidate",
+      "file": "services/inventory/__tests__/stock-integrity.repairs.postgres.test.ts",
+      "before": "050f1190c4a0e7067ae611e3f1a035e2c0cc1b009a0b143510f6c5d84b693f68",
+      "after": "c08ec4ff7deb74132c4e97d1f215329db4a7d8082788d08beaefcaea715faf07"
+    },
+    {
+      "scope": "captured-candidate",
+      "file": "services/inventory/__tests__/cross-workflow.phase3.postgres.test.ts",
+      "before": "f8d6ec9bf86516d1103eef0d66ed5ff46303505292e68442a7602efb528f702f",
+      "after": "69313b978edf5d37d208a2e19191b5ccc5e6638ffa943a884b6202e661f7e20e"
+    }
+  ],
+  "unexpectedCandidateDrift": [],
+  "workspaceDrift": [
+    "components/hris/HrisOperationalTimeApprovalPanel.tsx",
+    "components/landing/product-workflow.css",
+    "services/inventory/__tests__/cross-workflow.phase3.postgres.test.ts",
+    "services/inventory/__tests__/stock-integrity.repairs.postgres.test.ts",
+    "services/purchase-order/purchase-order-authoring.service.ts",
+    "tsconfig.json",
+    "types/purchase-orders-system-types.ts"
+  ],
+  "newSources": [
+    "components/hris/__tests__/HrisOperationalTimeApprovalPanel.refresh.test.tsx",
+    "jest.cross-workflow-phase3-ui.config.cjs",
+    "jest.hris-leave-browser.config.cjs",
+    "scripts/verify-af16-locked-install.cjs",
+    "services/inventory/__tests__/workflow-closure-seed.postgres.test.ts",
+    "tsconfig.cross-workflow-phase3.json"
+  ],
+  "sourceFiles": 4284,
+  "privateClientUnchanged": true,
+  "sharedClientUnchanged": true,
+  "applicationRuntimeFilesEditedByThisPhase": 0,
+  "sharedTestFilesEditedByThisPhase": 1,
+  "productionAccess": false
+}

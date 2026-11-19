@@ -99,6 +99,47 @@ const mockGetClientMissingCloseEvidenceRequestQueue =
 
 const generatedAt = "2026-06-20T10:00:00.000Z"
 
+describe("Phase 3 priority and source-time semantics", () => {
+  const compose = (queue = actionQueue(), incidents = [assuranceIncident()], now = generatedAt, locale: "en" | "fr" = "en") => composeManagerActionCenterData({
+    organizationId: "org-1", locale, generatedAt: now,
+    snapshots: {tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot(), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot()},
+    actionQueue: queue, assuranceIncidents: incidents,
+  })
+
+  it("keeps signal expiry out of deadline counts and uses its actual source expiry", () => {
+    const queue = actionQueue()
+    queue.actionItems[0].dueAt = "2000-01-01T00:00:00Z"
+    const data = compose(queue, [])
+    expect(data.actionItems.find(item => item.id === queue.actionItems[0].id)).toMatchObject({dateKind: "evidence_expiry", dueState: "scheduled", dueAt: queue.signals[0].expiresAt})
+    expect(data.summary.overdue).toBe(0)
+    expect(data.summary.dueToday).toBe(0)
+  })
+
+  it("preserves real deadlines across refresh and classifies due today using UTC", () => {
+    const incident = {...assuranceIncident(), dueAt: "2026-06-21T00:30:00+02:00"}
+    const first = compose(actionQueue({total: 0}), [incident], "2026-06-20T22:00:00Z")
+    const later = compose(actionQueue({total: 0}), [incident], "2026-06-20T23:00:00Z")
+    expect(first.actionItems[0]).toMatchObject({dateKind: "deadline", dueAt: incident.dueAt, dueState: "due_today"})
+    expect(later.actionItems[0]).toMatchObject({dueAt: incident.dueAt, dueState: "overdue"})
+    const detected = compose(actionQueue({total: 0}), [{...incident, dueAt: null}])
+    expect(detected.actionItems[0]).toMatchObject({dateKind: "detected", dueState: "scheduled"})
+    expect(detected.summary.overdue).toBe(0)
+  })
+
+  it.each(["en", "fr"] as const)("aligns the first action and explanation with deterministic ties (%s)", locale => {
+    const queue = actionQueue()
+    queue.actionItems = [{...queue.actionItems[0], id: "z"}, {...queue.actionItems[0], id: "a"}]
+    const first = compose(queue, [], generatedAt, locale)
+    const reordered = compose({...queue, actionItems: [...queue.actionItems].reverse()}, [], generatedAt, locale)
+    expect(first.actionItems.map(item => item.id)).toEqual(["a", "z"])
+    expect(reordered.actionItems.map(item => item.id)).toEqual(["a", "z"])
+    expect(first.commandBrief.conclusion).toContain(first.actionItems[0].title)
+    expect(first.commandBrief.conclusion).toContain(locale === "fr" ? "gravité critique" : "critical severity")
+    expect(first.commandBrief.primaryAction?.id).toBe(first.actionItems[0].actionLink.id)
+    if (locale === "fr") expect(first.actionItems[0].actionLink.href).toMatch(/^\/fr\/dashboard\//)
+  })
+})
+
 describe("manager action center service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -111,6 +152,21 @@ describe("manager action center service", () => {
     mockGetClientMissingCloseEvidenceRequestQueue.mockResolvedValue(
       missingProofQueue(),
     )
+  })
+
+  it.each([[0, 0, false], [1, 24, true], [25, 0, true]] as const)("discloses assurance coverage for %i visible and %i filtered source rows", async (visible, hidden, capped) => {
+    mockTenantReadSources()
+    mockGetAssuranceControlTowerData.mockResolvedValue({incidents: Array.from({length: visible}, (_, i) => ({...assuranceIncident(), id: `incident-${i}`})), summary: {hiddenByPermission: hidden}})
+    const data = await getManagerActionCenterData({accessContext: accessContext(), now: generatedAt})
+    expect(data.assuranceCoverage).toEqual({state: "AVAILABLE", loaded: visible, limit: 25, possiblyTruncated: capped})
+    expect(mockGetAssuranceControlTowerData).toHaveBeenCalledWith(expect.objectContaining({limit: 25}))
+  })
+
+  it("reports a failed assurance source instead of confirmed empty coverage", async () => {
+    mockTenantReadSources()
+    const data = await getManagerActionCenterData({accessContext: accessContext(), now: generatedAt})
+    expect(data.assuranceCoverage).toEqual({state: "UNAVAILABLE"})
+    expect(JSON.stringify(data)).not.toContain("assurance unavailable")
   })
 
   it("fails closed on a denied operating scope before downstream reads", async () => {
@@ -337,6 +393,22 @@ describe("manager action center service", () => {
     })
   })
 
+  it("pins the Manager source clock when loading crosses UTC midnight", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-10-23T23:59:59Z"))
+    try {
+      mockTenantReadSources()
+      mockGetPaymentTruthSnapshot.mockImplementationOnce(async () => {
+        jest.setSystemTime(new Date("2026-10-24T00:00:01Z"))
+        return paymentSnapshot()
+      })
+      const data = await getManagerActionCenterData({accessContext: accessContext()})
+      expect(data.generatedAt).toBe("2026-10-23T23:59:59.000Z")
+      for (const source of [mockGetPaymentTruthSnapshot, mockGetInventoryCashSnapshot, mockGetCloseReadinessSnapshot, mockGetTenantOperatingSnapshotFromRelated]) {
+        expect(source.mock.calls[0][0].now.toISOString()).toBe(data.generatedAt)
+      }
+    } finally { jest.useRealTimers() }
+  })
+
   it("keeps manager page data available when assurance control tower fails", async () => {
     mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
     mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot())
@@ -557,7 +629,7 @@ describe("manager action center service", () => {
 
     expect(data.summary).toMatchObject({
       total: 1,
-      dueToday: 1,
+      dueToday: 0,
       open: 1,
       high: 1,
       hiddenByPermission: 0,

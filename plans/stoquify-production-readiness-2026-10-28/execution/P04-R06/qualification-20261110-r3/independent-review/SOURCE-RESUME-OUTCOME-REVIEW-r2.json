@@ -1,0 +1,69 @@
+{
+  "at": "2026-11-10T19:02:35.645Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "observationAccepted": true,
+  "files": [
+    {
+      "path": "inventory/resume-20261110-r2/CURRENT-SOURCE-MANIFEST.json",
+      "sha256": "c346a34aaf073e4ee3ac1246863adbf751869400331755c69c698235e4623064"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/SELECTED-INPUTS-REFRESH.json",
+      "sha256": "e82f7d8f7ae6259ded53422b718fd3b568eeaf0fcf08642b1cfa8236e59b6065"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/SOURCE-RESUME-RESULT.json",
+      "sha256": "362c0d6da8b4d750cf22562c3c9f2616ad3410d06d097389059a554d5de16563"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/SOURCE-SIZES.json",
+      "sha256": "1038f42443f9c1f94564ab2af7e21f8d91b0ead5a24085f1ee172677fa7cb29c"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/MIGRATION-SOURCE-REFRESH.json",
+      "sha256": "bf9fad5af1fe9a8440e3ec8939c81a2b3be622e1ada7589a36645cf20ad73228"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/SOURCE-IMPACT.json",
+      "sha256": "045007bb97f0939cd8859c4b9235be4ecb434e7cd3d8fe817b3babad4ba8bf42"
+    },
+    {
+      "path": "inventory/resume-20261110-r2/PRIVATE-METADATA-DISPOSITION.json",
+      "sha256": "fe5a21ce44f5f2910783d816824c56de3dd6ad809646e66dfef6b9ef76709abb"
+    },
+    {
+      "path": "independent-review/CONCURRENT-SCHEMA-MIGRATION-SOURCE-REVIEW.json",
+      "sha256": "cd04890301d5507e406bd47dd9faced08b163dd0e82e9d66c1b5b650db37198b"
+    },
+    {
+      "path": "independent-review/DEPENDENCY-STAGING-OUTCOME-REVIEW.json",
+      "sha256": "dbf7007e9e23e7c2b54b0ef726c2949b67a13eb7b72363279d4d4b7a93142617"
+    }
+  ],
+  "sourceManifestSha256": "c346a34aaf073e4ee3ac1246863adbf751869400331755c69c698235e4623064",
+  "sourceIdentitySha256": "0b8354d4f340ad5b82931e2e18e3e01a7ba18cfd089351a2536b41e23891332c",
+  "sourceFiles": 9988,
+  "head": "80e4abb283216b9f8e04b94e5020393f7dcabf62",
+  "selectedInputs": 68,
+  "selectedUnchanged": 67,
+  "selectedSchemaSuccessor": 1,
+  "migrationCount": 123,
+  "migrationIdentitySha256": "4bc9837046bf41549a682d5f2fe9d53b539e2b554d28e6bc393d7865fb4b614c",
+  "metadataReceipts": 7,
+  "facts": [
+    "Independently rehashed all68current selected inputs, all3new non-doc delta paths, preceding4accounting service/test paths and all7metadata docs.",
+    "Structural schema/SQL was independently inspected; source catalog extends the old122 set with the exact reviewed migration.",
+    "Typed metadata separates4fixture-data references from3client code/tool provenance documents; no external referenced files opened.",
+    "Historical116mocked passes are unchanged-source historical evidence, not a new test or current generated-client/database proof."
+  ],
+  "requirements": [
+    "Exact full current equality/head/resources before capture.",
+    "Named selected68 successor and typed7metadata policy; original inputs preserved.",
+    "Fresh uniquely named isolated databases/current private client, with old baseline preserved.",
+    "Reviewed typed artifact exclusion helper and actual artifact/trace proof before runtime advancement."
+  ],
+  "candidateCaptureAccepted": false,
+  "databaseReuseAccepted": false,
+  "qualificationPassed": false
+}

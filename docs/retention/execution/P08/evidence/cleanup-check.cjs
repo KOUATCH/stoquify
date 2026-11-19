@@ -1,0 +1,4 @@
+const fs=require('node:fs'),path=require('node:path'),net=require('node:net')
+const target=JSON.parse(fs.readFileSync(path.join(__dirname,'DATABASE_TARGET.json'),'utf8'))
+async function probe(port){return new Promise(resolve=>{const socket=net.connect({host:'127.0.0.1',port});socket.setTimeout(3000);socket.once('connect',()=>{socket.destroy();resolve({port,closed:false})});socket.once('error',e=>resolve({port,closed:e.code==='ECONNREFUSED',code:e.code}));socket.once('timeout',()=>{socket.destroy();resolve({port,closed:false,code:'TIMEOUT'})})})}
+Promise.all([probe(3189),probe(target.port)]).then(ports=>{const result={utc:new Date().toISOString(),ports,status:ports.every(p=>p.closed)?'PASS':'FAIL',dataRetained:true};fs.writeFileSync(path.join(__dirname,'CLEANUP.json'),JSON.stringify(result,null,2));console.log(result);if(result.status!=='PASS')process.exitCode=1})

@@ -1,0 +1,54 @@
+{
+  "at": "2026-11-10T09:04:48.268Z",
+  "reviewer": "/root/r06_review",
+  "passed": true,
+  "scope": "Actual owned idle-cluster suspension and retained synthetic-state capture only",
+  "checks": {
+    "recipeHashes": true,
+    "suspendPassed": true,
+    "exactClusterStopped": true,
+    "stopExitZero": true,
+    "noOtherClients": true,
+    "bothMigrationLedgers122": true,
+    "buildEmpty246": true,
+    "tenActors": true,
+    "noSessionsOrAudits": true,
+    "retainedBothDatabases": true,
+    "snapshotMatches": true
+  },
+  "evidence": [
+    {
+      "path": "database/suspend-attempt02.json",
+      "sha256": "f45b7ba50a737518a3e16496d86dec14cb1f996a35273dbe0ea02ffbc3289d31"
+    },
+    {
+      "path": "database/cluster-owner-before-suspend-attempt02.json",
+      "sha256": "5774bf8496ef171775bbb41c7088d30e86f0bad698f403582c590a9d6a5328a2"
+    },
+    {
+      "path": "database/snapshot-suspend-attempt02-before-1794301415824-8fef0547-f5f2-4880-a646-1ed91132a59b.json",
+      "sha256": "1e702934a8cd4fc4ed78009462336b047d308e82bbf3eaaae4e2275bfae4a6a6"
+    }
+  ],
+  "observed": {
+    "stoppedPid": 9760,
+    "stopExit": 0,
+    "migrationsPerDatabase": 122,
+    "buildEmptyBusinessTables": 246,
+    "syntheticActors": 10,
+    "sessions": 0,
+    "audits": 0,
+    "rowMutations": 0
+  },
+  "currentOwnershipState": "stopped",
+  "retainedFixtureDigests": {
+    "business": "0bc5e4fccb7f3f13b0c8c84419277726afdd1e9412fcd7b60c9e8763dcdb7f39",
+    "sessions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "audits": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "limitations": [
+    "Resume recipe has not been executed; retained-state restart verification remains pending.",
+    "Cluster suspension and captured fixture state are not restore certification or native authentication outcome evidence.",
+    "State preservation concerns this recorded synthetic snapshot; no production operation or approval."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "reviewedAt": "2026-11-09T13:51:38.188Z",
+  "reviewer": "r04_review",
+  "passed": true,
+  "ownedPid": 22660,
+  "port": 55501,
+  "ownedPidAbsent": true,
+  "listenerAbsent": true,
+  "check": "Read-only Get-Process -Id 22660 and Get-NetTCPConnection -LocalPort 55501 -State Listen returned no process/listener; native receipt independently checked clean stop, port release and clients[]",
+  "fixturesRetained": true,
+  "noProductionChanges": true
+}

@@ -1,0 +1,82 @@
+{
+  "observedAt": "2026-11-10T18:53:28.657Z",
+  "packageId": "P04-R06",
+  "qualification": "20261110-r3",
+  "evidenceClass": "Read-only source inspection; no SQL, Prisma generation, application, build or database execution",
+  "supersedesCurrentEligibilityOnly": ["SOURCE-IMPACT.json", "SELECTED-INPUTS-REFRESH.json", "CURRENT-SOURCE-MANIFEST.json"],
+  "historicalEvidencePreserved": true,
+  "historicalSource": {
+    "files": 9973,
+    "identitySha256": "04dc0a79755c41b22bd68be018e1cdca2cb96c3abc763f1338dea947165f3650",
+    "manifestSha256": "0a69e88e6040d07fe70eaa3bb68f53875dabfc46c439736028981a935456dbe2",
+    "noLongerCurrent": true
+  },
+  "schema": {
+    "path": "prisma/schema.prisma",
+    "beforeSha256": "b9d29cb51cdafc77f55112afc37b29d2a92ae18d79b8989a68aa928fa1a5ec39",
+    "sha256": "937754a6034b37b82c98957ebb9b70f612659d40af562967151595562acc6ef0",
+    "lastWriteTimeUtc": "2026-11-10T18:43:29.070Z",
+    "structuralChange": true,
+    "affectedModels": ["FiscalYear", "AccountingPeriod", "CloseRun", "CloseChecklistItem", "CloseAssuranceFinding", "CloseEvidenceItem", "ClosePackExport", "AccountantReview", "AccountantComment"],
+    "disposition": "Added composite organization/period/run scope relations and six mapped composite unique keys. Inspected delta adds no authentication/session/user scalar fields. This is not a comments-only or formatting-only change."
+  },
+  "migrations": {
+    "observedAt": "2026-11-10T18:52:40.527Z",
+    "baselineCount": 122,
+    "currentCount": 123,
+    "old122AllUnchanged": true,
+    "modified": [],
+    "removed": [],
+    "added": [{
+      "path": "prisma/migrations/20261110190000_close_scope_integrity/migration.sql",
+      "sha256": "334b580ac161ed37b6eccd6bc33234b3aabd0d6935215d60d6dd3318166b53e7",
+      "bytes": 12710,
+      "lastWriteTimeUtc": "2026-11-10T18:45:39.751Z"
+    }],
+    "identityAlgorithm": "SHA256(JSON.stringify(rows sorted by migration name; each row {name,sha256}))",
+    "identitySha256": "4bc9837046bf41549a682d5f2fe9d53b539e2b554d28e6bc393d7865fb4b614c",
+    "migrationLockSha256": "c1b9baaaaf4862b8f72b8fe252588c3a167d89f4cc3a21ee1fafc22b01225a41",
+    "migrationLockUnchanged": true,
+    "sourceInspection": {
+      "transaction": "BEGIN/COMMIT, 5s lock timeout, 120s statement timeout",
+      "locks": "ACCESS EXCLUSIVE on nine accounting/Close tables",
+      "preflight": "Counts invalid existing composite references and raises 23514 with count-only details before DDL; no legacy data repair",
+      "newUniqueIndexes": 6,
+      "newCompositeForeignKeys": 14,
+      "foreignKeySemantics": "MATCH SIMPLE, ON DELETE NO ACTION, ON UPDATE RESTRICT; existing id-only foreign keys retained",
+      "newTriggerFunctions": 1,
+      "newTriggers": 7,
+      "triggerEffect": "Before-update rejects id/organizationId/periodId changes and closeRunId changes on child records",
+      "limits": "DDL and trigger behavior were inspected only. No database validity, migration application, rollback or concurrent-writer result is claimed."
+    }
+  },
+  "narrowUnchangedInputs": [
+    {"path":"package.json","sha256":"9ce0f7724514fa191f7ec105a6f8438445a7358314ca4531c118420120ed7b70"},
+    {"path":"package-lock.json","sha256":"c5ffe4c81a85824f0aaaf4d8e29e8833670cc676b13c49f8b0baeaafc83d7235"},
+    {"path":"tsconfig.json","sha256":"d3579c5303333929f58ef96286529142b8e64137c59fb8a32b7c43598ac518c9"},
+    {"path":"next.config.mjs","sha256":"26d86f5d38d19237d95338f4f16df7404677843bb0c7ec927a946b2d359ac5bf"},
+    {"path":"lib/auth.ts","sha256":"a377af943776826d68385a01ebdfe3478aff5737c8de98395e2bebbd16d102ad"},
+    {"path":"lib/security/credential-sign-in-outcome.ts","sha256":"c093f2c5a93498a75b013b525e9a22b452fca807266fb7203c08824a210bb19f"}
+  ],
+  "stability": {
+    "schemaMatchedAt": ["2026-11-10T18:52:25.715Z", "2026-11-10T18:53:28.657Z"],
+    "migrationMatchedAt": ["2026-11-10T18:52:25.715Z", "2026-11-10T18:53:28.657Z"],
+    "writerPaused": "not established",
+    "atomicSnapshot": false,
+    "requirement": "Refresh full source and all selected inputs, then recheck exact equality at candidate capture; do not assume concurrent writers paused."
+  },
+  "compatibility": {
+    "oldIdenticalSchemaProofReusable": false,
+    "old122MigrationLedgerCurrent": false,
+    "retainedDatabaseReuseAdmitted": false,
+    "oldGeneratedClientCurrent": false,
+    "authenticationScalarShapeAppearsUnchanged": true,
+    "sourceInferenceLimits": "Unchanged auth scalar shape does not replace current schema/client generation or actual database-ledger admission.",
+    "approvedSuccessorDirection": "Root authorized a new uniquely named disposable database strategy, preserving the stopped original baseline. Runtime owner must prepare the exact reviewed isolation recipe, initialize the new databases from the current 123 migrations, generate a private client from the current schema, and re-establish fixture/native evidence before qualification.",
+    "retainedBaseline": "Preserve old stopped r2 databases, private fixture, suspension proof, original 122-migration ledgers and all previous candidate receipts. Do not migrate or reseed them through this source task."
+  },
+  "nextGate": "Named successor full-source and 68-input inventory, explicit schema/migration delta admission, successor private metadata policy and independently admitted fresh database/client/capture recipe. Current source equality and resource gates remain mandatory.",
+  "candidateWrites": false,
+  "databaseAccess": false,
+  "qualificationPassed": false
+}

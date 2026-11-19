@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-10T10:20:27.994Z",
+  "command": "check-resources-attempt02-v2.cjs resource-retry-ready-20261110-r3.json",
+  "initialRestrictedExecution": {
+    "exitCode": 1,
+    "error": "Get-CimInstance: Access to a CIM resource was not available to the client.",
+    "receiptWritten": false,
+    "classification": "Tool access failure; not a capacity result"
+  },
+  "subsequentReviewedExecution": {
+    "receipt": "../resource-retry-ready-20261110-r3.json",
+    "exitCode": 0,
+    "passed": true
+  },
+  "workflowCheck": {
+    "command": "npm run agent:workflow:check",
+    "exitCode": 0,
+    "passed": true,
+    "unclassifiedScripts": 196
+  }
+}

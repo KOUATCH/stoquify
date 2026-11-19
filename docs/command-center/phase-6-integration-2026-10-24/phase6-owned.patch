@@ -1,0 +1,4452 @@
+--- before/prisma/schema.prisma
++++ after/prisma/schema.prisma
+@@ -311,6 +311,12 @@
+ // ============================================================
+ 
+ model Organization {
++  commandCenterNotices CommandCenterNotice[]
++  commandCenterPreferences CommandCenterPreference[]
++  commandCenterOccurrences CommandCenterOccurrence[]
++  commandCenterEvents CommandCenterEvent[]
++  commandCenterReviewStates CommandCenterReviewState[]
++  commandCenterReviewReceipts CommandCenterReviewReceipt[]
+   hrisSetupReviewGrants HrisSetupReviewerGrant[]
+   id                     String    @id @default(cuid())
+   name                   String
+@@ -2904,6 +2910,7 @@
+   hrisAttendanceAnomalies          HrisAttendanceAnomaly[]
+   hrisEmployeeDocuments           HrisEmployeeDocument[]
+   hrisPersonalCorrections         HrisPersonalCorrectionCase[]
++  hrisLifecycleTasks              HrisLifecycleTask[]
+ 
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+@@ -10483,6 +10490,37 @@
+  @@map("hris_employee_documents")
+ }
+ 
++model HrisLifecycleTask {
++ id String @id
++ organizationId String
++ employeeId String
++ employee PayrollEmployee @relation(fields: [organizationId, employeeId], references: [organizationId, id], onDelete: Restrict, map: "hris_task_employee_fk")
++ requestId String
++ approvalEventId String
++ lifecycleType String
++ code String
++ ownerId String
++ reviewerId String
++ effectiveAt DateTime @db.Timestamptz
++ dueAt DateTime @db.Timestamptz
++ status String @default("OPEN")
++ sourceState String @default("ACTIVE")
++ revision Int @default(1)
++ policy Json
++ template Json
++ history Json @default("[]")
++ submittedById String?
++ evidenceReference String?
++ documentId String?
++ outcomeKind String?
++ createdAt DateTime @default(now()) @db.Timestamptz
++ updatedAt DateTime @default(now()) @db.Timestamptz
++ @@unique([organizationId, requestId, code], map: "hris_task_identity")
++ @@index([organizationId, ownerId, status, dueAt], map: "hris_task_owner_due")
++ @@index([organizationId, reviewerId, status, dueAt], map: "hris_task_reviewer_due")
++ @@map("hris_lifecycle_tasks")
++}
++
+ model HrisPersonalCorrectionCase {
+  id String @id
+  organizationId String
+@@ -10509,3 +10547,112 @@
+  @@index([organizationId, employeeId, createdAt], map: "hris_personal_case_employee")
+  @@map("hris_personal_correction_cases")
+ }
++
++
++// Shared Command Center coordination; business outcomes remain source-owned.
++model CommandCenterOccurrence {
++  id String @id
++  organizationId String
++  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
++  logicalKey String
++  sourceKey String
++  sourceRefs Json
++  scopeKey String
++  windowKey String
++  episode Int
++  sourceRevision String
++  revision Int @default(1)
++  condition String
++  coordination String @default("OPEN")
++  ownerId String?
++  dueAt DateTime?
++  createdAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
++  updatedAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
++  events CommandCenterEvent[]
++  notices CommandCenterNotice[]
++  @@unique([organizationId, id])
++  @@unique([organizationId, logicalKey, episode], map: "cc_occurrence_episode_key")
++  @@index([organizationId, scopeKey, windowKey], map: "cc_occurrence_scope_idx")
++  @@map("command_center_occurrences")
++}
++
++model CommandCenterEvent {
++  id String @id
++  organizationId String
++  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
++  occurrenceId String
++  occurrence CommandCenterOccurrence @relation(fields: [organizationId, occurrenceId], references: [organizationId, id], onDelete: Restrict, map: "cc_event_occurrence_fk")
++  actorId String
++  requestId String?
++  intentHash String?
++  type String
++  resultRevision Int
++  changes Json
++  createdAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
++  @@unique([organizationId, actorId, requestId], map: "cc_event_request_key")
++  @@index([organizationId, occurrenceId, createdAt], map: "cc_event_history_idx")
++  @@map("command_center_events")
++}
++
++model CommandCenterReviewState {
++  id String @id
++  organizationId String
++  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
++  actorId String
++  scopeKey String
++  periodKey String
++  evidenceKey String
++  revision Int @default(1)
++  updatedAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
++  receipts CommandCenterReviewReceipt[]
++  @@unique([organizationId, id, actorId])
++  @@unique([organizationId, actorId, scopeKey, periodKey], map: "cc_review_scope_key")
++  @@map("command_center_review_states")
++}
++
++model CommandCenterReviewReceipt {
++  id String @id
++  organizationId String
++  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
++  actorId String
++  stateId String
++  state CommandCenterReviewState @relation(fields: [organizationId, stateId, actorId], references: [organizationId, id, actorId], onDelete: Restrict, map: "cc_receipt_state_fk")
++  revision Int
++  evidenceKey String
++  center String
++  requestId String
++  intentHash String
++  createdAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
++  @@unique([organizationId, actorId, requestId], map: "cc_receipt_request_key")
++  @@index([organizationId, stateId, revision], map: "cc_receipt_revision_idx")
++  @@map("command_center_review_receipts")
++}
++
++model CommandCenterNotice {
++ id String @id
++ organizationId String
++ organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
++ occurrenceId String
++ occurrence CommandCenterOccurrence @relation(fields: [organizationId, occurrenceId], references: [organizationId, id], onDelete: Restrict, map: "cc_notice_occurrence_fk")
++ recipientId String
++ transitionRevision Int
++ sourceKey String
++ state String @default("PENDING")
++ createdAt DateTime @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)"))
++ publishedAt DateTime?
++ readAt DateTime?
++ @@unique([organizationId, occurrenceId, recipientId, transitionRevision], map: "cc_notice_transition_key")
++ @@index([organizationId, recipientId, state], map: "cc_notice_recipient_idx")
++ @@map("command_center_notices")
++}
++model CommandCenterPreference {
++ id String @id
++ organizationId String
++ organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
++ actorId String
++ enabled Boolean @default(true)
++ quietStart Int?
++ quietEnd Int?
++ @@unique([organizationId, actorId], map: "cc_preference_actor_key")
++ @@map("command_center_preferences")
++}
+--- before/design-system/stoquify/pages/command-center-shared.md
++++ after/design-system/stoquify/pages/command-center-shared.md
+@@ -96,3 +96,14 @@
+ [Disposable database evidence](../../../docs/command-center/phase-5-database-2026-10-24/README.md) verifies source-owned assurance assignment with current POS location responsibility or tenant-wide authority, explicit tenant-wide aggregate handling, and denial for sources without a proven scope adapter. Both actor and assignee retain independent source/action permission and module requirements. Scope is resolved on the server and rechecked on replay.
+ 
+ Real persistence, concurrent updates, rollback, revocation and existing assurance case/alert-row identity now have bounded PostgreSQL evidence. No frontend changed in this slice. This does not make generic signal follow-up persistent, turn a visit-only Owner review into a durable receipt, or certify all three projections. Whole-program acceptance remains governed by the checklist.
++
++
++## Phase 6 implementation — 24 October 2026
++
++[Persistence and integration evidence](../../../docs/command-center/phase-6-integration-2026-10-24/README.md) supersedes earlier persistence-not-implemented statements for the seven registered generic aggregate families. Work & follow-up is now embedded in Digest, tenant/location Manager and Owner, behind a default-off server feature flag. It is not a fourth menu. The same source/scope has one persistent occurrence across views and sessions; selected location is server-authorized and retained as safe navigation state. Denied saved locations offer scope reset; every replacement clears private stale content.
++
++The shared close follow-up covers all retained accounting periods; shared payroll evidence covers the rolling next 30 UTC days, including declaration-only obligations. These are separately labelled follow-up scopes, not changes to the old financial summaries. Other current-state sources keep identity across daily/weekly views; inventory loss remains interval-specific. Exact member revisions and retained references bind evidence, with explicit unavailable coverage on cap/disappearance.
++
++Durable receipts apply to the Work & follow-up projection only, binding actor, tenant, scope, reporting interval and monotonic evidence revision. Personal-filtered views must switch to all permitted rows before reviewing. This does not make the existing visit-only financial brief acknowledgement durable or turn review into source approval. In-app notices are persisted and delivered on an authorized visit, with current recipient checks, deduplication, preferences, UTC quiet hours and retry; no background/external transport is enabled.
++
++EN/FR fixture-browser checks and real PostgreSQL service tests are separate evidence classes. Production stays disabled; full authenticated source-workflow E2E, migration-history/artifact rehearsal and human acceptance remain Release B gates. Source links preserve locale and native Back; not all destination pages accept the selected follow-up location/period as filters.
+--- before/docs/command-center/phase-0-2026-10-24/ACCEPTANCE_CHECKLIST.md
++++ after/docs/command-center/phase-0-2026-10-24/ACCEPTANCE_CHECKLIST.md
+@@ -171,3 +171,24 @@
+ CC-05.1–05.5 and CC-05.10 now have real assurance persistence, replay, concurrency, rollback, scope/history and new-session evidence. CC-05.2 adds active/undeleted POS location binding, same-tenant session/terminal checks and current actor/assignee authority; known aggregates require both parties to hold tenant-wide authority, and unknown sources fail closed. CC-05.6 adds assignment/replay revocation and concurrent account/manager changes; it does not certify every read or browser recovery.
+ 
+ CC-05.7/05.8 gain existing assurance stable-case/deduplication, changed-source/reopen and definition-version evidence. CC-06.7/06.8 gain alert-row deduplication evidence only; no delivery occurred. Whole-phase checkboxes remain open for all-origin coordination, generic episode recurrence, durable review receipts, three-view integration and live rendered journeys. The disposable schema-model bootstrap is not migration-history rehearsal.
++
++
++## Phase 6 bounded acceptance — 24 October 2026
++
++[Implementation and evidence](../phase-6-integration-2026-10-24/README.md) supersede earlier statements that generic persistence and three-center integration were unimplemented. The following is acceptance for the seven registered aggregate adapters plus the existing assurance slice; earlier unchecked program boxes are retained where full deployment/human or all-origin certification is broader than this fixture evidence.
++
++| Criteria | Bounded result | Evidence / limit |
++|---|---|---|
++| CC-05.1, 05.7; CC-06.1 | Passed | Persistent occurrence/owner/deadline across centers and new sessions; tenant and authorized location identities tested independently; no daily/weekly duplication of current state |
++| CC-05.2, 05.6; CC-07.2 | Passed for registered adapters | Current server actor/assignee/source/module/location; foreign IDs denied; real concurrent account revocation lock wait; scope replacement and denial clear UI; no universal production-role certification |
++| CC-05.3–05.5, 05.10; CC-07.3 | Passed | Real competing revisions, exact replay/changed intent, immutable history, transaction rollback after event/notice failure, private target identity and shutdown |
++| CC-05.8; CC-06.3–06.6 | Passed for follow-up projection | Source-confirmed synthetic record clearance then recurrence; deletion/cancellation/aging-out unknown; equal-total loss replacement and declaration-only loss invalidate evidence; A-B-A review remains stale; no financial completion command |
++| CC-05.9 | Passed | Coordination/read/review and source outcome remain separate; real receiving observation leaves inventory quantities unchanged |
++| CC-06.2 | Passed within declared coverage | Personal/all and location filters explicit; current versus interval source policies labelled; denied/capped families unavailable; no false complete count |
++| CC-06.7–06.8 | Passed for visit-delivered in-app notices | Existing signal/quiet-hour decision reused, recipient checks, atomic enqueue, deduplication, disabled/quiet preferences/new-session persistence, publication failure retry; no external/background delivery certification |
++| CC-07.5 | Implemented, source inspected | Default-off flag hides new integration; disabling retains immutable history; production rollback not executed |
++| CC-07.6 | Automated fixture evidence passed | EN/FR, 375/768/1440, keyboard/focus, CSS reflow, source Back, recovery and automated accessibility; human screen-reader/productivity acceptance remains open |
++| CC-07.1 | Open | Real service/DB and synthetic browser are separately tested; full authenticated browser-to-business-source workflow E2E has not run |
++| CC-07.4 | Partial / open release gate | New additive migration applied to a captured-schema bootstrap in fresh PostgreSQL; full migration history and release-artifact/schema-promotion controls not rehearsed |
++
++No production enablement or whole-program Phase 7 certification is asserted. No messages were sent to real users. Historical evidence is preserved with its original limits.
+--- before/docs/command-center/phase-0-2026-10-24/ACTION_SOURCE_MAP.md
++++ after/docs/command-center/phase-0-2026-10-24/ACTION_SOURCE_MAP.md
+@@ -112,3 +112,12 @@
+ [Current disposable verification](../phase-5-database-2026-10-24/README.md) adds `assurance-assignment-scope.ts` to the source-owned assignment transaction. Registered POS cash-shortage incidents bind to the real same-tenant session, terminal and active/undeleted location; current location responsibility or existing tenant-wide authority is required independently for actor and assignee. The terminal's current-session pointer is not used for a historical closed shift. Explicit known registry aggregates require tenant-wide authority for both parties. Unknown/employee-bound sources are denied pending dedicated adapters. Client metadata never supplies authority.
+ 
+ The existing incident event receives scope kind/fingerprint. Source/terminal/location locks and all previous session, permission, module, revision and replay controls remain in the same transaction. No source business command or producer activation changed. Real PostgreSQL verifies assignment persistence/races/rollback and existing case/alert-row deduplication; this is not generic episode storage, a three-page integration test or notification transport certification. The user-authorized cluster used synthetic data and was stopped. The repository schema and existing application database were unchanged by this work.
++
++
++## Phase 6 implemented coordination map — 24 October 2026
++
++The [new source/scope map](../phase-6-integration-2026-10-24/SOURCE_AND_SCOPE_DECISIONS.md) defines seven adapters in `services/command-center/sources.ts`. Their parameterized coordination store and protected actions are shared by all three centers, including currently authorized locations. Existing source-owned assignment/approval/completion commands remain unchanged. Follow-up storage is additive, default-off and applied only to a fresh disposable database in this work.
++
++Current-state families: suspense, stockout, overdue receiving, employee balance, all-retained-period close obligations and rolling 30-day UTC payroll proof. Inventory loss retains the normalized UTC report interval. Forecast reads actual payment proof and retains declaration-only bindings; loss binds exact completed-loss records as well as aggregate metrics. Missing records/permission/read failures never imply completion. See the linked map for permissions, source destinations, evidence caps and notification transport decisions.
++
++Shared receipts cover the follow-up projection, not the Owner financial brief. Recipient notices use existing signal/quiet-hour decisions and are delivered in-app on a permitted visit. No financial source, global notification worker or external message transport was changed.
+--- before/services/snapshots/close-readiness-snapshot.service.ts
++++ after/services/snapshots/close-readiness-snapshot.service.ts
+@@ -24,6 +24,7 @@
+ 
+ export async function getCloseReadinessSnapshot(
+   input: SnapshotScopeInput,
++  client?: Prisma.TransactionClient,
+ ): Promise<SnapshotResult<CloseReadinessMetrics>> {
+   const scope = normalizeSnapshotScope(input)
+   if (scope.locationId) {
+@@ -70,7 +71,7 @@
+ 
+   // Counts, run status and retained proof must describe one database revision.
+   // Invalidation can otherwise commit between the status and evidence reads.
+-  const source = await db.$transaction(async (tx) => {
++  const load = async (tx: Prisma.TransactionClient) => {
+     const closeRuns = await tx.closeRun.findMany({
+       where: closePeriodWhere,
+       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+@@ -184,7 +185,8 @@
+       replacements, latestPeriod, latestCloseRun, latestFinding, latestEvidence, latestChecklist,
+       findingGroups, checklistGroups, unavailableEvidenceGroups, certifiedExports,
+     }
+-  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
++  }
++  const source = client ? await load(client) : await db.$transaction(load, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
+ 
+   const {
+     accountingPeriodCount, openPeriodCount, closeRuns, openFindingCount, criticalOpenFindingCount,
+--- before/services/snapshots/inventory-cash-snapshot.service.ts
++++ after/services/snapshots/inventory-cash-snapshot.service.ts
+@@ -1,4 +1,5 @@
+ import "server-only"
++import type { Prisma } from "@prisma/client"
+ 
+ import { db } from "@/prisma/db"
+ import type { EvidenceGrade } from "@/services/evidence/evidence-contracts"
+@@ -7,6 +8,7 @@
+ 
+ export async function getInventoryCashSnapshot(
+   input: SnapshotScopeInput,
++  client: Prisma.TransactionClient = db,
+ ): Promise<SnapshotResult<InventoryCashMetrics>> {
+   const scope = normalizeSnapshotScope(input)
+   const locationFilter = scope.locationId ? { locationId: scope.locationId } : {}
+@@ -36,9 +38,9 @@
+     latestAdjustment,
+     latestTransfer,
+   ] = await Promise.all([
+-    db.item.count({ where: itemScope }),
+-    db.inventoryLevel.count({ where: inventoryLevelScope }),
+-    db.inventoryLevel.aggregate({
++    client.item.count({ where: itemScope }),
++    client.inventoryLevel.count({ where: inventoryLevelScope }),
++    client.inventoryLevel.aggregate({
+       where: inventoryLevelScope,
+       _sum: {
+         quantityOnHand: true,
+@@ -49,26 +51,26 @@
+         totalValue: true,
+       },
+     }),
+-    db.inventoryLevel.count({
++    client.inventoryLevel.count({
+       where: {
+         ...inventoryLevelScope,
+         quantityAvailable: { lte: 0 },
+       },
+     }),
+-    db.inventoryLevel.count({
++    client.inventoryLevel.count({
+       where: {
+         ...inventoryLevelScope,
+         quantityAvailable: { lt: 0 },
+       },
+     }),
+-    db.inventoryTransaction.count({
++    client.inventoryTransaction.count({
+       where: {
+         organizationId: scope.organizationId,
+         createdAt: periodWhere,
+         ...locationFilter,
+       },
+     }),
+-    db.stockAdjustment.count({
++    client.stockAdjustment.count({
+       where: {
+         organizationId: scope.organizationId,
+         deletedAt: null,
+@@ -76,7 +78,7 @@
+         ...locationFilter,
+       },
+     }),
+-    db.stockTransfer.count({
++    client.stockTransfer.count({
+       where: {
+         organizationId: scope.organizationId,
+         deletedAt: null,
+@@ -88,27 +90,27 @@
+           : {}),
+       },
+     }),
+-    db.item.findFirst({
++    client.item.findFirst({
+       where: { organizationId: scope.organizationId },
+       orderBy: { updatedAt: "desc" },
+       select: { updatedAt: true },
+     }),
+-    db.inventoryLevel.findFirst({
++    client.inventoryLevel.findFirst({
+       where: inventoryLevelScope,
+       orderBy: { updatedAt: "desc" },
+       select: { updatedAt: true },
+     }),
+-    db.inventoryTransaction.findFirst({
++    client.inventoryTransaction.findFirst({
+       where: { organizationId: scope.organizationId },
+       orderBy: { createdAt: "desc" },
+       select: { createdAt: true },
+     }),
+-    db.stockAdjustment.findFirst({
++    client.stockAdjustment.findFirst({
+       where: { organizationId: scope.organizationId },
+       orderBy: { updatedAt: "desc" },
+       select: { updatedAt: true },
+     }),
+-    db.stockTransfer.findFirst({
++    client.stockTransfer.findFirst({
+       where: { organizationId: scope.organizationId },
+       orderBy: { updatedAt: "desc" },
+       select: { updatedAt: true },
+--- before/services/snapshots/inventory-loss-snapshot.service.ts
++++ after/services/snapshots/inventory-loss-snapshot.service.ts
+@@ -1,4 +1,5 @@
+ import "server-only";
++import type { Prisma } from "@prisma/client";
+ 
+ import {
+   readInventoryLossSummary,
+@@ -24,6 +25,7 @@
+ 
+ export async function getInventoryLossSnapshot(
+   input: SnapshotScopeInput,
++  client?: Prisma.TransactionClient,
+ ): Promise<SnapshotResult<InventoryLossMetrics>> {
+   const scope = normalizeSnapshotScope(input);
+   const exclusivePeriodEnd = new Date(scope.periodEnd.getTime() + 1);
+@@ -36,7 +38,7 @@
+       detailLimit: 0,
+       groupLimit: 50,
+     },
+-    { now: () => new Date(scope.now) },
++    { now: () => new Date(scope.now), ...(client ? {client} : {}) },
+   );
+   const metrics = inventoryLossMetrics(source);
+   const blockers = inventoryLossBlockers(metrics);
+--- before/services/snapshots/payment-truth-snapshot.service.ts
++++ after/services/snapshots/payment-truth-snapshot.service.ts
+@@ -1,4 +1,5 @@
+ import "server-only"
++import type { Prisma } from "@prisma/client"
+ 
+ import {
+   ExceptionSeverity,
+@@ -30,7 +31,7 @@
+   PaymentExceptionStatus.REOPENED,
+ ]
+ 
+-const OPEN_SUSPENSE_STATUSES = [
++export const OPEN_SUSPENSE_STATUSES = [
+   SuspenseStatus.OPEN,
+   SuspenseStatus.ASSIGNED,
+   SuspenseStatus.IN_REVIEW,
+@@ -49,6 +50,7 @@
+ 
+ export async function getPaymentTruthSnapshot(
+   input: SnapshotScopeInput,
++  client: Prisma.TransactionClient = db,
+ ): Promise<SnapshotResult<PaymentTruthMetrics>> {
+   const scope = normalizeSnapshotScope(input)
+   if (scope.locationId) {
+@@ -112,22 +114,22 @@
+     latestSuspense,
+     latestTransaction,
+   ] = await Promise.all([
+-    db.providerAccount.count({ where: { organizationId: scope.organizationId, archivedAt: null } }),
+-    db.providerAccount.count({
++    client.providerAccount.count({ where: { organizationId: scope.organizationId, archivedAt: null } }),
++    client.providerAccount.count({
+       where: {
+         organizationId: scope.organizationId,
+         archivedAt: null,
+         status: ProviderAccountStatus.ACTIVE,
+       },
+     }),
+-    db.reconciliationRun.count({
++    client.reconciliationRun.count({
+       where: {
+         organizationId: scope.organizationId,
+         voidedAt: null,
+         businessDate: periodWhere,
+       },
+     }),
+-    db.reconciliationRun.count({
++    client.reconciliationRun.count({
+       where: {
+         organizationId: scope.organizationId,
+         voidedAt: null,
+@@ -135,7 +137,7 @@
+         status: ReconciliationRunStatus.READY_FOR_SIGNOFF,
+       },
+     }),
+-    db.reconciliationRun.count({
++    client.reconciliationRun.count({
+       where: {
+         organizationId: scope.organizationId,
+         voidedAt: null,
+@@ -143,20 +145,20 @@
+         status: ReconciliationRunStatus.SIGNED,
+       },
+     }),
+-    db.paymentException.count({
++    client.paymentException.count({
+       where: {
+         organizationId: scope.organizationId,
+         status: { in: OPEN_EXCEPTION_STATUSES },
+       },
+     }),
+-    db.paymentException.count({
++    client.paymentException.count({
+       where: {
+         organizationId: scope.organizationId,
+         status: { in: OPEN_EXCEPTION_STATUSES },
+         severity: ExceptionSeverity.CRITICAL,
+       },
+     }),
+-    db.suspenseItem.groupBy({
++    client.suspenseItem.groupBy({
+       by: ["currencyCode"],
+       where: {
+         organizationId: scope.organizationId,
+@@ -166,35 +168,35 @@
+       _count: { _all: true },
+       orderBy: { currencyCode: "asc" },
+     }),
+-    db.organization.findFirst({ where: { id: scope.organizationId }, select: { currency: true } }),
+-    db.paymentTransaction.count({
++    client.organization.findFirst({ where: { id: scope.organizationId }, select: { currency: true } }),
++    client.paymentTransaction.count({
+       where: {
+         organizationId: scope.organizationId,
+         occurredAt: periodWhere,
+         state: { in: PENDING_PAYMENT_STATES },
+       },
+     }),
+-    db.providerAccount.findFirst({
++    client.providerAccount.findFirst({
+       where: { organizationId: scope.organizationId },
+       orderBy: { updatedAt: "desc" },
+       select: { updatedAt: true },
+     }),
+-    db.reconciliationRun.findFirst({
++    client.reconciliationRun.findFirst({
+       where: { organizationId: scope.organizationId, voidedAt: null },
+       orderBy: { updatedAt: "desc" },
+       select: { updatedAt: true },
+     }),
+-    db.paymentException.findFirst({
++    client.paymentException.findFirst({
+       where: { organizationId: scope.organizationId },
+       orderBy: { updatedAt: "desc" },
+       select: { updatedAt: true },
+     }),
+-    db.suspenseItem.findFirst({
++    client.suspenseItem.findFirst({
+       where: { organizationId: scope.organizationId },
+       orderBy: { updatedAt: "desc" },
+       select: { updatedAt: true },
+     }),
+-    db.paymentTransaction.findFirst({
++    client.paymentTransaction.findFirst({
+       where: { organizationId: scope.organizationId },
+       orderBy: { updatedAt: "desc" },
+       select: { updatedAt: true },
+--- before/services/payroll/payroll-finance-forecast.service.ts
++++ after/services/payroll/payroll-finance-forecast.service.ts
+@@ -38,10 +38,10 @@
+   scope: NormalizedSnapshotScope
+   paymentTruth: SnapshotResult<PaymentTruthMetrics> | null
+   currency: string
+-}): Promise<PayrollFinanceForecastResult> {
++}, client: Prisma.TransactionClient = db): Promise<PayrollFinanceForecastResult> {
+   const horizon = payrollForecastHorizon(input.scope)
+   const runInclude = PAYROLL_FORECAST_RUN_INCLUDE
+-  const periods: PayrollForecastPeriod[] = await db.payrollPeriod.findMany({
++  const periods: PayrollForecastPeriod[] = await client.payrollPeriod.findMany({
+     where: {
+       organizationId: input.scope.organizationId,
+       payDate: { gte: horizon.start, lte: horizon.end },
+@@ -59,7 +59,7 @@
+     },
+     orderBy: { payDate: "asc" },
+   })
+-  const declarationRuns: PayrollForecastRun[] = await db.payrollRun.findMany({
++  const declarationRuns: PayrollForecastRun[] = await client.payrollRun.findMany({
+     where: {
+       organizationId: input.scope.organizationId,
+       deletedAt: null,
+@@ -116,7 +116,7 @@
+   const paymentBatchIds = Array.from(
+     new Set(runs.flatMap((run) => run.paymentBatches.map((batch) => batch.id))),
+   )
+-  const sourceLinks = await db.accountingSourceLink.findMany({
++  const sourceLinks = await client.accountingSourceLink.findMany({
+     where: {
+       organizationId: input.scope.organizationId,
+       OR: [
+@@ -167,7 +167,7 @@
+     ({ batch }) => batch.status !== PayrollPaymentBatchStatus.SETTLED,
+   )
+   const partialIds = paymentBatches.filter(({batch}) => batch.status === PayrollPaymentBatchStatus.PARTIALLY_SETTLED).map(({batch}) => batch.id)
+-  const settlementEvents = partialIds.length ? await db.businessEvent.findMany({
++  const settlementEvents = partialIds.length ? await client.businessEvent.findMany({
+     where: {organizationId: input.scope.organizationId, sourceType: AccountingSourceType.PAYROLL_PAYMENT, sourceId: {in: partialIds}, eventType: "payroll.payment_batch.reconciled"},
+     select: {id:true, organizationId:true, sourceId:true, status:true, payload:true, processedAt:true},
+   }) : []
+--- before/components/daily-habit/DailyHabitDigestDashboard.tsx
++++ after/components/daily-habit/DailyHabitDigestDashboard.tsx
+@@ -1,4 +1,5 @@
+ "use client"
++import { FollowUpPanel } from "@/components/command-center/FollowUpPanel"
+ 
+ import { CommandCenterRecovery } from "@/components/dashboard/CommandCenterRecovery"
+ 
+@@ -31,6 +32,7 @@
+ import type { CommandAgentSurfaceAccess } from "@/services/agents/command-agent-contracts"
+ 
+ type DailyHabitDigestDashboardProps = {
++  followUpEnabled?: boolean
+   data: DailyHabitDigestData
+   locale: "en" | "fr"
+   commandAgentAccess?: CommandAgentSurfaceAccess
+@@ -380,5 +382,5 @@
+ }
+ 
+ export function DailyHabitDigestDashboard(props: DailyHabitDigestDashboardProps) {
+-  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><DailyHabitDigestDashboardContent {...props} /></CommandCenterRecovery>
+-}
++  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><DailyHabitDigestDashboardContent {...props} />{props.followUpEnabled ? <div className="dashboard-landing-theme dark px-4 py-4"><div className="dashboard-landing-content mx-auto max-w-[1920px]"><FollowUpPanel key={`${props.data.organizationId}:${props.data.generatedAt}`} center="digest" periodStart={props.data.periodStart} periodEnd={props.data.periodEnd} locale={props.locale} /></div></div> : null}</CommandCenterRecovery>
++}
+--- before/components/manager-action-center/ManagerActionCenterDashboard.tsx
++++ after/components/manager-action-center/ManagerActionCenterDashboard.tsx
+@@ -1,4 +1,5 @@
+-"use client";
++"use client"
++import { FollowUpPanel } from "@/components/command-center/FollowUpPanel";
+ 
+ import { commandDateLabel, priorityExplanation } from "@/lib/dashboard/command-center-context"
+ import { CommandCenterRecovery } from "@/components/dashboard/CommandCenterRecovery"
+@@ -27,6 +28,7 @@
+ import type { ManagerActionCenterData } from "@/services/manager-action-center/manager-action-center-contracts";
+ 
+ type ManagerActionCenterDashboardProps = {
++  followUpEnabled?: boolean
+   data: ManagerActionCenterData;
+   locale: "en" | "fr";
+   title: string;
+@@ -515,5 +517,5 @@
+ }
+ 
+ export function ManagerActionCenterDashboard(props: ManagerActionCenterDashboardProps) {
+-  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><ManagerActionCenterDashboardContent {...props} /></CommandCenterRecovery>
+-}
++  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><ManagerActionCenterDashboardContent {...props} />{props.followUpEnabled ? <div className="dashboard-landing-theme dark px-4 py-4"><div className="dashboard-landing-content mx-auto max-w-[1920px]"><FollowUpPanel key={`${props.data.organizationId}:${props.data.generatedAt}`} center="manager" periodStart={props.data.periodStart} periodEnd={props.data.periodEnd} locale={props.locale} /></div></div> : null}</CommandCenterRecovery>
++}
+--- before/components/manager-action-center/ManagerLocationActionCenterDashboard.tsx
++++ after/components/manager-action-center/ManagerLocationActionCenterDashboard.tsx
+@@ -1,4 +1,5 @@
+ "use client"
++import { FollowUpPanel } from "@/components/command-center/FollowUpPanel"
+ 
+ import { biSeverityCopy } from "@/lib/dashboard/bi-presentation"
+ import { commandDateLabel, priorityExplanation } from "@/lib/dashboard/command-center-context"
+@@ -47,6 +48,7 @@
+ type Locale = "en" | "fr"
+ 
+ type ManagerLocationActionCenterDashboardProps = {
++  followUpEnabled?: boolean
+   data: ManagerLocationActionCenterData
+   locale: Locale
+   title: string
+@@ -1076,5 +1078,5 @@
+ }
+ 
+ export function ManagerLocationActionCenterDashboard(props: ManagerLocationActionCenterDashboardProps) {
+-  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><ManagerLocationActionCenterDashboardContent {...props} /></CommandCenterRecovery>
+-}
++  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><ManagerLocationActionCenterDashboardContent {...props} />{props.followUpEnabled ? props.data.bundles.map(bundle => <div key={`${props.data.organizationId}:${props.data.generatedAt}:${bundle.location.id}`} className="dashboard-landing-theme dark px-4 py-4"><div className="dashboard-landing-content mx-auto max-w-[1920px]"><h2 className="mb-3 text-lg font-semibold">{bundle.location.name}</h2><FollowUpPanel center="manager" locationId={bundle.location.id} periodStart={props.data.periodStart} periodEnd={props.data.periodEnd} locale={props.locale} /></div></div>) : null}</CommandCenterRecovery>
++}
+--- before/components/owner-war-room/OwnerWarRoomDashboard.tsx
++++ after/components/owner-war-room/OwnerWarRoomDashboard.tsx
+@@ -1,4 +1,5 @@
+ "use client"
++import { FollowUpPanel } from "@/components/command-center/FollowUpPanel"
+ 
+ import { useManagerView } from "@/components/manager-action-center/useManagerView"
+ import { priorityExplanation } from "@/lib/dashboard/command-center-context"
+@@ -64,6 +65,7 @@
+ } from "@/services/owner-war-room/owner-war-room-contracts"
+ 
+ type OwnerWarRoomDashboardProps = {
++  followUpEnabled?: boolean
+   data: OwnerWarRoomData
+   locale: "en" | "fr"
+   title: string
+@@ -760,5 +762,5 @@
+ }
+ 
+ export function OwnerWarRoomDashboard(props: OwnerWarRoomDashboardProps) {
+-  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><OwnerWarRoomDashboardContent {...props} /></CommandCenterRecovery>
+-}
++  return <CommandCenterRecovery snapshot={props.data} locale={props.locale}><OwnerWarRoomDashboardContent {...props} />{props.followUpEnabled ? <div className="dashboard-landing-theme dark px-4 py-4"><div className="dashboard-landing-content mx-auto max-w-[1920px]"><FollowUpPanel key={`${props.data.organizationId}:${props.data.generatedAt}`} center="owner" periodStart={props.data.periodStart} periodEnd={props.data.periodEnd} locale={props.locale} /></div></div> : null}</CommandCenterRecovery>
++}
+--- before/app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx
++++ after/app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx
+@@ -1,3 +1,4 @@
++import { persistenceEnabled } from "@/services/command-center/authority"
+ import type { Metadata } from "next"
+ 
+ import { DailyHabitDigestDashboard } from "@/components/daily-habit/DailyHabitDigestDashboard"
+@@ -50,6 +51,7 @@
+ 
+       return (
+         <DailyHabitDigestDashboard
++          followUpEnabled={persistenceEnabled()}
+           data={data}
+           locale={locale}
+           commandAgentAccess={commandAgentAccess}
+--- before/app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx
++++ after/app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx
+@@ -1,3 +1,4 @@
++import { persistenceEnabled } from "@/services/command-center/authority"
+ import type { Metadata } from "next"
+ 
+ import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
+@@ -77,6 +78,7 @@
+       if (result.kind === "LOCATIONS") {
+         return (
+           <ManagerLocationActionCenterDashboard
++          followUpEnabled={persistenceEnabled()}
+             data={result.data}
+             locale={resolvedLocale}
+             title={copy[resolvedLocale].title}
+@@ -87,6 +89,7 @@
+ 
+       return (
+         <ManagerActionCenterDashboard
++          followUpEnabled={persistenceEnabled()}
+           data={result.data}
+           locale={resolvedLocale}
+           title={copy[resolvedLocale].title}
+--- before/app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx
++++ after/app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx
+@@ -1,3 +1,4 @@
++import { persistenceEnabled } from "@/services/command-center/authority"
+ import type { Metadata } from "next"
+ 
+ import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+@@ -58,6 +59,7 @@
+ 
+       return (
+         <OwnerWarRoomDashboard
++          followUpEnabled={persistenceEnabled()}
+           data={data}
+           locale={resolvedLocale}
+           title={copy[resolvedLocale].title}
+--- /dev/null
++++ after/services/command-center/authority.ts
+@@ -0,0 +1,145 @@
++import "server-only";
++import { Prisma, type User } from "@prisma/client";
++import { hasRbacPermission } from "@/lib/security/rbac-permissions";
++import { ForbiddenError } from "@/services/_shared/action-errors";
++import { isUsableAccount } from "@/services/roles/role-custodian-policy";
++import { resolveTenantWideOperatingAuthority } from "@/services/operating-access/operating-access-scope-contracts";
++import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.service";
++import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts";
++import type { FollowUpQuery } from "./contracts";
++
++export type Identity = {
++  organizationId: string;
++  actorId: string;
++  session: { id: string; token: string };
++};
++export type Party = {
++  id: string;
++  permissions: string[];
++  wide: boolean;
++  name: string;
++};
++export const DIGEST_PERMISSIONS = [
++  "dashboard.read",
++  "finance.read",
++  "accounting.close.read",
++  "inventory.read",
++  "analytics.read",
++];
++export const persistenceEnabled = () =>
++  process.env.COMMAND_CENTER_PERSISTENCE_ENABLED === "true";
++export const deny = () =>
++  new ForbiddenError(
++    "Current access to this follow-up scope is required. Refresh the page.",
++  );
++
++export async function loadAuthority(
++  tx: Prisma.TransactionClient,
++  identity: Identity,
++  query: FollowUpQuery,
++  ownerId?: string | null,
++) {
++  if (!persistenceEnabled())
++    throw new ForbiddenError(
++      "Saved follow-up is not enabled in this environment.",
++    );
++  // Match the authority-writer lock order; serialize coordination per tenant.
++  const orgs = await tx.$queryRaw<{ id: string }[]>(
++    Prisma.sql`SELECT "id" FROM "organizations" WHERE "id"=${identity.organizationId} AND "isActive"=true AND "deletedAt" IS NULL FOR UPDATE`,
++  );
++  if (orgs.length !== 1) throw deny();
++  const ids = [
++    ...new Set([identity.actorId, ...(ownerId ? [ownerId] : [])]),
++  ].sort();
++  const users = await tx.$queryRaw<User[]>(
++    Prisma.sql`SELECT "id","firstName","lastName","email","isActive","isVerified","emailVerified","isLocked","lockedUntil" FROM "users" WHERE "organizationId"=${identity.organizationId} AND "id" IN (${Prisma.join(ids)}) ORDER BY "id" FOR SHARE`,
++  );
++  const roles = await tx.$queryRaw<
++    { id: string; code: string; permissions: string[] }[]
++  >(
++    Prisma.sql`SELECT "id","code","permissions" FROM "roles" WHERE "organizationId"=${identity.organizationId} ORDER BY "id" FOR SHARE`,
++  );
++  const memberships = await tx.$queryRaw<{ userId: string; roleId: string }[]>(
++    Prisma.sql`SELECT m."B" AS "userId",m."A" AS "roleId" FROM "_UserRoles" m JOIN "roles" r ON r."id"=m."A" WHERE r."organizationId"=${identity.organizationId} AND m."B" IN (${Prisma.join(ids)}) ORDER BY m."B",m."A" FOR SHARE OF m`,
++  );
++  const sessions = await tx.$queryRaw<{ expiresAt: Date }[]>(
++    Prisma.sql`SELECT "expiresAt" FROM "sessions" WHERE "id"=${identity.session.id} AND "token"=${identity.session.token} AND "userId"=${identity.actorId} FOR SHARE`,
++  );
++  const party = (id: string): Party => {
++    const user = users.find((u) => u.id === id);
++    if (!user || !isUsableAccount(user, new Date())) throw deny();
++    const assigned = roles.filter((r) =>
++      memberships.some((m) => m.userId === id && m.roleId === r.id),
++    );
++    const permissions = assigned.flatMap((r) => r.permissions);
++    return {
++      id,
++      permissions,
++      wide: Boolean(
++        resolveTenantWideOperatingAuthority({
++          isSuperUser: permissions.includes("*"),
++          roleCodes: assigned.map((r) => r.code),
++        }),
++      ),
++      name:
++        [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email,
++    };
++  };
++  const actor = party(identity.actorId),
++    owner = ownerId ? party(ownerId) : null;
++  const revalidate = () => {
++    if (!sessions[0] || sessions[0].expiresAt <= new Date()) throw deny();
++  };
++  revalidate();
++  const has = (permission: string) =>
++    hasRbacPermission(actor.permissions, permission);
++  if (
++    !(query.center === "digest"
++      ? DIGEST_PERMISSIONS.some(has)
++      : has("dashboard.read"))
++  )
++    throw deny();
++  if (query.center === "owner" && !actor.wide) throw deny();
++  if (query.locationId) {
++    const locations = await tx.$queryRaw<{ managerId: string | null }[]>(
++      Prisma.sql`SELECT "managerId" FROM "locations" WHERE "id"=${query.locationId} AND "organizationId"=${identity.organizationId} AND "isActive"=true AND "deletedAt" IS NULL FOR SHARE`,
++    );
++    if (
++      locations.length !== 1 ||
++      (!actor.wide && locations[0].managerId !== actor.id) ||
++      (owner && !owner.wide && locations[0].managerId !== owner.id)
++    )
++      throw deny();
++  } else if (
++    (query.center !== "digest" && !actor.wide) ||
++    (owner && (!actor.wide || !owner.wide))
++  ) {
++    // Shared tenant aggregates cannot broaden a branch/employee-specific scope.
++    throw deny();
++  }
++  if (
++    query.center !== "digest" &&
++    !(await moduleAllowed(tx, identity.organizationId, actor, "dashboard"))
++  )
++    throw deny();
++  return { actor, owner, revalidate };
++}
++export async function moduleAllowed(
++  tx: Prisma.TransactionClient,
++  org: string,
++  party: Party,
++  moduleSlug: CommercialModuleSlug,
++  write = false,
++) {
++  const decision = await evaluateModuleAccessInTx(tx, {
++    organizationId: org,
++    userId: party.id,
++    actorPermissions: party.permissions,
++    moduleSlug,
++    surfaceType: "action",
++    surface: "command-center:follow-up",
++    accessIntent: write ? "write" : "read",
++    mode: "enforce",
++  });
++  return decision.allowed;
++}
+--- /dev/null
++++ after/services/command-center/contracts.ts
+@@ -0,0 +1,78 @@
++export type Center = "digest" | "manager" | "owner";
++export type SourceKey =
++  | "suspense"
++  | "stockout"
++  | "receiving"
++  | "loss"
++  | "close"
++  | "payroll_forecast"
++  | "employee_balance";
++export type Scope = {
++  locationId: string | null;
++  periodStart: string;
++  periodEnd: string;
++};
++export type FollowUpQuery = {
++  center: Center;
++  locationId?: string | null;
++  periodStart: string;
++  periodEnd: string;
++};
++export type Condition = "ACTIVE" | "CLEAR" | "UNKNOWN";
++export type Coordination = "OPEN" | "ASSIGNED" | "WAITING" | "REVIEWED";
++export type FollowUpItem = {
++  id: string;
++  source: SourceKey;
++  revision: number;
++  episode: number;
++  condition: Condition;
++  coordination: Coordination;
++  ownerId: string | null;
++  ownerName: string | null;
++  dueAt: string | null;
++  actionPath: string;
++  canAssign: boolean;
++  canDelegate: boolean;
++  sourceRevision: string;
++  updatedAt: string;
++  history: { type: string; at: string }[];
++};
++export type FollowUpData = {
++  availableLocations: { id: string; name: string; assignedToActor: boolean }[];
++  scope: Scope;
++  items: FollowUpItem[];
++  actorId: string;
++  revision: number;
++  evidenceKey: string;
++  review: { current: boolean; reviewedAt: string | null };
++  unavailable: SourceKey[];
++  notices: { id: string; source: SourceKey }[];
++  preference: {
++    enabled: boolean;
++    quietStart: number | null;
++    quietEnd: number | null;
++  };
++};
++export type FollowUpCommand = FollowUpQuery & {
++  requestId: string;
++  itemId: string;
++  expectedRevision: number;
++  ownerId: string | null;
++  state: Coordination;
++  dueAt: string | null;
++};
++export type ReviewCommand = FollowUpQuery & {
++  requestId: string;
++  expectedRevision: number;
++  evidenceKey: string;
++};
++export type FollowUpCandidate = { id: string; name: string };
++
++export type CandidateQuery = FollowUpQuery & { itemId: string; search: string };
++
++export type PreferenceCommand = FollowUpQuery & {
++  enabled: boolean;
++  quietStart: number | null;
++  quietEnd: number | null;
++};
++export type NoticeCommand = FollowUpQuery & { noticeId: string };
+--- /dev/null
++++ after/services/command-center/notices.ts
+@@ -0,0 +1,111 @@
++import "server-only";
++import { randomUUID } from "node:crypto";
++import { Prisma } from "@prisma/client";
++import { shouldNotifyForSignal } from "@/services/signals/signal-notification.service";
++import { createBusinessSignalFromFact } from "@/services/signals/business-signal-rules.service";
++import type { BusinessSignalType } from "@/services/signals/business-signal-contracts";
++import { sources } from "./sources";
++import type { FollowUpData, SourceKey } from "./contracts";
++import type { Identity } from "./authority";
++const signalTypes: Record<SourceKey, BusinessSignalType> = {
++  suspense: "open_payment_suspense",
++  stockout: "stockout_risk",
++  receiving: "purchase_order_receiving_delay",
++  loss: "inventory_loss_review",
++  close: "close_blocker",
++  payroll_forecast: "payroll_exposure",
++  employee_balance: "payroll_exposure",
++};
++export async function queueAssignmentNotice(
++  tx: Prisma.TransactionClient,
++  org: string,
++  row: {
++    id: string;
++    ownerId: string | null;
++    revision: number;
++    sourceKey: SourceKey;
++  },
++) {
++  if (!row.ownerId) return;
++  // Called only after current actor/recipient source scope and module checks.
++  await tx.$executeRaw(
++    Prisma.sql`INSERT INTO "command_center_notices" ("id","organizationId","occurrenceId","recipientId","transitionRevision","sourceKey") VALUES (${randomUUID()},${org},${row.id},${row.ownerId},${row.revision},${row.sourceKey}) ON CONFLICT ("organizationId","occurrenceId","recipientId","transitionRevision") DO NOTHING`,
++  );
++}
++export async function visibleNotices(
++  tx: Prisma.TransactionClient,
++  identity: Identity,
++  rows: { id: string; ownerId: string | null; condition: string }[],
++) {
++  const preferences = await tx.$queryRaw<FollowUpData["preference"][]>(
++    Prisma.sql`SELECT "enabled","quietStart","quietEnd" FROM "command_center_preferences" WHERE "organizationId"=${identity.organizationId} AND "actorId"=${identity.actorId}`,
++  );
++  const preference = preferences[0] ?? {
++    enabled: true,
++    quietStart: null,
++    quietEnd: null,
++  };
++  const ids = rows
++    .filter((r) => r.ownerId === identity.actorId && r.condition === "ACTIVE")
++    .map((r) => r.id);
++  const notices: FollowUpData["notices"] = [];
++  if (!ids.length) return { notices, preference };
++  const records = await tx.$queryRaw<
++    { id: string; sourceKey: SourceKey; state: string }[]
++  >(
++    Prisma.sql`SELECT "id","sourceKey","state" FROM "command_center_notices" WHERE "organizationId"=${identity.organizationId} AND "recipientId"=${identity.actorId} AND "occurrenceId" IN (${Prisma.join(ids)}) AND "state" IN ('PENDING','PUBLISHED') ORDER BY "createdAt","id"`,
++  );
++  const now = new Date();
++  for (const row of records) {
++    const source = sources[row.sourceKey];
++    const signal = createBusinessSignalFromFact(
++      {
++        organizationId: identity.organizationId,
++        signalType: signalTypes[row.sourceKey],
++        moduleSlug: source.module,
++        sourceModule:
++          row.sourceKey === "stockout" || row.sourceKey === "loss"
++            ? "inventory"
++            : row.sourceKey === "receiving"
++              ? "purchasing"
++              : row.sourceKey === "close"
++                ? "close"
++                : row.sourceKey === "suspense"
++                  ? "payments"
++                  : "payroll",
++        subjectType: "command-center.follow-up",
++        subjectId: row.id,
++        severity: "medium",
++        requiredPermission: source.permissions[0],
++        actionPath: source.path,
++      },
++      now,
++    );
++    const allowed = shouldNotifyForSignal({
++      signal,
++      now,
++      preference: {
++        organizationId: identity.organizationId,
++        userId: identity.actorId,
++        channels: preference.enabled ? ["in_app"] : [],
++        enabledSignalTypes: [signal.signalType],
++        minimumSeverity: "low",
++        quietHours:
++          preference.quietStart === null
++            ? null
++            : {
++                startHour: preference.quietStart,
++                endHour: preference.quietEnd!,
++                timezone: "UTC",
++              },
++      },
++    });
++    if (!allowed) continue;
++    if (row.state === "PENDING")
++      await tx.$executeRaw(
++        Prisma.sql`UPDATE "command_center_notices" SET "state"='PUBLISHED',"publishedAt"=(CURRENT_TIMESTAMP AT TIME ZONE 'UTC') WHERE "id"=${row.id} AND "organizationId"=${identity.organizationId} AND "state"='PENDING'`,
++      );
++    notices.push({ id: row.id, source: row.sourceKey });
++  }
++  return { notices, preference };
++}
+--- /dev/null
++++ after/services/command-center/persistence.service.ts
+@@ -0,0 +1,534 @@
++import "server-only";
++import { queueAssignmentNotice, visibleNotices } from "./notices";
++import { randomUUID } from "node:crypto";
++import { Prisma } from "@prisma/client";
++import { db } from "@/prisma/db";
++import { hasRbacPermission } from "@/lib/security/rbac-permissions";
++import {
++  BusinessRuleError,
++  ConflictError,
++} from "@/services/_shared/action-errors";
++import { deny, loadAuthority, moduleAllowed, type Identity } from "./authority";
++import {
++  canReadSource,
++  digest,
++  readSources,
++  sources,
++  sourceModulesAllowed,
++  type Observation,
++} from "./sources";
++import type {
++  Coordination,
++  Condition,
++  FollowUpQuery,
++  FollowUpCommand,
++  FollowUpData,
++  ReviewCommand,
++  SourceKey,
++} from "./contracts";
++
++type Occurrence = {
++  id: string;
++  organizationId: string;
++  logicalKey: string;
++  sourceKey: SourceKey;
++  sourceRefs: string[];
++  scopeKey: string;
++  windowKey: string;
++  episode: number;
++  sourceRevision: string;
++  revision: number;
++  condition: Condition;
++  coordination: Coordination;
++  ownerId: string | null;
++  dueAt: Date | null;
++  updatedAt: Date;
++};
++type ReviewState = { id: string; evidenceKey: string; revision: number };
++const conflict = () =>
++  new ConflictError(
++    "The source or follow-up changed. Refresh before trying again.",
++  );
++export async function inCoordinationTransaction<T>(
++  work: (tx: Prisma.TransactionClient) => Promise<T>,
++): Promise<T> {
++  try {
++    return await db.$transaction(work, {
++      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
++      maxWait: 10000,
++      timeout: 45000,
++    });
++  } catch (error) {
++    if (
++      error instanceof Prisma.PrismaClientKnownRequestError &&
++      ["P2034", "P2002"].includes(error.code)
++    )
++      throw conflict();
++    throw error;
++  }
++}
++async function latest(tx: Prisma.TransactionClient, org: string, key: string) {
++  const rows = await tx.$queryRaw<Occurrence[]>(
++    Prisma.sql`SELECT * FROM "command_center_occurrences" WHERE "organizationId"=${org} AND "logicalKey"=${key} ORDER BY "episode" DESC LIMIT 1 FOR UPDATE`,
++  );
++  return rows[0] ?? null;
++}
++async function event(
++  tx: Prisma.TransactionClient,
++  identity: Identity,
++  row: Occurrence,
++  type: string,
++  changes: unknown,
++  requestId: string | null = null,
++  intentHash: string | null = null,
++) {
++  await tx.$executeRaw(
++    Prisma.sql`INSERT INTO "command_center_events" ("id","organizationId","occurrenceId","actorId","requestId","intentHash","type","resultRevision","changes") VALUES (${randomUUID()},${identity.organizationId},${row.id},${identity.actorId},${requestId},${intentHash},${type},${row.revision},${JSON.stringify(changes)}::jsonb)`,
++  );
++}
++async function observe(
++  tx: Prisma.TransactionClient,
++  identity: Identity,
++  observation: Observation,
++) {
++  let row = await latest(tx, identity.organizationId, observation.logicalKey);
++  if (!row && observation.condition !== "ACTIVE") return null;
++  if (
++    !row ||
++    (row.condition === "CLEAR" && observation.condition === "ACTIVE")
++  ) {
++    const id = randomUUID(),
++      episode = (row?.episode ?? 0) + 1;
++    const rows = await tx.$queryRaw<Occurrence[]>(
++      Prisma.sql`INSERT INTO "command_center_occurrences" ("id","organizationId","logicalKey","sourceKey","sourceRefs","scopeKey","windowKey","episode","sourceRevision","condition") VALUES (${id},${identity.organizationId},${observation.logicalKey},${observation.source},${JSON.stringify(observation.refs)}::jsonb,${observation.scopeKey},${observation.windowKey},${episode},${observation.revision},${observation.condition}) RETURNING *`,
++    );
++    row = rows[0];
++    await event(tx, identity, row, "OBSERVED", {
++      source: observation.source,
++      episode,
++      condition: observation.condition,
++      sourceRevision: observation.revision,
++      sourceRefs: observation.refs,
++    });
++    return row;
++  }
++  if (
++    row.sourceRevision !== observation.revision ||
++    row.condition !== observation.condition
++  ) {
++    const before = {
++      condition: row.condition,
++      sourceRevision: row.sourceRevision,
++      coordination: row.coordination,
++      sourceRefs: row.sourceRefs,
++    };
++    // Evidence changes invalidate a coordination review even when a hash returns
++    // to an earlier value. Assignment survives changes within the same episode.
++    const coordination =
++      row.coordination === "REVIEWED"
++        ? row.ownerId
++          ? "ASSIGNED"
++          : "OPEN"
++        : row.coordination;
++    const rows = await tx.$queryRaw<Occurrence[]>(
++      Prisma.sql`UPDATE "command_center_occurrences" SET "sourceRevision"=${observation.revision},"sourceRefs"=${JSON.stringify(observation.refs)}::jsonb,"condition"=${observation.condition},"coordination"=${coordination},"revision"="revision"+1,"updatedAt"=(CURRENT_TIMESTAMP AT TIME ZONE 'UTC') WHERE "id"=${row.id} AND "organizationId"=${identity.organizationId} RETURNING *`,
++    );
++    row = rows[0];
++    await event(tx, identity, row, "SOURCE_CHANGED", {
++      before,
++      after: {
++        condition: row.condition,
++        sourceRevision: row.sourceRevision,
++        coordination: row.coordination,
++        sourceRefs: row.sourceRefs,
++      },
++    });
++  }
++  return row;
++}
++async function updateReviewState(
++  tx: Prisma.TransactionClient,
++  identity: Identity,
++  evidence: Awaited<ReturnType<typeof readSources>>,
++  rows: Occurrence[],
++) {
++  const scopeKey = evidence.scope.locationId ?? "TENANT",
++    periodKey = JSON.stringify([
++      evidence.scope.periodStart,
++      evidence.scope.periodEnd,
++    ]);
++  // Unavailable coverage and all authorized evidence participate in the review.
++  const evidenceKey = digest([
++    "follow-up-review-v1",
++    scopeKey,
++    periodKey,
++    evidence.unavailable,
++    evidence.observations.map((o) => [o.source, o.condition, o.revision]),
++    rows.map((r) => [r.id, r.revision]),
++  ]);
++  let states = await tx.$queryRaw<ReviewState[]>(
++    Prisma.sql`SELECT "id","evidenceKey","revision" FROM "command_center_review_states" WHERE "organizationId"=${identity.organizationId} AND "actorId"=${identity.actorId} AND "scopeKey"=${scopeKey} AND "periodKey"=${periodKey} FOR UPDATE`,
++  );
++  if (!states.length) {
++    states = await tx.$queryRaw<ReviewState[]>(
++      Prisma.sql`INSERT INTO "command_center_review_states" ("id","organizationId","actorId","scopeKey","periodKey","evidenceKey") VALUES (${randomUUID()},${identity.organizationId},${identity.actorId},${scopeKey},${periodKey},${evidenceKey}) RETURNING "id","evidenceKey","revision"`,
++    );
++  } else if (states[0].evidenceKey !== evidenceKey) {
++    states = await tx.$queryRaw<ReviewState[]>(
++      Prisma.sql`UPDATE "command_center_review_states" SET "evidenceKey"=${evidenceKey},"revision"="revision"+1,"updatedAt"=(CURRENT_TIMESTAMP AT TIME ZONE 'UTC') WHERE "id"=${states[0].id} RETURNING "id","evidenceKey","revision"`,
++    );
++  }
++  return { state: states[0], evidenceKey };
++}
++async function snapshot(
++  tx: Prisma.TransactionClient,
++  identity: Identity,
++  query: FollowUpQuery,
++  ownerId?: string | null,
++) {
++  const authority = await loadAuthority(tx, identity, query, ownerId);
++  const evidence = await readSources(
++    tx,
++    identity.organizationId,
++    authority.actor,
++    query,
++    (key) => latest(tx, identity.organizationId, key),
++  );
++  const rows: Occurrence[] = [];
++  for (const observation of evidence.observations) {
++    const row = await observe(tx, identity, observation);
++    if (row) rows.push(row);
++  }
++  const review = await updateReviewState(tx, identity, evidence, rows);
++  authority.revalidate();
++  return { ...evidence, authority, rows, ...review };
++}
++async function present(
++  tx: Prisma.TransactionClient,
++  identity: Identity,
++  current: Awaited<ReturnType<typeof snapshot>>,
++): Promise<FollowUpData> {
++  const receipts = await tx.$queryRaw<{ createdAt: Date }[]>(
++    Prisma.sql`SELECT "createdAt" FROM "command_center_review_receipts" WHERE "organizationId"=${identity.organizationId} AND "actorId"=${identity.actorId} AND "stateId"=${current.state.id} AND "revision"=${current.state.revision} AND "evidenceKey"=${current.evidenceKey} ORDER BY "createdAt" DESC LIMIT 1`,
++  );
++  const items: FollowUpData["items"] = [];
++  for (const row of current.rows) {
++    const owner = row.ownerId
++      ? await tx.user.findFirst({
++          where: {
++            id: row.ownerId,
++            organizationId: identity.organizationId,
++            isActive: true,
++          },
++          select: { firstName: true, lastName: true, email: true },
++        })
++      : null;
++    const history = await tx.$queryRaw<{ type: string; at: Date }[]>(
++      Prisma.sql`SELECT "type","createdAt" AS "at" FROM "command_center_events" WHERE "organizationId"=${identity.organizationId} AND "occurrenceId"=${row.id} ORDER BY "createdAt" DESC,"id" DESC LIMIT 5`,
++    );
++    const canDelegate = hasRbacPermission(
++      current.authority.actor.permissions,
++      "controls.manage",
++    );
++    const canAssign =
++      (!row.ownerId || row.ownerId === identity.actorId || canDelegate) &&
++      row.condition === "ACTIVE" &&
++      (Boolean(current.scope.locationId) || current.authority.actor.wide) &&
++      (await sourceModulesAllowed(
++        tx,
++        identity.organizationId,
++        current.authority.actor,
++        row.sourceKey,
++        true,
++      ));
++    items.push({
++      id: row.id,
++      source: row.sourceKey,
++      revision: row.revision,
++      episode: row.episode,
++      condition: row.condition,
++      coordination: row.coordination,
++      ownerId: row.ownerId,
++      ownerName: owner
++        ? [owner.firstName, owner.lastName].filter(Boolean).join(" ") ||
++          owner.email
++        : null,
++      dueAt: row.dueAt?.toISOString() ?? null,
++      actionPath: sources[row.sourceKey].path,
++      canAssign,
++      canDelegate,
++      sourceRevision: row.sourceRevision,
++      updatedAt: row.updatedAt.toISOString(),
++      history: history.map((e) => ({ type: e.type, at: e.at.toISOString() })),
++    });
++  }
++  const locations = await tx.location.findMany({
++    where: {
++      organizationId: identity.organizationId,
++      isActive: true,
++      deletedAt: null,
++      ...(current.authority.actor.wide ? {} : { managerId: identity.actorId }),
++    },
++    select: { id: true, name: true, managerId: true },
++    orderBy: [{ name: "asc" }, { id: "asc" }],
++  });
++  current.authority.revalidate();
++  return {
++    availableLocations: locations.map((l) => ({
++      id: l.id,
++      name: l.name,
++      assignedToActor: l.managerId === identity.actorId,
++    })),
++    scope: current.scope,
++    items,
++    actorId: identity.actorId,
++    revision: current.state.revision,
++    evidenceKey: current.evidenceKey,
++    review: {
++      current: Boolean(receipts.length),
++      reviewedAt: receipts[0]?.createdAt.toISOString() ?? null,
++    },
++    unavailable: current.unavailable,
++    ...(await visibleNotices(tx, identity, current.rows)),
++  };
++}
++export async function loadFollowUps(identity: Identity, query: FollowUpQuery) {
++  return inCoordinationTransaction(async (tx) =>
++    present(tx, identity, await snapshot(tx, identity, query)),
++  );
++}
++export async function changeFollowUp(
++  identity: Identity,
++  input: FollowUpCommand,
++) {
++  return inCoordinationTransaction(async (tx) => {
++    const current = await snapshot(tx, identity, input, input.ownerId);
++    const row = current.rows.find((r) => r.id === input.itemId);
++    if (
++      !row ||
++      !canReadSource(current.authority.actor, row.sourceKey) ||
++      row.condition !== "ACTIVE"
++    )
++      throw deny();
++    const { actor, owner } = current.authority;
++    if (!current.scope.locationId && !actor.wide) throw deny();
++    if (
++      (input.ownerId !== identity.actorId ||
++        (row.ownerId && row.ownerId !== identity.actorId)) &&
++      !hasRbacPermission(actor.permissions, "controls.manage")
++    )
++      throw deny();
++    if (
++      owner &&
++      (!canReadSource(owner, row.sourceKey) ||
++        !(await sourceModulesAllowed(
++          tx,
++          identity.organizationId,
++          owner,
++          row.sourceKey,
++        )))
++    )
++      throw deny();
++    if (
++      !(await sourceModulesAllowed(
++        tx,
++        identity.organizationId,
++        actor,
++        row.sourceKey,
++        true,
++      ))
++    )
++      throw deny();
++    if (
++      (input.state === "ASSIGNED" || input.state === "WAITING") &&
++      !input.ownerId
++    )
++      throw new BusinessRuleError("Choose an eligible assignee.");
++    const intentHash = digest([
++      row.id,
++      input.expectedRevision,
++      input.ownerId,
++      input.state,
++      input.dueAt,
++    ]);
++    const events = await tx.$queryRaw<
++      { intentHash: string; resultRevision: number; occurrenceId: string }[]
++    >(
++      Prisma.sql`SELECT "intentHash","resultRevision","occurrenceId" FROM "command_center_events" WHERE "organizationId"=${identity.organizationId} AND "actorId"=${identity.actorId} AND "requestId"=${input.requestId}`,
++    );
++    if (events.length) {
++      if (
++        events[0].intentHash !== intentHash ||
++        events[0].occurrenceId !== row.id ||
++        events[0].resultRevision !== row.revision
++      )
++        throw conflict();
++      return present(tx, identity, current);
++    }
++    if (row.revision !== input.expectedRevision) throw conflict();
++    current.authority.revalidate();
++    const before = {
++      ownerId: row.ownerId,
++      state: row.coordination,
++      dueAt: row.dueAt?.toISOString() ?? null,
++    };
++    const updated = await tx.$queryRaw<Occurrence[]>(
++      Prisma.sql`UPDATE "command_center_occurrences" SET "ownerId"=${input.ownerId},"coordination"=${input.state},"dueAt"=(${input.dueAt}::timestamptz AT TIME ZONE 'UTC'),"revision"="revision"+1,"updatedAt"=(CURRENT_TIMESTAMP AT TIME ZONE 'UTC') WHERE "organizationId"=${identity.organizationId} AND "id"=${row.id} RETURNING *`,
++    );
++    await event(
++      tx,
++      identity,
++      updated[0],
++      "COORDINATED",
++      {
++        before,
++        after: {
++          ownerId: input.ownerId,
++          state: input.state,
++          dueAt: input.dueAt,
++        },
++        sourceRevision: row.sourceRevision,
++      },
++      input.requestId,
++      intentHash,
++    );
++    if (
++      input.ownerId &&
++      (input.ownerId !== row.ownerId ||
++        input.dueAt !== (row.dueAt?.toISOString() ?? null))
++    )
++      await queueAssignmentNotice(tx, identity.organizationId, updated[0]);
++    // Reuse the same transaction-bound source observation and pinned clock.
++    current.rows = current.rows.map((r) => (r.id === row.id ? updated[0] : r));
++    Object.assign(
++      current,
++      await updateReviewState(tx, identity, current, current.rows),
++    );
++    return present(tx, identity, current);
++  });
++}
++export async function reviewFollowUps(
++  identity: Identity,
++  input: ReviewCommand,
++) {
++  return inCoordinationTransaction(async (tx) => {
++    const current = await snapshot(tx, identity, input);
++    if (current.observations.some((o) => o.condition === "UNKNOWN"))
++      throw new BusinessRuleError(
++        "Refresh unavailable source evidence before recording a review.",
++      );
++    const intentHash = digest([
++      current.state.id,
++      input.expectedRevision,
++      input.evidenceKey,
++    ]);
++    const receipts = await tx.$queryRaw<
++      { intentHash: string; revision: number }[]
++    >(
++      Prisma.sql`SELECT "intentHash","revision" FROM "command_center_review_receipts" WHERE "organizationId"=${identity.organizationId} AND "actorId"=${identity.actorId} AND "requestId"=${input.requestId}`,
++    );
++    if (receipts.length) {
++      if (
++        receipts[0].intentHash !== intentHash ||
++        receipts[0].revision !== current.state.revision
++      )
++        throw conflict();
++      return present(tx, identity, current);
++    }
++    if (
++      current.state.revision !== input.expectedRevision ||
++      current.evidenceKey !== input.evidenceKey
++    )
++      throw conflict();
++    current.authority.revalidate();
++    await tx.$executeRaw(
++      Prisma.sql`INSERT INTO "command_center_review_receipts" ("id","organizationId","actorId","stateId","revision","evidenceKey","center","requestId","intentHash") VALUES (${randomUUID()},${identity.organizationId},${identity.actorId},${current.state.id},${current.state.revision},${current.evidenceKey},${input.center},${input.requestId},${intentHash})`,
++    );
++    return present(tx, identity, current);
++  });
++}
++
++export async function followUpCandidates(
++  identity: Identity,
++  input: import("./contracts").CandidateQuery,
++) {
++  return inCoordinationTransaction(async (tx) => {
++    const current = await snapshot(tx, identity, input);
++    const row = current.rows.find((r) => r.id === input.itemId);
++    if (
++      !row ||
++      !hasRbacPermission(current.authority.actor.permissions, "controls.manage")
++    )
++      throw deny();
++    const users = await tx.user.findMany({
++      where: {
++        organizationId: identity.organizationId,
++        isActive: true,
++        OR: [
++          { firstName: { contains: input.search, mode: "insensitive" } },
++          { lastName: { contains: input.search, mode: "insensitive" } },
++        ],
++      },
++      select: { id: true },
++      orderBy: { id: "asc" },
++      take: 51,
++    });
++    const candidates: import("./contracts").FollowUpCandidate[] = [];
++    for (const user of users.slice(0, 50)) {
++      try {
++        const auth = await loadAuthority(tx, identity, input, user.id);
++        if (
++          auth.owner &&
++          canReadSource(auth.owner, row.sourceKey) &&
++          (await sourceModulesAllowed(
++            tx,
++            identity.organizationId,
++            auth.owner,
++            row.sourceKey,
++          ))
++        )
++          candidates.push({ id: user.id, name: auth.owner.name });
++      } catch (error) {
++        if (!(error instanceof Error) || error.name !== "ForbiddenError")
++          throw error;
++      }
++    }
++    current.authority.revalidate();
++    return { candidates, limited: users.length > 50 };
++  });
++}
++
++export async function saveFollowUpPreference(
++  identity: Identity,
++  input: import("./contracts").PreferenceCommand,
++) {
++  return inCoordinationTransaction(async (tx) => {
++    const current = await snapshot(tx, identity, input);
++    await tx.$executeRaw(
++      Prisma.sql`INSERT INTO "command_center_preferences" ("id","organizationId","actorId","enabled","quietStart","quietEnd") VALUES (${randomUUID()},${identity.organizationId},${identity.actorId},${input.enabled},${input.quietStart},${input.quietEnd}) ON CONFLICT ("organizationId","actorId") DO UPDATE SET "enabled"=EXCLUDED."enabled","quietStart"=EXCLUDED."quietStart","quietEnd"=EXCLUDED."quietEnd"`,
++    );
++    return present(tx, identity, current);
++  });
++}
++export async function acknowledgeFollowUpNotice(
++  identity: Identity,
++  input: import("./contracts").NoticeCommand,
++) {
++  return inCoordinationTransaction(async (tx) => {
++    const current = await snapshot(tx, identity, input),
++      ids = current.rows
++        .filter(
++          (r) => r.ownerId === identity.actorId && r.condition === "ACTIVE",
++        )
++        .map((r) => r.id);
++    if (!ids.length) throw deny();
++    const rows = await tx.$queryRaw<{ id: string }[]>(
++      Prisma.sql`SELECT "id" FROM "command_center_notices" WHERE "id"=${input.noticeId} AND "organizationId"=${identity.organizationId} AND "recipientId"=${identity.actorId} AND "occurrenceId" IN (${Prisma.join(ids)})`,
++    );
++    if (!rows.length) throw deny();
++    await tx.$executeRaw(
++      Prisma.sql`UPDATE "command_center_notices" SET "state"='READ',"readAt"=(CURRENT_TIMESTAMP AT TIME ZONE 'UTC') WHERE "id"=${input.noticeId} AND "organizationId"=${identity.organizationId} AND "state"<>'READ'`,
++    );
++    return present(tx, identity, current);
++  });
++}
+--- /dev/null
++++ after/services/command-center/sources.ts
+@@ -0,0 +1,527 @@
++import "server-only";
++import { createHash } from "node:crypto";
++import {
++  Prisma,
++  AdjustmentStatus,
++  AdjustmentType,
++  PayrollRunStatus,
++  PurchaseOrderStatus,
++  PayrollEmployeeBalanceCaseStatus,
++  SuspenseStatus,
++} from "@prisma/client";
++import { hasRbacPermission } from "@/lib/security/rbac-permissions";
++import {
++  getPaymentTruthSnapshot,
++  OPEN_SUSPENSE_STATUSES,
++} from "@/services/snapshots/payment-truth-snapshot.service";
++import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service";
++import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service";
++import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service";
++import { getPayrollFinanceForecast } from "@/services/payroll/payroll-finance-forecast.service";
++import { normalizeSnapshotScope } from "@/services/snapshots/snapshot-utils";
++import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts";
++import type { Condition, FollowUpQuery, SourceKey } from "./contracts";
++import { moduleAllowed, type Party } from "./authority";
++
++export const digest = (value: unknown) =>
++  createHash("sha256").update(JSON.stringify(value)).digest("hex");
++export const sources: Record<
++  SourceKey,
++  {
++    module: CommercialModuleSlug;
++    permissions: string[];
++    path: string;
++    current: boolean;
++    location: boolean;
++  }
++> = {
++  suspense: {
++    module: "payment_reconciliation",
++    permissions: ["payments.reconciliation.read"],
++    path: "/dashboard/finance/reconciliation",
++    current: true,
++    location: false,
++  },
++  stockout: {
++    module: "inventory",
++    permissions: ["inventory.items.read"],
++    path: "/dashboard/inventory/items",
++    current: true,
++    location: true,
++  },
++  receiving: {
++    module: "purchasing",
++    permissions: ["purchases.orders.read"],
++    path: "/dashboard/purchase-orders",
++    current: true,
++    location: true,
++  },
++  loss: {
++    module: "inventory",
++    permissions: ["inventory.levels.read"],
++    path: "/dashboard/inventory/loss-control",
++    current: false,
++    location: true,
++  },
++  close: {
++    module: "close_assurance",
++    permissions: ["accounting.close.read"],
++    path: "/dashboard/accounting/close",
++    current: true,
++    location: false,
++  },
++  payroll_forecast: {
++    module: "payroll",
++    permissions: ["payroll.command.read", "payments.reconciliation.read"],
++    path: "/dashboard/payroll",
++    current: true,
++    location: false,
++  },
++  employee_balance: {
++    module: "payroll",
++    permissions: ["payments.reconciliation.read", "payroll.command.read"],
++    path: "/dashboard/payroll/payments",
++    current: true,
++    location: false,
++  },
++};
++export type Observation = {
++  source: SourceKey;
++  logicalKey: string;
++  windowKey: string;
++  scopeKey: string;
++  condition: Condition;
++  revision: string;
++  refs: string[];
++};
++export type Prior = { sourceRefs: string[]; condition: Condition };
++export const canReadSource = (party: Party, source: SourceKey) =>
++  sources[source].permissions.every((p) =>
++    hasRbacPermission(party.permissions, p),
++  );
++export async function readSources(
++  tx: Prisma.TransactionClient,
++  org: string,
++  actor: Party,
++  query: FollowUpQuery,
++  prior: (key: string) => Promise<Prior | null>,
++  now = new Date(),
++) {
++  const scope = normalizeSnapshotScope({
++    organizationId: org,
++    locationId: query.locationId,
++    periodStart: query.periodStart,
++    periodEnd: query.periodEnd,
++    now,
++  });
++  const scopeKey = scope.locationId ?? "TENANT";
++  const observations: Observation[] = [],
++    unavailable: SourceKey[] = [];
++  for (const source of Object.keys(sources) as SourceKey[]) {
++    const config = sources[source];
++    if (
++      source === "loss" &&
++      !scope.locationId &&
++      (!actor.wide || !hasRbacPermission(actor.permissions, "dashboard.read"))
++    ) {
++      unavailable.push(source);
++      continue;
++    }
++    if (
++      !canReadSource(actor, source) ||
++      (scope.locationId && !config.location) ||
++      !(await moduleAllowed(tx, org, actor, config.module))
++    ) {
++      unavailable.push(source);
++      continue;
++    }
++    if (
++      (source === "payroll_forecast" || source === "employee_balance") &&
++      !(await moduleAllowed(tx, org, actor, "payment_reconciliation"))
++    ) {
++      unavailable.push(source);
++      continue;
++    }
++    const windowKey = config.current
++      ? "CURRENT_STATE"
++      : JSON.stringify([
++          scope.periodStart.toISOString(),
++          scope.periodEnd.toISOString(),
++        ]);
++    const logicalKey = digest([
++      "command-center-v1",
++      org,
++      scopeKey,
++      source,
++      windowKey,
++    ]);
++    const previous = await prior(logicalKey);
++    const previousIds = previous?.sourceRefs ?? [];
++    let condition: Condition = "UNKNOWN",
++      revision: unknown = null,
++      refs: string[] = [];
++    const location = scope.locationId ? { locationId: scope.locationId } : {};
++    const activeLocation = {
++      organizationId: org,
++      isActive: true,
++      deletedAt: null,
++    };
++    if (source === "stockout") {
++      const snapshot = await getInventoryCashSnapshot(scope, tx);
++      const where = {
++        ...location,
++        location: activeLocation,
++        item: { organizationId: org, deletedAt: null, trackInventory: true },
++      };
++      const rows = await tx.inventoryLevel.findMany({
++        where: { ...where, quantityAvailable: { lte: 0 } },
++        select: { id: true, version: true, updatedAt: true },
++        orderBy: { id: "asc" },
++        take: 1001,
++      });
++      refs = rows.map((r) => r.id);
++      revision = rows;
++      if (
++        refs.length <= 1000 &&
++        refs.length === snapshot.metrics.zeroStockLevelCount
++      ) {
++        condition = refs.length
++          ? "ACTIVE"
++          : previousIds.length &&
++              (await tx.inventoryLevel.count({
++                where: {
++                  ...where,
++                  id: { in: previousIds },
++                  quantityAvailable: { gt: 0 },
++                },
++              })) !== previousIds.length
++            ? "UNKNOWN"
++            : "CLEAR";
++      }
++    } else if (source === "suspense") {
++      const snapshot = await getPaymentTruthSnapshot(scope, tx);
++      const rows = await tx.suspenseItem.findMany({
++        where: { organizationId: org, status: { in: OPEN_SUSPENSE_STATUSES } },
++        select: { id: true, updatedAt: true },
++        orderBy: { id: "asc" },
++        take: 1001,
++      });
++      refs = rows.map((r) => r.id);
++      revision = rows;
++      if (
++        refs.length <= 1000 &&
++        refs.length === snapshot.metrics.openSuspenseCount
++      )
++        condition = refs.length
++          ? "ACTIVE"
++          : previousIds.length &&
++              (await tx.suspenseItem.count({
++                where: {
++                  organizationId: org,
++                  id: { in: previousIds },
++                  status: {
++                    in: [SuspenseStatus.RESOLVED, SuspenseStatus.WRITTEN_OFF],
++                  },
++                },
++              })) !== previousIds.length
++            ? "UNKNOWN"
++            : "CLEAR";
++    } else if (source === "receiving") {
++      const where = {
++        organizationId: org,
++        deletedAt: null,
++        ...location,
++        location: activeLocation,
++      };
++      const rows = await tx.purchaseOrder.findMany({
++        where: {
++          ...where,
++          status: {
++            in: [
++              PurchaseOrderStatus.SUBMITTED,
++              PurchaseOrderStatus.APPROVED,
++              PurchaseOrderStatus.PARTIALLY_RECEIVED,
++            ],
++          },
++          expectedDeliveryDate: { lt: now },
++        },
++        select: { id: true, updatedAt: true },
++        orderBy: { id: "asc" },
++        take: 1001,
++      });
++      refs = rows.map((r) => r.id);
++      revision = rows;
++      if (
++        refs.length <= 1000 &&
++        refs.length ===
++          (await tx.purchaseOrder.count({
++            where: {
++              organizationId: org,
++              deletedAt: null,
++              ...location,
++              status: {
++                in: [
++                  PurchaseOrderStatus.SUBMITTED,
++                  PurchaseOrderStatus.APPROVED,
++                  PurchaseOrderStatus.PARTIALLY_RECEIVED,
++                ],
++              },
++              expectedDeliveryDate: { lt: now },
++            },
++          }))
++      )
++        condition = refs.length
++          ? "ACTIVE"
++          : previousIds.length &&
++              (await tx.purchaseOrder.count({
++                where: {
++                  ...where,
++                  id: { in: previousIds },
++                  status: {
++                    in: [
++                      PurchaseOrderStatus.RECEIVED,
++                      PurchaseOrderStatus.COMPLETED,
++                    ],
++                  },
++                },
++              })) !== previousIds.length
++            ? "UNKNOWN"
++            : "CLEAR";
++    } else if (source === "loss") {
++      const snapshot = await getInventoryLossSnapshot(scope, tx);
++      // Same completed-loss predicate as inventory-loss-read.service; bind reviews
++      // to retained records, not only totals which can match after replacement.
++      const rows = await tx.stockAdjustmentLine.findMany({
++        where: {
++          adjustedQuantity: { lt: 0 },
++          adjustment: {
++            organizationId: org,
++            deletedAt: null,
++            status: AdjustmentStatus.COMPLETED,
++            type: {
++              in: [
++                AdjustmentType.CYCLE_COUNT,
++                AdjustmentType.PHYSICAL_COUNT,
++                AdjustmentType.DAMAGED,
++                AdjustmentType.EXPIRED,
++                AdjustmentType.THEFT,
++                AdjustmentType.WRITE_OFF,
++              ],
++            },
++            adjustmentDate: { gte: scope.periodStart, lte: scope.periodEnd },
++            ...location,
++          },
++        },
++        select: {
++          id: true,
++          updatedAt: true,
++          evidenceHash: true,
++          adjustment: {
++            select: {
++              id: true,
++              updatedAt: true,
++              evidenceHash: true,
++              documentHash: true,
++            },
++          },
++        },
++        orderBy: { id: "asc" },
++        take: 1001,
++      });
++      refs = rows.map((r) => r.id);
++      revision = [snapshot.sourceHash, rows];
++      condition =
++        snapshot.metrics.sourceTruncated ||
++        refs.length > 1000 ||
++        refs.length !== snapshot.metrics.lossLineCount
++          ? "UNKNOWN"
++          : snapshot.metrics.lossLineCount > 0
++            ? "ACTIVE"
++            : previous
++              ? "UNKNOWN"
++              : "CLEAR";
++    } else if (source === "close") {
++      // This shared source tracks retained close obligations across periods;
++      // page-specific interval summaries remain separate and unchanged.
++      const periods = await tx.accountingPeriod.findMany({
++        where: { organizationId: org },
++        select: { id: true, startDate: true, endDate: true },
++        orderBy: { id: "asc" },
++        take: 1001,
++      });
++      refs = periods.map((p) => p.id);
++      if (periods.length > 1000) {
++        condition = "UNKNOWN";
++        revision = "coverage-limit";
++      } else if (!periods.length) {
++        condition = previousIds.length ? "UNKNOWN" : "CLEAR";
++        revision = "no-retained-periods";
++      } else {
++        const closeScope = {
++          ...scope,
++          periodStart: new Date(
++            Math.min(...periods.map((p) => p.startDate.getTime())),
++          ),
++          periodEnd: new Date(
++            Math.max(...periods.map((p) => p.endDate.getTime())),
++          ),
++        };
++        const snapshot = await getCloseReadinessSnapshot(closeScope, tx);
++        revision = snapshot.sourceHash;
++        const m = snapshot.metrics;
++        condition =
++          m.openFindingCount > 0 ||
++          m.blockedCloseRunCount > 0 ||
++          m.unavailableEvidenceCount > 0
++            ? "ACTIVE"
++            : previousIds.every((id) => refs.includes(id)) &&
++                m.certifiedCloseRunCount >= m.accountingPeriodCount &&
++                snapshot.evidenceGrade === "certified"
++              ? "CLEAR"
++              : previous
++                ? "UNKNOWN"
++                : "CLEAR";
++      }
++    } else if (source === "employee_balance") {
++      const rows = await tx.payrollEmployeeBalanceCase.findMany({
++        where: {
++          organizationId: org,
++          status: {
++            in: [
++              PayrollEmployeeBalanceCaseStatus.OPEN,
++              PayrollEmployeeBalanceCaseStatus.PARTIALLY_SETTLED,
++            ],
++          },
++        },
++        select: { id: true, updatedAt: true },
++        orderBy: { id: "asc" },
++        take: 1001,
++      });
++      refs = rows.map((r) => r.id);
++      revision = rows;
++      if (refs.length <= 1000)
++        condition = refs.length
++          ? "ACTIVE"
++          : previousIds.length &&
++              (await tx.payrollEmployeeBalanceCase.count({
++                where: {
++                  organizationId: org,
++                  id: { in: previousIds },
++                  status: PayrollEmployeeBalanceCaseStatus.SETTLED,
++                },
++              })) !== previousIds.length
++            ? "UNKNOWN"
++            : "CLEAR";
++    } else {
++      const organization = await tx.organization.findUniqueOrThrow({
++        where: { id: org },
++        select: { currency: true },
++      });
++      // Canonical rolling horizon, shared by daily/weekly/executive projections.
++      const start = new Date(now);
++      start.setUTCHours(0, 0, 0, 0);
++      const end = new Date(start.getTime() + 30 * 86400000);
++      end.setUTCHours(23, 59, 59, 999);
++      const forecastScope = { ...scope, periodStart: start, periodEnd: end };
++      const periods = await tx.payrollPeriod.findMany({
++        where: { organizationId: org, payDate: { gte: start, lte: end } },
++        select: { id: true },
++        orderBy: { id: "asc" },
++        take: 1001,
++      });
++      const declarations = await tx.payrollDeclaration.findMany({
++        where: {
++          organizationId: org,
++          dueDate: { gte: start, lte: end },
++          payrollRun: {
++            organizationId: org,
++            deletedAt: null,
++            status: {
++              in: [
++                PayrollRunStatus.POSTED,
++                PayrollRunStatus.PAID,
++                PayrollRunStatus.ARCHIVED,
++              ],
++            },
++          },
++        },
++        select: {
++          id: true,
++          updatedAt: true,
++          payrollRunId: true,
++          status: true,
++          payloadHash: true,
++        },
++        orderBy: { id: "asc" },
++        take: 1001,
++      });
++      refs = [
++        ...periods.map((p) => "period:" + p.id),
++        ...declarations.map((d) => "declaration:" + d.id),
++      ];
++      const paymentTruth = await getPaymentTruthSnapshot(forecastScope, tx);
++      const forecast = await getPayrollFinanceForecast(
++        { scope: forecastScope, paymentTruth, currency: organization.currency },
++        tx,
++      );
++      revision = [
++        forecast.metrics,
++        forecast.sourceMaxUpdatedAt,
++        forecast.sourceEvidenceHash,
++        declarations,
++      ];
++      condition =
++        refs.length > 1000
++          ? "UNKNOWN"
++          : forecast.metrics.blockerCodes.length > 0
++            ? "ACTIVE"
++            : forecast.metrics.authoritative &&
++                previousIds.every((id) => refs.includes(id))
++              ? "CLEAR"
++              : "UNKNOWN";
++    }
++    // Retain every known active member until positively cleared; deletion or
++    // filtering is never proof of completion. Bound references, report uncertainty.
++    if (condition === "ACTIVE" && previous?.condition !== "CLEAR")
++      refs = [...new Set([...previousIds, ...refs])].sort();
++    if (refs.length > 1000) {
++      condition = "UNKNOWN";
++      refs = previousIds;
++    }
++    if (condition !== "ACTIVE" && previousIds.length) refs = previousIds;
++    if (condition === "UNKNOWN") unavailable.push(source);
++    observations.push({
++      source,
++      scopeKey,
++      windowKey,
++      logicalKey,
++      condition,
++      revision: digest([condition, revision]),
++      refs,
++    });
++  }
++  return {
++    scope: {
++      locationId: scope.locationId,
++      periodStart: scope.periodStart.toISOString(),
++      periodEnd: scope.periodEnd.toISOString(),
++    },
++    observations,
++    unavailable,
++  };
++}
++
++export async function sourceModulesAllowed(
++  tx: Prisma.TransactionClient,
++  org: string,
++  party: Party,
++  source: SourceKey,
++  write = false,
++) {
++  if (!(await moduleAllowed(tx, org, party, sources[source].module, write)))
++    return false;
++  return (
++    !["payroll_forecast", "employee_balance"].includes(source) ||
++    (await moduleAllowed(tx, org, party, "payment_reconciliation", write))
++  );
++}
+--- /dev/null
++++ after/services/command-center/__tests__/command-center.postgres.test.ts
+@@ -0,0 +1,960 @@
++import { randomUUID } from "node:crypto";
++import path from "node:path";
++import { Prisma, type PrismaClient } from "@prisma/client";
++import type { FollowUpQuery, FollowUpCommand } from "../contracts";
++jest.mock("server-only", () => ({}));
++if (process.env.RUN_COMMAND_CENTER_INTEGRATION_POSTGRES !== "1")
++  throw Error("Use the disposable Command Center runner");
++const database = process.env.COMMAND_CENTER_DISPOSABLE_DATABASE!;
++if (!/^stoquify_local_command_center_[a-f0-9]{10}$/.test(database ?? ""))
++  throw Error("Unexpected target");
++require("../../../scripts/disposable-fixture-guard").assertDisposableDatabaseTarget(
++  process.env.DATABASE_URL,
++  [database],
++);
++const { db } = require("@/prisma/db") as { db: PrismaClient };
++const {
++  loadFollowUps,
++  changeFollowUp,
++  reviewFollowUps,
++  followUpCandidates,
++  saveFollowUpPreference,
++  acknowledgeFollowUpNotice,
++} =
++  require("../persistence.service") as typeof import("../persistence.service");
++const query: FollowUpQuery = {
++  center: "manager",
++  periodStart: "2026-10-24T00:00:00.000Z",
++  periodEnd: "2026-10-24T23:59:59.999Z",
++};
++const permissions = [
++  "dashboard.read",
++  "inventory.items.read",
++  "controls.manage",
++];
++async function fixture(extra: string[] = []) {
++  const suffix = randomUUID(),
++    org = await db.organization.create({
++      data: {
++        name: "Synthetic follow-up",
++        slug: "cc6-" + suffix,
++        currency: "XAF",
++      },
++    });
++  const role = await db.role.create({
++    data: {
++      organizationId: org.id,
++      code: "admin",
++      nameEn: "Fixture",
++      permissions: [...permissions, ...extra],
++    },
++  });
++  const create = (tag: string) =>
++    db.user.create({
++      data: {
++        organizationId: org.id,
++        email: `${tag}-${suffix}@example.invalid`,
++        firstName: tag,
++        isVerified: true,
++        roles: { connect: { id: role.id } },
++      },
++    });
++  const actor = await create("Actor"),
++    owner = await create("Owner"),
++    other = await create("Other");
++  const session = await db.session.create({
++    data: {
++      userId: actor.id,
++      token: randomUUID(),
++      expiresAt: new Date(Date.now() + 3600000),
++    },
++  });
++  const location = await db.location.create({
++    data: {
++      organizationId: org.id,
++      name: "Synthetic branch",
++      code: "A",
++      managerId: owner.id,
++    },
++  });
++  const item = await db.item.create({
++    data: {
++      organizationId: org.id,
++      sku: suffix,
++      slug: suffix,
++      nameEn: "Synthetic stock",
++      imageUrls: [],
++    },
++  });
++  const level = await db.inventoryLevel.create({
++    data: { itemId: item.id, locationId: location.id, quantityAvailable: 0 },
++  });
++  const identity = {
++    organizationId: org.id,
++    actorId: actor.id,
++    session: { id: session.id, token: session.token },
++  };
++  const load = (q = query) => loadFollowUps(identity, q);
++  const command = async (
++    ownerId: string | null = owner.id,
++  ): Promise<FollowUpCommand> => {
++    const data = await load();
++    const work = data.items.find((i) => i.source === "stockout")!;
++    return {
++      ...query,
++      requestId: randomUUID(),
++      itemId: work.id,
++      expectedRevision: work.revision,
++      ownerId,
++      state: "ASSIGNED",
++      dueAt: "2026-11-01T00:00:00.000Z",
++    };
++  };
++  const events = async (type = "COORDINATED") =>
++    Number(
++      (
++        await db.$queryRaw<
++          { n: bigint }[]
++        >`SELECT count(*)::bigint AS n FROM "command_center_events" WHERE "organizationId"=${org.id} AND "type"=${type}`
++      )[0].n,
++    );
++  return {
++    org,
++    role,
++    actor,
++    owner,
++    other,
++    session,
++    location,
++    item,
++    level,
++    identity,
++    load,
++    command,
++    events,
++  };
++}
++beforeAll(async () => {
++  const rows = await db.$queryRaw<
++    { name: string; directory: string; address: string }[]
++  >`SELECT current_database() AS name,current_setting('data_directory') AS directory,host(inet_server_addr()) AS address`;
++  expect(rows[0].name).toBe(database);
++  expect(rows[0].address).toBe("127.0.0.1");
++  expect(path.resolve(rows[0].directory).toLowerCase()).toBe(
++    path.resolve(process.env.COMMAND_CENTER_DISPOSABLE_CLUSTER!).toLowerCase(),
++  );
++});
++afterAll(async () => db.$disconnect());
++
++it("shares one persistent occurrence and owner across all three centers and a new session", async () => {
++  const f = await fixture(),
++    input = await f.command();
++  await changeFollowUp(f.identity, input);
++  const fresh = await db.session.create({
++    data: {
++      userId: f.actor.id,
++      token: randomUUID(),
++      expiresAt: new Date(Date.now() + 60000),
++    },
++  });
++  for (const center of ["digest", "manager", "owner"] as const) {
++    const data = await loadFollowUps(
++      { ...f.identity, session: { id: fresh.id, token: fresh.token } },
++      { ...query, center },
++    );
++    expect(data.items[0]).toMatchObject({
++      id: input.itemId,
++      ownerId: f.owner.id,
++      dueAt: input.dueAt,
++      coordination: "ASSIGNED",
++    });
++  }
++  expect(await f.events("OBSERVED")).toBe(1);
++});
++it("keeps current-state identity across daily and weekly display windows", async () => {
++  const f = await fixture();
++  const a = await f.load();
++  const b = await f.load({
++    ...query,
++    center: "digest",
++    periodStart: "2026-10-18T00:00:00.000Z",
++  });
++  expect(a.items[0].id).toBe(b.items[0].id);
++});
++it("does not double-count negative inventory", async () => {
++  const f = await fixture();
++  await db.inventoryLevel.update({
++    where: { id: f.level.id },
++    data: { quantityAvailable: -2 },
++  });
++  expect((await f.load()).items[0].condition).toBe("ACTIVE");
++});
++it("starts an unassigned occurrence only after source-confirmed clearance then recurrence", async () => {
++  const f = await fixture(),
++    input = await f.command();
++  await changeFollowUp(f.identity, input);
++  await db.inventoryLevel.update({
++    where: { id: f.level.id },
++    data: { quantityAvailable: 4, version: { increment: 1 } },
++  });
++  expect((await f.load()).items[0].condition).toBe("CLEAR");
++  await db.inventoryLevel.update({
++    where: { id: f.level.id },
++    data: { quantityAvailable: 0, version: { increment: 1 } },
++  });
++  const next = (await f.load()).items[0];
++  expect(next.id).not.toBe(input.itemId);
++  expect(next).toMatchObject({
++    episode: 2,
++    ownerId: null,
++    coordination: "OPEN",
++  });
++});
++it("does not infer clearance from deletion or exclusion", async () => {
++  const f = await fixture();
++  await f.load();
++  await db.item.update({
++    where: { id: f.item.id },
++    data: { deletedAt: new Date() },
++  });
++  expect((await f.load()).items[0].condition).toBe("UNKNOWN");
++});
++it("persists an evidence-bound review across centers and invalidates A-B-A", async () => {
++  const f = await fixture(),
++    a = await f.load();
++  const input = {
++    ...query,
++    requestId: randomUUID(),
++    expectedRevision: a.revision,
++    evidenceKey: a.evidenceKey,
++  };
++  await reviewFollowUps(f.identity, input);
++  await reviewFollowUps(f.identity, input);
++  expect((await f.load({ ...query, center: "owner" })).review.current).toBe(
++    true,
++  );
++  await db.inventoryLevel.update({
++    where: { id: f.level.id },
++    data: { quantityAvailable: -1, version: 1 },
++  });
++  expect((await f.load()).review.current).toBe(false);
++  await db.inventoryLevel.update({
++    where: { id: f.level.id },
++    data: {
++      quantityAvailable: 0,
++      version: f.level.version,
++      updatedAt: f.level.updatedAt,
++    },
++  });
++  const reverted = await f.load();
++  expect(reverted.review.current).toBe(false);
++  expect(reverted.revision).toBeGreaterThan(a.revision);
++});
++it("invalidates coordination review on changed evidence without losing the assigned owner", async () => {
++  const f = await fixture(),
++    input = await f.command();
++  await changeFollowUp(f.identity, { ...input, state: "REVIEWED" });
++  await db.inventoryLevel.update({
++    where: { id: f.level.id },
++    data: { quantityAvailable: -1, version: { increment: 1 } },
++  });
++  expect((await f.load()).items[0]).toMatchObject({
++    coordination: "ASSIGNED",
++    ownerId: f.owner.id,
++    episode: 1,
++  });
++});
++it("replays exactly once and rejects changed intent", async () => {
++  const f = await fixture(),
++    input = await f.command();
++  await changeFollowUp(f.identity, input);
++  await changeFollowUp(f.identity, input);
++  await expect(
++    changeFollowUp(f.identity, { ...input, ownerId: f.other.id }),
++  ).rejects.toThrow(/changed/);
++  expect(await f.events()).toBe(1);
++});
++it("allows only one competing command at the same revision", async () => {
++  const f = await fixture(),
++    input = await f.command();
++  const result = await Promise.allSettled([
++    changeFollowUp(f.identity, input),
++    changeFollowUp(f.identity, {
++      ...input,
++      ownerId: f.other.id,
++      requestId: randomUUID(),
++    }),
++  ]);
++  expect(result.filter((r) => r.status === "fulfilled")).toHaveLength(1);
++  expect(await f.events()).toBe(1);
++});
++it("converges parallel first observations without duplicate active occurrences", async () => {
++  const f = await fixture();
++  await Promise.allSettled([f.load(), f.load({ ...query, center: "owner" })]);
++  await f.load();
++  expect(await f.events("OBSERVED")).toBe(1);
++});
++it("rolls back the coordination change when event persistence fails", async () => {
++  const f = await fixture(),
++    input = await f.command();
++  await db.$executeRawUnsafe(
++    `CREATE FUNCTION cc6_fail_event() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'fixture failure'; END $$`,
++  );
++  await db.$executeRawUnsafe(
++    `CREATE TRIGGER cc6_fail_event BEFORE INSERT ON command_center_events FOR EACH ROW WHEN (NEW.type='COORDINATED') EXECUTE FUNCTION cc6_fail_event()`,
++  );
++  try {
++    await expect(changeFollowUp(f.identity, input)).rejects.toThrow();
++    expect((await f.load()).items[0]).toMatchObject({
++      ownerId: null,
++      coordination: "OPEN",
++    });
++    expect(await f.events()).toBe(0);
++  } finally {
++    await db.$executeRawUnsafe(
++      "DROP TRIGGER cc6_fail_event ON command_center_events",
++    );
++    await db.$executeRawUnsafe("DROP FUNCTION cc6_fail_event()");
++  }
++});
++it("rejects foreign tenant work, assignees and immutable event references", async () => {
++  const a = await fixture(),
++    b = await fixture(),
++    input = await a.command(),
++    other = await b.command();
++  await expect(
++    changeFollowUp(a.identity, { ...input, itemId: other.itemId }),
++  ).rejects.toThrow();
++  await expect(
++    changeFollowUp(a.identity, { ...input, ownerId: b.owner.id }),
++  ).rejects.toThrow();
++  await expect(
++    db.$executeRaw(
++      Prisma.sql`INSERT INTO "command_center_events" ("id","organizationId","occurrenceId","actorId","type","resultRevision","changes") VALUES (${randomUUID()},${a.org.id},${other.itemId},${a.actor.id},'FORGED',1,'{}'::jsonb)`,
++    ),
++  ).rejects.toThrow();
++});
++it.each(["account", "session", "permission", "module"])(
++  "reauthorizes %s revocation on read and replay",
++  async (kind) => {
++    const f = await fixture(),
++      input = await f.command();
++    await changeFollowUp(f.identity, input);
++    if (kind === "account")
++      await db.user.update({
++        where: { id: f.actor.id },
++        data: { isActive: false },
++      });
++    if (kind === "session")
++      await db.session.delete({ where: { id: f.session.id } });
++    if (kind === "permission")
++      await db.role.update({
++        where: { id: f.role.id },
++        data: { permissions: ["dashboard.read", "controls.manage"] },
++      });
++    if (kind === "module")
++      await db.tenantModuleConfiguration.create({
++        data: { organizationId: f.org.id, manifestHash: "fixture-empty" },
++      });
++    await expect(changeFollowUp(f.identity, input)).rejects.toThrow();
++    if (kind === "permission") expect((await f.load()).items).toEqual([]);
++    else await expect(f.load()).rejects.toThrow();
++    expect(await f.events()).toBe(1);
++  },
++);
++it("allows source-permitted Digest read while keeping tenant assignment and Manager scope restricted", async () => {
++  const f = await fixture();
++  await db.role.update({
++    where: { id: f.role.id },
++    data: {
++      code: "finance",
++      permissions: ["finance.read", "inventory.items.read"],
++    },
++  });
++  const data = await f.load({ ...query, center: "digest" });
++  expect(data.items[0].canAssign).toBe(false);
++  await expect(f.load()).rejects.toThrow();
++});
++it("binds location responsibility and rechecks assignee manager replacement on replay", async () => {
++  const f = await fixture();
++  const role = await db.role.create({
++    data: {
++      organizationId: f.org.id,
++      code: "branch_manager",
++      nameEn: "Scoped",
++      permissions,
++    },
++  });
++  await db.user.update({
++    where: { id: f.owner.id },
++    data: { roles: { set: [{ id: role.id }] } },
++  });
++  const q = { ...query, locationId: f.location.id };
++  const data = await f.load(q),
++    input = {
++      ...q,
++      requestId: randomUUID(),
++      itemId: data.items[0].id,
++      expectedRevision: data.items[0].revision,
++      ownerId: f.owner.id,
++      state: "ASSIGNED" as const,
++      dueAt: null,
++    };
++  await changeFollowUp(f.identity, input);
++  await db.location.update({
++    where: { id: f.location.id },
++    data: { managerId: f.other.id },
++  });
++  await expect(changeFollowUp(f.identity, input)).rejects.toThrow();
++});
++it("retains immutable review receipts and events", async () => {
++  const f = await fixture(),
++    data = await f.load();
++  await reviewFollowUps(f.identity, {
++    ...query,
++    requestId: randomUUID(),
++    expectedRevision: data.revision,
++    evidenceKey: data.evidenceKey,
++  });
++  await expect(
++    db.$executeRaw`UPDATE "command_center_review_receipts" SET "revision"=999 WHERE "organizationId"=${f.org.id}`,
++  ).rejects.toThrow(/immutable/);
++  await expect(
++    db.$executeRaw`DELETE FROM "command_center_events" WHERE "organizationId"=${f.org.id}`,
++  ).rejects.toThrow(/immutable/);
++});
++it("lists only eligible current assignees", async () => {
++  const f = await fixture(),
++    input = await f.command();
++  await db.user.update({
++    where: { id: f.other.id },
++    data: { isActive: false },
++  });
++  const result = await followUpCandidates(f.identity, {
++    ...query,
++    itemId: input.itemId,
++    search: "",
++  });
++  expect(result.candidates.map((c) => c.id)).toContain(f.owner.id);
++  expect(result.candidates.map((c) => c.id)).not.toContain(f.other.id);
++});
++it("does not treat cancelled receiving as successful source completion", async () => {
++  const f = await fixture(["purchases.orders.read"]),
++    supplier = await db.supplier.create({
++      data: { organizationId: f.org.id, name: "Synthetic supplier" },
++    });
++  const po = await db.purchaseOrder.create({
++    data: {
++      organizationId: f.org.id,
++      locationId: f.location.id,
++      supplierId: supplier.id,
++      orderNumber: randomUUID(),
++      status: "APPROVED",
++      expectedDeliveryDate: new Date("2026-01-01"),
++    },
++  });
++  expect(
++    (await f.load()).items.find((i) => i.source === "receiving")?.condition,
++  ).toBe("ACTIVE");
++  await db.purchaseOrder.update({
++    where: { id: po.id },
++    data: { status: "CANCELLED" },
++  });
++  expect(
++    (await f.load()).items.find((i) => i.source === "receiving")?.condition,
++  ).toBe("UNKNOWN");
++});
++it("observes explicit receipt completion without changing financial sources", async () => {
++  const f = await fixture(["purchases.orders.read"]),
++    supplier = await db.supplier.create({
++      data: { organizationId: f.org.id, name: "Synthetic supplier" },
++    });
++  const po = await db.purchaseOrder.create({
++    data: {
++      organizationId: f.org.id,
++      locationId: f.location.id,
++      supplierId: supplier.id,
++      orderNumber: randomUUID(),
++      status: "APPROVED",
++      expectedDeliveryDate: new Date("2026-01-01"),
++    },
++  });
++  await f.load();
++  await db.purchaseOrder.update({
++    where: { id: po.id },
++    data: { status: "RECEIVED" },
++  });
++  expect(
++    (await f.load()).items.find((i) => i.source === "receiving")?.condition,
++  ).toBe("CLEAR");
++  expect(
++    (
++      await db.inventoryLevel.findUniqueOrThrow({ where: { id: f.level.id } })
++    ).quantityAvailable.toString(),
++  ).toBe("0");
++});
++
++it("reads all seven canonical source adapters from real records in the same transaction", async () => {
++  const f = await fixture([
++    "inventory.levels.read",
++    "accounting.close.read",
++    "payroll.command.read",
++    "payments.reconciliation.read",
++    "purchases.orders.read",
++  ]);
++  await db.suspenseItem.create({
++    data: { organizationId: f.org.id, type: "UNKNOWN_CREDIT", amount: 10 },
++  });
++  await db.stockAdjustment.create({
++    data: {
++      organizationId: f.org.id,
++      locationId: f.location.id,
++      adjustmentNumber: randomUUID(),
++      type: "DAMAGED",
++      reason: "Synthetic loss",
++      status: "COMPLETED",
++      adjustmentDate: new Date(query.periodStart),
++      lines: {
++        create: {
++          itemId: f.item.id,
++          systemQuantity: 5,
++          actualQuantity: 4,
++          adjustedQuantity: -1,
++          unitCost: 10,
++          totalCost: 10,
++        },
++      },
++    },
++  });
++  const year = await db.fiscalYear.create({
++    data: {
++      organizationId: f.org.id,
++      name: "Synthetic",
++      startDate: new Date("2026-01-01"),
++      endDate: new Date("2026-12-31"),
++    },
++  });
++  const period = await db.accountingPeriod.create({
++    data: {
++      organizationId: f.org.id,
++      fiscalYearId: year.id,
++      periodNumber: 10,
++      name: "Synthetic October",
++      startDate: new Date(query.periodStart),
++      endDate: new Date(query.periodEnd),
++    },
++  });
++  await db.closeRun.create({
++    data: { organizationId: f.org.id, periodId: period.id, status: "BLOCKED" },
++  });
++  const today = new Date();
++  today.setUTCHours(12, 0, 0, 0);
++  const payrollPeriod = await db.payrollPeriod.create({
++    data: {
++      organizationId: f.org.id,
++      name: "Synthetic payroll",
++      periodStart: today,
++      periodEnd: new Date(today.getTime() + 86400000),
++      payDate: today,
++      countryCode: "CM",
++    },
++  });
++  const employee = await db.payrollEmployee.create({
++    data: {
++      organizationId: f.org.id,
++      employeeNumber: randomUUID(),
++      displayName: "Synthetic employee",
++      hireDate: new Date("2026-01-01"),
++    },
++  });
++  const run = await db.payrollRun.create({
++    data: {
++      organizationId: f.org.id,
++      payrollPeriodId: payrollPeriod.id,
++      runNumber: randomUUID(),
++      countryCode: "CM",
++      countryPackVersion: "fixture",
++      countryPackSchemaVersion: "fixture",
++      countryPackResolutionHash: "a".repeat(64),
++      countryPackCapabilityStatus: "SUPPORTED",
++      ruleSetHash: "b".repeat(64),
++      calculationHash: "c".repeat(64),
++      attendanceSnapshotHash: "d".repeat(64),
++    },
++  });
++  await db.payrollEmployeeBalanceCase.create({
++    data: {
++      organizationId: f.org.id,
++      employeeId: employee.id,
++      payrollRunId: run.id,
++      caseNumber: randomUUID(),
++      caseType: "RECEIVABLE",
++      amount: 100,
++      outstandingAmount: 100,
++      sourceNetPayableAmount: -100,
++      reason: "Synthetic fixture",
++      openedById: f.actor.id,
++      documentHash: "e".repeat(64),
++      evidenceHash: "f".repeat(64),
++    },
++  });
++  const supplier = await db.supplier.create({
++    data: { organizationId: f.org.id, name: "Synthetic supplier" },
++  });
++  await db.purchaseOrder.create({
++    data: {
++      organizationId: f.org.id,
++      locationId: f.location.id,
++      supplierId: supplier.id,
++      orderNumber: randomUUID(),
++      status: "APPROVED",
++      expectedDeliveryDate: new Date("2026-01-01"),
++    },
++  });
++  const data = await f.load();
++  expect(data.items.map((i) => i.source).sort()).toEqual(
++    [
++      "suspense",
++      "stockout",
++      "receiving",
++      "loss",
++      "close",
++      "payroll_forecast",
++      "employee_balance",
++    ].sort(),
++  );
++  expect(data.items.every((i) => i.condition === "ACTIVE")).toBe(true);
++  const weekly = await f.load({
++    ...query,
++    periodStart: "2026-10-18T00:00:00.000Z",
++  });
++  for (const key of ["close", "payroll_forecast"])
++    expect(weekly.items.find((i) => i.source === key)?.id).toBe(
++      data.items.find((i) => i.source === key)?.id,
++    );
++});
++async function ownerIdentity(f: Awaited<ReturnType<typeof fixture>>) {
++  const session = await db.session.create({
++    data: {
++      userId: f.owner.id,
++      token: randomUUID(),
++      expiresAt: new Date(Date.now() + 60000),
++    },
++  });
++  return {
++    ...f.identity,
++    actorId: f.owner.id,
++    session: { id: session.id, token: session.token },
++  };
++}
++it("publishes one current-recipient in-app notice and safely retries read acknowledgment", async () => {
++  const f = await fixture(),
++    input = await f.command();
++  await changeFollowUp(f.identity, input);
++  await changeFollowUp(f.identity, input);
++  const owner = await ownerIdentity(f),
++    first = await loadFollowUps(owner, query),
++    again = await loadFollowUps(owner, { ...query, center: "digest" });
++  expect(first.notices).toHaveLength(1);
++  expect(again.notices).toEqual(first.notices);
++  expect((await f.load()).notices).toEqual([]);
++  const ack = { ...query, noticeId: first.notices[0].id };
++  await acknowledgeFollowUpNotice(owner, ack);
++  await acknowledgeFollowUpNotice(owner, ack);
++  expect((await loadFollowUps(owner, query)).notices).toEqual([]);
++});
++it("defers pending notices during quiet hours and resumes the same delivery identity", async () => {
++  const f = await fixture(),
++    owner = await ownerIdentity(f),
++    hour = new Date().getUTCHours();
++  await saveFollowUpPreference(owner, {
++    ...query,
++    enabled: true,
++    quietStart: hour,
++    quietEnd: (hour + 1) % 24,
++  });
++  await changeFollowUp(f.identity, await f.command());
++  expect((await loadFollowUps(owner, query)).notices).toEqual([]);
++  const resumed = await saveFollowUpPreference(owner, {
++    ...query,
++    enabled: true,
++    quietStart: null,
++    quietEnd: null,
++  });
++  expect(resumed.notices).toHaveLength(1);
++  expect((await loadFollowUps(owner, query)).notices[0].id).toBe(
++    resumed.notices[0].id,
++  );
++});
++it("rechecks recipient access before notice publication and private reads", async () => {
++  const f = await fixture();
++  await changeFollowUp(f.identity, await f.command());
++  const owner = await ownerIdentity(f);
++  await db.user.update({
++    where: { id: f.owner.id },
++    data: { isActive: false },
++  });
++  await expect(loadFollowUps(owner, query)).rejects.toThrow();
++  const rows = await db.$queryRaw<
++    { state: string }[]
++  >`SELECT "state" FROM "command_center_notices" WHERE "organizationId"=${f.org.id}`;
++  expect(rows).toEqual([{ state: "PENDING" }]);
++});
++it("rolls back assignment and history if notification enqueue fails", async () => {
++  const f = await fixture(),
++    input = await f.command();
++  await db.$executeRawUnsafe(
++    `CREATE FUNCTION cc6_fail_notice() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'fixture notice failure'; END $$`,
++  );
++  await db.$executeRawUnsafe(
++    `CREATE TRIGGER cc6_fail_notice BEFORE INSERT ON command_center_notices FOR EACH ROW EXECUTE FUNCTION cc6_fail_notice()`,
++  );
++  try {
++    await expect(changeFollowUp(f.identity, input)).rejects.toThrow();
++    expect((await f.load()).items[0].ownerId).toBe(null);
++    expect(await f.events()).toBe(0);
++  } finally {
++    await db.$executeRawUnsafe(
++      "DROP TRIGGER cc6_fail_notice ON command_center_notices",
++    );
++    await db.$executeRawUnsafe("DROP FUNCTION cc6_fail_notice()");
++  }
++});
++
++async function waitForLock(fragment: string) {
++  const until = Date.now() + 7000;
++  while (Date.now() < until) {
++    const rows = await db.$queryRaw<
++      { n: bigint }[]
++    >`SELECT count(*)::bigint AS n FROM pg_stat_activity WHERE datname=current_database() AND pid<>pg_backend_pid() AND wait_event_type='Lock' AND query LIKE ${"%" + fragment + "%"}`;
++    if (Number(rows[0].n) > 0) return;
++    await new Promise((resolve) => setTimeout(resolve, 20));
++  }
++  throw Error("Expected PostgreSQL lock wait was not observed");
++}
++it("refuses assignment when concurrent assignee revocation commits first", async () => {
++  const f = await fixture(),
++    input = await f.command();
++  let entered!: () => void, release!: () => void;
++  const ready = new Promise<void>((resolve) => (entered = resolve)),
++    gate = new Promise<void>((resolve) => (release = resolve));
++  const revoke = db.$transaction(
++    async (tx) => {
++      await tx.user.update({
++        where: { id: f.owner.id },
++        data: { isActive: false },
++      });
++      entered();
++      await gate;
++    },
++    { timeout: 15000 },
++  );
++  await ready;
++  const assign = changeFollowUp(f.identity, input).then(
++    () => "accepted",
++    () => "refused",
++  );
++  try {
++    await waitForLock('FROM "users"');
++  } finally {
++    release();
++  }
++  await revoke;
++  expect(await assign).toBe("refused");
++  expect(await f.events()).toBe(0);
++});
++it("retries a failed in-app publication without changing delivery identity", async () => {
++  const f = await fixture();
++  await changeFollowUp(f.identity, await f.command());
++  const owner = await ownerIdentity(f);
++  const before = await db.$queryRaw<
++    { id: string; state: string }[]
++  >`SELECT "id","state" FROM "command_center_notices" WHERE "organizationId"=${f.org.id}`;
++  await db.$executeRawUnsafe(
++    `CREATE FUNCTION cc6_fail_publish() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'fixture publication failure'; END $$`,
++  );
++  await db.$executeRawUnsafe(
++    `CREATE TRIGGER cc6_fail_publish BEFORE UPDATE ON command_center_notices FOR EACH ROW WHEN (NEW.state='PUBLISHED') EXECUTE FUNCTION cc6_fail_publish()`,
++  );
++  try {
++    await expect(loadFollowUps(owner, query)).rejects.toThrow();
++    expect(
++      await db.$queryRaw`SELECT "id","state" FROM "command_center_notices" WHERE "organizationId"=${f.org.id}`,
++    ).toEqual(before);
++  } finally {
++    await db.$executeRawUnsafe(
++      "DROP TRIGGER cc6_fail_publish ON command_center_notices",
++    );
++    await db.$executeRawUnsafe("DROP FUNCTION cc6_fail_publish()");
++  }
++  const retried = await loadFollowUps(owner, query);
++  expect(retried.notices).toEqual([{ id: before[0].id, source: "stockout" }]);
++  expect((await loadFollowUps(owner, query)).notices).toEqual(retried.notices);
++});
++it("retains disabled notification preference across a new session", async () => {
++  const f = await fixture(),
++    owner = await ownerIdentity(f);
++  await saveFollowUpPreference(owner, {
++    ...query,
++    enabled: false,
++    quietStart: null,
++    quietEnd: null,
++  });
++  await changeFollowUp(f.identity, await f.command());
++  const fresh = await ownerIdentity(f),
++    data = await loadFollowUps(fresh, query);
++  expect(data.preference.enabled).toBe(false);
++  expect(data.notices).toEqual([]);
++});
++
++it("shares a location occurrence across Manager, Digest and Owner without sharing the tenant occurrence", async () => {
++  const f = await fixture(),
++    q = { ...query, locationId: f.location.id },
++    initial = await f.load(q),
++    item = initial.items[0];
++  await changeFollowUp(f.identity, {
++    ...q,
++    itemId: item.id,
++    expectedRevision: item.revision,
++    requestId: randomUUID(),
++    ownerId: f.owner.id,
++    state: "ASSIGNED",
++    dueAt: null,
++  });
++  const tenant = await f.load();
++  expect(tenant.items[0].id).not.toBe(item.id);
++  expect(tenant.availableLocations).toContainEqual({
++    id: f.location.id,
++    name: f.location.name,
++    assignedToActor: false,
++  });
++  for (const center of ["digest", "owner"] as const)
++    expect((await f.load({ ...q, center })).items[0]).toMatchObject({
++      id: item.id,
++      ownerId: f.owner.id,
++    });
++  const role = await db.role.create({
++    data: {
++      organizationId: f.org.id,
++      code: "branch_manager",
++      nameEn: "Scoped",
++      permissions,
++    },
++  });
++  await db.user.update({
++    where: { id: f.owner.id },
++    data: { roles: { set: [{ id: role.id }] } },
++  });
++  const owner = await ownerIdentity(f);
++  expect(
++    (await loadFollowUps(owner, { ...q, center: "digest" })).notices,
++  ).toHaveLength(1);
++  await db.location.update({
++    where: { id: f.location.id },
++    data: { managerId: f.other.id },
++  });
++  expect(
++    (await loadFollowUps(owner, { ...query, center: "digest" }))
++      .availableLocations,
++  ).toEqual([]);
++  await expect(
++    loadFollowUps(owner, { ...q, center: "digest" }),
++  ).rejects.toThrow();
++});
++it("invalidates loss review when equal-total evidence records are replaced", async () => {
++  const f = await fixture(["inventory.levels.read"]);
++  const adjustment = await db.stockAdjustment.create({
++    data: {
++      organizationId: f.org.id,
++      locationId: f.location.id,
++      adjustmentNumber: randomUUID(),
++      type: "DAMAGED",
++      reason: "Synthetic loss",
++      status: "COMPLETED",
++      adjustmentDate: new Date(query.periodStart),
++    },
++  });
++  const lineData = {
++    adjustmentId: adjustment.id,
++    itemId: f.item.id,
++    systemQuantity: 5,
++    actualQuantity: 4,
++    adjustedQuantity: -1,
++    unitCost: 10,
++    totalCost: 10,
++  };
++  const line = await db.stockAdjustmentLine.create({ data: lineData }),
++    before = await f.load();
++  await reviewFollowUps(f.identity, {
++    ...query,
++    requestId: randomUUID(),
++    expectedRevision: before.revision,
++    evidenceKey: before.evidenceKey,
++  });
++  await db.stockAdjustmentLine.delete({ where: { id: line.id } });
++  await db.stockAdjustmentLine.create({ data: lineData });
++  const after = await f.load();
++  expect(after.review.current).toBe(false);
++  expect(after.items.find((i) => i.source === "loss")?.sourceRevision).not.toBe(
++    before.items.find((i) => i.source === "loss")?.sourceRevision,
++  );
++});
++it("does not clear a declaration-only forecast when the declaration disappears", async () => {
++  const f = await fixture([
++      "payroll.command.read",
++      "payments.reconciliation.read",
++    ]),
++    today = new Date();
++  today.setUTCHours(12, 0, 0, 0);
++  const period = await db.payrollPeriod.create({
++    data: {
++      organizationId: f.org.id,
++      name: "Historical fixture",
++      periodStart: new Date("2025-01-01"),
++      periodEnd: new Date("2025-01-31"),
++      payDate: new Date("2025-01-31"),
++      countryCode: "CM",
++    },
++  });
++  const run = await db.payrollRun.create({
++    data: {
++      organizationId: f.org.id,
++      payrollPeriodId: period.id,
++      runNumber: randomUUID(),
++      status: "POSTED",
++      countryCode: "CM",
++      countryPackVersion: "fixture",
++      countryPackSchemaVersion: "fixture",
++      countryPackResolutionHash: "a".repeat(64),
++      countryPackCapabilityStatus: "SUPPORTED",
++      ruleSetHash: "b".repeat(64),
++      calculationHash: "c".repeat(64),
++      attendanceSnapshotHash: "d".repeat(64),
++    },
++  });
++  const declaration = await db.payrollDeclaration.create({
++    data: {
++      organizationId: f.org.id,
++      payrollRunId: run.id,
++      authority: "fixture",
++      declarationType: "fixture",
++      status: "REJECTED",
++      periodStart: period.periodStart,
++      periodEnd: period.periodEnd,
++      dueDate: today,
++      countryCode: "CM",
++      countryPackVersion: "fixture",
++      countryPackSchemaVersion: "fixture",
++      countryPackResolutionHash: "a".repeat(64),
++    },
++  });
++  expect(
++    (await f.load()).items.find((i) => i.source === "payroll_forecast")
++      ?.condition,
++  ).toBe("ACTIVE");
++  await db.payrollDeclaration.delete({ where: { id: declaration.id } });
++  expect(
++    (await f.load()).items.find((i) => i.source === "payroll_forecast")
++      ?.condition,
++  ).toBe("UNKNOWN");
++});
+--- /dev/null
++++ after/actions/command-center/follow-up.actions.ts
+@@ -0,0 +1,143 @@
++"use server";
++import { z } from "zod";
++import { requireSession } from "@/lib/security/auth-session";
++import { hasRbacPermission } from "@/lib/security/rbac-permissions";
++import {
++  protect,
++  type ProtectedActionResponse,
++} from "@/services/_shared/protect";
++import { toSafeActionError } from "@/services/_shared/action-errors";
++import {
++  deny,
++  DIGEST_PERMISSIONS,
++  type Identity,
++} from "@/services/command-center/authority";
++import {
++  loadFollowUps,
++  changeFollowUp,
++  reviewFollowUps,
++  followUpCandidates,
++  saveFollowUpPreference,
++  acknowledgeFollowUpNotice,
++} from "@/services/command-center/persistence.service";
++import type {
++  FollowUpData,
++  FollowUpQuery,
++  FollowUpCommand,
++  ReviewCommand,
++  CandidateQuery,
++  PreferenceCommand,
++  NoticeCommand,
++} from "@/services/command-center/contracts";
++const querySchema = z
++  .object({
++    center: z.enum(["digest", "manager", "owner"]),
++    locationId: z.string().min(1).max(128).nullable().optional(),
++    periodStart: z.string().datetime(),
++    periodEnd: z.string().datetime(),
++  })
++  .strict();
++const commandSchema = querySchema.extend({
++  requestId: z.string().uuid(),
++  itemId: z.string().uuid(),
++  expectedRevision: z.number().int().positive(),
++  ownerId: z.string().min(1).max(128).nullable(),
++  state: z.enum(["OPEN", "ASSIGNED", "WAITING", "REVIEWED"]),
++  dueAt: z.string().datetime().nullable(),
++});
++const reviewSchema = querySchema.extend({
++  requestId: z.string().uuid(),
++  expectedRevision: z.number().int().positive(),
++  evidenceKey: z.string().regex(/^[a-f0-9]{64}$/),
++});
++async function execute<T extends FollowUpQuery, O>(
++  schema: z.ZodType<T>,
++  raw: T,
++  handler: (identity: Identity, input: T) => Promise<O>,
++): Promise<ProtectedActionResponse<O>> {
++  try {
++    const input = schema.parse(raw);
++    const start = new Date(input.periodStart),
++      end = new Date(input.periodEnd);
++    if (end < start || end.getTime() - start.getTime() > 366 * 86400000)
++      throw deny();
++    const initial = await requireSession();
++    const permission =
++      input.center === "digest"
++        ? DIGEST_PERMISSIONS.find((p) =>
++            hasRbacPermission(initial.ctx.permissions, p),
++          )
++        : "dashboard.read";
++    if (!permission) throw deny();
++    return protect<T, O>(
++      {
++        permission,
++        tenantGuard: "handler-derived",
++        auditResource: "CommandCenterFollowUp",
++      },
++      async (value, ctx) => {
++        const verified = await requireSession();
++        if (
++          ctx.orgId !== verified.ctx.orgId ||
++          ctx.userId !== verified.ctx.userId
++        )
++          throw deny();
++        return handler(
++          {
++            organizationId: ctx.orgId,
++            actorId: ctx.userId,
++            session: {
++              id: verified.claims.sessionId,
++              token: verified.claims.sessionToken,
++            },
++          },
++          value,
++        );
++      },
++    )(input);
++  } catch (error) {
++    const safe = toSafeActionError(error);
++    return { success: false, data: null, ...safe };
++  }
++}
++export async function getCommandCenterFollowUps(input: FollowUpQuery) {
++  return execute(querySchema, input, loadFollowUps);
++}
++export async function changeCommandCenterFollowUp(input: FollowUpCommand) {
++  return execute(commandSchema, input, changeFollowUp);
++}
++export async function reviewCommandCenterFollowUps(input: ReviewCommand) {
++  return execute(reviewSchema, input, reviewFollowUps);
++}
++
++export async function getCommandCenterCandidates(input: CandidateQuery) {
++  return execute(
++    querySchema.extend({
++      itemId: z.string().uuid(),
++      search: z.string().max(80),
++    }),
++    input,
++    followUpCandidates,
++  );
++}
++
++export async function saveCommandCenterPreference(input: PreferenceCommand) {
++  return execute(
++    querySchema
++      .extend({
++        enabled: z.boolean(),
++        quietStart: z.number().int().min(0).max(23).nullable(),
++        quietEnd: z.number().int().min(0).max(23).nullable(),
++      })
++      .refine((v) => (v.quietStart === null) === (v.quietEnd === null)),
++    input,
++    saveFollowUpPreference,
++  );
++}
++export async function acknowledgeCommandCenterNotice(input: NoticeCommand) {
++  return execute(
++    querySchema.extend({ noticeId: z.string().uuid() }),
++    input,
++    acknowledgeFollowUpNotice,
++  );
++}
+--- /dev/null
++++ after/actions/command-center/__tests__/follow-up.actions.test.ts
+@@ -0,0 +1,118 @@
++jest.unmock("@/actions/command-center/follow-up.actions");
++jest.mock("@/lib/security/auth-session", () => ({ requireSession: jest.fn() }));
++jest.mock("@/services/_shared/protect", () => ({
++  protect: jest.fn((_options, handler) => async (input: unknown) => {
++    try {
++      return {
++        success: true,
++        data: await handler(input, { orgId: "org", userId: "actor" }),
++      };
++    } catch {
++      return { success: false, code: "FORBIDDEN" };
++    }
++  }),
++}));
++jest.mock("@/services/command-center/persistence.service", () => ({
++  loadFollowUps: jest.fn(),
++  changeFollowUp: jest.fn(),
++  reviewFollowUps: jest.fn(),
++  followUpCandidates: jest.fn(),
++  saveFollowUpPreference: jest.fn(),
++  acknowledgeFollowUpNotice: jest.fn(),
++}));
++import { requireSession } from "@/lib/security/auth-session";
++import {
++  loadFollowUps,
++  changeFollowUp,
++  saveFollowUpPreference,
++} from "@/services/command-center/persistence.service";
++import {
++  getCommandCenterFollowUps,
++  changeCommandCenterFollowUp,
++  saveCommandCenterPreference,
++} from "../follow-up.actions";
++const query = {
++  center: "manager" as const,
++  periodStart: "2026-10-24T00:00:00.000Z",
++  periodEnd: "2026-10-24T23:59:59.999Z",
++};
++const session = {
++  ctx: { orgId: "org", userId: "actor", permissions: ["dashboard.read"] },
++  claims: { sessionId: "session", sessionToken: "synthetic-session-token" },
++};
++beforeEach(() => {
++  jest.clearAllMocks();
++  (requireSession as jest.Mock).mockResolvedValue(session);
++});
++it("derives tenant, actor and session exclusively from verified server context", async () => {
++  await getCommandCenterFollowUps(query);
++  expect(loadFollowUps).toHaveBeenCalledWith(
++    {
++      organizationId: "org",
++      actorId: "actor",
++      session: { id: "session", token: "synthetic-session-token" },
++    },
++    query,
++  );
++});
++it("rejects injected tenant input before reading source data", async () => {
++  expect(
++    (
++      await getCommandCenterFollowUps({
++        ...query,
++        organizationId: "foreign",
++      } as never)
++    ).success,
++  ).toBe(false);
++  expect(loadFollowUps).not.toHaveBeenCalled();
++});
++it("rejects a changed authenticated context before invoking the service", async () => {
++  (requireSession as jest.Mock)
++    .mockResolvedValueOnce(session)
++    .mockResolvedValueOnce({
++      ...session,
++      ctx: { ...session.ctx, orgId: "changed" },
++    });
++  expect((await getCommandCenterFollowUps(query)).success).toBe(false);
++  expect(loadFollowUps).not.toHaveBeenCalled();
++});
++it("rejects invalid revision and command identity", async () => {
++  expect(
++    (
++      await changeCommandCenterFollowUp({
++        ...query,
++        requestId: "not-uuid",
++        itemId: "bad",
++        expectedRevision: 0,
++        ownerId: "actor",
++        state: "ASSIGNED",
++        dueAt: null,
++      })
++    ).success,
++  ).toBe(false);
++  expect(changeFollowUp).not.toHaveBeenCalled();
++});
++it("rejects incomplete quiet-hour preferences", async () => {
++  expect(
++    (
++      await saveCommandCenterPreference({
++        ...query,
++        enabled: true,
++        quietStart: 4,
++        quietEnd: null,
++      })
++    ).success,
++  ).toBe(false);
++  expect(saveFollowUpPreference).not.toHaveBeenCalled();
++});
++it("rejects an excessive reporting window", async () => {
++  expect(
++    (
++      await getCommandCenterFollowUps({
++        ...query,
++        periodStart: "2024-01-01T00:00:00.000Z",
++      })
++    ).success,
++  ).toBe(false);
++  expect(loadFollowUps).not.toHaveBeenCalled();
++});
+--- /dev/null
++++ after/components/command-center/FollowUpPanel.tsx
+@@ -0,0 +1,747 @@
++"use client";
++import { useCallback, useEffect, useMemo, useRef, useState } from "react";
++import Link from "next/link";
++import { localizePath } from "@/i18n/routing";
++import { Button } from "@/components/ui/button";
++import {
++  dashboardPanelClass,
++  dashboardRowClass,
++  dashboardMutedTextClass,
++} from "@/components/finance/finance-dashboard-theme";
++import {
++  getCommandCenterFollowUps,
++  changeCommandCenterFollowUp,
++  reviewCommandCenterFollowUps,
++  getCommandCenterCandidates,
++  saveCommandCenterPreference,
++  acknowledgeCommandCenterNotice,
++} from "@/actions/command-center/follow-up.actions";
++import type {
++  Center,
++  FollowUpQuery,
++  FollowUpData,
++  FollowUpItem,
++  FollowUpCommand,
++  ReviewCommand,
++  SourceKey,
++  Coordination,
++  FollowUpCandidate,
++  PreferenceCommand,
++  NoticeCommand,
++} from "@/services/command-center/contracts";
++const words = {
++  en: {
++    title: "Work & follow-up",
++    help: "Saved across Digest, Manager and Owner for the same source and scope. Coordination never certifies a business outcome.",
++    loading: "Checking current access and source evidence…",
++    refresh: "Refresh follow-ups",
++    empty: "No saved work is available in this scope.",
++    limited:
++      "Some sources are restricted or unavailable. This view does not establish organization-wide completion.",
++    save: "Save follow-up",
++    saved: "Follow-up saved. Other centers receive it on refresh.",
++    review: "Record review of these follow-ups",
++    reviewed: "Review recorded for the current evidence.",
++    reviewHelp:
++      "This records your review of the follow-ups below, not approval of the financial brief or source transactions.",
++    failed:
++      "Follow-ups are unavailable. Refresh to check current access and evidence.",
++    retry: "Retry the same request",
++    uncertain:
++      "The result is uncertain. Retry the same request or refresh before editing.",
++    open: "Open source",
++    owner: "Assignee",
++    me: "Me",
++    unassigned: "Unassigned",
++    due: "Follow-up date (UTC)",
++    state: "Coordination",
++    search: "Find eligible assignee",
++    find: "Search",
++    narrow: "Refine your search to see more candidates.",
++    history: "Recent history (up to 5 events)",
++    episode: "Occurrence",
++    mine: "Assigned to me",
++    all: "All permitted follow-ups",
++    noMatches: "No follow-ups match this filter.",
++    active: "Source needs attention",
++    clear: "Source condition cleared",
++    unknown: "Source evidence unavailable",
++    unavailableOwner: "Assignee unavailable",
++    states: {
++      OPEN: "Open",
++      ASSIGNED: "Assigned",
++      WAITING: "Waiting",
++      REVIEWED: "Reviewed",
++    },
++    events: {
++      OBSERVED: "Source observed",
++      SOURCE_CHANGED: "Source evidence changed",
++      COORDINATED: "Follow-up updated",
++    },
++  },
++  fr: {
++    title: "Travail et suivi",
++    help: "Enregistré dans Digest, Manager et Owner pour la même source et le même périmètre. Le suivi ne certifie aucun résultat métier.",
++    loading: "Vérification des accès et des preuves…",
++    refresh: "Actualiser les suivis",
++    empty: "Aucun travail enregistré n’est disponible dans ce périmètre.",
++    limited:
++      "Certaines sources sont restreintes ou indisponibles. Cette vue ne prouve pas l’achèvement des travaux de l’organisation.",
++    save: "Enregistrer le suivi",
++    saved:
++      "Suivi enregistré. Les autres centres le recevront après actualisation.",
++    review: "Enregistrer la revue de ces suivis",
++    reviewed: "Revue enregistrée pour les preuves actuelles.",
++    reviewHelp:
++      "Cette action enregistre la revue des suivis ci-dessous, sans approuver la synthèse financière ni les opérations sources.",
++    failed:
++      "Les suivis sont indisponibles. Actualisez pour vérifier les accès et les preuves.",
++    retry: "Réessayer la même demande",
++    uncertain:
++      "Le résultat est incertain. Réessayez la même demande ou actualisez avant de modifier.",
++    open: "Ouvrir la source",
++    owner: "Responsable",
++    me: "Moi",
++    unassigned: "Non attribué",
++    due: "Date de suivi (UTC)",
++    state: "Coordination",
++    search: "Rechercher un responsable autorisé",
++    find: "Rechercher",
++    narrow: "Affinez la recherche pour afficher d’autres responsables.",
++    history: "Historique récent (5 événements maximum)",
++    episode: "Occurrence",
++    mine: "Attribués à moi",
++    all: "Tous les suivis autorisés",
++    noMatches: "Aucun suivi ne correspond à ce filtre.",
++    active: "La source demande une intervention",
++    clear: "Condition levée à la source",
++    unknown: "Preuves sources indisponibles",
++    unavailableOwner: "Responsable indisponible",
++    states: {
++      OPEN: "Ouvert",
++      ASSIGNED: "Attribué",
++      WAITING: "En attente",
++      REVIEWED: "Examiné",
++    },
++    events: {
++      OBSERVED: "Source observée",
++      SOURCE_CHANGED: "Preuves sources modifiées",
++      COORDINATED: "Suivi mis à jour",
++    },
++  },
++};
++const titles: Record<"en" | "fr", Record<SourceKey, string>> = {
++  en: {
++    suspense: "Payment suspense",
++    stockout: "Stock availability",
++    receiving: "Overdue receiving",
++    loss: "Recorded inventory loss",
++    close: "Close obligations across retained periods",
++    payroll_forecast: "Payroll forecast evidence — next 30 UTC days",
++    employee_balance: "Employee balance recovery",
++  },
++  fr: {
++    suspense: "Paiements en suspens",
++    stockout: "Disponibilité du stock",
++    receiving: "Réceptions en retard",
++    loss: "Pertes de stock enregistrées",
++    close: "Obligations de clôture des périodes conservées",
++    payroll_forecast: "Preuves de paie — 30 prochains jours UTC",
++    employee_balance: "Recouvrement des soldes salariés",
++  },
++};
++type Pending =
++  | { kind: "change"; input: FollowUpCommand }
++  | { kind: "review"; input: ReviewCommand }
++  | { kind: "preference"; input: PreferenceCommand }
++  | { kind: "notice"; input: NoticeCommand };
++type Props = {
++  center: Center;
++  periodStart: string;
++  periodEnd: string;
++  locationId?: string | null;
++  locale: "en" | "fr";
++};
++export function FollowUpPanel({
++  center,
++  periodStart,
++  periodEnd,
++  locationId,
++  locale,
++}: Props) {
++  const [chosenLocation, setChosenLocation] = useState<string | null>(
++    locationId ?? null,
++  );
++  useEffect(() => {
++    const restore = () =>
++      setChosenLocation(
++        locationId ??
++          new URL(window.location.href).searchParams.get("followUpLocation"),
++      );
++    restore();
++    window.addEventListener("popstate", restore);
++    return () => window.removeEventListener("popstate", restore);
++  }, [locationId]);
++  function chooseLocation(value: string) {
++    const url = new URL(window.location.href);
++    if (value) url.searchParams.set("followUpLocation", value);
++    else url.searchParams.delete("followUpLocation");
++    window.history.replaceState(
++      window.history.state,
++      "",
++      url.pathname + url.search + url.hash,
++    );
++    setChosenLocation(value || null);
++  }
++  const effectiveLocation = locationId ?? chosenLocation;
++  const query = useMemo<FollowUpQuery>(
++    () => ({ center, periodStart, periodEnd, locationId: effectiveLocation }),
++    [center, periodStart, periodEnd, effectiveLocation],
++  );
++  const [data, setData] = useState<FollowUpData | null>(null),
++    [busy, setBusy] = useState(false),
++    [message, setMessage] = useState(""),
++    [retry, setRetry] = useState<Pending | null>(null),
++    [mine, setMine] = useState(center === "digest");
++  const generation = useRef(0),
++    inFlight = useRef(false),
++    pending = useRef<Pending | null>(null);
++  const t = words[locale];
++  const load = useCallback(async () => {
++    const token = ++generation.current;
++    inFlight.current = true;
++    pending.current = null;
++    setRetry(null);
++    setData(null);
++    setBusy(true);
++    setMessage(words[locale].loading);
++    try {
++      const result = await getCommandCenterFollowUps(query);
++      if (token !== generation.current) return;
++      if (result.success) {
++        setData(result.data);
++        setMessage("");
++      } else setMessage(words[locale].failed);
++    } catch {
++      if (token === generation.current) setMessage(words[locale].failed);
++    } finally {
++      if (token === generation.current) {
++        inFlight.current = false;
++        setBusy(false);
++      }
++    }
++  }, [query, locale]);
++  useEffect(() => {
++    const counter = generation;
++    void load();
++    const refresh = () => {
++      if (!inFlight.current && !pending.current) void load();
++    };
++    window.addEventListener("focus", refresh);
++    return () => {
++      counter.current++;
++      window.removeEventListener("focus", refresh);
++    };
++  }, [load]);
++  async function submit(command: Pending) {
++    const token = ++generation.current;
++    inFlight.current = true;
++    pending.current = command;
++    setBusy(true);
++    setRetry(null);
++    setMessage(t.loading);
++    try {
++      const result =
++        command.kind === "change"
++          ? await changeCommandCenterFollowUp(command.input)
++          : command.kind === "review"
++            ? await reviewCommandCenterFollowUps(command.input)
++            : command.kind === "preference"
++              ? await saveCommandCenterPreference(command.input)
++              : await acknowledgeCommandCenterNotice(command.input);
++      if (token !== generation.current) return;
++      if (result.success) {
++        pending.current = null;
++        setData(result.data);
++        setMessage(command.kind === "review" ? t.reviewed : t.saved);
++      } else if (
++        result.retryable &&
++        !["FORBIDDEN", "DATABASE_CONFLICT", "CONFLICT"].includes(result.code)
++      ) {
++        setRetry(command);
++        setMessage(t.uncertain);
++      } else {
++        pending.current = null;
++        setData(null);
++        setMessage(t.failed);
++      }
++    } catch {
++      if (token === generation.current) {
++        setRetry(command);
++        setMessage(t.uncertain);
++      }
++    } finally {
++      if (token === generation.current) {
++        inFlight.current = false;
++        setBusy(false);
++      }
++    }
++  }
++  const items =
++    data?.items.filter((item) => !mine || item.ownerId === data.actorId) ?? [];
++  return (
++    <section
++      aria-label={t.title}
++      className={`${dashboardPanelClass} space-y-4 p-4`}
++      aria-busy={busy}
++    >
++      <div className="flex flex-wrap items-start justify-between gap-3">
++        <div>
++          <h2 className="text-lg font-semibold">{t.title}</h2>
++          <p className={`${dashboardMutedTextClass} max-w-3xl text-sm`}>
++            {t.help}
++          </p>
++        </div>
++        <Button variant="outline" disabled={busy} onClick={() => void load()}>
++          {t.refresh}
++        </Button>
++      </div>
++      <p
++        role="status"
++        aria-live="polite"
++        aria-atomic="true"
++        className="text-sm"
++      >
++        {message}
++      </p>
++      {!data && !busy && !locationId && chosenLocation ? (
++        <Button variant="outline" onClick={() => chooseLocation("")}>
++          {locale === "fr"
++            ? "Réinitialiser le périmètre des suivis"
++            : "Reset follow-up scope"}
++        </Button>
++      ) : null}
++      {retry ? (
++        <Button disabled={busy} onClick={() => void submit(retry)}>
++          {t.retry}
++        </Button>
++      ) : null}
++      {data ? (
++        <>
++          {!locationId && data.availableLocations?.length ? (
++            <label className="block text-sm">
++              {locale === "fr" ? "Périmètre des suivis" : "Follow-up scope"}
++              <select
++                className="dashboard-control ml-2 max-w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 py-2 text-[var(--dash-text)]"
++                value={chosenLocation ?? ""}
++                disabled={busy || Boolean(retry)}
++                onChange={(event) => chooseLocation(event.target.value)}
++              >
++                <option value="">
++                  {locale === "fr" ? "Organisation" : "Organization"}
++                </option>
++                {data.availableLocations.map((location) => (
++                  <option key={location.id} value={location.id}>
++                    {location.name}
++                  </option>
++                ))}
++              </select>
++            </label>
++          ) : null}
++          {data.notices?.length ? (
++            <aside
++              aria-label={
++                locale === "fr" ? "Nouveaux suivis" : "New follow-ups"
++              }
++              className="space-y-2"
++            >
++              {data.notices.map((notice) => (
++                <div
++                  key={notice.id}
++                  className="flex flex-wrap items-center gap-3 text-sm"
++                >
++                  <span>
++                    {locale === "fr"
++                      ? "Suivi attribué ou date modifiée : "
++                      : "Assignment or follow-up date changed: "}
++                    {titles[locale][notice.source]}
++                  </span>
++                  <Button
++                    disabled={busy || Boolean(retry)}
++                    variant="outline"
++                    size="sm"
++                    onClick={() =>
++                      void submit({
++                        kind: "notice",
++                        input: { ...query, noticeId: notice.id },
++                      })
++                    }
++                  >
++                    {locale === "fr"
++                      ? "Marquer la notification comme lue"
++                      : "Mark notice read"}
++                  </Button>
++                </div>
++              ))}
++            </aside>
++          ) : null}
++          {data.unavailable.length > 0 ? (
++            <p className={`${dashboardMutedTextClass} text-sm`}>{t.limited}</p>
++          ) : null}
++          <label className="flex gap-2 text-sm">
++            <input
++              type="checkbox"
++              checked={mine}
++              onChange={(event) => setMine(event.target.checked)}
++            />
++            {t.mine}
++          </label>
++          {!items.length ? (
++            <p className={dashboardMutedTextClass}>
++              {data.items.length ? t.noMatches : t.empty}
++            </p>
++          ) : null}
++          <fieldset disabled={busy || Boolean(retry)} className="space-y-3">
++            <legend className="sr-only">{t.title}</legend>
++            {items.map((item) => (
++              <FollowUpRow
++                key={`${item.id}:${item.revision}`}
++                item={item}
++                actorId={data.actorId}
++                query={query}
++                locale={locale}
++                onSave={(input) => void submit({ kind: "change", input })}
++              />
++            ))}
++          </fieldset>
++          <div className="border-t border-[var(--dash-border-subtle)] pt-3">
++            <p className={`${dashboardMutedTextClass} mb-2 text-sm`}>
++              {t.reviewHelp}
++              {mine
++                ? " " +
++                  (locale === "fr"
++                    ? "Affichez tous les suivis autorisés pour enregistrer cette revue."
++                    : "Show all permitted follow-ups to record this review.")
++                : ""}
++            </p>
++            <Button
++              variant="outline"
++              disabled={
++                mine ||
++                busy ||
++                Boolean(retry) ||
++                data.review.current ||
++                data.items.some((i) => i.condition === "UNKNOWN")
++              }
++              onClick={() =>
++                void submit({
++                  kind: "review",
++                  input: {
++                    ...query,
++                    requestId: crypto.randomUUID(),
++                    expectedRevision: data.revision,
++                    evidenceKey: data.evidenceKey,
++                  },
++                })
++              }
++            >
++              {data.review.current ? t.reviewed : t.review}
++            </Button>
++          </div>
++          <PreferenceControls
++            key={JSON.stringify(data.preference)}
++            value={data.preference}
++            locale={locale}
++            disabled={busy || Boolean(retry)}
++            onSave={(value) =>
++              void submit({ kind: "preference", input: { ...query, ...value } })
++            }
++          />
++        </>
++      ) : null}
++    </section>
++  );
++}
++function FollowUpRow({
++  item,
++  actorId,
++  query,
++  locale,
++  onSave,
++}: {
++  item: FollowUpItem;
++  actorId: string;
++  query: FollowUpQuery;
++  locale: "en" | "fr";
++  onSave: (input: FollowUpCommand) => void;
++}) {
++  const t = words[locale],
++    [owner, setOwner] = useState(item.ownerId ?? actorId),
++    [state, setState] = useState<Coordination>(
++      item.coordination === "OPEN" ? "ASSIGNED" : item.coordination,
++    ),
++    [due, setDue] = useState(item.dueAt?.slice(0, 10) ?? ""),
++    [search, setSearch] = useState(""),
++    [candidates, setCandidates] = useState<FollowUpCandidate[]>([]),
++    [searchState, setSearchState] = useState("");
++  const live = useRef(true),
++    searchId = useRef(0);
++  useEffect(() => {
++    const counter = searchId;
++    live.current = true;
++    return () => {
++      live.current = false;
++      counter.current++;
++    };
++  }, []);
++  async function find() {
++    const token = ++searchId.current;
++    setCandidates([]);
++    setSearchState(t.loading);
++    try {
++      const response = await getCommandCenterCandidates({
++        ...query,
++        itemId: item.id,
++        search,
++      });
++      if (!live.current || token !== searchId.current) return;
++      if (response.success) {
++        setCandidates(response.data.candidates);
++        setSearchState(response.data.limited ? t.narrow : "");
++      } else setSearchState(t.failed);
++    } catch {
++      if (live.current && token === searchId.current) setSearchState(t.failed);
++    }
++  }
++  const options = [
++    { id: actorId, name: t.me },
++    ...(item.ownerId && item.ownerId !== actorId
++      ? [{ id: item.ownerId, name: item.ownerName ?? t.unavailableOwner }]
++      : []),
++    ...candidates,
++  ].filter((c, i, a) => a.findIndex((x) => x.id === c.id) === i);
++  const cls =
++    "dashboard-control w-full min-w-0 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 py-2 text-[var(--dash-text)]";
++  return (
++    <article className={`${dashboardRowClass} space-y-3 p-3`}>
++      <div className="flex flex-wrap items-start justify-between gap-2">
++        <div>
++          <h3 className="font-semibold">{titles[locale][item.source]}</h3>
++          <p className={`${dashboardMutedTextClass} text-sm`}>
++            {item.condition === "ACTIVE"
++              ? t.active
++              : item.condition === "CLEAR"
++                ? t.clear
++                : t.unknown}{" "}
++            · {t.episode} {item.episode} · {t.states[item.coordination]}
++          </p>
++          {item.ownerId ? (
++            <p className="text-sm">
++              {t.owner}: {item.ownerName ?? t.unavailableOwner}
++            </p>
++          ) : null}
++        </div>
++        <Button asChild size="sm" variant="outline">
++          <Link href={localizePath(item.actionPath, locale)}>{t.open}</Link>
++        </Button>
++      </div>
++      {item.canAssign ? (
++        <form
++          onSubmit={(event) => {
++            event.preventDefault();
++            onSave({
++              ...query,
++              requestId: crypto.randomUUID(),
++              itemId: item.id,
++              expectedRevision: item.revision,
++              ownerId: owner || null,
++              state,
++              dueAt:
++                due === (item.dueAt?.slice(0, 10) ?? "")
++                  ? item.dueAt
++                  : due
++                    ? new Date(`${due}T00:00:00Z`).toISOString()
++                    : null,
++            });
++          }}
++          className="space-y-3"
++        >
++          <div className="grid gap-3 md:grid-cols-3">
++            <label className="min-w-0 text-sm">
++              {t.owner}
++              <select
++                disabled={!item.canDelegate}
++                className={cls}
++                value={owner}
++                onChange={(e) => setOwner(e.target.value)}
++              >
++                <option value="">{t.unassigned}</option>
++                {options.map((candidate) => (
++                  <option key={candidate.id} value={candidate.id}>
++                    {candidate.name}
++                  </option>
++                ))}
++              </select>
++            </label>
++            <label className="min-w-0 text-sm">
++              {t.state}
++              <select
++                className={cls}
++                value={state}
++                onChange={(e) => setState(e.target.value as Coordination)}
++              >
++                {Object.entries(t.states).map(([value, label]) => (
++                  <option key={value} value={value}>
++                    {label}
++                  </option>
++                ))}
++              </select>
++            </label>
++            <label className="min-w-0 text-sm">
++              {t.due}
++              <input
++                className={cls}
++                type="date"
++                style={{ colorScheme: "dark" }}
++                value={due}
++                onChange={(e) => setDue(e.target.value)}
++              />
++            </label>
++          </div>
++          <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-end">
++            {item.canDelegate ? (
++              <>
++                <label className="min-w-0 w-full text-sm sm:w-auto sm:flex-1">
++                  {t.search}
++                  <input
++                    className={cls}
++                    value={search}
++                    maxLength={80}
++                    onChange={(e) => setSearch(e.target.value)}
++                  />
++                </label>
++                <Button
++                  variant="outline"
++                  type="button"
++                  onClick={() => void find()}
++                >
++                  {t.find}
++                </Button>
++              </>
++            ) : null}
++            <Button type="submit">{t.save}</Button>
++          </div>
++          <p role="status" className="text-sm">
++            {searchState}
++          </p>
++        </form>
++      ) : null}
++      <details>
++        <summary className="cursor-pointer text-sm">{t.history}</summary>
++        <ul className="mt-2 space-y-1 text-sm">
++          {item.history.map((event, i) => (
++            <li key={i}>
++              {t.events[event.type as keyof typeof t.events] ??
++                t.events.SOURCE_CHANGED}{" "}
++              ·{" "}
++              {new Intl.DateTimeFormat(locale, {
++                dateStyle: "medium",
++                timeStyle: "short",
++                timeZone: "UTC",
++              }).format(new Date(event.at))}{" "}
++              UTC
++            </li>
++          ))}
++        </ul>
++      </details>
++    </article>
++  );
++}
++
++function PreferenceControls({
++  value,
++  locale,
++  disabled,
++  onSave,
++}: {
++  value: FollowUpData["preference"];
++  locale: "en" | "fr";
++  disabled: boolean;
++  onSave: (value: FollowUpData["preference"]) => void;
++}) {
++  const [enabled, setEnabled] = useState(value?.enabled ?? true),
++    [start, setStart] = useState(value?.quietStart?.toString() ?? ""),
++    [end, setEnd] = useState(value?.quietEnd?.toString() ?? "");
++  const fr = locale === "fr",
++    cls =
++      "dashboard-control rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-2 py-1 text-[var(--dash-text)]";
++  return (
++    <details>
++      <summary className="cursor-pointer text-sm">
++        {fr
++          ? "Préférences des notifications de suivi"
++          : "Follow-up notification preferences"}
++      </summary>
++      <form
++        className="mt-3 flex flex-wrap items-end gap-3 text-sm"
++        onSubmit={(event) => {
++          event.preventDefault();
++          onSave({
++            enabled,
++            quietStart: start === "" ? null : Number(start),
++            quietEnd: end === "" ? null : Number(end),
++          });
++        }}
++      >
++        <fieldset
++          disabled={disabled}
++          className="flex flex-wrap items-end gap-3"
++        >
++          <legend className="sr-only">
++            {fr ? "Notifications dans l’application" : "In-app notifications"}
++          </legend>
++          <label>
++            <input
++              type="checkbox"
++              checked={enabled}
++              onChange={(e) => setEnabled(e.target.checked)}
++            />{" "}
++            {fr ? "Notifications dans l’application" : "In-app notifications"}
++          </label>
++          <label>
++            {fr ? "Début de pause (heure UTC)" : "Quiet start (UTC hour)"}
++            <input
++              className={`${cls} ml-2 w-20`}
++              type="number"
++              min={0}
++              max={23}
++              value={start}
++              onChange={(e) => setStart(e.target.value)}
++              required={end !== ""}
++            />
++          </label>
++          <label>
++            {fr ? "Fin de pause (heure UTC)" : "Quiet end (UTC hour)"}
++            <input
++              className={`${cls} ml-2 w-20`}
++              type="number"
++              min={0}
++              max={23}
++              value={end}
++              onChange={(e) => setEnd(e.target.value)}
++              required={start !== ""}
++            />
++          </label>
++          <Button variant="outline" type="submit">
++            {fr ? "Enregistrer les préférences" : "Save preferences"}
++          </Button>
++        </fieldset>
++      </form>
++      <p className={`${dashboardMutedTextClass} mt-2 text-xs`}>
++        {fr
++          ? "Les notifications en attente apparaissent lors d’une prochaine consultation autorisée, après la pause. Aucun e-mail n’est envoyé."
++          : "Pending notices appear on a later authorized visit after quiet hours. No email is sent."}
++      </p>
++    </details>
++  );
++}
+--- /dev/null
++++ after/components/command-center/__tests__/FollowUpPanel.test.tsx
+@@ -0,0 +1,287 @@
++import "@testing-library/jest-dom";
++import {
++  act,
++  fireEvent,
++  render,
++  screen,
++  waitFor,
++  cleanup,
++} from "@testing-library/react";
++import { FollowUpPanel } from "../FollowUpPanel";
++import * as actions from "@/actions/command-center/follow-up.actions";
++import type { FollowUpData } from "@/services/command-center/contracts";
++const load = actions.getCommandCenterFollowUps as jest.Mock,
++  change = actions.changeCommandCenterFollowUp as jest.Mock,
++  review = actions.reviewCommandCenterFollowUps as jest.Mock;
++const props = {
++  center: "manager" as const,
++  periodStart: "2026-10-24T00:00:00.000Z",
++  periodEnd: "2026-10-24T23:59:59.999Z",
++  locale: "en" as const,
++};
++function data(): FollowUpData {
++  return {
++    availableLocations: [],
++    scope: {
++      locationId: null,
++      periodStart: props.periodStart,
++      periodEnd: props.periodEnd,
++    },
++    actorId: "actor",
++    revision: 1,
++    evidenceKey: "a".repeat(64),
++    review: { current: false, reviewedAt: null },
++    unavailable: [],
++    notices: [],
++    preference: { enabled: true, quietStart: null, quietEnd: null },
++    items: [
++      {
++        id: "work",
++        source: "stockout",
++        revision: 1,
++        episode: 1,
++        condition: "ACTIVE",
++        coordination: "OPEN",
++        ownerId: null,
++        ownerName: null,
++        dueAt: null,
++        actionPath: "/dashboard/inventory/items",
++        canAssign: true,
++        canDelegate: true,
++        sourceRevision: "s",
++        updatedAt: props.periodStart,
++        history: [{ type: "OBSERVED", at: props.periodStart }],
++      },
++    ],
++  };
++}
++beforeEach(() => {
++  jest.clearAllMocks();
++  load.mockResolvedValue({ success: true, data: data() });
++  Object.defineProperty(crypto, "randomUUID", {
++    configurable: true,
++    value: () => "12345678-1234-4234-8234-123456789abc",
++  });
++});
++afterEach(cleanup);
++it.each(["digest", "manager", "owner"] as const)(
++  "loads the authorized shared projection for %s",
++  async (center) => {
++    render(<FollowUpPanel {...props} center={center} />);
++    await waitFor(() =>
++      expect(load).toHaveBeenCalledWith(expect.objectContaining({ center })),
++    );
++    if (center === "digest")
++      fireEvent.click(screen.getByRole("checkbox", { name: "Assigned to me" }));
++    expect(await screen.findByText("Stock availability")).toBeInTheDocument();
++  },
++);
++it("keeps the exact request and freezes edits after a lost response", async () => {
++  change
++    .mockRejectedValueOnce(new Error("lost response"))
++    .mockResolvedValueOnce({
++      success: true,
++      data: {
++        ...data(),
++        items: [
++          {
++            ...data().items[0],
++            ownerId: "actor",
++            coordination: "ASSIGNED",
++            revision: 2,
++          },
++        ],
++      },
++    });
++  render(<FollowUpPanel {...props} />);
++  fireEvent.click(
++    await screen.findByRole("button", { name: "Save follow-up" }),
++  );
++  await screen.findByText(/result is uncertain/);
++  expect(screen.getByRole("button", { name: "Save follow-up" })).toBeDisabled();
++  fireEvent.click(
++    screen.getByRole("button", { name: "Retry the same request" }),
++  );
++  await screen.findByText(/Follow-up saved/);
++  expect(change.mock.calls[1][0]).toEqual(change.mock.calls[0][0]);
++  expect(change.mock.calls[0][0]).not.toHaveProperty("organizationId");
++});
++it("removes private detail after denied mutation and offers refresh", async () => {
++  change.mockResolvedValue({
++    success: false,
++    retryable: false,
++    code: "FORBIDDEN",
++  });
++  render(<FollowUpPanel {...props} />);
++  fireEvent.click(
++    await screen.findByRole("button", { name: "Save follow-up" }),
++  );
++  await screen.findByText(/Follow-ups are unavailable/);
++  expect(screen.queryByText("Stock availability")).not.toBeInTheDocument();
++});
++it("clears old content during refresh and ignores an obsolete response after scope replacement", async () => {
++  let complete!: (value: unknown) => void;
++  load
++    .mockImplementationOnce(
++      () => new Promise((resolve) => (complete = resolve)),
++    )
++    .mockResolvedValueOnce({ success: true, data: { ...data(), items: [] } });
++  const view = render(<FollowUpPanel {...props} />);
++  view.rerender(<FollowUpPanel {...props} locationId="another-scope" />);
++  await screen.findByText(/No saved work/);
++  await act(async () => complete({ success: true, data: data() }));
++  expect(screen.queryByText("Stock availability")).not.toBeInTheDocument();
++});
++it("stores review against current evidence without any completion command", async () => {
++  review.mockResolvedValue({
++    success: true,
++    data: {
++      ...data(),
++      review: { current: true, reviewedAt: props.periodStart },
++    },
++  });
++  render(<FollowUpPanel {...props} />);
++  fireEvent.click(
++    await screen.findByRole("button", {
++      name: "Record review of these follow-ups",
++    }),
++  );
++  await waitFor(() =>
++    expect(review).toHaveBeenCalledWith(
++      expect.objectContaining({
++        expectedRevision: 1,
++        evidenceKey: "a".repeat(64),
++      }),
++    ),
++  );
++  expect(change).not.toHaveBeenCalled();
++});
++it("renders French labels and native localized source links", async () => {
++  render(<FollowUpPanel {...props} locale="fr" />);
++  await screen.findByText("Disponibilité du stock");
++  expect(
++    screen.getByRole("link", { name: "Ouvrir la source" }),
++  ).toHaveAttribute("href", "/fr/dashboard/inventory/items");
++  expect(screen.getByLabelText("Date de suivi (UTC)")).toBeInTheDocument();
++});
++it("keeps unavailable and cleared source states separate from coordination", async () => {
++  load.mockResolvedValue({
++    success: true,
++    data: {
++      ...data(),
++      unavailable: ["close"],
++      items: [{ ...data().items[0], condition: "UNKNOWN", canAssign: false }],
++    },
++  });
++  render(<FollowUpPanel {...props} />);
++  await screen.findByText(/Source evidence unavailable/);
++  expect(
++    screen.queryByRole("button", { name: "Save follow-up" }),
++  ).not.toBeInTheDocument();
++  expect(
++    screen.getByRole("button", { name: "Record review of these follow-ups" }),
++  ).toBeDisabled();
++});
++
++it("saves notification preferences through the protected action", async () => {
++  const save = actions.saveCommandCenterPreference as jest.Mock;
++  save.mockResolvedValue({
++    success: true,
++    data: {
++      ...data(),
++      preference: { enabled: false, quietStart: null, quietEnd: null },
++    },
++  });
++  render(<FollowUpPanel {...props} />);
++  fireEvent.click(
++    await screen.findByText("Follow-up notification preferences"),
++  );
++  fireEvent.click(
++    screen.getByRole("checkbox", { name: "In-app notifications" }),
++  );
++  fireEvent.click(screen.getByRole("button", { name: "Save preferences" }));
++  await waitFor(() =>
++    expect(save).toHaveBeenCalledWith({
++      center: props.center,
++      periodStart: props.periodStart,
++      periodEnd: props.periodEnd,
++      locationId: null,
++      enabled: false,
++      quietStart: null,
++      quietEnd: null,
++    }),
++  );
++});
++it("acknowledges only the selected notice", async () => {
++  load.mockResolvedValue({
++    success: true,
++    data: { ...data(), notices: [{ id: "notice-1", source: "stockout" }] },
++  });
++  const ack = actions.acknowledgeCommandCenterNotice as jest.Mock;
++  ack.mockResolvedValue({ success: true, data: data() });
++  render(<FollowUpPanel {...props} />);
++  fireEvent.click(
++    await screen.findByRole("button", { name: "Mark notice read" }),
++  );
++  await waitFor(() =>
++    expect(ack).toHaveBeenCalledWith(
++      expect.objectContaining({ noticeId: "notice-1", center: "manager" }),
++    ),
++  );
++  expect(change).not.toHaveBeenCalled();
++});
++
++it("requires the full visible scope before recording review", async () => {
++  render(<FollowUpPanel {...props} center="digest" />);
++  const review = await screen.findByRole("button", {
++    name: "Record review of these follow-ups",
++  });
++  expect(review).toBeDisabled();
++  fireEvent.click(screen.getByRole("checkbox", { name: "Assigned to me" }));
++  expect(review).not.toBeDisabled();
++});
++it("reloads authorized location selection without retaining old rows", async () => {
++  load.mockResolvedValue({
++    success: true,
++    data: {
++      ...data(),
++      availableLocations: [
++        { id: "branch", name: "Authorized branch", assignedToActor: true },
++      ],
++    },
++  });
++  render(<FollowUpPanel {...props} center="owner" />);
++  fireEvent.change(await screen.findByLabelText("Follow-up scope"), {
++    target: { value: "branch" },
++  });
++  await waitFor(() =>
++    expect(load).toHaveBeenLastCalledWith(
++      expect.objectContaining({ center: "owner", locationId: "branch" }),
++    ),
++  );
++});
++
++it("recovers from a revoked saved location without retaining private detail", async () => {
++  window.history.replaceState(
++    {},
++    "",
++    "/en/dashboard/daily-digest?followUpLocation=revoked",
++  );
++  load.mockImplementation(async (query) =>
++    query.locationId
++      ? { success: false, code: "FORBIDDEN" }
++      : { success: true, data: data() },
++  );
++  render(<FollowUpPanel {...props} center="digest" />);
++  fireEvent.click(
++    await screen.findByRole("button", { name: "Reset follow-up scope" }),
++  );
++  await waitFor(() =>
++    expect(load).toHaveBeenLastCalledWith(
++      expect.objectContaining({ locationId: null }),
++    ),
++  );
++  expect(
++    new URL(window.location.href).searchParams.has("followUpLocation"),
++  ).toBe(false);
++});
+--- /dev/null
++++ after/prisma/migrations/20261024180000_command_center_coordination/migration.sql
+@@ -0,0 +1,60 @@
++-- Additive coordination only. No business records are backfilled or modified.
++CREATE TABLE "command_center_occurrences" (
++ "id" TEXT PRIMARY KEY, "organizationId" TEXT NOT NULL REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
++ "logicalKey" TEXT NOT NULL, "sourceKey" TEXT NOT NULL, "sourceRefs" JSONB NOT NULL, "scopeKey" TEXT NOT NULL, "windowKey" TEXT NOT NULL,
++ "episode" INTEGER NOT NULL CHECK ("episode">0), "sourceRevision" TEXT NOT NULL, "revision" INTEGER NOT NULL DEFAULT 1 CHECK ("revision">0),
++ "condition" TEXT NOT NULL CHECK ("condition" IN ('ACTIVE','CLEAR','UNKNOWN')),
++ "coordination" TEXT NOT NULL DEFAULT 'OPEN' CHECK ("coordination" IN ('OPEN','ASSIGNED','WAITING','REVIEWED')),
++ "ownerId" TEXT, "dueAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'), "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
++);
++CREATE UNIQUE INDEX "cc_occurrence_episode_key" ON "command_center_occurrences"("organizationId","logicalKey","episode");
++CREATE INDEX "cc_occurrence_scope_idx" ON "command_center_occurrences"("organizationId","scopeKey","windowKey");
++CREATE TABLE "command_center_events" (
++ "id" TEXT PRIMARY KEY, "organizationId" TEXT NOT NULL REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
++ "occurrenceId" TEXT NOT NULL, "actorId" TEXT NOT NULL, "requestId" TEXT, "intentHash" TEXT, "type" TEXT NOT NULL,
++ "resultRevision" INTEGER NOT NULL, "changes" JSONB NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
++);
++CREATE UNIQUE INDEX "cc_event_request_key" ON "command_center_events"("organizationId","actorId","requestId");
++CREATE INDEX "cc_event_history_idx" ON "command_center_events"("organizationId","occurrenceId","createdAt");
++CREATE TABLE "command_center_review_states" (
++ "id" TEXT PRIMARY KEY, "organizationId" TEXT NOT NULL REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
++ "actorId" TEXT NOT NULL, "scopeKey" TEXT NOT NULL, "periodKey" TEXT NOT NULL, "evidenceKey" TEXT NOT NULL,
++ "revision" INTEGER NOT NULL DEFAULT 1, "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
++);
++CREATE UNIQUE INDEX "cc_review_scope_key" ON "command_center_review_states"("organizationId","actorId","scopeKey","periodKey");
++CREATE TABLE "command_center_review_receipts" (
++ "id" TEXT PRIMARY KEY, "organizationId" TEXT NOT NULL REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
++ "actorId" TEXT NOT NULL, "stateId" TEXT NOT NULL, "revision" INTEGER NOT NULL, "evidenceKey" TEXT NOT NULL,
++ "center" TEXT NOT NULL, "requestId" TEXT NOT NULL, "intentHash" TEXT NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
++);
++CREATE UNIQUE INDEX "cc_receipt_request_key" ON "command_center_review_receipts"("organizationId","actorId","requestId");
++CREATE INDEX "cc_receipt_revision_idx" ON "command_center_review_receipts"("organizationId","stateId","revision");
++-- Receipts and events retain attributable history. UI rollback never deletes them.
++CREATE FUNCTION "command_center_history_immutable"() RETURNS trigger LANGUAGE plpgsql AS $$
++BEGIN RAISE EXCEPTION 'Command Center history is immutable'; END $$;
++CREATE TRIGGER "command_center_events_immutable" BEFORE UPDATE OR DELETE ON "command_center_events" FOR EACH ROW EXECUTE FUNCTION "command_center_history_immutable"();
++CREATE TRIGGER "command_center_review_receipts_immutable" BEFORE UPDATE OR DELETE ON "command_center_review_receipts" FOR EACH ROW EXECUTE FUNCTION "command_center_history_immutable"();
++
++CREATE UNIQUE INDEX "command_center_occurrences_organizationId_id_key" ON "command_center_occurrences"("organizationId","id");
++ALTER TABLE "command_center_events" ADD CONSTRAINT "cc_event_occurrence_fk" FOREIGN KEY ("organizationId","occurrenceId") REFERENCES "command_center_occurrences"("organizationId","id") ON DELETE RESTRICT ON UPDATE CASCADE;
++CREATE UNIQUE INDEX "command_center_review_states_organizationId_id_actorId_key" ON "command_center_review_states"("organizationId","id","actorId");
++ALTER TABLE "command_center_review_receipts" ADD CONSTRAINT "cc_receipt_state_fk" FOREIGN KEY ("organizationId","stateId","actorId") REFERENCES "command_center_review_states"("organizationId","id","actorId") ON DELETE RESTRICT ON UPDATE CASCADE;
++
++-- In-app delivery only. No email, webhook, worker or scheduler is enabled.
++CREATE TABLE "command_center_notices" (
++ "id" TEXT PRIMARY KEY, "organizationId" TEXT NOT NULL REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
++ "occurrenceId" TEXT NOT NULL, "recipientId" TEXT NOT NULL, "transitionRevision" INTEGER NOT NULL, "sourceKey" TEXT NOT NULL,
++ "state" TEXT NOT NULL DEFAULT 'PENDING' CHECK ("state" IN ('PENDING','PUBLISHED','READ')),
++ "createdAt" TIMESTAMP(3) NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'), "publishedAt" TIMESTAMP(3), "readAt" TIMESTAMP(3)
++);
++CREATE UNIQUE INDEX "cc_notice_transition_key" ON "command_center_notices"("organizationId","occurrenceId","recipientId","transitionRevision");
++CREATE INDEX "cc_notice_recipient_idx" ON "command_center_notices"("organizationId","recipientId","state");
++CREATE TABLE "command_center_preferences" (
++ "id" TEXT PRIMARY KEY, "organizationId" TEXT NOT NULL REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
++ "actorId" TEXT NOT NULL, "enabled" BOOLEAN NOT NULL DEFAULT true,
++ "quietStart" INTEGER CHECK ("quietStart" BETWEEN 0 AND 23), "quietEnd" INTEGER CHECK ("quietEnd" BETWEEN 0 AND 23),
++ CHECK (("quietStart" IS NULL)=("quietEnd" IS NULL))
++);
++CREATE UNIQUE INDEX "cc_preference_actor_key" ON "command_center_preferences"("organizationId","actorId");
++
++ALTER TABLE "command_center_notices" ADD CONSTRAINT "cc_notice_occurrence_fk" FOREIGN KEY ("organizationId","occurrenceId") REFERENCES "command_center_occurrences"("organizationId","id") ON DELETE RESTRICT ON UPDATE CASCADE;

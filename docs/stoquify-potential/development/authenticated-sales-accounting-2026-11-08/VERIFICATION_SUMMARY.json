@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-11-09T10:30:18.059Z",
+  "status": "PASS",
+  "mockedTestsPassed": 112,
+  "focusedTypeRoots": [
+    {
+      "path": "components/finance/CustomerSettlementControls.tsx",
+      "sha256": "09a401b8023615b9333444a43136696da2734fe10b9b54de071c8fae593a7ce4"
+    },
+    {
+      "path": "components/finance/AROpenItemsHistoryWorkbench.tsx",
+      "sha256": "77f2701d1b226a3d7cb4e7c372b66633f4a550a6c0f5c90bb89397bbe8014e51"
+    },
+    {
+      "path": "actions/finance/customer-settlement.actions.ts",
+      "sha256": "e155ef594f1f8c409bc82e4b5ead9503d49ac6b0a0d93cc94e137ad6e975b59d"
+    },
+    {
+      "path": "services/accounting/customer-settlement-workbench.service.ts",
+      "sha256": "42d3dee68338f985f95361663774199d57dccc8595afa3e7c00cbcdf0d106e97"
+    },
+    {
+      "path": "hooks/useAROpenItemsHistoryWorkbench.ts",
+      "sha256": "b5c19ef3b59e968522aee4f73e86a6fe2140ea87006e065b5437ce632b6d6fcc"
+    },
+    {
+      "path": "components/pos/ProfessionalPOSSystem.tsx",
+      "sha256": "112cdd7331fd99bbac3b0a233fed953dec0a6560cca2dd7a8811898ef682e3ff"
+    }
+  ],
+  "authenticatedPositions": [
+    {
+      "stage": "after-sale",
+      "receivable": "4",
+      "bank": "0.00",
+      "journalCount": 2
+    },
+    {
+      "stage": "after-collection",
+      "receivable": "0",
+      "bank": "4.00",
+      "journalCount": 3
+    },
+    {
+      "stage": "after-reversal",
+      "receivable": "4",
+      "bank": "0.00",
+      "journalCount": 4
+    }
+  ],
+  "ownedRuntimeStopped": true,
+  "remainingOwnedListeners": 0,
+  "limitation": "Current-source synthetic development proof; migration history, custom triggers, production artifact and statutory qualification remain separate."
+}

@@ -1,3 +1,4 @@
+import { persistenceEnabled } from "@/services/command-center/authority"
 import type { Metadata } from "next"
 
 import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
@@ -58,6 +59,7 @@ export default async function OwnerWarRoomPage({
 
       return (
         <OwnerWarRoomDashboard
+          followUpEnabled={persistenceEnabled()}
           data={data}
           locale={resolvedLocale}
           title={copy[resolvedLocale].title}

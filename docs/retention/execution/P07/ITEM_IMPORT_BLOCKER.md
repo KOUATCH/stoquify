@@ -1,3 +1,5 @@
+> **18 October 2026 continuation:** The item-import/media blocker is resolved for the tested tenant-owned-media path. The complete synthetic import journey and recovery checks passed. See [current result](../P07-media-2026-10-18/RESULT.md) and [compatibility/recovery rules](../P07-media-2026-10-18/COMPATIBILITY_AND_RECOVERY.md). The original 17 October record below is retained as historical evidence; provider success and live cutover remain unproved.
+
 # P07 blocker — item import and tenant-owned images
 
 17 October 2026. **Blocks complete P07 synthetic master import acceptance.** Do not bypass the image ownership check or report the item import as complete.

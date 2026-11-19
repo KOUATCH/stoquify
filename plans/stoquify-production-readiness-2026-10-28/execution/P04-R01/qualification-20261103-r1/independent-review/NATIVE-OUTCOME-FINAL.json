@@ -1,0 +1,67 @@
+{
+  "reviewedAt": "2026-11-03T17:47:39.5786350Z",
+  "reviewer": "r01_independent_review",
+  "verdict": "accepted_fresh_native_retry02_outcomes",
+  "passed": true,
+  "tests": {
+    "total": 39,
+    "passed": 39,
+    "failed": 0,
+    "pending": 0
+  },
+  "currentSourceHashesMatched": 5206,
+  "sourceBeforeAfterEqual": true,
+  "migrationFilesMatched": 122,
+  "migrationsVerified": 121,
+  "matchingStatePairs": 35,
+  "totalObservations": 38,
+  "cleanup": {
+    "clusterStopped": true,
+    "portReleased": true,
+    "databasesRetained": [
+      "stoquify_local_p04_r01_20261103_r2"
+    ]
+  },
+  "remainingClients": [],
+  "postmasterPidAbsent": true,
+  "reconciliationErrors": [],
+  "archivedTestMapping": {
+    "at": "2026-11-03T17:45:29.9387159Z",
+    "reason": "Archive completed isolated native suite to avoid collection by unrelated root Jest runs; executed one-shot recipes unchanged",
+    "executedPath": "database/authority-retry02.postgres.test.ts",
+    "retainedPath": "database/authority-retry02.postgres.test.ts.source.txt",
+    "sha256": "bf743ad8151d37e1c91b6f358c36914ccf54a2985d5bdc5c238085027f141f91",
+    "bytes": 37291,
+    "byteExact": true,
+    "run": "database/native-result-retry02.json",
+    "rerun": "Prepare a new independently reviewed isolated recipe/run identity; never blindly rerun historical runner"
+  },
+  "evidenceClass": "real PostgreSQL/service and actual server-action function composition; BetterAuth/Next transport stubbed; no HTTP/browser",
+  "limitations": [
+    "Selected business/authority tables are digest-checked; positive fixture writes and explicit security audit/abuse/access-request bookkeeping remain recorded",
+    "Dedicated last-tenant-custodian native case not run; unit-only",
+    "No production census, hosted provider, browser, full-app build or release certification"
+  ],
+  "receipts": [
+    {
+      "path": "database/native-result-retry02.json",
+      "sha256": "1366b12daafb044b186b9cdd8458fa7fa1aefe2a75986fd53511a815795f76cb"
+    },
+    {
+      "path": "database/native-jest-retry02.json",
+      "sha256": "d04ff6c9404cedaaaa8d05e7f3fe7be045da7785221734273d617de07372f74f"
+    },
+    {
+      "path": "database/native-observations-retry02.json",
+      "sha256": "141441a27342415aaee031209049e705ef98e196f2415e764d086f9a245cd089"
+    },
+    {
+      "path": "database/test-source-relocation-retry02.json",
+      "sha256": "7affd686901ebe690f733fea95c3c61a9d4876c6858990488eaec4a3084033ae"
+    },
+    {
+      "path": "database/authority-retry02.postgres.test.ts.source.txt",
+      "sha256": "bf743ad8151d37e1c91b6f358c36914ccf54a2985d5bdc5c238085027f141f91"
+    }
+  ]
+}

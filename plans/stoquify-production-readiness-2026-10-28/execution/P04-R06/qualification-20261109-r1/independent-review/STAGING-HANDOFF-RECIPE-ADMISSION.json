@@ -1,0 +1,47 @@
+{
+  "at": "2026-11-09T20:04:23.186Z",
+  "reviewer": "/root/v02_review",
+  "passed": true,
+  "scope": "Exact owned staging-reader interruption and full independent read verification only",
+  "files": [
+    {
+      "path": "handoff-staging.ps1",
+      "sha256": "0a7c042e992b6199c3818d227a877e14d69fc53702aa0104e4d4adbcb3c04108"
+    },
+    {
+      "path": "reconcile-dependencies-v3.cjs",
+      "sha256": "3813558895c77e3cdca4d73467230afb805213c1699384fba43d0f8d7716929f"
+    }
+  ],
+  "copyLogSha256": "9dd9691e025b4068c85da3af323790c005ce9acc5aa07cc709034b2513d8f8fd",
+  "observedCopySummary": {
+    "files": 152806,
+    "copied": 152806,
+    "mismatch": 0,
+    "failed": 0,
+    "extra": 0
+  },
+  "syntax": {
+    "nodeExitCode": 0,
+    "powerShellParserErrors": 0,
+    "summaryPatternsMatched": true
+  },
+  "runtimeProcessIdentityObservedByReviewer": false,
+  "conditions": [
+    "Handoff must recheck exact PID3764, node executable, complete command line and2026-11-09T20:16:54.132452+01:00 creation time under approved execution context.",
+    "Zero children, completed copy summary and frozen original recipe required; no source/candidate/artifact/postgres/runtime or final receipt may have appeared.",
+    "Acquire verified process handle and compare its creation time before Stop-Process -InputObject; stop only that task process.",
+    "Persist exclusive preflight and interrupted/incomplete receipts with initial manifest/copy/script hashes; do not claim serial comparison completion or final schema assertion.",
+    "Only then run v3 complete destination/archive hash comparison with eight bounded readers; no serial checks assumed passed.",
+    "Actual dependency reconciliation receipt and independent receipt-bound admission remain mandatory before candidate/build progression."
+  ],
+  "review": [
+    "Original process has finished its only copy child according to completed log; remaining frozen code is read verification and task receipt writes.",
+    "Default reviewer CIM access was denied by sandbox; executable recipe must enforce process identity immediately before its sole process stop.",
+    "No filesystem delete/move, archive writes, app loading, SQL or external network action in handoff/verifier.",
+    "Parallel verifier rejects links, preserves deterministic manifest order and compares every expected byte/hash against preserved pre-copy manifest.",
+    "Current package/lock and new schema/migration bindings are checked; private generated client remains pending build proof."
+  ],
+  "actualHandoffExecuted": false,
+  "actualFullEqualityVerified": false
+}
