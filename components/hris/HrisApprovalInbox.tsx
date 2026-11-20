@@ -45,6 +45,29 @@ const ACTION_LABELS: Record<HrisApprovalDecision, string> = {
   APPLY: "Apply",
 }
 
+const DECISION_ERRORS = {
+  en: {
+    authentication: "Sign in again before completing this decision.",
+    forbidden: "You no longer have permission to complete this decision. Contact your administrator.",
+    conflict: "The request has changed. Refresh the approval queue and review it again before deciding.",
+    fallback: "Decision could not be completed. Refresh and verify that the request is still pending.",
+  },
+  fr: {
+    authentication: "Reconnectez-vous avant de terminer cette décision.",
+    forbidden: "Vous n'avez plus l'autorisation de terminer cette décision. Contactez votre administrateur.",
+    conflict: "La demande a changé. Actualisez la liste des approbations et vérifiez-la avant de décider.",
+    fallback: "La décision n'a pas pu être confirmée. Actualisez la liste et vérifiez que la demande est toujours en attente.",
+  },
+}
+
+function decisionErrorMessage(locale: "en" | "fr", code?: string) {
+  const messages = DECISION_ERRORS[locale]
+  if (code === "AUTH_REQUIRED" || code === "FRESH_AUTH_REQUIRED") return messages.authentication
+  if (code === "FORBIDDEN" || code === "TENANT_SCOPE_VIOLATION" || code === "SOD_VIOLATION") return messages.forbidden
+  if (code === "CONFLICT" || code === "CONCURRENCY_CONFLICT" || code === "INVALID_TRANSITION" || code === "NOT_FOUND") return messages.conflict
+  return messages.fallback
+}
+
 function actionIcon(action: HrisApprovalDecision) {
   if (action === "APPROVE") return Check
   if (action === "REJECT") return X
@@ -109,11 +132,11 @@ export function HrisApprovalInboxView({
   }
 
   function submitDecision() {
-    if (!selected) return
+    if (!selected || isPending) return
     setError(null)
     startTransition(async () => {
       try {
-        await decideHrisApprovalInboxItemAction({
+        const result = await decideHrisApprovalInboxItemAction({
           domain: selected.item.domain,
           decision: selected.action,
           employeeId: selected.item.employee.id,
@@ -128,10 +151,14 @@ export function HrisApprovalInboxView({
             selected.item.sourceId,
           ].join(":"),
         })
+        if (result?.success !== true || !result.data) {
+          setError(decisionErrorMessage(locale, result?.success === false ? result.code : undefined))
+          return
+        }
         setSelected(null)
         router.refresh()
       } catch {
-        setError("Decision could not be completed. Refresh and verify that the request is still pending.")
+        setError(decisionErrorMessage(locale))
       }
     })
   }
