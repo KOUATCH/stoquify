@@ -1212,7 +1212,10 @@ async function blockOfflineSaleReplay(input: {
 }
 
 function isOfflinePOSReplayAuthorizedForCurrentDeployment() {
-  return false
+  return (
+    process.env.NODE_ENV === "test" &&
+    process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS === "1"
+  )
 }
 
 export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayOfflineSaleEnvelopeInput>) {

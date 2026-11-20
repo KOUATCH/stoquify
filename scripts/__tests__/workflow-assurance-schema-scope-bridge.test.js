@@ -2,29 +2,33 @@ const fs = require("node:fs")
 const path = require("node:path")
 
 const root = path.resolve(__dirname, "../..")
-const migration = fs.readFileSync(
-  path.join(
-    root,
-    "prisma/migrations/20260621102500_workflow_assurance_schema_scope_bridge/migration.sql",
-  ),
-  "utf8",
-)
-
-const requiredEnums = [
-  "WorkflowAssuranceWorkflow",
-  "WorkflowAssuranceExecutionMode",
-  "WorkflowAssuranceResultStatus",
-  "WorkflowAssuranceRunType",
-  "WorkflowAssuranceRunStatus",
-  "WorkflowAssuranceSeverity",
-  "WorkflowAssuranceIncidentStatus",
-  "WorkflowAssuranceIncidentEventType",
-  "WorkflowAssuranceAlertChannel",
-  "WorkflowAssuranceAlertDeliveryStatus",
-  "WorkflowAssuranceWaiverStatus",
+const bridges = [
+  {
+    name: "20260621102500_workflow_assurance_enum_bridge",
+    requiredEnums: [
+      "WorkflowAssuranceWorkflow",
+      "WorkflowAssuranceExecutionMode",
+      "WorkflowAssuranceResultStatus",
+      "WorkflowAssuranceRunType",
+      "WorkflowAssuranceRunStatus",
+      "WorkflowAssuranceSeverity",
+    ],
+  },
+  {
+    name: "20260621112500_workflow_assurance_incident_enum_bridge",
+    requiredEnums: [
+      "WorkflowAssuranceIncidentStatus",
+      "WorkflowAssuranceIncidentEventType",
+      "WorkflowAssuranceAlertChannel",
+      "WorkflowAssuranceAlertDeliveryStatus",
+      "WorkflowAssuranceWaiverStatus",
+    ],
+  },
 ]
 
-describe("workflow assurance schema-scope bridge migration", () => {
+describe.each(bridges)("workflow assurance schema-scope bridge $name", ({ name, requiredEnums }) => {
+  const migration = fs.readFileSync(path.join(root, "prisma", "migrations", name, "migration.sql"), "utf8")
+
   it("is additive and leaves completed evidence untouched", () => {
     expect(migration).not.toMatch(/\bDROP\b/i)
     expect(migration).not.toMatch(/\bTRUNCATE\b/i)
@@ -34,12 +38,14 @@ describe("workflow assurance schema-scope bridge migration", () => {
   })
 
   it("checks each enum in the active PostgreSQL namespace", () => {
-    expect(migration.match(/namespace_entry\.nspname = current_schema\(\)/g)).toHaveLength(
+    expect(migration.match(/n\.nspname = current_schema\(\)/g)).toHaveLength(
       requiredEnums.length,
     )
+    const normalized = migration.replace(/\s+/g, " ")
     for (const enumName of requiredEnums) {
-      expect(migration).toContain(`type_entry.typname = '${enumName}'`)
-      expect(migration).toContain(`CREATE TYPE "${enumName}" AS ENUM`)
+      expect(normalized).toContain(
+        `JOIN pg_namespace n ON n.oid = t.typnamespace WHERE t.typname = '${enumName}' AND n.nspname = current_schema()) THEN CREATE TYPE "${enumName}" AS ENUM`,
+      )
     }
   })
 
