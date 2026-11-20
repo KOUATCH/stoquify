@@ -142,6 +142,10 @@ test("creates an authenticated payroll requester without HRIS access", async ({
 test("creates a second-tenant Command Agent isolation auth state", async ({
   request,
 }) => {
+  test.skip(
+    process.env.STOQUIFY_AGENT_CERTIFICATION_MODE !== "1",
+    "The second tenant is seeded for enabled Command Agent certification.",
+  )
   await createTenantAuthState({
     request,
     label: "Command Agent cross-tenant operator",
