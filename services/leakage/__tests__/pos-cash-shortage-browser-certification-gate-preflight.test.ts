@@ -220,6 +220,9 @@ describe("POS cash-shortage browser certification gate preflight", () => {
 function completeBrowserReadiness() {
   return evaluatePosCashShortageBrowserCertificationReadinessPreflight({
     ...currentBrowserSources(),
+    packageJsonText: JSON.stringify({
+      scripts: { "ui:smoke:assurance": "node scripts/workflow-assurance-browser-smoke.js" },
+    }),
     authStateNames: ["assurance-manager.json"],
     browserEvidenceManifestText: JSON.stringify(completeBrowserEvidenceManifest()),
   });
@@ -244,6 +247,8 @@ function currentBrowserSources() {
     incidentDetailRouteSourceText: readOptional(
       "app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx",
     ),
+    assuranceRouteAccessSourceText: read("app/[locale]/(dashboard)/dashboard/assurance/assurance-route-access.tsx"),
+    assuranceRouteCatalogSourceText: read("app/[locale]/(dashboard)/dashboard/assurance/assurance-route-data-access.ts"),
     controlTowerActionSourceText: read("actions/assurance/workflow-assurance-control-tower.actions.ts"),
     incidentDetailViewSourceText: read("components/assurance/AssuranceIncidentDetailView.tsx"),
     incidentActionsComponentSourceText: read("components/assurance/AssuranceIncidentActions.tsx"),
@@ -265,6 +270,8 @@ function currentAuthFixtureSources() {
     incidentDetailRouteSourceText: readOptional(
       "app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx",
     ),
+    assuranceRouteAccessSourceText: read("app/[locale]/(dashboard)/dashboard/assurance/assurance-route-access.tsx"),
+    assuranceRouteCatalogSourceText: read("app/[locale]/(dashboard)/dashboard/assurance/assurance-route-data-access.ts"),
     controlTowerActionSourceText: read("actions/assurance/workflow-assurance-control-tower.actions.ts"),
     posResolutionActionSourceText: read("actions/assurance/pos-cash-shortage-resolution.actions.ts"),
     authStateNames: listNames("playwright/.auth", /\.json$/i),

@@ -1,4 +1,5 @@
 import { POS_SHIFT_CASH_SHORTAGE_CHECK_KEY } from "./pos-shift-cash-shortage-contracts";
+import { hasProtectedPosCashShortageIncidentRoute } from "./pos-cash-shortage-incident-route-posture";
 
 export const POS_CASH_SHORTAGE_BROWSER_AUTH_FIXTURE_PREFLIGHT_VERSION = 1;
 
@@ -19,6 +20,8 @@ export type PosCashShortageBrowserAuthFixturePreflightInput = {
   smokeWrapperSourceText: string;
   uiRouteSmokeGateSourceText: string;
   incidentDetailRouteSourceText: string | null;
+  assuranceRouteAccessSourceText?: string;
+  assuranceRouteCatalogSourceText?: string;
   controlTowerActionSourceText: string;
   posResolutionActionSourceText: string;
   authStateNames: readonly string[];
@@ -86,17 +89,14 @@ function isRequirementSatisfied(
         input.uiRouteSmokeGateSourceText.includes("ASSURANCE_SMOKE_INCIDENT_ID") &&
         input.uiRouteSmokeGateSourceText.includes("__ASSURANCE_INCIDENT_ID_REQUIRED__")
       );
-    case "incident_detail_read_is_protected": {
-      const routeSource = input.incidentDetailRouteSourceText ?? "";
+    case "incident_detail_read_is_protected":
       return (
-        routeSource.includes("requirePermission") &&
-        routeSource.includes('resource: "WorkflowAssuranceIncident"') &&
+        hasProtectedPosCashShortageIncidentRoute(input) &&
         input.controlTowerActionSourceText.includes("const getIncidentDetail = protect") &&
         input.controlTowerActionSourceText.includes('permission: "controls.audit.read"') &&
         input.controlTowerActionSourceText.includes('auditResource: "WorkflowAssuranceIncident"') &&
         input.controlTowerActionSourceText.includes('tenantGuard: "handler-derived"')
       );
-    }
     case "pos_resolution_action_is_protected":
       return (
         input.posResolutionActionSourceText.includes("const resolvePosCashShortageIncident = protect") &&

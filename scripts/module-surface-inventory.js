@@ -485,17 +485,66 @@ function dashboardRoute(surfaceFile) {
     .replace(/\/route\.tsx$/, "") || "/dashboard"
 }
 
+function dashboardAccessDelegation(root, file, surface, source) {
+  const helper = source.match(/\breturn\s+(with(?:Items|ChangePassword|Finance|Payroll)SurfaceAccess)\(\{\s*params(?::\s*Promise\.resolve\(\{\s*locale\s*\}\))?,\s*surface,/)
+  const selection = source.match(/\bconst\s+surface\s*=\s*routeByKey\(["']([\w-]+)["']\)/)
+  if (!helper || !selection) return {}
+
+  const guard = helper[1]
+  const accessImport = Array.from(source.matchAll(/import\s*\{([^}]+)\}\s*from\s*["'](\.{1,2}\/[^"']+-route-access)["']/g))
+    .find((match) => {
+      const names = match[1].split(",").map((name) => name.trim())
+      return names.includes(guard) && names.includes("routeByKey")
+    })
+  if (!accessImport) return {}
+
+  const accessFile = path.posix.normalize(path.posix.join(path.posix.dirname(file), `${accessImport[2]}.tsx`))
+  const family = {
+    withItemsSurfaceAccess: "items",
+    withChangePasswordSurfaceAccess: "change-password",
+    withFinanceSurfaceAccess: "finance",
+    withPayrollSurfaceAccess: "payroll",
+  }[guard]
+  if (accessFile !== `app/[locale]/(dashboard)/dashboard/${family}/${family}-route-access.tsx`) return {}
+
+  const dataFile = accessFile.replace(/-route-access\.tsx$/, "-route-data-access.ts")
+  const access = readFile(root, accessFile)
+  const dataImport = `./${family}-route-data-access`
+  if (
+    !access.includes(`export async function ${guard}(`) ||
+    !access.includes(`from "${dataImport}"`) ||
+    !/return\s+get\w+RouteSurface\(key\)/.test(access) ||
+    !/if\s*\(state\.kind === "blocked"\)\s*\{\s*return state\.node/.test(access) ||
+    !access.includes("return onAllowed(state.context, state.locale)") ||
+    !/context\s*=\s*await require(?:Any|All)?Permissions?\(surface\.permissions/.test(access)
+  ) return {}
+
+  const data = readFile(root, dataFile)
+  const routes = Array.from(data.matchAll(/\{\s*key:\s*["']([\w-]+)["'],\s*route:\s*["']([^"']+)["'],\s*title:\s*["'][^"']+["'],\s*resource:\s*["'][^"']+["'],\s*permissions:\s*\[([\s\S]*?)\]/g))
+  const index = routes.findIndex((entry) => entry[1] === selection[1] && entry[2] === surface)
+  if (index < 0) return {}
+
+  const entry = routes[index]
+  const permission = extractStringList(entry[3])
+  if (!permission) return {}
+  const following = routes[index + 1]?.index ?? data.indexOf("\n  ]", entry.index + entry[0].length)
+  const policy = data.slice(entry.index, following < 0 ? data.length : following)
+  return { guard, permission, observeOrEnforce: detectObserveOrEnforce(policy) }
+}
+
 function dashboardRecords(root, catalog) {
   const dashboardRoot = path.join(root, "app/[locale]/(dashboard)/dashboard")
   return walk(dashboardRoot, (file) => /(?:page|layout)\.tsx$/.test(file) && !file.includes("__tests__"))
     .map((absolute) => {
       const file = toRepoPath(root, absolute)
       const source = fs.readFileSync(absolute, "utf8")
+      const surface = dashboardRoute(file)
       return createRecord({
         file,
-        surface: dashboardRoute(file),
+        surface,
         surfaceType: file.endsWith("layout.tsx") ? "layout" : "page",
         source,
+        ...dashboardAccessDelegation(root, file, surface, source),
       }, catalog)
     })
 }
