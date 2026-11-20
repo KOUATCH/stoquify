@@ -1272,7 +1272,7 @@ describe("payroll dashboard route smoke", () => {
     render(await PayrollContractsPage({ params: params() }));
     expect(
       screen.getByRole("heading", {
-        name: "Payroll contracts are not available for this role",
+        name: "Payroll contracts is not available for this role",
       }),
     ).toBeInTheDocument();
     expect(getEmployeeContractWorkflowAction).not.toHaveBeenCalled();
@@ -1286,7 +1286,7 @@ describe("payroll dashboard route smoke", () => {
     render(await PayrollEmployeesPage({ params: params() }));
     expect(
       screen.getByRole("heading", {
-        name: "Payroll employees are not available for this role",
+        name: "Payroll employees is not available for this role",
       }),
     ).toBeInTheDocument();
     expect(getPayrollEmployeeSourceDataAction).not.toHaveBeenCalled();
@@ -1300,7 +1300,7 @@ describe("payroll dashboard route smoke", () => {
     render(await PayrollDeclarationsPage({ params: params() }));
     expect(
       screen.getByRole("heading", {
-        name: "Payroll declarations are not available for this role",
+        name: "Payroll declarations is not available for this role",
       }),
     ).toBeInTheDocument();
     expect(getPayrollDeclarationWorkbenchAction).not.toHaveBeenCalled();
@@ -1314,7 +1314,7 @@ describe("payroll dashboard route smoke", () => {
     render(await PayrollPaymentsPage({ params: params() }));
     expect(
       screen.getByRole("heading", {
-        name: "Payroll payments are not available for this role",
+        name: "Payroll payments is not available for this role",
       }),
     ).toBeInTheDocument();
     expect(getPayrollPaymentReconciliationAction).not.toHaveBeenCalled();
@@ -1329,7 +1329,7 @@ describe("payroll dashboard route smoke", () => {
     render(await PayrollRunsPage({ params: params() }));
     expect(
       screen.getByRole("heading", {
-        name: "Payroll runs are not available for this role",
+        name: "Payroll runs is not available for this role",
       }),
     ).toBeInTheDocument();
     expect(getPayrollRunWorkbenchAction).not.toHaveBeenCalled();
@@ -1343,7 +1343,7 @@ describe("payroll dashboard route smoke", () => {
     render(await PayrollPayslipsPage({ params: params() }));
     expect(
       screen.getByRole("heading", {
-        name: "Payslips are not available for this role",
+        name: "Payroll payslips is not available for this role",
       }),
     ).toBeInTheDocument();
     expect(getMyPayrollPayslipsAction).not.toHaveBeenCalled();
@@ -1448,6 +1448,13 @@ describe("payroll dashboard route smoke", () => {
       },
     ];
 
+    const accessSource = readFileSync(
+      path.join(process.cwd(), "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx"),
+      "utf8",
+    );
+    expect(accessSource).toContain("await requireAnyPermission(");
+    expect(accessSource).toContain("await observeModuleAccess(");
+
     for (const contract of routeContracts) {
       const absolutePath = path.join(process.cwd(), contract.file);
       expect(existsSync(absolutePath)).toBe(true);
@@ -1455,8 +1462,7 @@ describe("payroll dashboard route smoke", () => {
       const source = readFileSync(absolutePath, "utf8");
       expect(source).toContain(contract.action);
       expect(source).toContain(contract.component);
-      expect(source).toContain("requireAnyPermission");
-      expect(source).toContain("observeModuleAccess");
+      expect(source).toContain("return withPayrollSurfaceAccess(");
       expect(source).toContain("overflow-x-hidden");
       expect(source).toContain("min-w-0");
       expect(source).toContain("max-w-[1920px]");

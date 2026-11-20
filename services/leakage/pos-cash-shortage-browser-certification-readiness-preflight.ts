@@ -1,4 +1,5 @@
 import { evaluatePosCashShortageBrowserEvidenceManifestPreflight } from "./pos-cash-shortage-browser-evidence-manifest-preflight";
+import { hasProtectedPosCashShortageIncidentRoute } from "./pos-cash-shortage-incident-route-posture";
 
 export const POS_CASH_SHORTAGE_BROWSER_CERTIFICATION_READINESS_PREFLIGHT_VERSION = 1;
 
@@ -23,6 +24,8 @@ export type PosCashShortageBrowserCertificationReadinessRequirement =
 
 export type PosCashShortageBrowserCertificationReadinessPreflightInput = {
   incidentDetailRouteSourceText: string | null;
+  assuranceRouteAccessSourceText?: string;
+  assuranceRouteCatalogSourceText?: string;
   controlTowerActionSourceText: string;
   incidentDetailViewSourceText: string;
   incidentActionsComponentSourceText: string;
@@ -90,8 +93,7 @@ function isRequirementSatisfied(
   switch (requirement) {
     case "incident_detail_route_present":
       return (
-        routeSource.includes("requirePermission") &&
-        routeSource.includes('resource: "WorkflowAssuranceIncident"') &&
+        hasProtectedPosCashShortageIncidentRoute(input) &&
         routeSource.includes("getAssuranceIncidentDetailData") &&
         routeSource.includes("AssuranceIncidentDetailView") &&
         routeSource.includes("incidentId")

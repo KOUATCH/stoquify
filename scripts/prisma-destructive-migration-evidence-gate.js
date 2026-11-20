@@ -5,6 +5,10 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const { scanMigrationRisks } = require("./prisma-production-migration-gate");
+const {
+  HASH_CONTRACT,
+  migrationHashRecord,
+} = require("./prisma-migration-catalog-gate");
 
 const PACKET_PATH =
   "docs/blockers/stoquify-migration-risk-maker-checker-packet-2026-08-13.json";
@@ -189,8 +193,8 @@ function absolute(root, relative) {
 function checkPacketBindings(root, packet) {
   const errors = [];
   const migrationTarget = absolute(root, packet.migration.path);
-  const migrationSha256 = fileSha256(migrationTarget);
-  if (migrationSha256 !== packet.migration.sha256) {
+  const migrationHashes = migrationHashRecord(migrationTarget);
+  if (migrationHashes.rawSha256 !== packet.migration.sha256) {
     errors.push("migration_hash_mismatch");
   }
   if (fs.statSync(migrationTarget).size !== packet.migration.utf8ByteLength) {
@@ -222,18 +226,24 @@ function checkPacketBindings(root, packet) {
       return !fs.existsSync(target) || fileSha256(target) !== entry.sha256;
     })
     .map((entry) => entry.path);
-  if (boundFileMismatches.length) errors.push("bound_file_hash_mismatch");
+  const releaseSnapshotErrors = boundFileMismatches.length
+    ? ["bound_file_hash_mismatch"]
+    : [];
 
   return {
     ready: errors.length === 0,
     errors,
-    migrationSha256,
+    hashContract: HASH_CONTRACT,
+    migrationSha256: migrationHashes.rawSha256,
+    migrationCanonicalLfSha256: migrationHashes.canonicalLfSha256,
     migrationByteLength: fs.statSync(migrationTarget).size,
     operationCount: packet.destructiveInventory.length,
     operationHashMismatches,
     inventorySha256,
     boundFileCount: boundFiles.length,
     boundFileMismatches,
+    releaseSnapshotReady: releaseSnapshotErrors.length === 0,
+    releaseSnapshotErrors,
   };
 }
 
@@ -326,6 +336,9 @@ function buildEvidenceReport(root = process.cwd()) {
     currentSourceState(root),
   );
   const manifestErrors = [];
+  const releaseSnapshotErrors = [
+    ...packetBindings.releaseSnapshotErrors,
+  ];
 
   if (manifest.packetId !== packet.packetId) manifestErrors.push("packet_id_mismatch");
   if (manifest.migration.sha256 !== packet.migration.sha256) {
@@ -340,7 +353,7 @@ function buildEvidenceReport(root = process.cwd()) {
 
   const schemaSha256 = fileSha256(absolute(root, manifest.prismaSchema.path));
   if (schemaSha256 !== manifest.prismaSchema.sha256) {
-    manifestErrors.push("manifest_prisma_schema_hash_mismatch");
+    releaseSnapshotErrors.push("manifest_prisma_schema_hash_mismatch");
   }
 
   const artifactIds = manifest.artifacts.map((entry) => entry.id);
@@ -368,7 +381,7 @@ function buildEvidenceReport(root = process.cwd()) {
     })
     .map((entry) => entry.path);
   if (supportingEvidenceMismatches.length) {
-    manifestErrors.push("supporting_evidence_hash_mismatch");
+    releaseSnapshotErrors.push("supporting_evidence_hash_mismatch");
   }
 
   const completed = artifacts.filter(
@@ -383,13 +396,15 @@ function buildEvidenceReport(root = process.cwd()) {
     checkerDecision = readJson(path.resolve(bundleRoot, checkerArtifact.path)).decision;
   }
   const approvalState = exactApprovalState(root, packet);
-  const approved =
+  const historicalApprovalReady =
     packetBindings.ready &&
     manifestErrors.length === 0 &&
-    candidateFreeze.ready &&
     preCheckerReady &&
     checkerDecision === "APPROVE_EXACT_HASH" &&
     approvalState.ready;
+  const releaseSnapshotReady =
+    candidateFreeze.ready && releaseSnapshotErrors.length === 0;
+  const approved = historicalApprovalReady && releaseSnapshotReady;
 
   const status = approved
     ? "APPROVED_EXACT_HASH_BY_RECORDED_HUMAN_CHECKER"
@@ -403,6 +418,11 @@ function buildEvidenceReport(root = process.cwd()) {
     packetId: packet.packetId,
     packetBindings,
     candidateFreeze,
+    releaseSnapshot: {
+      ready: releaseSnapshotReady,
+      errors: [...new Set(releaseSnapshotErrors)],
+      mutableFilesInvalidateHistoricalApproval: false,
+    },
     manifest: {
       ready: manifestErrors.length === 0,
       errors: [...new Set(manifestErrors)],
@@ -418,6 +438,7 @@ function buildEvidenceReport(root = process.cwd()) {
     preCheckerReady,
     checkerDecision,
     approvalState,
+    historicalApprovalReady,
     exactHashApprovalRecorded: approvalState.ready,
     productionExecutionAuthorized: approved,
     approvalClaimed: approved,
@@ -435,10 +456,13 @@ function renderMarkdown(report) {
     "## Static bindings",
     "",
     `- Packet bindings: ${report.packetBindings.ready ? "passed" : "failed"}`,
+    `- Release snapshot bindings: ${report.releaseSnapshot.ready ? "passed" : "blocked"}`,
     `- Candidate freeze: ${report.candidateFreeze.ready ? "passed" : "blocked"}`,
     `- Candidate mode: \`${report.candidateFreeze.mode}\``,
     `- Live source dirty paths: ${report.candidateFreeze.liveSourceDirtyPathCount ?? "unknown"}`,
     `- Migration SHA-256: \`${report.packetBindings.migrationSha256}\``,
+    `- Canonical LF approval SHA-256: \`${report.packetBindings.migrationCanonicalLfSha256}\``,
+    `- Hash contract: \`${report.packetBindings.hashContract.version}\``,
     `- Destructive operations: ${report.packetBindings.operationCount}`,
     `- Bound consumer/evidence files: ${report.packetBindings.boundFileCount}`,
     `- Manifest structure: ${report.manifest.ready ? "passed" : "failed"}`,
@@ -461,6 +485,8 @@ function renderMarkdown(report) {
     `- Stale approvals: ${report.approvalState.staleApprovalCount}`,
     `- Revoked approvals: ${report.approvalState.revokedApprovalCount}`,
     `- Exact-hash approval recorded: ${report.exactHashApprovalRecorded ? "yes" : "no"}`,
+    `- Historical approval evidence complete: ${report.historicalApprovalReady ? "yes" : "no"}`,
+    `- Mutable release snapshot invalidates historical approval: no`,
     `- Production execution authorized: ${report.productionExecutionAuthorized ? "yes" : "no"}`,
     "",
     "Templates and partial artifacts are deliberately not counted as completed evidence.",

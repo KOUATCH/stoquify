@@ -4,6 +4,7 @@ import getItemWithSuppliersById from "@/actions/item-suppliers/getItemWithSuppli
 import getBriefItemById from "@/actions/itemsShow/getBriefItemById"
 import getOrgSuppliers from "@/actions/suppliers/getOrgSuppliers"
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
+import { requirePermission } from "@/lib/security/rbac"
 import { getOrganizationSettingsForOrg } from "@/services/organization/organization-settings.service"
 import ItemSuppliersPage from "../page"
 
@@ -22,6 +23,9 @@ jest.mock("@/actions/suppliers/getOrgSuppliers", () => ({
 jest.mock("@/config/useAuth", () => ({
   checkPermission: jest.fn(),
   getAuthenticatedUser: jest.fn(),
+}))
+jest.mock("@/lib/security/rbac", () => ({
+  requirePermission: jest.fn(),
 }))
 jest.mock("@/services/organization/organization-settings.service", () => ({
   getOrganizationSettingsForOrg: jest.fn(),
@@ -66,12 +70,18 @@ const mockGetBriefItemById = getBriefItemById as jest.Mock
 const mockGetOrgSuppliers = getOrgSuppliers as jest.Mock
 const mockCheckPermission = checkPermission as jest.Mock
 const mockGetAuthenticatedUser = getAuthenticatedUser as jest.Mock
+const mockRequirePermission = requirePermission as jest.Mock
 const mockGetOrganizationSettingsForOrg = getOrganizationSettingsForOrg as jest.Mock
 
 describe("item suppliers page display context", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockCheckPermission.mockResolvedValue(true)
+    mockRequirePermission.mockResolvedValue({
+      orgId: "org-xaf",
+      userId: "user-1",
+      permissions: ["inventory.items.read"],
+    })
     mockGetAuthenticatedUser.mockResolvedValue({
       id: "user-1",
       organizationId: "org-xaf",
@@ -96,6 +106,11 @@ describe("item suppliers page display context", () => {
       params: Promise.resolve({ id: "item-1", locale: "fr" }),
     }))
 
+    expect(mockRequirePermission).toHaveBeenCalledWith("inventory.items.read", {
+      resource: "InventoryItems",
+      auditAllowed: true,
+    })
+    expect(mockCheckPermission).toHaveBeenCalledWith("inventory.items.read")
     expect(mockGetOrganizationSettingsForOrg).toHaveBeenCalledWith("org-xaf")
     const layout = screen.getByTestId("item-suppliers-layout")
     expect(layout).toHaveAttribute("data-organization-id", "org-xaf")

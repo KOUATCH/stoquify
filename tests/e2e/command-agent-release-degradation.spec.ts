@@ -193,11 +193,12 @@ test("denies a second tenant without a governed release package", async ({
     await page.goto("/en/dashboard/daily-digest", { waitUntil: "networkidle" });
     const panel = page.getByTestId("command-agent-panel");
     await expect(panel).toBeVisible();
-    await expect(
-      panel.getByRole("button", { name: "Generate brief" }),
-    ).toBeDisabled();
-    await expect(panel.getByRole("status")).toContainText(
-      "Command Agent is not available for this role.",
+    const generate = panel.getByRole("button", { name: "Generate brief" });
+    await expect(generate).toBeEnabled();
+    await generate.click();
+    await expect(panel.getByRole("alert")).toHaveText(
+      "Command Agent release controls are not ready.",
+      { timeout: 90_000 },
     );
     await expect(panel.getByTestId("command-agent-brief")).toHaveCount(0);
     await expect

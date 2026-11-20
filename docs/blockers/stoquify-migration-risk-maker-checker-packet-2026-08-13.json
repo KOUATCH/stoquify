@@ -1,21 +1,21 @@
 {
   "schemaVersion": 2,
   "packetId": "MIG-RISK-20260611130000-F7DE8DC7-RECONCILED-2026-08-13",
-  "reconciledAt": "2026-08-17T15:03:37.757Z",
+  "reconciledAt": "2026-11-20T08:51:14.402Z",
   "status": "DEVELOPMENT_BINDINGS_REFRESHED_NOT_PRODUCTION_APPROVAL",
   "recommendedDisposition": "REJECT_AND_REWORK_UNLESS_REQUIRED_EVIDENCE_PROVES_EXACT_HASH_SAFE",
   "productionExecutionAuthorized": false,
   "approvalClaimed": false,
   "migrationModifiedByPacket": false,
   "repository": {
-    "head": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "head": "27018a9788c2356481588a66db40714282adb0c0",
     "worktreeState": "DIRTY_PREEXISTING_CONCURRENT_EDITS",
     "bindingRule": "Per-file hashes bind technical inputs. Production additionally requires PRODUCTION_FROZEN mode, a clean source candidate excluding evidence outputs, unchanged Git HEAD/tree, completed recovery evidence, and signed maker-checker approval.",
-    "tree": "7efce91d5ba871e91470f60ed3b53833a1c3b4b4",
+    "tree": "42c9dbeb3c56d151c895417858583642e861d5a1",
     "candidateMode": "DEVELOPMENT_ROLLING",
     "sourceDirtyAtRefresh": true,
-    "sourceDirtyPathCountAtRefresh": 231,
-    "bindingRefreshAt": "2026-08-17T15:03:37.757Z"
+    "sourceDirtyPathCountAtRefresh": 1,
+    "bindingRefreshAt": "2026-11-20T08:51:14.402Z"
   },
   "supersedes": {
     "markdown": {
@@ -31,8 +31,8 @@
   },
   "migration": {
     "path": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
-    "sha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
-    "utf8ByteLength": 24674,
+    "sha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
+    "utf8ByteLength": 24082,
     "topLevelStatementsWithDestructiveOperations": 4,
     "destructiveOperationCount": 13,
     "rules": {
@@ -463,7 +463,7 @@
         },
         {
           "path": "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx",
-          "sha256": "fc6c34dfda44cbc615f8ed312ffe44ea78a3dc2deb8766a244de9c68a4e0a92b"
+          "sha256": "c01b638417401192a68e5a6ecadd67200efa8b65122c7006c14e6b475178df7f"
         }
       ]
     },
@@ -474,11 +474,11 @@
       "files": [
         {
           "path": "prisma/migrations/20260528124341_refine_item_barcode/migration.sql",
-          "sha256": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2"
+          "sha256": "fb17df3ea21af3a7c563f19d82841b40fd57be7ef5c877ec7a68249d3774485b"
         },
         {
           "path": "prisma/schema.prisma",
-          "sha256": "cdbc9c64e88d642f2bfc716ee4fda2e8b7dfbfc26f08a5170645311268ae8af9"
+          "sha256": "e7fb0b6195946077eca67e18829826021f3637fbb1967af5e52dc132f3e9e143"
         },
         {
           "path": "graphify-out/GRAPH_REPORT.md",
@@ -490,22 +490,22 @@
   "evidenceSourceFiles": [
     {
       "path": "scripts/prisma-production-migration-gate.js",
-      "sha256": "180f292e0de974f50e83d078d515ae337a450e1c50260f80cdbbb9f926bed151",
+      "sha256": "fa64e5d76581bf6c97c5a928ae3d87e96874d6557ae5d0e60196f09d9ad4c9c7",
       "purpose": "Destructive-pattern scanner and exact whole-file hash approval gate"
     },
     {
       "path": "scripts/__tests__/prisma-production-migration-gate.test.js",
-      "sha256": "9e6f8e8f392758ba5e514368d24d6cdc72d5969e698682cf26aaea1490e0a7d9",
+      "sha256": "3e7859eaacde582cbf770c3288db09ca758283902d8cebed017a78239b7bab72",
       "purpose": "Focused gate regression suite"
     },
     {
       "path": "docs/operations/runbooks/prisma-production-migrations.md",
-      "sha256": "639fdc4053592813ee315090f2967a164a3b747f9271f0de3d23fa6981f49a6d",
+      "sha256": "4933233f168dfae7ab9e140363a3901c79d76e27b05f489bf09dde2549f93d51",
       "purpose": "Production migration and destructive-approval policy"
     },
     {
       "path": "package.json",
-      "sha256": "cb23df62282b4c70958799f3d639b6f702e6c3dbd932f80df33e5014c0a28a1f",
+      "sha256": "baa823877c5b8a1b79e5be97badc4a0580d7e4be1e0cf09c469a514288f54ee4",
       "purpose": "Current migration-safety, schema-validation, and policy-gate command wiring"
     },
     {
@@ -521,12 +521,12 @@
     {
       "path": "scripts/prisma-destructive-migration-evidence-gate.js",
       "purpose": "Evidence completeness, candidate-freeze, and production authorization gate",
-      "sha256": "ca477eaec4dd24df1097bd848e5492d2373ab22c74c963373d23723dcb3c008d"
+      "sha256": "12cf6b3f2de83baabefd02ea5ccc7fd126b951be54af96d9b08dc67ab12da1dc"
     },
     {
       "path": "scripts/__tests__/prisma-destructive-migration-evidence-gate.test.js",
       "purpose": "Evidence-gate fail-closed regression suite",
-      "sha256": "f1e00e54b9939616f11e8cccbf6fe2879a7a80e30885ca2cd36cef45b9a492db"
+      "sha256": "f40b9bc141b39eca588d541f2379a075c4f0c6c0aa9081f5eaaa7a49870c7a45"
     },
     {
       "path": "scripts/prisma-destructive-migration-binding-refresh.js",
@@ -683,8 +683,8 @@
   },
   "verification": {
     "migrationSafetyScan": {
-      "runAt": "2026-08-17T15:03:37.757Z",
-      "migrationCount": 68,
+      "runAt": "2026-11-20T08:51:14.402Z",
+      "migrationCount": 80,
       "riskFindingCount": 13,
       "approvedRiskCount": 0,
       "status": "blocked",

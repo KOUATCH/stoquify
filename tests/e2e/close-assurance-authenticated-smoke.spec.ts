@@ -7,7 +7,7 @@ test.use({ acceptDownloads: true })
 
 const accountingPeriodId =
   process.env.AQSTOQFLOW_CLOSE_E2E_PERIOD_ID ??
-  "payroll_e2e_browser_2026_06_accounting_period"
+  "payroll_e2e_browser_2026_06_accounting_period_2026_06"
 const evidenceDir = join(
   process.cwd(),
   "what-next",

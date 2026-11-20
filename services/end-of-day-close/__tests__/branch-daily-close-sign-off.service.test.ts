@@ -511,10 +511,19 @@ describe("branch daily-close sign-off service", () => {
         mockFactory().mockRejectedValue(error)
       }
 
-      await expect(signBranchDailyClose(defaultInput())).rejects.toMatchObject({
-        name: "BusinessRuleError",
-        message: "Branch daily-close sign-off could not be completed safely.",
-      })
+      const expectedError = stage === "business event"
+        ? {
+            name: "ApplicationError",
+            code: "INTERNAL_ERROR",
+            status: 500,
+            expose: false,
+            message: "Business event could not be recorded.",
+          }
+        : {
+            name: "BusinessRuleError",
+            message: "Branch daily-close sign-off could not be completed safely.",
+          }
+      await expect(signBranchDailyClose(defaultInput())).rejects.toMatchObject(expectedError)
       expect(mockDb.$transaction).toHaveBeenCalledTimes(1)
       expect(mockDb.auditLog.create).not.toHaveBeenCalled()
       if (stage === "persistence") {

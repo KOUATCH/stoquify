@@ -869,6 +869,8 @@ describe("authenticated dashboard command surface smoke", () => {
       organizationId: "org-session",
       actorId: "user-session",
       actorPermissions: expect.arrayContaining(["dashboard.read", "accounting.close.read"]),
+      actorRoleCodes: ["OWNER"],
+      isSuperUser: false,
     })
     expect(screen.getByRole("heading", { name: "Owner War Room" })).toBeInTheDocument()
     expect(screen.getByRole("heading", { name: "Owner morning brief" })).toBeInTheDocument()
@@ -914,6 +916,8 @@ describe("authenticated dashboard command surface smoke", () => {
       organizationId: "org-session",
       actorId: "user-session",
       actorPermissions: expect.arrayContaining(["finance.read", "dashboard.read"]),
+      actorRoleCodes: ["OWNER"],
+      isSuperUser: false,
     })
     expect(screen.getByRole("heading", { name: "Cash command brief" })).toBeInTheDocument()
     expect(screen.getByRole("heading", { name: "Cash Command Intelligence" })).toBeInTheDocument()
@@ -939,13 +943,13 @@ describe("authenticated dashboard command surface smoke", () => {
 
     const cashCommand = await CashCommandPage({ params: Promise.resolve({ locale: "en" }) })
     render(cashCommand)
-    expect(screen.getByRole("heading", { name: "Cash Command is not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Cash Command Intelligence is not available for this role" })).toBeInTheDocument()
     expect(getCashCommandData).not.toHaveBeenCalled()
     cleanup()
 
     const stockToCash = await StockToCashFlowPage({ params: Promise.resolve({ locale: "en" }) })
     render(stockToCash)
-    expect(screen.getByRole("heading", { name: "Stock-to-Cash is not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Stock-to-Cash Flow is not available for this role" })).toBeInTheDocument()
     expect(getStockToCashFlowData).not.toHaveBeenCalled()
   })
 

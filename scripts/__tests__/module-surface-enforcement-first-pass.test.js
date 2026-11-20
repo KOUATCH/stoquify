@@ -13,8 +13,8 @@ describe("module surface first enforcement pass", () => {
 
   it.each([
     ["/dashboard/inventory", "inventory.read"],
-    ["/dashboard/items", "inventory.items.read"],
-    ["/dashboard/items/new", "inventory.items.create"],
+    ["/dashboard/items", "inventory.items.read", "withItemsSurfaceAccess"],
+    ["/dashboard/items/new", "inventory.items.create", "withItemsSurfaceAccess"],
     ["/dashboard/inventory/items", "inventory.items.read"],
     ["/dashboard/inventory/items/create", "inventory.items.create"],
     ["/dashboard/inventory/items/new", "inventory.items.create"],
@@ -33,16 +33,16 @@ describe("module surface first enforcement pass", () => {
     ["/dashboard/inventory/units", "inventory.units.read"],
     ["/dashboard/inventory/units/create", "inventory.units.create"],
     ["/dashboard/inventory/units/[id]/edit", "inventory.units.update"],
-  ])("guards inventory page surface %s", (surface, permission) => {
+  ])("guards inventory page surface %s", (surface, permission, guard = "checkPermission") => {
     const record = pageRecord(report, surface)
 
-    expect(record).toMatchObject({ guard: "checkPermission", permission })
+    expect(record).toMatchObject({ guard, permission })
     expect(record.classification).not.toContain("missing permission")
     expect(record.classification).not.toContain("dashboard-only risk")
   })
 
   it.each([
-    ["/dashboard/change-password", "PASSWORD_READ"],
+    ["/dashboard/change-password", "PASSWORD_READ", "withChangePasswordSurfaceAccess"],
     ["/dashboard/settings/appearance", "DASHBOARD_READ"],
     ["/dashboard/settings/company", "COMPANY_READ"],
     ["/dashboard/settings/organization", "COMPANY_READ"],
@@ -60,10 +60,10 @@ describe("module surface first enforcement pass", () => {
     ["/dashboard/settings/tax-rates/[id]/edit", "taxes.update"],
     ["/dashboard/settings/terminals", "POS_STATION_READ"],
     ["/dashboard/settings/users", "READ_USERS"],
-  ])("guards settings page surface %s", (surface, permission) => {
+  ])("guards settings page surface %s", (surface, permission, guard = "checkPermission") => {
     const record = pageRecord(report, surface)
 
-    expect(record).toMatchObject({ guard: "checkPermission", permission })
+    expect(record).toMatchObject({ guard, permission })
     expect(record.classification).not.toContain("missing permission")
     expect(record.classification).not.toContain("dashboard-only risk")
   })
@@ -96,10 +96,10 @@ describe("module surface first enforcement pass", () => {
 
 
   it.each([
-    ["/dashboard/finance", "FinanceRouteAccess", "financeViewPermissions(overview)"],
-    ["/dashboard/finance/receivables", "FinanceRouteAccess", "financeViewPermissions(receivables)"],
-    ["/dashboard/finance/cash-command", "requireAnyPermission", "finance.read | dashboard.read"],
-    ["/dashboard/payroll", "requireAnyPermission", "payroll.command.read"],
+    ["/dashboard/finance", "withFinanceSurfaceAccess", "finance.dashboard.read | finance.read"],
+    ["/dashboard/finance/receivables", "withFinanceSurfaceAccess", "finance.receivables.read | finance.read"],
+    ["/dashboard/finance/cash-command", "withFinanceSurfaceAccess", "finance.read | dashboard.read"],
+    ["/dashboard/payroll", "withPayrollSurfaceAccess", "payroll.command.read"],
   ])("guards focused finance and payroll dashboard surface %s", (surface, guard, permission) => {
     const record = pageRecord(report, surface)
 
@@ -116,7 +116,8 @@ describe("module surface first enforcement pass", () => {
       (item) => item.surfaceType === "action" && item.file === "actions/payroll/payroll-command-read-model.actions.ts",
     )
     const payrollActionSource = fs.readFileSync(path.join(process.cwd(), "actions/payroll/payroll-command-read-model.actions.ts"), "utf8")
-    const payrollPageSource = fs.readFileSync(path.join(process.cwd(), "app/[locale]/(dashboard)/dashboard/payroll/page.tsx"), "utf8")
+    const payrollAccessSource = fs.readFileSync(path.join(process.cwd(), "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx"), "utf8")
+    const payrollPage = pageRecord(report, "/dashboard/payroll")
 
     expect(financeAction).toMatchObject({
       moduleSlug: "finance",
@@ -125,11 +126,11 @@ describe("module surface first enforcement pass", () => {
       observeOrEnforce: "report-only",
     })
     expect(financeAction.classification).not.toContain("missing permission")
-    expect(payrollAction).toMatchObject({ moduleSlug: "payroll", guard: "protect", permission: "payroll.command.read", observeOrEnforce: "report-only" })
+    expect(payrollAction).toMatchObject({ moduleSlug: "payroll", guard: "protect", permission: "payroll.command.read", observeOrEnforce: "observe" })
     expect(payrollAction.classification).not.toContain("missing permission")
     expect(payrollActionSource).toContain('mode: "observe"')
-    expect(payrollPageSource).toContain('mode: "observe"')
-    expect(payrollPageSource).not.toContain("if (!moduleDecision.allowed)")
+    expect(payrollPage).toMatchObject({ guard: "withPayrollSurfaceAccess", permission: "payroll.command.read", observeOrEnforce: "observe" })
+    expect(payrollAccessSource).toContain('if (moduleMode === "enforce" && !moduleDecision.allowed)')
   })
 
   it("keeps module surface inventory report-only", () => {

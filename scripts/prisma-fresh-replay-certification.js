@@ -78,8 +78,8 @@ function requireSafeDatabaseUrl() {
     throw new Error("Fresh replay certification refuses non-local databases")
   }
   const databaseName = decodeURIComponent(parsed.pathname.replace(/^\//, ""))
-  if (!databaseName.startsWith("stoquify_referral_")) {
-    throw new Error("Fresh replay certification requires a stoquify_referral_* database")
+  if (!/^stoquify_(?:referral|replay)_[a-z0-9_]+$/.test(databaseName)) {
+    throw new Error("Fresh replay certification requires a stoquify_replay_* database (legacy stoquify_referral_* is also accepted)")
   }
   return { databaseName, databaseUrl: parsed.toString() }
 }

@@ -129,6 +129,8 @@ function currentSources() {
     incidentDetailRouteSourceText: readOptional(
       "app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx",
     ),
+    assuranceRouteAccessSourceText: read("app/[locale]/(dashboard)/dashboard/assurance/assurance-route-access.tsx"),
+    assuranceRouteCatalogSourceText: read("app/[locale]/(dashboard)/dashboard/assurance/assurance-route-data-access.ts"),
     controlTowerActionSourceText: read("actions/assurance/workflow-assurance-control-tower.actions.ts"),
     posResolutionActionSourceText: read("actions/assurance/pos-cash-shortage-resolution.actions.ts"),
     authStateNames: listNames("playwright/.auth", /\.json$/i),

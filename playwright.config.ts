@@ -10,6 +10,8 @@ const rbacDeniedAuthStatePath =
   "playwright/.auth/payroll-requester.json";
 const enabledPilotCertification =
   process.env.STOQUIFY_AGENT_CERTIFICATION_MODE === "1";
+const payrollOrganizationId =
+  process.env.AQSTOQFLOW_E2E_ORG_ID ?? "org_payroll_e2e_local";
 const transactionHistoryAuthStatePath =
   process.env.PLAYWRIGHT_TRANSACTION_HISTORY_STORAGE_STATE ??
   "playwright/.auth/transaction-history.json";
@@ -52,8 +54,10 @@ export default defineConfig({
         env: {
           ...process.env,
           STOQUIFY_COMMAND_AGENT_ROLLOUT: "internal",
-          STOQUIFY_COMMAND_AGENT_PILOT_ORG_IDS:
-            process.env.AQSTOQFLOW_E2E_ORG_ID ?? "org_payroll_e2e_local",
+          STOQUIFY_COMMAND_AGENT_PILOT_ORG_IDS: enabledPilotCertification
+            ? (process.env.STOQUIFY_COMMAND_AGENT_PILOT_ORG_IDS ??
+                payrollOrganizationId)
+            : payrollOrganizationId,
           STOQUIFY_COMMAND_AGENT_PILOT_ROLE_CODES: "PAYROLL_E2E",
           STOQUIFY_COMMAND_AGENT_KILL_SWITCH: enabledPilotCertification
             ? "0"

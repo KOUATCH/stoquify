@@ -28,7 +28,10 @@ describe("customer statement delivery envelope", () => {
 
   it("rejects tampering, malformed envelopes, and unsafe key configuration", () => {
     const sealed = sealCustomerStatementDeliveryEnvelope(payload, environment)!
-    const tampered = sealed.slice(0, -1) + (sealed.endsWith("a") ? "b" : "a")
+    const [version, iv, tag, ciphertext] = sealed.split(".")
+    const encrypted = Buffer.from(ciphertext, "base64url")
+    encrypted.writeUInt8(encrypted.readUInt8(0) ^ 1, 0)
+    const tampered = [version, iv, tag, encrypted.toString("base64url")].join(".")
 
     expect(openCustomerStatementDeliveryEnvelope(tampered, environment)).toBeNull()
     expect(openCustomerStatementDeliveryEnvelope("v1.invalid", environment)).toBeNull()

@@ -45,7 +45,7 @@ describe("Workflow Assurance multi-finding persistence migration", () => {
   })
 
   it("does not activate the POS cash-shortage detector, worker, or scheduler", () => {
-    expect(registry).not.toContain("pos.closed_shift_cash_shortage.review")
+    expect(registry).toContain('"pos.closed_shift_cash_shortage.review": runDormantPosShiftCashShortageReviewCheck')
     expect(registry).not.toContain("pos-shift-cash-shortage-evaluation-batch")
     expect(persistence).not.toMatch(/checkpoint|lease|watermark|dead.?letter|cron/i)
   })
