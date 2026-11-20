@@ -1,12 +1,12 @@
 const { assertLocalSeedAllowed, normalizePrismaDatasourceUrl, resolvePrismaDatasourceUrl } = require("../seed-payroll-e2e-user")
 
 describe("payroll E2E fixture datasource compatibility", () => {
-  it("normalizes PostgreSQL URLs for Prisma Edge compatibility", () => {
-    expect(normalizePrismaDatasourceUrl("postgresql://postgres@127.0.0.1:5432/stoquify")).toBe(
-      "prisma+postgres://postgres@127.0.0.1:5432/stoquify",
+  it("keeps direct PostgreSQL URLs for the Node Prisma client", () => {
+    expect(normalizePrismaDatasourceUrl(" postgresql://ci:ci@localhost:5432/aqstoqflow_ci?schema=public ")).toBe(
+      "postgresql://ci:ci@localhost:5432/aqstoqflow_ci?schema=public",
     )
     expect(normalizePrismaDatasourceUrl("postgres://postgres:pa%3Ass@127.0.0.1:5432/stoquify")).toBe(
-      "prisma+postgres://postgres:pa%3Ass@127.0.0.1:5432/stoquify",
+      "postgres://postgres:pa%3Ass@127.0.0.1:5432/stoquify",
     )
   })
 
@@ -21,10 +21,10 @@ describe("payroll E2E fixture datasource compatibility", () => {
 
   it("resolves fixture datasource from DATABASE_URL and DIRECT_URL", () => {
     expect(resolvePrismaDatasourceUrl({ DATABASE_URL: "postgres://payroll:pw@db.local:5432/payroll" })).toBe(
-      "prisma+postgres://payroll:pw@db.local:5432/payroll",
+      "postgres://payroll:pw@db.local:5432/payroll",
     )
     expect(resolvePrismaDatasourceUrl({ DIRECT_URL: "postgresql://payroll:pw@db.local:5432/payroll" })).toBe(
-      "prisma+postgres://payroll:pw@db.local:5432/payroll",
+      "postgresql://payroll:pw@db.local:5432/payroll",
     )
   })
 

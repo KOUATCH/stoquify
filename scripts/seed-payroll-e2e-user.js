@@ -114,15 +114,7 @@ loadLocalEnv()
 
 function normalizePrismaDatasourceUrl(rawUrl) {
   if (!rawUrl) return rawUrl
-
-  const trimmed = String(rawUrl).trim()
-  if (!trimmed) return trimmed
-  if (trimmed.startsWith("prisma://") || trimmed.startsWith("prisma+postgres://")) return trimmed
-  if (trimmed.startsWith("postgres://") || trimmed.startsWith("postgresql://")) {
-    return "prisma+postgres://" + trimmed.slice(trimmed.indexOf("://") + 3)
-  }
-
-  return trimmed
+  return String(rawUrl).trim()
 }
 
 function resolvePrismaDatasourceUrl(env = process.env) {

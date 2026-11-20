@@ -146,6 +146,9 @@ describe("Command Agent actions", () => {
         sourceId: "cm00000000000000000000001",
       }),
     );
+    expect(mockRecordBusinessEvent.mock.calls[0]?.[0]).not.toHaveProperty(
+      "sourceType",
+    );
   });
 
   it("fails closed on invalid execution input before invoking the runtime", async () => {
