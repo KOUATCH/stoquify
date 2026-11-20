@@ -1,6 +1,7 @@
 import { routeByKey, withPosSurfaceAccess } from "./pos-route-access"
 
 import ProfessionalPOSSystem from "@/components/pos/ProfessionalPOSSystem"
+import { isPOSG0CashOnlyPilot } from "@/services/pos/pos-g0-pilot"
 
 export default async function POSPage({
   params,
@@ -16,6 +17,6 @@ export default async function POSPage({
   return withPosSurfaceAccess({
     params,
     surface,
-    onAllowed: () => <ProfessionalPOSSystem />,
+    onAllowed: (context) => <ProfessionalPOSSystem cashOnlyPilot={isPOSG0CashOnlyPilot(context.orgId)} />,
   })
 }

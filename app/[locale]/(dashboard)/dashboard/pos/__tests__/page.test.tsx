@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react"
 
 import { requirePermission } from "@/lib/security/rbac"
+import { isPOSG0CashOnlyPilot } from "@/services/pos/pos-g0-pilot"
 
 import POSPage from "../page"
 
@@ -20,11 +21,15 @@ jest.mock("@/components/dashboard/DashboardRouteState", () => ({
   DashboardRouteState: () => <main />,
 }))
 
-const mockProfessionalPOSSystem = jest.fn(() => <section>POS shell rendered</section>)
+jest.mock("@/services/pos/pos-g0-pilot", () => ({
+  isPOSG0CashOnlyPilot: jest.fn((organizationId: string) => organizationId === "pilot-org"),
+}))
+
+const mockProfessionalPOSSystem = jest.fn((_props: { cashOnlyPilot: boolean }) => <section>POS shell rendered</section>)
 
 jest.mock("@/components/pos/ProfessionalPOSSystem", () => ({
   __esModule: true,
-  default: () => mockProfessionalPOSSystem(),
+  default: (props: { cashOnlyPilot: boolean }) => mockProfessionalPOSSystem(props),
 }))
 
 const mockRequirePermission = requirePermission as jest.Mock
@@ -44,7 +49,18 @@ describe("POSPage", () => {
       auditAllowed: true,
     })
     expect(mockProfessionalPOSSystem).toHaveBeenCalledTimes(1)
+    expect(isPOSG0CashOnlyPilot).toHaveBeenCalledWith("org-1")
+    expect(mockProfessionalPOSSystem).toHaveBeenCalledWith({ cashOnlyPilot: false })
     expect(screen.getByText("POS shell rendered")).toBeInTheDocument()
+  })
+
+  it("passes cash-only checkout to the authenticated pilot organization", async () => {
+    mockRequirePermission.mockResolvedValue({ orgId: "pilot-org" })
+
+    render(await POSPage({ params: Promise.resolve({ locale: "fr" }) }))
+
+    expect(isPOSG0CashOnlyPilot).toHaveBeenCalledWith("pilot-org")
+    expect(mockProfessionalPOSSystem).toHaveBeenCalledWith({ cashOnlyPilot: true })
   })
 
   it("stops before rendering the POS shell when the permission guard denies access", async () => {
@@ -55,6 +71,7 @@ describe("POSPage", () => {
     expect(mockRequirePermission).toHaveBeenCalledWith("OPERATE_POS", expect.objectContaining({
       resource: "POSPage",
     }))
+    expect(isPOSG0CashOnlyPilot).not.toHaveBeenCalled()
     expect(mockProfessionalPOSSystem).not.toHaveBeenCalled()
   })
 })

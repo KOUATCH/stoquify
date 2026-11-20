@@ -480,7 +480,7 @@ describe("ProfessionalPOSSystem sale commit", () => {
     expect(screen.getByTestId("pos-charge-footer")).toHaveClass("shrink-0")
   })
 
-  it("submits an active cash sale with a replay-safe non-statutory receipt", async () => {
+  it.each([true, false])("submits an active cash sale with a replay-safe non-statutory receipt (cash-only pilot %s)", async (cashOnlyPilot) => {
     const commitMutateAsync = jest.fn().mockResolvedValue(actionSuccess({
       clientCommitId: "pos:test-commit-id",
       resultSchemaVersion: 1,
@@ -559,7 +559,7 @@ describe("ProfessionalPOSSystem sale commit", () => {
     } as never)
     mockHooks.useCommitPOSSale.mockReturnValue(mutationState(commitMutateAsync) as never)
 
-    render(<ProfessionalPOSSystem />)
+    render(<ProfessionalPOSSystem cashOnlyPilot={cashOnlyPilot} />)
 
     expect(screen.getByTestId("pos-cart-lines")).toHaveClass(
       "min-h-[18rem]",
@@ -577,11 +577,35 @@ describe("ProfessionalPOSSystem sale commit", () => {
     expect(screen.getByText("tender.paid").parentElement).toHaveClass("rounded-md", "border")
     expect(screen.getByText("tender.due").parentElement).toHaveClass("rounded-md", "border")
     expect(screen.getByText("tender.change").parentElement).toHaveClass("rounded-md", "border")
+    const tenderMethod = screen.getByLabelText("tender.method")
     expect(
-      within(screen.getByLabelText("tender.method"))
+      within(tenderMethod)
         .getAllByRole("option")
         .map((option) => option.getAttribute("value")),
-    ).toEqual(["CASH"])
+    ).toEqual(cashOnlyPilot ? ["CASH"] : ["CASH", "ON_ACCOUNT"])
+    if (!cashOnlyPilot) {
+      fireEvent.change(tenderMethod, { target: { value: "ON_ACCOUNT" } })
+      expect(screen.getByText("tender.customerRequired")).toBeInTheDocument()
+      expect(screen.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+      const summary = within(screen.getByTestId("pos-charge-summary"))
+      const money = new Intl.NumberFormat("en", { style: "currency", currency: "XAF" })
+      expect(summary.getByText("Payment preview").nextElementSibling?.textContent).toBe(money.format(0))
+      expect(summary.getByText("Uncovered").nextElementSibling?.textContent).toBe(money.format(0))
+      expect(summary.getByText("tender.methods.ON_ACCOUNT").nextElementSibling?.textContent).toBe(money.format(100))
+
+      fireEvent.click(screen.getByRole("button", { name: "tender.addTender" }))
+      const [accountAmount, cashAmount] = screen.getAllByLabelText("tender.amount")
+      fireEvent.change(accountAmount, { target: { value: "60" } })
+      fireEvent.change(cashAmount, { target: { value: "30" } })
+      expect(summary.getByText("Payment preview").nextElementSibling?.textContent).toBe(money.format(30))
+      expect(summary.getByText("Uncovered").nextElementSibling?.textContent).toBe(money.format(10))
+      expect(summary.getByText("tender.methods.ON_ACCOUNT").nextElementSibling?.textContent).toBe(money.format(60))
+      fireEvent.change(cashAmount, { target: { value: "40" } })
+      expect(summary.getByText("Uncovered").nextElementSibling?.textContent).toBe(money.format(0))
+
+      fireEvent.click(screen.getAllByRole("button", { name: "tender.removeTender" })[1])
+      fireEvent.change(tenderMethod, { target: { value: "CASH" } })
+    }
     expect(screen.getByTestId("pos-cart-line")).toHaveClass("py-0.5")
     expect(screen.getByRole("button", { name: "cart.removeLine" })).toHaveClass("h-7", "w-7")
     expect(screen.getByRole("button", { name: "charge.cta" })).toHaveClass("h-11", "rounded-md", "border")

@@ -25,6 +25,10 @@ export default defineConfig({
         url: baseURL,
         reuseExistingServer: false,
         timeout: 240_000,
+        env: {
+          AQSTOQFLOW_POS_G0_CASH_ONLY_ORGANIZATION_ID:
+            process.env.AQSTOQFLOW_POS_G0_ORG_ID ?? "org_stoquify_pos_g0_cert_001",
+        },
       },
   projects: [
     {

@@ -45,6 +45,7 @@ import {
 import { addMoney, moneyToNumber, moneyToString, subtractMoney, toDecimal } from "./money"
 import { getPOSSaleCommitReceipt, type ReceiptDeliveryResult, type SalesReceiptPayload } from "./receipt.service"
 import { requirePOSCustomerAtLocation } from "./pos-customer.service"
+import { isPOSG0CashOnlyPilot } from "./pos-g0-pilot"
 import {
   activeCartSchema,
   activePOSSessionSchema,
@@ -96,9 +97,6 @@ const POS_SALE_COMMIT_RESULT_SCHEMA_VERSION = 1
 function assertSupportedSaleTenders(tenders: POSTenderInput[]) {
   if (tenders.some((tender) => tender.method === "STORE_CREDIT")) {
     throw new BusinessRuleError(STORE_CREDIT_TENDER_UNAVAILABLE_MESSAGE)
-  }
-  if (tenders.some((tender) => tender.method !== "CASH")) {
-    throw new BusinessRuleError(DEVELOPMENT_CASH_ONLY_TENDER_MESSAGE)
   }
 }
 
@@ -2082,6 +2080,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
   assertSupportedSaleTenders(input.tenders)
   assertSupportedDevelopmentReceipt(input.receipt)
   const requestHash = posSaleCommitRequestHash(rawInput, input)
+  const cashOnlyPilot = isPOSG0CashOnlyPilot(rawInput.organizationId)
 
   const runCommit = async (tx: Prisma.TransactionClient) => {
     const existingCommit = await tx.pOSCommitResult.findUnique({
@@ -2101,6 +2100,10 @@ export async function commitPOSSale(rawInput: UserScoped) {
         needsCompletion: existingCommit.status === "COMMITTED",
         callerReplayed: true,
       }
+    }
+
+    if (cashOnlyPilot && input.tenders.some((tender) => tender.method !== "CASH")) {
+      throw new BusinessRuleError(DEVELOPMENT_CASH_ONLY_TENDER_MESSAGE)
     }
 
     const sale = await tx.salesOrder.findFirst({
